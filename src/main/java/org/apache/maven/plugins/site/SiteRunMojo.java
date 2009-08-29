@@ -151,12 +151,12 @@ public class SiteRunMojo
 
         // For external reports
         project.getReporting().setOutputDirectory( tempWebappDirectory.getAbsolutePath() );
-        for ( MavenReport report : getReports().keySet() )
+        for ( MavenReportExecution mavenReportExecution : getReports() )
         {
-            report.setReportOutputDirectory( tempWebappDirectory );
+            mavenReportExecution.getMavenReport().setReportOutputDirectory( tempWebappDirectory );
         }
 
-        Map<MavenReport, ClassLoader> filteredReports = filterReports( getReports() );
+        List<MavenReportExecution> filteredReports = filterReports( getReports() );
 
         List localesList = siteTool.getAvailableLocales( locales );
         webapp.setAttribute( DoxiaFilter.LOCALES_LIST_KEY, localesList );

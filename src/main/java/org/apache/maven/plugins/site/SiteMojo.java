@@ -77,14 +77,14 @@ public class SiteMojo
         throws MojoExecutionException, MojoFailureException
     {
 
-        Map<MavenReport, ClassLoader> filteredReports;
+        List<MavenReportExecution> filteredReports; 
         if ( generateReports )
         {
             filteredReports = filterReports( getReports() );
         }
         else
         {
-            filteredReports = Collections.emptyMap();
+            filteredReports = Collections.emptyList();
         }
 
         try
@@ -112,7 +112,7 @@ public class SiteMojo
         }
     }
 
-    private void renderLocale( Locale locale, Map<MavenReport, ClassLoader> reports )
+    private void renderLocale( Locale locale, List<MavenReportExecution> reports )
         throws IOException, RendererException, MojoFailureException, MojoExecutionException
     {
         SiteRenderingContext context = createSiteRenderingContext( locale );
@@ -125,9 +125,9 @@ public class SiteMojo
         File outputDir = getOutputDirectory( locale );
 
         // For external reports
-        for ( Iterator i = reports.keySet().iterator(); i.hasNext(); )
+        for ( MavenReportExecution mavenReportExecution : reports )
         {
-            MavenReport report = (MavenReport) i.next();
+            MavenReport report = mavenReportExecution.getMavenReport();
             report.setReportOutputDirectory( outputDir );
         }
 

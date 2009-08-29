@@ -193,12 +193,12 @@ public abstract class AbstractSiteRenderingMojo
    */   
    protected MavenReportExecutor mavenReportExecutor;
 
-    protected Map<MavenReport, ClassLoader> getReports()
+    protected List<MavenReportExecution> getReports()
         throws MojoExecutionException
     {
         if ( this.project.getReporting() == null || this.project.getReporting().getPlugins().isEmpty() )
         {
-            return Collections.emptyMap();
+            return Collections.emptyList();
         }
         MavenReportExecutorRequest mavenReportExecutorRequest = new MavenReportExecutorRequest();
         mavenReportExecutorRequest.setLocalRepository( localRepository );
@@ -207,17 +207,18 @@ public abstract class AbstractSiteRenderingMojo
         return mavenReportExecutor.buildMavenReports( mavenReportExecutorRequest );
     }
 
-    protected Map<MavenReport, ClassLoader> filterReports( Map<MavenReport, ClassLoader> reports )
+    protected List<MavenReportExecution> filterReports( List<MavenReportExecution> reports )
     {
-        Map<MavenReport, ClassLoader> filteredReports = new HashMap<MavenReport, ClassLoader>();
-        for ( MavenReport report : reports.keySet() )
+        List<MavenReportExecution> filteredReports = new ArrayList<MavenReportExecution>();
+        for ( MavenReportExecution mavenReportExecution : reports )
         {
             // noinspection ErrorNotRethrown,UnusedCatchParameter
+            MavenReport report = mavenReportExecution.getMavenReport();
             try
             {
                 if ( report.canGenerateReport() )
                 {
-                    filteredReports.put( report, reports.get( report ) );
+                    filteredReports.add( mavenReportExecution );
                 }
             }
             catch ( AbstractMethodError e )
@@ -229,7 +230,7 @@ public abstract class AbstractSiteRenderingMojo
                 getLog().warn(
                                "Error loading report " + report.getClass().getName()
                                    + " - AbstractMethodError: canGenerateReport()" );
-                filteredReports.put( report, reports.get( report ) );
+                filteredReports.add( mavenReportExecution );
             }
         }
         return filteredReports;
@@ -345,12 +346,16 @@ public abstract class AbstractSiteRenderingMojo
      * @return A map with all reports keyed by filename having the report itself as value. The map will be used to
      * populate a menu.
      */
-    protected Map locateReports( Map<MavenReport, ClassLoader> reports, Map documents, Locale locale )
+    protected Map<String, MavenReport> locateReports( List<MavenReportExecution> reports, Map documents, Locale locale )
     {
-        Map reportsByOutputName = new HashMap();
-        for ( Iterator i = reports.keySet().iterator(); i.hasNext(); )
+        // copy Collection to prevent ConcurrentModificationException
+        List<MavenReportExecution> filtered = new ArrayList<MavenReportExecution>(reports);
+
+        Map<String, MavenReport> reportsByOutputName = new HashMap<String, MavenReport>();
+        for ( Iterator<MavenReportExecution> iterator = filtered.iterator(); iterator.hasNext(); )
         {
-            MavenReport report = (MavenReport) i.next();
+            MavenReportExecution mavenReportExecution = iterator.next();
+            MavenReport report = mavenReportExecution.getMavenReport();
 
             String outputName = report.getOutputName() + ".html";
 
@@ -363,12 +368,12 @@ public abstract class AbstractSiteRenderingMojo
 
                 getLog().info( "Skipped \"" + report.getName( locale ) + "\" report, file \"" + outputName
                                    + "\" already exists for the " + displayLanguage + " version." );
-                i.remove();
+                reports.remove( mavenReportExecution );
             }
             else
             {
                 RenderingContext renderingContext = new RenderingContext( siteDirectory, outputName );
-                ReportDocumentRenderer renderer = new ReportDocumentRenderer( report, renderingContext, getLog(), reports.get( report ) );
+                ReportDocumentRenderer renderer = new ReportDocumentRenderer( mavenReportExecution, renderingContext, getLog() );
                 documents.put( outputName, renderer );
             }
         }
@@ -399,7 +404,7 @@ public abstract class AbstractSiteRenderingMojo
         return categories;
     }
 
-    protected Map locateDocuments( SiteRenderingContext context, Map<MavenReport, ClassLoader> reports, Locale locale )
+    protected Map locateDocuments( SiteRenderingContext context, List<MavenReportExecution> reports, Locale locale )
         throws IOException, RendererException
     {
         Map documents = siteRenderer.locateDocumentFiles( context );

@@ -20,9 +20,7 @@ package org.apache.maven.plugins.site;
  */
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.maven.artifact.repository.DefaultRepositoryRequest;
 import org.apache.maven.artifact.repository.RepositoryRequest;
@@ -63,7 +61,7 @@ public class DefaultMavenReportExecutor
     @Requirement
     protected LifecycleExecutor lifecycleExecutor;
 
-    public Map<MavenReport, ClassLoader> buildMavenReports( MavenReportExecutorRequest mavenReportExecutorRequest )
+    public List<MavenReportExecution> buildMavenReports( MavenReportExecutorRequest mavenReportExecutorRequest )
         throws MojoExecutionException
     {
 
@@ -83,7 +81,7 @@ public class DefaultMavenReportExecutor
         try
         {
 
-            Map<MavenReport, ClassLoader> reports = new HashMap<MavenReport, ClassLoader>();
+            List<MavenReportExecution> reports = new ArrayList<MavenReportExecution>();
 
             for ( ReportPlugin reportPlugin : mavenReportExecutorRequest.getProject().getReporting().getPlugins() )
             {
@@ -138,7 +136,9 @@ public class DefaultMavenReportExecutor
                         getConfiguredMavenReport( mojoExecution, pluginDescriptor, mavenReportExecutorRequest );
                     if ( mavenReport != null )
                     {
-                        reports.put( mavenReport, pluginDescriptor.getClassRealm() );
+                        MavenReportExecution mavenReportExecution =
+                            new MavenReportExecution( mavenReport, pluginDescriptor.getClassRealm() );
+                        reports.add( mavenReportExecution );
                     }
                 }
             }

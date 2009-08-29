@@ -19,19 +19,42 @@ package org.apache.maven.plugins.site;
  * under the License.
  */
 
-import java.util.List;
-
-import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.reporting.MavenReport;
 
 /**
  *  
  * @author Olivier Lamy
  * @since 3.0-beta-1
  */
-public interface MavenReportExecutor
+public class MavenReportExecution
 {
-    // FIXME create a bean which contains MavenReport, ClassLoader and other stuff
-    //       to prevent this and will be more easily extensible
-    List<MavenReportExecution> buildMavenReports(MavenReportExecutorRequest mavenReportExecutorRequest)
-        throws MojoExecutionException;
+    private MavenReport mavenReport;
+
+    private ClassLoader classLoader;
+
+    public MavenReportExecution( MavenReport mavenReport, ClassLoader classLoader )
+    {
+        this.mavenReport = mavenReport;
+        this.classLoader = classLoader;
+    }
+
+    public MavenReport getMavenReport()
+    {
+        return mavenReport;
+    }
+
+    public void setMavenReport( MavenReport mavenReport )
+    {
+        this.mavenReport = mavenReport;
+    }
+
+    public ClassLoader getClassLoader()
+    {
+        return classLoader;
+    }
+
+    public void setClassLoader( ClassLoader classLoader )
+    {
+        this.classLoader = classLoader;
+    }
 }

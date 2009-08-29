@@ -53,23 +53,20 @@ import org.codehaus.plexus.classworlds.realm.ClassRealm;
 public class ReportDocumentRenderer
     implements DocumentRenderer
 {
-    private MavenReport report;
+    private MavenReportExecution mavenReportExecution;
 
     private RenderingContext renderingContext;
 
     private Log log;
     
-    private ClassLoader classLoader;
-
-    public ReportDocumentRenderer( MavenReport report, RenderingContext renderingContext, Log log, ClassLoader classLoader )
+    public ReportDocumentRenderer( MavenReportExecution mavenReportExecution, RenderingContext renderingContext, Log log)
     {
-        this.report = report;
+        this.mavenReportExecution = mavenReportExecution;
 
         this.renderingContext = renderingContext;
 
         this.log = log;
         
-        this.classLoader = classLoader;
     }
 
     private static class MySink
@@ -148,6 +145,9 @@ public class ReportDocumentRenderer
         throws RendererException, FileNotFoundException
     {
         Locale locale = siteRenderingContext.getLocale();
+        
+        MavenReport report = mavenReportExecution.getMavenReport();
+        
         String localReportName = report.getName( locale );
         log.info( "Generating \"" + localReportName + "\" report." );
 
@@ -155,7 +155,7 @@ public class ReportDocumentRenderer
 
         SiteRendererSink sink = new SiteRendererSink( renderingContext );
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
-        Thread.currentThread().setContextClassLoader( this.classLoader );
+        Thread.currentThread().setContextClassLoader( this.mavenReportExecution.getClassLoader() );
         try
         {
             if ( report instanceof MavenMultiPageReport )
@@ -242,6 +242,6 @@ public class ReportDocumentRenderer
      */
     public boolean isExternalReport()
     {
-        return report.isExternalReport();
+        return mavenReportExecution.getMavenReport().isExternalReport();
     }
 }
