@@ -70,19 +70,11 @@ public class DefaultMavenReportExecutor
         List<String> imports = new ArrayList<String>();
 
         imports.add( "org.apache.maven.reporting.MavenReport" );
-        // imports.add( "org.apache.maven.reporting.AbstractMavenReport" );
         imports.add( "org.apache.maven.doxia.siterenderer.Renderer" );
         imports.add( "org.apache.maven.doxia.sink.SinkFactory" );
         imports.add( "org.codehaus.doxia.sink.Sink" );
         imports.add( "org.apache.maven.doxia.sink.Sink" );
         imports.add( "org.apache.maven.doxia.sink.SinkEventAttributes" );
-
-        /*
-         * imports.add( "org.codehaus.plexus.util.xml.Xpp3Dom" ); imports.add(
-         * "org.codehaus.plexus.util.xml.pull.XmlPullParser" ); imports.add(
-         * "org.codehaus.plexus.util.xml.pull.XmlPullParserException" ); imports.add(
-         * "org.codehaus.plexus.util.xml.pull.XmlSerializer" );
-         */
 
         RepositoryRequest repositoryRequest = new DefaultRepositoryRequest();
         repositoryRequest.setLocalRepository( mavenReportExecutorRequest.getLocalRepository() );
@@ -181,11 +173,6 @@ public class DefaultMavenReportExecutor
         {
             getLog().warn( "skip ClassCastException " + e.getMessage() );
             return null;
-        }
-        catch ( Throwable e )
-        {
-            getLog().error( "error configuring mojo " + mojoExecution.toString() + " : " + e.getMessage(), e );
-            throw e;
         }
     }
 
