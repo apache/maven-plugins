@@ -88,7 +88,6 @@ import java.io.StringReader;
 import java.io.Writer;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -490,9 +489,10 @@ public class ProcessRemoteResourcesMojo
 
             RemoteResourcesClassLoader classLoader
                 = new RemoteResourcesClassLoader( null );
+            
             initalizeClassloader( classLoader, resourceBundleArtifacts );
             Thread.currentThread().setContextClassLoader( classLoader );
-
+            
             processResourceBundles( classLoader, context );
 
             try
@@ -982,7 +982,7 @@ public class ProcessRemoteResourcesMojo
         throws MojoExecutionException
     {
         InputStreamReader reader = null;
-
+        
         try
         {
 
@@ -991,14 +991,9 @@ public class ProcessRemoteResourcesMojo
             {
                 URL url = (URL) e.nextElement();
 
-                URLConnection conn = url.openConnection();
-
-                conn.connect();
-
-                reader = new InputStreamReader( conn.getInputStream() );
-
                 try
                 {
+                    reader = new InputStreamReader( url.openStream() );
 
                     RemoteResourcesBundleXpp3Reader bundleReader = new RemoteResourcesBundleXpp3Reader();
 
