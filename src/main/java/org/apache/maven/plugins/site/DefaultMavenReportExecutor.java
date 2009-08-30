@@ -119,11 +119,13 @@ public class DefaultMavenReportExecutor
 
                     MojoExecution mojoExecution = new MojoExecution( plugin, goal, "report:" + goal );
                     mojoExecution.setConfiguration( convert( mojoDescriptor ) );
+                    //lifecycleExecutor.populateDefaultConfigurationForPlugin( plugin, repositoryRequest );
                     mojoExecution.setMojoDescriptor( mojoDescriptor );
                     mavenPluginManager.setupPluginRealm( pluginDescriptor,
                                                          mavenReportExecutorRequest.getMavenSession(),
                                                          Thread.currentThread().getContextClassLoader(), imports );
 
+                    
                     lifecycleExecutor.calculateForkedExecutions( mojoExecution,
                                                                  mavenReportExecutorRequest.getMavenSession() );
                     if ( !mojoExecution.getForkedExecutions().isEmpty() )
