@@ -184,6 +184,8 @@ public class RepositoryUtils
             return false;
         }
 
+        wagon.setTimeout( 1000 );
+
         if ( log.isDebugEnabled() )
         {
             Debug debug = new Debug();
