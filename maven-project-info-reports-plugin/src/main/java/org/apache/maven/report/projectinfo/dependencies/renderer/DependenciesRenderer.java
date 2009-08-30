@@ -532,9 +532,7 @@ public class DependenciesRenderer
             new int[] { Sink.JUSTIFY_LEFT, Sink.JUSTIFY_RIGHT, Sink.JUSTIFY_RIGHT, Sink.JUSTIFY_RIGHT,
                 Sink.JUSTIFY_RIGHT, Sink.JUSTIFY_CENTER, Sink.JUSTIFY_CENTER, Sink.JUSTIFY_CENTER };
 
-        startTable();
-
-        sink.tableRows( justification, true );
+        startTable( justification, true );
 
         TotalCell totaldeps = new TotalCell( DEFAULT_DECIMAL_FORMAT );
         TotalCell totaldepsize = new TotalCell( fileLengthDecimalFormat );
@@ -647,8 +645,6 @@ public class DependenciesRenderer
                     totaldebug.getTotalString( i ), totalsealed.getTotalString( i ) } );
             }
         }
-
-        sink.tableRows_();
 
         endTable();
         endSection();
@@ -876,12 +872,10 @@ public class DependenciesRenderer
 
         sink.listItem();
 
-        sink.paragraph();
         sink.text( id + ( StringUtils.isNotEmpty( artifact.getScope() ) ? " (" + artifact.getScope() + ") " : " " ) );
         sink.rawText( "<img id=\"" + imgId + "\" src=\"" + IMG_INFO_URL
             + "\" alt=\"Information\" onclick=\"toggleDependencyDetail( '" + dependencyDetailId + "', '" + imgId
             + "' );\" style=\"cursor: pointer;vertical-align:text-bottom;\"></img>" );
-        sink.paragraph_();
 
         printDescriptionsAndURLs( node, dependencyDetailId );
 
@@ -1105,8 +1099,6 @@ public class DependenciesRenderer
         String blacklistedEnabled = getReportString( "report.dependencies.repo.locations.cell.blacklisted.enabled" );
         String blacklistedDisabled = getReportString( "report.dependencies.repo.locations.cell.blacklisted.disabled" );
 
-        startTable();
-
         // Table header
 
         String[] tableHeader;
@@ -1125,7 +1117,7 @@ public class DependenciesRenderer
                     Sink.JUSTIFY_CENTER };
         }
 
-        sink.tableRows( justificationRepo, true );
+        startTable( justificationRepo, true );
 
         tableHeader( tableHeader );
 
@@ -1164,8 +1156,6 @@ public class DependenciesRenderer
             }
             sink.tableRow_();
         }
-
-        sink.tableRows_();
 
         endTable();
     }
@@ -1209,9 +1199,7 @@ public class DependenciesRenderer
         Map totalByRepo = new HashMap();
         TotalCell totaldeps = new TotalCell( DEFAULT_DECIMAL_FORMAT );
 
-        startTable();
-
-        sink.tableRows( justificationRepo, true );
+        startTable( justificationRepo, true );
 
         tableHeader( tableHeader );
 
@@ -1225,7 +1213,6 @@ public class DependenciesRenderer
 
             if ( !Artifact.SCOPE_SYSTEM.equals( dependency.getScope() ) )
             {
-
                 tableCell( dependency.getId() );
 
                 for ( Iterator itrepo = repoIdList.iterator(); itrepo.hasNext(); )
@@ -1312,8 +1299,6 @@ public class DependenciesRenderer
         }
 
         tableRow( totalRow );
-
-        sink.tableRows_();
 
         endTable();
     }
