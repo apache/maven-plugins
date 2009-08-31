@@ -160,6 +160,7 @@ under the License.
     <mavenVersion>3.0-SNAPSHOT</mavenVersion>
     <wagonVersion>1.0-beta-4</wagonVersion>
     <plexusVersion>1.2.1-SNAPSHOT</plexusVersion>
+    <javadocPluginVersion>2.6.1-SNAPSHOT</javadocPluginVersion>
   </properties>
 
   <dependencies>
@@ -476,7 +477,7 @@ under the License.
             <!-- SNAPSHOT use due to MJAVADOC-251  -->
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-javadoc-plugin</artifactId>
-            <version>2.6.1-SNAPSHOT</version>          
+            <version>${javadocPluginVersion}</version>          
           </plugin>          
         </plugins>
       </reporting>

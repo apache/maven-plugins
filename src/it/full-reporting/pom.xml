@@ -14,7 +14,7 @@
   <url>http://maven.apache.org</url>
   <properties>
     <!-- SNAPSHOT use due to MJAVADOC-251  -->
-    <javadocPluginVersion>2.6.1-SNAPSHOT</javadocPluginVersion>
+    <javadocPluginVersion>@javadocPluginVersion@</javadocPluginVersion>
   </properties>
   <dependencies>
     <dependency>
