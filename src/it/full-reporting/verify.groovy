@@ -30,11 +30,16 @@ assert new File(basedir, 'target/site/index.html').exists();
 assert new File(basedir, 'target/site/checkstyle.html').exists();
 assert new File(basedir, 'target/site/cpd.html').exists();
 assert new File(basedir, 'target/site/apidocs/index.html').exists();
+assert new File(basedir, 'target/site/apidocs/org/apache/maven/plugins/site/its/App.html').exists();
 assert new File(basedir, 'target/site/cobertura/index.html').exists();
 assert new File(basedir, 'target/site/xref/index.html').exists();
 assert new File(basedir, 'target/site/xref-test/index.html').exists();
 
 assert new File(basedir, 'target/site/taglist.html').exists();
 assert new File(basedir, 'target/site/team-list.html').exists();
+
+assert new File(basedir, 'target/site/dependencies.html').exists();
+content = new File(basedir, 'target/site/dependencies.html').text;
+assert content.contains( 'junit:junit:jar:3.8.2' );
 
 return true;
