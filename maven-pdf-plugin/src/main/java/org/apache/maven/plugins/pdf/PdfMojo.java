@@ -319,13 +319,22 @@ public class PdfMojo
 
     /**
      * If <code>true</false>, generate all Maven reports defined in <code>${project.reporting}</code> and append
-     * them as a new entry in the Table Of Contents.
-     * <b>Note</b>: Including the report generation could fail the PDF generation.
+     * them as a new entry in the TOC (Table Of Contents).
+     * <b>Note</b>: Including the report generation could fail the PDF generation or increase the build time.
      *
      * @parameter expression="${includeReports}" default-value="true"
      * @since 1.1
      */
     private boolean includeReports;
+
+    /**
+     * If <code>true</false>, generate a TOC (Table Of Content) for all items defined in the &lt;toc/&gt; element from
+     * the document descriptor.
+     *
+     * @parameter expression="${includeTOC}" default-value="true"
+     * @since 1.1
+     */
+    private boolean includeTOC;
 
     // ----------------------------------------------------------------------
     // Instance fields
@@ -518,6 +527,7 @@ public class PdfMojo
             context.put( "FileUtils", new FileUtils() );
             context.put( "StringUtils", new StringUtils() );
             context.put( "i18n", i18n );
+            context.put( "includeTOC", Boolean.valueOf( includeTOC ) );
 
             try
             {
