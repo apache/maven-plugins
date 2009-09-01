@@ -24,6 +24,7 @@ import org.apache.maven.artifact.handler.DefaultArtifactHandler;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.execution.MavenSession;
+import org.apache.maven.execution.ReactorManager;
 import org.apache.maven.plugin.resources.remote.stub.MavenProjectResourcesStub;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.project.MavenProject;
@@ -385,7 +386,7 @@ public class RemoteResourcesMojoTest
                                     null, //Settings settings,
                                     null, //ArtifactRepository localRepository,
                                     null, //EventDispatcher eventDispatcher,
-                                    null, //ReactorManager reactorManager,
+                                    new ReactorManager(new ArrayList()),
                                     Arrays.asList( new String[] {"install"} ),
                                     project.getBasedir().toString(),
                                     new Properties(),
