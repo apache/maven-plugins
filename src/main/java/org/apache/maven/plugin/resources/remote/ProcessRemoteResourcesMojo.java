@@ -237,9 +237,19 @@ public class ProcessRemoteResourcesMojo
     private String[] supplementalModels;
 
     /**
+     * List of artifacts that are added to the search path when looking 
+     * for supplementalModels
+     * @parameter
+     * @since 1.1 
+     */
+    private List supplementalModelArtifacts;
+
+    /**
      * Map of artifacts to supplemental project object models.
      */
     private Map supplementModels;
+    
+    
 
     /**
      * Merges supplemental data model with artifact
@@ -269,7 +279,7 @@ public class ProcessRemoteResourcesMojo
     private boolean skip;
 
     /**
-     * Skip remote-resource processing
+     * Attaches the resource to the project as a resource directory
      *
      * @parameter default-value="true"
      * @since 1.0-beta-1
@@ -466,6 +476,7 @@ public class ProcessRemoteResourcesMojo
             }
         }
 
+        addSupplementalModelArtifacts();
         locator.addSearchPath( FileResourceLoader.ID, project.getFile().getParentFile().getAbsolutePath() );
         if ( appendedResourcesDirectory != null )
         {
@@ -481,7 +492,7 @@ public class ProcessRemoteResourcesMojo
 
             validate();
 
-            List resourceBundleArtifacts = downloadResourceBundles( resourceBundles );
+            List resourceBundleArtifacts = downloadBundles( resourceBundles );
             supplementModels = loadSupplements( supplementalModels );
 
             VelocityContext context = new VelocityContext( properties );
@@ -528,6 +539,38 @@ public class ProcessRemoteResourcesMojo
         finally
         {
             Thread.currentThread().setContextClassLoader( origLoader );
+        }
+    }
+
+    private void addSupplementalModelArtifacts() throws MojoExecutionException
+    {
+        if ( supplementalModelArtifacts != null && !supplementalModelArtifacts.isEmpty() )
+        {
+            List artifacts = downloadBundles( supplementalModelArtifacts );
+            
+            for ( Iterator i = artifacts.iterator(); i.hasNext(); )
+            {
+                File artifact = (File) i.next();
+                
+                if ( artifact.isDirectory() ) 
+                {
+                    locator.addSearchPath( FileResourceLoader.ID, artifact.getAbsolutePath() );
+                }
+                else
+                {
+                    try 
+                    {
+                        locator.addSearchPath( "jar", "jar:" + artifact.toURL().toExternalForm() );
+                    } 
+                    catch (MalformedURLException e) 
+                    {
+                        throw new MojoExecutionException( "Could not use jar " 
+                                                          + artifact.getAbsolutePath(), e );
+                    }
+                }
+            }
+
+            
         }
     }
 
@@ -925,24 +968,44 @@ public class ProcessRemoteResourcesMojo
         }
     }
 
-    private List downloadResourceBundles( List resourceBundles )
+    private List downloadBundles( List bundles )
         throws MojoExecutionException
     {
-        List resourceBundleArtifacts = new ArrayList();
+        List bundleArtifacts = new ArrayList();
 
         try
         {
-            for ( Iterator i = resourceBundles.iterator(); i.hasNext(); )
+            for ( Iterator i = bundles.iterator(); i.hasNext(); )
             {
                 String artifactDescriptor = (String) i.next();
                 // groupId:artifactId:version
                 String[] s = artifactDescriptor.split( ":" );
-                File artifact = downloader.download( s[0], s[1], s[2], localRepository,
+                File artifact = null;
+                //check if the artifact is part of the reactor
+                if ( mavenSession != null ) 
+                {
+                    List list = mavenSession.getSortedProjects();
+                    Iterator it = list.iterator();
+                    while ( it.hasNext() )
+                    {
+                        MavenProject p = (MavenProject) it.next();
+                        if ( s[0].equals( p.getGroupId() )
+                            && s[1].equals( p.getArtifactId() ) 
+                            && s[2].equals( p.getVersion() ) ) 
+                        {
+                            artifact = new File( p.getBuild().getOutputDirectory() );
+                        }
+                    }
+                }
+                if ( artifact == null || !artifact.exists() )
+                {
+                    artifact = downloader.download( s[0], s[1], s[2], localRepository,
                                                      ProjectUtils.buildArtifactRepositories( repositories,
                                                                                              artifactRepositoryFactory,
                                                                                              mavenSession.getContainer() ) );
+                }
 
-                resourceBundleArtifacts.add( artifact );
+                bundleArtifacts.add( artifact );
             }
         }
         catch ( DownloadException e )
@@ -958,7 +1021,7 @@ public class ProcessRemoteResourcesMojo
             throw new MojoExecutionException( "Resources JAR cannot be found.", e );
         }
 
-        return resourceBundleArtifacts;
+        return bundleArtifacts;
     }
 
     private void initalizeClassloader( RemoteResourcesClassLoader cl, List artifacts )
