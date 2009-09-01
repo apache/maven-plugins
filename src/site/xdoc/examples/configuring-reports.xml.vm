@@ -81,7 +81,8 @@ under the License.
         <source><![CDATA[
 <project>
   ...
-  <profile>
+  <profiles>
+    <profile>
       <id>pdf</id>
       <reporting>
         <plugins>
@@ -92,9 +93,16 @@ under the License.
               <reportSet>
                 <reports>
                   <report>cim</report>
+                  <!-- take too long time
+                  <report>dependencies</report> -->
+                  <report>dependency-convergence</report>
+                  <report>dependency-management</report>
+                  <!-- already present
+                  <report>index</report> -->
                   <report>issue-tracking</report>
                   <report>license</report>
                   <report>mailing-list</report>
+                  <report>plugin-management</report>
                   <report>plugins</report>
                   <report>project-team</report>
                   <report>scm</report>
@@ -112,11 +120,13 @@ under the License.
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-pdf-plugin</artifactId>
-            <version>1.0</version>
+            <version>${project.version}</version>
           </plugin>
         </plugins>
       </build>
     </profile>
+    ...
+  </profiles>
   ...
   <project>]]></source>
 

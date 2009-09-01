@@ -32,9 +32,9 @@ under the License.
 
   <toc name="Table of Contents">
     <item name="Introduction" ref="index.apt"/>
-    <item name="Usage" ref="usage.apt"/>
+    <item name="Usage" ref="usage.apt.vm"/>
     <item name="Filtering Document Descriptor" ref="examples/filtering.apt"/>
-    <item name="Configuring Reports" ref="/examples/configuring-reports.html"/>
+    <item name="Configuring Reports" ref="/examples/configuring-reports.xml.vm"/>
     <item name="Limitations" ref="limitations.apt"/>
     <item name="FAQ" ref="faq.fml"/>
   </toc>
