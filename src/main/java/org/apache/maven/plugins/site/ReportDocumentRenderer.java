@@ -177,7 +177,7 @@ public class ReportDocumentRenderer
             StringBuilder stringBuilder =
                 new StringBuilder( " an issue has occured with report " + report.getClass().getName() );
             stringBuilder.append( ", skip LinkageError " + e.getMessage() + ", please report an issue to maven dev team" );
-            log.warn( stringBuilder.toString() );
+            log.warn( stringBuilder.toString(), e );
         }
         finally 
         {

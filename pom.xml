@@ -160,7 +160,9 @@ under the License.
     <mavenVersion>3.0-SNAPSHOT</mavenVersion>
     <wagonVersion>1.0-beta-4</wagonVersion>
     <plexusVersion>1.2.1-SNAPSHOT</plexusVersion>
+    <!-- SNAPSHOT use due to MJAVADOC-251  -->
     <javadocPluginVersion>2.6.1-SNAPSHOT</javadocPluginVersion>
+    <!-- previous version breaks due to use of plexusContainer.getLoggerManager() -->
     <projectInfoReportsPluginVersion>2.2-SNAPSHOT</projectInfoReportsPluginVersion>
   </properties>
 

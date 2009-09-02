@@ -188,13 +188,13 @@ public class DefaultMavenReportExecutor
             boolean isMavenReport = MavenReport.class.isAssignableFrom( mojoDescriptor.getImplementationClass() );
             if ( !isMavenReport )
             {
-                getLog().info( " skip non MavenReport " + mojoExecution.getMojoDescriptor().getId() );
+                getLog().debug( " skip non MavenReport " + mojoExecution.getMojoDescriptor().getId() );
             }
             return isMavenReport;
         }
         catch ( LinkageError e )
         {
-            getLog().warn( "skip LinkageError  mojoExecution.goal" + mojoExecution.getGoal() + " : " + e.getMessage(),
+            getLog().warn( "skip LinkageError  mojoExecution.goal : " + mojoExecution.getGoal() + " : " + e.getMessage(),
                            e );
             // pluginRealm.display();
             return false;
