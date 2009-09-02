@@ -97,7 +97,7 @@ public class GpgSignAttachedMojo
     /**
      * The directory where to store signature files.
      * 
-     * @parameter expression="${project.build.directory}/gpg"
+     * @parameter default-value="${project.build.directory}/gpg"
      * @since 1.0-alpha-4
      */
     private File outputDirectory;
@@ -105,7 +105,7 @@ public class GpgSignAttachedMojo
     /**
      * The maven project.
      * 
-     * @parameter expression="${project}"
+     * @parameter default-value="${project}"
      * @required
      * @readonly
      */
@@ -130,7 +130,7 @@ public class GpgSignAttachedMojo
     private ArtifactHandlerManager artifactHandlerManager;
 
     /**
-     * @parameter expression="${settings}"
+     * @parameter default-value="${settings}"
      * @required
      * @readonly
      */
