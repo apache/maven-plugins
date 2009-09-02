@@ -82,7 +82,7 @@ public class SignAndDeployFileMojo
     private File ascDirectory;
 
     /**
-     * @parameter expression="${settings}"
+     * @parameter default-value="${settings}"
      * @required
      * @readonly
      */
@@ -106,7 +106,7 @@ public class SignAndDeployFileMojo
     private ArtifactDeployer deployer;
 
     /**
-     * @parameter expression="${localRepository}"
+     * @parameter default-value="${localRepository}"
      * @required
      * @readonly
      */
