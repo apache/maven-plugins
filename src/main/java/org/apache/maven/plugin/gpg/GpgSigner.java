@@ -51,6 +51,8 @@ public class GpgSigner
 
     private File baseDir;
 
+    private File homeDir;
+
     public GpgSigner()
     {
     }
@@ -83,6 +85,11 @@ public class GpgSigner
     public void setBaseDirectory( File out )
     {
         baseDir = out;
+    }
+
+    public void setHomeDirectory( File homeDirectory )
+    {
+        homeDir = homeDirectory;
     }
 
     public File generateSignatureForArtifact( File file, String pass )
@@ -131,6 +138,12 @@ public class GpgSigner
         Commandline cmd = new Commandline();
 
         cmd.setExecutable( "gpg" + ( SystemUtils.IS_OS_WINDOWS ? ".exe" : "" ) );
+
+        if ( homeDir != null )
+        {
+            cmd.createArg().setValue( "--homedir" );
+            cmd.createArg().setFile( homeDir );
+        }
 
         if ( useAgent )
         {

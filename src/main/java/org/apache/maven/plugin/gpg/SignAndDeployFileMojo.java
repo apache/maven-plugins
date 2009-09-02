@@ -52,6 +52,15 @@ public class SignAndDeployFileMojo
 {
 
     /**
+     * The directory from which gpg will load keyrings. If not specified, gpg will use the value configured for its
+     * installation, e.g. <code>~/.gnupg</code> or <code>%APPDATA%/gnupg</code>.
+     * 
+     * @parameter expression="${gpg.homedir}"
+     * @since 1.0
+     */
+    private File homedir;
+
+    /**
      * The passphrase to use when signing.
      * 
      * @parameter expression="${gpg.passphrase}"
@@ -247,6 +256,7 @@ public class SignAndDeployFileMojo
         signer.setUseAgent( useAgent );
         signer.setOutputDirectory( ascDirectory );
         signer.setBaseDirectory( new File( "foo" ).getAbsoluteFile().getParentFile().getAbsoluteFile() );
+        signer.setHomeDirectory( homedir );
 
         setDeployer( new SignedArtifactDeployer( deployer, passphrase ) );
         super.execute();
