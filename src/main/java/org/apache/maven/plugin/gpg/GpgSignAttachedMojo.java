@@ -55,6 +55,15 @@ public class GpgSignAttachedMojo
     private static final String DEFAULT_EXCLUDES[] = new String[] { "**/*.md5", "**/*.sha1", "**/*.asc" };
 
     /**
+     * The directory from which gpg will load keyrings. If not specified, gpg will use the value configured for its
+     * installation, e.g. <code>~/.gnupg</code> or <code>%APPDATA%/gnupg</code>.
+     * 
+     * @parameter expression="${gpg.homedir}"
+     * @since 1.0
+     */
+    private File homedir;
+
+    /**
      * The passphrase to use when signing.
      * 
      * @parameter expression="${gpg.passphrase}"
@@ -192,6 +201,7 @@ public class GpgSignAttachedMojo
         signer.setOutputDirectory( outputDirectory );
         signer.setBuildDirectory( new File( project.getBuild().getDirectory() ) );
         signer.setBaseDirectory( project.getBasedir() );
+        signer.setHomeDirectory( homedir );
 
         List signingBundles = new ArrayList();
 
