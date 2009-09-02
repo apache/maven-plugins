@@ -196,6 +196,7 @@ public class RepositoryUtils
 
         try
         {
+            // FIXME when upgrading to maven 3.x : this must be changed.
             AuthenticationInfo auth = wagonManager.getAuthenticationInfo( repo.getId() );
 
             ProxyInfo proxyInfo = getProxyInfo();
