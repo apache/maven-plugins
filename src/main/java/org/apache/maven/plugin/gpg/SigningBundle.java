@@ -24,23 +24,21 @@ import java.io.File;
 /** @author Jason van Zyl */
 public class SigningBundle
 {
+
     private String artifactType;
 
     private String classifier;
 
     private File signature;
 
-    public SigningBundle( String artifactType,
-                          File signature )
+    public SigningBundle( String artifactType, File signature )
     {
         this.artifactType = artifactType;
-       
+
         this.signature = signature;
     }
 
-
-    public SigningBundle( String artifactType, String classifier,
-                          File signature )
+    public SigningBundle( String artifactType, String classifier, File signature )
     {
         this.artifactType = artifactType;
         this.classifier = classifier;
@@ -61,4 +59,5 @@ public class SigningBundle
     {
         return classifier;
     }
+
 }
