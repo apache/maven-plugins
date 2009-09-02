@@ -1,0 +1,14 @@
+org.apache.maven.its.dependency:test:jar:1.0-SNAPSHOT
+\- org.apache.maven:maven-project:jar:2.0.6:compile
+   +- org.apache.maven:maven-settings:jar:2.0.6:compile
+   +- org.apache.maven:maven-profile:jar:2.0.6:compile
+   +- org.apache.maven:maven-model:jar:2.0.6:compile
+   +- org.apache.maven:maven-artifact-manager:jar:2.0.6:compile
+   |  +- org.apache.maven:maven-repository-metadata:jar:2.0.6:compile
+   |  \- org.apache.maven.wagon:wagon-provider-api:jar:1.0-beta-2:compile
+   +- org.apache.maven:maven-plugin-registry:jar:2.0.6:compile
+   +- org.codehaus.plexus:plexus-utils:jar:1.4.1:compile
+   +- org.apache.maven:maven-artifact:jar:2.0.6:compile
+   \- org.codehaus.plexus:plexus-container-default:jar:1.0-alpha-9-stable-1:compile
+      +- junit:junit:jar:3.8.1:compile
+      \- classworlds:classworlds:jar:1.1-alpha-2:compile

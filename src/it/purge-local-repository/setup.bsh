@@ -1,0 +1,10 @@
+import java.io.*;
+
+File purgedJar = new File( localRepositoryPath, "org/apache/maven/its/dependency/purged/1.0/purged-1.0.jar" );
+
+purgedJar.getParentFile().mkdirs();
+purgedJar.createNewFile();
+
+System.out.println( "Created dummy JAR " + purgedJar );
+
+return true;
