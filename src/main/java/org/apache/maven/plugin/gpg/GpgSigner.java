@@ -34,75 +34,79 @@ import org.codehaus.plexus.util.cli.CommandLineUtils;
 import org.codehaus.plexus.util.cli.Commandline;
 import org.codehaus.plexus.util.cli.DefaultConsumer;
 
-public class GpgSigner 
+public class GpgSigner
 {
+
     public static final String SIGNATURE_EXTENSION = ".asc";
-    
-    
+
     private boolean useAgent;
+
     private boolean isInteractive = true;
+
     private String keyname;
+
     private File outputDir;
+
     private File buildDir;
+
     private File baseDir;
-    
+
     public GpgSigner()
     {
     }
-    
-    
-    public void setInteractive(boolean b)
+
+    public void setInteractive( boolean b )
     {
         isInteractive = b;
     }
-    
-    public void setUseAgent(boolean b)
+
+    public void setUseAgent( boolean b )
     {
         useAgent = b;
     }
-    
-    public void setKeyName(String s) 
+
+    public void setKeyName( String s )
     {
         keyname = s;
     }
-    
-    public void setOutputDirectory(File out) 
+
+    public void setOutputDirectory( File out )
     {
         outputDir = out;
     }
-    public void setBuildDirectory(File out) 
+
+    public void setBuildDirectory( File out )
     {
         buildDir = out;
     }
-    public void setBaseDirectory(File out) 
+
+    public void setBaseDirectory( File out )
     {
         baseDir = out;
     }
-    
-    
-    public File generateSignatureForArtifact( File file , String pass)
+
+    public File generateSignatureForArtifact( File file, String pass )
         throws MojoExecutionException
     {
         File signature = new File( file + SIGNATURE_EXTENSION );
-    
+
         boolean isInBuildDir = false;
         if ( buildDir != null )
         {
             File parent = signature.getParentFile();
-            if ( buildDir.equals(parent) ) 
+            if ( buildDir.equals( parent ) )
             {
                 isInBuildDir = true;
             }
         }
-        if ( !isInBuildDir
-            && outputDir != null ) 
+        if ( !isInBuildDir && outputDir != null )
         {
             String fileDirectory = "";
             File signatureDirectory = signature;
-            
-            while( ( signatureDirectory = signatureDirectory.getParentFile() ) != null )
+
+            while ( ( signatureDirectory = signatureDirectory.getParentFile() ) != null )
             {
-                if( !signatureDirectory.equals( baseDir ) )
+                if ( !signatureDirectory.equals( baseDir ) )
                 {
                     fileDirectory = signatureDirectory.getName() + File.separatorChar + fileDirectory;
                 }
@@ -112,22 +116,22 @@ public class GpgSigner
                 }
             }
             signatureDirectory = new File( outputDir, fileDirectory );
-            if( !signatureDirectory.exists() )
+            if ( !signatureDirectory.exists() )
             {
                 signatureDirectory.mkdirs();
             }
             signature = new File( signatureDirectory, file.getName() + SIGNATURE_EXTENSION );
         }
-        
+
         if ( signature.exists() )
         {
             signature.delete();
         }
-        
+
         Commandline cmd = new Commandline();
-    
+
         cmd.setExecutable( "gpg" + ( SystemUtils.IS_OS_WINDOWS ? ".exe" : "" ) );
-    
+
         if ( useAgent )
         {
             cmd.createArg().setValue( "--use-agent" );
@@ -136,44 +140,43 @@ public class GpgSigner
         {
             cmd.createArg().setValue( "--no-use-agent" );
         }
-    
+
         InputStream in = null;
-        if ( null != pass) 
+        if ( null != pass )
         {
             cmd.createArg().setValue( "--passphrase-fd" );
-    
+
             cmd.createArg().setValue( "0" );
-    
+
             // Prepare the input stream which will be used to pass the passphrase to the executable
             in = new ByteArrayInputStream( pass.getBytes() );
         }
-    
-        if ( null != keyname)
+
+        if ( null != keyname )
         {
             cmd.createArg().setValue( "--local-user" );
-    
+
             cmd.createArg().setValue( keyname );
         }
-    
+
         cmd.createArg().setValue( "--armor" );
-    
+
         cmd.createArg().setValue( "--detach-sign" );
-        
+
         if ( !isInteractive )
         {
             cmd.createArg().setValue( "--no-tty" );
         }
-        
+
         cmd.createArg().setValue( "--output" );
         cmd.createArg().setFile( signature );
-        
+
         cmd.createArg().setFile( file );
-    
-    
+
         try
         {
             int exitCode = CommandLineUtils.executeCommandLine( cmd, in, new DefaultConsumer(), new DefaultConsumer() );
-    
+
             if ( exitCode != 0 )
             {
                 throw new MojoExecutionException( "Exit code: " + exitCode );
@@ -183,12 +186,12 @@ public class GpgSigner
         {
             throw new MojoExecutionException( "Unable to execute gpg command", e );
         }
-    
+
         return signature;
     }
-    
-    
-    private MavenProject findReactorProject(MavenProject prj) {
+
+    private MavenProject findReactorProject( MavenProject prj )
+    {
         if ( prj.getParent() != null )
         {
             if ( prj.getParent().getBasedir() != null && prj.getParent().getBasedir().exists() )
@@ -198,77 +201,79 @@ public class GpgSigner
         }
         return prj;
     }
-    
-    
-    public String getPassphrase(MavenProject project) throws IOException
+
+    public String getPassphrase( MavenProject project )
+        throws IOException
     {
         String pass = null;
-        
-        if (project != null) {
-            pass = project.getProperties().getProperty("gpg.passphrase");
-            if (pass == null) 
+
+        if ( project != null )
+        {
+            pass = project.getProperties().getProperty( "gpg.passphrase" );
+            if ( pass == null )
             {
-                MavenProject prj2 = findReactorProject(project);
-                pass = prj2.getProperties().getProperty("gpg.passphrase");
+                MavenProject prj2 = findReactorProject( project );
+                pass = prj2.getProperties().getProperty( "gpg.passphrase" );
             }
         }
-        if (pass == null) 
+        if ( pass == null )
         {
-            //TODO: with JDK 1.6, we could call System.console().readPassword("GPG Passphrase: ", null);
-            
-            BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-            while (System.in.available() != 0)
+            // TODO: with JDK 1.6, we could call System.console().readPassword("GPG Passphrase: ", null);
+
+            BufferedReader in = new BufferedReader( new InputStreamReader( System.in ) );
+            while ( System.in.available() != 0 )
             {
-                //there's some junk already on the input stream, consume it
-                //so we can get the real passphrase
+                // there's some junk already on the input stream, consume it
+                // so we can get the real passphrase
                 System.in.read();
             }
-            
-            System.out.print("GPG Passphrase:  ");
+
+            System.out.print( "GPG Passphrase:  " );
             MaskingThread thread = new MaskingThread();
             thread.start();
-    
-    
+
             pass = in.readLine();
-    
+
             // stop masking
             thread.stopMasking();
         }
-        if (project != null) {
-            findReactorProject(project).getProperties().setProperty("gpg.passphrase", pass);
+        if ( project != null )
+        {
+            findReactorProject( project ).getProperties().setProperty( "gpg.passphrase", pass );
         }
         return pass;
     }
-    
-    
+
     // based on ideas from http://java.sun.com/developer/technicalArticles/Security/pwordmask/
-    class MaskingThread extends Thread
+    class MaskingThread
+        extends Thread
     {
         private volatile boolean stop;
 
-       /**
-        * Begin masking until asked to stop.
-        */
+        /**
+         * Begin masking until asked to stop.
+         */
         public void run()
         {
-            //this needs to be high priority to make sure the characters don't
-            //really get to the screen.
-            
-            int priority = Thread.currentThread().getPriority();
-            Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
+            // this needs to be high priority to make sure the characters don't
+            // really get to the screen.
 
-            try {
+            int priority = Thread.currentThread().getPriority();
+            Thread.currentThread().setPriority( Thread.MAX_PRIORITY );
+
+            try
+            {
                 stop = false;
-                while(!stop)
-                { 
-                    //print a backspace + * to overwrite anything they type
-                    System.out.print("\010*");
+                while ( !stop )
+                {
+                    // print a backspace + * to overwrite anything they type
+                    System.out.print( "\010*" );
                     try
                     {
-                        //attempt masking at this rate
-                        Thread.sleep(1);
+                        // attempt masking at this rate
+                        Thread.sleep( 1 );
                     }
-                    catch (InterruptedException iex)
+                    catch ( InterruptedException iex )
                     {
                         Thread.currentThread().interrupt();
                         return;
@@ -278,17 +283,17 @@ public class GpgSigner
             finally
             {
                 // restore the original priority
-                Thread.currentThread().setPriority(priority);
+                Thread.currentThread().setPriority( priority );
             }
         }
 
         /**
          * Instruct the thread to stop masking.
          */
-        public void stopMasking() {
+        public void stopMasking()
+        {
             this.stop = true;
         }
-    }    
-    
+    }
 
 }

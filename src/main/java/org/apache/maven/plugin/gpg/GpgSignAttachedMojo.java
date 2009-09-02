@@ -41,7 +41,7 @@ import org.codehaus.plexus.util.SelectorUtils;
 
 /**
  * Sign project artifact, the POM, and attached artifacts with GnuPG for deployment.
- *
+ * 
  * @author Jason van Zyl
  * @author Jason Dillon
  * @author Daniel Kulp
@@ -51,36 +51,32 @@ import org.codehaus.plexus.util.SelectorUtils;
 public class GpgSignAttachedMojo
     extends AbstractMojo
 {
-    private static final String DEFAULT_EXCLUDES[] = new String[] {
-        "**/*.md5",
-        "**/*.sha1",
-        "**/*.asc"
-    };
+
+    private static final String DEFAULT_EXCLUDES[] = new String[] { "**/*.md5", "**/*.sha1", "**/*.asc" };
 
     /**
      * The passphrase to use when signing.
-     *
+     * 
      * @parameter expression="${gpg.passphrase}"
      */
     private String passphrase;
 
     /**
-     * The "name" of the key to sign with.  Passed to gpg as --local-user.
+     * The "name" of the key to sign with. Passed to gpg as --local-user.
      * 
      * @parameter expression="${gpg.keyname}"
      */
     private String keyname;
 
-
     /**
-     * Passes --use-agent or --no-use-agent to gpg.   If using an agent,
-     * the password is optional as the agent will provide it.
+     * Passes --use-agent or --no-use-agent to gpg. If using an agent, the password is optional as the agent will
+     * provide it.
      * 
      * @parameter expression="${gpg.useagent}" default-value="false"
      * @required
      */
     private boolean useAgent;
-    
+
     /**
      * Skip doing the gpg signing
      * 
@@ -89,11 +85,9 @@ public class GpgSignAttachedMojo
      */
     private boolean skip;
 
-    
     /**
-     * A list of files to exclude from being signed. Can contain ant-style 
-     * wildcards and double wildcards. The default excludes are
-     * <code>**&#47;*.md5   **&#47;*.sha1    **&#47;*.asc</code>.
+     * A list of files to exclude from being signed. Can contain ant-style wildcards and double wildcards. The default
+     * excludes are <code>**&#47;*.md5   **&#47;*.sha1    **&#47;*.asc</code>.
      * 
      * @parameter
      * @since 1.0-alpha-4
@@ -102,15 +96,15 @@ public class GpgSignAttachedMojo
 
     /**
      * The directory where to store signature files.
-     *
+     * 
      * @parameter expression="${project.build.directory}/gpg"
      * @since 1.0-alpha-4
      */
     private File outputDirectory;
-    
+
     /**
      * The maven project.
-     *
+     * 
      * @parameter expression="${project}"
      * @required
      * @readonly
@@ -119,7 +113,7 @@ public class GpgSignAttachedMojo
 
     /**
      * Maven ProjectHelper
-     *
+     * 
      * @component
      * @required
      * @readonly
@@ -128,35 +122,33 @@ public class GpgSignAttachedMojo
 
     /**
      * Maven ArtifactHandlerManager
-     *
+     * 
      * @component
      * @required
      * @readonly
      */
     private ArtifactHandlerManager artifactHandlerManager;
-    
+
     /**
      * @parameter expression="${settings}"
      * @required
      * @readonly
      */
     protected Settings settings;
-    
-    
-    private GpgSigner signer = new GpgSigner();
 
+    private GpgSigner signer = new GpgSigner();
 
     public void execute()
         throws MojoExecutionException
     {
 
         String pass = passphrase;
-        if ( skip ) 
+        if ( skip )
         {
-            //We're skipping the signing stuff
+            // We're skipping the signing stuff
             return;
         }
-        
+
         if ( excludes == null || excludes.length == 0 )
         {
             excludes = DEFAULT_EXCLUDES;
@@ -165,8 +157,7 @@ public class GpgSignAttachedMojo
         for ( int i = 0; i < excludes.length; i++ )
         {
             String pattern;
-            pattern = excludes[i].trim().replace( '/', File.separatorChar ).replace(
-                '\\', File.separatorChar );
+            pattern = excludes[i].trim().replace( '/', File.separatorChar ).replace( '\\', File.separatorChar );
             if ( pattern.endsWith( File.separator ) )
             {
                 pattern += "**";
@@ -174,25 +165,23 @@ public class GpgSignAttachedMojo
             newExcludes[i] = pattern;
         }
         excludes = newExcludes;
-        
-        
+
         if ( !useAgent && null == pass )
         {
             if ( !settings.isInteractiveMode() )
             {
-                throw new MojoExecutionException("Cannot obtain passphrase in batch mode");
+                throw new MojoExecutionException( "Cannot obtain passphrase in batch mode" );
             }
-            try 
+            try
             {
-                pass = signer.getPassphrase(project);
+                pass = signer.getPassphrase( project );
             }
-            catch (IOException e) 
+            catch ( IOException e )
             {
-                throw new MojoExecutionException("Exception reading password", e);
+                throw new MojoExecutionException( "Exception reading password", e );
             }
         }
-        
-        
+
         // ----------------------------------------------------------------------------
         // What we need to generateSignatureForArtifact here
         // ----------------------------------------------------------------------------
@@ -203,7 +192,7 @@ public class GpgSignAttachedMojo
         signer.setOutputDirectory( outputDirectory );
         signer.setBuildDirectory( new File( project.getBuild().getDirectory() ) );
         signer.setBaseDirectory( project.getBasedir() );
-        
+
         List signingBundles = new ArrayList();
 
         if ( !"pom".equals( project.getPackaging() ) )
@@ -280,8 +269,7 @@ public class GpgSignAttachedMojo
 
             ArtifactHandler ah = artifactHandlerManager.getArtifactHandler( bundle.getArtifactType() );
 
-            if ( bundle.getClassifier() != null 
-                && !"".equals( bundle.getClassifier() ) )
+            if ( bundle.getClassifier() != null && !"".equals( bundle.getClassifier() ) )
             {
                 projectHelper.attachArtifact( project, "asc", bundle.getClassifier() + "." + ah.getExtension(),
                                               bundle.getSignature() );
@@ -292,14 +280,13 @@ public class GpgSignAttachedMojo
             }
         }
     }
-    
+
     /**
-     * Tests whether or not a name matches against at least one exclude
-     * pattern.
-     *
+     * Tests whether or not a name matches against at least one exclude pattern.
+     * 
      * @param name The name to match. Must not be <code>null</code>.
-     * @return <code>true</code> when the name matches against at least one
-     *         exclude pattern, or <code>false</code> otherwise.
+     * @return <code>true</code> when the name matches against at least one exclude pattern, or <code>false</code>
+     *         otherwise.
      */
     protected boolean isExcluded( String name )
     {
@@ -312,5 +299,5 @@ public class GpgSignAttachedMojo
         }
         return false;
     }
-    
+
 }

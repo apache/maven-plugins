@@ -29,44 +29,43 @@ import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.metadata.RepositoryMetadataStoreException;
 import org.codehaus.plexus.util.FileUtils;
 
-public class AscArtifactMetadata extends AbstractArtifactMetadata
+public class AscArtifactMetadata
+    extends AbstractArtifactMetadata
 {
+
     File file;
+
     boolean isPom;
-    
-    public AscArtifactMetadata( Artifact artifact,
-                               File file,
-                               boolean isPom )
+
+    public AscArtifactMetadata( Artifact artifact, File file, boolean isPom )
     {
         super( artifact );
         this.file = file;
         this.isPom = isPom;
     }
 
-    public String getBaseVersion() 
+    public String getBaseVersion()
     {
         return artifact.getBaseVersion();
     }
 
-    public Object getKey() 
+    public Object getKey()
     {
-        return "gpg signature " + artifact.getGroupId() + ":" + artifact.getArtifactId() 
-            + ":" + artifact.getType() + ":" + artifact.getClassifier() +
-            (isPom ? ":pom" : "");
+        return "gpg signature " + artifact.getGroupId() + ":" + artifact.getArtifactId() + ":" + artifact.getType()
+            + ":" + artifact.getClassifier() + ( isPom ? ":pom" : "" );
     }
-    
+
     private String getFilename()
     {
         StringBuffer buf = new StringBuffer( getArtifactId() );
         buf.append( "-" ).append( artifact.getVersion() );
-        if ( isPom ) 
+        if ( isPom )
         {
             buf.append( ".pom" );
-        } 
+        }
         else
         {
-            if ( artifact.getClassifier() != null
-                 && !"".equals( artifact.getClassifier() ) )
+            if ( artifact.getClassifier() != null && !"".equals( artifact.getClassifier() ) )
             {
                 buf.append( "-" ).append( artifact.getClassifier() );
             }
@@ -86,22 +85,21 @@ public class AscArtifactMetadata extends AbstractArtifactMetadata
         return getFilename();
     }
 
-    public void merge( ArtifactMetadata metadata ) 
+    public void merge( ArtifactMetadata metadata )
     {
         AscArtifactMetadata m = (AscArtifactMetadata) metadata;
         if ( !m.file.equals( file ) )
         {
-            throw new IllegalStateException( "Cannot add two different pieces of metadata for: "
-                                             + getKey() );
+            throw new IllegalStateException( "Cannot add two different pieces of metadata for: " + getKey() );
         }
     }
 
-    public void storeInLocalRepository( ArtifactRepository localRepository,
-                                       ArtifactRepository remoteRepository )
-        throws RepositoryMetadataStoreException 
+    public void storeInLocalRepository( ArtifactRepository localRepository, ArtifactRepository remoteRepository )
+        throws RepositoryMetadataStoreException
     {
-        File destination = new File( localRepository.getBasedir(),
-                                     localRepository.pathOfLocalRepositoryMetadata( this, remoteRepository ) );
+        File destination =
+            new File( localRepository.getBasedir(), localRepository.pathOfLocalRepositoryMetadata( this,
+                                                                                                   remoteRepository ) );
 
         try
         {
@@ -113,7 +111,7 @@ public class AscArtifactMetadata extends AbstractArtifactMetadata
         }
     }
 
-    public boolean storedInArtifactVersionDirectory() 
+    public boolean storedInArtifactVersionDirectory()
     {
         return true;
     }
@@ -122,4 +120,5 @@ public class AscArtifactMetadata extends AbstractArtifactMetadata
     {
         return getFilename();
     }
+
 }
