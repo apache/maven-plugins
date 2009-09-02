@@ -1,0 +1,10 @@
+import java.io.*;
+
+File classFile = new File( basedir, "target/classes/Main.class" );
+
+if ( !classFile.isFile() )
+{
+    throw new Exception( "Build was not forked, class missing " + classFile );
+}
+
+return true;
