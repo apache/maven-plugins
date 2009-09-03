@@ -261,6 +261,9 @@ under the License.
   <profiles>
     <profile>
       <id>run-its</id>
+      <properties>
+        <remoteRepository>${project.build.directory}/remote-repo</remoteRepository>
+      </properties>
       <build>
         <testResources>
           <testResource>
