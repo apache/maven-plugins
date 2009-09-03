@@ -281,6 +281,27 @@ under the License.
       <artifactId>wagon-provider-api</artifactId>
       <version>${wagonVersion}</version>
     </dependency>
+    <!-- providers not anymore in core  -->
+    <dependency>
+      <groupId>org.apache.maven.wagon</groupId>
+      <artifactId>wagon-ssh</artifactId>
+      <version>${wagonVersion}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.wagon</groupId>
+      <artifactId>wagon-ssh-external</artifactId>
+      <version>${wagonVersion}</version>
+    </dependency>    
+    <dependency>
+      <groupId>org.apache.maven.wagon</groupId>
+      <artifactId>wagon-ftp</artifactId>
+      <version>${wagonVersion}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.wagon</groupId>
+      <artifactId>wagon-webdav-jackrabbit</artifactId>
+      <version>${wagonVersion}</version>
+    </dependency>                       
 
     <!-- Plexus -->
     <dependency>
@@ -411,20 +432,6 @@ under the License.
            </executions>
           </plugin>
         </plugins>
-      </build>
-    </profile>
-    <profile>
-      <id>dev</id>
-      <build>
-        <pluginManagement>
-          <plugins>
-            <plugin> 
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-site-plugin</artifactId>
-              <version>${project.version}</version>
-            </plugin>
-          </plugins>
-        </pluginManagement>
       </build>
     </profile>
     <profile>
@@ -559,6 +566,26 @@ under the License.
         </plugins>
       </build>
     </profile>
+    <profile>
+      <id>dev</id>
+      <build>
+        <pluginManagement>
+          <plugins>
+            <plugin> 
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-site-plugin</artifactId>
+              <version>${project.version}</version>
+            </plugin>
+          </plugins>
+        </pluginManagement>
+      </build>
+    </profile>    
   </profiles>
-  <!--  test  -->
+  
+  <distributionManagement>
+    <site>
+      <id>apache.website</id>
+      <url>scp://people.apache.org/home/olamy/public_html/test</url>
+    </site>  
+  </distributionManagement>
 </project>
