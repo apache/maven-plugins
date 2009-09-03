@@ -158,7 +158,7 @@ under the License.
     <doxiaVersion>1.1.2-SNAPSHOT</doxiaVersion>
     <doxiaSitetoolsVersion>1.1.2-SNAPSHOT</doxiaSitetoolsVersion>
     <mavenVersion>3.0-SNAPSHOT</mavenVersion>
-    <wagonVersion>1.0-beta-4</wagonVersion>
+    <wagonVersion>1.0-beta-6</wagonVersion>
     <plexusVersion>1.2.1-SNAPSHOT</plexusVersion>
     <!-- SNAPSHOT use due to MJAVADOC-251  -->
     <javadocPluginVersion>2.6.1-SNAPSHOT</javadocPluginVersion>
@@ -297,12 +297,15 @@ under the License.
       <artifactId>wagon-ftp</artifactId>
       <version>${wagonVersion}</version>
     </dependency>
+    <!--
+    disabled webdav as commons-httpclient failed with a java.lang.NoClassDefFoundError
+    clash with core.
     <dependency>
       <groupId>org.apache.maven.wagon</groupId>
       <artifactId>wagon-webdav-jackrabbit</artifactId>
       <version>${wagonVersion}</version>
     </dependency>                       
-
+    -->
     <!-- Plexus -->
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
