@@ -21,10 +21,8 @@ package org.apache.maven.plugin.resources.remote;
 
 import org.apache.maven.ProjectDependenciesResolver;
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.InvalidRepositoryException;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.repository.ArtifactRepositoryFactory;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.artifact.versioning.VersionRange;
@@ -41,7 +39,6 @@ import org.apache.maven.project.InvalidProjectModelException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
-import org.apache.maven.project.ProjectUtils;
 import org.apache.maven.project.artifact.InvalidDependencyVersionException;
 import org.apache.maven.project.inheritance.ModelInheritanceAssembler;
 import org.apache.maven.shared.artifact.filter.collection.ArtifactFilterException;
@@ -182,15 +179,6 @@ public class ProcessRemoteResourcesMojo
      * @required
      */
     private ArtifactRepository localRepository;
-
-    /**
-     * The remote repositories used as specified in your POM.
-     *
-     * @parameter expression="${project.repositories}"
-     * @readonly
-     * @required
-     */
-    private List repositories;
 
     /**
      * List of Remote Repositories used by the resolver
@@ -334,20 +322,6 @@ public class ProcessRemoteResourcesMojo
      * @component
      */
     private MavenFileFilter fileFilter;
-
-    // These two things make this horrible. Maven artifact is way too complicated and the relationship between
-    // the model usage and maven-artifact needs to be reworked as well as all our tools that deal with it. The
-    // ProjectUtils should be a component so I don't have to expose the container and artifact factory here. Can't
-    // change it now because it's not released ...
-
-    /**
-     * Artifact repository factory component.
-     *
-     * @component
-     * @readonly
-     * @required
-     */
-    private ArtifactRepositoryFactory artifactRepositoryFactory;
 
     /**
      * Artifact factory, needed to create artifacts.
@@ -616,7 +590,7 @@ public class ProcessRemoteResourcesMojo
             Artifact artifact = (Artifact) it.next();
             try
             {
-                List remoteRepo = null;
+                List remoteRepo = remoteArtifactRepositories;
                 if ( artifact.isSnapshot() )
                 {
                     VersionRange rng = VersionRange.createFromVersion( artifact.getBaseVersion() );
@@ -625,15 +599,6 @@ public class ProcessRemoteResourcesMojo
                                                                          artifact.getType(), artifact.getClassifier(),
                                                                          artifact.getScope(), null,
                                                                          artifact.isOptional() );
-                    remoteRepo = remoteArtifactRepositories;
-                }
-                else
-                {
-                    remoteRepo =
-                        ProjectUtils.buildArtifactRepositories( repositories,
-                                                                artifactRepositoryFactory,
-                                                                mavenSession.getContainer() );
-
                 }
 
                 getLog().debug( "Building project for " + artifact );
@@ -669,10 +634,6 @@ public class ProcessRemoteResourcesMojo
                 }
             }
             catch ( ProjectBuildingException e )
-            {
-                throw new MojoExecutionException( e.getMessage(), e );
-            }
-            catch ( InvalidRepositoryException e )
             {
                 throw new MojoExecutionException( e.getMessage(), e );
             }
@@ -999,10 +960,7 @@ public class ProcessRemoteResourcesMojo
                 }
                 if ( artifact == null || !artifact.exists() )
                 {
-                    artifact = downloader.download( s[0], s[1], s[2], localRepository,
-                                                     ProjectUtils.buildArtifactRepositories( repositories,
-                                                                                             artifactRepositoryFactory,
-                                                                                             mavenSession.getContainer() ) );
+                    artifact = downloader.download( s[0], s[1], s[2], localRepository, remoteArtifactRepositories );
                 }
 
                 bundleArtifacts.add( artifact );
@@ -1013,10 +971,6 @@ public class ProcessRemoteResourcesMojo
             throw new MojoExecutionException( "Error downloading resources JAR.", e );
         }
         catch ( DownloadNotFoundException e )
-        {
-            throw new MojoExecutionException( "Resources JAR cannot be found.", e );
-        }
-        catch ( InvalidRepositoryException e )
         {
             throw new MojoExecutionException( "Resources JAR cannot be found.", e );
         }
