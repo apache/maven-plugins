@@ -582,10 +582,4 @@ under the License.
     </profile>    
   </profiles>
   
-  <distributionManagement>
-    <site>
-      <id>apache.website</id>
-      <url>scp://people.apache.org/home/olamy/public_html/test</url>
-    </site>  
-  </distributionManagement>
 </project>
