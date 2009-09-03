@@ -91,21 +91,22 @@ public class DefaultMavenReportExecutor
                 plugin.setVersion( reportPlugin.getVersion() );
 
                 List<String> goals = new ArrayList<String>();
-                for ( ReportSet reportSet : reportPlugin.getReportSets() )
-                {
-                    goals.addAll( reportSet.getReports() );
-                }
-                // no report set we will execute all from the report plugin
-                boolean emptyReports = goals.isEmpty();
 
                 PluginDescriptor pluginDescriptor = mavenPluginManager.getPluginDescriptor( plugin, repositoryRequest );
 
-                if ( emptyReports )
+                if ( reportPlugin.getReportSets().isEmpty() )
                 {
                     List<MojoDescriptor> mojoDescriptors = pluginDescriptor.getMojos();
                     for ( MojoDescriptor mojoDescriptor : mojoDescriptors )
                     {
                         goals.add( mojoDescriptor.getGoal() );
+                    }
+                }
+                else
+                {
+                    for ( ReportSet reportSet : reportPlugin.getReportSets() )
+                    {
+                        goals.addAll( reportSet.getReports() );
                     }
                 }
 
