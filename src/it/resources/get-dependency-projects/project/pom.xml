@@ -1,0 +1,67 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  
+  <groupId>org.apache.maven.plugin.rresource.it</groupId>
+  <artifactId>get-dependency-projects</artifactId>
+  <version>${project.version}</version>
+  
+  <repositories>
+    <repository>
+      <id>it-remote</id>
+      <url>file:${remoteRepository}</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+    <repository>
+      <id>main-local</id>
+      <url>file:${localRepository}</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.maven.plugin.rresource.it.gdp</groupId>
+      <artifactId>release</artifactId>
+      <version>1.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.plugin.rresource.it.gdp</groupId>
+      <artifactId>snapshot</artifactId>
+      <version>1.0-SNAPSHOT</version>
+    </dependency>
+  </dependencies>  
+
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-remote-resources-plugin</artifactId>
+        <version>${project.version}</version>
+        <executions>
+          <execution>
+            <id>remote-resources</id>
+            <goals>
+              <goal>process</goal>
+            </goals>
+            <configuration>
+              <resourceBundles>
+                <resourceBundle>org.apache.maven.plugin.rresource.it:resource-bundle-with-template:${project.version}</resourceBundle>
+              </resourceBundles>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  
+</project>
