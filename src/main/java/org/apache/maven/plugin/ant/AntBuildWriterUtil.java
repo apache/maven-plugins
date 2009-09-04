@@ -568,14 +568,45 @@ public class AntBuildWriterUtil
     }
 
     /**
-     * @param mavenProject not null
-     * @return true if project packaging equals <code>jar</code> or <code>maven-plugin</code>
+     * @param mavenProject
+     * @return true if project packaging equals one of several packaging types 
+     *         including  <code>jar</code>, <code>maven-plugin</code>, <code>ejb</code>, or
+     *         <code>bundle</code>
      */
     public static boolean isJarPackaging( MavenProject mavenProject )
     {
         return mavenProject.getPackaging().toLowerCase().equals( "jar" )
-            || mavenProject.getPackaging().toLowerCase().equals( "ejb" )
-            || mavenProject.getPackaging().toLowerCase().equals( "maven-plugin" );
+            || isEjbPackaging( mavenProject )
+            || isMavenPluginPackaging( mavenProject )
+            || isBundlePackaging( mavenProject )
+            ;
+    }
+
+    /**
+     * @param mavenProject
+     * @return true if project packaging equals <code>bundle</code>
+     */
+    public static boolean isBundlePackaging( MavenProject mavenProject )
+    {
+        return mavenProject.getPackaging().toLowerCase().equals( "bundle" );
+    }
+
+    /**
+     * @param mavenProject
+     * @return true if project packaging equals <code>ejb</code>
+     */
+    public static boolean isEjbPackaging( MavenProject mavenProject )
+    {
+        return mavenProject.getPackaging().toLowerCase().equals( "ejb" );
+    }
+
+    /**
+     * @param mavenProject
+     * @return true if project packaging equals <code>maven-plugin</code>
+     */
+    public static boolean isMavenPluginPackaging( MavenProject mavenProject )
+    {
+        return mavenProject.getPackaging().toLowerCase().equals( "maven-plugin" );
     }
 
     /**
