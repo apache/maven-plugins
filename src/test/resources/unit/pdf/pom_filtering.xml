@@ -62,6 +62,7 @@
           <workingDirectory>${basedir}/target/test-output/pdf</workingDirectory>
           <implementation>fo</implementation>
           <aggregate>true</aggregate>
+          <generateTOC>start</generateTOC>
         </configuration>
       </plugin>
     </plugins>
