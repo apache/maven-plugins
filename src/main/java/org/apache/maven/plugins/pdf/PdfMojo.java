@@ -321,13 +321,14 @@ public class PdfMojo
     private boolean includeReports;
 
     /**
-     * If <code>true</false>, generate a TOC (Table Of Content) for all items defined in the &lt;toc/&gt; element from
-     * the document descriptor.
+     * Generate a TOC (Table Of Content) for all items defined in the &lt;toc/&gt; element from the document descriptor.
+     * <br/>
+     * Possible values are: 'none', 'start' and 'end'.
      *
-     * @parameter expression="${includeTOC}" default-value="true"
+     * @parameter expression="${generateTOC}" default-value="start"
      * @since 1.1
      */
-    private boolean includeTOC;
+    private String generateTOC;
 
     // ----------------------------------------------------------------------
     // Instance fields
@@ -383,19 +384,7 @@ public class PdfMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        if ( "fo".equalsIgnoreCase( implementation ) )
-        {
-            this.docRenderer = foRenderer;
-        }
-        else if ( "itext".equalsIgnoreCase( implementation ) )
-        {
-            this.docRenderer = itextRenderer;
-        }
-        else
-        {
-            throw new MojoFailureException( "Not a valid implementation: '" + implementation
-                + "'. Should be 'fo' or 'itext'." );
-        }
+        init();
 
         try
         {
@@ -415,6 +404,36 @@ public class PdfMojo
         catch ( IOException e )
         {
             throw new MojoExecutionException( "Error copying generated PDF: " + e.getMessage(), e );
+        }
+    }
+
+    /**
+     * Init and validate parameters
+     *
+     * @throws MojoFailureException if any
+     */
+    private void init()
+        throws MojoFailureException
+    {
+        if ( "fo".equalsIgnoreCase( implementation ) )
+        {
+            this.docRenderer = foRenderer;
+        }
+        else if ( "itext".equalsIgnoreCase( implementation ) )
+        {
+            this.docRenderer = itextRenderer;
+        }
+        else
+        {
+            throw new MojoFailureException( "Not a valid 'implementation' parameter: '" + implementation
+                + "'. Should be 'fo' or 'itext'." );
+        }
+
+        if ( !( "none".equalsIgnoreCase( generateTOC ) || "start".equalsIgnoreCase( generateTOC ) || "end"
+                                                                                                          .equalsIgnoreCase( generateTOC ) ) )
+        {
+            throw new MojoFailureException( "Not a valid 'generateTOC' parameter: '" + generateTOC
+                + "'. Should be 'none', 'start' or 'end'." );
         }
     }
 
@@ -532,7 +551,7 @@ public class PdfMojo
             context.put( "FileUtils", new FileUtils() );
             context.put( "StringUtils", new StringUtils() );
             context.put( "i18n", i18n );
-            context.put( "includeTOC", Boolean.valueOf( includeTOC ) );
+            context.put( "generateTOC", generateTOC );
 
             try
             {
