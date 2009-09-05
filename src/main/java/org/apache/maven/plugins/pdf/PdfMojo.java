@@ -1741,7 +1741,7 @@ public class PdfMojo
     // ----------------------------------------------------------------------
 
     /**
-     * A sink to generate Maven report as xdoc.
+     * A sink to generate a Maven report as xdoc with some known workarounds.
      *
      * @since 1.1
      */
@@ -1760,6 +1760,13 @@ public class PdfMojo
 
             // workaround to fix reporting-impl issue, no call of tableRows( justification, grid )
             writeStartTag( HtmlMarkup.TABLE );
+        }
+
+        /** {@inheritDoc} */
+        public void text( String text )
+        {
+            // workaround to fix quotes (MPIR-136)
+            super.write( StringUtils.replace( text, "\u0092", "'" ) );
         }
     }
 
