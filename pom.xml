@@ -409,7 +409,6 @@ under the License.
             <artifactId>maven-invoker-plugin</artifactId>
             <version>1.3</version>
             <configuration>
-              <debug>true</debug>
               <pomIncludes>
                 <pomInclude>*/pom.xml</pomInclude>
               </pomIncludes>
