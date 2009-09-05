@@ -150,7 +150,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-site-plugin</artifactId>
-        <version>2.0</version>
+        <version>@sitePluginVersion@</version>
         <configuration>
           <locales>en,cs,de,es,fr,hu,it,ja,ko,nl,no,pl,pt,pt_BR,sk,sv,tr,zh_CN,zh_TW</locales>
         </configuration>
