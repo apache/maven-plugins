@@ -33,6 +33,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.swing.text.AttributeSet;
 
@@ -51,6 +52,8 @@ import org.apache.maven.doxia.docrenderer.pdf.PdfRenderer;
 import org.apache.maven.doxia.document.DocumentModel;
 import org.apache.maven.doxia.document.DocumentTOCItem;
 import org.apache.maven.doxia.document.io.xpp3.DocumentXpp3Writer;
+import org.apache.maven.doxia.index.IndexEntry;
+import org.apache.maven.doxia.index.IndexingSink;
 import org.apache.maven.doxia.markup.HtmlMarkup;
 import org.apache.maven.doxia.module.xdoc.XdocSink;
 import org.apache.maven.doxia.parser.ParseException;
@@ -366,11 +369,11 @@ public class PdfMojo
     private File generatedSiteDirectoryTmp;
 
     /**
-     * The generated MavenReport list.
+     * A map of generated MavenReport list using locale as key.
      *
      * @since 1.1
      */
-    private List generatedMavenReports;
+    private Map generatedMavenReports;
 
     // ----------------------------------------------------------------------
     // Public methods
@@ -423,7 +426,7 @@ public class PdfMojo
      * @since 1.1
      */
     private void copyGeneratedPdf()
-            throws MojoExecutionException, IOException
+        throws MojoExecutionException, IOException
     {
         if ( !outputDirectory.getCanonicalPath().equals( workingDirectory.getCanonicalPath() ) )
         {
@@ -433,14 +436,41 @@ public class PdfMojo
             {
                 outputName = outputName.substring( 0, outputName.indexOf( extension ) - 1 );
             }
-            final List pdfs = FileUtils.getFiles( workingDirectory, "**/" + outputName + ".pdf", null );
 
-            for ( final Iterator it = pdfs.iterator(); it.hasNext(); )
+            for ( final Iterator iterator = getAvailableLocales().iterator(); iterator.hasNext(); )
             {
-                final File pdf = (File) it.next();
+                final Locale locale = (Locale) iterator.next();
 
-                FileUtils.copyFile( pdf, new File( outputDirectory, pdf.getName() ) );
-                pdf.delete();
+                File generatedPdfSource;
+                if ( !locale.getLanguage().equals( getDefaultLocale().getLanguage() ) )
+                {
+                    generatedPdfSource =
+                        new File( workingDirectory, locale.getLanguage() + File.separator + outputName + ".pdf" );
+                }
+                else
+                {
+                    generatedPdfSource = new File( workingDirectory, outputName + ".pdf" );
+                }
+
+                if ( !generatedPdfSource.exists() )
+                {
+                    getLog().warn( "Unable to find the generated pdf: " + generatedPdfSource.getAbsolutePath() );
+                    continue;
+                }
+
+                File generatedPdfDest;
+                if ( !locale.getLanguage().equals( getDefaultLocale().getLanguage() ) )
+                {
+                    generatedPdfDest =
+                        new File( outputDirectory, locale.getLanguage() + File.separator + outputName + ".pdf" );
+                }
+                else
+                {
+                    generatedPdfDest = new File( outputDirectory, outputName + ".pdf" );
+                }
+
+                FileUtils.copyFile( generatedPdfSource, generatedPdfDest );
+                generatedPdfSource.delete();
             }
         }
     }
@@ -625,18 +655,17 @@ public class PdfMojo
 
             String excludes = getDefaultExcludesWithLocales( getAvailableLocales(), getDefaultLocale() );
             List siteFiles = FileUtils.getFileNames( siteDirectory, "**/*", excludes, false );
-            if ( !locale.getLanguage().equals( getDefaultLocale().getLanguage() ) )
+            File siteDirectoryLocale = new File( siteDirectory, locale.getLanguage() );
+            if ( !locale.getLanguage().equals( getDefaultLocale().getLanguage() ) && siteDirectoryLocale.exists() )
             {
-                siteFiles =
-                    FileUtils.getFileNames( new File( siteDirectory, locale.getLanguage() ), "**/*", excludes,
-                                            false );
+                siteFiles = FileUtils.getFileNames( siteDirectoryLocale, "**/*", excludes, false );
             }
 
             List generatedSiteFiles = FileUtils.getFileNames( from, "**/*", excludes, false );
-            if ( !locale.getLanguage().equals( getDefaultLocale().getLanguage() ) )
+            File fromLocale = new File( from, locale.getLanguage() );
+            if ( !locale.getLanguage().equals( getDefaultLocale().getLanguage() ) && fromLocale.exists() )
             {
-                generatedSiteFiles =
-                    FileUtils.getFileNames( new File( from, locale.getLanguage() ), "**/*", excludes, false );
+                generatedSiteFiles = FileUtils.getFileNames( fromLocale, "**/*", excludes, false );
             }
 
             for ( final Iterator it = generatedSiteFiles.iterator(); it.hasNext(); )
@@ -653,10 +682,13 @@ public class PdfMojo
 
                 if ( !locale.getLanguage().equals( getDefaultLocale().getLanguage() ) )
                 {
-                    File in = new File( new File( from, locale.getLanguage() ), generatedSiteFile );
-                    File out = new File( new File( to, locale.getLanguage() ), generatedSiteFile );
-                    out.getParentFile().mkdirs();
-                    FileUtils.copyFile( in, out );
+                    if ( fromLocale.exists() )
+                    {
+                        File in = new File( fromLocale, generatedSiteFile );
+                        File out = new File( new File( to, locale.getLanguage() ), generatedSiteFile );
+                        out.getParentFile().mkdirs();
+                        FileUtils.copyFile( in, out );
+                    }
                 }
                 else
                 {
@@ -1024,7 +1056,7 @@ public class PdfMojo
         }
 
         // generate project-info report
-        if ( !getGeneratedMavenReports().isEmpty() )
+        if ( !getGeneratedMavenReports( locale ).isEmpty() )
         {
             File outDir = new File( getGeneratedSiteDirectoryTmp(), "xdoc" );
             if ( !locale.getLanguage().equals( defaultLocale.getLanguage() ) )
@@ -1038,7 +1070,7 @@ public class PdfMojo
             StringWriter sw = new StringWriter();
 
             PdfSink sink = new PdfSink( sw );
-            ProjectInfoRenderer r = new ProjectInfoRenderer( sink, getGeneratedMavenReports(), i18n, locale );
+            ProjectInfoRenderer r = new ProjectInfoRenderer( sink, getGeneratedMavenReports( locale ), i18n, locale );
             r.render();
 
             writeGeneratedReport( sw.toString(), piReport );
@@ -1185,9 +1217,10 @@ public class PdfMojo
             return;
         }
 
-        for ( final Iterator it = getGeneratedMavenReports().iterator(); it.hasNext(); )
+        for ( final Iterator it = getGeneratedMavenReports( locale ).iterator(); it.hasNext(); )
         {
             MavenReport generatedReport = (MavenReport) it.next();
+
             if ( report.getName( locale ).equals( generatedReport.getName( locale ) ) )
             {
                 if ( getLog().isDebugEnabled() )
@@ -1291,24 +1324,30 @@ public class PdfMojo
 
         if ( isValidGeneratedReport( mojoDescriptor, generatedReport, localReportName ) )
         {
-            getGeneratedMavenReports().add( report );
+            getGeneratedMavenReports( locale ).add( report );
         }
     }
 
     /**
+     * @param locale not null
      * @return the generated reports
      * @see #generateMavenReport(MojoDescriptor, MavenReport, Locale)
      * @see #isValidGeneratedReport(MojoDescriptor, File, String)
      * @since 1.1
      */
-    private List getGeneratedMavenReports()
+    private List getGeneratedMavenReports( Locale locale )
     {
         if ( this.generatedMavenReports == null )
         {
-            this.generatedMavenReports = new ArrayList();
+            this.generatedMavenReports = new HashMap();
         }
 
-        return this.generatedMavenReports;
+        if ( this.generatedMavenReports.get( locale ) == null )
+        {
+            this.generatedMavenReports.put( locale, new ArrayList() );
+        }
+
+        return ( (List) this.generatedMavenReports.get( locale ) );
     }
 
     /**
@@ -1333,13 +1372,13 @@ public class PdfMojo
         {
             return;
         }
-        if ( getGeneratedMavenReports().isEmpty() )
+        if ( getGeneratedMavenReports( locale ).isEmpty() )
         {
             return;
         }
 
         final DocumentTOCItem documentTOCItem = new DocumentTOCItem();
-        documentTOCItem.setName( i18n.getString( "pdf-plugin", getDefaultLocale(), "toc.project-info.item" ) );
+        documentTOCItem.setName( i18n.getString( "pdf-plugin", locale, "toc.project-info.item" ) );
         documentTOCItem.setRef( "/project-info" ); // see #generateMavenReports(Locale)
 
         List addedRef = new ArrayList();
@@ -1347,7 +1386,7 @@ public class PdfMojo
         List items = new ArrayList();
 
         // append generated report defined as MavenReport
-        for ( final Iterator it = getGeneratedMavenReports().iterator(); it.hasNext(); )
+        for ( final Iterator it = getGeneratedMavenReports( locale ).iterator(); it.hasNext(); )
         {
             final MavenReport report = (MavenReport) it.next();
 
@@ -1427,13 +1466,13 @@ public class PdfMojo
      * @param f not null
      * @return the xdoc file title or null if an error occurs.
      * @throws IOException if any
-     * @see TitleSink
      * @since 1.1
      */
-    private String getGeneratedDocumentTitle( File f )
+    private String getGeneratedDocumentTitle( final File f )
         throws IOException
     {
-        TitleSink titleSink = new TitleSink();
+        final IndexEntry entry = new IndexEntry( "index" );
+        final IndexingSink titleSink = new IndexingSink( entry );
 
         Reader reader = null;
         try
@@ -1823,49 +1862,6 @@ public class PdfMojo
             sink.section2_();
 
             sink.section1_();
-        }
-    }
-
-    /**
-     * A Sink class to get the Document title when parsing Doxia files.
-     *
-     * @see PdfMojo#getGeneratedDocumentTitle(File)
-     * @since 1.1
-     */
-    private static class TitleSink
-        extends SinkAdapter
-    {
-        String title;
-
-        boolean isTitle;
-
-        /** {@inheritDoc} */
-        public void title()
-        {
-            isTitle = true;
-        }
-
-        /** {@inheritDoc} */
-        public void title_()
-        {
-            isTitle = false;
-        }
-
-        /** {@inheritDoc} */
-        public void text( String text )
-        {
-            if ( isTitle )
-            {
-                title = text;
-            }
-        }
-
-        /**
-         * @return the found title or null.
-         */
-        public String getTitle()
-        {
-            return title;
         }
     }
 
