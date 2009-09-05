@@ -21,19 +21,20 @@ package org.apache.maven.plugins.pdf;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import java.util.Properties;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
+import javax.swing.text.AttributeSet;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
@@ -50,7 +51,6 @@ import org.apache.maven.doxia.docrenderer.pdf.PdfRenderer;
 import org.apache.maven.doxia.document.DocumentModel;
 import org.apache.maven.doxia.document.DocumentTOCItem;
 import org.apache.maven.doxia.document.io.xpp3.DocumentXpp3Writer;
-import org.apache.maven.doxia.logging.Log;
 import org.apache.maven.doxia.markup.HtmlMarkup;
 import org.apache.maven.doxia.module.xdoc.XdocSink;
 import org.apache.maven.doxia.parser.ParseException;
@@ -91,13 +91,7 @@ import org.apache.maven.reporting.MavenReport;
 import org.apache.maven.reporting.MavenReportException;
 import org.apache.maven.settings.Settings;
 import org.codehaus.classworlds.ClassRealm;
-import org.codehaus.classworlds.NoSuchRealmException;
-import org.codehaus.plexus.PlexusConstants;
-import org.codehaus.plexus.PlexusContainer;
-import org.codehaus.plexus.context.Context;
-import org.codehaus.plexus.context.ContextException;
 import org.codehaus.plexus.i18n.I18N;
-import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.PathTool;
@@ -116,11 +110,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
  */
 public class PdfMojo
     extends AbstractMojo
-    implements Contextualizable
 {
-    /** The Maven minor version, i.e. 0 if 2.0.10, 1 if 2.1.0 etc. */
-    private static final int MAVEN_MINOR_VERSION = getMavenMinorVersion();
-
     /** The vm line separator */
     private static final String EOL = System.getProperty( "line.separator" );
 
@@ -382,14 +372,6 @@ public class PdfMojo
      */
     private List generatedMavenReports;
 
-    /**
-     * The current Plexus container.
-     * <b>Note</b>: its realm id should be <code>maven-pdf-plugin</code>
-     *
-     * @since 1.1
-     */
-    private PlexusContainer container;
-
     // ----------------------------------------------------------------------
     // Public methods
     // ----------------------------------------------------------------------
@@ -461,13 +443,6 @@ public class PdfMojo
                 pdf.delete();
             }
         }
-    }
-
-    /** {@inheritDoc} */
-    public void contextualize( Context context )
-        throws ContextException
-    {
-        container = (PlexusContainer) context.get( PlexusConstants.PLEXUS_KEY );
     }
 
     // ----------------------------------------------------------------------
@@ -1130,16 +1105,11 @@ public class PdfMojo
     private MavenReport getMavenReport( MojoDescriptor mojoDescriptor )
         throws MojoExecutionException
     {
-        /*
-         * container.getContainerRealm().getId() == maven-pdf-plugin
-         * session.getContainer().getContainerRealm().getId() == plexus.core
-         * mojoDescriptor.getPluginDescriptor().getClassRealm().getId() == a report plugin
-         */
         ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
         try
         {
             Thread.currentThread()
-                  .setContextClassLoader( getClassRealm( mojoDescriptor.getPluginDescriptor() ).getClassLoader() );
+                  .setContextClassLoader( mojoDescriptor.getPluginDescriptor().getClassRealm().getClassLoader() );
 
             MojoExecution mojoExecution = new MojoExecution( mojoDescriptor );
 
@@ -1165,50 +1135,6 @@ public class PdfMojo
         {
             Thread.currentThread().setContextClassLoader( oldClassLoader );
         }
-    }
-
-    /**
-     * Get the Classworlds ClassRealm instance from the given plugin descriptor.
-     * <br/>
-     * <b>Note</b>: For backward compatibility with Maven 2.0.x, some Doxia 1.1 interfaces will be imported from
-     * this Plexus container.
-     *
-     * @param pluginDescriptor not null
-     * @return the plugin descriptor ClassRealm with Doxia 1.1 interfaces in the Maven 2.0.x case.
-     * @since 1.1
-     * @see #MAVEN_MINOR_VERSION
-     */
-    private ClassRealm getClassRealm( PluginDescriptor pluginDescriptor )
-    {
-        if ( MAVEN_MINOR_VERSION == 0 )
-        {
-            String[] doxiaInterfaces =
-                new String[] { Sink.class.getName(), SinkEventAttributes.class.getName(), Log.class.getName() };
-
-            if ( getLog().isDebugEnabled() )
-            {
-                getLog().debug(
-                        "To be backward compatible with mvn 2.0.x, added Doxia 1.1.x interfaces from the PDF realm ("
-                        + container.getContainerRealm().getId() + ") to the report plugin realm ("
-                        + pluginDescriptor.getClassRealm().getId() + "): "
-                        + StringUtils.join( doxiaInterfaces, ", " ) );
-            }
-
-            try
-            {
-                for ( int i = 0; i < doxiaInterfaces.length; i++ )
-                {
-                    pluginDescriptor.getClassRealm().importFrom( container.getContainerRealm().getId(),
-                                                                 doxiaInterfaces[i] );
-                }
-            }
-            catch ( NoSuchRealmException e )
-            {
-                getLog().error( "NoSuchRealmException: " + e.getMessage(), e );
-            }
-        }
-
-        return pluginDescriptor.getClassRealm();
     }
 
     /**
@@ -1312,10 +1238,18 @@ public class PdfMojo
 
         StringWriter sw = new StringWriter();
 
-        PdfSink sink = new PdfSink( sw );
+        PdfSink sink = null;
         try
         {
-            report.generate( sink, locale );
+            sink = new PdfSink( sw );
+            org.codehaus.doxia.sink.Sink proxy =
+                (org.codehaus.doxia.sink.Sink) Proxy
+                                                    .newProxyInstance(
+                                                                       org.codehaus.doxia.sink.Sink.class
+                                                                                                         .getClassLoader(),
+                                                                       new Class[] { org.codehaus.doxia.sink.Sink.class },
+                                                                       new SinkDelegate( sink ) );
+            report.generate( proxy, locale );
         }
         catch ( MavenReportException e )
         {
@@ -1347,7 +1281,10 @@ public class PdfMojo
         }
         finally
         {
-            sink.close();
+            if ( sink != null )
+            {
+                sink.close();
+            }
         }
 
         writeGeneratedReport( sw.toString(), generatedReport );
@@ -1760,66 +1697,6 @@ public class PdfMojo
         return excludesLocales;
     }
 
-    /**
-    * @return the current Maven version from <code>META-INF/maven/org.apache.maven/maven-core/pom.properties</code>
-    * or <code>null</code> if not found.
-    */
-    private static String getMavenVersion()
-    {
-        InputStream is = null;
-        try
-        {
-            is =
-                PdfMojo.class.getClassLoader()
-                             .getResourceAsStream( "META-INF/maven/org.apache.maven/maven-core/pom.properties" );
-
-            if ( is != null )
-            {
-                final Properties properties = new Properties();
-                properties.load( is );
-
-                return properties.getProperty( "version" );
-            }
-        }
-        catch ( IOException e )
-        {
-            // nop
-        }
-        finally
-        {
-            IOUtil.close( is );
-        }
-
-        return null;
-    }
-
-    /**
-     * All Maven versions respect this convention:
-     * <pre>
-     * &lt;major&gt;.&lt;minor&gt;.&lt;revision&gt;
-     * </pre>
-     *
-     * @return the Maven minor version as int or 0.
-     * @see #getMavenVersion()
-     */
-    private static int getMavenMinorVersion()
-    {
-        final String mvnVersion = getMavenVersion();
-        if ( mvnVersion == null )
-        {
-            return 0;
-        }
-
-        final Pattern pattern = Pattern.compile( "(\\d+)\\.{1}(\\d+)(\\.{1}(\\d+))?" );
-        final Matcher matcher = pattern.matcher( mvnVersion );
-        if ( matcher.find() )
-        {
-            return Integer.valueOf( matcher.group( 2 ) ).intValue();
-        }
-
-        return 0;
-    }
-
     // ----------------------------------------------------------------------
     // Inner class
     // ----------------------------------------------------------------------
@@ -1831,7 +1708,6 @@ public class PdfMojo
      */
     private static class PdfSink
         extends XdocSink
-        implements org.codehaus.doxia.sink.Sink
     {
         protected PdfSink( Writer writer )
         {
@@ -1990,6 +1866,53 @@ public class PdfMojo
         public String getTitle()
         {
             return title;
+        }
+    }
+
+    /**
+     * Delegates the method invocations on <code>org.codehaus.doxia.sink.Sink@maven-core-realm</code> to
+     * <code>org.apache.maven.doxia.sink.Sink@pdf-plugin-realm</code>.
+     *
+     * @author Benjamin Bentmann
+     */
+    private static class SinkDelegate
+        implements InvocationHandler
+    {
+        private final Sink sink;
+
+        public SinkDelegate( Sink sink )
+        {
+            this.sink = sink;
+        }
+
+        /** {@inheritDoc} */
+        public Object invoke( Object proxy, Method method, Object[] args )
+            throws Throwable
+        {
+            Class[] parameterTypes = method.getParameterTypes();
+
+            for ( int i = parameterTypes.length - 1; i >= 0; i-- )
+            {
+                if ( AttributeSet.class.isAssignableFrom( parameterTypes[i] ) )
+                {
+                    parameterTypes[i] = SinkEventAttributes.class;
+                }
+            }
+
+            if ( args != null )
+            {
+                for ( int i = args.length - 1; i >= 0; i-- )
+                {
+                    if ( AttributeSet.class.isInstance( args[i] ) )
+                    {
+                        args[i] = new SinkEventAttributeSet( (AttributeSet) args[i] );
+                    }
+                }
+            }
+
+            Method target = Sink.class.getMethod( method.getName(), parameterTypes );
+
+            return target.invoke( sink, args );
         }
     }
 }
