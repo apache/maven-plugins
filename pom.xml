@@ -221,6 +221,9 @@ under the License.
   <profiles>
     <profile>
       <id>run-its</id>
+      <properties>
+        <sitePluginVersion>2.0.1</sitePluginVersion>
+      </properties>
       <build>
         <plugins>
           <plugin>
@@ -258,6 +261,18 @@ under the License.
           </plugin>
         </plugins>
       </build>
+    </profile>
+    <profile>
+      <id>maven-3</id>
+      <activation>
+        <file>
+          <!-- This employs that the basedir expression is only recognized by Maven 3.x (see MNG-2363) -->
+          <exists>${basedir}</exists>
+        </file>
+      </activation>
+      <properties>
+        <sitePluginVersion>3.0-beta-1-SNAPSHOT</sitePluginVersion>
+      </properties>
     </profile>
   </profiles>
 </project>
