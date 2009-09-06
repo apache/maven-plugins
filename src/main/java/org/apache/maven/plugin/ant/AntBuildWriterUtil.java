@@ -1159,14 +1159,14 @@ public class AntBuildWriterUtil
         writer.addAttribute( "dir", outputDir );
         writer.endElement(); // mkdir
 
-        if ( !project.getDependencyArtifacts().isEmpty() )
+        if ( project.getArtifacts() != null )
         {
-            for ( Iterator i = project.getDependencyArtifacts().iterator(); i.hasNext(); )
+            for ( Iterator i = project.getArtifacts().iterator(); i.hasNext(); )
             {
                 Artifact artifact = (Artifact) i.next();
 
-                if ( !artifact.getScope().equals( Artifact.SCOPE_PROVIDED )
-                    && !artifact.getScope().equals( Artifact.SCOPE_TEST ) )
+                if ( Artifact.SCOPE_COMPILE.equals( artifact.getScope() )
+                    || Artifact.SCOPE_RUNTIME.equals( artifact.getScope() ) )
                 {
                     String path = artifactResolverWrapper.getLocalArtifactPath( artifact );
                     if ( !new File( path ).isAbsolute() )
