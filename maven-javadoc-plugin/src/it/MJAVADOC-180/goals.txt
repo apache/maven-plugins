@@ -1,1 +1,1 @@
-javadoc:test-javadoc
+clean javadoc:test-javadoc

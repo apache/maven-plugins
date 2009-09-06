@@ -1,1 +1,1 @@
-javadoc:aggregate
+clean javadoc:aggregate
