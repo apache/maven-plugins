@@ -1784,7 +1784,7 @@ public class PdfMojo
         /** {@inheritDoc} */
         public void text( String text )
         {
-            // workaround to fix quotes (MPIR-136)
+            // workaround to fix quotes introduced with MPIR-59 (then removed in MPIR-136)
             super.write( StringUtils.replace( text, "\u0092", "'" ) );
         }
     }
