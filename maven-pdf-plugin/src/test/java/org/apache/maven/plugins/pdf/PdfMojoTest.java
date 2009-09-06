@@ -55,7 +55,7 @@ public class PdfMojoTest
         PdfMojo mojo = (PdfMojo) lookupMojo( "pdf", testPom );
         assertNotNull( "pdf mojo not found!", mojo );
 
-        File pdfFile = new File( getBasedir(), "/target/test-output/pdf/maven-pdf-plugin-doc.pdf" );
+        File pdfFile = new File( getBasedir(), "/target/test-output/pdf/fo/maven-pdf-plugin-doc.pdf" );
         if ( pdfFile.exists() )
         {
             pdfFile.delete();
@@ -80,7 +80,7 @@ public class PdfMojoTest
         PdfMojo mojo = (PdfMojo) lookupMojo( "pdf", testPom );
         assertNotNull( "pdf mojo not found!", mojo );
 
-        File pdfFile = new File( getBasedir(), "/target/test-output/pdf/maven-pdf-plugin-doc.pdf" );
+        File pdfFile = new File( getBasedir(), "/target/test-output/pdf/itext/maven-pdf-plugin-doc.pdf" );
         if ( pdfFile.exists() )
         {
             pdfFile.delete();
@@ -103,7 +103,7 @@ public class PdfMojoTest
         PdfMojo mojo = (PdfMojo) lookupMojo( "pdf", testPom );
         assertNotNull( "pdf mojo not found!", mojo );
 
-        File pdfFile = new File( getBasedir(), "/target/test-output/pdf/maven-pdf-plugin-doc-1.0-SNAPSHOT.pdf" );
+        File pdfFile = new File( getBasedir(), "/target/test-output/pdf/filtering/maven-pdf-plugin-doc-1.0-SNAPSHOT.pdf" );
         if ( pdfFile.exists() )
         {
             pdfFile.delete();
@@ -114,7 +114,7 @@ public class PdfMojoTest
         assertTrue( "FO: Pdf file not created!", pdfFile.exists() );
         assertTrue( "FO: Pdf file has no content!", pdfFile.length() > 0 );
 
-        File foFile = new File( getBasedir(), "/target/test-output/pdf/maven-pdf-plugin-doc-1.0-SNAPSHOT.fo" );
+        File foFile = new File( getBasedir(), "/target/test-output/pdf/filtering/maven-pdf-plugin-doc-1.0-SNAPSHOT.fo" );
         assertTrue( "FO: Fo file not created!", foFile.exists() );
         assertTrue( "FO: Fo file has no content!", foFile.length() > 0 );
 
@@ -158,7 +158,7 @@ public class PdfMojoTest
         PdfMojo mojo = (PdfMojo) lookupMojo( "pdf", testPom );
         assertNotNull( "pdf mojo not found!", mojo );
 
-        File pdfFile = new File( getBasedir(), "/target/test-output/pdf/unnamed.pdf" );
+        File pdfFile = new File( getBasedir(), "/target/test-output/pdf/no/unnamed.pdf" );
         if ( pdfFile.exists() )
         {
             pdfFile.delete();
