@@ -211,7 +211,11 @@ public class ShadeMojo
     private File outputDirectory;
 
     /**
-     * The name of the shaded artifactId
+     * The name of the shaded artifactId.
+     * 
+     * If you like to change the name of the native artifact, you may use the <build><finalName> setting.
+     * If this is set to something different than <build><finalName>, no file replacement
+     * will be performed, even if shadedArtifactAttached is being used.
      *
      * @parameter expression="${finalName}"
      */
@@ -365,6 +369,22 @@ public class ShadeMojo
                 shader.shade( sourceArtifacts, sourcesJar, filters, relocators, resourceTransformers );
             }
 
+            boolean renamed=false;
+            
+            // rename the output file if a specific finalName is set
+            // but don't rename if the finalName is the <build><finalName>
+            // because this will be handled implicitely later
+            if ( finalName != null && finalName.length() > 0 && 
+                 !finalName.equals( project.getBuild().getFinalName() ) )
+            {
+                String finalFileName = finalName + "." + project.getArtifact().getArtifactHandler().getExtension(); 
+                File finalFile = new File( outputDirectory, finalFileName );
+                replaceFile( finalFile, outputJar );                
+                outputJar = finalFile;
+                
+                renamed=true;
+            }
+
             if ( shadedArtifactAttached )
             {
                 getLog().info( "Attaching shaded artifact." );
@@ -374,21 +394,20 @@ public class ShadeMojo
                     projectHelper.attachArtifact( project, "jar", shadedClassifierName + "-sources", sourcesJar );
                 }
             }
-
-            else
+            else if ( !renamed )
             {
                 getLog().info( "Replacing original artifact with shaded artifact." );
-                File file = shadedArtifactFile();
-                replaceFile( file, outputJar );
+                File originalArtifact = project.getArtifact().getFile();;
+                replaceFile( originalArtifact, outputJar );
 
                 if ( createSourcesJar )
                 {
-                    file = shadedSourcesArtifactFile();
+                    File shadedSources = shadedSourcesArtifactFile();
 
-                    replaceFile( file, sourcesJar );
+                    replaceFile( shadedSources, sourcesJar );
 
                     projectHelper.attachArtifact( project, "jar",
-                                                  "sources", file );
+                                                  "sources", shadedSources );
                 }
 
                 if ( createDependencyReducedPom )
@@ -631,34 +650,15 @@ public class ShadeMojo
         return new File( outputDirectory, shadedName );
     }
 
-    private File shadedArtifactFile()
-    {
-        Artifact artifact = project.getArtifact();
-
-        String shadedName;
-
-        if ( finalName != null )
-        {
-            shadedName = finalName + "." + artifact.getArtifactHandler().getExtension();
-        }
-        else
-        {
-            shadedName = shadedArtifactId + "-" + artifact.getVersion() + "."
-                + artifact.getArtifactHandler().getExtension();
-        }
-
-        return new File( outputDirectory, shadedName );
-    }
-
     private File shadedSourcesArtifactFile()
     {
         Artifact artifact = project.getArtifact();
 
         String shadedName;
 
-        if ( finalName != null )
+        if ( project.getBuild().getFinalName() != null )
         {
-            shadedName = finalName + "-sources." + artifact.getArtifactHandler().getExtension();
+            shadedName = project.getBuild().getFinalName() + "-sources." + artifact.getArtifactHandler().getExtension();
         }
         else
         {
