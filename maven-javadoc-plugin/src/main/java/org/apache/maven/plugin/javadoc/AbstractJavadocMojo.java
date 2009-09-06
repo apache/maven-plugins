@@ -35,6 +35,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -1568,7 +1569,8 @@ public abstract class AbstractJavadocMojo
             return Collections.EMPTY_LIST;
         }
 
-        return p.getCompileSourceRoots();
+        return ( p.getCompileSourceRoots() == null ? Collections.EMPTY_LIST
+                        : new LinkedList( p.getCompileSourceRoots() ) );
     }
 
     /**
@@ -1582,7 +1584,8 @@ public abstract class AbstractJavadocMojo
             return Collections.EMPTY_LIST;
         }
 
-        return p.getExecutionProject().getCompileSourceRoots();
+        return ( p.getExecutionProject().getCompileSourceRoots() == null ? Collections.EMPTY_LIST
+                        : new LinkedList( p.getExecutionProject().getCompileSourceRoots() ) );
     }
 
     /**
@@ -1591,7 +1594,8 @@ public abstract class AbstractJavadocMojo
      */
     protected List getProjectArtifacts( MavenProject p )
     {
-        return p.getCompileArtifacts();
+        return ( p.getCompileArtifacts() == null ? Collections.EMPTY_LIST
+                        : new LinkedList( p.getCompileArtifacts() ) );
     }
 
     /**
