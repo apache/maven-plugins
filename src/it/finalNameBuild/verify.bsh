@@ -1,0 +1,42 @@
+import java.io.*;
+import java.util.*;
+import java.util.regex.*;
+
+try
+{
+    // check for primary artifact, which is actually the shaded one!
+    File file = new File( basedir, "target/MyFinalName.jar" );
+    System.out.println( "file with finalName : " + file );
+    if ( !file.exists() )
+    {
+        System.out.println( "file with finalName does not exist: " + file );
+        return false;
+    }
+
+    // check for original unshaded jar
+    File original = new File( basedir, "target/original-MyFinalName.jar" );
+    System.out.println( "'orifinal' file with name : " + original );
+    if ( !original.exists() )
+    {
+        System.out.println( "'original' file does not exist: " + original );
+        return false;
+    }
+
+/* TODO: enable after we switched form package to install target for the ITS!
+    // check for the artifact in the repo
+    File rfile = new File( new File( basedir, "target/local-repo" ), 
+                         "org/apache/maven/its/shade/aat/finalNameBuild/1.0/finalNameBuild-1.0.jar" );
+    System.out.println( "Checking for existence in repo: " + rfile );
+    if ( !rfile.isFile() )
+    {
+        throw new FileNotFoundException( "Missing: " + rfile.getAbsolutePath() );
+    }
+*/
+}
+catch( Throwable t )
+{
+    t.printStackTrace();
+    return false;
+}
+
+return true;
