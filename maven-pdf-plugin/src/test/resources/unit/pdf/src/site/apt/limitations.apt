@@ -45,3 +45,18 @@ Known Bugs and Limitations
 * Known bugs
 
   None.
+
+* FOP vs iText
+
+  PDF can be rendered either using FOP (the default) or iText. The generated document is different.
+
+  One unexpected difference is visible on some special characters: FOP displays '#', while iText displays
+  nothing. For example:
+
+  * '\u0092': Unicode Character 'PRIVATE USE TWO' (U+0092)
+
+  * '\u2032': Unicode Character 'PRIME' (U+2032)
+
+  * '\u2033': Unicode Character 'DOUBLE PRIME' (U+2033)
+
+  * '\u203e': Unicode Character 'OVERLINE' (U+203E)
