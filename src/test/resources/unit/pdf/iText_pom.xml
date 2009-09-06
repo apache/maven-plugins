@@ -31,8 +31,8 @@
           <localRepository>${localRepository}</localRepository>
           <docDescriptor>${basedir}/target/test-classes/unit/pdf/src/site/pdf.xml</docDescriptor>
           <siteDirectory>${basedir}/target/test-classes/unit/pdf/src/site/</siteDirectory>
-          <outputDirectory>${basedir}/target/test-output/pdf</outputDirectory>
-          <workingDirectory>${basedir}/target/test-output/pdf</workingDirectory>
+          <outputDirectory>${basedir}/target/test-output/pdf/itext</outputDirectory>
+          <workingDirectory>${basedir}/target/test-output/pdf/itext</workingDirectory>
           <implementation>itext</implementation>
           <aggregate>true</aggregate>
           <generateTOC>start</generateTOC>

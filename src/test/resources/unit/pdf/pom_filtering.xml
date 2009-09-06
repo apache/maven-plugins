@@ -58,8 +58,8 @@
           <localRepository>${localRepository}</localRepository>
           <docDescriptor>${basedir}/target/test-classes/unit/pdf/src/site/pdf_filtering.xml</docDescriptor>
           <siteDirectory>${basedir}/target/test-classes/unit/pdf/src/site/</siteDirectory>
-          <outputDirectory>${basedir}/target/test-output/pdf</outputDirectory>
-          <workingDirectory>${basedir}/target/test-output/pdf</workingDirectory>
+          <outputDirectory>${basedir}/target/test-output/pdf/filtering</outputDirectory>
+          <workingDirectory>${basedir}/target/test-output/pdf/filtering</workingDirectory>
           <implementation>fo</implementation>
           <aggregate>true</aggregate>
           <generateTOC>start</generateTOC>
