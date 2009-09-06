@@ -6,3 +6,5 @@ println context
 
 File touchFile = context.get( "touchFile" )
 touchFile.createNewFile()
+
+return true
