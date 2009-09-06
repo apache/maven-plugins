@@ -49,7 +49,10 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-changes-plugin</artifactId>
-          <version>${changesPluginVersion}</version>          
+          <version>${changesPluginVersion}</version>
+          <configuration>
+            <issueLinkTemplate>http://myjira/browse/%ISSUE%</issueLinkTemplate>
+          </configuration>                      
         </plugin>
       </plugins>
     </pluginManagement>    
@@ -71,6 +74,11 @@
           </execution>
         </executions>     
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-site-plugin</artifactId>
+        <version>@sitePluginVersion@</version>
+      </plugin>      
     </plugins>
   </build>  
   <reporting>

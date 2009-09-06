@@ -74,7 +74,16 @@
             </configuration>
           </execution>
         </executions>
+        <configuration>
+          <template>test-announce.vm</template>
+          <templateDirectory>template-directory</templateDirectory>
+        </configuration>        
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-site-plugin</artifactId>
+        <version>@sitePluginVersion@</version>
+      </plugin>      
     </plugins>
   </build>
   <reporting>
