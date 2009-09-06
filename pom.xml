@@ -76,6 +76,7 @@ under the License.
     <doxiaVersion>1.0</doxiaVersion>
     <doxiaSitetoolsVersion>1.0</doxiaSitetoolsVersion>
     <mavenVersion>2.0.6</mavenVersion>
+    <sitePluginVersion>2.0.1</sitePluginVersion>
   </properties>
 
   <dependencies>
@@ -469,5 +470,19 @@ under the License.
         </plugins>
       </reporting>
     </profile>
+
+    <profile>
+      <id>maven-3</id>
+      <activation>
+        <file>
+          <!-- This employs that the basedir expression is only recognized by Maven 3.x (see MNG-2363) -->
+          <exists>${basedir}</exists>
+        </file>
+      </activation>
+      <properties>
+        <sitePluginVersion>3.0-beta-1-SNAPSHOT</sitePluginVersion>
+      </properties>
+    </profile>  
+    
   </profiles>
 </project>
