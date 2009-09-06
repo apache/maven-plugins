@@ -22,6 +22,7 @@ package org.apache.maven.plugin.javadoc;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -246,7 +247,8 @@ public class TestJavadocReport
             return Collections.EMPTY_LIST;
         }
 
-        return p.getTestCompileSourceRoots();
+        return ( p.getTestCompileSourceRoots() == null ? Collections.EMPTY_LIST
+                        : new LinkedList( p.getTestCompileSourceRoots() ) );
     }
 
     /** {@inheritDoc} */
@@ -257,13 +259,14 @@ public class TestJavadocReport
             return Collections.EMPTY_LIST;
         }
 
-        return p.getExecutionProject().getTestCompileSourceRoots();
+        return ( p.getExecutionProject().getTestCompileSourceRoots() == null ? Collections.EMPTY_LIST
+                        : new LinkedList( p.getExecutionProject().getTestCompileSourceRoots() ) );
     }
 
     /** {@inheritDoc} */
     protected List getProjectArtifacts( MavenProject p )
     {
-        return p.getTestArtifacts();
+        return ( p.getTestArtifacts() == null ? Collections.EMPTY_LIST : new LinkedList( p.getTestArtifacts() ) );
     }
 
     /** {@inheritDoc} */
