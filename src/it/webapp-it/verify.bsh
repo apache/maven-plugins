@@ -62,6 +62,8 @@ try
     "WEB-INF/classes/test.properties",
     "WEB-INF/classes/org/MyClass.class",
     "WEB-INF/lib/log4j-1.2.14.jar",
+    "WEB-INF/lib/maven-model-2.0.6.jar",
+    "WEB-INF/lib/plexus-utils-1.4.1.jar",
   };
   for ( String entry : expected )
   {
