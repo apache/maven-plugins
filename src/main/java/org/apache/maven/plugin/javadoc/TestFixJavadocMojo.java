@@ -19,6 +19,8 @@ package org.apache.maven.plugin.javadoc;
  * under the License.
  */
 
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
@@ -43,14 +45,16 @@ public class TestFixJavadocMojo
     /** {@inheritDoc} */
     protected List getProjectSourceRoots( MavenProject p )
     {
-        return p.getTestCompileSourceRoots();
+        return ( p.getTestCompileSourceRoots() == null ? Collections.EMPTY_LIST
+                        : new LinkedList( p.getTestCompileSourceRoots() ) );
     }
 
     /** {@inheritDoc} */
     protected List getCompileClasspathElements( MavenProject p )
         throws DependencyResolutionRequiredException
     {
-        return p.getTestClasspathElements();
+        return ( p.getTestClasspathElements() == null ? Collections.EMPTY_LIST
+                        : new LinkedList( p.getTestClasspathElements() ) );
     }
 
     /** {@inheritDoc} */
