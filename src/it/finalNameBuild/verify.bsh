@@ -22,16 +22,14 @@ try
         return false;
     }
 
-/* TODO: enable after we switched form package to install target for the ITS!
-    // check for the artifact in the repo
-    File rfile = new File( new File( basedir, "target/local-repo" ), 
-                         "org/apache/maven/its/shade/aat/finalNameBuild/1.0/finalNameBuild-1.0.jar" );
+    // check for the artifact in the repo. This is the shaded one!
+    File rfile = new File( localRepositoryPath
+                         ,  "org/apache/maven/its/shade/fnb/finalNameBuild/1.0/finalNameBuild-1.0.jar" );
     System.out.println( "Checking for existence in repo: " + rfile );
     if ( !rfile.isFile() )
     {
         throw new FileNotFoundException( "Missing: " + rfile.getAbsolutePath() );
     }
-*/
 }
 catch( Throwable t )
 {
