@@ -21,6 +21,16 @@ try
         System.out.println( "shaded file does not exist: " + shaded );
         return false;
     }
+
+    // check for the artifact in the repo
+    File rfile = new File( localRepositoryPath
+                         ,  "org/apache/maven/its/shade/fns/finalNameShade/1.0/finalNameShade-1.0.jar" );
+    System.out.println( "Checking for existence in repo: " + rfile );
+    if ( !rfile.isFile() )
+    {
+        throw new FileNotFoundException( "Missing: " + rfile.getAbsolutePath() );
+    }
+
 }
 catch( Throwable t )
 {
