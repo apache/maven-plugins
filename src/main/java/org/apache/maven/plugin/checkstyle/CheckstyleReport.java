@@ -910,10 +910,6 @@ public class CheckstyleReport
             {
                 throw new MavenReportException( e.getMessage(), e );
             }
-            catch ( IOException e )
-            {
-                throw new MavenReportException( e.getMessage(), e );
-            }
         }
 
         URLClassLoader projectClassLoader = new URLClassLoader( (URL[]) urls.toArray( new URL[urls.size()] ), null );
