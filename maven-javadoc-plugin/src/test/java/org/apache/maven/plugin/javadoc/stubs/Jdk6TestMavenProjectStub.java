@@ -59,7 +59,7 @@ public class Jdk6TestMavenProjectStub
         setBuild( build );
 
         List compileSourceRoots = new ArrayList();
-        compileSourceRoots.add( getBasedir() + "/src/test/resources/unit/jdk6-test/" );
+        compileSourceRoots.add( getBasedir().getAbsolutePath() );
         setCompileSourceRoots( compileSourceRoots );
     }
 
@@ -92,4 +92,12 @@ public class Jdk6TestMavenProjectStub
     {
         return new File( super.getBasedir() + "/src/test/resources/unit/jdk6-test/" );
     }
+
+    public List getCompileSourceRoots()
+    {
+        List sourceRoots = super.getCompileSourceRoots();
+        return  sourceRoots;
+    }
+    
+    
 }
