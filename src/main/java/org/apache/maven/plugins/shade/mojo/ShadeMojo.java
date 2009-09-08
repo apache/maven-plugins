@@ -332,6 +332,12 @@ public class ShadeMojo
 
                 continue;
             }
+            
+            if ( artifact.getType().equals( "pom" ) )
+            {
+                getLog().info( "Skipping pom dependency " + artifact.getId() + " in the shaded jar." );
+                continue;
+            }
 
             getLog().info( "Including " + artifact.getId() + " in the shaded jar." );
 
