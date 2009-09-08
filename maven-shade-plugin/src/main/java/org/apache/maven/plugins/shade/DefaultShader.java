@@ -69,7 +69,18 @@ public class DefaultShader
 
             List jarFilters = getFilters( jar, filters );
 
-            JarFile jarFile = new JarFile( jar );
+            JarFile jarFile;
+            
+            try 
+            {
+                jarFile = new JarFile( jar );
+            }
+            catch (ZipException zex)
+            {
+                // JarFile is not very verbose and doesn't tell the user which file it was
+                // so we will create a new Exception instead
+                throw new ZipException( "error in opening zip file" + jar );
+            }
 
             for ( Enumeration j = jarFile.entries(); j.hasMoreElements(); )
             {
