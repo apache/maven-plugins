@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -427,9 +428,12 @@ public class JavadocReportTest
         }
 
         assertTrue( contentOptions != null );
-        assertTrue( contentOptions.indexOf( "-link" ) != -1 );
-        assertTrue( contentOptions.indexOf( "http://java.sun.com/j2se/" ) != -1
-            || contentOptions.indexOf( "http://java.sun.com/javase/" ) != -1 );
+        if ( JavadocUtilTest.isWebSiteOnline( null, getContainer().getLogger(), "http://java.sun.com" ) )
+        {
+            assertTrue( contentOptions.indexOf( "-link" ) != -1 );
+            assertTrue( contentOptions.indexOf( "http://java.sun.com/j2se/" ) != -1
+                || contentOptions.indexOf( "http://java.sun.com/javase/" ) != -1 );
+        }
     }
 
     /**
@@ -934,7 +938,10 @@ public class JavadocReportTest
         assertTrue( FileUtils.fileExists( options.getAbsolutePath() ) );
         String optionsContent = readFile( options );
         // NO -link http://java.sun.com/j2se/1.5.0/docs/api/package-list
-        assertTrue( optionsContent.indexOf( "-link" ) == -1 );
+        if ( JavadocUtilTest.isWebSiteOnline( null, getContainer().getLogger(), "http://java.sun.com" ) )
+        {
+            assertTrue( optionsContent.indexOf( "-link" ) == -1 );
+        }
 
         // real proxy
         ProxyServer proxyServer = null;
@@ -962,7 +969,10 @@ public class JavadocReportTest
 
             optionsContent = readFile( options );
             // -link http://java.sun.com/j2se/1.5.0/docs/api/package-list
-            assertTrue( optionsContent.indexOf( "-link" ) != -1 );
+            if ( JavadocUtilTest.isWebSiteOnline( null, getContainer().getLogger(), "http://java.sun.com" ) )
+            {
+                assertTrue( optionsContent.indexOf( "-link" ) != -1 );
+            }
             assertTrue( true );
         }
         catch ( Exception e )
@@ -1007,7 +1017,10 @@ public class JavadocReportTest
 
             optionsContent = readFile( options );
             // -link http://java.sun.com/j2se/1.5.0/docs/api/package-list
-            assertTrue( optionsContent.indexOf( "-link" ) != -1 );
+            if ( JavadocUtilTest.isWebSiteOnline( null, getContainer().getLogger(), "http://java.sun.com" ) )
+            {
+                assertTrue( optionsContent.indexOf( "-link" ) != -1 );
+            }
             assertTrue( true );
         }
         catch ( Exception e )
