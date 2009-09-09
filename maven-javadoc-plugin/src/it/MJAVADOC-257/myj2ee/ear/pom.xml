@@ -23,35 +23,34 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>root</groupId>
+    <groupId>org.apache.maven.plugins.maven-javadoc-plugin.it.root</groupId>
     <artifactId>project</artifactId>
-    <version>1.0</version>
+    <version>1.0-SNAPSHOT</version>
   </parent>
 
-  <groupId>root.project</groupId>
+  <groupId>org.apache.maven.plugins.maven-javadoc-plugin.it.root.project</groupId>
   <artifactId>ear</artifactId>
   <packaging>ear</packaging>
-  <version>1.0</version>
 
   <name>ear assembly</name>
 
   <dependencies>
     <dependency>
-      <groupId>root.project</groupId>
+      <groupId>org.apache.maven.plugins.maven-javadoc-plugin.it.root.project</groupId>
       <artifactId>ejbs</artifactId>
       <type>ejb</type>
     </dependency>
     <dependency>
-      <groupId>root.project.servlets</groupId>
+      <groupId>org.apache.maven.plugins.maven-javadoc-plugin.it.root.project.servlets</groupId>
       <artifactId>servlet</artifactId>
       <type>war</type>
     </dependency>
     <dependency>
-      <groupId>root.project</groupId>
+      <groupId>org.apache.maven.plugins.maven-javadoc-plugin.it.root.project</groupId>
       <artifactId>primary-source</artifactId>
     </dependency>
     <dependency>
-      <groupId>root.project.projects</groupId>
+      <groupId>org.apache.maven.plugins.maven-javadoc-plugin.it.root.project.projects</groupId>
       <artifactId>logging</artifactId>
     </dependency>
   </dependencies>

@@ -29,8 +29,7 @@
     <relativePath>../pom.xml</relativePath>
   </parent>
 
-  <groupId>root</groupId>
-  <version>1.0</version>
+  <groupId>org.apache.maven.plugins.maven-javadoc-plugin.it.root</groupId>
   <artifactId>project</artifactId>
   <packaging>pom</packaging>
 
@@ -38,34 +37,36 @@
 
   <modules>
     <module>projects</module>
+    <!--
     <module>primary-source</module>
     <module>servlets</module>
     <module>ejbs</module>
     <module>ear</module>
+    -->
   </modules>
 
   <dependencyManagement>
     <dependencies>
       <dependency>
-        <groupId>root.project.projects</groupId>
+        <groupId>org.apache.maven.plugins.maven-javadoc-plugin.it.root.project.projects</groupId>
         <artifactId>logging</artifactId>
-        <version>1.0</version>
+        <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>root.project</groupId>
+        <groupId>org.apache.maven.plugins.maven-javadoc-plugin.it.root.project</groupId>
         <artifactId>primary-source</artifactId>
-        <version>1.0</version>
+        <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>root.project.servlets</groupId>
+        <groupId>org.apache.maven.plugins.maven-javadoc-plugin.it.root.project.servlets</groupId>
         <artifactId>servlet</artifactId>
-        <version>1.0</version>
+        <version>${project.version}</version>
         <type>war</type>
       </dependency>
       <dependency>
-        <groupId>root.project</groupId>
+        <groupId>org.apache.maven.plugins.maven-javadoc-plugin.it.root.project</groupId>
         <artifactId>ejbs</artifactId>
-        <version>1.0</version>
+        <version>${project.version}</version>
         <type>ejb</type>
       </dependency>
     </dependencies>
