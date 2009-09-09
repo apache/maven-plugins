@@ -23,7 +23,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -53,6 +52,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Settings;
+import org.apache.maven.shared.invoker.MavenInvocationException;
 import org.codehaus.plexus.components.interactivity.InputHandler;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
@@ -374,7 +374,22 @@ public abstract class AbstractFixJavadocMojo
         }
 
         // run clirr
-        executeClirr();
+        try
+        {
+            executeClirr();
+        }
+        catch ( MavenInvocationException e )
+        {
+            if ( getLog().isDebugEnabled() )
+            {
+                getLog().error( "MavenInvocationException: " + e.getMessage(), e );
+            }
+            else
+            {
+                getLog().error( "MavenInvocationException: " + e.getMessage() );
+            }
+            getLog().info( "Clirr is ignored." );
+        }
 
         // run qdox and process
         try
@@ -485,7 +500,10 @@ public abstract class AbstractFixJavadocMojo
                 }
                 else
                 {
-                    getLog().warn( "Unrecognized '" + s + "' for fixTags parameter. Ignored it!" );
+                    if ( getLog().isWarnEnabled() )
+                    {
+                        getLog().warn( "Unrecognized '" + s + "' for fixTags parameter. Ignored it!" );
+                    }
                 }
             }
             fixTags = StringUtils.join( filtered.iterator(), "," );
@@ -495,9 +513,12 @@ public abstract class AbstractFixJavadocMojo
         // encoding
         if ( StringUtils.isEmpty( encoding ) )
         {
-            getLog().warn(
-                           "File encoding has not been set, using platform encoding "
-                               + ReaderFactory.FILE_ENCODING + ", i.e. build is platform dependent!" );
+            if ( getLog().isWarnEnabled() )
+            {
+                getLog().warn(
+                               "File encoding has not been set, using platform encoding "
+                                   + ReaderFactory.FILE_ENCODING + ", i.e. build is platform dependent!" );
+            }
             encoding = ReaderFactory.FILE_ENCODING;
         }
 
@@ -505,7 +526,10 @@ public abstract class AbstractFixJavadocMojo
         if ( !( LEVEL_PUBLIC.equalsIgnoreCase( level.trim() ) || LEVEL_PROTECTED.equalsIgnoreCase( level.trim() )
             || LEVEL_PACKAGE.equalsIgnoreCase( level.trim() ) || LEVEL_PRIVATE.equalsIgnoreCase( level.trim() ) ) )
         {
-            getLog().warn( "Unrecognized '" + level + "' for level parameter, using 'protected' level." );
+            if ( getLog().isWarnEnabled() )
+            {
+                getLog().warn( "Unrecognized '" + level + "' for level parameter, using 'protected' level." );
+            }
             level = "protected";
         }
     }
@@ -585,8 +609,11 @@ public abstract class AbstractFixJavadocMojo
 
     /**
      * Invoke Maven to run clirr-maven-plugin to find API differences.
+     *
+     * @throws MavenInvocationException if any
      */
     private void executeClirr()
+        throws MavenInvocationException
     {
         if ( ignoreClirr )
         {
@@ -615,7 +642,7 @@ public abstract class AbstractFixJavadocMojo
         {
             if ( invokerLogFile.exists() )
             {
-                String invokerLogContent = readFile( invokerLogFile, "UTF-8" );
+                String invokerLogContent = StringUtils.unifyLineSeparators( FileUtils.fileRead( invokerLogFile, "UTF-8" ) );
                 // see org.codehaus.mojo.clirr.AbstractClirrMojo#getComparisonArtifact()
                 final String artifactNotFoundMsg =
                     "Unable to find a previous version of the project in the repository";
@@ -656,13 +683,19 @@ public abstract class AbstractFixJavadocMojo
     {
         if ( !clirrTextOutputFile.exists() )
         {
-            getLog().info(
-                           "No Clirr output file '" + clirrTextOutputFile.getAbsolutePath()
-                               + "' exists, Clirr is ignored." );
+            if ( getLog().isInfoEnabled() )
+            {
+                getLog().info(
+                               "No Clirr output file '" + clirrTextOutputFile.getAbsolutePath()
+                                   + "' exists, Clirr is ignored." );
+            }
             return;
         }
 
-        getLog().info( "Clirr output file was created: " + clirrTextOutputFile.getAbsolutePath() );
+        if ( getLog().isInfoEnabled() )
+        {
+            getLog().info( "Clirr output file was created: " + clirrTextOutputFile.getAbsolutePath() );
+        }
 
         clirrNewClasses = new LinkedList();
         clirrNewMethods = new LinkedHashMap();
@@ -674,7 +707,10 @@ public abstract class AbstractFixJavadocMojo
             String[] split = StringUtils.split( line, ":" );
             if ( split.length != 4 )
             {
-                getLog().debug( "Unable to parse the clirr line: " + line );
+                if ( getLog().isDebugEnabled() )
+                {
+                    getLog().debug( "Unable to parse the clirr line: " + line );
+                }
                 continue;
             }
 
@@ -685,7 +721,10 @@ public abstract class AbstractFixJavadocMojo
             }
             catch ( NumberFormatException e )
             {
-                getLog().debug( "Unable to parse the clirr line: " + line );
+                if ( getLog().isDebugEnabled() )
+                {
+                    getLog().debug( "Unable to parse the clirr line: " + line );
+                }
                 continue;
             }
 
@@ -794,7 +833,10 @@ public abstract class AbstractFixJavadocMojo
             }
             else
             {
-                getLog().warn( f + " doesn't exist. Ignored it." );
+                if ( getLog().isWarnEnabled() )
+                {
+                    getLog().warn( f + " doesn't exist. Ignored it." );
+                }
             }
         }
 
@@ -817,7 +859,10 @@ public abstract class AbstractFixJavadocMojo
             }
             catch ( ParseException e )
             {
-                getLog().warn( "QDOX ParseException: " + e.getMessage() + ". Can't fix it." );
+                if ( getLog().isWarnEnabled() )
+                {
+                    getLog().warn( "QDOX ParseException: " + e.getMessage() + ". Can't fix it." );
+                }
             }
         }
 
@@ -881,9 +926,12 @@ public abstract class AbstractFixJavadocMojo
 
         File javaFile = new File( javaClass.getSource().getURL().getFile() );
         // the original java content in memory
-        final String originalContent = readFile( javaFile, encoding );
+        final String originalContent = StringUtils.unifyLineSeparators( FileUtils.fileRead( javaFile, encoding ) );
 
-        getLog().debug( "Fixing " + javaClass.getFullyQualifiedName() );
+        if ( getLog().isDebugEnabled() )
+        {
+            getLog().debug( "Fixing " + javaClass.getFullyQualifiedName() );
+        }
 
         final StringWriter stringWriter = new StringWriter();
         BufferedReader reader = null;
@@ -958,7 +1006,10 @@ public abstract class AbstractFixJavadocMojo
             IOUtil.close( reader );
         }
 
-        getLog().debug( "Saving " + javaClass.getFullyQualifiedName() );
+        if ( getLog().isDebugEnabled() )
+        {
+            getLog().debug( "Saving " + javaClass.getFullyQualifiedName() );
+        }
 
         if ( outputDirectory != null
             && !outputDirectory.getAbsolutePath().equals( getProjectSourceDirectory().getAbsolutePath() ) )
@@ -2820,27 +2871,6 @@ public abstract class AbstractFixJavadocMojo
     // ----------------------------------------------------------------------
     // Static methods
     // ----------------------------------------------------------------------
-
-    /**
-     * @param javaFile not null
-     * @param encoding not null
-     * @return the content with unified line separator of the given javaFile using the given encoding.
-     * @throws IOException if any
-     */
-    private static String readFile( final File javaFile, final String encoding )
-        throws IOException
-    {
-        Reader fileReader = null;
-        try
-        {
-            fileReader = ReaderFactory.newReader( javaFile, encoding );
-            return StringUtils.unifyLineSeparators( IOUtil.toString( fileReader ) );
-        }
-        finally
-        {
-            IOUtil.close( fileReader );
-        }
-    }
 
     /**
      * Write content into the given javaFile and using the given encoding.

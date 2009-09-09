@@ -78,6 +78,7 @@ import org.apache.maven.project.artifact.InvalidDependencyVersionException;
 import org.apache.maven.reporting.MavenReportException;
 import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Settings;
+import org.apache.maven.shared.invoker.MavenInvocationException;
 import org.apache.maven.toolchain.Toolchain;
 import org.apache.maven.toolchain.ToolchainManager;
 import org.apache.maven.wagon.PathUtils;
@@ -92,7 +93,6 @@ import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.cli.CommandLineException;
 import org.codehaus.plexus.util.cli.CommandLineUtils;
 import org.codehaus.plexus.util.cli.Commandline;
-import org.codehaus.plexus.util.cli.DefaultConsumer;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 
 /**
@@ -1821,14 +1821,14 @@ public abstract class AbstractJavadocMojo
                     continue;
                 }
 
-                File argFile = new File( getJavadocDirectory(), arg.substring( 1 ) );
+                File argFile = new File( javadocOutputDirectory, arg.substring( 1 ) );
                 if ( argFile.exists() )
                 {
                     argFile.deleteOnExit();
                 }
             }
 
-            File scriptFile = new File( getJavadocDirectory(), DEBUG_JAVADOC_SCRIPT_NAME );
+            File scriptFile = new File( javadocOutputDirectory, DEBUG_JAVADOC_SCRIPT_NAME );
             if ( scriptFile.exists() )
             {
                 scriptFile.deleteOnExit();
@@ -3170,11 +3170,13 @@ public abstract class AbstractJavadocMojo
      * in the project.
      *
      * @param arguments a list of arguments, not null
+     * @throws MavenReportException if any
      * @see #offlineLinks
      * @see #getModulesLinks()
      * @see <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#package-list">package-list spec</a>
      */
     private void addLinkofflineArguments( List arguments )
+        throws MavenReportException
     {
         List offlineLinksList =
             ( offlineLinks != null ? new ArrayList( Arrays.asList( offlineLinks ) ) : new ArrayList() );
@@ -4226,9 +4228,12 @@ public abstract class AbstractJavadocMojo
         }
 
         CommandLineUtils.StringStreamConsumer err = new CommandLineUtils.StringStreamConsumer();
+        CommandLineUtils.StringStreamConsumer out = new CommandLineUtils.StringStreamConsumer();
         try
         {
-            int exitCode = CommandLineUtils.executeCommandLine( cmd, new DefaultConsumer(), err );
+            int exitCode = CommandLineUtils.executeCommandLine( cmd, out, err );
+
+            String output = ( StringUtils.isEmpty( out.getOutput() ) ? null : '\n' + out.getOutput() );
 
             if ( exitCode != 0 )
             {
@@ -4239,12 +4244,45 @@ public abstract class AbstractJavadocMojo
                 }
                 writeDebugJavadocScript( cmdLine, javadocOutputDirectory );
 
-                StringBuffer msg = new StringBuffer( "Exit code: " + exitCode + " - " + err.getOutput() );
+                if ( StringUtils.isNotEmpty( output ) && isJavadocVMInitError( output ) )
+                {
+                    StringBuffer msg = new StringBuffer();
+                    msg.append( output );
+                    msg.append( '\n' ).append( '\n' );
+                    msg.append( JavadocUtil.ERROR_INIT_VM ).append( '\n' );
+                    msg.append( "Or, try to reduce the Java heap size for the Javadoc goal using " );
+                    msg.append( "-Dminmemory=<size> and -Dmaxmemory=<size>." ).append( '\n' ).append( '\n' );
+
+                    msg.append( "Command line was: " ).append( cmdLine ).append( '\n' ).append( '\n' );
+                    msg.append( "Refer to the generated Javadoc files in '" ).append( javadocOutputDirectory )
+                       .append( "' dir.\n" );
+
+                    throw new MavenReportException( msg.toString() );
+                }
+
+                if ( StringUtils.isNotEmpty( output ) )
+                {
+                    getLog().info( output );
+                }
+
+                StringBuffer msg = new StringBuffer( "\nExit code: " );
+                msg.append( exitCode );
+                if ( StringUtils.isNotEmpty( err.getOutput() ) )
+                {
+                    msg.append( " - " ).append( err.getOutput() );
+                }
                 msg.append( '\n' );
-                msg.append( "Command line was: " + cmdLine ).append( '\n' ).append( '\n' );
-                msg.append( "Refer to the generated Javadoc files in '" + javadocOutputDirectory ).append( "' dir.\n" );
+                msg.append( "Command line was: " ).append( cmdLine ).append( '\n' ).append( '\n' );
+
+                msg.append( "Refer to the generated Javadoc files in '" ).append( javadocOutputDirectory )
+                   .append( "' dir.\n" );
 
                 throw new MavenReportException( msg.toString() );
+            }
+
+            if ( StringUtils.isNotEmpty( output ) )
+            {
+                getLog().info( output );
             }
         }
         catch ( CommandLineException e )
@@ -4340,7 +4378,14 @@ public abstract class AbstractJavadocMojo
                 }
                 catch ( Exception e )
                 {
-                    getLog().error( "Unable to retrieve the dependency: " + dependency + ". Ignored." );
+                    if ( getLog().isDebugEnabled() )
+                    {
+                        getLog().error( "Unable to retrieve the dependency: " + dependency + ". Ignored.", e );
+                    }
+                    else
+                    {
+                        getLog().error( "Unable to retrieve the dependency: " + dependency + ". Ignored." );
+                    }
                 }
 
                 if ( artifact != null && artifact.getFile().exists() )
@@ -4360,7 +4405,14 @@ public abstract class AbstractJavadocMojo
                 }
                 catch ( IOException e )
                 {
-                    getLog().error( "IOException: " + e.getMessage() );
+                    if ( getLog().isDebugEnabled() )
+                    {
+                        getLog().error( "IOException: " + e.getMessage(), e );
+                    }
+                    else
+                    {
+                        getLog().error( "IOException: " + e.getMessage() );
+                    }
                 }
             }
         }
@@ -4460,11 +4512,13 @@ public abstract class AbstractJavadocMojo
      *
      * @return the detected Javadoc links using the Maven conventions for all modules defined in the current project
      * or an empty list.
+     * @throws MavenReportException if any
      * @see #detectOfflineLinks
      * @see #reactorProjects
      * @since 2.6
      */
     private List getModulesLinks()
+        throws MavenReportException
     {
         if ( !( detectOfflineLinks && !isAggregator() && reactorProjects != null ) )
         {
@@ -4503,8 +4557,28 @@ public abstract class AbstractJavadocMojo
                     File invokerDir = new File( project.getBuild().getDirectory(), "invoker" );
                     invokerDir.mkdirs();
                     File invokerLogFile = FileUtils.createTempFile( "maven-javadoc-plugin", ".txt", invokerDir );
-                    JavadocUtil.invokeMaven( getLog(), new File( localRepository.getBasedir() ), p.getFile(),
-                                             Collections.singletonList( javadocGoal ), null, invokerLogFile );
+                    try
+                    {
+                        JavadocUtil.invokeMaven( getLog(), new File( localRepository.getBasedir() ), p.getFile(),
+                                                 Collections.singletonList( javadocGoal ), null, invokerLogFile );
+                    }
+                    catch ( MavenInvocationException e )
+                    {
+                        if ( getLog().isDebugEnabled() )
+                        {
+                            getLog().error( "MavenInvocationException: " + e.getMessage(), e );
+                        }
+                        else
+                        {
+                            getLog().error( "MavenInvocationException: " + e.getMessage() );
+                        }
+
+                        String invokerLogContent = JavadocUtil.readFile( invokerLogFile, "UTF-8" );
+                        if ( invokerLogContent != null && invokerLogContent.indexOf( JavadocUtil.ERROR_INIT_VM ) == -1 )
+                        {
+                            throw new MavenReportException( e.getMessage(), e );
+                        }
+                    }
                 }
 
                 if ( location.exists() )
@@ -4515,7 +4589,10 @@ public abstract class AbstractJavadocMojo
                     ol.setUrl( url );
                     ol.setLocation( location.getAbsolutePath() );
 
-                    getLog().debug( "Added Javadoc link: " + url + " for the project: " + p.getId() );
+                    if ( getLog().isDebugEnabled() )
+                    {
+                        getLog().debug( "Added Javadoc link: " + url + " for the project: " + p.getId() );
+                    }
 
                     modulesLinks.add( ol );
                 }
@@ -4558,24 +4635,27 @@ public abstract class AbstractJavadocMojo
                     {
                         String url = getJavadocLink( artifactProject );
 
-                        getLog().debug(
-                                        "Added Javadoc link: " + url + " for the project: "
-                                            + artifactProject.getId() );
+                        if ( getLog().isDebugEnabled() )
+                        {
+                            getLog().debug(
+                                            "Added Javadoc link: " + url + " for the project: "
+                                                + artifactProject.getId() );
+                        }
                         dependenciesLinks.add( url );
                     }
                 }
                 catch ( ProjectBuildingException e )
                 {
-                    getLog().debug(
-                                    "Error when building the artifact: " + artifact.toString()
-                                        + ". Ignored to add Javadoc link." );
                     if ( getLog().isDebugEnabled() )
                     {
-                        getLog().debug( "ProjectBuildingException: " + e.getMessage(), e );
+                        getLog().debug(
+                                       "Error when building the artifact: " + artifact.toString()
+                                           + ". Ignored to add Javadoc link." );
+                        getLog().error( "ProjectBuildingException: " + e.getMessage(), e );
                     }
                     else
                     {
-                        getLog().debug( "ProjectBuildingException: " + e.getMessage() );
+                        getLog().error( "ProjectBuildingException: " + e.getMessage() );
                     }
                 }
             }
@@ -4613,18 +4693,24 @@ public abstract class AbstractJavadocMojo
             }
             catch ( NumberFormatException e )
             {
-                getLog().debug(
-                                "NumberFormatException for the source parameter in the maven-compiler-plugin. "
-                                    + "Ignored it", e );
+                if ( getLog().isDebugEnabled() )
+                {
+                    getLog().debug(
+                                    "NumberFormatException for the source parameter in the maven-compiler-plugin. "
+                                        + "Ignored it", e );
+                }
             }
         }
         else
         {
-            getLog().debug(
-                            "No maven-compiler-plugin defined in ${build.plugins} or in "
-                                + "${project.build.pluginManagement} for the " + project.getId()
-                                + ". Added Javadoc API link according the javadoc executable version i.e.: "
-                                + fJavadocVersion );
+            if ( getLog().isDebugEnabled() )
+            {
+                getLog().debug(
+                                "No maven-compiler-plugin defined in ${build.plugins} or in "
+                                    + "${project.build.pluginManagement} for the " + project.getId()
+                                    + ". Added Javadoc API link according the javadoc executable version i.e.: "
+                                    + fJavadocVersion );
+            }
         }
 
         String javaApiLink = null;
@@ -4647,11 +4733,17 @@ public abstract class AbstractJavadocMojo
 
         if ( StringUtils.isNotEmpty( javaApiLink ) )
         {
-            getLog().debug( "Found Java API link: " + javaApiLink );
+            if ( getLog().isDebugEnabled() )
+            {
+                getLog().debug( "Found Java API link: " + javaApiLink );
+            }
         }
         else
         {
-            getLog().debug( "No Java API link found." );
+            if ( getLog().isDebugEnabled() )
+            {
+                getLog().debug( "No Java API link found." );
+            }
         }
 
         return javaApiLink;
@@ -4728,7 +4820,7 @@ public abstract class AbstractJavadocMojo
 
         try
         {
-            FileUtils.fileWrite( commandLineFile.getAbsolutePath(), cmdLine );
+            FileUtils.fileWrite( commandLineFile.getAbsolutePath(), "UTF-8", cmdLine );
 
             if ( !SystemUtils.IS_OS_WINDOWS )
             {
@@ -4746,6 +4838,28 @@ public abstract class AbstractJavadocMojo
                 getLog().error( "Unable to write '" + commandLineFile.getName() + "' debug script file" );
             }
         }
+    }
+
+    /**
+     * Check if the Javadoc JVM is correctly started or not.
+     *
+     * @param output the command line output, not null.
+     * @return <code>true</code> if Javadoc output command line contains Javadoc word, <code>false</code> otherwise.
+     * @see #executeJavadocCommandLine(Commandline, File)
+     * @since 2.6.1
+     */
+    private boolean isJavadocVMInitError( String output )
+    {
+        /*
+         * see main.usage and main.Building_tree keys from
+         * com.sun.tools.javadoc.resources.javadoc bundle in tools.jar
+         */
+        if ( output.indexOf( "Javadoc" ) != -1 || output.indexOf( "javadoc" ) != -1 )
+        {
+            return false;
+        }
+
+        return true;
     }
 
     // ----------------------------------------------------------------------
