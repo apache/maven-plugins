@@ -35,6 +35,7 @@ import org.apache.maven.plugin.javadoc.ProxyServer.AuthAsyncProxyServlet;
 import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Settings;
 import org.codehaus.plexus.PlexusTestCase;
+import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.util.FileUtils;
 
 /**
@@ -288,6 +289,11 @@ public class JavadocUtilTest
         JavadocUtil.fetchURL( settings, url );
         assertTrue( true );
 
+        if ( isWebSiteOnline( settings, getContainer().getLogger(), "http://maven.apache.org" ) )
+        {
+            return;
+        }
+
         url = new URL( "http://maven.apache.org/plugins/maven-javadoc-plugin/apidocs/package-list" );
         JavadocUtil.fetchURL( settings, url );
         assertTrue( true );
@@ -530,5 +536,33 @@ public class JavadocUtilTest
         expected.add( getBasedir() + "/target/classes" );
 
         assertTrue( EqualsBuilder.reflectionEquals( expected, JavadocUtil.pruneDirs( null, list ) ) );
+    }
+
+    /**
+     * @param settings could be null
+     * @param logger could be null
+     * @param websiteUrl not null
+     * @return <code>true</code> if we are able to fetch websiteUrl, <code>false</code> otherwise.
+     * @since 2.6.1
+     */
+    protected static boolean isWebSiteOnline( Settings settings, Logger logger, String websiteUrl )
+    {
+        try
+        {
+            JavadocUtil.fetchURL( settings, new URL( websiteUrl ) );
+            return true;
+        }
+        catch ( IOException e )
+        {
+            if ( logger == null )
+            {
+                e.printStackTrace();
+            }
+            else
+            {
+                logger.fatalError( "Error when fetching " + websiteUrl + ". Is it available?" );
+            }
+            return false;
+        }
     }
 }
