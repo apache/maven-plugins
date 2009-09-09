@@ -32,6 +32,7 @@ import junitx.util.PrivateAccessor;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
+import org.apache.maven.shared.invoker.MavenInvocationException;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
@@ -613,8 +614,10 @@ public class FixJavadocMojoTest
      *
      * @param testPom not null
      * @param log not null
+     * @throws MavenInvocationException if any
      */
     private void invokeCompileGoal( File testPom, Log log )
+        throws MavenInvocationException
     {
         List goals = new ArrayList();
         goals.add( "clean" );

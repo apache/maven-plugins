@@ -29,7 +29,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintStream;
-import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Modifier;
 import java.net.URL;
@@ -69,7 +68,6 @@ import org.apache.maven.shared.invoker.MavenInvocationException;
 import org.apache.maven.shared.invoker.PrintStreamHandler;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
-import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.cli.CommandLineException;
 import org.codehaus.plexus.util.cli.CommandLineUtils;
@@ -86,6 +84,11 @@ public class JavadocUtil
 {
     /** The default timeout used when fetching url, i.e. 2000. */
     public static final int DEFAULT_TIMEOUT = 2000;
+
+    /** Error message when VM could not be started using invoker. */
+    protected static final String ERROR_INIT_VM =
+        "Error occurred during initialization of VM, try to reduce the Java heap size for the MAVEN_OPTS " +
+        "environnement variable using -Xms:<size> and -Xmx:<size>.";
 
     /**
      * Method that removes the invalid directories in the specified directories.
@@ -966,10 +969,12 @@ public class JavadocUtil
      * @param goals a not null goals list.
      * @param properties the properties for the goals, could be null.
      * @param invokerLog the log file where the invoker will be written, if null using <code>System.out</code>.
+     * @throws MavenInvocationException if any
      * @since 2.6
      */
     protected static void invokeMaven( Log log, File localRepositoryDir, File projectFile, List goals,
                                        Properties properties, File invokerLog )
+        throws MavenInvocationException
     {
         if ( projectFile == null )
         {
@@ -1032,89 +1037,68 @@ public class JavadocUtil
             request.setJavaHome( javaHome );
         }
 
-        InvocationResult result;
-        try
+        if ( log != null && log.isDebugEnabled() )
         {
-            if ( log != null )
-            {
-                log.debug( "Invoking Maven for the goals: " + goals + " with properties=" + properties );
-            }
-            result = invoke( log, invoker, request, invokerLog, goals, properties, null );
+            log.debug( "Invoking Maven for the goals: " + goals + " with "
+                + ( properties == null ? "no properties" : "properties=" + properties ) );
         }
-        catch ( MavenInvocationException e )
-        {
-            if ( log != null )
-            {
-                if ( log.isDebugEnabled() )
-                {
-                    log.error( "MavenInvocationException: " + e.getMessage(), e );
-                }
-                else
-                {
-                    log.error( "MavenInvocationException: " + e.getMessage() );
-                }
-                log.error( "Error when invoking Maven, consult the invoker log." );
-            }
-            return;
-        }
+        InvocationResult result = invoke( log, invoker, request, invokerLog, goals, properties, null );
 
-        String invokerLogContent = null;
-        Reader reader = null;
-        try
+        if ( result.getExitCode() != 0 )
         {
-            reader = ReaderFactory.newReader( invokerLog, "UTF-8" );
-            invokerLogContent = IOUtil.toString( reader );
-        }
-        catch ( IOException e )
-        {
-            if ( log != null )
-            {
-                log.error( "IOException: " + e.getMessage() );
-            }
-        }
-        finally
-        {
-            IOUtil.close( reader );
-        }
+            String invokerLogContent = readFile( invokerLog, "UTF-8" );
 
-        if ( invokerLogContent != null
-            && invokerLogContent.indexOf( "Error occurred during initialization of VM" ) != -1 )
-        {
-            if ( log != null )
-            {
-                log.info( "Error occurred during initialization of VM, try to use an empty MAVEN_OPTS." );
-
-                log.debug( "Reinvoking Maven for the goals: " + goals + " with an empty MAVEN_OPTS" );
-            }
-            try
-            {
-                result = invoke( log, invoker, request, invokerLog, goals, properties, "" );
-            }
-            catch ( MavenInvocationException e )
+            // see DefaultMaven
+            if ( invokerLogContent != null && ( invokerLogContent.indexOf( "Scanning for projects..." ) == -1
+                || invokerLogContent.indexOf( OutOfMemoryError.class.getName() ) != -1 ) )
             {
                 if ( log != null )
                 {
+                    log.error( "Error occurred during initialization of VM, trying to use an empty MAVEN_OPTS..." );
+
                     if ( log.isDebugEnabled() )
                     {
-                        log.error( "MavenInvocationException: " + e.getMessage(), e );
+                        log.debug( "Reinvoking Maven for the goals: " + goals + " with an empty MAVEN_OPTS..." );
                     }
-                    else
-                    {
-                        log.error( "MavenInvocationException: " + e.getMessage() );
-                    }
-                    log.error( "Error when reinvoking Maven, consult the invoker log." );
                 }
-                return;
+                result = invoke( log, invoker, request, invokerLog, goals, properties, "" );
             }
         }
 
         if ( result.getExitCode() != 0 )
         {
-            if ( log != null )
+            String invokerLogContent = readFile( invokerLog, "UTF-8" );
+
+            // see DefaultMaven
+            if ( invokerLogContent != null && ( invokerLogContent.indexOf( "Scanning for projects..." ) == -1
+                || invokerLogContent.indexOf( OutOfMemoryError.class.getName() ) != -1 ) )
             {
-                log.error( "Error when invoking Maven, consult the invoker log file: "
-                    + invokerLog.getAbsolutePath() );
+                throw new MavenInvocationException( ERROR_INIT_VM );
             }
+
+            throw new MavenInvocationException( "Error when invoking Maven, consult the invoker log file: "
+                + invokerLog.getAbsolutePath() );
+        }
+    }
+
+    /**
+     * Read the given file and return the content or null if an IOException occurs.
+     *
+     * @param javaFile not null
+     * @param encoding could be null
+     * @return the content with unified line separator of the given javaFile using the given encoding.
+     * @see FileUtils#fileRead(File, String)
+     * @since 2.6.1
+     */
+    protected static String readFile( final File javaFile, final String encoding )
+    {
+        try
+        {
+            return FileUtils.fileRead( javaFile, encoding );
+        }
+        catch (IOException e )
+        {
+            return null;
         }
     }
 
@@ -1188,7 +1172,10 @@ public class JavadocUtil
         OutputStream os = null;
         if ( invokerLog != null )
         {
-            log.debug( "Using " + invokerLog.getAbsolutePath() + " to log the invoker" );
+            if ( log != null && log.isDebugEnabled() )
+            {
+                log.debug( "Using " + invokerLog.getAbsolutePath() + " to log the invoker" );
+            }
 
             try
             {
@@ -1201,7 +1188,7 @@ public class JavadocUtil
             }
             catch ( FileNotFoundException e )
             {
-                if ( log != null )
+                if ( log != null && log.isErrorEnabled() )
                 {
                     log.error( "FileNotFoundException: " + e.getMessage() + ". Using System.out to log the invoker." );
                 }
@@ -1209,7 +1196,7 @@ public class JavadocUtil
             }
             catch ( UnsupportedEncodingException e )
             {
-                if ( log != null )
+                if ( log != null && log.isErrorEnabled() )
                 {
                     log.error( "UnsupportedEncodingException: " + e.getMessage()
                         + ". Using System.out to log the invoker." );
@@ -1219,7 +1206,10 @@ public class JavadocUtil
         }
         else
         {
-            log.debug( "Using System.out to log the invoker." );
+            if ( log != null && log.isDebugEnabled() )
+            {
+                log.debug( "Using System.out to log the invoker." );
+            }
 
             ps = System.out;
         }
@@ -1232,7 +1222,8 @@ public class JavadocUtil
         InvocationOutputHandler outputHandler = new PrintStreamHandler( ps, false );
         request.setOutputHandler( outputHandler );
 
-        outputHandler.consumeLine( "Invoking Maven for the goals: " + goals + " with properties=" + properties );
+        outputHandler.consumeLine( "Invoking Maven for the goals: " + goals + " with "
+            + ( properties == null ? "no properties" : "properties=" + properties ) );
         outputHandler.consumeLine( "" );
         outputHandler.consumeLine( "M2_HOME=" + getMavenHome( log ) );
         outputHandler.consumeLine( "MAVEN_OPTS=" + getMavenOpts( log ) );
@@ -1268,7 +1259,7 @@ public class JavadocUtil
             }
             catch ( IOException e )
             {
-                if ( log != null )
+                if ( log != null && log.isDebugEnabled() )
                 {
                     log.debug( "IOException: " + e.getMessage() );
                 }
@@ -1278,7 +1269,7 @@ public class JavadocUtil
         File m2Home = new File( mavenHome );
         if ( !m2Home.exists() )
         {
-            if ( log != null )
+            if ( log != null && log.isErrorEnabled() )
             {
                 log
                    .error( "Cannot find Maven application directory. Either specify \'maven.home\' system property, or "
@@ -1303,7 +1294,7 @@ public class JavadocUtil
         }
         catch ( IOException e )
         {
-            if ( log != null )
+            if ( log != null && log.isDebugEnabled() )
             {
                 log.debug( "IOException: " + e.getMessage() );
             }
@@ -1339,7 +1330,7 @@ public class JavadocUtil
             }
             catch ( IOException e )
             {
-                if ( log != null )
+                if ( log != null && log.isDebugEnabled() )
                 {
                     log.debug( "IOException: " + e.getMessage() );
                 }
@@ -1348,7 +1339,7 @@ public class JavadocUtil
 
         if ( javaHome == null || !javaHome.exists() )
         {
-            if ( log != null )
+            if ( log != null && log.isErrorEnabled() )
             {
                 log.error( "Cannot find Java application directory. Either specify \'java.home\' system property, or "
                     + "JAVA_HOME environment variable." );
@@ -1372,7 +1363,7 @@ public class JavadocUtil
         }
         catch ( IOException e )
         {
-            if ( log != null )
+            if ( log != null && log.isDebugEnabled() )
             {
                 log.debug( "IOException: " + e.getMessage() );
             }
