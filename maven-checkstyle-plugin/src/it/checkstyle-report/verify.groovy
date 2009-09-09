@@ -19,7 +19,23 @@
  */
 assert new File(basedir, 'target/site/checkstyle.html').exists();
 
+assert new File(basedir, 'target/checkstyle-cachefile').exists();
+assert new File(basedir, 'target/checkstyle-checker.xml').exists();
+assert new File(basedir, 'target/checkstyle-header.txt').exists();
+assert new File(basedir, 'target/checkstyle-result.xml').exists();
+
 File rssFile = new File( basedir, 'target/site/checkstyle.rss' );
 assert rssFile.exists();
+
+def rss = new XmlParser().parse( rssFile );
+
+def channel = rss.channel[0]
+
+assert channel.title.text() == 'Unnamed - org.apache.maven.plugins.checkstyle:check-pass:jar:1.0-SNAPSHOT - Checkstyle report'
+
+def item = channel.item[0]
+assert item != null
+assert item.title.text().startsWith('File: 2,')
+
 
 return true;
