@@ -103,12 +103,18 @@ public class CopyDependenciesMojo
 				throw new MojoExecutionException("Could not create outputDirectory repository", e);
 			}
         }
-
-        artifacts = dss.getSkippedDependencies();
-        for ( Iterator i = artifacts.iterator(); i.hasNext(); )
+    	
+        Set skippedArtifacts = dss.getSkippedDependencies();
+        for ( Iterator i = skippedArtifacts.iterator(); i.hasNext(); )
         {
             Artifact artifact = (Artifact) i.next();
             getLog().info( artifact.getFile().getName() + " already exists in destination." );
+        }
+        
+        if (  isCopyPom() )
+        {
+            copyPoms( getOutputDirectory(), artifacts, this.stripVersion );
+            copyPoms( getOutputDirectory(), skippedArtifacts, this.stripVersion );  // Artifacts that already exist may not already have poms.
         }
     }
 
@@ -184,17 +190,28 @@ public class CopyDependenciesMojo
         File destFile = new File( destDir, destFileName );
 
         copyFile( artifact.getFile(), destFile );
-        // Copy POM if asked
-        if ( isCopyPom() )
+    }
+    
+    /**
+     * Copy the pom files associated with the artifacts.
+     */
+    public void copyPoms( File destDir, Set artifacts, boolean removeVersion ) throws MojoExecutionException
+    
+    {
+        Iterator iter = artifacts.iterator();
+        while ( iter.hasNext() )
         {
-            // Create the pom
+            Artifact artifact = (Artifact)iter.next();
             Artifact pomArtifact = getResolvedPomArtifact( artifact );
             
             // Copy the pom
             if ( pomArtifact.getFile() != null && pomArtifact.getFile().exists() )
             {
                 File pomDestFile = new File( destDir, DependencyUtil.getFormattedFileName( pomArtifact, removeVersion ) );
-                copyFile( pomArtifact.getFile(), pomDestFile );
+                if ( ! pomDestFile.exists() )
+                {
+                    copyFile( pomArtifact.getFile(), pomDestFile );
+                }
             }
         }
     }
