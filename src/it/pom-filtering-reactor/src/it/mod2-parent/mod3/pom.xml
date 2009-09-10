@@ -22,28 +22,20 @@ under the License.
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
+  <parent>
+    <groupId>test</groupId>
+    <artifactId>mod1-parent</artifactId>
+    <version>0.1-SNAPSHOT</version>
+    <relativePath>../mod1-parent</relativePath>
+  </parent>
+
   <groupId>test</groupId>
-  <artifactId>mod2-parent</artifactId>
+  <artifactId>mod3</artifactId>
   <version>0.1-SNAPSHOT</version>
   <packaging>pom</packaging>
-
-  <modules>
-    <module>mod1</module>
-    <module>mod2</module>
-  </modules>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <prop0>@pom.artifactId@</prop0>
   </properties>
-
-  <profiles>
-    <profile>
-      <id>minvoker-93</id>
-      <modules>
-        <module>mod3</module>
-      </modules>
-    </profile>
-  </profiles>
-
 </project>

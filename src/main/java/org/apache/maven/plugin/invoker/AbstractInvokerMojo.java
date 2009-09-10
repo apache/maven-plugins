@@ -25,6 +25,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.invoker.model.BuildJob;
 import org.apache.maven.plugin.invoker.model.io.xpp3.BuildJobXpp3Writer;
 import org.apache.maven.model.Model;
+import org.apache.maven.model.Profile;
 import org.apache.maven.shared.invoker.InvocationRequest;
 import org.apache.maven.shared.invoker.DefaultInvocationRequest;
 import org.apache.maven.shared.invoker.MavenCommandLineBuilder;
@@ -686,16 +687,23 @@ public abstract class AbstractInvokerMojo
                 collectProjects( projectsDir, parent, projectPaths, false );
             }
 
-            if ( model.getModules() != null )
+            Collection modulePaths = new LinkedHashSet();
+
+            modulePaths.addAll( model.getModules() );
+
+            for ( Iterator it = model.getProfiles().iterator(); it.hasNext(); )
             {
-                for ( Iterator it = model.getModules().iterator(); it.hasNext(); )
+                Profile profile = (Profile) it.next();
+                modulePaths.addAll( profile.getModules() );
+            }
+
+            for ( Iterator it = modulePaths.iterator(); it.hasNext(); )
+            {
+                String modulePath = (String) it.next();
+                String module = relativizePath( new File( projectDir, modulePath ), projectsRoot );
+                if ( module != null )
                 {
-                    String modulePath = (String) it.next();
-                    String module = relativizePath( new File( projectDir, modulePath ), projectsRoot );
-                    if ( module != null )
-                    {
-                        collectProjects( projectsDir, module, projectPaths, false );
-                    }
+                    collectProjects( projectsDir, module, projectPaths, false );
                 }
             }
         }
