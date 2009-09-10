@@ -23,27 +23,13 @@ under the License.
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>test</groupId>
-  <artifactId>mod2-parent</artifactId>
+  <artifactId>unfiltered</artifactId>
   <version>0.1-SNAPSHOT</version>
   <packaging>pom</packaging>
 
-  <modules>
-    <module>mod1</module>
-    <module>mod2</module>
-  </modules>
-
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <!-- this POM is not related to the reactor invocation and must as such stay unfiltered -->
     <prop0>@pom.artifactId@</prop0>
   </properties>
-
-  <profiles>
-    <profile>
-      <id>minvoker-93</id>
-      <modules>
-        <module>mod3</module>
-      </modules>
-    </profile>
-  </profiles>
-
 </project>
