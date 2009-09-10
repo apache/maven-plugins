@@ -3,7 +3,7 @@
  ------
  Vincent Siveton
  ------
- 2009-08-19
+ 2009-09-10
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -37,21 +37,22 @@ Using Javadoc Resources
 
 yourproject
   |-- src
-    |-- main
-      |-- java
-      |  |-- org
-      |     |-- apache
-      |        |-- myapp
-      |         `-- App.java
-      |         `-- package-info.java
-      |-- javadoc
-       `-- overview.html
-         |-- org
-            |-- apache
-               |-- myapp
-                `-- package.html
-                  |-- doc-files
-                   `-- app.png
+     |-- main
+        |-- java
+        |  |-- org
+        |     |-- apache
+        |        |-- myapp
+        |         `-- App.java
+        |         `-- package-info.java
+        |-- javadoc
+         `-- overview.html
+           |-resources
+           |-- org
+              |-- apache
+                 |-- myapp
+                  `-- package.html
+                    |-- doc-files
+                     `-- app.png
 +-----+
 
 * Overview Comment File: <overview.html>
@@ -110,7 +111,7 @@ yourproject
  {{{http://java.sun.com/j2se/javadoc/writingdoccomments/index.html#packagecomments}
  How to Write Doc Comments for the Javadoc Tool, Package-Level Comments}}.
 
- Here is an example of a <package.html> file, located in <$\{basedir\}/src/main/javadoc/org/apache/test/package.html>:
+ Here is an example of a <package.html> file, located in <$\{basedir\}/src/main/javadoc/org/apache/myapp/package.html>:
 
 +-----+
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
@@ -130,14 +131,14 @@ yourproject
  For more information, see {{{http://java.sun.com/j2se/1.5.0/docs/tooldocs/windows/javadoc.html#packagecomment}
  javadoc - The Java API Documentation Generator, Package Comment Files}}.
 
- Here is an example of a <package-info.java> file, located in <$\{basedir\}/src/main/java/org/apache/test/package-info.java>:
+ Here is an example of a <package-info.java> file, located in <$\{basedir\}/src/main/java/org/apache/myapp/package-info.java>:
 
 +-----+
 /**
  * This is the core package for the application
  * @since 1.0
  */
-package org.apache.test;
+package org.apache.myapp;
 +-----+
 
 * Miscellaneous Unprocessed Files: <doc-files>
@@ -148,10 +149,15 @@ package org.apache.test;
  javadoc - The Java API Documentation Generator, Miscellaneous Unprocessed Files}} and {{{http://java.sun.com/j2se/javadoc/writingdoccomments/index.html#images}
  How to Write Doc Comments for the Javadoc Tool, Including Images }}.
 
- Here is a sample javadoc comment to use images, located in <$\{basedir\}/src/main/javadoc/org/apache/test/doc-files> directory:
+ In addition to <doc-files> directories, since 2.6.1, the specific <src/main/javadoc/resources> directory will be
+ copied to the generated Javadoc resources directory (i.e. <apidocs/resources>). This is usefull when you want to
+ overwite default Javadoc tool resources, like the default <inherit.gif> to one with a transparent background
+ (See {{{../images/inherit.gif}GIF}} or {{{../images/inherit.psd}PSD}}).
+
+ Here is a sample javadoc comment to use <app.png> image, located in <$\{basedir\}/src/main/javadoc/org/apache/myapp/doc-files> directory:
 
 +-----+
-package org.apache.test;
+package org.apache.myapp;
 
 /**
  * The main Class launches the application.
