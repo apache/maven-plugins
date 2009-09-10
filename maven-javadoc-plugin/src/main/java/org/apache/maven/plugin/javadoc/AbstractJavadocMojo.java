@@ -873,7 +873,9 @@ public abstract class AbstractJavadocMojo
     private String docencoding;
 
     /**
-     * Enables deep copying of "doc-files" directories.
+     * Enables deep copying of the <code>&#42;&#42;/doc-files</code> directories and the specifc <code>resources</code>
+     * directory from the <code>javadocDirectory</code> directory (for instance,
+     * <code>src/main/javadoc/com/mycompany/myapp/doc-files</code> and <code>src/main/javadoc/resources</code>).
      * <br/>
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#docfilessubdirs">
      * docfilessubdirs</a>.

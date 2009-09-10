@@ -326,6 +326,11 @@ public class JavadocUtil
     protected static void copyJavadocResources( File outputDirectory, File javadocDir, String excludedocfilessubdir )
         throws IOException
     {
+        if ( !javadocDir.isDirectory() )
+        {
+            return;
+        }
+
         List excludes = new ArrayList();
         excludes.addAll( Arrays.asList( FileUtils.getDefaultExcludes() ) );
 
@@ -340,34 +345,30 @@ public class JavadocUtil
             }
         }
 
-        if ( javadocDir.exists() && javadocDir.isDirectory() )
+        List docFiles =
+            FileUtils.getDirectoryNames( javadocDir, "resources,**/doc-files",
+                                         StringUtils.join( excludes.iterator(), "," ), false, true );
+        for ( Iterator it = docFiles.iterator(); it.hasNext(); )
         {
-            List docFiles =
-                FileUtils.getDirectoryNames( javadocDir, "**/doc-files", StringUtils.join( excludes.iterator(),
-                                                                                           "," ), false, true );
-            for ( Iterator it = docFiles.iterator(); it.hasNext(); )
+            String docFile = (String) it.next();
+
+            File docFileOutput = new File( outputDirectory, docFile );
+            FileUtils.mkdir( docFileOutput.getAbsolutePath() );
+            FileUtils.copyDirectoryStructure( new File( javadocDir, docFile ), docFileOutput );
+            List files =
+                FileUtils.getFileAndDirectoryNames( docFileOutput, StringUtils.join( excludes.iterator(), "," ),
+                                                    null, true, true, true, true );
+            for ( Iterator it2 = files.iterator(); it2.hasNext(); )
             {
-                String docFile = (String) it.next();
+                File file = new File( it2.next().toString() );
 
-                File docFileOutput = new File( outputDirectory, docFile );
-                FileUtils.mkdir( docFileOutput.getAbsolutePath() );
-                FileUtils.copyDirectoryStructure( new File( javadocDir, docFile ), docFileOutput );
-                List files =
-                    FileUtils.getFileAndDirectoryNames( docFileOutput,
-                                                        StringUtils.join( excludes.iterator(), "," ), null, true,
-                                                        true, true, true );
-                for ( Iterator it2 = files.iterator(); it2.hasNext(); )
+                if ( file.isDirectory() )
                 {
-                    File file = new File( it2.next().toString() );
-
-                    if ( file.isDirectory() )
-                    {
-                        FileUtils.deleteDirectory( file );
-                    }
-                    else
-                    {
-                        file.delete();
-                    }
+                    FileUtils.deleteDirectory( file );
+                }
+                else
+                {
+                    file.delete();
                 }
             }
         }
