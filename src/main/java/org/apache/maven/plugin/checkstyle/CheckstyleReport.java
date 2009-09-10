@@ -38,6 +38,8 @@ import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.doxia.tools.SiteTool;
 import org.apache.maven.model.ReportPlugin;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.checkstyle.rss.CheckstyleRssGenerator;
+import org.apache.maven.plugin.checkstyle.rss.CheckstyleRssGeneratorRequest;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.MavenReportException;
@@ -90,9 +92,8 @@ import java.util.ResourceBundle;
  */
 public class CheckstyleReport
     extends AbstractMavenReport
-    implements Serviceable
 {
-    private static final String PLUGIN_RESOURCES = "org/apache/maven/plugin/checkstyle";
+    public static final String PLUGIN_RESOURCES = "org/apache/maven/plugin/checkstyle";
 
     /**
      * @deprecated Remove with format parameter.
@@ -502,24 +503,7 @@ public class CheckstyleReport
      * @readonly
      */
     private Renderer siteRenderer;
-
-    /**
-     * Velocity Component.
-     */
-    private VelocityComponent velocityComponent;
-
-    /**
-     * ServiceLocator used to lookup VelocityComponent
-     * Fix for MCHECKSTYLE-101 to avoid VelocityComponent beeing initialized when skip=true
-     */
-    private ServiceLocator serviceLocator;
-
-    /** {@inheritDoc} */
-    public void service( ServiceLocator locator )
-    {
-        this.serviceLocator = locator;
-    }
-
+    
     private static final File[] EMPTY_FILE_ARRAY = new File[0];
 
     private ByteArrayOutputStream stringOutputStream;
@@ -530,6 +514,16 @@ public class CheckstyleReport
      * @readonly
      */
     private ResourceManager locator;
+    
+    /**
+     * CheckstyleRssGenerator.
+     *
+     * @since 2.4
+     * @component role="org.apache.maven.plugin.checkstyle.rss.CheckstyleRssGenerator" role-hint="default"
+     * @required
+     * @readonly
+     */
+    protected CheckstyleRssGenerator checkstyleRssGenerator;    
 
     /** {@inheritDoc} */
     public String getName( Locale locale )
@@ -641,7 +635,9 @@ public class CheckstyleReport
                 generateMainReport( results, config, moduleFactory, bundle );
                 if ( enableRSS )
                 {
-                    generateRSS( results );
+                    CheckstyleRssGeneratorRequest request =
+                        new CheckstyleRssGeneratorRequest( this.project, this.getCopyright(), outputDirectory, getLog() );
+                    checkstyleRssGenerator.generateRSS( results, request );
                 }
 
             }
@@ -671,55 +667,7 @@ public class CheckstyleReport
         }
     }
 
-    private void generateRSS( CheckstyleResults results )
-        throws MavenReportException
-    {
-        if ( velocityComponent == null )
-        {
-            try
-            {
-                velocityComponent = (VelocityComponent) serviceLocator.lookup( VelocityComponent.ROLE );
-            }
-            catch ( ComponentLookupException e )
-            {
-                throw new MavenReportException( "Failed to setup Velocity", e );
-            }
-        }
-
-        VelocityTemplate vtemplate = new VelocityTemplate( velocityComponent, PLUGIN_RESOURCES );
-        vtemplate.setLog( getLog() );
-
-        Context context = new VelocityContext();
-        context.put( "results", results );
-        context.put( "project", project );
-        context.put( "copyright", getCopyright() );
-        context.put( "levelInfo", SeverityLevel.INFO );
-        context.put( "levelWarning", SeverityLevel.WARNING );
-        context.put( "levelError", SeverityLevel.ERROR );
-        context.put( "stringutils", new StringUtils() );
-
-        try
-        {
-            vtemplate.generate( outputDirectory.getPath() + "/checkstyle.rss", "checkstyle-rss.vm", context );
-        }
-        catch ( ResourceNotFoundException e )
-        {
-            throw new MavenReportException( "Unable to find checkstyle-rss.vm resource.", e );
-        }
-        catch ( MojoExecutionException e )
-        {
-            throw new MavenReportException( "Unable to generate checkstyle.rss.", e );
-        }
-        catch ( VelocityException e )
-        {
-            throw new MavenReportException( "Unable to generate checkstyle.rss.", e );
-        }
-        catch ( IOException e )
-        {
-            throw new MavenReportException( "Unable to generate checkstyle.rss.", e );
-        }
-    }
-
+    
     private String getCopyright()
     {
         String copyright;
