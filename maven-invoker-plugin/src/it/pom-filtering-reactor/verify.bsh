@@ -34,7 +34,8 @@ boolean check( String project, boolean filtered )
 try
 {
     return check( "mod2-parent", true ) && check( "mod2-parent/mod2", true ) && check( "mod2-parent/mod1-parent", true )
-            && check( "mod2-parent/mod1", true ) && check( "mod2-parent/mod1/src/it", false );
+            && check( "mod2-parent/mod1", true ) && check( "mod2-parent/mod3", true)
+            && check( "mod2-parent/mod1/src/it", false );
 }
 catch( Throwable t )
 {
