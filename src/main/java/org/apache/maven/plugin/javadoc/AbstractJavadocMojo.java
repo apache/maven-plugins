@@ -973,24 +973,24 @@ public abstract class AbstractJavadocMojo
      * Where <code>path/to/your/resource/yourhelp-doc.html</code> could be in <code>src/main/javadoc</code>.
      * <pre>
      * &lt;build&gt;
-     *   &lt;plugins&gt;
-     *     &lt;plugin&gt;
-     *       &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
-     *       &lt;artifactId&gt;maven-javadoc-plugin&lt;/artifactId&gt;
-     *       &lt;configuration&gt;
-     *         &lt;stylesheetfile&gt;path/to/your/resource/yourhelp-doc.html&lt;/stylesheetfile&gt;
-     *         ...
-     *       &lt;/configuration&gt;
-     *       &lt;dependencies&gt;
-     *         &lt;dependency&gt;
-     *           &lt;groupId&gt;groupId&lt;/groupId&gt;
-     *           &lt;artifactId&gt;artifactId&lt;/artifactId&gt;
-     *           &lt;version&gt;version&lt;/version&gt;
-     *         &lt;/dependency&gt;
-     *       &lt;/dependencies&gt;
-     *     &lt;/plugin&gt;
-     *     ...
-     *   &lt;plugins&gt;
+     * &nbsp;&nbsp;&lt;plugins&gt;
+     * &nbsp;&nbsp;&nbsp;&nbsp;&lt;plugin&gt;
+     * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+     * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;artifactId&gt;maven-javadoc-plugin&lt;/artifactId&gt;
+     * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;configuration&gt;
+     * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;helpfile&gt;path/to/your/resource/yourhelp-doc.html&lt;/helpfile&gt;
+     * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;...
+     * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/configuration&gt;
+     * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;dependencies&gt;
+     * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;dependency&gt;
+     * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;groupId&gt;groupId&lt;/groupId&gt;
+     * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;artifactId&gt;artifactId&lt;/artifactId&gt;
+     * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;version&gt;version&lt;/version&gt;
+     * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/dependency&gt;
+     * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/dependencies&gt;
+     * &nbsp;&nbsp;&nbsp;&nbsp;&lt;/plugin&gt;
+     * &nbsp;&nbsp;&nbsp;&nbsp;...
+     * &nbsp;&nbsp;&lt;plugins&gt;
      * &lt;/build&gt;
      * </pre>
      * Where <code>path/to/your/resource/yourhelp-doc.html</code> is defined in the
@@ -1297,24 +1297,24 @@ public abstract class AbstractJavadocMojo
      * Where <code>path/to/your/resource/yourstylesheet.css</code> could be in <code>src/main/javadoc</code>.
      * <pre>
      * &lt;build&gt;
-     *   &lt;plugins&gt;
-     *     &lt;plugin&gt;
-     *       &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
-     *       &lt;artifactId&gt;maven-javadoc-plugin&lt;/artifactId&gt;
-     *       &lt;configuration&gt;
-     *         &lt;stylesheetfile&gt;path/to/your/resource/yourstylesheet.css&lt;/stylesheetfile&gt;
-     *         ...
-     *       &lt;/configuration&gt;
-     *       &lt;dependencies&gt;
-     *         &lt;dependency&gt;
-     *           &lt;groupId&gt;groupId&lt;/groupId&gt;
-     *           &lt;artifactId&gt;artifactId&lt;/artifactId&gt;
-     *           &lt;version&gt;version&lt;/version&gt;
-     *         &lt;/dependency&gt;
-     *       &lt;/dependencies&gt;
-     *     &lt;/plugin&gt;
-     *     ...
-     *   &lt;plugins&gt;
+     * &nbsp;&nbsp;&lt;plugins&gt;
+     * &nbsp;&nbsp;&nbsp;&nbsp;&lt;plugin&gt;
+     * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+     * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;artifactId&gt;maven-javadoc-plugin&lt;/artifactId&gt;
+     * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;configuration&gt;
+     * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;stylesheetfile&gt;path/to/your/resource/yourstylesheet.css&lt;/stylesheetfile&gt;
+     * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;...
+     * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/configuration&gt;
+     * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;dependencies&gt;
+     * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;dependency&gt;
+     * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;groupId&gt;groupId&lt;/groupId&gt;
+     * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;artifactId&gt;artifactId&lt;/artifactId&gt;
+     * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;version&gt;version&lt;/version&gt;
+     * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/dependency&gt;
+     * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/dependencies&gt;
+     * &nbsp;&nbsp;&nbsp;&nbsp;&lt;/plugin&gt;
+     * &nbsp;&nbsp;&nbsp;&nbsp;...
+     * &nbsp;&nbsp;&lt;plugins&gt;
      * &lt;/build&gt;
      * </pre>
      * Where <code>path/to/your/resource/yourstylesheet.css</code> is defined in the
@@ -3325,7 +3325,7 @@ public abstract class AbstractJavadocMojo
      * @param anOutputDirectory the output directory
      * @throws java.io.IOException if any
      * @see #DEFAULT_CSS_NAME
-     * @see #copyResource(File, URL)
+     * @see JavadocUtil#copyResource(File, URL)
      */
     private void copyDefaultStylesheet( File anOutputDirectory )
         throws IOException
