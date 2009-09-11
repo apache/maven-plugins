@@ -33,6 +33,7 @@ import org.apache.maven.model.Resource;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugin.resources.remote.io.xpp3.RemoteResourcesBundleXpp3Reader;
 import org.apache.maven.plugin.resources.remote.io.xpp3.SupplementalDataModelXpp3Reader;
 import org.apache.maven.project.InvalidProjectModelException;
@@ -163,6 +164,15 @@ public class ProcessRemoteResourcesMojo
      * @since 1.1
      */
     protected boolean runOnlyAtExecutionRoot;
+    
+    /**
+     * Used for calculation of execution-root for {@link ProcessRemoteResourcesMojo#runOnlyAtExecutionRoot}.
+     * 
+     * @parameter default-value="${basedir}"
+     * @readonly
+     * @required
+     */
+    protected File basedir;
     
     /**
      * The character encoding scheme to be applied when filtering resources.
@@ -433,6 +443,13 @@ public class ProcessRemoteResourcesMojo
         {
             return;
         }
+        
+        if ( runOnlyAtExecutionRoot && !isExecutionRoot() )
+        {
+            getLog().info( "Skipping remote-resource generation in this project because it's not the Execution Root" );
+            return;
+        }
+        
         if ( supplementalModels == null )
         {
             File sups = new File( appendedResourcesDirectory, "supplemental-models.xml" );
@@ -514,6 +531,30 @@ public class ProcessRemoteResourcesMojo
         {
             Thread.currentThread().setContextClassLoader( origLoader );
         }
+    }
+
+    private boolean isExecutionRoot()
+    {
+        Log log = this.getLog();
+        
+        boolean result = mavenSession.getExecutionRootDirectory().equalsIgnoreCase( basedir.toString() );
+        
+        if ( log.isDebugEnabled() )
+        {
+            log.debug("Root Folder:" + mavenSession.getExecutionRootDirectory());
+            log.debug("Current Folder:"+ basedir );
+            
+            if ( result )
+            {
+                log.debug( "This is the execution root." );
+            }
+            else
+            {
+                log.debug( "This is NOT the execution root." );
+            }
+        }
+        
+        return result;
     }
 
     private void addSupplementalModelArtifacts() throws MojoExecutionException
