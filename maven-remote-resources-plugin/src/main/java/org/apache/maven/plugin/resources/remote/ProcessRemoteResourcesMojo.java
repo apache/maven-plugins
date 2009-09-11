@@ -93,7 +93,6 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -149,13 +148,13 @@ public class ProcessRemoteResourcesMojo
      * @parameter
      * @since 1.1
      */
-    protected List filterDelimiters;
+    protected List<String> filterDelimiters;
 
     /**
      * @parameter default-value="true"
      * @since 1.1
      */
-    protected boolean filterUsesDefaultDelimiters;
+    protected boolean useDefaultFilterDelimiters;
     
     /**
      * If true, only generate resources in the directory of the root project in a multimodule build.
@@ -198,7 +197,7 @@ public class ProcessRemoteResourcesMojo
      * @readonly
      * @required
      */
-    private List remoteArtifactRepositories;
+    private List<ArtifactRepository> remoteArtifactRepositories;
 
     /**
      * The current Maven project.
@@ -241,15 +240,13 @@ public class ProcessRemoteResourcesMojo
      * @parameter
      * @since 1.1 
      */
-    private List supplementalModelArtifacts;
+    private List<String> supplementalModelArtifacts;
 
     /**
      * Map of artifacts to supplemental project object models.
      */
-    private Map supplementModels;
+    private Map<String, Model> supplementModels;
     
-    
-
     /**
      * Merges supplemental data model with artifact
      * metadata.  Useful when processing artifacts with
@@ -267,7 +264,7 @@ public class ProcessRemoteResourcesMojo
      * @parameter
      * @required
      */
-    private List resourceBundles;
+    private List<String> resourceBundles;
 
     /**
      * Skip remote-resource processing
@@ -298,7 +295,7 @@ public class ProcessRemoteResourcesMojo
      *
      * @parameter
      */
-    private Map properties = new HashMap();
+    private Map<String, String> properties = new HashMap<String, String>();
 
     /**
      * The list of resources defined for the project.
@@ -307,7 +304,7 @@ public class ProcessRemoteResourcesMojo
      * @readonly
      * @required
      */
-    private List resources;
+    private List<Resource> resources;
 
     /**
      * Artifact downloader.
@@ -437,6 +434,7 @@ public class ProcessRemoteResourcesMojo
      */
     protected ProjectDependenciesResolver dependencyResolver;
 
+    @SuppressWarnings( "unchecked" )
     public void execute()
         throws MojoExecutionException
     {
@@ -484,7 +482,7 @@ public class ProcessRemoteResourcesMojo
 
             validate();
 
-            List resourceBundleArtifacts = downloadBundles( resourceBundles );
+            List<File> resourceBundleArtifacts = downloadBundles( resourceBundles );
             supplementModels = loadSupplements( supplementalModels );
 
             VelocityContext context = new VelocityContext( properties );
@@ -562,12 +560,10 @@ public class ProcessRemoteResourcesMojo
     {
         if ( supplementalModelArtifacts != null && !supplementalModelArtifacts.isEmpty() )
         {
-            List artifacts = downloadBundles( supplementalModelArtifacts );
+            List<File> artifacts = downloadBundles( supplementalModelArtifacts );
             
-            for ( Iterator i = artifacts.iterator(); i.hasNext(); )
+            for ( File artifact : artifacts )
             {
-                File artifact = (File) i.next();
-                
                 if ( artifact.isDirectory() ) 
                 {
                     locator.addSearchPath( FileResourceLoader.ID, artifact.getAbsolutePath() );
@@ -590,16 +586,17 @@ public class ProcessRemoteResourcesMojo
         }
     }
 
-    protected List getProjects()
+    @SuppressWarnings( "unchecked" )
+    protected List<MavenProject> getProjects()
         throws MojoExecutionException
     {
-        List projects = new ArrayList();
+        List<MavenProject> projects = new ArrayList<MavenProject>();
 
         // add filters in well known order, least specific to most specific
         FilterArtifacts filter = new FilterArtifacts();
         
-        Set depArtifacts;
-        Set artifacts = resolveProjectArtifacts();
+        Set<Artifact> depArtifacts;
+        Set<Artifact> artifacts = resolveProjectArtifacts();
         if ( runOnlyAtExecutionRoot )
         {
             depArtifacts = aggregateProjectDependencyArtifacts();
@@ -625,12 +622,11 @@ public class ProcessRemoteResourcesMojo
         }
 
 
-        for ( Iterator it = artifacts.iterator(); it.hasNext(); )
+        for ( Artifact artifact : artifacts )
         {
-            Artifact artifact = (Artifact) it.next();
             try
             {
-                List remoteRepo = remoteArtifactRepositories;
+                List<ArtifactRepository> remoteRepo = remoteArtifactRepositories;
                 if ( artifact.isSnapshot() )
                 {
                     VersionRange rng = VersionRange.createFromVersion( artifact.getBaseVersion() );
@@ -682,14 +678,15 @@ public class ProcessRemoteResourcesMojo
         return projects;
     }
 
-    private Set resolveProjectArtifacts()
+    @SuppressWarnings( "unchecked" )
+    private Set<Artifact> resolveProjectArtifacts()
         throws MojoExecutionException
     {
         try
         {
             if ( runOnlyAtExecutionRoot )
             {
-                List projects = mavenSession.getSortedProjects();
+                List<MavenProject> projects = mavenSession.getSortedProjects();
                 return dependencyResolver.resolve( projects, Collections.singleton( Artifact.SCOPE_TEST ), mavenSession );
             }
             else
@@ -709,20 +706,20 @@ public class ProcessRemoteResourcesMojo
         }
     }
 
-    private Set aggregateProjectDependencyArtifacts()
+    @SuppressWarnings( "unchecked" )
+    private Set<Artifact> aggregateProjectDependencyArtifacts()
         throws MojoExecutionException
     {
-        Set artifacts = new LinkedHashSet();
+        Set<Artifact> artifacts = new LinkedHashSet<Artifact>();
         
-        List projects = mavenSession.getSortedProjects();
-        for ( Iterator it = projects.iterator(); it.hasNext(); )
+        List<MavenProject> projects = mavenSession.getSortedProjects();
+        for ( MavenProject p : projects )
         {
-            MavenProject p = (MavenProject) it.next();
             if ( p.getDependencyArtifacts() == null )
             {
                 try
                 {
-                    Set depArtifacts = p.createArtifacts( artifactFactory, null, null );
+                    Set<Artifact> depArtifacts = p.createArtifacts( artifactFactory, null, null );
                     p.setDependencyArtifacts( depArtifacts );
                     
                     if ( depArtifacts != null && !depArtifacts.isEmpty() )
@@ -741,22 +738,20 @@ public class ProcessRemoteResourcesMojo
         return artifacts;
     }
 
-    protected Map getProjectsSortedByOrganization( List projects )
+    protected Map<Organization, List<MavenProject>> getProjectsSortedByOrganization( List<MavenProject> projects )
         throws MojoExecutionException
     {
-        Map organizations = new TreeMap( new OrganizationComparator() );
-        List unknownOrganization = new ArrayList();
+        Map<Organization, List<MavenProject>> organizations = new TreeMap<Organization, List<MavenProject>>( new OrganizationComparator() );
+        List<MavenProject> unknownOrganization = new ArrayList<MavenProject>();
 
-        for ( Iterator i = projects.iterator(); i.hasNext(); )
+        for ( MavenProject p : projects )
         {
-            MavenProject p = (MavenProject) i.next();
-
             if ( p.getOrganization() != null && StringUtils.isNotEmpty( p.getOrganization().getName() ) )
             {
-                List sortedProjects = (List) organizations.get( p.getOrganization() );
+                List<MavenProject> sortedProjects = (List<MavenProject>) organizations.get( p.getOrganization() );
                 if ( sortedProjects == null )
                 {
-                    sortedProjects = new ArrayList();
+                    sortedProjects = new ArrayList<MavenProject>();
                 }
                 sortedProjects.add( p );
 
@@ -780,9 +775,8 @@ public class ProcessRemoteResourcesMojo
     protected boolean copyResourceIfExists( File file, String relFileName, VelocityContext context )
         throws IOException, MojoExecutionException
     {
-        for ( Iterator i = resources.iterator(); i.hasNext(); )
+        for ( Resource resource : resources )
         {
-            Resource resource = (Resource) i.next();
             File resourceDirectory = new File( resource.getDirectory() );
 
             if ( !resourceDirectory.exists() )
@@ -868,6 +862,7 @@ public class ProcessRemoteResourcesMojo
         return false;
     }
 
+    @SuppressWarnings( "unchecked" )
     private MavenFileFilterRequest setupRequest( Resource resource, File source, File file )
     {
         MavenFileFilterRequest req = new MavenFileFilterRequest();
@@ -886,12 +881,23 @@ public class ProcessRemoteResourcesMojo
         
         if ( filterDelimiters != null && !filterDelimiters.isEmpty() )
         {
-            LinkedHashSet delims = new LinkedHashSet();
-            if ( filterUsesDefaultDelimiters )
+            LinkedHashSet<String> delims = new LinkedHashSet<String>();
+            if ( useDefaultFilterDelimiters )
             {
                 delims.addAll( req.getDelimiters() );
             }
-            delims.addAll( filterDelimiters );
+            
+            for ( String delim : filterDelimiters )
+            {
+                if ( delim == null )
+                {
+                    delims.add( "${*}" );
+                }
+                else
+                {
+                    delims.add( delim );
+                }
+            }
             
             req.setDelimiters( delims );
         }
@@ -904,10 +910,8 @@ public class ProcessRemoteResourcesMojo
     {
         int bundleCount = 1;
 
-        for ( Iterator i = resourceBundles.iterator(); i.hasNext(); )
+        for ( String artifactDescriptor : resourceBundles )
         {
-            String artifactDescriptor = (String) i.next();
-
             // groupId:artifactId:version
             String[] s = StringUtils.split( artifactDescriptor, ":" );
 
@@ -959,7 +963,7 @@ public class ProcessRemoteResourcesMojo
             inceptionYear = year;
         }
         context.put( "project", project );
-        List projects = getProjects();
+        List<MavenProject> projects = getProjects();
         context.put( "projects", projects );
         context.put( "projectsSortedByOrganization", getProjectsSortedByOrganization( projects ) );
 
@@ -975,27 +979,25 @@ public class ProcessRemoteResourcesMojo
         }
     }
 
-    private List downloadBundles( List bundles )
+    @SuppressWarnings( "unchecked" )
+    private List<File> downloadBundles( List<String> bundles )
         throws MojoExecutionException
     {
-        List bundleArtifacts = new ArrayList();
+        List<File> bundleArtifacts = new ArrayList<File>();
 
         try
         {
-            for ( Iterator i = bundles.iterator(); i.hasNext(); )
+            for ( String artifactDescriptor : bundles )
             {
-                String artifactDescriptor = (String) i.next();
                 // groupId:artifactId:version
                 String[] s = artifactDescriptor.split( ":" );
                 File artifact = null;
                 //check if the artifact is part of the reactor
                 if ( mavenSession != null ) 
                 {
-                    List list = mavenSession.getSortedProjects();
-                    Iterator it = list.iterator();
-                    while ( it.hasNext() )
+                    List<MavenProject> list = mavenSession.getSortedProjects();
+                    for ( MavenProject p : list )
                     {
-                        MavenProject p = (MavenProject) it.next();
                         if ( s[0].equals( p.getGroupId() )
                             && s[1].equals( p.getArtifactId() ) 
                             && s[2].equals( p.getVersion() ) ) 
@@ -1024,14 +1026,13 @@ public class ProcessRemoteResourcesMojo
         return bundleArtifacts;
     }
 
-    private void initalizeClassloader( RemoteResourcesClassLoader cl, List artifacts )
+    private void initalizeClassloader( RemoteResourcesClassLoader cl, List<File> artifacts )
         throws MojoExecutionException
     {
         try
         {
-            for ( Iterator i = artifacts.iterator(); i.hasNext(); )
+            for ( File artifact : artifacts )
             {
-                File artifact = (File) i.next();
                 cl.addURL( artifact.toURI().toURL() );
             }
         }
@@ -1041,6 +1042,7 @@ public class ProcessRemoteResourcesMojo
         }
     }
 
+    @SuppressWarnings( "unchecked" )
     protected void processResourceBundles( RemoteResourcesClassLoader classLoader, VelocityContext context )
         throws MojoExecutionException
     {
@@ -1049,7 +1051,7 @@ public class ProcessRemoteResourcesMojo
         try
         {
 
-            for ( Enumeration e = classLoader.getResources( BundleRemoteResourcesMojo.RESOURCES_MANIFEST );
+            for ( Enumeration<URL> e = classLoader.getResources( BundleRemoteResourcesMojo.RESOURCES_MANIFEST );
                   e.hasMoreElements(); )
             {
                 URL url = (URL) e.nextElement();
@@ -1062,10 +1064,8 @@ public class ProcessRemoteResourcesMojo
 
                     RemoteResourcesBundle bundle = bundleReader.read( reader );
 
-                    for ( Iterator i = bundle.getRemoteResources().iterator(); i.hasNext(); )
+                    for ( String bundleResource : (List<String>) bundle.getRemoteResources() )
                     {
-                        String bundleResource = (String) i.next();
-
                         String projectResource = bundleResource;
 
                         boolean doVelocity = false;
@@ -1239,16 +1239,17 @@ public class ProcessRemoteResourcesMojo
         return groupId.trim() + ":" + artifactId.trim();
     }
 
-    private Map loadSupplements( String models[] )
+    @SuppressWarnings( "unchecked" )
+    private Map<String, Model> loadSupplements( String models[] )
         throws MojoExecutionException
     {
         if ( models == null )
         {
             getLog().debug( "Supplemental data models won't be loaded.  " + "No models specified." );
-            return Collections.EMPTY_MAP;
+            return Collections.emptyMap();
         }
 
-        List supplements = new ArrayList();
+        List<Supplement> supplements = new ArrayList<Supplement>();
         for ( int idx = 0; idx < models.length; idx++ )
         {
             String set = models[idx];
@@ -1283,11 +1284,9 @@ public class ProcessRemoteResourcesMojo
 
         getLog().debug( "Loading supplements complete." );
 
-        Map supplementMap = new HashMap();
-        for ( Iterator i = supplements.iterator(); i.hasNext(); )
+        Map<String, Model> supplementMap = new HashMap<String, Model>();
+        for ( Supplement sd : supplements )
         {
-            Supplement sd = (Supplement) i.next();
-
             Xpp3Dom dom = (Xpp3Dom) sd.getProject();
 
             Model m = getSupplement( dom );
@@ -1319,12 +1318,10 @@ public class ProcessRemoteResourcesMojo
     }
 
     class OrganizationComparator
-        implements Comparator
+        implements Comparator<Organization>
     {
-        public int compare( Object o1, Object o2 )
+        public int compare( Organization org1, Organization org2 )
         {
-            Organization org1 = (Organization) o1;
-            Organization org2 = (Organization) o2;
             int i = compareStrings( org1.getName(), org2.getName() );
             if (i == 0)
             {
@@ -1333,7 +1330,7 @@ public class ProcessRemoteResourcesMojo
             return i;
         }
 
-        public boolean equals( Object o1, Object o2 )
+        public boolean equals( Organization o1, Organization o2 )
         {
             return compare(o1, o2) == 0;
         }
@@ -1357,21 +1354,16 @@ public class ProcessRemoteResourcesMojo
     }
 
     class ProjectComparator
-        implements Comparator
+        implements Comparator<MavenProject>
     {
-        public int compare( Object o1, Object o2 )
+        @SuppressWarnings( "unchecked" )
+        public int compare( MavenProject p1, MavenProject p2 )
         {
-            MavenProject p1 = (MavenProject) o1;
-            MavenProject p2 = (MavenProject) o2;
-
             return p1.getArtifact().compareTo( p2.getArtifact() );
         }
 
-        public boolean equals( Object o1, Object o2 )
+        public boolean equals( MavenProject p1, MavenProject p2 )
         {
-            MavenProject p1 = (MavenProject) o1;
-            MavenProject p2 = (MavenProject) o2;
-
             return p1.getArtifact().equals( p2.getArtifact() );
         }
     }
