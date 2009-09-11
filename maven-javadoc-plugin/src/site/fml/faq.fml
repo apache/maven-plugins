@@ -21,8 +21,8 @@ under the License.
 
 
 <faqs xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xmlns="http://maven.apache.org/FML/1.0"
-  xsi:schemaLocation="http://maven.apache.org/FML/1.0 http://maven.apache.org/xsd/fml-1.0.xsd"
+  xmlns="http://maven.apache.org/FML/1.0.1"
+  xsi:schemaLocation="http://maven.apache.org/FML/1.0.1 http://maven.apache.org/xsd/fml-1.0.1.xsd"
   id="FAQ" title="Frequently Asked Questions">
   <part id="General">
     <faq id="What are the Javadoc options supported by the Maven Javadoc Plugin">
@@ -32,7 +32,7 @@ under the License.
           All options provided by Sun on the Javadoc homepages are wrapped in the Maven Javadoc Plugin. This
           plugin supports Javadoc 1.4, 1.5 and 6.0 options. Refer you to the
           <a href="./apidocs/org/apache/maven/plugin/javadoc/package-summary.html">Javadoc Package Summary</a>
-          for more information.
+          for more information and to the <a href="./javadoc-mojo.html">Javadoc Plugin Documentation</a>.
         </p>
       </answer>
     </faq>
@@ -40,13 +40,17 @@ under the License.
       <question>Where in the pom.xml do I configure the Javadoc Plugin?</question>
       <answer>
         <p>
-          Like all other site report plugins, the Javadoc Plugin goes in the <i>&lt;reporting/&gt;</i> section
+          Like all other reporting plugins, the Javadoc Plugin goes in the <i>&lt;reporting/&gt;</i> section
           of your pom.xml. In this case, you will need to call <code>mvn site</code> to run reports.
         </p>
         <p>
-          You could also configure it in the &lt;plugins/&gt; or &lt;pluginsManagement/&gt; in &lt;build/&gt; tag
-          of your pom.xml. In this case, you will need to call <code>mvn javadoc:javadoc</code> to run the main
-          report.
+          You could also configure it in the <i>&lt;plugins/&gt;</i> or <i>&lt;pluginsManagement/&gt;</i> in
+          <i>&lt;build/&gt;</i> tag of your pom.xml. In this case, you will need to call
+          <code>mvn javadoc:javadoc</code> to run the main report.
+        </p>
+        <p>
+          <b>IMPORTANT NOTE</b>: using <i>&lt;reporting/&gt;</i> or <i>&lt;build/&gt;</i> elements have not the same
+          behavior, refer to <a href="./usage.html">usage page</a> for more information.
         </p>
       </answer>
     </faq>
@@ -226,12 +230,12 @@ ${project.reporting.outputDirectory}/apidocs/javadoc.exe(or .sh) \
           To deploy the Javadoc jar on a given Maven repository, you could call:
           <source><![CDATA[
 mvn deploy:deploy-file \
-    -DgroupId=&lt;group-id&gt; \
-    -DartifactId=&lt;artifact-id&gt; \
-    -Dversion=&lt;version&gt; \
-    -Dfile=&lt;path-to-file&gt; \
+    -DgroupId=<group-id> \
+    -DartifactId=<artifact-id> \
+    -Dversion=<version> \
+    -Dfile=<path-to-file> \
     -Dpackaging=jar \
-    -DrepositoryId=&lt;repository-id&gt; \
+    -DrepositoryId=<repository-id> \
     -Durl=dav:http://www.myrepository.com/m2 \
     -Dclassifier=javadoc]]></source>
         </p>
@@ -250,16 +254,25 @@ mvn deploy:deploy-file \
       </answer>
     </faq>
     <faq id="How to use links option in Standard Doclet">
-      <question>How to use links option in Standard Doclet?</question>
+      <question>How to use <i><a href="./javadoc-mojo.html#links">&lt;links/&gt;</a></i> option in Standard Doclet?</question>
       <answer>
         <p>
-          You need to configure the <i>&lt;links/&gt;</i> parameter. Also, you need to correctly write references in
-          your Javadoc, i.e.:
+          You need to configure the <i><a href="./javadoc-mojo.html#links">&lt;links/&gt;</a></i> parameter. Also, you
+          should correctly write references in your Javadoc, i.e.:
         </p>
         <ul>
           <li><code>@see MyMojo</code> or <code>{@link MyMojo}</code> will <b>NOT work</b>.</li>
-          <li><code>@see com.mycompany.plugin.myplugin.MyMojo</code> or <code>{@link com.mycompany.myplugin.MyMojo}</code> will <b>work</b>.</li>
+          <li><code>@see com.mycompany.plugin.myplugin.MyMojo</code> or <code>{@link com.mycompany.myplugin.MyMojo}</code>
+            will <b>work</b>.</li>
         </ul>
+      </answer>
+    </faq>
+    <faq id="How to add cross reference link to internal-external projects">
+      <question>How to add cross reference link to internal-external projects?</question>
+      <answer>
+        <p>
+          Please refer to <a href="./examples/links-configuration.html">Links configuration page</a>.
+        </p>
       </answer>
     </faq>
     <faq id="On Windows with Sun JDK, why javadoc:javadoc goal blows up due to an IllegalArgumentException in sun.net.www.ParseUtil.decode()">
@@ -401,14 +414,6 @@ mvn deploy:deploy-file \
           <dt><code>charset</code></dt>
           <dd>Value of <code>docencoding</code> parameter if not specified.</dd>
         </dl>
-      </answer>
-    </faq>
-    <faq id="How to add cross reference link to internal-external projects">
-      <question>How to add cross reference link to internal-external projects?</question>
-      <answer>
-        <p>
-          Please refer to <a href="./examples/links-configuration.html">Links configuration page</a>.
-        </p>
       </answer>
     </faq>
   </part>
