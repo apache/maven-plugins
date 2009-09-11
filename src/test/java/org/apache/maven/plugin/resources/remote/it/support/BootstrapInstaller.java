@@ -21,7 +21,7 @@ public class BootstrapInstaller
             
             Verifier verifier = new Verifier( bootstrapDir.getAbsolutePath() );
             
-            verifier.executeGoal( "install" );
+            verifier.executeGoal( "deploy" );
             
             verifier.verifyErrorFreeLog();
             verifier.resetStreams();
