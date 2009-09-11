@@ -1,0 +1,71 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.apache.maven.plugin.rresource.it.mrr43</groupId>
+  <artifactId>supplemental-artifact</artifactId>
+  <version>1</version>
+  
+  <name>Supplemental Artifact Consumer</name>
+
+  <repositories>
+    <repository>
+      <id>it-remote</id>
+      <url>file:${remoteRepository}</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+    <repository>
+      <id>main-local</id>
+      <url>file:${localRepository}</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.maven.plugin.rresource.it.mrr43</groupId>
+      <artifactId>deficient-dep</artifactId>
+      <version>1</version>
+    </dependency>
+  </dependencies>
+  
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-remote-resources-plugin</artifactId>
+        <version>${project.version}</version>
+        
+        <executions>
+          <execution>
+            <goals>
+              <goal>process</goal>
+            </goals>
+            <configuration>
+              <supplementalModels>
+                <supplementalModel>supplemental-models.xml</supplementalModel>
+              </supplementalModels>
+              
+              <supplementalModelArtifacts>
+                <supplementalModelArtifact>org.apache.maven.plugin.rresource.it.mrr43:supplemental-models:1</supplementalModelArtifact>
+              </supplementalModelArtifacts>
+              
+              <resourceBundles>
+                <resourceBundle>org.apache.maven.plugin.rresource.it:resource-bundle-with-org-processing:${project.version}</resourceBundle>
+              </resourceBundles>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>

@@ -23,31 +23,32 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   
-  <groupId>org.apache.maven.plugin.rresource.it</groupId>
-  <artifactId>bootstrap</artifactId>
-  <version>${project.version}</version>
+  <parent>
+    <groupId>org.apache.maven.plugin.rresource.it</groupId>
+    <artifactId>bootstrap</artifactId>
+    <version>${project.version}</version>
+  </parent>
   
-  <packaging>pom</packaging>
+  <artifactId>resource-bundle-with-org-processing</artifactId>
   
-  <name>IT Bootstrap</name>
+  <name>Resource Bundle with Organization Processing</name>
   
-  <distributionManagement>
-    <repository>
-      <id>it-remote</id>
-      <url>file:${remoteRepository}</url>
-    </repository>
-  </distributionManagement>
-  
-  <repositories>
-    <repository>
-      <id>main-local</id>
-      <url>file:${localRepository}</url>
-    </repository>
-  </repositories>
-  
-  <modules>
-    <module>resource-bundle-with-template</module>
-    <module>resource-bundle-with-org-processing</module>
-  </modules>
-  
+  <build>
+    <plugins>
+      <plugin>      
+        <artifactId>maven-remote-resources-plugin</artifactId>
+        
+        <!-- Use an established version, not the one currently under test. -->
+        <version>1.0</version>
+        
+        <executions>
+          <execution>
+            <goals>
+              <goal>bundle</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 </project>

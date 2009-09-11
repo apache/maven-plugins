@@ -1,0 +1,10 @@
+Built-In: #if ($projectName)$projectName#else${project.name}#end
+
+#foreach ( $organizationName in $projectsSortedByOrganization.keySet() )
+From: '$organizationName.name'#if($organizationName.url) ($organizationName.url)#end
+
+#foreach ( $project in $projectsSortedByOrganization.get( $organizationName ) )
+  - $project.name #if ($project.url)($project.url)#end $project.artifact
+#end
+
+#end
