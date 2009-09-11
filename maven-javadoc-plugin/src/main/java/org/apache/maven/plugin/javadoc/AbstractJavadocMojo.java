@@ -649,7 +649,8 @@ public abstract class AbstractJavadocMojo
 
     /**
      * Unconditionally excludes the specified packages and their subpackages from the list formed by
-     * <code>-subpackages</code>. Multiple packages can be separated by colons (<code>:</code>).
+     * <code>-subpackages</code>. Multiple packages can be separated by commas (<code>,</code>), colons (<code>:</code>)
+     * or semicolons (<code>;</code>).
      * <br/>
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#exclude">exclude</a>.
      * <br/>
@@ -2041,7 +2042,7 @@ public abstract class AbstractJavadocMojo
     }
 
     /**
-     * Method to get the packages specified in the excludePackageNames parameter. The packages are split
+     * Method to get the packages specified in the <code>excludePackageNames</code> parameter. The packages are split
      * with ',', ':', or ';' and then formatted.
      *
      * @return an array of String objects that contain the package names
@@ -2053,7 +2054,7 @@ public abstract class AbstractJavadocMojo
         // for the specified excludePackageNames
         if ( excludePackageNames != null )
         {
-            excludePackages = excludePackageNames.split( "[ ,:;]" );
+            excludePackages = excludePackageNames.split( "[,:;]" );
         }
         for ( int i = 0; i < excludePackages.length; i++ )
         {
@@ -4235,7 +4236,7 @@ public abstract class AbstractJavadocMojo
         {
             int exitCode = CommandLineUtils.executeCommandLine( cmd, out, err );
 
-            String output = ( StringUtils.isEmpty( out.getOutput() ) ? null : '\n' + out.getOutput() );
+            String output = ( StringUtils.isEmpty( out.getOutput() ) ? null : '\n' + out.getOutput().trim() );
 
             if ( exitCode != 0 )
             {
