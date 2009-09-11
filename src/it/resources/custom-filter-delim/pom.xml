@@ -2,22 +2,14 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   
-  <groupId>org.apache.maven.plugin.rresource.it</groupId>
-  <artifactId>custom-filter-delim</artifactId>
-  <version>${project.version}</version>
+  <parent>
+    <groupId>org.apache.maven.plugin.rresource.it</groupId>
+    <artifactId>it-parent</artifactId>
+    <version>${project.version}</version>
+    <relativePath>../it-parent/pom.xml</relativePath>
+  </parent>
   
-  <repositories>
-    <repository>
-      <id>main-local</id>
-      <url>file:${localRepository}</url>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </repository>
-  </repositories>
+  <artifactId>custom-filter-delim</artifactId>
   
   <build>
     <resources>
@@ -30,7 +22,6 @@
     <plugins>
       <plugin>
         <artifactId>maven-remote-resources-plugin</artifactId>
-        <version>${project.version}</version>
         <executions>
           <execution>
             <id>remote-resources</id>
