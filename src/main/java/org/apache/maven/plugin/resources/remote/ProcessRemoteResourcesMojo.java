@@ -119,6 +119,9 @@ import java.util.TreeMap;
  * @phase generate-resources
  */
 // NOTE: Removed the following in favor of maven-artifact-resolver library, for MRRESOURCES-41
+// If I leave this intact, interdependent projects within the reactor that haven't been built
+// (remember, this runs in the generate-resources phase) will cause the build to fail.
+//
 // @requiresDependencyResolution test
 public class ProcessRemoteResourcesMojo
     extends AbstractMojo
