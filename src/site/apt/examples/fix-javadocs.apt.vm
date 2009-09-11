@@ -41,15 +41,15 @@ Fixing Javadoc Comments
 * Features Summary
 
  The user could skip the class/field/method Javadoc fixing using specific parameters, i.e.
- {{{../fix-mojo.html#fixClassComment}fixClassComment}}.
- Also, the user could specify a {{{../fix-mojo.html#level}level}}, i.e. public, to fix only class/field/method with
+ {{{../fix-mojo.html#fixClassComment}\<fixClassComment/\>}}.
+ Also, the user could specify a {{{../fix-mojo.html#level}\<level/\>}}, i.e. public, to fix only class/field/method with
  the given level.
 
- These goals could fix dynamically all Javadoc tags (by default, see {{{../fix-mojo.html#fixTags}fixTags}}) or
+ These goals could fix dynamically all Javadoc tags (by default, see {{{../fix-mojo.html#fixTags}\<fixTags/\>}}) or
  selective tags like author, version...
- Also, the user could specify default value for some tags, i.e. {{{../fix-mojo.html#defaultAuthor}defaultAuthor}}.
+ Also, the user could specify default value for some tags, i.e. {{{../fix-mojo.html#defaultAuthor}\<defaultAuthor/\>}}.
 
- The <javadoc:fix> goal could use {{{http://clirr.sourceforge.net/}Clirr}} via the
+ The <javadoc:fix> goal could use Clirr ({{{http://clirr.sourceforge.net}}} via the
  {{{http://mojo.codehaus.org/clirr-maven-plugin/}clirr-maven-plugin}}, a tool that checks Java libraries for
  binary and source compatibility with older releases. So, the <@since> tags will be dynamically added for the current
  project version. You need to add the <comparisonVersion> parameter (see below).
@@ -107,11 +107,13 @@ mvn javadoc:fix -DcomparisonVersion=1.0
 
 ** Using another Clirr version
 
-  By default, the <fix> and <test-fix> goals use the {{{http://mojo.codehaus.org/clirr-maven-plugin/}clirr-maven-plugin}}, version <<<2.2.2>>>.
-  To use another version, you need to add a dependency in the Javadoc plugin, similar to the following:
+  By default, the <fix> and <test-fix> goals use the {{{http://mojo.codehaus.org/clirr-maven-plugin/}clirr-maven-plugin}},
+  version <<<2.2.2>>>. To use another version, you need to add a dependency in the Javadoc plugin, similar to the
+  following:
 
 +-----+
 <project>
+  ...
   <build>
     <plugins>
       <plugin>
@@ -128,9 +130,11 @@ mvn javadoc:fix -DcomparisonVersion=1.0
             <version>2.3-SNAPSHOT</version>
           </dependency>
         </dependencies>
-        ...
       </plugin>
+      ...
     </plugins>
+    ...
   </build>
+  ...
 </project>
 +-----+

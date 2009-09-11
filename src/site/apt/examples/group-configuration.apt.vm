@@ -29,12 +29,12 @@
 
 Grouping Packages
 
- To set a grouping for different packages, use the \<groups/\> configuration in your pom:
+ To set a grouping for different packages, use the {{{../javadoc-mojo.html#groups}\<groups/\>}} configuration in your pom:
 
 +-----+
 <project>
   ...
-  <reporting>
+  <reporting> (or <build>)
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -57,7 +57,7 @@ Grouping Packages
       </plugin>
     </plugins>
     ...
-  </reporting>
+  </reporting> (or </build>)
   ...
 </project>
 +-----+

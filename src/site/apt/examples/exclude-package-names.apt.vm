@@ -3,7 +3,7 @@
  ------
  Maria Odea Ching
  ------
- 2009-08-04
+ 2009-09-11
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -28,9 +28,10 @@
 
 Excluding Packages
 
- To exclude specific packages from the javadoc, use \<excludePackageNames\> as shown below. The parameter
- accepts wildcard (*) characters in its value but the wildcards should either be at the start or the end of the package
- name. If more than one package is to be excluded, each package name must be separated either with a ':', ',' or ';'.
+ To exclude specific packages from the Javadoc tool, use {{{../javadoc-mojo.html#excludePackageNames}\<excludePackageNames/\>}}
+ as shown below. The parameter accepts wildcard (*) characters in its value but the wildcards should either be at the
+ start or the end of the package name. If more than one package is to be excluded, each package name must be separated
+ either with a colon (':'), a comma (',') or a semicolon (';').
 
 +-----+
 <project>

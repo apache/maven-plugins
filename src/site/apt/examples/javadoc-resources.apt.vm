@@ -28,8 +28,8 @@
 
 Using Javadoc Resources
 
- The \<javadocDirectory/\> parameter can be used to include Javadoc resources like HTML or images. By default, all
- javadoc resources are in <$\{basedir\}/src/main/javadoc> directory.
+ The {{{../javadoc-mojo.html#javadocDirectory}\<javadocDirectory/\>}}/\> parameter can be used to include Javadoc
+ resources like HTML or images. By default, all javadoc resources are in <$\{basedir\}/src/main/javadoc> directory.
 
  Here is a typical set of resources files used by the Maven Javadoc plugin:
 
@@ -78,7 +78,7 @@ yourproject
 +-----+
 
  By default, the Javadoc Plugin includes the <$\{basedir\}/src/main/javadoc/overview.html> if it exists. You could also
- specify a specific <overview> file with the \<overview/\> parameter, for instance:
+ specify a specific <overview> file with the {{{../javadoc-mojo.html#overview}\<overview/\>}} parameter, for instance:
 
 +-----+
 <project>
@@ -131,7 +131,8 @@ yourproject
  For more information, see {{{http://java.sun.com/j2se/1.5.0/docs/tooldocs/windows/javadoc.html#packagecomment}
  javadoc - The Java API Documentation Generator, Package Comment Files}}.
 
- Here is an example of a <package-info.java> file, located in <$\{basedir\}/src/main/java/org/apache/myapp/package-info.java>:
+ Here is an example of a <package-info.java> file, located in
+ <$\{basedir\}/src/main/java/org/apache/myapp/package-info.java>:
 
 +-----+
 /**
@@ -146,15 +147,16 @@ package org.apache.myapp;
  These include images, sample source code, class files, applets, HTML files...
 
  For more information, see {{{http://java.sun.com/j2se/1.4.2/docs/tooldocs/solaris/javadoc.html#unprocessed}
- javadoc - The Java API Documentation Generator, Miscellaneous Unprocessed Files}} and {{{http://java.sun.com/j2se/javadoc/writingdoccomments/index.html#images}
- How to Write Doc Comments for the Javadoc Tool, Including Images }}.
+ javadoc - The Java API Documentation Generator, Miscellaneous Unprocessed Files}} and
+ {{{http://java.sun.com/j2se/javadoc/writingdoccomments/index.html#images}How to Write Doc Comments for the Javadoc Tool, Including Images }}.
 
  In addition to <doc-files> directories, since 2.6.1, the specific <src/main/javadoc/resources> directory will be
  copied to the generated Javadoc resources directory (i.e. <apidocs/resources>). This is usefull when you want to
  overwite default Javadoc tool resources, like the default <inherit.gif> to one with a transparent background
  (See {{{../images/inherit.gif}GIF}} or {{{../images/inherit.psd}PSD}}).
 
- Here is a sample javadoc comment to use <app.png> image, located in <$\{basedir\}/src/main/javadoc/org/apache/myapp/doc-files> directory:
+ Here is a sample javadoc comment to use <app.png> image, located in
+ <$\{basedir\}/src/main/javadoc/org/apache/myapp/doc-files> directory:
 
 +-----+
 package org.apache.myapp;
@@ -169,4 +171,4 @@ public class App
 +-----+
 
  <<IMPORTANT NOTE>>: To allow the copy of unprocessed files, you need to run the Javadoc Plugin with the
- <<<{{{../javadoc-mojo.html#docfilessubdirs}\<docfilessubdirs/\>}}>>> parameter.
+ {{{../javadoc-mojo.html#docfilessubdirs}\<docfilessubdirs/\>}} parameter.

@@ -28,14 +28,15 @@
 
 Configuring Help File
 
- If a custom \<helpfile/\> parameter is specified, you will be able to use it:
+ If a custom {{{../javadoc-mojo.html#helpfile}\<helpfile/\>}} parameter is specified, you will be able to use it:
 
- * if \<helpfile/\> is a given file, you could use an absolute or a  relative path, for instance:
+ * if {{{../javadoc-mojo.html#helpfile}\<helpfile/\>}} is a given file, you could use an absolute or a  relative path,
+ for instance:
 
 +-----+
 <project>
   ...
-  <reporting>
+  <reporting> (or <build>)
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -48,18 +49,18 @@ Configuring Help File
       </plugin>
     </plugins>
     ...
-  </reporting>
+  </reporting> (or </build>)
   ...
 </project>
 +-----+
 
- * since 2.6, \<helpfile/\> could be a resource in your project directory, i.e. <<<src/main/java>>>,
- <<<src/main/resources>>> or <<<src/main/javadoc>>>, for instance:
+ * since 2.6, {{{../javadoc-mojo.html#helpfile}\<helpfile/\>}} could be a resource in your project directory, i.e.
+ <<<src/main/java>>>, <<<src/main/resources>>> or <<<src/main/javadoc>>>, for instance:
 
 +-----+
 <project>
   ...
-  <build>
+  <reporting> (or <build>)
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -72,29 +73,13 @@ Configuring Help File
       </plugin>
     </plugins>
     ...
-  </build>
-  ...
-  <!-- Or the following
-  <reporting>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <version>${project.version}</version>
-        <configuration>
-          <helpfile>path/to/your/resource/help-doc.html</helpfile>
-          ...
-        </configuration>
-      </plugin>
-    </plugins>
-    ...
-  </reporting>
-  -->
+  </reporting> (or </build>)
   ...
 </project>
 +-----+
 
- * since 2.6, \<helpfile/\> could be a resource in the Javadoc plugin dependencies, for instance:
+ * since 2.6, {{{../javadoc-mojo.html#helpfile}\<helpfile/\>}} could be a resource in the Javadoc plugin dependencies,
+ for instance:
 
 +-----+
 <project>

@@ -80,7 +80,7 @@ yourproject
 
 <project>
   ...
-  <reporting>
+  <build>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -96,7 +96,7 @@ yourproject
         </configuration>
       </plugin>
     </plugins>
-  </reporting>
+  </build>
   ...
 </project>
 +-----+
