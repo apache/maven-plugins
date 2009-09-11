@@ -4,7 +4,7 @@
  Vincent Siveton
  Maria Odea Ching
  ------
- 2009-08-04
+ 2009-09-11
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -35,7 +35,7 @@ Usage
 
 * Generate Javadocs As Part Of Project Reports
 
- To generate javadocs as part of the site generation, you must configure the following in the \<reporting\> section of your pom:
+ To generate javadocs as part of the site generation, you should add the Javadoc Plugin in the \<reporting\> section of your pom:
 
 +-----+
 <project>
@@ -46,6 +46,9 @@ Usage
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
         <version>${project.version}</version>
+        <configuration>
+          ...
+        </configuration>
       </plugin>
     </plugins>
     ...
@@ -59,24 +62,95 @@ Usage
 
 * Generate Standalone Javadocs
 
- To generate standalone javadocs for the project, you can execute any of the following commands:
+ To generate standalone javadocs for the project, you could add the Javadoc Plugin in the \<build\> section of your pom
+ (if no configuration defined, the plugin uses default values):
+
++-----+
+<project>
+  ...
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>${project.version}</version>
+        <configuration>
+          ...
+        </configuration>
+      </plugin>
+    </plugins>
+    ...
+  </build>
+  ...
+</project>
++-----+
+
+ And execute any of the following commands:
 
 +-----+
 mvn javadoc:javadoc
-+-----+
-
- or
-
-+-----+
 mvn javadoc:jar
+mvn javadoc:aggregate
+mvn javadoc:aggregate-jar
+mvn javadoc:test-javadoc
+mvn javadoc:test-jar
+mvn javadoc:test-aggregate
+mvn javadoc:test-aggregate-jar
 +-----+
 
- For <<<mvn javadoc:jar>>>, the javadocs are first generated and then packaged into a jar file.
+ For all <<<jar>>> goals, the javadocs are first generated and then packaged into a jar file.
 
 * Javadoc Configuration
 
  The Javadoc Plugin supports a large number of configuration parameters. Each configuration parameter turns into
  a tag name.
 
- Please see the {{{./apidocs/org/apache/maven/plugin/javadoc/package-summary.html}Javadoc Package Summary}}
- for a listing of these parameters. Most of these parameters are passed directly to the Javadoc tool itself.
+ Please refer to the {{{../javadoc-mojo.html}Javadoc Plugin Documentation}} for a listing of these parameters. Most
+ of these parameters are passed directly to the Javadoc tool itself.
+
+ <<IMPORTANT NOTE>>: configuring the Javadoc plugin in the \<reporting/\> or \<build/\> elements in the pom have
+ <<NOT>> the same behavior as described in the
+ {{{http://maven.apache.org/guides/mini/guide-configuring-plugins.html#Using_the_reporting_Tag_VS_build_Tag}Guide to Configuring Plug-ins}}.
+
+ For instance, if you have the following snippet:
+
++-----+
+<project>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>${project.version}</version>
+        <configuration>
+          <show>private</show>
+          <nohelp>true</nohelp>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>${project.version}</version>
+        <configuration>
+          <stylesheetfile>${basedir}/src/main/javadoc/stylesheet.css</stylesheetfile>
+          <show>public</show>
+        </configuration>
+      </plugin>
+    </plugins>
+  </reporting>
+  </build>
++-----+
+
+ [<<<mvn site>>>] It will generate the Javadoc for public members (defined in \<reporting/\>) using the given
+ stylesheet (defined in \<reporting/\>), and with an help page (default value for
+ {{{../javadoc-mojo.html#nohelp}nohelp}} is true).
+
+ [<<<mvn javadoc:javadoc>>>] It will generate the Javadoc for private members (defined in \<build/\>) using the
+ stylesheet (defined in \<reporting/\>), and with no help page (defined in \<build/\>).
+
+ []
