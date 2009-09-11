@@ -1045,7 +1045,6 @@ public class ProcessRemoteResourcesMojo
         }
     }
 
-    @SuppressWarnings( "unchecked" )
     protected void processResourceBundles( RemoteResourcesClassLoader classLoader, VelocityContext context )
         throws MojoExecutionException
     {
@@ -1242,7 +1241,6 @@ public class ProcessRemoteResourcesMojo
         return groupId.trim() + ":" + artifactId.trim();
     }
 
-    @SuppressWarnings( "unchecked" )
     private Map<String, Model> loadSupplements( String models[] )
         throws MojoExecutionException
     {
