@@ -46,9 +46,11 @@ Project
 
 * Using The \<aggregate/\> Parameter (<<deprecated>>)
 
- <<Note>>: \<aggregate/\> parameter is <<deprecated>> since 2.5. Please use the <<<aggregate>>> goal instead of.
+ <<Note>>: {{{../javadoc-mojo.html#aggregate}\<aggregate/\>}} parameter is <<deprecated>> since 2.5. Please use the
+ <<<aggregate>>> goal instead of.
 
- The \<aggregate/\> parameter can be used to generate javadocs for multi-module projects. It gives the option to
+ The {{{../javadoc-mojo.html#aggregate}\<aggregate/\>}} parameter can be used to generate javadocs for multi-module
+ projects. It gives the option to
  generate one javadoc report for the entire project (all modules) or generate one javadoc report for each module.
 
  When you execute javadoc:javadoc from Project directory with aggregate set to <<true>>, a javadoc report will be created
@@ -60,7 +62,7 @@ Project
 +-----+
 <project>
   ...
-  <reporting>
+  <reporting> (or <build>)
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -74,17 +76,17 @@ Project
       </plugin>
     </plugins>
     ...
-  </reporting>
+  </reporting> (or </build>)
   ...
 </project>
 +-----+
 
 * Using The <<<aggregate>>> Goals
 
- The \<aggregate/\> parameter doesn't include generate source directories defined using the
- {{{http://mojo.codehaus.org/build-helper-maven-plugin/add-source-mojo.html}build-helper:add-source}}. In this case,
- you need to use the <<<aggregate>>> goal and <<<test-aggregate>>> goals. You could also define several \<reportSet/\>
- like the following:
+ The {{{../javadoc-mojo.html#aggregate}\<aggregate/\>}} parameter doesn't include generate source directories defined
+ using the {{{http://mojo.codehaus.org/build-helper-maven-plugin/add-source-mojo.html}build-helper:add-source}}. In
+ this case, you need to use the <<<aggregate>>> goal and <<<test-aggregate>>> goals. You could also define several
+ \<reportSet/\> like the following:
 
 +-----+
 
@@ -123,8 +125,8 @@ Project
 </project>
 +-----+
 
- The Javadoc plugin contains several <<<aggregate>>> goals to be use with an aggregator project. Here is the full list of all
- <<<aggregate>>> goals:
+ The Javadoc plugin contains several <<<aggregate>>> goals to be use with an aggregator project. Here is the full list
+ of all <<<aggregate>>> goals:
 
    * {{{../aggregate-mojo.html}javadoc:aggregate}} to generate the Javadoc files.
 

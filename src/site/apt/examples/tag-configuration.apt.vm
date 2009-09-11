@@ -29,12 +29,12 @@
 
 Configuring Custom Javadoc Tags
 
- You can configure any custom tags used in your javadoc via the \<tags/\> element:
+ You can configure any custom tags used in your javadoc via the {{{../javadoc-mojo.html#tags}\<tags/\>}} element:
 
 +-----+
 <project>
   ...
-  <reporting>
+  <reporting> (or <build>)
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -55,7 +55,7 @@ Configuring Custom Javadoc Tags
       </plugin>
     </plugins>
     ...
-  </reporting>
+  </reporting> (or </build>)
   ...
 </project>
 +-----+

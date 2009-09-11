@@ -33,12 +33,13 @@ Using Alternate Javadoc Tool
  By default, the Maven Javadoc Plugin tries to auto-detect the Javadoc Tool executable from the Java property
  <java.home> or from the environment variable <JAVA_HOME>.
 
- You could also specify the executable of the Javadoc Tool to use. For example:
+ You could also specify the executable of the Javadoc Tool to use with the
+ {{{../javadoc-mojo.html#javadocExecutable}\<javadocExecutable/\>}} parameter. For example:
 
 +-----+
 <project>
    ...
-   <reporting>
+   <reporting> (or <build>)
       <plugins>
          <plugin>
             <groupId>org.apache.maven.plugins</groupId>
@@ -51,7 +52,7 @@ Using Alternate Javadoc Tool
          </plugin>
          ...
       </plugins>
-   </reporting>
+   </reporting> (or </build>)
    ...
 </project>
 +-----+
@@ -66,7 +67,7 @@ Using Alternate Javadoc Tool
 +-----+
 <project>
    ...
-   <reporting>
+   <reporting> (or <build>)
       <plugins>
          <plugin>
             <groupId>org.apache.maven.plugins</groupId>
@@ -79,7 +80,7 @@ Using Alternate Javadoc Tool
          </plugin>
          ...
       </plugins>
-   </reporting>
+   </reporting> (or </build>)
    ...
 </project>
 +-----+

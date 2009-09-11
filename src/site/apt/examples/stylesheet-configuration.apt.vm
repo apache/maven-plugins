@@ -29,7 +29,8 @@
 
 Configuring Stylesheets
 
- If no custom stylesheet is specified in the \<stylesheetfile/\> parameter, the \<stylesheet/\> parameter will indicate
+ If no custom stylesheet is specified in the {{{../javadoc-mojo.html#stylesheetfile}\<stylesheetfile/\>}} parameter,
+ the {{{../javadoc-mojo.html#stylesheet}\<stylesheet/\>}} parameter will indicate
  which stylesheet will be used -- the stylesheet included in the maven javadoc plugin or the default stylesheet used by
  the javadoc tool. <<maven>> value indicates the maven javadoc plugin stylesheet, while <<java>> value indicates the
  default javadoc tool stylesheet. The default is <<java>> value if not specified.
@@ -37,7 +38,7 @@ Configuring Stylesheets
 +-----+
 <project>
   ...
-  <reporting>
+  <reporting> (or <build>)
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -50,21 +51,23 @@ Configuring Stylesheets
       </plugin>
     </plugins>
     ...
-  </reporting>
+  </reporting> (or </build>)
   ...
 </project>
 +-----+
 
 Configuring Stylesheets File
 
- If a custom \<stylesheetfile/\> parameter is specified, you will be able to use it:
+ If a custom {{{../javadoc-mojo.html#stylesheetfile}\<stylesheetfile/\>}} parameter is specified, you will be able to
+ use it:
 
- * if \<stylesheetfile/\> is a given file, you could use an absolute or a  relative path, for instance:
+ * if {{{../javadoc-mojo.html#stylesheetfile}\<stylesheetfile/\>}} is a given file, you could use an absolute or a
+ relative path, for instance:
 
 +-----+
 <project>
   ...
-  <reporting>
+  <reporting> (or <build>)
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -77,18 +80,18 @@ Configuring Stylesheets File
       </plugin>
     </plugins>
     ...
-  </reporting>
+  </reporting> (or </build>)
   ...
 </project>
 +-----+
 
- * since 2.6, \<stylesheetfile/\> could be a resource in your project directory, i.e. <<<src/main/java>>>,
- <<<src/main/resources>>> or <<<src/main/javadoc>>>, for instance:
+ * since 2.6, {{{../javadoc-mojo.html#stylesheetfile}\<stylesheetfile/\>}} could be a resource in your project
+ directory, i.e. <<<src/main/java>>>, <<<src/main/resources>>> or <<<src/main/javadoc>>>, for instance:
 
 +-----+
 <project>
   ...
-  <build>
+  <reporting> (or <build>)
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -101,29 +104,13 @@ Configuring Stylesheets File
       </plugin>
     </plugins>
     ...
-  </build>
-  ...
-  <!-- Or the following
-  <reporting>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <version>${project.version}</version>
-        <configuration>
-          <stylesheetfile>path/to/your/stylesheet.css</stylesheetfile>
-          ...
-        </configuration>
-      </plugin>
-    </plugins>
-    ...
-  </reporting>
-  -->
+  </reporting> (or </build>)
   ...
 </project>
 +-----+
 
- * since 2.6, \<stylesheetfile/\> could be a resource in the Javadoc plugin dependencies, for instance:
+ * since 2.6, {{{../javadoc-mojo.html#stylesheetfile}\<stylesheetfile/\>}} could be a resource in the Javadoc plugin
+ dependencies, for instance:
 
 +-----+
 <project>
