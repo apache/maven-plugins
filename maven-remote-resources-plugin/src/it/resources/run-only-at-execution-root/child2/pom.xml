@@ -13,6 +13,11 @@
   <dependencies>
     <dependency>
       <groupId>org.apache.maven.plugin.rresource.it.mrr41</groupId>
+      <artifactId>child-1</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.plugin.rresource.it.mrr41</groupId>
       <artifactId>snapshot</artifactId>
       <version>1.0-SNAPSHOT</version>
     </dependency>
