@@ -26,13 +26,12 @@ import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.StringUtils;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Iterator;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
-import java.io.FileWriter;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Bundle up resources that should be considered as a remote-resource.
@@ -126,12 +125,10 @@ public class BundleRemoteResourcesMojo
         scanner.addDefaultExcludes();
         scanner.scan();
 
-        List includedFiles = Arrays.asList( scanner.getIncludedFiles() );
+        List<String> includedFiles = Arrays.asList( scanner.getIncludedFiles() );
 
-        for ( Iterator i = includedFiles.iterator(); i.hasNext(); )
+        for ( String resource : includedFiles )
         {
-            String resource = (String) i.next();
-
             remoteResourcesBundle.addRemoteResource( StringUtils.replace( resource, '\\', '/' ) );
         }
 

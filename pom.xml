@@ -277,6 +277,16 @@ under the License.
           <testResource>
             <directory>src/it/resources</directory>
             <filtering>true</filtering>
+            <excludes>
+              <exclude>custom-filter-delim/src/main/resources/**</exclude>
+            </excludes>
+          </testResource>
+          <testResource>
+            <directory>src/it/resources</directory>
+            <filtering>false</filtering>
+            <includes>
+              <include>custom-filter-delim/src/main/resources/**</include>
+            </includes>
           </testResource>
         </testResources>
         
