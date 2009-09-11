@@ -117,9 +117,10 @@ import java.util.TreeMap;
  * </p>
  *
  * @goal process
- * @requiresDependencyResolution test
  * @phase generate-resources
  */
+// NOTE: Removed the following in favor of maven-artifact-resolver library, for MRRESOURCES-41
+// @requiresDependencyResolution test
 public class ProcessRemoteResourcesMojo
     extends AbstractMojo
 {
@@ -598,16 +599,14 @@ public class ProcessRemoteResourcesMojo
         FilterArtifacts filter = new FilterArtifacts();
         
         Set depArtifacts;
-        Set artifacts;
+        Set artifacts = resolveProjectArtifacts();
         if ( runOnlyAtExecutionRoot )
         {
             depArtifacts = aggregateProjectDependencyArtifacts();
-            artifacts = resolveProjectArtifacts();
         }
         else
         {
             depArtifacts = project.getDependencyArtifacts();
-            artifacts = project.getArtifacts();
         }
 
         filter.addFilter( new TransitivityFilter( depArtifacts, this.excludeTransitive ) );
@@ -686,11 +685,17 @@ public class ProcessRemoteResourcesMojo
     private Set resolveProjectArtifacts()
         throws MojoExecutionException
     {
-        List projects = mavenSession.getSortedProjects();
-
         try
         {
-            return dependencyResolver.resolve( projects, Collections.singleton( Artifact.SCOPE_TEST ), mavenSession );
+            if ( runOnlyAtExecutionRoot )
+            {
+                List projects = mavenSession.getSortedProjects();
+                return dependencyResolver.resolve( projects, Collections.singleton( Artifact.SCOPE_TEST ), mavenSession );
+            }
+            else
+            {
+                return dependencyResolver.resolve( project, Collections.singleton( Artifact.SCOPE_TEST ), mavenSession );
+            }
         }
         catch ( ArtifactResolutionException e )
         {
