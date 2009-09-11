@@ -2,9 +2,15 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   
+  <parent>
+    <groupId>org.apache.maven.plugin.rresource.it</groupId>
+    <artifactId>it-parent</artifactId>
+    <version>${project.version}</version>
+    <relativePath>../it-parent/pom.xml</relativePath>
+  </parent>
+  
   <groupId>org.apache.maven.plugin.rresource.it.mrr41</groupId>
   <artifactId>parent</artifactId>
-  <version>${project.version}</version>
   
   <packaging>pom</packaging>
   
@@ -13,34 +19,10 @@
     <module>child2</module>
   </modules>
   
-  <repositories>
-    <repository>
-      <id>it-remote</id>
-      <url>file:${remoteRepository}</url>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </repository>
-    <repository>
-      <id>main-local</id>
-      <url>file:${localRepository}</url>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </repository>
-  </repositories>
-
   <build>
     <plugins>
       <plugin>
         <artifactId>maven-remote-resources-plugin</artifactId>
-        <version>${project.version}</version>
         <executions>
           <execution>
             <id>remote-resources</id>

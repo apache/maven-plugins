@@ -9,14 +9,14 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
-public class IT001_GenerateFromOverride
+public class IT_GenerateFromOverride
     extends AbstractIT
 {
     
     public void test()
         throws IOException, URISyntaxException, VerificationException
     {
-        File dir = TestUtils.getTestDir( "001-generateFromOverride" );
+        File dir = TestUtils.getTestDir( "generate-from-override" );
         Verifier verifier = new Verifier( dir.getAbsolutePath() );
         
         verifier.executeGoal( "generate-resources" );
