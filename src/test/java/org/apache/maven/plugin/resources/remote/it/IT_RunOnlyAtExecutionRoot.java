@@ -31,35 +31,41 @@ import java.net.URISyntaxException;
 /**
  * @author Benjamin Bentmann
  */
-public class IT_GetDependenyProjects
+public class IT_RunOnlyAtExecutionRoot
     extends AbstractIT
 {
 
     public void test()
         throws IOException, URISyntaxException, VerificationException
     {
-        File dir = TestUtils.getTestDir( "get-dependency-projects" );
+        File dir = TestUtils.getTestDir( "run-only-at-execution-root" );
 
         Verifier verifier;
 
-        verifier = new Verifier( dir.getAbsolutePath() );
+        verifier = new Verifier( new File( dir, "resource-projects" ).getAbsolutePath() );
         verifier.executeGoal( "deploy" );
         verifier.verifyErrorFreeLog();
         verifier.resetStreams();
 
-        verifier = new Verifier( new File( dir, "project" ).getAbsolutePath() );
+        verifier = new Verifier( dir.getAbsolutePath() );
 
-        verifier.deleteArtifacts( "org.apache.maven.plugin.rresource.it.gdp" );
+        verifier.deleteArtifacts( "org.apache.maven.plugin.rresource.it.mrr41" );
 
         verifier.executeGoal( "generate-resources" );
         verifier.verifyErrorFreeLog();
         verifier.resetStreams();
 
-        File output = new File( dir, "project/target/maven-shared-archive-resources/DEPENDENCIES" );
+        String depResource = "target/maven-shared-archive-resources/DEPENDENCIES";
+        File output = new File( dir, depResource );
+        assertTrue( output.exists() );
+        
+        assertFalse( new File( dir, "child1/" + depResource ).exists() );
+        assertFalse( new File( dir, "child2/" + depResource ).exists() );
+        
         String content = FileUtils.fileRead( output );
 
-        assertTrue( content.indexOf( "Dependency Id: org.apache.maven.plugin.rresource.it.gdp:release:1.0" ) >= 0 );
-        assertTrue( content.indexOf( "Dependency Id: org.apache.maven.plugin.rresource.it.gdp:snapshot:1.0-SNAPSHOT" ) >= 0 );
+        assertTrue( content.indexOf( "Dependency Id: org.apache.maven.plugin.rresource.it.mrr41:release:1.0" ) >= 0 );
+        assertTrue( content.indexOf( "Dependency Id: org.apache.maven.plugin.rresource.it.mrr41:snapshot:1.0-SNAPSHOT" ) >= 0 );
     }
 
 }
