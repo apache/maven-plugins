@@ -9,14 +9,14 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
-public class IT000_GenerateFromBundle
+public class IT_FilterLocalOverride
     extends AbstractIT
 {
     
     public void test()
         throws IOException, URISyntaxException, VerificationException
     {
-        File dir = TestUtils.getTestDir( "000-generateFromBundle" );
+        File dir = TestUtils.getTestDir( "filter-local-override" );
         Verifier verifier = new Verifier( dir.getAbsolutePath() );
         
         verifier.executeGoal( "generate-resources" );
@@ -26,7 +26,7 @@ public class IT000_GenerateFromBundle
         File output = new File( dir, "target/maven-shared-archive-resources/DEPENDENCIES" );
         String content = FileUtils.fileRead( output );
         
-        assertTrue( content.indexOf( "Built-In:" ) > -1 );
+        assertTrue( content.indexOf( "Override: filter-local-override" ) > -1 );
     }
 
 }
