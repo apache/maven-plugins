@@ -29,19 +29,19 @@
 Configuring Custom Taglets
 
  You could configure any custom taglets in your Javadoc Plugin configuration via the \<taglet/\>, \<taglets/\>
- or \<tagletArtifacts/\> elements, depending the number of taglets used.
+ or \<tagletArtifacts/\> parameters, depending the number of taglets used.
 
  For more information about the taglet technology, please refer to
  {{http://java.sun.com/j2se/1.4.2/docs/tooldocs/javadoc/taglet/overview.html}}.
 
 * One Taglet
 
- For one known Taglet, just use the \<taglet/\> element:
+ For one known Taglet, just use the {{{../javadoc-mojo.html#taglet}\<taglet/\>}} parameter:
 
 +-----+
 <project>
   ...
-  <reporting>
+  <reporting> (or <build>)
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -61,19 +61,19 @@ Configuring Custom Taglets
       </plugin>
     </plugins>
     ...
-  </reporting>
+  </reporting> (or </build>)
   ...
 </project>
 +-----+
 
 * Several Taglets
 
- For several known Taglets, just use the \<taglets/\> element:
+ For several known Taglets, just use the {{{../javadoc-mojo.html#taglets}\<taglets/\>}} parameter:
 
 +-----+
 <project>
   ...
-  <reporting>
+  <reporting> (or <build>)
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -108,18 +108,18 @@ Configuring Custom Taglets
       </plugin>
     </plugins>
     ...
-  </reporting>
+  </reporting> (or </build>)
   ...
 </project>
 +-----+
 
- If it is several Taglets in the same Taglet artifact, you could use the \<taglets/\> and the \<tagletArtifact/\>
- elements:
+ If it is several Taglets in the same Taglet artifact, you could use the {{{../javadoc-mojo.html#taglets}\<taglets/\>}}
+ and the {{{../javadoc-mojo.html#tagletArtifact}\<tagletArtifact/\>}} parameters:
 
 +-----+
 <project>
   ...
-  <reporting>
+  <reporting> (or <build>)
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -148,18 +148,18 @@ Configuring Custom Taglets
       </plugin>
     </plugins>
     ...
-  </reporting>
+  </reporting> (or </build>)
   ...
 </project>
 +-----+
 
  If you don't know the Taglets or if you want to auto-detect Taglet class names, you could use the
- \<tagletArtifacts/\> element:
+ {{{../javadoc-mojo.html#tagletArtifacts}\<tagletArtifacts/\>}} parameter:
 
 +-----+
 <project>
   ...
-  <reporting>
+  <reporting> (or <build>)
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -186,8 +186,7 @@ Configuring Custom Taglets
       </plugin>
     </plugins>
     ...
-  </reporting>
+  </reporting> (or </build>)
   ...
 </project>
 +-----+
-

@@ -29,7 +29,7 @@
 Selective Javadocs Reports
 
  To run the Javadocs reports selectively, you need to include only the Javadocs reports that you prefer.
- Use "mvn site" to generate the selected reports.
+ Use <<<mvn site>>> to generate the selected reports.
 
 +-----+
 
@@ -42,6 +42,7 @@ Selective Javadocs Reports
         <artifactId>maven-javadoc-plugin</artifactId>
         <version>${project.version}</version>
         <configuration>
+          <!-- Default configuration for all reports -->
           ...
         </configuration>
         <reportSets>
@@ -49,6 +50,10 @@ Selective Javadocs Reports
             <reports>
               <report>javadoc</report>
               <!-- <report>test-javadoc</report> -->
+              <configuration>
+                <!-- Specific configuration for the given report -->
+                ...
+              </configuration>
             </reports>
           </reportSet>
         </reportSets>

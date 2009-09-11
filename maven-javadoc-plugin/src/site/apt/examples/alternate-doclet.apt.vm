@@ -31,14 +31,16 @@ Using Alternate Doclet
 
  To generate output from an alternate doclet, add configuration similar to the following to your POM.
 
- In this example, the doclet is UmlGraph. UmlGraph allows the declarative specification and drawing
- of UML class and sequence diagrams.
- For more information about UmlGraph, please refer to {{http://www.umlgraph.org/}}.
+ In this example, the doclet is UmlGraph ({{http://www.umlgraph.org/}}). UmlGraph allows the declarative specification
+ and drawing of UML class and sequence diagrams.
+
+ <<Note about UmlGraph>>: You must have the Graphviz binary in your PATH, or the images will not be generated.
+ For more information about Graphviz, please refer to {{http://www.graphviz.org/}}.
 
 +-----+
 <project>
    ...
-   <reporting>
+   <reporting> (or <build>)
       <plugins>
          <plugin>
             <groupId>org.apache.maven.plugins</groupId>
@@ -59,38 +61,34 @@ Using Alternate Doclet
          </plugin>
          ...
       </plugins>
-   </reporting>
+   </reporting> (or </build>)
    ...
 </project>
 +-----+
 
  <<Note>>:
 
-   * \<additionalparam/\> is used to set additional parameters on the command line, specifically
-     for doclet options.
+   * {{{../javadoc-mojo.html#additionalparam}\<additionalparam/\>}} is used to set additional parameters on the command
+   line, specifically for doclet options.
 
-   * \<useStandardDocletOptions/\> uses the
+   * {{{../javadoc-mojo.html#useStandardDocletOptions}\<useStandardDocletOptions/\>}} uses the
    {{{http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#standard}options provided by the Standard Doclet}}.
 
-   * If you need more artifacts in the docletpath, you could use \<docletArtifacts/\>.
+   * If you need more artifacts in the docletpath, you could use {{{../javadoc-mojo.html#docletArtifacts}\<docletArtifacts/\>}}.
 
    []
 
  After executing <<<mvn site>>>, you will see that a UML graph (.dot file) will be generated in the
  destination directory.
 
- <<Note about UmlGraph>>: You must have the Graphviz binary in your PATH, or the images will not be generated.
- For more information about Graphviz, please refer to {{http://www.graphviz.org/}}.
-
 Using Alternate Doclet In Addition To The Javadoc Doclet
 
  To generate output from an alternate doclet in addition to the normal HTML Javadoc doclet, add configuration
  similar to the following to your POM.
 
- In this example, the doclet is Sun DocCheck. The Sun Doc Check Doclet is an extension to the Javadoc
- tool. It runs on source code and reviews documentation comments, generating an HTML report that
- identifies empty comments and other ommissions and irregularities in the documentation comments.
- For more information about Sun DocCheck, please refer to {{http://java.sun.com/j2se/javadoc/doccheck/}}.
+ In this example, the doclet is Sun DocCheck ({{http://java.sun.com/j2se/javadoc/doccheck/}}). The Sun Doc Check Doclet
+ is an extension to the Javadoc tool. It runs on source code and reviews documentation comments, generating an HTML
+ report that identifies empty comments and other ommissions and irregularities in the documentation comments.
 
 +-----+
 <project>
