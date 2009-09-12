@@ -31,7 +31,6 @@ import java.util.Map;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.installer.ArtifactInstaller;
-import org.apache.maven.artifact.metadata.ArtifactMetadata;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.ArtifactRepositoryFactory;
 import org.apache.maven.model.Model;
@@ -271,11 +270,7 @@ public class InstallMojo
 
                 copyFileIfDifferent( file, destination );
 
-                for ( Iterator it = artifact.getMetadataList().iterator(); it.hasNext(); )
-                {
-                    ArtifactMetadata metadata = (ArtifactMetadata) it.next();
-                    metadata.storeInLocalRepository( testRepository, testRepository );
-                }
+                MetadataUtils.createMetadata( destination, artifact );
             }
             else
             {
@@ -467,7 +462,7 @@ public class InstallMojo
 
                 if ( pomFile.isFile() )
                 {
-                    if ( !pomFile.equals( artifactFile ) )
+                    if ( !pomArtifact.getId().equals( depArtifact.getId() ) )
                     {
                         copyArtifact( pomFile, pomArtifact, testRepository );
                     }
@@ -526,7 +521,7 @@ public class InstallMojo
     {
         Artifact pomArtifact = artifactFactory.createProjectArtifact( groupId, artifactId, version );
 
-        if ( installedArtifacts.contains( pomArtifact.getId() ) )
+        if ( installedArtifacts.contains( pomArtifact.getId() ) || copiedArtifacts.contains( pomArtifact.getId() ) )
         {
             getLog().debug( "Not re-installing " + pomArtifact );
             return;
