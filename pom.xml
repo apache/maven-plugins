@@ -124,7 +124,7 @@ under the License.
                 <goal>install</goal>
               </goals>
               <filterProperties>
-                <gpgHomeDir>${project.build.testOutputDirectory}/.gnupg</gpgHomeDir>
+                <gpgHomeDir>${project.build.testOutputDirectory}/gnupg</gpgHomeDir>
               </filterProperties>
             </configuration>
             <executions>
