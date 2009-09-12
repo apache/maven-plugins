@@ -520,7 +520,7 @@ public class JavadocUtilTest
     }
 
     /**
-     * Method to test copyJavadocResources()
+     * Method to test pruneDirs()
      *
      * @throws Exception if any
      */
@@ -536,6 +536,40 @@ public class JavadocUtilTest
         expected.add( getBasedir() + "/target/classes" );
 
         assertTrue( EqualsBuilder.reflectionEquals( expected, JavadocUtil.pruneDirs( null, list ) ) );
+    }
+
+    /**
+     * Method to test unifyPathSeparator()
+     *
+     * @throws Exception if any
+     */
+    public void testUnifyPathSeparator()
+        throws Exception
+    {
+        assertEquals( null, JavadocUtil.unifyPathSeparator( null ) );
+
+        final String ps = File.pathSeparator;
+
+        // Windows
+        String path1 = "C:\\maven-javadoc-plugin\\src\\main\\java";
+        String path2 = "C:\\maven-javadoc-plugin\\src\\main\\javadoc";
+        assertEquals( path1 + ps + path2, JavadocUtil.unifyPathSeparator( path1 + ";" + path2 ) );
+        assertEquals( path1 + ps + path2, JavadocUtil.unifyPathSeparator( path1 + ":" + path2 ) );
+
+        path1 = "C:/maven-javadoc-plugin/src/main/java";
+        path2 = "C:/maven-javadoc-plugin/src/main/javadoc";
+        assertEquals( path1 + ps + path2, JavadocUtil.unifyPathSeparator( path1 + ";" + path2 ) );
+        assertEquals( path1 + ps + path2, JavadocUtil.unifyPathSeparator( path1 + ":" + path2 ) );
+        assertEquals( path1 + ps + path2 + ps + path1 + ps + path2, JavadocUtil.unifyPathSeparator( path1 + ";"
+            + path2 + ";" + path1 + ":" + path2 ) );
+
+        // Unix
+        path1 = "/tmp/maven-javadoc-plugin/src/main/java";
+        path2 = "/tmp/maven-javadoc-plugin/src/main/javadoc";
+        assertEquals( path1 + ps + path2, JavadocUtil.unifyPathSeparator( path1 + ";" + path2 ) );
+        assertEquals( path1 + ps + path2, JavadocUtil.unifyPathSeparator( path1 + ":" + path2 ) );
+        assertEquals( path1 + ps + path2 + ps + path1 + ps + path2, JavadocUtil.unifyPathSeparator( path1 + ";"
+            + path2 + ":" + path1 + ":" + path2 ) );
     }
 
     /**

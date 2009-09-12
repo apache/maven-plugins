@@ -38,6 +38,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -68,6 +69,7 @@ import org.apache.maven.shared.invoker.MavenInvocationException;
 import org.apache.maven.shared.invoker.PrintStreamHandler;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.Os;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.cli.CommandLineException;
 import org.codehaus.plexus.util.cli.CommandLineUtils;
@@ -1103,6 +1105,64 @@ public class JavadocUtil
         }
     }
 
+    /**
+     * Split the given path with colon and semi-colon, to support Solaris and Windows path.
+     * Examples:
+     * <pre>
+     * splitPath( "/home:/tmp" )     = ["/home", "/tmp"]
+     * splitPath( "/home;/tmp" )     = ["/home", "/tmp"]
+     * splitPath( "C:/home:C:/tmp" ) = ["C:/home", "C:/tmp"]
+     * splitPath( "C:/home;C:/tmp" ) = ["C:/home", "C:/tmp"]
+     * </pre>
+     *
+     * @param path which can contain multiple paths separated with a colon (<code>:</code>) or a
+     * semi-colon (<code>;</code>), plateform independent. Could be null.
+     * @return the path splitted by colon or semi-colon or <code>null</code> if path was <code>null</code>.
+     * @since 2.6.1
+     */
+    protected static String[] splitPath( final String path )
+    {
+        if ( path == null )
+        {
+            return null;
+        }
+
+        List subpaths = new ArrayList();
+        PathTokenizer pathTokenizer = new PathTokenizer( path );
+        while ( pathTokenizer.hasMoreTokens() )
+        {
+            subpaths.add( pathTokenizer.nextToken() );
+        }
+
+        return (String[]) subpaths.toArray( new String[0] );
+    }
+
+    /**
+     * Unify the given path with the current System path separator, to be plateform independent.
+     * Examples:
+     * <pre>
+     * unifyPathSeparator( "/home:/tmp" ) = "/home:/tmp" (Solaris box)
+     * unifyPathSeparator( "/home:/tmp" ) = "/home;/tmp" (Windows box)
+     * </pre>
+     *
+     * @param path which can contain multiple paths by separating them with a colon (<code>:</code>) or a
+     * semi-colon (<code>;</code>), plateform independent. Could be null.
+     * @return the same path but separated with the current System path separator or <code>null</code> if path was
+     * <code>null</code>.
+     * @since 2.6.1
+     * @see #splitPath(String)
+     * @see File#pathSeparator
+     */
+    protected static String unifyPathSeparator( final String path )
+    {
+        if ( path == null )
+        {
+            return null;
+        }
+
+        return StringUtils.join( splitPath( path ), File.pathSeparator );
+    }
+
     // ----------------------------------------------------------------------
     // private methods
     // ----------------------------------------------------------------------
@@ -1371,5 +1431,175 @@ public class JavadocUtil
         }
 
         return javaOpts;
+    }
+
+    /**
+     * A Path tokenizer takes a path and returns the components that make up
+     * that path.
+     *
+     * The path can use path separators of either ':' or ';' and file separators
+     * of either '/' or '\'.
+     *
+     * @version revision 439418 taken on 2009-09-12 from Ant Project
+     * (see http://svn.apache.org/repos/asf/ant/core/trunk/src/main/org/apache/tools/ant/PathTokenizer.java)
+     */
+    private static class PathTokenizer
+    {
+        /**
+         * A tokenizer to break the string up based on the ':' or ';' separators.
+         */
+        private StringTokenizer tokenizer;
+
+        /**
+         * A String which stores any path components which have been read ahead
+         * due to DOS filesystem compensation.
+         */
+        private String lookahead = null;
+
+        /**
+         * A boolean that determines if we are running on Novell NetWare, which
+         * exhibits slightly different path name characteristics (multi-character
+         * volume / drive names)
+         */
+        private boolean onNetWare = Os.isFamily( "netware" );
+
+        /**
+         * Flag to indicate whether or not we are running on a platform with a
+         * DOS style filesystem
+         */
+        private boolean dosStyleFilesystem;
+
+        /**
+         * Constructs a path tokenizer for the specified path.
+         *
+         * @param path The path to tokenize. Must not be <code>null</code>.
+         */
+        public PathTokenizer( String path )
+        {
+            if ( onNetWare )
+            {
+                // For NetWare, use the boolean=true mode, so we can use delimiter
+                // information to make a better decision later.
+                tokenizer = new StringTokenizer( path, ":;", true );
+            }
+            else
+            {
+                // on Windows and Unix, we can ignore delimiters and still have
+                // enough information to tokenize correctly.
+                tokenizer = new StringTokenizer( path, ":;", false );
+            }
+            dosStyleFilesystem = File.pathSeparatorChar == ';';
+        }
+
+        /**
+         * Tests if there are more path elements available from this tokenizer's
+         * path. If this method returns <code>true</code>, then a subsequent call
+         * to nextToken will successfully return a token.
+         *
+         * @return <code>true</code> if and only if there is at least one token
+         * in the string after the current position; <code>false</code> otherwise.
+         */
+        public boolean hasMoreTokens()
+        {
+            if ( lookahead != null )
+            {
+                return true;
+            }
+
+            return tokenizer.hasMoreTokens();
+        }
+
+        /**
+         * Returns the next path element from this tokenizer.
+         *
+         * @return the next path element from this tokenizer.
+         *
+         * @exception NoSuchElementException if there are no more elements in this
+         *            tokenizer's path.
+         */
+        public String nextToken()
+            throws NoSuchElementException
+        {
+            String token = null;
+            if ( lookahead != null )
+            {
+                token = lookahead;
+                lookahead = null;
+            }
+            else
+            {
+                token = tokenizer.nextToken().trim();
+            }
+
+            if ( !onNetWare )
+            {
+                if ( token.length() == 1 && Character.isLetter( token.charAt( 0 ) ) && dosStyleFilesystem
+                    && tokenizer.hasMoreTokens() )
+                {
+                    // we are on a dos style system so this path could be a drive
+                    // spec. We look at the next token
+                    String nextToken = tokenizer.nextToken().trim();
+                    if ( nextToken.startsWith( "\\" ) || nextToken.startsWith( "/" ) )
+                    {
+                        // we know we are on a DOS style platform and the next path
+                        // starts with a slash or backslash, so we know this is a
+                        // drive spec
+                        token += ":" + nextToken;
+                    }
+                    else
+                    {
+                        // store the token just read for next time
+                        lookahead = nextToken;
+                    }
+                }
+            }
+            else
+            {
+                // we are on NetWare, tokenizing is handled a little differently,
+                // due to the fact that NetWare has multiple-character volume names.
+                if ( token.equals( File.pathSeparator ) || token.equals( ":" ) )
+                {
+                    // ignore ";" and get the next token
+                    token = tokenizer.nextToken().trim();
+                }
+
+                if ( tokenizer.hasMoreTokens() )
+                {
+                    // this path could be a drive spec, so look at the next token
+                    String nextToken = tokenizer.nextToken().trim();
+
+                    // make sure we aren't going to get the path separator next
+                    if ( !nextToken.equals( File.pathSeparator ) )
+                    {
+                        if ( nextToken.equals( ":" ) )
+                        {
+                            if ( !token.startsWith( "/" ) && !token.startsWith( "\\" ) && !token.startsWith( "." )
+                                && !token.startsWith( ".." ) )
+                            {
+                                // it indeed is a drive spec, get the next bit
+                                String oneMore = tokenizer.nextToken().trim();
+                                if ( !oneMore.equals( File.pathSeparator ) )
+                                {
+                                    token += ":" + oneMore;
+                                }
+                                else
+                                {
+                                    token += ":";
+                                    lookahead = oneMore;
+                                }
+                            }
+                            // implicit else: ignore the ':' since we have either a
+                            // UNIX or a relative path
+                        }
+                        else
+                        {
+                            // store the token just read for next time
+                            lookahead = nextToken;
+                        }
+                    }
+                }
+            }
+            return token;
+        }
     }
 }
