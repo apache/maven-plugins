@@ -135,7 +135,7 @@ public abstract class AbstractJavadocMojo
      *
      * @since 2.6
      */
-    public static final Properties DEFAULT_JAVA_API_LINKS  = new Properties();
+    public static final Properties DEFAULT_JAVA_API_LINKS = new Properties();
 
     /** The Javadoc script file name when <code>debug</code> parameter is on, i.e. javadoc.bat or javadoc.sh */
     protected static final String DEBUG_JAVADOC_SCRIPT_NAME =
@@ -520,7 +520,8 @@ public abstract class AbstractJavadocMojo
     // ----------------------------------------------------------------------
 
     /**
-     * Specifies the paths where the boot classes reside.
+     * Specifies the paths where the boot classes reside. The <code>bootclasspath</code> can contain multiple paths
+     * by separating them with a colon (<code>:</code>) or a semi-colon (<code>;</code>).
      * <br/>
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#bootclasspath">bootclasspath</a>.
      * <br/>
@@ -624,8 +625,8 @@ public abstract class AbstractJavadocMojo
 
     /**
      * Specifies the path to the doclet starting class file (specified with the <code>-doclet</code> option) and
-     * any jar files it depends on. The docletPath can contain multiple paths by separating them with a colon
-     * (<code>:</code>) on Solaris and a semi-colon (<code>;</code>) on Windows.
+     * any jar files it depends on. The <code>docletPath</code> can contain multiple paths by separating them with
+     * a colon (<code>:</code>) or a semi-colon (<code>;</code>).
      * <br/>
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#docletpath">docletpath</a>.
      *
@@ -661,8 +662,8 @@ public abstract class AbstractJavadocMojo
     private String excludePackageNames;
 
     /**
-     * Specifies the directories where extension classes reside. Separate directories in dirlist with a colon
-     * (<code>:</code>) on Solaris and a semi-colon (<code>;</code>) on Windows.
+     * Specifies the directories where extension classes reside. Separate directories in <code>extdirs</code> with a
+     * colon (<code>:</code>) or a semi-colon (<code>;</code>).
      * <br/>
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#extdirs">extdirs</a>.
      *
@@ -794,8 +795,8 @@ public abstract class AbstractJavadocMojo
     private String source;
 
     /**
-     * Specifies the source paths where the subpackages are located. The paths are separated with a colon
-     * (<code>:</code>) on Solaris and a semi-colon (<code>;</code>) on Windows.
+     * Specifies the source paths where the subpackages are located. The <code>sourcepath</code> can contain
+     * multiple paths by separating them with a colon (<code>:</code>) or a semi-colon (<code>;</code>).
      * <br/>
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#sourcepath">sourcepath</a>.
      *
@@ -1144,7 +1145,12 @@ public abstract class AbstractJavadocMojo
 
     /**
      * Omits qualifying package name from ahead of class names in output.
-     * <br/>
+     * Example:
+     * <pre>
+     * &lt;noqualifier&gt;all&lt;/noqualifier&gt;
+     * or
+     * &lt;noqualifier&gt;packagename1:packagename2&lt;/noqualifier&gt;
+     * </pre>
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#noqualifier">noqualifier</a>.
      * <br/>
      * Since <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/javadoc/whatsnew-1.4.html#summary">Java 1.4</a>.
@@ -1401,9 +1407,8 @@ public abstract class AbstractJavadocMojo
     private TagletArtifact[] tagletArtifacts;
 
     /**
-     * Specifies the search paths for finding taglet class files (.class). The tagletPath can contain
-     * multiple paths by separating them with a colon (<code>:</code>) on Solaris and a semi-colon (<code>;</code>)
-     * on Windows.
+     * Specifies the search paths for finding taglet class files (.class). The <code>tagletpath</code> can contain
+     * multiple paths by separating them with a colon (<code>:</code>) or a semi-colon (<code>;</code>).
      * <br/>
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#tagletpath">tagletpath</a>.
      * <br/>
@@ -1936,7 +1941,7 @@ public abstract class AbstractJavadocMojo
         }
         else
         {
-            sourcePaths = new ArrayList( Arrays.asList( sourcepath.split( "[;]" ) ) );
+            sourcePaths = new ArrayList( Arrays.asList( JavadocUtil.splitPath( sourcepath ) ) );
             sourcePaths = JavadocUtil.pruneDirs( project, sourcePaths );
             if ( getJavadocDirectory() != null )
             {
@@ -2026,8 +2031,10 @@ public abstract class AbstractJavadocMojo
     /**
      * Method to format the specified source paths that will be accepted by the javadoc tool.
      *
-     * @param sourcePaths the list of paths to the source files that will be included in the javadoc
-     * @return a String that contains the formatted source path argument
+     * @param sourcePaths the list of paths to the source files that will be included in the javadoc.
+     * @return a String that contains the formatted source path argument, separated by the System pathSeparator
+     * string (colon (<code>:</code>) on Solaris or semi-colon (<code>;</code>) on Windows).
+     * @see File#pathSeparator
      */
     private String getSourcePath( List sourcePaths )
     {
@@ -2068,8 +2075,10 @@ public abstract class AbstractJavadocMojo
      * Method that sets the classpath elements that will be specified in the javadoc <code>-classpath</code>
      * parameter.
      *
-     * @return a String that contains the concatenated classpath elements
-     * @throws MavenReportException if any
+     * @return a String that contains the concatenated classpath elements, separated by the System pathSeparator
+     * string (colon (<code>:</code>) on Solaris or semi-colon (<code>;</code>) on Windows).
+     * @throws MavenReportException if any.
+     * @see File#pathSeparator
      */
     private String getClasspath()
         throws MavenReportException
@@ -2390,9 +2399,10 @@ public abstract class AbstractJavadocMojo
     /**
      * Method to get the path of the bootclass artifacts used in the <code>-bootclasspath</code> option.
      *
-     * @return the path to jar file that contains taglet class file separated with a colon (<code>:</code>)
-     * on Solaris and a semi-colon (<code>;</code>) on Windows
+     * @return a string that contains bootclass path, separated by the System pathSeparator string
+     * (colon (<code>:</code>) on Solaris or semi-colon (<code>;</code>) on Windows).
      * @throws MavenReportException if any
+     * @see File#pathSeparator
      */
     private String getBootclassPath()
         throws MavenReportException
@@ -2421,7 +2431,7 @@ public abstract class AbstractJavadocMojo
 
         if ( StringUtils.isNotEmpty( bootclasspath ) )
         {
-            path.append( bootclasspath );
+            path.append( JavadocUtil.unifyPathSeparator( bootclasspath ) );
         }
 
         return path.toString();
@@ -2434,9 +2444,10 @@ public abstract class AbstractJavadocMojo
      * takes precedence over doclectArtifacts. docletPath is always appended to any result path
      * definition.
      *
-     * @return the path to jar file that contains doclet class file separated with a colon (<code>:</code>)
-     * on Solaris and a semi-colon (<code>;</code>) on Windows
+     * @return a string that contains doclet path, separated by the System pathSeparator string
+     * (colon (<code>:</code>) on Solaris or semi-colon (<code>;</code>) on Windows).
      * @throws MavenReportException if any
+     * @see File#pathSeparator
      */
     private String getDocletPath()
         throws MavenReportException
@@ -2466,7 +2477,7 @@ public abstract class AbstractJavadocMojo
 
         if ( !StringUtils.isEmpty( docletPath ) )
         {
-            path.append( docletPath );
+            path.append( JavadocUtil.unifyPathSeparator( docletPath ) );
         }
 
         if ( StringUtils.isEmpty( path.toString() ) && getLog().isWarnEnabled() )
@@ -2501,9 +2512,10 @@ public abstract class AbstractJavadocMojo
     /**
      * Method to get the path of the taglet artifacts used in the <code>-tagletpath</code> option.
      *
-     * @return the path to jar file that contains taglet class file separated with a colon (<code>:</code>)
-     * on Solaris and a semi-colon (<code>;</code>) on Windows
+     * @return a string that contains taglet path, separated by the System pathSeparator string
+     * (colon (<code>:</code>) on Solaris or semi-colon (<code>;</code>) on Windows).
      * @throws MavenReportException if any
+     * @see File#pathSeparator
      */
     private String getTagletPath()
         throws MavenReportException
@@ -2572,7 +2584,7 @@ public abstract class AbstractJavadocMojo
 
         if ( StringUtils.isNotEmpty( tagletpath ) )
         {
-            path.append( tagletpath );
+            path.append( JavadocUtil.unifyPathSeparator( tagletpath ) );
         }
 
         return path.toString();
@@ -3822,7 +3834,7 @@ public abstract class AbstractJavadocMojo
 
         addArgIfNotEmpty( arguments, "-exclude", getExcludedPackages( sourcePaths ), SINCE_JAVADOC_1_4 );
 
-        addArgIfNotEmpty( arguments, "-extdirs", JavadocUtil.quotedPathArgument( extdirs ) );
+        addArgIfNotEmpty( arguments, "-extdirs", JavadocUtil.quotedPathArgument( JavadocUtil.unifyPathSeparator( extdirs ) ) );
 
         if ( ( getOverview() != null ) && ( getOverview().exists() ) )
         {
