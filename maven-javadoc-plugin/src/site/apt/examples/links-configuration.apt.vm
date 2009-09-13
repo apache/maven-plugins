@@ -28,7 +28,8 @@
 
 Configuring <<<links>>> Parameter
 
-  You could add cross reference links to external projects using the {{{../javadoc-mojo.html#links}\<links/\>}}
+~~ Using anchor links produces a Velocity error.
+  You could add cross reference links to external projects using the {{{../javadoc-mojo.html}\<links/\>}}
   parameters. For instance:
 
 +-----+

@@ -68,6 +68,8 @@ public class TestJavadocReport
      * Specifies that Javadoc should retrieve the text for the Test overview documentation from the "source" file
      * specified by path/filename and place it on the Overview page (overview-summary.html).
      * <br/>
+     * <b>Note</b>: could be in conflict with &lt;nooverview/&gt;.
+     * <br/>
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#overview">overview</a>.
      * <br/>
      *
@@ -111,6 +113,10 @@ public class TestJavadocReport
 
     /**
      * Specifies the Test Javadoc resources directory to be included in the Javadoc (i.e. package.html, images...).
+     * <br/>
+     * Could be used in addition of <code>docfilessubdirs</code> parameter.
+     * <br/>
+     * See <a href="#docfilessubdirs">docfilessubdirs</a>.
      *
      * @parameter expression="${basedir}/src/test/javadoc" alias="javadocDirectory"
      * @since 2.5
@@ -122,7 +128,8 @@ public class TestJavadocReport
     // ----------------------------------------------------------------------
 
     /**
-     * The name of the Test Javadoc report.
+     * The name of the Test Javadoc report to be displayed in the Maven Generated Reports page
+     * (i.e. <code>project-reports.html</code>).
      *
      * @parameter expression="${testName}" alias="name"
      * @since 2.5
@@ -130,7 +137,8 @@ public class TestJavadocReport
     private String testName;
 
     /**
-     * The description of the Test Javadoc report.
+     * The description of the Test Javadoc report to be displayed in the Maven Generated Reports page
+     * (i.e. <code>project-reports.html</code>).
      *
      * @parameter expression="${testDescription}" alias="description"
      * @since 2.5

@@ -38,24 +38,29 @@ Using Alternate Javadoc Tool
 
 +-----+
 <project>
-   ...
-   <reporting> (or <build>)
-      <plugins>
-         <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-javadoc-plugin</artifactId>
-            <version>${project.version}</version>
-            <configuration>
-              <javadocExecutable>C:\jdk1.6.0\bin\javadoc.exe</javadocExecutable>
-              ...
-            </configuration>
-         </plugin>
-         ...
-      </plugins>
-   </reporting> (or </build>)
-   ...
+  ...
+  <reporting> (or <build>)
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>${project.version}</version>
+        <configuration>
+          <javadocExecutable>C:\jdk1.6.0\bin\javadoc.exe</javadocExecutable>
+          ...
+        </configuration>
+      </plugin>
+      ...
+    </plugins>
+  </reporting> (or </build>)
+  ...
 </project>
 +-----+
+
+  <<IMPORTANT NOTE>>: by using {{{../javadoc-mojo.html#javadocExecutable}\<javadocExecutable/\>}} parameter, the build
+  will be plateform dependent! A good practice is to define an environnement variable (i.e. JAVA_1.6_HOME), so you
+  could specify it: (i.e. \<javadocExecutable\>\u0024\{env.JAVA_1.6_HOME\}/bin/javadoc\</javadocExecutable\>). An other
+  ways is to define a POM property using \<project\>\<properties/\>\</project\>.
 
 * Using Alternate Javadoc Version
 
@@ -66,22 +71,22 @@ Using Alternate Javadoc Tool
 
 +-----+
 <project>
-   ...
-   <reporting> (or <build>)
-      <plugins>
-         <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-javadoc-plugin</artifactId>
-            <version>${project.version}</version>
-            <configuration>
-              <javadocVersion>1.5</javadocVersion>
-              ...
-            </configuration>
-         </plugin>
-         ...
-      </plugins>
-   </reporting> (or </build>)
-   ...
+  ...
+  <reporting> (or <build>)
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>${project.version}</version>
+        <configuration>
+          <javadocVersion>1.5</javadocVersion>
+          ...
+        </configuration>
+      </plugin>
+      ...
+    </plugins>
+  </reporting> (or </build>)
+  ...
 </project>
 +-----+
 

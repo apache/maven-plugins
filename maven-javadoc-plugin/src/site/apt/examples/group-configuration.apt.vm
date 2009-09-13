@@ -4,7 +4,7 @@
  Vincent Siveton
  Maria Odea Ching
  ------
- 2009-08-04
+ 2009-09-12
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -29,7 +29,28 @@
 
 Grouping Packages
 
- To set a grouping for different packages, use the {{{../javadoc-mojo.html#groups}\<groups/\>}} configuration in your pom:
+ To set a grouping for different packages, use the {{{../javadoc-mojo.html#groups}\<groups/\>}} parameter as shown
+ below. Each group will be consist of a \<title/\> and a \<packages/\> (as String). The \<packages/\> element supports
+ wildcard (*) to allow subpackages. If more than one package is to be included, each package name must be separated
+ colon (:) separated (similar to the
+ {{{http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#group}Javadoc Tool}}).
+
+ For instance, with the following packages:
+
++-----+
+com.mycompany.myapp
+com.mycompany.myapp.package1
+com.mycompany.myapp.package1.subpackage1
+com.mycompany.myapp.package1.subpackage2
+com.mycompany.myapp.package1.subpackage3
+com.mycompany.myapp.package1.util
+com.mycompany.myapp.package2
+com.mycompany.myapp.package2.subpackage4
+com.mycompany.myapp.package2.subpackage5
+com.mycompany.myapp.package2.util
++-----+
+
+  You could have the following configuration:
 
 +-----+
 <project>
@@ -41,20 +62,89 @@ Grouping Packages
         <artifactId>maven-javadoc-plugin</artifactId>
         <version>${project.version}</version>
         <configuration>
-          ...
           <groups>
             <group>
-              <title>Core Packages</title>
-              <packages>org.apache.maven.plugin.javadoc.test1</packages>
+              <title>Example 1 - Group Packages</title>
+              <!--
+              Include packages:
+                com.mycompany.myapp
+                com.mycompany.myapp.package1
+              BUT exclude all subpackages
+              -->
+              <packages>com.mycompany.myapp:com.mycompany.myapp.package1</packages>
             </group>
             <group>
-              <title>Extension Packages</title>
-              <packages>org.apache.maven.plugin.javadoc.test2</packages>
+              <title>Example 2 - Group Packages</title>
+              <!--
+              Include packages:
+                com.mycompany.myapp.package1.subpackage1
+                com.mycompany.myapp.package1.subpackage2
+                com.mycompany.myapp.package1.subpackage3
+                com.mycompany.myapp.package1.util
+              BUT exclude the root package:
+                com.mycompany.myapp.package1
+              -->
+              <packages>com.mycompany.myapp.package1.*</packages>
+            </group>
+            <group>
+              <title>Example 3 - Group Packages</title>
+              <!--
+              Include packages:
+                com.mycompany.myapp.package1
+                com.mycompany.myapp.package1.subpackage1
+                com.mycompany.myapp.package1.subpackage2
+                com.mycompany.myapp.package1.subpackage3
+                com.mycompany.myapp.package1.util
+              -->
+              <packages>com.mycompany.myapp.package1*</packages>
+            </group>
+            <group>
+              <title>Example 4 - Group Packages</title>
+              <!--
+              Include packages:
+                com.mycompany.myapp.package1
+                com.mycompany.myapp.package1.subpackage1
+                com.mycompany.myapp.package1.subpackage2
+                com.mycompany.myapp.package1.subpackage3
+                com.mycompany.myapp.package1.util
+                com.mycompany.myapp.package2
+                com.mycompany.myapp.package2.subpackage4
+                com.mycompany.myapp.package2.subpackage5
+                com.mycompany.myapp.package2.util
+              -->
+              <packages>com.mycompany.myapp.package*</packages>
+            </group>
+            <group>
+              <title>Example 5 - Group Packages</title>
+              <!--
+              Include packages:
+                com.mycompany.myapp.package1.subpackage1
+                com.mycompany.myapp.package1.subpackage2
+                com.mycompany.myapp.package1.subpackage3
+                com.mycompany.myapp.package1.util
+                com.mycompany.myapp.package2.subpackage4
+                com.mycompany.myapp.package2.subpackage5
+                com.mycompany.myapp.package2.util
+              BUT exclude the root packages:
+                com.mycompany.myapp.package1
+                com.mycompany.myapp.package2
+              -->
+              <packages>com.mycompany.myapp.package1.*:com.mycompany.myapp.package2.*</packages>
+            </group>
+            <group>
+              <title>Example 6 - Group Packages</title>
+              <!--
+              Include nothing.
+              The packages com.mycompany.myapp.package1.util and com.mycompany.myapp.package2.util
+              will be in "Other Packages" group
+              -->
+              <packages>*.util.*</packages>
             </group>
           </groups>
           ...
         </configuration>
       </plugin>
+      ...
     </plugins>
     ...
   </reporting> (or </build>)

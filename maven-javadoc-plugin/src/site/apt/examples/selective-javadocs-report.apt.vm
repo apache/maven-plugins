@@ -3,7 +3,7 @@
  ------
  Vincent Siveton
  ------
- 2009-08-04
+ 2009-09-13
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -29,7 +29,48 @@
 Selective Javadocs Reports
 
  To run the Javadocs reports selectively, you need to include only the Javadocs reports that you prefer.
- Use <<<mvn site>>> to generate the selected reports.
+ As said in the {{{../faq.html#Where_in_the_pom.xml_do_I_configure_the_Javadoc_Plugin}FAQ}}, the configuration
+ depends on the \<build/\> tag or \<reporting/\> tag used.
+
+* Using \<build/\> Tag
+
++-----+
+<project>
+  ...
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>${project.version}</version>
+        <configuration>
+          <!-- Default configuration for all reports -->
+          ...
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>javadoc</goal>
+              <goal>test-javadoc</goal>
+            </goals>
+            <phase>site</phase>
+            <configuration>
+              <!-- Specific configuration for the given reports -->
+              ...
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  ...
+</project>
++-----+
+
+ Since the phase is <<<site>>>, you need to call <<<mvn site>>> to generate the selected reports (only main and test
+ javadocs).
+
+* Using \<reporting/\> Tag
 
 +-----+
 
@@ -47,13 +88,24 @@ Selective Javadocs Reports
         </configuration>
         <reportSets>
           <reportSet>
+            <id>default</id>
+            <configuration>
+              <!-- Specific configuration for the given reports -->
+              ...
+            </configuration>
             <reports>
               <report>javadoc</report>
-              <!-- <report>test-javadoc</report> -->
-              <configuration>
-                <!-- Specific configuration for the given report -->
-                ...
-              </configuration>
+              <report>test-javadoc</report>
+            </reports>
+          </reportSet>
+          <reportSet>
+            <id>aggregate</id>
+            <configuration>
+              <!-- Specific configuration for the given reports -->
+              ...
+            </configuration>
+            <reports>
+              <report>aggregate</report>
             </reports>
           </reportSet>
         </reportSets>
@@ -63,3 +115,5 @@ Selective Javadocs Reports
   ...
 </project>
 +-----+
+
+  Just call <<<mvn site>>> to generate the selected reports (main, test and aggregate javadocs).

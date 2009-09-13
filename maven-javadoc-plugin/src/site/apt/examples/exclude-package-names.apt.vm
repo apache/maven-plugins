@@ -3,7 +3,7 @@
  ------
  Maria Odea Ching
  ------
- 2009-09-11
+ 2009-09-12
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -28,29 +28,73 @@
 
 Excluding Packages
 
- To exclude specific packages from the Javadoc tool, use {{{../javadoc-mojo.html#excludePackageNames}\<excludePackageNames/\>}}
+ To exclude specific packages, use {{{../javadoc-mojo.html#excludePackageNames}\<excludePackageNames/\>}} parameter
  as shown below. The parameter accepts wildcard (*) characters in its value but the wildcards should either be at the
  start or the end of the package name. If more than one package is to be excluded, each package name must be separated
- either with a colon (':'), a comma (',') or a semicolon (';').
+ either with a colon (':'), a comma (',') or a semicolon (';'). (similar to the
+ {{{http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#exclude}Javadoc Tool}})
+
+ For instance, with the following packages:
+
++-----+
+com.mycompany.myapp
+com.mycompany.myapp.package1
+com.mycompany.myapp.package1.subpackage1
+com.mycompany.myapp.package1.subpackage2
+com.mycompany.myapp.package1.subpackage3
+com.mycompany.myapp.package1.util
+com.mycompany.myapp.package2
+com.mycompany.myapp.package2.subpackage4
+com.mycompany.myapp.package2.subpackage5
+com.mycompany.myapp.package2.util
+com.mycompany.myapp.package3
+com.mycompany.myapp.package3.subpackage6
+com.mycompany.myapp.package3.subpackage6.subsubpackage1
+com.mycompany.myapp.package3.subpackage6.subsubpackage2
+com.mycompany.myapp.package3.subpackage7
+com.mycompany.myapp.package3.util
++-----+
+
+  You could have the following configuration:
 
 +-----+
 <project>
   ...
-  <reporting>
+  <reporting> (or <build>)
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
         <version>${project.version}</version>
         <configuration>
-          ...
-          <excludePackageNames>*.internal:org.acme.exclude1.*:org.acme.exclude2</excludePackageNames>
+          <!--
+          Exclude packages:
+            com.mycompany.myapp.package1.subpackage1
+            com.mycompany.myapp.package1.subpackage2
+            com.mycompany.myapp.package1.subpackage3
+            com.mycompany.myapp.package1.util
+            com.mycompany.myapp.package2
+            com.mycompany.myapp.package2.subpackage4
+            com.mycompany.myapp.package2.subpackage5
+            com.mycompany.myapp.package2.util
+            com.mycompany.myapp.package3.util
+          BUT include the packages:
+            com.mycompany.myapp
+            com.mycompany.myapp.package1
+            com.mycompany.myapp.package3
+            com.mycompany.myapp.package3.subpackage6
+            com.mycompany.myapp.package3.subpackage6.subsubpackage1
+            com.mycompany.myapp.package3.subpackage6.subsubpackage2
+            com.mycompany.myapp.package3.subpackage7
+          -->
+          <excludePackageNames>com.mycompany.myapp.package1.*:com.mycompany.myapp.package2:*.util.*</excludePackageNames>
           ...
         </configuration>
       </plugin>
+      ...
     </plugins>
     ...
-  </reporting>
+  </reporting> (or <build>)
   ...
 </project>
 +-----+

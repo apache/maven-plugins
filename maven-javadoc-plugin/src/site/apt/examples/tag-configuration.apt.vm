@@ -4,7 +4,7 @@
  Vincent Siveton
  Maria Odea Ching
  ------
- 2009-08-04
+ 2009-09-12
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -29,7 +29,29 @@
 
 Configuring Custom Javadoc Tags
 
- You can configure any custom tags used in your javadoc via the {{{../javadoc-mojo.html#tags}\<tags/\>}} element:
+ To configure any custom tags, use {{{../javadoc-mojo.html#tags}\<tags/\>}} parameter as shown below. Each tag will
+ be consist of a \<name/\>, a \<placement/\> and a \<head/\>. The \<placement/\> should be a combination of the
+ letters Xaoptcmf:
+
+  * X (disable tag)
+
+  * a (all)
+
+  * o (overview)
+
+  * p (packages)
+
+  * t (types, that is classes and interfaces)
+
+  * c (constructors)
+
+  * m (methods)
+
+  * f (fields)
+
+  []
+
+ For instance, with the following configuration:
 
 +-----+
 <project>
@@ -45,7 +67,7 @@ Configuring Custom Javadoc Tags
           <tags>
             <tag>
               <name>todo</name>
-              <!-- Should be a combination of the letters Xaoptcmf -->
+              <!-- todo tag for all places -->
               <placement>a</placement>
               <head>To do something:</head>
             </tag>
@@ -58,4 +80,27 @@ Configuring Custom Javadoc Tags
   </reporting> (or </build>)
   ...
 </project>
++-----+
+
+  and with the following todo tag in a class:
+
++-----+
+/**
+ * Hello world!
+ *
+ * @todo complete me!
+ */
+public class App {}
++-----+
+
+  the Javadoc tool will generate the following Javadoc:
+
++-----+
+public class App
+extends Object
+
+Hello world!
+
+To do something:
+    complete me!
 +-----+

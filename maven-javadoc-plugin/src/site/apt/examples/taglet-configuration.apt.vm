@@ -28,8 +28,9 @@
 
 Configuring Custom Taglets
 
- You could configure any custom taglets in your Javadoc Plugin configuration via the \<taglet/\>, \<taglets/\>
- or \<tagletArtifacts/\> parameters, depending the number of taglets used.
+ You could configure any custom taglets in your Javadoc Plugin configuration via the
+ {{{../javadoc-mojo.html#taglet}\<taglet/\>}}, {{{../javadoc-mojo.html#taglets}\<taglets/\>}}, or
+ {{{../javadoc-mojo.html#tagletArtifacts}\<tagletArtifacts/\>}} parameters, depending the number of taglets used.
 
  For more information about the taglet technology, please refer to
  {{http://java.sun.com/j2se/1.4.2/docs/tooldocs/javadoc/taglet/overview.html}}.

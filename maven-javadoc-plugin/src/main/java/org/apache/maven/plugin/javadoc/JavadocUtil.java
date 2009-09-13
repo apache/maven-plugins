@@ -803,7 +803,7 @@ public class JavadocUtil
      * Validate if a charset is supported on this platform.
      *
      * @param charsetName the charsetName to be check.
-     * @return <code>true</code> if the charset is supported by the JVM, <code>false</code> otherwise.
+     * @return <code>true</code> if the given charset is supported by the JVM, <code>false</code> otherwise.
      */
     protected static boolean validateEncoding( String charsetName )
     {
@@ -826,6 +826,7 @@ public class JavadocUtil
         {
             IOUtil.close( osw );
         }
+
         return true;
     }
 
