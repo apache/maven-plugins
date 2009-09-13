@@ -375,7 +375,8 @@ public abstract class AbstractJavadocMojo
     protected boolean aggregate;
 
     /**
-     * Set this to 'true' to debug Javadoc plugin. With this, 'options' and 'files' files are provided.
+     * Set this to <code>true</code> to debug the Javadoc plugin. With this, <code>javadoc.bat(or.sh)</code>,
+     * <code>options</code>, <code>@packages</code> or <code>argfile</code> files are provided in the output directory.
      * <br/>
      *
      * @since 2.1
@@ -652,6 +653,11 @@ public abstract class AbstractJavadocMojo
      * Unconditionally excludes the specified packages and their subpackages from the list formed by
      * <code>-subpackages</code>. Multiple packages can be separated by commas (<code>,</code>), colons (<code>:</code>)
      * or semicolons (<code>;</code>).
+     * <br/>
+     * Example:
+     * <pre>
+     * &lt;excludePackageNames&gt;*.internal:org.acme.exclude1.*:org.acme.exclude2&lt;/excludePackageNames&gt;
+     * </pre>
      * <br/>
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#exclude">exclude</a>.
      * <br/>
@@ -932,17 +938,28 @@ public abstract class AbstractJavadocMojo
      * (<code>*</code>) meaning "match any characters". Multiple patterns can be included in a group
      * by separating them with colons (<code>:</code>).
      * <br/>
-     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#group">group</a>.
-     * <br/>
      * Example:
      * <pre>
      * &lt;groups&gt;
      * &nbsp;&nbsp;&lt;group&gt;
      * &nbsp;&nbsp;&nbsp;&nbsp;&lt;title&gt;Core Packages&lt;/title&gt;
-     * &nbsp;&nbsp;&nbsp;&nbsp;&lt;packages&gt;org.apache.core&lt;/packages&gt;
+     * &nbsp;&nbsp;&nbsp;&nbsp;&lt;!-- To includes java.lang, java.lang.ref,
+     * &nbsp;&nbsp;&nbsp;&nbsp;java.lang.reflect and only java.util
+     * &nbsp;&nbsp;&nbsp;&nbsp;(i.e. not java.util.jar) --&gt;
+     * &nbsp;&nbsp;&nbsp;&nbsp;&lt;packages&gt;java.lang*:java.util&lt;/packages&gt;
+     * &nbsp;&nbsp;&lt;/group&gt;
+     * &nbsp;&nbsp;&lt;group&gt;
+     * &nbsp;&nbsp;&nbsp;&nbsp;&lt;title&gt;Extension Packages&lt;/title&gt;
+     * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;!-- To include javax.accessibility,
+     * &nbsp;&nbsp;&nbsp;&nbsp;javax.crypto, ... (among others) --&gt;
+     * &nbsp;&nbsp;&nbsp;&nbsp;&lt;packages&gt;javax.*&lt;/packages&gt;
      * &nbsp;&nbsp;&lt;/group&gt;
      * &lt;/groups&gt;
      * </pre>
+     * <b>Note</b>: using <code>java.lang.*</code> for <code>packages</code> would omit the <code>java.lang</code>
+     * package but using <code>java.lang*</code> will include it.
+     * <br/>
+     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#group">group</a>.
      * <br/>
      * See <a href="./apidocs/org/apache/maven/plugin/javadoc/options/Group.html">Javadoc</a>.
      * <br/>
@@ -1026,21 +1043,21 @@ public abstract class AbstractJavadocMojo
     /**
      * Creates links to existing javadoc-generated documentation of external referenced classes.
      * <br/>
-     * <b>Note 1</b>: only used is {@link #isOffline} is set to <code>false</code>.
-     * <br/>
-     * <b>Note 2</b>: all given links should have a fetchable <code>/package-list</code> file. For instance:
+     * <b>Notes</b>:
+     * <ol>
+     * <li>only used is {@link #isOffline} is set to <code>false</code>.</li>
+     * <li>all given links should have a fetchable <code>/package-list</code> file. For instance:
      * <pre>
      * &lt;links&gt;
-     *   &lt;link&gt;http://java.sun.com/j2se/1.4.2/docs/api&lt;/link&gt;
+     * &nbsp;&nbsp;&lt;link&gt;http://java.sun.com/j2se/1.4.2/docs/api&lt;/link&gt;
      * &lt;links&gt;
      * </pre>
-     * will be used because <code>http://java.sun.com/j2se/1.4.2/docs/api/package-list</code> exists.
-     * <br/>
-     * <b>Note 1</b>: if {@link #detectLinks} is defined, the links between the project dependencies are
-     * automatically added.
-     * <b>Note 2</b>: if {@link #detectJavaApiLink} is defined, a Java API link, based on the Java verion of the
-     * project's sources, will be added automatically.
-     * <br/>
+     * will be used because <code>http://java.sun.com/j2se/1.4.2/docs/api/package-list</code> exists.</li>
+     * <li>if {@link #detectLinks} is defined, the links between the project dependencies are
+     * automatically added.</li>
+     * <li>if {@link #detectJavaApiLink} is defined, a Java API link, based on the Java verion of the
+     * project's sources, will be added automatically.</li>
+     * </ol>
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#link">link</a>.
      *
      * @parameter expression="${links}"
@@ -1465,7 +1482,17 @@ public abstract class AbstractJavadocMojo
      * &nbsp;&nbsp;&lt;/tag&gt;
      * &lt;/tags&gt;
      * </pre>
-     * <br/>
+     * <b>Note</b>: the placement should be a combinaison of Xaoptcmf letters:
+     * <ul>
+     *   <li><b><code>X</code></b> (disable tag)</li>
+     *   <li><b><code>a</code></b> (all)</li>
+     *   <li><b><code>o</code></b> (overview)</li>
+     *   <li><b><code>p</code></b> (packages)</li>
+     *   <li><b><code>t</code></b> (types, that is classes and interfaces)</li>
+     *   <li><b><code>c</code></b> (constructors)</li>
+     *   <li><b><code>m</code></b> (methods)</li>
+     *   <li><b><code>f</code></b> (fields)</li>
+     * </ul>
      * See <a href="./apidocs/org/apache/maven/plugin/javadoc/options/Tag.html">Javadoc</a>.
      * <br/>
      *

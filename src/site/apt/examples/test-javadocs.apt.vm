@@ -28,14 +28,6 @@
 
 Generating Test Javadocs
 
- There are two ways to generate the test javadocs in the Maven Javadoc plugin:
-
-   * using the javadoc:test-javadoc goal
-
-   * using the \<reportSets/\> configuration parameter
-
-  []
-
  Here is a typical project used by the Maven Javadoc plugin:
 
 +-----+
