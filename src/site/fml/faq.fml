@@ -50,7 +50,9 @@ under the License.
         </p>
         <p>
           <b>IMPORTANT NOTE</b>: using <i>&lt;reporting/&gt;</i> or <i>&lt;build/&gt;</i> elements have not the same
-          behavior, refer to <a href="./usage.html">usage page</a> for more information.
+          behavior, refer to
+          <a href="http://maven.apache.org/guides/mini/guide-configuring-plugins.html#Using_the_reporting_Tag_VS_build_Tag">Using the &lt;reporting/&gt; Tag VS &lt;build/&gt; Tag</a>
+          part for more information.
         </p>
       </answer>
     </faq>

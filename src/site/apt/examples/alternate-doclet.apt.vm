@@ -39,42 +39,44 @@ Using Alternate Doclet
 
 +-----+
 <project>
-   ...
-   <reporting> (or <build>)
-      <plugins>
-         <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-javadoc-plugin</artifactId>
-            <version>${project.version}</version>
-            <configuration>
-              <doclet>org.umlgraph.doclet.UmlGraphDoc</doclet>
+  ...
+  <reporting> (or <build>)
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>${project.version}</version>
+        <configuration>
+          <doclet>org.umlgraph.doclet.UmlGraphDoc</doclet>
 
-              <!-- <docletPath>/path/to/UmlGraph.jar</docletPath> -->
-              <docletArtifact>
-                <groupId>org.umlgraph</groupId>
-                <artifactId>doclet</artifactId>
-                <version>5.1</version>
-              </docletArtifact>
-              <additionalparam>-views</additionalparam>
-              <useStandardDocletOptions>true</useStandardDocletOptions>
-            </configuration>
-         </plugin>
-         ...
-      </plugins>
-   </reporting> (or </build>)
-   ...
+          <!-- <docletPath>/path/to/UmlGraph.jar</docletPath> -->
+          <docletArtifact>
+            <groupId>org.umlgraph</groupId>
+            <artifactId>doclet</artifactId>
+            <version>5.1</version>
+          </docletArtifact>
+          <additionalparam>-views</additionalparam>
+          <useStandardDocletOptions>true</useStandardDocletOptions>
+        </configuration>
+      </plugin>
+    ...
+    </plugins>
+  </reporting> (or </build>)
+  ...
 </project>
 +-----+
 
  <<Note>>:
 
-   * {{{../javadoc-mojo.html#additionalparam}\<additionalparam/\>}} is used to set additional parameters on the command
-   line, specifically for doclet options.
+   * {{{../javadoc-mojo.html#additionalparam}\<additionalparam/\>}} parameter could be used to set additional
+   parameters on the command line, specifically for doclet options.
 
-   * {{{../javadoc-mojo.html#useStandardDocletOptions}\<useStandardDocletOptions/\>}} uses the
+   * {{{../javadoc-mojo.html#useStandardDocletOptions}\<useStandardDocletOptions/\>}} parameter could be used to specify
+   that the given doclet should use the
    {{{http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#standard}options provided by the Standard Doclet}}.
 
-   * If you need more artifacts in the docletpath, you could use {{{../javadoc-mojo.html#docletArtifacts}\<docletArtifacts/\>}}.
+   * If you need more artifacts in the docletpath, you could use the
+   {{{../javadoc-mojo.html#docletArtifacts}\<docletArtifacts/\>}} parameter.
 
    []
 
@@ -92,51 +94,51 @@ Using Alternate Doclet In Addition To The Javadoc Doclet
 
 +-----+
 <project>
-   ...
-   <reporting>
-      <plugins>
-         <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-javadoc-plugin</artifactId>
-            <version>${project.version}</version>
-            <reportSets>
-              <reportSet>
-                <id>html</id>
-                <reports>
-                  <report>javadoc</report>
-                </reports>
-              </reportSet>
-              <reportSet>
-                <id>doccheck</id>
-                <configuration>
-                  <doclet>com.sun.tools.doclets.doccheck.DocCheck</doclet>
+  ...
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>${project.version}</version>
+        <reportSets>
+          <reportSet>
+            <id>html</id>
+            <reports>
+              <report>javadoc</report>
+            </reports>
+          </reportSet>
+          <reportSet>
+            <id>doccheck</id>
+            <configuration>
+              <doclet>com.sun.tools.doclets.doccheck.DocCheck</doclet>
 
-                  <!-- <docletPath>/path/to/doccheck.jar</docletPath> -->
-                  <docletArtifact>
-                    <groupId>com.sun.tools.doclets</groupId>
-                    <artifactId>doccheck</artifactId>
-                    <version>1.2b2</version>
-                  </docletArtifact>
-                  <additionalparam>
+              <!-- <docletPath>/path/to/doccheck.jar</docletPath> -->
+              <docletArtifact>
+                <groupId>com.sun.tools.doclets</groupId>
+                <artifactId>doccheck</artifactId>
+                <version>1.2b2</version>
+              </docletArtifact>
+              <additionalparam>
                     -d \${project.build.directory}/site/doccheck
-                  </additionalparam>
+              </additionalparam>
 
-                  <!-- Other dir than apidocs -->
-                  <destDir>doccheck</destDir>
+              <!-- Other dir than apidocs -->
+              <destDir>doccheck</destDir>
 
-                  <!-- For the project-reports page-->
-                  <name>DocCheck</name>
-                  <description>DocCheck documentation.</description>
-                </configuration>
-                <reports>
-                  <report>javadoc</report>
-                </reports>
-              </reportSet>
-            </reportSets>
-        </plugin>
-        ...
-      </plugins>
-   </reporting>
-   ...
+              <!-- For the project-reports page-->
+              <name>DocCheck</name>
+              <description>DocCheck documentation.</description>
+            </configuration>
+            <reports>
+              <report>javadoc</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
+      ...
+    </plugins>
+  </reporting>
+  ...
 </project>
 +-----+

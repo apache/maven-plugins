@@ -72,7 +72,8 @@ public class JavadocReport
     private String destDir;
 
     /**
-     * The name of the Javadoc report.
+     * The name of the Javadoc report to be displayed in the Maven Generated Reports page
+     * (i.e. <code>project-reports.html</code>).
      *
      * @since 2.1
      * @parameter expression="${name}"
@@ -80,7 +81,8 @@ public class JavadocReport
     private String name;
 
     /**
-     * The description of the Javadoc report.
+     * The description of the Javadoc report to be displayed in the Maven Generated Reports page
+     * (i.e. <code>project-reports.html</code>).
      *
      * @since 2.1
      * @parameter expression="${description}"
