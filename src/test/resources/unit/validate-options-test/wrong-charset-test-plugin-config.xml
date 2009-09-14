@@ -21,11 +21,11 @@ under the License.
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.apache.maven.plugins.maven-javadoc-plugin.unit</groupId>
-  <artifactId>wrong-encoding-options-test</artifactId>
+  <artifactId>wrong-charset-options-test</artifactId>
   <packaging>jar</packaging>
   <version>1.0-SNAPSHOT</version>
   <inceptionYear>2007</inceptionYear>
-  <name>Maven Javadoc Plugin wrong encoding Test</name>
+  <name>Maven Javadoc Plugin wrong charset Test</name>
   <url>http://maven.apache.org</url>
   <build>
     <plugins>
@@ -41,7 +41,7 @@ under the License.
           <tags/>
           <quiet>true</quiet>
           <debug>true</debug>
-          <encoding>wrong</encoding>
+          <charset>wrong</charset>
           <stylesheet>java</stylesheet>
           <failOnError>true</failOnError>
         </configuration>
