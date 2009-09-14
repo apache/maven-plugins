@@ -148,6 +148,12 @@ under the License.
       <version>3.1</version>
     </dependency>
     <dependency>
+      <!-- MJAVADOC-246 -->
+      <groupId>commons-logging</groupId>
+      <artifactId>commons-logging</artifactId>
+      <version>1.1.1</version>
+    </dependency>
+    <dependency>
       <groupId>com.thoughtworks.qdox</groupId>
       <artifactId>qdox</artifactId>
       <version>1.9.2</version>
