@@ -1043,8 +1043,10 @@ public class JavadocReportTest
     public void testValidateOptions()
         throws Exception
     {
-        File testPom = new File( getBasedir(),
-                                 "src/test/resources/unit/validate-options-test/wrong-encoding-test-plugin-config.xml" );
+        // encoding
+        File testPom =
+            new File( getBasedir(),
+                      "src/test/resources/unit/validate-options-test/wrong-encoding-test-plugin-config.xml" );
         JavadocReport mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
         try
         {
@@ -1053,11 +1055,62 @@ public class JavadocReportTest
         }
         catch ( MojoExecutionException e )
         {
-            assertTrue( "Not wrong encoding catch", e.getMessage().indexOf( "Encoding not supported" ) != -1 );
+            assertTrue( "Not wrong encoding catch",
+                        e.getMessage().indexOf( "Unsupported option <encoding/>" ) != -1 );
+        }
+        testPom =
+            new File( getBasedir(),
+                      "src/test/resources/unit/validate-options-test/wrong-docencoding-test-plugin-config.xml" );
+        mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
+        try
+        {
+            mojo.execute();
+            assertTrue( "Not wrong docencoding catch", false );
+        }
+        catch ( MojoExecutionException e )
+        {
+            assertTrue( "Not wrong docencoding catch", e.getMessage()
+                                                        .indexOf( "Unsupported option <docencoding/>" ) != -1 );
+        }
+        testPom =
+            new File( getBasedir(),
+                      "src/test/resources/unit/validate-options-test/wrong-charset-test-plugin-config.xml" );
+        mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
+        try
+        {
+            mojo.execute();
+            assertTrue( "Not wrong charset catch", false );
+        }
+        catch ( MojoExecutionException e )
+        {
+            assertTrue( "Not wrong charset catch", e.getMessage().indexOf( "Unsupported option <charset/>" ) != -1 );
         }
 
-        testPom = new File( getBasedir(),
-                            "src/test/resources/unit/validate-options-test/conflict-options-test-plugin-config.xml" );
+        // locale
+        testPom =
+            new File( getBasedir(),
+                      "src/test/resources/unit/validate-options-test/wrong-locale-test-plugin-config.xml" );
+        mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
+        try
+        {
+            mojo.execute();
+            assertTrue( "Not wrong locale catch", false );
+        }
+        catch ( MojoExecutionException e )
+        {
+            assertTrue( "Not wrong locale catch", e.getMessage().indexOf( "Unsupported option <locale/>" ) != -1 );
+        }
+        testPom =
+            new File( getBasedir(),
+                      "src/test/resources/unit/validate-options-test/wrong-locale-with-variant-test-plugin-config.xml" );
+        mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
+        mojo.execute();
+        assertTrue( "Not wrong locale catch", true );
+
+        // conflict options
+        testPom =
+            new File( getBasedir(),
+                      "src/test/resources/unit/validate-options-test/conflict-options-test-plugin-config.xml" );
         mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
         try
         {
@@ -1066,7 +1119,8 @@ public class JavadocReportTest
         }
         catch ( MojoExecutionException e )
         {
-            assertTrue( "Not conflict catch", e.getMessage().indexOf( "Option <nohelp/> conflicts with <helpfile/>" ) != -1 );
+            assertTrue( "Not conflict catch", e.getMessage()
+                                               .indexOf( "Option <nohelp/> conflicts with <helpfile/>" ) != -1 );
         }
     }
 

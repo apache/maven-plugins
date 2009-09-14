@@ -3708,7 +3708,78 @@ public abstract class AbstractJavadocMojo
         // encoding
         if ( StringUtils.isNotEmpty( getEncoding() ) && !JavadocUtil.validateEncoding( getEncoding() ) )
         {
-            throw new MavenReportException( "Encoding not supported: " + getEncoding() );
+            throw new MavenReportException( "Unsupported option <encoding/> '" + getEncoding() + "'" );
+        }
+
+        // locale
+        if ( StringUtils.isNotEmpty( this.locale ) )
+        {
+            StringTokenizer tokenizer = new StringTokenizer( this.locale, "_" );
+            final int maxTokens = 3;
+            if ( tokenizer.countTokens() > maxTokens )
+            {
+                throw new MavenReportException( "Unsupported option <locale/> '" + this.locale
+                    + "', should be language_country_variant." );
+            }
+
+            Locale localeObject = null;
+            if ( tokenizer.hasMoreTokens() )
+            {
+                String language = tokenizer.nextToken().toLowerCase( Locale.ENGLISH );
+                if ( !Arrays.asList( Locale.getISOLanguages() ).contains( language ) )
+                {
+                    throw new MavenReportException( "Unsupported language '" + language
+                        + "' in option <locale/> '" + this.locale + "'" );
+                }
+                localeObject = new Locale( language );
+
+                if ( tokenizer.hasMoreTokens() )
+                {
+                    String country = tokenizer.nextToken().toUpperCase( Locale.ENGLISH );
+                    if ( !Arrays.asList( Locale.getISOCountries() ).contains( country ) )
+                    {
+                        throw new MavenReportException( "Unsupported country '" + country
+                            + "' in option <locale/> '" + this.locale + "'" );
+                    }
+                    localeObject = new Locale( language, country );
+
+                    if ( tokenizer.hasMoreTokens() )
+                    {
+                        String variant = tokenizer.nextToken();
+                        localeObject = new Locale( language, country, variant );
+                    }
+                }
+            }
+
+            if ( localeObject == null )
+            {
+                throw new MavenReportException( "Unsupported option <locale/> '" + this.locale
+                    + "', should be language_country_variant." );
+            }
+
+            this.locale = localeObject.toString();
+            final List availableLocalesList = Arrays.asList( Locale.getAvailableLocales() );
+            if ( StringUtils.isNotEmpty( localeObject.getVariant() )
+                && !availableLocalesList.contains( localeObject ) )
+            {
+                StringBuffer sb = new StringBuffer();
+                sb.append( "Unsupported option <locale/> with variant '" ).append( this.locale );
+                sb.append( "'" );
+
+                localeObject = new Locale( localeObject.getLanguage(), localeObject.getCountry() );
+                this.locale = localeObject.toString();
+
+                sb.append( ", trying to use <locale/> without variant, i.e. '" ).append( this.locale ).append( "'" );
+                if ( getLog().isWarnEnabled() )
+                {
+                    getLog().warn( sb.toString() );
+                }
+            }
+
+            if ( !availableLocalesList.contains( localeObject ) )
+            {
+                throw new MavenReportException( "Unsupported option <locale/> '" + this.locale + "'" );
+            }
         }
     }
 
@@ -3725,7 +3796,13 @@ public abstract class AbstractJavadocMojo
         // docencoding
         if ( StringUtils.isNotEmpty( getDocencoding() ) && !JavadocUtil.validateEncoding( getDocencoding() ) )
         {
-            throw new MavenReportException( "Encoding not supported: " + getDocencoding() );
+            throw new MavenReportException( "Unsupported option <docencoding/> '" + getDocencoding() + "'" );
+        }
+
+        // charset
+        if ( StringUtils.isNotEmpty( getCharset() ) && !JavadocUtil.validateEncoding( getCharset() ) )
+        {
+            throw new MavenReportException( "Unsupported option <charset/> '" + getCharset() + "'" );
         }
 
         // helpfile
@@ -4286,7 +4363,8 @@ public abstract class AbstractJavadocMojo
                 }
                 writeDebugJavadocScript( cmdLine, javadocOutputDirectory );
 
-                if ( StringUtils.isNotEmpty( output ) && isJavadocVMInitError( output ) )
+                if ( StringUtils.isNotEmpty( output ) && StringUtils.isEmpty( err.getOutput() )
+                    && isJavadocVMInitError( output ) )
                 {
                     StringBuffer msg = new StringBuffer();
                     msg.append( output );
