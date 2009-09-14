@@ -26,7 +26,7 @@
 
 Usage
 
-* Multi-Module Builds <since: 1.1>
+* Running Once in a Multi-Module Build (<Since: 1.1>)
 
   In many cases, an application build consists of multiple Maven modules, but you only need to 
   include the license files, dependencies listing, etc. once for the entire application. Of course,
@@ -126,3 +126,92 @@ Usage
  This will retrieve the <<<apache-jar-resource-bundle-1.0.jar>>> from the remote repositories
  specified in your POM, process each resource in the bundle and deposit them in your projects
  <<<${basedir}/target/classes>>> directory. 
+ 
+* Specifying Delimiters for Filterable Expressions (<Since 1.1>)
+
+ By default, the remote-resources plugin supports expressions specified using either the '<<<$\{expr}>>>' or '<<<@expr@>>>' format.
+ However, at times it may be more convenient to use a different set of filter delimiters. By configuring the 
+ <<<filterDelimiters>>> and <<<useDefaultFilterDelimiters>>> parameters, you have a high degree of control over the 
+ filtering process.
+ 
+ To enable the filter delimiters for the format '<<<#\{expr}>>>' (Ruby-style), add the following to your plugin
+ configuration:
+ 
++---+
+<plugin>
+  <artifactId>maven-remote-resources-plugin</artifactId>
+  <version>${project.version}</version>
+  [...]
+  
+  <executions>
+    <execution>
+      <id>process-remote-resources</id>
+      <goals>
+        <goal>process</goal>
+      </goals>
+      <configuration>
+        <filterDelimiters>
+          <filterDelimiter>#{*}</filterDelimiter>
+        </filterDelimiters>
+        [...]
+      </configuration>
+    </execution>
+  </executions>
+</plugin>
++---+
+
+  Notice the '<<<*>>>' character above. This denotes the dividing point between start and end delimiter, where the actual
+  expression will be specified. 
+  
+  If your start and end delimiters are the same, you can use an even simpler configuration. For example, to enable filter
+  delimiters for the format '<<<#expr#>>>', add the following to your plugin configuration:
+  
++---+
+<plugin>
+  <artifactId>maven-remote-resources-plugin</artifactId>
+  <version>${project.version}</version>
+  [...]
+  
+  <executions>
+    <execution>
+      <id>process-remote-resources</id>
+      <goals>
+        <goal>process</goal>
+      </goals>
+      <configuration>
+        <filterDelimiters>
+          <filterDelimiter>#</filterDelimiter>
+        </filterDelimiters>
+        [...]
+      </configuration>
+    </execution>
+  </executions>
+</plugin>
++---+
+
+  When the filter processor executes and notices this delimiter specification missing a '<<<*>>>' character, it will simply
+  assume the provided delimiter will be used as the start <and> end delimiter for an expression.
+  
+  All of the above assumes that you still want the ability to use '<<<$\{expr}>>>' and '<<<@expr@>>>' delimiters. However, in
+  cases where this would cause trouble, you can disable these default delimiters as follows:
+  
++---+
+<plugin>
+  <artifactId>maven-remote-resources-plugin</artifactId>
+  <version>${project.version}</version>
+  [...]
+  
+  <executions>
+    <execution>
+      <id>process-remote-resources</id>
+      <goals>
+        <goal>process</goal>
+      </goals>
+      <configuration>
+        <useDefaultFilterDelimiters>false</useDefaultFilterDelimiters>
+        [...]
+      </configuration>
+    </execution>
+  </executions>
+</plugin>
++---+
