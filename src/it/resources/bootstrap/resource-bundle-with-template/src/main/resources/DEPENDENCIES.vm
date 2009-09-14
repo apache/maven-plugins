@@ -1,0 +1,5 @@
+Built-In: #if ($projectName)$projectName#else${project.name}#end
+
+#foreach( $p in $projects )
+Dependency Id: $p.groupId:$p.artifactId:$p.version
+#end

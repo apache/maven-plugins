@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<supplementalDataModels>
+  <supplement>
+    <project>
+      <groupId>org.apache.maven.plugin.rresource.it.mrr43</groupId>
+      <artifactId>deficient-dep</artifactId>
+      
+      <name>Deficient Dependency</name>
+      <url>http://www.deficient-tools.us/dep</url>
+      
+      <organization>
+        <name>Deficient Tooling, Inc.</name>
+        <url>http://www.deficient-tools.us/</url>
+      </organization>
+    </project>
+  </supplement>
+</supplementalDataModels>

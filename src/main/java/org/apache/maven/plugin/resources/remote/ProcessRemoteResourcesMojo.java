@@ -19,35 +19,12 @@ package org.apache.maven.plugin.resources.remote;
  * under the License.
  */
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.io.StringReader;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-
+import org.apache.maven.ProjectDependenciesResolver;
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.InvalidRepositoryException;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.repository.ArtifactRepositoryFactory;
+import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
+import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Model;
@@ -56,13 +33,14 @@ import org.apache.maven.model.Resource;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugin.resources.remote.io.xpp3.RemoteResourcesBundleXpp3Reader;
 import org.apache.maven.plugin.resources.remote.io.xpp3.SupplementalDataModelXpp3Reader;
 import org.apache.maven.project.InvalidProjectModelException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
-import org.apache.maven.project.ProjectUtils;
+import org.apache.maven.project.artifact.InvalidDependencyVersionException;
 import org.apache.maven.project.inheritance.ModelInheritanceAssembler;
 import org.apache.maven.shared.artifact.filter.collection.ArtifactFilterException;
 import org.apache.maven.shared.artifact.filter.collection.ArtifactIdFilter;
@@ -73,16 +51,53 @@ import org.apache.maven.shared.artifact.filter.collection.TransitivityFilter;
 import org.apache.maven.shared.downloader.DownloadException;
 import org.apache.maven.shared.downloader.DownloadNotFoundException;
 import org.apache.maven.shared.downloader.Downloader;
+import org.apache.maven.shared.filtering.MavenFileFilter;
+import org.apache.maven.shared.filtering.MavenFileFilterRequest;
+import org.apache.maven.shared.filtering.MavenFilteringException;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
+import org.apache.velocity.exception.MethodInvocationException;
+import org.apache.velocity.exception.ParseErrorException;
+import org.apache.velocity.exception.ResourceNotFoundException;
 import org.codehaus.plexus.resource.ResourceManager;
 import org.codehaus.plexus.resource.loader.FileResourceLoader;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
+import org.codehaus.plexus.util.WriterFactory;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.codehaus.plexus.velocity.VelocityComponent;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.io.Reader;
+import java.io.StringReader;
+import java.io.Writer;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 
 /**
  * <p>
@@ -101,12 +116,74 @@ import org.codehaus.plexus.velocity.VelocityComponent;
  * </p>
  *
  * @goal process
- * @requiresDependencyResolution test
  * @phase generate-resources
  */
+// NOTE: Removed the following in favor of maven-artifact-resolver library, for MRRESOURCES-41
+// If I leave this intact, interdependent projects within the reactor that haven't been built
+// (remember, this runs in the generate-resources phase) will cause the build to fail.
+//
+// @requiresDependencyResolution test
 public class ProcessRemoteResourcesMojo
     extends AbstractMojo
 {
+    
+    private static final String TEMPLATE_SUFFIX = ".vm";
+    
+    /**
+     * <p>
+     * In cases where a local resource overrides one from a remote resource bundle, that resource
+     * should be filtered if the resource set specifies it. In those cases, this parameter defines
+     * the list of delimiters for filterable expressions. These delimiters are specified in the
+     * form 'beginToken*endToken'. If no '*' is given, the delimiter is assumed to be the same for start and end.
+     * </p>
+     * <p>
+     * So, the default filtering delimiters might be specified as:
+     * </p>
+     * <pre>
+     * &lt;delimiters&gt;
+     *   &lt;delimiter&gt;${*}&lt/delimiter&gt;
+     *   &lt;delimiter&gt;@&lt/delimiter&gt;
+     * &lt;/delimiters&gt;
+     * </pre>
+     * <p>
+     * Since the '@' delimiter is the same on both ends, we don't need to specify '@*@' (though we can).
+     * </p>
+     * @parameter
+     * @since 1.1
+     */
+    protected List<String> filterDelimiters;
+
+    /**
+     * @parameter default-value="true"
+     * @since 1.1
+     */
+    protected boolean useDefaultFilterDelimiters;
+    
+    /**
+     * If true, only generate resources in the directory of the root project in a multimodule build.
+     * Dependencies from all modules will be aggregated before resource-generation takes place.
+     * 
+     * @parameter default-value="false"
+     * @since 1.1
+     */
+    protected boolean runOnlyAtExecutionRoot;
+    
+    /**
+     * Used for calculation of execution-root for {@link ProcessRemoteResourcesMojo#runOnlyAtExecutionRoot}.
+     * 
+     * @parameter default-value="${basedir}"
+     * @readonly
+     * @required
+     */
+    protected File basedir;
+    
+    /**
+     * The character encoding scheme to be applied when filtering resources.
+     *
+     * @parameter expression="${encoding}" default-value="${project.build.sourceEncoding}"
+     */
+    protected String encoding;
+
     /**
      * The local repository taken from Maven's runtime. Typically $HOME/.m2/repository.
      *
@@ -117,22 +194,13 @@ public class ProcessRemoteResourcesMojo
     private ArtifactRepository localRepository;
 
     /**
-     * The remote repositories used as specified in your POM.
-     *
-     * @parameter expression="${project.repositories}"
-     * @readonly
-     * @required
-     */
-    private List repositories;
-
-    /**
      * List of Remote Repositories used by the resolver
      *
      * @parameter expression="${project.remoteArtifactRepositories}"
      * @readonly
      * @required
      */
-    private List remoteArtifactRepositories;
+    private List<ArtifactRepository> remoteArtifactRepositories;
 
     /**
      * The current Maven project.
@@ -170,10 +238,18 @@ public class ProcessRemoteResourcesMojo
     private String[] supplementalModels;
 
     /**
+     * List of artifacts that are added to the search path when looking 
+     * for supplementalModels
+     * @parameter
+     * @since 1.1 
+     */
+    private List<String> supplementalModelArtifacts;
+
+    /**
      * Map of artifacts to supplemental project object models.
      */
-    private Map supplementModels;
-
+    private Map<String, Model> supplementModels;
+    
     /**
      * Merges supplemental data model with artifact
      * metadata.  Useful when processing artifacts with
@@ -191,7 +267,7 @@ public class ProcessRemoteResourcesMojo
      * @parameter
      * @required
      */
-    private List resourceBundles;
+    private List<String> resourceBundles;
 
     /**
      * Skip remote-resource processing
@@ -202,7 +278,7 @@ public class ProcessRemoteResourcesMojo
     private boolean skip;
 
     /**
-     * Skip remote-resource processing
+     * Attaches the resource to the project as a resource directory
      *
      * @parameter default-value="true"
      * @since 1.0-beta-1
@@ -222,7 +298,7 @@ public class ProcessRemoteResourcesMojo
      *
      * @parameter
      */
-    private Map properties = new HashMap();
+    private Map<String, String> properties = new HashMap<String, String>();
 
     /**
      * The list of resources defined for the project.
@@ -231,7 +307,7 @@ public class ProcessRemoteResourcesMojo
      * @readonly
      * @required
      */
-    private List resources;
+    private List<Resource> resources;
 
     /**
      * Artifact downloader.
@@ -250,20 +326,13 @@ public class ProcessRemoteResourcesMojo
      * @required
      */
     private VelocityComponent velocity;
-
-    // These two things make this horrible. Maven artifact is way too complicated and the relationship between
-    // the model usage and maven-artifact needs to be reworked as well as all our tools that deal with it. The
-    // ProjectUtils should be a component so I don't have to expose the container and artifact factory here. Can't
-    // change it now because it's not released ...
-
+    
     /**
-     * Artifact repository factory component.
-     *
+     * Filtering support, for local resources that override those in the remote bundle.
+     * 
      * @component
-     * @readonly
-     * @required
      */
-    private ArtifactRepositoryFactory artifactRepositoryFactory;
+    private MavenFileFilter fileFilter;
 
     /**
      * Artifact factory, needed to create artifacts.
@@ -298,11 +367,11 @@ public class ProcessRemoteResourcesMojo
      * @readonly
      */
     private ResourceManager locator;
-    
-    
+
+
     /**
      * Scope to include. An Empty string indicates all scopes (default).
-     * 
+     *
      * @since 1.0
      * @parameter expression="${includeScope}" default-value="runtime"
      * @optional
@@ -311,16 +380,16 @@ public class ProcessRemoteResourcesMojo
 
     /**
      * Scope to exclude. An Empty string indicates no scopes (default).
-     * 
+     *
      * @since 1.0
      * @parameter expression="${excludeScope}" default-value=""
      * @optional
      */
     protected String excludeScope;
-    
+
     /**
      * Comma separated list of Artifact names too exclude.
-     * 
+     *
      * @since 1.0
      * @optional
      * @parameter expression="${excludeArtifactIds}" default-value=""
@@ -329,7 +398,7 @@ public class ProcessRemoteResourcesMojo
 
     /**
      * Comma separated list of Artifact names to include.
-     * 
+     *
      * @since 1.0
      * @optional
      * @parameter expression="${includeArtifactIds}" default-value=""
@@ -338,7 +407,7 @@ public class ProcessRemoteResourcesMojo
 
     /**
      * Comma separated list of GroupId Names to exclude.
-     * 
+     *
      * @since 1.0
      * @optional
      * @parameter expression="${excludeGroupIds}" default-value=""
@@ -347,7 +416,7 @@ public class ProcessRemoteResourcesMojo
 
     /**
      * Comma separated list of GroupIds to include.
-     * 
+     *
      * @since 1.0
      * @optional
      * @parameter expression="${includeGroupIds}" default-value=""
@@ -356,13 +425,19 @@ public class ProcessRemoteResourcesMojo
 
     /**
      * If we should exclude transitive dependencies
-     * 
+     *
      * @since 1.0
      * @optional
      * @parameter expression="${excludeTransitive}" default-value="false"
      */
     protected boolean excludeTransitive;
+    
+    /**
+     * @component role-hint="default"
+     */
+    protected ProjectDependenciesResolver dependencyResolver;
 
+    @SuppressWarnings( "unchecked" )
     public void execute()
         throws MojoExecutionException
     {
@@ -370,6 +445,13 @@ public class ProcessRemoteResourcesMojo
         {
             return;
         }
+        
+        if ( runOnlyAtExecutionRoot && !isExecutionRoot() )
+        {
+            getLog().info( "Skipping remote-resource generation in this project because it's not the Execution Root" );
+            return;
+        }
+        
         if ( supplementalModels == null )
         {
             File sups = new File( appendedResourcesDirectory, "supplemental-models.xml" );
@@ -387,6 +469,7 @@ public class ProcessRemoteResourcesMojo
             }
         }
 
+        addSupplementalModelArtifacts();
         locator.addSearchPath( FileResourceLoader.ID, project.getFile().getParentFile().getAbsolutePath() );
         if ( appendedResourcesDirectory != null )
         {
@@ -402,7 +485,7 @@ public class ProcessRemoteResourcesMojo
 
             validate();
 
-            List resourceBundleArtifacts = downloadResourceBundles( resourceBundles );
+            List<File> resourceBundleArtifacts = downloadBundles( resourceBundles );
             supplementModels = loadSupplements( supplementalModels );
 
             VelocityContext context = new VelocityContext( properties );
@@ -410,9 +493,10 @@ public class ProcessRemoteResourcesMojo
 
             RemoteResourcesClassLoader classLoader
                 = new RemoteResourcesClassLoader( null );
+            
             initalizeClassloader( classLoader, resourceBundleArtifacts );
             Thread.currentThread().setContextClassLoader( classLoader );
-
+            
             processResourceBundles( classLoader, context );
 
             try
@@ -451,21 +535,85 @@ public class ProcessRemoteResourcesMojo
         }
     }
 
-    protected List getProjects()
+    private boolean isExecutionRoot()
+    {
+        Log log = this.getLog();
+        
+        boolean result = mavenSession.getExecutionRootDirectory().equalsIgnoreCase( basedir.toString() );
+        
+        if ( log.isDebugEnabled() )
+        {
+            log.debug("Root Folder:" + mavenSession.getExecutionRootDirectory());
+            log.debug("Current Folder:"+ basedir );
+            
+            if ( result )
+            {
+                log.debug( "This is the execution root." );
+            }
+            else
+            {
+                log.debug( "This is NOT the execution root." );
+            }
+        }
+        
+        return result;
+    }
+
+    private void addSupplementalModelArtifacts() throws MojoExecutionException
+    {
+        if ( supplementalModelArtifacts != null && !supplementalModelArtifacts.isEmpty() )
+        {
+            List<File> artifacts = downloadBundles( supplementalModelArtifacts );
+            
+            for ( File artifact : artifacts )
+            {
+                if ( artifact.isDirectory() ) 
+                {
+                    locator.addSearchPath( FileResourceLoader.ID, artifact.getAbsolutePath() );
+                }
+                else
+                {
+                    try 
+                    {
+                        locator.addSearchPath( "jar", "jar:" + artifact.toURL().toExternalForm() );
+                    } 
+                    catch (MalformedURLException e) 
+                    {
+                        throw new MojoExecutionException( "Could not use jar " 
+                                                          + artifact.getAbsolutePath(), e );
+                    }
+                }
+            }
+
+            
+        }
+    }
+
+    @SuppressWarnings( "unchecked" )
+    protected List<MavenProject> getProjects()
         throws MojoExecutionException
     {
-        List projects = new ArrayList();
-        
+        List<MavenProject> projects = new ArrayList<MavenProject>();
+
         // add filters in well known order, least specific to most specific
         FilterArtifacts filter = new FilterArtifacts();
+        
+        Set<Artifact> depArtifacts;
+        Set<Artifact> artifacts = resolveProjectArtifacts();
+        if ( runOnlyAtExecutionRoot )
+        {
+            depArtifacts = aggregateProjectDependencyArtifacts();
+        }
+        else
+        {
+            depArtifacts = project.getDependencyArtifacts();
+        }
 
-        filter.addFilter( new TransitivityFilter( project.getDependencyArtifacts(), this.excludeTransitive ) );
+        filter.addFilter( new TransitivityFilter( depArtifacts, this.excludeTransitive ) );
         filter.addFilter( new ScopeFilter( this.includeScope, this.excludeScope ) );
         filter.addFilter( new GroupIdFilter( this.includeGroupIds, this.excludeGroupIds ) );
         filter.addFilter( new ArtifactIdFilter( this.includeArtifactIds, this.excludeArtifactIds ) );
 
-        // start with all artifacts.
-        Set artifacts = project.getArtifacts();
         // perform filtering
         try
         {
@@ -477,12 +625,11 @@ public class ProcessRemoteResourcesMojo
         }
 
 
-        for ( Iterator it = artifacts.iterator(); it.hasNext(); )
+        for ( Artifact artifact : artifacts )
         {
-            Artifact artifact = (Artifact) it.next();
             try
             {
-                List remoteRepo = repositories;
+                List<ArtifactRepository> remoteRepo = remoteArtifactRepositories;
                 if ( artifact.isSnapshot() )
                 {
                     VersionRange rng = VersionRange.createFromVersion( artifact.getBaseVersion() );
@@ -491,14 +638,13 @@ public class ProcessRemoteResourcesMojo
                                                                          artifact.getType(), artifact.getClassifier(),
                                                                          artifact.getScope(), null,
                                                                          artifact.isOptional() );
-                    remoteRepo = remoteArtifactRepositories;
                 }
 
                 getLog().debug( "Building project for " + artifact );
                 MavenProject p = null;
                 try
                 {
-                    p = mavenProjectBuilder.buildFromRepository( artifact, remoteRepo, localRepository, true );
+                    p = mavenProjectBuilder.buildFromRepository( artifact, remoteRepo, localRepository );
                 }
                 catch ( InvalidProjectModelException e )
                 {
@@ -528,30 +674,87 @@ public class ProcessRemoteResourcesMojo
             }
             catch ( ProjectBuildingException e )
             {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                throw new MojoExecutionException( e.getMessage(), e );
             }
         }
         Collections.sort( projects, new ProjectComparator() );
         return projects;
     }
 
-    protected Map getProjectsSortedByOrganization( List projects )
+    @SuppressWarnings( "unchecked" )
+    private Set<Artifact> resolveProjectArtifacts()
         throws MojoExecutionException
     {
-        Map organizations = new TreeMap( new OrganizationComparator() );
-        List unknownOrganization = new ArrayList();
-
-        for ( Iterator i = projects.iterator(); i.hasNext(); )
+        try
         {
-            MavenProject p = (MavenProject) i.next();
+            if ( runOnlyAtExecutionRoot )
+            {
+                List<MavenProject> projects = mavenSession.getSortedProjects();
+                return dependencyResolver.resolve( projects, Collections.singleton( Artifact.SCOPE_TEST ), mavenSession );
+            }
+            else
+            {
+                return dependencyResolver.resolve( project, Collections.singleton( Artifact.SCOPE_TEST ), mavenSession );
+            }
+        }
+        catch ( ArtifactResolutionException e )
+        {
+            throw new MojoExecutionException( "Failed to resolve dependencies for one or more projects in the reactor. Reason: "
+                + e.getMessage(), e );
+        }
+        catch ( ArtifactNotFoundException e )
+        {
+            throw new MojoExecutionException( "Failed to resolve dependencies for one or more projects in the reactor. Reason: "
+                + e.getMessage(), e );
+        }
+    }
 
+    @SuppressWarnings( "unchecked" )
+    private Set<Artifact> aggregateProjectDependencyArtifacts()
+        throws MojoExecutionException
+    {
+        Set<Artifact> artifacts = new LinkedHashSet<Artifact>();
+        
+        List<MavenProject> projects = mavenSession.getSortedProjects();
+        for ( MavenProject p : projects )
+        {
+            if ( p.getDependencyArtifacts() == null )
+            {
+                try
+                {
+                    Set<Artifact> depArtifacts = p.createArtifacts( artifactFactory, null, null );
+                    p.setDependencyArtifacts( depArtifacts );
+                    
+                    if ( depArtifacts != null && !depArtifacts.isEmpty() )
+                    {
+                        artifacts.addAll( depArtifacts );
+                    }
+                }
+                catch ( InvalidDependencyVersionException e )
+                {
+                    throw new MojoExecutionException( "Failed to create dependency artifacts for: " + p.getId() + ". Reason: "
+                        + e.getMessage(), e );
+                }
+            }
+        }
+        
+        return artifacts;
+    }
+
+    protected Map<Organization, List<MavenProject>> getProjectsSortedByOrganization( List<MavenProject> projects )
+        throws MojoExecutionException
+    {
+        Map<Organization, List<MavenProject>> organizations = new TreeMap<Organization, List<MavenProject>>( new OrganizationComparator() );
+        List<MavenProject> unknownOrganization = new ArrayList<MavenProject>();
+
+        for ( MavenProject p : projects )
+        {
             if ( p.getOrganization() != null && StringUtils.isNotEmpty( p.getOrganization().getName() ) )
             {
-                List sortedProjects = (List) organizations.get( p.getOrganization() );
+                List<MavenProject> sortedProjects = (List<MavenProject>) organizations.get( p.getOrganization() );
                 if ( sortedProjects == null )
                 {
-                    sortedProjects = new ArrayList();
+                    sortedProjects = new ArrayList<MavenProject>();
                 }
                 sortedProjects.add( p );
 
@@ -572,25 +775,85 @@ public class ProcessRemoteResourcesMojo
         return organizations;
     }
 
-    protected boolean copyResourceIfExists( File file, String relFileName )
-        throws IOException
+    protected boolean copyResourceIfExists( File file, String relFileName, VelocityContext context )
+        throws IOException, MojoExecutionException
     {
-        for ( Iterator i = resources.iterator(); i.hasNext(); )
+        for ( Resource resource : resources )
         {
-            Resource resource = (Resource) i.next();
             File resourceDirectory = new File( resource.getDirectory() );
 
             if ( !resourceDirectory.exists() )
             {
                 continue;
             }
+            
             //TODO - really should use the resource includes/excludes and name mapping
             File source = new File( resourceDirectory, relFileName );
+            File templateSource = new File( resourceDirectory, relFileName + TEMPLATE_SUFFIX );
+            
+            if ( !source.exists() && templateSource.exists() )
+            {
+                source = templateSource;
+            }
 
             if ( source.exists() && !source.equals( file ) )
             {
-                //TODO - should use filters here
-                FileUtils.copyFile( source, file );
+                if ( source == templateSource )
+                {
+                    Reader reader = null;
+                    Writer writer = null;
+                    try
+                    {
+                        if ( encoding != null )
+                        {
+                            reader = new InputStreamReader( new FileInputStream( source ), encoding );
+                            writer = new OutputStreamWriter( new FileOutputStream( file ), encoding );
+                        }
+                        else
+                        {
+                            reader = ReaderFactory.newPlatformReader( source );
+                            writer = WriterFactory.newPlatformWriter( file );
+                        }
+                        
+                        velocity.getEngine().evaluate( context, writer, "", reader );
+                        velocity.getEngine().evaluate( context, writer, "", reader );
+                    }
+                    catch ( ParseErrorException e )
+                    {
+                        throw new MojoExecutionException( "Error rendering velocity resource.", e );
+                    }
+                    catch ( MethodInvocationException e )
+                    {
+                        throw new MojoExecutionException( "Error rendering velocity resource.", e );
+                    }
+                    catch ( ResourceNotFoundException e )
+                    {
+                        throw new MojoExecutionException( "Error rendering velocity resource.", e );
+                    }
+                    finally
+                    {
+                        IOUtil.close( writer );
+                        IOUtil.close( reader );
+                    }
+                }
+                else if ( resource.isFiltering() )
+                {
+                    
+                    MavenFileFilterRequest req = setupRequest( resource, source, file );
+                    
+                    try
+                    {
+                        fileFilter.copyFile( req );
+                    }
+                    catch ( MavenFilteringException e )
+                    {
+                        throw new MojoExecutionException( "Error filtering resource: " + source, e );
+                    }
+                }
+                else
+                {
+                    FileUtils.copyFile( source, file );
+                }
 
                 //exclude the original (so eclipse doesn't complain about duplicate resources)
                 resource.addExclude( relFileName );
@@ -602,15 +865,56 @@ public class ProcessRemoteResourcesMojo
         return false;
     }
 
+    @SuppressWarnings( "unchecked" )
+    private MavenFileFilterRequest setupRequest( Resource resource, File source, File file )
+    {
+        MavenFileFilterRequest req = new MavenFileFilterRequest();
+        req.setFrom( source );
+        req.setTo( file );
+        req.setFiltering( resource.isFiltering() );
+        
+        req.setMavenProject( project );
+        req.setMavenSession( mavenSession );
+        req.setInjectProjectBuildFilters( true );
+        
+        if ( encoding != null )
+        {
+            req.setEncoding( encoding );
+        }
+        
+        if ( filterDelimiters != null && !filterDelimiters.isEmpty() )
+        {
+            LinkedHashSet<String> delims = new LinkedHashSet<String>();
+            if ( useDefaultFilterDelimiters )
+            {
+                delims.addAll( req.getDelimiters() );
+            }
+            
+            for ( String delim : filterDelimiters )
+            {
+                if ( delim == null )
+                {
+                    delims.add( "${*}" );
+                }
+                else
+                {
+                    delims.add( delim );
+                }
+            }
+            
+            req.setDelimiters( delims );
+        }
+        
+        return req;
+    }
+
     protected void validate()
         throws MojoExecutionException
     {
         int bundleCount = 1;
 
-        for ( Iterator i = resourceBundles.iterator(); i.hasNext(); )
+        for ( String artifactDescriptor : resourceBundles )
         {
-            String artifactDescriptor = (String) i.next();
-
             // groupId:artifactId:version
             String[] s = StringUtils.split( artifactDescriptor, ":" );
 
@@ -654,11 +958,15 @@ public class ProcessRemoteResourcesMojo
 
         if ( StringUtils.isEmpty( inceptionYear ) )
         {
-            getLog().info( "inceptionYear not specified, defaulting to " + year );
+            if ( getLog().isDebugEnabled() )
+            {
+                getLog().debug( "inceptionYear not specified, defaulting to " + year );
+            }
+            
             inceptionYear = year;
         }
         context.put( "project", project );
-        List projects = getProjects();
+        List<MavenProject> projects = getProjects();
         context.put( "projects", projects );
         context.put( "projectsSortedByOrganization", getProjectsSortedByOrganization( projects ) );
 
@@ -674,24 +982,39 @@ public class ProcessRemoteResourcesMojo
         }
     }
 
-    private List downloadResourceBundles( List resourceBundles )
+    @SuppressWarnings( "unchecked" )
+    private List<File> downloadBundles( List<String> bundles )
         throws MojoExecutionException
     {
-        List resourceBundleArtifacts = new ArrayList();
+        List<File> bundleArtifacts = new ArrayList<File>();
 
         try
         {
-            for ( Iterator i = resourceBundles.iterator(); i.hasNext(); )
+            for ( String artifactDescriptor : bundles )
             {
-                String artifactDescriptor = (String) i.next();
                 // groupId:artifactId:version
                 String[] s = artifactDescriptor.split( ":" );
-                File artifact = downloader.download( s[0], s[1], s[2], localRepository,
-                                                     ProjectUtils.buildArtifactRepositories( repositories,
-                                                                                             artifactRepositoryFactory,
-                                                                                             mavenSession.getContainer() ) );
+                File artifact = null;
+                //check if the artifact is part of the reactor
+                if ( mavenSession != null ) 
+                {
+                    List<MavenProject> list = mavenSession.getSortedProjects();
+                    for ( MavenProject p : list )
+                    {
+                        if ( s[0].equals( p.getGroupId() )
+                            && s[1].equals( p.getArtifactId() ) 
+                            && s[2].equals( p.getVersion() ) ) 
+                        {
+                            artifact = new File( p.getBuild().getOutputDirectory() );
+                        }
+                    }
+                }
+                if ( artifact == null || !artifact.exists() )
+                {
+                    artifact = downloader.download( s[0], s[1], s[2], localRepository, remoteArtifactRepositories );
+                }
 
-                resourceBundleArtifacts.add( artifact );
+                bundleArtifacts.add( artifact );
             }
         }
         catch ( DownloadException e )
@@ -702,22 +1025,17 @@ public class ProcessRemoteResourcesMojo
         {
             throw new MojoExecutionException( "Resources JAR cannot be found.", e );
         }
-        catch ( InvalidRepositoryException e )
-        {
-            throw new MojoExecutionException( "Resources JAR cannot be found.", e );
-        }
 
-        return resourceBundleArtifacts;
+        return bundleArtifacts;
     }
 
-    private void initalizeClassloader( RemoteResourcesClassLoader cl, List artifacts )
+    private void initalizeClassloader( RemoteResourcesClassLoader cl, List<File> artifacts )
         throws MojoExecutionException
     {
         try
         {
-            for ( Iterator i = artifacts.iterator(); i.hasNext(); )
+            for ( File artifact : artifacts )
             {
-                File artifact = (File) i.next();
                 cl.addURL( artifact.toURI().toURL() );
             }
         }
@@ -731,36 +1049,29 @@ public class ProcessRemoteResourcesMojo
         throws MojoExecutionException
     {
         InputStreamReader reader = null;
-
+        
         try
         {
 
-            for ( Enumeration e = classLoader.getResources( BundleRemoteResourcesMojo.RESOURCES_MANIFEST );
+            for ( Enumeration<URL> e = classLoader.getResources( BundleRemoteResourcesMojo.RESOURCES_MANIFEST );
                   e.hasMoreElements(); )
             {
                 URL url = (URL) e.nextElement();
 
-                URLConnection conn = url.openConnection();
-
-                conn.connect();
-
-                reader = new InputStreamReader( conn.getInputStream() );
-
                 try
                 {
+                    reader = new InputStreamReader( url.openStream() );
 
                     RemoteResourcesBundleXpp3Reader bundleReader = new RemoteResourcesBundleXpp3Reader();
 
                     RemoteResourcesBundle bundle = bundleReader.read( reader );
 
-                    for ( Iterator i = bundle.getRemoteResources().iterator(); i.hasNext(); )
+                    for ( String bundleResource : (List<String>) bundle.getRemoteResources() )
                     {
-                        String bundleResource = (String) i.next();
-
                         String projectResource = bundleResource;
 
                         boolean doVelocity = false;
-                        if ( projectResource.endsWith( ".vm" ) )
+                        if ( projectResource.endsWith( TEMPLATE_SUFFIX ) )
                         {
                             projectResource = projectResource.substring( 0, projectResource.length() - 3 );
                             doVelocity = true;
@@ -772,14 +1083,34 @@ public class ProcessRemoteResourcesMojo
 
                         FileUtils.mkdir( f.getParentFile().getAbsolutePath() );
 
-                        if ( !copyResourceIfExists( f, projectResource ) )
+                        if ( !copyResourceIfExists( f, projectResource, context ) )
                         {
                             if ( doVelocity )
                             {
-                                PrintWriter writer = new PrintWriter( new FileWriter( f ) );
+                                PrintWriter writer;
+                                if ( bundle.getSourceEncoding() == null )
+                                {
+                                    writer = new PrintWriter( new FileWriter( f ) );
+                                }
+                                else
+                                {
+                                    writer = new PrintWriter( new OutputStreamWriter( new FileOutputStream( f ),
+                                                                                      bundle.getSourceEncoding() ) );
+
+                                }
+
                                 try
                                 {
-                                    velocity.getEngine().mergeTemplate( bundleResource, context, writer );
+                                    if ( bundle.getSourceEncoding() == null )
+                                    {
+                                        velocity.getEngine().mergeTemplate( bundleResource, context, writer );
+                                    }
+                                    else
+                                    {
+                                        velocity.getEngine().mergeTemplate( bundleResource, bundle.getSourceEncoding(),
+                                                                            context, writer );
+
+                                    }
                                 }
                                 finally
                                 {
@@ -799,31 +1130,36 @@ public class ProcessRemoteResourcesMojo
                                                                     projectResource + ".vm" );
                             if ( appendedResourceFile.exists() )
                             {
-                                PrintWriter writer = new PrintWriter( new FileWriter( f, true ) );
-                                FileReader freader = new FileReader( appendedResourceFile );
-                                BufferedReader breader = new BufferedReader( freader );
+                                final InputStream in = new FileInputStream( appendedResourceFile );
+                                final OutputStream append = new FileOutputStream( f, true );
 
                                 try
                                 {
-                                    String line = breader.readLine();
-    
-                                    while ( line != null )
-                                    {
-                                        writer.println( line );
-                                        line = breader.readLine();
-                                    }
+                                    IOUtil.copy( in, append );
                                 }
                                 finally
                                 {
-                                    IOUtil.close(writer);
-                                    IOUtil.close(breader);
+                                    IOUtil.close( in );
+                                    IOUtil.close( append );
                                 }
-                            } 
-                            else if ( appendedVmResourceFile.exists() ) 
+                            }
+                            else if ( appendedVmResourceFile.exists() )
                             {
-                                PrintWriter writer = new PrintWriter( new FileWriter( f, true ) );
+                                PrintWriter writer;
                                 FileReader freader = new FileReader( appendedVmResourceFile );
-                                try 
+
+                                if ( bundle.getSourceEncoding() == null )
+                                {
+                                    writer = new PrintWriter( new FileWriter( f, true ) );
+                                }
+                                else
+                                {
+                                    writer = new PrintWriter( new OutputStreamWriter( new FileOutputStream( f, true ),
+                                                                                      bundle.getSourceEncoding() ) );
+
+                                }
+
+                                try
                                 {
                                     Velocity.init();
                                     Velocity.evaluate( context, writer, "remote-resources", freader );
@@ -834,7 +1170,7 @@ public class ProcessRemoteResourcesMojo
                                     IOUtil.close(freader);
                                 }
                             }
-                            
+
                         }
                     }
                 }
@@ -905,16 +1241,16 @@ public class ProcessRemoteResourcesMojo
         return groupId.trim() + ":" + artifactId.trim();
     }
 
-    private Map loadSupplements( String models[] )
+    private Map<String, Model> loadSupplements( String models[] )
         throws MojoExecutionException
     {
         if ( models == null )
         {
             getLog().debug( "Supplemental data models won't be loaded.  " + "No models specified." );
-            return Collections.EMPTY_MAP;
+            return Collections.emptyMap();
         }
 
-        List supplements = new ArrayList();
+        List<Supplement> supplements = new ArrayList<Supplement>();
         for ( int idx = 0; idx < models.length; idx++ )
         {
             String set = models[idx];
@@ -949,11 +1285,9 @@ public class ProcessRemoteResourcesMojo
 
         getLog().debug( "Loading supplements complete." );
 
-        Map supplementMap = new HashMap();
-        for ( Iterator i = supplements.iterator(); i.hasNext(); )
+        Map<String, Model> supplementMap = new HashMap<String, Model>();
+        for ( Supplement sd : supplements )
         {
-            Supplement sd = (Supplement) i.next();
-
             Xpp3Dom dom = (Xpp3Dom) sd.getProject();
 
             Model m = getSupplement( dom );
@@ -985,12 +1319,10 @@ public class ProcessRemoteResourcesMojo
     }
 
     class OrganizationComparator
-        implements Comparator
+        implements Comparator<Organization>
     {
-        public int compare( Object o1, Object o2 )
+        public int compare( Organization org1, Organization org2 )
         {
-            Organization org1 = (Organization) o1;
-            Organization org2 = (Organization) o2;
             int i = compareStrings( org1.getName(), org2.getName() );
             if (i == 0)
             {
@@ -999,7 +1331,7 @@ public class ProcessRemoteResourcesMojo
             return i;
         }
 
-        public boolean equals( Object o1, Object o2 )
+        public boolean equals( Organization o1, Organization o2 )
         {
             return compare(o1, o2) == 0;
         }
@@ -1023,21 +1355,16 @@ public class ProcessRemoteResourcesMojo
     }
 
     class ProjectComparator
-        implements Comparator
+        implements Comparator<MavenProject>
     {
-        public int compare( Object o1, Object o2 )
+        @SuppressWarnings( "unchecked" )
+        public int compare( MavenProject p1, MavenProject p2 )
         {
-            MavenProject p1 = (MavenProject) o1;
-            MavenProject p2 = (MavenProject) o2;
-
             return p1.getArtifact().compareTo( p2.getArtifact() );
         }
 
-        public boolean equals( Object o1, Object o2 )
+        public boolean equals( MavenProject p1, MavenProject p2 )
         {
-            MavenProject p1 = (MavenProject) o1;
-            MavenProject p2 = (MavenProject) o2;
-
             return p1.getArtifact().equals( p2.getArtifact() );
         }
     }

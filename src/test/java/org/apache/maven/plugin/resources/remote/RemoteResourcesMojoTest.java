@@ -24,13 +24,16 @@ import org.apache.maven.artifact.handler.DefaultArtifactHandler;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.execution.MavenSession;
+import org.apache.maven.execution.ReactorManager;
 import org.apache.maven.plugin.resources.remote.stub.MavenProjectResourcesStub;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.FileUtils;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,6 +41,7 @@ import java.util.Calendar;
 import java.util.Properties;
 import java.util.jar.JarOutputStream;
 import java.util.zip.ZipEntry;
+import org.codehaus.plexus.util.IOUtil;
 
 
 /**
@@ -90,6 +94,7 @@ public class RemoteResourcesMojoTest
         throws Exception
     {
         buildResourceBundle( "default-createbundle",
+                            null,
                             new String[] { "SIMPLE.txt" },
                             null );
     }
@@ -117,6 +122,7 @@ public class RemoteResourcesMojoTest
         File file = new File( repo.getBasedir() + "/" + path + ".jar" );
         file.getParentFile().mkdirs();
         buildResourceBundle( "default-simplebundles-create",
+                             null,
                              new String[] { "SIMPLE.txt" },
                              file );
 
@@ -126,6 +132,88 @@ public class RemoteResourcesMojoTest
         file = (File) getVariableValueFromObject( mojo, "outputDirectory" );
         file = new File( file, "SIMPLE.txt" );
         assertTrue( file.exists() );
+    }
+
+    public void testVelocityUTF8()
+        throws Exception
+    {
+        final MavenProjectResourcesStub project = createTestProject( "default-utf8" );
+        final ProcessRemoteResourcesMojo mojo = lookupProcessMojoWithSettings( project ,
+                                                                        new String[] {
+                                                                            "test:test:1.2"
+                                                                        } );
+
+        setupDefaultProject( project );
+
+        ArtifactRepository repo = (ArtifactRepository) getVariableValueFromObject( mojo, "localRepository" );
+        String path = repo.pathOf( new DefaultArtifact( "test",
+                                                        "test",
+                                                        VersionRange.createFromVersion( "1.2" ),
+                                                        null,
+                                                        "jar",
+                                                        "",
+                                                        new DefaultArtifactHandler() ) );
+
+        File file = new File( repo.getBasedir() + "/" + path + ".jar" );
+        file.getParentFile().mkdirs();
+        buildResourceBundle( "default-utf8-create",
+                             "UTF-8",
+                             new String[] { "UTF-8.bin.vm" },
+                             file );
+
+        mojo.execute();
+
+        file = (File) getVariableValueFromObject( mojo, "outputDirectory" );
+        file = new File( file, "UTF-8.bin" );
+        assertTrue( file.exists() );
+
+        InputStream in = new FileInputStream( file );
+        byte[] data = IOUtil.toByteArray( in );
+        IOUtil.close( in );
+
+        byte[] expected = "\u00E4\u00F6\u00FC\u00C4\u00D6\u00DC\u00DF".getBytes( "UTF-8" );
+        assertTrue( Arrays.equals( expected, data ) );
+    }
+
+    public void testVelocityISO88591()
+        throws Exception
+    {
+        final MavenProjectResourcesStub project = createTestProject( "default-iso88591" );
+        final ProcessRemoteResourcesMojo mojo = lookupProcessMojoWithSettings( project ,
+                                                                        new String[] {
+                                                                            "test:test:1.3"
+                                                                        } );
+
+        setupDefaultProject( project );
+
+        ArtifactRepository repo = (ArtifactRepository) getVariableValueFromObject( mojo, "localRepository" );
+        String path = repo.pathOf( new DefaultArtifact( "test",
+                                                        "test",
+                                                        VersionRange.createFromVersion( "1.3" ),
+                                                        null,
+                                                        "jar",
+                                                        "",
+                                                        new DefaultArtifactHandler() ) );
+
+        File file = new File( repo.getBasedir() + "/" + path + ".jar" );
+        file.getParentFile().mkdirs();
+        buildResourceBundle( "default-iso88591-create",
+                             "ISO-8859-1",
+                             new String[] { "ISO-8859-1.bin.vm" },
+                             file );
+
+        mojo.execute();
+
+        file = (File) getVariableValueFromObject( mojo, "outputDirectory" );
+        file = new File( file, "ISO-8859-1.bin" );
+        assertTrue( file.exists() );
+
+        InputStream in = new FileInputStream( file );
+        byte[] data = IOUtil.toByteArray( in );
+        IOUtil.close( in );
+
+        byte[] expected = "\u00E4\u00F6\u00FC\u00C4\u00D6\u00DC\u00DF".getBytes( "ISO-8859-1" );
+        assertTrue( Arrays.equals( expected, data ) );
     }
 
     public void testFilteredBundles()
@@ -151,6 +239,7 @@ public class RemoteResourcesMojoTest
         File file = new File( repo.getBasedir() + "/" + path + ".jar" );
         file.getParentFile().mkdirs();
         buildResourceBundle( "default-filterbundles-create",
+                             null,
                              new String[] { "FILTER.txt.vm" },
                              file );
 
@@ -169,6 +258,7 @@ public class RemoteResourcesMojoTest
     }
 
     protected void buildResourceBundle( String id,
+                                       String sourceEncoding,
                                        String resourceNames[],
                                        File jarName )
     throws Exception
@@ -176,7 +266,7 @@ public class RemoteResourcesMojoTest
         final MavenProjectResourcesStub project = createTestProject( id );
 
         final File resourceDir = new File( project.getBasedir() + "/src/main/resources" );
-        final BundleRemoteResourcesMojo mojo = lookupBundleMojoWithSettings( project , resourceDir );
+        final BundleRemoteResourcesMojo mojo = lookupBundleMojoWithSettings( project , resourceDir, sourceEncoding );
 
         setupDefaultProject( project );
 
@@ -209,9 +299,10 @@ public class RemoteResourcesMojoTest
             for ( int x = 0; x < resourceNames.length; x++ )
             {
                 File resource = new File( resourceDir, resourceNames[x] );
-                data = FileUtils.fileRead( resource );
+                InputStream in = new FileInputStream( resource );
                 jar.putNextEntry( new ZipEntry( resourceNames[x] ) );
-                jar.write( data.getBytes() );
+                IOUtil.copy( in, jar );
+                IOUtil.close( in );
                 jar.closeEntry();
             }
             jar.close();
@@ -252,16 +343,17 @@ public class RemoteResourcesMojoTest
         throws Exception
     {
         File resourceDir = new File( project.getBasedir() + "/src/main/resources" );
-        return lookupBundleMojoWithSettings( project, resourceDir );
+        return lookupBundleMojoWithSettings( project, resourceDir, null );
     }
     protected BundleRemoteResourcesMojo lookupBundleMojoWithSettings( final MavenProject project,
-                                                                      File resourceDir )
+                                                                      File resourceDir, String sourceEncoding )
     throws Exception
     {
         final BundleRemoteResourcesMojo mojo = lookupBundleMojo();
 
         setVariableValueToObject( mojo, "resourcesDirectory", resourceDir );
         setVariableValueToObject( mojo, "outputDirectory", new File( project.getBuild().getOutputDirectory() ) );
+        setVariableValueToObject( mojo, "sourceEncoding", sourceEncoding );
         return mojo;
     }
 
@@ -294,7 +386,7 @@ public class RemoteResourcesMojoTest
                                     null, //Settings settings,
                                     null, //ArtifactRepository localRepository,
                                     null, //EventDispatcher eventDispatcher,
-                                    null, //ReactorManager reactorManager,
+                                    new ReactorManager(new ArrayList()),
                                     Arrays.asList( new String[] {"install"} ),
                                     project.getBasedir().toString(),
                                     new Properties(),
@@ -304,7 +396,7 @@ public class RemoteResourcesMojoTest
         setVariableValueToObject( mojo, "outputDirectory", new File( project.getBuild().getOutputDirectory() ) );
         setVariableValueToObject( mojo, "resourceBundles", bundles );
         setVariableValueToObject( mojo, "mavenSession", session );
-        setVariableValueToObject( mojo, "repositories", project.getRemoteArtifactRepositories() );
+        setVariableValueToObject( mojo, "remoteArtifactRepositories", project.getRemoteArtifactRepositories() );
         setVariableValueToObject( mojo, "resources", project.getResources() );
         return mojo;
     }

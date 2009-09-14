@@ -19,7 +19,10 @@ specific language governing permissions and limitations
 under the License.
 -->
 
-<faqs id="FAQ" title="Frequently Asked Questions">
+<faqs xmlns="http://maven.apache.org/FML/1.0.1"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/FML/1.0.1 http://maven.apache.org/xsd/fml-1.0.1.xsd"
+  id="FAQ" title="Frequently Asked Questions">
   <part id="General">
     <faq id="question1">
       <question>Why do I need to use this plugin?</question>
@@ -40,44 +43,43 @@ under the License.
       <answer>
         <p>
           There are two solutions:
-          <ol>
-            <li>
-              File bugs with the projects that produced those artifacts to get them to fix them.  Also,
-              file bugs with the
-              <a href="http://jira.codehaus.org/browse/MEV">Maven Evangelism</a>
-              project to have the Maven people enhance the metadata in the repository.
-            </li>
-            <li>
-              Use a supplemental data file.  You can create a file that contains the missing metadata.
-              For example:
-              <source>
-                <supplementalDataModels>
-                  <supplement>
-                    <project>
-                      <groupId>com.sun.xml.bind</groupId>
-                      <artifactId>jaxb-impl</artifactId>
-                      <name>Sun JAXB Reference Implementation Runtime</name>
-                      <organization>
-                        <name>Sun Microsystems</name>
-                        <url>http://www.sun.com/</url>
-                      </organization>
-                      <licenses>
-                        <license>
-                          <name>COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) Version 1.0</name>
-                          <url>http://www.sun.com/cddl/cddl.html</url>
-                        </license>
-                      </licenses>
-                    </project>
-                  </supplement>
-                </supplementalDataModels>
-              </source>
-              That location for that file can then be configured in the
-              <code>supplementalModels</code> configuration element for the process mojo.  The
-              supplemental information is merged into the information provided from the repository.
-            </li>
-          </ol>
         </p>
-
+        <ol>
+          <li>
+            File bugs with the projects that produced those artifacts to get them to fix them.  Also,
+            file bugs with the
+            <a href="http://jira.codehaus.org/browse/MEV">Maven Evangelism</a>
+            project to have the Maven people enhance the metadata in the repository.
+          </li>
+          <li>
+            Use a supplemental data file.  You can create a file that contains the missing metadata.
+            For example:
+            <source><![CDATA[
+              <supplementalDataModels>
+                <supplement>
+                  <project>
+                    <groupId>com.sun.xml.bind</groupId>
+                    <artifactId>jaxb-impl</artifactId>
+                    <name>Sun JAXB Reference Implementation Runtime</name>
+                    <organization>
+                      <name>Sun Microsystems</name>
+                      <url>http://www.sun.com/</url>
+                    </organization>
+                    <licenses>
+                      <license>
+                        <name>COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) Version 1.0</name>
+                        <url>http://www.sun.com/cddl/cddl.html</url>
+                      </license>
+                    </licenses>
+                  </project>
+                </supplement>
+              </supplementalDataModels>]]>
+            </source>
+            That location for that file can then be configured in the
+            <code>supplementalModels</code> configuration element for the process mojo.  The
+            supplemental information is merged into the information provided from the repository.
+          </li>
+        </ol>
       </answer>
     </faq>
   </part>
