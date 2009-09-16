@@ -25,7 +25,7 @@ under the License.
   <parent>
     <artifactId>maven-plugins</artifactId>
     <groupId>org.apache.maven.plugins</groupId>
-    <version>13</version>
+    <version>14</version>
   </parent>
 
   <artifactId>maven-repository-plugin</artifactId>
@@ -171,32 +171,6 @@ under the License.
                   <goal>install</goal>
                   <goal>run</goal>
                 </goals>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-    <profile>
-      <!-- this should become 'apache-release' when maven-parent-12 is used -->
-      <id>release</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-assembly-plugin</artifactId>
-            <executions>
-              <execution>
-                <goals>
-                  <goal>single</goal>
-                </goals>
-                <phase>package</phase>
-                <configuration>
-                  <descriptors>
-                    <descriptor>src/assembly/source-release.xml</descriptor>
-                  </descriptors>
-                  <tarLongFileMode>gnu</tarLongFileMode>
-                </configuration>
               </execution>
             </executions>
           </plugin>
