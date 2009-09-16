@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version='1.0' encoding='UTF-8'?>
 
 <!--
 Licensed to the Apache Software Foundation (ASF) under one
@@ -19,13 +19,13 @@ specific language governing permissions and limitations
 under the License.
 -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd' xmlns='http://maven.apache.org/POM/4.0.0'>
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
     <artifactId>maven-plugins</artifactId>
     <groupId>org.apache.maven.plugins</groupId>
-    <version>13</version>
+    <version>14</version>
   </parent>
 
   <artifactId>maven-ear-plugin</artifactId>
@@ -127,10 +127,10 @@ under the License.
                 </goals>
                 <configuration>
                   <tasks>
-                    <copy todir="${project.build.testOutputDirectory}/projects" overwrite="true">
-                      <fileset dir="src/test/resources/projects" includes="**/pom.xml" />
+                    <copy overwrite='true' todir='${project.build.testOutputDirectory}/projects'>
+                      <fileset dir='src/test/resources/projects' includes='**/pom.xml'/>
                       <filterset>
-                        <filter token="project.version" value="${project.version}" />
+                        <filter token='project.version' value='${project.version}'/>
                       </filterset>
                     </copy>
                   </tasks>
@@ -180,7 +180,7 @@ under the License.
                   <includes>
                     <include>**/*IT.java</include>
                   </includes>
-                  <systemProperties combine.children="append">
+                  <systemProperties combine.children='append'>
                     <property>
                       <name>maven.home</name>
                       <value>${maven.home}</value>
