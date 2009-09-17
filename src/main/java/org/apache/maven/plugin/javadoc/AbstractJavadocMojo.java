@@ -315,6 +315,8 @@ public abstract class AbstractJavadocMojo
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#J">Jflag</a>.
      * <br/>
      * See <a href="http://java.sun.com/javase/technologies/hotspot/vmoptions.jsp">vmoptions</a>.
+     * <br/>
+     * See <a href="http://java.sun.com/j2se/1.4.2/docs/guide/net/properties.html">Networking Properties</a>.
      *
      * @since 2.3
      * @parameter expression="${additionalJOption}"
