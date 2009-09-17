@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -35,6 +36,7 @@ import org.apache.maven.plugin.javadoc.ProxyServer.AuthAsyncProxyServlet;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Settings;
+import org.apache.maven.wagon.proxy.ProxyInfo;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
@@ -910,8 +912,9 @@ public class JavadocReportTest
 
         //dummy proxy
         proxy.setActive( true );
-        proxy.setHost( "http://localhost" );
+        proxy.setHost( "127.0.0.1" );
         proxy.setPort( 80 );
+        proxy.setProtocol( "http" );
         proxy.setUsername( "toto" );
         proxy.setPassword( "toto" );
         proxy.setNonProxyHosts( "www.google.com|*.somewhere.com" );
@@ -927,7 +930,7 @@ public class JavadocReportTest
         assertTrue( FileUtils.fileExists( commandLine.getAbsolutePath() ) );
         String readed = readFile( commandLine );
         assertTrue( readed.indexOf( "-J-Dhttp.proxySet=true" ) != -1 );
-        assertTrue( readed.indexOf( "-J-Dhttp.proxyHost=http://localhost" ) != -1 );
+        assertTrue( readed.indexOf( "-J-Dhttp.proxyHost=127.0.0.1" ) != -1 );
         assertTrue( readed.indexOf( "-J-Dhttp.proxyPort=80" ) != -1 );
         assertTrue( readed.indexOf( "-J-Dhttp.proxyUser=\\\"toto\\\"" ) != -1 );
         assertTrue( readed.indexOf( "-J-Dhttp.proxyPassword=\\\"toto\\\"" ) != -1 );
@@ -956,6 +959,7 @@ public class JavadocReportTest
             proxy.setActive( true );
             proxy.setHost( proxyServer.getHostName() );
             proxy.setPort( proxyServer.getPort() );
+            proxy.setProtocol( "http" );
             settings.addProxy( proxy );
 
             mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
@@ -1000,6 +1004,7 @@ public class JavadocReportTest
             proxy.setActive( true );
             proxy.setHost( proxyServer.getHostName() );
             proxy.setPort( proxyServer.getPort() );
+            proxy.setProtocol( "http" );
             proxy.setUsername( "foo" );
             proxy.setPassword( "bar" );
             settings.addProxy( proxy );

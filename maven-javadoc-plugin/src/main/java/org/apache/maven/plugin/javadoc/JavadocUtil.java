@@ -48,11 +48,15 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+import org.apache.commons.httpclient.Credentials;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpStatus;
+import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.httpclient.params.HttpClientParams;
+import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.logging.Log;
@@ -67,6 +71,8 @@ import org.apache.maven.shared.invoker.InvocationResult;
 import org.apache.maven.shared.invoker.Invoker;
 import org.apache.maven.shared.invoker.MavenInvocationException;
 import org.apache.maven.shared.invoker.PrintStreamHandler;
+import org.apache.maven.wagon.proxy.ProxyInfo;
+import org.apache.maven.wagon.proxy.ProxyUtils;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.Os;
@@ -731,71 +737,66 @@ public class JavadocUtil
             throw new IllegalArgumentException( "The url is null" );
         }
 
-        HttpClient httpClient = null;
-        if ( !"file".equals( url.getProtocol() ) )
+        if ( "file".equals( url.getProtocol() ) )
         {
-            httpClient = new HttpClient();
-            httpClient.getHttpConnectionManager().getParams().setConnectionTimeout( DEFAULT_TIMEOUT );
-            httpClient.getHttpConnectionManager().getParams().setSoTimeout( DEFAULT_TIMEOUT );
-
-            if ( settings != null )
+            InputStream in = null;
+            try
             {
-                Proxy activeProxy = settings.getActiveProxy();
+                in = url.openStream();
+            }
+            finally
+            {
+                IOUtil.close( in );
+            }
 
-                if ( activeProxy != null )
+            return;
+        }
+
+        // http, https...
+        HttpClient httpClient = new HttpClient( new MultiThreadedHttpConnectionManager() );
+        httpClient.getHttpConnectionManager().getParams().setConnectionTimeout( DEFAULT_TIMEOUT );
+        httpClient.getHttpConnectionManager().getParams().setSoTimeout( DEFAULT_TIMEOUT );
+        httpClient.getParams().setBooleanParameter( HttpClientParams.ALLOW_CIRCULAR_REDIRECTS, true );
+
+        // Some web servers don't allow the default user-agent sent by httpClient
+        httpClient.getParams().setParameter( HttpMethodParams.USER_AGENT,
+                                             "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.0)" );
+
+        if ( settings != null && settings.getActiveProxy() != null )
+        {
+            Proxy activeProxy = settings.getActiveProxy();
+
+            ProxyInfo proxyInfo = new ProxyInfo();
+            proxyInfo.setNonProxyHosts( activeProxy.getNonProxyHosts() );
+
+            if ( StringUtils.isNotEmpty( activeProxy.getHost() )
+                && !ProxyUtils.validateNonProxyHosts( proxyInfo, url.getHost() ) )
+            {
+                httpClient.getHostConfiguration().setProxy( activeProxy.getHost(), activeProxy.getPort() );
+
+                if ( StringUtils.isNotEmpty( activeProxy.getUsername() ) && activeProxy.getPassword() != null )
                 {
-                    String proxyHost = settings.getActiveProxy().getHost();
-                    int proxyPort = settings.getActiveProxy().getPort();
+                    Credentials credentials =
+                        new UsernamePasswordCredentials( activeProxy.getUsername(), activeProxy.getPassword() );
 
-                    String proxyUser = settings.getActiveProxy().getUsername();
-                    String proxyPass = settings.getActiveProxy().getPassword();
-
-                    if ( StringUtils.isNotEmpty( proxyHost ) )
-                    {
-                        httpClient.getHostConfiguration().setProxy( proxyHost, proxyPort );
-                    }
-
-                    if ( StringUtils.isNotEmpty( proxyUser ) )
-                    {
-                        AuthScope authScope =
-                            new AuthScope( AuthScope.ANY_HOST, AuthScope.ANY_PORT, AuthScope.ANY_REALM,
-                                           AuthScope.ANY_SCHEME );
-                        UsernamePasswordCredentials usernamePasswordCredentials =
-                            new UsernamePasswordCredentials( proxyUser, proxyPass );
-                        httpClient.getState().setProxyCredentials( authScope, usernamePasswordCredentials );
-                    }
+                    httpClient.getState().setProxyCredentials( AuthScope.ANY, credentials );
                 }
             }
         }
 
-        InputStream in = null;
+        GetMethod getMethod = new GetMethod( url.toString() );
         try
         {
-            if ( httpClient != null )
-            {
-                GetMethod getMethod = new GetMethod( url.toString() );
+            int status = httpClient.executeMethod( getMethod );
 
-                try
-                {
-                    int status = httpClient.executeMethod( getMethod );
-                    if ( status != HttpStatus.SC_OK )
-                    {
-                        throw new FileNotFoundException( url.toString() );
-                    }
-                }
-                finally
-                {
-                    getMethod.releaseConnection();
-                }
-            }
-            else
+            if ( status != HttpStatus.SC_OK )
             {
-                in = url.openStream();
+                throw new FileNotFoundException( url.toString() );
             }
         }
         finally
         {
-            IOUtil.close( in );
+            getMethod.releaseConnection();
         }
     }
 

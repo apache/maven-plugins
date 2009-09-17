@@ -153,6 +153,12 @@ under the License.
       <artifactId>commons-logging</artifactId>
       <version>1.1.1</version>
     </dependency>
+    <!-- Not included in Httpclient -->
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <version>1.2.14</version>
+    </dependency>
     <dependency>
       <groupId>com.thoughtworks.qdox</groupId>
       <artifactId>qdox</artifactId>
@@ -198,6 +204,7 @@ under the License.
       <version>1.5.8</version>
     </dependency>
 
+    <!-- test -->
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
@@ -327,6 +334,40 @@ under the License.
             </property>
           </systemProperties>
         </configuration>
+      </plugin>
+
+      <!-- Backward compatibility with Maven 2.0.x -->
+      <plugin>
+        <artifactId>maven-shade-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <finalName>${project.build.finalName}</finalName>
+              <createDependencyReducedPom>false</createDependencyReducedPom>
+              <keepDependenciesWithProvidedScope>true</keepDependenciesWithProvidedScope>
+              <transformers>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ComponentsXmlResourceTransformer" />
+              </transformers>
+              <artifactSet>
+                <includes>
+                  <include>org.apache.maven.wagon:wagon-provider-api</include>
+                </includes>
+              </artifactSet>
+              <filters>
+                <filter>
+                  <artifact>org.apache.maven.wagon:wagon-provider-api</artifact>
+                  <includes>
+                    <include>org/apache/maven/wagon/proxy/ProxyUtils.class</include>
+                  </includes>
+                </filter>
+              </filters>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>

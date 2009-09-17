@@ -159,21 +159,47 @@ ${project.reporting.outputDirectory}/apidocs/javadoc.exe(or .sh) \
       <question>How to add proxy support?</question>
       <answer>
         <p>
-          To specify a proxy in the Javadoc tool, you need to configure an active proxy in your <i>settings.xml</i>. Read the
-          <a href="http://maven.apache.org/guides/mini/guide-proxies.html">Configuring a proxy</a> guide for more information.
-        </p>
-        <p>
-          The Javadoc Plugin calls the Javadoc tool with networking J options, i.e.:
+          To specify a proxy in the Javadoc tool, you need to configure an active proxy in your
+          <i>${user.home}/.m2/settings.xml</i>, similar to:
+          <source><![CDATA[
+<settings>
+  ...
+  <proxies>
+   <proxy>
+      <active>true</active>
+      <protocol>http</protocol>
+      <host>proxy.somewhere.com</host>
+      <port>3128</port>
+      <username>foo</username>
+      <password>bar</password>
+      <nonProxyHosts>java.sun.com|*.somewhere.com</nonProxyHosts>
+    </proxy>
+  </proxies>
+  ...
+</settings>
+]]></source>
+          With this, the Javadoc tool will be called with networking J options, i.e.:
           <source><![CDATA[
 ${project.reporting.outputDirectory}/apidocs/javadoc.exe(or .sh) \
     -J-Dhttp.proxySet=true \
-    -J-Dhttp.proxyHost=http://localhost \
-    -J-Dhttp.proxyPort=80 \
-    -J-Dhttp.nonProxyHosts="www.google.com|*.somewhere.com" \
-    -J-Dhttp.proxyUser="toto" \
-    -J-Dhttp.proxyPassword="toto" \
+    -J-Dhttp.proxyHost=proxy.somewhere.com \
+    -J-Dhttp.proxyPort=3128 \
+    -J-Dhttp.nonProxyHosts="java.sun.com|*.somewhere.com" \
+    -J-Dhttp.proxyUser="foo" \
+    -J-Dhttp.proxyPassword="bar" \
     @options \
     @packages | @argfile]]></source>
+        </p>
+        <p>
+          <b>Note</b>: If your proxy needs more JVM
+          <a href="http://java.sun.com/j2se/1.4.2/docs/guide/net/properties.html">networking properties</a>
+          (like NTLM), you could always add JVM options using the <i>&lt;additionalJOption/&gt;</i> parameter
+          in your Javadoc Plugin configuration, i.e.:
+          <source><![CDATA[
+<configuration>
+  <additionalJOption>-J-Dhttp.auth.ntlm.domain=MYDOMAIN</additionalJOption>
+  ...
+</configuration>]]></source>
         </p>
       </answer>
     </faq>
