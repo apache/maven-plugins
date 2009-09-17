@@ -224,7 +224,7 @@ public class JavadocUtilTest
     public void testHideProxyPassword()
         throws Exception
     {
-        String cmdLine = "javadoc.exe " + "-J-Dhttp.proxySet=true " + "-J-Dhttp.proxyHost=http://localhost "
+        String cmdLine = "javadoc.exe " + "-J-Dhttp.proxySet=true " + "-J-Dhttp.proxyHost=127.0.0.1 "
         + "-J-Dhttp.proxyPort=80 " + "-J-Dhttp.nonProxyHosts=\"www.google.com|*.somewhere.com\" "
         + "-J-Dhttp.proxyUser=\"toto\" " + "-J-Dhttp.proxyPassword=\"toto\" " + "@options @packages";
         cmdLine = JavadocUtil.hideProxyPassword( cmdLine, null );
@@ -233,14 +233,15 @@ public class JavadocUtilTest
         Settings settings = new Settings();
         Proxy proxy = new Proxy();
         proxy.setActive( true );
-        proxy.setHost( "http://localhost" );
+        proxy.setHost( "127.0.0.1" );
         proxy.setPort( 80 );
+        proxy.setProtocol( "http" );
         proxy.setUsername( "toto" );
         proxy.setPassword( "toto" );
         proxy.setNonProxyHosts( "www.google.com|*.somewhere.com" );
         settings.addProxy( proxy );
 
-        cmdLine = "javadoc.exe " + "-J-Dhttp.proxySet=true " + "-J-Dhttp.proxyHost=http://localhost "
+        cmdLine = "javadoc.exe " + "-J-Dhttp.proxySet=true " + "-J-Dhttp.proxyHost=127.0.0.1 "
             + "-J-Dhttp.proxyPort=80 " + "-J-Dhttp.nonProxyHosts=\"www.google.com|*.somewhere.com\" "
             + "-J-Dhttp.proxyUser=\"toto\" " + "-J-Dhttp.proxyPassword=\"toto\" " + "@options @packages";
         cmdLine = JavadocUtil.hideProxyPassword( cmdLine, settings );
@@ -249,13 +250,14 @@ public class JavadocUtilTest
         settings = new Settings();
         proxy = new Proxy();
         proxy.setActive( true );
-        proxy.setHost( "http://localhost" );
+        proxy.setHost( "127.0.0.1" );
         proxy.setPort( 80 );
+        proxy.setProtocol( "http" );
         proxy.setUsername( "toto" );
         proxy.setNonProxyHosts( "www.google.com|*.somewhere.com" );
         settings.addProxy( proxy );
 
-        cmdLine = "javadoc.exe " + "-J-Dhttp.proxySet=true " + "-J-Dhttp.proxyHost=http://localhost "
+        cmdLine = "javadoc.exe " + "-J-Dhttp.proxySet=true " + "-J-Dhttp.proxyHost=127.0.0.1 "
         + "-J-Dhttp.proxyPort=80 " + "-J-Dhttp.nonProxyHosts=\"www.google.com|*.somewhere.com\" "
         + "-J-Dhttp.proxyUser=\"toto\" " + "-J-Dhttp.proxyPassword=\"toto\" " + "@options @packages";
         cmdLine = JavadocUtil.hideProxyPassword( cmdLine, null );
@@ -289,8 +291,11 @@ public class JavadocUtilTest
         JavadocUtil.fetchURL( settings, url );
         assertTrue( true );
 
-        if ( isWebSiteOnline( settings, getContainer().getLogger(), "http://maven.apache.org" ) )
+        if ( !isWebSiteOnline( settings, getContainer().getLogger(), "http://maven.apache.org" ) )
         {
+            getContainer().getLogger().warn(
+                                             "http://maven.apache.org should be on line to run '"
+                                                 + getClass().getName() + "#" + getName() + "()'." );
             return;
         }
 
@@ -359,6 +364,7 @@ public class JavadocUtilTest
             proxy.setActive( true );
             proxy.setHost( proxyServer.getHostName() );
             proxy.setPort( proxyServer.getPort() );
+            proxy.setProtocol( "http" );
             settings.addProxy( proxy );
 
             JavadocUtil.fetchURL( settings, url );
@@ -392,6 +398,7 @@ public class JavadocUtilTest
             proxy.setActive( true );
             proxy.setHost( proxyServer.getHostName() );
             proxy.setPort( proxyServer.getPort() );
+            proxy.setProtocol( "http" );
             proxy.setUsername( "foo" );
             proxy.setPassword( "bar" );
             settings.addProxy( proxy );
@@ -433,14 +440,47 @@ public class JavadocUtilTest
             proxy.setActive( true );
             proxy.setHost( proxyServer.getHostName() );
             proxy.setPort( proxyServer.getPort() );
+            proxy.setProtocol( "http" );
             proxy.setUsername( "foo" );
             proxy.setPassword( "bar" );
             settings.addProxy( proxy );
+
             JavadocUtil.fetchURL( settings, url );
             assertTrue( false );
         }
         catch ( SocketTimeoutException e )
         {
+            assertTrue( true );
+        }
+        finally
+        {
+            if ( proxyServer != null )
+            {
+                proxyServer.stop();
+            }
+        }
+
+        // nonProxyHosts
+        try
+        {
+            proxyServlet = new AuthAsyncProxyServlet( authentications );
+            proxyServer = new ProxyServer( proxyServlet );
+            proxyServer.start();
+
+            settings = new Settings();
+            proxy = new Proxy();
+            proxy.setActive( true );
+            proxy.setHost( proxyServer.getHostName() );
+            proxy.setPort( proxyServer.getPort() );
+            proxy.setProtocol( "http" );
+            proxy.setUsername( "foo" );
+            proxy.setPassword( "bar" );
+            proxy.setNonProxyHosts( "maven.apache.org" );
+            settings.addProxy( proxy );
+
+            url = new URL( "http://maven.apache.org/plugins/maven-javadoc-plugin/apidocs/package-list" );
+
+            JavadocUtil.fetchURL( settings, url );
             assertTrue( true );
         }
         finally
