@@ -210,6 +210,12 @@ under the License.
           <artifactId>maven-assembly-plugin</artifactId>
           <version>2.2-beta-4</version>
         </plugin>
+        <plugin>
+          <!-- lock down to old version as newer version aborts build upon no mojos as required during ITs, see FIXME below -->
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-plugin-plugin</artifactId>
+          <version>2.4.3</version>
+        </plugin>
       </plugins>
     </pluginManagement>
     <plugins>
