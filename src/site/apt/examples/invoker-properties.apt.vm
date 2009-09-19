@@ -80,7 +80,10 @@ Invoker Properties
 
   []
 
-  All the properties can be indexed this way, e.g. <<<invoker.profiles.3>>> would specify the profiles to use for the
-  third invocation. If the property <<<invoker.profiles.3>>> was not defined, the plugin would query the property
+  Most of the properties can be indexed this way, e.g. <<<invoker.profiles.3>>> would specify the profiles to use for
+  the third invocation. If the property <<<invoker.profiles.3>>> was not defined, the plugin would query the property
   <<<invoker.profiles>>> as a fallback to determine the profiles for the third build. This build loop ends after
   invocation <i> if no property <<<invoker.*.>>><i+1> is defined.
+
+  The invoker properties can also be used to skip projects based on the current JRE version or OS family. For more
+  information on this feature, please see {{{./selector-conditions.html}Selector Conditions}}.
