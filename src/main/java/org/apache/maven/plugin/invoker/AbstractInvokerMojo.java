@@ -476,6 +476,14 @@ public abstract class AbstractInvokerMojo
      * # An optional description for this build job to be included in the build reports.
      * # Since plugin version 1.4
      * invoker.description = Checks the support for build reports.
+     *
+     * # A comma separated list of JRE versions on which this build job should be run.
+     * # Since plugin version 1.4
+     * invoker.java.version = 1.4+, !1.4.1, 1.7-
+     *
+     * # A comma separated list of OS families on which this build job should be run.
+     * # Since plugin version 1.4
+     * invoker.os.family = !windows, unix, mac 
      * </pre>
      *
      * @parameter expression="${invoker.invokerPropertiesFile}" default-value="invoker.properties"
@@ -993,22 +1001,34 @@ public abstract class AbstractInvokerMojo
 
         try
         {
-            long milliseconds = System.currentTimeMillis();
-            try
+            if ( isSelected( invokerProperties ) )
             {
-                runBuild( basedir, interpolatedPomFile, settingsFile, invokerProperties );
-            }
-            finally
-            {
-                milliseconds = System.currentTimeMillis() - milliseconds;
-                buildJob.setTime( milliseconds / 1000.0 );
-            }
+                long milliseconds = System.currentTimeMillis();
+                try
+                {
+                    runBuild( basedir, interpolatedPomFile, settingsFile, invokerProperties );
+                }
+                finally
+                {
+                    milliseconds = System.currentTimeMillis() - milliseconds;
+                    buildJob.setTime( milliseconds / 1000.0 );
+                }
 
-            buildJob.setResult( BuildJob.Result.SUCCESS );
+                buildJob.setResult( BuildJob.Result.SUCCESS );
 
-            if ( !suppressSummaries )
+                if ( !suppressSummaries )
+                {
+                    getLog().info( "..SUCCESS " + formatTime( buildJob.getTime() ) );
+                }
+            }
+            else
             {
-                getLog().info( "..SUCCESS " + formatTime( buildJob.getTime() ) );
+                buildJob.setResult( BuildJob.Result.SKIPPED );
+
+                if ( !suppressSummaries )
+                {
+                    getLog().info( "..SKIPPED " );
+                }
             }
         }
         catch ( BuildFailureException e )
@@ -1030,6 +1050,27 @@ public abstract class AbstractInvokerMojo
             }
             writeBuildReport( buildJob );
         }
+    }
+
+    /**
+     * Determines whether selector conditions of the specified invoker properties match the current environment.
+     * 
+     * @param invokerProperties The invoker properties to check, must not be <code>null</code>.
+     * @return <code>true</code> if the job corresponding to the properties should be run, <code>false</code> otherwise.
+     */
+    private boolean isSelected( InvokerProperties invokerProperties )
+    {
+        if ( !SelectorUtils.isJreVersion( invokerProperties.getJreVersion() ) )
+        {
+            return false;
+        }
+
+        if ( !SelectorUtils.isOsFamily( invokerProperties.getOsFamily() ) )
+        {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -1139,7 +1180,7 @@ public abstract class AbstractInvokerMojo
             request.setShowErrors( showErrors );
 
             request.setDebug( debug );
-            
+
             request.setShowVersion( showVersion );
 
             if ( logger != null )

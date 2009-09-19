@@ -1,0 +1,43 @@
+import java.io.*;
+import java.util.*;
+import java.util.regex.*;
+
+try
+{
+    String[] expected = {
+            "src/it/jre-version-match/target/touch.txt",
+            "src/it/os-family-match/target/touch.txt",
+      };
+    for ( String file : expected )
+    {
+        File touchFile = new File( basedir, file );
+        System.out.println( "Checking for existence of: " + touchFile );
+        if ( !touchFile.isFile() )
+        {
+            System.out.println( "FAILED!" );
+            return false;
+        }
+    }
+
+    String[] unexpected = {
+            "src/it/jre-version-mismatch/target/touch.txt",
+            "src/it/os-family-mismatch/target/touch.txt",
+      };
+    for ( String file : unexpected )
+    {
+        File touchFile = new File( basedir, file );
+        System.out.println( "Checking for absence of: " + touchFile );
+        if ( touchFile.exists() )
+        {
+            System.out.println( "FAILED!" );
+            return false;
+        }
+    }
+}
+catch( Throwable t )
+{
+    t.printStackTrace();
+    return false;
+}
+
+return true;
