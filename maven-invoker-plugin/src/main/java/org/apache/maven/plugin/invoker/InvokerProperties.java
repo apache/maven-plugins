@@ -123,6 +123,26 @@ class InvokerProperties
     }
 
     /**
+     * Gets the specification of JRE versions on which this build job should be run.
+     * 
+     * @return The specification of JRE versions or an empty string if not set.
+     */
+    public String getJreVersion()
+    {
+        return this.properties.getProperty( "invoker.java.version", "" );
+    }
+
+    /**
+     * Gets the specification of OS families on which this build job should be run.
+     * 
+     * @return The specification of OS families or an empty string if not set.
+     */
+    public String getOsFamily()
+    {
+        return this.properties.getProperty( "invoker.os.family", "" );
+    }
+
+    /**
      * Determines whether these invoker properties contain a build definition for the specified invocation index.
      * 
      * @param index The one-based index of the invocation to check for, must not be negative.

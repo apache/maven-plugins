@@ -185,6 +185,7 @@ class InvokerSession
         logger.info( "Execution Summary:" );
         logger.info( "  Builds Passing: " + successfulJobs.size() );
         logger.info( "  Builds Failing: " + failedJobs.size() );
+        logger.info( "  Builds Skipped: " + skippedJobs.size() );
         logger.info( separator );
 
         if ( !failedJobs.isEmpty() )
