@@ -24,6 +24,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.MessageFormat;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
@@ -142,6 +145,24 @@ public abstract class AbstractJarsignerMojo
     private Boolean attachments;
 
     /**
+     * A set of artifact classifiers describing the project attachments that should be processed. This parameter is only
+     * relevant if {@link #processAttachedArtifacts} is <code>true</code>. If empty, all attachments are included.
+     * 
+     * @parameter
+     * @since 1.2
+     */
+    private String[] includeClassifiers;
+
+    /**
+     * A set of artifact classifiers describing the project attachments that should not be processed. This parameter is
+     * only relevant if {@link #processAttachedArtifacts} is <code>true</code>. If empty, no attachments are excluded.
+     * 
+     * @parameter
+     * @since 1.2
+     */
+    private String[] excludeClassifiers;
+
+    /**
      * The Maven project.
      *
      * @parameter default-value="${project}"
@@ -178,9 +199,31 @@ public abstract class AbstractJarsignerMojo
 
                 if ( processAttachedArtifacts && !Boolean.FALSE.equals( attachments ) )
                 {
+                    Collection includes = new HashSet();
+                    if ( includeClassifiers != null )
+                    {
+                        includes.addAll( Arrays.asList( includeClassifiers ) );
+                    }
+
+                    Collection excludes = new HashSet();
+                    if ( excludeClassifiers != null )
+                    {
+                        excludes.addAll( Arrays.asList( excludeClassifiers ) );
+                    }
+
                     for ( Iterator it = this.project.getAttachedArtifacts().iterator(); it.hasNext(); )
                     {
                         final Artifact artifact = (Artifact) it.next();
+
+                        if ( !includes.isEmpty() && !includes.contains( artifact.getClassifier() ) )
+                        {
+                            continue;
+                        }
+
+                        if ( excludes.contains( artifact.getClassifier() ) )
+                        {
+                            continue;
+                        }
 
                         processed += processArtifact( artifact ) ? 1 : 0;
                     }
