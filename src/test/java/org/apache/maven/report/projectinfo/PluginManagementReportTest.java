@@ -72,7 +72,7 @@ public class PluginManagementReportTest
         assertEquals( webTables.length, 1 );
 
         assertEquals( webTables[0].getColumnCount(), 3 );
-        assertEquals( webTables[0].getRowCount(), 1 + getTestMavenProject().getPluginManagement().getPlugins().size() );
+        assertEquals( 3, webTables[0].getRowCount() );
 
         // Test the texts
         TextBlock[] textBlocks = response.getTextBlocks();
