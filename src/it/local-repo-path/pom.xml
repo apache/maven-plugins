@@ -40,7 +40,7 @@ under the License.
       <plugin>
         <!-- This triggers the download of a known version of this plugin which can then be safely invoked by the IT project -->
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-resources-plugin</artifactId>
+        <artifactId>maven-clean-plugin</artifactId>
         <version>2.2</version>
       </plugin>
       <plugin>
@@ -54,7 +54,7 @@ under the License.
           </pomIncludes>
           <settingsFile>src/it/settings.xml</settingsFile>
           <goals>
-            <goal>org.apache.maven.plugins:maven-resources-plugin:2.2:resources</goal>
+            <goal>org.apache.maven.plugins:maven-clean-plugin:2.2:clean</goal>
           </goals>
         </configuration>
         <executions>
