@@ -36,17 +36,23 @@ Maven Invoker Plugin
 
 * Goals Overview
 
-  The Invoker Plugin has two goals:
+  The plugin has four goals meant to participate in the default build lifecycle:
 
-  * {{{./install-mojo.html}invoker:install}} copies the project artifacts of the main build into the local repository to
-    prepare the execution of the selected sub projects.
-
-  * {{{./run-mojo.html}invoker:run}} runs a set of Maven projects in a directory and verifies the result (this is
-    equivalent to running both <<<invoker:integration-test>>> and <<<invoker:verify>>>).
+  * {{{./install-mojo.html}invoker:install}} copies the project artifacts and dependencies of the main build into a
+    dedicated local repository to prepare the execution of the selected sub projects in an isolated environment.
 
   * {{{./integration-test-mojo.html}invoker:integration-test}} runs a set of Maven projects in a directory.
 
   * {{{./verify-mojo.html}invoker:verify}} verifies the result of <<<invoker:integration-test>>>.
+
+  * {{{./run-mojo.html}invoker:run}} runs a set of Maven projects in a directory and verifies the result. This is
+    equivalent to running both <<<invoker:integration-test>>> and <<<invoker:verify>>>.
+
+  []
+
+  This last goal is intended for usage with the site lifecycle:
+
+  * {{{./report-mojo.html}invoker:report}} integrates the results from previous builds into the site.
 
   []
 
