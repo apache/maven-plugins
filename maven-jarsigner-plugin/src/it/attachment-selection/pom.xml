@@ -28,7 +28,7 @@ under the License.
   <packaging>jar</packaging>
 
   <description>
-    Tests the detection of JAR/ZIP files (we don't want to sign/verify other file formats).
+    Tests the selection of specific attachments.
   </description>
 
   <properties>
@@ -65,24 +65,9 @@ under the License.
             <configuration>
               <artifacts>
                 <artifact>
-                  <!--
-                  Note that neither the artifact type nor the file extension indicate the JAR nature of the file, yet
-                  we want it to be processed.
-                  -->
-                  <file>jar-with-unusual.ext</file>
-                  <type>foo</type>
-                  <classifier>a</classifier>
-                </artifact>
-                <artifact>
-                  <file>not-a-jar.properties</file>
-                  <type>bar</type>
-                  <classifier>b</classifier>
-                </artifact>
-                <artifact>
-                  <!-- see MJARSIGNER-7 -->
-                  <file>some.zip</file>
-                  <type>zip</type>
-                  <classifier>c</classifier>
+                  <file>excluded.jar</file>
+                  <type>jar</type>
+                  <classifier>unsigned</classifier>
                 </artifact>
               </artifacts>
             </configuration>
@@ -102,6 +87,9 @@ under the License.
           <alias>test-01</alias>
           <keypass>key-passwd</keypass>
           <sigfile>TESTING</sigfile>
+          <excludeClassifiers>
+            <excludeClassifier>unsigned</excludeClassifier>
+          </excludeClassifiers>
         </configuration>
         <executions>
           <execution>
