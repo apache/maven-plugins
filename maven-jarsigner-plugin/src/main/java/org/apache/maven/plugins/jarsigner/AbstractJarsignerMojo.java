@@ -28,7 +28,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import java.util.ResourceBundle;
-import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import org.apache.maven.artifact.Artifact;
@@ -126,8 +125,8 @@ public abstract class AbstractJarsignerMojo
     private boolean processMainArtifact;
 
     /**
-     * Controls processing of project attachments. If enabled, attached artifacts that are no JARs will be automatically
-     * excluded from processing.
+     * Controls processing of project attachments. If enabled, attached artifacts that are no JAR/ZIP files will be
+     * automatically excluded from processing.
      * 
      * @parameter expression="${jarsigner.processAttachedArtifacts}" default-value="true"
      * @since 1.1
@@ -266,40 +265,32 @@ public abstract class AbstractJarsignerMojo
     }
 
     /**
-     * Checks Java language capability of an artifact.
+     * Checks whether the specified artifact is a ZIP file.
      *
-     * @param artifact The artifact to check.
+     * @param artifact The artifact to check, may be <code>null</code>.
      *
-     * @return {@code true} if {@code artifact} is Java language capable; {@code false} if not.
+     * @return <code>true</code> if the artifact looks like a ZIP file, <code>false</code> otherwise.
      */
-    private boolean isJarFile( final Artifact artifact )
+    private boolean isZipFile( final Artifact artifact )
     {
-        return artifact != null && artifact.getFile() != null && isJarFile( artifact.getFile() );
+        return artifact != null && artifact.getFile() != null && isZipFile( artifact.getFile() );
     }
 
     /**
-     * Checks whether the specified file is a JAR file. For our purposes, a JAR file is a (non-empty) ZIP stream with a
-     * META-INF directory or some class files.
+     * Checks whether the specified file is a JAR file. For our purposes, a ZIP file is a ZIP stream with at least one
+     * entry.
      * 
      * @param file The file to check, must not be <code>null</code>.
-     * @return <code>true</code> if the file looks like a JAR file, <code>false</code> otherwise.
+     * @return <code>true</code> if the file looks like a ZIP file, <code>false</code> otherwise.
      */
-    private boolean isJarFile( final File file )
+    private boolean isZipFile( final File file )
     {
         try
         {
-            // NOTE: ZipFile.getEntry() might be shorter but is several factors slower on large files
-
             ZipInputStream zis = new ZipInputStream( new FileInputStream( file ) );
             try
             {
-                for ( ZipEntry ze = zis.getNextEntry(); ze != null; ze = zis.getNextEntry() )
-                {
-                    if ( ze.getName().startsWith( "META-INF/" ) || ze.getName().endsWith( ".class" ) )
-                    {
-                        return true;
-                    }
-                }
+                return zis.getNextEntry() != null;
             }
             finally
             {
@@ -333,7 +324,7 @@ public abstract class AbstractJarsignerMojo
 
         boolean processed = false;
 
-        if ( isJarFile( artifact ) )
+        if ( isZipFile( artifact ) )
         {
             processArchive( artifact.getFile() );
 
