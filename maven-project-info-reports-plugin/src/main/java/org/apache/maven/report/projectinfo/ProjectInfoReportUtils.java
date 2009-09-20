@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
 import java.net.URL;
+import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
@@ -168,8 +169,10 @@ public class ProjectInfoReportUtils
         }
         try
         {
-            MavenProject pluginProject = mavenProjectBuilder.buildFromRepository( copyArtifact, remoteRepositories,
-                                                                                  localRepository );
+            MavenProject pluginProject =
+                mavenProjectBuilder.buildFromRepository( copyArtifact,
+                                                         remoteRepositories == null ? Collections.EMPTY_LIST
+                                                                         : remoteRepositories, localRepository );
 
             if ( isArtifactUrlValid( pluginProject.getUrl() ) )
             {
