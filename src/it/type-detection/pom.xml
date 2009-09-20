@@ -78,6 +78,12 @@ under the License.
                   <type>bar</type>
                   <classifier>b</classifier>
                 </artifact>
+                <artifact>
+                  <!-- see MJARSIGNER-7 -->
+                  <file>some.zip</file>
+                  <type>zip</type>
+                  <classifier>c</classifier>
+                </artifact>
               </artifacts>
             </configuration>
           </execution>
