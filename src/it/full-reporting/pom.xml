@@ -64,18 +64,5 @@
           
     </plugins>
   </reporting>
-  <profiles>
-    <profile>
-      <id>foo</id>
-      <reporting>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-javadoc-plugin</artifactId>
-            <version>${javadocPluginVersion}</version>          
-          </plugin>         
-        </plugins>
-      </reporting>
-    </profile>
-  </profiles>
+
 </project>

@@ -22,6 +22,7 @@ package org.apache.maven.plugins.site;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.DefaultRepositoryRequest;
 import org.apache.maven.artifact.repository.RepositoryRequest;
 import org.apache.maven.lifecycle.LifecycleExecutor;
@@ -78,7 +79,12 @@ public class DefaultMavenReportExecutor
 
         RepositoryRequest repositoryRequest = new DefaultRepositoryRequest();
         repositoryRequest.setLocalRepository( mavenReportExecutorRequest.getLocalRepository() );
-        repositoryRequest.setRemoteRepositories( mavenReportExecutorRequest.getMavenSession().getRequest().getRemoteRepositories() );
+        
+        List<ArtifactRepository> remoteRepositories =
+            new ArrayList<ArtifactRepository>( mavenReportExecutorRequest.getProject().getRemoteArtifactRepositories() );
+        remoteRepositories.addAll( mavenReportExecutorRequest.getProject().getPluginArtifactRepositories() );
+        remoteRepositories.addAll( mavenReportExecutorRequest.getMavenSession().getRequest().getRemoteRepositories() );
+        repositoryRequest.setRemoteRepositories( remoteRepositories );
 
         try
         {
