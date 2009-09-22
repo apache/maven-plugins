@@ -69,19 +69,8 @@ under the License.
   </build>
 
   <reporting>
+    <excludeDefaults>true</excludeDefaults>
     <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-project-info-reports-plugin</artifactId>
-        <version>2.1</version>
-        <reportSets>
-          <reportSet>
-            <reports>
-              <report>index</report>
-            </reports>
-          </reportSet>
-        </reportSets>
-      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-invoker-plugin</artifactId>
