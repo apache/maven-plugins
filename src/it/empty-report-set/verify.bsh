@@ -6,3 +6,5 @@ if ( indexHtml.exists() )
 {
     throw new Exception( "Detected unwanted file " + indexHtml );
 }
+
+return true;

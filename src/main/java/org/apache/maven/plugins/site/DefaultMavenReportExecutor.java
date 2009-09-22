@@ -98,6 +98,11 @@ public class DefaultMavenReportExecutor
 
                 if ( reportPlugin.getReportSets().isEmpty() )
                 {
+                    continue;
+                }
+                
+                if ( reportPlugin.getReportSets() == null )
+                {
                     List<MojoDescriptor> mojoDescriptors = pluginDescriptor.getMojos();
                     for ( MojoDescriptor mojoDescriptor : mojoDescriptors )
                     {
