@@ -33,6 +33,8 @@ import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoNotFoundException;
+import org.apache.maven.plugin.PluginConfigurationException;
+import org.apache.maven.plugin.PluginContainerException;
 import org.apache.maven.plugin.descriptor.MojoDescriptor;
 import org.apache.maven.plugin.descriptor.PluginDescriptor;
 import org.apache.maven.reporting.MavenReport;
@@ -126,46 +128,71 @@ public class DefaultMavenReportExecutor
                                                          mavenReportExecutorRequest.getMavenSession(),
                                                          Thread.currentThread().getContextClassLoader(), imports );
 
-                    
-                    lifecycleExecutor.calculateForkedExecutions( mojoExecution,
-                                                                 mavenReportExecutorRequest.getMavenSession() );
-                    if ( !mojoExecution.getForkedExecutions().isEmpty() )
-                    {
-                        lifecycleExecutor.executeForkedExecutions( mojoExecution,
-                                                                   mavenReportExecutorRequest.getMavenSession() );
-                    }
-
                     MavenReport mavenReport =
                         getConfiguredMavenReport( mojoExecution, pluginDescriptor, mavenReportExecutorRequest );
                     if ( mavenReport != null )
                     {
+                        if ( canGenerateReport( mavenReport ) )
+                        {
                         MavenReportExecution mavenReportExecution =
                             new MavenReportExecution( mavenReport, pluginDescriptor.getClassRealm() );
-                        reports.add( mavenReportExecution );
+
+                            lifecycleExecutor.calculateForkedExecutions( mojoExecution,
+                                                                         mavenReportExecutorRequest.getMavenSession() );
+                            if ( !mojoExecution.getForkedExecutions().isEmpty() )
+                            {
+                                lifecycleExecutor.executeForkedExecutions( mojoExecution,
+                                                                           mavenReportExecutorRequest.getMavenSession() );
+                            }
+                            reports.add( mavenReportExecution );
+                        }
                     }
                 }
             }
             return reports;
         }
-        catch ( Throwable e )
+        catch ( Exception e )
         {
             throw new MojoExecutionException( "failed to get Reports ", e );
         }
     }
 
+    private boolean canGenerateReport(MavenReport mavenReport)
+    {
+     
+        try
+        {
+            return mavenReport.canGenerateReport();
+        }
+        catch ( AbstractMethodError e )
+        {
+            // the canGenerateReport() has been added just before the 2.0 release and will cause all the reporting
+            // plugins with an earlier version to fail (most of the org.codehaus mojo now fails)
+            // be nice with them, output a warning and don't let them break anything
+
+            getLog().warn(
+                           "Error loading report " + mavenReport.getClass().getName()
+                               + " - AbstractMethodError: canGenerateReport()" );
+            return true;
+        }        
+        
+    }
+    
     private MavenReport getConfiguredMavenReport( MojoExecution mojoExecution, PluginDescriptor pluginDescriptor,
                                                   MavenReportExecutorRequest mavenReportExecutorRequest )
-        throws Throwable
+        throws PluginContainerException, PluginConfigurationException
+
     {
         if ( !isMavenReport( mojoExecution, pluginDescriptor ) )
         {
             return null;
         }
+        MavenReport mavenReport = null;
         try
         {
             // FIXME here we need something to prevent MJAVADOC-251 config injection order can be different from mvn <
             // 3.x
-            MavenReport mavenReport =
+            mavenReport =
                 (MavenReport) mavenPluginManager.getConfiguredMojo( Mojo.class,
                                                                     mavenReportExecutorRequest.getMavenSession(),
                                                                     mojoExecution );
@@ -177,6 +204,7 @@ public class DefaultMavenReportExecutor
             getLog().warn( "skip ClassCastException " + e.getMessage() );
             return null;
         }
+
     }
 
     private boolean isMavenReport( MojoExecution mojoExecution, PluginDescriptor pluginDescriptor )
