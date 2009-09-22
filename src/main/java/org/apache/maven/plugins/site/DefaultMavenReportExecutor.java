@@ -83,7 +83,6 @@ public class DefaultMavenReportExecutor
         List<ArtifactRepository> remoteRepositories =
             new ArrayList<ArtifactRepository>( mavenReportExecutorRequest.getProject().getRemoteArtifactRepositories() );
         remoteRepositories.addAll( mavenReportExecutorRequest.getProject().getPluginArtifactRepositories() );
-        remoteRepositories.addAll( mavenReportExecutorRequest.getMavenSession().getRequest().getRemoteRepositories() );
         repositoryRequest.setRemoteRepositories( remoteRepositories );
 
         try
