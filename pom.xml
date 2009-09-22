@@ -315,5 +315,17 @@ under the License.
         </plugins>
       </build>
     </profile>
+    <profile>
+      <id>maven-3</id> 
+      <activation>
+        <file>
+          <!--  This employs that the basedir expression is only recognized by Maven 3.x (see MNG-2363) --> 
+          <exists>${basedir}</exists> 
+        </file>
+      </activation>
+      <modules>
+        <module>maven-project-info-reports-plugin</module>
+      </modules>
+    </profile> 
   </profiles>
 </project>
