@@ -92,21 +92,27 @@ public class DefaultMavenReportExecutor
 
             for ( ReportPlugin reportPlugin : mavenReportExecutorRequest.getProject().getReporting().getPlugins() )
             {
+                
                 Plugin plugin = new Plugin();
                 plugin.setGroupId( reportPlugin.getGroupId() );
                 plugin.setArtifactId( reportPlugin.getArtifactId() );
                 plugin.setVersion( reportPlugin.getVersion() );
 
+                if (logger.isInfoEnabled())
+                {
+                    logger.info( "configuring reportPlugin " + plugin.getGroupId() + ":" + plugin.getArtifactId() + ":" + plugin.getVersion() );
+                }
+                
                 List<String> goals = new ArrayList<String>();
 
                 PluginDescriptor pluginDescriptor = mavenPluginManager.getPluginDescriptor( plugin, repositoryRequest );
-
-                if ( reportPlugin.getReportSets().isEmpty() )
+                /*
+                if (  )
                 {
                     continue;
-                }
+                }*/
                 
-                if ( reportPlugin.getReportSets() == null )
+                if ( reportPlugin.getReportSets().isEmpty() )
                 {
                     List<MojoDescriptor> mojoDescriptors = pluginDescriptor.getMojos();
                     for ( MojoDescriptor mojoDescriptor : mojoDescriptors )
@@ -142,18 +148,19 @@ public class DefaultMavenReportExecutor
                         getConfiguredMavenReport( mojoExecution, pluginDescriptor, mavenReportExecutorRequest );
                     if ( mavenReport != null )
                     {
-                        if ( canGenerateReport( mavenReport ) )
-                        {
+
                         MavenReportExecution mavenReportExecution =
                             new MavenReportExecution( mavenReport, pluginDescriptor.getClassRealm() );
 
-                            lifecycleExecutor.calculateForkedExecutions( mojoExecution,
-                                                                         mavenReportExecutorRequest.getMavenSession() );
-                            if ( !mojoExecution.getForkedExecutions().isEmpty() )
-                            {
-                                lifecycleExecutor.executeForkedExecutions( mojoExecution,
-                                                                           mavenReportExecutorRequest.getMavenSession() );
-                            }
+                        lifecycleExecutor.calculateForkedExecutions( mojoExecution,
+                                                                     mavenReportExecutorRequest.getMavenSession() );
+                        if ( !mojoExecution.getForkedExecutions().isEmpty() )
+                        {
+                            lifecycleExecutor.executeForkedExecutions( mojoExecution,
+                                                                       mavenReportExecutorRequest.getMavenSession() );
+                        }
+                        if ( canGenerateReport( mavenReport ) )
+                        {
                             reports.add( mavenReportExecution );
                         }
                     }
