@@ -159,7 +159,7 @@ under the License.
     <doxiaSitetoolsVersion>1.1.2-SNAPSHOT</doxiaSitetoolsVersion>
     <mavenVersion>3.0-SNAPSHOT</mavenVersion>
     <wagonVersion>1.0-beta-6</wagonVersion>
-    <plexusVersion>1.2.1-SNAPSHOT</plexusVersion>
+    <plexusVersion>1.2.1</plexusVersion>
     <!-- SNAPSHOT use due to MJAVADOC-251  -->
     <javadocPluginVersion>2.6.1-SNAPSHOT</javadocPluginVersion>
     <!-- previous version breaks due to use of plexusContainer.getLoggerManager() -->
