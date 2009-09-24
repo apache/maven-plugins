@@ -135,5 +135,20 @@ under the License.
       </build>
     </profile>
   </profiles>
+  
+  <!-- remove plexus-interpolation released -->
+  <repositories>
+    <repository>
+      <id>plexus.snapshots</id>
+      <name>Plexus Snapshot Repository</name>
+      <url>http://oss.repository.sonatype.org/content/repositories/plexus-snapshots</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
 
 </project>
