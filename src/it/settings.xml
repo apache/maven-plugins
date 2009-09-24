@@ -38,9 +38,9 @@ under the License.
           </snapshots>
         </repository>
         <repository>
-          <id>apache.snapshots</id>
-          <name>Apache Snapshot Repository</name>
-          <url>http://people.apache.org/repo/m2-snapshot-repository</url>
+          <id>plexus.snapshots</id>
+          <name>Plexus Snapshot Repository</name>
+          <url>http://oss.repository.sonatype.org/content/repositories/plexus-snapshots</url>
           <releases>
             <enabled>false</enabled>
           </releases>
