@@ -19,18 +19,12 @@
 package org.apache.maven.plugin.eclipse.it;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.eclipse.TempEclipseWorkspace;
-import org.codehaus.plexus.util.xml.Xpp3Dom;
-import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 /**
  * @author <a href="mailto:trygvis@inamo.no">Trygve Laugst&oslash;l</a>
@@ -664,6 +658,17 @@ public class EclipsePluginIT
         throws Exception
     {
         testProject( "project-55-MECLIPSE-178" );
+    }
+
+    /**
+     * [MECLIPSE-603] checks exclusions on direct and transitive dependencies
+     * 
+     * @throws Exception
+     */
+    public void testProject56()
+        throws Exception
+    {
+        testProject( "project-56-MECLIPSE-603" );
     }
 
     public void testJeeSimple()
