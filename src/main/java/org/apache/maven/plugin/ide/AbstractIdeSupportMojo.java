@@ -781,21 +781,33 @@ public abstract class AbstractIdeSupportMojo
                 art.setFile( new File( dependency.getSystemPath() ) );
             }
 
-            List exclusions = new ArrayList();
-            for ( Iterator j = dependency.getExclusions().iterator(); j.hasNext(); )
-            {
-                Exclusion e = (Exclusion) j.next();
-                exclusions.add( e.getGroupId() + ":" + e.getArtifactId() ); //$NON-NLS-1$
-            }
-
-            ArtifactFilter newFilter = new ExcludesArtifactFilter( exclusions );
-
-            art.setDependencyFilter( newFilter );
+            handleExclusions( art, dependency );
 
             artifacts.add( art );
         }
 
         return artifacts;
+    }
+
+    /**
+     * Apply exclusion filters to direct AND transitive dependencies.
+     * 
+     * @param artifact
+     * @param dependency
+     */
+    private void handleExclusions( Artifact artifact, Dependency dependency )
+    {
+
+        List exclusions = new ArrayList();
+        for ( Iterator j = dependency.getExclusions().iterator(); j.hasNext(); )
+        {
+            Exclusion e = (Exclusion) j.next();
+            exclusions.add( e.getGroupId() + ":" + e.getArtifactId() ); //$NON-NLS-1$
+        }
+
+        ArtifactFilter newFilter = new ExcludesArtifactFilter( exclusions );
+
+        artifact.setDependencyFilter( newFilter );
     }
 
     /**
@@ -845,7 +857,7 @@ public abstract class AbstractIdeSupportMojo
     }
 
     /**
-     * @return an array with all dependencies avalaible in the workspace, to be implemented by the subclasses.
+     * @return an array with all dependencies available in the workspace, to be implemented by the subclasses.
      */
     protected IdeDependency[] getWorkspaceArtefacts()
     {
@@ -871,6 +883,8 @@ public abstract class AbstractIdeSupportMojo
                         artifactFactory.createDependencyArtifact( d.getGroupId(), d.getArtifactId(), versionRange,
                                                                   d.getType(), d.getClassifier(), d.getScope(),
                                                                   d.isOptional() );
+
+                    handleExclusions( artifact, d );
                     map.put( d.getManagementKey(), artifact );
                 }
                 catch ( InvalidVersionSpecificationException e )
