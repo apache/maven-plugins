@@ -1,0 +1,25 @@
+File aEmmaIndex = new File(basedir, "a/target/site/emma/index.html");
+if(!aEmmaIndex.exists() || aEmmaIndex.length() == 0) {
+	System.out.println("Missing 'index.html' for A");
+	return false;
+}
+
+File aEmmaFiles = new File(basedir, "a/target/site/emma/_files");
+if(!aEmmaFiles.exists() || aEmmaFiles.list().length == 0) {
+	System.out.println("Missing or empty directory '_files' for A");
+	return false;
+}
+
+File bEmmaIndex = new File(basedir, "b/target/site/emma/index.html");
+if(!bEmmaIndex.exists() || bEmmaIndex.length() == 0) {
+	System.out.println("Missing 'index.html' for B");
+	return false;
+}
+
+File bEmmaFiles = new File(basedir, "b/target/site/emma/_files");
+if(!bEmmaFiles.exists() || bEmmaFiles.list().length == 0) {
+	System.out.println("Missing or empty directory '_files' for B");
+	return false;
+}
+
+return true;

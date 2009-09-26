@@ -200,19 +200,18 @@ public class DefaultMavenReportExecutor
         throws PluginContainerException, PluginConfigurationException
 
     {
-        if ( !isMavenReport( mojoExecution, pluginDescriptor ) )
-        {
-            return null;
-        }
+
         MavenReport mavenReport = null;
         try
         {
-            // FIXME here we need something to prevent MJAVADOC-251 config injection order can be different from mvn <
-            // 3.x
-            mavenReport =
-                (MavenReport) mavenPluginManager.getConfiguredMojo( Mojo.class,
-                                                                    mavenReportExecutorRequest.getMavenSession(),
-                                                                    mojoExecution );
+            Mojo mojo = mavenPluginManager.getConfiguredMojo( Mojo.class,
+                                                              mavenReportExecutorRequest.getMavenSession(),
+                                                              mojoExecution );
+            if ( !isMavenReport( mojoExecution, pluginDescriptor, mojo ) )
+            {
+                return null;
+            }
+            mavenReport = (MavenReport) mojo; 
             return mavenReport;
 
         }
@@ -224,25 +223,30 @@ public class DefaultMavenReportExecutor
 
     }
 
-    private boolean isMavenReport( MojoExecution mojoExecution, PluginDescriptor pluginDescriptor )
+    private boolean isMavenReport( MojoExecution mojoExecution, PluginDescriptor pluginDescriptor, Mojo mojo )
     {
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         try
         {
             MojoDescriptor mojoDescriptor = pluginDescriptor.getMojo( mojoExecution.getGoal() );
             Thread.currentThread().setContextClassLoader( mojoDescriptor.getRealm() );
-            boolean isMavenReport = MavenReport.class.isAssignableFrom( mojoDescriptor.getImplementationClass() );
+            
+            boolean isMavenReport = MavenReport.class.isAssignableFrom( mojo.getClass() );
+            if (getLog().isInfoEnabled())
+            {
+                getLog().info( "class " + mojoDescriptor.getImplementationClass().getName() + " isMavenReport " + isMavenReport );
+            }
             if ( !isMavenReport )
             {
-                getLog().debug( " skip non MavenReport " + mojoExecution.getMojoDescriptor().getId() );
+                getLog().info( " skip non MavenReport " + mojoExecution.getMojoDescriptor().getId() );
             }
             return isMavenReport;
         }
         catch ( LinkageError e )
         {
-            getLog().warn( "skip LinkageError  mojoExecution.goal : " + mojoExecution.getGoal() + " : " + e.getMessage(),
+            getLog().warn(
+                           "skip LinkageError mojoExecution.goal : " + mojoExecution.getGoal() + " : " + e.getMessage(),
                            e );
-            // pluginRealm.display();
             return false;
         }
         finally
