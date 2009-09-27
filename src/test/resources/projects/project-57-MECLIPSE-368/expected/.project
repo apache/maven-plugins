@@ -1,6 +1,6 @@
 <projectDescription>
   <name>maven-eclipse-plugin-test-project-57</name>
-  <comment/>
+  <comment>Project-57 - Test MECLIPSE-368</comment>
   <projects/>
   <buildSpec>
     <buildCommand>
