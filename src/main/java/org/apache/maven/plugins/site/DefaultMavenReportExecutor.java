@@ -161,19 +161,24 @@ public class DefaultMavenReportExecutor
                         Xpp3Dom mergedConfiguration =
                             Xpp3DomUtils.mergeXpp3Dom( (Xpp3Dom) reportPlugin.getConfiguration(),
                                                        convert( mojoDescriptor ) );
-
+                        
                         Xpp3Dom cleanedConfiguration = new Xpp3Dom( "configuration" );
-                        for ( int i = 0, size = mergedConfiguration.getChildren().length; i < size; i++ )
+                        if ( mergedConfiguration.getChildren() != null )
                         {
-                            if ( mojoDescriptor.getParameterMap().containsKey(
-                                                                               mergedConfiguration.getChildren()[i].getName() ) )
+                            for ( int i = 0, size = mergedConfiguration.getChildren().length; i < size; i++ )
                             {
-                                cleanedConfiguration.addChild( mergedConfiguration.getChildren()[i] );
+                                if ( mojoDescriptor.getParameterMap().containsKey(
+                                                                                   mergedConfiguration.getChildren()[i].getName() ) )
+                                {
+                                    cleanedConfiguration.addChild( mergedConfiguration.getChildren()[i] );
+                                }
                             }
                         }
-
-                        getLog().info( "mojoExecution mergedConfiguration " + mergedConfiguration );
-                        getLog().info( "mojoExecution cleanedConfiguration " + cleanedConfiguration );
+                        if ( getLog().isDebugEnabled() )
+                        {
+                            getLog().debug( "mojoExecution mergedConfiguration " + mergedConfiguration );
+                            getLog().debug( "mojoExecution cleanedConfiguration " + cleanedConfiguration );
+                        }
 
                         mojoExecution.setConfiguration( cleanedConfiguration );
                     }
