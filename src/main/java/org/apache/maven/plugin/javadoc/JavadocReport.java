@@ -212,6 +212,10 @@ public class JavadocReport
 
             canGenerate = canGenerateReport( files );
         }
+        if ( getLog().isDebugEnabled() )
+        {
+            getLog().debug( " canGenerateReport " + canGenerate + " project " + this.project );
+        }
         return canGenerate;
     }
 
