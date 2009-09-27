@@ -671,6 +671,17 @@ public class EclipsePluginIT
         testProject( "project-56-MECLIPSE-603" );
     }
 
+    /**
+     * [MECLIPSE-368] Dependency configuration in DependencyManagement with exclusions is ignored
+     * 
+     * @throws Exception
+     */
+    public void testProject57()
+        throws Exception
+    {
+        testProject( "project-57-MECLIPSE-368" );
+    }
+
     public void testJeeSimple()
         throws Exception
     {
