@@ -44,6 +44,7 @@ import org.codehaus.plexus.component.annotations.Requirement;
 import org.codehaus.plexus.configuration.PlexusConfiguration;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
+import org.codehaus.plexus.util.xml.Xpp3DomUtils;
 
 /**
  *  
@@ -137,14 +138,47 @@ public class DefaultMavenReportExecutor
                     }
 
                     MojoExecution mojoExecution = new MojoExecution( plugin, goal, "report:" + goal );
+
                     mojoExecution.setConfiguration( convert( mojoDescriptor ) );
-                    //lifecycleExecutor.populateDefaultConfigurationForPlugin( plugin, repositoryRequest );
+
                     mojoExecution.setMojoDescriptor( mojoDescriptor );
+
                     mavenPluginManager.setupPluginRealm( pluginDescriptor,
                                                          mavenReportExecutorRequest.getMavenSession(),
                                                          Thread.currentThread().getContextClassLoader(), imports );
 
                     MavenReport mavenReport =
+                        getConfiguredMavenReport( mojoExecution, pluginDescriptor, mavenReportExecutorRequest );
+
+                    if ( mavenReport == null )
+                    {
+                        continue;
+                    }
+
+                    if ( reportPlugin.getConfiguration() != null )
+                    {
+
+                        Xpp3Dom mergedConfiguration =
+                            Xpp3DomUtils.mergeXpp3Dom( (Xpp3Dom) reportPlugin.getConfiguration(),
+                                                       convert( mojoDescriptor ) );
+
+                        Xpp3Dom cleanedConfiguration = new Xpp3Dom( "configuration" );
+                        for ( int i = 0, size = mergedConfiguration.getChildren().length; i < size; i++ )
+                        {
+                            if ( mojoDescriptor.getParameterMap().containsKey(
+                                                                               mergedConfiguration.getChildren()[i].getName() ) )
+                            {
+                                cleanedConfiguration.addChild( mergedConfiguration.getChildren()[i] );
+                            }
+                        }
+
+                        getLog().info( "mojoExecution mergedConfiguration " + mergedConfiguration );
+                        getLog().info( "mojoExecution cleanedConfiguration " + cleanedConfiguration );
+
+                        mojoExecution.setConfiguration( cleanedConfiguration );
+                    }
+
+                    mavenReport =
                         getConfiguredMavenReport( mojoExecution, pluginDescriptor, mavenReportExecutorRequest );
                     if ( mavenReport != null )
                     {
