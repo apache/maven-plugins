@@ -997,15 +997,21 @@ public class DoapMojo
             return;
         }
 
-        XmlWriterUtil.writeLineBreak( writer );
-        XmlWriterUtil.writeCommentText( writer, "Anonymous Source Repository", 2 );
         String anonymousConnection = scm.getConnection();
-        writeSourceRepository( writer, anonymousConnection );
+        if ( StringUtils.isNotEmpty( anonymousConnection ) )
+        {
+            XmlWriterUtil.writeLineBreak( writer );
+            XmlWriterUtil.writeCommentText( writer, "Anonymous Source Repository", 2 );
+            writeSourceRepository( writer, anonymousConnection );
+        }
 
-        XmlWriterUtil.writeLineBreak( writer );
-        XmlWriterUtil.writeCommentText( writer, "Developer Source Repository", 2 );
         String developerConnection = scm.getDeveloperConnection();
-        writeSourceRepository( writer, developerConnection );
+        if ( StringUtils.isNotEmpty( developerConnection ) )
+        {
+            XmlWriterUtil.writeLineBreak( writer );
+            XmlWriterUtil.writeCommentText( writer, "Developer Source Repository", 2 );
+            writeSourceRepository( writer, developerConnection );
+        }
     }
 
     /**
