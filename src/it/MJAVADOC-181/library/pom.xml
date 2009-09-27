@@ -42,24 +42,20 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-
-        <reportSets>
-          <reportSet>
-            <configuration>
-              <aggregate>true</aggregate>
-              <groups>
-                <group>
-                  <title>First Module</title>
-                  <packages>aaa</packages>
-                </group>
-                <group>
-                  <title>Second Module</title>
-                  <packages>bbb</packages>
-                </group>
-              </groups>
-            </configuration>
-          </reportSet>
-        </reportSets>
+        <version>@pom.version@</version>
+        <configuration>
+          <aggregate>true</aggregate>
+          <groups>
+            <group>
+              <title>First Module</title>
+              <packages>aaa</packages>
+            </group>
+            <group>
+              <title>Second Module</title>
+              <packages>bbb</packages>
+            </group>
+          </groups>
+        </configuration>        
       </plugin>
     </plugins>
   </reporting>
