@@ -107,11 +107,6 @@ public class DefaultMavenReportExecutor
                 List<String> goals = new ArrayList<String>();
 
                 PluginDescriptor pluginDescriptor = mavenPluginManager.getPluginDescriptor( plugin, repositoryRequest );
-                /*
-                if (  )
-                {
-                    continue;
-                }*/
                 
                 if ( reportPlugin.getReportSets().isEmpty() )
                 {
@@ -179,7 +174,7 @@ public class DefaultMavenReportExecutor
                             getLog().debug( "mojoExecution mergedConfiguration " + mergedConfiguration );
                             getLog().debug( "mojoExecution cleanedConfiguration " + cleanedConfiguration );
                         }
-
+                       
                         mojoExecution.setConfiguration( cleanedConfiguration );
                     }
 
