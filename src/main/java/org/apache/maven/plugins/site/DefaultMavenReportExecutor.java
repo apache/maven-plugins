@@ -264,15 +264,20 @@ public class DefaultMavenReportExecutor
         {
             MojoDescriptor mojoDescriptor = pluginDescriptor.getMojo( mojoExecution.getGoal() );
             Thread.currentThread().setContextClassLoader( mojoDescriptor.getRealm() );
-            
+
             boolean isMavenReport = MavenReport.class.isAssignableFrom( mojo.getClass() );
-            if (getLog().isInfoEnabled())
+            if ( getLog().isDebugEnabled() )
             {
-                getLog().info( "class " + mojoDescriptor.getImplementationClass().getName() + " isMavenReport " + isMavenReport );
+                getLog().debug(
+                                "class " + mojoDescriptor.getImplementationClass().getName() + " isMavenReport "
+                                    + isMavenReport );
             }
             if ( !isMavenReport )
             {
-                getLog().info( " skip non MavenReport " + mojoExecution.getMojoDescriptor().getId() );
+                if ( getLog().isDebugEnabled() )
+                {
+                    getLog().debug( " skip non MavenReport " + mojoExecution.getMojoDescriptor().getId() );
+                }
             }
             return isMavenReport;
         }
