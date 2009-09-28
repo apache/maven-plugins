@@ -38,6 +38,11 @@ import org.apache.maven.plugin.PluginConfigurationException;
 import org.apache.maven.plugin.PluginContainerException;
 import org.apache.maven.plugin.descriptor.MojoDescriptor;
 import org.apache.maven.plugin.descriptor.PluginDescriptor;
+import org.apache.maven.plugin.version.DefaultPluginVersionRequest;
+import org.apache.maven.plugin.version.PluginVersionRequest;
+import org.apache.maven.plugin.version.PluginVersionResolutionException;
+import org.apache.maven.plugin.version.PluginVersionResolver;
+import org.apache.maven.plugin.version.PluginVersionResult;
 import org.apache.maven.reporting.MavenReport;
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.component.annotations.Requirement;
@@ -64,11 +69,18 @@ public class DefaultMavenReportExecutor
 
     @Requirement
     protected LifecycleExecutor lifecycleExecutor;
+    
+    @Requirement
+    protected PluginVersionResolver pluginVersionResolver;
 
     public List<MavenReportExecution> buildMavenReports( MavenReportExecutorRequest mavenReportExecutorRequest )
         throws MojoExecutionException
     {
 
+        if (getLog().isDebugEnabled())
+        {
+            getLog().debug( "buildMavenReports" );
+        }
         List<String> imports = new ArrayList<String>();
 
         imports.add( "org.apache.maven.reporting.MavenReport" );
@@ -97,7 +109,7 @@ public class DefaultMavenReportExecutor
                 Plugin plugin = new Plugin();
                 plugin.setGroupId( reportPlugin.getGroupId() );
                 plugin.setArtifactId( reportPlugin.getArtifactId() );
-                plugin.setVersion( reportPlugin.getVersion() );
+                plugin.setVersion( getPluginVersion (reportPlugin, repositoryRequest ) );
 
                 if (logger.isInfoEnabled())
                 {
@@ -328,5 +340,39 @@ public class DefaultMavenReportExecutor
     private Logger getLog()
     {
         return logger;
+    }
+    
+    protected String getPluginVersion( ReportPlugin reportPlugin, RepositoryRequest repositoryRequest )
+        throws PluginVersionResolutionException
+    {
+        if ( getLog().isDebugEnabled() )
+        {
+            getLog().debug( "resolving version for " + reportPlugin.getGroupId() + ":" + reportPlugin.getArtifactId() );
+        }
+        if ( reportPlugin.getVersion() != null )
+        {
+            return reportPlugin.getVersion();
+        }
+        logger.warn( "report plugin " + reportPlugin.getGroupId() + ":" + reportPlugin.getArtifactId()
+            + " has an empty version" );
+        logger.warn( "" );
+        logger.warn( "It is highly recommended to fix these problems"
+            + " because they threaten the stability of your build." );
+        logger.warn( "" );
+        logger.warn( "For this reason, future Maven versions might no"
+            + " longer support building such malformed projects." );
+        logger.warn( "" );
+
+        PluginVersionRequest pluginVersionRequest = new DefaultPluginVersionRequest( repositoryRequest );
+        pluginVersionRequest.setGroupId( reportPlugin.getGroupId() );
+        pluginVersionRequest.setArtifactId( reportPlugin.getArtifactId() );
+        PluginVersionResult result = pluginVersionResolver.resolve( pluginVersionRequest );
+        if ( getLog().isDebugEnabled() )
+        {
+            getLog().debug(
+                            "resolving version " + result.getVersion() + " for " + reportPlugin.getGroupId() + ":"
+                                + reportPlugin.getArtifactId() );
+        }
+        return result.getVersion();
     }
 }

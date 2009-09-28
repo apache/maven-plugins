@@ -76,6 +76,10 @@ public class SiteMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
+        if ( getLog().isDebugEnabled() )
+        {
+            getLog().debug( "executing Site Mojo" );
+        }
 
         List<MavenReportExecution> filteredReports; 
         if ( generateReports )
