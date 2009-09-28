@@ -167,7 +167,7 @@ public class ResourcesMojo
     
     /**
      * Whether to escape backslashes and colons in windows-style paths.
-     * @parameter expression="${maven.resources.escapeWindowsPaths} default-value="true"
+     * @parameter expression="${maven.resources.escapeWindowsPaths}" default-value="true"
      * @since 2.4
      */
     protected boolean escapeWindowsPaths;
