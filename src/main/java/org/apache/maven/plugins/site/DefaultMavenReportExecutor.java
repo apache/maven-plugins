@@ -43,11 +43,13 @@ import org.apache.maven.plugin.version.PluginVersionRequest;
 import org.apache.maven.plugin.version.PluginVersionResolutionException;
 import org.apache.maven.plugin.version.PluginVersionResolver;
 import org.apache.maven.plugin.version.PluginVersionResult;
+import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.MavenReport;
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.component.annotations.Requirement;
 import org.codehaus.plexus.configuration.PlexusConfiguration;
 import org.codehaus.plexus.logging.Logger;
+import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.Xpp3DomUtils;
 
@@ -109,7 +111,7 @@ public class DefaultMavenReportExecutor
                 Plugin plugin = new Plugin();
                 plugin.setGroupId( reportPlugin.getGroupId() );
                 plugin.setArtifactId( reportPlugin.getArtifactId() );
-                plugin.setVersion( getPluginVersion (reportPlugin, repositoryRequest ) );
+                plugin.setVersion( getPluginVersion (reportPlugin, repositoryRequest, mavenReportExecutorRequest.getProject() ) );
 
                 if (logger.isInfoEnabled())
                 {
@@ -342,7 +344,7 @@ public class DefaultMavenReportExecutor
         return logger;
     }
     
-    protected String getPluginVersion( ReportPlugin reportPlugin, RepositoryRequest repositoryRequest )
+    protected String getPluginVersion( ReportPlugin reportPlugin, RepositoryRequest repositoryRequest, MavenProject project )
         throws PluginVersionResolutionException
     {
         if ( getLog().isDebugEnabled() )
@@ -353,6 +355,38 @@ public class DefaultMavenReportExecutor
         {
             return reportPlugin.getVersion();
         }
+        
+        // search in the build section
+        if ( project.getBuild() != null )
+        {
+            Plugin plugin = find( reportPlugin.getGroupId(), reportPlugin.getArtifactId(), project.getBuild().getPlugins() );
+            if (plugin != null && plugin.getVersion() != null)
+            {
+                if (getLog().isDebugEnabled())
+                {
+                    logger.debug( "resolve version from the build.plugins section " + plugin.getVersion() );
+                }
+                return plugin.getVersion();
+            }
+        }
+        
+        // search in pluginMngt section
+        if ( project.getBuild() != null && project.getBuild().getPluginManagement() != null )
+        {
+            Plugin plugin =
+                find( reportPlugin.getGroupId(), reportPlugin.getArtifactId(),
+                      project.getBuild().getPluginManagement().getPlugins() );
+            if ( plugin != null && plugin.getVersion() != null )
+            {
+                if ( getLog().isDebugEnabled() )
+                {
+                    logger.debug( "resolve version from the build.pluginManagement.plugins section " + plugin.getVersion() );
+                }
+                return plugin.getVersion();
+            }
+        }        
+        
+        
         logger.warn( "report plugin " + reportPlugin.getGroupId() + ":" + reportPlugin.getArtifactId()
             + " has an empty version" );
         logger.warn( "" );
@@ -374,5 +408,22 @@ public class DefaultMavenReportExecutor
                                 + reportPlugin.getArtifactId() );
         }
         return result.getVersion();
+    }
+    
+    private Plugin find( String groupId, String artifactId, List<Plugin> plugins )
+    {
+        if ( plugins == null )
+        {
+            return null;
+        }
+        for ( Plugin plugin : plugins )
+        {
+            if ( StringUtils.equals( plugin.getArtifactId(), artifactId )
+                && StringUtils.equals( plugin.getGroupId(), groupId ) )
+            {
+                return plugin;
+            }
+        }
+        return null;
     }
 }
