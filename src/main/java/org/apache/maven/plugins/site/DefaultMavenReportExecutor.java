@@ -74,7 +74,7 @@ public class DefaultMavenReportExecutor
     
     @Requirement
     protected PluginVersionResolver pluginVersionResolver;
-
+    
     public List<MavenReportExecution> buildMavenReports( MavenReportExecutorRequest mavenReportExecutorRequest )
         throws MojoExecutionException
     {
@@ -91,7 +91,7 @@ public class DefaultMavenReportExecutor
         imports.add( "org.codehaus.doxia.sink.Sink" );
         imports.add( "org.apache.maven.doxia.sink.Sink" );
         imports.add( "org.apache.maven.doxia.sink.SinkEventAttributes" );
-
+       
         RepositoryRequest repositoryRequest = new DefaultRepositoryRequest();
         repositoryRequest.setLocalRepository( mavenReportExecutorRequest.getLocalRepository() );
         
@@ -111,7 +111,7 @@ public class DefaultMavenReportExecutor
                 Plugin plugin = new Plugin();
                 plugin.setGroupId( reportPlugin.getGroupId() );
                 plugin.setArtifactId( reportPlugin.getArtifactId() );
-                plugin.setVersion( getPluginVersion (reportPlugin, repositoryRequest, mavenReportExecutorRequest.getProject() ) );
+                plugin.setVersion( getPluginVersion (reportPlugin, repositoryRequest, mavenReportExecutorRequest ) );
 
                 if (logger.isInfoEnabled())
                 {
@@ -344,7 +344,7 @@ public class DefaultMavenReportExecutor
         return logger;
     }
     
-    protected String getPluginVersion( ReportPlugin reportPlugin, RepositoryRequest repositoryRequest, MavenProject project )
+    protected String getPluginVersion( ReportPlugin reportPlugin, RepositoryRequest repositoryRequest, MavenReportExecutorRequest mavenReportExecutorRequest )
         throws PluginVersionResolutionException
     {
         if ( getLog().isDebugEnabled() )
@@ -355,6 +355,8 @@ public class DefaultMavenReportExecutor
         {
             return reportPlugin.getVersion();
         }
+        
+        MavenProject project = mavenReportExecutorRequest.getProject();
         
         // search in the build section
         if ( project.getBuild() != null )
@@ -398,6 +400,11 @@ public class DefaultMavenReportExecutor
         logger.warn( "" );
 
         PluginVersionRequest pluginVersionRequest = new DefaultPluginVersionRequest( repositoryRequest );
+        pluginVersionRequest.setOffline( mavenReportExecutorRequest.getMavenSession().isOffline() );
+        
+        // FIXME how to get this from the mavenSession ? 
+        //pluginVersionRequest.setForceUpdate( forceUpdate )
+        
         pluginVersionRequest.setGroupId( reportPlugin.getGroupId() );
         pluginVersionRequest.setArtifactId( reportPlugin.getArtifactId() );
         PluginVersionResult result = pluginVersionResolver.resolve( pluginVersionRequest );
