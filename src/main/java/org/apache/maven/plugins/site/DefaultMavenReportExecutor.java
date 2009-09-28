@@ -400,10 +400,9 @@ public class DefaultMavenReportExecutor
         logger.warn( "" );
 
         PluginVersionRequest pluginVersionRequest = new DefaultPluginVersionRequest( repositoryRequest );
-        pluginVersionRequest.setOffline( mavenReportExecutorRequest.getMavenSession().isOffline() );
+        pluginVersionRequest.setOffline( mavenReportExecutorRequest.getMavenSession().getRequest().isOffline() );
         
-        // FIXME how to get this from the mavenSession ? 
-        //pluginVersionRequest.setForceUpdate( forceUpdate )
+        pluginVersionRequest.setForceUpdate( mavenReportExecutorRequest.getMavenSession().getRequest().isUpdateSnapshots() );
         
         pluginVersionRequest.setGroupId( reportPlugin.getGroupId() );
         pluginVersionRequest.setArtifactId( reportPlugin.getArtifactId() );
