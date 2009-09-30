@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.maven.model.Build;
+import org.apache.maven.model.License;
 import org.apache.maven.model.Scm;
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
 
@@ -46,6 +47,7 @@ public class NoLicenseFileMavenProjectStub
         setDescription( "Sample Maven Project that has no license file." );
 
         Scm scm = new Scm();
+        scm.setUrl( "http://svn.apache.org/maven/sample/trunk" );
         scm.setConnection( "scm:svn:http://svn.apache.org/maven/sample/trunk" );
         setScm( scm );
 
@@ -76,9 +78,9 @@ public class NoLicenseFileMavenProjectStub
         this.build = build;
     }
 
-    public List getLicenses()
+    public List<License> getLicenses()
     {
-        return new ArrayList();
+        return new ArrayList<License>();
     }
 
 }

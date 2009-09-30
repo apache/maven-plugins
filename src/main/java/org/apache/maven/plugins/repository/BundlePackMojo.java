@@ -27,6 +27,7 @@ import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.model.License;
 import org.apache.maven.model.Model;
+import org.apache.maven.model.Scm;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.apache.maven.plugin.AbstractMojo;
@@ -43,7 +44,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -127,11 +127,37 @@ public class BundlePackMojo
     protected String version;
     
     /**
+     * Viewable URL for SCM connections, in cases where this isn't provided by the POM.
+     * @parameter expression="${scmUrl}"
+     */
+    protected String scmUrl;
+    
+    /**
+     * Read-only URL for SCM tool connections, in cases where this isn't provided by the POM.
+     * <br/>
+     * <b>NOTE:</b> This should be a standard maven-scm URL. See the 
+     * <a href="http://maven.apache.org/scm/scm-url-format.html">format guidelines</a> for more 
+     * information.
+     * 
+     * @parameter expression="${scmConnection}"
+     */
+    protected String scmConnection;
+    
+    /**
      * @parameter default-value="${settings}"
      * @readonly
      */
     protected Settings settings;
 
+    /**
+     * Disable validations to make sure bundle supports project materialization.
+     * <br/>
+     * <b>WARNING: This means your project will be MUCH harder to use.</b>
+     * @parameter expression="${bundle.disableMaterialization}" default-value="false"
+     */
+    private boolean disableMaterialization;
+
+    @SuppressWarnings( "unchecked" )
     public void execute()
         throws MojoExecutionException
     {
@@ -190,7 +216,7 @@ public class BundlePackMojo
                 rewrite = true;
             }
 
-            List licenses = model.getLicenses();
+            List<License> licenses = model.getLicenses();
             if ( licenses.isEmpty() )
             {
                 License license = new License();
@@ -201,6 +227,65 @@ public class BundlePackMojo
                 license.setUrl( inputHandler.readLine() );
                 licenses.add( license );
                 rewrite = true;
+            }
+            
+            if ( disableMaterialization )
+            {
+                getLog().warn( "Validations to confirm support for project materialization have been DISABLED." +
+                        "\n\nYour project may not provide the POM elements necessary to allow users to retrieve sources on-demand," +
+                        "\nor to easily checkout your project in an IDE. THIS CAN SERIOUSLY INCONVENIENCE YOUR USERS." +
+                        "\n\nContinue? [y/N]" );
+                
+                try
+                {
+                    if ( 'y' != inputHandler.readLine().toLowerCase().charAt( 0 ) )
+                    {
+                        disableMaterialization = false;
+                    }
+                }
+                catch ( IOException e )
+                {
+                    getLog().debug( "Error reading confirmation: " + e.getMessage(), e );
+                }
+                
+            }
+            
+            if ( !disableMaterialization )
+            {
+                Scm scm = model.getScm();
+                if ( scm == null )
+                {
+                    scm = new Scm();
+                    model.setScm( scm );
+                }
+                
+                if ( scm.getUrl() == null )
+                {
+                    if ( scmUrl != null )
+                    {
+                        scm.setUrl( scmUrl );
+                    }
+                    else
+                    {
+                        getLog().info( "SCM view URL is missing, please type the URL for the viewable SCM interface:" );
+                        scm.setUrl( inputHandler.readLine() );
+                        rewrite = true;
+                    }
+                }
+                
+                if ( scm.getConnection() == null )
+                {
+                    if ( scmConnection != null )
+                    {
+                        scm.setConnection( scmConnection );
+                    }
+                    else
+                    {
+                        getLog().info( "SCM read-only connection URL is missing, please type the read-only SCM URL:" );
+                        scm.setConnection( inputHandler.readLine() );
+                        rewrite = true;
+                    }
+                }
             }
         }
         catch ( IOException e )
@@ -227,7 +312,7 @@ public class BundlePackMojo
             }
             
             boolean batchMode = settings == null ? false : !settings.isInteractiveMode();
-            List files = BundleUtils.selectProjectFiles( dir, inputHandler, finalName, pom, getLog(), batchMode );
+            List<File> files = BundleUtils.selectProjectFiles( dir, inputHandler, finalName, pom, getLog(), batchMode );
 
             File bundle = new File( basedir, finalName + "-bundle.jar" );
 
@@ -237,9 +322,8 @@ public class BundlePackMojo
             boolean sourcesFound = false;
             boolean javadocsFound = false;
             
-            for ( Iterator it = files.iterator(); it.hasNext(); )
+            for ( File f : files )
             {
-                File f = (File) it.next();
                 if ( artifactChecks && f.getName().endsWith( finalName + "-sources.jar" ) )
                 {
                     sourcesFound = true;

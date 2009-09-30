@@ -30,7 +30,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -40,7 +39,7 @@ final class BundleUtils
     {
     }
     
-    public static List selectProjectFiles( final File dir, final InputHandler inputHandler, final String finalName,
+    public static List<File> selectProjectFiles( final File dir, final InputHandler inputHandler, final String finalName,
                                            final File pom, final Log log, final boolean batchMode )
         throws MojoExecutionException
     {
@@ -52,7 +51,7 @@ final class BundleUtils
             }
         } );
         
-        List result = new ArrayList();
+        List<File> result = new ArrayList<File>();
         
         if ( projectFiles == null )
         {
@@ -84,12 +83,12 @@ final class BundleUtils
             return result;
         }
         
-        Collections.sort( result, new Comparator()
+        Collections.sort( result, new Comparator<File>()
         {
-            public int compare( Object first, Object second )
+            public int compare( File first, File second )
             {
-                String f = ((File) first).getName();
-                String s = ((File) second).getName();
+                String f = first.getName();
+                String s = second.getName();
                 
                 if ( f.length() == s.length() )
                 {
@@ -105,10 +104,10 @@ final class BundleUtils
         return result;
     }
 
-    public static List reviseFileList( List input, InputHandler inputHandler, Log log, boolean batchMode )
+    public static List<File> reviseFileList( List<File> input, InputHandler inputHandler, Log log, boolean batchMode )
         throws MojoExecutionException
     {
-        List result = new ArrayList( input );
+        List<File> result = new ArrayList<File>( input );
         
         if ( batchMode )
         {
@@ -122,9 +121,8 @@ final class BundleUtils
             message.append( "\n0.) Done" );
             
             int i = 1;
-            for ( Iterator it = result.iterator(); it.hasNext(); )
+            for ( File f : result )
             {
-                File f = (File) it.next();
                 message.append( "\n" ).append( (i++) ).append( ".) " ).append( f.getName() );
             }
             

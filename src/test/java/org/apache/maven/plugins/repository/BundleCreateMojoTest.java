@@ -18,9 +18,12 @@
  */
 package org.apache.maven.plugins.repository;
 
+import static org.apache.maven.plugins.repository.testutil.Assertions.assertZipContents;
+
+import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
+import org.apache.maven.plugins.repository.testutil.Assertions;
 import org.apache.maven.plugins.repository.testutil.TestInputHandler;
-import org.codehaus.plexus.archiver.zip.ZipFile;
 import org.codehaus.plexus.components.interactivity.InputHandler;
 import org.codehaus.plexus.util.FileUtils;
 
@@ -28,7 +31,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 import java.util.Stack;
 
@@ -70,12 +72,12 @@ public class BundleCreateMojoTest
             new File( getBasedir(), "target/test/unit/pom-only/target/pom-only-bundle.jar" );
         assertTrue( FileUtils.fileExists( bundleSource.getAbsolutePath() ) );
 
-        Set entryNames = new HashSet();
+        Set<String> entryNames = new HashSet<String>();
         entryNames.add( "pom.xml" );
         entryNames.add( "META-INF/MANIFEST.MF" );
         entryNames.add( "META-INF/" );
 
-        assertZipContents( entryNames, Collections.EMPTY_SET, bundleSource );
+        assertZipContents( entryNames, Assertions.EMPTY_ENTRY_NAMES, bundleSource );
     }
 
     /**
@@ -113,7 +115,7 @@ public class BundleCreateMojoTest
             new File( getBasedir(), "target/test/unit/default-configuration/target/default-configuration-bundle.jar" );
         assertTrue( FileUtils.fileExists( bundleSource.getAbsolutePath() ) );
 
-        Set entryNames = new HashSet();
+        Set<String> entryNames = new HashSet<String>();
         entryNames.add( "default-configuration-javadoc.jar" );
         entryNames.add( "default-configuration-sources.jar" );
         entryNames.add( "default-configuration.jar" );
@@ -121,7 +123,7 @@ public class BundleCreateMojoTest
         entryNames.add( "META-INF/MANIFEST.MF" );
         entryNames.add( "META-INF/" );
 
-        assertZipContents( entryNames, Collections.EMPTY_SET, bundleSource );
+        assertZipContents( entryNames, Assertions.EMPTY_ENTRY_NAMES, bundleSource );
     }
 
     public void testDefaultconfiguration_RemoveOne()
@@ -146,7 +148,7 @@ public class BundleCreateMojoTest
             // NOTE: This is sensitive to the lookupMojo method timing...
             TestInputHandler ih = (TestInputHandler) lookup( InputHandler.ROLE, "default" );
 
-            Stack responses = new Stack();
+            Stack<String> responses = new Stack<String>();
             responses.push( "2" );
             ih.setLineResponses( responses );
 
@@ -161,14 +163,14 @@ public class BundleCreateMojoTest
             new File( getBasedir(), "target/test/unit/default-configuration/target/default-configuration-bundle.jar" );
         assertTrue( FileUtils.fileExists( bundleSource.getAbsolutePath() ) );
 
-        Set entryNames = new HashSet();
+        Set<String> entryNames = new HashSet<String>();
         entryNames.add( "default-configuration-sources.jar" );
         entryNames.add( "default-configuration.jar" );
         entryNames.add( "pom.xml" );
         entryNames.add( "META-INF/MANIFEST.MF" );
         entryNames.add( "META-INF/" );
 
-        Set bannedNames = new HashSet();
+        Set<String> bannedNames = new HashSet<String>();
         bannedNames.add( "default-configuration-javadoc.jar" );
 
         assertZipContents( entryNames, bannedNames, bundleSource );
@@ -196,7 +198,7 @@ public class BundleCreateMojoTest
             // NOTE: This is sensitive to the lookupMojo method timing...
             TestInputHandler ih = (TestInputHandler) lookup( InputHandler.ROLE, "default" );
 
-            Stack responses = new Stack();
+            Stack<String> responses = new Stack<String>();
             responses.push( "2,3" );
             ih.setLineResponses( responses );
 
@@ -211,13 +213,13 @@ public class BundleCreateMojoTest
             new File( getBasedir(), "target/test/unit/default-configuration/target/default-configuration-bundle.jar" );
         assertTrue( FileUtils.fileExists( bundleSource.getAbsolutePath() ) );
 
-        Set entryNames = new HashSet();
+        Set<String> entryNames = new HashSet<String>();
         entryNames.add( "default-configuration.jar" );
         entryNames.add( "pom.xml" );
         entryNames.add( "META-INF/MANIFEST.MF" );
         entryNames.add( "META-INF/" );
 
-        Set bannedNames = new HashSet();
+        Set<String> bannedNames = new HashSet<String>();
         bannedNames.add( "default-configuration-javadoc.jar" );
         bannedNames.add( "default-configuration-sources.jar" );
 
@@ -246,7 +248,7 @@ public class BundleCreateMojoTest
             // NOTE: This is sensitive to the lookupMojo method timing...
             TestInputHandler ih = (TestInputHandler) lookup( InputHandler.ROLE, "default" );
 
-            Stack responses = new Stack();
+            Stack<String> responses = new Stack<String>();
             responses.push( "3,2" );
             ih.setLineResponses( responses );
 
@@ -261,13 +263,13 @@ public class BundleCreateMojoTest
             new File( getBasedir(), "target/test/unit/default-configuration/target/default-configuration-bundle.jar" );
         assertTrue( FileUtils.fileExists( bundleSource.getAbsolutePath() ) );
 
-        Set entryNames = new HashSet();
+        Set<String> entryNames = new HashSet<String>();
         entryNames.add( "default-configuration.jar" );
         entryNames.add( "pom.xml" );
         entryNames.add( "META-INF/MANIFEST.MF" );
         entryNames.add( "META-INF/" );
 
-        Set bannedNames = new HashSet();
+        Set<String> bannedNames = new HashSet<String>();
         bannedNames.add( "default-configuration-javadoc.jar" );
         bannedNames.add( "default-configuration-sources.jar" );
 
@@ -296,7 +298,7 @@ public class BundleCreateMojoTest
             // NOTE: This is sensitive to the lookupMojo method timing...
             TestInputHandler ih = (TestInputHandler) lookup( InputHandler.ROLE, "default" );
 
-            Stack responses = new Stack();
+            Stack<String> responses = new Stack<String>();
             responses.push( "2, 3" );
             ih.setLineResponses( responses );
 
@@ -311,81 +313,17 @@ public class BundleCreateMojoTest
             new File( getBasedir(), "target/test/unit/default-configuration/target/default-configuration-bundle.jar" );
         assertTrue( FileUtils.fileExists( bundleSource.getAbsolutePath() ) );
 
-        Set entryNames = new HashSet();
+        Set<String> entryNames = new HashSet<String>();
         entryNames.add( "default-configuration.jar" );
         entryNames.add( "pom.xml" );
         entryNames.add( "META-INF/MANIFEST.MF" );
         entryNames.add( "META-INF/" );
 
-        Set bannedNames = new HashSet();
+        Set<String> bannedNames = new HashSet<String>();
         bannedNames.add( "default-configuration-javadoc.jar" );
         bannedNames.add( "default-configuration-sources.jar" );
 
         assertZipContents( entryNames, bannedNames, bundleSource );
-    }
-
-    private void assertZipContents( Set requiredNames, Set bannedNames, File bundleSource )
-        throws IOException
-    {
-        ZipFile zf = new ZipFile( bundleSource );
-
-        Set missing = new HashSet();
-        for ( Iterator it = requiredNames.iterator(); it.hasNext(); )
-        {
-            String name = (String) it.next();
-            if ( zf.getEntry( name ) == null )
-            {
-                missing.add( name );
-            }
-        }
-
-        Set banned = new HashSet();
-        for ( Iterator it = bannedNames.iterator(); it.hasNext(); )
-        {
-            String name = (String) it.next();
-            if ( zf.getEntry( name ) != null )
-            {
-                banned.add( name );
-            }
-        }
-
-        if ( !missing.isEmpty() || !banned.isEmpty() )
-        {
-            StringBuffer msg = new StringBuffer();
-            msg.append( "The following REQUIRED entries were missing from the bundle archive:\n" );
-
-            if ( missing.isEmpty() )
-            {
-                msg.append( "\nNone." );
-            }
-            else
-            {
-                for ( Iterator it = missing.iterator(); it.hasNext(); )
-                {
-                    String name = (String) it.next();
-
-                    msg.append( "\n" ).append( name );
-                }
-            }
-
-            msg.append( "\n\nThe following BANNED entries were present from the bundle archive:\n" );
-
-            if ( banned.isEmpty() )
-            {
-                msg.append( "\nNone.\n" );
-            }
-            else
-            {
-                for ( Iterator it = banned.iterator(); it.hasNext(); )
-                {
-                    String name = (String) it.next();
-
-                    msg.append( "\n" ).append( name );
-                }
-            }
-
-            fail( msg.toString() );
-        }
     }
 
     /**
@@ -421,7 +359,7 @@ public class BundleCreateMojoTest
         File bundleSource = new File( getBasedir(), "target/test/unit/no-javadocjar/target/no-javadocjar-bundle.jar" );
         assertTrue( FileUtils.fileExists( bundleSource.getAbsolutePath() ) );
 
-        Set entryNames = new HashSet();
+        Set<String> entryNames = new HashSet<String>();
         entryNames.add( "no-javadocjar-sources.jar" );
         entryNames.add( "no-javadocjar.jar" );
         entryNames.add( "pom.xml" );
@@ -464,7 +402,7 @@ public class BundleCreateMojoTest
         File bundleSource = new File( getBasedir(), "target/test/unit/no-sourcesjar/target/no-sourcesjar-bundle.jar" );
         assertTrue( FileUtils.fileExists( bundleSource.getAbsolutePath() ) );
 
-        Set entryNames = new HashSet();
+        Set<String> entryNames = new HashSet<String>();
         entryNames.add( "no-sourcesjar-javadoc.jar" );
         entryNames.add( "no-sourcesjar.jar" );
         entryNames.add( "pom.xml" );
@@ -509,13 +447,13 @@ public class BundleCreateMojoTest
             new File( getBasedir(), "target/test/unit/no-javadoc-sources/target/no-javadoc-sources-bundle.jar" );
         assertTrue( FileUtils.fileExists( bundleSource.getAbsolutePath() ) );
 
-        Set entryNames = new HashSet();
+        Set<String> entryNames = new HashSet<String>();
         entryNames.add( "no-javadoc-sources.jar" );
         entryNames.add( "pom.xml" );
         entryNames.add( "META-INF/MANIFEST.MF" );
         entryNames.add( "META-INF/" );
 
-        Set bannedNames = new HashSet();
+        Set<String> bannedNames = new HashSet<String>();
         bannedNames.add( "no-javadoc-sources-sources.jar" );
         bannedNames.add( "no-javadoc-sources-javadoc.jar" );
 
@@ -542,10 +480,18 @@ public class BundleCreateMojoTest
         File testPom = new File( getBasedir(), "src/test/resources/unit/no-scm/pom.xml" );
 
         BundleCreateMojo mojo = (BundleCreateMojo) lookupMojo( "bundle-create", testPom );
-        mojo.execute();
+        try
+        {
+            mojo.execute();
 
-        // MREPOSITORY-2 project.scm.connection should not be required for bundle-create
-        // fail( "Must throw an exception on a project element scm is null" );
+            // MREPOSITORY-2 project.scm.connection should not be required for bundle-create
+            // MREPOSITORY-19 project.scm.{url|connection} are required for project materialization...
+             fail( "Must throw an exception on a project element scm is null" );
+        }
+        catch ( MojoExecutionException e )
+        {
+            // expected; scm.connection is required, as is scm.url
+        }
 
     }
 

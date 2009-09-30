@@ -44,6 +44,7 @@ public class NoSourcesJarMavenProjectStub
         setDescription( "Sample Maven Project that has no sources jar file." );
 
         Scm scm = new Scm();
+        scm.setUrl( "http://svn.apache.org/maven/sample/trunk" );
         scm.setConnection( "scm:svn:http://svn.apache.org/maven/sample/trunk" );
         setScm( scm );
 
