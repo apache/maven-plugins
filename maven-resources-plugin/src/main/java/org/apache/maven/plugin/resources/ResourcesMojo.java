@@ -238,7 +238,20 @@ public class ResourcesMojo
                 {
                     delims.addAll( mavenResourcesExecution.getDelimiters() );
                 }
-                delims.addAll( delimiters );
+                
+                for ( Iterator dIt = delimiters.iterator(); dIt.hasNext(); )
+                {
+                    String delim = (String) dIt.next();
+                    if ( delim == null )
+                    {
+                        // FIXME: ${filter:*} could also trigger this condition. Need a better long-term solution.
+                        delims.add( "${*}" );
+                    }
+                    else
+                    {
+                        delims.add( delim );
+                    }
+                }
                 
                 mavenResourcesExecution.setDelimiters( delims );
             }
