@@ -51,6 +51,8 @@ Usage
  * url
 
  * licenses
+ 
+ * scm (url and connection at a minimum)
 
  []
 

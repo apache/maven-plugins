@@ -29,7 +29,7 @@ import org.codehaus.plexus.components.interactivity.InputHandler;
 import org.codehaus.plexus.util.StringUtils;
 
 import java.io.File;
-import java.util.Iterator;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -59,6 +59,14 @@ public class BundleCreateMojo
      * @readonly
      */
     private MavenProject project;
+    
+    /**
+     * Disable validations to make sure bundle supports project materialization.
+     * <br/>
+     * <b>WARNING: This means your project will be MUCH harder to use.</b>
+     * @parameter expression="${bundle.disableMaterialization}" default-value="false"
+     */
+    private boolean disableMaterialization;
 
     /**
      * Jar archiver.
@@ -114,6 +122,42 @@ public class BundleCreateMojo
         {
             throw new MojoExecutionException( "At least one license must be defined." );
         }
+        
+        if ( disableMaterialization )
+        {
+            getLog().warn( "Validations to confirm support for project materialization have been DISABLED." +
+            		"\n\nYour project may not provide the POM elements necessary to allow users to retrieve sources on-demand," +
+            		"\nor to easily checkout your project in an IDE. THIS CAN SERIOUSLY INCONVENIENCE YOUR USERS." +
+            		"\n\nContinue? [y/N]" );
+            
+            try
+            {
+                if ( 'y' != inputHandler.readLine().toLowerCase().charAt( 0 ) )
+                {
+                    disableMaterialization = false;
+                }
+            }
+            catch ( IOException e )
+            {
+                getLog().debug( "Error reading confirmation: " + e.getMessage(), e );
+            }
+            
+        }
+        
+        if ( !disableMaterialization )
+        {
+            if ( project.getScm() == null )
+            {
+                throw new MojoExecutionException( "You must supply a valid <scm>> section, with at least "
+                    + "<url> (viewing URL) and <connection> (read-only tooling connection) specified." );
+            }
+            else
+            {
+                validate( project.getScm().getUrl(), "project.scm.url" );
+                
+                validate( project.getScm().getConnection(), "project.scm.url" );
+            }
+        }
 
         // ----------------------------------------------------------------------
         // Create the bundle archive
@@ -126,7 +170,7 @@ public class BundleCreateMojo
         String outputDirectory = project.getBuild().getDirectory();
         
         boolean batchMode = settings == null ? false : !settings.isInteractiveMode();
-        List files = BundleUtils.selectProjectFiles( new File( outputDirectory ), inputHandler, finalName, pom, getLog(), batchMode );
+        List<File> files = BundleUtils.selectProjectFiles( new File( outputDirectory ), inputHandler, finalName, pom, getLog(), batchMode );
 
         String extension = artifactHandlerManager.getArtifactHandler( project.getPackaging() ).getExtension();
 
@@ -140,9 +184,8 @@ public class BundleCreateMojo
             boolean sourcesFound = false;
             boolean javadocsFound = false;
             
-            for ( Iterator it = files.iterator(); it.hasNext(); )
+            for ( File f : files )
             {
-                File f = (File) it.next();
                 if ( artifactChecks && f.getName().endsWith( finalName + "-sources." + extension ) )
                 {
                     sourcesFound = true;

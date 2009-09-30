@@ -29,11 +29,11 @@ public class TestInputHandler
     implements InputHandler
 {
     
-    private Stack lineResponses;
+    private Stack<String> lineResponses;
     
-    private Stack lineListResponses;
+    private Stack<List<String>> lineListResponses;
     
-    private Stack passwordResponses;
+    private Stack<String> passwordResponses;
 
     public String readLine()
         throws IOException
@@ -41,10 +41,10 @@ public class TestInputHandler
         return (String) ( lineResponses == null || lineResponses.isEmpty() ? null : lineResponses.pop() );
     }
 
-    public List readMultipleLines()
+    public List<String> readMultipleLines()
         throws IOException
     {
-        return (List) ( lineListResponses == null || lineListResponses.isEmpty() ? null : lineListResponses.pop() );
+        return lineListResponses == null || lineListResponses.isEmpty() ? null : lineListResponses.pop();
     }
 
     public String readPassword()
@@ -53,17 +53,17 @@ public class TestInputHandler
         return (String) ( passwordResponses == null || passwordResponses.isEmpty() ? null : passwordResponses.pop() );
     }
 
-    public void setLineResponses( Stack responses )
+    public void setLineResponses( Stack<String> responses )
     {
         this.lineResponses = responses;
     }
 
-    public void setLineListResponses( Stack lineLists )
+    public void setLineListResponses( Stack<List<String>> lineLists )
     {
         this.lineListResponses = lineLists;
     }
 
-    public void setPasswordResponses( Stack responses )
+    public void setPasswordResponses( Stack<String> responses )
     {
         this.passwordResponses = responses;
     }
