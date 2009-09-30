@@ -38,12 +38,13 @@ under the License.
   <prerequisites>
     <maven>2.0.6</maven>
   </prerequisites>
-
+  
   <scm>
     <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-repository-plugin/</connection>
     <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/trunk/maven-repository-plugin/</developerConnection>
     <url>http://svn.apache.org/viewvc/maven/plugins/trunk/maven-repository-plugin/</url>
   </scm>
+  
   <issueManagement>
     <system>JIRA</system>
     <url>http://jira.codehaus.org/browse/MREPOSITORY</url>
@@ -143,6 +144,11 @@ under the License.
   <profiles>
     <profile>
       <id>run-its</id>
+      
+      <properties>
+        <localRepositoryUrl>${project.build.directory}/it-repo</localRepositoryUrl>
+      </properties>
+      
       <build>
         <testResources>
           <testResource>
