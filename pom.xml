@@ -83,7 +83,7 @@ under the License.
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-interpolation</artifactId>
-      <version>1.13-SNAPSHOT</version>
+      <version>1.13</version>
     </dependency>
 
     <dependency>
