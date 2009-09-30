@@ -18,19 +18,18 @@
  */
 package org.apache.maven.plugins.repository;
 
+import static org.apache.maven.plugins.repository.testutil.Assertions.assertZipContents;
+
 import org.apache.maven.artifact.repository.DefaultArtifactRepository;
 import org.apache.maven.artifact.repository.layout.DefaultRepositoryLayout;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
+import org.apache.maven.plugins.repository.testutil.Assertions;
 import org.apache.maven.plugins.repository.testutil.TestInputHandler;
-import org.codehaus.plexus.archiver.zip.ZipFile;
 import org.codehaus.plexus.components.interactivity.InputHandler;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
-import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 import java.util.Stack;
 
@@ -41,6 +40,7 @@ import java.util.Stack;
 public class BundlePackMojoTest
     extends AbstractMojoTestCase
 {
+    
     public void testPack_PomPackaging()
         throws Exception
     {
@@ -53,15 +53,26 @@ public class BundlePackMojoTest
 
         File generatedFilesDir = new File( getBasedir(), "target/bundle-pack-parent-tests" );
         mojo.basedir = generatedFilesDir.getAbsolutePath();
+        
+        // NOTE: This is sensitive to the lookupMojo method timing...
+        TestInputHandler ih = (TestInputHandler) lookup( InputHandler.ROLE, "default" );
+
+        Stack<String> responses = new Stack<String>();
+        responses.push( "http://foo/" );
+        responses.push( "scm:svn:http://foo/" );
+        responses.push( "2,3" );
+        responses.push( "0" );
+        ih.setLineResponses( responses );
+
         mojo.execute();
 
         File bundleSource = new File( generatedFilesDir, "testparent-1.0-bundle.jar" );
-        Set entryNames = new HashSet();
+        Set<String> entryNames = new HashSet<String>();
         entryNames.add( "pom.xml" );
         entryNames.add( "META-INF/MANIFEST.MF" );
         entryNames.add( "META-INF/" );
 
-        assertZipContents( entryNames, Collections.EMPTY_SET, bundleSource );
+        assertZipContents( entryNames, Assertions.EMPTY_ENTRY_NAMES, bundleSource );
     }
 
     public void testPack()
@@ -79,7 +90,7 @@ public class BundlePackMojoTest
         mojo.execute();
 
         File bundleSource = new File( generatedFilesDir, "testartifact-1.0-bundle.jar" );
-        Set entryNames = new HashSet();
+        Set<String> entryNames = new HashSet<String>();
         entryNames.add( "testartifact-1.0-javadoc.jar" );
         entryNames.add( "testartifact-1.0-sources.jar" );
         entryNames.add( "testartifact-1.0.jar" );
@@ -87,7 +98,7 @@ public class BundlePackMojoTest
         entryNames.add( "META-INF/MANIFEST.MF" );
         entryNames.add( "META-INF/" );
 
-        assertZipContents( entryNames, Collections.EMPTY_SET, bundleSource );
+        assertZipContents( entryNames, Assertions.EMPTY_ENTRY_NAMES, bundleSource );
     }
 
     public void testPack_RemoveOne()
@@ -103,7 +114,7 @@ public class BundlePackMojoTest
         // NOTE: This is sensitive to the lookupMojo method timing...
         TestInputHandler ih = (TestInputHandler) lookup( InputHandler.ROLE, "default" );
 
-        Stack responses = new Stack();
+        Stack<String> responses = new Stack<String>();
         responses.push( "3" );
         ih.setLineResponses( responses );
 
@@ -112,14 +123,14 @@ public class BundlePackMojoTest
         mojo.execute();
 
         File bundleSource = new File( generatedFilesDir, "testartifact-1.0-bundle.jar" );
-        Set entryNames = new HashSet();
+        Set<String> entryNames = new HashSet<String>();
         entryNames.add( "testartifact-1.0-javadoc.jar" );
         entryNames.add( "testartifact-1.0.jar" );
         entryNames.add( "pom.xml" );
         entryNames.add( "META-INF/MANIFEST.MF" );
         entryNames.add( "META-INF/" );
 
-        Set bannedNames = new HashSet();
+        Set<String> bannedNames = new HashSet<String>();
         // determined experimentally, so this could change!
         bannedNames.add( "testartifact-1.0-sources.jar" );
 
@@ -139,7 +150,7 @@ public class BundlePackMojoTest
         // NOTE: This is sensitive to the lookupMojo method timing...
         TestInputHandler ih = (TestInputHandler) lookup( InputHandler.ROLE, "default" );
 
-        Stack responses = new Stack();
+        Stack<String> responses = new Stack<String>();
         responses.push( "2,3" );
         ih.setLineResponses( responses );
 
@@ -148,13 +159,13 @@ public class BundlePackMojoTest
         mojo.execute();
 
         File bundleSource = new File( generatedFilesDir, "testartifact-1.0-bundle.jar" );
-        Set entryNames = new HashSet();
+        Set<String> entryNames = new HashSet<String>();
         entryNames.add( "testartifact-1.0.jar" );
         entryNames.add( "pom.xml" );
         entryNames.add( "META-INF/MANIFEST.MF" );
         entryNames.add( "META-INF/" );
 
-        Set bannedNames = new HashSet();
+        Set<String> bannedNames = new HashSet<String>();
         // determined experimentally, so this could change!
         bannedNames.add( "testartifact-1.0-sources.jar" );
         bannedNames.add( "testartifact-1.0-javadoc.jar" );
@@ -175,7 +186,7 @@ public class BundlePackMojoTest
         // NOTE: This is sensitive to the lookupMojo method timing...
         TestInputHandler ih = (TestInputHandler) lookup( InputHandler.ROLE, "default" );
 
-        Stack responses = new Stack();
+        Stack<String> responses = new Stack<String>();
         responses.push( "3,2" );
         ih.setLineResponses( responses );
 
@@ -184,13 +195,13 @@ public class BundlePackMojoTest
         mojo.execute();
 
         File bundleSource = new File( generatedFilesDir, "testartifact-1.0-bundle.jar" );
-        Set entryNames = new HashSet();
+        Set<String> entryNames = new HashSet<String>();
         entryNames.add( "testartifact-1.0.jar" );
         entryNames.add( "pom.xml" );
         entryNames.add( "META-INF/MANIFEST.MF" );
         entryNames.add( "META-INF/" );
 
-        Set bannedNames = new HashSet();
+        Set<String> bannedNames = new HashSet<String>();
         // determined experimentally, so this could change!
         bannedNames.add( "testartifact-1.0-sources.jar" );
         bannedNames.add( "testartifact-1.0-javadoc.jar" );
@@ -211,7 +222,7 @@ public class BundlePackMojoTest
         // NOTE: This is sensitive to the lookupMojo method timing...
         TestInputHandler ih = (TestInputHandler) lookup( InputHandler.ROLE, "default" );
 
-        Stack responses = new Stack();
+        Stack<String> responses = new Stack<String>();
         responses.push( "2, 3" );
         ih.setLineResponses( responses );
 
@@ -220,82 +231,18 @@ public class BundlePackMojoTest
         mojo.execute();
 
         File bundleSource = new File( generatedFilesDir, "testartifact-1.0-bundle.jar" );
-        Set entryNames = new HashSet();
+        Set<String> entryNames = new HashSet<String>();
         entryNames.add( "testartifact-1.0.jar" );
         entryNames.add( "pom.xml" );
         entryNames.add( "META-INF/MANIFEST.MF" );
         entryNames.add( "META-INF/" );
 
-        Set bannedNames = new HashSet();
+        Set<String> bannedNames = new HashSet<String>();
         // determined experimentally, so this could change!
         bannedNames.add( "testartifact-1.0-sources.jar" );
         bannedNames.add( "testartifact-1.0-javadoc.jar" );
 
         assertZipContents( entryNames, bannedNames, bundleSource );
-    }
-
-    private void assertZipContents( Set requiredNames, Set bannedNames, File bundleSource )
-        throws IOException
-    {
-        ZipFile zf = new ZipFile( bundleSource );
-
-        Set missing = new HashSet();
-        for ( Iterator it = requiredNames.iterator(); it.hasNext(); )
-        {
-            String name = (String) it.next();
-            if ( zf.getEntry( name ) == null )
-            {
-                missing.add( name );
-            }
-        }
-
-        Set banned = new HashSet();
-        for ( Iterator it = bannedNames.iterator(); it.hasNext(); )
-        {
-            String name = (String) it.next();
-            if ( zf.getEntry( name ) != null )
-            {
-                banned.add( name );
-            }
-        }
-
-        if ( !missing.isEmpty() || !banned.isEmpty() )
-        {
-            StringBuffer msg = new StringBuffer();
-            msg.append( "The following REQUIRED entries were missing from the bundle archive:\n" );
-
-            if ( missing.isEmpty() )
-            {
-                msg.append( "\nNone." );
-            }
-            else
-            {
-                for ( Iterator it = missing.iterator(); it.hasNext(); )
-                {
-                    String name = (String) it.next();
-
-                    msg.append( "\n" ).append( name );
-                }
-            }
-
-            msg.append( "\n\nThe following BANNED entries were present from the bundle archive:\n" );
-
-            if ( banned.isEmpty() )
-            {
-                msg.append( "\nNone.\n" );
-            }
-            else
-            {
-                for ( Iterator it = banned.iterator(); it.hasNext(); )
-                {
-                    String name = (String) it.next();
-
-                    msg.append( "\n" ).append( name );
-                }
-            }
-
-            fail( msg.toString() );
-        }
     }
 
 }

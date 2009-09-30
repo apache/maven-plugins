@@ -44,6 +44,7 @@ public class PomOnlyMavenProjectStub
         setDescription( "Sample Maven Project that has default repository plugin configuration." );
 
         Scm scm = new Scm();
+        scm.setUrl( "http://svn.apache.org/maven/sample/trunk" );
         scm.setConnection( "scm:svn:http://svn.apache.org/maven/sample/trunk" );
         setScm( scm );
 

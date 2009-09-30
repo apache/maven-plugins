@@ -42,6 +42,7 @@ public class NoProjectNameMavenProjectStub
         setDescription( "Sample Maven Project that has no project name specified in the pom." );
 
         Scm scm = new Scm();
+        scm.setUrl( "http://svn.apache.org/maven/sample/trunk" );
         scm.setConnection( "scm:svn:http://svn.apache.org/maven/sample/trunk" );
         setScm( scm );
 
