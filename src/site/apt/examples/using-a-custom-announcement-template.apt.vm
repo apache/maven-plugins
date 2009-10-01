@@ -91,17 +91,21 @@ Using a Custom Announcement Template
 *-----------------+----------+-------------+
 | packaging*      | String   | The packaging from your project's pom.
 *-----------------+----------+-------------+
+| release*        | Release  | The release that you are announcing.
+*-----------------+----------+-------------+
+| project*        | MavenProject | The Maven Project being released.
+*-----------------+----------+-------------+
 | url             | String   | Distribution url of the artifact. <<Default value is>>: <<<$\{project.url\}>>>.
 *-----------------+----------+-------------+
 | introduction    | String   | A short description or introduction of the released artifact. <<Default value is>>: <<<$\{project.description\}>>>.
 *-----------------+----------+-------------+
 | developmentTeam | String   | Name of the team that develops the artifact. <<Default value is>>: <<<$\{project.name\} team>>>.
 *-----------------+----------+-------------+
-| finalName       | String   | The name of the artifact to be used in the announcement. <<Default value is>>: <<<$\{project.build.finalName\}.$\{project.packaging\}>>>.
+| finalName       | String   | The name of the artifact to be used in the announcement. <<Default value is>>: <<<$\{project.build.finalName\}>>>.
 *-----------------+----------+-------------+
 | urlDownload     | String   | URL where the artifact can be downloaded. <<Default value is>>: <<<$\{project.url\}>>>.
 *-----------------+----------+-------------+
-| release*        | Release  | The release that you are announcing.
+| announceParameters | Map   | A Map of custom parameters that can be specified in the plugin's configuration.
 *-----------------+----------+-------------+
 <Variables marked with * are read-only.>
 
@@ -110,7 +114,7 @@ Using a Custom Announcement Template
 *-----------------+----------+-------------+
 | <<Variable>>    | <<Type>> | <<Description>>
 *-----------------+----------+-------------+
-| actions         | List     | All actions that were completed in this release.
+| actions*        | List     | All actions that were completed in this release.
 *-----------------+----------+-------------+
 | dateRelease*    | String   | The date when this release is made.
 *-----------------+----------+-------------+
