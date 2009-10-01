@@ -95,7 +95,7 @@ Using a Custom Announcement Template
 *-----------------+----------+-------------+
 | introduction    | String   | A short description or introduction of the released artifact. Default-value: <<<$\{project.description\}>>>.
 *-----------------+----------+-------------+
-| developmentTeam | String   | Name of the team that develops the artifact. Default-value: <<<$\{project.artifactId\}-team>>>.
+| developmentTeam | String   | Name of the team that develops the artifact. Default-value: <<<$\{project.name\} team>>>.
 *-----------------+----------+-------------+
 | finalName       | String   | The name of the artifact to be used in the announcement. Default-value: <<<$\{project.build.finalName\}.$\{project.packaging\}>>>.
 *-----------------+----------+-------------+
@@ -110,7 +110,7 @@ Using a Custom Announcement Template
 *-----------------+----------+-------------+
 | <<Variable>>    | <<Type>> | <<Contents>>
 *-----------------+----------+-------------+
-| action*         | List     | All actions that were completed in this release.
+| actions         | List     | All actions that were completed in this release.
 *-----------------+----------+-------------+
 | dateRelease*    | String   | The date when this release is made.
 *-----------------+----------+-------------+
