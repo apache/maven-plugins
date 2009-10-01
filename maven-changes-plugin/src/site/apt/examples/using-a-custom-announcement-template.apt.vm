@@ -79,7 +79,7 @@ Using a Custom Announcement Template
  your own template:
 
 *-----------------+----------+-------------+
-| <<Variable>>    | <<Type>> | <<Contents>>
+| <<Variable>>    | <<Type>> | <<Description>>
 *-----------------+----------+-------------+
 | releases*       | List     | All the releases from either the changes.xml file or from JIRA.
 *-----------------+----------+-------------+
@@ -91,15 +91,15 @@ Using a Custom Announcement Template
 *-----------------+----------+-------------+
 | packaging*      | String   | The packaging from your project's pom.
 *-----------------+----------+-------------+
-| url             | String   | Distribution url of the artifact. Default-value: <<<$\{project.url\}>>>.
+| url             | String   | Distribution url of the artifact. <<Default value is>>: <<<$\{project.url\}>>>.
 *-----------------+----------+-------------+
-| introduction    | String   | A short description or introduction of the released artifact. Default-value: <<<$\{project.description\}>>>.
+| introduction    | String   | A short description or introduction of the released artifact. <<Default value is>>: <<<$\{project.description\}>>>.
 *-----------------+----------+-------------+
-| developmentTeam | String   | Name of the team that develops the artifact. Default-value: <<<$\{project.name\} team>>>.
+| developmentTeam | String   | Name of the team that develops the artifact. <<Default value is>>: <<<$\{project.name\} team>>>.
 *-----------------+----------+-------------+
-| finalName       | String   | The name of the artifact to be used in the announcement. Default-value: <<<$\{project.build.finalName\}.$\{project.packaging\}>>>.
+| finalName       | String   | The name of the artifact to be used in the announcement. <<Default value is>>: <<<$\{project.build.finalName\}.$\{project.packaging\}>>>.
 *-----------------+----------+-------------+
-| urlDownload     | String   | URL where the artifact can be downloaded. Default-value: <<<$\{project.url\}>>>.
+| urlDownload     | String   | URL where the artifact can be downloaded. <<Default value is>>: <<<$\{project.url\}>>>.
 *-----------------+----------+-------------+
 | release*        | Release  | The release that you are announcing.
 *-----------------+----------+-------------+
@@ -108,7 +108,7 @@ Using a Custom Announcement Template
  Each <<<Release>>> also has a set of variables:
 
 *-----------------+----------+-------------+
-| <<Variable>>    | <<Type>> | <<Contents>>
+| <<Variable>>    | <<Type>> | <<Description>>
 *-----------------+----------+-------------+
 | actions         | List     | All actions that were completed in this release.
 *-----------------+----------+-------------+
@@ -123,7 +123,7 @@ Using a Custom Announcement Template
  Finally each <<<Action>>> has the following variables:
 
 *-----------------+----------+-------------+
-| <<Variable>>    | <<Type>> | <<Contents>>
+| <<Variable>>    | <<Type>> | <<Description>>
 *-----------------+----------+-------------+
 | action*         | String   | What was done.
 *-----------------+----------+-------------+
