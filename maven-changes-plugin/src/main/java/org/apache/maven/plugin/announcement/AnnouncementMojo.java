@@ -88,7 +88,8 @@ public class AnnouncementMojo
     private String version;
 
     /**
-     * Distribution url of the artifact.
+     * Distribution URL of the artifact.
+     * This parameter will be passed to the template.
      *
      * @parameter expression="${project.url}"
      * @required
@@ -114,6 +115,7 @@ public class AnnouncementMojo
     /**
      * URL where the artifact can be downloaded. If not specified,
      * no URL is used.
+     * This parameter will be passed to the template.
      *
      * @parameter
      */
@@ -129,6 +131,7 @@ public class AnnouncementMojo
 
     /**
      * Name of the team that develops the artifact.
+     * This parameter will be passed to the template.
      *
      * @parameter default-value="${project.name} team" expression="${changes.developmentTeam}"
      * @required
@@ -137,6 +140,7 @@ public class AnnouncementMojo
 
     /**
      * Short description or introduction of the released artifact.
+     * This parameter will be passed to the template.
      *
      * @parameter default-value="${project.description}"
      */
@@ -176,9 +180,9 @@ public class AnnouncementMojo
      * @parameter expression="${basedir}"
      * @required
      * @since 2.1
-     */    
+     */
     private String basedir;
-    
+
     private ChangesXML xml;
 
     //=======================================//
@@ -212,7 +216,8 @@ public class AnnouncementMojo
     private boolean generateJiraAnnouncement;
 
     /**
-     * Only closed issues are needed.
+     * Include issues from JIRA with these status ids. Multiple status ids can
+     * be specified as a comma separated list of ids.
      * <p>
      * <b>Note:</b> In versions 2.0-beta-3 and earlier this parameter was
      * called "statusId".
@@ -223,7 +228,8 @@ public class AnnouncementMojo
     private String statusIds;
 
     /**
-     * Only fixed issues are needed.
+     * Include issues from JIRA with these resolution ids. Multiple resolution
+     * ids can be specified as a comma separated list of ids.
      * <p>
      * <b>Note:</b> In versions 2.0-beta-3 and earlier this parameter was
      * called "resolutionId".
@@ -269,25 +275,28 @@ public class AnnouncementMojo
      * @since 2.1
      */
     private String jiraPassword;
-    
+
     /**
      * The template encoding.
      *
      * @parameter expression="${changes.templateEncoding}" default-value="${project.build.sourceEncoding}"
      * @since 2.1
-     */      
+     */
     private String templateEncoding;
-    
+
     /**
-     * The template encoding.
+     * If releases from JIRA should be merged with the releases from a
+     * changes.xml file.
      *
      * @parameter expression="${changes.jiraMerge}" default-value="false"
      * @since 2.1
-     */      
+     */
     private boolean jiraMerge;
-    
+
     /**
-     * Map which will be pass to the velocity context
+     * Map of custom parameters for the announcement.
+     * This Map will be passed to the template.
+     *
      * @parameter
      * @since 2.1
      */
@@ -348,7 +357,7 @@ public class AnnouncementMojo
     {
         doGenerate( releases, getLatestRelease( releases )  );
     }
-    
+
     protected void doGenerate( List releases, Release release )
         throws MojoExecutionException
     {
@@ -382,9 +391,9 @@ public class AnnouncementMojo
             context.put( "finalName", getFinalName() );
 
             context.put( "urlDownload", getUrlDownload() );
-            
+
             context.put( "project", project );
-            
+
             if ( announceParameters == null )
             {
                 // empty Map to prevent NPE in velocity execution
@@ -394,7 +403,7 @@ public class AnnouncementMojo
             {
                 context.put( "announceParameters", announceParameters );
             }
-            
+
 
             processTemplate( context, getOutputDirectory(), template );
         }
@@ -454,7 +463,7 @@ public class AnnouncementMojo
 
         release = getRelease( releases, pomVersion );
         isFound = (release != null);
-        
+
         if ( !isFound )
         {
             throw new MojoExecutionException( "Couldn't find the release '" + pomVersion
@@ -462,12 +471,12 @@ public class AnnouncementMojo
         }
         else
         {
-            
+
         }
         return release;
     }
 
-    
+
     protected Release getRelease(List releases, String version)
     {
         Release release = null;
@@ -492,7 +501,7 @@ public class AnnouncementMojo
         }
         return null;
     }
-    
+
     private void logRelease( Release release )
     {
         Action action;
@@ -529,9 +538,9 @@ public class AnnouncementMojo
             }
 
             VelocityEngine engine = velocity.getEngine();
-           
+
             engine.setApplicationAttribute( "baseDirectory", basedir );
-            
+
             if ( StringUtils.isEmpty( templateEncoding ) )
             {
                 templateEncoding =  ReaderFactory.FILE_ENCODING;
@@ -539,11 +548,11 @@ public class AnnouncementMojo
                                "File encoding has not been set, using platform encoding " + templateEncoding
                                    + ", i.e. build is platform dependent!" );
             }
-            
+
             Writer writer = new OutputStreamWriter( new FileOutputStream( f ), templateEncoding );
-            
+
             Template velocityTemplate = engine.getTemplate( templateDirectory + "/" + template, templateEncoding );
-            
+
             velocityTemplate.merge( context, writer );
 
             writer.flush();
@@ -581,7 +590,7 @@ public class AnnouncementMojo
 
         doGenerate( releases );
     }
-    
+
     protected List getJiraReleases()
         throws MojoExecutionException
     {
@@ -660,7 +669,7 @@ public class AnnouncementMojo
         }
         return changesReleases;
     }
-    
+
     /*
      * accessors
      */
