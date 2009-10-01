@@ -78,69 +78,69 @@ Using a Custom Announcement Template
  Here's a list of the variables that you have at your disposal, when creating
  your own template:
 
-*-----------------+----------+-------------+
-| <<Variable>>    | <<Type>> | <<Description>>
-*-----------------+----------+-------------+
-| releases*       | List     | All the releases from either the changes.xml file or from JIRA.
-*-----------------+----------+-------------+
-| groupId*        | String   | The groupId from your project's pom.
-*-----------------+----------+-------------+
-| artifactId*     | String   | The artifactId from your project's pom.
-*-----------------+----------+-------------+
-| version*        | String   | The version from your project's pom.
-*-----------------+----------+-------------+
-| packaging*      | String   | The packaging from your project's pom.
-*-----------------+----------+-------------+
-| release*        | Release  | The release that you are announcing.
-*-----------------+----------+-------------+
-| project*        | MavenProject | The Maven Project being released.
-*-----------------+----------+-------------+
-| url             | String   | Distribution url of the artifact. <<Default value is>>: <<<$\{project.url\}>>>.
-*-----------------+----------+-------------+
-| introduction    | String   | A short description or introduction of the released artifact. <<Default value is>>: <<<$\{project.description\}>>>.
-*-----------------+----------+-------------+
-| developmentTeam | String   | Name of the team that develops the artifact. <<Default value is>>: <<<$\{project.name\} team>>>.
-*-----------------+----------+-------------+
-| finalName       | String   | The name of the artifact to be used in the announcement. <<Default value is>>: <<<$\{project.build.finalName\}>>>.
-*-----------------+----------+-------------+
-| urlDownload     | String   | URL where the artifact can be downloaded. <<Default value is>>: <<<$\{project.url\}>>>.
-*-----------------+----------+-------------+
-| announceParameters | Map   | A Map of custom parameters that can be specified in the plugin's configuration.
-*-----------------+----------+-------------+
+*-----------------+----------+-----------+-----------------+
+| <<Variable>>    | <<Type>> | <<Since>> | <<Description>>
+*-----------------+----------+-----------+-----------------+
+| releases*       | List     |    2.0    | All the releases from either the changes.xml file or from JIRA.
+*-----------------+----------+-----------+-----------------+
+| groupId*        | String   |    2.0    | The groupId from your project's pom.
+*-----------------+----------+-----------+-----------------+
+| artifactId*     | String   |    2.0    | The artifactId from your project's pom.
+*-----------------+----------+-----------+-----------------+
+| version*        | String   |    2.0    | The version from your project's pom.
+*-----------------+----------+-----------+-----------------+
+| packaging*      | String   |    2.0    | The packaging from your project's pom.
+*-----------------+----------+-----------+-----------------+
+| release*        | Release  |    2.0    | The release that you are announcing.
+*-----------------+----------+-----------+-----------------+
+| project*        | MavenProject | 2.1   | The Maven Project being released.
+*-----------------+----------+-----------+-----------------+
+| url             | String   |    2.0    | Distribution url of the artifact. <<Default value is>>: <<<$\{project.url\}>>>.
+*-----------------+----------+-----------+-----------------+
+| introduction    | String   |    2.0    | A short description or introduction of the released artifact. <<Default value is>>: <<<$\{project.description\}>>>.
+*-----------------+----------+-----------+-----------------+
+| developmentTeam | String   |    2.0    | Name of the team that develops the artifact. <<Default value is>>: <<<$\{project.name\} team>>>.
+*-----------------+----------+-----------+-----------------+
+| finalName       | String   |    2.0    | The name of the artifact to be used in the announcement. <<Default value is>>: <<<$\{project.build.finalName\}>>>.
+*-----------------+----------+-----------+-----------------+
+| urlDownload     | String   |    2.0    | URL where the artifact can be downloaded. <<Default value is>>: <<<$\{project.url\}>>>.
+*-----------------+----------+-----------+-----------------+
+| announceParameters | Map   |    2.1    | A Map of custom parameters that can be specified in the plugin's configuration.
+*-----------------+----------+-----------+-----------------+
 <Variables marked with * are read-only.>
 
  Each <<<Release>>> also has a set of variables:
 
-*-----------------+----------+-------------+
-| <<Variable>>    | <<Type>> | <<Description>>
-*-----------------+----------+-------------+
-| actions*        | List     | All actions that were completed in this release.
-*-----------------+----------+-------------+
-| dateRelease*    | String   | The date when this release is made.
-*-----------------+----------+-------------+
-| description*    | String   | A description of the release.
-*-----------------+----------+-------------+
-| version*        | String   | The version of this release.
-*-----------------+----------+-------------+
+*-----------------+----------+-----------+-----------------+
+| <<Variable>>    | <<Type>> | <<Since>> | <<Description>>
+*-----------------+----------+-----------+-----------------+
+| actions*        | List     |    2.0    | All actions that were completed in this release.
+*-----------------+----------+-----------+-----------------+
+| dateRelease*    | String   |    2.0    | The date when this release is made.
+*-----------------+----------+-----------+-----------------+
+| description*    | String   |    2.0    | A description of the release.
+*-----------------+----------+-----------+-----------------+
+| version*        | String   |    2.0    | The version of this release.
+*-----------------+----------+-----------+-----------------+
 <Variables marked with * are read-only.>
 
  Finally each <<<Action>>> has the following variables:
 
-*-----------------+----------+-------------+
-| <<Variable>>    | <<Type>> | <<Description>>
-*-----------------+----------+-------------+
-| action*         | String   | What was done.
-*-----------------+----------+-------------+
-| dev*            | String   | The developer who made the change.
-*-----------------+----------+-------------+
-| dueTo*          | String   | If this was a contribution from a non-developer, the name of that person.
-*-----------------+----------+-------------+
-| dueToEmail*     | String   | If this was a contribution from a non-developer, the e-mail address of that person.
-*-----------------+----------+-------------+
-| issue*          | String   | The key of the issue in your issue tracking system.
-*-----------------+----------+-------------+
-| type*           | String   | What kind of change was this.
-*-----------------+----------+-------------+
+*-----------------+----------+-----------+-----------------+
+| <<Variable>>    | <<Type>> | <<Since>> | <<Description>>
+*-----------------+----------+-----------+-----------------+
+| action*         | String   |    2.0    | What was done.
+*-----------------+----------+-----------+-----------------+
+| dev*            | String   |    2.0    | The developer who made the change.
+*-----------------+----------+-----------+-----------------+
+| dueTo*          | String   |    2.0    | If this was a contribution from a non-developer, the name of that person.
+*-----------------+----------+-----------+-----------------+
+| dueToEmail*     | String   |    2.0    | If this was a contribution from a non-developer, the e-mail address of that person.
+*-----------------+----------+-----------+-----------------+
+| issue*          | String   |    2.0    | The key of the issue in your issue tracking system.
+*-----------------+----------+-----------+-----------------+
+| type*           | String   |    2.0    | What kind of change was this.
+*-----------------+----------+-----------+-----------------+
 <Variables marked with * are read-only.>
 
  For information on how to access variables in your template and more,
