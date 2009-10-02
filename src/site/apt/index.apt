@@ -3,7 +3,7 @@
  ------
  Dennis Lundberg
  ------
- 2008-07-31
+ 2009-10-02
  ------
 
  ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -44,9 +44,11 @@ Maven Changes Plugin
 
   * {{{./changes-report-mojo.html}changes:changes-report}} create a report showing what has changed between different releases of the project.
 
-  * {{{./jira-report-mojo.html}changes:jira-report}} create a report from issues downloaded from JIRA.
-
   * {{{./changes-validate-mojo.html}changes:changes-validate}} validate the <<<changes.xml>>> file.
+
+  * {{{./jira-report-mojo.html}changes:jira-report}} create a report from issues downloaded from {{{http://www.atlassian.com/software/jira/}JIRA}}.
+
+  * {{{./trac-report-mojo.html}changes:trac-report}} create a report from issues downloaded from {{{http://trac.edgewall.org/}Trac}}.
 
   []
 
@@ -77,10 +79,14 @@ Maven Changes Plugin
 
   * {{{./examples/alternate-changes-xml-location.html}Alternate Location for the changes.xml File}}
 
+  * {{{./examples/configuring-trac-report.html}Configuring the Trac Report}}
+
+  * {{{./examples/customizing-jira-report.html}Customizing the JIRA Report}}
+
   * {{{./examples/smtp-authentication.html}SMTP authentication}}
 
-  * {{{./examples/using-a-custom-announcement-template.html}Using a Custom Announcement Template}}
-
   * {{{./examples/specifying-mail-sender.html}Specifying the mail sender}}
+
+  * {{{./examples/using-a-custom-announcement-template.html}Using a Custom Announcement Template}}
 
   * {{{./examples/changes-file-validation.html}Validate your <<<changes.xml>>> file}}
