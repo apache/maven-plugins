@@ -17,7 +17,11 @@ KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations
 under the License.
 -->
-<model xsd.namespace="http://maven.apache.org/changes/1.0.0" xsd.target-namespace="http://maven.apache.org/changes/1.0.0">
+<model xmlns="http://modello.codehaus.org/MODELLO/1.0.0"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://modello.codehaus.org/MODELLO/1.0.0 http://modello.codehaus.org/xsd/modello-1.0.0.xsd"
+       xsd.namespace="http://maven.apache.org/changes/1.0.0"
+       xsd.targetNamespace="http://maven.apache.org/changes/1.0.0">
   <id>changes</id>
   <name>Changes</name>
   <description>
@@ -89,10 +93,10 @@ under the License.
       <name>Body</name>
       <version>1.0.0</version>
       <fields>
-        <field xml.listStyle="flat" xml.tagName="release">
+        <field xml.tagName="release">
           <name>releases</name>
           <version>1.0.0</version>
-          <association>
+          <association xml.itemsStyle="flat">
             <type>Release</type>
             <multiplicity>*</multiplicity>
           </association>
@@ -134,10 +138,10 @@ under the License.
             A short description of this release.
           </description>
         </field>
-        <field xml.listStyle="flat" xml.tagName="action">
+        <field xml.tagName="action">
           <name>actions</name>
           <version>1.0.0</version>
-          <association>
+          <association xml.itemsStyle="flat">
             <type>Action</type>
             <multiplicity>*</multiplicity>
           </association>
@@ -157,14 +161,14 @@ under the License.
                   if ( action.getType() != null && action.getType().equalsIgnoreCase( type ) )
                   {
                       actions.add( action );
-                  } 
+                  }
                 }
                 return actions;
             }
           ]]></code>
         </codeSegment>
       </codeSegments>
-      
+
     </class>
     <class>
       <name>Author</name>
@@ -282,19 +286,19 @@ under the License.
           <type>String</type>
           <description>fix date</description>
         </field>
-        <field xml.listStyle="flat" xml.tagName="fixes" xml.associationTagName="fixes">
+        <field xml.tagName="fixes">
           <name>fixedIssues</name>
           <version>1.0.0</version>
-          <association>
+          <association xml.itemsStyle="flat" xml.tagName="fixes">
             <type>FixedIssue</type>
             <multiplicity>*</multiplicity>
           </association>
           <description>A list of fix issues.</description>
         </field>
-        <field xml.listStyle="flat" xml.tagName="dueto" xml.associationTagName="dueto">
+        <field xml.tagName="dueto">
           <name>dueTos</name>
           <version>1.0.0</version>
-          <association>
+          <association xml.itemsStyle="flat" xml.tagName="dueto">
             <type>DueTo</type>
             <multiplicity>*</multiplicity>
           </association>
