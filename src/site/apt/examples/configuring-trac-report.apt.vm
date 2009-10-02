@@ -3,7 +3,7 @@
  ------
  David Roussel
  ------
- 2008-08-26
+ 2009-10-02
  ------
 
  ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -31,20 +31,20 @@ Configuring the Trac Report
 
 * Configuring your Trac instance
 
- The plugin needs to be told details of your Trac installation so that i
- can connect and query the open tickets.  The Trac installation needs to be 
- accessible via no authentication, basic authentication or NTLM authentication, 
- if you've used form authentication then you are out of luck.
- 
+ The plugin needs to be told details of your Trac installation so that it
+ can connect and query the open tickets.  The Trac installation needs to be
+ accessible via no authentication, basic authentication or NTLM authentication.
+ If you've used form authentication then you are out of luck.
+
  Your Trac installation needs to have the {{{http://trac-hacks.org/wiki/XmlRpcPlugin}XML-RPC plugin}}
- installed and working for this plugin to be able to read the tickets. 
+ installed and working for this plugin to be able to read the tickets.
 
 ** Basic Report Configuration
 
  The most basic report configuration is read from the <<<\<issueManagement\>>>> section
- of your pom.  This should work with no additional configuration, but by default all ticket
+ of your POM.  This should work with no additional configuration, but by default all ticket
  will be listed
- 
+
 +-----------------+
   <issueManagement>
     <system>trac</system>
@@ -53,8 +53,8 @@ Configuring the Trac Report
 +-----------------+
 
 ** Configuring a Custom Query
- 
- The exact query can configured in the <<<\<query\>>>> element.  
+
+ The exact query can configured in the <<<\<query\>>>> element.
  See {{{http://trac.edgewall.org/wiki/TracQuery}TracQuery}} for the exact syntax.
 
 +-----------------+
@@ -73,10 +73,10 @@ Configuring the Trac Report
 
 ** Configuring Basic Authentication
 
- If your Trac is protected by basic authentication then you'll need to add 
+ If your Trac is protected by basic authentication then you'll need to add
  the <<<\<tracUser\>>>> and <<<\<tracPassword\>>>> configuration elements
  so that the pluign knows who to authenticate as.
- 
+
 +-----------------+
 <project>
   ...
@@ -100,15 +100,15 @@ Configuring the Trac Report
 
 ** Configuring NTLM Authentication
 
- If you have your Trac sitting behind Apache on Windows with mod_sspi 
- doing authentication with Active Directory, then the plugin should 
- authenticate to the server as the current use without any extra config.
- No <<<\<tracUser\>>>> and <<<\<tracPassword\>>>> configuration elements 
+ If you have your Trac sitting behind Apache on Windows with mod_sspi
+ doing authentication with Active Directory, then the plugin should
+ authenticate to the server as the current user without any extra config.
+ No <<<\<tracUser\>>>> and <<<\<tracPassword\>>>> configuration elements
  are needed.
 
 ** Using custom encoding
 
- If you have to support non-western encodings, then specify an <<<\<outputEncoding\>>>> in the 
+ If you have to support non-western encodings, then specify an <<<\<outputEncoding\>>>> in the
  configuration.
 
 +-----------------+
