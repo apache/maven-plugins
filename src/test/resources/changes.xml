@@ -16,7 +16,9 @@ KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations
 under the License.
 -->
-<document>
+<document xmlns="http://maven.apache.org/changes/1.0.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/changes/1.0.0 http://maven.apache.org/xsd/changes-1.0.0.xsd">
   <properties>
     <title>Page title</title>
     <author email="vmassol@apache.org">Vincent Massol</author>
@@ -26,18 +28,18 @@ under the License.
     <release version="2.0" date="in CVS">
       <action dev="vmassol" type="update">
         Blah blah blaha.
-      </action>              
+      </action>
     </release>
 
     <release version="1.0-SNAPSHOT" date="2003-06-05" description="Sample Description">
       <action dev="vmassol" type="add">Test
-      </action>              
+      </action>
       <action dev="vmassol" type="fix" issue="JIRA-XXX">
         Corrected bug blah blah.
-      </action>              
+      </action>
       <action dev="vmassol" type="remove" due-to="John Doe" due-to-email="john@doe.com">
         Removed blah blah.
-      </action>              
+      </action>
     </release>
   </body>
 </document>
