@@ -29,7 +29,7 @@
 Selector Conditions
  
   Starting with plugin version 1.4, some keys of the {{{./invoker-properties.html}Invoker Properties}} can be used to
-  skip individual projects based on the current JRE version of OS family as illustrated in the example below:
+  skip individual projects based on the current JRE version or OS family as illustrated in the example below:
 
 -------------------
 # build project if JRE version is 1.4 or higher, but exclude version 1.4.1
