@@ -1,0 +1,31 @@
+import java.io.*;
+import java.util.*;
+import java.util.jar.*;
+import java.util.regex.*;
+
+try
+{
+    File jarFile = new File( basedir, "target/project-without-sources-1.0-SNAPSHOT-sources.jar" );
+    System.out.println( "Checking for non-existence of " + jarFile );
+    if ( jarFile.isFile() )
+    {
+        System.out.println( "FAILURE!" );
+        return false;
+    }
+
+    File testJarFile = new File( basedir, "target/project-without-sources-1.0-SNAPSHOT-test-sources.jar" );
+    System.out.println( "Checking for non-existence of " + testJarFile );
+    if ( testJarFile.isFile() )
+    {
+        System.out.println( "FAILURE!" );
+        return false;
+    }
+
+}
+catch( Throwable t )
+{
+    t.printStackTrace();
+    return false;
+}
+
+return true;
