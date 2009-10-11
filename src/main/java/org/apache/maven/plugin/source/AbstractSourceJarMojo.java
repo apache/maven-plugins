@@ -259,47 +259,54 @@ public abstract class AbstractSourceJarMojo
             archiveProjectContent( subProject, archiver.getArchiver() );
         }
 
-        if ( useDefaultManifestFile && defaultManifestFile.exists() && archive.getManifestFile() == null )
-        {
-            getLog().info( "Adding existing MANIFEST to archive. Found under: " + defaultManifestFile.getPath() );
-            archive.setManifestFile( defaultManifestFile );
-        }
-
-        File outputFile = new File( outputDirectory, finalName + "-" + getClassifier() + getExtension() );
+        if(!archiver.getArchiver().getFiles().isEmpty()){
         
-        try
-        {
-            archiver.setOutputFile( outputFile );
-
-            archive.setAddMavenDescriptor( false );
-            archive.setForced( forceCreation );
-
-            archiver.createArchive( project, archive );
-        }
-        catch ( IOException e )
-        {
-            throw new MojoExecutionException( "Error creating source archive: " + e.getMessage(), e );
-        }
-        catch ( ArchiverException e )
-        {
-            throw new MojoExecutionException( "Error creating source archive: " + e.getMessage(), e );
-        }
-        catch ( DependencyResolutionRequiredException e )
-        {
-            throw new MojoExecutionException( "Error creating source archive: " + e.getMessage(), e );
-        }
-        catch ( ManifestException e )
-        {
-            throw new MojoExecutionException( "Error creating source archive: " + e.getMessage(), e );
-        }
-
-        if ( attach )
-        {
-            projectHelper.attachArtifact( project, getType(), getClassifier(), outputFile );
+            if ( useDefaultManifestFile && defaultManifestFile.exists() && archive.getManifestFile() == null )
+            {
+                getLog().info( "Adding existing MANIFEST to archive. Found under: " + defaultManifestFile.getPath() );
+                archive.setManifestFile( defaultManifestFile );
+            }
+    
+            File outputFile = new File( outputDirectory, finalName + "-" + getClassifier() + getExtension() );
+            
+            try
+            {
+                archiver.setOutputFile( outputFile );
+    
+                archive.setAddMavenDescriptor( false );
+                archive.setForced( forceCreation );
+    
+                archiver.createArchive( project, archive );
+            }
+            catch ( IOException e )
+            {
+                throw new MojoExecutionException( "Error creating source archive: " + e.getMessage(), e );
+            }
+            catch ( ArchiverException e )
+            {
+                throw new MojoExecutionException( "Error creating source archive: " + e.getMessage(), e );
+            }
+            catch ( DependencyResolutionRequiredException e )
+            {
+                throw new MojoExecutionException( "Error creating source archive: " + e.getMessage(), e );
+            }
+            catch ( ManifestException e )
+            {
+                throw new MojoExecutionException( "Error creating source archive: " + e.getMessage(), e );
+            }
+    
+            if ( attach )
+            {
+                projectHelper.attachArtifact( project, getType(), getClassifier(), outputFile );
+            }
+            else
+            {
+                getLog().info( "NOT adding java-sources to attached artifacts list." );
+            }
         }
         else
         {
-            getLog().info( "NOT adding java-sources to attached artifacts list." );
+            getLog().info( "No sources in project. Archive not created." );
         }
     }
 
