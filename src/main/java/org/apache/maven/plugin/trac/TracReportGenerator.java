@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.maven.doxia.sink.Sink;
+import org.apache.maven.reporting.MavenReportException;
 
 /**
  * Generates a Trac report.
@@ -34,10 +35,66 @@ import org.apache.maven.doxia.sink.Sink;
  */
 public class TracReportGenerator
 {
+    private static final int COLUMN_ID = 0;
+    private static final int COLUMN_TYPE = 1;
+    private static final int COLUMN_SUMMARY = 2;
+    private static final int COLUMN_STATUS = 3;
+    private static final int COLUMN_RESOLUTION = 4;
+    private static final int COLUMN_MILESTONE = 5;
+    private static final int COLUMN_OWNER = 6;
+    private static final int COLUMN_PRIORITY = 7;
+    private static final int COLUMN_REPORTER = 8;
+    private static final int COLUMN_COMPONENT = 9;
+    private static final int COLUMN_CREATED = 10;
+    private static final int COLUMN_CHANGED = 11;
 
-    public TracReportGenerator()
-    {
-        // nothing here
+    /**
+     * Valid Trac columns.
+     */
+    private static final String[] TRAC_COLUMNS = {
+            /* 0 */ "id",
+            /* 1 */ "type",
+            /* 2 */ "summary",
+            /* 3 */ "status",
+            /* 4 */ "resolution",
+            /* 5 */ "milestone",
+            /* 6 */ "owner",
+            /* 7 */ "priority",
+            /* 8 */ "reporter",
+            /* 9 */ "component",
+            /* 10 */ "created",
+            /* 11 */ "changed"
+    };
+
+    private int[] columnOrder;
+
+    public TracReportGenerator(String columnNames) throws MavenReportException {
+
+        String[] columnNamesArray = columnNames.split( "," );
+        int validColumnNames = 0;
+        columnOrder = new int[columnNamesArray.length];
+        for ( int i = 0; i < columnOrder.length; i++ )
+        {
+            // Default to -1, indicating that the column should not be included in the report
+            columnOrder[i] = -1;
+            for ( int columnIndex = 0; columnIndex < TRAC_COLUMNS.length; columnIndex++ )
+            {
+                String columnName = columnNamesArray[i].trim();
+                if ( TRAC_COLUMNS[columnIndex].equalsIgnoreCase( columnName ) )
+                {
+                    // Found a valid column name - add it
+                    columnOrder[i] = columnIndex;
+                    validColumnNames++;
+                    break;
+                }
+            }
+        }
+        if ( validColumnNames == 0 )
+        {
+            // This can happen if the user has configured column names and they are all invalid
+            throw new MavenReportException(
+                "maven-changes-plugin: None of the configured columnNames '" + columnNames + "' are valid." );
+        }
     }
 
     public void doGenerateEmptyReport( ResourceBundle bundle, Sink sink )
@@ -76,25 +133,51 @@ public class TracReportGenerator
 
         sink.tableRow();
 
-        sinkHeader( sink, bundle.getString( "report.trac.label.id" ) );
-
-        sinkHeader( sink, bundle.getString( "report.trac.label.type" ) );
-
-        sinkHeader( sink, bundle.getString( "report.trac.label.summary" ) );
-
-        sinkHeader( sink, bundle.getString( "report.trac.label.owner" ) );
-
-        sinkHeader( sink, bundle.getString( "report.trac.label.reporter" ) );
-
-        sinkHeader( sink, bundle.getString( "report.trac.label.priority" ) );
-
-        sinkHeader( sink, bundle.getString( "report.trac.label.status" ) );
-
-        sinkHeader( sink, bundle.getString( "report.trac.label.resolution" ) );
-
-        sinkHeader( sink, bundle.getString( "report.trac.label.created" ) );
-
-        sinkHeader( sink, bundle.getString( "report.trac.label.changed" ) );
+        for ( int columnIndex = 0; columnIndex < columnOrder.length; columnIndex++ )
+        {
+            switch ( columnOrder[columnIndex] )
+            {
+                case COLUMN_ID:
+                    sinkHeader( sink, bundle.getString( "report.trac.label.id" ) );
+                    break;
+                case COLUMN_TYPE:
+                    sinkHeader( sink, bundle.getString( "report.trac.label.type" ) );
+                    break;
+                case COLUMN_SUMMARY:
+                    sinkHeader( sink, bundle.getString( "report.trac.label.summary" ) );
+                    break;
+                case COLUMN_OWNER:
+                    sinkHeader( sink, bundle.getString( "report.trac.label.owner" ) );
+                    break;
+                case COLUMN_REPORTER:
+                    sinkHeader( sink, bundle.getString( "report.trac.label.reporter" ) );
+                    break;
+                case COLUMN_PRIORITY:
+                    sinkHeader( sink, bundle.getString( "report.trac.label.priority" ) );
+                    break;
+                case COLUMN_STATUS:
+                    sinkHeader( sink, bundle.getString( "report.trac.label.status" ) );
+                    break;
+                case COLUMN_RESOLUTION:
+                    sinkHeader( sink, bundle.getString( "report.trac.label.resolution" ) );
+                    break;
+                case COLUMN_CREATED:
+                    sinkHeader( sink, bundle.getString( "report.trac.label.created" ) );
+                    break;
+                case COLUMN_CHANGED:
+                    sinkHeader( sink, bundle.getString( "report.trac.label.changed" ) );
+                    break;
+                case COLUMN_MILESTONE:
+                    sinkHeader( sink, bundle.getString( "report.trac.label.milestone" ) );
+                    break;
+                case COLUMN_COMPONENT:
+                    sinkHeader( sink, bundle.getString( "report.trac.label.component" ) );
+                    break;
+                default:
+                    // Do not add a header for this column
+                    break;
+            }
+        }
 
         sink.tableRow_();
     }
@@ -114,33 +197,55 @@ public class TracReportGenerator
 
             sink.tableRow();
 
-            sink.tableCell();
-
-            sink.link( ticket.getLink() );
-
-            sink.text( ticket.getId() );
-
-            sink.link_();
-
-            sink.tableCell_();
-
-            sinkCell( sink, ticket.getType() );
-
-            sinkCell( sink, ticket.getSummary() );
-
-            sinkCell( sink, ticket.getOwner() );
-
-            sinkCell( sink, ticket.getReporter() );
-
-            sinkCell( sink, ticket.getPriority() );
-
-            sinkCell( sink, ticket.getStatus() );
-
-            sinkCell( sink, ticket.getResolution() );
-
-            sinkCell( sink, sdf.format( ticket.getTimeCreated() ) );
-
-            sinkCell( sink, sdf.format( ticket.getTimeChanged() ) );
+            for ( int columnIndex = 0; columnIndex < columnOrder.length; columnIndex++ )
+            {
+                switch ( columnOrder[columnIndex] )
+                {
+                    case COLUMN_ID:
+                        sink.tableCell();
+                        sink.link( ticket.getLink() );
+                        sink.text( ticket.getId() );
+                        sink.link_();
+                        sink.tableCell_();
+                        break;
+                    case COLUMN_TYPE:
+                        sinkCell( sink, ticket.getType() );
+                        break;
+                    case COLUMN_SUMMARY:
+                        sinkCell( sink, ticket.getSummary() );
+                        break;
+                    case COLUMN_OWNER:
+                        sinkCell( sink, ticket.getOwner() );
+                        break;
+                    case COLUMN_REPORTER:
+                        sinkCell( sink, ticket.getReporter() );
+                        break;
+                    case COLUMN_PRIORITY:
+                        sinkCell( sink, ticket.getPriority() );
+                        break;
+                    case COLUMN_STATUS:
+                        sinkCell( sink, ticket.getStatus() );
+                        break;
+                    case COLUMN_RESOLUTION:
+                        sinkCell( sink, ticket.getResolution() );
+                        break;
+                    case COLUMN_CREATED:
+                        sinkCell( sink, sdf.format( ticket.getTimeCreated() ) );
+                        break;
+                    case COLUMN_CHANGED:
+                        sinkCell( sink, sdf.format( ticket.getTimeChanged() ) );
+                        break;
+                    case COLUMN_MILESTONE:
+                        sinkCell( sink, ticket.getMilestone() );
+                        break;
+                    case COLUMN_COMPONENT:
+                        sinkCell( sink, ticket.getComponent() );
+                        break;
+                    default:
+                        // Do not add details for this column
+                        break;
+                }
+            }
 
             sink.tableRow_();
         }
