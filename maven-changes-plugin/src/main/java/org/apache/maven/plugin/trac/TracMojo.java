@@ -38,7 +38,7 @@ import org.codehaus.plexus.util.StringUtils;
 /**
  * Goal which downloads issues from the Issue Tracking System and generates a
  * report.
- * 
+ *
  * @goal trac-report
  * @author Noriko Kinugasa
  * @version $Id$
@@ -50,7 +50,7 @@ public class TracMojo
     /**
      * Defines the Trac username for authentication into a private Trac
      * installation.
-     * 
+     *
      * @parameter default-value=""
      */
     private String tracUser;
@@ -58,17 +58,34 @@ public class TracMojo
     /**
      * Defines the Trac password for authentication into a private Trac
      * installation.
-     * 
+     *
      * @parameter default-value=""
      */
     private String tracPassword;
 
     /**
      * Defines the Trac query for searching ticket.
-     * 
+     *
      * @parameter default-value="order=id"
      */
     private String query;
+
+    /**
+     * Sets the column names that you want to show in the report. The columns
+     * will appear in the report in the same order as you specify them here.
+     * Multiple values can be separated by commas.
+     * <p>
+     * Valid columns are: <code>id</code>, <code>type</code>,
+     * <code>summary</code>, <code>status</code>, <code>resolution</code>,
+     * <code>milestone</code>, <code>owner</code>, <code>priority</code>,
+     * <code>reporter</code>, <code>component</code>, <code>created</code>,
+     * <code>changed</code>.
+     * </p>
+     *
+     * @parameter default-value="id,type,summary,owner,reporter,priority,status,resolution,created,changed"
+     * @since 2.2
+     */
+    private String columnNames;
 
     /**
      * @see org.apache.maven.reporting.AbstractMavenReport#canGenerateReport()
@@ -128,7 +145,7 @@ public class TracMojo
         ArrayList ticketList = new ArrayList();
         TracTicket matchTicket;
 
-        TracReportGenerator report = new TracReportGenerator();
+        TracReportGenerator report = new TracReportGenerator(columnNames);
 
         if ( queryResult.length == 0 )
         {
