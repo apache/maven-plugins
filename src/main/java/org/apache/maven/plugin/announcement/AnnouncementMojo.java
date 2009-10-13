@@ -92,7 +92,6 @@ public class AnnouncementMojo
      * This parameter will be passed to the template.
      *
      * @parameter expression="${project.url}"
-     * @required
      */
     private String url;
 
