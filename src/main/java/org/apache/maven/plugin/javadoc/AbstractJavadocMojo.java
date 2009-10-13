@@ -2772,42 +2772,39 @@ public abstract class AbstractJavadocMojo
             }
         }
 
-        if ( settings == null )
+        if ( settings == null || settings.getActiveProxy() == null )
         {
             return;
         }
 
         Proxy activeProxy = settings.getActiveProxy();
-        if ( activeProxy != null )
+        String protocol =
+            StringUtils.isNotEmpty( activeProxy.getProtocol() ) ? activeProxy.getProtocol() + "." : "";
+
+        if ( StringUtils.isNotEmpty( activeProxy.getHost() ) )
         {
-            String protocol =
-                StringUtils.isNotEmpty( activeProxy.getProtocol() ) ? activeProxy.getProtocol() + "." : "";
+            cmd.createArg().setValue( "-J-D" + protocol + "proxySet=true" );
+            cmd.createArg().setValue( "-J-D" + protocol + "proxyHost=" + activeProxy.getHost() );
 
-            if ( StringUtils.isNotEmpty( activeProxy.getHost() ) )
+            if ( activeProxy.getPort() > 0 )
             {
-                cmd.createArg().setValue( "-J-D" + protocol + "proxySet=true" );
-                cmd.createArg().setValue( "-J-D" + protocol + "proxyHost=" + activeProxy.getHost() );
+                cmd.createArg().setValue( "-J-D" + protocol + "proxyPort=" + activeProxy.getPort() );
+            }
 
-                if ( activeProxy.getPort() > 0 )
+            if ( StringUtils.isNotEmpty( activeProxy.getNonProxyHosts() ) )
+            {
+                cmd.createArg().setValue(
+                                          "-J-D" + protocol + "nonProxyHosts=\""
+                                              + activeProxy.getNonProxyHosts() + "\"" );
+            }
+
+            if ( StringUtils.isNotEmpty( activeProxy.getUsername() ) )
+            {
+                cmd.createArg().setValue( "-J-Dhttp.proxyUser=\"" + activeProxy.getUsername() + "\"" );
+
+                if ( StringUtils.isNotEmpty( activeProxy.getPassword() ) )
                 {
-                    cmd.createArg().setValue( "-J-D" + protocol + "proxyPort=" + activeProxy.getPort() );
-                }
-
-                if ( StringUtils.isNotEmpty( activeProxy.getNonProxyHosts() ) )
-                {
-                    cmd.createArg().setValue(
-                                              "-J-D" + protocol + "nonProxyHosts=\""
-                                                  + activeProxy.getNonProxyHosts() + "\"" );
-                }
-
-                if ( StringUtils.isNotEmpty( activeProxy.getUsername() ) )
-                {
-                    cmd.createArg().setValue( "-J-Dhttp.proxyUser=\"" + activeProxy.getUsername() + "\"" );
-
-                    if ( StringUtils.isNotEmpty( activeProxy.getPassword() ) )
-                    {
-                        cmd.createArg().setValue( "-J-Dhttp.proxyPassword=\"" + activeProxy.getPassword() + "\"" );
-                    }
+                    cmd.createArg().setValue( "-J-Dhttp.proxyPassword=\"" + activeProxy.getPassword() + "\"" );
                 }
             }
         }
