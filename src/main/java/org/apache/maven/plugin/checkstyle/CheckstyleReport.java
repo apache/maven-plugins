@@ -23,7 +23,6 @@ import com.puppycrawl.tools.checkstyle.Checker;
 import com.puppycrawl.tools.checkstyle.ConfigurationLoader;
 import com.puppycrawl.tools.checkstyle.DefaultConfiguration;
 import com.puppycrawl.tools.checkstyle.DefaultLogger;
-import com.puppycrawl.tools.checkstyle.ModuleFactory;
 import com.puppycrawl.tools.checkstyle.PackageNamesLoader;
 import com.puppycrawl.tools.checkstyle.PropertiesExpander;
 import com.puppycrawl.tools.checkstyle.XMLLogger;
@@ -79,6 +78,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 /**
  * Perform a Checkstyle analysis, and generate a report on violations.
@@ -594,11 +594,8 @@ public class CheckstyleReport
 
                 String configFile = getConfigFile();
                 Properties overridingProperties = getOverridingProperties();
-                ModuleFactory moduleFactory;
                 Configuration config;
                 CheckstyleResults results;
-
-                moduleFactory = getModuleFactory();
 
                 config = ConfigurationLoader.loadConfiguration( configFile,
                                                                 new PropertiesExpander( overridingProperties ) );
@@ -614,8 +611,8 @@ public class CheckstyleReport
                 for ( int i = 0; i < modules.length; i++ )
                 {
                     Configuration module = modules[i];
-                    if ( "TreeWalker".equals( module.getName() )
-                        || "com.puppycrawl.tools.checkstyle.TreeWalker".equals( module.getName() ) )
+                    if ( "Checker".equals( module.getName() )
+                        || "com.puppycrawl.tools.checkstyle.Checker".equals( module.getName() ) )
                     {
                         if ( module instanceof DefaultConfiguration )
                         {
@@ -626,13 +623,25 @@ public class CheckstyleReport
                             getLog().warn( "Failed to configure file encoding on module " + module );
                         }
                     }
+                    if ("TreeWalker".equals(module.getName())
+                        || "com.puppycrawl.tools.checkstyle.TreeWalker".equals(module.getName()))
+                    {
+                        if (module instanceof DefaultConfiguration)
+                        {
+                            ((DefaultConfiguration) module).addAttribute("cacheFile", cacheFile);
+                        }
+                        else
+                        {
+                            getLog().warn("Failed to configure cache file on module " + module);
+                        }
+                    }
                 }
 
-                results = executeCheckstyle( config, moduleFactory );
+                results = executeCheckstyle( config );
 
                 ResourceBundle bundle = getBundle( locale );
                 generateReportStatics();
-                generateMainReport( results, config, moduleFactory, bundle );
+                generateMainReport( results, config, bundle );
                 if ( enableRSS )
                 {
                     CheckstyleRssGeneratorRequest request =
@@ -689,8 +698,7 @@ public class CheckstyleReport
         return copyright;
     }
 
-    private void generateMainReport( CheckstyleResults results, Configuration config, ModuleFactory moduleFactory,
-                                     ResourceBundle bundle )
+    private void generateMainReport( CheckstyleResults results, Configuration config, ResourceBundle bundle )
     {
         CheckstyleReportGenerator generator = new CheckstyleReportGenerator( getSink(), bundle, project.getBasedir(), siteTool );
 
@@ -700,7 +708,6 @@ public class CheckstyleReport
         generator.setEnableFilesSummary( enableFilesSummary );
         generator.setEnableRSS( enableRSS );
         generator.setCheckstyleConfig( config );
-        generator.setCheckstyleModuleFactory( moduleFactory );
         if ( linkXRef )
         {
             String relativePath = PathTool.getRelativePath( getOutputDirectory(), xrefLocation.getAbsolutePath() );
@@ -783,7 +790,7 @@ public class CheckstyleReport
         }
     }
 
-    private CheckstyleResults executeCheckstyle( Configuration config, ModuleFactory moduleFactory )
+    private CheckstyleResults executeCheckstyle( Configuration config )
         throws MavenReportException, CheckstyleException
     {
         File[] files;
@@ -863,10 +870,7 @@ public class CheckstyleReport
         URLClassLoader projectClassLoader = new URLClassLoader( (URL[]) urls.toArray( new URL[urls.size()] ), null );
         checker.setClassloader( projectClassLoader );
 
-        if ( moduleFactory != null )
-        {
-            checker.setModuleFactory( moduleFactory );
-        }
+        checker.setModuleClassLoader( Thread.currentThread().getContextClassLoader() );
 
         if ( filterSet != null )
         {
@@ -896,7 +900,11 @@ public class CheckstyleReport
 
         checker.addListener( sinkListener );
 
-        int nbErrors = checker.process( files );
+        ArrayList filesList = new ArrayList();
+        for (int i = 0; i < files.length; i++) {
+            filesList.add(files[i]);
+        }
+        int nbErrors = checker.process( filesList );
 
         checker.destroy();
 
@@ -1104,31 +1112,6 @@ public class CheckstyleReport
                                             + configLocation, e );
         }
 
-    }
-
-    private ModuleFactory getModuleFactory()
-        throws CheckstyleException
-    {
-        // default to internal module factory.
-        ModuleFactory moduleFactory = PackageNamesLoader.loadModuleFactory( Thread.currentThread()
-            .getContextClassLoader() );
-
-        try
-        {
-            // attempt to locate any specified package file.
-            File packageNamesFile = locator.resolveLocation( packageNamesLocation, "checkstyle-packages.xml" );
-
-            if ( packageNamesFile != null )
-            {
-                // load resolved location.
-                moduleFactory = PackageNamesLoader.loadModuleFactory( packageNamesFile.getAbsolutePath() );
-            }
-        }
-        catch ( IOException e )
-        {
-            getLog().error( "Unable to process package names location: " + packageNamesLocation, e );
-        }
-        return moduleFactory;
     }
 
     private String getSuppressionLocation()
