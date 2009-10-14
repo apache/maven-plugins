@@ -57,7 +57,7 @@ public class JavadocReport
     /**
      * Specifies the destination directory where javadoc saves the generated HTML files.
      *
-     * @parameter expression="${project.reporting.outputDirectory}/apidocs"
+     * @parameter expression="${reportOutputDirectory}" default-value="${project.reporting.outputDirectory}/apidocs"
      * @required
      */
     private File reportOutputDirectory;
