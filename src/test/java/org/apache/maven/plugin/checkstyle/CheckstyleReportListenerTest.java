@@ -67,20 +67,20 @@ public class CheckstyleReportListenerTest
 
         AuditEvent event = new AuditEvent( this, "/source/path/file1", null );
         fireFileStarted( event );
-        LocalizedMessage message = new LocalizedMessage( 0, 0, "", "", null, SeverityLevel.INFO, null, getClass() );
+        LocalizedMessage message = new LocalizedMessage( 0, 0, "", "", null, SeverityLevel.INFO, null, getClass(), null );
         fireAddError( new AuditEvent( this, "/source/path/file1", message ) );
         fireFileFinished( event );
 
         event = new AuditEvent( this, "/source/path/file2", null );
         fireFileStarted( event );
-        message = new LocalizedMessage( 0, 0, "", "", null, SeverityLevel.WARNING, null, getClass() );
+        message = new LocalizedMessage( 0, 0, "", "", null, SeverityLevel.WARNING, null, getClass(), null );
         fireAddError( new AuditEvent( this, "/source/path/file2", message ) );
         fireAddError( new AuditEvent( this, "/source/path/file2", message ) );
         fireFileFinished( event );
 
         event = new AuditEvent( this, "/source/path/file3", null );
         fireFileStarted( event );
-        message = new LocalizedMessage( 0, 0, "", "", null, SeverityLevel.ERROR, null, getClass() );
+        message = new LocalizedMessage( 0, 0, "", "", null, SeverityLevel.ERROR, null, getClass(), null );
         fireAddError( new AuditEvent( this, "/source/path/file3", message ) );
         fireAddError( new AuditEvent( this, "/source/path/file3", message ) );
         fireAddError( new AuditEvent( this, "/source/path/file3", message ) );
@@ -88,7 +88,7 @@ public class CheckstyleReportListenerTest
 
         event = new AuditEvent( this, "/source/path/file4", null );
         fireFileStarted( event );
-        message = new LocalizedMessage( 0, 0, "", "", null, SeverityLevel.IGNORE, null, getClass() );
+        message = new LocalizedMessage( 0, 0, "", "", null, SeverityLevel.IGNORE, null, getClass(), null );
         fireAddError( new AuditEvent( this, "/source/path/file4", message ) );
         fireAddError( new AuditEvent( this, "/source/path/file4", message ) );
         fireAddError( new AuditEvent( this, "/source/path/file4", message ) );

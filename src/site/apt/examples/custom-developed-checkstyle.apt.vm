@@ -75,7 +75,7 @@ mycompany-checkstyle-checks
     <dependency>
       <groupId>checkstyle</groupId>
       <artifactId>checkstyle</artifactId>
-      <version>4.4</version>
+        <version>${project.version}</version>
     </dependency>
   </dependencies>
 </project>
