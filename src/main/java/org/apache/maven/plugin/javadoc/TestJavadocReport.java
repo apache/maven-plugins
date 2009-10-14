@@ -98,7 +98,7 @@ public class TestJavadocReport
     /**
      * Specifies the destination directory where test Javadoc saves the generated HTML files.
      *
-     * @parameter expression="${project.reporting.outputDirectory}/testapidocs"
+     * @parameter expression="${reportTestOutputDirectory}" default-value="${project.reporting.outputDirectory}/testapidocs"
      * @required
      */
     private File reportOutputDirectory;
