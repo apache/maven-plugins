@@ -170,12 +170,7 @@ under the License.
     <dependency>
       <groupId>checkstyle</groupId>
       <artifactId>checkstyle</artifactId>
-      <version>4.4</version>
-    </dependency>
-    <dependency>
-      <groupId>checkstyle</groupId>
-      <artifactId>checkstyle-optional</artifactId>
-      <version>4.4</version>
+      <version>5.0</version>
     </dependency>
 
     <!-- misc -->
@@ -233,7 +228,7 @@ under the License.
           </execution>
         </executions>
       </plugin>
-    </plugins>    
+    </plugins>
   </build>
 
   <profiles>
@@ -285,10 +280,20 @@ under the License.
             -->
             <version>${pom.version}</version>
           </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-plugin-plugin</artifactId>
+            <version>2.5.1</version>
+            <configuration>
+              <requirements>
+                <jdk>1.5</jdk>
+              </requirements>
+            </configuration>
+          </plugin>
         </plugins>
       </reporting>
     </profile>
-    
+
     <profile>
       <id>maven-3</id>
       <activation>
@@ -300,7 +305,7 @@ under the License.
       <properties>
         <sitePluginVersion>3.0-beta-1-SNAPSHOT</sitePluginVersion>
       </properties>
-    </profile>     
-    
+    </profile>
+
   </profiles>
 </project>
