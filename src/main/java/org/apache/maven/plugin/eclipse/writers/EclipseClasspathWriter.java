@@ -64,7 +64,9 @@ public class EclipseClasspathWriter
      *
      */
     private static final String ORG_ECLIPSE_AJDT_ASPECTPATH = "org.eclipse.ajdt.aspectpath";
-
+     
+    private static final String ASPECTJRT_CONTAINER = "org.eclipse.ajdt.core.ASPECTJRT_CONTAINER";
+	
     /**
      *
      */
@@ -525,9 +527,13 @@ public class EclipseClasspathWriter
 
         }
 
-        // Skip aspectj libraries since they are in the container.
-        if ( ( config.getAjdtVersion() != 0 ) && dep.getArtifactId().toLowerCase().indexOf( "aspectj" ) >= 0 )
+        // Replace aspectJ runtime library with ajdt ASPECTJRT_CONTAINER.
+        if ( ( config.getAjdtVersion() != 0 ) && dep.getGroupId().equals( "org.aspectj" ) && dep.getArtifactId().equals( "aspectjrt" ) )
         {
+            writer.startElement( ELT_CLASSPATHENTRY );
+            writer.addAttribute( ATTR_KIND, "con" );
+            writer.addAttribute( ATTR_PATH, ASPECTJRT_CONTAINER );
+            writer.endElement();
             return;
         }
 
