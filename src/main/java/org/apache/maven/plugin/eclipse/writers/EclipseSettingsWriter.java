@@ -24,7 +24,10 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
+import java.util.Iterator;
+import java.util.List;
 
+import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.eclipse.Messages;
 import org.apache.maven.plugin.ide.IdeUtils;
@@ -51,6 +54,8 @@ public class EclipseSettingsWriter
 
     private static final String PROP_JDT_CORE_COMPILER_SOURCE = "org.eclipse.jdt.core.compiler.source"; //$NON-NLS-1$
 
+    private static final String PROP_JDT_CORE_COMPILER_ENCODING = "encoding/"; //$NON-NLS-1$
+
     /**
      * @see org.apache.maven.plugin.eclipse.writers.EclipseWriter#write()
      */
@@ -62,12 +67,62 @@ public class EclipseSettingsWriter
         Properties coreSettings = new Properties();
 
         String source = IdeUtils.getCompilerSourceVersion( config.getProject() );
+        String encoding = IdeUtils.getCompilerSourceEncoding( config.getProject() );
         String target = IdeUtils.getCompilerTargetVersion( config.getProject() );
 
         if ( source != null )
         {
             coreSettings.put( PROP_JDT_CORE_COMPILER_SOURCE, source );
             coreSettings.put( PROP_JDT_CORE_COMPILER_COMPLIANCE, source );
+        }
+        
+        if ( encoding != null )
+        {
+            String basedir = config.getProject().getBasedir().getAbsolutePath();
+			List compileSourceRoots = config.getProject().getCompileSourceRoots();
+			if ( compileSourceRoots != null )
+			{
+				Iterator it = compileSourceRoots.iterator();
+				while ( it.hasNext() )
+				{
+					String sourcePath = (String) it.next();
+					String relativePath = sourcePath.substring( basedir.length() ).replace( '\\', '/' );
+					coreSettings.put( PROP_JDT_CORE_COMPILER_ENCODING + relativePath, encoding );
+				}
+			}
+			List testCompileSourceRoots = config.getProject().getTestCompileSourceRoots();
+            if ( testCompileSourceRoots != null )
+			{
+				Iterator it = testCompileSourceRoots.iterator();
+				while ( it.hasNext() )
+				{
+					String sourcePath = (String) it.next();
+					String relativePath = sourcePath.substring( basedir.length() ).replace( '\\', '/' );
+					coreSettings.put( PROP_JDT_CORE_COMPILER_ENCODING + relativePath, encoding );
+				}
+			}
+			List resources = config.getProject().getResources();
+            if ( resources != null )
+			{
+				Iterator it = resources.iterator();
+				while ( it.hasNext() )
+				{
+					Resource resource = (Resource) it.next();
+					String relativePath = resource.getDirectory().substring( basedir.length() ).replace( '\\', '/' );
+					coreSettings.put( PROP_JDT_CORE_COMPILER_ENCODING + relativePath, encoding );
+				}
+			}
+			List testResources = config.getProject().getTestResources();
+            if ( testResources != null )
+			{
+				Iterator it = testResources.iterator();
+				while ( it.hasNext() )
+				{
+					Resource resource = (Resource) it.next();
+					String relativePath = resource.getDirectory().substring( basedir.length() ).replace( '\\', '/' );
+					coreSettings.put( PROP_JDT_CORE_COMPILER_ENCODING + relativePath, encoding );
+				}
+			}
         }
 
         if ( target != null && !JDK_1_2_SOURCES.equals( target ) )

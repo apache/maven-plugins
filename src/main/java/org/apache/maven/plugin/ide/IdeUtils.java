@@ -79,6 +79,11 @@ public class IdeUtils
     private static final String PROPERTY_SOURCE = "source"; //$NON-NLS-1$
 
     /**
+     * 'encoding' property for maven-compiler-plugin.
+     */
+    private static final String PROPERTY_ENCODING = "encoding"; //$NON-NLS-1$
+    
+    /**
      * 'target' property for maven-compiler-plugin.
      */
     private static final String PROPERTY_TARGET = "target"; //$NON-NLS-1$
@@ -172,6 +177,18 @@ public class IdeUtils
         return IdeUtils.getCompilerPluginSetting( project, PROPERTY_SOURCE );
     }
 
+    /**
+     * Returns the source encoding configured for the compiler plugin. Returns the minimum version required to compile
+     * both standard and test sources, if settings are different.
+     * 
+     * @param project maven project
+     * @return java source version
+     */
+    public static String getCompilerSourceEncoding( MavenProject project )
+    {
+        return IdeUtils.getCompilerPluginSetting( project, PROPERTY_ENCODING );
+    }
+    
     /**
      * Returns the target version configured for the compiler plugin. Returns the minimum version required to compile
      * both standard and test sources, if settings are different.
