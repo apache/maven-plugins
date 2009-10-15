@@ -532,6 +532,7 @@ public class ReadWorkspaceLocations
                             getProjectLocation( workspaceConfiguration.getWorkspaceDirectory(), project );
                         if ( projectLocation != null )
                         {
+						    logger.debug( "read workpsace project " + projectLocation );
                             IdeDependency ideDependency = readArtefact( projectLocation, logger );
                             if ( ideDependency != null )
                             {
@@ -546,6 +547,7 @@ public class ReadWorkspaceLocations
                 }
             }
         }
+		logger.debug( dependencies.size() + " from workspace " + workspaceConfiguration.getWorkspaceDirectory() );
         workspaceConfiguration.setWorkspaceArtefacts( (IdeDependency[]) dependencies.toArray( new IdeDependency[dependencies.size()] ) );
     }
 }
