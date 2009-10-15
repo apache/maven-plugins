@@ -26,6 +26,7 @@
         <configuration>
           <workspace>${basedir}/../../eclipse/workspaceDoesNotExist</workspace>
           <downloadSources>true</downloadSources>
+		  <ajdtVersion>1.5</ajdtVersion>
         </configuration>
       </plugin>
       <plugin>
