@@ -504,9 +504,9 @@ public class EclipsePlugin
 
     /**
      * The version of AJDT for which configuration files will be generated. The default value is "1.5", supported
-     * versions are "none", "1.4", and "1.5".
+     * versions are "none" (AJDT support disabled), "1.4", and "1.5".
      * 
-     * @parameter expression="${eclipse.ajdtVersion}" default-value="1.5"
+     * @parameter expression="${eclipse.ajdtVersion}" default-value="none"
      */
     private String ajdtVersion;
 
