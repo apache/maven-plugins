@@ -24,7 +24,6 @@ import org.codehaus.plexus.interpolation.InterpolationException;
 import org.codehaus.plexus.interpolation.PropertiesBasedValueSource;
 import org.codehaus.plexus.interpolation.StringSearchInterpolator;
 import org.codehaus.plexus.util.IOUtil;
-import org.codehaus.plexus.util.interpolation.RegexBasedInterpolator;
 
 import java.io.File;
 import java.io.FileInputStream;
