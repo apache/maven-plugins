@@ -38,6 +38,7 @@ import org.apache.maven.plugin.eclipse.Messages;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.PropertyUtils;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 
@@ -82,7 +83,7 @@ public class IdeUtils
      * 'encoding' property for maven-compiler-plugin.
      */
     private static final String PROPERTY_ENCODING = "encoding"; //$NON-NLS-1$
-    
+
     /**
      * 'target' property for maven-compiler-plugin.
      */
@@ -95,7 +96,7 @@ public class IdeUtils
 
     /**
      * Delete a file, handling log messages and exceptions
-     * 
+     *
      * @param f File to be deleted
      * @throws MojoExecutionException only if a file exists and can't be deleted
      */
@@ -149,7 +150,7 @@ public class IdeUtils
 
     /**
      * Returns a compiler plugin settings, considering also settings altered in plugin executions .
-     * 
+     *
      * @param project maven project
      * @return option value (may be null)
      */
@@ -162,13 +163,17 @@ public class IdeUtils
                 findCompilerPluginSettingInPlugins( project.getModel().getBuild().getPluginManagement().getPlugins(),
                                                     optionName );
         }
+        if ( value == null )
+        {
+            project.getProperties().getProperty( "project.build.sourceEncoding" );
+        }
         return value;
     }
 
     /**
      * Returns the source version configured for the compiler plugin. Returns the minimum version required to compile
      * both standard and test sources, if settings are different.
-     * 
+     *
      * @param project maven project
      * @return java source version
      */
@@ -180,7 +185,7 @@ public class IdeUtils
     /**
      * Returns the source encoding configured for the compiler plugin. Returns the minimum version required to compile
      * both standard and test sources, if settings are different.
-     * 
+     *
      * @param project maven project
      * @return java source version
      */
@@ -188,11 +193,11 @@ public class IdeUtils
     {
         return IdeUtils.getCompilerPluginSetting( project, PROPERTY_ENCODING );
     }
-    
+
     /**
      * Returns the target version configured for the compiler plugin. Returns the minimum version required to compile
      * both standard and test sources, if settings are different.
-     * 
+     *
      * @param project maven project
      * @return java target version
      */
@@ -228,7 +233,7 @@ public class IdeUtils
 
     /**
      * Extracts the version of the first matching artifact in the given list.
-     * 
+     *
      * @param artifactIds artifact names to compare against for extracting version
      * @param artifacts Set of artifacts for our project
      * @param len expected length of the version sub-string
@@ -255,7 +260,7 @@ public class IdeUtils
 
     /**
      * Search for a configuration setting of an other plugin for a configuration setting.
-     * 
+     *
      * @todo there should be a better way to do this
      * @param project the current maven project to get the configuration from.
      * @param pluginId the group id and artifact id of the plugin to search for
@@ -275,7 +280,7 @@ public class IdeUtils
 
     /**
      * Search for the configuration Xpp3 dom of an other plugin.
-     * 
+     *
      * @todo there should be a better way to do this
      * @param project the current maven project to get the configuration from.
      * @param pluginId the group id and artifact id of the plugin to search for
@@ -295,7 +300,7 @@ public class IdeUtils
 
     /**
      * Search for the configuration Xpp3 dom of an other plugin.
-     * 
+     *
      * @todo there should be a better way to do this
      * @param project the current maven project to get the configuration from.
      * @param artifactId the artifact id of the plugin to search for
@@ -337,7 +342,7 @@ public class IdeUtils
      * <p>
      * Note: if projectNameTemplate is not null then that value will be used regardless of the values for
      * addVersionToProjectName or addGroupIdToProjectName and a warning will be issued.
-     * 
+     *
      * @param projectNameTemplate the current projectNameTemplate, if available
      * @param addVersionToProjectName whether to include Version in the project name
      * @param addGroupIdToProjectName whether to include GroupId in the project name.
@@ -380,7 +385,7 @@ public class IdeUtils
 
     /**
      * Use the project name template to create an eclipse project.
-     * 
+     *
      * @param template Template for the project name
      * @param artifact the artifact to create the project name for
      * @return the created ide project name
@@ -419,7 +424,7 @@ public class IdeUtils
 
     /**
      * Wrapper around {@link ArtifactResolver#resolve(Artifact, List, ArtifactRepository)}
-     * 
+     *
      * @param artifactResolver see {@link ArtifactResolver#resolve(Artifact, List, ArtifactRepository)}
      * @param artifact see {@link ArtifactResolver#resolve(Artifact, List, ArtifactRepository)}
      * @param remoteRepos see {@link ArtifactResolver#resolve(Artifact, List, ArtifactRepository)}
@@ -454,7 +459,7 @@ public class IdeUtils
     /**
      * Wrap {@link ArtifactFactory#createArtifactWithClassifier} so that the type and classifier are set correctly for
      * "sources" and "javadoc".
-     * 
+     *
      * @param groupId see {@link ArtifactFactory#createArtifactWithClassifier}
      * @param artifactId see {@link ArtifactFactory#createArtifactWithClassifier}
      * @param version see {@link ArtifactFactory#createArtifactWithClassifier}
@@ -572,7 +577,7 @@ public class IdeUtils
 
     /**
      * Convert the provided filename from a Windows separator \\ to a unix/java separator /
-     * 
+     *
      * @param filename file name to fix separator
      * @return filename with all \\ replaced with /
      */
@@ -587,7 +592,7 @@ public class IdeUtils
      * "file:/home/dir". So, in the first case the slash after "file:" is not part of the corresponding filesystem path
      * while in the later case it is. This discrepancy makes verifying the javadoc attachments in ".classpath" a little
      * tricky.
-     * 
+     *
      * @param input string input that may contain a windows URI
      * @return all windows URI convert "file:C:/dir" to "file:/C:/dir"
      */
@@ -598,7 +603,7 @@ public class IdeUtils
 
     /**
      * Returns a compiler plugin settings from a list of plugins .
-     * 
+     *
      * @param project maven project
      * @return option value (may be null)
      */
