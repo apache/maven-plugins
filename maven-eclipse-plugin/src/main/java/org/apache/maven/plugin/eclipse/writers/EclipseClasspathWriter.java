@@ -45,7 +45,7 @@ import org.codehaus.plexus.util.xml.XMLWriter;
 
 /**
  * Writes eclipse .classpath file.
- * 
+ *
  * @author <a href="mailto:trygvis@inamo.no">Trygve Laugst&oslash;l</a>
  * @author <a href="mailto:kenney@neonics.com">Kenney Westerhof</a>
  * @author <a href="mailto:fgiust@apache.org">Fabrizio Giustina</a>
@@ -64,9 +64,9 @@ public class EclipseClasspathWriter
      *
      */
     private static final String ORG_ECLIPSE_AJDT_ASPECTPATH = "org.eclipse.ajdt.aspectpath";
-     
+
     private static final String ASPECTJRT_CONTAINER = "org.eclipse.ajdt.core.ASPECTJRT_CONTAINER";
-	
+
     /**
      *
      */
@@ -528,12 +528,12 @@ public class EclipseClasspathWriter
         }
 
         // Replace aspectJ runtime library with ajdt ASPECTJRT_CONTAINER.
-        if ( ( config.getAjdtVersion() != 0 ) && dep.getGroupId().equals( "org.aspectj" ) && dep.getArtifactId().equals( "aspectjrt" ) )
+        if ( ( config.getAjdtVersion() != 0 ) && isAspectJRuntime( dep ) )
         {
-            writer.startElement( ELT_CLASSPATHENTRY );
-            writer.addAttribute( ATTR_KIND, "con" );
-            writer.addAttribute( ATTR_PATH, ASPECTJRT_CONTAINER );
-            writer.endElement();
+            if ( ! config.getClasspathContainers().contains( ASPECTJRT_CONTAINER ) )
+            {
+                config.getClasspathContainers().add( ASPECTJRT_CONTAINER );
+            }
             return;
         }
 
@@ -616,5 +616,17 @@ public class EclipseClasspathWriter
         }
         writer.endElement();
 
+    }
+
+    /**
+     * @return
+     */
+    private boolean isAspectJRuntime( IdeDependency dep )
+    {
+        if ( dep.getArtifactId().equals( "aspectjrt" ) )
+        {
+            return dep.getGroupId().equals( "org.aspectj" ) || dep.getGroupId().equals( "aspectj" );
+        }
+        return false;
     }
 }
