@@ -40,6 +40,8 @@ class InvokerSession
 
     private List failedJobs;
 
+    private List errorJobs;
+
     private List successfulJobs;
 
     private List skippedJobs;
@@ -121,6 +123,18 @@ class InvokerSession
     }
 
     /**
+     * Gets the build jobs which had errors for this session.
+     *
+     * @return The build jobs in error for this session, can be empty but never <code>null</code>.
+     */
+    public List getErrorJobs()
+    {
+        updateStats();
+
+        return errorJobs;
+    } 
+
+    /**
      * Gets the skipped build jobs in this session.
      * 
      * @return The skipped build jobs in this session, can be empty but never <code>null</code>.
@@ -137,11 +151,12 @@ class InvokerSession
         successfulJobs = null;
         failedJobs = null;
         skippedJobs = null;
+        errorJobs = null;
     }
 
     private void updateStats()
     {
-        if ( successfulJobs != null && skippedJobs != null && failedJobs != null )
+        if ( successfulJobs != null && skippedJobs != null && failedJobs != null && errorJobs != null )
         {
             return;
         }
@@ -149,6 +164,7 @@ class InvokerSession
         successfulJobs = new ArrayList();
         failedJobs = new ArrayList();
         skippedJobs = new ArrayList();
+        errorJobs = new ArrayList();
 
         for ( Iterator iterator = buildJobs.iterator(); iterator.hasNext(); )
         {
@@ -161,6 +177,10 @@ class InvokerSession
             else if ( BuildJob.Result.SKIPPED.equals( buildJob.getResult() ) )
             {
                 skippedJobs.add( buildJob );
+            }
+            else if ( BuildJob.Result.ERROR.equals( buildJob.getResult() ) )
+            {
+                errorJobs.add( buildJob );
             }
             else if ( buildJob.getResult() != null )
             {
@@ -183,9 +203,10 @@ class InvokerSession
 
         logger.info( separator );
         logger.info( "Execution Summary:" );
-        logger.info( "  Builds Passing: " + successfulJobs.size() );
-        logger.info( "  Builds Failing: " + failedJobs.size() );
-        logger.info( "  Builds Skipped: " + skippedJobs.size() );
+        logger.info( "  Builds Passing:  " + successfulJobs.size() );
+        logger.info( "  Builds Failing:  " + failedJobs.size() );
+        logger.info( "  Builds in Error: " + errorJobs.size() );
+        logger.info( "  Builds Skipped:  " + skippedJobs.size() );
         logger.info( separator );
 
         if ( !failedJobs.isEmpty() )
@@ -234,6 +255,19 @@ class InvokerSession
         if ( !failedJobs.isEmpty() )
         {
             String message = failedJobs.size() + " build" + ( failedJobs.size() == 1 ? "" : "s" ) + " failed.";
+
+            if ( ignoreFailures )
+            {
+                logger.warn( "Ignoring that " + message );
+            }
+            else
+            {
+                throw new MojoFailureException( this, message, message );
+            }
+        }
+        if ( !errorJobs.isEmpty() )
+        {
+             String message = errorJobs.size() + " build" + ( errorJobs.size() == 1 ? "" : "s" ) + " in error.";
 
             if ( ignoreFailures )
             {
