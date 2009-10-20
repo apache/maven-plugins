@@ -35,7 +35,7 @@ assert channel.title.text() == 'Unnamed - org.apache.maven.plugins.checkstyle:ch
 
 def item = channel.item[0]
 assert item != null
-assert item.title.text().startsWith('File: 2,')
+assert item.title.text().startsWith('File: 1,')
 
 
 return true;
