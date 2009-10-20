@@ -10,7 +10,7 @@
       <outputDirectory>/</outputDirectory>
       <excludes>
         <exclude>**/*.log</exclude>
-        <exclude>%regex[(?!.*src/).*target.*]</exclude>
+        <exclude>%regex[(?!((?!target/)[^/]+/)*src/).*target.*]</exclude>
       </excludes>
     </fileSet>
   </fileSets>

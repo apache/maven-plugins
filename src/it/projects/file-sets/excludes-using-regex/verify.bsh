@@ -45,6 +45,22 @@ try
 		System.out.println( "target/omit.txt in child project was included the jar." );
 		return false;
 	}
+	
+	je = jf.getEntry( "parent-1.0/target/classes/src/omit.txt" );
+	
+	if ( je != null )
+	{
+		System.out.println( "target/classes/src/omit.txt in parent project was included the jar." );
+		return false;
+	}
+	
+	je = jf.getEntry( "parent-1.0/child/target/classes/src/omit.txt" );
+	
+	if ( je != null )
+	{
+		System.out.println( "target/classes/src/omit.txt in child project was included the jar." );
+		return false;
+	}
 }
 catch( IOException e )
 {
