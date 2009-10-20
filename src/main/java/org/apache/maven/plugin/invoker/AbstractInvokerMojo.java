@@ -225,6 +225,18 @@ public abstract class AbstractInvokerMojo
     private Invoker invoker;
 
     /**
+     * Relative path of a selector script to run prior to executing the build. This script may be written with
+     * either BeanShell or Groovy (since 1.3). If the file extension is omitted (e.g. <code>prebuild</code>), the plugin
+     * searches for the file by trying out the well-known extensions <code>.bsh</code> and <code>.groovy</code>. If this
+     * script exists for a particular project but returns any non-null value different from <code>true</code> or throws
+     * an exception, the corresponding build is flagged as skipped. In this case, none of the pre-build hook script, 
+     * Maven nor the post-build hook script will be invoked.
+     *
+     * @parameter expression="${invoker.selectorScript}" default-value="selector"
+     */
+    private String selectorScript;
+
+    /**
      * Relative path of a pre-build hook script to run prior to executing the build. This script may be written with
      * either BeanShell or Groovy (since 1.3). If the file extension is omitted (e.g. <code>prebuild</code>), the plugin
      * searches for the file by trying out the well-known extensions <code>.bsh</code> and <code>.groovy</code>. If this
@@ -1004,9 +1016,10 @@ public abstract class AbstractInvokerMojo
             if ( isSelected( invokerProperties ) )
             {
                 long milliseconds = System.currentTimeMillis();
+                boolean executed;
                 try
                 {
-                    runBuild( basedir, interpolatedPomFile, settingsFile, invokerProperties );
+                    executed = runBuild( basedir, interpolatedPomFile, settingsFile, invokerProperties );
                 }
                 finally
                 {
@@ -1014,11 +1027,24 @@ public abstract class AbstractInvokerMojo
                     buildJob.setTime( milliseconds / 1000.0 );
                 }
 
-                buildJob.setResult( BuildJob.Result.SUCCESS );
-
-                if ( !suppressSummaries )
+                if ( executed )
                 {
-                    getLog().info( "..SUCCESS " + formatTime( buildJob.getTime() ) );
+
+                    buildJob.setResult( BuildJob.Result.SUCCESS );
+
+                    if ( !suppressSummaries )
+                    {
+                        getLog().info( "..SUCCESS " + formatTime( buildJob.getTime() ) );
+                    }
+                }
+                else
+                {
+                    buildJob.setResult( BuildJob.Result.SKIPPED );
+
+                    if ( !suppressSummaries )
+                    {
+                        getLog().info( "..SKIPPED " + formatTime( buildJob.getTime() ) );
+                    }
                 }
             }
             else
@@ -1029,6 +1055,17 @@ public abstract class AbstractInvokerMojo
                 {
                     getLog().info( "..SKIPPED " );
                 }
+            }
+        }
+        catch ( BuildErrorException e ) 
+        {
+            buildJob.setResult( BuildJob.Result.ERROR );
+            buildJob.setFailureMessage( e.getMessage() );
+
+            if ( !suppressSummaries )
+            {
+                getLog().info( "..ERROR " + formatTime( buildJob.getTime() ) );
+                getLog().info( "  " + e.getMessage() );
             }
         }
         catch ( BuildFailureException e )
@@ -1139,10 +1176,12 @@ public abstract class AbstractInvokerMojo
      * @param settingsFile The (already interpolated) user settings file for the build, may be <code>null</code> to use
      *            the current user settings.
      * @param invokerProperties The properties to use.
+     * @return <code>true</code> if the project was launched or <code>false</code> if the selector script indicated that
+     *            the project should be skipped.
      * @throws org.apache.maven.plugin.MojoExecutionException If the project could not be launched.
      * @throws org.apache.maven.plugin.invoker.BuildFailureException If either a hook script or the build itself failed.
      */
-    private void runBuild( File basedir, File pomFile, File settingsFile, InvokerProperties invokerProperties )
+    private boolean runBuild( File basedir, File pomFile, File settingsFile, InvokerProperties invokerProperties )
         throws MojoExecutionException, BuildFailureException
     {
         if ( getLog().isDebugEnabled() && !invokerProperties.getProperties().isEmpty() )
@@ -1166,6 +1205,20 @@ public abstract class AbstractInvokerMojo
         FileLogger logger = setupLogger( basedir );
         try
         {
+            try
+            {
+                scriptRunner.run( "selector script", basedir, selectorScript, context, logger,
+                                  BuildJob.Result.SKIPPED );
+            }
+            catch ( BuildErrorException e ) 
+            {
+		throw e;
+            }
+            catch ( BuildFailureException e )
+            {
+                return false;
+            }
+ 
             scriptRunner.run( "pre-build script", basedir, preBuildHookScript, context, logger,
                               BuildJob.Result.FAILURE_PRE_HOOK );
 
@@ -1265,6 +1318,7 @@ public abstract class AbstractInvokerMojo
                 logger.close();
             }
         }
+        return true;
     }
 
     /**
