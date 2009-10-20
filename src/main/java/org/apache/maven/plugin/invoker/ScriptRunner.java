@@ -215,7 +215,7 @@ class ScriptRunner
             {
                 t.printStackTrace( logger.getPrintStream() );
             }
-            throw new BuildFailureException( "The " + scriptDescription + " did not succeed. " + msg, stage );
+            throw new BuildErrorException( "The " + scriptDescription + " did not succeed. " + msg, stage, t );
         }
 
         if ( !( result == null || Boolean.TRUE.equals( result ) || "true".equals( result ) ) )
