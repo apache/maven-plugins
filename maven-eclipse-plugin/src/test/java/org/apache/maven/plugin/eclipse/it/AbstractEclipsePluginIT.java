@@ -228,7 +228,7 @@ public abstract class AbstractEclipsePluginIT
 
     /**
      * Execute the eclipse:eclipse goal on a test project and verify generated files.
-     * 
+     *
      * @param projectName project directory
      * @throws Exception any exception generated during test
      */
@@ -240,7 +240,7 @@ public abstract class AbstractEclipsePluginIT
 
     /**
      * Execute the eclipse:eclipse goal on a test project and verify generated files.
-     * 
+     *
      * @param basedir basedir of mvn execution
      * @throws Exception any exception generated during test
      */
@@ -252,7 +252,7 @@ public abstract class AbstractEclipsePluginIT
 
     /**
      * Execute the eclipse:eclipse goal on a test project and verify generated files.
-     * 
+     *
      * @param projectName project directory
      * @param properties additional properties
      * @param cleanGoal TODO
@@ -267,7 +267,7 @@ public abstract class AbstractEclipsePluginIT
 
     /**
      * Execute the eclipse:eclipse goal on a test project and verify generated files.
-     * 
+     *
      * @param projectName project directory
      * @param properties additional properties
      * @param cleanGoal TODO
@@ -298,7 +298,7 @@ public abstract class AbstractEclipsePluginIT
 
     /**
      * Execute the eclipse:eclipse goal on a test project and verify generated files.
-     * 
+     *
      * @param basedir basedir of mvn execution
      * @param properties additional properties
      * @param cleanGoal TODO
@@ -343,7 +343,7 @@ public abstract class AbstractEclipsePluginIT
 
     /**
      * Execute the eclipse:configure-workspace goal on a test project and verify generated files.
-     * 
+     *
      * @param projectName project directory
      * @throws Exception any exception generated during test
      */
@@ -355,7 +355,7 @@ public abstract class AbstractEclipsePluginIT
 
     /**
      * Execute the eclipse:configure-workspace goal on a test project and verify generated files.
-     * 
+     *
      * @param projectName project directory
      * @throws Exception any exception generated during test
      */
@@ -367,7 +367,7 @@ public abstract class AbstractEclipsePluginIT
 
     /**
      * Execute the eclipse:configure-workspace goal on a test project and verify generated files.
-     * 
+     *
      * @param projectName project directory
      * @param properties additional properties
      * @param cleanGoal TODO
@@ -460,9 +460,12 @@ public abstract class AbstractEclipsePluginIT
             buildLog = new File( BUILD_OUTPUT_DIRECTORY, "unknown.build.log" );
         }
 
+        if (properties == null) properties = new Properties();
         InvocationRequest request = buildTool.createBasicInvocationRequest( pom, properties, goals, buildLog );
         request.setUpdateSnapshots( false );
         request.setShowErrors( true );
+        request.getProperties().setProperty( "downloadSources", "false" );
+        request.getProperties().setProperty( "downloadJavadocs", "false" );
 
         request.setDebug( true );
 
@@ -576,7 +579,7 @@ public abstract class AbstractEclipsePluginIT
 
     /**
      * Assert that two XML files are equal.
-     * 
+     *
      * @param expectedFile the expected file - only used for path information
      * @param expectedFileContents the contents of the expected file
      * @param actualFile the actual file - only used for path information
@@ -605,7 +608,7 @@ public abstract class AbstractEclipsePluginIT
 
     /**
      * Assert that two text files are equals. Lines that start with # are comments and ignored.
-     * 
+     *
      * @param expectedFile the expected file - only used for path information
      * @param expectedFileContents the contents of the expected file
      * @param actualFile the actual file - only used for path information
@@ -640,7 +643,7 @@ public abstract class AbstractEclipsePluginIT
 
     /**
      * Preprocess the file so that equals comparison can be done. Preprocessing may vary based on filename.
-     * 
+     *
      * @param file the file being processed
      * @param variables if not null, then replace all keys with the corresponding values in the expected string.
      * @return processed input
@@ -684,7 +687,7 @@ public abstract class AbstractEclipsePluginIT
 
     /**
      * Normalize line terminators into \n. \r\n, \r, \n all get changed into \n.
-     * 
+     *
      * @param input the string to normalize
      * @return string with line terminators normalized
      */
@@ -858,7 +861,7 @@ public abstract class AbstractEclipsePluginIT
     /**
      * Locate the actual file needed for comparison. The expectedFile has the baseDir prefix removed and the resulting
      * relative path used to locate the file within the projectOutputDir.
-     * 
+     *
      * @param projectOutputDir the directory where the eclipse plugin writes files to
      * @param basedir the base dir of the project being tested
      * @param expectedFile the expected file used to compare to the actual file
@@ -885,7 +888,7 @@ public abstract class AbstractEclipsePluginIT
 
     /**
      * Test if the file contains xml content.
-     * 
+     *
      * @param f the file to test
      * @return true if the file contains xml content, false otherwise.
      */
@@ -911,7 +914,7 @@ public abstract class AbstractEclipsePluginIT
 
     /**
      * Return the not available marker file for the specified artifact details.
-     * 
+     *
      * @param groupId group id of artifact
      * @param artifactId artifact id of artifact
      * @param version version of artifact
@@ -956,7 +959,7 @@ public abstract class AbstractEclipsePluginIT
 
     /**
      * Assert that the not available marker file exists for the specified artifact details.
-     * 
+     *
      * @param groupId group id of artifact
      * @param artifactId artifact id of artifact
      * @param version version of artifact
@@ -974,7 +977,7 @@ public abstract class AbstractEclipsePluginIT
 
     /**
      * Assert that the not available marker file does not exist for the specified artifact details.
-     * 
+     *
      * @param groupId group id of artifact
      * @param artifactId artifact id of artifact
      * @param version version of artifact
