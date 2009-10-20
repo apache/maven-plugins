@@ -58,7 +58,7 @@ Usage
 
   In this example, the directory <<<src/it>>> is the location where all the IT projects reside. You simply put each
   integration test into a distinct sub directory, like shown by <<<first-it>>> and <<<second-it>>>. The plugin
-  configuration for this example would like this:
+  configuration for this example would look like this:
 
 -------------------
 <project>

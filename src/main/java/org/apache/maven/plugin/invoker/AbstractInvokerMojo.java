@@ -225,14 +225,17 @@ public abstract class AbstractInvokerMojo
     private Invoker invoker;
 
     /**
-     * Relative path of a selector script to run prior to executing the build. This script may be written with
-     * either BeanShell or Groovy (since 1.3). If the file extension is omitted (e.g. <code>prebuild</code>), the plugin
-     * searches for the file by trying out the well-known extensions <code>.bsh</code> and <code>.groovy</code>. If this
-     * script exists for a particular project but returns any non-null value different from <code>true</code> or throws
-     * an exception, the corresponding build is flagged as skipped. In this case, none of the pre-build hook script, 
-     * Maven nor the post-build hook script will be invoked.
+     * Relative path of a selector script to run prior in order to decide if the build should be executed. This script 
+     * may be written with either BeanShell or Groovy. If the file extension is omitted (e.g. <code>selector</code>), 
+     * the plugin searches for the file by trying out the well-known extensions <code>.bsh</code> and <code>.groovy</code>. 
+     * If this script exists for a particular project but returns any non-null value different from <code>true</code>, 
+     * the corresponding build is flagged as skipped. In this case, none of the pre-build hook script, 
+     * Maven nor the post-build hook script will be invoked. If this script throws an exception, the corresponding 
+     * build is flagged as in error, and none of the pre-build hook script, Maven not the post-build hook script will
+     * be invoked.
      *
      * @parameter expression="${invoker.selectorScript}" default-value="selector"
+     * @since 1.5
      */
     private String selectorScript;
 
