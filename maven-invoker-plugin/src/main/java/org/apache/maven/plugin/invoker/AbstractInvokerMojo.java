@@ -1211,7 +1211,7 @@ public abstract class AbstractInvokerMojo
             try
             {
                 scriptRunner.run( "selector script", basedir, selectorScript, context, logger,
-                                  BuildJob.Result.SKIPPED );
+                                  BuildJob.Result.SKIPPED, false );
             }
             catch ( BuildErrorException e ) 
             {
@@ -1223,7 +1223,7 @@ public abstract class AbstractInvokerMojo
             }
  
             scriptRunner.run( "pre-build script", basedir, preBuildHookScript, context, logger,
-                              BuildJob.Result.FAILURE_PRE_HOOK );
+                              BuildJob.Result.FAILURE_PRE_HOOK, false );
 
             final InvocationRequest request = new DefaultInvocationRequest();
 
@@ -1312,7 +1312,7 @@ public abstract class AbstractInvokerMojo
             }
 
             scriptRunner.run( "post-build script", basedir, postBuildHookScript, context, logger,
-                              BuildJob.Result.FAILURE_POST_HOOK );
+                              BuildJob.Result.FAILURE_POST_HOOK, true );
         }
         finally
         {
