@@ -1100,6 +1100,11 @@ public abstract class AbstractInvokerMojo
      */
     private boolean isSelected( InvokerProperties invokerProperties )
     {
+        if ( !SelectorUtils.isMavenVersion( invokerProperties.getMavenVersion() ) )
+        {
+            return false;
+        }
+
         if ( !SelectorUtils.isJreVersion( invokerProperties.getJreVersion() ) )
         {
             return false;
