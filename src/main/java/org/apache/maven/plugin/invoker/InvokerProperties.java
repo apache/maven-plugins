@@ -133,6 +133,17 @@ class InvokerProperties
     }
 
     /**
+     * Gets the specification of Maven versions on which this build job should be run.
+     *
+     * @return The specification of Maven versions on which this build job should be run.
+     * @since 1.5
+     */
+    public String getMavenVersion()
+    {
+        return this.properties.getProperty( "invoker.maven.version", "" );
+    }
+
+    /**
      * Gets the specification of OS families on which this build job should be run.
      * 
      * @return The specification of OS families or an empty string if not set.

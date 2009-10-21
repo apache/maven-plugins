@@ -19,17 +19,19 @@ package org.apache.maven.plugin.invoker;
  * under the License.
  */
 
+import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.util.Os;
+import org.codehaus.plexus.util.StringUtils;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-
-import org.codehaus.plexus.util.Os;
-import org.codehaus.plexus.util.StringUtils;
+import java.util.Properties;
 
 /**
  * Provides utility methods for selecting build jobs based on environmental conditions.
- * 
+ *
  * @author Benjamin Bentmann
  */
 class SelectorUtils
@@ -85,6 +87,40 @@ class SelectorUtils
         }
     }
 
+    /**
+     * Retrieves the current Maven version.
+     * @return The current Maven version.
+     */
+    static String getMavenVersion()
+    {
+        try
+        {
+            // This relies on the fact that MavenProject is the in core classloader
+            // and that the core classloader is for the maven-core artifact
+            // and that should have a pom.properties file
+            // if this ever changes, we will have to revisit this code.
+            Properties properties = new Properties();
+            properties.load( MavenProject.class.getClassLoader().getResourceAsStream(
+                "META-INF/maven/org.apache.maven/maven-core/pom.properties" ) );
+            return StringUtils.trim( properties.getProperty( "version" ) );
+        }
+        catch ( Exception e )
+        {
+            return null;
+        }
+    }
+
+    static boolean isMavenVersion( String mavenSpec )
+    {
+        List includes = new ArrayList();
+        List excludes = new ArrayList();
+        parseList( mavenSpec, includes, excludes );
+
+        List mavenVersionList = parseVersion( getMavenVersion() );
+
+        return isJreVersion( mavenVersionList, includes, true ) && !isJreVersion( mavenVersionList, excludes, false );
+    }
+
     static boolean isJreVersion( String jreSpec )
     {
         List includes = new ArrayList();
@@ -135,8 +171,8 @@ class SelectorUtils
         else
         {
             // 1.5 <=> [1.5,1.6)
-            return checkVersion.size() <= jreVersion.size()
-                && checkVersion.equals( jreVersion.subList( 0, checkVersion.size() ) );
+            return checkVersion.size() <= jreVersion.size() && checkVersion.equals(
+                jreVersion.subList( 0, checkVersion.size() ) );
         }
     }
 
@@ -158,7 +194,7 @@ class SelectorUtils
 
     static int compareVersions( List version1, List version2 )
     {
-        for ( Iterator it1 = version1.iterator(), it2 = version2.iterator();; )
+        for ( Iterator it1 = version1.iterator(), it2 = version2.iterator(); ; )
         {
             if ( !it1.hasNext() )
             {
