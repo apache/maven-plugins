@@ -43,7 +43,7 @@ invoker.os.family = !windows
   version as illustrated in the example below:
   
 -------------------
-# build project is Maven version is 2.0.10 or higher, but exclude versions 2.1.0 and 2.2.0
+# build project if Maven version is 2.0.10 or higher, but exclude versions 2.1.0 and 2.2.0
 invoker.maven.version = 2.0.10+, !2.1.0, !2.2.0
 -------------------
 
@@ -51,7 +51,7 @@ invoker.maven.version = 2.0.10+, !2.1.0, !2.2.0
   denotes an inclusion. A project is build if no exclusion matches and if no inclusions are given or at least one of
   them matches the current environment.
 
-  The tokens to describe JRE versions can be suffixed with "+" or "-". The table below shows how the different styles
+  The tokens to describe versions can be suffixed with "+" or "-". The table below shows how the different styles
   of version tokens translate to a version range:
 
 *----------------+----------------------------+
