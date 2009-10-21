@@ -4698,6 +4698,14 @@ public abstract class AbstractJavadocMojo
                             throw new MavenReportException( e.getMessage(), e );
                         }
                     }
+                    finally
+                    {
+                        // just create the directory to prevent repeated invokations..
+                        if ( !location.exists() )
+                        {
+                            location.mkdirs();
+                        }
+                    }
                 }
 
                 if ( location.exists() )
