@@ -86,6 +86,7 @@ import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.UnArchiver;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
+import org.codehaus.plexus.components.io.fileselectors.IncludeExcludeFileSelector;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
@@ -3437,55 +3438,62 @@ public abstract class AbstractJavadocMojo
     private void copyAdditionalJavadocResources( File anOutputDirectory )
         throws MavenReportException
     {
-        if ( resourcesArtifacts != null && resourcesArtifacts.length > 0 )
+        if ( resourcesArtifacts == null || resourcesArtifacts.length == 0 )
         {
-            UnArchiver unArchiver;
+            return;
+        }
+
+        UnArchiver unArchiver;
+        try
+        {
+            unArchiver = archiverManager.getUnArchiver( "jar" );
+        }
+        catch ( NoSuchArchiverException e )
+        {
+            throw new MavenReportException( "Unable to extract resources artifact. "
+                + "No archiver for 'jar' available.", e );
+        }
+
+        for ( int i = 0; i < resourcesArtifacts.length; i++ )
+        {
+            ResourcesArtifact item = resourcesArtifacts[i];
+
+            Artifact artifact;
             try
             {
-                unArchiver = archiverManager.getUnArchiver( "jar" );
+                artifact = createAndResolveArtifact( item );
             }
-            catch ( NoSuchArchiverException e )
+            catch ( ArtifactResolutionException e )
             {
-                throw new MavenReportException( "Unable to extract resources artifact. "
-                    + "No archiver for 'jar' available.", e );
+                throw new MavenReportException( "Unable to resolve artifact:" + item, e );
+            }
+            catch ( ArtifactNotFoundException e )
+            {
+                throw new MavenReportException( "Unable to find artifact:" + item, e );
+            }
+            catch ( ProjectBuildingException e )
+            {
+                throw new MavenReportException( "Unable to build the Maven project for the artifact:" + item,
+                                                e );
             }
 
-            for ( int i = 0; i < resourcesArtifacts.length; i++ )
+            unArchiver.setSourceFile( artifact.getFile() );
+            unArchiver.setDestDirectory( anOutputDirectory );
+            // remove the META-INF directory from resource artifact
+            IncludeExcludeFileSelector[] selectors =
+                new IncludeExcludeFileSelector[] { new IncludeExcludeFileSelector() };
+            selectors[0].setExcludes( new String[] { "META-INF/**" } );
+            unArchiver.setFileSelectors( selectors );
+
+            getLog().info( "Extracting contents of resources artifact: " + artifact.getArtifactId() );
+            try
             {
-                ResourcesArtifact item = resourcesArtifacts[i];
-
-                Artifact artifact;
-                try
-                {
-                    artifact = createAndResolveArtifact( item );
-                }
-                catch ( ArtifactResolutionException e )
-                {
-                    throw new MavenReportException( "Unable to resolve artifact:" + item, e );
-                }
-                catch ( ArtifactNotFoundException e )
-                {
-                    throw new MavenReportException( "Unable to find artifact:" + item, e );
-                }
-                catch ( ProjectBuildingException e )
-                {
-                    throw new MavenReportException( "Unable to build the Maven project for the artifact:" + item,
-                                                    e );
-                }
-
-                unArchiver.setSourceFile( artifact.getFile() );
-                unArchiver.setDestDirectory( anOutputDirectory );
-
-                getLog().info( "Extracting contents of resources artifact: " + artifact.getArtifactId() );
-                try
-                {
-                    unArchiver.extract();
-                }
-                catch ( ArchiverException e )
-                {
-                    throw new MavenReportException( "Extraction of resources failed. Artifact that failed was: "
-                        + artifact.getArtifactId(), e );
-                }
+                unArchiver.extract();
+            }
+            catch ( ArchiverException e )
+            {
+                throw new MavenReportException( "Extraction of resources failed. Artifact that failed was: "
+                    + artifact.getArtifactId(), e );
             }
         }
     }

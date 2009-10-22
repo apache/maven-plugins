@@ -21,30 +21,37 @@
 import java.io.*;
 
 File target = new File( basedir, "test/target" );
-if ( !target.exists() || !target.isDirectory() )
+if ( !target.isDirectory() )
 {
     System.err.println( "target is missing or not a directory." );
     return false;
 }
 
 File apidocs = new File( basedir, "test/target/site/apidocs" );
-if ( !apidocs.exists() || !apidocs.isDirectory() )
+if ( !apidocs.isDirectory() )
 {
     System.err.println( apidocs.getAbsolutePath() + " is missing or not a directory." );
     return false;
 }
 
 File file1 = new File( apidocs, "file1.txt" );
-if ( !file1.exists() || !file1.isFile() )
+if ( !file1.isFile() )
 {
     System.err.println( file1.getAbsolutePath() + " is missing or a directory." );
     return false;
 }
 
 File file2 = new File( apidocs, "file2.txt" );
-if ( !file2.exists() || !file2.isFile() )
+if ( !file2.isFile() )
 {
     System.err.println( file2.getAbsolutePath() + " is missing or a directory." );
+    return false;
+}
+
+File metainf = new File( apidocs, "META-INF" );
+if ( metainf.isDirectory() )
+{
+    System.err.println( metainf.getAbsolutePath() + " exists." );
     return false;
 }
 
