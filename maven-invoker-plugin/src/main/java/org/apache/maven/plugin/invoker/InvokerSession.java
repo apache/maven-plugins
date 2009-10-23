@@ -199,14 +199,12 @@ class InvokerSession
     {
         updateStats();
 
-        String separator = "---------------------------------------";
+        String separator = "-------------------------------------------------";
 
         logger.info( separator );
-        logger.info( "Execution Summary:" );
-        logger.info( "  Builds Passing:  " + successfulJobs.size() );
-        logger.info( "  Builds Failing:  " + failedJobs.size() );
-        logger.info( "  Builds in Error: " + errorJobs.size() );
-        logger.info( "  Builds Skipped:  " + skippedJobs.size() );
+        logger.info( "Build Summary:" );
+        logger.info( "  Passed: " + successfulJobs.size() + ", Failed: " + failedJobs.size() + ", Errors: "
+            + errorJobs.size() + ", Skipped: " + skippedJobs.size() );
         logger.info( separator );
 
         if ( !failedJobs.isEmpty() )
