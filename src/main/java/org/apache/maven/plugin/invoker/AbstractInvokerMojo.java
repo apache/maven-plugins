@@ -499,6 +499,10 @@ public abstract class AbstractInvokerMojo
      * # A comma separated list of OS families on which this build job should be run.
      * # Since plugin version 1.4
      * invoker.os.family = !windows, unix, mac 
+     *
+     * # A comma separated list of Maven versions on which this build should be run.
+     * # Since plugin version 1.5
+     * invoker.maven.version = 2.0.10+, !2.1.0, !2.2.0
      * </pre>
      *
      * @parameter expression="${invoker.invokerPropertiesFile}" default-value="invoker.properties"
