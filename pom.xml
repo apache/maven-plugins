@@ -243,7 +243,7 @@ under the License.
         <plugin>
           <groupId>org.codehaus.modello</groupId>
           <artifactId>modello-maven-plugin</artifactId>
-          <version>1.0.2</version>
+          <version>1.1</version>
         </plugin>
         <!-- only used for tests, extends Jetty classes need 1.5 -->
         <plugin>
@@ -251,11 +251,11 @@ under the License.
           <artifactId>maven-enforcer-plugin</artifactId>
           <version>1.0-beta-1</version>
         </plugin>
-        <!-- Need to be removed when maven-plugins:14 will be released -->
+        <!-- Need to be removed when maven-plugins:15 will be released -->
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-plugin-plugin</artifactId>
-          <version>2.5</version>
+          <version>2.5.1</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -280,7 +280,7 @@ under the License.
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-source-plugin</artifactId>
-          <version>2.1</version>
+          <version>2.1.1</version>
         </plugin>
       </plugins>
     </pluginManagement>
@@ -372,18 +372,13 @@ under the License.
     </plugins>
   </build>
 
-  <!-- Need to be removed when maven-plugins:14 will be released -->
+  <!-- Need to be removed when maven-plugins:15 will be released -->
   <reporting>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-plugin-plugin</artifactId>
-        <version>2.5</version>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-project-info-reports-plugin</artifactId>
-        <version>2.1.2</version>
+        <version>2.5.1</version>
       </plugin>
     </plugins>
   </reporting>
