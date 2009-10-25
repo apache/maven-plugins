@@ -32,6 +32,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Repository;
 import org.apache.maven.model.Resource;
 import org.apache.maven.project.MavenProject;
@@ -583,55 +584,62 @@ public class AntBuildWriter
 
         XmlWriterUtil.writeCommentText( writer, "Defining classpaths", 1 );
 
-        writer.startElement( "path" );
-        writer.addAttribute( "id", "build.classpath" );
-        writer.startElement( "fileset" );
-        writer.addAttribute( "dir", "${maven.repo.local}" );
-        if ( !project.getCompileArtifacts().isEmpty() )
-        {
-            for ( Iterator i = project.getCompileArtifacts().iterator(); i.hasNext(); )
-            {
-                Artifact artifact = (Artifact) i.next();
-                String path = artifactResolverWrapper.getLocalArtifactPath( artifact );
-                writer.startElement( "include" );
-                writer.addAttribute( "name", path );
-                writer.endElement(); // include
-            }
-        }
-        else
-        {
-            writer.startElement( "include" );
-            writer.addAttribute( "name", "*.jar" );
-            writer.endElement(); // include
-        }
-        writer.endElement(); // fileset
-        writer.endElement(); // path
+        writeBuildPathDefinition( writer, "build.classpath", project.getCompileArtifacts() );
 
-        writer.startElement( "path" );
-        writer.addAttribute( "id", "build.test.classpath" );
-        writer.startElement( "fileset" );
-        writer.addAttribute( "dir", "${maven.repo.local}" );
-        if ( !project.getTestArtifacts().isEmpty() )
-        {
-            for ( Iterator i = project.getTestArtifacts().iterator(); i.hasNext(); )
-            {
-                Artifact artifact = (Artifact) i.next();
-                String path = artifactResolverWrapper.getLocalArtifactPath( artifact );
-                writer.startElement( "include" );
-                writer.addAttribute( "name", path );
-                writer.endElement(); // include
-            }
-        }
-        else
-        {
-            writer.startElement( "include" );
-            writer.addAttribute( "name", "*.jar" );
-            writer.endElement(); // include
-        }
-        writer.endElement(); // fileset
-        writer.endElement(); // path
+        writeBuildPathDefinition( writer, "build.test.classpath", project.getTestArtifacts() );
 
         XmlWriterUtil.writeLineBreak( writer );
+    }
+
+    private void writeBuildPathDefinition( XMLWriter writer, String id, List artifacts )
+    {
+        writer.startElement( "path" );
+        writer.addAttribute( "id", id );
+
+        for ( Iterator i = artifacts.iterator(); i.hasNext(); )
+        {
+            Artifact artifact = (Artifact) i.next();
+
+            writer.startElement( "pathelement" );
+
+            String path;
+            if ( Artifact.SCOPE_SYSTEM.equals( artifact.getScope() ) )
+            {
+                path = getUninterpolatedSystemPath( artifact );
+            }
+            else
+            {
+                path = "${maven.repo.local}/" + artifactResolverWrapper.getLocalArtifactPath( artifact );
+            }
+            writer.addAttribute( "location", path );
+
+            writer.endElement(); // pathelement
+        }
+
+        writer.endElement(); // path
+    }
+
+    private String getUninterpolatedSystemPath( Artifact artifact )
+    {
+        for ( Iterator it = project.getOriginalModel().getDependencies().iterator(); it.hasNext(); )
+        {
+            Dependency dependency = (Dependency) it.next();
+            if ( artifact.getDependencyConflictId().equals( dependency.getManagementKey() ) )
+            {
+                return dependency.getSystemPath();
+            }
+        }
+
+        String path = artifact.getFile().getAbsolutePath();
+
+        if ( path.startsWith( project.getBasedir().getAbsolutePath() + File.separator ) )
+        {
+            path = path.substring( project.getBasedir().getAbsolutePath().length() + 1 );
+            path = path.replace( '\\', '/' );
+            path = "${basedir}/" + path;
+        }
+
+        return path;
     }
 
     /**
@@ -1262,7 +1270,11 @@ public class AntBuildWriter
         {
             Artifact artifact = (Artifact) i.next();
 
-            // TODO: should the artifacthandler be used instead?
+            if ( Artifact.SCOPE_SYSTEM.equals( artifact.getScope() ) )
+            {
+                continue;
+            }
+
             String path = artifactResolverWrapper.getLocalArtifactPath( artifact );
 
             if ( !new File( path ).exists() )
