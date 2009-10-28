@@ -746,7 +746,11 @@ public class ShadeMojo
 
                 model.setDependencies( dependencies );
 
-                File f = new File( outputDirectory, "dependency-reduced-pom.xml" );
+                /*
+                 * NOTE: Be sure to create the POM in the original base directory to be able to resolve the relativePath
+                 * to local parent POMs when invoking the project builder below.
+                 */
+                File f = new File( project.getBasedir(), "dependency-reduced-pom.xml" );
                 if ( f.exists() )
                 {
                     f.delete();
@@ -754,27 +758,29 @@ public class ShadeMojo
 
                 Writer w = WriterFactory.newXmlWriter( f );
 
-                PomWriter.write( w, model, true );
-
-                w.close();
+                try
+                {
+                    PomWriter.write( w, model, true );
+                }
+                finally
+                {
+                    w.close();
+                }
 
                 MavenProject p2 = mavenProjectBuilder.build( f, localRepository, null );
                 modified = updateExcludesInDeps( p2, dependencies, transitiveDeps );
 
             }
 
-            //copy the dependecy-reduced-pom.xml to the basedir where
-            //we'll set the file for the project to it.  We cannot set
-            //it to the real version in "target" as then ${basedir} gets
-            //messed up.   We'll delete this file on exit to make
-            //sure it gets cleaned up.
+            /*
+             * NOTE: Although the dependency reduced POM in the project directory is temporary build output, we have to
+             * use that for the file of the project instead of something in target to avoid messing up the base
+             * directory of the project. We'll delete this file on exit to make sure it gets cleaned up but keep a copy
+             * for inspection in the target directory as well.
+             */
             File f = new File( project.getBasedir(), "dependency-reduced-pom.xml" );
             File f2 = new File( outputDirectory, "dependency-reduced-pom.xml" );
-            if ( f.exists() )
-            {
-                f.delete();
-            }
-            FileUtils.copyFile( f2, f );
+            FileUtils.copyFile( f, f2 );
             FileUtils.forceDeleteOnExit( f );
             project.setFile( f );
         }
