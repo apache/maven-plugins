@@ -31,6 +31,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Modifier;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -787,7 +788,16 @@ public class JavadocUtil
         GetMethod getMethod = new GetMethod( url.toString() );
         try
         {
-            int status = httpClient.executeMethod( getMethod );
+            int status;
+            try
+            {
+                status = httpClient.executeMethod( getMethod );
+            }
+            catch ( SocketTimeoutException e )
+            {
+                // could be a sporadic failure, one more retry before we give up
+                status = httpClient.executeMethod( getMethod );
+            }
 
             if ( status != HttpStatus.SC_OK )
             {
