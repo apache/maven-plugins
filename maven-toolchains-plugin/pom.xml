@@ -29,7 +29,7 @@ under the License.
   </parent>
 
   <artifactId>maven-toolchains-plugin</artifactId>
-  <version>1.1-SNAPSHOT</version>
+  <version>1.0-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
   <name>Maven Toolchains Plugin</name>
@@ -43,6 +43,11 @@ under the License.
     <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/trunk/maven-toolchains-plugin/</developerConnection>
     <url>http://svn.apache.org/viewvc/maven/plugins/trunk/maven-toolchains-plugin/</url>
   </scm>
+
+  <issueManagement>
+    <system>jira</system>
+    <url>http://jira.codehaus.org/browse/MTOOLCHAINS</url>
+  </issueManagement>
 
   <dependencies>
     <dependency>
