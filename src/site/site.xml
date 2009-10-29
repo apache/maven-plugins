@@ -18,11 +18,38 @@ KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations
 under the License.
 -->
+
 <project xmlns="http://maven.apache.org/DECORATION/1.0.0"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/DECORATION/1.0.0 http://maven.apache.org/xsd/decoration-1.0.0.xsd"
   name="Maven Toolchains plugin">
+  <bannerLeft>
+    <name>Apache Maven</name>
+    <src>http://maven.apache.org/images/apache-maven-project-2.png</src>
+    <href>http://maven.apache.org/</href>
+  </bannerLeft>
+  <bannerRight>
+    <src>http://maven.apache.org/images/maven-logo-2.gif</src>
+  </bannerRight>
+  <publishDate position="right" format="yyyy-MM-dd" />
+  <version position="right" />
+
+  <skin>
+    <groupId>org.apache.maven.skins</groupId>
+    <artifactId>maven-stylus-skin</artifactId>
+    <version>1.1</version>
+  </skin>
   <body>
+        <head>
+      <script type="text/javascript" src="http://www.google-analytics.com/urchin.js"></script>
+      <script type="text/javascript">_uacct = "UA-140879-1";
+        urchinTracker();</script>
+    </head>
+    <breadcrumbs>
+      <item name="Apache" href="http://www.apache.org/" />
+      <item name="Maven" href="http://maven.apache.org/index.html"/>
+      <item name="Plugins" href="http://maven.apache.org/plugins/index.html"/>
+    </breadcrumbs>
     <menu name="Overview">
       <item name="Introduction" href="index.html"/>
       <item name="Goals" href="plugin-info.html"/>
@@ -35,5 +62,19 @@ under the License.
     <!--menu name="Resources">
       <item name="Maven 2.0.x Version Range Syntax" href="http://maven.apache.org/plugins/maven-enforcer-plugin/rules/versionRanges.html" />
     </menu-->
+    <menu inherit="bottom" ref="reports" />
+    <menu name="Maven Projects" inherit="bottom">
+      <item name="Ant Tasks" href="http://maven.apache.org/ant-tasks/index.html" />
+      <item name="Doxia" href="http://maven.apache.org/doxia/index.html" />
+      <item name="JXR" href="http://maven.apache.org/jxr/index.html" />
+      <item name="Maven 1.x" href="http://maven.apache.org/maven-1.x/index.html" />
+      <item name="Maven 2" href="http://maven.apache.org/index.html" />
+      <item name="Mercury" href="http://maven.apache.org/mercury/index.html" />
+      <item name="Plugins" href="http://maven.apache.org/plugins/index.html" />
+      <item name="SCM" href="http://maven.apache.org/scm/index.html" />
+      <item name="Shared Components" href="http://maven.apache.org/shared/index.html" />
+      <item name="Surefire" href="http://maven.apache.org/surefire/index.html" />
+      <item name="Wagon" href="http://maven.apache.org/wagon/index.html" />
+    </menu>
   </body>
 </project>
