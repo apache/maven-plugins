@@ -75,6 +75,9 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-site-plugin</artifactId>
         <version>@sitePluginVersion@</version>
+        <configuration> 
+          <locales>en,fr</locales>
+        </configuration>
       </plugin>      
     </plugins>
   </build>  
