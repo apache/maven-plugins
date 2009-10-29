@@ -1,0 +1,58 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.apache.maven.plugin.rresource.it</groupId>
+    <artifactId>it-parent</artifactId>
+    <version>${project.version}</version>
+    <relativePath>../it-parent/pom.xml</relativePath>
+  </parent>
+
+  <groupId>org.apache.maven.plugin.rresource.it</groupId>
+  <artifactId>test</artifactId>
+  <version>1.0</version>
+
+  <repositories>
+    <repository>
+      <id>test</id>
+      <url>file:///${it.dir}/repo</url>
+    </repository>
+  </repositories>
+
+  <dependencies>
+    <dependency>
+      <!-- dependency with missing POM -->
+      <groupId>test</groupId>
+      <artifactId>missing</artifactId>
+      <version>0.1</version>
+    </dependency>
+    <dependency>
+      <!-- dependency with invalid POM -->
+      <groupId>test</groupId>
+      <artifactId>invalid</artifactId>
+      <version>0.1</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-remote-resources-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>remote-resources</id>
+            <goals>
+              <goal>process</goal>
+            </goals>
+            <configuration>
+              <resourceBundles>
+                <resourceBundle>org.apache.maven.plugin.rresource.it:resource-bundle-with-template:${project.version}</resourceBundle>
+              </resourceBundles>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>
