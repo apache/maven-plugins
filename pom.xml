@@ -44,6 +44,11 @@ under the License.
     <url>http://svn.apache.org/viewvc/maven/plugins/tags/maven-toolchains-plugin-1.0</url>
   </scm>
 
+  <issueManagement>
+    <system>jira</system>
+    <url>http://jira.codehaus.org/browse/MTOOLCHAINS</url>
+  </issueManagement>
+
   <dependencies>
     <dependency>
       <groupId>org.apache.maven</groupId>
