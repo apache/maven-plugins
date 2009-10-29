@@ -29,11 +29,11 @@ under the License.
       <item name="Usage" href="usage.html"/>
       <item name="Standard Toolchains" href="toolchains/index.html"/>
     </menu>
-    <menu name="Custom Toolchains">
+    <!--menu name="Custom Toolchains">
           <item name="Writing a custom toolchain TBD" href="http://maven.apache.org/"/>
-    </menu>
-    <menu name="Resources">
+    </menu-->
+    <!--menu name="Resources">
       <item name="Maven 2.0.x Version Range Syntax" href="http://maven.apache.org/plugins/maven-enforcer-plugin/rules/versionRanges.html" />
-    </menu>
+    </menu-->
   </body>
 </project>
