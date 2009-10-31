@@ -22,6 +22,7 @@ package org.apache.maven.plugin.ant;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
@@ -29,6 +30,7 @@ import org.apache.maven.settings.Settings;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Properties;
 
 /**
  * Generate Ant build files.
@@ -106,6 +108,14 @@ public class AntMojo
      */
     private boolean overwrite;
 
+    /**
+     * The current Maven session.
+     * 
+     * @parameter default-value="${session}"
+     * @readonly
+     */
+    private MavenSession session;
+
     /** {@inheritDoc} */
     public void execute()
         throws MojoExecutionException
@@ -114,7 +124,10 @@ public class AntMojo
                                                                                        localRepository,
                                                                                        remoteRepositories );
 
-        AntBuildWriter antBuildWriter = new AntBuildWriter( project, artifactResolverWrapper, settings, overwrite );
+        Properties executionProperties = ( session != null ) ? session.getExecutionProperties() : null;
+
+        AntBuildWriter antBuildWriter =
+            new AntBuildWriter( project, artifactResolverWrapper, settings, overwrite, executionProperties );
 
         try
         {

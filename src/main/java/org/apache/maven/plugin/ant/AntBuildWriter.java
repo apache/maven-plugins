@@ -30,9 +30,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Dependency;
+import org.apache.maven.model.Profile;
 import org.apache.maven.model.Repository;
 import org.apache.maven.model.Resource;
 import org.apache.maven.project.MavenProject;
@@ -89,6 +92,8 @@ public class AntBuildWriter
 
     private boolean overwrite;
 
+    private Properties executionProperties;
+
     /**
      * @param project
      * @param artifactResolverWrapper
@@ -96,13 +101,14 @@ public class AntBuildWriter
      * @param overwrite
      */
     public AntBuildWriter( MavenProject project, ArtifactResolverWrapper artifactResolverWrapper, Settings settings,
-                          boolean overwrite )
+                           boolean overwrite, Properties executionProperties )
     {
         this.project = project;
         this.artifactResolverWrapper = artifactResolverWrapper;
         this.localRepository = new File( artifactResolverWrapper.getLocalRepository().getBasedir() );
         this.settings = settings;
         this.overwrite = overwrite;
+        this.executionProperties = ( executionProperties != null ) ? executionProperties : new Properties();
     }
 
     /**
@@ -621,22 +627,55 @@ public class AntBuildWriter
 
     private String getUninterpolatedSystemPath( Artifact artifact )
     {
+        String managementKey = artifact.getDependencyConflictId();
+
         for ( Iterator it = project.getOriginalModel().getDependencies().iterator(); it.hasNext(); )
         {
             Dependency dependency = (Dependency) it.next();
-            if ( artifact.getDependencyConflictId().equals( dependency.getManagementKey() ) )
+            if ( managementKey.equals( dependency.getManagementKey() ) )
             {
                 return dependency.getSystemPath();
             }
         }
 
+        for ( Iterator itp = project.getOriginalModel().getProfiles().iterator(); itp.hasNext(); )
+        {
+            Profile profile = (Profile) itp.next();
+            for ( Iterator it = profile.getDependencies().iterator(); it.hasNext(); )
+            {
+                Dependency dependency = (Dependency) it.next();
+                if ( managementKey.equals( dependency.getManagementKey() ) )
+                {
+                    return dependency.getSystemPath();
+                }
+            }
+        }
+
         String path = artifact.getFile().getAbsolutePath();
 
-        if ( path.startsWith( project.getBasedir().getAbsolutePath() + File.separator ) )
+        Properties props = new Properties();
+        props.putAll( project.getProperties() );
+        props.putAll( executionProperties );
+        props.remove( "user.dir" );
+        props.put( "basedir", project.getBasedir().getAbsolutePath() );
+
+        SortedMap candidateProperties = new TreeMap();
+        for ( Iterator it = props.keySet().iterator(); it.hasNext(); )
         {
-            path = path.substring( project.getBasedir().getAbsolutePath().length() + 1 );
+            String key = (String) it.next();
+            String value = new File( props.getProperty( key ) ).getPath();
+            if ( path.startsWith( value ) && value.length() > 0 )
+            {
+                candidateProperties.put( value, key );
+            }
+        }
+        if ( !candidateProperties.isEmpty() )
+        {
+            String value = candidateProperties.lastKey().toString();
+            String key = candidateProperties.get( value ).toString();
+            path = path.substring( value.length() );
             path = path.replace( '\\', '/' );
-            path = "${basedir}/" + path;
+            return "${" + key + "}" + path;
         }
 
         return path;
