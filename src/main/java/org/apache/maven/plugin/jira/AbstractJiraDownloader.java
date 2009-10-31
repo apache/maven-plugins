@@ -382,11 +382,11 @@ public abstract class AbstractJiraDownloader
 
                     fullURL += ( "&tempMax=" + nbEntriesMax + "&reset=true&decorator=none" );
 
-                    if (log.isDebugEnabled())
+                    if ( log.isDebugEnabled() )
                     {
                         log.debug( "download jira issues from url " + fullURL );
                     }
-                    
+
                     // execute the GET
                     download( client, fullURL );
                 }

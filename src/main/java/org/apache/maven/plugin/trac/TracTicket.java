@@ -1,10 +1,5 @@
 package org.apache.maven.plugin.trac;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -23,6 +18,11 @@ import java.util.Date;
  * specific language governing permissions and limitations
  * under the License.
  */
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 /**
  * A Trac Ticket.
@@ -189,7 +189,7 @@ public class TracTicket
         {
             long millis = Long.parseLong( timeCreated );
             Calendar cld = Calendar.getInstance();
-            cld.setTimeInMillis( millis * 1000l );
+            cld.setTimeInMillis( millis * 1000L );
             return cld.getTime();
         }
         catch ( NumberFormatException e )

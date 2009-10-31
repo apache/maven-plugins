@@ -31,11 +31,11 @@ public interface ChangesSchemaValidator
     /**
      * @param file
      * @param schemaVersion
-     * @param failOnValidationError if false SchemaValidatorException will not be throw 
+     * @param failOnValidationError if false SchemaValidatorException will not be throw
      * @return {@link XmlValidationHandler}
      * @throws SchemaValidatorException
      */
-    public XmlValidationHandler validateXmlWithSchema( File file, String schemaVersion, boolean failOnValidationError )
+    XmlValidationHandler validateXmlWithSchema( File file, String schemaVersion, boolean failOnValidationError )
         throws SchemaValidatorException;
-    
+
 }

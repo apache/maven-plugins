@@ -34,11 +34,11 @@ import org.codehaus.plexus.util.FastMap;
 import org.xml.sax.SAXException;
 
 /**
- * 
+ *
  * @author <a href="mailto:olamy@apache.org">olamy</a>
  * @since 28 juil. 2008
  * @version $Id$
- * 
+ *
  * @plexus.component role="org.apache.maven.plugin.changes.schema.ChangesSchemaValidator" role-hint="default"
  */
 public class DefaultChangesSchemaValidator
@@ -46,10 +46,10 @@ public class DefaultChangesSchemaValidator
 {
 
     /** property schema */
-    public static final String W3C_XML_SCHEMA = "http://www.w3.org/2001/XMLSchema";    
-    
+    public static final String W3C_XML_SCHEMA = "http://www.w3.org/2001/XMLSchema";
+
     public static final String CHANGES_SCHEMA_PATH = "META-INF/changes/xsd/";
-    
+
     private Map compiledSchemas = new FastMap();
 
     public XmlValidationHandler validateXmlWithSchema( File file, String schemaVersion, boolean failOnValidationError )
@@ -58,17 +58,17 @@ public class DefaultChangesSchemaValidator
         try
         {
             String schemaPath = CHANGES_SCHEMA_PATH + "changes-" + schemaVersion + ".xsd";
-            
+
             Schema schema = getSchema( schemaPath );
-            
+
             Validator validator = schema.newValidator();
-            
+
             XmlValidationHandler baseHandler = new XmlValidationHandler( failOnValidationError );
-            
+
             validator.setErrorHandler( baseHandler );
-            
+
             validator.validate( new StreamSource( new FileReader( file ) ) );
-            
+
             return baseHandler;
         }
         catch ( IOException e )
@@ -93,9 +93,9 @@ public class DefaultChangesSchemaValidator
             return (Schema) this.compiledSchemas.get( schemaPath );
         }
         Schema schema = this.compileJAXPSchema( schemaPath );
-        
+
         this.compiledSchemas.put( schemaPath, schema );
-        
+
         return schema;
     }
 
@@ -112,7 +112,7 @@ public class DefaultChangesSchemaValidator
 
         if ( is == null )
         {
-            throw new NullPointerException(" impossible to load schema with path " + uriSchema );
+            throw new NullPointerException( " impossible to load schema with path " + uriSchema );
         }
 
         //newInstance de SchemaFactory not ThreadSafe
@@ -135,7 +135,7 @@ public class DefaultChangesSchemaValidator
             throw new SchemaValidatorException( "SAXException : " + e.getMessage(), e );
         }
 
-    }    
+    }
 
 
 }
