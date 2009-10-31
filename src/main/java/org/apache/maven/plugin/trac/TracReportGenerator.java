@@ -68,8 +68,9 @@ public class TracReportGenerator
 
     private int[] columnOrder;
 
-    public TracReportGenerator(String columnNames) throws MavenReportException {
-
+    public TracReportGenerator( String columnNames )
+        throws MavenReportException
+    {
         String[] columnNamesArray = columnNames.split( "," );
         int validColumnNames = 0;
         columnOrder = new int[columnNamesArray.length];

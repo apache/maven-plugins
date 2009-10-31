@@ -145,7 +145,7 @@ public class TracMojo
         ArrayList ticketList = new ArrayList();
         TracTicket matchTicket;
 
-        TracReportGenerator report = new TracReportGenerator(columnNames);
+        TracReportGenerator report = new TracReportGenerator( columnNames );
 
         if ( queryResult.length == 0 )
         {
@@ -162,10 +162,10 @@ public class TracMojo
                 params = new Object[] { queryResult[i] };
                 try
                 {
-                    Object[] Ticketresult = null;
+                    Object[] ticketresult = null;
                     matchTicket = new TracTicket();
-                    Ticketresult = (Object[]) client.execute( "ticket.get", params );
-                    ticketList.add( setQueryResult( Ticketresult, matchTicket ) );
+                    ticketresult = (Object[]) client.execute( "ticket.get", params );
+                    ticketList.add( setQueryResult( ticketresult, matchTicket ) );
 
                 }
                 catch ( XmlRpcException e )
