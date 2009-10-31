@@ -350,7 +350,7 @@ public class JiraReportGenerator
 
         if ( text != null )
         {
-            sink.rawText( text );
+            sink.text( text );
         }
         else
         {
