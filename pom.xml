@@ -454,6 +454,7 @@ under the License.
               <xmlPath>${basedir}/src/site/changes/sample-changes.xml</xmlPath>
               <!-- For JIRA-report -->
               <columnNames>Type,Key,Summary,Assignee,Status,Resolution,Fix Version</columnNames>
+              <maxEntries>200</maxEntries>
               <onlyCurrentVersion>true</onlyCurrentVersion>
               <resolutionIds>Closed</resolutionIds>
               <sortColumnNames>Type,Key</sortColumnNames>
