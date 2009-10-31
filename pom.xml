@@ -472,8 +472,12 @@ under the License.
             <artifactId>l10n-maven-plugin</artifactId>
             <version>1.0-alpha-2</version>
             <configuration>
+              <excludes>
+                <exclude>**/log4j.properties</exclude>
+              </excludes>
               <locales>
                 <locale>de</locale>
+                <locale>fr</locale>
                 <locale>sv</locale>
               </locales>
             </configuration>
