@@ -43,54 +43,54 @@ public class ChangesXML
     private String author;
 
     private String title;
-    
+
     private String authorEmail;
-    
+
     private ChangesDocument changesDocument;
 
     public ChangesXML( File xmlPath, Log log )
     {
-        
-        if (xmlPath == null || !xmlPath.exists())
+
+        if ( xmlPath == null || !xmlPath.exists() )
         {
             log.error( "changes xml file is null or not exists " );
             return;
         }
-        
+
         try
         {
-            
+
             ChangesXpp3Reader reader = new ChangesXpp3Reader();
 
-            changesDocument = reader.read( new FileInputStream( xmlPath), false ); 
-            
-            if (changesDocument == null)
+            changesDocument = reader.read( new FileInputStream( xmlPath ), false );
+
+            if ( changesDocument == null )
             {
                 log.error( "cannot build changes from file " + xmlPath.getPath() );
                 return;
             }
-            
+
             Properties properties = changesDocument.getProperties();
-            
-            if (properties != null)
+
+            if ( properties != null )
             {
                 if ( properties.getAuthor() != null )
                 {
                     this.author = properties.getAuthor().getName();
-                    this.authorEmail = properties.getAuthor().getName(); 
+                    this.authorEmail = properties.getAuthor().getName();
                 }
-                this.title = properties.getTitle();                  
+                this.title = properties.getTitle();
             }
-            
-            
+
+
             Body body = changesDocument.getBody();
-            
-            
+
+
             if ( body != null )
             {
                 this.releaseList = changesDocument.getBody().getReleases();
             }
-            
+
         }
         catch ( Throwable e )
         {

@@ -461,7 +461,7 @@ public class AnnouncementMojo
         }
 
         release = getRelease( releases, pomVersion );
-        isFound = (release != null);
+        isFound = ( release != null );
 
         if ( !isFound )
         {
@@ -476,7 +476,7 @@ public class AnnouncementMojo
     }
 
 
-    protected Release getRelease(List releases, String version)
+    protected Release getRelease( List releases, String version )
     {
         Release release = null;
         for ( int i = 0; i < releases.size(); i++ )
