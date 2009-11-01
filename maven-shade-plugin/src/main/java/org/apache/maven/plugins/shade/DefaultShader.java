@@ -32,6 +32,8 @@ import java.util.ArrayList;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.JarOutputStream;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.zip.ZipException;
 
 import org.apache.maven.plugins.shade.relocation.Relocator;
@@ -280,6 +282,9 @@ public class DefaultShader
     class RelocatorRemapper
         extends Remapper
     {
+
+        private final Pattern classPattern = Pattern.compile( "(\\[*)?L(.+);" );
+
         List relocators;
 
         public RelocatorRemapper( List relocators )
@@ -302,59 +307,30 @@ public class DefaultShader
                 {
                     Relocator r = (Relocator) i.next();
 
-                    if ( r.canRelocateClass( name ) )
+                    String prefix = "";
+                    String suffix = "";
+
+                    Matcher m = classPattern.matcher( name );
+                    if ( m.matches() )
                     {
-                        value = r.relocateClass( name );
-                        break;
-                    } 
-                    else if ( r.canRelocatePath( name ) )
-                    {
-                        value = r.relocatePath( name );
-                        break;
+                        prefix = m.group( 1 ) + "L";
+                        suffix = ";";
+                        name = m.group( 2 );
                     }
 
-                    if ( name.length() > 0 && name.charAt( 0 ) == '[' ) 
+                    if ( r.canRelocateClass( name ) )
                     {
-                        int count = 0;
-                        while ( name.length() > 0 && name.charAt(0) == '[' ) 
-                        {
-                            name = name.substring( 1 );
-                            ++count;
-                        }
-                        
-                        if ( name.length() > 0 
-                             && name.charAt( 0 ) == 'L'
-                             && name.charAt( name.length() - 1 ) == ';' ) 
-                        {
-                            name = name.substring( 1, name.length() - 1 );
-                                                        
-                            if ( r.canRelocatePath( name ) )
-                            {
-                                value = 'L' + r.relocatePath( name ) + ';';
-                                while ( count > 0 ) 
-                                {
-                                    value = '[' + value;
-                                    --count;
-                                }
-                                break;
-                            }
-
-                            if ( r.canRelocateClass( name ) )
-                            {
-                                value = 'L' + r.relocateClass( name ) + ';';
-                                while (count > 0) 
-                                {
-                                    value = '[' + value;
-                                    --count;
-                                }
-                                break;
-                            }
-                            
-                        }
+                        value = prefix + r.relocateClass( name ) + suffix;
+                        break;
+                    }
+                    else if ( r.canRelocatePath( name ) )
+                    {
+                        value = prefix + r.relocatePath( name ) + suffix;
+                        break;
                     }
                 }
                 return value;
-            } 
+            }
             return super.mapValue( object );
         }
 
