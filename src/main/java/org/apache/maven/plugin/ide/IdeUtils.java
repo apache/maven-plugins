@@ -163,10 +163,6 @@ public class IdeUtils
                 findCompilerPluginSettingInPlugins( project.getModel().getBuild().getPluginManagement().getPlugins(),
                                                     optionName );
         }
-        if ( value == null )
-        {
-            project.getProperties().getProperty( "project.build.sourceEncoding" );
-        }
         return value;
     }
 
@@ -191,7 +187,12 @@ public class IdeUtils
      */
     public static String getCompilerSourceEncoding( MavenProject project )
     {
-        return IdeUtils.getCompilerPluginSetting( project, PROPERTY_ENCODING );
+        String value = IdeUtils.getCompilerPluginSetting( project, PROPERTY_ENCODING );
+		if ( value == null )
+        {
+            project.getProperties().getProperty( "project.build.sourceEncoding" );
+        }
+		return value;
     }
 
     /**
