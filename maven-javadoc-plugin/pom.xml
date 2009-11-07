@@ -339,6 +339,7 @@ under the License.
       <!-- Backward compatibility with Maven 2.0.x -->
       <plugin>
         <artifactId>maven-shade-plugin</artifactId>
+        <version>1.2.1</version>
         <executions>
           <execution>
             <phase>package</phase>

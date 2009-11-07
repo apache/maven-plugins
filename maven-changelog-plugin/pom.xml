@@ -360,7 +360,7 @@ under the License.
               Use the current version to generate sample with the last features/fixes of the plugin.
               It implies that the current version is already deployed to generate the site.
             -->
-            <version>${pom.version}</version>
+            <version>${project.version}</version>
           </plugin>
         </plugins>
       </reporting>
