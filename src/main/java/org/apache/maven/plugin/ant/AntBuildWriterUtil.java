@@ -564,7 +564,7 @@ public class AntBuildWriterUtil
      */
     public static boolean isPomPackaging( MavenProject mavenProject )
     {
-        return mavenProject.getPackaging().toLowerCase().equals( "pom" );
+        return "pom".equals( mavenProject.getPackaging() );
     }
 
     /**
@@ -575,7 +575,7 @@ public class AntBuildWriterUtil
      */
     public static boolean isJarPackaging( MavenProject mavenProject )
     {
-        return mavenProject.getPackaging().toLowerCase().equals( "jar" )
+        return "jar".equals( mavenProject.getPackaging() )
             || isEjbPackaging( mavenProject )
             || isMavenPluginPackaging( mavenProject )
             || isBundlePackaging( mavenProject )
@@ -588,7 +588,7 @@ public class AntBuildWriterUtil
      */
     public static boolean isBundlePackaging( MavenProject mavenProject )
     {
-        return mavenProject.getPackaging().toLowerCase().equals( "bundle" );
+        return "bundle".equals( mavenProject.getPackaging() );
     }
 
     /**
@@ -597,7 +597,7 @@ public class AntBuildWriterUtil
      */
     public static boolean isEjbPackaging( MavenProject mavenProject )
     {
-        return mavenProject.getPackaging().toLowerCase().equals( "ejb" );
+        return "ejb".equals( mavenProject.getPackaging() );
     }
 
     /**
@@ -606,7 +606,7 @@ public class AntBuildWriterUtil
      */
     public static boolean isMavenPluginPackaging( MavenProject mavenProject )
     {
-        return mavenProject.getPackaging().toLowerCase().equals( "maven-plugin" );
+        return "maven-plugin".equals( mavenProject.getPackaging() );
     }
 
     /**
@@ -615,7 +615,7 @@ public class AntBuildWriterUtil
      */
     public static boolean isEarPackaging( MavenProject mavenProject )
     {
-        return mavenProject.getPackaging().toLowerCase().equals( "ear" );
+        return "ear".equals( mavenProject.getPackaging() );
     }
 
     /**
@@ -624,7 +624,7 @@ public class AntBuildWriterUtil
      */
     public static boolean isWarPackaging( MavenProject mavenProject )
     {
-        return mavenProject.getPackaging().toLowerCase().equals( "war" );
+        return "war".equals( mavenProject.getPackaging() );
     }
 
     /**
