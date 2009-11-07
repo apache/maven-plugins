@@ -87,7 +87,7 @@ public class ChangesMojo
      *
      * @parameter
      * @since 2.1
-     */    
+     */
     private Map issueLinkTemplatePerSystem;
 
     /**
@@ -99,16 +99,16 @@ public class ChangesMojo
     /**
      * A flag whether the report should also include the dates of individual actions. If set to <code>false</code>, only
      * the dates of releases will be written to the report.
-     * 
+     *
      * @parameter expression="${changes.addActionDate}" default-value="false"
      * @since 2.1
-     */        
-    private boolean addActionDate;    
+     */
+    private boolean addActionDate;
     
     /**
-     * 
+     *
      * @component
-     * 
+     *
      * @since 2.2
      */
     private MavenFileFilter mavenFileFilter;
@@ -117,17 +117,17 @@ public class ChangesMojo
      * @parameter expression="${session}"
      * @readonly
      * @required
-     * 
+     *
      * @since 2.2
-     * 
+     *
      */
     protected MavenSession session;
     
     /**
      * applying filtering filtering "a la" resources plugin
-     * 
+     *
      * @parameter default-value="false"
-     * 
+     *
      * @since 2.2
      */
     private boolean filteringChanges;
@@ -138,36 +138,36 @@ public class ChangesMojo
      * @parameter expression="${project.build.directory}/changes"
      * @required
      * @readonly
-     * 
+     *
      * @since 2.2
-     * 
+     *
      */
-    private File outputDirectory;    
+    private File filteredOutputDirectory;    
     
     /**
      *
      * Format to use for publishDate. The value will be available with the following expression ${publishDate}
-     * 
+     *
      * @see SimpleDateFormat
-     * 
+     *
      * @parameter default-value="yyyy-MM-dd"
-     * 
+     *
      * @since 2.2
-     * 
+     *
      */
     private String publishDateFormat;
     
     /**
     *
-    * Locale to use for publishDate when formatting 
-    * 
+    * Locale to use for publishDate when formatting
+    *
     * @see Locale
-    * 
+    *
     * @parameter default-value="en"
-    * 
+    *
     * @since 2.2
-    * 
-    */    
+    *
+    */
     private String publishDateLocale;
     
     
@@ -213,9 +213,9 @@ public class ChangesMojo
         }
         if ( filteringChanges )
         {
-            if ( !outputDirectory.exists() )
+            if ( !filteredOutputDirectory.exists() )
             {
-                outputDirectory.mkdirs();
+                filteredOutputDirectory.mkdirs();
             }
             XmlStreamReader xmlStreamReader = null;
             try
@@ -223,7 +223,7 @@ public class ChangesMojo
                 // so we get encoding from the file itself
                 xmlStreamReader = ReaderFactory.newXmlReader( xmlPath );
                 String encoding = xmlStreamReader.getEncoding();
-                File resultFile = new File( outputDirectory, "changes.xml" );
+                File resultFile = new File( filteredOutputDirectory, "changes.xml" );
                 Date now = new Date();
                 SimpleDateFormat simpleDateFormat =
                     new SimpleDateFormat( publishDateFormat, new Locale( publishDateLocale ) );
@@ -255,7 +255,7 @@ public class ChangesMojo
 
         ChangesReportGenerator report = new ChangesReportGenerator( xmlPath, getLog() );
         
-        report.setIssueLinksPerSystem( issueLinkTemplatePerSystem ); 
+        report.setIssueLinksPerSystem( issueLinkTemplatePerSystem );
         report.setIssueLink( issueLinkTemplate );
         
         report.setUrl( url );
