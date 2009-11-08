@@ -290,6 +290,21 @@ under the License.
               </requirements>
             </configuration>
           </plugin>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>l10n-maven-plugin</artifactId>
+            <version>1.0-alpha-2</version>
+            <configuration>
+              <excludes>
+                <exclude>**/log4j.properties</exclude>
+              </excludes>
+              <locales>
+                <locale>de</locale>
+                <locale>fr</locale>
+                <locale>sv</locale>
+              </locales>
+            </configuration>
+          </plugin>
         </plugins>
       </reporting>
     </profile>
