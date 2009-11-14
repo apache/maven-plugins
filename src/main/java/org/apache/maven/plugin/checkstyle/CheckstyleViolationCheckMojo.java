@@ -474,9 +474,7 @@ public class CheckstyleViolationCheckMojo
                                    + "unable to find checkstyle:checkstyle outputFile." );
                 return;
             }
-
-            System.out.println("outputFile " + outputFile.getPath());
-            
+           
             try
             {
                 XmlPullParser xpp = new MXParser();
