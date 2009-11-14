@@ -45,19 +45,14 @@ import com.puppycrawl.tools.checkstyle.api.SeverityLevel;
  *                   role-hint="default"
  */
 public class DefaultCheckstyleRssGenerator
-    implements CheckstyleRssGenerator, Serviceable
+    implements CheckstyleRssGenerator
 {
    
     /**
-     * Velocity Component.
+     * @plexus.requirement
      */
     private VelocityComponent velocityComponent;
 
-    /**
-     * ServiceLocator used to lookup VelocityComponent
-     * Fix for MCHECKSTYLE-101 to avoid VelocityComponent beeing initialized when skip=true
-     */
-    private ServiceLocator serviceLocator;
     
     /**
      * @see org.apache.maven.plugin.checkstyle.rss.CheckstyleRssGenerator#generateRSS(org.apache.maven.plugin.checkstyle.CheckstyleResults)
@@ -65,17 +60,6 @@ public class DefaultCheckstyleRssGenerator
     public void generateRSS( CheckstyleResults results, CheckstyleRssGeneratorRequest checkstyleRssGeneratorRequest )
         throws MavenReportException
     {
-        if ( velocityComponent == null )
-        {
-            try
-            {
-                velocityComponent = (VelocityComponent) serviceLocator.lookup( VelocityComponent.ROLE );
-            }
-            catch ( ComponentLookupException e )
-            {
-                throw new MavenReportException( "Failed to setup Velocity", e );
-            }
-        }
 
         VelocityTemplate vtemplate = new VelocityTemplate( velocityComponent, CheckstyleReport.PLUGIN_RESOURCES );
         vtemplate.setLog( checkstyleRssGeneratorRequest.getLog() );
@@ -111,9 +95,4 @@ public class DefaultCheckstyleRssGenerator
         }
     }
     
-    /** {@inheritDoc} */
-    public void service( ServiceLocator locator )
-    {
-        this.serviceLocator = locator;
-    }
 }
