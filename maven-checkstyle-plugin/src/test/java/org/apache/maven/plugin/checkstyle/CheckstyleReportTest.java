@@ -86,7 +86,7 @@ public class CheckstyleReportTest
     public void testMinConfiguration()
         throws Exception
     {
-        File htmlFile = generateReport( "min-plugin-config.xml" );
+        generateReport( "min-plugin-config.xml" );
     }
 
     public void testCustomConfiguration()
@@ -143,9 +143,10 @@ public class CheckstyleReportTest
         }
         catch ( Exception e )
         {
-            if ( !( e.getCause().getCause() instanceof DependencyResolutionRequiredException ) )
+            if ( !( e.getCause().getCause().getCause() instanceof DependencyResolutionRequiredException ) )
             {
-                fail( "Must throw exception on errors" );
+                e.printStackTrace();
+                fail( "Must throw exception DependencyResolutionRequiredException on errors and not " + e.getClass().getName() + ", " + e.getMessage() );
             }
         }
     }
