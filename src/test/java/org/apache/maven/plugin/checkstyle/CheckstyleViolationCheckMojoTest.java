@@ -19,12 +19,14 @@ package org.apache.maven.plugin.checkstyle;
  * under the License.
  */
 
+import java.io.File;
+
+import org.apache.maven.model.Build;
 import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
-
-import java.io.File;
+import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
 
 /**
  * @author Edwin Punzalan
@@ -33,15 +35,24 @@ import java.io.File;
 public class CheckstyleViolationCheckMojoTest
     extends AbstractMojoTestCase
 {
+    
+    
+    
     public void testDefaultConfig()
         throws Exception
     {
         File pluginXmlFile = new File( getBasedir(), "src/test/plugin-configs/check-plugin-config.xml" );
 
-        Mojo mojo = lookupMojo( "check", pluginXmlFile );
-
+        CheckstyleViolationCheckMojo mojo = (CheckstyleViolationCheckMojo) lookupMojo( "check", pluginXmlFile );
+        
+        mojoSetup( mojo );
+        
         assertNotNull( "Mojo found.", mojo );
-
+        
+        assertNotNull( "project null.", mojo.project );
+        
+        assertNotNull( "locator null.", mojo.locator );
+        
         try
         {
             mojo.execute();
@@ -63,6 +74,8 @@ public class CheckstyleViolationCheckMojoTest
 
         assertNotNull( "Mojo found.", mojo );
 
+        mojoSetup( mojo );
+        
         setVariableValueToObject( mojo, "outputFileFormat", "plain" );
 
         try
@@ -86,6 +99,8 @@ public class CheckstyleViolationCheckMojoTest
 
         assertNotNull( "Mojo found.", mojo );
 
+        mojoSetup( mojo );
+        
         setVariableValueToObject( mojo, "outputFile", new File( "target/NoSuchFile.xml" ) );
 
         mojo.execute();
@@ -100,8 +115,44 @@ public class CheckstyleViolationCheckMojoTest
 
         assertNotNull( "Mojo found.", mojo );
 
+        mojoSetup( mojo );
+        
         setVariableValueToObject( mojo, "failOnViolation", Boolean.FALSE );
 
         mojo.execute();
+    }
+    
+    protected void mojoSetup( Mojo mojo )
+        throws Exception
+    {
+        // mojo setup
+
+        setVariableValueToObject( mojo, "project", new MavenProjectStub()
+        {
+
+            public File getFile()
+            {
+                return new File( getBasedir(), "target/classes" );
+            }
+
+            public Build getBuild()
+            {
+                return new Build()
+                {
+                    public String getDirectory()
+                    {
+                        return getBasedir() + "/target/classes";
+                    }
+                };
+            }
+
+        } );
+
+        setVariableValueToObject( mojo, "configLocation", "config/sun_checks.xml" );
+        setVariableValueToObject( mojo, "cacheFile", getBasedir() + "/target/classes/checkstyle-cachefile" );
+        setVariableValueToObject( mojo, "sourceDirectory", new File( getBasedir(), "src/test/plugin-configs/src" ));// new File( getBasedir() + "/target" ) );
+        setVariableValueToObject( mojo, "encoding", "UTF-8" );
+        setVariableValueToObject( mojo, "skipExec", Boolean.TRUE );
+
     }
 }

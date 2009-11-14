@@ -27,10 +27,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
@@ -41,7 +38,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
-import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.doxia.tools.SiteTool;
 import org.apache.maven.model.ReportPlugin;
@@ -57,7 +53,6 @@ import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.PathTool;
 import org.codehaus.plexus.util.StringUtils;
 
-import com.puppycrawl.tools.checkstyle.Checker;
 import com.puppycrawl.tools.checkstyle.ConfigurationLoader;
 import com.puppycrawl.tools.checkstyle.DefaultConfiguration;
 import com.puppycrawl.tools.checkstyle.DefaultLogger;
@@ -493,7 +488,7 @@ public class CheckstyleReport
      * @readonly
      */
     private Renderer siteRenderer;
-    
+        
     private static final File[] EMPTY_FILE_ARRAY = new File[0];
 
     private ByteArrayOutputStream stringOutputStream;
@@ -513,7 +508,15 @@ public class CheckstyleReport
      * @required
      * @readonly
      */
-    protected CheckstyleRssGenerator checkstyleRssGenerator;    
+    protected CheckstyleRssGenerator checkstyleRssGenerator;
+    
+    /**
+     * @since 2.5
+     * @component role="org.apache.maven.plugin.checkstyle.CheckstyleExecutor" role-hint="default"
+     * @required
+     * @readonly
+     */
+    protected CheckstyleExecutor checkstyleExecutor;    
 
     /** {@inheritDoc} */
     public String getName( Locale locale )
@@ -584,10 +587,9 @@ public class CheckstyleReport
 
                 String configFile = getConfigFile();
                 Properties overridingProperties = getOverridingProperties();
-                Configuration config;
                 CheckstyleResults results;
 
-                config = ConfigurationLoader.loadConfiguration( configFile,
+                Configuration config = ConfigurationLoader.loadConfiguration( configFile,
                                                                 new PropertiesExpander( overridingProperties ) );
                 String effectiveEncoding =
                     StringUtils.isNotEmpty( encoding ) ? encoding : System.getProperty( "file.encoding", "UTF-8" );
@@ -643,6 +645,10 @@ public class CheckstyleReport
             catch ( CheckstyleException e )
             {
                 throw new MavenReportException( "Failed during checkstyle configuration", e );
+            }
+            catch (CheckstyleExecutorException e)
+            {
+                throw new MavenReportException( "Failed during checkstyle execution", e );
             }
             finally
             {
@@ -781,141 +787,16 @@ public class CheckstyleReport
     }
 
     private CheckstyleResults executeCheckstyle( Configuration config )
-        throws MavenReportException, CheckstyleException
+        throws MavenReportException, CheckstyleException, CheckstyleExecutorException
     {
-        File[] files;
-        try
-        {
-            files = getFilesToProcess( includes, excludes );
-        }
-        catch ( IOException e )
-        {
-            throw new MavenReportException( "Error getting files to process", e );
-        }
-
-        FilterSet filterSet = getSuppressions();
-
-        Checker checker = new Checker();
-
-        // setup classloader, needed to avoid "Unable to get class information
-        // for ..." errors
-        List classPathStrings;
-        List outputDirectories = new ArrayList();
-        try
-        {
-            classPathStrings = this.project.getCompileClasspathElements();
-            outputDirectories.add( this.project.getBuild().getOutputDirectory() );
-
-            if ( includeTestSourceDirectory && ( testSourceDirectory != null ) && ( testSourceDirectory.exists() )
-                && ( testSourceDirectory.isDirectory() ) )
-            {
-                classPathStrings = this.project.getTestClasspathElements();
-                outputDirectories.add( this.project.getBuild().getTestOutputDirectory() );
-            }
-        }
-        catch ( DependencyResolutionRequiredException e )
-        {
-            throw new MavenReportException( e.getMessage(), e );
-        }
-
-        List urls = new ArrayList( classPathStrings.size() );
-
-        Iterator iter = classPathStrings.iterator();
-        while ( iter.hasNext() )
-        {
-            try
-            {
-                urls.add( new File( ( (String) iter.next() ) ).toURL() );
-            }
-            catch ( MalformedURLException e )
-            {
-                throw new MavenReportException( e.getMessage(), e );
-            }
-        }
-
-        Iterator iterator = outputDirectories.iterator();
-        while ( iterator.hasNext() )
-        {
-            try
-            {
-                String outputDirectoryString = (String) iterator.next();
-                if ( outputDirectoryString != null )
-                {
-                    File outputDirectoryFile = new File( outputDirectoryString );
-                    if ( outputDirectoryFile.exists() )
-                    {
-                        URL outputDirectoryUrl = outputDirectoryFile.toURL();
-                        getLog().debug( "Adding the outputDirectory " + outputDirectoryUrl.toString()
-                            + " to the Checkstyle class path" );
-                        urls.add( outputDirectoryUrl );
-                    }
-                }
-            }
-            catch ( MalformedURLException e )
-            {
-                throw new MavenReportException( e.getMessage(), e );
-            }
-        }
-
-        URLClassLoader projectClassLoader = new URLClassLoader( (URL[]) urls.toArray( new URL[urls.size()] ), null );
-        checker.setClassloader( projectClassLoader );
-
-        checker.setModuleClassLoader( Thread.currentThread().getContextClassLoader() );
-
-        if ( filterSet != null )
-        {
-            checker.addFilter( filterSet );
-        }
-
-        checker.configure( config );
-
-        AuditListener listener = getListener();
-
-        if ( listener != null )
-        {
-            checker.addListener( listener );
-        }
-
-        if ( consoleOutput )
-        {
-            checker.addListener( getConsoleListener() );
-        }
-
-        CheckstyleReportListener sinkListener = new CheckstyleReportListener( sourceDirectory );
-        if ( includeTestSourceDirectory && ( testSourceDirectory != null ) && ( testSourceDirectory.exists() )
-            && ( testSourceDirectory.isDirectory() ) )
-        {
-            sinkListener.addSourceDirectory( testSourceDirectory );
-        }
-
-        checker.addListener( sinkListener );
-
-        ArrayList filesList = new ArrayList();
-        for (int i = 0; i < files.length; i++) {
-            filesList.add(files[i]);
-        }
-        int nbErrors = checker.process( filesList );
-
-        checker.destroy();
-
-        if ( stringOutputStream != null )
-        {
-            getLog().info( stringOutputStream.toString() );
-        }
-
-        if ( failsOnError && nbErrors > 0 )
-        {
-            // TODO: should be a failure, not an error. Report is not meant to
-            // throw an exception here (so site would
-            // work regardless of config), but should record this information
-            throw new MavenReportException( "There are " + nbErrors + " checkstyle errors." );
-        }
-        else if ( nbErrors > 0 )
-        {
-            getLog().info( "There are " + nbErrors + " checkstyle errors." );
-        }
-
-        return sinkListener.getResults();
+        CheckstyleExecutorRequest request = new CheckstyleExecutorRequest( config );
+        request.setConsoleListener( getConsoleListener() ).setConsoleOutput( consoleOutput ).setExcludes( excludes )
+            .setFailsOnError( failsOnError ).setIncludes( includes )
+            .setIncludeTestSourceDirectory( includeTestSourceDirectory ).setListener( getListener() ).setLog( getLog() )
+            .setProject( project ).setSourceDirectory( sourceDirectory ).setStringOutputStream( stringOutputStream )
+            .setSuppressionsLocation( suppressionsLocation ).setTestSourceDirectory( testSourceDirectory );
+        
+        return checkstyleExecutor.executeCheckstyle( request );
     }
 
     /** {@inheritDoc} */
