@@ -163,6 +163,7 @@ under the License.
     <javadocPluginVersion>2.6.1</javadocPluginVersion>
     <!-- previous version breaks due to use of plexusContainer.getLoggerManager() -->
     <projectInfoReportsPluginVersion>2.2-SNAPSHOT</projectInfoReportsPluginVersion>
+    <checkstylePluginVersion>2.5-SNAPSHOT</checkstylePluginVersion>
   </properties>
 
   <dependencies>
@@ -407,7 +408,7 @@ under the License.
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-invoker-plugin</artifactId>
-            <version>1.4</version>
+            <version>1.5</version>
             <configuration>
               <projectsDirectory>src/it</projectsDirectory>
               <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
@@ -486,7 +487,6 @@ under the License.
             <version>${projectInfoReportsPluginVersion}</version>          
           </plugin>
           <plugin>
-            <!-- SNAPSHOT use due to MJAVADOC-251  -->
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-javadoc-plugin</artifactId>
             <version>${javadocPluginVersion}</version>          
@@ -528,15 +528,7 @@ under the License.
             <plugin>
               <groupId>org.apache.maven.plugins</groupId>
               <artifactId>maven-resources-plugin</artifactId>
-              <version>2.4</version>
-              <dependencies>
-                <!--  MSHARED-125 --> 
-                <dependency>
-                  <groupId>org.apache.maven.shared</groupId>
-                  <artifactId>maven-filtering</artifactId>
-                  <version>1.0-beta-4-SNAPSHOT</version>
-                </dependency>
-              </dependencies>
+              <version>2.4.1</version>
             </plugin>
           </plugins>
         </pluginManagement>        
