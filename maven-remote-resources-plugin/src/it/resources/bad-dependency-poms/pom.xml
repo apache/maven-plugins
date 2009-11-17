@@ -22,6 +22,12 @@
 
   <dependencies>
     <dependency>
+      <!-- dependency with good POM -->
+      <groupId>test</groupId>
+      <artifactId>pom</artifactId>
+      <version>0.2</version>
+    </dependency>
+    <dependency>
       <!-- dependency with missing POM -->
       <groupId>test</groupId>
       <artifactId>missing</artifactId>

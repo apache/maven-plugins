@@ -53,6 +53,7 @@ public class IT_BadDependencyPoms
         String content = FileUtils.fileRead( output );
 
         assertTrue( content.indexOf( "Dependency Id: test:missing:0.1" ) >= 0 );
+        assertTrue( content.indexOf( "Dependency Id: test:pom:0.2" ) >= 0 );
     }
 
 }
