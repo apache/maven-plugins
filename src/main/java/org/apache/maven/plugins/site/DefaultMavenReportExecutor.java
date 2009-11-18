@@ -20,11 +20,15 @@ package org.apache.maven.plugins.site;
  */
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.DefaultRepositoryRequest;
 import org.apache.maven.artifact.repository.RepositoryRequest;
+import org.apache.maven.artifact.resolver.filter.ExclusionSetFilter;
+import org.apache.maven.doxia.site.decoration.DecorationModel;
 import org.apache.maven.lifecycle.LifecycleExecutor;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.model.ReportPlugin;
@@ -85,6 +89,7 @@ public class DefaultMavenReportExecutor
         }
         List<String> imports = new ArrayList<String>();
 
+        
         imports.add( "org.apache.maven.reporting.MavenReport" );
         imports.add( "org.apache.maven.doxia.siterenderer.Renderer" );
         imports.add( "org.apache.maven.doxia.sink.SinkFactory" );
@@ -92,6 +97,13 @@ public class DefaultMavenReportExecutor
         imports.add( "org.apache.maven.doxia.sink.Sink" );
         imports.add( "org.apache.maven.doxia.sink.SinkEventAttributes" );
        
+        Set<String> excludes = new HashSet<String>( 1 );
+        //excludes.add( "maven-reporting-impl");
+        excludes.add( "doxia-site-renderer" );
+        excludes.add( "doxia-sink-api" );
+        
+        ExclusionSetFilter exclusionSetFilter = new ExclusionSetFilter(excludes);         
+        
         RepositoryRequest repositoryRequest = new DefaultRepositoryRequest();
         repositoryRequest.setLocalRepository( mavenReportExecutorRequest.getLocalRepository() );
         repositoryRequest.setRemoteRepositories( mavenReportExecutorRequest.getProject().getPluginArtifactRepositories() );
@@ -148,9 +160,11 @@ public class DefaultMavenReportExecutor
 
                     mojoExecution.setMojoDescriptor( mojoDescriptor );
 
+
+                    
                     mavenPluginManager.setupPluginRealm( pluginDescriptor,
                                                          mavenReportExecutorRequest.getMavenSession(),
-                                                         Thread.currentThread().getContextClassLoader(), imports );
+                                                         Thread.currentThread().getContextClassLoader(), imports, exclusionSetFilter );
 
                     MavenReport mavenReport =
                         getConfiguredMavenReport( mojoExecution, pluginDescriptor, mavenReportExecutorRequest );
