@@ -157,9 +157,9 @@ under the License.
   <properties>
     <doxiaVersion>1.1.2-SNAPSHOT</doxiaVersion>
     <doxiaSitetoolsVersion>1.1.2-SNAPSHOT</doxiaSitetoolsVersion>
-    <mavenVersion>3.0-alpha-3</mavenVersion>
+    <mavenVersion>3.0-alpha-4</mavenVersion>
     <wagonVersion>1.0-beta-6</wagonVersion>
-    <plexusVersion>1.5.0</plexusVersion>
+    <plexusVersion>1.5.1</plexusVersion>
     <javadocPluginVersion>2.6.1</javadocPluginVersion>
     <!-- previous version breaks due to use of plexusContainer.getLoggerManager() -->
     <projectInfoReportsPluginVersion>2.2-SNAPSHOT</projectInfoReportsPluginVersion>
