@@ -78,8 +78,10 @@ public class DefaultCheckstyleExecutor
         ClassLoader checkstyleClassLoader = PackageNamesLoader.class.getClassLoader();
         Thread.currentThread().setContextClassLoader( checkstyleClassLoader );
 
-        
-        getLogger().info( "executeCheckstyle start headerLocation : " + request.getHeaderLocation() );
+        if ( getLogger().isDebugEnabled() )
+        {
+            getLogger().debug( "executeCheckstyle start headerLocation : " + request.getHeaderLocation() );
+        }
         locator.setOutputDirectory( new File( request.getProject().getBuild().getDirectory() ) );
         File[] files;
         try
@@ -291,7 +293,11 @@ public class DefaultCheckstyleExecutor
         {
             if ( request.getPropertiesLocation() != null )
             {
-                getLogger().info( "request.getPropertiesLocation() " + request.getPropertiesLocation() );
+                if ( getLogger().isDebugEnabled() )
+                {
+                    getLogger().debug( "request.getPropertiesLocation() " + request.getPropertiesLocation() );
+                }                
+                
                 File propertiesFile = locator.getResourceAsFile( request.getPropertiesLocation(),
                                                                  "checkstyle-checker.properties" );
 
@@ -321,7 +327,11 @@ public class DefaultCheckstyleExecutor
                     headerLocation = "config/maven-header.txt";
                 }
             }
-            getLogger().info( "headerLocation " + headerLocation );
+            if ( getLogger().isDebugEnabled() )
+            {
+                getLogger().debug( "headerLocation " + headerLocation );
+            } 
+            
             if ( StringUtils.isNotEmpty( headerLocation ) )
             {
                 try
@@ -437,7 +447,11 @@ public class DefaultCheckstyleExecutor
     {
         try
         {
-            getLogger().info( "request.getConfigLocation() " + request.getConfigLocation() );
+            if ( getLogger().isDebugEnabled() )
+            {
+                getLogger().debug( "request.getConfigLocation() " + request.getConfigLocation() );
+            }
+           
             File configFile = locator.getResourceAsFile( request.getConfigLocation(), "checkstyle-checker.xml" );
 
             if ( configFile == null )
