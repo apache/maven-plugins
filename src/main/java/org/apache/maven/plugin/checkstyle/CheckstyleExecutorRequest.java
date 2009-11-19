@@ -26,7 +26,6 @@ import org.apache.maven.project.MavenProject;
 
 import com.puppycrawl.tools.checkstyle.DefaultLogger;
 import com.puppycrawl.tools.checkstyle.api.AuditListener;
-import com.puppycrawl.tools.checkstyle.api.Configuration;
 
 /**
  * @author <a href="mailto:olamy@apache.org">olamy</a>
