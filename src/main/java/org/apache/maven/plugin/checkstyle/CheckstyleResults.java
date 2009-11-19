@@ -20,6 +20,7 @@ package org.apache.maven.plugin.checkstyle;
  */
 
 import com.puppycrawl.tools.checkstyle.api.AuditEvent;
+import com.puppycrawl.tools.checkstyle.api.Configuration;
 import com.puppycrawl.tools.checkstyle.api.SeverityLevel;
 
 import java.util.HashMap;
@@ -38,6 +39,8 @@ import java.util.Map;
 public class CheckstyleResults
 {
     private Map files;
+    
+    private Configuration configuration;
 
     public CheckstyleResults()
     {
@@ -130,5 +133,15 @@ public class CheckstyleResults
         }
 
         return count;
+    }
+
+    public Configuration getConfiguration()
+    {
+        return configuration;
+    }
+
+    public void setConfiguration( Configuration configuration )
+    {
+        this.configuration = configuration;
     }
 }
