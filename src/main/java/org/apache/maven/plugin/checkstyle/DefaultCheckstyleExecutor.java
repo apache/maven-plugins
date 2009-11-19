@@ -74,6 +74,7 @@ public class DefaultCheckstyleExecutor
         // checkstyle will always use the context classloader in order
         // to load resources (dtds),
         // so we have to fix it
+        // olamy this hack is not anymore needed in maven 3.x
         ClassLoader checkstyleClassLoader = PackageNamesLoader.class.getClassLoader();
         Thread.currentThread().setContextClassLoader( checkstyleClassLoader );
 
