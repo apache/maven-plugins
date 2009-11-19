@@ -22,6 +22,7 @@ package org.apache.maven.plugin.checkstyle;
 import com.puppycrawl.tools.checkstyle.api.AuditEvent;
 import com.puppycrawl.tools.checkstyle.api.AuditListener;
 import com.puppycrawl.tools.checkstyle.api.AutomaticBean;
+import com.puppycrawl.tools.checkstyle.api.Configuration;
 import com.puppycrawl.tools.checkstyle.api.SeverityLevel;
 import org.codehaus.plexus.util.StringUtils;
 
@@ -50,6 +51,8 @@ public class CheckstyleReportListener
     private List events;
 
     private SeverityLevel severityLevel;
+    
+    private Configuration checkstyleConfiguration;
 
     /**
      * @param sourceDirectory assume that is <code>sourceDirectory</code> is a not null directory and exists
@@ -59,6 +62,17 @@ public class CheckstyleReportListener
         this.sourceDirectories = new ArrayList();
         this.sourceDirectories.add( sourceDirectory );
     }
+    /**
+     * @param sourceDirectory assume that is <code>sourceDirectory</code> is a not null directory and exists
+     * @param configuration checkstyle configuration
+     * @since 2.5
+     */
+    public CheckstyleReportListener( File sourceDirectory, Configuration configuration )
+    {
+        this.sourceDirectories = new ArrayList();
+        this.sourceDirectories.add( sourceDirectory );
+        this.checkstyleConfiguration = configuration;
+    }    
 
     /**
      * @param sourceDirectory assume that is <code>sourceDirectory</code> is a not null directory and exists
@@ -147,6 +161,7 @@ public class CheckstyleReportListener
      */
     public CheckstyleResults getResults()
     {
+        results.setConfiguration( checkstyleConfiguration );
         return results;
     }
 
@@ -157,5 +172,22 @@ public class CheckstyleReportListener
     {
         this.results = results;
     }
+
+    /**
+     * @since 2.5
+     */
+    public Configuration getCheckstyleConfiguration()
+    {
+        return checkstyleConfiguration;
+    }
+
+    /**
+     * @since 2.5
+     */
+    public void setCheckstyleConfiguration( Configuration checkstyleConfiguration )
+    {
+        this.checkstyleConfiguration = checkstyleConfiguration;
+    }
+
 }
 
