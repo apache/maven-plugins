@@ -35,8 +35,7 @@ import com.puppycrawl.tools.checkstyle.api.Configuration;
  */
 public class CheckstyleExecutorRequest
 {
-    private Configuration configuration;
-    
+   
     /**
      * Specifies the names filter of the source files to be used for Checkstyle.
      */
@@ -69,22 +68,27 @@ public class CheckstyleExecutorRequest
     
     private ByteArrayOutputStream stringOutputStream;
     
-    public CheckstyleExecutorRequest(Configuration configuration)
-    {
-        this.configuration = configuration;
-    }
+    private String propertiesLocation;
+    
+    //
+    
+    private String configLocation;
 
-    public Configuration getConfiguration()
-    {
-        return configuration;
-    }
+    private String propertyExpansion;
+    
+    private String headerLocation; 
+    
+    private String cacheFile;  
+    
+    private String suppressionsFileExpression;
+    
+    private String encoding; 
 
-    public CheckstyleExecutorRequest setConfiguration( Configuration configuration )
+    public CheckstyleExecutorRequest( )
     {
-        this.configuration = configuration;
-        return this;
-    }
-
+        //nothing 
+    }    
+    
     public String getIncludes()
     {
         return includes;
@@ -228,4 +232,79 @@ public class CheckstyleExecutorRequest
         return this;
     }
     
+    public String getConfigLocation()
+    {
+        return configLocation;
+    }
+
+    public CheckstyleExecutorRequest setConfigLocation( String configLocation )
+    {
+        this.configLocation = configLocation;
+        return this;
+    }
+
+    public String getPropertyExpansion()
+    {
+        return propertyExpansion;
+    }
+
+    public CheckstyleExecutorRequest setPropertyExpansion( String propertyExpansion )
+    {
+        this.propertyExpansion = propertyExpansion;
+        return this;
+    }
+    
+    public String getHeaderLocation()
+    {
+        return headerLocation;
+    }
+
+    public CheckstyleExecutorRequest setHeaderLocation( String headerLocation )
+    {
+        this.headerLocation = headerLocation;
+        return this;
+    }
+
+    public String getCacheFile()
+    {
+        return cacheFile;
+    }
+
+    public CheckstyleExecutorRequest setCacheFile( String cacheFile )
+    {
+        this.cacheFile = cacheFile;
+        return this;
+    }
+
+    public String getSuppressionsFileExpression()
+    {
+        return suppressionsFileExpression;
+    }
+
+    public CheckstyleExecutorRequest setSuppressionsFileExpression( String suppressionsFileExpression )
+    {
+        this.suppressionsFileExpression = suppressionsFileExpression;
+        return this;
+    }
+
+    public String getEncoding()
+    {
+        return encoding;
+    }
+
+    public CheckstyleExecutorRequest setEncoding( String encoding )
+    {
+        this.encoding = encoding;
+        return this;
+    }    
+    
+    public String getPropertiesLocation()
+    {
+        return propertiesLocation;
+    }
+
+    public void setPropertiesLocation( String propertiesLocation )
+    {
+        this.propertiesLocation = propertiesLocation;
+    }    
 }

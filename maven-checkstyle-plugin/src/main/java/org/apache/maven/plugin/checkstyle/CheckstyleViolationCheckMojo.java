@@ -388,60 +388,16 @@ public class CheckstyleViolationCheckMojo
 
                 try
                 {
-                    // checkstyle will always use the context classloader in order
-                    // to load resources (dtds),
-                    // so we have to fix it
-                    ClassLoader checkstyleClassLoader = PackageNamesLoader.class.getClassLoader();
-                    Thread.currentThread().setContextClassLoader( checkstyleClassLoader );
-                    String configFile = getConfigFile();
-                    Properties overridingProperties = getOverridingProperties();
-                    Configuration config = ConfigurationLoader
-                        .loadConfiguration( configFile, new PropertiesExpander( overridingProperties ) );
-                    String effectiveEncoding = StringUtils.isNotEmpty( encoding ) ? encoding : System
-                        .getProperty( "file.encoding", "UTF-8" );
-                    if ( StringUtils.isEmpty( encoding ) )
-                    {
-                        getLog().warn(
-                                       "File encoding has not been set, using platform encoding " + effectiveEncoding
-                                           + ", i.e. build is platform dependent!" );
-                    }
-                    Configuration[] modules = config.getChildren();
-                    for ( int i = 0; i < modules.length; i++ )
-                    {
-                        Configuration module = modules[i];
-                        if ( "Checker".equals( module.getName() )
-                            || "com.puppycrawl.tools.checkstyle.Checker".equals( module.getName() ) )
-                        {
-                            if ( module instanceof DefaultConfiguration )
-                            {
-                                ( (DefaultConfiguration) module ).addAttribute( "charset", effectiveEncoding );
-                            }
-                            else
-                            {
-                                getLog().warn( "Failed to configure file encoding on module " + module );
-                            }
-                        }
-                        if ( "TreeWalker".equals( module.getName() )
-                            || "com.puppycrawl.tools.checkstyle.TreeWalker".equals( module.getName() ) )
-                        {
-                            if ( module instanceof DefaultConfiguration )
-                            {
-                                ( (DefaultConfiguration) module ).addAttribute( "cacheFile", cacheFile );
-                            }
-                            else
-                            {
-                                getLog().warn( "Failed to configure cache file on module " + module );
-                            }
-                        }
-                    }
-
-                    CheckstyleExecutorRequest request = new CheckstyleExecutorRequest( config );
+                    CheckstyleExecutorRequest request = new CheckstyleExecutorRequest();
                     request.setConsoleListener( getConsoleListener() ).setConsoleOutput( consoleOutput )
                         .setExcludes( excludes ).setFailsOnError( failsOnError ).setIncludes( includes )
                         .setIncludeTestSourceDirectory( includeTestSourceDirectory ).setListener( getListener() )
                         .setLog( getLog() ).setProject( project ).setSourceDirectory( sourceDirectory )
                         .setStringOutputStream( stringOutputStream ).setSuppressionsLocation( suppressionsLocation )
-                        .setTestSourceDirectory( testSourceDirectory );
+                        .setTestSourceDirectory( testSourceDirectory ).setConfigLocation( configLocation )
+                        .setPropertyExpansion( propertyExpansion ).setHeaderLocation( headerLocation )
+                        .setCacheFile( cacheFile ).setSuppressionsFileExpression( suppressionsFileExpression )
+                        .setEncoding( encoding ).setPropertiesLocation( propertiesLocation );
 
                     checkstyleExecutor.executeCheckstyle( request );
 
@@ -576,122 +532,6 @@ public class CheckstyleViolationCheckMojo
             return false;
         }
     }
-
-    private String getConfigFile()
-        throws MojoExecutionException
-    {
-        try
-        {
-            File configFile = locator.getResourceAsFile( configLocation, "checkstyle-checker.xml" );
-
-            if ( configFile == null )
-            {
-                throw new MojoExecutionException( "Unable to process config location: " + configLocation );
-            }
-            return configFile.getAbsolutePath();
-        }
-        catch ( org.codehaus.plexus.resource.loader.ResourceNotFoundException e )
-        {
-            throw new MojoExecutionException( "Unable to find configuration file at location " + configLocation, e );
-        }
-        catch ( FileResourceCreationException e )
-        {
-            throw new MojoExecutionException( "Unable to process configuration file location " + configLocation, e );
-        }
-
-    }
-
-    private Properties getOverridingProperties()
-        throws MojoExecutionException
-    {
-        Properties p = new Properties();
-
-        try
-        {
-            File propertiesFile = locator.resolveLocation( propertiesLocation, "checkstyle-checker.properties" );
-
-            if ( propertiesFile != null )
-            {
-                p.load( new FileInputStream( propertiesFile ) );
-            }
-
-            if ( StringUtils.isNotEmpty( propertyExpansion ) )
-            {
-                // Convert \ to \\, so that p.load will convert it back properly
-                propertyExpansion = StringUtils.replace( propertyExpansion, "\\", "\\\\" );
-                p.load( new ByteArrayInputStream( propertyExpansion.getBytes() ) );
-            }
-
-            // Workaround for MCHECKSTYLE-48
-            // Make sure that "config/maven-header.txt" is the default value
-            // for headerLocation, if configLocation="config/maven_checks.xml"
-            if ( "config/maven_checks.xml".equals( configLocation ) )
-            {
-                if ( "LICENSE.txt".equals( headerLocation ) )
-                {
-                    headerLocation = "config/maven-header.txt";
-                }
-            }
-            if ( StringUtils.isNotEmpty( headerLocation ) )
-            {
-                try
-                {
-                    File headerFile = locator.resolveLocation( headerLocation, "checkstyle-header.txt" );
-
-                    if ( headerFile != null )
-                    {
-                        p.setProperty( "checkstyle.header.file", headerFile.getAbsolutePath() );
-                    }
-                }
-                catch ( IOException e )
-                {
-                    throw new MojoExecutionException( "Unable to process header location: " + headerLocation, e );
-                }
-            }
-
-            if ( cacheFile != null )
-            {
-                p.setProperty( "checkstyle.cache.file", cacheFile );
-            }
-        }
-        catch ( IOException e )
-        {
-            throw new MojoExecutionException( "Failed to get overriding properties", e );
-        }
-
-        if ( suppressionsFileExpression != null )
-        {
-            String suppresionFile = getSuppressionLocation();
-
-            if ( suppresionFile != null )
-            {
-                p.setProperty( suppressionsFileExpression, suppresionFile );
-            }
-        }
-
-        return p;
-    }
-
-    private String getSuppressionLocation()
-        throws MojoExecutionException
-    {
-        try
-        {
-            File suppressionsFile = locator.resolveLocation( suppressionsLocation, "checkstyle-suppressions.xml" );
-
-            if ( suppressionsFile == null )
-            {
-                return null;
-            }
-
-            return suppressionsFile.getAbsolutePath();
-        }
-        catch ( IOException e )
-        {
-            throw new MojoExecutionException( "Failed to process supressions location: " + suppressionsLocation, e );
-        }
-    }
-    
     private DefaultLogger getConsoleListener()
         throws MojoExecutionException
     {
