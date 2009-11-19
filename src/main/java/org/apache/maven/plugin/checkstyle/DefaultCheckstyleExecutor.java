@@ -18,7 +18,9 @@
  */
 package org.apache.maven.plugin.checkstyle;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -27,15 +29,24 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Properties;
 
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
+import org.codehaus.plexus.logging.AbstractLogEnabled;
 import org.codehaus.plexus.resource.ResourceManager;
+import org.codehaus.plexus.resource.loader.FileResourceCreationException;
+import org.codehaus.plexus.resource.loader.ResourceNotFoundException;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.StringUtils;
 
 import com.puppycrawl.tools.checkstyle.Checker;
+import com.puppycrawl.tools.checkstyle.ConfigurationLoader;
+import com.puppycrawl.tools.checkstyle.DefaultConfiguration;
+import com.puppycrawl.tools.checkstyle.PackageNamesLoader;
+import com.puppycrawl.tools.checkstyle.PropertiesExpander;
 import com.puppycrawl.tools.checkstyle.api.AuditListener;
 import com.puppycrawl.tools.checkstyle.api.CheckstyleException;
+import com.puppycrawl.tools.checkstyle.api.Configuration;
 import com.puppycrawl.tools.checkstyle.api.FilterSet;
 import com.puppycrawl.tools.checkstyle.filters.SuppressionsLoader;
 
@@ -46,6 +57,7 @@ import com.puppycrawl.tools.checkstyle.filters.SuppressionsLoader;
  * @version $Id$
  */
 public class DefaultCheckstyleExecutor
+    extends AbstractLogEnabled
     implements CheckstyleExecutor
 {
     
@@ -59,6 +71,15 @@ public class DefaultCheckstyleExecutor
     public CheckstyleResults executeCheckstyle( CheckstyleExecutorRequest request )
         throws CheckstyleExecutorException, CheckstyleException
     {
+        // checkstyle will always use the context classloader in order
+        // to load resources (dtds),
+        // so we have to fix it
+        ClassLoader checkstyleClassLoader = PackageNamesLoader.class.getClassLoader();
+        Thread.currentThread().setContextClassLoader( checkstyleClassLoader );
+
+        
+        getLogger().info( "executeCheckstyle start headerLocation : " + request.getHeaderLocation() );
+        locator.setOutputDirectory( new File( request.getProject().getBuild().getDirectory() ) );
         File[] files;
         try
         {
@@ -94,11 +115,11 @@ public class DefaultCheckstyleExecutor
             throw new CheckstyleExecutorException( e.getMessage(), e );
         }
 
-        if (classPathStrings == null)
+        if ( classPathStrings == null )
         {
             classPathStrings = Collections.EMPTY_LIST;
         }
-        
+
         List urls = new ArrayList( classPathStrings.size() );
 
         Iterator iter = classPathStrings.iterator();
@@ -148,8 +169,8 @@ public class DefaultCheckstyleExecutor
         {
             checker.addFilter( filterSet );
         }
-
-        checker.configure( request.getConfiguration() );
+        Configuration configuration = getConfiguration( request ); 
+        checker.configure( configuration );
 
         AuditListener listener = request.getListener();
 
@@ -163,7 +184,7 @@ public class DefaultCheckstyleExecutor
             checker.addListener( request.getConsoleListener() );
         }
 
-        CheckstyleReportListener sinkListener = new CheckstyleReportListener( request.getSourceDirectory() );
+        CheckstyleReportListener sinkListener = new CheckstyleReportListener( request.getSourceDirectory(), configuration );
         if ( request.isIncludeTestSourceDirectory() && ( request.getTestSourceDirectory() != null )
             && ( request.getTestSourceDirectory().exists() ) && ( request.getTestSourceDirectory().isDirectory() ) )
         {
@@ -199,6 +220,156 @@ public class DefaultCheckstyleExecutor
         }
 
         return sinkListener.getResults();
+    }
+
+    public Configuration getConfiguration( CheckstyleExecutorRequest request )
+        throws CheckstyleExecutorException
+    {
+        try
+        {
+            // checkstyle will always use the context classloader in order
+            // to load resources (dtds),
+            // so we have to fix it
+            ClassLoader checkstyleClassLoader = PackageNamesLoader.class.getClassLoader();
+            Thread.currentThread().setContextClassLoader( checkstyleClassLoader );
+            String configFile = getConfigFile( request );
+            Properties overridingProperties = getOverridingProperties( request );
+            Configuration config = ConfigurationLoader
+                .loadConfiguration( configFile, new PropertiesExpander( overridingProperties ) );
+            String effectiveEncoding = StringUtils.isNotEmpty( request.getEncoding() ) ? request.getEncoding() : System
+                .getProperty( "file.encoding", "UTF-8" );
+            if ( StringUtils.isEmpty( request.getEncoding() ) )
+            {
+                request.getLog().warn(
+                                       "File encoding has not been set, using platform encoding " + effectiveEncoding
+                                           + ", i.e. build is platform dependent!" );
+            }
+            Configuration[] modules = config.getChildren();
+            for ( int i = 0; i < modules.length; i++ )
+            {
+                Configuration module = modules[i];
+                if ( "Checker".equals( module.getName() )
+                    || "com.puppycrawl.tools.checkstyle.Checker".equals( module.getName() ) )
+                {
+                    if ( module instanceof DefaultConfiguration )
+                    {
+                        ( (DefaultConfiguration) module ).addAttribute( "charset", effectiveEncoding );
+                    }
+                    else
+                    {
+                        request.getLog().warn( "Failed to configure file encoding on module " + module );
+                    }
+                }
+                if ( "TreeWalker".equals( module.getName() )
+                    || "com.puppycrawl.tools.checkstyle.TreeWalker".equals( module.getName() ) )
+                {
+                    if ( module instanceof DefaultConfiguration )
+                    {
+                        ( (DefaultConfiguration) module ).addAttribute( "cacheFile", request.getCacheFile() );
+                    }
+                    else
+                    {
+                        request.getLog().warn( "Failed to configure cache file on module " + module );
+                    }
+                }
+            }
+            return config;
+        }
+        catch ( CheckstyleException e )
+        {
+            throw new CheckstyleExecutorException( "Failed during checkstyle configuration", e );
+        }
+    }
+
+    private Properties getOverridingProperties( CheckstyleExecutorRequest request )
+        throws CheckstyleExecutorException
+    {
+        Properties p = new Properties();
+
+        try
+        {
+            if ( request.getPropertiesLocation() != null )
+            {
+                getLogger().info( "request.getPropertiesLocation() " + request.getPropertiesLocation() );
+                File propertiesFile = locator.getResourceAsFile( request.getPropertiesLocation(),
+                                                                 "checkstyle-checker.properties" );
+
+                if ( propertiesFile != null )
+                {
+                    p.load( new FileInputStream( propertiesFile ) );
+                }
+            }
+
+            if ( StringUtils.isNotEmpty( request.getPropertyExpansion() ) )
+            {
+                String propertyExpansion = request.getPropertyExpansion();
+                // Convert \ to \\, so that p.load will convert it back properly
+                propertyExpansion = StringUtils.replace( propertyExpansion, "\\", "\\\\" );
+                p.load( new ByteArrayInputStream( propertyExpansion.getBytes() ) );
+            }
+
+            // Workaround for MCHECKSTYLE-48
+            // Make sure that "config/maven-header.txt" is the default value
+            // for headerLocation, if configLocation="config/maven_checks.xml"
+            String headerLocation = request.getHeaderLocation();
+            if ( "config/maven_checks.xml".equals( request.getConfigLocation() ) )
+            {
+
+                if ( "LICENSE.txt".equals( request.getHeaderLocation() ) )
+                {
+                    headerLocation = "config/maven-header.txt";
+                }
+            }
+            getLogger().info( "headerLocation " + headerLocation );
+            if ( StringUtils.isNotEmpty( headerLocation ) )
+            {
+                try
+                {
+                    File headerFile = locator.getResourceAsFile( headerLocation, "checkstyle-header.txt" );
+
+                    if ( headerFile != null )
+                    {
+                        p.setProperty( "checkstyle.header.file", headerFile.getAbsolutePath() );
+                    }
+                }
+                catch ( FileResourceCreationException e )
+                {
+                    throw new CheckstyleExecutorException( "Unable to process header location: " + headerLocation, e );
+                }
+                catch ( ResourceNotFoundException e )
+                {
+                    throw new CheckstyleExecutorException( "Unable to process header location: " + headerLocation, e );
+                }                
+            }
+
+            if ( request.getCacheFile() != null )
+            {
+                p.setProperty( "checkstyle.cache.file", request.getCacheFile() );
+            }
+        }
+        catch ( IOException e )
+        {
+            throw new CheckstyleExecutorException( "Failed to get overriding properties", e );
+        }
+        catch ( FileResourceCreationException e )
+        {
+            throw new CheckstyleExecutorException( "Failed to get overriding properties", e );
+        }
+        catch ( ResourceNotFoundException e )
+        {
+            throw new CheckstyleExecutorException( "Failed to get overriding properties", e );
+        } 
+        if ( request.getSuppressionsFileExpression() != null )
+        {
+            String suppresionFile = request.getSuppressionsFileExpression();
+
+            if ( suppresionFile != null )
+            {
+                p.setProperty( request.getSuppressionsFileExpression(), suppresionFile );
+            }
+        }
+
+        return p;
     }
 
     private File[] getFilesToProcess( CheckstyleExecutorRequest request )
@@ -258,5 +429,33 @@ public class DefaultCheckstyleExecutor
             throw new CheckstyleExecutorException( "Failed to process supressions location: "
                 + request.getSuppressionsLocation(), e );
         }
+    }
+
+    private String getConfigFile( CheckstyleExecutorRequest request )
+        throws CheckstyleExecutorException
+    {
+        try
+        {
+            getLogger().info( "request.getConfigLocation() " + request.getConfigLocation() );
+            File configFile = locator.getResourceAsFile( request.getConfigLocation(), "checkstyle-checker.xml" );
+
+            if ( configFile == null )
+            {
+                throw new CheckstyleExecutorException( "Unable to process config location: "
+                    + request.getConfigLocation() );
+            }
+            return configFile.getAbsolutePath();
+        }
+        catch ( org.codehaus.plexus.resource.loader.ResourceNotFoundException e )
+        {
+            throw new CheckstyleExecutorException( "Unable to find configuration file at location "
+                + request.getConfigLocation(), e );
+        }
+        catch ( FileResourceCreationException e )
+        {
+            throw new CheckstyleExecutorException( "Unable to process configuration file location "
+                + request.getConfigLocation(), e );
+        }
+
     }
 }
