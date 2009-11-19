@@ -19,10 +19,8 @@ package org.apache.maven.plugin.checkstyle;
  * under the License.
  */
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -32,10 +30,8 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Properties;
 import java.util.ResourceBundle;
 
 import org.apache.maven.doxia.siterenderer.Renderer;
@@ -47,23 +43,14 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.MavenReportException;
 import org.codehaus.plexus.resource.ResourceManager;
-import org.codehaus.plexus.resource.loader.FileResourceCreationException;
 import org.codehaus.plexus.resource.loader.FileResourceLoader;
-import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.PathTool;
 import org.codehaus.plexus.util.StringUtils;
 
-import com.puppycrawl.tools.checkstyle.ConfigurationLoader;
-import com.puppycrawl.tools.checkstyle.DefaultConfiguration;
 import com.puppycrawl.tools.checkstyle.DefaultLogger;
-import com.puppycrawl.tools.checkstyle.PackageNamesLoader;
-import com.puppycrawl.tools.checkstyle.PropertiesExpander;
 import com.puppycrawl.tools.checkstyle.XMLLogger;
 import com.puppycrawl.tools.checkstyle.api.AuditListener;
 import com.puppycrawl.tools.checkstyle.api.CheckstyleException;
-import com.puppycrawl.tools.checkstyle.api.Configuration;
-import com.puppycrawl.tools.checkstyle.api.FilterSet;
-import com.puppycrawl.tools.checkstyle.filters.SuppressionsLoader;
 
 /**
  * Perform a Checkstyle analysis, and generate a report on violations.
@@ -488,8 +475,6 @@ public class CheckstyleReport
      */
     private Renderer siteRenderer;
         
-    private static final File[] EMPTY_FILE_ARRAY = new File[0];
-
     private ByteArrayOutputStream stringOutputStream;
 
     /**
@@ -805,36 +790,6 @@ public class CheckstyleReport
         return fileOutputStream;
     }
 
-    private File[] getFilesToProcess( String includes, String excludes )
-        throws IOException
-    {
-        StringBuffer excludesStr = new StringBuffer();
-
-        if ( StringUtils.isNotEmpty( excludes ) )
-        {
-            excludesStr.append( excludes );
-        }
-
-        String[] defaultExcludes = FileUtils.getDefaultExcludes();
-        for ( int i = 0; i < defaultExcludes.length; i++ )
-        {
-            if ( excludesStr.length() > 0 )
-            {
-                excludesStr.append( "," );
-            }
-
-            excludesStr.append( defaultExcludes[i] );
-        }
-
-        List files = FileUtils.getFiles( sourceDirectory, includes, excludesStr.toString() );
-        if ( includeTestSourceDirectory && ( testSourceDirectory != null ) && ( testSourceDirectory.exists() )
-            && ( testSourceDirectory.isDirectory() ) )
-        {
-            files.addAll( FileUtils.getFiles( testSourceDirectory, includes, excludesStr.toString() ) );
-        }
-
-        return (File[]) files.toArray( EMPTY_FILE_ARRAY );
-    }
     private DefaultLogger getConsoleListener()
         throws MavenReportException
     {
