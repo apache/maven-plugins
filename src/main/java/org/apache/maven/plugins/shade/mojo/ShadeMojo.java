@@ -403,7 +403,7 @@ public class ShadeMojo
             else if ( !renamed )
             {
                 getLog().info( "Replacing original artifact with shaded artifact." );
-                File originalArtifact = project.getArtifact().getFile();;
+                File originalArtifact = project.getArtifact().getFile();
                 replaceFile( originalArtifact, outputJar );
 
                 if ( createSourcesJar )
@@ -721,7 +721,7 @@ public class ShadeMojo
 
             dependencies.add( d );
 
-            String id = d.getGroupId() + ":" + d.getArtifactId();
+            String id = getId( d );
 
             if ( artifactsToRemove.contains( id ) )
             {
@@ -788,16 +788,25 @@ public class ShadeMojo
 
     private String getId( Artifact artifact )
     {
-        if ( artifact.getClassifier() == null || "jar".equals( artifact.getClassifier() ) )
+        return getId( artifact.getGroupId(), artifact.getArtifactId(), artifact.getClassifier() );
+    }
+
+    private String getId( Dependency dependency )
+    {
+        return getId( dependency.getGroupId(), dependency.getArtifactId(), dependency.getClassifier() );
+    }
+
+    private String getId( String groupId, String artifactId, String classifier )
+    {
+        if ( classifier == null || "jar".equals( classifier ) )
         {
-            return artifact.getGroupId() + ":" + artifact.getArtifactId();
+            return groupId + ":" + artifactId;
         }
         else
         {
-            return artifact.getGroupId() + ":" + artifact.getArtifactId() + ":" + artifact.getClassifier();
+            return groupId + ":" + artifactId + ":" + classifier;
         }
     }
-
 
     public boolean updateExcludesInDeps( MavenProject project,
                                          List dependencies,
