@@ -213,8 +213,8 @@ public class ShadeMojo
     /**
      * The name of the shaded artifactId.
      * 
-     * If you like to change the name of the native artifact, you may use the <build><finalName> setting.
-     * If this is set to something different than <build><finalName>, no file replacement
+     * If you like to change the name of the native artifact, you may use the &lt;build>&lt;finalName> setting.
+     * If this is set to something different than &lt;build>&lt;finalName>, no file replacement
      * will be performed, even if shadedArtifactAttached is being used.
      *
      * @parameter expression="${finalName}"
