@@ -337,17 +337,32 @@ public class DefaultShader
         public String map( String name )
         {
             String value = name;
+
+            String prefix = "";
+            String suffix = "";
+
+            Matcher m = classPattern.matcher( name );
+            if ( m.matches() )
+            {
+                prefix = m.group( 1 ) + "L";
+                suffix = ";";
+                name = m.group( 2 );
+            }
+
             for ( Iterator i = relocators.iterator(); i.hasNext(); )
             {
                 Relocator r = (Relocator) i.next();
 
                 if ( r.canRelocatePath( name ) )
                 {
-                    value = r.relocatePath( name );
+                    value = prefix + r.relocatePath( name ) + suffix;
                     break;
                 }
             }
+
             return value;
         }
+
     }
+
 }
