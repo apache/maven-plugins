@@ -23,7 +23,7 @@ import org.apache.maven.artifact.Artifact;
 
 /**
  * A full file name mapping, useful if artifacts might have the same
- * name accross groups.
+ * name across groups.
  *
  * @author <a href="snicoll@apache.org">Stephane Nicoll</a>
  * @version $Id$
