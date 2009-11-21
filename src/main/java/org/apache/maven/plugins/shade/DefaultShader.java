@@ -303,20 +303,21 @@ public class DefaultShader
             {
                 String name = (String) object;
                 String value = name;
+
+                String prefix = "";
+                String suffix = "";
+
+                Matcher m = classPattern.matcher( name );
+                if ( m.matches() )
+                {
+                    prefix = m.group( 1 ) + "L";
+                    suffix = ";";
+                    name = m.group( 2 );
+                }
+
                 for ( Iterator i = relocators.iterator(); i.hasNext(); )
                 {
                     Relocator r = (Relocator) i.next();
-
-                    String prefix = "";
-                    String suffix = "";
-
-                    Matcher m = classPattern.matcher( name );
-                    if ( m.matches() )
-                    {
-                        prefix = m.group( 1 ) + "L";
-                        suffix = ";";
-                        name = m.group( 2 );
-                    }
 
                     if ( r.canRelocateClass( name ) )
                     {
@@ -329,8 +330,10 @@ public class DefaultShader
                         break;
                     }
                 }
+
                 return value;
             }
+
             return super.mapValue( object );
         }
 
