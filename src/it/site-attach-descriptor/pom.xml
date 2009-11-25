@@ -19,7 +19,7 @@ under the License.
 
 <project xmlns="http://maven.apache.org/POM/4.0.0"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>test</groupId>
   <artifactId>site-attach-descriptor</artifactId>
@@ -35,9 +35,9 @@ under the License.
       <uniqueVersion>false</uniqueVersion>
       <id>site-deploy</id>
       <name>Example company web server</name>
-      <url>file://@project.build.directory@/it/site-attach-descriptor/target/snapshot-repo/</url>    
+      <url>file://@project.build.directory@/it/site-attach-descriptor/target/snapshot-repo/</url>
     </snapshotRepository>
-  </distributionManagement>  
+  </distributionManagement>
   <build>
     <pluginManagement>
       <plugins>
@@ -45,7 +45,7 @@ under the License.
           <artifactId>maven-site-plugin</artifactId>
           <version>@project.version@</version>
         </plugin>
-      </plugins>    
+      </plugins>
     </pluginManagement>
     <plugins>
       <plugin>
