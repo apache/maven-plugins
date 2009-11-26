@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -473,7 +474,13 @@ public class AnnouncementMojo
         return release;
     }
 
-
+    /**
+     * Get a release with the specified version from the list of releases.
+     *
+     * @param releases A list of releases
+     * @param version The version we want
+     * @return A Release, or null if no release with the specified version can be found
+     */
     protected Release getRelease( List releases, String version )
     {
         Release release = null;
@@ -637,34 +644,60 @@ public class AnnouncementMojo
         }
     }
 
-    protected List mergeReleases( List changesReleases, List jiraReleases )
+    /**
+     * Merge releases from one issue tracker with releases from another issue
+     * tracker. If a release is found in both issue trackers, i.e. they have
+     * the same version, their issues are merged into one release.
+     *
+     * @param firstReleases Releases from the first issue tracker
+     * @param secondReleases Releases from the second issue tracker
+     * @return A list containing the merged releases
+     */
+    protected List mergeReleases( final List firstReleases, final List secondReleases )
     {
-        if ( changesReleases == null && jiraReleases == null )
+        if ( firstReleases == null && secondReleases == null )
         {
             return Collections.EMPTY_LIST;
         }
-        if ( changesReleases == null )
+        if ( firstReleases == null )
         {
-            return jiraReleases;
+            return secondReleases;
         }
-        if ( jiraReleases == null )
+        if ( secondReleases == null )
         {
-            return changesReleases;
+            return firstReleases;
         }
 
-        for ( Iterator iterator = changesReleases.iterator(); iterator.hasNext(); )
+        List mergedReleases = new ArrayList();
+
+        // Loop through the releases from the first issue tracker, merging in
+        // actions from releases with the same version from the second issue
+        // tracker
+        for ( Iterator iterator = firstReleases.iterator(); iterator.hasNext(); )
         {
-            Release release = (Release) iterator.next();
-            Release jiraRelease = getRelease( jiraReleases, release.getVersion() );
-            if ( jiraRelease != null )
+            Release firstRelease = (Release) iterator.next();
+            Release secondRelease = getRelease( secondReleases, firstRelease.getVersion() );
+            if ( secondRelease != null )
             {
-                if ( jiraRelease.getActions() != null )
+                if ( secondRelease.getActions() != null )
                 {
-                    release.getActions().addAll( jiraRelease.getActions() );
+                    firstRelease.getActions().addAll( secondRelease.getActions() );
                 }
             }
+            mergedReleases.add(firstRelease);
         }
-        return changesReleases;
+
+        // Handle releases that are only in the second issue tracker
+        for ( Iterator iterator = secondReleases.iterator(); iterator.hasNext(); )
+        {
+            Release secondRelease = (Release) iterator.next();
+            Release mergedRelease = getRelease( mergedReleases, secondRelease.getVersion() );
+            if ( mergedRelease == null )
+            {
+                mergedReleases.add(secondRelease);
+            }
+        }
+        return mergedReleases;
     }
 
     /*
