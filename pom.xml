@@ -451,6 +451,9 @@ under the License.
               <!-- For Announcement -->
               <generateJiraAnnouncement>true</generateJiraAnnouncement>
               <!-- For Changes-report -->
+              <issueLinkTemplatePerSystem>
+                <default>%URL%/%ISSUE%</default>
+              </issueLinkTemplatePerSystem>
               <xmlPath>${basedir}/src/site/changes/sample-changes.xml</xmlPath>
               <!-- For JIRA-report -->
               <columnNames>Type,Key,Summary,Assignee,Status,Resolution,Fix Version</columnNames>
