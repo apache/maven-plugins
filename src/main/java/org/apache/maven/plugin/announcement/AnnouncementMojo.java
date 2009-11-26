@@ -28,7 +28,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.changes.ChangesXML;
 import org.apache.maven.plugin.jira.JiraXML;
@@ -55,7 +54,7 @@ import org.codehaus.plexus.velocity.VelocityComponent;
  * @version $Id$
  */
 public class AnnouncementMojo
-    extends AbstractMojo
+    extends AbstractAnnouncementMojo
 {
     private static final String SNAPSHOT_SUFFIX = "-SNAPSHOT";
 
@@ -172,15 +171,6 @@ public class AnnouncementMojo
      * @required
      */
     private String templateDirectory;
-
-    /**
-     * The current project base directory.
-     *
-     * @parameter expression="${basedir}"
-     * @required
-     * @since 2.1
-     */
-    private String basedir;
 
     private ChangesXML xml;
 
@@ -313,34 +303,42 @@ public class AnnouncementMojo
     public void execute()
         throws MojoExecutionException
     {
-        if ( this.jiraMerge )
+        // Run only at the execution root
+        if ( runOnlyAtExecutionRoot && !isThisTheExecutionRoot() )
         {
-            ChangesXML changesXML =  new ChangesXML( getXmlPath(), getLog() );
-            List changesReleases = changesXML.getReleaseList();
-            List jiraReleases = getJiraReleases();
-            List mergedReleases = mergeReleases( changesReleases, jiraReleases );
-            doGenerate( mergedReleases );
+            getLog().info( "Skipping the announcement generation in this project because it's not the Execution Root" );
         }
         else
         {
-            if ( !generateJiraAnnouncement )
+            if ( this.jiraMerge )
             {
-                if ( getXmlPath().exists() )
-                {
-                    setXml( new ChangesXML( getXmlPath(), getLog() ) );
-
-                    getLog().info( "Creating announcement file from " + getXmlPath() + "..." );
-
-                    doGenerate( getXml().getReleaseList() );
-                }
-                else
-                {
-                    getLog().warn( "changes.xml file " + getXmlPath().getAbsolutePath() + " does not exist." );
-                }
+                ChangesXML changesXML =  new ChangesXML( getXmlPath(), getLog() );
+                List changesReleases = changesXML.getReleaseList();
+                List jiraReleases = getJiraReleases();
+                List mergedReleases = mergeReleases( changesReleases, jiraReleases );
+                doGenerate( mergedReleases );
             }
             else
             {
-                doJiraGenerate();
+                if ( !generateJiraAnnouncement )
+                {
+                    if ( getXmlPath().exists() )
+                    {
+                        setXml( new ChangesXML( getXmlPath(), getLog() ) );
+
+                        getLog().info( "Creating announcement file from " + getXmlPath() + "..." );
+
+                        doGenerate( getXml().getReleaseList() );
+                    }
+                    else
+                    {
+                        getLog().warn( "changes.xml file " + getXmlPath().getAbsolutePath() + " does not exist." );
+                    }
+                }
+                else
+                {
+                    doJiraGenerate();
+                }
             }
         }
     }
