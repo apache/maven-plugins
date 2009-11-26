@@ -343,12 +343,7 @@ public class ChangesReportGenerator
         parseLink = issueLink.replaceFirst( ISSUE_TOKEN, issue );
         if ( parseLink.indexOf( URL_TOKEN ) >= 0 )
         {
-            String url = getUrl();
-            // remove the trailing slash if it exists.
-            if ( url.endsWith( "/" ) )
-            {
-                url = url.substring( 0, url.length() - 1 );
-            }
+            String url = this.url.substring( 0, this.url.lastIndexOf( "/" ) );
             parseLink = parseLink.replaceFirst( URL_TOKEN, url );
         }
 
