@@ -27,7 +27,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.maven.model.Developer;
-import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.announcement.mailsender.ProjectJavamailMailSender;
 import org.apache.maven.project.MavenProject;
@@ -46,7 +45,7 @@ import org.codehaus.plexus.util.IOUtil;
  * @execute goal="announcement-generate"
  */
 public class AnnouncementMailMojo
-    extends AbstractMojo
+    extends AbstractAnnouncementMojo
 {
     //=========================================
     // announcement-mail goal fields
@@ -154,9 +153,9 @@ public class AnnouncementMailMojo
      * @required
      */
     private String template;
-    
+
     /**
-     * Mail content type to use. 
+     * Mail content type to use.
      * @parameter default-value="text/plain"
      * @required
      * @since 2.1
@@ -168,49 +167,57 @@ public class AnnouncementMailMojo
     public void execute()
         throws MojoExecutionException
     {
-        File templateFile = new File( templateOutputDirectory, template );
-       
-        ConsoleLogger logger = new ConsoleLogger( Logger.LEVEL_INFO, "base" );
-        
-        if ( getLog().isDebugEnabled() )
+        // Run only at the execution root
+        if ( runOnlyAtExecutionRoot && !isThisTheExecutionRoot() )
         {
-            logger.setThreshold( Logger.LEVEL_DEBUG );
-        }
-
-        mailer.enableLogging( logger );
-
-        mailer.setSmtpHost( getSmtpHost() );
-
-        mailer.setSmtpPort( getSmtpPort() );
-
-        mailer.setSslMode( sslMode );
-
-        if ( username != null )
-        {
-            mailer.setUsername( username );
-        }
-
-        if ( password != null )
-        {
-            mailer.setPassword( password );
-        }
-        
-        mailer.initialize();
-        
-        if ( getLog().isDebugEnabled() )
-        {
-            getLog().debug( "fromDeveloperId: " + getFromDeveloperId() );
-        }
-
-        if ( templateFile.isFile() )
-        {
-            getLog().info( "Connecting to Host: " + getSmtpHost() + ":" + getSmtpPort() );
-
-            sendMessage();
+            getLog().info( "Skipping the announcement mail in this project because it's not the Execution Root" );
         }
         else
         {
-            throw new MojoExecutionException( "Announcement template " + templateFile + " not found..." );
+            File templateFile = new File( templateOutputDirectory, template );
+
+            ConsoleLogger logger = new ConsoleLogger( Logger.LEVEL_INFO, "base" );
+
+            if ( getLog().isDebugEnabled() )
+            {
+                logger.setThreshold( Logger.LEVEL_DEBUG );
+            }
+
+            mailer.enableLogging( logger );
+
+            mailer.setSmtpHost( getSmtpHost() );
+
+            mailer.setSmtpPort( getSmtpPort() );
+
+            mailer.setSslMode( sslMode );
+
+            if ( username != null )
+            {
+                mailer.setUsername( username );
+            }
+
+            if ( password != null )
+            {
+                mailer.setPassword( password );
+            }
+
+            mailer.initialize();
+
+            if ( getLog().isDebugEnabled() )
+            {
+                getLog().debug( "fromDeveloperId: " + getFromDeveloperId() );
+            }
+
+            if ( templateFile.isFile() )
+            {
+                getLog().info( "Connecting to Host: " + getSmtpHost() + ":" + getSmtpPort() );
+
+                sendMessage();
+            }
+            else
+            {
+                throw new MojoExecutionException( "Announcement template " + templateFile + " not found..." );
+            }
         }
     }
 
@@ -238,7 +245,7 @@ public class AnnouncementMailMojo
             mailMsg.setSubject( getSubject() );
             mailMsg.setContent( IOUtil.toString( readAnnouncement( templateFile ) ) );
             mailMsg.setContentType( this.mailContentType );
-            mailMsg.setFrom( fromAddress, fromName );            
+            mailMsg.setFrom( fromAddress, fromName );
             final Iterator it = getToAddresses().iterator();
             while ( it.hasNext() )
             {
@@ -248,7 +255,7 @@ public class AnnouncementMailMojo
 
             }
             mailer.send( mailMsg );
-            getLog().info( "Sent..." );            
+            getLog().info( "Sent..." );
         }
         catch ( IOException ioe )
         {
