@@ -226,7 +226,7 @@ public class ChangesReportGenerator
 
                 sink.tableCell();
 
-                sink.rawText( action.getAction() );
+                sink.text( action.getAction() );
 
                 // no null check needed classes from modello return a new ArrayList
                 if ( StringUtils.isNotEmpty( action.getIssue() ) || ( !action.getFixedIssues().isEmpty() ) )
