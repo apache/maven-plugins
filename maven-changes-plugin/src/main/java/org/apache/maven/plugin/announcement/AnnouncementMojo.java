@@ -315,9 +315,16 @@ public class AnnouncementMojo
             {
                 ChangesXML changesXML =  new ChangesXML( getXmlPath(), getLog() );
                 List changesReleases = changesXML.getReleaseList();
-                List jiraReleases = getJiraReleases();
-                List mergedReleases = mergeReleases( changesReleases, jiraReleases );
-                doGenerate( mergedReleases );
+                if ( validateIfIssueManagementComplete() )
+                {
+                    List jiraReleases = getJiraReleases();
+                    List mergedReleases = mergeReleases( changesReleases, jiraReleases );
+                    doGenerate( mergedReleases );
+                }
+                else
+                {
+                    throw new MojoExecutionException( "Something is wrong with the Issue Management section. See previous error messages." );
+                }
             }
             else
             {
@@ -588,11 +595,18 @@ public class AnnouncementMojo
     public void doJiraGenerate()
         throws MojoExecutionException
     {
-        List releases = getJiraReleases();
+        if ( validateIfIssueManagementComplete() )
+        {
+            List releases = getJiraReleases();
 
-        getLog().info( "Creating announcement file from JIRA releases..." );
+            getLog().info( "Creating announcement file from JIRA releases..." );
 
-        doGenerate( releases );
+            doGenerate( releases );
+        }
+        else
+        {
+            throw new MojoExecutionException( "Something is wrong with the Issue Management section. See previous error messages." );
+        }
     }
 
     protected List getJiraReleases()
@@ -698,6 +712,34 @@ public class AnnouncementMojo
             }
         }
         return mergedReleases;
+    }
+
+    /**
+     * This method was copied from JiraMojo and modified.
+     */
+    private boolean validateIfIssueManagementComplete()
+    {
+        if ( project.getIssueManagement() == null )
+        {
+            getLog().error( "No Issue Management set. No JIRA announcement will be made." );
+
+            return false;
+        }
+        else if ( ( project.getIssueManagement().getUrl() == null )
+            || ( project.getIssueManagement().getUrl().trim().equals( "" ) ) )
+        {
+            getLog().error( "No URL set in Issue Management. No JIRA announcement will be made." );
+
+            return false;
+        }
+        else if ( ( project.getIssueManagement().getSystem() != null )
+            && !( project.getIssueManagement().getSystem().equalsIgnoreCase( "jira" ) ) )
+        {
+            getLog().error( "No JIRA Issue Management system configured. No JIRA announcement will be made." );
+
+            return false;
+        }
+        return true;
     }
 
     /*
