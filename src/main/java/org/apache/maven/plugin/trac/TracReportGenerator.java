@@ -305,7 +305,7 @@ public class TracReportGenerator
 
         if ( text != null )
         {
-            sink.rawText( text );
+            sink.text( text );
         }
         else
         {
