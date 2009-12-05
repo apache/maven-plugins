@@ -39,12 +39,12 @@ public class PrefixedClasspathLocatorStrategy
 
     private String formatPrefix( String prefix )
     {
-        if ( !prefix.startsWith( "/" ) )
+        if ( prefix.startsWith( "/" ) )
         {
-            prefix = "/" + prefix;
+            prefix = prefix.substring( 1 );
         }
 
-        if ( !prefix.endsWith( "/" ) )
+        if ( prefix.length() > 0 && !prefix.endsWith( "/" ) )
         {
             prefix += "/";
         }
