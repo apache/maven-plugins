@@ -376,7 +376,8 @@ public class FileFormatterTest
         mockManager.verifyAll();
     }
 
-    private MavenProject createBasicMavenProject() {
+    private MavenProject createBasicMavenProject()
+    {
         Model model = new Model();
         model.setArtifactId( "artifact" );
         model.setGroupId( "group" );
@@ -384,23 +385,26 @@ public class FileFormatterTest
 
         return new MavenProject( model );
     }
-    
+
     private void enableBasicFilteringConfiguration( MavenProject project, File basedir )
         throws Exception
     {
-      configSource.getTemporaryRootDirectory();
-      configSourceControl.setReturnValue( basedir );
+        configSource.getTemporaryRootDirectory();
+        configSourceControl.setReturnValue( basedir );
 
-      configSource.getProject();
-      configSourceControl.setReturnValue( project, MockControl.ONE_OR_MORE );
+        configSource.getProject();
+        configSourceControl.setReturnValue( project, MockControl.ONE_OR_MORE );
 
-      configSource.getMavenFileFilter();
-      configSourceControl.setReturnValue( lookup( "org.apache.maven.shared.filtering.MavenFileFilter" ) );
+        configSource.getMavenFileFilter();
+        configSourceControl.setReturnValue( lookup( "org.apache.maven.shared.filtering.MavenFileFilter" ) );
 
-      configSource.getMavenSession();
-      configSourceControl.setReturnValue( null );
+        configSource.getMavenSession();
+        configSourceControl.setReturnValue( null );
+
+        configSource.getFilters();
+        configSourceControl.setReturnValue( null );
     }
-    
+
     private void enableBasicFilteringConfiguration( File basedir, List filterFilenames )
         throws Exception
     {
