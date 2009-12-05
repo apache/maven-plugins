@@ -85,7 +85,7 @@ public class FileFormatter
             boolean isPropertiesFile = source.getName().toLowerCase( Locale.ENGLISH ).endsWith( ".properties" );
 
             configSource.getMavenFileFilter().copyFile( source, target, true, configSource.getProject(),
-                    Collections.EMPTY_LIST, isPropertiesFile, null, configSource.getMavenSession() );
+                    configSource.getFilters(), isPropertiesFile, null, configSource.getMavenSession() );
 
             return target;
         }

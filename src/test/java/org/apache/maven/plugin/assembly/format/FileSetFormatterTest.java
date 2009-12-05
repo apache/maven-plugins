@@ -319,6 +319,9 @@ public class FileSetFormatterTest
 
         configSource.getMavenSession();
         configSourceControl.setReturnValue( null, MockControl.ONE_OR_MORE );
+
+        configSource.getFilters();
+        configSourceControl.setReturnValue( null, MockControl.ONE_OR_MORE );
     }
 
 }
