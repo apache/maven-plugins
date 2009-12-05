@@ -31,6 +31,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.Collections;
+import java.util.Locale;
 
 /**
  * @version $Id$
@@ -81,7 +82,7 @@ public class FileFormatter
             File target = FileUtils.createTempFile( source.getName() + ".", ".filtered", tempRoot );
 
             //@todo this test can be improved
-            boolean isPropertiesFile = source.getName().toLowerCase().contains( ".properties" );
+            boolean isPropertiesFile = source.getName().toLowerCase( Locale.ENGLISH ).endsWith( ".properties" );
 
             configSource.getMavenFileFilter().copyFile( source, target, true, configSource.getProject(),
                     Collections.EMPTY_LIST, isPropertiesFile, null, configSource.getMavenSession() );
