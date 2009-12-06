@@ -25,7 +25,7 @@ under the License.
   <parent>
     <artifactId>maven-plugins</artifactId>
     <groupId>org.apache.maven.plugins</groupId>
-    <version>14</version>
+    <version>16</version>
   </parent>
 
   <artifactId>maven-assembly-plugin</artifactId>
