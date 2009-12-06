@@ -55,6 +55,7 @@ import org.codehaus.plexus.component.configurator.ComponentConfigurator;
 import org.codehaus.plexus.component.configurator.ConfigurationListener;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
+import org.codehaus.plexus.configuration.PlexusConfiguration;
 import org.codehaus.plexus.configuration.xml.XmlPlexusConfiguration;
 import org.codehaus.plexus.context.Context;
 import org.codehaus.plexus.context.ContextException;
@@ -67,6 +68,8 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -279,9 +282,9 @@ public class DefaultAssemblyArchiver
      * @param format
      *            Archive format
      * @param includeBaseDir
-     * @param configSource
      * @param finalName
-     * @param string
+     * @param configSource
+     * @param containerHandlers
      * @return archiver Archiver generated
      * @throws org.codehaus.plexus.archiver.ArchiverException
      * @throws org.codehaus.plexus.archiver.manager.NoSuchArchiverException
@@ -336,49 +339,29 @@ public class DefaultAssemblyArchiver
                                                       AssemblerConfigurationSource configSource )
         throws InvalidAssemblerConfigurationException
     {
-        ComponentConfigurator configurator;
-        try
-        {
-            configurator = (ComponentConfigurator) container.lookup( ComponentConfigurator.ROLE, "basic" );
-        }
-        catch ( ComponentLookupException e )
-        {
-            throw new InvalidAssemblerConfigurationException( "Failed to lookup configurator component for setup of handler: " + handler.getClass().getName(), e );
-        }
-        
-        XmlPlexusConfiguration configuration = new XmlPlexusConfiguration( config );
-        
-        ConfigurationListener listener = new DebugConfigurationListener( getLogger() );
-        ExpressionEvaluator expressionEvaluator = new AssemblyExpressionEvaluator( configSource );
-
         getLogger().debug( "Configuring handler: '" + handler.getClass().getName() + "' -->" );
-        
+
         try
         {
-            configurator.configureComponent( handler, configuration, expressionEvaluator,
-                                             container.getContainerRealm(), listener );
+            configureComponent( handler, config, configSource );
         }
         catch ( ComponentConfigurationException e )
         {
-            throw new InvalidAssemblerConfigurationException( "Failed to configure handler: " + handler.getClass().getName(), e );
+            throw new InvalidAssemblerConfigurationException( "Failed to configure handler: "
+                + handler.getClass().getName(), e );
         }
-        
+        catch ( ComponentLookupException e )
+        {
+            throw new InvalidAssemblerConfigurationException( "Failed to lookup configurator for setup of handler: "
+                + handler.getClass().getName(), e );
+        }
+
         getLogger().debug( "-- end configuration --" );
     }
 
     private void configureArchiver( Archiver archiver, AssemblerConfigurationSource configSource )
         throws ArchiverException
     {
-        ComponentConfigurator configurator;
-        try
-        {
-            configurator = (ComponentConfigurator) container.lookup( ComponentConfigurator.ROLE, "basic" );
-        }
-        catch ( ComponentLookupException e )
-        {
-            throw new ArchiverException( "Failed to lookup configurator component for setup of archiver: " + archiver.getClass().getName(), e );
-        }
-        
         Xpp3Dom config;
         try
         {
@@ -392,25 +375,95 @@ public class DefaultAssemblyArchiver
         {
             throw new ArchiverException( "Failed to parse archiver configuration for: " + archiver.getClass().getName(), e );
         }
-        
-        XmlPlexusConfiguration configuration = new XmlPlexusConfiguration( config );
-        
-        ConfigurationListener listener = new DebugConfigurationListener( getLogger() );
-        ExpressionEvaluator expressionEvaluator = new AssemblyExpressionEvaluator( configSource );
 
         getLogger().debug( "Configuring archiver: '" + archiver.getClass().getName() + "' -->" );
         
         try
         {
-            configurator.configureComponent( archiver, configuration, expressionEvaluator,
-                                             container.getContainerRealm(), listener );
+            configureComponent( archiver, config, configSource );
         }
         catch ( ComponentConfigurationException e )
         {
             throw new ArchiverException( "Failed to configure archiver: " + archiver.getClass().getName(), e );
         }
-        
+        catch ( ComponentLookupException e )
+        {
+            throw new ArchiverException( "Failed to lookup configurator for setup of archiver: "
+                + archiver.getClass().getName(), e );
+        }
+
         getLogger().debug( "-- end configuration --" );
+    }
+
+    private void configureComponent( Object component, Xpp3Dom config, AssemblerConfigurationSource configSource )
+        throws ComponentLookupException, ComponentConfigurationException
+    {
+        ComponentConfigurator configurator =
+            (ComponentConfigurator) container.lookup( ComponentConfigurator.ROLE, "basic" );
+
+        ConfigurationListener listener = new DebugConfigurationListener( getLogger() );
+
+        ExpressionEvaluator expressionEvaluator = new AssemblyExpressionEvaluator( configSource );
+
+        XmlPlexusConfiguration configuration = new XmlPlexusConfiguration( config );
+
+        Object[] containerRealm = getContainerRealm();
+
+        /*
+         * NOTE: The signature of configureComponent() has changed in Maven 3.x, the reflection prevents a linkage error
+         * and makes the code work with both Maven 2 and 3.
+         */
+        try
+        {
+            Method configureComponent =
+                ComponentConfigurator.class.getMethod( "configureComponent", new Class[] { Object.class,
+                    PlexusConfiguration.class, ExpressionEvaluator.class, (Class) containerRealm[1],
+                    ConfigurationListener.class } );
+
+            configureComponent.invoke( configurator, new Object[] { component, configuration, expressionEvaluator,
+                containerRealm[0], listener } );
+        }
+        catch ( NoSuchMethodException e )
+        {
+            throw new RuntimeException( e );
+        }
+        catch ( IllegalAccessException e )
+        {
+            throw new RuntimeException( e );
+        }
+        catch ( InvocationTargetException e )
+        {
+            if ( e.getCause() instanceof ComponentConfigurationException )
+            {
+                throw (ComponentConfigurationException) e.getCause();
+            }
+            throw new RuntimeException( e.getCause() );
+        }
+    }
+
+    private Object[] getContainerRealm()
+    {
+        /*
+         * NOTE: The return type of getContainerRealm() has changed in Maven 3.x, the reflection prevents a linkage
+         * error and makes the code work with both Maven 2 and 3.
+         */
+        try
+        {
+            Method getContainerRealm = container.getClass().getMethod( "getContainerRealm", null );
+            return new Object[] { getContainerRealm.invoke( container, null ), getContainerRealm.getReturnType() };
+        }
+        catch ( NoSuchMethodException e )
+        {
+            throw new RuntimeException( e );
+        }
+        catch ( IllegalAccessException e )
+        {
+            throw new RuntimeException( e );
+        }
+        catch ( InvocationTargetException e )
+        {
+            throw new RuntimeException( e.getCause() );
+        }
     }
 
     protected Archiver createWarArchiver()
