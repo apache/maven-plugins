@@ -173,20 +173,26 @@ Configuring the Site Descriptor
 
 * Including Generated Content
 
-  There are several preset menus that can be used in the site descriptor to include generated content from your project.
-  These are:
+  Files in the format-based directory structure can be linked to by their target
+  HTML filename, e.g. <<<${basedir}/src/site/apt/foo.apt>>> and
+  <<<${basedir}/src/site/fml/faq.fml>>> can be linked to via:
 
-  * <<<reports>>> - a menu with links to all the generated reports for your
-  project
++-----+
+<project>
+  ...
+  <body>
+    ...
+    <menu name="Foo" href="foo.html" />
+    <menu name="FAQ" href="faq.html" />
+    ...
+  </body>
+  ...
+</project>
++-----+
 
-  * <<<parent>>> - a menu with a link to the parent project's site
-
-  * <<<modules>>> - a menu containing the links to the sites of the submodules
-  of this project
-
-  []
-
-  To include a preset menu, use the <<<ref>>> attribute. For example:
+  There are also several preset menus that can be used in the site descriptor to
+  include generated content from your project. These are linked via the
+  <<<ref>>> attribute, like so:
 
 +-----+
 <project>
@@ -204,6 +210,19 @@ Configuring the Site Descriptor
   <<<$\{modules\}>>> has been deprecated and you are encouraged to use the new
   syntax instead. The support for the old syntax will be removed in a future
   version of the Site Plugin.
+
+  The currently available preset menus are:
+
+  * <<<reports>>> - a menu with links to all the generated reports for your
+  project
+
+  * <<<parent>>> - a menu with a link to the parent project's site
+
+  * <<<modules>>> - a menu containing the links to the sites of the submodules
+  of this project
+
+  []
+
 
 * Skinning
 
