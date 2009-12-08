@@ -73,7 +73,7 @@ under the License.
   </issueManagement>
 
   <properties>
-    <doxiaVersion>1.1.2-SNAPSHOT</doxiaVersion>
+    <doxiaVersion>1.1.2</doxiaVersion>
     <mavenVersion>2.0.9</mavenVersion>
   </properties>
 
@@ -127,12 +127,18 @@ under the License.
     <dependency>
       <groupId>org.apache.maven.reporting</groupId>
       <artifactId>maven-reporting-impl</artifactId>
-      <version>2.0.4.2</version>
+      <version>2.0.4.3</version>
+      <exclusions>
+        <exclusion>
+            <groupId>org.apache.maven.doxia</groupId>
+            <artifactId>doxia-core</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
       <artifactId>maven-doxia-tools</artifactId>
-      <version>1.0.2</version>
+      <version>1.1</version>
       <exclusions>
         <exclusion>
           <groupId>org.apache.maven.doxia</groupId>
