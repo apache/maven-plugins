@@ -202,6 +202,17 @@ under the License.
             -->
             <version>${project.version}</version>
           </plugin>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>l10n-maven-plugin</artifactId>
+            <version>1.0-alpha-2</version>
+            <configuration>
+              <locales>
+                <locale>de</locale>
+                <locale>fr</locale>
+              </locales>
+            </configuration>
+          </plugin>
         </plugins>
       </reporting>
     </profile>
