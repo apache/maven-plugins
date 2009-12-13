@@ -52,7 +52,7 @@ public class DependenciesReportTest
         generateReport( "dependencies", "dependencies-plugin-config.xml" );
         assertTrue( "Test html generated", getGeneratedReport( "dependencies.html" ).exists() );
 
-        URL reportURL = getGeneratedReport( "dependencies.html" ).toURL();
+        URL reportURL = getGeneratedReport( "dependencies.html" ).toURI().toURL();
         assertNotNull( reportURL );
 
         // HTTPUnit

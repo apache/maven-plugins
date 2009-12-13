@@ -38,7 +38,7 @@ public class ManagementDependencies
     private final List managementDependencies;
 
     /**
-     * @param projectDependencies
+     * @param projectDependencies the list of dependencies.
      */
     public ManagementDependencies( List projectDependencies )
     {

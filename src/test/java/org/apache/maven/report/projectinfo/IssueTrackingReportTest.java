@@ -52,7 +52,7 @@ public class IssueTrackingReportTest
         generateReport( "issue-tracking", "issue-tracking-plugin-config.xml" );
         assertTrue( "Test html generated", getGeneratedReport( "issue-tracking.html" ).exists() );
 
-        URL reportURL = getGeneratedReport( "issue-tracking.html" ).toURL();
+        URL reportURL = getGeneratedReport( "issue-tracking.html" ).toURI().toURL();
         assertNotNull( reportURL );
 
         // HTTPUnit

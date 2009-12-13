@@ -159,7 +159,7 @@ public abstract class AbstractProjectInfoReport
             RenderingContext context = new RenderingContext( outputDirectory, getOutputName() + ".html" );
 
             SiteRendererSink sink = new SiteRendererSink( context );
-            generate( sink, locale );
+            generate( (org.apache.maven.doxia.sink.Sink) sink, null, locale );
 
             outputDirectory.mkdirs();
 

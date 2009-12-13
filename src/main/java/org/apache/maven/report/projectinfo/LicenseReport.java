@@ -141,11 +141,10 @@ public class LicenseReport
      * @param project not null
      * @param url not null
      * @return a valid URL object from the url string
-     * @throws MalformedURLException if any
      * @throws IOException if any
      */
     protected static URL getLicenseURL( MavenProject project, String url )
-        throws MalformedURLException, IOException
+        throws IOException
     {
         URL licenseUrl = null;
         UrlValidator urlValidator = new UrlValidator( UrlValidator.ALLOW_ALL_SCHEMES );
@@ -180,7 +179,7 @@ public class LicenseReport
             }
             try
             {
-                licenseUrl = licenseFile.toURL();
+                licenseUrl = licenseFile.toURI().toURL();
             }
             catch ( MalformedURLException e )
             {

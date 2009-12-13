@@ -42,7 +42,7 @@ public class DefaultArtifactHandlerStub
     }
 
     /**
-     * @param language
+     * @param language the language. Defaults to "java".
      */
     public void setLanguage( String language )
     {

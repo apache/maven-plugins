@@ -1294,8 +1294,8 @@ public class DependenciesRenderer
         {
             String repokey = (String) itrepo.next();
 
-            Integer dependencies = (Integer) totalByRepo.get( repokey );
-            totalRow[idnum++] = dependencies != null ? dependencies.toString() : "0";
+            Integer deps = (Integer) totalByRepo.get( repokey );
+            totalRow[idnum++] = deps != null ? deps.toString() : "0";
         }
 
         tableRow( totalRow );
@@ -1453,23 +1453,23 @@ public class DependenciesRenderer
             if ( fs > 1024 * 1024 * 1024 )
             {
                 result = super.format( (float) fs / ( 1024 * 1024 * 1024 ), result, fieldPosition );
-                result.append( " " ).append( getString( i18n, "report.dependencies.file.details.column.size.gb" ) );
+                result.append( " " ).append( getString( "report.dependencies.file.details.column.size.gb" ) );
                 return result;
             }
 
             if ( fs > 1024 * 1024 )
             {
                 result = super.format( (float) fs / ( 1024 * 1024 ), result, fieldPosition );
-                result.append( " " ).append( getString( i18n, "report.dependencies.file.details.column.size.mb" ) );
+                result.append( " " ).append( getString( "report.dependencies.file.details.column.size.mb" ) );
                 return result;
             }
 
             result = super.format( (float) fs / ( 1024 ), result, fieldPosition );
-            result.append( " " ).append( getString( i18n, "report.dependencies.file.details.column.size.kb" ) );
+            result.append( " " ).append( getString( "report.dependencies.file.details.column.size.kb" ) );
             return result;
         }
 
-        private String getString( I18N i18n, String key )
+        private String getString( String key )
         {
             return i18n.getString( "project-info-report", locale, key );
         }
@@ -1546,9 +1546,9 @@ public class DependenciesRenderer
 
         String getTotalString( int index )
         {
-            long total = getTotal( index );
+            long totalString = getTotal( index );
 
-            if ( total <= 0 )
+            if ( totalString <= 0 )
             {
                 return "";
             }
