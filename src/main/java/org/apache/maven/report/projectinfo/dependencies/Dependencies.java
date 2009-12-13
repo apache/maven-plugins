@@ -79,9 +79,9 @@ public class Dependencies
     /**
      * Default constructor
      *
-     * @param project
-     * @param dependencyTreeNode
-     * @param classesAnalyzer
+     * @param project the MavenProject.
+     * @param dependencyTreeNode the DependencyNode.
+     * @param classesAnalyzer the JarClassesAnalysis.
      */
     public Dependencies( MavenProject project, DependencyNode dependencyTreeNode,
                          JarClassesAnalysis classesAnalyzer )
@@ -262,7 +262,7 @@ public class Dependencies
     }
 
     /**
-     * @param artifact
+     * @param artifact the artifact.
      * @return the jardata object from the artifact
      * @throws IOException if any
      */

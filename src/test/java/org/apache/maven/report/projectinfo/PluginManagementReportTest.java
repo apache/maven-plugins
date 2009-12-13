@@ -52,7 +52,7 @@ public class PluginManagementReportTest
         generateReport( "plugin-management", "plugin-management-plugin-config.xml" );
         assertTrue( "Test html generated", getGeneratedReport( "plugin-management.html" ).exists() );
 
-        URL reportURL = getGeneratedReport( "plugin-management.html" ).toURL();
+        URL reportURL = getGeneratedReport( "plugin-management.html" ).toURI().toURL();
         assertNotNull( reportURL );
 
         // HTTPUnit

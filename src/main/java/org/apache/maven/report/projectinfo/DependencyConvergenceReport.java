@@ -20,6 +20,7 @@ package org.apache.maven.report.projectinfo;
  */
 
 import org.apache.maven.doxia.sink.Sink;
+import org.apache.maven.doxia.sink.SinkEventAttributeSet;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.MavenReportException;
@@ -208,7 +209,7 @@ public class DependencyConvergenceReport
         {
             String version = (String) it.next();
             sink.tableRow();
-            sink.tableCell( "25%" );
+            sink.tableCell( new SinkEventAttributeSet( new String[] {SinkEventAttributeSet.WIDTH, "25%"} ) );
             sink.text( version );
             sink.tableCell_();
 
@@ -496,9 +497,9 @@ public class DependencyConvergenceReport
         Iterator iterator = reactorProjects.iterator();
         while ( iterator.hasNext() )
         {
-            MavenProject project = (MavenProject) iterator.next();
-            if ( project.getGroupId().equals( dependency.getGroupId() )
-                && project.getArtifactId().equals( dependency.getArtifactId() ) )
+            MavenProject mavenProject = (MavenProject) iterator.next();
+            if ( mavenProject.getGroupId().equals( dependency.getGroupId() )
+                && mavenProject.getArtifactId().equals( dependency.getArtifactId() ) )
             {
                 if ( getLog().isDebugEnabled() )
                 {

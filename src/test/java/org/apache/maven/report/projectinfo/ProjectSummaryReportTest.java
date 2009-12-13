@@ -51,7 +51,7 @@ public class ProjectSummaryReportTest
         generateReport( "summary", "summary-plugin-config.xml" );
         assertTrue( "Test html generated", getGeneratedReport( "project-summary.html" ).exists() );
 
-        URL reportURL = getGeneratedReport( "project-summary.html" ).toURL();
+        URL reportURL = getGeneratedReport( "project-summary.html" ).toURI().toURL();
         assertNotNull( reportURL );
 
         // HTTPUnit

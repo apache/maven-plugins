@@ -1,8 +1,5 @@
 package org.apache.maven.report.projectinfo.stubs;
 
-import java.util.Collections;
-import java.util.List;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -21,6 +18,9 @@ import java.util.List;
  * specific language governing permissions and limitations
  * under the License.
  */
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>

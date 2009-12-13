@@ -52,7 +52,7 @@ public class DependencyManagementReportTest
         generateReport( "dependency-management", "dependency-management-plugin-config.xml" );
         assertTrue( "Test html generated", getGeneratedReport( "dependency-management.html" ).exists() );
 
-        URL reportURL = getGeneratedReport( "dependency-management.html" ).toURL();
+        URL reportURL = getGeneratedReport( "dependency-management.html" ).toURI().toURL();
         assertNotNull( reportURL );
 
         // HTTPUnit

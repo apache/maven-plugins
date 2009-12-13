@@ -51,7 +51,7 @@ public class TeamListReportTest
         generateReport( "project-team", "project-team-plugin-config.xml" );
         assertTrue( "Test html generated", getGeneratedReport( "team-list.html" ).exists() );
 
-        URL reportURL = getGeneratedReport( "team-list.html" ).toURL();
+        URL reportURL = getGeneratedReport( "team-list.html" ).toURI().toURL();
         assertNotNull( reportURL );
 
         // HTTPUnit

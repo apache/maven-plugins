@@ -51,7 +51,7 @@ public class DependencyConvergenceReportTest
         generateReport( "dependency-convergence", "dependency-convergence-plugin-config.xml" );
         assertTrue( "Test html generated", getGeneratedReport( "dependency-convergence.html" ).exists() );
 
-        URL reportURL = getGeneratedReport( "dependency-convergence.html" ).toURL();
+        URL reportURL = getGeneratedReport( "dependency-convergence.html" ).toURI().toURL();
         assertNotNull( reportURL );
 
         // HTTPUnit
