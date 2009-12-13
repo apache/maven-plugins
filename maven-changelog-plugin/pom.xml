@@ -131,7 +131,7 @@ under the License.
     <maven-scm.version>1.2</maven-scm.version>
     <doxiaVersion>1.0</doxiaVersion>
     <mavenVersion>2.0.6</mavenVersion>
-    <sitePluginVersion>2.0.1</sitePluginVersion>    
+    <sitePluginVersion>2.0.1</sitePluginVersion>
   </properties>
 
   <dependencies>
@@ -347,7 +347,7 @@ under the License.
       <properties>
         <sitePluginVersion>3.0-beta-1-SNAPSHOT</sitePluginVersion>
       </properties>
-    </profile>     
+    </profile>
 
     <profile>
       <id>reporting</id>
@@ -369,6 +369,7 @@ under the License.
             <configuration>
               <locales>
                 <locale>de</locale>
+                <locale>sv</locale>
               </locales>
             </configuration>
           </plugin>
