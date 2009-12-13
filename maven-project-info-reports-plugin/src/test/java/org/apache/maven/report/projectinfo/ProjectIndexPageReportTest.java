@@ -51,7 +51,7 @@ public class ProjectIndexPageReportTest
         generateReport( "index", "index-plugin-config.xml" );
         assertTrue( "Test html generated", getGeneratedReport( "index.html" ).exists() );
 
-        URL reportURL = getGeneratedReport( "index.html" ).toURL();
+        URL reportURL = getGeneratedReport( "index.html" ).toURI().toURL();
         assertNotNull( reportURL );
 
         // HTTPUnit

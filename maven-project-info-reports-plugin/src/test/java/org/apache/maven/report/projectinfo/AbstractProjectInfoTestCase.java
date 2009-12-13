@@ -105,7 +105,6 @@ public abstract class AbstractProjectInfoTestCase
      *
      * @param key the key for the desired string
      * @return the string for the given key
-     * @throws IllegalArgumentException if the parameter is empty.
      */
     protected String getString( String key )
     {
@@ -130,6 +129,7 @@ public abstract class AbstractProjectInfoTestCase
     /**
      * Get the generated report as file in the test maven project.
      *
+     * @param name the name of the report.
      * @return the generated report as file
      * @throws IOException if the return file doesnt exist
      */
@@ -150,8 +150,8 @@ public abstract class AbstractProjectInfoTestCase
     /**
      * Generate the report and return the generated file
      *
-     * @param goal
-     * @param pluginXml
+     * @param goal the mojo goal.
+     * @param pluginXml the name of the xml file in "src/test/resources/plugin-configs/".
      * @return the generated HTML file
      * @throws Exception if any
      */
@@ -165,7 +165,7 @@ public abstract class AbstractProjectInfoTestCase
         mojo.execute();
 
         MavenProjectBuilder builder = (MavenProjectBuilder) lookup( MavenProjectBuilder.ROLE );
-        ProfileManager profileManager = new DefaultProfileManager( getContainer() );
+        ProfileManager profileManager = new DefaultProfileManager( getContainer(), null, null );
 
         ArtifactRepository localRepository = (ArtifactRepository) getVariableValueFromObject( mojo,
                                                                                               "localRepository" );

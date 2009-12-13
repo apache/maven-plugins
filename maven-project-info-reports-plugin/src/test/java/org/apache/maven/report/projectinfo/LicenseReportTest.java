@@ -51,7 +51,7 @@ public class LicenseReportTest
         generateReport( "license", "license-plugin-config.xml" );
         assertTrue( "Test html generated", getGeneratedReport( "license.html" ).exists() );
 
-        URL reportURL = getGeneratedReport( "license.html" ).toURL();
+        URL reportURL = getGeneratedReport( "license.html" ).toURI().toURL();
         assertNotNull( reportURL );
 
         // HTTPUnit

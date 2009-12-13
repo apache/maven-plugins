@@ -56,7 +56,7 @@ public class MailingListsReportTest
         generateReport( "mailing-list", "mailing-list-plugin-config.xml" );
         assertTrue( "Test html generated", getGeneratedReport( "mail-lists.html" ).exists() );
 
-        URL reportURL = getGeneratedReport( "mail-lists.html" ).toURL();
+        URL reportURL = getGeneratedReport( "mail-lists.html" ).toURI().toURL();
         assertNotNull( reportURL );
 
         // HTTPUnit
@@ -101,7 +101,6 @@ public class MailingListsReportTest
     }
 
     /**
-     * @throws Exception if any
      * @throws Throwable if any
      */
     public void testGetArchiveServer()

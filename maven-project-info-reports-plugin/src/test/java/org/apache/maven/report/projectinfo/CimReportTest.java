@@ -51,7 +51,7 @@ public class CimReportTest
         generateReport( "cim", "cim-plugin-config.xml" );
         assertTrue( "Test html generated", getGeneratedReport( "integration.html" ).exists() );
 
-        URL reportURL = getGeneratedReport( "integration.html" ).toURL();
+        URL reportURL = getGeneratedReport( "integration.html" ).toURI().toURL();
         assertNotNull( reportURL );
 
         // HTTPUnit

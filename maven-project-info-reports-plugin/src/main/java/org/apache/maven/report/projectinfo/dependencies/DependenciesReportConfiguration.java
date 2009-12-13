@@ -32,8 +32,8 @@ public class DependenciesReportConfiguration
     private boolean dependencyLocationsEnabled;
 
     /**
-     * @param detailsEnabled
-     * @param locationEnabled
+     * @param detailsEnabled whether details is enabled.
+     * @param locationEnabled whether location is enabled.
      */
     public DependenciesReportConfiguration( boolean detailsEnabled, boolean locationEnabled )
     {

@@ -54,7 +54,7 @@ public class ScmReportTest
         generateReport( "scm", "scm-plugin-config.xml" );
         assertTrue( "Test html generated", getGeneratedReport( "source-repository.html" ).exists() );
 
-        URL reportURL = getGeneratedReport( "source-repository.html" ).toURL();
+        URL reportURL = getGeneratedReport( "source-repository.html" ).toURI().toURL();
         assertNotNull( reportURL );
 
         // HTTPUnit
@@ -90,7 +90,8 @@ public class ScmReportTest
     public void testReportWithWrongUrl()
         throws Exception
     {
-        File pluginXmlFile = new File( getBasedir(), "src/test/resources/plugin-configs/" + "scm-wrong-url-plugin-config.xml" );
+        File pluginXmlFile = new File( getBasedir(), "src/test/resources/plugin-configs/"
+                + "scm-wrong-url-plugin-config.xml" );
         Mojo mojo = lookupMojo( "scm", pluginXmlFile );
         assertNotNull( "Mojo found.", mojo );
 
