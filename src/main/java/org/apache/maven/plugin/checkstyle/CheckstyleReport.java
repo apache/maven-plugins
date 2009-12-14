@@ -562,7 +562,6 @@ public class CheckstyleReport
 
             try
             {
-                getLog().info( "in mojo headerLocation " + headerLocation );
                 CheckstyleExecutorRequest request = new CheckstyleExecutorRequest();
                 request.setConsoleListener( getConsoleListener() ).setConsoleOutput( consoleOutput )
                     .setExcludes( excludes ).setFailsOnError( failsOnError ).setIncludes( includes )
