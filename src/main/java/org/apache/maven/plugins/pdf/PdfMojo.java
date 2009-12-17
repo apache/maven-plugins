@@ -49,6 +49,7 @@ import org.apache.maven.doxia.docrenderer.DocumentRenderer;
 import org.apache.maven.doxia.docrenderer.DocumentRendererContext;
 import org.apache.maven.doxia.docrenderer.DocumentRendererException;
 import org.apache.maven.doxia.docrenderer.pdf.PdfRenderer;
+import org.apache.maven.doxia.document.DocumentMeta;
 import org.apache.maven.doxia.document.DocumentModel;
 import org.apache.maven.doxia.document.DocumentTOCItem;
 import org.apache.maven.doxia.document.io.xpp3.DocumentXpp3Writer;
@@ -780,6 +781,11 @@ public class PdfMojo
         catch ( IOException io )
         {
             throw new MojoExecutionException( "Error opening DocumentDescriptor!", io );
+        }
+
+        if ( model.getMeta() == null )
+        {
+            model.setMeta( new DocumentMeta() );
         }
 
         if ( StringUtils.isEmpty( model.getMeta().getLanguage() ) )
