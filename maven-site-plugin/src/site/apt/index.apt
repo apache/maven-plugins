@@ -32,6 +32,15 @@ Maven Site Plugin
  The Site Plugin is used to generate a site for the project. The generated site also includes the project's reports
  that were configured in the <<<\<reporting\>>>> section of the POM.
 
+ If you consider <<upgrading to site-plugin-2.1>>, please note that there have been a couple of important changes.
+ First, the plugin now requires at least <<Maven 2.1.x>> to run, you cannot use it with older Maven versions.
+ Second, and most notable, site-plugin-2.1 has been upgraded to use <<Doxia 1.1>>, which has seen a lot of major
+ changes itself. If you experience unexpected behavior, please read
+ {{{http://maven.apache.org/doxia/whatsnew-1.1.html}Doxia: what's new in 1.1?}},
+ {{{http://maven.apache.org/doxia/references/doxia-apt.html}Doxia: Enhancements to the APT format}},
+ {{{http://maven.apache.org/doxia/issues/index.html}Doxia: Issues & Gotchas}}, and the
+ {{{http://maven.apache.org/doxia/faq.html}Doxia: Frequently Asked Questions}} first.
+
 * Goals Overview
 
    The Site Plugin has seven goals:
