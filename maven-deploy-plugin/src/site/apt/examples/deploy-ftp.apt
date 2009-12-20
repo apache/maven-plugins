@@ -34,45 +34,25 @@ Deployment of artifacts with FTP
 
 +----+
 <project>
-  <parent>
-    <groupId>com.stchome</groupId>
-    <artifactId>mavenFull</artifactId>
-    <version>1.0</version>
-  </parent>
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>com.mycompany</groupId>
-  <artifactId>my-app</artifactId>
-  <packaging>jar</packaging>
-  <version>1.1-SNAPSHOT</version>
-  <name>Maven Quick Start Archetype</name>
-  <url>http://maven.apache.org</url>
-  <dependencies>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>3.8.1</version>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
-
-  <!-- Enabling the use of FTP -->
+  ...
   <distributionManagement>
     <repository>
-    <id>ftp-repository</id>
-    <url>ftp://repository.mycompany.com/repository</url>
+      <id>ftp-repository</id>
+      <url>ftp://repository.mycompany.com/repository</url>
     </repository>
   </distributionManagement>
 
   <build>
     <extensions>
+      <!-- Enabling the use of FTP -->
       <extension>
         <groupId>org.apache.maven.wagon</groupId>
          <artifactId>wagon-ftp</artifactId>
-         <version>1.0-alpha-6</version>
+         <version>1.0-beta-6</version>
       </extension>
     </extensions>
   </build>
-
+  ...
 </project>
 +----+
 
@@ -81,20 +61,15 @@ Deployment of artifacts with FTP
 
 +----+
 <settings>
-
   ...
-
   <servers>
     <server>
       <id>ftp-repository</id>
       <username>user</username>
       <password>pass</password>
     </server>
-
   </servers>
-
   ...
-
 </settings>
 +----+
 
