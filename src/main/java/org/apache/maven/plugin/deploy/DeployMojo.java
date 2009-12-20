@@ -29,12 +29,6 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.artifact.ProjectArtifactMetadata;
-import org.codehaus.plexus.PlexusConstants;
-import org.codehaus.plexus.PlexusContainer;
-import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
-import org.codehaus.plexus.context.Context;
-import org.codehaus.plexus.context.ContextException;
-import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
 
 import java.io.File;
 import java.util.Iterator;
@@ -53,7 +47,6 @@ import java.util.regex.Pattern;
  */
 public class DeployMojo
     extends AbstractDeployMojo
-    implements Contextualizable
 {
 
     private static final Pattern ALT_REPO_SYNTAX_PATTERN = Pattern.compile( "(.+)::(.+)::(.+)" );
@@ -102,11 +95,6 @@ public class DeployMojo
      * @readonly
      */
     private List attachedArtifacts;
-
-    /**
-     * Contextualized.
-     */
-    private PlexusContainer container;
     
     /**
      * Set this to 'true' to bypass artifact deploy
@@ -224,16 +212,8 @@ public class DeployMojo
                 String id = matcher.group( 1 ).trim();
                 String layout = matcher.group( 2 ).trim();
                 String url = matcher.group( 3 ).trim();
-                
-                ArtifactRepositoryLayout repoLayout;
-                try
-                {
-                    repoLayout = ( ArtifactRepositoryLayout ) container.lookup( ArtifactRepositoryLayout.ROLE, layout );
-                }
-                catch ( ComponentLookupException e )
-                {
-                    throw new MojoExecutionException( "Cannot find repository layout: " + layout, e );
-                }
+
+                ArtifactRepositoryLayout repoLayout = getLayout( layout );
                 
                 repo = new DefaultArtifactRepository( id, url, repoLayout );
             }
@@ -255,9 +235,4 @@ public class DeployMojo
         return repo;
     }
 
-    public void contextualize( Context context )
-        throws ContextException
-    {
-        this.container = (PlexusContainer) context.get( PlexusConstants.PLEXUS_KEY );
-    }
 }
