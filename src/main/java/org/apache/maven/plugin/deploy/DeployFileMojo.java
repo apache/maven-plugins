@@ -45,7 +45,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
-import java.util.Map;
 
 /**
  * Installs the artifact in the remote repository.
@@ -117,13 +116,6 @@ public class DeployFileMojo
      * @required
      */
     private String repositoryLayout;
-
-    /**
-     * Map that contains the layouts
-     *
-     * @component role="org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout"
-     */
-    private Map repositoryLayouts;
 
     /**
      * URL where the artifact will be deployed. <br/>
@@ -206,9 +198,7 @@ public class DeployFileMojo
             throw new MojoExecutionException( file.getPath() + " not found." );
         }
 
-        ArtifactRepositoryLayout layout;
-
-        layout = ( ArtifactRepositoryLayout ) repositoryLayouts.get( repositoryLayout );
+        ArtifactRepositoryLayout layout = getLayout( repositoryLayout );
 
         ArtifactRepository deploymentRepository =
             repositoryFactory.createDeploymentArtifactRepository( repositoryId, url, layout, uniqueVersion );
