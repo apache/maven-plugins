@@ -22,25 +22,19 @@ under the License.
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>org.apache.maven.its.deploy.adr</groupId>
+  <groupId>org.apache.maven.its.deploy.adrwodm</groupId>
   <artifactId>test</artifactId>
   <version>1.0</version>
   <packaging>jar</packaging>
 
   <description>
-    Tests the deployment to an alternative repository specified on the CLI.
+    Tests the deployment to an alternative repository specified on the CLI when the POM does not specify
+    distribution management (MDEPLOY-50).
   </description>
 
   <properties>
     <maven.test.skip>true</maven.test.skip>
   </properties>
-
-  <distributionManagement>
-    <repository>
-      <id>it</id>
-      <url>file:///${basedir}/target/void</url>
-    </repository>
-  </distributionManagement>
 
   <build>
     <plugins>
