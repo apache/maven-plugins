@@ -22,19 +22,19 @@ under the License.
     <plugins>
       <plugin>
         <artifactId>maven-deploy-plugin</artifactId>
-		<configuration>
-		  <groupId>org.apache.maven.test</groupId>
-		  <artifactId>maven-deploy-file-test</artifactId>
-		  <version>1.0</version>
-		  <packaging>jar</packaging>
-		  <file>${basedir}/src/test/resources/unit/deploy-file-legacy-repository-layout/target/deploy-test-file-1.0-SNAPSHOT.jar</file>
-		  <repositoryId>deploy-test</repositoryId>
-		  <url>file://${basedir}/target/remote-repo/deploy-file-legacy-repository-layout</url>
-		  <uniqueVersion>true</uniqueVersion>
-		  <localRepository>${localRepository}</localRepository>
-		  <repositoryLayout>legacy</repositoryLayout>
-      <generatePom>true</generatePom>
-		</configuration>
+        <configuration>
+          <groupId>org.apache.maven.test</groupId>
+          <artifactId>maven-deploy-file-test</artifactId>
+          <version>1.0</version>
+          <packaging>jar</packaging>
+          <file>${basedir}/src/test/resources/unit/deploy-file-legacy-repository-layout/target/deploy-test-file-1.0-SNAPSHOT.jar</file>
+          <repositoryId>deploy-test</repositoryId>
+          <url>file://${basedir}/target/remote-repo/deploy-file-legacy-repository-layout</url>
+          <uniqueVersion>true</uniqueVersion>
+          <localRepository>${localRepository}</localRepository>
+          <repositoryLayout>legacy</repositoryLayout>
+          <generatePom>true</generatePom>
+        </configuration>
       </plugin>
     </plugins>
   </build>
