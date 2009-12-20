@@ -44,7 +44,7 @@ public abstract class AbstractDeployMojo
     protected ArtifactFactory artifactFactory;
 
     /**
-     * @parameter expression="${localRepository}"
+     * @parameter default-value="${localRepository}"
      * @required
      * @readonly
      */

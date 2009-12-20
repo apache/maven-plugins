@@ -27,6 +27,7 @@ import org.apache.maven.artifact.repository.DefaultArtifactRepository;
 import org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.artifact.ProjectArtifactMetadata;
 import org.codehaus.plexus.PlexusConstants;
 import org.codehaus.plexus.PlexusContainer;
@@ -58,6 +59,13 @@ public class DeployMojo
     private static final Pattern ALT_REPO_SYNTAX_PATTERN = Pattern.compile( "(.+)::(.+)::(.+)" );
 
     /**
+     * @parameter default-value="${project}"
+     * @required
+     * @readonly
+     */
+    private MavenProject project;
+
+    /**
      * @parameter default-value="${project.artifact}"
      * @required
      * @readonly
@@ -77,12 +85,6 @@ public class DeployMojo
      * @readonly
      */
     private File pomFile;
-
-    /**
-     * @parameter expression="${project.distributionManagementArtifactRepository}"
-     * @readonly
-     */
-    private ArtifactRepository deploymentRepository;
 
     /**
      * Specifies an alternative repository to which the project artifacts should be deployed ( other
@@ -204,14 +206,6 @@ public class DeployMojo
     private ArtifactRepository getDeploymentRepository()
         throws MojoExecutionException, MojoFailureException
     {
-        if ( deploymentRepository == null && altDeploymentRepository == null )
-        {
-            String msg = "Deployment failed: repository element was not specified in the pom inside"
-                + " distributionManagement element or in -DaltDeploymentRepository=id::layout::url parameter";
-
-            throw new MojoExecutionException( msg );
-        }
-
         ArtifactRepository repo = null;
 
         if ( altDeploymentRepository != null )
@@ -247,7 +241,15 @@ public class DeployMojo
         
         if ( repo == null )
         {
-            repo = deploymentRepository;
+            repo = project.getDistributionManagementArtifactRepository();
+        }
+
+        if ( repo == null )
+        {
+            String msg = "Deployment failed: repository element was not specified in the POM inside"
+                + " distributionManagement element or in -DaltDeploymentRepository=id::layout::url parameter";
+
+            throw new MojoExecutionException( msg );
         }
 
         return repo;

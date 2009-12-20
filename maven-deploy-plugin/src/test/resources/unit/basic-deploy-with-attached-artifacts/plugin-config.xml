@@ -30,7 +30,9 @@ under the License.
             <attachedArtifact implementation="org.apache.maven.plugin.deploy.stubs.AttachedArtifactStub" />
           </attachedArtifacts>
           <localRepository>${localRepository}</localRepository>
-          <deploymentRepository implementation="org.apache.maven.plugin.deploy.stubs.ArtifactRepositoryStub" />
+          <project implementation="org.apache.maven.plugin.deploy.stubs.MavenProjectStub">
+            <deploymentRepository implementation="org.apache.maven.plugin.deploy.stubs.ArtifactRepositoryStub" />
+          </project>
           <updateReleaseInfo>true</updateReleaseInfo>
         </configuration>
       </plugin>
