@@ -23,7 +23,6 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.deployer.ArtifactDeploymentException;
 import org.apache.maven.artifact.metadata.ArtifactMetadata;
 import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.repository.ArtifactRepositoryFactory;
 import org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Parent;
@@ -125,13 +124,6 @@ public class DeployFileMojo
      * @required
      */
     private String url;
-
-    /**
-     * Component used to create a repository
-     *
-     * @component
-     */
-    private ArtifactRepositoryFactory repositoryFactory;
 
     /**
      * Location of an existing POM file to be deployed alongside the main

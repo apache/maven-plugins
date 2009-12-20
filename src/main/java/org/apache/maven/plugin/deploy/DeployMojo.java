@@ -23,7 +23,6 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.deployer.ArtifactDeploymentException;
 import org.apache.maven.artifact.metadata.ArtifactMetadata;
 import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.repository.DefaultArtifactRepository;
 import org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -214,8 +213,8 @@ public class DeployMojo
                 String url = matcher.group( 3 ).trim();
 
                 ArtifactRepositoryLayout repoLayout = getLayout( layout );
-                
-                repo = new DefaultArtifactRepository( id, url, repoLayout );
+
+                repo = repositoryFactory.createDeploymentArtifactRepository( id, url, repoLayout, true );
             }
         }
         
