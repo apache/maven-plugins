@@ -43,6 +43,10 @@ under the License.
          Maven 2 installation.
        </p>
        <p>
+         As an alternative to placing the wagon provider into the Maven distribution, you can also create a dummy
+         POM that declares the required wagon as an <code>&lt;extension&gt;</code> inside the current directory.
+       </p>
+       <p>
          If the error description is something like this:
        </p>
        <p>
@@ -60,7 +64,7 @@ under the License.
        <question>I don't want to deploy one of the artifacts in my multi-module build.  Can I skip deployment?</question>
        <answer>
          <p>
-           Yes, you can skip deployment of individual modules by configuring the deploy plugin as follows:
+           Yes, you can skip deployment of individual modules by configuring the Deploy Plugin as follows:
          </p>
          <p>
            <source>
