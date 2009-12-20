@@ -19,10 +19,14 @@ package org.apache.maven.plugin.deploy;
  * under the License.
  */
 
+import java.util.Map;
+
 import org.apache.maven.artifact.deployer.ArtifactDeployer;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout;
 import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 
 /**
@@ -42,6 +46,13 @@ public abstract class AbstractDeployMojo
      * @component
      */
     protected ArtifactFactory artifactFactory;
+
+    /**
+     * Map that contains the layouts.
+     *
+     * @component role="org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout"
+     */
+    private Map repositoryLayouts;
 
     /**
      * @parameter default-value="${localRepository}"
@@ -94,6 +105,19 @@ public abstract class AbstractDeployMojo
         {
             throw new MojoFailureException( "Cannot deploy artifacts when Maven is in offline mode" );
         }
+    }
+
+    ArtifactRepositoryLayout getLayout( String id )
+        throws MojoExecutionException
+    {
+        ArtifactRepositoryLayout layout = (ArtifactRepositoryLayout) repositoryLayouts.get( id );
+
+        if ( layout == null )
+        {
+            throw new MojoExecutionException( "Invalid repository layout: " + id );
+        }
+
+        return layout;
     }
 
 }
