@@ -32,7 +32,7 @@ Disable timestamps suffix in an artifact
   To disable the addition of timestamp to the artifact, set the <<uniqueVersion>> parameter to <<<false>>>.
 
 +---+
-mvn deploy:deploy-file -Durl=file://C:\m2-repo \
+mvn deploy:deploy-file -Durl=file:///C:/m2-repo \
                        -DrepositoryId=some.id \
                        -Dfile=your-artifact-1.0.jar \
                        -DpomFile=your-pom.xml \

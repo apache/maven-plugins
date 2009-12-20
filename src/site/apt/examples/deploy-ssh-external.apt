@@ -35,28 +35,7 @@ Deployment of artifacts in an external SSH command
 +----+
 
 <project>
-  <parent>
-    <groupId>com.stchome</groupId>
-    <artifactId>mavenFull</artifactId>
-    <version>1.0</version>
-  </parent>
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>com.mycompany</groupId>
-  <artifactId>my-app</artifactId>
-  <packaging>jar</packaging>
-  <version>1.1-SNAPSHOT</version>
-  <name>Maven Quick Start Archetype</name>
-  <url>http://maven.apache.org</url>
-  <dependencies>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>3.8.1</version>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
-
-  <!-- Enabling the use of FTP -->
+  ...
   <distributionManagement>
     <repository>
       <id>ssh-repository</id>
@@ -66,14 +45,15 @@ Deployment of artifacts in an external SSH command
 
   <build>
     <extensions>
+      <!-- Enabling the use of FTP -->
       <extension>
         <groupId>org.apache.maven.wagon</groupId>
          <artifactId>wagon-ssh-external</artifactId>
-         <version>1.0-alpha-5</version>
+         <version>1.0-beta-6</version>
       </extension>
     </extensions>
   </build>
-
+  ..
 </project>
 
 +----+
@@ -108,9 +88,7 @@ Deployment of artifacts in an external SSH command
  using Maven:
 
 +----+
-
 mvn deploy
-
 +----+
 
  Sometimes you may have permissions problems deploying and if so you can set the file and directory permissions
@@ -143,4 +121,5 @@ mvn deploy
 
  <<NOTE:>> If you are using Putty it will expect the private key to be in the <<<PPK>>> format and not the standard
  format so make sure you use <<<puttygen>>> to convert your openssh format key to <<<PPK>>> format or generate another
- one. Windows users can find the Putty tools {{{http://www.chiark.greenend.org.uk/~sgtatham/putty/download.html}here}}.
+ one. Windows users can find the Putty tools on the
+ {{{http://www.chiark.greenend.org.uk/~sgtatham/putty/download.html}PuTTY Download Page}}.

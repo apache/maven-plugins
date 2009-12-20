@@ -49,7 +49,7 @@ Deploy an artifact with classifier
   To add classifier into your artifact for your deployment, set the text to the <<classifier>> parameter.
 
 +---+
-mvn deploy:deploy-file -Durl=file://C:\m2-repo \
+mvn deploy:deploy-file -Durl=file:///C:/m2-repo \
                        -DrepositoryId=some.id \
                        -Dfile=path-to-your-artifact-jar \
                        -DpomFile=path-to-your-pom.xml \
