@@ -33,6 +33,7 @@ import org.apache.maven.plugin.deploy.stubs.DeployArtifactStub;
 import org.apache.maven.plugin.deploy.stubs.ArtifactDeployerStub;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
+import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.FileUtils;
 
 /**
@@ -64,14 +65,25 @@ public class DeployMojoTest
         
         localRepo = new File( LOCAL_REPO );
 
-        if( localRepo.exists() )
+        if ( localRepo.exists() )
         {
             FileUtils.deleteDirectory( localRepo );
         }
 
-        if( remoteRepo.exists() )
+        if ( remoteRepo.exists() )
         {
             FileUtils.deleteDirectory( remoteRepo );
+        }
+    }
+
+    public void tearDown()
+        throws Exception
+    {
+        super.tearDown();
+        
+        if( remoteRepo.exists() )
+        {
+            //FileUtils.deleteDirectory( remoteRepo );
         }
     }
     
@@ -110,7 +122,7 @@ public class DeployMojoTest
         
         artifact.setFile( file );        
         
-        ArtifactRepositoryStub repo = ( ArtifactRepositoryStub ) getVariableValueFromObject( mojo, "deploymentRepository" );
+        ArtifactRepositoryStub repo = getRepoStub( mojo );
 
         assertNotNull( repo );
         
@@ -212,7 +224,7 @@ public class DeployMojoTest
 
         artifact.setFile( file );
 
-        ArtifactRepositoryStub repo = (ArtifactRepositoryStub) getVariableValueFromObject( mojo, "deploymentRepository" );
+        ArtifactRepositoryStub repo = getRepoStub( mojo );
 
         assertNotNull( repo );
 
@@ -258,7 +270,7 @@ public class DeployMojoTest
         
         artifact.setArtifactHandlerExtension( packaging );
         
-        ArtifactRepositoryStub repo = ( ArtifactRepositoryStub ) getVariableValueFromObject( mojo, "deploymentRepository" ); 
+        ArtifactRepositoryStub repo = getRepoStub( mojo );
         
         repo.setAppendToUrl( "basic-deploy-pom" );
         
@@ -315,7 +327,7 @@ public class DeployMojoTest
         
         artifact.setFile( testPom );
         
-        ArtifactRepositoryStub repo = ( ArtifactRepositoryStub ) getVariableValueFromObject( mojo, "deploymentRepository" ); 
+        ArtifactRepositoryStub repo = getRepoStub( mojo );
         
         repo.setAppendToUrl( "basic-deploy-updateReleaseParam" );        
         
@@ -373,7 +385,7 @@ public class DeployMojoTest
         
         List attachedArtifacts = ( ArrayList ) getVariableValueFromObject( mojo, "attachedArtifacts" );
 
-        ArtifactRepositoryStub repo = ( ArtifactRepositoryStub ) getVariableValueFromObject( mojo, "deploymentRepository" ); 
+        ArtifactRepositoryStub repo = getRepoStub( mojo );
         
         repo.setAppendToUrl( "basic-deploy-with-attached-artifacts" );          
         
@@ -543,15 +555,12 @@ public class DeployMojoTest
         }
         return expectedFiles.size();
     }    
-    
-    public void tearDown()
+
+    private ArtifactRepositoryStub getRepoStub( Object mojo )
         throws Exception
     {
-        super.tearDown();
-        
-        if( remoteRepo.exists() )
-        {
-            //FileUtils.deleteDirectory( remoteRepo );
-        }
+        MavenProject project = (MavenProject) getVariableValueFromObject( mojo, "project" );
+        return (ArtifactRepositoryStub) project.getDistributionManagementArtifactRepository();
     }
+
 }
