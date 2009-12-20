@@ -28,7 +28,7 @@ under the License.
   <packaging>jar</packaging>
 
   <description>
-    Tests the installation of a non-POM project that has no main artifact file but only attached artifacts (see
+    Tests the deployment of a non-POM project that has no main artifact file but only attached artifacts (see
     MDEPLOY-78). This variant of the test checks the build when target/classes is non-existent.
   </description>
 
@@ -88,7 +88,7 @@ under the License.
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-install-plugin</artifactId>
-        <version>2.2</version>
+        <version>2.3</version>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
