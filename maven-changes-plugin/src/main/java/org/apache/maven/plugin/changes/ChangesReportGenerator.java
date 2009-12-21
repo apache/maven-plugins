@@ -328,7 +328,7 @@ public class ChangesReportGenerator
             sink.section2();
 
             sinkSectionTitle2Anchor( sink, bundle.getString( "report.changes.label.release" ) + " "
-                + release.getVersion() + " - " + release.getDateRelease(), HtmlTools.encodeId( release.getVersion() ) );
+                + release.getVersion() + " - " + release.getDateRelease(), release.getVersion() );
 
             constructActions( sink, release.getActions(), bundle );
 
@@ -450,7 +450,7 @@ public class ChangesReportGenerator
         sink.text( text );
         sink.sectionTitle1_();
 
-        sink.anchor( anchor );
+        sink.anchor( HtmlTools.encodeId( anchor ) );
         sink.anchor_();
     }
 
@@ -460,7 +460,7 @@ public class ChangesReportGenerator
         sink.text( text );
         sink.sectionTitle2_();
 
-        sink.anchor( anchor );
+        sink.anchor( HtmlTools.encodeId( anchor ) );
         sink.anchor_();
     }
 
