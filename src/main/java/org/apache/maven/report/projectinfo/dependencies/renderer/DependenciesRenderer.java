@@ -532,7 +532,7 @@ public class DependenciesRenderer
             new int[] { Sink.JUSTIFY_LEFT, Sink.JUSTIFY_RIGHT, Sink.JUSTIFY_RIGHT, Sink.JUSTIFY_RIGHT,
                 Sink.JUSTIFY_RIGHT, Sink.JUSTIFY_CENTER, Sink.JUSTIFY_CENTER, Sink.JUSTIFY_CENTER };
 
-        startTable( justification, true );
+        startTable( justification, false );
 
         TotalCell totaldeps = new TotalCell( DEFAULT_DECIMAL_FORMAT );
         TotalCell totaldepsize = new TotalCell( fileLengthDecimalFormat );
@@ -1117,7 +1117,7 @@ public class DependenciesRenderer
                     Sink.JUSTIFY_CENTER };
         }
 
-        startTable( justificationRepo, true );
+        startTable( justificationRepo, false );
 
         tableHeader( tableHeader );
 
@@ -1199,7 +1199,7 @@ public class DependenciesRenderer
         Map totalByRepo = new HashMap();
         TotalCell totaldeps = new TotalCell( DEFAULT_DECIMAL_FORMAT );
 
-        startTable( justificationRepo, true );
+        startTable( justificationRepo, false );
 
         tableHeader( tableHeader );
 
