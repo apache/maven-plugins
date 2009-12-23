@@ -509,22 +509,6 @@ public class PdfMojo
     private void generatedPdf()
         throws MojoExecutionException, IOException
     {
-        try
-        {
-            FileUtils.deleteDirectory( workingDirectory );
-        }
-        catch ( IOException e )
-        {
-            if ( getLog().isDebugEnabled() )
-            {
-                getLog().error( "IOException: " + e.getMessage(), e );
-            }
-            else
-            {
-                getLog().error( "IOException: " + e.getMessage() );
-            }
-        }
-
         Locale.setDefault( getDefaultLocale() );
 
         for ( final Iterator iterator = getAvailableLocales().iterator(); iterator.hasNext(); )
