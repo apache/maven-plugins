@@ -73,7 +73,7 @@ under the License.
     <mavenVersion>2.1.0</mavenVersion>
     <wagonVersion>1.0-beta-3</wagonVersion>
     <scmVersion>1.1</scmVersion>
-    <sitePluginVersion>2.0.1</sitePluginVersion>
+    <sitePluginVersion>2.1</sitePluginVersion>
   </properties>
 
   <dependencies>
@@ -419,6 +419,6 @@ under the License.
       <properties>
         <sitePluginVersion>3.0-beta-1-SNAPSHOT</sitePluginVersion>
       </properties>
-    </profile>    
+    </profile>
   </profiles>
 </project>
