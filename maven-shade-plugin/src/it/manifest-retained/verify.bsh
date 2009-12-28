@@ -10,4 +10,9 @@ if ( !"PASSED".equals( mf.getMainAttributes().getValue( "Test-Entry" ) ) )
     throw new IllegalStateException( "MANIFEST.MF is incomplete" );
 }
 
+if ( !"org.apache.maven.Main".equals( mf.getMainAttributes().getValue( "Main-Class" ) ) )
+{
+    throw new IllegalStateException( "MANIFEST.MF is incomplete" );
+}
+
 return true;
