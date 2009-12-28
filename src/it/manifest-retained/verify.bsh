@@ -1,0 +1,13 @@
+import java.io.*;
+import java.util.jar.*;
+
+JarFile jarFile = new JarFile( new File( basedir, "target/test-1.0-shaded.jar" ) );
+Manifest mf = jarFile.getManifest();
+jarFile.close();
+
+if ( !"PASSED".equals( mf.getMainAttributes().getValue( "Test-Entry" ) ) )
+{
+    throw new IllegalStateException( "MANIFEST.MF is incomplete" );
+}
+
+return true;
