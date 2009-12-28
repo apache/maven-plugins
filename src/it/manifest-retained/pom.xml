@@ -32,6 +32,15 @@ under the License.
     Test that existing manifest entries are retained upon shading.
   </description>
 
+  <dependencies>
+    <dependency>
+      <!-- dummy dependency to test interaction of multiple manifests -->
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-shade-plugin</artifactId>
+      <version>@project.version@</version>
+    </dependency>
+  </dependencies>
+
   <build>
     <plugins>
       <plugin>
@@ -50,6 +59,9 @@ under the License.
         <version>2.2</version>
         <configuration>
           <archive>
+            <manifest>
+              <mainClass>org.apache.maven.Main</mainClass>
+            </manifest>
             <manifestEntries>
               <Test-Entry>PASSED</Test-Entry>
             </manifestEntries>
