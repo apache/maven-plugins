@@ -47,8 +47,8 @@ Selecting Contents for Uber JAR
                 <excludes>
                   <exclude>classworlds:classworlds</exclude>
                   <exclude>junit:junit</exclude>
-                  <exclude>jmock:jmock</exclude>
-                  <exclude>xml-apis:xml-apis</exclude>
+                  <exclude>jmock:*</exclude>
+                  <exclude>*:xml-apis</exclude>
                 </excludes>
               </artifactSet>
             </configuration>
@@ -62,7 +62,9 @@ Selecting Contents for Uber JAR
 +-----
 
   Of course, <<<\<includes\>>>> can be used as well to specify a white list of artifacts. Artifacts are denoted by a
-  composite idenitifer of the form <groupId>:<artifactId>[:<classifier>].
+  composite idenitifer of the form <groupId>:<artifactId>[[:<type>]:<classifier>]. Since plugin version 1.3, the
+  wildcard characters '*' and '?' can be used to do glob-like pattern matching.
+  
 
   For fine-grained control of which classes from the selected dependencies are included, artifact filters can be used:
 
