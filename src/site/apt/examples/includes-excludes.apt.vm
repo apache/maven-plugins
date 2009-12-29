@@ -94,6 +94,14 @@ Selecting Contents for Uber JAR
                     <exclude>org/junit/runners/**</exclude>
                   </excludes>
                 </filter>
+                <filter>
+                  <artifact>*:*</artifact>
+                  <excludes>
+                    <exclude>META-INF/*.SF</exclude>
+                    <exclude>META-INF/*.DSA</exclude>
+                    <exclude>META-INF/*.RSA</exclude>
+                  </excludes>
+                </filter>
               </filters>
             </configuration>
           </execution>
@@ -106,4 +114,6 @@ Selecting Contents for Uber JAR
 +-----
 
   Here, Ant-like patterns are used to specify that from the dependency <<<junit:junit>>> only certain classes/resources
-  should be included in the uber JAR.
+  should be included in the uber JAR. The second filter demonstrates the use of wildcards for the artifact identity which
+  was introduced in plugin version 1.3. It excludes all signature related files from every artifact, regardless of its
+  group or artifact id.

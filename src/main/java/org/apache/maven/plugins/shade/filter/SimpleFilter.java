@@ -33,22 +33,22 @@ public class SimpleFilter
     implements Filter
 {
 
-    private File jar;
+    private Set jars;
 
     private Set includes;
 
     private Set excludes;
 
-    public SimpleFilter( File jar, Set includes, Set excludes )
+    public SimpleFilter( Set jars, Set includes, Set excludes )
     {
-        this.jar = jar;
+        this.jars = new HashSet( jars );
         this.includes = normalizePatterns( includes );
         this.excludes = normalizePatterns( excludes );
     }
 
     public boolean canFilter( File jar )
     {
-        return this.jar.equals( jar );
+        return jars.contains( jar );
     }
 
     public boolean isFiltered( String classFile )
