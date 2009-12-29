@@ -64,8 +64,8 @@ class ArtifactId
         }
         groupId = ( tokens.length > 0 ) ? tokens[0] : "";
         artifactId = ( tokens.length > 1 ) ? tokens[1] : "";
-        type = ( tokens.length > 2 ) ? tokens[2] : "*";
-        classifier = ( tokens.length > 3 ) ? tokens[3] : "*";
+        type = ( tokens.length > 3 ) ? tokens[2] : "*";
+        classifier = ( tokens.length > 3 ) ? tokens[3] : ( ( tokens.length > 2 ) ? tokens[2] : "*" );
     }
 
     public String getGroupId()
