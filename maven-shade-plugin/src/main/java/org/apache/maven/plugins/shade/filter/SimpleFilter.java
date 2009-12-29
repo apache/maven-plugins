@@ -22,6 +22,7 @@ package org.apache.maven.plugins.shade.filter;
 import org.codehaus.plexus.util.SelectorUtils;
 
 import java.io.File;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -31,6 +32,7 @@ import java.util.Set;
 public class SimpleFilter
     implements Filter
 {
+
     private File jar;
 
     private Set includes;
@@ -40,8 +42,8 @@ public class SimpleFilter
     public SimpleFilter( File jar, Set includes, Set excludes )
     {
         this.jar = jar;
-        this.includes = includes;
-        this.excludes = excludes;
+        this.includes = normalizePatterns( includes );
+        this.excludes = normalizePatterns( excludes );
     }
 
     public boolean canFilter( File jar )
@@ -51,13 +53,14 @@ public class SimpleFilter
 
     public boolean isFiltered( String classFile )
     {
+        String path = normalizePath( classFile );
 
-        return !( isIncluded( classFile ) && !isExcluded( classFile ) );
+        return !( isIncluded( path ) && !isExcluded( path ) );
     }
 
     private boolean isIncluded( String classFile )
     {
-        if ( includes == null || includes.size() == 0 )
+        if ( includes == null || includes.isEmpty() )
         {
             return true;
         }
@@ -67,7 +70,7 @@ public class SimpleFilter
 
     private boolean isExcluded( String classFile )
     {
-        if ( excludes == null || excludes.size() == 0 )
+        if ( excludes == null || excludes.isEmpty() )
         {
             return false;
         }
@@ -89,4 +92,26 @@ public class SimpleFilter
 
         return false;
     }
+
+    private String normalizePath( String path )
+    {
+        return ( path != null ) ? path.replace( '/', File.separatorChar ).replace( '\\', File.separatorChar ) : null;
+    }
+
+    private Set normalizePatterns( Set patterns )
+    {
+        Set result = new HashSet();
+
+        if ( patterns != null )
+        {
+            for ( Iterator it = patterns.iterator(); it.hasNext(); )
+            {
+                String pattern = (String) it.next();
+                result.add( normalizePath( pattern ) );
+            }
+        }
+
+        return result;
+    }
+
 }
