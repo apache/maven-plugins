@@ -172,8 +172,13 @@ public class ShadeMojo
     protected ArtifactResolver artifactResolver;
 
     /**
-     * Artifacts to include/exclude from the final artifact.
-     *
+     * Artifacts to include/exclude from the final artifact. Artifacts are denoted by composite identifiers of the
+     * general form <code>groupId:artifactId:type:classifier</code>. Since version 1.3, the wildcard characters '*' and '?' can be used
+     * within the sub parts of those composite identifiers to do pattern matching. For convenience, the syntax
+     * <code>groupId</code> is equivalent to <code>groupId:*:*:*</code>, <code>groupId:artifactId</code> is equivalent
+     * to <code>groupId:artifactId:*:*</code> and <code>groupId:artifactId:classifier</code> is equivalent to
+     * <code>groupId:artifactId:*:classifier</code>.
+     * 
      * @parameter
      */
     private ArtifactSet artifactSet;
@@ -193,16 +198,12 @@ public class ShadeMojo
     private ResourceTransformer[] transformers;
 
     /**
-     * Archive Filters to be used. Allows you to specify an artifact in the form of
-     * <code>groupId:artifactId:type:classifier</code> and a set of include/exclude file patterns for filtering which
-     * contents of the archive are added to the shaded jar. Just like the include/exclude patterns, the artifact
-     * coordinates for the filter support the wildcard characters '*' and '?'. For convenience, the syntax
-     * <code>groupId</code> is equivalent to <code>groupId:*:*:*</code>, <code>groupId:artifactId</code> is equivalent
-     * to <code>groupId:artifactId:*:*</code> and <code>groupId:artifactId:classifier</code> is equivalent to
-     * <code>groupId:artifactId:*:classifier</code>. From a logical perspective, includes are processed before excludes,
-     * thus it's possible to use an include to collect a set of files from the archive then use excludes to further
-     * reduce the set. By default, all files are included and no files are excluded. If multiple filters apply to an
-     * artifact, the intersection of the matched files will be included in the final JAR.
+     * Archive Filters to be used. Allows you to specify an artifact in the form of a composite identifier as used by
+     * {@link #artifactSet} and a set of include/exclude file patterns for filtering which contents of the archive are
+     * added to the shaded jar. From a logical perspective, includes are processed before excludes, thus it's possible
+     * to use an include to collect a set of files from the archive then use excludes to further reduce the set. By
+     * default, all files are included and no files are excluded. If multiple filters apply to an artifact, the
+     * intersection of the matched files will be included in the final JAR.
      * 
      * @parameter
      */
@@ -327,11 +328,13 @@ public class ShadeMojo
             }
         }
 
+        ArtifactSelector artifactSelector = new ArtifactSelector( artifactSet, shadedGroupFilter );
+
         for ( Iterator it = project.getArtifacts().iterator(); it.hasNext(); )
         {
             Artifact artifact = (Artifact) it.next();
 
-            if ( excludeArtifact( artifact ) )
+            if ( !artifactSelector.isSelected( artifact ) )
             {
                 getLog().info( "Excluding " + artifact.getId() + " from the shaded jar." );
 
@@ -527,51 +530,6 @@ public class ShadeMojo
             return resolvedArtifact.getFile();
         }
         return null;
-    }
-
-    private boolean excludeArtifact( Artifact artifact )
-    {
-        String id = getId( artifact );
-
-        // This is the case where we have only stated artifacts to include and no exclusions
-        // have been listed. We just want what we have asked to include.
-        if ( artifactSet != null && ( artifactSet.getExcludes() == null && artifactSet.getIncludes() != null )
-            && !includedArtifacts().contains( id ) )
-        {
-            return true;
-        }
-
-        if ( excludedArtifacts().contains( id ) )
-        {
-            return true;
-        }
-
-        if ( shadedGroupFilter != null && !artifact.getGroupId().startsWith( shadedGroupFilter ) )
-        {
-            return true;
-        }
-
-        return false;
-    }
-
-    private Set excludedArtifacts()
-    {
-        if ( artifactSet != null && artifactSet.getExcludes() != null )
-        {
-            return artifactSet.getExcludes();
-        }
-
-        return Collections.EMPTY_SET;
-    }
-
-    private Set includedArtifacts()
-    {
-        if ( artifactSet != null && artifactSet.getIncludes() != null )
-        {
-            return artifactSet.getIncludes();
-        }
-
-        return Collections.EMPTY_SET;
     }
 
     private List getRelocators()
@@ -805,24 +763,18 @@ public class ShadeMojo
 
     private String getId( Artifact artifact )
     {
-        return getId( artifact.getGroupId(), artifact.getArtifactId(), artifact.getClassifier() );
+        return getId( artifact.getGroupId(), artifact.getArtifactId(), artifact.getType(), artifact.getClassifier() );
     }
 
     private String getId( Dependency dependency )
     {
-        return getId( dependency.getGroupId(), dependency.getArtifactId(), dependency.getClassifier() );
+        return getId( dependency.getGroupId(), dependency.getArtifactId(), dependency.getType(),
+                      dependency.getClassifier() );
     }
 
-    private String getId( String groupId, String artifactId, String classifier )
+    private String getId( String groupId, String artifactId, String type, String classifier )
     {
-        if ( classifier == null || "jar".equals( classifier ) )
-        {
-            return groupId + ":" + artifactId;
-        }
-        else
-        {
-            return groupId + ":" + artifactId + ":" + classifier;
-        }
+        return groupId + ":" + artifactId + ":" + type + ":" + ( ( classifier != null ) ? classifier : "" );
     }
 
     public boolean updateExcludesInDeps( MavenProject project,
