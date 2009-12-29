@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -192,13 +193,17 @@ public class ShadeMojo
     private ResourceTransformer[] transformers;
 
     /**
-     * Archive Filters to be used.  Allows you to specify an artifact in the form of
-     * groupId:artifactId and a set of include/exclude file patterns for filtering which
-     * contents of the archive are added to the shaded jar.  From a logical perspective,
-     * includes are processed before excludes, thus it's possible to use an include to
-     * collect a set of files from the archive then use excludes to further reduce the set.
-     * By default, all files are included and no files are excluded.
-     *
+     * Archive Filters to be used. Allows you to specify an artifact in the form of
+     * <code>groupId:artifactId:type:classifier</code> and a set of include/exclude file patterns for filtering which
+     * contents of the archive are added to the shaded jar. Just like the include/exclude patterns, the artifact
+     * coordinates for the filter support the wildcard characters '*' and '?'. For convenience, the syntax
+     * <code>groupId:artifactId</code> is equivalent to <code>groupId:artifactId:*:*</code> and
+     * <code>groupId:artifactId:type</code> is equivalent to <code>groupId:artifactId:type:*</code>. From a logical
+     * perspective, includes are processed before excludes, thus it's possible to use an include to collect a set of
+     * files from the archive then use excludes to further reduce the set. By default, all files are included and no
+     * files are excluded. If multiple filters apply to an artifact, the intersection of the matched files will be
+     * included.
+     * 
      * @parameter
      */
     private ArchiveFilter[] filters;
@@ -602,36 +607,48 @@ public class ShadeMojo
     {
         List filters = new ArrayList();
 
-        if ( this.filters == null )
+        if ( this.filters == null || this.filters.length <= 0 )
         {
             return filters;
         }
 
         Map artifacts = new HashMap();
 
-        artifacts.put( getId( project.getArtifact() ), project.getArtifact().getFile() );
+        artifacts.put( project.getArtifact(), new ArtifactId( project.getArtifact() ) );
 
         for ( Iterator it = project.getArtifacts().iterator(); it.hasNext(); )
         {
             Artifact artifact = (Artifact) it.next();
 
-            artifacts.put( getId( artifact ), artifact.getFile() );
+            artifacts.put( artifact, new ArtifactId( artifact ) );
         }
 
         for ( int i = 0; i < this.filters.length; i++ )
         {
-            ArchiveFilter f = this.filters[i];
+            ArchiveFilter filter = this.filters[i];
 
-            File jar = (File) artifacts.get( f.getArtifact() );
+            ArtifactId pattern = new ArtifactId( filter.getArtifact() );
 
-            if ( jar == null )
+            Set jars = new HashSet();
+
+            for ( Iterator it = artifacts.entrySet().iterator(); it.hasNext(); )
             {
-                getLog().info( "No artifact matching filter " + f.getArtifact() );
+                Map.Entry entry = (Map.Entry) it.next();
+
+                if ( ( (ArtifactId) entry.getValue() ).matches( pattern ) )
+                {
+                    jars.add( ( (Artifact) entry.getKey() ).getFile() );
+                }
+            }
+
+            if ( jars.isEmpty() )
+            {
+                getLog().info( "No artifact matching filter " + filter.getArtifact() );
 
                 continue;
             }
 
-            filters.add( new SimpleFilter( jar, f.getIncludes(), f.getExcludes() ) );
+            filters.add( new SimpleFilter( jars, filter.getIncludes(), filter.getExcludes() ) );
 
         }
 

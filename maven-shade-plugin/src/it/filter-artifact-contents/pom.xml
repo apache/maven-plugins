@@ -86,6 +86,12 @@ under the License.
                     <exclude>org/apache/*</exclude>
                   </excludes>
                 </filter>
+                <filter>
+                  <artifact>*:*</artifact>
+                  <excludes>
+                    <exclude>org/*</exclude>
+                  </excludes>
+                </filter>
               </filters>
             </configuration>
           </execution>
