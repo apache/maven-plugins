@@ -55,6 +55,7 @@ under the License.
       <groupId>org.apache.maven.its.shade.fac</groupId>
       <artifactId>b</artifactId>
       <version>0.1</version>
+      <classifier>client</classifier>
     </dependency>
   </dependencies>
 
@@ -81,7 +82,7 @@ under the License.
                   </includes>
                 </filter>
                 <filter>
-                  <artifact>org.apache.maven.its.shade.fac:b</artifact>
+                  <artifact>org.apache.maven.its.shade.fac:b:client</artifact>
                   <excludes>
                     <exclude>org/apache/*</exclude>
                   </excludes>

@@ -61,14 +61,14 @@ public class ArtifactIdTest
         id = new ArtifactId( "gid:aid:" );
         assertEquals( "gid", id.getGroupId() );
         assertEquals( "aid", id.getArtifactId() );
-        assertEquals( "", id.getType() );
-        assertEquals( "*", id.getClassifier() );
+        assertEquals( "*", id.getType() );
+        assertEquals( "", id.getClassifier() );
 
-        id = new ArtifactId( "gid:aid:type" );
+        id = new ArtifactId( "gid:aid:cls" );
         assertEquals( "gid", id.getGroupId() );
         assertEquals( "aid", id.getArtifactId() );
-        assertEquals( "type", id.getType() );
-        assertEquals( "*", id.getClassifier() );
+        assertEquals( "*", id.getType() );
+        assertEquals( "cls", id.getClassifier() );
 
         id = new ArtifactId( "gid:aid:type:cls" );
         assertEquals( "gid", id.getGroupId() );
@@ -121,10 +121,11 @@ public class ArtifactIdTest
         assertFalse( new ArtifactId( "gid", "aid", "Type", "cls" ).matches( new ArtifactId( "gid:aid:type:cls" ) ) );
         assertFalse( new ArtifactId( "gid", "aid", "type", "Cls" ).matches( new ArtifactId( "gid:aid:type:cls" ) ) );
 
-        assertTrue( new ArtifactId( "gid", "aid", "type", "" ).matches( new ArtifactId( "gid:aid:type" ) ) );
-        assertTrue( new ArtifactId( "gid", "aid", "type", "cls" ).matches( new ArtifactId( "gid:aid:type" ) ) );
-        assertFalse( new ArtifactId( "id", "aid", "type", "" ).matches( new ArtifactId( "gid:aid:type" ) ) );
-        assertFalse( new ArtifactId( "gid", "id", "type", "" ).matches( new ArtifactId( "gid:aid:type" ) ) );
+        assertTrue( new ArtifactId( "gid", "aid", "any", "cls" ).matches( new ArtifactId( "gid:aid:cls" ) ) );
+        assertTrue( new ArtifactId( "gid", "aid", "type", "cls" ).matches( new ArtifactId( "gid:aid:cls" ) ) );
+        assertFalse( new ArtifactId( "id", "aid", "type", "cls" ).matches( new ArtifactId( "gid:aid:cls" ) ) );
+        assertFalse( new ArtifactId( "gid", "id", "type", "cls" ).matches( new ArtifactId( "gid:aid:cls" ) ) );
+        assertFalse( new ArtifactId( "gid", "id", "type", "ls" ).matches( new ArtifactId( "gid:aid:cls" ) ) );
 
         assertTrue( new ArtifactId( "gid", "aid", "type", "" ).matches( new ArtifactId( "gid:aid" ) ) );
         assertTrue( new ArtifactId( "gid", "aid", "any", "tests" ).matches( new ArtifactId( "gid:aid" ) ) );
