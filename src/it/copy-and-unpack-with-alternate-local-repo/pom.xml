@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <!--
   ~ Licensed to the Apache Software Foundation (ASF) under one
   ~ or more contributor license agreements.  See the NOTICE file
@@ -17,25 +18,24 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
+  
+<project>
 
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-
+  
   <groupId>org.apache.maven.its.dependency</groupId>
   <artifactId>test</artifactId>
   <version>1.0-SNAPSHOT</version>
 
   <name>Test</name>
   <description>
-    Test dependency:copy
+    Test dependency:copy and dependency:unpack with alternate local repository
   </description>
-
+  
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
-
+  
   <build>
     <plugins>
       <plugin>
@@ -43,16 +43,33 @@
         <version>@project.version@</version>
         <executions>
           <execution>
-            <id>test</id>
+            <id>copy</id>
             <goals>
               <goal>copy</goal>
             </goals>
             <configuration>
+              <alternateLocalRepository>${project.build.directory}/repo</alternateLocalRepository>
               <artifactItems>
                 <artifactItem>
-                  <groupId>org.apache.maven</groupId>
-                  <artifactId>maven-model</artifactId>
-                  <version>2.0.6</version>
+                  <groupId>junit</groupId>
+                  <artifactId>junit</artifactId>
+                  <version>3.8.1</version>
+                </artifactItem>
+              </artifactItems>
+            </configuration>
+          </execution>
+          <execution>
+            <id>unpack</id>
+            <goals>
+              <goal>unpack</goal>
+            </goals>
+            <configuration>
+              <alternateLocalRepository>${project.build.directory}/repo</alternateLocalRepository>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>junit</groupId>
+                  <artifactId>junit</artifactId>
+                  <version>3.8.1</version>
                 </artifactItem>
               </artifactItems>
             </configuration>

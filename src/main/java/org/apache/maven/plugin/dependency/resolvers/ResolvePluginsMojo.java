@@ -152,7 +152,7 @@ public class ResolvePluginsMojo
         {
             Artifact artifact = (Artifact) i.next();
             // resolve the new artifact
-            this.resolver.resolve( artifact, this.remotePluginRepositories, this.local );
+            this.resolver.resolve( artifact, this.remotePluginRepositories, this.getLocal() );
         }
         return artifacts;
     }

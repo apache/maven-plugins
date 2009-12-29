@@ -479,7 +479,7 @@ public class TestCopyDependenciesMojo
         // init classifier things
         mojo.factory = DependencyTestUtils.getArtifactFactory();
         mojo.resolver = new StubArtifactResolver( null, are, anfe );
-        mojo.local = new StubArtifactRepository( this.testDir.getAbsolutePath() );
+        mojo.setLocal( new StubArtifactRepository( this.testDir.getAbsolutePath() ) );
 
         try
         {

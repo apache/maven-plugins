@@ -1,0 +1,26 @@
+import java.io.*;
+
+
+File file = new File( basedir, "target/dependency/junit-3.8.1.jar" );
+
+System.out.println( "Checking for existence of " + file );
+if ( !file.isFile() )
+{
+   throw new Exception( "Missing " + file );
+}
+
+file = new File( basedir, "target/dependency/junit" );
+System.out.println( "Checking for existence of " + file );
+if ( !file.isDirectory() )
+{
+   throw new Exception( "Missing " + file );
+}
+
+file = new File( basedir, "target/repo/junit/junit/3.8.1/junit-3.8.1.jar" );
+System.out.println( "Checking for existence of " + file );
+if ( !file.isFile() )
+{
+   throw new Exception( "Missing " + file );
+}
+
+return true;

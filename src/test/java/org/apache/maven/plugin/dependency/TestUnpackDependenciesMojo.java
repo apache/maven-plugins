@@ -568,7 +568,7 @@ public class TestUnpackDependenciesMojo
         mojo.type = testType;
         mojo.factory = DependencyTestUtils.getArtifactFactory();
         mojo.resolver = new StubArtifactResolver( stubFactory, false, false );
-        mojo.local = new StubArtifactRepository( this.testDir.getAbsolutePath() );
+        mojo.setLocal( new StubArtifactRepository( this.testDir.getAbsolutePath() ) );
 
         mojo.execute();
 

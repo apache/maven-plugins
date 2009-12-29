@@ -222,7 +222,7 @@ public class CopyDependenciesMojo
 		// Resolve the pom artifact using repos
 		try
 		{
-		    this.resolver.resolve( pomArtifact, this.remoteRepos, this.local );
+		    this.resolver.resolve( pomArtifact, this.remoteRepos, this.getLocal() );
 		}
 		catch ( Exception e )
 		{

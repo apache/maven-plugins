@@ -115,6 +115,50 @@ Copying specific artifacts
 </project>
 +---+
 
+{Using an alternate local repository}:
+
+    <<dependency:copy>> always downloads artifacts to default local repository first, and then
+    copy the artifacts to the desired locations.  For large size unique snapshot artifacts, the downloads can quickly
+    fill up default local repository, and therefore local disk, after many executions.  
+    To clean up the downloaded artifacts as part the build, set <alternateLocalRepotority>'s value 
+    to a location in your project's target directory.
+    
+    This use case also applies to <<dependency:unpack>> goal.
+    
++---+
+<project>
+  [...]
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>${project.version}</version>
+        <executions>
+          <execution>
+            <id>copy-with-alternalte-repo</id>
+            <phase>install</phase>
+            <goals>
+              <goal>copy</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  [...]
+                </artifactItem>
+                [...]
+              </artifactItems>
+              <alternateLocalRepository>\${project.build.directory}/localrepo</alternateLocalRepository>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  [...]
+</project>
++---+    
+    
 {Copying from the command line}:
   
 	If you intend to configure this mojo for execution on the command line using:

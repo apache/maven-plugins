@@ -308,7 +308,7 @@ public abstract class AbstractDependencyFilterMojo
             artifacts = status.getResolvedDependencies();
 
             // resolve the rest of the artifacts
-            ArtifactsResolver artifactsResolver = new DefaultArtifactsResolver( this.resolver, this.local,
+            ArtifactsResolver artifactsResolver = new DefaultArtifactsResolver( this.resolver, this.getLocal(),
                                                                                 this.remoteRepos, stopOnFailure );
             resolvedArtifacts = artifactsResolver.resolve( artifacts, getLog() );
 
