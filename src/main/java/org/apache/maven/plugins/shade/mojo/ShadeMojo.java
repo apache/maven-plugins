@@ -198,11 +198,11 @@ public class ShadeMojo
      * contents of the archive are added to the shaded jar. Just like the include/exclude patterns, the artifact
      * coordinates for the filter support the wildcard characters '*' and '?'. For convenience, the syntax
      * <code>groupId:artifactId</code> is equivalent to <code>groupId:artifactId:*:*</code> and
-     * <code>groupId:artifactId:type</code> is equivalent to <code>groupId:artifactId:type:*</code>. From a logical
-     * perspective, includes are processed before excludes, thus it's possible to use an include to collect a set of
-     * files from the archive then use excludes to further reduce the set. By default, all files are included and no
-     * files are excluded. If multiple filters apply to an artifact, the intersection of the matched files will be
-     * included.
+     * <code>groupId:artifactId:classifier</code> is equivalent to <code>groupId:artifactId:*:classifier</code>. From a
+     * logical perspective, includes are processed before excludes, thus it's possible to use an include to collect a
+     * set of files from the archive then use excludes to further reduce the set. By default, all files are included and
+     * no files are excluded. If multiple filters apply to an artifact, the intersection of the matched files will be
+     * included in the final JAR.
      * 
      * @parameter
      */
