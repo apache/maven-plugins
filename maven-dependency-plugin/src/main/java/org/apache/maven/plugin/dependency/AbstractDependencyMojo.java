@@ -85,7 +85,7 @@ public abstract class AbstractDependencyMojo
      * @readonly
      * @required
      */
-    protected org.apache.maven.artifact.repository.ArtifactRepository local;
+    private org.apache.maven.artifact.repository.ArtifactRepository local;
 
     /**
      * List of Remote Repositories used by the resolver
@@ -318,7 +318,7 @@ public abstract class AbstractDependencyMojo
     /**
      * @return Returns the local.
      */
-    public org.apache.maven.artifact.repository.ArtifactRepository getLocal ()
+    protected org.apache.maven.artifact.repository.ArtifactRepository getLocal ()
     {
         return this.local;
     }

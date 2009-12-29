@@ -282,7 +282,7 @@ public class BuildClasspathMojo
             // substitute the property for the local repo path to make the classpath file portable.
             if ( StringUtils.isNotEmpty( localRepoProperty ) )
             {
-                file = StringUtils.replace( file, local.getBasedir(), localRepoProperty );
+                file = StringUtils.replace( file, getLocal().getBasedir(), localRepoProperty );
             }
             sb.append( file );
         }

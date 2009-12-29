@@ -77,7 +77,7 @@ public abstract class AbstractResolveMojo
         {
             Artifact artifact = (Artifact) i.next();
             // resolve the new artifact
-            this.resolver.resolve( artifact, this.remoteRepos, this.local );
+            this.resolver.resolve( artifact, this.remoteRepos, this.getLocal() );
         }
         return artifacts;
     }
@@ -102,7 +102,7 @@ public abstract class AbstractResolveMojo
         Artifact pomArtifact = this.factory.createArtifact( artifact.getGroupId(), artifact.getArtifactId(), artifact
             .getVersion(), "", "pom" );
 
-        MavenProject pomProject = mavenProjectBuilder.buildFromRepository( pomArtifact, this.remoteRepos, this.local );
+        MavenProject pomProject = mavenProjectBuilder.buildFromRepository( pomArtifact, this.remoteRepos, this.getLocal() );
 
         return resolveDependencyArtifacts( pomProject );
     }

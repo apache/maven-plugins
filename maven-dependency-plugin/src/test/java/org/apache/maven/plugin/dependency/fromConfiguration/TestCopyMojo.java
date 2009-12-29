@@ -660,5 +660,25 @@ public class TestCopyMojo
 
         assertTrue( time < copiedFile.lastModified() );
     }
+    
+    public void testCopyFileWithOverideLocalRepo()
+        throws IOException, MojoExecutionException
+    {
+        ArrayList list = stubFactory.getArtifactItems( stubFactory.getClassifiedArtifacts() );
+
+        mojo.setArtifactItems( list );
+        mojo.setLocal( new StubArtifactRepository( this.testDir.getAbsolutePath() ) );
+        
+        File execLocalRepo =  new File( this.testDir.getAbsolutePath(), "executionLocalRepo" );
+        assertFalse( execLocalRepo.exists() );
+        
+        mojo.setAlternateLocalRepository( execLocalRepo );
+        
+        assertEquals( execLocalRepo.getAbsolutePath(), mojo.getLocal().getBasedir() ); 
+        mojo.execute();
+
+        assertFilesExist( list, true );
+       
+    }    
 
 }

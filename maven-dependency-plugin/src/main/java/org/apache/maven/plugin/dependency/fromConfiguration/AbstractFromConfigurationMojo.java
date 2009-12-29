@@ -25,6 +25,9 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.artifact.repository.DefaultArtifactRepository;
+import org.apache.maven.artifact.repository.layout.DefaultRepositoryLayout;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
@@ -97,6 +100,21 @@ public abstract class AbstractFromConfigurationMojo
      * @since 1.0
      */
     private ArrayList artifactItems;
+    
+    /**
+     * Internal local repository
+     */
+    private ArtifactRepository localRepository;    
+
+    /**
+     * Path to an alternate local repository during plugin's execution.
+     * Set this value to a location under your project's target directory so that
+     * downloaded artifacts are removed as part of the build.
+     * @parameter 
+     * @since 2.2
+     */
+    private  File alternateLocalRepository;    
+    
 
     abstract ArtifactItemFilter getMarkedArtifactFilter( ArtifactItem item );
 
@@ -239,7 +257,7 @@ public abstract class AbstractFromConfigurationMojo
              * iter.next(); artifact = node.getArtifact(); }
              */
 
-            resolver.resolve( artifact, remoteRepos, local );
+            resolver.resolve( artifact, remoteRepos, getLocal() );
         }
         catch ( ArtifactResolutionException e )
         {
@@ -347,6 +365,32 @@ public abstract class AbstractFromConfigurationMojo
         return map;
     }*/
 
+    
+    /**
+     * @return Returns the local.
+     */
+    protected ArtifactRepository getLocal ()
+    {
+        if ( this.localRepository != null )
+        {
+            return this.localRepository;
+        }
+        
+        if ( this.alternateLocalRepository != null )
+        {
+            //create a temporary local repository with unique id
+            this.localRepository = new DefaultArtifactRepository( Long.toHexString( System.currentTimeMillis() ), "file://" + this.alternateLocalRepository.getAbsolutePath(), new DefaultRepositoryLayout() );
+            
+            this.getLog().debug( "Execution local repository is at: " + this.localRepository.getBasedir()  );
+            
+            return this.localRepository;
+        }
+        
+        this.localRepository = super.getLocal();
+        
+        return this.localRepository;
+    }
+    
     /**
      * @return Returns the artifactItems.
      */
@@ -431,4 +475,9 @@ public abstract class AbstractFromConfigurationMojo
     {
         this.overWriteSnapshots = theOverWriteSnapshots;
     }
+    
+    public void setAlternateLocalRepository( File alternateLocalRepository )
+    {
+        this.alternateLocalRepository = alternateLocalRepository;
+    }    
 }
