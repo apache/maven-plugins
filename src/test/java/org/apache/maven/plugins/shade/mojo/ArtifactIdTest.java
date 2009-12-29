@@ -34,15 +34,13 @@ public class ArtifactIdTest
 
         id = new ArtifactId( (String) null );
         assertEquals( "", id.getGroupId() );
-        assertEquals( "", id.getArtifactId() );
 
         id = new ArtifactId( "" );
         assertEquals( "", id.getGroupId() );
-        assertEquals( "", id.getArtifactId() );
 
         id = new ArtifactId( "gid" );
         assertEquals( "gid", id.getGroupId() );
-        assertEquals( "", id.getArtifactId() );
+        assertEquals( "*", id.getArtifactId() );
 
         id = new ArtifactId( "gid:" );
         assertEquals( "gid", id.getGroupId() );
@@ -131,6 +129,10 @@ public class ArtifactIdTest
         assertTrue( new ArtifactId( "gid", "aid", "any", "tests" ).matches( new ArtifactId( "gid:aid" ) ) );
         assertFalse( new ArtifactId( "id", "aid", "type", "" ).matches( new ArtifactId( "gid:aid" ) ) );
         assertFalse( new ArtifactId( "gid", "id", "type", "" ).matches( new ArtifactId( "gid:aid" ) ) );
+
+        assertTrue( new ArtifactId( "gid", "aid", "type", "" ).matches( new ArtifactId( "gid" ) ) );
+        assertTrue( new ArtifactId( "gid", "id", "any", "any" ).matches( new ArtifactId( "gid" ) ) );
+        assertFalse( new ArtifactId( "id", "aid", "type", "" ).matches( new ArtifactId( "gid" ) ) );
 
         assertTrue( new ArtifactId( "gid", "aid", "type", "cls" ).matches( new ArtifactId( "*:aid:type:cls" ) ) );
         assertTrue( new ArtifactId( "any", "aid", "type", "cls" ).matches( new ArtifactId( "*:aid:type:cls" ) ) );
