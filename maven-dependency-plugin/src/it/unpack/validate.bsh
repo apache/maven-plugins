@@ -8,14 +8,14 @@ if ( !file.isDirectory() )
    throw new Exception( "Missing " + file );
 }
 
-file = new File( file, "wrapper-delta-pack-3.2.3" );
+file = new File( file, "qdox-1.5" );
 System.out.println( "Checking for existence of " + file );
 if ( !file.isDirectory() )
 {
    throw new Exception( "Missing " + file );
 }
 
-file = new File( file, "jdoc.tar.gz" );
+file = new File( file, "build.xml" );
 System.out.println( "Checking for existence of " + file );
 if ( !file.isFile() )
 {
