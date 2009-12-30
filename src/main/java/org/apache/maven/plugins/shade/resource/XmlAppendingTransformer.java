@@ -22,6 +22,7 @@ package org.apache.maven.plugins.shade.resource;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
+import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
 
@@ -52,7 +53,7 @@ public class XmlAppendingTransformer
         return false;
     }
 
-    public void processResource( InputStream is )
+    public void processResource( String resource, InputStream is, List relocators )
         throws IOException
     {
         Document r;

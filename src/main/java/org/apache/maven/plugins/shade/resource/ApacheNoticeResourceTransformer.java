@@ -31,6 +31,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -83,7 +84,7 @@ public class ApacheNoticeResourceTransformer
         return false;
     }
 
-    public void processResource( InputStream is )
+    public void processResource( String resource, InputStream is, List relocators )
         throws IOException
     {
         if ( entries.isEmpty() )

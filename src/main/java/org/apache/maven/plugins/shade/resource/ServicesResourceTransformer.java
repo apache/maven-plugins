@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
@@ -67,7 +68,7 @@ public class ServicesResourceTransformer
         return false;
     }
 
-    public void processResource( InputStream is )
+    public void processResource( String resource, InputStream is, List relocators )
         throws IOException
     {
         IOUtil.copy( is, data );

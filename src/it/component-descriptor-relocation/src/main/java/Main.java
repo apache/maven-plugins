@@ -1,5 +1,3 @@
-package org.apache.maven.plugins.shade.resource;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -19,44 +17,26 @@ package org.apache.maven.plugins.shade.resource;
  * under the License.
  */
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
-import java.util.jar.JarOutputStream;
+import org.apache.maven.component.api.*;
 
-/**
- * A resource processor that prevents the inclusion of an arbitrary
- * resource into the shaded JAR.
- *
- */
-public class DontIncludeResourceTransformer
-    implements ResourceTransformer
+import org.codehaus.plexus.*;
+
+public class Main
 {
-    String resource;
 
-    public boolean canTransformResource( String r )
+    public static void main( String[] args )
+        throws Exception
     {
-        if ( r.endsWith( resource ) )
+        DefaultPlexusContainer container = new DefaultPlexusContainer();
+        container.initialize();
+        container.start();
+        
+        Component comp = (Component) container.lookup( Component.class.getName(), "test" );
+        System.out.println( comp.getId() );
+        if ( !"test-default".equals( comp.getId() ) )
         {
-            return true;
+            throw new IllegalStateException( "bad component " + comp );
         }
-
-        return false;
     }
 
-    public void processResource( String resource, InputStream is, List relocators )
-        throws IOException
-    {
-
-    }
-
-    public boolean hasTransformedResource()
-    {
-        return false;
-    }
-
-    public void modifyOutputStream( JarOutputStream os )
-        throws IOException
-    {
-    }
 }

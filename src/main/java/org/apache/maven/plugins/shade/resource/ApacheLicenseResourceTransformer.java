@@ -22,6 +22,7 @@ package org.apache.maven.plugins.shade.resource;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.jar.JarOutputStream;
 
@@ -49,7 +50,7 @@ public class ApacheLicenseResourceTransformer
         return false;
     }
 
-    public void processResource( InputStream is )
+    public void processResource( String resource, InputStream is, List relocators )
         throws IOException
     {
 
