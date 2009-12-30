@@ -72,10 +72,10 @@ How to prepare your dependencies before updating to Maven 2.0.6:
 
   Read more here:
 
-  * {{{./analyze-mojo.html}Analyze Mojo}}
+  * {{{../analyze-mojo.html}Analyze Mojo}}
 
-  * {{{./analyze-dep-mgt-mojo.html}Analyze-dep-mgt Mojo}}
+  * {{{../analyze-dep-mgt-mojo.html}Analyze-dep-mgt Mojo}}
 
-  * {{{./usage.html}Usage}}
+  * {{{../usage.html}Usage}}
 
   []
