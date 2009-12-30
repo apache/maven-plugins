@@ -79,7 +79,7 @@ public class ShadeMojo
     extends AbstractMojo
 {
     /**
-     * @parameter expression="${project}"
+     * @parameter default-value="${project}"
      * @readonly
      * @required
      */
@@ -111,7 +111,7 @@ public class ShadeMojo
     /**
      * ProjectBuilder, needed to create projects from the artifacts.
      *
-     * @component role="org.apache.maven.project.MavenProjectBuilder"
+     * @component
      * @required
      * @readonly
      */
@@ -138,7 +138,7 @@ public class ShadeMojo
     /**
      * Remote repositories which will be searched for source attachments.
      *
-     * @parameter expression="${project.remoteArtifactRepositories}"
+     * @parameter default-value="${project.remoteArtifactRepositories}"
      * @required
      * @readonly
      */
@@ -147,7 +147,7 @@ public class ShadeMojo
     /**
      * Local maven repository.
      *
-     * @parameter expression="${localRepository}"
+     * @parameter default-value="${localRepository}"
      * @required
      * @readonly
      */
@@ -156,7 +156,7 @@ public class ShadeMojo
     /**
      * Artifact factory, needed to download source jars for inclusion in classpath.
      *
-     * @component role="org.apache.maven.artifact.factory.ArtifactFactory"
+     * @component
      * @required
      * @readonly
      */
@@ -165,7 +165,7 @@ public class ShadeMojo
     /**
      * Artifact resolver, needed to download source jars for inclusion in classpath.
      *
-     * @component role="org.apache.maven.artifact.resolver.ArtifactResolver"
+     * @component
      * @required
      * @readonly
      */
