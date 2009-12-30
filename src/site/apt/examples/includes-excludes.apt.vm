@@ -49,6 +49,8 @@ Selecting Contents for Uber JAR
                   <exclude>junit:junit</exclude>
                   <exclude>jmock:*</exclude>
                   <exclude>*:xml-apis</exclude>
+                  <exclude>org.apache.maven:lib:tests</exclude>
+                  <exclude>log4j:log4j:jar:</exclude>
                 </excludes>
               </artifactSet>
             </configuration>
