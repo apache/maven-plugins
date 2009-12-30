@@ -85,6 +85,7 @@ under the License.
                   <artifact>org.apache.maven.its.shade.fac:b:client</artifact>
                   <excludes>
                     <exclude>org/apache/*</exclude>
+                    <exclude>org/apache/maven/b/</exclude>
                   </excludes>
                 </filter>
                 <filter>
