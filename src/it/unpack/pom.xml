@@ -52,9 +52,10 @@
               <outputDirectory>${project.build.directory}/output spaces directory</outputDirectory>
               <artifactItems>
                 <artifactItem>
-                  <groupId>tanukisoft</groupId>
-                  <artifactId>wrapper-delta-pack</artifactId>
-                  <version>3.2.3</version>
+                  <groupId>qdox</groupId>
+                  <artifactId>qdox</artifactId>
+                  <version>1.5</version>
+                  <classifier>src</classifier>
                   <type>tar.gz</type>
                 </artifactItem>
               </artifactItems>
