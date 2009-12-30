@@ -64,6 +64,9 @@ Resource Transformers
 </project>
 +-----
 
+  Since plugin version 1.3, this resource transformer will also update the descriptor to account for relocation of
+  component interfaces/implementations (if any).
+
 * Concatenating Service Entries
 
   JAR files providing implementations of some interfaces often ship with a <<<META-INF/services/>>> directory that
