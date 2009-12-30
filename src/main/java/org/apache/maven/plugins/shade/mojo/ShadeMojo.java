@@ -295,6 +295,16 @@ public class ShadeMojo
      */
     private boolean createSourcesJar;
 
+    /**
+     * The path to the output file for the shaded artifact. When this parameter is set, the created archive will neither
+     * replace the project's main artifact nor will it be attached. Hence, this parameter causes the parameters
+     * {@link #finalName}, {@link #shadedArtifactAttached}, {@link #shadedClassifierName} and
+     * {@link #createDependencyReducedPom} to be ignored when used.
+     * 
+     * @parameter
+     * @since 1.3
+     */
+    private File outputFile;
 
     /** @throws MojoExecutionException  */
     public void execute()
@@ -304,31 +314,35 @@ public class ShadeMojo
         Set artifactIds = new LinkedHashSet();
         Set sourceArtifacts = new LinkedHashSet();
 
-        if ( project.getArtifact().getFile() == null )
-        {
-            getLog().error( "The project main artifact does not exist. This could have the following" );
-            getLog().error( "reasons:" );
-            getLog().error( "- You have invoked the goal directly from the command line. This is not" );
-            getLog().error( "  supported. Please add the goal to the default lifecycle via an" );
-            getLog().error( "  <execution> element in your POM and use \"mvn package\" to have it run." );
-            getLog().error( "- You have bound the goal to a lifecycle phase before \"package\". Please" );
-            getLog().error( "  remove this binding from your POM such that the goal will be run in" );
-            getLog().error( "  the proper phase." );
-            throw new MojoExecutionException( "Failed to create shaded artifact.",
-                                              new IllegalStateException( "Project main artifact does not exist." ) );
-        }
-        artifacts.add( project.getArtifact().getFile() );
+        ArtifactSelector artifactSelector = new ArtifactSelector( artifactSet, shadedGroupFilter );
 
-        if ( createSourcesJar )
+        if ( artifactSelector.isSelected( project.getArtifact() ) && !"pom".equals( project.getArtifact().getType() ) )
         {
-            File file = shadedSourcesArtifactFile();
-            if ( file.exists() )
+            if ( project.getArtifact().getFile() == null )
             {
-                sourceArtifacts.add( file );
+                getLog().error( "The project main artifact does not exist. This could have the following" );
+                getLog().error( "reasons:" );
+                getLog().error( "- You have invoked the goal directly from the command line. This is not" );
+                getLog().error( "  supported. Please add the goal to the default lifecycle via an" );
+                getLog().error( "  <execution> element in your POM and use \"mvn package\" to have it run." );
+                getLog().error( "- You have bound the goal to a lifecycle phase before \"package\". Please" );
+                getLog().error( "  remove this binding from your POM such that the goal will be run in" );
+                getLog().error( "  the proper phase." );
+                throw new MojoExecutionException( "Failed to create shaded artifact.",
+                                                  new IllegalStateException( "Project main artifact does not exist." ) );
+            }
+
+            artifacts.add( project.getArtifact().getFile() );
+
+            if ( createSourcesJar )
+            {
+                File file = shadedSourcesArtifactFile();
+                if ( file.isFile() )
+                {
+                    sourceArtifacts.add( file );
+                }
             }
         }
-
-        ArtifactSelector artifactSelector = new ArtifactSelector( artifactSet, shadedGroupFilter );
 
         for ( Iterator it = project.getArtifacts().iterator(); it.hasNext(); )
         {
@@ -340,8 +354,8 @@ public class ShadeMojo
 
                 continue;
             }
-            
-            if ( artifact.getType().equals( "pom" ) )
+
+            if ( "pom".equals( artifact.getType() ) )
             {
                 getLog().info( "Skipping pom dependency " + artifact.getId() + " in the shaded jar." );
                 continue;
@@ -364,7 +378,7 @@ public class ShadeMojo
         }
 
 
-        File outputJar = shadedArtifactFileWithClassifier();
+        File outputJar = ( outputFile != null ) ? outputFile : shadedArtifactFileWithClassifier();
         File sourcesJar = shadedSourceArtifactFileWithClassifier();
 
         // Now add our extra resources
@@ -383,56 +397,58 @@ public class ShadeMojo
                 shader.shade( sourceArtifacts, sourcesJar, filters, relocators, resourceTransformers );
             }
 
-            boolean renamed=false;
-            
-            // rename the output file if a specific finalName is set
-            // but don't rename if the finalName is the <build><finalName>
-            // because this will be handled implicitely later
-            if ( finalName != null && finalName.length() > 0 && 
-                 !finalName.equals( project.getBuild().getFinalName() ) )
+            if ( outputFile == null )
             {
-                String finalFileName = finalName + "." + project.getArtifact().getArtifactHandler().getExtension(); 
-                File finalFile = new File( outputDirectory, finalFileName );
-                replaceFile( finalFile, outputJar );                
-                outputJar = finalFile;
-                
-                renamed=true;
-            }
+                boolean renamed = false;
 
-            if ( shadedArtifactAttached )
-            {
-                getLog().info( "Attaching shaded artifact." );
-                projectHelper.attachArtifact( project, project.getArtifact().getType(), shadedClassifierName, outputJar );
-                if ( createSourcesJar )
+                // rename the output file if a specific finalName is set
+                // but don't rename if the finalName is the <build><finalName>
+                // because this will be handled implicitely later
+                if ( finalName != null && finalName.length() > 0 && !finalName.equals( project.getBuild().getFinalName() ) )
                 {
-                    projectHelper.attachArtifact( project, "jar", shadedClassifierName + "-sources", sourcesJar );
-                }
-            }
-            else if ( !renamed )
-            {
-                getLog().info( "Replacing original artifact with shaded artifact." );
-                File originalArtifact = project.getArtifact().getFile();
-                replaceFile( originalArtifact, outputJar );
+                    String finalFileName = finalName + "." + project.getArtifact().getArtifactHandler().getExtension();
+                    File finalFile = new File( outputDirectory, finalFileName );
+                    replaceFile( finalFile, outputJar );
+                    outputJar = finalFile;
 
-                if ( createSourcesJar )
-                {
-                    File shadedSources = shadedSourcesArtifactFile();
-
-                    replaceFile( shadedSources, sourcesJar );
-
-                    projectHelper.attachArtifact( project, "jar",
-                                                  "sources", shadedSources );
+                    renamed = true;
                 }
 
-                if ( createDependencyReducedPom )
+                if ( shadedArtifactAttached )
                 {
-                    createDependencyReducedPom( artifactIds );
+                    getLog().info( "Attaching shaded artifact." );
+                    projectHelper.attachArtifact( project, project.getArtifact().getType(), shadedClassifierName,
+                                                  outputJar );
+                    if ( createSourcesJar )
+                    {
+                        projectHelper.attachArtifact( project, "jar", shadedClassifierName + "-sources", sourcesJar );
+                    }
+                }
+                else if ( !renamed )
+                {
+                    getLog().info( "Replacing original artifact with shaded artifact." );
+                    File originalArtifact = project.getArtifact().getFile();
+                    replaceFile( originalArtifact, outputJar );
+
+                    if ( createSourcesJar )
+                    {
+                        File shadedSources = shadedSourcesArtifactFile();
+
+                        replaceFile( shadedSources, sourcesJar );
+
+                        projectHelper.attachArtifact( project, "jar", "sources", shadedSources );
+                    }
+
+                    if ( createDependencyReducedPom )
+                    {
+                        createDependencyReducedPom( artifactIds );
+                    }
                 }
             }
         }
         catch ( Exception e )
         {
-            throw new MojoExecutionException( "Error creating shaded jar.", e );
+            throw new MojoExecutionException( "Error creating shaded jar: " + e.getMessage(), e );
         }
     }
 
