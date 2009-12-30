@@ -89,6 +89,7 @@ public class DefaultShader
                 JarEntry entry = (JarEntry) j.nextElement();
 
                 String name = entry.getName();
+
                 if ( "META-INF/INDEX.LIST".equals( name ) ) 
                 {
                     //we cannot allow the jar indexes to be copied over or the 
@@ -97,11 +98,12 @@ public class DefaultShader
                     continue;
                 }
 
-                String mappedName = remapper.map( name );
-
-                InputStream is = jarFile.getInputStream( entry );
                 if ( !entry.isDirectory() && !isFiltered( jarFilters, name ) )
                 {
+                    InputStream is = jarFile.getInputStream( entry );
+
+                    String mappedName = remapper.map( name );
+
                     int idx = mappedName.lastIndexOf( '/' );
                     if ( idx != -1 )
                     {
@@ -119,7 +121,7 @@ public class DefaultShader
                     }
                     else
                     {
-                        if ( !resourceTransformed( resourceTransformers, mappedName, is ) )
+                        if ( !resourceTransformed( resourceTransformers, mappedName, is, relocators ) )
                         {
                             // Avoid duplicates that aren't accounted for by the resource transformers
                             if ( resources.contains( mappedName ) )
@@ -130,9 +132,9 @@ public class DefaultShader
                             addResource( resources, jos, mappedName, is );
                         }
                     }
-                }
 
-                IOUtil.close( is );
+                    IOUtil.close( is );
+                }
             }
 
             jarFile.close();
@@ -248,7 +250,7 @@ public class DefaultShader
         return false;
     }
 
-    private boolean resourceTransformed( List resourceTransformers, String name, InputStream is )
+    private boolean resourceTransformed( List resourceTransformers, String name, InputStream is, List relocators )
         throws IOException
     {
         boolean resourceTransformed = false;
@@ -259,7 +261,7 @@ public class DefaultShader
 
             if ( transformer.canTransformResource( name ) )
             {
-                transformer.processResource( is );
+                transformer.processResource( name, is, relocators );
 
                 resourceTransformed = true;
 

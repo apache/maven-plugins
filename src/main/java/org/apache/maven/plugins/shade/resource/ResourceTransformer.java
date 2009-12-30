@@ -21,6 +21,7 @@ package org.apache.maven.plugins.shade.resource;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 import java.util.jar.JarOutputStream;
 
 /** @author Jason van Zyl */
@@ -28,7 +29,7 @@ public interface ResourceTransformer
 {
     boolean canTransformResource( String resource );
 
-    void processResource( InputStream is )
+    void processResource( String resource, InputStream is, List relocators )
         throws IOException;
 
     boolean hasTransformedResource();
