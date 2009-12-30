@@ -20,10 +20,10 @@ package org.apache.maven.plugins.shade.resource;
  */
 
 import java.io.IOException;
+import java.util.Collections;
 
 import junit.framework.TestCase;
 
-import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 
 /**
@@ -44,10 +44,13 @@ public class ComponentsXmlResourceTransformerTest
 
     public void testConfigurationMerging() throws IOException
     {
-        transformer.processResource( getClass().getResourceAsStream( "/components-1.xml" ) );
-        transformer.processResource( getClass().getResourceAsStream( "/components-2.xml" ) );
+        transformer.processResource( "components-1.xml", getClass().getResourceAsStream( "/components-1.xml" ),
+                                     Collections.EMPTY_LIST );
+        transformer.processResource( "components-1.xml", getClass().getResourceAsStream( "/components-2.xml" ),
+                                     Collections.EMPTY_LIST );
 
-        assertEquals( IOUtil.toString( getClass().getResourceAsStream( "/components-expected.xml" ) ),
-                      FileUtils.fileRead( transformer.getTransformedResource() ) );
+        assertEquals( IOUtil.toString( getClass().getResourceAsStream( "/components-expected.xml" ), "UTF-8" ),
+                      IOUtil.toString( transformer.getTransformedResource(), "UTF-8" ) );
     }
+
 }

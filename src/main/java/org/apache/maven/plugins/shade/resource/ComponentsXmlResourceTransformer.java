@@ -19,19 +19,20 @@ package org.apache.maven.plugins.shade.resource;
  * under the License.
  */
 
-import java.io.File;
-import java.io.FileOutputStream;
+import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
 
+import org.apache.maven.plugins.shade.relocation.Relocator;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.WriterFactory;
@@ -55,36 +56,29 @@ public class ComponentsXmlResourceTransformer
         return COMPONENTS_XML_PATH.equals( resource );
     }
 
-    public void processResource( InputStream is )
+    public void processResource( String resource, InputStream is, List relocators )
         throws IOException
     {
-        // We can't just read the stream because the plexus dom builder closes the stream
-
-        File f = File.createTempFile( "maven-shade-plugin", "tmp" );
-
-        f.deleteOnExit();
-
-        OutputStream os = new FileOutputStream( f );
-
-        IOUtil.copy( is, os );
-
-        os.close();
-
-        //
-
-        Reader reader;
-
         Xpp3Dom newDom;
 
         try
         {
-            reader = ReaderFactory.newXmlReader( f );
+            BufferedInputStream bis = new BufferedInputStream( is )
+            {
+                public void close()
+                    throws IOException
+                {
+                    // leave ZIP open
+                }
+            };
+
+            Reader reader = ReaderFactory.newXmlReader( bis );
 
             newDom = Xpp3DomBuilder.build( reader );
         }
         catch ( Exception e )
         {
-            throw new IOException( "Error parsing components.xml in " + is );
+            throw (IOException) new IOException( "Error parsing components.xml in " + is ).initCause( e );
         }
 
         // Only try to merge in components if there are some elements in the component-set
@@ -99,13 +93,17 @@ public class ComponentsXmlResourceTransformer
         {
             Xpp3Dom component = children[i];
 
-            String role = component.getChild( "role" ).getValue();
+            String role = getValue( component, "role" );
+            role = getRelocatedClass( role, relocators );
+            setValue( component, "role", role );
 
-            Xpp3Dom child = component.getChild( "role-hint" );
+            String roleHint = getValue( component, "role-hint" );
 
-            String roleHint = child != null ? child.getValue() : "";
+            String impl = getValue( component, "implementation" );
+            impl = getRelocatedClass( impl, relocators );
+            setValue( component, "implementation", impl );
 
-            String key = role + roleHint;
+            String key = role + ':' + roleHint;
             if ( components.containsKey( key ) )
             {
                 // TODO: use the tools in Plexus to merge these properly. For now, I just need an all-or-nothing
@@ -118,6 +116,19 @@ public class ComponentsXmlResourceTransformer
                 }
             }
 
+            Xpp3Dom requirements = component.getChild( "requirements" );
+            if ( requirements != null && requirements.getChildCount() > 0 )
+            {
+                for ( int r = requirements.getChildCount() - 1; r >= 0; r-- )
+                {
+                    Xpp3Dom requirement = requirements.getChild( r );
+
+                    String requiredRole = getValue( requirement, "role" );
+                    requiredRole = getRelocatedClass( requiredRole, relocators );
+                    setValue( requirement, "role", requiredRole );
+                }
+            }
+
             components.put( key, component );
         }
     }
@@ -125,30 +136,26 @@ public class ComponentsXmlResourceTransformer
     public void modifyOutputStream( JarOutputStream jos )
         throws IOException
     {
-        Reader reader = ReaderFactory.newXmlReader( getTransformedResource() );
+        byte[] data = getTransformedResource();
 
         jos.putNextEntry( new JarEntry( COMPONENTS_XML_PATH ) );
 
-        IOUtil.copy( reader, jos );
-
-        reader.close();
+        IOUtil.copy( data, jos );
 
         components.clear();
     }
 
     public boolean hasTransformedResource()
     {
-        return components.size() > 0;
+        return !components.isEmpty();
     }
 
-    public File getTransformedResource()
+    byte[] getTransformedResource()
         throws IOException
     {
-        File f = File.createTempFile( "shade-maven-plugin-plx", "tmp" );
+        ByteArrayOutputStream baos = new ByteArrayOutputStream( 1024 * 4 );
 
-        f.deleteOnExit();
-
-        Writer writer = WriterFactory.newXmlWriter( f );
+        Writer writer = WriterFactory.newXmlWriter( baos );
         try
         {
             Xpp3Dom dom = new Xpp3Dom( "component-set" );
@@ -170,8 +177,44 @@ public class ComponentsXmlResourceTransformer
             IOUtil.close( writer );
         }
 
-        return f;
+        return baos.toByteArray();
     }
 
+    private String getRelocatedClass( String className, List relocators )
+    {
+        if ( className != null && className.length() > 0 && relocators != null )
+        {
+            for ( Iterator it = relocators.iterator(); it.hasNext(); )
+            {
+                Relocator relocator = (Relocator) it.next();
+
+                if ( relocator.canRelocateClass( className ) )
+                {
+                    return relocator.relocateClass( className );
+                }
+            }
+        }
+
+        return className;
+    }
+
+    private static String getValue( Xpp3Dom dom, String element )
+    {
+        Xpp3Dom child = dom.getChild( element );
+
+        return ( child != null && child.getValue() != null ) ? child.getValue() : "";
+    }
+
+    private static void setValue( Xpp3Dom dom, String element, String value )
+    {
+        Xpp3Dom child = dom.getChild( element );
+
+        if ( child == null || value == null || value.length() <= 0 )
+        {
+            return;
+        }
+
+        child.setValue( value );
+    }
 
 }
