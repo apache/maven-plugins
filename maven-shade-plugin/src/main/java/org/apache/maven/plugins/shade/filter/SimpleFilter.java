@@ -41,7 +41,7 @@ public class SimpleFilter
 
     public SimpleFilter( Set jars, Set includes, Set excludes )
     {
-        this.jars = new HashSet( jars );
+        this.jars = ( jars != null ) ? new HashSet( jars ) : new HashSet();
         this.includes = normalizePatterns( includes );
         this.excludes = normalizePatterns( excludes );
     }
@@ -95,7 +95,7 @@ public class SimpleFilter
 
     private String normalizePath( String path )
     {
-        return ( path != null ) ? path.replace( '/', File.separatorChar ).replace( '\\', File.separatorChar ) : null;
+        return ( path != null ) ? path.replace( File.separatorChar == '/' ? '\\' : '/', File.separatorChar ) : null;
     }
 
     private Set normalizePatterns( Set patterns )
@@ -107,7 +107,15 @@ public class SimpleFilter
             for ( Iterator it = patterns.iterator(); it.hasNext(); )
             {
                 String pattern = (String) it.next();
-                result.add( normalizePath( pattern ) );
+
+                pattern = normalizePath( pattern );
+
+                if ( pattern.endsWith( File.separator ) )
+                {
+                    pattern += "**";
+                }
+
+                result.add( pattern );
             }
         }
 

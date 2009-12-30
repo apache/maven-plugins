@@ -16,6 +16,7 @@ String[] unwanted =
     "org/a.properties",
     "org/b.properties",
     "org/apache/b.properties",
+    "org/apache/maven/b/b.properties",
 };
 
 JarFile jarFile = new JarFile( new File( basedir, "target/test-1.0.jar" ) );
