@@ -135,6 +135,24 @@ mvn dependency:copy
 </project>
 +---+
 
+  <Notes:>
+  
+    * By default, artifacts are copied into <outputDirectory> using 
+      Maven artifact file name convention ( ie <artifactId-version-classifier.type> ).
+      Use the following rules to override the default convention:
+      
+      * Use <artifactItem.destFileName> to override the default file name.  
+        
+      * Use <stripVersion> to remove <version> from default file name.
+        This field is ignored when <artifactId.destFileName> is set.
+      
+      * Use <artifactItem.outputDirectory> to override the plugin's <outputDirectory> configuration 
+        per <artifactItem>.
+        
+      []
+      
+    []
+
 * The <<<dependency:copy-dependencies>>> mojo
 
    This goal can be bound to a lifecycle phase and configured in your <<<pom.xml>>>.
@@ -273,7 +291,6 @@ mvn dependency:unpack
               <classifier> [classifier - optional] </classifier>
               <overWrite>[ true or false ]</overWrite>
               <outputDirectory>[ output directory ]</outputDirectory>
-              <destFileName>[ filename ]</destFileName>
               <includes>[ comma separated list of file filters ]</includes>
               <excludes>[ comma separated list of file filters ]</excludes>
             </artifactItem>
