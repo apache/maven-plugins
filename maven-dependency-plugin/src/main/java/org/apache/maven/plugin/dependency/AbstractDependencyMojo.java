@@ -219,9 +219,7 @@ public abstract class AbstractDependencyMojo
     {
         try
         {
-            getLog().info(
-                            "Unpacking " + file.getPath() + " to\n  " + location.getPath()
-                                + "\n   with includes " + includes + " and excludes:" + excludes );
+            logUnpack( file, location, includes, excludes );
 
             location.mkdirs();
 
@@ -403,5 +401,39 @@ public abstract class AbstractDependencyMojo
     public void setArtifactMetadataSource ( ArtifactMetadataSource theArtifactMetadataSource )
     {
         this.artifactMetadataSource = theArtifactMetadataSource;
+    }
+
+    private void logUnpack( File file, File location, String includes, String excludes )
+    {
+        if ( !getLog().isInfoEnabled() )
+        {
+            return;
+        }
+
+        StringBuffer msg = new StringBuffer();
+        msg.append( "Unpacking " );
+        msg.append( file );
+        msg.append( " to " );
+        msg.append( location );
+
+        if ( includes != null && excludes != null )
+        {
+            msg.append( " with includes " );
+            msg.append( includes );
+            msg.append( " and excludes " );
+            msg.append( excludes );
+        }
+        else if ( includes != null )
+        {
+            msg.append( " with includes " );
+            msg.append( includes );
+        }
+        else if ( excludes != null )
+        {
+            msg.append( " with excludes " );
+            msg.append( excludes );
+        }
+
+        getLog().info( msg.toString() );
     }
 }
