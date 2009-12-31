@@ -541,7 +541,7 @@ mvn dependency:build-classpath
   or to write the classpath to cp.txt.:
 
 +---+
-mvn dependency:build-classpath -Dmaven.dep.cpFile=cp.txt
+mvn dependency:build-classpath -Dmdep.outputFile=cp.txt
 +---+
 
   The goal can also be bound to a lifecycle phase with the following configuration:
