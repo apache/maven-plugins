@@ -41,14 +41,20 @@ public class ArtifactIdTest
         id = new ArtifactId( "gid" );
         assertEquals( "gid", id.getGroupId() );
         assertEquals( "*", id.getArtifactId() );
+        assertEquals( "*", id.getType() );
+        assertEquals( "*", id.getClassifier() );
 
         id = new ArtifactId( "gid:" );
         assertEquals( "gid", id.getGroupId() );
         assertEquals( "", id.getArtifactId() );
+        assertEquals( "*", id.getType() );
+        assertEquals( "*", id.getClassifier() );
 
         id = new ArtifactId( ":aid" );
         assertEquals( "", id.getGroupId() );
         assertEquals( "aid", id.getArtifactId() );
+        assertEquals( "*", id.getType() );
+        assertEquals( "*", id.getClassifier() );
 
         id = new ArtifactId( "gid:aid" );
         assertEquals( "gid", id.getGroupId() );
