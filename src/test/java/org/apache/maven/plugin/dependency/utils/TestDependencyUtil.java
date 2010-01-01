@@ -259,20 +259,4 @@ public class TestDependencyUtil
         assertEquals( expectedResult, name );
 
     }
-    
-    public void testTokenizer()
-    {
-        
-        String [] tokens = DependencyUtil.tokenizer( " \r\n a, \t \n \r b \t \n \r" );
-        assertEquals( 2, tokens.length );
-        assertEquals( "a", tokens[0] );
-        assertEquals( "b", tokens[1] );
-        
-        tokens = DependencyUtil.tokenizer( null );
-        assertEquals( 0, tokens.length );
-        
-        tokens = DependencyUtil.tokenizer( "  " );
-        assertEquals( 0, tokens.length );
-        
-    }
 }

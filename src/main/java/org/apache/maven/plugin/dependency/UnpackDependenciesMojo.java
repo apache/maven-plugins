@@ -111,7 +111,7 @@ public class UnpackDependenciesMojo
      */
     public String getExcludes ()
     {
-        return DependencyUtil.cleanToBeTokenizedString( this.excludes );
+        return this.excludes;
     }
     
     /**
@@ -125,16 +125,16 @@ public class UnpackDependenciesMojo
     }
     
     /**
-     * @return Returns a comma separated list of included items
+     * @return Returns a comma seperated list of included items
      */
     public String getIncludes()
     {
-        return DependencyUtil.cleanToBeTokenizedString( this.includes );
+    	return this.includes;
     }
 
     /**
      * @param includes
-     * 			A comma separated list of items to include 
+     * 			A comma seperated list of items to inmclude 
      * 			i.e.  **\/*.xml, **\/*.properties
      */
     public void setIncludes ( String includes )
