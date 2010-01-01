@@ -22,7 +22,6 @@ package org.apache.maven.plugin.dependency.fromConfiguration;
 import java.io.File;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.plugin.dependency.utils.DependencyUtil;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
@@ -329,7 +328,7 @@ public class ArtifactItem
      */
     public String getExcludes ()
     {
-        return DependencyUtil.cleanToBeTokenizedString( this.excludes );
+        return this.excludes;
     }
     
     /**
@@ -347,7 +346,7 @@ public class ArtifactItem
      */
     public String getIncludes()
     {
-    	return DependencyUtil.cleanToBeTokenizedString( this.includes );
+    	return this.includes;
     }
 
     /**
