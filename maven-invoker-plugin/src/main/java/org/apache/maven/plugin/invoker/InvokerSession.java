@@ -260,12 +260,13 @@ class InvokerSession
             }
             else
             {
-                throw new MojoFailureException( this, message, message );
+                throw new MojoFailureException( message + " See console output above for details." );
             }
         }
+
         if ( !errorJobs.isEmpty() )
         {
-             String message = errorJobs.size() + " build" + ( errorJobs.size() == 1 ? "" : "s" ) + " in error.";
+            String message = errorJobs.size() + " build" + ( errorJobs.size() == 1 ? "" : "s" ) + " in error.";
 
             if ( ignoreFailures )
             {
@@ -273,7 +274,7 @@ class InvokerSession
             }
             else
             {
-                throw new MojoFailureException( this, message, message );
+                throw new MojoFailureException( message + " See console output above for details." );
             }
         }
     }
