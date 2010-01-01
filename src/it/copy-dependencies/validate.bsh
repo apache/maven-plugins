@@ -1,12 +1,14 @@
 import java.io.*;
 
-File libDir = new File( basedir, "target/dependency" );
+File libDir = new File( basedir, "target/it/copy-dep-test-1" );
 
 String[] expectedFiles = {
     "maven-model-2.0.6.jar",
     "maven-model-2.0.6.pom",
     "plexus-utils-1.4.1.jar",
     "plexus-utils-1.4.1.pom",
+    "maven-model-2.0.6-sources.jar",
+    "maven-model-2.0.6-javadoc.jar",
 };
 
 for ( String expectedFile : expectedFiles )
@@ -18,5 +20,74 @@ for ( String expectedFile : expectedFiles )
         throw new Exception( "Missing file " + file );
     }
 }
+
+libDir = new File( basedir, "target/it/copy-dep-test-2" );
+
+String [] expectedFiles2 = {
+    "maven-model-2.0.6.jar",
+    "plexus-utils-1.4.1.jar",
+};
+
+String [] unexpectedFiles2 = {
+    "plexus-utils-1.4.1.pom",
+    "maven-model-2.0.6.pom",
+    "maven-model-2.0.6-sources.jar",
+    "maven-model-2.0.6-javadoc.jar",
+};
+
+for ( String expectedFile : expectedFiles2 )
+{
+    File file = new File( libDir, expectedFile );
+    System.out.println( "Checking for existence of " + file );
+    if ( !file.isFile() )
+    {
+        throw new Exception( "Missing file " + file );
+    }
+}
+
+for ( String unexpectedFile : unexpectedFiles2 )
+{
+    File file = new File( libDir, unexpectedFile );
+    System.out.println( "Checking for existence of " + file );
+    if ( file.isFile() )
+    {
+        throw new Exception( "Unexpected file " + file  + " found" );
+    }
+}
+
+libDir = new File( basedir, "target/it/copy-dep-test-3" );
+
+String [] expectedFiles3 = {
+    "maven-model-2.0.6-sources.jar",
+};
+
+String [] unexpectedFiles3 = {
+    "plexus-utils-1.4.1.pom",
+    "maven-model-2.0.6.pom",
+    "maven-model-2.0.6-javadoc.jar",
+    "maven-model-2.0.6.jar",
+    "plexus-utils-1.4.1.jar",
+};
+
+for ( String expectedFile : expectedFiles3 )
+{
+    File file = new File( libDir, expectedFile );
+    System.out.println( "Checking for existence of " + file );
+    if ( !file.isFile() )
+    {
+        throw new Exception( "Missing file " + file );
+    }
+}
+
+for ( String unexpectedFile : unexpectedFiles3 )
+{
+    File file = new File( libDir, unexpectedFile );
+    System.out.println( "Checking for existence of " + file );
+    if ( file.isFile() )
+    {
+        throw new Exception( "Unexpected file " + file  + " found" );
+    }
+}
+
 
 return true;
