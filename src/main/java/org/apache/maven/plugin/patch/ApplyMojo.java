@@ -218,7 +218,8 @@ public class ApplyMojo
     private File originalFile;
 
     /**
-     * The output file which is the original file, plus modifications from the patch.
+     * The output file which is the original file, plus modifications from the patch. By default, the file(s) will be
+     * patched inplace.
      * 
      * @parameter
      */
@@ -565,19 +566,6 @@ public class ApplyMojo
 
         cli.setWorkingDirectory( targetDirectory.getAbsolutePath() );
 
-        if ( originalFile != null )
-        {
-            cli.createArg().setFile( originalFile );
-
-            if ( destFile != null )
-            {
-                cli.createArg().setValue( "-o" );
-                cli.createArg().setFile( destFile );
-            }
-
-            cli.createArg().setFile( patchFile );
-        }
-
         cli.createArg().setValue( "-p" + strip );
 
         if ( ignoreWhitespace )
@@ -602,6 +590,17 @@ public class ApplyMojo
 
         cli.createArg().setValue( "-i" );
         cli.createArg().setFile( patchFile );
+
+        if ( destFile != null )
+        {
+            cli.createArg().setValue( "-o" );
+            cli.createArg().setFile( destFile );
+        }
+
+        if ( originalFile != null )
+        {
+            cli.createArg().setFile( originalFile );
+        }
 
         return cli;
     }
