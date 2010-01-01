@@ -25,6 +25,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -285,6 +286,12 @@ public abstract class AbstractAnalyzeMojo
                 writer.endElement();
                 writer.startElement( "version" );
                 writer.writeText( artifact.getBaseVersion() );
+                if ( !StringUtils.isBlank( artifact.getClassifier() ) )
+                {
+                    writer.startElement( "classifier" );
+                    writer.writeText( artifact.getClassifier() );
+                    writer.endElement();
+                }
                 writer.endElement();
 
                 if ( !Artifact.SCOPE_COMPILE.equals( artifact.getScope() ) )
