@@ -73,7 +73,11 @@
               <goal>copy-dependencies</goal>
             </goals>
             <configuration>
-              <excludeClassifiers>sources,javadoc</excludeClassifiers>
+              <!-- MDEP-235 -->
+              <excludeClassifiers>
+                sources,
+                javadoc
+              </excludeClassifiers>
               <outputDirectory>${project.build.directory}/it/copy-dep-test-2</outputDirectory>
             </configuration>
           </execution>

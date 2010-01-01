@@ -226,4 +226,26 @@ public final class DependencyUtil
 
         reader.close();
     }
+
+    //
+    // mainly used to parse excludes,includes configuration
+    //
+    public static String [] tokenizer( String str )
+    {
+        return StringUtils.split( cleanToBeTokenizedString( str ), "," );
+    }
+    
+    //
+    // clean up configuration string before it can be tokenized
+    //
+    public static String cleanToBeTokenizedString( String str )
+    {
+        String ret = "";
+        if ( ! StringUtils.isEmpty( str ) )
+        {
+            ret = StringUtils.join( StringUtils.split( str ), "," );
+        }
+        
+        return ret;
+    }    
 }
