@@ -438,7 +438,7 @@ public class ApplyMojo
         };
 
         // used if failFast is false
-        String failedPatches = null;
+        List failedPatches = new ArrayList();
 
         for ( Iterator it = patchesApplied.entrySet().iterator(); it.hasNext(); )
         {
@@ -449,24 +449,19 @@ public class ApplyMojo
             try
             {
                 getLog().info( "Applying patch: " + patchName );
-                int result = executeCommandLine( cli, consumer, consumer );
 
-                getLog().info( "patch command returned: " + result );
+                int result = executeCommandLine( cli, consumer, consumer );
 
                 if ( result != 0 )
                 {
                     if ( failFast )
                     {
-                        throw new MojoExecutionException( "Patch command failed (exit value != 0) for " + patchName
-                            + ". Please see debug output for more information." );
+                        throw new MojoExecutionException( "Patch command failed with exit code " + result + " for "
+                            + patchName + ". Please see console and debug output for more information." );
                     }
                     else
                     {
-                        if ( failedPatches == null )
-                        {
-                            failedPatches = new String();
-                        }
-                        failedPatches = failedPatches + patchName + "\n";
+                        failedPatches.add( patchName );
                     }
                 }
             }
@@ -477,10 +472,13 @@ public class ApplyMojo
             }
         }
 
-        if ( failedPatches != null )
+        if ( !failedPatches.isEmpty() )
         {
-            getLog().info( "Failed applying one or more patches:" );
-            getLog().info( failedPatches );
+            getLog().error( "Failed applying one or more patches:" );
+            for ( Iterator it = failedPatches.iterator(); it.hasNext(); )
+            {
+                getLog().error( "* " + it.next() );
+            }
             throw new MojoExecutionException( "Patch command failed for one or more patches."
                 + " Please see console and debug output for more information." );
         }
@@ -493,12 +491,17 @@ public class ApplyMojo
     {
         if ( getLog().isDebugEnabled() )
         {
-            getLog().debug( "Executing:\n" + cli + "\n" );
+            getLog().debug( "Executing: " + cli );
         }
 
-        getLog().info( Commandline.toString( cli.getShellCommandline() ) );
+        int result = CommandLineUtils.executeCommandLine( cli, out, err );
 
-        return CommandLineUtils.executeCommandLine( cli, out, err );
+        if ( getLog().isDebugEnabled() )
+        {
+            getLog().debug( "Exit code: " + result );
+        }
+
+        return result;
     }
 
     private void writeTrackingFile( Map patchesApplied )
