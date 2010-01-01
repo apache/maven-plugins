@@ -46,11 +46,6 @@ import org.apache.maven.shared.dependency.tree.DependencyNode;
 import org.apache.maven.shared.dependency.tree.DependencyTreeBuilder;
 import org.apache.maven.shared.dependency.tree.DependencyTreeBuilderException;
 import org.apache.maven.shared.jar.classes.JarClassesAnalysis;
-import org.codehaus.plexus.PlexusConstants;
-import org.codehaus.plexus.PlexusContainer;
-import org.codehaus.plexus.context.Context;
-import org.codehaus.plexus.context.ContextException;
-import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
 
@@ -66,7 +61,6 @@ import org.codehaus.plexus.util.ReaderFactory;
  */
 public class DependenciesReport
     extends AbstractProjectInfoReport
-    implements Contextualizable
 {
     /** Images resources dir */
     private static final String RESOURCES_DIR = "org/apache/maven/report/projectinfo/resources";
@@ -178,12 +172,6 @@ public class DependenciesReport
      */
     private boolean dependencyLocationsEnabled;
 
-    /**
-     * Plexus container to play with logger manager.
-     *
-     * @since 2.1
-     */
-    private PlexusContainer container;
 
     // ----------------------------------------------------------------------
     // Public methods
@@ -243,13 +231,6 @@ public class DependenciesReport
     public String getOutputName()
     {
         return "dependencies";
-    }
-
-    /** {@inheritDoc} */
-    public void contextualize( Context context )
-        throws ContextException
-    {
-        this.container = (PlexusContainer) context.get( PlexusConstants.PLEXUS_KEY );
     }
 
     // ----------------------------------------------------------------------
