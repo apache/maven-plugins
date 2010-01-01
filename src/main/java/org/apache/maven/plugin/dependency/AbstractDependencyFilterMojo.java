@@ -1,22 +1,18 @@
 package org.apache.maven.plugin.dependency;
 
 /*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
+ * Licensed to the Apache Software Foundation (ASF) under one or more contributor license
+ * agreements. See the NOTICE file distributed with this work for additional information regarding
+ * copyright ownership. The ASF licenses this file to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License. You may obtain a
+ * copy of the License at
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.    
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License
+ * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing permissions and limitations under
+ * the License.
  */
 
 import java.io.File;
@@ -25,6 +21,7 @@ import java.util.Set;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.dependency.utils.DependencyStatusSets;
+import org.apache.maven.plugin.dependency.utils.DependencyUtil;
 import org.apache.maven.plugin.dependency.utils.resolvers.ArtifactsResolver;
 import org.apache.maven.plugin.dependency.utils.resolvers.DefaultArtifactsResolver;
 import org.apache.maven.plugin.dependency.utils.translators.ArtifactTranslator;
@@ -218,7 +215,8 @@ public abstract class AbstractDependencyFilterMojo
      * @return A HashSet of artifacts
      * @throws MojoExecutionException 
      */
-    protected Set getResolvedDependencies( boolean stopOnFailure )throws MojoExecutionException
+    protected Set getResolvedDependencies( boolean stopOnFailure )
+        throws MojoExecutionException
 
     {
         DependencyStatusSets status = getDependencySets( stopOnFailure );
@@ -244,11 +242,21 @@ public abstract class AbstractDependencyFilterMojo
         FilterArtifacts filter = new FilterArtifacts();
 
         filter.addFilter( new TransitivityFilter( project.getDependencyArtifacts(), this.excludeTransitive ) );
-        filter.addFilter( new ScopeFilter( this.includeScope, this.excludeScope ) );
-        filter.addFilter( new TypeFilter( this.includeTypes, this.excludeTypes ) );
-        filter.addFilter( new ClassifierFilter( this.includeClassifiers, this.excludeClassifiers ) );
-        filter.addFilter( new GroupIdFilter( this.includeGroupIds, this.excludeGroupIds ) );
-        filter.addFilter( new ArtifactIdFilter( this.includeArtifactIds, this.excludeArtifactIds ) );
+
+        filter.addFilter( new ScopeFilter( DependencyUtil.cleanToBeTokenizedString( this.includeScope ), DependencyUtil
+            .cleanToBeTokenizedString( this.excludeScope ) ) );
+
+        filter.addFilter( new TypeFilter( DependencyUtil.cleanToBeTokenizedString( this.includeTypes ), DependencyUtil
+            .cleanToBeTokenizedString( this.excludeTypes ) ) );
+
+        filter.addFilter( new ClassifierFilter( DependencyUtil.cleanToBeTokenizedString( this.includeClassifiers ),
+                                                DependencyUtil.cleanToBeTokenizedString( this.excludeClassifiers ) ) );
+
+        filter.addFilter( new GroupIdFilter( DependencyUtil.cleanToBeTokenizedString( this.includeGroupIds ),
+                                             DependencyUtil.cleanToBeTokenizedString( this.excludeGroupIds ) ) );
+
+        filter.addFilter( new ArtifactIdFilter( DependencyUtil.cleanToBeTokenizedString( this.includeArtifactIds ),
+                                                DependencyUtil.cleanToBeTokenizedString( this.excludeArtifactIds ) ) );
 
         // start with all artifacts.
         Set artifacts = project.getArtifacts();
@@ -260,7 +268,7 @@ public abstract class AbstractDependencyFilterMojo
         }
         catch ( ArtifactFilterException e )
         {
-            throw new MojoExecutionException(e.getMessage(),e);
+            throw new MojoExecutionException( e.getMessage(), e );
         }
 
         // transform artifacts if classifier is set
@@ -346,7 +354,7 @@ public abstract class AbstractDependencyFilterMojo
         }
         catch ( ArtifactFilterException e )
         {
-            throw new MojoExecutionException(e.getMessage(),e);
+            throw new MojoExecutionException( e.getMessage(), e );
         }
 
         // calculate the skipped artifacts
