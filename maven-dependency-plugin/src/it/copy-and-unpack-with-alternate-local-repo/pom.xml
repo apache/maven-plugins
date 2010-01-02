@@ -48,7 +48,7 @@
               <goal>copy</goal>
             </goals>
             <configuration>
-              <alternateLocalRepository>${project.build.directory}/repo</alternateLocalRepository>
+              <localRepositoryDirectory>${project.build.directory}/repo</localRepositoryDirectory>
               <artifactItems>
                 <artifactItem>
                   <groupId>junit</groupId>
@@ -64,7 +64,7 @@
               <goal>unpack</goal>
             </goals>
             <configuration>
-              <alternateLocalRepository>${project.build.directory}/repo</alternateLocalRepository>
+              <localRepositoryDirectory>${project.build.directory}/repo</localRepositoryDirectory>
               <artifactItems>
                 <artifactItem>
                   <groupId>junit</groupId>

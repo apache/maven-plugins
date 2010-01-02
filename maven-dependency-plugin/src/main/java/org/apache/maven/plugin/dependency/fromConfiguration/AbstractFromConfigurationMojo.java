@@ -26,8 +26,7 @@ import java.util.List;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.repository.DefaultArtifactRepository;
-import org.apache.maven.artifact.repository.layout.DefaultRepositoryLayout;
+import org.apache.maven.artifact.repository.ArtifactRepositoryFactory;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
@@ -100,21 +99,26 @@ public abstract class AbstractFromConfigurationMojo
      * @since 1.0
      */
     private ArrayList artifactItems;
-    
-    /**
-     * Internal local repository
-     */
-    private ArtifactRepository localRepository;    
 
     /**
-     * Path to an alternate local repository during plugin's execution.
-     * Set this value to a location under your project's target directory so that
-     * downloaded artifacts are removed as part of the build.
+     * To look up ArtifactRepository implementation
+     * @component
+     * @readonly
+     */
+    private ArtifactRepositoryFactory artifactRepositoryManager;
+    
+    /**
+     * Path to override default local repository during plugin's execution.
+     * To remove all downloaded artifacts as part of the build, set this value to a location under your project's target directory 
      * @parameter 
      * @since 2.2
      */
-    private  File alternateLocalRepository;    
-    
+    private  File localRepositoryDirectory;    
+
+    /**
+     * To host and cache localRepositoryDirectory 
+     */
+    private ArtifactRepository overrideLocalRepository;    
 
     abstract ArtifactItemFilter getMarkedArtifactFilter( ArtifactItem item );
 
@@ -367,28 +371,32 @@ public abstract class AbstractFromConfigurationMojo
 
     
     /**
+     * Override the base to 
      * @return Returns the local.
      */
     protected ArtifactRepository getLocal ()
     {
-        if ( this.localRepository != null )
+        if ( this.overrideLocalRepository != null )
         {
-            return this.localRepository;
+            return this.overrideLocalRepository;
         }
         
-        if ( this.alternateLocalRepository != null )
+        if ( this.localRepositoryDirectory != null )
         {
-            //create a temporary local repository with unique id
-            this.localRepository = new DefaultArtifactRepository( Long.toHexString( System.currentTimeMillis() ), "file://" + this.alternateLocalRepository.getAbsolutePath(), new DefaultRepositoryLayout() );
-            
-            this.getLog().debug( "Execution local repository is at: " + this.localRepository.getBasedir()  );
-            
-            return this.localRepository;
+            //create a new local repo using existing layout, snapshots, and releases policy
+            this.overrideLocalRepository = artifactRepositoryManager.createArtifactRepository( Long
+                .toHexString( System.currentTimeMillis() ), "file://"
+                + this.localRepositoryDirectory.getAbsolutePath(), super.getLocal().getLayout(), super.getLocal()
+                .getSnapshots(), super.getLocal().getReleases() );
+
+            this.getLog().debug( "Execution local repository is at: " + this.overrideLocalRepository.getBasedir() );
+
+            return this.overrideLocalRepository;
         }
-        
-        this.localRepository = super.getLocal();
-        
-        return this.localRepository;
+
+        this.overrideLocalRepository = super.getLocal();
+
+        return this.overrideLocalRepository;
     }
     
     /**
@@ -476,8 +484,8 @@ public abstract class AbstractFromConfigurationMojo
         this.overWriteSnapshots = theOverWriteSnapshots;
     }
     
-    public void setAlternateLocalRepository( File alternateLocalRepository )
+    public void setLocalRepositoryDirectory( File localRepositoryDirectory )
     {
-        this.alternateLocalRepository = alternateLocalRepository;
+        this.localRepositoryDirectory = localRepositoryDirectory;
     }    
 }
