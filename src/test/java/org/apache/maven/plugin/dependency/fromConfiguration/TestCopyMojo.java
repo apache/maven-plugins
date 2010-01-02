@@ -672,7 +672,7 @@ public class TestCopyMojo
         File execLocalRepo =  new File( this.testDir.getAbsolutePath(), "executionLocalRepo" );
         assertFalse( execLocalRepo.exists() );
         
-        mojo.setAlternateLocalRepository( execLocalRepo );
+        mojo.setLocalRepositoryDirectory( execLocalRepo );
         
         assertEquals( execLocalRepo.getAbsolutePath(), mojo.getLocal().getBasedir() ); 
         mojo.execute();

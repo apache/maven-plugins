@@ -120,7 +120,7 @@ Copying specific artifacts
     <<dependency:copy>> always downloads artifacts to default local repository first, and then
     copy the artifacts to the desired locations.  For large size unique snapshot artifacts, the downloads can quickly
     fill up default local repository, and therefore local disk, after many executions.  
-    To clean up the downloaded artifacts as part the build, set <alternateLocalRepotority>'s value 
+    To clean up the downloaded artifacts as part the build, set <localRepotorityDirectory>'s value 
     to a location in your project's target directory.
     
     This use case also applies to <<dependency:unpack>> goal.
@@ -148,7 +148,7 @@ Copying specific artifacts
                 </artifactItem>
                 [...]
               </artifactItems>
-              <alternateLocalRepository>\${project.build.directory}/localrepo</alternateLocalRepository>
+              <localRepositoryDirectory>\${project.build.directory}/localrepo</localRepositoryDirectory>
             </configuration>
           </execution>
         </executions>
