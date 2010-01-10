@@ -21,15 +21,9 @@ package org.apache.maven.plugin.clean;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.project.MavenProject;
-import org.apache.maven.shared.model.fileset.FileSet;
-import org.apache.maven.shared.model.fileset.util.FileSetManager;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  * Goal which cleans the build.
@@ -53,15 +47,6 @@ import java.util.List;
 public class CleanMojo
     extends AbstractMojo
 {
-    /**
-     * The Maven Project Object.
-     *
-     * @parameter default-value="${project}"
-     * @required
-     * @readonly
-     * @since 2.2
-     */
-    private MavenProject project;
 
     /**
      * This is where build results go.
@@ -115,23 +100,18 @@ public class CleanMojo
      * @parameter
      * @since 2.1
      */
-    private List filesets;
+    private Fileset[] filesets;
 
     /**
-     * Sets whether the plugin should follow symbolic links to delete files.
-     *
+     * Sets whether the plugin should follow symbolic links while deleting files from the default output directories of
+     * the project. Not following symlinks requires more IO operations and heap memory, regardless whether symlinks are
+     * actually present. So projects with a huge output directory that knowingly does not contain symlinks can improve
+     * performance by setting this parameter to <code>true</code>.
+     * 
      * @parameter expression="${clean.followSymLinks}" default-value="false"
      * @since 2.1
      */
     private boolean followSymLinks;
-
-    /**
-     * Finds and retrieves included and excluded files, and handles their
-     * deletion
-     *
-     * @since 2.1
-     */
-    private FileSetManager fileSetManager;
 
     /**
      * Disables the plugin execution.
@@ -159,10 +139,9 @@ public class CleanMojo
     private boolean excludeDefaultDirectories;
 
     /**
-     * Deletes file-sets in the following project build directory order:
-     * (source) directory, output directory, test directory, report directory,
-     * and then the additional file-sets.
-     *
+     * Deletes file-sets in the following project build directory order: (source) directory, output directory, test
+     * directory, report directory, and then the additional file-sets.
+     * 
      * @see org.apache.maven.plugin.Mojo#execute()
      * @throws MojoExecutionException When a directory failed to get deleted.
      */
@@ -175,28 +154,37 @@ public class CleanMojo
             return;
         }
 
+        Cleaner cleaner = new Cleaner( getLog(), isVerbose() );
+
         try
         {
-            fileSetManager = new FileSetManager( getLog(), isVerbose() );
-
-            if ( !excludeDefaultDirectories )
+            File[] directories = getDirectories();
+            for ( int i = 0; i < directories.length; i++ )
             {
-                removeDirectory( directory );
-                removeDirectory( outputDirectory );
-                removeDirectory( testOutputDirectory );
-                removeDirectory( reportDirectory );
+                File directory = directories[i];
+                if ( directory != null )
+                {
+                    cleaner.delete( directory, null, followSymLinks, failOnError );
+                }
             }
 
-            removeAdditionalFilesets();
+            if ( filesets != null )
+            {
+                for ( int i = 0; i < filesets.length; i++ )
+                {
+                    Fileset fileset = filesets[i];
+                    if ( fileset.getDirectory() == null )
+                    {
+                        throw new MojoExecutionException( "Missing base directory for " + fileset );
+                    }
+                    GlobSelector selector = new GlobSelector( fileset.getIncludes(), fileset.getExcludes() );
+                    cleaner.delete( fileset.getDirectory(), selector, fileset.isFollowSymlinks(), failOnError );
+                }
+            }
         }
-        catch ( MojoExecutionException e )
+        catch ( IOException e )
         {
-            if ( failOnError )
-            {
-                throw e;
-            }
-
-            getLog().warn( e.getMessage() );
+            throw new MojoExecutionException( "Failed to clean project: " + e.getMessage(), e );
         }
     }
 
@@ -211,142 +199,22 @@ public class CleanMojo
     }
 
     /**
-     * Deletes additional file-sets specified by the <code>filesets</code> tag.
-     *
-     * @throws MojoExecutionException When a directory failed to get deleted.
+     * Gets the directories to clean (if any). The returned array may contain null entries.
+     * 
+     * @return The directories to clean or an empty array if none, never <code>null</code>.
      */
-    private void removeAdditionalFilesets()
-        throws MojoExecutionException
+    private File[] getDirectories()
     {
-        if ( filesets != null && !filesets.isEmpty() )
+        File[] directories;
+        if ( excludeDefaultDirectories )
         {
-            for ( Iterator it = filesets.iterator(); it.hasNext(); )
-            {
-                FileSet fileset = (FileSet) it.next();
-
-                removeFileSet( fileset );
-            }
+            directories = new File[0];
         }
-    }
-
-    /**
-     * Deletes a directory and its contents.
-     *
-     * @param dir The base directory of the included and excluded files.
-     * @throws MojoExecutionException When a directory failed to get deleted.
-     */
-    private void removeDirectory( File dir )
-        throws MojoExecutionException
-    {
-        if ( dir != null )
+        else
         {
-            FileSet fs = new Fileset();
-            fs.setDirectory( dir.getPath() );
-            fs.addInclude( "**" );
-            fs.setFollowSymlinks( followSymLinks );
-
-            removeFileSet( fs );
+            directories = new File[] { directory, outputDirectory, testOutputDirectory, reportDirectory };
         }
+        return directories;
     }
 
-    /**
-     * Deletes the specified file set. If the base directory of the file set is relative, it will be resolved against
-     * the base directory of the current project.
-     *
-     * @param fileset The file set to delete, must not be <code>null</code>.
-     * @throws MojoExecutionException When the file set failed to get deleted.
-     */
-    private void removeFileSet( FileSet fileset )
-        throws MojoExecutionException
-    {
-        try
-        {
-            File dir = new File( fileset.getDirectory() );
-
-            if ( !dir.isAbsolute() )
-            {
-                dir = new File( project.getBasedir(), fileset.getDirectory() );
-                fileset.setDirectory( dir.getPath() );
-            }
-
-            if ( !dir.exists() )
-            {
-                getLog().debug( "Skipping non-existing directory: " + dir );
-                return;
-            }
-
-            if ( !dir.isDirectory() )
-            {
-                throw new MojoExecutionException( dir + " is not a directory." );
-            }
-
-            getLog().info( "Deleting " + fileset );
-            fileSetManager.delete( fileset, failOnError );
-        }
-        catch ( IOException e )
-        {
-            throw new MojoExecutionException( "Failed to delete directory: " + fileset.getDirectory() + ". Reason: "
-                + e.getMessage(), e );
-        }
-        catch ( IllegalStateException e )
-        {
-            // TODO: IOException from plexus-utils should be acceptable here
-            throw new MojoExecutionException( "Failed to delete directory: " + fileset.getDirectory() + ". Reason: "
-                + e.getMessage(), e );
-        }
-    }
-
-    /**
-     * Sets the project build directory.
-     *
-     * @param newDirectory The project build directory to set.
-     */
-    protected void setDirectory( File newDirectory )
-    {
-        this.directory = newDirectory;
-    }
-
-    /**
-     * Sets the project build output directory.
-     *
-     * @param newOutputDirectory The project build output directory to set.
-     */
-    protected void setOutputDirectory( File newOutputDirectory )
-    {
-        this.outputDirectory = newOutputDirectory;
-    }
-
-    /**
-     * Sets the project build test output directory.
-     *
-     * @param newTestOutputDirectory The project build test output directory to set.
-     */
-    protected void setTestOutputDirectory( File newTestOutputDirectory )
-    {
-        this.testOutputDirectory = newTestOutputDirectory;
-    }
-
-    /**
-     * Sets the project build report directory.
-     *
-     * @param newReportDirectory The project build report directory to set.
-     */
-    protected void setReportDirectory( File newReportDirectory )
-    {
-        this.reportDirectory = newReportDirectory;
-    }
-
-    /**
-     * Adds a file-set to the list of file-sets to clean.
-     *
-     * @param fileset the fileset
-     */
-    public void addFileset( Fileset fileset )
-    {
-        if ( filesets == null )
-        {
-            filesets = new LinkedList();
-        }
-        filesets.add( fileset );
-    }
 }

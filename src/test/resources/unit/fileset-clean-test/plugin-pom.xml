@@ -23,7 +23,6 @@
       <plugin>
         <artifactId>maven-clean-plugin</artifactId>
         <configuration>
-          <project implementation="org.apache.maven.plugin.clean.stubs.CleanProjectStub"/>
           <filesets>
             <fileset>
               <directory>${basedir}/target/test-classes/unit/fileset-clean-test/target</directory>
