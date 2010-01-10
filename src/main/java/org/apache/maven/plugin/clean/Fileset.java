@@ -19,7 +19,8 @@ package org.apache.maven.plugin.clean;
  * under the License.
  */
 
-import org.apache.maven.shared.model.fileset.FileSet;
+import java.io.File;
+import java.util.Arrays;
 
 /**
  * Customizes the string representation of
@@ -30,11 +31,38 @@ import org.apache.maven.shared.model.fileset.FileSet;
  *
  * @version $Id$
  * @since 2.1
- * @see org.apache.maven.shared.model.fileset.FileSet
  */
 public class Fileset
-    extends FileSet
 {
+
+    private File directory;
+
+    private String[] includes;
+
+    private String[] excludes;
+
+    private boolean followSymlinks;
+
+    public File getDirectory()
+    {
+        return directory;
+    }
+
+    public String[] getIncludes()
+    {
+        return ( includes != null ) ? includes : new String[0];
+    }
+
+    public String[] getExcludes()
+    {
+        return ( excludes != null ) ? excludes : new String[0];
+    }
+
+    public boolean isFollowSymlinks()
+    {
+        return followSymlinks;
+    }
+
     /**
      * Retrieves the included and excluded files from this file-set's directory.
      * Specifically, <code>"file-set: <I>[directory]</I> (included:
@@ -47,6 +75,8 @@ public class Fileset
      */
     public String toString()
     {
-        return "file set: " + getDirectory() + " (included: " + getIncludes() + ", excluded: " + getExcludes() + ")";
+        return "file set: " + getDirectory() + " (included: " + Arrays.asList( getIncludes() ) + ", excluded: "
+            + Arrays.asList( getExcludes() ) + ")";
     }
+
 }

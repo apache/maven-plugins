@@ -25,10 +25,10 @@ under the License.
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>test</groupId>
-  <artifactId>dangling-symlinks</artifactId>
+  <artifactId>symlinks-dont-follow</artifactId>
   <version>1.0-SNAPSHOT</version>
 
-  <description>Check for proper cleaning of dangling symlinks (MCLEAN-28).</description>
+  <description>Check that symlinks are not followed if requested (MCLEAN-39).</description>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -39,7 +39,16 @@ under the License.
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-clean-plugin</artifactId>
-        <version>@pom.version@</version>
+        <version>@project.version@</version>
+        <configuration>
+          <followSymLinks>false</followSymLinks>
+          <filesets>
+            <fileset>
+              <directory>target2</directory>
+              <followSymlinks>false</followSymlinks>
+            </fileset>
+          </filesets>
+        </configuration>
       </plugin>
     </plugins>
   </build>

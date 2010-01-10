@@ -23,7 +23,6 @@
       <plugin>
         <artifactId>maven-clean-plugin</artifactId>
         <configuration>
-          <project implementation="org.apache.maven.plugin.clean.stubs.CleanProjectStub"/>
           <directory>${basedir}/target/test-classes/unit/invalid-directory-test/this-is-a-file</directory>
           <verbose>true</verbose>
           <failOnError>true</failOnError>
