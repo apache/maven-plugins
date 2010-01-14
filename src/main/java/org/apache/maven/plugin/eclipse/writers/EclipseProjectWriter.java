@@ -217,6 +217,15 @@ public class EclipseProjectWriter
 
         writer.endElement();
 
+        //
+        // Project files that are generated with m-p-e cannot be supported by M2Eclipse
+        //
+        writer.startElement( "comment" ); //$NON-NLS-1$
+
+        writer.writeText( "NO_M2ECLIPSE_SUPPORT: Project files created with the maven-eclipse-plugin are not supported in M2Eclipse." );
+
+        writer.endElement();
+
         writer.startElement( "projects" ); //$NON-NLS-1$
 
         // referenced projects should not be added for plugins
