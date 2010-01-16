@@ -144,4 +144,7 @@ EAR Plugin Tests
 
   * project-057: builds an EAR with a complete JBoss 4.2 configuration and validate it matches the DTD (MEAR-104)
 
+  * project-058: builds an EAR with deployment descriptor configuration for Java EE 6
+
+
    
