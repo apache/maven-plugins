@@ -146,5 +146,7 @@ EAR Plugin Tests
 
   * project-058: builds an EAR with deployment descriptor configuration for Java EE 6
 
+  * project-059: builds an EAR with no display name entry at all
+
 
    

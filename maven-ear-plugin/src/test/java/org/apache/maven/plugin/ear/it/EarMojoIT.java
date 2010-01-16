@@ -617,12 +617,21 @@ public class EarMojoIT
         doTestProject( "project-057", new String[]{"ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar"} );
     }
 
-     /**
+    /**
      * Builds an EAR with deployment descriptor configuration for Java EE 6.
      */
     public void testProject058()
         throws Exception
     {
         doTestProject( "project-058", new String[]{"ejb-sample-one-1.0.jar"} );
+    }
+
+    /**
+     * Builds an EAR with no display name entry at all.
+     */
+    public void testProject059()
+        throws Exception
+    {
+        doTestProject( "project-059", new String[]{"ejb-sample-one-1.0.jar"} );
     }
 }
