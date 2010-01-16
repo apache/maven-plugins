@@ -34,9 +34,9 @@ import java.util.Iterator;
 final class ApplicationXmlWriter
     extends AbstractXmlWriter
 {
-    public static final String DOCTYPE_1_3 = "application PUBLIC\n" +
-        "\t\"-//Sun Microsystems, Inc.//DTD J2EE Application 1.3//EN\"\n" +
-        "\t\"http://java.sun.com/dtd/application_1_3.dtd\"";
+    public static final String DOCTYPE_1_3 =
+        "application PUBLIC\n" + "\t\"-//Sun Microsystems, Inc.//DTD J2EE Application 1.3//EN\"\n" +
+            "\t\"http://java.sun.com/dtd/application_1_3.dtd\"";
 
     private static final String APPLICATION_ELEMENT = "application";
 
@@ -67,12 +67,25 @@ final class ApplicationXmlWriter
         {
             writer = initializeRootElementFive( w );
         }
-        else if ( GenerateApplicationXmlMojo.VERSION_6.equals( version ))
+        else if ( GenerateApplicationXmlMojo.VERSION_6.equals( version ) )
         {
             writer = initializeRootElementSix( w );
         }
-        writeDisplayName( context.getDisplayName(), writer );
-        writeDescription( context.getDescription(), writer );
+
+        // IMPORTANT: the order of the description and display-name elements was
+        // reversed between J2EE 1.3 and J2EE 1.4.
+        if ( GenerateApplicationXmlMojo.VERSION_1_3.equals( version ) )
+        {
+            writeDisplayName( context.getDisplayName(), writer );
+            writeDescription( context.getDescription(), writer );
+        }
+        else
+        {
+            writeDescription( context.getDescription(), writer );
+            writeDisplayName( context.getDisplayName(), writer );
+        }
+        // Do not change this unless you really know what you're doing :)
+
 
         final Iterator moduleIt = context.getEarModules().iterator();
         while ( moduleIt.hasNext() )
@@ -90,7 +103,7 @@ final class ApplicationXmlWriter
 
         if ( GenerateApplicationXmlMojo.VERSION_5.equals( version ) )
         {
-        	writeLibraryDirectory ( context.getLibraryDirectory(), writer );
+            writeLibraryDirectory( context.getLibraryDirectory(), writer );
         }
 
         writer.endElement();
@@ -168,7 +181,6 @@ final class ApplicationXmlWriter
         writer.addAttribute( "xsi:schemaLocation",
                              "http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/application_6.xsd" );
         writer.addAttribute( "version", "6" );
-        //mkleint: the schema document is not present at the site, but it should end up there eventually..
         return writer;
     }
 
