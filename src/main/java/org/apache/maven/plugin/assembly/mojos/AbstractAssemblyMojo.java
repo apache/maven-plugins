@@ -418,7 +418,7 @@ public abstract class AbstractAssemblyMojo
                             projectHelper.attachArtifact( project, format, null, destFile );
                         }
                     }
-                    else
+                    else if ( attach )
                     {
                         getLog().warn( "Assembly file: " + destFile + " is not a regular file (it may be a directory). It cannot be attached to the project build for installation or deployment." );
                     }
