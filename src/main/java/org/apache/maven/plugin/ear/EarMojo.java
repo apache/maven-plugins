@@ -212,14 +212,12 @@ public class EarMojo
     private ArchiverManager archiverManager;
 
     /**
-     *
      * @component role="org.apache.maven.shared.filtering.MavenFileFilter" role-hint="default"
      * @required
      */
     private MavenFileFilter mavenFileFilter;
 
     /**
-     *
      * @component role="org.apache.maven.shared.filtering.MavenResourcesFiltering" role-hint="default"
      * @required
      */
@@ -279,8 +277,9 @@ public class EarMojo
                 final File destinationFile = buildDestinationFile( getWorkDirectory(), module.getUri() );
                 if ( !sourceFile.isFile() )
                 {
-                    throw new MojoExecutionException( "Cannot copy a directory: " + sourceFile.getAbsolutePath() +
-                        "; Did you package/install " + module.getArtifact() + "?" );
+                    throw new MojoExecutionException(
+                        "Cannot copy a directory: " + sourceFile.getAbsolutePath() + "; Did you package/install " +
+                            module.getArtifact() + "?" );
                 }
 
                 if ( destinationFile.getCanonicalPath().equals( sourceFile.getCanonicalPath() ) )
@@ -310,8 +309,9 @@ public class EarMojo
                     }
                     else
                     {
-                        getLog().debug( "Skipping artifact[" + module + "], as it is already up to date at[" +
-                            module.getUri() + "]" );
+                        getLog().debug(
+                            "Skipping artifact[" + module + "], as it is already up to date at[" + module.getUri() +
+                                "]" );
                     }
                 }
             }
@@ -339,8 +339,7 @@ public class EarMojo
                 String[] fileNames = getEarFiles( earSourceDir );
                 for ( int i = 0; i < fileNames.length; i++ )
                 {
-                    copyFile( new File( earSourceDir, fileNames[i] ),
-                              new File( getWorkDirectory(), fileNames[i] ) );
+                    copyFile( new File( earSourceDir, fileNames[i] ), new File( getWorkDirectory(), fileNames[i] ) );
                 }
             }
 
@@ -359,7 +358,7 @@ public class EarMojo
         }
         catch ( MavenFilteringException e )
         {
-            throw new MojoExecutionException( "Error filetering EAR sources", e );
+            throw new MojoExecutionException( "Error filtering EAR sources", e );
         }
 
         // Copy resources files
@@ -367,7 +366,7 @@ public class EarMojo
         {
             if ( resourcesDir != null && resourcesDir.exists() )
             {
-                getLog().warn( "resourcesDir is deprecated. Please use the earSourceDirectory property instead.");
+                getLog().warn( "resourcesDir is deprecated. Please use the earSourceDirectory property instead." );
                 getLog().info( "Copy ear resources to " + getWorkDirectory().getAbsolutePath() );
                 String[] fileNames = getEarFiles( resourcesDir );
                 for ( int i = 0; i < fileNames.length; i++ )
@@ -384,7 +383,7 @@ public class EarMojo
 
         // Check if deployment descriptor is there
         File ddFile = new File( getWorkDirectory(), APPLICATION_XML_URI );
-        if ( !ddFile.exists() && (! (version.equals( VERSION_5 ) || version.equals( VERSION_6 ))))
+        if ( !ddFile.exists() && ( !( version.equals( VERSION_5 ) || version.equals( VERSION_6 ) ) ) )
         {
             throw new MojoExecutionException(
                 "Deployment descriptor: " + ddFile.getAbsolutePath() + " does not exist." );
@@ -393,7 +392,7 @@ public class EarMojo
         try
         {
             File earFile = getEarFile( outputDirectory, finalName, classifier );
-            final MavenArchiver archiver = new EarMavenArchiver(getModules());
+            final MavenArchiver archiver = new EarMavenArchiver( getModules() );
             final JarArchiver jarArchiver = getJarArchiver();
             getLog().debug( "Jar archiver implementation[" + jarArchiver.getClass().getName() + "]" );
             archiver.setArchiver( jarArchiver );
@@ -560,15 +559,21 @@ public class EarMojo
         return jarArchiver;
     }
 
-    private void copyFile(File source, File target)
-            throws MavenFilteringException, IOException, MojoExecutionException {
+    private void copyFile( File source, File target )
+        throws MavenFilteringException, IOException, MojoExecutionException
+    {
         if ( filtering && !isNonFilteredExtension( source.getName() ) )
         {
-           mavenFileFilter.copyFile( source, target, true, getFilterWrappers(), null );
+            // Silly that we have to do this ourselves
+            if ( target.getParentFile() != null && !target.getParentFile().exists() )
+            {
+                target.getParentFile().mkdirs();
+            }
+            mavenFileFilter.copyFile( source, target, true, getFilterWrappers(), null );
         }
         else
         {
-             FileUtils.copyFile(source,target);
+            FileUtils.copyFile( source, target );
         }
     }
 
@@ -577,15 +582,18 @@ public class EarMojo
         return !mavenResourcesFiltering.filteredFileExtension( fileName, nonFilteredFileExtensions );
     }
 
-    private List getFilterWrappers() throws MojoExecutionException {
-        if (filterWrappers == null)
+    private List getFilterWrappers()
+        throws MojoExecutionException
+    {
+        if ( filterWrappers == null )
         {
             try
             {
                 MavenResourcesExecution mavenResourcesExecution = new MavenResourcesExecution();
                 mavenResourcesExecution.setEscapeString( escapeString );
-                filterWrappers = mavenFileFilter.getDefaultFilterWrappers( project, filters,
-                        escapedBackslashesInFilePath, this.session, mavenResourcesExecution );
+                filterWrappers =
+                    mavenFileFilter.getDefaultFilterWrappers( project, filters, escapedBackslashesInFilePath,
+                                                              this.session, mavenResourcesExecution );
             }
             catch ( MavenFilteringException e )
             {
