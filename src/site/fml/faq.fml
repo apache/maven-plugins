@@ -46,6 +46,18 @@ under the License.
        </p>
      </answer>
    </faq>
+   <faq id="avoid-display-name">
+     <question>
+       How can I avoid to generate a display-name entry in the generated application.xml?
+     </question>
+     <answer>
+       <p>
+         By default, the plugin will always generate a display-name with the id of the project if a custom one
+         is not provided through configuration. If for some reason you don't want any display-name at all, just
+         use the ${null} value instead.
+       </p>
+     </answer>
+   </faq>
  </part>
 </faqs>
 
