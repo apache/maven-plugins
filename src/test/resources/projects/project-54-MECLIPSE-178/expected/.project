@@ -1,6 +1,6 @@
 <projectDescription>
   <name>maven-eclipse-plugin-test-project-54</name>
-  <comment>Project-54 - Test MECLIPSE-178</comment>
+  <comment>Project-54 - Test MECLIPSE-178. NO_M2ECLIPSE_SUPPORT: Project files created with the maven-eclipse-plugin are not supported in M2Eclipse.</comment>
   <projects/>
   <buildSpec>
     <buildCommand>
