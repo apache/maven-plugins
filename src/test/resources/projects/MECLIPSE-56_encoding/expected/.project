@@ -1,6 +1,6 @@
 <projectDescription>
   <name>maven-eclipse-plugin-test-MECLIPSE-56_encoding</name>
-  <comment>Test of non-ascii characters like &quot;ö ä ü ß&quot;</comment>
+  <comment>Test of non-ascii characters like &quot;ö ä ü ß&quot;. NO_M2ECLIPSE_SUPPORT: Project files created with the maven-eclipse-plugin are not supported in M2Eclipse.</comment>
   <projects/>
   <buildSpec>
     <buildCommand>

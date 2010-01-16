@@ -60,6 +60,8 @@ public class EclipseProjectWriter
 {
     private static final String ELT_NAME = "name"; //$NON-NLS-1$
 
+    private static final String ELT_COMMENT = "comment"; //$NON-NLS-1$
+
     private static final String ELT_BUILD_COMMAND = "buildCommand"; //$NON-NLS-1$
 
     private static final String ELT_LINK = "link"; //$NON-NLS-1$
@@ -205,26 +207,7 @@ public class EclipseProjectWriter
         writer.writeText( config.getEclipseProjectName() );
         writer.endElement();
 
-        // TODO: this entire element might be dropped if the comment is null.
-        // but as the maven1 eclipse plugin does it, it's better to be safe than sorry
-        // A eclipse developer might want to look at this.
-        writer.startElement( "comment" ); //$NON-NLS-1$
-
-        if ( config.getProject().getDescription() != null )
-        {
-            writer.writeText( config.getProject().getDescription() );
-        }
-
-        writer.endElement();
-
-        //
-        // Project files that are generated with m-p-e cannot be supported by M2Eclipse
-        //
-        writer.startElement( "comment" ); //$NON-NLS-1$
-
-        writer.writeText( "NO_M2ECLIPSE_SUPPORT: Project files created with the maven-eclipse-plugin are not supported in M2Eclipse." );
-
-        writer.endElement();
+        addComment( writer, config.getProject().getDescription() );
 
         writer.startElement( "projects" ); //$NON-NLS-1$
 
@@ -407,4 +390,33 @@ public class EclipseProjectWriter
             writer.endElement(); // link
         }
     }
+
+    private void addComment( XMLWriter writer, String projectDescription )
+    {
+        String comment = "";
+
+        if ( projectDescription != null )
+        {
+            comment = projectDescription.trim();
+
+            if ( comment.length() > 0 )
+            {
+                if ( !comment.endsWith( "." ) )
+                {
+                    comment += ".";
+                }
+                comment += " ";
+            }
+        }
+
+        //
+        // Project files that are generated with m-p-e cannot be supported by M2Eclipse
+        //
+        comment += "NO_M2ECLIPSE_SUPPORT: Project files created with the maven-eclipse-plugin are not supported in M2Eclipse.";
+
+        writer.startElement( ELT_COMMENT );
+        writer.writeText( comment );
+        writer.endElement();
+    }
+
 }
