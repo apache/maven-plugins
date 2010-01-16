@@ -1,6 +1,6 @@
 <projectDescription>
   <name>multymodule-2-1.0</name>
-  <comment/>
+  <comment>NO_M2ECLIPSE_SUPPORT: Project files created with the maven-eclipse-plugin are not supported in M2Eclipse.</comment>
   <projects>
     <project>prefix-multymodule-1-1.0</project>
     <project>multymodule-4-1.0</project>
