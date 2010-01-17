@@ -19,6 +19,7 @@ package org.apache.maven.plugins.shade.mojo;
  * under the License.
  */
 
+import java.util.Collection;
 import java.util.Collections;
 
 import junit.framework.TestCase;
@@ -30,33 +31,38 @@ public class ArtifactSelectorTest
     extends TestCase
 {
 
+    private ArtifactSelector newSelector( Collection includes, Collection excludes, String groupPrefix )
+    {
+        return new ArtifactSelector( includes, excludes, groupPrefix );
+    }
+
     public void testIsSelected()
     {
         ArtifactSelector selector;
 
-        selector = new ArtifactSelector( null, null, null );
+        selector = newSelector( null, null, null );
         assertTrue( selector.isSelected( new ArtifactId( "gid", "aid", "type", "cls" ) ) );
 
-        selector = new ArtifactSelector( null, null, "" );
+        selector = newSelector( null, null, "" );
         assertTrue( selector.isSelected( new ArtifactId( "gid", "aid", "type", "cls" ) ) );
 
-        selector = new ArtifactSelector( null, null, "gid" );
+        selector = newSelector( null, null, "gid" );
         assertTrue( selector.isSelected( new ArtifactId( "gid", "aid", "type", "cls" ) ) );
         assertTrue( selector.isSelected( new ArtifactId( "gid.test", "aid", "type", "cls" ) ) );
         assertFalse( selector.isSelected( new ArtifactId( "id", "aid", "type", "cls" ) ) );
 
-        selector = new ArtifactSelector( Collections.EMPTY_SET, Collections.EMPTY_SET, null );
+        selector = newSelector( Collections.EMPTY_SET, Collections.EMPTY_SET, null );
         assertTrue( selector.isSelected( new ArtifactId( "gid", "aid", "type", "cls" ) ) );
 
-        selector = new ArtifactSelector( Collections.singleton( "gid:aid" ), Collections.EMPTY_SET, null );
+        selector = newSelector( Collections.singleton( "gid:aid" ), Collections.EMPTY_SET, null );
         assertTrue( selector.isSelected( new ArtifactId( "gid", "aid", "type", "cls" ) ) );
         assertFalse( selector.isSelected( new ArtifactId( "gid", "id", "type", "cls" ) ) );
 
-        selector = new ArtifactSelector( Collections.EMPTY_SET, Collections.singleton( "gid:aid" ), null );
+        selector = newSelector( Collections.EMPTY_SET, Collections.singleton( "gid:aid" ), null );
         assertFalse( selector.isSelected( new ArtifactId( "gid", "aid", "type", "cls" ) ) );
         assertTrue( selector.isSelected( new ArtifactId( "gid", "id", "type", "cls" ) ) );
 
-        selector = new ArtifactSelector( Collections.singleton( "gid:*" ), Collections.singleton( "*:aid" ), null );
+        selector = newSelector( Collections.singleton( "gid:*" ), Collections.singleton( "*:aid" ), null );
         assertTrue( selector.isSelected( new ArtifactId( "gid", "id", "type", "cls" ) ) );
         assertFalse( selector.isSelected( new ArtifactId( "gid", "aid", "type", "cls" ) ) );
         assertFalse( selector.isSelected( new ArtifactId( "gid.test", "id", "type", "cls" ) ) );
