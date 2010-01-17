@@ -35,10 +35,15 @@ class ArtifactSelector
 
     private Collection excludes;
 
-    public ArtifactSelector( ArtifactSet artifactSet, String groupPrefix )
+    public ArtifactSelector( Artifact projectArtifact, ArtifactSet artifactSet, String groupPrefix )
     {
         this( ( artifactSet != null ) ? artifactSet.getIncludes() : null,
               ( artifactSet != null ) ? artifactSet.getExcludes() : null, groupPrefix );
+
+        if ( projectArtifact != null && !this.includes.isEmpty() )
+        {
+            this.includes.add( new ArtifactId( projectArtifact ) );
+        }
     }
 
     public ArtifactSelector( Collection includes, Collection excludes, String groupPrefix )

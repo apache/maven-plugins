@@ -173,10 +173,10 @@ public class ShadeMojo
 
     /**
      * Artifacts to include/exclude from the final artifact. Artifacts are denoted by composite identifiers of the
-     * general form <code>groupId:artifactId:type:classifier</code>. Since version 1.3, the wildcard characters '*' and '?' can be used
-     * within the sub parts of those composite identifiers to do pattern matching. For convenience, the syntax
-     * <code>groupId</code> is equivalent to <code>groupId:*:*:*</code>, <code>groupId:artifactId</code> is equivalent
-     * to <code>groupId:artifactId:*:*</code> and <code>groupId:artifactId:classifier</code> is equivalent to
+     * general form <code>groupId:artifactId:type:classifier</code>. Since version 1.3, the wildcard characters '*' and
+     * '?' can be used within the sub parts of those composite identifiers to do pattern matching. For convenience, the
+     * syntax <code>groupId</code> is equivalent to <code>groupId:*:*:*</code>, <code>groupId:artifactId</code> is
+     * equivalent to <code>groupId:artifactId:*:*</code> and <code>groupId:artifactId:classifier</code> is equivalent to
      * <code>groupId:artifactId:*:classifier</code>.
      * 
      * @parameter
@@ -314,7 +314,8 @@ public class ShadeMojo
         Set artifactIds = new LinkedHashSet();
         Set sourceArtifacts = new LinkedHashSet();
 
-        ArtifactSelector artifactSelector = new ArtifactSelector( artifactSet, shadedGroupFilter );
+        ArtifactSelector artifactSelector =
+            new ArtifactSelector( project.getArtifact(), artifactSet, shadedGroupFilter );
 
         if ( artifactSelector.isSelected( project.getArtifact() ) && !"pom".equals( project.getArtifact().getType() ) )
         {
