@@ -30,10 +30,10 @@ Including Module Binaries
 
 * Warning
 
-  *WARNING!* Using the <<<binaries>>> section of a <<<moduleSet>>> definition
+  <<Warning:>> Using the <<<binaries>>> section of a <<<moduleSet>>> definition
   involves some tricky considerations that are a result of the way Maven
   sorts and executes project builds within a multimodule context. Please
-  read {{{faq.html#module-binaries}this FAQ entry}} if you decide to use them.
+  read {{{../../faq.html#module-binaries}this FAQ entry}} if you decide to use them.
 
 * Introduction
 
@@ -139,7 +139,7 @@ mvn clean package assembly:directory
   This will ensure that the output directory (normally, <<<target>>>), is
   removed before building the assembly directory. 
   
-  <<NOTE:>> Because of a quirk in Maven 2.0's execution model relating to 
+  <<Note:>> Because of a quirk in Maven 2.0's execution model relating to 
   aggregator mojos and the inheritance hierarchy, we need to explicitly execute 
   the package phase ahead of the assembly invocation, to ensure all modules have 
   been built.
