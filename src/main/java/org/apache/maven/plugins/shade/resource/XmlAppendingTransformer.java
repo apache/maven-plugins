@@ -21,6 +21,7 @@ package org.apache.maven.plugins.shade.resource;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringReader;
 import java.util.Iterator;
 import java.util.List;
 import java.util.jar.JarEntry;
@@ -34,13 +35,19 @@ import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
+import org.xml.sax.EntityResolver;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 public class XmlAppendingTransformer
     implements ResourceTransformer
 {
     public static final String XSI_NS = "http://www.w3.org/2001/XMLSchema-instance";
 
+    boolean ignoreDtd = true;
+
     String resource;
+
     Document doc;
 
     public boolean canTransformResource( String r )
@@ -59,7 +66,20 @@ public class XmlAppendingTransformer
         Document r;
         try
         {
-            r = new SAXBuilder().build( is );
+            SAXBuilder builder = new SAXBuilder( false );
+            builder.setExpandEntities( false );
+            if ( ignoreDtd )
+            {
+                builder.setEntityResolver( new EntityResolver()
+                {
+                    public InputSource resolveEntity( String publicId, String systemId )
+                        throws SAXException, IOException
+                    {
+                        return new InputSource( new StringReader( "" ) );
+                    }
+                } );
+            }
+            r = builder.build( is );
         }
         catch ( JDOMException e )
         {

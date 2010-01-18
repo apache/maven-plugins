@@ -143,4 +143,44 @@ Resource Transformers
 </project>
 +----- 
 
-  For XML files, you can use the <<<XmlAppendingTransformer>>> instead.   
+  For XML files, you can use the <<<XmlAppendingTransformer>>> instead:
+
++-----
+<project>
+  ...
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>${project.version}</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <transformers>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.XmlAppendingTransformer">
+                  <resource>META-INF/magic.xml</resource>
+                  <!-- Add this to enable loading of DTDs
+                  <ignoreDtd>false</ignoreDtd>
+                  -->
+                </transformer>
+              </transformers>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  ...
+</project>
++----- 
+
+  Since plugin version 1.3.1, the <<<XmlAppendingTransformer>>> will by default not load DTDs, thereby avoiding network
+  access. The potential downside of this mode is that external entities cannot be resolved which could fail the
+  transformation, e.g. when using the Crimson XML parser as used in some JRE 1.4. If the transformed resource uses
+  external entities, DTD resolution can either be turned back on or a plugin dependency on <<<xerces:xercesImpl:2.9.1>>>
+  is added to the POM.
