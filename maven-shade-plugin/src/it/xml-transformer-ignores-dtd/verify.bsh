@@ -1,0 +1,19 @@
+import java.io.*;
+import java.util.jar.*;
+
+String[] wanted =
+{
+    "test.xml",
+};
+
+JarFile jarFile = new JarFile( new File( basedir, "target/test-1.0.jar" ) );
+
+for ( String path : wanted )
+{
+    if ( jarFile.getEntry( path ) == null )
+    {
+        throw new IllegalStateException( "wanted path is missing: " + path );
+    }
+}
+
+jarFile.close();
