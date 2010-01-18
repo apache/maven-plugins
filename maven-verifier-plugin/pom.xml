@@ -75,10 +75,21 @@ under the License.
         <artifactId>modello-maven-plugin</artifactId>
         <executions>
           <execution>
+            <id>generate-xsd-site</id>
+            <phase>pre-site</phase>
             <goals>
+              <goal>xsd</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${project.reporting.outputDirectory}/xsd</outputDirectory>
+            </configuration>
+          </execution>
+          <execution>
+            <id>standard</id>
+            <goals>
+              <goal>java</goal>
               <goal>xpp3-reader</goal>
               <goal>xpp3-writer</goal>
-              <goal>java</goal>
             </goals>
           </execution>
           <execution>
@@ -86,7 +97,6 @@ under the License.
             <phase>pre-site</phase>
             <goals>
               <goal>xdoc</goal>
-              <goal>xsd</goal>
             </goals>
           </execution>
         </executions>

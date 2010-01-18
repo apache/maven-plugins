@@ -3,7 +3,7 @@
  ------
  Denis Cabasson
  ------
- 20 july 2006
+ 2010-01-18
  ------
 
 Sample Verifications
@@ -11,7 +11,9 @@ Sample Verifications
   Here is an example of what a <<<verifications.xml>>> file can look like:
 
 +--------
-<verifications>
+<verifications xmlns="http://maven.apache.org/verifications/1.0.0"
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               xsi:schemaLocation="http://maven.apache.org/verifications/1.0.0 http://maven.apache.org/xsd/verifications-1.0.0.xsd">
   <files>
     <file>
       <location>src/main/resources/file1.txt</location>
@@ -32,6 +34,6 @@ Sample Verifications
 
   * checks that the file <<<src/main/resources/file1.txt>>> is present.
 
-  * checks that the file <<<src/main/resources/file2.txt>>> is present and match the regexp <aaaabbbb>.
+  * checks that the file <<<src/main/resources/file2.txt>>> is present and matches the regular expression <aaaabbbb>.
 
   * checks that the file <<<src/main/resources/file3.txt>>> is <<not>> present.
