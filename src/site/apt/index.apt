@@ -3,7 +3,7 @@
  ------
  Denis Cabasson
  ------
- 20 july 2006
+ 2010-01-18
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -32,7 +32,7 @@ Maven Verifier Plugin
 
 * Goals Overview
 
-  * {{{./verify-mojo.html}verifier:verify}} Verifies the existence or non-existence of files/directories and optionally checks file content against a regexp.
+  * {{{./verify-mojo.html}verifier:verify}} Verifies the existence or non-existence of files/directories and optionally checks file content against a regular expression.
 
 * Usage
 

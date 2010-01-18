@@ -3,12 +3,12 @@
  ------
  Denis Cabasson
  ------
- 20 july 2006
+ 2010-01-18
  ------
 
 Usage
 
-  To verify file system resources during your build, add the Verifier plugin in
+  To verify file system resources during your build, add the Verifier Plugin in
   your <<<pom.xml>>> under the <<<build>>> section. You will also need to
   create a {{{verifications.html}<<<verifications.xml>>>}} file that contains
   the verification rules. Add the path to that file to the
@@ -41,8 +41,8 @@ Usage
 [...]
 +---------
 
-  The Verifier plugin will fail your build if the verification rules found in
-  the <<<verificationFile>>> fails. If you do not want the Verifier plugin to
+  The Verifier Plugin will fail your build if the verification rules found in
+  the <<<verificationFile>>> fails. If you do not want the Verifier Plugin to
   fail your build you can set the configuration element <<<\<failOnError\>>>>
   to <<<false>>>.
 
