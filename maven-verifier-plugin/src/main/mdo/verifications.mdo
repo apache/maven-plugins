@@ -21,10 +21,10 @@ under the License.
   <id>verifications</id>
   <name>Verifications</name>
   <description><![CDATA[
-    Project-specific configuration file for the Verifier plugin. It contains
+    Project-specific configuration file for the Verifier Plugin. It contains
     definitions of the files and directories to be checked after an
-    integration test has run. It can also check for file content against 
-    regexps.]]></description>
+    integration test has run. It can also check for file content against
+    regular expressions.]]></description>
   <defaults>
     <default>
       <key>package</key>
@@ -64,7 +64,7 @@ under the License.
         <field>
           <name>contains</name>
           <version>1.0.0</version>
-          <description><![CDATA[Check the content against this regexp.]]></description>
+          <description><![CDATA[Check the content against this regular expression.]]></description>
           <required>false</required>
           <type>String</type>
         </field>
