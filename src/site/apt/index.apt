@@ -4,7 +4,7 @@
  Maria Odea Ching
  Vincent Siveton
  ------
- 2008-08-28
+ 2010-01-21
  ------
 
  ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -29,14 +29,14 @@
 
 Maven Help Plugin
 
- The Maven 2 Help Plugin is used to get relative information about a project or the system. It can be used to get a
+ The Maven Help Plugin is used to get relative information about a project or the system. It can be used to get a
  description of a particular plugin, including the plugin's mojos with their parameters and component requirements,
- the effective pom and effective settings of the current build, and the profiles applied to the current project being
+ the effective POM and effective settings of the current build, and the profiles applied to the current project being
  built.
 
 * Goals Overview
 
-  The Help plugin has 8 goals:
+  The Help Plugin has 8 goals:
 
   * {{{./active-profiles-mojo.html}help:active-profiles}} lists the profiles which are currently active for the build.
 
@@ -82,7 +82,7 @@ Maven Help Plugin
 
 * Examples
 
-   To provide you with better understanding on some usages of the Help plugin, you can take a look into the
+   To provide you with better understanding on some usages of the Help Plugin, you can take a look into the
    following example(s):
 
    * {{{./examples/describe-configuration.html}Configuring Describe Goal}}

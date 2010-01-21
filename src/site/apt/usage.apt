@@ -5,7 +5,7 @@
  Maria Odea Ching
  Vincent Siveton
  ------
- 2008-08-27
+ 2010-01-21
  ------
 
  ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -30,7 +30,7 @@
 
 Usage
 
- Below are the different goals and the minimalist configurations of the Help plugin.
+ Below are the different goals and the minimalist configurations of the Help Plugin.
 
 * The <<<help:active-profiles>>> Goal
 
@@ -75,7 +75,7 @@ Usage
 
  <<Note>>: you could also use the <<<output>>> parameter to redirect output to a file.
 
-  Refer to {{{./examples/describe-configuration.html}Configuring Describe Goal}} for more informations about its
+  Refer to {{{./examples/describe-configuration.html}Configuring Describe Goal}} for more information about its
   configuration.
 
 * The <<<help:effective-pom>>> Goal
@@ -109,7 +109,7 @@ Usage
 
 * The <<<help:system>>> Goal
 
-  The <<<{{{./system-mojo.html}system}}>>> goal is used to view the system informations like system properties and
+  The <<<{{{./system-mojo.html}system}}>>> goal is used to view the system information like system properties and
   environment variables.
 
   You can execute this goal using the following command:
