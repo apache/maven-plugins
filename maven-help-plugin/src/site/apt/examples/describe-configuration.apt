@@ -5,7 +5,7 @@
  Maria Odea Ching
  Vincent Siveton
  ------
- 2008-08-30
+ 2010-01-21
  ------
 
  ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -65,7 +65,7 @@ Configuring Describe Goal
 
 * The <<<mojo>>> Parameter
 
- You can use the <<<mojo>>> parameter of the <<<describe>>> goal to show or display relative informations about a
+ You can use the <<<mojo>>> parameter of the <<<describe>>> goal to show or display relative information about a
  particular goal of the plugin you specified.
 
  For example, when you execute the following command:
@@ -149,10 +149,10 @@ For more information, run 'mvn help:describe [...] -Ddetail'
 
 * The <<<minimal>>>, <<<medium>>> and <<<full>>> Parameters
 
- If you want to display less or more detailed informations, you can use the <<<minimal>>>, <<<medium>>> or <<<full>>>
+ If you want to display less or more detailed information, you can use the <<<minimal>>>, <<<medium>>> or <<<full>>>
  parameters.
 
- The <<<minimal>>> parameter adds a minimal list of informations:
+ The <<<minimal>>> parameter adds a minimal list of information:
 
 +-----+
 # mvn help:describe -Dplugin=help -Dminimal=true
