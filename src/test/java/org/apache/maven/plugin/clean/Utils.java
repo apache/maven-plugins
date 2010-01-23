@@ -21,6 +21,10 @@ package org.apache.maven.plugin.clean;
 
 import java.io.File;
 
+import org.codehaus.plexus.util.cli.CommandLineUtils;
+import org.codehaus.plexus.util.cli.Commandline;
+import org.codehaus.plexus.util.cli.StreamConsumer;
+
 /**
  * Testing helpers for the IT scripts.
  * 
@@ -40,10 +44,25 @@ public class Utils
     {
         try
         {
-            String[] args = { "ln", "-s", target.getAbsolutePath(), link.getAbsolutePath() };
-            Process process = Runtime.getRuntime().exec( args );
-            process.waitFor();
-            return 0 == process.exitValue();
+            Commandline cli = new Commandline();
+            cli.setExecutable( "ln" );
+            cli.createArg().setValue( "-s" );
+            cli.createArg().setFile( target );
+            cli.createArg().setFile( link );
+            int code = CommandLineUtils.executeCommandLine( cli, new StreamConsumer()
+            {
+                public void consumeLine( String line )
+                {
+                    System.out.println( line );
+                }
+            }, new StreamConsumer()
+            {
+                public void consumeLine( String line )
+                {
+                    System.err.println( line );
+                }
+            } );
+            return 0 == code;
         }
         catch ( Exception e )
         {
