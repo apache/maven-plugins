@@ -77,6 +77,7 @@ public class AntRunMojo
      * ant script generates source code.
      *
      * @parameter expression="${sourceRoot}"
+     * @deprecated Use the build-helper-maven-plugin to bind source directories
      */
     private File sourceRoot;
 
@@ -86,6 +87,7 @@ public class AntRunMojo
      * ant script generates test source code.
      *
      * @parameter expression="${testSourceRoot}"
+     * @deprecated Use the build-helper-maven-plugin to bind test source directories
      */
     private File testSourceRoot;
 
