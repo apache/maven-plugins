@@ -29,11 +29,11 @@
 Referencing the Maven Classpaths
 
  A property is set for each dependency with the format 
- "maven.dependency.groupId.artifactId[.classifier].type.path".  For example, to show the path
+ "groupId:artifactId[:classifier]:type".  For example, to show the path
  to a dependency with groupId "org.apache" and artifactId "common-util", the following could be used.
 
 ------
-<echo message="My Dependency JAR Path: ${mvn.dependency.org.apache.common-util.jar.path}"/> 
+<echo message="Dependency JAR Path: ${org.apache:common-util:jar}"/> 
 ------
  
  You can also use these classpath references:
