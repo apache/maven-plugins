@@ -36,6 +36,9 @@ Referencing the Maven Classpaths
 <echo message="Dependency JAR Path: ${org.apache:common-util:jar}"/> 
 ------
  
+ Note that the old format "maven.dependency.groupId.artifactId[.classifier].type.path" has been deprecated
+ and should no longer be used.
+ 
  You can also use these classpath references:
   
   * <<<maven.compile.classpath>>>
