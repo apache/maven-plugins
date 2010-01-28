@@ -97,7 +97,8 @@ public class AntPropertyHelper
      * maven.dependency.groupId.artifactId[.classifier].type.path
      * 
      * @param artifact
-     * @return
+     * @return property name
+     * @deprecated The dependency conflict ID should be used as the property name.
      */
     public static String getDependencyArtifactPropertyName( Artifact artifact )
     {
