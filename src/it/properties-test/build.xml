@@ -1,13 +1,19 @@
 <?xml version="1.0"?>
 <project name="properties-test">
 
-    <target name="test">
+  <target name="test">
 
-        <fail unless="maven.project.artifactId" message="Property not set ${maven.project.artifactId}"/>
-        <fail unless="testProp1" message="Property not set ${testProp1}"/>
-        <fail unless="maven.dependency.junit.junit.jar.path" message="Property not set ${maven.dependency.junit.junit.jar.path}"/>
-        <fail unless="line.separator" message="Property not set ${line.separator}"/>
+    <echo message="project.artifactId : ${project.artifactId}"/>
+    <fail unless="project.artifactId" message="Property not set \${project.artifactId}"/>
+    <echo message="testProp1 : ${testProp1}"/>
+    <fail unless="testProp1" message="Property not set \${testProp1}"/>
+    <echo message="line.separator : ${line.separator}"/>
+    <fail unless="line.separator" message="Property not set \${line.separator}"/>
+    <echo message="junit:junit:jar : ${junit:junit:jar}"/>
+    <fail unless="junit:junit:jar" message="Property not set \${junit:junit:jar}"/>    
+    <echo message="maven.dependency.junit.junit.jar.path : ${maven.dependency.junit.junit.jar.path}"/>
+    <fail unless="maven.dependency.junit.junit.jar.path" message="Property not set \${maven.dependency.junit.junit.jar.path}"/>
       
-    </target>
+  </target>
 
 </project>

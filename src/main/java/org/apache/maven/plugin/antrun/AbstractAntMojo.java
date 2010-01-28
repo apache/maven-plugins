@@ -53,6 +53,12 @@ public abstract class AbstractAntMojo
     extends AbstractMojo
 {
     /**
+     * String to prepend to project and dependency property names.
+     * @parameter default-value=""
+     */
+    private String propertyPrefix;
+    
+    /**
      * @deprecated use {@link AbstractAntMojo#executeTasks(Target,MavenProject,List)}.
      */
     protected void executeTasks( Target antTasks, MavenProject mavenProject )
@@ -73,6 +79,11 @@ public abstract class AbstractAntMojo
         {
             getLog().info( "No ant tasks defined - SKIPPED" );
             return;
+        }
+        
+        if ( propertyPrefix == null )
+        {
+            propertyPrefix = "";
         }
 
         try
@@ -192,27 +203,38 @@ public abstract class AbstractAntMojo
         antProject.setProperty( "ant.file", mavenProject.getFile().getAbsolutePath() );
         
         // Add some of the common maven properties
-        antProject.setProperty( "maven.project.groupId", mavenProject.getGroupId() );
-        antProject.setProperty( "maven.project.artifactId", mavenProject.getArtifactId() );
-        antProject.setProperty( "maven.project.name", mavenProject.getName() );
-        antProject.setProperty( "maven.project.description", mavenProject.getDescription() );
-        antProject.setProperty( "maven.project.version", mavenProject.getVersion() );
-        antProject.setProperty( "maven.project.packaging", mavenProject.getPackaging() );
-        antProject.setProperty( "maven.project.build.directory", mavenProject.getBuild().getDirectory() );
-        antProject.setProperty( "maven.project.build.outputDirectory", mavenProject.getBuild().getOutputDirectory() );
-        antProject.setProperty( "maven.project.build.outputDirectory", mavenProject.getBuild().getTestOutputDirectory() );
-        antProject.setProperty( "maven.project.build.sourceDirectory", mavenProject.getBuild().getSourceDirectory() );
-        antProject.setProperty( "maven.project.build.testSourceDirectory", mavenProject.getBuild().getTestSourceDirectory() );
+        System.out.println( (propertyPrefix+ "project.artifactId"));
+        antProject.setProperty( ( propertyPrefix + "project.groupId" ), mavenProject.getGroupId() );
+        antProject.setProperty( ( propertyPrefix + "project.artifactId" ), mavenProject.getArtifactId() );
+        antProject.setProperty( ( propertyPrefix + "project.name" ), mavenProject.getName() );
+        antProject.setProperty( ( propertyPrefix + "project.description" ), mavenProject.getDescription() );
+        antProject.setProperty( ( propertyPrefix + "project.version" ), mavenProject.getVersion() );
+        antProject.setProperty( ( propertyPrefix + "project.packaging" ), mavenProject.getPackaging() );
+        antProject.setProperty( ( propertyPrefix + "project.build.directory" ), mavenProject.getBuild().getDirectory() );
+        antProject.setProperty( ( propertyPrefix + "project.build.outputDirectory" ), mavenProject.getBuild().getOutputDirectory() );
+        antProject.setProperty( ( propertyPrefix + "project.build.outputDirectory" ), mavenProject.getBuild().getTestOutputDirectory() );
+        antProject.setProperty( ( propertyPrefix + "project.build.sourceDirectory" ), mavenProject.getBuild().getSourceDirectory() );
+        antProject.setProperty( ( propertyPrefix + "project.build.testSourceDirectory" ), mavenProject.getBuild().getTestSourceDirectory() );
         
-        // Add paths to depenedency artifacts
-        Set artifacts = mavenProject.getDependencyArtifacts();
-        for ( Iterator it = artifacts.iterator(); it.hasNext(); )
+        // Add properties for depenedency artifacts
+        Set depArtifacts = mavenProject.getDependencyArtifacts();
+        for ( Iterator it = depArtifacts.iterator(); it.hasNext(); )
         {
             Artifact artifact = (Artifact) it.next();
 
-            String key = AntPropertyHelper.getDependencyArtifactPropertyName( artifact );
+            String propName = artifact.getDependencyConflictId();
 
-            antProject.setProperty( key, artifact.getFile().getPath() );
+            antProject.setProperty( propertyPrefix + propName, artifact.getFile().getPath() );
+        }
+        
+        // Add properties in deprecated format to depenedency artifacts
+        for ( Iterator it = depArtifacts.iterator(); it.hasNext(); )
+        {
+            Artifact artifact = (Artifact) it.next();
+
+            String propName = AntPropertyHelper.getDependencyArtifactPropertyName( artifact );
+
+            antProject.setProperty( propName, artifact.getFile().getPath() );
         }
     }
 }
