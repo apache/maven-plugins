@@ -634,4 +634,60 @@ public class EarMojoIT
     {
         doTestProject( "project-059", new String[]{"ejb-sample-one-1.0.jar"} );
     }
+
+    /**
+     * Builds an EAR with ejb-client packaged for J2EE 1.3 (MEAR-85)
+     *
+     * @throws Exception
+     */
+    public void testProject060()
+        throws Exception
+    {
+        doTestProject( "project-060", new String[]{"ejb-sample-one-1.0.jar", "ejb-sample-two-1.0-client.jar"} );
+    }
+
+    /**
+     * Builds an EAR with ejb-client packaged for J2EE 1.4 (MEAR-85)
+     *
+     * @throws Exception
+     */
+    public void testProject061()
+        throws Exception
+    {
+        doTestProject( "project-061", new String[]{"ejb-sample-one-1.0.jar", "ejb-sample-two-1.0-client.jar"} );
+    }
+
+    /**
+     * Builds an EAR with ejb-client packaged for JavaEE 5 (MEAR-85)
+     *
+     * @throws Exception
+     */
+    public void testProject062()
+        throws Exception
+    {
+        doTestProject( "project-062", new String[]{"ejb-sample-one-1.0.jar", "lib/ejb-sample-two-1.0-client.jar"} );
+    }
+
+    /**
+     * Builds an EAR with ejb-client packaged for JavaEE 6 (MEAR-85)
+     *
+     * @throws Exception
+     */
+    public void testProject063()
+        throws Exception
+    {
+        doTestProject( "project-063", new String[]{"lib/ejb-sample-two-1.0-client.jar"} );
+    }
+
+    /**
+     * Builds an EAR with ejb-client packaged for JavaEE 5 and still put it in the root (MEAR-85)
+     *
+     * @throws Exception
+     */
+    public void testProject064()
+        throws Exception
+    {
+        doTestProject( "project-064", new String[]{"ejb-sample-one-1.0.jar", "ejb-sample-two-1.0-client.jar"} );
+    }
+
 }
