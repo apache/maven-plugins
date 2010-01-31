@@ -55,12 +55,13 @@ public final class EarModuleFactory
      * execution configuration.
      *
      * @param artifact                the artifact
+     * @param javaEEVersion           the javaEE version to use
      * @param defaultLibBundleDir     the default bundle dir for {@link JarModule}
      * @param includeInApplicationXml should {@link JarModule} be included in application Xml
      * @return an ear module for this artifact
      * @throws UnknownArtifactTypeException if the artifact is not handled
      */
-    public static EarModule newEarModule( Artifact artifact, String defaultLibBundleDir,
+    public static EarModule newEarModule( Artifact artifact, String javaEEVersion, String defaultLibBundleDir,
                                           Boolean includeInApplicationXml )
         throws UnknownArtifactTypeException
     {
@@ -85,7 +86,16 @@ public final class EarModuleFactory
         }
         else if ( "ejb-client".equals( artifactType ) )
         {
-            return new EjbClientModule( artifact, null );
+            // Somewhat weird way to tackle the problem described in MEAR-85
+            if ( AbstractEarMojo.VERSION_1_3.equals( javaEEVersion ) ||
+                AbstractEarMojo.VERSION_1_4.equals( javaEEVersion ) )
+            {
+                return new EjbClientModule( artifact, null );
+            }
+            else
+            {
+                return new EjbClientModule( artifact, defaultLibBundleDir );
+            }
         }
         else if ( "rar".equals( artifactType ) )
         {
