@@ -148,5 +148,15 @@ EAR Plugin Tests
 
   * project-059: builds an EAR with no display name entry at all
 
+  * project-060: builds an EAR with ejb-client packaged for J2EE 1.3
+
+  * project-061: builds an EAR with ejb-client packaged for J2EE 1.4
+
+  * project-062: builds an EAR with ejb-client packaged for JavaEE 5
+
+  * project-063: builds an EAR with ejb-client packaged for JavaEE 6
+
+  * project-064: builds an EAR with ejb-client packaged for JavaEE 5 and still put it in the root
+
 
    

@@ -223,7 +223,7 @@ public abstract class AbstractEarMojo
                 if ( !isArtifactRegistered( artifact, allModules ) && !artifact.isOptional() &&
                     filter.include( artifact ) )
                 {
-                    EarModule module = EarModuleFactory.newEarModule( artifact, defaultLibBundleDir,
+                    EarModule module = EarModuleFactory.newEarModule( artifact, version, defaultLibBundleDir,
                                                                       includeLibInApplicationXml );
                     allModules.add( module );
                 }
