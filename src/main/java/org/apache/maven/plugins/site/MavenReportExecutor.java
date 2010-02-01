@@ -30,8 +30,11 @@ import org.apache.maven.plugin.MojoExecutionException;
  */
 public interface MavenReportExecutor
 {
-    // FIXME create a bean which contains MavenReport, ClassLoader and other stuff
-    //       to prevent this and will be more easily extensible
+    /**
+     * @param mavenReportExecutorRequest
+     * @return
+     * @throws MojoExecutionException
+     */
     List<MavenReportExecution> buildMavenReports(MavenReportExecutorRequest mavenReportExecutorRequest)
         throws MojoExecutionException;
 }
