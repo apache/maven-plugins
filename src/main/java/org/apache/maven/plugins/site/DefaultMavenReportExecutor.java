@@ -54,6 +54,7 @@ import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.Xpp3DomUtils;
+import org.mortbay.log.Log;
 
 /**
  *  
@@ -275,6 +276,24 @@ public class DefaultMavenReportExecutor
         {
             getLog().warn( "skip ClassCastException " + e.getMessage() );
             return null;
+        }
+        catch (PluginContainerException e )
+        {
+            /**
+             * ignore old plugin which are using removed PluginRegistry
+             * [INFO] Caused by: java.lang.NoClassDefFoundError: org/apache/maven/plugin/registry/PluginRegistry
+             */
+            if ( e.getCause() != null && e.getCause() instanceof NoClassDefFoundError && e.getMessage().contains( "PluginRegistry" ) )
+            {
+                getLog().warn( "skip NoClassDefFoundError with PluginRegistry " );
+                // too noisy only in debug mode + e.getMessage() );
+                if (getLog().isDebugEnabled())
+                {
+                    Log.debug( e.getMessage(), e );
+                }
+                return null;
+            }
+            throw e;
         }
 
     }
