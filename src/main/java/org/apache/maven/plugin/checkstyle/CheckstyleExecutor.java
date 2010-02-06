@@ -29,6 +29,12 @@ import com.puppycrawl.tools.checkstyle.api.CheckstyleException;
 public interface CheckstyleExecutor
 {
 
+    /**
+     * @param {@link CheckstyleExecutorRequest}
+     * @return {@link CheckstyleResults}
+     * @throws CheckstyleExecutorException
+     * @throws CheckstyleException
+     */
     CheckstyleResults executeCheckstyle( CheckstyleExecutorRequest request )
         throws CheckstyleExecutorException, CheckstyleException;
 }
