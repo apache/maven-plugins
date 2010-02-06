@@ -1,10 +1,5 @@
 package org.apache.maven.plugin.checkstyle.rss;
 
-import java.io.File;
-
-import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.project.MavenProject;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -23,6 +18,12 @@ import org.apache.maven.project.MavenProject;
  * specific language governing permissions and limitations
  * under the License.
  */
+
+import java.io.File;
+
+import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.project.MavenProject;
+
 
 /**
  * @author Olivier Lamy
