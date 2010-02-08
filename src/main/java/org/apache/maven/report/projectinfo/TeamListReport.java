@@ -19,6 +19,7 @@ package org.apache.maven.report.projectinfo;
  * under the License.
  */
 
+import org.apache.commons.lang.SystemUtils;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.model.Contributor;
 import org.apache.maven.model.Developer;
@@ -135,18 +136,18 @@ public class TeamListReport
             startSection( i18n.getString( "project-info-report", locale, "report.team-list.intro.title" ) );
 
             // To handle JS
-            StringBuffer javascript = new StringBuffer( "function offsetDate(id, offset) {\n" );
-            javascript.append( "    var now = new Date();\n" );
-            javascript.append( "    var nowTime = now.getTime();\n" );
-            javascript.append( "    var localOffset = now.getTimezoneOffset();\n" );
+            StringBuffer javascript = new StringBuffer( "function offsetDate(id, offset) {" ).append( SystemUtils.LINE_SEPARATOR );
+            javascript.append( "    var now = new Date();" ).append( SystemUtils.LINE_SEPARATOR );
+            javascript.append( "    var nowTime = now.getTime();" ).append( SystemUtils.LINE_SEPARATOR );
+            javascript.append( "    var localOffset = now.getTimezoneOffset();" ).append( SystemUtils.LINE_SEPARATOR );
             javascript.append( "    var developerTime = nowTime + ( offset * 60 * 60 * 1000 )"
-                               + "+ ( localOffset * 60 * 1000 );\n" );
-            javascript.append( "    var developerDate = new Date(developerTime);\n" );
-            javascript.append( "\n" );
-            javascript.append( "    document.getElementById(id).innerHTML = developerDate;\n" );
-            javascript.append( "}\n" );
-            javascript.append( "\n" );
-            javascript.append( "function init(){\n" );
+                               + "+ ( localOffset * 60 * 1000 );" ).append( SystemUtils.LINE_SEPARATOR );
+            javascript.append( "    var developerDate = new Date(developerTime);" ).append( SystemUtils.LINE_SEPARATOR );
+            javascript.append( SystemUtils.LINE_SEPARATOR );
+            javascript.append( "    document.getElementById(id).innerHTML = developerDate;" ).append( SystemUtils.LINE_SEPARATOR );
+            javascript.append( "}" ).append( SystemUtils.LINE_SEPARATOR );
+            javascript.append( SystemUtils.LINE_SEPARATOR);
+            javascript.append( "function init(){" ).append( SystemUtils.LINE_SEPARATOR );
 
             // Introduction
             paragraph( i18n.getString( "project-info-report", locale, "report.team-list.intro.description1" ) );
@@ -227,7 +228,8 @@ public class TeamListReport
             }
 
             // To handle JS
-            javascript.append( "}\n" ).append( "\n" ).append( "window.onLoad = init();\n" );
+            javascript.append( "}" ).append( SystemUtils.LINE_SEPARATOR ).append( SystemUtils.LINE_SEPARATOR )
+                .append( "window.onLoad = init();" ).append( SystemUtils.LINE_SEPARATOR );
             javaScript( javascript.toString() );
 
             endSection();
@@ -288,7 +290,7 @@ public class TeamListReport
                 {
                     javascript.append( "    offsetDate('developer-" ).append( developerRow ).append( "', '" );
                     javascript.append( developer.getTimezone() );
-                    javascript.append( "');\n" );
+                    javascript.append( "');" ).append( SystemUtils.LINE_SEPARATOR );
                 }
                 sink.rawText( "</span>" );
                 sink.tableCell_();
@@ -360,7 +362,7 @@ public class TeamListReport
                     javascript.append( "    offsetDate('contributor-" ).append( contributorRow )
                         .append( "', '" );
                     javascript.append( contributor.getTimezone() );
-                    javascript.append( "');\n" );
+                    javascript.append( "');" ).append( SystemUtils.LINE_SEPARATOR );
                 }
                 sink.rawText( "</span>" );
                 sink.tableCell_();
