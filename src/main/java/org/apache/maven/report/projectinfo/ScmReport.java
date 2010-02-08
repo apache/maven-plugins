@@ -19,6 +19,7 @@ package org.apache.maven.report.projectinfo;
  * under the License.
  */
 
+import org.apache.commons.lang.SystemUtils;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Scm;
@@ -481,9 +482,9 @@ public class ScmReport
 
                 StringBuffer sb = new StringBuffer();
                 sb.append( "[global]" );
-                sb.append( "\n" );
-                sb.append( "http-proxy-host = your.proxy.name" ).append( "\n" );
-                sb.append( "http-proxy-port = 3128" ).append( "\n" );
+                sb.append( SystemUtils.LINE_SEPARATOR );
+                sb.append( "http-proxy-host = your.proxy.name" ).append( SystemUtils.LINE_SEPARATOR );
+                sb.append( "http-proxy-port = 3128" ).append( SystemUtils.LINE_SEPARATOR );
                 verbatimText( sb.toString() );
 
                 endSection();
@@ -524,7 +525,7 @@ public class ScmReport
 
             StringBuffer command = new StringBuffer();
             command.append( "$ cvs -d " ).append( cvsRepo.getCvsRoot() ).append( " login" );
-            command.append( "\n" );
+            command.append( SystemUtils.LINE_SEPARATOR );
             command.append( "$ cvs -z3 -d " ).append( cvsRepo.getCvsRoot() );
             command.append( " co " ).append( cvsRepo.getModule() );
 
@@ -570,7 +571,7 @@ public class ScmReport
 
             StringBuffer command = new StringBuffer();
             command.append( "$ cvs -d " ).append( cvsRoot ).append( " login" );
-            command.append( "\n" );
+            command.append( SystemUtils.LINE_SEPARATOR );
             command.append( "$ cvs -z3 -d " ).append( cvsRoot ).append( " co " ).append( cvsRepo.getModule() );
 
             verbatimText( command.toString() );
@@ -627,7 +628,7 @@ public class ScmReport
             command.append( " -P password" );
             command.append( " " );
             command.append( perforceRepo.getPath() );
-            command.append( "\n" );
+            command.append( SystemUtils.LINE_SEPARATOR );
             command.append( "$ p4 submit -c \"A comment\"" );
 
             verbatimText( command.toString() );
@@ -656,7 +657,7 @@ public class ScmReport
             command.append( "$ stcmd co -x -nologo -stop -p " );
             command.append( fullUrl );
             command.append( " -is" );
-            command.append( "\n" );
+            command.append( SystemUtils.LINE_SEPARATOR );
             command.append( "$ stcmd ci -x -nologo -stop -p " );
             command.append( fullUrl );
             command.append( " -f NCI -is" );
@@ -775,12 +776,12 @@ public class ScmReport
                     if ( !isIntroAdded )
                     {
                         sb.append( "This SCM url '" + scmUrl + "' is invalid due to the following errors:" );
-                        sb.append( "\n" );
+                        sb.append( SystemUtils.LINE_SEPARATOR );
                         isIntroAdded = true;
                     }
                     sb.append( " * " );
                     sb.append( msg );
-                    sb.append( "\n" );
+                    sb.append( SystemUtils.LINE_SEPARATOR );
                 }
 
                 if ( StringUtils.isNotEmpty( sb.toString() ) )

@@ -40,6 +40,7 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.apache.commons.lang.SystemUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
@@ -161,25 +162,25 @@ public class DependenciesRenderer
         {
             throw new RuntimeException( e );
         }
-
+        
         StringBuffer sb = new StringBuffer();
-        sb.append( "<script language=\"javascript\" type=\"text/javascript\">" ).append( "\n" );
-        sb.append( "      function toggleDependencyDetail( divId, imgId )" ).append( "\n" );
-        sb.append( "      {" ).append( "\n" );
-        sb.append( "        var div = document.getElementById( divId );" ).append( "\n" );
-        sb.append( "        var img = document.getElementById( imgId );" ).append( "\n" );
-        sb.append( "        if( div.style.display == '' )" ).append( "\n" );
-        sb.append( "        {" ).append( "\n" );
-        sb.append( "          div.style.display = 'none';" ).append( "\n" );
-        sb.append( "          img.src='" + IMG_INFO_URL + "';" ).append( "\n" );
-        sb.append( "        }" ).append( "\n" );
-        sb.append( "        else" ).append( "\n" );
-        sb.append( "        {" ).append( "\n" );
-        sb.append( "          div.style.display = '';" ).append( "\n" );
-        sb.append( "          img.src='" + IMG_CLOSE_URL + "';" ).append( "\n" );
-        sb.append( "        }" ).append( "\n" );
-        sb.append( "      }" ).append( "\n" );
-        sb.append( "</script>" ).append( "\n" );
+        sb.append( "<script language=\"javascript\" type=\"text/javascript\">" ).append( SystemUtils.LINE_SEPARATOR );
+        sb.append( "      function toggleDependencyDetail( divId, imgId )" ).append( SystemUtils.LINE_SEPARATOR );
+        sb.append( "      {" ).append( SystemUtils.LINE_SEPARATOR );
+        sb.append( "        var div = document.getElementById( divId );" ).append( SystemUtils.LINE_SEPARATOR );
+        sb.append( "        var img = document.getElementById( imgId );" ).append( SystemUtils.LINE_SEPARATOR );
+        sb.append( "        if( div.style.display == '' )" ).append( SystemUtils.LINE_SEPARATOR );
+        sb.append( "        {" ).append( SystemUtils.LINE_SEPARATOR );
+        sb.append( "          div.style.display = 'none';" ).append( SystemUtils.LINE_SEPARATOR );
+        sb.append( "          img.src='" + IMG_INFO_URL + "';" ).append( SystemUtils.LINE_SEPARATOR );
+        sb.append( "        }" ).append( SystemUtils.LINE_SEPARATOR );
+        sb.append( "        else" ).append( SystemUtils.LINE_SEPARATOR );
+        sb.append( "        {" ).append( SystemUtils.LINE_SEPARATOR );
+        sb.append( "          div.style.display = '';" ).append( SystemUtils.LINE_SEPARATOR );
+        sb.append( "          img.src='" + IMG_CLOSE_URL + "';" ).append( SystemUtils.LINE_SEPARATOR );
+        sb.append( "        }" ).append( SystemUtils.LINE_SEPARATOR );
+        sb.append( "      }" ).append( SystemUtils.LINE_SEPARATOR );
+        sb.append( "</script>" ).append( SystemUtils.LINE_SEPARATOR );
         JAVASCRIPT = sb.toString();
     }
 
