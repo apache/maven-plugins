@@ -72,7 +72,7 @@ under the License.
     <doxia-sitetoolsVersion>1.1.2</doxia-sitetoolsVersion>
     <mavenVersion>2.1.0</mavenVersion>
     <wagonVersion>1.0-beta-3</wagonVersion>
-    <scmVersion>1.1</scmVersion>
+    <scmVersion>1.3</scmVersion>
     <sitePluginVersion>2.1</sitePluginVersion>
   </properties>
 
@@ -214,6 +214,16 @@ under the License.
       <artifactId>maven-scm-provider-cvsjava</artifactId>
       <version>${scmVersion}</version>
     </dependency>
+    <dependency>
+      <groupId>org.apache.maven.scm</groupId>
+      <artifactId>maven-scm-provider-gitexe</artifactId>
+      <version>${scmVersion}</version>
+    </dependency>   
+    <dependency>
+      <groupId>org.apache.maven.scm</groupId>
+      <artifactId>maven-scm-provider-git-commons</artifactId>
+      <version>${scmVersion}</version>
+    </dependency>     
 
     <!-- Doxia -->
     <dependency>
