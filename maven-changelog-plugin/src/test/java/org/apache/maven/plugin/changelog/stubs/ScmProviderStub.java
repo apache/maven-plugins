@@ -20,6 +20,7 @@ package org.apache.maven.plugin.changelog.stubs;
  */
 
 import org.apache.maven.scm.ScmBranch;
+import org.apache.maven.scm.ScmBranchParameters;
 import org.apache.maven.scm.ScmException;
 import org.apache.maven.scm.ScmFileSet;
 import org.apache.maven.scm.ScmTagParameters;
@@ -472,6 +473,12 @@ public class ScmProviderStub
 
     /** {@inheritDoc} */
     public TagScmResult tag( ScmRepository arg0, ScmFileSet arg1, String arg2, ScmTagParameters arg3 )
+        throws ScmException
+    {
+        return null;
+    }
+
+    public BranchScmResult branch( ScmRepository arg0, ScmFileSet arg1, String arg2, ScmBranchParameters arg3 )
         throws ScmException
     {
         return null;
