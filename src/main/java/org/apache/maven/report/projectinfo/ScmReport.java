@@ -27,6 +27,7 @@ import org.apache.maven.reporting.AbstractMavenReportRenderer;
 import org.apache.maven.scm.manager.NoSuchScmProviderException;
 import org.apache.maven.scm.manager.ScmManager;
 import org.apache.maven.scm.provider.cvslib.repository.CvsScmProviderRepository;
+import org.apache.maven.scm.provider.hg.repository.HgScmProviderRepository;
 import org.apache.maven.scm.provider.perforce.repository.PerforceScmProviderRepository;
 import org.apache.maven.scm.provider.starteam.repository.StarteamScmProviderRepository;
 import org.apache.maven.scm.provider.svn.repository.SvnScmProviderRepository;
@@ -260,6 +261,12 @@ public class ScmReport
                 linkPatternedText( i18n.getString( "project-info-report", locale, "report.scm.cvs.intro" ) );
                 sink.paragraph_();
             }
+            else if ( isScmSystem( anonymousRepository, "hg" ) )
+            {
+                sink.paragraph();
+                linkPatternedText( i18n.getString( "project-info-report", locale, "report.scm.hg.intro" ) );
+                sink.paragraph_();
+            }
             else if ( isScmSystem( anonymousRepository, "perforce" ) )
             {
                 sink.paragraph();
@@ -332,6 +339,13 @@ public class ScmReport
 
                 anonymousAccessCVS( cvsRepo );
             }
+            if ( anonymousRepository != null && isScmSystem( anonymousRepository, "hg" ) )
+            {
+                HgScmProviderRepository hgRepo = (HgScmProviderRepository) anonymousRepository
+                    .getProviderRepository();
+
+                anonymousAccessMercurial( hgRepo );
+            }
             else if ( anonymousRepository != null && isScmSystem( anonymousRepository, "svn" ) )
             {
                 SvnScmProviderRepository svnRepo = (SvnScmProviderRepository) anonymousRepository
@@ -373,6 +387,12 @@ public class ScmReport
                 CvsScmProviderRepository cvsRepo = (CvsScmProviderRepository) devRepository.getProviderRepository();
 
                 developerAccessCVS( cvsRepo );
+            }
+            else if ( devRepository != null && isScmSystem( devRepository, "hg" ) )
+            {
+                HgScmProviderRepository hgRepo = (HgScmProviderRepository) devRepository.getProviderRepository();
+
+                developerAccessMercurial( hgRepo );
             }
             else if ( devRepository != null && isScmSystem( devRepository, "perforce" ) )
             {
@@ -511,6 +531,27 @@ public class ScmReport
             verbatimText( command.toString() );
         }
 
+        // Mercurial
+
+        /**
+         * Create the documentation to provide an anonymous access with a <code>Mercurial</code> SCM.
+         * For example, generate the following command line:
+         * <p>hg clone uri</p>
+         *
+         * @param hgRepo
+         */
+        private void anonymousAccessMercurial( HgScmProviderRepository hgRepo )
+        {
+            sink.paragraph();
+            linkPatternedText( i18n.getString( "project-info-report", locale, "report.scm.anonymousaccess.hg.intro" ) );
+            sink.paragraph_();
+            
+            StringBuffer command = new StringBuffer();
+            command.append( "$ hg clone " ).append( hgRepo.getURI() );
+
+            verbatimText( command.toString() );
+        }
+
         /**
          * Create the documentation to provide an developer access with a <code>CVS</code> SCM.
          * For example, generate the following command line:
@@ -531,6 +572,28 @@ public class ScmReport
             command.append( "$ cvs -d " ).append( cvsRoot ).append( " login" );
             command.append( "\n" );
             command.append( "$ cvs -z3 -d " ).append( cvsRoot ).append( " co " ).append( cvsRepo.getModule() );
+
+            verbatimText( command.toString() );
+        }
+
+        // Mercurial
+
+        /**
+         * Create the documentation to provide an developer access with a <code>Mercurial</code> SCM.
+         * For example, generate the following command line:
+         * <p>hg clone repo </p>
+         * 
+         * @param hgRepo
+         */
+        private void developerAccessMercurial(HgScmProviderRepository hgRepo)
+        {
+            sink.paragraph();
+            linkPatternedText( i18n.getString( "project-info-report", locale, "report.scm.devaccess.hg.intro" ) );
+            sink.paragraph_();
+            
+            StringBuffer command = new StringBuffer();
+            command.append( "$ hg clone " );
+            command.append(hgRepo.getURI());
 
             verbatimText( command.toString() );
         }
