@@ -112,13 +112,12 @@ public class DeployFileMojo
      * a Maven 1.x-style repository layout.
      * 
      * @parameter expression="${repositoryLayout}" default-value="default"
-     * @required
      */
     private String repositoryLayout;
 
     /**
      * URL where the artifact will be deployed. <br/>
-     * ie ( file://C:\m2-repo or scp://host.com/path/to/repo )
+     * ie ( file:///C:/m2-repo or scp://host.com/path/to/repo )
      *
      * @parameter expression="${url}"
      * @required
