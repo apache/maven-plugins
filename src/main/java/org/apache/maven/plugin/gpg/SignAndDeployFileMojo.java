@@ -64,7 +64,7 @@ public class SignAndDeployFileMojo
     /**
      * The directory where to store signature files.
      * 
-     * @parameter expression="${gpg.asc.directory}"
+     * @parameter expression="${gpg.ascDirectory}"
      */
     private File ascDirectory;
 
