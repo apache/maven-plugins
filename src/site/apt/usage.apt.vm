@@ -105,7 +105,7 @@ mvn javadoc:test-aggregate-jar
  The Javadoc Plugin supports a large number of configuration parameters. Each configuration parameter turns into
  a tag name.
 
- Please refer to the {{{../javadoc-mojo.html}Javadoc Plugin Documentation}} for a listing of these parameters. Most
+ Please refer to the {{{./javadoc-mojo.html}Javadoc Plugin Documentation}} for a listing of these parameters. Most
  of these parameters are passed directly to the Javadoc tool itself.
 
  <<IMPORTANT NOTE>>: configuring the Javadoc plugin in the \<reporting/\> or \<build/\> elements in the pom have
@@ -148,7 +148,7 @@ mvn javadoc:test-aggregate-jar
 
  [<<<mvn site>>>] It will generate the Javadoc for public members (defined in \<reporting/\>) using the given
  stylesheet (defined in \<reporting/\>), and with an help page (default value for
- {{{../javadoc-mojo.html#nohelp}nohelp}} is true).
+ {{{./javadoc-mojo.html#nohelp}nohelp}} is true).
 
  [<<<mvn javadoc:javadoc>>>] It will generate the Javadoc for private members (defined in \<build/\>) using the
  stylesheet (defined in \<reporting/\>), and with no help page (defined in \<build/\>).
