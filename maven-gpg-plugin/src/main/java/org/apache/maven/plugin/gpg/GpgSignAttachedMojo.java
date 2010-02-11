@@ -72,10 +72,10 @@ public class GpgSignAttachedMojo
     /**
      * The directory where to store signature files.
      * 
-     * @parameter default-value="${project.build.directory}/gpg"
+     * @parameter default-value="${project.build.directory}/gpg" alias="outputDirectory"
      * @since 1.0-alpha-4
      */
-    private File outputDirectory;
+    private File ascDirectory;
 
     /**
      * The maven project.
@@ -136,7 +136,7 @@ public class GpgSignAttachedMojo
         // What we need to generateSignatureForArtifact here
         // ----------------------------------------------------------------------------
 
-        signer.setOutputDirectory( outputDirectory );
+        signer.setOutputDirectory( ascDirectory );
         signer.setBuildDirectory( new File( project.getBuild().getDirectory() ) );
         signer.setBaseDirectory( project.getBasedir() );
 
