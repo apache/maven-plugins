@@ -1,13 +1,12 @@
 import java.io.*;
 
-File artifactDir = new File( localRepositoryPath, "org/apache/maven/its/gpg/sr/test/1.0" );
+File artifactDir = new File( basedir, "target/repo/org/apache/maven/its/gpg/sadfwp/test/1.0" );
 
 String[] expectedFiles = {
-    "test-1.0.pom",
-    "test-1.0.pom.asc",
     "test-1.0.jar",
     "test-1.0.jar.asc",
-    "test-1.0-sources.jar.asc",
+    "test-1.0.pom",
+    "test-1.0.pom.asc",
 };
 
 for ( String expectedFile : expectedFiles )

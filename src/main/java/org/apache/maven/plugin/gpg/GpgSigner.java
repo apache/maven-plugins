@@ -45,6 +45,8 @@ public class GpgSigner
 
     private String keyname;
 
+    private String passphrase;
+
     private File outputDir;
 
     private File buildDir;
@@ -68,6 +70,11 @@ public class GpgSigner
         keyname = s;
     }
 
+    public void setPassPhrase( String s )
+    {
+        passphrase = s;
+    }
+
     public void setOutputDirectory( File out )
     {
         outputDir = out;
@@ -88,7 +95,7 @@ public class GpgSigner
         homeDir = homeDirectory;
     }
 
-    public File generateSignatureForArtifact( File file, String pass )
+    public File generateSignatureForArtifact( File file )
         throws MojoExecutionException
     {
         File signature = new File( file + SIGNATURE_EXTENSION );
@@ -151,14 +158,14 @@ public class GpgSigner
         }
 
         InputStream in = null;
-        if ( null != pass )
+        if ( null != passphrase )
         {
             cmd.createArg().setValue( "--passphrase-fd" );
 
             cmd.createArg().setValue( "0" );
 
             // Prepare the input stream which will be used to pass the passphrase to the executable
-            in = new ByteArrayInputStream( pass.getBytes() );
+            in = new ByteArrayInputStream( passphrase.getBytes() );
         }
 
         if ( null != keyname )
