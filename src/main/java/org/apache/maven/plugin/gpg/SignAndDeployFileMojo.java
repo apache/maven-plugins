@@ -37,7 +37,6 @@ import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.ArtifactRepositoryFactory;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.deploy.DeployFileMojo;
-import org.apache.maven.settings.Settings;
 
 /**
  * Signs artifacts and installs the artifact in the remote repository.
@@ -91,11 +90,10 @@ public class SignAndDeployFileMojo
     private File ascDirectory;
 
     /**
-     * @parameter default-value="${settings}"
-     * @required
+     * @parameter default-value="${settings.interactiveMode}"
      * @readonly
      */
-    protected Settings settings;
+    private boolean interactive;
 
     /**
      * Maven ArtifactHandlerManager
@@ -251,7 +249,7 @@ public class SignAndDeployFileMojo
 
         copyToParent();
         ArtifactDeployer deployer = getDeployer();
-        signer.setInteractive( settings.isInteractiveMode() );
+        signer.setInteractive( interactive );
         signer.setKeyName( keyname );
         signer.setUseAgent( useAgent );
         signer.setOutputDirectory( ascDirectory );
@@ -332,7 +330,7 @@ public class SignAndDeployFileMojo
             pass = passphrase;
             if ( !useAgent && null == pass )
             {
-                if ( !settings.isInteractiveMode() )
+                if ( !interactive )
                 {
                     throw new MojoExecutionException( "Cannot obtain passphrase in batch mode" );
                 }

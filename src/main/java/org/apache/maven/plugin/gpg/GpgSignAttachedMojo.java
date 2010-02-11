@@ -35,7 +35,6 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
-import org.apache.maven.settings.Settings;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.SelectorUtils;
 
@@ -87,7 +86,7 @@ public class GpgSignAttachedMojo
     private boolean useAgent;
 
     /**
-     * Skip doing the gpg signing
+     * Skip doing the gpg signing.
      * 
      * @parameter expression="${gpg.skip}" default-value="false"
      * @required
@@ -95,7 +94,7 @@ public class GpgSignAttachedMojo
     private boolean skip;
 
     /**
-     * A list of files to exclude from being signed. Can contain ant-style wildcards and double wildcards. The default
+     * A list of files to exclude from being signed. Can contain Ant-style wildcards and double wildcards. The default
      * excludes are <code>**&#47;*.md5   **&#47;*.sha1    **&#47;*.asc</code>.
      * 
      * @parameter
@@ -139,11 +138,10 @@ public class GpgSignAttachedMojo
     private ArtifactHandlerManager artifactHandlerManager;
 
     /**
-     * @parameter default-value="${settings}"
-     * @required
+     * @parameter default-value="${settings.interactiveMode}"
      * @readonly
      */
-    protected Settings settings;
+    private boolean interactive;
 
     private GpgSigner signer = new GpgSigner();
 
@@ -177,7 +175,7 @@ public class GpgSignAttachedMojo
 
         if ( !useAgent && null == pass )
         {
-            if ( !settings.isInteractiveMode() )
+            if ( !interactive )
             {
                 throw new MojoExecutionException( "Cannot obtain passphrase in batch mode" );
             }
@@ -195,7 +193,7 @@ public class GpgSignAttachedMojo
         // What we need to generateSignatureForArtifact here
         // ----------------------------------------------------------------------------
 
-        signer.setInteractive( settings.isInteractiveMode() );
+        signer.setInteractive( interactive );
         signer.setKeyName( keyname );
         signer.setUseAgent( useAgent );
         signer.setOutputDirectory( outputDirectory );
