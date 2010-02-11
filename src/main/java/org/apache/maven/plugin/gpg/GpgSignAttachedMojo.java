@@ -150,6 +150,12 @@ public class GpgSignAttachedMojo
 
             File projectArtifact = project.getArtifact().getFile();
 
+            if ( projectArtifact == null )
+            {
+                throw new MojoFailureException( "The project artifact has not been assembled yet. "
+                    + "Please do not invoke this goal before the lifecycle phase \"package\"." );
+            }
+
             File projectArtifactSignature = signer.generateSignatureForArtifact( projectArtifact );
 
             if ( projectArtifactSignature != null )
