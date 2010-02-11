@@ -310,7 +310,7 @@ public class SignAndDeployFileMojo
     private File getLocalRepoFile( Artifact artifact )
     {
         String path = localRepository.pathOf( artifact );
-        return new File(localRepository.getBasedir(), path );
+        return new File( localRepository.getBasedir(), path );
     }
 
     /**
