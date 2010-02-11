@@ -31,8 +31,8 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.apache.maven.artifact.handler.DefaultArtifactHandler;
 import org.apache.maven.artifact.handler.manager.ArtifactHandlerManager;
-import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.codehaus.plexus.util.FileUtils;
@@ -48,48 +48,15 @@ import org.codehaus.plexus.util.SelectorUtils;
  * @phase verify
  */
 public class GpgSignAttachedMojo
-    extends AbstractMojo
+    extends AbstractGpgMojo
 {
 
     private static final String DEFAULT_EXCLUDES[] = new String[] { "**/*.md5", "**/*.sha1", "**/*.asc" };
 
     /**
-     * The directory from which gpg will load keyrings. If not specified, gpg will use the value configured for its
-     * installation, e.g. <code>~/.gnupg</code> or <code>%APPDATA%/gnupg</code>.
-     * 
-     * @parameter expression="${gpg.homedir}"
-     * @since 1.0
-     */
-    private File homedir;
-
-    /**
-     * The passphrase to use when signing.
-     * 
-     * @parameter expression="${gpg.passphrase}"
-     */
-    private String passphrase;
-
-    /**
-     * The "name" of the key to sign with. Passed to gpg as --local-user.
-     * 
-     * @parameter expression="${gpg.keyname}"
-     */
-    private String keyname;
-
-    /**
-     * Passes --use-agent or --no-use-agent to gpg. If using an agent, the password is optional as the agent will
-     * provide it.
-     * 
-     * @parameter expression="${gpg.useagent}" default-value="false"
-     * @required
-     */
-    private boolean useAgent;
-
-    /**
      * Skip doing the gpg signing.
      * 
      * @parameter expression="${gpg.skip}" default-value="false"
-     * @required
      */
     private boolean skip;
 
@@ -137,19 +104,9 @@ public class GpgSignAttachedMojo
      */
     private ArtifactHandlerManager artifactHandlerManager;
 
-    /**
-     * @parameter default-value="${settings.interactiveMode}"
-     * @readonly
-     */
-    private boolean interactive;
-
-    private GpgSigner signer = new GpgSigner();
-
     public void execute()
-        throws MojoExecutionException
+        throws MojoExecutionException, MojoFailureException
     {
-
-        String pass = passphrase;
         if ( skip )
         {
             // We're skipping the signing stuff
@@ -173,33 +130,15 @@ public class GpgSignAttachedMojo
         }
         excludes = newExcludes;
 
-        if ( !useAgent && null == pass )
-        {
-            if ( !interactive )
-            {
-                throw new MojoExecutionException( "Cannot obtain passphrase in batch mode" );
-            }
-            try
-            {
-                pass = signer.getPassphrase( project );
-            }
-            catch ( IOException e )
-            {
-                throw new MojoExecutionException( "Exception reading password", e );
-            }
-        }
+        GpgSigner signer = newSigner( project );
 
         // ----------------------------------------------------------------------------
         // What we need to generateSignatureForArtifact here
         // ----------------------------------------------------------------------------
 
-        signer.setInteractive( interactive );
-        signer.setKeyName( keyname );
-        signer.setUseAgent( useAgent );
         signer.setOutputDirectory( outputDirectory );
         signer.setBuildDirectory( new File( project.getBuild().getDirectory() ) );
         signer.setBaseDirectory( project.getBasedir() );
-        signer.setHomeDirectory( homedir );
 
         List signingBundles = new ArrayList();
 
@@ -211,7 +150,7 @@ public class GpgSignAttachedMojo
 
             File projectArtifact = project.getArtifact().getFile();
 
-            File projectArtifactSignature = signer.generateSignatureForArtifact( projectArtifact, pass );
+            File projectArtifactSignature = signer.generateSignatureForArtifact( projectArtifact );
 
             if ( projectArtifactSignature != null )
             {
@@ -234,7 +173,7 @@ public class GpgSignAttachedMojo
             throw new MojoExecutionException( "Error copying POM for signing.", e );
         }
 
-        File pomSignature = signer.generateSignatureForArtifact( pomToSign, pass );
+        File pomSignature = signer.generateSignatureForArtifact( pomToSign );
 
         if ( pomSignature != null )
         {
@@ -251,7 +190,7 @@ public class GpgSignAttachedMojo
 
             File file = artifact.getFile();
 
-            File signature = signer.generateSignatureForArtifact( file, pass );
+            File signature = signer.generateSignatureForArtifact( file );
 
             if ( signature != null )
             {

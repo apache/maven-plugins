@@ -47,7 +47,6 @@ under the License.
         <artifactId>maven-gpg-plugin</artifactId>
         <version>@project.version@</version>
         <configuration>
-          <homedir>@gpgHomeDir@</homedir>
           <passphrase>TEST</passphrase>
         </configuration>
         <executions>
