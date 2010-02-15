@@ -139,7 +139,7 @@ under the License.
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-resources</artifactId>
-      <version>1.0-alpha-6</version>
+      <version>1.0-alpha-7-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
@@ -366,5 +366,18 @@ under the License.
     
 
   </profiles>
+  
+  <repositories>
+    <repository>
+      <id>oss.sonatype.snapshots</id>
+      <url>http://oss.repository.sonatype.org/content/repositories/plexus-snapshots</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
   
 </project>
