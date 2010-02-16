@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<!DOCTYPE module PUBLIC "-//Puppy Crawl//DTD Check Configuration 1.2//EN" "http://www.puppycrawl.com/dtds/configuration_1_2.dtd">
+
+<module name="DEKIES">
+	<property name="localeCountry" value="DE"/>
+	<property name="localeLanguage" value="de"/>
+	<module name="TreeWalker">
+		<property name="fileExtensions" value="java,ejb,jpf"/>	
+		<!-- Allow text only in catch-blocks -->
+		<module name="EmptyBlock">
+			<property name="option" value="text"/>
+			<property name="tokens" value="LITERAL_CATCH"/>
+		</module>
+	</module>
+</module>
