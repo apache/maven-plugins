@@ -404,6 +404,11 @@ public class DefaultCheckstyleExecutor
             excludesStr.append( defaultExcludes[i] );
         }
 
+        if (request.getSourceDirectory() == null || !request.getSourceDirectory().exists())
+        {
+            return EMPTY_FILE_ARRAY;
+        }
+        
         List files = FileUtils.getFiles( request.getSourceDirectory(), request.getIncludes(), excludesStr.toString() );
         if ( request.isIncludeTestSourceDirectory() && ( request.getTestSourceDirectory() != null )
             && ( request.getTestSourceDirectory().exists() ) && ( request.getTestSourceDirectory().isDirectory() ) )
