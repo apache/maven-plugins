@@ -38,6 +38,10 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-checkstyle-plugin</artifactId>
           <version>@pom.version@</version>
+          <configuration>
+            <configLocation>http://svn.apache.org/repos/asf/maven/plugins/tags/maven-checkstyle-plugin-2.5/src/main/resources/config/maven_checks.xml</configLocation>
+            <headerLocation>http://svn.apache.org/repos/asf/maven/plugins/tags/maven-checkstyle-plugin-2.5/src/main/resources/config/maven-header.txt</headerLocation>
+          </configuration>            
         </plugin>      
       </plugins>
     </pluginManagement>
@@ -61,6 +65,9 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
         <version>@pom.version@</version>
+        <configuration>
+          <configLocation>http://svn.apache.org/repos/asf/maven/plugins/tags/maven-checkstyle-plugin-2.5/src/main/resources/config/maven_checks.xml</configLocation>
+        </configuration>        
       </plugin>
     </plugins>
   </reporting>
