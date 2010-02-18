@@ -4759,7 +4759,7 @@ public abstract class AbstractJavadocMojo
         {
             Artifact artifact = (Artifact) it.next();
 
-            if ( artifact != null && artifact.getFile().exists() )
+            if ( artifact != null && artifact.getFile() != null && artifact.getFile().exists() )
             {
                 try
                 {
