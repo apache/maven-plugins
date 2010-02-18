@@ -163,7 +163,7 @@ under the License.
     <javadocPluginVersion>2.6.1</javadocPluginVersion>
     <!-- previous version breaks due to use of plexusContainer.getLoggerManager() -->
     <projectInfoReportsPluginVersion>2.2-SNAPSHOT</projectInfoReportsPluginVersion>
-    <checkstylePluginVersion>2.5-SNAPSHOT</checkstylePluginVersion>
+    <checkstylePluginVersion>2.5</checkstylePluginVersion>
   </properties>
 
   <dependencies>
