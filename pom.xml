@@ -367,17 +367,4 @@ under the License.
 
   </profiles>
   
-  <repositories>
-    <repository>
-      <id>oss.sonatype.snapshots</id>
-      <url>http://oss.repository.sonatype.org/content/repositories/plexus-snapshots</url>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </repository>
-  </repositories>
-  
 </project>
