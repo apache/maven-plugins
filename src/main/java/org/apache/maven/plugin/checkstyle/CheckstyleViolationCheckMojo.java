@@ -271,14 +271,6 @@ public class CheckstyleViolationCheckMojo
     
     /**
      * @since 2.5
-     * @component role="org.codehaus.plexus.resource.ResourceManager" role-hint="default"
-     * @required
-     * @readonly
-     */
-    protected ResourceManager locator;    
-    
-    /**
-     * @since 2.5
      * @component role="org.apache.maven.plugin.checkstyle.CheckstyleExecutor" role-hint="default"
      * @required
      * @readonly
@@ -370,10 +362,6 @@ public class CheckstyleViolationCheckMojo
 
             if ( !skipExec )
             {
-                locator.addSearchPath( FileResourceLoader.ID, project.getFile().getParentFile().getAbsolutePath() );
-                locator.addSearchPath( "url", "" );
-
-                locator.setOutputDirectory( new File( project.getBuild().getDirectory() ) );
 
                 ClassLoader currentClassLoader = Thread.currentThread().getContextClassLoader();
 

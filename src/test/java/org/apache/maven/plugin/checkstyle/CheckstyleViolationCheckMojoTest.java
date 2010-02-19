@@ -51,8 +51,6 @@ public class CheckstyleViolationCheckMojoTest
         
         assertNotNull( "project null.", mojo.project );
         
-        assertNotNull( "locator null.", mojo.locator );
-        
         try
         {
             mojo.execute();
