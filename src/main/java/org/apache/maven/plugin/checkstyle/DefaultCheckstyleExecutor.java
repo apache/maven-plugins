@@ -35,6 +35,7 @@ import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 import org.codehaus.plexus.resource.ResourceManager;
 import org.codehaus.plexus.resource.loader.FileResourceCreationException;
+import org.codehaus.plexus.resource.loader.FileResourceLoader;
 import org.codehaus.plexus.resource.loader.ResourceNotFoundException;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.StringUtils;
@@ -456,7 +457,15 @@ public class DefaultCheckstyleExecutor
             {
                 getLogger().debug( "request.getConfigLocation() " + request.getConfigLocation() );
             }
-           
+            File parent = request.getProject().getFile().getParentFile();
+            if (parent != null)
+            {
+                // MCHECKSTYLE-131 ( olamy ) I don't like this hack. what's happened if this is defined in parent/parent pom 
+                // it will breaks
+                locator.addSearchPath( FileResourceLoader.ID, request.getProject().getFile().getParentFile().getAbsolutePath() );
+            }
+            locator.addSearchPath( "url", "" );
+            
             File configFile = locator.getResourceAsFile( request.getConfigLocation(), "checkstyle-checker.xml" );
 
             if ( configFile == null )
