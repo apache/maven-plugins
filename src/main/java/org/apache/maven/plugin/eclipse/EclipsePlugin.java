@@ -1855,7 +1855,12 @@ public class EclipsePlugin
         Build build = mavenProject.getBuild();
         if ( build != null )
         {
-            Plugin plugin = (Plugin) build.getPluginsAsMap().get( "org.apache.maven.plugins:maven-eclipse-plugin" );
+            String eclipsePlugin = "org.apache.maven.plugins:maven-eclipse-plugin";
+            Plugin plugin = (Plugin) build.getPluginsAsMap().get( eclipsePlugin );
+            if ( plugin == null && build.getPluginManagement() != null )
+            {
+                plugin = (Plugin) build.getPluginManagement().getPluginsAsMap().get( eclipsePlugin );
+            }
             if ( plugin != null )
             {
                 Xpp3Dom config = (Xpp3Dom) plugin.getConfiguration();
