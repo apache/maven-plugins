@@ -53,6 +53,15 @@ public abstract class AbstractAntMojo
     extends AbstractMojo
 {
     /**
+     * The Maven project object
+     *
+     * @parameter expression="${project}"
+     * @required
+     * @readonly
+     */
+    private MavenProject project;
+
+    /**
      * String to prepend to project and dependency property names.
      * @parameter default-value=""
      */
@@ -236,5 +245,14 @@ public abstract class AbstractAntMojo
 
             antProject.setProperty( propName, artifact.getFile().getPath() );
         }
+    }
+
+    /**
+     * Get the current Maven project
+     * @return current Maven project
+     */
+    public MavenProject getMavenProject()
+    {
+        return this.project;
     }
 }

@@ -46,15 +46,6 @@ public class AntRunMojo
     extends AbstractAntMojo
 {
     /**
-     * The Maven project object
-     *
-     * @parameter expression="${project}"
-     * @required
-     * @readonly
-     */
-    private MavenProject project;
-
-    /**
      * The plugin dependencies.
      *
      * @parameter expression="${plugin.artifacts}"
@@ -97,18 +88,19 @@ public class AntRunMojo
     public void execute()
         throws MojoExecutionException
     {
-        executeTasks( tasks, project, pluginArtifacts );
+        executeTasks( tasks, getMavenProject(), pluginArtifacts );
 
         if ( sourceRoot != null )
         {
             getLog().info( "Registering compile source root " + sourceRoot );
-            project.addCompileSourceRoot( sourceRoot.toString() );
+            getMavenProject().addCompileSourceRoot( sourceRoot.toString() );
         }
 
         if ( testSourceRoot != null )
         {
             getLog().info( "Registering compile test source root " + testSourceRoot );
-            project.addTestCompileSourceRoot( testSourceRoot.toString() );
+            getMavenProject().addTestCompileSourceRoot( testSourceRoot.toString() );
         }
     }
+    
 }
