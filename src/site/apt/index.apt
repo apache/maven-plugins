@@ -54,12 +54,6 @@ Maven Eclipse Plugin
 
 ** Specific goals
 
-*** Specific goals to support m2eclipse
-
-  * {{{./m2eclipse-mojo.html}eclipse:m2eclipse}} generates the Eclipse configuration
-  files that are already configured for {{{http://m2eclipse.codehaus.org}M2eclipse}}.
-
-
 *** Specific goals for PDE developments
 
   * {{{./to-maven-mojo.html}eclipse:to-maven}} Add eclipse artifacts from an eclipse installation
