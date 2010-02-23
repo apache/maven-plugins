@@ -97,60 +97,12 @@ Usage
 [...]
 ------
 
-  Below you can see how to indicate that Ant has generated some more java
-  source that needs to be included in the compilation phase. Note that the
-  compile phase follows the <<<generate-sources>>> phase in the lifecycle.
+* Additional source directories
 
-------
-<project>
-  [...]
-  <build>
-    <plugins>
-      [...]
-      <plugin>
-        <artifactId>maven-antrun-plugin</artifactId>
-        <version>${project.version}</version>
-        <executions>
-          <execution>
-            <phase>generate-sources</phase>
-            <configuration>
-              <tasks>
-
-                <!--
-                  Place any Ant task here. You can add anything
-                  you can add between <target> and </target> in a
-                  build.xml.
-                -->
-
-              </tasks>
-              <sourceRoot>
-                \${project.build.directory}/generated-sources/main/java
-              </sourceRoot>
-              <testSourceRoot>
-                \${project.build.directory}/generated-sources/test/java
-              </testSourceRoot>
-            </configuration>
-            <goals>
-              <goal>run</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
-  [...]
-</project>
-------
-
-  Of course, you can put whatever folder you prefer. The folders in the example
-  above are handy because they are deleted when you <<<clean>>> since they are in
-  the build directory (which is, by default, "target").
-
-  <<<\<sourceRoot/\>>>> adds a single folder to the list of folders that get
-  compiled with the program source code (<<<compile>>>).
-
-  <<<\<testSourceRoot/\>>>> adds a single folder to the list of folders that get
-  compiled with the test source code (<<<test-compile>>>).
+  If your ant tasks generate additional source code that needs to be added 
+  to the build, you can use the 
+  {{{http://mojo.codehaus.org/build-helper-maven-plugin/}build-helper-maven-plugin}}.  
+  The sourceRoot and testSourceRoot options of the antrun plugin have been deprecated.
 
 * Using maven properties
 
