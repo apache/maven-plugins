@@ -384,8 +384,8 @@ public abstract class AbstractFromConfigurationMojo
         if ( this.localRepositoryDirectory != null )
         {
             //create a new local repo using existing layout, snapshots, and releases policy
-            this.overrideLocalRepository = artifactRepositoryManager.createArtifactRepository( Long
-                .toHexString( System.currentTimeMillis() ), "file://"
+            this.overrideLocalRepository = artifactRepositoryManager.createArtifactRepository( 
+                super.getLocal().getId(), "file://"
                 + this.localRepositoryDirectory.getAbsolutePath(), super.getLocal().getLayout(), super.getLocal()
                 .getSnapshots(), super.getLocal().getReleases() );
 
