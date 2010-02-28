@@ -22,6 +22,7 @@ package org.apache.maven.plugin.dependency;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
@@ -29,7 +30,7 @@ import org.apache.maven.artifact.installer.ArtifactInstallationException;
 import org.apache.maven.artifact.installer.ArtifactInstaller;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.ArtifactRepositoryFactory;
-import org.apache.maven.artifact.repository.layout.DefaultRepositoryLayout;
+import org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.dependency.utils.DependencyStatusSets;
 import org.apache.maven.plugin.dependency.utils.DependencyUtil;
@@ -63,6 +64,11 @@ public class CopyDependenciesMojo
     protected ArtifactRepositoryFactory repositoryFactory;
 
     /**
+     * @component role="org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout"
+     */
+    private Map repositoryLayouts;
+
+    /**
      * Main entry into mojo. Gets the list of dependencies and iterates through
      * calling copyArtifact.
      * 
@@ -91,7 +97,7 @@ public class CopyDependenciesMojo
 				ArtifactRepository targetRepository = repositoryFactory.createDeploymentArtifactRepository(
 						"local", 
 						outputDirectory.toURL().toExternalForm(), 
-						new DefaultRepositoryLayout(),
+                        (ArtifactRepositoryLayout) repositoryLayouts.get( "default" ),
 						false /*uniqueVersion*/ );
 		        for ( Iterator i = artifacts.iterator(); i.hasNext(); )
 		        {
