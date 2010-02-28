@@ -284,6 +284,13 @@ public class LinkcheckReport
      */
     private boolean forceSite;
 
+    /**
+     * The base URL to use for absolute links (eg <code>/index.html</code>) in the site.
+     *
+     * @parameter expression="${linkcheck.baseURL}" default-value="${project.url}"
+     */
+    private String baseURL;
+
     // ----------------------------------------------------------------------
     // Instance fields
     // ----------------------------------------------------------------------
@@ -473,6 +480,7 @@ public class LinkcheckReport
         // Wrap linkcheck
         linkCheck.setOnline( !offline );
         linkCheck.setBasedir( basedir );
+        linkCheck.setBaseURL( baseURL );
         linkCheck.setReportOutput( linkcheckOutput );
         linkCheck.setLinkCheckCache( linkcheckCache );
         linkCheck.setExcludedLinks( excludedLinks );
