@@ -31,7 +31,6 @@ import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.ArtifactRepositoryFactory;
 import org.apache.maven.artifact.repository.ArtifactRepositoryPolicy;
 import org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout;
-import org.apache.maven.artifact.repository.layout.DefaultRepositoryLayout;
 import org.apache.maven.artifact.resolver.AbstractArtifactResolutionException;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.plugin.AbstractMojo;
@@ -67,6 +66,11 @@ public class GetMojo
      * @readonly
      */
     private ArtifactRepositoryFactory artifactRepositoryFactory;
+
+    /**
+     * @component roleHint="default"
+     */
+    private ArtifactRepositoryLayout repositoryLayout;
 
     /**
      * @component
@@ -167,7 +171,6 @@ public class GetMojo
         Artifact dummyOriginatingArtifact =
             artifactFactory.createBuildArtifact( "org.apache.maven.plugins", "maven-downloader-plugin", "1.0", "jar" );
 
-        ArtifactRepositoryLayout repositoryLayout = new DefaultRepositoryLayout();
         ArtifactRepositoryPolicy always =
             new ArtifactRepositoryPolicy( true, ArtifactRepositoryPolicy.UPDATE_POLICY_ALWAYS,
                                           ArtifactRepositoryPolicy.CHECKSUM_POLICY_WARN );
