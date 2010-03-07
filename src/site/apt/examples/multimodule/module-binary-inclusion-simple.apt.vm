@@ -25,7 +25,7 @@
 
 ~~ NOTE: For help with the syntax of this file, see:
 ~~ http://maven.apache.org/doxia/references/apt-format.html
-                                                                                                                        
+
 Including Module Binaries
 
 * Warning
@@ -40,18 +40,18 @@ Including Module Binaries
   It is common practice to create an assembly using the parent POM of a
   multimodule build. At times, you may want to ensure that this assembly also
   includes one or more of the module binaries.
-  
-  This example demonstrates how to include the artifact and dependencies of a 
+
+  This example demonstrates how to include the artifact and dependencies of a
   module, under the directory <<<modules/\<module-name\>>>>.
-  
+
 * The Assembly Descriptor
 
   First, let's write an assembly descriptor to create this assembly. For the
   sake of clarity, this descriptor will be as simple as possible, only
   demonstrating the features described by this example.
-  
+
 +---+
-<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0" 
+<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0 http://maven.apache.org/xsd/assembly-1.1.0.xsd">
   <id>bin</id>
@@ -75,32 +75,32 @@ Including Module Binaries
 
   This descriptor states that the assembly id should be <<<bin>>>, that the
   output format is a directory, and that the contents of the assembly should
-  <<not>> be contained within a directory named after the finalName of the 
+  <<not>> be contained within a directory named after the finalName of the
   top-level project.
-  
+
   Furthermore, it states that we wish to include the artifact files for the module
   with a groupId of <<<org.test>>> and an artifactId of <<<child1>>>, along with
-  its dependency artifacts. These artifacts should be contained within the 
-  directory structure <<<modules/child1>>> for this module, since the 
+  its dependency artifacts. These artifacts should be contained within the
+  directory structure <<<modules/child1>>> for this module, since the
   outputDirectory expression will be interpolated on a module-by-module basis.
-  
+
 * The POM
 
   Now, let's review the POM configuration necessary to enable the building of
   this assembly via the <assembly:directory> mojo:
-  
+
 +---+
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.test</groupId>
   <artifactId>parent</artifactId>
   <version>1.0</version>
-  
+
   <packaging>pom</packaging>
-  
+
   <name>Parent</name>
 
   <modules>
@@ -127,28 +127,28 @@ Including Module Binaries
 
   This POM simply directs the Assembly Plugin to use the <<<bin.xml>>>
   assembly descriptor when executing.
-  
+
 * Execute!
 
   To build the assembly, we issue the following command:
-  
+
 +---+
 mvn clean package assembly:directory
 +---+
 
   This will ensure that the output directory (normally, <<<target>>>), is
-  removed before building the assembly directory. 
-  
-  <<Note:>> Because of a quirk in Maven 2.0's execution model relating to 
-  aggregator mojos and the inheritance hierarchy, we need to explicitly execute 
-  the package phase ahead of the assembly invocation, to ensure all modules have 
+  removed before building the assembly directory.
+
+  <<Note:>> Because of a quirk in Maven 2.0's execution model relating to
+  aggregator mojos and the inheritance hierarchy, we need to explicitly execute
+  the package phase ahead of the assembly invocation, to ensure all modules have
   been built.
-  
+
 * Examining the Output
 
   When the Maven execution completes, the following directory structure should
   be left:
-  
+
 +---+
 target/parent-1.0-bin
 `-- modules
