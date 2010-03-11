@@ -127,7 +127,7 @@ under the License.
     <dependency>
       <groupId>pmd</groupId>
       <artifactId>pmd-jdk14</artifactId>
-      <version>4.2.4</version>
+      <version>4.2.5</version>
     </dependency>
 
     <!-- misc -->
