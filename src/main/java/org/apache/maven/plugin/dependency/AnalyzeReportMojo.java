@@ -33,12 +33,12 @@ import org.apache.maven.shared.dependency.analyzer.ProjectDependencyAnalyzer;
 import org.apache.maven.shared.dependency.analyzer.ProjectDependencyAnalyzerException;
 
 /**
- * Analyzes the dependencies of this project and produces a report that summarises which are: used and declared; used
+ * Analyzes the dependencies of this project and produces a report that summarizes which are: used and declared; used
  * and undeclared; unused and declared.
- * 
+ *
  * @version $Id$
  * @since 2.0-alpha-5
- * 
+ *
  * @goal analyze-report
  * @requiresDependencyResolution test
  * @execute phase="test-compile"
@@ -50,7 +50,7 @@ public class AnalyzeReportMojo
 
     /**
      * The Maven project to analyze.
-     * 
+     *
      * @parameter expression="${project}"
      * @required
      * @readonly
@@ -59,7 +59,7 @@ public class AnalyzeReportMojo
 
     /**
      * The Maven project dependency analyzer to use.
-     * 
+     *
      * @component
      * @required
      * @readonly
@@ -67,8 +67,8 @@ public class AnalyzeReportMojo
     private ProjectDependencyAnalyzer analyzer;
 
     /**
-     * 
-     * 
+     *
+     *
      * @component
      * @required
      * @readonly
@@ -77,7 +77,7 @@ public class AnalyzeReportMojo
 
     /**
      * Target folder
-     * 
+     *
      * @parameter expression="${project.build.directory}"
      * @readonly
      * @since 2.0-alpha-5
@@ -97,14 +97,14 @@ public class AnalyzeReportMojo
             getLog().info( "Skipping pom project" );
             return;
         }
-        
+
         if ( outputDirectory == null || !outputDirectory.exists() )
         {
             getLog().info( "Skipping project with no Target directory" );
             return;
         }
 
-        // Step 1: Analyse the project
+        // Step 1: Analyze the project
         ProjectDependencyAnalysis analysis = null;
         try
         {
@@ -123,7 +123,7 @@ public class AnalyzeReportMojo
         AnalyzeReportView analyzethis = new AnalyzeReportView();
         analyzethis.generateReport( analysis, sink, bundle );
     }
-    
+
     // MavenReport methods ----------------------------------------------------
 
     /*
@@ -149,7 +149,7 @@ public class AnalyzeReportMojo
     {
         return getBundle( locale ).getString( "analyze.report.description" );
     }
-    
+
     // AbstractMavenReport methods --------------------------------------------
 
     /*
@@ -177,12 +177,12 @@ public class AnalyzeReportMojo
     {
         return siteRenderer;
     }
-    
+
     // protected methods ------------------------------------------------------
 
     /**
-     * 
-     * 
+     *
+     *
      * @param locale
      *            the current locale
      */

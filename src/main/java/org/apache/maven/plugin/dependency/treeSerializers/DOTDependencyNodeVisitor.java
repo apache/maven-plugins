@@ -21,7 +21,6 @@ package org.apache.maven.plugin.dependency.treeSerializers;
 
 import org.apache.maven.shared.dependency.tree.traversal.DependencyNodeVisitor;
 import org.apache.maven.shared.dependency.tree.DependencyNode;
-import org.apache.maven.project.MavenProject;
 
 import java.io.Writer;
 import java.util.List;
@@ -62,7 +61,7 @@ public class DOTDependencyNodeVisitor extends AbstractSerializingVisitor
 
         List children = node.getChildren() ;
 
-        for ( Iterator it = children.iterator () ; it.hasNext (); ) 
+        for ( Iterator it = children.iterator () ; it.hasNext (); )
         {
             StringBuffer sb = new StringBuffer() ;
             sb.append( "\t\"" ) ;

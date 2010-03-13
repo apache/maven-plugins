@@ -43,7 +43,7 @@ import org.codehaus.plexus.util.StringUtils;
  * to 2.0.6, it was possible to inherit versions that didn't match your
  * dependencyManagement. See <a
  * href="http://jira.codehaus.org/browse/MNG-1577">MNG-1577</a> for more info.
- * This mojo is also usefull for just detecting projects that override the
+ * This mojo is also useful for just detecting projects that override the
  * dependencyManagement directly. Set ignoreDirect to false to detect these
  * otherwise normal conditions.
  *
