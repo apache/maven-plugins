@@ -1,6 +1,6 @@
 package org.apache.maven.plugin.dependency.fromConfiguration;
 
-/* 
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -16,7 +16,7 @@ package org.apache.maven.plugin.dependency.fromConfiguration;
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
- * under the License.    
+ * under the License.
  */
 
 import java.io.File;
@@ -42,11 +42,11 @@ import org.codehaus.plexus.util.StringUtils;
 /**
  * Abstract Parent class used by mojos that get Artifact information from the
  * plugin configuration as an ArrayList of ArtifactItems
- * 
+ *
  * @see ArtifactItem
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  * @version $Id$
- * 
+ *
  */
 public abstract class AbstractFromConfigurationMojo
     extends AbstractDependencyMojo
@@ -54,7 +54,7 @@ public abstract class AbstractFromConfigurationMojo
 
     /**
      * Default location used for mojo unless overridden in ArtifactItem
-     * 
+     *
      * @parameter expression="${outputDirectory}"
      *            default-value="${project.build.directory}/dependency"
      * @optional
@@ -64,7 +64,7 @@ public abstract class AbstractFromConfigurationMojo
 
     /**
      * Overwrite release artifacts
-     * 
+     *
      * @optional
      * @since 1.0
      * @parameter expression="${mdep.overWriteReleases}" default-value="false"
@@ -73,7 +73,7 @@ public abstract class AbstractFromConfigurationMojo
 
     /**
      * Overwrite snapshot artifacts
-     * 
+     *
      * @optional
      * @since 1.0
      * @parameter expression="${mdep.overWriteSnapshots}" default-value="false"
@@ -82,7 +82,7 @@ public abstract class AbstractFromConfigurationMojo
 
     /**
      * Overwrite if newer
-     * 
+     *
      * @optional
      * @since 2.0
      * @parameter expression="${mdep.overIfNewer}" default-value="true"
@@ -93,7 +93,7 @@ public abstract class AbstractFromConfigurationMojo
      * Collection of ArtifactItems to work on. (ArtifactItem contains groupId,
      * artifactId, version, type, classifier, location, destFileName, markerFile and overwrite.)
      * See <a href="./usage.html">Usage</a> for details.
-     * 
+     *
      * @parameter
      * @required
      * @since 1.0
@@ -106,19 +106,19 @@ public abstract class AbstractFromConfigurationMojo
      * @readonly
      */
     private ArtifactRepositoryFactory artifactRepositoryManager;
-    
-    /**
-     * Path to override default local repository during plugin's execution.
-     * To remove all downloaded artifacts as part of the build, set this value to a location under your project's target directory 
-     * @parameter 
-     * @since 2.2
-     */
-    private  File localRepositoryDirectory;    
 
     /**
-     * To host and cache localRepositoryDirectory 
+     * Path to override default local repository during plugin's execution.
+     * To remove all downloaded artifacts as part of the build, set this value to a location under your project's target directory
+     * @parameter
+     * @since 2.2
      */
-    private ArtifactRepository overrideLocalRepository;    
+    private  File localRepositoryDirectory;
+
+    /**
+     * To host and cache localRepositoryDirectory
+     */
+    private ArtifactRepository overrideLocalRepository;
 
     abstract ArtifactItemFilter getMarkedArtifactFilter( ArtifactItem item );
 
@@ -126,14 +126,14 @@ public abstract class AbstractFromConfigurationMojo
      * Preprocesses the list of ArtifactItems. This method defaults the
      * outputDirectory if not set and creates the output Directory if it doesn't
      * exist.
-     * 
+     *
      * @param removeVersion
      *            remove the version from the filename.
      * @return An ArrayList of preprocessed ArtifactItems
-     * 
+     *
      * @throws MojoExecutionException
      *             with a message if an error occurs.
-     * 
+     *
      * @see ArtifactItem
      */
     protected ArrayList getProcessedArtifactItems( boolean removeVersion )
@@ -176,7 +176,7 @@ public abstract class AbstractFromConfigurationMojo
             }
             catch ( ArtifactFilterException e )
             {
-                throw new MojoExecutionException (e.getMessage(),e);
+                throw new MojoExecutionException( e.getMessage(), e );
             }
         }
         return artifactItems;
@@ -202,12 +202,12 @@ public abstract class AbstractFromConfigurationMojo
      * Resolves the Artifact from the remote repository if nessessary. If no
      * version is specified, it will be retrieved from the dependency list or
      * from the DependencyManagement section of the pom.
-     * 
+     *
      * @param artifactItem
      *            containing information about artifact from plugin
      *            configuration.
      * @return Artifact object representing the specified file.
-     * 
+     *
      * @throws MojoExecutionException
      *             with a message if the version can't be found in
      *             DependencyManagement.
@@ -249,7 +249,7 @@ public abstract class AbstractFromConfigurationMojo
             // functionality.
             /*
              * List listeners = new ArrayList();
-             * 
+             *
              * Set theSet = new HashSet(); theSet.add( artifact );
              * ArtifactResolutionResult artifactResolutionResult =
              * artifactCollector.collect( theSet, project .getArtifact(),
@@ -278,7 +278,7 @@ public abstract class AbstractFromConfigurationMojo
     /**
      * Tries to find missing version from dependancy list and dependency
      * management. If found, the artifact is updated with the correct version.
-     * 
+     *
      * It will first look for an exact match on artifactId/groupId/classifier/type and if it doesn't find
      * a match, it will try again looking for artifactId and groupId only.
      * @param artifact
@@ -303,7 +303,7 @@ public abstract class AbstractFromConfigurationMojo
     /**
      * Tries to find missing version from a list of dependencies. If found, the
      * artifact is updated with the correct version.
-     * 
+     *
      * @param artifact
      *            representing configured file.
      * @param list
@@ -369,9 +369,9 @@ public abstract class AbstractFromConfigurationMojo
         return map;
     }*/
 
-    
+
     /**
-     * Override the base to 
+     * Override the base to
      * @return Returns the local.
      */
     protected ArtifactRepository getLocal ()
@@ -380,11 +380,11 @@ public abstract class AbstractFromConfigurationMojo
         {
             return this.overrideLocalRepository;
         }
-        
+
         if ( this.localRepositoryDirectory != null )
         {
             //create a new local repo using existing layout, snapshots, and releases policy
-            this.overrideLocalRepository = artifactRepositoryManager.createArtifactRepository( 
+            this.overrideLocalRepository = artifactRepositoryManager.createArtifactRepository(
                 super.getLocal().getId(), "file://"
                 + this.localRepositoryDirectory.getAbsolutePath(), super.getLocal().getLayout(), super.getLocal()
                 .getSnapshots(), super.getLocal().getReleases() );
@@ -398,7 +398,7 @@ public abstract class AbstractFromConfigurationMojo
 
         return this.overrideLocalRepository;
     }
-    
+
     /**
      * @return Returns the artifactItems.
      */
@@ -483,9 +483,9 @@ public abstract class AbstractFromConfigurationMojo
     {
         this.overWriteSnapshots = theOverWriteSnapshots;
     }
-    
+
     public void setLocalRepositoryDirectory( File localRepositoryDirectory )
     {
         this.localRepositoryDirectory = localRepositoryDirectory;
-    }    
+    }
 }

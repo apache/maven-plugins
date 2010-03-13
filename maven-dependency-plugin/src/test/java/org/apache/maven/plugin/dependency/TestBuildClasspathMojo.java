@@ -41,7 +41,7 @@ public class TestBuildClasspathMojo
 
     /**
      * tests the proper discovery and configuration of the mojo
-     * 
+     *
      * @throws Exception
      */
     public void testEnvironment()
@@ -110,38 +110,38 @@ public class TestBuildClasspathMojo
         assertNotNull( mojo );
         assertNotNull( mojo.getProject() );
 
-        ArtifactRepository local = new StubArtifactRepository(stubFactory.getWorkingDir().getPath());
+        ArtifactRepository local = new StubArtifactRepository( stubFactory.getWorkingDir().getPath() );
         mojo.setLocal( local );
-        
+
         Artifact artifact = stubFactory.getReleaseArtifact();
-       
-        
+
+
         StringBuffer sb = new StringBuffer();
         mojo.setPrefix( null );
         mojo.setStripVersion( false );
         mojo.appendArtifactPath( artifact, sb );
-        assertEquals(artifact.getFile().getPath(),sb.toString());
-        
+        assertEquals( artifact.getFile().getPath(), sb.toString() );
+
         mojo.setLocalRepoProperty( "$M2_REPO" );
         sb.setLength( 0 );
         mojo.appendArtifactPath( artifact, sb );
-        assertEquals("$M2_REPO"+File.separator+artifact.getFile().getName(),sb.toString());
-        
+        assertEquals( "$M2_REPO" + File.separator + artifact.getFile().getName(), sb.toString() );
+
         mojo.setLocalRepoProperty( "%M2_REPO%" );
         sb.setLength( 0 );
         mojo.appendArtifactPath( artifact, sb );
-        assertEquals("%M2_REPO%"+File.separator+artifact.getFile().getName(),sb.toString());
-        
+        assertEquals( "%M2_REPO%" + File.separator + artifact.getFile().getName(), sb.toString() );
+
         mojo.setLocalRepoProperty( "" );
         mojo.setPrefix( "prefix" );
         sb.setLength( 0 );
         mojo.appendArtifactPath( artifact, sb );
-        assertEquals("prefix"+File.separator+artifact.getFile().getName(),sb.toString());
-      
+        assertEquals( "prefix" + File.separator + artifact.getFile().getName(), sb.toString() );
+
         mojo.setPrefix( "prefix" );
         mojo.setStripVersion( true );
         sb.setLength( 0 );
         mojo.appendArtifactPath( artifact, sb );
-        assertEquals("prefix"+File.separator+DependencyUtil.getFormattedFileName( artifact, true ),sb.toString());
+        assertEquals( "prefix" + File.separator + DependencyUtil.getFormattedFileName( artifact, true ), sb.toString() );
     }
 }

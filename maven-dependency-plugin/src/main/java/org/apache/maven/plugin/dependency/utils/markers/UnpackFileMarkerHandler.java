@@ -16,7 +16,7 @@ package org.apache.maven.plugin.dependency.utils.markers;
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
- * under the License.    
+ * under the License.
  */
 
 import java.io.File;
@@ -28,68 +28,68 @@ import org.codehaus.plexus.util.StringUtils;
  * @author <a href="mailto:dbradicich@comcast.net">Damian Bradicich</a>
  * @version $Id$
  */
-public class UnpackFileMarkerHandler extends DefaultFileMarkerHandler 
+public class UnpackFileMarkerHandler extends DefaultFileMarkerHandler
 {
-	protected ArtifactItem artifactItem;
-	
-	public UnpackFileMarkerHandler( File markerFilesDirectory )
+    protected ArtifactItem artifactItem;
+
+    public UnpackFileMarkerHandler( File markerFilesDirectory )
     {
         super( markerFilesDirectory );
     }
-	
-	public UnpackFileMarkerHandler( ArtifactItem artifactItem, File markerFilesDirectory )
-	{
-		this( markerFilesDirectory );
-		setArtifactItem( artifactItem );
-	}
-	
-	protected File getMarkerFile() 
-	{
-		/**
-		 * Build a hash of all include/exclude strings, to determine
-		 * if an artifactItem has been unpacked using the include/exclude
-		 * parameters, this will allow an artifact to be included multiple
-		 * times with different include/exclude parameters
-		 */
-		File markerFile = null;
-		if ( this.artifactItem == null 
-			|| ( StringUtils.isEmpty( this.artifactItem.getIncludes() )
-			&&	StringUtils.isEmpty( this.artifactItem.getExcludes() ) ) )
-		{
-			markerFile = super.getMarkerFile();
-		}
-		else
-		{
-			int includeExcludeHash = 0;
-			
-			if ( StringUtils.isNotEmpty( this.artifactItem.getIncludes() ) )
-			{
-				includeExcludeHash += this.artifactItem.getIncludes().hashCode();
-			}
-			
-			if ( StringUtils.isNotEmpty( this.artifactItem.getExcludes() ) )
-			{
-				includeExcludeHash += this.artifactItem.getExcludes().hashCode();
-			}
-			
-			markerFile = new File( this.markerFilesDirectory, this.artifact.getId().replace( ':', '-' ) + includeExcludeHash );
-		}
-		
-		return markerFile;
-	}
-	
-	public void setArtifactItem( ArtifactItem artifactItem )
-	{
-		this.artifactItem = artifactItem;
-		
-		if (this.artifactItem != null)
-		{
-			setArtifact( this.artifactItem.getArtifact() );
-		}
-	}
-	
-	public ArtifactItem getArtifactItem( )
-	{
-		return this.artifactItem;
-	}
+
+    public UnpackFileMarkerHandler( ArtifactItem artifactItem, File markerFilesDirectory )
+    {
+        this( markerFilesDirectory );
+        setArtifactItem( artifactItem );
+    }
+
+    protected File getMarkerFile()
+    {
+        /**
+         * Build a hash of all include/exclude strings, to determine
+         * if an artifactItem has been unpacked using the include/exclude
+         * parameters, this will allow an artifact to be included multiple
+         * times with different include/exclude parameters
+         */
+        File markerFile = null;
+        if ( this.artifactItem == null
+            || ( StringUtils.isEmpty( this.artifactItem.getIncludes() )
+            &&	StringUtils.isEmpty( this.artifactItem.getExcludes() ) ) )
+        {
+            markerFile = super.getMarkerFile();
+        }
+        else
+        {
+            int includeExcludeHash = 0;
+
+            if ( StringUtils.isNotEmpty( this.artifactItem.getIncludes() ) )
+            {
+                includeExcludeHash += this.artifactItem.getIncludes().hashCode();
+            }
+
+            if ( StringUtils.isNotEmpty( this.artifactItem.getExcludes() ) )
+            {
+                includeExcludeHash += this.artifactItem.getExcludes().hashCode();
+            }
+
+            markerFile = new File( this.markerFilesDirectory, this.artifact.getId().replace( ':', '-' ) + includeExcludeHash );
+        }
+
+        return markerFile;
+    }
+
+    public void setArtifactItem( ArtifactItem artifactItem )
+    {
+        this.artifactItem = artifactItem;
+
+        if ( this.artifactItem != null )
+        {
+            setArtifact( this.artifactItem.getArtifact() );
+        }
+    }
+
+    public ArtifactItem getArtifactItem( )
+    {
+        return this.artifactItem;
+    }
 }

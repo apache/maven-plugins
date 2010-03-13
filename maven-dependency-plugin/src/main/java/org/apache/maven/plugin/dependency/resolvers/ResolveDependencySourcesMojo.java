@@ -1,6 +1,6 @@
 package org.apache.maven.plugin.dependency.resolvers;
 
-/* 
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -16,7 +16,7 @@ package org.apache.maven.plugin.dependency.resolvers;
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
- * under the License.    
+ * under the License.
  */
 
 import java.io.IOException;
@@ -33,7 +33,7 @@ import org.apache.maven.shared.artifact.filter.collection.ArtifactsFilter;
 
 /**
  * Goal that resolves the project source dependencies from the repository.
- * 
+ *
  * @goal sources
  * @phase generate-sources
  * @requiresDependencyResolution test
@@ -53,14 +53,14 @@ public class ResolveDependencySourcesMojo
      * Only used to store results for integration test validation
      */
     DependencyStatusSets results;
-    
+
     /**
      * Main entry into mojo. Gets the list of dependencies and iterates through
      * resolving the source jars.
-     * 
+     *
      * @throws MojoExecutionException
      *             with a message if an error occurs.
-     * 
+     *
      */
     public void execute()
         throws MojoExecutionException
@@ -69,21 +69,21 @@ public class ResolveDependencySourcesMojo
         this.type = SOURCE_TYPE;
         // get sets of dependencies
         results = this.getDependencySets( false );
-        
-        SourcesFileMarkerHandler handler = new SourcesFileMarkerHandler(this.markersDirectory);
+
+        SourcesFileMarkerHandler handler = new SourcesFileMarkerHandler( this.markersDirectory );
         handler.setResolved( true );
-        
+
         Iterator iter = results.getResolvedDependencies().iterator();
-        while (iter.hasNext())
+        while ( iter.hasNext() )
         {
             Artifact artifact = (Artifact) iter.next();
             handler.setArtifact( artifact );
             handler.setMarker();
         }
-        
+
         handler.setResolved( false );
         iter = results.getUnResolvedDependencies().iterator();
-        while (iter.hasNext())
+        while ( iter.hasNext() )
         {
             Artifact artifact = (Artifact) iter.next();
             handler.setArtifact( artifact );
@@ -104,7 +104,7 @@ public class ResolveDependencySourcesMojo
         }
         catch ( IOException e )
         {
-            throw new MojoExecutionException(e.getMessage(),e);
+            throw new MojoExecutionException( e.getMessage(), e );
         }
     }
 

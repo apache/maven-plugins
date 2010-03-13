@@ -46,7 +46,7 @@ import org.codehaus.plexus.util.StringUtils;
  * This mojo is also usefull for just detecting projects that override the
  * dependencyManagement directly. Set ignoreDirect to false to detect these
  * otherwise normal conditions.
- * 
+ *
  * @author <a href="mailto:brianefox@gmail.com">Brian Fox</a>
  * @version $Id$
  * @goal analyze-dep-mgt
@@ -59,8 +59,8 @@ public class AnalyzeDepMgt
     // fields -----------------------------------------------------------------
 
     /**
-     * 
-     * 
+     *
+     *
      * @parameter expression="${project}"
      * @required
      * @readonly
@@ -69,14 +69,14 @@ public class AnalyzeDepMgt
 
     /**
      * Fail the build if a problem is detected.
-     * 
+     *
      * @parameter expression="${mdep.analyze.failBuild}" default-value="false"
      */
     private boolean failBuild = false;
 
     /**
      * Ignore Direct Dependency Overrides of dependencyManagement section.
-     * 
+     *
      * @parameter expression="${mdep.analyze.ignore.direct}" default-value="true"
      */
     private boolean ignoreDirect = true;
@@ -158,8 +158,9 @@ public class AnalyzeDepMgt
             {
                 Artifact exclusion = (Artifact) exclusionIter.next();
                 getLog().info(
-                               StringUtils.stripEnd( getArtifactManagementKey( exclusion ),":") + " was excluded in DepMgt, but version "
-                                   + exclusion.getVersion() + " has been found in the dependency tree." );
+                               StringUtils.stripEnd( getArtifactManagementKey( exclusion ), ":" )
+                                   + " was excluded in DepMgt, but version " + exclusion.getVersion()
+                                   + " has been found in the dependency tree." );
                 foundError = true;
             }
 
@@ -190,7 +191,7 @@ public class AnalyzeDepMgt
     /**
      * Returns a map of the exclusions using the Dependency ManagementKey as the
      * keyset.
-     * 
+     *
      * @param exclusionList
      *            to be added to the map.
      * @return a map of the exclusions using the Dependency ManagementKey as the
@@ -214,7 +215,7 @@ public class AnalyzeDepMgt
     /**
      * Returns a List of the artifacts that should have been excluded, but were
      * found in the dependency tree.
-     * 
+     *
      * @param exclusions
      *            a map of the DependencyManagement exclusions, with the
      *            ManagementKey as the key and Dependency as the value.
@@ -239,20 +240,20 @@ public class AnalyzeDepMgt
         return list;
     }
 
-    public String getExclusionKey(Artifact artifact)
+    public String getExclusionKey( Artifact artifact )
     {
-        return artifact.getGroupId()+":"+artifact.getArtifactId();
+        return artifact.getGroupId() + ":" + artifact.getArtifactId();
     }
-    
-    public String getExclusionKey(Exclusion ex)
+
+    public String getExclusionKey( Exclusion ex )
     {
-        return ex.getGroupId()+":"+ex.getArtifactId();
+        return ex.getGroupId() + ":" + ex.getArtifactId();
     }
-    
+
     /**
      * Calculate the mismatches between the DependencyManagement and resolved
      * artifacts
-     * 
+     *
      * @param depMgtMap
      *            contains the Dependency.GetManagementKey as the keyset for
      *            quick lookup.
@@ -272,10 +273,10 @@ public class AnalyzeDepMgt
             Dependency depFromDepMgt = (Dependency) depMgtMap.get( getArtifactManagementKey( dependencyArtifact ) );
             if ( depFromDepMgt != null )
             {
-               
+
                 //workaround for MNG-2961
                 dependencyArtifact.isSnapshot();
-                
+
                 if (!depFromDepMgt.getVersion().equals( dependencyArtifact.getBaseVersion()) )
                 {
                     mismatchMap.put( dependencyArtifact, depFromDepMgt );
@@ -288,7 +289,7 @@ public class AnalyzeDepMgt
     /**
      * This function displays the log to the screen showing the versions and
      * information about the artifacts that don't match.
-     * 
+     *
      * @param dependencyArtifact
      *            the artifact that was resolved.
      * @param dependencyFromDepMgt
@@ -312,7 +313,7 @@ public class AnalyzeDepMgt
     /**
      * This function returns a string comparable with
      * Dependency.GetManagementKey.
-     * 
+     *
      * @param artifact
      *            to gen the key for
      * @return a string in the form: groupId:ArtifactId:Type[:Classifier]
@@ -320,7 +321,7 @@ public class AnalyzeDepMgt
     public String getArtifactManagementKey( Artifact artifact )
     {
         return artifact.getGroupId() + ":" + artifact.getArtifactId() + ":" + artifact.getType()
-            + (( artifact.getClassifier() !=null ) ? ":" + artifact.getClassifier() : "" );
+            + ( ( artifact.getClassifier() != null ) ? ":" + artifact.getClassifier() : "" );
     }
 
     /**

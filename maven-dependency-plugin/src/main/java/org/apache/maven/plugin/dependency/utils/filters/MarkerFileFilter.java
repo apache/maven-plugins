@@ -16,11 +16,11 @@ package org.apache.maven.plugin.dependency.utils.filters;
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
- * under the License.    
+ * under the License.
  */
 
 /**
- * 
+ *
  */
 
 import java.util.HashSet;
@@ -62,7 +62,7 @@ public class MarkerFileFilter
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.apache.mojo.dependency.utils.filters.ArtifactsFilter#filter(java.util.Set,
      *      org.apache.maven.plugin.logging.Log)
      */
@@ -72,7 +72,7 @@ public class MarkerFileFilter
         Set result = new HashSet();
 
         Iterator iter = artifacts.iterator();
-       
+
         while ( iter.hasNext() )
         {
             Artifact artifact = (Artifact) iter.next();
@@ -107,7 +107,7 @@ public class MarkerFileFilter
         }
         catch ( MojoExecutionException e )
         {
-            throw new ArtifactFilterException (e.getMessage(),e);
+            throw new ArtifactFilterException( e.getMessage(), e );
         }
 
         return result;

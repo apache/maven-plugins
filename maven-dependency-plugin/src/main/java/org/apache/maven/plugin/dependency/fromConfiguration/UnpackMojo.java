@@ -1,6 +1,6 @@
 package org.apache.maven.plugin.dependency.fromConfiguration;
 
-/* 
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -16,28 +16,24 @@ package org.apache.maven.plugin.dependency.fromConfiguration;
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
- * under the License.    
+ * under the License.
  */
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.dependency.utils.DependencyUtil;
 import org.apache.maven.plugin.dependency.utils.filters.ArtifactItemFilter;
 import org.apache.maven.plugin.dependency.utils.filters.MarkerFileFilter;
 import org.apache.maven.plugin.dependency.utils.markers.MarkerHandler;
 import org.apache.maven.plugin.dependency.utils.markers.UnpackFileMarkerHandler;
-import org.apache.maven.plugin.logging.Log;
-import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
  * Goal that retrieves a list of artifacts from the repository and unpacks them
  * in a defined location.
- * 
+ *
  * @since 1.0
  * @goal unpack
  * @phase process-sources
@@ -50,11 +46,11 @@ public final class UnpackMojo
 
     /**
      * Directory to store flag files after unpack
-     * 
+     *
      * @parameter expression="${project.build.directory}/dependency-maven-plugin-markers"
      */
     private File markersDirectory;
-    
+
     /**
      * A comma separated list of file patterns to include when unpacking the
      * artifact.  i.e.  **\/*.xml,**\/*.properties NOTE: Excludes patterns override the includes. (component code = return isIncluded( name ) AND !isExcluded( name );)
@@ -74,10 +70,10 @@ public final class UnpackMojo
     /**
      * Main entry into mojo. This method gets the ArtifactItems and iterates
      * through each one passing it to unpackArtifact.
-     * 
+     *
      * @throws MojoExecutionException
      *             with a message if an error occurs.
-     * 
+     *
      * @see ArtifactItem
      * @see #getArtifactItems
      * @see #unpackArtifact(ArtifactItem)
@@ -103,13 +99,13 @@ public final class UnpackMojo
 
     /**
      * This method gets the Artifact object and calls DependencyUtil.unpackFile.
-     * 
+     *
      * @param artifactItem
      *            containing the information about the Artifact to unpack.
-     * 
+     *
      * @throws MojoExecutionException
      *             with a message if an error occurs.
-     * 
+     *
      * @see #getArtifact
      * @see DependencyUtil#unpackFile(Artifact, File, File, ArchiverManager,
      *      Log)
@@ -118,7 +114,7 @@ public final class UnpackMojo
         throws MojoExecutionException
     {
         MarkerHandler handler = new UnpackFileMarkerHandler( artifactItem, this.markersDirectory );
-        
+
         unpack( artifactItem.getArtifact().getFile(), artifactItem.getOutputDirectory(), artifactItem.getIncludes(), artifactItem.getExcludes() );
         handler.setMarker();
 
@@ -131,25 +127,25 @@ public final class UnpackMojo
         return new MarkerFileFilter( this.isOverWriteReleases(), this.isOverWriteSnapshots(),
                                      this.isOverWriteIfNewer(), handler );
     }
-    
-    protected ArrayList getProcessedArtifactItems(boolean removeVersion)
-    	throws MojoExecutionException 
+
+    protected ArrayList getProcessedArtifactItems( boolean removeVersion )
+        throws MojoExecutionException
     {
-    	ArrayList items = super.getProcessedArtifactItems( removeVersion );
-    	Iterator iter = items.iterator();
+        ArrayList items = super.getProcessedArtifactItems( removeVersion );
+        Iterator iter = items.iterator();
         while ( iter.hasNext() )
         {
             ArtifactItem artifactItem = (ArtifactItem) iter.next();
-            if ( StringUtils.isEmpty(artifactItem.getIncludes()) )
+            if ( StringUtils.isEmpty( artifactItem.getIncludes() ) )
             {
                 artifactItem.setIncludes( getIncludes() );
             }
-            if ( StringUtils.isEmpty(artifactItem.getExcludes()) )
+            if ( StringUtils.isEmpty( artifactItem.getExcludes() ) )
             {
                 artifactItem.setExcludes( getExcludes() );
             }
         }
-    	return items;
+        return items;
     }
 
     /**
@@ -168,8 +164,8 @@ public final class UnpackMojo
     {
         this.markersDirectory = theMarkersDirectory;
     }
-    
-   
+
+
     /**
      * @return Returns a comma separated list of excluded items
      */
@@ -177,28 +173,28 @@ public final class UnpackMojo
     {
         return this.excludes;
     }
-    
+
     /**
-     * @param excludes 
-     * 			A comma separated list of items to exclude 
+     * @param excludes
+     * 			A comma separated list of items to exclude
      * 			i.e.  **\/*.xml, **\/*.properties
      */
     public void setExcludes ( String excludes )
     {
         this.excludes = excludes;
     }
-    
+
     /**
      * @return Returns a comma separated list of included items
      */
     public String getIncludes()
     {
-    	return this.includes;
+        return this.includes;
     }
 
     /**
      * @param includes
-     * 			A comma separated list of items to include 
+     * 			A comma separated list of items to include
      * 			i.e.  **\/*.xml, **\/*.properties
      */
     public void setIncludes ( String includes )

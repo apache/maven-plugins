@@ -96,7 +96,7 @@ public class TestCopyDependenciesMojo
 
     /**
      * tests the proper discovery and configuration of the mojo
-     * 
+     *
      * @throws Exception
      */
     public void testMojo()
@@ -184,9 +184,9 @@ public class TestCopyDependenciesMojo
             Artifact artifact = (Artifact) iter.next();
             String fileName = DependencyUtil.getFormattedFileName( artifact, false );
             File file = new File( mojo.outputDirectory, fileName );
-            assertFalse(file.exists() );
+            assertFalse( file.exists() );
         }
-        
+
         mojo.excludeTypes = "";
         mojo.execute();
 
@@ -200,7 +200,7 @@ public class TestCopyDependenciesMojo
         }
     }
 
-    
+
     public void testExcludeArtifactId()
         throws Exception
     {
@@ -228,7 +228,7 @@ public class TestCopyDependenciesMojo
         mojo.includeArtifactIds = "one";
         mojo.excludeArtifactIds = "one";
         //shouldn't get anything
-        
+
         mojo.execute();
 
         Iterator iter = mojo.project.getArtifacts().iterator();
@@ -239,7 +239,7 @@ public class TestCopyDependenciesMojo
             File file = new File( mojo.outputDirectory, fileName );
             assertFalse( file.exists() );
         }
-        
+
         mojo.excludeArtifactIds = "";
         mojo.execute();
 
@@ -270,9 +270,9 @@ public class TestCopyDependenciesMojo
             Artifact artifact = (Artifact) iter.next();
             String fileName = DependencyUtil.getFormattedFileName( artifact, false );
             File file = new File( mojo.outputDirectory, fileName );
-            assertFalse(file.exists() );
+            assertFalse( file.exists() );
         }
-        
+
         mojo.excludeGroupIds = "";
         mojo.execute();
 
@@ -323,7 +323,7 @@ public class TestCopyDependenciesMojo
             assertEquals( artifact.getGroupId().equals( "one" ) || artifact.getGroupId().equals( "two" ), !file.exists() );
         }
     }
-    
+
     public void testExcludeClassifier()
         throws Exception
     {
@@ -362,7 +362,7 @@ public class TestCopyDependenciesMojo
             File file = new File( mojo.outputDirectory, fileName );
             assertFalse( file.exists() );
         }
-        
+
         mojo.excludeClassifiers = "";
         mojo.execute();
 
@@ -495,7 +495,7 @@ public class TestCopyDependenciesMojo
     /*
      * public void testOverwrite() { stubFactory.setCreateFiles( false );
      * Artifact artifact = stubFactory.createArtifact( "test", "artifact", "1.0" );
-     * 
+     *
      * File testFile = new File( getBasedir() + File.separatorChar +
      * "target/test-classes/unit/copy-dependencies-test/test.zip" ); }
      */
@@ -744,7 +744,7 @@ public class TestCopyDependenciesMojo
             assertEquals( !saf.include( artifact ), file.exists() );
         }
     }
-    
+
     public void testCopyPom()
         throws Exception
     {

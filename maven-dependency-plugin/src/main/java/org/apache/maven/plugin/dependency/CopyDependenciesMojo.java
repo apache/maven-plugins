@@ -16,7 +16,7 @@ package org.apache.maven.plugin.dependency;
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
- * under the License.    
+ * under the License.
  */
 
 import java.io.File;
@@ -35,13 +35,12 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.dependency.utils.DependencyStatusSets;
 import org.apache.maven.plugin.dependency.utils.DependencyUtil;
 import org.apache.maven.plugin.dependency.utils.filters.DestFileFilter;
-import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.shared.artifact.filter.collection.ArtifactsFilter;
 
 /**
  * Goal that copies the project dependencies from the repository to a defined
  * location.
- * 
+ *
  * @goal copy-dependencies
  * @requiresDependencyResolution test
  * @phase process-sources
@@ -71,10 +70,10 @@ public class CopyDependenciesMojo
     /**
      * Main entry into mojo. Gets the list of dependencies and iterates through
      * calling copyArtifact.
-     * 
+     *
      * @throws MojoExecutionException
      *             with a message if an error occurs.
-     * 
+     *
      * @see #getDependencies
      * @see #copyArtifact(Artifact, boolean)
      */
@@ -84,102 +83,103 @@ public class CopyDependenciesMojo
         DependencyStatusSets dss = getDependencySets( this.failOnMissingClassifierArtifact );
         Set artifacts = dss.getResolvedDependencies();
 
-    	if ( !useRepositoryLayout )
-    	{
-	        for ( Iterator i = artifacts.iterator(); i.hasNext(); )
-	        {
-	    		copyArtifact( (Artifact) i.next(), this.stripVersion );
-	    	}
-    	}
-    	else
-    	{
-			try {
-				ArtifactRepository targetRepository = repositoryFactory.createDeploymentArtifactRepository(
-						"local", 
-						outputDirectory.toURL().toExternalForm(), 
-                        (ArtifactRepositoryLayout) repositoryLayouts.get( "default" ),
-						false /*uniqueVersion*/ );
-		        for ( Iterator i = artifacts.iterator(); i.hasNext(); )
-		        {
-					installArtifact( (Artifact) i.next(), targetRepository );
-	        	}
-			} 
-			catch ( MalformedURLException e ) 
-			{
-				throw new MojoExecutionException("Could not create outputDirectory repository", e);
-			}
+        if ( !useRepositoryLayout )
+        {
+            for ( Iterator i = artifacts.iterator(); i.hasNext(); )
+            {
+                copyArtifact( (Artifact) i.next(), this.stripVersion );
+            }
         }
-    	
+        else
+        {
+            try
+            {
+                ArtifactRepository targetRepository = repositoryFactory.createDeploymentArtifactRepository(
+                        "local",
+                        outputDirectory.toURL().toExternalForm(),
+                        (ArtifactRepositoryLayout) repositoryLayouts.get( "default" ),
+                        false /*uniqueVersion*/ );
+                for ( Iterator i = artifacts.iterator(); i.hasNext(); )
+                {
+                    installArtifact( (Artifact) i.next(), targetRepository );
+                }
+            }
+            catch ( MalformedURLException e )
+            {
+                throw new MojoExecutionException( "Could not create outputDirectory repository", e );
+            }
+        }
+
         Set skippedArtifacts = dss.getSkippedDependencies();
         for ( Iterator i = skippedArtifacts.iterator(); i.hasNext(); )
         {
             Artifact artifact = (Artifact) i.next();
             getLog().info( artifact.getFile().getName() + " already exists in destination." );
         }
-        
-        if (  isCopyPom() )
+
+        if ( isCopyPom() )
         {
             copyPoms( getOutputDirectory(), artifacts, this.stripVersion );
             copyPoms( getOutputDirectory(), skippedArtifacts, this.stripVersion );  // Artifacts that already exist may not already have poms.
         }
     }
 
-    private void installArtifact( Artifact artifact, ArtifactRepository targetRepository) 
+    private void installArtifact( Artifact artifact, ArtifactRepository targetRepository )
     {
-		try
-		{
-			if ( "pom".equals( artifact.getType() ) ) 
-			{
-				installer.install( artifact.getFile(), artifact, targetRepository );
-	            installBaseSnapshot( artifact, targetRepository );
-			}
-			else
-			{
-	            installer.install( artifact.getFile(), artifact, targetRepository );
-	            installBaseSnapshot( artifact, targetRepository );
+        try
+        {
+            if ( "pom".equals( artifact.getType() ) )
+            {
+                installer.install( artifact.getFile(), artifact, targetRepository );
+                installBaseSnapshot( artifact, targetRepository );
+            }
+            else
+            {
+                installer.install( artifact.getFile(), artifact, targetRepository );
+                installBaseSnapshot( artifact, targetRepository );
 
-	            if ( isCopyPom() )
-	            {
-		            Artifact pomArtifact = getResolvedPomArtifact( artifact );
-		            if ( pomArtifact.getFile() != null && pomArtifact.getFile().exists() )
-		            {
-		            	installer.install( pomArtifact.getFile(), pomArtifact, targetRepository );
-			            installBaseSnapshot( pomArtifact, targetRepository );
-		            }
-	            }
-			}
-		}
-		catch ( ArtifactInstallationException e ) 
-		{
-		    getLog().info( e.getMessage() );
-		}
-	}
+                if ( isCopyPom() )
+                {
+                    Artifact pomArtifact = getResolvedPomArtifact( artifact );
+                    if ( pomArtifact.getFile() != null && pomArtifact.getFile().exists() )
+                    {
+                        installer.install( pomArtifact.getFile(), pomArtifact, targetRepository );
+                        installBaseSnapshot( pomArtifact, targetRepository );
+                    }
+                }
+            }
+        }
+        catch ( ArtifactInstallationException e )
+        {
+            getLog().info( e.getMessage() );
+        }
+    }
 
-	private void installBaseSnapshot( Artifact artifact, ArtifactRepository targetRepository )
-			throws ArtifactInstallationException 
-	{
-		if ( artifact.isSnapshot() && !artifact.getBaseVersion().equals( artifact.getVersion() ) )
-		{
-			Artifact baseArtifact = this.factory.createArtifact( artifact.getGroupId(), artifact.getArtifactId(),
-		            artifact.getBaseVersion(), artifact.getScope(), artifact.getType() );
-		    installer.install( artifact.getFile(), baseArtifact, targetRepository );
-		}
-	}
+    private void installBaseSnapshot( Artifact artifact, ArtifactRepository targetRepository )
+            throws ArtifactInstallationException
+    {
+        if ( artifact.isSnapshot() && !artifact.getBaseVersion().equals( artifact.getVersion() ) )
+        {
+            Artifact baseArtifact = this.factory.createArtifact( artifact.getGroupId(), artifact.getArtifactId(),
+                    artifact.getBaseVersion(), artifact.getScope(), artifact.getType() );
+            installer.install( artifact.getFile(), baseArtifact, targetRepository );
+        }
+    }
 
-	/**
+    /**
      * Copies the Artifact after building the destination file name if
      * overridden. This method also checks if the classifier is set and adds it
      * to the destination file name if needed.
-     * 
+     *
      * @param artifact
      *            representing the object to be copied.
      * @param removeVersion
      *            specifies if the version should be removed from the file name
      *            when copying.
-     * 
+     *
      * @throws MojoExecutionException
      *             with a message if an error occurs.
-     * 
+     *
      * @see DependencyUtil#copyFile(File, File, Log)
      * @see DependencyUtil#getFormattedFileName(Artifact, boolean)
      */
@@ -197,19 +197,19 @@ public class CopyDependenciesMojo
 
         copyFile( artifact.getFile(), destFile );
     }
-    
+
     /**
      * Copy the pom files associated with the artifacts.
      */
     public void copyPoms( File destDir, Set artifacts, boolean removeVersion ) throws MojoExecutionException
-    
+
     {
         Iterator iter = artifacts.iterator();
         while ( iter.hasNext() )
         {
             Artifact artifact = (Artifact)iter.next();
             Artifact pomArtifact = getResolvedPomArtifact( artifact );
-            
+
             // Copy the pom
             if ( pomArtifact.getFile() != null && pomArtifact.getFile().exists() )
             {
@@ -222,20 +222,21 @@ public class CopyDependenciesMojo
         }
     }
 
-	protected Artifact getResolvedPomArtifact( Artifact artifact ) {
-		Artifact pomArtifact = this.factory.createArtifact( artifact.getGroupId(), artifact.getArtifactId(),
-		                                                    artifact.getVersion(), "", "pom" );
-		// Resolve the pom artifact using repos
-		try
-		{
-		    this.resolver.resolve( pomArtifact, this.remoteRepos, this.getLocal() );
-		}
-		catch ( Exception e )
-		{
-		    getLog().info( e.getMessage() );
-		}
-		return pomArtifact;
-	}
+    protected Artifact getResolvedPomArtifact( Artifact artifact )
+    {
+        Artifact pomArtifact = this.factory.createArtifact( artifact.getGroupId(), artifact.getArtifactId(),
+                                                            artifact.getVersion(), "", "pom" );
+        // Resolve the pom artifact using repos
+        try
+        {
+            this.resolver.resolve( pomArtifact, this.remoteRepos, this.getLocal() );
+        }
+        catch ( Exception e )
+        {
+            getLog().info( e.getMessage() );
+        }
+        return pomArtifact;
+    }
 
     protected ArtifactsFilter getMarkedArtifactFilter()
     {

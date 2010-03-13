@@ -34,7 +34,7 @@ import org.apache.maven.shared.dependency.tree.DependencyNode;
 
 /**
  * Tests <code>TreeMojo</code>.
- * 
+ *
  * @author <a href="mailto:markhobson@gmail.com">Mark Hobson</a>
  * @version $Id$
  * @since 2.0
@@ -43,7 +43,7 @@ public class TestTreeMojo
     extends AbstractDependencyMojoTestCase
 {
     // TestCase methods -------------------------------------------------------
-    
+
     /*
      * @see org.apache.maven.plugin.testing.AbstractMojoTestCase#setUp()
      */
@@ -53,12 +53,12 @@ public class TestTreeMojo
         // required for mojo lookups to work
         super.setUp( "tree", false );
     }
-    
+
     // tests ------------------------------------------------------------------
 
     /**
      * Tests the proper discovery and configuration of the mojo.
-     * 
+     *
      * @throws Exception
      */
     public void testTreeTestEnvironment()
@@ -81,9 +81,9 @@ public class TestTreeMojo
         project.setDependencyArtifacts( directArtifacts );
 
         mojo.execute();
-        
+
         DependencyNode rootNode = mojo.getDependencyTree();
-        assertNodeEquals( "testGroupId:project:jar:1.0:compile", rootNode);
+        assertNodeEquals( "testGroupId:project:jar:1.0:compile", rootNode );
         assertEquals( 2, rootNode.getChildren().size() );
         assertChildNodeEquals( "testGroupId:snapshot:jar:2.0-SNAPSHOT:compile", rootNode, 0 );
         assertChildNodeEquals( "testGroupId:release:jar:1.0:compile", rootNode, 1 );
@@ -97,10 +97,12 @@ public class TestTreeMojo
     public void testTreeDotSerializing()
         throws Exception
     {
-        List contents = runTreeMojo("tree1.dot", "dot") ;
-        assertTrue(findString(contents, "digraph \"testGroupId:project:jar:1.0:compile\" {"));
-        assertTrue(findString(contents, "\"testGroupId:project:jar:1.0:compile\" -> \"testGroupId:snapshot:jar:2.0-SNAPSHOT:compile\""));
-        assertTrue(findString(contents, "\"testGroupId:project:jar:1.0:compile\" -> \"testGroupId:release:jar:1.0:compile\""));
+        List contents = runTreeMojo( "tree1.dot", "dot" );
+        assertTrue( findString( contents, "digraph \"testGroupId:project:jar:1.0:compile\" {" ) );
+        assertTrue( findString( contents,
+                                "\"testGroupId:project:jar:1.0:compile\" -> \"testGroupId:snapshot:jar:2.0-SNAPSHOT:compile\"" ) );
+        assertTrue( findString( contents,
+                                "\"testGroupId:project:jar:1.0:compile\" -> \"testGroupId:release:jar:1.0:compile\"" ) );
     }
 
     /**
@@ -111,14 +113,14 @@ public class TestTreeMojo
     public void testTreeGraphMLSerializing()
         throws Exception
     {
-        List contents = runTreeMojo("tree1.graphml", "graphml") ;
+        List contents = runTreeMojo( "tree1.graphml", "graphml" );
 
-        assertTrue(findString(contents, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"));
-        assertTrue(findString(contents, "<y:NodeLabel>testGroupId:project:jar:1.0:compile</y:NodeLabel>"));
-        assertTrue(findString(contents, "<y:NodeLabel>testGroupId:snapshot:jar:2.0-SNAPSHOT:compile</y:NodeLabel>"));
-        assertTrue(findString(contents, "<y:NodeLabel>testGroupId:release:jar:1.0:compile</y:NodeLabel>"));
-        assertTrue(findString(contents, "<key for=\"node\" id=\"d0\" yfiles.type=\"nodegraphics\"/>"));
-        assertTrue(findString(contents, "<key for=\"edge\" id=\"d1\" yfiles.type=\"edgegraphics\"/>"));
+        assertTrue( findString( contents, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" ) );
+        assertTrue( findString( contents, "<y:NodeLabel>testGroupId:project:jar:1.0:compile</y:NodeLabel>" ) );
+        assertTrue( findString( contents, "<y:NodeLabel>testGroupId:snapshot:jar:2.0-SNAPSHOT:compile</y:NodeLabel>" ) );
+        assertTrue( findString( contents, "<y:NodeLabel>testGroupId:release:jar:1.0:compile</y:NodeLabel>" ) );
+        assertTrue( findString( contents, "<key for=\"node\" id=\"d0\" yfiles.type=\"nodegraphics\"/>" ) );
+        assertTrue( findString( contents, "<key for=\"edge\" id=\"d1\" yfiles.type=\"edgegraphics\"/>" ) );
     }
 
     /**
@@ -129,10 +131,10 @@ public class TestTreeMojo
     public void testTreeTGFSerializing()
         throws Exception
     {
-        List contents = runTreeMojo("tree1.tgf", "tgf") ;
-        assertTrue(findString(contents, "testGroupId:project:jar:1.0:compile"));
-        assertTrue(findString(contents, "testGroupId:snapshot:jar:2.0-SNAPSHOT:compile"));
-        assertTrue(findString(contents, "testGroupId:release:jar:1.0:compile"));
+        List contents = runTreeMojo( "tree1.tgf", "tgf" );
+        assertTrue( findString( contents, "testGroupId:project:jar:1.0:compile" ) );
+        assertTrue( findString( contents, "testGroupId:snapshot:jar:2.0-SNAPSHOT:compile" ) );
+        assertTrue( findString( contents, "testGroupId:release:jar:1.0:compile" ) );
     }
 
     /**
@@ -141,15 +143,15 @@ public class TestTreeMojo
      * @param format
      * @return list of strings in the output file
      */
-    private List runTreeMojo(String outputFile, String format)
+    private List runTreeMojo( String outputFile, String format )
              throws Exception
     {
         File testPom = new File( getBasedir(), "target/test-classes/unit/tree-test/plugin-config.xml" );
-        String outputFileName =  testDir.getAbsolutePath() + outputFile  ;
+        String outputFileName = testDir.getAbsolutePath() + outputFile;
         TreeMojo mojo = (TreeMojo) lookupMojo( "tree", testPom );
         setVariableValueToObject( mojo, "localRepository", new StubArtifactRepository( testDir.getAbsolutePath() ) );
         setVariableValueToObject( mojo, "outputType", format );
-        setVariableValueToObject( mojo, "outputFile", new File( outputFileName) );
+        setVariableValueToObject( mojo, "outputFile", new File( outputFileName ) );
 
         assertNotNull( mojo );
         assertNotNull( mojo.getProject() );
@@ -165,13 +167,13 @@ public class TestTreeMojo
 
         mojo.execute();
 
-        BufferedReader fp1 =  new BufferedReader(new FileReader(outputFileName));
-        List contents = new ArrayList() ;
+        BufferedReader fp1 = new BufferedReader( new FileReader( outputFileName ) );
+        List contents = new ArrayList();
 
         String line = null;
-        while ((line = fp1.readLine()) != null)
+        while ( ( line = fp1.readLine() ) != null )
         {
-            contents.add(line);
+            contents.add( line );
         }
         fp1.close();
 
@@ -183,31 +185,31 @@ public class TestTreeMojo
      * @param contents
      * @param str
      */
-    private boolean findString(List contents, String str)
+    private boolean findString( List contents, String str )
     {
-        for ( Iterator it = contents.iterator () ; it.hasNext (); )
+        for ( Iterator it = contents.iterator(); it.hasNext(); )
         {
-            String line = (String) it.next() ;
-            if ( line.indexOf(str) != -1 )
+            String line = (String) it.next();
+            if ( line.indexOf( str ) != -1 )
             {
                 // if match then return here
-                return true ;
+                return true;
             }
         }
 
         // in case no match for the whole list
-        return false ;
+        return false;
     }
-    
+
     // private methods --------------------------------------------------------
-    
+
     private void assertChildNodeEquals( String expectedNode, DependencyNode actualParentNode, int actualChildIndex )
     {
         DependencyNode actualNode = (DependencyNode) actualParentNode.getChildren().get( actualChildIndex );
-        
+
         assertNodeEquals( expectedNode, actualNode );
     }
-    
+
     private void assertNodeEquals( String expectedNode, DependencyNode actualNode )
     {
         String[] tokens = expectedNode.split( ":" );
