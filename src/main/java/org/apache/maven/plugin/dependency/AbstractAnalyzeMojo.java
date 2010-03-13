@@ -39,7 +39,7 @@ import org.codehaus.plexus.util.xml.PrettyPrintXMLWriter;
 /**
  * Analyzes the dependencies of this project and determines which are: used and declared; used and undeclared; unused
  * and declared.
- * 
+ *
  * @author <a href="mailto:markhobson@gmail.com">Mark Hobson</a>
  * @version $Id$
  * @since 2.0-alpha-5
@@ -51,7 +51,7 @@ public abstract class AbstractAnalyzeMojo
 
     /**
      * The Maven project to analyze.
-     * 
+     *
      * @parameter expression="${project}"
      * @required
      * @readonly
@@ -60,7 +60,7 @@ public abstract class AbstractAnalyzeMojo
 
     /**
      * The Maven project dependency analyzer to use.
-     * 
+     *
      * @component
      * @required
      * @readonly
@@ -69,28 +69,28 @@ public abstract class AbstractAnalyzeMojo
 
     /**
      * Whether to fail the build if a dependency warning is found.
-     * 
+     *
      * @parameter expression="${failOnWarning}" default-value="false"
      */
     private boolean failOnWarning;
 
     /**
      * Output used dependencies
-     * 
+     *
      * @parameter expression="${verbose}" default-value="false"
      */
     private boolean verbose;
 
     /**
      * Ignore Runtime,Provide,Test,System scopes for unused dependency analysis
-     * 
+     *
      * @parameter expression="${ignoreNonCompile}" default-value="false"
      */
     private boolean ignoreNonCompile;
 
     /**
      * Output the xml for the missing dependencies
-     * 
+     *
      * @parameter expression="${outputXML}" default-value="false"
      * @since 2.0-alpha-5
      */
@@ -98,7 +98,7 @@ public abstract class AbstractAnalyzeMojo
 
     /**
      * Output scriptable values
-     * 
+     *
      * @parameter expression="${scriptableOutput}" default-value="false"
      * @since 2.0-alpha-5
      */
@@ -106,7 +106,7 @@ public abstract class AbstractAnalyzeMojo
 
     /**
      * Flag to use for scriptable output
-     * 
+     *
      * @parameter expression="${scriptableFlag}" default-value="$$$%%%"
      * @since 2.0-alpha-5
      */
@@ -114,7 +114,7 @@ public abstract class AbstractAnalyzeMojo
 
     /**
      * Flag to use for scriptable output
-     * 
+     *
      * @parameter expression="${basedir}"
      * @readonly
      * @since 2.0-alpha-5
@@ -123,7 +123,7 @@ public abstract class AbstractAnalyzeMojo
 
     /**
      * Target folder
-     * 
+     *
      * @parameter expression="${project.build.directory}"
      * @readonly
      * @since 2.0-alpha-5
@@ -143,8 +143,8 @@ public abstract class AbstractAnalyzeMojo
             getLog().info( "Skipping pom project" );
             return;
         }
-        
-        if ( outputDirectory == null || !outputDirectory.exists())
+
+        if ( outputDirectory == null || !outputDirectory.exists() )
         {
             getLog().info( "Skipping project with no build directory" );
             return;
@@ -176,7 +176,7 @@ public abstract class AbstractAnalyzeMojo
         Set usedDeclared = analysis.getUsedDeclaredArtifacts();
         Set usedUndeclared = analysis.getUsedUndeclaredArtifacts();
         Set unusedDeclared = analysis.getUnusedDeclaredArtifacts();
-        
+
         if ( ignoreNonCompile )
         {
             Set filteredUnusedDeclared = new HashSet( unusedDeclared );
@@ -197,14 +197,14 @@ public abstract class AbstractAnalyzeMojo
             getLog().info( "No dependency problems found" );
             return false;
         }
-        
+
         if ( verbose && !usedDeclared.isEmpty() )
         {
             getLog().info( "Used declared dependencies found:" );
 
             logArtifacts( analysis.getUsedDeclaredArtifacts(), false );
         }
-        
+
         if ( !usedUndeclared.isEmpty() )
         {
             getLog().warn( "Used undeclared dependencies found:" );
@@ -215,7 +215,7 @@ public abstract class AbstractAnalyzeMojo
         if ( !unusedDeclared.isEmpty() )
         {
             getLog().warn( "Unused declared dependencies found:" );
-            
+
             logArtifacts( unusedDeclared, true );
         }
 
@@ -223,7 +223,7 @@ public abstract class AbstractAnalyzeMojo
         {
             writeDependencyXML( usedUndeclared );
         }
-        
+
         if ( scriptableOutput )
         {
             writeScriptableOutput( usedUndeclared );
@@ -306,7 +306,7 @@ public abstract class AbstractAnalyzeMojo
             getLog().info( "\n" + out.getBuffer() );
         }
     }
-    
+
     private void writeScriptableOutput( Set artifacts )
     {
         if ( !artifacts.isEmpty() )

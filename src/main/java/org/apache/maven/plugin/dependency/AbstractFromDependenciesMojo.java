@@ -16,7 +16,7 @@ package org.apache.maven.plugin.dependency;
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
- * under the License.    
+ * under the License.
  */
 
 import java.io.File;
@@ -24,7 +24,7 @@ import java.io.File;
 /**
  * Abstract Parent class used by mojos that get Artifact information from the
  * project dependencies.
- * 
+ *
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  * @version $Id$
  */
@@ -34,7 +34,7 @@ public abstract class AbstractFromDependenciesMojo
 
     /**
      * Strip artifact version during copy
-     * 
+     *
      * @optional
      * @parameter expression="${mdep.stripVersion}" default-value="false"
      * @parameter
@@ -43,7 +43,7 @@ public abstract class AbstractFromDependenciesMojo
 
     /**
      * Default location used for mojo unless overridden in ArtifactItem
-     * 
+     *
      * @parameter expression="${outputDirectory}"
      *            default-value="${project.build.directory}/dependency"
      * @optional
@@ -62,18 +62,18 @@ public abstract class AbstractFromDependenciesMojo
 
     /**
      * Also copy the pom of each artifact.
-     * 
+     *
      * @since 2.0
      * @parameter expression="${mdep.copyPom}"
      *            default-value="false"
      * @optional
      */
     protected boolean copyPom = true;
-    
+
     /**
      * Place each type of file in a separate subdirectory. (example
      * /outputDirectory/jars /outputDirectory/wars etc)
-     * 
+     *
      * @since 2.0-alpha-1
      * @parameter expression="${mdep.useSubDirectoryPerType}" default-value="false"
      * @optional
@@ -83,7 +83,7 @@ public abstract class AbstractFromDependenciesMojo
     /**
      * Place each file in a separate subdirectory. (example
      * /outputDirectory/junit-3.8.1-jar)
-     * 
+     *
      * @since 2.0-alpha-1
      * @parameter expression="${mdep.useSubDirectoryPerArtifact}"
      *            default-value="false"
@@ -93,7 +93,7 @@ public abstract class AbstractFromDependenciesMojo
 
     /**
      * This only applies if the classifier parameter is used.
-     * 
+     *
      * @since 2.0-alpha-2
      * @parameter expression="${mdep.failOnMissingClassifierArtifact}"
      *            default-value="true"
@@ -173,7 +173,7 @@ public abstract class AbstractFromDependenciesMojo
     }
 
     /**
-     * 
+     *
      * @return true, if dependencies must be planted in a repository layout
      */
     public boolean isUseRepositoryLayout()
@@ -182,7 +182,7 @@ public abstract class AbstractFromDependenciesMojo
     }
 
     /**
-     * 
+     *
      * @param useRepositoryLayout -
      *            true if dependencies must be planted in a repository layout
      */
@@ -194,14 +194,16 @@ public abstract class AbstractFromDependenciesMojo
     /**
      * @return true, if the pom of each artifact must be copied
      */
-    public boolean isCopyPom() {
+    public boolean isCopyPom()
+    {
         return this.copyPom;
     }
 
     /**
      * @param copyPom - true if the pom of each artifact must be copied
      */
-    public void setCopyPom(boolean copyPom) {
+    public void setCopyPom( boolean copyPom )
+    {
         this.copyPom = copyPom;
     }
 }

@@ -16,7 +16,7 @@ package org.apache.maven.plugin.dependency;
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
- * under the License.    
+ * under the License.
  */
 
 import java.io.BufferedReader;
@@ -41,7 +41,7 @@ import org.codehaus.plexus.util.StringUtils;
 
 /**
  * This goal will output a classpath string of dependencies from the local repository to a file or log.
- * 
+ *
  * @goal build-classpath
  * @requiresDependencyResolution test
  * @phase generate-sources
@@ -56,7 +56,7 @@ public class BuildClasspathMojo
 
     /**
      * Strip artifact version during copy (only works if prefix is set)
-     * 
+     *
      * @parameter expression="${mdep.stripVersion}" default-value="false"
      * @parameter
      */
@@ -65,7 +65,7 @@ public class BuildClasspathMojo
     /**
      * The prefix to prepend on each dependent artifact. If undefined, the paths refer to the actual files store in the
      * local repository (the stipVersion parameter does nothing then).
-     * 
+     *
      * @parameter expression="${mdep.prefix}"
      */
     private String prefix;
@@ -84,10 +84,10 @@ public class BuildClasspathMojo
      * @parameter expression="${mdep.outputFile}"
      */
     private File outputFile;
-    
+
     /**
      * If 'true', it skips the up-to-date-check, and always regenerates the classpath file.
-     * 
+     *
      * @parameter default-value="false" expression="${mdep.regenerateFile}"
      */
     private boolean regenerateFile;
@@ -96,7 +96,7 @@ public class BuildClasspathMojo
      * Override the char used between the paths. This field is initialized to contain the first character of the value
      * of the system property file.separator. On UNIX systems the value of this field is '/'; on Microsoft Windows
      * systems it is '\'. The default is File.separator
-     * 
+     *
      * @since 2.0
      * @parameter default-value="" expression="${mdep.fileSeparator}"
      */
@@ -107,7 +107,7 @@ public class BuildClasspathMojo
      * initialized to contain the first character of the value of the system property path.separator. This character is
      * used to separate filenames in a sequence of files given as a path list. On UNIX systems, this character is ':';
      * on Microsoft Windows systems it is ';'.
-     * 
+     *
      * @since 2.0
      * @parameter default-value="" expression="${mdep.pathSeparator}"
      */
@@ -116,7 +116,7 @@ public class BuildClasspathMojo
     /**
      * Replace the absolute path to the local repo with this property. This field is ignored it prefix is declared. The
      * value will be forced to "${M2_REPO}" if no value is provided AND the attach flag is true.
-     * 
+     *
      * @since 2.0
      * @parameter default-value="" expression="${mdep.localRepoProperty}"
      */
@@ -124,15 +124,15 @@ public class BuildClasspathMojo
 
     /**
      * Attach the classpath file to the main artifact so it can be installed and deployed.
-     * 
+     *
      * @since 2.0
      * @parameter default-value=false
      */
     boolean attach;
-    
+
     /**
      * Write out the classpath in a format compatible with filtering (classpath=xxxxx)
-     * 
+     *
      * @since 2.0
      * @parameter default-value=false expression="${mdep.outputFilterFile}"
      */
@@ -140,7 +140,7 @@ public class BuildClasspathMojo
 
     /**
      * Maven ProjectHelper
-     * 
+     *
      * @component
      * @readonly
      */
@@ -152,7 +152,7 @@ public class BuildClasspathMojo
 
     /**
      * Main entry into mojo. Gets the list of dependencies and iterates through calling copyArtifact.
-     * 
+     *
      * @throws MojoExecutionException with a message if an error occurs.
      * @see #getDependencies
      * @see #copyArtifact(Artifact, boolean)
@@ -160,13 +160,13 @@ public class BuildClasspathMojo
     public void execute()
         throws MojoExecutionException
     {
-        
-        if (cpFile != null)
+
+        if ( cpFile != null )
         {
             getLog().warn( "The parameter cpFile is deprecated. Use outputFile instead." );
             this.outputFile = cpFile;
         }
-        
+
         // initialize the separators.
         if ( StringUtils.isEmpty( fileSeparator ) )
         {
@@ -233,11 +233,11 @@ public class BuildClasspathMojo
         }
 
         //make the string valid for filtering
-        if (outputFilterFile)
+        if ( outputFilterFile )
         {
-            cpString = "classpath="+ cpString;
+            cpString = "classpath=" + cpString;
         }
-        
+
         if ( outputFile == null )
         {
             getLog().info( "Dependencies classpath:\n" + cpString );
@@ -270,7 +270,7 @@ public class BuildClasspathMojo
 
     /**
      * Appends the artifact path into the specified stringBuffer.
-     * 
+     *
      * @param art
      * @param sb
      */
@@ -297,7 +297,7 @@ public class BuildClasspathMojo
 
     /**
      * Checks that new classpath differs from that found inside the old classpathFile.
-     * 
+     *
      * @param cpString
      * @return true if the specified classpath equals to that found inside the file, false otherwise (including when
      *         file does not exists but new classpath does).
@@ -319,21 +319,21 @@ public class BuildClasspathMojo
 
     /**
      * It stores the specified string into that file.
-     * 
+     *
      * @param cpString the string to be written into the file.
      * @throws MojoExecutionException
      */
     private void storeClasspathFile( String cpString, File out )
         throws MojoExecutionException
     {
-        
+
         //make sure the parent path exists.
         out.getParentFile().mkdirs();
-        
+
         try
         {
-           
-            
+
+
             Writer w = new BufferedWriter( new FileWriter( out ) );
 
             try
@@ -344,8 +344,8 @@ public class BuildClasspathMojo
             }
             catch ( IOException ex )
             {
-                throw new MojoExecutionException( "Error while writting to classpath file '" + out + "': " +
-                    ex.toString(), ex );
+                throw new MojoExecutionException( "Error while writting to classpath file '" + out + "': "
+                    + ex.toString(), ex );
             }
             finally
             {
@@ -354,15 +354,15 @@ public class BuildClasspathMojo
         }
         catch ( IOException ex )
         {
-            throw new MojoExecutionException( "Error while opening/closing classpath file '" + out + "': " +
-                ex.toString(), ex );
+            throw new MojoExecutionException( "Error while opening/closing classpath file '" + out + "': "
+                + ex.toString(), ex );
         }
     }
 
     /**
      * Reads into a string the file specified by the mojo param 'outputFile'. Assumes, the instance variable 'outputFile' is not
      * null.
-     * 
+     *
      * @return the string contained in the classpathFile, if exists, or null ortherwise.
      * @throws MojoExecutionException
      */
@@ -400,7 +400,7 @@ public class BuildClasspathMojo
 
     /**
      * Compares artifacts lexicographically, using pattern [group_id][artifact_id][version].
-     * 
+     *
      * @param arg1 first object
      * @param arg2 second object
      * @return the value <code>0</code> if the argument string is equal to this string; a value less than

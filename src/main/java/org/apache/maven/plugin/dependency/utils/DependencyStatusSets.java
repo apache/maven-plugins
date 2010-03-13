@@ -16,11 +16,11 @@ package org.apache.maven.plugin.dependency.utils;
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
- * under the License.    
+ * under the License.
  */
 
 /**
- * 
+ *
  */
 
 import java.util.Iterator;
@@ -136,12 +136,12 @@ public class DependencyStatusSets
         }
     }
 
-    public String getOutput(boolean outputAbsoluteArtifactFilename )
+    public String getOutput( boolean outputAbsoluteArtifactFilename )
     {
-        return getOutput(outputAbsoluteArtifactFilename, true );
+        return getOutput( outputAbsoluteArtifactFilename, true );
     }
 
-    public String getOutput(boolean outputAbsoluteArtifactFilename, boolean outputScope )
+    public String getOutput( boolean outputAbsoluteArtifactFilename, boolean outputScope )
     {
         StringBuffer sb = new StringBuffer();
         sb.append( "\n" );
@@ -169,10 +169,10 @@ public class DependencyStatusSets
                         artifactFilename = null;
                     }
                 }
-                
+
                 String id = outputScope ? artifact.toString() : artifact.getId();
-                
-                sb.append( "   " + id + ( outputAbsoluteArtifactFilename ? ":" + artifactFilename : "" ) +"\n");
+
+                sb.append( "   " + id + ( outputAbsoluteArtifactFilename ? ":" + artifactFilename : "" ) + "\n" );
             }
         }
 
@@ -184,7 +184,7 @@ public class DependencyStatusSets
             sortedSkippedDependencies.addAll( this.skippedDependencies );
             for ( Iterator i = sortedSkippedDependencies.iterator(); i.hasNext(); )
             {
-                sb.append( "   " + ( (Artifact) i.next() ).getId()+"\n" );
+                sb.append( "   " + ( (Artifact) i.next() ).getId() + "\n" );
             }
         }
 
@@ -196,10 +196,10 @@ public class DependencyStatusSets
             sortedUnResolvedDependencies.addAll( this.unResolvedDependencies );
             for ( Iterator i = sortedUnResolvedDependencies.iterator(); i.hasNext(); )
             {
-                sb.append( "   " + ( (Artifact) i.next() ).getId()+"\n" );
+                sb.append( "   " + ( (Artifact) i.next() ).getId() + "\n" );
             }
         }
-        sb.append("\n");
+        sb.append( "\n" );
 
         return sb.toString();
     }

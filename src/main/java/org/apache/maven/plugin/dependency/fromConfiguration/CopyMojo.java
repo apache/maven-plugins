@@ -1,6 +1,6 @@
 package org.apache.maven.plugin.dependency.fromConfiguration;
 
-/* 
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -16,24 +16,21 @@ package org.apache.maven.plugin.dependency.fromConfiguration;
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
- * under the License.    
+ * under the License.
  */
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.dependency.utils.DependencyUtil;
 import org.apache.maven.plugin.dependency.utils.filters.ArtifactItemFilter;
 import org.apache.maven.plugin.dependency.utils.filters.DestFileFilter;
-import org.apache.maven.plugin.logging.Log;
 
 /**
  * Goal that copies a list of artifacts from the repository to defined
  * locations.
- * 
+ *
  * @goal copy
  * @since 1.0
  * @phase process-sources
@@ -46,7 +43,7 @@ public class CopyMojo
 
     /**
      * Strip artifact version during copy
-     * 
+     *
      * @parameter expression="${mdep.stripVersion}" default-value="false"
      * @parameter
      */
@@ -55,10 +52,10 @@ public class CopyMojo
     /**
      * Main entry into mojo. This method gets the ArtifactItems and iterates
      * through each one passing it to copyArtifact.
-     * 
+     *
      * @throws MojoExecutionException
      *             with a message if an error occurs.
-     * 
+     *
      * @see ArtifactItem
      * @see #getArtifactItems
      * @see #copyArtifact(ArtifactItem)
@@ -85,12 +82,12 @@ public class CopyMojo
     /**
      * Resolves the artifact from the repository and copies it to the specified
      * location.
-     * 
+     *
      * @param artifactItem
      *            containing the information about the Artifact to copy.
      * @throws MojoExecutionException
      *             with a message if an error occurs.
-     * 
+     *
      * @see DependencyUtil#copyFile(File, File, Log)
      * @see DependencyUtil#getFormattedFileName(Artifact, boolean)
      */

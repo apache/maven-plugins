@@ -16,7 +16,7 @@ package org.apache.maven.plugin.dependency;
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
- * under the License.    
+ * under the License.
  */
 
 import java.io.File;
@@ -29,14 +29,12 @@ import org.apache.maven.plugin.dependency.utils.DependencyStatusSets;
 import org.apache.maven.plugin.dependency.utils.DependencyUtil;
 import org.apache.maven.plugin.dependency.utils.filters.MarkerFileFilter;
 import org.apache.maven.plugin.dependency.utils.markers.DefaultFileMarkerHandler;
-import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.shared.artifact.filter.collection.ArtifactsFilter;
-import org.codehaus.plexus.archiver.manager.ArchiverManager;
 
 /**
  * Goal that unpacks the project dependencies from the repository to a defined
  * location.
- * 
+ *
  * @goal unpack-dependencies
  * @requiresDependencyResolution test
  * @phase process-sources
@@ -47,7 +45,7 @@ import org.codehaus.plexus.archiver.manager.ArchiverManager;
 public class UnpackDependenciesMojo
     extends AbstractFromDependenciesMojo
 {
-	/**
+    /**
      * A comma separated list of file patterns to include when unpacking the
      * artifact.  i.e.  **\/*.xml,**\/*.properties NOTE: Excludes patterns override the includes. (component code = return isIncluded( name ) AND !isExcluded( name );)
      * @since 2.0
@@ -62,14 +60,14 @@ public class UnpackDependenciesMojo
      * @parameter expression="${mdep.unpack.excludes}"
      */
     private String excludes;
-    
+
     /**
      * Main entry into mojo. This method gets the dependencies and iterates
      * through each one passing it to DependencyUtil.unpackFile().
-     * 
+     *
      * @throws MojoExecutionException
      *             with a message if an error occurs.
-     * 
+     *
      * @see #getDependencies
      * @see DependencyUtil#unpackFile(Artifact, File, File, ArchiverManager,
      *      Log)
@@ -91,7 +89,7 @@ public class UnpackDependenciesMojo
             DefaultFileMarkerHandler handler = new DefaultFileMarkerHandler( artifact, this.markersDirectory );
             handler.setMarker();
         }
-        
+
         artifacts = dss.getSkippedDependencies();
         for ( Iterator i = artifacts.iterator(); i.hasNext(); )
         {
@@ -105,7 +103,7 @@ public class UnpackDependenciesMojo
         return new MarkerFileFilter( this.overWriteReleases, this.overWriteSnapshots, this.overWriteIfNewer,
                                      new DefaultFileMarkerHandler( this.markersDirectory ) );
     }
-    
+
     /**
      * @return Returns a comma separated list of excluded items
      */
@@ -113,17 +111,17 @@ public class UnpackDependenciesMojo
     {
         return DependencyUtil.cleanToBeTokenizedString( this.excludes );
     }
-    
+
     /**
-     * @param excludes 
-     * 			A comma separated list of items to exclude 
+     * @param excludes
+     * 			A comma separated list of items to exclude
      * 			i.e.  **\/*.xml, **\/*.properties
      */
     public void setExcludes ( String excludes )
     {
         this.excludes = excludes;
     }
-    
+
     /**
      * @return Returns a comma separated list of included items
      */
@@ -134,7 +132,7 @@ public class UnpackDependenciesMojo
 
     /**
      * @param includes
-     * 			A comma separated list of items to include 
+     * 			A comma separated list of items to include
      * 			i.e.  **\/*.xml, **\/*.properties
      */
     public void setIncludes ( String includes )

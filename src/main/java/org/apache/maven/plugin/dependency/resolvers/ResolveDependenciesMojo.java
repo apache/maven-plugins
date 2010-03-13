@@ -16,7 +16,7 @@ package org.apache.maven.plugin.dependency.resolvers;
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
- * under the License.    
+ * under the License.
  */
 
 import java.io.IOException;
@@ -31,7 +31,7 @@ import org.apache.maven.shared.artifact.filter.collection.ArtifactsFilter;
 
 /**
  * Goal that resolves the project dependencies from the repository.
- * 
+ *
  * @goal resolve
  * @requiresDependencyResolution test
  * @phase generate-sources
@@ -45,7 +45,7 @@ public class ResolveDependenciesMojo
 
     /**
      * If we should display the scope when resolving
-     * 
+     *
      * @parameter expression="${mdep.outputScope}" default-value="true"
      * @since 2.0-alpha-2
      */
@@ -58,7 +58,7 @@ public class ResolveDependenciesMojo
 
     /**
      * Main entry into mojo. Gets the list of dependencies and iterates through displaying the resolved version.
-     * 
+     *
      * @throws MojoExecutionException with a message if an error occurs.
      */
     public void execute()
@@ -81,7 +81,7 @@ public class ResolveDependenciesMojo
         }
         catch ( IOException e )
         {
-            throw new MojoExecutionException(e.getMessage(),e);
+            throw new MojoExecutionException( e.getMessage(), e );
         }
     }
 

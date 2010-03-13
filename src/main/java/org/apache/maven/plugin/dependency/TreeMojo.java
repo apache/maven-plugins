@@ -246,11 +246,11 @@ public class TreeMojo extends AbstractMojo
         }
         catch ( InvalidVersionSpecificationException e )
         {
-            throw new MojoExecutionException(e.getLocalizedMessage());
+            throw new MojoExecutionException( e.getLocalizedMessage() );
         }
 
 
-        if (output != null)
+        if ( output != null )
         {
             getLog().warn( "The parameter output is deprecated. Use outputFile instead." );
             this.outputFile = output;

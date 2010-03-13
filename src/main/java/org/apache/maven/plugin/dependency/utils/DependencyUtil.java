@@ -16,7 +16,7 @@ package org.apache.maven.plugin.dependency.utils;
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
- * under the License.    
+ * under the License.
  */
 
 import java.io.BufferedReader;
@@ -31,7 +31,7 @@ import org.codehaus.plexus.util.StringUtils;
 
 /**
  * Utility class with static helper methods
- * 
+ *
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  * @version $Id$
  */
@@ -42,7 +42,7 @@ public final class DependencyUtil
      * Builds the file name. If removeVersion is set, then the file name must be
      * reconstructed from the artifactId, Classifier (if used) and Type.
      * Otherwise, this method returns the artifact file name.
-     * 
+     *
      * @param artifact
      *            File to be formatted.
      * @param removeVersion
@@ -88,7 +88,7 @@ public final class DependencyUtil
 
     /**
      * Formats the outputDirectory based on type.
-     * 
+     *
      * @param useSubdirsPerType
      *            if a new sub directory should be used for each type.
      * @param useSubdirPerArtifact
@@ -102,7 +102,7 @@ public final class DependencyUtil
      *            base outputDirectory.
      * @param artifact
      *            information about the artifact.
-     * 
+     *
      * @return a formatted File object to use for output.
      */
     public static File getFormattedOutputDirectory( boolean useSubdirsPerType, boolean useSubdirPerArtifact,
@@ -166,10 +166,10 @@ public final class DependencyUtil
         }
         return sb.toString();
     }
-    
+
     /**
      * Writes the specified string to the specified file.
-     * 
+     *
      * @param string
      *            the string to write
      * @param file
@@ -177,7 +177,7 @@ public final class DependencyUtil
      * @throws IOException
      *             if an I/O error occurs
      */
-    public synchronized static void write( String string, File file, Log log ) throws IOException
+    public static synchronized void write( String string, File file, Log log ) throws IOException
     {
         file.getParentFile().mkdirs();
 
@@ -204,16 +204,16 @@ public final class DependencyUtil
             }
         }
     }
-    
+
     /**
      * Writes the specified string to the log at info level.
-     * 
+     *
      * @param string
      *            the string to write
      * @throws IOException
      *             if an I/O error occurs
      */
-    public synchronized static void log( String string, Log log ) throws IOException
+    public static synchronized void log( String string, Log log ) throws IOException
     {
         BufferedReader reader = new BufferedReader( new StringReader( string ) );
 
@@ -234,7 +234,7 @@ public final class DependencyUtil
     {
         return StringUtils.split( cleanToBeTokenizedString( str ), "," );
     }
-    
+
     //
     // clean up configuration string before it can be tokenized
     //
@@ -245,7 +245,7 @@ public final class DependencyUtil
         {
             ret = StringUtils.join( StringUtils.split( str ), "," );
         }
-        
+
         return ret;
-    }    
+    }
 }

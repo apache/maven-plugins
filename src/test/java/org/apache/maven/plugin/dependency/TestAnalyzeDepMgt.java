@@ -48,7 +48,7 @@ public class TestAnalyzeDepMgt
     Dependency exclusion;
 
     Exclusion ex;
-    
+
     Artifact exclusionArtifact;
 
     DependencyManagement depMgt;
@@ -58,30 +58,30 @@ public class TestAnalyzeDepMgt
 
         mojo = new AnalyzeDepMgt();
         MavenProject project = new DependencyProjectStub();
-        
+
         stubFactory = new DependencyArtifactStubFactory( new File( "" ), false );
 
         Set allArtifacts = stubFactory.getMixedArtifacts();
         Set directArtifacts = stubFactory.getClassifiedArtifacts();
-        
+
 
         exclusionArtifact = stubFactory.getReleaseArtifact();
         directArtifacts.add( exclusionArtifact );
         ex = new Exclusion();
         ex.setArtifactId( exclusionArtifact.getArtifactId() );
         ex.setGroupId( exclusionArtifact.getGroupId() );
-        
+
         exclusion = new Dependency();
         exclusion.setArtifactId( exclusionArtifact.getArtifactId() );
         exclusion.setGroupId( exclusionArtifact.getGroupId() );
         exclusion.setType( exclusionArtifact.getType() );
         exclusion.setClassifier( "" );
         exclusion.setVersion( "3.0" );
-        
+
         exclusion.addExclusion( ex );
         ArrayList list = new ArrayList();
         list.add( exclusion );
-        
+
         depMgt = new DependencyManagement();
         depMgt.setDependencies( list );
 
@@ -147,7 +147,7 @@ public class TestAnalyzeDepMgt
 
     public void testAddExclusions()
     {
-        
+
         assertEquals( 0, mojo.addExclusions( null ).size() );
 
         ArrayList list = new ArrayList();
@@ -190,7 +190,7 @@ public class TestAnalyzeDepMgt
     }
 
     public void testMojo() throws IOException
-    {   
+    {
         mojo.setIgnoreDirect( false );
         try
         {
@@ -200,9 +200,9 @@ public class TestAnalyzeDepMgt
         catch ( Exception e )
         {
             e.printStackTrace();
-            fail("Caught Unexpected Exception:"+e.getLocalizedMessage());
+            fail( "Caught Unexpected Exception:" + e.getLocalizedMessage() );
         }
-        
+
         try
         {
             DependencyProjectStub project = (DependencyProjectStub) mojo.getProject();
@@ -213,9 +213,9 @@ public class TestAnalyzeDepMgt
         catch ( Exception e )
         {
             e.printStackTrace();
-            fail("Caught Unexpected Exception:"+e.getLocalizedMessage());
+            fail( "Caught Unexpected Exception:" + e.getLocalizedMessage() );
         }
-        
+
         try
         {
             DependencyProjectStub project = (DependencyProjectStub) mojo.getProject();
@@ -223,13 +223,13 @@ public class TestAnalyzeDepMgt
             // test with exclusion
             mojo.setFailBuild( true );
             mojo.execute();
-            fail("Expected exception to fail the build.");
+            fail( "Expected exception to fail the build." );
         }
         catch ( Exception e )
         {
-            System.out.println("Caught Expected Exception:"+e.getLocalizedMessage());
+            System.out.println( "Caught Expected Exception:" + e.getLocalizedMessage() );
         }
-        
+
         try
         {
             DependencyProjectStub project = (DependencyProjectStub) mojo.getProject();
@@ -242,7 +242,7 @@ public class TestAnalyzeDepMgt
         catch ( Exception e )
         {
             e.printStackTrace();
-            fail("Caught Unexpected Exception:"+e.getLocalizedMessage());
+            fail( "Caught Unexpected Exception:" + e.getLocalizedMessage() );
         }
     }
 }

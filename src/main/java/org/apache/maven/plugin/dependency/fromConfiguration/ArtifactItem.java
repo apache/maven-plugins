@@ -1,6 +1,6 @@
 package org.apache.maven.plugin.dependency.fromConfiguration;
 
-/* 
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -16,7 +16,7 @@ package org.apache.maven.plugin.dependency.fromConfiguration;
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
- * under the License.    
+ * under the License.
  */
 
 import java.io.File;
@@ -28,7 +28,7 @@ import org.codehaus.plexus.util.StringUtils;
 /**
  * ArtifactItem represents information specified in the plugin configuration
  * section for each artifact.
- * 
+ *
  * @since 1.0
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  * @version $Id$
@@ -37,7 +37,7 @@ public class ArtifactItem
 {
     /**
      * Group Id of Artifact
-     * 
+     *
      * @parameter
      * @required
      */
@@ -45,7 +45,7 @@ public class ArtifactItem
 
     /**
      * Name of Artifact
-     * 
+     *
      * @parameter
      * @required
      */
@@ -53,14 +53,14 @@ public class ArtifactItem
 
     /**
      * Version of Artifact
-     * 
+     *
      * @parameter
      */
     private String version = null;
 
     /**
      * Type of Artifact (War,Jar,etc)
-     * 
+     *
      * @parameter
      * @required
      */
@@ -68,21 +68,21 @@ public class ArtifactItem
 
     /**
      * Classifier for Artifact (tests,sources,etc)
-     * 
+     *
      * @parameter
      */
     private String classifier;
 
     /**
      * Location to use for this Artifact. Overrides default location.
-     * 
+     *
      * @parameter
      */
     private File outputDirectory;
 
     /**
      * Provides ability to change destination file name
-     * 
+     *
      * @parameter
      */
     private String destFileName;
@@ -101,7 +101,7 @@ public class ArtifactItem
      * Artifact Item
      */
     private Artifact artifact;
-    
+
     /**
      * A comma separated list of file patterns to include when unpacking the
      * artifact.
@@ -323,7 +323,7 @@ public class ArtifactItem
     {
         this.artifact = artifact;
     }
-    
+
     /**
      * @return Returns a comma separated list of excluded items
      */
@@ -331,28 +331,28 @@ public class ArtifactItem
     {
         return DependencyUtil.cleanToBeTokenizedString( this.excludes );
     }
-    
+
     /**
-     * @param excludes 
-     * 			A comma seperated list of items to exclude 
+     * @param excludes
+     * 			A comma seperated list of items to exclude
      * 			i.e.  **\/*.xml, **\/*.properties
      */
     public void setExcludes ( String excludes )
     {
         this.excludes = excludes;
     }
-    
+
     /**
      * @return Returns a comma seperated list of included items
      */
     public String getIncludes()
     {
-    	return DependencyUtil.cleanToBeTokenizedString( this.includes );
+        return DependencyUtil.cleanToBeTokenizedString( this.includes );
     }
 
     /**
      * @param includes
-     * 			A comma seperated list of items to inmclude 
+     * 			A comma seperated list of items to inmclude
      * 			i.e.  **\/*.xml, **\/*.properties
      */
     public void setIncludes ( String includes )

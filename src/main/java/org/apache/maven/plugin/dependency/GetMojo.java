@@ -153,14 +153,18 @@ public class GetMojo
     {
 
         if ( artifactId == null && artifact == null )
+        {
             throw new MojoFailureException( "You must specify an artifact, "
                 + "e.g. -Dartifact=org.apache.maven.plugins:maven-downloader-plugin:1.0" );
+        }
         if ( artifactId == null )
         {
             String[] tokens = StringUtils.split( artifact, ":" );
             if ( tokens.length != 3 && tokens.length != 4 )
+            {
                 throw new MojoFailureException( "Invalid artifact, you must specify "
                     + "groupId:artifactId:version[:packaging] " + artifact );
+            }
             groupId = tokens[0];
             artifactId = tokens[1];
             version = tokens[2];
@@ -179,14 +183,14 @@ public class GetMojo
                                                                 always );
 
         if ( pomRemoteRepositories == null )
+        {
             pomRemoteRepositories = new ArrayList();
+        }
 
         List repoList = new ArrayList( pomRemoteRepositories );
         if ( remoteRepositories != null )
         {
-
             repoList.addAll( Arrays.asList( StringUtils.split( remoteRepositories, "," ) ) );
-
         }
 
         repoList.add( remoteRepo );
