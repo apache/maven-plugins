@@ -5,7 +5,6 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 
 import org.apache.maven.plugin.logging.Log;
-import org.codehaus.plexus.logging.Logger;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
