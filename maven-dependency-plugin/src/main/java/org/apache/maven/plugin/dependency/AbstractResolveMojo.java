@@ -16,7 +16,7 @@ package org.apache.maven.plugin.dependency;
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
- * under the License.    
+ * under the License.
  */
 
 import java.io.File;
@@ -35,34 +35,36 @@ import org.apache.maven.project.artifact.InvalidDependencyVersionException;
 /**
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  * @version $Id$
- * 
+ *
  */
 public abstract class AbstractResolveMojo
     extends AbstractDependencyFilterMojo
 {
     /**
      * Project builder -- builds a model from a pom.xml
-     * 
+     *
      * @component role="org.apache.maven.project.MavenProjectBuilder"
      * @required
      * @readonly
      */
     protected MavenProjectBuilder mavenProjectBuilder;
+
     /**
      * If specified, this parameter will cause the dependencies to be written to the path specified, instead of writing
      * to the console.
-     * 
+     *
      * @parameter expression="${outputFile}"
      * @since 2.0
      */
     protected File outputFile;
+
     /**
      * This method resolves the dependency artifacts from the project.
-     * 
+     *
      * @param theProject
      *            The POM.
      * @return resolved set of dependency artifacts.
-     * 
+     *
      * @throws ArtifactResolutionException
      * @throws ArtifactNotFoundException
      * @throws InvalidDependencyVersionException
@@ -84,12 +86,12 @@ public abstract class AbstractResolveMojo
 
     /**
      * This method resolves all transitive dependencies of an artifact.
-     * 
+     *
      * @param artifact
      *            the artifact used to retrieve dependencies
-     * 
+     *
      * @return resolved set of dependencies
-     * 
+     *
      * @throws ArtifactResolutionException
      * @throws ArtifactNotFoundException
      * @throws ProjectBuildingException

@@ -6,9 +6,9 @@ package org.apache.maven.plugin.dependency;
  * copyright ownership. The ASF licenses this file to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License. You may obtain a
  * copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software distributed under the License
  * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the License for the specific language governing permissions and limitations under
@@ -38,9 +38,9 @@ import org.apache.maven.shared.artifact.filter.collection.TypeFilter;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
- * Class that excapusulates the plugin parameters, and contains methods that
+ * Class that encapsulates the plugin parameters, and contains methods that
  * handle dependency filtering
- * 
+ *
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  * @version $Id$
  * @see org.apache.maven.plugin.dependency.AbstractDependencyMojo
@@ -50,7 +50,7 @@ public abstract class AbstractDependencyFilterMojo
 {
     /**
      * If we should exclude transitive dependencies
-     * 
+     *
      * @since 2.0
      * @optional
      * @parameter expression="${excludeTransitive}" default-value="false"
@@ -60,7 +60,7 @@ public abstract class AbstractDependencyFilterMojo
     /**
      * Comma Separated list of Types to include. Empty String indicates include
      * everything (default).
-     * 
+     *
      * @since 2.0
      * @parameter expression="${includeTypes}" default-value=""
      * @optional
@@ -70,7 +70,7 @@ public abstract class AbstractDependencyFilterMojo
     /**
      * Comma Separated list of Types to exclude. Empty String indicates don't
      * exclude anything (default).
-     * 
+     *
      * @since 2.0
      * @parameter expression="${excludeTypes}" default-value=""
      * @optional
@@ -79,7 +79,7 @@ public abstract class AbstractDependencyFilterMojo
 
     /**
      * Scope to include. An Empty string indicates all scopes (default).
-     * 
+     *
      * @since 2.0
      * @parameter expression="${includeScope}" default-value=""
      * @optional
@@ -88,7 +88,7 @@ public abstract class AbstractDependencyFilterMojo
 
     /**
      * Scope to exclude. An Empty string indicates no scopes (default).
-     * 
+     *
      * @since 2.0
      * @parameter expression="${excludeScope}" default-value=""
      * @optional
@@ -98,7 +98,7 @@ public abstract class AbstractDependencyFilterMojo
     /**
      * Comma Separated list of Classifiers to include. Empty String indicates
      * include everything (default).
-     * 
+     *
      * @since 2.0
      * @parameter expression="${includeClassifiers}" default-value=""
      * @optional
@@ -108,7 +108,7 @@ public abstract class AbstractDependencyFilterMojo
     /**
      * Comma Separated list of Classifiers to exclude. Empty String indicates
      * don't exclude anything (default).
-     * 
+     *
      * @since 2.0
      * @parameter expression="${excludeClassifiers}" default-value=""
      * @optional
@@ -117,7 +117,7 @@ public abstract class AbstractDependencyFilterMojo
 
     /**
      * Specify classifier to look for. Example: sources
-     * 
+     *
      * @optional
      * @since 2.0
      * @parameter expression="${classifier}" default-value=""
@@ -127,7 +127,7 @@ public abstract class AbstractDependencyFilterMojo
     /**
      * Specify type to look for when constructing artifact based on classifier.
      * Example: java-source,jar,war
-     * 
+     *
      * @optional
      * @since 2.0
      * @parameter expression="${type}" default-value="java-source"
@@ -136,7 +136,7 @@ public abstract class AbstractDependencyFilterMojo
 
     /**
      * Comma separated list of Artifact names too exclude.
-     * 
+     *
      * @since 2.0
      * @optional
      * @parameter expression="${excludeArtifactIds}" default-value=""
@@ -145,7 +145,7 @@ public abstract class AbstractDependencyFilterMojo
 
     /**
      * Comma separated list of Artifact names to include.
-     * 
+     *
      * @since 2.0
      * @optional
      * @parameter expression="${includeArtifactIds}" default-value=""
@@ -154,7 +154,7 @@ public abstract class AbstractDependencyFilterMojo
 
     /**
      * Comma separated list of GroupId Names to exclude.
-     * 
+     *
      * @since 2.0
      * @optional
      * @parameter expression="${excludeGroupIds}" default-value=""
@@ -163,7 +163,7 @@ public abstract class AbstractDependencyFilterMojo
 
     /**
      * Comma separated list of GroupIds to include.
-     * 
+     *
      * @since 2.0
      * @optional
      * @parameter expression="${includeGroupIds}" default-value=""
@@ -172,7 +172,7 @@ public abstract class AbstractDependencyFilterMojo
 
     /**
      * Directory to store flag files
-     * 
+     *
      * @parameter expression="${markersDirectory}"
      *            default-value="${project.build.directory}/dependency-maven-plugin-markers"
      * @optional
@@ -182,7 +182,7 @@ public abstract class AbstractDependencyFilterMojo
 
     /**
      * Overwrite release artifacts
-     * 
+     *
      * @optional
      * @since 1.0
      * @parameter expression="${overWriteReleases}" default-value="false"
@@ -191,7 +191,7 @@ public abstract class AbstractDependencyFilterMojo
 
     /**
      * Overwrite snapshot artifacts
-     * 
+     *
      * @optional
      * @since 1.0
      * @parameter expression="${overWriteSnapshots}" default-value="false"
@@ -200,7 +200,7 @@ public abstract class AbstractDependencyFilterMojo
 
     /**
      * Overwrite artifacts that don't exist or are older than the source.
-     * 
+     *
      * @optional
      * @since 2.0
      * @parameter expression="${overWriteIfNewer}" default-value="true"
@@ -211,9 +211,9 @@ public abstract class AbstractDependencyFilterMojo
 
     /**
      * Retrieves dependencies, either direct only or all including transitive.
-     * 
+     *
      * @return A HashSet of artifacts
-     * @throws MojoExecutionException 
+     * @throws MojoExecutionException
      */
     protected Set getResolvedDependencies( boolean stopOnFailure )
         throws MojoExecutionException
@@ -225,15 +225,15 @@ public abstract class AbstractDependencyFilterMojo
     }
 
     /**
-     * 
+     *
      * Method creates filters and filters the projects dependencies. This method
      * also transforms the dependencies if classifier is set. The dependencies
      * are filtered in least specific to most specific order
-     * 
+     *
      * @param stopOnFailure
      * @return DependencyStatusSets - Bean of TreeSets that contains information
      *         on the projects dependencies
-     * @throws MojoExecutionException 
+     * @throws MojoExecutionException
      */
     protected DependencyStatusSets getDependencySets( boolean stopOnFailure )
         throws MojoExecutionException
@@ -286,9 +286,9 @@ public abstract class AbstractDependencyFilterMojo
     }
 
     /**
-     * 
+     *
      * Transform artifacts
-     * 
+     *
      * @param artifacts
      * @param stopOnFailure
      * @return DependencyStatusSets - Bean of TreeSets that contains information
@@ -334,7 +334,7 @@ public abstract class AbstractDependencyFilterMojo
 
     /**
      * Filter the marked dependencies
-     * 
+     *
      * @param artifacts
      * @return
      * @throws MojoExecutionException

@@ -23,7 +23,6 @@ import java.io.Writer;
 
 import org.apache.maven.shared.dependency.tree.DependencyNode;
 import org.apache.maven.shared.dependency.tree.traversal.DependencyNodeVisitor;
-import org.apache.maven.shared.dependency.tree.traversal.SerializingDependencyNodeVisitor;
 
 /**
  * A dependency node visitor that serializes visited nodes to a writer using the graphml format.
