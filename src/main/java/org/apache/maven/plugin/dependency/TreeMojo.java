@@ -16,7 +16,7 @@ package org.apache.maven.plugin.dependency;
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
- * under the License.    
+ * under the License.
  */
 
 import java.io.File;
@@ -66,7 +66,7 @@ import org.apache.maven.shared.dependency.tree.traversal.SerializingDependencyNo
 
 /**
  * Displays the dependency tree for this project.
- * 
+ *
  * @author <a href="mailto:markhobson@gmail.com">Mark Hobson</a>
  * @version $Id$
  * @since 2.0-alpha-5
@@ -79,7 +79,7 @@ public class TreeMojo extends AbstractMojo
 
     /**
      * The Maven project.
-     * 
+     *
      * @parameter expression="${project}"
      * @required
      * @readonly
@@ -88,7 +88,7 @@ public class TreeMojo extends AbstractMojo
 
     /**
      * The artifact repository to use.
-     * 
+     *
      * @parameter expression="${localRepository}"
      * @required
      * @readonly
@@ -97,7 +97,7 @@ public class TreeMojo extends AbstractMojo
 
     /**
      * The artifact factory to use.
-     * 
+     *
      * @component
      * @required
      * @readonly
@@ -106,7 +106,7 @@ public class TreeMojo extends AbstractMojo
 
     /**
      * The artifact metadata source to use.
-     * 
+     *
      * @component
      * @required
      * @readonly
@@ -115,7 +115,7 @@ public class TreeMojo extends AbstractMojo
 
     /**
      * The artifact collector to use.
-     * 
+     *
      * @component
      * @required
      * @readonly
@@ -124,7 +124,7 @@ public class TreeMojo extends AbstractMojo
 
     /**
      * The dependency tree builder to use.
-     * 
+     *
      * @component
      * @required
      * @readonly
@@ -158,23 +158,23 @@ public class TreeMojo extends AbstractMojo
      * @since 2.1
      */
     private String outputType;
-    
+
     /**
      * The scope to filter by when resolving the dependency tree, or <code>null</code> to include dependencies from
      * all scopes. Note that this feature does not currently work due to MNG-3236.
-     * 
+     *
      * @since 2.0-alpha-5
      * @see <a href="http://jira.codehaus.org/browse/MNG-3236">MNG-3236</a>
-     * 
+     *
      * @parameter expression="${scope}"
      */
     private String scope;
 
     /**
      * Whether to include omitted nodes in the serialized dependency tree.
-     * 
+     *
      * @since 2.0-alpha-6
-     * 
+     *
      * @parameter expression="${verbose}" default-value="false"
      */
     private boolean verbose;
@@ -183,9 +183,9 @@ public class TreeMojo extends AbstractMojo
      * The token set name to use when outputting the dependency tree. Possible values are <code>whitespace</code>,
      * <code>standard</code> or <code>extended</code>, which use whitespace, standard or extended ASCII sets
      * respectively.
-     * 
+     *
      * @since 2.0-alpha-6
-     * 
+     *
      * @parameter expression="${tokens}" default-value="standard"
      */
     private String tokens;
@@ -193,10 +193,10 @@ public class TreeMojo extends AbstractMojo
     /**
      * A comma-separated list of artifacts to filter the serialized dependency tree by, or <code>null</code> not to
      * filter the dependency tree. The artifact syntax is defined by <code>StrictPatternIncludesArtifactFilter</code>.
-     * 
+     *
      * @see StrictPatternIncludesArtifactFilter
      * @since 2.0-alpha-6
-     * 
+     *
      * @parameter expression="${includes}"
      */
     private String includes;
@@ -205,10 +205,10 @@ public class TreeMojo extends AbstractMojo
      * A comma-separated list of artifacts to filter from the serialized dependency tree, or <code>null</code> not to
      * filter any artifacts from the dependency tree. The artifact syntax is defined by
      * <code>StrictPatternExcludesArtifactFilter</code>.
-     * 
+     *
      * @see StrictPatternExcludesArtifactFilter
      * @since 2.0-alpha-6
-     * 
+     *
      * @parameter expression="${excludes}"
      */
     private String excludes;
@@ -219,7 +219,7 @@ public class TreeMojo extends AbstractMojo
      * @component role="org.apache.maven.execution.RuntimeInformation"
      */
     private RuntimeInformation rti;
-    
+
     /**
      * The computed dependency tree root node of the Maven project.
      */
@@ -232,7 +232,7 @@ public class TreeMojo extends AbstractMojo
      */
     public void execute() throws MojoExecutionException, MojoFailureException
     {
-        
+
         ArtifactVersion detectedMavenVersion = rti.getApplicationVersion();
         VersionRange vr;
         try
@@ -249,13 +249,13 @@ public class TreeMojo extends AbstractMojo
             throw new MojoExecutionException(e.getLocalizedMessage());
         }
 
-        
+
         if (output != null)
         {
             getLog().warn( "The parameter output is deprecated. Use outputFile instead." );
             this.outputFile = output;
         }
-        
+
         ArtifactFilter artifactFilter = createResolvingArtifactFilter();
 
         try
@@ -266,7 +266,7 @@ public class TreeMojo extends AbstractMojo
                 dependencyTreeBuilder.buildDependencyTree( project, localRepository, artifactFactory,
                                                            artifactMetadataSource, artifactFilter, artifactCollector );
 
-            String dependencyTreeString = serialiseDependencyTree( rootNode );
+            String dependencyTreeString = serializeDependencyTree( rootNode );
 
             if ( outputFile != null )
             {
@@ -293,7 +293,7 @@ public class TreeMojo extends AbstractMojo
 
     /**
      * Gets the Maven project used by this mojo.
-     * 
+     *
      * @return the Maven project
      */
     public MavenProject getProject()
@@ -303,7 +303,7 @@ public class TreeMojo extends AbstractMojo
 
     /**
      * Gets the computed dependency tree root node for the Maven project.
-     * 
+     *
      * @return the dependency tree root node
      */
     public DependencyNode getDependencyTree()
@@ -315,7 +315,7 @@ public class TreeMojo extends AbstractMojo
 
     /**
      * Gets the artifact filter to use when resolving the dependency tree.
-     * 
+     *
      * @return the artifact filter
      */
     private ArtifactFilter createResolvingArtifactFilter()
@@ -338,16 +338,15 @@ public class TreeMojo extends AbstractMojo
     }
 
     /**
-     * Serialises the specified dependency tree to a string.
-     * 
+     * Serializes the specified dependency tree to a string.
+     *
      * @param rootNode
-     *            the dependency tree root node to serialise
-     * @return the serialised dependency tree
+     *            the dependency tree root node to serialize
+     * @return the serialized dependency tree
      */
-    private String serialiseDependencyTree( DependencyNode rootNode )
+    private String serializeDependencyTree( DependencyNode rootNode )
     {
         StringWriter writer = new StringWriter();
-        TreeTokens treeTokens = toTreeTokens( tokens );
 
         DependencyNodeVisitor visitor = getSerializingDependencyNodeVisitor( writer );
 
@@ -393,7 +392,7 @@ public class TreeMojo extends AbstractMojo
 
     /**
      * Gets the tree tokens instance for the specified name.
-     * 
+     *
      * @param tokens
      *            the tree tokens name
      * @return the <code>TreeTokens</code> instance
@@ -424,7 +423,7 @@ public class TreeMojo extends AbstractMojo
 
     /**
      * Gets the dependency node filter to use when serializing the dependency tree.
-     * 
+     *
      * @return the dependency node filter, or <code>null</code> if none required
      */
     private DependencyNodeFilter createDependencyNodeFilter()
@@ -464,16 +463,16 @@ public class TreeMojo extends AbstractMojo
         return filters.isEmpty() ? null : new AndDependencyNodeFilter( filters );
     }
 
-    //following is required because the version handling in maven code 
+    //following is required because the version handling in maven code
     //doesn't work properly. I ripped it out of the enforcer rules.
-    
+
 
 
     /**
      * Copied from Artifact.VersionRange. This is tweaked to handle singular ranges properly. Currently the default
      * containsVersion method assumes a singular version means allow everything. This method assumes that "2.0.4" ==
      * "[2.0.4,)"
-     * 
+     *
      * @param allowedRange range of allowed versions.
      * @param theVersion the version to be checked.
      * @return true if the version is contained by the range.
