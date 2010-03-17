@@ -1,0 +1,22 @@
+import java.io.*;
+import java.util.*;
+import java.util.jar.*;
+import java.util.regex.*;
+
+File jarFile = new File( basedir, "target/test-1.0.jar" );
+System.out.println( "Checking for existence of " + jarFile );
+if ( !jarFile.isFile() )
+{
+    throw new FileNotFoundException( "Missing " + jarFile );
+}
+
+JarFile jar = new JarFile( jarFile );
+
+Manifest mf = jar.getManifest();
+String classpath = mf.getMainAttributes().getValue( Attributes.Name.CLASS_PATH );
+if ( classpath == null || classpath.indexOf( "junit-3.8.2.jar" ) < 0 )
+{
+    throw new IllegalStateException( "Bad Class-Path " + classpath );
+}
+
+jar.close();

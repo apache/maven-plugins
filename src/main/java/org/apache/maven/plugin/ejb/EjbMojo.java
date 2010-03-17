@@ -40,6 +40,7 @@ import java.util.List;
  * @author <a href="evenisse@apache.org">Emmanuel Venisse</a>
  * @version $Id$
  * @goal ejb
+ * @requiresDependencyResolution runtime
  * @phase package
  */
 public class EjbMojo
