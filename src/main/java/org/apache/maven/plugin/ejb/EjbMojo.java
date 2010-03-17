@@ -71,7 +71,6 @@ public class EjbMojo
      * Directory that resources are copied to during the build.
      *
      * @parameter default-value="${project.build.outputDirectory}" expression="${outputDirectory}"
-     * @required
      */
     private File outputDirectory;
 
@@ -79,7 +78,6 @@ public class EjbMojo
      * The name of the EJB file to generate.
      *
      * @parameter default-value="${project.build.finalName}" expression="${jarName}"
-     * @required
      */
     private String jarName;
 
@@ -146,7 +144,7 @@ public class EjbMojo
     /**
      * The Maven project.
      *
-     * @parameter expression="${project}"
+     * @parameter default-value="${project}"
      * @required
      * @readonly
      */
@@ -170,7 +168,6 @@ public class EjbMojo
      * </pre>
      *
      * @parameter default-value="2.1" expression="${ejb.ejbVersion}"
-     * @required
      * @since 2.1
      */
     private String ejbVersion;
