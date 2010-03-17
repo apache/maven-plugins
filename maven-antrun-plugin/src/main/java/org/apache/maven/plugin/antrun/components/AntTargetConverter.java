@@ -90,9 +90,9 @@ public class AntTargetConverter
         throws ComponentConfigurationException
     {
         Project project = new Project();
-        project.setName( "DummyProject" );
+        project.setName( "AntrunPluginProject" );
 
-        target.setName( "" );
+        target.setName( "antrun-target" );
         target.setProject( project );
         String[] attributeNames = configuration.getAttributeNames();
         for ( int i = 0; i < attributeNames.length; i++ )
@@ -197,11 +197,11 @@ public class AntTargetConverter
      *
      * @see <a href="http://ant.apache.org/manual/using.html#targets">Ant targets</a>
      *
-     * @param tasks should be not null
+     * @param target should be not null
      * @param attributeName if empty, skipped
      * @param attributeValue if empty, skipped
      */
-    private static void addAttributes( Target tasks, String attributeName, String attributeValue )
+    private static void addAttributes( Target target, String attributeName, String attributeValue )
     {
         if ( StringUtils.isEmpty( attributeName ) )
         {
@@ -214,19 +214,19 @@ public class AntTargetConverter
 
         if ( attributeName.toLowerCase().equals( "name" ) )
         {
-            tasks.setName( attributeValue );
+            target.setName( attributeValue );
         }
         if ( attributeName.toLowerCase().equals( "unless" ) )
         {
-            tasks.setUnless( attributeValue );
+            target.setUnless( attributeValue );
         }
         if ( attributeName.toLowerCase().equals( "description" ) )
         {
-            tasks.setDescription( attributeValue );
+            target.setDescription( attributeValue );
         }
         if ( attributeName.toLowerCase().equals( "if" ) )
         {
-            tasks.setIf( attributeValue );
+            target.setIf( attributeValue );
         }
     }
 }
