@@ -54,6 +54,8 @@ under the License.
   ...
 </project>
           </source>
+Please see the <a href="http://maven.apache.org/shared/maven-archiver/examples/classpath.html">Maven Archiver Reference</a>
+for more information about controlling the exact format of the generated class path entries.
         </p>
       </answer>
     </faq>
