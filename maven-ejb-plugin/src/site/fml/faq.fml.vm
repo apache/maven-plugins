@@ -38,6 +38,7 @@ under the License.
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-ejb-plugin</artifactId>
+        <version>${project.version}</version>
         ...
         <configuration>
           <archive>
