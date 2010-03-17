@@ -25,7 +25,7 @@ under the License.
   <parent>
     <groupId>org.apache.maven.plugins</groupId>
     <artifactId>maven-plugins</artifactId>
-    <version>14</version>
+    <version>17</version>
   </parent>
 
   <artifactId>maven-ejb-plugin</artifactId>
@@ -124,7 +124,7 @@ under the License.
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-invoker-plugin</artifactId>
-            <version>1.4</version>
+            <version>1.5</version>
             <configuration>
               <debug>true</debug>
               <projectsDirectory>src/it</projectsDirectory>
