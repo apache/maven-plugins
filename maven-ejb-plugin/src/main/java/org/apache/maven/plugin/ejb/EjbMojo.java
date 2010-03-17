@@ -235,7 +235,9 @@ public class EjbMojo
         {
             String[] mainJarExcludes = DEFAULT_EXCLUDES;
 
-            if ( excludes != null && !excludes.isEmpty() ) {
+            if ( excludes != null && !excludes.isEmpty() )
+            {
+                excludes.add( EJB_JAR_XML );
                 mainJarExcludes = (String[]) excludes.toArray( EMPTY_STRING_ARRAY );
             }
 
