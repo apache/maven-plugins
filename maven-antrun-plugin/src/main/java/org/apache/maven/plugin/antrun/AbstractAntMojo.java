@@ -29,6 +29,7 @@ import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
+import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.antrun.components.AntTargetConverter;
@@ -38,6 +39,7 @@ import org.apache.tools.ant.DefaultLogger;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.PropertyHelper;
 import org.apache.tools.ant.Target;
+import org.apache.tools.ant.taskdefs.Typedef;
 import org.apache.tools.ant.types.Path;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator;
 import org.codehaus.plexus.util.StringUtils;
@@ -52,14 +54,41 @@ import org.codehaus.plexus.util.StringUtils;
 public abstract class AbstractAntMojo
     extends AbstractMojo
 {
+
+    /**
+     * The path to The XML file containing the definition of the Maven tasks.
+     */
+    public final static String ANTLIB = "org/apache/maven/ant/tasks/antlib.xml";
+
+    /**
+     * The URI which defines the built in Ant tasks
+     */
+    public final static String TASK_URI = "antlib:org.apache.maven.ant.tasks";
+    
     /**
      * The Maven project object
      *
      * @parameter expression="${project}"
-     * @required
      * @readonly
      */
     private MavenProject project;
+
+    /**
+     * The plugin dependencies.
+     *
+     * @parameter expression="${plugin.artifacts}"
+     * @required
+     * @readonly
+     */
+    private List pluginArtifacts;
+
+    /**
+     * The local Maven repository
+     * 
+     * @parameter expression="${localRepository}"
+     * @readonly
+     */
+    protected ArtifactRepository localRepository;
 
     /**
      * String to prepend to project and dependency property names.
@@ -68,22 +97,30 @@ public abstract class AbstractAntMojo
     private String propertyPrefix;
     
     /**
+     * The xml namespace to use for the built in Ant tasks.
+     * @parameter default-value="mvn"
+     */
+    private String taskNamespace;
+    
+    /**
      * @deprecated use {@link AbstractAntMojo#executeTasks(Target,MavenProject,List)}.
      */
-    protected void executeTasks( Target antTasks, MavenProject mavenProject )
+    /*protected void executeTasks( Target antTasks, MavenProject mavenProject )
         throws MojoExecutionException
     {
-        executeTasks( antTasks, mavenProject, null );
-    }
+        executeTasks( antTasks, null );
+    }*/
 
     /**
      * @param antTasks
      * @param mavenProject
      * @throws MojoExecutionException
      */
-    protected void executeTasks( Target antTasks, MavenProject mavenProject, List pluginArtifacts )
+    protected void executeTasks( Target antTasks )
         throws MojoExecutionException
     {
+        MavenProject mavenProject = getMavenProject();
+        
         if ( antTasks == null )
         {
             getLog().info( "No ant tasks defined - SKIPPED" );
@@ -131,6 +168,10 @@ public abstract class AbstractAntMojo
 
             /* set maven.plugin.classpath with plugin dependencies */
             antProject.addReference( "maven.plugin.classpath", getPathFromArtifacts( pluginArtifacts, antProject ) );
+            
+            antProject.addReference( "maven.project", getMavenProject() );
+            antProject.addReference( "maven.local.repository", localRepository );
+            initMavenTasks( antProject );
             
             // The ant project needs actual properties vs. using expression evaluator when calling an external build file.
             copyProperties( mavenProject, antProject );
@@ -254,5 +295,15 @@ public abstract class AbstractAntMojo
     public MavenProject getMavenProject()
     {
         return this.project;
+    }
+    
+    public void initMavenTasks( Project antProject )
+    {
+        getLog().debug( "Initialize Maven Ant Tasks" );
+        Typedef typedef = new Typedef();
+        typedef.setProject( antProject );
+        typedef.setResource( ANTLIB );
+        //typedef.setURI( TASK_URI );
+        typedef.execute();
     }
 }
