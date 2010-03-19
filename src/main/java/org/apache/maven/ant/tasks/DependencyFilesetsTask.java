@@ -20,7 +20,7 @@ package org.apache.maven.ant.tasks;
  */
 
 import java.io.File;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -97,7 +97,7 @@ public class DependencyFilesetsTask
         MavenProject mavenProject = (MavenProject) this.getProject().getReference( "maven.project" );
 
         // Add filesets for depenedency artifacts
-        Set depArtifacts = filterArtifacts( mavenProject.getDependencyArtifacts() );
+        Set depArtifacts = filterArtifacts( mavenProject.getArtifacts() );
 
         FileSet dependenciesFileSet = new FileSet();
         dependenciesFileSet.setProject( getProject() );
@@ -201,7 +201,7 @@ public class DependencyFilesetsTask
             filter.add( new TypesArtifactFilter( getTypes() ) );
         }
 
-        Set artifactsResult = new HashSet();
+        Set artifactsResult = new LinkedHashSet();
         for ( Iterator iter = artifacts.iterator(); iter.hasNext(); )
         {
             Artifact artifact = (Artifact) iter.next();
