@@ -1,0 +1,78 @@
+ ------
+ DependencyFileSets Task
+ ------
+ Paul Gier
+ ------
+ March 2010
+ ------
+
+ ~~ Licensed to the Apache Software Foundation (ASF) under one
+ ~~ or more contributor license agreements.  See the NOTICE file
+ ~~ distributed with this work for additional information
+ ~~ regarding copyright ownership.  The ASF licenses this file
+ ~~ to you under the Apache License, Version 2.0 (the
+ ~~ "License"); you may not use this file except in compliance
+ ~~ with the License.  You may obtain a copy of the License at
+ ~~
+ ~~   http://www.apache.org/licenses/LICENSE-2.0
+ ~~
+ ~~ Unless required by applicable law or agreed to in writing,
+ ~~ software distributed under the License is distributed on an
+ ~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ ~~ KIND, either express or implied.  See the License for the
+ ~~ specific language governing permissions and limitations
+ ~~ under the License.
+
+ ~~ NOTE: For help with the syntax of this file, see:
+ ~~ http://maven.apache.org/doxia/references/apt-format.html
+ 
+DependencyFilesets Task
+
+  This task will create fileset objects containing the Maven project dependencies.  This can be used access
+  specific dependency artifacts, or to operate on a set of dependency artifacts.  Each artifact will be assigned 
+  a fileset ID in the form <<<[prefix]groupId:artifactId:[classifier]:type>>>.  A dependency on a junit jar would be
+  given a fileset ID of <<<junit:junit:jar>>>.
+  
+  In addition, a single fileset containing all the project dependencies will be created using the default ID
+  maven.project.dependencies
+
+* Task Parameters
+
+*---------------+--------------------------------------------------------+-----------------------------------*
+|| Attribute    || Description                                           || Required                          |
+*---------------+--------------------------------------------------------+-----------------------------------*
+| prefix        | String to prepend to all fileset IDs                   | No, defaults to empty string      |
+*---------------+--------------------------------------------------------+-----------------------------------*
+| projectDependenciesId  | RefId for the fileset containing all project dependencies  | No, defaults to "maven.project.dependencies     |
+*---------------+--------------------------------------------------------+-----------------------------------*
+| scopes        | Comma separated list of artifact scopes to include     | No, defaults to all artifacts     |
+*---------------+--------------------------------------------------------+-----------------------------------*
+| types         | Comma separated list of artifact types to include      | No, defaults to all artifacts     |
+*---------------+--------------------------------------------------------+-----------------------------------*
+
+
+* Example
+
+  This example shows how to access individual dependencies and the combined dependency fileset.
+  
+------
+    <configuration>
+      <tasks>
+
+        <dependencyfilesets prefix="mydeps."/>
+        <mkdir dir="target/dependencies"/>
+        <copy todir="target/dependencies">
+          <fileset refid="mydeps.junit:junit:jar"/>
+          <fileset refid="mydeps.org.apache.ant:ant:jar"/>
+        </copy>
+        
+        <mkdir dir="target/dependencies2"/>
+        <copy todir="target/dependencies2" flatten="true">
+          <fileset refid="mydeps.maven.project.dependencies"/>
+        </copy>
+
+      </tasks>
+    </configuration>
+
+------
+

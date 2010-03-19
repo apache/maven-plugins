@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  
+  <groupId>org.apache.maven.plugins.antrun</groupId>
+  <artifactId>properties-test</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <name>Test for passing properties to the ant build</name>
+  <description>Test for passing properties to the ant build</description>
+ 
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>@pom.version@</version>
+        <executions>
+          <execution>
+            <id>antrun</id>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <tasks>
+
+                <dependencyfilesets prefix="test."/>
+                <mkdir dir="target/dependencies"/>
+                <copy todir="target/dependencies">
+                  <fileset refid="test.junit:junit:jar"/>
+                  <fileset refid="test.org.apache.ant:ant:jar"/>
+                </copy>
+                
+                <mkdir dir="target/dependencies2"/>
+                <copy todir="target/dependencies2" flatten="true">
+                  <fileset refid="test.maven.project.dependencies"/>
+                </copy>
+
+              </tasks>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.ant</groupId>
+      <artifactId>ant</artifactId>
+      <version>1.7.1</version>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.2</version>
+    </dependency>
+  </dependencies>
+
+
+</project>
