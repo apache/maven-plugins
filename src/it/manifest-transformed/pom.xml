@@ -63,7 +63,8 @@ under the License.
               <mainClass>org.apache.maven.Main</mainClass>
             </manifest>
             <manifestEntries>
-              <Test-Entry>PASSED</Test-Entry>
+              <Test-Entry>FAILED</Test-Entry>
+              <Original-Entry>PASSED</Original-Entry>
             </manifestEntries>
           </archive>
         </configuration>
