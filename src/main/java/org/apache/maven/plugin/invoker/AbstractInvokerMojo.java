@@ -162,9 +162,10 @@ public abstract class AbstractInvokerMojo
     private boolean cloneAllFiles;
     
     /**
-     * Ensure the cloneProjectsTo directory is not polluted with files from earlier invoker runs.  
+     * Ensure the {@link #cloneProjectsTo} directory is not polluted with files from earlier invoker runs.
      * 
      * @parameter default-value="false"
+     * @since 1.6
      */
     private boolean cloneClean;
 
@@ -758,7 +759,7 @@ public abstract class AbstractInvokerMojo
     private void cloneProjects( Collection projectPaths )
         throws MojoExecutionException
     {
-        if ( !cloneProjectsTo.mkdirs() && cloneClean ) 
+        if ( !cloneProjectsTo.mkdirs() && cloneClean )
         {
             try
             {
@@ -766,7 +767,8 @@ public abstract class AbstractInvokerMojo
             }
             catch ( IOException e )
             {
-                throw new MojoExecutionException( "Could not clean the cloneProjectsTo directory. Reason: " + e.getMessage(), e );
+                throw new MojoExecutionException( "Could not clean the cloneProjectsTo directory. Reason: "
+                    + e.getMessage(), e );
             }
         }
 
