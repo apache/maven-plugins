@@ -16,6 +16,11 @@ if ( !"PASSED".equals( mf.getMainAttributes().getValue( "Test-Entry" ) ) )
     throw new IllegalStateException( "META-INF/MANIFEST.MF is incomplete" );
 }
 
+if ( !"PASSED".equals( mf.getMainAttributes().getValue( "Original-Entry" ) ) )
+{
+    throw new IllegalStateException( "META-INF/MANIFEST.MF is incomplete" );
+}
+
 if ( !"org.apache.maven.Shade".equals( mf.getMainAttributes().getValue( "Main-Class" ) ) )
 {
     throw new IllegalStateException( "META-INF/MANIFEST.MF is incomplete" );
