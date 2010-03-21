@@ -44,9 +44,8 @@ import org.codehaus.plexus.util.IOUtil;
 public class ServicesResourceTransformer
     implements ResourceTransformer
 {
-    private static final String SERVICES_PATH = "META-INF/services";
 
-    private ByteArrayOutputStream data;
+    private static final String SERVICES_PATH = "META-INF/services";
 
     private Map serviceEntries = new HashMap();
 
@@ -54,14 +53,6 @@ public class ServicesResourceTransformer
     {
         if ( resource.startsWith( SERVICES_PATH ) )
         {
-            data = (ByteArrayOutputStream) serviceEntries.get( resource );
-
-            if ( data == null )
-            {
-                data = new ByteArrayOutputStream();
-                serviceEntries.put( resource, data );
-            }
-
             return true;
         }
 
@@ -71,7 +62,14 @@ public class ServicesResourceTransformer
     public void processResource( String resource, InputStream is, List relocators )
         throws IOException
     {
-        IOUtil.copy( is, data );
+        ServiceStream out = (ServiceStream) serviceEntries.get( resource );
+        if ( out == null )
+        {
+            out = new ServiceStream();
+            serviceEntries.put( resource, out );
+        }
+
+        out.append( is );
         is.close();
     }
 
@@ -86,10 +84,38 @@ public class ServicesResourceTransformer
         for ( Iterator i = serviceEntries.keySet().iterator(); i.hasNext(); )
         {
             String key = (String) i.next();
-            ByteArrayOutputStream data = (ByteArrayOutputStream) serviceEntries.get( key );
+            ServiceStream data = (ServiceStream) serviceEntries.get( key );
             jos.putNextEntry( new JarEntry( key ) );
-            IOUtil.copy( new ByteArrayInputStream( data.toByteArray() ), jos );
+            IOUtil.copy( data.toInputStream(), jos );
             data.reset();
         }
     }
+
+    static class ServiceStream
+        extends ByteArrayOutputStream
+    {
+
+        public ServiceStream()
+        {
+            super( 1024 );
+        }
+
+        public void append( InputStream is )
+            throws IOException
+        {
+            if ( count > 0 && buf[count - 1] != '\n' && buf[count - 1] != '\r' )
+            {
+                write( '\n' );
+            }
+
+            IOUtil.copy( is, this );
+        }
+
+        public InputStream toInputStream()
+        {
+            return new ByteArrayInputStream( buf, 0, count );
+        }
+
+    }
+
 }

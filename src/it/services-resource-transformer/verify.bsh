@@ -1,0 +1,14 @@
+import java.io.*;
+import java.util.jar.*;
+import org.codehaus.plexus.util.*;
+
+JarFile jarFile = new JarFile( new File( basedir, "target/test-1.0.jar" ) );
+JarEntry jarEntry = jarFile.getEntry( "META-INF/services/org.apache.maven.Shade" );
+String service = IOUtil.toString( jarFile.getInputStream( jarEntry ), "UTF-8" );
+jarFile.close();
+
+String[] providers = service.split( "(\r\n)|(\r)|(\n)" );
+if ( providers.length != 2 )
+{
+    throw new IllegalStateException( "Broken provider list: " + service );
+}
