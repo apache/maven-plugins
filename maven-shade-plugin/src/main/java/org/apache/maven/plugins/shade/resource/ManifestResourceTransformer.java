@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.jar.Attributes;
 import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
 
@@ -42,7 +43,6 @@ import org.codehaus.plexus.util.IOUtil;
 public class ManifestResourceTransformer
     implements ResourceTransformer
 {
-    private static final String MANIFEST_PATH = "META-INF/MANIFEST.MF";
 
     // Configuration
     private String mainClass;
@@ -54,7 +54,7 @@ public class ManifestResourceTransformer
 
     public boolean canTransformResource( String resource )
     {
-        if ( MANIFEST_PATH.equalsIgnoreCase( resource ) )
+        if ( JarFile.MANIFEST_NAME.equalsIgnoreCase( resource ) )
         {
             return true;
         }
@@ -106,7 +106,7 @@ public class ManifestResourceTransformer
             }
         }
 
-        jos.putNextEntry( new JarEntry( MANIFEST_PATH ) );
+        jos.putNextEntry( new JarEntry( JarFile.MANIFEST_NAME ) );
         manifest.write( jos );
     }
 }

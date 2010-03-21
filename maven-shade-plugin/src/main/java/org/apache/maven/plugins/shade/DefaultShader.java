@@ -37,6 +37,7 @@ import java.util.regex.Pattern;
 import java.util.zip.ZipException;
 
 import org.apache.maven.plugins.shade.relocation.Relocator;
+import org.apache.maven.plugins.shade.resource.ManifestResourceTransformer;
 import org.apache.maven.plugins.shade.resource.ResourceTransformer;
 import org.apache.maven.plugins.shade.filter.Filter;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
@@ -60,10 +61,46 @@ public class DefaultShader
     {
         Set resources = new HashSet();
 
+        ResourceTransformer manifestTransformer = null;
+        List transformers = new ArrayList( resourceTransformers );
+        for ( Iterator it = transformers.iterator(); it.hasNext(); )
+        {
+            ResourceTransformer transformer = (ResourceTransformer) it.next();
+            if ( transformer instanceof ManifestResourceTransformer )
+            {
+                manifestTransformer = transformer;
+                it.remove();
+            }
+        }
+
         RelocatorRemapper remapper = new RelocatorRemapper( relocators );
 
         uberJar.getParentFile().mkdirs();
         JarOutputStream jos = new JarOutputStream( new FileOutputStream( uberJar ) );
+
+        if ( manifestTransformer != null )
+        {
+            for ( Iterator it = jars.iterator(); it.hasNext(); )
+            {
+                File jar = (File) it.next();
+                JarFile jarFile = newJarFile( jar );
+                for ( Enumeration en = jarFile.entries(); en.hasMoreElements(); )
+                {
+                    JarEntry entry = (JarEntry) en.nextElement();
+                    String resource = entry.getName();
+                    if ( manifestTransformer.canTransformResource( resource ) )
+                    {
+                        resources.add( resource );
+                        manifestTransformer.processResource( resource, jarFile.getInputStream( entry ), relocators );
+                        break;
+                    }
+                }
+            }
+            if ( manifestTransformer.hasTransformedResource() )
+            {
+                manifestTransformer.modifyOutputStream( jos );
+            }
+        }
 
         for ( Iterator i = jars.iterator(); i.hasNext(); )
         {
@@ -71,18 +108,7 @@ public class DefaultShader
 
             List jarFilters = getFilters( jar, filters );
 
-            JarFile jarFile;
-            
-            try 
-            {
-                jarFile = new JarFile( jar );
-            }
-            catch (ZipException zex)
-            {
-                // JarFile is not very verbose and doesn't tell the user which file it was
-                // so we will create a new Exception instead
-                throw new ZipException( "error in opening zip file " + jar );
-            }
+            JarFile jarFile = newJarFile( jar );
 
             for ( Enumeration j = jarFile.entries(); j.hasMoreElements(); )
             {
@@ -121,7 +147,7 @@ public class DefaultShader
                     }
                     else
                     {
-                        if ( !resourceTransformed( resourceTransformers, mappedName, is, relocators ) )
+                        if ( !resourceTransformed( transformers, mappedName, is, relocators ) )
                         {
                             // Avoid duplicates that aren't accounted for by the resource transformers
                             if ( resources.contains( mappedName ) )
@@ -140,7 +166,7 @@ public class DefaultShader
             jarFile.close();
         }
 
-        for ( Iterator i = resourceTransformers.iterator(); i.hasNext(); )
+        for ( Iterator i = transformers.iterator(); i.hasNext(); )
         {
             ResourceTransformer transformer = (ResourceTransformer) i.next();
 
@@ -151,6 +177,21 @@ public class DefaultShader
         }
 
         IOUtil.close( jos );
+    }
+
+    private JarFile newJarFile( File jar )
+        throws IOException
+    {
+        try
+        {
+            return new JarFile( jar );
+        }
+        catch ( ZipException zex )
+        {
+            // JarFile is not very verbose and doesn't tell the user which file it was
+            // so we will create a new Exception instead
+            throw new ZipException( "error in opening zip file " + jar );
+        }
     }
 
     private List getFilters( File jar, List filters )
