@@ -177,22 +177,44 @@ public class ShadeMojo
      * '?' can be used within the sub parts of those composite identifiers to do pattern matching. For convenience, the
      * syntax <code>groupId</code> is equivalent to <code>groupId:*:*:*</code>, <code>groupId:artifactId</code> is
      * equivalent to <code>groupId:artifactId:*:*</code> and <code>groupId:artifactId:classifier</code> is equivalent to
-     * <code>groupId:artifactId:*:classifier</code>.
+     * <code>groupId:artifactId:*:classifier</code>. For example:
+     * <pre>
+     * &lt;artifactSet&gt;
+     *   &lt;includes&gt;
+     *     &lt;include&gt;org.apache.maven:*&lt;/include&gt;
+     *   &lt;/includes&gt;
+     *   &lt;excludes&gt;
+     *     &lt;exclude&gt;*:maven-core&lt;/exclude&gt;
+     *   &lt;/excludes&gt;
+     * &lt;/artifactSet&gt;
+     * </pre>
      * 
      * @parameter
      */
     private ArtifactSet artifactSet;
 
     /**
-     * Packages to be relocated.
+     * Packages to be relocated. For example:
+     * <pre>
+     * &lt;relocations&gt;
+     *   &lt;relocation&gt;
+     *     &lt;pattern&gt;org.apache&lt;/pattern&gt;
+     *     &lt;shadedPattern&gt;hidden.org.apache&lt;/shadedPattern&gt;
+     *     &lt;excludes&gt;
+     *       &lt;exclude&gt;org.apache.ExcludedClass&lt;/exclude&gt;
+     *     &lt;/excludes&gt;
+     *   &lt;/relocation&gt;
+     * &lt;/relocations&gt;
+     * </pre>
      *
      * @parameter
      */
     private PackageRelocation[] relocations;
 
     /**
-     * Resource transformers to be used.
-     *
+     * Resource transformers to be used. Please see the "Examples" section for more information on available
+     * transformers and their configuration.
+     * 
      * @parameter
      */
     private ResourceTransformer[] transformers;
@@ -203,7 +225,20 @@ public class ShadeMojo
      * added to the shaded jar. From a logical perspective, includes are processed before excludes, thus it's possible
      * to use an include to collect a set of files from the archive then use excludes to further reduce the set. By
      * default, all files are included and no files are excluded. If multiple filters apply to an artifact, the
-     * intersection of the matched files will be included in the final JAR.
+     * intersection of the matched files will be included in the final JAR. For example:
+     * <pre>
+     * &lt;filters&gt;
+     *   &lt;filter&gt;
+     *     &lt;artifact&gt;junit:junit&lt;/artifact&gt;
+     *     &lt;includes&gt;
+     *       &lt;include&gt;org/junit/**&lt;/include&gt;
+     *     &lt;/includes&gt;
+     *     &lt;excludes&gt;
+     *       &lt;exclude&gt;org/junit/experimental/**&lt;/exclude&gt;
+     *     &lt;/excludes&gt;
+     *   &lt;/filter&gt;
+     * &lt;/filters&gt;
+     * </pre>
      * 
      * @parameter
      */
