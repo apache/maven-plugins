@@ -160,6 +160,13 @@ public abstract class AbstractInvokerMojo
      * @since 1.2
      */
     private boolean cloneAllFiles;
+    
+    /**
+     * Ensure the cloneProjectsTo directory is not polluted with files from earlier invoker runs.  
+     * 
+     * @parameter default-value="false"
+     */
+    private boolean cloneClean;
 
     /**
      * A single POM to build, skipping any scanning parameters and behavior.
@@ -751,7 +758,17 @@ public abstract class AbstractInvokerMojo
     private void cloneProjects( Collection projectPaths )
         throws MojoExecutionException
     {
-        cloneProjectsTo.mkdirs();
+        if ( !cloneProjectsTo.mkdirs() && cloneClean ) 
+        {
+            try
+            {
+                FileUtils.cleanDirectory( cloneProjectsTo );
+            }
+            catch ( IOException e )
+            {
+                throw new MojoExecutionException( "Could not clean the cloneProjectsTo directory. Reason: " + e.getMessage(), e );
+            }
+        }
 
         // determine project directories to clone
         Collection dirs = new LinkedHashSet();

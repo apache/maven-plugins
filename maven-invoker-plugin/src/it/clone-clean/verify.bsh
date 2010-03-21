@@ -1,0 +1,12 @@
+import java.io.*;
+
+try
+{
+    File itRoot = new File( basedir, "target/it/clone-clean" );
+    return !new File( itRoot, "foobar.log" ).exists();
+}
+catch( Throwable t )
+{
+    t.printStackTrace();
+    return false;
+}
