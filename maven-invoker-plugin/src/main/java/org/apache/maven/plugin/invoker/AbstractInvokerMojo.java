@@ -1241,9 +1241,9 @@ public abstract class AbstractInvokerMojo
                 scriptRunner.run( "selector script", basedir, selectorScript, context, logger,
                                   BuildJob.Result.SKIPPED, false );
             }
-            catch ( BuildErrorException e ) 
+            catch ( BuildErrorException e )
             {
-		throw e;
+                throw e;
             }
             catch ( BuildFailureException e )
             {
