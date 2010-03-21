@@ -1,0 +1,22 @@
+import java.io.*;
+import java.util.jar.*;
+
+// NOTE: We deliberately use JarInputStream and not JarFile here!
+JarInputStream jarStream = new JarInputStream( new FileInputStream( new File( basedir, "target/test-1.0.jar" ) ) );
+Manifest mf = jarStream.getManifest();
+jarStream.close();
+
+if ( mf == null )
+{
+    throw new IllegalStateException( "META-INF/MANIFEST.MF is missing" );
+}
+
+if ( !"PASSED".equals( mf.getMainAttributes().getValue( "Test-Entry" ) ) )
+{
+    throw new IllegalStateException( "META-INF/MANIFEST.MF is incomplete" );
+}
+
+if ( !"org.apache.maven.Shade".equals( mf.getMainAttributes().getValue( "Main-Class" ) ) )
+{
+    throw new IllegalStateException( "META-INF/MANIFEST.MF is incomplete" );
+}
