@@ -149,7 +149,7 @@ public class EffectiveSettingsMojo
 
             if ( StringUtils.isNotEmpty( proxy.getPassword() ) )
             {
-                proxy.setPassword( StringUtils.repeat( "*", proxy.getPassword().length() ) );
+                proxy.setPassword( "***" );
             }
         }
 
@@ -159,12 +159,12 @@ public class EffectiveSettingsMojo
             // Password
             if ( StringUtils.isNotEmpty( server.getPassword() ) )
             {
-                server.setPassword( StringUtils.repeat( "*", server.getPassword().length() ) );
+                server.setPassword( "***" );
             }
             // Passphrase
             if ( StringUtils.isNotEmpty( server.getPassphrase() ) )
             {
-                server.setPassphrase( StringUtils.repeat( "*", server.getPassphrase().length() ) );
+                server.setPassphrase( "***" );
             }
         }
     }
