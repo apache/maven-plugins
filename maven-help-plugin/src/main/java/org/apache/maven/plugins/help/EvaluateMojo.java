@@ -130,6 +130,13 @@ public class EvaluateMojo
     private String artifact;
 
     /**
+     * An expression to evaluate instead of prompting. Note that this <i>must not</i> include the surrounding ${...}.
+     *
+     * @parameter expression="${expression}"
+     */
+    private String expression;
+
+    /**
      * Local Repository.
      *
      * @parameter expression="${localRepository}"
@@ -192,7 +199,7 @@ public class EvaluateMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        if ( !settings.isInteractiveMode() )
+        if ( expression == null && !settings.isInteractiveMode() )
         {
             StringBuffer msg = new StringBuffer();
             msg.append( "Maven is configured to NOT interact with the user for input. " );
@@ -219,24 +226,31 @@ public class EvaluateMojo
             }
         }
 
-        while ( true )
+        if ( expression == null )
         {
-            getLog().info( "Enter the Maven expression i.e. ${project.groupId} or 0 to exit?:" );
-
-            try
+            while ( true )
             {
-                String userExpression = inputHandler.readLine();
-                if ( userExpression == null || userExpression.toLowerCase( Locale.ENGLISH ).equals( "0" ) )
+                getLog().info( "Enter the Maven expression i.e. ${project.groupId} or 0 to exit?:" );
+
+                try
                 {
-                    break;
-                }
+                    String userExpression = inputHandler.readLine();
+                    if ( userExpression == null || userExpression.toLowerCase( Locale.ENGLISH ).equals( "0" ) )
+                    {
+                        break;
+                    }
 
-                handleResponse( userExpression );
+                    handleResponse( userExpression );
+                }
+                catch ( IOException e )
+                {
+                    throw new MojoExecutionException( "Unable to read from standard input.", e );
+                }
             }
-            catch ( IOException e )
-            {
-                throw new MojoExecutionException( "Unable to read from standard input.", e );
-            }
+        }
+        else
+        {
+            handleResponse( "${" + expression + "}" );
         }
     }
 
