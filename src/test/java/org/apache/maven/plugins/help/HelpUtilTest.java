@@ -19,17 +19,13 @@ package org.apache.maven.plugins.help;
  * under the License.
  */
 
+import org.apache.maven.execution.MavenSession;
+import org.apache.maven.plugin.testing.AbstractMojoTestCase;
+
 import java.io.File;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Properties;
-
-import junit.framework.Assert;
-
-import org.apache.maven.execution.MavenSession;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 
 /**
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
@@ -63,18 +59,6 @@ public class HelpUtilTest
                               Arrays.asList( new String[] { "evaluate" } ),
                               describe.project.getBasedir().toString(), new Properties(),
                               Calendar.getInstance().getTime() );
-        try
-        {
-            HelpUtil.getMojoDescriptor( "help:evaluate", session, describe.project, "help:evaluate", true, false );
-            assertTrue( true );
-        }
-        catch ( MojoFailureException e )
-        {
-            Assert.fail( "The API changes" );
-        }
-        catch ( MojoExecutionException e )
-        {
-            Assert.fail( "The API changes" );
-        }
+        HelpUtil.getMojoDescriptor( "help:evaluate", session, describe.project, "help:evaluate", true, false );
     }
 }
