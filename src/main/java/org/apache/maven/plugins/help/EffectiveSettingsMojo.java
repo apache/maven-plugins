@@ -156,10 +156,15 @@ public class EffectiveSettingsMojo
         for ( Iterator it = aSettings.getServers().iterator(); it.hasNext(); )
         {
             Server server = (Server) it.next();
-
+            // Password
             if ( StringUtils.isNotEmpty( server.getPassword() ) )
             {
                 server.setPassword( StringUtils.repeat( "*", server.getPassword().length() ) );
+            }
+            // Passphrase
+            if ( StringUtils.isNotEmpty( server.getPassphrase() ) )
+            {
+                server.setPassphrase( StringUtils.repeat( "*", server.getPassphrase().length() ) );
             }
         }
     }
