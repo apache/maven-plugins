@@ -293,7 +293,14 @@ public class DescribeMojo
 
             if ( StringUtils.isNotEmpty( goal ) )
             {
-                describeMojo( descriptor.getMojo( goal ), descriptionBuffer );
+                MojoDescriptor mojo = descriptor.getMojo( goal );
+                if ( mojo == null )
+                {
+                    throw new MojoFailureException(
+                        "The mojo '" + goal + "' does not exist in the plugin '" + pi.getPrefix() + "'" );
+                }
+
+                describeMojo( mojo, descriptionBuffer );
             }
             else
             {
