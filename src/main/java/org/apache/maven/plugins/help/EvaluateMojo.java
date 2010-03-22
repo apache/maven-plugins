@@ -116,6 +116,11 @@ public class EvaluateMojo
      */
     private ArtifactResolver resolver;
 
+    /**
+     * @component
+     */
+    private LoggerRetriever loggerRetriever;
+
     // ----------------------------------------------------------------------
     // Mojo parameters
     // ----------------------------------------------------------------------
@@ -362,7 +367,7 @@ public class EvaluateMojo
             MojoExecution mojoExecution = new MojoExecution( mojoDescriptor );
             evaluator =
                 new PluginParameterExpressionEvaluator( session, mojoExecution, pathTranslator,
-                                                        session.getContainer().getLogger(), project,
+                                                        loggerRetriever.getLogger(), project,
                                                         session.getExecutionProperties() );
         }
 
