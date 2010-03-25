@@ -21,6 +21,7 @@
     </dependency>
   </dependencies>
   <reporting>
+    <excludeDefaults>true</excludeDefaults>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

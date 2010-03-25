@@ -44,6 +44,12 @@ import org.codehaus.plexus.util.ReaderFactory;
 public abstract class AbstractSiteMojo
     extends AbstractMojo
 {
+
+    /**
+     * @parameter
+     */
+    protected ReportPlugin[] reportPlugins;
+
     /**
      * A comma separated list of locales supported by Maven. The first valid token will be the default Locale
      * for this instance of the Java Virtual Machine.
@@ -69,15 +75,14 @@ public abstract class AbstractSiteMojo
     /**
      * Directory containing the site.xml file and the source for apt, fml and xdoc docs.
      *
-     * @parameter expression="${basedir}/src/site"
-     * @required
+     * @parameter default-value="${basedir}/src/site"
      */
     protected File siteDirectory;
 
     /**
      * The maven project.
      *
-     * @parameter expression="${project}"
+     * @parameter default-value="${project}"
      * @required
      * @readonly
      */
@@ -86,18 +91,18 @@ public abstract class AbstractSiteMojo
     /**
      * The local repository.
      *
-     * @parameter expression="${localRepository}"
+     * @parameter default-value="${localRepository}"
      */
     protected ArtifactRepository localRepository;
 
     /**
      * The reactor projects.
      *
-     * @parameter expression="${reactorProjects}"
+     * @parameter default-value="${reactorProjects}"
      * @required
      * @readonly
      */
-    protected List reactorProjects;
+    protected List<MavenProject> reactorProjects;
 
     /**
      * Specifies the input encoding.

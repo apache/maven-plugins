@@ -31,6 +31,8 @@ public class MavenReportExecutorRequest
 
     private MavenProject project;
 
+    private ReportPlugin[] reportPlugins;
+
     public ArtifactRepository getLocalRepository()
     {
         return localRepository;
@@ -59,6 +61,16 @@ public class MavenReportExecutorRequest
     public void setProject( MavenProject project )
     {
         this.project = project;
+    }
+
+    public ReportPlugin[] getReportPlugins()
+    {
+        return reportPlugins;
+    }
+
+    public void setReportPlugins( ReportPlugin[] reportPlugins )
+    {
+        this.reportPlugins = reportPlugins;
     }
 
 }

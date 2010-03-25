@@ -29,8 +29,6 @@ import org.apache.maven.artifact.repository.RepositoryRequest;
 import org.apache.maven.artifact.resolver.filter.ExclusionSetFilter;
 import org.apache.maven.lifecycle.LifecycleExecutor;
 import org.apache.maven.model.Plugin;
-import org.apache.maven.model.ReportPlugin;
-import org.apache.maven.model.ReportSet;
 import org.apache.maven.plugin.MavenPluginManager;
 import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.MojoExecution;
@@ -112,9 +110,8 @@ public class DefaultMavenReportExecutor
 
             List<MavenReportExecution> reports = new ArrayList<MavenReportExecution>();
 
-            for ( ReportPlugin reportPlugin : mavenReportExecutorRequest.getProject().getReporting().getPlugins() )
+            for ( ReportPlugin reportPlugin : mavenReportExecutorRequest.getReportPlugins() )
             {
-                
                 Plugin plugin = new Plugin();
                 plugin.setGroupId( reportPlugin.getGroupId() );
                 plugin.setArtifactId( reportPlugin.getArtifactId() );
@@ -175,10 +172,10 @@ public class DefaultMavenReportExecutor
 
                     if ( reportPlugin.getConfiguration() != null )
                     {
+                        Xpp3Dom reportConfiguration = convert( reportPlugin.getConfiguration() );
 
                         Xpp3Dom mergedConfiguration =
-                            Xpp3DomUtils.mergeXpp3Dom( (Xpp3Dom) reportPlugin.getConfiguration(),
-                                                       convert( mojoDescriptor ) );
+                            Xpp3DomUtils.mergeXpp3Dom( reportConfiguration, convert( mojoDescriptor ) );
                         
                         Xpp3Dom cleanedConfiguration = new Xpp3Dom( "configuration" );
                         if ( mergedConfiguration.getChildren() != null )
@@ -338,29 +335,28 @@ public class DefaultMavenReportExecutor
 
     private Xpp3Dom convert( MojoDescriptor mojoDescriptor )
     {
-        Xpp3Dom dom = new Xpp3Dom( "configuration" );
+        PlexusConfiguration config = mojoDescriptor.getMojoConfiguration();
+        return ( config != null ) ? convert( config ) : new Xpp3Dom( "configuration" );
+    }
 
-        PlexusConfiguration c = mojoDescriptor.getMojoConfiguration();
-
-        PlexusConfiguration[] ces = c.getChildren();
-
-        if ( ces != null )
+    private Xpp3Dom convert( PlexusConfiguration config )
+    {
+        if ( config == null )
         {
-            for ( PlexusConfiguration ce : ces )
-            {
-                String value = ce.getValue( null );
-                String defaultValue = ce.getAttribute( "default-value", null );
-                if ( value != null || defaultValue != null )
-                {
-                    Xpp3Dom e = new Xpp3Dom( ce.getName() );
-                    e.setValue( value );
-                    if ( defaultValue != null )
-                    {
-                        e.setAttribute( "default-value", defaultValue );
-                    }
-                    dom.addChild( e );
-                }
-            }
+            return null;
+        }
+
+        Xpp3Dom dom = new Xpp3Dom( config.getName() );
+        dom.setValue( config.getValue( null ) );
+
+        for ( String attrib : config.getAttributeNames() )
+        {
+            dom.setAttribute( attrib, config.getAttribute( attrib, null ) );
+        }
+
+        for ( int n = config.getChildCount(), i = 0; i < n; i++ )
+        {
+            dom.addChild( convert( config.getChild( i ) ) );
         }
 
         return dom;

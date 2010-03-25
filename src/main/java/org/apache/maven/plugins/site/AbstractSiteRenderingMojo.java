@@ -196,7 +196,7 @@ public abstract class AbstractSiteRenderingMojo
     protected List<MavenReportExecution> getReports()
         throws MojoExecutionException
     {
-        if ( this.project.getReporting() == null || this.project.getReporting().getPlugins().isEmpty() )
+        if ( reportPlugins == null || reportPlugins.length <= 0 )
         {
             return Collections.emptyList();
         }
@@ -204,6 +204,7 @@ public abstract class AbstractSiteRenderingMojo
         mavenReportExecutorRequest.setLocalRepository( localRepository );
         mavenReportExecutorRequest.setMavenSession( mavenSession );
         mavenReportExecutorRequest.setProject( project );
+        mavenReportExecutorRequest.setReportPlugins( reportPlugins );
         return mavenReportExecutor.buildMavenReports( mavenReportExecutorRequest );
     }
 
