@@ -26,6 +26,7 @@ import org.codehaus.plexus.configuration.PlexusConfiguration;
 
 /**
  * Represents a reporting plugin and its executions.
+ * @since 3.0-beta-1
  */
 public class ReportPlugin
 {
