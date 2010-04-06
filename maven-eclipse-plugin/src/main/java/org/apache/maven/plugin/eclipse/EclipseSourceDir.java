@@ -230,6 +230,15 @@ public class EclipseSourceDir
     }
 
     /**
+     * Wheter this resource should be copied with filtering.
+     * @param filtering filter resources
+     */
+    public void setFiltering(boolean filtering)
+    {
+        this.filtering = filtering;
+    }
+
+    /**
      * @see java.lang.Object#equals(java.lang.Object)
      */
     public boolean equals( Object obj )
@@ -289,19 +298,9 @@ public class EclipseSourceDir
      * @throws MojoExecutionException test or filtering values are not identical, or isResource true and output are not
      *             identical
      */
-    public void merge( EclipseSourceDir mergeWith )
+    public boolean merge( EclipseSourceDir mergeWith )
         throws MojoExecutionException
     {
-        if ( test != mergeWith.test )
-        {
-            throw new MojoExecutionException( "Request to merge when 'test' is not identical. Original=" + toString()
-                + ", merging with=" + mergeWith.toString() );
-        }
-        if ( filtering != mergeWith.filtering )
-        {
-            throw new MojoExecutionException( "Request to merge when 'filtering' is not identical. Original="
-                + toString() + ", merging with=" + mergeWith.toString() );
-        }
 
         if ( isResource != mergeWith.isResource )
         {
@@ -317,15 +316,17 @@ public class EclipseSourceDir
         }
         else
         {
-            if ( !StringUtils.equals( output, mergeWith.output ) )
-            {
-                throw new MojoExecutionException( "Request to merge when 'output' is not identical. Original="
-                    + toString() + ", merging with=" + mergeWith.toString() );
-            }
 
             LinkedHashSet includesAsSet = new LinkedHashSet();
-            includesAsSet.addAll( include );
-            includesAsSet.addAll( mergeWith.include );
+
+            // if the orginal or merged dir have an empty "include" this means all is included,
+            // so merge includes only if both are not empty
+            if (!include.isEmpty() && !mergeWith.include.isEmpty())
+            {
+                includesAsSet.addAll(include);
+                includesAsSet.addAll(mergeWith.include);
+            }
+
             include = new ArrayList( includesAsSet );
 
             LinkedHashSet excludesAsSet = new LinkedHashSet();
@@ -333,5 +334,24 @@ public class EclipseSourceDir
             excludesAsSet.addAll( mergeWith.exclude );
             exclude = new ArrayList( excludesAsSet );
         }
+
+        if (!StringUtils.equals(output, mergeWith.output))
+        {
+            // Request to merge when 'output' is not identical
+            return false;
+        }
+
+        if (test != mergeWith.test)
+        {
+            // Request to merge when 'test' is not identical
+            return false;
+        }
+
+        if (filtering != mergeWith.filtering)
+        {
+            // Request to merge when 'filtering' is not identical
+            return false;
+        }
+        return true;
     }
 }

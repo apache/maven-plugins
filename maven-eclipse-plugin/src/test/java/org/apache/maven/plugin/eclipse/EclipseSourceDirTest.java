@@ -159,4 +159,46 @@ public class EclipseSourceDirTest
                       objectUnderTest.toString() );
     }
 
+    public void testMergWhenFilteringIsNotIdentical() throws Exception
+    {
+        EclipseSourceDir resource1 = testFixture_src_main_resources();
+        EclipseSourceDir resource2 = testFixture_src_main_resources();
+
+        resource1.getInclude().add("**/*.dup");
+        resource1.getInclude().add("**/*.txt");
+        resource1.getExclude().add("**/*.svn");
+        resource1.getExclude().add("**/*~");
+
+        resource2.getInclude().add("**/*.xml");
+        resource2.getInclude().add("**/*.dup");
+        resource2.getExclude().add("**/*.cvs");
+        resource2.getExclude().add("**/*~");
+        resource2.setFiltering(true);
+
+        boolean result = resource1.merge(resource2);
+
+        assertFalse("Resource dirs should not have been merged successfully", result);
+       
+        assertEquals(
+            "resource /src/main/resources: output=target/classes, include=[**/*.dup|**/*.txt|**/*.xml], exclude=[**/*.java|**/*.svn|**/*~|**/*.cvs], test=false, filtering=false",
+            resource1.toString());
+    }
+
+    public void testMergWhenFilteringIsNotIdenticalOverlapping() throws Exception
+    {
+        EclipseSourceDir resource1 = testFixture_src_main_resources();
+        EclipseSourceDir resource2 = testFixture_src_main_resources();
+
+        resource2.getInclude().add("**/*.properties");
+        resource2.setFiltering(true);
+
+        boolean result = resource1.merge(resource2);
+
+        assertFalse("Resource dirs should not have been merged successfully", result);
+
+        assertEquals(
+            "resource /src/main/resources: output=target/classes, include=[], exclude=[**/*.java], test=false, filtering=false",
+            resource1.toString());
+    }
+
 }

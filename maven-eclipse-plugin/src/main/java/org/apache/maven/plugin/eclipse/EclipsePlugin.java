@@ -1646,10 +1646,23 @@ public class EclipsePlugin
             if ( !directories.add( resourceDir ) )
             {
                 EclipseSourceDir originalDir = (EclipseSourceDir) get( directories, resourceDir );
-                getLog().info(
-                               "Resource directory's path matches an existing source directory. Resources will be merged with the source directory "
-                                   + originalDir.getPath() );
-                originalDir.merge( resourceDir );
+
+                boolean merged = originalDir.merge(resourceDir);
+                if (merged)
+                {
+                    getLog().info(
+                        "Resource directory's path matches an existing source directory. Resources have been merged with the source directory "
+                            + originalDir.getPath());
+                }
+                else
+                {
+                    getLog()
+                        .info(
+                            "Resource directory's path matches an existing source directory but \"test\", \"filtering\" or \"output\" were different."
+                                + "The resulting eclipse configuration may not accurately reflect the project configuration for "
+                                + originalDir.getPath());
+                }
+
             }
         }
     }
