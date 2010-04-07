@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
+import org.apache.maven.plugin.javadoc.resolver.SourceResolverConfig;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.StringUtils;
 
@@ -198,5 +199,15 @@ public class TestJavadocJar
     protected List getCompileArtifacts( ArtifactResolutionResult result )
     {
         return JavadocUtil.getCompileArtifacts( result.getArtifacts(), true );
+    }
+    
+    /**
+     * Overriden to enable the resolution of -test-sources jar files.
+     * 
+     * {@inheritDoc}
+     */
+    protected SourceResolverConfig configureDependencySourceResolution( final SourceResolverConfig config )
+    {
+        return super.configureDependencySourceResolution( config ).withoutCompileSources().withTestSources();
     }
 }

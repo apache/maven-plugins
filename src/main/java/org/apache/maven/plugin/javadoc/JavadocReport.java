@@ -206,7 +206,16 @@ public class JavadocReport
 
         if ( !this.isAggregator() || ( this.isAggregator() && this.project.isExecutionRoot() ) )
         {
-            List sourcePaths = getSourcePaths();
+            List sourcePaths;
+            try
+            {
+                sourcePaths = getSourcePaths();
+            }
+            catch ( MavenReportException e )
+            {
+                getLog().error( e.getMessage(), e );
+                return false;
+            }
 
             List files = getFiles( sourcePaths );
 
