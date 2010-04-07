@@ -235,11 +235,26 @@ under the License.
       <version>6.1.19</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+    	<groupId>org.apache.maven.shared</groupId>
+    	<artifactId>maven-common-artifact-filters</artifactId>
+    	<version>1.2</version>
+    	<type>jar</type>
+    	<scope>compile</scope>
+    </dependency>
   </dependencies>
 
   <build>
     <pluginManagement>
       <plugins>
+        <plugin>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>2.1</version>
+          <configuration>
+            <source>1.5</source>
+            <target>1.5</target>
+          </configuration>
+        </plugin>
         <plugin>
           <groupId>org.codehaus.modello</groupId>
           <artifactId>modello-maven-plugin</artifactId>

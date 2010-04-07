@@ -28,6 +28,7 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
+import org.apache.maven.plugin.javadoc.resolver.SourceResolverConfig;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.MavenReportException;
 import org.codehaus.plexus.util.StringUtils;
@@ -334,5 +335,15 @@ public class TestJavadocReport
         {
             links.add( "../apidocs" );
         }
+    }
+    
+    /**
+     * Overriden to enable the resolution of -test-sources jar files.
+     * 
+     * {@inheritDoc}
+     */
+    protected SourceResolverConfig configureDependencySourceResolution( final SourceResolverConfig config )
+    {
+        return super.configureDependencySourceResolution( config ).withoutCompileSources().withTestSources();
     }
 }

@@ -55,6 +55,7 @@ import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.artifact.resolver.MultipleArtifactsNotFoundException;
+import org.apache.maven.artifact.resolver.filter.AndArtifactFilter;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.apache.maven.execution.MavenSession;
@@ -71,6 +72,8 @@ import org.apache.maven.plugin.javadoc.options.ResourcesArtifact;
 import org.apache.maven.plugin.javadoc.options.Tag;
 import org.apache.maven.plugin.javadoc.options.Taglet;
 import org.apache.maven.plugin.javadoc.options.TagletArtifact;
+import org.apache.maven.plugin.javadoc.resolver.ResourceResolver;
+import org.apache.maven.plugin.javadoc.resolver.SourceResolverConfig;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
@@ -78,6 +81,8 @@ import org.apache.maven.project.artifact.InvalidDependencyVersionException;
 import org.apache.maven.reporting.MavenReportException;
 import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Settings;
+import org.apache.maven.shared.artifact.filter.PatternExcludesArtifactFilter;
+import org.apache.maven.shared.artifact.filter.PatternIncludesArtifactFilter;
 import org.apache.maven.shared.invoker.MavenInvocationException;
 import org.apache.maven.toolchain.Toolchain;
 import org.apache.maven.toolchain.ToolchainManager;
@@ -367,7 +372,7 @@ public abstract class AbstractJavadocMojo
      * @parameter expression="${reactorProjects}"
      * @readonly
      */
-    private List reactorProjects;
+    private List<MavenProject> reactorProjects;
 
     /**
      * Whether to build an aggregated report at the root, or build individual reports.
@@ -1545,6 +1550,54 @@ public abstract class AbstractJavadocMojo
      */
     private String windowtitle;
 
+    /**
+     * Whether dependency -sources jars should be resolved and included as source paths for javadoc generation.
+     * This is useful when creating javadocs for a distribution project.
+     * 
+     * @parameter default-value="false"
+     * @since 2.6.2
+     */
+    private boolean includeDependencySources;
+
+    /**
+     * Directory where unpacked project sources / test-sources should be cached.
+     *
+     * @parameter default-value="${project.build.directory}/distro-javadoc-sources"
+     * @since 2.6.2
+     * @see #includeDependencySources
+     */
+    private File sourceDependencyCacheDir;
+
+    /**
+     * Whether to include transitive dependencies in the list of dependency -sources jars to include
+     * in this javadoc run.
+     * 
+     * @parameter default-value="false"
+     * @since 2.6.2
+     * @see #includeDependencySources
+     */
+    private boolean includeTransitiveDependencySources;
+    
+    /**
+     * List of included dependency-source patterns. Example: org.apache.maven:*
+     *
+     * 
+     * @parameter
+     * @since 2.6.2
+     * @see #includeDependencySources
+     */
+    private List<String> dependencySourceIncludes;
+
+    /**
+     * List of excluded dependency-source patterns. Example: org.apache.maven.shared:*
+     *
+     * 
+     * @parameter
+     * @since 2.6.2
+     * @see #includeDependencySources
+     */
+    private List<String> dependencySourceExcludes;
+    
     // ----------------------------------------------------------------------
     // static
     // ----------------------------------------------------------------------
@@ -1905,6 +1958,7 @@ public abstract class AbstractJavadocMojo
      * @see JavadocUtil#pruneDirs(MavenProject, List)
      */
     protected List getSourcePaths()
+        throws MavenReportException
     {
         List sourcePaths;
 
@@ -1934,6 +1988,11 @@ public abstract class AbstractJavadocMojo
                 }
             }
 
+            if ( includeDependencySources )
+            {
+                sourcePaths.addAll( getDependencySourcePaths() );
+            }
+            
             if ( isAggregator() && project.isExecutionRoot() )
             {
                 for ( Iterator i = reactorProjects.iterator(); i.hasNext(); )
@@ -1987,6 +2046,74 @@ public abstract class AbstractJavadocMojo
         return sourcePaths;
     }
 
+    /**
+     * Override this method to customize the configuration for resolving dependency sources. The default
+     * behavior enables the resolution of -sources jar files.
+     */
+    protected SourceResolverConfig configureDependencySourceResolution( final SourceResolverConfig config )
+    {
+        return config.withCompileSources();
+    }
+
+    /**
+     * Resolve dependency sources so they can be included directly in the javadoc process. To customize this,
+     * override {@link AbstractJavadocMojo#configureDependencySourceResolution(SourceResolverConfig)}.
+     */
+    protected final List<String> getDependencySourcePaths()
+        throws MavenReportException
+    {
+        final SourceResolverConfig config =
+            new SourceResolverConfig( project, localRepository, sourceDependencyCacheDir, resolver, factory,
+                                      artifactMetadataSource, archiverManager ).withReactorProjects( reactorProjects );
+
+        configureDependencySourceResolution( config );
+
+        final AndArtifactFilter andFilter = new AndArtifactFilter();
+
+        final List<String> dependencyIncludes = dependencySourceIncludes;
+        final List<String> dependencyExcludes = dependencySourceExcludes;
+
+        if ( isNotEmpty( dependencyIncludes ) || isNotEmpty( dependencyExcludes ) )
+        {
+            if ( isNotEmpty( dependencyIncludes ) )
+            {
+                andFilter.add( new PatternIncludesArtifactFilter( dependencyIncludes,
+                                                                  !includeTransitiveDependencySources ) );
+            }
+
+            if ( isNotEmpty( dependencyExcludes ) )
+            {
+                andFilter.add( new PatternExcludesArtifactFilter( dependencyExcludes,
+                                                                  !includeTransitiveDependencySources ) );
+            }
+
+            config.withFilter( andFilter );
+        }
+
+        try
+        {
+            return ResourceResolver.resolveSourceDirs( config );
+        }
+        catch ( final ArtifactResolutionException e )
+        {
+            throw new MavenReportException( "Failed to resolve one or more javadoc source/resource artifacts:\n\n"
+                + e.getMessage(), e );
+        }
+        catch ( final ArtifactNotFoundException e )
+        {
+            throw new MavenReportException( "Failed to resolve one or more javadoc source/resource artifacts:\n\n"
+                + e.getMessage(), e );
+        }
+    }
+
+    /**
+     * Convenience method to determine that a collection is not empty or null.
+     */
+    protected final boolean isNotEmpty( final List<?> collection )
+    {
+        return collection != null && !collection.isEmpty();
+    }
+    
     /**
      * Method that indicates whether the javadoc can be generated or not. If the project does not contain any source
      * files and no subpackages are specified, the plugin will terminate.

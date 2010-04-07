@@ -108,7 +108,7 @@ public class JavadocUtil
      * @param dirs the list of <code>String</code> directories path that will be validated.
      * @return a List of valid <code>String</code> directories absolute paths.
      */
-    protected static List pruneDirs( MavenProject project, List dirs )
+    public static List pruneDirs( MavenProject project, List dirs )
     {
         List pruned = new ArrayList( dirs.size() );
         for ( Iterator i = dirs.iterator(); i.hasNext(); )
