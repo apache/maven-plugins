@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.apache.maven.plugins.maven-javadoc-plugin.it</groupId>
+  <artifactId>MJAVADOC-280-2</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-invoker-plugin</artifactId>
+        <version>1.4</version>
+        <executions>
+          <execution>
+            <id>build-projects</id>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <pom>MJAVADOC-280-2-projects/pom.xml</pom>
+              <goals>
+                <goal>clean</goal>
+                <goal>install</goal>
+              </goals>
+              <streamLogs>true</streamLogs>
+              <suppressSummaries>true</suppressSummaries>
+            </configuration>
+          </execution>
+          <execution>
+            <id>build-distro</id>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <pom>MJAVADOC-280-2-distro/pom.xml</pom>
+              <goals>
+                <goal>clean</goal>
+                <goal>package</goal>
+              </goals>
+              <streamLogs>true</streamLogs>
+              <suppressSummaries>true</suppressSummaries>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>
