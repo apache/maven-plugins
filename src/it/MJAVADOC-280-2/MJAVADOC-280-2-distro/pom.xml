@@ -1,0 +1,61 @@
+<?xml version="1.0"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <artifactId>MJAVADOC-280-2</artifactId>
+    <groupId>org.apache.maven.plugins.maven-javadoc-plugin.it</groupId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>MJAVADOC-280-2-distro</artifactId>
+  <name>MJAVADOC-280-2-distro</name>
+
+  <dependencies>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>${project.parent.artifactId}-modA</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>${project.parent.artifactId}-modB</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    
+    <!-- Only needed for javadoc generation. -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+  
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <!-- <version>2.6.2-SNAPSHOT</version> -->
+        <version>@pom.version@</version>
+        <executions>
+          <execution>
+            <id>javadoc-jars</id>
+            <phase>package</phase>
+            <goals>
+              <goal>jar</goal>
+              <goal>test-jar</goal>
+            </goals>
+            <configuration>
+              <includeDependencySources>true</includeDependencySources>
+              <dependencySourceIncludes>
+                <dependencySourceInclude>${project.groupId}:*</dependencySourceInclude>
+              </dependencySourceIncludes>
+              <detectOfflineLinks>false</detectOfflineLinks>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>

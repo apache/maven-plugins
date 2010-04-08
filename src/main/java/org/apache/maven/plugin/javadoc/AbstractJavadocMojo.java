@@ -2062,6 +2062,19 @@ public abstract class AbstractJavadocMojo
     protected final List<String> getDependencySourcePaths()
         throws MavenReportException
     {
+        try
+        {
+            if ( sourceDependencyCacheDir.exists() )
+            {
+                FileUtils.forceDelete( sourceDependencyCacheDir );
+                sourceDependencyCacheDir.mkdirs();
+            }
+        }
+        catch ( IOException e )
+        {
+            throw new MavenReportException( "Failed to delete cache directory: " + sourceDependencyCacheDir + "\nReason: " + e.getMessage(), e );
+        }
+        
         final SourceResolverConfig config =
             new SourceResolverConfig( project, localRepository, sourceDependencyCacheDir, resolver, factory,
                                       artifactMetadataSource, archiverManager ).withReactorProjects( reactorProjects );

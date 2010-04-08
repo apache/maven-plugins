@@ -211,7 +211,7 @@ public final class ResourceResolver
             final File basedir = reactorProject.getBasedir();
             for ( final String root : srcRoots )
             {
-                dirs.add( new File( basedir, root ).getAbsolutePath() );
+                dirs.add( root );
             }
         }
 
