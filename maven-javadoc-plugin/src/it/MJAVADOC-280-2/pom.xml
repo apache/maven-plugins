@@ -14,6 +14,7 @@
         <executions>
           <execution>
             <id>build-projects</id>
+            <phase>package</phase>
             <goals>
               <goal>run</goal>
             </goals>
@@ -29,6 +30,7 @@
           </execution>
           <execution>
             <id>build-distro</id>
+            <phase>package</phase>
             <goals>
               <goal>run</goal>
             </goals>
