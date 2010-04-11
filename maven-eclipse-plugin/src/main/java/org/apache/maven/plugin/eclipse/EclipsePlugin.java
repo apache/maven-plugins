@@ -316,7 +316,8 @@ public class EclipsePlugin
     private String wtpversion;
 
     /**
-     * JEE context name of the WTP module. ( ex. WEB context name ).
+     * JEE context name of the WTP module. ( ex. WEB context name ). You can use "ROOT" if you want to map the webapp
+     * to the root context.
      * 
      * @parameter expression="${wtpContextName}"
      */
@@ -1348,6 +1349,10 @@ public class EclipsePlugin
             if ( wtpContextName == null )
             {
                 config.setContextName( project.getArtifactId() );
+            }
+            else if ( "ROOT".equals(wtpContextName) )
+            {
+                config.setContextName( "" );
             }
             else
             {
