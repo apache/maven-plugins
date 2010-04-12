@@ -682,6 +682,39 @@ public class EclipsePluginIT
         testProject( "project-57-MECLIPSE-368" );
     }
 
+    /**
+     * [MECLIPSE-621] mvn eclipse:eclipse fails or doesn't generate proper .classpath when specifying the same resource directory with different filtering rules
+     * 
+     * @throws Exception
+     */
+    public void testProject58()
+        throws Exception
+    {
+        testProject( "project-58-MECLIPSE-621" );
+    }
+
+    /**
+     * [MECLIPSE-576] Merge resource dirs shall pass gracefully
+     * 
+     * @throws Exception
+     */
+    public void testProject59()
+        throws Exception
+    {
+        testProject( "project-59-MECLIPSE-576" );
+    }
+
+    /**
+     * [MECLIPSE-652] Ability to map a webapp to the root context
+     * 
+     * @throws Exception
+     */
+    public void testProject60()
+        throws Exception
+    {
+        testProject( "project-60-MECLIPSE-652" );
+    }
+
     public void testJeeSimple()
         throws Exception
     {
