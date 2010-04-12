@@ -19,7 +19,13 @@ package org.apache.maven.plugin.javadoc;
  * under the License.
  */
 
+import static org.codehaus.plexus.util.IOUtil.close;
+import static org.apache.maven.plugin.javadoc.JavadocUtil.toList;
+import static org.apache.maven.plugin.javadoc.JavadocUtil.toRelative;
+import static org.apache.maven.plugin.javadoc.JavadocUtil.*;
+
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -35,6 +41,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -63,15 +70,19 @@ import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.javadoc.options.BootclasspathArtifact;
 import org.apache.maven.plugin.javadoc.options.DocletArtifact;
 import org.apache.maven.plugin.javadoc.options.Group;
+import org.apache.maven.plugin.javadoc.options.JavadocOptions;
 import org.apache.maven.plugin.javadoc.options.JavadocPathArtifact;
 import org.apache.maven.plugin.javadoc.options.OfflineLink;
 import org.apache.maven.plugin.javadoc.options.ResourcesArtifact;
 import org.apache.maven.plugin.javadoc.options.Tag;
 import org.apache.maven.plugin.javadoc.options.Taglet;
 import org.apache.maven.plugin.javadoc.options.TagletArtifact;
+import org.apache.maven.plugin.javadoc.options.io.xpp3.JavadocOptionsXpp3Writer;
+import org.apache.maven.plugin.javadoc.resolver.JavadocBundle;
 import org.apache.maven.plugin.javadoc.resolver.ResourceResolver;
 import org.apache.maven.plugin.javadoc.resolver.SourceResolverConfig;
 import org.apache.maven.project.MavenProject;
@@ -115,6 +126,24 @@ import org.codehaus.plexus.util.xml.Xpp3Dom;
 public abstract class AbstractJavadocMojo
     extends AbstractMojo
 {
+    /**
+     * Classifier used in the name of the javadoc-options XML file, and in the resources bundle 
+     * artifact that gets attached to the project. This one is used for non-test javadocs.
+     * 
+     * @since 2.6.2
+     * @see #TEST_JAVADOC_RESOURCES_ATTACHMENT_CLASSIFIER
+     */
+    public static final String JAVADOC_RESOURCES_ATTACHMENT_CLASSIFIER = "javadoc-resources";
+    
+    /**
+     * Classifier used in the name of the javadoc-options XML file, and in the resources bundle 
+     * artifact that gets attached to the project. This one is used for test-javadocs.
+     * 
+     * @since 2.6.2
+     * @see #JAVADOC_RESOURCES_ATTACHMENT_CLASSIFIER
+     */
+    public static final String TEST_JAVADOC_RESOURCES_ATTACHMENT_CLASSIFIER = "test-javadoc-resources";
+
     /**
      * The default Javadoc API urls according the
      * <a href="http://java.sun.com/reference/api/index.html">Sun API Specifications</a>:
@@ -1072,7 +1101,7 @@ public abstract class AbstractJavadocMojo
      * @see #detectLinks
      * @see #detectJavaApiLink
      */
-    protected ArrayList links;
+    protected ArrayList<String> links;
 
     /**
      * Creates an HTML version of each source file (with line numbers) and adds links to them from the standard
@@ -1598,6 +1627,24 @@ public abstract class AbstractJavadocMojo
      */
     private List<String> dependencySourceExcludes;
     
+    /**
+     * Directory into which assembled {@link JavadocOptions} instances will be written before they
+     * are added to javadoc resources bundles.
+     * 
+     * @parameter default-value="${project.build.directory}/javadoc-bundle-options"
+     * @readonly
+     * @since 2.6.2
+     */
+    private File javadocOptionsDir;
+
+    /**
+     * Transient variable to allow lazy-resolution of javadoc bundles from dependencies, so they can
+     * be used at various points in the javadoc generation process.
+     * 
+     * @since 2.6.2
+     */
+    private transient List<JavadocBundle> dependencyJavadocBundles;
+    
     // ----------------------------------------------------------------------
     // static
     // ----------------------------------------------------------------------
@@ -1632,6 +1679,11 @@ public abstract class AbstractJavadocMojo
     protected String getOutputDirectory()
     {
         return outputDirectory.getAbsoluteFile().toString();
+    }
+    
+    protected MavenProject getProject()
+    {
+        return project;
     }
 
     /**
@@ -1771,6 +1823,17 @@ public abstract class AbstractJavadocMojo
             this.debug = true;
         }
 
+        // NOTE: Always generate this file, to allow javadocs from modules to be aggregated via
+        // useDependencySources in a distro module build.
+        try
+        {
+            buildJavadocOptions();
+        }
+        catch ( IOException e )
+        {
+            throw new MavenReportException( "Failed to generate javadoc options file: " + e.getMessage(), e );
+        }
+        
         List sourcePaths = getSourcePaths();
         List files = getFiles( sourcePaths );
         if ( !canGenerateReport( files ) )
@@ -1932,8 +1995,10 @@ public abstract class AbstractJavadocMojo
      *
      * @param sourcePaths a List that contains the paths to the source files
      * @return a List that contains the specific path for every source file
+     * @throws MavenReportException 
      */
     protected List getFiles( List sourcePaths )
+        throws MavenReportException
     {
         List files = new ArrayList();
         if ( StringUtils.isEmpty( subpackages ) )
@@ -2075,11 +2140,7 @@ public abstract class AbstractJavadocMojo
             throw new MavenReportException( "Failed to delete cache directory: " + sourceDependencyCacheDir + "\nReason: " + e.getMessage(), e );
         }
         
-        final SourceResolverConfig config =
-            new SourceResolverConfig( project, localRepository, sourceDependencyCacheDir, resolver, factory,
-                                      artifactMetadataSource, archiverManager ).withReactorProjects( reactorProjects );
-
-        configureDependencySourceResolution( config );
+        final SourceResolverConfig config = getDependencySourceResolverConfig();
 
         final AndArtifactFilter andFilter = new AndArtifactFilter();
 
@@ -2105,7 +2166,7 @@ public abstract class AbstractJavadocMojo
 
         try
         {
-            return ResourceResolver.resolveSourceDirs( config );
+            return ResourceResolver.resolveDependencySourcePaths( config );
         }
         catch ( final ArtifactResolutionException e )
         {
@@ -2120,13 +2181,19 @@ public abstract class AbstractJavadocMojo
     }
 
     /**
-     * Convenience method to determine that a collection is not empty or null.
+     * Construct a SourceResolverConfig for resolving dependency sources and resources in a consistent
+     * way, so it can be reused for both source and resource resolution.
+     * 
+     * @since 2.6.2
      */
-    protected final boolean isNotEmpty( final List<?> collection )
+    private SourceResolverConfig getDependencySourceResolverConfig()
     {
-        return collection != null && !collection.isEmpty();
+        return configureDependencySourceResolution( new SourceResolverConfig( getLog(), project, localRepository,
+                                                                              sourceDependencyCacheDir, resolver,
+                                                                              factory, artifactMetadataSource,
+                                                                              archiverManager ).withReactorProjects( reactorProjects ) );
     }
-    
+
     /**
      * Method that indicates whether the javadoc can be generated or not. If the project does not contain any source
      * files and no subpackages are specified, the plugin will terminate.
@@ -2166,8 +2233,10 @@ public abstract class AbstractJavadocMojo
      *
      * @param sourcePaths the list of paths to the source files
      * @return a String that contains the exclude argument that will be used by javadoc
+     * @throws MavenReportException 
      */
     private String getExcludedPackages( List sourcePaths )
+        throws MavenReportException
     {
         List excludedNames = null;
 
@@ -2223,22 +2292,55 @@ public abstract class AbstractJavadocMojo
      * with ',', ':', or ';' and then formatted.
      *
      * @return an array of String objects that contain the package names
+     * @throws MavenReportException 
      */
     private String[] getExcludedPackages()
+        throws MavenReportException
     {
-        String[] excludePackages = {};
-
+        Set<String> excluded = new LinkedHashSet<String>();
+        
+        if ( includeDependencySources )
+        {
+            try
+            {
+                resolveDependencyBundles();
+            }
+            catch ( IOException e )
+            {
+                throw new MavenReportException( "Failed to resolve javadoc bundles from dependencies: " + e.getMessage(), e );
+            }
+            
+            if ( isNotEmpty( dependencyJavadocBundles ) )
+            {
+                for ( JavadocBundle bundle : dependencyJavadocBundles )
+                {
+                    JavadocOptions options = bundle.getOptions();
+                    if ( options != null && isNotEmpty( options.getExcludePackageNames() ) )
+                    {
+                        excluded.addAll( options.getExcludePackageNames() );
+                    }
+                }
+            }
+        }
+        
         // for the specified excludePackageNames
-        if ( excludePackageNames != null )
+        if ( StringUtils.isNotEmpty( excludePackageNames ) )
         {
-            excludePackages = excludePackageNames.split( "[,:;]" );
+            excluded.addAll( Arrays.asList( excludePackageNames.split( "[,:;]" ) ) );
         }
-        for ( int i = 0; i < excludePackages.length; i++ )
+        
+        String[] result = new String[excluded.size()];
+        if ( isNotEmpty( excluded ) )
         {
-            excludePackages[i] = excludePackages[i].replace( '.', File.separatorChar );
+            int idx = 0;
+            for ( String exclude : excluded )
+            {
+                result[idx] = exclude.replace( '.', File.separatorChar );
+                idx++;
+            }
         }
 
-        return excludePackages;
+        return result;
     }
 
     /**
@@ -2577,27 +2679,23 @@ public abstract class AbstractJavadocMojo
     private String getBootclassPath()
         throws MavenReportException
     {
-        StringBuffer path = new StringBuffer();
-
-        if ( bootclasspathArtifacts != null )
+        Set<BootclasspathArtifact> bootclasspathArtifacts = collectBootClasspathArtifacts();
+        
+        List<String> bootclassPath = new ArrayList<String>();
+        for ( BootclasspathArtifact aBootclasspathArtifact : bootclasspathArtifacts )
         {
-            List bootclassPath = new ArrayList();
-            for ( int i = 0; i < bootclasspathArtifacts.length; i++ )
+            if ( ( StringUtils.isNotEmpty( aBootclasspathArtifact.getGroupId() ) )
+                && ( StringUtils.isNotEmpty( aBootclasspathArtifact.getArtifactId() ) )
+                && ( StringUtils.isNotEmpty( aBootclasspathArtifact.getVersion() ) ) )
             {
-                BootclasspathArtifact aBootclasspathArtifact = bootclasspathArtifacts[i];
-
-                if ( ( StringUtils.isNotEmpty( aBootclasspathArtifact.getGroupId() ) )
-                    && ( StringUtils.isNotEmpty( aBootclasspathArtifact.getArtifactId() ) )
-                    && ( StringUtils.isNotEmpty( aBootclasspathArtifact.getVersion() ) ) )
-                {
-                    bootclassPath.addAll( getArtifactsAbsolutePath( aBootclasspathArtifact ) );
-                }
+                bootclassPath.addAll( getArtifactsAbsolutePath( aBootclasspathArtifact ) );
             }
-
-            bootclassPath = JavadocUtil.pruneFiles( bootclassPath );
-
-            path.append( StringUtils.join( bootclassPath.iterator(), File.pathSeparator ) );
         }
+
+        bootclassPath = JavadocUtil.pruneFiles( bootclassPath );
+
+        StringBuffer path = new StringBuffer();
+        path.append( StringUtils.join( bootclassPath.iterator(), File.pathSeparator ) );
 
         if ( StringUtils.isNotEmpty( bootclasspath ) )
         {
@@ -2622,28 +2720,19 @@ public abstract class AbstractJavadocMojo
     private String getDocletPath()
         throws MavenReportException
     {
-        StringBuffer path = new StringBuffer();
-        if ( !isDocletArtifactEmpty( docletArtifact ) )
+        Set<DocletArtifact> docletArtifacts = collectDocletArtifacts();
+        List<String> pathParts = new ArrayList<String>();
+        
+        for ( DocletArtifact docletArtifact : docletArtifacts )
         {
-            path.append( StringUtils.join( getArtifactsAbsolutePath( docletArtifact ).iterator(),
-                                           File.pathSeparator ) );
-        }
-        else if ( docletArtifacts != null )
-        {
-            for ( int i = 0; i < docletArtifacts.length; i++ )
+            if ( !isDocletArtifactEmpty( docletArtifact ) )
             {
-                if ( !isDocletArtifactEmpty( docletArtifacts[i] ) )
-                {
-                    path.append( StringUtils.join( getArtifactsAbsolutePath( docletArtifacts[i] ).iterator(),
-                                                   File.pathSeparator ) );
-
-                    if ( i < docletArtifacts.length - 1 )
-                    {
-                        path.append( File.pathSeparator );
-                    }
-                }
+                pathParts.addAll( getArtifactsAbsolutePath( docletArtifact ) );
             }
         }
+        
+        StringBuffer path = new StringBuffer();
+        path.append( StringUtils.join( pathParts.iterator(), File.pathSeparator ) );
 
         if ( !StringUtils.isEmpty( docletPath ) )
         {
@@ -2690,67 +2779,47 @@ public abstract class AbstractJavadocMojo
     private String getTagletPath()
         throws MavenReportException
     {
+        Set<TagletArtifact> tArtifacts = collectTagletArtifacts();
+        List<String> pathParts = new ArrayList<String>();
+        
+        for ( TagletArtifact tagletArtifact : tArtifacts )
+        {
+            if ( ( tagletArtifact != null ) && ( StringUtils.isNotEmpty( tagletArtifact.getGroupId() ) )
+                && ( StringUtils.isNotEmpty( tagletArtifact.getArtifactId() ) )
+                && ( StringUtils.isNotEmpty( tagletArtifact.getVersion() ) ) )
+            {
+                pathParts.addAll( getArtifactsAbsolutePath( tagletArtifact ) );
+            }
+        }
+
+        
+        Set<Taglet> taglets = collectTaglets();
+        for ( Taglet taglet : taglets )
+        {
+            if ( taglet == null )
+            {
+                continue;
+            }
+
+            if ( ( taglet.getTagletArtifact() != null )
+                && ( StringUtils.isNotEmpty( taglet.getTagletArtifact().getGroupId() ) )
+                && ( StringUtils.isNotEmpty( taglet.getTagletArtifact().getArtifactId() ) )
+                && ( StringUtils.isNotEmpty( taglet.getTagletArtifact().getVersion() ) ) )
+            {
+                pathParts.addAll( getArtifactsAbsolutePath( taglet.getTagletArtifact() ) );
+
+                pathParts = JavadocUtil.pruneFiles( pathParts );
+            }
+            else if ( StringUtils.isNotEmpty( taglet.getTagletpath() ) )
+            {
+                pathParts.add( taglet.getTagletpath() );
+
+                pathParts = JavadocUtil.pruneDirs( project, pathParts );
+            }
+        }
+        
         StringBuffer path = new StringBuffer();
-
-        if ( ( tagletArtifact != null ) && ( StringUtils.isNotEmpty( tagletArtifact.getGroupId() ) )
-            && ( StringUtils.isNotEmpty( tagletArtifact.getArtifactId() ) )
-            && ( StringUtils.isNotEmpty( tagletArtifact.getVersion() ) ) )
-        {
-            path.append( StringUtils.join( getArtifactsAbsolutePath( tagletArtifact ).iterator(),
-                                           File.pathSeparator ) );
-        }
-
-        if ( tagletArtifacts != null )
-        {
-            List tagletsPath = new ArrayList();
-            for ( int i = 0; i < tagletArtifacts.length; i++ )
-            {
-                TagletArtifact aTagletArtifact = tagletArtifacts[i];
-
-                if ( ( StringUtils.isNotEmpty( aTagletArtifact.getGroupId() ) )
-                    && ( StringUtils.isNotEmpty( aTagletArtifact.getArtifactId() ) )
-                    && ( StringUtils.isNotEmpty( aTagletArtifact.getVersion() ) ) )
-                {
-                    tagletsPath.addAll( getArtifactsAbsolutePath( aTagletArtifact ) );
-                }
-            }
-
-            tagletsPath = JavadocUtil.pruneFiles( tagletsPath );
-
-            path.append( StringUtils.join( tagletsPath.iterator(), File.pathSeparator ) );
-        }
-
-        if ( taglets != null )
-        {
-            List tagletsPath = new ArrayList();
-            for ( int i = 0; i < taglets.length; i++ )
-            {
-                Taglet current = taglets[i];
-
-                if ( current == null )
-                {
-                    continue;
-                }
-
-                if ( ( current.getTagletArtifact() != null )
-                    && ( StringUtils.isNotEmpty( current.getTagletArtifact().getGroupId() ) )
-                    && ( StringUtils.isNotEmpty( current.getTagletArtifact().getArtifactId() ) )
-                    && ( StringUtils.isNotEmpty( current.getTagletArtifact().getVersion() ) ) )
-                {
-                    tagletsPath.addAll( getArtifactsAbsolutePath( current.getTagletArtifact() ) );
-
-                    tagletsPath = JavadocUtil.pruneFiles( tagletsPath );
-                }
-                else if ( StringUtils.isNotEmpty( current.getTagletpath() ) )
-                {
-                    tagletsPath.add( current.getTagletpath() );
-
-                    tagletsPath = JavadocUtil.pruneDirs( project, tagletsPath );
-                }
-            }
-
-            path.append( StringUtils.join( tagletsPath.iterator(), File.pathSeparator ) );
-        }
+        path.append( StringUtils.join( pathParts.iterator(), File.pathSeparator ) );
 
         if ( StringUtils.isNotEmpty( tagletpath ) )
         {
@@ -2758,6 +2827,363 @@ public abstract class AbstractJavadocMojo
         }
 
         return path.toString();
+    }
+    
+    private Set<String> collectLinks()
+        throws MavenReportException
+    {
+        Set<String> links = new LinkedHashSet<String>();
+        
+        if ( includeDependencySources )
+        {
+            try
+            {
+                resolveDependencyBundles();
+            }
+            catch ( IOException e )
+            {
+                throw new MavenReportException( "Failed to resolve javadoc bundles from dependencies: " + e.getMessage(), e );
+            }
+            
+            if ( isNotEmpty( dependencyJavadocBundles ) )
+            {
+                for ( JavadocBundle bundle : dependencyJavadocBundles )
+                {
+                    JavadocOptions options = bundle.getOptions();
+                    if ( options != null && isNotEmpty( options.getLinks() ) )
+                    {
+                        links.addAll( options.getLinks() );
+                    }
+                }
+            }
+        }
+        
+        if ( isNotEmpty( this.links ) )
+        {
+            links.addAll( this.links );
+        }
+        
+        String javaApiLink = getDefaultJavadocApiLink();
+        if ( javaApiLink != null )
+        {
+            links.add( javaApiLink );
+        }
+
+        links.addAll( getDependenciesLinks() );
+        
+        return links;
+    }
+    
+    private Set<Group> collectGroups()
+        throws MavenReportException
+    {
+        Set<Group> groups = new LinkedHashSet<Group>();
+        
+        if ( includeDependencySources )
+        {
+            try
+            {
+                resolveDependencyBundles();
+            }
+            catch ( IOException e )
+            {
+                throw new MavenReportException( "Failed to resolve javadoc bundles from dependencies: " + e.getMessage(), e );
+            }
+            
+            if ( isNotEmpty( dependencyJavadocBundles ) )
+            {
+                for ( JavadocBundle bundle : dependencyJavadocBundles )
+                {
+                    JavadocOptions options = bundle.getOptions();
+                    if ( options != null && isNotEmpty( options.getGroups() ) )
+                    {
+                        groups.addAll( options.getGroups() );
+                    }
+                }
+            }
+        }
+        
+        if ( this.groups != null && this.groups.length > 0 )
+        {
+            groups.addAll( Arrays.asList( this.groups ) );
+        }
+        
+        return groups;
+    }
+
+    private Set<ResourcesArtifact> collectResourcesArtifacts()
+        throws MavenReportException
+    {
+        Set<ResourcesArtifact> result = new LinkedHashSet<ResourcesArtifact>();
+
+        if ( includeDependencySources )
+        {
+            try
+            {
+                resolveDependencyBundles();
+            }
+            catch ( IOException e )
+            {
+                throw new MavenReportException( "Failed to resolve javadoc bundles from dependencies: "
+                    + e.getMessage(), e );
+            }
+
+            if ( isNotEmpty( dependencyJavadocBundles ) )
+            {
+                for ( JavadocBundle bundle : dependencyJavadocBundles )
+                {
+                    JavadocOptions options = bundle.getOptions();
+                    if ( options != null && isNotEmpty( options.getResourcesArtifacts() ) )
+                    {
+                        result.addAll( options.getResourcesArtifacts() );
+                    }
+                }
+            }
+        }
+
+        if ( this.resourcesArtifacts != null && this.resourcesArtifacts.length > 0 )
+        {
+            result.addAll( Arrays.asList( this.resourcesArtifacts ) );
+        }
+
+        return result;
+    }
+
+    private Set<BootclasspathArtifact> collectBootClasspathArtifacts()
+        throws MavenReportException
+    {
+        Set<BootclasspathArtifact> result = new LinkedHashSet<BootclasspathArtifact>();
+
+        if ( includeDependencySources )
+        {
+            try
+            {
+                resolveDependencyBundles();
+            }
+            catch ( IOException e )
+            {
+                throw new MavenReportException( "Failed to resolve javadoc bundles from dependencies: "
+                    + e.getMessage(), e );
+            }
+
+            if ( isNotEmpty( dependencyJavadocBundles ) )
+            {
+                for ( JavadocBundle bundle : dependencyJavadocBundles )
+                {
+                    JavadocOptions options = bundle.getOptions();
+                    if ( options != null && isNotEmpty( options.getBootclasspathArtifacts() ) )
+                    {
+                        result.addAll( options.getBootclasspathArtifacts() );
+                    }
+                }
+            }
+        }
+
+        if ( this.bootclasspathArtifacts != null && this.bootclasspathArtifacts.length > 0 )
+        {
+            result.addAll( Arrays.asList( this.bootclasspathArtifacts ) );
+        }
+
+        return result;
+    }
+
+    private Set<OfflineLink> collectOfflineLinks()
+        throws MavenReportException
+    {
+        Set<OfflineLink> result = new LinkedHashSet<OfflineLink>();
+
+        if ( includeDependencySources )
+        {
+            try
+            {
+                resolveDependencyBundles();
+            }
+            catch ( IOException e )
+            {
+                throw new MavenReportException( "Failed to resolve javadoc bundles from dependencies: "
+                    + e.getMessage(), e );
+            }
+
+            if ( isNotEmpty( dependencyJavadocBundles ) )
+            {
+                for ( JavadocBundle bundle : dependencyJavadocBundles )
+                {
+                    JavadocOptions options = bundle.getOptions();
+                    if ( options != null && isNotEmpty( options.getOfflineLinks() ) )
+                    {
+                        result.addAll( options.getOfflineLinks() );
+                    }
+                }
+            }
+        }
+
+        if ( this.offlineLinks != null && this.offlineLinks.length > 0 )
+        {
+            result.addAll( Arrays.asList( this.offlineLinks ) );
+        }
+
+        return result;
+    }
+
+    private Set<Tag> collectTags()
+        throws MavenReportException
+    {
+        Set<Tag> tags = new LinkedHashSet<Tag>();
+
+        if ( includeDependencySources )
+        {
+            try
+            {
+                resolveDependencyBundles();
+            }
+            catch ( IOException e )
+            {
+                throw new MavenReportException( "Failed to resolve javadoc bundles from dependencies: "
+                    + e.getMessage(), e );
+            }
+
+            if ( isNotEmpty( dependencyJavadocBundles ) )
+            {
+                for ( JavadocBundle bundle : dependencyJavadocBundles )
+                {
+                    JavadocOptions options = bundle.getOptions();
+                    if ( options != null && isNotEmpty( options.getTags() ) )
+                    {
+                        tags.addAll( options.getTags() );
+                    }
+                }
+            }
+        }
+
+        if ( this.tags != null && this.tags.length > 0 )
+        {
+            tags.addAll( Arrays.asList( this.tags ) );
+        }
+
+        return tags;
+    }
+
+    private Set<TagletArtifact> collectTagletArtifacts()
+        throws MavenReportException
+    {
+        Set<TagletArtifact> tArtifacts = new LinkedHashSet<TagletArtifact>();
+        
+        if ( includeDependencySources )
+        {
+            try
+            {
+                resolveDependencyBundles();
+            }
+            catch ( IOException e )
+            {
+                throw new MavenReportException( "Failed to resolve javadoc bundles from dependencies: " + e.getMessage(), e );
+            }
+            
+            if ( isNotEmpty( dependencyJavadocBundles ) )
+            {
+                for ( JavadocBundle bundle : dependencyJavadocBundles )
+                {
+                    JavadocOptions options = bundle.getOptions();
+                    if ( options != null && isNotEmpty( options.getTagletArtifacts() ) )
+                    {
+                        tArtifacts.addAll( options.getTagletArtifacts() );
+                    }
+                }
+            }
+        }
+        
+        if ( tagletArtifact != null )
+        {
+            tArtifacts.add( tagletArtifact );
+        }
+        
+        if ( tagletArtifacts != null && tagletArtifacts.length > 0 )
+        {
+            tArtifacts.addAll( Arrays.asList( tagletArtifacts ) );
+        }
+        
+        return tArtifacts;
+    }
+
+    private Set<DocletArtifact> collectDocletArtifacts()
+        throws MavenReportException
+    {
+        Set<DocletArtifact> dArtifacts = new LinkedHashSet<DocletArtifact>();
+
+        if ( includeDependencySources )
+        {
+            try
+            {
+                resolveDependencyBundles();
+            }
+            catch ( IOException e )
+            {
+                throw new MavenReportException( "Failed to resolve javadoc bundles from dependencies: "
+                    + e.getMessage(), e );
+            }
+
+            if ( isNotEmpty( dependencyJavadocBundles ) )
+            {
+                for ( JavadocBundle bundle : dependencyJavadocBundles )
+                {
+                    JavadocOptions options = bundle.getOptions();
+                    if ( options != null && isNotEmpty( options.getDocletArtifacts() ) )
+                    {
+                        dArtifacts.addAll( options.getDocletArtifacts() );
+                    }
+                }
+            }
+        }
+
+        if ( docletArtifact != null )
+        {
+            dArtifacts.add( docletArtifact );
+        }
+
+        if ( docletArtifacts != null && docletArtifacts.length > 0 )
+        {
+            dArtifacts.addAll( Arrays.asList( docletArtifacts ) );
+        }
+
+        return dArtifacts;
+    }
+
+    private Set<Taglet> collectTaglets()
+        throws MavenReportException
+    {
+        Set<Taglet> result = new LinkedHashSet<Taglet>();
+
+        if ( includeDependencySources )
+        {
+            try
+            {
+                resolveDependencyBundles();
+            }
+            catch ( IOException e )
+            {
+                throw new MavenReportException( "Failed to resolve javadoc bundles from dependencies: "
+                    + e.getMessage(), e );
+            }
+
+            if ( isNotEmpty( dependencyJavadocBundles ) )
+            {
+                for ( JavadocBundle bundle : dependencyJavadocBundles )
+                {
+                    JavadocOptions options = bundle.getOptions();
+                    if ( options != null && isNotEmpty( options.getTaglets() ) )
+                    {
+                        result.addAll( options.getTaglets() );
+                    }
+                }
+            }
+        }
+
+        if ( taglet != null && taglets.length > 0 )
+        {
+            result.addAll( Arrays.asList( taglets ) );
+        }
+
+        return result;
     }
 
     /**
@@ -2767,17 +3193,17 @@ public abstract class AbstractJavadocMojo
      * @return a list of locale artifacts absolute path
      * @throws MavenReportException if any
      */
-    private List getArtifactsAbsolutePath( JavadocPathArtifact javadocArtifact )
+    private List<String> getArtifactsAbsolutePath( JavadocPathArtifact javadocArtifact )
         throws MavenReportException
     {
         if ( ( StringUtils.isEmpty( javadocArtifact.getGroupId() ) )
             && ( StringUtils.isEmpty( javadocArtifact.getArtifactId() ) )
             && ( StringUtils.isEmpty( javadocArtifact.getVersion() ) ) )
         {
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
 
-        List path = new ArrayList();
+        List<String> path = new ArrayList<String>();
 
         try
         {
@@ -3357,37 +3783,31 @@ public abstract class AbstractJavadocMojo
      * @see #getModulesLinks()
      * @see <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#package-list">package-list spec</a>
      */
-    private void addLinkofflineArguments( List arguments )
+    private void addLinkofflineArguments( List<String> arguments )
         throws MavenReportException
     {
-        List offlineLinksList =
-            ( offlineLinks != null ? new ArrayList( Arrays.asList( offlineLinks ) ) : new ArrayList() );
+        Set<OfflineLink> offlineLinksList = collectOfflineLinks();
 
         offlineLinksList.addAll( getModulesLinks() );
 
-        if ( offlineLinksList != null )
+        for ( OfflineLink offlineLink : offlineLinksList )
         {
-            for ( int i = 0; i < offlineLinksList.size(); i++ )
+            String url = offlineLink.getUrl();
+            if ( StringUtils.isEmpty( url ) )
             {
-                OfflineLink offlineLink = (OfflineLink) offlineLinksList.get( i );
+                continue;
+            }
+            url = cleanUrl( url );
 
-                String url = offlineLink.getUrl();
-                if ( StringUtils.isEmpty( url ) )
-                {
-                    continue;
-                }
-                url = cleanUrl( url );
-
-                String location = offlineLink.getLocation();
-                if ( StringUtils.isEmpty( location ) )
-                {
-                    continue;
-                }
-                if ( isValidJavadocLink( location ) )
-                {
-                    addArgIfNotEmpty( arguments, "-linkoffline", JavadocUtil.quotedPathArgument( url )
-                                      + " " + JavadocUtil.quotedPathArgument( location ), true );
-                }
+            String location = offlineLink.getLocation();
+            if ( StringUtils.isEmpty( location ) )
+            {
+                continue;
+            }
+            if ( isValidJavadocLink( location ) )
+            {
+                addArgIfNotEmpty( arguments, "-linkoffline", JavadocUtil.quotedPathArgument( url ) + " "
+                    + JavadocUtil.quotedPathArgument( location ), true );
             }
         }
     }
@@ -3406,30 +3826,19 @@ public abstract class AbstractJavadocMojo
      * </ul>
      *
      * @param arguments a list of arguments, not null
+     * @throws MavenReportException 
      * @see #detectLinks
      * @see #getDependenciesLinks()
      * @see JavadocUtil#fetchURL(Settings, URL)
      * @see <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#package-list">package-list spec</a>
      */
-    private void addLinkArguments( List arguments )
+    private void addLinkArguments( List<String> arguments )
+        throws MavenReportException
     {
-        if ( links == null )
+        Set<String> links = collectLinks();
+
+        for ( String link : links )
         {
-            links = new ArrayList();
-        }
-
-        String javaApiLink = getDefaultJavadocApiLink();
-        if ( javaApiLink != null )
-        {
-            links.add( javaApiLink );
-        }
-
-        links.addAll( getDependenciesLinks() );
-
-        for ( int i = 0; i < links.size(); i++ )
-        {
-            String link = (String) links.get( i );
-
             if ( StringUtils.isEmpty( link ) )
             {
                 continue;
@@ -3546,6 +3955,24 @@ public abstract class AbstractJavadocMojo
             throw new IOException( "The outputDirectory " + anOutputDirectory + " doesn't exists." );
         }
 
+        if ( includeDependencySources )
+        {
+            resolveDependencyBundles();
+            if ( isNotEmpty( dependencyJavadocBundles ) )
+            {
+                for ( JavadocBundle bundle : dependencyJavadocBundles )
+                {
+                    File dir = bundle.getResourcesDirectory();
+                    JavadocOptions options = bundle.getOptions();
+                    if ( dir != null && dir.isDirectory() )
+                    {
+                        JavadocUtil.copyJavadocResources( anOutputDirectory, dir, options == null ? null
+                                        : options.getExcludedDocfilesSubdirs() );
+                    }
+                }
+            }
+        }
+        
         if ( getJavadocDirectory() != null )
         {
             JavadocUtil.copyJavadocResources( anOutputDirectory, getJavadocDirectory(), excludedocfilessubdir );
@@ -3568,6 +3995,19 @@ public abstract class AbstractJavadocMojo
         }
     }
 
+    private synchronized void resolveDependencyBundles()
+        throws IOException
+    {
+        if ( dependencyJavadocBundles == null )
+        {
+            dependencyJavadocBundles = ResourceResolver.resolveDependencyJavadocBundles( getDependencySourceResolverConfig() );
+            if ( dependencyJavadocBundles == null )
+            {
+                dependencyJavadocBundles = new ArrayList<JavadocBundle>();
+            }
+        }
+    }
+
     /**
      * Method that copy additional Javadoc resources from given artifacts.
      *
@@ -3578,7 +4018,8 @@ public abstract class AbstractJavadocMojo
     private void copyAdditionalJavadocResources( File anOutputDirectory )
         throws MavenReportException
     {
-        if ( resourcesArtifacts == null || resourcesArtifacts.length == 0 )
+        Set<ResourcesArtifact> resourcesArtifacts = collectResourcesArtifacts();
+        if ( isEmpty( resourcesArtifacts ) )
         {
             return;
         }
@@ -3594,10 +4035,8 @@ public abstract class AbstractJavadocMojo
                 + "No archiver for 'jar' available.", e );
         }
 
-        for ( int i = 0; i < resourcesArtifacts.length; i++ )
+        for ( ResourcesArtifact item : resourcesArtifacts )
         {
-            ResourcesArtifact item = resourcesArtifacts[i];
-
             Artifact artifact;
             try
             {
@@ -4254,19 +4693,21 @@ public abstract class AbstractJavadocMojo
      * Add <code>groups</code> parameter to arguments.
      *
      * @param arguments not null
+     * @throws MavenReportException 
      */
     private void addGroups( List arguments )
+        throws MavenReportException
     {
-        if ( groups == null )
+        Set<Group> groups = collectGroups();
+        if ( isEmpty( groups ) )
         {
             return;
-
         }
 
-        for ( int i = 0; i < groups.length; i++ )
+        for ( Group group : groups )
         {
-            if ( groups[i] == null || StringUtils.isEmpty( groups[i].getTitle() )
-                || StringUtils.isEmpty( groups[i].getPackages() ) )
+            if ( group == null || StringUtils.isEmpty( group.getTitle() )
+                || StringUtils.isEmpty( group.getPackages() ) )
             {
                 if ( getLog().isWarnEnabled() )
                 {
@@ -4275,9 +4716,9 @@ public abstract class AbstractJavadocMojo
             }
             else
             {
-                String groupTitle = StringUtils.replace( groups[i].getTitle(), ",", "&#44;" );
+                String groupTitle = StringUtils.replace( group.getTitle(), ",", "&#44;" );
                 addArgIfNotEmpty( arguments, "-group", JavadocUtil.quotedArgument( groupTitle ) + " "
-                    + JavadocUtil.quotedArgument( groups[i].getPackages() ), true );
+                    + JavadocUtil.quotedArgument( group.getPackages() ), true );
             }
         }
     }
@@ -4286,17 +4727,21 @@ public abstract class AbstractJavadocMojo
      * Add <code>tags</code> parameter to arguments.
      *
      * @param arguments not null
+     * @throws MavenReportException 
      */
     private void addTags( List arguments )
+        throws MavenReportException
     {
-        if ( tags == null )
+        Set<Tag> tags = collectTags();
+        
+        if ( isEmpty( tags ) )
         {
             return;
         }
 
-        for ( int i = 0; i < tags.length; i++ )
+        for ( Tag tag : tags )
         {
-            if ( StringUtils.isEmpty( tags[i].getName() ) )
+            if ( StringUtils.isEmpty( tag.getName() ) )
             {
                 if ( getLog().isWarnEnabled() )
                 {
@@ -4305,13 +4750,13 @@ public abstract class AbstractJavadocMojo
             }
             else
             {
-                String value = "\"" + tags[i].getName();
-                if ( StringUtils.isNotEmpty( tags[i].getPlacement() ) )
+                String value = "\"" + tag.getName();
+                if ( StringUtils.isNotEmpty( tag.getPlacement() ) )
                 {
-                    value += ":" + tags[i].getPlacement();
-                    if ( StringUtils.isNotEmpty( tags[i].getHead() ) )
+                    value += ":" + tag.getPlacement();
+                    if ( StringUtils.isNotEmpty( tag.getHead() ) )
                     {
-                        value += ":" + tags[i].getHead();
+                        value += ":" + tag.getHead();
                     }
                 }
                 value += "\"";
@@ -4359,16 +4804,45 @@ public abstract class AbstractJavadocMojo
     private void addTagletsFromTagletArtifacts( List arguments )
         throws MavenReportException
     {
-        if ( tagletArtifacts == null )
+        Set<TagletArtifact> tArtifacts = new LinkedHashSet<TagletArtifact>();
+        if ( tagletArtifacts != null && tagletArtifacts.length > 0 )
+        {
+            tArtifacts.addAll( Arrays.asList( tagletArtifacts ) );
+        }
+        
+        if ( includeDependencySources )
+        {
+            try
+            {
+                resolveDependencyBundles();
+            }
+            catch ( IOException e )
+            {
+                throw new MavenReportException( "Failed to resolve javadoc bundles from dependencies: " + e.getMessage(), e );
+            }
+            
+            if ( isNotEmpty( dependencyJavadocBundles ) )
+            {
+                for ( JavadocBundle bundle : dependencyJavadocBundles )
+                {
+                    JavadocOptions options = bundle.getOptions();
+                    if ( options != null && isNotEmpty( options.getTagletArtifacts() ) )
+                    {
+                        tArtifacts.addAll( options.getTagletArtifacts() );
+                    }
+                }
+            }
+        }
+        
+        if ( isEmpty( tArtifacts ) )
         {
             return;
         }
 
         List tagletsPath = new ArrayList();
-        for ( int i = 0; i < tagletArtifacts.length; i++ )
+        
+        for ( TagletArtifact aTagletArtifact: tArtifacts )
         {
-            TagletArtifact aTagletArtifact = tagletArtifacts[i];
-
             if ( ( StringUtils.isNotEmpty( aTagletArtifact.getGroupId() ) )
                 && ( StringUtils.isNotEmpty( aTagletArtifact.getArtifactId() ) )
                 && ( StringUtils.isNotEmpty( aTagletArtifact.getVersion() ) ) )
@@ -4784,7 +5258,7 @@ public abstract class AbstractJavadocMojo
      * @see #reactorProjects
      * @since 2.6
      */
-    private List getModulesLinks()
+    private List<OfflineLink> getModulesLinks()
         throws MavenReportException
     {
         if ( !( detectOfflineLinks && !isAggregator() && reactorProjects != null ) )
@@ -4885,7 +5359,7 @@ public abstract class AbstractJavadocMojo
      * @see #detectLinks
      * @since 2.6
      */
-    private List getDependenciesLinks()
+    private List<String> getDependenciesLinks()
     {
         if ( !detectLinks )
         {
@@ -5239,4 +5713,72 @@ public abstract class AbstractJavadocMojo
 
         return null;
     }
+    
+    /**
+     * Construct the output file for the generated javadoc-options XML file, after creating the 
+     * javadocOptionsDir if necessary. This method does NOT write to the file in question.
+     * 
+     * @since 2.6.2
+     */
+    protected final File getJavadocOptionsFile()
+    {
+        if ( !javadocOptionsDir.exists() )
+        {
+            javadocOptionsDir.mkdirs();
+        }
+        
+        return new File( javadocOptionsDir, "javadoc-options-" + getAttachmentClassifier() + ".xml" );
+    }
+    
+    /**
+     * Generate a javadoc-options XML file, for either bundling with a javadoc-resources artifact OR
+     * supplying to a distro module in a includeDependencySources configuration, so the javadoc options
+     * from this execution can be reconstructed and merged in the distro build.
+     * 
+     * @since 2.6.2
+     */
+    protected final JavadocOptions buildJavadocOptions()
+        throws IOException
+    {
+        JavadocOptions options = new JavadocOptions();
+        
+        options.setBootclasspathArtifacts( toList( bootclasspathArtifacts ) );
+        options.setDocfilesSubdirsUsed( docfilessubdirs );
+        options.setDocletArtifacts( toList( docletArtifact, docletArtifacts ) );
+        options.setExcludedDocfilesSubdirs( excludedocfilessubdir );
+        options.setExcludePackageNames( toList( excludePackageNames ) );
+        options.setGroups( toList( groups ) );
+        options.setLinks( links );
+        options.setOfflineLinks( toList( offlineLinks ) );
+        options.setResourcesArtifacts( toList( resourcesArtifacts ) );
+        options.setTagletArtifacts( toList( tagletArtifact, tagletArtifacts ) );
+        options.setTaglets( toList( taglets ) );
+        options.setTags( toList( tags ) );
+        
+        options.setJavadocResourcesDirectory( toRelative( project.getBasedir(), getJavadocDirectory().getAbsolutePath() ) );
+        
+        File optionsFile = getJavadocOptionsFile();
+        FileWriter writer = null;
+        try
+        {
+            writer = new FileWriter( optionsFile );
+            new JavadocOptionsXpp3Writer().write( writer, options );
+        }
+        finally
+        {
+            close( writer );
+        }
+        
+        return options;
+    }
+    
+    /**
+     * Override this if you need to provide a bundle attachment classifier, as in the case of test 
+     * javadocs.
+     */
+    protected String getAttachmentClassifier()
+    {
+        return JAVADOC_RESOURCES_ATTACHMENT_CLASSIFIER;
+    }
+    
 }

@@ -326,7 +326,7 @@ public class TestJavadocReport
     {
         if ( links == null )
         {
-            links = new ArrayList();
+            links = new ArrayList<String>();
         }
 
         // TODO the prerequisite is that the main report is in apidocs

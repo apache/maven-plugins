@@ -19,6 +19,9 @@ package org.apache.maven.plugin.javadoc;
  * under the License.
  */
 
+import static org.codehaus.plexus.util.StringUtils.isEmpty;
+import static org.codehaus.plexus.util.StringUtils.isNotEmpty;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -36,6 +39,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -108,13 +112,11 @@ public class JavadocUtil
      * @param dirs the list of <code>String</code> directories path that will be validated.
      * @return a List of valid <code>String</code> directories absolute paths.
      */
-    public static List pruneDirs( MavenProject project, List dirs )
+    public static List<String> pruneDirs( MavenProject project, List<String> dirs )
     {
-        List pruned = new ArrayList( dirs.size() );
-        for ( Iterator i = dirs.iterator(); i.hasNext(); )
+        List<String> pruned = new ArrayList<String>( dirs.size() );
+        for ( String dir : dirs )
         {
-            String dir = (String) i.next();
-
             if ( dir == null )
             {
                 continue;
@@ -142,26 +144,36 @@ public class JavadocUtil
      * @param files the list of <code>String</code> files paths that will be validated.
      * @return a List of valid <code>File</code> objects.
      */
-    protected static List pruneFiles( List files )
+    protected static List<String> pruneFiles( List<String> files )
     {
-        List pruned = new ArrayList( files.size() );
-        for ( Iterator i = files.iterator(); i.hasNext(); )
+        List<String> pruned = new ArrayList<String>( files.size() );
+        for ( String f : files )
         {
-            String f = (String) i.next();
-
-            if ( f == null )
-            {
-                continue;
-            }
-
-            File file = new File( f );
-            if ( file.isFile() && !pruned.contains( f ) )
+            if ( !shouldPruneFile( f, pruned ) )
             {
                 pruned.add( f );
             }
         }
-
+ 
         return pruned;
+    }
+
+    /**
+     * Determine whether a file should be excluded from the provided list of paths, based on whether
+     * it exists and is already present in the list.
+     */
+    public static boolean shouldPruneFile( String f, List<String> pruned )
+    {
+        if ( f != null )
+        {
+            File file = new File( f );
+            if ( file.isFile() && ( isEmpty( pruned ) || !pruned.contains( f ) ) )
+            {
+                return false;
+            }
+        }
+        
+        return true;
     }
 
     /**
@@ -1614,4 +1626,112 @@ public class JavadocUtil
             return token;
         }
     }
+    
+    static List<String> toList( String src )
+    {
+        return toList( src, null, null );
+    }
+    
+    static List<String> toList( String src, String elementPrefix, String elementSuffix )
+    {
+        if ( StringUtils.isEmpty( src ) )
+        {
+            return null;
+        }
+        
+        List<String> result = new ArrayList<String>();
+
+        StringTokenizer st = new StringTokenizer( src, "[,:;]" );
+        StringBuilder sb = new StringBuilder( 256 );
+        while ( st.hasMoreTokens() )
+        {
+            sb.setLength( 0 );
+            if ( StringUtils.isNotEmpty( elementPrefix ) )
+            {
+                sb.append( elementPrefix );
+            }
+            
+            sb.append( st.nextToken() );
+            
+            if ( StringUtils.isNotEmpty( elementSuffix ) )
+            {
+                sb.append( elementSuffix );
+            }
+            
+            result.add( sb.toString() );
+        }
+        
+        return result;
+    }
+    
+    static <T> List<T> toList( T[] multiple )
+    {
+        return toList( null, multiple );
+    }
+    
+    static <T> List<T> toList( T single, T[] multiple )
+    {
+        if ( single == null && ( multiple == null || multiple.length < 1 ) )
+        {
+            return null;
+        }
+        
+        List<T> result = new ArrayList<T>();
+        if ( single != null )
+        {
+            result.add( single );
+        }
+        
+        if ( multiple != null && multiple.length > 0 )
+        {
+            result.addAll( Arrays.asList( multiple ) );
+        }
+        
+        return result;
+    }
+    
+    // TODO: move to plexus-utils or use something appropriate from there
+    public static String toRelative( File basedir, String absolutePath )
+    {
+        String relative;
+
+        absolutePath = absolutePath.replace( '\\', '/' );
+        String basedirPath = basedir.getAbsolutePath().replace( '\\', '/' );
+
+        if ( absolutePath.startsWith( basedirPath ) )
+        {
+            relative = absolutePath.substring( basedirPath.length() );
+            if ( relative.startsWith( "/" ) )
+            {
+                relative = relative.substring( 1 );
+            }
+            if ( relative.length() <= 0 )
+            {
+                relative = ".";
+            }
+        }
+        else
+        {
+            relative = absolutePath;
+        }
+
+        return relative;
+    }
+    
+    /**
+     * Convenience method to determine that a collection is not empty or null.
+     */
+    public static boolean isNotEmpty( final Collection<?> collection )
+    {
+        return collection != null && !collection.isEmpty();
+    }
+    
+    /**
+     * Convenience method to determine that a collection is empty or null.
+     */
+    public static boolean isEmpty( final Collection<?> collection )
+    {
+        return collection == null || collection.isEmpty();
+    }
+    
 }

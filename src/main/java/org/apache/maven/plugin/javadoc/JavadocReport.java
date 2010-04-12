@@ -207,17 +207,17 @@ public class JavadocReport
         if ( !this.isAggregator() || ( this.isAggregator() && this.project.isExecutionRoot() ) )
         {
             List sourcePaths;
+            List files;
             try
             {
                 sourcePaths = getSourcePaths();
+                files = getFiles( sourcePaths );
             }
             catch ( MavenReportException e )
             {
                 getLog().error( e.getMessage(), e );
                 return false;
             }
-
-            List files = getFiles( sourcePaths );
 
             canGenerate = canGenerateReport( files );
         }
