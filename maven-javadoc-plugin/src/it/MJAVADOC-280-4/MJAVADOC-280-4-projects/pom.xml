@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>org.apache.maven.plugins.maven-javadoc-plugin.it</groupId>
+  <artifactId>MJAVADOC-280-4-projects</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+  
+  <modules>
+    <module>MJAVADOC-280-4-modA</module>
+    <module>MJAVADOC-280-4-modB</module>
+  </modules>
+  
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <artifactId>maven-javadoc-plugin</artifactId>
+          <!-- <version>2.6.2-SNAPSHOT</version> -->
+          <version>@pom.version@</version>
+          <configuration>
+            <tags>
+              <tag><name>.foo</name><placement>optm</placement><head>Foo:</head></tag>
+              <tag><name>author</name></tag>
+              <tag><name>version</name></tag>
+              <tag><name>.bar</name><placement>tcmf</placement><head>Bar:</head></tag>
+              <tag><name>see</name></tag>
+            </tags>
+            <detectOfflineLinks>false</detectOfflineLinks>
+          </configuration>
+          <executions>
+            <execution>
+              <id>javadoc-resource-jars</id>
+              <phase>package</phase>
+              <goals>
+                <goal>resource-bundle</goal>
+                <goal>test-resource-bundle</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-source-plugin</artifactId>
+          <version>2.1.1</version>
+          <executions>
+            <execution>
+              <id>attach-sources</id>
+              <goals>
+                <goal>jar</goal>
+                <goal>test-jar</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+</project>

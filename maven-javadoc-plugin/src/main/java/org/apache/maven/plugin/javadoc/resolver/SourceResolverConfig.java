@@ -24,6 +24,7 @@ import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
+import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
 
@@ -55,12 +56,15 @@ public class SourceResolverConfig
 
     private final ArtifactFactory artifactFactory;
 
-    public SourceResolverConfig( final MavenProject project, final ArtifactRepository localRepository,
+    private final Log log;
+
+    public SourceResolverConfig( final Log log, final MavenProject project, final ArtifactRepository localRepository,
                                  final File outputBasedir, final ArtifactResolver artifactResolver,
                                  final ArtifactFactory artifactFactory,
                                  final ArtifactMetadataSource artifactMetadataSource,
                                  final ArchiverManager archiverManager )
     {
+        this.log = log;
         this.project = project;
         this.localRepository = localRepository;
         this.outputBasedir = outputBasedir;
@@ -159,6 +163,11 @@ public class SourceResolverConfig
     public ArtifactFactory artifactFactory()
     {
         return artifactFactory;
+    }
+    
+    public Log log()
+    {
+        return log;
     }
 
 }

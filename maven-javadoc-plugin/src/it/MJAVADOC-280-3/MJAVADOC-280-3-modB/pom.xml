@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <artifactId>MJAVADOC-280-3</artifactId>
+    <groupId>org.apache.maven.plugins.maven-javadoc-plugin.it</groupId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>MJAVADOC-280-3-modB</artifactId>
+  <name>MJAVADOC-280-3-modB</name>
+
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <configuration>
+          <tags>
+            <tag><name>.foo</name><placement>optm</placement><head>Foo:</head></tag>
+            <tag><name>author</name></tag>
+            <tag><name>version</name></tag>
+            <tag><name>.bar</name><placement>tcmf</placement><head>Bar:</head></tag>
+            <tag><name>see</name></tag>
+          </tags>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

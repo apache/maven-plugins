@@ -19,7 +19,11 @@ specific language governing permissions and limitations
 under the License.
 -->
 
-<model xmlns="http://modello.codehaus.org/MODELLO/1.1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://modello.codehaus.org/MODELLO/1.1.0 http://modello.codehaus.org/xsd/modello-1.1.0.xsd">
+<model xmlns="http://modello.codehaus.org/MODELLO/1.1.0" 
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+       xsi:schemaLocation="http://modello.codehaus.org/MODELLO/1.1.0 http://modello.codehaus.org/xsd/modello-1.1.0.xsd"
+       xsd.namespace="http://http://maven.apache.org/plugins/maven-javadoc-plugin/maven-javadoc-options/${version}" 
+       xsd.target-namespace="http://maven.apache.org/plugins/maven-javadoc-plugin/xsd/maven-javadoc-options-${version}.xsd">
   <id>javadocoptions</id>
   <name>JavadocOptions</name>
   <description><![CDATA[Model for Javadoc Options.]]></description>
@@ -30,22 +34,154 @@ under the License.
     </default>
   </defaults>
   <classes>
+    <class rootElement="true" xml.tagName="javadocOptions">
+      <name>JavadocOptions</name>
+      <version>1.1.0+</version>
+      <description>Root class to contain all javadoc configuration options for inclusion in javadoc bundle archives.</description>
+      <fields>
+        <field>
+          <name>groups</name>
+          <version>1.1.0+</version>
+          <description>A list of Group parameters.</description>
+          <required>false</required>
+          <association>
+            <type>Group</type>
+            <multiplicity>*</multiplicity>
+          </association>
+        </field>
+        <field>
+          <name>tags</name>
+          <version>1.1.0+</version>
+          <description>A list of Tag parameters.</description>
+          <required>false</required>
+          <association>
+            <type>Tag</type>
+            <multiplicity>*</multiplicity>
+          </association>
+        </field>
+        <field>
+          <name>docletArtifacts</name>
+          <version>1.1.0+</version>
+          <description>A list of DocletArtifact parameters.</description>
+          <required>false</required>
+          <association>
+            <type>DocletArtifact</type>
+            <multiplicity>*</multiplicity>
+          </association>
+        </field>
+        <field>
+          <name>taglets</name>
+          <version>1.1.0+</version>
+          <description>A list of Taglet parameters.</description>
+          <required>false</required>
+          <association>
+            <type>Taglet</type>
+            <multiplicity>*</multiplicity>
+          </association>
+        </field>
+        <field>
+          <name>offlineLinks</name>
+          <version>1.1.0+</version>
+          <description>A list of OfflineLink parameters.</description>
+          <required>false</required>
+          <association>
+            <type>OfflineLink</type>
+            <multiplicity>*</multiplicity>
+          </association>
+        </field>
+        <field>
+          <name>tagletArtifacts</name>
+          <version>1.1.0+</version>
+          <description>A list of TagletArtifact parameters.</description>
+          <required>false</required>
+          <association>
+            <type>TagletArtifact</type>
+            <multiplicity>*</multiplicity>
+          </association>
+        </field>
+        <field>
+          <name>resourcesArtifacts</name>
+          <version>1.1.0+</version>
+          <description>A list of ResourcesArtifact parameters.</description>
+          <required>false</required>
+          <association>
+            <type>ResourcesArtifact</type>
+            <multiplicity>*</multiplicity>
+          </association>
+        </field>
+        <field>
+          <name>bootclasspathArtifacts</name>
+          <version>1.1.0+</version>
+          <description>A list of BootclasspathArtifact parameters.</description>
+          <required>false</required>
+          <association>
+            <type>BootclasspathArtifact</type>
+            <multiplicity>*</multiplicity>
+          </association>
+        </field>
+        <field>
+          <name>links</name>
+          <version>1.1.0+</version>
+          <description>List of URLs to javadocs for external classes.</description>
+          <required>false</required>
+          <association>
+            <type>String</type>
+            <multiplicity>*</multiplicity>
+          </association>
+        </field>
+        <field>
+          <name>excludePackageNames</name>
+          <version>1.1.0+</version>
+          <description>List of subpackage patterns to exclude from javadoc generation.</description>
+          <required>false</required>
+          <association>
+            <type>String</type>
+            <multiplicity>*</multiplicity>
+          </association>
+        </field>
+        <field>
+          <name>docfilesSubdirsUsed</name>
+          <version>1.1.0+</version>
+          <description>Enables deep copying of the '&amp;#42;&amp;#42;/doc-files' directories and the specific 'resources' directory.</description>
+          <required>false</required>
+          <type>boolean</type>
+        </field>
+        <field>
+          <name>excludedDocfilesSubdirs</name>
+          <version>1.1.0+</version>
+          <description>List of exclusion patterns separated by ':' for deep copying of the '&amp;#42;&amp;#42;/doc-files' directories.</description>
+          <required>false</required>
+          <type>String</type>
+        </field>
+        <field>
+          <name>javadocResourcesDirectory</name>
+          <version>1.1.0+</version>
+          <description>
+            Path relative to project basedir where javadoc resources were located. 
+            This is mainly useful in multimodule builds where the reactor is still populated.
+          </description>
+          <required>false</required>
+          <type>String</type>
+        </field>
+      </fields>
+    </class>
+    
     <class>
       <name>Group</name>
       <description>A Group parameter.</description>
-      <version>1.0.0</version>
+      <version>1.0.0+</version>
       <fields>
         <field>
           <name>title</name>
           <description>Title can be any text, and can include white space. This text is placed in the table heading for the group.</description>
-          <version>1.0.0</version>
+          <version>1.0.0+</version>
           <type>String</type>
           <identifier>true</identifier>
         </field>
         <field>
           <name>packages</name>
           <description>Packages can be any package name, or can be the start of any package name followed by an asterisk (*). The asterisk is a wildcard meaning "match any characters". This is the only wildcard allowed. Multiple patterns can be included in a group by separating them with colons (:).</description>
-          <version>1.0.0</version>
+          <version>1.0.0+</version>
           <type>String</type>
           <identifier>true</identifier>
         </field>
@@ -55,26 +191,26 @@ under the License.
     <class>
       <name>Tag</name>
       <description>A Tag parameter.</description>
-      <version>1.0.0</version>
+      <version>1.0.0+</version>
       <fields>
         <field>
           <name>name</name>
           <description>Name of the tag.</description>
-          <version>1.0.0</version>
+          <version>1.0.0+</version>
           <type>String</type>
           <identifier>true</identifier>
         </field>
         <field>
           <name>head</name>
           <description>Head of the tag.</description>
-          <version>1.0.0</version>
+          <version>1.0.0+</version>
           <type>String</type>
           <identifier>true</identifier>
         </field>
       </fields>
       <codeSegments>
         <codeSegment>
-          <version>1.0.0</version>
+          <version>1.0.0+</version>
             <code><![CDATA[
     /**
      * Field placement
@@ -137,26 +273,26 @@ under the License.
     <class>
       <name>JavadocPathArtifact</name>
       <description>An artifact object used by Javadoc path options like -docletpath or -tagletpath.</description>
-      <version>1.0.0</version>
+      <version>1.0.0+</version>
       <fields>
         <field>
           <name>groupId</name>
           <description>The id of the group of the artifact.</description>
-          <version>1.0.0</version>
+          <version>1.0.0+</version>
           <type>String</type>
           <identifier>true</identifier>
         </field>
         <field>
           <name>artifactId</name>
           <description>The id of the artifact.</description>
-          <version>1.0.0</version>
+          <version>1.0.0+</version>
           <type>String</type>
           <identifier>true</identifier>
         </field>
         <field>
           <name>version</name>
           <description>The version of the artifact.</description>
-          <version>1.0.0</version>
+          <version>1.0.0+</version>
           <type>String</type>
           <identifier>true</identifier>
         </field>
@@ -166,54 +302,54 @@ under the License.
     <class>
       <name>DocletArtifact</name>
       <description>A doclet parameter as artifact.</description>
-      <version>1.0.0</version>
+      <version>1.0.0+</version>
       <superClass>JavadocPathArtifact</superClass>
     </class>
 
     <class>
       <name>TagletArtifact</name>
       <description>A taglet parameter as artifact.</description>
-      <version>1.0.0</version>
+      <version>1.0.0+</version>
       <superClass>JavadocPathArtifact</superClass>
     </class>
 
     <class>
       <name>ResourcesArtifact</name>
       <description>A artifact containing resources.</description>
-      <version>1.0.0</version>
+      <version>1.0.0+</version>
       <superClass>JavadocPathArtifact</superClass>
     </class>
 
     <class>
       <name>BootclasspathArtifact</name>
       <description>A bootclasspath parameter as artifact.</description>
-      <version>1.0.0</version>
+      <version>1.0.0+</version>
       <superClass>JavadocPathArtifact</superClass>
     </class>
 
     <class>
       <name>Taglet</name>
       <description>A Taglet parameter.</description>
-      <version>1.0.0</version>
+      <version>1.0.0+</version>
       <fields>
         <field>
           <name>tagletClass</name>
           <description>tagletClass is the fully-qualified name for the taglet class.</description>
-          <version>1.0.0</version>
+          <version>1.0.0+</version>
           <type>String</type>
           <identifier>true</identifier>
         </field>
         <field>
           <name>tagletpath</name>
           <description>Specifies the search paths for finding taglet class files (.class).</description>
-          <version>1.0.0</version>
+          <version>1.0.0+</version>
           <type>String</type>
           <identifier>true</identifier>
         </field>
         <field>
           <name>tagletArtifact</name>
           <description>Specifies the taglet artifact to be included in the tagletpath option for finding taglet class files (.class).</description>
-          <version>1.0.0</version>
+          <version>1.0.0+</version>
           <association>
             <type>TagletArtifact</type>
           </association>
@@ -224,19 +360,19 @@ under the License.
     <class>
       <name>OfflineLink</name>
       <description>An offline link parameter.</description>
-      <version>1.0.0</version>
+      <version>1.0.0+</version>
       <fields>
         <field>
           <name>url</name>
           <description>The url of the link.</description>
-          <version>1.0.0</version>
+          <version>1.0.0+</version>
           <type>String</type>
           <identifier>true</identifier>
         </field>
         <field>
           <name>location</name>
           <description>The location of the link.</description>
-          <version>1.0.0</version>
+          <version>1.0.0+</version>
           <type>String</type>
           <identifier>true</identifier>
         </field>
