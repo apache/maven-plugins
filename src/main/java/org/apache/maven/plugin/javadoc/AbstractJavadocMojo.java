@@ -130,7 +130,7 @@ public abstract class AbstractJavadocMojo
      * Classifier used in the name of the javadoc-options XML file, and in the resources bundle 
      * artifact that gets attached to the project. This one is used for non-test javadocs.
      * 
-     * @since 2.6.2
+     * @since 2.7
      * @see #TEST_JAVADOC_RESOURCES_ATTACHMENT_CLASSIFIER
      */
     public static final String JAVADOC_RESOURCES_ATTACHMENT_CLASSIFIER = "javadoc-resources";
@@ -139,7 +139,7 @@ public abstract class AbstractJavadocMojo
      * Classifier used in the name of the javadoc-options XML file, and in the resources bundle 
      * artifact that gets attached to the project. This one is used for test-javadocs.
      * 
-     * @since 2.6.2
+     * @since 2.7
      * @see #JAVADOC_RESOURCES_ATTACHMENT_CLASSIFIER
      */
     public static final String TEST_JAVADOC_RESOURCES_ATTACHMENT_CLASSIFIER = "test-javadoc-resources";
@@ -1584,7 +1584,7 @@ public abstract class AbstractJavadocMojo
      * This is useful when creating javadocs for a distribution project.
      * 
      * @parameter default-value="false"
-     * @since 2.6.2
+     * @since 2.7
      */
     private boolean includeDependencySources;
 
@@ -1592,7 +1592,7 @@ public abstract class AbstractJavadocMojo
      * Directory where unpacked project sources / test-sources should be cached.
      *
      * @parameter default-value="${project.build.directory}/distro-javadoc-sources"
-     * @since 2.6.2
+     * @since 2.7
      * @see #includeDependencySources
      */
     private File sourceDependencyCacheDir;
@@ -1602,7 +1602,7 @@ public abstract class AbstractJavadocMojo
      * in this javadoc run.
      * 
      * @parameter default-value="false"
-     * @since 2.6.2
+     * @since 2.7
      * @see #includeDependencySources
      */
     private boolean includeTransitiveDependencySources;
@@ -1612,7 +1612,7 @@ public abstract class AbstractJavadocMojo
      *
      * 
      * @parameter
-     * @since 2.6.2
+     * @since 2.7
      * @see #includeDependencySources
      */
     private List<String> dependencySourceIncludes;
@@ -1622,7 +1622,7 @@ public abstract class AbstractJavadocMojo
      *
      * 
      * @parameter
-     * @since 2.6.2
+     * @since 2.7
      * @see #includeDependencySources
      */
     private List<String> dependencySourceExcludes;
@@ -1633,7 +1633,7 @@ public abstract class AbstractJavadocMojo
      * 
      * @parameter default-value="${project.build.directory}/javadoc-bundle-options"
      * @readonly
-     * @since 2.6.2
+     * @since 2.7
      */
     private File javadocOptionsDir;
 
@@ -1641,7 +1641,7 @@ public abstract class AbstractJavadocMojo
      * Transient variable to allow lazy-resolution of javadoc bundles from dependencies, so they can
      * be used at various points in the javadoc generation process.
      * 
-     * @since 2.6.2
+     * @since 2.7
      */
     private transient List<JavadocBundle> dependencyJavadocBundles;
     
@@ -2184,7 +2184,7 @@ public abstract class AbstractJavadocMojo
      * Construct a SourceResolverConfig for resolving dependency sources and resources in a consistent
      * way, so it can be reused for both source and resource resolution.
      * 
-     * @since 2.6.2
+     * @since 2.7
      */
     private SourceResolverConfig getDependencySourceResolverConfig()
     {
@@ -5718,7 +5718,7 @@ public abstract class AbstractJavadocMojo
      * Construct the output file for the generated javadoc-options XML file, after creating the 
      * javadocOptionsDir if necessary. This method does NOT write to the file in question.
      * 
-     * @since 2.6.2
+     * @since 2.7
      */
     protected final File getJavadocOptionsFile()
     {
@@ -5735,7 +5735,7 @@ public abstract class AbstractJavadocMojo
      * supplying to a distro module in a includeDependencySources configuration, so the javadoc options
      * from this execution can be reconstructed and merged in the distro build.
      * 
-     * @since 2.6.2
+     * @since 2.7
      */
     protected final JavadocOptions buildJavadocOptions()
         throws IOException
