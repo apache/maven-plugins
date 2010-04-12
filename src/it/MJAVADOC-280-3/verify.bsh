@@ -1,6 +1,6 @@
 import java.io.File;
 
-File distroTarget = new File( basedir, "MJAVADOC-280-1-distro/target" );
+File distroTarget = new File( basedir, "MJAVADOC-280-3-distro/target" );
 File apidocs = new File( distroTarget, "apidocs" );
 File testApidocs = new File( distroTarget, "testapidocs" );
 

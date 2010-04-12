@@ -12,3 +12,82 @@
     <module>MJAVADOC-280-2-distro</module>
   </modules>
 </project>
+  
+  <properties>
+    <!-- <javadocPluginVersion>2.6.2-SNAPSHOT</javadocPluginVersion> -->
+    <javadocPluginVersion>@pom.version@</javadocPluginVersion>
+  </properties>
+  
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>2.4.2</version>
+        <executions>
+          <execution>
+            <id>filter-projects</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${project.build.directory}</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>${project.artifactId}-projects</directory>
+                  <filtering>true</filtering>
+                  <targetPath>${project.artifactId}-projects</targetPath>
+                </resource>
+                <resource>
+                  <directory>${project.artifactId}-distro</directory>
+                  <filtering>true</filtering>
+                  <targetPath>${project.artifactId}-distro</targetPath>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-invoker-plugin</artifactId>
+        <version>1.4</version>
+        <configuration>
+          <localRepositoryPath>${project.basedir}/../../local-repo</localRepositoryPath>
+          <streamLogs>true</streamLogs>
+          <suppressSummaries>true</suppressSummaries>
+          <debug>true</debug>
+        </configuration>
+        <executions>
+          <execution>
+            <id>build-projects</id>
+            <phase>package</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <pom>${project.build.directory}/MJAVADOC-280-2-projects/pom.xml</pom>
+              <goals>
+                <goal>clean</goal>
+                <goal>install</goal>
+              </goals>
+            </configuration>
+          </execution>
+          <execution>
+            <id>build-distro</id>
+            <phase>package</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <pom>${project.build.directory}/MJAVADOC-280-2-distro/pom.xml</pom>
+              <goals>
+                <goal>clean</goal>
+                <goal>package</goal>
+              </goals>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>
