@@ -1,0 +1,246 @@
+ ------
+ Aggregating Javadocs from Dependency Sources
+ ------
+ John Casey
+ ------
+ 2010-04-12
+ ------
+
+~~ Licensed to the Apache Software Foundation (ASF) under one
+~~ or more contributor license agreements.  See the NOTICE file
+~~ distributed with this work for additional information
+~~ regarding copyright ownership.  The ASF licenses this file
+~~ to you under the Apache License, Version 2.0 (the
+~~ "License"); you may not use this file except in compliance
+~~ with the License.  You may obtain a copy of the License at
+~~
+~~   http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~ Unless required by applicable law or agreed to in writing,
+~~ software distributed under the License is distributed on an
+~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+~~ KIND, either express or implied.  See the License for the
+~~ specific language governing permissions and limitations
+~~ under the License.
+
+~~ NOTE: For help with the syntax of this file, see:
+~~ http://maven.apache.org/doxia/references/apt-format.html
+
+Aggregating Javadocs from Dependency Sources
+
+  <<Since: 2.6.2>>
+
+  Consider the following project dependency graph:
+
++-----+
+
+org.test:project-distro:0.1
+  |
+  |--> org.test.dep:project-A:1.0
+  |    |
+  |    |--> commons-lang:commons-lang:1.0
+  |    |
+  |    `--> commons-io:commons-io:1.0
+  |
+  |--> org.test.dep:project-B:1.1
+  |    |
+  |    `--> commons-io:commons-io:1.0
+  |
+  |--> org.test.dep:project-C:1.0
+  |
+  `--> commons-cli:commons-cli:1.0
+
++-----+
+
+  Suppose you maintain a series of projects with separate release cycles, along with another project which serves to 
+  integrate everything together to provide a tested platform, with its dependencies coordinated for compatibility. In
+  order to produce the <<<project-distro>>> distribution, you'll want to produce a comprehensive set of javadocs 
+  containing not only what little code is in the distro project itself - which isn't likely to be very enlightening -
+  but also the javadocs for your other projects, which are dependencies of the distribution.
+  
+  Since version <2.6.2> of the maven-javadoc-plugin, you can do this using the <<<includeDependencySources>>> flag and 
+  its associated configuration options. Using this flag, it's possible to aggregate sources from other modules in a 
+  multi-module build <or> use the <<<sources>>> and <<<test-sources>>> jars published alongside the main artifacts for
+  your projects. It's also possible to fine-tune which dependencies' sources should be aggregated, and which ignored.
+  Last but not least, it's possible to include non-source javadoc configurations and resources from your dependencies by
+  publishing  <<<javadoc-resources>>> and <<<test-javadoc-resources>>> bundle artifacts alongside your dependencies' 
+  main artifacts.
+  
+  To get started, let's look at how to lay the ground work for dependency-driven javadoc aggregation.
+  
+* Preparing Dependencies for Aggregation
+
+  Dependency-driven javadoc aggregation works by resolving the sources for included dependencies, then including these
+  sources in the javadoc production process for your project. As is common practice with Maven, dependency sources will
+  be resolved from other modules in the current reactor if they are available there. Otherwise, the plugin will attempt
+  to resolve the appropriate sources artifact for the dependency: <<<sources>>> for main javadocs, <<<test-sources>>> for
+  test javadocs. <<NOTE: If your configuration includes a dependency but that dependency's source artifact is unavailable, the
+  javadoc plugin will fail.>>
+  
+  The recommended method for producing these source artifacts is the {{{http://maven.apache.org/plugins/maven-source-plugin/}maven-source-plugin}}.
+  The following simple example shows how to produce source artifacts:
+  
++-----+
+<project>
+  [...]
+  <groupId>org.test.dep</groupId>
+  <artifactId>project-A</artifactId>
+  <version>1.0</version>
+  [...]
+  <build>
+    <plugins>
+      [...]
+      <plugin>
+        <artifactId>maven-source-plugin</artifactId>
+        <version>2.1.1</version>
+        <executions>
+          <execution>
+            <id>bundle-sources</id>
+            <phase>package</phase>
+            <goals>
+              <!-- produce source artifact for main project sources -->
+              <goal>jar</goal>
+              
+              <!-- produce source artifact for project test sources -->
+              <goal>test-jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  [...]
+</project>
++-----+
+
+  <<NOTE: If you don't intend to generate test javadocs that include dependency sources, you can omit the 
+  <<<test-jar>>> goal above.>>
+  
+  At this point, your project is ready to produce the artifacts necessary to support dependency-driven javadoc aggregation.
+  The next time you install or deploy the project, the appropriate artifacts will be available for your distribution
+  project to consume.
+
+* Fine-Tuning Included Dependencies
+
+  Unifying the javadocs of your project and its dependencies is fine, but let's not go too far. Along with your own
+  upstream projects, your distribution may include dependencies on external projects. It may not be appropriate to
+  include javadocs for these projects in your distribution; linking to them is usually better. In any case, you may
+  not have enough influence over these external projects to get them to produce source artifacts like the ones discussed
+  above. In our original example, take a look at that last direct dependency:
+  
++-----+
+  
+  `--> commons-cli:commons-cli:1.0
+
++-----+
+  
+  This is a pretty common direct dependency for projects that provide command-line execution options. But consider
+  what happens if commons-cli doesn't provide a <<<sources>>> jar: dependency-driven javadoc aggregation would fail
+  for any project that contained commons-cli as a direct dependency. To avoid this case, you have the option to fine-tune
+  which dependencies get included in the javadoc aggregation process. In your distribution project, add configuraiton
+  for the <<<maven-javadoc-plugin>>> similar to the following:
+  
++-----+
+<project>
+  [...]
+  <groupId>org.test</groupId>
+  <artifactId>project-distro</artifactId>
+  [...]
+  <build>
+    <plugins>
+      [...]
+      <plugin>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>@pom.version@</version>
+        <executions>
+          <execution>
+            <id>javadoc-jar</id>
+            <phase>package</phase>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+            <configuration>
+              <!-- switch on dependency-driven aggregation -->
+              <includeDependencySources>true</includeDependencySources>
+              
+              <dependencySourceExcludes>
+                <!-- exclude ONLY commons-cli artifacts -->
+                <dependencySourceExclude>commons-cli:*</dependencySourceExclude>
+              </dependencySourceExcludes>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>
++-----+
+
+  <<NOTE:>> The above configuration excludes <<only>> commons-cli. If you have multiple external dependencies, it may be easier
+  to configure which dependencies are <<included>>, as follows:
+  
++-----+
+  [...]
+            <configuration>
+              <!-- switch on dependency-driven aggregation -->
+              <includeDependencySources>true</includeDependencySources>
+
+              <dependencySourceIncludes>
+                <!-- include ONLY dependencies I control -->
+                <dependencySourceInclude>org.test.dep:*</dependencySourceInclude>
+              </dependencySourceIncludes>
+            </configuration>
+  [...]
++-----+
+
+* Including Javadoc Resources from Dependencies
+
+  Many projects choose customize their javadoc configuration beyond the defaults.
+  
+  If you have customized configuration for generating the javadocs in these dependency projects,
+  you may wish to propagate these customizations to the distribution project itself. To do this, use the <<<resource-bundle>>>
+  and <<<test-resource-bundle>>> goals, new in version <<2.6.2>> of the javadoc plugin. These will create new artifacts
+  that contain the javadoc configuration options plus the contents of $\{javadocDirectory} (which defaults to src/main/javadoc),
+  or $\{tetsJavadocDirectory} (which defaults to src/test/javadoc) depending on the bundle goal. If these artifacts are
+  available, the dependency-driven aggregation process will include the content and configuration they contain when
+  generating the javadocs for your distribution. The following example shows how to produce these artifacts:
+  
++-----+
+<project>
+  [...]
+  <groupId>org.test.dep</groupId>
+  <artifactId>project-A</artifactId>
+  <version>1.0</version>
+  [...]
+  <build>
+    <plugins>
+      [...]
+      <plugin>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>@pom.version@</version>
+        <executions>
+          <execution>
+            <id>resource-bundles</id>
+            <phase>package</phase>
+            <goals>
+              <!-- produce source artifact for main project sources -->
+              <goal>resource-bundle</goal>
+
+              <!-- produce source artifact for project test sources -->
+              <goal>test-resource-bundle</goal>
+            </goals>
+            <configuration>
+              <detectOfflineLinks>false</detectOfflineLinks>
+              [...]
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  [...]
+</project>
++-----+
+
+  <<NOTE: Again, if you don't need to generate test javadocs, you can omit the <<<test-resource-bundle>>> goal above.>>
+  <<NOTE 2: The configuration option <<<detectOfflineLinks>>> is provided as an example only. It is not required.>>>
