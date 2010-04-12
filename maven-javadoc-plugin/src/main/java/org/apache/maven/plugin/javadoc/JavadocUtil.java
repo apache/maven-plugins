@@ -19,9 +19,6 @@ package org.apache.maven.plugin.javadoc;
  * under the License.
  */
 
-import static org.codehaus.plexus.util.StringUtils.isEmpty;
-import static org.codehaus.plexus.util.StringUtils.isNotEmpty;
-
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;

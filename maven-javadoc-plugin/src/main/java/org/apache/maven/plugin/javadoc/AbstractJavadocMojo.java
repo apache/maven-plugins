@@ -3178,7 +3178,7 @@ public abstract class AbstractJavadocMojo
             }
         }
 
-        if ( taglet != null && taglets.length > 0 )
+        if ( taglets != null && taglets.length > 0 )
         {
             result.addAll( Arrays.asList( taglets ) );
         }
@@ -5722,7 +5722,7 @@ public abstract class AbstractJavadocMojo
      */
     protected final File getJavadocOptionsFile()
     {
-        if ( !javadocOptionsDir.exists() )
+        if ( javadocOptionsDir != null && !javadocOptionsDir.exists() )
         {
             javadocOptionsDir.mkdirs();
         }
@@ -5755,7 +5755,10 @@ public abstract class AbstractJavadocMojo
         options.setTaglets( toList( taglets ) );
         options.setTags( toList( tags ) );
         
-        options.setJavadocResourcesDirectory( toRelative( project.getBasedir(), getJavadocDirectory().getAbsolutePath() ) );
+        if ( getProject() != null && getJavadocDirectory() != null )
+        {
+            options.setJavadocResourcesDirectory( toRelative( getProject().getBasedir(), getJavadocDirectory().getAbsolutePath() ) );
+        }
         
         File optionsFile = getJavadocOptionsFile();
         FileWriter writer = null;
