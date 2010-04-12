@@ -39,7 +39,7 @@ import java.io.IOException;
  *  
  * @goal resource-bundle
  * @phase package
- * @since 2.6.2
+ * @since 2.7
  */
 public class ResourcesBundleMojo
     extends AbstractJavadocMojo
