@@ -35,6 +35,7 @@ under the License.
     </menu>
     <menu name="Examples">
       <item name="Aggregating Javadocs" href="/examples/aggregate.html"/>
+      <item name="Aggregating Dependency Javadocs" href="/examples/aggregate-dependency-sources.html"/>
       <item name="Excluding Packages" href="/examples/exclude-package-names.html"/>
       <item name="Grouping Packages" href="/examples/group-configuration.html"/>
       <item name="Using Alternate Doclets" href="/examples/alternate-doclet.html"/>
