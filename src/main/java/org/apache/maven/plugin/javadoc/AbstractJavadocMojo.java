@@ -22,7 +22,8 @@ package org.apache.maven.plugin.javadoc;
 import static org.codehaus.plexus.util.IOUtil.close;
 import static org.apache.maven.plugin.javadoc.JavadocUtil.toList;
 import static org.apache.maven.plugin.javadoc.JavadocUtil.toRelative;
-import static org.apache.maven.plugin.javadoc.JavadocUtil.*;
+import static org.apache.maven.plugin.javadoc.JavadocUtil.isNotEmpty;
+import static org.apache.maven.plugin.javadoc.JavadocUtil.isEmpty;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -70,7 +71,6 @@ import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.javadoc.options.BootclasspathArtifact;
 import org.apache.maven.plugin.javadoc.options.DocletArtifact;
 import org.apache.maven.plugin.javadoc.options.Group;
