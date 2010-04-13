@@ -6,8 +6,12 @@
   <version>1.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   
-  <properties>
-    <!-- <javadocPluginVersion>2.6.2-SNAPSHOT</javadocPluginVersion> -->
+  <modules>
+    <module>MJAVADOC-280-4-projects</module>
+    <module>MJAVADOC-280-4-distro</module>
+  </modules>
+  
+  <!-- <properties>
     <javadocPluginVersion>@pom.version@</javadocPluginVersion>
   </properties>
   
@@ -83,5 +87,5 @@
         </executions>
       </plugin>
     </plugins>
-  </build>
+  </build> -->
 </project>
