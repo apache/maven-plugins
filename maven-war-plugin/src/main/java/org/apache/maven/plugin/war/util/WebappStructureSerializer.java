@@ -40,19 +40,23 @@ import java.io.Writer;
 public class WebappStructureSerializer
 {
 
-    private final XStream xStream;
+    private static final XStream xStream;
+
+    static {
+        xStream = new XStream(new DomDriver());
+
+        // Register aliases
+        xStream.alias( "webapp-structure", WebappStructure.class );
+        xStream.alias( "path-set", PathSet.class );
+        xStream.alias( "dependency", Dependency.class );
+        
+    }
 
     /**
      * Creates a new instance of the serializer.
      */
     public WebappStructureSerializer()
     {
-        this.xStream = new XStream(new DomDriver());
-
-        // Register aliases
-        xStream.alias( "webapp-structure", WebappStructure.class );
-        xStream.alias( "path-set", PathSet.class );
-        xStream.alias( "dependency", Dependency.class );
     }
 
 
