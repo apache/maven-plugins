@@ -3,8 +3,12 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>org.apache.maven.plugins.maven-javadoc-plugin.it</groupId>
-  <version>1.0-SNAPSHOT</version>
+  <parent>
+    <groupId>org.apache.maven.plugins.maven-javadoc-plugin.it</groupId>
+    <artifactId>MJAVADOC-280-4</artifactId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+  
   <artifactId>MJAVADOC-280-4-distro</artifactId>
   
   <name>MJAVADOC-280-4-distro</name>
@@ -34,7 +38,7 @@
     <plugins>
       <plugin>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>@javadocPluginVersion@</version>
+        <version>@pom.version@</version>
         <executions>
           <execution>
             <id>javadoc-jars</id>
