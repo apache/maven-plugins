@@ -42,14 +42,15 @@ public class WebappStructureSerializer
 
     private static final XStream xStream;
 
-    static {
-        xStream = new XStream(new DomDriver());
+    static
+    {
+        xStream = new XStream( new DomDriver() );
 
         // Register aliases
         xStream.alias( "webapp-structure", WebappStructure.class );
         xStream.alias( "path-set", PathSet.class );
         xStream.alias( "dependency", Dependency.class );
-        
+
     }
 
     /**
