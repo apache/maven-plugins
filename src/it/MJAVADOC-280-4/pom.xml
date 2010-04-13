@@ -43,12 +43,13 @@
       </plugin>
       <plugin>
         <artifactId>maven-invoker-plugin</artifactId>
-        <version>1.4</version>
+        <version>1.5</version>
         <configuration>
           <localRepositoryPath>${project.basedir}/../../local-repo</localRepositoryPath>
           <streamLogs>true</streamLogs>
           <suppressSummaries>true</suppressSummaries>
           <debug>true</debug>
+          <settingsFile>${project.basedir}/../interpolated-settings.xml</settingsFile>
         </configuration>
         <executions>
           <execution>
