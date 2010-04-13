@@ -5315,7 +5315,11 @@ public abstract class AbstractJavadocMojo
                         }
 
                         String invokerLogContent = JavadocUtil.readFile( invokerLogFile, "UTF-8" );
-                        if ( invokerLogContent != null && invokerLogContent.indexOf( JavadocUtil.ERROR_INIT_VM ) == -1 )
+                        
+                        // TODO: Why are we only interested in cases where the JVM won't start?
+                        // [MJAVADOC-275][jdcasey] I changed the logic here to only throw an error WHEN 
+                        //   the JVM won't start (opposite of what it was).
+                        if ( invokerLogContent != null && invokerLogContent.indexOf( JavadocUtil.ERROR_INIT_VM ) > -1 )
                         {
                             throw new MavenReportException( e.getMessage(), e );
                         }
