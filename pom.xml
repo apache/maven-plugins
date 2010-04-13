@@ -417,6 +417,7 @@ under the License.
                 <pomInclude>**/MJAVADOC-257/pom.xml</pomInclude>
                 <pomInclude>**/MJAVADOC-259/pom.xml</pomInclude>
                 <pomInclude>**/MJAVADOC-262/pom.xml</pomInclude>
+                <pomInclude>MJAVADOC-275/pom.xml</pomInclude>
                 <pomInclude>MJAVADOC-280-*/pom.xml</pomInclude>
               </pomIncludes>
               <postBuildHookScript>verify</postBuildHookScript>
