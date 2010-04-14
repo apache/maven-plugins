@@ -1,5 +1,5 @@
 <classpath>
   <classpathentry kind="output" path="target/classes"/>
-  <classpathentry kind="lib" path="sysdep.jar"/>
   <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+  <classpathentry kind="lib" path="sysdep.jar"/>
 </classpath>

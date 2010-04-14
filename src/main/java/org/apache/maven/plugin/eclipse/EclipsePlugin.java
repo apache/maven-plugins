@@ -550,6 +550,15 @@ public class EclipsePlugin
      * @parameter
      */
     private List linkedResources;
+    
+    /**
+     * Put classpath container entries last in eclipse classpath configuration. Note that this behaviour, although
+     * useful in situations were you want to override resources found in classpath containers, will made JRE classes
+     * loaded after 3rd party jars, so enabling it is not suggested.
+     * 
+     * @parameter expression="${eclipse.classpathContainersLast}" default-value="false"
+     */
+    protected boolean classpathContainersLast;
 
     protected final boolean isJavaProject()
     {
@@ -1290,6 +1299,7 @@ public class EclipsePlugin
         config.setAddVersionToProjectName( isAddVersionToProjectName() );
         config.setPackaging( packaging );
         config.setLinkedResources( linkedResources );
+        config.setClasspathContainersLast( classpathContainersLast );
 
         collectWarContextRootsFromReactorEarConfiguration( config );
 

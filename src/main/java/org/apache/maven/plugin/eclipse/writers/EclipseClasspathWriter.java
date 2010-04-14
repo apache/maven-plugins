@@ -368,6 +368,12 @@ public class EclipseClasspathWriter
                 }
             }
         }
+        
+
+        if (!config.isClasspathContainersLast())
+        {
+            writeClasspathContainers(writer);
+        }
 
         // ----------------------------------------------------------------------
         // The dependencies
@@ -388,6 +394,22 @@ public class EclipseClasspathWriter
             }
         }
 
+        if (config.isClasspathContainersLast())
+        {
+            writeClasspathContainers(writer);
+        }
+        
+        writer.endElement();
+
+        IOUtil.close( w );
+
+    }
+
+    /**
+     * @param writer
+     */
+    private void writeClasspathContainers(XMLWriter writer)
+    {
         // ----------------------------------------------------------------------
         // Container classpath entries
         // ----------------------------------------------------------------------
@@ -399,11 +421,6 @@ public class EclipseClasspathWriter
             writer.addAttribute( ATTR_PATH, (String) it.next() );
             writer.endElement(); // name
         }
-
-        writer.endElement();
-
-        IOUtil.close( w );
-
     }
 
     private String getDependencyId( IdeDependency dep )
