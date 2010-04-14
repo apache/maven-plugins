@@ -150,6 +150,11 @@ public class EclipseWriterConfig
     private WorkspaceConfiguration workspaceConfiguration;
 
     private List linkedResources;
+    
+    /**
+     * @See {@link EclipsePlugin#classpathContainersLast}
+     */
+    private boolean classpathContainersLast;
 
     public WorkspaceConfiguration getWorkspaceConfiguration()
     {
@@ -621,6 +626,26 @@ public class EclipseWriterConfig
     public void setLinkedResources( List linkedResources )
     {
         this.linkedResources = linkedResources;
+    }
+
+    
+    /**
+     * Returns the classpathContainersLast.
+     * @return the classpathContainersLast
+     */
+    public boolean isClasspathContainersLast()
+    {
+        return classpathContainersLast;
+    }
+
+    
+    /**
+     * Sets the classpathContainersLast.
+     * @param classpathContainersLast the classpathContainersLast to set
+     */
+    public void setClasspathContainersLast(boolean classpathContainersLast)
+    {
+        this.classpathContainersLast = classpathContainersLast;
     }
 
 }

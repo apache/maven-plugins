@@ -715,6 +715,17 @@ public class EclipsePluginIT
         testProject( "project-60-MECLIPSE-652" );
     }
 
+    /**
+     * [MECLIPSE-548] Classpath container entries should come before 3rd party jars in .classpath
+     * 
+     * @throws Exception
+     */
+    public void testProject61()
+        throws Exception
+    {
+        testProject( "project-61-MECLIPSE-548" );
+    }
+
     public void testJeeSimple()
         throws Exception
     {

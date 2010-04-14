@@ -5,8 +5,8 @@
   <classpathentry kind="src" path="src/main/resources" excluding="**/*.java"/>
   <classpathentry kind="src" path="src/main/aspect" including="**/*.java|**/*.aj"/>
   <classpathentry kind="output" path="target/classes"/>
-  <classpathentry kind="var" path="M2_REPO/org/aspectj/aspectjtools/1.6.2/aspectjtools-1.6.2.jar"/>
-  <classpathentry kind="var" path="M2_REPO/junit/junit/3.8.1/junit-3.8.1.jar"/>
   <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
   <classpathentry kind="con" path="org.eclipse.ajdt.core.ASPECTJRT_CONTAINER"/>
+  <classpathentry kind="var" path="M2_REPO/org/aspectj/aspectjtools/1.6.2/aspectjtools-1.6.2.jar"/>
+  <classpathentry kind="var" path="M2_REPO/junit/junit/3.8.1/junit-3.8.1.jar"/>
 </classpath>
