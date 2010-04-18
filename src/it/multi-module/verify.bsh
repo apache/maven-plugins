@@ -1,33 +1,10 @@
+import org.codehaus.plexus.util.FileUtils;
+
 import java.io.*;
 import java.util.*;
 
-String[] expectedPaths =
-{
-    "mod-1/target/site/pmd.html",
-    "mod-1/target/site/pmd.xml",
-    "mod-1/target/site/cpd.html",
-    "mod-1/target/site/cpd.xml",
-    "mod-2/target/site/pmd.html",
-    "mod-2/target/site/pmd.xml",
-    "mod-2/target/site/cpd.html",
-    "mod-2/target/site/cpd.xml",
-    "mod-3/target/site/pmd.html",
-    "mod-3/target/site/pmd.xml",
-    "mod-3/target/site/cpd.html",
-    "mod-3/target/site/cpd.xml",
-};
-
-for ( String path : expectedPaths )
-{
-    File file = new File( basedir, path );
-    System.out.println( "Checking for existence of " + file );
-    if ( !file.isFile() )
-    {
-        throw new FileNotFoundException( "Missing: " + file.getAbsolutePath() );
-    }
-}
-
-String[] unexpectedPaths =
+String[] modules = { "mod-1", "mod-2", "mod-3" };
+String[] paths =
 {
     "target/site/pmd.html",
     "target/site/pmd.xml",
@@ -37,7 +14,23 @@ String[] unexpectedPaths =
     "target/cpd.xml",
 };
 
-for ( String path : unexpectedPaths )
+// files must exist in every module
+for ( String module : modules )
+{
+    // PMD and CPD reports
+    for ( String path : paths )
+    {
+        File file = new File( basedir, module + '/' + path );
+        System.out.println( "Checking for existence of " + file );
+        if ( !file.isFile() )
+        {
+            throw new FileNotFoundException( "Missing: " + file.getAbsolutePath() );
+        }
+    }
+}
+
+// files must not exist in parent
+for ( String path : paths )
 {
     File file = new File( basedir, path );
     System.out.println( "Checking for absence of " + file );
@@ -45,6 +38,22 @@ for ( String path : unexpectedPaths )
     {
         throw new IOException( "Banned: " + file.getAbsolutePath() );
     }
+}
+
+
+// check PMD rulesets target copy
+File rule = new File( basedir, "mod-1/target/latin-1.xml" );
+String nonascii = "-CHARS: \u00C4\u00D6\u00DC\u00E4\u00F6\u00FC\u00DF\u00BC\u00BD\u00BE\u00A4";
+String content = FileUtils.fileRead( rule, "ISO-8859-1" );
+if ( content.indexOf( nonascii ) < 0 )
+{
+    throw new IOException( "non-ascii content corrupted in Latin1." );
+}
+rule = new File( basedir, "mod-1/target/utf-8.xml" );
+content = FileUtils.fileRead( rule, "UTF-8" );
+if ( content.indexOf( nonascii ) < 0 )
+{
+    throw new IOException( "non-ascii content corrupted in UTF-8." );
 }
 
 return true;
