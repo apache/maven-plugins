@@ -22,7 +22,6 @@ package org.apache.maven.plugin.pmd;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
@@ -39,6 +38,7 @@ import net.sourceforge.pmd.cpd.Renderer;
 import net.sourceforge.pmd.cpd.XMLRenderer;
 
 import org.apache.maven.reporting.MavenReportException;
+import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.WriterFactory;
 import org.codehaus.plexus.util.StringUtils;
@@ -176,35 +176,26 @@ public class CpdReport
     {
         Renderer r = createRenderer();
         String buffer = r.render( cpd.getMatches() );
+        Writer writer = null;
         try
         {
             targetDirectory.mkdirs();
-            FileOutputStream tStream = new FileOutputStream( new File( targetDirectory, "cpd." + format ) );
-            Writer writer = new OutputStreamWriter( tStream, "UTF-8" );
-            try
-            {
-                writer.write( buffer );
-            }
-            finally
-            {
-                IOUtil.close( writer );
-            }
+            File targetFile = new File( targetDirectory, "cpd." + format );
+            FileOutputStream tStream = new FileOutputStream( targetFile );
+            writer = new OutputStreamWriter( tStream, "UTF-8" );
+            writer.write( buffer );
 
             File siteDir = getReportOutputDirectory();
             siteDir.mkdirs();
-            writer = new FileWriter( new File( siteDir, "cpd." + format ) );
-            try
-            {
-                writer.write( buffer, 0, buffer.length() );
-            }
-            finally
-            {
-                IOUtil.close( writer );
-            }
+            FileUtils.copyFile( targetFile, new File( siteDir, "cpd." + format ) );
         }
         catch ( IOException ioe )
         {
             throw new MavenReportException( ioe.getMessage(), ioe );
+        }
+        finally
+        {
+            IOUtil.close( writer );
         }
     }
 
