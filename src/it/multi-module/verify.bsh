@@ -56,4 +56,25 @@ if ( content.indexOf( nonascii ) < 0 )
     throw new IOException( "non-ascii content corrupted in UTF-8." );
 }
 
+// check xml files encoding
+void checkEncoding( String module, String encoding )
+{
+    for ( String path : paths )
+    {
+        if ( !path.endsWith( ".xml" ) )
+        {
+            continue;
+        }
+        File file = new File( basedir, module + '/' + path );
+        content = FileUtils.fileRead( file, encoding );
+        if ( !content.startsWith( "<?xml version=\"1.0\" encoding=\"" + encoding + "\"?>" ) )
+        {
+            throw new IOException( "wrong XML encoding declaration for " + file );
+        }
+    }
+}
+checkEncoding( "mod-1", "ISO-8859-1" );
+checkEncoding( "mod-2", "UTF-8" );
+checkEncoding( "mod-3", "UTF-8" );
+
 return true;

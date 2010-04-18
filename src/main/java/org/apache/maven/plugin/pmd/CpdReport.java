@@ -174,7 +174,7 @@ public class CpdReport
             targetDirectory.mkdirs();
             File targetFile = new File( targetDirectory, "cpd." + format );
             FileOutputStream tStream = new FileOutputStream( targetFile );
-            writer = new OutputStreamWriter( tStream, "UTF-8" );
+            writer = new OutputStreamWriter( tStream, getOutputEncoding() );
             writer.write( buffer );
             writer.close();
 
@@ -216,7 +216,7 @@ public class CpdReport
         Renderer renderer = null;
         if ( "xml".equals( format ) )
         {
-            renderer = new XMLRenderer( "UTF-8" );
+            renderer = new XMLRenderer( getOutputEncoding() );
         }
         else if ( "csv".equals( format ) )
         {

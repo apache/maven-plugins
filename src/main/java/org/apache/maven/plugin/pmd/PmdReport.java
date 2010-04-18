@@ -311,7 +311,7 @@ public class PmdReport
                     {
                         File targetFile = new File( targetDirectory, "pmd." + format );
                         FileOutputStream tStream = new FileOutputStream( targetFile );
-                        writer = new OutputStreamWriter( tStream, "UTF-8" );
+                        writer = new OutputStreamWriter( tStream, getOutputEncoding() );
 
                         r.setWriter( writer );
                         r.start();
@@ -411,7 +411,7 @@ public class PmdReport
         Renderer renderer = null;
         if ( "xml".equals( format ) )
         {
-            renderer = new PmdXMLRenderer( "UTF-8" );
+            renderer = new PmdXMLRenderer( getOutputEncoding() );
         }
         else if ( "txt".equals( format ) )
         {
