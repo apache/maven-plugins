@@ -35,6 +35,10 @@ under the License.
     Test proper report generation in a multi-module build.
   </description>
 
+  <properties>
+    <project.reporting.outputEncoding>ISO-8859-1</project.reporting.outputEncoding>
+  </properties>
+
   <reporting>
     <plugins>
       <plugin>

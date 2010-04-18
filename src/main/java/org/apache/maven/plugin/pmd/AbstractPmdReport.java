@@ -38,6 +38,7 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.AbstractMavenReport;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.PathTool;
+import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
@@ -184,6 +185,14 @@ public abstract class AbstractPmdReport
      * @since 2.3
      */
     private String sourceEncoding;
+
+    /**
+     * The file encoding when writing non-HTML reports.
+     *
+     * @parameter expression="${outputEncoding}" default-value="${project.reporting.outputEncoding}"
+     * @since 2.5
+     */
+    private String outputEncoding;
 
     /**
      * The projects in the reactor for aggregation report.
@@ -426,5 +435,16 @@ public abstract class AbstractPmdReport
     protected String getSourceEncoding()
     {
         return sourceEncoding;
+    }
+
+    /**
+     * Gets the effective reporting output files encoding.
+     *
+     * @return The effective reporting output file encoding, never <code>null</code>.
+     * @since 2.5
+     */
+    protected String getOutputEncoding()
+    {
+        return ( outputEncoding != null ) ? outputEncoding : ReaderFactory.UTF_8;
     }
 }
