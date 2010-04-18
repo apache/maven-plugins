@@ -177,6 +177,13 @@ public abstract class AbstractPmdReport
      */
     protected boolean aggregate;
 
+    /**
+     * The file encoding to use when reading the Java sources.
+     *
+     * @parameter expression="${encoding}" default-value="${project.build.sourceEncoding}"
+     * @since 2.3
+     */
+    private String sourceEncoding;
 
     /**
      * The projects in the reactor for aggregation report.
@@ -414,5 +421,10 @@ public abstract class AbstractPmdReport
     protected String getOutputDirectory()
     {
         return outputDirectory.getAbsolutePath();
+    }
+
+    protected String getSourceEncoding()
+    {
+        return sourceEncoding;
     }
 }

@@ -110,13 +110,6 @@ public class PmdReport
     private String[] rulesets = new String[]{"rulesets/basic.xml", "rulesets/unusedcode.xml", "rulesets/imports.xml", };
 
     /**
-     * The file encoding to use when reading the Java sources.
-     *
-     * @parameter expression="${encoding}" default-value="${project.build.sourceEncoding}"
-     */
-    private String sourceEncoding;
-
-    /**
      * @component
      * @required
      * @readonly
@@ -233,7 +226,7 @@ public class PmdReport
                     throw new MavenReportException( "Can't get file list", e );
                 }
 
-                if ( StringUtils.isEmpty( sourceEncoding ) && !files.isEmpty() )
+                if ( StringUtils.isEmpty( getSourceEncoding() ) && !files.isEmpty() )
                 {
                     getLog().warn(
                                    "File encoding has not been set, using platform encoding "
@@ -257,9 +250,9 @@ public class PmdReport
                             // PMD closes this Reader even though it did not open it so we have
                             // to open a new one with every call to processFile().
                             Reader reader;
-                            if ( StringUtils.isNotEmpty( sourceEncoding ) )
+                            if ( StringUtils.isNotEmpty( getSourceEncoding() ) )
                             {
-                                reader = ReaderFactory.newReader( file, sourceEncoding );
+                                reader = ReaderFactory.newReader( file, getSourceEncoding() );
                             }
                             else
                             {
@@ -276,7 +269,7 @@ public class PmdReport
                         }
                         catch ( UnsupportedEncodingException e1 )
                         {
-                            throw new MavenReportException( "Encoding '" + sourceEncoding + "' is not supported.", e1 );
+                            throw new MavenReportException( "Encoding '" + getSourceEncoding() + "' is not supported.", e1 );
                         }
                         catch ( PMDException pe )
                         {
@@ -418,8 +411,7 @@ public class PmdReport
         Renderer renderer = null;
         if ( "xml".equals( format ) )
         {
-            // MPMD-83: encoding in XML declaration is hardcoded in PMD XMLRenderer as UTF-8
-            renderer = new XMLRenderer();
+            renderer = new PmdXMLRenderer( "UTF-8" );
         }
         else if ( "txt".equals( format ) )
         {
@@ -452,6 +444,15 @@ public class PmdReport
         }
 
         return renderer;
+    }
+
+    private static class PmdXMLRenderer extends XMLRenderer
+    {
+        public PmdXMLRenderer( String encoding )
+        {
+            super();
+            this.encoding = encoding;
+        }
     }
 
     /** @author <a href="mailto:douglass.doug@gmail.com">Doug Douglass</a> */
