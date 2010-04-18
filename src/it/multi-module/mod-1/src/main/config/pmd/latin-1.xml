@@ -7,5 +7,6 @@
   <description>
     This ruleset is encoded with ISO-8859-1 to check proper encoding handling.
   </description>
-  <rule ref="rulesets/basic.xml/UnnecessaryReturn" message="LATIN-1-CHARS: ÄÖÜäöüß"/>
+  <rule ref="rulesets/basic.xml/UnnecessaryReturn" message="LATIN-1-CHARS: ÄÖÜäöüß¼½¾¤"/>
+  <!-- note: ¼½¾¤ = 0xBC 0xBD 0xBE 0xA4 don't exist any more in Latin 15, replaced by OE oe Y" and euro -->
 </ruleset>

@@ -7,5 +7,5 @@
   <description>
     This ruleset is encoded with UTF-8 to check proper encoding handling.
   </description>
-  <rule ref="rulesets/basic.xml/EmptyStatementNotInLoop" message="UTF-8-CHARS: ÄÖÜäöüß"/>
+  <rule ref="rulesets/basic.xml/EmptyStatementNotInLoop" message="UTF-8-CHARS: ÄÖÜäöüß¼½¾¤"/>
 </ruleset>
