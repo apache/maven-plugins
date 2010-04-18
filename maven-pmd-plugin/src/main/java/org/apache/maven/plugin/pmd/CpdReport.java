@@ -72,14 +72,6 @@ public class CpdReport
      */
     private boolean skip;
 
-    /**
-     * The file encoding to use when reading the Java sources.
-     *
-     * @parameter expression="${encoding}" default-value="${project.build.sourceEncoding}"
-     * @since 2.3
-     */
-    private String sourceEncoding;
-
     /** {@inheritDoc} */
     public String getName( Locale locale )
     {
@@ -125,12 +117,12 @@ public class CpdReport
                 {
                     files = getFilesToProcess();
 
-                    if ( StringUtils.isNotEmpty( sourceEncoding ) )
+                    if ( StringUtils.isNotEmpty( getSourceEncoding() ) )
                     {
-                        cpd.setEncoding( sourceEncoding );
+                        cpd.setEncoding( getSourceEncoding() );
 
                         // test encoding as CPD will convert exception into a RuntimeException
-                        WriterFactory.newWriter( new ByteArrayOutputStream(), sourceEncoding );
+                        WriterFactory.newWriter( new ByteArrayOutputStream(), getSourceEncoding() );
                     }
                     else if ( !files.isEmpty() )
                     {
@@ -146,7 +138,7 @@ public class CpdReport
                 }
                 catch ( UnsupportedEncodingException e )
                 {
-                    throw new MavenReportException( "Encoding '" + sourceEncoding + "' is not supported.", e );
+                    throw new MavenReportException( "Encoding '" + getSourceEncoding() + "' is not supported.", e );
                 }
                 catch ( IOException e )
                 {
