@@ -22,9 +22,11 @@ package org.apache.maven.plugin.pmd;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
@@ -55,6 +57,8 @@ import org.codehaus.plexus.resource.ResourceManager;
 import org.codehaus.plexus.resource.loader.FileResourceCreationException;
 import org.codehaus.plexus.resource.loader.FileResourceLoader;
 import org.codehaus.plexus.resource.loader.ResourceNotFoundException;
+import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
 
@@ -310,30 +314,31 @@ public class PmdReport
                 {
                     // Use the PMD renderers to render in any format aside from HTML.
                     Renderer r = createRenderer();
-                    StringWriter stringwriter = new StringWriter();
+                    Writer writer = null;
 
                     try
                     {
-                        r.setWriter( stringwriter );
+                        File targetFile = new File( targetDirectory, "pmd." + format );
+                        FileOutputStream tStream = new FileOutputStream( targetFile );
+                        writer = new OutputStreamWriter( tStream, "UTF-8" );
+
+                        r.setWriter( writer );
                         r.start();
                         r.renderFileReport( report );
                         r.end();
-                        String buffer = stringwriter.toString();
-
-                        Writer writer = new FileWriter( new File( targetDirectory, "pmd." + format ) );
-                        writer.write( buffer, 0, buffer.length() );
                         writer.close();
 
                         File siteDir = getReportOutputDirectory();
                         siteDir.mkdirs();
-                        writer = new FileWriter( new File( siteDir,
-                                                             "pmd." + format ) );
-                        writer.write( buffer, 0, buffer.length() );
-                        writer.close();
+                        FileUtils.copyFile( targetFile, new File( siteDir, "pmd." + format ) );
                     }
                     catch ( IOException ioe )
                     {
                         throw new MavenReportException( ioe.getMessage(), ioe );
+                    }
+                    finally
+                    {
+                        IOUtil.close( writer );
                     }
                 }
             }
@@ -415,6 +420,7 @@ public class PmdReport
         Renderer renderer = null;
         if ( "xml".equals( format ) )
         {
+            // MPMD-83: encoding in XML declaration is hardcoded in PMD XMLRenderer as UTF-8
             renderer = new XMLRenderer();
         }
         else if ( "txt".equals( format ) )
