@@ -184,6 +184,7 @@ public class CpdReport
             FileOutputStream tStream = new FileOutputStream( targetFile );
             writer = new OutputStreamWriter( tStream, "UTF-8" );
             writer.write( buffer );
+            writer.close();
 
             File siteDir = getReportOutputDirectory();
             siteDir.mkdirs();
