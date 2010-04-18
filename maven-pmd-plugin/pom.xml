@@ -115,7 +115,7 @@ under the License.
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-resources</artifactId>
-      <version>1.0-alpha-4</version>
+      <version>1.0-alpha-7</version>
     </dependency>
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
@@ -228,6 +228,6 @@ under the License.
       <properties>
         <sitePluginVersion>3.0-beta-1-SNAPSHOT</sitePluginVersion>
       </properties>
-    </profile>    
+    </profile>
   </profiles>
 </project>
