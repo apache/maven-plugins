@@ -726,6 +726,19 @@ public class EclipsePluginIT
         testProject( "project-61-MECLIPSE-548" );
     }
 
+    /**
+     * [MECLIPSE-561] Make "test sources last" configurable
+     * 
+     * @throws Exception
+     */
+    public void testProject62()
+        throws Exception
+    {
+        testProject( "project-62-MECLIPSE-561" );
+    }
+
+    
+    
     public void testJeeSimple()
         throws Exception
     {

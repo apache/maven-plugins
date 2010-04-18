@@ -556,9 +556,23 @@ public class EclipsePlugin
      * useful in situations were you want to override resources found in classpath containers, will made JRE classes
      * loaded after 3rd party jars, so enabling it is not suggested.
      * 
+     * @since 2.9
      * @parameter expression="${eclipse.classpathContainersLast}" default-value="false"
      */
     protected boolean classpathContainersLast;
+    
+    /**
+     * Whether to place test resources after main resources. Note that the default behavior of Maven version 2.0.8 or 
+     * later is to have test dirs before main dirs in classpath so this is discouraged if you need to reproduce the
+     * maven behavior during tests. The default behavior is also changed in eclipse plugin version 2.6 in order to
+     * better match the maven one.
+     * Switching to "test source last" can anyway be useful if you need to run your application in eclipse, since there
+     * is no concept in eclipse of "phases" with different set of source dirs and dependencies like we have in maven.
+     * 
+     * @since 2.9
+     * @parameter expression="${eclipse.testSourcesLast}" default-value="false"
+     */
+    protected boolean testSourcesLast;
 
     protected final boolean isJavaProject()
     {
@@ -1562,6 +1576,12 @@ public class EclipsePlugin
 
         // NOTE: Since MNG-3118, test classes come before main classes
         boolean testBeforeMain = isMavenVersion( "[2.0.8,)" );
+        
+        // let users override this if needed, they need to simulate more than the test phase in eclipse
+        if (testSourcesLast)
+        {
+            testBeforeMain = false;
+        }
 
         if ( testBeforeMain )
         {
