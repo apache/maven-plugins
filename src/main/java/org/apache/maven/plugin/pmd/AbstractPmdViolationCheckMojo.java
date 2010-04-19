@@ -91,7 +91,7 @@ public abstract class AbstractPmdViolationCheckMojo
     private boolean verbose;
 
     /**
-     * The project to analyse.
+     * The project to analyze.
      *
      * @parameter expression="${project}"
      * @required
