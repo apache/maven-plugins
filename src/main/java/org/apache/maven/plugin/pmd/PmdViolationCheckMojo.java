@@ -43,7 +43,7 @@ public class PmdViolationCheckMojo
     /**
      * What priority level to fail the build on. Failures at or above this level
      * will stop the build. Anything below will be warnings and will be
-     * displayed in the build output if verbose=true. Note: Minumum Priority = 5
+     * displayed in the build output if verbose=true. Note: Minimum Priority = 5
      * Maximum Priority = 0
      *
      * @parameter expression="${pmd.failurePriority}" default-value="5"

@@ -72,7 +72,7 @@ public class PmdReport
     extends AbstractPmdReport
 {
     /**
-     * The target JDK to analyse based on. Should match the target used in the compiler plugin. Valid values are
+     * The target JDK to analyze based on. Should match the target used in the compiler plugin. Valid values are
      * currently <code>1.3</code>, <code>1.4</code>, <code>1.5</code> and <code>1.6</code>.
      * <p>
      * <b>Note:</b> support for <code>1.6</code> was added in version 2.3 of this plugin.
