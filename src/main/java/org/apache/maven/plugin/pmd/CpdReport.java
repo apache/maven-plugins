@@ -111,44 +111,7 @@ public class CpdReport
             {
                 Thread.currentThread().setContextClassLoader( this.getClass().getClassLoader() );
 
-                CPD cpd = new CPD( minimumTokens, new JavaLanguage() );
-                Map files = null;
-                try
-                {
-                    files = getFilesToProcess();
-
-                    if ( StringUtils.isNotEmpty( getSourceEncoding() ) )
-                    {
-                        cpd.setEncoding( getSourceEncoding() );
-
-                        // test encoding as CPD will convert exception into a RuntimeException
-                        WriterFactory.newWriter( new ByteArrayOutputStream(), getSourceEncoding() );
-                    }
-                    else if ( !files.isEmpty() )
-                    {
-                        getLog().warn(
-                                       "File encoding has not been set, using platform encoding "
-                                           + WriterFactory.FILE_ENCODING + ", i.e. build is platform dependent!" );
-                    }
-
-                    for ( Iterator it = files.keySet().iterator(); it.hasNext(); )
-                    {
-                        cpd.add( (File) it.next() );
-                    }
-                }
-                catch ( UnsupportedEncodingException e )
-                {
-                    throw new MavenReportException( "Encoding '" + getSourceEncoding() + "' is not supported.", e );
-                }
-                catch ( IOException e )
-                {
-                    throw new MavenReportException( e.getMessage(), e );
-                }
-                cpd.go();
-
-                CpdReportGenerator gen =
-                    new CpdReportGenerator( getSink(), files, getBundle( locale ), aggregate );
-                gen.generate( cpd.getMatches() );
+                CPD cpd = generateReport( locale );
 
                 if ( !isHtml() )
                 {
@@ -161,6 +124,51 @@ public class CpdReport
             }
 
         }
+    }
+
+    private CPD generateReport( Locale locale )
+        throws MavenReportException
+    {
+        CPD cpd = new CPD( minimumTokens, new JavaLanguage() );
+        Map files = null;
+        try
+        {
+            files = getFilesToProcess();
+
+            if ( StringUtils.isNotEmpty( getSourceEncoding() ) )
+            {
+                cpd.setEncoding( getSourceEncoding() );
+
+                // test encoding as CPD will convert exception into a RuntimeException
+                WriterFactory.newWriter( new ByteArrayOutputStream(), getSourceEncoding() );
+            }
+            else if ( !files.isEmpty() )
+            {
+                getLog().warn(
+                               "File encoding has not been set, using platform encoding "
+                                   + WriterFactory.FILE_ENCODING + ", i.e. build is platform dependent!" );
+            }
+
+            for ( Iterator it = files.keySet().iterator(); it.hasNext(); )
+            {
+                cpd.add( (File) it.next() );
+            }
+        }
+        catch ( UnsupportedEncodingException e )
+        {
+            throw new MavenReportException( "Encoding '" + getSourceEncoding() + "' is not supported.", e );
+        }
+        catch ( IOException e )
+        {
+            throw new MavenReportException( e.getMessage(), e );
+        }
+        cpd.go();
+
+        CpdReportGenerator gen =
+            new CpdReportGenerator( getSink(), files, getBundle( locale ), aggregate );
+        gen.generate( cpd.getMatches() );
+
+        return cpd;
     }
 
     void writeNonHtml( CPD cpd )
