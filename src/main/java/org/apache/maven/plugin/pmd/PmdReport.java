@@ -169,7 +169,7 @@ public class PmdReport
 
                 if ( !isHtml() )
                 {
-                    renderPmdFormat( report );
+                    writeNonHtml( report );
                 }
             }
             finally
@@ -326,7 +326,7 @@ public class PmdReport
      * @param report
      * @throws MavenReportException
      */
-    private void renderPmdFormat( Report report )
+    private void writeNonHtml( Report report )
         throws MavenReportException
     {
         Renderer r = createRenderer();
