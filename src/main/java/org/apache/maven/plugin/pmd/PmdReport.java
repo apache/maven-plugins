@@ -331,6 +331,11 @@ public class PmdReport
     {
         Renderer r = createRenderer();
 
+        if ( r == null )
+        {
+            return;
+        }
+
         Writer writer = null;
 
         try
@@ -455,11 +460,6 @@ public class PmdReport
                 throw new MavenReportException(
                     "Can't find the custom format " + format + ": " + e.getClass().getName(), e );
             }
-        }
-
-        if ( renderer == null )
-        {
-            throw new MavenReportException( "Can't create report with format of " + format );
         }
 
         return renderer;
