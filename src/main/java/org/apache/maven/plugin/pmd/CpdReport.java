@@ -167,6 +167,12 @@ public class CpdReport
         throws MavenReportException
     {
         Renderer r = createRenderer();
+
+        if ( r == null )
+        {
+            return;
+        }
+
         String buffer = r.render( cpd.getMatches() );
         Writer writer = null;
         try
@@ -231,13 +237,8 @@ public class CpdReport
             catch ( Exception e )
             {
                 throw new MavenReportException(
-                    "Can't find the custom format " + format + ": " + e.getClass().getName() );
+                    "Can't find CPD custom format " + format + ": " + e.getClass().getName() );
             }
-        }
-
-        if ( renderer == null )
-        {
-            throw new MavenReportException( "Can't create report with format of " + format );
         }
 
         return renderer;
