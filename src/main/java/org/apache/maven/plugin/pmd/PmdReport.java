@@ -458,7 +458,7 @@ public class PmdReport
             catch ( Exception e )
             {
                 throw new MavenReportException(
-                    "Can't find the custom format " + format + ": " + e.getClass().getName(), e );
+                    "Can't find PMD custom format " + format + ": " + e.getClass().getName(), e );
             }
         }
 
