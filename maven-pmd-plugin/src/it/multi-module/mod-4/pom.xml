@@ -22,52 +22,27 @@ under the License.
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>org.apache.maven.its.pmd.mm</groupId>
-  <artifactId>parent</artifactId>
-  <version>1.0-SNAPSHOT</version>
-  <packaging>pom</packaging>
+  <parent>
+    <groupId>org.apache.maven.its.pmd.mm</groupId>
+    <artifactId>parent</artifactId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
 
-  <name>Parent</name>
+  <artifactId>mod-4</artifactId>
+
+  <name>Module 4</name>
   <description>
-    Test proper report generation in a multi-module build.
+    Test proper report generation with format=none.
   </description>
-
-  <modules>
-    <module>mod-1</module>
-    <module>mod-2</module>
-    <module>mod-3</module>
-    <module>mod-4</module>
-  </modules>
-
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-  </properties>
-
-  <build>
-    <plugins>
-      <plugin>
-        <artifactId>maven-site-plugin</artifactId>
-        <version>@sitePluginVersion@</version>
-      </plugin>
-    </plugins>
-  </build>
 
   <reporting>
     <plugins>
       <plugin>
-        <artifactId>maven-project-info-reports-plugin</artifactId>
-        <version>2.1.2</version>
-        <reportSets>
-          <reportSet>
-            <reports>
-              <report>index</report>
-            </reports>
-          </reportSet>
-        </reportSets>
-      </plugin>
-      <plugin>
         <artifactId>maven-pmd-plugin</artifactId>
         <version>@project.version@</version>
+        <configuration>
+          <format>none</format>
+        </configuration>
       </plugin>
     </plugins>
   </reporting>
