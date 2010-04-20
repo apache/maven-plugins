@@ -261,7 +261,7 @@ public abstract class AbstractPmdReport
      * @return a List of the files where the PMD tool will be executed
      * @throws java.io.IOException
      */
-    protected Map getFilesToProcess( )
+    protected Map getFilesToProcess()
         throws IOException
     {
         String sourceXref = constructXRefLocation( false );
@@ -413,7 +413,7 @@ public abstract class AbstractPmdReport
         }
         try
         {
-            Map filesToProcess = getFilesToProcess( );
+            Map filesToProcess = getFilesToProcess();
             if ( filesToProcess.isEmpty() )
             {
                 return false;

@@ -165,178 +165,197 @@ public class PmdReport
             {
                 Thread.currentThread().setContextClassLoader( this.getClass().getClassLoader() );
 
-                Sink sink = getSink();
-
-                PMD pmd = getPMD();
-                RuleContext ruleContext = new RuleContext();
-                Report report = new Report();
-                PmdReportListener reportSink = new PmdReportListener( sink, getBundle( locale ), aggregate );
-
-                report.addListener( reportSink );
-                ruleContext.setReport( report );
-                reportSink.beginDocument();
-
-                RuleSetFactory ruleSetFactory = new RuleSetFactory();
-                ruleSetFactory.setMinimumPriority( this.minimumPriority );
-                RuleSet[] sets = new RuleSet[rulesets.length];
-                try
-                {
-                    for ( int idx = 0; idx < rulesets.length; idx++ )
-                    {
-                        String set = rulesets[idx];
-                        getLog().debug( "Preparing ruleset: " + set );
-                        File ruleset = locator.getResourceAsFile( set, getLocationTemp( set ) );
-
-                        if ( null == ruleset )
-                        {
-                            throw new MavenReportException( "Could not resolve " + set );
-                        }
-
-                        InputStream rulesInput = new FileInputStream( ruleset );
-                        try
-                        {
-                            sets[idx] = ruleSetFactory.createRuleSet( rulesInput );
-                        }
-                        finally
-                        {
-                            rulesInput.close();
-                        }
-                    }
-                }
-                catch ( IOException e )
-                {
-                    throw new MavenReportException( e.getMessage(), e );
-                }
-                catch ( ResourceNotFoundException e )
-                {
-                    throw new MavenReportException( e.getMessage(), e );
-                }
-                catch ( FileResourceCreationException e )
-                {
-                    throw new MavenReportException( e.getMessage(), e );
-                }
-
-                Map files;
-                try
-                {
-                    files = getFilesToProcess( );
-                }
-                catch ( IOException e )
-                {
-                    throw new MavenReportException( "Can't get file list", e );
-                }
-
-                if ( StringUtils.isEmpty( getSourceEncoding() ) && !files.isEmpty() )
-                {
-                    getLog().warn(
-                                   "File encoding has not been set, using platform encoding "
-                                       + ReaderFactory.FILE_ENCODING + ", i.e. build is platform dependent!" );
-                }
-
-                for ( Iterator i = files.entrySet().iterator(); i.hasNext(); )
-                {
-                    Map.Entry entry = (Map.Entry) i.next();
-                    File file = (File) entry.getKey();
-                    PmdFileInfo fileInfo = (PmdFileInfo) entry.getValue();
-
-                    // TODO: lazily call beginFile in case there are no rules
-
-                    reportSink.beginFile( file , fileInfo );
-                    ruleContext.setSourceCodeFilename( file.getAbsolutePath() );
-                    for ( int idx = 0; idx < rulesets.length; idx++ )
-                    {
-                        try
-                        {
-                            // PMD closes this Reader even though it did not open it so we have
-                            // to open a new one with every call to processFile().
-                            Reader reader;
-                            if ( StringUtils.isNotEmpty( getSourceEncoding() ) )
-                            {
-                                reader = ReaderFactory.newReader( file, getSourceEncoding() );
-                            }
-                            else
-                            {
-                                reader = ReaderFactory.newPlatformReader( file );
-                            }
-                            try
-                            {
-                                pmd.processFile( reader, sets[idx], ruleContext );
-                            }
-                            finally
-                            {
-                                reader.close();
-                            }
-                        }
-                        catch ( UnsupportedEncodingException e1 )
-                        {
-                            throw new MavenReportException( "Encoding '" + getSourceEncoding() + "' is not supported.", e1 );
-                        }
-                        catch ( PMDException pe )
-                        {
-                            String msg = pe.getLocalizedMessage();
-                            Throwable r = pe.getCause();
-                            if ( r != null )
-                            {
-                                msg = msg + ": " + r.getLocalizedMessage();
-                            }
-                            getLog().warn( msg );
-                            reportSink.ruleViolationAdded(
-                                new ProcessingErrorRuleViolation( file, msg ) );
-                        }
-                        catch ( FileNotFoundException e2 )
-                        {
-                            getLog().warn( "Error opening source file: " + file );
-                            reportSink.ruleViolationAdded(
-                                new ProcessingErrorRuleViolation( file, e2.getLocalizedMessage() ) );
-                        }
-                        catch ( Exception e3 )
-                        {
-                            getLog().warn( "Failure executing PMD for: " + file, e3 );
-                            reportSink.ruleViolationAdded(
-                                new ProcessingErrorRuleViolation( file, e3.getLocalizedMessage() ) );
-                        }
-                    }
-                    reportSink.endFile( file );
-                }
-
-                reportSink.endDocument();
+                Report report = generateReport( locale );
 
                 if ( !isHtml() )
                 {
-                    // Use the PMD renderers to render in any format aside from HTML.
-                    Renderer r = createRenderer();
-                    Writer writer = null;
-
-                    try
-                    {
-                        File targetFile = new File( targetDirectory, "pmd." + format );
-                        FileOutputStream tStream = new FileOutputStream( targetFile );
-                        writer = new OutputStreamWriter( tStream, getOutputEncoding() );
-
-                        r.setWriter( writer );
-                        r.start();
-                        r.renderFileReport( report );
-                        r.end();
-                        writer.close();
-
-                        File siteDir = getReportOutputDirectory();
-                        siteDir.mkdirs();
-                        FileUtils.copyFile( targetFile, new File( siteDir, "pmd." + format ) );
-                    }
-                    catch ( IOException ioe )
-                    {
-                        throw new MavenReportException( ioe.getMessage(), ioe );
-                    }
-                    finally
-                    {
-                        IOUtil.close( writer );
-                    }
+                    renderPmdFormat( report );
                 }
             }
             finally
             {
                 Thread.currentThread().setContextClassLoader( origLoader );
             }
+        }
+    }
+
+    private Report generateReport( Locale locale )
+        throws MavenReportException
+    {
+        Sink sink = getSink();
+
+        PMD pmd = getPMD();
+        RuleContext ruleContext = new RuleContext();
+        Report report = new Report();
+        PmdReportListener reportSink = new PmdReportListener( sink, getBundle( locale ), aggregate );
+
+        report.addListener( reportSink );
+        ruleContext.setReport( report );
+        reportSink.beginDocument();
+
+        RuleSetFactory ruleSetFactory = new RuleSetFactory();
+        ruleSetFactory.setMinimumPriority( this.minimumPriority );
+        RuleSet[] sets = new RuleSet[rulesets.length];
+        try
+        {
+            for ( int idx = 0; idx < rulesets.length; idx++ )
+            {
+                String set = rulesets[idx];
+                getLog().debug( "Preparing ruleset: " + set );
+                File ruleset = locator.getResourceAsFile( set, getLocationTemp( set ) );
+
+                if ( null == ruleset )
+                {
+                    throw new MavenReportException( "Could not resolve " + set );
+                }
+
+                InputStream rulesInput = new FileInputStream( ruleset );
+                try
+                {
+                    sets[idx] = ruleSetFactory.createRuleSet( rulesInput );
+                }
+                finally
+                {
+                    rulesInput.close();
+                }
+            }
+        }
+        catch ( IOException e )
+        {
+            throw new MavenReportException( e.getMessage(), e );
+        }
+        catch ( ResourceNotFoundException e )
+        {
+            throw new MavenReportException( e.getMessage(), e );
+        }
+        catch ( FileResourceCreationException e )
+        {
+            throw new MavenReportException( e.getMessage(), e );
+        }
+
+        Map files;
+        try
+        {
+            files = getFilesToProcess( );
+        }
+        catch ( IOException e )
+        {
+            throw new MavenReportException( "Can't get file list", e );
+        }
+
+        if ( StringUtils.isEmpty( getSourceEncoding() ) && !files.isEmpty() )
+        {
+            getLog().warn( "File encoding has not been set, using platform encoding "
+                               + ReaderFactory.FILE_ENCODING + ", i.e. build is platform dependent!" );
+        }
+
+        for ( Iterator i = files.entrySet().iterator(); i.hasNext(); )
+        {
+            Map.Entry entry = (Map.Entry) i.next();
+            File file = (File) entry.getKey();
+            PmdFileInfo fileInfo = (PmdFileInfo) entry.getValue();
+
+            // TODO: lazily call beginFile in case there are no rules
+
+            reportSink.beginFile( file , fileInfo );
+            ruleContext.setSourceCodeFilename( file.getAbsolutePath() );
+            for ( int idx = 0; idx < rulesets.length; idx++ )
+            {
+                try
+                {
+                    // PMD closes this Reader even though it did not open it so we have
+                    // to open a new one with every call to processFile().
+                    Reader reader;
+                    if ( StringUtils.isNotEmpty( getSourceEncoding() ) )
+                    {
+                        reader = ReaderFactory.newReader( file, getSourceEncoding() );
+                    }
+                    else
+                    {
+                        reader = ReaderFactory.newPlatformReader( file );
+                    }
+
+                    try
+                    {
+                        pmd.processFile( reader, sets[idx], ruleContext );
+                    }
+                    finally
+                    {
+                        reader.close();
+                    }
+                }
+                catch ( UnsupportedEncodingException e1 )
+                {
+                    throw new MavenReportException( "Encoding '" + getSourceEncoding() + "' is not supported.", e1 );
+                }
+                catch ( PMDException pe )
+                {
+                    String msg = pe.getLocalizedMessage();
+                    Throwable r = pe.getCause();
+                    if ( r != null )
+                    {
+                        msg = msg + ": " + r.getLocalizedMessage();
+                    }
+                    getLog().warn( msg );
+                    reportSink.ruleViolationAdded( new ProcessingErrorRuleViolation( file, msg ) );
+                }
+                catch ( FileNotFoundException e2 )
+                {
+                    getLog().warn( "Error opening source file: " + file );
+                    reportSink.ruleViolationAdded(
+                        new ProcessingErrorRuleViolation( file, e2.getLocalizedMessage() ) );
+                }
+                catch ( Exception e3 )
+                {
+                    getLog().warn( "Failure executing PMD for: " + file, e3 );
+                    reportSink.ruleViolationAdded(
+                        new ProcessingErrorRuleViolation( file, e3.getLocalizedMessage() ) );
+                }
+            }
+            reportSink.endFile( file );
+        }
+
+        reportSink.endDocument();
+
+        return report;
+    }
+
+    /**
+     * Use the PMD renderers to render in any format aside from HTML.
+     *
+     * @param report
+     * @throws MavenReportException
+     */
+    private void renderPmdFormat( Report report )
+        throws MavenReportException
+    {
+        Renderer r = createRenderer();
+
+        Writer writer = null;
+
+        try
+        {
+            File targetFile = new File( targetDirectory, "pmd." + format );
+            FileOutputStream tStream = new FileOutputStream( targetFile );
+            writer = new OutputStreamWriter( tStream, getOutputEncoding() );
+
+            r.setWriter( writer );
+            r.start();
+            r.renderFileReport( report );
+            r.end();
+            writer.close();
+
+            File siteDir = getReportOutputDirectory();
+            siteDir.mkdirs();
+            FileUtils.copyFile( targetFile, new File( siteDir, "pmd." + format ) );
+        }
+        catch ( IOException ioe )
+        {
+            throw new MavenReportException( ioe.getMessage(), ioe );
+        }
+        finally
+        {
+            IOUtil.close( writer );
         }
     }
 
@@ -434,7 +453,7 @@ public class PmdReport
             catch ( Exception e )
             {
                 throw new MavenReportException(
-                    "Can't find the custom format " + format + ": " + e.getClass().getName() );
+                    "Can't find the custom format " + format + ": " + e.getClass().getName(), e );
             }
         }
 
