@@ -326,6 +326,7 @@ under the License.
       </activation>
       <modules>
         <module>maven-project-info-reports-plugin</module>
+        <module>maven-remote-resources-plugin</module>
       </modules>
     </profile> 
   </profiles>
