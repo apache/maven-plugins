@@ -282,7 +282,7 @@ mvn deploy:deploy-file \
       </answer>
     </faq>
     <faq id="How to use links option in Standard Doclet">
-      <question>How to use <i><a href="./javadoc-mojo.html#links">&lt;links/&gt;</a></i> option in Standard Doclet?</question>
+      <question>How to use <code>&lt;links/&gt;</code> option in Standard Doclet?</question>
       <answer>
         <p>
           You need to configure the <i><a href="./javadoc-mojo.html#links">&lt;links/&gt;</a></i> parameter. Also, you
@@ -428,18 +428,18 @@ mvn deploy:deploy-file \
       </answer>
     </faq>
     <faq id="What are the values of encoding, docencoding and charset parameters">
-      <question>What are the values of <code>encoding</code>, <code>docencoding</code> and <code>charset</code> parameters?</question>
+      <question>What are the values of <code>&lt;encoding/&gt;</code>, <code>&lt;docencoding/&gt;</code> and <code>&lt;charset/&gt;</code> parameters?</question>
       <answer>
         <p>
           By default, these parameters have the following values:
         </p>
         <dl>
-          <dt><code>encoding</code></dt>
+          <dt><code>&lt;encoding/&gt;</code></dt>
           <dd>Value of <code>${project.build.sourceEncoding}</code> property or the value of the
             <code>file.encoding</code> system property if not specified.</dd>
-          <dt><code>docencoding</code></dt>
+          <dt><code>&lt;docencoding/&gt;</code></dt>
           <dd>Value of <code>${project.reporting.outputEncoding}</code> property or <code>UTF-8</code> if not specified.</dd>
-          <dt><code>charset</code></dt>
+          <dt><code>&lt;charset/&gt;</code></dt>
           <dd>Value of <code>docencoding</code> parameter if not specified.</dd>
         </dl>
       </answer>
