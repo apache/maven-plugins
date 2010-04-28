@@ -43,6 +43,8 @@ import java.util.Locale;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.StringTokenizer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.doxia.siterenderer.Renderer;
@@ -85,6 +87,12 @@ public class ChangeLogReport
      * It can be used in <code>displayFileDetailUrl</code>.
      */
     private static final String FILE_TOKEN = "%FILE%";
+
+    /**
+     * A special token that represents a Mantis/Bugzilla/JIRA/etc issue ID.
+     * It can be used in the <code>issueLinkUrl</code>.
+     */
+    private static final String ISSUE_TOKEN = "%ISSUE%";
 
     /**
      * The number of days to use as a range, when this is not specified.
@@ -289,6 +297,28 @@ public class ChangeLogReport
      * @parameter expression="${project.scm.url}"
      */
     protected String displayFileDetailUrl;
+
+    /**
+     * A pattern used to identify 'issue tracker' IDs such as those used by JIRA,
+     * Bugzilla and alike in the SCM commit messages. Any matched patterns
+     * are replaced with <code>issueLinkUrl<code> URL. The default
+     * value is a JIRA-style issue identification pattern.
+     *
+     * @parameter expression="${issueIDRegexPattern}" default-value="[a-zA-Z]{2,}-\\d+"
+     * @required
+     */
+    private String issueIDRegexPattern;
+
+    /**
+     * The issue tracker URL used when replacing any matched <code>issueIDRegexPattern</code>
+     * found in the SCM commit messages. The default is URL is the codehaus JIRA
+     * URL. If %ISSUE% is found in the URL it is replaced with the matched issue ID,
+     * otherwise the matched issue ID is appended to the URL.
+     *
+     * @parameter expression="${issueLinkUrl}" default-value="http://jira.codehaus.org/browse/%ISSUE%"
+     * @required
+     */
+    private String issueLinkUrl;
 
     // temporary field holder while generating the report
     private String rptRepository, rptOneRepoParam, rptMultiRepoParam;
@@ -1096,14 +1126,36 @@ public class ChangeLogReport
         String line;
         try
         {
-            line = br.readLine();
-            while ( line != null )
+            if ( ( issueIDRegexPattern != null && issueIDRegexPattern.length() > 0 )
+                && ( issueLinkUrl != null && issueLinkUrl.length() > 0 ) )
             {
-                sink.text( line );
+                Pattern pattern = Pattern.compile( issueIDRegexPattern );
+
                 line = br.readLine();
-                if ( line != null )
+
+                while ( line != null )
                 {
-                    sink.lineBreak();
+                    sinkIssueLink( sink, line, pattern );
+
+                    line = br.readLine();
+                    if ( line != null )
+                    {
+                        sink.lineBreak();
+                    }
+                }
+            }
+            else
+            {
+                line = br.readLine();
+
+                while ( line != null )
+                {
+                    sink.text( line );
+                    line = br.readLine();
+                    if ( line != null )
+                    {
+                        sink.lineBreak();
+                    }
                 }
             }
         }
@@ -1132,6 +1184,54 @@ public class ChangeLogReport
         sink.tableCell_();
 
         sink.tableRow_();
+    }
+
+    private void sinkIssueLink( Sink sink, String line, Pattern pattern )
+    {
+        // replace any ticket patterns found.
+
+        Matcher matcher = pattern.matcher( line );
+
+        int currLoc = 0;
+
+        while ( matcher.find() )
+        {
+            String match = matcher.group();
+
+            String link;
+
+            if ( issueLinkUrl.indexOf( ISSUE_TOKEN ) > 0 )
+            {
+                link = issueLinkUrl.replaceAll( ISSUE_TOKEN, match );
+            }
+            else
+            {
+                if ( issueLinkUrl.endsWith( "/" ) )
+                {
+                    link = issueLinkUrl;
+                }
+                else
+                {
+                    link = issueLinkUrl + "/";
+                }
+
+                link += match;
+            }
+
+            int startOfMatch = matcher.start();
+
+            String unmatchedText = line.substring( currLoc, startOfMatch );
+
+            currLoc = matcher.end();
+
+            sink.text( unmatchedText );
+
+            sink.link( link );
+            sink.text( match );
+            sink.link_();
+        }
+
+        sink.text( line.substring( currLoc ) );
     }
 
     /**
