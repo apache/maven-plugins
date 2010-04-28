@@ -95,6 +95,12 @@ public class ChangeLogReport
     private static final String ISSUE_TOKEN = "%ISSUE%";
 
     /**
+    * A special token that represents the SCM revision number for a changeset.
+    * It can be used in <code>displayChangeSetDetailUrl</code>.
+    */
+    private static final String REV_TOKEN = "%REV%";
+
+    /**
      * The number of days to use as a range, when this is not specified.
      */
     private static final int DEFAULT_RANGE = 30;
@@ -319,6 +325,28 @@ public class ChangeLogReport
      * @required
      */
     private String issueLinkUrl;
+
+    /**
+     * A template string that is used to create the changeset URL.
+     *
+     * If not defined no change set link will be created.
+     *
+     * There is one special token that you can use in your template:
+     * <ul>
+     * <li><code>%REV%</code> - this is the changeset revision</li>
+     * </ul>
+     * <p>
+     * Example:
+     * <code>http://fisheye.sourceforge.net/changelog/a-project/?cs=%REV%</code>
+     * </p>
+     * <p>
+     * <strong>Note:</strong> If you don't supply the %REV% token in your template,
+     * the revision will simply be appended to your template URL.
+     * </p>
+     *
+     * @parameter expression="${displayChangeSetDetailUrl}"
+     */
+    protected String displayChangeSetDetailUrl;
 
     // temporary field holder while generating the report
     private String rptRepository, rptOneRepoParam, rptMultiRepoParam;
@@ -1395,6 +1423,18 @@ public class ChangeLogReport
         }
 
         sink.text( " " );
+
+        if ( linkRev == null && revision != null && displayChangeSetDetailUrl != null )
+        {
+            if ( displayChangeSetDetailUrl.indexOf( REV_TOKEN ) > 0 )
+            {
+                linkRev = displayChangeSetDetailUrl.replaceAll( REV_TOKEN, revision );
+            }
+            else
+            {
+                linkRev = displayChangeSetDetailUrl + revision;
+            }
+        }
 
         if ( linkRev != null )
         {
