@@ -20,7 +20,6 @@ package org.apache.maven.plugin.changelog;
  */
 
 import org.apache.maven.doxia.sink.Sink;
-import org.apache.maven.model.Developer;
 import org.apache.maven.scm.ChangeFile;
 import org.apache.maven.scm.ChangeSet;
 import org.apache.maven.scm.command.changelog.ChangeLogSet;
@@ -42,13 +41,6 @@ import java.util.ResourceBundle;
 public class DeveloperActivityReport
     extends ChangeLogReport
 {
-    /**
-     * List of developers to be shown on the report.
-     *
-     * @parameter expression="${project.developers}"
-     */
-    private List developers;
-
     /**
      * Used to hold data while creating the report
      */
@@ -183,42 +175,18 @@ public class DeveloperActivityReport
     {
         initDeveloperDetails( set );
 
-        //for( Iterator i=commits.keySet().iterator(); i.hasNext(); )
-        for ( Iterator i = developers.iterator(); i.hasNext(); )
+        for( Iterator i = commits.keySet().iterator(); i.hasNext(); )
         {
-            Developer developer = (Developer) i.next();
+            String author = (String) i.next();
 
-            String name = developer.getName();
-
-            String id = developer.getId();
-
-            LinkedList devCommits;
-            HashMap devFiles;
-
-            if ( !commits.containsKey( name ) )
-            {
-                if ( !commits.containsKey( id ) )
-                {
-                    continue;
-                }
-
-                devCommits = (LinkedList) commits.get( id );
-
-                devFiles = (HashMap) files.get( id );
-            }
-            else
-            {
-                devCommits = (LinkedList) commits.get( name );
-
-                devFiles = (HashMap) files.get( name );
-            }
+            LinkedList devCommits = (LinkedList) commits.get( author );
+            HashMap devFiles = (HashMap) files.get( author );
 
             sink.tableRow();
-
             sink.tableCell();
-            sink.link( "team-list.html#" + developer.getId() );
-            sink.text( name );
-            sink.link_();
+
+            sinkAuthorDetails( sink, author );
+
             sink.tableCell_();
 
             sink.tableCell();
