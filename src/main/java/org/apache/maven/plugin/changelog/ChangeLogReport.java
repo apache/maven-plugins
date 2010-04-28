@@ -95,8 +95,9 @@ public class ChangeLogReport
     private static final String ISSUE_TOKEN = "%ISSUE%";
 
     /**
-    * A special token that represents the SCM revision number for a changeset.
-    * It can be used in <code>displayChangeSetDetailUrl</code>.
+    * A special token that represents the SCM revision number.
+    * It can be used in <code>displayChangeSetDetailUrl</code>
+    * and <code>displayFileRevDetailUrl</code>.
     */
     private static final String REV_TOKEN = "%REV%";
 
@@ -300,7 +301,7 @@ public class ChangeLogReport
      * the path of the file will simply be appended to your template URL.
      * </p>
      *
-     * @parameter expression="${project.scm.url}"
+     * @parameter expression="${displayFileDetailUrl}" default-value="${project.scm.url}"
      */
     protected String displayFileDetailUrl;
 
@@ -312,6 +313,7 @@ public class ChangeLogReport
      *
      * @parameter expression="${issueIDRegexPattern}" default-value="[a-zA-Z]{2,}-\\d+"
      * @required
+     * @since 2.2
      */
     private String issueIDRegexPattern;
 
@@ -323,6 +325,7 @@ public class ChangeLogReport
      *
      * @parameter expression="${issueLinkUrl}" default-value="http://jira.codehaus.org/browse/%ISSUE%"
      * @required
+     * @since 2.2
      */
     private String issueLinkUrl;
 
@@ -345,8 +348,39 @@ public class ChangeLogReport
      * </p>
      *
      * @parameter expression="${displayChangeSetDetailUrl}"
+     * @since 2.2
      */
     protected String displayChangeSetDetailUrl;
+
+    /**
+     * A template string that is used to create the revision aware URL to
+     * the file details in a similar fashion to the <code>displayFileDetailUrl</code>.
+     * When a report contains both file and file revision information, as in the
+     * Change Log report, this template string can be used to create a revision
+     * aware URL to the file details.
+     *
+     * If not defined this template string defaults to the same value as the
+     * <code>displayFileDetailUrl</code> and thus revision number aware links will
+     * not be used.
+     *
+     * There are two special tokens that you can use in your template:
+     * <ul>
+     * <li><code>%FILE%</code> - this is the path to a file</li>
+     * <li><code>%REV%</code> - this is the revision of the file</li>
+     * </ul>
+     * <p>
+     * Example:
+     * <code>http://fisheye.sourceforge.net/browse/a-project/%FILE%?r=%REV%</code>
+     * </p>
+     * <p>
+     * <strong>Note:</strong> If you don't supply the %FILE% token in your template,
+     * the path of the file will simply be appended to your template URL.
+     * </p>
+     *
+     * @parameter expression="${displayFileRevDetailUrl}"
+     * @since 2.2
+     */
+    protected String displayFileRevDetailUrl;
 
     // temporary field holder while generating the report
     private String rptRepository, rptOneRepoParam, rptMultiRepoParam;
@@ -373,6 +407,8 @@ public class ChangeLogReport
             return;
         }
 
+        intializeDefaultConfigurationParameters();
+
         verifySCMTypeParams();
 
         if ( systemProperties != null )
@@ -393,6 +429,18 @@ public class ChangeLogReport
         }
 
         doGenerateReport( getChangedSets(), getBundle( locale ), getSink() );
+    }
+
+    /**
+     * Initializes any configuration parameters that have not/can not be defined
+     * or defaulted by the Mojo API.
+     */
+    private void intializeDefaultConfigurationParameters()
+    {
+        if ( displayFileRevDetailUrl == null || displayFileRevDetailUrl.length() == 0 )
+        {
+            displayFileRevDetailUrl = displayFileDetailUrl;
+        }
     }
 
     /**
@@ -1360,20 +1408,38 @@ public class ChangeLogReport
         String linkFile = null;
         String linkRev = null;
 
-        if ( displayFileDetailUrl != null )
+        if ( revision != null )
         {
-            if ( !scmUrl.equals( displayFileDetailUrl ) )
+            linkFile = displayFileRevDetailUrl;
+        }
+        else
+        {
+            linkFile = displayFileDetailUrl;
+        }
+
+        if ( linkFile != null )
+        {
+            if ( !scmUrl.equals( linkFile ) )
             {
                 // Use the given URL to create links to the files
-                if ( displayFileDetailUrl.indexOf( FILE_TOKEN ) > 0 )
+
+                if ( linkFile.indexOf( FILE_TOKEN ) > 0 )
                 {
-                    linkFile = displayFileDetailUrl.replaceAll( FILE_TOKEN, name );
+                    linkFile = linkFile.replaceAll( FILE_TOKEN, name );
                 }
                 else
                 {
                     // This is here so that we are backwards compatible with the
                     // format used before the special token was introduced
-                    linkFile = displayFileDetailUrl + name;
+
+                    linkFile = linkFile + name;
+                }
+
+                // Use the given URL to create links to the files
+
+                if (  revision != null && linkFile.indexOf( REV_TOKEN ) > 0 )
+                {
+                    linkFile = linkFile.replaceAll( REV_TOKEN, revision );
                 }
             }
             else if ( connection.startsWith( "scm:perforce" ) )
