@@ -48,6 +48,7 @@ import java.util.regex.Pattern;
 
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.doxia.siterenderer.Renderer;
+import org.apache.maven.model.Developer;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.AbstractMavenReport;
@@ -382,11 +383,25 @@ public class ChangeLogReport
      */
     protected String displayFileRevDetailUrl;
 
+    /**
+     * List of developers to be shown on the report.
+     *
+     * @parameter expression="${project.developers}"
+     * @since 2.2
+     */
+    protected List developers;
+
     // temporary field holder while generating the report
     private String rptRepository, rptOneRepoParam, rptMultiRepoParam;
 
     // field for SCM Connection URL
     private String connection;
+
+    // field used to hold a map of the developers by Id
+    private HashMap developersById;
+
+    // field used to hold a map of the developers by Name
+    private HashMap developersByName;
 
     /**
      * The system properties to use (needed by the perforce scm provider).
@@ -407,7 +422,9 @@ public class ChangeLogReport
             return;
         }
 
-        intializeDefaultConfigurationParameters();
+        initializeDefaultConfigurationParameters();
+
+        initializeDeveloperMaps();
 
         verifySCMTypeParams();
 
@@ -435,11 +452,32 @@ public class ChangeLogReport
      * Initializes any configuration parameters that have not/can not be defined
      * or defaulted by the Mojo API.
      */
-    private void intializeDefaultConfigurationParameters()
+    private void initializeDefaultConfigurationParameters()
     {
         if ( displayFileRevDetailUrl == null || displayFileRevDetailUrl.length() == 0 )
         {
             displayFileRevDetailUrl = displayFileDetailUrl;
+        }
+    }
+
+    /**
+     * Creates maps of the project developers by developer Id and developer Name
+     * for quick lookups.
+     */
+    private void initializeDeveloperMaps()
+    {
+        developersById = new HashMap();
+        developersByName = new HashMap();
+
+        if ( developers != null )
+        {
+            for ( Iterator i = developers.iterator(); i.hasNext(); )
+            {
+                Developer developer = (Developer) i.next();
+
+                developersById.put( developer.getId(), developer );
+                developersByName.put( developer.getName(), developer );
+            }
         }
     }
 
@@ -1190,7 +1228,9 @@ public class ChangeLogReport
         sink.tableCell_();
 
         sink.tableCell();
-        sink.text( entry.getAuthor() );
+
+        sinkAuthorDetails( sink, entry.getAuthor() );
+
         sink.tableCell_();
 
         sink.tableCell();
@@ -1308,6 +1348,35 @@ public class ChangeLogReport
         }
 
         sink.text( line.substring( currLoc ) );
+    }
+
+    /**
+     * If the supplied author is a known developer this method outputs a
+     * link to the team members report, or alternatively, if the supplied
+     * author is unknown, outputs the author's name as plain text.
+     *
+     * @param sink Sink to use for outputting
+     * @param author The author's name.
+     */
+    protected void sinkAuthorDetails( Sink sink, String author )
+    {
+        Developer developer = (Developer) developersById.get( author );
+
+        if ( developer == null )
+        {
+            developer = (Developer) developersByName.get( author );
+        }
+
+        if ( developer != null )
+        {
+            sink.link( "team-list.html#" + developer.getId() );
+            sink.text( developer.getName() );
+            sink.link_();
+        }
+        else
+        {
+            sink.text( author );
+        }
     }
 
     /**
