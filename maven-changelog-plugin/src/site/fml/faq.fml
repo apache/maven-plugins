@@ -180,5 +180,27 @@ mvn scm:changelog
         </ol>
       </answer>
     </faq>
+    <faq id="Why do the child modules of my multi module project have wrong SCM URLs">
+      <question>Why do the child modules of my multi module project have wrong SCM URLs?</question>
+      <answer>
+        <p>
+          The short answer is that they don't. This is usually a
+          misunderstanding of how the SCM URLs are inherited.
+        </p>
+        <p>
+          If you only define an &lt;scm&gt; element in the parent POM, the
+          child modules will interit a value for their SCM URLs. The path to a
+          child directory, when using the aggregator, is <em>not</em> used when
+          constructing the SCM URLs. Only the artifactId is used.
+        </p>
+        <p>
+          If you want to examine what your POM looks like, including the SCM
+          URLs, you can run this command:
+<source>
+mvn help:effective-pom
+</source>
+        </p>
+      </answer>
+    </faq>
   </part>
 </faqs>
