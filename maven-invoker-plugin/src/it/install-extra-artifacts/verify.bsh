@@ -23,6 +23,9 @@ try
         "org/codehaus/plexus/plexus-utils/1.5.6/plexus-utils-1.5.6.pom",
         "junit/junit/3.8.2/junit-3.8.2.jar",
         "junit/junit/3.8.2/junit-3.8.2.pom",
+        "jdom/jdom/1.1/jdom-1.1.pom",
+        "org/jdom/jdom/1.1/jdom-1.1.pom",
+        "org/jdom/jdom/1.1/jdom-1.1.jar",
     };
     for ( String file : files )
     {
@@ -31,6 +34,10 @@ try
         if ( !stagedFile.isFile() )
         {
             throw new IllegalStateException( "Missing: " + stagedFile );
+        }
+        if ( file.endsWith( "jdom-1.1.jar" ) && stagedFile.length() < 1024 * 10 )
+        {
+            throw new IllegalStateException( "Corrupt: " + stagedFile );
         }
     }
 }

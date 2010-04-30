@@ -522,6 +522,8 @@ public class InstallMojo
     private void copyArtifact( Artifact artifact, ArtifactRepository testRepository )
         throws MojoExecutionException
     {
+        copyPoms( artifact, testRepository );
+
         Artifact depArtifact =
             artifactFactory.createArtifactWithClassifier( artifact.getGroupId(), artifact.getArtifactId(),
                                                           artifact.getBaseVersion(), artifact.getType(),
@@ -529,22 +531,23 @@ public class InstallMojo
 
         File artifactFile = artifact.getFile();
 
+        copyArtifact( artifactFile, depArtifact, testRepository );
+    }
+
+    private void copyPoms( Artifact artifact, ArtifactRepository testRepository )
+        throws MojoExecutionException
+    {
         Artifact pomArtifact =
-            artifactFactory.createProjectArtifact( depArtifact.getGroupId(), depArtifact.getArtifactId(),
-                                                   depArtifact.getBaseVersion() );
+            artifactFactory.createProjectArtifact( artifact.getGroupId(), artifact.getArtifactId(),
+                                                   artifact.getBaseVersion() );
 
         File pomFile = new File( localRepository.getBasedir(), localRepository.pathOf( pomArtifact ) );
 
         if ( pomFile.isFile() )
         {
-            if ( !pomArtifact.getId().equals( depArtifact.getId() ) )
-            {
-                copyArtifact( pomFile, pomArtifact, testRepository );
-            }
+            copyArtifact( pomFile, pomArtifact, testRepository );
             copyParentPoms( pomFile, testRepository );
         }
-
-        copyArtifact( artifactFile, depArtifact, testRepository );
     }
 
     /**
@@ -611,6 +614,10 @@ public class InstallMojo
                 throw new MojoExecutionException( "Invalid artifact " + extraArtifacts[i] );
             }
 
+            String groupId = gav[0];
+            String artifactId = gav[1];
+            String version = gav[2];
+
             String type = "jar";
             if ( gav.length > 3 )
             {
@@ -636,11 +643,19 @@ public class InstallMojo
             Artifact artifact = null;
             try
             {
-                artifact = artifactFactory.createArtifactWithClassifier( gav[0], gav[1], gav[2], type, classifier );
+                artifact = artifactFactory.createArtifactWithClassifier( groupId, artifactId, version, type, classifier );
 
                 ArtifactResolutionResult arr =
                     resolver.resolveTransitively( Collections.singleton( artifact ), originatingArtifact,
                                                   remoteRepositories, localRepository, artifactMetadataSource );
+
+                if ( !groupId.equals( artifact.getGroupId() ) || !artifactId.equals( artifact.getArtifactId() )
+                    || !version.equals( artifact.getVersion() ) )
+                {
+                    artifact =
+                        artifactFactory.createArtifactWithClassifier( groupId, artifactId, version, type, classifier );
+                    copyPoms( artifact, testRepository );
+                }
 
                 for ( Iterator iterator = arr.getArtifacts().iterator(); iterator.hasNext(); )
                 {
