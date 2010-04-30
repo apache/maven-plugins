@@ -22,17 +22,24 @@ package org.apache.maven.plugin.invoker;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.installer.ArtifactInstaller;
+import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.ArtifactRepositoryFactory;
+import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
+import org.apache.maven.artifact.resolver.ArtifactResolver;
+import org.apache.maven.artifact.resolver.ResolutionNode;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Parent;
 import org.apache.maven.plugin.AbstractMojo;
@@ -132,6 +139,48 @@ public class InstallMojo
     private Collection copiedArtifacts;
 
     /**
+     * Extra dependencies that needed to be installed on the local repository.<BR>
+     * Format:
+     * 
+     * <pre>
+     * groupId:artifactId:version:type:classifier
+     * </pre>
+     * 
+     * Examples:
+     * 
+     * <pre>
+     * org.apache.maven.plugins:maven-clean-plugin:2.4:maven-plugin
+     * org.apache.maven.plugins:maven-clean-plugin:2.4:jar:javadoc
+     * </pre>
+     * 
+     * If the type is 'maven-plugin' the plugin will try to resolve the artifact using plugin remote repositories,
+     * instead of using artifact remore repository.
+     * 
+     * @parameter
+     */
+    private String[] extraArtifacts;
+
+    /**
+     * @component
+     */
+    private ArtifactResolver resolver;
+
+    /**
+     * @parameter default-value="${project.remoteArtifactRepositories}"
+     */
+    private List remoteRepositories;
+
+    /**
+     * @parameter default-value="${project.pluginArtifactRepositories}"
+     */
+    private List remotePluginRepositories;
+
+    /**
+     * @component
+     */
+    private ArtifactMetadataSource artifactMetadataSource;
+
+    /**
      * Performs this mojo's tasks.
      * 
      * @throws MojoExecutionException If the artifacts could not be installed.
@@ -153,6 +202,11 @@ public class InstallMojo
         installProjectDependencies( project, reactorProjects, testRepository );
         installProjectParents( project, testRepository );
         installProjectArtifacts( project, testRepository );
+
+        if ( extraArtifacts != null )
+        {
+            installExtraArtifacts( testRepository, extraArtifacts );
+        }
     }
 
     /**
@@ -447,29 +501,7 @@ public class InstallMojo
             {
                 Artifact artifact = (Artifact) it.next();
 
-                Artifact depArtifact =
-                    artifactFactory.createArtifactWithClassifier( artifact.getGroupId(), artifact.getArtifactId(),
-                                                                  artifact.getBaseVersion(), artifact.getType(),
-                                                                  artifact.getClassifier() );
-
-                File artifactFile = artifact.getFile();
-
-                Artifact pomArtifact =
-                    artifactFactory.createProjectArtifact( depArtifact.getGroupId(), depArtifact.getArtifactId(),
-                                                           depArtifact.getBaseVersion() );
-
-                File pomFile = new File( localRepository.getBasedir(), localRepository.pathOf( pomArtifact ) );
-
-                if ( pomFile.isFile() )
-                {
-                    if ( !pomArtifact.getId().equals( depArtifact.getId() ) )
-                    {
-                        copyArtifact( pomFile, pomArtifact, testRepository );
-                    }
-                    copyParentPoms( pomFile, testRepository );
-                }
-
-                copyArtifact( artifactFile, depArtifact, testRepository );
+                copyArtifact( artifact, testRepository );
             }
 
             // install dependencies that were resolved from the reactor
@@ -487,6 +519,34 @@ public class InstallMojo
         {
             throw new MojoExecutionException( "Failed to install project dependencies: " + mvnProject, e );
         }
+    }
+
+    private void copyArtifact( Artifact artifact, ArtifactRepository testRepository )
+        throws MojoExecutionException
+    {
+        Artifact depArtifact =
+            artifactFactory.createArtifactWithClassifier( artifact.getGroupId(), artifact.getArtifactId(),
+                                                          artifact.getBaseVersion(), artifact.getType(),
+                                                          artifact.getClassifier() );
+
+        File artifactFile = artifact.getFile();
+
+        Artifact pomArtifact =
+            artifactFactory.createProjectArtifact( depArtifact.getGroupId(), depArtifact.getArtifactId(),
+                                                   depArtifact.getBaseVersion() );
+
+        File pomFile = new File( localRepository.getBasedir(), localRepository.pathOf( pomArtifact ) );
+
+        if ( pomFile.isFile() )
+        {
+            if ( !pomArtifact.getId().equals( depArtifact.getId() ) )
+            {
+                copyArtifact( pomFile, pomArtifact, testRepository );
+            }
+            copyParentPoms( pomFile, testRepository );
+        }
+
+        copyArtifact( artifactFile, depArtifact, testRepository );
     }
 
     /**
@@ -532,6 +592,68 @@ public class InstallMojo
         {
             copyArtifact( pomFile, pomArtifact, testRepository );
             copyParentPoms( pomFile, testRepository );
+        }
+    }
+
+    private void installExtraArtifacts( ArtifactRepository testRepository, String[] extraArtifacts )
+        throws MojoExecutionException
+    {
+        for ( int i = 0; i < extraArtifacts.length; i++ )
+        {
+            String[] gav = extraArtifacts[i].split( ":" );
+            if ( gav.length < 3 || gav.length > 5 )
+            {
+                throw new MojoExecutionException( "Invalid artifact " + extraArtifacts[i] );
+            }
+
+            String type = null;
+            if ( gav.length > 3 )
+            {
+                type = gav[3];
+            }
+            else
+            {
+                type = "jar";
+            }
+
+            String classifier = null;
+            if ( gav.length == 5 )
+            {
+                classifier = gav[4];
+            }
+
+            List remoteRepositories;
+            if ( "maven-plugin".equals( type ) )
+            {
+                remoteRepositories = this.remotePluginRepositories;
+            }
+            else
+            {
+                remoteRepositories = this.remoteRepositories;
+            }
+
+            Artifact artifact = null;
+            try
+            {
+                artifact = artifactFactory.createArtifactWithClassifier( gav[0], gav[1], gav[2], type, classifier );
+
+                Artifact originatingArtifact = artifactFactory.createBuildArtifact( "dummy", "dummy", "1.0", "jar" );
+
+                ArtifactResolutionResult arr =
+                    resolver.resolveTransitively( Collections.singleton( artifact ), originatingArtifact,
+                                                  remoteRepositories, localRepository, artifactMetadataSource );
+
+                Set nodes = arr.getArtifactResolutionNodes();
+                for ( Iterator iterator = nodes.iterator(); iterator.hasNext(); )
+                {
+                    ResolutionNode node = (ResolutionNode) iterator.next();
+                    copyArtifact( node.getArtifact(), testRepository );
+                }
+            }
+            catch ( Exception e )
+            {
+                throw new MojoExecutionException( "Unable to resolve dependencies for: " + artifact, e );
+            }
         }
     }
 
