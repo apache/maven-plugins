@@ -50,6 +50,8 @@ under the License.
             <extraArtifact>org.apache.maven.plugins:maven-clean-plugin:2.4:maven-plugin</extraArtifact>
             <!-- gid:aid:version:type:classifier -->
             <extraArtifact>org.apache.maven.plugins:maven-clean-plugin:2.4:jar:javadoc</extraArtifact>
+            <!-- relocated -->
+            <extraArtifact>jdom:jdom:1.1</extraArtifact>
           </extraArtifacts>
         </configuration>
         <executions>
