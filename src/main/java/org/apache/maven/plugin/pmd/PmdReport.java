@@ -212,7 +212,10 @@ public class PmdReport
                 InputStream rulesInput = new FileInputStream( ruleset );
                 try
                 {
-                    sets[idx] = ruleSetFactory.createRuleSet( rulesInput );
+                    RuleSet ruleSet = ruleSetFactory.createRuleSet( rulesInput );
+                    sets[idx] = ruleSet;
+
+                    ruleSet.start( ruleContext );
                 }
                 finally
                 {
@@ -313,6 +316,11 @@ public class PmdReport
                 }
             }
             reportSink.endFile( file );
+        }
+
+        for ( int idx = 0; idx < rulesets.length; idx++ )
+        {
+            sets[idx].end( ruleContext );
         }
 
         reportSink.endDocument();
