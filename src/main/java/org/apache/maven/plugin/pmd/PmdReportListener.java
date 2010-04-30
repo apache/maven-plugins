@@ -28,7 +28,6 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import net.sourceforge.pmd.IRuleViolation;
-import net.sourceforge.pmd.PMD;
 import net.sourceforge.pmd.ReportListener;
 import net.sourceforge.pmd.stat.Metric;
 
@@ -189,7 +188,7 @@ public class PmdReportListener
         sink.link( "http://pmd.sourceforge.net/" );
         sink.text( "PMD" );
         sink.link_();
-        sink.text( " " + PMD.VERSION + "." );
+        sink.text( " " + AbstractPmdReport.getPmdVersion() + "." );
         sink.paragraph_();
 
         sink.section1_();
@@ -305,5 +304,4 @@ public class PmdReportListener
 
         sink.close();
     }
-
 }

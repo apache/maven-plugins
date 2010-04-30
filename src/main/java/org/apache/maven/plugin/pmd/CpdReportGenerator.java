@@ -24,7 +24,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import net.sourceforge.pmd.PMD;
 import net.sourceforge.pmd.cpd.Match;
 
 import org.apache.maven.doxia.sink.Sink;
@@ -88,7 +87,7 @@ public class CpdReportGenerator
         sink.link( "http://pmd.sourceforge.net/cpd.html" );
         sink.text( "CPD" );
         sink.link_();
-        sink.text( " " + PMD.VERSION + "." );
+        sink.text( " " + AbstractPmdReport.getPmdVersion() + "." );
         sink.paragraph_();
 
         sink.section1_();
