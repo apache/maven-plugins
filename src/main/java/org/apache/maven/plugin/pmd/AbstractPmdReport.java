@@ -32,6 +32,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import net.sourceforge.pmd.PMD;
+
 import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.model.ReportPlugin;
 import org.apache.maven.project.MavenProject;
@@ -446,5 +448,21 @@ public abstract class AbstractPmdReport
     protected String getOutputEncoding()
     {
         return ( outputEncoding != null ) ? outputEncoding : ReaderFactory.UTF_8;
+    }
+
+    static String getPmdVersion()
+    {
+        try
+        {
+            return (String) PMD.class.getField( "VERSION" ).get( null );
+        }
+        catch ( IllegalAccessException e )
+        {
+            throw new RuntimeException( "PMD VERSION field not accessible", e );
+        }
+        catch ( NoSuchFieldException e )
+        {
+            throw new RuntimeException( "PMD VERSION field not found", e );
+        }
     }
 }
