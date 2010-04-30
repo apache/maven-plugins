@@ -19,10 +19,9 @@ package org.apache.maven.plugin.pmd;
  * under the License.
  */
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -33,6 +32,8 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.pull.MXParser;
 import org.codehaus.plexus.util.xml.pull.XmlPullParser;
@@ -111,14 +112,15 @@ public abstract class AbstractPmdViolationCheckMojo
         if ( "java".equals( language ) || aggregate )
         {
             File outputFile = new File( targetDirectory, filename );
+
             if ( outputFile.exists() )
             {
+                Reader reader = null;
                 try
                 {
                     XmlPullParser xpp = new MXParser();
-                    FileReader freader = new FileReader( outputFile );
-                    BufferedReader breader = new BufferedReader( freader );
-                    xpp.setInput( breader );
+                    reader = ReaderFactory.newXmlReader( outputFile );
+                    xpp.setInput( reader );
 
                     Map violations = getViolations( xpp, tagName, failurePriority );
 
@@ -153,6 +155,10 @@ public abstract class AbstractPmdViolationCheckMojo
                     throw new MojoExecutionException(
                                                       "Unable to read PMD results xml: " + outputFile.getAbsolutePath(),
                                                       e );
+                }
+                finally
+                {
+                    IOUtil.close( reader );
                 }
             }
             else
