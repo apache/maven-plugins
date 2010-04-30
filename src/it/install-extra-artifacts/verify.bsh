@@ -1,0 +1,55 @@
+import java.io.*;
+import java.util.*;
+import java.util.regex.*;
+
+try
+{
+    File itRepoDir = new File( basedir, "target/it-repo" );
+    if ( !itRepoDir.isDirectory() )
+    {
+        System.out.println( "IT local repository missing: " + itRepoDir );
+        return false;
+    }
+
+    File installedFile = new File( itRepoDir, "org/apache/maven/plugins/maven-clean-plugin/2.4/maven-clean-plugin-2.4.pom" );
+    if ( !installedFile.isFile() )
+    {
+        System.out.println( "Installed file missing in local repo: " + installedFile );
+        return false;
+    }
+    
+    installedFile = new File( itRepoDir, "org/apache/maven/plugins/maven-clean-plugin/2.4/maven-clean-plugin-2.4.jar" );
+    if ( !installedFile.isFile() )
+    {
+        System.out.println( "Installed file missing in local repo: " + installedFile );
+        return false;
+    }
+    
+    installedFile = new File( itRepoDir, "org/apache/maven/plugins/maven-clean-plugin/2.4/maven-clean-plugin-2.4-javadoc.jar" );
+    if ( !installedFile.isFile() )
+    {
+        System.out.println( "Installed file missing in local repo: " + installedFile );
+        return false;
+    }
+    
+    installedFile = new File( itRepoDir, "asm/asm/3.0/asm-3.0.jar" );
+    if ( !installedFile.isFile() )
+    {
+        System.out.println( "Installed file missing in local repo: " + installedFile );
+        return false;
+    }
+
+    installedFile = new File( itRepoDir, "asm/asm/3.0/asm-3.0.pom" );
+    if ( !installedFile.isFile() )
+    {
+        System.out.println( "Installed file missing in local repo: " + installedFile );
+        return false;
+    }
+}
+catch( Throwable t )
+{
+    t.printStackTrace();
+    return false;
+}
+
+return true;
