@@ -29,7 +29,6 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
@@ -39,7 +38,6 @@ import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.ArtifactRepositoryFactory;
 import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
-import org.apache.maven.artifact.resolver.ResolutionNode;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Parent;
 import org.apache.maven.plugin.AbstractMojo;
@@ -139,7 +137,7 @@ public class InstallMojo
     private Collection copiedArtifacts;
 
     /**
-     * Extra dependencies that needed to be installed on the local repository.<BR>
+     * Extra dependencies that need to be installed on the local repository.<BR>
      * Format:
      * 
      * <pre>
@@ -154,9 +152,10 @@ public class InstallMojo
      * </pre>
      * 
      * If the type is 'maven-plugin' the plugin will try to resolve the artifact using plugin remote repositories,
-     * instead of using artifact remore repository.
+     * instead of using artifact remote repositories.
      * 
      * @parameter
+     * @since 1.6
      */
     private String[] extraArtifacts;
 
@@ -167,11 +166,13 @@ public class InstallMojo
 
     /**
      * @parameter default-value="${project.remoteArtifactRepositories}"
+     * @readonly
      */
-    private List remoteRepositories;
+    private List remoteArtifactRepositories;
 
     /**
      * @parameter default-value="${project.pluginArtifactRepositories}"
+     * @readonly
      */
     private List remotePluginRepositories;
 
@@ -203,10 +204,7 @@ public class InstallMojo
         installProjectParents( project, testRepository );
         installProjectArtifacts( project, testRepository );
 
-        if ( extraArtifacts != null )
-        {
-            installExtraArtifacts( testRepository, extraArtifacts );
-        }
+        installExtraArtifacts( testRepository, extraArtifacts );
     }
 
     /**
@@ -598,6 +596,13 @@ public class InstallMojo
     private void installExtraArtifacts( ArtifactRepository testRepository, String[] extraArtifacts )
         throws MojoExecutionException
     {
+        if ( extraArtifacts == null )
+        {
+            return;
+        }
+
+        Artifact originatingArtifact = project.getArtifact();
+
         for ( int i = 0; i < extraArtifacts.length; i++ )
         {
             String[] gav = extraArtifacts[i].split( ":" );
@@ -606,14 +611,10 @@ public class InstallMojo
                 throw new MojoExecutionException( "Invalid artifact " + extraArtifacts[i] );
             }
 
-            String type = null;
+            String type = "jar";
             if ( gav.length > 3 )
             {
                 type = gav[3];
-            }
-            else
-            {
-                type = "jar";
             }
 
             String classifier = null;
@@ -629,7 +630,7 @@ public class InstallMojo
             }
             else
             {
-                remoteRepositories = this.remoteRepositories;
+                remoteRepositories = this.remoteArtifactRepositories;
             }
 
             Artifact artifact = null;
@@ -637,17 +638,13 @@ public class InstallMojo
             {
                 artifact = artifactFactory.createArtifactWithClassifier( gav[0], gav[1], gav[2], type, classifier );
 
-                Artifact originatingArtifact = artifactFactory.createBuildArtifact( "dummy", "dummy", "1.0", "jar" );
-
                 ArtifactResolutionResult arr =
                     resolver.resolveTransitively( Collections.singleton( artifact ), originatingArtifact,
                                                   remoteRepositories, localRepository, artifactMetadataSource );
 
-                Set nodes = arr.getArtifactResolutionNodes();
-                for ( Iterator iterator = nodes.iterator(); iterator.hasNext(); )
+                for ( Iterator iterator = arr.getArtifacts().iterator(); iterator.hasNext(); )
                 {
-                    ResolutionNode node = (ResolutionNode) iterator.next();
-                    copyArtifact( node.getArtifact(), testRepository );
+                    copyArtifact( (Artifact) iterator.next(), testRepository );
                 }
             }
             catch ( Exception e )
