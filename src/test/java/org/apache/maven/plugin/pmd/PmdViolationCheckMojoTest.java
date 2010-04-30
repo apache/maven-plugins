@@ -90,7 +90,7 @@ public class PmdViolationCheckMojoTest
         }
         catch ( MojoFailureException e )
         {
-            System.out.println("Caught Expected Message: "+e.getMessage());// expected
+            System.out.println( "Caught Expected Message: " + e.getMessage() );// expected
         }
 
     }
