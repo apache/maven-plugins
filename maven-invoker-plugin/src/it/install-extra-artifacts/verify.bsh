@@ -11,39 +11,27 @@ try
         return false;
     }
 
-    File installedFile = new File( itRepoDir, "org/apache/maven/plugins/maven-clean-plugin/2.4/maven-clean-plugin-2.4.pom" );
-    if ( !installedFile.isFile() )
+    String[] files =
     {
-        System.out.println( "Installed file missing in local repo: " + installedFile );
-        return false;
-    }
-    
-    installedFile = new File( itRepoDir, "org/apache/maven/plugins/maven-clean-plugin/2.4/maven-clean-plugin-2.4.jar" );
-    if ( !installedFile.isFile() )
+        "org/apache/maven/plugins/maven-clean-plugin/2.4/maven-clean-plugin-2.4.jar",
+        "org/apache/maven/plugins/maven-clean-plugin/2.4/maven-clean-plugin-2.4.pom",
+        "org/apache/maven/plugins/maven-clean-plugin/2.4/maven-clean-plugin-2.4-javadoc.jar",
+        "org/apache/maven/plugins/maven-plugins/16/maven-plugins-16.pom",
+        "org/apache/maven/maven-parent/15/maven-parent-15.pom",
+        "org/apache/apache/6/apache-6.pom",
+        "org/codehaus/plexus/plexus-utils/1.5.6/plexus-utils-1.5.6.jar",
+        "org/codehaus/plexus/plexus-utils/1.5.6/plexus-utils-1.5.6.pom",
+        "junit/junit/3.8.2/junit-3.8.2.jar",
+        "junit/junit/3.8.2/junit-3.8.2.pom",
+    };
+    for ( String file : files )
     {
-        System.out.println( "Installed file missing in local repo: " + installedFile );
-        return false;
-    }
-    
-    installedFile = new File( itRepoDir, "org/apache/maven/plugins/maven-clean-plugin/2.4/maven-clean-plugin-2.4-javadoc.jar" );
-    if ( !installedFile.isFile() )
-    {
-        System.out.println( "Installed file missing in local repo: " + installedFile );
-        return false;
-    }
-    
-    installedFile = new File( itRepoDir, "asm/asm/3.0/asm-3.0.jar" );
-    if ( !installedFile.isFile() )
-    {
-        System.out.println( "Installed file missing in local repo: " + installedFile );
-        return false;
-    }
-
-    installedFile = new File( itRepoDir, "asm/asm/3.0/asm-3.0.pom" );
-    if ( !installedFile.isFile() )
-    {
-        System.out.println( "Installed file missing in local repo: " + installedFile );
-        return false;
+        File stagedFile = new File( itRepoDir, file );
+        System.out.println( "Checking for existence of: " + stagedFile );
+        if ( !stagedFile.isFile() )
+        {
+            throw new IllegalStateException( "Missing: " + stagedFile );
+        }
     }
 }
 catch( Throwable t )
