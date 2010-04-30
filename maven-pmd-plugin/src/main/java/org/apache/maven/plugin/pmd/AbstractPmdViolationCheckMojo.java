@@ -33,6 +33,7 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.pull.MXParser;
 import org.codehaus.plexus.util.xml.pull.XmlPullParser;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
@@ -180,11 +181,23 @@ public abstract class AbstractPmdViolationCheckMojo
         List failures = new ArrayList();
         List warnings = new ArrayList();
 
+        String fullpath = null;
+
         while ( eventType != XmlPullParser.END_DOCUMENT )
         {
+            if ( eventType == XmlPullParser.START_TAG && "file".equals( xpp.getName() ) )
+            {
+                fullpath = xpp.getAttributeValue( "", "name" );
+            }
             if ( eventType == XmlPullParser.START_TAG && tagName.equals( xpp.getName() ) )
             {
                 Map details = getErrorDetails( xpp );
+
+                if ( fullpath != null )
+                {
+                    details.put( "filename", getFilename( fullpath, (String) details.get( "package" ) ) );
+                }
+
                 try
                 {
                     int priority = Integer.parseInt( (String) details.get( "priority" ) );
@@ -199,13 +212,13 @@ public abstract class AbstractPmdViolationCheckMojo
                 }
                 catch ( NumberFormatException e )
                 {
-                    // i don't know what priority this is. Treat it like a
+                    // I don't know what priority this is. Treat it like a
                     // failure
                     failures.add( details );
                 }
                 catch ( NullPointerException e )
                 {
-                    // i don't know what priority this is. Treat it like a
+                    // I don't know what priority this is. Treat it like a
                     // failure
                     failures.add( details );
                 }
@@ -219,6 +232,26 @@ public abstract class AbstractPmdViolationCheckMojo
         map.put( FAILURES_KEY, failures );
         map.put( WARNINGS_KEY, warnings );
         return map;
+    }
+
+    private String getFilename( String fullpath, String pkg )
+    {
+        int index = fullpath.lastIndexOf( File.separatorChar );
+
+        while ( StringUtils.isNotEmpty( pkg ) )
+        {
+            index = fullpath.substring( 0, index ).lastIndexOf( File.separatorChar );
+
+            int dot = pkg.indexOf( '.' );
+
+            if ( dot < 0 )
+            {
+                break;
+            }
+            pkg = pkg.substring( dot + 1 );
+        }
+
+        return fullpath.substring( index + 1 );
     }
 
     /**
