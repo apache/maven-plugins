@@ -29,11 +29,13 @@ import java.io.Writer;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Properties;
 import java.util.ResourceBundle;
 
 import net.sourceforge.pmd.cpd.CPD;
 import net.sourceforge.pmd.cpd.CSVRenderer;
 import net.sourceforge.pmd.cpd.JavaLanguage;
+import net.sourceforge.pmd.cpd.JavaTokenizer;
 import net.sourceforge.pmd.cpd.Renderer;
 import net.sourceforge.pmd.cpd.XMLRenderer;
 
@@ -71,6 +73,24 @@ public class CpdReport
      * @since 2.1
      */
     private boolean skip;
+
+    /**
+     * If true, CPD ignores literal value differences when evaluating a duplicate block.
+     * This means that <code>foo=42;</code> and <code>foo=43;</code> will be seen as equivalent.
+     * You may want to run PMD with this option off to start with and then switch it on to see what it turns up.
+     *
+     * @parameter expression="${cpd.ignoreLiterals}" default-value="false"
+     * @since 2.5
+     */
+    private boolean ignoreLiterals;
+
+    /**
+     * Similar to <code>ignoreLiterals</code> but for identifiers; i.e., variable names, methods names, and so forth.
+     *
+     * @parameter expression="${cpd.ignoreIdentifiers}" default-value="false"
+     * @since 2.5
+     */
+    private boolean ignoreIdentifiers;
 
     /** {@inheritDoc} */
     public String getName( Locale locale )
@@ -129,7 +149,17 @@ public class CpdReport
     private CPD generateReport( Locale locale )
         throws MavenReportException
     {
-        CPD cpd = new CPD( minimumTokens, new JavaLanguage() );
+        Properties p = new Properties();
+        if ( ignoreLiterals )
+        {
+            p.setProperty( JavaTokenizer.IGNORE_LITERALS, "true" );
+        }
+        if ( ignoreIdentifiers )
+        {
+            p.setProperty( JavaTokenizer.IGNORE_IDENTIFIERS, "true" );
+        }
+        CPD cpd = new CPD( minimumTokens, new JavaLanguage( p ) );
+
         Map files = null;
         try
         {
