@@ -29,7 +29,7 @@ under the License.
 
   <groupId>org.apache.maven.plugins</groupId>
   <artifactId>maven-plugins</artifactId>
-  <version>18</version>
+  <version>19-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>Maven Plugins</name>
@@ -160,9 +160,9 @@ under the License.
   </modules>
 
   <scm>
-    <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/tags/maven-plugins-18</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/tags/maven-plugins-18</developerConnection>
-    <url>http://svn.apache.org/viewvc/maven/plugins/tags/maven-plugins-18</url>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/trunk/</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/trunk/</developerConnection>
+    <url>http://svn.apache.org/viewvc/maven/plugins/trunk/</url>
   </scm>
   <distributionManagement>
     <site>
