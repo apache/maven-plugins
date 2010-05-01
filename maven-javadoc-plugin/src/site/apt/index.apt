@@ -109,6 +109,8 @@ Maven Javadoc Plugin
 
    * {{{./examples/aggregate.html}Aggregating Javadocs for Multi-Projects}}
 
+   * {{{./examples/aggregate-dependency-sources.html}Aggregating Dependency Javadocs}}
+
    * {{{./examples/exclude-package-names.html}Excluding Packages}}
 
    * {{{./examples/group-configuration.html}Grouping Packages}}
