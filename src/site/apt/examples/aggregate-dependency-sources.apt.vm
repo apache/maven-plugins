@@ -98,10 +98,10 @@ org.test:project-distro:0.1
             <phase>package</phase>
             <goals>
               <!-- produce source artifact for main project sources -->
-              <goal>jar</goal>
+              <goal>jar-no-fork</goal>
               
               <!-- produce source artifact for project test sources -->
-              <goal>test-jar</goal>
+              <goal>test-jar-no-fork</goal>
             </goals>
           </execution>
         </executions>
@@ -113,7 +113,7 @@ org.test:project-distro:0.1
 +-----+
 
   <<NOTE:>> If you don't intend to generate test javadocs that include dependency sources, you can omit the 
-  <<<test-jar>>> goal above.
+  <<<test-jar-no-fork>>> goal above.
   
   At this point, your project is ready to produce the artifacts necessary to support dependency-driven javadoc aggregation.
   The next time you install or deploy the project, the appropriate artifacts will be available for your distribution
