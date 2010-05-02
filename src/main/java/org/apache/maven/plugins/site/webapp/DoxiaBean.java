@@ -22,6 +22,7 @@ package org.apache.maven.plugins.site.webapp;
 import java.io.File;
 import java.util.Map;
 
+import org.apache.maven.doxia.siterenderer.DocumentRenderer;
 import org.apache.maven.doxia.siterenderer.SiteRenderingContext;
 
 /**
@@ -34,7 +35,7 @@ public class DoxiaBean
 {
     private SiteRenderingContext context;
 
-    private Map documents;
+    private Map<String, DocumentRenderer> documents;
 
     private File generatedSiteDirectory;
 
@@ -43,7 +44,7 @@ public class DoxiaBean
      * @param documents
      * @param generatedSiteDirectory
      */
-    public DoxiaBean( SiteRenderingContext context, Map documents,
+    public DoxiaBean( SiteRenderingContext context, Map<String, DocumentRenderer> documents,
                                  File generatedSiteDirectory )
     {
         this.context = context;
@@ -61,12 +62,12 @@ public class DoxiaBean
         this.context = context;
     }
 
-    public Map getDocuments()
+    public Map<String, DocumentRenderer> getDocuments()
     {
         return documents;
     }
 
-    public void setDocuments( Map documents )
+    public void setDocuments( Map<String, DocumentRenderer> documents )
     {
         this.documents = documents;
     }

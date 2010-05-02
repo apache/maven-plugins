@@ -129,9 +129,9 @@ public class SiteStageDeployMojo
         deployStagingSite();
     }
 
-    
+
     // FIXME too much duplicate code with SiteDeployMojo
-    
+
     /**
      * Deploy the staging directory using the stagingSiteURL.
      *
@@ -176,11 +176,11 @@ public class SiteStageDeployMojo
             throw new MojoExecutionException(
                 "Wagon protocol '" + repository.getProtocol() + "' doesn't support directory copying" );
         }
-       
+
         try
         {
             Debug debug = new Debug();
-            
+
 
             wagon.addSessionListener( debug );
 
@@ -252,7 +252,8 @@ public class SiteStageDeployMojo
      * @param usersStagingSiteURL The staging site URL as suggested by the user's configuration
      * @return the site URL for staging
      */
-    protected String getStagingSiteURL( MavenProject currentProject, List reactorProjects, String usersStagingSiteURL )
+    protected String getStagingSiteURL( MavenProject currentProject, List<MavenProject> reactorProjects,
+                                        String usersStagingSiteURL )
     {
         String topLevelURL = null;
         String relative = "";

@@ -57,7 +57,7 @@ public class ReportDocumentRenderer
     private RenderingContext renderingContext;
 
     private Log log;
-    
+
     public ReportDocumentRenderer( MavenReportExecution mavenReportExecution, RenderingContext renderingContext, Log log)
     {
         this.mavenReportExecution = mavenReportExecution;
@@ -65,7 +65,7 @@ public class ReportDocumentRenderer
         this.renderingContext = renderingContext;
 
         this.log = log;
-        
+
     }
 
     private static class MySink
@@ -99,7 +99,7 @@ public class ReportDocumentRenderer
     {
         private RenderingContext context;
 
-        private List sinks = new ArrayList();
+        private List<Sink> sinks = new ArrayList<Sink>();
 
         public MySinkFactory( RenderingContext ctx )
         {
@@ -134,7 +134,7 @@ public class ReportDocumentRenderer
             return null;
         }
 
-        public List sinks()
+        public List<Sink> sinks()
         {
             return sinks;
         }
@@ -144,9 +144,9 @@ public class ReportDocumentRenderer
         throws RendererException, FileNotFoundException
     {
         Locale locale = siteRenderingContext.getLocale();
-        
+
         MavenReport report = mavenReportExecution.getMavenReport();
-        
+
         String localReportName = report.getName( locale );
         log.info( "Generating \"" + localReportName + "\" report." );
 
@@ -178,7 +178,7 @@ public class ReportDocumentRenderer
             stringBuilder.append( ", skip LinkageError " + e.getMessage() + ", please report an issue to maven dev team" );
             log.warn( stringBuilder.toString(), e );
         }
-        finally 
+        finally
         {
             Thread.currentThread().setContextClassLoader( originalClassLoader );
             sink.close();
@@ -188,7 +188,7 @@ public class ReportDocumentRenderer
         {
             try
             {
-                List sinks = sf.sinks();
+                List<Sink> sinks = sf.sinks();
 
                 log.debug( "Multipage report: " + sinks.size() + " subreports" );
 

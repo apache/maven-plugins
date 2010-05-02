@@ -22,7 +22,6 @@ package org.apache.maven.plugins.site;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -38,7 +37,7 @@ import org.apache.maven.reporting.MavenReport;
  * <p>
  * Note that links between module sites in a multi module build will <b>not</b> work.
  * </p>
- * 
+ *
  * @author <a href="mailto:evenisse@apache.org">Emmanuel Venisse</a>
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
@@ -50,7 +49,7 @@ public class SiteMojo
 {
     /**
      * Directory containing the generated project sites and report distributions.
-     * 
+     *
      * @parameter expression="${siteOutputDirectory}" default-value="${project.reporting.outputDirectory}"
      * @required
      */
@@ -58,7 +57,7 @@ public class SiteMojo
 
     /**
      * Convenience parameter that allows you to disable report generation.
-     * 
+     *
      * @parameter expression="${generateReports}" default-value="true"
      */
     private boolean generateReports;
@@ -77,7 +76,7 @@ public class SiteMojo
      * Generate the project site
      * <p/>
      * throws MojoExecutionException if any
-     * 
+     *
      * @see org.apache.maven.plugin.Mojo#execute()
      */
     public void execute()
@@ -88,7 +87,7 @@ public class SiteMojo
             getLog().debug( "executing Site Mojo" );
         }
 
-        List<MavenReportExecution> filteredReports; 
+        List<MavenReportExecution> filteredReports;
         if ( generateReports )
         {
             filteredReports = filterReports( getReports() );
@@ -100,16 +99,14 @@ public class SiteMojo
 
         try
         {
-            List localesList = siteTool.getAvailableLocales( locales );
+            List<Locale> localesList = siteTool.getAvailableLocales( locales );
 
             // Default is first in the list
-            Locale defaultLocale = (Locale) localesList.get( 0 );
+            Locale defaultLocale = localesList.get( 0 );
             Locale.setDefault( defaultLocale );
 
-            for ( Iterator iterator = localesList.iterator(); iterator.hasNext(); )
+            for ( Locale locale : localesList )
             {
-                Locale locale = (Locale) iterator.next();
-
                 renderLocale( locale, filteredReports );
             }
         }

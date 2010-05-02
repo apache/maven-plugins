@@ -22,7 +22,6 @@ package org.apache.maven.plugins.site;
 import junit.framework.TestCase;
 import org.apache.maven.artifact.manager.DefaultWagonManager;
 import org.apache.maven.artifact.manager.WagonManager;
-import org.apache.maven.wagon.proxy.ProxyInfo;
 import org.apache.maven.wagon.repository.Repository;
 
 /**
@@ -48,7 +47,7 @@ public class SiteDeployMojoTest
         // should not fail ;-)
         assertTrue( true );
     }
-    
+
     // FIXME restore this tests ??
     /*
     public void testGetProxyInfoNoProxyForRepositoryProtocol()

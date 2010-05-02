@@ -138,7 +138,8 @@ public abstract class AbstractSiteMojo
         return ( outputEncoding == null ) ? ReaderFactory.UTF_8 : outputEncoding;
     }
 
-    protected void populateReportItems( DecorationModel decorationModel, Locale locale, Map reportsByOutputName )
+    protected void populateReportItems( DecorationModel decorationModel, Locale locale,
+                                        Map<String, MavenReport> reportsByOutputName )
     {
         for ( Iterator i = decorationModel.getMenus().iterator(); i.hasNext(); )
         {
@@ -148,17 +149,18 @@ public abstract class AbstractSiteMojo
         }
     }
 
-    private void populateItemRefs( List items, Locale locale, Map reportsByOutputName )
+    private void populateItemRefs( List<MenuItem> items, Locale locale, Map<String, MavenReport> reportsByOutputName )
     {
-        for ( Iterator i = items.iterator(); i.hasNext(); )
+        for ( Iterator<MenuItem> i = items.iterator(); i.hasNext(); )
         {
-            MenuItem item = (MenuItem) i.next();
+            MenuItem item = i.next();
 
             if ( item.getRef() != null )
             {
-                if ( reportsByOutputName.containsKey( item.getRef() ) )
+                MavenReport report = reportsByOutputName.get( item.getRef() );
+
+                if ( report != null )
                 {
-                    MavenReport report = (MavenReport) reportsByOutputName.get( item.getRef() );
 
                     if ( item.getName() == null )
                     {

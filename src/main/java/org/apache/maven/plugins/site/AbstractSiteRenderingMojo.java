@@ -162,7 +162,7 @@ public abstract class AbstractSiteRenderingMojo
      * @todo should we deprecate in favour of reports?
      */
     protected File generatedSiteDirectory;
-    
+
     /**
      * The Maven project.
      *
@@ -171,26 +171,26 @@ public abstract class AbstractSiteRenderingMojo
      * @readonly
      */
     protected MavenProject project;
-    
+
     /**
      * @parameter expression="${session}"
      * @required
      * @readonly
      */
     protected MavenSession mavenSession;
-   
+
     /**
     *
     * @component
     * @readonly
-    */    
+    */
     protected PlexusContainer plexusContainer;
 
    /**
    *
    * @component
    * @readonly
-   */   
+   */
    protected MavenReportExecutor mavenReportExecutor;
 
     protected List<MavenReportExecution> getReports()
@@ -347,7 +347,8 @@ public abstract class AbstractSiteRenderingMojo
      * @return A map with all reports keyed by filename having the report itself as value. The map will be used to
      * populate a menu.
      */
-    protected Map<String, MavenReport> locateReports( List<MavenReportExecution> reports, Map documents, Locale locale )
+    protected Map<String, MavenReport> locateReports( List<MavenReportExecution> reports,
+                                                      Map<String, DocumentRenderer> documents, Locale locale )
     {
         // copy Collection to prevent ConcurrentModificationException
         List<MavenReportExecution> filtered = new ArrayList<MavenReportExecution>(reports);
@@ -374,7 +375,7 @@ public abstract class AbstractSiteRenderingMojo
             else
             {
                 RenderingContext renderingContext = new RenderingContext( siteDirectory, outputName );
-                ReportDocumentRenderer renderer = new ReportDocumentRenderer( mavenReportExecution, renderingContext, getLog() );
+                DocumentRenderer renderer = new ReportDocumentRenderer( mavenReportExecution, renderingContext, getLog() );
                 documents.put( outputName, renderer );
             }
         }
@@ -388,12 +389,11 @@ public abstract class AbstractSiteRenderingMojo
      * @param reports A Collection of MavenReports
      * @return A map keyed category having the report itself as value
      */
-    protected Map categoriseReports( Collection reports )
+    protected Map categoriseReports( Collection<MavenReport> reports )
     {
         Map categories = new HashMap();
-        for ( Iterator i = reports.iterator(); i.hasNext(); )
+        for ( MavenReport report : reports )
         {
-            MavenReport report = (MavenReport) i.next();
             List categoryReports = (List) categories.get( report.getCategoryName() );
             if ( categoryReports == null )
             {

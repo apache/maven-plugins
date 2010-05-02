@@ -34,7 +34,6 @@ import org.codehaus.plexus.i18n.I18N;
 import java.io.FileNotFoundException;
 import java.io.Writer;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
@@ -56,18 +55,18 @@ public class CategorySummaryDocumentRenderer
 
     private I18N i18n;
 
-    private List categoryReports;
+    private List<MavenReport> categoryReports;
 
     private final Log log;
 
     public CategorySummaryDocumentRenderer( RenderingContext renderingContext, String title, String desc1, String desc2,
-                                            I18N i18n, List categoryReports )
+                                            I18N i18n, List<MavenReport> categoryReports )
     {
         this( renderingContext, title, desc1, desc2, i18n, categoryReports, null );
     }
 
     public CategorySummaryDocumentRenderer( RenderingContext renderingContext, String title, String desc1, String desc2,
-                                            I18N i18n, List categoryReports, Log log )
+                                            I18N i18n, List<MavenReport> categoryReports, Log log )
     {
         this.renderingContext = renderingContext;
         this.title = title;
@@ -144,10 +143,8 @@ public class CategorySummaryDocumentRenderer
 
         if ( categoryReports != null )
         {
-            for ( Iterator i1 = categoryReports.iterator(); i1.hasNext(); )
+            for ( MavenReport report : categoryReports )
             {
-                MavenReport report = (MavenReport) i1.next();
-
                 sink.tableRow();
                 sink.tableCell();
                 sink.link( report.getOutputName() + ".html" );

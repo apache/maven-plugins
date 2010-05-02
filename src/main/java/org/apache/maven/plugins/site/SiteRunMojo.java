@@ -25,7 +25,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -158,21 +157,19 @@ public class SiteRunMojo
 
         List<MavenReportExecution> filteredReports = filterReports( getReports() );
 
-        List localesList = siteTool.getAvailableLocales( locales );
+        List<Locale> localesList = siteTool.getAvailableLocales( locales );
         webapp.setAttribute( DoxiaFilter.LOCALES_LIST_KEY, localesList );
 
         // Default is first in the list
-        Locale defaultLocale = (Locale) localesList.get( 0 );
+        Locale defaultLocale = localesList.get( 0 );
         Locale.setDefault( defaultLocale );
 
         try
         {
-            Map i18nDoxiaContexts = new HashMap();
+            Map<String, DoxiaBean> i18nDoxiaContexts = new HashMap<String, DoxiaBean>();
 
-            for ( Iterator it = localesList.iterator(); it.hasNext(); )
+            for ( Locale locale : localesList )
             {
-                Locale locale = (Locale) it.next();
-
                 SiteRenderingContext i18nContext = createSiteRenderingContext( locale );
                 i18nContext.setInputEncoding( getInputEncoding() );
                 i18nContext.setOutputEncoding( getOutputEncoding() );
