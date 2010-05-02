@@ -74,18 +74,6 @@ public class LicenseReport
     // ----------------------------------------------------------------------
 
     /** {@inheritDoc} */
-    public String getName( Locale locale )
-    {
-        return i18n.getString( "project-info-report", locale, "report.license.name" );
-    }
-
-    /** {@inheritDoc} */
-    public String getDescription( Locale locale )
-    {
-        return i18n.getString( "project-info-report", locale, "report.license.description" );
-    }
-
-    /** {@inheritDoc} */
     public void executeReport( Locale locale )
     {
         LicenseRenderer r = new LicenseRenderer( getSink(), getProject(), i18n, locale, settings );
@@ -133,6 +121,11 @@ public class LicenseReport
 
     /** {@inheritDoc} */
     public String getOutputName()
+    {
+        return "license";
+    }
+
+    protected String getI18Nsection()
     {
         return "license";
     }

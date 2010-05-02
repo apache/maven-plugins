@@ -75,18 +75,6 @@ public class PluginManagementReport
     // ----------------------------------------------------------------------
 
     /** {@inheritDoc} */
-    public String getName( Locale locale )
-    {
-        return i18n.getString( "project-info-report", locale, "report.pluginManagement.name" );
-    }
-
-    /** {@inheritDoc} */
-    public String getDescription( Locale locale )
-    {
-        return i18n.getString( "project-info-report", locale, "report.pluginManagement.description" );
-    }
-
-    /** {@inheritDoc} */
     public void executeReport( Locale locale )
     {
         PluginManagementRenderer r = new PluginManagementRenderer( getLog(), getSink(), locale, i18n, project
@@ -98,6 +86,11 @@ public class PluginManagementReport
     public String getOutputName()
     {
         return "plugin-management";
+    }
+
+    protected String getI18Nsection()
+    {
+        return "pluginManagement";
     }
 
     /** {@inheritDoc} */

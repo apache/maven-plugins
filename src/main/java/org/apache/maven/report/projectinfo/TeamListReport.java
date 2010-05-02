@@ -52,18 +52,6 @@ public class TeamListReport
     // ----------------------------------------------------------------------
 
     /** {@inheritDoc} */
-    public String getName( Locale locale )
-    {
-        return i18n.getString( "project-info-report", locale, "report.team-list.name" );
-    }
-
-    /** {@inheritDoc} */
-    public String getDescription( Locale locale )
-    {
-        return i18n.getString( "project-info-report", locale, "report.team-list.description" );
-    }
-
-    /** {@inheritDoc} */
     public void executeReport( Locale locale )
     {
         TeamListRenderer r = new TeamListRenderer( getSink(), project.getModel(), i18n, locale );
@@ -73,6 +61,11 @@ public class TeamListReport
 
     /** {@inheritDoc} */
     public String getOutputName()
+    {
+        return "team-list";
+    }
+
+    protected String getI18Nsection()
     {
         return "team-list";
     }

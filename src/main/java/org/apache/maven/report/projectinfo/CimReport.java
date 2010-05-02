@@ -47,18 +47,6 @@ public class CimReport
     // ----------------------------------------------------------------------
 
     /** {@inheritDoc} */
-    public String getName( Locale locale )
-    {
-        return i18n.getString( "project-info-report", locale, "report.cim.name" );
-    }
-
-    /** {@inheritDoc} */
-    public String getDescription( Locale locale )
-    {
-        return i18n.getString( "project-info-report", locale, "report.cim.description" );
-    }
-
-    /** {@inheritDoc} */
     public void executeReport( Locale locale )
     {
         CimRenderer r = new CimRenderer( getSink(), getProject().getModel(), i18n, locale );
@@ -70,6 +58,11 @@ public class CimReport
     public String getOutputName()
     {
         return "integration";
+    }
+
+    protected String getI18Nsection()
+    {
+        return "cim";
     }
 
     // ----------------------------------------------------------------------

@@ -44,18 +44,6 @@ public class IssueTrackingReport
     // ----------------------------------------------------------------------
 
     /** {@inheritDoc} */
-    public String getName( Locale locale )
-    {
-        return i18n.getString( "project-info-report", locale, "report.issuetracking.name" );
-    }
-
-    /** {@inheritDoc} */
-    public String getDescription( Locale locale )
-    {
-        return i18n.getString( "project-info-report", locale, "report.issuetracking.description" );
-    }
-
-    /** {@inheritDoc} */
     public void executeReport( Locale locale )
     {
         IssueTrackingRenderer r = new IssueTrackingRenderer( getSink(), getProject().getModel(), i18n, locale );
@@ -67,6 +55,11 @@ public class IssueTrackingReport
     public String getOutputName()
     {
         return "issue-tracking";
+    }
+
+    protected String getI18Nsection()
+    {
+        return "issuetracking";
     }
 
     // ----------------------------------------------------------------------

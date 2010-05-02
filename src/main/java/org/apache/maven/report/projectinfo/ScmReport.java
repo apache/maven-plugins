@@ -103,18 +103,6 @@ public class ScmReport
     // ----------------------------------------------------------------------
 
     /** {@inheritDoc} */
-    public String getName( Locale locale )
-    {
-        return i18n.getString( "project-info-report", locale, "report.scm.name" );
-    }
-
-    /** {@inheritDoc} */
-    public String getDescription( Locale locale )
-    {
-        return i18n.getString( "project-info-report", locale, "report.scm.description" );
-    }
-
-    /** {@inheritDoc} */
     public void executeReport( Locale locale )
     {
         ScmRenderer r = new ScmRenderer( getLog(), scmManager, getSink(), getProject().getModel(), i18n, locale,
@@ -128,6 +116,11 @@ public class ScmReport
     public String getOutputName()
     {
         return "source-repository";
+    }
+
+    protected String getI18Nsection()
+    {
+        return "scm";
     }
 
     // ----------------------------------------------------------------------
@@ -546,7 +539,7 @@ public class ScmReport
             sink.paragraph();
             linkPatternedText( i18n.getString( "project-info-report", locale, "report.scm.anonymousaccess.hg.intro" ) );
             sink.paragraph_();
-            
+
             StringBuffer command = new StringBuffer();
             command.append( "$ hg clone " ).append( hgRepo.getURI() );
 
@@ -583,7 +576,7 @@ public class ScmReport
          * Create the documentation to provide an developer access with a <code>Mercurial</code> SCM.
          * For example, generate the following command line:
          * <p>hg clone repo </p>
-         * 
+         *
          * @param hgRepo
          */
         private void developerAccessMercurial(HgScmProviderRepository hgRepo)
@@ -591,7 +584,7 @@ public class ScmReport
             sink.paragraph();
             linkPatternedText( i18n.getString( "project-info-report", locale, "report.scm.devaccess.hg.intro" ) );
             sink.paragraph_();
-            
+
             StringBuffer command = new StringBuffer();
             command.append( "$ hg clone " );
             command.append(hgRepo.getURI());

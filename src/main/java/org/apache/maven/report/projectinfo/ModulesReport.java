@@ -52,18 +52,6 @@ public class ModulesReport
     // ----------------------------------------------------------------------
 
     /** {@inheritDoc} */
-    public String getName( Locale locale )
-    {
-        return i18n.getString( "project-info-report", locale, "report.modules.name" );
-    }
-
-    /** {@inheritDoc} */
-    public String getDescription( Locale locale )
-    {
-        return i18n.getString( "project-info-report", locale, "report.modules.description" );
-    }
-
-    /** {@inheritDoc} */
     public void executeReport( Locale locale )
     {
         new ModulesRenderer( getSink(), getProject().getModel(), i18n, locale ).render();
@@ -71,6 +59,11 @@ public class ModulesReport
 
     /** {@inheritDoc} */
     public String getOutputName()
+    {
+        return "modules";
+    }
+
+    protected String getI18Nsection()
     {
         return "modules";
     }
