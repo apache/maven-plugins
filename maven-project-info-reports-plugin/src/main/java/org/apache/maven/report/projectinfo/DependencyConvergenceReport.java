@@ -74,16 +74,9 @@ public class DependencyConvergenceReport
         return "dependency-convergence";
     }
 
-    /** {@inheritDoc} */
-    public String getName( Locale locale )
+    protected String getI18Nsection()
     {
-        return getI18nString( locale, "name" );
-    }
-
-    /** {@inheritDoc} */
-    public String getDescription( Locale locale )
-    {
-        return getI18nString( locale, "description" );
+        return "dependency-convergence";
     }
 
     /** {@inheritDoc} */
@@ -576,11 +569,6 @@ public class DependencyConvergenceReport
         }
 
         return dependencyMap;
-    }
-
-    private String getI18nString( Locale locale, String key )
-    {
-        return i18n.getString( "project-info-report", locale, "report.dependency-convergence." + key );
     }
 
     /**

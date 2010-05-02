@@ -80,18 +80,6 @@ public class DependencyManagementReport
     // ----------------------------------------------------------------------
 
     /** {@inheritDoc} */
-    public String getName( Locale locale )
-    {
-        return i18n.getString( "project-info-report", locale, "report.dependencyManagement.name" );
-    }
-
-    /** {@inheritDoc} */
-    public String getDescription( Locale locale )
-    {
-        return i18n.getString( "project-info-report", locale, "report.dependencyManagement.description" );
-    }
-
-    /** {@inheritDoc} */
     public void executeReport( Locale locale )
     {
         DependencyManagementRenderer r = new DependencyManagementRenderer( getSink(), locale, i18n, getLog(),
@@ -105,6 +93,11 @@ public class DependencyManagementReport
     public String getOutputName()
     {
         return "dependency-management";
+    }
+
+    protected String getI18Nsection()
+    {
+        return "dependencyManagement";
     }
 
     /** {@inheritDoc} */

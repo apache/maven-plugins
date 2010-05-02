@@ -51,21 +51,14 @@ public class ProjectSummaryReport
     }
 
     /** {@inheritDoc} */
-    public String getName( Locale locale )
-    {
-        return i18n.getString( "project-info-report", locale, "report.summary.name" );
-    }
-
-    /** {@inheritDoc} */
-    public String getDescription( Locale locale )
-    {
-        return i18n.getString( "project-info-report", locale, "report.summary.description" );
-    }
-
-    /** {@inheritDoc} */
     public String getOutputName()
     {
         return "project-summary";
+    }
+
+    protected String getI18Nsection()
+    {
+        return "summary";
     }
 
     // ----------------------------------------------------------------------

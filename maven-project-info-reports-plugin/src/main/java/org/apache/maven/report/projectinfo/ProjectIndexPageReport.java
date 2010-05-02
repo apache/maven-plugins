@@ -43,7 +43,7 @@ public class ProjectIndexPageReport
     /** {@inheritDoc} */
     public String getName( Locale locale )
     {
-        return i18n.getString( "project-info-report", locale, "report.index.title" );
+        return getI18nString( locale, "title" );
     }
 
     /** {@inheritDoc} */
@@ -57,7 +57,7 @@ public class ProjectIndexPageReport
         }
         else
         {
-            desc = i18n.getString( "project-info-report", locale, "report.index.nodescription" );
+            return getI18nString( locale, "nodescription" );
         }
         return desc;
     }
@@ -73,6 +73,11 @@ public class ProjectIndexPageReport
 
     /** {@inheritDoc} */
     public String getOutputName()
+    {
+        return "index";
+    }
+
+    protected String getI18Nsection()
     {
         return "index";
     }
