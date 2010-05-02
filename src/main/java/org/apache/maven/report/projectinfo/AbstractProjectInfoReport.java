@@ -243,4 +243,23 @@ public abstract class AbstractProjectInfoReport
     {
         return siteRenderer;
     }
+
+    protected String getI18nString( Locale locale, String key )
+    {
+        return i18n.getString( "project-info-report", locale, "report." + getI18Nsection() + '.' + key );
+    }
+
+    protected abstract String getI18Nsection();
+
+    /** {@inheritDoc} */
+    public String getName( Locale locale )
+    {
+        return getI18nString( locale, "name" );
+    }
+
+    /** {@inheritDoc} */
+    public String getDescription( Locale locale )
+    {
+        return getI18nString( locale, "description" );
+    }
 }
