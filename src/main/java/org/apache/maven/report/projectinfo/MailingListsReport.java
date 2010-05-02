@@ -48,18 +48,6 @@ public class MailingListsReport
     // ----------------------------------------------------------------------
 
     /** {@inheritDoc} */
-    public String getName( Locale locale )
-    {
-        return i18n.getString( "project-info-report", locale, "report.mailing-lists.name" );
-    }
-
-    /** {@inheritDoc} */
-    public String getDescription( Locale locale )
-    {
-        return i18n.getString( "project-info-report", locale, "report.mailing-lists.description" );
-    }
-
-    /** {@inheritDoc} */
     public void executeReport( Locale locale )
     {
         MailingListsRenderer r = new MailingListsRenderer( getSink(), getProject().getModel(), i18n, locale );
@@ -71,6 +59,11 @@ public class MailingListsReport
     public String getOutputName()
     {
         return "mail-lists";
+    }
+
+    protected String getI18Nsection()
+    {
+        return "mailing-lists";
     }
 
     // ----------------------------------------------------------------------

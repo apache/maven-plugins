@@ -178,18 +178,6 @@ public class DependenciesReport
     // ----------------------------------------------------------------------
 
     /** {@inheritDoc} */
-    public String getName( Locale locale )
-    {
-        return i18n.getString( "project-info-report", locale, "report.dependencies.name" );
-    }
-
-    /** {@inheritDoc} */
-    public String getDescription( Locale locale )
-    {
-        return i18n.getString( "project-info-report", locale, "report.dependencies.description" );
-    }
-
-    /** {@inheritDoc} */
     public void executeReport( Locale locale )
     {
         if ( settings.isOffline() && dependencyLocationsEnabled )
@@ -229,6 +217,11 @@ public class DependenciesReport
 
     /** {@inheritDoc} */
     public String getOutputName()
+    {
+        return "dependencies";
+    }
+
+    protected String getI18Nsection()
     {
         return "dependencies";
     }

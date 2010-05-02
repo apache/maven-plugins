@@ -75,18 +75,6 @@ public class PluginsReport
     // ----------------------------------------------------------------------
 
     /** {@inheritDoc} */
-    public String getName( Locale locale )
-    {
-        return i18n.getString( "project-info-report", locale, "report.plugins.name" );
-    }
-
-    /** {@inheritDoc} */
-    public String getDescription( Locale locale )
-    {
-        return i18n.getString( "project-info-report", locale, "report.plugins.description" );
-    }
-
-    /** {@inheritDoc} */
     public void executeReport( Locale locale )
     {
         PluginsRenderer r = new PluginsRenderer( getLog(), getSink(), locale, i18n, project.getPluginArtifacts(),
@@ -97,6 +85,11 @@ public class PluginsReport
 
     /** {@inheritDoc} */
     public String getOutputName()
+    {
+        return "plugins";
+    }
+
+    protected String getI18Nsection()
     {
         return "plugins";
     }
