@@ -37,6 +37,7 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.MavenReportException;
 import org.codehaus.plexus.i18n.I18N;
+import org.codehaus.plexus.util.IOUtil;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -143,29 +144,34 @@ public abstract class AbstractProjectInfoReport
         }
 
         // TODO: push to a helper? Could still be improved by taking more of the site information from the site plugin
+        Writer writer = null;
         try
         {
+            String filename = getOutputName() + ".html";
+
             DecorationModel model = new DecorationModel();
             model.setBody( new Body() );
+
             Map attributes = new HashMap();
             attributes.put( "outputEncoding", "UTF-8" );
             attributes.put( "project", project );
+
             Locale locale = Locale.getDefault();
             Artifact defaultSkin =
                 siteTool.getDefaultSkinArtifact( localRepository, project.getRemoteArtifactRepositories() );
+
             SiteRenderingContext siteContext = siteRenderer.createContextForSkin( defaultSkin.getFile(), attributes,
                                                                                   model, getName( locale ), locale );
 
-            RenderingContext context = new RenderingContext( outputDirectory, getOutputName() + ".html" );
+            RenderingContext context = new RenderingContext( outputDirectory, filename );
 
             SiteRendererSink sink = new SiteRendererSink( context );
-            generate( (org.apache.maven.doxia.sink.Sink) sink, null, locale );
+
+            generate( sink, null, locale );
 
             outputDirectory.mkdirs();
 
-            Writer writer =
-                new OutputStreamWriter( new FileOutputStream( new File( outputDirectory, getOutputName() + ".html" ) ),
-                                        "UTF-8" );
+            writer = new OutputStreamWriter( new FileOutputStream( new File( outputDirectory, filename ) ), "UTF-8" );
 
             siteRenderer.generateDocument( writer, sink, siteContext );
 
@@ -191,6 +197,10 @@ public abstract class AbstractProjectInfoReport
         {
             throw new MojoExecutionException(
                 "An error has occurred in " + getName( Locale.ENGLISH ) + " report generation.", e );
+        }
+        finally
+        {
+            IOUtil.close( writer );
         }
     }
 
