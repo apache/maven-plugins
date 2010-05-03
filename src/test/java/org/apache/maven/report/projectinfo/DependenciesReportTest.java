@@ -79,8 +79,8 @@ public class DependenciesReportTest
         assertEquals( textBlocks[0].getText(), getString( "report.dependencies.title" ) );
         assertEquals( textBlocks[1].getText(), "test" );
         assertEquals( textBlocks[2].getText(), getString( "report.dependencies.intro.test" ) );
-        assertEquals( textBlocks[3].getText(), getString( "report.transitivedependencies.title" ) );
-        assertEquals( textBlocks[4].getText(), getString( "report.transitivedependencies.nolist" ) );
+        assertEquals( textBlocks[3].getText(), getString( "report.dependencies.transitive.title" ) );
+        assertEquals( textBlocks[4].getText(), getString( "report.dependencies.transitive.nolist" ) );
         assertEquals( textBlocks[5].getText(), getString( "report.dependencies.graph.title" ) );
         assertEquals( textBlocks[6].getText(), getString( "report.dependencies.graph.tree.title" ) );
         assertEquals( textBlocks[7].getText(), getString( "report.dependencies.graph.tables.licenses" ) );

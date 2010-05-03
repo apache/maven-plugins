@@ -22,7 +22,6 @@ package org.apache.maven.report.projectinfo;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.model.IssueManagement;
 import org.apache.maven.model.Model;
-import org.apache.maven.reporting.AbstractMavenReportRenderer;
 import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.util.StringUtils;
 
@@ -70,29 +69,20 @@ public class IssueTrackingReport
      * Internal renderer class
      */
     private static class IssueTrackingRenderer
-        extends AbstractMavenReportRenderer
+        extends AbstractProjectInfoRenderer
     {
         private Model model;
 
-        private I18N i18n;
-
-        private Locale locale;
-
         IssueTrackingRenderer( Sink sink, Model model, I18N i18n, Locale locale )
         {
-            super( sink );
+            super( sink, i18n, locale );
 
             this.model = model;
-
-            this.i18n = i18n;
-
-            this.locale = locale;
         }
 
-        /** {@inheritDoc} */
-        public String getTitle()
+        protected String getI18Nsection()
         {
-            return i18n.getString( "project-info-report", locale, "report.issuetracking.title" );
+            return "issuetracking";
         }
 
         /** {@inheritDoc} */
@@ -103,7 +93,7 @@ public class IssueTrackingReport
             {
                 startSection( getTitle() );
 
-                paragraph( i18n.getString( "project-info-report", locale, "report.issuetracking.noissueManagement" ) );
+                paragraph( getI18nString( "noissueManagement" ) );
 
                 endSection();
 
@@ -114,37 +104,33 @@ public class IssueTrackingReport
             String url = issueManagement.getUrl();
 
             // Overview
-            startSection( i18n.getString( "project-info-report", locale, "report.issuetracking.overview.title" ) );
+            startSection( getI18nString( "overview.title" ) );
 
             if ( isIssueManagementSystem( system, "jira" ) )
             {
                 sink.paragraph();
-                linkPatternedText( i18n.getString( "project-info-report", locale, "report.issuetracking.jira.intro" ) );
+                linkPatternedText( getI18nString( "jira.intro" ) );
                 sink.paragraph_();
             }
             else if ( isIssueManagementSystem( system, "bugzilla" ) )
             {
                 sink.paragraph();
-                linkPatternedText(
-                    i18n.getString( "project-info-report", locale, "report.issuetracking.bugzilla.intro" ) );
+                linkPatternedText( getI18nString( "bugzilla.intro" ) );
                 sink.paragraph_();
             }
             else if ( isIssueManagementSystem( system, "scarab" ) )
             {
                 sink.paragraph();
-                linkPatternedText(
-                    i18n.getString( "project-info-report", locale, "report.issuetracking.scarab.intro" ) );
+                linkPatternedText( getI18nString( "scarab.intro" ) );
                 sink.paragraph_();
             }
             else if ( system == null || "".equals( system.trim() ) )
             {
-                paragraph( i18n.getString( "project-info-report", locale, "report.issuetracking.general.intro" ) );
+                paragraph( getI18nString( "general.intro" ) );
             }
             else
             {
-                paragraph(
-                    i18n.getString( "project-info-report", locale, "report.issuetracking.custom.intro" ).replaceFirst(
-                        "%issueManagementSystem%", system ) );
+                paragraph( getI18nString( "custom.intro" ).replaceFirst( "%issueManagementSystem%", system ) );
             }
 
             endSection();
@@ -152,7 +138,7 @@ public class IssueTrackingReport
             // Connection
             startSection( getTitle() );
 
-            paragraph( i18n.getString( "project-info-report", locale, "report.issuetracking.intro" ) );
+            paragraph( getI18nString( "intro" ) );
 
             verbatimLink( url, url );
 
