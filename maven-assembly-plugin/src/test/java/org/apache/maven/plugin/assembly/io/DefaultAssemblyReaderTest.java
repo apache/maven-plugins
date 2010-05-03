@@ -487,6 +487,12 @@ public class DefaultAssemblyReaderTest
 
         configSource.getBasedir();
         configSourceControl.setReturnValue( basedir, MockControl.ZERO_OR_MORE );
+        
+        
+        MavenProject project = new MavenProject();
+        
+        configSource.getProject();
+        configSourceControl.setReturnValue( project, MockControl.ZERO_OR_MORE );
 
         mockManager.replayAll();
 
@@ -702,7 +708,6 @@ public class DefaultAssemblyReaderTest
         model.setVersion( "version" );
 
         MavenProject project = new MavenProject( model );
-
         configSource.getProject();
         configSourceControl.setReturnValue( project, MockControl.ZERO_OR_MORE );
 
@@ -776,7 +781,7 @@ public class DefaultAssemblyReaderTest
         MavenProject project = new MavenProject( model );
 
         configSource.getProject();
-        configSourceControl.setReturnValue( project );
+        configSourceControl.setReturnValue( project, MockControl.ONE_OR_MORE );
 
         configSource.isSiteIncluded();
         configSourceControl.setReturnValue( false );

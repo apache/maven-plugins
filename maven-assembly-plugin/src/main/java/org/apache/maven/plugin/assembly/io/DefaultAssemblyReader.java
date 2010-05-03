@@ -27,6 +27,7 @@ import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.InvalidAssemblerConfigurationException;
 import org.apache.maven.plugin.assembly.interpolation.AssemblyInterpolationException;
 import org.apache.maven.plugin.assembly.interpolation.AssemblyInterpolator;
+import org.apache.maven.plugin.assembly.interpolation.AssemblyExpressionEvaluator;
 import org.apache.maven.plugin.assembly.model.Assembly;
 import org.apache.maven.plugin.assembly.model.Component;
 import org.apache.maven.plugin.assembly.model.ContainerDescriptorHandlerConfig;
@@ -422,7 +423,10 @@ public class DefaultAssemblyReader
     protected void mergeComponentsWithMainAssembly( Assembly assembly, AssemblerConfigurationSource configSource )
         throws AssemblyReadException
     {
-        RelativeFileLocatorStrategy fls = new RelativeFileLocatorStrategy( configSource.getBasedir() );
+        RelativeFileLocatorStrategy rfls = new RelativeFileLocatorStrategy( configSource.getBasedir() );
+
+        // allow absolute paths in componentDescriptor... MASSEMBLY-486
+        FileLocatorStrategy afls = new FileLocatorStrategy();
 
         ClasspathResourceLocatorStrategy crls = new ClasspathResourceLocatorStrategy();
 
@@ -434,16 +438,29 @@ public class DefaultAssemblyReader
         URLLocatorStrategy uls = new URLLocatorStrategy();
 
         Locator locator = new Locator();
-        locator.addStrategy( fls );
+        locator.addStrategy( rfls );
+        locator.addStrategy( afls );
         locator.addStrategy( als );
         locator.addStrategy( crls );
         locator.addStrategy( uls );
+
+        AssemblyExpressionEvaluator aee = new AssemblyExpressionEvaluator( configSource );
 
         List componentLocations = assembly.getComponentDescriptors();
 
         for ( Iterator it = componentLocations.iterator(); it.hasNext(); )
         {
             String location = (String) it.next();
+            
+            // allow expressions in path to component descriptor... MASSEMBLY-486
+            try
+            {
+                location = aee.evaluate( location ).toString();
+            }
+            catch ( Exception eee )
+            {
+                getLogger().error( "Error interpolating componentDescriptor: " + location, eee );
+            }
 
             Location resolvedLocation = locator.resolve( location );
 
