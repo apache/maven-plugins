@@ -25,7 +25,7 @@
       
       <!-- Both the range AND the scope are critical here, 
            since this artifact will be EXCLUDED from the depSet. -->
-      <version>[1.2.13]</version>
+      <version>[1.2.16]</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>
