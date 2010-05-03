@@ -22,7 +22,6 @@ package org.apache.maven.report.projectinfo;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.model.MailingList;
 import org.apache.maven.model.Model;
-import org.apache.maven.reporting.AbstractMavenReportRenderer;
 import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.util.StringUtils;
 
@@ -74,31 +73,22 @@ public class MailingListsReport
      * Internal renderer class
      */
     protected static class MailingListsRenderer
-        extends AbstractMavenReportRenderer
+        extends AbstractProjectInfoRenderer
     {
         private Model model;
-
-        private I18N i18n;
-
-        private Locale locale;
 
         private static final String[] EMPTY_STRING_ARRAY = new String[0];
 
         MailingListsRenderer( Sink sink, Model model, I18N i18n, Locale locale )
         {
-            super( sink );
+            super( sink, i18n, locale );
 
             this.model = model;
-
-            this.i18n = i18n;
-
-            this.locale = locale;
         }
 
-        /** {@inheritDoc} */
-        public String getTitle()
+        protected String getI18Nsection()
         {
-            return i18n.getString( "project-info-report", locale, "report.mailing-lists.title" );
+            return "mailing-lists";
         }
 
         /** {@inheritDoc} */
@@ -111,7 +101,7 @@ public class MailingListsReport
                 startSection( getTitle() );
 
                 // TODO: should the report just be excluded?
-                paragraph( i18n.getString( "project-info-report", locale, "report.mailing-lists.nolist" ) );
+                paragraph( getI18nString( "nolist" ) );
 
                 endSection();
 
@@ -120,7 +110,7 @@ public class MailingListsReport
 
             startSection( getTitle() );
 
-            paragraph( i18n.getString( "project-info-report", locale, "report.mailing-lists.intro" ) );
+            paragraph( getI18nString( "intro" ) );
 
             startTable();
 
@@ -136,14 +126,12 @@ public class MailingListsReport
                 }
             }
 
-            String name = i18n.getString( "project-info-report", locale, "report.mailing-lists.column.name" );
-            String subscribe = i18n.getString( "project-info-report", locale, "report.mailing-lists.column.subscribe" );
-            String unsubscribe =
-                i18n.getString( "project-info-report", locale, "report.mailing-lists.column.unsubscribe" );
-            String post = i18n.getString( "project-info-report", locale, "report.mailing-lists.column.post" );
-            String archive = i18n.getString( "project-info-report", locale, "report.mailing-lists.column.archive" );
-            String archivesOther =
-                i18n.getString( "project-info-report", locale, "report.mailing-lists.column.otherArchives" );
+            String name = getI18nString( "column.name" );
+            String subscribe = getI18nString( "column.subscribe" );
+            String unsubscribe = getI18nString( "column.unsubscribe" );
+            String post = getI18nString( "column.post" );
+            String archive = getI18nString( "column.archive" );
+            String archivesOther = getI18nString( "column.otherArchives" );
 
             if ( otherArchives )
             {

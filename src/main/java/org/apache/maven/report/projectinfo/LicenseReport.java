@@ -23,7 +23,6 @@ import org.apache.commons.validator.UrlValidator;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.model.License;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.reporting.AbstractMavenReportRenderer;
 import org.apache.maven.settings.Settings;
 import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.util.StringUtils;
@@ -192,33 +191,24 @@ public class LicenseReport
      * Internal renderer class
      */
     private static class LicenseRenderer
-        extends AbstractMavenReportRenderer
+        extends AbstractProjectInfoRenderer
     {
         private MavenProject project;
 
         private Settings settings;
 
-        private I18N i18n;
-
-        private Locale locale;
-
         LicenseRenderer( Sink sink, MavenProject project, I18N i18n, Locale locale, Settings settings )
         {
-            super( sink );
+            super( sink, i18n, locale );
 
             this.project = project;
 
             this.settings = settings;
-
-            this.i18n = i18n;
-
-            this.locale = locale;
         }
 
-        /** {@inheritDoc} */
-        public String getTitle()
+        protected String getI18Nsection()
         {
-            return i18n.getString( "project-info-report", locale, "report.license.title" );
+            return "license";
         }
 
         /** {@inheritDoc} */
@@ -230,7 +220,7 @@ public class LicenseReport
             {
                 startSection( getTitle() );
 
-                paragraph( i18n.getString( "project-info-report", locale, "report.license.nolicense" ) );
+                paragraph( getI18nString( "nolicense" ) );
 
                 endSection();
 
@@ -238,14 +228,14 @@ public class LicenseReport
             }
 
             // Overview
-            startSection( i18n.getString( "project-info-report", locale, "report.license.overview.title" ) );
+            startSection( getI18nString( "overview.title" ) );
 
-            paragraph( i18n.getString( "project-info-report", locale, "report.license.overview.intro" ) );
+            paragraph( getI18nString( "overview.intro" ) );
 
             endSection();
 
             // License
-            startSection( i18n.getString( "project-info-report", locale, "report.license.title" ) );
+            startSection( getI18nString( "title" ) );
 
             for ( Iterator i = licenses.iterator(); i.hasNext(); )
             {

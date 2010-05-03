@@ -33,9 +33,9 @@ import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProjectBuilder;
+import org.apache.maven.report.projectinfo.AbstractProjectInfoRenderer;
 import org.apache.maven.report.projectinfo.ProjectInfoReportUtils;
 import org.apache.maven.report.projectinfo.dependencies.ManagementDependencies;
-import org.apache.maven.reporting.AbstractMavenReportRenderer;
 import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.util.StringUtils;
 
@@ -45,13 +45,9 @@ import org.codehaus.plexus.util.StringUtils;
  * @since 2.1
  */
 public class DependencyManagementRenderer
-    extends AbstractMavenReportRenderer
+    extends AbstractProjectInfoRenderer
 {
     private final ManagementDependencies dependencies;
-
-    private final Locale locale;
-
-    private final I18N i18n;
 
     private final Log log;
 
@@ -81,10 +77,8 @@ public class DependencyManagementRenderer
                                          MavenProjectBuilder mavenProjectBuilder, List remoteRepositories,
                                          ArtifactRepository localRepository )
     {
-        super( sink );
+        super( sink, i18n, locale );
 
-        this.locale = locale;
-        this.i18n = i18n;
         this.log = log;
         this.dependencies = dependencies;
         this.artifactFactory = artifactFactory;
@@ -97,10 +91,9 @@ public class DependencyManagementRenderer
     // Public methods
     // ----------------------------------------------------------------------
 
-    /** {@inheritDoc} */
-    public String getTitle()
+    protected String getI18Nsection()
     {
-        return getReportString( "report.dependencyManagement.title" );
+        return "dependencyManagement";
     }
 
     /** {@inheritDoc} */
@@ -112,7 +105,7 @@ public class DependencyManagementRenderer
         {
             startSection( getTitle() );
 
-            paragraph( getReportString( "report.dependencyManagement.nolist" ) );
+            paragraph( getI18nString( "nolist" ) );
 
             endSection();
 
@@ -151,11 +144,11 @@ public class DependencyManagementRenderer
 
     private String[] getDependencyTableHeader( boolean hasClassifier )
     {
-        String groupId = getReportString( "report.dependencyManagement.column.groupId" );
-        String artifactId = getReportString( "report.dependencyManagement.column.artifactId" );
-        String version = getReportString( "report.dependencyManagement.column.version" );
-        String classifier = getReportString( "report.dependencyManagement.column.classifier" );
-        String type = getReportString( "report.dependencyManagement.column.type" );
+        String groupId = getI18nString( "column.groupId" );
+        String artifactId = getI18nString( "column.artifactId" );
+        String version = getI18nString( "column.version" );
+        String classifier = getI18nString( "column.classifier" );
+        String type = getI18nString( "column.type" );
 
         if ( hasClassifier )
         {
@@ -174,7 +167,7 @@ public class DependencyManagementRenderer
 
             startSection( scope );
 
-            paragraph( getReportString( "report.dependencyManagement.intro." + scope ) );
+            paragraph( getI18nString( "intro." + scope ) );
             startTable();
 
             boolean hasClassifier = false;
@@ -269,10 +262,5 @@ public class DependencyManagementRenderer
                 return result;
             }
         };
-    }
-
-    private String getReportString( String key )
-    {
-        return i18n.getString( "project-info-report", locale, key );
     }
 }

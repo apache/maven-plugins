@@ -24,7 +24,6 @@ import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.model.Contributor;
 import org.apache.maven.model.Developer;
 import org.apache.maven.model.Model;
-import org.apache.maven.reporting.AbstractMavenReportRenderer;
 import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.util.StringUtils;
 
@@ -78,7 +77,7 @@ public class TeamListReport
      * Internal renderer class
      */
     private static class TeamListRenderer
-        extends AbstractMavenReportRenderer
+        extends AbstractProjectInfoRenderer
     {
         private static final String PROPERTIES = "properties";
 
@@ -100,33 +99,24 @@ public class TeamListReport
 
         private Model model;
 
-        private I18N i18n;
-
-        private Locale locale;
-
         private static final String[] EMPTY_STRING_ARRAY = new String[0];
 
         TeamListRenderer( Sink sink, Model model, I18N i18n, Locale locale )
         {
-            super( sink );
+            super( sink, i18n, locale );
 
             this.model = model;
-
-            this.i18n = i18n;
-
-            this.locale = locale;
         }
 
-        /** {@inheritDoc} */
-        public String getTitle()
+        protected String getI18Nsection()
         {
-            return i18n.getString( "project-info-report", locale, "report.team-list.title" );
+            return "team-list";
         }
 
         /** {@inheritDoc} */
         public void renderBody()
         {
-            startSection( i18n.getString( "project-info-report", locale, "report.team-list.intro.title" ) );
+            startSection( getI18nString( "intro.title" ) );
 
             // To handle JS
             StringBuffer javascript = new StringBuffer( "function offsetDate(id, offset) {" ).append( SystemUtils.LINE_SEPARATOR );
@@ -143,21 +133,21 @@ public class TeamListReport
             javascript.append( "function init(){" ).append( SystemUtils.LINE_SEPARATOR );
 
             // Introduction
-            paragraph( i18n.getString( "project-info-report", locale, "report.team-list.intro.description1" ) );
-            paragraph( i18n.getString( "project-info-report", locale, "report.team-list.intro.description2" ) );
+            paragraph( getI18nString( "intro.description1" ) );
+            paragraph( getI18nString( "intro.description2" ) );
 
             // Developer section
             List developers = model.getDevelopers();
 
-            startSection( i18n.getString( "project-info-report", locale, "report.team-list.developers.title" ) );
+            startSection( getI18nString( "developers.title" ) );
 
             if ( developers == null || developers.isEmpty() )
             {
-                paragraph( i18n.getString( "project-info-report", locale, "report.team-list.nodeveloper" ) );
+                paragraph( getI18nString( "nodeveloper" ) );
             }
             else
             {
-                paragraph( i18n.getString( "project-info-report", locale, "report.team-list.developers.intro" ) );
+                paragraph( getI18nString( "developers.intro" ) );
 
                 startTable();
 
@@ -188,15 +178,15 @@ public class TeamListReport
             // contributors section
             List contributors = model.getContributors();
 
-            startSection( i18n.getString( "project-info-report", locale, "report.team-list.contributors.title" ) );
+            startSection( getI18nString( "contributors.title" ) );
 
             if ( contributors == null || contributors.isEmpty() )
             {
-                paragraph( i18n.getString( "project-info-report", locale, "report.team-list.nocontributor" ) );
+                paragraph( getI18nString( "nocontributor" ) );
             }
             else
             {
-                paragraph( i18n.getString( "project-info-report", locale, "report.team-list.contributors.intro" ) );
+                paragraph( getI18nString( "contributors.intro" ) );
 
                 startTable();
 
@@ -384,19 +374,15 @@ public class TeamListReport
         private String[] getRequiredContrHeaderArray( Map requiredHeaders )
         {
             List requiredArray = new ArrayList();
-            String name = i18n.getString( "project-info-report", locale, "report.team-list.contributors.name" );
-            String email = i18n.getString( "project-info-report", locale, "report.team-list.contributors.email" );
-            String url = i18n.getString( "project-info-report", locale, "report.team-list.contributors.url" );
-            String organization = i18n.getString( "project-info-report", locale,
-                                                  "report.team-list.contributors.organization" );
-            String organizationUrl = i18n.getString( "project-info-report", locale,
-                                                     "report.team-list.contributors.organizationurl" );
-            String roles = i18n.getString( "project-info-report", locale, "report.team-list.contributors.roles" );
-            String timeZone = i18n.getString( "project-info-report", locale, "report.team-list.contributors.timezone" );
-            String actualTime = i18n.getString( "project-info-report", locale,
-                                                "report.team-list.contributors.actualtime" );
-            String properties = i18n.getString( "project-info-report", locale,
-                                                "report.team-list.contributors.properties" );
+            String name = getI18nString( "contributors.name" );
+            String email = getI18nString( "contributors.email" );
+            String url = getI18nString( "contributors.url" );
+            String organization = getI18nString( "contributors.organization" );
+            String organizationUrl = getI18nString( "contributors.organizationurl" );
+            String roles = getI18nString( "contributors.roles" );
+            String timeZone = getI18nString( "contributors.timezone" );
+            String actualTime = getI18nString( "contributors.actualtime" );
+            String properties = getI18nString( "contributors.properties" );
 
             setRequiredArray( requiredHeaders, requiredArray, name, email, url, organization, organizationUrl, roles,
                               timeZone, actualTime, properties );
@@ -418,20 +404,16 @@ public class TeamListReport
         {
             List requiredArray = new ArrayList();
 
-            String id = i18n.getString( "project-info-report", locale, "report.team-list.developers.id" );
-            String name = i18n.getString( "project-info-report", locale, "report.team-list.developers.name" );
-            String email = i18n.getString( "project-info-report", locale, "report.team-list.developers.email" );
-            String url = i18n.getString( "project-info-report", locale, "report.team-list.developers.url" );
-            String organization = i18n.getString( "project-info-report", locale,
-                                                  "report.team-list.developers.organization" );
-            String organizationUrl = i18n.getString( "project-info-report", locale,
-                                                     "report.team-list.developers.organizationurl" );
-            String roles = i18n.getString( "project-info-report", locale, "report.team-list.developers.roles" );
-            String timeZone = i18n.getString( "project-info-report", locale, "report.team-list.developers.timezone" );
-            String actualTime = i18n
-                .getString( "project-info-report", locale, "report.team-list.developers.actualtime" );
-            String properties = i18n
-                .getString( "project-info-report", locale, "report.team-list.developers.properties" );
+            String id = getI18nString( "developers.id" );
+            String name = getI18nString( "developers.name" );
+            String email = getI18nString( "developers.email" );
+            String url = getI18nString( "developers.url" );
+            String organization = getI18nString( "developers.organization" );
+            String organizationUrl = getI18nString( "developers.organizationurl" );
+            String roles = getI18nString( "developers.roles" );
+            String timeZone = getI18nString( "developers.timezone" );
+            String actualTime = getI18nString( "developers.actualtime" );
+            String properties = getI18nString( "developers.properties" );
 
             if ( requiredHeaders.get( ID ) == Boolean.TRUE )
             {
