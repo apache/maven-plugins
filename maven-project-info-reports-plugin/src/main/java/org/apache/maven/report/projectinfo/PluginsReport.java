@@ -36,7 +36,6 @@ import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
-import org.apache.maven.reporting.AbstractMavenReportRenderer;
 import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.util.StringUtils;
 
@@ -109,17 +108,13 @@ public class PluginsReport
      * Internal renderer class
      */
     protected static class PluginsRenderer
-        extends AbstractMavenReportRenderer
+        extends AbstractProjectInfoRenderer
     {
         private final Log log;
 
         private final List plugins;
 
         private final List reports;
-
-        private final Locale locale;
-
-        private final I18N i18n;
 
         private final MavenProject project;
 
@@ -145,17 +140,13 @@ public class PluginsReport
                                 MavenProject project, MavenProjectBuilder mavenProjectBuilder,
                                 ArtifactFactory artifactFactory, ArtifactRepository localRepository )
         {
-            super( sink );
+            super( sink, i18n, locale );
 
             this.log = log;
-
-            this.locale = locale;
 
             this.plugins = new ArrayList( plugins );
 
             this.reports = new ArrayList( reports );
-
-            this.i18n = i18n;
 
             this.project = project;
 
@@ -166,10 +157,9 @@ public class PluginsReport
             this.localRepository = localRepository;
         }
 
-        /** {@inheritDoc} */
-        public String getTitle()
+        protected String getI18Nsection()
         {
-            return getReportString( "report.plugins.title" );
+            return "plugins";
         }
 
         /** {@inheritDoc} */
@@ -191,14 +181,14 @@ public class PluginsReport
             List list = ( isPlugins ? plugins : reports );
             String[] tableHeader = getPluginTableHeader();
 
-            startSection( ( isPlugins ? getReportString( "report.plugins.title" )
-                                     : getReportString( "report.plugins.report.title" ) ) );
+            startSection( ( isPlugins ? getI18nString( "title" )
+                                     : getI18nString( "report.title" ) ) );
 
             if ( list == null || list.isEmpty() )
             {
 
-                paragraph(  ( isPlugins ? getReportString( "report.plugins.nolist" )
-                                        : getReportString( "report.plugins.report.nolist" ) ) );
+                paragraph(  ( isPlugins ? getI18nString( "nolist" )
+                                        : getI18nString( "report.nolist" ) ) );
 
                 endSection();
 
@@ -259,9 +249,9 @@ public class PluginsReport
         private String[] getPluginTableHeader()
         {
             // reused key...
-            String groupId = getReportString( "report.dependencyManagement.column.groupId" );
-            String artifactId = getReportString( "report.dependencyManagement.column.artifactId" );
-            String version = getReportString( "report.dependencyManagement.column.version" );
+            String groupId = getI18nString( "dependencyManagement", "column.groupId" );
+            String artifactId = getI18nString( "dependencyManagement", "column.artifactId" );
+            String version = getI18nString( "dependencyManagement", "column.version" );
             return new String[] { groupId, artifactId, version };
         }
 
@@ -289,11 +279,6 @@ public class PluginsReport
                     return result;
                 }
             };
-        }
-
-        private String getReportString( String key )
-        {
-            return i18n.getString( "project-info-report", locale, key );
         }
     }
 }

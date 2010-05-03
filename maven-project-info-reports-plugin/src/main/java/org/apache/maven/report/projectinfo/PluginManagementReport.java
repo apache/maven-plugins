@@ -36,7 +36,6 @@ import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
-import org.apache.maven.reporting.AbstractMavenReportRenderer;
 import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.util.StringUtils;
 
@@ -110,15 +109,11 @@ public class PluginManagementReport
      * @author Nick Stolwijk
      */
     protected static class PluginManagementRenderer
-        extends AbstractMavenReportRenderer
+        extends AbstractProjectInfoRenderer
     {
         private final Log log;
 
         private final List pluginManagement;
-
-        private final Locale locale;
-
-        private final I18N i18n;
 
         private final MavenProject project;
 
@@ -143,15 +138,11 @@ public class PluginManagementReport
                                          MavenProject project, MavenProjectBuilder mavenProjectBuilder,
                                          ArtifactFactory artifactFactory, ArtifactRepository localRepository )
         {
-            super( sink );
+            super( sink, i18n, locale );
 
             this.log = log;
 
-            this.locale = locale;
-
             this.pluginManagement = plugins;
-
-            this.i18n = i18n;
 
             this.project = project;
 
@@ -162,11 +153,9 @@ public class PluginManagementReport
             this.localRepository = localRepository;
         }
 
-
-        /** {@inheritDoc} */
-        public String getTitle()
+        protected String getI18Nsection()
         {
-            return getReportString( "report.pluginManagement.title" );
+            return "pluginManagement";
         }
 
         /** {@inheritDoc} */
@@ -235,9 +224,9 @@ public class PluginManagementReport
         private String[] getPluginTableHeader()
         {
             // reused key...
-            String groupId = getReportString( "report.dependencyManagement.column.groupId" );
-            String artifactId = getReportString( "report.dependencyManagement.column.artifactId" );
-            String version = getReportString( "report.dependencyManagement.column.version" );
+            String groupId = getI18nString( "dependencyManagement", "column.groupId" );
+            String artifactId = getI18nString( "dependencyManagement", "column.artifactId" );
+            String version = getI18nString( "dependencyManagement", "column.version" );
             return new String[] { groupId, artifactId, version };
         }
 
@@ -265,11 +254,6 @@ public class PluginManagementReport
                     return result;
                 }
             };
-        }
-
-        private String getReportString( String key )
-        {
-            return i18n.getString( "project-info-report", locale, key );
         }
     }
 }

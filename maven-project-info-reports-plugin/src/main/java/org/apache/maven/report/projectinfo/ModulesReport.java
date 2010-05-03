@@ -29,7 +29,6 @@ import java.util.Locale;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
-import org.apache.maven.reporting.AbstractMavenReportRenderer;
 
 import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.util.IOUtil;
@@ -82,29 +81,20 @@ public class ModulesReport
      * Internal renderer class
      */
     private class ModulesRenderer
-        extends AbstractMavenReportRenderer
+        extends AbstractProjectInfoRenderer
     {
         private Model model;
 
-        private I18N i18n;
-
-        private Locale locale;
-
         ModulesRenderer( Sink sink, Model model, I18N i18n, Locale locale )
         {
-            super( sink );
+            super( sink, i18n, locale );
 
             this.model = model;
-
-            this.i18n = i18n;
-
-            this.locale = locale;
         }
 
-        /** {@inheritDoc} */
-        public String getTitle()
+        protected String getI18Nsection()
         {
-            return i18n.getString( "project-info-report", locale, "report.modules.title" );
+            return "modules";
         }
 
         /** {@inheritDoc} */
@@ -114,12 +104,12 @@ public class ModulesReport
 
             startSection( getTitle() );
 
-            paragraph( i18n.getString( "project-info-report", locale, "report.modules.intro" ) );
+            paragraph( getI18nString( "intro" ) );
 
             startTable();
 
-            String name = i18n.getString( "project-info-report", locale, "report.modules.header.name" );
-            String description = i18n.getString( "project-info-report", locale, "report.modules.header.description" );
+            String name = getI18nString( "header.name" );
+            String description = getI18nString( "header.description" );
             tableHeader( new String[] {name, description} );
 
             for ( Iterator it = modules.iterator(); it.hasNext(); )

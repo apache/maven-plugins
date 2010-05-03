@@ -23,7 +23,6 @@ import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.model.CiManagement;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Notifier;
-import org.apache.maven.reporting.AbstractMavenReportRenderer;
 import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.util.StringUtils;
 
@@ -73,29 +72,20 @@ public class CimReport
      * Internal renderer class
      */
     private static class CimRenderer
-        extends AbstractMavenReportRenderer
+        extends AbstractProjectInfoRenderer
     {
         private Model model;
 
-        private I18N i18n;
-
-        private Locale locale;
-
         CimRenderer( Sink sink, Model model, I18N i18n, Locale locale )
         {
-            super( sink );
+            super( sink, i18n, locale );
 
             this.model = model;
-
-            this.i18n = i18n;
-
-            this.locale = locale;
         }
 
-        /** {@inheritDoc} */
-        public String getTitle()
+        protected String getI18Nsection()
         {
-            return i18n.getString( "project-info-report", locale, "report.cim.title" );
+            return "cim";
         }
 
         /** {@inheritDoc} */
@@ -106,7 +96,7 @@ public class CimReport
             {
                 startSection( getTitle() );
 
-                paragraph( i18n.getString( "project-info-report", locale, "report.cim.nocim" ) );
+                paragraph( getI18nString( "nocim" ) );
 
                 endSection();
 
@@ -118,76 +108,75 @@ public class CimReport
             List notifiers = cim.getNotifiers();
 
             // Overview
-            startSection( i18n.getString( "project-info-report", locale, "report.cim.overview.title" ) );
+            startSection( getI18nString( "overview.title" ) );
 
             sink.paragraph();
             if ( isCimSystem( system, "anthill" ) )
             {
-                linkPatternedText( i18n.getString( "project-info-report", locale, "report.cim.anthill.intro" ) );
+                linkPatternedText( getI18nString( "anthill.intro" ) );
             }
             else if ( isCimSystem( system, "buildforge" ) )
             {
-                linkPatternedText( i18n.getString( "project-info-report", locale, "report.cim.buildforge.intro" ) );
+                linkPatternedText( getI18nString( "buildforge.intro" ) );
             }
             else if ( isCimSystem( system, "continuum" ) )
             {
-                linkPatternedText( i18n.getString( "project-info-report", locale, "report.cim.continuum.intro" ) );
+                linkPatternedText( getI18nString( "continuum.intro" ) );
             }
             else if ( isCimSystem( system, "cruisecontrol" ) )
             {
-                linkPatternedText( i18n.getString( "project-info-report", locale, "report.cim.cruisecontrol.intro" ) );
+                linkPatternedText( getI18nString( "cruisecontrol.intro" ) );
             }
             else if ( isCimSystem( system, "hudson" ) )
             {
-                linkPatternedText( i18n.getString( "project-info-report", locale, "report.cim.hudson.intro" ) );
+                linkPatternedText( getI18nString( "hudson.intro" ) );
             }
             else if ( isCimSystem( system, "luntbuild" ) )
             {
-                linkPatternedText( i18n.getString( "project-info-report", locale, "report.cim.luntbuild.intro" ) );
+                linkPatternedText( getI18nString( "luntbuild.intro" ) );
             }
             else
             {
-                linkPatternedText( i18n.getString( "project-info-report", locale, "report.cim.general.intro" ) );
+                linkPatternedText( getI18nString( "general.intro" ) );
             }
             sink.paragraph_();
 
             endSection();
 
             // Access
-            startSection( i18n.getString( "project-info-report", locale, "report.cim.access" ) );
+            startSection( getI18nString( "access" ) );
 
             if ( !StringUtils.isEmpty( url ) )
             {
-                paragraph( i18n.getString( "project-info-report", locale, "report.cim.url" ) );
+                paragraph( getI18nString( "url" ) );
 
                 verbatimLink( url, url );
             }
             else
             {
-                paragraph( i18n.getString( "project-info-report", locale, "report.cim.nourl" ) );
+                paragraph( getI18nString( "nourl" ) );
             }
 
             endSection();
 
             // Notifiers
-            startSection( i18n.getString( "project-info-report", locale, "report.cim.notifiers.title" ) );
+            startSection( getI18nString( "notifiers.title" ) );
 
             if ( notifiers == null || notifiers.isEmpty() )
             {
-                paragraph( i18n.getString( "project-info-report", locale, "report.cim.notifiers.nolist" ) );
+                paragraph( getI18nString( "notifiers.nolist" ) );
             }
             else
             {
                 sink.paragraph();
-                sink.text( i18n.getString( "project-info-report", locale, "report.cim.notifiers.intro" ) );
+                sink.text( getI18nString( "notifiers.intro" ) );
                 sink.paragraph_();
 
                 startTable();
 
-                String type = i18n.getString( "project-info-report", locale, "report.cim.notifiers.column.type" );
-                String address = i18n.getString( "project-info-report", locale, "report.cim.notifiers.column.address" );
-                String configuration =
-                    i18n.getString( "project-info-report", locale, "report.cim.notifiers.column.configuration" );
+                String type = getI18nString( "notifiers.column.type" );
+                String address = getI18nString( "notifiers.column.address" );
+                String configuration = getI18nString( "notifiers.column.configuration" );
 
                 tableHeader( new String[]{type, address, configuration} );
 
@@ -207,11 +196,11 @@ public class CimReport
         }
 
         /**
-         * Checks if a CIM system is bugzilla, continium...
+         * Checks if a CIM system is bugzilla, continuum...
          *
          * @param connection
          * @param cim
-         * @return true if the CIM system is bugzilla, continium..., false otherwise.
+         * @return true if the CIM system is bugzilla, continuum..., false otherwise.
          */
         private boolean isCimSystem( String connection, String cim )
         {
