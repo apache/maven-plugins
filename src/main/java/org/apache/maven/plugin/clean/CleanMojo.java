@@ -41,6 +41,7 @@ import java.io.IOException;
  * @author <a href="mailto:evenisse@maven.org">Emmanuel Venisse</a>
  * @version $Id$
  * @goal clean
+ * @threadSafe
  * @since 2.0
  * @see org.apache.maven.plugin.clean.Fileset
  */
