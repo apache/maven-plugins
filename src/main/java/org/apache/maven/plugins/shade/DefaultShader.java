@@ -49,7 +49,7 @@ import org.objectweb.asm.commons.Remapper;
 
 /**
  * @author Jason van Zyl
- * @plexus.component
+ * @plexus.component instantiation-strategy="per-lookup"
  */
 public class DefaultShader
     extends AbstractLogEnabled
