@@ -160,10 +160,9 @@ public class CleanMojoTest
         assertTrue( checkEmpty( getBasedir() + "/target/test-classes/unit/fileset-clean-test/target/subdir" ) );
 
         // fileset 2
-        //TODO: MCLEAN-7
         assertTrue( checkExists( getBasedir() + "/target/test-classes/unit/fileset-clean-test/"
             + "buildOutputDirectory" ) );
-        assertFalse( checkExists( getBasedir() + "/target/test-classes/fileset-clean-test/"
+        assertFalse( checkExists( getBasedir() + "/target/test-classes/unit/fileset-clean-test/"
             + "buildOutputDirectory/file.txt" ) );
     }
 
