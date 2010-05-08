@@ -1064,6 +1064,10 @@ public class ChangeLogReport
             if ( set.getStartVersion() == null || set.getStartVersion().getName() == null )
             {
                 sink.text( bundle.getString( "report.SetTagCreation" ) );
+                if ( set.getEndVersion() != null && set.getEndVersion().getName() != null )
+                {
+                    sink.text( " " + bundle.getString( "report.SetTagUntil" ) + " '" + set.getEndVersion() + "'" );
+                }
             }
             else if ( set.getEndVersion() == null || set.getEndVersion().getName() == null )
             {
