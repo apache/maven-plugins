@@ -254,7 +254,7 @@ public class DefaultShader
 
         ClassWriter cw = new ClassWriter( cr, 0 );
 
-        ClassVisitor cv = new RemappingClassAdapter( cw, remapper );
+        ClassVisitor cv = new TempRemappingClassAdapter( cw, remapper );
 
         cr.accept( cv, ClassReader.EXPAND_FRAMES );
 
