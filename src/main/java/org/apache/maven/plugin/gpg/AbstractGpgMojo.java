@@ -60,6 +60,7 @@ public abstract class AbstractGpgMojo
     /**
      * Passes <code>--use-agent</code> or <code>--no-use-agent</code> to gpg. If using an agent, the passphrase is
      * optional as the agent will provide it.
+     * For gpg2, specify true as --no-use-agent was removed in gpg2 and doesn't ask for a passphrase anymore.
      * 
      * @parameter expression="${gpg.useagent}" default-value="false"
      */
