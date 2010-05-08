@@ -40,7 +40,7 @@
                 <include>**</include>
               </includes>
               <excludes>
-                <exclude>**</exclude>
+                <exclude></exclude>
               </excludes>
             </fileset>
           </filesets>
