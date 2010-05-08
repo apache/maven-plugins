@@ -74,6 +74,7 @@ import org.codehaus.plexus.util.WriterFactory;
  * @goal shade
  * @phase package
  * @requiresDependencyResolution runtime
+ * @threadSafe
  */
 public class ShadeMojo
     extends AbstractMojo
