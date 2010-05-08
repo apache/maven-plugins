@@ -99,6 +99,11 @@ class GlobSelector
 
     private static String normalizePattern( String pattern )
     {
+        if ( pattern == null )
+        {
+            return "";
+        }
+
         String normalized = pattern.replace( ( File.separatorChar == '/' ) ? '\\' : '/', File.separatorChar );
 
         if ( normalized.endsWith( File.separator ) )
