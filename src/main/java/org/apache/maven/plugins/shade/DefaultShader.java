@@ -46,7 +46,6 @@ import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.commons.Remapper;
-import org.objectweb.asm.commons.RemappingClassAdapter;
 
 /**
  * @author Jason van Zyl
@@ -56,8 +55,9 @@ public class DefaultShader
     extends AbstractLogEnabled
     implements Shader
 {
+
     public void shade( Set jars, File uberJar, List filters, List relocators, List resourceTransformers )
-    throws IOException
+        throws IOException
     {
         Set resources = new HashSet();
 
