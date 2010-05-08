@@ -21,10 +21,12 @@ package org.apache.maven.plugins.shade;
 
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassVisitor;
+import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.commons.Remapper;
 import org.objectweb.asm.commons.RemappingAnnotationAdapter;
 import org.objectweb.asm.commons.RemappingClassAdapter;
+import org.objectweb.asm.commons.RemappingFieldAdapter;
 import org.objectweb.asm.commons.RemappingMethodAdapter;
 
 /**
@@ -36,19 +38,42 @@ class TempRemappingClassAdapter
     extends RemappingClassAdapter
 {
 
-    private static class MethRemapVisitor
+    private static class MethodRemapVisitor
         extends RemappingMethodAdapter
     {
-        public MethRemapVisitor( int access, String desc, MethodVisitor mv, Remapper renamer )
+        public MethodRemapVisitor( int access, String desc, MethodVisitor mv, Remapper renamer )
         {
             super( access, desc, mv, renamer );
         }
 
         public AnnotationVisitor visitAnnotation( String desc, boolean visible )
         {
-            // The original source from asm did not have the call to remapper.mapDesc()
+            // The original source from asm:3.2 does not have the call to remapper.mapDesc()
             AnnotationVisitor av = mv.visitAnnotation( remapper.mapDesc( desc ), visible );
             return av == null ? av : new RemappingAnnotationAdapter( av, remapper );
+        }
+    }
+
+    private static class FieldRemapVisitor
+        extends RemappingFieldAdapter
+    {
+
+        private final FieldVisitor fv;
+
+        private final Remapper remapper;
+
+        public FieldRemapVisitor( FieldVisitor fv, Remapper remapper )
+        {
+            super( fv, remapper );
+            this.fv = fv;
+            this.remapper = remapper;
+        }
+
+        public AnnotationVisitor visitAnnotation( String desc, boolean visible )
+        {
+            // The original source from asm:3.2 does not have the call to remapper.mapDesc()
+            AnnotationVisitor av = fv.visitAnnotation( remapper.mapDesc( desc ), visible );
+            return av == null ? null : new RemappingAnnotationAdapter( av, remapper );
         }
     }
 
@@ -59,7 +84,12 @@ class TempRemappingClassAdapter
 
     protected MethodVisitor createRemappingMethodAdapter( int access, String newDesc, MethodVisitor mv )
     {
-        return new MethRemapVisitor( access, newDesc, mv, remapper );
+        return new MethodRemapVisitor( access, newDesc, mv, remapper );
+    }
+
+    protected FieldVisitor createRemappingFieldAdapter( FieldVisitor fv )
+    {
+        return new FieldRemapVisitor( fv, remapper );
     }
 
 }
