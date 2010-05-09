@@ -51,6 +51,9 @@ under the License.
       <plugin>
         <artifactId>maven-site-plugin</artifactId>
         <version>@project.version@</version>
+        <configuration>
+          <locales>en,sv</locales>
+        </configuration>
       </plugin>
     </plugins>
   </build>
