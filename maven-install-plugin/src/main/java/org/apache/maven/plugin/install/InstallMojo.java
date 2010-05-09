@@ -36,6 +36,7 @@ import java.util.List;
  * @version $Id$
  * @goal install
  * @phase install
+ * @threadSafe
  */
 public class InstallMojo
     extends AbstractInstallMojo

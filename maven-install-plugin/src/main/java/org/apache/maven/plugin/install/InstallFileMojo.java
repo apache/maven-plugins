@@ -54,6 +54,7 @@ import java.util.Map;
  * @goal install-file
  * @requiresProject false
  * @aggregator
+ * @threadSafe
  */
 public class InstallFileMojo
     extends AbstractInstallMojo
