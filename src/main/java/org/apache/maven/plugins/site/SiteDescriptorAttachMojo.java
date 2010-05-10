@@ -22,16 +22,20 @@ package org.apache.maven.plugins.site;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.doxia.site.decoration.DecorationModel;
 import org.apache.maven.doxia.site.decoration.io.xpp3.DecorationXpp3Reader;
+import org.apache.maven.doxia.site.decoration.io.xpp3.DecorationXpp3Writer;
 import org.apache.maven.doxia.tools.SiteToolException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.MavenProjectHelper;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
+import org.codehaus.plexus.util.WriterFactory;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
+import java.io.Writer;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -61,6 +65,15 @@ public class SiteDescriptorAttachMojo
      * @readonly
      */
     private File basedir;
+
+    /**
+     * Maven ProjectHelper.
+     *
+     * @component
+     * @readonly
+     * @since 2.1.1
+     */
+    private MavenProjectHelper projectHelper;
 
     public void execute()
         throws MojoExecutionException
@@ -100,7 +113,7 @@ public class SiteDescriptorAttachMojo
                 }
                 catch ( SiteToolException e )
                 {
-                    throw new MojoExecutionException( "Error when interpoling site descriptor", e );
+                    throw new MojoExecutionException( "Error when interpolating site descriptor", e );
                 }
 
                 MavenProject parentProject = siteTool.getParentProject( project, reactorProjects, localRepository );
@@ -117,7 +130,37 @@ public class SiteDescriptorAttachMojo
                     throw new MojoExecutionException( "Error when populating modules", e );
                 }
 
-                artifact.addMetadata( new SiteDescriptorArtifactMetadata( artifact, decoration, descriptorFile ) );
+                // Calculate the classifier to use
+                String classifier = null;
+                int index = descriptorFile.getName().lastIndexOf( '.' );
+                if ( index > 0 )
+                {
+                    classifier = descriptorFile.getName().substring( 0, index );
+                }
+                else
+                {
+                    throw new MojoExecutionException( "Unable to determine the classifier to use" );
+                }
+
+                // Prepare a file for the interpolated site descriptor
+                String filename = project.getArtifactId() + "-" + project.getVersion() + "-" + descriptorFile.getName();
+                File interpolatedDescriptorFile = new File( project.getBuild().getDirectory(), filename );
+                interpolatedDescriptorFile.getParentFile().mkdirs();
+
+                try
+                {
+                    // Write the interpolated site descriptor to a file
+                    Writer writer = WriterFactory.newXmlWriter( interpolatedDescriptorFile );
+                    new DecorationXpp3Writer().write( writer, decoration );
+                    // Attach the interpolated site descriptor
+                    getLog().debug( "Attaching the site descriptor '" + interpolatedDescriptorFile.getAbsolutePath()
+                        + "' with classifier '" + classifier + "' to the project." );
+                    projectHelper.attachArtifact( project, "xml", classifier, interpolatedDescriptorFile );
+                }
+                catch ( IOException e )
+                {
+                    throw new MojoExecutionException( "Unable to store interpolated site descriptor", e );
+                }
             }
         }
     }
