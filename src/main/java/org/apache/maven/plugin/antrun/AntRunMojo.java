@@ -38,6 +38,7 @@ import org.apache.tools.ant.Target;
  * @version $Id$
  * @configurator override
  * @goal run
+ * @threadSafe
  * @requiresDependencyResolution test
  */
 public class AntRunMojo
