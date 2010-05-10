@@ -30,6 +30,8 @@ import org.apache.maven.plugin.MojoExecutionException;
  * @aggregator
  * @execute phase="generate-sources"
  * @since 2.0.3
+ * @threadSafe
+ * 
  */
 public class AggregatorSourceJarMojo
     extends SourceJarMojo
