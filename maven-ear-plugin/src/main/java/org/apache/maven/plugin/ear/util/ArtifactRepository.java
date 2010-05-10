@@ -44,12 +44,14 @@ public class ArtifactRepository
      *
      * @param artifacts the artifacts
      * @param mainArtifactId the id to use for the main artifact (no classifier)
+     * @param artifactTypeMappingService
      */
-    public ArtifactRepository( Set artifacts, String mainArtifactId )
+    public ArtifactRepository( Set artifacts, String mainArtifactId,
+                               ArtifactTypeMappingService artifactTypeMappingService )
     {
         this.artifacts = artifacts;
         this.mainArtifactId = mainArtifactId;
-        this.artifactTypeMappingService = ArtifactTypeMappingService.getInstance();
+        this.artifactTypeMappingService = artifactTypeMappingService;
     }
 
     /**

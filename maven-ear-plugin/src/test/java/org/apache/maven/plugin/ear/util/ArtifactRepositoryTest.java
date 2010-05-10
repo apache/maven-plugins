@@ -20,6 +20,8 @@ package org.apache.maven.plugin.ear.util;
  */
 
 import org.apache.maven.plugin.ear.AbstractEarTest;
+import org.apache.maven.plugin.ear.EarPluginException;
+import org.codehaus.plexus.configuration.PlexusConfigurationException;
 
 /**
  * @author <a href="snicoll@apache.org">Stephane Nicoll</a>
@@ -34,7 +36,6 @@ public class ArtifactRepositoryTest
         throws Exception
     {
         super.setUp();
-        ArtifactTypeMappingService.getInstance().configure( null );
     }
 
 
@@ -42,7 +43,9 @@ public class ArtifactRepositoryTest
 
     public void testEmptyRepository()
     {
-        ArtifactRepository repo = new ArtifactRepository( createArtifacts( null ), MAIN_ARTIFACT_ID );
+        ArtifactTypeMappingService artifactTypeMappingService = new ArtifactTypeMappingService();
+        ArtifactRepository repo = new ArtifactRepository( createArtifacts( null ), MAIN_ARTIFACT_ID,
+                                                          artifactTypeMappingService );
         assertNull( repo.getUniqueArtifact( "ear", "ar", "jar" ) );
         assertNull( repo.getUniqueArtifact( "ear", "ar", "jar", null ) );
         assertNull( repo.getUniqueArtifact( "ear", "ar", "jar", "class" ) );
@@ -50,16 +53,20 @@ public class ArtifactRepositoryTest
 
     public void testRepositoryWithOneUnclassifiedArtifact()
     {
+        ArtifactTypeMappingService artifactTypeMappingService = new ArtifactTypeMappingService();
         ArtifactRepository repo =
-            new ArtifactRepository( createArtifacts( new String[]{"myartifact"} ), MAIN_ARTIFACT_ID );
+            new ArtifactRepository( createArtifacts( new String[]{"myartifact"} ), MAIN_ARTIFACT_ID,
+                                    artifactTypeMappingService );
         assertNotNull( repo.getUniqueArtifact( DEFAULT_GROUPID, "myartifact", "jar" ) );
         assertNotNull( repo.getUniqueArtifact( DEFAULT_GROUPID, "myartifact", "jar", null ) );
     }
 
     public void testRepositoryWithOneClassifiedArtifact()
     {
+        ArtifactTypeMappingService artifactTypeMappingService = new ArtifactTypeMappingService();
         ArtifactRepository repo = new ArtifactRepository(
-            createArtifacts( new String[]{"myartifact"}, null, null, new String[]{"classified"} ), MAIN_ARTIFACT_ID );
+            createArtifacts( new String[]{"myartifact"}, null, null, new String[]{"classified"} ), MAIN_ARTIFACT_ID,
+            artifactTypeMappingService );
         assertNotNull( repo.getUniqueArtifact( DEFAULT_GROUPID, "myartifact", "jar" ) );
         assertNotNull( repo.getUniqueArtifact( DEFAULT_GROUPID, "myartifact", "jar", "classified" ) );
         assertNull( repo.getUniqueArtifact( DEFAULT_GROUPID, "myartifact", "jar", "wrong" ) );
@@ -67,9 +74,11 @@ public class ArtifactRepositoryTest
 
     public void testRepositoryWithMultipleClassifiedArtifacts()
     {
+        ArtifactTypeMappingService artifactTypeMappingService = new ArtifactTypeMappingService();
         ArtifactRepository repo = new ArtifactRepository(
             createArtifacts( new String[]{"myartifact", "myartifact", "myartifact"}, null, null,
-                             new String[]{"class1", "class2", "class3"} ), MAIN_ARTIFACT_ID );
+                             new String[]{"class1", "class2", "class3"} ), MAIN_ARTIFACT_ID,
+            artifactTypeMappingService );
 
         assertNull( repo.getUniqueArtifact( DEFAULT_GROUPID, "myartifact", "jar" ) );
         assertNotNull( repo.getUniqueArtifact( DEFAULT_GROUPID, "myartifact", "jar", "class1" ) );
@@ -79,10 +88,12 @@ public class ArtifactRepositoryTest
     }
 
     public void testRepositoryWithMultipleClassifiedArtifactsAndMainArtifact()
+        throws PlexusConfigurationException, EarPluginException
     {
+        ArtifactTypeMappingService artifactTypeMappingService = new ArtifactTypeMappingService();
         ArtifactRepository repo = new ArtifactRepository(
             createArtifacts( new String[]{"myartifact", "myartifact", "myartifact"}, null, null,
-                             new String[]{"class1", "class2", null} ), MAIN_ARTIFACT_ID );
+                             new String[]{"class1", "class2", null} ), MAIN_ARTIFACT_ID, artifactTypeMappingService );
 
         assertNull( repo.getUniqueArtifact( DEFAULT_GROUPID, "myartifact", "jar" ) );
         assertNotNull( repo.getUniqueArtifact( DEFAULT_GROUPID, "myartifact", "jar", "class1" ) );

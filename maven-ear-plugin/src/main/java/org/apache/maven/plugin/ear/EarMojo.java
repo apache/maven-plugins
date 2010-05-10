@@ -53,6 +53,7 @@ import java.util.List;
  * @version $Id$
  * @goal ear
  * @phase package
+ * @threadSafe
  * @requiresDependencyResolution test
  */
 public class EarMojo

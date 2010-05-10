@@ -22,6 +22,7 @@ package org.apache.maven.plugin.ear;
 import org.apache.maven.plugin.ear.output.FileNameMapping;
 import org.apache.maven.plugin.ear.output.FileNameMappingFactory;
 import org.apache.maven.plugin.ear.util.ArtifactRepository;
+import org.apache.maven.plugin.ear.util.ArtifactTypeMappingService;
 import org.apache.maven.project.MavenProject;
 
 /**
@@ -32,15 +33,6 @@ import org.apache.maven.project.MavenProject;
  */
 public class EarExecutionContext
 {
-    private static final EarExecutionContext INSTANCE = new EarExecutionContext();
-
-    public static EarExecutionContext getInstance()
-    {
-        return INSTANCE;
-    }
-
-    // Singleton implementation
-
     private String defaultLibBundleDir;
 
     private JbossConfiguration jbossConfiguration;
@@ -50,19 +42,17 @@ public class EarExecutionContext
     private ArtifactRepository artifactRepository;
 
 
-    private EarExecutionContext()
+    public EarExecutionContext( MavenProject project, String mainArtifactId, String defaultLibBundleDir,
+                                JbossConfiguration jbossConfiguration, String fileNameMappingName,
+                                ArtifactTypeMappingService typeMappingService )
     {
+        initialize( project, mainArtifactId, defaultLibBundleDir, jbossConfiguration, fileNameMappingName, typeMappingService );
 
     }
 
     public String getDefaultLibBundleDir()
     {
         return defaultLibBundleDir;
-    }
-
-    public JbossConfiguration getJbossConfiguration()
-    {
-        return jbossConfiguration;
     }
 
     public boolean isJbossConfigured()
@@ -80,19 +70,20 @@ public class EarExecutionContext
         return artifactRepository;
     }
 
-    protected void initialize( MavenProject project, String mainArtifactId, String defaultLibBundleDir, JbossConfiguration jbossConfiguration,
-                               String fileNameMappingName )
+    private void initialize( MavenProject project, String mainArtifactId, String defaultLibBundleDir, JbossConfiguration jbossConfiguration,
+                             String fileNameMappingName, ArtifactTypeMappingService typeMappingService )
     {
-        this.artifactRepository = new ArtifactRepository( project.getArtifacts(), mainArtifactId);
+        this.artifactRepository = new ArtifactRepository( project.getArtifacts(), mainArtifactId,
+                                                          typeMappingService );
         this.defaultLibBundleDir = defaultLibBundleDir;
         this.jbossConfiguration = jbossConfiguration;
         if ( fileNameMappingName == null || fileNameMappingName.trim().length() == 0 )
         {
-            this.fileNameMapping = FileNameMappingFactory.INSTANCE.getDefaultFileNameMapping();
+            this.fileNameMapping = FileNameMappingFactory.getDefaultFileNameMapping();
         }
         else
         {
-            this.fileNameMapping = FileNameMappingFactory.INSTANCE.getFileNameMapping( fileNameMappingName );
+            this.fileNameMapping = FileNameMappingFactory.getFileNameMapping( fileNameMappingName );
         }
     }
 }

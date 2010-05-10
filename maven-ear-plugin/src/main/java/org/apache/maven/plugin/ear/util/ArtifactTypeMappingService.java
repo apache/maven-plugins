@@ -45,30 +45,22 @@ public class ArtifactTypeMappingService
 
     static final String MAPPING_ATTRIBUTE = "mapping";
 
-    private static final ArtifactTypeMappingService INSTANCE = new ArtifactTypeMappingService();
-
-    public static ArtifactTypeMappingService getInstance()
-    {
-        return INSTANCE;
-    }
-
     // A standard type to a list of customType
     private final Map typeMappings;
 
     // The user-defined mapping for direct access
     private final Map customMappings;
 
-    private ArtifactTypeMappingService()
+    public ArtifactTypeMappingService( )
     {
         this.typeMappings = new HashMap();
         this.customMappings = new HashMap();
+        init();
     }
 
     public void configure( final PlexusConfiguration plexusConfiguration )
         throws EarPluginException, PlexusConfigurationException
     {
-        // Initializes the typeMappings with default values
-        init();
 
         // No user defined configuration
         if ( plexusConfiguration == null )

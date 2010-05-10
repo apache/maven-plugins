@@ -37,6 +37,7 @@ import java.util.List;
  * @version $Id$
  * @goal generate-application-xml
  * @phase generate-resources
+ * @threadSafe
  * @requiresDependencyResolution test
  */
 public class GenerateApplicationXmlMojo

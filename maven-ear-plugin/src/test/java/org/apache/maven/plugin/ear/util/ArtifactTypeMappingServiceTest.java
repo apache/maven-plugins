@@ -105,7 +105,7 @@ public class ArtifactTypeMappingServiceTest
 
             rootConfig.addChild( childConfig );
             rootConfig.addChild( childConfig2 );
-            ArtifactTypeMappingService service = ArtifactTypeMappingService.getInstance();
+            ArtifactTypeMappingService service = new ArtifactTypeMappingService();
             service.configure( rootConfig );
             fail( "Should have failed" );
         }
@@ -131,7 +131,7 @@ public class ArtifactTypeMappingServiceTest
             childConfig.setAttribute( "mapping", "notAStandardType" );
 
             rootConfig.addChild( childConfig );
-            ArtifactTypeMappingService service = ArtifactTypeMappingService.getInstance();
+            ArtifactTypeMappingService service = new ArtifactTypeMappingService();
             service.configure( rootConfig );
             fail( "Should have failed" );
         }
@@ -156,7 +156,7 @@ public class ArtifactTypeMappingServiceTest
             childConfig.setAttribute( "mapping", "ejb" );
 
             rootConfig.addChild( childConfig );
-            ArtifactTypeMappingService service = ArtifactTypeMappingService.getInstance();
+            ArtifactTypeMappingService service = new ArtifactTypeMappingService();
             service.configure( rootConfig );
             fail( "Should have failed" );
         }
@@ -181,7 +181,7 @@ public class ArtifactTypeMappingServiceTest
             childConfig.setAttribute( "type", "generic" );
 
             rootConfig.addChild( childConfig );
-            ArtifactTypeMappingService service = ArtifactTypeMappingService.getInstance();
+            ArtifactTypeMappingService service = new ArtifactTypeMappingService();
             service.configure( rootConfig );
             fail( "Should have failed" );
         }
@@ -208,7 +208,7 @@ public class ArtifactTypeMappingServiceTest
             childConfig.setAttribute( "type", "MyRar" );
             childConfig.setAttribute( "mapping", "rar" );
             rootConfig.addChild( childConfig );
-            ArtifactTypeMappingService service = ArtifactTypeMappingService.getInstance();
+            ArtifactTypeMappingService service = new ArtifactTypeMappingService();
             service.configure( rootConfig );
 
             return service;
@@ -233,7 +233,7 @@ public class ArtifactTypeMappingServiceTest
     {
         try
         {
-            ArtifactTypeMappingService service = ArtifactTypeMappingService.getInstance();
+            ArtifactTypeMappingService service = new ArtifactTypeMappingService();
             service.configure( new XmlPlexusConfiguration( "dummy" ) );
 
             return service;

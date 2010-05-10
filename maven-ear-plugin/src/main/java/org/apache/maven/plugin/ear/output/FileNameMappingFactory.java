@@ -36,24 +36,17 @@ import java.util.Map;
  */
 public class FileNameMappingFactory
 {
-    public static final String STANDARD_FILE_NAME_MAPPING = "standard";
+    static final String STANDARD_FILE_NAME_MAPPING = "standard";
 
-    public static final String FULL_FILE_NAME_MAPPING = "full";
-
-    public static final FileNameMappingFactory INSTANCE = new FileNameMappingFactory();
-
-    private final Map mappings;
+    static final String FULL_FILE_NAME_MAPPING = "full";
 
     private FileNameMappingFactory()
     {
-        mappings = new HashMap();
-        mappings.put( STANDARD_FILE_NAME_MAPPING, new StandardFileNameMapping() );
-        mappings.put( FULL_FILE_NAME_MAPPING, new FullFileNameMapping() );
     }
 
-    public FileNameMapping getDefaultFileNameMapping()
+    public static FileNameMapping getDefaultFileNameMapping()
     {
-        return getFileNameMapping( STANDARD_FILE_NAME_MAPPING );
+        return new StandardFileNameMapping() ;
     }
 
     /**
@@ -64,22 +57,19 @@ public class FileNameMappingFactory
      * @return the file name mapping implementation
      * @throws IllegalStateException if the implementation is not found
      */
-    public FileNameMapping getFileNameMapping( final String nameOrClass )
+    public static FileNameMapping getFileNameMapping( final String nameOrClass )
         throws IllegalStateException
     {
-        // Check if it's there yet
-        if ( mappings.containsKey( nameOrClass ) )
-        {
-            return (FileNameMapping) mappings.get( nameOrClass );
+        if (STANDARD_FILE_NAME_MAPPING.equals( nameOrClass )){
+            return getDefaultFileNameMapping();
         }
-        else
-        {
+        if (FULL_FILE_NAME_MAPPING.equals(  nameOrClass )){
+            return new FullFileNameMapping();
+        }
             try
             {
                 final Class c = Class.forName( nameOrClass );
-                final FileNameMapping fnm = (FileNameMapping) c.newInstance();
-                mappings.put( nameOrClass, fnm );
-                return fnm;
+                return (FileNameMapping) c.newInstance();
             }
             catch ( ClassNotFoundException e )
             {
@@ -101,6 +91,5 @@ public class FileNameMappingFactory
                 throw new IllegalStateException( "Specified class[" + nameOrClass + "] does not implement[" +
                     FileNameMapping.class.getName() + "]" );
             }
-        }
     }
 }
