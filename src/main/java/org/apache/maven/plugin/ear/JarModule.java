@@ -82,7 +82,7 @@ public class JarModule
 
         // If the defaultLibBundleDir is set and no bundle dir is
         // set, set the default as bundle dir
-        setLibBundleDir( EarExecutionContext.getInstance().getDefaultLibBundleDir() );
+        setLibBundleDir( earExecutionContext.getDefaultLibBundleDir() );
     }
 
     public String getType()

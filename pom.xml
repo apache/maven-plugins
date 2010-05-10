@@ -25,7 +25,7 @@ under the License.
   <parent>
     <artifactId>maven-plugins</artifactId>
     <groupId>org.apache.maven.plugins</groupId>
-    <version>17</version>
+    <version>18</version>
   </parent>
 
   <artifactId>maven-ear-plugin</artifactId>
@@ -71,11 +71,23 @@ under the License.
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-archiver</artifactId>
       <version>2.2</version>
+      <exclusions>
+        <exclusion> <!-- Just a small workaround until archiver can be released without dangerous plexus-io version -->
+          <groupId>org.codehaus.plexus</groupId>
+          <artifactId>plexus-archiver</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
+    <dependency> <!-- part of the same workaround. Remove this dep when uprading maven-archiver -->
+      <groupId>org.codehaus.plexus</groupId>
+      <artifactId>plexus-archiver</artifactId>
+      <version>1.0</version>
+    </dependency>
+
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-utils</artifactId>
-      <version>1.5.7</version>
+      <version>2.0.5</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.shared</groupId>

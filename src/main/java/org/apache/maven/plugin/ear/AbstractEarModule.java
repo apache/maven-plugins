@@ -64,6 +64,8 @@ public abstract class AbstractEarModule
 
     protected String altDeploymentDescriptor;
 
+    protected EarExecutionContext earExecutionContext;
+
     /**
      * Empty constructor to be used when the module
      * is built based on the configuration.
@@ -86,6 +88,11 @@ public abstract class AbstractEarModule
         this.bundleDir = null;
     }
 
+    public void setEarExecutionContext( EarExecutionContext earExecutionContext )
+    {
+        this.earExecutionContext = earExecutionContext;
+    }
+
     public void resolveArtifact( Set artifacts )
         throws EarPluginException, MojoFailureException
     {
@@ -98,7 +105,7 @@ public abstract class AbstractEarModule
                 throw new MojoFailureException(
                     "Could not resolve artifact[" + groupId + ":" + artifactId + ":" + getType() + "]" );
             }
-            final ArtifactRepository ar = EarExecutionContext.getInstance().getArtifactRepository();
+            final ArtifactRepository ar = earExecutionContext.getArtifactRepository();
             artifact = ar.getUniqueArtifact( groupId, artifactId, getType(), classifier );
             // Artifact has not been found
             if ( artifact == null )
@@ -193,7 +200,7 @@ public abstract class AbstractEarModule
     {
         if ( bundleFileName == null )
         {
-            bundleFileName = EarExecutionContext.getInstance().getFileNameMapping().mapFileName( artifact );
+            bundleFileName = earExecutionContext.getFileNameMapping().mapFileName( artifact );
         }
         return bundleFileName;
     }

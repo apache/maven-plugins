@@ -46,7 +46,7 @@ public class FileNameMappingFactoryTest
 
     public void testDefaultFileNameMapping()
     {
-        final FileNameMapping actual = FileNameMappingFactory.INSTANCE.getDefaultFileNameMapping();
+        final FileNameMapping actual = FileNameMappingFactory.getDefaultFileNameMapping();
         assertNotNull( actual );
         assertEquals( StandardFileNameMapping.class, actual.getClass() );
     }
@@ -54,7 +54,7 @@ public class FileNameMappingFactoryTest
     public void testGetFileNameMappingByName()
     {
         final FileNameMapping actual =
-            FileNameMappingFactory.INSTANCE.getFileNameMapping( FileNameMappingFactory.STANDARD_FILE_NAME_MAPPING );
+            FileNameMappingFactory.getFileNameMapping( FileNameMappingFactory.STANDARD_FILE_NAME_MAPPING );
         assertNotNull( actual );
         assertEquals( StandardFileNameMapping.class, actual.getClass() );
     }
@@ -62,13 +62,13 @@ public class FileNameMappingFactoryTest
     public void testGetFileNameMappingByName2()
     {
         final FileNameMapping actual =
-            FileNameMappingFactory.INSTANCE.getFileNameMapping( FileNameMappingFactory.FULL_FILE_NAME_MAPPING );
+            FileNameMappingFactory.getFileNameMapping( FileNameMappingFactory.FULL_FILE_NAME_MAPPING );
         assertNotNull( actual );
         assertEquals( FullFileNameMapping.class, actual.getClass() );
     }
 
     public void testGetFileNameMappingByClass() {
-        final FileNameMapping actual = FileNameMappingFactory.INSTANCE.getFileNameMapping(StandardFileNameMapping.class.getName());
+        final FileNameMapping actual = FileNameMappingFactory.getFileNameMapping(StandardFileNameMapping.class.getName());
         assertNotNull( actual);
         assertEquals( StandardFileNameMapping.class, actual.getClass());
     }
@@ -76,7 +76,7 @@ public class FileNameMappingFactoryTest
     public void testGetFileNameMappingByClass2()
     {
         final FileNameMapping actual =
-            FileNameMappingFactory.INSTANCE.getFileNameMapping( FullFileNameMapping.class.getName() );
+            FileNameMappingFactory.getFileNameMapping( FullFileNameMapping.class.getName() );
         assertNotNull( actual );
         assertEquals( FullFileNameMapping.class, actual.getClass() );
     }
@@ -85,7 +85,7 @@ public class FileNameMappingFactoryTest
     {
         try
         {
-            FileNameMappingFactory.INSTANCE.getFileNameMapping( "com.foo.bar" );
+            FileNameMappingFactory.getFileNameMapping( "com.foo.bar" );
             fail("Should have failed");
         }
         catch ( IllegalStateException e )
