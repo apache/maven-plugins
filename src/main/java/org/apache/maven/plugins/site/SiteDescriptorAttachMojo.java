@@ -19,7 +19,15 @@ package org.apache.maven.plugins.site;
  * under the License.
  */
 
-import org.apache.maven.artifact.Artifact;
+import java.io.File;
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.Writer;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
 import org.apache.maven.doxia.site.decoration.DecorationModel;
 import org.apache.maven.doxia.site.decoration.io.xpp3.DecorationXpp3Reader;
 import org.apache.maven.doxia.site.decoration.io.xpp3.DecorationXpp3Writer;
@@ -32,15 +40,6 @@ import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.WriterFactory;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.StringReader;
-import java.io.Writer;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
 /**
  * Adds the site descriptor (<code>site.xml</code>) to the list of files to be installed/deployed.
  *
@@ -52,12 +51,6 @@ import java.util.Map;
 public class SiteDescriptorAttachMojo
     extends AbstractSiteMojo
 {
-    /**
-     * @parameter expression="${project.artifact}"
-     * @required
-     * @readonly
-     */
-    private Artifact artifact;
 
     /**
      * @parameter expression="${basedir}"
