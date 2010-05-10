@@ -32,6 +32,8 @@ import java.util.List;
  * @goal test-jar-no-fork
  * @phase package
  * @since 2.1
+ * @threadSafe
+ *
  */
 public class TestSourceJarNoForkMojo
     extends AbstractSourceJarMojo

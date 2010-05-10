@@ -26,6 +26,8 @@ package org.apache.maven.plugin.source;
  * @phase package
  * @execute phase="generate-sources"
  * @since 2.0.3
+ * @threadSafe
+ * 
  */
 public class TestSourceJarMojo
     extends TestSourceJarNoForkMojo
