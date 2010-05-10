@@ -23,6 +23,7 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.ear.util.ArtifactTypeMappingService;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -33,20 +34,22 @@ import java.util.List;
  */
 public final class EarModuleFactory
 {
-    public final static List standardArtifactTypes = new ArrayList();
+    public final static List standardArtifactTypes;
 
     static
     {
-        standardArtifactTypes.add( "jar" );
-        standardArtifactTypes.add( "ejb" );
-        standardArtifactTypes.add( "ejb3" );
-        standardArtifactTypes.add( "par" );
-        standardArtifactTypes.add( "ejb-client" );
-        standardArtifactTypes.add( "rar" );
-        standardArtifactTypes.add( "war" );
-        standardArtifactTypes.add( "sar" );
-        standardArtifactTypes.add( "wsr" );
-        standardArtifactTypes.add( "har" );
+        List temp = new ArrayList();
+        temp.add( "jar" );
+        temp.add( "ejb" );
+        temp.add( "ejb3" );
+        temp.add( "par" );
+        temp.add( "ejb-client" );
+        temp.add( "rar" );
+        temp.add( "war" );
+        temp.add( "sar" );
+        temp.add( "wsr" );
+        temp.add( "har" );
+        standardArtifactTypes = Collections.unmodifiableList(  temp );
     }
 
     /**
@@ -56,17 +59,19 @@ public final class EarModuleFactory
      *
      * @param artifact                the artifact
      * @param javaEEVersion           the javaEE version to use
-     * @param defaultLibBundleDir     the default bundle dir for {@link JarModule}
-     * @param includeInApplicationXml should {@link JarModule} be included in application Xml
+     * @param defaultLibBundleDir     the default bundle dir for {@link org.apache.maven.plugin.ear.JarModule}
+     * @param includeInApplicationXml should {@link org.apache.maven.plugin.ear.JarModule} be included in application Xml
+     * @param typeMappingService    The artifact type mapping service
      * @return an ear module for this artifact
      * @throws UnknownArtifactTypeException if the artifact is not handled
      */
     public static EarModule newEarModule( Artifact artifact, String javaEEVersion, String defaultLibBundleDir,
-                                          Boolean includeInApplicationXml )
+                                          Boolean includeInApplicationXml,
+                                          ArtifactTypeMappingService typeMappingService )
         throws UnknownArtifactTypeException
     {
         // Get the standard artifact type based on default config and user-defined mapping(s)
-        final String artifactType = ArtifactTypeMappingService.getInstance().getStandardType( artifact.getType() );
+        final String artifactType = typeMappingService.getStandardType( artifact.getType() );
 
         if ( "jar".equals( artifactType ) )
         {

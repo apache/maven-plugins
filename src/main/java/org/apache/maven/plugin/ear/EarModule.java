@@ -109,4 +109,6 @@ public interface EarModule
     public void resolveArtifact( Set artifacts )
         throws EarPluginException, MojoFailureException;
 
+    public void setEarExecutionContext(EarExecutionContext earExecutionContext);
+
 }

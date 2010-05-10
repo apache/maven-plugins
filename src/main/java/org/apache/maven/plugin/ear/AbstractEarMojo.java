@@ -159,9 +159,11 @@ public abstract class AbstractEarMojo
         throws MojoExecutionException, MojoFailureException
     {
         getLog().debug( "Resolving artifact type mappings ..." );
+        ArtifactTypeMappingService typeMappingService;
         try
         {
-            ArtifactTypeMappingService.getInstance().configure( artifactTypeMappings );
+            typeMappingService = new ArtifactTypeMappingService();
+            typeMappingService.configure( artifactTypeMappings );
         }
         catch ( EarPluginException e )
         {
@@ -183,8 +185,9 @@ public abstract class AbstractEarMojo
         }
 
         getLog().debug( "Initializing ear execution context" );
-        EarExecutionContext.getInstance().initialize( project, mainArtifactId, defaultLibBundleDir, jbossConfiguration,
-                                                      fileNameMapping );
+        EarExecutionContext earExecutionContext =
+            new EarExecutionContext( project, mainArtifactId, defaultLibBundleDir, jbossConfiguration,
+                                     fileNameMapping, typeMappingService);
 
         getLog().debug( "Resolving ear modules ..." );
         allModules = new ArrayList();
@@ -199,6 +202,7 @@ public abstract class AbstractEarMojo
                 {
                     module = modules[i];
                     getLog().debug( "Resolving ear module[" + module + "]" );
+                    module.setEarExecutionContext(  earExecutionContext );
                     module.resolveArtifact( project.getArtifacts() );
                     allModules.add( module );
                 }
@@ -224,7 +228,9 @@ public abstract class AbstractEarMojo
                     filter.include( artifact ) )
                 {
                     EarModule module = EarModuleFactory.newEarModule( artifact, version, defaultLibBundleDir,
-                                                                      includeLibInApplicationXml );
+                                                                      includeLibInApplicationXml,
+                                                                      typeMappingService);
+                    module.setEarExecutionContext( earExecutionContext );
                     allModules.add( module );
                 }
             }

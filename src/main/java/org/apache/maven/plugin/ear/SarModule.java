@@ -47,7 +47,7 @@ public class SarModule
     public void appendModule( XMLWriter writer, String version )
     {
         // If JBoss is not configured, add the module as a connector element
-        if ( !EarExecutionContext.getInstance().isJbossConfigured() )
+        if ( !earExecutionContext.isJbossConfigured() )
         {
             writer.startElement( MODULE_ELEMENT );
             writer.startElement( SAR_MODULE );
