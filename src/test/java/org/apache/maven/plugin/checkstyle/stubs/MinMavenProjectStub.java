@@ -38,17 +38,17 @@ public class MinMavenProjectStub
     extends org.apache.maven.plugin.testing.stubs.MavenProjectStub
 {
     /** {@inheritDoc} */
-    public List getCompileClasspathElements()
+    public List<String> getCompileClasspathElements()
         throws DependencyResolutionRequiredException
     {
         return Collections.singletonList( PlexusTestCase.getBasedir() + "/target/classes" );
     }
 
     /** {@inheritDoc} */
-    public List getTestClasspathElements()
+    public List<String> getTestClasspathElements()
         throws DependencyResolutionRequiredException
     {
-        List list = new ArrayList( getCompileClasspathElements() );
+        List<String> list = new ArrayList<String>( getCompileClasspathElements() );
         list.add( PlexusTestCase.getBasedir() + "/target/test-classes" );
         return list;
     }
@@ -60,7 +60,7 @@ public class MinMavenProjectStub
     }
 
     /** {@inheritDoc} */
-    public List getReportPlugins()
+    public List<ReportPlugin> getReportPlugins()
     {
         ReportPlugin jxrPlugin = new ReportPlugin();
 

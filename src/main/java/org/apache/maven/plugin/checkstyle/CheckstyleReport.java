@@ -70,11 +70,11 @@ public class CheckstyleReport
     /**
      * @deprecated Remove with format parameter.
      */
-    private static final Map FORMAT_TO_CONFIG_LOCATION;
+    private static final Map<String, String> FORMAT_TO_CONFIG_LOCATION;
 
     static
     {
-        Map fmt2Cfg = new HashMap();
+        Map<String, String> fmt2Cfg = new HashMap<String, String>();
 
         fmt2Cfg.put( "sun", "config/sun_checks.xml" );
         fmt2Cfg.put( "turbine", "config/turbine_checks.xml" );
@@ -474,7 +474,7 @@ public class CheckstyleReport
      * @readonly
      */
     private Renderer siteRenderer;
-        
+
     private ByteArrayOutputStream stringOutputStream;
 
     /**
@@ -483,7 +483,7 @@ public class CheckstyleReport
      * @readonly
      */
     private ResourceManager locator;
-    
+
     /**
      * CheckstyleRssGenerator.
      *
@@ -493,14 +493,14 @@ public class CheckstyleReport
      * @readonly
      */
     protected CheckstyleRssGenerator checkstyleRssGenerator;
-    
+
     /**
      * @since 2.5
      * @component role="org.apache.maven.plugin.checkstyle.CheckstyleExecutor" role-hint="default"
      * @required
      * @readonly
      */
-    protected CheckstyleExecutor checkstyleExecutor;    
+    protected CheckstyleExecutor checkstyleExecutor;
 
     /** {@inheritDoc} */
     public String getName( Locale locale )
@@ -572,7 +572,7 @@ public class CheckstyleReport
                     .setPropertyExpansion( propertyExpansion ).setHeaderLocation( headerLocation )
                     .setCacheFile( cacheFile ).setSuppressionsFileExpression( suppressionsFileExpression )
                     .setEncoding( encoding ).setPropertiesLocation( propertiesLocation );
-                
+
                 CheckstyleResults results = checkstyleExecutor.executeCheckstyle( request );
 
                 ResourceBundle bundle = getBundle( locale );
@@ -616,7 +616,7 @@ public class CheckstyleReport
         }
     }
 
-    
+
     private String getCopyright()
     {
         String copyright;
@@ -665,9 +665,9 @@ public class CheckstyleReport
             else
             {
                 // Not yet generated - check if the report is on its way
-                for ( Iterator reports = getProject().getReportPlugins().iterator(); reports.hasNext(); )
+                for ( Iterator<ReportPlugin> reports = getProject().getReportPlugins().iterator(); reports.hasNext(); )
                 {
-                    ReportPlugin report = (ReportPlugin) reports.next();
+                    ReportPlugin report = reports.next();
 
                     String artifactId = report.getArtifactId();
                     if ( "maven-jxr-plugin".equals( artifactId ) || "jxr-maven-plugin".equals( artifactId ) )
