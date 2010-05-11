@@ -25,7 +25,6 @@ import com.puppycrawl.tools.checkstyle.api.AuditEvent;
 import com.puppycrawl.tools.checkstyle.api.LocalizedMessage;
 
 import java.util.Collections;
-import java.util.Locale;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
@@ -73,27 +72,27 @@ public class CheckstyleResultsTest
 
     public void testResults()
     {
-        Map files = new HashMap();
+        Map<String, List<AuditEvent>> files = new HashMap<String, List<AuditEvent>>();
 
         LocalizedMessage message = new LocalizedMessage( 0, 0, "", "", null, SeverityLevel.INFO, null, getClass(), null );
         AuditEvent event = new AuditEvent( this, "file1", message );
         files.put( "file1", Collections.singletonList( event ) );
 
         message = new LocalizedMessage( 0, 0, "", "", null, SeverityLevel.WARNING, null, getClass(), null );
-        List events = new ArrayList();
+        List<AuditEvent> events = new ArrayList<AuditEvent>();
         events.add( new AuditEvent( this, "file2", message ) );
         events.add( new AuditEvent( this, "file2", message ) );
         files.put( "file2", events );
 
         message = new LocalizedMessage( 0, 0, "", "", null, SeverityLevel.ERROR, null, getClass(), null );
-        events = new ArrayList();
+        events = new ArrayList<AuditEvent>();
         events.add( new AuditEvent( this, "file3", message ) );
         events.add( new AuditEvent( this, "file3", message ) );
         events.add( new AuditEvent( this, "file3", message ) );
         files.put( "file3", events );
 
         message = new LocalizedMessage( 0, 0, "", "", null, SeverityLevel.IGNORE, null, getClass(), null );
-        events = new ArrayList();
+        events = new ArrayList<AuditEvent>();
         events.add( new AuditEvent( this, "file4", message ) );
         events.add( new AuditEvent( this, "file4", message ) );
         events.add( new AuditEvent( this, "file4", message ) );
