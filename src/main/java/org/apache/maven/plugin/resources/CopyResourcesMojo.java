@@ -30,6 +30,7 @@ import java.util.List;
  * @version $Id$
  * @goal copy-resources
  * @phase
+ * @threadSafe
  */
 public class CopyResourcesMojo
     extends ResourcesMojo
