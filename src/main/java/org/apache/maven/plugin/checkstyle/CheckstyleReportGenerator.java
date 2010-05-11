@@ -22,6 +22,7 @@ package org.apache.maven.plugin.checkstyle;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -68,7 +69,7 @@ public class CheckstyleReportGenerator
     private SiteTool siteTool;
 
     private String xrefLocation;
-    
+
     public CheckstyleReportGenerator( Sink sink, ResourceBundle bundle, File basedir, SiteTool siteTool )
     {
         this.bundle = bundle;
@@ -241,8 +242,8 @@ public class CheckstyleReportGenerator
      * @param defaultValue The default value to use if the attribute cannot be found in any configuration
      * @return The value of the specified attribute
      */
-    private String getConfigAttribute( Configuration config, List parentConfigurations, String attributeName,
-                                       String defaultValue )
+    private String getConfigAttribute( Configuration config, List<Configuration> parentConfigurations,
+                                       String attributeName, String defaultValue )
     {
         String ret;
         try
@@ -254,9 +255,8 @@ public class CheckstyleReportGenerator
             // Try to find the attribute in a parent, if there are any
             if ( parentConfigurations != null && !parentConfigurations.isEmpty() )
             {
-                Configuration parentConfiguration =
-                    (Configuration) parentConfigurations.get( parentConfigurations.size() - 1 );
-                List newParentConfigurations = new ArrayList( parentConfigurations );
+                Configuration parentConfiguration = parentConfigurations.get( parentConfigurations.size() - 1 );
+                List<Configuration> newParentConfigurations = new ArrayList<Configuration>( parentConfigurations );
                 // Remove the last parent
                 newParentConfigurations.remove( parentConfiguration );
                 ret = getConfigAttribute( parentConfiguration, newParentConfigurations, attributeName, defaultValue );
@@ -328,12 +328,13 @@ public class CheckstyleReportGenerator
      * @param parentConfigurations A List of configurations for the chain of parents to the current configuration
      * @param results The results to summarize
      */
-    private void doRuleChildren( Configuration configuration, List parentConfigurations, CheckstyleResults results )
+    private void doRuleChildren( Configuration configuration, List<Configuration> parentConfigurations,
+                                 CheckstyleResults results )
     {
         // Remember the chain of parent configurations
         if ( parentConfigurations == null )
         {
-            parentConfigurations = new ArrayList();
+            parentConfigurations = new ArrayList<Configuration>();
         }
         // The "oldest" parent will be first in the list
         parentConfigurations.add( configuration );
@@ -342,10 +343,9 @@ public class CheckstyleReportGenerator
         {
             // Log the parent configuration path
             StringBuffer parentPath = new StringBuffer();
-            Iterator iterator = parentConfigurations.iterator();
-            while ( iterator.hasNext() )
+            for ( Iterator<Configuration> iterator = parentConfigurations.iterator(); iterator.hasNext(); )
             {
-                Configuration parentConfiguration = (Configuration) iterator.next();
+                Configuration parentConfiguration = iterator.next();
                 parentPath.append( parentConfiguration.getName() );
                 if ( iterator.hasNext() )
                 {
@@ -383,23 +383,22 @@ public class CheckstyleReportGenerator
      * @param ruleName The name of the rule, for example "JavadocMethod"
      * @param results The results to summarize
      */
-    private void doRuleRow( Configuration checkerConfig, List parentConfigurations, String ruleName,
+    private void doRuleRow( Configuration checkerConfig, List<Configuration> parentConfigurations, String ruleName,
                             CheckstyleResults results )
     {
         sink.tableRow();
         sink.tableCell();
         sink.text( ruleName );
 
-        List attribnames = new ArrayList( Arrays.asList( checkerConfig.getAttributeNames() ) );
+        List<String> attribnames = new ArrayList<String>( Arrays.asList( checkerConfig.getAttributeNames() ) );
         attribnames.remove( "severity" ); // special value (deserves unique column)
         if ( !attribnames.isEmpty() )
         {
             sink.list();
-            Iterator it = attribnames.iterator();
-            while ( it.hasNext() )
+            for ( String name : attribnames )
             {
                 sink.listItem();
-                String name = (String) it.next();
+
                 sink.bold();
                 sink.text( name );
                 sink.bold_();
@@ -408,12 +407,10 @@ public class CheckstyleReportGenerator
                 // special case, Header.header and RegexpHeader.header
                 if ( "header".equals( name ) && ( "Header".equals( ruleName ) || "RegexpHeader".equals( ruleName ) ) )
                 {
-                    List lines = stringSplit( value, "\\n" );
+                    List<String> lines = stringSplit( value, "\\n" );
                     int linenum = 1;
-                    Iterator itl = lines.iterator();
-                    while ( itl.hasNext() )
+                    for ( String line : lines )
                     {
-                        String line = (String) itl.next();
                         sink.lineBreak();
                         sink.rawText( "<span style=\"color: gray\">" );
                         sink.text( linenum + ":" );
@@ -463,7 +460,7 @@ public class CheckstyleReportGenerator
         String fixedmessage = getConfigAttribute( checkerConfig, null, "message", null );
         // Grab the severity from the rule configuration, use null as default value
         String configSeverity = getConfigAttribute( checkerConfig, null, "severity", null );
-        sink.text( countRuleViolation( results.getFiles().values().iterator(), ruleName, fixedmessage,
+        sink.text( countRuleViolation( results.getFiles().values(), ruleName, fixedmessage,
                                        configSeverity ) );
         sink.tableCell_();
 
@@ -486,9 +483,9 @@ public class CheckstyleReportGenerator
      * @param delim
      * @return
      */
-    private List stringSplit( String input, String delim )
+    private List<String> stringSplit( String input, String delim )
     {
-        List ret = new ArrayList();
+        List<String> ret = new ArrayList<String>();
 
         int delimLen = delim.length();
         int offset = 0;
@@ -512,24 +509,21 @@ public class CheckstyleReportGenerator
     /**
      * Count the number of violations for the given rule.
      *
-     * @param files An iterator over the set of files that has violations
+     * @param files A collection over the set of files that has violations
      * @param ruleName The name of the rule
      * @param message A message that, if it's not null, will be matched to the message from the violation
      * @param severity A severity that, if it's not null, will be matched to the severity from the violation
      * @return The number of rule violations
      */
-    private String countRuleViolation( Iterator files, String ruleName, String message, String severity )
+    private String countRuleViolation( Collection<List<AuditEvent>> files, String ruleName, String message,
+                                       String severity )
     {
         long count = 0;
 
-        while ( files.hasNext() )
+        for ( List<AuditEvent> errors : files )
         {
-            List errors = (List) files.next();
-
-            for ( Iterator error = errors.iterator(); error.hasNext(); )
+            for ( AuditEvent event : errors )
             {
-                AuditEvent event = (AuditEvent) error.next();
-
                 String eventSrcName = event.getSourceName();
                 if ( eventSrcName != null
                         && ( eventSrcName.endsWith( ruleName )
@@ -654,13 +648,12 @@ public class CheckstyleReportGenerator
         sink.tableRow_();
 
         // Sort the files before writing them to the report
-        ArrayList fileList = new ArrayList( results.getFiles().keySet() );
+        List<String> fileList = new ArrayList<String>( results.getFiles().keySet() );
         Collections.sort( fileList );
 
-        for ( Iterator files = fileList.iterator(); files.hasNext(); )
+        for ( String filename : fileList )
         {
-            String filename = (String) files.next();
-            List violations = results.getFileViolations( filename );
+            List<AuditEvent> violations = results.getFileViolations( filename );
             if ( violations.isEmpty() )
             {
                 // skip files without violations
@@ -703,14 +696,12 @@ public class CheckstyleReportGenerator
         sink.sectionTitle1_();
 
         // Sort the files before writing their details to the report
-        ArrayList fileList = new ArrayList( results.getFiles().keySet() );
+        List<String> fileList = new ArrayList<String>( results.getFiles().keySet() );
         Collections.sort( fileList );
-        Iterator files = fileList.iterator();
 
-        while ( files.hasNext() )
+        for ( String file : fileList )
         {
-            String file = (String) files.next();
-            List violations = results.getFileViolations( file );
+            List<AuditEvent> violations = results.getFileViolations( file );
 
             if ( violations.isEmpty() )
             {
@@ -748,12 +739,10 @@ public class CheckstyleReportGenerator
         sink.section1_();
     }
 
-    private void doFileEvents( List eventList, String filename )
+    private void doFileEvents( List<AuditEvent> eventList, String filename )
     {
-        Iterator events = eventList.iterator();
-        while ( events.hasNext() )
+        for ( AuditEvent event : eventList )
         {
-            AuditEvent event = (AuditEvent) events.next();
             SeverityLevel level = event.getSeverityLevel();
 
             if ( ( getSeverityLevel() != null ) && !getSeverityLevel().equals( level ) )

@@ -28,7 +28,6 @@ import org.codehaus.plexus.util.StringUtils;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -42,16 +41,16 @@ public class CheckstyleReportListener
     extends AutomaticBean
     implements AuditListener
 {
-    private List sourceDirectories;
+    private List<File> sourceDirectories;
 
     private CheckstyleResults results;
 
     private String currentFile;
 
-    private List events;
+    private List<AuditEvent> events;
 
     private SeverityLevel severityLevel;
-    
+
     private Configuration checkstyleConfiguration;
 
     /**
@@ -59,7 +58,7 @@ public class CheckstyleReportListener
      */
     public CheckstyleReportListener( File sourceDirectory )
     {
-        this.sourceDirectories = new ArrayList();
+        this.sourceDirectories = new ArrayList<File>();
         this.sourceDirectories.add( sourceDirectory );
     }
     /**
@@ -69,10 +68,10 @@ public class CheckstyleReportListener
      */
     public CheckstyleReportListener( File sourceDirectory, Configuration configuration )
     {
-        this.sourceDirectories = new ArrayList();
+        this.sourceDirectories = new ArrayList<File>();
         this.sourceDirectories.add( sourceDirectory );
         this.checkstyleConfiguration = configuration;
-    }    
+    }
 
     /**
      * @param sourceDirectory assume that is <code>sourceDirectory</code> is a not null directory and exists
@@ -113,10 +112,8 @@ public class CheckstyleReportListener
     /** {@inheritDoc} */
     public void fileStarted( AuditEvent event )
     {
-        for ( Iterator it = sourceDirectories.iterator(); it.hasNext(); )
+        for ( File sourceDirectory : sourceDirectories )
         {
-            File sourceDirectory = (File) it.next();
-
             currentFile = StringUtils.substring( event.getFileName(), sourceDirectory.getPath().length() + 1 );
             currentFile = StringUtils.replace( currentFile, "\\", "/" );
 
@@ -125,7 +122,7 @@ public class CheckstyleReportListener
 
         if ( events == null )
         {
-            events = new ArrayList();
+            events = new ArrayList<AuditEvent>();
         }
     }
 
