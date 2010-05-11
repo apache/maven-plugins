@@ -22,6 +22,8 @@ package org.apache.maven.plugin.checkstyle.stubs;
 import java.util.List;
 import java.util.Collections;
 
+import org.apache.maven.model.ReportPlugin;
+
 /**
  * @author Edwin Punzalan
  * @version $Id$
@@ -36,7 +38,7 @@ public class MavenProjectWithNoJxrPluginStub
     }
 
     /** {@inheritDoc} */
-    public List getReportPlugins()
+    public List<ReportPlugin> getReportPlugins()
     {
         return Collections.EMPTY_LIST;
     }

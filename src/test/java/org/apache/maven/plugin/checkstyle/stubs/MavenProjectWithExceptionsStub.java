@@ -32,7 +32,7 @@ public class MavenProjectWithExceptionsStub
     extends MinMavenProjectStub
 {
     /** {@inheritDoc} */
-    public List getCompileClasspathElements()
+    public List<String> getCompileClasspathElements()
         throws DependencyResolutionRequiredException
     {
         throw new DependencyResolutionRequiredException( new ArtifactStub() );

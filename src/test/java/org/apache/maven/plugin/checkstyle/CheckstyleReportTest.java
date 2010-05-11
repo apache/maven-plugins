@@ -92,38 +92,38 @@ public class CheckstyleReportTest
     public void testCustomConfiguration()
         throws Exception
     {
-        File htmlFile = generateReport( "custom-plugin-config.xml" );
+        generateReport( "custom-plugin-config.xml" );
     }
 
     public void testUseFile()
         throws Exception
     {
-        File htmlFile = generateReport( "useFile-plugin-config.xml" );
+        generateReport( "useFile-plugin-config.xml" );
     }
 
     public void testNoRulesSummary()
         throws Exception
     {
-        File htmlFile = generateReport( "no-rules-plugin-config.xml" );
+        generateReport( "no-rules-plugin-config.xml" );
     }
 
     public void testNoSeveritySummary()
         throws Exception
     {
-        File htmlFile = generateReport( "no-severity-plugin-config.xml" );
+        generateReport( "no-severity-plugin-config.xml" );
     }
 
     public void testNoFilesSummary()
         throws Exception
     {
-        File htmlFile = generateReport( "no-files-plugin-config.xml" );
+        generateReport( "no-files-plugin-config.xml" );
     }
 
     public void testFailOnError()
     {
         try
         {
-            File htmlFile = generateReport( "fail-on-error-plugin-config.xml" );
+            generateReport( "fail-on-error-plugin-config.xml" );
 
             fail( "Must throw exception on errors" );
         }
@@ -137,7 +137,7 @@ public class CheckstyleReportTest
     {
         try
         {
-            File htmlFile = generateReport( "dep-resolution-exception-plugin-config.xml" );
+            generateReport( "dep-resolution-exception-plugin-config.xml" );
 
             fail( "Must throw exception on errors" );
         }
@@ -154,7 +154,7 @@ public class CheckstyleReportTest
     public void testTestSourceDirectory()
         throws Exception
     {
-        File htmlFile = generateReport( "test-source-directory-plugin-config.xml" );
+        generateReport( "test-source-directory-plugin-config.xml" );
     }
 
     private File generateReport( String pluginXml )
