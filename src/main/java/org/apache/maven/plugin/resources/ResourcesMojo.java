@@ -48,6 +48,8 @@ import java.util.List;
  * @version $Id$
  * @goal resources
  * @phase process-resources
+ * @threadSafe
+ * 
  */
 public class ResourcesMojo
     extends AbstractMojo
