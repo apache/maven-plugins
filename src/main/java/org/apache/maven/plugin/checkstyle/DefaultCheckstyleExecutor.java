@@ -27,7 +27,6 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
@@ -61,12 +60,12 @@ public class DefaultCheckstyleExecutor
     extends AbstractLogEnabled
     implements CheckstyleExecutor
 {
-    
+
     /**
      * @plexus.requirement role="org.codehaus.plexus.resource.ResourceManager" role-hint="default"
      */
-    private ResourceManager locator;    
-    
+    private ResourceManager locator;
+
     private static final File[] EMPTY_FILE_ARRAY = new File[0];
 
     public CheckstyleResults executeCheckstyle( CheckstyleExecutorRequest request )
@@ -100,8 +99,8 @@ public class DefaultCheckstyleExecutor
 
         // setup classloader, needed to avoid "Unable to get class information
         // for ..." errors
-        List classPathStrings = new ArrayList();
-        List outputDirectories = new ArrayList();
+        List<String> classPathStrings = new ArrayList<String>();
+        List<String> outputDirectories = new ArrayList<String>();
         try
         {
             classPathStrings = request.getProject().getCompileClasspathElements();
@@ -124,14 +123,13 @@ public class DefaultCheckstyleExecutor
             classPathStrings = Collections.EMPTY_LIST;
         }
 
-        List urls = new ArrayList( classPathStrings.size() );
+        List<URL> urls = new ArrayList<URL>( classPathStrings.size() );
 
-        Iterator iter = classPathStrings.iterator();
-        while ( iter.hasNext() )
+        for ( String path : classPathStrings )
         {
             try
             {
-                urls.add( new File( ( (String) iter.next() ) ).toURL() );
+                urls.add( new File( path ).toURL() );
             }
             catch ( MalformedURLException e )
             {
@@ -139,12 +137,10 @@ public class DefaultCheckstyleExecutor
             }
         }
 
-        Iterator iterator = outputDirectories.iterator();
-        while ( iterator.hasNext() )
+        for ( String outputDirectoryString : outputDirectories )
         {
             try
             {
-                String outputDirectoryString = (String) iterator.next();
                 if ( outputDirectoryString != null )
                 {
                     File outputDirectoryFile = new File( outputDirectoryString );
@@ -173,7 +169,7 @@ public class DefaultCheckstyleExecutor
         {
             checker.addFilter( filterSet );
         }
-        Configuration configuration = getConfiguration( request ); 
+        Configuration configuration = getConfiguration( request );
         checker.configure( configuration );
 
         AuditListener listener = request.getListener();
@@ -197,7 +193,7 @@ public class DefaultCheckstyleExecutor
 
         checker.addListener( sinkListener );
 
-        ArrayList filesList = new ArrayList();
+        List<File> filesList = new ArrayList<File>();
         for ( int i = 0; i < files.length; i++ )
         {
             filesList.add( files[i] );
@@ -297,8 +293,8 @@ public class DefaultCheckstyleExecutor
                 if ( getLogger().isDebugEnabled() )
                 {
                     getLogger().debug( "request.getPropertiesLocation() " + request.getPropertiesLocation() );
-                }                
-                
+                }
+
                 File propertiesFile = locator.getResourceAsFile( request.getPropertiesLocation(),
                                                                  "checkstyle-checker.properties" );
 
@@ -331,8 +327,8 @@ public class DefaultCheckstyleExecutor
             if ( getLogger().isDebugEnabled() )
             {
                 getLogger().debug( "headerLocation " + headerLocation );
-            } 
-            
+            }
+
             if ( StringUtils.isNotEmpty( headerLocation ) )
             {
                 try
@@ -351,7 +347,7 @@ public class DefaultCheckstyleExecutor
                 catch ( ResourceNotFoundException e )
                 {
                     throw new CheckstyleExecutorException( "Unable to process header location: " + headerLocation, e );
-                }                
+                }
             }
 
             if ( request.getCacheFile() != null )
@@ -370,7 +366,7 @@ public class DefaultCheckstyleExecutor
         catch ( ResourceNotFoundException e )
         {
             throw new CheckstyleExecutorException( "Failed to get overriding properties", e );
-        } 
+        }
         if ( request.getSuppressionsFileExpression() != null )
         {
             String suppresionFile = request.getSuppressionsFileExpression();
@@ -409,13 +405,14 @@ public class DefaultCheckstyleExecutor
         {
             return EMPTY_FILE_ARRAY;
         }
-        
-        List files = FileUtils.getFiles( request.getSourceDirectory(), request.getIncludes(), excludesStr.toString() );
+
+        List<File> files =
+            FileUtils.getFiles( request.getSourceDirectory(), request.getIncludes(), excludesStr.toString() );
         if ( request.isIncludeTestSourceDirectory() && ( request.getTestSourceDirectory() != null )
             && ( request.getTestSourceDirectory().exists() ) && ( request.getTestSourceDirectory().isDirectory() ) )
         {
-            files.addAll( FileUtils.getFiles( request.getTestSourceDirectory(), request.getIncludes(), excludesStr
-                .toString() ) );
+            files.addAll( FileUtils.getFiles( request.getTestSourceDirectory(), request.getIncludes(),
+                                              excludesStr.toString() ) );
         }
 
         return (File[]) files.toArray( EMPTY_FILE_ARRAY );
@@ -460,12 +457,12 @@ public class DefaultCheckstyleExecutor
             File parent = request.getProject().getFile().getParentFile();
             if (parent != null)
             {
-                // MCHECKSTYLE-131 ( olamy ) I don't like this hack. what's happened if this is defined in parent/parent pom 
+                // MCHECKSTYLE-131 ( olamy ) I don't like this hack. what's happened if this is defined in parent/parent pom
                 // it will breaks
                 locator.addSearchPath( FileResourceLoader.ID, request.getProject().getFile().getParentFile().getAbsolutePath() );
             }
             locator.addSearchPath( "url", "" );
-            
+
             File configFile = locator.getResourceAsFile( request.getConfigLocation(), "checkstyle-checker.xml" );
 
             if ( configFile == null )

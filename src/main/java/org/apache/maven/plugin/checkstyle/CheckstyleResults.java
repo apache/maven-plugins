@@ -24,7 +24,6 @@ import com.puppycrawl.tools.checkstyle.api.Configuration;
 import com.puppycrawl.tools.checkstyle.api.SeverityLevel;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -38,43 +37,43 @@ import java.util.Map;
  */
 public class CheckstyleResults
 {
-    private Map files;
-    
+    private Map<String, List<AuditEvent>> files;
+
     private Configuration configuration;
 
     public CheckstyleResults()
     {
-        files = new HashMap();
+        files = new HashMap<String, List<AuditEvent>>();
     }
 
-    public List getFileViolations( String file )
+    public List<AuditEvent> getFileViolations( String file )
     {
-        List violations;
+        List<AuditEvent> violations;
 
         if ( this.files.containsKey( file ) )
         {
-            violations = (List) this.files.get( file );
+            violations = this.files.get( file );
         }
         else
         {
-            violations = new LinkedList();
+            violations = new LinkedList<AuditEvent>();
             this.files.put( file, violations );
         }
 
         return violations;
     }
 
-    public void setFileViolations( String file, List violations )
+    public void setFileViolations( String file, List<AuditEvent> violations )
     {
         this.files.put( file, violations );
     }
 
-    public Map getFiles()
+    public Map<String, List<AuditEvent>> getFiles()
     {
         return files;
     }
 
-    public void setFiles( Map files )
+    public void setFiles( Map<String, List<AuditEvent>> files )
     {
         this.files = files;
     }
@@ -88,12 +87,8 @@ public class CheckstyleResults
     {
         long count = 0;
 
-        Iterator it = this.files.values().iterator();
-
-        while ( it.hasNext() )
+        for ( List<AuditEvent> errors : this.files.values() )
         {
-            List errors = (List) it.next();
-
             count = count + getSeverityCount( errors, level );
         }
 
@@ -109,23 +104,19 @@ public class CheckstyleResults
             return count;
         }
 
-        List violations = (List) this.files.get( file );
+        List<AuditEvent> violations = this.files.get( file );
 
         count = getSeverityCount( violations, level );
 
         return count;
     }
 
-    public long getSeverityCount( List violations, SeverityLevel level )
+    public long getSeverityCount( List<AuditEvent> violations, SeverityLevel level )
     {
         long count = 0;
 
-        Iterator it = violations.iterator();
-
-        while ( it.hasNext() )
+        for ( AuditEvent event : violations )
         {
-            AuditEvent event = (AuditEvent) it.next();
-
             if ( event.getSeverityLevel().equals( level ) )
             {
                 count++;

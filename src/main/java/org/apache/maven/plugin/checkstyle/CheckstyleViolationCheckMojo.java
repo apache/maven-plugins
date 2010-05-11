@@ -32,8 +32,6 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.resource.ResourceManager;
-import org.codehaus.plexus.resource.loader.FileResourceLoader;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.pull.MXParser;
@@ -110,14 +108,14 @@ public class CheckstyleViolationCheckMojo
      * @since 2.2
      */
     private boolean skip;
-    
+
     /**
      * Skip checktyle execution will only scan the outputFile.
      *
      * @parameter expression="${checkstyle.skipExec}" default-value="false"
      * @since 2.5
      */
-    private boolean skipExec;    
+    private boolean skipExec;
 
     /**
      * Output the detected violations to the console.
@@ -126,7 +124,7 @@ public class CheckstyleViolationCheckMojo
      * @since 2.3
      */
     private boolean logViolationsToConsole;
-    
+
     /**
      * <p>
      * Specifies the location of the XML configuration to use.
@@ -161,7 +159,7 @@ public class CheckstyleViolationCheckMojo
      * @parameter expression="${checkstyle.config.location}"
      *            default-value="config/sun_checks.xml"
      */
-    private String configLocation;    
+    private String configLocation;
 
     /**
      * <p>
@@ -186,14 +184,14 @@ public class CheckstyleViolationCheckMojo
      * @since 2.5
      */
     private String propertiesLocation;
-    
+
     /**
      * Allows for specifying raw property expansion information.
      *
      * @parameter
      */
     private String propertyExpansion;
-    
+
     /**
      * <p>
      * Specifies the location of the License file (a.k.a. the header file) that
@@ -219,15 +217,15 @@ public class CheckstyleViolationCheckMojo
      *            default-value="LICENSE.txt"
      * @since 2.0-beta-2
      */
-    private String headerLocation;    
-    
+    private String headerLocation;
+
     /**
      * Specifies the cache file used to speed up Checkstyle on successive runs.
      *
      * @parameter default-value="${project.build.directory}/checkstyle-cachefile"
      */
-    private String cacheFile;    
-    
+    private String cacheFile;
+
     /**
      * The key to be used in the properties for the suppressions file.
      *
@@ -235,8 +233,8 @@ public class CheckstyleViolationCheckMojo
      *            default-value="checkstyle.suppressions.file"
      * @since 2.1
      */
-    private String suppressionsFileExpression;    
- 
+    private String suppressionsFileExpression;
+
     /**
      * <p>
      * Specifies the location of the suppressions XML file to use.
@@ -257,8 +255,8 @@ public class CheckstyleViolationCheckMojo
      * @parameter expression="${checkstyle.suppressions.location}"
      * @since 2.0-beta-2
      */
-    private String suppressionsLocation;    
-    
+    private String suppressionsLocation;
+
     /**
      * The file encoding to use when reading the source files. If the property <code>project.build.sourceEncoding</code>
      * is not set, the platform default encoding is used. <strong>Note:</strong> This parameter always overrides the
@@ -267,23 +265,23 @@ public class CheckstyleViolationCheckMojo
      * @parameter expression="${encoding}" default-value="${project.build.sourceEncoding}"
      * @since 2.2
      */
-    private String encoding;    
-    
+    private String encoding;
+
     /**
      * @since 2.5
      * @component role="org.apache.maven.plugin.checkstyle.CheckstyleExecutor" role-hint="default"
      * @required
      * @readonly
      */
-    protected CheckstyleExecutor checkstyleExecutor;    
-    
+    protected CheckstyleExecutor checkstyleExecutor;
+
     /**
      * Output errors to console.
      *
      * @parameter default-value="false"
      */
-    private boolean consoleOutput;    
-    
+    private boolean consoleOutput;
+
     /**
      * The Maven Project Object.
      *
@@ -307,8 +305,8 @@ public class CheckstyleViolationCheckMojo
      *
      * @parameter expression="${checkstyle.excludes}"
      */
-    private String excludes;    
-    
+    private String excludes;
+
     /**
      * Specifies the names filter of the source files to be used for Checkstyle.
      *
@@ -316,14 +314,14 @@ public class CheckstyleViolationCheckMojo
      * @required
      */
     private String includes;
-    
+
     /**
      * Specifies if the build should fail upon a violation.
      *
      * @parameter default-value="false"
      */
-    private boolean failsOnError;    
-    
+    private boolean failsOnError;
+
     /**
      * Specifies the location of the test source directory to be used for
      * Checkstyle.
@@ -339,24 +337,24 @@ public class CheckstyleViolationCheckMojo
      * @parameter default-value="${false}"
      * @since 2.2
      */
-    private boolean includeTestSourceDirectory;    
-    
+    private boolean includeTestSourceDirectory;
+
     /**
      * Specifies the location of the source directory to be used for Checkstyle.
      *
      * @parameter default-value="${project.build.sourceDirectory}"
      * @required
      */
-    private File sourceDirectory;    
-    
+    private File sourceDirectory;
+
     private ByteArrayOutputStream stringOutputStream;
-    
-    
+
+
     /** {@inheritDoc} */
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        
+
         if ( !skip )
         {
 
@@ -394,7 +392,7 @@ public class CheckstyleViolationCheckMojo
                     //be sure to restore original context classloader
                     Thread.currentThread().setContextClassLoader( currentClassLoader );
                 }
-            
+
             }
             if ( !"xml".equals( outputFileFormat ) )
             {
@@ -409,7 +407,7 @@ public class CheckstyleViolationCheckMojo
                                    + "unable to find checkstyle:checkstyle outputFile." );
                 return;
             }
-           
+
             try
             {
                 XmlPullParser xpp = new MXParser();
@@ -487,7 +485,7 @@ public class CheckstyleViolationCheckMojo
 
     /**
      * Checks if the given severity is considered a violation.
-     * 
+     *
      * @param severity The severity to check
      * @return <code>true</code> if the given severity is a violation, otherwise <code>false</code>
      */
@@ -581,5 +579,5 @@ public class CheckstyleViolationCheckMojo
 
         return listener;
     }
-    
+
 }

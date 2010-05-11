@@ -26,7 +26,6 @@ import junit.framework.TestCase;
 
 import java.io.File;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -36,13 +35,13 @@ import java.util.Map;
 public class CheckstyleReportListenerTest
     extends TestCase
 {
-    private Map listenerMap;
+    private Map<SeverityLevel, CheckstyleReportListener> listenerMap;
 
     /** {@inheritDoc} */
     protected void setUp()
         throws Exception
     {
-        listenerMap = new HashMap();
+        listenerMap = new HashMap<SeverityLevel, CheckstyleReportListener>();
 
         CheckstyleReportListener listener = new CheckstyleReportListener( new File( "/source/path" ) );
         listener.setSeverityLevelFilter( SeverityLevel.INFO );
@@ -140,50 +139,40 @@ public class CheckstyleReportListenerTest
 
     private void fireAuditStarted( AuditEvent event )
     {
-        for ( Iterator listeners = listenerMap.values().iterator(); listeners.hasNext(); )
+        for ( CheckstyleReportListener listener : listenerMap.values() )
         {
-            CheckstyleReportListener listener = (CheckstyleReportListener) listeners.next();
-
             listener.auditStarted( event );
         }
     }
 
     private void fireAuditFinished( AuditEvent event )
     {
-        for ( Iterator listeners = listenerMap.values().iterator(); listeners.hasNext(); )
+        for ( CheckstyleReportListener listener : listenerMap.values() )
         {
-            CheckstyleReportListener listener = (CheckstyleReportListener) listeners.next();
-
             listener.auditFinished( event );
         }
     }
 
     private void fireFileStarted( AuditEvent event )
     {
-        for ( Iterator listeners = listenerMap.values().iterator(); listeners.hasNext(); )
+        for ( CheckstyleReportListener listener : listenerMap.values() )
         {
-            CheckstyleReportListener listener = (CheckstyleReportListener) listeners.next();
-
             listener.fileStarted( event );
         }
     }
 
     private void fireFileFinished( AuditEvent event )
     {
-        for ( Iterator listeners = listenerMap.values().iterator(); listeners.hasNext(); )
+        for ( CheckstyleReportListener listener : listenerMap.values() )
         {
-            CheckstyleReportListener listener = (CheckstyleReportListener) listeners.next();
-
             listener.fileFinished( event );
         }
     }
 
     private void fireAddError( AuditEvent event )
     {
-        for ( Iterator listeners = listenerMap.values().iterator(); listeners.hasNext(); )
+        for ( CheckstyleReportListener listener : listenerMap.values() )
         {
-            CheckstyleReportListener listener = (CheckstyleReportListener) listeners.next();
-
             listener.addError( event );
         }
     }
