@@ -30,6 +30,8 @@ import java.util.List;
  * @version $Id$
  * @goal testResources
  * @phase process-test-resources
+ * @threadSafe
+ * 
  */
 public class TestResourcesMojo
     extends ResourcesMojo
