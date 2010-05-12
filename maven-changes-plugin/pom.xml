@@ -111,17 +111,17 @@ under the License.
       <artifactId>maven-settings</artifactId>
       <version>${mavenVersion}</version>
     </dependency>
-    <dependency>
-      <groupId>org.apache.maven.reporting</groupId>
-      <artifactId>maven-reporting-api</artifactId>
-      <version>${mavenVersion}</version>
-    </dependency>
 
     <!-- shared -->
     <dependency>
       <groupId>org.apache.maven.reporting</groupId>
+      <artifactId>maven-reporting-api</artifactId>
+      <version>3.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.reporting</groupId>
       <artifactId>maven-reporting-impl</artifactId>
-      <version>2.0.4.3</version>
+      <version>2.0.5</version>
     </dependency>
 
     <!-- plexus -->
