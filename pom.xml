@@ -169,6 +169,12 @@ under the License.
   </properties>
 
   <dependencies>
+    <dependency>
+      <groupId>org.apache.maven.reporting</groupId>
+      <artifactId>maven-reporting-api</artifactId>
+      <version>3.0</version>
+    </dependency>
+
     <!-- Maven -->
     <dependency>
       <groupId>org.apache.maven</groupId>
@@ -198,11 +204,6 @@ under the License.
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-settings</artifactId>
-      <version>${mavenVersion}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven.reporting</groupId>
-      <artifactId>maven-reporting-api</artifactId>
       <version>${mavenVersion}</version>
     </dependency>
 
