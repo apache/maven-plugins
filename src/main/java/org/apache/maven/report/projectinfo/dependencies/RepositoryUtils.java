@@ -165,6 +165,8 @@ public class RepositoryUtils
             return false;
         }
 
+        repo = wagonManager.getMirrorRepository( repo );
+        
         String id = repo.getId();
         Repository repository = new Repository( id, repo.getUrl() );
 
