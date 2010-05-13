@@ -1,6 +1,7 @@
 import java.io.*;
 import java.util.*;
 import java.util.regex.*;
+import org.codehaus.plexus.util.*;
 
 try
 {
@@ -33,6 +34,17 @@ try
             return false;
         }
     }
+    
+    File maillist = new File( siteDir, "mail-lists.html");
+    FileInputStream fis = new FileInputStream ( maillist );
+    String downloadContent = IOUtil.toString ( fis, "UTF-8" );
+    int indexOf = downloadContent.indexOf( "mail list intro text foo" );
+    if ( indexOf < 0)
+    {
+        System.err.println( "mail-lists.html doesn't contain mail list intro text foo" );
+        return false;
+    }    
+    
 }
 catch( Throwable t )
 {
