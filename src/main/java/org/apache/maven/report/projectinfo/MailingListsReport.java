@@ -19,16 +19,16 @@ package org.apache.maven.report.projectinfo;
  * under the License.
  */
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.model.MailingList;
 import org.apache.maven.model.Model;
 import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.util.StringUtils;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
 
 /**
  * Generates the Mailing List report.
@@ -42,6 +42,18 @@ import java.util.Locale;
 public class MailingListsReport
     extends AbstractProjectInfoReport
 {
+    
+    
+
+    /**
+     * This can override the header text of the mailing list(s) report
+     *
+     * @parameter
+     * @since 2.2
+     */
+    protected String introduction;    
+    
+    
     // ----------------------------------------------------------------------
     // Public methods
     // ----------------------------------------------------------------------
@@ -49,7 +61,7 @@ public class MailingListsReport
     /** {@inheritDoc} */
     public void executeReport( Locale locale )
     {
-        MailingListsRenderer r = new MailingListsRenderer( getSink(), getProject().getModel(), i18n, locale );
+        MailingListsRenderer r = new MailingListsRenderer( getSink(), getProject().getModel(), i18n, locale, introduction );
 
         r.render();
     }
@@ -78,12 +90,16 @@ public class MailingListsReport
         private Model model;
 
         private static final String[] EMPTY_STRING_ARRAY = new String[0];
+        
+        private String introduction;
 
-        MailingListsRenderer( Sink sink, Model model, I18N i18n, Locale locale )
+        MailingListsRenderer( Sink sink, Model model, I18N i18n, Locale locale, String introduction )
         {
             super( sink, i18n, locale );
 
             this.model = model;
+            
+            this.introduction = introduction;
         }
 
         protected String getI18Nsection()
@@ -110,8 +126,15 @@ public class MailingListsReport
 
             startSection( getTitle() );
 
-            paragraph( getI18nString( "intro" ) );
-
+            if ( StringUtils.isNotBlank( introduction ) )
+            {
+                paragraph( introduction );
+            }
+            else
+            {
+                paragraph( getI18nString( "intro" ) );
+            }
+            
             startTable();
 
             // To beautify the display with other archives
