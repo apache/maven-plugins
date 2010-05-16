@@ -24,7 +24,7 @@ under the License.
     <groupId>org.apache.maven</groupId>
     <artifactId>maven-parent</artifactId>
     <version>16</version>
-    <relativePath>../pom/maven/pom.xml</relativePath>
+    <relativePath>../../pom/maven/pom.xml</relativePath>
   </parent>
 
   <groupId>org.apache.maven.plugins</groupId>
@@ -110,59 +110,10 @@ under the License.
     </mailingList>
   </mailingLists>
 
-  <modules>
-    <module>maven-ant-plugin</module>
-    <module>maven-antrun-plugin</module>
-
-    <!-- HACK: Deliberately put before other plugins that employ maven-antrun-plugin to workaround MNG-1323 -->
-    <module>maven-eclipse-plugin</module>
-
-    <!-- Excluded due to ongoing failures <module>maven-assembly-plugin</module> -->
-    <module>maven-changelog-plugin</module>
-    <module>maven-changes-plugin</module>
-    <module>maven-checkstyle-plugin</module>
-    <module>maven-clean-plugin</module>
-    <module>maven-compiler-plugin</module>
-    <module>maven-dependency-plugin</module>
-    <module>maven-deploy-plugin</module>
-    <module>maven-doap-plugin</module>
-    <module>maven-docck-plugin</module>
-    <module>maven-ear-plugin</module>
-    <module>maven-ejb-plugin</module>
-    <module>maven-gpg-plugin</module>
-    <module>maven-help-plugin</module>
-    <module>maven-idea-plugin</module>
-    <module>maven-install-plugin</module>
-    <module>maven-invoker-plugin</module>
-    <module>maven-jar-plugin</module>
-    <module>maven-jarsigner-plugin</module>
-    <module>maven-javadoc-plugin</module>
-    <module>maven-linkcheck-plugin</module>
-    <module>maven-one-plugin</module>
-    <module>maven-patch-plugin</module>
-    <module>maven-pdf-plugin</module>
-    <module>maven-pmd-plugin</module>
-    <!--Excluded as a workaround for MNG-3814
-    <module>maven-project-info-reports-plugin</module>-->
-    <module>maven-rar-plugin</module>
-    <module>maven-reactor-plugin</module>
-    <!--Excluded as a workaround for MNG-3814
-    <module>maven-remote-resources-plugin</module-->
-    <module>maven-repository-plugin</module>
-    <module>maven-resources-plugin</module>
-    <module>maven-shade-plugin</module>
-    <module>maven-site-plugin</module>
-    <module>maven-source-plugin</module>
-    <module>maven-stage-plugin</module>
-    <module>maven-toolchains-plugin</module>
-    <module>maven-verifier-plugin</module>
-    <module>maven-war-plugin</module>
-  </modules>
-
   <scm>
-    <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/trunk/</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/trunk/</developerConnection>
-    <url>http://svn.apache.org/viewvc/maven/plugins/trunk/</url>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-plugins/</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/trunk/maven-plugins/</developerConnection>
+    <url>http://svn.apache.org/viewvc/maven/plugins/trunk/maven-plugins/</url>
   </scm>
   <distributionManagement>
     <site>
@@ -290,44 +241,5 @@ under the License.
         </plugins>
       </reporting>
     </profile>
-    <profile>
-      <id>parent-release</id>
-      <build>
-        <plugins>
-          <plugin>
-            <artifactId>maven-release-plugin</artifactId>
-            <configuration>
-              <arguments>-N -Papache-release</arguments>
-            </configuration>
-          </plugin>
-          <plugin>
-            <artifactId>maven-assembly-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>source-release-assembly</id>
-                <configuration>
-                  <descriptorRefs>
-                    <descriptorRef>src</descriptorRef>
-                  </descriptorRefs>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-    <profile>
-      <id>maven-3</id> 
-      <activation>
-        <file>
-          <!--  This employs that the basedir expression is only recognized by Maven 3.x (see MNG-2363) --> 
-          <exists>${basedir}</exists> 
-        </file>
-      </activation>
-      <modules>
-        <module>maven-project-info-reports-plugin</module>
-        <module>maven-remote-resources-plugin</module>
-      </modules>
-    </profile> 
   </profiles>
 </project>
