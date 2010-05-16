@@ -40,6 +40,9 @@ import java.util.jar.JarOutputStream;
 
 import org.codehaus.plexus.util.StringUtils;
 
+/**
+ * Merges <code>META-INF/NOTICE.TXT</code> files.
+ */
 public class ApacheNoticeResourceTransformer
     implements ResourceTransformer
 {
