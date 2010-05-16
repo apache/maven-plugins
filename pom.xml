@@ -1,0 +1,103 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.apache.maven</groupId>
+    <artifactId>maven-parent</artifactId>
+    <version>16</version>
+    <relativePath>../pom/maven/pom.xml</relativePath>
+  </parent>
+
+  <groupId>org.apache.maven.plugins</groupId>
+  <artifactId>maven-plugins-aggregator</artifactId>
+  <version>1-SNAPSHOT</version>
+  <packaging>pom</packaging>
+
+  <name>Maven Plugins Aggregator</name>
+  <description>Maven Plugins Aggregator</description>
+
+  <modules>
+    <module>maven-plugins</module>
+    <module>maven-ant-plugin</module>
+    <module>maven-antrun-plugin</module>
+
+    <!-- HACK: Deliberately put before other plugins that employ maven-antrun-plugin to workaround MNG-1323 -->
+    <module>maven-eclipse-plugin</module>
+
+    <!-- Excluded due to ongoing failures <module>maven-assembly-plugin</module> -->
+    <module>maven-changelog-plugin</module>
+    <module>maven-changes-plugin</module>
+    <module>maven-checkstyle-plugin</module>
+    <module>maven-clean-plugin</module>
+    <module>maven-compiler-plugin</module>
+    <module>maven-dependency-plugin</module>
+    <module>maven-deploy-plugin</module>
+    <module>maven-doap-plugin</module>
+    <module>maven-docck-plugin</module>
+    <module>maven-ear-plugin</module>
+    <module>maven-ejb-plugin</module>
+    <module>maven-gpg-plugin</module>
+    <module>maven-help-plugin</module>
+    <module>maven-idea-plugin</module>
+    <module>maven-install-plugin</module>
+    <module>maven-invoker-plugin</module>
+    <module>maven-jar-plugin</module>
+    <module>maven-jarsigner-plugin</module>
+    <module>maven-javadoc-plugin</module>
+    <module>maven-linkcheck-plugin</module>
+    <module>maven-one-plugin</module>
+    <module>maven-patch-plugin</module>
+    <module>maven-pdf-plugin</module>
+    <module>maven-pmd-plugin</module>
+    <!--Excluded as a workaround for MNG-3814
+    <module>maven-project-info-reports-plugin</module>-->
+    <module>maven-rar-plugin</module>
+    <module>maven-reactor-plugin</module>
+    <!--Excluded as a workaround for MNG-3814
+    <module>maven-remote-resources-plugin</module-->
+    <module>maven-repository-plugin</module>
+    <module>maven-resources-plugin</module>
+    <module>maven-shade-plugin</module>
+    <module>maven-site-plugin</module>
+    <module>maven-source-plugin</module>
+    <module>maven-stage-plugin</module>
+    <module>maven-toolchains-plugin</module>
+    <module>maven-verifier-plugin</module>
+    <module>maven-war-plugin</module>
+  </modules>
+
+  <profiles>
+    <profile>
+      <id>maven-3</id> 
+      <activation>
+        <file>
+          <!--  This employs that the basedir expression is only recognized by Maven 3.x (see MNG-2363) --> 
+          <exists>${basedir}</exists> 
+        </file>
+      </activation>
+      <modules>
+        <module>maven-project-info-reports-plugin</module>
+        <module>maven-remote-resources-plugin</module>
+      </modules>
+    </profile> 
+  </profiles>
+</project>
