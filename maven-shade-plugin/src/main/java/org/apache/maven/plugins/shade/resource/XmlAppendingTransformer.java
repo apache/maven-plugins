@@ -39,6 +39,9 @@ import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+/**
+ * Appends multiple occurrences of some XML file.
+ */
 public class XmlAppendingTransformer
     implements ResourceTransformer
 {
