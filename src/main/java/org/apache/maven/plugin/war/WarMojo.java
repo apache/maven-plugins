@@ -42,6 +42,7 @@ import java.util.Arrays;
  * @version $Id$
  * @goal war
  * @phase package
+ * @threadSafe
  * @requiresDependencyResolution runtime
  */
 public class WarMojo

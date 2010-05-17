@@ -27,6 +27,7 @@ import org.apache.maven.plugin.MojoFailureException;
  *
  * @goal exploded
  * @phase package
+ * @threadSafe
  * @requiresDependencyResolution runtime
  * @version $Id$
  */

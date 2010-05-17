@@ -40,6 +40,7 @@ import java.io.PrintWriter;
  * @version $Id$
  * @goal manifest
  * @phase process-resources
+ * @threadSafe
  * @requiresDependencyResolution runtime
  */
 public class WarManifestMojo
