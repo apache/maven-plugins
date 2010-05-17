@@ -69,21 +69,24 @@ under the License.
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
-      <artifactId>maven-archiver</artifactId>
-      <version>2.2</version>
-      <exclusions>
-        <exclusion> <!-- Just a small workaround until archiver can be released without dangerous plexus-io version -->
-          <groupId>org.codehaus.plexus</groupId>
-          <artifactId>plexus-archiver</artifactId>
-        </exclusion>
-      </exclusions>
+      <artifactId>maven-core</artifactId>
+      <version>2.0.6</version>
     </dependency>
-    <dependency> <!-- part of the same workaround. Remove this dep when uprading maven-archiver -->
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-archiver</artifactId>
+      <version>2.4.1</version>
+    </dependency>
+    <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-archiver</artifactId>
       <version>1.0</version>
     </dependency>
-
+   <dependency>
+      <groupId>org.codehaus.plexus</groupId>
+      <artifactId>plexus-container-default</artifactId>
+      <version>1.0-alpha-9-stable-1</version>
+    </dependency>
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-utils</artifactId>
@@ -106,6 +109,12 @@ under the License.
       <version>1.2</version>
       <scope>test</scope>
     </dependency>
+   <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+   </dependency>
   </dependencies>
 
   <build>
