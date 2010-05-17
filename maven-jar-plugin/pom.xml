@@ -29,7 +29,7 @@ under the License.
   </parent>
 
   <artifactId>maven-jar-plugin</artifactId>
-  <version>2.3.1</version>
+  <version>2.4-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
   <name>Maven JAR Plugin</name>
@@ -53,9 +53,9 @@ under the License.
   </prerequisites>
 
   <scm>
-    <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/tags/maven-jar-plugin-2.3.1</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/tags/maven-jar-plugin-2.3.1</developerConnection>
-    <url>http://svn.apache.org/viewvc/maven/plugins/tags/maven-jar-plugin-2.3.1</url>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-jar-plugin/</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/trunk/maven-jar-plugin/</developerConnection>
+    <url>http://svn.apache.org/viewvc/maven/plugins/trunk/maven-jar-plugin/</url>
   </scm>
   <issueManagement>
     <system>JIRA</system>
