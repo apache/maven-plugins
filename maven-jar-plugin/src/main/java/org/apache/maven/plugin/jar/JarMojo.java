@@ -29,6 +29,7 @@ import java.io.File;
  * @goal jar
  * @phase package
  * @requiresProject
+ * @threadSafe
  * @requiresDependencyResolution runtime
  */
 public class JarMojo

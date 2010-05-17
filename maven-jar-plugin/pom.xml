@@ -25,7 +25,7 @@ under the License.
   <parent>
     <artifactId>maven-plugins</artifactId>
     <groupId>org.apache.maven.plugins</groupId>
-    <version>17</version>
+    <version>18</version>
   </parent>
 
   <artifactId>maven-jar-plugin</artifactId>
@@ -91,12 +91,12 @@ under the License.
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-archiver</artifactId>
-      <version>2.4</version>
+      <version>2.4.1</version>
     </dependency>
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-archiver</artifactId>
-      <version>1.0-alpha-12</version>
+      <version>1.0</version>
       <exclusions>
         <exclusion>
           <groupId>org.codehaus.plexus</groupId>
@@ -116,7 +116,7 @@ under the License.
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-utils</artifactId>
-      <version>1.4.9</version>
+      <version>2.0.5</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.plugin-testing</groupId>
