@@ -30,6 +30,7 @@ import org.apache.maven.plugin.MojoExecutionException;
  * @goal test-jar
  * @phase package
  * @requiresProject
+ * @threadSafe
  * @requiresDependencyResolution test
  */
 public class TestJarMojo
