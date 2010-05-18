@@ -43,3 +43,5 @@ mvn site
  would generate the project information documentation. For more information on
  how to customize the Project Information Reports Plugin, check the examples on the
  {{{./index.html}Introduction}} page.
+
+ <Note:> This plugin requires Maven Site Plugin 2.1 or higher to work properly.
