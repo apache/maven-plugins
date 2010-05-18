@@ -31,6 +31,8 @@ Maven Project Info Reports Plugin
 
  The Maven Project Info Reports plugin is used to generate reports information about the project.
 
+ <Note:> This plugin requires Maven Site Plugin 2.1 or higher to work properly.
+
 * Goals Overview
 
  The Project Info Reports Plugin has thirteen goals:
