@@ -36,6 +36,7 @@
           <implementation>fo</implementation>
           <aggregate>true</aggregate>
           <generateTOC>start</generateTOC>
+          <validate>true</validate>
         </configuration>
       </plugin>
     </plugins>
