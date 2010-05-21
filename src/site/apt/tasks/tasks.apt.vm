@@ -39,4 +39,6 @@ Ant Tasks
 *---------------+--------------------------------------------------------+
 | {{{./dependencyFilesets.html}dependencyfilesets}}   | Creates a fileset for each of the Maven project dependencies and adds them to the Ant build   | 
 *---------------+--------------------------------------------------------+
+| {{{./versionMapper.html}versionMapper}}     | Mapper to remove version from artifact filenames   | 
+*---------------+--------------------------------------------------------+
    
