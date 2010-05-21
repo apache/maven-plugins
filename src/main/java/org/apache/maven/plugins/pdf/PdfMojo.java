@@ -331,6 +331,17 @@ public class PdfMojo
      */
     private String generateTOC;
 
+    /**
+     * Whether to validate xml input documents.
+     * If set to true, <strong>all</strong> input documents in xml format
+     * (in particular xdoc and fml) will be validated and any error will
+     * lead to a build failure.
+     *
+     * @parameter expression="${validate}" default-value="false"
+     * @since 1.2
+     */
+    private boolean validate;
+
     // ----------------------------------------------------------------------
     // Instance fields
     // ----------------------------------------------------------------------
@@ -537,6 +548,7 @@ public class PdfMojo
             context.put( "StringUtils", new StringUtils() );
             context.put( "i18n", i18n );
             context.put( "generateTOC", generateTOC );
+            context.put( "validate", Boolean.valueOf( validate ) );
 
             try
             {
