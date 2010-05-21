@@ -35,9 +35,8 @@ Ant Tasks
 *-----------------------------------------------------+--------------------------------------------------------+
 || Task                                               || Description                                           |
 *---------------+--------------------------------------------------------+
+| {{{./attachArtifact.html}attachartifact}}   | Attach an artifact to the current Maven project   | 
+*---------------+--------------------------------------------------------+
 | {{{./dependencyFilesets.html}dependencyfilesets}}   | Creates a fileset for each of the Maven project dependencies and adds them to the Ant build   | 
 *---------------+--------------------------------------------------------+
-  
-  * {{{./dependencyFilesets.html}dependencyfilesets}} Creates a filesets for the current
-      Maven project dependencies and adds them to the Ant build.
- 
+   
