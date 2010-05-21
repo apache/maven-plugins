@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <antlib>
 
+  <taskdef name="attachartifact" classname="org.apache.maven.ant.tasks.AttachArtifactTask"/>
   <taskdef name="dependencyfilesets" classname="org.apache.maven.ant.tasks.DependencyFilesetsTask"/>
 
 </antlib>
