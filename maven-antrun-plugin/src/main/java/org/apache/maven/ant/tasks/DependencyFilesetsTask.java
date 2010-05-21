@@ -29,13 +29,15 @@ import org.apache.maven.ant.tasks.support.TypesArtifactFilter;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.filter.AndArtifactFilter;
+import org.apache.maven.plugin.antrun.AbstractAntMojo;
 import org.apache.maven.project.MavenProject;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.types.FileSet;
 
 /**
- * Ant task which create a fileset for each dependency in a Maven project.
+ * Ant task which create a fileset for each dependency in a Maven project, and a 
+ * fileset containing all selected dependencies.
  * 
  * @author pgier
  */
@@ -43,14 +45,12 @@ public class DependencyFilesetsTask
     extends Task
 {
 
-    public final static String DEFAULT_MAVEN_PROJECT_REFID = "maven.project";
-
     public final static String DEFAULT_PROJECT_DEPENDENCIES_ID = "maven.project.dependencies";
 
     /**
      * The project ref Id of the project being used.
      */
-    private String mavenProjectId = DEFAULT_MAVEN_PROJECT_REFID;
+    private String mavenProjectId = AbstractAntMojo.DEFAULT_MAVEN_PROJECT_REFID;
 
     /**
      * The id to store the dependencies fileset.

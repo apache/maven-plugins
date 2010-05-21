@@ -56,6 +56,11 @@ public abstract class AbstractAntMojo
 {
 
     /**
+     * The refid used to store the Maven project object in the Ant build.
+     */
+    public final static String DEFAULT_MAVEN_PROJECT_REFID = "maven.project";
+
+    /**
      * The path to The XML file containing the definition of the Maven tasks.
      */
     public final static String ANTLIB = "org/apache/maven/ant/tasks/antlib.xml";
@@ -169,7 +174,7 @@ public abstract class AbstractAntMojo
             /* set maven.plugin.classpath with plugin dependencies */
             antProject.addReference( "maven.plugin.classpath", getPathFromArtifacts( pluginArtifacts, antProject ) );
             
-            antProject.addReference( "maven.project", getMavenProject() );
+            antProject.addReference( DEFAULT_MAVEN_PROJECT_REFID, getMavenProject() );
             antProject.addReference( "maven.local.repository", localRepository );
             initMavenTasks( antProject );
             
