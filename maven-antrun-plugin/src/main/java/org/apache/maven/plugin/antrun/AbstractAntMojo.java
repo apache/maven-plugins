@@ -108,6 +108,14 @@ public abstract class AbstractAntMojo
     private String taskNamespace;
     
     /**
+     * The name of a property containing the list of all dependency versions.
+     * This is used for the removing the versions from the filenames.
+     * 
+     * @parameter default-value="maven.project.dependencies.versions"
+     */
+    private String versionsPropertyName;
+    
+    /**
      * @deprecated use {@link AbstractAntMojo#executeTasks(Target,MavenProject,List)}.
      */
     /*protected void executeTasks( Target antTasks, MavenProject mavenProject )
@@ -272,7 +280,7 @@ public abstract class AbstractAntMojo
         antProject.setProperty( ( propertyPrefix + "project.build.testSourceDirectory" ), mavenProject.getBuild().getTestSourceDirectory() );
         
         // Add properties for depenedency artifacts
-        Set depArtifacts = mavenProject.getDependencyArtifacts();
+        Set depArtifacts = mavenProject.getArtifacts();
         for ( Iterator it = depArtifacts.iterator(); it.hasNext(); )
         {
             Artifact artifact = (Artifact) it.next();
@@ -282,7 +290,19 @@ public abstract class AbstractAntMojo
             antProject.setProperty( propertyPrefix + propName, artifact.getFile().getPath() );
         }
         
+        // Add a property containing the list of versions for the mapper
+        StringBuffer versionsBuffer = new StringBuffer();
+        for ( Iterator it = depArtifacts.iterator(); it.hasNext(); )
+        {
+            Artifact artifact = (Artifact) it.next();
+
+            versionsBuffer.append( artifact.getVersion() + File.pathSeparator );
+        }
+        antProject.setProperty( versionsPropertyName, versionsBuffer.toString() );
+        
+        
         // Add properties in deprecated format to depenedency artifacts
+        // This should be removed in future versions of the antrun plugin.
         for ( Iterator it = depArtifacts.iterator(); it.hasNext(); )
         {
             Artifact artifact = (Artifact) it.next();
