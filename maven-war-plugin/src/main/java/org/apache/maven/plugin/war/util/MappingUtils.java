@@ -38,6 +38,7 @@ import org.codehaus.plexus.interpolation.ValueSource;
  * The expression might use any field of the {@link Artifact} interface. Some
  * examples might be:
  * <ul>
+ * <li>@{artifactId}@-@{version}@@{dashClassifier?}@.@{extension}@</li>
  * <li>@{artifactId}@-@{version}@.@{extension}@</li>
  * <li>@{artifactId}@.@{extension}@</li>
  * </ul>
@@ -69,6 +70,19 @@ public class MappingUtils
 
         Properties classifierMask = new Properties();
         classifierMask.setProperty( "classifier", "" );
+
+        // Support for special expressions, like @{dashClassifier?}@, see MWAR-212
+        String classifier = artifact.getClassifier();
+        if ( classifier != null )
+        {
+            classifierMask.setProperty( "dashClassifier?", "-" + classifier );
+            classifierMask.setProperty( "dashClassifier", "-" + classifier );
+        }
+        else
+        {
+            classifierMask.setProperty( "dashClassifier?", "" );
+            classifierMask.setProperty( "dashClassifier", "" );
+        }
 
         interpolator.addValueSource( new PropertiesBasedValueSource ( classifierMask ) );
 

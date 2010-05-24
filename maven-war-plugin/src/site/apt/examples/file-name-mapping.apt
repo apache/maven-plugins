@@ -2,8 +2,9 @@
  Using File Name Mapping
  ------
  Stephane Nicoll
+ Dennis Lundberg
  ------
- 2008-08-03
+ 2010-05-24
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
 ~~ or more contributor license agreements.  See the NOTICE file
@@ -34,18 +35,26 @@ Using File Name Mapping
 @{artifactId}@-@{version}@.@{extension}@
 +-----
 
- If the artifact has a classifier it is of course:
+ If the artifact has a classifier the default pattern is of course:
 
 +-----
 @{artifactId}@-@{version}@-@{classifier}@.@{extension}@
 +-----
 
  The <<<outputFileNameMapping>>> parameter allows you to give a custom pattern. Each token defined in the
- pattern will be replaced with the value for the current artifact. You can use any property of Artifact and
- ArtifactHandler as a token.
+ pattern will be replaced with a value from the current artifact. You can use any property of Artifact and
+ ArtifactHandler as a token. There is also a special token named <<<dashClassifier?>>> that can be used.
+ It will add the string "-yourclassifier" if and only if the artifact has a classifier.
 
- For instance, to store the libraries and TLDs without version numbers, use the following pattern:
+ For instance, to store the libraries and TLDs without version numbers or classifiers, use the following pattern:
 
 +-----
 @{artifactId}@.@{extension}@
++-----
+
+ To store the libraries and TLDs without version numbers but with classifiers
+ (if they exist), use the following pattern:
+
++-----
+@{artifactId}@@{dashClassifier?}@.@{extension}@
 +-----

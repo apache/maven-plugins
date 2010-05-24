@@ -82,6 +82,34 @@ public class MappingUtilsTest
                       MappingUtils.evaluateFileNameMapping( AbstractWarMojo.DEFAULT_FILE_NAME_MAPPING_CLASSIFIER, jar ) );
     }
 
+    /**
+     * Test for MWAR-212.
+     */
+    public void testMappingWithOptionalClassifier()
+        throws MojoExecutionException, InterpolationException
+    {
+        final String MAPPING_WITH_OPTIONAL_CLASSIFIER_1 = "@{artifactId}@-@{version}@@{dashClassifier}@.@{extension}@";
+        final String MAPPING_WITH_OPTIONAL_CLASSIFIER_2 = "@{artifactId}@-@{version}@@{dashClassifier?}@.@{extension}@";
+
+        TestArtifactStub jar = new TestArtifactStub();
+        jar.setGroupId( "org.apache.sample" );
+        jar.setArtifactId( "maven-test-lib" );
+        jar.setVersion( "1.0" );
+        assertEquals( "maven-test-lib-1.0.jar",
+                      MappingUtils.evaluateFileNameMapping( MAPPING_WITH_OPTIONAL_CLASSIFIER_1, jar ) );
+        assertEquals( "maven-test-lib-1.0.jar",
+                      MappingUtils.evaluateFileNameMapping( MAPPING_WITH_OPTIONAL_CLASSIFIER_2, jar ) );
+
+        jar = new TestArtifactStub();
+        jar.setGroupId( "org.apache.sample" );
+        jar.setArtifactId( "maven-test-lib" );
+        jar.setVersion( "1.0" );
+        jar.setClassifier( "classifier" );
+        assertEquals( "maven-test-lib-1.0-classifier.jar",
+                      MappingUtils.evaluateFileNameMapping( MAPPING_WITH_OPTIONAL_CLASSIFIER_1, jar ) );
+        assertEquals( "maven-test-lib-1.0-classifier.jar",
+                      MappingUtils.evaluateFileNameMapping( MAPPING_WITH_OPTIONAL_CLASSIFIER_2, jar ) );
+    }
 
     // A very dumb stub used to test the mappings
     class TestArtifactStub
