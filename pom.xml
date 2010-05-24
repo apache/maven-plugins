@@ -25,7 +25,7 @@ under the License.
   <parent>
     <groupId>org.apache.maven.plugins</groupId>
     <artifactId>maven-plugins</artifactId>
-    <version>16</version>
+    <version>18</version>
   </parent>
 
   <artifactId>maven-site-plugin</artifactId>
@@ -368,10 +368,6 @@ under the License.
 
   <reporting>
     <plugins>
-      <plugin>
-        <artifactId>maven-plugin-plugin</artifactId>
-        <version>2.5</version>
-      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-project-info-reports-plugin</artifactId>
