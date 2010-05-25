@@ -2,12 +2,9 @@ package org.apache.maven.ant.tasks;
 
 import java.io.File;
 
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.handler.ArtifactHandler;
-import org.apache.maven.artifact.handler.DefaultArtifactHandler;
 import org.apache.maven.plugin.antrun.AbstractAntMojo;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.project.artifact.AttachedArtifact;
+import org.apache.maven.project.MavenProjectHelper;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
@@ -32,13 +29,19 @@ import org.codehaus.plexus.util.FileUtils;
  * under the License.
  */
 
-public class AttachArtifactTask extends Task
+public class AttachArtifactTask
+    extends Task
 {
 
     /**
      * The refId of the maven project.
      */
     private String mavenProjectRefId = AbstractAntMojo.DEFAULT_MAVEN_PROJECT_REFID;
+
+    /**
+     * The refId of the maven project helper component.
+     */
+    private String mavenProjectHelperRefId = AbstractAntMojo.DEFAULT_MAVEN_PROJECT_HELPER_REFID;
 
     /**
      * The file to attach.
@@ -77,20 +80,22 @@ public class AttachArtifactTask extends Task
             type = FileUtils.getExtension( file.getName() );
         }
         
-        MavenProject mavenProject = (MavenProject) this.getProject().getReference( "maven.project" );
+        MavenProject mavenProject = (MavenProject) this.getProject().getReference( mavenProjectRefId );
 
         if ( classifier == null )
         {
-            mavenProject.setFile( file );
+            mavenProject.getArtifact().setFile( file );
         }
         else
         {
-            ArtifactHandler handler = new DefaultArtifactHandler( type );
-            Artifact artifact = new AttachedArtifact(mavenProject.getArtifact(), type, classifier, handler);
-            artifact.setFile( file );
-            artifact.setResolved( true );
+            if ( this.getProject().getReference( mavenProjectHelperRefId ) == null )
+            {
+                throw new BuildException( "Maven project helper reference not found: " + mavenProjectHelperRefId );
+            }
+
             log( "Attaching " + file + " as an attached artifact", Project.MSG_VERBOSE );
-            mavenProject.addAttachedArtifact( artifact );
+            MavenProjectHelper projectHelper = (MavenProjectHelper) getProject().getReference( mavenProjectHelperRefId );
+            projectHelper.attachArtifact( mavenProject, type, classifier, file );
         }
     }
 
