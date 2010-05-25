@@ -2,13 +2,9 @@ package org.apache.maven.ant.tasks;
 
 import java.io.File;
 
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.handler.ArtifactHandler;
-import org.apache.maven.artifact.handler.DefaultArtifactHandler;
 import org.apache.maven.plugin.antrun.AbstractAntMojo;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
-import org.apache.maven.project.artifact.AttachedArtifact;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
@@ -33,7 +29,8 @@ import org.codehaus.plexus.util.FileUtils;
  * under the License.
  */
 
-public class AttachArtifactTask extends Task
+public class AttachArtifactTask
+    extends Task
 {
 
     /**
@@ -97,7 +94,7 @@ public class AttachArtifactTask extends Task
             }
 
             log( "Attaching " + file + " as an attached artifact", Project.MSG_VERBOSE );
-            MavenProjectHelper projectHelper = (MavenProjectHelper)getProject().getReference( mavenProjectHelperRefId );
+            MavenProjectHelper projectHelper = (MavenProjectHelper) getProject().getReference( mavenProjectHelperRefId );
             projectHelper.attachArtifact( mavenProject, type, classifier, file );
         }
     }
