@@ -33,7 +33,8 @@ Referencing the Maven Classpaths
  to a dependency with groupId "org.apache" and artifactId "common-util", the following could be used.
 
 ------
-<echo message="Dependency JAR Path: $ {org.apache:common-util:jar}"/> 
+#set( $D = '$' )
+<echo message="Dependency JAR Path: ${D}{org.apache:common-util:jar}"/> 
 ------
  
  Note that the old format "maven.dependency.groupId.artifactId[.classifier].type.path" has been deprecated
