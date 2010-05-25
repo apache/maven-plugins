@@ -81,7 +81,7 @@ public class AttachArtifactTask extends Task
 
         if ( classifier == null )
         {
-            mavenProject.setFile( file );
+            mavenProject.getArtifact().setFile( file );
         }
         else
         {
