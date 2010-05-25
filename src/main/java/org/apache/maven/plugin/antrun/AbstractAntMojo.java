@@ -34,6 +34,7 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.antrun.components.AntTargetConverter;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.MavenProjectHelper;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DefaultLogger;
 import org.apache.tools.ant.Project;
@@ -61,6 +62,11 @@ public abstract class AbstractAntMojo
     public final static String DEFAULT_MAVEN_PROJECT_REFID = "maven.project";
 
     /**
+     * The refid used to store the Maven project object in the Ant build.
+     */
+    public final static String DEFAULT_MAVEN_PROJECT_HELPER_REFID = "maven.project.helper";
+
+    /**
      * The path to The XML file containing the definition of the Maven tasks.
      */
     public final static String ANTLIB = "org/apache/maven/ant/tasks/antlib.xml";
@@ -77,6 +83,13 @@ public abstract class AbstractAntMojo
      * @readonly
      */
     private MavenProject project;
+
+    /**
+     * The Maven project helper object
+     *
+     * @component
+     */
+    private MavenProjectHelper projectHelper;
 
     /**
      * The plugin dependencies.
@@ -183,6 +196,7 @@ public abstract class AbstractAntMojo
             antProject.addReference( "maven.plugin.classpath", getPathFromArtifacts( pluginArtifacts, antProject ) );
             
             antProject.addReference( DEFAULT_MAVEN_PROJECT_REFID, getMavenProject() );
+            antProject.addReference( DEFAULT_MAVEN_PROJECT_HELPER_REFID, projectHelper );
             antProject.addReference( "maven.local.repository", localRepository );
             initMavenTasks( antProject );
             
