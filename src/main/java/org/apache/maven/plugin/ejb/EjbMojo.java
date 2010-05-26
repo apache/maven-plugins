@@ -22,13 +22,19 @@ package org.apache.maven.plugin.ejb;
 import org.apache.maven.archiver.MavenArchiveConfiguration;
 import org.apache.maven.archiver.MavenArchiver;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
+import org.apache.maven.shared.filtering.MavenFileFilter;
+import org.apache.maven.shared.filtering.MavenFilteringException;
+import org.apache.maven.shared.filtering.MavenResourcesExecution;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
 import org.codehaus.plexus.archiver.jar.ManifestException;
+import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.xml.XmlStreamReader;
 
 import java.io.File;
 import java.io.IOException;
@@ -196,6 +202,55 @@ public class EjbMojo
     private MavenArchiveConfiguration archive = new MavenArchiveConfiguration();
 
     /**
+     * To escape interpolated value with windows path.
+     * c:\foo\bar will be replaced with c:\\foo\\bar.
+     *
+     * @parameter default-value="false" expression="${ejb.escapeBackslashesInFilePath}"
+     * @since 2.2.2
+     */
+    private boolean escapeBackslashesInFilePath;
+
+    /**
+     * An expression preceded with this String won't be interpolated.
+     * \${foo} will be replaced with ${foo}.
+     *
+     * @parameter expression="${ejb.escapeString}"
+     * @since 2.2.2
+     */
+    protected String escapeString;
+
+    /**
+     * To filter the deployment descriptor.
+     *
+     * @parameter default-value="false" expression="${ejb.filterDeploymentDescriptor}"
+     * @since 2.2.2
+     */
+    private boolean filterDeploymentDescriptor;
+
+    /**
+     * Filters (properties files) to include during the interpolation of the deployment descriptor.
+     *
+     * @parameter
+     * @since 2.2.2
+     */
+    private List filters;
+
+    /**
+     * @component role="org.apache.maven.shared.filtering.MavenFileFilter" role-hint="default"
+     * @required
+     * @since 2.2.2
+     */
+    private MavenFileFilter mavenFileFilter;
+
+    /**
+     * @parameter expression="${session}"
+     * @readonly
+     * @required
+     * @since 2.2.2
+     */
+    private MavenSession session;
+
+    /**
      * Generates an EJB jar and optionally an ejb-client jar.
      *
      * @todo Add license files in META-INF directory.
@@ -245,6 +300,25 @@ public class EjbMojo
 
             if ( deploymentDescriptor.exists() )
             {
+                // EJB-34 Filter ejb-jar.xml
+                if ( filterDeploymentDescriptor )
+                {
+                    getLog().debug( "Filtering deployment descriptor." );
+                    MavenResourcesExecution mavenResourcesExecution = new MavenResourcesExecution();
+                    mavenResourcesExecution.setEscapeString( escapeString );
+                    List filterWrappers = mavenFileFilter.getDefaultFilterWrappers( project, filters,
+                                                                                    escapeBackslashesInFilePath,
+                                                                                    this.session,
+                                                                                    mavenResourcesExecution );
+
+                    // Create a temporary file that we can copy-and-filter
+                    File unfilteredDeploymentDescriptor = new File( outputDirectory, EJB_JAR_XML + ".unfiltered" );
+                    FileUtils.copyFile( deploymentDescriptor, unfilteredDeploymentDescriptor );
+                    mavenFileFilter.copyFile( unfilteredDeploymentDescriptor, deploymentDescriptor, true,
+                                              filterWrappers, getEncoding( unfilteredDeploymentDescriptor ) );
+                    // Remove the temporary file
+                    FileUtils.forceDelete( unfilteredDeploymentDescriptor );
+                }
                 archiver.getArchiver().addFile( deploymentDescriptor, EJB_JAR_XML );
             }
 
@@ -266,6 +340,10 @@ public class EjbMojo
         catch ( DependencyResolutionRequiredException e )
         {
             throw new MojoExecutionException( "There was a problem creating the EJB archive: " + e.getMessage(), e );
+        }
+        catch ( MavenFilteringException e )
+        {
+            throw new MojoExecutionException( "There was a problem filtering the deployment descriptor: " + e.getMessage(), e );
         }
 
         // Handle the classifier if necessary
@@ -370,6 +448,20 @@ public class EjbMojo
         }
 
         return new File( basedir, finalName + classifier + ".jar" );
+    }
+
+    /**
+     * Get the encoding from an XML-file.
+     *
+     * @param xmlFile the XML-file
+     * @return The encoding of the XML-file, or UTF-8 if it's not specified in the file
+     * @throws IOException if an error occurred while reading the file
+     */
+    private String getEncoding( File xmlFile )
+        throws IOException
+    {
+        XmlStreamReader xmlReader = new XmlStreamReader( xmlFile );
+        return xmlReader.getEncoding();
     }
 
 }

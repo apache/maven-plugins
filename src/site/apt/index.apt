@@ -62,6 +62,8 @@ Maven EJB Plugin
   To provide you with better understanding on some usages of the Maven EJB Plugin,
   you can take a look into the following examples:
 
+  * {{{./examples/filter-deployment-descriptor.html}Filter the deployment descriptor}}
+
   * {{{./examples/generating-ejb-client.html}Generating an EJB client}}
 
   * {{{./examples/ejb-client-dependency.html}Using the ejb-client as a dependency}}

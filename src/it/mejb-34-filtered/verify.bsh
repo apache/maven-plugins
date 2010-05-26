@@ -1,0 +1,53 @@
+import java.io.*;
+import java.util.*;
+import java.util.jar.*;
+import java.util.regex.*;
+import java.util.zip.ZipEntry;
+import org.codehaus.plexus.util.IOUtil;
+
+try
+{
+    File file = new File( basedir, "target/mejb-34-filtered-1.0.jar" );
+    System.out.println( "Checking for existence of " + file );
+    if ( !file.isFile() )
+    {
+        System.out.println( "FAILURE! Missing JAR file" );
+        return false;
+    }
+
+    JarFile jarFile = new JarFile( file );
+
+    ZipEntry zipEntry = jarFile.getEntry( "META-INF/ejb-jar.xml" );
+    if ( zipEntry == null )
+    {
+        System.out.println( "FAILURE! Missing META-INF/ejb-jar.xml in the JAR file" );
+        return false;
+    }
+    else
+    {
+        InputStream is = jarFile.getInputStream( zipEntry );
+        String contents = IOUtil.toString ( is, "UTF-8" );
+        int index = contents.indexOf( "myKey" );
+        if ( index >= 0 )
+        {
+            System.out.println( "FAILURE! The key 'myKey' has not been replaced during filtering" );
+            return false;
+        }
+        index = contents.indexOf( "myValue" );
+        if ( index < 0 )
+        {
+            System.out.println( "FAILURE! The value 'myValue' has not been injected during filtering" );
+            return false;
+        }
+        is.close();
+    }
+
+    jarFile.close();
+}
+catch( Throwable t )
+{
+    t.printStackTrace();
+    return false;
+}
+
+return true;
