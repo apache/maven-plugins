@@ -19,18 +19,32 @@ specific language governing permissions and limitations
 under the License.
 -->
 
-<project xmlns="http://maven.apache.org/DECORATION/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/DECORATION/1.0.0 http://maven.apache.org/xsd/decoration-1.0.0.xsd">
-  <body>
-    <menu name="Overview">
-      <item name="Introduction" href="index.html"/>
-      <item name="Goals" href="plugin-info.html"/>
-      <item name="Usage" href="usage.html"/>
-      <item name="FAQ" href="faq.html"/>
-    </menu>
-    <menu name="Examples">
-      <item name="Filter the deployment descriptor" href="examples/filter-deployment-descriptor.html" />
-      <item name="Generating an EJB client" href="examples/generating-ejb-client.html" />
-      <item name="Using the ejb-client as a dependency" href="examples/ejb-client-dependency.html"/>
-    </menu>
-  </body>
+<project>
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>org.apache.maven.its.ejb</groupId>
+  <artifactId>mejb-34-filtered</artifactId>
+  <version>1.0</version>
+  <packaging>ejb</packaging>
+
+  <name>Maven Integration Test :: mejb-34</name> 
+  <description>Test an EJB generation</description>
+
+  <properties>
+    <myKey>myValue</myKey>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-ejb-plugin</artifactId>
+        <version>@project.version@</version>
+        <configuration>
+          <filterDeploymentDescriptor>true</filterDeploymentDescriptor>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>

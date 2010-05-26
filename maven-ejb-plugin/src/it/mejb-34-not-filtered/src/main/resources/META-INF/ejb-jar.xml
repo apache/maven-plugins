@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ejb-jar>
+  <enterprise-beans>
+    <session>
+      <ejb-name>Hello</ejb-name>
+      <home>org.apache.maven.mejb34.HelloHome</home>
+      <remote>org.apache.maven.mejb34.Hello</remote>
+      <ejb-class>org.apache.maven.mejb34.HelloBean</ejb-class>
+      <session-type>Stateless</session-type>
+      <transaction-type>Container</transaction-type>
+      <env-entry>
+        <description>This includes a property @myKey@.</description>
+        <env-entry-name>name</env-entry-name>
+        <env-entry-type>java.lang.String</env-entry-type>
+        <env-entry-value>value</env-entry-value>
+      </env-entry>
+    </session>
+  </enterprise-beans>
+  <assembly-descriptor>
+    <container-transaction>
+      <method>
+        <ejb-name>Hello</ejb-name>
+        <method-name>*</method-name>
+      </method>
+      <trans-attribute>Required</trans-attribute>
+    </container-transaction>
+  </assembly-descriptor>
+</ejb-jar>
