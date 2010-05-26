@@ -46,6 +46,7 @@ import org.codehaus.plexus.util.SelectorUtils;
  * @author Daniel Kulp
  * @goal sign
  * @phase verify
+ * @threadSafe
  */
 public class GpgSignAttachedMojo
     extends AbstractGpgMojo

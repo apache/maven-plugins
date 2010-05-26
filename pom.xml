@@ -25,7 +25,7 @@ under the License.
   <parent>
     <artifactId>maven-plugins</artifactId>
     <groupId>org.apache.maven.plugins</groupId>
-    <version>17</version>
+    <version>18</version>
   </parent>
 
   <artifactId>maven-gpg-plugin</artifactId>
@@ -79,7 +79,7 @@ under the License.
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-utils</artifactId>
-      <version>2.0.1</version>
+      <version>2.0.5</version>
     </dependency>
   </dependencies>
 

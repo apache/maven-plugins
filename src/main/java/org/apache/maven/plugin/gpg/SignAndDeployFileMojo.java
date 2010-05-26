@@ -55,6 +55,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
  * @author Daniel Kulp
  * @goal sign-and-deploy-file
  * @requiresProject false
+ * @threadSafe
  * @since 1.0-beta-4
  */
 public class SignAndDeployFileMojo
