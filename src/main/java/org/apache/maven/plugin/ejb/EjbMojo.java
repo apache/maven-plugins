@@ -47,6 +47,7 @@ import java.util.List;
  * @version $Id$
  * @goal ejb
  * @requiresDependencyResolution runtime
+ * @threadSafe
  * @phase package
  */
 public class EjbMojo
