@@ -74,8 +74,7 @@ public class ListRepositoriesMojo extends AbstractResolveMojo
 			}
 		} catch (ArtifactResolutionException e)
 		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new MojoExecutionException("Unable to resolve artifacts",e);
 		}
 	}
 
