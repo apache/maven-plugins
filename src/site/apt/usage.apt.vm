@@ -67,3 +67,13 @@ mvn verify -Dgpg.passphrase=thephrase
 +----------+
 
   If you don't specify a passphrase, it will prompt for one.
+
+  <Note:> When using the GPG Plugin in combination with the Maven Release Plugin, you might need to specify the passphrase
+  like this:
+
++----------+
+mvn release:perform -Darguments=-Dgpg.passphrase=thephrase
++----------+
+
+  This accounts for the fact, that the Release Plugin forks Maven and system properties of the current Maven session are
+  unfortunately not automatically propagated to the forked Maven session (see also {{{http://jira.codehaus.org/browse/MGPG-9}MGPG-9}}.
