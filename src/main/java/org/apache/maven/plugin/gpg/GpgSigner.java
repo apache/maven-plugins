@@ -160,6 +160,9 @@ public class GpgSigner
         InputStream in = null;
         if ( null != passphrase )
         {
+            // make --passphrase-fd effective in gpg2
+            cmd.createArg().setValue( "--batch" );
+
             cmd.createArg().setValue( "--passphrase-fd" );
 
             cmd.createArg().setValue( "0" );
