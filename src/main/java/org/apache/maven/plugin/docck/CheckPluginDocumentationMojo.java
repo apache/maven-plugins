@@ -45,6 +45,7 @@ import java.util.List;
  * @goal check
  * @aggregator
  * @phase validate
+ * @threadSafe
  */
 public class CheckPluginDocumentationMojo
     extends AbstractCheckDocumentationMojo

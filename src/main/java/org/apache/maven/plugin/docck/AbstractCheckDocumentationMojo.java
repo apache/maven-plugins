@@ -60,6 +60,7 @@ import java.util.Map;
  * reused for other types of projects, too.
  *
  * @author jdcasey
+ * @threadSafe
  */
 public abstract class AbstractCheckDocumentationMojo
     extends AbstractMojo
