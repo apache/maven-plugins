@@ -51,10 +51,10 @@ public class ArtifactsPackagingTask
     private final String id;
 
 
-    public ArtifactsPackagingTask( Set artifacts )
+    public ArtifactsPackagingTask( Set artifacts, Overlay currentProjectOverlay )
     {
         this.artifacts = artifacts;
-        this.id = Overlay.currentProjectInstance().getId();
+        this.id = currentProjectOverlay.getId();
     }
 
 

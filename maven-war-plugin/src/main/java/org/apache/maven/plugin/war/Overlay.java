@@ -47,8 +47,6 @@ public class Overlay
 
     public static final String[] DEFAULT_EXCLUDES = new String[]{"META-INF/MANIFEST.MF"};
 
-    private static Overlay currentProjectInstance;
-
     private String id;
 
     private String groupId;
@@ -95,19 +93,11 @@ public class Overlay
         return ( groupId == null && artifactId == null );
     }
 
-    /**
-     * Creates an overlay of the current project.
-     *
-     * @return the current project as an overlay
-     */
-    public static Overlay currentProjectInstance()
+    public static Overlay createInstance()
     {
-        if ( currentProjectInstance == null )
-        {
-            currentProjectInstance = new Overlay();
-            currentProjectInstance.setId( "currentBuild" );
-        }
-        return currentProjectInstance;
+        Overlay overlay = new Overlay();
+        overlay.setId( "currentBuild" );
+        return overlay;
     }
 
     // Getters and Setters

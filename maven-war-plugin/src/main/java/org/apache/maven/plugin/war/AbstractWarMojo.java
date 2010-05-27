@@ -313,6 +313,14 @@ public abstract class AbstractWarMojo
 
     private final WebappStructureSerializer webappStructureSerialier = new WebappStructureSerializer();
 
+    private final Overlay currentProjectOverlay = Overlay.createInstance();
+
+
+    public Overlay getCurrentProjectOverlay()
+    {
+        return currentProjectOverlay;
+    }
+
     /**
      * Returns a string array of the excludes to be used
      * when copying the content of the war source directory.
@@ -431,7 +439,7 @@ public abstract class AbstractWarMojo
         getLog().info( "Assembling webapp[" + project.getArtifactId() + "] in [" + webappDirectory + "]" );
 
         final OverlayManager overlayManager =
-            new OverlayManager( overlays, project, dependentWarIncludes, dependentWarExcludes );
+            new OverlayManager( overlays, project, dependentWarIncludes, dependentWarExcludes, currentProjectOverlay );
         final List packagingTasks = getPackagingTasks( overlayManager );
         List defaultFilterWrappers = null;
         try
@@ -499,11 +507,12 @@ public abstract class AbstractWarMojo
             Overlay overlay = (Overlay) it.next();
             if ( overlay.isCurrentProject() )
             {
-                packagingTasks.add( new WarProjectPackagingTask( webResources, webXml, containerConfigXML ) );
+                packagingTasks.add( new WarProjectPackagingTask( webResources, webXml, containerConfigXML,
+                                                                 currentProjectOverlay ) );
             }
             else
             {
-                packagingTasks.add( new OverlayPackagingTask( overlay ) );
+                packagingTasks.add( new OverlayPackagingTask( overlay, currentProjectOverlay ) );
             }
         }
         return packagingTasks;

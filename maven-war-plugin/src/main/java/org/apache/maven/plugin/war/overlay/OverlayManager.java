@@ -57,10 +57,12 @@ public class OverlayManager
      * @param project         the maven project
      * @param defaultIncludes the default includes to use
      * @param defaultExcludes the default excludes to use
+     * @param currentProjectOverlay the overlay for the current project
      * @throws InvalidOverlayConfigurationException
      *          if the config is invalid
      */
-    public OverlayManager( List overlays, MavenProject project, String defaultIncludes, String defaultExcludes )
+    public OverlayManager( List overlays, MavenProject project, String defaultIncludes, String defaultExcludes,
+                           Overlay currentProjectOverlay )
         throws InvalidOverlayConfigurationException
     {
         this.overlays = new ArrayList();
@@ -73,7 +75,7 @@ public class OverlayManager
         this.artifactsOverlays = getOverlaysAsArtifacts();
 
         // Initialize
-        initialize( defaultIncludes, defaultExcludes );
+        initialize( defaultIncludes, defaultExcludes, currentProjectOverlay );
 
     }
 
@@ -111,10 +113,11 @@ public class OverlayManager
      *
      * @param defaultIncludes the default includes to use
      * @param defaultExcludes the default excludes to use
+     * @param currentProjectOverlay  the overlay for the current project
      * @throws InvalidOverlayConfigurationException
      *          if the configuration is invalid
      */
-    void initialize( String defaultIncludes, String defaultExcludes )
+    void initialize( String defaultIncludes, String defaultExcludes, Overlay currentProjectOverlay )
         throws InvalidOverlayConfigurationException
     {
 
@@ -132,7 +135,7 @@ public class OverlayManager
             // If it's the current project, return the project instance
             if ( overlay.isCurrentProject() )
             {
-                overlay = Overlay.currentProjectInstance();
+                overlay = currentProjectOverlay;
                 it.set( overlay );
             }
             // default includes/excludes - only if the overlay uses the default settings
@@ -169,12 +172,12 @@ public class OverlayManager
         while ( it3.hasNext() )
         {
             Overlay overlay = (Overlay) it3.next();
-            if ( overlay.equals( Overlay.currentProjectInstance() ) )
+            if ( overlay.equals( currentProjectOverlay ) )
             {
                 return;
             }
         }
-        overlays.add( 0, Overlay.currentProjectInstance() );
+        overlays.add( 0, currentProjectOverlay );
     }
 
     /**
