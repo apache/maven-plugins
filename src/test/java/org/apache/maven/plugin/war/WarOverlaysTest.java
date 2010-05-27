@@ -249,7 +249,7 @@ public class WarOverlaysTest
         final List overlays = new ArrayList();
 
         // Add the default project explicitely
-        overlays.add( Overlay.currentProjectInstance() );
+        overlays.add( mojo.getCurrentProjectOverlay() );
 
         // Other overlays
         overlays.add( new DefaultOverlay( overlay1 ) );
@@ -341,7 +341,7 @@ public class WarOverlaysTest
         mojo.addOverlay( over1 );
         mojo.addOverlay( over2 );
         mojo.addOverlay( over3 );
-        mojo.addOverlay( Overlay.currentProjectInstance() );
+        mojo.addOverlay( mojo.getCurrentProjectOverlay());
         mojo.addOverlay( over4 );
 
         final List assertedFiles = new ArrayList();
@@ -411,7 +411,7 @@ public class WarOverlaysTest
         mojo.addOverlay( over1 );
         mojo.addOverlay( over2 );
         mojo.addOverlay( over3 );
-        mojo.addOverlay( Overlay.currentProjectInstance() );
+        mojo.addOverlay( mojo.getCurrentProjectOverlay() );
         mojo.addOverlay( over4 );
 
         final List assertedFiles = new ArrayList();

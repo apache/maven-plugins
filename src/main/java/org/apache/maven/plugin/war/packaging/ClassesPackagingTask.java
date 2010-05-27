@@ -45,6 +45,12 @@ import java.io.IOException;
 public class ClassesPackagingTask
     extends AbstractWarPackagingTask
 {
+    private final Overlay currentProjectOverlay;
+
+    public ClassesPackagingTask( Overlay currentProjectOverlay )
+    {
+        this.currentProjectOverlay = currentProjectOverlay;
+    }
 
     public void performPackaging( WarPackagingContext context )
         throws MojoExecutionException
@@ -66,7 +72,7 @@ public class ClassesPackagingTask
                 final PathSet sources = getFilesToIncludes( context.getClassesDirectory(), null, null );
                 try
                 {
-                    copyFiles( Overlay.currentProjectInstance().getId(), context, context.getClassesDirectory(),
+                    copyFiles( currentProjectOverlay.getId(), context, context.getClassesDirectory(),
                                sources, CLASSES_PATH, false );
                 }
                 catch ( IOException e )
@@ -98,7 +104,7 @@ public class ClassesPackagingTask
         }
         final String targetFilename = LIB_PATH + archiveName;
 
-        if ( context.getWebappStructure().registerFile( Overlay.currentProjectInstance().getId(), targetFilename ) )
+        if ( context.getWebappStructure().registerFile( currentProjectOverlay.getId(), targetFilename ) )
         {
             final File libDirectory = new File( context.getWebappDirectory(), LIB_PATH );
             final File jarFile = new File( libDirectory, archiveName );
