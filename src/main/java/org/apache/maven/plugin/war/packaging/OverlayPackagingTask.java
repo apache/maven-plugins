@@ -40,13 +40,13 @@ public class OverlayPackagingTask
     private final Overlay overlay;
 
 
-    public OverlayPackagingTask( Overlay overlay )
+    public OverlayPackagingTask( Overlay overlay, Overlay currentProjectOverlay )
     {
         if ( overlay == null )
         {
             throw new NullPointerException( "overlay could not be null." );
         }
-        if ( overlay.equals( Overlay.currentProjectInstance() ) )
+        if ( overlay.equals( currentProjectOverlay ) )
         {
             throw new IllegalStateException( "Could not handle the current project with this task." );
         }

@@ -48,10 +48,12 @@ public class OverlayManagerTest
         final List overlays = new ArrayList();
         try
         {
-            OverlayManager manager = new OverlayManager( overlays, project, DEFAULT_INCLUDES, DEFAULT_EXCLUDES );
+            final Overlay currentProjectOVerlay = Overlay.createInstance();
+            OverlayManager manager = new OverlayManager( overlays, project, DEFAULT_INCLUDES, DEFAULT_EXCLUDES,
+                                                         currentProjectOVerlay );
             assertNotNull( manager.getOverlays() );
             assertEquals( 1, manager.getOverlays().size() );
-            assertEquals( Overlay.currentProjectInstance(), manager.getOverlays().get( 0 ) );
+            assertEquals( currentProjectOVerlay, manager.getOverlays().get( 0 ) );
         }
         catch ( InvalidOverlayConfigurationException e )
         {
@@ -60,7 +62,7 @@ public class OverlayManagerTest
         }
     }
 
-    public void testAutodetectSimpleOverlay()
+    public void testAutodetectSimpleOverlay( Overlay currentProjectOverlay )
         throws Exception
     {
 
@@ -72,10 +74,12 @@ public class OverlayManagerTest
 
         try
         {
-            OverlayManager manager = new OverlayManager( overlays, project, DEFAULT_INCLUDES, DEFAULT_EXCLUDES );
+            final Overlay overlay = currentProjectOverlay;
+            OverlayManager manager = new OverlayManager( overlays, project, DEFAULT_INCLUDES, DEFAULT_EXCLUDES,
+                                                         overlay );
             assertNotNull( manager.getOverlays() );
             assertEquals( 2, manager.getOverlays().size() );
-            assertEquals( Overlay.currentProjectInstance(), manager.getOverlays().get( 0 ) );
+            assertEquals( overlay, manager.getOverlays().get( 0 ) );
             assertEquals( new DefaultOverlay( first ), manager.getOverlays().get( 1 ) );
         }
         catch ( InvalidOverlayConfigurationException e )
@@ -98,10 +102,12 @@ public class OverlayManagerTest
 
         try
         {
-            OverlayManager manager = new OverlayManager( overlays, project, DEFAULT_INCLUDES, DEFAULT_EXCLUDES );
+            final Overlay currentProjectOverlay = Overlay.createInstance();
+            OverlayManager manager = new OverlayManager( overlays, project, DEFAULT_INCLUDES, DEFAULT_EXCLUDES,
+                                                         currentProjectOverlay );
             assertNotNull( manager.getOverlays() );
             assertEquals( 2, manager.getOverlays().size() );
-            assertEquals( Overlay.currentProjectInstance(), manager.getOverlays().get( 0 ) );
+            assertEquals( Overlay.createInstance(), manager.getOverlays().get( 0 ) );
             assertEquals( overlays.get( 0 ), manager.getOverlays().get( 1 ) );
         }
         catch ( InvalidOverlayConfigurationException e )
@@ -124,7 +130,8 @@ public class OverlayManagerTest
 
         try
         {
-            new OverlayManager( overlays, project, DEFAULT_INCLUDES, DEFAULT_EXCLUDES );
+            final Overlay currentProjectOVerlay = Overlay.createInstance();
+            new OverlayManager( overlays, project, DEFAULT_INCLUDES, DEFAULT_EXCLUDES, currentProjectOVerlay );
             fail( "Should have failed to validate an unknown overlay" );
         }
         catch ( InvalidOverlayConfigurationException e )
@@ -145,15 +152,17 @@ public class OverlayManagerTest
 
         final List overlays = new ArrayList();
         overlays.add( new DefaultOverlay( first ) );
-        overlays.add( Overlay.currentProjectInstance() );
+        final Overlay currentProjectOverlay = Overlay.createInstance();
+        overlays.add( currentProjectOverlay );
 
         try
         {
-            OverlayManager manager = new OverlayManager( overlays, project, DEFAULT_INCLUDES, DEFAULT_EXCLUDES );
+            OverlayManager manager = new OverlayManager( overlays, project, DEFAULT_INCLUDES, DEFAULT_EXCLUDES,
+                                                         currentProjectOverlay );
             assertNotNull( manager.getOverlays() );
             assertEquals( 3, manager.getOverlays().size() );
             assertEquals( overlays.get( 0 ), manager.getOverlays().get( 0 ) );
-            assertEquals( Overlay.currentProjectInstance(), manager.getOverlays().get( 1 ) );
+            assertEquals( currentProjectOverlay, manager.getOverlays().get( 1 ) );
             assertEquals( new DefaultOverlay( second ), manager.getOverlays().get( 2 ) );
 
         }
@@ -181,10 +190,12 @@ public class OverlayManagerTest
 
         try
         {
-            OverlayManager manager = new OverlayManager( overlays, project, DEFAULT_INCLUDES, DEFAULT_EXCLUDES );
+            final Overlay currentProjectOverlay = Overlay.createInstance();
+            OverlayManager manager = new OverlayManager( overlays, project, DEFAULT_INCLUDES, DEFAULT_EXCLUDES,
+                                                         currentProjectOverlay );
             assertNotNull( manager.getOverlays() );
             assertEquals( 3, manager.getOverlays().size() );
-            assertEquals( Overlay.currentProjectInstance(), manager.getOverlays().get( 0 ) );
+            assertEquals( currentProjectOverlay, manager.getOverlays().get( 0 ) );
             assertEquals( overlays.get( 0 ), manager.getOverlays().get( 1 ) );
             assertEquals( overlays.get( 1 ), manager.getOverlays().get( 2 ) );
 
