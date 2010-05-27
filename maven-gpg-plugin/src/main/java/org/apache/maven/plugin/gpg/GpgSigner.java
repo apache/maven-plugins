@@ -29,6 +29,7 @@ import java.io.InputStreamReader;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.Os;
+import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.cli.CommandLineException;
 import org.codehaus.plexus.util.cli.CommandLineUtils;
 import org.codehaus.plexus.util.cli.Commandline;
@@ -39,6 +40,8 @@ public class GpgSigner
 
     public static final String SIGNATURE_EXTENSION = ".asc";
 
+    private String executable;
+ 
     private boolean useAgent;
 
     private boolean isInteractive = true;
@@ -54,6 +57,11 @@ public class GpgSigner
     private File baseDir;
 
     private File homeDir;
+
+    public void setExecutable( String executable )
+    {
+        this.executable = executable;
+    }
 
     public void setInteractive( boolean b )
     {
@@ -140,7 +148,14 @@ public class GpgSigner
 
         Commandline cmd = new Commandline();
 
-        cmd.setExecutable( "gpg" + ( Os.isFamily( Os.FAMILY_WINDOWS ) ? ".exe" : "" ) );
+        if ( StringUtils.isNotEmpty( executable ) )
+        {
+            cmd.setExecutable( executable );
+        }
+        else
+        {
+            cmd.setExecutable( "gpg" + ( Os.isFamily( Os.FAMILY_WINDOWS ) ? ".exe" : "" ) );
+        }
 
         if ( homeDir != null )
         {

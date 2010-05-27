@@ -72,11 +72,21 @@ public abstract class AbstractGpgMojo
      */
     private boolean interactive;
 
+    /**
+     * The path to the GnuPG executable to use for artifact signing. Defaults to either "gpg" or "gpg.exe" depending on
+     * the operating system.
+     * 
+     * @parameter expression="${gpg.executable}"
+     * @since 1.1
+     */
+    private String executable;
+    
     GpgSigner newSigner( MavenProject project )
         throws MojoExecutionException, MojoFailureException
     {
         GpgSigner signer = new GpgSigner();
 
+        signer.setExecutable( executable );
         signer.setInteractive( interactive );
         signer.setKeyName( keyname );
         signer.setUseAgent( useAgent );
