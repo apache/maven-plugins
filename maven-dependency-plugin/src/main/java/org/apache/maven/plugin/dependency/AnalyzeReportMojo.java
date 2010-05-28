@@ -20,9 +20,13 @@ package org.apache.maven.plugin.dependency;
  */
 
 import java.io.File;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.Set;
 
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.project.MavenProject;
@@ -35,10 +39,9 @@ import org.apache.maven.shared.dependency.analyzer.ProjectDependencyAnalyzerExce
 /**
  * Analyzes the dependencies of this project and produces a report that summarizes which are: used and declared; used
  * and undeclared; unused and declared.
- *
+ * 
  * @version $Id$
  * @since 2.0-alpha-5
- *
  * @goal analyze-report
  * @requiresDependencyResolution test
  * @execute phase="test-compile"
@@ -50,7 +53,7 @@ public class AnalyzeReportMojo
 
     /**
      * The Maven project to analyze.
-     *
+     * 
      * @parameter expression="${project}"
      * @required
      * @readonly
@@ -59,7 +62,7 @@ public class AnalyzeReportMojo
 
     /**
      * The Maven project dependency analyzer to use.
-     *
+     * 
      * @component
      * @required
      * @readonly
@@ -67,8 +70,6 @@ public class AnalyzeReportMojo
     private ProjectDependencyAnalyzer analyzer;
 
     /**
-     *
-     *
      * @component
      * @required
      * @readonly
@@ -77,12 +78,19 @@ public class AnalyzeReportMojo
 
     /**
      * Target folder
-     *
+     * 
      * @parameter expression="${project.build.directory}"
      * @readonly
      * @since 2.0-alpha-5
      */
     private File outputDirectory;
+
+    /**
+     * Ignore Runtime,Provide,Test,System scopes for unused dependency analysis
+     * 
+     * @parameter expression="${ignoreNonCompile}" default-value="false"
+     */
+    private boolean ignoreNonCompile;
 
     // Mojo methods -----------------------------------------------------------
 
@@ -115,6 +123,26 @@ public class AnalyzeReportMojo
             throw new MavenReportException( "Cannot analyze dependencies", exception );
         }
 
+
+        //remove everything that's not in the compile scope
+        if ( ignoreNonCompile )
+        {
+            Set filteredUnusedDeclared = new HashSet( analysis.getUnusedDeclaredArtifacts() );
+            Iterator iter = filteredUnusedDeclared.iterator();
+            while ( iter.hasNext() )
+            {
+                Artifact artifact = (Artifact) iter.next();
+                if ( !artifact.getScope().equals( Artifact.SCOPE_COMPILE ) )
+                {
+                    iter.remove();
+                }
+            }
+            
+            ProjectDependencyAnalysis analysisTemp = new ProjectDependencyAnalysis(analysis.getUsedDeclaredArtifacts(),analysis.getUsedUndeclaredArtifacts(),filteredUnusedDeclared);
+            analysis = analysisTemp;
+        }
+        
+        
         // Step 2: Create sink and bundle
         Sink sink = getSink();
         ResourceBundle bundle = getBundle( locale );
@@ -181,10 +209,7 @@ public class AnalyzeReportMojo
     // protected methods ------------------------------------------------------
 
     /**
-     *
-     *
-     * @param locale
-     *            the current locale
+     * @param locale the current locale
      */
     protected ResourceBundle getBundle( Locale locale )
     {
