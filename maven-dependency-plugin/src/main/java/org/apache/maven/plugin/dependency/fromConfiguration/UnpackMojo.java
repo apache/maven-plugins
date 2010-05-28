@@ -31,9 +31,8 @@ import org.apache.maven.plugin.dependency.utils.markers.UnpackFileMarkerHandler;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
- * Goal that retrieves a list of artifacts from the repository and unpacks them
- * in a defined location.
- *
+ * Goal that retrieves a list of artifacts from the repository and unpacks them in a defined location.
+ * 
  * @since 1.0
  * @goal unpack
  * @phase process-sources
@@ -46,34 +45,36 @@ public final class UnpackMojo
 
     /**
      * Directory to store flag files after unpack
-     *
+     * 
      * @parameter expression="${project.build.directory}/dependency-maven-plugin-markers"
      */
     private File markersDirectory;
 
     /**
-     * A comma separated list of file patterns to include when unpacking the
-     * artifact.  i.e.  **\/*.xml,**\/*.properties NOTE: Excludes patterns override the includes. (component code = return isIncluded( name ) AND !isExcluded( name );)
-     *  @since 2.0-alpha-5
+     * A comma separated list of file patterns to include when unpacking the artifact. i.e. **\/*.xml,**\/*.properties
+     * NOTE: Excludes patterns override the includes. (component code = return isIncluded( name ) AND !isExcluded( name
+     * );)
+     * 
+     * @since 2.0-alpha-5
      * @parameter expression="${mdep.unpack.includes}"
      */
     private String includes;
 
     /**
-     * A comma separated list of file patterns to exclude when unpacking the
-     * artifact.  i.e.  **\/*.xml,**\/*.properties NOTE: Excludes patterns override the includes. (component code = return isIncluded( name ) AND !isExcluded( name );)
+     * A comma separated list of file patterns to exclude when unpacking the artifact. i.e. **\/*.xml,**\/*.properties
+     * NOTE: Excludes patterns override the includes. (component code = return isIncluded( name ) AND !isExcluded( name
+     * );)
+     * 
      * @since 2.0-alpha-5
      * @parameter expression="${mdep.unpack.excludes}"
      */
     private String excludes;
 
     /**
-     * Main entry into mojo. This method gets the ArtifactItems and iterates
-     * through each one passing it to unpackArtifact.
-     *
-     * @throws MojoExecutionException
-     *             with a message if an error occurs.
-     *
+     * Main entry into mojo. This method gets the ArtifactItems and iterates through each one passing it to
+     * unpackArtifact.
+     * 
+     * @throws MojoExecutionException with a message if an error occurs.
      * @see ArtifactItem
      * @see #getArtifactItems
      * @see #unpackArtifact(ArtifactItem)
@@ -81,41 +82,40 @@ public final class UnpackMojo
     public void execute()
         throws MojoExecutionException
     {
-        ArrayList processedItems = getProcessedArtifactItems( false );
-        Iterator iter = processedItems.iterator();
-        while ( iter.hasNext() )
+        if ( !isSkip() )
         {
-            ArtifactItem artifactItem = (ArtifactItem) iter.next();
-            if ( artifactItem.isNeedsProcessing() )
+            ArrayList processedItems = getProcessedArtifactItems( false );
+            Iterator iter = processedItems.iterator();
+            while ( iter.hasNext() )
             {
-                unpackArtifact( artifactItem );
-            }
-            else
-            {
-                this.getLog().info( artifactItem.getArtifact().getFile().getName() + " already unpacked." );
+                ArtifactItem artifactItem = (ArtifactItem) iter.next();
+                if ( artifactItem.isNeedsProcessing() )
+                {
+                    unpackArtifact( artifactItem );
+                }
+                else
+                {
+                    this.getLog().info( artifactItem.getArtifact().getFile().getName() + " already unpacked." );
+                }
             }
         }
     }
 
     /**
      * This method gets the Artifact object and calls DependencyUtil.unpackFile.
-     *
-     * @param artifactItem
-     *            containing the information about the Artifact to unpack.
-     *
-     * @throws MojoExecutionException
-     *             with a message if an error occurs.
-     *
+     * 
+     * @param artifactItem containing the information about the Artifact to unpack.
+     * @throws MojoExecutionException with a message if an error occurs.
      * @see #getArtifact
-     * @see DependencyUtil#unpackFile(Artifact, File, File, ArchiverManager,
-     *      Log)
+     * @see DependencyUtil#unpackFile(Artifact, File, File, ArchiverManager, Log)
      */
     private void unpackArtifact( ArtifactItem artifactItem )
         throws MojoExecutionException
     {
         MarkerHandler handler = new UnpackFileMarkerHandler( artifactItem, this.markersDirectory );
 
-        unpack( artifactItem.getArtifact().getFile(), artifactItem.getOutputDirectory(), artifactItem.getIncludes(), artifactItem.getExcludes() );
+        unpack( artifactItem.getArtifact().getFile(), artifactItem.getOutputDirectory(), artifactItem.getIncludes(),
+                artifactItem.getExcludes() );
         handler.setMarker();
 
     }
@@ -157,29 +157,25 @@ public final class UnpackMojo
     }
 
     /**
-     * @param theMarkersDirectory
-     *            The markersDirectory to set.
+     * @param theMarkersDirectory The markersDirectory to set.
      */
     public void setMarkersDirectory( File theMarkersDirectory )
     {
         this.markersDirectory = theMarkersDirectory;
     }
 
-
     /**
      * @return Returns a comma separated list of excluded items
      */
-    public String getExcludes ()
+    public String getExcludes()
     {
         return this.excludes;
     }
 
     /**
-     * @param excludes
-     * 			A comma separated list of items to exclude
-     * 			i.e.  **\/*.xml, **\/*.properties
+     * @param excludes A comma separated list of items to exclude i.e. **\/*.xml, **\/*.properties
      */
-    public void setExcludes ( String excludes )
+    public void setExcludes( String excludes )
     {
         this.excludes = excludes;
     }
@@ -193,11 +189,9 @@ public final class UnpackMojo
     }
 
     /**
-     * @param includes
-     * 			A comma separated list of items to include
-     * 			i.e.  **\/*.xml, **\/*.properties
+     * @param includes A comma separated list of items to include i.e. **\/*.xml, **\/*.properties
      */
-    public void setIncludes ( String includes )
+    public void setIncludes( String includes )
     {
         this.includes = includes;
     }
