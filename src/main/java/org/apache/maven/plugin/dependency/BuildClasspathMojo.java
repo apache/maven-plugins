@@ -31,6 +31,8 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -221,15 +223,10 @@ public class BuildClasspathMojo
         // the file paths that were pulled from the artifacts
         if ( isFileSepSet )
         {
-            String separator = File.separator;
-
-            // if the file sep is "\" then I need to escape it for the regex
-            if ( File.separator.equals( "\\" ) )
-            {
-                separator = "\\\\";
-            }
-
-            cpString = cpString.replaceAll( separator, fileSeparator );
+            // Escape file separators to be used as literal strings
+            final String pattern = Pattern.quote( File.separator );
+            final String replacement = Matcher.quoteReplacement( fileSeparator );
+            cpString = cpString.replaceAll( pattern, replacement );
         }
 
         //make the string valid for filtering
