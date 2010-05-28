@@ -120,6 +120,7 @@ public class TestCopyMojo
         CopyMojo themojo = new CopyMojo();
 
         assertFalse( themojo.isStripVersion() );
+        assertFalse( themojo.isSkip() );
     }
 
     public void testCopyFile()
@@ -132,6 +133,26 @@ public class TestCopyMojo
         mojo.execute();
 
         assertFilesExist( list, true );
+    }
+    
+    public void testSkip()
+        throws IOException, MojoExecutionException
+    {
+        ArrayList list = stubFactory.getArtifactItems( stubFactory.getClassifiedArtifacts() );
+
+        mojo.setSkip( true );
+        mojo.setArtifactItems( list );
+
+        mojo.execute();
+        Iterator iter = list.iterator();
+        while ( iter.hasNext() )
+        {
+            //these will be null because no processing has occured only when everything is skipped
+            ArtifactItem item = (ArtifactItem) iter.next();
+            assertEquals( null, item.getOutputDirectory() );
+            assertEquals( null, item.getDestFileName() );
+        }
+
     }
 
     public void testCopyFileNoOverwrite()

@@ -141,6 +141,19 @@ public class TestUnpackMojo
 
         assertMarkerFiles( list, true );
     }
+    
+    public void testSkip()
+        throws IOException, MojoExecutionException
+    {
+        ArrayList list = stubFactory.getArtifactItems( stubFactory.getClassifiedArtifacts() );
+
+        mojo.setSkip( true );
+        mojo.setArtifactItems( list );
+
+        mojo.execute();
+
+        assertMarkerFiles( list, false );
+    }
 
     public void testUnpackToLocation()
         throws IOException, MojoExecutionException

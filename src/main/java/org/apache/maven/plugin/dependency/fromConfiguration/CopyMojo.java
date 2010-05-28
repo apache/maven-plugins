@@ -28,9 +28,8 @@ import org.apache.maven.plugin.dependency.utils.filters.ArtifactItemFilter;
 import org.apache.maven.plugin.dependency.utils.filters.DestFileFilter;
 
 /**
- * Goal that copies a list of artifacts from the repository to defined
- * locations.
- *
+ * Goal that copies a list of artifacts from the repository to defined locations.
+ * 
  * @goal copy
  * @since 1.0
  * @phase process-sources
@@ -43,19 +42,17 @@ public class CopyMojo
 
     /**
      * Strip artifact version during copy
-     *
+     * 
      * @parameter expression="${mdep.stripVersion}" default-value="false"
      * @parameter
      */
     private boolean stripVersion = false;
 
     /**
-     * Main entry into mojo. This method gets the ArtifactItems and iterates
-     * through each one passing it to copyArtifact.
-     *
-     * @throws MojoExecutionException
-     *             with a message if an error occurs.
-     *
+     * Main entry into mojo. This method gets the ArtifactItems and iterates through each one passing it to
+     * copyArtifact.
+     * 
+     * @throws MojoExecutionException with a message if an error occurs.
      * @see ArtifactItem
      * @see #getArtifactItems
      * @see #copyArtifact(ArtifactItem)
@@ -63,31 +60,30 @@ public class CopyMojo
     public void execute()
         throws MojoExecutionException
     {
-        ArrayList theArtifactItems = getProcessedArtifactItems( this.stripVersion );
-        Iterator iter = theArtifactItems.iterator();
-        while ( iter.hasNext() )
+        if ( !isSkip() )
         {
-            ArtifactItem artifactItem = (ArtifactItem) iter.next();
-            if ( artifactItem.isNeedsProcessing() )
+            ArrayList theArtifactItems = getProcessedArtifactItems( this.stripVersion );
+            Iterator iter = theArtifactItems.iterator();
+            while ( iter.hasNext() )
             {
-                copyArtifact( artifactItem );
-            }
-            else
-            {
-                this.getLog().info( artifactItem + " already exists in " + artifactItem.getOutputDirectory() );
+                ArtifactItem artifactItem = (ArtifactItem) iter.next();
+                if ( artifactItem.isNeedsProcessing() )
+                {
+                    copyArtifact( artifactItem );
+                }
+                else
+                {
+                    this.getLog().info( artifactItem + " already exists in " + artifactItem.getOutputDirectory() );
+                }
             }
         }
     }
 
     /**
-     * Resolves the artifact from the repository and copies it to the specified
-     * location.
-     *
-     * @param artifactItem
-     *            containing the information about the Artifact to copy.
-     * @throws MojoExecutionException
-     *             with a message if an error occurs.
-     *
+     * Resolves the artifact from the repository and copies it to the specified location.
+     * 
+     * @param artifactItem containing the information about the Artifact to copy.
+     * @throws MojoExecutionException with a message if an error occurs.
      * @see DependencyUtil#copyFile(File, File, Log)
      * @see DependencyUtil#getFormattedFileName(Artifact, boolean)
      */
@@ -101,9 +97,9 @@ public class CopyMojo
 
     protected ArtifactItemFilter getMarkedArtifactFilter( ArtifactItem item )
     {
-        ArtifactItemFilter destinationNameOverrideFilter = new DestFileFilter( this.isOverWriteReleases(), this
-            .isOverWriteSnapshots(), this.isOverWriteIfNewer(), false, false, false, this.stripVersion, item
-            .getOutputDirectory() );
+        ArtifactItemFilter destinationNameOverrideFilter =
+            new DestFileFilter( this.isOverWriteReleases(), this.isOverWriteSnapshots(), this.isOverWriteIfNewer(),
+                                false, false, false, this.stripVersion, item.getOutputDirectory() );
         return destinationNameOverrideFilter;
     }
 
@@ -116,8 +112,7 @@ public class CopyMojo
     }
 
     /**
-     * @param stripVersion
-     *            The stripVersion to set.
+     * @param stripVersion The stripVersion to set.
      */
     public void setStripVersion( boolean stripVersion )
     {
