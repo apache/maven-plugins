@@ -28,13 +28,12 @@ import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
 import org.apache.maven.artifact.resolver.ResolutionNode;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.dependency.AbstractResolveMojo;
+import org.apache.maven.plugin.dependency.AbstractDependencyMojo;
 import org.apache.maven.shared.artifact.filter.ScopeArtifactFilter;
-import org.apache.maven.shared.artifact.filter.collection.ArtifactsFilter;
 
 /**
- * Goal that resolves all project dependencies, including plugins and reports
- * and their dependencies.
+ * Goal that resolves all project dependencies and then lists the repositories
+ * used by the build and by the transitive dependencies
  * 
  * @goal list-repositories
  * @requiresDependencyResolution test
@@ -42,7 +41,7 @@ import org.apache.maven.shared.artifact.filter.collection.ArtifactsFilter;
  * @version $Id: GoOfflineMojo.java 728546 2008-12-21 22:56:51Z bentmann $
  * @since 2.2
  */
-public class ListRepositoriesMojo extends AbstractResolveMojo
+public class ListRepositoriesMojo extends AbstractDependencyMojo
 {
 	/**
      * Displays a list of the repositories used by this build.
@@ -76,11 +75,5 @@ public class ListRepositoriesMojo extends AbstractResolveMojo
 		{
 			throw new MojoExecutionException("Unable to resolve artifacts",e);
 		}
-	}
-
-	protected ArtifactsFilter getMarkedArtifactFilter()
-	{
-		// TODO Auto-generated method stub
-		return null;
 	}
 }
