@@ -1,2 +1,1 @@
 rev to merge from trunk
-- 943455 ([MSITE-474] Make validation configurable)
