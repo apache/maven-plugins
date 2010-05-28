@@ -21,7 +21,7 @@
   Allan Ramirez
   Brian Fox
   ------
-  Jan 2008
+  May 2010
   ------
 
 Usage
@@ -643,3 +643,8 @@ mvn dependency:tree
 +-----+
 mvn dependency:tree -Doutput=/path/to/file
 +-----+
+
+* The <<<dependency:list-repositories>>> Mojo
+
+  This mojo is used to list all the repositories that this build depends upon. It will show repositories defined in your settings, 
+  poms and declared in transitive dependency poms.

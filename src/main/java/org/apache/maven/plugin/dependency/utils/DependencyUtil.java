@@ -31,7 +31,7 @@ import org.codehaus.plexus.util.StringUtils;
 
 /**
  * Utility class with static helper methods
- *
+ * 
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  * @version $Id$
  */
@@ -39,75 +39,56 @@ public final class DependencyUtil
 {
 
     /**
-     * Builds the file name. If removeVersion is set, then the file name must be
-     * reconstructed from the artifactId, Classifier (if used) and Type.
-     * Otherwise, this method returns the artifact file name.
-     *
-     * @param artifact
-     *            File to be formatted.
-     * @param removeVersion
-     *            Specifies if the version should be removed from the file name.
-     * @return Formatted file name in the format
-     *         artifactId-[version]-[classifier].[type]
+     * Builds the file name. If removeVersion is set, then the file name must be reconstructed from the artifactId,
+     * Classifier (if used) and Type. Otherwise, this method returns the artifact file name.
+     * 
+     * @param artifact File to be formatted.
+     * @param removeVersion Specifies if the version should be removed from the file name.
+     * @return Formatted file name in the format artifactId-[version]-[classifier].[type]
      */
     public static String getFormattedFileName( Artifact artifact, boolean removeVersion )
     {
         String destFileName = null;
 
-        // if there is a file and we aren't stripping the version, just get the
-        // name directly
-        if ( artifact.getFile() != null && !removeVersion )
+        String versionString = null;
+        if ( !removeVersion )
         {
-            destFileName = artifact.getFile().getName();
+            versionString = "-" + artifact.getVersion();
         }
         else
-        // if offline
         {
-            String versionString = null;
-            if ( !removeVersion )
-            {
-                versionString = "-" + artifact.getVersion();
-            }
-            else
-            {
-                versionString = "";
-            }
-
-            String classifierString = "";
-
-            if ( StringUtils.isNotEmpty( artifact.getClassifier() ) )
-            {
-                classifierString = "-" + artifact.getClassifier();
-            }
-
-            destFileName = artifact.getArtifactId() + versionString + classifierString + "."
-                + artifact.getArtifactHandler().getExtension();
+            versionString = "";
         }
+
+        String classifierString = "";
+
+        if ( StringUtils.isNotEmpty( artifact.getClassifier() ) )
+        {
+            classifierString = "-" + artifact.getClassifier();
+        }
+
+        destFileName =
+            artifact.getArtifactId() + versionString + classifierString + "."
+                + artifact.getArtifactHandler().getExtension();
+
         return destFileName;
     }
 
     /**
      * Formats the outputDirectory based on type.
-     *
-     * @param useSubdirsPerType
-     *            if a new sub directory should be used for each type.
-     * @param useSubdirPerArtifact
-     *            if a new sub directory should be used for each artifact.
-     * @param useRepositoryLayout
-     *            if dependendies must be moved into a Maven repository layout, if
-     *            set, other settings will be ignored.
-     * @param removeVersion
-     *            if the version must not be mentioned in the filename
-     * @param outputDirectory
-     *            base outputDirectory.
-     * @param artifact
-     *            information about the artifact.
-     *
+     * 
+     * @param useSubdirsPerType if a new sub directory should be used for each type.
+     * @param useSubdirPerArtifact if a new sub directory should be used for each artifact.
+     * @param useRepositoryLayout if dependendies must be moved into a Maven repository layout, if set, other settings
+     *            will be ignored.
+     * @param removeVersion if the version must not be mentioned in the filename
+     * @param outputDirectory base outputDirectory.
+     * @param artifact information about the artifact.
      * @return a formatted File object to use for output.
      */
     public static File getFormattedOutputDirectory( boolean useSubdirsPerType, boolean useSubdirPerArtifact,
-                                                   boolean useRepositoryLayout, boolean removeVersion,
-                                                   File outputDirectory, Artifact artifact )
+                                                    boolean useRepositoryLayout, boolean removeVersion,
+                                                    File outputDirectory, Artifact artifact )
     {
         StringBuffer sb = new StringBuffer( 128 );
         if ( useRepositoryLayout )
@@ -169,15 +150,13 @@ public final class DependencyUtil
 
     /**
      * Writes the specified string to the specified file.
-     *
-     * @param string
-     *            the string to write
-     * @param file
-     *            the file to write to
-     * @throws IOException
-     *             if an I/O error occurs
+     * 
+     * @param string the string to write
+     * @param file the file to write to
+     * @throws IOException if an I/O error occurs
      */
-    public static synchronized void write( String string, File file, Log log ) throws IOException
+    public static synchronized void write( String string, File file, Log log )
+        throws IOException
     {
         file.getParentFile().mkdirs();
 
@@ -207,13 +186,12 @@ public final class DependencyUtil
 
     /**
      * Writes the specified string to the log at info level.
-     *
-     * @param string
-     *            the string to write
-     * @throws IOException
-     *             if an I/O error occurs
+     * 
+     * @param string the string to write
+     * @throws IOException if an I/O error occurs
      */
-    public static synchronized void log( String string, Log log ) throws IOException
+    public static synchronized void log( String string, Log log )
+        throws IOException
     {
         BufferedReader reader = new BufferedReader( new StringReader( string ) );
 
@@ -230,7 +208,7 @@ public final class DependencyUtil
     //
     // mainly used to parse excludes,includes configuration
     //
-    public static String [] tokenizer( String str )
+    public static String[] tokenizer( String str )
     {
         return StringUtils.split( cleanToBeTokenizedString( str ), "," );
     }
@@ -241,7 +219,7 @@ public final class DependencyUtil
     public static String cleanToBeTokenizedString( String str )
     {
         String ret = "";
-        if ( ! StringUtils.isEmpty( str ) )
+        if ( !StringUtils.isEmpty( str ) )
         {
             ret = StringUtils.join( StringUtils.split( str ), "," );
         }

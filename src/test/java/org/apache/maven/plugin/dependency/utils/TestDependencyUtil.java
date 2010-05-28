@@ -239,7 +239,7 @@ public class TestDependencyUtil
         artifact.setFile( file );
 
         String name = DependencyUtil.getFormattedFileName( artifact, false );
-        String expectedResult = "test-file-name.jar";
+        String expectedResult = "two-1.1-SNAPSHOT-sources.war";
         assertEquals( expectedResult, name );
 
         name = DependencyUtil.getFormattedFileName( artifact, true );
