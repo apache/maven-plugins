@@ -71,6 +71,17 @@ public class SiteMojo
     private boolean generateSitemap;
 
     /**
+     * Whether to validate xml input documents.
+     * If set to true, <strong>all</strong> input documents in xml format
+     * (in particular xdoc and fml) will be validated and any error will
+     * lead to a build failure.
+     *
+     * @parameter expression="${validate}" default-value="false"
+     * @since 2.1.1
+     */
+    private boolean validate;
+
+    /**
      * {@inheritDoc}
      *
      * Generate the project site
@@ -127,6 +138,11 @@ public class SiteMojo
 
         context.setInputEncoding( getInputEncoding() );
         context.setOutputEncoding( getOutputEncoding() );
+        context.setValidate( validate );
+        if ( validate )
+        {
+            getLog().info( "Validation is switched on, xml input documents will be validated!" );
+        }
 
         Map documents = locateDocuments( context, reports, locale );
 
