@@ -22,15 +22,10 @@ package org.apache.maven.plugin.gpg;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.handler.ArtifactHandler;
-import org.apache.maven.artifact.handler.DefaultArtifactHandler;
-import org.apache.maven.artifact.handler.manager.ArtifactHandlerManager;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
@@ -96,15 +91,6 @@ public class GpgSignAttachedMojo
      */
     private MavenProjectHelper projectHelper;
 
-    /**
-     * Maven ArtifactHandlerManager
-     * 
-     * @component
-     * @required
-     * @readonly
-     */
-    private ArtifactHandlerManager artifactHandlerManager;
-
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
@@ -149,17 +135,20 @@ public class GpgSignAttachedMojo
             // Project artifact
             // ----------------------------------------------------------------------------
 
-            File projectArtifact = project.getArtifact().getFile();
+            Artifact artifact = project.getArtifact();
 
-            if ( projectArtifact != null && projectArtifact.isFile() )
+            File file = artifact.getFile();
+
+            if ( file != null && file.isFile() )
             {
-                getLog().debug( "Generating signature for " + projectArtifact );
+                getLog().debug( "Generating signature for " + file );
 
-                File projectArtifactSignature = signer.generateSignatureForArtifact( projectArtifact );
+                File projectArtifactSignature = signer.generateSignatureForArtifact( file );
 
                 if ( projectArtifactSignature != null )
                 {
-                    signingBundles.add( new SigningBundle( project.getArtifact().getType(), projectArtifactSignature ) );
+                    signingBundles.add( new SigningBundle( artifact.getArtifactHandler().getExtension(),
+                                                           projectArtifactSignature ) );
                 }
             }
             else if ( project.getAttachedArtifacts().isEmpty() )
@@ -213,7 +202,8 @@ public class GpgSignAttachedMojo
 
             if ( signature != null )
             {
-                signingBundles.add( new SigningBundle( artifact.getType(), artifact.getClassifier(), signature ) );
+                signingBundles.add( new SigningBundle( artifact.getArtifactHandler().getExtension(),
+                                                       artifact.getClassifier(), signature ) );
             }
         }
 
@@ -221,29 +211,12 @@ public class GpgSignAttachedMojo
         // Attach all the signatures
         // ----------------------------------------------------------------------------
 
-        ArtifactHandler handler = new DefaultArtifactHandler( "asc" );
-
-        Map map = new HashMap();
-
-        map.put( "asc", handler );
-
-        artifactHandlerManager.addHandlers( map );
-
         for ( Iterator i = signingBundles.iterator(); i.hasNext(); )
         {
             SigningBundle bundle = (SigningBundle) i.next();
 
-            ArtifactHandler ah = artifactHandlerManager.getArtifactHandler( bundle.getArtifactType() );
-
-            if ( bundle.getClassifier() != null && !"".equals( bundle.getClassifier() ) )
-            {
-                projectHelper.attachArtifact( project, "asc", bundle.getClassifier() + "." + ah.getExtension(),
-                                              bundle.getSignature() );
-            }
-            else
-            {
-                projectHelper.attachArtifact( project, ah.getExtension() + ".asc", null, bundle.getSignature() );
-            }
+            projectHelper.attachArtifact( project, bundle.getExtension() + ".asc", bundle.getClassifier(),
+                                          bundle.getSignature() );
         }
     }
 
