@@ -73,7 +73,7 @@ under the License.
   </issueManagement>
 
   <properties>
-    <doxiaVersion>1.1.3-SNAPSHOT</doxiaVersion>
+    <doxiaVersion>1.1.3</doxiaVersion>
     <mavenVersion>2.0.9</mavenVersion>
   </properties>
 
