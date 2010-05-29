@@ -226,12 +226,9 @@ public class GpgSigner
 
     private MavenProject findReactorProject( MavenProject prj )
     {
-        if ( prj.getParent() != null )
+        if ( prj.getParent() != null && prj.getParent().getBasedir() != null && prj.getParent().getBasedir().exists() )
         {
-            if ( prj.getParent().getBasedir() != null && prj.getParent().getBasedir().exists() )
-            {
-                return findReactorProject( prj.getParent() );
-            }
+            return findReactorProject( prj.getParent() );
         }
         return prj;
     }

@@ -215,8 +215,8 @@ public class GpgSignAttachedMojo
         {
             SigningBundle bundle = (SigningBundle) i.next();
 
-            projectHelper.attachArtifact( project, bundle.getExtension() + ".asc", bundle.getClassifier(),
-                                          bundle.getSignature() );
+            projectHelper.attachArtifact( project, bundle.getExtension() + GpgSigner.SIGNATURE_EXTENSION,
+                                          bundle.getClassifier(), bundle.getSignature() );
         }
     }
 
