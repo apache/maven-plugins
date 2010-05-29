@@ -76,4 +76,4 @@ mvn release:perform -Darguments=-Dgpg.passphrase=thephrase
 +----------+
 
   This accounts for the fact, that the Release Plugin forks Maven and system properties of the current Maven session are
-  unfortunately not automatically propagated to the forked Maven session (see also {{{http://jira.codehaus.org/browse/MGPG-9}MGPG-9}}.
+  unfortunately not automatically propagated to the forked Maven session (see also {{{http://jira.codehaus.org/browse/MGPG-9}MGPG-9}}).
