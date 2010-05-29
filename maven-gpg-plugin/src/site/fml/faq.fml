@@ -37,7 +37,7 @@ under the License.
      <answer>
        <p>
          The <code>site.xml</code> that can be deployed alongside parent POMs was originally attached to the project in such a
-         way that the GPG Plugin could not get a hold of it. To enable signing of the site descriptor, you need to update to
+         way that the GPG Plugin could not get hold of it. To enable signing of the site descriptor, you need to update to
          Maven Site Plugin 2.1.1+ which contains the required fix (see also
          <a href="http://jira.codehaus.org/browse/MSITE-478">MSITE-478</a>).
        </p>
