@@ -151,17 +151,25 @@ public class GpgSignAttachedMojo
 
             File projectArtifact = project.getArtifact().getFile();
 
-            if ( projectArtifact == null )
+            if ( projectArtifact != null && projectArtifact.isFile() )
+            {
+                getLog().debug( "Generating signature for " + projectArtifact );
+
+                File projectArtifactSignature = signer.generateSignatureForArtifact( projectArtifact );
+
+                if ( projectArtifactSignature != null )
+                {
+                    signingBundles.add( new SigningBundle( project.getArtifact().getType(), projectArtifactSignature ) );
+                }
+            }
+            else if ( project.getAttachedArtifacts().isEmpty() )
             {
                 throw new MojoFailureException( "The project artifact has not been assembled yet. "
                     + "Please do not invoke this goal before the lifecycle phase \"package\"." );
             }
-
-            File projectArtifactSignature = signer.generateSignatureForArtifact( projectArtifact );
-
-            if ( projectArtifactSignature != null )
+            else
             {
-                signingBundles.add( new SigningBundle( project.getArtifact().getType(), projectArtifactSignature ) );
+                getLog().debug( "Main artifact not assembled, skipping signature generation" );
             }
         }
 
@@ -180,6 +188,8 @@ public class GpgSignAttachedMojo
             throw new MojoExecutionException( "Error copying POM for signing.", e );
         }
 
+        getLog().debug( "Generating signature for " + pomToSign );
+
         File pomSignature = signer.generateSignatureForArtifact( pomToSign );
 
         if ( pomSignature != null )
@@ -196,6 +206,8 @@ public class GpgSignAttachedMojo
             Artifact artifact = (Artifact) i.next();
 
             File file = artifact.getFile();
+
+            getLog().debug( "Generating signature for " + file );
 
             File signature = signer.generateSignatureForArtifact( file );
 
