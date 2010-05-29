@@ -25,29 +25,29 @@ import java.io.File;
 public class SigningBundle
 {
 
-    private String artifactType;
+    private String extension;
 
     private String classifier;
 
     private File signature;
 
-    public SigningBundle( String artifactType, File signature )
+    public SigningBundle( String extension, File signature )
     {
-        this.artifactType = artifactType;
+        this.extension = extension;
 
         this.signature = signature;
     }
 
-    public SigningBundle( String artifactType, String classifier, File signature )
+    public SigningBundle( String extension, String classifier, File signature )
     {
-        this.artifactType = artifactType;
+        this.extension = extension;
         this.classifier = classifier;
         this.signature = signature;
     }
 
-    public String getArtifactType()
+    public String getExtension()
     {
-        return artifactType;
+        return extension;
     }
 
     public File getSignature()
