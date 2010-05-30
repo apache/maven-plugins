@@ -1,6 +1,6 @@
 package org.apache.maven.plugin.dependency.resolvers;
 
-/* 
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -16,7 +16,7 @@ package org.apache.maven.plugin.dependency.resolvers;
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
- * under the License.    
+ * under the License.
  */
 
 import java.util.ArrayList;
@@ -34,46 +34,48 @@ import org.apache.maven.shared.artifact.filter.ScopeArtifactFilter;
 /**
  * Goal that resolves all project dependencies and then lists the repositories
  * used by the build and by the transitive dependencies
- * 
+ *
  * @goal list-repositories
  * @requiresDependencyResolution test
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  * @version $Id: GoOfflineMojo.java 728546 2008-12-21 22:56:51Z bentmann $
  * @since 2.2
  */
-public class ListRepositoriesMojo extends AbstractDependencyMojo
+public class ListRepositoriesMojo
+    extends AbstractDependencyMojo
 {
 	/**
      * Displays a list of the repositories used by this build.
 	 * @throws MojoExecutionException
 	 *             with a message if an error occurs.
-	 * 
+	 *
 	 */
-	public void execute() throws MojoExecutionException
+    public void execute()
+        throws MojoExecutionException
 	{
 		try
 		{
 			ArtifactResolutionResult result = this.artifactCollector.collect(
 					project.getArtifacts(), project.getArtifact(), this.getLocal(),
 					this.remoteRepos, this.artifactMetadataSource,
-					new ScopeArtifactFilter(Artifact.SCOPE_TEST),
-					new ArrayList());
+					new ScopeArtifactFilter( Artifact.SCOPE_TEST ),
+					new ArrayList() );
 			HashSet repos = new HashSet();
-			for (Iterator i = result.getArtifactResolutionNodes().iterator(); i
-					.hasNext();)
+            for ( Iterator i = result.getArtifactResolutionNodes().iterator(); i.hasNext(); )
 			{
 				ResolutionNode node = (ResolutionNode) i.next();
-				repos.addAll(node.getRemoteRepositories());
+                repos.addAll( node.getRemoteRepositories() );
 			}
 
-			this.getLog().info("Repositories Used by this build:");
-			for (Iterator i = repos.iterator(); i.hasNext();)
-			{
-				this.getLog().info(i.next().toString());
-			}
-		} catch (ArtifactResolutionException e)
-		{
-			throw new MojoExecutionException("Unable to resolve artifacts",e);
-		}
+            this.getLog().info( "Repositories Used by this build:" );
+            for ( Iterator i = repos.iterator(); i.hasNext(); )
+            {
+                this.getLog().info( i.next().toString() );
+            }
+        }
+        catch ( ArtifactResolutionException e )
+        {
+            throw new MojoExecutionException( "Unable to resolve artifacts", e );
+        }
 	}
 }
