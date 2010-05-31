@@ -286,7 +286,7 @@ under the License.
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
       <artifactId>maven-doxia-tools</artifactId>
-      <version>1.2</version>
+      <version>1.2.1</version>
       <exclusions>
         <exclusion>
           <groupId>org.apache.maven</groupId>
