@@ -289,7 +289,7 @@ public abstract class AbstractAntMojo
         antProject.setProperty( ( propertyPrefix + "project.packaging" ), mavenProject.getPackaging() );
         antProject.setProperty( ( propertyPrefix + "project.build.directory" ), mavenProject.getBuild().getDirectory() );
         antProject.setProperty( ( propertyPrefix + "project.build.outputDirectory" ), mavenProject.getBuild().getOutputDirectory() );
-        antProject.setProperty( ( propertyPrefix + "project.build.outputDirectory" ), mavenProject.getBuild().getTestOutputDirectory() );
+        antProject.setProperty( ( propertyPrefix + "project.build.testOutputDirectory" ), mavenProject.getBuild().getTestOutputDirectory() );
         antProject.setProperty( ( propertyPrefix + "project.build.sourceDirectory" ), mavenProject.getBuild().getSourceDirectory() );
         antProject.setProperty( ( propertyPrefix + "project.build.testSourceDirectory" ), mavenProject.getBuild().getTestSourceDirectory() );
         
