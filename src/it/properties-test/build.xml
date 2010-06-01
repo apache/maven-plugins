@@ -13,7 +13,31 @@
     <fail unless="junit:junit:jar" message="Property not set \${junit:junit:jar}"/>    
     <echo message="maven.dependency.junit.junit.jar.path : ${maven.dependency.junit.junit.jar.path}"/>
     <fail unless="maven.dependency.junit.junit.jar.path" message="Property not set \${maven.dependency.junit.junit.jar.path}"/>
-      
+    
+    <property name="outputDir" location="./target/classes"/>
+    <echo message="outputDir: ${outputDir}"/>
+    <property name="outputDirProp" location="${project.build.outputDirectory}"/>
+    <echo message="outputDirProp: ${outputDirProp}"/>
+    <fail message="Incorrect output dir property">
+      <condition>
+        <not>
+          <equals arg1="${outputDir}" arg2="${outputDirProp}"/>
+        </not>
+      </condition>
+    </fail>
+    
+    <property name="testOutputDir" location="./target/test-stuff"/>
+    <echo message="testOutputDir ${testOutputDir}"/>
+    <property name="testOutputDirProp" location="${project.build.testOutputDirectory}"/>
+    <echo message="testOutputDirProp: ${testOutputDirProp}"/>
+    <fail message="Incorrect test output dir prop">
+      <condition>
+        <not>
+          <equals arg1="${testOutputDir}" arg2="${testOutputDirProp}"/>
+        </not>
+      </condition>
+    </fail>
+
   </target>
 
 </project>

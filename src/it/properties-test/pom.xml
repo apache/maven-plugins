@@ -19,6 +19,7 @@
   </dependencies>
 
   <build>
+    <testOutputDirectory>target/test-stuff</testOutputDirectory>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
