@@ -29,7 +29,7 @@ import org.apache.maven.ant.tasks.support.TypesArtifactFilter;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.filter.AndArtifactFilter;
-import org.apache.maven.plugin.antrun.AbstractAntMojo;
+import org.apache.maven.plugin.antrun.AntRunMojo;
 import org.apache.maven.project.MavenProject;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
@@ -50,7 +50,7 @@ public class DependencyFilesetsTask
     /**
      * The project ref Id of the project being used.
      */
-    private String mavenProjectId = AbstractAntMojo.DEFAULT_MAVEN_PROJECT_REFID;
+    private String mavenProjectId = AntRunMojo.DEFAULT_MAVEN_PROJECT_REFID;
 
     /**
      * The id to store the dependencies fileset.
