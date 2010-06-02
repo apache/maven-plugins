@@ -21,6 +21,7 @@ under the License.
 
 <faqs xmlns="http://maven.apache.org/FML/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/FML/1.0 http://maven.apache.org/xsd/fml-1.0.xsd" id="FAQ" title="Frequently Asked Questions">
   <part id="General">
+    <title>General</title>
     <faq id="What is the difference between mvn site and mvn site:site">
       <question>What is the difference between <i>mvn site</i> and <i>mvn site:site</i>?</question>
       <answer>
@@ -48,6 +49,62 @@ under the License.
         </ul>
       </answer>
     </faq>
+    <faq id="How to include a custom Doxia module, like Twiki">
+      <question>How to include a custom Doxia module, like Twiki?</question>
+      <answer>
+        <p>
+          The site plugin handles out-of-box apt, xdoc and fml formats. If you
+          want to use a custom format like Twiki, you need to specify the
+          Doxia Twiki dependency, i.e.:
+          <source>
+<![CDATA[<project>
+  ...
+  <build>
+    <plugins>
+      ...
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-site-plugin</artifactId>
+        <dependencies>
+          <dependency>
+            <groupId>org.apache.maven.doxia</groupId>
+            <artifactId>doxia-module-twiki</artifactId>
+            <version>1.0</version>
+          </dependency>
+        </dependencies>
+      </plugin>
+    </plugins>
+  </build>
+  ...
+</project>]]></source>
+        </p>
+      </answer>
+    </faq>
+    <faq id="Can_I_validate_xml">
+      <question>How can I validate my xdoc/fml source files?</question>
+      <answer>
+        <p>
+          Since version 2.1.1 of the site plugin, there is a <code>validate</code>
+          configuration parameter that switches on xml validation (default is off).
+          Note that in the current implementation of the parser used by Doxia,
+          validation requires an independent parsing run, so that every source
+          file is actually parsed twice when validation is switched on.
+        </p>
+        <p>
+          If validation is switched on, <strong>all</strong> xml source
+          files need a correct schema and/or DTD definition.
+          See the Doxia documentation on
+          <a href="http://maven.apache.org/doxia/references/xdoc-format.html#Validation">validating xdocs</a>,
+          and the schema definitions for
+          <a href="http://maven.apache.org/doxia/doxia/doxia-modules/doxia-module-xdoc/using-xdoc-xsd.html">xdoc</a>
+          and
+          <a href="http://maven.apache.org/doxia/doxia/doxia-modules/doxia-module-fml/using-fml-xsd.html">fml</a>.
+        </p>
+      </answer>
+    </faq>
+  </part>
+  <part id="Specific_issues">
+    <title>Specific issues</title>
     <faq id="Why do my absolute links get translated into relative links">
       <question>Why do my absolute links get translated into relative links?</question>
       <answer>
@@ -91,34 +148,20 @@ under the License.
         </p>
       </answer>
     </faq>
-    <faq id="How to include a custom Doxia module, like Twiki">
-      <question>How to include a custom Doxia module, like Twiki?</question>
+    <faq id="Can_I_use_entities">
+      <question>Can I use entities in xdoc/fml source files?</question>
       <answer>
         <p>
-          The site plugin handles out-of-box apt, xdoc and fml formats. If you
-          want to use a custom format like Twiki, you need to specify the
-          Doxia Twiki dependency, i.e.:
-          <source>
-<![CDATA[<project>
-  ...
-  <build>
-    <plugins>
-      ...
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-site-plugin</artifactId>
-        <dependencies>
-          <dependency>
-            <groupId>org.apache.maven.doxia</groupId>
-            <artifactId>doxia-module-twiki</artifactId>
-            <version>1.0</version>
-          </dependency>
-        </dependencies>
-      </plugin>
-    </plugins>
-  </build>
-  ...
-</project>]]></source>
+          Yes. Entity resolution has been added in Doxia version 1.1, available
+          in site plugin 2.1 and later.
+        </p>
+        <p>
+          There is a catch however. In the current implementation (as of site-plugin-2.1.1),
+          entities are only resolved by an independent
+          <a href="#Can_I_validate_xml">validation</a> run.
+          Therefore, if you want to use entities, you <strong>have</strong> to switch on
+          validation for your xml source files.
+          See <a href="http://jira.codehaus.org/browse/MSITE-483">MSITE-483</a>.
         </p>
       </answer>
     </faq>
