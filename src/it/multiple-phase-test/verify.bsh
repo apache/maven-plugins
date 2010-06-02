@@ -1,0 +1,29 @@
+import java.io.*;
+import java.util.*;
+import java.util.regex.*;
+
+import org.codehaus.plexus.util.*;
+
+try
+{
+    File phase1 = new File( basedir, "phase-1.txt" );
+    if ( ! phase1.exists() )
+    {
+        System.err.println( "Could not find Ant generated file: " + phase1 );
+        return false;
+    }
+    
+    File phase2 = new File( basedir, "phase-2.txt" );
+    if ( ! phase2.exists() )
+    {
+        System.err.println( "Could not find Ant generated file: " + phase2 );
+        return false;
+    }
+}
+catch( Throwable t )
+{
+    t.printStackTrace();
+    return false;
+}
+
+return true;
