@@ -52,7 +52,7 @@ import com.puppycrawl.tools.checkstyle.filters.SuppressionsLoader;
 
 /**
  * @author <a href="mailto:olamy@apache.org">olamy</a>
- * @plexus.component role="org.apache.maven.plugin.checkstyle.CheckstyleExecutor" role-hint="default"
+ * @plexus.component role="org.apache.maven.plugin.checkstyle.CheckstyleExecutor" role-hint="default" instantiation-strategy="per-lookup"
  * @since 2.5
  * @version $Id$
  */
@@ -464,7 +464,6 @@ public class DefaultCheckstyleExecutor
             locator.addSearchPath( "url", "" );
 
             File configFile = locator.getResourceAsFile( request.getConfigLocation(), "checkstyle-checker.xml" );
-
             if ( configFile == null )
             {
                 throw new CheckstyleExecutorException( "Unable to process config location: "
