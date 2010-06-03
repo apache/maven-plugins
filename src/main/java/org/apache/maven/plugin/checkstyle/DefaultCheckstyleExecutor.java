@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Properties;
 
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
+import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 import org.codehaus.plexus.resource.ResourceManager;
 import org.codehaus.plexus.resource.loader.FileResourceCreationException;
@@ -454,12 +455,16 @@ public class DefaultCheckstyleExecutor
             {
                 getLogger().debug( "request.getConfigLocation() " + request.getConfigLocation() );
             }
-            File parent = request.getProject().getFile().getParentFile();
-            if (parent != null)
+            
+            MavenProject parent = request.getProject();
+            while ( parent != null && parent.getFile() != null )
             {
-                // MCHECKSTYLE-131 ( olamy ) I don't like this hack. what's happened if this is defined in parent/parent pom
-                // it will breaks
-                locator.addSearchPath( FileResourceLoader.ID, request.getProject().getFile().getParentFile().getAbsolutePath() );
+                // MCHECKSTYLE-131 ( olamy ) I don't like this hack.
+                // (dkulp) Me either.   It really pollutes the location stuff
+                // by allowing searches of stuff outside the current module.
+                File dir = parent.getFile().getParentFile();
+                locator.addSearchPath( FileResourceLoader.ID, dir.getAbsolutePath() );
+                parent = parent.getParent();
             }
             locator.addSearchPath( "url", "" );
 
