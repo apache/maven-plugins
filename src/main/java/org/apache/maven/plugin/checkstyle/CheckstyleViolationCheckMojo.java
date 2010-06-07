@@ -53,6 +53,7 @@ import com.puppycrawl.tools.checkstyle.api.CheckstyleException;
  * @goal check
  * @phase verify
  * @requiresDependencyResolution compile
+ * @threadSafe
  */
 public class CheckstyleViolationCheckMojo
     extends AbstractMojo
