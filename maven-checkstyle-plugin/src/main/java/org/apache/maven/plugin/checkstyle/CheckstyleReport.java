@@ -61,6 +61,7 @@ import com.puppycrawl.tools.checkstyle.api.CheckstyleException;
  * @version $Id$
  * @goal checkstyle
  * @requiresDependencyResolution compile
+ * @threadSafe
  */
 public class CheckstyleReport
     extends AbstractMavenReport
@@ -501,6 +502,7 @@ public class CheckstyleReport
      * @readonly
      */
     protected CheckstyleExecutor checkstyleExecutor;
+    
 
     /** {@inheritDoc} */
     public String getName( Locale locale )
@@ -820,7 +822,7 @@ public class CheckstyleReport
         // TODO: would be good to scan the files here
         return sourceDirectory.exists();
     }
-
+    
     /** {@inheritDoc} */
     public void setReportOutputDirectory( File reportOutputDirectory )
     {

@@ -1,4 +1,3 @@
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -17,25 +16,16 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-assert new File(basedir, 'target/site/checkstyle.html').exists();
+package org.codehaus.plexus.util.interpolation;
 
-assert new File(basedir, 'target/checkstyle-cachefile').exists();
-assert new File(basedir, 'target/checkstyle-checker.xml').exists();
-assert new File(basedir, 'target/checkstyle-header.txt').exists();
-assert new File(basedir, 'target/checkstyle-result.xml').exists();
-
-File rssFile = new File( basedir, 'target/site/checkstyle.rss' );
-assert rssFile.exists();
-
-def rss = new XmlParser().parse( rssFile );
-
-def channel = rss.channel[0]
-
-assert channel.title.text() == 'check-pass - Checkstyle report'
-
-def item = channel.item[0]
-assert item != null
-assert item.title.text().startsWith('File: 1,')
-
-
-return true;
+/**
+ * @author <a href="mailto:olamy@apache.org">olamy</a>
+ * @since
+ * @version $Id$
+ * @deprecated must be removed when doxia has upgraded to plexus-utils 2.x and plexux-interpolation
+ */
+public interface ValueSource
+    extends org.codehaus.plexus.interpolation.ValueSource
+{
+    // no-op
+}
