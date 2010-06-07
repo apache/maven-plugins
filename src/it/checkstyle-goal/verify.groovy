@@ -30,7 +30,7 @@ def rss = new XmlParser().parse( rssFile );
 
 def channel = rss.channel[0]
 
-assert channel.title.text() == 'Unnamed - org.apache.maven.plugins.checkstyle:check-pass:jar:1.0-SNAPSHOT - Checkstyle report'
+assert channel.title.text() == 'check-pass - Checkstyle report'
 
 def item = channel.item[0]
 assert item != null
