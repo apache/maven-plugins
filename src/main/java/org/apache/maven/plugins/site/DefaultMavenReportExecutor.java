@@ -304,7 +304,7 @@ public class DefaultMavenReportExecutor
             Thread.currentThread().setContextClassLoader( mojoDescriptor.getRealm() );
 
             boolean isMavenReport = MavenReport.class.isAssignableFrom( mojo.getClass() );
-            if ( getLog().isDebugEnabled() )
+            if ( getLog().isDebugEnabled() && mojoDescriptor != null && mojoDescriptor.getImplementationClass() != null )
             {
                 getLog().debug(
                                 "class " + mojoDescriptor.getImplementationClass().getName() + " isMavenReport "
