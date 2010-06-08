@@ -36,6 +36,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
  * @goal cpd-check
  * @phase verify
  * @execute goal="cpd"
+ * @threadSafe
  */
 public class CpdViolationCheckMojo
     extends AbstractPmdViolationCheckMojo
