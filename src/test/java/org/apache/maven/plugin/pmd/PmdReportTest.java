@@ -26,6 +26,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Locale;
 
 /**
  * @author <a href="mailto:oching@apache.org">Maria Odea Ching</a>
@@ -199,7 +200,8 @@ public class PmdReportTest
             File testPom =
                 new File( getBasedir(), "src/test/resources/unit/invalid-format/invalid-format-plugin-config.xml" );
             PmdReport mojo = (PmdReport) lookupMojo( "pmd", testPom );
-            mojo.execute();
+            setVariableValueToObject( mojo, "compileSourceRoots", mojo.project.getCompileSourceRoots() );
+            mojo.executeReport( Locale.ENGLISH );
 
             fail( "Must throw MavenReportException." );
         }

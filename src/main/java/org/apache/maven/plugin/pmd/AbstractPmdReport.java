@@ -291,20 +291,27 @@ public abstract class AbstractPmdReport
 
         List directories = new ArrayList();
 
-        for ( Iterator i = compileSourceRoots.iterator(); i.hasNext(); )
+        if ( compileSourceRoots != null )
         {
-            String root = (String) i.next();
-            File sroot = new File( root );
-            directories.add( new PmdFileInfo( project, sroot, sourceXref ) );
-        }
 
-        if ( includeTests )
-        {
-            for ( Iterator i = testSourceRoots.iterator(); i.hasNext(); )
+            for ( Iterator i = compileSourceRoots.iterator(); i.hasNext(); )
             {
                 String root = (String) i.next();
                 File sroot = new File( root );
-                directories.add( new PmdFileInfo( project, sroot, testXref ) );
+                directories.add( new PmdFileInfo( project, sroot, sourceXref ) );
+            }
+
+        }
+        if ( includeTests )
+        {
+            if ( testSourceRoots != null )
+            {
+                for ( Iterator i = testSourceRoots.iterator(); i.hasNext(); )
+                {
+                    String root = (String) i.next();
+                    File sroot = new File( root );
+                    directories.add( new PmdFileInfo( project, sroot, testXref ) );
+                }
             }
         }
         if ( aggregate )

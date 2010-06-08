@@ -67,6 +67,7 @@ import org.codehaus.plexus.util.StringUtils;
  * @version $Id$
  * @since 2.0
  * @goal pmd
+ * @threadSafe
  */
 public class PmdReport
     extends AbstractPmdReport
