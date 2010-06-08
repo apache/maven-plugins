@@ -148,6 +148,7 @@ public class CpdReportTest
                 new File( getBasedir(),
                           "src/test/resources/unit/invalid-format/cpd-invalid-format-plugin-config.xml" );
             CpdReport mojo = (CpdReport) lookupMojo( "cpd", testPom );
+            setVariableValueToObject( mojo, "compileSourceRoots", mojo.project.getCompileSourceRoots() );
             mojo.execute();
 
             fail( "MavenReportException must be thrown" );
