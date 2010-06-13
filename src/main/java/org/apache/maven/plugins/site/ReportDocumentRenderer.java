@@ -58,7 +58,7 @@ public class ReportDocumentRenderer
 
     private Log log;
 
-    public ReportDocumentRenderer( MavenReportExecution mavenReportExecution, RenderingContext renderingContext, Log log)
+    public ReportDocumentRenderer( MavenReportExecution mavenReportExecution, RenderingContext renderingContext, Log log )
     {
         this.mavenReportExecution = mavenReportExecution;
 

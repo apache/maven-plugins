@@ -125,6 +125,5 @@ public class SiteDescriptorArtifactMetadata
     public void merge( org.apache.maven.repository.legacy.metadata.ArtifactMetadata metadata )
     {
         // FIXME what todo here ?
-        
     }
 }

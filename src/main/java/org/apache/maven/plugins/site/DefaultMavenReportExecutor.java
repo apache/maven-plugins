@@ -55,7 +55,7 @@ import org.codehaus.plexus.util.xml.Xpp3DomUtils;
 import org.mortbay.log.Log;
 
 /**
- *  
+ *
  * @author Olivier Lamy
  * @since 3.0-beta-1
  */
@@ -72,35 +72,34 @@ public class DefaultMavenReportExecutor
 
     @Requirement
     protected LifecycleExecutor lifecycleExecutor;
-    
+
     @Requirement
     protected PluginVersionResolver pluginVersionResolver;
-    
+
     public List<MavenReportExecution> buildMavenReports( MavenReportExecutorRequest mavenReportExecutorRequest )
         throws MojoExecutionException
     {
-
-        if (getLog().isDebugEnabled())
+        if ( getLog().isDebugEnabled() )
         {
             getLog().debug( "buildMavenReports" );
         }
         List<String> imports = new ArrayList<String>();
 
-        
+
         imports.add( "org.apache.maven.reporting.MavenReport" );
         imports.add( "org.apache.maven.doxia.siterenderer.Renderer" );
         imports.add( "org.apache.maven.doxia.sink.SinkFactory" );
         imports.add( "org.codehaus.doxia.sink.Sink" );
         imports.add( "org.apache.maven.doxia.sink.Sink" );
         imports.add( "org.apache.maven.doxia.sink.SinkEventAttributes" );
-       
+
         Set<String> excludes = new HashSet<String>( 1 );
         //excludes.add( "maven-reporting-impl");
         excludes.add( "doxia-site-renderer" );
         excludes.add( "doxia-sink-api" );
-        
-        ExclusionSetFilter exclusionSetFilter = new ExclusionSetFilter(excludes);         
-        
+
+        ExclusionSetFilter exclusionSetFilter = new ExclusionSetFilter( excludes );
+
         RepositoryRequest repositoryRequest = new DefaultRepositoryRequest();
         repositoryRequest.setLocalRepository( mavenReportExecutorRequest.getLocalRepository() );
         repositoryRequest.setRemoteRepositories( mavenReportExecutorRequest.getProject().getPluginArtifactRepositories() );
@@ -115,17 +114,18 @@ public class DefaultMavenReportExecutor
                 Plugin plugin = new Plugin();
                 plugin.setGroupId( reportPlugin.getGroupId() );
                 plugin.setArtifactId( reportPlugin.getArtifactId() );
-                plugin.setVersion( getPluginVersion (reportPlugin, repositoryRequest, mavenReportExecutorRequest ) );
+                plugin.setVersion( getPluginVersion( reportPlugin, repositoryRequest, mavenReportExecutorRequest ) );
 
-                if (logger.isInfoEnabled())
+                if ( logger.isInfoEnabled() )
                 {
-                    logger.info( "configuring reportPlugin " + plugin.getGroupId() + ":" + plugin.getArtifactId() + ":" + plugin.getVersion() );
+                    logger.info( "configuring reportPlugin " + plugin.getGroupId() + ":" + plugin.getArtifactId() + ":"
+                        + plugin.getVersion() );
                 }
-                
+
                 List<String> goals = new ArrayList<String>();
 
                 PluginDescriptor pluginDescriptor = mavenPluginManager.getPluginDescriptor( plugin, repositoryRequest );
-                
+
                 if ( reportPlugin.getReportSets().isEmpty() )
                 {
                     List<MojoDescriptor> mojoDescriptors = pluginDescriptor.getMojos();
@@ -157,10 +157,11 @@ public class DefaultMavenReportExecutor
                     mojoExecution.setMojoDescriptor( mojoDescriptor );
 
 
-                    
+
                     mavenPluginManager.setupPluginRealm( pluginDescriptor,
                                                          mavenReportExecutorRequest.getMavenSession(),
-                                                         Thread.currentThread().getContextClassLoader(), imports, exclusionSetFilter );
+                                                         Thread.currentThread().getContextClassLoader(), imports,
+                                                         exclusionSetFilter );
 
                     MavenReport mavenReport =
                         getConfiguredMavenReport( mojoExecution, pluginDescriptor, mavenReportExecutorRequest );
@@ -176,7 +177,7 @@ public class DefaultMavenReportExecutor
 
                         Xpp3Dom mergedConfiguration =
                             Xpp3DomUtils.mergeXpp3Dom( reportConfiguration, convert( mojoDescriptor ) );
-                        
+
                         Xpp3Dom cleanedConfiguration = new Xpp3Dom( "configuration" );
                         if ( mergedConfiguration.getChildren() != null )
                         {
@@ -194,7 +195,7 @@ public class DefaultMavenReportExecutor
                             getLog().debug( "mojoExecution mergedConfiguration " + mergedConfiguration );
                             getLog().debug( "mojoExecution cleanedConfiguration " + cleanedConfiguration );
                         }
-                       
+
                         mojoExecution.setConfiguration( cleanedConfiguration );
                     }
 
@@ -228,9 +229,8 @@ public class DefaultMavenReportExecutor
         }
     }
 
-    private boolean canGenerateReport(MavenReport mavenReport)
+    private boolean canGenerateReport( MavenReport mavenReport )
     {
-     
         try
         {
             return mavenReport.canGenerateReport();
@@ -245,10 +245,10 @@ public class DefaultMavenReportExecutor
                            "Error loading report " + mavenReport.getClass().getName()
                                + " - AbstractMethodError: canGenerateReport()" );
             return true;
-        }        
-        
+        }
+
     }
-    
+
     private MavenReport getConfiguredMavenReport( MojoExecution mojoExecution, PluginDescriptor pluginDescriptor,
                                                   MavenReportExecutorRequest mavenReportExecutorRequest )
         throws PluginContainerException, PluginConfigurationException
@@ -265,7 +265,7 @@ public class DefaultMavenReportExecutor
             {
                 return null;
             }
-            mavenReport = (MavenReport) mojo; 
+            mavenReport = (MavenReport) mojo;
             return mavenReport;
 
         }
@@ -274,17 +274,18 @@ public class DefaultMavenReportExecutor
             getLog().warn( "skip ClassCastException " + e.getMessage() );
             return null;
         }
-        catch (PluginContainerException e )
+        catch ( PluginContainerException e )
         {
             /**
              * ignore old plugin which are using removed PluginRegistry
              * [INFO] Caused by: java.lang.NoClassDefFoundError: org/apache/maven/plugin/registry/PluginRegistry
              */
-            if ( e.getCause() != null && e.getCause() instanceof NoClassDefFoundError && e.getMessage().contains( "PluginRegistry" ) )
+            if ( e.getCause() != null && e.getCause() instanceof NoClassDefFoundError
+                && e.getMessage().contains( "PluginRegistry" ) )
             {
                 getLog().warn( "skip NoClassDefFoundError with PluginRegistry " );
                 // too noisy only in debug mode + e.getMessage() );
-                if (getLog().isDebugEnabled())
+                if ( getLog().isDebugEnabled() )
                 {
                     Log.debug( e.getMessage(), e );
                 }
@@ -366,7 +367,7 @@ public class DefaultMavenReportExecutor
     {
         return logger;
     }
-    
+
     protected String getPluginVersion( ReportPlugin reportPlugin, RepositoryRequest repositoryRequest, MavenReportExecutorRequest mavenReportExecutorRequest )
         throws PluginVersionResolutionException
     {
@@ -378,23 +379,23 @@ public class DefaultMavenReportExecutor
         {
             return reportPlugin.getVersion();
         }
-        
+
         MavenProject project = mavenReportExecutorRequest.getProject();
-        
+
         // search in the build section
         if ( project.getBuild() != null )
         {
             Plugin plugin = find( reportPlugin.getGroupId(), reportPlugin.getArtifactId(), project.getBuild().getPlugins() );
-            if (plugin != null && plugin.getVersion() != null)
+            if ( plugin != null && plugin.getVersion() != null )
             {
-                if (getLog().isDebugEnabled())
+                if ( getLog().isDebugEnabled() )
                 {
                     logger.debug( "resolve version from the build.plugins section " + plugin.getVersion() );
                 }
                 return plugin.getVersion();
             }
         }
-        
+
         // search in pluginMngt section
         if ( project.getBuild() != null && project.getBuild().getPluginManagement() != null )
         {
@@ -409,9 +410,9 @@ public class DefaultMavenReportExecutor
                 }
                 return plugin.getVersion();
             }
-        }        
-        
-        
+        }
+
+
         logger.warn( "report plugin " + reportPlugin.getGroupId() + ":" + reportPlugin.getArtifactId()
             + " has an empty version" );
         logger.warn( "" );
@@ -424,9 +425,9 @@ public class DefaultMavenReportExecutor
 
         PluginVersionRequest pluginVersionRequest = new DefaultPluginVersionRequest( repositoryRequest );
         pluginVersionRequest.setOffline( mavenReportExecutorRequest.getMavenSession().getRequest().isOffline() );
-        
+
         pluginVersionRequest.setForceUpdate( mavenReportExecutorRequest.getMavenSession().getRequest().isUpdateSnapshots() );
-        
+
         pluginVersionRequest.setGroupId( reportPlugin.getGroupId() );
         pluginVersionRequest.setArtifactId( reportPlugin.getArtifactId() );
         PluginVersionResult result = pluginVersionResolver.resolve( pluginVersionRequest );
@@ -438,7 +439,7 @@ public class DefaultMavenReportExecutor
         }
         return result.getVersion();
     }
-    
+
     private Plugin find( String groupId, String artifactId, List<Plugin> plugins )
     {
         if ( plugins == null )

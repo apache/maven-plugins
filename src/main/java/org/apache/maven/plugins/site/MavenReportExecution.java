@@ -22,7 +22,7 @@ package org.apache.maven.plugins.site;
 import org.apache.maven.reporting.MavenReport;
 
 /**
- *  
+ *
  * @author Olivier Lamy
  * @since 3.0-beta-1
  */

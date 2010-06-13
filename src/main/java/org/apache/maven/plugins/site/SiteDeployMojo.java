@@ -187,7 +187,7 @@ public class SiteDeployMojo
         {
             throw new MojoExecutionException( "Unable to configure Wagon: '" + repository.getProtocol() + "'", e );
         }
-        
+
 
         if ( !wagon.supportsDirectoryCopy() )
         {
@@ -215,11 +215,11 @@ public class SiteDeployMojo
                 wagon.connect( repository, wagonManager.getAuthenticationInfo( id ) );
             }
             */
-            
+
             wagon.connect( repository );
-            
+
             wagon.putDirectory( inputDirectory, "." );
-            
+
             if ( chmod && wagon instanceof CommandExecutor )
             {
                 CommandExecutor exec = (CommandExecutor) wagon;
@@ -326,7 +326,7 @@ public class SiteDeployMojo
                 return null;
             }
         }
-                
+
         return proxyInfo;
         */
     }
