@@ -10,7 +10,6 @@ classpath = StringUtils.replace( classpath, "PREFIX/", "" );
 List actual = Arrays.asList( classpath.split( ":" ) );
 
 List expected = new ArrayList();
-expected.add( "classworlds-1.1-alpha-2.jar" );
 expected.add( "junit-3.8.1.jar" );
 expected.add( "maven-artifact-2.0.6.jar" );
 expected.add( "maven-artifact-manager-2.0.6.jar" );
