@@ -20,14 +20,17 @@
 
 <project xmlns="http://maven.apache.org/POM/4.0.0"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>org.apache.maven.plugins</groupId>
-  <artifactId>maven-changes-plugin-test</artifactId>
+
+  <groupId>org.apache.maven.plugins.site.its</groupId>
+  <artifactId>report-changes-generation</artifactId>
   <version>99.0</version>
-  <name>Maven</name>
   <packaging>jar</packaging>
-  <description>Test report.</description>
+
+  <name>maven-site-plugin IT: maven-changes-plugin</name>
+  <description>Test maven-changes-plugin report generation.</description>
+
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
@@ -36,13 +39,16 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+
   <issueManagement>
     <system>jira</system>
     <url>http://localhost/bla</url>
   </issueManagement>
+
   <properties>
     <changesPluginVersion>2.1</changesPluginVersion>
   </properties>
+
   <build>
     <pluginManagement>
       <plugins>
@@ -52,15 +58,15 @@
           <version>${changesPluginVersion}</version>
           <configuration>
             <issueLinkTemplate>http://myjira/browse/%ISSUE%</issueLinkTemplate>
-          </configuration>                      
+          </configuration>
         </plugin>
       </plugins>
-    </pluginManagement>    
+    </pluginManagement>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-changes-plugin</artifactId>
-        <version>${changesPluginVersion}</version>   
+        <version>${changesPluginVersion}</version>
         <executions>
           <execution>
             <id>validate-changes</id>
@@ -72,15 +78,16 @@
               <failOnError>true</failOnError>
             </configuration>
           </execution>
-        </executions>     
+        </executions>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-site-plugin</artifactId>
         <version>@pom.version@</version>
-      </plugin>      
+      </plugin>
     </plugins>
-  </build>  
+  </build>
+
   <reporting>
     <excludeDefaults>true</excludeDefaults>
     <plugins>
@@ -101,5 +108,5 @@
       </plugin>
     </plugins>
   </reporting>
-  
+
 </project>

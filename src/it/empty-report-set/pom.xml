@@ -23,7 +23,7 @@ under the License.
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.apache.maven.its.site</groupId>
-  <artifactId>test</artifactId>
+  <artifactId>empty-report-set</artifactId>
   <version>0.1</version>
   <packaging>jar</packaging>
 

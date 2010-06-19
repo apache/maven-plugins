@@ -48,7 +48,7 @@ try
         return false;
     }
 
-    File childDirectory = new File ( stagingDirectory, "localhost/" + strippedTmpDir + "/www.example.com/parent/child" );
+    File childDirectory = new File ( stagingDirectory, "localhost/" + strippedTmpDir + "/www.example.com/parent/MSITE-304-child" );
     if ( !childDirectory.exists() || !childDirectory.isDirectory() )
     {
         System.err.println( "Staging directory for child '" + childDirectory + "' is missing or not a directory." );
@@ -62,14 +62,14 @@ try
         return false;
     }
 
-    File validChildStageDeployDirectory = new File ( stageDeployDirectory, "staging/child" );
+    File validChildStageDeployDirectory = new File ( stageDeployDirectory, "staging/MSITE-304-child" );
     if ( !validChildStageDeployDirectory.exists() || !validChildStageDeployDirectory.isDirectory() )
     {
         System.err.println( "Valid stage deploy directory for child '" + validChildStageDeployDirectory + "' is missing or not a directory." );
         return false;
     }
 
-    File invalidChildStageDeployDirectory = new File ( stageDeployDirectory, "child/staging" );
+    File invalidChildStageDeployDirectory = new File ( stageDeployDirectory, "MSITE-304-child/staging" );
     if ( invalidChildStageDeployDirectory.exists() && invalidChildStageDeployDirectory.isDirectory() )
     {
         System.err.println( "Invalid stage deploy directory for child '" + invalidChildStageDeployDirectory + "' is present." );
