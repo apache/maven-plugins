@@ -37,9 +37,9 @@ try
     {
         System.err.println( "siteDescriptor file is missing from target or is a directory." );
         return false;
-    }    
-    
-    File siteDescriptor = new File ( target, "snapshot-repo/test/site-attach-descriptor/1.0-SNAPSHOT/site-attach-descriptor-1.0-SNAPSHOT-site.xml" );
+    }
+
+    File siteDescriptor = new File ( target, "snapshot-repo/org/apache/maven/plugins/site/its/site-attach-descriptor/1.0-SNAPSHOT/site-attach-descriptor-1.0-SNAPSHOT-site.xml" );
     if ( !siteDescriptor.exists() || siteDescriptor.isDirectory() )
     {
         System.err.println( "siteDescriptor file is missing from local repository or is a directory." );
