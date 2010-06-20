@@ -37,7 +37,6 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.io.Writer;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -79,19 +78,17 @@ public class SiteDescriptorAttachMojo
     public void execute()
         throws MojoExecutionException
     {
-        List localesList = siteTool.getAvailableLocales( locales );
+        List<Locale> localesList = siteTool.getAvailableLocales( locales );
 
-        for ( Iterator iterator = localesList.iterator(); iterator.hasNext(); )
+        for ( Locale locale : localesList )
         {
-            Locale locale = (Locale) iterator.next();
-
             File descriptorFile = siteTool.getSiteDescriptorFromBasedir( toRelative( project.getBasedir(),
                                                                                      siteDirectory.getAbsolutePath() ),
                                                                          basedir, locale );
 
             if ( descriptorFile.exists() )
             {
-                Map props = new HashMap();
+                Map<String, String> props = new HashMap<String, String>();
                 props.put( "reports", "<menu ref=\"reports\"/>" );
                 props.put( "modules", "<menu ref=\"modules\"/>" );
 

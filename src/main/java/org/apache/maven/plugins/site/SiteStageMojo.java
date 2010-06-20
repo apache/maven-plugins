@@ -19,6 +19,10 @@ package org.apache.maven.plugins.site;
  * under the License.
  */
 
+
+import java.io.File;
+import java.util.List;
+
 import org.apache.maven.model.Site;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;

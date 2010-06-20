@@ -160,21 +160,19 @@ public class SiteRunMojo
 
         List filteredReports = filterReports( reports );
 
-        List localesList = siteTool.getAvailableLocales( locales );
+        List<Locale> localesList = siteTool.getAvailableLocales( locales );
         webapp.setAttribute( DoxiaFilter.LOCALES_LIST_KEY, localesList );
 
         // Default is first in the list
-        Locale defaultLocale = (Locale) localesList.get( 0 );
+        Locale defaultLocale = localesList.get( 0 );
         Locale.setDefault( defaultLocale );
 
         try
         {
-            Map i18nDoxiaContexts = new HashMap();
+            Map<String, DoxiaBean> i18nDoxiaContexts = new HashMap<String, DoxiaBean>();
 
-            for ( Iterator it = localesList.iterator(); it.hasNext(); )
+            for ( Locale locale : localesList )
             {
-                Locale locale = (Locale) it.next();
-
                 SiteRenderingContext i18nContext = createSiteRenderingContext( locale );
                 i18nContext.setInputEncoding( getInputEncoding() );
                 i18nContext.setOutputEncoding( getOutputEncoding() );
