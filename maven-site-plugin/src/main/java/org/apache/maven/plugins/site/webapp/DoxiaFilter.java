@@ -36,7 +36,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -57,9 +56,9 @@ public class DoxiaFilter
 
     private Renderer siteRenderer;
 
-    private Map i18nDoxiaContexts;
+    private Map<String, DoxiaBean> i18nDoxiaContexts;
 
-    private List localesList;
+    private List<Locale> localesList;
 
     /**
      * @see javax.servlet.Filter#init(javax.servlet.FilterConfig)
@@ -71,9 +70,9 @@ public class DoxiaFilter
 
         siteRenderer = (Renderer) servletContext.getAttribute( SITE_RENDERER_KEY );
 
-        i18nDoxiaContexts = (Map) servletContext.getAttribute( I18N_DOXIA_CONTEXTS_KEY );
+        i18nDoxiaContexts = (Map<String, DoxiaBean>) servletContext.getAttribute( I18N_DOXIA_CONTEXTS_KEY );
 
-        localesList = (List) servletContext.getAttribute( LOCALES_LIST_KEY );
+        localesList = (List<Locale>) servletContext.getAttribute( LOCALES_LIST_KEY );
     }
 
     /**
@@ -99,14 +98,12 @@ public class DoxiaFilter
 
         // Handle locale request
         SiteRenderingContext context;
-        Map documents;
+        Map<String, DocumentRenderer> documents;
         File generatedSiteDirectory;
 
         String localeWanted = null;
-        for ( Iterator it = localesList.iterator(); it.hasNext(); )
+        for ( Locale locale : localesList )
         {
-            Locale locale = (Locale) it.next();
-
             if ( path.startsWith( locale.getLanguage() + "/" ) )
             {
                 localeWanted = locale.toString();
@@ -116,7 +113,7 @@ public class DoxiaFilter
 
         if ( localeWanted == null )
         {
-            DoxiaBean defaultDoxiaBean = (DoxiaBean) i18nDoxiaContexts.get( "default" );
+            DoxiaBean defaultDoxiaBean = i18nDoxiaContexts.get( "default" );
             if ( defaultDoxiaBean == null )
             {
                 throw new ServletException( "No doxia bean found for the default locale" );
@@ -127,7 +124,7 @@ public class DoxiaFilter
         }
         else
         {
-            DoxiaBean i18nDoxiaBean = (DoxiaBean) i18nDoxiaContexts.get( localeWanted );
+            DoxiaBean i18nDoxiaBean = i18nDoxiaContexts.get( localeWanted );
             if ( i18nDoxiaBean == null )
             {
                 throw new ServletException( "No doxia bean found for the locale " + localeWanted );
@@ -174,7 +171,7 @@ public class DoxiaFilter
             context.addSiteDirectory( generatedSiteDirectory );
             try
             {
-                Map locateDocuments = siteRenderer.locateDocumentFiles( context );
+                Map<String, DocumentRenderer> locateDocuments = siteRenderer.locateDocumentFiles( context );
 
                 if ( locateDocuments.containsKey( path ) )
                 {
@@ -187,10 +184,9 @@ public class DoxiaFilter
                 throw new ServletException( e );
             }
 
-            List originalSiteDirectories = new ArrayList( context.getSiteDirectories() );
-            for ( Iterator i = originalSiteDirectories.iterator(); i.hasNext(); )
+            List<File> originalSiteDirectories = new ArrayList<File>( context.getSiteDirectories() );
+            for ( File dir : originalSiteDirectories )
             {
-                File dir = (File) i.next();
                 context.addSiteDirectory( dir );
             }
         }

@@ -138,9 +138,9 @@ public class SiteMap
         sink.text( i18n.getString( "site-plugin", locale, "site.sitemap.description" ) );
         sink.paragraph_();
 
-        for ( Iterator it = decoration.getMenus().iterator(); it.hasNext(); )
+        for ( Iterator<Menu> it = decoration.getMenus().iterator(); it.hasNext(); )
         {
-            Menu menu = (Menu) it.next();
+            Menu menu = it.next();
 
             sink.section3();
             sink.sectionTitle3();
@@ -157,7 +157,7 @@ public class SiteMap
         sink.body_();
     }
 
-    private void extractItems( List items, Sink sink )
+    private void extractItems( List<MenuItem> items, Sink sink )
     {
         if ( items == null || items.isEmpty() )
         {
@@ -166,10 +166,8 @@ public class SiteMap
 
         sink.list();
 
-        for ( Iterator it = items.iterator(); it.hasNext(); )
+        for ( MenuItem item : items )
         {
-            MenuItem item = (MenuItem) it.next();
-
             sink.listItem();
             sink.link( item.getHref() );
             sink.text( item.getName() );

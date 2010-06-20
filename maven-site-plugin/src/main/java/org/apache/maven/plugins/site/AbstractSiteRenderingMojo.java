@@ -304,7 +304,8 @@ public abstract class AbstractSiteRenderingMojo
      * @return A map with all reports keyed by filename having the report itself as value.
      * The map will be used to populate a menu.
      */
-    protected Map locateReports( List reports, Map documents, Locale locale )
+    protected Map<String, MavenReport> locateReports( List<MavenReport> reports,
+                                                      Map<String, DocumentRenderer> documents, Locale locale )
     {
         Map reportsByOutputName = new HashMap();
         for ( Iterator i = reports.iterator(); i.hasNext(); )
@@ -341,12 +342,11 @@ public abstract class AbstractSiteRenderingMojo
      * @param reports A Collection of MavenReports
      * @return A map keyed category having the report itself as value
      */
-    protected Map categoriseReports( Collection reports )
+    protected Map categoriseReports( Collection<MavenReport> reports )
     {
         Map categories = new HashMap();
-        for ( Iterator i = reports.iterator(); i.hasNext(); )
+        for ( MavenReport report : reports )
         {
-            MavenReport report = (MavenReport) i.next();
             List categoryReports = (List) categories.get( report.getCategoryName() );
             if ( categoryReports == null )
             {
