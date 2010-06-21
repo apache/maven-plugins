@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.apache.maven.doxia.siterenderer.DocumentRenderer;
 import org.apache.maven.doxia.siterenderer.SiteRenderingContext;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -152,13 +153,12 @@ public class SiteRunMojo
 
         // For external reports
         project.getReporting().setOutputDirectory( tempWebappDirectory.getAbsolutePath() );
-        for ( Iterator i = reports.iterator(); i.hasNext(); )
+        for ( MavenReport report : reports )
         {
-            MavenReport report = (MavenReport) i.next();
             report.setReportOutputDirectory( tempWebappDirectory );
         }
 
-        List filteredReports = filterReports( reports );
+        List<MavenReport> filteredReports = filterReports( reports );
 
         List<Locale> localesList = siteTool.getAvailableLocales( locales );
         webapp.setAttribute( DoxiaFilter.LOCALES_LIST_KEY, localesList );
@@ -177,7 +177,7 @@ public class SiteRunMojo
                 i18nContext.setInputEncoding( getInputEncoding() );
                 i18nContext.setOutputEncoding( getOutputEncoding() );
 
-                Map i18nDocuments = locateDocuments( i18nContext, filteredReports, locale );
+                Map<String, DocumentRenderer> i18nDocuments = locateDocuments( i18nContext, filteredReports, locale );
                 DoxiaBean doxiaBean;
                 if ( defaultLocale.equals( locale ) )
                 {
@@ -185,8 +185,9 @@ public class SiteRunMojo
                 }
                 else
                 {
-                    doxiaBean = new DoxiaBean( i18nContext, i18nDocuments, new File( generatedSiteDirectory, locale
-                        .getLanguage() ) );
+                    doxiaBean =
+                        new DoxiaBean( i18nContext, i18nDocuments, new File( generatedSiteDirectory,
+                                                                             locale.getLanguage() ) );
                 }
 
                 i18nDoxiaContexts.put( locale.getLanguage(), doxiaBean );
