@@ -251,7 +251,8 @@ public class SiteStageDeployMojo
      * @param usersStagingSiteURL The staging site URL as suggested by the user's configuration
      * @return the site URL for staging
      */
-    protected String getStagingSiteURL( MavenProject currentProject, List reactorProjects, String usersStagingSiteURL )
+    protected String getStagingSiteURL( MavenProject currentProject, List<MavenProject> reactorProjects,
+                                        String usersStagingSiteURL )
     {
         String topLevelURL = null;
         String relative = "";

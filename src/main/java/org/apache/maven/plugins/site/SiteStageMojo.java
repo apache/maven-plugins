@@ -19,7 +19,6 @@ package org.apache.maven.plugins.site;
  * under the License.
  */
 
-
 import java.io.File;
 import java.util.List;
 
@@ -30,10 +29,6 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.plugins.site.wagon.repository.Repository;
 import org.codehaus.plexus.util.PathTool;
 import org.codehaus.plexus.util.StringUtils;
-
-import java.io.File;
-import java.util.Iterator;
-import java.util.List;
 
 /**
  * Generates a site in a local staging or mock directory based on the site URL
@@ -103,12 +98,8 @@ public class SiteStageMojo
 
         if ( reactorProjects != null && reactorProjects.size() > 1 )
         {
-            Iterator reactorItr = reactorProjects.iterator();
-
-            while ( reactorItr.hasNext() )
+            for ( MavenProject reactorProject : reactorProjects )
             {
-                MavenProject reactorProject = (MavenProject) reactorItr.next();
-
                 if ( reactorProject != null && reactorProject.getParent() != null
                     && project.getArtifactId().equals( reactorProject.getParent().getArtifactId() ) )
                 {
@@ -129,7 +120,8 @@ public class SiteStageMojo
      * @param usersStagingDirectory The staging directory as suggested by the user's configuration
      * @return the directory for staging
      */
-    protected File getStagingDirectory( MavenProject currentProject, List reactorProjects, File usersStagingDirectory )
+    protected File getStagingDirectory( MavenProject currentProject, List<MavenProject> reactorProjects,
+                                        File usersStagingDirectory )
     {
         // Check if the user has specified a stagingDirectory
         if ( usersStagingDirectory != null )
@@ -164,15 +156,13 @@ public class SiteStageMojo
      * @param reactorProjects The projects in the reactor
      * @return The top level project in the reactor, or <code>null</code> if none can be found
      */
-    protected MavenProject getTopLevelProject( List reactorProjects )
+    protected MavenProject getTopLevelProject( List<MavenProject> reactorProjects )
     {
         MavenProject topLevelProject = null;
         if ( reactorProjects != null )
         {
-            Iterator iterator = reactorProjects.iterator();
-            while ( iterator.hasNext() )
+            for ( MavenProject reactorProject : reactorProjects )
             {
-                MavenProject reactorProject = (MavenProject) iterator.next();
                 if ( reactorProject.isExecutionRoot() )
                 {
                     topLevelProject = reactorProject;

@@ -19,6 +19,7 @@ package org.apache.maven.plugins.site;
  * under the License.
  */
 
+import org.apache.maven.doxia.siterenderer.DocumentRenderer;
 import org.apache.maven.doxia.siterenderer.RendererException;
 import org.apache.maven.doxia.siterenderer.SiteRenderingContext;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -28,7 +29,6 @@ import org.apache.maven.reporting.MavenReport;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -95,7 +95,7 @@ public class SiteMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        List filteredReports;
+        List<MavenReport> filteredReports;
         if ( generateReports )
         {
             filteredReports = filterReports( reports );
@@ -107,16 +107,14 @@ public class SiteMojo
 
         try
         {
-            List localesList = siteTool.getAvailableLocales( locales );
+            List<Locale> localesList = siteTool.getAvailableLocales( locales );
 
             // Default is first in the list
-            Locale defaultLocale = (Locale) localesList.get( 0 );
+            Locale defaultLocale = localesList.get( 0 );
             Locale.setDefault( defaultLocale );
 
-            for ( Iterator iterator = localesList.iterator(); iterator.hasNext(); )
+            for ( Locale locale : localesList )
             {
-                Locale locale = (Locale) iterator.next();
-
                 renderLocale( locale, filteredReports );
             }
         }
@@ -130,8 +128,7 @@ public class SiteMojo
         }
     }
 
-    private void renderLocale( Locale locale,
-                               List reports )
+    private void renderLocale( Locale locale, List<MavenReport> reports )
         throws IOException, RendererException, MojoFailureException, MojoExecutionException
     {
         SiteRenderingContext context = createSiteRenderingContext( locale );
@@ -144,14 +141,13 @@ public class SiteMojo
             getLog().info( "Validation is switched on, xml input documents will be validated!" );
         }
 
-        Map documents = locateDocuments( context, reports, locale );
+        Map<String, DocumentRenderer> documents = locateDocuments( context, reports, locale );
 
         File outputDir = getOutputDirectory( locale );
 
         // For external reports
-        for ( Iterator i = reports.iterator(); i.hasNext(); )
+        for ( MavenReport report : reports )
         {
-            MavenReport report = (MavenReport) i.next();
             report.setReportOutputDirectory( outputDir );
         }
 

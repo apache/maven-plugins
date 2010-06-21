@@ -42,7 +42,6 @@ import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.List;
-import java.util.Iterator;
 
 /**
  * Renders a Maven report.
@@ -98,7 +97,7 @@ public class ReportDocumentRenderer
     {
         private RenderingContext context;
 
-        private List sinks = new ArrayList();
+        private List<MySink> sinks = new ArrayList<MySink>();
 
         public MySinkFactory( RenderingContext ctx )
         {
@@ -107,7 +106,7 @@ public class ReportDocumentRenderer
 
         public Sink createSink( File outputDir, String outputName )
         {
-            SiteRendererSink sink = new MySink( outputDir, outputName, context );
+            MySink sink = new MySink( outputDir, outputName, context );
             sinks.add( sink );
             return sink;
         }
@@ -133,7 +132,7 @@ public class ReportDocumentRenderer
             return null;
         }
 
-        public List sinks()
+        public List<MySink> sinks()
         {
             return sinks;
         }
@@ -182,17 +181,17 @@ public class ReportDocumentRenderer
         {
             try
             {
-                List sinks = sf.sinks();
+                List<MySink> sinks = sf.sinks();
 
                 log.debug( "Multipage report: " + sinks.size() + " subreports" );
 
-                for ( Iterator it = sinks.iterator(); it.hasNext(); )
+                for ( MySink mySink : sinks )
                 {
-                    MySink mySink = (MySink) it.next();
                     mySink.enableLogging( new MojoLogWrapper( log ) );
 
                     log.debug( "  Rendering " + mySink.getOutputName() );
 
+                    // TODO should not rely on platform encoding
                     Writer out = new FileWriter( new File( mySink.getOutputDir(), mySink.getOutputName() ) );
 
                     try
