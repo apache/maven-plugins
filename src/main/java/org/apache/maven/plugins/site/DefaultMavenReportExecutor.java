@@ -63,7 +63,6 @@ import org.mortbay.log.Log;
 public class DefaultMavenReportExecutor
     implements MavenReportExecutor
 {
-
     @Requirement
     private Logger logger;
 
@@ -83,9 +82,8 @@ public class DefaultMavenReportExecutor
         {
             getLog().debug( "buildMavenReports" );
         }
+
         List<String> imports = new ArrayList<String>();
-
-
         imports.add( "org.apache.maven.reporting.MavenReport" );
         imports.add( "org.apache.maven.doxia.siterenderer.Renderer" );
         imports.add( "org.apache.maven.doxia.sink.SinkFactory" );
@@ -106,7 +104,6 @@ public class DefaultMavenReportExecutor
 
         try
         {
-
             List<MavenReportExecution> reports = new ArrayList<MavenReportExecution>();
 
             for ( ReportPlugin reportPlugin : mavenReportExecutorRequest.getReportPlugins() )
@@ -118,8 +115,7 @@ public class DefaultMavenReportExecutor
 
                 if ( logger.isInfoEnabled() )
                 {
-                    logger.info( "configuring reportPlugin " + plugin.getGroupId() + ":" + plugin.getArtifactId() + ":"
-                        + plugin.getVersion() );
+                    logger.info( "configuring reportPlugin " + plugin.getId() );
                 }
 
                 List<String> goals = new ArrayList<String>();
@@ -156,8 +152,6 @@ public class DefaultMavenReportExecutor
 
                     mojoExecution.setMojoDescriptor( mojoDescriptor );
 
-
-
                     mavenPluginManager.setupPluginRealm( pluginDescriptor,
                                                          mavenReportExecutorRequest.getMavenSession(),
                                                          Thread.currentThread().getContextClassLoader(), imports,
@@ -181,12 +175,11 @@ public class DefaultMavenReportExecutor
                         Xpp3Dom cleanedConfiguration = new Xpp3Dom( "configuration" );
                         if ( mergedConfiguration.getChildren() != null )
                         {
-                            for ( int i = 0, size = mergedConfiguration.getChildren().length; i < size; i++ )
+                            for ( Xpp3Dom parameter : mergedConfiguration.getChildren() )
                             {
-                                if ( mojoDescriptor.getParameterMap().containsKey(
-                                                                                   mergedConfiguration.getChildren()[i].getName() ) )
+                                if ( mojoDescriptor.getParameterMap().containsKey( parameter.getName() ) )
                                 {
-                                    cleanedConfiguration.addChild( mergedConfiguration.getChildren()[i] );
+                                    cleanedConfiguration.addChild( parameter );
                                 }
                             }
                         }
@@ -201,19 +194,21 @@ public class DefaultMavenReportExecutor
 
                     mavenReport =
                         getConfiguredMavenReport( mojoExecution, pluginDescriptor, mavenReportExecutorRequest );
+
                     if ( mavenReport != null )
                     {
-
                         MavenReportExecution mavenReportExecution =
                             new MavenReportExecution( mavenReport, pluginDescriptor.getClassRealm() );
 
                         lifecycleExecutor.calculateForkedExecutions( mojoExecution,
                                                                      mavenReportExecutorRequest.getMavenSession() );
+
                         if ( !mojoExecution.getForkedExecutions().isEmpty() )
                         {
                             lifecycleExecutor.executeForkedExecutions( mojoExecution,
                                                                        mavenReportExecutorRequest.getMavenSession() );
                         }
+
                         if ( canGenerateReport( mavenReport ) )
                         {
                             reports.add( mavenReportExecution );
@@ -252,22 +247,19 @@ public class DefaultMavenReportExecutor
     private MavenReport getConfiguredMavenReport( MojoExecution mojoExecution, PluginDescriptor pluginDescriptor,
                                                   MavenReportExecutorRequest mavenReportExecutorRequest )
         throws PluginContainerException, PluginConfigurationException
-
     {
-
-        MavenReport mavenReport = null;
         try
         {
             Mojo mojo = mavenPluginManager.getConfiguredMojo( Mojo.class,
                                                               mavenReportExecutorRequest.getMavenSession(),
                                                               mojoExecution );
+
             if ( !isMavenReport( mojoExecution, pluginDescriptor, mojo ) )
             {
                 return null;
             }
-            mavenReport = (MavenReport) mojo;
-            return mavenReport;
 
+            return (MavenReport) mojo;
         }
         catch ( ClassCastException e )
         {
@@ -284,7 +276,7 @@ public class DefaultMavenReportExecutor
                 && e.getMessage().contains( "PluginRegistry" ) )
             {
                 getLog().warn( "skip NoClassDefFoundError with PluginRegistry " );
-                // too noisy only in debug mode + e.getMessage() );
+                // too noisy, only in debug mode + e.getMessage() );
                 if ( getLog().isDebugEnabled() )
                 {
                     Log.debug( e.getMessage(), e );
@@ -293,7 +285,6 @@ public class DefaultMavenReportExecutor
             }
             throw e;
         }
-
     }
 
     private boolean isMavenReport( MojoExecution mojoExecution, PluginDescriptor pluginDescriptor, Mojo mojo )
