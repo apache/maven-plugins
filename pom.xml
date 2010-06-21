@@ -29,7 +29,7 @@ under the License.
   </parent>
 
   <artifactId>maven-site-plugin</artifactId>
-  <version>2.1.2-SNAPSHOT</version>
+  <version>2.2-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
   <name>Maven Site Plugin</name>
@@ -148,7 +148,7 @@ under the License.
   </contributors>
 
   <prerequisites>
-    <maven>2.1.0</maven>
+    <maven>2.2.0</maven>
   </prerequisites>
 
   <scm>
