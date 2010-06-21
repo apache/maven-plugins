@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.apache.maven.doxia.siterenderer.DocumentRenderer;
 import org.apache.maven.doxia.siterenderer.RendererException;
 import org.apache.maven.doxia.siterenderer.SiteRenderingContext;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -144,7 +145,7 @@ public class SiteMojo
             getLog().info( "Validation is switched on, xml input documents will be validated!" );
         }
 
-        Map documents = locateDocuments( context, reports, locale );
+        Map<String, DocumentRenderer> documents = locateDocuments( context, reports, locale );
 
         File outputDir = getOutputDirectory( locale );
 

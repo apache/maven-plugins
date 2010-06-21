@@ -141,9 +141,9 @@ public abstract class AbstractSiteMojo
     protected void populateReportItems( DecorationModel decorationModel, Locale locale,
                                         Map<String, MavenReport> reportsByOutputName )
     {
-        for ( Iterator i = decorationModel.getMenus().iterator(); i.hasNext(); )
+        for ( Iterator<Menu> i = decorationModel.getMenus().iterator(); i.hasNext(); )
         {
-            Menu menu = (Menu) i.next();
+            Menu menu = i.next();
 
             populateItemRefs( menu.getItems(), locale, reportsByOutputName );
         }

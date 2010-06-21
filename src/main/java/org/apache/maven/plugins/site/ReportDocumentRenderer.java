@@ -26,7 +26,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Writer;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
@@ -99,7 +98,7 @@ public class ReportDocumentRenderer
     {
         private RenderingContext context;
 
-        private List<Sink> sinks = new ArrayList<Sink>();
+        private List<MySink> sinks = new ArrayList<MySink>();
 
         public MySinkFactory( RenderingContext ctx )
         {
@@ -108,7 +107,7 @@ public class ReportDocumentRenderer
 
         public Sink createSink( File outputDir, String outputName )
         {
-            SiteRendererSink sink = new MySink( outputDir, outputName, context );
+            MySink sink = new MySink( outputDir, outputName, context );
             sinks.add( sink );
             return sink;
         }
@@ -134,7 +133,7 @@ public class ReportDocumentRenderer
             return null;
         }
 
-        public List<Sink> sinks()
+        public List<MySink> sinks()
         {
             return sinks;
         }
@@ -188,13 +187,12 @@ public class ReportDocumentRenderer
         {
             try
             {
-                List<Sink> sinks = sf.sinks();
+                List<MySink> sinks = sf.sinks();
 
                 log.debug( "Multipage report: " + sinks.size() + " subreports" );
 
-                for ( Iterator it = sinks.iterator(); it.hasNext(); )
+                for ( MySink mySink : sinks )
                 {
-                    MySink mySink = (MySink) it.next();
                     mySink.enableLogging( new MojoLogWrapper( log ) );
 
                     log.debug( "  Rendering " + mySink.getOutputName() );

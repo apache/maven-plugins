@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -137,7 +136,7 @@ public abstract class AbstractSiteRenderingMojo
      *
      * @parameter expression="${attributes}"
      */
-    protected Map attributes;
+    protected Map<Object, Object> attributes;
 
     /**
      * Site renderer.
@@ -243,7 +242,7 @@ public abstract class AbstractSiteRenderingMojo
     {
         if ( attributes == null )
         {
-            attributes = new HashMap();
+            attributes = new HashMap<Object, Object>();
         }
 
         if ( attributes.get( "project" ) == null )
@@ -358,9 +357,8 @@ public abstract class AbstractSiteRenderingMojo
         List<MavenReportExecution> filtered = new ArrayList<MavenReportExecution>(reports);
 
         Map<String, MavenReport> reportsByOutputName = new HashMap<String, MavenReport>();
-        for ( Iterator<MavenReportExecution> iterator = filtered.iterator(); iterator.hasNext(); )
+        for ( MavenReportExecution mavenReportExecution : filtered )
         {
-            MavenReportExecution mavenReportExecution = iterator.next();
             MavenReport report = mavenReportExecution.getMavenReport();
 
             String outputName = report.getOutputName() + ".html";
@@ -393,15 +391,15 @@ public abstract class AbstractSiteRenderingMojo
      * @param reports A Collection of MavenReports
      * @return A map keyed category having the report itself as value
      */
-    protected Map categoriseReports( Collection<MavenReport> reports )
+    protected Map<String, List<MavenReport>> categoriseReports( Collection<MavenReport> reports )
     {
-        Map categories = new HashMap();
+        Map<String, List<MavenReport>> categories = new HashMap<String, List<MavenReport>>();
         for ( MavenReport report : reports )
         {
-            List categoryReports = (List) categories.get( report.getCategoryName() );
+            List<MavenReport> categoryReports = categories.get( report.getCategoryName() );
             if ( categoryReports == null )
             {
-                categoryReports = new ArrayList();
+                categoryReports = new ArrayList<MavenReport>();
                 categories.put( report.getCategoryName(), categoryReports );
             }
             categoryReports.add( report );
@@ -409,22 +407,22 @@ public abstract class AbstractSiteRenderingMojo
         return categories;
     }
 
-    protected Map locateDocuments( SiteRenderingContext context, List<MavenReportExecution> reports, Locale locale )
+    protected Map<String, DocumentRenderer> locateDocuments( SiteRenderingContext context, List<MavenReportExecution> reports, Locale locale )
         throws IOException, RendererException
     {
-        Map documents = siteRenderer.locateDocumentFiles( context );
+        Map<String, DocumentRenderer> documents = siteRenderer.locateDocumentFiles( context );
 
-        Map reportsByOutputName = locateReports( reports, documents, locale );
+        Map<String, MavenReport> reportsByOutputName = locateReports( reports, documents, locale );
 
         // TODO: I want to get rid of categories eventually. There's no way to add your own in a fully i18n manner
-        Map categories = categoriseReports( reportsByOutputName.values() );
+        Map<String, List<MavenReport>> categories = categoriseReports( reportsByOutputName.values() );
 
         siteTool.populateReportsMenu( context.getDecoration(), locale, categories );
         populateReportItems( context.getDecoration(), locale, reportsByOutputName );
 
         if ( categories.containsKey( MavenReport.CATEGORY_PROJECT_INFORMATION ) )
         {
-            List categoryReports = (List) categories.get( MavenReport.CATEGORY_PROJECT_INFORMATION );
+            List<MavenReport> categoryReports = categories.get( MavenReport.CATEGORY_PROJECT_INFORMATION );
 
             RenderingContext renderingContext = new RenderingContext( siteDirectory, "project-info.html" );
             String title = i18n.getString( "site-plugin", locale, "report.information.title" );
@@ -445,7 +443,7 @@ public abstract class AbstractSiteRenderingMojo
 
         if ( categories.containsKey( MavenReport.CATEGORY_PROJECT_REPORTS ) )
         {
-            List categoryReports = (List) categories.get( MavenReport.CATEGORY_PROJECT_REPORTS );
+            List<MavenReport> categoryReports = categories.get( MavenReport.CATEGORY_PROJECT_REPORTS );
             RenderingContext renderingContext = new RenderingContext( siteDirectory, "project-reports.html" );
             String title = i18n.getString( "site-plugin", locale, "report.project.title" );
             String desc1 = i18n.getString( "site-plugin", locale, "report.project.description1" );
