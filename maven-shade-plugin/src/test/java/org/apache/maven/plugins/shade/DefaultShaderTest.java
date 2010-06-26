@@ -70,7 +70,7 @@ public class DefaultShaderTest
         File file = new File( "target/testShaderWithStaticInitializedClass.jar" );
         s.shade( set, file, filters, relocators, resourceTransformers );
 
-        URLClassLoader cl = new URLClassLoader( new URL[]{file.toURL()} );
+        URLClassLoader cl = new URLClassLoader( new URL[]{file.toURI().toURL()} );
         Class c = cl.loadClass( "hidden.org.apache.maven.plugins.shade.Lib" );
         Object o = c.newInstance();
         assertEquals( "foo.bar/baz", c.getDeclaredField( "CONSTANT" ).get( o ) );
