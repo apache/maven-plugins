@@ -85,6 +85,7 @@ public class DefaultMavenReportExecutor
 
         List<String> imports = new ArrayList<String>();
         imports.add( "org.apache.maven.reporting.MavenReport" );
+        imports.add( "org.apache.maven.reporting.MavenMultiPageReport" );
         imports.add( "org.apache.maven.doxia.siterenderer.Renderer" );
         imports.add( "org.apache.maven.doxia.sink.SinkFactory" );
         imports.add( "org.codehaus.doxia.sink.Sink" );
@@ -185,8 +186,8 @@ public class DefaultMavenReportExecutor
                         }
                         if ( getLog().isDebugEnabled() )
                         {
-                            getLog().debug( "mojoExecution mergedConfiguration " + mergedConfiguration );
-                            getLog().debug( "mojoExecution cleanedConfiguration " + cleanedConfiguration );
+                            getLog().debug( "mojoExecution mergedConfiguration: " + mergedConfiguration );
+                            getLog().debug( "mojoExecution cleanedConfiguration: " + cleanedConfiguration );
                         }
 
                         mojoExecution.setConfiguration( cleanedConfiguration );
@@ -299,7 +300,7 @@ public class DefaultMavenReportExecutor
             if ( getLog().isDebugEnabled() && mojoDescriptor != null && mojoDescriptor.getImplementationClass() != null )
             {
                 getLog().debug(
-                                "class " + mojoDescriptor.getImplementationClass().getName() + " isMavenReport "
+                                "class " + mojoDescriptor.getImplementationClass().getName() + " isMavenReport: "
                                     + isMavenReport );
             }
             if ( !isMavenReport )
@@ -414,7 +415,7 @@ public class DefaultMavenReportExecutor
         }
 
 
-        logger.warn( "report plugin " + reportPluginKey + " has an empty version" );
+        logger.warn( "Report plugin " + reportPluginKey + " has an empty version." );
         logger.warn( "" );
         logger.warn( "It is highly recommended to fix these problems"
             + " because they threaten the stability of your build." );
