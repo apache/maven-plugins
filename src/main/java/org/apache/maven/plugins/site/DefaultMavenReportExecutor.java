@@ -362,12 +362,20 @@ public class DefaultMavenReportExecutor
     protected String getPluginVersion( ReportPlugin reportPlugin, RepositoryRequest repositoryRequest, MavenReportExecutorRequest mavenReportExecutorRequest )
         throws PluginVersionResolutionException
     {
+        String reportPluginKey = null;
+
         if ( getLog().isDebugEnabled() )
         {
-            getLog().debug( "resolving version for " + reportPlugin.getGroupId() + ":" + reportPlugin.getArtifactId() );
+            reportPluginKey = reportPlugin.getGroupId() + ':' + reportPlugin.getArtifactId();
+            getLog().debug( "resolving version for " + reportPluginKey );
         }
         if ( reportPlugin.getVersion() != null )
         {
+            if ( getLog().isDebugEnabled() )
+            {
+                logger.debug( "resolved " + reportPluginKey + " version from the reporting.plugins section: "
+                    + reportPlugin.getVersion() );
+            }
             return reportPlugin.getVersion();
         }
 
@@ -376,36 +384,37 @@ public class DefaultMavenReportExecutor
         // search in the build section
         if ( project.getBuild() != null )
         {
-            Plugin plugin = find( reportPlugin.getGroupId(), reportPlugin.getArtifactId(), project.getBuild().getPlugins() );
+            Plugin plugin = find( reportPlugin, project.getBuild().getPlugins() );
+
             if ( plugin != null && plugin.getVersion() != null )
             {
                 if ( getLog().isDebugEnabled() )
                 {
-                    logger.debug( "resolve version from the build.plugins section " + plugin.getVersion() );
+                    logger.debug( "resolved " + reportPluginKey + " version from the build.plugins section: "
+                        + plugin.getVersion() );
                 }
                 return plugin.getVersion();
             }
         }
 
-        // search in pluginMngt section
+        // search in pluginManagement section
         if ( project.getBuild() != null && project.getBuild().getPluginManagement() != null )
         {
-            Plugin plugin =
-                find( reportPlugin.getGroupId(), reportPlugin.getArtifactId(),
-                      project.getBuild().getPluginManagement().getPlugins() );
+            Plugin plugin = find( reportPlugin, project.getBuild().getPluginManagement().getPlugins() );
+
             if ( plugin != null && plugin.getVersion() != null )
             {
                 if ( getLog().isDebugEnabled() )
                 {
-                    logger.debug( "resolve version from the build.pluginManagement.plugins section " + plugin.getVersion() );
+                    logger.debug( "resolved " + reportPluginKey
+                        + " version from the build.pluginManagement.plugins section: " + plugin.getVersion() );
                 }
                 return plugin.getVersion();
             }
         }
 
 
-        logger.warn( "report plugin " + reportPlugin.getGroupId() + ":" + reportPlugin.getArtifactId()
-            + " has an empty version" );
+        logger.warn( "report plugin " + reportPluginKey + " has an empty version" );
         logger.warn( "" );
         logger.warn( "It is highly recommended to fix these problems"
             + " because they threaten the stability of your build." );
@@ -424,14 +433,12 @@ public class DefaultMavenReportExecutor
         PluginVersionResult result = pluginVersionResolver.resolve( pluginVersionRequest );
         if ( getLog().isDebugEnabled() )
         {
-            getLog().debug(
-                            "resolving version " + result.getVersion() + " for " + reportPlugin.getGroupId() + ":"
-                                + reportPlugin.getArtifactId() );
+            getLog().debug( "resolved " + reportPluginKey + " version from repository: " + result.getVersion() );
         }
         return result.getVersion();
     }
 
-    private Plugin find( String groupId, String artifactId, List<Plugin> plugins )
+    private Plugin find( ReportPlugin reportPlugin, List<Plugin> plugins )
     {
         if ( plugins == null )
         {
@@ -439,8 +446,8 @@ public class DefaultMavenReportExecutor
         }
         for ( Plugin plugin : plugins )
         {
-            if ( StringUtils.equals( plugin.getArtifactId(), artifactId )
-                && StringUtils.equals( plugin.getGroupId(), groupId ) )
+            if ( StringUtils.equals( plugin.getArtifactId(), reportPlugin.getArtifactId() )
+                && StringUtils.equals( plugin.getGroupId(), reportPlugin.getGroupId() ) )
             {
                 return plugin;
             }
