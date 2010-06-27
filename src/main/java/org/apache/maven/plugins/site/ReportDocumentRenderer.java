@@ -162,8 +162,10 @@ public class ReportDocumentRenderer
             }
             else
             {
+                // old API compatibility
+                log.warn( "\"" + localReportName + "\" report is using old MavenReport API: "
+                    + "please upgrade report to a version using MavenMultiPageReport." );
                 report.generate( sink, locale );
-
             }
         }
         catch ( MavenReportException e )
@@ -174,7 +176,7 @@ public class ReportDocumentRenderer
         {
             StringBuilder stringBuilder =
                 new StringBuilder( " an issue has occured with report " + report.getClass().getName() );
-            stringBuilder.append( ", skip LinkageError " + e.getMessage() + ", please report an issue to maven dev team" );
+            stringBuilder.append( ", skip LinkageError " + e.getMessage() + ", please report an issue to maven dev team." );
             log.warn( stringBuilder.toString(), e );
         }
         finally
