@@ -42,6 +42,8 @@ import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.reporting.MavenMultiPageReport;
 import org.apache.maven.reporting.MavenReport;
 import org.apache.maven.reporting.MavenReportException;
+import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.WriterFactory;
 
 /**
  * Renders a Maven report.
@@ -198,15 +200,18 @@ public class ReportDocumentRenderer
 
                     log.debug( "  Rendering " + mySink.getOutputName() );
 
-                    Writer out = new FileWriter( new File( mySink.getOutputDir(), mySink.getOutputName() ) );
+                    File outputFile = new File( mySink.getOutputDir(), mySink.getOutputName() );
 
+                    Writer out = null;
                     try
                     {
+                        out = WriterFactory.newWriter( outputFile, siteRenderingContext.getOutputEncoding() );
                         renderer.generateDocument( out, mySink, siteRenderingContext );
                     }
                     finally
                     {
                         mySink.close();
+                        IOUtil.close( out );
                     }
                 }
             }
