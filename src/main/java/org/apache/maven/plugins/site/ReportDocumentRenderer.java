@@ -160,14 +160,12 @@ public class ReportDocumentRenderer
         {
             if ( report instanceof MavenMultiPageReport )
             {
+                // extended multi-page API
                 ( (MavenMultiPageReport) report ).generate( sink, sf, locale );
             }
             else
             {
-                // old API compatibility
-                // warning message is not welcome at this time: "old" MavenReport API is still fine
-                //log.warn( "\"" + localReportName + "\" report is using old MavenReport API: "
-                //    + "please upgrade report to a version using MavenMultiPageReport." );
+                // old single-page-only API
                 report.generate( sink, locale );
             }
         }
@@ -177,10 +175,8 @@ public class ReportDocumentRenderer
         }
         catch ( LinkageError e )
         {
-            StringBuilder stringBuilder =
-                new StringBuilder( " an issue has occured with report " + report.getClass().getName() );
-            stringBuilder.append( ", skip LinkageError " + e.getMessage() + ", please report an issue to maven dev team." );
-            log.warn( stringBuilder.toString(), e );
+            log.warn( "An issue has occurred with report " + report.getClass().getName() + ", skip LinkageError "
+                          + e.getMessage() + ", please report an issue to Maven dev team.", e );
         }
         finally
         {
