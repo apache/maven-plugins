@@ -19,6 +19,7 @@ package org.apache.maven.plugins.site;
  * under the License.
  */
 
+import org.apache.maven.model.Plugin;
 import org.apache.maven.reporting.MavenReport;
 
 /**
@@ -32,8 +33,11 @@ public class MavenReportExecution
 
     private ClassLoader classLoader;
 
-    public MavenReportExecution( MavenReport mavenReport, ClassLoader classLoader )
+    private Plugin plugin;
+
+    public MavenReportExecution( Plugin plugin, MavenReport mavenReport, ClassLoader classLoader )
     {
+        this.setPlugin( plugin );
         this.mavenReport = mavenReport;
         this.classLoader = classLoader;
     }
@@ -56,5 +60,15 @@ public class MavenReportExecution
     public void setClassLoader( ClassLoader classLoader )
     {
         this.classLoader = classLoader;
+    }
+
+    public void setPlugin( Plugin plugin )
+    {
+        this.plugin = plugin;
+    }
+
+    public Plugin getPlugin()
+    {
+        return plugin;
     }
 }

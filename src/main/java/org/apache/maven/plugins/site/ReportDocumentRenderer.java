@@ -147,7 +147,9 @@ public class ReportDocumentRenderer
         MavenReport report = mavenReportExecution.getMavenReport();
 
         String localReportName = report.getName( locale );
-        log.info( "Generating \"" + localReportName + "\" report." );
+        String pluginInfo =
+            mavenReportExecution.getPlugin().getArtifactId() + ':' + mavenReportExecution.getPlugin().getVersion();
+        log.info( "Generating \"" + localReportName + "\" report    --- " + pluginInfo );
 
         MySinkFactory sf = new MySinkFactory( renderingContext );
 

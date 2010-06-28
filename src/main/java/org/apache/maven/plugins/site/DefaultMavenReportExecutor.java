@@ -116,7 +116,7 @@ public class DefaultMavenReportExecutor
 
                 if ( logger.isInfoEnabled() )
                 {
-                    logger.info( "configuring reportPlugin " + plugin.getId() );
+                    logger.info( "configuring report plugin " + plugin.getId() );
                 }
 
                 List<String> goals = new ArrayList<String>();
@@ -199,7 +199,8 @@ public class DefaultMavenReportExecutor
                     if ( mavenReport != null )
                     {
                         MavenReportExecution mavenReportExecution =
-                            new MavenReportExecution( mavenReport, pluginDescriptor.getClassRealm() );
+                            new MavenReportExecution( mojoExecution.getPlugin(), mavenReport,
+                                                      pluginDescriptor.getClassRealm() );
 
                         lifecycleExecutor.calculateForkedExecutions( mojoExecution,
                                                                      mavenReportExecutorRequest.getMavenSession() );
@@ -360,7 +361,8 @@ public class DefaultMavenReportExecutor
         return logger;
     }
 
-    protected String getPluginVersion( ReportPlugin reportPlugin, RepositoryRequest repositoryRequest, MavenReportExecutorRequest mavenReportExecutorRequest )
+    protected String getPluginVersion( ReportPlugin reportPlugin, RepositoryRequest repositoryRequest,
+                                       MavenReportExecutorRequest mavenReportExecutorRequest )
         throws PluginVersionResolutionException
     {
         String reportPluginKey = null;
