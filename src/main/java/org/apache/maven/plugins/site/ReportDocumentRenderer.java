@@ -165,8 +165,9 @@ public class ReportDocumentRenderer
             else
             {
                 // old API compatibility
-                log.warn( "\"" + localReportName + "\" report is using old MavenReport API: "
-                    + "please upgrade report to a version using MavenMultiPageReport." );
+                // warning message is not welcome at this time: "old" MavenReport API is still fine
+                //log.warn( "\"" + localReportName + "\" report is using old MavenReport API: "
+                //    + "please upgrade report to a version using MavenMultiPageReport." );
                 report.generate( sink, locale );
             }
         }
