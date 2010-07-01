@@ -59,6 +59,9 @@ Maven Site Plugin
 
    * {{{./jar-mojo.html}site:jar}} bundles the site output into a JAR so that it can be deployed to a repository.
 
+   * {{{./effective-site-mojo.html}site:effective-site}} calculates effective site descriptor, after inheritance and
+     interpolation.
+
 * Usage
 
   General instructions on how to use the Site Plugin can be found on the {{{./usage.html}usage page}}. Some more
