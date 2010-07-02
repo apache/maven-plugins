@@ -451,7 +451,8 @@ public class AntRunMojo
     }
 
     /**
-     * Replace text in a string buffer
+     * Replace text in a StringBuffer.  If the match text is not found, the StringBuffer 
+     * is returned unchanged.
      * 
      * @param text The string buffer containing the text
      * @param match The string to match and remove
@@ -460,7 +461,10 @@ public class AntRunMojo
     public void stringReplace( StringBuffer text, String match, String with )
     {
         int index = text.indexOf( match );
-        text.replace( index, index + match.length(), with );
+        if ( index != -1 )
+        {
+            text.replace( index, index + match.length(), with );
+        }
     }
 
     public String checkTargetName( PlexusConfiguration antTargetConfig )
