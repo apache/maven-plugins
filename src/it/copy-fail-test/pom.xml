@@ -38,8 +38,15 @@ under the License.
         <version>@pom.version@</version>
         <configuration>
           <tasks>
-            <copy file="${project.build.directory}/../pom.xml" tofile="${project.build.directory}/pom-copy.xml" overwrite="true" verbose="true" failonerror="true" />
+            
+            <copy file="${basedir}/pom.xml" tofile="${project.build.directory}/pom-copy.xml" overwrite="true" verbose="true" failonerror="true" />
             <copy file="${project.build.directory}/junk.xml" tofile="${project.build.directory}/junk.xml" overwrite="true" verbose="true" failonerror="false" />
+            
+            <copy todir="${project.build.directory}/">
+              <fileset dir="${basedir}/stuff"/>
+            </copy>
+            <copy file="${basedir}/pom.xml" tofile="${project.build.directory}/pom-copy2.xml"/>
+            
           </tasks>
         </configuration>
       </plugin>
