@@ -132,6 +132,7 @@ public class AntRunMojo
      * String to prepend to project and dependency property names.
      * 
      * @parameter default-value=""
+     * @since 1.4
      */
     private String propertyPrefix;
 
@@ -139,6 +140,7 @@ public class AntRunMojo
      * The xml namespace to use for the built in Ant tasks.
      * 
      * @parameter default-value="mvn"
+     * @since 1.5
      */
     private String taskNamespace;
 
@@ -164,6 +166,7 @@ public class AntRunMojo
      * build.xml.
      * 
      * @parameter
+     * @since 1.5
      */
     private PlexusConfiguration target;
 
