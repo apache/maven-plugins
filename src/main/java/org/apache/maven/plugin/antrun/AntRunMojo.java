@@ -358,6 +358,8 @@ public class AntRunMojo
                                 mavenProject.getBuild().getSourceDirectory() );
         antProject.setProperty( ( propertyPrefix + "project.build.testSourceDirectory" ),
                                 mavenProject.getBuild().getTestSourceDirectory() );
+        antProject.setProperty( ( propertyPrefix + "localRepository" ), localRepository.toString() );
+        antProject.setProperty( ( propertyPrefix + "settings.localRepository" ), localRepository.getBasedir() );
 
         // Add properties for depenedency artifacts
         Set depArtifacts = mavenProject.getArtifacts();
