@@ -20,6 +20,7 @@ package org.apache.maven.plugin.antrun;
  */
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -32,19 +33,19 @@ import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.antrun.components.AntTargetConverter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DefaultLogger;
 import org.apache.tools.ant.Project;
-import org.apache.tools.ant.PropertyHelper;
-import org.apache.tools.ant.Target;
+import org.apache.tools.ant.ProjectHelper;
 import org.apache.tools.ant.taskdefs.Typedef;
 import org.apache.tools.ant.types.Path;
-import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator;
+import org.codehaus.plexus.configuration.PlexusConfiguration;
+import org.codehaus.plexus.configuration.PlexusConfigurationException;
+import org.codehaus.plexus.configuration.xml.XmlPlexusConfiguration;
+import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.StringUtils;
-
 
 /**
  * Maven AntRun Mojo.
@@ -58,7 +59,6 @@ import org.codehaus.plexus.util.StringUtils;
  * @author <a href="mailto:kenney@apache.org">Kenney Westerhof</a>
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
- * @configurator override
  * @goal run
  * @threadSafe
  * @requiresDependencyResolution test
@@ -77,6 +77,16 @@ public class AntRunMojo
     public final static String DEFAULT_MAVEN_PROJECT_HELPER_REFID = "maven.project.helper";
 
     /**
+     * The default target name.
+     */
+    public final static String DEFAULT_ANT_TARGET_NAME = "main";
+
+    /**
+     * The name used for the ant target
+     */
+    private String antTargetName;
+
+    /**
      * The path to The XML file containing the definition of the Maven tasks.
      */
     public final static String ANTLIB = "org/apache/maven/ant/tasks/antlib.xml";
@@ -85,10 +95,10 @@ public class AntRunMojo
      * The URI which defines the built in Ant tasks
      */
     public final static String TASK_URI = "antlib:org.apache.maven.ant.tasks";
-    
+
     /**
      * The Maven project object
-     *
+     * 
      * @parameter expression="${project}"
      * @readonly
      */
@@ -96,14 +106,14 @@ public class AntRunMojo
 
     /**
      * The Maven project helper object
-     *
+     * 
      * @component
      */
     private MavenProjectHelper projectHelper;
 
     /**
      * The plugin dependencies.
-     *
+     * 
      * @parameter expression="${plugin.artifacts}"
      * @required
      * @readonly
@@ -120,47 +130,56 @@ public class AntRunMojo
 
     /**
      * String to prepend to project and dependency property names.
+     * 
      * @parameter default-value=""
      */
     private String propertyPrefix;
-    
+
     /**
      * The xml namespace to use for the built in Ant tasks.
+     * 
      * @parameter default-value="mvn"
      */
     private String taskNamespace;
-    
+
     /**
-     * The name of a property containing the list of all dependency versions.
-     * This is used for the removing the versions from the filenames.
+     * The name of a property containing the list of all dependency versions. This is used for the removing the versions
+     * from the filenames.
      * 
      * @parameter default-value="maven.project.dependencies.versions"
      */
     private String versionsPropertyName;
-    
-    /**
-     * The XML for the Ant task. You can add anything you can add
-     * between &lt;target&gt; and &lt;/target&gt; in a build.xml.
-     *
-     * @parameter expression="${tasks}"
-     */
-    private Target tasks;
 
     /**
-     * This folder is added to the list of those folders
-     * containing source to be compiled. Use this if your
-     * ant script generates source code.
-     *
+     * The XML for the Ant task. You can add anything you can add between &lt;target&gt; and &lt;/target&gt; in a
+     * build.xml.
+     * 
+     * @deprecated Use target instead
+     * @parameter
+     */
+    private XmlPlexusConfiguration tasks;
+
+    /**
+     * The XML for the Ant target. You can add anything you can add between &lt;target&gt; and &lt;/target&gt; in a
+     * build.xml.
+     * 
+     * @parameter
+     */
+    private XmlPlexusConfiguration target;
+
+    /**
+     * This folder is added to the list of those folders containing source to be compiled. Use this if your ant script
+     * generates source code.
+     * 
      * @parameter expression="${sourceRoot}"
      * @deprecated Use the build-helper-maven-plugin to bind source directories
      */
     private File sourceRoot;
 
     /**
-     * This folder is added to the list of those folders
-     * containing source to be compiled for testing. Use this if your
+     * This folder is added to the list of those folders containing source to be compiled for testing. Use this if your
      * ant script generates test source code.
-     *
+     * 
      * @parameter expression="${testSourceRoot}"
      * @deprecated Use the build-helper-maven-plugin to bind test source directories
      */
@@ -173,13 +192,19 @@ public class AntRunMojo
         throws MojoExecutionException
     {
         MavenProject mavenProject = getMavenProject();
-        
-        if ( tasks == null )
+
+        if ( tasks != null )
         {
-            getLog().info( "No ant tasks defined - SKIPPED" );
-            return;
+            getLog().warn( "Parameter tasks is deprecated, use target instead" );
+            target = tasks;
         }
         
+        if ( target == null )
+        {
+            getLog().info( "No ant target defined - SKIPPED" );
+            return;
+        }
+
         if ( propertyPrefix == null )
         {
             propertyPrefix = "";
@@ -187,14 +212,10 @@ public class AntRunMojo
 
         try
         {
-            //TODO refactor - place the manipulation of the expressionEvaluator into a separated class.
-            ExpressionEvaluator exprEvaluator = (ExpressionEvaluator) tasks.getProject()
-                .getReference( AntTargetConverter.MAVEN_EXPRESSION_EVALUATOR_ID );
-
-            Project antProject = tasks.getProject();
-
-            PropertyHelper propertyHelper = PropertyHelper.getPropertyHelper( antProject );
-            propertyHelper.setNext( new AntPropertyHelper( exprEvaluator, mavenProject.getArtifacts(), getLog() ) );
+            Project antProject = new Project();
+            File antBuildFile = this.writeTargetToProjectFile( );
+            ProjectHelper.configureProject( antProject, antBuildFile );
+            antProject.init();
 
             DefaultLogger antLogger = new DefaultLogger();
             antLogger.setOutputPrintStream( System.out );
@@ -221,13 +242,14 @@ public class AntRunMojo
 
             /* set maven.plugin.classpath with plugin dependencies */
             antProject.addReference( "maven.plugin.classpath", getPathFromArtifacts( pluginArtifacts, antProject ) );
-            
+
             antProject.addReference( DEFAULT_MAVEN_PROJECT_REFID, getMavenProject() );
             antProject.addReference( DEFAULT_MAVEN_PROJECT_HELPER_REFID, projectHelper );
             antProject.addReference( "maven.local.repository", localRepository );
             initMavenTasks( antProject );
-            
-            // The ant project needs actual properties vs. using expression evaluator when calling an external build file.
+
+            // The ant project needs actual properties vs. using expression evaluator when calling an external build
+            // file.
             copyProperties( mavenProject, antProject );
 
             if ( getLog().isInfoEnabled() )
@@ -235,7 +257,7 @@ public class AntRunMojo
                 getLog().info( "Executing tasks" );
             }
 
-            tasks.execute();
+            antProject.executeTarget( antTargetName );
 
             if ( getLog().isInfoEnabled() )
             {
@@ -267,7 +289,7 @@ public class AntRunMojo
             getMavenProject().addTestCompileSourceRoot( testSourceRoot.toString() );
         }
     }
-    
+
     /**
      * @param artifacts
      * @param antProject
@@ -302,6 +324,7 @@ public class AntRunMojo
 
     /**
      * Copy properties from the maven project to the ant project.
+     * 
      * @param mavenProject
      * @param antProject
      */
@@ -311,15 +334,15 @@ public class AntRunMojo
         Iterator iter = mavenProps.keySet().iterator();
         while ( iter.hasNext() )
         {
-            String key = (String)iter.next();
+            String key = (String) iter.next();
             antProject.setProperty( key, mavenProps.getProperty( key ) );
         }
-        
+
         // Set the POM file as the ant.file for the tasks run directly in Maven.
         antProject.setProperty( "ant.file", mavenProject.getFile().getAbsolutePath() );
-        
+
         // Add some of the common maven properties
-        System.out.println( (propertyPrefix+ "project.artifactId"));
+        System.out.println( ( propertyPrefix + "project.artifactId" ) );
         antProject.setProperty( ( propertyPrefix + "project.groupId" ), mavenProject.getGroupId() );
         antProject.setProperty( ( propertyPrefix + "project.artifactId" ), mavenProject.getArtifactId() );
         antProject.setProperty( ( propertyPrefix + "project.name" ), mavenProject.getName() );
@@ -327,11 +350,15 @@ public class AntRunMojo
         antProject.setProperty( ( propertyPrefix + "project.version" ), mavenProject.getVersion() );
         antProject.setProperty( ( propertyPrefix + "project.packaging" ), mavenProject.getPackaging() );
         antProject.setProperty( ( propertyPrefix + "project.build.directory" ), mavenProject.getBuild().getDirectory() );
-        antProject.setProperty( ( propertyPrefix + "project.build.outputDirectory" ), mavenProject.getBuild().getOutputDirectory() );
-        antProject.setProperty( ( propertyPrefix + "project.build.testOutputDirectory" ), mavenProject.getBuild().getTestOutputDirectory() );
-        antProject.setProperty( ( propertyPrefix + "project.build.sourceDirectory" ), mavenProject.getBuild().getSourceDirectory() );
-        antProject.setProperty( ( propertyPrefix + "project.build.testSourceDirectory" ), mavenProject.getBuild().getTestSourceDirectory() );
-        
+        antProject.setProperty( ( propertyPrefix + "project.build.outputDirectory" ),
+                                mavenProject.getBuild().getOutputDirectory() );
+        antProject.setProperty( ( propertyPrefix + "project.build.testOutputDirectory" ),
+                                mavenProject.getBuild().getTestOutputDirectory() );
+        antProject.setProperty( ( propertyPrefix + "project.build.sourceDirectory" ),
+                                mavenProject.getBuild().getSourceDirectory() );
+        antProject.setProperty( ( propertyPrefix + "project.build.testSourceDirectory" ),
+                                mavenProject.getBuild().getTestSourceDirectory() );
+
         // Add properties for depenedency artifacts
         Set depArtifacts = mavenProject.getArtifacts();
         for ( Iterator it = depArtifacts.iterator(); it.hasNext(); )
@@ -342,7 +369,7 @@ public class AntRunMojo
 
             antProject.setProperty( propertyPrefix + propName, artifact.getFile().getPath() );
         }
-        
+
         // Add a property containing the list of versions for the mapper
         StringBuffer versionsBuffer = new StringBuffer();
         for ( Iterator it = depArtifacts.iterator(); it.hasNext(); )
@@ -352,8 +379,7 @@ public class AntRunMojo
             versionsBuffer.append( artifact.getVersion() + File.pathSeparator );
         }
         antProject.setProperty( versionsPropertyName, versionsBuffer.toString() );
-        
-        
+
         // Add properties in deprecated format to depenedency artifacts
         // This should be removed in future versions of the antrun plugin.
         for ( Iterator it = depArtifacts.iterator(); it.hasNext(); )
@@ -368,20 +394,84 @@ public class AntRunMojo
 
     /**
      * Get the current Maven project
+     * 
      * @return current Maven project
      */
     public MavenProject getMavenProject()
     {
         return this.project;
     }
-    
+
     public void initMavenTasks( Project antProject )
     {
         getLog().debug( "Initialize Maven Ant Tasks" );
         Typedef typedef = new Typedef();
         typedef.setProject( antProject );
         typedef.setResource( ANTLIB );
-        //typedef.setURI( TASK_URI );
+        // typedef.setURI( TASK_URI );
         typedef.execute();
     }
+
+    /**
+     * Write the ant target and surrounding tags to a temporary file
+     * 
+     * @throws PlexusConfigurationException
+     */
+    private File writeTargetToProjectFile()
+        throws IOException, PlexusConfigurationException
+    {
+        StringBuffer antProjectConfig = new StringBuffer( target.getXpp3Dom().toString() );
+
+        // replace deprecated tasks tag with standard Ant target
+        stringReplace( antProjectConfig, "<tasks", "<target" );
+        stringReplace( antProjectConfig, "</tasks", "</target" );
+
+        antTargetName = target.getAttribute( "name" );
+
+        if ( antTargetName == null )
+        {
+            antTargetName = DEFAULT_ANT_TARGET_NAME;
+            stringReplace( antProjectConfig, "<target", "<target name=\"" + antTargetName + "\"" );
+        }
+
+        final String projectOpen = "<project name=\"maven-antrun-\" default=\"" + antTargetName + "\">\n";
+        int index = antProjectConfig.indexOf( "<target" );
+        antProjectConfig.insert( index, projectOpen );
+
+        final String projectClose = "\n</project>";
+        antProjectConfig.append( projectClose );
+
+        // The fileName should probably use the plugin executionId instead of the targetName
+        String fileName = "build-" + antTargetName + ".xml";
+        File buildFile = new File( project.getBuild().getDirectory(), "/antrun/" + fileName );
+
+        buildFile.getParentFile().mkdirs();
+        FileUtils.fileWrite( buildFile.getAbsolutePath(), antProjectConfig.toString() );
+        return buildFile;
+    }
+
+    /**
+     * Replace text in a string buffer
+     * 
+     * @param text The string buffer containing the text
+     * @param match The string to match and remove
+     * @param with The string to insert
+     */
+    public void stringReplace( StringBuffer text, String match, String with )
+    {
+        int index = text.indexOf( match );
+        text.replace( index, index + match.length(), with );
+    }
+
+    public String checkTargetName( PlexusConfiguration antTargetConfig )
+        throws PlexusConfigurationException
+    {
+        String targetName = antTargetConfig.getAttribute( "name" );
+        if ( targetName == null )
+        {
+            targetName = DEFAULT_ANT_TARGET_NAME;
+        }
+        return targetName;
+    }
+
 }
