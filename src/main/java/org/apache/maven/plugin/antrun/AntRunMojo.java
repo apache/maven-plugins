@@ -342,7 +342,7 @@ public class AntRunMojo
         antProject.setProperty( "ant.file", mavenProject.getFile().getAbsolutePath() );
 
         // Add some of the common maven properties
-        System.out.println( ( propertyPrefix + "project.artifactId" ) );
+        getLog().debug("Setting properties with prefix: " + propertyPrefix );
         antProject.setProperty( ( propertyPrefix + "project.groupId" ), mavenProject.getGroupId() );
         antProject.setProperty( ( propertyPrefix + "project.artifactId" ), mavenProject.getArtifactId() );
         antProject.setProperty( ( propertyPrefix + "project.name" ), mavenProject.getName() );
