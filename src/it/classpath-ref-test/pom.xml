@@ -5,14 +5,19 @@
   <modelVersion>4.0.0</modelVersion>
   
   <groupId>org.apache.maven.plugins.antrun</groupId>
-  <artifactId>test6</artifactId>
+  <artifactId>test-classpaths</artifactId>
   <version>1.0-SNAPSHOT</version>
-  <name>Test for plugin classpath references and optional ant tasks</name>
-  <description>Ensure that maven.plugin.classpath reference is set and optional tasks work</description>
+  <name>Test for compile and plugin classpath references</name>
+  <description>Ensure that maven.compile.classpath and maven.plugin.classpath referencies are set</description>
  
   <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.2</version>
+    </dependency>
   </dependencies>
-  
+
   <build>
     <plugins>
       <plugin>
@@ -24,10 +29,24 @@
             <id>compile</id>
             <phase>compile</phase>
             <configuration>
+              <sourceRoot>target/generated/src/main/java</sourceRoot>
               <tasks>
+
+                <path id="classpath">
+                  <path refid="maven.compile.classpath"/>
+                  <path refid="maven.plugin.classpath"/>
+                </path>
                 <ant antfile="${basedir}/build.xml" inheritRefs="true">
                   <target name="test"/>
                 </ant>
+
+                <path id="classpath">
+                  <path refid="maven.dependency.classpath"/>
+                </path>
+                <ant antfile="${basedir}/build.xml" inheritRefs="true">
+                  <target name="test"/>
+                </ant>
+
               </tasks>
             </configuration>
             <goals>
@@ -35,18 +54,6 @@
             </goals>
           </execution>
         </executions>
-        <dependencies>
-          <dependency>
-            <groupId>ant</groupId>
-            <artifactId>ant-antlr</artifactId>
-            <version>1.6.5</version>
-          </dependency>
-          <dependency>
-            <groupId>antlr</groupId>
-            <artifactId>antlrall</artifactId>
-            <version>2.7.4</version>
-          </dependency>
-        </dependencies>
       </plugin>
     </plugins>
   </build>
