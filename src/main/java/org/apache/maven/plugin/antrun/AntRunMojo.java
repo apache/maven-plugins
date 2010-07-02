@@ -137,12 +137,14 @@ public class AntRunMojo
     private String propertyPrefix;
 
     /**
-     * The xml namespace to use for the built in Ant tasks.
+     * The xml tag prefix to use for the built in Ant tasks. This prefix needs to be prepended to each task referenced
+     * in the antrun target config. For example, a prefix of "mvn" means that the attachartifact task is referenced by
+     * "&lt;mvn:attachartifact&gt;" The default value of an empty string means that no prefix is used for the tasks.
      * 
-     * @parameter default-value="mvn"
+     * @parameter default-value=""
      * @since 1.5
      */
-    private String taskNamespace;
+    private String customTaskPrefix = "";
 
     /**
      * The name of a property containing the list of all dependency versions. This is used for the removing the versions
@@ -413,7 +415,10 @@ public class AntRunMojo
         Typedef typedef = new Typedef();
         typedef.setProject( antProject );
         typedef.setResource( ANTLIB );
-        // typedef.setURI( TASK_URI );
+        if ( ! customTaskPrefix.equals( "" ) )
+        {
+            typedef.setURI( TASK_URI );
+        }
         typedef.execute();
     }
 
@@ -444,7 +449,13 @@ public class AntRunMojo
             stringReplace( antProjectConfig, "<target", "<target name=\"" + antTargetName + "\"" );
         }
 
-        final String projectOpen = "<project name=\"maven-antrun-\" default=\"" + antTargetName + "\">\n";
+        String xmlns = "";
+        if ( ! customTaskPrefix.trim().equals( "" ) )
+        {
+            xmlns = "xmlns:" + customTaskPrefix + "=\"" + TASK_URI + "\""; 
+        }
+        
+        final String projectOpen = "<project name=\"maven-antrun-\" default=\"" + antTargetName + "\" " + xmlns +" >\n";
         int index = antProjectConfig.indexOf( "<target" );
         antProjectConfig.insert( index, projectOpen );
 
