@@ -28,7 +28,7 @@ under the License.
   <packaging>jar</packaging>
   <version>1.0-SNAPSHOT</version>
   <inceptionYear>2006</inceptionYear>
-  <name>Maven Antrun Plugin Test</name>
+  <name>Maven Antrun Plugin Test - Local Repo Prop [MANTRUN-143]</name>
   <url>http://maven.apache.org</url>
   <dependencies>
     <dependency>
@@ -47,15 +47,15 @@ under the License.
         <configuration>
           <tasks>
             <echo message="${localRepository}"/>
-            <fail message="Local repository property not set 1">
+            <fail message="localRepository property not set">
               <condition>
                 <not>
-                  <contains string="${localRepository}" substring="Repository[local" casesensitive="no"/>
+                  <isset property="localRepository"/>
                 </not>
               </condition>
             </fail>
             <echo message="${settings.localRepository}"/>
-            <fail message="Local repository property not set 2">
+            <fail message="settings.localRepository property not set">
               <condition>
                 <not>
                   <isset property="settings.localRepository"/>
