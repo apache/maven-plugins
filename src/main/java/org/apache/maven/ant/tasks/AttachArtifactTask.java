@@ -1,15 +1,5 @@
 package org.apache.maven.ant.tasks;
 
-import java.io.File;
-
-import org.apache.maven.plugin.antrun.AntRunMojo;
-import org.apache.maven.project.MavenProject;
-import org.apache.maven.project.MavenProjectHelper;
-import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.Project;
-import org.apache.tools.ant.Task;
-import org.codehaus.plexus.util.FileUtils;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -28,6 +18,16 @@ import org.codehaus.plexus.util.FileUtils;
  * specific language governing permissions and limitations
  * under the License.
  */
+
+import java.io.File;
+
+import org.apache.maven.plugin.antrun.AntRunMojo;
+import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.MavenProjectHelper;
+import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.Project;
+import org.apache.tools.ant.Task;
+import org.codehaus.plexus.util.FileUtils;
 
 public class AttachArtifactTask
     extends Task
