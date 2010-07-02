@@ -21,6 +21,7 @@ package org.apache.maven.plugin.antrun;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -43,7 +44,6 @@ import org.apache.tools.ant.taskdefs.Typedef;
 import org.apache.tools.ant.types.Path;
 import org.codehaus.plexus.configuration.PlexusConfiguration;
 import org.codehaus.plexus.configuration.PlexusConfigurationException;
-import org.codehaus.plexus.configuration.xml.XmlPlexusConfiguration;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.StringUtils;
 
@@ -157,7 +157,7 @@ public class AntRunMojo
      * @deprecated Use target instead
      * @parameter
      */
-    private XmlPlexusConfiguration tasks;
+    private PlexusConfiguration tasks;
 
     /**
      * The XML for the Ant target. You can add anything you can add between &lt;target&gt; and &lt;/target&gt; in a
@@ -165,7 +165,7 @@ public class AntRunMojo
      * 
      * @parameter
      */
-    private XmlPlexusConfiguration target;
+    private PlexusConfiguration target;
 
     /**
      * This folder is added to the list of those folders containing source to be compiled. Use this if your ant script
@@ -422,7 +422,12 @@ public class AntRunMojo
     private File writeTargetToProjectFile()
         throws IOException, PlexusConfigurationException
     {
-        StringBuffer antProjectConfig = new StringBuffer( target.getXpp3Dom().toString() );
+        // Have to use an XML writer because in Maven 2.x the PlexusConfig toString() method loses XML attributes
+        StringWriter writer = new StringWriter();
+        AntrunXmlPlexusConfigurationWriter xmlWriter = new AntrunXmlPlexusConfigurationWriter();
+        xmlWriter.write( writer, target );
+        
+        StringBuffer antProjectConfig = writer.getBuffer();
 
         // replace deprecated tasks tag with standard Ant target
         stringReplace( antProjectConfig, "<tasks", "<target" );
