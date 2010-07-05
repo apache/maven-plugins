@@ -30,7 +30,6 @@ import org.apache.maven.doxia.siterenderer.sink.SiteRendererSink;
 import org.apache.maven.doxia.tools.MojoLogWrapper;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.reporting.MavenReport;
-import org.apache.maven.reporting.MavenMultiPageReport;
 import org.apache.maven.reporting.MavenReportException;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.WriterFactory;
