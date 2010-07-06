@@ -1,0 +1,10 @@
+import java.io.*;
+
+boolean result = true;
+
+String assemblyDir = "target/massembly-462-1-src/";
+
+result = result && new File( basedir, assemblyDir + "test.txt" ).exists();
+result = result && new File( basedir, assemblyDir ).list().length == 1;
+
+return result;
