@@ -159,6 +159,7 @@ public class AddFileSetsTask
             
             List excludes = fileSet.getExcludes();
             excludes.add( "**/*.filtered" );
+            excludes.add( "**/*.formatted" );
             task.setExcludes( excludes );
             
             task.setIncludes( fileSet.getIncludes() );
