@@ -83,8 +83,9 @@ Usage
 [...]
 +---+
 
-  Unfortunately, Maven doesn't currently support hashed or encrypted passwords
-  in the <<<settings.xml>>>.
+  Please see the article about
+  {{{http://maven.apache.org/guides/mini/guide-encryption.html}Password Encryption}}
+  for instructions on how to avoid clear text passwords in the <<<settings.xml>>>.
 
   Once you've configured your repository deployment information correctly
   deploying your project's artifact will only require invocation of the
