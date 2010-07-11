@@ -169,6 +169,9 @@ public class DeployMojo
                     }
 
                     getDeployer().deploy( pomFile, pomArtifact, repo, getLocalRepository() );
+
+                    // propagate the timestamped version to the main artifact for the attached artifacts to pick it up
+                    artifact.setResolvedVersion( pomArtifact.getVersion() );
                 }
                 else
                 {
