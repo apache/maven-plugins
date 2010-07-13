@@ -126,9 +126,9 @@ public class BundleCreateMojo
         if ( disableMaterialization )
         {
             getLog().warn( "Validations to confirm support for project materialization have been DISABLED." +
-            		"\n\nYour project may not provide the POM elements necessary to allow users to retrieve sources on-demand," +
-            		"\nor to easily checkout your project in an IDE. THIS CAN SERIOUSLY INCONVENIENCE YOUR USERS." +
-            		"\n\nContinue? [y/N]" );
+                "\n\nYour project may not provide the POM elements necessary to allow users to retrieve sources on-demand," +
+                "\nor to easily checkout your project in an IDE. THIS CAN SERIOUSLY INCONVENIENCE YOUR USERS." +
+                "\n\nContinue? [y/N]" );
             
             try
             {
@@ -148,14 +148,14 @@ public class BundleCreateMojo
         {
             if ( project.getScm() == null )
             {
-                throw new MojoExecutionException( "You must supply a valid <scm>> section, with at least "
+                throw new MojoExecutionException( "You must supply a valid <scm> section, with at least "
                     + "<url> (viewing URL) and <connection> (read-only tooling connection) specified." );
             }
             else
             {
                 validate( project.getScm().getUrl(), "project.scm.url" );
                 
-                validate( project.getScm().getConnection(), "project.scm.url" );
+                validate( project.getScm().getConnection(), "project.scm.connection" );
             }
         }
 
