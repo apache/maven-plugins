@@ -96,5 +96,32 @@ public class BundleCreateIT
             verifier.resetStreams();
         }
     }
+    
+    @SuppressWarnings( "unchecked" )
+    @Test
+    public void createFromAlternativePom()
+        throws Exception
+    {
+        File dir = getTestDir( "bundle-create-alt-pom" );
+        
+        Verifier verifier = new Verifier( dir.getAbsolutePath() );
+        
+        verifier.getCliOptions().add( "-f alternative-pom.xml --settings ../settings.xml" );
+        
+        String prefix = IntegrationTestUtils.getCliPluginPrefix();
+        
+        verifier.executeGoal( prefix + "bundle-create" );
+        verifier.verifyErrorFreeLog();
+        verifier.resetStreams();
+        
+        File bundleSource = new File( dir, "target/test-1.0-bundle.jar" );
+        
+        Set<String> requiredEntries = new HashSet<String>();
+        requiredEntries.add( "pom.xml" );
+        requiredEntries.add( "test-1.0.jar" );
+        requiredEntries.add( "test-1.0-sources.jar" );
+        
+        assertZipContents( requiredEntries, Assertions.EMPTY_ENTRY_NAMES, bundleSource );
+    }
 
 }
