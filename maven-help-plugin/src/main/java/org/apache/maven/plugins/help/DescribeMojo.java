@@ -22,6 +22,7 @@ package org.apache.maven.plugins.help;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -587,10 +588,10 @@ public class DescribeMojo
 
         if ( ( detail || medium ) && !minimal )
         {
-            append( buffer, "This plugin has " + pd.getMojos().size() + " goal"
-                + ( pd.getMojos().size() > 1 ? "s" : "" ) + ":", 0 );
+            append( buffer, "This plugin has " + mojos.size() + " goal" + ( mojos.size() > 1 ? "s" : "" ) + ":", 0 );
             buffer.append( "\n" );
 
+            mojos = new ArrayList( mojos );
             PluginUtils.sortMojos( mojos );
 
             for ( Iterator it = mojos.iterator(); it.hasNext(); )
@@ -733,6 +734,7 @@ public class DescribeMojo
             return;
         }
 
+        params = new ArrayList( params );
         // TODO remove when maven-plugin-tools-api:2.4.4 is out see PluginUtils.sortMojoParameters()
         Collections.sort( params, new Comparator()
         {
