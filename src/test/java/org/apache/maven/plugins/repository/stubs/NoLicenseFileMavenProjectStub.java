@@ -18,6 +18,8 @@
  */
 package org.apache.maven.plugins.repository.stubs;
 
+import java.io.File;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,6 +58,11 @@ public class NoLicenseFileMavenProjectStub
         build.setDirectory( getBasedir() + "/target/test/unit/no-license-file/target" );
         setBuild( build );
 
+    }
+
+    public File getFile()
+    {
+        return new File( getBasedir(), "src/test/resources/unit/no-license-file/pom.xml" );
     }
 
     public Scm getScm()

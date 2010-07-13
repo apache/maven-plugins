@@ -163,7 +163,7 @@ public class BundleCreateMojo
         // Create the bundle archive
         // ----------------------------------------------------------------------
 
-        File pom = new File( basedir, POM );
+        File pom = project.getFile();
 
         final String finalName = project.getBuild().getFinalName();
 

@@ -18,6 +18,8 @@
  */
 package org.apache.maven.plugins.repository.stubs;
 
+import java.io.File;
+
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Scm;
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
@@ -53,6 +55,11 @@ public class NoSourcesJarMavenProjectStub
         build.setDirectory( getBasedir() + "/target/test/unit/no-sourcesjar/target" );
         setBuild( build );
 
+    }
+
+    public File getFile()
+    {
+        return new File( getBasedir(), "src/test/resources/unit/no-sourcesjar/pom.xml" );
     }
 
     public Scm getScm()
