@@ -44,12 +44,12 @@ public class BundleCreateMojo
     public static final String POM = "pom.xml";
 
     /**
-     * Base directory.
+     * Output directory.
      *
-     * @parameter default-value="${basedir}"
+     * @parameter default-value="${project.build.directory}"
      * @readonly
      */
-    private String basedir;
+    private File outputDirectory;
 
     /**
      * The current Maven project.
@@ -161,10 +161,9 @@ public class BundleCreateMojo
 
         final String finalName = project.getBuild().getFinalName();
 
-        String outputDirectory = project.getBuild().getDirectory();
-        
         boolean batchMode = settings == null ? false : !settings.isInteractiveMode();
-        List<File> files = BundleUtils.selectProjectFiles( new File( outputDirectory ), inputHandler, finalName, pom, getLog(), batchMode );
+        List<File> files =
+            BundleUtils.selectProjectFiles( outputDirectory, inputHandler, finalName, pom, getLog(), batchMode );
 
         File bundle = new File( outputDirectory, finalName + "-bundle.jar" );
 
