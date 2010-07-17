@@ -19,7 +19,6 @@ package org.apache.maven.plugins.repository;
  * under the License.
  */
 
-import org.apache.maven.artifact.handler.manager.ArtifactHandlerManager;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
@@ -74,11 +73,6 @@ public class BundleCreateMojo
      * @component role="org.codehaus.plexus.archiver.Archiver" roleHint="jar"
      */
     private JarArchiver jarArchiver;
-
-    /**
-     * @component
-     */
-    private ArtifactHandlerManager artifactHandlerManager;
 
     /**
      * @component
@@ -172,8 +166,6 @@ public class BundleCreateMojo
         boolean batchMode = settings == null ? false : !settings.isInteractiveMode();
         List<File> files = BundleUtils.selectProjectFiles( new File( outputDirectory ), inputHandler, finalName, pom, getLog(), batchMode );
 
-        String extension = artifactHandlerManager.getArtifactHandler( project.getPackaging() ).getExtension();
-
         File bundle = new File( outputDirectory, finalName + "-bundle.jar" );
 
         try
@@ -186,11 +178,11 @@ public class BundleCreateMojo
             
             for ( File f : files )
             {
-                if ( artifactChecks && f.getName().endsWith( finalName + "-sources." + extension ) )
+                if ( artifactChecks && f.getName().endsWith( finalName + "-sources.jar" ) )
                 {
                     sourcesFound = true;
                 }
-                else if ( artifactChecks && f.getName().equals( finalName + "-javadoc." + extension ) )
+                else if ( artifactChecks && f.getName().equals( finalName + "-javadoc.jar" ) )
                 {
                     javadocsFound = true;
                 }
