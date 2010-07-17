@@ -10,7 +10,7 @@
         <artifactId>maven-repository-plugin</artifactId>
         <configuration>
           <project implementation="org.apache.maven.plugins.repository.stubs.PomOnlyMavenProjectStub"/>
-          <basedir>${basedir}/src/test/resources/unit/pom-only</basedir>
+          <outputDirectory>${basedir}/target/test/unit/pom-only/target</outputDirectory>
         </configuration>
       </plugin>
     </plugins>

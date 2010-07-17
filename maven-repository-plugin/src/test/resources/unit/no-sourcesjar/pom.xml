@@ -10,7 +10,7 @@
         <artifactId>maven-repository-plugin</artifactId>
         <configuration>
           <project implementation="org.apache.maven.plugins.repository.stubs.NoSourcesJarMavenProjectStub"/>
-          <basedir>${basedir}/src/test/resources/unit/no-sourcesjar</basedir>
+          <outputDirectory>${basedir}/target/test/unit/no-sourcesjar/target</outputDirectory>
         </configuration>
       </plugin>
     </plugins>
