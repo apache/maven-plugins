@@ -68,7 +68,7 @@ mvn repository:bundle-create
 +----+
 
  The bundle will be created in your <<<target>>> directory with the name:
- <<<$\{pom.artifactId\}-$\{pom.currentVersion\}-bundle.jar>>>
+ <<<$\{project.artifactId\}-$\{project.version\}-bundle.jar>>>
 
  If you want to include a jar with java sources in your upload (recommended, unless your license doesn't
  allow sources to be redistributed) the command to run is:
@@ -93,8 +93,8 @@ mvn source:jar javadoc:jar repository:bundle-create
  <<Note:>> This goal was introduced in version 2.1 of this plugin.
 
  Simply run this command and follow the instructions on the command line. The
- bundle will be created in the current directory, unless you specify
- {{{bundle-pack-mojo.html}something else}}.
+ bundle will be created in the current directory, unless you specify different
+ values for the {{{bundle-pack-mojo.html}goal parameters}}.
 
 +----+
 mvn repository:bundle-pack
