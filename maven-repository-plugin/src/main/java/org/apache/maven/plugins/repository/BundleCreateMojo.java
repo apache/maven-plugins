@@ -207,9 +207,7 @@ public class BundleCreateMojo
         }
         catch ( Exception e )
         {
-            e.printStackTrace();
-
-            throw new MojoExecutionException( "Error creating upload bundle archive." );
+            throw new MojoExecutionException( "Error creating upload bundle archive.", e );
         }
     }
 
