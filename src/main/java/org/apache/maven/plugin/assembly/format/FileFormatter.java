@@ -24,6 +24,7 @@ import org.apache.maven.plugin.assembly.utils.AssemblyFileUtils;
 import org.apache.maven.shared.filtering.MavenFilteringException;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.IOUtil;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -97,9 +98,10 @@ public class FileFormatter
     private File formatLineEndings( String lineEndingChars, File source, File tempRoot )
         throws AssemblyFormattingException
     {
+        Reader contentReader = null;
         try
         {
-            Reader contentReader = new FileReader( source );
+            contentReader = new FileReader( source );
 
             File target = FileUtils.createTempFile( source.getName() + ".", ".formatted", tempRoot );
 
@@ -114,6 +116,10 @@ public class FileFormatter
         catch ( IOException e )
         {
             throw new AssemblyFormattingException( "Error line formatting file '" + source + "': " + e.getMessage(), e );
+        }
+        finally
+        {
+            IOUtil.close( contentReader );
         }
     }
 }
