@@ -50,4 +50,12 @@
   <properties>
     <testProp1>testProp1-value</testProp1>
   </properties>
+  <profiles>
+    <profile>
+      <id>property-profile</id>
+      <properties>
+        <profileProp>the profile property</profileProp>
+      </properties>
+    </profile>
+  </profiles>
 </project>

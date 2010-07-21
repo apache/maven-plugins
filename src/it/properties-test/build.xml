@@ -3,17 +3,29 @@
 
   <target name="test">
 
+  	<!-- Check basic pom component properties -->
     <echo message="project.artifactId : ${project.artifactId}"/>
     <fail unless="project.artifactId" message="Property not set \${project.artifactId}"/>
+  	
+  	<!-- Properties defined in the pom <properties> -->
     <echo message="testProp1 : ${testProp1}"/>
     <fail unless="testProp1" message="Property not set \${testProp1}"/>
+  	
+  	<!-- Properties defined in an active profile -->
+  	<echo message="profileProp : ${profileProp}"/>
+  	<fail unless="profileProp" message="Profile property not set \${profileProp}"/>
+  	
+  	<!-- System properties -->
     <echo message="line.separator : ${line.separator}"/>
     <fail unless="line.separator" message="Property not set \${line.separator}"/>
+  	
+  	<!-- Dependency artifact properties -->
     <echo message="junit:junit:jar : ${junit:junit:jar}"/>
     <fail unless="junit:junit:jar" message="Property not set \${junit:junit:jar}"/>    
     <echo message="maven.dependency.junit.junit.jar.path : ${maven.dependency.junit.junit.jar.path}"/>
     <fail unless="maven.dependency.junit.junit.jar.path" message="Property not set \${maven.dependency.junit.junit.jar.path}"/>
     
+  	<!-- Check that the build output dir is pointing to the correct location -->
     <property name="outputDir" location="./target/classes"/>
     <echo message="outputDir: ${outputDir}"/>
     <property name="outputDirProp" location="${project.build.outputDirectory}"/>
@@ -26,6 +38,7 @@
       </condition>
     </fail>
     
+  	<!-- Check that the non-default test output dir is pointing to the correct location -->
     <property name="testOutputDir" location="./target/test-stuff"/>
     <echo message="testOutputDir ${testOutputDir}"/>
     <property name="testOutputDirProp" location="${project.build.testOutputDirectory}"/>
