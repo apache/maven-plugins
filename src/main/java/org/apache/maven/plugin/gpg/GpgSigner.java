@@ -46,6 +46,8 @@ public class GpgSigner
 
     private boolean isInteractive = true;
 
+    private boolean defaultKeyring = true;
+
     private String keyname;
 
     private String passphrase;
@@ -57,6 +59,10 @@ public class GpgSigner
     private File baseDir;
 
     private File homeDir;
+
+    private String secretKeyring;
+
+    private String publicKeyring;
 
     public void setExecutable( String executable )
     {
@@ -71,6 +77,11 @@ public class GpgSigner
     public void setUseAgent( boolean b )
     {
         useAgent = b;
+    }
+
+    public void setDefaultKeyring( boolean enabled )
+    {
+        defaultKeyring = enabled;
     }
 
     public void setKeyName( String s )
@@ -101,6 +112,16 @@ public class GpgSigner
     public void setHomeDirectory( File homeDirectory )
     {
         homeDir = homeDirectory;
+    }
+
+    public void setSecretKeyring( String path )
+    {
+        secretKeyring = path;
+    }
+
+    public void setPublicKeyring( String path )
+    {
+        publicKeyring = path;
     }
 
     public File generateSignatureForArtifact( File file )
@@ -200,6 +221,23 @@ public class GpgSigner
         if ( !isInteractive )
         {
             cmd.createArg().setValue( "--no-tty" );
+        }
+
+        if ( !defaultKeyring )
+        {
+            cmd.createArg().setValue( "--no-default-keyring" );
+        }
+
+        if ( StringUtils.isNotEmpty( secretKeyring ) )
+        {
+            cmd.createArg().setValue( "--secret-keyring" );
+            cmd.createArg().setValue( secretKeyring );
+        }
+
+        if ( StringUtils.isNotEmpty( publicKeyring ) )
+        {
+            cmd.createArg().setValue( "--keyring" );
+            cmd.createArg().setValue( publicKeyring );
         }
 
         cmd.createArg().setValue( "--output" );
