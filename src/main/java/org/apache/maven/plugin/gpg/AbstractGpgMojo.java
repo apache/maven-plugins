@@ -84,7 +84,7 @@ public abstract class AbstractGpgMojo
     /**
      * Whether to add the default keyrings from gpg's home directory to the list of used keyrings.
      * 
-     * @parameter expression="${gpg.defaultKeyring} default-value="true"
+     * @parameter expression="${gpg.defaultKeyring}" default-value="true"
      * @since 1.2
      */
     private boolean defaultKeyring;
@@ -95,7 +95,7 @@ public abstract class AbstractGpgMojo
      * {@link #defaultKeyring} if required) to use a different secret key. <em>Note:</em> Relative paths are resolved
      * against gpg's home directory, not the project base directory.
      * 
-     * @parameter expression="${gpg.secretKeyring}
+     * @parameter expression="${gpg.secretKeyring}"
      * @since 1.2
      */
     private String secretKeyring;
@@ -105,7 +105,7 @@ public abstract class AbstractGpgMojo
      * home directory is considered. Use this option (and {@link #defaultKeyring} if required) to use a different public
      * key. <em>Note:</em> Relative paths are resolved against gpg's home directory, not the project base directory.
      * 
-     * @parameter expression="${gpg.publicKeyring}
+     * @parameter expression="${gpg.publicKeyring}"
      * @since 1.2
      */
     private String publicKeyring;
