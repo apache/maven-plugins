@@ -1,0 +1,22 @@
+import java.io.*;
+
+File artifactDir = new File( localRepositoryPath, "org/apache/maven/its/gpg/ask/test/1.0" );
+
+String[] expectedFiles = {
+    "test-1.0.pom",
+    "test-1.0.pom.asc",
+    "test-1.0.jar",
+    "test-1.0.jar.asc",
+};
+
+for ( String expectedFile : expectedFiles )
+{
+    File file = new File( artifactDir, expectedFile );
+
+    System.out.println( "Checking for existence of " + file );
+
+    if ( !file.isFile() )
+    {
+        throw new Exception( "Missing file " + file );
+    }
+}
