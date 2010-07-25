@@ -47,9 +47,6 @@ under the License.
         <artifactId>maven-gpg-plugin</artifactId>
         <version>@project.version@</version>
         <configuration>
-          <passphrase>secret</passphrase>
-          <secretKeyring>secring-1.gpg</secretKeyring>
-          <publicKeyring>pubring-1.gpg</publicKeyring>
         </configuration>
         <executions>
           <execution>
