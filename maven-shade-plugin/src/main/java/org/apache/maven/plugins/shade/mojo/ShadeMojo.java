@@ -649,7 +649,18 @@ public class ShadeMojo
 
                 if ( ( (ArtifactId) entry.getValue() ).matches( pattern ) )
                 {
-                    jars.add( ( (Artifact) entry.getKey() ).getFile() );
+                    Artifact artifact = (Artifact) entry.getKey();
+                    
+                    jars.add( artifact.getFile() );
+                    
+                    if ( createSourcesJar )
+                    {
+                        File file = resolveArtifactSources( artifact );
+                        if ( file != null )
+                        {
+                            jars.add( file );
+                        }
+                    }
                 }
             }
 
