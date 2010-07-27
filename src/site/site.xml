@@ -29,10 +29,9 @@ under the License.
 
     <menu name="Overview">
       <item name="Introduction" href="index.html"/>
-      <item name="Goals" href="linkcheck-mojo.html"/>
+      <item name="Goals" href="plugin-info.html"/>
       <item name="Usage" href="usage.html"/>
       <item name="FAQ" href="faq.html"/>
     </menu>
-
   </body>
 </project>
