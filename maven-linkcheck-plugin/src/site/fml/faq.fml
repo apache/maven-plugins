@@ -20,17 +20,17 @@ under the License.
 -->
 
 
-<faqs xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xmlns="http://maven.apache.org/FML/1.0"
-  xsi:schemaLocation="http://maven.apache.org/FML/1.0 http://maven.apache.org/xsd/fml-1.0.xsd"
+<faqs xmlns="http://maven.apache.org/FML/1.0.1"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/FML/1.0.1 http://maven.apache.org/xsd/fml-1.0.1.xsd"
   id="FAQ" title="Frequently Asked Questions">
   <part id="General">
-    <faq id="Why the plugin invokes the site goal">
-      <question>Why the plugin invokes the site goal?</question>
+    <faq id="Why does the plugin invoke the site goal">
+      <question>Why does the plugin invoke the site goal?</question>
       <answer>
         <p>
-          By safety, the plugin generates the site goal in a separate space to be sure that the number of
-          documents analyzed are the same than the generated documents.
+          The plugin executes the site goal in a separate space to make sure that the number of
+          documents analyzed are the same as the generated documents.
         </p>
       </answer>
     </faq>
