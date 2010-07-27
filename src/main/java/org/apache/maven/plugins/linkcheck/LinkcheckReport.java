@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.doxia.linkcheck.HttpBean;
@@ -1293,13 +1294,26 @@ public class LinkcheckReport
                     if ( linkcheckFileResult.getTarget().startsWith( "#" ) )
                     {
                         getSink().link( linkcheckFile.getRelativePath() + linkcheckFileResult.getTarget() );
-                        getSink().text( linkcheckFile.getRelativePath() + linkcheckFileResult.getTarget() );
+                    }
+                    else if ( linkcheckFileResult.getTarget().startsWith( "." ) )
+                    {
+                        // We need to calculate a correct absolute path here, because target is a relative path
+                        String absolutePath = FilenameUtils.getFullPath( linkcheckFile.getRelativePath() )
+                            + linkcheckFileResult.getTarget();
+                        String normalizedPath = FilenameUtils.normalize( absolutePath );
+                        if( normalizedPath == null )
+                        {
+                            normalizedPath = absolutePath;
+                        }
+                        getSink().link( normalizedPath );
                     }
                     else
                     {
                         getSink().link( linkcheckFileResult.getTarget() );
-                        getSink().text( linkcheckFileResult.getTarget() );
                     }
+                    // Show the link as it was written to make it easy for
+                    // the author to find it in the source document
+                    getSink().text( linkcheckFileResult.getTarget() );
                     getSink().link_();
                     getSink().text( ": " );
                     getSink().text( linkcheckFileResult.getErrorMessage() );
