@@ -97,7 +97,7 @@ public class LinkcheckReport
     private Renderer siteRenderer;
 
     /**
-     * SiteTool component.
+     * LinkCheck component.
      *
      * @component
      */
@@ -147,11 +147,10 @@ public class LinkcheckReport
     // ----------------------------------------------------------------------
 
     /**
-     * The settings offline paramater.
+     * Whether we are offline or not.
      *
-     * @parameter expression="${settings.offline}"
+     * @parameter default-value="${settings.offline}" expression="${linkcheck.offline}"
      * @required
-     * @readonly
      */
     private boolean offline;
 
