@@ -25,7 +25,7 @@ under the License.
   <parent>
     <groupId>org.apache.maven.plugins</groupId>
     <artifactId>maven-plugins</artifactId>
-    <version>14</version>
+    <version>18</version>
   </parent>
 
   <artifactId>maven-linkcheck-plugin</artifactId>
@@ -157,6 +157,26 @@ under the License.
   </dependencies>
 
   <profiles>
+    <profile>
+      <id>reporting</id>
+      <reporting>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>l10n-maven-plugin</artifactId>
+            <version>1.0-alpha-2</version>
+            <configuration>
+              <!-- Add locales here when the plugin is localized
+              <locales>
+                <locale>de</locale>
+              </locales>
+              -->
+            </configuration>
+          </plugin>
+        </plugins>
+      </reporting>
+    </profile>
+
     <profile>
       <id>run-its</id>
       <build>
