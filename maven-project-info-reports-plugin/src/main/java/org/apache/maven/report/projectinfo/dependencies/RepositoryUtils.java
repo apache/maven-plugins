@@ -20,7 +20,6 @@ package org.apache.maven.report.projectinfo.dependencies;
  */
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.maven.artifact.Artifact;
@@ -72,9 +71,9 @@ public class RepositoryUtils
 
     private final ArtifactFactory factory;
 
-    private final List remoteRepositories;
+    private final List<ArtifactRepository> remoteRepositories;
 
-    private final List pluginRepositories;
+    private final List<ArtifactRepository> pluginRepositories;
 
     private final ArtifactResolver resolver;
 
@@ -94,8 +93,9 @@ public class RepositoryUtils
      */
     public RepositoryUtils( Log log, WagonManager wagonManager, Settings settings,
                             MavenProjectBuilder mavenProjectBuilder, ArtifactFactory factory,
-                            ArtifactResolver resolver, List remoteRepositories, List pluginRepositories,
-                            ArtifactRepository localRepository, RepositoryMetadataManager repositoryMetadataManager )
+                            ArtifactResolver resolver, List<ArtifactRepository> remoteRepositories,
+                            List<ArtifactRepository> pluginRepositories, ArtifactRepository localRepository,
+                            RepositoryMetadataManager repositoryMetadataManager )
     {
         this.log = log;
         this.wagonManager = wagonManager;
@@ -119,7 +119,7 @@ public class RepositoryUtils
     /**
      * @return remote artifact repo
      */
-    public List getRemoteArtifactRepositories()
+    public List<ArtifactRepository> getRemoteArtifactRepositories()
     {
         return remoteRepositories;
     }
@@ -127,7 +127,7 @@ public class RepositoryUtils
     /**
      * @return plugin artifact repo
      */
-    public List getPluginArtifactRepositories()
+    public List<ArtifactRepository> getPluginArtifactRepositories()
     {
         return pluginRepositories;
     }
@@ -141,7 +141,8 @@ public class RepositoryUtils
     public void resolve( Artifact artifact )
         throws ArtifactResolutionException, ArtifactNotFoundException
     {
-        List repos = new ArrayList();
+        List<ArtifactRepository> repos =
+            new ArrayList<ArtifactRepository>( pluginRepositories.size() + remoteRepositories.size() );
         repos.addAll( pluginRepositories );
         repos.addAll( remoteRepositories );
 
@@ -348,10 +349,8 @@ public class RepositoryUtils
                     }
                 }
 
-                for ( Iterator it = artifact.getMetadataList().iterator(); it.hasNext(); )
+                for ( ArtifactMetadata m : artifact.getMetadataList() )
                 {
-                    ArtifactMetadata m = (ArtifactMetadata) it.next();
-
                     if ( m instanceof SnapshotArtifactRepositoryMetadata )
                     {
                         SnapshotArtifactRepositoryMetadata snapshotMetadata = (SnapshotArtifactRepositoryMetadata) m;

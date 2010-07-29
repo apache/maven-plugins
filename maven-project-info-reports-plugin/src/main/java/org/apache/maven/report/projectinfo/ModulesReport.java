@@ -22,7 +22,6 @@ package org.apache.maven.report.projectinfo;
 import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
@@ -100,7 +99,7 @@ public class ModulesReport
         /** {@inheritDoc} */
         public void renderBody()
         {
-            List modules = model.getModules();
+            List<String> modules = model.getModules();
 
             startSection( getTitle() );
 
@@ -112,10 +111,8 @@ public class ModulesReport
             String description = getI18nString( "header.description" );
             tableHeader( new String[] {name, description} );
 
-            for ( Iterator it = modules.iterator(); it.hasNext(); )
+            for ( String module : modules )
             {
-                String module = (String) it.next();
-
                 Model moduleModel;
                 File f = new File( project.getBasedir(), module + "/pom.xml" );
 
@@ -163,13 +160,12 @@ public class ModulesReport
     private Model readModel ( File pom )
     {
         MavenXpp3Reader xpp3 = new MavenXpp3Reader();
-        Model model = null;
         Reader reader = null;
 
         try
         {
             reader = ReaderFactory.newXmlReader( pom );
-            model = xpp3.read( reader );
+            return xpp3.read( reader );
         }
         catch ( IOException io )
         {
@@ -184,9 +180,6 @@ public class ModulesReport
         finally
         {
             IOUtil.close( reader );
-            reader = null;
         }
-
-        return model;
     }
 }

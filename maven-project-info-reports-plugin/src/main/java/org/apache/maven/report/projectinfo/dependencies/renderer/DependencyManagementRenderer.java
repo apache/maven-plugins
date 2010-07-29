@@ -21,7 +21,6 @@ package org.apache.maven.report.projectinfo.dependencies.renderer;
 
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -55,7 +54,7 @@ public class DependencyManagementRenderer
 
     private final MavenProjectBuilder mavenProjectBuilder;
 
-    private final List remoteRepositories;
+    private final List<ArtifactRepository> remoteRepositories;
 
     private final ArtifactRepository localRepository;
 
@@ -74,8 +73,8 @@ public class DependencyManagementRenderer
      */
     public DependencyManagementRenderer( Sink sink, Locale locale, I18N i18n, Log log,
                                          ManagementDependencies dependencies, ArtifactFactory artifactFactory,
-                                         MavenProjectBuilder mavenProjectBuilder, List remoteRepositories,
-                                         ArtifactRepository localRepository )
+                                         MavenProjectBuilder mavenProjectBuilder,
+                                         List<ArtifactRepository> remoteRepositories, ArtifactRepository localRepository )
     {
         super( sink, i18n, locale );
 
@@ -125,21 +124,20 @@ public class DependencyManagementRenderer
         startSection( getTitle() );
 
         // collect dependencies by scope
-        Map dependenciesByScope = dependencies.getManagementDependenciesByScope();
+        Map<String, List<Dependency>> dependenciesByScope = dependencies.getManagementDependenciesByScope();
 
         renderDependenciesForAllScopes( dependenciesByScope );
 
         endSection();
     }
 
-    private void renderDependenciesForAllScopes( Map dependenciesByScope )
+    private void renderDependenciesForAllScopes( Map<String, List<Dependency>> dependenciesByScope )
     {
-        renderDependenciesForScope( Artifact.SCOPE_COMPILE, (List) dependenciesByScope.get( Artifact.SCOPE_COMPILE ) );
-        renderDependenciesForScope( Artifact.SCOPE_RUNTIME, (List) dependenciesByScope.get( Artifact.SCOPE_RUNTIME ) );
-        renderDependenciesForScope( Artifact.SCOPE_TEST, (List) dependenciesByScope.get( Artifact.SCOPE_TEST ) );
-        renderDependenciesForScope( Artifact.SCOPE_PROVIDED,
-                                    (List) dependenciesByScope.get( Artifact.SCOPE_PROVIDED ) );
-        renderDependenciesForScope( Artifact.SCOPE_SYSTEM, (List) dependenciesByScope.get( Artifact.SCOPE_SYSTEM ) );
+        renderDependenciesForScope( Artifact.SCOPE_COMPILE, dependenciesByScope.get( Artifact.SCOPE_COMPILE ) );
+        renderDependenciesForScope( Artifact.SCOPE_RUNTIME, dependenciesByScope.get( Artifact.SCOPE_RUNTIME ) );
+        renderDependenciesForScope( Artifact.SCOPE_TEST, dependenciesByScope.get( Artifact.SCOPE_TEST ) );
+        renderDependenciesForScope( Artifact.SCOPE_PROVIDED, dependenciesByScope.get( Artifact.SCOPE_PROVIDED ) );
+        renderDependenciesForScope( Artifact.SCOPE_SYSTEM, dependenciesByScope.get( Artifact.SCOPE_SYSTEM ) );
     }
 
     private String[] getDependencyTableHeader( boolean hasClassifier )
@@ -158,7 +156,7 @@ public class DependencyManagementRenderer
         return new String[] { groupId, artifactId, version, type };
     }
 
-    private void renderDependenciesForScope( String scope, List artifacts )
+    private void renderDependenciesForScope( String scope, List<Dependency> artifacts )
     {
         if ( artifacts != null )
         {
@@ -171,9 +169,8 @@ public class DependencyManagementRenderer
             startTable();
 
             boolean hasClassifier = false;
-            for ( Iterator iterator = artifacts.iterator(); iterator.hasNext(); )
+            for ( Dependency dependency : artifacts )
             {
-                Dependency dependency = (Dependency) iterator.next();
                 if ( StringUtils.isNotEmpty( dependency.getClassifier() ) )
                 {
                     hasClassifier = true;
@@ -184,9 +181,8 @@ public class DependencyManagementRenderer
             String[] tableHeader = getDependencyTableHeader( hasClassifier );
             tableHeader( tableHeader );
 
-            for ( Iterator iterator = artifacts.iterator(); iterator.hasNext(); )
+            for ( Dependency dependency : artifacts )
             {
-                Dependency dependency = (Dependency) iterator.next();
                 tableRow( getDependencyRow( dependency, hasClassifier ) );
             }
             endTable();
@@ -214,15 +210,12 @@ public class DependencyManagementRenderer
             dependency.getType() };
     }
 
-    private Comparator getDependencyComparator()
+    private Comparator<Dependency> getDependencyComparator()
     {
-        return new Comparator()
+        return new Comparator<Dependency>()
         {
-            public int compare( Object o1, Object o2 )
+            public int compare( Dependency a1, Dependency a2 )
             {
-                Dependency a1 = (Dependency) o1;
-                Dependency a2 = (Dependency) o2;
-
                 int result = a1.getGroupId().compareTo( a2.getGroupId() );
                 if ( result == 0 )
                 {

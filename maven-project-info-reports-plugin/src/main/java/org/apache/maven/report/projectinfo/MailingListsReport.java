@@ -42,8 +42,6 @@ import org.codehaus.plexus.util.StringUtils;
 public class MailingListsReport
     extends AbstractProjectInfoReport
 {
-    
-    
 
     /**
      * This can override the header text of the mailing list(s) report
@@ -52,8 +50,8 @@ public class MailingListsReport
      * @since 2.2
      */
     protected String introduction;    
-    
-    
+
+
     // ----------------------------------------------------------------------
     // Public methods
     // ----------------------------------------------------------------------
@@ -110,7 +108,7 @@ public class MailingListsReport
         /** {@inheritDoc} */
         public void renderBody()
         {
-            List mailingLists = model.getMailingLists();
+            List<MailingList> mailingLists = model.getMailingLists();
 
             if ( mailingLists == null || mailingLists.isEmpty() )
             {
@@ -139,10 +137,8 @@ public class MailingListsReport
 
             // To beautify the display with other archives
             boolean otherArchives = false;
-            for ( Iterator i = mailingLists.iterator(); i.hasNext(); )
+            for ( MailingList m : mailingLists )
             {
-                MailingList m = (MailingList) i.next();
-
                 if ( m.getOtherArchives() != null && !m.getOtherArchives().isEmpty() )
                 {
                     otherArchives = true;
@@ -165,11 +161,9 @@ public class MailingListsReport
                 tableHeader( new String[]{name, subscribe, unsubscribe, post, archive} );
             }
 
-            for ( Iterator i = model.getMailingLists().iterator(); i.hasNext(); )
+            for ( MailingList mailingList : model.getMailingLists() )
             {
-                MailingList mailingList = (MailingList) i.next();
-
-                List textRow = new ArrayList();
+                List<String> textRow = new ArrayList<String>();
 
                 // Validate here subsribe/unsubsribe lists and archives?
                 textRow.add( mailingList.getName() );
@@ -200,7 +194,7 @@ public class MailingListsReport
                 if ( mailingList.getOtherArchives() != null && !mailingList.getOtherArchives().isEmpty() )
                 {
                     // For the first line
-                    Iterator it = mailingList.getOtherArchives().iterator();
+                    Iterator<String> it = mailingList.getOtherArchives().iterator();
                     String otherArchive = it.next().toString();
 
                     textRow.add( createLinkPatternedText( getArchiveServer( otherArchive ), otherArchive ) );
@@ -210,10 +204,10 @@ public class MailingListsReport
                     // Other lines...
                     while ( it.hasNext() )
                     {
-                        otherArchive = (String) it.next();
+                        otherArchive = it.next();
 
                         // Reinit the list to beautify the display
-                        textRow = new ArrayList();
+                        textRow = new ArrayList<String>();
 
                         // Name
                         textRow.add( " " );

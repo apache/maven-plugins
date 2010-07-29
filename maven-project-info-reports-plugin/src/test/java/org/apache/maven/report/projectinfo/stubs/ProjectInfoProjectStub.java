@@ -92,11 +92,11 @@ public abstract class ProjectInfoProjectStub
             + "/target/test-classes" );
         setBuild( build );
 
-        List compileSourceRoots = new ArrayList();
+        List<String> compileSourceRoots = new ArrayList<String>();
         compileSourceRoots.add( getBasedir() + "/src/main/java" );
         setCompileSourceRoots( compileSourceRoots );
 
-        List testCompileSourceRoots = new ArrayList();
+        List<String> testCompileSourceRoots = new ArrayList<String>();
         testCompileSourceRoots.add( getBasedir() + "/src/test/java" );
         setTestCompileSourceRoots( testCompileSourceRoots );
     }
@@ -131,13 +131,13 @@ public abstract class ProjectInfoProjectStub
     }
 
     /** {@inheritDoc} */
-    public Set getArtifacts()
+    public Set<Artifact> getArtifacts()
     {
-        return Collections.EMPTY_SET;
+        return Collections.emptySet();
     }
 
     /** {@inheritDoc} */
-    public List getRemoteArtifactRepositories()
+    public List<ArtifactRepository> getRemoteArtifactRepositories()
     {
         ArtifactRepository repository = new DefaultArtifactRepository( "central", "http://repo1.maven.org/maven2",
                                                                        new DefaultRepositoryLayout() );
@@ -146,11 +146,12 @@ public abstract class ProjectInfoProjectStub
     }
 
     /** {@inheritDoc} */
-    public Set getDependencyArtifacts()
+    public Set<Artifact> getDependencyArtifacts()
     {
-        return Collections.singleton( new DefaultArtifact( "junit", "junit", VersionRange.createFromVersion( "3.8.1" ),
-                                                           Artifact.SCOPE_TEST, "jar", null,
-                                                           new DefaultArtifactHandler( "jar" ), false ) );
+        Artifact artifact =
+            new DefaultArtifact( "junit", "junit", VersionRange.createFromVersion( "3.8.1" ), Artifact.SCOPE_TEST,
+                                 "jar", null, new DefaultArtifactHandler( "jar" ), false );
+        return Collections.singleton( artifact );
     }
 
     /** {@inheritDoc} */

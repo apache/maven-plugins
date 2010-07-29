@@ -29,7 +29,6 @@ import org.codehaus.plexus.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -137,7 +136,7 @@ public class TeamListReport
             paragraph( getI18nString( "intro.description2" ) );
 
             // Developer section
-            List developers = model.getDevelopers();
+            List<Developer> developers = model.getDevelopers();
 
             startSection( getI18nString( "developers.title" ) );
 
@@ -152,7 +151,7 @@ public class TeamListReport
                 startTable();
 
                 // By default we think that all headers not required
-                Map headersMap = new HashMap();
+                Map<String, Boolean> headersMap = new HashMap<String, Boolean>();
                 // set true for headers that are required
                 checkRequiredHeaders( headersMap, developers );
                 String[] requiredHeaders = getRequiredDevHeaderArray( headersMap );
@@ -161,10 +160,8 @@ public class TeamListReport
 
                 // To handle JS
                 int developersRows = 0;
-                for ( Iterator i = developers.iterator(); i.hasNext(); )
+                for ( Developer developer : developers )
                 {
-                    Developer developer = (Developer) i.next();
-
                     renderDeveloper( developer, developersRows, headersMap, javascript );
 
                     developersRows++;
@@ -176,7 +173,7 @@ public class TeamListReport
             endSection();
 
             // contributors section
-            List contributors = model.getContributors();
+            List<Contributor> contributors = model.getContributors();
 
             startSection( getI18nString( "contributors.title" ) );
 
@@ -190,7 +187,7 @@ public class TeamListReport
 
                 startTable();
 
-                Map headersMap = new HashMap();
+                Map<String, Boolean> headersMap = new HashMap<String, Boolean>();
                 checkRequiredHeaders( headersMap, contributors );
                 String[] requiredHeaders = getRequiredContrHeaderArray( headersMap );
 
@@ -198,10 +195,8 @@ public class TeamListReport
 
                 // To handle JS
                 int contributorsRows = 0;
-                for ( Iterator i = contributors.iterator(); i.hasNext(); )
+                for ( Contributor contributor : contributors )
                 {
-                    Contributor contributor = (Contributor) i.next();
-
                     renderContributor( contributor, contributorsRows, headersMap, javascript );
 
                     contributorsRows++;
@@ -220,7 +215,8 @@ public class TeamListReport
             endSection();
         }
 
-        private void renderDeveloper( Developer developer, int developerRow, Map headersMap, StringBuffer javascript )
+        private void renderDeveloper( Developer developer, int developerRow, Map<String, Boolean> headersMap,
+                                      StringBuffer javascript )
         {
             // To handle JS
             sink.tableRow();
@@ -295,7 +291,7 @@ public class TeamListReport
             sink.tableRow_();
         }
 
-        private void renderContributor( Contributor contributor, int contributorRow, Map headersMap,
+        private void renderContributor( Contributor contributor, int contributorRow, Map<String, Boolean> headersMap,
                                         StringBuffer javascript )
         {
             sink.tableRow();
@@ -371,9 +367,9 @@ public class TeamListReport
          * @param requiredHeaders
          * @return
          */
-        private String[] getRequiredContrHeaderArray( Map requiredHeaders )
+        private String[] getRequiredContrHeaderArray( Map<String, Boolean> requiredHeaders )
         {
-            List requiredArray = new ArrayList();
+            List<String> requiredArray = new ArrayList<String>();
             String name = getI18nString( "contributors.name" );
             String email = getI18nString( "contributors.email" );
             String url = getI18nString( "contributors.url" );
@@ -400,9 +396,9 @@ public class TeamListReport
          * @param requiredHeaders
          * @return
          */
-        private String[] getRequiredDevHeaderArray( Map requiredHeaders )
+        private String[] getRequiredDevHeaderArray( Map<String, Boolean> requiredHeaders )
         {
-            List requiredArray = new ArrayList();
+            List<String> requiredArray = new ArrayList<String>();
 
             String id = getI18nString( "developers.id" );
             String name = getI18nString( "developers.name" );
@@ -445,9 +441,9 @@ public class TeamListReport
          * @param actualTime
          * @param properties
          */
-        private void setRequiredArray( Map requiredHeaders, List requiredArray, String name, String email, String url,
-                                       String organization, String organizationUrl, String roles, String timeZone,
-                                       String actualTime, String properties )
+        private void setRequiredArray( Map<String, Boolean> requiredHeaders, List<String> requiredArray, String name,
+                                       String email, String url, String organization, String organizationUrl,
+                                       String roles, String timeZone, String actualTime, String properties )
         {
             if ( requiredHeaders.get( NAME ) == Boolean.TRUE )
             {
@@ -489,7 +485,7 @@ public class TeamListReport
          * @param requiredHeaders
          * @param units
          */
-        private void checkRequiredHeaders( Map requiredHeaders, List units )
+        private void checkRequiredHeaders( Map<String, Boolean> requiredHeaders, List<?> units )
         {
             requiredHeaders.put( ID, Boolean.FALSE );
             requiredHeaders.put( NAME, Boolean.FALSE );
@@ -501,15 +497,14 @@ public class TeamListReport
             requiredHeaders.put( TIME_ZONE, Boolean.FALSE );
             requiredHeaders.put( PROPERTIES, Boolean.FALSE );
 
-            for ( Iterator i = units.iterator(); i.hasNext(); )
+            for ( Object unit : units )
             {
-                Object unit = i.next();
                 String name = null;
                 String email = null;
                 String url = null;
                 String organization = null;
                 String organizationUrl = null;
-                List roles = null;
+                List<String> roles = null;
                 String timeZone = null;
                 Properties properties = null;
 

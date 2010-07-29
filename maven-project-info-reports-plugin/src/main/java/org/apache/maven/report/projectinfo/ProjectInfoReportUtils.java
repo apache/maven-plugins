@@ -153,8 +153,8 @@ public class ProjectInfoReportUtils
      * @return the artifact url or null if an error occurred.
      */
     public static String getArtifactUrl( ArtifactFactory factory, Artifact artifact,
-                                         MavenProjectBuilder mavenProjectBuilder, List remoteRepositories,
-                                         ArtifactRepository localRepository )
+                                         MavenProjectBuilder mavenProjectBuilder,
+                                         List<ArtifactRepository> remoteRepositories, ArtifactRepository localRepository )
     {
         if ( Artifact.SCOPE_SYSTEM.equals( artifact.getScope() ) )
         {

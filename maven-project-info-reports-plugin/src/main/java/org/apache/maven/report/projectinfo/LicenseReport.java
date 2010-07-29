@@ -31,7 +31,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
@@ -88,11 +87,8 @@ public class LicenseReport
             return true;
         }
 
-        List licenses = project.getModel().getLicenses();
-        for ( Iterator i = licenses.iterator(); i.hasNext(); )
+        for ( License license : project.getModel().getLicenses() )
         {
-            License license = (License) i.next();
-
             String url = license.getUrl();
 
             URL licenseUrl = null;
@@ -214,7 +210,7 @@ public class LicenseReport
         /** {@inheritDoc} */
         public void renderBody()
         {
-            List licenses = project.getModel().getLicenses();
+            List<License> licenses = project.getModel().getLicenses();
 
             if ( licenses.isEmpty() )
             {
@@ -237,10 +233,8 @@ public class LicenseReport
             // License
             startSection( getI18nString( "title" ) );
 
-            for ( Iterator i = licenses.iterator(); i.hasNext(); )
+            for ( License license : licenses )
             {
-                License license = (License) i.next();
-
                 String name = license.getName();
                 String url = license.getUrl();
                 String comments = license.getComments();

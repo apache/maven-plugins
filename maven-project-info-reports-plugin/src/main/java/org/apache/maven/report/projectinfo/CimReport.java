@@ -26,7 +26,6 @@ import org.apache.maven.model.Notifier;
 import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.util.StringUtils;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
@@ -105,7 +104,7 @@ public class CimReport
 
             String system = cim.getSystem();
             String url = cim.getUrl();
-            List notifiers = cim.getNotifiers();
+            List<Notifier> notifiers = cim.getNotifiers();
 
             // Overview
             startSection( getI18nString( "overview.title" ) );
@@ -180,10 +179,8 @@ public class CimReport
 
                 tableHeader( new String[]{type, address, configuration} );
 
-                for ( Iterator i = notifiers.iterator(); i.hasNext(); )
+                for ( Notifier notifier : notifiers )
                 {
-                    Notifier notifier = (Notifier) i.next();
-
                     tableRow( new String[]{notifier.getType(),
                         createLinkPatternedText( notifier.getAddress(), notifier.getAddress() ),
                         propertiesToString( notifier.getConfiguration() )} );
