@@ -37,7 +37,6 @@ import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.util.StringUtils;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
@@ -719,7 +718,7 @@ public class ScmReport
             }
 
             ScmRepository repo = null;
-            List messages = new ArrayList();
+            List<String> messages = new ArrayList<String>();
             try
             {
                 messages.addAll( scmManager.validateScmRepository( scmUrl ) );
@@ -733,10 +732,8 @@ public class ScmReport
             {
                 StringBuffer sb = new StringBuffer();
                 boolean isIntroAdded = false;
-                for ( Iterator it = messages.iterator(); it.hasNext(); )
+                for ( String msg : messages )
                 {
-                    String msg = it.next().toString();
-
                     // Ignore NoSuchScmProviderException msg
                     // See impl of AbstractScmManager#validateScmRepository()
                     if ( msg.startsWith( "No such provider" ) )

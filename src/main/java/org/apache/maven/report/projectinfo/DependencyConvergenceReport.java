@@ -62,7 +62,7 @@ public class DependencyConvergenceReport
      * @required
      * @readonly
      */
-    private List reactorProjects;
+    private List<MavenProject> reactorProjects;
 
     // ----------------------------------------------------------------------
     // Public methods
@@ -110,7 +110,7 @@ public class DependencyConvergenceReport
         sink.text( getI18nString( locale, "title" ) );
         sink.sectionTitle1_();
 
-        Map dependencyMap = getDependencyMap();
+        Map<String, List<ReverseDependencyLink>> dependencyMap = getDependencyMap();
 
         // legend
         generateLegend( locale, sink );
@@ -135,13 +135,13 @@ public class DependencyConvergenceReport
     // ----------------------------------------------------------------------
 
     /**
-     * Generate the convergenec table for all dependencies
+     * Generate the convergence table for all dependencies
      *
      * @param locale
      * @param sink
      * @param dependencyMap
      */
-    private void generateConvergence( Locale locale, Sink sink, Map dependencyMap )
+    private void generateConvergence( Locale locale, Sink sink, Map<String, List<ReverseDependencyLink>> dependencyMap )
     {
         sink.section2();
 
@@ -149,11 +149,10 @@ public class DependencyConvergenceReport
         sink.text( getI18nString( locale, "convergence.caption" ) );
         sink.sectionTitle2_();
 
-        Iterator it = dependencyMap.keySet().iterator();
-        while ( it.hasNext() )
+        for ( Map.Entry<String, List<ReverseDependencyLink>> entry : dependencyMap.entrySet() )
         {
-            String key = (String) it.next();
-            List depList = (List) dependencyMap.get( key );
+            String key = entry.getKey();
+            List<ReverseDependencyLink> depList = entry.getValue();
 
             sink.section3();
             sink.sectionTitle3();
@@ -174,11 +173,11 @@ public class DependencyConvergenceReport
      * @param sink
      * @param depList
      */
-    private void generateDependencyDetails( Sink sink, List depList )
+    private void generateDependencyDetails( Sink sink, List<ReverseDependencyLink> depList )
     {
         sink.table();
 
-        Map artifactMap = getSortedUniqueArtifactMap( depList );
+        Map<String, List<ReverseDependencyLink>> artifactMap = getSortedUniqueArtifactMap( depList );
 
         sink.tableRow();
 
@@ -197,10 +196,8 @@ public class DependencyConvergenceReport
 
         sink.table();
 
-        Iterator it = artifactMap.keySet().iterator();
-        while ( it.hasNext() )
+        for ( String version : artifactMap.keySet() )
         {
-            String version = (String) it.next();
             sink.tableRow();
             sink.tableCell( new SinkEventAttributeSet( new String[] {SinkEventAttributeSet.WIDTH, "25%"} ) );
             sink.text( version );
@@ -220,15 +217,14 @@ public class DependencyConvergenceReport
         sink.table_();
     }
 
-    private void generateVersionDetails( Sink sink, Map artifactMap, String version )
+    private void generateVersionDetails( Sink sink, Map<String, List<ReverseDependencyLink>> artifactMap, String version )
     {
         sink.numberedList( 1 ); // Use lower alpha numbering
-        List depList = (List) artifactMap.get( version );
+        List<ReverseDependencyLink> depList = artifactMap.get( version );
         Collections.sort( depList, new ReverseDependencyLinkComparator() );
-        Iterator it = depList.iterator();
-        while ( it.hasNext() )
+
+        for ( ReverseDependencyLink rdl : depList )
         {
-            ReverseDependencyLink rdl = (ReverseDependencyLink) it.next();
             sink.numberedListItem();
             if ( StringUtils.isNotEmpty( rdl.project.getUrl() ) )
             {
@@ -263,19 +259,17 @@ public class DependencyConvergenceReport
      *
      * @return A Map of sorted unique artifacts
      */
-    private Map getSortedUniqueArtifactMap( List depList )
+    private Map<String, List<ReverseDependencyLink>> getSortedUniqueArtifactMap( List<ReverseDependencyLink> depList )
     {
-        Map uniqueArtifactMap = new TreeMap();
+        Map<String, List<ReverseDependencyLink>> uniqueArtifactMap = new TreeMap<String, List<ReverseDependencyLink>>();
 
-        Iterator it = depList.iterator();
-        while ( it.hasNext() )
+        for ( ReverseDependencyLink rdl : depList )
         {
-            ReverseDependencyLink rdl = (ReverseDependencyLink) it.next();
             String key = rdl.getDependency().getVersion();
-            List projectList = (List) uniqueArtifactMap.get( key );
+            List<ReverseDependencyLink> projectList = uniqueArtifactMap.get( key );
             if ( projectList == null )
             {
-                projectList = new ArrayList();
+                projectList = new ArrayList<ReverseDependencyLink>();
             }
             projectList.add( rdl );
             uniqueArtifactMap.put( key, projectList );
@@ -331,17 +325,15 @@ public class DependencyConvergenceReport
      * @param sink
      * @param dependencyMap
      */
-    private void generateStats( Locale locale, Sink sink, Map dependencyMap )
+    private void generateStats( Locale locale, Sink sink, Map<String, List<ReverseDependencyLink>> dependencyMap )
     {
         int depCount = dependencyMap.size();
         int artifactCount = 0;
         int snapshotCount = 0;
 
-        Iterator it = dependencyMap.values().iterator();
-        while ( it.hasNext() )
+        for ( List<ReverseDependencyLink> depList : dependencyMap.values() )
         {
-            List depList = (List) it.next();
-            Map artifactMap = getSortedUniqueArtifactMap( depList );
+            Map<String, List<ReverseDependencyLink>> artifactMap = getSortedUniqueArtifactMap( depList );
             snapshotCount += countSnapshots( artifactMap );
             artifactCount += artifactMap.size();
         }
@@ -449,22 +441,21 @@ public class DependencyConvergenceReport
         sink.table_();
     }
 
-    private int countSnapshots( Map artifactMap )
+    private int countSnapshots( Map<String, List<ReverseDependencyLink>> artifactMap )
     {
         int count = 0;
-        Iterator it = artifactMap.keySet().iterator();
-        while ( it.hasNext() )
+        for ( Map.Entry<String, List<ReverseDependencyLink>> entry : artifactMap.entrySet() )
         {
-            String version = (String) it.next();
+            String version = entry.getKey();
             boolean isReactorProject = false;
 
-            Iterator iterator = ( (List) artifactMap.get( version ) ).iterator();
+            Iterator<ReverseDependencyLink> iterator = entry.getValue().iterator();
             // It if enough to check just the first dependency here, because
             // the dependency is the same in all the RDLs in the List. It's the
             // reactorProjects that are different.
             if ( iterator.hasNext() )
             {
-                ReverseDependencyLink rdl = (ReverseDependencyLink) iterator.next();
+                ReverseDependencyLink rdl = iterator.next();
                 if ( isReactorProject( rdl.getDependency() ) )
                 {
                     isReactorProject = true;
@@ -487,10 +478,8 @@ public class DependencyConvergenceReport
      */
     private boolean isReactorProject( Dependency dependency )
     {
-        Iterator iterator = reactorProjects.iterator();
-        while ( iterator.hasNext() )
+        for ( MavenProject mavenProject : reactorProjects )
         {
-            MavenProject mavenProject = (MavenProject) iterator.next();
             if ( mavenProject.getGroupId().equals( dependency.getGroupId() )
                 && mavenProject.getArtifactId().equals( dependency.getArtifactId() ) )
             {
@@ -543,25 +532,21 @@ public class DependencyConvergenceReport
      *
      * @return A Map of relationships between dependencies and reactor projects
      */
-    private Map getDependencyMap()
+    private Map<String, List<ReverseDependencyLink>> getDependencyMap()
     {
-        Iterator it = reactorProjects.iterator();
+        Map<String, List<ReverseDependencyLink>> dependencyMap = new TreeMap<String, List<ReverseDependencyLink>>();
 
-        Map dependencyMap = new TreeMap();
-
-        while ( it.hasNext() )
+        for ( MavenProject reactorProject : reactorProjects )
         {
-            MavenProject reactorProject = (MavenProject) it.next();
-
-            Iterator itdep = reactorProject.getDependencies().iterator();
+            Iterator<Dependency> itdep = reactorProject.getDependencies().iterator();
             while ( itdep.hasNext() )
             {
                 Dependency dep = (Dependency) itdep.next();
                 String key = dep.getGroupId() + ":" + dep.getArtifactId();
-                List depList = (List) dependencyMap.get( key );
+                List<ReverseDependencyLink> depList = dependencyMap.get( key );
                 if ( depList == null )
                 {
-                    depList = new ArrayList();
+                    depList = new ArrayList<ReverseDependencyLink>();
                 }
                 depList.add( new ReverseDependencyLink( dep, reactorProject ) );
                 dependencyMap.put( key, depList );
@@ -607,19 +592,12 @@ public class DependencyConvergenceReport
      * Internal ReverseDependencyLink comparator
      */
     static class ReverseDependencyLinkComparator
-        implements Comparator
+        implements Comparator<ReverseDependencyLink>
     {
         /** {@inheritDoc} */
-        public int compare( Object o1, Object o2 )
+        public int compare( ReverseDependencyLink p1, ReverseDependencyLink p2 )
         {
-            if ( o1 instanceof ReverseDependencyLink && o2 instanceof ReverseDependencyLink )
-            {
-                ReverseDependencyLink p1 = (ReverseDependencyLink) o1;
-                ReverseDependencyLink p2 = (ReverseDependencyLink) o2;
-                return p1.getProject().getId().compareTo( p2.getProject().getId() );
-            }
-
-            return 0;
+            return p1.getProject().getId().compareTo( p2.getProject().getId() );
         }
     }
 }

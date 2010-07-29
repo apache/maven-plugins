@@ -21,7 +21,6 @@ package org.apache.maven.report.projectinfo.dependencies;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -35,12 +34,12 @@ import org.apache.maven.model.Dependency;
  */
 public class ManagementDependencies
 {
-    private final List managementDependencies;
+    private final List<Dependency> managementDependencies;
 
     /**
      * @param projectDependencies the list of dependencies.
      */
-    public ManagementDependencies( List projectDependencies )
+    public ManagementDependencies( List<Dependency> projectDependencies )
     {
         this.managementDependencies = projectDependencies;
     }
@@ -56,9 +55,9 @@ public class ManagementDependencies
     /**
      * @return managementDependencies
      */
-    public List getManagementDependencies()
+    public List<Dependency> getManagementDependencies()
     {
-        return new ArrayList( managementDependencies );
+        return new ArrayList<Dependency>( managementDependencies );
     }
 
     /**
@@ -69,17 +68,16 @@ public class ManagementDependencies
      * @see Artifact#SCOPE_SYSTEM
      * @see Artifact#SCOPE_TEST
      */
-    public Map getManagementDependenciesByScope()
+    public Map<String, List<Dependency>> getManagementDependenciesByScope()
     {
-        Map dependenciesByScope = new HashMap();
-        for ( Iterator i = getManagementDependencies().iterator(); i.hasNext(); )
+        Map<String, List<Dependency>> dependenciesByScope = new HashMap<String, List<Dependency>>();
+        for ( Dependency dependency : managementDependencies )
         {
-            Dependency dependency = (Dependency) i.next();
             String scope = dependency.getScope() != null ? dependency.getScope() : Artifact.SCOPE_COMPILE;
-            List multiValue = (List) dependenciesByScope.get( scope );
+            List<Dependency> multiValue = dependenciesByScope.get( scope );
             if ( multiValue == null )
             {
-                multiValue = new ArrayList();
+                multiValue = new ArrayList<Dependency>();
             }
             multiValue.add( dependency );
             dependenciesByScope.put( scope, multiValue );

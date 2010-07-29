@@ -86,7 +86,7 @@ public class DependenciesRenderer
     /** Used to format decimal values in the "Dependency File Details" table */
     protected static final DecimalFormat DEFAULT_DECIMAL_FORMAT = new DecimalFormat( "#,##0" );
 
-    private static final Set JAR_SUBTYPE = new HashSet();
+    private static final Set<String> JAR_SUBTYPE = new HashSet<String>();
 
     /**
      * An HTML script tag with the Javascript used by the dependencies report.
@@ -116,16 +116,16 @@ public class DependenciesRenderer
     /**
      * Will be filled with license name / set of projects.
      */
-    private Map licenseMap = new HashMap()
+    private Map<String, Object> licenseMap = new HashMap<String, Object>()
     {
         /** {@inheritDoc} */
-        public Object put( Object key, Object value )
+        public Object put( String key, Object value )
         {
             // handle multiple values as a set to avoid duplicates
-            SortedSet valueList = (SortedSet) get( key );
+            SortedSet<Object> valueList = (SortedSet<Object>) get( key );
             if ( valueList == null )
             {
-                valueList = new TreeSet();
+                valueList = new TreeSet<Object>();
             }
             valueList.add( value );
             return super.put( key, valueList );
@@ -136,7 +136,7 @@ public class DependenciesRenderer
 
     private final MavenProjectBuilder mavenProjectBuilder;
 
-    private final List remoteRepositories;
+    private final List<ArtifactRepository> remoteRepositories;
 
     private final ArtifactRepository localRepository;
 
@@ -201,7 +201,7 @@ public class DependenciesRenderer
                                  Dependencies dependencies, DependencyNode dependencyTreeNode,
                                  DependenciesReportConfiguration config, RepositoryUtils repoUtils,
                                  ArtifactFactory artifactFactory, MavenProjectBuilder mavenProjectBuilder,
-                                 List remoteRepositories, ArtifactRepository localRepository )
+                                 List<ArtifactRepository> remoteRepositories, ArtifactRepository localRepository )
     {
         super( sink, i18n, locale );
 
@@ -431,7 +431,7 @@ public class DependenciesRenderer
         startSection( getTitle() );
 
         // collect dependencies by scope
-        Map dependenciesByScope = dependencies.getDependenciesByScope( false );
+        Map<String, List<Artifact>> dependenciesByScope = dependencies.getDependenciesByScope( false );
 
         renderDependenciesForAllScopes( dependenciesByScope, false );
 
@@ -447,23 +447,22 @@ public class DependenciesRenderer
      * @see Artifact#SCOPE_SYSTEM
      * @see Artifact#SCOPE_TEST
      */
-    private void renderDependenciesForAllScopes( Map dependenciesByScope, boolean isTransitive )
+    private void renderDependenciesForAllScopes( Map<String, List<Artifact>> dependenciesByScope, boolean isTransitive )
     {
-        renderDependenciesForScope( Artifact.SCOPE_COMPILE,
-                                    (List) dependenciesByScope.get( Artifact.SCOPE_COMPILE ), isTransitive );
-        renderDependenciesForScope( Artifact.SCOPE_RUNTIME,
-                                    (List) dependenciesByScope.get( Artifact.SCOPE_RUNTIME ), isTransitive );
-        renderDependenciesForScope( Artifact.SCOPE_TEST, (List) dependenciesByScope.get( Artifact.SCOPE_TEST ),
+        renderDependenciesForScope( Artifact.SCOPE_COMPILE, dependenciesByScope.get( Artifact.SCOPE_COMPILE ),
                                     isTransitive );
-        renderDependenciesForScope( Artifact.SCOPE_PROVIDED,
-                                    (List) dependenciesByScope.get( Artifact.SCOPE_PROVIDED ), isTransitive );
-        renderDependenciesForScope( Artifact.SCOPE_SYSTEM,
-                                    (List) dependenciesByScope.get( Artifact.SCOPE_SYSTEM ), isTransitive );
+        renderDependenciesForScope( Artifact.SCOPE_RUNTIME, dependenciesByScope.get( Artifact.SCOPE_RUNTIME ),
+                                    isTransitive );
+        renderDependenciesForScope( Artifact.SCOPE_TEST, dependenciesByScope.get( Artifact.SCOPE_TEST ), isTransitive );
+        renderDependenciesForScope( Artifact.SCOPE_PROVIDED, dependenciesByScope.get( Artifact.SCOPE_PROVIDED ),
+                                    isTransitive );
+        renderDependenciesForScope( Artifact.SCOPE_SYSTEM, dependenciesByScope.get( Artifact.SCOPE_SYSTEM ),
+                                    isTransitive );
     }
 
     private void renderSectionProjectTransitiveDependencies()
     {
-        Map dependenciesByScope = dependencies.getDependenciesByScope( true );
+        Map<String, List<Artifact>> dependenciesByScope = dependencies.getDependenciesByScope( true );
 
         startSection( getI18nString( "transitive.title" ) );
 
@@ -509,7 +508,7 @@ public class DependenciesRenderer
     {
         startSection( getI18nString( "file.details.title" ) );
 
-        List alldeps = dependencies.getAllDependencies();
+        List<Artifact> alldeps = dependencies.getAllDependencies();
         Collections.sort( alldeps, getArtifactComparator() );
 
         // i18n
@@ -552,10 +551,8 @@ public class DependenciesRenderer
         tableHeader( tableHeader );
 
         // Table rows
-        for ( Iterator it = alldeps.iterator(); it.hasNext(); )
+        for ( Artifact artifact : alldeps )
         {
-            Artifact artifact = (Artifact) it.next();
-
             if ( artifact.getFile() == null )
             {
                 log.error( "Artifact: " + artifact.getId() + " has no file." );
@@ -664,24 +661,19 @@ public class DependenciesRenderer
             "", "", "" } );
     }
 
-    private void populateRepositoryMap( Map repos, List rowRepos )
+    private void populateRepositoryMap( Map<String, ArtifactRepository> repos, List<ArtifactRepository> rowRepos )
     {
-        Iterator it = rowRepos.iterator();
-        while ( it.hasNext() )
+        for ( ArtifactRepository repo : rowRepos )
         {
-            ArtifactRepository repo = (ArtifactRepository) it.next();
-
             repos.put( repo.getId(), repo );
         }
     }
 
-    private void blacklistRepositoryMap( Map repos, List repoUrlBlackListed )
+    private void blacklistRepositoryMap( Map<String, ArtifactRepository> repos,
+                                         List<String> repoUrlBlackListed )
     {
-        for ( Iterator it = repos.keySet().iterator(); it.hasNext(); )
+        for ( ArtifactRepository repo : repos.values() )
         {
-            String key = (String) it.next();
-            ArtifactRepository repo = (ArtifactRepository) repos.get( key );
-
             // ping repo
             if ( !repo.isBlacklisted() )
             {
@@ -723,16 +715,15 @@ public class DependenciesRenderer
         startSection( getI18nString( "repo.locations.title" ) );
 
         // Collect Alphabetical Dependencies
-        List alldeps = dependencies.getAllDependencies();
+        List<Artifact> alldeps = dependencies.getAllDependencies();
         Collections.sort( alldeps, getArtifactComparator() );
 
         // Collect Repositories
-        Map repoMap = new HashMap();
+        Map<String, ArtifactRepository> repoMap = new HashMap<String, ArtifactRepository>();
 
         populateRepositoryMap( repoMap, repoUtils.getRemoteArtifactRepositories() );
-        for ( Iterator it = alldeps.iterator(); it.hasNext(); )
+        for ( Artifact artifact : alldeps )
         {
-            Artifact artifact = (Artifact) it.next();
             try
             {
                 MavenProject artifactProject = repoUtils.getMavenProjectFromRepository( artifact );
@@ -744,7 +735,7 @@ public class DependenciesRenderer
             }
         }
 
-        List repoUrlBlackListed = new ArrayList();
+        List<String> repoUrlBlackListed = new ArrayList<String>();
         blacklistRepositoryMap( repoMap, repoUrlBlackListed );
 
         // Render Repository List
@@ -765,7 +756,7 @@ public class DependenciesRenderer
         endSection();
     }
 
-    private void renderDependenciesForScope( String scope, List artifacts, boolean isTransitive )
+    private void renderDependenciesForScope( String scope, List<Artifact> artifacts, boolean isTransitive )
     {
         if ( artifacts != null )
         {
@@ -785,10 +776,8 @@ public class DependenciesRenderer
 
             startTable();
             tableHeader( tableHeader );
-            for ( Iterator iterator = artifacts.iterator(); iterator.hasNext(); )
+            for ( Artifact artifact : artifacts )
             {
-                Artifact artifact = (Artifact) iterator.next();
-
                 renderArtifactRow( artifact, withClassifier, withOptional );
             }
             endTable();
@@ -797,15 +786,12 @@ public class DependenciesRenderer
         }
     }
 
-    private Comparator getArtifactComparator()
+    private Comparator<Artifact> getArtifactComparator()
     {
-        return new Comparator()
+        return new Comparator<Artifact>()
         {
-            public int compare( Object o1, Object o2 )
+            public int compare( Artifact a1, Artifact a2 )
             {
-                Artifact a1 = (Artifact) o1;
-                Artifact a2 = (Artifact) o2;
-
                 // put optional last
                 if ( a1.isOptional() && !a2.isOptional() )
                 {
@@ -876,10 +862,10 @@ public class DependenciesRenderer
         if ( !node.getChildren().isEmpty() )
         {
             boolean toBeIncluded = false;
-            List subList = new ArrayList();
-            for ( Iterator deps = node.getChildren().iterator(); deps.hasNext(); )
+            List<DependencyNode> subList = new ArrayList<DependencyNode>();
+            for ( Iterator<DependencyNode> deps = node.getChildren().iterator(); deps.hasNext(); )
             {
-                DependencyNode dep = (DependencyNode) deps.next();
+                DependencyNode dep = deps.next();
 
                 if ( !dependencies.getAllDependencies().contains( dep.getArtifact() ) )
                 {
@@ -893,10 +879,8 @@ public class DependenciesRenderer
             if ( toBeIncluded )
             {
                 sink.list();
-                for ( Iterator deps = subList.iterator(); deps.hasNext(); )
+                for ( DependencyNode dep : subList )
                 {
-                    DependencyNode dep = (DependencyNode) deps.next();
-
                     printDependencyListing( dep );
                 }
                 sink.list_();
@@ -924,7 +908,7 @@ public class DependenciesRenderer
                 String artifactDescription = artifactProject.getDescription();
                 String artifactUrl = artifactProject.getUrl();
                 String artifactName = artifactProject.getName();
-                List licenses = artifactProject.getLicenses();
+                List<License> licenses = artifactProject.getLicenses();
 
                 sink.tableRow();
                 sink.tableHeaderCell();
@@ -974,9 +958,8 @@ public class DependenciesRenderer
                 sink.bold_();
                 if ( !licenses.isEmpty() )
                 {
-                    for ( Iterator iter = licenses.iterator(); iter.hasNext(); )
+                    for ( License element : licenses )
                     {
-                        License element = (License) iter.next();
                         String licenseName = element.getName();
                         String licenseUrl = element.getUrl();
 
@@ -1046,9 +1029,9 @@ public class DependenciesRenderer
 
     private void printGroupedLicenses()
     {
-        for ( Iterator iter = licenseMap.keySet().iterator(); iter.hasNext(); )
+        for ( Map.Entry<String, Object> entry : licenseMap.entrySet() )
         {
-            String licenseName = (String) iter.next();
+            String licenseName = entry.getKey();
             sink.paragraph();
             sink.bold();
             if ( StringUtils.isEmpty( licenseName ) )
@@ -1062,11 +1045,11 @@ public class DependenciesRenderer
             sink.text( ": " );
             sink.bold_();
 
-            SortedSet projects = (SortedSet) licenseMap.get( licenseName );
+            SortedSet<String> projects = (SortedSet<String>) entry.getValue();
 
-            for ( Iterator iterator = projects.iterator(); iterator.hasNext(); )
+            for ( Iterator<String> iterator = projects.iterator(); iterator.hasNext(); )
             {
-                String projectName = (String) iterator.next();
+                String projectName = iterator.next();
                 sink.text( projectName );
                 if ( iterator.hasNext() )
                 {
@@ -1078,7 +1061,7 @@ public class DependenciesRenderer
         }
     }
 
-    private void printRepositories( Map repoMap, List repoUrlBlackListed )
+    private void printRepositories( Map<String, ArtifactRepository> repoMap, List<String> repoUrlBlackListed )
     {
         // i18n
         String repoid = getI18nString( "repo.locations.column.repoid" );
@@ -1117,11 +1100,8 @@ public class DependenciesRenderer
 
         // Table rows
 
-        for ( Iterator it = repoMap.keySet().iterator(); it.hasNext(); )
+        for ( ArtifactRepository repo : repoMap.values() )
         {
-            String key = (String) it.next();
-            ArtifactRepository repo = (ArtifactRepository) repoMap.get( key );
-
             sink.tableRow();
             tableCell( repo.getId() );
 
@@ -1154,7 +1134,7 @@ public class DependenciesRenderer
         endTable();
     }
 
-    private void printArtifactsLocations( Map repoMap, List alldeps )
+    private void printArtifactsLocations( Map<String, ArtifactRepository> repoMap, List<Artifact> alldeps )
     {
         // i18n
         String artifact = getI18nString( "repo.locations.column.artifact" );
@@ -1163,12 +1143,12 @@ public class DependenciesRenderer
         sink.text( getI18nString( "repo.locations.artifact.breakdown" ) );
         sink.paragraph_();
 
-        List repoIdList = new ArrayList();
+        List<String> repoIdList = new ArrayList<String>();
         // removed blacklisted repo
-        for ( Iterator it = repoMap.keySet().iterator(); it.hasNext(); )
+        for ( Map.Entry<String, ArtifactRepository> entry : repoMap.entrySet() )
         {
-            String repokey = (String) it.next();
-            ArtifactRepository repo = (ArtifactRepository) repoMap.get( repokey );
+            String repokey = entry.getKey();
+            ArtifactRepository repo = entry.getValue();
             if ( !repo.isBlacklisted() )
             {
                 repoIdList.add( repokey );
@@ -1182,25 +1162,22 @@ public class DependenciesRenderer
         justificationRepo[0] = Sink.JUSTIFY_LEFT;
 
         int idnum = 1;
-        for ( Iterator it = repoIdList.iterator(); it.hasNext(); )
+        for ( String id : repoIdList )
         {
-            String id = (String) it.next();
             tableHeader[idnum] = id;
             justificationRepo[idnum] = Sink.JUSTIFY_CENTER;
             idnum++;
         }
 
-        Map totalByRepo = new HashMap();
+        Map<String, Integer> totalByRepo = new HashMap<String, Integer>();
         TotalCell totaldeps = new TotalCell( DEFAULT_DECIMAL_FORMAT );
 
         startTable( justificationRepo, false );
 
         tableHeader( tableHeader );
 
-        for ( Iterator it = alldeps.iterator(); it.hasNext(); )
+        for ( Artifact dependency : alldeps )
         {
-            Artifact dependency = (Artifact) it.next();
-
             totaldeps.incrementTotal( dependency.getScope() );
 
             sink.tableRow();
@@ -1209,10 +1186,9 @@ public class DependenciesRenderer
             {
                 tableCell( dependency.getId() );
 
-                for ( Iterator itrepo = repoIdList.iterator(); itrepo.hasNext(); )
+                for ( String repokey : repoIdList )
                 {
-                    String repokey = (String) itrepo.next();
-                    ArtifactRepository repo = (ArtifactRepository) repoMap.get( repokey );
+                    ArtifactRepository repo = repoMap.get( repokey );
 
                     String depUrl = repoUtils.getDependencyUrlFromRepository( dependency, repo );
 
@@ -1265,10 +1241,8 @@ public class DependenciesRenderer
             {
                 tableCell( dependency.getId() );
 
-                for ( Iterator itrepo = repoIdList.iterator(); itrepo.hasNext(); )
+                for ( String repoId : repoIdList )
                 {
-                    itrepo.next();
-
                     tableCell( "-" );
                 }
             }
@@ -1284,11 +1258,9 @@ public class DependenciesRenderer
         String[] totalRow = new String[repoIdList.size() + 1];
         totalRow[0] = totaldeps.toString();
         idnum = 1;
-        for ( Iterator itrepo = repoIdList.iterator(); itrepo.hasNext(); )
+        for ( String repokey : repoIdList )
         {
-            String repokey = (String) itrepo.next();
-
-            Integer deps = (Integer) totalByRepo.get( repokey );
+            Integer deps = totalByRepo.get( repokey );
             totalRow[idnum++] = deps != null ? deps.toString() : "0";
         }
 
@@ -1301,12 +1273,10 @@ public class DependenciesRenderer
      * @param artifacts not null
      * @return <code>true</code> if one artifact in the list has a classifier, <code>false</code> otherwise.
      */
-    private boolean hasClassifier( List artifacts )
+    private boolean hasClassifier( List<Artifact> artifacts )
     {
-        for ( Iterator iterator = artifacts.iterator(); iterator.hasNext(); )
+        for ( Artifact artifact : artifacts )
         {
-            Artifact artifact = (Artifact) iterator.next();
-
             if ( StringUtils.isNotEmpty( artifact.getClassifier() ) )
             {
                 return true;
@@ -1320,12 +1290,10 @@ public class DependenciesRenderer
      * @param artifacts not null
      * @return <code>true</code> if one artifact in the list is optional, <code>false</code> otherwise.
      */
-    private boolean hasOptional( List artifacts )
+    private boolean hasOptional( List<Artifact> artifacts )
     {
-        for ( Iterator iterator = artifacts.iterator(); iterator.hasNext(); )
+        for ( Artifact artifact : artifacts )
         {
-            Artifact artifact = (Artifact) iterator.next();
-
             if ( artifact.isOptional() )
             {
                 return true;
@@ -1339,12 +1307,10 @@ public class DependenciesRenderer
      * @param artifacts not null
      * @return <code>true</code> if one artifact in the list is sealed, <code>false</code> otherwise.
      */
-    private boolean hasSealed( List artifacts )
+    private boolean hasSealed( List<Artifact> artifacts )
     {
-        for ( Iterator it = artifacts.iterator(); it.hasNext(); )
+        for ( Artifact artifact : artifacts )
         {
-            Artifact artifact = (Artifact) it.next();
-
             // TODO site:run Why do we need to resolve this...
             if ( artifact.getFile() == null && !Artifact.SCOPE_SYSTEM.equals( artifact.getScope() ) )
             {

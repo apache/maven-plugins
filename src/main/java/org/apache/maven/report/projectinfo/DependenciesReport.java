@@ -32,6 +32,7 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.manager.WagonManager;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
+import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.metadata.RepositoryMetadataManager;
 import org.apache.maven.artifact.resolver.ArtifactCollector;
 import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
@@ -152,7 +153,7 @@ public class DependenciesReport
      * @required
      * @readonly
      */
-    private List remoteRepositories;
+    private List<ArtifactRepository> remoteRepositories;
 
     /**
      * Display file details for each dependency, such as: file size, number of

@@ -22,7 +22,6 @@ package org.apache.maven.report.projectinfo;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -112,9 +111,9 @@ public class PluginsReport
     {
         private final Log log;
 
-        private final List plugins;
+        private final List<Artifact> plugins;
 
-        private final List reports;
+        private final List<Artifact> reports;
 
         private final MavenProject project;
 
@@ -136,17 +135,17 @@ public class PluginsReport
          * @param artifactFactory
          * @param localRepository
          */
-        public PluginsRenderer( Log log, Sink sink, Locale locale, I18N i18n, Set plugins, Set reports,
-                                MavenProject project, MavenProjectBuilder mavenProjectBuilder,
+        public PluginsRenderer( Log log, Sink sink, Locale locale, I18N i18n, Set<Artifact> plugins,
+                                Set<Artifact> reports, MavenProject project, MavenProjectBuilder mavenProjectBuilder,
                                 ArtifactFactory artifactFactory, ArtifactRepository localRepository )
         {
             super( sink, i18n, locale );
 
             this.log = log;
 
-            this.plugins = new ArrayList( plugins );
+            this.plugins = new ArrayList<Artifact>( plugins );
 
-            this.reports = new ArrayList( reports );
+            this.reports = new ArrayList<Artifact>( reports );
 
             this.project = project;
 
@@ -178,7 +177,7 @@ public class PluginsReport
          */
         private void renderSectionPlugins( boolean isPlugins )
         {
-            List list = ( isPlugins ? plugins : reports );
+            List<Artifact> list = ( isPlugins ? plugins : reports );
             String[] tableHeader = getPluginTableHeader();
 
             startSection( ( isPlugins ? getI18nString( "title" )
@@ -200,10 +199,8 @@ public class PluginsReport
             startTable();
             tableHeader( tableHeader );
 
-            for ( Iterator iterator = list.iterator(); iterator.hasNext(); )
+            for ( Artifact artifact : list )
             {
-                Artifact artifact = (Artifact) iterator.next();
-
                 VersionRange versionRange;
                 if ( StringUtils.isEmpty( artifact.getVersion() ) )
                 {
@@ -216,10 +213,10 @@ public class PluginsReport
 
                 Artifact pluginArtifact = artifactFactory.createParentArtifact( artifact.getGroupId(), artifact
                     .getArtifactId(), versionRange.toString() );
-                List artifactRepositories = project.getPluginArtifactRepositories();
+                List<ArtifactRepository> artifactRepositories = project.getPluginArtifactRepositories();
                 if ( artifactRepositories == null )
                 {
-                    artifactRepositories = new ArrayList();
+                    artifactRepositories = new ArrayList<ArtifactRepository>();
                 }
                 try
                 {
@@ -261,16 +258,13 @@ public class PluginsReport
             return new String[] { groupId, artifactId, version };
         }
 
-        private Comparator getArtifactComparator()
+        private Comparator<Artifact> getArtifactComparator()
         {
-            return new Comparator()
+            return new Comparator<Artifact>()
             {
                 /** {@inheritDoc} */
-                public int compare( Object o1, Object o2 )
+                public int compare( Artifact a1, Artifact a2 )
                 {
-                    Artifact a1 = (Artifact) o1;
-                    Artifact a2 = (Artifact) o2;
-
                     int result = a1.getGroupId().compareTo( a2.getGroupId() );
                     if ( result == 0 )
                     {

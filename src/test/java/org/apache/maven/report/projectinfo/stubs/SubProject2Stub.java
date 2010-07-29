@@ -39,7 +39,7 @@ public class SubProject2Stub
     }
 
     /** {@inheritDoc} */
-    public List getDependencies()
+    public List<Dependency> getDependencies()
     {
         Dependency d = new Dependency();
         d.setGroupId( "junit" );

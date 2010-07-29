@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Locale;
 
 import org.apache.maven.artifact.factory.ArtifactFactory;
+import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.report.projectinfo.dependencies.ManagementDependencies;
 import org.apache.maven.report.projectinfo.dependencies.renderer.DependencyManagementRenderer;
@@ -68,7 +69,7 @@ public class DependencyManagementReport
      * @since 2.1
      * @parameter expression="${project.remoteArtifactRepositories}"
      */
-    private List remoteRepositories;
+    private List<ArtifactRepository> remoteRepositories;
 
     /**
      * Lazy instantiation for management dependencies.

@@ -49,32 +49,32 @@ public class Dependencies
     /**
      * @since 2.1
      */
-    private List projectDependencies;
+    private List<Artifact> projectDependencies;
 
     /**
      * @since 2.1
      */
-    private List projectTransitiveDependencies;
+    private List<Artifact> projectTransitiveDependencies;
 
     /**
      * @since 2.1
      */
-    private List allDependencies;
+    private List<Artifact> allDependencies;
 
     /**
      * @since 2.1
      */
-    private Map dependenciesByScope;
+    private Map<String, List<Artifact>> dependenciesByScope;
 
     /**
      * @since 2.1
      */
-    private Map transitiveDependenciesByScope;
+    private Map<String, List<Artifact>> transitiveDependenciesByScope;
 
     /**
      * @since 2.1
      */
-    private Map dependencyDetails;
+    private Map<String, JarData> dependencyDetails;
 
     /**
      * Default constructor
@@ -93,11 +93,11 @@ public class Dependencies
         /*
          * Workaround to ensure proper File objects in the Artifacts from the ReportResolutionListener
          */
-        Map projectMap = new HashMap();
-        Iterator it = project.getArtifacts().iterator();
+        Map<String, Artifact> projectMap = new HashMap<String, Artifact>();
+        Iterator<Artifact> it = project.getArtifacts().iterator();
         while ( it.hasNext() )
         {
-            Artifact artifact = (Artifact) it.next();
+            Artifact artifact = it.next();
             projectMap.put( ArtifactUtils.versionlessKey( artifact ), artifact );
         }
 
@@ -125,17 +125,17 @@ public class Dependencies
     /**
      * @return a list of <code>Artifact</code> from the project.
      */
-    public List getProjectDependencies()
+    public List<Artifact> getProjectDependencies()
     {
         if ( projectDependencies != null )
         {
             return projectDependencies;
         }
 
-        projectDependencies = new ArrayList();
-        for ( Iterator i = dependencyTreeNode.getChildren().iterator(); i.hasNext(); )
+        projectDependencies = new ArrayList<Artifact>();
+        for ( Iterator<DependencyNode> i = dependencyTreeNode.getChildren().iterator(); i.hasNext(); )
         {
-            DependencyNode dependencyNode = (DependencyNode) i.next();
+            DependencyNode dependencyNode = i.next();
 
             projectDependencies.add( dependencyNode.getArtifact() );
         }
@@ -146,14 +146,14 @@ public class Dependencies
     /**
      * @return a list of transitive <code>Artifact</code> from the project.
      */
-    public List getTransitiveDependencies()
+    public List<Artifact> getTransitiveDependencies()
     {
         if ( projectTransitiveDependencies != null )
         {
             return projectTransitiveDependencies;
         }
 
-        projectTransitiveDependencies = new ArrayList( getAllDependencies() );
+        projectTransitiveDependencies = new ArrayList<Artifact>( getAllDependencies() );
         projectTransitiveDependencies.removeAll( getProjectDependencies() );
 
         return projectTransitiveDependencies;
@@ -162,17 +162,17 @@ public class Dependencies
     /**
      * @return a list of included <code>Artifact</code> returned by the dependency tree.
      */
-    public List getAllDependencies()
+    public List<Artifact> getAllDependencies()
     {
         if ( allDependencies != null )
         {
             return allDependencies;
         }
 
-        allDependencies = new ArrayList();
-        for ( Iterator i = dependencyTreeNode.getChildren().iterator(); i.hasNext(); )
+        allDependencies = new ArrayList<Artifact>();
+        for ( Iterator<DependencyNode> i = dependencyTreeNode.getChildren().iterator(); i.hasNext(); )
         {
-            DependencyNode dependencyNode = (DependencyNode) i.next();
+            DependencyNode dependencyNode = i.next();
 
             if ( dependencyNode.getState() != DependencyNode.INCLUDED )
             {
@@ -205,7 +205,7 @@ public class Dependencies
      * @see Artifact#SCOPE_SYSTEM
      * @see Artifact#SCOPE_TEST
      */
-    public Map getDependenciesByScope( boolean isTransitively )
+    public Map<String, List<Artifact>> getDependenciesByScope( boolean isTransitively )
     {
         if ( isTransitively )
         {
@@ -214,15 +214,13 @@ public class Dependencies
                 return transitiveDependenciesByScope;
             }
 
-            transitiveDependenciesByScope = new HashMap();
-            for ( Iterator i = getTransitiveDependencies().iterator(); i.hasNext(); )
+            transitiveDependenciesByScope = new HashMap<String, List<Artifact>>();
+            for ( Artifact artifact : getTransitiveDependencies() )
             {
-                Artifact artifact = (Artifact) i.next();
-
-                List multiValue = (List) transitiveDependenciesByScope.get( artifact.getScope() );
+                List<Artifact> multiValue = transitiveDependenciesByScope.get( artifact.getScope() );
                 if ( multiValue == null )
                 {
-                    multiValue = new ArrayList();
+                    multiValue = new ArrayList<Artifact>();
                 }
 
                 if ( !multiValue.contains( artifact ) )
@@ -240,15 +238,13 @@ public class Dependencies
             return dependenciesByScope;
         }
 
-        dependenciesByScope = new HashMap();
-        for ( Iterator i = getProjectDependencies().iterator(); i.hasNext(); )
+        dependenciesByScope = new HashMap<String, List<Artifact>>();
+        for ( Artifact artifact : getProjectDependencies() )
         {
-            Artifact artifact = (Artifact) i.next();
-
-            List multiValue = (List) dependenciesByScope.get( artifact.getScope() );
+            List<Artifact> multiValue = dependenciesByScope.get( artifact.getScope() );
             if ( multiValue == null )
             {
-                multiValue = new ArrayList();
+                multiValue = new ArrayList<Artifact>();
             }
 
             if ( !multiValue.contains( artifact ) )
@@ -271,10 +267,10 @@ public class Dependencies
     {
         if ( dependencyDetails == null )
         {
-            dependencyDetails = new HashMap();
+            dependencyDetails = new HashMap<String, JarData>();
         }
 
-        JarData old = (JarData) dependencyDetails.get( artifact.getId() );
+        JarData old = dependencyDetails.get( artifact.getId() );
         if ( dependencyDetails.get( artifact.getId() ) != null )
         {
             return old;
@@ -299,18 +295,18 @@ public class Dependencies
     // Private methods
     // ----------------------------------------------------------------------
 
-    private void mapArtifactFiles( DependencyNode node, Map projectMap )
+    private void mapArtifactFiles( DependencyNode node, Map<String, Artifact> projectMap )
     {
-        List childs = node.getChildren();
+        List<DependencyNode> childs = node.getChildren();
         if ( ( childs == null ) || childs.isEmpty() )
         {
             return;
         }
 
-        Iterator it = childs.iterator();
+        Iterator<DependencyNode> it = childs.iterator();
         while ( it.hasNext() )
         {
-            DependencyNode anode = (DependencyNode) it.next();
+            DependencyNode anode = it.next();
             String key = ArtifactUtils.versionlessKey( anode.getArtifact() );
             Artifact projartifact = (Artifact) projectMap.get( key );
             if ( projartifact != null )
@@ -339,9 +335,9 @@ public class Dependencies
             return;
         }
 
-        for ( Iterator i = dependencyNode.getChildren().iterator(); i.hasNext(); )
+        for ( Iterator<DependencyNode> i = dependencyNode.getChildren().iterator(); i.hasNext(); )
         {
-            DependencyNode subdependencyNode = (DependencyNode) i.next();
+            DependencyNode subdependencyNode = i.next();
 
             if ( subdependencyNode.getState() != DependencyNode.INCLUDED )
             {

@@ -22,7 +22,6 @@ package org.apache.maven.report.projectinfo;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
@@ -113,7 +112,7 @@ public class PluginManagementReport
     {
         private final Log log;
 
-        private final List pluginManagement;
+        private final List<Plugin> pluginManagement;
 
         private final MavenProject project;
 
@@ -134,7 +133,7 @@ public class PluginManagementReport
          * @param artifactFactory
          * @param localRepository
          */
-        public PluginManagementRenderer( Log log, Sink sink, Locale locale, I18N i18n, List plugins,
+        public PluginManagementRenderer( Log log, Sink sink, Locale locale, I18N i18n, List<Plugin> plugins,
                                          MavenProject project, MavenProjectBuilder mavenProjectBuilder,
                                          ArtifactFactory artifactFactory, ArtifactRepository localRepository )
         {
@@ -177,9 +176,8 @@ public class PluginManagementReport
             startTable();
             tableHeader( tableHeader );
 
-            for ( Iterator iterator = pluginManagement.iterator(); iterator.hasNext(); )
+            for ( Plugin plugin : pluginManagement )
             {
-                Plugin plugin = (Plugin) iterator.next();
                 VersionRange versionRange;
                 if ( StringUtils.isEmpty( plugin.getVersion() ) )
                 {
@@ -192,10 +190,10 @@ public class PluginManagementReport
 
                 Artifact pluginArtifact = artifactFactory.createParentArtifact( plugin.getGroupId(), plugin
                     .getArtifactId(), versionRange.toString() );
-                List artifactRepositories = project.getPluginArtifactRepositories();
+                List<ArtifactRepository> artifactRepositories = project.getPluginArtifactRepositories();
                 if ( artifactRepositories == null )
                 {
-                    artifactRepositories = new ArrayList();
+                    artifactRepositories = new ArrayList<ArtifactRepository>();
                 }
                 try
                 {
@@ -236,16 +234,13 @@ public class PluginManagementReport
             return new String[] { groupId, artifactId, version };
         }
 
-        private Comparator getPluginComparator()
+        private Comparator<Plugin> getPluginComparator()
         {
-            return new Comparator()
+            return new Comparator<Plugin>()
             {
                 /** {@inheritDoc} */
-                public int compare( Object o1, Object o2 )
+                public int compare( Plugin a1, Plugin a2 )
                 {
-                    Plugin a1 = (Plugin) o1;
-                    Plugin a2 = (Plugin) o2;
-
                     int result = a1.getGroupId().compareTo( a2.getGroupId() );
                     if ( result == 0 )
                     {
