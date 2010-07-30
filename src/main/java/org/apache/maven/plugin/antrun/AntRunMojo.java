@@ -393,10 +393,32 @@ public class AntRunMojo
         {
             Artifact artifact = (Artifact) it.next();
 
-            String propName = AntPropertyHelper.getDependencyArtifactPropertyName( artifact );
+            String propName = getDependencyArtifactPropertyName( artifact );
 
             antProject.setProperty( propName, artifact.getFile().getPath() );
         }
+    }
+
+    /**
+     * Prefix for legacy property format.
+     * @deprecated This should only be used for generating the old property format.
+     */
+    public static final String DEPENDENCY_PREFIX = "maven.dependency.";
+    
+    /**
+     * Returns a property name for a dependency artifact.  The name is in the format
+     * maven.dependency.groupId.artifactId[.classifier].type.path
+     * 
+     * @param artifact
+     * @return property name
+     * @deprecated The dependency conflict ID should be used as the property name.
+     */
+    public static String getDependencyArtifactPropertyName( Artifact artifact )
+    {
+        String key = DEPENDENCY_PREFIX + artifact.getGroupId() + "." + artifact.getArtifactId()
+            + ( artifact.getClassifier() != null ? "." + artifact.getClassifier() : "" )
+            + ( artifact.getType() != null ? "." + artifact.getType() : "" ) + ".path";
+        return key;
     }
 
     /**
