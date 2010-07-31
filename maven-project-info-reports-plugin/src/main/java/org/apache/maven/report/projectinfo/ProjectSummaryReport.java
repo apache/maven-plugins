@@ -23,6 +23,7 @@ import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.model.Organization;
 import org.apache.maven.reporting.MavenReportException;
 import org.codehaus.plexus.util.StringUtils;
+import org.codehaus.plexus.util.xml.Xpp3Dom;
 
 import java.util.Locale;
 
@@ -104,10 +105,10 @@ public class ProjectSummaryReport
 
             startSection( getI18nString( "general.title" ) );
             startTable();
-            tableHeader( new String[]{getI18nString( "field" ), getI18nString( "value" )} );
-            tableRow( new String[]{getI18nString( "general.name" ), name} );
-            tableRow( new String[]{getI18nString( "general.description" ), description} );
-            tableRowWithLink( new String[]{getI18nString( "general.homepage" ), homepage} );
+            tableHeader( new String[] { getI18nString( "field" ), getI18nString( "value" ) } );
+            tableRow( new String[] { getI18nString( "general.name" ), name } );
+            tableRow( new String[] { getI18nString( "general.description" ), description } );
+            tableRowWithLink( new String[] { getI18nString( "general.homepage" ), homepage } );
             endTable();
             endSection();
 
@@ -130,9 +131,9 @@ public class ProjectSummaryReport
                 }
 
                 startTable();
-                tableHeader( new String[]{getI18nString( "field" ), getI18nString( "value" )} );
+                tableHeader( new String[] { getI18nString( "field" ), getI18nString( "value" ) } );
                 tableRow( new String[] { getI18nString( "organization.name" ), organization.getName() } );
-                tableRowWithLink( new String[]{getI18nString( "organization.url" ), organization.getUrl()} );
+                tableRowWithLink( new String[] { getI18nString( "organization.url" ), organization.getUrl() } );
                 endTable();
             }
             endSection();
@@ -140,17 +141,84 @@ public class ProjectSummaryReport
             //build section
             startSection( getI18nString( "build.title" ) );
             startTable();
-            tableHeader( new String[]{getI18nString( "field" ), getI18nString( "value" )} );
-            tableRow( new String[]{getI18nString( "build.groupid" ), project.getGroupId()} );
-            tableRow( new String[]{getI18nString( "build.artifactid" ), project.getArtifactId()} );
-            tableRow( new String[]{getI18nString( "build.version" ), project.getVersion()} );
-            tableRow( new String[]{getI18nString( "build.type" ), project.getPackaging()} );
+            tableHeader( new String[] { getI18nString( "field" ), getI18nString( "value" ) } );
+            tableRow( new String[] { getI18nString( "build.groupid" ), project.getGroupId() } );
+            tableRow( new String[] { getI18nString( "build.artifactid" ), project.getArtifactId() } );
+            tableRow( new String[] { getI18nString( "build.version" ), project.getVersion() } );
+            tableRow( new String[] { getI18nString( "build.type" ), project.getPackaging() } );
+            tableRow( new String[] { getI18nString( "build.jdk" ), getMinimumJavaVersion() } );
             endTable();
             endSection();
 
             endSection();
         }
 
+        private String getMinimumJavaVersion()
+        {
+            Xpp3Dom pluginConfig =
+                project.getGoalConfiguration( "org.apache.maven.plugins", "maven-compiler-plugin", null, null );
+
+            String source = null;
+            String target = null;
+            String compilerVersion = null;
+
+            if ( pluginConfig != null )
+            {
+                source = getChildValue( pluginConfig, "source" );
+                target = getChildValue( pluginConfig, "target" );
+
+                String fork = getChildValue( pluginConfig, "fork" );
+                if ( "true".equalsIgnoreCase( fork ) )
+                {
+                    compilerVersion = getChildValue( pluginConfig, "compilerVersion" );
+                }
+            }
+
+            String minimumJavaVersion = compilerVersion;
+            if ( target != null )
+            {
+                minimumJavaVersion = target;
+            }
+            else if ( source != null )
+            {
+                minimumJavaVersion = source;
+            }
+            else if ( compilerVersion != null )
+            {
+                minimumJavaVersion = compilerVersion;
+            }
+            else
+            {
+                // no source, target, compilerVersion: toolchain? default target attribute of current
+                // maven-compiler-plugin's version? analyze packaged jar (like dependencies)?
+            }
+            
+            return minimumJavaVersion;
+        }
+
+        private String getChildValue( Xpp3Dom parent, String childName )
+        {
+            if ( parent == null )
+            {
+                return null;
+            }
+
+            Xpp3Dom child = parent.getChild( childName );
+
+            if ( child == null )
+            {
+                return null;
+            }
+
+            String value = child.getValue();
+
+            if ( value == null || value.trim().length() == 0 )
+            {
+                return null;
+            }
+
+            return value.trim();
+        }
 
         private void tableRowWithLink( String[] content )
         {
@@ -166,18 +234,15 @@ public class ProjectSummaryReport
                 {
                     sink.text( "-" );
                 }
+                else if ( ctr == content.length - 1 && cell.length() > 0 )
+                {
+                    sink.link( cell );
+                    sink.text( cell );
+                    sink.link_();
+                }
                 else
                 {
-                    if ( ctr == content.length - 1 && cell.length() > 0 )
-                    {
-                        sink.link( cell );
-                        sink.text( cell );
-                        sink.link_();
-                    }
-                    else
-                    {
-                        sink.text( cell );
-                    }
+                    sink.text( cell );
                 }
                 sink.tableCell_();
             }
