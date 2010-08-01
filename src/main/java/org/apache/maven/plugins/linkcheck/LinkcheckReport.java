@@ -1039,10 +1039,10 @@ public class LinkcheckReport
 
         getSink().tableRow();
         getSink().tableHeaderCell();
-        getSink().text( i18n.getString( "linkcheck-report", locale, "report.linkcheck.table.summary.parameter" ) );
+        getSink().text( i18n.getString( "linkcheck-report", locale, "report.linkcheck.summary.table.parameter" ) );
         getSink().tableHeaderCell_();
         getSink().tableHeaderCell();
-        getSink().text( i18n.getString( "linkcheck-report", locale, "report.linkcheck.table.summary.value" ) );
+        getSink().text( i18n.getString( "linkcheck-report", locale, "report.linkcheck.summary.table.value" ) );
         getSink().tableHeaderCell_();
         getSink().tableRow_();
 
@@ -1050,7 +1050,7 @@ public class LinkcheckReport
         getSink().tableCell();
         getSink().rawText(
                            i18n.getString( "linkcheck-report", locale,
-                                           "report.linkcheck.table.summary.httpFollowRedirect" ) );
+                                           "report.linkcheck.summary.table.httpFollowRedirect" ) );
         getSink().tableCell_();
         getSink().tableCell();
         getSink().text( String.valueOf( httpFollowRedirect ) );
@@ -1062,12 +1062,12 @@ public class LinkcheckReport
         getSink()
                  .rawText(
                            i18n
-                               .getString( "linkcheck-report", locale, "report.linkcheck.table.summary.httpMethod" ) );
+                               .getString( "linkcheck-report", locale, "report.linkcheck.summary.table.httpMethod" ) );
         getSink().tableCell_();
         getSink().tableCell();
         if ( StringUtils.isEmpty( httpMethod ) )
         {
-            getSink().text( i18n.getString( "linkcheck-report", locale, "report.linkcheck.table.summary.none" ) );
+            getSink().text( i18n.getString( "linkcheck-report", locale, "report.linkcheck.summary.table.none" ) );
         }
         else
         {
@@ -1079,7 +1079,7 @@ public class LinkcheckReport
         getSink().tableRow();
         getSink().tableCell();
         getSink().rawText(
-                           i18n.getString( "linkcheck-report", locale, "report.linkcheck.table.summary.offline" ) );
+                           i18n.getString( "linkcheck-report", locale, "report.linkcheck.summary.table.offline" ) );
         getSink().tableCell_();
         getSink().tableCell();
         getSink().text( String.valueOf( offline ) );
@@ -1090,12 +1090,12 @@ public class LinkcheckReport
         getSink().tableCell();
         getSink().rawText(
                            i18n.getString( "linkcheck-report", locale,
-                                           "report.linkcheck.table.summary.excludedPages" ) );
+                                           "report.linkcheck.summary.table.excludedPages" ) );
         getSink().tableCell_();
         getSink().tableCell();
         if ( getExcludedPages() == null || getExcludedPages().length == 0 )
         {
-            getSink().text( i18n.getString( "linkcheck-report", locale, "report.linkcheck.table.summary.none" ) );
+            getSink().text( i18n.getString( "linkcheck-report", locale, "report.linkcheck.summary.table.none" ) );
         }
         else
         {
@@ -1108,12 +1108,12 @@ public class LinkcheckReport
         getSink().tableCell();
         getSink().rawText(
                            i18n.getString( "linkcheck-report", locale,
-                                           "report.linkcheck.table.summary.excludedLinks" ) );
+                                           "report.linkcheck.summary.table.excludedLinks" ) );
         getSink().tableCell_();
         getSink().tableCell();
         if ( excludedLinks == null || excludedLinks.length == 0 )
         {
-            getSink().text( i18n.getString( "linkcheck-report", locale, "report.linkcheck.table.summary.none" ) );
+            getSink().text( i18n.getString( "linkcheck-report", locale, "report.linkcheck.summary.table.none" ) );
         }
         else
         {
@@ -1126,12 +1126,12 @@ public class LinkcheckReport
         getSink().tableCell();
         getSink().rawText(
                            i18n.getString( "linkcheck-report", locale,
-                                           "report.linkcheck.table.summary.excludedHttpStatusErrors" ) );
+                                           "report.linkcheck.summary.table.excludedHttpStatusErrors" ) );
         getSink().tableCell_();
         getSink().tableCell();
         if ( excludedHttpStatusErrors == null || excludedHttpStatusErrors.length == 0 )
         {
-            getSink().text( i18n.getString( "linkcheck-report", locale, "report.linkcheck.table.summary.none" ) );
+            getSink().text( i18n.getString( "linkcheck-report", locale, "report.linkcheck.summary.table.none" ) );
         }
         else
         {
@@ -1144,12 +1144,12 @@ public class LinkcheckReport
         getSink().tableCell();
         getSink().rawText(
                            i18n.getString( "linkcheck-report", locale,
-                                           "report.linkcheck.table.summary.excludedHttpStatusWarnings" ) );
+                                           "report.linkcheck.summary.table.excludedHttpStatusWarnings" ) );
         getSink().tableCell_();
         getSink().tableCell();
         if ( excludedHttpStatusWarnings == null || excludedHttpStatusWarnings.length == 0 )
         {
-            getSink().text( i18n.getString( "linkcheck-report", locale, "report.linkcheck.table.summary.none" ) );
+            getSink().text( i18n.getString( "linkcheck-report", locale, "report.linkcheck.summary.table.none" ) );
         }
         else
         {
@@ -1360,7 +1360,7 @@ public class LinkcheckReport
                         detail ? i18n.getString( "linkcheck-report", locale,
                                                  "report.linkcheck.detail.table.documents" )
                                         : i18n.getString( "linkcheck-report", locale,
-                                                          "report.linkcheck.table.summary.documents" ) );
+                                                          "report.linkcheck.summary.table.documents" ) );
         getSink().tableHeaderCell_();
         // TODO it is due to DOXIA-78
         getSink().rawText( "<th colspan=\"4\" align=\"center\">" );
