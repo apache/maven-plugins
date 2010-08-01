@@ -81,7 +81,11 @@ Usage
 </project>
 +-----+
 
-  <<Note 1>>: In this case, no report will be created, only linkcheck files in the <<<target/linkcheck>>> directory
-  by default.
+  In this case, no report will be created, but the linkcheck files
+  will be created in the <<<target/linkcheck>>> directory.
 
-  <<Note 2>>: The execution configuration is inadvisable, i.e. you can't use it in a specific phase.
+* Real life configuration
+
+  If you want to see a real life configuration you can have a look at
+  {{{http://svn.apache.org/repos/asf/maven/site/trunk/pom.xml}the POM for the Maven site}}.
+  There is a profile near the end called <linkcheck>.
