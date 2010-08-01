@@ -1079,6 +1079,16 @@ public class LinkcheckReport
         getSink().tableRow();
         getSink().tableCell();
         getSink().rawText(
+                           i18n.getString( "linkcheck-report", locale, "report.linkcheck.table.summary.offline" ) );
+        getSink().tableCell_();
+        getSink().tableCell();
+        getSink().text( String.valueOf( offline ) );
+        getSink().tableCell_();
+        getSink().tableRow_();
+
+        getSink().tableRow();
+        getSink().tableCell();
+        getSink().rawText(
                            i18n.getString( "linkcheck-report", locale,
                                            "report.linkcheck.table.summary.excludedPages" ) );
         getSink().tableCell_();
