@@ -122,7 +122,7 @@ under the License.
     <dependency>
       <groupId>org.apache.maven.doxia</groupId>
       <artifactId>doxia-linkcheck</artifactId>
-      <version>1.1-SNAPSHOT</version>
+      <version>1.1</version>
     </dependency>
 
     <!-- plexus -->
