@@ -46,6 +46,7 @@ import org.apache.maven.doxia.linkcheck.model.LinkcheckFile;
 import org.apache.maven.doxia.linkcheck.model.LinkcheckFileResult;
 import org.apache.maven.doxia.linkcheck.model.LinkcheckModel;
 import org.apache.maven.doxia.siterenderer.Renderer;
+import org.apache.maven.model.Reporting;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.AbstractMavenReport;
@@ -575,6 +576,12 @@ public class LinkcheckReport
             ioe.setStackTrace( e.getStackTrace() );
             throw ioe;
         }
+
+        // MLINKCHECK-1
+        if ( clone.getOriginalModel().getReporting() == null ) {
+            clone.getOriginalModel().setReporting( new Reporting() );
+        }
+
         clone.getOriginalModel().getReporting().setOutputDirectory( tmpReportingOutputDirectory.getAbsolutePath() );
 
         // create the original model as tmp pom file for the invoker
