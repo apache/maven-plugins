@@ -526,12 +526,12 @@ public class LinkcheckReport
     }
 
     /**
-     * Invoke Maven for the <code>site</code> phase for a temporary Maven project using <code>tmpReportingOutputDirectory</code>
-     * as <code>${project.reporting.outputDirectory}</code>. This is a workaround to be sure that all site files have been
-     * correctly generated.
+     * Invoke Maven for the <code>site</code> phase for a temporary Maven project using
+     * <code>tmpReportingOutputDirectory</code> as <code>${project.reporting.outputDirectory}</code>.
+     * This is a workaround to be sure that all site files have been correctly generated.
      * <br/>
-     * <b>Note 1</b>: the Maven Home should be defined in the <code>maven.home</code> Java system property or defined in
-     * <code>M2_HOME</code> system env variables.
+     * <b>Note 1</b>: the Maven Home should be defined in the <code>maven.home</code> Java system property
+     * or defined in <code>M2_HOME</code> system env variables.
      * <b>Note 2</be>: we can't use <code>siteOutputDirectory</code> param from site plugin because some plugins
      * <code>${project.reporting.outputDirectory}</code> in there conf.
      *
@@ -629,14 +629,14 @@ public class LinkcheckReport
             request.setJavaHome( javaHome );
         }
 
-        InvocationResult result;
+        InvocationResult invocationResult;
         try
         {
             if ( getLog().isDebugEnabled() )
             {
                 getLog().debug( "Invoking Maven for the goals: " + goals + " with properties=" + properties );
             }
-            result = invoke( invoker, request, invokerLog, goals, properties, null );
+            invocationResult = invoke( invoker, request, invokerLog, goals, properties, null );
         }
         catch ( MavenInvocationException e )
         {
@@ -684,7 +684,7 @@ public class LinkcheckReport
 
             try
             {
-                result = invoke( invoker, request, invokerLog, goals, properties, "" );
+                invocationResult = invoke( invoker, request, invokerLog, goals, properties, "" );
             }
             catch ( MavenInvocationException e )
             {
@@ -697,7 +697,7 @@ public class LinkcheckReport
             }
         }
 
-        if ( result.getExitCode() != 0 )
+        if ( invocationResult.getExitCode() != 0 )
         {
             if ( getLog().isErrorEnabled() )
             {
@@ -1311,7 +1311,7 @@ public class LinkcheckReport
                         String absolutePath = FilenameUtils.getFullPath( linkcheckFile.getRelativePath() )
                             + linkcheckFileResult.getTarget();
                         String normalizedPath = FilenameUtils.normalize( absolutePath );
-                        if( normalizedPath == null )
+                        if ( normalizedPath == null )
                         {
                             normalizedPath = absolutePath;
                         }
