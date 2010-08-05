@@ -40,9 +40,9 @@ Maven Linkcheck Plugin
 * Usage
 
   General instructions on how to use the Linkcheck Plugin can be found on the {{{./usage.html}usage page}}.
-  Last but not least, users occasionally contribute
-  additional examples, tips or errata to the
-  {{{http://docs.codehaus.org/display/MAVENUSER/Linkcheck+Plugin}plugin's wiki page}}.
+~~   Last but not least, users occasionally contribute
+~~   additional examples, tips or errata to the
+~~   {{{http://docs.codehaus.org/display/MAVENUSER/Linkcheck+Plugin}plugin's wiki page}}.
 
   In case you still have questions regarding the plugin's usage, please feel
   free to contact the {{{./mail-lists.html}user mailing list}}. The posts to the mailing list are archived and could
