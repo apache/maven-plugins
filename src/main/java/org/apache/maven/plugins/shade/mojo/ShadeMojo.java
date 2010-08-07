@@ -333,10 +333,11 @@ public class ShadeMojo
     private boolean createSourcesJar;
 
     /**
-     * When true, dependencies will be stripped down on the class level
-     * to only the transitive hull required for the artifact.
-     *
+     * When true, dependencies will be stripped down on the class level to only the transitive hull required for the
+     * artifact. <em>Note:</em> Usage of this feature requires Java 1.5 or higher.
+     * 
      * @parameter default-value="false"
+     * @since 1.4
      */
     private boolean minimizeJar;
 
