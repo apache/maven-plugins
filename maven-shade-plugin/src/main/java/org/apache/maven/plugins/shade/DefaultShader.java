@@ -116,11 +116,11 @@ public class DefaultShader
 
                 String name = entry.getName();
 
-                if ( "META-INF/INDEX.LIST".equals( name ) ) 
+                if ( "META-INF/INDEX.LIST".equals( name ) )
                 {
-                    //we cannot allow the jar indexes to be copied over or the 
-                    //jar is useless.   Ideally, we could create a new one
-                    //later
+                    // we cannot allow the jar indexes to be copied over or the
+                    // jar is useless. Ideally, we could create a new one
+                    // later
                     continue;
                 }
 
@@ -133,7 +133,7 @@ public class DefaultShader
                     int idx = mappedName.lastIndexOf( '/' );
                     if ( idx != -1 )
                     {
-                        //make sure dirs are created
+                        // make sure dirs are created
                         String dir = mappedName.substring( 0, idx );
                         if ( !resources.contains( dir ) )
                         {
@@ -224,7 +224,7 @@ public class DefaultShader
             }
         }
 
-        //directory entries must end in "/"
+        // directory entries must end in "/"
         JarEntry entry = new JarEntry( name + "/" );
         jos.putNextEntry( entry );
 
