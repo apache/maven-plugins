@@ -29,6 +29,7 @@ import java.util.Set;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.util.IOUtil;
 import org.vafer.jdependency.Clazz;
 import org.vafer.jdependency.Clazzpath;
 import org.vafer.jdependency.ClazzpathUnit;
@@ -73,8 +74,7 @@ public class MinijarFilter
             }
             finally
             {
-                if ( is != null )
-                    is.close();
+                IOUtil.close( is );
             }
         }
 
@@ -95,7 +95,7 @@ public class MinijarFilter
 
         if ( removable.contains( clazz ) )
         {
-            log.info( "Removing " + className );
+            log.debug( "Removing " + className );
             classes_removed += 1;
             return true;
         }
@@ -107,7 +107,7 @@ public class MinijarFilter
     public void finished()
     {
         int classes_total = classes_removed + classes_kept;
-        log.info( "Minimized " + classes_total + " -> " + classes_kept + "("
+        log.info( "Minimized " + classes_total + " -> " + classes_kept + " ("
             + (int) ( 100 * classes_kept / classes_total ) + "%)" );
     }
 }
