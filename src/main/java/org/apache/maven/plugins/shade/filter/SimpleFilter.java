@@ -122,4 +122,7 @@ public class SimpleFilter
         return result;
     }
 
+    public void finished()
+    {
+    }
 }

@@ -177,6 +177,12 @@ public class DefaultShader
         }
 
         IOUtil.close( jos );
+
+        for ( Iterator it = filters.iterator(); it.hasNext(); )
+        {
+            Filter filter = (Filter) it.next();
+            filter.finished();
+        }
     }
 
     private JarFile newJarFile( File jar )
