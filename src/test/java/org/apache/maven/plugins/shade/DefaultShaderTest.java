@@ -32,6 +32,8 @@ import junit.framework.TestCase;
 
 import org.apache.maven.plugins.shade.relocation.SimpleRelocator;
 import org.apache.maven.plugins.shade.resource.ComponentsXmlResourceTransformer;
+import org.codehaus.plexus.logging.Logger;
+import org.codehaus.plexus.logging.console.ConsoleLogger;
 
 /**
  * @author Jason van Zyl
@@ -53,7 +55,7 @@ public class DefaultShaderTest
     public void testShaderWithStaticInitializedClass()
         throws Exception
     {
-        Shader s = new DefaultShader();
+        Shader s = newShader();
 
         Set set = new LinkedHashSet();
 
@@ -92,7 +94,7 @@ public class DefaultShaderTest
     public void shaderWithPattern( String shadedPattern, File jar, String[] excludes )
         throws Exception
     {
-        Shader s = new DefaultShader();
+        DefaultShader s = newShader();
 
         Set set = new LinkedHashSet();
 
@@ -111,6 +113,15 @@ public class DefaultShaderTest
         List filters = new ArrayList();
 
         s.shade( set, jar, filters, relocators, resourceTransformers );
+    }
+
+    private static DefaultShader newShader()
+    {
+        DefaultShader s = new DefaultShader();
+
+        s.enableLogging( new ConsoleLogger( Logger.LEVEL_INFO, "TEST" ) );
+
+        return s;
     }
 
 }
