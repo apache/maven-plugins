@@ -431,6 +431,11 @@ under the License.
         <artifactId>maven-project-info-reports-plugin</artifactId>
         <version>${projectInfoReportsPluginVersion}</version>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <version>${checkstylePluginVersion}</version>
+      </plugin>
     </plugins>
   </reporting>
   <profiles>
