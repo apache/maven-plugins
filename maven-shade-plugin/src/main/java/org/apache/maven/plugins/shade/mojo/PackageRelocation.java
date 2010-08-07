@@ -31,6 +31,8 @@ public class PackageRelocation
 
     private String shadedPattern;
 
+    private List includes;
+
     private List excludes;
 
     public String getPattern()
@@ -41,6 +43,11 @@ public class PackageRelocation
     public String getShadedPattern()
     {
         return shadedPattern;
+    }
+
+    public List getIncludes()
+    {
+        return includes;
     }
 
     public List getExcludes()

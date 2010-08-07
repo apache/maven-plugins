@@ -63,7 +63,7 @@ public class DefaultShaderTest
 
         List relocators = new ArrayList();
 
-        relocators.add( new SimpleRelocator( "org.apache.maven.plugins.shade", null, null ) );
+        relocators.add( new SimpleRelocator( "org.apache.maven.plugins.shade", null, null, null ) );
 
         List resourceTransformers = new ArrayList();
 
@@ -104,7 +104,7 @@ public class DefaultShaderTest
 
         List relocators = new ArrayList();
 
-        relocators.add( new SimpleRelocator( "org/codehaus/plexus/util", shadedPattern, Arrays.asList( excludes ) ) );
+        relocators.add( new SimpleRelocator( "org/codehaus/plexus/util", shadedPattern, null, Arrays.asList( excludes ) ) );
 
         List resourceTransformers = new ArrayList();
 

@@ -18,7 +18,7 @@ public class SimpleRelocatorTest
     {
         SimpleRelocator relocator;
 
-        relocator = new SimpleRelocator( "org.foo", null, null );
+        relocator = new SimpleRelocator( "org.foo", null, null, null );
         assertEquals( true, relocator.canRelocatePath( "org/foo/Class" ) );
         assertEquals( true, relocator.canRelocatePath( "org/foo/Class.class" ) );
         assertEquals( true, relocator.canRelocatePath( "org/foo/bar/Class" ) );
@@ -29,7 +29,7 @@ public class SimpleRelocatorTest
         assertEquals( false, relocator.canRelocatePath( "org/Foo/Class.class" ) );
 
         relocator =
-            new SimpleRelocator( "org.foo", null, Arrays.asList( new String[] { "org.foo.Excluded", "org.foo.public.*",
+            new SimpleRelocator( "org.foo", null, null, Arrays.asList( new String[] { "org.foo.Excluded", "org.foo.public.*",
                 "org.foo.Public*Stuff" } ) );
         assertEquals( true, relocator.canRelocatePath( "org/foo/Class" ) );
         assertEquals( true, relocator.canRelocatePath( "org/foo/Class.class" ) );
@@ -52,14 +52,14 @@ public class SimpleRelocatorTest
     {
         SimpleRelocator relocator;
 
-        relocator = new SimpleRelocator( "org.foo", null, null );
+        relocator = new SimpleRelocator( "org.foo", null, null, null );
         assertEquals( true, relocator.canRelocateClass( "org.foo.Class" ) );
         assertEquals( true, relocator.canRelocateClass( "org.foo.bar.Class" ) );
         assertEquals( false, relocator.canRelocateClass( "com.foo.bar.Class" ) );
         assertEquals( false, relocator.canRelocateClass( "org.Foo.Class" ) );
 
         relocator =
-            new SimpleRelocator( "org.foo", null, Arrays.asList( new String[] { "org.foo.Excluded", "org.foo.public.*",
+            new SimpleRelocator( "org.foo", null, null, Arrays.asList( new String[] { "org.foo.Excluded", "org.foo.public.*",
                 "org.foo.Public*Stuff" } ) );
         assertEquals( true, relocator.canRelocateClass( "org.foo.Class" ) );
         assertEquals( true, relocator.canRelocateClass( "org.foo.excluded" ) );
@@ -76,10 +76,10 @@ public class SimpleRelocatorTest
     {
         SimpleRelocator relocator;
 
-        relocator = new SimpleRelocator( "org.foo", null, null );
+        relocator = new SimpleRelocator( "org.foo", null, null, null );
         assertEquals( "hidden/org/foo/bar/Class.class", relocator.relocatePath( "org/foo/bar/Class.class" ) );
 
-        relocator = new SimpleRelocator( "org.foo", "private.stuff", null );
+        relocator = new SimpleRelocator( "org.foo", "private.stuff", null, null );
         assertEquals( "private/stuff/bar/Class.class", relocator.relocatePath( "org/foo/bar/Class.class" ) );
     }
 
@@ -87,10 +87,10 @@ public class SimpleRelocatorTest
     {
         SimpleRelocator relocator;
 
-        relocator = new SimpleRelocator( "org.foo", null, null );
+        relocator = new SimpleRelocator( "org.foo", null, null, null );
         assertEquals( "hidden.org.foo.bar.Class", relocator.relocateClass( "org.foo.bar.Class" ) );
 
-        relocator = new SimpleRelocator( "org.foo", "private.stuff", null );
+        relocator = new SimpleRelocator( "org.foo", "private.stuff", null, null );
         assertEquals( "private.stuff.bar.Class", relocator.relocateClass( "org.foo.bar.Class" ) );
     }
 
