@@ -212,15 +212,24 @@ class Cleaner
                 // try to release any locks held by non-closed files
                 System.gc();
             }
-            try
+
+            boolean deleted = false;
+
+            int[] delays = { 125, 250, 750 };
+            for ( int i = 0; !deleted && i < delays.length; i++ )
             {
-                Thread.sleep( 10 );
+                try
+                {
+                    Thread.sleep( delays[i] );
+                }
+                catch ( InterruptedException e )
+                {
+                    // ignore
+                }
+                deleted = file.delete() || !file.exists();
             }
-            catch ( InterruptedException e )
-            {
-                // ignore
-            }
-            if ( !file.delete() )
+
+            if ( !deleted )
             {
                 if ( failOnError )
                 {
