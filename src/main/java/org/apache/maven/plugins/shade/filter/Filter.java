@@ -29,4 +29,6 @@ public interface Filter
     boolean canFilter( File jar );
 
     boolean isFiltered( String classFile );
+
+    void finished();
 }
