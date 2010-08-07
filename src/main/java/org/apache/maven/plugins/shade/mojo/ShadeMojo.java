@@ -202,13 +202,17 @@ public class ShadeMojo
      *   &lt;relocation&gt;
      *     &lt;pattern&gt;org.apache&lt;/pattern&gt;
      *     &lt;shadedPattern&gt;hidden.org.apache&lt;/shadedPattern&gt;
+     *     &lt;includes&gt;
+     *       &lt;include&gt;org.apache.maven.*&lt;/include&gt;
+     *     &lt;/includes&gt;
      *     &lt;excludes&gt;
-     *       &lt;exclude&gt;org.apache.ExcludedClass&lt;/exclude&gt;
+     *       &lt;exclude&gt;org.apache.maven.Public*&lt;/exclude&gt;
      *     &lt;/excludes&gt;
      *   &lt;/relocation&gt;
      * &lt;/relocations&gt;
      * </pre>
-     *
+     * <em>Note:</em> Support for includes exists only since version 1.4.
+     * 
      * @parameter
      */
     private PackageRelocation[] relocations;
@@ -609,7 +613,7 @@ public class ShadeMojo
         {
             PackageRelocation r = relocations[i];
 
-            relocators.add( new SimpleRelocator( r.getPattern(), r.getShadedPattern(), r.getExcludes() ) );
+            relocators.add( new SimpleRelocator( r.getPattern(), r.getShadedPattern(), r.getIncludes(), r.getExcludes() ) );
         }
 
         return relocators;

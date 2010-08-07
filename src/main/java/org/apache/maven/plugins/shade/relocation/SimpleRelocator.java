@@ -19,6 +19,7 @@ package org.apache.maven.plugins.shade.relocation;
  * under the License.
  */
 
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -33,17 +34,20 @@ import org.codehaus.plexus.util.SelectorUtils;
 public class SimpleRelocator
     implements Relocator
 {
-    private String pattern;
 
-    private String pathPattern;
+    private final String pattern;
 
-    private String shadedPattern;
+    private final String pathPattern;
 
-    private String shadedPathPattern;
+    private final String shadedPattern;
 
-    private Set excludes;
+    private final String shadedPathPattern;
 
-    public SimpleRelocator( String patt, String shadedPattern, List excludes )
+    private final Set includes;
+
+    private final Set excludes;
+
+    public SimpleRelocator( String patt, String shadedPattern, List includes, List excludes )
     {
         this.pattern = patt.replace( '/', '.' );
         this.pathPattern = patt.replace( '.', '/' );
@@ -59,24 +63,70 @@ public class SimpleRelocator
             this.shadedPathPattern = "hidden/" + this.pathPattern;
         }
 
-        if ( excludes != null && !excludes.isEmpty() )
+        this.includes = normalizePatterns( includes );
+        this.excludes = normalizePatterns( excludes );
+    }
+
+    private static Set normalizePatterns( Collection patterns )
+    {
+        Set normalized = null;
+
+        if ( patterns != null && !patterns.isEmpty() )
         {
-            this.excludes = new LinkedHashSet();
+            normalized = new LinkedHashSet();
 
-            for ( Iterator i = excludes.iterator(); i.hasNext(); )
+            for ( Iterator i = patterns.iterator(); i.hasNext(); )
             {
-                String e = (String) i.next();
+                String pattern = (String) i.next();
 
-                String classExclude = e.replace( '.', '/' );
-                this.excludes.add( classExclude );
+                String classPattern = pattern.replace( '.', '/' );
 
-                if ( classExclude.endsWith( "/*" ) )
+                normalized.add( classPattern );
+
+                if ( classPattern.endsWith( "/*" ) )
                 {
-                    String packageExclude = classExclude.substring( 0, classExclude.lastIndexOf( '/' ) );
-                    this.excludes.add( packageExclude );
+                    String packagePattern = classPattern.substring( 0, classPattern.lastIndexOf( '/' ) );
+                    normalized.add( packagePattern );
                 }
             }
         }
+
+        return normalized;
+    }
+
+    private boolean isIncluded( String path )
+    {
+        if ( includes != null && !includes.isEmpty() )
+        {
+            for ( Iterator i = includes.iterator(); i.hasNext(); )
+            {
+                String include = (String) i.next();
+
+                if ( SelectorUtils.matchPath( include, path, true ) )
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+        return true;
+    }
+
+    private boolean isExcluded( String path )
+    {
+        if ( excludes != null && !excludes.isEmpty() )
+        {
+            for ( Iterator i = excludes.iterator(); i.hasNext(); )
+            {
+                String exclude = (String) i.next();
+
+                if ( SelectorUtils.matchPath( exclude, path, true ) )
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     public boolean canRelocatePath( String path )
@@ -85,17 +135,10 @@ public class SimpleRelocator
         {
             path = path.substring( 0, path.length() - 6 );
         }
-        if ( excludes != null )
-        {
-            for ( Iterator i = excludes.iterator(); i.hasNext(); )
-            {
-                String exclude = (String) i.next();
 
-                if ( SelectorUtils.matchPath( exclude, path, true ) )
-                {
-                    return false;
-                }
-            }
+        if ( !isIncluded( path ) || isExcluded( path ) )
+        {
+            return false;
         }
 
         return path.startsWith( pathPattern );
