@@ -49,6 +49,7 @@ import org.apache.maven.model.Model;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.shade.Shader;
+import org.apache.maven.plugins.shade.filter.MinijarFilter;
 import org.apache.maven.plugins.shade.filter.SimpleFilter;
 import org.apache.maven.plugins.shade.pom.PomWriter;
 import org.apache.maven.plugins.shade.relocation.SimpleRelocator;
@@ -330,6 +331,14 @@ public class ShadeMojo
      * @parameter expression="${createSourcesJar}" default-value="false"
      */
     private boolean createSourcesJar;
+
+    /**
+     * When true, dependencies will be stripped down on the class level
+     * to only the transitive hull required for the artifact.
+     *
+     * @parameter default-value="false"
+     */
+    private boolean minimizeJar;
 
     /**
      * The path to the output file for the shaded artifact. When this parameter is set, the created archive will neither
@@ -616,63 +625,75 @@ public class ShadeMojo
     }
 
     private List getFilters()
+        throws MojoExecutionException
     {
         List filters = new ArrayList();
 
-        if ( this.filters == null || this.filters.length <= 0 )
+        if ( this.filters != null && this.filters.length > 0 )
         {
-            return filters;
-        }
+            Map artifacts = new HashMap();
 
-        Map artifacts = new HashMap();
+            artifacts.put( project.getArtifact(), new ArtifactId( project.getArtifact() ) );
 
-        artifacts.put( project.getArtifact(), new ArtifactId( project.getArtifact() ) );
-
-        for ( Iterator it = project.getArtifacts().iterator(); it.hasNext(); )
-        {
-            Artifact artifact = (Artifact) it.next();
-
-            artifacts.put( artifact, new ArtifactId( artifact ) );
-        }
-
-        for ( int i = 0; i < this.filters.length; i++ )
-        {
-            ArchiveFilter filter = this.filters[i];
-
-            ArtifactId pattern = new ArtifactId( filter.getArtifact() );
-
-            Set jars = new HashSet();
-
-            for ( Iterator it = artifacts.entrySet().iterator(); it.hasNext(); )
+            for ( Iterator it = project.getArtifacts().iterator(); it.hasNext(); )
             {
-                Map.Entry entry = (Map.Entry) it.next();
+                Artifact artifact = (Artifact) it.next();
 
-                if ( ( (ArtifactId) entry.getValue() ).matches( pattern ) )
+                artifacts.put( artifact, new ArtifactId( artifact ) );
+            }
+
+            for ( int i = 0; i < this.filters.length; i++ )
+            {
+                ArchiveFilter filter = this.filters[i];
+
+                ArtifactId pattern = new ArtifactId( filter.getArtifact() );
+
+                Set jars = new HashSet();
+
+                for ( Iterator it = artifacts.entrySet().iterator(); it.hasNext(); )
                 {
-                    Artifact artifact = (Artifact) entry.getKey();
-                    
-                    jars.add( artifact.getFile() );
-                    
-                    if ( createSourcesJar )
+                    Map.Entry entry = (Map.Entry) it.next();
+
+                    if ( ( (ArtifactId) entry.getValue() ).matches( pattern ) )
                     {
-                        File file = resolveArtifactSources( artifact );
-                        if ( file != null )
+                        Artifact artifact = (Artifact) entry.getKey();
+
+                        jars.add( artifact.getFile() );
+
+                        if ( createSourcesJar )
                         {
-                            jars.add( file );
+                            File file = resolveArtifactSources( artifact );
+                            if ( file != null )
+                            {
+                                jars.add( file );
+                            }
                         }
                     }
                 }
-            }
 
-            if ( jars.isEmpty() )
+                if ( jars.isEmpty() )
+                {
+                    getLog().info( "No artifact matching filter " + filter.getArtifact() );
+
+                    continue;
+                }
+
+                filters.add( new SimpleFilter( jars, filter.getIncludes(), filter.getExcludes() ) );
+            }
+        }
+
+        if ( minimizeJar )
+        {
+            getLog().info( "Minimizing jar " + project.getArtifact() );
+
+            try
             {
-                getLog().info( "No artifact matching filter " + filter.getArtifact() );
-
-                continue;
+                filters.add( new MinijarFilter( project, getLog() ) );
             }
-
-            filters.add( new SimpleFilter( jars, filter.getIncludes(), filter.getExcludes() ) );
-
+            catch ( IOException e )
+            {
+                throw new MojoExecutionException( "Failed to analyze class dependencies", e );
+            }
         }
 
         return filters;
