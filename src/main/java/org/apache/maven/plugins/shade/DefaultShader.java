@@ -106,6 +106,8 @@ public class DefaultShader
         {
             File jar = (File) i.next();
 
+            getLogger().debug( "Processing JAR " + jar );
+
             List jarFilters = getFilters( jar, filters );
 
             JarFile jarFile = newJarFile( jar );
@@ -308,6 +310,8 @@ public class DefaultShader
 
             if ( transformer.canTransformResource( name ) )
             {
+                getLogger().debug( "Transforming " + name + " using " + transformer.getClass().getName() );
+
                 transformer.processResource( name, is, relocators );
 
                 resourceTransformed = true;

@@ -86,7 +86,7 @@ public class XmlAppendingTransformer
         }
         catch ( JDOMException e )
         {
-            throw new RuntimeException( e );
+            throw new RuntimeException( "Error processing resource " + resource + ": " + e.getMessage(), e );
         }
 
         if ( doc == null )
