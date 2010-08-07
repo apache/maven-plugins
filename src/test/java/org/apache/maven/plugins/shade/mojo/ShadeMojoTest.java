@@ -81,7 +81,7 @@ public class ShadeMojoTest
         set.add( new File( getBasedir(), "src/test/jars/test-artifact-1.0-SNAPSHOT.jar" ) );
 
         List relocators = new ArrayList();
-        relocators.add( new SimpleRelocator( "org.codehaus.plexus.util", "hidden", Arrays.asList( new String[] {
+        relocators.add( new SimpleRelocator( "org.codehaus.plexus.util", "hidden", null, Arrays.asList( new String[] {
             "org.codehaus.plexus.util.xml.Xpp3Dom", "org.codehaus.plexus.util.xml.pull.*" } ) ) );
 
         List resourceTransformers = new ArrayList();
@@ -193,7 +193,7 @@ public class ShadeMojoTest
 
         List relocators = new ArrayList();
 
-        relocators.add( new SimpleRelocator( "org/codehaus/plexus/util", shadedPattern, Arrays.asList(
+        relocators.add( new SimpleRelocator( "org/codehaus/plexus/util", shadedPattern, null, Arrays.asList(
             new String[]{"org/codehaus/plexus/util/xml/Xpp3Dom", "org/codehaus/plexus/util/xml/pull.*"} ) ) );
 
         List resourceTransformers = new ArrayList();
