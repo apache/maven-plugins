@@ -23,9 +23,9 @@ under the License.
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-     <artifactId>maven-plugins</artifactId>
-     <groupId>org.apache.maven.plugins</groupId>
-     <version>18</version>
+    <artifactId>maven-plugins</artifactId>
+    <groupId>org.apache.maven.plugins</groupId>
+    <version>18</version>
   </parent>
 
   <artifactId>maven-shade-plugin</artifactId>
@@ -33,7 +33,10 @@ under the License.
   <packaging>maven-plugin</packaging>
 
   <name>Maven Shade Plugin</name>
-  <description>Repackages the project classes together with their dependencies into a single uber-jar, optionally renaming classes.</description>
+  <description>
+    Repackages the project classes together with their dependencies into a single uber-jar, optionally renaming classes
+    or removing unused classes.
+  </description>
 
   <prerequisites>
     <maven>${mavenVersion}</maven>
