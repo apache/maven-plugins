@@ -121,3 +121,33 @@ Selecting Contents for Uber JAR
   should be included in the uber JAR. The second filter demonstrates the use of wildcards for the artifact identity which
   was introduced in plugin version 1.3. It excludes all signature related files from every artifact, regardless of its
   group or artifact id.
+
+  Besides user-specified filters, the plugin can also be configured to automatically remove all classes of dependencies
+  that are not used by the project, thereby minimizing the resulting uber JAR:
+
++-----
+<project>
+  ...
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>${project.version}</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <minimizeJar>true</minimizeJar>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  ...
+</project>
++-----
