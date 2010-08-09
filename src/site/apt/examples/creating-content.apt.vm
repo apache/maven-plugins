@@ -50,12 +50,12 @@ Creating Content
       +- site.xml
 --------------------
 
- You notice the <<<$\{basedir\}/src/site>>> directory which contains a site
+ The <<<$\{basedir\}/src/site>>> directory which contains a site
  descriptor along with various directories corresponding to the supported
  document formats. Let's take a look at examples of the various document
  formats.
 
-  The APT format, "Almost Plain Text", is a wiki-like format that allows you to
+  The APT format ("Almost Plain Text") is a wiki-like format that allows you to
   write simple, structured documents (like this one) very quickly. A full
   reference of the
   {{{http://maven.apache.org/doxia/references/apt-format.html} APT Format}} is
@@ -94,7 +94,13 @@ Creating Content
       +- other.html
 --------------------
 
-  The <<<css>>> and <<<images>>> directories contains stylesheets and images
+  This means that <<</src/site/apt/index.apt>>> will be available in the site as
+  <<</index.html>>>. So, in {{{./sitedescriptor.html} your site descriptor}} you
+  might link to <<</index.html>>> and <<</other.html>>>, where the source of
+  these two files would be <<</src/site/apt/index.apt>>> and
+  <<</src/site/xdoc/other.xdoc>>>.
+
+  The <<<css>>> and <<<images>>> directories contain stylesheets and images
   from the skin being used. You can read more about skins in
   {{{./sitedescriptor.html}the site descriptor documentation}}.
 
