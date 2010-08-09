@@ -37,7 +37,7 @@ Changing the Template File
 
   <<Note:>> If you use this method then skins and the default templates, CSS
   and images are disabled. It is therefor highly recommended that you package
-  this as a {{{creatingskins.html}skin}} instead.
+  this as a {{{./creatingskins.html}skin}} instead.
 
   For version 2.0-beta-5 and later you would add something like this to your
   <<<pom.xml>>>:

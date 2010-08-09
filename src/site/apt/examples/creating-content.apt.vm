@@ -96,7 +96,7 @@ Creating Content
 
   The <<<css>>> and <<<images>>> directories contains stylesheets and images
   from the skin being used. You can read more about skins in
-  {{{sitedescriptor.html}the site descriptor documentation}}.
+  {{{./sitedescriptor.html}the site descriptor documentation}}.
 
 
 * Adding Extra Resources
