@@ -69,15 +69,14 @@ public abstract class AbstractSiteMojo
     /**
      * Directory containing the site.xml file and the source for apt, fml and xdoc docs.
      *
-     * @parameter expression="${basedir}/src/site"
-     * @required
+     * @parameter default-value="${basedir}/src/site"
      */
     protected File siteDirectory;
 
     /**
      * The maven project.
      *
-     * @parameter expression="${project}"
+     * @parameter default-value="${project}"
      * @required
      * @readonly
      */
@@ -86,14 +85,14 @@ public abstract class AbstractSiteMojo
     /**
      * The local repository.
      *
-     * @parameter expression="${localRepository}"
+     * @parameter default-value="${localRepository}"
      */
     protected ArtifactRepository localRepository;
 
     /**
      * The reactor projects.
      *
-     * @parameter expression="${reactorProjects}"
+     * @parameter default-value="${reactorProjects}"
      * @required
      * @readonly
      */
