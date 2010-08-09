@@ -20,7 +20,9 @@ under the License.
 -->
 
 <!--$Id$-->
-<project name="MSITE-265">
+<project name="MSITE-265" xmlns="http://maven.apache.org/DECORATION/1.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/DECORATION/1.0.0 http://maven.apache.org/xsd/decoration-1.0.0.xsd">
   <publishDate format="dd MMM yyyy HH:mm"/>
   <version position="left"/>
   <skin>
@@ -30,13 +32,13 @@ under the License.
   <body>
     <breadcrumbs>
       <item name="Maven" href="http://maven.apache.org/${currentVersion}"/>
-    </breadcrumbs>    
+    </breadcrumbs>
     <menu name="Releases TODO">
       <item name="release1.6" href="releases/release1.6.html"/>
       <item name="release1.6.3" href="releases/release1.6.3.html"/>
     </menu>
     <menu ref="parent"/>
     <menu ref="reports"/>
-    <menu ref="modules"/>    
+    <menu ref="modules"/>
   </body>
 </project>
