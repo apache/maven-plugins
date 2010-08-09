@@ -277,6 +277,8 @@ public class SiteDeployMojo
      * Defensively support for comma (",") and semi colon (";") in addition to pipe ("|") as separator.
      * </p>
      *
+     * @param repository the Repository to extract the ProxyInfo from.
+     * @param wagonManager the WagonManager used to connect to the Repository.
      * @return a ProxyInfo object instantiated or <code>null</code> if no matching proxy is found
      * FIXME FIXME take care about proxy use
      */

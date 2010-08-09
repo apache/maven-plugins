@@ -150,7 +150,7 @@ public abstract class AbstractSiteRenderingMojo
      * Alternative directory for xdoc source, useful for m1 to m2 migration
      *
      * @parameter default-value="${basedir}/xdocs"
-     * @deprecated
+     * @deprecated use the standard m2 directory layout
      */
     private File xdocDirectory;
 
@@ -347,8 +347,9 @@ public abstract class AbstractSiteRenderingMojo
      *
      * @param reports A List of MavenReports
      * @param documents A Map of documents, keyed by filename
-     * @return A map with all reports keyed by filename having the report itself as value. The map will be used to
-     * populate a menu.
+     * @param locale the Locale the reports are processed for.
+     * @return A map with all reports keyed by filename having the report itself as value.
+     * The map will be used to populate a menu.
      */
     protected Map<String, MavenReport> locateReports( List<MavenReportExecution> reports,
                                                       Map<String, DocumentRenderer> documents, Locale locale )
