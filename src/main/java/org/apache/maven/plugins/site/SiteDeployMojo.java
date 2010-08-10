@@ -21,6 +21,7 @@ package org.apache.maven.plugins.site;
 
 import java.io.File;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.maven.artifact.manager.WagonManager;
 import org.apache.maven.model.DistributionManagement;
 import org.apache.maven.model.Site;
@@ -203,9 +204,10 @@ public class SiteDeployMojo
 
             wagon.addTransferListener( debug );
 
-            /*
-            FIXME proxy Info
             ProxyInfo proxyInfo = getProxyInfo( repository, wagonManager );
+            getLog().debug( "found proxyInfo "
+                                + ( proxyInfo == null ? "null" : "host:port " + proxyInfo.getHost() + ":"
+                                    + proxyInfo.getPort() + ", " + proxyInfo.getUserName() ) );
             if ( proxyInfo != null )
             {
                 wagon.connect( repository, wagonManager.getAuthenticationInfo( id ), proxyInfo );
@@ -214,7 +216,7 @@ public class SiteDeployMojo
             {
                 wagon.connect( repository, wagonManager.getAuthenticationInfo( id ) );
             }
-            */
+            
 
             wagon.connect( repository );
 
@@ -284,8 +286,6 @@ public class SiteDeployMojo
      */
     public static ProxyInfo getProxyInfo( Repository repository, WagonManager wagonManager )
     {
-        return null;
-        /*
         ProxyInfo proxyInfo = wagonManager.getProxy( repository.getProtocol() );
 
         if ( proxyInfo == null )
@@ -328,9 +328,8 @@ public class SiteDeployMojo
                 return null;
             }
         }
-
         return proxyInfo;
-        */
+        
     }
 
     /**

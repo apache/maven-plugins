@@ -338,15 +338,13 @@ under the License.
       <artifactId>wagon-ftp</artifactId>
       <version>${wagonVersion}</version>
     </dependency>
-    <!--
-    disabled webdav as commons-httpclient failed with a java.lang.NoClassDefFoundError
-    clash with core.
+
     <dependency>
       <groupId>org.apache.maven.wagon</groupId>
       <artifactId>wagon-webdav-jackrabbit</artifactId>
       <version>${wagonVersion}</version>
     </dependency>
-    -->
+    
     <!-- Plexus -->
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
