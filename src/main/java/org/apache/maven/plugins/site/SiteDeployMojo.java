@@ -166,7 +166,7 @@ public class SiteDeployMojo
         {
             throw new MojoExecutionException( "The URL to the site is missing in the project descriptor." );
         }
-        getLog().debug( "The site will be deployed to '" + url + "'");
+        getLog().debug( "The site will be deployed to id '" + url + "' with id '" + id + "'");
 
         Repository repository = new Repository( id, url );
 
