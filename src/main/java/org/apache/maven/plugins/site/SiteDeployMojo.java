@@ -40,8 +40,10 @@ import org.apache.maven.wagon.TransferFailedException;
 import org.apache.maven.wagon.UnsupportedProtocolException;
 import org.apache.maven.wagon.Wagon;
 import org.apache.maven.wagon.authentication.AuthenticationException;
+import org.apache.maven.wagon.authentication.AuthenticationInfo;
 import org.apache.maven.wagon.authorization.AuthorizationException;
 import org.apache.maven.wagon.observers.Debug;
+import org.apache.maven.wagon.providers.webdav.WebDavWagon;
 import org.apache.maven.wagon.proxy.ProxyInfo;
 import org.apache.maven.wagon.repository.Repository;
 import org.codehaus.plexus.PlexusConstants;
@@ -208,18 +210,24 @@ public class SiteDeployMojo
             getLog().debug( "found proxyInfo "
                                 + ( proxyInfo == null ? "null" : "host:port " + proxyInfo.getHost() + ":"
                                     + proxyInfo.getPort() + ", " + proxyInfo.getUserName() ) );
+            AuthenticationInfo authenticationInfo = wagonManager.getAuthenticationInfo( id );
+            getLog().debug( "authenticationInfo with id '" + id + "' : " + authenticationInfo.getUserName() );
+
             if ( proxyInfo != null )
             {
-                wagon.connect( repository, wagonManager.getAuthenticationInfo( id ), proxyInfo );
+                getLog().debug( "connect with proxyInfo" );
+                wagon.connect( repository, authenticationInfo, proxyInfo );
+            }
+            else if ( proxyInfo == null && authenticationInfo != null )
+            {
+                getLog().debug( "connect with authenticationInfo and without proxyInfo" );
+                wagon.connect( repository, authenticationInfo );
             }
             else
             {
-                wagon.connect( repository, wagonManager.getAuthenticationInfo( id ) );
+                getLog().debug( "connect without authenticationInfo and without proxyInfo" );
+                wagon.connect( repository );
             }
-            
-
-            wagon.connect( repository );
-
             wagon.putDirectory( inputDirectory, "." );
 
             if ( chmod && wagon instanceof CommandExecutor )
