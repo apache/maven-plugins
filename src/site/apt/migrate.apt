@@ -33,6 +33,14 @@ Migrate
   adjustments to their environment, documents or configuration. Below is a list
   of these changes and what you as a user need to be aware of.
 
+* From 2.x to 3.0
+
+  * Version 3 of the plugin requires at least <<Maven 3.0-beta-2>> to run.
+
+~~ TODO Copy the content from the wiki to here and kill the wiki page when are ready for the 3.0 release
+
+  []
+
 * From 2.0.x to 2.1.x
 
   * The plugin now requires at least <<Maven 2.1>> to run, you cannot use it
