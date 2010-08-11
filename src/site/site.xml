@@ -28,6 +28,7 @@ under the License.
       <item name="Goals" href="plugin-info.html"/>
       <item name="Usage" href="usage.html"/>
       <item name="FAQ" href="faq.html"/>
+      <item name="Migrate" href="migrate.html"/>
     </menu>
     <menu name="Configuration">
       <item name="Internationalization" href="i18n.html"/>
