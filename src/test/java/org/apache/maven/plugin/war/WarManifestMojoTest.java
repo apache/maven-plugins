@@ -139,6 +139,40 @@ public class WarManifestMojoTest
         assertTrue( idx >= 0 );
 
         idx = content.indexOf( "Implementation-Vendor" );
+
+        assertTrue( idx >= 0 );  
+    }
+
+    public void testManifestWithCustomAttributes()
+      throws Exception
+    {
+        loadMojo( "target/test-classes/unit/manifest/manifest-with-custom-attrs/plugin-config.xml" );
+
+        MavenArchiveConfiguration config = (MavenArchiveConfiguration) getVariableValueFromObject( mojo, "archive" );
+
+        mojo.execute();
+
+        assertTrue( config.getManifest().isAddExtensions() );
+
+        File warSourceDir = (File) getVariableValueFromObject( mojo, "warSourceDirectory" );
+
+        File manifestDir = new File( warSourceDir, "META-INF" );
+
+        File manifest = new File( manifestDir, "MANIFEST.MF" );
+
+        assertTrue( manifest.exists() );
+
+        String content = FileUtils.fileRead( manifest );
+
+        int idx = content.indexOf( "Specification-Title" );
+
+        assertTrue( idx >= 0 );
+        
+        idx = content.indexOf( "Custom-Version" );
+
+        assertTrue( idx >= 0);
+
+
     }
 
     public void loadMojo( String pluginXml )
