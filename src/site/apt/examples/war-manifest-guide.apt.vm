@@ -31,7 +31,7 @@ WAR Manifest Customization
  The manifest can be customized by configuring the WAR Plugin's archiver. For full information on the different
  configuration options available check the documentation for
  {{{http://maven.apache.org/shared/maven-archiver/index.html}Maven Archiver}}.
- This version of Maven WAR Plugin uses Maven Archiver 2.4.
+ This version of Maven WAR Plugin uses Maven Archiver ${mavenArchiverVersion}.
 
 +--------------------+
 <project>
