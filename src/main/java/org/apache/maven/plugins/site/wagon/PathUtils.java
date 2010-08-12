@@ -37,6 +37,7 @@ public final class PathUtils
 {
     private PathUtils()
     {
+        // no op
     }
     
     /**

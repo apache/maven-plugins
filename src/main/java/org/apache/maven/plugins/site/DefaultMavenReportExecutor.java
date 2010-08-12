@@ -20,6 +20,7 @@ package org.apache.maven.plugins.site;
  */
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -45,6 +46,7 @@ import org.apache.maven.plugin.version.PluginVersionResolver;
 import org.apache.maven.plugin.version.PluginVersionResult;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.MavenReport;
+import org.codehaus.classworlds.ClassRealm;
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.component.annotations.Requirement;
 import org.codehaus.plexus.configuration.PlexusConfiguration;
@@ -55,7 +57,41 @@ import org.codehaus.plexus.util.xml.Xpp3DomUtils;
 import org.mortbay.log.Log;
 
 /**
- *
+ * <p>
+ *   This component will build some {@link MavenReportExecution} from {@link MavenReportExecutorRequest}.
+ *   If a {@link MavenReport} need to fork a lifecycle, this fork is executed here. 
+ *   It will ask the core to get some informations in order to correctly setup {@link MavenReport}.
+ * </p>
+ * <p>
+ *   <b>Note</b> if no version is defined in the report plugin the version will be search 
+ *   with method {@link #getPluginVersion(ReportPlugin, RepositoryRequest, MavenReportExecutorRequest)}
+ *   Steps to find a plugin version stop after each step if a non <code>null</code> has been found
+ *   <ul>
+ *     <li>use the one defined in the reportPlugin configuration</li>
+ *     <li>search similar (same groupId and artifactId) mojo in the build/plugins section of the pom</li>
+ *     <li>search similar (same groupId and artifactId) mojo in the build/pluginManagement section of the pom</li>
+ *     <li>ask {@link PluginVersionResolver} to get a version and display a warning as it's not a recommended use</li>  
+ *   </ul>
+ * </p>
+ * <p>
+ *   Following steps are done
+ *   <ul>
+ *     <li>get {@link PluginDescriptor} from the {@link MavenPluginManager#getPluginDescriptor(Plugin, RepositoryRequest)}</li>
+ *     <li>setup a {@link ClassLoader} with the Mojo Site plugin {@link ClassLoader} as parent for the report execution. 
+ *       You must note some classes are imported from the current Site Mojo {@link ClassRealm} see {@link #imports}.
+ *       The artifact resolution excludes the following artifacts (with using an {@link ExclusionSetFilter} : 
+ *       doxia-site-renderer, doxia-sink-api.
+ *       done using {@link MavenPluginManager#setupPluginRealm(PluginDescriptor, org.apache.maven.execution.MavenSession, ClassLoader, List, org.apache.maven.artifact.resolver.filter.ArtifactFilter)}
+ *     </li>
+ *     <li>
+ *       setup the mojo using {@link MavenPluginManager#getConfiguredMojo(Class, org.apache.maven.execution.MavenSession, MojoExecution)}
+ *     </li>
+ *     <li>
+ *       verify with {@link LifecycleExecutor#calculateForkedExecutions(MojoExecution, org.apache.maven.execution.MavenSession)}
+ *       if any forked execution is needed : if yes executes the forked execution here
+ *     </li>
+ *   </ul>
+ * </p>
  * @author Olivier Lamy
  * @since 3.0-beta-1
  */
@@ -74,6 +110,13 @@ public class DefaultMavenReportExecutor
 
     @Requirement
     protected PluginVersionResolver pluginVersionResolver;
+    
+    private List<String> imports = Arrays.asList( "org.apache.maven.reporting.MavenReport",
+                                                  "org.apache.maven.reporting.MavenMultiPageReport",
+                                                  "org.apache.maven.doxia.siterenderer.Renderer",
+                                                  "org.apache.maven.doxia.sink.SinkFactory",
+                                                  "org.codehaus.doxia.sink.Sink", "org.apache.maven.doxia.sink.Sink",
+                                                  "org.apache.maven.doxia.sink.SinkEventAttributes" );
 
     public List<MavenReportExecution> buildMavenReports( MavenReportExecutorRequest mavenReportExecutorRequest )
         throws MojoExecutionException
@@ -83,17 +126,7 @@ public class DefaultMavenReportExecutor
             getLog().debug( "buildMavenReports" );
         }
 
-        List<String> imports = new ArrayList<String>();
-        imports.add( "org.apache.maven.reporting.MavenReport" );
-        imports.add( "org.apache.maven.reporting.MavenMultiPageReport" );
-        imports.add( "org.apache.maven.doxia.siterenderer.Renderer" );
-        imports.add( "org.apache.maven.doxia.sink.SinkFactory" );
-        imports.add( "org.codehaus.doxia.sink.Sink" );
-        imports.add( "org.apache.maven.doxia.sink.Sink" );
-        imports.add( "org.apache.maven.doxia.sink.SinkEventAttributes" );
-
         Set<String> excludes = new HashSet<String>( 1 );
-        //excludes.add( "maven-reporting-impl");
         excludes.add( "doxia-site-renderer" );
         excludes.add( "doxia-sink-api" );
 
@@ -361,6 +394,14 @@ public class DefaultMavenReportExecutor
         return logger;
     }
 
+    /**
+     * 
+     * @param reportPlugin
+     * @param repositoryRequest
+     * @param mavenReportExecutorRequest
+     * @return the plugin version
+     * @throws PluginVersionResolutionException
+     */
     protected String getPluginVersion( ReportPlugin reportPlugin, RepositoryRequest repositoryRequest,
                                        MavenReportExecutorRequest mavenReportExecutorRequest )
         throws PluginVersionResolutionException

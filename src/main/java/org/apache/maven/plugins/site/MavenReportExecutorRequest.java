@@ -23,6 +23,16 @@ import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.project.MavenProject;
 
+/**
+ * <p>
+ *   Bean which contains necessay informations for build {@link MavenReportExecution} 
+ *   with {@link MavenReportExecutor}.
+ *   The goal is to store some informations regarding the current maven execution.
+ * </p>
+ * @author <a href="mailto:olamy@apache.org">olamy</a>
+ * @since 3.0-beta-1
+ * @version $Id$
+ */
 public class MavenReportExecutorRequest
 {
     private ArtifactRepository localRepository;

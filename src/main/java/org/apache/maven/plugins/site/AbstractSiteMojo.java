@@ -47,6 +47,7 @@ public abstract class AbstractSiteMojo
 
     /**
      * @parameter
+     * @since 3.0-beta-1
      */
     protected ReportPlugin[] reportPlugins;
 
