@@ -42,6 +42,16 @@ Migrate
 
   []
 
+* From 2.1.x to 2.2.x
+
+  * The plugin now requires at least <<Maven 2.2.0>> to run, you cannot use it
+  with older Maven versions.
+
+  * The plugin now requires at least <<Java 5>> to run, you cannot use it
+  with older Java versions.
+
+  []
+
 * From 2.0.x to 2.1.x
 
   * The plugin now requires at least <<Maven 2.1>> to run, you cannot use it
