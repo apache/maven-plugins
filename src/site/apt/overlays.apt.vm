@@ -346,7 +346,7 @@ documentedprojectdependency-1.0-SNAPSHOT.war
     ...
 +-----------------+
 
-  * <<useCache>> - set to <<<false>>> to disable the webapp structure cache. Default value is: <<<true>>>.
+  * <<useCache>> - set to <<<true>>> to enable the webapp structure cache. Default value is: <<<false>>>.
 
 +-----------------+
     ...
@@ -356,7 +356,7 @@ documentedprojectdependency-1.0-SNAPSHOT.war
         <artifactId>maven-war-plugin</artifactId>
         <version>${project.version}</version>
         <configuration>
-          <useCache>false</useCache>
+          <useCache>true</useCache>
         </configuration>
        </plugin>
     </plugins>

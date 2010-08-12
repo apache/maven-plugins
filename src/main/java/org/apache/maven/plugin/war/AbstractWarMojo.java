@@ -181,12 +181,12 @@ public abstract class AbstractWarMojo
 
     /**
      * Whether the cache should be used to save the status of the webapp
-     * accross multiple runs.
+     * across multiple runs. Experimental feature so disabled by default.
      *
-     * @parameter expression="${useCache}" default-value="true"
+     * @parameter expression="${useCache}" default-value="false"
      * @since 2.1-alpha-1
      */
-    private boolean useCache = true;
+    private boolean useCache = false;
 
     /**
      * @component role="org.apache.maven.artifact.factory.ArtifactFactory"
