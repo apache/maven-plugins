@@ -6,7 +6,7 @@
  Maria Odea Ching
  Dennis Lundberg
  ------
- 2009-03-08
+ 2010-08-12
  ------
 
  ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -147,8 +147,14 @@ Configuring the Site Descriptor
 
 * Inheritance
 
-  Site descriptors are inherited along the same lines as project descriptors are. When you deploy a project, its site
-  descriptor is also deployed so that it can be inherited.
+  Site descriptors are inherited along the same lines as project descriptors
+  are. If you want your project's site descriptor to be inherited, you need to
+  attach it to the project's main artifact. You use the
+  <<<site:attach-descriptor>>> goal to attach the site descriptor to your
+  project's main artifact.
+
+  In Maven 3 you must attach the site descriptor yourself, even for projects
+  with packaging set to "pom".
 
   By default, only the basic settings are inherited. From the body, <<only>>
   the links are inherited, and these accumulate to contain all the parents'
