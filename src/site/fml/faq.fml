@@ -102,6 +102,23 @@ under the License.
         </p>
       </answer>
     </faq>
+    <faq id="Use_of_url">
+      <question>How does the Site Plugin use the &lt;url&gt; element in the POM?</question>
+      <answer>
+        <p>
+          The Site Plugin uses the &lt;url&gt; element in the POM to create
+          relative links for the generated site. If your project has a URL
+          where the generated site is deployed, then put that URL into the
+          &lt;url&gt; element. If the project's site is not deployed anywhere,
+          then remove the &lt;url&gt; element from the POM.
+        </p>
+        <p>
+          In a multi module build it is important for the parent and child
+          modules to have <strong>different</strong> URLs. If they have the
+          same URL, then links within the combined site will not work.
+        </p>
+      </answer>
+    </faq>
   </part>
   <part id="Specific_issues">
     <title>Specific issues</title>
