@@ -107,22 +107,22 @@ public class ArtifactsPackagingTask
                     else if ( "war".equals( type ) )
                     {
                         // Nothing to do here, it is an overlay and it's already handled
-                        context.getLog().debug( "war artifacts are handled as overlays, ignoring[" + artifact + "]" );
+                        context.getLog().debug( "war artifacts are handled as overlays, ignoring [" + artifact + "]" );
                     }
                     else if ( "zip".equals( type ) )
                     {
                         // Nothing to do here, it is an overlay and it's already handled
-                        context.getLog().debug( "zip artifacts are handled as overlays, ignoring[" + artifact + "]" );
+                        context.getLog().debug( "zip artifacts are handled as overlays, ignoring [" + artifact + "]" );
                     }
                     else
                     {
                         context.getLog().debug(
-                            "Artifact of type[" + type + "] is not supported, ignoring[" + artifact + "]" );
+                            "Artifact of type [" + type + "] is not supported, ignoring [" + artifact + "]" );
                     }
                 }
                 catch ( IOException e )
                 {
-                    throw new MojoExecutionException( "Failed to copy file for artifact[" + artifact + "]", e );
+                    throw new MojoExecutionException( "Failed to copy file for artifact [" + artifact + "]", e );
                 }
             }
         }
