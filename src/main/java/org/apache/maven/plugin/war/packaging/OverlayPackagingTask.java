@@ -61,13 +61,13 @@ public class OverlayPackagingTask
             "OverlayPackagingTask performPackaging overlay.getTargetPath() " + overlay.getTargetPath() );
         if ( overlay.shouldSkip() )
         {
-            context.getLog().info( "Skipping overlay[" + overlay + "]" );
+            context.getLog().info( "Skipping overlay [" + overlay + "]" );
         }
         else
         {
             try
             {
-                context.getLog().info( "Processing overlay[" + overlay + "]" );
+                context.getLog().info( "Processing overlay [" + overlay + "]" );
 
                 // Step1: Extract if necessary
                 final File tmpDir = unpackOverlay( context, overlay );
@@ -94,7 +94,7 @@ public class OverlayPackagingTask
             }
             catch ( IOException e )
             {
-                throw new MojoExecutionException( "Failed to copy file for overlay[" + overlay + "]", e );
+                throw new MojoExecutionException( "Failed to copy file for overlay [" + overlay + "]", e );
             }
         }
     }
@@ -123,7 +123,7 @@ public class OverlayPackagingTask
         }
         else
         {
-            context.getLog().debug( "Overlay[" + overlay + "] was already unpacked" );
+            context.getLog().debug( "Overlay [" + overlay + "] was already unpacked" );
         }
         return tmpDir;
     }

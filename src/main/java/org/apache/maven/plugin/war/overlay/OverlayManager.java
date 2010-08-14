@@ -224,7 +224,7 @@ public class OverlayManager
             }
         }
         throw new InvalidOverlayConfigurationException(
-            "overlay[" + overlay + "] is not a dependency of the project." );
+            "overlay [" + overlay + "] is not a dependency of the project." );
 
     }
 

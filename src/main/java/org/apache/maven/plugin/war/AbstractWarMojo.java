@@ -436,7 +436,7 @@ public abstract class AbstractWarMojo
         }
 
         final long startTime = System.currentTimeMillis();
-        getLog().info( "Assembling webapp[" + project.getArtifactId() + "] in [" + webappDirectory + "]" );
+        getLog().info( "Assembling webapp [" + project.getArtifactId() + "] in [" + webappDirectory + "]" );
 
         final OverlayManager overlayManager =
             new OverlayManager( overlays, project, dependentWarIncludes, dependentWarExcludes, currentProjectOverlay );
