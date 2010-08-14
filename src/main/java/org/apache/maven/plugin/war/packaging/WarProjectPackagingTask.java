@@ -198,7 +198,7 @@ public class WarProjectPackagingTask
     protected void handleClassesDirectory( WarPackagingContext context )
         throws MojoExecutionException
     {
-        ClassesPackagingTask task = new ClassesPackagingTask( currentProjectOverlay);
+        ClassesPackagingTask task = new ClassesPackagingTask( currentProjectOverlay );
         task.performPackaging( context );
     }
 
@@ -308,12 +308,12 @@ public class WarProjectPackagingTask
         if ( !context.getWebappDirectory().exists() )
         {
             context.getLog().warn(
-                "Not copying webapp webResources[" + resource.getDirectory() + "]: webapp directory[" +
-                    context.getWebappDirectory().getAbsolutePath() + "] does not exist!" );
+                "Not copying webapp webResources[" + resource.getDirectory() + "]: webapp directory["
+                    + context.getWebappDirectory().getAbsolutePath() + "] does not exist!" );
         }
 
-        context.getLog().info( "Copying webapp webResources[" + resource.getDirectory() + "] to[" +
-            context.getWebappDirectory().getAbsolutePath() + "]" );
+        context.getLog().info( "Copying webapp webResources[" + resource.getDirectory() + "] to["
+            + context.getWebappDirectory().getAbsolutePath() + "]" );
         String[] fileNames = getFilesToCopy( resource );
         for ( int i = 0; i < fileNames.length; i++ )
         {
@@ -324,8 +324,8 @@ public class WarProjectPackagingTask
                 // MWAR-129 if targetPath is only a dot <targetPath>.</targetPath> or ./
                 // and the Resource is in a part of the warSourceDirectory the file from sources will override this
                 // that's we don't have to add the targetPath yep not nice but works
-                if ( !StringUtils.equals( ".", resource.getTargetPath() ) &&
-                    !StringUtils.equals( "./", resource.getTargetPath() ) )
+                if ( !StringUtils.equals( ".", resource.getTargetPath() )
+                    && !StringUtils.equals( "./", resource.getTargetPath() ) )
                 {
                     targetFileName = resource.getTargetPath() + File.separator + targetFileName;
                 }

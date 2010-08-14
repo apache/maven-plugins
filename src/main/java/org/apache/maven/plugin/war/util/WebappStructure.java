@@ -418,10 +418,10 @@ public class WebappStructure
         {
             DependencyInfo dependencyInfo = (DependencyInfo) it.next();
             final Dependency dependency2 = dependencyInfo.getDependency();
-            if ( StringUtils.equals( dependency.getGroupId(), dependency2.getGroupId() ) &&
-                StringUtils.equals( dependency.getArtifactId(), dependency2.getArtifactId() ) &&
-                StringUtils.equals( dependency.getType(), dependency2.getType() ) &&
-                StringUtils.equals( dependency.getClassifier(), dependency2.getClassifier() ) )
+            if ( StringUtils.equals( dependency.getGroupId(), dependency2.getGroupId() )
+                && StringUtils.equals( dependency.getArtifactId(), dependency2.getArtifactId() )
+                && StringUtils.equals( dependency.getType(), dependency2.getType() )
+                && StringUtils.equals( dependency.getClassifier(), dependency2.getClassifier() ) )
             {
 
                 return dependencyInfo.getTargetFileName();
@@ -452,12 +452,12 @@ public class WebappStructure
         while ( it.hasNext() )
         {
             Dependency dep = (Dependency) it.next();
-            if ( dependency.getGroupId().equals( dep.getGroupId() ) &&
-                dependency.getArtifactId().equals( dep.getArtifactId() ) &&
-                dependency.getType().equals( dep.getType() ) &&
-                ( ( dependency.getClassifier() == null && dep.getClassifier() == null ) ||
-                    ( dependency.getClassifier() != null &&
-                        dependency.getClassifier().equals( dep.getClassifier() ) ) ) )
+            if ( dependency.getGroupId().equals( dep.getGroupId() )
+                && dependency.getArtifactId().equals( dep.getArtifactId() )
+                && dependency.getType().equals( dep.getType() )
+                && ( ( dependency.getClassifier() == null && dep.getClassifier() == null )
+                    || ( dependency.getClassifier() != null
+                        && dependency.getClassifier().equals( dep.getClassifier() ) ) ) )
             {
                 return dep;
             }
