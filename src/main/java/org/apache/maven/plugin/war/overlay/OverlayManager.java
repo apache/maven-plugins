@@ -243,7 +243,7 @@ public class OverlayManager
     }
 
     /**
-     * Returns a list of war {@link org.apache.maven.artifact.Artifact} describing
+     * Returns a list of WAR {@link org.apache.maven.artifact.Artifact} describing
      * the overlays of the current project.
      *
      * @return the overlays as artifacts objects
