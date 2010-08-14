@@ -258,7 +258,7 @@ public abstract class AbstractWarMojo
      * The overlays to apply.
      *
      * @parameter
-     * @since 2.1
+     * @since 2.1-alpha-1
      */
     private List overlays = new ArrayList();
 
