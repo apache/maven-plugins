@@ -297,7 +297,7 @@ public class WarProjectPackagingTask
     /**
      * Copies webapp webResources from the specified directory.
      *
-     * @param context  the war packaging context to use
+     * @param context  the WAR packaging context to use
      * @param resource the resource to copy
      * @throws IOException            if an error occurred while copying the resources
      * @throws MojoExecutionException if an error occurred while retrieving the filter properties
