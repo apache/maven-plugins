@@ -87,9 +87,11 @@ class Cleaner
      *            everything.
      * @param followSymlinks Whether to follow symlinks.
      * @param failOnError Whether to abort with an exception in case a selected file/directory could not be deleted.
+     * @param retryOnError Whether to undertake additional delete attempts in case the first attempt failed.
      * @throws IOException If a file/directory could not be deleted and <code>failOnError</code> is <code>true</code>.
      */
-    public void delete( File basedir, Selector selector, boolean followSymlinks, boolean failOnError )
+    public void delete( File basedir, Selector selector, boolean followSymlinks, boolean failOnError,
+                        boolean retryOnError )
         throws IOException
     {
         if ( !basedir.isDirectory() )
@@ -112,7 +114,7 @@ class Cleaner
 
         File file = followSymlinks ? basedir : basedir.getCanonicalFile();
 
-        delete( file, "", selector, followSymlinks, failOnError );
+        delete( file, "", selector, followSymlinks, failOnError, retryOnError );
     }
 
     /**
@@ -126,10 +128,12 @@ class Cleaner
      *            everything.
      * @param followSymlinks Whether to follow symlinks.
      * @param failOnError Whether to abort with an exception in case a selected file/directory could not be deleted.
+     * @param retryOnError Whether to undertake additional delete attempts in case the first attempt failed.
      * @return The result of the cleaning, never <code>null</code>.
      * @throws IOException If a file/directory could not be deleted and <code>failOnError</code> is <code>true</code>.
      */
-    private Result delete( File file, String pathname, Selector selector, boolean followSymlinks, boolean failOnError )
+    private Result delete( File file, String pathname, Selector selector, boolean followSymlinks, boolean failOnError,
+                           boolean retryOnError )
         throws IOException
     {
         Result result = new Result();
@@ -151,7 +155,8 @@ class Cleaner
                         {
                             String filename = filenames[i];
                             File child = new File( canonical, filename );
-                            result.update( delete( child, prefix + filename, selector, followSymlinks, failOnError ) );
+                            result.update( delete( child, prefix + filename, selector, followSymlinks, failOnError,
+                                                   retryOnError ) );
                         }
                     }
                 }
@@ -183,7 +188,7 @@ class Cleaner
                     logVerbose.log( "Deleting dangling symlink " + file );
                 }
             }
-            result.failures += delete( file, failOnError );
+            result.failures += delete( file, failOnError, retryOnError );
         }
         else
         {
@@ -199,34 +204,42 @@ class Cleaner
      * 
      * @param file The file/directory to delete, must not be <code>null</code>.
      * @param failOnError Whether to abort with an exception in case the file/directory could not be deleted.
+     * @param retryOnError Whether to undertake additional delete attempts in case the first attempt failed.
      * @return <code>0</code> if the file was deleted, <code>1</code> otherwise.
      * @throws IOException If a file/directory could not be deleted and <code>failOnError</code> is <code>true</code>.
      */
-    private int delete( File file, boolean failOnError )
+    private int delete( File file, boolean failOnError, boolean retryOnError )
         throws IOException
     {
         if ( !file.delete() )
         {
-            if ( ON_WINDOWS )
-            {
-                // try to release any locks held by non-closed files
-                System.gc();
-            }
-
             boolean deleted = false;
 
-            int[] delays = { 125, 250, 750 };
-            for ( int i = 0; !deleted && i < delays.length; i++ )
+            if ( retryOnError )
             {
-                try
+                if ( ON_WINDOWS )
                 {
-                    Thread.sleep( delays[i] );
+                    // try to release any locks held by non-closed files
+                    System.gc();
                 }
-                catch ( InterruptedException e )
+
+                int[] delays = { 50, 250, 750 };
+                for ( int i = 0; !deleted && i < delays.length; i++ )
                 {
-                    // ignore
+                    try
+                    {
+                        Thread.sleep( delays[i] );
+                    }
+                    catch ( InterruptedException e )
+                    {
+                        // ignore
+                    }
+                    deleted = file.delete() || !file.exists();
                 }
-                deleted = file.delete() || !file.exists();
+            }
+            else
+            {
+                deleted = !file.exists();
             }
 
             if ( !deleted )

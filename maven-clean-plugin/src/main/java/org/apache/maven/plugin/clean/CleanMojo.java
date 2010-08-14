@@ -131,6 +131,16 @@ public class CleanMojo
     private boolean failOnError;
 
     /**
+     * Indicates whether the plugin should undertake additional attempts (after a short delay) to delete a file if the
+     * first attempt failed. This is meant to help deleting files that are temporarily locked by third-party tools like
+     * virus scanners or search indexing.
+     * 
+     * @parameter expression="${maven.clean.retryOnError}" default-value="true"
+     * @since 2.4.2
+     */
+    private boolean retryOnError;
+
+    /**
      * Disables the deletion of the default output directories configured for a project. If set to <code>true</code>,
      * only the files/directories selected via the parameter {@link #filesets} will be deleted.
      * 
@@ -165,7 +175,7 @@ public class CleanMojo
                 File directory = directories[i];
                 if ( directory != null )
                 {
-                    cleaner.delete( directory, null, followSymLinks, failOnError );
+                    cleaner.delete( directory, null, followSymLinks, failOnError, retryOnError );
                 }
             }
 
@@ -179,7 +189,8 @@ public class CleanMojo
                         throw new MojoExecutionException( "Missing base directory for " + fileset );
                     }
                     GlobSelector selector = new GlobSelector( fileset.getIncludes(), fileset.getExcludes() );
-                    cleaner.delete( fileset.getDirectory(), selector, fileset.isFollowSymlinks(), failOnError );
+                    cleaner.delete( fileset.getDirectory(), selector, fileset.isFollowSymlinks(), failOnError,
+                                    retryOnError );
                 }
             }
         }
