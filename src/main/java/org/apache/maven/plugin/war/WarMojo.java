@@ -51,7 +51,7 @@ public class WarMojo
     /**
      * The directory for the generated WAR.
      *
-     * @parameter expression="${project.build.directory}"
+     * @parameter default-value="${project.build.directory}"
      * @required
      */
     private String outputDirectory;
@@ -59,14 +59,14 @@ public class WarMojo
     /**
      * The name of the generated WAR.
      *
-     * @parameter expression="${project.build.finalName}"
+     * @parameter default-value="${project.build.finalName}"
      * @required
      */
     private String warName;
 
     /**
      * Classifier to add to the generated WAR. If given, the artifact will be an attachment instead.
-     * The classifier will not be applied to the jar file of the project - only to the war file.
+     * The classifier will not be applied to the JAR file of the project - only to the WAR file.
      *
      * @parameter
      */
@@ -74,7 +74,7 @@ public class WarMojo
 
     /**
      * The comma separated list of tokens to exclude from the WAR before
-     * packaging. This option may be used to implement the skinny war use
+     * packaging. This option may be used to implement the skinny WAR use
      * case.
      *
      * @parameter alias="packagingExcludes"
@@ -85,7 +85,7 @@ public class WarMojo
     /**
      * The comma separated list of tokens to include in the WAR before
      * packaging. By default everything is included. This option may be used
-     * to implement the skinny war use case.
+     * to implement the skinny WAR use case.
      *
      * @parameter alias="packagingIncludes"
      * @since 2.1-beta-1
@@ -114,7 +114,7 @@ public class WarMojo
 
     /**
      * Whether or not to fail the build is the <code>web.xml</code> file is missing. Set to <code>false</code>
-     * if you want you war built without a <code>web.xml</code> file.
+     * if you want you WAR built without a <code>web.xml</code> file.
      *
      * @parameter expression="${failOnMissingWebXml}" default-value="true"
      * @since 2.1-alpha-2
@@ -178,7 +178,7 @@ public class WarMojo
     /**
      * Generates the webapp according to the <tt>mode</tt> attribute.
      *
-     * @param warFile the target war file
+     * @param warFile the target WAR file
      * @throws IOException            if an error occurred while copying files
      * @throws ArchiverException      if the archive could not be created
      * @throws ManifestException      if the manifest could not be created

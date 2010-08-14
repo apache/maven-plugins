@@ -55,7 +55,7 @@ import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
- * Contains commons jobs for war mojos.
+ * Contains common jobs for WAR mojos.
  *
  * @version $Id$
  */
@@ -74,9 +74,9 @@ public abstract class AbstractWarMojo
     private static final String WEB_INF = "WEB-INF";
 
     /**
-     * The maven project.
+     * The Maven project.
      *
-     * @parameter expression="${project}"
+     * @parameter default-value="${project}"
      * @required
      * @readonly
      */
@@ -85,7 +85,7 @@ public abstract class AbstractWarMojo
     /**
      * The directory containing generated classes.
      *
-     * @parameter expression="${project.build.outputDirectory}"
+     * @parameter default-value="${project.build.outputDirectory}"
      * @required
      * @readonly
      */
@@ -112,7 +112,7 @@ public abstract class AbstractWarMojo
     /**
      * The directory where the webapp is built.
      *
-     * @parameter expression="${project.build.directory}/${project.build.finalName}"
+     * @parameter default-value="${project.build.directory}/${project.build.finalName}"
      * @required
      */
     private File webappDirectory;
@@ -120,7 +120,7 @@ public abstract class AbstractWarMojo
     /**
      * Single directory for extra files to include in the WAR.
      *
-     * @parameter expression="${basedir}/src/main/webapp"
+     * @parameter default-value="${basedir}/src/main/webapp"
      * @required
      */
     private File warSourceDirectory;
@@ -156,7 +156,7 @@ public abstract class AbstractWarMojo
     /**
      * Directory to unpack dependent WARs into if needed
      *
-     * @parameter expression="${project.build.directory}/war/work"
+     * @parameter default-value="${project.build.directory}/war/work"
      * @required
      */
     private File workDirectory;
@@ -173,7 +173,7 @@ public abstract class AbstractWarMojo
     /**
      * The file containing the webapp structure cache.
      *
-     * @parameter expression="${project.build.directory}/war/work/webapp-cache.xml"
+     * @parameter default-value="${project.build.directory}/war/work/webapp-cache.xml"
      * @required
      * @since 2.1-alpha-1
      */
@@ -235,7 +235,7 @@ public abstract class AbstractWarMojo
 
     /**
      * The comma separated list of tokens to include when doing
-     * a war overlay.
+     * a WAR overlay.
      * Default is '**'
      *
      * @parameter
@@ -246,7 +246,7 @@ public abstract class AbstractWarMojo
 
     /**
      * The comma separated list of tokens to exclude when doing
-     * a war overlay.
+     * a WAR overlay.
      *
      * @parameter
      *
@@ -272,7 +272,7 @@ public abstract class AbstractWarMojo
     private List nonFilteredFileExtensions;
 
     /**
-     * @parameter expression="${session}"
+     * @parameter default-value="${session}"
      * @readonly
      * @required
      * @since 2.1-alpha-2
@@ -323,7 +323,7 @@ public abstract class AbstractWarMojo
 
     /**
      * Returns a string array of the excludes to be used
-     * when copying the content of the war source directory.
+     * when copying the content of the WAR source directory.
      *
      * @return an array of tokens to exclude
      */
@@ -352,7 +352,7 @@ public abstract class AbstractWarMojo
 
     /**
      * Returns a string array of the includes to be used
-     * when assembling/copying the war.
+     * when assembling/copying the WAR.
      *
      * @return an array of tokens to include
      */
@@ -363,7 +363,7 @@ public abstract class AbstractWarMojo
 
     /**
      * Returns a string array of the excludes to be used
-     * when adding dependent wars as an overlay onto this war.
+     * when adding dependent WAR as an overlay onto this WAR.
      *
      * @return an array of tokens to exclude
      */
@@ -383,7 +383,7 @@ public abstract class AbstractWarMojo
 
     /**
      * Returns a string array of the includes to be used
-     * when adding dependent wars as an overlay onto this war.
+     * when adding dependent WARs as an overlay onto this WAR.
      *
      * @return an array of tokens to include
      */
