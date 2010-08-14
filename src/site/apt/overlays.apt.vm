@@ -3,8 +3,9 @@
  ------
  Pete Marvin King
  Stephane Nicoll
+ Dennis Lundberg
  ------
- 2008-08-03
+ 2010-08-14
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
 ~~ or more contributor license agreements.  See the NOTICE file
@@ -28,19 +29,16 @@
 
 Overlays
 
- Overlays are used to share common resources accross multiple web applications. In general,
- all dependencies of a WAR project are collected in <<<WEB-INF/lib>>> except for WAR
- artifacts that are overlayed on the WAR source.
+ Overlays are used to share common resources across multiple web applications.
+ The dependencies of a WAR project are collected in <<<WEB-INF/lib>>>, except for WAR
+ artifacts which are overlayed on the WAR project itself.
 
- In previous versions of the WAR Plugin, no configuration was necessary. This is still the
- case if you are happy with the default settings. However, if you need more control, read on!
 
 * Overlays at a glance
 
-  To demonstrate, given this project structure:
+  To demonstrate, given this structure for the project <<<documentedproject>>>:
 
 +-----------------+
- .
  |-- pom.xml
  `-- src
      `-- main
@@ -61,7 +59,25 @@ Overlays
                  `-- websource.jsp
 +-----------------+
 
- The project depends on <<<documentedprojectdependency-1.0-SNAPSHOT.war>>>:
+ The project depends on another WAR artifact, <<<documentedprojectdependency-1.0-SNAPSHOT.war>>>,
+ which is declared as a dependency in the project's <<<pom.xml>>>:
+
++-----------------+
+  ...
+  <dependencies>
+    <dependency>
+      <groupId>com.example.projects</groupId>
+      <artifactId>documentedprojectdependency</artifactId>
+      <version>1.0-SNAPSHOT</version>
+      <type>war</type>
+      <scope>runtime</scope>
+    </dependency>
+    ...
+  </dependencies>
+  ...
++-----------------+
+
+  The structure for the <<<documentedprojectdependency>>> WAR file looks like this:
 
 +-----------------+
 documentedprojectdependency-1.0-SNAPSHOT.war
@@ -84,35 +100,14 @@ documentedprojectdependency-1.0-SNAPSHOT.war
  `-- index-dependency.jsp
 +-----------------+
 
- Assuming that you've declared the WAR artifact as a dependency in your <<<pom.xml>>>:
+ The resulting WAR would end up like this:
 
 +-----------------+
-  ...
-  <dependencies>
-    <dependency>
-      <groupId>com.example.projects</groupId>
-      <artifactId>documentedprojectdependency</artifactId>
-      <version>1.0-SNAPSHOT</version>
-      <type>war</type>
-      <scope>runtime</scope>
-    </dependency>
-    ...
-  </dependencies>
-  ...
-+-----------------+
-
- the resulting WAR would end up like this:
-
-+-----------------+
-
  |-- META-INF
  |   |-- MANIFEST.MF
  |   `-- maven
  |       `-- com.example.projects
- |           |-- documentedproject
- |           |   |-- pom.properties
- |           |   `-- pom.xml
- |           `-- documentedprojectdependency
+ |           `-- documentedproject
  |               |-- pom.properties
  |               `-- pom.xml
  |-- WEB-INF
@@ -132,37 +127,43 @@ documentedprojectdependency-1.0-SNAPSHOT.war
      `-- websource.jsp
 +-----------------+
 
+  The <<<web.xml>>> file above comes from <<<documentedproject>>>.
+
+
 * Overlay types
 
-  The WAR Plugin handles both <<war>> and <<zip>> artifacts. However, for backard compatibility reason, zip
-  overlays are handled only if they are defined explicitely in the plugin's configuration.
+  The WAR Plugin handles both <<war>> and <<zip>> artifacts as overlays. However, for backward compatibility reasons, zip
+  overlays are handled only if they are defined explicitly in the plugin's configuration.
 
 
 * Configuring Overlays
 
-  The {overlay} element can be configured as follows:
+  In previous versions of the WAR Plugin, no configuration was necessary. This is still the
+  case if you are happy with the default settings. However, if you need more control, read on!
 
-  * <<id>> - sets the id of the overlay. If none is provided, the WAR Plugin will
+  The <<<\<{overlay}\>>>> element can have the following child elements:
+
+  * <<id>> - the id of the overlay. If none is provided, the WAR Plugin will
   generate one.
 
-  * <<groupId>> - sets the groupId of the overlay artifact you want to configure.
+  * <<groupId>> - the groupId of the overlay artifact you want to configure.
 
-  * <<artifactId>> - sets the artifactId of the overlay artifact you want to
+  * <<artifactId>> - the artifactId of the overlay artifact you want to
   configure.
 
-  * <<type>> - sets the type of the overlay artifact you want to
+  * <<type>> - the type of the overlay artifact you want to
   configure. Default value is: <<<war>>>.
 
-  * <<classifier>> - sets the classifier of the overlay artifact you want to
-  configure if multiple artifacts matches the groupId/artifact.
+  * <<classifier>> - the classifier of the overlay artifact you want to
+  configure if multiple artifacts matches the groupId/artifactId.
 
-  * <<includes>> - sets the files to include. By default, all files are included.
+  * <<includes>> - the files to include. By default, all files are included.
 
-  * <<excludes>> - sets the files to exclude. By default, the <<<META-INF>>> directory
+  * <<excludes>> - the files to exclude. By default, the <<<META-INF>>> directory
   is excluded.
 
-  * <<targetPath>> - sets the target relative path in the webapp structure, which is only
-  available for <<<war>>> types. By default, the content of the overlay is added in the root
+  * <<targetPath>> - the target relative path in the webapp structure, which is only
+  available for overlays of type <<<war>>>. By default, the content of the overlay is added in the root
   structure of the webapp.
 
   * <<skip>> - set to <<<true>>> to skip this overlay. Default value is: <<<false>>>.
@@ -186,12 +187,12 @@ documentedprojectdependency-1.0-SNAPSHOT.war
               <groupId>com.example.projects</groupId>
               <artifactId>documentedprojectdependency</artifactId>
               <excludes>
-                <exclude>images/sampleimage-dependency.jpg</exclude>
+                <exclude>WEB-INF/classes/images/sampleimage-dependency.jpg</exclude>
               </excludes>
             </overlay>
           </overlays>
         </configuration>
-       </plugin>
+      </plugin>
     </plugins>
   </build>
   ...
@@ -201,12 +202,12 @@ documentedprojectdependency-1.0-SNAPSHOT.war
 * Overlays packaging
 
   Overlays are applied with a first-win strategy (hence if a file has been copied by
-  an overlay, it won't be copied anymore). Overlays are applied in the order in which
-  they are defined in the <<<overlays>>> configuration. If no configuration is provided,
-  the order in which they are defined in the dependencies is used (warning: this is not
+  one overlay, it won't be copied by another). Overlays are applied in the order in which
+  they are defined in the <<<\<overlays\>>>> configuration. If no configuration is provided,
+  the order in which the dependencies are defined in the POM is used (warning: this is not
   deterministic, especially if you have overlays as transitive dependencies). In case of
   a mixed situation (e.g. configured overlays and non-configured overlays), non-configured
-  overlays are added after configured overlays.
+  overlays are applied after configured overlays.
 
   By default, the source of the project (a.k.a the current build) is added first (e.g.
   before any overlay is applied). The current build is defined as a special overlay
@@ -214,7 +215,7 @@ documentedprojectdependency-1.0-SNAPSHOT.war
   configure the current build after those overlays.
 
   For instance, if <<<my-webapp>>> from the <<<com.example.projects>>> group is a dependency
-  of the project and needs to be applied before the project's source, do as follows:
+  of the project and needs to be applied before the project's own source, do as follows:
 
 
 +-----------------+
@@ -232,7 +233,7 @@ documentedprojectdependency-1.0-SNAPSHOT.war
               <artifactId>my-webapp</artifactId>
             </overlay>
             <overlay>
-              <!-- empty groupId/artifactId is detected as the current build -->
+              <!-- empty groupId/artifactId represents the current build -->
             </overlay>
           </overlays>
         </configuration>
@@ -242,8 +243,8 @@ documentedprojectdependency-1.0-SNAPSHOT.war
   ...
 +-----------------+
 
-  Note that in the scenario above, any other overlay will be applied after the current build
-  since they have not been configured in the <<<overlays>>> element.
+  <<Note:>> In the scenario above, any other WAR dependency will be applied after the current build
+  since they have not been configured in the <<<\<overlays\>>>> element.
 
   To perform an even more fine grained overwriting policy, overlays can be packaged multiple times
   with different includes/excludes. For instance if the <<<index.jsp>>> file of the
@@ -269,7 +270,7 @@ documentedprojectdependency-1.0-SNAPSHOT.war
               </includes>
             </overlay>
             <overlay>
-              <!-- empty groupId/artifactId is detected as the current build -->
+              <!-- empty groupId/artifactId represents the current build -->
             </overlay>
 
             <!-- Other overlays here if necessary -->
@@ -290,7 +291,7 @@ documentedprojectdependency-1.0-SNAPSHOT.war
 
 * Overlay global settings
 
-   The following settings can be specified globally and modify the way overlays are applied.
+   The following settings can be specified globally and modify the way all overlays are applied.
 
    * <<dependentWarIncludes>> - sets the default includes to apply to all overlays. Any overlay that
     has no specific <<<includes>>> element will inherit this setting by default.
