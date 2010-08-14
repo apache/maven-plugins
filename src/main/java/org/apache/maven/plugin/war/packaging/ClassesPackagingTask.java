@@ -78,7 +78,7 @@ public class ClassesPackagingTask
                 catch ( IOException e )
                 {
                     throw new MojoExecutionException(
-                        "Could not copy webapp classes[" + context.getClassesDirectory().getAbsolutePath() + "]", e );
+                        "Could not copy webapp classes [" + context.getClassesDirectory().getAbsolutePath() + "]", e );
                 }
             }
         }
@@ -99,7 +99,7 @@ public class ClassesPackagingTask
         catch ( InterpolationException e )
         {
             throw new MojoExecutionException(
-                "Could not get the final name of the artifact[" + artifact.getGroupId() + ":" + artifact.getArtifactId()
+                "Could not get the final name of the artifact [" + artifact.getGroupId() + ":" + artifact.getArtifactId()
                     + ":" + artifact.getVersion() + "]", e );
         }
         final String targetFilename = LIB_PATH + archiveName;
@@ -115,7 +115,7 @@ public class ClassesPackagingTask
         else
         {
             context.getLog().warn(
-                "Could not generate archive classes file[" + targetFilename + "] has already been copied." );
+                "Could not generate archive classes file [" + targetFilename + "] has already been copied." );
         }
     }
 }

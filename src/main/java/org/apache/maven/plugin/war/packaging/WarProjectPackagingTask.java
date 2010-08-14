@@ -136,7 +136,7 @@ public class WarProjectPackagingTask
                 }
                 catch ( IOException e )
                 {
-                    throw new MojoExecutionException( "Could not copy resource[" + resource.getDirectory() + "]", e );
+                    throw new MojoExecutionException( "Could not copy resource [" + resource.getDirectory() + "]", e );
                 }
             }
         }
@@ -158,7 +158,7 @@ public class WarProjectPackagingTask
         else if ( !context.getWebappSourceDirectory().getAbsolutePath().equals(
             context.getWebappDirectory().getPath() ) )
         {
-            context.getLog().info( "Copying webapp resources[" + context.getWebappSourceDirectory() + "]" );
+            context.getLog().info( "Copying webapp resources [" + context.getWebappSourceDirectory() + "]" );
             final PathSet sources =
                 getFilesToIncludes( context.getWebappSourceDirectory(), context.getWebappSourceIncludes(),
                                     context.getWebappSourceExcludes() );
@@ -170,7 +170,7 @@ public class WarProjectPackagingTask
             catch ( IOException e )
             {
                 throw new MojoExecutionException(
-                    "Could not copy webapp sources[" + context.getWebappDirectory().getAbsolutePath() + "]", e );
+                    "Could not copy webapp sources [" + context.getWebappDirectory().getAbsolutePath() + "]", e );
             }
         }
     }
@@ -308,11 +308,11 @@ public class WarProjectPackagingTask
         if ( !context.getWebappDirectory().exists() )
         {
             context.getLog().warn(
-                "Not copying webapp webResources[" + resource.getDirectory() + "]: webapp directory["
+                "Not copying webapp webResources [" + resource.getDirectory() + "]: webapp directory ["
                     + context.getWebappDirectory().getAbsolutePath() + "] does not exist!" );
         }
 
-        context.getLog().info( "Copying webapp webResources[" + resource.getDirectory() + "] to["
+        context.getLog().info( "Copying webapp webResources [" + resource.getDirectory() + "] to ["
             + context.getWebappDirectory().getAbsolutePath() + "]" );
         String[] fileNames = getFilesToCopy( resource );
         for ( int i = 0; i < fileNames.length; i++ )

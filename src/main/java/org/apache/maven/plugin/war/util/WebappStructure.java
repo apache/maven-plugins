@@ -253,7 +253,7 @@ public class WebappStructure
 
             }
             throw new IllegalStateException(
-                "Should not happen, path[" + path + "] is flagged as being registered but was not found." );
+                "Should not happen, path [" + path + "] is flagged as being registered but was not found." );
         }
 
     }
