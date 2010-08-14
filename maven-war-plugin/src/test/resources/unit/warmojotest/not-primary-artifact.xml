@@ -24,7 +24,7 @@ under the License.
       <plugin>
         <artifactId>maven-war-plugin</artifactId>
         <configuration>
-        	  <primaryArtifact>false</primaryArtifact>
+          <primaryArtifact>false</primaryArtifact>
         </configuration>
       </plugin>
     </plugins>

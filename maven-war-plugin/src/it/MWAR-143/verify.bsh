@@ -60,9 +60,9 @@ filesAreIdentical( File expected, File current )
 try
 {
 
-	File originalImg = new File( basedir, "war-common/src/main/images/duke-beer.jpg" );
-	
-	File targetImg = new File( basedir, "war-common/target/common-overlay-1.0-SNAPSHOT/duke-beer.jpg" );
+    File originalImg = new File( basedir, "war-common/src/main/images/duke-beer.jpg" );
+
+    File targetImg = new File( basedir, "war-common/target/common-overlay-1.0-SNAPSHOT/duke-beer.jpg" );
 
     boolean identical = filesAreIdentical( originalImg, targetImg );
 
@@ -100,11 +100,11 @@ try
     int indexOf = paramContent.indexOf( "debug.test = hello world !" );
     if ( indexOf < 0)
     {
-    	System.err.println( "filter.properties does not contains debug.test = hello world !" );
-    	return false;
+        System.err.println( "filter.properties does not contains debug.test = hello world !" );
+        return false;
     }
     
-	targetImg = new File( basedir, "war-filter-overlay/target/custom-manifest-1.0-SNAPSHOT/duke-beer.jpg" );
+    targetImg = new File( basedir, "war-filter-overlay/target/custom-manifest-1.0-SNAPSHOT/duke-beer.jpg" );
 
     boolean identical = filesAreIdentical( originalImg, targetImg );
     

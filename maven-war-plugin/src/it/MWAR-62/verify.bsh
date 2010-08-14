@@ -41,14 +41,14 @@ try
     if ( devProperties.exists() )
     {
         System.err.println( "dev.properties has not been excluded." );
-        return false;    	
+        return false;
     }
     
     File testProperties = new File ( webAppDirectory, "test.properties" );
     if ( testProperties.exists() )
     {
         System.err.println( "test.properties has not been excluded." );
-        return false;    	
+        return false;
     }    
         
 }

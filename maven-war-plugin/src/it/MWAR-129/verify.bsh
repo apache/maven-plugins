@@ -53,8 +53,8 @@ try
     int indexOf = paramContent.indexOf( "<c:set var=\"app_version\" value=\"1.0-SNAPSHOT\"/>" );
     if ( indexOf < 0)
     {
-    	System.err.println( "param.jsp not contains <c:set var=\"app_version\" value=\"1.0-SNAPSHOT\"/>" );
-    	return false;
+        System.err.println( "param.jsp not contains <c:set var=\"app_version\" value=\"1.0-SNAPSHOT\"/>" );
+        return false;
     }
     
 }

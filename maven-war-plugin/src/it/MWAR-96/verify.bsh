@@ -52,15 +52,15 @@ try
     int indexOf = paramContent.indexOf( "<td>java version : " + javaVersion + "</td>" );
     if ( indexOf < 0)
     {
-    	System.err.println( "index.jsp not contains <td>java version : " + javaVersion + "</td>" );
-    	return false;
+        System.err.println( "index.jsp not contains <td>java version : " + javaVersion + "</td>" );
+        return false;
     }
     
     indexOf = paramContent.indexOf("<td>okitworks</td>");
     if ( indexOf < 0)
     {
-    	System.err.println( "index.jsp not contains <td>okitworks</td>" );
-    	return false;
+        System.err.println( "index.jsp not contains <td>okitworks</td>" );
+        return false;
     }
     
 }
