@@ -52,15 +52,15 @@ try
     int indexOf = paramContent.indexOf( "<text>hallo @@ hallo</text>" );
     if ( indexOf < 0)
     {
-    	System.err.println( "filterme.xml does not contains <text>hallo @@ hallo</text>" );
-    	return false;
+        System.err.println( "filterme.xml does not contains <text>hallo @@ hallo</text>" );
+        return false;
     }
     
-	indexOf = paramContent.indexOf( "<text2>start-${}-end</text2>" );
+    indexOf = paramContent.indexOf( "<text2>start-${}-end</text2>" );
     if ( indexOf < 0)
     {
-    	System.err.println( "filterme.xml does not contains <text2>start-${}-end</text2>" );
-    	return false;
+        System.err.println( "filterme.xml does not contains <text2>start-${}-end</text2>" );
+        return false;
     }    
     
 }

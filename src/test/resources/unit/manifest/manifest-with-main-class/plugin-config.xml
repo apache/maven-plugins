@@ -24,13 +24,13 @@ under the License.
       <plugin>
         <artifactId>maven-war-plugin</artifactId>
         <configuration>
-		  <project implementation="org.apache.maven.plugin.war.stub.MavenProjectArtifactsStub" />
+          <project implementation="org.apache.maven.plugin.war.stub.MavenProjectArtifactsStub" />
           <warSourceDirectory>${basedir}/target/test-classes/unit/manifest/manifest-with-main-class/src/main</warSourceDirectory>
-		  <archive>
-		    <manifest>
-			  <mainClass>org.dummy.test.SomeClass</mainClass>
-			</manifest>
-		  </archive>
+          <archive>
+            <manifest>
+              <mainClass>org.dummy.test.SomeClass</mainClass>
+            </manifest>
+          </archive>
         </configuration>
       </plugin>
     </plugins>
