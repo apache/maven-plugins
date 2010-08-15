@@ -59,13 +59,13 @@ under the License.
      <question>What's the difference between using dependentWarExclude and provided scope?</question>
      <answer>
        <p><code>dependentWarExclude</code> is used in <a href="overlays.html">overlays</a> for excluding dependent
-       WAR files from the exploded webapp.</p>
+       WAR files from the assembled webapp.</p>
      </answer>
    </faq>
    <faq id="webresourcesexclude">
      <question>How do I exclude files in my web resources?</question>
      <answer>
-       <p>Use the <code>webResources</code> <code>exclude</code> parameter to identify the tokens to exclude.</p>
+       <p>Use the <code>&lt;webResources&gt;</code> / <code>&lt;exclude&gt;</code> parameter to identify the tokens to exclude.</p>
        <p>For more information refer to <a href="examples/adding-filtering-webresources.html">Adding and Filtering
        External Web Resources</a>.</p>
      </answer>

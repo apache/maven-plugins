@@ -43,7 +43,7 @@ Using File Name Mapping
 
  The <<<outputFileNameMapping>>> parameter allows you to give a custom pattern. Each token defined in the
  pattern will be replaced with a value from the current artifact. You can use any property of Artifact and
- ArtifactHandler as a token. There is also a special token named <<<dashClassifier?>>> that can be used, since 2.1-beta-2.
+ ArtifactHandler as a token. There is also a special token named <<<dashClassifier?>>> that can be used, since 2.1.
  It will add the string "-yourclassifier" if and only if the artifact has a classifier.
 
  For instance, to store the libraries and TLDs without version numbers or classifiers, use the following pattern:

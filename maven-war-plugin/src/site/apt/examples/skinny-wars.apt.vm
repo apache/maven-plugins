@@ -69,7 +69,7 @@ Creating Skinny WARs
  This is useful when there is a need to package a small, but non-empty, subset
  of JARs into the WAR. When making an EAR of skinny WARs, one wants to package
  all of the JARs into the EAR. Sometimes a list of JARs must be packaged into
- the WAR though in order for it to work properly, like tag libraries.
+ the WAR though in order for it to work properly, like with tag libraries.
 
 +-----------------+
 <project>

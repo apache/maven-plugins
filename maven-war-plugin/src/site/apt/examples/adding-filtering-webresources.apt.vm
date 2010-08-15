@@ -35,7 +35,7 @@ Adding and Filtering External Web Resources
  The WAR Plugin is also capable of including resources not found in the default resource
  directory through the <<<webResources>>> parameter.
 
-*POM configuration
+*Adding web resources
 
 +-------+
 <project>
@@ -78,9 +78,8 @@ Adding and Filtering External Web Resources
          |           `-- projects
          |               `-- SampleAction.java
          |-- resources
-         |   |-- images
-         |   |   `-- sampleimage.jpg
-         |   `-- sampleresource
+         |   `-- images
+         |       `-- sampleimage.jpg
          `-- webapp
              |-- WEB-INF
              |   `-- web.xml
@@ -120,7 +119,7 @@ documentedproject-1.0-SNAPSHOT.war
  <<<external-resource2.jpg>>> and <<<image2>>> are copied to the root of the WAR, preserving the
  directory structure.
 
-*Configuring webResources
+*Configuring web Resources
 
  <<<webResources>>> is a list of resources. All options of resource are supported.
 
@@ -245,9 +244,8 @@ documentedproject-1.0-SNAPSHOT.war
          |           `-- projects
          |               `-- SampleAction.java
          |-- resources
-         |   |-- images
-         |   |   `-- sampleimage.jpg
-         |   `-- sampleresource
+         |   `-- images
+         |       `-- sampleimage.jpg
          `-- webapp
              |-- WEB-INF
              |   `-- web.xml
