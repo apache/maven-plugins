@@ -33,4 +33,17 @@ under the License.
   <scm/>
   <issueManagement/>
   <organization/>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <artifactId>maven-doap-plugin</artifactId>
+          <configuration>
+            <about>Maven 3 requires this configuration since default value (=project.url) is null</about>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
 </project>
