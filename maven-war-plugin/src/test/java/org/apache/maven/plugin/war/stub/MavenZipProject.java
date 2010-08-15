@@ -1,10 +1,5 @@
 package org.apache.maven.plugin.war.stub;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import org.apache.maven.artifact.Artifact;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -23,6 +18,12 @@ import org.apache.maven.artifact.Artifact;
  * specific language governing permissions and limitations
  * under the License.
  */
+
+import java.util.HashSet;
+import java.util.Set;
+
+import org.apache.maven.artifact.Artifact;
+
 /**
  * @author <a href="mailto:olamy@apache.org">olamy</a>
  * @since 9 juin 07
