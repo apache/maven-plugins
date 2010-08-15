@@ -29,14 +29,14 @@ under the License.
   </parent>
 
   <artifactId>maven-war-plugin</artifactId>
-  <version>2.1-beta-2-SNAPSHOT</version>
+  <version>2.1-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
   <name>Maven WAR Plugin</name>
   <description>Builds a Web Application Archive (WAR) file from the project output and its dependencies.</description>
 
   <prerequisites>
-    <maven>2.0.6</maven>
+    <maven>${mavenVersion}</maven>
   </prerequisites>
 
   <scm>
