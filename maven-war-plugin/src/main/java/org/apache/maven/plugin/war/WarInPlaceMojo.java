@@ -23,7 +23,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 
 /**
- * Generate the webapp in the source directory.
+ * Generate the webapp in the WAR source directory.
  *
  * @goal inplace
  * @requiresDependencyResolution runtime
