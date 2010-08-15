@@ -3,7 +3,7 @@
  ------
  Pete Marvin King
  ------
- 2009-03-08
+ 2010-08-15
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -40,10 +40,10 @@ Maven WAR Plugin
    an exploded webapp in a specified directory.
 
  * {{{./inplace-mojo.html}war:inplace}} another variation of <<<war:explode>>> where the webapp is instead generated in the
-   web source directory, which is <<<src/main/webapp>>> by default.
+   web application source directory, which is <<<src/main/webapp>>> by default.
 
  * {{{./manifest-mojo.html}war:manifest}} generates a manifest for this webapp. The manifest file is created in the
-   <<<warSourceDirectory>>>.
+   web application source directory.
 
  []
 

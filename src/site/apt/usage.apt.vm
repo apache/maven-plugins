@@ -3,7 +3,7 @@
  ------
  Pete Marvin King
  ------
- 2008-08-03
+ 2010-08-15
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -45,7 +45,7 @@ Usage
 
 *Using the <<<package>>> phase with the project package type as war / invocation of the <<<war:war>>> goal
 
- This is the general way of using the WAR Plugin.
+ This is the normal way of using the WAR Plugin.
  To illustrate, here's the <<<pom.xml>>> for our project:
 
 +----------+
@@ -64,7 +64,6 @@ Usage
  The project's structure looks like this:
 
 +----------+
- .
  |-- pom.xml
  `-- src
      `-- main
@@ -74,9 +73,8 @@ Usage
          |           `-- projects
          |               `-- SampleAction.java
          |-- resources
-         |   |-- images
-         |   |   `-- sampleimage.jpg
-         |   `-- sampleresource
+         |   `-- images
+         |       `-- sampleimage.jpg
          `-- webapp
              |-- WEB-INF
              |   `-- web.xml
@@ -188,7 +186,6 @@ mvn compile war:inplace
  This will result in:
 
 +----------+
- .
  |-- pom.xml
  |-- src
  |   `-- main
@@ -198,9 +195,8 @@ mvn compile war:inplace
  |       |           `-- projects
  |       |               `-- SampleAction.java
  |       |-- resources
- |       |   |-- images
- |       |   |   `-- sampleimage.jpg
- |       |   `-- sampleresource
+ |       |   `-- images
+ |       |       `-- sampleimage.jpg
  |       `-- webapp
  |           |-- META-INF
  |           |-- WEB-INF
