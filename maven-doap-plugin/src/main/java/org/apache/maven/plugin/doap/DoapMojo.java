@@ -278,7 +278,6 @@ public class DoapMojo
      * <br/>
      *
      * @parameter expression="${about}" default-value="${project.url}"
-     * @required
      * @since 1.0
      */
     private String about;
