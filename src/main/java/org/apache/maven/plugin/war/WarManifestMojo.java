@@ -47,7 +47,7 @@ public class WarManifestMojo
     extends AbstractWarMojo
 {
     /**
-     * The War archiver.
+     * The WAR archiver.
      *
      * @component role="org.codehaus.plexus.archiver.Archiver" roleHint="war"
      */
@@ -55,7 +55,7 @@ public class WarManifestMojo
 
 
     /**
-     * Executes the WarMojo on the current project.
+     * Executes this mojo on the current project.
      *
      * @throws MojoExecutionException if an error occurred while building the webapp
      */

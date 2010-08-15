@@ -77,7 +77,7 @@ public class WarMojo
      * packaging. This option may be used to implement the skinny WAR use
      * case.
      *
-     * @parameter alias="packagingExcludes"
+     * @parameter
      * @since 2.1-alpha-2
      */
     private String packagingExcludes;
@@ -87,13 +87,12 @@ public class WarMojo
      * packaging. By default everything is included. This option may be used
      * to implement the skinny WAR use case.
      *
-     * @parameter alias="packagingIncludes"
      * @since 2.1-beta-1
      */
     private String packagingIncludes;
 
     /**
-     * The War archiver.
+     * The WAR archiver.
      *
      * @component role="org.codehaus.plexus.archiver.Archiver" roleHint="war"
      */
@@ -113,8 +112,9 @@ public class WarMojo
     private boolean primaryArtifact = true;
 
     /**
-     * Whether or not to fail the build is the <code>web.xml</code> file is missing. Set to <code>false</code>
+     * Whether or not to fail the build if the <code>web.xml</code> file is missing. Set to <code>false</code>
      * if you want you WAR built without a <code>web.xml</code> file.
+     * This may be useful if you are building an overlay that has no web.xml file.
      *
      * @parameter expression="${failOnMissingWebXml}" default-value="true"
      * @since 2.1-alpha-2
