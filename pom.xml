@@ -198,7 +198,7 @@ under the License.
         <plugins>
           <plugin>
             <artifactId>maven-invoker-plugin</artifactId>
-            <version>1.4</version>
+            <version>1.5</version>
             <configuration>
               <debug>true</debug>
               <projectsDirectory>src/it</projectsDirectory>
