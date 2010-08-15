@@ -36,8 +36,6 @@ public class JavadocJarDefaultMavenProjectStub
 {
     private Scm scm;
 
-    private Build build;
-
     public JavadocJarDefaultMavenProjectStub()
     {
         readModel( new File( getBasedir(), "javadocjar-default-plugin-config.xml" ) );
@@ -65,7 +63,7 @@ public class JavadocJarDefaultMavenProjectStub
         build.setDirectory( super.getBasedir() + "/target/test/unit/javadocjar-default/target" );
         setBuild( build );
 
-        List compileSourceRoots = new ArrayList();
+        List<String> compileSourceRoots = new ArrayList<String>();
         compileSourceRoots.add( getBasedir() + "/javadocjar/def" );
         setCompileSourceRoots( compileSourceRoots );
     }
@@ -80,18 +78,6 @@ public class JavadocJarDefaultMavenProjectStub
     public void setScm( Scm scm )
     {
         this.scm = scm;
-    }
-
-    /** {@inheritDoc} */
-    public Build getBuild()
-    {
-        return build;
-    }
-
-    /** {@inheritDoc} */
-    public void setBuild( Build build )
-    {
-        this.build = build;
     }
 
     /** {@inheritDoc} */

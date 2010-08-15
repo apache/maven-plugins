@@ -23,18 +23,14 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DefaultArtifact;
-import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.handler.DefaultArtifactHandler;
-import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
 import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.model.Build;
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.project.artifact.InvalidDependencyVersionException;
 
 /**
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
@@ -43,8 +39,6 @@ import org.apache.maven.project.artifact.InvalidDependencyVersionException;
 public class TestJavadocMavenProjectStub
     extends MavenProjectStub
 {
-    private Build build;
-
     public TestJavadocMavenProjectStub()
     {
         readModel( new File( getBasedir(), "test-javadoc-test-plugin-config.xml" ) );
@@ -71,38 +65,19 @@ public class TestJavadocMavenProjectStub
         build.setTestOutputDirectory( super.getBasedir() + "/target/test/unit/test-javadoc-test/target/test-classes" );
         setBuild( build );
 
-        List compileSourceRoots = new ArrayList();
+        List<String> compileSourceRoots = new ArrayList<String>();
         compileSourceRoots.add( getBasedir() + "/src/main/java" );
         setCompileSourceRoots( compileSourceRoots );
 
-        List testCompileSourceRoots = new ArrayList();
+        List<String> testCompileSourceRoots = new ArrayList<String>();
         testCompileSourceRoots.add( getBasedir() + "/src/test/java" );
         setTestCompileSourceRoots( testCompileSourceRoots );
-    }
-
-    /** {@inheritDoc} */
-    public Build getBuild()
-    {
-        return build;
-    }
-
-    /** {@inheritDoc} */
-    public void setBuild( Build build )
-    {
-        this.build = build;
     }
 
     /** {@inheritDoc} */
     public File getBasedir()
     {
         return new File( super.getBasedir() + "/src/test/resources/unit/test-javadoc-test" );
-    }
-
-    /** {@inheritDoc} */
-    public Set createArtifacts( ArtifactFactory artifactFactory, String string, ArtifactFilter artifactFilter )
-        throws InvalidDependencyVersionException
-    {
-        return Collections.EMPTY_SET;
     }
 
     /** {@inheritDoc} */

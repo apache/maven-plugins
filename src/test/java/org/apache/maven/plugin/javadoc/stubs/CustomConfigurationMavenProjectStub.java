@@ -61,7 +61,7 @@ public class CustomConfigurationMavenProjectStub
         build.setDirectory( super.getBasedir() + "/target/test/unit/custom-configuration/target" );
         setBuild( build );
 
-        List compileSourceRoots = new ArrayList();
+        List<String> compileSourceRoots = new ArrayList<String>();
         String temp =  getBasedir().getAbsolutePath();
         if( !temp.startsWith( "/" ) )
         {

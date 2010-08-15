@@ -32,8 +32,6 @@ import java.util.List;
  */
 public class ResourcesWithExcludesTestMavenProjectStub extends MavenProjectStub
 {
-    private Build build;
-
     public ResourcesWithExcludesTestMavenProjectStub()
     {
         readModel( new File( getBasedir(), "resources-with-excludes-test-plugin-config.xml" ) );
@@ -51,21 +49,9 @@ public class ResourcesWithExcludesTestMavenProjectStub extends MavenProjectStub
         build.setDirectory( super.getBasedir() + "/target/test/unit/resources-with-excludes-test/target" );
         setBuild( build );
 
-        List compileSourceRoots = new ArrayList();
+        List<String> compileSourceRoots = new ArrayList<String>();
         compileSourceRoots.add( getBasedir() + "/src/main/java" );
         setCompileSourceRoots( compileSourceRoots );
-    }
-
-    /** {@inheritDoc} */
-    public Build getBuild()
-    {
-        return build;
-    }
-
-    /** {@inheritDoc} */
-    public void setBuild( Build build )
-    {
-        this.build = build;
     }
 
     /** {@inheritDoc} */

@@ -37,8 +37,6 @@ import java.util.List;
  */
 public class HelpFileMavenProjectStub extends MavenProjectStub
 {
-    private Build build;
-
     public HelpFileMavenProjectStub()
     {
         readModel( new File( getBasedir(), "pom.xml" ) );
@@ -61,21 +59,9 @@ public class HelpFileMavenProjectStub extends MavenProjectStub
         build.setPlugins( getModel().getBuild().getPlugins() );
         setBuild( build );
 
-        List compileSourceRoots = new ArrayList();
+        List<String> compileSourceRoots = new ArrayList<String>();
         compileSourceRoots.add( getBasedir() + "/src/main/java" );
         setCompileSourceRoots( compileSourceRoots );
-    }
-
-    /** {@inheritDoc} */
-    public Build getBuild()
-    {
-        return build;
-    }
-
-    /** {@inheritDoc} */
-    public void setBuild( Build build )
-    {
-        this.build = build;
     }
 
     /** {@inheritDoc} */
@@ -85,7 +71,7 @@ public class HelpFileMavenProjectStub extends MavenProjectStub
     }
 
     /** {@inheritDoc} */
-    public List getRemoteArtifactRepositories()
+    public List<ArtifactRepository> getRemoteArtifactRepositories()
     {
         ArtifactRepository repository =
             new DefaultArtifactRepository( "central", "http://repo1.maven.org/maven2",

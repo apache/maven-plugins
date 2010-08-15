@@ -36,8 +36,6 @@ public class DocletPathTestMavenProjectStub
 {
     private Scm scm;
 
-    private Build build;
-
     public DocletPathTestMavenProjectStub()
     {
         readModel( new File( getBasedir(), "doclet-path-test-plugin-config.xml" ) );
@@ -58,7 +56,7 @@ public class DocletPathTestMavenProjectStub
         build.setDirectory( super.getBasedir() + "/target/test/unit/doclet-path-test/target" );
         setBuild( build );
 
-        List compileSourceRoots = new ArrayList();
+        List<String> compileSourceRoots = new ArrayList<String>();
         compileSourceRoots.add( getBasedir() + "/doclet/test" );
         setCompileSourceRoots( compileSourceRoots );
     }
@@ -73,18 +71,6 @@ public class DocletPathTestMavenProjectStub
     public void setScm( Scm scm )
     {
         this.scm = scm;
-    }
-
-    /** {@inheritDoc} */
-    public Build getBuild()
-    {
-        return build;
-    }
-
-    /** {@inheritDoc} */
-    public void setBuild( Build build )
-    {
-        this.build = build;
     }
 
     /** {@inheritDoc} */

@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import junitx.util.PrivateAccessor;
@@ -108,12 +107,12 @@ public class FixJavadocMojoTest
         FileUtils.copyDirectoryStructure( sourceDir, localRepo );
 
         // Remove SCM files
-        List files =
+        List<String> files =
             FileUtils.getFileAndDirectoryNames( localRepo, FileUtils.getDefaultExcludesAsString(), null, true,
                                                 true, true, true );
-        for ( Iterator it = files.iterator(); it.hasNext(); )
+        for ( String filename : files )
         {
-            File file = new File( it.next().toString() );
+            File file = new File( filename );
 
             if ( file.isDirectory() )
             {
@@ -619,7 +618,7 @@ public class FixJavadocMojoTest
     private void invokeCompileGoal( File testPom, Log log )
         throws MavenInvocationException
     {
-        List goals = new ArrayList();
+        List<String> goals = new ArrayList<String>();
         goals.add( "clean" );
         goals.add( "compile" );
         File invokerDir = new File( getBasedir(), "target/invoker" );
@@ -665,10 +664,10 @@ public class FixJavadocMojoTest
                  .copyDirectoryStructure(
                                           new File( getBasedir(), "src/test/resources/unit/" + testProjectDirName ),
                                           testPomBasedir );
-        List scmFiles = FileUtils.getDirectoryNames( testPomBasedir, "**/.svn", null, true );
-        for ( Iterator it = scmFiles.iterator(); it.hasNext(); )
+        List<String> scmFiles = FileUtils.getDirectoryNames( testPomBasedir, "**/.svn", null, true );
+        for ( String filename : scmFiles )
         {
-            File dir = new File( it.next().toString() );
+            File dir = new File( filename );
 
             if ( dir.isDirectory() )
             {

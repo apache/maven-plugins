@@ -21,16 +21,11 @@ package org.apache.maven.plugin.javadoc.stubs;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
-import org.apache.maven.artifact.factory.ArtifactFactory;
-import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
 import org.apache.maven.model.Build;
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.project.artifact.InvalidDependencyVersionException;
 
 /**
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
@@ -39,8 +34,6 @@ import org.apache.maven.project.artifact.InvalidDependencyVersionException;
 public class AggregateResourcesTestMavenProjectStub
     extends MavenProjectStub
 {
-    private Build build;
-
     public AggregateResourcesTestMavenProjectStub()
     {
         readModel( new File( getBasedir(), "aggregate-resources-test-plugin-config.xml" ) );
@@ -60,33 +53,14 @@ public class AggregateResourcesTestMavenProjectStub
         build.setDirectory( super.getBasedir() + "/target/test/unit/aggregate-resources-test/target" );
         setBuild( build );
 
-        List compileSourceRoots = new ArrayList();
+        List<String> compileSourceRoots = new ArrayList<String>();
         setCompileSourceRoots( compileSourceRoots );
-    }
-
-    /** {@inheritDoc} */
-    public Build getBuild()
-    {
-        return build;
-    }
-
-    /** {@inheritDoc} */
-    public void setBuild( Build build )
-    {
-        this.build = build;
     }
 
     /** {@inheritDoc} */
     public File getBasedir()
     {
         return new File( super.getBasedir() + "/src/test/resources/unit/aggregate-resources-test" );
-    }
-
-    /** {@inheritDoc} */
-    public Set createArtifacts( ArtifactFactory artifactFactory, String string, ArtifactFilter artifactFilter )
-        throws InvalidDependencyVersionException
-    {
-        return Collections.EMPTY_SET;
     }
 
     /** {@inheritDoc} */

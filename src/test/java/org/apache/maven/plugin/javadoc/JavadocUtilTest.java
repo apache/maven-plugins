@@ -350,7 +350,7 @@ public class JavadocUtilTest
             }
         }
 
-        Map authentications = new HashMap();
+        Map<String, String> authentications = new HashMap<String, String>();
         authentications.put( "foo", "bar" );
         // wrong auth
         try
@@ -511,7 +511,7 @@ public class JavadocUtilTest
         assertTrue( output.mkdirs() );
 
         JavadocUtil.copyJavadocResources( output, input, null );
-        List expected = new ArrayList();
+        List<String> expected = new ArrayList<String>();
         expected.add( "test" + File.separator + "doc-files" + File.separator + "excluded-dir1" + File.separator
             + "sample-excluded1.gif" );
         expected.add( "test" + File.separator + "doc-files" + File.separator + "excluded-dir2" + File.separator
@@ -521,7 +521,7 @@ public class JavadocUtilTest
         expected.add( "test" + File.separator + "doc-files" + File.separator + "included-dir2" + File.separator
             + "sample-included2.gif" );
         assertTrue( EqualsBuilder.reflectionEquals( expected, FileUtils.getFiles( output, null, null, false ) ) );
-        expected = new ArrayList();
+        expected = new ArrayList<String>();
         expected.add( "" );
         expected.add( "test" + File.separator + "doc-files" + File.separator + "excluded-dir1" );
         expected.add( "test" + File.separator + "doc-files" + File.separator + "excluded-dir1" );
@@ -543,13 +543,13 @@ public class JavadocUtilTest
         assertTrue( output.mkdirs() );
 
         JavadocUtil.copyJavadocResources( output, input, "excluded-dir1:excluded-dir2" );
-        expected = new ArrayList();
+        expected = new ArrayList<String>();
         expected.add( "test" + File.separator + "doc-files" + File.separator + "included-dir1" + File.separator
             + "sample-included1.gif" );
         expected.add( "test" + File.separator + "doc-files" + File.separator + "included-dir2" + File.separator
             + "sample-included2.gif" );
         assertTrue( EqualsBuilder.reflectionEquals( expected, FileUtils.getFiles( output, null, null, false ) ) );
-        expected = new ArrayList();
+        expected = new ArrayList<String>();
         expected.add( "" );
         expected.add( "test" + File.separator + "doc-files" + File.separator + "included-dir1" );
         expected.add( "test" + File.separator + "doc-files" + File.separator + "included-dir2" );
@@ -567,12 +567,12 @@ public class JavadocUtilTest
     public void testPruneDirs()
         throws Exception
     {
-        List list = new ArrayList();
+        List<String> list = new ArrayList<String>();
         list.add( getBasedir() + "/target/classes" );
         list.add( getBasedir() + "/target/classes" );
         list.add( getBasedir() + "/target/classes" );
 
-        List expected = new ArrayList();
+        List<String> expected = new ArrayList<String>();
         expected.add( getBasedir() + "/target/classes" );
 
         assertTrue( EqualsBuilder.reflectionEquals( expected, JavadocUtil.pruneDirs( null, list ) ) );

@@ -37,8 +37,6 @@ public class JavadocJarInvalidDestdirMavenProjectStub
 {
     private Scm scm;
 
-    private Build build;
-
     public JavadocJarInvalidDestdirMavenProjectStub()
     {
         readModel( new File( getBasedir(), "javadocjar-invalid-destdir-plugin-config.xml" ) );
@@ -64,7 +62,7 @@ public class JavadocJarInvalidDestdirMavenProjectStub
         build.setDirectory( super.getBasedir() + "/target/test/unit/javadocjar-invalid-destdir/target" );
         setBuild( build );
 
-        List compileSourceRoots = new ArrayList();
+        List<String> compileSourceRoots = new ArrayList<String>();
         compileSourceRoots.add(
             getBasedir() + "/javadocjar/invalid/destdir" );
         setCompileSourceRoots( compileSourceRoots );
@@ -80,18 +78,6 @@ public class JavadocJarInvalidDestdirMavenProjectStub
     public void setScm( Scm scm )
     {
         this.scm = scm;
-    }
-
-    /** {@inheritDoc} */
-    public Build getBuild()
-    {
-        return build;
-    }
-
-    /** {@inheritDoc} */
-    public void setBuild( Build build )
-    {
-        this.build = build;
     }
 
     /** {@inheritDoc} */

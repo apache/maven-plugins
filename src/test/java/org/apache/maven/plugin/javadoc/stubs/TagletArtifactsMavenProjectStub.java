@@ -37,8 +37,6 @@ import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
 public class TagletArtifactsMavenProjectStub
     extends MavenProjectStub
 {
-    private Build build;
-
     /**
      * Default constructor.
      */
@@ -59,25 +57,13 @@ public class TagletArtifactsMavenProjectStub
         build.setDirectory( super.getBasedir() + "/target/test/unit/tagletArtifacts-test/target" );
         setBuild( build );
 
-        List compileSourceRoots = new ArrayList();
+        List<String> compileSourceRoots = new ArrayList<String>();
         compileSourceRoots.add( getBasedir() + "/src/main/java" );
         setCompileSourceRoots( compileSourceRoots );
     }
 
     /** {@inheritDoc} */
-    public Build getBuild()
-    {
-        return build;
-    }
-
-    /** {@inheritDoc} */
-    public void setBuild( Build build )
-    {
-        this.build = build;
-    }
-
-    /** {@inheritDoc} */
-    public List getRemoteArtifactRepositories()
+    public List<ArtifactRepository> getRemoteArtifactRepositories()
     {
         ArtifactRepository repository =
             new DefaultArtifactRepository( "central", "http://repo1.maven.org/maven2",

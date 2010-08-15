@@ -36,8 +36,6 @@ public class DefaultConfigurationMavenProjectStub
 {
     private Scm scm;
 
-    private Build build;
-
     public DefaultConfigurationMavenProjectStub()
     {
         readModel( new File( getBasedir(), "default-configuration-plugin-config.xml" ) );
@@ -58,7 +56,7 @@ public class DefaultConfigurationMavenProjectStub
         build.setDirectory( super.getBasedir() + "/target/test/unit/default-configuration/target" );
         setBuild( build );
 
-        List compileSourceRoots = new ArrayList();
+        List<String> compileSourceRoots = new ArrayList<String>();
         compileSourceRoots.add( getBasedir() + "/def/configuration" );
         setCompileSourceRoots( compileSourceRoots );
     }
@@ -73,18 +71,6 @@ public class DefaultConfigurationMavenProjectStub
     public void setScm( Scm scm )
     {
         this.scm = scm;
-    }
-
-    /** {@inheritDoc} */
-    public Build getBuild()
-    {
-        return build;
-    }
-
-    /** {@inheritDoc} */
-    public void setBuild( Build build )
-    {
-        this.build = build;
     }
 
     /** {@inheritDoc} */

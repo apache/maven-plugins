@@ -25,7 +25,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -121,12 +120,12 @@ public class JavadocReportTest
         FileUtils.copyDirectoryStructure( sourceDir, localRepo );
 
         // Remove SCM files
-        List files =
+        List<String> files =
             FileUtils.getFileAndDirectoryNames( localRepo, FileUtils.getDefaultExcludesAsString(), null, true,
                                                 true, true, true );
-        for ( Iterator it = files.iterator(); it.hasNext(); )
+        for ( String filename : files )
         {
-            File file = new File( it.next().toString() );
+            File file = new File( filename );
 
             if ( file.isDirectory() )
             {
@@ -989,7 +988,7 @@ public class JavadocReportTest
         }
 
         // auth proxy
-        Map authentications = new HashMap();
+        Map<String, String> authentications = new HashMap<String, String>();
         authentications.put( "foo", "bar" );
         try
         {

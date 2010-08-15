@@ -20,7 +20,6 @@ package org.apache.maven.plugin.javadoc.stubs;
  */
 
 import org.apache.maven.model.Build;
-import org.apache.maven.model.Scm;
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
 
 import java.io.File;
@@ -34,8 +33,6 @@ import java.util.List;
 public class DocfilesWithJavaTestMavenProjectStub
     extends MavenProjectStub
 {
-    private Build build;
-
     public DocfilesWithJavaTestMavenProjectStub()
     {
         readModel( new File( getBasedir(), "docfiles-with-java-test-plugin-config.xml" ) );
@@ -50,21 +47,9 @@ public class DocfilesWithJavaTestMavenProjectStub
         build.setDirectory( super.getBasedir() + "/target/test/unit/docfiles-with-java-test/target" );
         setBuild( build );
 
-        List compileSourceRoots = new ArrayList();
+        List<String> compileSourceRoots = new ArrayList<String>();
         compileSourceRoots.add( getBasedir() + "/docfiles-with-java-test/src/main" );
         setCompileSourceRoots( compileSourceRoots );
-    }
-
-    /** {@inheritDoc} */
-    public Build getBuild()
-    {
-        return build;
-    }
-
-    /** {@inheritDoc} */
-    public void setBuild( Build build )
-    {
-        this.build = build;
     }
 
     /** {@inheritDoc} */
