@@ -23,7 +23,7 @@ under the License.
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
        xsi:schemaLocation="http://modello.codehaus.org/MODELLO/1.1.0 http://modello.codehaus.org/xsd/modello-1.1.0.xsd"
        xsd.namespace="http://http://maven.apache.org/plugins/maven-javadoc-plugin/maven-javadoc-options/${version}" 
-       xsd.target-namespace="http://maven.apache.org/plugins/maven-javadoc-plugin/xsd/maven-javadoc-options-${version}.xsd">
+       xsd.targetNamespace="http://maven.apache.org/plugins/maven-javadoc-plugin/xsd/maven-javadoc-options-${version}.xsd">
   <id>javadocoptions</id>
   <name>JavadocOptions</name>
   <description><![CDATA[Model for Javadoc Options.]]></description>
