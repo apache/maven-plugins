@@ -33,41 +33,6 @@ WAR Manifest Customization
  {{{http://maven.apache.org/shared/maven-archiver/index.html}Maven Archiver}}.
  This version of Maven WAR Plugin uses Maven Archiver ${mavenArchiverVersion}.
 
-+--------------------+
-<project>
-  ...
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-war-plugin</artifactId>
-        <version>${project.version}</version>
-        <configuration>
-          <archive>
-            <manifestEntries>
-              <manifest_entry>value</manifest_entry>
-            </manifestEntries>
-          </archive>
-        </configuration>
-      </plugin>
-      ...
-    </plugins>
-  </build>
-  ...
-</project>
-+--------------------+
-
-  The <<<pom.xml>>> would generate this <<<META-INF/MANIFEST.MF>>> in your war.
-
-+--------------------+
-Manifest-Version: 1.0
-Archiver-Version: Plexus Archiver
-Created-By: Apache Maven
-Built-By: ${user.name}
-Build-Jdk: ${java.version}
-manifest_entry: value
-+--------------------+
-
 *Generating a manifest classpath
 
   Generating a manifest classpath for a WAR is similar to for a JAR, but there are a couple of slight differences since
