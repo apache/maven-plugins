@@ -43,18 +43,18 @@ public class TestFixJavadocMojo
     extends AbstractFixJavadocMojo
 {
     /** {@inheritDoc} */
-    protected List getProjectSourceRoots( MavenProject p )
+    protected List<String> getProjectSourceRoots( MavenProject p )
     {
         return ( p.getTestCompileSourceRoots() == null ? Collections.EMPTY_LIST
-                        : new LinkedList( p.getTestCompileSourceRoots() ) );
+                        : new LinkedList<String>( p.getTestCompileSourceRoots() ) );
     }
 
     /** {@inheritDoc} */
-    protected List getCompileClasspathElements( MavenProject p )
+    protected List<String> getCompileClasspathElements( MavenProject p )
         throws DependencyResolutionRequiredException
     {
         return ( p.getTestClasspathElements() == null ? Collections.EMPTY_LIST
-                        : new LinkedList( p.getTestClasspathElements() ) );
+                        : new LinkedList<String>( p.getTestClasspathElements() ) );
     }
 
     /** {@inheritDoc} */

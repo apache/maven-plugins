@@ -37,7 +37,6 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.NoSuchElementException;
@@ -182,15 +181,15 @@ public class JavadocUtil
      * @param excludedPackages the package names to be excluded in the javadoc
      * @return a List of the source files to be excluded in the generated javadoc
      */
-    protected static List getExcludedNames( List sourcePaths, String[] subpackagesList, String[] excludedPackages )
+    protected static List<String> getExcludedNames( List<String> sourcePaths, String[] subpackagesList,
+                                                    String[] excludedPackages )
     {
-        List excludedNames = new ArrayList();
-        for ( Iterator i = sourcePaths.iterator(); i.hasNext(); )
+        List<String> excludedNames = new ArrayList<String>();
+        for ( String path : sourcePaths )
         {
-            String path = (String) i.next();
             for ( int j = 0; j < subpackagesList.length; j++ )
             {
-                List excludes = getExcludedPackages( path, excludedPackages );
+                List<String> excludes = getExcludedPackages( path, excludedPackages );
                 excludedNames.addAll( excludes );
             }
         }
@@ -204,7 +203,7 @@ public class JavadocUtil
      * @return list of compile artifacts with compile scope
      * @deprecated since 2.5, using {@link #getCompileArtifacts(Set, boolean)} instead of.
      */
-    protected static List getCompileArtifacts( Set artifacts )
+    protected static List<Artifact> getCompileArtifacts( Set<Artifact> artifacts )
     {
         return getCompileArtifacts( artifacts, false );
     }
@@ -215,14 +214,12 @@ public class JavadocUtil
      * @param withTestScope flag to include or not the artifacts with test scope
      * @return list of compile artifacts with or without test scope.
      */
-    protected static List getCompileArtifacts( Set artifacts, boolean withTestScope )
+    protected static List<Artifact> getCompileArtifacts( Set<Artifact> artifacts, boolean withTestScope )
     {
-        List list = new ArrayList( artifacts.size() );
+        List<Artifact> list = new ArrayList<Artifact>( artifacts.size() );
 
-        for ( Iterator i = artifacts.iterator(); i.hasNext(); )
+        for ( Artifact a : artifacts )
         {
-            Artifact a = (Artifact) i.next();
-
             // TODO: classpath check doesn't belong here - that's the other method
             if ( a.getArtifactHandler().isAddedToClasspath() )
             {
@@ -349,7 +346,7 @@ public class JavadocUtil
             return;
         }
 
-        List excludes = new ArrayList();
+        List<String> excludes = new ArrayList<String>();
         excludes.addAll( Arrays.asList( FileUtils.getDefaultExcludes() ) );
 
         if ( StringUtils.isNotEmpty( excludedocfilessubdir ) )
@@ -363,22 +360,20 @@ public class JavadocUtil
             }
         }
 
-        List docFiles =
+        List<String> docFiles =
             FileUtils.getDirectoryNames( javadocDir, "resources,**/doc-files",
                                          StringUtils.join( excludes.iterator(), "," ), false, true );
-        for ( Iterator it = docFiles.iterator(); it.hasNext(); )
+        for ( String docFile : docFiles )
         {
-            String docFile = (String) it.next();
-
             File docFileOutput = new File( outputDirectory, docFile );
             FileUtils.mkdir( docFileOutput.getAbsolutePath() );
             FileUtils.copyDirectoryStructure( new File( javadocDir, docFile ), docFileOutput );
-            List files =
+            List<String> files =
                 FileUtils.getFileAndDirectoryNames( docFileOutput, StringUtils.join( excludes.iterator(), "," ),
                                                     null, true, true, true, true );
-            for ( Iterator it2 = files.iterator(); it2.hasNext(); )
+            for ( String filename : files )
             {
-                File file = new File( it2.next().toString() );
+                File file = new File( filename );
 
                 if ( file.isDirectory() )
                 {
@@ -401,9 +396,9 @@ public class JavadocUtil
      * @param excludePackages package names to be excluded in the javadoc
      * @return a StringBuffer that contains the appended file names of the files to be included in the javadoc
      */
-    protected static List getIncludedFiles( File sourceDirectory, String[] fileList, String[] excludePackages )
+    protected static List<String> getIncludedFiles( File sourceDirectory, String[] fileList, String[] excludePackages )
     {
-        List files = new ArrayList();
+        List<String> files = new ArrayList<String>();
 
         for ( int j = 0; j < fileList.length; j++ )
         {
@@ -475,9 +470,9 @@ public class JavadocUtil
      * @param excludePackagenames package names to be excluded in the javadoc
      * @return a List of the packagenames to be excluded
      */
-    protected static List getExcludedPackages( String sourceDirectory, String[] excludePackagenames )
+    protected static List<String> getExcludedPackages( String sourceDirectory, String[] excludePackagenames )
     {
-        List files = new ArrayList();
+        List<String> files = new ArrayList<String>();
         for ( int i = 0; i < excludePackagenames.length; i++ )
         {
             String[] fileList = FileUtils.getFilesFromExtension( sourceDirectory, new String[] { "java" } );
@@ -497,10 +492,9 @@ public class JavadocUtil
             }
         }
 
-        List excluded = new ArrayList();
-        for ( Iterator it = files.iterator(); it.hasNext(); )
+        List<String> excluded = new ArrayList<String>();
+        for ( String file : files )
         {
-            String file = (String) it.next();
             int idx = file.lastIndexOf( File.separatorChar );
             String tmpStr = file.substring( 0, idx );
             tmpStr = tmpStr.replace( '\\', '/' );
@@ -523,12 +517,12 @@ public class JavadocUtil
      * @param files the variable that contains the appended filenames of the files to be included in the javadoc
      * @param excludePackages the packages to be excluded in the javadocs
      */
-    protected static void addFilesFromSource( List files, File sourceDirectory, String[] excludePackages )
+    protected static void addFilesFromSource( List<String> files, File sourceDirectory, String[] excludePackages )
     {
         String[] fileList = FileUtils.getFilesFromExtension( sourceDirectory.getPath(), new String[] { "java" } );
         if ( fileList != null && fileList.length != 0 )
         {
-            List tmpFiles = getIncludedFiles( sourceDirectory, fileList, excludePackages );
+            List<String> tmpFiles = getIncludedFiles( sourceDirectory, fileList, excludePackages );
             files.addAll( tmpFiles );
         }
     }
@@ -899,10 +893,10 @@ public class JavadocUtil
      * @throws ClassNotFoundException if any
      * @throws NoClassDefFoundError if any
      */
-    protected static List getTagletClassNames( File jarFile )
+    protected static List<String> getTagletClassNames( File jarFile )
         throws IOException, ClassNotFoundException, NoClassDefFoundError
     {
-        List classes = getClassNamesFromJar( jarFile );
+        List<String> classes = getClassNamesFromJar( jarFile );
         ClassLoader cl;
 
         // Needed to find com.sun.tools.doclets.Taglet class
@@ -916,14 +910,12 @@ public class JavadocUtil
             cl = new URLClassLoader( new URL[] { jarFile.toURI().toURL() }, null );
         }
 
-        List tagletClasses = new ArrayList();
+        List<String> tagletClasses = new ArrayList<String>();
 
-        Class tagletClass = cl.loadClass( "com.sun.tools.doclets.Taglet" );
-        for ( Iterator it = classes.iterator(); it.hasNext(); )
+        Class<?> tagletClass = cl.loadClass( "com.sun.tools.doclets.Taglet" );
+        for ( String s : classes )
         {
-            String s = (String) it.next();
-
-            Class c = cl.loadClass( s );
+            Class<?> c = cl.loadClass( s );
 
             if ( tagletClass.isAssignableFrom( c ) && !Modifier.isAbstract( c.getModifiers() ) )
             {
@@ -996,7 +988,7 @@ public class JavadocUtil
      * @throws MavenInvocationException if any
      * @since 2.6
      */
-    protected static void invokeMaven( Log log, File localRepositoryDir, File projectFile, List goals,
+    protected static void invokeMaven( Log log, File localRepositoryDir, File projectFile, List<String> goals,
                                        Properties properties, File invokerLog )
         throws MavenInvocationException
     {
@@ -1148,14 +1140,14 @@ public class JavadocUtil
             return null;
         }
 
-        List subpaths = new ArrayList();
+        List<String> subpaths = new ArrayList<String>();
         PathTokenizer pathTokenizer = new PathTokenizer( path );
         while ( pathTokenizer.hasMoreTokens() )
         {
             subpaths.add( pathTokenizer.nextToken() );
         }
 
-        return (String[]) subpaths.toArray( new String[0] );
+        return subpaths.toArray( new String[subpaths.size()] );
     }
 
     /**
@@ -1193,7 +1185,7 @@ public class JavadocUtil
      * @return all class names from the given jar file.
      * @throws IOException if any or if the jarFile is null or doesn't exist.
      */
-    private static List getClassNamesFromJar( File jarFile )
+    private static List<String> getClassNamesFromJar( File jarFile )
         throws IOException
     {
         if ( jarFile == null || !jarFile.exists() || !jarFile.isFile() )
@@ -1201,7 +1193,7 @@ public class JavadocUtil
             throw new IOException( "The jar '" + jarFile + "' doesn't exist or is not a file." );
         }
 
-        List classes = new ArrayList();
+        List<String> classes = new ArrayList<String>();
         JarInputStream jarStream = null;
 
         try
@@ -1210,11 +1202,6 @@ public class JavadocUtil
             JarEntry jarEntry = jarStream.getNextJarEntry();
             while ( jarEntry != null )
             {
-                if ( jarEntry == null )
-                {
-                    break;
-                }
-
                 if ( jarEntry.getName().toLowerCase( Locale.ENGLISH ).endsWith( ".class" ) )
                 {
                     String name = jarEntry.getName().substring( 0, jarEntry.getName().indexOf( "." ) );
@@ -1247,7 +1234,7 @@ public class JavadocUtil
      * @since 2.6
      */
     private static InvocationResult invoke( Log log, Invoker invoker, InvocationRequest request, File invokerLog,
-                                            List goals, Properties properties, String mavenOpts )
+                                            List<String> goals, Properties properties, String mavenOpts )
         throws MavenInvocationException
     {
         PrintStream ps;

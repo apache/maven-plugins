@@ -393,7 +393,7 @@ public abstract class AbstractJavadocMojo
      *
      * @parameter expression="${project.remoteArtifactRepositories}"
      */
-    private List remoteRepositories;
+    private List<ArtifactRepository> remoteRepositories;
 
     /**
      * The projects in the reactor for aggregation report.
@@ -1691,11 +1691,11 @@ public abstract class AbstractJavadocMojo
      * @return the list of directories where compiled classes are placed for the given project. These dirs are
      * added in the javadoc classpath.
      */
-    protected List getProjectBuildOutputDirs( MavenProject p )
+    protected List<String> getProjectBuildOutputDirs( MavenProject p )
     {
         if ( StringUtils.isEmpty( p.getBuild().getOutputDirectory() ) )
         {
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
 
         return Collections.singletonList( p.getBuild().getOutputDirectory() );
@@ -1705,11 +1705,11 @@ public abstract class AbstractJavadocMojo
      * @param p not null maven project
      * @return the list of source paths for the given project
      */
-    protected List getProjectSourceRoots( MavenProject p )
+    protected List<String> getProjectSourceRoots( MavenProject p )
     {
         if ( "pom".equals( p.getPackaging().toLowerCase() ) )
         {
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
 
         return ( p.getCompileSourceRoots() == null ? Collections.EMPTY_LIST
@@ -1720,11 +1720,11 @@ public abstract class AbstractJavadocMojo
      * @param p not null maven project
      * @return the list of source paths for the execution project of the given project
      */
-    protected List getExecutionProjectSourceRoots( MavenProject p )
+    protected List<String> getExecutionProjectSourceRoots( MavenProject p )
     {
         if ( "pom".equals( p.getExecutionProject().getPackaging().toLowerCase() ) )
         {
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
 
         return ( p.getExecutionProject().getCompileSourceRoots() == null ? Collections.EMPTY_LIST
@@ -1735,10 +1735,10 @@ public abstract class AbstractJavadocMojo
      * @param p not null maven project
      * @return the list of artifacts for the given project
      */
-    protected List getProjectArtifacts( MavenProject p )
+    protected List<Artifact> getProjectArtifacts( MavenProject p )
     {
         return ( p.getCompileArtifacts() == null ? Collections.EMPTY_LIST
-                        : new LinkedList( p.getCompileArtifacts() ) );
+                        : new LinkedList<Artifact>( p.getCompileArtifacts() ) );
     }
 
     /**
@@ -1834,15 +1834,15 @@ public abstract class AbstractJavadocMojo
             throw new MavenReportException( "Failed to generate javadoc options file: " + e.getMessage(), e );
         }
         
-        List sourcePaths = getSourcePaths();
-        List files = getFiles( sourcePaths );
+        List<String> sourcePaths = getSourcePaths();
+        List<String> files = getFiles( sourcePaths );
         if ( !canGenerateReport( files ) )
         {
             return;
         }
 
-        List packageNames = getPackageNames( sourcePaths, files );
-        List filesWithUnnamedPackages = getFilesWithUnnamedPackages( sourcePaths, files );
+        List<String> packageNames = getPackageNames( sourcePaths, files );
+        List<String> filesWithUnnamedPackages = getFilesWithUnnamedPackages( sourcePaths, files );
 
         // ----------------------------------------------------------------------
         // Find the javadoc executable and version
@@ -1902,7 +1902,7 @@ public abstract class AbstractJavadocMojo
             cmd.createArg().setValue( additionalJOption );
         }
 
-        List arguments = new ArrayList();
+        List<String> arguments = new ArrayList<String>();
 
         // ----------------------------------------------------------------------
         // Wrap Javadoc options
@@ -1997,17 +1997,17 @@ public abstract class AbstractJavadocMojo
      * @return a List that contains the specific path for every source file
      * @throws MavenReportException 
      */
-    protected List getFiles( List sourcePaths )
+    protected List<String> getFiles( List<String> sourcePaths )
         throws MavenReportException
     {
-        List files = new ArrayList();
+        List<String> files = new ArrayList<String>();
         if ( StringUtils.isEmpty( subpackages ) )
         {
             String[] excludedPackages = getExcludedPackages();
 
-            for ( Iterator i = sourcePaths.iterator(); i.hasNext(); )
+            for ( String sourcePath : sourcePaths )
             {
-                File sourceDirectory = new File( (String) i.next() );
+                File sourceDirectory = new File( sourcePath );
                 JavadocUtil.addFilesFromSource( files, sourceDirectory, excludedPackages );
             }
         }
@@ -2022,14 +2022,14 @@ public abstract class AbstractJavadocMojo
      * @return a List of the project absolute source paths as <code>String</code>
      * @see JavadocUtil#pruneDirs(MavenProject, List)
      */
-    protected List getSourcePaths()
+    protected List<String> getSourcePaths()
         throws MavenReportException
     {
-        List sourcePaths;
+        List<String> sourcePaths;
 
         if ( StringUtils.isEmpty( sourcepath ) )
         {
-            sourcePaths = new ArrayList( JavadocUtil.pruneDirs( project, getProjectSourceRoots( project ) ) );
+            sourcePaths = new ArrayList<String>( JavadocUtil.pruneDirs( project, getProjectSourceRoots( project ) ) );
 
             if ( project.getExecutionProject() != null )
             {
@@ -2046,7 +2046,7 @@ public abstract class AbstractJavadocMojo
                 File javadocDir = getJavadocDirectory();
                 if ( javadocDir.exists() && javadocDir.isDirectory() )
                 {
-                    List l =
+                    List<String> l =
                         JavadocUtil.pruneDirs( project,
                                                Collections.singletonList( getJavadocDirectory().getAbsolutePath() ) );
                     sourcePaths.addAll( l );
@@ -2060,13 +2060,11 @@ public abstract class AbstractJavadocMojo
             
             if ( isAggregator() && project.isExecutionRoot() )
             {
-                for ( Iterator i = reactorProjects.iterator(); i.hasNext(); )
+                for ( MavenProject subProject : reactorProjects )
                 {
-                    MavenProject subProject = (MavenProject) i.next();
-
                     if ( subProject != project )
                     {
-                        List sourceRoots = getProjectSourceRoots( subProject );
+                        List<String> sourceRoots = getProjectSourceRoots( subProject );
 
                         if ( subProject.getExecutionProject() != null )
                         {
@@ -2084,7 +2082,7 @@ public abstract class AbstractJavadocMojo
                         File javadocDir = new File( subProject.getBasedir(), javadocDirRelative );
                         if ( javadocDir.exists() && javadocDir.isDirectory() )
                         {
-                            List l =
+                            List<String> l =
                                 JavadocUtil.pruneDirs( subProject,
                                                        Collections.singletonList( javadocDir.getAbsolutePath() ) );
                             sourcePaths.addAll( l );
@@ -2095,11 +2093,11 @@ public abstract class AbstractJavadocMojo
         }
         else
         {
-            sourcePaths = new ArrayList( Arrays.asList( JavadocUtil.splitPath( sourcepath ) ) );
+            sourcePaths = new ArrayList<String>( Arrays.asList( JavadocUtil.splitPath( sourcepath ) ) );
             sourcePaths = JavadocUtil.pruneDirs( project, sourcePaths );
             if ( getJavadocDirectory() != null )
             {
-                List l =
+                List<String> l =
                     JavadocUtil.pruneDirs( project,
                                            Collections.singletonList( getJavadocDirectory().getAbsolutePath() ) );
                 sourcePaths.addAll( l );
@@ -2201,7 +2199,7 @@ public abstract class AbstractJavadocMojo
      * @param files the project files
      * @return a boolean that indicates whether javadoc report can be generated or not
      */
-    protected boolean canGenerateReport( List files )
+    protected boolean canGenerateReport( List<String> files )
     {
         boolean canGenerate = true;
 
@@ -2218,7 +2216,7 @@ public abstract class AbstractJavadocMojo
      * @return the compile artifacts from the result
      * @see JavadocUtil#getCompileArtifacts(Set, boolean)
      */
-    protected List getCompileArtifacts( ArtifactResolutionResult result )
+    protected List<Artifact> getCompileArtifacts( ArtifactResolutionResult result )
     {
         return JavadocUtil.getCompileArtifacts( result.getArtifacts(), false );
     }
@@ -2235,10 +2233,10 @@ public abstract class AbstractJavadocMojo
      * @return a String that contains the exclude argument that will be used by javadoc
      * @throws MavenReportException 
      */
-    private String getExcludedPackages( List sourcePaths )
+    private String getExcludedPackages( List<String> sourcePaths )
         throws MavenReportException
     {
-        List excludedNames = null;
+        List<String> excludedNames = null;
 
         if ( StringUtils.isNotEmpty( sourcepath ) && StringUtils.isNotEmpty( subpackages ) )
         {
@@ -2252,9 +2250,9 @@ public abstract class AbstractJavadocMojo
         if ( StringUtils.isNotEmpty( subpackages ) && excludedNames != null )
         {
             // add the excludedpackage names
-            for ( Iterator it = excludedNames.iterator(); it.hasNext(); )
+            for ( Iterator<String> it = excludedNames.iterator(); it.hasNext(); )
             {
-                String str = (String) it.next();
+                String str = it.next();
                 excludeArg = excludeArg + str;
 
                 if ( it.hasNext() )
@@ -2275,7 +2273,7 @@ public abstract class AbstractJavadocMojo
      * string (colon (<code>:</code>) on Solaris or semi-colon (<code>;</code>) on Windows).
      * @see File#pathSeparator
      */
-    private String getSourcePath( List sourcePaths )
+    private String getSourcePath( List<String> sourcePaths )
     {
         String sourcePath = null;
 
@@ -2355,8 +2353,8 @@ public abstract class AbstractJavadocMojo
     private String getClasspath()
         throws MavenReportException
     {
-        List classpathElements = new ArrayList();
-        Map compileArtifactMap = new HashMap();
+        List<String> classpathElements = new ArrayList<String>();
+        Map<String, Artifact> compileArtifactMap = new HashMap<String, Artifact>();
 
         classpathElements.addAll( getProjectBuildOutputDirs( project ) );
 
@@ -2366,15 +2364,13 @@ public abstract class AbstractJavadocMojo
         {
             try
             {
-                for ( Iterator i = reactorProjects.iterator(); i.hasNext(); )
+                for ( MavenProject subProject : reactorProjects )
                 {
-                    MavenProject subProject = (MavenProject) i.next();
-
                     if ( subProject != project )
                     {
                         classpathElements.addAll( getProjectBuildOutputDirs( subProject ) );
 
-                        Set dependencyArtifacts = subProject.createArtifacts( factory, null, null );
+                        Set<Artifact> dependencyArtifacts = subProject.createArtifacts( factory, null, null );
                         if ( !dependencyArtifacts.isEmpty() )
                         {
                             ArtifactResolutionResult result = null;
@@ -2423,11 +2419,9 @@ public abstract class AbstractJavadocMojo
                                 sb.append( subProject.getGroupId() ).append( ":" );
                                 sb.append( subProject.getArtifactId() ).append( ":" );
                                 sb.append( subProject.getVersion() ).append( '\n' );
-                                for ( Iterator it = compileArtifactMap.keySet().iterator(); it.hasNext(); )
+                                for ( String key : compileArtifactMap.keySet() )
                                 {
-                                    String key = it.next().toString();
-
-                                    Artifact a = (Artifact) compileArtifactMap.get( key );
+                                    Artifact a = compileArtifactMap.get( key );
                                     sb.append( a.getFile() ).append( '\n' );
                                 }
 
@@ -2443,12 +2437,10 @@ public abstract class AbstractJavadocMojo
             }
         }
 
-        for ( Iterator it = compileArtifactMap.keySet().iterator(); it.hasNext(); )
+        for ( String key : compileArtifactMap.keySet() )
         {
-            String key = it.next().toString();
-
-            Artifact a = (Artifact) compileArtifactMap.get( key );
-            classpathElements.add( a.getFile() );
+            Artifact a = compileArtifactMap.get( key );
+            classpathElements.add( a.getFile().toString() );
         }
 
         return StringUtils.join( classpathElements.iterator(), File.pathSeparator );
@@ -2478,40 +2470,40 @@ public abstract class AbstractJavadocMojo
      * @param artifactList the list of artifacts that will be put in the map
      * @throws MavenReportException if any
      */
-    private void populateCompileArtifactMap( Map compileArtifactMap, Collection artifactList )
+    private void populateCompileArtifactMap( Map<String, Artifact> compileArtifactMap, Collection<Artifact> artifactList )
         throws MavenReportException
     {
-        if ( artifactList != null )
+        if ( artifactList == null )
         {
-            for ( Iterator i = artifactList.iterator(); i.hasNext(); )
+            return;
+        }
+
+        for ( Artifact newArtifact : artifactList )
+        {
+            File file = newArtifact.getFile();
+
+            if ( file == null )
             {
-                Artifact newArtifact = (Artifact) i.next();
+                throw new MavenReportException( "Error in plugin descriptor - "
+                    + "dependency was not resolved for artifact: " + newArtifact.getGroupId() + ":"
+                    + newArtifact.getArtifactId() + ":" + newArtifact.getVersion() );
+            }
 
-                File file = newArtifact.getFile();
+            if ( compileArtifactMap.get( newArtifact.getDependencyConflictId() ) != null )
+            {
+                Artifact oldArtifact =
+                    (Artifact) compileArtifactMap.get( newArtifact.getDependencyConflictId() );
 
-                if ( file == null )
-                {
-                    throw new MavenReportException( "Error in plugin descriptor - "
-                        + "dependency was not resolved for artifact: " + newArtifact.getGroupId() + ":"
-                        + newArtifact.getArtifactId() + ":" + newArtifact.getVersion() );
-                }
-
-                if ( compileArtifactMap.get( newArtifact.getDependencyConflictId() ) != null )
-                {
-                    Artifact oldArtifact =
-                        (Artifact) compileArtifactMap.get( newArtifact.getDependencyConflictId() );
-
-                    ArtifactVersion oldVersion = new DefaultArtifactVersion( oldArtifact.getVersion() );
-                    ArtifactVersion newVersion = new DefaultArtifactVersion( newArtifact.getVersion() );
-                    if ( newVersion.compareTo( oldVersion ) > 0 )
-                    {
-                        compileArtifactMap.put( newArtifact.getDependencyConflictId(), newArtifact );
-                    }
-                }
-                else
+                ArtifactVersion oldVersion = new DefaultArtifactVersion( oldArtifact.getVersion() );
+                ArtifactVersion newVersion = new DefaultArtifactVersion( newArtifact.getVersion() );
+                if ( newVersion.compareTo( oldVersion ) > 0 )
                 {
                     compileArtifactMap.put( newArtifact.getDependencyConflictId(), newArtifact );
                 }
+            }
+            else
+            {
+                compileArtifactMap.put( newArtifact.getDependencyConflictId(), newArtifact );
             }
         }
     }
@@ -3213,23 +3205,21 @@ public abstract class AbstractJavadocMojo
             // Find its transitive dependencies in the local repo
             MavenProject artifactProject =
                 mavenProjectBuilder.buildFromRepository( artifact, remoteRepositories, localRepository );
-            Set dependencyArtifacts = artifactProject.createArtifacts( factory, null, null );
+            Set<Artifact> dependencyArtifacts = artifactProject.createArtifacts( factory, null, null );
             if ( !dependencyArtifacts.isEmpty() )
             {
                 ArtifactResolutionResult result =
                     resolver.resolveTransitively( dependencyArtifacts, artifactProject.getArtifact(),
                                                   artifactProject.getRemoteArtifactRepositories(),
                                                   localRepository, artifactMetadataSource );
-                Set artifacts = result.getArtifacts();
+                Set<Artifact> artifacts = result.getArtifacts();
 
-                Map compileArtifactMap = new HashMap();
+                Map<String, Artifact> compileArtifactMap = new HashMap<String, Artifact>();
                 populateCompileArtifactMap( compileArtifactMap, artifacts );
 
-                for ( Iterator it = compileArtifactMap.keySet().iterator(); it.hasNext(); )
+                for ( String key : compileArtifactMap.keySet() )
                 {
-                    String key = it.next().toString();
-
-                    Artifact a = (Artifact) compileArtifactMap.get( key );
+                    Artifact a = compileArtifactMap.get( key );
                     path.add( a.getFile().getAbsolutePath() );
                 }
             }
@@ -3571,7 +3561,7 @@ public abstract class AbstractJavadocMojo
      * @param b the flag which controls if the argument is added or not.
      * @param value the argument value to be added.
      */
-    private void addArgIf( List arguments, boolean b, String value )
+    private void addArgIf( List<String> arguments, boolean b, String value )
     {
         if ( b )
         {
@@ -3590,7 +3580,7 @@ public abstract class AbstractJavadocMojo
      * @see #addArgIf(java.util.List,boolean,String)
      * @see #isJavaDocVersionAtLeast(float)
      */
-    private void addArgIf( List arguments, boolean b, String value, float requiredJavaVersion )
+    private void addArgIf( List<String> arguments, boolean b, String value, float requiredJavaVersion )
     {
         if ( b )
         {
@@ -3621,7 +3611,7 @@ public abstract class AbstractJavadocMojo
      * @param value the argument value to be added.
      * @see #addArgIfNotEmpty(java.util.List,String,String,boolean)
      */
-    private void addArgIfNotEmpty( List arguments, String key, String value )
+    private void addArgIfNotEmpty( List<String> arguments, String key, String value )
     {
         addArgIfNotEmpty( arguments, key, value, false );
     }
@@ -3641,7 +3631,7 @@ public abstract class AbstractJavadocMojo
      * @see #addArgIfNotEmpty(List, String, String, boolean, boolean)
      * @see #isJavaDocVersionAtLeast(float)
      */
-    private void addArgIfNotEmpty( List arguments, String key, String value, boolean repeatKey,
+    private void addArgIfNotEmpty( List<String> arguments, String key, String value, boolean repeatKey,
                                    boolean splitValue, float requiredJavaVersion )
     {
         if ( StringUtils.isNotEmpty( value ) )
@@ -3674,7 +3664,8 @@ public abstract class AbstractJavadocMojo
      * @param repeatKey repeat or not the key in the command line
      * @param splitValue if <code>true</code> given value will be tokenized by comma
      */
-    private void addArgIfNotEmpty( List arguments, String key, String value, boolean repeatKey, boolean splitValue )
+    private void addArgIfNotEmpty( List<String> arguments, String key, String value, boolean repeatKey,
+                                   boolean splitValue )
     {
         if ( StringUtils.isNotEmpty( value ) )
         {
@@ -3719,7 +3710,7 @@ public abstract class AbstractJavadocMojo
      * @param value the argument value to be added.
      * @param repeatKey repeat or not the key in the command line
      */
-    private void addArgIfNotEmpty( List arguments, String key, String value, boolean repeatKey )
+    private void addArgIfNotEmpty( List<String> arguments, String key, String value, boolean repeatKey )
     {
         addArgIfNotEmpty( arguments, key, value, repeatKey, true );
     }
@@ -3734,7 +3725,7 @@ public abstract class AbstractJavadocMojo
      * @param requiredJavaVersion the required Java version, for example 1.31f or 1.4f
      * @see #addArgIfNotEmpty(java.util.List, String, String, float, boolean)
      */
-    private void addArgIfNotEmpty( List arguments, String key, String value, float requiredJavaVersion )
+    private void addArgIfNotEmpty( List<String> arguments, String key, String value, float requiredJavaVersion )
     {
         addArgIfNotEmpty( arguments, key, value, requiredJavaVersion, false );
     }
@@ -3751,7 +3742,7 @@ public abstract class AbstractJavadocMojo
      * @see #addArgIfNotEmpty(java.util.List,String,String)
      * @see #isJavaDocVersionAtLeast(float)
      */
-    private void addArgIfNotEmpty( List arguments, String key, String value, float requiredJavaVersion,
+    private void addArgIfNotEmpty( List<String> arguments, String key, String value, float requiredJavaVersion,
                                    boolean repeatKey )
     {
         if ( StringUtils.isNotEmpty( value ) )
@@ -3980,10 +3971,8 @@ public abstract class AbstractJavadocMojo
 
         if ( isAggregator() && project.isExecutionRoot() )
         {
-            for ( Iterator i = reactorProjects.iterator(); i.hasNext(); )
+            for ( MavenProject subProject : reactorProjects )
             {
-                MavenProject subProject = (MavenProject) i.next();
-
                 if ( subProject != project )
                 {
                     String javadocDirRelative =
@@ -4082,7 +4071,7 @@ public abstract class AbstractJavadocMojo
      * @param files not null
      * @return the list of package names for files in the sourcePaths
      */
-    private List getPackageNames( List sourcePaths, List files )
+    private List<String> getPackageNames( List<String> sourcePaths, List<String> files )
     {
         return getPackageNamesOrFilesWithUnnamedPackages( sourcePaths, files, true );
     }
@@ -4092,7 +4081,7 @@ public abstract class AbstractJavadocMojo
      * @param files not null
      * @return a list files with unnamed package names for files in the sourecPaths
      */
-    private List getFilesWithUnnamedPackages( List sourcePaths, List files )
+    private List<String> getFilesWithUnnamedPackages( List<String> sourcePaths, List<String> files )
     {
         return getPackageNamesOrFilesWithUnnamedPackages( sourcePaths, files, false );
     }
@@ -4105,23 +4094,22 @@ public abstract class AbstractJavadocMojo
      * @see #getFiles(List)
      * @see #getSourcePaths()
      */
-    private List getPackageNamesOrFilesWithUnnamedPackages( List sourcePaths, List files, boolean onlyPackageName )
+    private List<String> getPackageNamesOrFilesWithUnnamedPackages( List<String> sourcePaths, List<String> files,
+                                                                    boolean onlyPackageName )
     {
-        List returnList = new ArrayList();
+        List<String> returnList = new ArrayList<String>();
 
         if ( !StringUtils.isEmpty( sourcepath ) )
         {
             return returnList;
         }
 
-        for ( Iterator it = files.iterator(); it.hasNext(); )
+        for ( String currentFile : files )
         {
-            String currentFile = (String) it.next();
             currentFile = currentFile.replace( '\\', '/' );
 
-            for ( Iterator it2 = sourcePaths.iterator(); it2.hasNext(); )
+            for ( String currentSourcePath : sourcePaths )
             {
-                String currentSourcePath = (String) it2.next();
                 currentSourcePath = currentSourcePath.replace( '\\', '/' );
 
                 if ( !currentSourcePath.endsWith( "/" ) )
@@ -4176,7 +4164,7 @@ public abstract class AbstractJavadocMojo
      * @throws MavenReportException if any
      * @see #OPTIONS_FILE_NAME
      */
-    private void addCommandLineOptions( Commandline cmd, List arguments, File javadocOutputDirectory )
+    private void addCommandLineOptions( Commandline cmd, List<String> arguments, File javadocOutputDirectory )
         throws MavenReportException
     {
         File optionsFile = new File( javadocOutputDirectory, OPTIONS_FILE_NAME );
@@ -4216,7 +4204,7 @@ public abstract class AbstractJavadocMojo
      * @see #ARGFILE_FILE_NAME
      * @see #FILES_FILE_NAME
      */
-    private void addCommandLineArgFile( Commandline cmd, File javadocOutputDirectory, List files )
+    private void addCommandLineArgFile( Commandline cmd, File javadocOutputDirectory, List<String> files )
         throws MavenReportException
     {
         File argfileFile;
@@ -4263,7 +4251,7 @@ public abstract class AbstractJavadocMojo
      * @throws MavenReportException if any
      * @see #PACKAGES_FILE_NAME
      */
-    private void addCommandLinePackages( Commandline cmd, File javadocOutputDirectory, List packageNames )
+    private void addCommandLinePackages( Commandline cmd, File javadocOutputDirectory, List<String> packageNames )
         throws MavenReportException
     {
         File packagesFile = new File( javadocOutputDirectory, PACKAGES_FILE_NAME );
@@ -4344,7 +4332,7 @@ public abstract class AbstractJavadocMojo
             }
 
             this.locale = localeObject.toString();
-            final List availableLocalesList = Arrays.asList( Locale.getAvailableLocales() );
+            final List<Locale> availableLocalesList = Arrays.asList( Locale.getAvailableLocales() );
             if ( StringUtils.isNotEmpty( localeObject.getVariant() )
                 && !availableLocalesList.contains( localeObject ) )
             {
@@ -4433,17 +4421,14 @@ public abstract class AbstractJavadocMojo
      * @return true if ALL missing artifacts are found in the reactor.
      * @see DefaultPluginManager#checkRequiredMavenVersion( plugin, localRepository, remoteRepositories )
      */
-    private boolean checkMissingArtifactsInReactor( Collection dependencyArtifacts, Collection missing )
+    private boolean checkMissingArtifactsInReactor( Collection<Artifact> dependencyArtifacts,
+                                                    Collection<Artifact> missing )
     {
-        Set foundInReactor = new HashSet();
-        Iterator iter = missing.iterator();
-        while ( iter.hasNext() )
+        Set<MavenProject> foundInReactor = new HashSet<MavenProject>();
+        for ( Artifact mArtifact : missing )
         {
-            Artifact mArtifact = (Artifact) iter.next();
-            Iterator pIter = reactorProjects.iterator();
-            while ( pIter.hasNext() )
+            for ( MavenProject p : reactorProjects )
             {
-                MavenProject p = (MavenProject) pIter.next();
                 if ( p.getArtifactId().equals( mArtifact.getArtifactId() )
                     && p.getGroupId().equals( mArtifact.getGroupId() )
                     && p.getVersion().equals( mArtifact.getVersion() ) )
@@ -4477,7 +4462,7 @@ public abstract class AbstractJavadocMojo
      * @throws MavenReportException if any
      * @see <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#javadocoptions">http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#javadocoptions</a>
      */
-    private void addJavadocOptions( List arguments, List sourcePaths )
+    private void addJavadocOptions( List<String> arguments, List<String> sourcePaths )
         throws MavenReportException
     {
         validateJavadocOptions();
@@ -4569,7 +4554,7 @@ public abstract class AbstractJavadocMojo
      * @see <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#standard">
      * http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#standard</a>
      */
-    private void addStandardDocletOptions( File javadocOutputDirectory, List arguments )
+    private void addStandardDocletOptions( File javadocOutputDirectory, List<String> arguments )
         throws MavenReportException
     {
         validateStandardDocletOptions();
@@ -4695,7 +4680,7 @@ public abstract class AbstractJavadocMojo
      * @param arguments not null
      * @throws MavenReportException 
      */
-    private void addGroups( List arguments )
+    private void addGroups( List<String> arguments )
         throws MavenReportException
     {
         Set<Group> groups = collectGroups();
@@ -4729,7 +4714,7 @@ public abstract class AbstractJavadocMojo
      * @param arguments not null
      * @throws MavenReportException 
      */
-    private void addTags( List arguments )
+    private void addTags( List<String> arguments )
         throws MavenReportException
     {
         Set<Tag> tags = collectTags();
@@ -4770,7 +4755,7 @@ public abstract class AbstractJavadocMojo
      *
      * @param arguments not null
      */
-    private void addTaglets( List arguments )
+    private void addTaglets( List<String> arguments )
     {
         if ( taglets == null )
         {
@@ -4801,7 +4786,7 @@ public abstract class AbstractJavadocMojo
      * @throws MavenReportException if any
      * @see JavadocUtil#getTagletClassNames(File)
      */
-    private void addTagletsFromTagletArtifacts( List arguments )
+    private void addTagletsFromTagletArtifacts( List<String> arguments )
         throws MavenReportException
     {
         Set<TagletArtifact> tArtifacts = new LinkedHashSet<TagletArtifact>();
@@ -4839,9 +4824,9 @@ public abstract class AbstractJavadocMojo
             return;
         }
 
-        List tagletsPath = new ArrayList();
+        List<String> tagletsPath = new ArrayList<String>();
         
-        for ( TagletArtifact aTagletArtifact: tArtifacts )
+        for ( TagletArtifact aTagletArtifact : tArtifacts )
         {
             if ( ( StringUtils.isNotEmpty( aTagletArtifact.getGroupId() ) )
                 && ( StringUtils.isNotEmpty( aTagletArtifact.getArtifactId() ) )
@@ -4872,16 +4857,14 @@ public abstract class AbstractJavadocMojo
 
         tagletsPath = JavadocUtil.pruneFiles( tagletsPath );
 
-        for ( Iterator it = tagletsPath.iterator(); it.hasNext(); )
+        for ( String tagletJar : tagletsPath )
         {
-            String tagletJar = (String) it.next();
-
             if ( !tagletJar.toLowerCase( Locale.ENGLISH ).endsWith( ".jar" ) )
             {
                 continue;
             }
 
-            List tagletClasses;
+            List<String> tagletClasses;
             try
             {
                 tagletClasses = JavadocUtil.getTagletClassNames( new File( tagletJar ) );
@@ -4931,10 +4914,8 @@ public abstract class AbstractJavadocMojo
 
             if ( tagletClasses != null && !tagletClasses.isEmpty() )
             {
-                for ( Iterator it2 = tagletClasses.iterator(); it2.hasNext(); )
+                for ( String tagletClass : tagletClasses )
                 {
-                    String tagletClass = (String) it2.next();
-
                     addArgIfNotEmpty( arguments, "-taglet", JavadocUtil.quotedArgument( tagletClass ),
                                       SINCE_JAVADOC_1_4 );
                 }
@@ -5063,7 +5044,7 @@ public abstract class AbstractJavadocMojo
             inputResourceName = inputResourceName.replaceFirst( "//*", "" );
         }
 
-        List classPath = new ArrayList();
+        List<String> classPath = new ArrayList<String>();
         classPath.add( project.getBuild().getSourceDirectory() );
 
         URL resourceURL = getResource( classPath, inputResourceName );
@@ -5074,9 +5055,9 @@ public abstract class AbstractJavadocMojo
         }
 
         classPath.clear();
-        for ( Iterator it = project.getBuild().getResources().iterator(); it.hasNext(); )
+        for ( Iterator<Resource> it = project.getBuild().getResources().iterator(); it.hasNext(); )
         {
-            Resource resource = (Resource) it.next();
+            Resource resource = it.next();
 
             classPath.add( resource.getDirectory() );
         }
@@ -5104,9 +5085,9 @@ public abstract class AbstractJavadocMojo
         Plugin javadocPlugin = getPlugin( project, pluginId );
         if ( javadocPlugin != null && javadocPlugin.getDependencies() != null )
         {
-            for ( Iterator it = javadocPlugin.getDependencies().iterator(); it.hasNext(); )
+            for ( Iterator<Dependency> it = javadocPlugin.getDependencies().iterator(); it.hasNext(); )
             {
-                Dependency dependency = (Dependency) it.next();
+                Dependency dependency = it.next();
 
                 JavadocPathArtifact javadocPathArtifact = new JavadocPathArtifact();
                 javadocPathArtifact.setGroupId( dependency.getGroupId() );
@@ -5171,15 +5152,14 @@ public abstract class AbstractJavadocMojo
      * @see ClassLoader#getResource(String)
      * @since 2.6
      */
-    private URL getResource( final List classPath, final String resource )
+    private URL getResource( final List<String> classPath, final String resource )
     {
-        List urls = new ArrayList( classPath.size() );
-        Iterator iter = classPath.iterator();
-        while ( iter.hasNext() )
+        List<URL> urls = new ArrayList<URL>( classPath.size() );
+        for ( String filename : classPath )
         {
             try
             {
-                urls.add( new File( ( (String) iter.next() ) ).toURL() );
+                urls.add( new File( filename ).toURL() );
             }
             catch ( MalformedURLException e )
             {
@@ -5263,17 +5243,15 @@ public abstract class AbstractJavadocMojo
     {
         if ( !( detectOfflineLinks && !isAggregator() && reactorProjects != null ) )
         {
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
 
         getLog().debug( "Try to add links for modules..." );
 
-        List modulesLinks = new ArrayList();
+        List<OfflineLink> modulesLinks = new ArrayList<OfflineLink>();
         String javadocDirRelative = PathUtils.toRelative( project.getBasedir(), getOutputDirectory() );
-        for ( Iterator it = reactorProjects.iterator(); it.hasNext(); )
+        for ( MavenProject p : reactorProjects )
         {
-            MavenProject p = (MavenProject) it.next();
-
             if ( p.getPackaging().equals( "pom" ) )
             {
                 continue;
@@ -5367,15 +5345,15 @@ public abstract class AbstractJavadocMojo
     {
         if ( !detectLinks )
         {
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
 
         getLog().debug( "Try to add links for dependencies..." );
 
-        List dependenciesLinks = new ArrayList();
-        for ( Iterator it = project.getDependencyArtifacts().iterator(); it.hasNext(); )
+        List<String> dependenciesLinks = new ArrayList<String>();
+        for ( Iterator<Artifact> it = project.getDependencyArtifacts().iterator(); it.hasNext(); )
         {
-            Artifact artifact = (Artifact) it.next();
+            Artifact artifact = it.next();
 
             if ( artifact != null && artifact.getFile() != null && artifact.getFile().exists() )
             {

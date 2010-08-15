@@ -33,9 +33,8 @@ import org.codehaus.plexus.archiver.jar.ManifestException;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Locale;
 import java.util.List;
-import java.util.Iterator;
+import java.util.Locale;
 
 /**
  * Bundles the Javadoc documentation for <code>main Java code</code> in an <b>NON aggregator</b> project into
@@ -291,11 +290,10 @@ public class JavadocJar
             archiver.getArchiver().addDirectory( contentDirectory, DEFAULT_INCLUDES, DEFAULT_EXCLUDES );
         }
 
-        List resources = project.getBuild().getResources();
+        List<Resource> resources = project.getBuild().getResources();
 
-        for ( Iterator i = resources.iterator(); i.hasNext(); )
+        for ( Resource r : resources )
         {
-            Resource r = (Resource) i.next();
             if ( r.getDirectory().endsWith( "maven-shared-archive-resources" ) )
             {
                 archiver.getArchiver().addDirectory( new File( r.getDirectory() ) );

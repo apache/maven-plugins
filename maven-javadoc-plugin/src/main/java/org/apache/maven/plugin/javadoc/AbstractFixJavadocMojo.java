@@ -302,7 +302,7 @@ public abstract class AbstractFixJavadocMojo
     private ArtifactRepository localRepository;
 
     /**
-     * Output directory where Java classes will be rewrited.
+     * Output directory where Java classes will be rewritten.
      *
      * @parameter expression="${outputDirectory}" default-value="${project.build.sourceDirectory}"
      */
@@ -340,13 +340,13 @@ public abstract class AbstractFixJavadocMojo
     private String[] fixTagsSplitted;
 
     /** New classes found by Clirr. */
-    private List clirrNewClasses;
+    private List<String> clirrNewClasses;
 
     /** New Methods in a Class (the key) found by Clirr. */
-    private Map clirrNewMethods;
+    private Map<String, List<String>> clirrNewMethods;
 
     /** List of classes where <code>&#42;since</code> is added. Will be used to add or not this tag in the methods. */
-    private List sinceClasses;
+    private List<String> sinceClasses;
 
     /** {@inheritDoc} */
     public void execute()
@@ -429,10 +429,10 @@ public abstract class AbstractFixJavadocMojo
      * @param p not null maven project.
      * @return the list of source paths for the given project.
      */
-    protected List getProjectSourceRoots( MavenProject p )
+    protected List<String> getProjectSourceRoots( MavenProject p )
     {
         return ( p.getCompileSourceRoots() == null ? Collections.EMPTY_LIST
-                        : new LinkedList( p.getCompileSourceRoots() ) );
+                        : new LinkedList<String>( p.getCompileSourceRoots() ) );
     }
 
     /**
@@ -440,11 +440,11 @@ public abstract class AbstractFixJavadocMojo
      * @return the compile classpath elements
      * @throws DependencyResolutionRequiredException if any
      */
-    protected List getCompileClasspathElements( MavenProject p )
+    protected List<String> getCompileClasspathElements( MavenProject p )
         throws DependencyResolutionRequiredException
     {
         return ( p.getCompileClasspathElements() == null ? Collections.EMPTY_LIST
-                        : new LinkedList( p.getCompileClasspathElements() ) );
+                        : new LinkedList<String>( p.getCompileClasspathElements() ) );
     }
 
     /**
@@ -487,7 +487,7 @@ public abstract class AbstractFixJavadocMojo
         if ( !FIX_TAGS_ALL.equalsIgnoreCase( fixTags.trim() ) )
         {
             String[] split = StringUtils.split( fixTags, "," );
-            List filtered = new LinkedList();
+            List<String> filtered = new LinkedList<String>();
             for ( int j = 0; j < split.length; j++ )
             {
                 String s = split[j].trim();
@@ -697,8 +697,8 @@ public abstract class AbstractFixJavadocMojo
             getLog().info( "Clirr output file was created: " + clirrTextOutputFile.getAbsolutePath() );
         }
 
-        clirrNewClasses = new LinkedList();
-        clirrNewMethods = new LinkedHashMap();
+        clirrNewClasses = new LinkedList<String>();
+        clirrNewMethods = new LinkedHashMap<String, List<String>>();
 
         BufferedReader input = new BufferedReader( ReaderFactory.newReader( clirrTextOutputFile, "UTF-8" ) );
         String line = null;
@@ -732,15 +732,15 @@ public abstract class AbstractFixJavadocMojo
             // 7011 - Method Added
             // 7012 - Method Added to Interface
             // 8000 - Class Added
-            List list;
+            List<String> list;
             String[] splits2;
             switch ( code )
             {
                 case 7011:
-                    list = (List) clirrNewMethods.get( split[2].trim() );
+                    list = clirrNewMethods.get( split[2].trim() );
                     if ( list == null )
                     {
-                        list = new ArrayList();
+                        list = new ArrayList<String>();
                     }
                     splits2 = StringUtils.split( split[3].trim(), "'" );
                     if ( splits2.length != 3 )
@@ -752,10 +752,10 @@ public abstract class AbstractFixJavadocMojo
                     break;
 
                 case 7012:
-                    list = (List) clirrNewMethods.get( split[2].trim() );
+                    list = clirrNewMethods.get( split[2].trim() );
                     if ( list == null )
                     {
-                        list = new ArrayList();
+                        list = new ArrayList<String>();
                     }
                     splits2 = StringUtils.split( split[3].trim(), "'" );
                     if ( splits2.length != 3 )
@@ -823,10 +823,10 @@ public abstract class AbstractFixJavadocMojo
             return null;
         }
 
-        List javaFiles = new LinkedList();
-        for ( Iterator i = getProjectSourceRoots( project ).iterator(); i.hasNext(); )
+        List<File> javaFiles = new LinkedList<File>();
+        for ( String sourceRoot : getProjectSourceRoots( project ) )
         {
-            File f = new File( (String) i.next() );
+            File f = new File( sourceRoot );
             if ( f.isDirectory() )
             {
                 javaFiles.addAll( FileUtils.getFiles( f, includes, excludes, true ) );
@@ -843,9 +843,8 @@ public abstract class AbstractFixJavadocMojo
         JavaDocBuilder builder = new JavaDocBuilder();
         builder.getClassLibrary().addClassLoader( getProjectClassLoader() );
         builder.setEncoding( encoding );
-        for ( Iterator i = javaFiles.iterator(); i.hasNext(); )
+        for ( File f : javaFiles )
         {
-            File f = (File) i.next();
             if ( !f.getAbsolutePath().toLowerCase( Locale.ENGLISH ).endsWith( ".java" )
                 && getLog().isWarnEnabled() )
             {
@@ -878,7 +877,7 @@ public abstract class AbstractFixJavadocMojo
     {
         if ( projectClassLoader == null )
         {
-            List classPath;
+            List<String> classPath;
             try
             {
                 classPath = getCompileClasspathElements( project );
@@ -888,13 +887,12 @@ public abstract class AbstractFixJavadocMojo
                 throw new MojoExecutionException( "DependencyResolutionRequiredException: " + e.getMessage(), e );
             }
 
-            List urls = new ArrayList( classPath.size() );
-            Iterator iter = classPath.iterator();
-            while ( iter.hasNext() )
+            List<URL> urls = new ArrayList<URL>( classPath.size() );
+            for ( String filename : classPath )
             {
                 try
                 {
-                    urls.add( new File( ( (String) iter.next() ) ).toURL() );
+                    urls.add( new File( filename ).toURL() );
                 }
                 catch ( MalformedURLException e )
                 {
@@ -1120,7 +1118,7 @@ public abstract class AbstractFixJavadocMojo
      */
     private boolean isInLevel( String[] modifiers )
     {
-        List modifiersAsList = Arrays.asList( modifiers );
+        List<String> modifiersAsList = Arrays.asList( modifiers );
 
         if ( LEVEL_PUBLIC.equalsIgnoreCase( level.trim() ) )
         {
@@ -1852,9 +1850,9 @@ public abstract class AbstractFixJavadocMojo
                 else
                 {
                     // write unknown tags
-                    for ( Iterator it = javaEntityTags.getUnknownTags().iterator(); it.hasNext(); )
+                    for ( Iterator<String> it = javaEntityTags.getUnknownTags().iterator(); it.hasNext(); )
                     {
-                        String originalJavadocTag = it.next().toString();
+                        String originalJavadocTag = it.next();
 
                         if ( StringUtils.removeDuplicateWhitespace( originalJavadocTag ).trim()
                                         .indexOf( "@" + docletTag.getName() ) != -1 )
@@ -1868,9 +1866,9 @@ public abstract class AbstractFixJavadocMojo
             }
             else
             {
-                for ( Iterator it = javaEntityTags.getUnknownTags().iterator(); it.hasNext(); )
+                for ( Iterator<String> it = javaEntityTags.getUnknownTags().iterator(); it.hasNext(); )
                 {
-                    String originalJavadocTag = it.next().toString();
+                    String originalJavadocTag = it.next();
 
                     if ( StringUtils.removeDuplicateWhitespace( originalJavadocTag ).trim()
                                     .indexOf( "@" + docletTag.getName() ) != -1 )
@@ -2034,7 +2032,7 @@ public abstract class AbstractFixJavadocMojo
         }
 
         // Maybe a RuntimeException
-        Class clazz = getRuntimeExceptionClass( javaMethod.getParentClass(), exceptionClassName );
+        Class<?> clazz = getRuntimeExceptionClass( javaMethod.getParentClass(), exceptionClassName );
         if ( clazz != null )
         {
             sb.append( StringUtils.replace( originalJavadocTag, exceptionClassName, clazz.getName() ) );
@@ -2596,24 +2594,20 @@ public abstract class AbstractFixJavadocMojo
             }
         }
 
-        Class clazz = getClass( javaMethod.getParentClass().getFullyQualifiedName() );
+        Class<?> clazz = getClass( javaMethod.getParentClass().getFullyQualifiedName() );
 
-        List interfaces = ClassUtils.getAllInterfaces( clazz );
-        for ( Iterator it = interfaces.iterator(); it.hasNext(); )
+        List<Class<?>>interfaces = ClassUtils.getAllInterfaces( clazz );
+        for ( Class<?> intface : interfaces )
         {
-            Class intface = (Class) it.next();
-
             if ( isInherited( intface, javaMethod ) )
             {
                 return true;
             }
         }
 
-        List classes = ClassUtils.getAllSuperclasses( clazz );
-        for ( Iterator it = classes.iterator(); it.hasNext(); )
+        List<Class<?>> classes = ClassUtils.getAllSuperclasses( clazz );
+        for ( Class<?> superClass : classes )
         {
-            Class superClass = (Class) it.next();
-
             if ( isInherited( superClass, javaMethod ) )
             {
                 return true;
@@ -2630,7 +2624,7 @@ public abstract class AbstractFixJavadocMojo
      * <code>false</code> otherwise.
      * @see #isInherited(JavaMethod)
      */
-    private boolean isInherited( Class clazz, JavaMethod javaMethod )
+    private boolean isInherited( Class<?> clazz, JavaMethod javaMethod )
     {
         Method[] methods = clazz.getDeclaredMethods();
         for ( int i = 0; i < methods.length; i++ )
@@ -2752,17 +2746,15 @@ public abstract class AbstractFixJavadocMojo
             return false;
         }
 
-        List clirrMethods = (List) clirrNewMethods.get( javaMethod.getParentClass().getFullyQualifiedName() );
+        List<String> clirrMethods = clirrNewMethods.get( javaMethod.getParentClass().getFullyQualifiedName() );
         if ( clirrMethods == null )
         {
             return false;
         }
 
-        for ( Iterator it = clirrMethods.iterator(); it.hasNext(); )
+        for ( String clirrMethod : clirrMethods )
         {
             // see net.sf.clirr.core.internal.checks.MethodSetCheck#getMethodId(JavaType clazz, Method method)
-            String clirrMethod = (String) it.next();
-
             String retrn = "";
             if ( javaMethod.getReturns() != null )
             {
@@ -2796,7 +2788,7 @@ public abstract class AbstractFixJavadocMojo
      * @see {@link ClassUtils#getClass(ClassLoader, String, boolean)}
      * @see {@link #getProjectClassLoader()}
      */
-    private Class getClass( String className )
+    private Class<?> getClass( String className )
         throws MojoExecutionException
     {
         try
@@ -2824,14 +2816,14 @@ public abstract class AbstractFixJavadocMojo
      * @return a RuntimeException assignable class.
      * @see #getClass(String)
      */
-    private Class getRuntimeExceptionClass( JavaClass currentClass, String exceptionClassName )
+    private Class<?> getRuntimeExceptionClass( JavaClass currentClass, String exceptionClassName )
     {
         String[] potentialClassNames =
             new String[] { exceptionClassName, currentClass.getPackage().getName() + "." + exceptionClassName,
                 currentClass.getPackage().getName() + "." + currentClass.getName() + "$" + exceptionClassName,
                 "java.lang." + exceptionClassName };
 
-        Class clazz = null;
+        Class<?> clazz = null;
         for ( int i = 0; i < potentialClassNames.length; i++ )
         {
             try
@@ -2858,7 +2850,7 @@ public abstract class AbstractFixJavadocMojo
     {
         if ( sinceClasses == null )
         {
-            sinceClasses = new ArrayList();
+            sinceClasses = new ArrayList<String>();
         }
         sinceClasses.add( javaClass.getFullyQualifiedName() );
     }
@@ -3254,7 +3246,7 @@ public abstract class AbstractFixJavadocMojo
         }
 
         String[] javaClassContentLines = getLines( javaClassContent );
-        List list = new LinkedList();
+        List<String> list = new LinkedList<String>();
         for ( int i = entity.getLineNumber() - 2; i >= 0; i-- )
         {
             String line = javaClassContentLines[i];
@@ -3363,14 +3355,14 @@ public abstract class AbstractFixJavadocMojo
             return content;
         }
 
-        List linesList = new LinkedList();
+        List<String> linesList = new LinkedList<String>();
         linesList.addAll( Arrays.asList( lines ) );
 
         Collections.reverse( linesList );
 
-        for ( Iterator it = linesList.iterator(); it.hasNext(); )
+        for ( Iterator<String> it = linesList.iterator(); it.hasNext(); )
         {
-            String line = (String) it.next();
+            String line = it.next();
 
             if ( line.trim().equals( "*" ) )
             {
@@ -3446,7 +3438,7 @@ public abstract class AbstractFixJavadocMojo
     private static String[] getLines( final String content )
         throws IOException
     {
-        List lines = new LinkedList();
+        List<String> lines = new LinkedList<String>();
 
         BufferedReader reader = new BufferedReader( new StringReader( content ) );
         String line = reader.readLine();
@@ -3528,7 +3520,7 @@ public abstract class AbstractFixJavadocMojo
         if ( params[0].trim().equals( "<" ) && params[2].trim().equals( ">" ) )
         {
             String param = params[1];
-            List l = new ArrayList( Arrays.asList( params ) );
+            List<String> l = new ArrayList<String>( Arrays.asList( params ) );
             l.set( 1, "<" + param + ">" );
             l.remove( 0 );
             l.remove( 1 );
@@ -3549,31 +3541,31 @@ public abstract class AbstractFixJavadocMojo
         private final boolean isJavaMethod;
 
         /** List of tag names. */
-        private List namesTags;
+        private List<String> namesTags;
 
         /** Map with java parameter as key and original Javadoc lines as values. */
-        private Map tagParams;
+        private Map<String, String> tagParams;
 
         /** Original javadoc lines. */
         private String tagReturn;
 
         /** Map with java throw as key and original Javadoc lines as values. */
-        private Map tagThrows;
+        private Map<String, String> tagThrows;
 
         /** Original javadoc lines for unknown tags. */
-        private List unknownsTags;
+        private List<String> unknownsTags;
 
         public JavaEntityTags( AbstractInheritableJavaEntity entity, boolean isJavaMethod )
         {
             this.entity = entity;
             this.isJavaMethod = isJavaMethod;
-            this.namesTags = new LinkedList();
-            this.tagParams = new LinkedHashMap();
-            this.tagThrows = new LinkedHashMap();
-            this.unknownsTags = new LinkedList();
+            this.namesTags = new LinkedList<String>();
+            this.tagParams = new LinkedHashMap<String, String>();
+            this.tagThrows = new LinkedHashMap<String, String>();
+            this.unknownsTags = new LinkedList<String>();
         }
 
-        public List getNamesTags()
+        public List<String> getNamesTags()
         {
             return namesTags;
         }
@@ -3588,7 +3580,7 @@ public abstract class AbstractFixJavadocMojo
             tagReturn = s;
         }
 
-        public List getUnknownTags()
+        public List<String> getUnknownTags()
         {
             return unknownsTags;
         }
