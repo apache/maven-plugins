@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
 import org.apache.maven.plugin.javadoc.resolver.SourceResolverConfig;
 import org.apache.maven.project.MavenProject;
@@ -233,9 +234,9 @@ public class TestJavadocReport
     // ----------------------------------------------------------------------
 
     /** {@inheritDoc} */
-    protected List getProjectBuildOutputDirs( MavenProject p )
+    protected List<String> getProjectBuildOutputDirs( MavenProject p )
     {
-        List dirs = new ArrayList();
+        List<String> dirs = new ArrayList<String>();
         if ( StringUtils.isNotEmpty( p.getBuild().getOutputDirectory() ) )
         {
             dirs.add( p.getBuild().getOutputDirectory() );
@@ -249,33 +250,34 @@ public class TestJavadocReport
     }
 
     /** {@inheritDoc} */
-    protected List getProjectSourceRoots( MavenProject p )
+    protected List<String> getProjectSourceRoots( MavenProject p )
     {
         if ( "pom".equals( p.getPackaging().toLowerCase() ) )
         {
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
 
         return ( p.getTestCompileSourceRoots() == null ? Collections.EMPTY_LIST
-                        : new LinkedList( p.getTestCompileSourceRoots() ) );
+                        : new LinkedList<String>( p.getTestCompileSourceRoots() ) );
     }
 
     /** {@inheritDoc} */
-    protected List getExecutionProjectSourceRoots( MavenProject p )
+    protected List<String> getExecutionProjectSourceRoots( MavenProject p )
     {
         if ( "pom".equals( p.getExecutionProject().getPackaging().toLowerCase() ) )
         {
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
 
         return ( p.getExecutionProject().getTestCompileSourceRoots() == null ? Collections.EMPTY_LIST
-                        : new LinkedList( p.getExecutionProject().getTestCompileSourceRoots() ) );
+                        : new LinkedList<String>( p.getExecutionProject().getTestCompileSourceRoots() ) );
     }
 
     /** {@inheritDoc} */
-    protected List getProjectArtifacts( MavenProject p )
+    protected List<Artifact> getProjectArtifacts( MavenProject p )
     {
-        return ( p.getTestArtifacts() == null ? Collections.EMPTY_LIST : new LinkedList( p.getTestArtifacts() ) );
+        return ( p.getTestArtifacts() == null ? Collections.EMPTY_LIST
+                        : new LinkedList<Artifact>( p.getTestArtifacts() ) );
     }
 
     /** {@inheritDoc} */
@@ -303,7 +305,7 @@ public class TestJavadocReport
     }
 
     /** {@inheritDoc} */
-    protected List getCompileArtifacts( ArtifactResolutionResult result )
+    protected List<Artifact> getCompileArtifacts( ArtifactResolutionResult result )
     {
         return JavadocUtil.getCompileArtifacts( result.getArtifacts(), true );
     }

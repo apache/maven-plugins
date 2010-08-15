@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
 import org.apache.maven.plugin.javadoc.resolver.SourceResolverConfig;
 import org.apache.maven.project.MavenProject;
@@ -152,9 +153,9 @@ public class TestJavadocJar
     }
 
     /** {@inheritDoc} */
-    protected List getProjectBuildOutputDirs( MavenProject p )
+    protected List<String> getProjectBuildOutputDirs( MavenProject p )
     {
-        List dirs = new ArrayList();
+        List<String> dirs = new ArrayList<String>();
         if ( StringUtils.isNotEmpty( p.getBuild().getOutputDirectory() ) )
         {
             dirs.add( p.getBuild().getOutputDirectory() );
@@ -168,35 +169,35 @@ public class TestJavadocJar
     }
 
     /** {@inheritDoc} */
-    protected List getProjectSourceRoots( MavenProject p )
+    protected List<String> getProjectSourceRoots( MavenProject p )
     {
         if ( "pom".equals( p.getPackaging().toLowerCase() ) )
         {
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
 
         return p.getTestCompileSourceRoots();
     }
 
     /** {@inheritDoc} */
-    protected List getExecutionProjectSourceRoots( MavenProject p )
+    protected List<String> getExecutionProjectSourceRoots( MavenProject p )
     {
         if ( "pom".equals( p.getExecutionProject().getPackaging().toLowerCase() ) )
         {
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
 
         return p.getExecutionProject().getTestCompileSourceRoots();
     }
 
     /** {@inheritDoc} */
-    protected List getProjectArtifacts( MavenProject p )
+    protected List<Artifact> getProjectArtifacts( MavenProject p )
     {
         return p.getTestArtifacts();
     }
 
     /** {@inheritDoc} */
-    protected List getCompileArtifacts( ArtifactResolutionResult result )
+    protected List<Artifact> getCompileArtifacts( ArtifactResolutionResult result )
     {
         return JavadocUtil.getCompileArtifacts( result.getArtifacts(), true );
     }

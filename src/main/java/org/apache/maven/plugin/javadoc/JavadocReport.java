@@ -206,8 +206,8 @@ public class JavadocReport
 
         if ( !this.isAggregator() || ( this.isAggregator() && this.project.isExecutionRoot() ) )
         {
-            List sourcePaths;
-            List files;
+            List<String> sourcePaths;
+            List<String> files;
             try
             {
                 sourcePaths = getSourcePaths();
