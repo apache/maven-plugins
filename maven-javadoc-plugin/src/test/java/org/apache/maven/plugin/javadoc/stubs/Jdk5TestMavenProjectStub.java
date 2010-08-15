@@ -36,8 +36,6 @@ public class Jdk5TestMavenProjectStub
 {
     private Scm scm;
 
-    private Build build;
-
     public Jdk5TestMavenProjectStub()
     {
         readModel( new File( getBasedir(), "jdk5-test-plugin-config.xml" ) );
@@ -58,7 +56,7 @@ public class Jdk5TestMavenProjectStub
         build.setDirectory( super.getBasedir() + "/target/test/unit/jdk5-test/target" );
         setBuild( build );
 
-        List compileSourceRoots = new ArrayList();
+        List<String> compileSourceRoots = new ArrayList<String>();
         compileSourceRoots.add( getBasedir().getAbsolutePath() );
         setCompileSourceRoots( compileSourceRoots );
     }
@@ -73,18 +71,6 @@ public class Jdk5TestMavenProjectStub
     public void setScm( Scm scm )
     {
         this.scm = scm;
-    }
-
-    /** {@inheritDoc} */
-    public Build getBuild()
-    {
-        return build;
-    }
-
-    /** {@inheritDoc} */
-    public void setBuild( Build build )
-    {
-        this.build = build;
     }
 
     /** {@inheritDoc} */

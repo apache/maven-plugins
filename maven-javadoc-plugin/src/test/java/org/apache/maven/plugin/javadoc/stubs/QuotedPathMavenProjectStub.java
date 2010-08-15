@@ -36,12 +36,9 @@ public class QuotedPathMavenProjectStub
 {
    private Scm scm;
 
-    private Build build;
-
     public QuotedPathMavenProjectStub()
     {
         readModel( new File( getBasedir(), "quotedpath-test-plugin-config.xml" ) );
-
 
         setGroupId( "org.apache.maven.plugins.maven-javadoc-plugin.unit" );
         setArtifactId( "quotedpath-test" );
@@ -59,7 +56,7 @@ public class QuotedPathMavenProjectStub
         build.setDirectory( super.getBasedir() + "/target/test/unit/quotedpath'test/target" );
         setBuild( build );
 
-        List compileSourceRoots = new ArrayList();
+        List<String> compileSourceRoots = new ArrayList<String>();
         compileSourceRoots.add( getBasedir() + "/quotedpath/test" );
         setCompileSourceRoots( compileSourceRoots );
     }
@@ -74,18 +71,6 @@ public class QuotedPathMavenProjectStub
     public void setScm( Scm scm )
     {
         this.scm = scm;
-    }
-
-    /** {@inheritDoc} */
-    public Build getBuild()
-    {
-        return build;
-    }
-
-    /** {@inheritDoc} */
-    public void setBuild( Build build )
-    {
-        this.build = build;
     }
 
     /** {@inheritDoc} */

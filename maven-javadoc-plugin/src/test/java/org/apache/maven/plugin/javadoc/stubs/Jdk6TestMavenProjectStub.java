@@ -36,8 +36,6 @@ public class Jdk6TestMavenProjectStub
 {
     private Scm scm;
 
-    private Build build;
-
     public Jdk6TestMavenProjectStub()
     {
         readModel( new File( getBasedir(), "jdk6-test-plugin-config.xml" ) );
@@ -58,7 +56,7 @@ public class Jdk6TestMavenProjectStub
         build.setDirectory( super.getBasedir() + "/target/test/unit/jdk6-test/target" );
         setBuild( build );
 
-        List compileSourceRoots = new ArrayList();
+        List<String> compileSourceRoots = new ArrayList<String>();
         compileSourceRoots.add( getBasedir().getAbsolutePath() );
         setCompileSourceRoots( compileSourceRoots );
     }
@@ -76,28 +74,8 @@ public class Jdk6TestMavenProjectStub
     }
 
     /** {@inheritDoc} */
-    public Build getBuild()
-    {
-        return build;
-    }
-
-    /** {@inheritDoc} */
-    public void setBuild( Build build )
-    {
-        this.build = build;
-    }
-
-    /** {@inheritDoc} */
     public File getBasedir()
     {
         return new File( super.getBasedir() + "/src/test/resources/unit/jdk6-test/" );
     }
-
-    public List getCompileSourceRoots()
-    {
-        List sourceRoots = super.getCompileSourceRoots();
-        return  sourceRoots;
-    }
-    
-    
 }

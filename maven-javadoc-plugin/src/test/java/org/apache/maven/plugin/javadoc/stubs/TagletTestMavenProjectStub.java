@@ -36,8 +36,6 @@ public class TagletTestMavenProjectStub
 {
     private Scm scm;
 
-    private Build build;
-
     public TagletTestMavenProjectStub()
     {
         readModel( new File( getBasedir(), "taglet-test-plugin-config.xml" ) );
@@ -58,7 +56,7 @@ public class TagletTestMavenProjectStub
         build.setDirectory( super.getBasedir() + "/target/test/unit/taglet-test/target" );
         setBuild( build );
 
-        List compileSourceRoots = new ArrayList();
+        List<String> compileSourceRoots = new ArrayList<String>();
         compileSourceRoots.add( getBasedir() + "/taglet/test" );
         setCompileSourceRoots( compileSourceRoots );
     }
@@ -73,18 +71,6 @@ public class TagletTestMavenProjectStub
     public void setScm( Scm scm )
     {
         this.scm = scm;
-    }
-
-    /** {@inheritDoc} */
-    public Build getBuild()
-    {
-        return build;
-    }
-
-    /** {@inheritDoc} */
-    public void setBuild( Build build )
-    {
-        this.build = build;
     }
 
     /** {@inheritDoc} */

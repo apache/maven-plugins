@@ -55,10 +55,10 @@ public class JavadocJarTest
 
         //validate contents of jar file
         ZipFile jar = new ZipFile( generatedFile );
-        Set set = new HashSet();
-        for( Enumeration entries = jar.getEntries(); entries.hasMoreElements(); )
+        Set<String> set = new HashSet<String>();
+        for( Enumeration<ZipEntry> entries = jar.getEntries(); entries.hasMoreElements(); )
         {
-            ZipEntry entry = ( ZipEntry ) entries.nextElement();
+            ZipEntry entry = entries.nextElement();
             set.add( entry.getName() );
         }
 

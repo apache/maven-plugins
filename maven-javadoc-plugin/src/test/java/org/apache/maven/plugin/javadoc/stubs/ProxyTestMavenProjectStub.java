@@ -32,8 +32,6 @@ import java.util.List;
  */
 public class ProxyTestMavenProjectStub extends MavenProjectStub
 {
-    private Build build;
-
     public ProxyTestMavenProjectStub()
     {
         readModel( new File( getBasedir(), "proxy-test-plugin-config.xml" ) );
@@ -51,21 +49,9 @@ public class ProxyTestMavenProjectStub extends MavenProjectStub
         build.setDirectory( super.getBasedir() + "/target/test/unit/proxy-test/target" );
         setBuild( build );
 
-        List compileSourceRoots = new ArrayList();
+        List<String> compileSourceRoots = new ArrayList<String>();
         compileSourceRoots.add( getBasedir() + "/src/main/java" );
         setCompileSourceRoots( compileSourceRoots );
-    }
-
-    /** {@inheritDoc} */
-    public Build getBuild()
-    {
-        return build;
-    }
-
-    /** {@inheritDoc} */
-    public void setBuild( Build build )
-    {
-        this.build = build;
     }
 
     /** {@inheritDoc} */

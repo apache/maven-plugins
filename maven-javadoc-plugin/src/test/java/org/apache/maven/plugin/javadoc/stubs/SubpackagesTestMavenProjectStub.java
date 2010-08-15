@@ -36,8 +36,6 @@ public class SubpackagesTestMavenProjectStub
 {
     private Scm scm;
 
-    private Build build;
-
     public SubpackagesTestMavenProjectStub()
     {
         readModel( new File( getBasedir(), "subpackages-test-plugin-config.xml" ) );
@@ -58,7 +56,7 @@ public class SubpackagesTestMavenProjectStub
         build.setDirectory( super.getBasedir() + "/target/test/unit/subpackages-test/target" );
         setBuild( build );
 
-        List compileSourceRoots = new ArrayList();
+        List<String> compileSourceRoots = new ArrayList<String>();
         compileSourceRoots.add( getBasedir() + "/subpackages/test" );
         setCompileSourceRoots( compileSourceRoots );
     }
@@ -73,18 +71,6 @@ public class SubpackagesTestMavenProjectStub
     public void setScm( Scm scm )
     {
         this.scm = scm;
-    }
-
-    /** {@inheritDoc} */
-    public Build getBuild()
-    {
-        return build;
-    }
-
-    /** {@inheritDoc} */
-    public void setBuild( Build build )
-    {
-        this.build = build;
     }
 
     /** {@inheritDoc} */

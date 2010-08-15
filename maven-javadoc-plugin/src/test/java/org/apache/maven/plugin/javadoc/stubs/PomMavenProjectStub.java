@@ -33,8 +33,6 @@ import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
 public class PomMavenProjectStub
     extends MavenProjectStub
 {
-    private Build build;
-
     public PomMavenProjectStub()
     {
         readModel( new File( getBasedir(), "pom-test-plugin-config.xml" ) );
@@ -55,25 +53,13 @@ public class PomMavenProjectStub
         build.setTestOutputDirectory( super.getBasedir() + "/target/test/unit/pom-test/target/test-classes" );
         setBuild( build );
 
-        List compileSourceRoots = new ArrayList();
+        List<String> compileSourceRoots = new ArrayList<String>();
         compileSourceRoots.add( getBasedir() + "/src/main/java" );
         setCompileSourceRoots( compileSourceRoots );
 
-        List testCompileSourceRoots = new ArrayList();
+        List<String> testCompileSourceRoots = new ArrayList<String>();
         testCompileSourceRoots.add( getBasedir() + "/src/test/java" );
         setTestCompileSourceRoots( testCompileSourceRoots );
-    }
-
-    /** {@inheritDoc} */
-    public Build getBuild()
-    {
-        return build;
-    }
-
-    /** {@inheritDoc} */
-    public void setBuild( Build build )
-    {
-        this.build = build;
     }
 
     /** {@inheritDoc} */

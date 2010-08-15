@@ -52,7 +52,7 @@ public class AggregateTestMavenProjectStub
         build.setFinalName( getModel().getArtifactId() );
         build.setDirectory( super.getBasedir() + "/target/test/unit/aggregate-test/target" );
 
-        List compileSourceRoots = new ArrayList();
+        List<String> compileSourceRoots = new ArrayList<String>();
         compileSourceRoots.add( getBasedir() + "/src/main/java" );
         setCompileSourceRoots( compileSourceRoots );
     }

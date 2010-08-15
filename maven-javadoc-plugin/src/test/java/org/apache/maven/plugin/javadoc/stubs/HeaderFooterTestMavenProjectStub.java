@@ -32,8 +32,6 @@ import java.util.List;
  */
 public class HeaderFooterTestMavenProjectStub extends MavenProjectStub
 {
-    private Build build;
-
     public HeaderFooterTestMavenProjectStub()
     {
         readModel( new File( getBasedir(), "header-footer-test-plugin-config.xml" ) );
@@ -51,21 +49,9 @@ public class HeaderFooterTestMavenProjectStub extends MavenProjectStub
         build.setDirectory( super.getBasedir() + "/target/test/unit/header-footer-test/target" );
         setBuild( build );
 
-        List compileSourceRoots = new ArrayList();
+        List<String> compileSourceRoots = new ArrayList<String>();
         compileSourceRoots.add( getBasedir() + "/src/main/java" );
         setCompileSourceRoots( compileSourceRoots );
-    }
-
-    /** {@inheritDoc} */
-    public Build getBuild()
-    {
-        return build;
-    }
-
-    /** {@inheritDoc} */
-    public void setBuild( Build build )
-    {
-        this.build = build;
     }
 
     /** {@inheritDoc} */

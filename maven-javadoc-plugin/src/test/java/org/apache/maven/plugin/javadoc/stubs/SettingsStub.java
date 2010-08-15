@@ -47,7 +47,7 @@ public class SettingsStub
     }
 
     /** {@inheritDoc} */
-    public List getProxies()
+    public List<Proxy> getProxies()
     {
         return Collections.singletonList( getActiveProxy() );
     }

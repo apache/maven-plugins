@@ -21,17 +21,12 @@ package org.apache.maven.plugin.javadoc.stubs;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.factory.ArtifactFactory;
-import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
 import org.apache.maven.model.Build;
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.project.artifact.InvalidDependencyVersionException;
 
 /**
  * @author <a href="mailto:oching@apache.org">Maria Odea Ching</a>
@@ -40,8 +35,6 @@ import org.apache.maven.project.artifact.InvalidDependencyVersionException;
 public class AggregateProject1TestMavenProjectStub
     extends MavenProjectStub
 {
-    private Build build;
-
     public AggregateProject1TestMavenProjectStub()
     {
         setGroupId( "org.apache.maven.plugins.maven-javadoc-plugin.unit" );
@@ -54,33 +47,15 @@ public class AggregateProject1TestMavenProjectStub
         artifact.setArtifactHandler( new DefaultArtifactHandlerStub() );
         setArtifact( artifact );
 
-        build = new Build();
+        Build build = new Build();
         build.setFinalName( "aggregate-test-project1" );
         build.setDirectory( super.getBasedir() + "/target/test/unit/aggregate-test/target" );
+        setBuild( build );
 
         String basedir = getBasedir().getAbsolutePath();
-        List compileSourceRoots = new ArrayList();
+        List<String> compileSourceRoots = new ArrayList<String>();
         compileSourceRoots.add( basedir + "/aggregate/test/project1" );
         setCompileSourceRoots( compileSourceRoots );
-    }
-
-    /** {@inheritDoc} */
-    public Build getBuild()
-    {
-        return build;
-    }
-
-    /** {@inheritDoc} */
-    public void setBuild( Build build )
-    {
-        this.build = build;
-    }
-
-    /** {@inheritDoc} */
-    public Set createArtifacts( ArtifactFactory artifactFactory, String string, ArtifactFilter artifactFilter )
-        throws InvalidDependencyVersionException
-    {
-        return Collections.EMPTY_SET;
     }
 
     /** {@inheritDoc} */

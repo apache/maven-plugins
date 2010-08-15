@@ -149,7 +149,7 @@ class ProxyServer
     static class AuthAsyncProxyServlet
         extends AsyncProxyServlet
     {
-        private Map authentications;
+        private Map<String, String> authentications;
 
         private long sleepTime = 0;
 
@@ -166,7 +166,7 @@ class ProxyServer
          *
          * @param authentications a map of user/password
          */
-        public AuthAsyncProxyServlet( Map authentications )
+        public AuthAsyncProxyServlet( Map<String, String> authentications )
         {
             this();
 
@@ -179,7 +179,7 @@ class ProxyServer
          * @param authentications a map of user/password
          * @param sleepTime a positive time to sleep the service thread (for timeout)
          */
-        public AuthAsyncProxyServlet( Map authentications, long sleepTime )
+        public AuthAsyncProxyServlet( Map<String, String> authentications, long sleepTime )
         {
             this();
 
