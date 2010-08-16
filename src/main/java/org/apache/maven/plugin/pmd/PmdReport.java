@@ -157,7 +157,7 @@ public class PmdReport
         //configure ResourceManager
         locator.addSearchPath( FileResourceLoader.ID, project.getFile().getParentFile().getAbsolutePath() );
         locator.addSearchPath( "url", "" );
-        locator.setOutputDirectory( new File( project.getBuild().getDirectory() ) );
+        locator.setOutputDirectory( targetDirectory );
 
         if ( !skip && canGenerateReport() )
         {
@@ -349,6 +349,7 @@ public class PmdReport
 
         try
         {
+            targetDirectory.mkdirs();
             File targetFile = new File( targetDirectory, "pmd." + format );
             FileOutputStream tStream = new FileOutputStream( targetFile );
             writer = new OutputStreamWriter( tStream, getOutputEncoding() );
