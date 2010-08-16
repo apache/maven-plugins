@@ -21,19 +21,24 @@ under the License.
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
+
   <parent>
     <artifactId>maven-plugins</artifactId>
     <groupId>org.apache.maven.plugins</groupId>
     <version>17</version>
   </parent>
+
   <artifactId>maven-eclipse-plugin</artifactId>
   <version>2.9-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
+
   <name>Maven Eclipse Plugin</name>
   <description>The Eclipse Plugin is used to generate Eclipse IDE files (.project, .classpath and the .settings folder) from a POM.</description>
+
   <prerequisites>
     <maven>2.0.1</maven>
   </prerequisites>
+
   <scm>
     <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-eclipse-plugin/</connection>
     <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/trunk/maven-eclipse-plugin/</developerConnection>
@@ -43,9 +48,11 @@ under the License.
     <system>JIRA</system>
     <url>http://jira.codehaus.org/browse/MECLIPSE</url>
   </issueManagement>
+
   <properties>
     <maven.test.jvmargs>-Xmx1024m</maven.test.jvmargs>
   </properties>
+
   <dependencies>
     <dependency>
       <groupId>commons-io</groupId>
@@ -202,6 +209,7 @@ under the License.
       <scope>test</scope>
     </dependency>
   </dependencies>
+
   <build>
     <pluginManagement>
       <plugins>
@@ -267,7 +275,7 @@ under the License.
               <rules>
                 <requireMavenVersion>
                   <!-- The tests check file encoding and class path ordering which depends on fixes in latest Maven -->
-                  <version>[2.0.9,)</version>
+                  <version>[2.0.9,3.0],[3.0,)</version><!-- workaround for MENFORCER-94 -->
                 </requireMavenVersion>
               </rules>
             </configuration>
@@ -295,6 +303,7 @@ under the License.
       </plugin>
     </plugins>
   </build>
+
   <profiles>
     <profile>
       <id>run-its</id>
