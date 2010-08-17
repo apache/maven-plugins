@@ -275,7 +275,7 @@ under the License.
               <rules>
                 <requireMavenVersion>
                   <!-- The tests check file encoding and class path ordering which depends on fixes in latest Maven -->
-                  <version>[2.0.9,3.0],[3.0,)</version><!-- workaround for MENFORCER-94 -->
+                  <version>[2.0.9,3.0-SNAPSHOT],[3.0,)</version><!-- workaround for MENFORCER-94 -->
                 </requireMavenVersion>
               </rules>
             </configuration>
