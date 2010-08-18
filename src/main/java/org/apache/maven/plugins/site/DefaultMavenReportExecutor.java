@@ -78,7 +78,7 @@ import org.mortbay.log.Log;
  *   <ul>
  *     <li>get {@link PluginDescriptor} from the {@link MavenPluginManager#getPluginDescriptor(Plugin, RepositoryRequest)}</li>
  *     <li>setup a {@link ClassLoader} with the Mojo Site plugin {@link ClassLoader} as parent for the report execution. 
- *       You must note some classes are imported from the current Site Mojo {@link ClassRealm} see {@link #imports}.
+ *       You must note some classes are imported from the current Site Mojo {@link ClassRealm} see {@link #IMPORTS}.
  *       The artifact resolution excludes the following artifacts (with using an {@link ExclusionSetFilter} : 
  *       doxia-site-renderer, doxia-sink-api.
  *       done using {@link MavenPluginManager#setupPluginRealm(PluginDescriptor, org.apache.maven.execution.MavenSession, ClassLoader, List, org.apache.maven.artifact.resolver.filter.ArtifactFilter)}
@@ -95,7 +95,7 @@ import org.mortbay.log.Log;
  * @author Olivier Lamy
  * @since 3.0-beta-1
  */
-@Component(role=MavenReportExecutor.class)
+@Component( role = MavenReportExecutor.class )
 public class DefaultMavenReportExecutor
     implements MavenReportExecutor
 {
@@ -111,26 +111,26 @@ public class DefaultMavenReportExecutor
     @Requirement
     protected PluginVersionResolver pluginVersionResolver;
     
-    private List<String> imports = Arrays.asList( "org.apache.maven.reporting.MavenReport",
-                                                  "org.apache.maven.reporting.MavenMultiPageReport",
-                                                  "org.apache.maven.doxia.siterenderer.Renderer",
-                                                  "org.apache.maven.doxia.sink.SinkFactory",
-                                                  "org.codehaus.doxia.sink.Sink", "org.apache.maven.doxia.sink.Sink",
-                                                  "org.apache.maven.doxia.sink.SinkEventAttributes" );
+    private static final List<String> IMPORTS = Arrays.asList( "org.apache.maven.reporting.MavenReport",
+                                                               "org.apache.maven.reporting.MavenMultiPageReport",
+                                                               "org.apache.maven.doxia.siterenderer.Renderer",
+                                                               "org.apache.maven.doxia.sink.SinkFactory",
+                                                               "org.codehaus.doxia.sink.Sink",
+                                                               "org.apache.maven.doxia.sink.Sink",
+                                                               "org.apache.maven.doxia.sink.SinkEventAttributes" );
+
+    private static final Set<String> EXCLUDES = new HashSet<String>( Arrays.asList( "doxia-site-renderer",
+                                                                                    "doxia-sink-api" ) );
 
     public List<MavenReportExecution> buildMavenReports( MavenReportExecutorRequest mavenReportExecutorRequest )
         throws MojoExecutionException
     {
         if ( getLog().isDebugEnabled() )
         {
-            getLog().debug( "buildMavenReports" );
+            getLog().debug( "DefaultMavenReportExecutor.buildMavenReports()" );
         }
 
-        Set<String> excludes = new HashSet<String>( 1 );
-        excludes.add( "doxia-site-renderer" );
-        excludes.add( "doxia-sink-api" );
-
-        ExclusionSetFilter exclusionSetFilter = new ExclusionSetFilter( excludes );
+        ExclusionSetFilter exclusionSetFilter = new ExclusionSetFilter( EXCLUDES );
 
         RepositoryRequest repositoryRequest = new DefaultRepositoryRequest();
         repositoryRequest.setLocalRepository( mavenReportExecutorRequest.getLocalRepository() );
@@ -188,7 +188,7 @@ public class DefaultMavenReportExecutor
 
                     mavenPluginManager.setupPluginRealm( pluginDescriptor,
                                                          mavenReportExecutorRequest.getMavenSession(),
-                                                         Thread.currentThread().getContextClassLoader(), imports,
+                                                         Thread.currentThread().getContextClassLoader(), IMPORTS,
                                                          exclusionSetFilter );
 
                     MavenReport mavenReport =
@@ -331,25 +331,26 @@ public class DefaultMavenReportExecutor
             Thread.currentThread().setContextClassLoader( mojoDescriptor.getRealm() );
 
             boolean isMavenReport = MavenReport.class.isAssignableFrom( mojo.getClass() );
-            if ( getLog().isDebugEnabled() && mojoDescriptor != null && mojoDescriptor.getImplementationClass() != null )
+
+            if ( getLog().isDebugEnabled() )
             {
-                getLog().debug(
-                                "class " + mojoDescriptor.getImplementationClass().getName() + " isMavenReport: "
-                                    + isMavenReport );
-            }
-            if ( !isMavenReport )
-            {
-                if ( getLog().isDebugEnabled() )
+                if ( mojoDescriptor != null && mojoDescriptor.getImplementationClass() != null )
                 {
-                    getLog().debug( " skip non MavenReport " + mojoExecution.getMojoDescriptor().getId() );
+                    getLog().debug( "class " + mojoDescriptor.getImplementationClass().getName() + " isMavenReport: "
+                                        + isMavenReport );
+                }
+
+                if ( !isMavenReport )
+                {
+                    getLog().debug( "skip non MavenReport " + mojoExecution.getMojoDescriptor().getId() );
                 }
             }
+
             return isMavenReport;
         }
         catch ( LinkageError e )
         {
-            getLog().warn(
-                           "skip LinkageError mojoExecution.goal : " + mojoExecution.getGoal() + " : " + e.getMessage(),
+            getLog().warn( "skip LinkageError mojoExecution.goal : " + mojoExecution.getGoal() + " : " + e.getMessage(),
                            e );
             return false;
         }
@@ -357,7 +358,6 @@ public class DefaultMavenReportExecutor
         {
             Thread.currentThread().setContextClassLoader( originalClassLoader );
         }
-
     }
 
     private Xpp3Dom convert( MojoDescriptor mojoDescriptor )
