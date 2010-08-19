@@ -45,7 +45,7 @@ Manifest customization
   element. Below you will find some of the configuration options that are
   available. For more info see the
   {{{http://maven.apache.org/shared/maven-archiver/index.html}Maven Archiver reference}}.
-  This version of Maven JAR Plugin uses Maven Archiver 2.4.
+  This version of Maven JAR Plugin uses Maven Archiver ${mavenArchiverVersion}.
 
 +-----------------+
 <project>
