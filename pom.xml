@@ -63,6 +63,7 @@ under the License.
   </issueManagement>
 
   <properties>
+    <mavenArchiverVersion>2.4.1</mavenArchiverVersion>
     <mavenVersion>2.0.6</mavenVersion>
   </properties>
 
@@ -91,7 +92,7 @@ under the License.
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-archiver</artifactId>
-      <version>2.4.1</version>
+      <version>${mavenArchiverVersion}</version>
     </dependency>
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
