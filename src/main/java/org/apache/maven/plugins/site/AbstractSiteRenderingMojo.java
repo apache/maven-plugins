@@ -262,7 +262,7 @@ public abstract class AbstractSiteRenderingMojo
 
         // Put any of the properties in directly into the Velocity context
         attributes.putAll( project.getProperties() );
-
+       
         DecorationModel decorationModel;
         try
         {

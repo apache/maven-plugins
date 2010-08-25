@@ -27,7 +27,7 @@ import java.util.Set;
 
 import org.apache.maven.artifact.repository.DefaultRepositoryRequest;
 import org.apache.maven.artifact.repository.RepositoryRequest;
-import org.apache.maven.artifact.resolver.filter.ExclusionSetFilter;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.lifecycle.LifecycleExecutor;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.plugin.MavenPluginManager;
@@ -55,6 +55,7 @@ import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.Xpp3DomUtils;
 import org.mortbay.log.Log;
+import org.sonatype.aether.util.filter.ExclusionsDependencyFilter;
 
 /**
  * <p>
@@ -129,13 +130,14 @@ public class DefaultMavenReportExecutor
         {
             getLog().debug( "DefaultMavenReportExecutor.buildMavenReports()" );
         }
-
-        ExclusionSetFilter exclusionSetFilter = new ExclusionSetFilter( EXCLUDES );
+        ExclusionsDependencyFilter exclusionSetFilter = new ExclusionsDependencyFilter( EXCLUDES );
 
         RepositoryRequest repositoryRequest = new DefaultRepositoryRequest();
         repositoryRequest.setLocalRepository( mavenReportExecutorRequest.getLocalRepository() );
         repositoryRequest.setRemoteRepositories( mavenReportExecutorRequest.getProject().getPluginArtifactRepositories() );
 
+        MavenSession session = mavenReportExecutorRequest.getMavenSession();
+        
         try
         {
             List<MavenReportExecution> reports = new ArrayList<MavenReportExecution>();
@@ -154,7 +156,8 @@ public class DefaultMavenReportExecutor
 
                 List<String> goals = new ArrayList<String>();
 
-                PluginDescriptor pluginDescriptor = mavenPluginManager.getPluginDescriptor( plugin, repositoryRequest );
+                
+                PluginDescriptor pluginDescriptor = mavenPluginManager.getPluginDescriptor(plugin, session.getCurrentProject().getRemotePluginRepositories(),  session.getRepositorySession());
 
                 if ( reportPlugin.getReportSets().isEmpty() )
                 {
@@ -190,7 +193,6 @@ public class DefaultMavenReportExecutor
                                                          mavenReportExecutorRequest.getMavenSession(),
                                                          Thread.currentThread().getContextClassLoader(), IMPORTS,
                                                          exclusionSetFilter );
-
                     MavenReport mavenReport =
                         getConfiguredMavenReport( mojoExecution, pluginDescriptor, mavenReportExecutorRequest );
 
@@ -467,10 +469,14 @@ public class DefaultMavenReportExecutor
             + " longer support building such malformed projects." );
         logger.warn( "" );
 
-        PluginVersionRequest pluginVersionRequest = new DefaultPluginVersionRequest( repositoryRequest );
-        pluginVersionRequest.setOffline( mavenReportExecutorRequest.getMavenSession().getRequest().isOffline() );
+		Plugin plugin = new Plugin();
+		plugin.setGroupId( reportPlugin.getGroupId() );
+		plugin.setArtifactId( reportPlugin.getArtifactId() );
+        
+        PluginVersionRequest pluginVersionRequest = new DefaultPluginVersionRequest( plugin , mavenReportExecutorRequest.getMavenSession() );
+        //pluginVersionRequest.setOffline( mavenReportExecutorRequest.getMavenSession().getRequest().isOffline() );
 
-        pluginVersionRequest.setForceUpdate( mavenReportExecutorRequest.getMavenSession().getRequest().isUpdateSnapshots() );
+        //pluginVersionRequest.setForceUpdate( mavenReportExecutorRequest.getMavenSession().getRequest().isUpdateSnapshots() );
 
         pluginVersionRequest.setGroupId( reportPlugin.getGroupId() );
         pluginVersionRequest.setArtifactId( reportPlugin.getArtifactId() );

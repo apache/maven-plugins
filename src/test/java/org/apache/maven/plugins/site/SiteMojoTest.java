@@ -18,26 +18,39 @@ package org.apache.maven.plugins.site;
  * specific language governing permissions and limitations
  * under the License.
  */
-
 import java.io.File;
 import java.util.HashMap;
 
 import org.apache.maven.doxia.tools.SiteTool;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.codehaus.plexus.util.FileUtils;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
  */
+@RunWith(JUnit4.class)
 public class SiteMojoTest
     extends AbstractMojoTestCase
 {
+    
+    @Before
+    public void setup()
+        throws Exception
+    {
+        super.setUp();
+    }
+    
     /**
      * Test method for 'org.apache.maven.plugins.site.AbstractSiteMojo.getInterpolatedSiteDescriptorContent(Map, MavenProject, String)'
      *
      * @throws Exception
      */
+    @Test
     public void testGetInterpolatedSiteDescriptorContent()
         throws Exception
     {
