@@ -75,7 +75,7 @@ public abstract class AbstractSiteRenderingMojo
      *
      * @parameter
      */
-    protected Map moduleExcludes;
+    protected Map<String, String> moduleExcludes;
 
     /**
      * The component for assembling inheritance.
