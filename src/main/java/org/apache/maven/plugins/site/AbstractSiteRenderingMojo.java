@@ -20,6 +20,7 @@ package org.apache.maven.plugins.site;
  */
 
 import org.apache.maven.artifact.factory.ArtifactFactory;
+import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.doxia.sink.render.RenderingContext;
 import org.apache.maven.doxia.site.decoration.DecorationModel;
@@ -70,7 +71,7 @@ public abstract class AbstractSiteRenderingMojo
      *
      * @parameter
      */
-    protected Map moduleExcludes;
+    protected Map<String, String> moduleExcludes;
 
     /**
      * The component for assembling inheritance.
@@ -92,7 +93,7 @@ public abstract class AbstractSiteRenderingMojo
      * @todo this is used for site descriptor resolution - it should relate to the actual project but for some reason they are not always filled in
      * @parameter expression="${project.remoteArtifactRepositories}"
      */
-    protected List repositories;
+    protected List<ArtifactRepository> repositories;
 
     /**
      * The component used for creating artifact instances.
