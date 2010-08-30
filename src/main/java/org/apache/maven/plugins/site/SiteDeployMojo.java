@@ -161,7 +161,7 @@ public class SiteDeployMojo
      */
     private SettingsDecrypter settingsDecrypter;    
 
-    @Inject
+    @Requirement
     private PlexusContainer container;
 
     // FIXME too much duplicate code with SiteStageDeployMojo
