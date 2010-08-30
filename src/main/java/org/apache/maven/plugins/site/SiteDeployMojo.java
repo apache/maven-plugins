@@ -24,6 +24,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.maven.artifact.manager.WagonManager;
 import org.apache.maven.execution.MavenExecutionRequest;
@@ -86,7 +88,6 @@ import org.codehaus.plexus.util.xml.Xpp3Dom;
  */
 public class SiteDeployMojo
     extends AbstractMojo
-    implements Contextualizable
 {
     /**
      * Directory containing the generated project sites and report distributions.
@@ -160,6 +161,7 @@ public class SiteDeployMojo
      */
     private SettingsDecrypter settingsDecrypter;    
 
+    @Inject
     private PlexusContainer container;
 
     // FIXME too much duplicate code with SiteStageDeployMojo
@@ -505,12 +507,6 @@ public class SiteDeployMojo
                 }
             }
         }
-    }
-
-    public void contextualize( Context context )
-        throws ContextException
-    {
-        container = (PlexusContainer) context.get( PlexusConstants.PLEXUS_KEY );
     }
 
 }
