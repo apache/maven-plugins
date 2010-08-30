@@ -22,7 +22,9 @@ package org.apache.maven.plugins.site.stubs;
 import java.io.File;
 import java.util.Properties;
 
+import org.apache.maven.model.DistributionManagement;
 import org.apache.maven.model.Model;
+import org.apache.maven.model.Site;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
 import org.codehaus.plexus.util.ReaderFactory;
@@ -34,14 +36,21 @@ import org.codehaus.plexus.util.ReaderFactory;
 public class SiteMavenProjectStub
     extends MavenProjectStub
 {
+    DistributionManagement distributionManagement = new DistributionManagement();
+    
     public SiteMavenProjectStub()
+    {
+        this( null );
+    }    
+    
+    public SiteMavenProjectStub(String pomFilePath)
     {
         MavenXpp3Reader pomReader = new MavenXpp3Reader();
         Model model = null;
 
         try
         {
-            File pomFile = new File( getBasedir(), "/src/test/resources/unit/interpolated-site/pom.xml" );
+            File pomFile = new File( getBasedir(),pomFilePath == null ? "/src/test/resources/unit/interpolated-site/pom.xml" : pomFilePath );
             model = pomReader.read( ReaderFactory.newXmlReader( pomFile ) );
             setModel( model );
         }
@@ -49,6 +58,9 @@ public class SiteMavenProjectStub
         {
             throw new RuntimeException( e );
         }
+        Site site = new Site();
+        site.setId( "localhost" );
+        distributionManagement.setSite( site );
     }
 
     /**
@@ -65,5 +77,11 @@ public class SiteMavenProjectStub
     public Properties getProperties()
     {
         return new Properties();
+    }
+
+    @Override
+    public DistributionManagement getDistributionManagement()
+    {
+        return distributionManagement;
     }
 }

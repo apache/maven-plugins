@@ -20,9 +20,14 @@ package org.apache.maven.plugins.site;
  */
 
 import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.maven.artifact.manager.WagonManager;
+import org.apache.maven.execution.MavenExecutionRequest;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.DistributionManagement;
 import org.apache.maven.model.Site;
 import org.apache.maven.plugin.AbstractMojo;
@@ -30,8 +35,12 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.repository.legacy.WagonConfigurationException;
+import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Server;
 import org.apache.maven.settings.Settings;
+import org.apache.maven.settings.crypto.DefaultSettingsDecryptionRequest;
+import org.apache.maven.settings.crypto.SettingsDecrypter;
+import org.apache.maven.settings.crypto.SettingsDecryptionResult;
 import org.apache.maven.wagon.CommandExecutionException;
 import org.apache.maven.wagon.CommandExecutor;
 import org.apache.maven.wagon.ConnectionException;
@@ -43,11 +52,11 @@ import org.apache.maven.wagon.authentication.AuthenticationException;
 import org.apache.maven.wagon.authentication.AuthenticationInfo;
 import org.apache.maven.wagon.authorization.AuthorizationException;
 import org.apache.maven.wagon.observers.Debug;
-import org.apache.maven.wagon.providers.webdav.WebDavWagon;
 import org.apache.maven.wagon.proxy.ProxyInfo;
 import org.apache.maven.wagon.repository.Repository;
 import org.codehaus.plexus.PlexusConstants;
 import org.codehaus.plexus.PlexusContainer;
+import org.codehaus.plexus.component.annotations.Requirement;
 import org.codehaus.plexus.component.configurator.ComponentConfigurationException;
 import org.codehaus.plexus.component.configurator.ComponentConfigurator;
 import org.codehaus.plexus.component.repository.exception.ComponentLifecycleException;
@@ -76,7 +85,8 @@ import org.codehaus.plexus.util.xml.Xpp3Dom;
  * @goal deploy
  */
 public class SiteDeployMojo
-    extends AbstractMojo implements Contextualizable
+    extends AbstractMojo
+    implements Contextualizable
 {
     /**
      * Directory containing the generated project sites and report distributions.
@@ -133,6 +143,22 @@ public class SiteDeployMojo
      * @readonly
      */
     private Settings settings;
+    
+    /**
+     * @parameter expression="${session}"
+     * @required
+     * @readonly
+     * @since 3.0-beta-2
+     */
+    protected MavenSession mavenSession;    
+    
+    
+    /**
+     * @since 3.0-beta-2
+     * @component
+     * @readonly
+     */
+    private SettingsDecrypter settingsDecrypter;    
 
     private PlexusContainer container;
 
@@ -176,11 +202,22 @@ public class SiteDeployMojo
         // TODO: work on moving this into the deployer like the other deploy methods
 
         Wagon wagon;
-
+        
+        String protocol = repository.getProtocol();
+        
+        getLog().debug( "repository protocol " + protocol );
+        
+        ProxyInfo proxyInfo = getProxy( protocol, url, getLog(), mavenSession, settingsDecrypter );
+        getLog().debug( "found proxyInfo "
+                            + ( proxyInfo == null ? "null" : "host:port " + proxyInfo.getHost() + ":"
+                                + proxyInfo.getPort() + ", " + proxyInfo.getUserName() ) );
+        AuthenticationInfo authenticationInfo = wagonManager.getAuthenticationInfo( id );
+        getLog().debug( "authenticationInfo with id '" + id + "' : " + authenticationInfo.getUserName() );        
+        
         try
         {
             wagon = wagonManager.getWagon( repository );
-            configureWagon( wagon, repository.getId(), settings, container, getLog() );
+            configureWagon( wagon, repository, settings, container, getLog() );
         }
         catch ( UnsupportedProtocolException e )
         {
@@ -205,13 +242,6 @@ public class SiteDeployMojo
             wagon.addSessionListener( debug );
 
             wagon.addTransferListener( debug );
-
-            ProxyInfo proxyInfo = getProxyInfo( repository, wagonManager );
-            getLog().debug( "found proxyInfo "
-                                + ( proxyInfo == null ? "null" : "host:port " + proxyInfo.getHost() + ":"
-                                    + proxyInfo.getPort() + ", " + proxyInfo.getUserName() ) );
-            AuthenticationInfo authenticationInfo = wagonManager.getAuthenticationInfo( id );
-            getLog().debug( "authenticationInfo with id '" + id + "' : " + authenticationInfo.getUserName() );
 
             if ( proxyInfo != null )
             {
@@ -291,12 +321,15 @@ public class SiteDeployMojo
      * @param wagonManager the WagonManager used to connect to the Repository.
      * @return a ProxyInfo object instantiated or <code>null</code> if no matching proxy is found
      */
-    public static ProxyInfo getProxyInfo( Repository repository, WagonManager wagonManager )
+    public static ProxyInfo getProxyInfo( Repository repository, WagonManager wagonManager, Log log )
     {
+        
         ProxyInfo proxyInfo = wagonManager.getProxy( repository.getProtocol() );
 
+        
         if ( proxyInfo == null )
         {
+            log.debug( "no ProxyInfo for Repository 'id' " + repository.getId() + " 'protocol' " + repository.getProtocol() );
             return null;
         }
 
@@ -338,6 +371,75 @@ public class SiteDeployMojo
         return proxyInfo;
         
     }
+    
+    public static ProxyInfo getProxy( String protocol, String url, Log log, MavenSession mavenSession, SettingsDecrypter settingsDecrypter )
+    {
+        String originalProtocol = protocol;
+        // olamy : hackish here protocol (wagon hint in fact !) is dav
+        // but the real protocol (transport layer) is http(s) 
+        // and it's the one use in wagon to find the proxy arghhh
+        // so we will check both
+        if (StringUtils.equalsIgnoreCase( "dav", protocol ) && StringUtils.startsWith( url, "dav:" ))
+        {
+            url = StringUtils.substringAfter( url, "dav:" );
+            if (StringUtils.startsWith( url, "http" ))
+            {
+                try
+                {
+                    URL urlSite = new URL( url );
+                    protocol = urlSite.getProtocol();
+                    log.debug( "find dav protocol so transform to real transport protocol " + protocol );
+                }
+                catch ( MalformedURLException e )
+                {
+                    log.warn( "fail to build URL with " + url );
+                }
+                
+            }
+        }
+        else
+        {
+            log.debug( "getProxy 'protocol' : " +  protocol );
+        }
+        if ( mavenSession != null && protocol != null )
+        {
+            MavenExecutionRequest request = mavenSession.getRequest();
+
+            if ( request != null )
+            {
+                List<Proxy> proxies = request.getProxies();
+
+                if ( proxies != null )
+                {
+                    for ( Proxy proxy : proxies )
+                    {
+                        if ( proxy.isActive()
+                            && ( protocol.equalsIgnoreCase( proxy.getProtocol() ) || originalProtocol
+                                .equalsIgnoreCase( proxy.getProtocol() ) ) )
+                        {
+                            SettingsDecryptionResult result = settingsDecrypter
+                                .decrypt( new DefaultSettingsDecryptionRequest( proxy ) );
+                            proxy = result.getProxy();
+
+                            ProxyInfo proxyInfo = new ProxyInfo();
+                            proxyInfo.setHost( proxy.getHost() );
+                            // so hackish for wagon the protocol is https for site dav : dav:https://dav.codehaus.org/mojo/ 
+                            proxyInfo.setType( protocol );//proxy.getProtocol() );
+                            proxyInfo.setPort( proxy.getPort() );
+                            proxyInfo.setNonProxyHosts( proxy.getNonProxyHosts() );
+                            proxyInfo.setUserName( proxy.getUsername() );
+                            proxyInfo.setPassword( proxy.getPassword() );
+
+                            return proxyInfo;
+                        }
+                    }
+                }
+            }
+        }
+        log.debug( "getProxy 'protocol' : " +  protocol  + " no ProxyInfo found");
+        return null;
+    }    
+    
 
     /**
      * Configure the Wagon with the information from serverConfigurationMap ( which comes from settings.xml )
@@ -350,17 +452,19 @@ public class SiteDeployMojo
      * @param log
      * @throws WagonConfigurationException
      */
-    static void configureWagon( Wagon wagon, String repositoryId, Settings settings, PlexusContainer container,
+    static void configureWagon( Wagon wagon, Repository repository, Settings settings, PlexusContainer container,
                                 Log log )
         throws WagonConfigurationException
     {
         log.debug( " configureWagon " );
+                
         // MSITE-25: Make sure that the server settings are inserted
         for ( int i = 0; i < settings.getServers().size(); i++ )
         {
             Server server = (Server) settings.getServers().get( i );
+            log.debug( "configureWagon server " + server.getId() );
             String id = server.getId();
-            if ( id != null && id.equals( repositoryId ) )
+            if ( id != null && id.equals( repository.getId() ) )
             {
                 if ( server.getConfiguration() != null )
                 {
@@ -376,12 +480,12 @@ public class SiteDeployMojo
                     }
                     catch ( final ComponentLookupException e )
                     {
-                        throw new WagonConfigurationException( repositoryId, "Unable to lookup wagon configurator."
+                        throw new WagonConfigurationException( repository.getId(), "Unable to lookup wagon configurator."
                             + " Wagon configuration cannot be applied.", e );
                     }
                     catch ( ComponentConfigurationException e )
                     {
-                        throw new WagonConfigurationException( repositoryId, "Unable to apply wagon configuration.",
+                        throw new WagonConfigurationException( repository.getId(), "Unable to apply wagon configuration.",
                                                                e );
                     }
                     finally
@@ -398,9 +502,7 @@ public class SiteDeployMojo
                             }
                         }
                     }
-
                 }
-
             }
         }
     }

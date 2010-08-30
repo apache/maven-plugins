@@ -55,6 +55,7 @@ import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.Xpp3DomUtils;
 import org.mortbay.log.Log;
+import org.sonatype.aether.repository.RemoteRepository;
 import org.sonatype.aether.util.filter.ExclusionsDependencyFilter;
 
 /**
@@ -156,8 +157,9 @@ public class DefaultMavenReportExecutor
 
                 List<String> goals = new ArrayList<String>();
 
+                List<RemoteRepository> remoteRepositories = session.getCurrentProject().getRemotePluginRepositories();
                 
-                PluginDescriptor pluginDescriptor = mavenPluginManager.getPluginDescriptor(plugin, session.getCurrentProject().getRemotePluginRepositories(),  session.getRepositorySession());
+                PluginDescriptor pluginDescriptor = mavenPluginManager.getPluginDescriptor(plugin, remoteRepositories , session.getRepositorySession());
 
                 if ( reportPlugin.getReportSets().isEmpty() )
                 {

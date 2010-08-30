@@ -22,12 +22,16 @@ package org.apache.maven.plugins.site;
 import java.io.File;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.apache.maven.artifact.manager.WagonManager;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.repository.legacy.WagonConfigurationException;
 import org.apache.maven.settings.Settings;
+import org.apache.maven.settings.crypto.SettingsDecrypter;
 import org.apache.maven.wagon.CommandExecutionException;
 import org.apache.maven.wagon.CommandExecutor;
 import org.apache.maven.wagon.ConnectionException;
@@ -36,9 +40,12 @@ import org.apache.maven.wagon.TransferFailedException;
 import org.apache.maven.wagon.UnsupportedProtocolException;
 import org.apache.maven.wagon.Wagon;
 import org.apache.maven.wagon.authentication.AuthenticationException;
+import org.apache.maven.wagon.authentication.AuthenticationInfo;
 import org.apache.maven.wagon.authorization.AuthorizationException;
 import org.apache.maven.wagon.observers.Debug;
+import org.apache.maven.wagon.proxy.ProxyInfo;
 import org.apache.maven.wagon.repository.Repository;
+import org.codehaus.plexus.PlexusContainer;
 
 /**
  * Deploys the generated site to a staging or mock directory to the site URL
@@ -117,6 +124,16 @@ public class SiteStageDeployMojo
      * @readonly
      */
     private Settings settings;
+    
+    /**
+     * @since 3.0-beta-2
+     * @component
+     * @readonly
+     */
+    private SettingsDecrypter settingsDecrypter;   
+    
+    @Inject
+    private PlexusContainer container;
 
     /**
      * {@inheritDoc}
@@ -148,12 +165,25 @@ public class SiteStageDeployMojo
 
         Repository repository = new Repository( stagingRepositoryId, stagingSiteURL );
 
+        // TODO: work on moving this into the deployer like the other deploy methods
+
         Wagon wagon;
+        
+        String protocol = repository.getProtocol();
+        
+        getLog().debug( "repository protocol " + protocol );
+        
+        ProxyInfo proxyInfo = SiteDeployMojo.getProxy( protocol, stagingSiteURL, getLog(), mavenSession, settingsDecrypter );
+        getLog().debug( "found proxyInfo "
+                            + ( proxyInfo == null ? "null" : "host:port " + proxyInfo.getHost() + ":"
+                                + proxyInfo.getPort() + ", " + proxyInfo.getUserName() ) );
+        AuthenticationInfo authenticationInfo = wagonManager.getAuthenticationInfo( stagingRepositoryId );
+        getLog().debug( "authenticationInfo with id '" + stagingRepositoryId + "' : " + authenticationInfo.getUserName() );        
+        
         try
         {
             wagon = wagonManager.getWagon( repository );
-            SiteDeployMojo.configureWagon( wagon, stagingRepositoryId, settings, plexusContainer, getLog() );
-            wagon.connect( repository );
+            SiteDeployMojo.configureWagon( wagon, repository, settings, container, getLog() );
         }
         catch ( UnsupportedProtocolException e )
         {
@@ -162,14 +192,8 @@ public class SiteStageDeployMojo
         catch ( WagonConfigurationException e )
         {
             throw new MojoExecutionException( "Unable to configure Wagon: '" + repository.getProtocol() + "'", e );
-        } catch (AuthenticationException e)
-        {
-            throw new MojoExecutionException( "AuthenticationException : Unable to connect Wagon to repository : '" + repository.getProtocol() + "'", e );
         }
-        catch ( ConnectionException e )
-        {
-            throw new MojoExecutionException( "Unable to connect Wagon to repository : '" + repository.getProtocol() + "'", e );
-        }
+
 
         if ( !wagon.supportsDirectoryCopy() )
         {
@@ -181,23 +205,25 @@ public class SiteStageDeployMojo
         {
             Debug debug = new Debug();
 
-
             wagon.addSessionListener( debug );
 
             wagon.addTransferListener( debug );
 
-            /*
-            ProxyInfo proxyInfo = SiteDeployMojo.getProxyInfo( repository, wagonManager );
             if ( proxyInfo != null )
             {
-                wagon.connect( repository, wagonManager.getAuthenticationInfo( stagingRepositoryId ), proxyInfo );
+                getLog().debug( "connect with proxyInfo" );
+                wagon.connect( repository, authenticationInfo, proxyInfo );
+            }
+            else if ( proxyInfo == null && authenticationInfo != null )
+            {
+                getLog().debug( "connect with authenticationInfo and without proxyInfo" );
+                wagon.connect( repository, authenticationInfo );
             }
             else
             {
-                wagon.connect( repository, wagonManager.getAuthenticationInfo( stagingRepositoryId ) );
+                getLog().debug( "connect without authenticationInfo and without proxyInfo" );
+                wagon.connect( repository );
             }
-            */
-            wagon.connect( repository );
             wagon.putDirectory( new File( stagingDirectory, getStructure( project, false ) ), "." );
 
             getLog().debug( "putDirectory end ok " );

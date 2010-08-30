@@ -164,7 +164,7 @@ under the License.
   <properties>
     <doxiaVersion>1.1.3</doxiaVersion>
     <doxiaSitetoolsVersion>1.1.3</doxiaSitetoolsVersion>
-    <mavenVersion>3.0-SNAPSHOT</mavenVersion>
+    <mavenVersion>3.0-beta-3</mavenVersion>
     <wagonVersion>1.0-beta-6</wagonVersion>
     <plexusVersion>1.5.4</plexusVersion>
     <javadocPluginVersion>2.6.1</javadocPluginVersion>
@@ -228,6 +228,12 @@ under the License.
       <groupId>org.apache.maven.doxia</groupId>
       <artifactId>doxia-core</artifactId>
       <version>${doxiaVersion}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>commons-logging</groupId>
+          <artifactId>commons-logging</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
@@ -343,6 +349,12 @@ under the License.
       <groupId>org.apache.maven.wagon</groupId>
       <artifactId>wagon-webdav-jackrabbit</artifactId>
       <version>${wagonVersion}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-nop</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     
     <!-- Plexus -->
@@ -372,8 +384,36 @@ under the License.
     <dependency>
       <groupId>org.mortbay.jetty</groupId>
       <artifactId>jetty</artifactId>
-      <version>6.1.5</version>
+      <version>6.1.25</version>
     </dependency>
+    
+    <dependency>
+      <groupId>org.mortbay.jetty</groupId>
+      <artifactId>jetty-client</artifactId>
+      <version>6.1.25</version>
+      <scope>test</scope>
+    </dependency>
+    
+    <!-- note slf4j- upgrade possible until upgrade wagon-webdav-jackrabbit is upgraded too -->
+    
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>1.5.3</version>
+    </dependency>    
+    
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-simple</artifactId>
+      <version>1.5.3</version>
+      
+    </dependency>
+    
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>jcl-over-slf4j</artifactId>
+      <version>1.6.1</version>
+    </dependency>    
 
     <!-- test -->
     <dependency>
