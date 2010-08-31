@@ -434,8 +434,13 @@ under the License.
       <plugins>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-clean-plugin</artifactId>
+          <version>2.4.1</version>
+        </plugin>      
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
-          <version>2.3</version>
+          <version>2.3.1</version>
           <configuration>
             <source>1.5</source>
             <target>1.5</target>
@@ -444,8 +449,13 @@ under the License.
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-plugin-plugin</artifactId>
-          <version>2.5.1</version>
+          <version>2.6</version>
         </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-resources-plugin</artifactId>
+          <version>2.4.2</version>
+        </plugin>        
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-site-plugin</artifactId>
@@ -482,6 +492,11 @@ under the License.
         <artifactId>maven-checkstyle-plugin</artifactId>
         <version>${checkstylePluginVersion}</version>
       </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>cobertura-maven-plugin</artifactId>
+        <version>2.4</version>
+      </plugin>      
     </plugins>
   </reporting>
   <profiles>
@@ -608,15 +623,6 @@ under the License.
             </configuration>
           </plugin>
         </plugins>
-        <pluginManagement>
-          <plugins>
-            <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-resources-plugin</artifactId>
-              <version>2.4.2</version>
-            </plugin>
-          </plugins>
-        </pluginManagement>
       </build>
     </profile>
 
