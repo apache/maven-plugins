@@ -164,7 +164,7 @@ under the License.
   <properties>
     <doxiaVersion>1.1.3</doxiaVersion>
     <doxiaSitetoolsVersion>1.1.3</doxiaSitetoolsVersion>
-    <mavenVersion>3.0-beta-3</mavenVersion>
+    <mavenVersion>3.0-SNAPSHOT</mavenVersion>
     <wagonVersion>1.0-beta-6</wagonVersion>
     <plexusVersion>1.5.4</plexusVersion>
     <javadocPluginVersion>2.6.1</javadocPluginVersion>
