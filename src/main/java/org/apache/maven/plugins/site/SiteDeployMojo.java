@@ -24,8 +24,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 
-import javax.inject.Inject;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.maven.artifact.manager.WagonManager;
 import org.apache.maven.execution.MavenExecutionRequest;
@@ -56,7 +54,6 @@ import org.apache.maven.wagon.authorization.AuthorizationException;
 import org.apache.maven.wagon.observers.Debug;
 import org.apache.maven.wagon.proxy.ProxyInfo;
 import org.apache.maven.wagon.repository.Repository;
-import org.codehaus.plexus.PlexusConstants;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.component.annotations.Requirement;
 import org.codehaus.plexus.component.configurator.ComponentConfigurationException;
@@ -65,9 +62,6 @@ import org.codehaus.plexus.component.repository.exception.ComponentLifecycleExce
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.codehaus.plexus.configuration.PlexusConfiguration;
 import org.codehaus.plexus.configuration.xml.XmlPlexusConfiguration;
-import org.codehaus.plexus.context.Context;
-import org.codehaus.plexus.context.ContextException;
-import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 
 /**
