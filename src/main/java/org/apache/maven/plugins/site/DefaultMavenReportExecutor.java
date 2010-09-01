@@ -188,21 +188,7 @@ public class DefaultMavenReportExecutor
                     MojoExecution mojoExecution = new MojoExecution( plugin, goal, "report:" + goal );
 
                     mojoExecution.setConfiguration( convert( mojoDescriptor ) );
-
-                    mojoExecution.setMojoDescriptor( mojoDescriptor );
-
-                    mavenPluginManager.setupPluginRealm( pluginDescriptor,
-                                                         mavenReportExecutorRequest.getMavenSession(),
-                                                         Thread.currentThread().getContextClassLoader(), IMPORTS,
-                                                         exclusionSetFilter );
-                    MavenReport mavenReport =
-                        getConfiguredMavenReport( mojoExecution, pluginDescriptor, mavenReportExecutorRequest );
-
-                    if ( mavenReport == null )
-                    {
-                        continue;
-                    }
-
+                    
                     if ( reportPlugin.getConfiguration() != null )
                     {
                         Xpp3Dom reportConfiguration = convert( reportPlugin.getConfiguration() );
@@ -228,30 +214,37 @@ public class DefaultMavenReportExecutor
                         }
 
                         mojoExecution.setConfiguration( cleanedConfiguration );
-                    }
+                    }                    
 
-                    mavenReport =
+                    mojoExecution.setMojoDescriptor( mojoDescriptor );
+
+                    mavenPluginManager.setupPluginRealm( pluginDescriptor,
+                                                         mavenReportExecutorRequest.getMavenSession(),
+                                                         Thread.currentThread().getContextClassLoader(), IMPORTS,
+                                                         exclusionSetFilter );
+                    MavenReport mavenReport =
                         getConfiguredMavenReport( mojoExecution, pluginDescriptor, mavenReportExecutorRequest );
 
-                    if ( mavenReport != null )
+                    if ( mavenReport == null )
                     {
-                        MavenReportExecution mavenReportExecution =
-                            new MavenReportExecution( mojoExecution.getPlugin(), mavenReport,
-                                                      pluginDescriptor.getClassRealm() );
+                        continue;
+                    }
+                    MavenReportExecution mavenReportExecution =
+                        new MavenReportExecution( mojoExecution.getPlugin(), mavenReport,
+                                                  pluginDescriptor.getClassRealm() );
 
-                        lifecycleExecutor.calculateForkedExecutions( mojoExecution,
-                                                                     mavenReportExecutorRequest.getMavenSession() );
+                    lifecycleExecutor.calculateForkedExecutions( mojoExecution,
+                                                                 mavenReportExecutorRequest.getMavenSession() );
 
-                        if ( !mojoExecution.getForkedExecutions().isEmpty() )
-                        {
-                            lifecycleExecutor.executeForkedExecutions( mojoExecution,
-                                                                       mavenReportExecutorRequest.getMavenSession() );
-                        }
+                    if ( !mojoExecution.getForkedExecutions().isEmpty() )
+                    {
+                        lifecycleExecutor.executeForkedExecutions( mojoExecution,
+                                                                   mavenReportExecutorRequest.getMavenSession() );
+                    }
 
-                        if ( canGenerateReport( mavenReport ) )
-                        {
-                            reports.add( mavenReportExecution );
-                        }
+                    if ( canGenerateReport( mavenReport ) )
+                    {
+                        reports.add( mavenReportExecution );
                     }
                 }
             }
