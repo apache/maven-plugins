@@ -186,8 +186,8 @@ public abstract class AbstractEarMojo
 
         getLog().debug( "Initializing ear execution context" );
         EarExecutionContext earExecutionContext =
-            new EarExecutionContext( project, mainArtifactId, defaultLibBundleDir, jbossConfiguration,
-                                     fileNameMapping, typeMappingService);
+            new EarExecutionContext( project, mainArtifactId, defaultLibBundleDir, jbossConfiguration, fileNameMapping,
+                                     typeMappingService );
 
         getLog().debug( "Resolving ear modules ..." );
         allModules = new ArrayList();
@@ -202,7 +202,7 @@ public abstract class AbstractEarMojo
                 {
                     module = modules[i];
                     getLog().debug( "Resolving ear module[" + module + "]" );
-                    module.setEarExecutionContext(  earExecutionContext );
+                    module.setEarExecutionContext( earExecutionContext );
                     module.resolveArtifact( project.getArtifacts() );
                     allModules.add( module );
                 }
@@ -228,8 +228,7 @@ public abstract class AbstractEarMojo
                     filter.include( artifact ) )
                 {
                     EarModule module = EarModuleFactory.newEarModule( artifact, version, defaultLibBundleDir,
-                                                                      includeLibInApplicationXml,
-                                                                      typeMappingService);
+                                                                      includeLibInApplicationXml, typeMappingService );
                     module.setEarExecutionContext( earExecutionContext );
                     allModules.add( module );
                 }

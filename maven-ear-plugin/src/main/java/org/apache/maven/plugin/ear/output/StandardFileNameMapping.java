@@ -28,7 +28,8 @@ import org.apache.maven.artifact.Artifact;
  * @author <a href="snicoll@apache.org">Stephane Nicoll</a>
  * @version $Id$
  */
-public class StandardFileNameMapping implements FileNameMapping
+public class StandardFileNameMapping
+    implements FileNameMapping
 {
 
     public String mapFileName( final Artifact a )

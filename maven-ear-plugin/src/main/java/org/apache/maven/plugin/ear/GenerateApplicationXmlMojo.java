@@ -45,7 +45,6 @@ public class GenerateApplicationXmlMojo
 {
 
 
-
     /**
      * Whether the application.xml should be generated or not.
      *
@@ -92,8 +91,8 @@ public class GenerateApplicationXmlMojo
         else
         {
             // Check version
-            if ( !version.equals( VERSION_1_3 ) && !version.equals( VERSION_1_4 ) && 
-                 !version.equals( VERSION_5 ) && !version.equals( VERSION_6 ) )
+            if ( !version.equals( VERSION_1_3 ) && !version.equals( VERSION_1_4 ) && !version.equals( VERSION_5 ) &&
+                !version.equals( VERSION_6 ) )
             {
                 throw new MojoExecutionException( "Invalid version[" + version + "]" );
             }
@@ -166,8 +165,9 @@ public class GenerateApplicationXmlMojo
         File descriptor = new File( outputDir, "application.xml" );
 
         final ApplicationXmlWriter writer = new ApplicationXmlWriter( version, encoding );
-        final ApplicationXmlWriterContext context = new ApplicationXmlWriterContext(descriptor, getModules(), 
-                buildSecurityRoles(), displayName, description, defaultLibBundleDir);
+        final ApplicationXmlWriterContext context =
+            new ApplicationXmlWriterContext( descriptor, getModules(), buildSecurityRoles(), displayName, description,
+                                             defaultLibBundleDir );
         writer.write( context );
     }
 

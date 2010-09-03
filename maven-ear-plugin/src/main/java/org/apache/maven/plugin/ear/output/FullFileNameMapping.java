@@ -28,12 +28,13 @@ import org.apache.maven.artifact.Artifact;
  * @author <a href="snicoll@apache.org">Stephane Nicoll</a>
  * @version $Id$
  */
-public class FullFileNameMapping implements FileNameMapping
+public class FullFileNameMapping
+    implements FileNameMapping
 {
-    
+
     public String mapFileName( final Artifact a )
     {
-        final String dashedGroupId = a.getGroupId().replace( '.', '-');
+        final String dashedGroupId = a.getGroupId().replace( '.', '-' );
         return dashedGroupId + "-" + a.getFile().getName();
     }
 }

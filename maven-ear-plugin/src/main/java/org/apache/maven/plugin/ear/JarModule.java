@@ -68,8 +68,8 @@ public class JarModule
             writer.writeText( getUri() );
             writer.endElement();
 
-            writeAltDeploymentDescriptor( writer, version);
-            
+            writeAltDeploymentDescriptor( writer, version );
+
             writer.endElement();
         }
     }

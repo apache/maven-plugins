@@ -42,8 +42,8 @@ public class ArtifactRepository
     /**
      * Creates a new repository wih the specified artifacts.
      *
-     * @param artifacts the artifacts
-     * @param mainArtifactId the id to use for the main artifact (no classifier)
+     * @param artifacts                  the artifacts
+     * @param mainArtifactId             the id to use for the main artifact (no classifier)
      * @param artifactTypeMappingService
      */
     public ArtifactRepository( Set artifacts, String mainArtifactId,

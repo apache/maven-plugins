@@ -114,7 +114,7 @@ public abstract class AbstractEarModule
                 if ( candidates.size() > 1 )
                 {
                     throw new MojoFailureException( "Artifact[" + this + "] has " + candidates.size() +
-                        " candidates, please provide a classifier." );
+                                                        " candidates, please provide a classifier." );
                 }
                 else
                 {
@@ -321,7 +321,8 @@ public abstract class AbstractEarModule
      *
      * @param uri the uri
      */
-    void setUri(String uri) {
+    void setUri( String uri )
+    {
         this.uri = uri;
 
     }

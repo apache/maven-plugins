@@ -46,7 +46,8 @@ public class EarExecutionContext
                                 JbossConfiguration jbossConfiguration, String fileNameMappingName,
                                 ArtifactTypeMappingService typeMappingService )
     {
-        initialize( project, mainArtifactId, defaultLibBundleDir, jbossConfiguration, fileNameMappingName, typeMappingService );
+        initialize( project, mainArtifactId, defaultLibBundleDir, jbossConfiguration, fileNameMappingName,
+                    typeMappingService );
 
     }
 
@@ -70,11 +71,11 @@ public class EarExecutionContext
         return artifactRepository;
     }
 
-    private void initialize( MavenProject project, String mainArtifactId, String defaultLibBundleDir, JbossConfiguration jbossConfiguration,
-                             String fileNameMappingName, ArtifactTypeMappingService typeMappingService )
+    private void initialize( MavenProject project, String mainArtifactId, String defaultLibBundleDir,
+                             JbossConfiguration jbossConfiguration, String fileNameMappingName,
+                             ArtifactTypeMappingService typeMappingService )
     {
-        this.artifactRepository = new ArtifactRepository( project.getArtifacts(), mainArtifactId,
-                                                          typeMappingService );
+        this.artifactRepository = new ArtifactRepository( project.getArtifacts(), mainArtifactId, typeMappingService );
         this.defaultLibBundleDir = defaultLibBundleDir;
         this.jbossConfiguration = jbossConfiguration;
         if ( fileNameMappingName == null || fileNameMappingName.trim().length() == 0 )

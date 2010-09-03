@@ -51,7 +51,7 @@ public class ArtifactTypeMappingService
     // The user-defined mapping for direct access
     private final Map customMappings;
 
-    public ArtifactTypeMappingService( )
+    public ArtifactTypeMappingService()
     {
         this.typeMappings = new HashMap();
         this.customMappings = new HashMap();
@@ -87,8 +87,9 @@ public class ArtifactTypeMappingService
             }
             else if ( !EarModuleFactory.isStandardArtifactType( mapping ) )
             {
-                throw new EarPluginException( "Invalid artifact type mapping, mapping[" + mapping +
-                    "] must be a standard Ear artifact type[" + EarModuleFactory.getStandardArtifactTypes() + "]" );
+                throw new EarPluginException(
+                    "Invalid artifact type mapping, mapping[" + mapping + "] must be a standard Ear artifact type[" +
+                        EarModuleFactory.getStandardArtifactTypes() + "]" );
             }
             else if ( customMappings.containsKey( customType ) )
             {
@@ -119,8 +120,9 @@ public class ArtifactTypeMappingService
     {
         if ( !EarModuleFactory.isStandardArtifactType( standardType ) )
         {
-            throw new IllegalStateException( "Artifact type[" + standardType +
-                "] is not a standard Ear artifact type[" + EarModuleFactory.getStandardArtifactTypes() + "]" );
+            throw new IllegalStateException(
+                "Artifact type[" + standardType + "] is not a standard Ear artifact type[" +
+                    EarModuleFactory.getStandardArtifactTypes() + "]" );
         }
         final List typeMappings = (List) this.typeMappings.get( standardType );
         return typeMappings.contains( customType );

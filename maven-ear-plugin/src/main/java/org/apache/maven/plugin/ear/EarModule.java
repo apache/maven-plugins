@@ -84,7 +84,6 @@ public interface EarModule
      * to the application's root directory.
      *
      * @return the alternative deployment descriptor for this module
-     *
      * @since JavaEE 5
      */
     public String getAltDeploymentDescriptor();
@@ -103,12 +102,12 @@ public interface EarModule
      * further the resolution.
      *
      * @param artifacts the project's artifacts
-     * @throws EarPluginException if the artifact could not be resolved
+     * @throws EarPluginException   if the artifact could not be resolved
      * @throws MojoFailureException if an unexpected error occured
      */
     public void resolveArtifact( Set artifacts )
         throws EarPluginException, MojoFailureException;
 
-    public void setEarExecutionContext(EarExecutionContext earExecutionContext);
+    public void setEarExecutionContext( EarExecutionContext earExecutionContext );
 
 }

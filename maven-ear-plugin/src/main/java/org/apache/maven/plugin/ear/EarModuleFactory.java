@@ -49,7 +49,7 @@ public final class EarModuleFactory
         temp.add( "sar" );
         temp.add( "wsr" );
         temp.add( "har" );
-        standardArtifactTypes = Collections.unmodifiableList(  temp );
+        standardArtifactTypes = Collections.unmodifiableList( temp );
     }
 
     /**
@@ -61,7 +61,7 @@ public final class EarModuleFactory
      * @param javaEEVersion           the javaEE version to use
      * @param defaultLibBundleDir     the default bundle dir for {@link org.apache.maven.plugin.ear.JarModule}
      * @param includeInApplicationXml should {@link org.apache.maven.plugin.ear.JarModule} be included in application Xml
-     * @param typeMappingService    The artifact type mapping service
+     * @param typeMappingService      The artifact type mapping service
      * @return an ear module for this artifact
      * @throws UnknownArtifactTypeException if the artifact is not handled
      */

@@ -42,7 +42,7 @@ public class EarMavenArchiverTest
         modules.add( module );
 
         final EarMavenArchiver archiver = new EarMavenArchiver( modules );
-        assertEquals( "foo-1.0.jar", archiver.generateClassPathEntry( "" ));
+        assertEquals( "foo-1.0.jar", archiver.generateClassPathEntry( "" ) );
 
     }
 
@@ -54,7 +54,7 @@ public class EarMavenArchiverTest
         modules.add( module );
 
         final EarMavenArchiver archiver = new EarMavenArchiver( modules );
-        assertEquals( "libs/foo-1.0.jar", archiver.generateClassPathEntry( "" ));
+        assertEquals( "libs/foo-1.0.jar", archiver.generateClassPathEntry( "" ) );
 
     }
 
@@ -70,7 +70,7 @@ public class EarMavenArchiverTest
         modules.add( module2 );
 
         final EarMavenArchiver archiver = new EarMavenArchiver( modules );
-        assertEquals( "foo-1.0.jar bar-2.0.1.war", archiver.generateClassPathEntry( "" ));
+        assertEquals( "foo-1.0.jar bar-2.0.1.war", archiver.generateClassPathEntry( "" ) );
 
     }
 
