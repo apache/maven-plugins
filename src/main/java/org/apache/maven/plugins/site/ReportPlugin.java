@@ -20,6 +20,7 @@ package org.apache.maven.plugins.site;
  */
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.maven.model.Plugin;
@@ -44,6 +45,8 @@ public class ReportPlugin
     private PlexusConfiguration configuration;
 
     private List<ReportSet> reportSets;
+    
+    private List<String> reports;
 
     public String getGroupId()
     {
@@ -98,6 +101,16 @@ public class ReportPlugin
     public void setReportSets( List<ReportSet> reportSets )
     {
         this.reportSets = reportSets;
+    }
+
+    public List<String> getReports()
+    {
+        return reports == null ? Collections.<String>emptyList() : reports;
+    }
+
+    public void setReports( List<String> reports )
+    {
+        this.reports = reports;
     }
 
 }

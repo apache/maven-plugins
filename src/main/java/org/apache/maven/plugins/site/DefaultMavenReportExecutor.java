@@ -155,13 +155,13 @@ public class DefaultMavenReportExecutor
                     logger.info( "configuring report plugin " + plugin.getId() );
                 }
 
-                List<String> goals = new ArrayList<String>();
+                Set<String> goals = new HashSet<String>();
 
                 List<RemoteRepository> remoteRepositories = session.getCurrentProject().getRemotePluginRepositories();
                 
                 PluginDescriptor pluginDescriptor = mavenPluginManager.getPluginDescriptor(plugin, remoteRepositories , session.getRepositorySession());
 
-                if ( reportPlugin.getReportSets().isEmpty() )
+                if ( reportPlugin.getReportSets().isEmpty() && reportPlugin.getReports().isEmpty() )
                 {
                     List<MojoDescriptor> mojoDescriptors = pluginDescriptor.getMojos();
                     for ( MojoDescriptor mojoDescriptor : mojoDescriptors )
@@ -171,9 +171,16 @@ public class DefaultMavenReportExecutor
                 }
                 else
                 {
-                    for ( ReportSet reportSet : reportPlugin.getReportSets() )
+                    if (reportPlugin.getReportSets() != null)
                     {
-                        goals.addAll( reportSet.getReports() );
+                        for ( ReportSet reportSet : reportPlugin.getReportSets() )
+                        {
+                            goals.addAll( reportSet.getReports() );
+                        }
+                    }
+                    if (!reportPlugin.getReports().isEmpty())
+                    {
+                        goals.addAll( reportPlugin.getReports() );
                     }
                 }
 
