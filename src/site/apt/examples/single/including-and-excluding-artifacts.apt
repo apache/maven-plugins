@@ -72,3 +72,10 @@ Including and Excluding Artifacts
     ....
   </dependencySets>
 -----
+
+* What about your Project's Artifacts?
+
+	{{{http://jira.codehaus.org/browse/MASSEMBLY-197}MASSEMBLY-197}} added <<<useProjectArtifact>>> 
+	and <<<useProjectAttachments>>> to the <<<dependencySet>>> configuration.
+	
+	See {{{../../assembly.html#class_dependencySet}Assembly Descriptor Format}} for the default values and how to configure them.
