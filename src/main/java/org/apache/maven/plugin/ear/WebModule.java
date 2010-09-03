@@ -66,8 +66,8 @@ public class WebModule
 
         writer.endElement(); // web
 
-        writeAltDeploymentDescriptor( writer, version);
-        
+        writeAltDeploymentDescriptor( writer, version );
+
         writer.endElement(); // module
     }
 

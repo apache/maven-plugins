@@ -36,6 +36,7 @@ import junit.framework.TestCase;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 /**
  * @author <a href="snicoll@apache.org">Stephane Nicoll</a>
  * @version $Id$
@@ -67,16 +68,17 @@ public class FileNameMappingFactoryTest
         assertEquals( FullFileNameMapping.class, actual.getClass() );
     }
 
-    public void testGetFileNameMappingByClass() {
-        final FileNameMapping actual = FileNameMappingFactory.getFileNameMapping(StandardFileNameMapping.class.getName());
-        assertNotNull( actual);
-        assertEquals( StandardFileNameMapping.class, actual.getClass());
+    public void testGetFileNameMappingByClass()
+    {
+        final FileNameMapping actual =
+            FileNameMappingFactory.getFileNameMapping( StandardFileNameMapping.class.getName() );
+        assertNotNull( actual );
+        assertEquals( StandardFileNameMapping.class, actual.getClass() );
     }
 
     public void testGetFileNameMappingByClass2()
     {
-        final FileNameMapping actual =
-            FileNameMappingFactory.getFileNameMapping( FullFileNameMapping.class.getName() );
+        final FileNameMapping actual = FileNameMappingFactory.getFileNameMapping( FullFileNameMapping.class.getName() );
         assertNotNull( actual );
         assertEquals( FullFileNameMapping.class, actual.getClass() );
     }
@@ -86,7 +88,7 @@ public class FileNameMappingFactoryTest
         try
         {
             FileNameMappingFactory.getFileNameMapping( "com.foo.bar" );
-            fail("Should have failed");
+            fail( "Should have failed" );
         }
         catch ( IllegalStateException e )
         {

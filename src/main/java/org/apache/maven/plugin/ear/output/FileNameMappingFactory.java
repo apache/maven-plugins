@@ -19,9 +19,6 @@ package org.apache.maven.plugin.ear.output;
  * under the License.
  */
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * Provides access to {@link FileNameMapping} implementations.
  * <p/>
@@ -46,7 +43,7 @@ public class FileNameMappingFactory
 
     public static FileNameMapping getDefaultFileNameMapping()
     {
-        return new StandardFileNameMapping() ;
+        return new StandardFileNameMapping();
     }
 
     /**
@@ -60,36 +57,38 @@ public class FileNameMappingFactory
     public static FileNameMapping getFileNameMapping( final String nameOrClass )
         throws IllegalStateException
     {
-        if (STANDARD_FILE_NAME_MAPPING.equals( nameOrClass )){
+        if ( STANDARD_FILE_NAME_MAPPING.equals( nameOrClass ) )
+        {
             return getDefaultFileNameMapping();
         }
-        if (FULL_FILE_NAME_MAPPING.equals(  nameOrClass )){
+        if ( FULL_FILE_NAME_MAPPING.equals( nameOrClass ) )
+        {
             return new FullFileNameMapping();
         }
-            try
-            {
-                final Class c = Class.forName( nameOrClass );
-                return (FileNameMapping) c.newInstance();
-            }
-            catch ( ClassNotFoundException e )
-            {
-                throw new IllegalStateException(
-                    "File name mapping implementation[" + nameOrClass + "] was not found " + e.getMessage() );
-            }
-            catch ( InstantiationException e )
-            {
-                throw new IllegalStateException( "Could not instanciate file name mapping implementation[" +
-                    nameOrClass + "] make sure it has a default public constructor" );
-            }
-            catch ( IllegalAccessException e )
-            {
-                throw new IllegalStateException( "Could not access file name mapping implementation[" + nameOrClass +
-                    "] make sure it has a default public constructor" );
-            }
-            catch ( ClassCastException e )
-            {
-                throw new IllegalStateException( "Specified class[" + nameOrClass + "] does not implement[" +
-                    FileNameMapping.class.getName() + "]" );
-            }
+        try
+        {
+            final Class c = Class.forName( nameOrClass );
+            return (FileNameMapping) c.newInstance();
+        }
+        catch ( ClassNotFoundException e )
+        {
+            throw new IllegalStateException(
+                "File name mapping implementation[" + nameOrClass + "] was not found " + e.getMessage() );
+        }
+        catch ( InstantiationException e )
+        {
+            throw new IllegalStateException( "Could not instanciate file name mapping implementation[" + nameOrClass +
+                                                 "] make sure it has a default public constructor" );
+        }
+        catch ( IllegalAccessException e )
+        {
+            throw new IllegalStateException( "Could not access file name mapping implementation[" + nameOrClass +
+                                                 "] make sure it has a default public constructor" );
+        }
+        catch ( ClassCastException e )
+        {
+            throw new IllegalStateException(
+                "Specified class[" + nameOrClass + "] does not implement[" + FileNameMapping.class.getName() + "]" );
+        }
     }
 }

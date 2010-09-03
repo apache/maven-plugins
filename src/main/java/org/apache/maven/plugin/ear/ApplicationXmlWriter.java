@@ -86,7 +86,6 @@ final class ApplicationXmlWriter
         }
         // Do not change this unless you really know what you're doing :)
 
-
         final Iterator moduleIt = context.getEarModules().iterator();
         while ( moduleIt.hasNext() )
         {

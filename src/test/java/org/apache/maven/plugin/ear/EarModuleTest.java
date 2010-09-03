@@ -27,14 +27,16 @@ import junit.framework.TestCase;
  * @author <a href="snicoll@apache.org">Stephane Nicoll</a>
  * @version $Id$
  */
-public class EarModuleTest extends TestCase
+public class EarModuleTest
+    extends TestCase
 {
 
-    public void testCleanBuildDir() {
-        assertEquals("APP-INF/lib/", AbstractEarModule.cleanBundleDir( "APP-INF/lib"));
-        assertEquals("APP-INF/lib/", AbstractEarModule.cleanBundleDir( "APP-INF/lib/"));
-        assertEquals("APP-INF/lib/", AbstractEarModule.cleanBundleDir( "/APP-INF/lib"));
-        assertEquals("APP-INF/lib/", AbstractEarModule.cleanBundleDir( "/APP-INF/lib/"));        
-        assertEquals("", AbstractEarModule.cleanBundleDir( "/"));
+    public void testCleanBuildDir()
+    {
+        assertEquals( "APP-INF/lib/", AbstractEarModule.cleanBundleDir( "APP-INF/lib" ) );
+        assertEquals( "APP-INF/lib/", AbstractEarModule.cleanBundleDir( "APP-INF/lib/" ) );
+        assertEquals( "APP-INF/lib/", AbstractEarModule.cleanBundleDir( "/APP-INF/lib" ) );
+        assertEquals( "APP-INF/lib/", AbstractEarModule.cleanBundleDir( "/APP-INF/lib/" ) );
+        assertEquals( "", AbstractEarModule.cleanBundleDir( "/" ) );
     }
 }

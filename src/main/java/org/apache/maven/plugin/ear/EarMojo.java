@@ -59,7 +59,7 @@ import java.util.List;
 public class EarMojo
     extends AbstractEarMojo
 {
-    private static final String[] EMPTY_STRING_ARRAY = {};
+    private static final String[] EMPTY_STRING_ARRAY = { };
 
 
     /**

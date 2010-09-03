@@ -41,7 +41,7 @@ public class EarMojoIT
     public void testProject001()
         throws Exception
     {
-        doTestProject( "project-001", new String[]{"ejb-sample-one-1.0.jar"} );
+        doTestProject( "project-001", new String[]{ "ejb-sample-one-1.0.jar" } );
     }
 
     /**
@@ -50,7 +50,7 @@ public class EarMojoIT
     public void testProject002()
         throws Exception
     {
-        doTestProject( "project-002", new String[]{"APP-INF/lib/ejb-sample-one-1.0.jar", "ejb-sample-two.jar"} );
+        doTestProject( "project-002", new String[]{ "APP-INF/lib/ejb-sample-one-1.0.jar", "ejb-sample-two.jar" } );
     }
 
     /**
@@ -59,8 +59,8 @@ public class EarMojoIT
     public void testProject003()
         throws Exception
     {
-        doTestProject( "project-003", new String[]{"ejb-sample-one-1.0.jar", "APP-INF/lib/jar-sample-one-1.0.jar",
-            "APP-INF/lib/jar-sample-two-1.0.jar"} );
+        doTestProject( "project-003", new String[]{ "ejb-sample-one-1.0.jar", "APP-INF/lib/jar-sample-one-1.0.jar",
+            "APP-INF/lib/jar-sample-two-1.0.jar" } );
     }
 
     /**
@@ -70,8 +70,8 @@ public class EarMojoIT
     public void testProject004()
         throws Exception
     {
-        doTestProject( "project-004", new String[]{"ejb-sample-one-1.0.jar", "jar-sample-one-1.0.jar",
-            "APP-INF/lib/jar-sample-two-1.0.jar"} );
+        doTestProject( "project-004", new String[]{ "ejb-sample-one-1.0.jar", "jar-sample-one-1.0.jar",
+            "APP-INF/lib/jar-sample-two-1.0.jar" } );
     }
 
     /**
@@ -80,7 +80,7 @@ public class EarMojoIT
     public void testProject005()
         throws Exception
     {
-        doTestProject( "project-005", new String[]{"ejb-sample-one-1.0.jar", "libs/another-name.jar"} );
+        doTestProject( "project-005", new String[]{ "ejb-sample-one-1.0.jar", "libs/another-name.jar" } );
     }
 
     /**
@@ -89,7 +89,7 @@ public class EarMojoIT
     public void testProject006()
         throws Exception
     {
-        doTestProject( "project-006", new String[]{"ejb-sample-one-1.0.jar", "jar-sample-two-1.0.jar"} );
+        doTestProject( "project-006", new String[]{ "ejb-sample-one-1.0.jar", "jar-sample-two-1.0.jar" } );
     }
 
     /**
@@ -98,7 +98,7 @@ public class EarMojoIT
     public void testProject007()
         throws Exception
     {
-        doTestProject( "project-007", new String[]{"ejb-sample-one-1.0-classified.jar"} );
+        doTestProject( "project-007", new String[]{ "ejb-sample-one-1.0-classified.jar" } );
     }
 
     /**
@@ -107,7 +107,7 @@ public class EarMojoIT
     public void testProject008()
         throws Exception
     {
-        doTestProject( "project-008", new String[]{"ejb-sample-one-1.0.jar"} );
+        doTestProject( "project-008", new String[]{ "ejb-sample-one-1.0.jar" } );
     }
 
     /**
@@ -116,7 +116,7 @@ public class EarMojoIT
     public void testProject009()
         throws Exception
     {
-        doTestProject( "project-009", new String[]{"ejb-sample-one-1.0.jar"} );
+        doTestProject( "project-009", new String[]{ "ejb-sample-one-1.0.jar" } );
     }
 
     /**
@@ -125,7 +125,7 @@ public class EarMojoIT
     public void testProject010()
         throws Exception
     {
-        doTestProject( "project-010", new String[]{"ejb-sample-one-1.0.jar"} );
+        doTestProject( "project-010", new String[]{ "ejb-sample-one-1.0.jar" } );
     }
 
     /**
@@ -134,7 +134,7 @@ public class EarMojoIT
     public void testProject011()
         throws Exception
     {
-        doTestProject( "project-011", new String[]{"ejb-sample-one-1.0.jar"} );
+        doTestProject( "project-011", new String[]{ "ejb-sample-one-1.0.jar" } );
     }
 
     /**
@@ -143,7 +143,7 @@ public class EarMojoIT
     public void testProject012()
         throws Exception
     {
-        doTestProject( "project-012", new String[]{"README.txt", "LICENSE.txt", "ejb-sample-one-1.0.jar"} );
+        doTestProject( "project-012", new String[]{ "README.txt", "LICENSE.txt", "ejb-sample-one-1.0.jar" } );
     }
 
     /**
@@ -152,7 +152,7 @@ public class EarMojoIT
     public void testProject013()
         throws Exception
     {
-        doTestProject( "project-013", new String[]{"README.txt", "LICENSE.txt", "ejb-sample-one-1.0.jar"} );
+        doTestProject( "project-013", new String[]{ "README.txt", "LICENSE.txt", "ejb-sample-one-1.0.jar" } );
     }
 
     /**
@@ -161,7 +161,7 @@ public class EarMojoIT
     public void testProject014()
         throws Exception
     {
-        doTestProject( "project-014", new String[]{"LICENSE.txt", "ejb-sample-one-1.0.jar"} );
+        doTestProject( "project-014", new String[]{ "LICENSE.txt", "ejb-sample-one-1.0.jar" } );
     }
 
     /**
@@ -170,7 +170,7 @@ public class EarMojoIT
     public void testProject015()
         throws Exception
     {
-        final File baseDir = doTestProject( "project-015", new String[]{"ejb-sample-one-1.0.jar"} );
+        final File baseDir = doTestProject( "project-015", new String[]{ "ejb-sample-one-1.0.jar" } );
         final File expectedManifest = new File( baseDir, "src/main/application/META-INF/MANIFEST.MF" );
         final File actualManifest = new File( getEarDirectory( baseDir, "project-015" ), "META-INF/MANIFEST.MF" );
         assertTrue( "Manifest was not copied", actualManifest.exists() );
@@ -197,7 +197,7 @@ public class EarMojoIT
     public void testProject017()
         throws Exception
     {
-        doTestProject( "project-017", new String[]{"ejb-sample-one-1.0.jar"} );
+        doTestProject( "project-017", new String[]{ "ejb-sample-one-1.0.jar" } );
     }
 
     /**
@@ -218,8 +218,8 @@ public class EarMojoIT
         throws Exception
     {
         doTestProject( "project-019",
-                       new String[]{"ejb-sample-one-1.0.jar", "sar-sample-one-1.0.sar", "jar-sample-one-1.0.jar"},
-                       new boolean[]{false, true, true} );
+                       new String[]{ "ejb-sample-one-1.0.jar", "sar-sample-one-1.0.sar", "jar-sample-one-1.0.jar" },
+                       new boolean[]{ false, true, true } );
     }
 
     /**
@@ -229,8 +229,8 @@ public class EarMojoIT
         throws Exception
     {
         doTestProject( "project-020",
-                       new String[]{"ejb-sample-one-1.0.jar", "sar-sample-one-1.0.sar", "jar-sample-one-1.0.jar"},
-                       new boolean[]{true, false, false} );
+                       new String[]{ "ejb-sample-one-1.0.jar", "sar-sample-one-1.0.sar", "jar-sample-one-1.0.jar" },
+                       new boolean[]{ true, false, false } );
     }
 
     /**
@@ -240,9 +240,9 @@ public class EarMojoIT
         throws Exception
     {
         doTestProject( "project-021",
-                       new String[]{"ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar", "sar-sample-one-1.0.sar",
-                           "jar-sample-one-1.0.jar", "jar-sample-two-1.0.jar"},
-                       new boolean[]{false, true, false, false, true} );
+                       new String[]{ "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar", "sar-sample-one-1.0.sar",
+                           "jar-sample-one-1.0.jar", "jar-sample-two-1.0.jar" },
+                       new boolean[]{ false, true, false, false, true } );
     }
 
     /**
@@ -262,8 +262,8 @@ public class EarMojoIT
     public void testProject023()
         throws Exception
     {
-        doTestProject( "project-023", new String[]{"ejb-sample-one-1.0-classified.jar", "ejb-sample-two-1.0.jar"},
-                       new boolean[]{true, false} );
+        doTestProject( "project-023", new String[]{ "ejb-sample-one-1.0-classified.jar", "ejb-sample-two-1.0.jar" },
+                       new boolean[]{ true, false } );
     }
 
     /**
@@ -272,8 +272,8 @@ public class EarMojoIT
     public void testProject024()
         throws Exception
     {
-        doTestProject( "project-024", new String[]{"ejb-sample-one-1.0-classified.jar", "ejb-sample-two-1.0.jar"},
-                       new boolean[]{true, false} );
+        doTestProject( "project-024", new String[]{ "ejb-sample-one-1.0-classified.jar", "ejb-sample-two-1.0.jar" },
+                       new boolean[]{ true, false } );
     }
 
     /**
@@ -282,8 +282,8 @@ public class EarMojoIT
     public void testProject025()
         throws Exception
     {
-        doTestProject( "project-025", new String[]{"ejb-sample-one-1.0-classified.jar", "ejb-sample-one-1.0.jar"},
-                       new boolean[]{true, false} );
+        doTestProject( "project-025", new String[]{ "ejb-sample-one-1.0-classified.jar", "ejb-sample-one-1.0.jar" },
+                       new boolean[]{ true, false } );
     }
 
     /**
@@ -303,7 +303,7 @@ public class EarMojoIT
     public void testProject027()
         throws Exception
     {
-        doTestProject( "project-027", new String[]{"ejb-sample-one-1.0.jar"} );
+        doTestProject( "project-027", new String[]{ "ejb-sample-one-1.0.jar" } );
     }
 
     /**
@@ -312,7 +312,7 @@ public class EarMojoIT
     public void testProject028()
         throws Exception
     {
-        doTestProject( "project-028", new String[]{"ejb-sample-one-1.0.jar"} );
+        doTestProject( "project-028", new String[]{ "ejb-sample-one-1.0.jar" } );
     }
 
     /**
@@ -321,7 +321,7 @@ public class EarMojoIT
     public void testProject029()
         throws Exception
     {
-        doTestProject( "project-029", new String[]{"ejb-sample-one-1.0.jar"} );
+        doTestProject( "project-029", new String[]{ "ejb-sample-one-1.0.jar" } );
     }
 
     /**
@@ -331,7 +331,7 @@ public class EarMojoIT
     public void testProject030()
         throws Exception
     {
-        doTestProject( "project-030", new String[]{"ejb-sample-one-1.0.jar", "ejb-sample-two-1.0-client.jar"} );
+        doTestProject( "project-030", new String[]{ "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0-client.jar" } );
     }
 
     /**
@@ -341,7 +341,7 @@ public class EarMojoIT
     public void testProject031()
         throws Exception
     {
-        doTestProject( "project-031", new String[]{"ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar"} );
+        doTestProject( "project-031", new String[]{ "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar" } );
     }
 
     /**
@@ -350,7 +350,7 @@ public class EarMojoIT
     public void testProject032()
         throws Exception
     {
-        doTestProject( "project-032", new String[]{"ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar"} );
+        doTestProject( "project-032", new String[]{ "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar" } );
     }
 
     /**
@@ -360,8 +360,8 @@ public class EarMojoIT
         throws Exception
     {
         doTestProject( "project-033",
-                       new String[]{"ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar", "sar-sample-one-1.0.sar",
-                           "har-sample-one-1.0.har"} );
+                       new String[]{ "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar", "sar-sample-one-1.0.sar",
+                           "har-sample-one-1.0.har" } );
     }
 
     /**
@@ -370,7 +370,7 @@ public class EarMojoIT
     public void testProject034()
         throws Exception
     {
-        doTestProject( "project-034", new String[]{"ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar"} );
+        doTestProject( "project-034", new String[]{ "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar" } );
     }
 
     /**
@@ -380,9 +380,9 @@ public class EarMojoIT
         throws Exception
     {
         doTestProject( "project-035",
-                       new String[]{"foo/eartest-ejb-sample-one-1.0.jar", "eartest-ejb-sample-two-1.0.jar",
+                       new String[]{ "foo/eartest-ejb-sample-one-1.0.jar", "eartest-ejb-sample-two-1.0.jar",
                            "libs/eartest-jar-sample-one-1.0.jar", "libs/eartest-jar-sample-two-1.0.jar",
-                           "sar-sample-one.sar"} );
+                           "sar-sample-one.sar" } );
     }
 
     /**
@@ -392,10 +392,10 @@ public class EarMojoIT
         throws Exception
     {
         doTestProject( "project-036",
-                       new String[]{"foo/eartest-ejb-sample-one-1.0.jar", "eartest-ejb-sample-two-1.0.jar",
+                       new String[]{ "foo/eartest-ejb-sample-one-1.0.jar", "eartest-ejb-sample-two-1.0.jar",
                            "com-foo-bar-ejb-sample-one-1.0.jar", "com-foo-bar-ejb-sample-two-1.0.jar",
                            "libs/eartest-jar-sample-one-1.0.jar", "libs/eartest-jar-sample-two-1.0.jar",
-                           "sar-sample-one.sar"} );
+                           "sar-sample-one.sar" } );
     }
 
     /**
@@ -405,7 +405,7 @@ public class EarMojoIT
     public void testProject037()
         throws Exception
     {
-        doTestProject( "project-037", new String[]{"ejb-sample-one-1.0.jar", "ejb-sample-two-1.0-client.jar"} );
+        doTestProject( "project-037", new String[]{ "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0-client.jar" } );
     }
 
     /**
@@ -415,8 +415,8 @@ public class EarMojoIT
     public void testProject038()
         throws Exception
     {
-        doTestProject( "project-038", new String[]{"ejb-sample-one-1.0-classified.jar", "ejb-sample-one-1.0.jar"},
-                       new boolean[]{false, true} );
+        doTestProject( "project-038", new String[]{ "ejb-sample-one-1.0-classified.jar", "ejb-sample-one-1.0.jar" },
+                       new boolean[]{ false, true } );
     }
 
     /**
@@ -425,7 +425,7 @@ public class EarMojoIT
     public void testProject039()
         throws Exception
     {
-        doTestProject( "project-039", new String[]{"ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar"} );
+        doTestProject( "project-039", new String[]{ "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar" } );
     }
 
     /**
@@ -435,7 +435,7 @@ public class EarMojoIT
     public void testProject040()
         throws Exception
     {
-        doTestProject( "project-040", new String[]{"ejb-sample-one-1.0.jar"} );
+        doTestProject( "project-040", new String[]{ "ejb-sample-one-1.0.jar" } );
     }
 
     /**
@@ -444,7 +444,7 @@ public class EarMojoIT
     public void testProject041()
         throws Exception
     {
-        doTestProject( "project-041", new String[]{"ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar"} );
+        doTestProject( "project-041", new String[]{ "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar" } );
     }
 
     /**
@@ -453,7 +453,7 @@ public class EarMojoIT
     public void testProject042()
         throws Exception
     {
-        doTestProject( "project-042", new String[]{"ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar"} );
+        doTestProject( "project-042", new String[]{ "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar" } );
     }
 
 
@@ -463,7 +463,7 @@ public class EarMojoIT
     public void testProject043()
         throws Exception
     {
-        final File baseDir = doTestProject( "project-043", new String[]{"ejb-sample-one-1.0.jar"} );
+        final File baseDir = doTestProject( "project-043", new String[]{ "ejb-sample-one-1.0.jar" } );
         final File expectedApplicationXml = new File( baseDir, "target/custom-descriptor-dir/application.xml" );
         assertTrue( "Application.xml file not found", expectedApplicationXml.exists() );
         assertFalse( "Application.xml file should not be empty", expectedApplicationXml.length() == 0 );
@@ -475,7 +475,7 @@ public class EarMojoIT
     public void testProject044()
         throws Exception
     {
-        doTestProject( "project-044", new String[]{"ejb-sample-one-1.0.jar", "myLibs/jar-sample-one-1.0.jar"} );
+        doTestProject( "project-044", new String[]{ "ejb-sample-one-1.0.jar", "myLibs/jar-sample-one-1.0.jar" } );
     }
 
     /**
@@ -484,7 +484,7 @@ public class EarMojoIT
     public void testProject045()
         throws Exception
     {
-        final File baseDir = doTestProject( "project-045", new String[]{"README.txt", "ejb-sample-one-1.0.jar"} );
+        final File baseDir = doTestProject( "project-045", new String[]{ "README.txt", "ejb-sample-one-1.0.jar" } );
         final File actualReadme = new File( getEarDirectory( baseDir, "project-045" ), "README.txt" );
         final String content = IOUtil.toString( ReaderFactory.newReader( actualReadme, "UTF-8" ) );
         assertTrue( "application name and version was not filtered properly", content.indexOf( "my-app 99.0" ) != -1 );
@@ -499,7 +499,7 @@ public class EarMojoIT
     public void testProject046()
         throws Exception
     {
-        final File baseDir = doTestProject( "project-046", new String[]{"README.txt", "ejb-sample-one-1.0.jar"} );
+        final File baseDir = doTestProject( "project-046", new String[]{ "README.txt", "ejb-sample-one-1.0.jar" } );
         final File actualReadme = new File( getEarDirectory( baseDir, "project-046" ), "README.txt" );
         final String content = IOUtil.toString( ReaderFactory.newReader( actualReadme, "UTF-8" ) );
         assertTrue( "application name and version was not filtered properly", content.indexOf( "my-app 99.0" ) != -1 );
@@ -514,7 +514,7 @@ public class EarMojoIT
     public void testProject047()
         throws Exception
     {
-        final File baseDir = doTestProject( "project-047", new String[]{"README.txt", "ejb-sample-one-1.0.jar"} );
+        final File baseDir = doTestProject( "project-047", new String[]{ "README.txt", "ejb-sample-one-1.0.jar" } );
         final File actualReadme = new File( getEarDirectory( baseDir, "project-047" ), "README.txt" );
         final String content = IOUtil.toString( ReaderFactory.newReader( actualReadme, "UTF-8" ) );
         assertTrue( "application name and version should not have been filtered",
@@ -529,7 +529,7 @@ public class EarMojoIT
     public void testProject048()
         throws Exception
     {
-        doTestProject( "project-048", new String[]{"ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar"} );
+        doTestProject( "project-048", new String[]{ "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar" } );
     }
 
     /**
@@ -538,7 +538,7 @@ public class EarMojoIT
     public void testProject049()
         throws Exception
     {
-        doTestProject( "project-049", new String[]{"ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar"} );
+        doTestProject( "project-049", new String[]{ "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar" } );
     }
 
     /**
@@ -547,7 +547,7 @@ public class EarMojoIT
     public void testProject050()
         throws Exception
     {
-        doTestProject( "project-050", new String[]{"ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar"} );
+        doTestProject( "project-050", new String[]{ "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar" } );
     }
 
     /**
@@ -556,7 +556,7 @@ public class EarMojoIT
     public void testProject051()
         throws Exception
     {
-        doTestProject( "project-051", new String[]{"ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar"} );
+        doTestProject( "project-051", new String[]{ "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar" } );
     }
 
     /**
@@ -565,7 +565,7 @@ public class EarMojoIT
     public void testProject052()
         throws Exception
     {
-        doTestProject( "project-052", new String[]{"ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar"} );
+        doTestProject( "project-052", new String[]{ "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar" } );
     }
 
     /**
@@ -574,7 +574,7 @@ public class EarMojoIT
     public void testProject053()
         throws Exception
     {
-        doTestProject( "project-053", new String[]{"ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar"} );
+        doTestProject( "project-053", new String[]{ "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar" } );
     }
 
     /**
@@ -583,7 +583,7 @@ public class EarMojoIT
     public void testProject054()
         throws Exception
     {
-        doTestProject( "project-054", new String[]{"ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar"} );
+        doTestProject( "project-054", new String[]{ "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar" } );
     }
 
     /**
@@ -592,8 +592,8 @@ public class EarMojoIT
     public void testProject055()
         throws Exception
     {
-        doTestProject( "project-055", new String[]{"jar-sample-one-1.0.jar", "jar-sample-two-1.0.jar",
-            "jar-sample-three-with-deps-1.0.jar"} );
+        doTestProject( "project-055", new String[]{ "jar-sample-one-1.0.jar", "jar-sample-two-1.0.jar",
+            "jar-sample-three-with-deps-1.0.jar" } );
     }
 
     /**
@@ -603,7 +603,7 @@ public class EarMojoIT
     public void testProject056()
         throws Exception
     {
-        doTestProject( "project-056", new String[]{"ejb-sample-one-1.0.jar"} );
+        doTestProject( "project-056", new String[]{ "ejb-sample-one-1.0.jar" } );
     }
 
 
@@ -614,7 +614,7 @@ public class EarMojoIT
     public void testProject057()
         throws Exception
     {
-        doTestProject( "project-057", new String[]{"ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar"} );
+        doTestProject( "project-057", new String[]{ "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar" } );
     }
 
     /**
@@ -623,7 +623,7 @@ public class EarMojoIT
     public void testProject058()
         throws Exception
     {
-        doTestProject( "project-058", new String[]{"ejb-sample-one-1.0.jar"} );
+        doTestProject( "project-058", new String[]{ "ejb-sample-one-1.0.jar" } );
     }
 
     /**
@@ -632,7 +632,7 @@ public class EarMojoIT
     public void testProject059()
         throws Exception
     {
-        doTestProject( "project-059", new String[]{"ejb-sample-one-1.0.jar"} );
+        doTestProject( "project-059", new String[]{ "ejb-sample-one-1.0.jar" } );
     }
 
     /**
@@ -643,7 +643,7 @@ public class EarMojoIT
     public void testProject060()
         throws Exception
     {
-        doTestProject( "project-060", new String[]{"ejb-sample-one-1.0.jar", "ejb-sample-two-1.0-client.jar"} );
+        doTestProject( "project-060", new String[]{ "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0-client.jar" } );
     }
 
     /**
@@ -654,7 +654,7 @@ public class EarMojoIT
     public void testProject061()
         throws Exception
     {
-        doTestProject( "project-061", new String[]{"ejb-sample-one-1.0.jar", "ejb-sample-two-1.0-client.jar"} );
+        doTestProject( "project-061", new String[]{ "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0-client.jar" } );
     }
 
     /**
@@ -665,7 +665,7 @@ public class EarMojoIT
     public void testProject062()
         throws Exception
     {
-        doTestProject( "project-062", new String[]{"ejb-sample-one-1.0.jar", "lib/ejb-sample-two-1.0-client.jar"} );
+        doTestProject( "project-062", new String[]{ "ejb-sample-one-1.0.jar", "lib/ejb-sample-two-1.0-client.jar" } );
     }
 
     /**
@@ -676,7 +676,7 @@ public class EarMojoIT
     public void testProject063()
         throws Exception
     {
-        doTestProject( "project-063", new String[]{"lib/ejb-sample-two-1.0-client.jar"} );
+        doTestProject( "project-063", new String[]{ "lib/ejb-sample-two-1.0-client.jar" } );
     }
 
     /**
@@ -687,7 +687,7 @@ public class EarMojoIT
     public void testProject064()
         throws Exception
     {
-        doTestProject( "project-064", new String[]{"ejb-sample-one-1.0.jar", "ejb-sample-two-1.0-client.jar"} );
+        doTestProject( "project-064", new String[]{ "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0-client.jar" } );
     }
 
 }

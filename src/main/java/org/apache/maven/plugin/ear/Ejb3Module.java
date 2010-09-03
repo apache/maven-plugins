@@ -27,7 +27,6 @@ import org.apache.maven.artifact.Artifact;
  * @author Stephane Nicoll <snicoll@apache.org>
  * @author $Author$ (last edit)
  * @version $Revision$
- *
  * @deprecated ejb v3 is now properly handled by the standard
  *             ejb packaging type. use {@link EjbModule} instead
  */

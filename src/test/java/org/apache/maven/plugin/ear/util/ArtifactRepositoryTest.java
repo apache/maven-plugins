@@ -44,8 +44,8 @@ public class ArtifactRepositoryTest
     public void testEmptyRepository()
     {
         ArtifactTypeMappingService artifactTypeMappingService = new ArtifactTypeMappingService();
-        ArtifactRepository repo = new ArtifactRepository( createArtifacts( null ), MAIN_ARTIFACT_ID,
-                                                          artifactTypeMappingService );
+        ArtifactRepository repo =
+            new ArtifactRepository( createArtifacts( null ), MAIN_ARTIFACT_ID, artifactTypeMappingService );
         assertNull( repo.getUniqueArtifact( "ear", "ar", "jar" ) );
         assertNull( repo.getUniqueArtifact( "ear", "ar", "jar", null ) );
         assertNull( repo.getUniqueArtifact( "ear", "ar", "jar", "class" ) );
@@ -55,7 +55,7 @@ public class ArtifactRepositoryTest
     {
         ArtifactTypeMappingService artifactTypeMappingService = new ArtifactTypeMappingService();
         ArtifactRepository repo =
-            new ArtifactRepository( createArtifacts( new String[]{"myartifact"} ), MAIN_ARTIFACT_ID,
+            new ArtifactRepository( createArtifacts( new String[]{ "myartifact" } ), MAIN_ARTIFACT_ID,
                                     artifactTypeMappingService );
         assertNotNull( repo.getUniqueArtifact( DEFAULT_GROUPID, "myartifact", "jar" ) );
         assertNotNull( repo.getUniqueArtifact( DEFAULT_GROUPID, "myartifact", "jar", null ) );
@@ -65,7 +65,7 @@ public class ArtifactRepositoryTest
     {
         ArtifactTypeMappingService artifactTypeMappingService = new ArtifactTypeMappingService();
         ArtifactRepository repo = new ArtifactRepository(
-            createArtifacts( new String[]{"myartifact"}, null, null, new String[]{"classified"} ), MAIN_ARTIFACT_ID,
+            createArtifacts( new String[]{ "myartifact" }, null, null, new String[]{ "classified" } ), MAIN_ARTIFACT_ID,
             artifactTypeMappingService );
         assertNotNull( repo.getUniqueArtifact( DEFAULT_GROUPID, "myartifact", "jar" ) );
         assertNotNull( repo.getUniqueArtifact( DEFAULT_GROUPID, "myartifact", "jar", "classified" ) );
@@ -76,8 +76,8 @@ public class ArtifactRepositoryTest
     {
         ArtifactTypeMappingService artifactTypeMappingService = new ArtifactTypeMappingService();
         ArtifactRepository repo = new ArtifactRepository(
-            createArtifacts( new String[]{"myartifact", "myartifact", "myartifact"}, null, null,
-                             new String[]{"class1", "class2", "class3"} ), MAIN_ARTIFACT_ID,
+            createArtifacts( new String[]{ "myartifact", "myartifact", "myartifact" }, null, null,
+                             new String[]{ "class1", "class2", "class3" } ), MAIN_ARTIFACT_ID,
             artifactTypeMappingService );
 
         assertNull( repo.getUniqueArtifact( DEFAULT_GROUPID, "myartifact", "jar" ) );
@@ -92,8 +92,8 @@ public class ArtifactRepositoryTest
     {
         ArtifactTypeMappingService artifactTypeMappingService = new ArtifactTypeMappingService();
         ArtifactRepository repo = new ArtifactRepository(
-            createArtifacts( new String[]{"myartifact", "myartifact", "myartifact"}, null, null,
-                             new String[]{"class1", "class2", null} ), MAIN_ARTIFACT_ID, artifactTypeMappingService );
+            createArtifacts( new String[]{ "myartifact", "myartifact", "myartifact" }, null, null,
+                             new String[]{ "class1", "class2", null } ), MAIN_ARTIFACT_ID, artifactTypeMappingService );
 
         assertNull( repo.getUniqueArtifact( DEFAULT_GROUPID, "myartifact", "jar" ) );
         assertNotNull( repo.getUniqueArtifact( DEFAULT_GROUPID, "myartifact", "jar", "class1" ) );

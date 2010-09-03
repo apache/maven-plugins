@@ -28,17 +28,24 @@ import java.util.List;
  * @author <a href="snicoll@apache.org">Stephane Nicoll</a>
  * @version $Id: ApplicationXmlWriter.java 728546 2008-12-21 22:56:51Z bentmann $
  */
-class ApplicationXmlWriterContext {
+class ApplicationXmlWriterContext
+{
 
     private final File destinationFile;
+
     private final List earModules;
+
     private final List securityRoles;
+
     private final String displayName;
+
     private final String description;
+
     private final String libraryDirectory;
 
-    public ApplicationXmlWriterContext(File destinationFile, List earModules, List securityRoles,
-                                       String displayName, String description, String libraryDirectory) {
+    public ApplicationXmlWriterContext( File destinationFile, List earModules, List securityRoles, String displayName,
+                                        String description, String libraryDirectory )
+    {
         this.destinationFile = destinationFile;
         this.earModules = earModules;
         this.securityRoles = securityRoles;
@@ -52,7 +59,8 @@ class ApplicationXmlWriterContext {
      *
      * @return the output file
      */
-    public File getDestinationFile() {
+    public File getDestinationFile()
+    {
         return destinationFile;
     }
 
@@ -61,7 +69,8 @@ class ApplicationXmlWriterContext {
      *
      * @return the ear modules
      */
-    public List getEarModules() {
+    public List getEarModules()
+    {
         return earModules;
     }
 
@@ -70,7 +79,8 @@ class ApplicationXmlWriterContext {
      *
      * @return the security roles
      */
-    public List getSecurityRoles() {
+    public List getSecurityRoles()
+    {
         return securityRoles;
     }
 
@@ -79,7 +89,8 @@ class ApplicationXmlWriterContext {
      *
      * @return the display name
      */
-    public String getDisplayName() {
+    public String getDisplayName()
+    {
         return displayName;
     }
 
@@ -88,7 +99,8 @@ class ApplicationXmlWriterContext {
      *
      * @return the description
      */
-    public String getDescription() {
+    public String getDescription()
+    {
         return description;
     }
 
@@ -97,7 +109,8 @@ class ApplicationXmlWriterContext {
      *
      * @return the library directory
      */
-    public String getLibraryDirectory() {
+    public String getLibraryDirectory()
+    {
         return libraryDirectory;
     }
 }

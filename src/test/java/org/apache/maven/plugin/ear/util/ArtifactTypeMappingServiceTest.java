@@ -20,7 +20,6 @@ package org.apache.maven.plugin.ear.util;
  */
 
 import junit.framework.TestCase;
-
 import org.apache.maven.plugin.ear.EarModuleFactory;
 import org.apache.maven.plugin.ear.EarPluginException;
 import org.apache.maven.plugin.ear.UnknownArtifactTypeException;

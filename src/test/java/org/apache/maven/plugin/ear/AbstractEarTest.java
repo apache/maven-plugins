@@ -1,7 +1,6 @@
 package org.apache.maven.plugin.ear;
 
 import junit.framework.TestCase;
-
 import org.apache.maven.artifact.Artifact;
 
 import java.util.Set;
