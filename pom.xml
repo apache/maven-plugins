@@ -642,4 +642,11 @@ under the License.
     </profile>
   </profiles>
 
+  <distributionManagement>
+    <site>
+      <id>apache.website</id>
+      <url>scp://people.apache.org/www/maven.apache.org/plugins/maven-site-plugin-${project.version}</url>
+    </site>
+  </distributionManagement>
+
 </project>
