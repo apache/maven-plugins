@@ -355,7 +355,7 @@ public abstract class AbstractSiteRenderingMojo
                                                       Map<String, DocumentRenderer> documents, Locale locale )
     {
         // copy Collection to prevent ConcurrentModificationException
-        List<MavenReportExecution> filtered = new ArrayList<MavenReportExecution>(reports);
+        List<MavenReportExecution> filtered = new ArrayList<MavenReportExecution>( reports );
 
         Map<String, MavenReport> reportsByOutputName = new HashMap<String, MavenReport>();
         for ( MavenReportExecution mavenReportExecution : filtered )

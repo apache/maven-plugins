@@ -147,7 +147,7 @@ public class SiteRunMojo
         webapp.setContextPath( "/" );
         webapp.setResourceBase( tempWebappDirectory.getAbsolutePath() );
         webapp.setAttribute( DoxiaFilter.SITE_RENDERER_KEY, siteRenderer );
-       	webapp.getInitParams().put( "org.mortbay.jetty.servlet.Default.useFileMappedBuffer", "false" );
+        webapp.getInitParams().put( "org.mortbay.jetty.servlet.Default.useFileMappedBuffer", "false" );
 
         // For external reports
         project.getReporting().setOutputDirectory( tempWebappDirectory.getAbsolutePath() );

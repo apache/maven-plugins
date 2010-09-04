@@ -27,6 +27,7 @@ import java.util.Set;
 
 import org.apache.maven.artifact.repository.DefaultRepositoryRequest;
 import org.apache.maven.artifact.repository.RepositoryRequest;
+import org.apache.maven.artifact.resolver.filter.ExclusionSetFilter;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.lifecycle.LifecycleExecutor;
 import org.apache.maven.model.Plugin;
@@ -159,7 +160,8 @@ public class DefaultMavenReportExecutor
 
                 List<RemoteRepository> remoteRepositories = session.getCurrentProject().getRemotePluginRepositories();
                 
-                PluginDescriptor pluginDescriptor = mavenPluginManager.getPluginDescriptor(plugin, remoteRepositories , session.getRepositorySession());
+                PluginDescriptor pluginDescriptor = mavenPluginManager
+                    .getPluginDescriptor( plugin, remoteRepositories, session.getRepositorySession() );
 
                 if ( reportPlugin.getReportSets().isEmpty() && reportPlugin.getReports().isEmpty() )
                 {
@@ -171,14 +173,14 @@ public class DefaultMavenReportExecutor
                 }
                 else
                 {
-                    if (reportPlugin.getReportSets() != null)
+                    if ( reportPlugin.getReportSets() != null )
                     {
                         for ( ReportSet reportSet : reportPlugin.getReportSets() )
                         {
                             goals.addAll( reportSet.getReports() );
                         }
                     }
-                    if (!reportPlugin.getReports().isEmpty())
+                    if ( !reportPlugin.getReports().isEmpty() )
                     {
                         goals.addAll( reportPlugin.getReports() );
                     }
@@ -469,11 +471,10 @@ public class DefaultMavenReportExecutor
         logger.warn( "" );
         logger.warn( "For this reason, future Maven versions might no"
             + " longer support building such malformed projects." );
-        logger.warn( "" );
 
-		Plugin plugin = new Plugin();
-		plugin.setGroupId( reportPlugin.getGroupId() );
-		plugin.setArtifactId( reportPlugin.getArtifactId() );
+        Plugin plugin = new Plugin();
+        plugin.setGroupId( reportPlugin.getGroupId() );
+        plugin.setArtifactId( reportPlugin.getArtifactId() );
         
         PluginVersionRequest pluginVersionRequest = new DefaultPluginVersionRequest( plugin , mavenReportExecutorRequest.getMavenSession() );
         //pluginVersionRequest.setOffline( mavenReportExecutorRequest.getMavenSession().getRequest().isOffline() );

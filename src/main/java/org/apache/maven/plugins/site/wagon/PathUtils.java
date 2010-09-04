@@ -374,7 +374,8 @@ public final class PathUtils
             else
             {
                 int index = url.indexOf( "://" );
-                if( index != -1 ) {
+                if ( index != -1 )
+                {
                     pos = index + 3;
                 }
             }
