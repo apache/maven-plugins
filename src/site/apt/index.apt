@@ -30,7 +30,7 @@
 Maven Site Plugin
 
  The Site Plugin is used to generate a site for the project. The generated site also includes the project's reports
- that were configured in the <<<\<reporting\>>>> section of the POM.
+ that were configured in the POM.
 
  Please read the {{{./migrate.html}migration guide}} if you want to upgrade the Site Plugin.
 
