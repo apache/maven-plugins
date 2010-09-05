@@ -35,9 +35,10 @@ Migrate
 
 * From 2.x to 3.0
 
-  * Version 3 of the plugin requires at least <<Maven 3.0-beta-2>> to run.
+  * Version 3 of the plugin requires at least <<Maven 3.0-beta-3>> to run.
 
-~~ TODO Copy the content from the wiki to here and kill the wiki page when are ready for the 3.0 release
+  * Read more at the site for
+  {{{http://maven.apache.org/plugins/maven-site-plugin-3.x/}Maven Site Plugin 3.x}}.
 
   []
 
