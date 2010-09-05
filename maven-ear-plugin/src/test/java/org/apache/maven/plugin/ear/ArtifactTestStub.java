@@ -42,6 +42,8 @@ public class ArtifactTestStub
     implements Artifact
 
 {
+    public static final String DEFAULT_VERSION = "1.0";
+
     private final String groupId;
 
     private final String artifactId;
@@ -50,13 +52,21 @@ public class ArtifactTestStub
 
     private final String classifier;
 
+    private String version;
 
-    public ArtifactTestStub( String groupId, String artifactId, String type, String classifier )
+
+    public ArtifactTestStub( String groupId, String artifactId, String type, String classifier, String version )
     {
         this.groupId = groupId;
         this.artifactId = artifactId;
         this.type = type;
         this.classifier = classifier;
+        this.version = version;
+    }
+
+    public ArtifactTestStub( String groupId, String artifactId, String type, String classifier )
+    {
+        this( groupId, artifactId, type, classifier, DEFAULT_VERSION );
     }
 
 
@@ -72,12 +82,12 @@ public class ArtifactTestStub
 
     public String getVersion()
     {
-        throw new UnsupportedOperationException( "not implemented ; fake artifact stub" );
+        return version;
     }
 
-    public void setVersion( String string )
+    public void setVersion( String version )
     {
-        throw new UnsupportedOperationException( "not implemented ; fake artifact stub" );
+        this.version = version;
     }
 
     public String getScope()
@@ -112,7 +122,7 @@ public class ArtifactTestStub
 
     public String getBaseVersion()
     {
-        throw new UnsupportedOperationException( "not implemented ; fake artifact stub" );
+        return version;
     }
 
     public void setBaseVersion( String string )
@@ -177,7 +187,7 @@ public class ArtifactTestStub
 
     public ArtifactHandler getArtifactHandler()
     {
-        throw new UnsupportedOperationException( "not implemented ; fake artifact stub" );
+        return new ArtifactHandlerTestStub( "jar" );
     }
 
     public List getDependencyTrail()

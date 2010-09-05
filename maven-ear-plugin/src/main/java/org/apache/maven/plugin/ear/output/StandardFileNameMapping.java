@@ -29,11 +29,12 @@ import org.apache.maven.artifact.Artifact;
  * @version $Id$
  */
 public class StandardFileNameMapping
-    implements FileNameMapping
+    extends AbstractFileNameMapping
 {
 
     public String mapFileName( final Artifact a )
     {
-        return a.getFile().getName();
+        return generateFileName( a );
     }
+
 }
