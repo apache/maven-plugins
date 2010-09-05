@@ -40,6 +40,8 @@ Migrate
   * Read more at the site for
   {{{http://maven.apache.org/plugins/maven-site-plugin-3.x/}Maven Site Plugin 3.x}}.
 
+~~ TODO Copy the content from the wiki to here and kill the wiki page when we are ready for the 3.0 release
+
   []
 
 * From 2.1.x to 2.2.x
