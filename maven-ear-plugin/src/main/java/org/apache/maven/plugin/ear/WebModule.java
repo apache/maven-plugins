@@ -52,9 +52,9 @@ public class WebModule
         this.contextRoot = getDefaultContextRoot( a );
     }
 
-    public void appendModule( XMLWriter writer, String version )
+    public void appendModule( XMLWriter writer, String version, Boolean generateId )
     {
-        writer.startElement( MODULE_ELEMENT );
+        startModuleElement( writer, generateId );
         writer.startElement( WEB_MODULE );
         writer.startElement( WEB_URI_FIELD );
         writer.writeText( getUri() );

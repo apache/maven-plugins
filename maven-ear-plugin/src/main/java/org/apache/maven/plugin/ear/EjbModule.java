@@ -42,9 +42,9 @@ public class EjbModule
         super( a );
     }
 
-    public void appendModule( XMLWriter writer, String version )
+    public void appendModule( XMLWriter writer, String version, Boolean generateId )
     {
-        writer.startElement( MODULE_ELEMENT );
+        startModuleElement( writer, generateId );
         writer.startElement( EJB_MODULE );
         writer.writeText( getUri() );
         writer.endElement();

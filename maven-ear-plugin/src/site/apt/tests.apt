@@ -34,9 +34,9 @@ EAR Plugin Tests
 
   * project-002: builds an EAR with a customized artifact location and a customized artifact name
 
-  * project-003: builds an EAR with a defalt bundle directory for _java_ modules
+  * project-003: builds an EAR with a default bundle directory for _java_ modules
 
-  * project-004: builds an EAR with a defalt bundle directory for _java_ modules and a custom location overriding the default
+  * project-004: builds an EAR with a default bundle directory for _java_ modules and a custom location overriding the default
 
   * project-005: builds an EAR with a custom URI
 
@@ -157,6 +157,12 @@ EAR Plugin Tests
   * project-063: builds an EAR with ejb-client packaged for JavaEE 6
 
   * project-064: builds an EAR with ejb-client packaged for JavaEE 5 and still put it in the root
+
+  * project-065: builds an EAR with a custom moduleId
+
+  * project-066: builds an EAR with generateModuleId enabled
+
+  * project-067: builds an EAR with generateModuleId enabled and a custom module
 
 
    

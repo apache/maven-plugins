@@ -19,8 +19,8 @@ package org.apache.maven.plugin.ear.it;
  * under the License.
  */
 
+import org.apache.maven.it.util.IOUtil;
 import org.codehaus.plexus.util.FileUtils;
-import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
 
 import java.io.File;
@@ -54,7 +54,7 @@ public class EarMojoIT
     }
 
     /**
-     * Builds an EAR with a defalt bundle directory for <tt>java</tt> modules.
+     * Builds an EAR with a default bundle directory for <tt>java</tt> modules.
      */
     public void testProject003()
         throws Exception
@@ -64,7 +64,7 @@ public class EarMojoIT
     }
 
     /**
-     * Builds an EAR with a defalt bundle directory for _java_ modules and a custom
+     * Builds an EAR with a default bundle directory for _java_ modules and a custom
      * location overriding the default.
      */
     public void testProject004()
@@ -688,6 +688,34 @@ public class EarMojoIT
         throws Exception
     {
         doTestProject( "project-064", new String[]{ "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0-client.jar" } );
+    }
+
+    /**
+     * Builds an EAR with a custom moduleId.
+     */
+    public void testProject065()
+        throws Exception
+    {
+        doTestProject( "project-065", new String[]{ "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar" } );
+    }
+
+    /**
+     * Builds an EAR with generateModuleId enabled.
+     */
+    public void testProject066()
+        throws Exception
+    {
+        doTestProject( "project-066", new String[]{ "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar" } );
+    }
+
+
+    /**
+     * Builds an EAR with generateModuleId enabled and a custom module.
+     */
+    public void testProject067()
+        throws Exception
+    {
+        doTestProject( "project-067", new String[]{ "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar" } );
     }
 
 }

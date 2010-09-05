@@ -42,9 +42,9 @@ public class RarModule
         super( a );
     }
 
-    public void appendModule( XMLWriter writer, String version )
+    public void appendModule( XMLWriter writer, String version, Boolean generateId )
     {
-        writer.startElement( MODULE_ELEMENT );
+        startModuleElement( writer, generateId );
         writer.startElement( RAR_MODULE );
         writer.writeText( getUri() );
         writer.endElement();

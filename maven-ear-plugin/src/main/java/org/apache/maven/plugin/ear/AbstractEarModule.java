@@ -42,8 +42,6 @@ public abstract class AbstractEarModule
 
     protected static final String ALT_DD = "alt-dd";
 
-    private String uri;
-
     private Artifact artifact;
 
     // Those are set by the configuration
@@ -60,9 +58,15 @@ public abstract class AbstractEarModule
 
     protected Boolean excluded = Boolean.FALSE;
 
+    private String uri;
+
     protected Boolean unpack = null;
 
     protected String altDeploymentDescriptor;
+
+    private String moduleId;
+
+    // This is injected once the module has been built.
 
     protected EarExecutionContext earExecutionContext;
 
@@ -127,6 +131,11 @@ public abstract class AbstractEarModule
     public Artifact getArtifact()
     {
         return artifact;
+    }
+
+    public String getModuleId()
+    {
+        return moduleId;
     }
 
     public String getUri()
@@ -247,6 +256,36 @@ public abstract class AbstractEarModule
             writer.startElement( ALT_DD );
             writer.writeText( getAltDeploymentDescriptor() );
             writer.endElement();
+        }
+    }
+
+    /**
+     * Starts a new {@link #MODULE_ELEMENT} on the specified writer, possibly
+     * including an id attribute.
+     *
+     * @param writer     the XML writer.
+     * @param generateId whether an id should be generated
+     */
+    protected void startModuleElement( XMLWriter writer, Boolean generateId )
+    {
+        writer.startElement( MODULE_ELEMENT );
+
+        // If a moduleId is specified, always include it
+        if ( getModuleId() != null )
+        {
+            writer.addAttribute( "id", getModuleId() );
+        }
+        else if ( generateId.booleanValue() )
+        {
+            // No module id was specified but one should be generated.
+            Artifact artifact = getArtifact();
+            String generatedId =
+                artifact.getType().toUpperCase() + "_" + artifact.getGroupId() + "." + artifact.getArtifactId();
+            if ( null != artifact.getClassifier() && artifact.getClassifier().trim().length() > 0 )
+            {
+                generatedId += "-" + artifact.getClassifier().trim();
+            }
+            writer.addAttribute( "id", generatedId );
         }
     }
 

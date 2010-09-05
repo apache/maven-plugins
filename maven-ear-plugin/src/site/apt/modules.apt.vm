@@ -114,6 +114,8 @@ EAR Modules
   * <<altDeploymentDescriptor>> - sets the alternative deployment descriptor for
   this module.
 
+  * <<moduleId>> - sets the id of the module in the generated application.xml.
+
 
 * {ejbModule} Properties
 
@@ -148,6 +150,8 @@ EAR Modules
   * <<altDeploymentDescriptor>> - sets the alternative deployment descriptor for
   this module.
 
+  * <<moduleId>> - sets the id of the module in the generated application.xml.
+
 
 * {jarModule} Properties
 
@@ -181,6 +185,8 @@ EAR Modules
 
   * <<altDeploymentDescriptor>> - sets the alternative deployment descriptor for
   this module.
+
+  * <<moduleId>> - sets the id of the module in the generated application.xml.
 
   * <<includeInApplicationXml>> - set to true to if you want to generate an entry
   of this module in <<<application.xml>>>. Default is false.
@@ -219,6 +225,8 @@ EAR Modules
   * <<altDeploymentDescriptor>> - sets the alternative deployment descriptor for
   this module.
 
+  * <<moduleId>> - sets the id of the module in the generated application.xml.
+
 
 * {rarModule} Properties
 
@@ -253,6 +261,8 @@ EAR Modules
   * <<altDeploymentDescriptor>> - sets the alternative deployment descriptor for
   this module.
 
+  * <<moduleId>> - sets the id of the module in the generated application.xml.
+
 
 * {sarModule} Properties
 
@@ -283,6 +293,8 @@ EAR Modules
 
   * <<unpack>> - set to true to unpack this artifact into the ear archive according
   to its uri. Default is false.
+
+  * <<moduleId>> - sets the id of the module in the generated application.xml.
 
 
 * {webModule} Properties
@@ -317,6 +329,8 @@ EAR Modules
 
   * <<altDeploymentDescriptor>> - sets the alternative deployment descriptor for
   this module.
+
+  * <<moduleId>> - sets the id of the module in the generated application.xml.
 
   * <<contextRoot>> - sets the context root of this web artifact.
 
@@ -353,6 +367,8 @@ EAR Modules
 
   * <<altDeploymentDescriptor>> - sets the alternative deployment descriptor for
   this module.
+
+  * <<moduleId>> - sets the id of the module in the generated application.xml.
 
 
 * {harModule} Properties

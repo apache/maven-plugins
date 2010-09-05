@@ -43,10 +43,13 @@ final class ApplicationXmlWriter
 
     private final String version;
 
-    ApplicationXmlWriter( String version, String encoding )
+    private final Boolean generateModuleId;
+
+    ApplicationXmlWriter( String version, String encoding, Boolean generateModuleId )
     {
         super( encoding );
         this.version = version;
+        this.generateModuleId = generateModuleId;
     }
 
     public void write( ApplicationXmlWriterContext context )
@@ -90,7 +93,7 @@ final class ApplicationXmlWriter
         while ( moduleIt.hasNext() )
         {
             EarModule module = (EarModule) moduleIt.next();
-            module.appendModule( writer, version );
+            module.appendModule( writer, version, generateModuleId );
         }
 
         final Iterator securityRoleIt = context.getSecurityRoles().iterator();
