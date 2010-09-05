@@ -22,19 +22,18 @@ package org.apache.maven.plugin.ear.output;
 import org.apache.maven.artifact.Artifact;
 
 /**
- * A full file name mapping, useful if artifacts might have the same
- * name across groups.
+ * A simplified version of the standard file name mapping which does not
+ * retain the version in the generated file name.
  *
  * @author <a href="snicoll@apache.org">Stephane Nicoll</a>
- * @version $Id$
  */
-public class FullFileNameMapping
+public class NoVersionFileNameMapping
     extends AbstractFileNameMapping
 {
 
-    public String mapFileName( final Artifact a )
+    public String mapFileName( Artifact a )
     {
-        final String dashedGroupId = a.getGroupId().replace( '.', '-' );
-        return dashedGroupId + "-" + generateFileName( a, true );
+        return generateFileName( a, false );
     }
+
 }

@@ -36,17 +36,24 @@ public abstract class AbstractFileNameMapping
     /**
      * Generates a standard file name for the specified {@link Artifact}.
      * <p/>
-     * Returns something like <tt>artifactId-version[-classifier].extension</tt>.
+     * Returns something like <tt>artifactId-version[-classifier].extension</tt>
+     * if <tt>addVersion</tt> is true. Otherwise it generates something
+     * like <tt>artifactId[-classifier].extension</tt>
      *
-     * @param a the artifact to generate a filename from
+     * @param a          the artifact to generate a filename from
+     * @param addVersion whether the version should be added
      * @return the filename, with a standard format
      */
-    protected String generateFileName( final Artifact a )
+    protected String generateFileName( final Artifact a, boolean addVersion )
     {
         final String extension = a.getArtifactHandler().getExtension();
 
         final StringBuilder buffer = new StringBuilder( 128 );
-        buffer.append( a.getArtifactId() ).append( '-' ).append( a.getBaseVersion() );
+        buffer.append( a.getArtifactId() );
+        if ( addVersion )
+        {
+            buffer.append( '-' ).append( a.getBaseVersion() );
+        }
         if ( a.hasClassifier() )
         {
             buffer.append( '-' ).append( a.getClassifier() );

@@ -34,7 +34,7 @@ public class StandardFileNameMapping
 
     public String mapFileName( final Artifact a )
     {
-        return generateFileName( a );
+        return generateFileName( a, true );
     }
 
 }

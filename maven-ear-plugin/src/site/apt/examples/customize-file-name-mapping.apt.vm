@@ -45,4 +45,5 @@ Customizing The File Name Mapping
   </build>
 +---------
 
-  As a result, each artifact file name will be prefixed by the groupId to avoid clashes.
+  As a result, each artifact file name will be prefixed by the groupId to avoid clashes. There is also a
+  <<<no-version>>> file name mapping if you do not want to get the version in the file names.
