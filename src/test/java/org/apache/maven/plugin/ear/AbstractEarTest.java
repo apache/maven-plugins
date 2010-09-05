@@ -120,6 +120,4 @@ public abstract class AbstractEarTest
         return createArtifact( artifactId, type, null );
 
     }
-
-
 }
