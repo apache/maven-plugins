@@ -160,6 +160,8 @@ under the License.
     <system>JIRA</system>
     <url>http://jira.codehaus.org/browse/MSITE</url>
   </issueManagement>
+  
+  <url>http://maven.apache.org/plugins/maven-site-plugin-${project.version}</url>
 
   <properties>
     <doxiaVersion>1.1.3</doxiaVersion>
