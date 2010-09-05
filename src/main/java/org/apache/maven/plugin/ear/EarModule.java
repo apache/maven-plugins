@@ -91,10 +91,11 @@ public interface EarModule
     /**
      * Appends the <tt>XML</tt> representation of this module.
      *
-     * @param writer  the writer to use
-     * @param version the version of the <tt>application.xml</tt> file
+     * @param writer     the writer to use
+     * @param version    the version of the <tt>application.xml</tt> file
+     * @param generateId whether an id should be generated
      */
-    public void appendModule( XMLWriter writer, String version );
+    public void appendModule( XMLWriter writer, String version, Boolean generateId );
 
     /**
      * Resolves the {@link Artifact} represented by the module. Note

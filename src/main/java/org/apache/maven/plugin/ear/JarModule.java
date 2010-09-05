@@ -57,13 +57,13 @@ public class JarModule
 
     }
 
-    public void appendModule( XMLWriter writer, String version )
+    public void appendModule( XMLWriter writer, String version, Boolean generateId )
     {
         // Generates an entry in the application.xml only if
         // includeInApplicationXml is set
         if ( includeInApplicationXml.booleanValue() )
         {
-            writer.startElement( MODULE_ELEMENT );
+            startModuleElement( writer, generateId );
             writer.startElement( JAVA_MODULE );
             writer.writeText( getUri() );
             writer.endElement();

@@ -47,6 +47,7 @@ under the License.
       <item name="Specifying Security Roles For The Generated application.xml" href="examples/specifying-security-roles-for-the-generated-application-xml.html"/>
       <item name="Generating jboss-app.xml" href="examples/generating-jboss-app.html"/>
       <item name="Customize file name mapping" href="examples/customize-file-name-mapping.html"/>
+      <item name="Generating modules ID" href="examples/generating-modules-id.html"/>
     </menu>
   </body>
 </project>
