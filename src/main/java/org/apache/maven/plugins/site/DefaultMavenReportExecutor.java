@@ -412,11 +412,10 @@ public class DefaultMavenReportExecutor
                                        MavenReportExecutorRequest mavenReportExecutorRequest )
         throws PluginVersionResolutionException
     {
-        String reportPluginKey = null;
+        String reportPluginKey = reportPlugin.getGroupId() + ':' + reportPlugin.getArtifactId();
 
         if ( getLog().isDebugEnabled() )
         {
-            reportPluginKey = reportPlugin.getGroupId() + ':' + reportPlugin.getArtifactId();
             getLog().debug( "resolving version for " + reportPluginKey );
         }
         if ( reportPlugin.getVersion() != null )
