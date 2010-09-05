@@ -110,9 +110,11 @@ mvn package
 
   The file name mapping to use for artifacts stored in the EAR can be specified
   using the <<<fileNameMapping>>> parameter. Valid values for this parameter
-  are <<<standard>>> (default) and <<<full>>>. By specifying <<<full>>> as file
-  name mapping, artifacts are prefixed by the <<<groupId>>> where dots have been
-  replaced by dashes.
+  are <<<standard>>> (default), <<<full>>> and <<<no-version>>>. By specifying
+  <<<full>>> as file name mapping, artifacts are prefixed by the <<<groupId>>>
+  where dots have been replaced by dashes. <<<no-version>>> can be used as a
+  replacement of the default mapping; the only difference is that the version
+  is omitted.
 
   For more information on EAR modules, please see the
   {{{modules.html}modules configuration}} page.

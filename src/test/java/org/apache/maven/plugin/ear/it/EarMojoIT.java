@@ -708,7 +708,6 @@ public class EarMojoIT
         doTestProject( "project-066", new String[]{ "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar" } );
     }
 
-
     /**
      * Builds an EAR with generateModuleId enabled and a custom module.
      */
@@ -716,6 +715,15 @@ public class EarMojoIT
         throws Exception
     {
         doTestProject( "project-067", new String[]{ "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar" } );
+    }
+
+    /**
+     * Builds an EAR with the no-version file name mapping.
+     */
+    public void testProject068()
+        throws Exception
+    {
+        doTestProject( "project-068", new String[]{ "ejb-sample-one.jar", "ejb-sample-two.jar" } );
     }
 
 }

@@ -19,22 +19,23 @@ package org.apache.maven.plugin.ear.output;
  * under the License.
  */
 
-import org.apache.maven.artifact.Artifact;
-
 /**
- * A full file name mapping, useful if artifacts might have the same
- * name across groups.
- *
- * @author <a href="snicoll@apache.org">Stephane Nicoll</a>
- * @version $Id$
+ * @author Stephane Nicoll
  */
-public class FullFileNameMapping
-    extends AbstractFileNameMapping
+public class NoVersionFileNameMappingTest
+    extends AbstractFileNameMappingTest
 {
+    private final NoVersionFileNameMapping instance = new NoVersionFileNameMapping();
 
-    public String mapFileName( final Artifact a )
+    public void testSimpleArtifact()
     {
-        final String dashedGroupId = a.getGroupId().replace( '.', '-' );
-        return dashedGroupId + "-" + generateFileName( a, true );
+        assertEquals( "foo.jar", instance.mapFileName( createArtifact( "foo", "1.0-SNAPSHOT", "jar" ) ) );
     }
+
+    public void testArtifactWithClassifier()
+    {
+        assertEquals( "foo-sources.jar",
+                      instance.mapFileName( createArtifact( "foo", "1.0-SNAPSHOT", "jar", "sources" ) ) );
+    }
+
 }

@@ -68,6 +68,14 @@ public class FileNameMappingFactoryTest
         assertEquals( FullFileNameMapping.class, actual.getClass() );
     }
 
+    public void testGetFileNameMappingByName3()
+    {
+        final FileNameMapping actual =
+            FileNameMappingFactory.getFileNameMapping( FileNameMappingFactory.NO_VERSION_FILE_NAME_MAPPING );
+        assertNotNull( actual );
+        assertEquals( NoVersionFileNameMapping.class, actual.getClass() );
+    }
+
     public void testGetFileNameMappingByClass()
     {
         final FileNameMapping actual =

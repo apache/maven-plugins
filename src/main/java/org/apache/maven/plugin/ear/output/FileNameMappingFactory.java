@@ -37,6 +37,9 @@ public class FileNameMappingFactory
 
     static final String FULL_FILE_NAME_MAPPING = "full";
 
+    static final String NO_VERSION_FILE_NAME_MAPPING = "no-version";
+
+
     private FileNameMappingFactory()
     {
     }
@@ -65,6 +68,10 @@ public class FileNameMappingFactory
         {
             return new FullFileNameMapping();
         }
+        if ( NO_VERSION_FILE_NAME_MAPPING.equals( nameOrClass ) )
+        {
+            return new NoVersionFileNameMapping();
+        }
         try
         {
             final Class c = Class.forName( nameOrClass );
@@ -77,7 +84,7 @@ public class FileNameMappingFactory
         }
         catch ( InstantiationException e )
         {
-            throw new IllegalStateException( "Could not instanciate file name mapping implementation[" + nameOrClass +
+            throw new IllegalStateException( "Could not instantiate file name mapping implementation[" + nameOrClass +
                                                  "] make sure it has a default public constructor" );
         }
         catch ( IllegalAccessException e )

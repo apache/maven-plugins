@@ -164,5 +164,7 @@ EAR Plugin Tests
 
   * project-067: builds an EAR with generateModuleId enabled and a custom module
 
+  * project-068: builds an EAR with the no-version file name mapping
+
 
    
