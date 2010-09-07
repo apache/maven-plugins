@@ -3,7 +3,7 @@
  ------
  The Maven Team
  ------
- 2009-07-14
+ 2010-09-07
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -62,7 +62,7 @@ Customize the SCM Report
       </plugin>
       ...
     </plugins>
-  <reporting>
+  </reporting>
   ...
 </project>
 +-----------------+
