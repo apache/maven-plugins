@@ -1040,16 +1040,9 @@ public abstract class AbstractIdeSupportMojo
     {
         StringBuffer msg = new StringBuffer();
 
-        if ( !missingSourceDependencies.isEmpty() )
+        if ( getDownloadSources() && !missingSourceDependencies.isEmpty() )
         {
-            if ( getDownloadSources() )
-            {
-                msg.append( Messages.getString( "AbstractIdeSupportMojo.sourcesnotavailable" ) ); //$NON-NLS-1$
-            }
-            else
-            {
-                msg.append( Messages.getString( "AbstractIdeSupportMojo.sourcesnotdownloaded" ) ); //$NON-NLS-1$
-            }
+            msg.append( Messages.getString( "AbstractIdeSupportMojo.sourcesnotavailable" ) ); //$NON-NLS-1$
 
             for ( Iterator it = missingSourceDependencies.iterator(); it.hasNext(); )
             {
@@ -1059,16 +1052,9 @@ public abstract class AbstractIdeSupportMojo
             msg.append( "\n" ); //$NON-NLS-1$
         }
 
-        if ( !missingJavadocDependencies.isEmpty() )
+        if ( getDownloadJavadocs() && !missingJavadocDependencies.isEmpty() )
         {
-            if ( getDownloadJavadocs() )
-            {
-                msg.append( Messages.getString( "AbstractIdeSupportMojo.javadocnotavailable" ) ); //$NON-NLS-1$
-            }
-            else
-            {
-                msg.append( Messages.getString( "AbstractIdeSupportMojo.javadocnotdownloaded" ) ); //$NON-NLS-1$
-            }
+            msg.append( Messages.getString( "AbstractIdeSupportMojo.javadocnotavailable" ) ); //$NON-NLS-1$
 
             for ( Iterator it = missingJavadocDependencies.iterator(); it.hasNext(); )
             {
