@@ -480,7 +480,7 @@ under the License.
         </file>
       </activation>
       <properties>
-        <sitePluginVersion>3.0-beta-2-SNAPSHOT</sitePluginVersion>
+        <sitePluginVersion>3.0-beta-2</sitePluginVersion>
         <projectInfoReportsPluginVersion>2.2</projectInfoReportsPluginVersion>
       </properties>
     </profile>
