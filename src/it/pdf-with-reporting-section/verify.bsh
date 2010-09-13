@@ -1,0 +1,10 @@
+import java.io.*;
+
+File pdfFile = new File( basedir, "target/pdf/test.pdf" );
+System.out.println( "Checking for existence of " + pdfFile );
+if ( !pdfFile.isFile() )
+{
+    throw new FileNotFoundException( pdfFile + " missing" );
+}
+
+return true;
