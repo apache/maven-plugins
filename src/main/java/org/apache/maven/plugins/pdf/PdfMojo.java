@@ -1051,27 +1051,30 @@ public class PdfMojo
 
             final PluginDescriptor pluginDescriptor = getPluginDescriptor( reportPlugin );
 
-            List goals = new ArrayList();
-            for ( final Iterator it2 = reportPlugin.getReportSets().iterator(); it2.hasNext(); )
+            if (pluginDescriptor != null)
             {
-                final ReportSet reportSet = (ReportSet) it2.next();
-
-                for ( final Iterator it3 = reportSet.getReports().iterator(); it3.hasNext(); )
+                List goals = new ArrayList();
+                for ( final Iterator it2 = reportPlugin.getReportSets().iterator(); it2.hasNext(); )
                 {
-                    goals.add( it3.next().toString() );
+                    final ReportSet reportSet = (ReportSet) it2.next();
+    
+                    for ( final Iterator it3 = reportSet.getReports().iterator(); it3.hasNext(); )
+                    {
+                        goals.add( it3.next().toString() );
+                    }
                 }
-            }
-
-            List mojoDescriptors = pluginDescriptor.getMojos();
-            for ( final Iterator it2 = mojoDescriptors.iterator(); it2.hasNext(); )
-            {
-                final MojoDescriptor mojoDescriptor = (MojoDescriptor) it2.next();
-
-                if ( goals.isEmpty() || ( !goals.isEmpty() && goals.contains( mojoDescriptor.getGoal() ) ) )
+    
+                List mojoDescriptors = pluginDescriptor.getMojos();
+                for ( final Iterator it2 = mojoDescriptors.iterator(); it2.hasNext(); )
                 {
-                    MavenReport report = getMavenReport( mojoDescriptor );
-
-                    generateMavenReport( mojoDescriptor, report, locale );
+                    final MojoDescriptor mojoDescriptor = (MojoDescriptor) it2.next();
+    
+                    if ( goals.isEmpty() || ( !goals.isEmpty() && goals.contains( mojoDescriptor.getGoal() ) ) )
+                    {
+                        MavenReport report = getMavenReport( mojoDescriptor );
+    
+                        generateMavenReport( mojoDescriptor, report, locale );
+                    }
                 }
             }
         }
@@ -1103,6 +1106,7 @@ public class PdfMojo
     }
 
     /**
+     * TODO olamy : remove when maven 3 will be the de facto standard :-)
      * @param reportPlugin not null
      * @return the PluginDescriptor instance for the given reportPlugin.
      * @throws MojoExecutionException if any
@@ -1146,6 +1150,11 @@ public class PdfMojo
         catch ( PluginVersionNotFoundException e )
         {
             throw new MojoExecutionException( "PluginVersionNotFoundException: " + e.getMessage(), e );
+        }
+        catch ( NoSuchMethodError e )
+        {
+            getLog().info( "ignoring not anymore existing api call in maven 3" );
+            return null;
         }
     }
 
