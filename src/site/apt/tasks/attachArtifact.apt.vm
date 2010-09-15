@@ -61,13 +61,13 @@ AttachArtifact Task
               <goal>run</goal>
             </goals>
             <configuration>
-              <tasks>
+              <target>
                 <zip destfile="my-project-src.zip"
                      basedir="."
                      includes="*.*"
                   />
                 <attachartifact file="my-project-src.zip" classifier="src" type="zip"/>
-              </tasks>
+              </target>
             </configuration>
           </execution>
         </executions>

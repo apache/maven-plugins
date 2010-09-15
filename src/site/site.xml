@@ -37,7 +37,7 @@ under the License.
     </menu>
     <menu name="Examples">
       <item name="Referencing the Maven Classpaths" href="examples/classpaths.html"/>
-      <item name="Using tasks Attributes" href="examples/tasksAttributes.html"/>
+      <item name="Using target attributes" href="examples/tasksAttributes.html"/>
       <item name="Using tasks not included in Ant's default jar" href="examples/customTasks.html"/>
     </menu>
   </body>

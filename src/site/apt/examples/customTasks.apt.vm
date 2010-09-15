@@ -49,7 +49,7 @@ Using tasks not included in Ant's default jar
              <id>ftp</id>
              <phase>deploy</phase>
              <configuration>
-               <tasks>
+               <target>
 
                  <ftp action="send" server="myhost" remotedir="/home/test" userid="x" password="y" depends="yes" verbose="yes">
                    <fileset dir="\${project.build.directory}">
@@ -60,7 +60,7 @@ Using tasks not included in Ant's default jar
                  <taskdef name="myTask" classname="com.acme.MyTask" classpathref="maven.plugin.classpath"/>
                  <myTask a="b"/>
 
-               </tasks>
+               </target>
              </configuration>
              <goals>
                <goal>run</goal>
