@@ -207,7 +207,7 @@ public class EjbMojo
      * c:\foo\bar will be replaced with c:\\foo\\bar.
      *
      * @parameter default-value="false" expression="${ejb.escapeBackslashesInFilePath}"
-     * @since 2.2.2
+     * @since 2.3
      */
     private boolean escapeBackslashesInFilePath;
 
@@ -216,7 +216,7 @@ public class EjbMojo
      * \${foo} will be replaced with ${foo}.
      *
      * @parameter expression="${ejb.escapeString}"
-     * @since 2.2.2
+     * @since 2.3
      */
     protected String escapeString;
 
@@ -224,7 +224,7 @@ public class EjbMojo
      * To filter the deployment descriptor.
      *
      * @parameter default-value="false" expression="${ejb.filterDeploymentDescriptor}"
-     * @since 2.2.2
+     * @since 2.3
      */
     private boolean filterDeploymentDescriptor;
 
@@ -232,14 +232,14 @@ public class EjbMojo
      * Filters (properties files) to include during the interpolation of the deployment descriptor.
      *
      * @parameter
-     * @since 2.2.2
+     * @since 2.3
      */
     private List filters;
 
     /**
      * @component role="org.apache.maven.shared.filtering.MavenFileFilter" role-hint="default"
      * @required
-     * @since 2.2.2
+     * @since 2.3
      */
     private MavenFileFilter mavenFileFilter;
 
@@ -247,7 +247,7 @@ public class EjbMojo
      * @parameter expression="${session}"
      * @readonly
      * @required
-     * @since 2.2.2
+     * @since 2.3
      */
     private MavenSession session;
 
