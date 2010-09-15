@@ -578,7 +578,8 @@ public class LinkcheckReport
         }
 
         // MLINKCHECK-1
-        if ( clone.getOriginalModel().getReporting() == null ) {
+        if ( clone.getOriginalModel().getReporting() == null )
+        {
             clone.getOriginalModel().setReporting( new Reporting() );
         }
 
