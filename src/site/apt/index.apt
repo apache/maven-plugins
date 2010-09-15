@@ -5,7 +5,7 @@
  <snicoll@apache.org>
  Pete Marvin King
  ------
- 2009-04-07
+ 2010-09-15
  ------
 
  ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -72,6 +72,6 @@ Maven EJB Plugin
 
 * Related Links
 
-  * {{{http://maven.apache.org/guides/mini/guide-manifest.html}Guide to manifest customization}}
+  * {{{http://maven.apache.org/shared/maven-archiver/index.html}How to configure the archive, including its manifest}}
 
   []
