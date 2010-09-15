@@ -32,7 +32,7 @@ Filter the deployment descriptor
   (<<</META-INF/ejb-jar.xml>>>) for you, if you have the need to inject values
   into it during the build.
 
-  <<Note:>> This feature was added in version 2.2.2 of the EJB Plugin.
+  <<Note:>> This feature was added in version 2.3 of the EJB Plugin.
 
   To filter the deployment descriptor add the following configuration to your
   POM:
