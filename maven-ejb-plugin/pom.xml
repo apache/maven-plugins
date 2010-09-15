@@ -29,7 +29,7 @@ under the License.
   </parent>
 
   <artifactId>maven-ejb-plugin</artifactId>
-  <version>2.2.2-SNAPSHOT</version>
+  <version>2.3-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
   <name>Maven EJB Plugin</name>
