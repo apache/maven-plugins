@@ -48,7 +48,7 @@ VersionMapper
               <goal>run</goal>
             </goals>
             <configuration>
-              <tasks>
+              <target>
                 <mapper id="remove-versions"
                         classname="org.apache.maven.ant.tasks.support.VersionMapper"
                         from="${maven.project.dependencies.versions}" 
@@ -59,7 +59,7 @@ VersionMapper
                   </path>
                   <mapper refid="remove-versions" />
                 </copy>
-              </tasks>
+              </target>
             </configuration>
           </execution>
         </executions>
