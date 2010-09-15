@@ -26,9 +26,9 @@
  ~~ NOTE: For help with the syntax of this file, see:
  ~~ http://maven.apache.org/doxia/references/apt-format.html
 
-Using <<<\<tasks/\>>>> Attributes
+Using <<<\<target/\>>>> Attributes
 
- Since plugin version 1.2 you can specify attributes in the <<<\<tasks/\>>>> configuration to execute or not
+ Since plugin version 1.2 you can specify attributes in the <<<\<target/\>>>> configuration to execute or not
  Ant tasks depending some conditions. For example, to skip Ant call, you could add the following:
 
 ------
@@ -46,9 +46,9 @@ Using <<<\<tasks/\>>>> Attributes
             <phase> <!-- a lifecycle phase --> </phase>
             <configuration>
 
-              <tasks unless="maven.test.skip">
+              <target unless="maven.test.skip">
                 <echo message="To skip me, just call mvn -Dmaven.test.skip=true"/>
-              </tasks>
+              </target>
 
             </configuration>
             <goals>

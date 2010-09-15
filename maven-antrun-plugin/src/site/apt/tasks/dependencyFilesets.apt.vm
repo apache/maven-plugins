@@ -68,7 +68,7 @@ DependencyFilesets Task
               <goal>run</goal>
             </goals>
             <configuration>
-              <tasks>
+              <target>
         
                 <dependencyfilesets prefix="mydeps."/>
                 <mkdir dir="target/dependencies"/>
@@ -82,7 +82,7 @@ DependencyFilesets Task
                   <fileset refid="mydeps.maven.project.dependencies"/>
                 </copy>
         
-              </tasks>
+              </target>
             </configuration>
           </execution>
         </executions>

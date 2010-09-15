@@ -33,8 +33,8 @@ Usage
   The maven-antrun-plugin has only one goal, <<<run>>>.
 
   This allows Maven 2 to run Ant tasks. To do so, there must be an existing
-  project and maven-antrun-plugin must have its <<<\<tasks\>>>> tag
-  configured (although it would still execute without the <<<\<tasks\>>>> tag,
+  project and maven-antrun-plugin must have its <<<\<target\>>>> tag
+  configured (although it would still execute without the <<<\<target\>>>> tag,
   it would not do anything). Below is the template for
   <<<maven-antrun-plugin>>>'s <<<pom.xml>>>.
 
@@ -50,7 +50,7 @@ Usage
           <execution>
             <phase> <!-- a lifecycle phase --> </phase>
             <configuration>
-              <tasks>
+              <target>
 
                 <!--
                   Place any Ant task here. You can add anything
@@ -58,7 +58,7 @@ Usage
                   build.xml.
                 -->
 
-              </tasks>
+              </target>
             </configuration>
             <goals>
               <goal>run</goal>
@@ -76,12 +76,12 @@ Usage
   <<<\<execution/\>>>> section and specifying a new phase.
 
   Ultimately, you could specify some Ant {{{http://ant.apache.org/manual/using.html#targets}<<<\<target/\>>>>}}
-  attributes in the <<<\<tasks/\>>>> tag. Only <<<depends>>> attribute in Ant <<<\<target/\>>>> is not wrapped.
+  attributes in the <<<\<target/\>>>> tag. Only <<<depends>>> attribute in Ant <<<\<target/\>>>> is not wrapped.
 
 ------
 [...]
 <configuration>
-  <tasks name="The name of the tasks"
+  <target name="The name of the target"
     if="The name of the property that must be set in order for this task"
     unless="The name of the property that must NOT be set in order for this task"
     description="A short description of this target's function">
@@ -92,7 +92,7 @@ Usage
       build.xml.
     -->
 
-  </tasks>
+  </target>
 <configuration>
 [...]
 ------
@@ -106,7 +106,7 @@ Usage
 
 * Using maven properties
 
-  All of the properties available to maven are also available in the tasks
+  All of the properties available to maven are also available in the target
   configuration.  However, you may want to call an external Ant build script
   using the <ant> task.  To avoid name conflicts, only a subset of the properties
   are passed to the external Ant build.  These include all properties defined in

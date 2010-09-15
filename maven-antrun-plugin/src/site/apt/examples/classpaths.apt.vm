@@ -72,7 +72,7 @@ Referencing the Maven Classpaths
             <id>compile</id>
             <phase>compile</phase>
             <configuration>
-              <tasks>
+              <target>
                 <property name="compile_classpath" refid="maven.compile.classpath"/>
                 <property name="runtime_classpath" refid="maven.runtime.classpath"/>
                 <property name="test_classpath" refid="maven.test.classpath"/>
@@ -82,7 +82,7 @@ Referencing the Maven Classpaths
                 <echo message="runtime classpath: ${runtime_classpath}"/>
                 <echo message="test classpath:    ${test_classpath}"/>
                 <echo message="plugin classpath:  ${plugin_classpath}"/>
-              </tasks>
+              </target>
             </configuration>
             <goals>
               <goal>run</goal>
@@ -117,7 +117,7 @@ Referencing the Maven Classpaths
             <id>compile</id>
             <phase>compile</phase>
             <configuration>
-              <tasks>
+              <target>
                 <property name="compile_classpath" refid="maven.compile.classpath"/>
                 <property name="runtime_classpath" refid="maven.runtime.classpath"/>
                 <property name="test_classpath" refid="maven.test.classpath"/>
@@ -126,7 +126,7 @@ Referencing the Maven Classpaths
                 <ant antfile="${basedir}/build.xml">
                   <target name="test"/>
                 </ant>
-              </tasks>
+              </target>
             </configuration>
             <goals>
               <goal>run</goal>
