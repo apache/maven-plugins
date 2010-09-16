@@ -566,10 +566,7 @@ public class PdfMojo
             }
             catch ( DocumentRendererException e )
             {
-                if ( getLog().isDebugEnabled() )
-                {
-                    throw new MojoExecutionException( "Error during document generation: " + e.getMessage(), e );
-                }
+                getLog().debug( e );
 
                 throw new MojoExecutionException( "Error during document generation: " + e.getMessage() );
             }
@@ -991,21 +988,12 @@ public class PdfMojo
                 w = WriterFactory.newXmlWriter( doc );
                 xpp3.write( w, docModel );
 
-                if ( getLog().isDebugEnabled() )
-                {
-                    getLog().debug( "Generated a default document model: " + doc.getAbsolutePath() );
-                }
+                getLog().debug( "Generated a default document model: " + doc.getAbsolutePath() );
             }
             catch ( IOException e )
             {
-                if ( getLog().isDebugEnabled() )
-                {
-                    getLog().error( "Failed to write document model: " + e.getMessage(), e );
-                }
-                else
-                {
-                    getLog().error( "Failed to write document model: " + e.getMessage() );
-                }
+                getLog().error( "Failed to write document model: " + e.getMessage() );
+                getLog().debug( e );
             }
             finally
             {
@@ -1028,20 +1016,13 @@ public class PdfMojo
     {
         if ( !includeReports )
         {
-            if ( getLog().isInfoEnabled() )
-            {
-                getLog().info( "Skipped report generation." );
-            }
-
+            getLog().info( "Skipped report generation." );
             return;
         }
 
         if ( project.getReporting() == null )
         {
-            if ( getLog().isInfoEnabled() )
-            {
-                getLog().info( "No report was specified." );
-            }
+            getLog().info( "No report was specified." );
             return;
         }
 
@@ -1153,7 +1134,8 @@ public class PdfMojo
         }
         catch ( NoSuchMethodError e )
         {
-            getLog().info( "ignoring not anymore existing api call in maven 3" );
+            getLog().info( "Ignoring api call removed in maven 3, no reports are generated!" );
+            getLog().debug( e );
             return null;
         }
     }
@@ -1225,10 +1207,7 @@ public class PdfMojo
             {
                 getLog().info( "Skipped \"" + localReportName + "\" report." );
             }
-            if ( getLog().isDebugEnabled() )
-            {
-                getLog().debug( "canGenerateReport() was false." );
-            }
+            getLog().debug( "canGenerateReport() was false." );
 
             return;
         }
@@ -1239,10 +1218,7 @@ public class PdfMojo
             {
                 getLog().info( "Skipped external \"" + localReportName + "\" report." );
             }
-            if ( getLog().isDebugEnabled() )
-            {
-                getLog().debug( "isExternalReport() was false." );
-            }
+            getLog().debug( "isExternalReport() was false." );
 
             return;
         }
