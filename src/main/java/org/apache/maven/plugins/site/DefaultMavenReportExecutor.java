@@ -291,15 +291,15 @@ public class DefaultMavenReportExecutor
     {
         try
         {
-            Mojo mojo = mavenPluginManager.getConfiguredMojo( Mojo.class,
-                                                              mavenReportExecutorRequest.getMavenSession(),
-                                                              mojoExecution );
-
-            if ( !isMavenReport( mojoExecution, pluginDescriptor, mojo ) )
+            if ( !isMavenReport( mojoExecution, pluginDescriptor ) )
             {
                 return null;
             }
 
+            Mojo mojo = mavenPluginManager.getConfiguredMojo( Mojo.class,
+                                                              mavenReportExecutorRequest.getMavenSession(),
+                                                              mojoExecution );
+            
             return (MavenReport) mojo;
         }
         catch ( ClassCastException e )
@@ -328,15 +328,33 @@ public class DefaultMavenReportExecutor
         }
     }
 
-    private boolean isMavenReport( MojoExecution mojoExecution, PluginDescriptor pluginDescriptor, Mojo mojo )
+    private boolean isMavenReport( MojoExecution mojoExecution, PluginDescriptor pluginDescriptor )
     {
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
+        Class<?> mojoClass;
+        Thread.currentThread().setContextClassLoader( mojoExecution.getMojoDescriptor().getRealm() );
         try
         {
-            MojoDescriptor mojoDescriptor = pluginDescriptor.getMojo( mojoExecution.getGoal() );
-            Thread.currentThread().setContextClassLoader( mojoDescriptor.getRealm() );
+            mojoClass =
+                pluginDescriptor.getClassRealm().loadClass( mojoExecution.getMojoDescriptor().getImplementation() );
+        }
+        catch ( ClassNotFoundException e )
+        {
+            getLog().warn( "skip ClassNotFoundException mojoExecution.goal : " + mojoExecution.getGoal() + " : "
+                               + e.getMessage(), e );
+            return false;
+        }
+        finally
+        {
+            Thread.currentThread().setContextClassLoader( originalClassLoader );
+        }       
 
-            boolean isMavenReport = MavenReport.class.isAssignableFrom( mojo.getClass() );
+        try
+        {
+            Thread.currentThread().setContextClassLoader( mojoExecution.getMojoDescriptor().getRealm() );
+            MojoDescriptor mojoDescriptor = pluginDescriptor.getMojo( mojoExecution.getGoal() );
+
+            boolean isMavenReport = MavenReport.class.isAssignableFrom( mojoClass );
 
             if ( getLog().isDebugEnabled() )
             {
