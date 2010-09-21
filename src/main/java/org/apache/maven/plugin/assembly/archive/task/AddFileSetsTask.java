@@ -33,6 +33,8 @@ import org.codehaus.plexus.logging.console.ConsoleLogger;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -54,6 +56,11 @@ public class AddFileSetsTask
     public AddFileSetsTask( final List<FileSet> fileSets )
     {
         this.fileSets = fileSets;
+    }
+
+    public AddFileSetsTask( final FileSet... fileSets )
+    {
+        this.fileSets = new ArrayList<FileSet>( Arrays.asList( fileSets ) );
     }
 
     public void execute( final Archiver archiver, final AssemblerConfigurationSource configSource )

@@ -42,6 +42,7 @@ import org.apache.maven.plugin.assembly.utils.TypeConversionUtils;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.codehaus.plexus.archiver.Archiver;
+import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.component.annotations.Requirement;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
@@ -71,6 +72,9 @@ public class ModuleSetAssemblyPhase
 
     @Requirement
     private MavenProjectBuilder projectBuilder;
+
+    @Requirement
+    private ArchiverManager archiverManager;
 
     public ModuleSetAssemblyPhase()
     {
@@ -248,7 +252,7 @@ public class ModuleSetAssemblyPhase
 
                 final AddDependencySetsTask task =
                     new AddDependencySetsTask( depSets, context.getResolvedArtifacts(), moduleProject, projectBuilder,
-                                               getLogger() );
+                                               archiverManager, getLogger() );
 
                 task.setModuleProject( moduleProject );
                 task.setModuleArtifact( chosenModuleArtifacts.get( moduleProject ) );

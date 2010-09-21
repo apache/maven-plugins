@@ -972,6 +972,47 @@
           <defaultValue>false</defaultValue>
           <type>boolean</type>
         </field>
+        <field>
+          <name>lineEnding</name>
+          <version>1.1.2+</version>
+          <type>String</type>
+          <description>
+            <![CDATA[
+            Sets the line-endings of the files.
+            Valid values:
+            <ul>
+              <li><b>"keep"</b> - Preserve all line endings</li>
+              <li><b>"unix"</b> - Use Unix-style line endings</li>
+              <li><b>"lf"</b> - Use a single line-feed line endings</li>
+              <li><b>"dos"</b> - Use DOS-style line endings</li>
+              <li><b>"crlf"</b> - Use Carraige-return, line-feed line endings</li>
+            </ul>
+            ]]>
+          </description>
+        </field>
+        <field>
+          <name>useStrictFiltering</name>
+          <version>1.1.2+</version>
+          <type>boolean</type>
+          <defaultValue>false</defaultValue>
+          <description>
+          When specified as true, any include/exclude patterns which aren't used to filter an actual
+          artifact during assembly creation will cause the build to fail with an error. This is meant
+          to highlight obsolete inclusions or exclusions, or else signal that the assembly descriptor
+          is incorrectly configured. (Since 2.2)
+          </description>
+        </field>
+        <field>
+          <name>useDefaultExcludes</name>
+          <version>1.1.2+</version>
+          <type>boolean</type>
+          <defaultValue>true</defaultValue>
+          <description>
+            Whether standard exclusion patterns, such as those matching CVS and Subversion
+            metadata files, should be used when calculating the files affected by this set.
+            For backward compatibility, the default value is true. (Since 2.2)
+          </description>
+        </field>
       </fields>
     </class>
     <class>
