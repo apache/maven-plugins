@@ -28,6 +28,7 @@ import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
+import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.easymock.MockControl;
 
 import java.io.File;
@@ -49,6 +50,10 @@ public class MockAndControlForAddDependencySetsTask
     public MockControl dependencyResolverCtl;
 
     public MavenProjectBuilder projectBuilder;
+
+    public MockControl archiverManagerCtl;
+
+    public ArchiverManager archiverManager;
 
     public MockControl projectBuilderCtl;
 
@@ -77,6 +82,11 @@ public class MockAndControlForAddDependencySetsTask
         mockManager.add( projectBuilderCtl );
 
         projectBuilder = (MavenProjectBuilder) projectBuilderCtl.getMock();
+
+        archiverManagerCtl = MockControl.createControl( ArchiverManager.class );
+        mockManager.add( archiverManagerCtl );
+
+        archiverManager = (ArchiverManager) archiverManagerCtl.getMock();
 
         enableDefaultExpectations();
     }
