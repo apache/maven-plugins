@@ -43,12 +43,14 @@ public class AssemblyProxyArchiverTest
     private final TestFileManager fileManager = new TestFileManager( "massembly-proxyArchiver", "" );
 
     @Override
-    public void tearDown() throws Exception
+    public void tearDown()
+        throws Exception
     {
         fileManager.cleanUp();
     }
 
-    public void testAddFile_NoPerms_CallAcceptFilesOnlyOnce() throws IOException, ArchiverException
+    public void testAddFile_NoPerms_CallAcceptFilesOnlyOnce()
+        throws IOException, ArchiverException
     {
         final MockControl delegateControl = MockControl.createControl( Archiver.class );
         final Archiver delegate = (Archiver) delegateControl.getMock();
@@ -65,7 +67,7 @@ public class AssemblyProxyArchiverTest
 
         final AssemblyProxyArchiver archiver =
             new AssemblyProxyArchiver( "", delegate, null, selectors, null, new ConsoleLogger( Logger.LEVEL_DEBUG,
-                                                                                               "test" ) );
+                                                                                               "test" ), false );
 
         final File inputFile = fileManager.createTempFile();
 
@@ -76,7 +78,8 @@ public class AssemblyProxyArchiverTest
         delegateControl.verify();
     }
 
-    public void testAddDirectory_NoPerms_CallAcceptFilesOnlyOnce() throws IOException, ArchiverException
+    public void testAddDirectory_NoPerms_CallAcceptFilesOnlyOnce()
+        throws IOException, ArchiverException
     {
         final Archiver delegate = new JarArchiver();
 
@@ -89,7 +92,7 @@ public class AssemblyProxyArchiverTest
 
         final AssemblyProxyArchiver archiver =
             new AssemblyProxyArchiver( "", delegate, null, selectors, null, new ConsoleLogger( Logger.LEVEL_DEBUG,
-                                                                                               "test" ) );
+                                                                                               "test" ), false );
 
         final File dir = fileManager.createTempDir();
         fileManager.createFile( dir, "file.txt", "This is a test." );
@@ -119,7 +122,8 @@ public class AssemblyProxyArchiverTest
             return count;
         }
 
-        public boolean isSelected( final FileInfo fileInfo ) throws IOException
+        public boolean isSelected( final FileInfo fileInfo )
+            throws IOException
         {
             if ( fileInfo.isFile() )
             {
