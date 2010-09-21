@@ -1,0 +1,21 @@
+import java.io.*;
+
+try
+{
+  String javaVersion = System.getProperty( "java.version" );
+  File a = new File( basedir, "target/parent-1.0-bin/a/filtered.txt");
+  
+  BufferedReader r = new BufferedReader(new FileReader(a));
+  String line = r.readLine();
+  if ( ! line.endsWith( javaVersion ) )
+  {
+    System.out.println( "Expected java version: " + javaVersion + "\nLine was: " + line );
+    return false;
+  }
+}
+catch( IOException e )
+{
+    e.printStackTrace();
+}
+
+return true;
