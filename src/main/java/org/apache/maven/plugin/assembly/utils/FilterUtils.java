@@ -19,12 +19,6 @@ package org.apache.maven.plugin.assembly.utils;
  * under the License.
  */
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.resolver.filter.AndArtifactFilter;
 import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
@@ -34,6 +28,12 @@ import org.apache.maven.shared.artifact.filter.PatternExcludesArtifactFilter;
 import org.apache.maven.shared.artifact.filter.PatternIncludesArtifactFilter;
 import org.apache.maven.shared.artifact.filter.StatisticsReportingArtifactFilter;
 import org.codehaus.plexus.logging.Logger;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @version $Id$
@@ -45,34 +45,34 @@ public final class FilterUtils
     {
     }
 
-    public static void filterProjects( Set projects, List includes, List excludes, boolean actTransitively,
-                                       Logger logger )
+    public static void filterProjects( final Set<MavenProject> projects, final List<String> includes,
+                                       final List<String> excludes, final boolean actTransitively, final Logger logger )
     {
-        List allFilters = new ArrayList();
+        final List<PatternIncludesArtifactFilter> allFilters = new ArrayList<PatternIncludesArtifactFilter>();
 
-        AndArtifactFilter filter = new AndArtifactFilter();
+        final AndArtifactFilter filter = new AndArtifactFilter();
 
         if ( !includes.isEmpty() )
         {
-            PatternIncludesArtifactFilter includeFilter = new PatternIncludesArtifactFilter( includes,
-                                                                                               actTransitively );
+            final PatternIncludesArtifactFilter includeFilter =
+                new PatternIncludesArtifactFilter( includes, actTransitively );
 
             filter.add( includeFilter );
             allFilters.add( includeFilter );
         }
         if ( !excludes.isEmpty() )
         {
-            PatternExcludesArtifactFilter excludeFilter = new PatternExcludesArtifactFilter( excludes,
-                                                                                               actTransitively );
+            final PatternExcludesArtifactFilter excludeFilter =
+                new PatternExcludesArtifactFilter( excludes, actTransitively );
 
             filter.add( excludeFilter );
             allFilters.add( excludeFilter );
         }
 
-        for ( Iterator it = projects.iterator(); it.hasNext(); )
+        for ( final Iterator<MavenProject> it = projects.iterator(); it.hasNext(); )
         {
-            MavenProject project = (MavenProject) it.next();
-            Artifact artifact = project.getArtifact();
+            final MavenProject project = it.next();
+            final Artifact artifact = project.getArtifact();
 
             if ( !filter.include( artifact ) )
             {
@@ -80,9 +80,9 @@ public final class FilterUtils
             }
         }
 
-        for ( Iterator it = allFilters.iterator(); it.hasNext(); )
+        for ( final Iterator<PatternIncludesArtifactFilter> it = allFilters.iterator(); it.hasNext(); )
         {
-            ArtifactFilter f = (ArtifactFilter) it.next();
+            final ArtifactFilter f = it.next();
 
             if ( f instanceof StatisticsReportingArtifactFilter )
             {
@@ -91,27 +91,30 @@ public final class FilterUtils
         }
     }
 
-    public static void filterArtifacts( Set artifacts, List includes, List excludes, boolean strictFiltering,
-                                        boolean actTransitively, List additionalFilters, Logger logger )
+    public static void filterArtifacts( final Set<Artifact> artifacts, final List<String> includes,
+                                        final List<String> excludes, final boolean strictFiltering,
+                                        final boolean actTransitively, final Logger logger,
+                                        final ArtifactFilter... additionalFilters )
         throws InvalidAssemblerConfigurationException
     {
-        List allFilters = new ArrayList();
+        final List<ArtifactFilter> allFilters = new ArrayList<ArtifactFilter>();
 
-        AndArtifactFilter filter = new AndArtifactFilter();
+        final AndArtifactFilter filter = new AndArtifactFilter();
 
-        if ( additionalFilters != null && !additionalFilters.isEmpty() )
+        if ( additionalFilters != null && additionalFilters.length > 0 )
         {
-            for ( Iterator it = additionalFilters.iterator(); it.hasNext(); )
+            for ( final ArtifactFilter additionalFilter : additionalFilters )
             {
-                ArtifactFilter additionalFilter = (ArtifactFilter) it.next();
-
-                filter.add( additionalFilter );
+                if ( additionalFilter != null )
+                {
+                    filter.add( additionalFilter );
+                }
             }
         }
 
         if ( !includes.isEmpty() )
         {
-            ArtifactFilter includeFilter = new PatternIncludesArtifactFilter( includes, actTransitively );
+            final ArtifactFilter includeFilter = new PatternIncludesArtifactFilter( includes, actTransitively );
 
             filter.add( includeFilter );
 
@@ -120,21 +123,22 @@ public final class FilterUtils
 
         if ( !excludes.isEmpty() )
         {
-            ArtifactFilter excludeFilter = new PatternExcludesArtifactFilter( excludes, actTransitively );
+            final ArtifactFilter excludeFilter = new PatternExcludesArtifactFilter( excludes, actTransitively );
 
             filter.add( excludeFilter );
 
             allFilters.add( excludeFilter );
         }
 
-        if ( additionalFilters != null && !additionalFilters.isEmpty() )
-        {
-            allFilters.addAll( additionalFilters );
-        }
+        // FIXME: Why is this added twice??
+        // if ( additionalFilters != null && !additionalFilters.isEmpty() )
+        // {
+        // allFilters.addAll( additionalFilters );
+        // }
 
-        for ( Iterator it = artifacts.iterator(); it.hasNext(); )
+        for ( final Iterator<Artifact> it = artifacts.iterator(); it.hasNext(); )
         {
-            Artifact artifact = (Artifact) it.next();
+            final Artifact artifact = it.next();
 
             if ( !filter.include( artifact ) )
             {
@@ -149,13 +153,13 @@ public final class FilterUtils
 
         reportFilteringStatistics( allFilters, logger );
 
-        for ( Iterator it = allFilters.iterator(); it.hasNext(); )
+        for ( final Iterator<ArtifactFilter> it = allFilters.iterator(); it.hasNext(); )
         {
-            ArtifactFilter f = (ArtifactFilter) it.next();
+            final ArtifactFilter f = it.next();
 
             if ( f instanceof StatisticsReportingArtifactFilter )
             {
-                StatisticsReportingArtifactFilter sFilter = (StatisticsReportingArtifactFilter) f;
+                final StatisticsReportingArtifactFilter sFilter = (StatisticsReportingArtifactFilter) f;
 
                 if ( strictFiltering && sFilter.hasMissedCriteria() )
                 {
@@ -166,15 +170,15 @@ public final class FilterUtils
         }
     }
 
-    public static void reportFilteringStatistics( Collection filters, Logger logger )
+    public static void reportFilteringStatistics( final Collection<ArtifactFilter> filters, final Logger logger )
     {
-        for ( Iterator it = filters.iterator(); it.hasNext(); )
+        for ( final Iterator<ArtifactFilter> it = filters.iterator(); it.hasNext(); )
         {
-            ArtifactFilter f = (ArtifactFilter) it.next();
+            final ArtifactFilter f = it.next();
 
             if ( f instanceof StatisticsReportingArtifactFilter )
             {
-                StatisticsReportingArtifactFilter sFilter = (StatisticsReportingArtifactFilter) f;
+                final StatisticsReportingArtifactFilter sFilter = (StatisticsReportingArtifactFilter) f;
 
                 if ( logger.isDebugEnabled() )
                 {

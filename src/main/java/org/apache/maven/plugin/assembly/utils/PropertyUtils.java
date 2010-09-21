@@ -32,7 +32,6 @@ import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Properties;
 
-
 /**
  * @author <a href="mailto:kenney@neonics.com">Kenney Westerhof</a>
  * @version $Id$
@@ -46,13 +45,17 @@ public final class PropertyUtils
 
     /**
      * Reads a property file, resolving all internal variables.
-     *
-     * @param propfile       The property file to load
-     * @param fail           wheter to throw an exception when the file cannot be loaded or to return null
-     * @param useSystemProps wheter to incorporate System.getProperties settings into the returned Properties object.
+     * 
+     * @param propfile
+     *            The property file to load
+     * @param fail
+     *            wheter to throw an exception when the file cannot be loaded or to return null
+     * @param useSystemProps
+     *            wheter to incorporate System.getProperties settings into the returned Properties object.
      * @return the loaded and fully resolved Properties object
      */
-    public static Properties getInterpolatedPropertiesFromFile( File propfile, boolean fail, boolean useSystemProps )
+    public static Properties getInterpolatedPropertiesFromFile( final File propfile, final boolean fail,
+                                                                final boolean useSystemProps )
         throws IOException, AssemblyFormattingException
     {
         Properties props;
@@ -68,7 +71,7 @@ public final class PropertyUtils
 
         if ( propfile.exists() )
         {
-            FileInputStream inStream = new FileInputStream( propfile );
+            final FileInputStream inStream = new FileInputStream( propfile );
             try
             {
                 props.load( inStream );
@@ -83,20 +86,22 @@ public final class PropertyUtils
             throw new FileNotFoundException( propfile.toString() );
         }
 
-        StringSearchInterpolator interpolator = new StringSearchInterpolator();
+        final StringSearchInterpolator interpolator = new StringSearchInterpolator();
         interpolator.addValueSource( new PropertiesBasedValueSource( props ) );
 
-        for ( Enumeration n = props.propertyNames(); n.hasMoreElements(); )
+        for ( @SuppressWarnings( "rawtypes" )
+        final Enumeration n = props.propertyNames(); n.hasMoreElements(); )
         {
-            String key = (String) n.nextElement();
+            final String key = (String) n.nextElement();
             String value = props.getProperty( key );
             try
             {
                 value = interpolator.interpolate( value );
             }
-            catch ( InterpolationException e )
+            catch ( final InterpolationException e )
             {
-                throw new AssemblyFormattingException( "Failed to interpolate property value: '" + value + "' for key: '" + key + "'. Reason: " + e.getMessage(), e );
+                throw new AssemblyFormattingException( "Failed to interpolate property value: '" + value
+                                + "' for key: '" + key + "'. Reason: " + e.getMessage(), e );
             }
 
             props.setProperty( key, value );

@@ -32,7 +32,7 @@ import org.codehaus.plexus.logging.console.ConsoleLogger;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collections;
+import java.util.ArrayList;
 
 import junit.framework.TestCase;
 
@@ -46,6 +46,7 @@ public class AddFileSetsTaskTest
 
     private MockAndControlForAddFileSetsTask macTask;
 
+    @Override
     public void setUp()
     {
         mockManager = new MockManager();
@@ -55,8 +56,8 @@ public class AddFileSetsTaskTest
         macTask = new MockAndControlForAddFileSetsTask( mockManager, fileManager );
     }
 
-    public void tearDown()
-        throws IOException
+    @Override
+    public void tearDown() throws IOException
     {
         fileManager.cleanUp();
     }
@@ -64,13 +65,13 @@ public class AddFileSetsTaskTest
     public void testGetFileSetDirectory_ShouldReturnAbsoluteSourceDir()
         throws ArchiveCreationException, AssemblyFormattingException
     {
-        File dir = fileManager.createTempDir();
+        final File dir = fileManager.createTempDir();
 
-        FileSet fs = new FileSet();
+        final FileSet fs = new FileSet();
 
         fs.setDirectory( dir.getAbsolutePath() );
 
-        File result = new AddFileSetsTask( Collections.EMPTY_LIST ).getFileSetDirectory( fs, null, null );
+        final File result = new AddFileSetsTask( new ArrayList<FileSet>() ).getFileSetDirectory( fs, null, null );
 
         assertEquals( dir.getAbsolutePath(), result.getAbsolutePath() );
     }
@@ -78,11 +79,11 @@ public class AddFileSetsTaskTest
     public void testGetFileSetDirectory_ShouldReturnBasedir()
         throws ArchiveCreationException, AssemblyFormattingException
     {
-        File dir = fileManager.createTempDir();
+        final File dir = fileManager.createTempDir();
 
-        FileSet fs = new FileSet();
+        final FileSet fs = new FileSet();
 
-        File result = new AddFileSetsTask( Collections.EMPTY_LIST ).getFileSetDirectory( fs, dir, null );
+        final File result = new AddFileSetsTask( new ArrayList<FileSet>() ).getFileSetDirectory( fs, dir, null );
 
         assertEquals( dir.getAbsolutePath(), result.getAbsolutePath() );
     }
@@ -90,17 +91,17 @@ public class AddFileSetsTaskTest
     public void testGetFileSetDirectory_ShouldReturnDirFromBasedirAndSourceDir()
         throws ArchiveCreationException, AssemblyFormattingException
     {
-        File dir = fileManager.createTempDir();
+        final File dir = fileManager.createTempDir();
 
-        String srcPath = "source";
+        final String srcPath = "source";
 
-        File srcDir = new File( dir, srcPath );
+        final File srcDir = new File( dir, srcPath );
 
-        FileSet fs = new FileSet();
+        final FileSet fs = new FileSet();
 
         fs.setDirectory( srcPath );
 
-        File result = new AddFileSetsTask( Collections.EMPTY_LIST ).getFileSetDirectory( fs, dir, null );
+        final File result = new AddFileSetsTask( new ArrayList<FileSet>() ).getFileSetDirectory( fs, dir, null );
 
         assertEquals( srcDir.getAbsolutePath(), result.getAbsolutePath() );
     }
@@ -108,46 +109,45 @@ public class AddFileSetsTaskTest
     public void testGetFileSetDirectory_ShouldReturnDirFromArchiveBasedirAndSourceDir()
         throws ArchiveCreationException, AssemblyFormattingException
     {
-        File dir = fileManager.createTempDir();
+        final File dir = fileManager.createTempDir();
 
-        String srcPath = "source";
+        final String srcPath = "source";
 
-        File srcDir = new File( dir, srcPath );
+        final File srcDir = new File( dir, srcPath );
 
-        FileSet fs = new FileSet();
+        final FileSet fs = new FileSet();
 
         fs.setDirectory( srcPath );
 
-        File result = new AddFileSetsTask( Collections.EMPTY_LIST ).getFileSetDirectory( fs, null, dir );
+        final File result = new AddFileSetsTask( new ArrayList<FileSet>() ).getFileSetDirectory( fs, null, dir );
 
         assertEquals( srcDir.getAbsolutePath(), result.getAbsolutePath() );
     }
 
-    public void testAddFileSet_ShouldAddDirectory()
-        throws ArchiveCreationException, AssemblyFormattingException
+    public void testAddFileSet_ShouldAddDirectory() throws ArchiveCreationException, AssemblyFormattingException
     {
-        FileSet fs = new FileSet();
+        final FileSet fs = new FileSet();
 
-        String dirname = "dir";
+        final String dirname = "dir";
 
         fs.setDirectory( dirname );
         fs.setOutputDirectory( "dir2" );
 
         // ensure this exists, so the directory addition will proceed.
-        File srcDir = new File( macTask.archiveBaseDir, dirname );
+        final File srcDir = new File( macTask.archiveBaseDir, dirname );
         srcDir.mkdirs();
 
-        int[] modes = { -1, -1, -1, -1 };
+        final int[] modes = { -1, -1, -1, -1 };
 
         macTask.expectAdditionOfSingleFileSet( null, null, null, true, modes, 1, true, false );
 
         macTask.expectGetProject( null );
 
-        MavenProject project = new MavenProject( new Model() );
+        final MavenProject project = new MavenProject( new Model() );
 
         mockManager.replayAll();
 
-        AddFileSetsTask task = new AddFileSetsTask( Collections.EMPTY_LIST );
+        final AddFileSetsTask task = new AddFileSetsTask( new ArrayList<FileSet>() );
 
         task.setLogger( new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) );
         task.setProject( project );
@@ -160,29 +160,29 @@ public class AddFileSetsTaskTest
     public void testAddFileSet_ShouldAddDirectoryUsingSourceDirNameForDestDir()
         throws ArchiveCreationException, AssemblyFormattingException
     {
-        FileSet fs = new FileSet();
+        final FileSet fs = new FileSet();
 
-        String dirname = "dir";
+        final String dirname = "dir";
 
         fs.setDirectory( dirname );
 
-        File archiveBaseDir = fileManager.createTempDir();
+        final File archiveBaseDir = fileManager.createTempDir();
 
         // ensure this exists, so the directory addition will proceed.
-        File srcDir = new File( archiveBaseDir, dirname );
+        final File srcDir = new File( archiveBaseDir, dirname );
         srcDir.mkdirs();
 
-        int[] modes = { -1, -1, -1, -1 };
+        final int[] modes = { -1, -1, -1, -1 };
 
         macTask.expectAdditionOfSingleFileSet( null, null, null, true, modes, 1, true, false );
 
         macTask.expectGetProject( null );
 
-        MavenProject project = new MavenProject( new Model() );
+        final MavenProject project = new MavenProject( new Model() );
 
         mockManager.replayAll();
 
-        AddFileSetsTask task = new AddFileSetsTask( Collections.EMPTY_LIST );
+        final AddFileSetsTask task = new AddFileSetsTask( new ArrayList<FileSet>() );
 
         task.setLogger( new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) );
         task.setProject( project );
@@ -195,13 +195,13 @@ public class AddFileSetsTaskTest
     public void testAddFileSet_ShouldNotAddDirectoryWhenSourceDirNonExistent()
         throws ArchiveCreationException, AssemblyFormattingException
     {
-        FileSet fs = new FileSet();
+        final FileSet fs = new FileSet();
 
-        String dirname = "dir";
+        final String dirname = "dir";
 
         fs.setDirectory( dirname );
 
-        File archiveBaseDir = fileManager.createTempDir();
+        final File archiveBaseDir = fileManager.createTempDir();
 
         macTask.expectGetFinalName( "finalName" );
 
@@ -212,11 +212,11 @@ public class AddFileSetsTaskTest
         macTask.archiver.getOverrideFileMode();
         macTask.archiverCtl.setReturnValue( -1 );
 
-        MavenProject project = new MavenProject( new Model() );
+        final MavenProject project = new MavenProject( new Model() );
 
         mockManager.replayAll();
 
-        AddFileSetsTask task = new AddFileSetsTask( Collections.EMPTY_LIST );
+        final AddFileSetsTask task = new AddFileSetsTask( new ArrayList<FileSet>() );
 
         task.setLogger( new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) );
         task.setProject( project );
@@ -235,7 +235,7 @@ public class AddFileSetsTaskTest
 
         mockManager.replayAll();
 
-        AddFileSetsTask task = new AddFileSetsTask( Collections.EMPTY_LIST );
+        final AddFileSetsTask task = new AddFileSetsTask( new ArrayList<FileSet>() );
 
         try
         {
@@ -243,7 +243,7 @@ public class AddFileSetsTaskTest
 
             fail( "Should throw exception due to non-existent archiveBasedir location that was provided." );
         }
-        catch ( ArchiveCreationException e )
+        catch ( final ArchiveCreationException e )
         {
             // should do this, because it cannot use the provide archiveBasedir.
         }
@@ -254,14 +254,14 @@ public class AddFileSetsTaskTest
     public void testExecute_ShouldThrowExceptionIfArchiveBasedirProvidedIsNotADirectory()
         throws AssemblyFormattingException, IOException
     {
-        File archiveBaseDir = fileManager.createTempFile();
+        final File archiveBaseDir = fileManager.createTempFile();
 
         macTask.archiveBaseDir = archiveBaseDir;
         macTask.expectGetArchiveBaseDirectory();
 
         mockManager.replayAll();
 
-        AddFileSetsTask task = new AddFileSetsTask( Collections.EMPTY_LIST );
+        final AddFileSetsTask task = new AddFileSetsTask( new ArrayList<FileSet>() );
 
         try
         {
@@ -269,7 +269,7 @@ public class AddFileSetsTaskTest
 
             fail( "Should throw exception due to non-directory archiveBasedir location that was provided." );
         }
-        catch ( ArchiveCreationException e )
+        catch ( final ArchiveCreationException e )
         {
             // should do this, because it cannot use the provide archiveBasedir.
         }

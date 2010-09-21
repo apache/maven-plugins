@@ -20,23 +20,18 @@ package org.apache.maven.plugin.assembly.archive.task.testutils;
  */
 
 import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
-import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
-import org.apache.maven.plugin.assembly.artifact.DependencyResolver;
 import org.apache.maven.plugin.assembly.testutils.MockManager;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
-import org.apache.maven.project.artifact.InvalidDependencyVersionException;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.easymock.MockControl;
 
 import java.io.File;
 import java.util.List;
-import java.util.Set;
 
 import junit.framework.Assert;
 
@@ -51,22 +46,20 @@ public class MockAndControlForAddDependencySetsTask
 
     public MockControl configSourceCtl;
 
-    public DependencyResolver dependencyResolver;
-
     public MockControl dependencyResolverCtl;
 
     public MavenProjectBuilder projectBuilder;
 
     public MockControl projectBuilderCtl;
 
-    private MavenProject project;
+    private final MavenProject project;
 
-    public MockAndControlForAddDependencySetsTask( MockManager mockManager )
+    public MockAndControlForAddDependencySetsTask( final MockManager mockManager )
     {
         this( mockManager, null );
     }
 
-    public MockAndControlForAddDependencySetsTask( MockManager mockManager, MavenProject project )
+    public MockAndControlForAddDependencySetsTask( final MockManager mockManager, final MavenProject project )
     {
         this.project = project;
 
@@ -80,15 +73,10 @@ public class MockAndControlForAddDependencySetsTask
 
         configSource = (AssemblerConfigurationSource) configSourceCtl.getMock();
 
-        dependencyResolverCtl = MockControl.createControl( DependencyResolver.class );
-        mockManager.add( dependencyResolverCtl );
-
-        dependencyResolver = ( DependencyResolver ) dependencyResolverCtl.getMock();
-
         projectBuilderCtl = MockControl.createControl( MavenProjectBuilder.class );
         mockManager.add( projectBuilderCtl );
 
-        projectBuilder = ( MavenProjectBuilder ) projectBuilderCtl.getMock();
+        projectBuilder = (MavenProjectBuilder) projectBuilderCtl.getMock();
 
         enableDefaultExpectations();
     }
@@ -99,7 +87,8 @@ public class MockAndControlForAddDependencySetsTask
         configSourceCtl.setReturnValue( project, MockControl.ZERO_OR_MORE );
     }
 
-    public void expectAddArchivedFileSet( File file, String outputLocation, String[] includes, String[] excludes )
+    public void expectAddArchivedFileSet( final File file, final String outputLocation, final String[] includes,
+                                          final String[] excludes )
     {
         try
         {
@@ -112,14 +101,14 @@ public class MockAndControlForAddDependencySetsTask
 
             archiverCtl.setVoidCallable( MockControl.ONE_OR_MORE );
         }
-        catch ( ArchiverException e )
+        catch ( final ArchiverException e )
         {
             Assert.fail( "Should never happen." );
         }
     }
 
-    public void expectModeChange( int originalDirMode, int originalFileMode, int dirMode, int fileMode,
-                                            int numberOfChanges )
+    public void expectModeChange( final int originalDirMode, final int originalFileMode, final int dirMode,
+                                  final int fileMode, final int numberOfChanges )
     {
         archiver.getOverrideDirectoryMode();
         archiverCtl.setReturnValue( originalDirMode );
@@ -130,7 +119,7 @@ public class MockAndControlForAddDependencySetsTask
         // one of the changes will occur below, when we restore the original mode.
         if ( numberOfChanges > 1 )
         {
-            for( int i = 1; i< numberOfChanges; i++ )
+            for ( int i = 1; i < numberOfChanges; i++ )
             {
                 archiver.setDirectoryMode( dirMode );
                 archiver.setFileMode( fileMode );
@@ -141,49 +130,49 @@ public class MockAndControlForAddDependencySetsTask
         archiver.setFileMode( originalFileMode );
     }
 
-    public void expectAddFile( File file, String outputLocation )
+    public void expectAddFile( final File file, final String outputLocation )
     {
         try
         {
             archiver.addFile( file, outputLocation );
         }
-        catch ( ArchiverException e )
+        catch ( final ArchiverException e )
         {
             Assert.fail( "Should never happen." );
         }
     }
 
-    public void expectAddFile( File file, String outputLocation, int fileMode )
+    public void expectAddFile( final File file, final String outputLocation, final int fileMode )
     {
         try
         {
             archiver.addFile( file, outputLocation, fileMode );
         }
-        catch ( ArchiverException e )
+        catch ( final ArchiverException e )
         {
             Assert.fail( "Should never happen." );
         }
     }
 
-    public void expectGetReactorProjects( List projects )
+    public void expectGetReactorProjects( final List<MavenProject> projects )
     {
         configSource.getReactorProjects();
         configSourceCtl.setReturnValue( projects, MockControl.ONE_OR_MORE );
     }
 
-    public void expectCSGetFinalName( String finalName )
+    public void expectCSGetFinalName( final String finalName )
     {
         configSource.getFinalName();
         configSourceCtl.setReturnValue( finalName, MockControl.ONE_OR_MORE );
     }
 
-    public void expectGetDestFile( File destFile )
+    public void expectGetDestFile( final File destFile )
     {
         archiver.getDestFile();
         archiverCtl.setReturnValue( destFile, MockControl.ZERO_OR_MORE );
     }
 
-    public void expectCSGetRepositories( ArtifactRepository localRepo, List remoteRepos )
+    public void expectCSGetRepositories( final ArtifactRepository localRepo, final List<ArtifactRepository> remoteRepos )
     {
         configSource.getLocalRepository();
         configSourceCtl.setReturnValue( localRepo, MockControl.ONE_OR_MORE );
@@ -192,7 +181,7 @@ public class MockAndControlForAddDependencySetsTask
         configSourceCtl.setReturnValue( remoteRepos, MockControl.ONE_OR_MORE );
     }
 
-    public void expectBuildFromRepository( ProjectBuildingException error )
+    public void expectBuildFromRepository( final ProjectBuildingException error )
     {
         try
         {
@@ -200,13 +189,13 @@ public class MockAndControlForAddDependencySetsTask
             projectBuilderCtl.setMatcher( MockControl.ALWAYS_MATCHER );
             projectBuilderCtl.setThrowable( error, MockControl.ONE_OR_MORE );
         }
-        catch ( ProjectBuildingException e )
+        catch ( final ProjectBuildingException e )
         {
             Assert.fail( "should never happen" );
         }
     }
 
-    public void expectBuildFromRepository( MavenProject project )
+    public void expectBuildFromRepository( final MavenProject project )
     {
         try
         {
@@ -214,36 +203,13 @@ public class MockAndControlForAddDependencySetsTask
             projectBuilderCtl.setMatcher( MockControl.ALWAYS_MATCHER );
             projectBuilderCtl.setReturnValue( project, MockControl.ONE_OR_MORE );
         }
-        catch ( ProjectBuildingException e )
+        catch ( final ProjectBuildingException e )
         {
             Assert.fail( "should never happen" );
         }
     }
 
-    public void expectResolveDependencies( Set resolvedArtifacts )
-    {
-        try
-        {
-            dependencyResolver.resolveDependencies( null, null, null, null, null, true );
-        }
-        catch ( ArtifactResolutionException e )
-        {
-            Assert.fail( "should never happen!" );
-        }
-        catch ( ArtifactNotFoundException e )
-        {
-            Assert.fail( "should never happen!" );
-        }
-        catch ( InvalidDependencyVersionException e )
-        {
-            Assert.fail( "should never happen!" );
-        }
-
-        dependencyResolverCtl.setMatcher( MockControl.ALWAYS_MATCHER );
-        dependencyResolverCtl.setReturnValue( resolvedArtifacts, MockControl.ONE_OR_MORE );
-    }
-    
-    public void expectGetSession( MavenSession session )
+    public void expectGetSession( final MavenSession session )
     {
         configSource.getMavenSession();
         configSourceCtl.setReturnValue( session, MockControl.ZERO_OR_MORE );

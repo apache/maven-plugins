@@ -1,22 +1,33 @@
 package org.apache.maven.plugin.assembly;
 
-import java.util.Map;
+import org.apache.maven.artifact.Artifact;
+
+import java.util.Set;
 
 public class DefaultAssemblyContext
     implements AssemblyContext
 {
 
-    private Map managedVersions;
+    private Set<Artifact> artifacts;
 
-    public Map getManagedVersionMap()
+    /**
+     * {@inheritDoc}
+     * 
+     * @see org.apache.maven.plugin.assembly.AssemblyContext#setResolvedArtifacts(java.util.Set)
+     */
+    public void setResolvedArtifacts( final Set<Artifact> artifacts )
     {
-        return managedVersions;
+        this.artifacts = artifacts;
     }
 
-    public AssemblyContext setManagedVersionMap( Map managedVersions )
+    /**
+     * {@inheritDoc}
+     * 
+     * @see org.apache.maven.plugin.assembly.AssemblyContext#getResolvedArtifacts()
+     */
+    public Set<Artifact> getResolvedArtifacts()
     {
-        this.managedVersions = managedVersions;
-        return this;
+        return artifacts;
     }
 
 }

@@ -1,31 +1,33 @@
 package org.apache.maven.plugin.assembly.artifact;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
-
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.artifact.filter.ScopeArtifactFilter;
 
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 /**
- * Helper class used to accumulate scopes and modules (with binaries included) 
- * that are used in an assembly, for the purposes of creating an aggregated
- * managed-version map with dependency version conflicts resolved.
+ * Helper class used to accumulate scopes and modules (with binaries included) that are used in an assembly, for the
+ * purposes of creating an aggregated managed-version map with dependency version conflicts resolved.
  * 
  * @author jdcasey
  */
 class ResolutionManagementInfo
 {
     private boolean resolutionRequired;
-    
-    private ScopeArtifactFilter scopeFilter = new ScopeArtifactFilter();
-    
+
+    private final ScopeArtifactFilter scopeFilter = new ScopeArtifactFilter();
+
     private boolean resolvedTransitively;
-    
-    private Set enabledProjects = new LinkedHashSet();
-    
-    ResolutionManagementInfo( MavenProject mainProject )
+
+    private final Set<MavenProject> enabledProjects = new LinkedHashSet<MavenProject>();
+
+    private final Set<Artifact> artifacts = new LinkedHashSet<Artifact>();
+
+    ResolutionManagementInfo( final MavenProject currentProject )
     {
-        enabledProjects.add( mainProject );
+        enabledProjects.add( currentProject );
     }
 
     boolean isResolutionRequired()
@@ -33,7 +35,7 @@ class ResolutionManagementInfo
         return resolutionRequired;
     }
 
-    void setResolutionRequired( boolean resolutionRequired )
+    void setResolutionRequired( final boolean resolutionRequired )
     {
         this.resolutionRequired = resolutionRequired;
     }
@@ -43,16 +45,16 @@ class ResolutionManagementInfo
         return resolvedTransitively;
     }
 
-    void setResolvedTransitively( boolean resolvedTransitively )
+    void setResolvedTransitively( final boolean resolvedTransitively )
     {
-        this.resolvedTransitively = resolvedTransitively;
+        this.resolvedTransitively = this.resolvedTransitively || resolvedTransitively;
     }
 
     ScopeArtifactFilter getScopeFilter()
     {
         return scopeFilter;
     }
-    
+
     void enableCompileScope()
     {
         scopeFilter.setIncludeCompileScope( true );
@@ -84,8 +86,8 @@ class ResolutionManagementInfo
     {
         scopeFilter.setIncludeSystemScope( true );
     }
-    
-    void enableProjectResolution( MavenProject project )
+
+    void enableProjectResolution( final MavenProject project )
     {
         if ( !enabledProjects.contains( project ) )
         {
@@ -93,8 +95,23 @@ class ResolutionManagementInfo
         }
     }
 
-    Set getEnabledProjects()
+    Set<MavenProject> getEnabledProjects()
     {
         return enabledProjects;
+    }
+
+    Set<Artifact> getArtifacts()
+    {
+        return artifacts;
+    }
+
+    void addArtifacts( final Set<Artifact> a )
+    {
+        artifacts.addAll( a );
+    }
+
+    void addArtifact( final Artifact a )
+    {
+        artifacts.add( a );
     }
 }

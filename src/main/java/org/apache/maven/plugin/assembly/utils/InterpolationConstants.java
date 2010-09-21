@@ -6,24 +6,24 @@ import java.util.List;
 
 public final class InterpolationConstants
 {
-    
-    public static final List PROJECT_PREFIXES;
-    
-    public static final List PROJECT_PROPERTIES_PREFIXES;
-    
+
+    public static final List<String> PROJECT_PREFIXES;
+
+    public static final List<String> PROJECT_PROPERTIES_PREFIXES;
+
     static
     {
-        List projectPrefixes = new ArrayList();
+        final List<String> projectPrefixes = new ArrayList<String>();
         projectPrefixes.add( "pom." );
         projectPrefixes.add( "project." );
-        
+
         PROJECT_PREFIXES = Collections.unmodifiableList( projectPrefixes );
-        
-        List projectPropertiesPrefixes = new ArrayList();
-        
+
+        final List<String> projectPropertiesPrefixes = new ArrayList<String>();
+
         projectPropertiesPrefixes.add( "pom.properties." );
         projectPropertiesPrefixes.add( "project.properties." );
-        
+
         PROJECT_PROPERTIES_PREFIXES = Collections.unmodifiableList( projectPropertiesPrefixes );
     }
 

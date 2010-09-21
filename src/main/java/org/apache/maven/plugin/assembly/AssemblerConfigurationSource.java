@@ -72,20 +72,20 @@ public interface AssemblerConfigurationSource
 
     File getArchiveBaseDirectory();
 
-    List getFilters();
+    List<String> getFilters();
 
-    List getReactorProjects();
+    List<MavenProject> getReactorProjects();
 
-    List getRemoteRepositories();
+    List<ArtifactRepository> getRemoteRepositories();
 
     boolean isDryRun();
 
     boolean isIgnoreDirFormatExtensions();
 
     boolean isIgnoreMissingDescriptor();
-    
+
     MavenSession getMavenSession();
-    
+
     String getArchiverConfig();
 
     MavenFileFilter getMavenFileFilter();

@@ -21,7 +21,6 @@ package org.apache.maven.plugin.assembly.archive.phase;
 
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.AssemblyContext;
-import org.apache.maven.plugin.assembly.DefaultAssemblyContext;
 import org.apache.maven.plugin.assembly.InvalidAssemblerConfigurationException;
 import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
@@ -29,8 +28,8 @@ import org.apache.maven.plugin.assembly.model.Assembly;
 import org.codehaus.plexus.archiver.Archiver;
 
 /**
- * Handles one top-level section of the assembly descriptor, to determine which 
- * files to include in the assembly archive for that section.
+ * Handles one top-level section of the assembly descriptor, to determine which files to include in the assembly archive
+ * for that section.
  * 
  * @version $Id$
  */
@@ -41,34 +40,16 @@ public interface AssemblyArchiverPhase
     /**
      * Handle the associated section of the assembly descriptor.
      * 
-     * @param assembly The assembly descriptor to use
-     * @param archiver The archiver used to create the assembly archive, to 
-     *                 which files/directories/artifacts are added
-     * @param configSource The configuration for this assembly build, normally 
-     *                     derived from the plugin that launched the assembly 
-     *                     process.
-     *                     
-     * @deprecated Use {@link AssemblyArchiverPhase#execute(Assembly, Archiver, AssemblerConfigurationSource, AssemblyContext)}
-     *             instead. This method should be the equivalent of calling the new execute() method with a newly-minted
-     *             instance of {@link DefaultAssemblyContext}.
+     * @param assembly
+     *            The assembly descriptor to use
+     * @param archiver
+     *            The archiver used to create the assembly archive, to which files/directories/artifacts are added
+     * @param configSource
+     *            The configuration for this assembly build, normally derived from the plugin that launched the assembly
+     *            process.
+     * @param context
      */
-    void execute( Assembly assembly, Archiver archiver, AssemblerConfigurationSource configSource )
+    void execute( Assembly assembly, Archiver archiver, AssemblerConfigurationSource configSource,
+                  AssemblyContext context )
         throws ArchiveCreationException, AssemblyFormattingException, InvalidAssemblerConfigurationException;
-
-    /**
-     * Handle the associated section of the assembly descriptor.
-     * 
-     * @param assembly The assembly descriptor to use
-     * @param archiver The archiver used to create the assembly archive, to 
-     *                 which files/directories/artifacts are added
-     * @param configSource The configuration for this assembly build, normally 
-     *                     derived from the plugin that launched the assembly 
-     *                     process.
-     * @param context Context instance that contains the collected managed 
-     *                versions for dependencies, and potentially any caches that 
-     *                may be useful for the assembly process.
-     */
-    void execute( Assembly assembly, Archiver archiver, AssemblerConfigurationSource configSource, AssemblyContext context )
-        throws ArchiveCreationException, AssemblyFormattingException, InvalidAssemblerConfigurationException;
-
 }

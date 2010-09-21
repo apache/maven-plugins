@@ -1,8 +1,5 @@
 package org.apache.maven.plugin.assembly.testutils;
 
-import java.io.File;
-import java.util.List;
-
 import org.apache.maven.archiver.MavenArchiveConfiguration;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.execution.MavenSession;
@@ -10,11 +7,15 @@ import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.filtering.MavenFileFilter;
 
+import java.io.File;
+import java.util.List;
+
 public class ConfigSourceStub
     implements AssemblerConfigurationSource
 {
 
     private String archiverConfig;
+
     private MavenProject project;
 
     public File getArchiveBaseDirectory()
@@ -57,7 +58,7 @@ public class ConfigSourceStub
         return null;
     }
 
-    public List getFilters()
+    public List<String> getFilters()
     {
         return null;
     }
@@ -92,12 +93,12 @@ public class ConfigSourceStub
         return project;
     }
 
-    public List getReactorProjects()
+    public List<MavenProject> getReactorProjects()
     {
         return null;
     }
 
-    public List getRemoteRepositories()
+    public List<ArtifactRepository> getRemoteRepositories()
     {
         return null;
     }
@@ -146,8 +147,8 @@ public class ConfigSourceStub
     {
         return false;
     }
-    
-    public void setArchiverConfig( String archiverConfig )
+
+    public void setArchiverConfig( final String archiverConfig )
     {
         this.archiverConfig = archiverConfig;
     }
@@ -157,13 +158,14 @@ public class ConfigSourceStub
         return archiverConfig;
     }
 
-    public MavenFileFilter getMavenFileFilter() {
+    public MavenFileFilter getMavenFileFilter()
+    {
         return null;
     }
 
-    public void setProject( MavenProject mavenProject )
+    public void setProject( final MavenProject mavenProject )
     {
-        this.project = mavenProject;
+        project = mavenProject;
     }
 
 }

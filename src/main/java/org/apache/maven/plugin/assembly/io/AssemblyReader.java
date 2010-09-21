@@ -34,7 +34,7 @@ import java.util.List;
 public interface AssemblyReader
 {
 
-    public List readAssemblies( AssemblerConfigurationSource configSource )
+    public List<Assembly> readAssemblies( AssemblerConfigurationSource configSource )
         throws AssemblyReadException, InvalidAssemblerConfigurationException;
 
     public Assembly getAssemblyForDescriptorReference( String ref, AssemblerConfigurationSource configSource )

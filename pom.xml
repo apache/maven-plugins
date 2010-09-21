@@ -56,6 +56,31 @@ under the License.
 
   <dependencies>
     <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-plugin-api</artifactId>
+      <version>${mavenVersion}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-core</artifactId>
+      <version>${mavenVersion}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-project</artifactId>
+      <version>${mavenVersion}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-artifact</artifactId>
+      <version>${mavenVersion}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-model</artifactId>
+      <version>${mavenVersion}</version>
+    </dependency>
+    <dependency>
       <groupId>org.apache.maven.shared</groupId>
       <artifactId>maven-common-artifact-filters</artifactId>
       <version>1.3-SNAPSHOT</version>
@@ -115,16 +140,6 @@ under the License.
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
-      <artifactId>maven-plugin-api</artifactId>
-      <version>${mavenVersion}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven</groupId>
-      <artifactId>maven-project</artifactId>
-      <version>${mavenVersion}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven</groupId>
       <artifactId>maven-archiver</artifactId>
       <version>2.4.1</version>
     </dependency>
@@ -141,16 +156,6 @@ under the License.
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-utils</artifactId>
       <version>2.0.5</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven</groupId>
-      <artifactId>maven-artifact</artifactId>
-      <version>${mavenVersion}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven</groupId>
-      <artifactId>maven-model</artifactId>
-      <version>${mavenVersion}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
@@ -196,7 +201,7 @@ under the License.
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>3.8.2</version>
+      <version>4.8.1</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -208,38 +213,21 @@ under the License.
     </dependency>
   </dependencies>
 
-  <repositories>
-    <repository>
-      <id>codehaus.org</id>
-      <url>http://snapshots.repository.codehaus.org</url>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-    </repository>
-  </repositories>
-  <pluginRepositories>
-    <pluginRepository>
-      <id>codehaus.snapshots</id>
-      <url>http://snapshots.repository.codehaus.org</url>
-    </pluginRepository>
-  </pluginRepositories>
-
   <build>
     <plugins>
       <plugin>
         <groupId>org.codehaus.plexus</groupId>
-        <artifactId>plexus-maven-plugin</artifactId>
-        <version>1.3.8</version>
+        <artifactId>plexus-component-metadata</artifactId>
+        <version>1.5.4</version>
         <executions>
           <execution>
             <id>create-component-descriptor</id>
-            <phase>generate-resources</phase>
             <goals>
-              <goal>descriptor</goal>
+              <goal>generate-metadata</goal>
             </goals>
           </execution>
           <execution>
-            <id>merge</id>
+            <id>merge-metadata</id>
             <configuration>
               <output>${project.build.outputDirectory}/META-INF/plexus/components.xml</output>
               <descriptors>
@@ -247,9 +235,8 @@ under the License.
                 <descriptor>src/main/resources/META-INF/plexus/components.xml</descriptor>
               </descriptors>
             </configuration>
-            <phase>generate-resources</phase>
             <goals>
-              <goal>merge-descriptors</goal>
+              <goal>merge-metadata</goal>
             </goals>
           </execution>
         </executions>
@@ -257,8 +244,9 @@ under the License.
       <plugin>
         <groupId>org.codehaus.modello</groupId>
         <artifactId>modello-maven-plugin</artifactId>
-        <version>1.0</version>
+        <version>1.4</version>
         <configuration>
+          <useJava5>true</useJava5>
           <version>${mdoVersion}</version>
         </configuration>
         <executions>
@@ -323,7 +311,20 @@ under the License.
   <profiles>
     <profile>
       <id>run-its</id>
-      <pluginRepositories>
+	  <repositories>
+	    <repository>
+	      <id>codehaus.org</id>
+	      <url>http://snapshots.repository.codehaus.org</url>
+	      <releases>
+	        <enabled>false</enabled>
+	      </releases>
+	    </repository>
+	  </repositories>
+	  <pluginRepositories>
+	    <pluginRepository>
+	      <id>codehaus.snapshots</id>
+	      <url>http://snapshots.repository.codehaus.org</url>
+	    </pluginRepository>
         <pluginRepository>
           <id>apache.snapshots</id>
           <url>http://repository.apache.org/snapshots</url>

@@ -19,18 +19,20 @@ package org.apache.maven.plugin.assembly.testutils;
  * under the License.
  */
 
+import org.easymock.MockControl;
+
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.easymock.MockControl;
+import junit.framework.AssertionFailedError;
 
 public class MockManager
 {
 
-    private Set mockControls = new HashSet();
+    private final Set<MockControl> mockControls = new HashSet<MockControl>();
 
-    public void add( MockControl control )
+    public void add( final MockControl control )
     {
         mockControls.add( control );
     }
@@ -42,9 +44,9 @@ public class MockManager
 
     public void replayAll()
     {
-        for ( Iterator it = mockControls.iterator(); it.hasNext(); )
+        for ( final Iterator<MockControl> it = mockControls.iterator(); it.hasNext(); )
         {
-            MockControl control = (MockControl) it.next();
+            final MockControl control = it.next();
 
             control.replay();
         }
@@ -52,11 +54,23 @@ public class MockManager
 
     public void verifyAll()
     {
-        for ( Iterator it = mockControls.iterator(); it.hasNext(); )
+        for ( final Iterator<MockControl> it = mockControls.iterator(); it.hasNext(); )
         {
-            MockControl control = (MockControl) it.next();
+            final MockControl control = it.next();
 
-            control.verify();
+            try
+            {
+                control.verify();
+            }
+            catch ( final AssertionFailedError err )
+            {
+                final String message =
+                    "MockControl: " + control + " of: " + control.getMock() + " failed.\n" + err.getMessage();
+                final AssertionFailedError e = new AssertionFailedError( message );
+                e.initCause( err );
+
+                throw e;
+            }
         }
     }
 

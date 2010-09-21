@@ -35,29 +35,31 @@ public class RepoInfoWrapper
 {
 
     private final Repository repo;
-    private List convertedAlignments;
 
-    public RepoInfoWrapper( Repository repo )
+    private List<GroupVersionAlignmentWrapper> convertedAlignments;
+
+    public RepoInfoWrapper( final Repository repo )
     {
         this.repo = repo;
     }
 
-    public List getExcludes()
+    public List<String> getExcludes()
     {
         return repo.getExcludes();
     }
 
-    public List getGroupVersionAlignments()
+    public List<GroupVersionAlignmentWrapper> getGroupVersionAlignments()
     {
-        List alignments = repo.getGroupVersionAlignments();
+        final List<GroupVersionAlignment> alignments = repo.getGroupVersionAlignments();
 
         if ( convertedAlignments == null || alignments.size() != convertedAlignments.size() )
         {
-            List l = new ArrayList( alignments.size() );
+            final List<GroupVersionAlignmentWrapper> l =
+                new ArrayList<GroupVersionAlignmentWrapper>( alignments.size() );
 
-            for ( Iterator it = alignments.iterator(); it.hasNext(); )
+            for ( final Iterator<GroupVersionAlignment> it = alignments.iterator(); it.hasNext(); )
             {
-                GroupVersionAlignment alignment = (GroupVersionAlignment) it.next();
+                final GroupVersionAlignment alignment = it.next();
 
                 l.add( new GroupVersionAlignmentWrapper( alignment ) );
             }
@@ -68,7 +70,7 @@ public class RepoInfoWrapper
         return convertedAlignments;
     }
 
-    public List getIncludes()
+    public List<String> getIncludes()
     {
         return repo.getIncludes();
     }

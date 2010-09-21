@@ -46,23 +46,23 @@ import java.util.Map;
 
 /**
  * Components XML file filter.
- *
+ * 
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  * @version $Id$
  */
 public class ComponentsXmlArchiverFileFilter
     implements ContainerDescriptorHandler
 {
-    // [jdcasey] Switched visibility to protected to allow testing. Also, because this class isn't final, it should allow
+    // [jdcasey] Switched visibility to protected to allow testing. Also, because this class isn't final, it should
+    // allow
     // some minimal access to the components accumulated for extending classes.
-    protected Map components;
+    protected Map<String, Xpp3Dom> components;
 
     private boolean excludeOverride = false;
 
     public static final String COMPONENTS_XML_PATH = "META-INF/plexus/components.xml";
 
-    protected void addComponentsXml( Reader componentsReader )
-        throws XmlPullParserException, IOException
+    protected void addComponentsXml( final Reader componentsReader ) throws XmlPullParserException, IOException
     {
         Xpp3Dom newDom = Xpp3DomBuilder.build( componentsReader );
 
@@ -73,22 +73,23 @@ public class ComponentsXmlArchiverFileFilter
 
         if ( newDom != null )
         {
-            Xpp3Dom[] children = newDom.getChildren();
+            final Xpp3Dom[] children = newDom.getChildren();
 
             for ( int i = 0; i < children.length; i++ )
             {
-                Xpp3Dom component = children[i];
+                final Xpp3Dom component = children[i];
 
                 if ( components == null )
                 {
-                    components = new LinkedHashMap();
+                    components = new LinkedHashMap<String, Xpp3Dom>();
                 }
 
-                String role = component.getChild( "role" ).getValue();
-                Xpp3Dom child = component.getChild( "role-hint" );
-                String roleHint = child != null ? child.getValue() : "";
+                final String role = component.getChild( "role" )
+                                             .getValue();
+                final Xpp3Dom child = component.getChild( "role-hint" );
+                final String roleHint = child != null ? child.getValue() : "";
 
-                String key = role + roleHint;
+                final String key = role + roleHint;
                 if ( !components.containsKey( key ) )
                 {
                     System.out.println( "Adding " + key );
@@ -102,41 +103,41 @@ public class ComponentsXmlArchiverFileFilter
         }
     }
 
-//    public void addComponentsXml( File componentsXml )
-//        throws IOException, XmlPullParserException
-//    {
-//        FileReader fileReader = null;
-//        try
-//        {
-//            fileReader = new FileReader( componentsXml );
-//
-//            addComponentsXml( fileReader );
-//        }
-//        finally
-//        {
-//            IOUtil.close( fileReader );
-//        }
-//    }
+    // public void addComponentsXml( File componentsXml )
+    // throws IOException, XmlPullParserException
+    // {
+    // FileReader fileReader = null;
+    // try
+    // {
+    // fileReader = new FileReader( componentsXml );
+    //
+    // addComponentsXml( fileReader );
+    // }
+    // finally
+    // {
+    // IOUtil.close( fileReader );
+    // }
+    // }
 
-    private void addToArchive( Archiver archiver )
-        throws IOException, ArchiverException
+    private void addToArchive( final Archiver archiver ) throws IOException, ArchiverException
     {
         if ( components != null )
         {
-            File f = File.createTempFile( "maven-assembly-plugin", "tmp" );
+            final File f = File.createTempFile( "maven-assembly-plugin", "tmp" );
             f.deleteOnExit();
 
             // TODO use WriterFactory.newXmlWriter() when plexus-utils is upgraded to 1.4.5+
-            Writer fileWriter = new OutputStreamWriter( new FileOutputStream( f ), "UTF-8" );
+            final Writer fileWriter = new OutputStreamWriter( new FileOutputStream( f ), "UTF-8" );
             try
             {
-                Xpp3Dom dom = new Xpp3Dom( "component-set" );
-                Xpp3Dom componentDom = new Xpp3Dom( "components" );
+                final Xpp3Dom dom = new Xpp3Dom( "component-set" );
+                final Xpp3Dom componentDom = new Xpp3Dom( "components" );
                 dom.addChild( componentDom );
 
-                for ( Iterator i = components.values().iterator(); i.hasNext(); )
+                for ( final Iterator<Xpp3Dom> i = components.values()
+                                                            .iterator(); i.hasNext(); )
                 {
-                    Xpp3Dom component = (Xpp3Dom) i.next();
+                    final Xpp3Dom component = i.next();
                     componentDom.addChild( component );
                 }
 
@@ -155,15 +156,14 @@ public class ComponentsXmlArchiverFileFilter
         }
     }
 
-    public void finalizeArchiveCreation( Archiver archiver )
-        throws ArchiverException
+    public void finalizeArchiveCreation( final Archiver archiver ) throws ArchiverException
     {
         // this will prompt the isSelected() call, below, for all resources added to the archive.
         // FIXME: This needs to be corrected in the AbstractArchiver, where
         // runArchiveFinalizers() is called before regular resources are added...
         // which is done because the manifest needs to be added first, and the
         // manifest-creation component is a finalizer in the assembly plugin...
-        for ( ResourceIterator it = archiver.getResources(); it.hasNext(); )
+        for ( final ResourceIterator it = archiver.getResources(); it.hasNext(); )
         {
             it.next();
         }
@@ -172,13 +172,13 @@ public class ComponentsXmlArchiverFileFilter
         {
             addToArchive( archiver );
         }
-        catch ( IOException e )
+        catch ( final IOException e )
         {
             throw new ArchiverException( "Error finalizing component-set for archive. Reason: " + e.getMessage(), e );
         }
     }
 
-    public List getVirtualFiles()
+    public List<String> getVirtualFiles()
     {
         if ( ( components != null ) && !components.isEmpty() )
         {
@@ -188,8 +188,7 @@ public class ComponentsXmlArchiverFileFilter
         return null;
     }
 
-    public boolean isSelected( FileInfo fileInfo )
-        throws IOException
+    public boolean isSelected( final FileInfo fileInfo ) throws IOException
     {
         if ( fileInfo.isFile() )
         {
@@ -198,7 +197,8 @@ public class ComponentsXmlArchiverFileFilter
                 return true;
             }
 
-            String entry = fileInfo.getName().replace( '\\', '/' );
+            String entry = fileInfo.getName()
+                                   .replace( '\\', '/' );
 
             if ( entry.startsWith( "/" ) )
             {
@@ -217,9 +217,10 @@ public class ComponentsXmlArchiverFileFilter
                     reader = new InputStreamReader( stream, "UTF-8" );
                     addComponentsXml( reader );
                 }
-                catch ( XmlPullParserException e )
+                catch ( final XmlPullParserException e )
                 {
-                    IOException error = new IOException( "Error finalizing component-set for archive. Reason: " + e.getMessage() );
+                    final IOException error =
+                        new IOException( "Error finalizing component-set for archive. Reason: " + e.getMessage() );
                     error.initCause( e );
 
                     throw error;
@@ -243,8 +244,7 @@ public class ComponentsXmlArchiverFileFilter
         }
     }
 
-    public void finalizeArchiveExtraction( UnArchiver unarchiver )
-        throws ArchiverException
+    public void finalizeArchiveExtraction( final UnArchiver unarchiver ) throws ArchiverException
     {
     }
 

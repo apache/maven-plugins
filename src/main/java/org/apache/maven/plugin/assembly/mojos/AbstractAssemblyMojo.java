@@ -51,41 +51,37 @@ import java.util.List;
  * @version $Id$
  */
 public abstract class AbstractAssemblyMojo
-extends AbstractMojo
-implements AssemblerConfigurationSource
+    extends AbstractMojo
+    implements AssemblerConfigurationSource
 {
 
     /**
-     * Flag allowing one or more executions of the assembly plugin to be configured
-     * as skipped for a particular build. This makes the assembly plugin more controllable
-     * from profiles.
-     *
+     * Flag allowing one or more executions of the assembly plugin to be configured as skipped for a particular build.
+     * This makes the assembly plugin more controllable from profiles.
+     * 
      * @parameter expression="${skipAssembly}" default-value="false"
      */
     private boolean skipAssembly;
 
     /**
      * If this flag is set, everything up to the call to Archiver.createArchive() will be executed.
-     *
+     * 
      * @parameter expression="${assembly.dryRun}" default-value="false"
      */
     private boolean dryRun;
 
     /**
-     * If this flag is set, the ".dir" suffix will be suppressed in the output
-     * directory name when using assembly/format == 'dir' and other formats
-     * that begin with 'dir'.
-     * <br/>
-     * <b>NOTE:</b> Since 2.2-beta-3, the default-value for this is true, NOT 
-     * false as it used to be.
-     *
+     * If this flag is set, the ".dir" suffix will be suppressed in the output directory name when using assembly/format
+     * == 'dir' and other formats that begin with 'dir'. <br/>
+     * <b>NOTE:</b> Since 2.2-beta-3, the default-value for this is true, NOT false as it used to be.
+     * 
      * @parameter default-value="true"
      */
     private boolean ignoreDirFormatExtensions;
 
     /**
      * Local Maven repository where artifacts are cached during the build process.
-     *
+     * 
      * @parameter default-value="${localRepository}"
      * @required
      * @readonly
@@ -97,20 +93,20 @@ implements AssemblerConfigurationSource
      * @required
      * @readonly
      */
-    private List remoteRepositories;
+    private List<ArtifactRepository> remoteRepositories;
 
     /**
      * Contains the full list of projects in the reactor.
-     *
+     * 
      * @parameter default-value="${reactorProjects}"
      * @required
      * @readonly
      */
-    private List reactorProjects;
+    private List<MavenProject> reactorProjects;
 
     /**
      * The output directory of the assembled distribution file.
-     *
+     * 
      * @parameter default-value="${project.build.directory}"
      * @required
      */
@@ -118,7 +114,7 @@ implements AssemblerConfigurationSource
 
     /**
      * The filename of the assembled distribution file.
-     *
+     * 
      * @parameter default-value="${project.build.finalName}"
      * @required
      */
@@ -126,7 +122,7 @@ implements AssemblerConfigurationSource
 
     /**
      * Directory to unpack JARs into if needed
-     *
+     * 
      * @parameter default-value="${project.build.directory}/assembly/work"
      * @required
      */
@@ -135,15 +131,17 @@ implements AssemblerConfigurationSource
     /**
      * This is the artifact classifier to be used for the resultant assembly artifact. Normally, you would use the
      * assembly-id instead of specifying this here.
-     *
+     * 
      * @parameter expression="${classifier}"
      * @deprecated Please use the Assembly's id for classifier instead
      */
+    @Deprecated
+    @SuppressWarnings( "unused" )
     private String classifier;
 
     /**
      * A list of descriptor files to generate from.
-     *
+     * 
      * @parameter
      */
     private String[] descriptors;
@@ -151,55 +149,55 @@ implements AssemblerConfigurationSource
     /**
      * A list of built-in descriptor references to generate from. You can select from <code>bin</code>,
      * <code>jar-with-dependencies</code>, or <code>src</code>.
-     *
+     * 
      * @parameter
      */
     private String[] descriptorRefs;
 
     /**
      * Directory to scan for descriptor files in.
-     *
+     * 
      * @parameter
      */
     private File descriptorSourceDirectory;
 
     /**
-     * This is the base directory from which archive files are created.
-     * This base directory pre-pended to any <code>&lt;directory&gt;</code>
-     * specifications in the assembly descriptor.  This is an optional
-     * parameter.
-     *
+     * This is the base directory from which archive files are created. This base directory pre-pended to any
+     * <code>&lt;directory&gt;</code> specifications in the assembly descriptor. This is an optional parameter.
+     * 
      * @parameter
      */
     private File archiveBaseDirectory;
 
     /**
-     * Predefined Assembly Descriptor Id's.  You can select bin, jar-with-dependencies, or src.
-     *
+     * Predefined Assembly Descriptor Id's. You can select bin, jar-with-dependencies, or src.
+     * 
      * @parameter expression="${descriptorId}"
      * @deprecated Please use descriptorRefs instead
      */
+    @Deprecated
     protected String descriptorId;
 
     /**
-     * Assembly XML Descriptor file.  This must be the path to your customized descriptor file.
-     *
+     * Assembly XML Descriptor file. This must be the path to your customized descriptor file.
+     * 
      * @parameter expression="${descriptor}"
      * @deprecated Please use descriptors instead
      */
+    @Deprecated
     protected String descriptor;
 
     /**
-     * Sets the TarArchiver behavior on file paths with more than 100 characters length.
-     * Valid values are: "warn" (default), "fail", "truncate", "gnu", or "omit".
-     *
+     * Sets the TarArchiver behavior on file paths with more than 100 characters length. Valid values are: "warn"
+     * (default), "fail", "truncate", "gnu", or "omit".
+     * 
      * @parameter expression="${tarLongFileMode}" default-value="warn"
      */
     private String tarLongFileMode;
 
     /**
      * Base directory of the project.
-     *
+     * 
      * @parameter default-value="${basedir}"
      * @required
      * @readonly
@@ -208,21 +206,21 @@ implements AssemblerConfigurationSource
 
     /**
      * Maven ProjectHelper.
-     *
+     * 
      * @component
      */
     private MavenProjectHelper projectHelper;
 
     /**
      * Maven shared filtering utility.
-     *
+     * 
      * @component
      */
     private MavenFileFilter mavenFileFilter;
 
     /**
      * The Maven Session Object
-     *
+     * 
      * @parameter expression="${session}"
      * @required
      * @readonly
@@ -231,7 +229,7 @@ implements AssemblerConfigurationSource
 
     /**
      * Temporary directory that contain the files to be assembled.
-     *
+     * 
      * @parameter default-value="${project.build.directory}/archive-tmp"
      * @required
      * @readonly
@@ -240,7 +238,7 @@ implements AssemblerConfigurationSource
 
     /**
      * Directory for site generated.
-     *
+     * 
      * @parameter default-value="${project.reporting.outputDirectory}"
      * @readonly
      */
@@ -248,21 +246,23 @@ implements AssemblerConfigurationSource
 
     /**
      * Set to true to include the site generated by site:site goal.
-     *
+     * 
      * @parameter expression="${includeSite}" default-value="false"
      * @deprecated Please set this variable in the assembly descriptor instead
      */
+    @Deprecated
     private boolean includeSite;
 
     /**
      * Set to false to exclude the assembly id from the assembly final name.
-     *
+     * 
      * @parameter expression="${appendAssemblyId}" default-value="true"
      */
     protected boolean appendAssemblyId;
 
     /**
      * Set to true in order to not fail when a descriptor is missing.
+     * 
      * @parameter expression="${ignoreMissingDescriptor}" default-value="false"
      */
     protected boolean ignoreMissingDescriptor;
@@ -270,7 +270,7 @@ implements AssemblerConfigurationSource
     /**
      * This is a set of instructions to the archive builder, especially for building .jar files. It enables you to
      * specify a Manifest file for the jar, in addition to other options.
-     *
+     * 
      * @parameter
      */
     private MavenArchiveConfiguration archive;
@@ -278,12 +278,11 @@ implements AssemblerConfigurationSource
     /**
      * @parameter
      */
-    protected List filters;
+    protected List<String> filters;
 
     /**
-     * Controls whether the assembly plugin tries to attach the resulting
-     * assembly to the project.
-     *
+     * Controls whether the assembly plugin tries to attach the resulting assembly to the project.
+     * 
      * @parameter expression="${attach}" default-value="true"
      * @since 2.2-beta-1
      */
@@ -300,26 +299,25 @@ implements AssemblerConfigurationSource
     private AssemblyReader assemblyReader;
 
     /**
-     * Allows additional configuration options that are specific to a particular
-     * type of archive format. This is intended to capture an XML configuration
-     * that will be used to reflectively setup the options on the archiver instance.
-     * <br/>
-     * For instance, to direct an assembly with the "ear" format to use a particular
-     * deployment descriptor, you should specify the following for the archiverConfig value
-     * in your plugin configuration:
-     * <br/>
+     * Allows additional configuration options that are specific to a particular type of archive format. This is
+     * intended to capture an XML configuration that will be used to reflectively setup the options on the archiver
+     * instance. <br/>
+     * For instance, to direct an assembly with the "ear" format to use a particular deployment descriptor, you should
+     * specify the following for the archiverConfig value in your plugin configuration: <br/>
+     * 
      * <pre>
      * &lt;appxml&gt;${project.basedir}/somepath/app.xml&lt;/appxml&gt;
      * </pre>
-     *  
+     * 
      * @parameter
      * @since 2.2-beta-3
      */
     private PlexusConfiguration archiverConfig;
 
     /**
-     * This will cause the assembly to run only at the top of a given module tree. That is, run in the project 
-     * contained in the same folder where the mvn execution was launched.
+     * This will cause the assembly to run only at the top of a given module tree. That is, run in the project contained
+     * in the same folder where the mvn execution was launched.
+     * 
      * @parameter expression="${runOnlyAtExecutionRoot}" default-value="false"
      * @since 2.2-beta-4
      */
@@ -327,12 +325,11 @@ implements AssemblerConfigurationSource
 
     /**
      * Create the binary distribution.
-     *
+     * 
      * @throws org.apache.maven.plugin.MojoExecutionException
-     *
+     * 
      */
-    public void execute()
-    throws MojoExecutionException, MojoFailureException
+    public void execute() throws MojoExecutionException, MojoFailureException
     {
         if ( skipAssembly )
         {
@@ -340,47 +337,47 @@ implements AssemblerConfigurationSource
             return;
         }
 
-        //run only at the execution root.
-        if (runOnlyAtExecutionRoot && !isThisTheExecutionRoot())
+        // run only at the execution root.
+        if ( runOnlyAtExecutionRoot && !isThisTheExecutionRoot() )
         {
             getLog().info( "Skipping the assembly in this project because it's not the Execution Root" );
             return;
         }
 
-        List assemblies;
+        List<Assembly> assemblies;
         try
         {
             assemblies = assemblyReader.readAssemblies( this );
         }
-        catch ( AssemblyReadException e )
+        catch ( final AssemblyReadException e )
         {
             throw new MojoExecutionException( "Error reading assemblies: " + e.getMessage(), e );
         }
-        catch ( InvalidAssemblerConfigurationException e )
+        catch ( final InvalidAssemblerConfigurationException e )
         {
-            throw new MojoFailureException( assemblyReader, e.getMessage(), "Mojo configuration is invalid: " + e.getMessage() );
+            throw new MojoFailureException( assemblyReader, e.getMessage(), "Mojo configuration is invalid: "
+                            + e.getMessage() );
         }
 
         // TODO: include dependencies marked for distribution under certain formats
         // TODO: how, might we plug this into an installer, such as NSIS?
 
         boolean warnedAboutMainProjectArtifact = false;
-        for ( Iterator assemblyIterator = assemblies.iterator(); assemblyIterator.hasNext(); )
+        for ( final Iterator<Assembly> assemblyIterator = assemblies.iterator(); assemblyIterator.hasNext(); )
         {
-            Assembly assembly = (Assembly) assemblyIterator.next();
+            final Assembly assembly = assemblyIterator.next();
             try
             {
-                String fullName = AssemblyFormatUtils.getDistributionName( assembly, this );
+                final String fullName = AssemblyFormatUtils.getDistributionName( assembly, this );
 
-                for ( Iterator formatIterator = assembly.getFormats().iterator(); formatIterator.hasNext(); )
+                for ( final String format : assembly.getFormats() )
                 {
-                    String format = (String) formatIterator.next();
+                    final File destFile = assemblyArchiver.createArchive( assembly, fullName, format, this );
 
-                    File destFile = assemblyArchiver.createArchive( assembly, fullName, format, this );
-
-                    MavenProject project = getProject();
-                    String classifier = getClassifier();
-                    String type = project.getArtifact().getType();
+                    final MavenProject project = getProject();
+                    final String classifier = getClassifier();
+                    final String type = project.getArtifact()
+                                               .getType();
 
                     if ( attach && destFile.isFile() )
                     {
@@ -396,23 +393,28 @@ implements AssemblerConfigurationSource
                         {
                             if ( !warnedAboutMainProjectArtifact )
                             {
-                                StringBuffer message = new StringBuffer();
+                                final StringBuffer message = new StringBuffer();
 
                                 message.append( "Configuration options: 'appendAssemblyId' is set to false, and 'classifier' is missing." );
-                                message.append( "\nInstead of attaching the assembly file: " ).append( destFile ).append( ", it will become the file for main project artifact." );
+                                message.append( "\nInstead of attaching the assembly file: " )
+                                       .append( destFile )
+                                       .append( ", it will become the file for main project artifact." );
                                 message.append( "\nNOTE: If multiple descriptors or descriptor-formats are provided for this project, the value of this file will be non-deterministic!" );
 
                                 getLog().warn( message );
                                 warnedAboutMainProjectArtifact = true;
                             }
 
-                            File existingFile = project.getArtifact().getFile();
+                            final File existingFile = project.getArtifact()
+                                                             .getFile();
                             if ( ( existingFile != null ) && existingFile.exists() )
                             {
-                                getLog().warn( "Replacing pre-existing project main-artifact file: " + existingFile + "\nwith assembly file: " + destFile );
+                                getLog().warn( "Replacing pre-existing project main-artifact file: " + existingFile
+                                                               + "\nwith assembly file: " + destFile );
                             }
 
-                            project.getArtifact().setFile( destFile );
+                            project.getArtifact()
+                                   .setFile( destFile );
                         }
                         else
                         {
@@ -421,37 +423,42 @@ implements AssemblerConfigurationSource
                     }
                     else if ( attach )
                     {
-                        getLog().warn( "Assembly file: " + destFile + " is not a regular file (it may be a directory). It cannot be attached to the project build for installation or deployment." );
+                        getLog().warn( "Assembly file: "
+                                                       + destFile
+                                                       + " is not a regular file (it may be a directory). It cannot be attached to the project build for installation or deployment." );
                     }
                 }
             }
-            catch ( ArchiveCreationException e )
+            catch ( final ArchiveCreationException e )
             {
                 throw new MojoExecutionException( "Failed to create assembly: " + e.getMessage(), e );
             }
-            catch ( AssemblyFormattingException e )
+            catch ( final AssemblyFormattingException e )
             {
                 throw new MojoExecutionException( "Failed to create assembly: " + e.getMessage(), e );
             }
-            catch ( InvalidAssemblerConfigurationException e )
+            catch ( final InvalidAssemblerConfigurationException e )
             {
-                throw new MojoFailureException( assembly, "Assembly is incorrectly configured: " + assembly.getId(), "Assembly: "
-                                                + assembly.getId() + " is not configured correctly: " + e.getMessage() );
+                throw new MojoFailureException( assembly, "Assembly is incorrectly configured: " + assembly.getId(),
+                                                "Assembly: " + assembly.getId() + " is not configured correctly: "
+                                                                + e.getMessage() );
             }
         }
     }
 
     /**
      * Returns true if the current project is located at the Execution Root Directory (where mvn was launched)
+     * 
      * @return
      */
     protected boolean isThisTheExecutionRoot()
     {
-        Log log = this.getLog();
-        log.debug("Root Folder:" + mavenSession.getExecutionRootDirectory());
-        log.debug("Current Folder:"+ basedir );
-        boolean result = mavenSession.getExecutionRootDirectory().equalsIgnoreCase(basedir.toString());
-        if (result)
+        final Log log = getLog();
+        log.debug( "Root Folder:" + mavenSession.getExecutionRootDirectory() );
+        log.debug( "Current Folder:" + basedir );
+        final boolean result = mavenSession.getExecutionRootDirectory()
+                                           .equalsIgnoreCase( basedir.toString() );
+        if ( result )
         {
             log.debug( "This is the execution root." );
         }
@@ -560,20 +567,21 @@ implements AssemblerConfigurationSource
         return archiveBaseDirectory;
     }
 
-    public List getFilters()
+    public List<String> getFilters()
     {
         if ( filters == null )
         {
-            filters = getProject().getBuild().getFilters();
+            filters = getProject().getBuild()
+                                  .getFilters();
             if ( filters == null )
             {
-                filters = Collections.EMPTY_LIST;
+                filters = Collections.emptyList();
             }
         }
         return filters;
     }
 
-    public List getReactorProjects()
+    public List<MavenProject> getReactorProjects()
     {
         return reactorProjects;
     }
@@ -589,122 +597,122 @@ implements AssemblerConfigurationSource
         return projectHelper;
     }
 
-    public void setAppendAssemblyId( boolean appendAssemblyId )
+    public void setAppendAssemblyId( final boolean appendAssemblyId )
     {
         this.appendAssemblyId = appendAssemblyId;
     }
 
-    public void setArchive( MavenArchiveConfiguration archive )
+    public void setArchive( final MavenArchiveConfiguration archive )
     {
         this.archive = archive;
     }
 
-    public void setArchiveBaseDirectory( File archiveBaseDirectory )
+    public void setArchiveBaseDirectory( final File archiveBaseDirectory )
     {
         this.archiveBaseDirectory = archiveBaseDirectory;
     }
 
-    public void setAssemblyArchiver( AssemblyArchiver assemblyArchiver )
+    public void setAssemblyArchiver( final AssemblyArchiver assemblyArchiver )
     {
         this.assemblyArchiver = assemblyArchiver;
     }
 
-    public void setAssemblyReader( AssemblyReader assemblyReader )
+    public void setAssemblyReader( final AssemblyReader assemblyReader )
     {
         this.assemblyReader = assemblyReader;
     }
 
-    public void setBasedir( File basedir )
+    public void setBasedir( final File basedir )
     {
         this.basedir = basedir;
     }
 
-    public void setClassifier( String classifier )
+    public void setClassifier( final String classifier )
     {
         this.classifier = classifier;
     }
 
-    public void setDescriptor( String descriptor )
+    public void setDescriptor( final String descriptor )
     {
         this.descriptor = descriptor;
     }
 
-    public void setDescriptorId( String descriptorId )
+    public void setDescriptorId( final String descriptorId )
     {
         this.descriptorId = descriptorId;
     }
 
-    public void setDescriptorRefs( String[] descriptorRefs )
+    public void setDescriptorRefs( final String[] descriptorRefs )
     {
         this.descriptorRefs = descriptorRefs;
     }
 
-    public void setDescriptors( String[] descriptors )
+    public void setDescriptors( final String[] descriptors )
     {
         this.descriptors = descriptors;
     }
 
-    public void setDescriptorSourceDirectory( File descriptorSourceDirectory )
+    public void setDescriptorSourceDirectory( final File descriptorSourceDirectory )
     {
         this.descriptorSourceDirectory = descriptorSourceDirectory;
     }
 
-    public void setFilters( List filters )
+    public void setFilters( final List<String> filters )
     {
         this.filters = filters;
     }
 
-    public void setFinalName( String finalName )
+    public void setFinalName( final String finalName )
     {
         this.finalName = finalName;
     }
 
-    public void setIncludeSite( boolean includeSite )
+    public void setIncludeSite( final boolean includeSite )
     {
         this.includeSite = includeSite;
     }
 
-    public void setLocalRepository( ArtifactRepository localRepository )
+    public void setLocalRepository( final ArtifactRepository localRepository )
     {
         this.localRepository = localRepository;
     }
 
-    public void setOutputDirectory( File outputDirectory )
+    public void setOutputDirectory( final File outputDirectory )
     {
         this.outputDirectory = outputDirectory;
     }
 
-    public void setProjectHelper( MavenProjectHelper projectHelper )
+    public void setProjectHelper( final MavenProjectHelper projectHelper )
     {
         this.projectHelper = projectHelper;
     }
 
-    public void setReactorProjects( List reactorProjects )
+    public void setReactorProjects( final List<MavenProject> reactorProjects )
     {
         this.reactorProjects = reactorProjects;
     }
 
-    public void setSiteDirectory( File siteDirectory )
+    public void setSiteDirectory( final File siteDirectory )
     {
         this.siteDirectory = siteDirectory;
     }
 
-    public void setTarLongFileMode( String tarLongFileMode )
+    public void setTarLongFileMode( final String tarLongFileMode )
     {
         this.tarLongFileMode = tarLongFileMode;
     }
 
-    public void setTempRoot( File tempRoot )
+    public void setTempRoot( final File tempRoot )
     {
         this.tempRoot = tempRoot;
     }
 
-    public void setWorkDirectory( File workDirectory )
+    public void setWorkDirectory( final File workDirectory )
     {
         this.workDirectory = workDirectory;
     }
 
-    public List getRemoteRepositories()
+    public List<ArtifactRepository> getRemoteRepositories()
     {
         return remoteRepositories;
     }
@@ -719,16 +727,19 @@ implements AssemblerConfigurationSource
         return ignoreDirFormatExtensions;
     }
 
-    public boolean isIgnoreMissingDescriptor() {
+    public boolean isIgnoreMissingDescriptor()
+    {
         return ignoreMissingDescriptor;
     }
 
-    public void setIgnoreMissingDescriptor(boolean ignoreMissingDescriptor) {
+    public void setIgnoreMissingDescriptor( final boolean ignoreMissingDescriptor )
+    {
         this.ignoreMissingDescriptor = ignoreMissingDescriptor;
     }
 
-    public MavenSession getMavenSession() {
-        return this.mavenSession;
+    public MavenSession getMavenSession()
+    {
+        return mavenSession;
     }
 
     public String getArchiverConfig()

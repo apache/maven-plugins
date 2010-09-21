@@ -19,13 +19,8 @@ package org.apache.maven.plugin.assembly.archive.phase;
  * under the License.
  */
 
-import java.io.File;
-import java.util.Iterator;
-import java.util.List;
-
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.AssemblyContext;
-import org.apache.maven.plugin.assembly.DefaultAssemblyContext;
 import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
 import org.apache.maven.plugin.assembly.format.FileFormatter;
@@ -35,16 +30,19 @@ import org.apache.maven.plugin.assembly.utils.AssemblyFormatUtils;
 import org.apache.maven.plugin.assembly.utils.TypeConversionUtils;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
+import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 
+import java.io.File;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Handles the top-level &lt;files/&gt; section of the assembly descriptor.
  * 
  * @version $Id$
- * @plexus.component role="org.apache.maven.plugin.assembly.archive.phase.AssemblyArchiverPhase"
- *                   role-hint="file-items"
  */
+@Component( role = AssemblyArchiverPhase.class, hint = "file-items" )
 public class FileItemAssemblyPhase
     extends AbstractLogEnabled
     implements AssemblyArchiverPhase
@@ -53,35 +51,26 @@ public class FileItemAssemblyPhase
     /**
      * {@inheritDoc}
      */
-    public void execute( Assembly assembly, Archiver archiver, AssemblerConfigurationSource configSource )
+    public void execute( final Assembly assembly, final Archiver archiver,
+                         final AssemblerConfigurationSource configSource, final AssemblyContext context )
         throws ArchiveCreationException, AssemblyFormattingException
     {
-        execute( assembly, archiver, configSource, new DefaultAssemblyContext() );
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public void execute( Assembly assembly, Archiver archiver, AssemblerConfigurationSource configSource,
-                         AssemblyContext context )
-        throws ArchiveCreationException, AssemblyFormattingException
-    {
-        List fileList = assembly.getFiles();
-        File basedir = configSource.getBasedir();
+        final List<FileItem> fileList = assembly.getFiles();
+        final File basedir = configSource.getBasedir();
 
-        FileFormatter fileFormatter = new FileFormatter( configSource, getLogger() );
-        for ( Iterator i = fileList.iterator(); i.hasNext(); )
+        final FileFormatter fileFormatter = new FileFormatter( configSource, getLogger() );
+        for ( final Iterator<FileItem> i = fileList.iterator(); i.hasNext(); )
         {
-            FileItem fileItem = (FileItem) i.next();
+            final FileItem fileItem = i.next();
 
-            String sourcePath = fileItem.getSource();
+            final String sourcePath = fileItem.getSource();
 
             // ensure source file is in absolute path for reactor build to work
             File source = new File( sourcePath );
 
             // save the original sourcefile's name, because filtration may
             // create a temp file with a different name.
-            String sourceName = source.getName();
+            final String sourceName = source.getName();
 
             if ( !source.isAbsolute() )
             {
@@ -97,7 +86,7 @@ public class FileItemAssemblyPhase
                 destName = sourceName;
             }
 
-            String outputDirectory =
+            final String outputDirectory =
                 AssemblyFormatUtils.getOutputDirectory( fileItem.getOutputDirectory(), configSource.getProject(), null,
                                                         configSource.getFinalName(), configSource );
 
@@ -121,7 +110,7 @@ public class FileItemAssemblyPhase
             {
                 archiver.addFile( source, target, TypeConversionUtils.modeToInt( fileItem.getFileMode(), getLogger() ) );
             }
-            catch ( ArchiverException e )
+            catch ( final ArchiverException e )
             {
                 throw new ArchiveCreationException( "Error adding file to archive: " + e.getMessage(), e );
             }

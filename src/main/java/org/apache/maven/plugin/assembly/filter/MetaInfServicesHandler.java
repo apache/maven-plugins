@@ -25,7 +25,7 @@ public class MetaInfServicesHandler
     extends AbstractLineAggregatingHandler
 {
 
-    private static final String SERVICES_PATH_PREFIX = "/META-INF/services/";
+    private static final String SERVICES_PATH_PREFIX = "META-INF/services/";
 
     @Override
     protected String getOutputPathPrefix( final FileInfo fileInfo )
@@ -36,8 +36,19 @@ public class MetaInfServicesHandler
     @Override
     protected boolean fileMatches( final FileInfo fileInfo )
     {
-        return fileInfo.getName().startsWith( SERVICES_PATH_PREFIX )
-                        || fileInfo.getName().startsWith( "META-INF/services" );
+        final String path = fileInfo.getName();
+
+        String leftover = null;
+        if ( path.startsWith( SERVICES_PATH_PREFIX ) )
+        {
+            leftover = path.substring( SERVICES_PATH_PREFIX.length() );
+        }
+        else if ( path.startsWith( "/META-INF/services/" ) )
+        {
+            leftover = path.substring( SERVICES_PATH_PREFIX.length() - 1 );
+        }
+
+        return leftover != null && leftover.length() > 0;
     }
 
 }

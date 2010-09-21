@@ -32,12 +32,12 @@ public class GroupVersionAlignmentWrapper
 
     private final GroupVersionAlignment alignment;
 
-    public GroupVersionAlignmentWrapper( GroupVersionAlignment alignment )
+    public GroupVersionAlignmentWrapper( final GroupVersionAlignment alignment )
     {
         this.alignment = alignment;
     }
 
-    public List getExcludes()
+    public List<String> getExcludes()
     {
         return alignment.getExcludes();
     }

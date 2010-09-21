@@ -25,9 +25,9 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.InvalidAssemblerConfigurationException;
+import org.apache.maven.plugin.assembly.interpolation.AssemblyExpressionEvaluator;
 import org.apache.maven.plugin.assembly.interpolation.AssemblyInterpolationException;
 import org.apache.maven.plugin.assembly.interpolation.AssemblyInterpolator;
-import org.apache.maven.plugin.assembly.interpolation.AssemblyExpressionEvaluator;
 import org.apache.maven.plugin.assembly.model.Assembly;
 import org.apache.maven.plugin.assembly.model.Component;
 import org.apache.maven.plugin.assembly.model.ContainerDescriptorHandlerConfig;
@@ -46,6 +46,7 @@ import org.apache.maven.shared.io.location.Location;
 import org.apache.maven.shared.io.location.Locator;
 import org.apache.maven.shared.io.location.LocatorStrategy;
 import org.apache.maven.shared.io.location.URLLocatorStrategy;
+import org.codehaus.plexus.component.annotations.Requirement;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.logging.console.ConsoleLogger;
@@ -72,32 +73,28 @@ import java.util.Set;
 
 /**
  * @version $Id$
- * @plexus.component role="org.apache.maven.plugin.assembly.io.AssemblyReader" role-hint="default"
  */
+@org.codehaus.plexus.component.annotations.Component( role = AssemblyReader.class )
 public class DefaultAssemblyReader
     extends AbstractLogEnabled
     implements AssemblyReader
 {
 
-    /**
-     * @plexus.requirement
-     */
+    @Requirement
     private ArtifactFactory factory;
 
-    /**
-     * @plexus.requirement
-     */
+    @Requirement
     private ArtifactResolver resolver;
 
-    public List readAssemblies( AssemblerConfigurationSource configSource )
+    public List<Assembly> readAssemblies( final AssemblerConfigurationSource configSource )
         throws AssemblyReadException, InvalidAssemblerConfigurationException
     {
-        Locator locator = new Locator();
+        final Locator locator = new Locator();
 
-        LocatorStrategy prefixedClasspathStrategy = new PrefixedClasspathLocatorStrategy( "/assemblies/" );
-        LocatorStrategy classpathStrategy = new ClasspathResourceLocatorStrategy();
+        final LocatorStrategy prefixedClasspathStrategy = new PrefixedClasspathLocatorStrategy( "/assemblies/" );
+        final LocatorStrategy classpathStrategy = new ClasspathResourceLocatorStrategy();
 
-        List strategies = new ArrayList();
+        final List<LocatorStrategy> strategies = new ArrayList<LocatorStrategy>();
         strategies.add( new RelativeFileLocatorStrategy( configSource.getBasedir() ) );
 
         strategies.add( new ArtifactLocatorStrategy( factory, resolver, configSource.getLocalRepository(),
@@ -108,17 +105,17 @@ public class DefaultAssemblyReader
         strategies.add( new FileLocatorStrategy() );
         strategies.add( new URLLocatorStrategy() );
 
-        List refStrategies = new ArrayList();
+        final List<LocatorStrategy> refStrategies = new ArrayList<LocatorStrategy>();
         refStrategies.add( prefixedClasspathStrategy );
         refStrategies.add( classpathStrategy );
 
-        List assemblies = new ArrayList();
+        final List<Assembly> assemblies = new ArrayList<Assembly>();
 
-        String descriptor = configSource.getDescriptor();
-        String descriptorId = configSource.getDescriptorId();
-        String[] descriptors = configSource.getDescriptors();
-        String[] descriptorRefs = configSource.getDescriptorReferences();
-        File descriptorSourceDirectory = configSource.getDescriptorSourceDirectory();
+        final String descriptor = configSource.getDescriptor();
+        final String descriptorId = configSource.getDescriptorId();
+        final String[] descriptors = configSource.getDescriptors();
+        final String[] descriptorRefs = configSource.getDescriptorReferences();
+        final File descriptorSourceDirectory = configSource.getDescriptorSourceDirectory();
 
         if ( descriptor != null )
         {
@@ -153,11 +150,12 @@ public class DefaultAssemblyReader
 
         if ( ( descriptorSourceDirectory != null ) && descriptorSourceDirectory.isDirectory() )
         {
-            locator.setStrategies( Collections.singletonList( new RelativeFileLocatorStrategy( descriptorSourceDirectory ) ) );
+            locator.setStrategies( Collections.singletonList( new RelativeFileLocatorStrategy(
+                                                                                               descriptorSourceDirectory ) ) );
 
-            DirectoryScanner scanner = new DirectoryScanner();
+            final DirectoryScanner scanner = new DirectoryScanner();
             scanner.setBasedir( descriptorSourceDirectory );
-            scanner.setIncludes( new String[]{ "**/*.xml" } );
+            scanner.setIncludes( new String[] { "**/*.xml" } );
             scanner.addDefaultExcludes();
 
             try
@@ -165,17 +163,16 @@ public class DefaultAssemblyReader
                 scanner.scan();
             }
             // FIXME: plexus-utils >= 1.3-SNAPSHOT should fix this.
-            catch ( NullPointerException e )
+            catch ( final NullPointerException e )
             {
-                StackTraceElement frameZero = e.getStackTrace()[0];
+                final StackTraceElement frameZero = e.getStackTrace()[0];
 
                 if ( "org.codehaus.plexus.util.DirectoryScanner".equals( frameZero.getClassName() )
                                 && "scandir".equals( frameZero.getMethodName() ) )
                 {
                     if ( getLogger().isDebugEnabled() )
                     {
-                        getLogger().debug(
-                                           "Caught filesystem error while scanning directories..."
+                        getLogger().debug( "Caught filesystem error while scanning directories..."
                                                            + "using zero-length list as the result.", e );
                     }
                 }
@@ -185,7 +182,7 @@ public class DefaultAssemblyReader
                 }
             }
 
-            String[] paths = scanner.getIncludedFiles();
+            final String[] paths = scanner.getIncludedFiles();
 
             if ( paths != null )
             {
@@ -209,10 +206,10 @@ public class DefaultAssemblyReader
         }
 
         // check unique IDs
-        Set ids = new HashSet();
-        for ( Iterator i = assemblies.iterator(); i.hasNext(); )
+        final Set<String> ids = new HashSet<String>();
+        for ( final Iterator<Assembly> i = assemblies.iterator(); i.hasNext(); )
         {
-            Assembly assembly = (Assembly) i.next();
+            final Assembly assembly = i.next();
             if ( !ids.add( assembly.getId() ) )
             {
                 getLogger().warn( "The assembly id " + assembly.getId() + " is used more than once." );
@@ -222,22 +219,26 @@ public class DefaultAssemblyReader
         return assemblies;
     }
 
-    public Assembly getAssemblyForDescriptorReference( String ref, AssemblerConfigurationSource configSource )
+    public Assembly getAssemblyForDescriptorReference( final String ref, final AssemblerConfigurationSource configSource )
         throws AssemblyReadException, InvalidAssemblerConfigurationException
     {
-        return addAssemblyForDescriptorReference( ref, configSource, new ArrayList( 1 ) );
+        return addAssemblyForDescriptorReference( ref, configSource, new ArrayList<Assembly>( 1 ) );
     }
 
-    public Assembly getAssemblyFromDescriptorFile( File file, AssemblerConfigurationSource configSource )
+    public Assembly getAssemblyFromDescriptorFile( final File file, final AssemblerConfigurationSource configSource )
         throws AssemblyReadException, InvalidAssemblerConfigurationException
     {
-        return addAssemblyFromDescriptorFile( file, configSource, new ArrayList( 1 ) );
+        return addAssemblyFromDescriptorFile( file, configSource, new ArrayList<Assembly>( 1 ) );
     }
 
-    private Assembly addAssemblyForDescriptorReference( String ref, AssemblerConfigurationSource configSource, List assemblies )
+    private Assembly addAssemblyForDescriptorReference( final String ref,
+                                                        final AssemblerConfigurationSource configSource,
+                                                        final List<Assembly> assemblies )
         throws AssemblyReadException, InvalidAssemblerConfigurationException
     {
-        InputStream resourceAsStream = Thread.currentThread().getContextClassLoader().getResourceAsStream( "assemblies/" + ref + ".xml" );
+        final InputStream resourceAsStream = Thread.currentThread()
+                                                   .getContextClassLoader()
+                                                   .getResourceAsStream( "assemblies/" + ref + ".xml" );
 
         if ( resourceAsStream == null )
         {
@@ -255,19 +256,22 @@ public class DefaultAssemblyReader
         try
         {
             // TODO use ReaderFactory.newXmlReader() when plexus-utils is upgraded to 1.4.5+
-            Assembly assembly = readAssembly( new InputStreamReader( resourceAsStream, "UTF-8" ), ref, configSource );
+            final Assembly assembly =
+                readAssembly( new InputStreamReader( resourceAsStream, "UTF-8" ), ref, configSource );
 
             assemblies.add( assembly );
             return assembly;
         }
-        catch ( UnsupportedEncodingException e )
+        catch ( final UnsupportedEncodingException e )
         {
             // should not occur since UTF-8 support is mandatory
             throw new AssemblyReadException( "Encoding not supported for descriptor with ID '" + ref + "'" );
         }
     }
 
-    private Assembly addAssemblyFromDescriptorFile( File descriptor, AssemblerConfigurationSource configSource, List assemblies )
+    private Assembly addAssemblyFromDescriptorFile( final File descriptor,
+                                                    final AssemblerConfigurationSource configSource,
+                                                    final List<Assembly> assemblies )
         throws AssemblyReadException, InvalidAssemblerConfigurationException
     {
         if ( !descriptor.exists() )
@@ -288,13 +292,13 @@ public class DefaultAssemblyReader
         {
             // TODO use ReaderFactory.newXmlReader() when plexus-utils is upgraded to 1.4.5+
             r = new InputStreamReader( new FileInputStream( descriptor ), "UTF-8" );
-            Assembly assembly = readAssembly( r, descriptor.getAbsolutePath(), configSource );
+            final Assembly assembly = readAssembly( r, descriptor.getAbsolutePath(), configSource );
 
             assemblies.add( assembly );
 
             return assembly;
         }
-        catch ( IOException e )
+        catch ( final IOException e )
         {
             throw new AssemblyReadException( "Error reading assembly descriptor: " + descriptor, e );
         }
@@ -304,39 +308,43 @@ public class DefaultAssemblyReader
         }
     }
 
-    private Assembly addAssemblyFromDescriptor( String spec, Locator locator, AssemblerConfigurationSource configSource, List assemblies )
+    private Assembly addAssemblyFromDescriptor( final String spec, final Locator locator,
+                                                final AssemblerConfigurationSource configSource,
+                                                final List<Assembly> assemblies )
         throws AssemblyReadException, InvalidAssemblerConfigurationException
     {
-        Location location = locator.resolve( spec );
+        final Location location = locator.resolve( spec );
 
         if ( location == null )
         {
             if ( configSource.isIgnoreMissingDescriptor() )
             {
                 getLogger().debug( "Ignoring missing assembly descriptor with ID '" + spec
-                                   + "' per configuration.\nLocator output was:\n\n"
-                                   + locator.getMessageHolder().render() );
+                                                   + "' per configuration.\nLocator output was:\n\n"
+                                                   + locator.getMessageHolder()
+                                                            .render() );
                 return null;
             }
             else
             {
-                throw new AssemblyReadException( "Error locating assembly descriptor: " + spec
-                                                 + "\n\n" + locator.getMessageHolder().render() );
+                throw new AssemblyReadException( "Error locating assembly descriptor: " + spec + "\n\n"
+                                + locator.getMessageHolder()
+                                         .render() );
             }
         }
 
         Reader r = null;
         try
         {
-         // TODO use ReaderFactory.newXmlReader() when plexus-utils is upgraded to 1.4.5+
+            // TODO use ReaderFactory.newXmlReader() when plexus-utils is upgraded to 1.4.5+
             r = new InputStreamReader( location.getInputStream(), "UTF-8" );
-            Assembly assembly = readAssembly( r, spec, configSource );
+            final Assembly assembly = readAssembly( r, spec, configSource );
 
             assemblies.add( assembly );
 
             return assembly;
         }
-        catch ( IOException e )
+        catch ( final IOException e )
         {
             throw new AssemblyReadException( "Error reading assembly descriptor: " + spec, e );
         }
@@ -347,21 +355,28 @@ public class DefaultAssemblyReader
 
     }
 
-    public Assembly readAssembly( Reader reader, String locationDescription, AssemblerConfigurationSource configSource )
+    public Assembly readAssembly( final Reader reader, final String locationDescription,
+                                  final AssemblerConfigurationSource configSource )
         throws AssemblyReadException, InvalidAssemblerConfigurationException
     {
         Assembly assembly;
 
-        File basedir = configSource.getBasedir();
-        MavenProject project = configSource.getProject();
+        final File basedir = configSource.getBasedir();
+        final MavenProject project = configSource.getProject();
 
         try
         {
-            Map context = new HashMap( System.getProperties() );
+            final Map<String, String> context = new HashMap<String, String>();
+            for ( final Object k : System.getProperties()
+                                         .keySet() )
+            {
+                final String key = (String) k;
+                context.put( key, System.getProperty( key ) );
+            }
 
             context.put( "basedir", basedir.getAbsolutePath() );
 
-            AssemblyXpp3Reader r = new AssemblyXpp3Reader();
+            final AssemblyXpp3Reader r = new AssemblyXpp3Reader();
             assembly = r.read( reader );
 
             mergeComponentsWithMainAssembly( assembly, configSource );
@@ -372,17 +387,20 @@ public class DefaultAssemblyReader
 
             debugPrintAssembly( "After assembly is interpolated:", assembly );
         }
-        catch ( IOException e )
+        catch ( final IOException e )
         {
-            throw new AssemblyReadException( "Error reading descriptor at: " + locationDescription + ": " + e.getMessage(), e );
+            throw new AssemblyReadException( "Error reading descriptor at: " + locationDescription + ": "
+                            + e.getMessage(), e );
         }
-        catch ( XmlPullParserException e )
+        catch ( final XmlPullParserException e )
         {
-            throw new AssemblyReadException( "Error reading descriptor at: " + locationDescription + ": " + e.getMessage(), e );
+            throw new AssemblyReadException( "Error reading descriptor at: " + locationDescription + ": "
+                            + e.getMessage(), e );
         }
-        catch ( AssemblyInterpolationException e )
+        catch ( final AssemblyInterpolationException e )
         {
-            throw new AssemblyReadException( "Error reading descriptor at: " + locationDescription + ": " + e.getMessage(), e );
+            throw new AssemblyReadException( "Error reading descriptor at: " + locationDescription + ": "
+                            + e.getMessage(), e );
         }
         finally
         {
@@ -397,16 +415,17 @@ public class DefaultAssemblyReader
         return assembly;
     }
 
-    private void debugPrintAssembly( String message, Assembly assembly )
+    private void debugPrintAssembly( final String message, final Assembly assembly )
     {
-        StringWriter sWriter = new StringWriter();
+        final StringWriter sWriter = new StringWriter();
         try
         {
             new AssemblyXpp3Writer().write( sWriter, assembly );
         }
-        catch ( IOException e )
+        catch ( final IOException e )
         {
-            getLogger().debug( "Failed to print debug message with assembly descriptor listing, and message: " + message, e );
+            getLogger().debug( "Failed to print debug message with assembly descriptor listing, and message: "
+                                               + message, e );
         }
 
         getLogger().debug( message + "\n\n" + sWriter.toString() + "\n\n" );
@@ -414,55 +433,56 @@ public class DefaultAssemblyReader
 
     /**
      * Add the contents of all included components to main assembly
-     *
+     * 
      * @param assembly
      * @throws AssemblyReadException
      * @throws MojoFailureException
      * @throws MojoExecutionException
      */
-    protected void mergeComponentsWithMainAssembly( Assembly assembly, AssemblerConfigurationSource configSource )
+    protected void mergeComponentsWithMainAssembly( final Assembly assembly,
+                                                    final AssemblerConfigurationSource configSource )
         throws AssemblyReadException
     {
-        RelativeFileLocatorStrategy rfls = new RelativeFileLocatorStrategy( configSource.getBasedir() );
+        final RelativeFileLocatorStrategy rfls = new RelativeFileLocatorStrategy( configSource.getBasedir() );
 
         // allow absolute paths in componentDescriptor... MASSEMBLY-486
-        FileLocatorStrategy afls = new FileLocatorStrategy();
+        final FileLocatorStrategy afls = new FileLocatorStrategy();
 
-        ClasspathResourceLocatorStrategy crls = new ClasspathResourceLocatorStrategy();
+        final ClasspathResourceLocatorStrategy crls = new ClasspathResourceLocatorStrategy();
 
-        ArtifactLocatorStrategy als = new ArtifactLocatorStrategy( factory, resolver,
-                                                                   configSource.getLocalRepository(),
-                                                                   configSource.getRemoteRepositories(),
-                                                                   "assembly-component" );
+        final ArtifactLocatorStrategy als =
+            new ArtifactLocatorStrategy( factory, resolver, configSource.getLocalRepository(),
+                                         configSource.getRemoteRepositories(), "assembly-component" );
 
-        URLLocatorStrategy uls = new URLLocatorStrategy();
+        final URLLocatorStrategy uls = new URLLocatorStrategy();
 
-        Locator locator = new Locator();
+        final Locator locator = new Locator();
         locator.addStrategy( rfls );
         locator.addStrategy( afls );
         locator.addStrategy( als );
         locator.addStrategy( crls );
         locator.addStrategy( uls );
 
-        AssemblyExpressionEvaluator aee = new AssemblyExpressionEvaluator( configSource );
+        final AssemblyExpressionEvaluator aee = new AssemblyExpressionEvaluator( configSource );
 
-        List componentLocations = assembly.getComponentDescriptors();
+        final List<String> componentLocations = assembly.getComponentDescriptors();
 
-        for ( Iterator it = componentLocations.iterator(); it.hasNext(); )
+        for ( final Iterator<String> it = componentLocations.iterator(); it.hasNext(); )
         {
-            String location = (String) it.next();
-            
+            String location = it.next();
+
             // allow expressions in path to component descriptor... MASSEMBLY-486
             try
             {
-                location = aee.evaluate( location ).toString();
+                location = aee.evaluate( location )
+                              .toString();
             }
-            catch ( Exception eee )
+            catch ( final Exception eee )
             {
                 getLogger().error( "Error interpolating componentDescriptor: " + location, eee );
             }
 
-            Location resolvedLocation = locator.resolve( location );
+            final Location resolvedLocation = locator.resolve( location );
 
             if ( resolvedLocation == null )
             {
@@ -475,11 +495,11 @@ public class DefaultAssemblyReader
                 reader = new InputStreamReader( resolvedLocation.getInputStream() );
                 component = new ComponentXpp3Reader().read( reader );
             }
-            catch ( IOException e )
+            catch ( final IOException e )
             {
                 throw new AssemblyReadException( "Error reading component descriptor", e );
             }
-            catch ( XmlPullParserException e )
+            catch ( final XmlPullParserException e )
             {
                 throw new AssemblyReadException( "Error reading component descriptor", e );
             }
@@ -494,69 +514,71 @@ public class DefaultAssemblyReader
 
     /**
      * Add the content of a single Component to main assembly
+     * 
      * @param component
      * @param assembly
      */
-    protected void mergeComponentWithAssembly( Component component, Assembly assembly )
+    protected void mergeComponentWithAssembly( final Component component, final Assembly assembly )
     {
-        List containerHandlerDescriptors = component.getContainerDescriptorHandlers();
+        final List<ContainerDescriptorHandlerConfig> containerHandlerDescriptors =
+            component.getContainerDescriptorHandlers();
 
-        for ( Iterator it = containerHandlerDescriptors.iterator(); it.hasNext(); )
+        for ( final Iterator<ContainerDescriptorHandlerConfig> it = containerHandlerDescriptors.iterator(); it.hasNext(); )
         {
-            ContainerDescriptorHandlerConfig cfg = (ContainerDescriptorHandlerConfig) it.next();
+            final ContainerDescriptorHandlerConfig cfg = it.next();
             assembly.addContainerDescriptorHandler( cfg );
         }
 
-        List dependencySetList = component.getDependencySets();
+        final List<DependencySet> dependencySetList = component.getDependencySets();
 
-        for ( Iterator it = dependencySetList.iterator(); it.hasNext(); )
+        for ( final Iterator<DependencySet> it = dependencySetList.iterator(); it.hasNext(); )
         {
-            DependencySet dependencySet = ( DependencySet ) it.next();
+            final DependencySet dependencySet = it.next();
             assembly.addDependencySet( dependencySet );
         }
 
-        List fileSetList = component.getFileSets();
+        final List<FileSet> fileSetList = component.getFileSets();
 
-        for ( Iterator it = fileSetList.iterator(); it.hasNext(); )
+        for ( final Iterator<FileSet> it = fileSetList.iterator(); it.hasNext(); )
         {
-            FileSet fileSet = ( FileSet ) it.next();
+            final FileSet fileSet = it.next();
 
             assembly.addFileSet( fileSet );
         }
 
-        List fileList = component.getFiles();
+        final List<FileItem> fileList = component.getFiles();
 
-        for ( Iterator it = fileList.iterator(); it.hasNext(); )
+        for ( final Iterator<FileItem> it = fileList.iterator(); it.hasNext(); )
         {
-            FileItem fileItem = ( FileItem ) it.next();
+            final FileItem fileItem = it.next();
 
             assembly.addFile( fileItem );
         }
 
-        List repositoriesList = component.getRepositories();
+        final List<Repository> repositoriesList = component.getRepositories();
 
-        for ( Iterator it = repositoriesList.iterator(); it.hasNext(); )
+        for ( final Iterator<Repository> it = repositoriesList.iterator(); it.hasNext(); )
         {
-            Repository repository = ( Repository ) it.next();
+            final Repository repository = it.next();
 
             assembly.addRepository( repository );
         }
     }
 
-    public void includeSiteInAssembly( Assembly assembly, AssemblerConfigurationSource configSource )
+    public void includeSiteInAssembly( final Assembly assembly, final AssemblerConfigurationSource configSource )
         throws InvalidAssemblerConfigurationException
     {
-        File siteDirectory = configSource.getSiteDirectory();
+        final File siteDirectory = configSource.getSiteDirectory();
 
         if ( !siteDirectory.exists() )
         {
             throw new InvalidAssemblerConfigurationException(
-                "site did not exist in the target directory - please run site:site before creating the assembly" );
+                                                              "site did not exist in the target directory - please run site:site before creating the assembly" );
         }
 
         getLogger().info( "Adding site directory to assembly : " + siteDirectory );
 
-        FileSet siteFileSet = new FileSet();
+        final FileSet siteFileSet = new FileSet();
 
         siteFileSet.setDirectory( siteDirectory.getPath() );
 
@@ -565,6 +587,7 @@ public class DefaultAssemblyReader
         assembly.addFileSet( siteFileSet );
     }
 
+    @Override
     protected Logger getLogger()
     {
         Logger logger = super.getLogger();
