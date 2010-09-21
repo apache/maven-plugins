@@ -1134,8 +1134,7 @@ public class PdfMojo
         }
         catch ( NoSuchMethodError e )
         {
-            getLog().info( "Ignoring api call removed in maven 3, no reports are generated!" );
-            getLog().debug( e );
+            getLog().info( "ignoring not anymore existing api call in maven 3" );
             return null;
         }
     }
