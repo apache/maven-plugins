@@ -30,8 +30,8 @@ import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
 
 import java.io.File;
-import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
@@ -72,9 +72,10 @@ public class UnpackMojo
      * 
      * @throws MojoExecutionException
      */
-    public void execute() throws MojoExecutionException, MojoFailureException
+    public void execute()
+        throws MojoExecutionException, MojoFailureException
     {
-        final Set<Artifact> dependencies = new HashSet<Artifact>();
+        final Set<Artifact> dependencies = new LinkedHashSet<Artifact>();
 
         if ( project.getArtifact() != null && project.getArtifact()
                                                      .getFile() != null )
