@@ -1,0 +1,100 @@
+import java.io.*;
+import java.util.jar.*;
+
+try
+{
+  JarFile file = new JarFile( new File( basedir, "child2/target/child2-1.0-SNAPSHOT-bin.jar" ) );
+  JarEntry handlerEntry = file.getEntry( "META-INF/spring.handlers" );
+  if ( handlerEntry == null )
+  {
+    return false;
+  }
+
+  BufferedReader br = new BufferedReader( new InputStreamReader( file.getInputStream( handlerEntry ) ) );
+
+  boolean aopFound = false;
+  boolean ctxFound = false;
+
+  String line = null;
+  while( ( line = br.readLine() ) != null )
+  {
+    if ( line.endsWith( "AopNamespaceHandler1" ) )
+    {
+      aopFound = true;
+    }
+    else if ( line.endsWith( "ContextNamespaceHandler1" ) )
+    {
+      ctxFound = true;
+    }
+
+    if ( aopFound && ctxFound )
+    {
+      break;
+    }
+  }
+
+  if ( !aopFound )
+  {
+    System.out.println( "Cannot find entry 'AopNamespaceHandler1' in: " + handlerEntry.getName() );
+    return false;
+  }
+
+  br.close();
+  
+  if ( !ctxFound )
+  {
+    System.out.println( "Cannot find entry 'ContextNamespaceHandler1' in: " + handlerEntry.getName() );
+    return false;
+  }
+  
+  JarEntry schemaEntry = file.getEntry( "META-INF/spring.schemas" );
+  if ( schemaEntry == null )
+  {
+    return false;
+  }
+
+  br = new BufferedReader( new InputStreamReader( file.getInputStream( schemaEntry ) ) );
+
+  boolean found30 = false;
+  boolean found40 = false;
+
+  String line = null;
+  while( ( line = br.readLine() ) != null )
+  {
+    if ( line.endsWith( "spring-aop-3.0.xsd" ) )
+    {
+      found30 = true;
+    }
+    else if ( line.endsWith( "spring-aop-4.0.xsd" ) )
+    {
+      found40 = true;
+    }
+
+    if ( found30 && found40 )
+    {
+      break;
+    }
+  }
+
+  br.close();
+  
+  if ( !found30 )
+  {
+    System.out.println( "Cannot find entry 'spring-aop-3.0.xsd' in: " + schemaEntry.getName() );
+    return false;
+  }
+
+  if ( !found40 )
+  {
+    System.out.println( "Cannot find entry 'spring-aop-4.0.xsd' in: " + schemaEntry.getName() );
+    return false;
+  }
+  
+  return true;
+}
+catch( IOException e )
+{
+    e.printStackTrace();
+}
+
+return false;
