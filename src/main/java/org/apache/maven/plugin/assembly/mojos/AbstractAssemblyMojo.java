@@ -198,7 +198,7 @@ public abstract class AbstractAssemblyMojo
     /**
      * Base directory of the project.
      * 
-     * @parameter default-value="${basedir}"
+     * @parameter default-value="${project.basedir}"
      * @required
      * @readonly
      */
@@ -329,7 +329,8 @@ public abstract class AbstractAssemblyMojo
      * @throws org.apache.maven.plugin.MojoExecutionException
      * 
      */
-    public void execute() throws MojoExecutionException, MojoFailureException
+    public void execute()
+        throws MojoExecutionException, MojoFailureException
     {
         if ( skipAssembly )
         {
