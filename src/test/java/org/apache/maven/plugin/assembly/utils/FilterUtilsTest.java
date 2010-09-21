@@ -30,6 +30,7 @@ import org.codehaus.plexus.logging.console.ConsoleLogger;
 import org.easymock.MockControl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -38,7 +39,7 @@ import java.util.Set;
 import junit.framework.TestCase;
 
 public class FilterUtilsTest
-    extends TestCase
+extends TestCase
 {
 
     private MockManager mockManager = new MockManager();
@@ -102,28 +103,36 @@ public class FilterUtilsTest
     }
 
     public void testFilterArtifacts_ShouldNotRemoveArtifactDirectlyIncluded()
-        throws InvalidAssemblerConfigurationException
+    throws InvalidAssemblerConfigurationException
     {
         verifyArtifactInclusion( "group", "artifact", "group:artifact", null, null, null );
         verifyArtifactInclusion( "group", "artifact", "group:artifact:jar", null, null, null );
     }
 
     public void testFilterArtifacts_ShouldNotRemoveArtifactTransitivelyIncluded()
-        throws InvalidAssemblerConfigurationException
+    throws InvalidAssemblerConfigurationException
     {
-        verifyArtifactInclusion( "group", "artifact", "group:dependentArtifact", null, Collections
-            .singletonList( "group:dependentArtifact:jar:version" ), null );
+        verifyArtifactInclusion( "group",
+                                 "artifact",
+                                 "group:dependentArtifact",
+                                 null,
+                                 Arrays.asList( new String[] { "current:project:jar:1.0",
+                                 "group:dependentArtifact:jar:version" } ), null );
     }
 
     public void testFilterArtifacts_ShouldRemoveArtifactTransitivelyExcluded()
-        throws InvalidAssemblerConfigurationException
+    throws InvalidAssemblerConfigurationException
     {
-        verifyArtifactExclusion( "group", "artifact", null, "group:dependentArtifact", Collections
-            .singletonList( "group:dependentArtifact:jar:version" ), null );
+        verifyArtifactExclusion( "group",
+                                 "artifact",
+                                 null,
+                                 "group:dependentArtifact",
+                                 Arrays.asList( new String[] { "current:project:jar:1.0",
+                                 "group:dependentArtifact:jar:version" } ), null );
     }
 
     public void testFilterArtifacts_ShouldRemoveArtifactDirectlyExcluded()
-        throws InvalidAssemblerConfigurationException
+    throws InvalidAssemblerConfigurationException
     {
         verifyArtifactExclusion( "group", "artifact", null, "group:artifact", null, null );
 
@@ -133,14 +142,14 @@ public class FilterUtilsTest
     }
 
     public void testFilterArtifacts_ShouldNotRemoveArtifactNotIncludedAndNotExcluded()
-        throws InvalidAssemblerConfigurationException
+    throws InvalidAssemblerConfigurationException
     {
         verifyArtifactInclusion( "group", "artifact", null, null, null, null );
         verifyArtifactInclusion( "group", "artifact", null, null, null, null );
     }
 
     public void testFilterArtifacts_ShouldRemoveArtifactExcludedByAdditionalFilter()
-        throws InvalidAssemblerConfigurationException
+    throws InvalidAssemblerConfigurationException
     {
         ArtifactFilter filter = new ArtifactFilter()
         {
@@ -163,14 +172,22 @@ public class FilterUtilsTest
 
     public void testFilterProjects_ShouldNotRemoveProjectTransitivelyIncluded()
     {
-        verifyProjectInclusion( "group", "artifact", "group:dependentArtifact", null, Collections
-            .singletonList( "group:dependentArtifact:jar:version" ) );
+        verifyProjectInclusion( "group",
+                                "artifact",
+                                "group:dependentArtifact",
+                                null,
+                                Arrays.asList( new String[] { "current:project:jar:1.0",
+                                "group:dependentArtifact:jar:version" } ) );
     }
 
     public void testFilterProjects_ShouldRemoveProjectTransitivelyExcluded()
     {
-        verifyProjectExclusion( "group", "artifact", null, "group:dependentArtifact", Collections
-            .singletonList( "group:dependentArtifact:jar:version" ) );
+        verifyProjectExclusion( "group",
+                                "artifact",
+                                null,
+                                "group:dependentArtifact",
+                                Arrays.asList( new String[] { "current:project:jar:1.0",
+                                    "group:dependentArtifact:jar:version" } ) );
     }
 
     public void testFilterProjects_ShouldRemoveProjectDirectlyExcluded()
@@ -187,7 +204,7 @@ public class FilterUtilsTest
 
     private void verifyArtifactInclusion( String groupId, String artifactId, String inclusionPattern,
                                           String exclusionPattern, List depTrail, ArtifactFilter additionalFilter )
-        throws InvalidAssemblerConfigurationException
+    throws InvalidAssemblerConfigurationException
     {
         verifyArtifactFiltering( groupId, artifactId, inclusionPattern, exclusionPattern, depTrail, true,
                                  additionalFilter );
@@ -195,7 +212,7 @@ public class FilterUtilsTest
 
     private void verifyArtifactExclusion( String groupId, String artifactId, String inclusionPattern,
                                           String exclusionPattern, List depTrail, ArtifactFilter additionalFilter )
-        throws InvalidAssemblerConfigurationException
+    throws InvalidAssemblerConfigurationException
     {
         verifyArtifactFiltering( groupId, artifactId, inclusionPattern, exclusionPattern, depTrail, false,
                                  additionalFilter );
@@ -204,7 +221,7 @@ public class FilterUtilsTest
     private void verifyArtifactFiltering( String groupId, String artifactId, String inclusionPattern,
                                           String exclusionPattern, List depTrail, boolean verifyInclusion,
                                           ArtifactFilter additionalFilter )
-        throws InvalidAssemblerConfigurationException
+    throws InvalidAssemblerConfigurationException
     {
         ArtifactMockAndControl mac = new ArtifactMockAndControl( groupId, artifactId, depTrail );
 
@@ -249,7 +266,7 @@ public class FilterUtilsTest
         {
             assertEquals( 1, artifacts.size() );
             assertEquals( mac.artifact.getDependencyConflictId(), ( (Artifact) artifacts.iterator().next() )
-                .getDependencyConflictId() );
+                          .getDependencyConflictId() );
         }
         else
         {
@@ -340,7 +357,7 @@ public class FilterUtilsTest
     }
 
     private final class ProjectWithArtifactMockControl
-        extends MavenProject
+    extends MavenProject
     {
         ArtifactMockAndControl mac;
 
