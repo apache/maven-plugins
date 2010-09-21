@@ -41,6 +41,7 @@ import org.apache.maven.shared.filtering.MavenFileFilter;
 import org.codehaus.plexus.configuration.PlexusConfiguration;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -50,8 +51,8 @@ import java.util.List;
  * @version $Id$
  */
 public abstract class AbstractAssemblyMojo
-    extends AbstractMojo
-    implements AssemblerConfigurationSource
+extends AbstractMojo
+implements AssemblerConfigurationSource
 {
 
     /**
@@ -211,7 +212,7 @@ public abstract class AbstractAssemblyMojo
      * @component
      */
     private MavenProjectHelper projectHelper;
-    
+
     /**
      * Maven shared filtering utility.
      *
@@ -297,7 +298,7 @@ public abstract class AbstractAssemblyMojo
      * @component
      */
     private AssemblyReader assemblyReader;
-    
+
     /**
      * Allows additional configuration options that are specific to a particular
      * type of archive format. This is intended to capture an XML configuration
@@ -315,7 +316,7 @@ public abstract class AbstractAssemblyMojo
      * @since 2.2-beta-3
      */
     private PlexusConfiguration archiverConfig;
-    
+
     /**
      * This will cause the assembly to run only at the top of a given module tree. That is, run in the project 
      * contained in the same folder where the mvn execution was launched.
@@ -331,14 +332,14 @@ public abstract class AbstractAssemblyMojo
      *
      */
     public void execute()
-        throws MojoExecutionException, MojoFailureException
+    throws MojoExecutionException, MojoFailureException
     {
         if ( skipAssembly )
         {
             getLog().info( "Assemblies have been skipped per configuration of the skipAssembly parameter." );
             return;
         }
-        
+
         //run only at the execution root.
         if (runOnlyAtExecutionRoot && !isThisTheExecutionRoot())
         {
@@ -435,7 +436,7 @@ public abstract class AbstractAssemblyMojo
             catch ( InvalidAssemblerConfigurationException e )
             {
                 throw new MojoFailureException( assembly, "Assembly is incorrectly configured: " + assembly.getId(), "Assembly: "
-                                + assembly.getId() + " is not configured correctly: " + e.getMessage() );
+                                                + assembly.getId() + " is not configured correctly: " + e.getMessage() );
             }
         }
     }
@@ -458,10 +459,10 @@ public abstract class AbstractAssemblyMojo
         {
             log.debug( "This is NOT the execution root." );
         }
-        
+
         return result;
     }
-    
+
     protected AssemblyArchiver getAssemblyArchiver()
     {
         return assemblyArchiver;
@@ -564,6 +565,10 @@ public abstract class AbstractAssemblyMojo
         if ( filters == null )
         {
             filters = getProject().getBuild().getFilters();
+            if ( filters == null )
+            {
+                filters = Collections.EMPTY_LIST;
+            }
         }
         return filters;
     }
@@ -721,11 +726,11 @@ public abstract class AbstractAssemblyMojo
     public void setIgnoreMissingDescriptor(boolean ignoreMissingDescriptor) {
         this.ignoreMissingDescriptor = ignoreMissingDescriptor;
     }
-    
+
     public MavenSession getMavenSession() {
-    	return this.mavenSession;
+        return this.mavenSession;
     }
-    
+
     public String getArchiverConfig()
     {
         return archiverConfig == null ? null : archiverConfig.toString();

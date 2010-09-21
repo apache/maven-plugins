@@ -25,7 +25,7 @@ under the License.
   <parent>
     <artifactId>maven-plugins</artifactId>
     <groupId>org.apache.maven.plugins</groupId>
-    <version>17</version>
+    <version>18</version>
   </parent>
 
   <artifactId>maven-assembly-plugin</artifactId>
@@ -50,19 +50,20 @@ under the License.
   </issueManagement>
 
   <properties>
-    <mdoVersion>1.1.1</mdoVersion>
+    <mdoVersion>1.1.2</mdoVersion>
+    <mavenVersion>2.2.1</mavenVersion>
   </properties>
 
   <dependencies>
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
       <artifactId>maven-common-artifact-filters</artifactId>
-      <version>1.1</version>
+      <version>1.3-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-interpolation</artifactId>
-      <version>1.7</version>
+      <version>1.13</version>
     </dependency>
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
@@ -88,7 +89,7 @@ under the License.
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
       <artifactId>maven-filtering</artifactId>
-      <version>1.0-beta-2</version>
+      <version>1.0-beta-4</version>
     </dependency>
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
@@ -115,17 +116,17 @@ under the License.
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-plugin-api</artifactId>
-      <version>2.0.4</version>
+      <version>${mavenVersion}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-project</artifactId>
-      <version>2.0.4</version>
+      <version>${mavenVersion}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-archiver</artifactId>
-      <version>2.4</version>
+      <version>2.4.1</version>
     </dependency>
     <!-- FIXME: I'm specifying a dependency on plexus-container-default
                 in order to force the version to be compatible with maven
@@ -144,12 +145,12 @@ under the License.
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-artifact</artifactId>
-      <version>2.0.4</version>
+      <version>${mavenVersion}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-model</artifactId>
-      <version>2.0.4</version>
+      <version>${mavenVersion}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
@@ -289,6 +290,14 @@ under the License.
     </plugins>
     <pluginManagement>
       <plugins>
+        <plugin>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>2.3.1</version>
+          <configuration>
+            <source>1.5</source>
+            <target>1.5</target>
+          </configuration>
+        </plugin>
         <plugin>
           <artifactId>maven-surefire-plugin</artifactId>
           <configuration>
