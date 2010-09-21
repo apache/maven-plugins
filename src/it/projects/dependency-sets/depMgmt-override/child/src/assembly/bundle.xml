@@ -1,0 +1,19 @@
+<assembly>
+  <!-- TODO: Change ${pom.*} references to ${project.*} once maven-assembly-plugin 2.2-beta-3 is available -->
+  <includeBaseDirectory>false</includeBaseDirectory>
+  <id>bundle</id>
+  <formats>
+    <format>dir</format>
+  </formats>
+  
+  <dependencySets>
+    <dependencySet>
+      <unpack>false</unpack>
+      <useProjectArtifact>false</useProjectArtifact>
+      <outputDirectory>.</outputDirectory>
+      <includes>
+        <include>org.apache.maven:maven-plugin-api</include>
+      </includes>
+    </dependencySet>
+  </dependencySets>
+</assembly>
