@@ -19,37 +19,90 @@ package org.apache.maven.plugin.assembly.archive.archiver;
  * under the License.
  */
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import org.apache.maven.plugin.assembly.testutils.TestFileManager;
+import org.apache.maven.plugin.assembly.testutils.TrackingArchiverStub;
+import org.apache.maven.plugin.assembly.testutils.TrackingArchiverStub.Addition;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
+import org.codehaus.plexus.archiver.util.DefaultFileSet;
 import org.codehaus.plexus.components.io.fileselectors.FileInfo;
 import org.codehaus.plexus.components.io.fileselectors.FileSelector;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.logging.console.ConsoleLogger;
 import org.easymock.MockControl;
+import org.junit.AfterClass;
+import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 public class AssemblyProxyArchiverTest
-    extends TestCase
 {
 
-    private final TestFileManager fileManager = new TestFileManager( "massembly-proxyArchiver", "" );
+    private static final TestFileManager fileManager = new TestFileManager( "massembly-proxyArchiver", "" );
 
-    @Override
-    public void tearDown()
-        throws Exception
+    private static final Logger logger = new ConsoleLogger( Logger.LEVEL_DEBUG, "test" );
+
+    @AfterClass
+    public static void cleanupFiles()
     {
         fileManager.cleanUp();
     }
 
-    public void testAddFile_NoPerms_CallAcceptFilesOnlyOnce()
+    @Test( timeout = 5000 )
+    public void addFileSet_SkipWhenSourceIsAssemblyWorkDir()
+        throws IOException, ArchiverException
+    {
+        final File sources = fileManager.createTempDir();
+
+        final File workdir = new File( sources, "workdir" );
+
+        final TrackingArchiverStub tracker = new TrackingArchiverStub();
+        final AssemblyProxyArchiver archiver =
+            new AssemblyProxyArchiver( "", tracker, null, null, null, workdir, logger, false );
+
+        final DefaultFileSet fs = new DefaultFileSet();
+        fs.setDirectory( workdir );
+
+        archiver.addFileSet( fs );
+
+        assertTrue( tracker.added.isEmpty() );
+    }
+
+    @Test( timeout = 5000 )
+    public void addFileSet_addExcludeWhenSourceContainsAssemblyWorkDir()
+        throws IOException, ArchiverException
+    {
+        final File sources = fileManager.createTempDir();
+
+        final File workdir = new File( sources, "workdir" );
+
+        final TrackingArchiverStub tracker = new TrackingArchiverStub();
+        final AssemblyProxyArchiver archiver =
+            new AssemblyProxyArchiver( "", tracker, null, null, null, workdir, logger, false );
+
+        final DefaultFileSet fs = new DefaultFileSet();
+        fs.setDirectory( sources );
+
+        archiver.addFileSet( fs );
+
+        assertEquals( 1, tracker.added.size() );
+
+        final Addition addition = tracker.added.get( 0 );
+        assertNotNull( addition.excludes );
+        assertEquals( 1, addition.excludes.length );
+        assertEquals( workdir.getName(), addition.excludes[0] );
+    }
+
+    @Test
+    public void addFile_NoPerms_CallAcceptFilesOnlyOnce()
         throws IOException, ArchiverException
     {
         final MockControl delegateControl = MockControl.createControl( Archiver.class );
@@ -66,8 +119,8 @@ public class AssemblyProxyArchiverTest
         delegateControl.replay();
 
         final AssemblyProxyArchiver archiver =
-            new AssemblyProxyArchiver( "", delegate, null, selectors, null, new ConsoleLogger( Logger.LEVEL_DEBUG,
-                                                                                               "test" ), false );
+            new AssemblyProxyArchiver( "", delegate, null, selectors, null, new File( "." ),
+                                       new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ), false );
 
         final File inputFile = fileManager.createTempFile();
 
@@ -78,7 +131,8 @@ public class AssemblyProxyArchiverTest
         delegateControl.verify();
     }
 
-    public void testAddDirectory_NoPerms_CallAcceptFilesOnlyOnce()
+    @Test
+    public void addDirectory_NoPerms_CallAcceptFilesOnlyOnce()
         throws IOException, ArchiverException
     {
         final Archiver delegate = new JarArchiver();
@@ -91,8 +145,8 @@ public class AssemblyProxyArchiverTest
         selectors.add( counter );
 
         final AssemblyProxyArchiver archiver =
-            new AssemblyProxyArchiver( "", delegate, null, selectors, null, new ConsoleLogger( Logger.LEVEL_DEBUG,
-                                                                                               "test" ), false );
+            new AssemblyProxyArchiver( "", delegate, null, selectors, null, new File( "." ),
+                                       new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ), false );
 
         final File dir = fileManager.createTempDir();
         fileManager.createFile( dir, "file.txt", "This is a test." );
