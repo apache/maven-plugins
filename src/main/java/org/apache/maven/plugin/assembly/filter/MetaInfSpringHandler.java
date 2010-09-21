@@ -25,7 +25,7 @@ public class MetaInfSpringHandler
     extends AbstractLineAggregatingHandler
 {
 
-    private static final String SPRING_PATH_PREFIX = "/META-INF";
+    private static final String SPRING_PATH_PREFIX = "META-INF/";
 
     @Override
     protected String getOutputPathPrefix( final FileInfo fileInfo )
