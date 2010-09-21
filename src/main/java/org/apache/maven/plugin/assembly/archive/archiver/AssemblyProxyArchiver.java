@@ -78,14 +78,6 @@ public class AssemblyProxyArchiver
     public AssemblyProxyArchiver( final String rootPrefix, final Archiver delegate,
                                   final List<ContainerDescriptorHandler> containerDescriptorHandlers,
                                   final List<FileSelector> extraSelectors,
-                                  final List<ArchiveFinalizer> extraFinalizers, final Logger logger )
-    {
-        this( rootPrefix, delegate, containerDescriptorHandlers, extraSelectors, extraFinalizers, logger, false );
-    }
-
-    public AssemblyProxyArchiver( final String rootPrefix, final Archiver delegate,
-                                  final List<ContainerDescriptorHandler> containerDescriptorHandlers,
-                                  final List<FileSelector> extraSelectors,
                                   final List<ArchiveFinalizer> extraFinalizers, final Logger logger,
                                   final boolean dryRun )
     {
@@ -142,7 +134,8 @@ public class AssemblyProxyArchiver
     }
 
     public void addArchivedFileSet( final File archiveFile, final String prefix, final String[] includes,
-                                    final String[] excludes ) throws ArchiverException
+                                    final String[] excludes )
+        throws ArchiverException
     {
         final String archiveKey = getArchiveKey( archiveFile, prefix );
         if ( seenPaths.contains( archiveKey ) )
@@ -201,7 +194,8 @@ public class AssemblyProxyArchiver
         }
     }
 
-    public void addArchivedFileSet( final File archiveFile, final String prefix ) throws ArchiverException
+    public void addArchivedFileSet( final File archiveFile, final String prefix )
+        throws ArchiverException
     {
         final String archiveKey = getArchiveKey( archiveFile, prefix );
         if ( seenPaths.contains( archiveKey ) )
@@ -276,7 +270,8 @@ public class AssemblyProxyArchiver
         }
     }
 
-    public void addArchivedFileSet( final File archiveFile ) throws ArchiverException
+    public void addArchivedFileSet( final File archiveFile )
+        throws ArchiverException
     {
         final String archiveKey = getArchiveKey( archiveFile, "" );
         if ( seenPaths.contains( archiveKey ) )
@@ -313,7 +308,8 @@ public class AssemblyProxyArchiver
     }
 
     public void addDirectory( final File directory, final String prefix, final String[] includes,
-                              final String[] excludes ) throws ArchiverException
+                              final String[] excludes )
+        throws ArchiverException
     {
         inPublicApi.set( Boolean.TRUE );
         try
@@ -343,7 +339,8 @@ public class AssemblyProxyArchiver
         }
     }
 
-    public void addDirectory( final File directory, final String prefix ) throws ArchiverException
+    public void addDirectory( final File directory, final String prefix )
+        throws ArchiverException
     {
         inPublicApi.set( Boolean.TRUE );
         try
@@ -402,7 +399,8 @@ public class AssemblyProxyArchiver
         }
     }
 
-    public void addDirectory( final File directory ) throws ArchiverException
+    public void addDirectory( final File directory )
+        throws ArchiverException
     {
         inPublicApi.set( Boolean.TRUE );
         try
@@ -456,7 +454,8 @@ public class AssemblyProxyArchiver
         }
     }
 
-    public void addFile( final File inputFile, final String destFileName ) throws ArchiverException
+    public void addFile( final File inputFile, final String destFileName )
+        throws ArchiverException
     {
         if ( acceptFile( inputFile ) )
         {
@@ -481,7 +480,8 @@ public class AssemblyProxyArchiver
         }
     }
 
-    public void createArchive() throws ArchiverException, IOException
+    public void createArchive()
+        throws ArchiverException, IOException
     {
         inPublicApi.set( Boolean.TRUE );
         try
@@ -663,7 +663,8 @@ public class AssemblyProxyArchiver
         throw new UnsupportedOperationException( "Undocumented feature of plexus-archiver; this is not yet supported." );
     }
 
-    public void addArchivedFileSet( final ArchivedFileSet fileSet ) throws ArchiverException
+    public void addArchivedFileSet( final ArchivedFileSet fileSet )
+        throws ArchiverException
     {
         final String archiveKey = getArchiveKey( fileSet.getArchive(), "" );
         if ( seenPaths.contains( archiveKey ) )
@@ -695,7 +696,8 @@ public class AssemblyProxyArchiver
         }
     }
 
-    public void addFileSet( final FileSet fileSet ) throws ArchiverException
+    public void addFileSet( final FileSet fileSet )
+        throws ArchiverException
     {
         inPublicApi.set( Boolean.TRUE );
         try
@@ -729,7 +731,8 @@ public class AssemblyProxyArchiver
         return methodElement.getMethodName() + " (archiver line: " + methodElement.getLineNumber() + ")";
     }
 
-    private boolean acceptFile( final File inputFile ) throws ArchiverException
+    private boolean acceptFile( final File inputFile )
+        throws ArchiverException
     {
         if ( Boolean.TRUE != inPublicApi.get() )
         {
@@ -771,7 +774,8 @@ public class AssemblyProxyArchiver
             this.inputFile = inputFile;
         }
 
-        public InputStream getContents() throws IOException
+        public InputStream getContents()
+            throws IOException
         {
             return new FileInputStream( inputFile );
         }
@@ -807,7 +811,8 @@ public class AssemblyProxyArchiver
         }
     }
 
-    public void addResources( final PlexusIoResourceCollection resources ) throws ArchiverException
+    public void addResources( final PlexusIoResourceCollection resources )
+        throws ArchiverException
     {
         inPublicApi.set( Boolean.TRUE );
         try
@@ -820,7 +825,8 @@ public class AssemblyProxyArchiver
         }
     }
 
-    public ResourceIterator getResources() throws ArchiverException
+    public ResourceIterator getResources()
+        throws ArchiverException
     {
         return delegate.getResources();
     }
