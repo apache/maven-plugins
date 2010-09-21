@@ -32,15 +32,17 @@ public class PrefixedFileSet
 {
 
     private final String rootPrefix;
+
     private final FileSet fileSet;
+
     private final FileSelector[] selectors;
 
-    public PrefixedFileSet( FileSet fileSet, String rootPrefix, FileSelector[] selectors )
+    public PrefixedFileSet( final FileSet fileSet, final String rootPrefix, final FileSelector[] selectors )
     {
         this.fileSet = fileSet;
         this.selectors = selectors;
 
-        if ( rootPrefix.length() > 0 && ! rootPrefix.endsWith( "/" ) )
+        if ( rootPrefix.length() > 0 && !rootPrefix.endsWith( "/" ) )
         {
             this.rootPrefix = rootPrefix + "/";
         }
@@ -60,7 +62,7 @@ public class PrefixedFileSet
         FileSelector[] sel = fileSet.getFileSelectors();
         if ( ( sel != null ) && ( selectors != null ) )
         {
-            FileSelector[] temp = new FileSelector[ sel.length + selectors.length ];
+            final FileSelector[] temp = new FileSelector[sel.length + selectors.length];
 
             System.arraycopy( sel, 0, temp, 0, sel.length );
             System.arraycopy( selectors, 0, temp, sel.length, selectors.length );
@@ -83,6 +85,11 @@ public class PrefixedFileSet
     public String getPrefix()
     {
         String prefix = fileSet.getPrefix();
+        if ( prefix == null )
+        {
+            return rootPrefix;
+        }
+
         if ( prefix.startsWith( "/" ) )
         {
             if ( prefix.length() > 1 )

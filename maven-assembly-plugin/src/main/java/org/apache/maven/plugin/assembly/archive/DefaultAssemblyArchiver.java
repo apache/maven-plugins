@@ -318,7 +318,7 @@ public class DefaultAssemblyArchiver
 
         archiver =
             new AssemblyProxyArchiver( prefix, archiver, containerHandlers, extraSelectors, extraFinalizers,
-                                       getLogger(), configSource.isDryRun() );
+                                       configSource.getWorkingDirectory(), getLogger(), configSource.isDryRun() );
 
         return archiver;
     }
