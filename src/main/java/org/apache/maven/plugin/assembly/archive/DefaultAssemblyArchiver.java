@@ -31,6 +31,7 @@ import org.apache.maven.plugin.assembly.archive.phase.AssemblyArchiverPhase;
 import org.apache.maven.plugin.assembly.artifact.DependencyResolver;
 import org.apache.maven.plugin.assembly.filter.ComponentsXmlArchiverFileFilter;
 import org.apache.maven.plugin.assembly.filter.ContainerDescriptorHandler;
+import org.apache.maven.plugin.assembly.filter.MetaInfServicesHandler;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
 import org.apache.maven.plugin.assembly.interpolation.AssemblyExpressionEvaluator;
 import org.apache.maven.plugin.assembly.model.Assembly;
@@ -234,7 +235,7 @@ public class DefaultAssemblyArchiver
         }
 
         List handlers = new ArrayList();
-        boolean foundPlexus = false;
+        List<String> hints = new ArrayList<String>();
 
         if ( ( requestedContainerDescriptorHandlers != null ) && !requestedContainerDescriptorHandlers.isEmpty() )
         {
@@ -260,22 +261,33 @@ public class DefaultAssemblyArchiver
                 }
                 
                 handlers.add( handler );
-
-                if ( "plexus".equals( hint ) )
-                {
-                    foundPlexus = true;
-                }
+                hints.add( hint );
             }
         }
 
-        if ( !foundPlexus )
-        {
-            handlers.add( new ComponentsXmlArchiverFileFilter() );
-        }
+        addBuiltInContainerDescriptorHandlers( hints, handlers );
 
         return handlers;
     }
 
+    private void addBuiltInContainerDescriptorHandlers( final List<String> hints, final List handlers )
+    {
+        if ( !hints.contains( "plexus" ) )
+        {
+            handlers.add( new ComponentsXmlArchiverFileFilter() );
+        }
+
+        if ( !hints.contains( "metaInf-services" ) )
+        {
+            handlers.add( new MetaInfServicesHandler() );
+        }
+
+        if ( !hints.contains( "metaInf-spring" ) )
+        {
+            handlers.add( new MetaInfServicesHandler() );
+        }
+    }
+    
     /**
      * Creates the necessary archiver to build the distribution file.
      *
