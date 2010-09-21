@@ -486,11 +486,23 @@ public abstract class AbstractAssemblyMojo
         return basedir;
     }
 
+    /**
+     * {@inheritDoc}
+     * 
+     * @deprecated This has been replaced by {@link #getDescriptors()}
+     */
+    @Deprecated
     public String getDescriptor()
     {
         return descriptor;
     }
 
+    /**
+     * {@inheritDoc}
+     * 
+     * @deprecated This has been replaced by {@link #getDescriptorReferences()}
+     */
+    @Deprecated
     public String getDescriptorId()
     {
         return descriptorId;
@@ -633,11 +645,23 @@ public abstract class AbstractAssemblyMojo
         this.classifier = classifier;
     }
 
+    /**
+     * {@inheritDoc}
+     * 
+     * @deprecated This has been replaced by {@link #setDescriptors()}
+     */
+    @Deprecated
     public void setDescriptor( final String descriptor )
     {
         this.descriptor = descriptor;
     }
 
+    /**
+     * {@inheritDoc}
+     * 
+     * @deprecated This has been replaced by {@link #setDescriptorReferences()}
+     */
+    @Deprecated
     public void setDescriptorId( final String descriptorId )
     {
         this.descriptorId = descriptorId;
