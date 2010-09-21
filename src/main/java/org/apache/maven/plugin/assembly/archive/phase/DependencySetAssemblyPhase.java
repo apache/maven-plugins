@@ -28,6 +28,7 @@ import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
 import org.apache.maven.plugin.assembly.model.Assembly;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.codehaus.plexus.archiver.Archiver;
+import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.component.annotations.Requirement;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
@@ -46,6 +47,9 @@ public class DependencySetAssemblyPhase
 
     @Requirement
     private MavenProjectBuilder projectBuilder;
+
+    @Requirement
+    private ArchiverManager archiverManager;
 
     public DependencySetAssemblyPhase()
     {
@@ -67,7 +71,7 @@ public class DependencySetAssemblyPhase
     {
         final AddDependencySetsTask task =
             new AddDependencySetsTask( assembly.getDependencySets(), context.getResolvedArtifacts(),
-                                       configSource.getProject(), projectBuilder, getLogger() );
+                                       configSource.getProject(), projectBuilder, archiverManager, getLogger() );
 
         task.execute( archiver, configSource );
     }

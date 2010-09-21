@@ -1,0 +1,18 @@
+import java.io.*;
+
+try
+{
+    File f = new File( basedir, "child2/target/child2-1-bin/child1/assembly-resources/test.txt" );
+    
+    BufferedReader r = new BufferedReader( new FileReader( f ) );
+    if ( r.readLine().equals( "Project Version: 1" ) )
+    {
+      return true;
+    }
+}
+catch( IOException e )
+{
+    e.printStackTrace();
+}
+
+return false;
