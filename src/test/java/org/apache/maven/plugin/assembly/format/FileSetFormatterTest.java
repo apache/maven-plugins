@@ -19,7 +19,6 @@ package org.apache.maven.plugin.assembly.format;
  * under the License.
  */
 
-import junit.framework.TestCase;
 import org.apache.maven.model.Model;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.model.FileSet;
@@ -27,10 +26,10 @@ import org.apache.maven.plugin.assembly.testutils.MockManager;
 import org.apache.maven.plugin.assembly.testutils.TestFileManager;
 import org.apache.maven.plugin.assembly.utils.AssemblyFileUtils;
 import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.PlexusTestCase;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.logging.console.ConsoleLogger;
 import org.codehaus.plexus.util.FileUtils;
-import org.codehaus.plexus.PlexusTestCase;
 import org.easymock.MockControl;
 
 import java.io.File;
@@ -39,7 +38,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class FileSetFormatterTest
-    extends PlexusTestCase
+extends PlexusTestCase
 {
 
     private MockManager mockManager;
@@ -53,7 +52,7 @@ public class FileSetFormatterTest
     private MockControl configSourceControl;
 
     public void setUp()
-        throws Exception
+    throws Exception
     {
         super.setUp();
 
@@ -70,13 +69,13 @@ public class FileSetFormatterTest
     }
 
     public void tearDown()
-        throws IOException
+    throws IOException
     {
         fileManager.cleanUp();
     }
 
     public void testShouldReturnOriginalUnalteredDirectoryWhenLineEndingIsNull()
-        throws AssemblyFormattingException, IOException
+    throws AssemblyFormattingException, IOException
     {
         FileSet fs = new FileSet();
 
@@ -90,7 +89,7 @@ public class FileSetFormatterTest
     }
 
     public void testShouldReturnOriginalUnalteredDirectoryWhenLineEndingIsKeep()
-        throws AssemblyFormattingException, IOException
+    throws AssemblyFormattingException, IOException
     {
         FileSet fs = new FileSet();
         fs.setLineEnding( AssemblyFileUtils.LINE_ENDING_KEEP );
@@ -105,7 +104,7 @@ public class FileSetFormatterTest
     }
 
     public void testShouldReturnOriginalUnalteredDirectoryWhenIncludedFileSetIsEmpty()
-        throws AssemblyFormattingException, IOException
+    throws AssemblyFormattingException, IOException
     {
         File dir = fileManager.createTempDir();
 
@@ -123,7 +122,7 @@ public class FileSetFormatterTest
     }
 
     public void testShouldConvertLineEndingsOnTwoFiles()
-        throws AssemblyFormattingException, IOException
+    throws AssemblyFormattingException, IOException
     {
         File dir = fileManager.createTempDir();
 
@@ -157,7 +156,7 @@ public class FileSetFormatterTest
     }
 
     public void testShouldConvertLineEndingsOnOneFileWithAnotherExplicitlyExcluded()
-        throws AssemblyFormattingException, IOException
+    throws AssemblyFormattingException, IOException
     {
         File dir = fileManager.createTempDir();
 
@@ -191,7 +190,7 @@ public class FileSetFormatterTest
     }
 
     public void testShouldConvertLineEndingsOnOneExplicitlyIncludedFile()
-        throws AssemblyFormattingException, IOException
+    throws AssemblyFormattingException, IOException
     {
         File dir = fileManager.createTempDir();
 
@@ -224,7 +223,7 @@ public class FileSetFormatterTest
     }
 
     public void testShouldConvertLineEndingsOnOneFileAndIgnoreFileWithinDefaultExcludedDir()
-        throws AssemblyFormattingException, IOException
+    throws AssemblyFormattingException, IOException
     {
         File dir = fileManager.createTempDir();
 
@@ -257,7 +256,7 @@ public class FileSetFormatterTest
     }
 
     public void testShouldFilterSeveralFiles()
-        throws Exception
+    throws Exception
     {
         File basedir = fileManager.createTempDir();
 
@@ -298,7 +297,7 @@ public class FileSetFormatterTest
     }
 
     private void enableBasicFilteringConfiguration( File basedir, List filterFilenames )
-        throws Exception
+    throws Exception
     {
         configSource.getTemporaryRootDirectory();
         configSourceControl.setReturnValue( basedir );
@@ -321,7 +320,7 @@ public class FileSetFormatterTest
         configSourceControl.setReturnValue( null, MockControl.ONE_OR_MORE );
 
         configSource.getFilters();
-        configSourceControl.setReturnValue( null, MockControl.ONE_OR_MORE );
+        configSourceControl.setReturnValue( Collections.EMPTY_LIST, MockControl.ONE_OR_MORE );
     }
 
 }
