@@ -29,7 +29,7 @@ under the License.
   </parent>
 
   <artifactId>maven-linkcheck-plugin</artifactId>
-  <version>1.0.1</version>
+  <version>1.1-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
   <name>Maven Linkcheck Plugin</name>
@@ -40,9 +40,9 @@ under the License.
   </prerequisites>
 
   <scm>
-    <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/tags/maven-linkcheck-plugin-1.0.1</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/tags/maven-linkcheck-plugin-1.0.1</developerConnection>
-    <url>http://svn.apache.org/viewvc/maven/plugins/tags/maven-linkcheck-plugin-1.0.1</url>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-linkcheck-plugin/</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/trunk/maven-linkcheck-plugin/</developerConnection>
+    <url>http://svn.apache.org/viewvc/maven/plugins/trunk/maven-linkcheck-plugin/</url>
   </scm>
   <issueManagement>
     <system>jira</system>
