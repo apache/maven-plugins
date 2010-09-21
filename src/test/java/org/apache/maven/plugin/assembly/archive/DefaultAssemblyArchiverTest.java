@@ -137,6 +137,9 @@ public class DefaultAssemblyArchiverTest
         configSource.getArchiverConfig();
         csControl.setReturnValue( null, MockControl.ZERO_OR_MORE );
 
+        configSource.getWorkingDirectory();
+        csControl.setReturnValue( new File( "." ), MockControl.ZERO_OR_MORE );
+
         final Assembly assembly = new Assembly();
         final AssemblyContext context = new DefaultAssemblyContext();
 
@@ -190,6 +193,9 @@ public class DefaultAssemblyArchiverTest
         configSource.isDryRun();
         configCtl.setReturnValue( false, MockControl.ZERO_OR_MORE );
 
+        configSource.getWorkingDirectory();
+        configCtl.setReturnValue( new File( "." ), MockControl.ZERO_OR_MORE );
+
         mm.add( configCtl );
 
         mm.replayAll();
@@ -233,6 +239,9 @@ public class DefaultAssemblyArchiverTest
         configSource.getJarArchiveConfiguration();
         configCtl.setReturnValue( null, MockControl.ZERO_OR_MORE );
 
+        configSource.getWorkingDirectory();
+        configCtl.setReturnValue( new File( "." ), MockControl.ZERO_OR_MORE );
+
         mm.add( configCtl );
 
         mm.replayAll();
@@ -274,6 +283,9 @@ public class DefaultAssemblyArchiverTest
         configSource.getJarArchiveConfiguration();
         configCtl.setReturnValue( null, MockControl.ZERO_OR_MORE );
 
+        configSource.getWorkingDirectory();
+        configCtl.setReturnValue( new File( "." ), MockControl.ZERO_OR_MORE );
+
         mm.add( configCtl );
 
         mm.replayAll();
@@ -305,6 +317,9 @@ public class DefaultAssemblyArchiverTest
 
         configSource.getArchiverConfig();
         configCtl.setReturnValue( null, MockControl.ZERO_OR_MORE );
+
+        configSource.getWorkingDirectory();
+        configCtl.setReturnValue( new File( "." ), MockControl.ZERO_OR_MORE );
 
         mm.add( configCtl );
 

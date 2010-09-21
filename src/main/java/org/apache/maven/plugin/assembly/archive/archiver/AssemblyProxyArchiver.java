@@ -40,6 +40,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -61,6 +62,8 @@ public class AssemblyProxyArchiver
     implements Archiver
 {
 
+    private static final String[] STR_TEMPLATE = new String[0];
+
     private final Archiver delegate;
 
     private String rootPrefix;
@@ -75,14 +78,20 @@ public class AssemblyProxyArchiver
 
     private final Set<String> seenPaths = new HashSet<String>();
 
+    private final String assemblyWorkPath;
+
     public AssemblyProxyArchiver( final String rootPrefix, final Archiver delegate,
                                   final List<ContainerDescriptorHandler> containerDescriptorHandlers,
                                   final List<FileSelector> extraSelectors,
-                                  final List<ArchiveFinalizer> extraFinalizers, final Logger logger,
-                                  final boolean dryRun )
+                                  final List<ArchiveFinalizer> extraFinalizers, final File assemblyWorkDir,
+                                  final Logger logger, final boolean dryRun )
     {
         this.rootPrefix = rootPrefix;
         this.delegate = delegate;
+
+        assemblyWorkPath = assemblyWorkDir.getAbsolutePath()
+                                          .replace( '\\', '/' );
+
         this.logger = logger;
         this.dryRun = dryRun;
 
@@ -330,7 +339,7 @@ public class AssemblyProxyArchiver
             }
             else
             {
-                delegate.addFileSet( fs );
+                doAddFileSet( fs );
             }
         }
         finally
@@ -359,7 +368,7 @@ public class AssemblyProxyArchiver
             }
             else
             {
-                delegate.addFileSet( fs );
+                doAddFileSet( fs );
             }
         }
         finally
@@ -390,7 +399,7 @@ public class AssemblyProxyArchiver
             }
             else
             {
-                delegate.addFileSet( fs );
+                doAddFileSet( fs );
             }
         }
         finally
@@ -419,7 +428,7 @@ public class AssemblyProxyArchiver
             }
             else
             {
-                delegate.addFileSet( fs );
+                doAddFileSet( fs );
             }
         }
         finally
@@ -712,12 +721,70 @@ public class AssemblyProxyArchiver
             }
             else
             {
-                delegate.addFileSet( fs );
+                doAddFileSet( fs );
             }
         }
         finally
         {
             inPublicApi.set( null );
+        }
+    }
+
+    private void doAddFileSet( final FileSet fs )
+        throws ArchiverException
+    {
+        final String fsPath = fs.getDirectory()
+                                .getAbsolutePath()
+                                .replace( '\\', '/' );
+
+        if ( fsPath.equals( assemblyWorkPath ) )
+        {
+            logger.debug( "SKIPPING fileset with source directory matching assembly working-directory: " + fsPath );
+            return;
+        }
+        else if ( assemblyWorkPath.startsWith( fsPath ) )
+        {
+            final List<String> newEx = new ArrayList<String>();
+            if ( fs.getExcludes() != null )
+            {
+                newEx.addAll( Arrays.asList( fs.getExcludes() ) );
+            }
+
+            final String workDirExclude = assemblyWorkPath.substring( fsPath.length() + 1 );
+
+            logger.debug( "Adding exclude for assembly working-directory: " + workDirExclude
+                            + "\nFile-Set source directory: " + fsPath );
+
+            newEx.add( workDirExclude );
+
+            final List<String> newIn = new ArrayList<String>();
+            if ( fs.getIncludes() != null )
+            {
+                for ( final String include : fs.getIncludes() )
+                {
+                    if ( !include.startsWith( workDirExclude ) )
+                    {
+                        newIn.add( include );
+                    }
+                }
+            }
+
+            final DefaultFileSet dfs = new DefaultFileSet();
+
+            dfs.setCaseSensitive( fs.isCaseSensitive() );
+            dfs.setDirectory( fs.getDirectory() );
+            dfs.setExcludes( newEx.toArray( STR_TEMPLATE ) );
+            dfs.setFileSelectors( fs.getFileSelectors() );
+            dfs.setIncludes( newIn.toArray( STR_TEMPLATE ) );
+            dfs.setIncludingEmptyDirectories( fs.isIncludingEmptyDirectories() );
+            dfs.setPrefix( fs.getPrefix() );
+            dfs.setUsingDefaultExcludes( fs.isUsingDefaultExcludes() );
+
+            delegate.addFileSet( dfs );
+        }
+        else
+        {
+            delegate.addFileSet( fs );
         }
     }
 
