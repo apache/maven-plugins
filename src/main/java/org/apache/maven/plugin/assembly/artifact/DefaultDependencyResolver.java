@@ -52,6 +52,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -136,7 +137,7 @@ public class DefaultDependencyResolver
     {
 
         final List<Artifact> missing = new ArrayList<Artifact>();
-        final Set<Artifact> resolved = new HashSet<Artifact>();
+        final Set<Artifact> resolved = new LinkedHashSet<Artifact>();
         for ( final Iterator<Artifact> it = dependencyArtifacts.iterator(); it.hasNext(); )
         {
             final Artifact depArtifact = it.next();

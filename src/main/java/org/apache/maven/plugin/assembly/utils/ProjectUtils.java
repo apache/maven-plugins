@@ -25,7 +25,6 @@ import org.codehaus.plexus.logging.Logger;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -81,7 +80,7 @@ public final class ProjectUtils
                 Set<MavenProject> currentPotentialParents;
                 if ( includeSubModules )
                 {
-                    currentPotentialParents = new HashSet<MavenProject>( modules );
+                    currentPotentialParents = new LinkedHashSet<MavenProject>( modules );
                 }
                 else
                 {

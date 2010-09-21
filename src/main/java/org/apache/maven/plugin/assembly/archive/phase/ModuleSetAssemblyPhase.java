@@ -52,8 +52,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -159,7 +159,7 @@ public class ModuleSetAssemblyPhase
             return;
         }
 
-        final Set<MavenProject> moduleProjects = new HashSet<MavenProject>( projects );
+        final Set<MavenProject> moduleProjects = new LinkedHashSet<MavenProject>( projects );
 
         for ( final Iterator<MavenProject> it = moduleProjects.iterator(); it.hasNext(); )
         {
@@ -536,7 +536,7 @@ public class ModuleSetAssemblyPhase
         {
             if ( !moduleSet.isIncludeSubModules() )
             {
-                moduleProjects = new HashSet<MavenProject>( configSource.getReactorProjects() );
+                moduleProjects = new LinkedHashSet<MavenProject>( configSource.getReactorProjects() );
             }
 
             project = configSource.getReactorProjects()
