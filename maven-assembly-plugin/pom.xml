@@ -199,6 +199,13 @@ under the License.
       <version>3.8.2</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+    	<groupId>org.codehaus.plexus</groupId>
+    	<artifactId>plexus-component-annotations</artifactId>
+    	<version>1.5.4</version>
+    	<type>jar</type>
+    	<scope>compile</scope>
+    </dependency>
   </dependencies>
 
   <repositories>
