@@ -540,22 +540,30 @@ implements AssemblyArchiverPhase
         MavenProject project = configSource.getProject();
 
 
+        Set moduleProjects = null;
         if ( moduleSet.isUseAllReactorProjects() )
         {
+            if ( !moduleSet.isIncludeSubModules() )
+            {
+                moduleProjects = new HashSet( configSource.getReactorProjects() );
+            }
+
             project = (MavenProject) configSource.getReactorProjects().get( 0 );
         }
 
-        Set moduleProjects;
-        try
+        if ( moduleProjects == null )
         {
-            moduleProjects =
-                ProjectUtils.getProjectModules( project, configSource.getReactorProjects(),
-                                                moduleSet.isIncludeSubModules(), logger );
-        }
-        catch ( IOException e )
-        {
-            throw new ArchiveCreationException( "Error retrieving module-set for project: " + project.getId() + ": "
-                                                + e.getMessage(), e );
+            try
+            {
+                moduleProjects =
+                    ProjectUtils.getProjectModules( project, configSource.getReactorProjects(),
+                                                    moduleSet.isIncludeSubModules(), logger );
+            }
+            catch ( IOException e )
+            {
+                throw new ArchiveCreationException( "Error retrieving module-set for project: " + project.getId()
+                                + ": " + e.getMessage(), e );
+            }
         }
 
         FilterUtils.filterProjects( moduleProjects, moduleSet.getIncludes(), moduleSet.getExcludes(), true, logger );
