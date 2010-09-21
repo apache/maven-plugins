@@ -13,6 +13,7 @@
         <include>org.test:child3</include>
       </includes>
       <sources>
+        <includeModuleDirectory>false</includeModuleDirectory>
         <fileSets>
           <fileSet>
             <outputDirectory>sources/${artifact.artifactId}</outputDirectory>
