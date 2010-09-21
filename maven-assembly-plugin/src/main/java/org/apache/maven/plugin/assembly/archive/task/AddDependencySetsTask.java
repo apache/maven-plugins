@@ -42,8 +42,8 @@ import org.codehaus.plexus.logging.Logger;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -209,7 +209,7 @@ public class AddDependencySetsTask
     protected Set<Artifact> resolveDependencyArtifacts( final DependencySet dependencySet )
         throws InvalidAssemblerConfigurationException
     {
-        final Set<Artifact> dependencyArtifacts = new HashSet<Artifact>();
+        final Set<Artifact> dependencyArtifacts = new LinkedHashSet<Artifact>();
         if ( resolvedArtifacts != null )
         {
             dependencyArtifacts.addAll( resolvedArtifacts );
