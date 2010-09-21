@@ -26,12 +26,14 @@ public class AssemblyReadException
     extends Exception
 {
 
-    public AssemblyReadException( String message, Throwable cause )
+    private static final long serialVersionUID = 1L;
+
+    public AssemblyReadException( final String message, final Throwable cause )
     {
         super( message, cause );
     }
 
-    public AssemblyReadException( String message )
+    public AssemblyReadException( final String message )
     {
         super( message );
     }

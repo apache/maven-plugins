@@ -51,16 +51,16 @@ public class AddArtifactTask
 
     private boolean unpack = false;
 
-    private List includes;
+    private List<String> includes;
 
-    private List excludes;
+    private List<String> excludes;
 
     private final Artifact artifact;
 
     private MavenProject project;
-    
+
     private MavenProject moduleProject;
-    
+
     private Artifact moduleArtifact;
 
     private String outputDirectory;
@@ -69,33 +69,36 @@ public class AddArtifactTask
 
     private final Logger logger;
 
-    public AddArtifactTask( Artifact artifact, Logger logger )
+    public AddArtifactTask( final Artifact artifact, final Logger logger )
     {
         this.artifact = artifact;
         this.logger = logger;
     }
 
-    public void execute( Archiver archiver, AssemblerConfigurationSource configSource )
+    public void execute( final Archiver archiver, final AssemblerConfigurationSource configSource )
         throws ArchiveCreationException, AssemblyFormattingException
     {
-        // MASSEMBLY-282: We should support adding a project's standard output file as part of an assembly that replaces it.
-        if ( ( ( artifact.getFile() != null )  &&  ( archiver.getDestFile() != null ) )
-                        && artifact.getFile().equals( archiver.getDestFile() ) )
+        // MASSEMBLY-282: We should support adding a project's standard output file as part of an assembly that replaces
+        // it.
+        if ( ( ( artifact.getFile() != null ) && ( archiver.getDestFile() != null ) )
+                        && artifact.getFile()
+                                   .equals( archiver.getDestFile() ) )
         {
-            File tempRoot = configSource.getTemporaryRootDirectory();
-            File tempArtifactFile = new File( tempRoot, artifact.getFile().getName() );
+            final File tempRoot = configSource.getTemporaryRootDirectory();
+            final File tempArtifactFile = new File( tempRoot, artifact.getFile()
+                                                                      .getName() );
 
             logger.warn( "Artifact: "
-                         + artifact.getId()
-                         + " references the same file as the assembly destination file. Moving it to a temporary location for inclusion." );
+                            + artifact.getId()
+                            + " references the same file as the assembly destination file. Moving it to a temporary location for inclusion." );
             try
             {
                 FileUtils.copyFile( artifact.getFile(), tempArtifactFile );
             }
-            catch ( IOException e )
+            catch ( final IOException e )
             {
-                throw new ArchiveCreationException( "Error moving artifact file: '" + artifact.getFile() + "' to temporary location: " + tempArtifactFile + ". Reason: "
-                                                    + e.getMessage(), e );
+                throw new ArchiveCreationException( "Error moving artifact file: '" + artifact.getFile()
+                                + "' to temporary location: " + tempArtifactFile + ". Reason: " + e.getMessage(), e );
             }
 
             artifact.setFile( tempArtifactFile );
@@ -103,7 +106,9 @@ public class AddArtifactTask
 
         String destDirectory = outputDirectory;
 
-        destDirectory = AssemblyFormatUtils.getOutputDirectory( destDirectory, configSource.getProject(), moduleProject, project, configSource.getFinalName(), configSource );
+        destDirectory =
+            AssemblyFormatUtils.getOutputDirectory( destDirectory, configSource.getProject(), moduleProject, project,
+                                                    configSource.getFinalName(), configSource );
 
         if ( unpack )
         {
@@ -119,16 +124,16 @@ public class AddArtifactTask
             {
                 includesArray = DEFAULT_INCLUDES_ARRAY;
             }
-            String[] excludesArray = TypeConversionUtils.toStringArray( excludes );
+            final String[] excludesArray = TypeConversionUtils.toStringArray( excludes );
 
-            int oldDirMode = archiver.getOverrideDirectoryMode();
-            int oldFileMode = archiver.getOverrideFileMode();
+            final int oldDirMode = archiver.getOverrideDirectoryMode();
+            final int oldFileMode = archiver.getOverrideFileMode();
 
             logger.debug( "Unpacking artifact: " + artifact.getId() + " to assembly location: " + outputLocation + "." );
 
             boolean fileModeSet = false;
             boolean dirModeSet = false;
-            
+
             try
             {
                 if ( fileMode != -1 )
@@ -143,10 +148,11 @@ public class AddArtifactTask
                     dirModeSet = true;
                 }
 
-                File artifactFile = artifact.getFile();
+                final File artifactFile = artifact.getFile();
                 if ( artifactFile == null )
                 {
-                    logger.warn( "Skipping artifact: " + artifact.getId() + "; it does not have an associated file or directory." );
+                    logger.warn( "Skipping artifact: " + artifact.getId()
+                                    + "; it does not have an associated file or directory." );
                 }
                 else if ( artifactFile.isDirectory() )
                 {
@@ -157,14 +163,16 @@ public class AddArtifactTask
                 {
                     logger.debug( "Unpacking artifact contents for: " + artifact + " to: " + outputLocation );
                     logger.debug( "includes:\n" + StringUtils.join( includesArray, "\n" ) + "\n" );
-                    logger.debug( "excludes:\n" + (excludesArray == null ? "none" : StringUtils.join( excludesArray, "\n" ) ) + "\n" );
+                    logger.debug( "excludes:\n"
+                                    + ( excludesArray == null ? "none" : StringUtils.join( excludesArray, "\n" ) )
+                                    + "\n" );
                     archiver.addArchivedFileSet( artifactFile, outputLocation, includesArray, excludesArray );
                 }
             }
-            catch ( ArchiverException e )
+            catch ( final ArchiverException e )
             {
                 throw new ArchiveCreationException( "Error adding file-set for '" + artifact.getId() + "' to archive: "
-                    + e.getMessage(), e );
+                                + e.getMessage(), e );
             }
             finally
             {
@@ -172,7 +180,7 @@ public class AddArtifactTask
                 {
                     archiver.setDirectoryMode( oldDirMode );
                 }
-                
+
                 if ( fileModeSet )
                 {
                     archiver.setFileMode( oldFileMode );
@@ -181,18 +189,19 @@ public class AddArtifactTask
         }
         else
         {
-            String fileNameMapping =
+            final String fileNameMapping =
                 AssemblyFormatUtils.evaluateFileNameMapping( outputFileNameMapping, artifact,
                                                              configSource.getProject(), moduleProject, moduleArtifact,
                                                              project, configSource );
 
-            String outputLocation = destDirectory + fileNameMapping;
+            final String outputLocation = destDirectory + fileNameMapping;
 
             try
             {
-                File artifactFile = artifact.getFile();
+                final File artifactFile = artifact.getFile();
 
-                logger.debug( "Adding artifact: " + artifact.getId() + " with file: " + artifactFile + " to assembly location: " + outputLocation + "." );
+                logger.debug( "Adding artifact: " + artifact.getId() + " with file: " + artifactFile
+                                + " to assembly location: " + outputLocation + "." );
 
                 if ( fileMode != -1 )
                 {
@@ -203,60 +212,60 @@ public class AddArtifactTask
                     archiver.addFile( artifactFile, outputLocation );
                 }
             }
-            catch ( ArchiverException e )
+            catch ( final ArchiverException e )
             {
                 throw new ArchiveCreationException( "Error adding file '" + artifact.getId() + "' to archive: "
-                    + e.getMessage(), e );
+                                + e.getMessage(), e );
             }
         }
     }
 
-    public void setDirectoryMode( int directoryMode )
+    public void setDirectoryMode( final int directoryMode )
     {
         this.directoryMode = directoryMode;
     }
 
-    public void setFileMode( int fileMode )
+    public void setFileMode( final int fileMode )
     {
         this.fileMode = fileMode;
     }
 
-    public void setExcludes( List excludes )
+    public void setExcludes( final List<String> excludes )
     {
         this.excludes = excludes;
     }
 
-    public void setIncludes( List includes )
+    public void setIncludes( final List<String> includes )
     {
         this.includes = includes;
     }
 
-    public void setUnpack( boolean unpack )
+    public void setUnpack( final boolean unpack )
     {
         this.unpack = unpack;
     }
 
-    public void setProject( MavenProject project )
+    public void setProject( final MavenProject project )
     {
         this.project = project;
     }
 
-    public void setOutputDirectory( String outputDirectory )
+    public void setOutputDirectory( final String outputDirectory )
     {
         this.outputDirectory = outputDirectory;
     }
 
-    public void setFileNameMapping( String outputFileNameMapping )
+    public void setFileNameMapping( final String outputFileNameMapping )
     {
         this.outputFileNameMapping = outputFileNameMapping;
     }
 
-    public void setOutputDirectory( String outputDirectory, String defaultOutputDirectory )
+    public void setOutputDirectory( final String outputDirectory, final String defaultOutputDirectory )
     {
         setOutputDirectory( outputDirectory == null ? defaultOutputDirectory : outputDirectory );
     }
 
-    public void setFileNameMapping( String outputFileNameMapping, String defaultOutputFileNameMapping )
+    public void setFileNameMapping( final String outputFileNameMapping, final String defaultOutputFileNameMapping )
     {
         setFileNameMapping( outputFileNameMapping == null ? defaultOutputFileNameMapping : outputFileNameMapping );
     }
@@ -266,7 +275,7 @@ public class AddArtifactTask
         return moduleProject;
     }
 
-    public void setModuleProject( MavenProject moduleProject )
+    public void setModuleProject( final MavenProject moduleProject )
     {
         this.moduleProject = moduleProject;
     }
@@ -276,7 +285,7 @@ public class AddArtifactTask
         return moduleArtifact;
     }
 
-    public void setModuleArtifact( Artifact moduleArtifact )
+    public void setModuleArtifact( final Artifact moduleArtifact )
     {
         this.moduleArtifact = moduleArtifact;
     }

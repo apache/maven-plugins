@@ -36,8 +36,19 @@ public class MetaInfSpringHandler
     @Override
     protected boolean fileMatches( final FileInfo fileInfo )
     {
-        return fileInfo.getName().startsWith( "/META-INF/spring." )
-                        || fileInfo.getName().startsWith( "META-INF/spring." );
+        final String path = fileInfo.getName();
+
+        String leftover = null;
+        if ( path.startsWith( "/META-INF/spring." ) )
+        {
+            leftover = path.substring( "/META-INF/spring.".length() );
+        }
+        else if ( path.startsWith( "META-INF/spring." ) )
+        {
+            leftover = path.substring( "META-INF/spring.".length() - 1 );
+        }
+
+        return leftover != null && leftover.length() > 0;
     }
 
 }

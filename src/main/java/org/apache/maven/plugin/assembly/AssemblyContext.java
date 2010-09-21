@@ -1,12 +1,12 @@
 package org.apache.maven.plugin.assembly;
 
-import java.util.Map;
+import org.apache.maven.artifact.Artifact;
+
+import java.util.Set;
 
 public interface AssemblyContext
 {
-    
-    AssemblyContext setManagedVersionMap( Map managedVersions );
-    
-    Map getManagedVersionMap();
+    void setResolvedArtifacts( Set<Artifact> artifacts );
 
+    Set<Artifact> getResolvedArtifacts();
 }

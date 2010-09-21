@@ -26,12 +26,14 @@ public class InvalidAssemblerConfigurationException
     extends Exception
 {
 
-    public InvalidAssemblerConfigurationException( String message, Throwable error )
+    private static final long serialVersionUID = 1L;
+
+    public InvalidAssemblerConfigurationException( final String message, final Throwable error )
     {
         super( message, error );
     }
 
-    public InvalidAssemblerConfigurationException( String message )
+    public InvalidAssemblerConfigurationException( final String message )
     {
         super( message );
     }

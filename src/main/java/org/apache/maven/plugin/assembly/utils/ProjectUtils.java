@@ -41,15 +41,16 @@ public final class ProjectUtils
     {
     }
 
-    public static Set getProjectModules( MavenProject project, List reactorProjects, boolean includeSubModules,
-                                         Logger logger )
+    public static Set<MavenProject> getProjectModules( final MavenProject project,
+                                                       final List<MavenProject> reactorProjects,
+                                                       final boolean includeSubModules, final Logger logger )
         throws IOException
     {
-        Set singleParentSet = Collections.singleton( project );
+        final Set<MavenProject> singleParentSet = Collections.singleton( project );
 
-        Set moduleCandidates = new LinkedHashSet( reactorProjects );
+        final Set<MavenProject> moduleCandidates = new LinkedHashSet<MavenProject>( reactorProjects );
 
-        Set modules = new LinkedHashSet();
+        final Set<MavenProject> modules = new LinkedHashSet<MavenProject>();
 
         // we temporarily add the master project to the modules set, since this
         // set is pulling double duty as a set of
@@ -65,9 +66,9 @@ public final class ProjectUtils
         {
             changed = 0;
 
-            for ( Iterator candidateIterator = moduleCandidates.iterator(); candidateIterator.hasNext(); )
+            for ( final Iterator<MavenProject> candidateIterator = moduleCandidates.iterator(); candidateIterator.hasNext(); )
             {
-                MavenProject moduleCandidate = ( MavenProject ) candidateIterator.next();
+                final MavenProject moduleCandidate = candidateIterator.next();
 
                 if ( moduleCandidate.getFile() == null )
                 {
@@ -77,19 +78,19 @@ public final class ProjectUtils
                     continue;
                 }
 
-                Set currentPotentialParents;
+                Set<MavenProject> currentPotentialParents;
                 if ( includeSubModules )
                 {
-                    currentPotentialParents = new HashSet( modules );
+                    currentPotentialParents = new HashSet<MavenProject>( modules );
                 }
                 else
                 {
                     currentPotentialParents = singleParentSet;
                 }
 
-                for ( Iterator parentIterator = currentPotentialParents.iterator(); parentIterator.hasNext(); )
+                for ( final Iterator<MavenProject> parentIterator = currentPotentialParents.iterator(); parentIterator.hasNext(); )
                 {
-                    MavenProject potentialParent = ( MavenProject ) parentIterator.next();
+                    final MavenProject potentialParent = parentIterator.next();
 
                     if ( potentialParent.getFile() == null )
                     {
@@ -130,13 +131,15 @@ public final class ProjectUtils
         return modules;
     }
 
-    private static boolean projectContainsModule( MavenProject mainProject, MavenProject moduleProject )
+    private static boolean projectContainsModule( final MavenProject mainProject, final MavenProject moduleProject )
         throws IOException
     {
-        List modules = mainProject.getModules();
-        File basedir = mainProject.getBasedir();
+        @SuppressWarnings( "unchecked" )
+        final List<String> modules = mainProject.getModules();
+        final File basedir = mainProject.getBasedir();
 
-        File moduleFile = moduleProject.getFile().getCanonicalFile();
+        final File moduleFile = moduleProject.getFile()
+                                             .getCanonicalFile();
 
         File moduleBasedir = moduleProject.getBasedir();
 
@@ -147,11 +150,11 @@ public final class ProjectUtils
 
         moduleBasedir = moduleBasedir.getCanonicalFile();
 
-        for ( Iterator it = modules.iterator(); it.hasNext(); )
+        for ( final Iterator<String> it = modules.iterator(); it.hasNext(); )
         {
-            String moduleSubpath = ( String ) it.next();
+            final String moduleSubpath = it.next();
 
-            File moduleDir = new File( basedir, moduleSubpath ).getCanonicalFile();
+            final File moduleDir = new File( basedir, moduleSubpath ).getCanonicalFile();
 
             if ( moduleDir.equals( moduleFile ) || moduleDir.equals( moduleBasedir ) )
             {

@@ -31,7 +31,7 @@ import org.easymock.MockControl;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
 import junit.framework.TestCase;
@@ -40,33 +40,34 @@ public class AssemblyProxyArchiverTest
     extends TestCase
 {
 
-    private TestFileManager fileManager = new TestFileManager( "massembly-proxyArchiver", "" );
+    private final TestFileManager fileManager = new TestFileManager( "massembly-proxyArchiver", "" );
 
-    public void tearDown()
-        throws Exception
+    @Override
+    public void tearDown() throws Exception
     {
         fileManager.cleanUp();
     }
 
-    public void testAddFile_NoPerms_CallAcceptFilesOnlyOnce()
-        throws IOException, ArchiverException
+    public void testAddFile_NoPerms_CallAcceptFilesOnlyOnce() throws IOException, ArchiverException
     {
-        MockControl delegateControl = MockControl.createControl( Archiver.class );
-        Archiver delegate = (Archiver) delegateControl.getMock();
+        final MockControl delegateControl = MockControl.createControl( Archiver.class );
+        final Archiver delegate = (Archiver) delegateControl.getMock();
 
         delegate.addFile( null, null );
         delegateControl.setMatcher( MockControl.ALWAYS_MATCHER );
         delegateControl.setVoidCallable();
 
-        CounterSelector counter = new CounterSelector( true );
-        List selectors = Collections.singletonList( counter );
+        final CounterSelector counter = new CounterSelector( true );
+        final List<FileSelector> selectors = new ArrayList<FileSelector>();
+        selectors.add( counter );
 
         delegateControl.replay();
 
-        AssemblyProxyArchiver archiver = new AssemblyProxyArchiver( "", delegate, Collections.EMPTY_LIST, selectors,
-                                                                      Collections.EMPTY_LIST, new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) );
+        final AssemblyProxyArchiver archiver =
+            new AssemblyProxyArchiver( "", delegate, null, selectors, null, new ConsoleLogger( Logger.LEVEL_DEBUG,
+                                                                                               "test" ) );
 
-        File inputFile = fileManager.createTempFile();
+        final File inputFile = fileManager.createTempFile();
 
         archiver.addFile( inputFile, "file.txt" );
 
@@ -75,25 +76,26 @@ public class AssemblyProxyArchiverTest
         delegateControl.verify();
     }
 
-    public void testAddDirectory_NoPerms_CallAcceptFilesOnlyOnce()
-        throws IOException, ArchiverException
+    public void testAddDirectory_NoPerms_CallAcceptFilesOnlyOnce() throws IOException, ArchiverException
     {
-        Archiver delegate = new JarArchiver();
+        final Archiver delegate = new JarArchiver();
 
-        File output = fileManager.createTempFile();
+        final File output = fileManager.createTempFile();
         delegate.setDestFile( output );
 
-        CounterSelector counter = new CounterSelector( true );
-        List selectors = Collections.singletonList( counter );
+        final CounterSelector counter = new CounterSelector( true );
+        final List<FileSelector> selectors = new ArrayList<FileSelector>();
+        selectors.add( counter );
 
-        AssemblyProxyArchiver archiver = new AssemblyProxyArchiver( "", delegate, Collections.EMPTY_LIST, selectors,
-                                                                      Collections.EMPTY_LIST, new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) );
+        final AssemblyProxyArchiver archiver =
+            new AssemblyProxyArchiver( "", delegate, null, selectors, null, new ConsoleLogger( Logger.LEVEL_DEBUG,
+                                                                                               "test" ) );
 
-        File dir = fileManager.createTempDir();
+        final File dir = fileManager.createTempDir();
         fileManager.createFile( dir, "file.txt", "This is a test." );
 
         archiver.addDirectory( dir );
-        
+
         archiver.createArchive();
 
         assertEquals( 1, counter.getCount() );
@@ -107,7 +109,7 @@ public class AssemblyProxyArchiverTest
 
         private boolean answer = false;
 
-        public CounterSelector( boolean answer )
+        public CounterSelector( final boolean answer )
         {
             this.answer = answer;
         }
@@ -117,8 +119,7 @@ public class AssemblyProxyArchiverTest
             return count;
         }
 
-        public boolean isSelected( FileInfo fileInfo )
-            throws IOException
+        public boolean isSelected( final FileInfo fileInfo ) throws IOException
         {
             if ( fileInfo.isFile() )
             {

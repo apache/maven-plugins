@@ -39,13 +39,14 @@ import java.util.Set;
 import junit.framework.TestCase;
 
 public class FilterUtilsTest
-extends TestCase
+    extends TestCase
 {
 
-    private MockManager mockManager = new MockManager();
+    private final MockManager mockManager = new MockManager();
 
     private Logger logger;
 
+    @Override
     public void setUp()
     {
         clearAll();
@@ -60,8 +61,8 @@ extends TestCase
 
     public void testFilterArtifacts_ShouldThrowExceptionUsingStrictModeWithUnmatchedInclude()
     {
-        MockControl artifactCtl = MockControl.createControl( Artifact.class );
-        Artifact artifact = (Artifact) artifactCtl.getMock();
+        final MockControl artifactCtl = MockControl.createControl( Artifact.class );
+        final Artifact artifact = (Artifact) artifactCtl.getMock();
 
         mockManager.add( artifactCtl );
 
@@ -77,24 +78,24 @@ extends TestCase
         artifact.getDependencyConflictId();
         artifactCtl.setReturnValue( "group:artifact:type", MockControl.ONE_OR_MORE );
 
-        List includes = new ArrayList();
+        final List<String> includes = new ArrayList<String>();
 
         includes.add( "other.group:other-artifact:type:version" );
 
-        List excludes = Collections.EMPTY_LIST;
+        final List<String> excludes = Collections.emptyList();
 
-        Set artifacts = new HashSet();
+        final Set<Artifact> artifacts = new HashSet<Artifact>();
         artifacts.add( artifact );
 
         mockManager.replayAll();
 
         try
         {
-            FilterUtils.filterArtifacts( artifacts, includes, excludes, true, false, Collections.EMPTY_LIST, logger );
+            FilterUtils.filterArtifacts( artifacts, includes, excludes, true, false, logger );
 
             fail( "Should fail because of unmatched include." );
         }
-        catch ( InvalidAssemblerConfigurationException e )
+        catch ( final InvalidAssemblerConfigurationException e )
         {
             // expected.
         }
@@ -103,36 +104,36 @@ extends TestCase
     }
 
     public void testFilterArtifacts_ShouldNotRemoveArtifactDirectlyIncluded()
-    throws InvalidAssemblerConfigurationException
+        throws InvalidAssemblerConfigurationException
     {
         verifyArtifactInclusion( "group", "artifact", "group:artifact", null, null, null );
         verifyArtifactInclusion( "group", "artifact", "group:artifact:jar", null, null, null );
     }
 
     public void testFilterArtifacts_ShouldNotRemoveArtifactTransitivelyIncluded()
-    throws InvalidAssemblerConfigurationException
+        throws InvalidAssemblerConfigurationException
     {
         verifyArtifactInclusion( "group",
                                  "artifact",
                                  "group:dependentArtifact",
                                  null,
                                  Arrays.asList( new String[] { "current:project:jar:1.0",
-                                 "group:dependentArtifact:jar:version" } ), null );
+                                     "group:dependentArtifact:jar:version" } ), null );
     }
 
     public void testFilterArtifacts_ShouldRemoveArtifactTransitivelyExcluded()
-    throws InvalidAssemblerConfigurationException
+        throws InvalidAssemblerConfigurationException
     {
         verifyArtifactExclusion( "group",
                                  "artifact",
                                  null,
                                  "group:dependentArtifact",
                                  Arrays.asList( new String[] { "current:project:jar:1.0",
-                                 "group:dependentArtifact:jar:version" } ), null );
+                                     "group:dependentArtifact:jar:version" } ), null );
     }
 
     public void testFilterArtifacts_ShouldRemoveArtifactDirectlyExcluded()
-    throws InvalidAssemblerConfigurationException
+        throws InvalidAssemblerConfigurationException
     {
         verifyArtifactExclusion( "group", "artifact", null, "group:artifact", null, null );
 
@@ -142,19 +143,19 @@ extends TestCase
     }
 
     public void testFilterArtifacts_ShouldNotRemoveArtifactNotIncludedAndNotExcluded()
-    throws InvalidAssemblerConfigurationException
+        throws InvalidAssemblerConfigurationException
     {
         verifyArtifactInclusion( "group", "artifact", null, null, null, null );
         verifyArtifactInclusion( "group", "artifact", null, null, null, null );
     }
 
     public void testFilterArtifacts_ShouldRemoveArtifactExcludedByAdditionalFilter()
-    throws InvalidAssemblerConfigurationException
+        throws InvalidAssemblerConfigurationException
     {
-        ArtifactFilter filter = new ArtifactFilter()
+        final ArtifactFilter filter = new ArtifactFilter()
         {
 
-            public boolean include( Artifact artifact )
+            public boolean include( final Artifact artifact )
             {
                 return false;
             }
@@ -177,7 +178,7 @@ extends TestCase
                                 "group:dependentArtifact",
                                 null,
                                 Arrays.asList( new String[] { "current:project:jar:1.0",
-                                "group:dependentArtifact:jar:version" } ) );
+                                    "group:dependentArtifact:jar:version" } ) );
     }
 
     public void testFilterProjects_ShouldRemoveProjectTransitivelyExcluded()
@@ -202,71 +203,65 @@ extends TestCase
         verifyProjectInclusion( "group", "artifact", null, null, null );
     }
 
-    private void verifyArtifactInclusion( String groupId, String artifactId, String inclusionPattern,
-                                          String exclusionPattern, List depTrail, ArtifactFilter additionalFilter )
-    throws InvalidAssemblerConfigurationException
+    private void verifyArtifactInclusion( final String groupId, final String artifactId, final String inclusionPattern,
+                                          final String exclusionPattern, final List<String> depTrail,
+                                          final ArtifactFilter additionalFilter )
+        throws InvalidAssemblerConfigurationException
     {
         verifyArtifactFiltering( groupId, artifactId, inclusionPattern, exclusionPattern, depTrail, true,
                                  additionalFilter );
     }
 
-    private void verifyArtifactExclusion( String groupId, String artifactId, String inclusionPattern,
-                                          String exclusionPattern, List depTrail, ArtifactFilter additionalFilter )
-    throws InvalidAssemblerConfigurationException
+    private void verifyArtifactExclusion( final String groupId, final String artifactId, final String inclusionPattern,
+                                          final String exclusionPattern, final List<String> depTrail,
+                                          final ArtifactFilter additionalFilter )
+        throws InvalidAssemblerConfigurationException
     {
         verifyArtifactFiltering( groupId, artifactId, inclusionPattern, exclusionPattern, depTrail, false,
                                  additionalFilter );
     }
 
-    private void verifyArtifactFiltering( String groupId, String artifactId, String inclusionPattern,
-                                          String exclusionPattern, List depTrail, boolean verifyInclusion,
-                                          ArtifactFilter additionalFilter )
-    throws InvalidAssemblerConfigurationException
+    private void verifyArtifactFiltering( final String groupId, final String artifactId, final String inclusionPattern,
+                                          final String exclusionPattern, final List<String> depTrail,
+                                          final boolean verifyInclusion, final ArtifactFilter additionalFilter )
+        throws InvalidAssemblerConfigurationException
     {
-        ArtifactMockAndControl mac = new ArtifactMockAndControl( groupId, artifactId, depTrail );
+        final ArtifactMockAndControl mac = new ArtifactMockAndControl( groupId, artifactId, depTrail );
 
         mockManager.replayAll();
 
-        List inclusions;
+        List<String> inclusions;
         if ( inclusionPattern != null )
         {
             inclusions = Collections.singletonList( inclusionPattern );
         }
         else
         {
-            inclusions = Collections.EMPTY_LIST;
+            inclusions = Collections.emptyList();
         }
 
-        List exclusions;
+        List<String> exclusions;
         if ( exclusionPattern != null )
         {
             exclusions = Collections.singletonList( exclusionPattern );
         }
         else
         {
-            exclusions = Collections.EMPTY_LIST;
+            exclusions = Collections.emptyList();
         }
 
-        List filters;
-        if ( additionalFilter != null )
-        {
-            filters = Collections.singletonList( additionalFilter );
-        }
-        else
-        {
-            filters = Collections.EMPTY_LIST;
-        }
-
-        Set artifacts = new HashSet();
+        final Set<Artifact> artifacts = new HashSet<Artifact>();
         artifacts.add( mac.artifact );
 
-        FilterUtils.filterArtifacts( artifacts, inclusions, exclusions, false, depTrail != null, filters, logger );
+        FilterUtils.filterArtifacts( artifacts, inclusions, exclusions, false, depTrail != null, logger,
+                                     additionalFilter );
 
         if ( verifyInclusion )
         {
             assertEquals( 1, artifacts.size() );
-            assertEquals( mac.artifact.getDependencyConflictId(), ( (Artifact) artifacts.iterator().next() )
-                          .getDependencyConflictId() );
+            assertEquals( mac.artifact.getDependencyConflictId(), artifacts.iterator()
+                                                                           .next()
+                                                                           .getDependencyConflictId() );
         }
         else
         {
@@ -282,59 +277,62 @@ extends TestCase
         mockManager.clear();
     }
 
-    private void verifyProjectInclusion( String groupId, String artifactId, String inclusionPattern,
-                                         String exclusionPattern, List depTrail )
+    private void verifyProjectInclusion( final String groupId, final String artifactId, final String inclusionPattern,
+                                         final String exclusionPattern, final List<String> depTrail )
     {
         verifyProjectFiltering( groupId, artifactId, inclusionPattern, exclusionPattern, depTrail, true );
     }
 
-    private void verifyProjectExclusion( String groupId, String artifactId, String inclusionPattern,
-                                         String exclusionPattern, List depTrail )
+    private void verifyProjectExclusion( final String groupId, final String artifactId, final String inclusionPattern,
+                                         final String exclusionPattern, final List<String> depTrail )
     {
         verifyProjectFiltering( groupId, artifactId, inclusionPattern, exclusionPattern, depTrail, false );
     }
 
-    private void verifyProjectFiltering( String groupId, String artifactId, String inclusionPattern,
-                                         String exclusionPattern, List depTrail, boolean verifyInclusion )
+    private void verifyProjectFiltering( final String groupId, final String artifactId, final String inclusionPattern,
+                                         final String exclusionPattern, final List<String> depTrail,
+                                         final boolean verifyInclusion )
     {
-        ProjectWithArtifactMockControl pmac = new ProjectWithArtifactMockControl( groupId, artifactId, depTrail );
+        final ProjectWithArtifactMockControl pmac = new ProjectWithArtifactMockControl( groupId, artifactId, depTrail );
 
         mockManager.replayAll();
 
         // make sure the mock is satisfied...you can't disable this expectation.
         pmac.mac.artifact.getDependencyConflictId();
 
-        Set projects = new HashSet();
+        final Set<MavenProject> projects = new HashSet<MavenProject>();
         projects.add( pmac );
 
-        List inclusions;
+        List<String> inclusions;
         if ( inclusionPattern != null )
         {
             inclusions = Collections.singletonList( inclusionPattern );
         }
         else
         {
-            inclusions = Collections.EMPTY_LIST;
+            inclusions = Collections.emptyList();
         }
 
-        List exclusions;
+        List<String> exclusions;
         if ( exclusionPattern != null )
         {
             exclusions = Collections.singletonList( exclusionPattern );
         }
         else
         {
-            exclusions = Collections.EMPTY_LIST;
+            exclusions = Collections.emptyList();
         }
 
-        Logger logger = new ConsoleLogger( Logger.LEVEL_DEBUG, "test" );
+        final Logger logger = new ConsoleLogger( Logger.LEVEL_DEBUG, "test" );
 
         FilterUtils.filterProjects( projects, inclusions, exclusions, depTrail != null, logger );
 
         if ( verifyInclusion )
         {
             assertEquals( 1, projects.size() );
-            assertEquals( pmac.getId(), ( (MavenProject) projects.iterator().next() ).getId() );
+            assertEquals( pmac.getId(), projects.iterator()
+                                                .next()
+                                                .getId() );
         }
         else
         {
@@ -347,9 +345,9 @@ extends TestCase
         mockManager.clear();
     }
 
-    private static Model buildModel( String groupId, String artifactId )
+    private static Model buildModel( final String groupId, final String artifactId )
     {
-        Model model = new Model();
+        final Model model = new Model();
         model.setGroupId( groupId );
         model.setArtifactId( artifactId );
 
@@ -357,11 +355,11 @@ extends TestCase
     }
 
     private final class ProjectWithArtifactMockControl
-    extends MavenProject
+        extends MavenProject
     {
         ArtifactMockAndControl mac;
 
-        ProjectWithArtifactMockControl( String groupId, String artifactId, List depTrail )
+        ProjectWithArtifactMockControl( final String groupId, final String artifactId, final List<String> depTrail )
         {
             super( buildModel( groupId, artifactId ) );
 
@@ -382,9 +380,9 @@ extends TestCase
 
         String artifactId;
 
-        List dependencyTrail;
+        List<String> dependencyTrail;
 
-        ArtifactMockAndControl( String groupId, String artifactId, List dependencyTrail )
+        ArtifactMockAndControl( final String groupId, final String artifactId, final List<String> dependencyTrail )
         {
             this.groupId = groupId;
             this.artifactId = artifactId;

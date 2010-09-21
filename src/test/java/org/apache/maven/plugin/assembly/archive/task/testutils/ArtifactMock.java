@@ -32,45 +32,77 @@ public class ArtifactMock
 {
 
     private final MockControl artifactCtl;
+
     private final Artifact artifact;
 
     private final MockControl handlerCtl;
+
     private final ArtifactHandler handler;
+
     private String groupId;
+
     private String artifactId;
+
     private String baseVersion;
+
     private File file;
-    private String scope;
+
     private Boolean isSnapshot;
+
     private String version;
-    private List dependencyTrail;
+
+    private List<String> dependencyTrail;
+
     private String id;
+
     private String dependencyConflictId;
+
     private String typeAndExt;
-    private String classifier;
 
-    public ArtifactMock( MockManager mockManager, String groupId, String artifactId, String version, String type, boolean isSnapshot )
+    private final String classifier;
+
+    public ArtifactMock( final MockManager mockManager, final String groupId, final String artifactId,
+                         final String version, final String type, final boolean isSnapshot )
     {
-        this( mockManager, groupId, artifactId, version, type, null, isSnapshot, null );
+        this( mockManager, groupId, artifactId, version, type, null, isSnapshot, null, null );
     }
 
-    public ArtifactMock( MockManager mockManager, String groupId, String artifactId, String version, String type, boolean isSnapshot, String baseVersion )
+    public ArtifactMock( final MockManager mockManager, final String groupId, final String artifactId,
+                         final String version, final String type, final boolean isSnapshot, final String baseVersion )
     {
-        this( mockManager, groupId, artifactId, version, type, null, isSnapshot, baseVersion );
+        this( mockManager, groupId, artifactId, version, type, null, isSnapshot, baseVersion, null );
     }
 
-    public ArtifactMock( MockManager mockManager, String groupId, String artifactId, String version, String type, String classifier, boolean isSnapshot )
+    public ArtifactMock( final MockManager mockManager, final String groupId, final String artifactId,
+                         final String version, final String type, final String classifier, final boolean isSnapshot )
     {
-        this( mockManager, groupId, artifactId, version, type, classifier, isSnapshot, null );
+        this( mockManager, groupId, artifactId, version, type, classifier, isSnapshot, null, null );
     }
 
-    public ArtifactMock( MockManager mockManager, String groupId, String artifactId, String version, String type, String classifier, boolean isSnapshot, String baseVersion )
+    public ArtifactMock( final MockManager mockManager, final String groupId, final String artifactId,
+                         final String version, final String type, final String classifier, final boolean isSnapshot,
+                         final String baseVersion )
+    {
+        this( mockManager, groupId, artifactId, version, type, classifier, isSnapshot, baseVersion, null );
+    }
+
+    public ArtifactMock( final MockManager mockManager, final String groupId, final String artifactId,
+                         final String version, final String type, final String classifier, final boolean isSnapshot,
+                         final String baseVersion, String scope )
     {
         artifactCtl = MockControl.createControl( Artifact.class );
 
         mockManager.add( artifactCtl );
 
         artifact = (Artifact) artifactCtl.getMock();
+
+        if ( scope == null )
+        {
+            scope = Artifact.SCOPE_COMPILE;
+        }
+
+        artifact.getScope();
+        artifactCtl.setReturnValue( scope, MockControl.ZERO_OR_MORE );
 
         handlerCtl = MockControl.createControl( ArtifactHandler.class );
 
@@ -96,7 +128,7 @@ public class ArtifactMock
         setDependencyConflictId();
     }
 
-    public void setExtension( String extension )
+    public void setExtension( final String extension )
     {
         setTypeAndExt( extension );
     }
@@ -111,7 +143,7 @@ public class ArtifactMock
         return artifact;
     }
 
-    public void setArtifactId( String artifactId )
+    public void setArtifactId( final String artifactId )
     {
         if ( ( artifactId != null ) && ( this.artifactId == null ) )
         {
@@ -122,7 +154,7 @@ public class ArtifactMock
         }
     }
 
-    public void setBaseVersion( String baseVersion )
+    public void setBaseVersion( final String baseVersion )
     {
         if ( ( baseVersion != null ) && ( this.baseVersion == null ) )
         {
@@ -133,7 +165,7 @@ public class ArtifactMock
         }
     }
 
-    public void setFile( File destination )
+    public void setFile( final File destination )
     {
         if ( ( destination != null ) && ( file == null ) )
         {
@@ -144,7 +176,7 @@ public class ArtifactMock
         }
     }
 
-    public void setGroupId( String groupId )
+    public void setGroupId( final String groupId )
     {
         if ( ( groupId != null ) && ( this.groupId == null ) )
         {
@@ -155,18 +187,7 @@ public class ArtifactMock
         }
     }
 
-    public void setScope( String scope )
-    {
-        if ( ( scope != null ) && ( this.scope == null ) )
-        {
-            artifact.getScope();
-            artifactCtl.setReturnValue( scope, MockControl.ZERO_OR_MORE );
-
-            this.scope = scope;
-        }
-    }
-
-    public void setVersion( String version )
+    public void setVersion( final String version )
     {
         if ( ( version != null ) && ( this.version == null ) )
         {
@@ -183,7 +204,7 @@ public class ArtifactMock
         }
     }
 
-    public void setDependencyTrail( List dependencyTrail )
+    public void setDependencyTrail( final List<String> dependencyTrail )
     {
         if ( ( dependencyTrail != null ) && ( this.dependencyTrail == null ) )
         {
@@ -194,7 +215,7 @@ public class ArtifactMock
         }
     }
 
-    public void setId( String id )
+    public void setId( final String id )
     {
         if ( ( id != null ) && ( this.id == null ) )
         {
@@ -205,7 +226,7 @@ public class ArtifactMock
         }
     }
 
-    public void setDependencyConflictId( String id )
+    public void setDependencyConflictId( final String id )
     {
         if ( ( id != null ) && ( dependencyConflictId == null ) )
         {
@@ -216,7 +237,7 @@ public class ArtifactMock
         }
     }
 
-    public void setSnapshot( boolean snapshot )
+    public void setSnapshot( final boolean snapshot )
     {
         if ( isSnapshot == null )
         {
@@ -232,11 +253,11 @@ public class ArtifactMock
     {
         if ( file == null )
         {
-            File newFile = File.createTempFile( "ArtifactMock.test.", "" );
+            final File newFile = File.createTempFile( "ArtifactMock.test.", "" );
             newFile.deleteOnExit();
 
             artifact.getFile();
-            artifactCtl.setReturnValue(  newFile, MockControl.ZERO_OR_MORE );
+            artifactCtl.setReturnValue( newFile, MockControl.ZERO_OR_MORE );
 
             file = newFile;
         }
@@ -244,12 +265,12 @@ public class ArtifactMock
         return file;
     }
 
-    public void setType( String type )
+    public void setType( final String type )
     {
         setTypeAndExt( type );
     }
 
-    private void setTypeAndExt( String type )
+    private void setTypeAndExt( final String type )
     {
         if ( ( type != null ) && ( typeAndExt == null ) )
         {
@@ -267,7 +288,8 @@ public class ArtifactMock
     {
         if ( ( groupId != null ) && ( artifactId != null ) && ( typeAndExt != null ) )
         {
-            String id = groupId + ":" + artifactId + ":" + typeAndExt + ( classifier == null ? "" : ":" + classifier );
+            final String id =
+                groupId + ":" + artifactId + ":" + typeAndExt + ( classifier == null ? "" : ":" + classifier );
             setDependencyConflictId( id );
         }
     }
@@ -276,7 +298,9 @@ public class ArtifactMock
     {
         if ( ( groupId != null ) && ( artifactId != null ) && ( typeAndExt != null ) && ( version != null ) )
         {
-            String id = groupId + ":" + artifactId + ":" + version + ":" + typeAndExt + ( classifier == null ? "" : ":" + classifier );
+            final String id =
+                groupId + ":" + artifactId + ":" + version + ":" + typeAndExt
+                                + ( classifier == null ? "" : ":" + classifier );
             setId( id );
         }
     }

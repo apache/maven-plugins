@@ -45,12 +45,12 @@ public class MockAndControlForAddArtifactTask
 
     private MavenProject project = null;
 
-    public MockAndControlForAddArtifactTask( MockManager mockManager )
+    public MockAndControlForAddArtifactTask( final MockManager mockManager )
     {
         this( mockManager, null );
     }
 
-    public MockAndControlForAddArtifactTask( MockManager mockManager, MavenProject project )
+    public MockAndControlForAddArtifactTask( final MockManager mockManager, final MavenProject project )
     {
         this.project = project;
 
@@ -71,24 +71,25 @@ public class MockAndControlForAddArtifactTask
     {
         configSource.getProject();
         configSourceCtl.setReturnValue( project, MockControl.ZERO_OR_MORE );
-        
+
         configSource.getMavenSession();
         configSourceCtl.setReturnValue( null, MockControl.ZERO_OR_MORE );
     }
 
-    public void expectGetFinalName( String finalName )
+    public void expectGetFinalName( final String finalName )
     {
         configSource.getFinalName();
         configSourceCtl.setReturnValue( finalName, MockControl.ONE_OR_MORE );
     }
 
-    public void expectGetDestFile( File destFile )
+    public void expectGetDestFile( final File destFile )
     {
         archiver.getDestFile();
         archiverCtl.setReturnValue( destFile, MockControl.ZERO_OR_MORE );
     }
 
-    public void expectAddArchivedFileSet( File artifactFile, String outputLocation, String[] includes, String[] excludes )
+    public void expectAddArchivedFileSet( final File artifactFile, final String outputLocation,
+                                          final String[] includes, final String[] excludes )
     {
         try
         {
@@ -101,14 +102,14 @@ public class MockAndControlForAddArtifactTask
 
             archiverCtl.setVoidCallable( MockControl.ONE_OR_MORE );
         }
-        catch ( ArchiverException e )
+        catch ( final ArchiverException e )
         {
             Assert.fail( "Should never happen." );
         }
     }
 
-    public void expectModeChange( int originalDirMode, int originalFileMode, int dirMode, int fileMode,
-                                            int numberOfChanges )
+    public void expectModeChange( final int originalDirMode, final int originalFileMode, final int dirMode,
+                                  final int fileMode, final int numberOfChanges )
     {
         archiver.getOverrideDirectoryMode();
         archiverCtl.setReturnValue( originalDirMode );
@@ -119,13 +120,13 @@ public class MockAndControlForAddArtifactTask
         // one of the changes will occur below, when we restore the original mode.
         if ( numberOfChanges > 1 )
         {
-            for( int i = 1; i< numberOfChanges; i++ )
+            for ( int i = 1; i < numberOfChanges; i++ )
             {
                 if ( dirMode > -1 )
                 {
                     archiver.setDirectoryMode( dirMode );
                 }
-                
+
                 if ( fileMode > -1 )
                 {
                     archiver.setFileMode( fileMode );
@@ -137,46 +138,46 @@ public class MockAndControlForAddArtifactTask
         {
             archiver.setDirectoryMode( originalDirMode );
         }
-        
+
         if ( fileMode > -1 )
         {
             archiver.setFileMode( originalFileMode );
         }
     }
 
-    public void expectAddFile( File file, String outputLocation, int fileMode )
+    public void expectAddFile( final File file, final String outputLocation, final int fileMode )
     {
         try
         {
             archiver.addFile( file, outputLocation, fileMode );
             archiverCtl.setVoidCallable( MockControl.ONE_OR_MORE );
         }
-        catch ( ArchiverException e )
+        catch ( final ArchiverException e )
         {
             Assert.fail( "Should never happen." );
         }
     }
 
-    public void expectAddFile( File file, String outputLocation )
+    public void expectAddFile( final File file, final String outputLocation )
     {
         try
         {
             archiver.addFile( file, outputLocation );
             archiverCtl.setVoidCallable( MockControl.ONE_OR_MORE );
         }
-        catch ( ArchiverException e )
+        catch ( final ArchiverException e )
         {
             Assert.fail( "Should never happen." );
         }
     }
 
-    public void expectGetReactorProjects( List projects )
+    public void expectGetReactorProjects( final List<MavenProject> projects )
     {
         configSource.getReactorProjects();
         configSourceCtl.setReturnValue( projects, MockControl.ONE_OR_MORE );
     }
-    
-    public void expectGetSession( MavenSession session )
+
+    public void expectGetSession( final MavenSession session )
     {
         configSource.getMavenSession();
         configSourceCtl.setReturnValue( session, MockControl.ONE_OR_MORE );

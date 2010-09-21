@@ -27,8 +27,6 @@ import org.apache.maven.plugin.assembly.archive.task.testutils.ArtifactMock;
 import org.apache.maven.plugin.assembly.archive.task.testutils.MockAndControlForAddArtifactTask;
 import org.apache.maven.plugin.assembly.archive.task.testutils.MockAndControlForAddDependencySetsTask;
 import org.apache.maven.plugin.assembly.archive.task.testutils.MockAndControlForAddFileSetsTask;
-import org.apache.maven.plugin.assembly.archive.task.testutils.MockAndControlForArtifact;
-import org.apache.maven.plugin.assembly.artifact.DependencyResolver;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
 import org.apache.maven.plugin.assembly.model.Assembly;
 import org.apache.maven.plugin.assembly.model.DependencySet;
@@ -61,10 +59,11 @@ public class ModuleSetAssemblyPhaseTest
     extends TestCase
 {
 
-    private TestFileManager fileManager = new TestFileManager( "module-set-phase.test.", "" );
-    
-    private Logger logger = new ConsoleLogger( Logger.LEVEL_INFO, "test" );
+    private final TestFileManager fileManager = new TestFileManager( "module-set-phase.test.", "" );
 
+    private final Logger logger = new ConsoleLogger( Logger.LEVEL_INFO, "test" );
+
+    @Override
     public void tearDown()
         throws IOException
     {
@@ -73,50 +72,50 @@ public class ModuleSetAssemblyPhaseTest
 
     public void testIsDeprecatedModuleSourcesConfigPresent_ShouldCatchOutputDir()
     {
-        ModuleSources sources = new ModuleSources();
+        final ModuleSources sources = new ModuleSources();
         sources.setOutputDirectory( "outdir" );
 
-        ModuleSetAssemblyPhase phase = createPhase( new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ), null );
+        final ModuleSetAssemblyPhase phase = createPhase( new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ), null );
 
         assertTrue( phase.isDeprecatedModuleSourcesConfigPresent( sources ) );
     }
 
     public void testIsDeprecatedModuleSourcesConfigPresent_ShouldCatchInclude()
     {
-        ModuleSources sources = new ModuleSources();
+        final ModuleSources sources = new ModuleSources();
         sources.addInclude( "**/included.txt" );
 
-        ModuleSetAssemblyPhase phase = createPhase( new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ), null );
+        final ModuleSetAssemblyPhase phase = createPhase( new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ), null );
 
         assertTrue( phase.isDeprecatedModuleSourcesConfigPresent( sources ) );
     }
 
     public void testIsDeprecatedModuleSourcesConfigPresent_ShouldCatchExclude()
     {
-        ModuleSources sources = new ModuleSources();
+        final ModuleSources sources = new ModuleSources();
         sources.addExclude( "**/excluded.txt" );
 
-        ModuleSetAssemblyPhase phase = createPhase( new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ), null );
+        final ModuleSetAssemblyPhase phase = createPhase( new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ), null );
 
         assertTrue( phase.isDeprecatedModuleSourcesConfigPresent( sources ) );
     }
 
     public void testIsDeprecatedModuleSourcesConfigPresent_ShouldNotCatchFileMode()
     {
-        ModuleSources sources = new ModuleSources();
+        final ModuleSources sources = new ModuleSources();
         sources.setFileMode( "777" );
 
-        ModuleSetAssemblyPhase phase = createPhase( new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ), null );
+        final ModuleSetAssemblyPhase phase = createPhase( new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ), null );
 
         assertFalse( phase.isDeprecatedModuleSourcesConfigPresent( sources ) );
     }
 
     public void testIsDeprecatedModuleSourcesConfigPresent_ShouldNotCatchDirMode()
     {
-        ModuleSources sources = new ModuleSources();
+        final ModuleSources sources = new ModuleSources();
         sources.setDirectoryMode( "777" );
 
-        ModuleSetAssemblyPhase phase = createPhase( new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ), null );
+        final ModuleSetAssemblyPhase phase = createPhase( new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ), null );
 
         assertFalse( phase.isDeprecatedModuleSourcesConfigPresent( sources ) );
     }
@@ -124,38 +123,38 @@ public class ModuleSetAssemblyPhaseTest
     public void testCreateFileSet_ShouldUseModuleDirOnlyWhenOutDirIsNull()
         throws AssemblyFormattingException
     {
-        MockManager mm = new MockManager();
+        final MockManager mm = new MockManager();
 
-        Model model = new Model();
+        final Model model = new Model();
         model.setArtifactId( "artifact" );
 
-        MavenProject project = new MavenProject( model );
+        final MavenProject project = new MavenProject( model );
 
-        MockAndControlForAddArtifactTask macTask = new MockAndControlForAddArtifactTask( mm, project );
+        final MockAndControlForAddArtifactTask macTask = new MockAndControlForAddArtifactTask( mm, project );
 
         macTask.expectGetFinalName( null );
 
-        FileSet fs = new FileSet();
+        final FileSet fs = new FileSet();
 
-        ModuleSources sources = new ModuleSources();
+        final ModuleSources sources = new ModuleSources();
         sources.setIncludeModuleDirectory( true );
 
-        File basedir = fileManager.createTempDir();
+        final File basedir = fileManager.createTempDir();
 
-        MavenProject artifactProject = new MavenProject( new Model() );
-        
+        final MavenProject artifactProject = new MavenProject( new Model() );
+
         artifactProject.setFile( new File( basedir, "pom.xml" ) );
 
-        ArtifactMock artifactMock = new ArtifactMock( mm, "group", "artifact", "version", "jar", false );
+        final ArtifactMock artifactMock = new ArtifactMock( mm, "group", "artifact", "version", "jar", false );
 
         artifactProject.setArtifact( artifactMock.getArtifact() );
 
         mm.replayAll();
 
-        FileSet result = createPhase( new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ), null ).createFileSet( fs,
-                                                                                                             sources,
-                                                                                                             artifactProject,
-                                                                                                             macTask.configSource );
+        final FileSet result =
+            createPhase( new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ), null ).createFileSet( fs, sources,
+                                                                                                artifactProject,
+                                                                                                macTask.configSource );
 
         assertEquals( "artifact/", result.getOutputDirectory() );
 
@@ -165,39 +164,39 @@ public class ModuleSetAssemblyPhaseTest
     public void testCreateFileSet_ShouldPrependModuleDirWhenOutDirIsProvided()
         throws AssemblyFormattingException
     {
-        MockManager mm = new MockManager();
+        final MockManager mm = new MockManager();
 
-        Model model = new Model();
+        final Model model = new Model();
         model.setArtifactId( "artifact" );
 
-        MavenProject project = new MavenProject( model );
+        final MavenProject project = new MavenProject( model );
 
-        MockAndControlForAddArtifactTask macTask = new MockAndControlForAddArtifactTask( mm, project );
+        final MockAndControlForAddArtifactTask macTask = new MockAndControlForAddArtifactTask( mm, project );
 
         macTask.expectGetFinalName( null );
-        
-        FileSet fs = new FileSet();
+
+        final FileSet fs = new FileSet();
         fs.setOutputDirectory( "out" );
 
-        ModuleSources sources = new ModuleSources();
+        final ModuleSources sources = new ModuleSources();
         sources.setIncludeModuleDirectory( true );
 
-        MavenProject artifactProject = new MavenProject( new Model() );
+        final MavenProject artifactProject = new MavenProject( new Model() );
 
-        File basedir = fileManager.createTempDir();
+        final File basedir = fileManager.createTempDir();
 
         artifactProject.setFile( new File( basedir, "pom.xml" ) );
 
-        ArtifactMock artifactMock = new ArtifactMock( mm, "group", "artifact", "version", "jar", false );
+        final ArtifactMock artifactMock = new ArtifactMock( mm, "group", "artifact", "version", "jar", false );
 
         artifactProject.setArtifact( artifactMock.getArtifact() );
 
         mm.replayAll();
 
-        FileSet result = createPhase( new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ), null ).createFileSet( fs,
-                                                                                                             sources,
-                                                                                                             artifactProject,
-                                                                                                             macTask.configSource );
+        final FileSet result =
+            createPhase( new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ), null ).createFileSet( fs, sources,
+                                                                                                artifactProject,
+                                                                                                macTask.configSource );
 
         assertEquals( "artifact/out/", result.getOutputDirectory() );
 
@@ -207,41 +206,42 @@ public class ModuleSetAssemblyPhaseTest
     public void testCreateFileSet_ShouldAddExcludesForSubModulesWhenExcludeSubModDirsIsTrue()
         throws AssemblyFormattingException
     {
-        MockManager mm = new MockManager();
+        final MockManager mm = new MockManager();
 
-        MockAndControlForAddArtifactTask macTask = new MockAndControlForAddArtifactTask( mm, null );
+        final MockAndControlForAddArtifactTask macTask = new MockAndControlForAddArtifactTask( mm, null );
 
         macTask.expectGetFinalName( null );
-        
-        FileSet fs = new FileSet();
 
-        ModuleSources sources = new ModuleSources();
+        final FileSet fs = new FileSet();
+
+        final ModuleSources sources = new ModuleSources();
         sources.setExcludeSubModuleDirectories( true );
 
-        Model model = new Model();
+        final Model model = new Model();
         model.setArtifactId( "artifact" );
 
         model.addModule( "submodule" );
 
-        MavenProject project = new MavenProject( model );
+        final MavenProject project = new MavenProject( model );
 
-        File basedir = fileManager.createTempDir();
+        final File basedir = fileManager.createTempDir();
 
         project.setFile( new File( basedir, "pom.xml" ) );
 
-        ArtifactMock artifactMock = new ArtifactMock( mm, "group", "artifact", "version", "jar", false );
+        final ArtifactMock artifactMock = new ArtifactMock( mm, "group", "artifact", "version", "jar", false );
 
         project.setArtifact( artifactMock.getArtifact() );
 
         mm.replayAll();
 
-        FileSet result = createPhase( new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ), null ).createFileSet( fs,
-                                                                                                             sources,
-                                                                                                             project,
-                                                                                                             macTask.configSource );
+        final FileSet result =
+            createPhase( new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ), null ).createFileSet( fs, sources, project,
+                                                                                                macTask.configSource );
 
-        assertEquals( 1, result.getExcludes().size() );
-        assertEquals( "submodule/**", result.getExcludes().get( 0 ) );
+        assertEquals( 1, result.getExcludes()
+                               .size() );
+        assertEquals( "submodule/**", result.getExcludes()
+                                            .get( 0 ) );
 
         mm.verifyAll();
     }
@@ -249,46 +249,46 @@ public class ModuleSetAssemblyPhaseTest
     public void testExecute_ShouldSkipIfNoModuleSetsFound()
         throws ArchiveCreationException, AssemblyFormattingException, InvalidAssemblerConfigurationException
     {
-        Assembly assembly = new Assembly();
+        final Assembly assembly = new Assembly();
         assembly.setIncludeBaseDirectory( false );
 
-        createPhase( null, null ).execute( assembly, null, null );
+        createPhase( null, null ).execute( assembly, null, null, new DefaultAssemblyContext() );
     }
 
     public void testExecute_ShouldAddOneModuleSetWithOneModuleInIt()
         throws ArchiveCreationException, AssemblyFormattingException, IOException,
         InvalidAssemblerConfigurationException
     {
-        MockManager mm = new MockManager();
+        final MockManager mm = new MockManager();
 
-        MavenProject project = createProject( "group", "artifact", "version", null );
+        final MavenProject project = createProject( "group", "artifact", "version", null );
 
-        MockAndControlForAddArtifactTask macTask = new MockAndControlForAddArtifactTask( mm, project );
+        final MockAndControlForAddArtifactTask macTask = new MockAndControlForAddArtifactTask( mm, project );
 
-        MavenProject module = createProject( "group", "module", "version", project );
+        final MavenProject module = createProject( "group", "module", "version", project );
 
-        ArtifactMock moduleArtifactMock = new ArtifactMock( mm, "group", "module", "version", "jar", false );
-        File moduleArtifactFile = moduleArtifactMock.setNewFile();
+        final ArtifactMock moduleArtifactMock = new ArtifactMock( mm, "group", "module", "version", "jar", false );
+        final File moduleArtifactFile = moduleArtifactMock.setNewFile();
         module.setArtifact( moduleArtifactMock.getArtifact() );
 
-        List projects = new ArrayList();
+        final List<MavenProject> projects = new ArrayList<MavenProject>();
 
         projects.add( module );
 
         macTask.expectGetReactorProjects( projects );
         macTask.expectGetFinalName( "final-name" );
         macTask.expectGetDestFile( new File( "junk" ) );
-        
-        int mode = TypeConversionUtils.modeToInt( "777", new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) );
+
+        final int mode = TypeConversionUtils.modeToInt( "777", new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) );
 
         macTask.expectAddFile( moduleArtifactFile, "out/artifact", mode );
 
-        Assembly assembly = new Assembly();
+        final Assembly assembly = new Assembly();
         assembly.setIncludeBaseDirectory( false );
 
-        ModuleSet ms = new ModuleSet();
+        final ModuleSet ms = new ModuleSet();
 
-        ModuleBinaries bin = new ModuleBinaries();
+        final ModuleBinaries bin = new ModuleBinaries();
 
         bin.setOutputFileNameMapping( "artifact" );
         bin.setOutputDirectory( "out" );
@@ -300,11 +300,12 @@ public class ModuleSetAssemblyPhaseTest
 
         assembly.addModuleSet( ms );
 
-        Logger logger = new ConsoleLogger( Logger.LEVEL_DEBUG, "test" );
+        final Logger logger = new ConsoleLogger( Logger.LEVEL_DEBUG, "test" );
 
         mm.replayAll();
 
-        createPhase( logger, null ).execute( assembly, macTask.archiver, macTask.configSource );
+        createPhase( logger, null ).execute( assembly, macTask.archiver, macTask.configSource,
+                                             new DefaultAssemblyContext() );
 
         mm.verifyAll();
     }
@@ -312,35 +313,36 @@ public class ModuleSetAssemblyPhaseTest
     public void testAddModuleBinaries_ShouldReturnImmediatelyWhenBinariesIsNull()
         throws ArchiveCreationException, AssemblyFormattingException, InvalidAssemblerConfigurationException
     {
-        createPhase( null, null ).addModuleBinaries( null, null, null, null, null );
+        createPhase( null, null ).addModuleBinaries( null, null, null, null, new DefaultAssemblyContext() );
     }
 
     public void testAddModuleBinaries_ShouldFilterPomModule()
         throws ArchiveCreationException, AssemblyFormattingException, IOException,
         InvalidAssemblerConfigurationException
     {
-        MockManager mm = new MockManager();
+        final MockManager mm = new MockManager();
 
-        MockAndControlForAddArtifactTask macTask = new MockAndControlForAddArtifactTask( mm );
+        final MockAndControlForAddArtifactTask macTask = new MockAndControlForAddArtifactTask( mm );
 
-        ModuleBinaries binaries = new ModuleBinaries();
+        final ModuleBinaries binaries = new ModuleBinaries();
 
         binaries.setUnpack( false );
         binaries.setFileMode( "777" );
         binaries.setOutputDirectory( "out" );
         binaries.setOutputFileNameMapping( "artifact" );
 
-        MavenProject project = createProject( "group", "artifact", "version", null );
+        final MavenProject project = createProject( "group", "artifact", "version", null );
         project.setPackaging( "pom" );
 
-        ArtifactMock artifactMock = new ArtifactMock( mm, "group", "artifact", "version", "pom", false );
+        final ArtifactMock artifactMock = new ArtifactMock( mm, "group", "artifact", "version", "pom", false );
         project.setArtifact( artifactMock.getArtifact() );
 
-        Set projects = Collections.singleton( project );
+        final Set<MavenProject> projects = Collections.singleton( project );
 
         mm.replayAll();
 
-        createPhase( new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ), null ).addModuleBinaries( binaries, projects,
+        createPhase( new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ), null ).addModuleBinaries( binaries,
+                                                                                                projects,
                                                                                                 macTask.archiver,
                                                                                                 macTask.configSource,
                                                                                                 new DefaultAssemblyContext() );
@@ -352,18 +354,19 @@ public class ModuleSetAssemblyPhaseTest
         throws ArchiveCreationException, AssemblyFormattingException, IOException,
         InvalidAssemblerConfigurationException
     {
-        MockManager mm = new MockManager();
+        final MockManager mm = new MockManager();
 
-        MockAndControlForAddArtifactTask macTask = new MockAndControlForAddArtifactTask( mm, null );
+        final MockAndControlForAddArtifactTask macTask = new MockAndControlForAddArtifactTask( mm, null );
 
-        ArtifactMock artifactMock = new ArtifactMock( mm, "group", "artifact", "version", "jar", "test", false );
-        File artifactFile = artifactMock.setNewFile();
+        final ArtifactMock artifactMock = new ArtifactMock( mm, "group", "artifact", "version", "jar", "test", false );
+        final File artifactFile = artifactMock.setNewFile();
 
         macTask.expectGetFinalName( "final-name" );
         macTask.expectGetDestFile( new File( "junk" ) );
-        macTask.expectAddFile( artifactFile, "out/artifact", TypeConversionUtils.modeToInt( "777", new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) ) );
-        
-        ModuleBinaries binaries = new ModuleBinaries();
+        macTask.expectAddFile( artifactFile, "out/artifact",
+                               TypeConversionUtils.modeToInt( "777", new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) ) );
+
+        final ModuleBinaries binaries = new ModuleBinaries();
 
         binaries.setIncludeDependencies( false );
         binaries.setUnpack( false );
@@ -372,14 +375,14 @@ public class ModuleSetAssemblyPhaseTest
         binaries.setOutputFileNameMapping( "artifact" );
         binaries.setAttachmentClassifier( "test" );
 
-        MavenProject project = createProject( "group", "artifact", "version", null );
+        final MavenProject project = createProject( "group", "artifact", "version", null );
         project.addAttachedArtifact( artifactMock.getArtifact() );
 
-        Set projects = Collections.singleton( project );
+        final Set<MavenProject> projects = Collections.singleton( project );
 
         mm.replayAll();
 
-        Logger logger = new ConsoleLogger( Logger.LEVEL_DEBUG, "test" );
+        final Logger logger = new ConsoleLogger( Logger.LEVEL_DEBUG, "test" );
 
         createPhase( logger, null ).addModuleBinaries( binaries, projects, macTask.archiver, macTask.configSource,
                                                        new DefaultAssemblyContext() );
@@ -390,14 +393,14 @@ public class ModuleSetAssemblyPhaseTest
     public void testAddModuleBinaries_ShouldFailWhenOneModuleDoesntHaveAttachmentWithMatchingClassifier()
         throws ArchiveCreationException, AssemblyFormattingException, IOException
     {
-        MockManager mm = new MockManager();
+        final MockManager mm = new MockManager();
 
-        MockAndControlForAddArtifactTask macTask = new MockAndControlForAddArtifactTask( mm );
+        final MockAndControlForAddArtifactTask macTask = new MockAndControlForAddArtifactTask( mm );
 
-        ArtifactMock artifactMock = new ArtifactMock( mm, "group", "artifact", "version", "jar", "test", false );
+        final ArtifactMock artifactMock = new ArtifactMock( mm, "group", "artifact", "version", "jar", "test", false );
         artifactMock.setNewFile();
 
-        ModuleBinaries binaries = new ModuleBinaries();
+        final ModuleBinaries binaries = new ModuleBinaries();
 
         binaries.setUnpack( false );
         binaries.setFileMode( "777" );
@@ -405,14 +408,14 @@ public class ModuleSetAssemblyPhaseTest
         binaries.setOutputFileNameMapping( "artifact" );
         binaries.setAttachmentClassifier( "test" );
 
-        MavenProject project = createProject( "group", "artifact", "version", null );
+        final MavenProject project = createProject( "group", "artifact", "version", null );
         project.setArtifact( artifactMock.getArtifact() );
 
-        Set projects = Collections.singleton( project );
+        final Set<MavenProject> projects = Collections.singleton( project );
 
         mm.replayAll();
 
-        Logger logger = new ConsoleLogger( Logger.LEVEL_DEBUG, "test" );
+        final Logger logger = new ConsoleLogger( Logger.LEVEL_DEBUG, "test" );
 
         try
         {
@@ -421,7 +424,7 @@ public class ModuleSetAssemblyPhaseTest
 
             fail( "Should throw an invalid configuration exception because of module with missing attachment." );
         }
-        catch ( InvalidAssemblerConfigurationException e )
+        catch ( final InvalidAssemblerConfigurationException e )
         {
             // should throw this because of missing attachment.
         }
@@ -433,18 +436,19 @@ public class ModuleSetAssemblyPhaseTest
         throws ArchiveCreationException, AssemblyFormattingException, IOException,
         InvalidAssemblerConfigurationException
     {
-        MockManager mm = new MockManager();
+        final MockManager mm = new MockManager();
 
-        MockAndControlForAddArtifactTask macTask = new MockAndControlForAddArtifactTask( mm );
+        final MockAndControlForAddArtifactTask macTask = new MockAndControlForAddArtifactTask( mm );
 
-        ArtifactMock artifactMock = new ArtifactMock( mm, "group", "artifact", "version", "jar", false );
-        File artifactFile = artifactMock.setNewFile();
+        final ArtifactMock artifactMock = new ArtifactMock( mm, "group", "artifact", "version", "jar", false );
+        final File artifactFile = artifactMock.setNewFile();
 
         macTask.expectGetFinalName( "final-name" );
         macTask.expectGetDestFile( new File( "junk" ) );
-        macTask.expectAddFile( artifactFile, "out/artifact", TypeConversionUtils.modeToInt( "777", new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) ) );
-        
-        ModuleBinaries binaries = new ModuleBinaries();
+        macTask.expectAddFile( artifactFile, "out/artifact",
+                               TypeConversionUtils.modeToInt( "777", new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) ) );
+
+        final ModuleBinaries binaries = new ModuleBinaries();
 
         binaries.setIncludeDependencies( false );
         binaries.setUnpack( false );
@@ -452,14 +456,14 @@ public class ModuleSetAssemblyPhaseTest
         binaries.setOutputDirectory( "out" );
         binaries.setOutputFileNameMapping( "artifact" );
 
-        MavenProject project = createProject( "group", "artifact", "version", null );
+        final MavenProject project = createProject( "group", "artifact", "version", null );
         project.setArtifact( artifactMock.getArtifact() );
 
-        Set projects = Collections.singleton( project );
+        final Set<MavenProject> projects = Collections.singleton( project );
 
         mm.replayAll();
 
-        Logger logger = new ConsoleLogger( Logger.LEVEL_DEBUG, "test" );
+        final Logger logger = new ConsoleLogger( Logger.LEVEL_DEBUG, "test" );
 
         createPhase( logger, null ).addModuleBinaries( binaries, projects, macTask.archiver, macTask.configSource,
                                                        new DefaultAssemblyContext() );
@@ -471,26 +475,27 @@ public class ModuleSetAssemblyPhaseTest
         throws ArchiveCreationException, AssemblyFormattingException, IOException,
         InvalidAssemblerConfigurationException
     {
-        MockManager mm = new MockManager();
+        final MockManager mm = new MockManager();
 
-        MockAndControlForAddDependencySetsTask macTask = new MockAndControlForAddDependencySetsTask( mm );
+        final MockAndControlForAddDependencySetsTask macTask = new MockAndControlForAddDependencySetsTask( mm );
 
-        ArtifactMock artifactMock = new ArtifactMock( mm, "group", "artifact", "version", "jar", false );
-        File artifactFile = artifactMock.setNewFile();
+        final ArtifactMock artifactMock = new ArtifactMock( mm, "group", "artifact", "version", "jar", false );
+        final File artifactFile = artifactMock.setNewFile();
 
         macTask.expectCSGetFinalName( "final-name" );
         macTask.expectGetDestFile( new File( "junk" ) );
-        macTask.expectAddFile( artifactFile, "out/artifact", TypeConversionUtils.modeToInt( "777", new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) ) );
+        macTask.expectAddFile( artifactFile, "out/artifact",
+                               TypeConversionUtils.modeToInt( "777", new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) ) );
         macTask.expectGetSession( null );
-        
-        ModuleBinaries binaries = new ModuleBinaries();
+
+        final ModuleBinaries binaries = new ModuleBinaries();
 
         binaries.setUnpack( false );
         binaries.setFileMode( "777" );
         binaries.setOutputDirectory( "out" );
         binaries.setOutputFileNameMapping( "artifact" );
 
-        DependencySet ds = new DependencySet();
+        final DependencySet ds = new DependencySet();
         ds.setUseProjectArtifact( false );
         ds.setOutputDirectory( binaries.getOutputDirectory() );
         ds.setOutputFileNameMapping( "${artifact.artifactId}" );
@@ -498,32 +503,34 @@ public class ModuleSetAssemblyPhaseTest
 
         binaries.addDependencySet( ds );
 
-        MavenProject project = createProject( "group", "artifact", "version", null );
+        final MavenProject project = createProject( "group", "artifact", "version", null );
         project.setArtifact( artifactMock.getArtifact() );
 
-        ArtifactMock depArtifactMock = new ArtifactMock( mm, "group", "dep", "1", "jar", false );
-        File depArtifactFile = depArtifactMock.setNewFile();
+        final ArtifactMock depArtifactMock = new ArtifactMock( mm, "group", "dep", "1", "jar", false );
+        final File depArtifactFile = depArtifactMock.setNewFile();
 
-        macTask.expectAddFile( depArtifactFile, "out/dep", TypeConversionUtils.modeToInt( "777", new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) ) );
+        macTask.expectAddFile( depArtifactFile, "out/dep",
+                               TypeConversionUtils.modeToInt( "777", new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) ) );
 
-        MavenProject depProject = createProject( "group", "dep", "version", null );
+        final MavenProject depProject = createProject( "group", "dep", "version", null );
         depProject.setArtifact( depArtifactMock.getArtifact() );
 
         macTask.expectBuildFromRepository( depProject );
 
         macTask.expectCSGetRepositories( null, null );
-        macTask.expectResolveDependencies( Collections.singleton( depArtifactMock.getArtifact() ) );
 
-        Set projects = Collections.singleton( project );
+        final Set<MavenProject> projects = Collections.singleton( project );
 
         mm.replayAll();
 
-        Logger overrideLogger = new ConsoleLogger( Logger.LEVEL_DEBUG, "test" );
+        final Logger overrideLogger = new ConsoleLogger( Logger.LEVEL_DEBUG, "test" );
 
-        ModuleSetAssemblyPhase phase = createPhase( overrideLogger, macTask );
+        final ModuleSetAssemblyPhase phase = createPhase( overrideLogger, macTask );
 
-        phase.addModuleBinaries( binaries, projects, macTask.archiver, macTask.configSource,
-                                 new DefaultAssemblyContext() );
+        final DefaultAssemblyContext context = new DefaultAssemblyContext();
+        context.setResolvedArtifacts( Collections.singleton( depArtifactMock.getArtifact() ) );
+
+        phase.addModuleBinaries( binaries, projects, macTask.archiver, macTask.configSource, context );
 
         mm.verifyAll();
     }
@@ -532,22 +539,22 @@ public class ModuleSetAssemblyPhaseTest
         throws ArchiveCreationException, AssemblyFormattingException, IOException,
         InvalidAssemblerConfigurationException
     {
-        MockManager mm = new MockManager();
+        final MockManager mm = new MockManager();
 
-        MockAndControlForAddDependencySetsTask macTask = new MockAndControlForAddDependencySetsTask( mm );
+        final MockAndControlForAddDependencySetsTask macTask = new MockAndControlForAddDependencySetsTask( mm );
 
-        ArtifactMock moduleArtifactMock = new ArtifactMock( mm, "group", "artifact", "0", "jar", false );
-        File moduleArtifactFile = moduleArtifactMock.setNewFile();
+        final ArtifactMock moduleArtifactMock = new ArtifactMock( mm, "group", "artifact", "0", "jar", false );
+        final File moduleArtifactFile = moduleArtifactMock.setNewFile();
 
         macTask.expectCSGetFinalName( "final-name" );
         macTask.expectGetDestFile( new File( "junk" ) );
 
-        int mode = TypeConversionUtils.modeToInt( "777", new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) );
+        final int mode = TypeConversionUtils.modeToInt( "777", new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) );
 
         macTask.expectAddFile( moduleArtifactFile, "out/artifact", mode );
         macTask.expectGetSession( null );
-        
-        ModuleBinaries binaries = new ModuleBinaries();
+
+        final ModuleBinaries binaries = new ModuleBinaries();
 
         binaries.setUnpack( false );
         binaries.setFileMode( "777" );
@@ -555,95 +562,97 @@ public class ModuleSetAssemblyPhaseTest
         binaries.setOutputFileNameMapping( "${artifact.artifactId}" );
         binaries.setIncludeDependencies( true );
 
-        MavenProject project = createProject( "group", "artifact", "version", null );
+        final MavenProject project = createProject( "group", "artifact", "version", null );
         project.setArtifact( moduleArtifactMock.getArtifact() );
 
-        ArtifactMock depArtifactMock = new ArtifactMock( mm, "group", "dep", "1", "jar", false );
-        File depArtifactFile = depArtifactMock.setNewFile();
+        final ArtifactMock depArtifactMock = new ArtifactMock( mm, "group", "dep", "1", "jar", false );
+        final File depArtifactFile = depArtifactMock.setNewFile();
 
         macTask.expectAddFile( depArtifactFile, "out/dep", mode );
 
-        MavenProject depProject = createProject( "group", "dep", "version", null );
+        final MavenProject depProject = createProject( "group", "dep", "version", null );
         depProject.setArtifact( depArtifactMock.getArtifact() );
 
         macTask.expectBuildFromRepository( depProject );
 
         macTask.expectCSGetRepositories( null, null );
-        macTask.expectResolveDependencies( Collections.singleton( depArtifactMock.getArtifact() ) );
 
-        Set projects = Collections.singleton( project );
+        final Set<MavenProject> projects = Collections.singleton( project );
 
         mm.replayAll();
 
-        Logger overrideLogger = new ConsoleLogger( Logger.LEVEL_DEBUG, "test" );
+        final Logger overrideLogger = new ConsoleLogger( Logger.LEVEL_DEBUG, "test" );
 
-        ModuleSetAssemblyPhase phase = createPhase( overrideLogger, macTask );
+        final ModuleSetAssemblyPhase phase = createPhase( overrideLogger, macTask );
 
-        phase.addModuleBinaries( binaries, projects, macTask.archiver, macTask.configSource,
-                                 new DefaultAssemblyContext() );
+        final DefaultAssemblyContext context = new DefaultAssemblyContext();
+        context.setResolvedArtifacts( Collections.singleton( depArtifactMock.getArtifact() ) );
+
+        phase.addModuleBinaries( binaries, projects, macTask.archiver, macTask.configSource, context );
 
         mm.verifyAll();
     }
 
-    public void testCollectExcludesFromQueuedArtifacts_ShouldAddOneExclusion()
-    {
-        MockManager mm = new MockManager();
-
-        List excludes = new ArrayList();
-
-        // nothing up this sleeve...
-        assertTrue( excludes.isEmpty() );
-
-        mm.replayAll();
-
-        Set artifactIds = Collections.singleton( "group:artifact:jar" );
-
-        List result = createPhase( new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ), null )
-            .collectExcludesFromQueuedArtifacts( artifactIds, excludes );
-
-        assertEquals( 1, result.size() );
-
-        assertEquals( "group:artifact:jar", result.get( 0 ) );
-
-        mm.verifyAll();
-    }
-
-    public void testCollectExcludesFromQueuedArtifacts_ShouldHandleNullExcludesList()
-    {
-        MockManager mm = new MockManager();
-
-        mm.replayAll();
-
-        Set artifactIds = Collections.singleton( "group:artifact:jar" );
-
-        List result = createPhase( new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ), null )
-            .collectExcludesFromQueuedArtifacts( artifactIds, null );
-
-        assertEquals( 1, result.size() );
-
-        assertEquals( "group:artifact:jar", result.get( 0 ) );
-
-        mm.verifyAll();
-    }
+    // public void testCollectExcludesFromQueuedArtifacts_ShouldAddOneExclusion()
+    // {
+    // MockManager mm = new MockManager();
+    //
+    // List excludes = new ArrayList();
+    //
+    // // nothing up this sleeve...
+    // assertTrue( excludes.isEmpty() );
+    //
+    // mm.replayAll();
+    //
+    // Set artifactIds = Collections.singleton( "group:artifact:jar" );
+    //
+    // List result = createPhase( new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ), null )
+    // .collectExcludesFromQueuedArtifacts( artifactIds, excludes );
+    //
+    // assertEquals( 1, result.size() );
+    //
+    // assertEquals( "group:artifact:jar", result.get( 0 ) );
+    //
+    // mm.verifyAll();
+    // }
+    //
+    // public void testCollectExcludesFromQueuedArtifacts_ShouldHandleNullExcludesList()
+    // {
+    // MockManager mm = new MockManager();
+    //
+    // mm.replayAll();
+    //
+    // Set artifactIds = Collections.singleton( "group:artifact:jar" );
+    //
+    // List result = createPhase( new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ), null )
+    // .collectExcludesFromQueuedArtifacts( artifactIds, null );
+    //
+    // assertEquals( 1, result.size() );
+    //
+    // assertEquals( "group:artifact:jar", result.get( 0 ) );
+    //
+    // mm.verifyAll();
+    // }
 
     public void testAddModuleArtifact_ShouldThrowExceptionWhenArtifactFileIsNull()
         throws AssemblyFormattingException, IOException
     {
-        MockManager mm = new MockManager();
+        final MockManager mm = new MockManager();
 
-        ArtifactMock artifactMock = new ArtifactMock( mm, "group", "artifact", "version", "type", false );
+        final ArtifactMock artifactMock = new ArtifactMock( mm, "group", "artifact", "version", "type", false );
         artifactMock.setNullFile();
 
         mm.replayAll();
 
         try
         {
-            createPhase( new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ), null ).addModuleArtifact( artifactMock.getArtifact(), null,
-                                                                                              null, null, null );
+            createPhase( new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ), null ).addModuleArtifact( artifactMock.getArtifact(),
+                                                                                                    null, null, null,
+                                                                                                    null );
 
             fail( "Expected ArchiveCreationException since artifact file is null." );
         }
-        catch ( ArchiveCreationException e )
+        catch ( final ArchiveCreationException e )
         {
             // expected
         }
@@ -654,22 +663,23 @@ public class ModuleSetAssemblyPhaseTest
     public void testAddModuleArtifact_ShouldAddOneArtifact()
         throws AssemblyFormattingException, IOException, ArchiveCreationException
     {
-        MockManager mm = new MockManager();
+        final MockManager mm = new MockManager();
 
-        MockAndControlForAddArtifactTask macTask = new MockAndControlForAddArtifactTask( mm );
+        final MockAndControlForAddArtifactTask macTask = new MockAndControlForAddArtifactTask( mm );
 
-        ArtifactMock artifactMock = new ArtifactMock( mm, "group", "artifact", "version", "type", false );
-        File artifactFile = artifactMock.setNewFile();
+        final ArtifactMock artifactMock = new ArtifactMock( mm, "group", "artifact", "version", "type", false );
+        final File artifactFile = artifactMock.setNewFile();
 
-        MavenProject project = createProject( "group", "artifact", "version", null );
+        final MavenProject project = createProject( "group", "artifact", "version", null );
         project.setArtifact( artifactMock.getArtifact() );
 
         macTask.expectGetFinalName( "final-name" );
         macTask.expectGetDestFile( new File( "junk" ) );
 
-        macTask.expectAddFile( artifactFile, "out/artifact", TypeConversionUtils.modeToInt( "777", new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) ) );
-        
-        ModuleBinaries binaries = new ModuleBinaries();
+        macTask.expectAddFile( artifactFile, "out/artifact",
+                               TypeConversionUtils.modeToInt( "777", new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) ) );
+
+        final ModuleBinaries binaries = new ModuleBinaries();
         binaries.setOutputDirectory( "out" );
         binaries.setOutputFileNameMapping( "artifact" );
         binaries.setUnpack( false );
@@ -677,10 +687,11 @@ public class ModuleSetAssemblyPhaseTest
 
         mm.replayAll();
 
-        createPhase( new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ), null ).addModuleArtifact( artifactMock.getArtifact(), project,
-                                                                                          macTask.archiver,
-                                                                                          macTask.configSource,
-                                                                                          binaries );
+        createPhase( new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ), null ).addModuleArtifact( artifactMock.getArtifact(),
+                                                                                                project,
+                                                                                                macTask.archiver,
+                                                                                                macTask.configSource,
+                                                                                                binaries );
 
         mm.verifyAll();
     }
@@ -688,7 +699,7 @@ public class ModuleSetAssemblyPhaseTest
     public void testAddModuleSourceFileSets_ShouldReturnImmediatelyIfSourcesIsNull()
         throws ArchiveCreationException, AssemblyFormattingException
     {
-        MockManager mm = new MockManager();
+        final MockManager mm = new MockManager();
 
         mm.replayAll();
 
@@ -701,23 +712,23 @@ public class ModuleSetAssemblyPhaseTest
     public void testAddModuleSourceFileSets_ShouldAddOneSourceDirectory()
         throws ArchiveCreationException, AssemblyFormattingException
     {
-        MockManager mm = new MockManager();
+        final MockManager mm = new MockManager();
 
-        MockAndControlForAddFileSetsTask macTask = new MockAndControlForAddFileSetsTask( mm, fileManager );
+        final MockAndControlForAddFileSetsTask macTask = new MockAndControlForAddFileSetsTask( mm, fileManager );
 
-        MavenProject project = createProject( "group", "artifact", "version", null );
+        final MavenProject project = createProject( "group", "artifact", "version", null );
 
         macTask.expectGetProject( project );
 
-        ArtifactMock artifactMock = new ArtifactMock( mm, "group", "artifact", "version", "jar", false );
+        final ArtifactMock artifactMock = new ArtifactMock( mm, "group", "artifact", "version", "jar", false );
 
         project.setArtifact( artifactMock.getArtifact() );
 
-        Set projects = Collections.singleton( project );
+        final Set<MavenProject> projects = Collections.singleton( project );
 
-        ModuleSources sources = new ModuleSources();
+        final ModuleSources sources = new ModuleSources();
 
-        FileSet fs = new FileSet();
+        final FileSet fs = new FileSet();
         fs.setDirectory( "/src" );
         fs.setDirectoryMode( "777" );
         fs.setFileMode( "777" );
@@ -726,15 +737,15 @@ public class ModuleSetAssemblyPhaseTest
 
         macTask.expectGetArchiveBaseDirectory();
 
-        int mode = TypeConversionUtils.modeToInt( "777", new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) );
-        int[] modes = { -1, -1, mode, mode };
+        final int mode = TypeConversionUtils.modeToInt( "777", new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) );
+        final int[] modes = { -1, -1, mode, mode };
 
         macTask.expectAdditionOfSingleFileSet( project, project.getBasedir(), "final-name", false, modes, 1, true,
                                                false );
 
         mm.replayAll();
 
-        Logger logger = new ConsoleLogger( Logger.LEVEL_DEBUG, "test" );
+        final Logger logger = new ConsoleLogger( Logger.LEVEL_DEBUG, "test" );
 
         createPhase( logger, null ).addModuleSourceFileSets( sources, projects, macTask.archiver, macTask.configSource );
 
@@ -744,22 +755,23 @@ public class ModuleSetAssemblyPhaseTest
     public void testGetModuleProjects_ShouldReturnNothingWhenReactorContainsOnlyCurrentProject()
         throws ArchiveCreationException
     {
-        MockManager mm = new MockManager();
+        final MockManager mm = new MockManager();
 
-        MavenProject project = createProject( "group", "artifact", "version", null );
+        final MavenProject project = createProject( "group", "artifact", "version", null );
 
-        MockAndControlForAddDependencySetsTask macTask = new MockAndControlForAddDependencySetsTask( mm, project );
+        final MockAndControlForAddDependencySetsTask macTask = new MockAndControlForAddDependencySetsTask( mm, project );
 
-        List projects = Collections.singletonList( project );
+        final List<MavenProject> projects = Collections.singletonList( project );
 
         macTask.expectGetReactorProjects( projects );
 
-        ModuleSet moduleSet = new ModuleSet();
+        final ModuleSet moduleSet = new ModuleSet();
         moduleSet.setIncludeSubModules( true );
 
         mm.replayAll();
 
-        Set moduleProjects = ModuleSetAssemblyPhase.getModuleProjects( moduleSet, macTask.configSource, logger );
+        final Set<MavenProject> moduleProjects =
+            ModuleSetAssemblyPhase.getModuleProjects( moduleSet, macTask.configSource, logger );
 
         assertTrue( moduleProjects.isEmpty() );
 
@@ -769,26 +781,27 @@ public class ModuleSetAssemblyPhaseTest
     public void testGetModuleProjects_ShouldReturnNothingWhenReactorContainsTwoSiblingProjects()
         throws ArchiveCreationException
     {
-        MockManager mm = new MockManager();
+        final MockManager mm = new MockManager();
 
-        MavenProject project = createProject( "group", "artifact", "version", null );
+        final MavenProject project = createProject( "group", "artifact", "version", null );
 
-        MockAndControlForAddDependencySetsTask macTask = new MockAndControlForAddDependencySetsTask( mm, project );
+        final MockAndControlForAddDependencySetsTask macTask = new MockAndControlForAddDependencySetsTask( mm, project );
 
-        MavenProject project2 = createProject( "group", "artifact2", "version", null );
+        final MavenProject project2 = createProject( "group", "artifact2", "version", null );
 
-        List projects = new ArrayList();
+        final List<MavenProject> projects = new ArrayList<MavenProject>();
         projects.add( project );
         projects.add( project2 );
 
         macTask.expectGetReactorProjects( projects );
 
-        ModuleSet moduleSet = new ModuleSet();
+        final ModuleSet moduleSet = new ModuleSet();
         moduleSet.setIncludeSubModules( true );
 
         mm.replayAll();
 
-        Set moduleProjects = ModuleSetAssemblyPhase.getModuleProjects( moduleSet, macTask.configSource, logger );
+        final Set<MavenProject> moduleProjects =
+            ModuleSetAssemblyPhase.getModuleProjects( moduleSet, macTask.configSource, logger );
 
         assertTrue( moduleProjects.isEmpty() );
 
@@ -798,30 +811,32 @@ public class ModuleSetAssemblyPhaseTest
     public void testGetModuleProjects_ShouldReturnModuleOfCurrentProject()
         throws ArchiveCreationException
     {
-        MockManager mm = new MockManager();
+        final MockManager mm = new MockManager();
 
-        MavenProject project = createProject( "group", "artifact", "version", null );
+        final MavenProject project = createProject( "group", "artifact", "version", null );
 
-        MockAndControlForAddDependencySetsTask macTask = new MockAndControlForAddDependencySetsTask( mm, project );
+        final MockAndControlForAddDependencySetsTask macTask = new MockAndControlForAddDependencySetsTask( mm, project );
 
-        MavenProject project2 = createProject( "group", "artifact2", "version", project );
+        final MavenProject project2 = createProject( "group", "artifact2", "version", project );
 
-        List projects = new ArrayList();
+        final List<MavenProject> projects = new ArrayList<MavenProject>();
         projects.add( project );
         projects.add( project2 );
 
         macTask.expectGetReactorProjects( projects );
 
-        ModuleSet moduleSet = new ModuleSet();
+        final ModuleSet moduleSet = new ModuleSet();
         moduleSet.setIncludeSubModules( true );
 
         mm.replayAll();
 
-        Set moduleProjects = ModuleSetAssemblyPhase.getModuleProjects( moduleSet, macTask.configSource, logger );
+        final Set<MavenProject> moduleProjects =
+            ModuleSetAssemblyPhase.getModuleProjects( moduleSet, macTask.configSource, logger );
 
         assertFalse( moduleProjects.isEmpty() );
 
-        MavenProject result = (MavenProject) moduleProjects.iterator().next();
+        final MavenProject result = moduleProjects.iterator()
+                                                  .next();
 
         assertEquals( "artifact2", result.getArtifactId() );
 
@@ -831,32 +846,33 @@ public class ModuleSetAssemblyPhaseTest
     public void testGetModuleProjects_ShouldReturnDescendentModulesOfCurrentProject()
         throws ArchiveCreationException
     {
-        MockManager mm = new MockManager();
+        final MockManager mm = new MockManager();
 
-        MavenProject project = createProject( "group", "artifact", "version", null );
+        final MavenProject project = createProject( "group", "artifact", "version", null );
 
-        MockAndControlForAddDependencySetsTask macTask = new MockAndControlForAddDependencySetsTask( mm, project );
+        final MockAndControlForAddDependencySetsTask macTask = new MockAndControlForAddDependencySetsTask( mm, project );
 
-        MavenProject project2 = createProject( "group", "artifact2", "version", project );
-        MavenProject project3 = createProject( "group", "artifact3", "version", project2 );
+        final MavenProject project2 = createProject( "group", "artifact2", "version", project );
+        final MavenProject project3 = createProject( "group", "artifact3", "version", project2 );
 
-        List projects = new ArrayList();
+        final List<MavenProject> projects = new ArrayList<MavenProject>();
         projects.add( project );
         projects.add( project2 );
         projects.add( project3 );
 
         macTask.expectGetReactorProjects( projects );
 
-        ModuleSet moduleSet = new ModuleSet();
+        final ModuleSet moduleSet = new ModuleSet();
         moduleSet.setIncludeSubModules( true );
 
         mm.replayAll();
 
-        Set moduleProjects = ModuleSetAssemblyPhase.getModuleProjects( moduleSet, macTask.configSource, logger );
+        final Set<MavenProject> moduleProjects =
+            ModuleSetAssemblyPhase.getModuleProjects( moduleSet, macTask.configSource, logger );
 
         assertEquals( 2, moduleProjects.size() );
 
-        List check = new ArrayList();
+        final List<MavenProject> check = new ArrayList<MavenProject>();
         check.add( project2 );
         check.add( project3 );
 
@@ -868,65 +884,53 @@ public class ModuleSetAssemblyPhaseTest
     public void testGetModuleProjects_ShouldExcludeModuleAndDescendentsTransitively()
         throws ArchiveCreationException
     {
-        MockManager mm = new MockManager();
+        final MockManager mm = new MockManager();
 
-        MavenProject project = createProject( "group", "artifact", "version", null );
+        final MavenProject project = createProject( "group", "artifact", "version", null );
 
-        MockAndControlForAddDependencySetsTask macTask = new MockAndControlForAddDependencySetsTask( mm, project );
+        final MockAndControlForAddDependencySetsTask macTask = new MockAndControlForAddDependencySetsTask( mm, project );
 
-        List macArtifacts = new ArrayList();
+        final List<ArtifactMock> macArtifacts = new ArrayList<ArtifactMock>();
 
         macArtifacts.add( addArtifact( project, mm, false, false ) );
 
-        MavenProject project2 = createProject( "group", "artifact2", "version", project );
+        final MavenProject project2 = createProject( "group", "artifact2", "version", project );
         macArtifacts.add( addArtifact( project2, mm, true, false ) );
-
-        ( (MockAndControlForArtifact) macArtifacts.get( 1 ) ).expectGetId( "group:artifact2:jar:version" );
-//        ( (MockAndControlForArtifact) macArtifacts.get( 1 ) ).expectGetDependencyTrail( Collections
-//            .singletonList( "group:artifact:jar:version" ) );
-
-        MavenProject project3 = createProject( "group", "artifact3", "version", project2 );
+        final MavenProject project3 = createProject( "group", "artifact3", "version", project2 );
         macArtifacts.add( addArtifact( project3, mm, true, true ) );
 
-        ( (MockAndControlForArtifact) macArtifacts.get( 2 ) ).expectGetId( "group:artifact3:jar:version" );
-
-        List projects = new ArrayList();
+        final List<MavenProject> projects = new ArrayList<MavenProject>();
         projects.add( project );
         projects.add( project2 );
         projects.add( project3 );
 
         macTask.expectGetReactorProjects( projects );
 
-        ModuleSet moduleSet = new ModuleSet();
+        final ModuleSet moduleSet = new ModuleSet();
         moduleSet.setIncludeSubModules( true );
 
         moduleSet.addExclude( "group:artifact2" );
 
         mm.replayAll();
 
-        Set moduleProjects = ModuleSetAssemblyPhase.getModuleProjects( moduleSet, macTask.configSource, logger );
+        final Set<MavenProject> moduleProjects =
+            ModuleSetAssemblyPhase.getModuleProjects( moduleSet, macTask.configSource, logger );
 
         assertTrue( moduleProjects.isEmpty() );
 
         mm.verifyAll();
     }
 
-    private MockAndControlForArtifact addArtifact( MavenProject project, MockManager mm, boolean expectIdentityChecks,
-                                                   boolean expectDepTrailCheck )
+    private ArtifactMock addArtifact( final MavenProject project, final MockManager mm,
+                                      final boolean expectIdentityChecks, final boolean expectDepTrailCheck )
     {
-        MockAndControlForArtifact macArtifact = new MockAndControlForArtifact( mm );
-
-        if ( expectIdentityChecks )
-        {
-            macArtifact.expectGetArtifactId( project.getArtifactId() );
-            macArtifact.expectGetGroupId( project.getGroupId() );
-            macArtifact.expectGetDependencyConflictId( project.getGroupId(), project.getArtifactId(), project
-                .getPackaging() );
-        }
+        final ArtifactMock macArtifact =
+            new ArtifactMock( mm, project.getGroupId(), project.getArtifactId(), project.getVersion(),
+                              project.getPackaging(), false );
 
         if ( expectDepTrailCheck )
         {
-            LinkedList depTrail = new LinkedList();
+            final LinkedList<String> depTrail = new LinkedList<String>();
 
             MavenProject parent = project.getParent();
             while ( parent != null )
@@ -936,19 +940,19 @@ public class ModuleSetAssemblyPhaseTest
                 parent = parent.getParent();
             }
 
-            macArtifact.expectGetDependencyTrail( depTrail );
+            macArtifact.setDependencyTrail( depTrail );
         }
 
-        project.setArtifact( macArtifact.artifact );
+        project.setArtifact( macArtifact.getArtifact() );
 
         return macArtifact;
     }
 
-    private void verifyResultIs( List check, Set moduleProjects )
+    private void verifyResultIs( final List<MavenProject> check, final Set<MavenProject> moduleProjects )
     {
         boolean failed = false;
 
-        Set checkTooMany = new HashSet( moduleProjects );
+        final Set<MavenProject> checkTooMany = new HashSet<MavenProject>( moduleProjects );
         checkTooMany.removeAll( check );
 
         if ( !checkTooMany.isEmpty() )
@@ -957,15 +961,15 @@ public class ModuleSetAssemblyPhaseTest
 
             System.out.println( "Unexpected projects in output: " );
 
-            for ( Iterator iter = checkTooMany.iterator(); iter.hasNext(); )
+            for ( final Iterator<MavenProject> iter = checkTooMany.iterator(); iter.hasNext(); )
             {
-                MavenProject project = (MavenProject) iter.next();
+                final MavenProject project = iter.next();
 
                 System.out.println( project.getId() );
             }
         }
 
-        Set checkTooFew = new HashSet( check );
+        final Set<MavenProject> checkTooFew = new HashSet<MavenProject>( check );
         checkTooFew.removeAll( moduleProjects );
 
         if ( !checkTooFew.isEmpty() )
@@ -974,9 +978,9 @@ public class ModuleSetAssemblyPhaseTest
 
             System.out.println( "Expected projects missing from output: " );
 
-            for ( Iterator iter = checkTooMany.iterator(); iter.hasNext(); )
+            for ( final Iterator<MavenProject> iter = checkTooMany.iterator(); iter.hasNext(); )
             {
-                MavenProject project = (MavenProject) iter.next();
+                final MavenProject project = iter.next();
 
                 System.out.println( project.getId() );
             }
@@ -988,27 +992,29 @@ public class ModuleSetAssemblyPhaseTest
         }
     }
 
-    private MavenProject createProject( String groupId, String artifactId, String version, MavenProject parentProject )
+    private MavenProject createProject( final String groupId, final String artifactId, final String version,
+                                        final MavenProject parentProject )
     {
-        Model model = new Model();
+        final Model model = new Model();
         model.setArtifactId( artifactId );
         model.setGroupId( groupId );
         model.setVersion( version );
 
-        MavenProject project = new MavenProject( model );
+        final MavenProject project = new MavenProject( model );
 
         File pomFile;
         if ( parentProject == null )
         {
-            File basedir = fileManager.createTempDir();
+            final File basedir = fileManager.createTempDir();
             pomFile = new File( basedir, "pom.xml" );
         }
         else
         {
-            File parentBase = parentProject.getBasedir();
+            final File parentBase = parentProject.getBasedir();
             pomFile = new File( parentBase, artifactId + "/pom.xml" );
 
-            parentProject.getModel().addModule( artifactId );
+            parentProject.getModel()
+                         .addModule( artifactId );
             project.setParent( parentProject );
         }
 
@@ -1017,18 +1023,17 @@ public class ModuleSetAssemblyPhaseTest
         return project;
     }
 
-    private ModuleSetAssemblyPhase createPhase( Logger logger, MockAndControlForAddDependencySetsTask macTask )
+    private ModuleSetAssemblyPhase createPhase( final Logger logger,
+                                                final MockAndControlForAddDependencySetsTask macTask )
     {
         MavenProjectBuilder projectBuilder = null;
-        DependencyResolver dependencyResolver = null;
 
         if ( macTask != null )
         {
             projectBuilder = macTask.projectBuilder;
-            dependencyResolver = macTask.dependencyResolver;
         }
 
-        ModuleSetAssemblyPhase phase = new ModuleSetAssemblyPhase( projectBuilder, dependencyResolver, logger );
+        final ModuleSetAssemblyPhase phase = new ModuleSetAssemblyPhase( projectBuilder, logger );
 
         return phase;
     }

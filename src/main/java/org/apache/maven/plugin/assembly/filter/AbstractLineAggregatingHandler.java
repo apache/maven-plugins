@@ -20,18 +20,18 @@ package org.apache.maven.plugin.assembly.filter;
 import org.apache.maven.plugin.assembly.utils.AssemblyFileUtils;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
+import org.codehaus.plexus.archiver.ResourceIterator;
 import org.codehaus.plexus.archiver.UnArchiver;
 import org.codehaus.plexus.components.io.fileselectors.FileInfo;
 import org.codehaus.plexus.util.IOUtil;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -41,30 +41,55 @@ public abstract class AbstractLineAggregatingHandler
     implements ContainerDescriptorHandler
 {
 
-    private Map<String, StringWriter> catalog = new HashMap<String, StringWriter>();
+    private Map<String, List<String>> catalog = new HashMap<String, List<String>>();
 
-    private Map<String, List<String>> files = new HashMap<String, List<String>>();
+    private boolean excludeOverride = false;
 
     protected abstract String getOutputPathPrefix( final FileInfo fileInfo );
 
     protected abstract boolean fileMatches( final FileInfo fileInfo );
 
-    public void finalizeArchiveCreation( final Archiver archiver ) throws ArchiverException
+    protected String getEncoding()
     {
-        for ( final Map.Entry<String, StringWriter> entry : catalog.entrySet() )
+        return "UTF-8";
+    }
+
+    public void finalizeArchiveCreation( final Archiver archiver )
+        throws ArchiverException
+    {
+        // this will prompt the isSelected() call, below, for all resources added to the archive.
+        // FIXME: This needs to be corrected in the AbstractArchiver, where
+        // runArchiveFinalizers() is called before regular resources are added...
+        // which is done because the manifest needs to be added first, and the
+        // manifest-creation component is a finalizer in the assembly plugin...
+        for ( final ResourceIterator it = archiver.getResources(); it.hasNext(); )
+        {
+            it.next();
+        }
+
+        addToArchive( archiver );
+    }
+
+    protected void addToArchive( final Archiver archiver )
+        throws ArchiverException
+    {
+        for ( final Map.Entry<String, List<String>> entry : catalog.entrySet() )
         {
             final String name = entry.getKey();
             final String fname = new File( name ).getName();
 
-            Writer writer = null;
+            PrintWriter writer = null;
             File f;
             try
             {
                 f = File.createTempFile( "assembly-" + fname, ".tmp" );
                 f.deleteOnExit();
 
-                writer = new FileWriter( f );
-                writer.write( entry.getValue().toString() );
+                writer = new PrintWriter( new OutputStreamWriter( new FileOutputStream( f ), getEncoding() ) );
+                for ( final String line : entry.getValue() )
+                {
+                    writer.println( line );
+                }
             }
             catch ( final IOException e )
             {
@@ -75,10 +100,15 @@ public abstract class AbstractLineAggregatingHandler
             {
                 IOUtil.close( writer );
             }
+
+            excludeOverride = true;
+            archiver.addFile( f, name );
+            excludeOverride = false;
         }
     }
 
-    public void finalizeArchiveExtraction( final UnArchiver unArchiver ) throws ArchiverException
+    public void finalizeArchiveExtraction( final UnArchiver unArchiver )
+        throws ArchiverException
     {
     }
 
@@ -87,33 +117,30 @@ public abstract class AbstractLineAggregatingHandler
         return new ArrayList<String>( catalog.keySet() );
     }
 
-    public boolean isSelected( final FileInfo fileInfo ) throws IOException
+    public boolean isSelected( final FileInfo fileInfo )
+        throws IOException
     {
+        if ( excludeOverride )
+        {
+            return true;
+        }
+
         String name = fileInfo.getName();
         name = AssemblyFileUtils.normalizePath( name );
         name = name.replace( File.separatorChar, '/' );
 
-        name = getOutputPathPrefix( fileInfo ) + new File( name ).getName();
-
         if ( fileInfo.isFile() && fileMatches( fileInfo ) )
         {
-            StringWriter writer = catalog.get( name );
-            if ( writer == null )
+            name = getOutputPathPrefix( fileInfo ) + new File( name ).getName();
+
+            List<String> lines = catalog.get( name );
+            if ( lines == null )
             {
-                writer = new StringWriter();
-                catalog.put( name, writer );
+                lines = new ArrayList<String>();
+                catalog.put( name, lines );
             }
 
-            readLines( fileInfo, new PrintWriter( writer ) );
-
-            List<String> aggregated = files.get( name );
-            if ( aggregated == null )
-            {
-                aggregated = new ArrayList<String>();
-                files.put( name, aggregated );
-            }
-
-            aggregated.add( fileInfo.getName() );
+            readLines( fileInfo, lines );
 
             return false;
         }
@@ -121,16 +148,21 @@ public abstract class AbstractLineAggregatingHandler
         return true;
     }
 
-    protected void readLines( final FileInfo fileInfo, final PrintWriter writer ) throws IOException
+    protected void readLines( final FileInfo fileInfo, final List<String> lines )
+        throws IOException
     {
         BufferedReader reader = null;
         try
         {
-            reader = new BufferedReader( new InputStreamReader( fileInfo.getContents() ) ); // platform encoding
+            reader = new BufferedReader( new InputStreamReader( fileInfo.getContents(), getEncoding() ) );
+
             String line = null;
             while ( ( line = reader.readLine() ) != null )
             {
-                writer.println( line );
+                if ( !lines.contains( line ) )
+                {
+                    lines.add( line );
+                }
             }
         }
         finally
@@ -139,24 +171,14 @@ public abstract class AbstractLineAggregatingHandler
         }
     }
 
-    protected final Map<String, StringWriter> getCatalog()
+    protected final Map<String, List<String>> getCatalog()
     {
         return catalog;
     }
 
-    protected final Map<String, List<String>> getFiles()
-    {
-        return files;
-    }
-
-    protected final void setCatalog( final Map<String, StringWriter> catalog )
+    protected final void setCatalog( final Map<String, List<String>> catalog )
     {
         this.catalog = catalog;
-    }
-
-    protected final void setFiles( final Map<String, List<String>> files )
-    {
-        this.files = files;
     }
 
 }

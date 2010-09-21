@@ -26,12 +26,14 @@ public class AssemblyFormattingException
     extends Exception
 {
 
-    public AssemblyFormattingException( String message, Throwable error )
+    private static final long serialVersionUID = 1L;
+
+    public AssemblyFormattingException( final String message, final Throwable error )
     {
         super( message, error );
     }
 
-    public AssemblyFormattingException( String message )
+    public AssemblyFormattingException( final String message )
     {
         super( message );
     }

@@ -26,12 +26,14 @@ public class ArchiveCreationException
     extends Exception
 {
 
-    public ArchiveCreationException( String message, Throwable error )
+    private static final long serialVersionUID = 1L;
+
+    public ArchiveCreationException( final String message, final Throwable error )
     {
         super( message, error );
     }
 
-    public ArchiveCreationException( String message )
+    public ArchiveCreationException( final String message )
     {
         super( message );
     }

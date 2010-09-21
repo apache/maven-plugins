@@ -21,6 +21,7 @@ package org.apache.maven.plugin.assembly.archive.phase;
 
 import org.apache.maven.model.Model;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
+import org.apache.maven.plugin.assembly.DefaultAssemblyContext;
 import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
 import org.apache.maven.plugin.assembly.model.Assembly;
@@ -45,8 +46,9 @@ public class FileItemAssemblyPhaseTest
     extends TestCase
 {
 
-    private TestFileManager fileManager = new TestFileManager( "file-item-phase.test.", "" );
+    private final TestFileManager fileManager = new TestFileManager( "file-item-phase.test.", "" );
 
+    @Override
     public void tearDown()
         throws IOException
     {
@@ -56,22 +58,22 @@ public class FileItemAssemblyPhaseTest
     public void testExecute_ShouldAddNothingWhenNoFileItemsArePresent()
         throws ArchiveCreationException, AssemblyFormattingException
     {
-        MockManager mm = new MockManager();
+        final MockManager mm = new MockManager();
 
-        MockAndControlForConfigSource macCS = new MockAndControlForConfigSource( mm );
+        final MockAndControlForConfigSource macCS = new MockAndControlForConfigSource( mm );
 
-        File basedir = fileManager.createTempDir();
+        final File basedir = fileManager.createTempDir();
 
         macCS.expectGetBasedir( basedir );
 
-        MockAndControlForLogger macLogger = new MockAndControlForLogger( mm );
+        final MockAndControlForLogger macLogger = new MockAndControlForLogger( mm );
 
-        Assembly assembly = new Assembly();
+        final Assembly assembly = new Assembly();
         assembly.setId( "test" );
 
         mm.replayAll();
 
-        createPhase( macLogger.logger ).execute( assembly, null, macCS.configSource );
+        createPhase( macLogger.logger ).execute( assembly, null, macCS.configSource, new DefaultAssemblyContext() );
 
         mm.verifyAll();
     }
@@ -79,17 +81,17 @@ public class FileItemAssemblyPhaseTest
     public void testExecute_ShouldAddAbsoluteFileNoFilterNoLineEndingConversion()
         throws ArchiveCreationException, AssemblyFormattingException, IOException
     {
-        MockManager mm = new MockManager();
+        final MockManager mm = new MockManager();
 
-        MockAndControlForConfigSource macCS = new MockAndControlForConfigSource( mm );
+        final MockAndControlForConfigSource macCS = new MockAndControlForConfigSource( mm );
 
-        File basedir = fileManager.createTempDir();
+        final File basedir = fileManager.createTempDir();
 
-        File file = fileManager.createFile( basedir, "file.txt", "This is a test file." );
+        final File file = fileManager.createFile( basedir, "file.txt", "This is a test file." );
 
         macCS.expectGetBasedir( basedir );
 
-        File tempRoot = fileManager.createTempDir();
+        final File tempRoot = fileManager.createTempDir();
 
         macCS.expectGetTemporaryRootDirectory( tempRoot );
 
@@ -97,26 +99,29 @@ public class FileItemAssemblyPhaseTest
 
         macCS.expectGetFinalName( "final-name" );
 
-        MockAndControlForLogger macLogger = new MockAndControlForLogger( mm );
+        final MockAndControlForLogger macLogger = new MockAndControlForLogger( mm );
 
-        MockAndControlForArchiver macArchiver = new MockAndControlForArchiver( mm );
+        final MockAndControlForArchiver macArchiver = new MockAndControlForArchiver( mm );
 
-        Assembly assembly = new Assembly();
+        final Assembly assembly = new Assembly();
         assembly.setId( "test" );
 
-        FileItem fi = new FileItem();
+        final FileItem fi = new FileItem();
         fi.setSource( file.getAbsolutePath() );
         fi.setFiltered( false );
         fi.setLineEnding( "keep" );
         fi.setFileMode( "777" );
 
-        macArchiver.expectAddFile( file, "file.txt", TypeConversionUtils.modeToInt( "777", new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) ) );
+        macArchiver.expectAddFile( file,
+                                   "file.txt",
+                                   TypeConversionUtils.modeToInt( "777", new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) ) );
 
         assembly.addFile( fi );
 
         mm.replayAll();
 
-        createPhase( macLogger.logger ).execute( assembly, macArchiver.archiver, macCS.configSource );
+        createPhase( macLogger.logger ).execute( assembly, macArchiver.archiver, macCS.configSource,
+                                                 new DefaultAssemblyContext() );
 
         mm.verifyAll();
     }
@@ -124,17 +129,17 @@ public class FileItemAssemblyPhaseTest
     public void testExecute_ShouldAddRelativeFileNoFilterNoLineEndingConversion()
         throws ArchiveCreationException, AssemblyFormattingException, IOException
     {
-        MockManager mm = new MockManager();
+        final MockManager mm = new MockManager();
 
-        MockAndControlForConfigSource macCS = new MockAndControlForConfigSource( mm );
+        final MockAndControlForConfigSource macCS = new MockAndControlForConfigSource( mm );
 
-        File basedir = fileManager.createTempDir();
+        final File basedir = fileManager.createTempDir();
 
-        File file = fileManager.createFile( basedir, "file.txt", "This is a test file." );
+        final File file = fileManager.createFile( basedir, "file.txt", "This is a test file." );
 
         macCS.expectGetBasedir( basedir );
 
-        File tempRoot = fileManager.createTempDir();
+        final File tempRoot = fileManager.createTempDir();
 
         macCS.expectGetTemporaryRootDirectory( tempRoot );
 
@@ -142,26 +147,29 @@ public class FileItemAssemblyPhaseTest
 
         macCS.expectGetFinalName( "final-name" );
 
-        MockAndControlForLogger macLogger = new MockAndControlForLogger( mm );
+        final MockAndControlForLogger macLogger = new MockAndControlForLogger( mm );
 
-        MockAndControlForArchiver macArchiver = new MockAndControlForArchiver( mm );
+        final MockAndControlForArchiver macArchiver = new MockAndControlForArchiver( mm );
 
-        Assembly assembly = new Assembly();
+        final Assembly assembly = new Assembly();
         assembly.setId( "test" );
 
-        FileItem fi = new FileItem();
+        final FileItem fi = new FileItem();
         fi.setSource( "file.txt" );
         fi.setFiltered( false );
         fi.setLineEnding( "keep" );
         fi.setFileMode( "777" );
 
-        macArchiver.expectAddFile( file, "file.txt", TypeConversionUtils.modeToInt( "777", new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) ) );
+        macArchiver.expectAddFile( file,
+                                   "file.txt",
+                                   TypeConversionUtils.modeToInt( "777", new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) ) );
 
         assembly.addFile( fi );
 
         mm.replayAll();
 
-        createPhase( macLogger.logger ).execute( assembly, macArchiver.archiver, macCS.configSource );
+        createPhase( macLogger.logger ).execute( assembly, macArchiver.archiver, macCS.configSource,
+                                                 new DefaultAssemblyContext() );
 
         mm.verifyAll();
     }
@@ -169,19 +177,21 @@ public class FileItemAssemblyPhaseTest
     public void testExecute_WithOutputDirectory()
         throws Exception
     {
-        MockManager mm = new MockManager();
+        final MockManager mm = new MockManager();
 
-        MockAndControlForConfigSource macCS = new MockAndControlForConfigSource( mm );
+        final MockAndControlForConfigSource macCS = new MockAndControlForConfigSource( mm );
 
-        File basedir = fileManager.createTempDir();
+        final File basedir = fileManager.createTempDir();
 
-        File readmeFile = fileManager.createFile( basedir, "README.txt", "This is a test file for README.txt." );
-        File licenseFile = fileManager.createFile( basedir, "LICENSE.txt", "This is a test file for LICENSE.txt." );
-        File configFile = fileManager.createFile( basedir, "config/config.txt", "This is a test file for config/config.txt" );
+        final File readmeFile = fileManager.createFile( basedir, "README.txt", "This is a test file for README.txt." );
+        final File licenseFile =
+            fileManager.createFile( basedir, "LICENSE.txt", "This is a test file for LICENSE.txt." );
+        final File configFile =
+            fileManager.createFile( basedir, "config/config.txt", "This is a test file for config/config.txt" );
 
         macCS.expectGetBasedir( basedir );
 
-        File tempRoot = fileManager.createTempDir();
+        final File tempRoot = fileManager.createTempDir();
 
         macCS.expectGetTemporaryRootDirectory( tempRoot );
 
@@ -189,38 +199,44 @@ public class FileItemAssemblyPhaseTest
 
         macCS.expectGetFinalName( "final-name" );
 
-        MockAndControlForLogger macLogger = new MockAndControlForLogger( mm );
+        final MockAndControlForLogger macLogger = new MockAndControlForLogger( mm );
 
-        MockAndControlForArchiver macArchiver = new MockAndControlForArchiver( mm );
+        final MockAndControlForArchiver macArchiver = new MockAndControlForArchiver( mm );
 
-        Assembly assembly = new Assembly();
+        final Assembly assembly = new Assembly();
         assembly.setId( "test" );
         assembly.setIncludeBaseDirectory( true );
 
-        FileItem readmeFileItem = new FileItem();
+        final FileItem readmeFileItem = new FileItem();
         readmeFileItem.setSource( "README.txt" );
         readmeFileItem.setOutputDirectory( "" );
         readmeFileItem.setFiltered( false );
         readmeFileItem.setLineEnding( "keep" );
         readmeFileItem.setFileMode( "777" );
 
-        FileItem licenseFileItem = new FileItem();
+        final FileItem licenseFileItem = new FileItem();
         licenseFileItem.setSource( "LICENSE.txt" );
         licenseFileItem.setOutputDirectory( "/" );
         licenseFileItem.setFiltered( false );
         licenseFileItem.setLineEnding( "keep" );
         licenseFileItem.setFileMode( "777" );
 
-        FileItem configFileItem = new FileItem();
+        final FileItem configFileItem = new FileItem();
         configFileItem.setSource( "config/config.txt" );
         configFileItem.setOutputDirectory( "config" );
         configFileItem.setFiltered( false );
         configFileItem.setLineEnding( "keep" );
         configFileItem.setFileMode( "777" );
 
-        macArchiver.expectAddFile( readmeFile, "README.txt", TypeConversionUtils.modeToInt( "777", new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) ) );
-        macArchiver.expectAddFile( licenseFile, "LICENSE.txt", TypeConversionUtils.modeToInt( "777", new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) ) );
-        macArchiver.expectAddFile( configFile, "config/config.txt", TypeConversionUtils.modeToInt( "777", new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) ) );
+        macArchiver.expectAddFile( readmeFile,
+                                   "README.txt",
+                                   TypeConversionUtils.modeToInt( "777", new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) ) );
+        macArchiver.expectAddFile( licenseFile,
+                                   "LICENSE.txt",
+                                   TypeConversionUtils.modeToInt( "777", new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) ) );
+        macArchiver.expectAddFile( configFile,
+                                   "config/config.txt",
+                                   TypeConversionUtils.modeToInt( "777", new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) ) );
 
         assembly.addFile( readmeFileItem );
         assembly.addFile( licenseFileItem );
@@ -228,7 +244,8 @@ public class FileItemAssemblyPhaseTest
 
         mm.replayAll();
 
-        createPhase( macLogger.logger ).execute( assembly, macArchiver.archiver, macCS.configSource );
+        createPhase( macLogger.logger ).execute( assembly, macArchiver.archiver, macCS.configSource,
+                                                 new DefaultAssemblyContext() );
 
         mm.verifyAll();
     }
@@ -236,20 +253,21 @@ public class FileItemAssemblyPhaseTest
     public void testExecute_WithOutputDirectoryAndDestName()
         throws Exception
     {
-        MockManager mm = new MockManager();
+        final MockManager mm = new MockManager();
 
-        MockAndControlForConfigSource macCS = new MockAndControlForConfigSource( mm );
+        final MockAndControlForConfigSource macCS = new MockAndControlForConfigSource( mm );
 
-        File basedir = fileManager.createTempDir();
+        final File basedir = fileManager.createTempDir();
 
-        File readmeFile = fileManager.createFile( basedir, "README.txt", "This is a test file for README.txt." );
-        File licenseFile = fileManager.createFile( basedir, "LICENSE.txt", "This is a test file for LICENSE.txt." );
-        File configFile = fileManager.createFile( basedir, "config/config.txt",
-                                                  "This is a test file for config/config.txt" );
+        final File readmeFile = fileManager.createFile( basedir, "README.txt", "This is a test file for README.txt." );
+        final File licenseFile =
+            fileManager.createFile( basedir, "LICENSE.txt", "This is a test file for LICENSE.txt." );
+        final File configFile =
+            fileManager.createFile( basedir, "config/config.txt", "This is a test file for config/config.txt" );
 
         macCS.expectGetBasedir( basedir );
 
-        File tempRoot = fileManager.createTempDir();
+        final File tempRoot = fileManager.createTempDir();
 
         macCS.expectGetTemporaryRootDirectory( tempRoot );
 
@@ -257,15 +275,15 @@ public class FileItemAssemblyPhaseTest
 
         macCS.expectGetFinalName( "final-name" );
 
-        MockAndControlForLogger macLogger = new MockAndControlForLogger( mm );
+        final MockAndControlForLogger macLogger = new MockAndControlForLogger( mm );
 
-        MockAndControlForArchiver macArchiver = new MockAndControlForArchiver( mm );
+        final MockAndControlForArchiver macArchiver = new MockAndControlForArchiver( mm );
 
-        Assembly assembly = new Assembly();
+        final Assembly assembly = new Assembly();
         assembly.setId( "test" );
         assembly.setIncludeBaseDirectory( true );
 
-        FileItem readmeFileItem = new FileItem();
+        final FileItem readmeFileItem = new FileItem();
         readmeFileItem.setSource( "README.txt" );
         readmeFileItem.setOutputDirectory( "" );
         readmeFileItem.setDestName( "README_renamed.txt" );
@@ -273,7 +291,7 @@ public class FileItemAssemblyPhaseTest
         readmeFileItem.setLineEnding( "keep" );
         readmeFileItem.setFileMode( "777" );
 
-        FileItem licenseFileItem = new FileItem();
+        final FileItem licenseFileItem = new FileItem();
         licenseFileItem.setSource( "LICENSE.txt" );
         licenseFileItem.setOutputDirectory( "/" );
         licenseFileItem.setDestName( "LICENSE_renamed.txt" );
@@ -281,7 +299,7 @@ public class FileItemAssemblyPhaseTest
         licenseFileItem.setLineEnding( "keep" );
         licenseFileItem.setFileMode( "777" );
 
-        FileItem configFileItem = new FileItem();
+        final FileItem configFileItem = new FileItem();
         configFileItem.setSource( "config/config.txt" );
         configFileItem.setDestName( "config_renamed.txt" );
         configFileItem.setOutputDirectory( "config" );
@@ -289,9 +307,15 @@ public class FileItemAssemblyPhaseTest
         configFileItem.setLineEnding( "keep" );
         configFileItem.setFileMode( "777" );
 
-        macArchiver.expectAddFile( readmeFile, "README_renamed.txt", TypeConversionUtils.modeToInt( "777", new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) ) );
-        macArchiver.expectAddFile( licenseFile, "LICENSE_renamed.txt", TypeConversionUtils.modeToInt( "777", new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) ) );
-        macArchiver.expectAddFile( configFile, "config/config_renamed.txt", TypeConversionUtils.modeToInt( "777", new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) ) );
+        macArchiver.expectAddFile( readmeFile,
+                                   "README_renamed.txt",
+                                   TypeConversionUtils.modeToInt( "777", new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) ) );
+        macArchiver.expectAddFile( licenseFile,
+                                   "LICENSE_renamed.txt",
+                                   TypeConversionUtils.modeToInt( "777", new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) ) );
+        macArchiver.expectAddFile( configFile,
+                                   "config/config_renamed.txt",
+                                   TypeConversionUtils.modeToInt( "777", new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) ) );
 
         assembly.addFile( readmeFileItem );
         assembly.addFile( licenseFileItem );
@@ -299,7 +323,8 @@ public class FileItemAssemblyPhaseTest
 
         mm.replayAll();
 
-        createPhase( macLogger.logger ).execute( assembly, macArchiver.archiver, macCS.configSource );
+        createPhase( macLogger.logger ).execute( assembly, macArchiver.archiver, macCS.configSource,
+                                                 new DefaultAssemblyContext() );
 
         mm.verifyAll();
     }
@@ -307,20 +332,21 @@ public class FileItemAssemblyPhaseTest
     public void testExecute_WithOutputDirectoryAndDestNameAndIncludeBaseDirectoryFalse()
         throws Exception
     {
-        MockManager mm = new MockManager();
+        final MockManager mm = new MockManager();
 
-        MockAndControlForConfigSource macCS = new MockAndControlForConfigSource( mm );
+        final MockAndControlForConfigSource macCS = new MockAndControlForConfigSource( mm );
 
-        File basedir = fileManager.createTempDir();
+        final File basedir = fileManager.createTempDir();
 
-        File readmeFile = fileManager.createFile( basedir, "README.txt", "This is a test file for README.txt." );
-        File licenseFile = fileManager.createFile( basedir, "LICENSE.txt", "This is a test file for LICENSE.txt." );
-        File configFile = fileManager.createFile( basedir, "config/config.txt",
-                                                  "This is a test file for config/config.txt" );
+        final File readmeFile = fileManager.createFile( basedir, "README.txt", "This is a test file for README.txt." );
+        final File licenseFile =
+            fileManager.createFile( basedir, "LICENSE.txt", "This is a test file for LICENSE.txt." );
+        final File configFile =
+            fileManager.createFile( basedir, "config/config.txt", "This is a test file for config/config.txt" );
 
         macCS.expectGetBasedir( basedir );
 
-        File tempRoot = fileManager.createTempDir();
+        final File tempRoot = fileManager.createTempDir();
 
         macCS.expectGetTemporaryRootDirectory( tempRoot );
 
@@ -328,29 +354,29 @@ public class FileItemAssemblyPhaseTest
 
         macCS.expectGetFinalName( "final-name" );
 
-        MockAndControlForLogger macLogger = new MockAndControlForLogger( mm );
+        final MockAndControlForLogger macLogger = new MockAndControlForLogger( mm );
 
-        MockAndControlForArchiver macArchiver = new MockAndControlForArchiver( mm );
+        final MockAndControlForArchiver macArchiver = new MockAndControlForArchiver( mm );
 
-        Assembly assembly = new Assembly();
+        final Assembly assembly = new Assembly();
         assembly.setId( "test" );
         assembly.setIncludeBaseDirectory( false );
 
-        FileItem readmeFileItem = new FileItem();
+        final FileItem readmeFileItem = new FileItem();
         readmeFileItem.setSource( "README.txt" );
         readmeFileItem.setDestName( "README_renamed.txt" );
         readmeFileItem.setFiltered( false );
         readmeFileItem.setLineEnding( "keep" );
         readmeFileItem.setFileMode( "777" );
 
-        FileItem licenseFileItem = new FileItem();
+        final FileItem licenseFileItem = new FileItem();
         licenseFileItem.setSource( "LICENSE.txt" );
         licenseFileItem.setDestName( "LICENSE_renamed.txt" );
         licenseFileItem.setFiltered( false );
         licenseFileItem.setLineEnding( "keep" );
         licenseFileItem.setFileMode( "777" );
 
-        FileItem configFileItem = new FileItem();
+        final FileItem configFileItem = new FileItem();
         configFileItem.setSource( "config/config.txt" );
         configFileItem.setDestName( "config_renamed.txt" );
         configFileItem.setOutputDirectory( "config" );
@@ -358,9 +384,15 @@ public class FileItemAssemblyPhaseTest
         configFileItem.setLineEnding( "keep" );
         configFileItem.setFileMode( "777" );
 
-        macArchiver.expectAddFile( readmeFile, "README_renamed.txt", TypeConversionUtils.modeToInt( "777", new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) ) );
-        macArchiver.expectAddFile( licenseFile, "LICENSE_renamed.txt", TypeConversionUtils.modeToInt( "777", new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) ) );
-        macArchiver.expectAddFile( configFile, "config/config_renamed.txt", TypeConversionUtils.modeToInt( "777", new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) ) );
+        macArchiver.expectAddFile( readmeFile,
+                                   "README_renamed.txt",
+                                   TypeConversionUtils.modeToInt( "777", new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) ) );
+        macArchiver.expectAddFile( licenseFile,
+                                   "LICENSE_renamed.txt",
+                                   TypeConversionUtils.modeToInt( "777", new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) ) );
+        macArchiver.expectAddFile( configFile,
+                                   "config/config_renamed.txt",
+                                   TypeConversionUtils.modeToInt( "777", new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) ) );
 
         assembly.addFile( readmeFileItem );
         assembly.addFile( licenseFileItem );
@@ -368,14 +400,15 @@ public class FileItemAssemblyPhaseTest
 
         mm.replayAll();
 
-        createPhase( macLogger.logger ).execute( assembly, macArchiver.archiver, macCS.configSource );
+        createPhase( macLogger.logger ).execute( assembly, macArchiver.archiver, macCS.configSource,
+                                                 new DefaultAssemblyContext() );
 
         mm.verifyAll();
     }
 
-    private FileItemAssemblyPhase createPhase( Logger logger )
+    private FileItemAssemblyPhase createPhase( final Logger logger )
     {
-        FileItemAssemblyPhase phase = new FileItemAssemblyPhase();
+        final FileItemAssemblyPhase phase = new FileItemAssemblyPhase();
         phase.enableLogging( logger );
 
         return phase;
@@ -387,21 +420,21 @@ public class FileItemAssemblyPhaseTest
 
         MockControl control;
 
-        public MockAndControlForArchiver( MockManager mockManager )
+        public MockAndControlForArchiver( final MockManager mockManager )
         {
             control = MockControl.createControl( Archiver.class );
             mockManager.add( control );
 
-            archiver = ( Archiver ) control.getMock();
+            archiver = (Archiver) control.getMock();
         }
 
-        public void expectAddFile( File file, String outputLocation, int fileMode )
+        public void expectAddFile( final File file, final String outputLocation, final int fileMode )
         {
             try
             {
                 archiver.addFile( file, outputLocation, fileMode );
             }
-            catch ( ArchiverException e )
+            catch ( final ArchiverException e )
             {
                 Assert.fail( "Should never happen." );
             }
@@ -414,36 +447,36 @@ public class FileItemAssemblyPhaseTest
 
         MockControl control;
 
-        public MockAndControlForConfigSource( MockManager mockManager )
+        public MockAndControlForConfigSource( final MockManager mockManager )
         {
             control = MockControl.createControl( AssemblerConfigurationSource.class );
             mockManager.add( control );
 
-            configSource = ( AssemblerConfigurationSource ) control.getMock();
-            
+            configSource = (AssemblerConfigurationSource) control.getMock();
+
             configSource.getMavenSession();
             control.setReturnValue( null, MockControl.ZERO_OR_MORE );
         }
 
-        public void expectGetProject( MavenProject project )
+        public void expectGetProject( final MavenProject project )
         {
             configSource.getProject();
             control.setReturnValue( project, MockControl.ONE_OR_MORE );
         }
 
-        public void expectGetFinalName( String finalName )
+        public void expectGetFinalName( final String finalName )
         {
             configSource.getFinalName();
             control.setReturnValue( finalName, MockControl.ONE_OR_MORE );
         }
 
-        public void expectGetTemporaryRootDirectory( File tempRoot )
+        public void expectGetTemporaryRootDirectory( final File tempRoot )
         {
             configSource.getTemporaryRootDirectory();
             control.setReturnValue( tempRoot, MockControl.ONE_OR_MORE );
         }
 
-        public void expectGetBasedir( File basedir )
+        public void expectGetBasedir( final File basedir )
         {
             configSource.getBasedir();
             control.setReturnValue( basedir, MockControl.ONE_OR_MORE );
@@ -456,12 +489,12 @@ public class FileItemAssemblyPhaseTest
 
         MockControl control;
 
-        public MockAndControlForLogger( MockManager mockManager )
+        public MockAndControlForLogger( final MockManager mockManager )
         {
             control = MockControl.createControl( Logger.class );
             mockManager.add( control );
 
-            logger = ( Logger ) control.getMock();
+            logger = (Logger) control.getMock();
         }
     }
 

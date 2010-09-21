@@ -55,25 +55,24 @@ public class SimpleAggregatingDescriptorHandler
 
     private String outputPath;
 
-    private String commentChars = "#";
+    private final String commentChars = "#";
 
     // calculated, temporary values.
 
     private boolean overrideFilterAction;
 
-    private StringWriter aggregateWriter = new StringWriter();
+    private final StringWriter aggregateWriter = new StringWriter();
 
-    private List filenames = new ArrayList();
+    private final List<String> filenames = new ArrayList<String>();
 
     // injected by the container.
 
     private Logger logger;
 
-    public void finalizeArchiveCreation( Archiver archiver )
-        throws ArchiverException
+    public void finalizeArchiveCreation( final Archiver archiver ) throws ArchiverException
     {
         checkConfig();
-        
+
         if ( outputPath.endsWith( "/" ) )
         {
             throw new ArchiverException(
@@ -86,7 +85,7 @@ public class SimpleAggregatingDescriptorHandler
             outputPath = outputPath.substring( 1 );
         }
 
-        File temp = writePropertiesFile();
+        final File temp = writePropertiesFile();
 
         overrideFilterAction = true;
 
@@ -95,8 +94,7 @@ public class SimpleAggregatingDescriptorHandler
         overrideFilterAction = false;
     }
 
-    private File writePropertiesFile()
-        throws ArchiverException
+    private File writePropertiesFile() throws ArchiverException
     {
         File f;
 
@@ -111,9 +109,9 @@ public class SimpleAggregatingDescriptorHandler
 
             writer.write( commentChars + " Aggregated on " + new Date() + " from: " );
 
-            for ( Iterator it = filenames.iterator(); it.hasNext(); )
+            for ( final Iterator<String> it = filenames.iterator(); it.hasNext(); )
             {
-                String filename = (String) it.next();
+                final String filename = it.next();
 
                 writer.write( "\n" + commentChars + " " + filename );
             }
@@ -122,10 +120,10 @@ public class SimpleAggregatingDescriptorHandler
 
             writer.write( aggregateWriter.toString() );
         }
-        catch ( IOException e )
+        catch ( final IOException e )
         {
             throw new ArchiverException( "Error adding aggregated properties to finalize archive creation. Reason: "
-                                         + e.getMessage(), e );
+                            + e.getMessage(), e );
         }
         finally
         {
@@ -135,23 +133,21 @@ public class SimpleAggregatingDescriptorHandler
         return f;
     }
 
-    public void finalizeArchiveExtraction( UnArchiver unarchiver )
-        throws ArchiverException
+    public void finalizeArchiveExtraction( final UnArchiver unarchiver ) throws ArchiverException
     {
     }
 
-    public List getVirtualFiles()
+    public List<String> getVirtualFiles()
     {
         checkConfig();
-        
+
         return Collections.singletonList( outputPath );
     }
 
-    public boolean isSelected( FileInfo fileInfo )
-        throws IOException
+    public boolean isSelected( final FileInfo fileInfo ) throws IOException
     {
         checkConfig();
-        
+
         if ( overrideFilterAction )
         {
             System.out.println( "Filtering overridden. Returning true." );
@@ -178,14 +174,14 @@ public class SimpleAggregatingDescriptorHandler
     {
         if ( filePattern == null || outputPath == null )
         {
-            throw new IllegalStateException( "You must configure filePattern and outputPath in your containerDescriptorHandler declaration." );
+            throw new IllegalStateException(
+                                             "You must configure filePattern and outputPath in your containerDescriptorHandler declaration." );
         }
     }
 
-    private void readProperties( FileInfo fileInfo )
-        throws IOException
+    private void readProperties( final FileInfo fileInfo ) throws IOException
     {
-        StringWriter writer = new StringWriter();
+        final StringWriter writer = new StringWriter();
         Reader reader = null;
         try
         {
@@ -199,7 +195,7 @@ public class SimpleAggregatingDescriptorHandler
             IOUtil.close( reader );
         }
 
-        String content = writer.toString();
+        final String content = writer.toString();
 
         aggregateWriter.write( "\n" );
         aggregateWriter.write( content );
@@ -215,7 +211,7 @@ public class SimpleAggregatingDescriptorHandler
         return logger;
     }
 
-    public void enableLogging( Logger logger )
+    public void enableLogging( final Logger logger )
     {
         this.logger = logger;
     }
@@ -225,7 +221,7 @@ public class SimpleAggregatingDescriptorHandler
         return filePattern;
     }
 
-    public void setFilePattern( String filePattern )
+    public void setFilePattern( final String filePattern )
     {
         this.filePattern = filePattern;
     }
@@ -235,7 +231,7 @@ public class SimpleAggregatingDescriptorHandler
         return outputPath;
     }
 
-    public void setOutputPath( String outputPath )
+    public void setOutputPath( final String outputPath )
     {
         this.outputPath = outputPath;
     }

@@ -43,20 +43,20 @@ public class AddFileSetsTask
     implements ArchiverTask
 {
 
-    private final List fileSets;
+    private final List<FileSet> fileSets;
 
     private Logger logger;
 
     private MavenProject project;
-    
+
     private MavenProject moduleProject;
 
-    public AddFileSetsTask( List fileSets )
+    public AddFileSetsTask( final List<FileSet> fileSets )
     {
         this.fileSets = fileSets;
     }
 
-    public void execute( Archiver archiver, AssemblerConfigurationSource configSource )
+    public void execute( final Archiver archiver, final AssemblerConfigurationSource configSource )
         throws ArchiveCreationException, AssemblyFormattingException
     {
         // don't need this check here. it's more efficient here, but the logger is not actually
@@ -64,45 +64,45 @@ public class AddFileSetsTask
         // class.
         // checkLogger();
 
-        File archiveBaseDir = configSource.getArchiveBaseDirectory();
+        final File archiveBaseDir = configSource.getArchiveBaseDirectory();
 
         if ( archiveBaseDir != null )
         {
             if ( !archiveBaseDir.exists() )
             {
                 throw new ArchiveCreationException( "The archive base directory '" + archiveBaseDir.getAbsolutePath()
-                    + "' does not exist" );
+                                + "' does not exist" );
             }
             else if ( !archiveBaseDir.isDirectory() )
             {
                 throw new ArchiveCreationException( "The archive base directory '" + archiveBaseDir.getAbsolutePath()
-                    + "' exists, but it is not a directory" );
+                                + "' exists, but it is not a directory" );
             }
         }
 
-        for ( Iterator i = fileSets.iterator(); i.hasNext(); )
+        for ( final Iterator<FileSet> i = fileSets.iterator(); i.hasNext(); )
         {
-            FileSet fileSet = (FileSet) i.next();
+            final FileSet fileSet = i.next();
 
             addFileSet( fileSet, archiver, configSource, archiveBaseDir );
         }
     }
 
-    protected void addFileSet( FileSet fileSet, Archiver archiver, AssemblerConfigurationSource configSource,
-                               File archiveBaseDir )
+    protected void addFileSet( final FileSet fileSet, final Archiver archiver,
+                               final AssemblerConfigurationSource configSource, final File archiveBaseDir )
         throws AssemblyFormattingException, ArchiveCreationException
     {
         // throw this check in just in case someone extends this class...
         checkLogger();
 
-        FileSetFormatter fileSetFormatter = new FileSetFormatter( configSource, logger );
+        final FileSetFormatter fileSetFormatter = new FileSetFormatter( configSource, logger );
 
         if ( project == null )
         {
             project = configSource.getProject();
         }
 
-        File basedir = project.getBasedir();
+        final File basedir = project.getBasedir();
 
         String destDirectory = fileSet.getOutputDirectory();
 
@@ -118,9 +118,9 @@ public class AddFileSetsTask
         if ( logger.isDebugEnabled() )
         {
             logger.debug( "FileSet[" + destDirectory + "]" + " dir perms: "
-                + Integer.toString( archiver.getOverrideDirectoryMode(), 8 ) + " file perms: "
-                + Integer.toString( archiver.getOverrideFileMode(), 8 )
-                + ( fileSet.getLineEnding() == null ? "" : " lineEndings: " + fileSet.getLineEnding() ) );
+                            + Integer.toString( archiver.getOverrideDirectoryMode(), 8 ) + " file perms: "
+                            + Integer.toString( archiver.getOverrideFileMode(), 8 )
+                            + ( fileSet.getLineEnding() == null ? "" : " lineEndings: " + fileSet.getLineEnding() ) );
         }
 
         logger.debug( "The archive base directory is '" + archiveBaseDir + "'" );
@@ -133,35 +133,36 @@ public class AddFileSetsTask
             {
                 fileSetDir = fileSetFormatter.formatFileSetForAssembly( fileSetDir, fileSet );
             }
-            catch ( IOException e )
+            catch ( final IOException e )
             {
                 throw new ArchiveCreationException( "Error fixing file-set line endings for assembly: "
-                    + e.getMessage(), e );
+                                + e.getMessage(), e );
             }
 
-            logger.debug( "Adding file-set from directory: '" + fileSetDir.getAbsolutePath() + "'\nassembly output directory is: \'" + destDirectory + "\'" );
+            logger.debug( "Adding file-set from directory: '" + fileSetDir.getAbsolutePath()
+                            + "'\nassembly output directory is: \'" + destDirectory + "\'" );
 
-            AddDirectoryTask task = new AddDirectoryTask( fileSetDir );
+            final AddDirectoryTask task = new AddDirectoryTask( fileSetDir );
 
-            int dirMode = TypeConversionUtils.modeToInt( fileSet.getDirectoryMode(), logger );
+            final int dirMode = TypeConversionUtils.modeToInt( fileSet.getDirectoryMode(), logger );
             if ( dirMode != -1 )
             {
                 task.setDirectoryMode( dirMode );
             }
-            
-            int fileMode = TypeConversionUtils.modeToInt( fileSet.getFileMode(), logger );
+
+            final int fileMode = TypeConversionUtils.modeToInt( fileSet.getFileMode(), logger );
             if ( fileMode != -1 )
             {
                 task.setFileMode( fileMode );
             }
-            
+
             task.setUseDefaultExcludes( fileSet.isUseDefaultExcludes() );
-            
-            List excludes = fileSet.getExcludes();
+
+            final List<String> excludes = fileSet.getExcludes();
             excludes.add( "**/*.filtered" );
             excludes.add( "**/*.formatted" );
             task.setExcludes( excludes );
-            
+
             task.setIncludes( fileSet.getIncludes() );
             task.setOutputDirectory( destDirectory );
 
@@ -169,12 +170,13 @@ public class AddFileSetsTask
         }
     }
 
-    protected File getFileSetDirectory( FileSet fileSet, File basedir, File archiveBaseDir )
+    protected File getFileSetDirectory( final FileSet fileSet, final File basedir, final File archiveBaseDir )
         throws ArchiveCreationException, AssemblyFormattingException
     {
         String sourceDirectory = fileSet.getDirectory();
 
-        if ( sourceDirectory == null || sourceDirectory.trim().length() < 1 )
+        if ( sourceDirectory == null || sourceDirectory.trim()
+                                                       .length() < 1 )
         {
             sourceDirectory = basedir.getAbsolutePath();
         }
@@ -206,12 +208,12 @@ public class AddFileSetsTask
         }
     }
 
-    public void setLogger( Logger logger )
+    public void setLogger( final Logger logger )
     {
         this.logger = logger;
     }
 
-    public void setProject( MavenProject project )
+    public void setProject( final MavenProject project )
     {
         this.project = project;
     }
@@ -221,7 +223,7 @@ public class AddFileSetsTask
         return moduleProject;
     }
 
-    public void setModuleProject( MavenProject moduleProject )
+    public void setModuleProject( final MavenProject moduleProject )
     {
         this.moduleProject = moduleProject;
     }

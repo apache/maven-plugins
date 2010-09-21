@@ -56,63 +56,66 @@ import java.util.Set;
 public class AssemblyInterpolator
     extends AbstractLogEnabled
 {
-    private static final Set INTERPOLATION_BLACKLIST;
+    private static final Set<String> INTERPOLATION_BLACKLIST;
 
     private static final Properties ENVIRONMENT_VARIABLES;
-    
+
     static
     {
-        Set blacklist = new HashSet();
+        final Set<String> blacklist = new HashSet<String>();
 
         blacklist.add( "outputFileNameMapping" );
         blacklist.add( "outputDirectoryMapping" );
         blacklist.add( "outputDirectory" );
 
         INTERPOLATION_BLACKLIST = blacklist;
-        
+
         Properties environmentVariables;
         try
         {
             environmentVariables = CommandLineUtils.getSystemEnvVars( false );
         }
-        catch ( IOException e )
+        catch ( final IOException e )
         {
             environmentVariables = new Properties();
         }
-        
+
         ENVIRONMENT_VARIABLES = environmentVariables;
     }
 
-    public AssemblyInterpolator()
-        throws IOException
+    public AssemblyInterpolator() throws IOException
     {
     }
 
-    public Assembly interpolate( Assembly assembly, MavenProject project, AssemblerConfigurationSource configSource )
+    public Assembly interpolate( final Assembly assembly, final MavenProject project,
+                                 final AssemblerConfigurationSource configSource )
         throws AssemblyInterpolationException
     {
-        Set blacklistFields = new HashSet( FieldBasedObjectInterpolator.DEFAULT_BLACKLISTED_FIELD_NAMES );
+        @SuppressWarnings( "unchecked" )
+        final Set<String> blacklistFields =
+            new HashSet<String>( FieldBasedObjectInterpolator.DEFAULT_BLACKLISTED_FIELD_NAMES );
         blacklistFields.addAll( INTERPOLATION_BLACKLIST );
 
-        Set blacklistPkgs = FieldBasedObjectInterpolator.DEFAULT_BLACKLISTED_PACKAGE_PREFIXES;
+        @SuppressWarnings( "unchecked" )
+        final Set<String> blacklistPkgs = FieldBasedObjectInterpolator.DEFAULT_BLACKLISTED_PACKAGE_PREFIXES;
 
-        FieldBasedObjectInterpolator objectInterpolator =
+        final FieldBasedObjectInterpolator objectInterpolator =
             new FieldBasedObjectInterpolator( blacklistFields, blacklistPkgs );
-        Interpolator interpolator = buildInterpolator( project, configSource );
+        final Interpolator interpolator = buildInterpolator( project, configSource );
 
         // TODO: Will this adequately detect cycles between prefixed property references and prefixed project
         // references??
-        RecursionInterceptor interceptor =
+        final RecursionInterceptor interceptor =
             new PrefixAwareRecursionInterceptor( InterpolationConstants.PROJECT_PREFIXES, true );
 
         try
         {
             objectInterpolator.interpolate( assembly, interpolator, interceptor );
         }
-        catch ( InterpolationException e )
+        catch ( final InterpolationException e )
         {
             throw new AssemblyInterpolationException( "Failed to interpolate assembly with ID: " + assembly.getId()
-                + ". Reason: " + e.getMessage(), e );
+                            + ". Reason: " + e.getMessage(), e );
         }
         finally
         {
@@ -121,17 +124,19 @@ public class AssemblyInterpolator
 
         if ( objectInterpolator.hasWarnings() && getLogger().isDebugEnabled() )
         {
-            StringBuffer sb = new StringBuffer();
+            final StringBuffer sb = new StringBuffer();
 
             sb.append( "One or more minor errors occurred while interpolating the assembly with ID: "
-                + assembly.getId() + ":\n" );
+                            + assembly.getId() + ":\n" );
 
-            List warnings = objectInterpolator.getWarnings();
-            for ( Iterator it = warnings.iterator(); it.hasNext(); )
+            @SuppressWarnings( "unchecked" )
+            final List<ObjectInterpolationWarning> warnings = objectInterpolator.getWarnings();
+            for ( final Iterator<ObjectInterpolationWarning> it = warnings.iterator(); it.hasNext(); )
             {
-                ObjectInterpolationWarning warning = (ObjectInterpolationWarning) it.next();
+                final ObjectInterpolationWarning warning = it.next();
 
-                sb.append( '\n' ).append( warning );
+                sb.append( '\n' )
+                  .append( warning );
             }
 
             sb.append( "\n\nThese values were SKIPPED, but the assembly process will continue.\n" );
@@ -142,12 +147,13 @@ public class AssemblyInterpolator
         return assembly;
     }
 
-    public static Interpolator buildInterpolator( final MavenProject project, AssemblerConfigurationSource configSource )
+    public static Interpolator buildInterpolator( final MavenProject project,
+                                                  final AssemblerConfigurationSource configSource )
     {
-        StringSearchInterpolator interpolator = new StringSearchInterpolator();
+        final StringSearchInterpolator interpolator = new StringSearchInterpolator();
         interpolator.setCacheAnswers( true );
 
-        MavenSession session = configSource.getMavenSession();
+        final MavenSession session = configSource.getMavenSession();
 
         if ( session != null )
         {
@@ -156,7 +162,7 @@ public class AssemblyInterpolator
             {
                 userProperties = session.getExecutionProperties();
             }
-            catch ( NoSuchMethodError nsmer )
+            catch ( final NoSuchMethodError nsmer )
             {
                 // OK, so user is using Maven <= 2.0.8. No big deal.
             }
@@ -183,20 +189,21 @@ public class AssemblyInterpolator
             }
 
         }
-        catch ( NoSuchMethodError nsmer )
+        catch ( final NoSuchMethodError nsmer )
         {
             // OK, so user is using Maven <= 2.0.8. No big deal.
         }
 
         // 7
         interpolator.addValueSource( new PropertiesBasedValueSource( commandLineProperties ) );
-        interpolator.addValueSource( new PrefixedPropertiesValueSource( Collections.singletonList( "env." ), ENVIRONMENT_VARIABLES,
-                                                                        true ) );
-        
+        interpolator.addValueSource( new PrefixedPropertiesValueSource( Collections.singletonList( "env." ),
+                                                                        ENVIRONMENT_VARIABLES, true ) );
+
         interpolator.addPostProcessor( new PathTranslatingPostProcessor( project.getBasedir() ) );
         return interpolator;
     }
 
+    @Override
     protected Logger getLogger()
     {
         Logger logger = super.getLogger();
@@ -210,22 +217,23 @@ public class AssemblyInterpolator
 
         return logger;
     }
-    
-    private static final class PathTranslatingPostProcessor implements InterpolationPostProcessor
+
+    private static final class PathTranslatingPostProcessor
+        implements InterpolationPostProcessor
     {
 
         private final File basedir;
 
-        public PathTranslatingPostProcessor( File basedir )
+        public PathTranslatingPostProcessor( final File basedir )
         {
             this.basedir = basedir;
         }
 
-        public Object execute( String expression, Object value )
+        public Object execute( final String expression, final Object value )
         {
-            String path = String.valueOf( value );
+            final String path = String.valueOf( value );
             return AssemblyFileUtils.makePathRelativeTo( path, basedir );
         }
-        
+
     }
 }

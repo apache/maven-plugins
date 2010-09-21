@@ -22,54 +22,57 @@ import org.codehaus.plexus.util.introspection.ReflectionValueExtractor;
 
 import java.util.Properties;
 
-
 /**
  * @author Andreas Hoheneder (ahoh_at_inode.at)
  * @version $Id$
- *
- * @depcrecated 
+ * 
+ * @depcrecated
  */
+@Deprecated
 public class ReflectionProperties
     extends Properties
 {
 
-    private MavenProject project;
+    private static final long serialVersionUID = 1L;
+
+    private final MavenProject project;
 
     boolean escapedBackslashesInFilePath;
 
-    public ReflectionProperties( MavenProject aProject, boolean escapedBackslashesInFilePath ) 
+    public ReflectionProperties( final MavenProject aProject, final boolean escapedBackslashesInFilePath )
     {
-       super();
+        super();
 
-       project = aProject;
+        project = aProject;
 
-       this.escapedBackslashesInFilePath = escapedBackslashesInFilePath;
+        this.escapedBackslashesInFilePath = escapedBackslashesInFilePath;
     }
-    
-    public Object get( Object key )
+
+    @Override
+    public Object get( final Object key )
     {
         Object value = null;
-        try 
+        try
         {
-            value = ReflectionValueExtractor.evaluate( "" + key , project );
+            value = ReflectionValueExtractor.evaluate( "" + key, project );
 
-            if ( escapedBackslashesInFilePath && value != null &&
-                "java.lang.String".equals( value.getClass().getName() ) )
+            if ( escapedBackslashesInFilePath && value != null && "java.lang.String".equals( value.getClass()
+                                                                                                  .getName() ) )
             {
-                String val = (String) value;
+                final String val = (String) value;
 
                 // Check if it's a windows path
                 if ( val.indexOf( ":\\" ) == 1 )
                 {
-                    value = StringUtils.replace( (String)value, "\\", "\\\\" );
-                    value = StringUtils.replace( (String)value, ":", "\\:" );
+                    value = StringUtils.replace( (String) value, "\\", "\\\\" );
+                    value = StringUtils.replace( (String) value, ":", "\\:" );
                 }
             }
         }
-        catch ( Exception e ) 
+        catch ( final Exception e )
         {
-            //TODO: remove the try-catch block when ReflectionValueExtractor.evaluate() throws no more exceptions
-        } 
+            // TODO: remove the try-catch block when ReflectionValueExtractor.evaluate() throws no more exceptions
+        }
         return value;
     }
 }

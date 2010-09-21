@@ -19,15 +19,6 @@ package org.apache.maven.plugin.assembly.archive;
  * under the License.
  */
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.util.Collections;
-import java.util.List;
-
 import org.apache.maven.archiver.MavenArchiveConfiguration;
 import org.apache.maven.archiver.MavenArchiver;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
@@ -40,6 +31,15 @@ import org.codehaus.plexus.archiver.jar.Manifest;
 import org.codehaus.plexus.archiver.jar.ManifestException;
 import org.codehaus.plexus.util.IOUtil;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.util.Collections;
+import java.util.List;
+
 /**
  * @version $Id$
  */
@@ -48,6 +48,7 @@ public class ManifestCreationFinalizer
 {
 
     private final MavenProject project;
+
     private final MavenArchiveConfiguration archiveConfiguration;
 
     // TODO: I'd really prefer to rewrite MavenArchiver as either a
@@ -55,23 +56,23 @@ public class ManifestCreationFinalizer
     // create an include pom.properties etc into another archiver), or
     // an implementation of an archiver
     // (the first is preferable).
-    private MavenArchiver mavenArchiver = new MavenArchiver();
+    private final MavenArchiver mavenArchiver = new MavenArchiver();
 
-    public ManifestCreationFinalizer( MavenProject project, MavenArchiveConfiguration archiveConfiguration )
+    public ManifestCreationFinalizer( final MavenProject project, final MavenArchiveConfiguration archiveConfiguration )
     {
         this.project = project;
         this.archiveConfiguration = archiveConfiguration;
     }
 
-    public void finalizeArchiveCreation( Archiver archiver )
-        throws ArchiverException
+    @Override
+    public void finalizeArchiveCreation( final Archiver archiver ) throws ArchiverException
     {
         if ( archiveConfiguration != null )
         {
             try
             {
                 Manifest manifest;
-                File manifestFile = archiveConfiguration.getManifestFile();
+                final File manifestFile = archiveConfiguration.getManifestFile();
 
                 if ( manifestFile != null )
                 {
@@ -81,11 +82,11 @@ public class ManifestCreationFinalizer
                         manifestFileReader = new InputStreamReader( new FileInputStream( manifestFile ), "UTF-8" );
                         manifest = new Manifest( manifestFileReader );
                     }
-                    catch ( FileNotFoundException e )
+                    catch ( final FileNotFoundException e )
                     {
                         throw new ArchiverException( "Manifest not found: " + e.getMessage(), e );
                     }
-                    catch ( IOException e )
+                    catch ( final IOException e )
                     {
                         throw new ArchiverException( "Error processing manifest: " + e.getMessage(), e );
                     }
@@ -101,22 +102,22 @@ public class ManifestCreationFinalizer
 
                 if ( ( manifest != null ) && ( archiver instanceof JarArchiver ) )
                 {
-                    JarArchiver jarArchiver = (JarArchiver) archiver;
+                    final JarArchiver jarArchiver = (JarArchiver) archiver;
                     jarArchiver.addConfiguredManifest( manifest );
                 }
             }
-            catch ( ManifestException e )
+            catch ( final ManifestException e )
             {
                 throw new ArchiverException( "Error creating manifest: " + e.getMessage(), e );
             }
-            catch ( DependencyResolutionRequiredException e )
+            catch ( final DependencyResolutionRequiredException e )
             {
                 throw new ArchiverException( "Dependencies were not resolved: " + e.getMessage(), e );
             }
         }
     }
 
-    public List getVirtualFiles()
+    public List<String> getVirtualFiles()
     {
         if ( archiveConfiguration != null )
         {
@@ -127,10 +128,10 @@ public class ManifestCreationFinalizer
                     return Collections.singletonList( "META-INF/MANIFEST.MF" );
                 }
             }
-            catch ( ManifestException e )
+            catch ( final ManifestException e )
             {
             }
-            catch ( DependencyResolutionRequiredException e )
+            catch ( final DependencyResolutionRequiredException e )
             {
             }
         }

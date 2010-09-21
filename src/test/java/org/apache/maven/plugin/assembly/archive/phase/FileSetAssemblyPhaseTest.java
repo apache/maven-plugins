@@ -20,6 +20,7 @@ package org.apache.maven.plugin.assembly.archive.phase;
  */
 
 import org.apache.maven.model.Model;
+import org.apache.maven.plugin.assembly.DefaultAssemblyContext;
 import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
 import org.apache.maven.plugin.assembly.archive.task.testutils.MockAndControlForAddFileSetsTask;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
@@ -40,10 +41,11 @@ public class FileSetAssemblyPhaseTest
     extends TestCase
 {
 
-    private MockManager mockManager = new MockManager();
+    private final MockManager mockManager = new MockManager();
 
-    private TestFileManager fileManager = new TestFileManager( "file-set-assembly.test.", "" );
+    private final TestFileManager fileManager = new TestFileManager( "file-set-assembly.test.", "" );
 
+    @Override
     public void tearDown()
         throws IOException
     {
@@ -53,16 +55,18 @@ public class FileSetAssemblyPhaseTest
     public void testShouldNotFailWhenNoFileSetsSpecified()
         throws ArchiveCreationException, AssemblyFormattingException
     {
-        Assembly assembly = new Assembly();
+        final Assembly assembly = new Assembly();
 
         assembly.setId( "test" );
 
-        MockAndControlForLogger macLogger = new MockAndControlForLogger();
-        MockAndControlForAddFileSetsTask macTask = new MockAndControlForAddFileSetsTask( mockManager, fileManager );
+        final MockAndControlForLogger macLogger = new MockAndControlForLogger();
+        final MockAndControlForAddFileSetsTask macTask =
+            new MockAndControlForAddFileSetsTask( mockManager, fileManager );
 
         mockManager.replayAll();
 
-        createPhase( macLogger ).execute( assembly, macTask.archiver, macTask.configSource );
+        createPhase( macLogger ).execute( assembly, macTask.archiver, macTask.configSource,
+                                          new DefaultAssemblyContext() );
 
         mockManager.verifyAll();
     }
@@ -70,12 +74,12 @@ public class FileSetAssemblyPhaseTest
     public void testShouldAddOneFileSet()
         throws ArchiveCreationException, AssemblyFormattingException
     {
-        Assembly assembly = new Assembly();
+        final Assembly assembly = new Assembly();
 
         assembly.setId( "test" );
         assembly.setIncludeBaseDirectory( false );
 
-        FileSet fs = new FileSet();
+        final FileSet fs = new FileSet();
         fs.setOutputDirectory( "/out" );
         fs.setDirectory( "/input" );
         fs.setFileMode( "777" );
@@ -83,34 +87,36 @@ public class FileSetAssemblyPhaseTest
 
         assembly.addFileSet( fs );
 
-        MockAndControlForLogger macLogger = new MockAndControlForLogger();
-        MockAndControlForAddFileSetsTask macTask = new MockAndControlForAddFileSetsTask( mockManager, fileManager );
+        final MockAndControlForLogger macLogger = new MockAndControlForLogger();
+        final MockAndControlForAddFileSetsTask macTask =
+            new MockAndControlForAddFileSetsTask( mockManager, fileManager );
 
         macTask.expectGetArchiveBaseDirectory();
 
-        File basedir = fileManager.createTempDir();
+        final File basedir = fileManager.createTempDir();
 
-        MavenProject project = new MavenProject( new Model() );
+        final MavenProject project = new MavenProject( new Model() );
 
         macLogger.expectDebug( true, true );
 
-        int dirMode = Integer.parseInt( "777", 8 );
-        int fileMode = Integer.parseInt( "777", 8 );
+        final int dirMode = Integer.parseInt( "777", 8 );
+        final int fileMode = Integer.parseInt( "777", 8 );
 
-        int[] modes = { -1, -1, dirMode, fileMode };
+        final int[] modes = { -1, -1, dirMode, fileMode };
 
         macTask.expectAdditionOfSingleFileSet( project, basedir, "final-name", false, modes, 1, true );
 
         mockManager.replayAll();
 
-        createPhase( macLogger ).execute( assembly, macTask.archiver, macTask.configSource );
+        createPhase( macLogger ).execute( assembly, macTask.archiver, macTask.configSource,
+                                          new DefaultAssemblyContext() );
 
         mockManager.verifyAll();
     }
 
-    private FileSetAssemblyPhase createPhase( MockAndControlForLogger macLogger )
+    private FileSetAssemblyPhase createPhase( final MockAndControlForLogger macLogger )
     {
-        FileSetAssemblyPhase phase = new FileSetAssemblyPhase();
+        final FileSetAssemblyPhase phase = new FileSetAssemblyPhase();
 
         phase.enableLogging( macLogger.logger );
 
@@ -128,10 +134,10 @@ public class FileSetAssemblyPhaseTest
             control = MockControl.createControl( Logger.class );
             mockManager.add( control );
 
-            logger = ( Logger ) control.getMock();
+            logger = (Logger) control.getMock();
         }
 
-        public void expectDebug( boolean debugCheck, boolean debugEnabled )
+        public void expectDebug( final boolean debugCheck, final boolean debugEnabled )
         {
             if ( debugCheck )
             {

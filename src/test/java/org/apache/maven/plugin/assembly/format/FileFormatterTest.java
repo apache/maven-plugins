@@ -37,21 +37,21 @@ import java.util.Collections;
 import java.util.List;
 
 public class FileFormatterTest
-extends PlexusTestCase
+    extends PlexusTestCase
 {
 
-    private Logger logger = new ConsoleLogger( Logger.LEVEL_DEBUG, "test" );
+    private final Logger logger = new ConsoleLogger( Logger.LEVEL_DEBUG, "test" );
 
-    private TestFileManager fileManager = new TestFileManager( "fileFormatterTest.", "" );
+    private final TestFileManager fileManager = new TestFileManager( "fileFormatterTest.", "" );
 
-    private MockManager mockManager = new MockManager();
+    private final MockManager mockManager = new MockManager();
 
     private AssemblerConfigurationSource configSource;
 
     private MockControl configSourceControl;
 
-    public void setUp()
-    throws Exception
+    @Override
+    public void setUp() throws Exception
     {
         super.setUp();
 
@@ -61,55 +61,52 @@ extends PlexusTestCase
         configSource = (AssemblerConfigurationSource) configSourceControl.getMock();
     }
 
-    public void tearDown()
-    throws IOException
+    @Override
+    public void tearDown() throws IOException
     {
         fileManager.cleanUp();
     }
 
-    public void testTemporaryRootDirectoryNotExist()
-    throws IOException, AssemblyFormattingException
+    public void testTemporaryRootDirectoryNotExist() throws IOException, AssemblyFormattingException
     {
-        File basedir = fileManager.createTempDir();
-        File tempRoot = new File(basedir, "tempdir");
+        final File basedir = fileManager.createTempDir();
+        final File tempRoot = new File( basedir, "tempdir" );
         configSource.getTemporaryRootDirectory();
         configSourceControl.setReturnValue( tempRoot );
 
-        File file = fileManager.createFile( basedir, "one.txt", "This is a\ntest." );
+        final File file = fileManager.createFile( basedir, "one.txt", "This is a\ntest." );
 
         mockManager.replayAll();
 
-        File result = new FileFormatter( configSource, logger ).format( file, false, "dos" );
+        final File result = new FileFormatter( configSource, logger ).format( file, false, "dos" );
 
-        assertTrue( !file.equals(result) );
-
+        assertTrue( !file.equals( result ) );
 
         mockManager.verifyAll();
     }
 
-    public void testShouldNotTransformOneFile()
-    throws IOException, AssemblyFormattingException
+    public void testShouldNotTransformOneFile() throws IOException, AssemblyFormattingException
     {
-        File basedir = fileManager.createTempDir();
+        final File basedir = fileManager.createTempDir();
 
         configSource.getTemporaryRootDirectory();
         configSourceControl.setReturnValue( basedir );
 
-        //        Model model = new Model();
-        //        model.setArtifactId( "artifact" );
-        //        model.setGroupId( "group" );
-        //        model.setVersion( "version" );
+        // Model model = new Model();
+        // model.setArtifactId( "artifact" );
+        // model.setGroupId( "group" );
+        // model.setVersion( "version" );
         //
-        //        MavenProject project = new MavenProject( model );
+        // MavenProject project = new MavenProject( model );
         //
-        //        configSource.getProject();
-        //        configSourceControl.setReturnValue( project );
+        // configSource.getProject();
+        // configSourceControl.setReturnValue( project );
 
-        File file = fileManager.createFile( basedir, "one.txt", "This is a test." );
+        final File file = fileManager.createFile( basedir, "one.txt", "This is a test." );
 
         mockManager.replayAll();
 
-        File result = new FileFormatter( configSource, logger ).format( file, false, null );
+        final File result = new FileFormatter( configSource, logger ).format( file, false, null );
 
         assertEquals( file, result );
 
@@ -117,19 +114,18 @@ extends PlexusTestCase
     }
 
     // TODO: Should not be appending line-ending at the end if there is none in the source.
-    public void testShouldConvertCRLFLineEndingsInFile()
-    throws IOException, AssemblyFormattingException
+    public void testShouldConvertCRLFLineEndingsInFile() throws IOException, AssemblyFormattingException
     {
-        File basedir = fileManager.createTempDir();
+        final File basedir = fileManager.createTempDir();
 
         configSource.getTemporaryRootDirectory();
         configSourceControl.setReturnValue( basedir );
 
-        File file = fileManager.createFile( basedir, "one.txt", "This is a\ntest." );
+        final File file = fileManager.createFile( basedir, "one.txt", "This is a\ntest." );
 
         mockManager.replayAll();
 
-        File result = new FileFormatter( configSource, logger ).format( file, false, "dos" );
+        final File result = new FileFormatter( configSource, logger ).format( file, false, "dos" );
 
         assertEquals( "This is a\r\ntest.\r\n", fileManager.getFileContents( result ) );
 
@@ -137,62 +133,60 @@ extends PlexusTestCase
     }
 
     // TODO: Should not be appending line-ending at the end if there is none in the source.
-    public void testShouldConvertLFLineEndingsInFile()
-    throws IOException, AssemblyFormattingException
+    public void testShouldConvertLFLineEndingsInFile() throws IOException, AssemblyFormattingException
     {
-        File basedir = fileManager.createTempDir();
+        final File basedir = fileManager.createTempDir();
 
         configSource.getTemporaryRootDirectory();
         configSourceControl.setReturnValue( basedir );
 
-        File file = fileManager.createFile( basedir, "one.txt", "This is a\r\ntest." );
+        final File file = fileManager.createFile( basedir, "one.txt", "This is a\r\ntest." );
 
         mockManager.replayAll();
 
-        File result = new FileFormatter( configSource, logger ).format( file, false, "unix" );
+        final File result = new FileFormatter( configSource, logger ).format( file, false, "unix" );
 
         assertEquals( "This is a\ntest.\n", fileManager.getFileContents( result ) );
 
         mockManager.verifyAll();
     }
 
-    public void testShouldFilterProjectExpressionInFile()
-    throws Exception
+    public void testShouldFilterProjectExpressionInFile() throws Exception
     {
-        File basedir = fileManager.createTempDir();
+        final File basedir = fileManager.createTempDir();
 
-        enableBasicFilteringConfiguration( basedir, Collections.EMPTY_LIST );
+        enableBasicFilteringConfiguration( basedir, null );
 
-        File file = fileManager.createFile( basedir, "one.txt", "This is a test for project: ${artifactId} @artifactId@." );
+        final File file =
+            fileManager.createFile( basedir, "one.txt", "This is a test for project: ${artifactId} @artifactId@." );
 
         mockManager.replayAll();
 
-        File result = new FileFormatter( configSource, logger ).format( file, true, null );
+        final File result = new FileFormatter( configSource, logger ).format( file, true, null );
 
         assertEquals( "This is a test for project: artifact artifact.", fileManager.getFileContents( result ) );
 
         mockManager.verifyAll();
     }
 
-    public void testShouldFilterExpressionInPropertiesFileWithWindowsEscapes()
-    throws Exception
+    public void testShouldFilterExpressionInPropertiesFileWithWindowsEscapes() throws Exception
     {
 
-        File sourceDir = fileManager.createTempDir();
-        MavenProject project = createBasicMavenProject();
-        Build build = new Build();
+        final File sourceDir = fileManager.createTempDir();
+        final MavenProject project = createBasicMavenProject();
+        final Build build = new Build();
 
         // project.build.outputDirectory = C:\out\deeper
         build.setOutputDirectory( "C:\\out\\deeper" );
-        project.setBuild(build);
+        project.setBuild( build );
 
         enableBasicFilteringConfiguration( project, sourceDir );
 
-        File file = fileManager.createFile(sourceDir, "one.properties", "out=${project.build.outputDirectory}");
+        final File file = fileManager.createFile( sourceDir, "one.properties", "out=${project.build.outputDirectory}" );
 
         mockManager.replayAll();
 
-        File result = new FileFormatter(configSource, logger).format(file, true, null);
+        final File result = new FileFormatter( configSource, logger ).format( file, true, null );
 
         // expect: C:\\out\\deeper
         assertEquals( "out=C:\\\\out\\\\deeper", fileManager.getFileContents( result ) );
@@ -200,176 +194,173 @@ extends PlexusTestCase
         mockManager.verifyAll();
     }
 
-    public void testShouldFilterExpressionInPropertiesFileWithoutWindowsEscapes()
-    throws Exception
+    public void testShouldFilterExpressionInPropertiesFileWithoutWindowsEscapes() throws Exception
     {
 
-        File sourceDir = fileManager.createTempDir();
-        MavenProject project = createBasicMavenProject();
-        Build build = new Build();
+        final File sourceDir = fileManager.createTempDir();
+        final MavenProject project = createBasicMavenProject();
+        final Build build = new Build();
         build.setOutputDirectory( "C:\\out\\deeper" );
-        project.setBuild(build);
+        project.setBuild( build );
 
         enableBasicFilteringConfiguration( project, sourceDir );
 
-        File file = fileManager.createFile(sourceDir, "one.txt", "project.basedirA=${project.build.outputDirectory}");
+        final File file =
+            fileManager.createFile( sourceDir, "one.txt", "project.basedirA=${project.build.outputDirectory}" );
 
         mockManager.replayAll();
 
-        File result = new FileFormatter(configSource, logger).format(file, true, null);
+        final File result = new FileFormatter( configSource, logger ).format( file, true, null );
 
-        assertEquals("project.basedirA=C:\\out\\deeper",fileManager.getFileContents(result));
+        assertEquals( "project.basedirA=C:\\out\\deeper", fileManager.getFileContents( result ) );
 
         mockManager.verifyAll();
     }
 
-
-    public void testShouldFilterExpressionFromFiltersFileInFile()
-    throws Exception
+    public void testShouldFilterExpressionFromFiltersFileInFile() throws Exception
     {
-        File basedir = fileManager.createTempDir();
+        final File basedir = fileManager.createTempDir();
 
-        File filterProps = fileManager.createFile( basedir, "filter.properties", "property=Test" );
+        final File filterProps = fileManager.createFile( basedir, "filter.properties", "property=Test" );
 
         enableBasicFilteringConfiguration( basedir, Collections.singletonList( filterProps.getCanonicalPath() ) );
 
-        File file = fileManager.createFile( basedir, "one.txt", "This is a test for project: ${property} @property@." );
+        final File file =
+            fileManager.createFile( basedir, "one.txt", "This is a test for project: ${property} @property@." );
 
         mockManager.replayAll();
 
-        File result = new FileFormatter( configSource, logger ).format( file, true, null );
+        final File result = new FileFormatter( configSource, logger ).format( file, true, null );
 
         assertEquals( "This is a test for project: Test Test.", fileManager.getFileContents( result ) );
 
         mockManager.verifyAll();
     }
 
-    public void testShouldFilterExpressionFromFiltersFileInPropertiesFileWithoutWindowsEscapes()
-    throws Exception
+    public void testShouldFilterExpressionFromFiltersFileInPropertiesFileWithoutWindowsEscapes() throws Exception
     {
-        File basedir = fileManager.createTempDir();
+        final File basedir = fileManager.createTempDir();
 
-        File filterProps = fileManager.createFile( basedir, "filter.properties", "property=C:\\\\Test" );
+        final File filterProps = fileManager.createFile( basedir, "filter.properties", "property=C:\\\\Test" );
 
         enableBasicFilteringConfiguration( basedir, Collections.singletonList( filterProps.getCanonicalPath() ) );
 
-        File file = fileManager.createFile( basedir, "one.properties", "project: ${property} @property@." );
+        final File file = fileManager.createFile( basedir, "one.properties", "project: ${property} @property@." );
 
         mockManager.replayAll();
 
-        File result = new FileFormatter( configSource, logger ).format( file, true, null );
+        final File result = new FileFormatter( configSource, logger ).format( file, true, null );
 
         assertEquals( "project: C:\\\\Test C:\\\\Test.", fileManager.getFileContents( result ) );
 
         mockManager.verifyAll();
     }
 
-    public void testShouldFilterExpressionFromFiltersFileInNonPropertiesFileWithoutWindowsEscapes()
-    throws Exception
+    public void testShouldFilterExpressionFromFiltersFileInNonPropertiesFileWithoutWindowsEscapes() throws Exception
     {
-        File basedir = fileManager.createTempDir();
+        final File basedir = fileManager.createTempDir();
 
-        File filterProps = fileManager.createFile( basedir, "filter.properties", "property=C:\\\\Test" );
+        final File filterProps = fileManager.createFile( basedir, "filter.properties", "property=C:\\\\Test" );
 
         enableBasicFilteringConfiguration( basedir, Collections.singletonList( filterProps.getCanonicalPath() ) );
 
-        File file = fileManager.createFile( basedir, "one.txt", "This is a test for project: ${property} @property@." );
+        final File file =
+            fileManager.createFile( basedir, "one.txt", "This is a test for project: ${property} @property@." );
 
         mockManager.replayAll();
 
-        File result = new FileFormatter( configSource, logger ).format( file, true, null );
+        final File result = new FileFormatter( configSource, logger ).format( file, true, null );
 
         assertEquals( "This is a test for project: C:\\Test C:\\Test.", fileManager.getFileContents( result ) );
 
         mockManager.verifyAll();
     }
 
-    public void testShouldNotIgnoreFirstWordInDotNotationExpressions()
-    throws Exception
+    public void testShouldNotIgnoreFirstWordInDotNotationExpressions() throws Exception
     {
-        File basedir = fileManager.createTempDir();
+        final File basedir = fileManager.createTempDir();
 
-        enableBasicFilteringConfiguration( basedir, Collections.EMPTY_LIST );
+        enableBasicFilteringConfiguration( basedir, null );
 
-        File file = fileManager.createFile( basedir, "one.txt", "testing ${bean.id} which used to resolve to project.id" );
+        final File file =
+            fileManager.createFile( basedir, "one.txt", "testing ${bean.id} which used to resolve to project.id" );
 
         mockManager.replayAll();
 
-        File result = new FileFormatter( configSource, logger ).format( file, true, null );
+        final File result = new FileFormatter( configSource, logger ).format( file, true, null );
 
         assertEquals( "testing ${bean.id} which used to resolve to project.id", fileManager.getFileContents( result ) );
 
         mockManager.verifyAll();
     }
 
-    public void testShouldFilterExpressionsFromTwoFiltersFilesInFile()
-    throws Exception
+    public void testShouldFilterExpressionsFromTwoFiltersFilesInFile() throws Exception
     {
-        File basedir = fileManager.createTempDir();
+        final File basedir = fileManager.createTempDir();
 
-        File filterProps = fileManager.createFile( basedir, "filter.properties", "property=Test" );
-        File filterProps2 = fileManager.createFile( basedir, "filter2.properties", "otherProperty=OtherValue" );
+        final File filterProps = fileManager.createFile( basedir, "filter.properties", "property=Test" );
+        final File filterProps2 = fileManager.createFile( basedir, "filter2.properties", "otherProperty=OtherValue" );
 
-        List filters = new ArrayList();
+        final List<String> filters = new ArrayList<String>();
         filters.add( filterProps.getCanonicalPath() );
         filters.add( filterProps2.getCanonicalPath() );
 
         enableBasicFilteringConfiguration( basedir, filters );
 
-        File file = fileManager.createFile( basedir, "one.txt",
-        "property: ${property} @property@ otherProperty: ${otherProperty} @otherProperty@." );
+        final File file =
+            fileManager.createFile( basedir, "one.txt",
+                                    "property: ${property} @property@ otherProperty: ${otherProperty} @otherProperty@." );
 
         mockManager.replayAll();
 
-        File result = new FileFormatter( configSource, logger ).format( file, true, null );
+        final File result = new FileFormatter( configSource, logger ).format( file, true, null );
 
         assertEquals( "property: Test Test otherProperty: OtherValue OtherValue.", fileManager.getFileContents( result ) );
 
         mockManager.verifyAll();
     }
 
-    public void testShouldOverrideOneFilterValueWithAnotherAndFilterFile()
-    throws Exception
+    public void testShouldOverrideOneFilterValueWithAnotherAndFilterFile() throws Exception
     {
-        File basedir = fileManager.createTempDir();
+        final File basedir = fileManager.createTempDir();
 
-        File filterProps = fileManager.createFile( basedir, "filter.properties", "property=Test" );
-        File filterProps2 = fileManager.createFile( basedir, "filter2.properties", "property=OtherValue" );
+        final File filterProps = fileManager.createFile( basedir, "filter.properties", "property=Test" );
+        final File filterProps2 = fileManager.createFile( basedir, "filter2.properties", "property=OtherValue" );
 
-        List filters = new ArrayList();
+        final List<String> filters = new ArrayList<String>();
         filters.add( filterProps.getCanonicalPath() );
         filters.add( filterProps2.getCanonicalPath() );
 
         enableBasicFilteringConfiguration( basedir, filters );
 
-        File file = fileManager.createFile( basedir, "one.txt", "property: ${property} @property@." );
+        final File file = fileManager.createFile( basedir, "one.txt", "property: ${property} @property@." );
 
         mockManager.replayAll();
 
-        File result = new FileFormatter( configSource, logger ).format( file, true, null );
+        final File result = new FileFormatter( configSource, logger ).format( file, true, null );
 
         assertEquals( "property: OtherValue OtherValue.", fileManager.getFileContents( result ) );
 
         mockManager.verifyAll();
     }
 
-    public void testShouldOverrideProjectValueWithFilterValueAndFilterFile()
-    throws Exception
+    public void testShouldOverrideProjectValueWithFilterValueAndFilterFile() throws Exception
     {
-        File basedir = fileManager.createTempDir();
+        final File basedir = fileManager.createTempDir();
 
-        File filterProps = fileManager.createFile( basedir, "filter.properties", "artifactId=Test" );
+        final File filterProps = fileManager.createFile( basedir, "filter.properties", "artifactId=Test" );
 
-        List filters = new ArrayList();
+        final List<String> filters = new ArrayList<String>();
         filters.add( filterProps.getCanonicalPath() );
 
         enableBasicFilteringConfiguration( basedir, filters );
 
-        File file = fileManager.createFile( basedir, "one.txt", "project artifact-id: ${artifactId} @artifactId@." );
+        final File file =
+            fileManager.createFile( basedir, "one.txt", "project artifact-id: ${artifactId} @artifactId@." );
 
         mockManager.replayAll();
 
-        File result = new FileFormatter( configSource, logger ).format( file, true, null );
+        final File result = new FileFormatter( configSource, logger ).format( file, true, null );
 
         assertEquals( "project artifact-id: Test Test.", fileManager.getFileContents( result ) );
 
@@ -378,7 +369,7 @@ extends PlexusTestCase
 
     private MavenProject createBasicMavenProject()
     {
-        Model model = new Model();
+        final Model model = new Model();
         model.setArtifactId( "artifact" );
         model.setGroupId( "group" );
         model.setVersion( "version" );
@@ -386,8 +377,7 @@ extends PlexusTestCase
         return new MavenProject( model );
     }
 
-    private void enableBasicFilteringConfiguration( MavenProject project, File basedir )
-    throws Exception
+    private void enableBasicFilteringConfiguration( final MavenProject project, final File basedir ) throws Exception
     {
         configSource.getTemporaryRootDirectory();
         configSourceControl.setReturnValue( basedir );
@@ -405,11 +395,15 @@ extends PlexusTestCase
         configSourceControl.setReturnValue( Collections.EMPTY_LIST );
     }
 
-    private void enableBasicFilteringConfiguration( File basedir, List filterFilenames )
-    throws Exception
+    private void enableBasicFilteringConfiguration( final File basedir, final List<String> filterFilenames )
+        throws Exception
     {
-        MavenProject project = createBasicMavenProject();
-        project.getBuild().setFilters( filterFilenames );
+        final MavenProject project = createBasicMavenProject();
+        if ( filterFilenames != null )
+        {
+            project.getBuild()
+                   .setFilters( filterFilenames );
+        }
 
         enableBasicFilteringConfiguration( project, basedir );
     }

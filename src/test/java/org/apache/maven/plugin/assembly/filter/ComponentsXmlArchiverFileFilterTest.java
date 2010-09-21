@@ -62,101 +62,110 @@ public class ComponentsXmlArchiverFileFilterTest
 {
     private ComponentsXmlArchiverFileFilter filter;
 
-    private TestFileManager fileManager = new TestFileManager( "componentsXmlArchiverFileFilter.test", ".zip" );
+    private final TestFileManager fileManager = new TestFileManager( "componentsXmlArchiverFileFilter.test", ".zip" );
 
+    @Override
     public void setUp()
     {
         filter = new ComponentsXmlArchiverFileFilter();
     }
 
-    public void tearDown()
-        throws IOException
+    @Override
+    public void tearDown() throws IOException
     {
         fileManager.cleanUp();
     }
 
-    public void testAddComponentsXml_ShouldAddComponentWithoutRoleHint()
-        throws IOException, XmlPullParserException
+    public void testAddComponentsXml_ShouldAddComponentWithoutRoleHint() throws IOException, XmlPullParserException
     {
-        Reader reader = writeComponentsXml( Collections.singletonList( new ComponentDef( "role", null,
-                                                                                         "org.apache.maven.Impl" ) ) );
+        final Reader reader =
+            writeComponentsXml( Collections.singletonList( new ComponentDef( "role", null, "org.apache.maven.Impl" ) ) );
 
         filter.addComponentsXml( reader );
 
         assertFalse( filter.components.isEmpty() );
 
-        Xpp3Dom componentDom = (Xpp3Dom) filter.components.get( "role" );
+        final Xpp3Dom componentDom = filter.components.get( "role" );
 
-        assertEquals( "role", componentDom.getChild( "role" ).getValue() );
+        assertEquals( "role", componentDom.getChild( "role" )
+                                          .getValue() );
         assertNull( componentDom.getChild( "role-hint" ) );
-        assertEquals( "org.apache.maven.Impl", componentDom.getChild( "implementation" ).getValue() );
+        assertEquals( "org.apache.maven.Impl", componentDom.getChild( "implementation" )
+                                                           .getValue() );
     }
 
-    public void testAddComponentsXml_ShouldAddComponentWithRoleHint()
-        throws IOException, XmlPullParserException
+    public void testAddComponentsXml_ShouldAddComponentWithRoleHint() throws IOException, XmlPullParserException
     {
-        Reader reader = writeComponentsXml( Collections.singletonList( new ComponentDef( "role", "hint",
-                                                                                         "org.apache.maven.Impl" ) ) );
+        final Reader reader =
+            writeComponentsXml( Collections.singletonList( new ComponentDef( "role", "hint", "org.apache.maven.Impl" ) ) );
 
         filter.addComponentsXml( reader );
 
         assertFalse( filter.components.isEmpty() );
 
-        Xpp3Dom componentDom = (Xpp3Dom) filter.components.get( "rolehint" );
+        final Xpp3Dom componentDom = filter.components.get( "rolehint" );
 
-        assertEquals( "role", componentDom.getChild( "role" ).getValue() );
-        assertEquals( "hint", componentDom.getChild( "role-hint" ).getValue() );
-        assertEquals( "org.apache.maven.Impl", componentDom.getChild( "implementation" ).getValue() );
+        assertEquals( "role", componentDom.getChild( "role" )
+                                          .getValue() );
+        assertEquals( "hint", componentDom.getChild( "role-hint" )
+                                          .getValue() );
+        assertEquals( "org.apache.maven.Impl", componentDom.getChild( "implementation" )
+                                                           .getValue() );
     }
 
-    public void testAddComponentsXml_ShouldAddTwoComponentsWithRoleHints()
-        throws IOException, XmlPullParserException
+    public void testAddComponentsXml_ShouldAddTwoComponentsWithRoleHints() throws IOException, XmlPullParserException
     {
-        List defs = new ArrayList();
+        final List<ComponentDef> defs = new ArrayList<ComponentDef>();
 
         defs.add( new ComponentDef( "role", "hint", "org.apache.maven.Impl" ) );
         defs.add( new ComponentDef( "role", "hint2", "org.apache.maven.Impl2" ) );
 
-        Reader reader = writeComponentsXml( defs );
+        final Reader reader = writeComponentsXml( defs );
 
         filter.addComponentsXml( reader );
 
         assertFalse( filter.components.isEmpty() );
 
-        Xpp3Dom componentDom = (Xpp3Dom) filter.components.get( "rolehint" );
+        Xpp3Dom componentDom = filter.components.get( "rolehint" );
 
-        assertEquals( "role", componentDom.getChild( "role" ).getValue() );
-        assertEquals( "hint", componentDom.getChild( "role-hint" ).getValue() );
-        assertEquals( "org.apache.maven.Impl", componentDom.getChild( "implementation" ).getValue() );
+        assertEquals( "role", componentDom.getChild( "role" )
+                                          .getValue() );
+        assertEquals( "hint", componentDom.getChild( "role-hint" )
+                                          .getValue() );
+        assertEquals( "org.apache.maven.Impl", componentDom.getChild( "implementation" )
+                                                           .getValue() );
 
-        componentDom = (Xpp3Dom) filter.components.get( "rolehint2" );
+        componentDom = filter.components.get( "rolehint2" );
 
-        assertEquals( "role", componentDom.getChild( "role" ).getValue() );
-        assertEquals( "hint2", componentDom.getChild( "role-hint" ).getValue() );
-        assertEquals( "org.apache.maven.Impl2", componentDom.getChild( "implementation" ).getValue() );
+        assertEquals( "role", componentDom.getChild( "role" )
+                                          .getValue() );
+        assertEquals( "hint2", componentDom.getChild( "role-hint" )
+                                           .getValue() );
+        assertEquals( "org.apache.maven.Impl2", componentDom.getChild( "implementation" )
+                                                            .getValue() );
     }
 
     public void testAddToArchive_ShouldWriteComponentWithoutHintToFile()
         throws IOException, ArchiverException, JDOMException
     {
-        Xpp3Dom dom = createComponentDom( new ComponentDef( "role", null, "impl" ) );
+        final Xpp3Dom dom = createComponentDom( new ComponentDef( "role", null, "impl" ) );
 
-        filter.components = new LinkedHashMap();
+        filter.components = new LinkedHashMap<String, Xpp3Dom>();
         filter.components.put( "role", dom );
 
-        FileCatchingArchiver fca = new FileCatchingArchiver();
+        final FileCatchingArchiver fca = new FileCatchingArchiver();
 
         filter.finalizeArchiveCreation( fca );
 
         assertEquals( ComponentsXmlArchiverFileFilter.COMPONENTS_XML_PATH, fca.getDestFileName() );
 
-        SAXBuilder builder = new SAXBuilder( false );
+        final SAXBuilder builder = new SAXBuilder( false );
 
-        Document doc = builder.build( fca.getFile() );
+        final Document doc = builder.build( fca.getFile() );
 
-        XPath role = XPath.newInstance( "//component[position()=1]/role/text()" );
-        XPath hint = XPath.newInstance( "//component[position()=1]/role-hint/text()" );
-        XPath implementation = XPath.newInstance( "//component[position()=1]/implementation/text()" );
+        final XPath role = XPath.newInstance( "//component[position()=1]/role/text()" );
+        final XPath hint = XPath.newInstance( "//component[position()=1]/role-hint/text()" );
+        final XPath implementation = XPath.newInstance( "//component[position()=1]/implementation/text()" );
 
         assertEquals( "role", ( (Text) role.selectSingleNode( doc ) ).getText() );
         assertNull( hint.selectSingleNode( doc ) );
@@ -166,64 +175,63 @@ public class ComponentsXmlArchiverFileFilterTest
     public void testAddToArchive_ShouldWriteComponentWithHintToFile()
         throws IOException, ArchiverException, JDOMException
     {
-        Xpp3Dom dom = createComponentDom( new ComponentDef( "role", "hint", "impl" ) );
+        final Xpp3Dom dom = createComponentDom( new ComponentDef( "role", "hint", "impl" ) );
 
-        filter.components = new LinkedHashMap();
+        filter.components = new LinkedHashMap<String, Xpp3Dom>();
         filter.components.put( "rolehint", dom );
 
-        FileCatchingArchiver fca = new FileCatchingArchiver();
+        final FileCatchingArchiver fca = new FileCatchingArchiver();
 
         filter.finalizeArchiveCreation( fca );
 
         assertEquals( ComponentsXmlArchiverFileFilter.COMPONENTS_XML_PATH, fca.getDestFileName() );
 
-        SAXBuilder builder = new SAXBuilder( false );
+        final SAXBuilder builder = new SAXBuilder( false );
 
-        Document doc = builder.build( fca.getFile() );
+        final Document doc = builder.build( fca.getFile() );
 
-        XPath role = XPath.newInstance( "//component[position()=1]/role/text()" );
-        XPath hint = XPath.newInstance( "//component[position()=1]/role-hint/text()" );
-        XPath implementation = XPath.newInstance( "//component[position()=1]/implementation/text()" );
+        final XPath role = XPath.newInstance( "//component[position()=1]/role/text()" );
+        final XPath hint = XPath.newInstance( "//component[position()=1]/role-hint/text()" );
+        final XPath implementation = XPath.newInstance( "//component[position()=1]/implementation/text()" );
 
         assertEquals( "role", ( (Text) role.selectSingleNode( doc ) ).getText() );
         assertEquals( "hint", ( (Text) hint.selectSingleNode( doc ) ).getText() );
         assertEquals( "impl", ( (Text) implementation.selectSingleNode( doc ) ).getText() );
     }
 
-    public void testAddToArchive_ShouldWriteTwoComponentToFile()
-        throws IOException, ArchiverException, JDOMException
+    public void testAddToArchive_ShouldWriteTwoComponentToFile() throws IOException, ArchiverException, JDOMException
     {
-        filter.components = new LinkedHashMap();
+        filter.components = new LinkedHashMap<String, Xpp3Dom>();
 
-        Xpp3Dom dom = createComponentDom( new ComponentDef( "role", "hint", "impl" ) );
+        final Xpp3Dom dom = createComponentDom( new ComponentDef( "role", "hint", "impl" ) );
 
         filter.components.put( "rolehint", dom );
 
-        Xpp3Dom dom2 = createComponentDom( new ComponentDef( "role", "hint2", "impl" ) );
+        final Xpp3Dom dom2 = createComponentDom( new ComponentDef( "role", "hint2", "impl" ) );
 
         filter.components.put( "rolehint2", dom2 );
 
-        FileCatchingArchiver fca = new FileCatchingArchiver();
+        final FileCatchingArchiver fca = new FileCatchingArchiver();
 
         filter.finalizeArchiveCreation( fca );
 
         assertEquals( ComponentsXmlArchiverFileFilter.COMPONENTS_XML_PATH, fca.getDestFileName() );
 
-        SAXBuilder builder = new SAXBuilder( false );
+        final SAXBuilder builder = new SAXBuilder( false );
 
-        Document doc = builder.build( fca.getFile() );
+        final Document doc = builder.build( fca.getFile() );
 
-        XPath role = XPath.newInstance( "//component[position()=1]/role/text()" );
-        XPath hint = XPath.newInstance( "//component[position()=1]/role-hint/text()" );
-        XPath implementation = XPath.newInstance( "//component[position()=1]/implementation/text()" );
+        final XPath role = XPath.newInstance( "//component[position()=1]/role/text()" );
+        final XPath hint = XPath.newInstance( "//component[position()=1]/role-hint/text()" );
+        final XPath implementation = XPath.newInstance( "//component[position()=1]/implementation/text()" );
 
         assertEquals( "role", ( (Text) role.selectSingleNode( doc ) ).getText() );
         assertEquals( "hint", ( (Text) hint.selectSingleNode( doc ) ).getText() );
         assertEquals( "impl", ( (Text) implementation.selectSingleNode( doc ) ).getText() );
 
-        XPath role2 = XPath.newInstance( "//component[position()=2]/role/text()" );
-        XPath hint2 = XPath.newInstance( "//component[position()=2]/role-hint/text()" );
-        XPath implementation2 = XPath.newInstance( "//component[position()=2]/implementation/text()" );
+        final XPath role2 = XPath.newInstance( "//component[position()=2]/role/text()" );
+        final XPath hint2 = XPath.newInstance( "//component[position()=2]/role-hint/text()" );
+        final XPath implementation2 = XPath.newInstance( "//component[position()=2]/implementation/text()" );
 
         assertEquals( "role", ( (Text) role2.selectSingleNode( doc ) ).getText() );
         assertEquals( "hint2", ( (Text) hint2.selectSingleNode( doc ) ).getText() );
@@ -234,54 +242,54 @@ public class ComponentsXmlArchiverFileFilterTest
     public void testAddToArchive_ShouldWriteTwoComponentToArchivedFile()
         throws IOException, ArchiverException, JDOMException
     {
-        filter.components = new LinkedHashMap();
+        filter.components = new LinkedHashMap<String, Xpp3Dom>();
 
-        Xpp3Dom dom = createComponentDom( new ComponentDef( "role", "hint", "impl" ) );
+        final Xpp3Dom dom = createComponentDom( new ComponentDef( "role", "hint", "impl" ) );
 
         filter.components.put( "rolehint", dom );
 
-        Xpp3Dom dom2 = createComponentDom( new ComponentDef( "role", "hint2", "impl" ) );
+        final Xpp3Dom dom2 = createComponentDom( new ComponentDef( "role", "hint2", "impl" ) );
 
         filter.components.put( "rolehint2", dom2 );
 
-        ZipArchiver archiver = new ZipArchiver();
+        final ZipArchiver archiver = new ZipArchiver();
 
-        File archiveFile = fileManager.createTempFile();
+        final File archiveFile = fileManager.createTempFile();
 
         archiver.setDestFile( archiveFile );
 
-        File descriptorFile = fileManager.createTempFile();
+        final File descriptorFile = fileManager.createTempFile();
 
         archiver.setArchiveFinalizers( Collections.singletonList( filter ) );
 
         archiver.createArchive();
 
-        ZipFile zf = new ZipFile( archiveFile );
+        final ZipFile zf = new ZipFile( archiveFile );
 
-        ZipEntry ze = zf.getEntry( ComponentsXmlArchiverFileFilter.COMPONENTS_XML_PATH );
+        final ZipEntry ze = zf.getEntry( ComponentsXmlArchiverFileFilter.COMPONENTS_XML_PATH );
 
         assertNotNull( ze );
 
-        FileOutputStream fileStream = new FileOutputStream( descriptorFile );
+        final FileOutputStream fileStream = new FileOutputStream( descriptorFile );
 
         IOUtil.copy( zf.getInputStream( ze ), fileStream );
         IOUtil.close( fileStream );
 
-        SAXBuilder builder = new SAXBuilder( false );
+        final SAXBuilder builder = new SAXBuilder( false );
 
-        Document doc = builder.build( descriptorFile );
+        final Document doc = builder.build( descriptorFile );
 
-        XPath role = XPath.newInstance( "//component[position()=1]/role/text()" );
-        XPath hint = XPath.newInstance( "//component[position()=1]/role-hint/text()" );
-        XPath implementation = XPath.newInstance( "//component[position()=1]/implementation/text()" );
+        final XPath role = XPath.newInstance( "//component[position()=1]/role/text()" );
+        final XPath hint = XPath.newInstance( "//component[position()=1]/role-hint/text()" );
+        final XPath implementation = XPath.newInstance( "//component[position()=1]/implementation/text()" );
 
         assertEquals( "role", ( (Text) role.selectSingleNode( doc ) ).getText() );
         assertEquals( "hint", ( (Text) hint.selectSingleNode( doc ) ).getText() );
         assertEquals( "impl", ( (Text) implementation.selectSingleNode( doc ) ).getText() );
 
-        XPath role2 = XPath.newInstance( "//component[position()=2]/role/text()" );
-        XPath hint2 = XPath.newInstance( "//component[position()=2]/role-hint/text()" );
-        XPath implementation2 = XPath.newInstance( "//component[position()=2]/implementation/text()" );
+        final XPath role2 = XPath.newInstance( "//component[position()=2]/role/text()" );
+        final XPath hint2 = XPath.newInstance( "//component[position()=2]/role-hint/text()" );
+        final XPath implementation2 = XPath.newInstance( "//component[position()=2]/implementation/text()" );
 
         assertEquals( "role", ( (Text) role2.selectSingleNode( doc ) ).getText() );
         assertEquals( "hint2", ( (Text) hint2.selectSingleNode( doc ) ).getText() );
@@ -289,42 +297,41 @@ public class ComponentsXmlArchiverFileFilterTest
 
     }
 
-    private Xpp3Dom createComponentDom( ComponentDef def )
+    private Xpp3Dom createComponentDom( final ComponentDef def )
     {
-        Xpp3Dom dom = new Xpp3Dom( "component" );
+        final Xpp3Dom dom = new Xpp3Dom( "component" );
 
-        Xpp3Dom role = new Xpp3Dom( "role" );
+        final Xpp3Dom role = new Xpp3Dom( "role" );
         role.setValue( def.role );
         dom.addChild( role );
 
-        String hint = def.roleHint;
+        final String hint = def.roleHint;
         if ( hint != null )
         {
-            Xpp3Dom roleHint = new Xpp3Dom( "role-hint" );
+            final Xpp3Dom roleHint = new Xpp3Dom( "role-hint" );
             roleHint.setValue( hint );
             dom.addChild( roleHint );
         }
 
-        Xpp3Dom impl = new Xpp3Dom( "implementation" );
+        final Xpp3Dom impl = new Xpp3Dom( "implementation" );
         impl.setValue( def.implementation );
         dom.addChild( impl );
 
         return dom;
     }
 
-    private Reader writeComponentsXml( List componentDefs )
-        throws IOException
+    private Reader writeComponentsXml( final List<ComponentDef> componentDefs ) throws IOException
     {
-        StringWriter writer = new StringWriter();
+        final StringWriter writer = new StringWriter();
 
-        PrettyPrintXMLWriter xmlWriter = new PrettyPrintXMLWriter( writer );
+        final PrettyPrintXMLWriter xmlWriter = new PrettyPrintXMLWriter( writer );
 
         xmlWriter.startElement( "component-set" );
         xmlWriter.startElement( "components" );
 
-        for ( Iterator it = componentDefs.iterator(); it.hasNext(); )
+        for ( final Iterator<ComponentDef> it = componentDefs.iterator(); it.hasNext(); )
         {
-            ComponentDef def = (ComponentDef) it.next();
+            final ComponentDef def = it.next();
 
             xmlWriter.startElement( "component" );
 
@@ -332,7 +339,7 @@ public class ComponentsXmlArchiverFileFilterTest
             xmlWriter.writeText( def.role );
             xmlWriter.endElement();
 
-            String roleHint = def.roleHint;
+            final String roleHint = def.roleHint;
             if ( roleHint != null )
             {
                 xmlWriter.startElement( "role-hint" );
@@ -361,7 +368,7 @@ public class ComponentsXmlArchiverFileFilterTest
 
         String implementation;
 
-        ComponentDef( String role, String roleHint, String implementation )
+        ComponentDef( final String role, final String roleHint, final String implementation )
         {
             this.role = role;
             this.roleHint = roleHint;
@@ -378,32 +385,29 @@ public class ComponentsXmlArchiverFileFilterTest
 
         private String destFileName;
 
-        public void addDirectory( File directory )
+        public void addDirectory( final File directory ) throws ArchiverException
+        {
+            throw new UnsupportedOperationException( "not supported" );
+        }
+
+        public void addDirectory( final File directory, final String prefix ) throws ArchiverException
+        {
+            throw new UnsupportedOperationException( "not supported" );
+        }
+
+        public void addDirectory( final File directory, final String[] includes, final String[] excludes )
             throws ArchiverException
         {
             throw new UnsupportedOperationException( "not supported" );
         }
 
-        public void addDirectory( File directory, String prefix )
-            throws ArchiverException
+        public void addDirectory( final File directory, final String prefix, final String[] includes,
+                                  final String[] excludes ) throws ArchiverException
         {
             throw new UnsupportedOperationException( "not supported" );
         }
 
-        public void addDirectory( File directory, String[] includes, String[] excludes )
-            throws ArchiverException
-        {
-            throw new UnsupportedOperationException( "not supported" );
-        }
-
-        public void addDirectory( File directory, String prefix, String[] includes, String[] excludes )
-            throws ArchiverException
-        {
-            throw new UnsupportedOperationException( "not supported" );
-        }
-
-        public void addFile( File inputFile, String destFileName )
-            throws ArchiverException
+        public void addFile( final File inputFile, final String destFileName ) throws ArchiverException
         {
             this.inputFile = inputFile;
             this.destFileName = destFileName;
@@ -419,14 +423,13 @@ public class ComponentsXmlArchiverFileFilterTest
             return destFileName;
         }
 
-        public void addFile( File inputFile, String destFileName, int permissions )
+        public void addFile( final File inputFile, final String destFileName, final int permissions )
             throws ArchiverException
         {
             throw new UnsupportedOperationException( "not supported" );
         }
 
-        public void createArchive()
-            throws ArchiverException, IOException
+        public void createArchive() throws ArchiverException, IOException
         {
             throw new UnsupportedOperationException( "not supported" );
         }
@@ -446,6 +449,7 @@ public class ComponentsXmlArchiverFileFilterTest
             throw new UnsupportedOperationException( "not supported" );
         }
 
+        @SuppressWarnings( "rawtypes" )
         public Map getFiles()
         {
             throw new UnsupportedOperationException( "not supported" );
@@ -456,51 +460,49 @@ public class ComponentsXmlArchiverFileFilterTest
             throw new UnsupportedOperationException( "not supported" );
         }
 
-        public void setDefaultDirectoryMode( int mode )
+        public void setDefaultDirectoryMode( final int mode )
         {
             throw new UnsupportedOperationException( "not supported" );
         }
 
-        public void setDefaultFileMode( int mode )
+        public void setDefaultFileMode( final int mode )
         {
             throw new UnsupportedOperationException( "not supported" );
         }
 
-        public void setDestFile( File destFile )
+        public void setDestFile( final File destFile )
         {
             throw new UnsupportedOperationException( "not supported" );
         }
 
-        public void setIncludeEmptyDirs( boolean includeEmptyDirs )
+        public void setIncludeEmptyDirs( final boolean includeEmptyDirs )
         {
             throw new UnsupportedOperationException( "not supported" );
         }
 
-        public void addArchivedFileSet( File archiveFile )
+        public void addArchivedFileSet( final File archiveFile ) throws ArchiverException
+        {
+            throw new UnsupportedOperationException( "not supported" );
+        }
+
+        public void addArchivedFileSet( final File archiveFile, final String prefix ) throws ArchiverException
+        {
+            throw new UnsupportedOperationException( "not supported" );
+        }
+
+        public void addArchivedFileSet( final File archiveFile, final String[] includes, final String[] excludes )
             throws ArchiverException
         {
             throw new UnsupportedOperationException( "not supported" );
         }
 
-        public void addArchivedFileSet( File archiveFile, String prefix )
-            throws ArchiverException
+        public void addArchivedFileSet( final File archiveFile, final String prefix, final String[] includes,
+                                        final String[] excludes ) throws ArchiverException
         {
             throw new UnsupportedOperationException( "not supported" );
         }
 
-        public void addArchivedFileSet( File archiveFile, String[] includes, String[] excludes )
-            throws ArchiverException
-        {
-            throw new UnsupportedOperationException( "not supported" );
-        }
-
-        public void addArchivedFileSet( File archiveFile, String prefix, String[] includes, String[] excludes )
-            throws ArchiverException
-        {
-            throw new UnsupportedOperationException( "not supported" );
-        }
-
-        public void setForced( boolean forced )
+        public void setForced( final boolean forced )
         {
             throw new UnsupportedOperationException( "not supported" );
         }
@@ -515,49 +517,42 @@ public class ComponentsXmlArchiverFileFilterTest
             throw new UnsupportedOperationException( "not supported" );
         }
 
-        public void setDotFileDirectory( File dotFileDirectory )
+        public void setDotFileDirectory( final File dotFileDirectory )
         {
         }
 
-        public void addArchivedFileSet( ArchivedFileSet fileSet )
+        public void addArchivedFileSet( final ArchivedFileSet fileSet ) throws ArchiverException
+        {
+            throw new UnsupportedOperationException( "not supported" );
+        }
+
+        public void addFileSet( final FileSet fileSet ) throws ArchiverException
+        {
+            throw new UnsupportedOperationException( "not supported" );
+        }
+
+        public void addResource( final PlexusIoResource resource, final String destFileName, final int permissions )
             throws ArchiverException
         {
             throw new UnsupportedOperationException( "not supported" );
         }
 
-        public void addFileSet( FileSet fileSet )
-            throws ArchiverException
+        public void addResources( final PlexusIoResourceCollection resources ) throws ArchiverException
         {
             throw new UnsupportedOperationException( "not supported" );
         }
 
-        public void addResource( PlexusIoResource resource,
-                                 String destFileName,
-                                 int permissions )
-            throws ArchiverException
+        public ResourceIterator getResources() throws ArchiverException
         {
-            throw new UnsupportedOperationException( "not supported" );
-        }
+            return new ResourceIterator()
+            {
 
-        public void addResources( PlexusIoResourceCollection resources )
-            throws ArchiverException
-        {
-            throw new UnsupportedOperationException( "not supported" );
-        }
-
-        public ResourceIterator getResources()
-            throws ArchiverException
-        {
-            return new ResourceIterator(){
-
-                public boolean hasNext()
-                    throws ArchiverException
+                public boolean hasNext() throws ArchiverException
                 {
                     return false;
                 }
 
-                public ArchiveEntry next()
-                    throws ArchiverException
+                public ArchiveEntry next() throws ArchiverException
                 {
                     throw new NoSuchElementException();
                 }
@@ -570,7 +565,7 @@ public class ComponentsXmlArchiverFileFilterTest
             return Archiver.DUPLICATES_ADD;
         }
 
-        public void setDuplicateBehavior( String duplicate )
+        public void setDuplicateBehavior( final String duplicate )
         {
         }
 
@@ -594,12 +589,12 @@ public class ComponentsXmlArchiverFileFilterTest
             throw new UnsupportedOperationException( "not supported" );
         }
 
-        public void setDirectoryMode( int mode )
+        public void setDirectoryMode( final int mode )
         {
             throw new UnsupportedOperationException( "not supported" );
         }
 
-        public void setFileMode( int mode )
+        public void setFileMode( final int mode )
         {
             throw new UnsupportedOperationException( "not supported" );
         }
