@@ -361,7 +361,10 @@ public class AddDependencySetsTask
 
         model.setDescription( "Stub for " + depArtifact.getId() );
 
-        return new MavenProject( model );
+        final MavenProject project = new MavenProject( model );
+        project.setArtifact( depArtifact );
+
+        return project;
     }
 
     protected Set<Artifact> resolveDependencyArtifacts( final DependencySet dependencySet )
