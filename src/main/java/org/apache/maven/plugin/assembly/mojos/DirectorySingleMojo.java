@@ -22,23 +22,24 @@ package org.apache.maven.plugin.assembly.mojos;
 import org.apache.maven.project.MavenProject;
 
 /**
- * Like the <code>assembly:attached</code> goal, assemble an application bundle 
- * or distribution from an assembly descriptor. This goal is suitable either for 
- * binding to the lifecycle or calling directly from the command line (provided 
- * all required files are available before the build starts, or are produced 
- * by another goal specified before this one on the command line). 
- * <br/>
+ * Like the <code>assembly:attached</code> goal, assemble an application bundle or distribution from an assembly
+ * descriptor. This goal is suitable either for binding to the lifecycle or calling directly from the command line
+ * (provided all required files are available before the build starts, or are produced by another goal specified before
+ * this one on the command line). <br/>
  * 
- * This goal differs from <code>assembly:single</code> in that it ignores the &lt;formats/&gt;
- * section of the assembly descriptor, and forces the assembly to be created as
- * a directory in the project's build-output directory (usually <code>./target</code>).
- *
+ * This goal differs from <code>assembly:single</code> in that it ignores the &lt;formats/&gt; section of the assembly
+ * descriptor, and forces the assembly to be created as a directory in the project's build-output directory (usually
+ * <code>./target</code>).
+ * 
  * @author <a href="mailto:jdcasey@apache.org">John Casey</a>
  * @author <a href="mailto:gscokart@users.sourceforge.net">Gilles Scokart</a>
  * @version $Id$
- *
+ * 
  * @goal directory-single
+ * @inheritByDefault false
+ * @deprecated Use assembly:single and an assembly with format == dir instead! This mojo is redundant.
  */
+@Deprecated
 public class DirectorySingleMojo
     extends AbstractDirectoryMojo
 {
@@ -49,6 +50,7 @@ public class DirectorySingleMojo
      */
     private MavenProject project;
 
+    @Override
     public MavenProject getProject()
     {
         return project;

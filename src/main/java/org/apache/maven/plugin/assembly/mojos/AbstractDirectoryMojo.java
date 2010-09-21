@@ -35,11 +35,13 @@ import java.util.List;
 /**
  * @version $Id$
  */
+@Deprecated
 public abstract class AbstractDirectoryMojo
     extends AbstractAssemblyMojo
 {
     @Override
-    public void execute() throws MojoExecutionException, MojoFailureException
+    public void execute()
+        throws MojoExecutionException, MojoFailureException
     {
         final AssemblyReader reader = getAssemblyReader();
 
@@ -64,7 +66,8 @@ public abstract class AbstractDirectoryMojo
         }
     }
 
-    private void createDirectory( final Assembly assembly ) throws MojoExecutionException, MojoFailureException
+    private void createDirectory( final Assembly assembly )
+        throws MojoExecutionException, MojoFailureException
     {
         final AssemblyArchiver archiver = getAssemblyArchiver();
 
