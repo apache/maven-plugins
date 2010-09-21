@@ -23,8 +23,8 @@
   to "component.mdo".
 -->
 
-<model xsd.namespace="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.1" 
-       xsd.targetNamespace="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.1">
+<model xsd.namespace="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2" 
+       xsd.targetNamespace="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2">
        
   <id>assembly</id>
   <name>Assembly</name>
@@ -609,6 +609,17 @@
       <version>1.0.0+</version>
       <fields>
         <field>
+          <name>useAllReactorProjects</name>
+          <version>1.1.2+</version>
+          <type>boolean</type>
+          <defaultValue>false</defaultValue>
+          <description>
+          If set to true, the plugin will include all projects in the current reactor for processing 
+          in this ModuleSet. These will be subject to include/exclude rules.
+          Default value is true. (Since 2.2-beta-6)
+          </description>
+        </field>
+        <field>
           <name>includeSubModules</name>
           <version>1.1.0+</version>
           <type>boolean</type>
@@ -983,7 +994,7 @@
         </field>
         <field>
           <name>configuration</name>
-          <version>1.1.1</version>
+          <version>1.1.1+</version>
           <description>
             Configuration options for the handler.
           </description>
