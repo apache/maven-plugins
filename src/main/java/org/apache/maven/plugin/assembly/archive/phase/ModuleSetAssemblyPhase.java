@@ -538,9 +538,8 @@ implements AssemblyArchiverPhase
     throws ArchiveCreationException
     {
         MavenProject project = configSource.getProject();
-
-
         Set moduleProjects = null;
+
         if ( moduleSet.isUseAllReactorProjects() )
         {
             if ( !moduleSet.isIncludeSubModules() )
@@ -562,7 +561,7 @@ implements AssemblyArchiverPhase
             catch ( IOException e )
             {
                 throw new ArchiveCreationException( "Error retrieving module-set for project: " + project.getId()
-                                + ": " + e.getMessage(), e );
+                                                    + ": " + e.getMessage(), e );
             }
         }
 
