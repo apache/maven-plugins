@@ -21,12 +21,13 @@ package org.apache.maven.plugin.assembly.archive.phase;
 
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.AssemblyContext;
-import org.apache.maven.plugin.assembly.DefaultAssemblyContext;
 import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
 import org.apache.maven.plugin.assembly.archive.task.AddFileSetsTask;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
 import org.apache.maven.plugin.assembly.model.Assembly;
+import org.apache.maven.plugin.assembly.model.FileSet;
 import org.codehaus.plexus.archiver.Archiver;
+import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 
 import java.util.List;
@@ -35,9 +36,8 @@ import java.util.List;
  * Handles the &lt;fileSets/&gt; top-level section of the assembly descriptor.
  * 
  * @version $Id$
- * @plexus.component role="org.apache.maven.plugin.assembly.archive.phase.AssemblyArchiverPhase"
- *                   role-hint="file-sets"
  */
+@Component( role = AssemblyArchiverPhase.class, hint = "file-sets" )
 public class FileSetAssemblyPhase
     extends AbstractLogEnabled
     implements AssemblyArchiverPhase
@@ -46,24 +46,15 @@ public class FileSetAssemblyPhase
     /**
      * {@inheritDoc}
      */
-    public void execute( Assembly assembly, Archiver archiver, AssemblerConfigurationSource configSource )
+    public void execute( final Assembly assembly, final Archiver archiver,
+                         final AssemblerConfigurationSource configSource, final AssemblyContext context )
         throws ArchiveCreationException, AssemblyFormattingException
     {
-        execute( assembly, archiver, configSource, new DefaultAssemblyContext() );
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public void execute( Assembly assembly, Archiver archiver, AssemblerConfigurationSource configSource,
-                         AssemblyContext context )
-        throws ArchiveCreationException, AssemblyFormattingException
-    {
-        List fileSets = assembly.getFileSets();
+        final List<FileSet> fileSets = assembly.getFileSets();
 
         if ( ( fileSets != null ) && !fileSets.isEmpty() )
         {
-            AddFileSetsTask task = new AddFileSetsTask( fileSets );
+            final AddFileSetsTask task = new AddFileSetsTask( fileSets );
 
             task.setLogger( getLogger() );
             task.execute( archiver, configSource );

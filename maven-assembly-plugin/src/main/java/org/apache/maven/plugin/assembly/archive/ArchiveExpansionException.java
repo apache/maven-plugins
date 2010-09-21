@@ -26,12 +26,14 @@ public class ArchiveExpansionException
     extends Exception
 {
 
-    public ArchiveExpansionException( String message, Throwable error )
+    private static final long serialVersionUID = 1L;
+
+    public ArchiveExpansionException( final String message, final Throwable error )
     {
         super( message, error );
     }
 
-    public ArchiveExpansionException( String message )
+    public ArchiveExpansionException( final String message )
     {
         super( message );
     }

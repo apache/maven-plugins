@@ -53,7 +53,7 @@ import java.util.Set;
  * <li>prefixing (where all paths have a set global prefix prepended before addition)</li>
  * <li>duplication checks on archive additions (for archive-file path + prefix)</li>
  * </ul>
- *
+ * 
  * @author jdcasey
  * @version $Id$
  */
@@ -61,28 +61,33 @@ public class AssemblyProxyArchiver
     implements Archiver
 {
 
-    private Archiver delegate;
+    private final Archiver delegate;
 
     private String rootPrefix;
 
     private FileSelector[] selectors;
 
-    private ThreadLocal inPublicApi = new ThreadLocal();
+    private final ThreadLocal<Boolean> inPublicApi = new ThreadLocal<Boolean>();
 
     private final Logger logger;
 
     private final boolean dryRun;
 
-    private Set seenPaths = new HashSet();
+    private final Set<String> seenPaths = new HashSet<String>();
 
-    public AssemblyProxyArchiver( String rootPrefix, Archiver delegate, List containerDescriptorHandlers,
-                                   List extraSelectors, List extraFinalizers, Logger logger )
+    public AssemblyProxyArchiver( final String rootPrefix, final Archiver delegate,
+                                  final List<ContainerDescriptorHandler> containerDescriptorHandlers,
+                                  final List<FileSelector> extraSelectors,
+                                  final List<ArchiveFinalizer> extraFinalizers, final Logger logger )
     {
         this( rootPrefix, delegate, containerDescriptorHandlers, extraSelectors, extraFinalizers, logger, false );
     }
 
-    public AssemblyProxyArchiver( String rootPrefix, Archiver delegate, List containerDescriptorHandlers,
-                                   List extraSelectors, List extraFinalizers, Logger logger, boolean dryRun )
+    public AssemblyProxyArchiver( final String rootPrefix, final Archiver delegate,
+                                  final List<ContainerDescriptorHandler> containerDescriptorHandlers,
+                                  final List<FileSelector> extraSelectors,
+                                  final List<ArchiveFinalizer> extraFinalizers, final Logger logger,
+                                  final boolean dryRun )
     {
         this.rootPrefix = rootPrefix;
         this.delegate = delegate;
@@ -94,15 +99,15 @@ public class AssemblyProxyArchiver
             this.rootPrefix += "/";
         }
 
-        List selectors = new ArrayList();
+        final List<FileSelector> selectors = new ArrayList<FileSelector>();
 
-        boolean isFinalizerEnabled = ( delegate instanceof FinalizerEnabled );
+        final boolean isFinalizerEnabled = ( delegate instanceof FinalizerEnabled );
 
         if ( containerDescriptorHandlers != null )
         {
-            for ( Iterator it = containerDescriptorHandlers.iterator(); it.hasNext(); )
+            for ( final Iterator<ContainerDescriptorHandler> it = containerDescriptorHandlers.iterator(); it.hasNext(); )
             {
-                ContainerDescriptorHandler handler = (ContainerDescriptorHandler) it.next();
+                final ContainerDescriptorHandler handler = it.next();
 
                 selectors.add( handler );
 
@@ -115,31 +120,31 @@ public class AssemblyProxyArchiver
 
         if ( extraSelectors != null )
         {
-            for ( Iterator it = extraSelectors.iterator(); it.hasNext(); )
+            for ( final Iterator<FileSelector> it = extraSelectors.iterator(); it.hasNext(); )
             {
-                FileSelector selector = (FileSelector) it.next();
+                final FileSelector selector = it.next();
                 selectors.add( selector );
             }
         }
 
         if ( ( extraFinalizers != null ) && isFinalizerEnabled )
         {
-            for ( Iterator it = extraFinalizers.iterator(); it.hasNext(); )
+            for ( final Iterator<ArchiveFinalizer> it = extraFinalizers.iterator(); it.hasNext(); )
             {
-                ( (FinalizerEnabled) delegate ).addArchiveFinalizer( (ArchiveFinalizer) it.next() );
+                ( (FinalizerEnabled) delegate ).addArchiveFinalizer( it.next() );
             }
         }
 
         if ( !selectors.isEmpty() )
         {
-            this.selectors = (FileSelector[]) selectors.toArray( new FileSelector[0] );
+            this.selectors = selectors.toArray( new FileSelector[0] );
         }
     }
 
-    public void addArchivedFileSet( File archiveFile, String prefix, String[] includes, String[] excludes )
-        throws ArchiverException
+    public void addArchivedFileSet( final File archiveFile, final String prefix, final String[] includes,
+                                    final String[] excludes ) throws ArchiverException
     {
-        String archiveKey = getArchiveKey( archiveFile, prefix );
+        final String archiveKey = getArchiveKey( archiveFile, prefix );
         if ( seenPaths.contains( archiveKey ) )
         {
             warn( "Archive: " + archiveFile + " has already been added. Skipping." );
@@ -149,7 +154,7 @@ public class AssemblyProxyArchiver
         inPublicApi.set( Boolean.TRUE );
         try
         {
-            DefaultArchivedFileSet fs = new DefaultArchivedFileSet();
+            final DefaultArchivedFileSet fs = new DefaultArchivedFileSet();
 
             fs.setArchive( archiveFile );
             fs.setIncludes( includes );
@@ -175,12 +180,12 @@ public class AssemblyProxyArchiver
         }
     }
 
-    private String getArchiveKey( File archiveFile, String prefix )
+    private String getArchiveKey( final File archiveFile, final String prefix )
     {
         return archiveFile.getAbsolutePath() + ":" + prefix;
     }
 
-    private void debug( String message )
+    private void debug( final String message )
     {
         if ( ( logger != null ) && logger.isDebugEnabled() )
         {
@@ -188,7 +193,7 @@ public class AssemblyProxyArchiver
         }
     }
 
-    private void warn( String message )
+    private void warn( final String message )
     {
         if ( ( logger != null ) && logger.isWarnEnabled() )
         {
@@ -196,10 +201,9 @@ public class AssemblyProxyArchiver
         }
     }
 
-    public void addArchivedFileSet( File archiveFile, String prefix )
-        throws ArchiverException
+    public void addArchivedFileSet( final File archiveFile, final String prefix ) throws ArchiverException
     {
-        String archiveKey = getArchiveKey( archiveFile, prefix );
+        final String archiveKey = getArchiveKey( archiveFile, prefix );
         if ( seenPaths.contains( archiveKey ) )
         {
             warn( "Archive: " + archiveFile + " has already been added. Skipping." );
@@ -209,7 +213,7 @@ public class AssemblyProxyArchiver
         inPublicApi.set( Boolean.TRUE );
         try
         {
-            DefaultArchivedFileSet fs = new DefaultArchivedFileSet();
+            final DefaultArchivedFileSet fs = new DefaultArchivedFileSet();
 
             fs.setArchive( archiveFile );
             fs.setPrefix( rootPrefix + prefix );
@@ -233,10 +237,10 @@ public class AssemblyProxyArchiver
         }
     }
 
-    public void addArchivedFileSet( File archiveFile, String[] includes, String[] excludes )
+    public void addArchivedFileSet( final File archiveFile, final String[] includes, final String[] excludes )
         throws ArchiverException
     {
-        String archiveKey = getArchiveKey( archiveFile, "" );
+        final String archiveKey = getArchiveKey( archiveFile, "" );
         if ( seenPaths.contains( archiveKey ) )
         {
             warn( "Archive: " + archiveFile + " has already been added. Skipping." );
@@ -246,7 +250,7 @@ public class AssemblyProxyArchiver
         inPublicApi.set( Boolean.TRUE );
         try
         {
-            DefaultArchivedFileSet fs = new DefaultArchivedFileSet();
+            final DefaultArchivedFileSet fs = new DefaultArchivedFileSet();
 
             fs.setArchive( archiveFile );
             fs.setIncludes( includes );
@@ -272,10 +276,9 @@ public class AssemblyProxyArchiver
         }
     }
 
-    public void addArchivedFileSet( File archiveFile )
-        throws ArchiverException
+    public void addArchivedFileSet( final File archiveFile ) throws ArchiverException
     {
-        String archiveKey = getArchiveKey( archiveFile, "" );
+        final String archiveKey = getArchiveKey( archiveFile, "" );
         if ( seenPaths.contains( archiveKey ) )
         {
             warn( "Archive: " + archiveFile + " has already been added. Skipping." );
@@ -285,7 +288,7 @@ public class AssemblyProxyArchiver
         inPublicApi.set( Boolean.TRUE );
         try
         {
-            DefaultArchivedFileSet fs = new DefaultArchivedFileSet();
+            final DefaultArchivedFileSet fs = new DefaultArchivedFileSet();
 
             fs.setArchive( archiveFile );
             fs.setPrefix( rootPrefix );
@@ -309,13 +312,13 @@ public class AssemblyProxyArchiver
         }
     }
 
-    public void addDirectory( File directory, String prefix, String[] includes, String[] excludes )
-        throws ArchiverException
+    public void addDirectory( final File directory, final String prefix, final String[] includes,
+                              final String[] excludes ) throws ArchiverException
     {
         inPublicApi.set( Boolean.TRUE );
         try
         {
-            DefaultFileSet fs = new DefaultFileSet();
+            final DefaultFileSet fs = new DefaultFileSet();
 
             fs.setDirectory( directory );
             fs.setIncludes( includes );
@@ -340,13 +343,12 @@ public class AssemblyProxyArchiver
         }
     }
 
-    public void addDirectory( File directory, String prefix )
-        throws ArchiverException
+    public void addDirectory( final File directory, final String prefix ) throws ArchiverException
     {
         inPublicApi.set( Boolean.TRUE );
         try
         {
-            DefaultFileSet fs = new DefaultFileSet();
+            final DefaultFileSet fs = new DefaultFileSet();
 
             fs.setDirectory( directory );
             fs.setPrefix( rootPrefix + prefix );
@@ -369,13 +371,13 @@ public class AssemblyProxyArchiver
         }
     }
 
-    public void addDirectory( File directory, String[] includes, String[] excludes )
+    public void addDirectory( final File directory, final String[] includes, final String[] excludes )
         throws ArchiverException
     {
         inPublicApi.set( Boolean.TRUE );
         try
         {
-            DefaultFileSet fs = new DefaultFileSet();
+            final DefaultFileSet fs = new DefaultFileSet();
 
             fs.setDirectory( directory );
             fs.setIncludes( includes );
@@ -400,13 +402,12 @@ public class AssemblyProxyArchiver
         }
     }
 
-    public void addDirectory( File directory )
-        throws ArchiverException
+    public void addDirectory( final File directory ) throws ArchiverException
     {
         inPublicApi.set( Boolean.TRUE );
         try
         {
-            DefaultFileSet fs = new DefaultFileSet();
+            final DefaultFileSet fs = new DefaultFileSet();
 
             fs.setDirectory( directory );
             fs.setPrefix( rootPrefix );
@@ -429,7 +430,7 @@ public class AssemblyProxyArchiver
         }
     }
 
-    public void addFile( File inputFile, String destFileName, int permissions )
+    public void addFile( final File inputFile, final String destFileName, final int permissions )
         throws ArchiverException
     {
         if ( acceptFile( inputFile ) )
@@ -455,8 +456,7 @@ public class AssemblyProxyArchiver
         }
     }
 
-    public void addFile( File inputFile, String destFileName )
-        throws ArchiverException
+    public void addFile( final File inputFile, final String destFileName ) throws ArchiverException
     {
         if ( acceptFile( inputFile ) )
         {
@@ -481,8 +481,7 @@ public class AssemblyProxyArchiver
         }
     }
 
-    public void createArchive()
-        throws ArchiverException, IOException
+    public void createArchive() throws ArchiverException, IOException
     {
         inPublicApi.set( Boolean.TRUE );
         try
@@ -541,6 +540,7 @@ public class AssemblyProxyArchiver
         }
     }
 
+    @SuppressWarnings( { "rawtypes", "deprecation" } )
     public Map getFiles()
     {
         inPublicApi.set( Boolean.TRUE );
@@ -593,7 +593,7 @@ public class AssemblyProxyArchiver
         }
     }
 
-    public void setDefaultDirectoryMode( int mode )
+    public void setDefaultDirectoryMode( final int mode )
     {
         inPublicApi.set( Boolean.TRUE );
         try
@@ -606,7 +606,7 @@ public class AssemblyProxyArchiver
         }
     }
 
-    public void setDefaultFileMode( int mode )
+    public void setDefaultFileMode( final int mode )
     {
         inPublicApi.set( Boolean.TRUE );
         try
@@ -619,7 +619,7 @@ public class AssemblyProxyArchiver
         }
     }
 
-    public void setDestFile( File destFile )
+    public void setDestFile( final File destFile )
     {
         inPublicApi.set( Boolean.TRUE );
         try
@@ -632,7 +632,7 @@ public class AssemblyProxyArchiver
         }
     }
 
-    public void setForced( boolean forced )
+    public void setForced( final boolean forced )
     {
         inPublicApi.set( Boolean.TRUE );
         try
@@ -645,7 +645,7 @@ public class AssemblyProxyArchiver
         }
     }
 
-    public void setIncludeEmptyDirs( boolean includeEmptyDirs )
+    public void setIncludeEmptyDirs( final boolean includeEmptyDirs )
     {
         inPublicApi.set( Boolean.TRUE );
         try
@@ -658,15 +658,14 @@ public class AssemblyProxyArchiver
         }
     }
 
-    public void setDotFileDirectory( File dotFileDirectory )
+    public void setDotFileDirectory( final File dotFileDirectory )
     {
         throw new UnsupportedOperationException( "Undocumented feature of plexus-archiver; this is not yet supported." );
     }
 
-    public void addArchivedFileSet( ArchivedFileSet fileSet )
-        throws ArchiverException
+    public void addArchivedFileSet( final ArchivedFileSet fileSet ) throws ArchiverException
     {
-        String archiveKey = getArchiveKey( fileSet.getArchive(), "" );
+        final String archiveKey = getArchiveKey( fileSet.getArchive(), "" );
         if ( seenPaths.contains( archiveKey ) )
         {
             warn( "Archive: " + fileSet.getArchive() + " has already been added. Skipping." );
@@ -676,7 +675,7 @@ public class AssemblyProxyArchiver
         inPublicApi.set( Boolean.TRUE );
         try
         {
-            PrefixedArchivedFileSet fs = new PrefixedArchivedFileSet( fileSet, rootPrefix, selectors );
+            final PrefixedArchivedFileSet fs = new PrefixedArchivedFileSet( fileSet, rootPrefix, selectors );
 
             debug( "Adding archived file-set in: " + fileSet.getArchive() + " to archive location: " + fs.getPrefix() );
 
@@ -696,13 +695,12 @@ public class AssemblyProxyArchiver
         }
     }
 
-    public void addFileSet( FileSet fileSet )
-        throws ArchiverException
+    public void addFileSet( final FileSet fileSet ) throws ArchiverException
     {
         inPublicApi.set( Boolean.TRUE );
         try
         {
-            PrefixedFileSet fs = new PrefixedFileSet( fileSet, rootPrefix, selectors );
+            final PrefixedFileSet fs = new PrefixedFileSet( fileSet, rootPrefix, selectors );
 
             debug( "Adding file-set in: " + fileSet.getDirectory() + " to archive location: " + fs.getPrefix() );
 
@@ -723,26 +721,25 @@ public class AssemblyProxyArchiver
 
     private String getMethodName()
     {
-        NullPointerException npe = new NullPointerException();
-        StackTraceElement[] trace = npe.getStackTrace();
+        final NullPointerException npe = new NullPointerException();
+        final StackTraceElement[] trace = npe.getStackTrace();
 
-        StackTraceElement methodElement = trace[1];
+        final StackTraceElement methodElement = trace[1];
 
         return methodElement.getMethodName() + " (archiver line: " + methodElement.getLineNumber() + ")";
     }
 
-    private boolean acceptFile( File inputFile )
-        throws ArchiverException
+    private boolean acceptFile( final File inputFile ) throws ArchiverException
     {
         if ( Boolean.TRUE != inPublicApi.get() )
         {
             if ( selectors != null )
             {
-                FileInfo fileInfo = new DefaultFileInfo( inputFile );
+                final FileInfo fileInfo = new DefaultFileInfo( inputFile );
 
                 for ( int i = 0; i < selectors.length; i++ )
                 {
-                    FileSelector selector = selectors[i];
+                    final FileSelector selector = selectors[i];
 
                     try
                     {
@@ -751,10 +748,10 @@ public class AssemblyProxyArchiver
                             return false;
                         }
                     }
-                    catch ( IOException e )
+                    catch ( final IOException e )
                     {
                         throw new ArchiverException( "Error processing file: " + inputFile + " using selector: "
-                                                     + selectors[i], e );
+                                        + selectors[i], e );
                     }
                 }
             }
@@ -769,13 +766,12 @@ public class AssemblyProxyArchiver
 
         private final File inputFile;
 
-        DefaultFileInfo( File inputFile )
+        DefaultFileInfo( final File inputFile )
         {
             this.inputFile = inputFile;
         }
 
-        public InputStream getContents()
-            throws IOException
+        public InputStream getContents() throws IOException
         {
             return new FileInputStream( inputFile );
         }
@@ -797,9 +793,7 @@ public class AssemblyProxyArchiver
 
     }
 
-    public void addResource( PlexusIoResource resource,
-                             String destFileName,
-                             int permissions )
+    public void addResource( final PlexusIoResource resource, final String destFileName, final int permissions )
         throws ArchiverException
     {
         inPublicApi.set( Boolean.TRUE );
@@ -813,8 +807,7 @@ public class AssemblyProxyArchiver
         }
     }
 
-    public void addResources( PlexusIoResourceCollection resources )
-        throws ArchiverException
+    public void addResources( final PlexusIoResourceCollection resources ) throws ArchiverException
     {
         inPublicApi.set( Boolean.TRUE );
         try
@@ -827,8 +820,7 @@ public class AssemblyProxyArchiver
         }
     }
 
-    public ResourceIterator getResources()
-        throws ArchiverException
+    public ResourceIterator getResources() throws ArchiverException
     {
         return delegate.getResources();
     }
@@ -838,7 +830,7 @@ public class AssemblyProxyArchiver
         return delegate.getDuplicateBehavior();
     }
 
-    public void setDuplicateBehavior( String duplicate )
+    public void setDuplicateBehavior( final String duplicate )
     {
         inPublicApi.set( Boolean.TRUE );
         try
@@ -871,7 +863,7 @@ public class AssemblyProxyArchiver
         return delegate.getOverrideFileMode();
     }
 
-    public void setDirectoryMode( int mode )
+    public void setDirectoryMode( final int mode )
     {
         inPublicApi.set( Boolean.TRUE );
         try
@@ -884,7 +876,7 @@ public class AssemblyProxyArchiver
         }
     }
 
-    public void setFileMode( int mode )
+    public void setFileMode( final int mode )
     {
         inPublicApi.set( Boolean.TRUE );
         try

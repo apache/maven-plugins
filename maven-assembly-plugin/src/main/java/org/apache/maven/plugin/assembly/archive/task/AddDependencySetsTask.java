@@ -20,14 +20,11 @@ package org.apache.maven.plugin.assembly.archive.task;
  */
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
-import org.apache.maven.artifact.resolver.ArtifactResolutionException;
+import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.InvalidAssemblerConfigurationException;
 import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
-import org.apache.maven.plugin.assembly.artifact.DependencyResolver;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
 import org.apache.maven.plugin.assembly.model.DependencySet;
 import org.apache.maven.plugin.assembly.model.UnpackOptions;
@@ -37,7 +34,7 @@ import org.apache.maven.plugin.assembly.utils.TypeConversionUtils;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
-import org.apache.maven.project.artifact.InvalidDependencyVersionException;
+import org.apache.maven.shared.artifact.filter.ScopeArtifactFilter;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.logging.Logger;
@@ -45,10 +42,9 @@ import org.codehaus.plexus.logging.Logger;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -58,23 +54,23 @@ public class AddDependencySetsTask
     implements ArchiverTask
 {
 
-    private static final List NON_ARCHIVE_DEPENDENCY_TYPES;
+    private static final List<String> NON_ARCHIVE_DEPENDENCY_TYPES;
 
     static
     {
-        List nonArch = new ArrayList();
+        final List<String> nonArch = new ArrayList<String>();
 
         nonArch.add( "pom" );
 
         NON_ARCHIVE_DEPENDENCY_TYPES = Collections.unmodifiableList( nonArch );
     }
 
-    private final List dependencySets;
+    private final List<DependencySet> dependencySets;
 
     private final Logger logger;
 
     private final MavenProject project;
-    
+
     private MavenProject moduleProject;
 
     private final MavenProjectBuilder projectBuilder;
@@ -83,24 +79,22 @@ public class AddDependencySetsTask
 
     private String defaultOutputFileNameMapping;
 
-    private final DependencyResolver dependencyResolver;
-
-    private final Map managedVersions;
-
     private Artifact moduleArtifact;
 
-    public AddDependencySetsTask( List dependencySets, MavenProject project, Map managedVersions, MavenProjectBuilder projectBuilder,
-                                  DependencyResolver dependencyResolver, Logger logger )
+    private final Set<Artifact> resolvedArtifacts;
+
+    public AddDependencySetsTask( final List<DependencySet> dependencySets, final Set<Artifact> resolvedArtifacts,
+                                  final MavenProject project, final MavenProjectBuilder projectBuilder,
+                                  final Logger logger )
     {
         this.dependencySets = dependencySets;
+        this.resolvedArtifacts = resolvedArtifacts;
         this.project = project;
-        this.managedVersions = managedVersions;
         this.projectBuilder = projectBuilder;
-        this.dependencyResolver = dependencyResolver;
         this.logger = logger;
     }
 
-    public void execute( Archiver archiver, AssemblerConfigurationSource configSource )
+    public void execute( final Archiver archiver, final AssemblerConfigurationSource configSource )
         throws ArchiveCreationException, AssemblyFormattingException, InvalidAssemblerConfigurationException
     {
         if ( ( dependencySets == null ) || dependencySets.isEmpty() )
@@ -109,22 +103,23 @@ public class AddDependencySetsTask
             return;
         }
 
-        List deps = project.getDependencies();
+        @SuppressWarnings( "unchecked" )
+        final List<Dependency> deps = project.getDependencies();
         if ( ( deps == null ) || deps.isEmpty() )
         {
             logger.debug( "Project " + project.getId() + " has no dependencies. Skipping dependency set addition." );
         }
 
-        for ( Iterator i = dependencySets.iterator(); i.hasNext(); )
+        for ( final Iterator<DependencySet> i = dependencySets.iterator(); i.hasNext(); )
         {
-            DependencySet dependencySet = (DependencySet) i.next();
+            final DependencySet dependencySet = i.next();
 
             addDependencySet( dependencySet, archiver, configSource );
         }
     }
 
-    protected void addDependencySet( DependencySet dependencySet, Archiver archiver,
-                                     AssemblerConfigurationSource configSource )
+    protected void addDependencySet( final DependencySet dependencySet, final Archiver archiver,
+                                     final AssemblerConfigurationSource configSource )
         throws AssemblyFormattingException, ArchiveCreationException, InvalidAssemblerConfigurationException
     {
         logger.debug( "Processing DependencySet (output=" + dependencySet.getOutputDirectory() + ")" );
@@ -132,27 +127,28 @@ public class AddDependencySetsTask
         if ( !dependencySet.isUseTransitiveDependencies() && dependencySet.isUseTransitiveFiltering() )
         {
             logger.warn( "DependencySet has nonsensical configuration: useTransitiveDependencies == false "
-                         + "AND useTransitiveFiltering == true. Transitive filtering flag will be ignored." );
+                            + "AND useTransitiveFiltering == true. Transitive filtering flag will be ignored." );
         }
 
-        Set dependencyArtifacts = resolveDependencyArtifacts( dependencySet, configSource );
+        final Set<Artifact> dependencyArtifacts = resolveDependencyArtifacts( dependencySet );
 
         logger.debug( "Adding " + dependencyArtifacts.size() + " dependency artifacts." );
 
-        for ( Iterator j = dependencyArtifacts.iterator(); j.hasNext(); )
+        for ( final Iterator<Artifact> j = dependencyArtifacts.iterator(); j.hasNext(); )
         {
-            Artifact depArtifact = (Artifact) j.next();
+            final Artifact depArtifact = j.next();
 
             MavenProject depProject;
             try
             {
-                depProject = projectBuilder.buildFromRepository( depArtifact, configSource.getRemoteRepositories(),
-                                                                 configSource.getLocalRepository() );
+                depProject =
+                    projectBuilder.buildFromRepository( depArtifact, configSource.getRemoteRepositories(),
+                                                        configSource.getLocalRepository() );
             }
-            catch ( ProjectBuildingException e )
+            catch ( final ProjectBuildingException e )
             {
-                logger.debug( "Error retrieving POM of module-dependency: " + depArtifact.getId()
-                    + "; Reason: " + e.getMessage() + "\n\nBuilding stub project instance." );
+                logger.debug( "Error retrieving POM of module-dependency: " + depArtifact.getId() + "; Reason: "
+                                + e.getMessage() + "\n\nBuilding stub project instance." );
 
                 depProject = buildProjectStub( depArtifact );
             }
@@ -163,29 +159,29 @@ public class AddDependencySetsTask
             }
             else
             {
-                AddArtifactTask task = new AddArtifactTask( depArtifact, logger );
+                final AddArtifactTask task = new AddArtifactTask( depArtifact, logger );
 
                 task.setProject( depProject );
                 task.setModuleProject( moduleProject );
                 task.setModuleArtifact( moduleArtifact );
                 task.setOutputDirectory( dependencySet.getOutputDirectory(), defaultOutputDirectory );
                 task.setFileNameMapping( dependencySet.getOutputFileNameMapping(), defaultOutputFileNameMapping );
-                
-                int dirMode = TypeConversionUtils.modeToInt( dependencySet.getDirectoryMode(), logger );
+
+                final int dirMode = TypeConversionUtils.modeToInt( dependencySet.getDirectoryMode(), logger );
                 if ( dirMode != -1 )
                 {
                     task.setDirectoryMode( dirMode );
                 }
-                
-                int fileMode = TypeConversionUtils.modeToInt( dependencySet.getFileMode(), logger );
+
+                final int fileMode = TypeConversionUtils.modeToInt( dependencySet.getFileMode(), logger );
                 if ( fileMode != -1 )
                 {
                     task.setFileMode( fileMode );
                 }
-                
+
                 task.setUnpack( dependencySet.isUnpack() );
 
-                UnpackOptions opts = dependencySet.getUnpackOptions();
+                final UnpackOptions opts = dependencySet.getUnpackOptions();
                 if ( dependencySet.isUnpack() && ( opts != null ) )
                 {
                     task.setIncludes( opts.getIncludes() );
@@ -197,9 +193,9 @@ public class AddDependencySetsTask
         }
     }
 
-    private MavenProject buildProjectStub( Artifact depArtifact )
+    private MavenProject buildProjectStub( final Artifact depArtifact )
     {
-        Model model = new Model();
+        final Model model = new Model();
         model.setGroupId( depArtifact.getGroupId() );
         model.setArtifactId( depArtifact.getArtifactId() );
         model.setVersion( depArtifact.getBaseVersion() );
@@ -210,60 +206,38 @@ public class AddDependencySetsTask
         return new MavenProject( model );
     }
 
-    protected Set resolveDependencyArtifacts( DependencySet dependencySet, AssemblerConfigurationSource configSource )
-        throws ArchiveCreationException, InvalidAssemblerConfigurationException
+    protected Set<Artifact> resolveDependencyArtifacts( final DependencySet dependencySet )
+        throws InvalidAssemblerConfigurationException
     {
-        ArtifactRepository localRepository = configSource.getLocalRepository();
-
-        List additionalRemoteRepositories = configSource.getRemoteRepositories();
-
-        Set dependencyArtifacts;
-        try
+        final Set<Artifact> dependencyArtifacts = new HashSet<Artifact>();
+        if ( resolvedArtifacts != null )
         {
-            dependencyArtifacts = dependencyResolver.resolveDependencies( project, dependencySet.getScope(),
-                                                                          managedVersions, localRepository,
-                                                                          additionalRemoteRepositories,
-                                                                          dependencySet.isUseTransitiveDependencies() );
-
-            if ( ( dependencyArtifacts != null ) && !dependencyArtifacts.isEmpty() )
-            {
-                dependencyArtifacts = new LinkedHashSet( dependencyArtifacts );
-            }
-        }
-        catch ( ArtifactResolutionException e )
-        {
-            throw new ArchiveCreationException( "Failed to resolve dependencies for project: " + project.getId(), e );
-        }
-        catch ( ArtifactNotFoundException e )
-        {
-            throw new ArchiveCreationException( "Failed to resolve dependencies for project: " + project.getId(), e );
-        }
-        catch ( InvalidDependencyVersionException e )
-        {
-            throw new ArchiveCreationException( "Failed to resolve dependencies for project: " + project.getId(), e );
+            dependencyArtifacts.addAll( resolvedArtifacts );
         }
 
         if ( dependencySet.isUseProjectArtifact() )
         {
-            Artifact projectArtifact = project.getArtifact();
+            final Artifact projectArtifact = project.getArtifact();
             if ( ( projectArtifact != null ) && ( projectArtifact.getFile() != null ) )
             {
                 dependencyArtifacts.add( projectArtifact );
             }
             else
             {
-                logger.warn( "Cannot include project artifact: " + projectArtifact + "; it doesn't have an associated file or directory." );
+                logger.warn( "Cannot include project artifact: " + projectArtifact
+                                + "; it doesn't have an associated file or directory." );
             }
         }
 
         if ( dependencySet.isUseProjectAttachments() )
         {
-            List attachments = project.getAttachedArtifacts();
+            @SuppressWarnings( "unchecked" )
+            final List<Artifact> attachments = project.getAttachedArtifacts();
             if ( attachments != null )
             {
-                for ( Iterator attachmentIt = attachments.iterator(); attachmentIt.hasNext(); )
+                for ( final Iterator<Artifact> attachmentIt = attachments.iterator(); attachmentIt.hasNext(); )
                 {
-                    Artifact attachment = (Artifact) attachmentIt.next();
+                    final Artifact attachment = attachmentIt.next();
 
                     if ( attachment.getFile() != null )
                     {
@@ -272,7 +246,7 @@ public class AddDependencySetsTask
                     else
                     {
                         logger.warn( "Cannot include attached artifact: " + project.getId() + " for project: "
-                                     + project.getId() + "; it doesn't have an associated file or directory." );
+                                        + project.getId() + "; it doesn't have an associated file or directory." );
                     }
                 }
             }
@@ -287,26 +261,30 @@ public class AddDependencySetsTask
             logger.debug( "Filtering dependency artifacts WITHOUT transitive dependency path information." );
         }
 
+        final ScopeArtifactFilter filter = new ScopeArtifactFilter( dependencySet.getScope() );
+
         FilterUtils.filterArtifacts( dependencyArtifacts, dependencySet.getIncludes(), dependencySet.getExcludes(),
                                      dependencySet.isUseStrictFiltering(), dependencySet.isUseTransitiveFiltering(),
-                                     Collections.EMPTY_LIST, logger );
+                                     logger, filter );
 
         return dependencyArtifacts;
     }
 
-    protected void addNonArchiveDependency( Artifact depArtifact, MavenProject depProject, DependencySet dependencySet,
-                                            Archiver archiver, AssemblerConfigurationSource configSource )
+    protected void addNonArchiveDependency( final Artifact depArtifact, final MavenProject depProject,
+                                            final DependencySet dependencySet, final Archiver archiver,
+                                            final AssemblerConfigurationSource configSource )
         throws AssemblyFormattingException, ArchiveCreationException
     {
-        File source = depArtifact.getFile();
+        final File source = depArtifact.getFile();
 
         String outputDirectory = dependencySet.getOutputDirectory();
 
-        outputDirectory = AssemblyFormatUtils.getOutputDirectory( outputDirectory, configSource.getProject(),
-                                                                  moduleProject, depProject, depProject.getBuild().getFinalName(),
-                                                                  configSource );
+        outputDirectory =
+            AssemblyFormatUtils.getOutputDirectory( outputDirectory, configSource.getProject(), moduleProject,
+                                                    depProject, depProject.getBuild()
+                                                                          .getFinalName(), configSource );
 
-        String destName =
+        final String destName =
             AssemblyFormatUtils.evaluateFileNameMapping( dependencySet.getOutputFileNameMapping(), depArtifact,
                                                          configSource.getProject(), moduleProject, moduleArtifact,
                                                          depProject, configSource );
@@ -325,7 +303,7 @@ public class AddDependencySetsTask
 
         try
         {
-            int mode = TypeConversionUtils.modeToInt( dependencySet.getFileMode(), logger );
+            final int mode = TypeConversionUtils.modeToInt( dependencySet.getFileMode(), logger );
             if ( mode > -1 )
             {
                 archiver.addFile( source, target, mode );
@@ -335,13 +313,13 @@ public class AddDependencySetsTask
                 archiver.addFile( source, target );
             }
         }
-        catch ( ArchiverException e )
+        catch ( final ArchiverException e )
         {
             throw new ArchiveCreationException( "Error adding file to archive: " + e.getMessage(), e );
         }
     }
 
-    public List getDependencySets()
+    public List<DependencySet> getDependencySets()
     {
         return dependencySets;
     }
@@ -356,7 +334,7 @@ public class AddDependencySetsTask
         return defaultOutputDirectory;
     }
 
-    public void setDefaultOutputDirectory( String defaultOutputDirectory )
+    public void setDefaultOutputDirectory( final String defaultOutputDirectory )
     {
         this.defaultOutputDirectory = defaultOutputDirectory;
     }
@@ -366,7 +344,7 @@ public class AddDependencySetsTask
         return defaultOutputFileNameMapping;
     }
 
-    public void setDefaultOutputFileNameMapping( String defaultOutputFileNameMapping )
+    public void setDefaultOutputFileNameMapping( final String defaultOutputFileNameMapping )
     {
         this.defaultOutputFileNameMapping = defaultOutputFileNameMapping;
     }
@@ -376,16 +354,16 @@ public class AddDependencySetsTask
         return moduleProject;
     }
 
-    public void setModuleProject( MavenProject moduleProject )
+    public void setModuleProject( final MavenProject moduleProject )
     {
         this.moduleProject = moduleProject;
     }
 
-    public void setModuleArtifact( Artifact moduleArtifact )
+    public void setModuleArtifact( final Artifact moduleArtifact )
     {
         this.moduleArtifact = moduleArtifact;
     }
-    
+
     public Artifact getModuleArtifact()
     {
         return moduleArtifact;

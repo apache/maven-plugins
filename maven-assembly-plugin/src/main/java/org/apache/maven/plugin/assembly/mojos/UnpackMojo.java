@@ -19,11 +19,6 @@ package org.apache.maven.plugin.assembly.mojos;
  * under the License.
  */
 
-import java.io.File;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
-
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -34,14 +29,20 @@ import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
 
+import java.io.File;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+
 /**
- * Unpack project dependencies.  Currently supports dependencies of type jar and zip.
- *
+ * Unpack project dependencies. Currently supports dependencies of type jar and zip.
+ * 
  * @version $Id$
  * @goal unpack
  * @requiresDependencyResolution test
  * @deprecated Use org.apache.maven.plugins:maven-dependency-plugin goal: unpack or unpack-dependencies instead.
  */
+@Deprecated
 public class UnpackMojo
     extends AbstractMojo
 {
@@ -60,7 +61,7 @@ public class UnpackMojo
 
     /**
      * Directory to unpack JARs into if needed
-     *
+     * 
      * @parameter expression="${project.build.directory}/assembly/work"
      * @required
      */
@@ -68,61 +69,63 @@ public class UnpackMojo
 
     /**
      * Unpacks the archive file.
-     *
+     * 
      * @throws MojoExecutionException
      */
-    public void execute()
-        throws MojoExecutionException, MojoFailureException
+    public void execute() throws MojoExecutionException, MojoFailureException
     {
-        Set dependencies = new HashSet();
+        final Set<Artifact> dependencies = new HashSet<Artifact>();
 
-        if ( project.getArtifact() != null && project.getArtifact().getFile() != null )
+        if ( project.getArtifact() != null && project.getArtifact()
+                                                     .getFile() != null )
         {
             dependencies.add( project.getArtifact() );
         }
 
-        Set projectArtifacts = project.getArtifacts();
+        @SuppressWarnings( "unchecked" )
+        final Set<Artifact> projectArtifacts = project.getArtifacts();
         if ( projectArtifacts != null )
         {
             dependencies.addAll( projectArtifacts );
         }
 
-        for ( Iterator j = dependencies.iterator(); j.hasNext(); )
+        for ( final Iterator<Artifact> j = dependencies.iterator(); j.hasNext(); )
         {
-            Artifact artifact = (Artifact) j.next();
+            final Artifact artifact = j.next();
 
-            String name = artifact.getFile().getName();
+            final String name = artifact.getFile()
+                                        .getName();
 
-            File tempLocation = new File( workDirectory, name.substring( 0, name.lastIndexOf( '.' ) ) );
+            final File tempLocation = new File( workDirectory, name.substring( 0, name.lastIndexOf( '.' ) ) );
             boolean process = false;
             if ( !tempLocation.exists() )
             {
                 tempLocation.mkdirs();
                 process = true;
             }
-            else if ( artifact.getFile().lastModified() > tempLocation.lastModified() )
+            else if ( artifact.getFile()
+                              .lastModified() > tempLocation.lastModified() )
             {
                 process = true;
             }
 
             if ( process )
             {
-                File file = artifact.getFile();
+                final File file = artifact.getFile();
                 try
                 {
                     AssemblyFileUtils.unpack( file, tempLocation, archiverManager );
                 }
-                catch ( NoSuchArchiverException e )
+                catch ( final NoSuchArchiverException e )
                 {
-                    this.getLog().info( "Skip unpacking dependency file with unknown extension: " + file.getPath() );
+                    getLog().info( "Skip unpacking dependency file with unknown extension: " + file.getPath() );
                 }
-                catch ( ArchiveExpansionException e )
+                catch ( final ArchiveExpansionException e )
                 {
                     throw new MojoExecutionException( "Error unpacking dependency file: " + file, e );
                 }
             }
         }
     }
-
 
 }

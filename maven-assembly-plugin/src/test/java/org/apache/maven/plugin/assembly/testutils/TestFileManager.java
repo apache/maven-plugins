@@ -37,7 +37,7 @@ public class TestFileManager
 
     public static final String TEMP_DIR_PATH = System.getProperty( "java.io.tmpdir" );
 
-    private List filesToDelete = new ArrayList();
+    private final List<File> filesToDelete = new ArrayList<File>();
 
     private final String baseFilename;
 
@@ -49,7 +49,7 @@ public class TestFileManager
 
     private boolean warnAboutCleanup = false;
 
-    public TestFileManager( String baseFilename, String fileSuffix )
+    public TestFileManager( final String baseFilename, final String fileSuffix )
     {
         this.baseFilename = baseFilename;
         this.fileSuffix = fileSuffix;
@@ -61,7 +61,7 @@ public class TestFileManager
     {
         callerInfo = new NullPointerException().getStackTrace()[2];
 
-        Runnable warning = new Runnable()
+        final Runnable warning = new Runnable()
         {
 
             public void run()
@@ -73,7 +73,8 @@ public class TestFileManager
 
         cleanupWarning = new Thread( warning );
 
-        Runtime.getRuntime().addShutdownHook( cleanupWarning );
+        Runtime.getRuntime()
+               .addShutdownHook( cleanupWarning );
     }
 
     private void maybeWarnAboutCleanUp()
@@ -84,7 +85,7 @@ public class TestFileManager
         }
     }
 
-    public void markForDeletion( File toDelete )
+    public void markForDeletion( final File toDelete )
     {
         filesToDelete.add( toDelete );
         warnAboutCleanup = true;
@@ -96,11 +97,11 @@ public class TestFileManager
         {
             Thread.sleep( 20 );
         }
-        catch ( InterruptedException e )
+        catch ( final InterruptedException e )
         {
         }
 
-        File dir = new File( TEMP_DIR_PATH, baseFilename + System.currentTimeMillis() );
+        final File dir = new File( TEMP_DIR_PATH, baseFilename + System.currentTimeMillis() );
 
         dir.mkdirs();
         markForDeletion( dir );
@@ -108,10 +109,9 @@ public class TestFileManager
         return dir;
     }
 
-    public synchronized File createTempFile()
-        throws IOException
+    public synchronized File createTempFile() throws IOException
     {
-        File tempFile = File.createTempFile( baseFilename, fileSuffix );
+        final File tempFile = File.createTempFile( baseFilename, fileSuffix );
         tempFile.deleteOnExit();
         markForDeletion( tempFile );
 
@@ -120,9 +120,9 @@ public class TestFileManager
 
     public void cleanUp()
     {
-        for ( Iterator it = filesToDelete.iterator(); it.hasNext(); )
+        for ( final Iterator<File> it = filesToDelete.iterator(); it.hasNext(); )
         {
-            File file = ( File ) it.next();
+            final File file = it.next();
 
             if ( file.exists() )
             {
@@ -130,7 +130,7 @@ public class TestFileManager
                 {
                     FileUtils.forceDelete( file );
                 }
-                catch ( Exception e )
+                catch ( final Exception e )
                 {
                     System.err.println( "Error while deleting test file/dir: " + file + "; ignoring." );
                 }
@@ -142,9 +142,9 @@ public class TestFileManager
         warnAboutCleanup = false;
     }
 
-    public void assertFileExistence( File dir, String filename, boolean shouldExist )
+    public void assertFileExistence( final File dir, final String filename, final boolean shouldExist )
     {
-        File file = new File( dir, filename );
+        final File file = new File( dir, filename );
 
         if ( shouldExist )
         {
@@ -156,12 +156,12 @@ public class TestFileManager
         }
     }
 
-    public void assertFileContents( File dir, String filename, String contentsTest )
+    public void assertFileContents( final File dir, final String filename, final String contentsTest )
         throws IOException
     {
         assertFileExistence( dir, filename, true );
 
-        File file = new File( dir, filename );
+        final File file = new File( dir, filename );
 
         Assert.assertEquals( contentsTest, getFileContents( file ) );
     }
@@ -169,12 +169,12 @@ public class TestFileManager
     /**
      * NOTE: the file content is written using platform encoding.
      */
-    public File createFile( File dir, String filename, String contents )
-        throws IOException
+    public File createFile( final File dir, final String filename, final String contents ) throws IOException
     {
-        File file = new File( dir, filename );
+        final File file = new File( dir, filename );
 
-        file.getParentFile().mkdirs();
+        file.getParentFile()
+            .mkdirs();
 
         FileWriter writer = null;
 
@@ -197,8 +197,7 @@ public class TestFileManager
     /**
      * NOTE: the file content is read using platform encoding.
      */
-    public String getFileContents( File file )
-        throws IOException
+    public String getFileContents( final File file ) throws IOException
     {
         String result = null;
 
@@ -217,18 +216,17 @@ public class TestFileManager
         return result;
     }
 
-    protected void finalize()
-        throws Throwable
+    @Override
+    protected void finalize() throws Throwable
     {
         maybeWarnAboutCleanUp();
 
         super.finalize();
     }
 
-    public File createFile( String filename, String content )
-        throws IOException
+    public File createFile( final String filename, final String content ) throws IOException
     {
-        File dir = createTempDir();
+        final File dir = createTempDir();
         return createFile( dir, filename, content );
     }
 

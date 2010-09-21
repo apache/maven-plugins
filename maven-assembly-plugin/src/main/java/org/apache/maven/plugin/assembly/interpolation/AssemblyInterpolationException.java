@@ -25,34 +25,36 @@ package org.apache.maven.plugin.assembly.interpolation;
 public class AssemblyInterpolationException
     extends Exception
 {
+    private static final long serialVersionUID = 1L;
+
     private String expression;
 
     private String originalMessage;
 
-    public AssemblyInterpolationException( String message )
+    public AssemblyInterpolationException( final String message )
     {
         super( message );
     }
 
-    public AssemblyInterpolationException( String message, Throwable cause )
+    public AssemblyInterpolationException( final String message, final Throwable cause )
     {
         super( message, cause );
     }
 
-    public AssemblyInterpolationException( String expression, String message, Throwable cause )
+    public AssemblyInterpolationException( final String expression, final String message, final Throwable cause )
     {
         super( "The Assembly expression: " + expression + " could not be evaluated. Reason: " + message, cause );
 
         this.expression = expression;
-        this.originalMessage = message;
+        originalMessage = message;
     }
 
-    public AssemblyInterpolationException( String expression, String message )
+    public AssemblyInterpolationException( final String expression, final String message )
     {
         super( "The Assembly expression: " + expression + " could not be evaluated. Reason: " + message );
 
         this.expression = expression;
-        this.originalMessage = message;
+        originalMessage = message;
     }
 
     public String getExpression()

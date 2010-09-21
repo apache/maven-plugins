@@ -38,7 +38,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class FileSetFormatterTest
-extends PlexusTestCase
+    extends PlexusTestCase
 {
 
     private MockManager mockManager;
@@ -51,8 +51,8 @@ extends PlexusTestCase
 
     private MockControl configSourceControl;
 
-    public void setUp()
-    throws Exception
+    @Override
+    public void setUp() throws Exception
     {
         super.setUp();
 
@@ -68,79 +68,78 @@ extends PlexusTestCase
         configSource = (AssemblerConfigurationSource) configSourceControl.getMock();
     }
 
-    public void tearDown()
-    throws IOException
+    @Override
+    public void tearDown() throws IOException
     {
         fileManager.cleanUp();
     }
 
     public void testShouldReturnOriginalUnalteredDirectoryWhenLineEndingIsNull()
-    throws AssemblyFormattingException, IOException
+        throws AssemblyFormattingException, IOException
     {
-        FileSet fs = new FileSet();
+        final FileSet fs = new FileSet();
 
-        FileSetFormatter formatter = new FileSetFormatter( configSource, logger );
+        final FileSetFormatter formatter = new FileSetFormatter( configSource, logger );
 
-        File dir = fileManager.createTempDir();
+        final File dir = fileManager.createTempDir();
 
-        File result = formatter.formatFileSetForAssembly( dir, fs );
+        final File result = formatter.formatFileSetForAssembly( dir, fs );
 
         assertEquals( dir, result );
     }
 
     public void testShouldReturnOriginalUnalteredDirectoryWhenLineEndingIsKeep()
-    throws AssemblyFormattingException, IOException
+        throws AssemblyFormattingException, IOException
     {
-        FileSet fs = new FileSet();
+        final FileSet fs = new FileSet();
         fs.setLineEnding( AssemblyFileUtils.LINE_ENDING_KEEP );
 
-        FileSetFormatter formatter = new FileSetFormatter( configSource, logger );
+        final FileSetFormatter formatter = new FileSetFormatter( configSource, logger );
 
-        File dir = fileManager.createTempDir();
+        final File dir = fileManager.createTempDir();
 
-        File result = formatter.formatFileSetForAssembly( dir, fs );
+        final File result = formatter.formatFileSetForAssembly( dir, fs );
 
         assertEquals( dir, result );
     }
 
     public void testShouldReturnOriginalUnalteredDirectoryWhenIncludedFileSetIsEmpty()
-    throws AssemblyFormattingException, IOException
+        throws AssemblyFormattingException, IOException
     {
-        File dir = fileManager.createTempDir();
+        final File dir = fileManager.createTempDir();
 
-        FileSet fs = new FileSet();
+        final FileSet fs = new FileSet();
 
         fs.setLineEnding( AssemblyFileUtils.LINE_ENDING_LF );
         fs.setDirectory( dir.getCanonicalPath() );
         fs.addExclude( "**/*" );
 
-        FileSetFormatter formatter = new FileSetFormatter( configSource, logger );
+        final FileSetFormatter formatter = new FileSetFormatter( configSource, logger );
 
-        File result = formatter.formatFileSetForAssembly( dir, fs );
+        final File result = formatter.formatFileSetForAssembly( dir, fs );
 
         assertEquals( dir, result );
     }
 
-    public void testShouldConvertLineEndingsOnTwoFiles()
-    throws AssemblyFormattingException, IOException
+    public void testShouldConvertLineEndingsOnTwoFiles() throws AssemblyFormattingException, IOException
     {
-        File dir = fileManager.createTempDir();
+        final File dir = fileManager.createTempDir();
 
-        String filename1 = "one.txt";
-        String filename2 = "two.txt";
+        final String filename1 = "one.txt";
+        final String filename2 = "two.txt";
 
         fileManager.createFile( dir, filename1, "Hello\nThis is a test." );
         fileManager.createFile( dir, filename2, "Hello\nThis is also a test." );
 
-        FileSet fs = new FileSet();
+        final FileSet fs = new FileSet();
 
         fs.setLineEnding( AssemblyFileUtils.LINE_ENDING_CRLF );
         fs.setDirectory( dir.getCanonicalPath() );
         fs.addInclude( "**/*.txt" );
 
-        FileSetFormatter formatter = new FileSetFormatter( configSource, logger );
+        final FileSetFormatter formatter = new FileSetFormatter( configSource, logger );
 
-        File result = formatter.formatFileSetForAssembly( dir, fs );
+        final File result = formatter.formatFileSetForAssembly( dir, fs );
 
         assertFalse( dir.equals( result ) );
 
@@ -156,25 +155,25 @@ extends PlexusTestCase
     }
 
     public void testShouldConvertLineEndingsOnOneFileWithAnotherExplicitlyExcluded()
-    throws AssemblyFormattingException, IOException
+        throws AssemblyFormattingException, IOException
     {
-        File dir = fileManager.createTempDir();
+        final File dir = fileManager.createTempDir();
 
-        String filename1 = "one.txt";
-        String filename2 = "two.txt";
+        final String filename1 = "one.txt";
+        final String filename2 = "two.txt";
 
         fileManager.createFile( dir, filename1, "Hello\nThis is a test." );
         fileManager.createFile( dir, filename2, "Hello\nThis is also a test." );
 
-        FileSet fs = new FileSet();
+        final FileSet fs = new FileSet();
 
         fs.setLineEnding( AssemblyFileUtils.LINE_ENDING_CRLF );
         fs.setDirectory( dir.getCanonicalPath() );
         fs.addExclude( "**/two.txt" );
 
-        FileSetFormatter formatter = new FileSetFormatter( configSource, logger );
+        final FileSetFormatter formatter = new FileSetFormatter( configSource, logger );
 
-        File result = formatter.formatFileSetForAssembly( dir, fs );
+        final File result = formatter.formatFileSetForAssembly( dir, fs );
 
         assertFalse( dir.equals( result ) );
 
@@ -190,25 +189,25 @@ extends PlexusTestCase
     }
 
     public void testShouldConvertLineEndingsOnOneExplicitlyIncludedFile()
-    throws AssemblyFormattingException, IOException
+        throws AssemblyFormattingException, IOException
     {
-        File dir = fileManager.createTempDir();
+        final File dir = fileManager.createTempDir();
 
-        String filename1 = "one.txt";
-        String filename2 = "two.txt";
+        final String filename1 = "one.txt";
+        final String filename2 = "two.txt";
 
         fileManager.createFile( dir, filename1, "Hello\nThis is a test." );
         fileManager.createFile( dir, filename2, "Hello\nThis is also a test." );
 
-        FileSet fs = new FileSet();
+        final FileSet fs = new FileSet();
 
         fs.setLineEnding( AssemblyFileUtils.LINE_ENDING_CRLF );
         fs.setDirectory( dir.getCanonicalPath() );
         fs.addInclude( "**/one.txt" );
 
-        FileSetFormatter formatter = new FileSetFormatter( configSource, logger );
+        final FileSetFormatter formatter = new FileSetFormatter( configSource, logger );
 
-        File result = formatter.formatFileSetForAssembly( dir, fs );
+        final File result = formatter.formatFileSetForAssembly( dir, fs );
 
         assertFalse( dir.equals( result ) );
         try
@@ -223,24 +222,24 @@ extends PlexusTestCase
     }
 
     public void testShouldConvertLineEndingsOnOneFileAndIgnoreFileWithinDefaultExcludedDir()
-    throws AssemblyFormattingException, IOException
+        throws AssemblyFormattingException, IOException
     {
-        File dir = fileManager.createTempDir();
+        final File dir = fileManager.createTempDir();
 
-        String filename1 = "one.txt";
-        String filename2 = "CVS/two.txt";
+        final String filename1 = "one.txt";
+        final String filename2 = "CVS/two.txt";
 
         fileManager.createFile( dir, filename1, "Hello\nThis is a test." );
         fileManager.createFile( dir, filename2, "Hello\nThis is also a test." );
 
-        FileSet fs = new FileSet();
+        final FileSet fs = new FileSet();
 
         fs.setLineEnding( AssemblyFileUtils.LINE_ENDING_CRLF );
         fs.setDirectory( dir.getCanonicalPath() );
 
-        FileSetFormatter formatter = new FileSetFormatter( configSource, logger );
+        final FileSetFormatter formatter = new FileSetFormatter( configSource, logger );
 
-        File result = formatter.formatFileSetForAssembly( dir, fs );
+        final File result = formatter.formatFileSetForAssembly( dir, fs );
 
         assertFalse( dir.equals( result ) );
 
@@ -255,21 +254,20 @@ extends PlexusTestCase
         }
     }
 
-    public void testShouldFilterSeveralFiles()
-    throws Exception
+    public void testShouldFilterSeveralFiles() throws Exception
     {
-        File basedir = fileManager.createTempDir();
+        final File basedir = fileManager.createTempDir();
 
-        String filename1 = "one.txt";
-        String filename2 = "two.txt";
+        final String filename1 = "one.txt";
+        final String filename2 = "two.txt";
 
         // this file will be filtered with a project expression
         fileManager.createFile( basedir, filename1, "This is the filtered artifactId: ${project.artifactId}." );
         // this one fill be filtered with a filter file
         fileManager.createFile( basedir, filename2, "This is the filtered 'foo' property: ${foo}." );
-        File filterProps = fileManager.createFile( basedir, "filter.properties", "foo=bar" );
+        final File filterProps = fileManager.createFile( basedir, "filter.properties", "foo=bar" );
 
-        FileSet fs = new FileSet();
+        final FileSet fs = new FileSet();
         fs.setFiltered( true );
         fs.setDirectory( basedir.getCanonicalPath() );
         fs.addInclude( "**/*.txt" );
@@ -278,8 +276,8 @@ extends PlexusTestCase
 
         mockManager.replayAll();
 
-        FileSetFormatter formatter = new FileSetFormatter( configSource, logger );
-        File result = formatter.formatFileSetForAssembly( basedir, fs );
+        final FileSetFormatter formatter = new FileSetFormatter( configSource, logger );
+        final File result = formatter.formatFileSetForAssembly( basedir, fs );
 
         assertFalse( result.equals( basedir ) );
 
@@ -296,25 +294,27 @@ extends PlexusTestCase
         }
     }
 
-    private void enableBasicFilteringConfiguration( File basedir, List filterFilenames )
-    throws Exception
+    private void enableBasicFilteringConfiguration( final File basedir, final List<String> filterFilenames )
+        throws Exception
     {
         configSource.getTemporaryRootDirectory();
         configSourceControl.setReturnValue( basedir );
 
-        Model model = new Model();
+        final Model model = new Model();
         model.setArtifactId( "artifact" );
         model.setGroupId( "group" );
         model.setVersion( "version" );
 
-        MavenProject project = new MavenProject( model );
-        project.getBuild().setFilters( filterFilenames );
+        final MavenProject project = new MavenProject( model );
+        project.getBuild()
+               .setFilters( filterFilenames );
 
         configSource.getProject();
         configSourceControl.setReturnValue( project, MockControl.ONE_OR_MORE );
 
         configSource.getMavenFileFilter();
-        configSourceControl.setReturnValue( lookup( "org.apache.maven.shared.filtering.MavenFileFilter" ), MockControl.ONE_OR_MORE );
+        configSourceControl.setReturnValue( lookup( "org.apache.maven.shared.filtering.MavenFileFilter" ),
+                                            MockControl.ONE_OR_MORE );
 
         configSource.getMavenSession();
         configSourceControl.setReturnValue( null, MockControl.ONE_OR_MORE );

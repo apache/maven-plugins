@@ -38,36 +38,35 @@ import java.util.List;
 public abstract class AbstractDirectoryMojo
     extends AbstractAssemblyMojo
 {
-    public void execute()
-        throws MojoExecutionException, MojoFailureException
+    @Override
+    public void execute() throws MojoExecutionException, MojoFailureException
     {
-        AssemblyReader reader = getAssemblyReader();
+        final AssemblyReader reader = getAssemblyReader();
 
-        List assemblies;
+        List<Assembly> assemblies;
         try
         {
             assemblies = reader.readAssemblies( this );
         }
-        catch ( AssemblyReadException e )
+        catch ( final AssemblyReadException e )
         {
             throw new MojoExecutionException( "Error reading assembly descriptors: " + e.getMessage(), e );
         }
-        catch ( InvalidAssemblerConfigurationException e )
+        catch ( final InvalidAssemblerConfigurationException e )
         {
             throw new MojoFailureException( reader, e.getMessage(), "Mojo configuration is invalid: " + e.getMessage() );
         }
 
-        for ( Iterator i = assemblies.iterator(); i.hasNext(); )
+        for ( final Iterator<Assembly> i = assemblies.iterator(); i.hasNext(); )
         {
-            Assembly assembly = ( Assembly ) i.next();
+            final Assembly assembly = i.next();
             createDirectory( assembly );
         }
     }
 
-    private void createDirectory( Assembly assembly )
-        throws MojoExecutionException, MojoFailureException
+    private void createDirectory( final Assembly assembly ) throws MojoExecutionException, MojoFailureException
     {
-        AssemblyArchiver archiver = getAssemblyArchiver();
+        final AssemblyArchiver archiver = getAssemblyArchiver();
 
         String fullName = getFinalName();
 
@@ -84,18 +83,19 @@ public abstract class AbstractDirectoryMojo
         {
             archiver.createArchive( assembly, fullName, "dir", this );
         }
-        catch ( ArchiveCreationException e )
+        catch ( final ArchiveCreationException e )
         {
             throw new MojoExecutionException( "Error creating assembly: " + e.getMessage(), e );
         }
-        catch ( AssemblyFormattingException e )
+        catch ( final AssemblyFormattingException e )
         {
             throw new MojoExecutionException( "Error creating assembly: " + e.getMessage(), e );
         }
-        catch ( InvalidAssemblerConfigurationException e )
+        catch ( final InvalidAssemblerConfigurationException e )
         {
-            throw new MojoFailureException( assembly, "Assembly is incorrectly configured: " + assembly.getId(), "Assembly: "
-                            + assembly.getId() + " is not configured correctly: " + e.getMessage() );
+            throw new MojoFailureException( assembly, "Assembly is incorrectly configured: " + assembly.getId(),
+                                            "Assembly: " + assembly.getId() + " is not configured correctly: "
+                                                            + e.getMessage() );
         }
     }
 

@@ -31,51 +31,57 @@ public final class TypeConversionUtils
 {
 
     private static final int U_R = 256;
+
     private static final int U_W = 128;
+
     private static final int U_X = 64;
 
     private static final int G_R = 32;
+
     private static final int G_W = 16;
+
     private static final int G_X = 8;
 
     private static final int W_R = 4;
+
     private static final int W_W = 2;
+
     private static final int W_X = 1;
 
     private TypeConversionUtils()
     {
     }
 
-    public static String[] toStringArray( List list )
+    public static String[] toStringArray( final List<String> list )
     {
         String[] result = null;
 
         if ( ( list != null ) && !list.isEmpty() )
         {
-            result = (String[]) list.toArray( new String[0] );
+            result = list.toArray( new String[0] );
         }
 
         return result;
     }
 
-    public static int modeToInt( String mode, Logger logger )
-        throws AssemblyFormattingException
+    public static int modeToInt( final String mode, final Logger logger ) throws AssemblyFormattingException
     {
-        if ( mode == null || mode.trim().length() < 1 )
+        if ( mode == null || mode.trim()
+                                 .length() < 1 )
         {
             return -1;
         }
 
         try
         {
-            int value = Integer.parseInt( mode, 8 );
+            final int value = Integer.parseInt( mode, 8 );
 
             // discard sanity assessment here; we're pushing ahead.
             verifyModeSanity( value, logger );
 
             return value;
         }
-        catch( NumberFormatException e )
+        catch ( final NumberFormatException e )
         {
             throw new AssemblyFormattingException( "Failed to parse mode as an octal number: \'" + mode + "\'.", e );
         }
@@ -83,9 +89,9 @@ public final class TypeConversionUtils
 
     // the boolean return type is for people who want to make a decision based on the sanity
     // assessment.
-    public static boolean verifyModeSanity( int mode, Logger logger )
+    public static boolean verifyModeSanity( final int mode, final Logger logger )
     {
-        StringBuffer messages = new StringBuffer();
+        final StringBuffer messages = new StringBuffer();
 
         messages.append( "The mode: " + Integer.toString( mode, 8 ) + " contains nonsensical permissions:" );
 

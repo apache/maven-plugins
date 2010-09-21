@@ -22,11 +22,10 @@ package org.apache.maven.plugin.assembly.utils;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.logging.console.ConsoleLogger;
-import org.codehaus.plexus.util.StringOutputStream;
 
+import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -36,20 +35,20 @@ public class TypeConversionUtilsTest
     extends TestCase
 {
 
-    public void testModeToInt_InterpretAsOctalWithoutLeadingZero()
-        throws AssemblyFormattingException
+    public void testModeToInt_InterpretAsOctalWithoutLeadingZero() throws AssemblyFormattingException
     {
-        int check = Integer.decode( "0777" ).intValue();
-        int test = TypeConversionUtils.modeToInt( "777", new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) );
+        final int check = Integer.decode( "0777" )
+                                 .intValue();
+        final int test = TypeConversionUtils.modeToInt( "777", new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) );
 
         assertEquals( check, test );
     }
 
-    public void testModeToInt_InterpretValuesWithLeadingZeroAsOctal()
-        throws AssemblyFormattingException
+    public void testModeToInt_InterpretValuesWithLeadingZeroAsOctal() throws AssemblyFormattingException
     {
-        int check = Integer.decode( "0777" ).intValue();
-        int test = TypeConversionUtils.modeToInt( "0777", new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) );
+        final int check = Integer.decode( "0777" )
+                                 .intValue();
+        final int test = TypeConversionUtils.modeToInt( "0777", new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) );
 
         assertEquals( check, test );
     }
@@ -62,7 +61,7 @@ public class TypeConversionUtilsTest
 
             fail( "'493' is an invalid mode and should trigger an exception." );
         }
-        catch ( AssemblyFormattingException e )
+        catch ( final AssemblyFormattingException e )
         {
             // expected.
         }
@@ -70,7 +69,7 @@ public class TypeConversionUtilsTest
 
     public void testVerifyModeSanity_WarnOnNonsensicalOctalValue_002()
     {
-        List messages = new ArrayList( 2 );
+        final List<String> messages = new ArrayList<String>( 2 );
         messages.add( "World has write access, but user does not." );
         messages.add( "World has write access, but group does not." );
 
@@ -79,7 +78,7 @@ public class TypeConversionUtilsTest
 
     public void testVerifyModeSanity_WarnOnNonsensicalOctalValue_020()
     {
-        List messages = new ArrayList( 1 );
+        final List<String> messages = new ArrayList<String>( 1 );
         messages.add( "Group has write access, but user does not." );
 
         checkFileModeSanity( "020", false, messages );
@@ -87,23 +86,26 @@ public class TypeConversionUtilsTest
 
     public void testVerifyModeSanity_ReturnTrueForValidOctalValue_775()
     {
-        checkFileModeSanity( "775", true, Collections.EMPTY_LIST );
+        checkFileModeSanity( "775", true, null );
     }
 
-    private void checkFileModeSanity( String mode, boolean isSane, List messagesToCheckIfInsane )
+    private void checkFileModeSanity( final String mode, final boolean isSane,
+                                      final List<String> messagesToCheckIfInsane )
     {
-        StringOutputStream sos = new StringOutputStream();
-        PrintStream ps = new PrintStream( sos );
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        final PrintStream ps = new PrintStream( baos );
 
-        PrintStream oldOut = System.out;
-        PrintStream oldErr = System.err;
+        final PrintStream oldOut = System.out;
+        final PrintStream oldErr = System.err;
 
         try
         {
             System.setOut( ps );
             System.setErr( ps );
 
-            assertEquals( "Mode sanity should be: " + isSane, isSane, TypeConversionUtils.verifyModeSanity( Integer.parseInt( mode, 8 ), new ConsoleLogger( Logger.LEVEL_WARN, "test" ) ) );
+            assertEquals( "Mode sanity should be: " + isSane, isSane,
+                          TypeConversionUtils.verifyModeSanity( Integer.parseInt( mode, 8 ),
+                                                                new ConsoleLogger( Logger.LEVEL_WARN, "test" ) ) );
         }
         finally
         {
@@ -113,11 +115,11 @@ public class TypeConversionUtilsTest
 
         if ( !isSane && messagesToCheckIfInsane != null && !messagesToCheckIfInsane.isEmpty() )
         {
-            String message = sos.toString();
+            final String message = new String( baos.toByteArray() );
 
-            for ( Iterator it = messagesToCheckIfInsane.iterator(); it.hasNext(); )
+            for ( final Iterator<String> it = messagesToCheckIfInsane.iterator(); it.hasNext(); )
             {
-                String checkMessage = (String) it.next();
+                final String checkMessage = it.next();
 
                 assertTrue( "\'" + checkMessage + "\' is not present in output.", message.indexOf( checkMessage ) > -1 );
             }

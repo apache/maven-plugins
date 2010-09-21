@@ -19,16 +19,16 @@ package org.apache.maven.plugin.assembly.archive.task;
  * under the License.
  */
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.util.DefaultFileSet;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * @version $Id$
@@ -39,9 +39,9 @@ public class AddDirectoryTask
 
     private final File directory;
 
-    private List includes;
+    private List<String> includes;
 
-    private List excludes;
+    private List<String> excludes;
 
     private String outputDirectory;
 
@@ -51,12 +51,12 @@ public class AddDirectoryTask
 
     private int fileMode = -1;
 
-    public AddDirectoryTask( File directory )
+    public AddDirectoryTask( final File directory )
     {
         this.directory = directory;
     }
 
-    public void execute( Archiver archiver, AssemblerConfigurationSource configSource )
+    public void execute( final Archiver archiver, final AssemblerConfigurationSource configSource )
         throws ArchiveCreationException
     {
         if ( ".".equals( outputDirectory ) )
@@ -66,15 +66,15 @@ public class AddDirectoryTask
         else if ( "..".equals( outputDirectory ) )
         {
             throw new ArchiveCreationException( "Cannot add source directory: " + directory + " to archive-path: "
-                + outputDirectory + ". All paths must be within the archive root directory." );
+                            + outputDirectory + ". All paths must be within the archive root directory." );
         }
-        
-        int oldDirMode = archiver.getOverrideDirectoryMode();
-        int oldFileMode = archiver.getOverrideFileMode();
+
+        final int oldDirMode = archiver.getOverrideDirectoryMode();
+        final int oldFileMode = archiver.getOverrideFileMode();
 
         boolean fileModeSet = false;
         boolean dirModeSet = false;
-        
+
         try
         {
             if ( directoryMode != -1 )
@@ -91,14 +91,14 @@ public class AddDirectoryTask
 
             if ( directory.exists() )
             {
-                List directoryExcludes;
+                List<String> directoryExcludes;
                 if ( excludes != null && !excludes.isEmpty() )
                 {
-                    directoryExcludes = new ArrayList( excludes );
+                    directoryExcludes = new ArrayList<String>( excludes );
                 }
                 else
                 {
-                    directoryExcludes = new ArrayList();
+                    directoryExcludes = new ArrayList<String>();
                 }
 
                 try
@@ -107,50 +107,50 @@ public class AddDirectoryTask
                     if ( includes != null && !includes.isEmpty() )
                     {
                         includesArray = new String[includes.size()];
-                        
+
                         int i = 0;
-                        for ( Iterator it = includes.iterator(); it.hasNext(); )
+                        for ( final Iterator<String> it = includes.iterator(); it.hasNext(); )
                         {
-                            String value = (String) it.next();
+                            String value = it.next();
                             if ( value.startsWith( "./" ) || value.startsWith( ".\\" ) )
                             {
                                 value = value.substring( 2 );
                             }
-                            
+
                             if ( value.startsWith( "/" ) || value.startsWith( "\\" ) )
                             {
                                 value = value.substring( 1 );
                             }
-                            
+
                             includesArray[i] = value;
-                            
+
                             i++;
                         }
                     }
 
                     // this one is guaranteed to be non-null by code above.
-                    String[] excludesArray = new String[directoryExcludes.size()];
-                    
+                    final String[] excludesArray = new String[directoryExcludes.size()];
+
                     int i = 0;
-                    for ( Iterator it = directoryExcludes.iterator(); it.hasNext(); )
+                    for ( final Iterator<String> it = directoryExcludes.iterator(); it.hasNext(); )
                     {
-                        String value = (String) it.next();
+                        String value = it.next();
                         if ( value.startsWith( "./" ) || value.startsWith( ".\\" ) )
                         {
                             value = value.substring( 2 );
                         }
-                        
+
                         if ( value.startsWith( "/" ) || value.startsWith( "\\" ) )
                         {
                             value = value.substring( 1 );
                         }
-                        
+
                         excludesArray[i] = value;
-                        
+
                         i++;
                     }
 
-                    DefaultFileSet fs = new DefaultFileSet();
+                    final DefaultFileSet fs = new DefaultFileSet();
                     fs.setUsingDefaultExcludes( useDefaultExcludes );
                     fs.setPrefix( outputDirectory );
                     fs.setDirectory( directory );
@@ -159,7 +159,7 @@ public class AddDirectoryTask
 
                     archiver.addFileSet( fs );
                 }
-                catch ( ArchiverException e )
+                catch ( final ArchiverException e )
                 {
                     throw new ArchiveCreationException( "Error adding directory to archive: " + e.getMessage(), e );
                 }
@@ -171,7 +171,7 @@ public class AddDirectoryTask
             {
                 archiver.setDirectoryMode( oldDirMode );
             }
-            
+
             if ( fileModeSet )
             {
                 archiver.setFileMode( oldFileMode );
@@ -179,32 +179,32 @@ public class AddDirectoryTask
         }
     }
 
-    public void setExcludes( List excludes )
+    public void setExcludes( final List<String> excludes )
     {
         this.excludes = excludes;
     }
 
-    public void setIncludes( List includes )
+    public void setIncludes( final List<String> includes )
     {
         this.includes = includes;
     }
 
-    public void setOutputDirectory( String outputDirectory )
+    public void setOutputDirectory( final String outputDirectory )
     {
         this.outputDirectory = outputDirectory;
     }
 
-    public void setDirectoryMode( int directoryMode )
+    public void setDirectoryMode( final int directoryMode )
     {
         this.directoryMode = directoryMode;
     }
 
-    public void setFileMode( int fileMode )
+    public void setFileMode( final int fileMode )
     {
         this.fileMode = fileMode;
     }
 
-    public void setUseDefaultExcludes( boolean useDefaultExcludes )
+    public void setUseDefaultExcludes( final boolean useDefaultExcludes )
     {
         this.useDefaultExcludes = useDefaultExcludes;
     }
