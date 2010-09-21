@@ -1,0 +1,23 @@
+import java.io.*;
+
+boolean result = true;
+
+if ( !new File( basedir, "child4/target/child4-1.0-bin/lib/child1.jar" ).exists() )
+{
+	  System.out.println( "Child-1 jar is NOT in output!" );
+	  result = false;
+}
+
+if ( !new File( basedir, "child4/target/child4-1.0-bin/lib/child3.jar" ).exists() )
+{
+	  System.out.println( "Child-3 jar is NOT in output!" );
+	  result = false;
+}
+
+if ( new File( basedir, "child4/target/child4-1.0-bin/lib/child2.jar" ).exists() )
+{
+	  System.out.println( "Child-2 jar SHOULD NOT BE in output!" );
+	  result = false;
+}
+
+return result;
