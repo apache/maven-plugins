@@ -1,0 +1,83 @@
+import java.io.*;
+import java.util.*;
+import java.util.jar.*;
+
+boolean result = true;
+
+try
+{
+    File f1 = new File( basedir, "enum/target/enum-1-bin.jar" );
+    File f2 = new File( basedir, "wildcard/target/wildcard-1-bin.jar" );
+    
+    JarFile jf1 = new JarFile( f1 );
+    JarFile jf2 = new JarFile( f2 );
+    
+    for( Enumeration e = jf1.entries(); e.hasMoreElements(); )
+    {
+        JarEntry entry1 = (JarEntry) e.nextElement();
+        JarEntry entry2 = (JarEntry) jf2.getEntry( entry1.getName() );
+        
+        if ( entry2 == null )
+        {
+            System.out.println( "Missing entry: " + entry1.getName() + " in " + f2 );
+            result = false;
+        }
+    }
+    
+    for( Enumeration e = jf2.entries(); e.hasMoreElements(); )
+    {
+        JarEntry entry2 = (JarEntry) e.nextElement();
+        JarEntry entry1 = (JarEntry) jf2.getEntry( entry2.getName() );
+        
+        if ( entry1 == null )
+        {
+            System.out.println( "Missing entry: " + entry2.getName() + " in " + f1 );
+            result = false;
+        }
+        
+        if ( !entry1.isDirectory() )
+        {
+            if ( entry2.isDirectory() )
+            {
+                System.out.println( "One file is directory, the other a file! Entry: " + entry2.getName() );
+                result = false;
+            }
+            else
+            {
+                ByteArrayOutputStream b1 = new ByteArrayOutputStream();
+
+                InputStream in = jf1.getInputStream( entry1 );
+                byte[] buf = new byte[1024];
+                int read = -1;
+
+                while( ( read = in.read( buf ) ) > -1 )
+                {
+                    b1.write( buf, 0, read );
+                }
+
+                ByteArrayOutputStream b2 = new ByteArrayOutputStream();
+
+                in = jf2.getInputStream( entry2 );
+                read = -1;
+
+                while( ( read = in.read( buf ) ) > -1 )
+                {
+                    b2.write( buf, 0, read );
+                }
+
+                if ( !Arrays.equals( b1.toByteArray(), b2.toByteArray() ) )
+                {
+                    System.out.println( "Entries are not equal! Entry name: " + entry2.getName() );
+                    result = false;
+                }
+            }
+        }
+    }
+}
+catch ( IOException e )
+{
+    e.printStackTrace();
+    result = false;
+}
+
+return result;

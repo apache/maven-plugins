@@ -1,0 +1,17 @@
+<assembly>
+    <id>bin</id>
+    <formats>
+        <format>jar</format>
+    </formats>
+    <includeBaseDirectory>false</includeBaseDirectory>
+    <dependencySets>
+        <dependencySet>
+            <outputDirectory>/</outputDirectory>
+            <unpack>true</unpack>
+            <includes>
+                <include>org.mule:mule-core</include>
+                <include>org.mule.transports:mule-transport-vm</include>
+            </includes>
+        </dependencySet>
+    </dependencySets>
+</assembly>
