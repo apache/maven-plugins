@@ -1,0 +1,54 @@
+<?xml version="1.0"?><project>
+  <parent>
+    <artifactId>parent</artifactId>
+    <groupId>org.test</groupId>
+    <version>1.0</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.test</groupId>
+  <artifactId>child4</artifactId>
+  <name>Child 4 - Assembler</name>
+  <version>1.0</version>
+
+  <!-- Used to ensure this child is sorted LAST.
+       NOT used by the assembly descriptor! -->
+  <dependencies>
+    <dependency>
+      <groupId>org.test</groupId>
+      <artifactId>child1</artifactId>
+      <version>1.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.test</groupId>
+      <artifactId>child2</artifactId>
+      <version>1.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.test</groupId>
+      <artifactId>child3</artifactId>
+      <version>1.0</version>
+    </dependency>
+  </dependencies>
+  
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>assembly</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <configuration>
+              <descriptors>
+                <descriptor>src/assemble/bin.xml</descriptor>
+              </descriptors>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>
