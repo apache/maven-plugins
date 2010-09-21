@@ -587,7 +587,7 @@
           <type>String</type>
           <description>
             <![CDATA[
-            Sets the line-endings of the files.
+            Sets the line-endings of the files. (Since 2.2)
             Valid values:
             <ul>
               <li><b>"keep"</b> - Preserve all line endings</li>

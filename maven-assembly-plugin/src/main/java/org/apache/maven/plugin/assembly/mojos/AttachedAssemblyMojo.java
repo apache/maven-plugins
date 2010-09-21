@@ -22,23 +22,22 @@ package org.apache.maven.plugin.assembly.mojos;
 import org.apache.maven.project.MavenProject;
 
 /**
- * Assemble an application bundle or distribution from an assembly descriptor, 
- * WITHOUT first forcing Maven to build all POMs to the <code>package</code> 
- * phase (as is required by the <code>assembly:assembly</code> goal).
- * <br/>
- *
- * <b>NOTE:</b> This goal should ONLY be run from the command line, and if building a multimodule project 
- * it should be used from the root POM. Use the <code>assembly:single</code> goal for binding 
- * your assembly to the lifecycle.
- *
+ * Assemble an application bundle or distribution from an assembly descriptor, WITHOUT first forcing Maven to build all
+ * POMs to the <code>package</code> phase (as is required by the <code>assembly:assembly</code> goal). <br/>
+ * 
+ * <b>NOTE:</b> This goal should ONLY be run from the command line, and if building a multimodule project it should be
+ * used from the root POM. Use the <code>assembly:single</code> goal for binding your assembly to the lifecycle.
+ * 
  * @author <a href="mailto:jdcasey@apache.org">John Casey</a>
  * @author <a href="mailto:jerome@coffeebreaks.org">Jerome Lacoste</a>
  * @version $Id$
- *
+ * 
  * @goal attached
  * @aggregator
- * @deprecated Use goal: 'assembly' (from the command line) or 'single' (from a lifecycle binding) instead.
+ * @inheritByDefault false
+ * @deprecated Use assembly:single instead! The assembly:attached mojo leads to non-standard builds.
  */
+@Deprecated
 public class AttachedAssemblyMojo
     extends AbstractAssemblyMojo
 {
@@ -49,6 +48,7 @@ public class AttachedAssemblyMojo
      */
     private MavenProject project;
 
+    @Override
     public MavenProject getProject()
     {
         return project;

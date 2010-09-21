@@ -145,6 +145,10 @@ public class AddDependencySetsTask
         {
             filterContents = true;
         }
+        else if ( dependencyArtifacts.size() > 1 )
+        {
+            checkMultiArtifactOutputConfig( dependencySet );
+        }
 
         logger.debug( "Adding " + dependencyArtifacts.size() + " dependency artifacts." );
 
@@ -182,6 +186,29 @@ public class AddDependencySetsTask
                     addNormalArtifact( dependencySet, depArtifact, depProject, archiver, configSource );
                 }
             }
+        }
+    }
+
+    private void checkMultiArtifactOutputConfig( final DependencySet dependencySet )
+    {
+        String dir = dependencySet.getOutputDirectory();
+        if ( dir == null )
+        {
+            dir = defaultOutputDirectory;
+        }
+
+        String mapping = dependencySet.getOutputFileNameMapping();
+        if ( mapping == null )
+        {
+            mapping = defaultOutputFileNameMapping;
+        }
+
+        if ( ( dir != null && dir.indexOf( "${" ) < 0 ) || ( mapping != null && mapping.indexOf( "${" ) < 0 ) )
+        {
+            logger.warn( "NOTE: Your assembly specifies a dependencySet that matches multiple artifacts, but specifies a concrete output format. "
+                            + "THIS MAY RESULT IN ONE OR MORE ARTIFACTS BEING OBSCURED!\n\nOutput directory: '"
+                            + dir
+                            + "'\nOutput filename mapping: '" + mapping + "'" );
         }
     }
 

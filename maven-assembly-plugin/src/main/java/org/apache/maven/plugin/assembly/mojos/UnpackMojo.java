@@ -40,6 +40,7 @@ import java.util.Set;
  * @version $Id$
  * @goal unpack
  * @requiresDependencyResolution test
+ * @inheritByDefault false
  * @deprecated Use org.apache.maven.plugins:maven-dependency-plugin goal: unpack or unpack-dependencies instead.
  */
 @Deprecated
