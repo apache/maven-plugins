@@ -130,7 +130,7 @@ under the License.
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-io</artifactId>
-      <version>1.0</version>
+      <version>1.0.1</version>
       <exclusions>
         <exclusion>
           <groupId>org.codehaus.plexus</groupId>
@@ -424,6 +424,7 @@ under the License.
                     <pomExclude>**/descriptor/pom.xml</pomExclude>
                     <pomExclude>**/handler-def/pom.xml</pomExclude>
                     <pomExclude>**/assembly/pom.xml</pomExclude>
+                    <pomExclude>dependency-sets/depSet-transFromProfile/pom.xml</pomExclude>
                   </pomExcludes>
                   <postBuildHookScript>verify</postBuildHookScript>
                 </configuration>
