@@ -87,6 +87,7 @@ public class WarMojo
      * packaging. By default everything is included. This option may be used
      * to implement the skinny WAR use case.
      *
+     * @parameter
      * @since 2.1-beta-1
      */
     private String packagingIncludes;
