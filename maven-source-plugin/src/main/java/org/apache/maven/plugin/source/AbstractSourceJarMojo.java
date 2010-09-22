@@ -190,6 +190,15 @@ public abstract class AbstractSourceJarMojo
      */
     private boolean forceCreation;
 
+    /**
+     * A flag used to disable the source procedure. This is primarily intended for usage from the command line to
+     * occasionally adjust the build.
+     * 
+     * @parameter expression="${source.skip}" default-value="false"
+     * @since 1.4
+     */
+    private boolean skipSource;
+
     // ----------------------------------------------------------------------
     // Public methods
     // ----------------------------------------------------------------------
@@ -198,6 +207,12 @@ public abstract class AbstractSourceJarMojo
     public void execute()
         throws MojoExecutionException
     {
+        if ( skipSource )
+        {
+            getLog().info( "Skipping source per configuration." );
+            return;
+        }
+
         packageSources( project );
     }
 

@@ -39,6 +39,15 @@ under the License.
     <maven>2.0.6</maven>
   </prerequisites>
 
+  <contributors>
+    <contributor>
+      <name>Marvin Froeder</name>
+      <email>velo.br@gmail.com</email>
+      <roles>
+        <role>MSOURCES-55</role>
+      </roles>
+    </contributor>
+  </contributors>
   <scm>
     <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-source-plugin/</connection>
     <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/trunk/maven-source-plugin/</developerConnection>
