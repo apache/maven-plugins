@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <artifactId>parent</artifactId>
+    <groupId>test</groupId>
+    <version>1</version>
+  </parent>
+  <artifactId>child1</artifactId>
+  
+  <properties>
+    <foo>bar</foo>
+  </properties>
+</project>

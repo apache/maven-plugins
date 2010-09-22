@@ -419,6 +419,9 @@ under the License.
                     <!-- This will be handled by the parent in the bugs/massembly-285 dir. -->
                     <pomExclude>bugs/massembly-285/massembly-285-*/pom.xml</pomExclude>
 
+                    <pomExclude>dependency-sets/depSet-enum-vs-wildcard/enum/pom.xml</pomExclude>
+                    <pomExclude>dependency-sets/depSet-enum-vs-wildcard/wildcard/pom.xml</pomExclude>
+                    
                     <pomExclude>**/child*/pom.xml</pomExclude>
                     <pomExclude>**/module*/pom.xml</pomExclude>
                     <pomExclude>**/descriptor/pom.xml</pomExclude>
