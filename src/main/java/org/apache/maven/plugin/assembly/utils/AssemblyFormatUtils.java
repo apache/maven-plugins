@@ -149,6 +149,8 @@ public final class AssemblyFormatUtils
         {
             // 2
             interpolator.addValueSource( new PrefixedObjectValueSource( "module.", moduleProject ) );
+            interpolator.addValueSource( new PrefixedPropertiesValueSource( "module.properties.",
+                                                                            moduleProject.getProperties() ) );
             if ( moduleProject.getArtifact() != null )
             {
                 interpolator.addValueSource( new PrefixedObjectValueSource( "module.", moduleProject.getArtifact() ) );
@@ -159,6 +161,8 @@ public final class AssemblyFormatUtils
         {
             // 3
             interpolator.addValueSource( new PrefixedObjectValueSource( "artifact.", artifactProject ) );
+            interpolator.addValueSource( new PrefixedPropertiesValueSource( "artifact.properties.",
+                                                                            artifactProject.getProperties() ) );
             if ( artifactProject.getArtifact() != null )
             {
                 interpolator.addValueSource( new PrefixedObjectValueSource( "artifact.", artifactProject.getArtifact() ) );
@@ -345,6 +349,8 @@ public final class AssemblyFormatUtils
         if ( moduleProject != null )
         {
             interpolator.addValueSource( new PrefixedObjectValueSource( "module.", moduleProject ) );
+            interpolator.addValueSource( new PrefixedPropertiesValueSource( "module.properties.",
+                                                                            moduleProject.getProperties() ) );
             if ( moduleProject.getArtifact() != null )
             {
                 interpolator.addValueSource( new PrefixedObjectValueSource( "module.", moduleProject.getArtifact() ) );
@@ -362,6 +368,8 @@ public final class AssemblyFormatUtils
         if ( artifactProject != null )
         {
             interpolator.addValueSource( new PrefixedObjectValueSource( "artifact.", artifactProject ) );
+            interpolator.addValueSource( new PrefixedPropertiesValueSource( "artifact.properties.",
+                                                                            artifactProject.getProperties() ) );
             if ( artifactProject.getArtifact() != null )
             {
                 interpolator.addValueSource( new PrefixedObjectValueSource( "artifact.", artifactProject.getArtifact() ) );
