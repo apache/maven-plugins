@@ -195,7 +195,7 @@ public abstract class AbstractSourceJarMojo
      * occasionally adjust the build.
      * 
      * @parameter expression="${source.skip}" default-value="false"
-     * @since 1.4
+     * @since 2.2
      */
     private boolean skipSource;
 
