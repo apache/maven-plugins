@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<assembly>
+  <id>bin</id>
+  <formats>
+    <format>dir</format>
+  </formats>
+  <includeBaseDirectory>false</includeBaseDirectory>
+  <dependencySets>
+    <dependencySet>
+      <useTransitiveDependencies>true</useTransitiveDependencies>
+      <useTransitiveFiltering>true</useTransitiveFiltering>
+      <includes>
+        <include>test:child1</include>
+      </includes>
+      <excludes>
+        <exclude>test:child2</exclude>
+      </excludes>
+    </dependencySet>
+  </dependencySets>
+</assembly>
