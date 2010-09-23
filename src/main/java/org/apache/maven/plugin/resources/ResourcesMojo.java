@@ -306,18 +306,19 @@ public class ResourcesMojo
     /**
      * @since 2.5
      */
-    protected void executeUserFilterComponents(MavenResourcesExecution mavenResourcesExecution)
-    throws MojoExecutionException, MavenFilteringException
+    protected void executeUserFilterComponents( MavenResourcesExecution mavenResourcesExecution )
+        throws MojoExecutionException, MavenFilteringException
     {
 
-        if (mavenFilteringHints != null)
+        if ( mavenFilteringHints != null )
         {
-            for (Iterator ite = mavenFilteringHints.iterator();ite.hasNext();)
+            for ( Iterator ite = mavenFilteringHints.iterator(); ite.hasNext(); )
             {
                 String hint = (String) ite.next();
                 try
                 {
-                    mavenFilteringComponents.add( plexusContainer.lookup( MavenResourcesFiltering.class.getName(), hint ) );
+                    mavenFilteringComponents
+                        .add( plexusContainer.lookup( MavenResourcesFiltering.class.getName(), hint ) );
                 }
                 catch ( ComponentLookupException e )
                 {
@@ -328,14 +329,14 @@ public class ResourcesMojo
         else
         {
             getLog().debug( "no use filter components" );
-        }            
-        
-        if (mavenFilteringComponents != null && !mavenFilteringComponents.isEmpty())
+        }
+
+        if ( mavenFilteringComponents != null && !mavenFilteringComponents.isEmpty() )
         {
             getLog().debug( "execute user filters" );
-            for(Iterator ite = mavenFilteringComponents.iterator();ite.hasNext();)
+            for ( Iterator ite = mavenFilteringComponents.iterator(); ite.hasNext(); )
             {
-                MavenResourcesFiltering filter = (MavenResourcesFiltering)ite.next();
+                MavenResourcesFiltering filter = (MavenResourcesFiltering) ite.next();
                 filter.filterResources( mavenResourcesExecution );
             }
         }
