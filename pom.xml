@@ -128,6 +128,12 @@ under the License.
       <version>1.0-beta-1</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+      <version>1.4</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <profiles>
@@ -135,6 +141,29 @@ under the License.
       <id>run-its</id>
       <build>
         <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-jar-plugin</artifactId>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>test-jar</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.codehaus.plexus</groupId>
+            <artifactId>plexus-maven-plugin</artifactId>
+            <version>1.3.4</version>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>test-descriptor</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>          
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-invoker-plugin</artifactId>
