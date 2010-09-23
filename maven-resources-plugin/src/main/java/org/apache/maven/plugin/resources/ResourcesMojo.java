@@ -27,6 +27,12 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.filtering.MavenFilteringException;
 import org.apache.maven.shared.filtering.MavenResourcesExecution;
 import org.apache.maven.shared.filtering.MavenResourcesFiltering;
+import org.codehaus.plexus.PlexusConstants;
+import org.codehaus.plexus.PlexusContainer;
+import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
+import org.codehaus.plexus.context.Context;
+import org.codehaus.plexus.context.ContextException;
+import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
 
@@ -52,7 +58,8 @@ import java.util.List;
  * 
  */
 public class ResourcesMojo
-    extends AbstractMojo
+    extends AbstractMojo 
+    implements Contextualizable
 {
 
     /**
@@ -201,6 +208,30 @@ public class ResourcesMojo
      */
     protected boolean useDefaultDelimiters;
     
+    /**
+     * List of plexus components hint which implements {@link MavenResourcesFiltering#filterResources(MavenResourcesExecution)}
+     * @parameter
+     * @since 2.4
+     */
+    private List mavenFilteringHints;
+    
+    /**
+     * @since 2.4
+     */    
+    private PlexusContainer plexusContainer;
+    
+    /**
+     * @since 2.4
+     */     
+    private List mavenFilteringComponents = new ArrayList();
+    
+    public void contextualize( Context context )
+        throws ContextException
+    {
+        getLog().debug( "execute contextualize" );
+        plexusContainer = (PlexusContainer) context.get( PlexusConstants.PLEXUS_KEY );
+    }
+
     public void execute()
         throws MojoExecutionException
     {
@@ -263,10 +294,50 @@ public class ResourcesMojo
                 mavenResourcesExecution.setNonFilteredFileExtensions( nonFilteredFileExtensions );
             }
             mavenResourcesFiltering.filterResources( mavenResourcesExecution );
+            
+            executeUserFilterComponents( mavenResourcesExecution );
         }
         catch ( MavenFilteringException e )
         {
             throw new MojoExecutionException( e.getMessage(), e );
+        }
+    }
+    
+    /**
+     * @since 2.5
+     */
+    protected void executeUserFilterComponents(MavenResourcesExecution mavenResourcesExecution)
+    throws MojoExecutionException, MavenFilteringException
+    {
+
+        if (mavenFilteringHints != null)
+        {
+            for (Iterator ite = mavenFilteringHints.iterator();ite.hasNext();)
+            {
+                String hint = (String) ite.next();
+                try
+                {
+                    mavenFilteringComponents.add( plexusContainer.lookup( MavenResourcesFiltering.class.getName(), hint ) );
+                }
+                catch ( ComponentLookupException e )
+                {
+                    throw new MojoExecutionException( e.getMessage(), e );
+                }
+            }
+        }
+        else
+        {
+            getLog().debug( "no use filter components" );
+        }            
+        
+        if (mavenFilteringComponents != null && !mavenFilteringComponents.isEmpty())
+        {
+            getLog().debug( "execute user filters" );
+            for(Iterator ite = mavenFilteringComponents.iterator();ite.hasNext();)
+            {
+                MavenResourcesFiltering filter = (MavenResourcesFiltering)ite.next();
+                filter.filterResources( mavenResourcesExecution );
+            }
         }
     }
     
