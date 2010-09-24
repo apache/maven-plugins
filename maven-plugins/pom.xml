@@ -273,6 +273,23 @@ under the License.
             </plugin>          
           </plugins>
         </pluginManagement>
+        <plugins>
+          <!-- if releasing current pom with maven 3 site descriptor must be attached -->
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-site-plugin</artifactId>
+            <version>${sitePluginVersion}</version>
+            <inherited>false</inherited>
+            <executions>
+              <execution>
+                <id>attach-descriptor</id>
+                <goals>
+                  <goal>attach-descriptor</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>        
       </build>
                   
     </profile>     
