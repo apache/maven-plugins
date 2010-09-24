@@ -83,7 +83,8 @@ public class AssemblyInterpolator
         ENVIRONMENT_VARIABLES = environmentVariables;
     }
 
-    public AssemblyInterpolator() throws IOException
+    public AssemblyInterpolator()
+        throws IOException
     {
     }
 
@@ -179,6 +180,24 @@ public class AssemblyInterpolator
                                                                         project.getProperties(), true ) );
         interpolator.addValueSource( new PrefixedObjectValueSource( InterpolationConstants.PROJECT_PREFIXES, project,
                                                                     true ) );
+
+        final Properties settingsProperties = new Properties();
+        if ( configSource.getLocalRepository() != null )
+        {
+            settingsProperties.setProperty( "localRepository", configSource.getLocalRepository()
+                                                                           .getBasedir() );
+            settingsProperties.setProperty( "settings.localRepository", configSource.getLocalRepository()
+                                                                                    .getBasedir() );
+        }
+        else if ( session != null && session.getSettings() != null )
+        {
+            settingsProperties.setProperty( "localRepository", session.getSettings()
+                                                                      .getLocalRepository() );
+            settingsProperties.setProperty( "settings.localRepository", configSource.getLocalRepository()
+                                                                                    .getBasedir() );
+        }
+
+        interpolator.addValueSource( new PropertiesBasedValueSource( settingsProperties ) );
 
         Properties commandLineProperties = System.getProperties();
         try

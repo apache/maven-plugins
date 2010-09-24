@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0 http://maven.apache.org/xsd/assembly-1.1.0.xsd">
+    <id>bin</id>
+    <formats>
+        <format>dir</format>
+    </formats>
+    <includeBaseDirectory>false</includeBaseDirectory>
+    
+    <files>
+      <file>
+        <source>${localRepository}/org/apache/maven/plugins/maven-assembly-plugin/${testVersion}/maven-assembly-plugin-${testVersion}.jar</source>
+        <outputDirectory>unprefixed</outputDirectory>
+        <destName>maven-assembly-plugin.jar</destName>
+      </file>
+      <file>
+        <source>${settings.localRepository}/org/apache/maven/plugins/maven-assembly-plugin/${testVersion}/maven-assembly-plugin-${testVersion}.jar</source>
+        <outputDirectory>prefixed</outputDirectory>
+        <destName>maven-assembly-plugin.jar</destName>
+      </file>
+    </files>
+</assembly>

@@ -24,6 +24,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
+import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.model.Model;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.AssemblyContext;
@@ -251,6 +252,16 @@ public class DefaultAssemblyArchiverTest
 
         configSource.isUpdateOnly();
         configCtl.setReturnValue( false, MockControl.ZERO_OR_MORE );
+
+        final MockControl lrCtl = MockControl.createControl( ArtifactRepository.class );
+        final ArtifactRepository lr = (ArtifactRepository) lrCtl.getMock();
+        mm.add( lrCtl );
+
+        lr.getBasedir();
+        lrCtl.setReturnValue( "/path/to/local/repo", MockControl.ZERO_OR_MORE );
+
+        configSource.getLocalRepository();
+        configCtl.setReturnValue( lr, MockControl.ZERO_OR_MORE );
 
         mm.add( configCtl );
 
