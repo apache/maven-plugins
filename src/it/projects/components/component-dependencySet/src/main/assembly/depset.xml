@@ -1,0 +1,7 @@
+<component>
+  <dependencySets>
+    <dependencySet>
+      <scope>test</scope>
+    </dependencySet>
+  </dependencySets>
+</component>

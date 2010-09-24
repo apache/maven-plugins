@@ -1,0 +1,19 @@
+<component>
+  <moduleSets>
+    <moduleSet>
+      <includes>
+        <include>test:child1</include>
+      </includes>
+      
+      <useAllReactorProjects>true</useAllReactorProjects>
+      <binaries>
+        <unpack>false</unpack>
+        <dependencySets>
+          <dependencySet>
+            <scope>test</scope>
+          </dependencySet>
+        </dependencySets>
+      </binaries>
+    </moduleSet>
+  </moduleSets>
+</component>

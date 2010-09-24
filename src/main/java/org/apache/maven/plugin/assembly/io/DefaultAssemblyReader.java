@@ -19,8 +19,6 @@ package org.apache.maven.plugin.assembly.io;
  * under the License.
  */
 
-import org.apache.maven.artifact.factory.ArtifactFactory;
-import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
@@ -34,19 +32,17 @@ import org.apache.maven.plugin.assembly.model.ContainerDescriptorHandlerConfig;
 import org.apache.maven.plugin.assembly.model.DependencySet;
 import org.apache.maven.plugin.assembly.model.FileItem;
 import org.apache.maven.plugin.assembly.model.FileSet;
+import org.apache.maven.plugin.assembly.model.ModuleSet;
 import org.apache.maven.plugin.assembly.model.Repository;
 import org.apache.maven.plugin.assembly.model.io.xpp3.AssemblyXpp3Reader;
 import org.apache.maven.plugin.assembly.model.io.xpp3.AssemblyXpp3Writer;
 import org.apache.maven.plugin.assembly.model.io.xpp3.ComponentXpp3Reader;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.shared.io.location.ArtifactLocatorStrategy;
 import org.apache.maven.shared.io.location.ClasspathResourceLocatorStrategy;
 import org.apache.maven.shared.io.location.FileLocatorStrategy;
 import org.apache.maven.shared.io.location.Location;
 import org.apache.maven.shared.io.location.Locator;
 import org.apache.maven.shared.io.location.LocatorStrategy;
-import org.apache.maven.shared.io.location.URLLocatorStrategy;
-import org.codehaus.plexus.component.annotations.Requirement;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.logging.console.ConsoleLogger;
@@ -80,34 +76,17 @@ public class DefaultAssemblyReader
     implements AssemblyReader
 {
 
-    @Requirement
-    private ArtifactFactory factory;
-
-    @Requirement
-    private ArtifactResolver resolver;
-
     public List<Assembly> readAssemblies( final AssemblerConfigurationSource configSource )
         throws AssemblyReadException, InvalidAssemblerConfigurationException
     {
         final Locator locator = new Locator();
 
-        final LocatorStrategy prefixedClasspathStrategy = new PrefixedClasspathLocatorStrategy( "/assemblies/" );
-        final LocatorStrategy classpathStrategy = new ClasspathResourceLocatorStrategy();
-
         final List<LocatorStrategy> strategies = new ArrayList<LocatorStrategy>();
         strategies.add( new RelativeFileLocatorStrategy( configSource.getBasedir() ) );
-
-        strategies.add( new ArtifactLocatorStrategy( factory, resolver, configSource.getLocalRepository(),
-                                                     configSource.getRemoteRepositories(), "xml", "assembly-descriptor" ) );
-
-        strategies.add( prefixedClasspathStrategy );
-        strategies.add( classpathStrategy );
         strategies.add( new FileLocatorStrategy() );
-        strategies.add( new URLLocatorStrategy() );
 
         final List<LocatorStrategy> refStrategies = new ArrayList<LocatorStrategy>();
-        refStrategies.add( prefixedClasspathStrategy );
-        refStrategies.add( classpathStrategy );
+        refStrategies.add( new PrefixedClasspathLocatorStrategy( "/assemblies/" ) );
 
         final List<Assembly> assemblies = new ArrayList<Assembly>();
 
@@ -257,7 +236,7 @@ public class DefaultAssemblyReader
         {
             // TODO use ReaderFactory.newXmlReader() when plexus-utils is upgraded to 1.4.5+
             final Assembly assembly =
-                readAssembly( new InputStreamReader( resourceAsStream, "UTF-8" ), ref, configSource );
+                readAssembly( new InputStreamReader( resourceAsStream, "UTF-8" ), ref, null, configSource );
 
             assemblies.add( assembly );
             return assembly;
@@ -292,7 +271,8 @@ public class DefaultAssemblyReader
         {
             // TODO use ReaderFactory.newXmlReader() when plexus-utils is upgraded to 1.4.5+
             r = new InputStreamReader( new FileInputStream( descriptor ), "UTF-8" );
-            final Assembly assembly = readAssembly( r, descriptor.getAbsolutePath(), configSource );
+            final Assembly assembly =
+                readAssembly( r, descriptor.getAbsolutePath(), descriptor.getParentFile(), configSource );
 
             assemblies.add( assembly );
 
@@ -338,7 +318,15 @@ public class DefaultAssemblyReader
         {
             // TODO use ReaderFactory.newXmlReader() when plexus-utils is upgraded to 1.4.5+
             r = new InputStreamReader( location.getInputStream(), "UTF-8" );
-            final Assembly assembly = readAssembly( r, spec, configSource );
+
+            File dir = null;
+            if ( location.getFile() != null )
+            {
+                dir = location.getFile()
+                              .getParentFile();
+            }
+
+            final Assembly assembly = readAssembly( r, spec, dir, configSource );
 
             assemblies.add( assembly );
 
@@ -355,8 +343,8 @@ public class DefaultAssemblyReader
 
     }
 
-    public Assembly readAssembly( final Reader reader, final String locationDescription,
-                                  final AssemblerConfigurationSource configSource )
+    protected Assembly readAssembly( final Reader reader, final String locationDescription, final File assemblyDir,
+                                     final AssemblerConfigurationSource configSource )
         throws AssemblyReadException, InvalidAssemblerConfigurationException
     {
         Assembly assembly;
@@ -379,7 +367,7 @@ public class DefaultAssemblyReader
             final AssemblyXpp3Reader r = new AssemblyXpp3Reader();
             assembly = r.read( reader );
 
-            mergeComponentsWithMainAssembly( assembly, configSource );
+            mergeComponentsWithMainAssembly( assembly, assemblyDir, configSource );
 
             debugPrintAssembly( "Before assembly is interpolated:", assembly );
 
@@ -435,33 +423,26 @@ public class DefaultAssemblyReader
      * Add the contents of all included components to main assembly
      * 
      * @param assembly
+     * @param assemblyDir
      * @throws AssemblyReadException
      * @throws MojoFailureException
      * @throws MojoExecutionException
      */
-    protected void mergeComponentsWithMainAssembly( final Assembly assembly,
+    protected void mergeComponentsWithMainAssembly( final Assembly assembly, final File assemblyDir,
                                                     final AssemblerConfigurationSource configSource )
         throws AssemblyReadException
     {
-        final RelativeFileLocatorStrategy rfls = new RelativeFileLocatorStrategy( configSource.getBasedir() );
+        final Locator locator = new Locator();
+
+        if ( assemblyDir != null && assemblyDir.exists() && assemblyDir.isDirectory() )
+        {
+            locator.addStrategy( new RelativeFileLocatorStrategy( assemblyDir ) );
+        }
 
         // allow absolute paths in componentDescriptor... MASSEMBLY-486
-        final FileLocatorStrategy afls = new FileLocatorStrategy();
-
-        final ClasspathResourceLocatorStrategy crls = new ClasspathResourceLocatorStrategy();
-
-        final ArtifactLocatorStrategy als =
-            new ArtifactLocatorStrategy( factory, resolver, configSource.getLocalRepository(),
-                                         configSource.getRemoteRepositories(), "assembly-component" );
-
-        final URLLocatorStrategy uls = new URLLocatorStrategy();
-
-        final Locator locator = new Locator();
-        locator.addStrategy( rfls );
-        locator.addStrategy( afls );
-        locator.addStrategy( als );
-        locator.addStrategy( crls );
-        locator.addStrategy( uls );
+        locator.addStrategy( new RelativeFileLocatorStrategy( configSource.getBasedir() ) );
+        locator.addStrategy( new FileLocatorStrategy() );
+        locator.addStrategy( new ClasspathResourceLocatorStrategy() );
 
         final AssemblyExpressionEvaluator aee = new AssemblyExpressionEvaluator( configSource );
 
@@ -562,6 +543,12 @@ public class DefaultAssemblyReader
             final Repository repository = it.next();
 
             assembly.addRepository( repository );
+        }
+
+        final List<ModuleSet> moduleSets = component.getModuleSets();
+        for ( final ModuleSet moduleSet : moduleSets )
+        {
+            assembly.addModuleSet( moduleSet );
         }
     }
 

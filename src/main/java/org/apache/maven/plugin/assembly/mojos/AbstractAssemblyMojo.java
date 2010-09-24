@@ -155,7 +155,7 @@ public abstract class AbstractAssemblyMojo
     private String[] descriptorRefs;
 
     /**
-     * Directory to scan for descriptor files in.
+     * Directory to scan for descriptor files in. <b>NOTE:</b> This may not work correctly with assembly components.
      * 
      * @parameter
      */
