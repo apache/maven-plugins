@@ -55,6 +55,21 @@
       <version>1.0.0+</version>
       <fields>
         <field>
+          <name>moduleSets</name>
+          <version>1.1.2+</version>
+          <association>
+            <type>ModuleSet</type>
+            <multiplicity>*</multiplicity>
+          </association>
+          <description>
+            <![CDATA[
+            Specifies which module files to include in the assembly. A moduleSet
+            is specified by providing one or more of &lt;moduleSet&gt;
+            subelements.
+            ]]>
+          </description>
+        </field>
+        <field>
           <name>fileSets</name>
           <version>1.0.0+</version>
           <association>
@@ -649,6 +664,247 @@
             Configuration options for the handler.
           </description>
           <type>DOM</type>
+        </field>
+      </fields>
+    </class>
+    <class>
+      <name>ModuleSet</name>
+      <description>
+        <![CDATA[
+        A moduleSet represent one or more project &lt;module&gt; present inside
+        a project's pom.xml. This allows you to include sources or binaries
+        belonging to a project's &lt;modules&gt;.
+    
+        <br/><b>NOTE:</b> When using &lt;moduleSets&gt; from the command-line, it
+        is required to pass first the package phase by doing: "mvn package
+        assembly:assembly". This bug/issue is scheduled to be addressed by Maven 2.1.
+        ]]>
+      </description>
+      <version>1.0.0+</version>
+      <fields>
+        <field>
+          <name>useAllReactorProjects</name>
+          <version>1.1.2+</version>
+          <type>boolean</type>
+          <defaultValue>false</defaultValue>
+          <description>
+          If set to true, the plugin will include all projects in the current reactor for processing 
+          in this ModuleSet. These will be subject to include/exclude rules.
+          Default value is true. (Since 2.2-beta-6)
+          </description>
+        </field>
+        <field>
+          <name>includeSubModules</name>
+          <version>1.1.2+</version>
+          <type>boolean</type>
+          <defaultValue>true</defaultValue>
+          <description>
+          If set to false, the plugin will exclude sub-modules from processing in this ModuleSet.
+          Otherwise, it will process all sub-modules, each subject to include/exclude rules.
+          Default value is true. (Since 2.2)
+          </description>
+        </field>
+        <field>
+          <name>includes</name>
+          <version>1.1.2+</version>
+          <description>
+            <![CDATA[
+            This is a list of &lt;include/&gt; subelements, each containing a
+            module reference of the type groupId:artifactId. Modules matching
+            these elements will be included in this set. If none is present,
+            then &lt;includes&gt; represents all valid values.
+            ]]>
+          </description>
+          <association>
+            <type>String</type>
+            <multiplicity>*</multiplicity>
+          </association>
+        </field>
+        <field>
+          <name>excludes</name>
+          <version>1.1.2+</version>
+          <description>
+            <![CDATA[
+            This is a list of &lt;exclude/&gt; subelements, each containing a
+            module reference of the type groupId:artifactId. Modules matching
+            these elements will be excluded from this set.
+            ]]>
+          </description>
+          <association>
+            <type>String</type>
+            <multiplicity>*</multiplicity>
+          </association>
+        </field>
+        <field>
+          <name>sources</name>
+          <version>1.1.2+</version>
+          <description>
+            When this is present, the plugin will include the source files of
+            the included modules from this set in the resulting assembly.
+          </description>
+          <association>
+            <type>ModuleSources</type>
+          </association>
+        </field>
+        <field>
+          <name>binaries</name>
+          <version>1.1.2+</version>
+          <description>
+            When this is present, the plugin will include the binaries of the
+            included modules from this set in the resulting assembly.
+          </description>
+          <association>
+            <type>ModuleBinaries</type>
+          </association>
+        </field>
+      </fields>
+    </class>
+    
+    <class>
+      <name>ModuleSources</name>
+      <version>1.1.2+</version>
+      <superClass>SetBase</superClass>
+      <description>
+        Contains configuration options for including the source files of a
+        project module in an assembly.
+      </description>
+      <fields>
+        <field>
+          <name>fileSets</name>
+          <version>1.1.2+</version>
+          <association>
+            <type>FileSet</type>
+            <multiplicity>*</multiplicity>
+          </association>
+          <description>
+            <![CDATA[
+            Specifies which groups of files from each included module to include in the assembly. A
+            fileSet is specified by providing one or more of &lt;fileSet&gt; subelements. (Since 2.2)
+            ]]>
+          </description>
+        </field>
+        <field>
+          <name>includeModuleDirectory</name>
+          <version>1.1.2+</version>
+          <type>boolean</type>
+          <defaultValue>true</defaultValue>
+          <description>
+            <![CDATA[
+            Specifies whether the module's finalName should be prepended to the outputDirectory 
+            values of any fileSets applied to it. Default value is true. (Since 2.2)
+            ]]>
+          </description>
+        </field>
+        <field>
+          <name>excludeSubModuleDirectories</name>
+          <version>1.1.2+</version>
+          <type>boolean</type>
+          <defaultValue>true</defaultValue>
+          <description>
+            <![CDATA[
+            Specifies whether sub-module directories below the current module should be excluded
+            from fileSets applied to that module. This might be useful if you only mean to copy
+            the sources for the exact module list matched by this ModuleSet, ignoring (or processing
+            separately) the modules which exist in directories below the current one. 
+            Default value is true. (Since 2.2)
+            ]]>
+          </description>
+        </field>
+        <field>
+          <name>outputDirectoryMapping</name>
+          <version>1.1.2+</version>
+          <type>String</type>
+          <defaultValue>${module.artifactId}</defaultValue>
+          <description>
+            Sets the mapping pattern for all module base-directories included in this assembly.
+            NOTE: This field is only used if includeModuleDirectory == true.
+            Default is the module's ${artifactId} in 2.2-beta-1, and ${module.artifactId} in subsequent versions. (Since 2.2)
+          </description>
+        </field>
+      </fields>
+    </class>
+    
+    <class>
+      <name>ModuleBinaries</name>
+      <version>1.1.2+</version>
+      <superClass>SetBase</superClass>
+      <description>
+        Contains configuration options for including the binary files of a
+        project module in an assembly.
+      </description>
+      <fields>
+        <field>
+          <name>attachmentClassifier</name>
+          <version>1.1.2+</version>
+          <type>String</type>
+          <description>
+          When specified, the attachmentClassifier will cause the assembler to look at artifacts
+          attached to the module instead of the main project artifact. If it can find an attached
+          artifact matching the specified classifier, it will use it; otherwise, it will throw an
+          exception. (Since 2.2)
+          </description>
+        </field>
+        <field>
+          <name>includeDependencies</name>
+          <version>1.1.2+</version>
+          <type>boolean</type>
+          <defaultValue>true</defaultValue>
+          <description>
+          If set to true, the plugin will include the direct and transitive dependencies of
+          of the project modules included here.  Otherwise, it will only include the module
+          packages only. Default value is true.
+          </description>
+        </field>
+        <field>
+          <name>dependencySets</name>
+          <version>1.1.2+</version>
+          <association>
+            <type>DependencySet</type>
+            <multiplicity>*</multiplicity>
+          </association>
+          <description>
+            <![CDATA[
+            Specifies which dependencies of the module to include in the assembly. A
+            dependencySet is specified by providing one or more of
+            &lt;dependencySet&gt; subelements. (Since 2.2)
+            ]]>
+          </description>
+        </field>
+        <field>
+          <name>unpack</name>
+          <version>1.1.2+</version>
+          <type>boolean</type>
+          <defaultValue>true</defaultValue>
+          <description>
+            If set to true, this property will unpack all module packages
+            into the specified output directory. When set to false
+            module packages will be included as archives (jars).
+            Default value is true.
+          </description>
+        </field>
+        <field>
+          <name>unpackOptions</name>
+          <version>1.1.2+</version>
+          <description>
+          Allows the specification of includes and excludes, along with filtering options, for items
+          unpacked from a module artifact. (Since 2.2)
+          </description> 
+          <association>
+            <type>UnpackOptions</type>
+          </association>
+        </field>
+        <field>
+          <name>outputFileNameMapping</name>
+          <version>1.1.2+</version>
+          <type>String</type>
+          <defaultValue>${module.artifactId}-${module.version}${dashClassifier?}.${module.extension}</defaultValue>
+          <description>
+            Sets the mapping pattern for all NON-UNPACKED dependencies included
+            in this assembly.
+            Default is ${module.artifactId}-${module.version}${dashClassifier?}.${module.extension}.
+            (Since 2.2-beta-2; 2.2-beta-1 uses ${artifactId}-${version}${dashClassifier?}.${extension}) NOTE: If the 
+            dependencySet specifies unpack == true, outputFileNameMapping WILL NOT BE USED; in these cases, use outputDirectory.
+          </description>
         </field>
       </fields>
     </class>
