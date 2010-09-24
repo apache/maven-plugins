@@ -1,0 +1,1 @@
+return new java.io.File( basedir, "target/parent-1-src/src/main/assembly/src.xml" ).exists();
