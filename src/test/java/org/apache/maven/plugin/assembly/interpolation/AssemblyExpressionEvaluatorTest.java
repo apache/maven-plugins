@@ -19,11 +19,7 @@ package org.apache.maven.plugin.assembly.interpolation;
  * under the License.
  */
 
-import java.io.IOException;
-import java.util.Properties;
-
-import junit.framework.TestCase;
-
+import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Model;
@@ -37,14 +33,20 @@ import org.codehaus.plexus.logging.console.ConsoleLogger;
 import org.easymock.MockControl;
 import org.easymock.classextension.MockClassControl;
 
+import java.io.IOException;
+import java.util.Properties;
+
+import junit.framework.TestCase;
+
 public class AssemblyExpressionEvaluatorTest
     extends TestCase
 {
 
     private AssemblyInterpolator interpolator;
-    
-    private ConfigSourceStub configSourceStub = new ConfigSourceStub();
 
+    private final ConfigSourceStub configSourceStub = new ConfigSourceStub();
+
+    @Override
     public void setUp()
         throws IOException
     {
@@ -56,15 +58,15 @@ public class AssemblyExpressionEvaluatorTest
     public void testShouldResolveModelGroupId()
         throws ExpressionEvaluationException
     {
-        Model model = new Model();
+        final Model model = new Model();
         model.setArtifactId( "artifact-id" );
         model.setGroupId( "group.id" );
         model.setVersion( "1" );
         model.setPackaging( "jar" );
-        
+
         configSourceStub.setProject( new MavenProject( model ) );
-        
-        Object result = new AssemblyExpressionEvaluator( configSourceStub ).evaluate( "assembly.${groupId}" );
+
+        final Object result = new AssemblyExpressionEvaluator( configSourceStub ).evaluate( "assembly.${groupId}" );
 
         assertEquals( "assembly.group.id", result );
     }
@@ -72,20 +74,20 @@ public class AssemblyExpressionEvaluatorTest
     public void testShouldResolveModelPropertyBeforeModelGroupId()
         throws ExpressionEvaluationException
     {
-        Model model = new Model();
+        final Model model = new Model();
         model.setArtifactId( "artifact-id" );
         model.setGroupId( "group.id" );
         model.setVersion( "1" );
         model.setPackaging( "jar" );
 
-        Properties props = new Properties();
+        final Properties props = new Properties();
         props.setProperty( "groupId", "other.id" );
 
         model.setProperties( props );
 
         configSourceStub.setProject( new MavenProject( model ) );
-        
-        Object result = new AssemblyExpressionEvaluator( configSourceStub ).evaluate( "assembly.${groupId}" );
+
+        final Object result = new AssemblyExpressionEvaluator( configSourceStub ).evaluate( "assembly.${groupId}" );
 
         assertEquals( "assembly.other.id", result );
     }
@@ -93,47 +95,57 @@ public class AssemblyExpressionEvaluatorTest
     public void testShouldResolveContextValueBeforeModelPropertyOrModelGroupIdInAssemblyId()
         throws ExpressionEvaluationException
     {
-        Model model = new Model();
+        final Model model = new Model();
         model.setArtifactId( "artifact-id" );
         model.setGroupId( "group.id" );
         model.setVersion( "1" );
         model.setPackaging( "jar" );
 
-        Properties props = new Properties();
+        final Properties props = new Properties();
         props.setProperty( "groupId", "other.id" );
 
         model.setProperties( props );
 
-        MockManager mm = new MockManager();
-        
-        MockControl sessionControl = MockClassControl.createControl( MavenSession.class );
-        MavenSession session = (MavenSession) sessionControl.getMock();
-        
+        final MockManager mm = new MockManager();
+
+        final MockControl sessionControl = MockClassControl.createControl( MavenSession.class );
+        final MavenSession session = (MavenSession) sessionControl.getMock();
+
         mm.add( sessionControl );
-        
-        Properties execProps = new Properties();
+
+        final Properties execProps = new Properties();
         execProps.setProperty( "groupId", "still.another.id" );
-        
+
         session.getExecutionProperties();
         sessionControl.setReturnValue( execProps, MockControl.ZERO_OR_MORE );
-        
-        MockControl csControl = MockControl.createControl( AssemblerConfigurationSource.class );
-        AssemblerConfigurationSource cs = (AssemblerConfigurationSource) csControl.getMock();
-        
+
+        final MockControl csControl = MockControl.createControl( AssemblerConfigurationSource.class );
+        final AssemblerConfigurationSource cs = (AssemblerConfigurationSource) csControl.getMock();
+
         mm.add( csControl );
-        
+
         cs.getMavenSession();
         csControl.setReturnValue( session, MockControl.ZERO_OR_MORE );
-        
+
         cs.getProject();
         csControl.setReturnValue( new MavenProject( model ), MockControl.ZERO_OR_MORE );
-        
+
+        final MockControl lrCtl = MockControl.createControl( ArtifactRepository.class );
+        final ArtifactRepository lr = (ArtifactRepository) lrCtl.getMock();
+        mm.add( lrCtl );
+
+        lr.getBasedir();
+        lrCtl.setReturnValue( "/path/to/local/repo", MockControl.ZERO_OR_MORE );
+
+        cs.getLocalRepository();
+        csControl.setReturnValue( lr, MockControl.ZERO_OR_MORE );
+
         mm.replayAll();
 
-        Object result = new AssemblyExpressionEvaluator( cs ).evaluate( "assembly.${groupId}" );
+        final Object result = new AssemblyExpressionEvaluator( cs ).evaluate( "assembly.${groupId}" );
 
         assertEquals( "assembly.still.another.id", result );
-        
+
         mm.verifyAll();
         mm.clear();
     }
@@ -141,15 +153,15 @@ public class AssemblyExpressionEvaluatorTest
     public void testShouldReturnUnchangedInputForUnresolvedExpression()
         throws ExpressionEvaluationException
     {
-        Model model = new Model();
+        final Model model = new Model();
         model.setArtifactId( "artifact-id" );
         model.setGroupId( "group.id" );
         model.setVersion( "1" );
         model.setPackaging( "jar" );
-        
+
         configSourceStub.setProject( new MavenProject( model ) );
 
-        Object result = new AssemblyExpressionEvaluator( configSourceStub ).evaluate( "assembly.${unresolved}" );
+        final Object result = new AssemblyExpressionEvaluator( configSourceStub ).evaluate( "assembly.${unresolved}" );
 
         assertEquals( "assembly.${unresolved}", result );
     }
@@ -157,17 +169,18 @@ public class AssemblyExpressionEvaluatorTest
     public void testShouldInterpolateMultiDotProjectExpression()
         throws ExpressionEvaluationException
     {
-        Build build = new Build();
+        final Build build = new Build();
         build.setFinalName( "final-name" );
 
-        Model model = new Model();
+        final Model model = new Model();
         model.setBuild( build );
 
         configSourceStub.setProject( new MavenProject( model ) );
 
-        Object result = new AssemblyExpressionEvaluator( configSourceStub ).evaluate( "assembly.${project.build.finalName}" );
+        final Object result =
+            new AssemblyExpressionEvaluator( configSourceStub ).evaluate( "assembly.${project.build.finalName}" );
 
         assertEquals( "assembly.final-name", result );
     }
-    
+
 }

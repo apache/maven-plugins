@@ -11,6 +11,8 @@ public final class InterpolationConstants
 
     public static final List<String> PROJECT_PROPERTIES_PREFIXES;
 
+    public static final String SETTINGS_PREFIX = "settings.";
+
     static
     {
         final List<String> projectPrefixes = new ArrayList<String>();

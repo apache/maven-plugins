@@ -19,6 +19,7 @@ package org.apache.maven.plugin.assembly.interpolation;
  * under the License.
  */
 
+import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Model;
@@ -48,7 +49,8 @@ public class AssemblyInterpolatorTest
     private final AssemblerConfigurationSource configSourceStub = new ConfigSourceStub();
 
     @Override
-    public void setUp() throws IOException
+    public void setUp()
+        throws IOException
     {
         interpolator = new AssemblyInterpolator();
 
@@ -86,7 +88,8 @@ public class AssemblyInterpolatorTest
         assertEquals( "${artifactId}.${packaging}", outputSet.getOutputFileNameMapping() );
     }
 
-    public void testDependencySetOutputDirectoryIsNotInterpolated() throws IOException, AssemblyInterpolationException
+    public void testDependencySetOutputDirectoryIsNotInterpolated()
+        throws IOException, AssemblyInterpolationException
     {
         final Model model = new Model();
         model.setArtifactId( "artifact-id" );
@@ -114,7 +117,8 @@ public class AssemblyInterpolatorTest
         assertEquals( "${artifactId}.${packaging}", outputSet.getOutputDirectory() );
     }
 
-    public void testShouldResolveModelGroupIdInAssemblyId() throws AssemblyInterpolationException
+    public void testShouldResolveModelGroupIdInAssemblyId()
+        throws AssemblyInterpolationException
     {
         final Model model = new Model();
         model.setArtifactId( "artifact-id" );
@@ -131,7 +135,8 @@ public class AssemblyInterpolatorTest
         assertEquals( "assembly.group.id", result.getId() );
     }
 
-    public void testShouldResolveModelPropertyBeforeModelGroupIdInAssemblyId() throws AssemblyInterpolationException
+    public void testShouldResolveModelPropertyBeforeModelGroupIdInAssemblyId()
+        throws AssemblyInterpolationException
     {
         final Model model = new Model();
         model.setArtifactId( "artifact-id" );
@@ -189,6 +194,16 @@ public class AssemblyInterpolatorTest
 
         mm.add( csControl );
 
+        final MockControl lrCtl = MockControl.createControl( ArtifactRepository.class );
+        final ArtifactRepository lr = (ArtifactRepository) lrCtl.getMock();
+        mm.add( lrCtl );
+
+        lr.getBasedir();
+        lrCtl.setReturnValue( "/path/to/local/repo", MockControl.ZERO_OR_MORE );
+
+        cs.getLocalRepository();
+        csControl.setReturnValue( lr, MockControl.ZERO_OR_MORE );
+
         cs.getMavenSession();
         csControl.setReturnValue( session, MockControl.ZERO_OR_MORE );
 
@@ -202,7 +217,8 @@ public class AssemblyInterpolatorTest
         mm.clear();
     }
 
-    public void testShouldNotTouchUnresolvedExpression() throws AssemblyInterpolationException
+    public void testShouldNotTouchUnresolvedExpression()
+        throws AssemblyInterpolationException
     {
         final Model model = new Model();
         model.setArtifactId( "artifact-id" );
@@ -219,7 +235,8 @@ public class AssemblyInterpolatorTest
         assertEquals( "assembly.${unresolved}", result.getId() );
     }
 
-    public void testShouldInterpolateMultiDotProjectExpression() throws AssemblyInterpolationException
+    public void testShouldInterpolateMultiDotProjectExpression()
+        throws AssemblyInterpolationException
     {
         final Build build = new Build();
         build.setFinalName( "final-name" );
