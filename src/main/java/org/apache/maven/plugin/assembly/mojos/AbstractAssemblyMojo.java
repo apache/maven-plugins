@@ -59,7 +59,7 @@ public abstract class AbstractAssemblyMojo
      * Flag allowing one or more executions of the assembly plugin to be configured as skipped for a particular build.
      * This makes the assembly plugin more controllable from profiles.
      * 
-     * @parameter expression="${skipAssembly}" default-value="false"
+     * @parameter expression="${assembly.skipAssembly}" default-value="false"
      */
     private boolean skipAssembly;
 
@@ -191,7 +191,7 @@ public abstract class AbstractAssemblyMojo
      * Sets the TarArchiver behavior on file paths with more than 100 characters length. Valid values are: "warn"
      * (default), "fail", "truncate", "gnu", or "omit".
      * 
-     * @parameter expression="${tarLongFileMode}" default-value="warn"
+     * @parameter expression="${assembly.tarLongFileMode}" default-value="warn"
      */
     private String tarLongFileMode;
 
@@ -221,7 +221,7 @@ public abstract class AbstractAssemblyMojo
     /**
      * The Maven Session Object
      * 
-     * @parameter expression="${session}"
+     * @parameter default-value="${session}"
      * @required
      * @readonly
      */
@@ -256,14 +256,14 @@ public abstract class AbstractAssemblyMojo
     /**
      * Set to false to exclude the assembly id from the assembly final name.
      * 
-     * @parameter expression="${appendAssemblyId}" default-value="true"
+     * @parameter expression="${assembly.appendAssemblyId}" default-value="true"
      */
     protected boolean appendAssemblyId;
 
     /**
      * Set to true in order to not fail when a descriptor is missing.
      * 
-     * @parameter expression="${ignoreMissingDescriptor}" default-value="false"
+     * @parameter expression="${assembly.ignoreMissingDescriptor}" default-value="false"
      */
     protected boolean ignoreMissingDescriptor;
 
@@ -283,7 +283,7 @@ public abstract class AbstractAssemblyMojo
     /**
      * Controls whether the assembly plugin tries to attach the resulting assembly to the project.
      * 
-     * @parameter expression="${attach}" default-value="true"
+     * @parameter expression="${assembly.attach}" default-value="true"
      * @since 2.2-beta-1
      */
     private boolean attach;
@@ -318,10 +318,18 @@ public abstract class AbstractAssemblyMojo
      * This will cause the assembly to run only at the top of a given module tree. That is, run in the project contained
      * in the same folder where the mvn execution was launched.
      * 
-     * @parameter expression="${runOnlyAtExecutionRoot}" default-value="false"
+     * @parameter expression="${assembly.runOnlyAtExecutionRoot}" default-value="false"
      * @since 2.2-beta-4
      */
     private boolean runOnlyAtExecutionRoot;
+
+    /**
+     * This will cause the assembly to only update an existing archive, if it exists.
+     * 
+     * @parameter expression="${assembly.updatOnly}" default-value="false"
+     * @since 2.2-beta-6
+     */
+    private boolean updateOnly;
 
     /**
      * Create the binary distribution.
@@ -775,5 +783,10 @@ public abstract class AbstractAssemblyMojo
     public MavenFileFilter getMavenFileFilter()
     {
         return mavenFileFilter;
+    }
+
+    public boolean isUpdateOnly()
+    {
+        return updateOnly;
     }
 }

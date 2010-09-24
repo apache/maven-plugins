@@ -168,4 +168,9 @@ public class ConfigSourceStub
         project = mavenProject;
     }
 
+    public boolean isUpdateOnly()
+    {
+        return false;
+    }
+
 }
