@@ -19,6 +19,11 @@ package org.apache.maven.plugin.assembly.archive;
  * under the License.
  */
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
+
 import org.apache.maven.model.Model;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.AssemblyContext;
@@ -32,7 +37,9 @@ import org.apache.maven.plugin.assembly.model.Assembly;
 import org.apache.maven.plugin.assembly.testutils.MockManager;
 import org.apache.maven.plugin.assembly.testutils.TestFileManager;
 import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.PlexusTestCase;
+import org.codehaus.plexus.DefaultPlexusContainer;
+import org.codehaus.plexus.PlexusContainer;
+import org.codehaus.plexus.PlexusContainerException;
 import org.codehaus.plexus.archiver.ArchivedFileSet;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
@@ -51,6 +58,9 @@ import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.logging.console.ConsoleLogger;
 import org.codehaus.plexus.util.FileUtils;
 import org.easymock.MockControl;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
@@ -62,19 +72,56 @@ import java.util.Map;
 import junit.framework.Assert;
 
 public class DefaultAssemblyArchiverTest
-    extends PlexusTestCase
+// extends PlexusTestCase
 {
 
-    private final TestFileManager fileManager = new TestFileManager( "def-assy-archiver.test.", "" );
+    private static final TestFileManager fileManager = new TestFileManager( "def-assy-archiver.test.", "" );
 
-    @Override
-    public void tearDown()
+    private PlexusContainer container;
+
+    @Before
+    public void setup()
+        throws PlexusContainerException
+    {
+        container = new DefaultPlexusContainer();
+        container.initialize();
+        container.start();
+    }
+
+    public void shutdown()
+    {
+        container.dispose();
+    }
+
+    // @Override
+    @AfterClass
+    public static void tearDown()
         throws Exception
     {
         fileManager.cleanUp();
-        super.tearDown();
     }
 
+    @Test( expected = InvalidAssemblerConfigurationException.class )
+    public void failWhenAssemblyIdIsNull()
+        throws ArchiveCreationException, AssemblyFormattingException, InvalidAssemblerConfigurationException
+    {
+        final MockManager mm = new MockManager();
+        final MockAndControlForAssemblyArchiver macMgr = new MockAndControlForAssemblyArchiver( mm );
+
+        final MockControl csControl = MockControl.createControl( AssemblerConfigurationSource.class );
+        mm.add( csControl );
+
+        final AssemblerConfigurationSource configSource = (AssemblerConfigurationSource) csControl.getMock();
+
+        mm.replayAll();
+
+        final DefaultAssemblyArchiver archiver = createSubject( macMgr, null, null );
+        archiver.createArchive( new Assembly(), "full-name", "zip", configSource );
+
+        mm.verifyAll();
+    }
+
+    @Test
     public void testCreateArchive()
         throws ArchiveCreationException, AssemblyFormattingException, InvalidAssemblerConfigurationException,
         IOException
@@ -144,6 +191,8 @@ public class DefaultAssemblyArchiverTest
         csControl.setReturnValue( false, MockControl.ZERO_OR_MORE );
 
         final Assembly assembly = new Assembly();
+        assembly.setId( "id" );
+
         final AssemblyContext context = new DefaultAssemblyContext();
 
         try
@@ -165,6 +214,7 @@ public class DefaultAssemblyArchiverTest
         mm.verifyAll();
     }
 
+    @Test
     public void testCreateArchiver_ShouldConfigureArchiver()
         throws NoSuchArchiverException, ArchiverException
     {
@@ -216,6 +266,7 @@ public class DefaultAssemblyArchiverTest
         mm.verifyAll();
     }
 
+    @Test
     public void testCreateArchiver_ShouldCreateTarArchiverWithNoCompression()
         throws NoSuchArchiverException, ArchiverException
     {
@@ -266,6 +317,7 @@ public class DefaultAssemblyArchiverTest
         mm.verifyAll();
     }
 
+    @Test
     public void testCreateArchiver_ShouldCreateWarArchiverWithIgnoreWebxmlSetToFalse()
         throws NoSuchArchiverException, ArchiverException
     {
@@ -310,6 +362,7 @@ public class DefaultAssemblyArchiverTest
         assertFalse( twArchiver.ignoreWebxml );
     }
 
+    @Test
     public void testCreateArchiver_ShouldCreateZipArchiver()
         throws NoSuchArchiverException, ArchiverException
     {
@@ -450,6 +503,7 @@ public class DefaultAssemblyArchiverTest
     // mm.verifyAll();
     // }
 
+    @Test
     public void testCreateWarArchiver_ShouldDisableIgnoreWebxmlOption()
         throws NoSuchArchiverException
     {
@@ -471,6 +525,7 @@ public class DefaultAssemblyArchiverTest
         assertFalse( twArchiver.ignoreWebxml );
     }
 
+    @Test
     public void testCreateTarArchiver_ShouldNotInitializeCompression()
         throws NoSuchArchiverException, ArchiverException
     {
@@ -495,6 +550,7 @@ public class DefaultAssemblyArchiverTest
         mm.verifyAll();
     }
 
+    @Test
     public void testCreateTarArchiver_ShouldInitializeGZipCompression()
         throws NoSuchArchiverException, ArchiverException
     {
@@ -519,6 +575,7 @@ public class DefaultAssemblyArchiverTest
         mm.verifyAll();
     }
 
+    @Test
     public void testCreateTarArchiver_ShouldInitializeBZipCompression()
         throws NoSuchArchiverException, ArchiverException
     {
@@ -543,6 +600,7 @@ public class DefaultAssemblyArchiverTest
         mm.verifyAll();
     }
 
+    @Test
     public void testCreateTarArchiver_ShouldFailWithInvalidCompression()
         throws NoSuchArchiverException, ArchiverException
     {
@@ -579,7 +637,7 @@ public class DefaultAssemblyArchiverTest
         final DefaultAssemblyArchiver subject =
             new DefaultAssemblyArchiver( macMgr.archiverManager, macMgr.dependencyResolver, phases );
 
-        subject.setContainer( getContainer() );
+        subject.setContainer( container );
 
         if ( logger == null )
         {
