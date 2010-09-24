@@ -89,4 +89,6 @@ public interface AssemblerConfigurationSource
     String getArchiverConfig();
 
     MavenFileFilter getMavenFileFilter();
+
+    boolean isUpdateOnly();
 }

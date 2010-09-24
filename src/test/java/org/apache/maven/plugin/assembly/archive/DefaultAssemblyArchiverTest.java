@@ -140,6 +140,9 @@ public class DefaultAssemblyArchiverTest
         configSource.getWorkingDirectory();
         csControl.setReturnValue( new File( "." ), MockControl.ZERO_OR_MORE );
 
+        configSource.isUpdateOnly();
+        csControl.setReturnValue( false, MockControl.ZERO_OR_MORE );
+
         final Assembly assembly = new Assembly();
         final AssemblyContext context = new DefaultAssemblyContext();
 
@@ -196,6 +199,9 @@ public class DefaultAssemblyArchiverTest
         configSource.getWorkingDirectory();
         configCtl.setReturnValue( new File( "." ), MockControl.ZERO_OR_MORE );
 
+        configSource.isUpdateOnly();
+        configCtl.setReturnValue( false, MockControl.ZERO_OR_MORE );
+
         mm.add( configCtl );
 
         mm.replayAll();
@@ -242,6 +248,9 @@ public class DefaultAssemblyArchiverTest
         configSource.getWorkingDirectory();
         configCtl.setReturnValue( new File( "." ), MockControl.ZERO_OR_MORE );
 
+        configSource.isUpdateOnly();
+        configCtl.setReturnValue( false, MockControl.ZERO_OR_MORE );
+
         mm.add( configCtl );
 
         mm.replayAll();
@@ -286,6 +295,9 @@ public class DefaultAssemblyArchiverTest
         configSource.getWorkingDirectory();
         configCtl.setReturnValue( new File( "." ), MockControl.ZERO_OR_MORE );
 
+        configSource.isUpdateOnly();
+        configCtl.setReturnValue( false, MockControl.ZERO_OR_MORE );
+
         mm.add( configCtl );
 
         mm.replayAll();
@@ -320,6 +332,9 @@ public class DefaultAssemblyArchiverTest
 
         configSource.getWorkingDirectory();
         configCtl.setReturnValue( new File( "." ), MockControl.ZERO_OR_MORE );
+
+        configSource.isUpdateOnly();
+        configCtl.setReturnValue( false, MockControl.ZERO_OR_MORE );
 
         mm.add( configCtl );
 
@@ -618,6 +633,10 @@ public class DefaultAssemblyArchiverTest
             mm.add( archiverControl );
 
             archiver = (Archiver) archiverControl.getMock();
+
+            archiver.setForced( false );
+            archiverControl.setMatcher( MockControl.ALWAYS_MATCHER );
+            archiverControl.setVoidCallable( MockControl.ZERO_OR_MORE );
         }
 
         // void expectSetArchiverFilters()

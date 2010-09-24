@@ -320,6 +320,8 @@ public class DefaultAssemblyArchiver
             new AssemblyProxyArchiver( prefix, archiver, containerHandlers, extraSelectors, extraFinalizers,
                                        configSource.getWorkingDirectory(), getLogger(), configSource.isDryRun() );
 
+        archiver.setForced( !configSource.isUpdateOnly() );
+
         return archiver;
     }
 
