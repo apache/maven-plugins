@@ -151,18 +151,6 @@
       <version>1.0.0+</version>
       <fields>
         <field>
-          <name>useStrictFiltering</name>
-          <version>1.1.0+</version>
-          <type>boolean</type>
-          <defaultValue>false</defaultValue>
-          <description>
-          When specified as true, any include/exclude patterns which aren't used to filter an actual
-          artifact during assembly creation will cause the build to fail with an error. This is meant
-          to highlight obsolete inclusions or exclusions, or else signal that the assembly descriptor
-          is incorrectly configured.
-          </description>
-        </field>
-        <field>
           <name>useDefaultExcludes</name>
           <version>1.1.0+</version>
           <type>boolean</type>
@@ -391,6 +379,18 @@
         in the assembly.
       </description>
       <fields>
+        <field>
+          <name>useStrictFiltering</name>
+          <version>1.1.2+</version>
+          <type>boolean</type>
+          <defaultValue>false</defaultValue>
+          <description>
+          When specified as true, any include/exclude patterns which aren't used to filter an actual
+          artifact during assembly creation will cause the build to fail with an error. This is meant
+          to highlight obsolete inclusions or exclusions, or else signal that the assembly descriptor
+          is incorrectly configured. (Since 2.2)
+          </description>
+        </field>
         <field>
           <name>outputFileNameMapping</name>
           <version>1.0.0+</version>

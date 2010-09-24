@@ -302,7 +302,6 @@ public class AddDependencySetsTask
 
         fs.setLineEnding( opts.getLineEnding() );
         fs.setUseDefaultExcludes( opts.isUseDefaultExcludes() );
-        fs.setUseStrictFiltering( opts.isUseStrictFiltering() );
 
         final AddFileSetsTask task = new AddFileSetsTask( fs );
         task.setProject( depProject );
