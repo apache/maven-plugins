@@ -1,0 +1,122 @@
+ ------
+ Custom resource filters
+ ------
+ Olivier Lamy
+ ------
+ 2010-09-24
+ ------
+
+~~ Licensed to the Apache Software Foundation (ASF) under one
+~~ or more contributor license agreements.  See the NOTICE file
+~~ distributed with this work for additional information
+~~ regarding copyright ownership.  The ASF licenses this file
+~~ to you under the Apache License, Version 2.0 (the
+~~ "License"); you may not use this file except in compliance
+~~ with the License.  You may obtain a copy of the License at
+~~
+~~   http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~ Unless required by applicable law or agreed to in writing,
+~~ software distributed under the License is distributed on an
+~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+~~ KIND, either express or implied.  See the License for the
+~~ specific language governing permissions and limitations
+~~ under the License.
+
+~~ NOTE: For help with the syntax of this file, see:
+~~ http://maven.apache.org/doxia/references/apt-format.html
+
+Custom resource filters
+
+ With version 2.5 you are now able to build your own custom resources filter(s).
+ 
+ Your custom resources filter classes must implements 
+ {{{http://maven.apache.org/shared/maven-filtering/apidocs/org/apache/maven/shared/filtering/MavenResourcesFiltering.html}org.apache.maven.shared.filtering.MavenResourcesFiltering}}.
+ 
+* Custom Resource Filter Implementation
+
+ Your custom resources filter classes must be marked as a Plexus Component. Below a sample with a roleHint itFilter.
+
++-----+
+
+/**
+ * @plexus.component role="org.apache.maven.shared.filtering.MavenResourcesFiltering" 
+ *                   role-hint="itFilter"
+ */
+public class ItFilter
+    implements MavenResourcesFiltering
+
++-----+ 
+
+ Then you must activate in your build the mojo which will scan javadoc annotations to transform thoses to plexus component metadata.
+ 
++-----+
+
+  <plugin>
+    <groupId>org.codehaus.plexus</groupId>
+    <artifactId>plexus-maven-plugin</artifactId>
+    <version>1.3.4</version>
+    <executions>
+      <execution>
+        <goals>
+          <goal>descriptor</goal>
+        </goals>
+      </execution>
+    </executions>
+  </plugin>
+
++-----+ 
+ 
+* Dependency declaration 
+ 
+ Your classes must be available in the maven-resources-plugin classpath, this can be done with adding your artifact to the plugin dependencies. 
+ 
++-----+
+<project>
+  ...
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>${project.version}</version>
+        <configuration>
+          ...
+          <dependencies>
+            <dependency>
+              <groupId>custom resources filters artifact groupId</groupId>
+              <artifactId>custom resources filters artifact artifactId</artifactId>
+              <version>custom resources filters artifact version</version>
+            </dependency>
+          </dependencies>
+          ...
+        </configuration>
+      </plugin>
+    </plugins>
+    ...
+  </build>
+  ...
+</project>
++-----+ 
+ 
+* Use of your Custom Resource Filter with the maven-resources-plugin
+
+ You must now declare you custom filter in the plugin. mavenFilteringHint must respect same syntax as your Plexus Component roleHint.
+ 
++-----+
+  <plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-resources-plugin</artifactId>
+    <version>@pom.version@</version>
+    <configuration>
+      ...
+      <mavenFilteringHints>
+        <mavenFilteringHint>itFilter</mavenFilteringHint>
+      </mavenFilteringHints>
+     </configuration>
+     ...
+   </configuration>
+ </plugin>
++-----+ 
+  
+ And that's it !
