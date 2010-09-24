@@ -76,6 +76,8 @@ public class AssemblyProxyArchiver
 
     private final boolean dryRun;
 
+    private boolean forced;
+
     private final Set<String> seenPaths = new HashSet<String>();
 
     private final String assemblyWorkPath;
@@ -501,6 +503,7 @@ public class AssemblyProxyArchiver
             }
             else
             {
+                delegate.setForced( forced );
                 delegate.createArchive();
             }
         }
@@ -646,6 +649,7 @@ public class AssemblyProxyArchiver
         inPublicApi.set( Boolean.TRUE );
         try
         {
+            this.forced = forced;
             delegate.setForced( forced );
         }
         finally
