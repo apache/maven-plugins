@@ -92,12 +92,14 @@ public class DefaultAssemblyReaderTest
     }
 
     @Override
-    public void tearDown() throws IOException
+    public void tearDown()
+        throws IOException
     {
         fileManager.cleanUp();
     }
 
-    public void testIncludeSiteInAssembly_ShouldFailIfSiteDirectoryNonExistent() throws IOException
+    public void testIncludeSiteInAssembly_ShouldFailIfSiteDirectoryNonExistent()
+        throws IOException
     {
         final File siteDir = File.createTempFile( "assembly-reader.", ".test" );
         siteDir.delete();
@@ -504,7 +506,7 @@ public class DefaultAssemblyReaderTest
 
         mockManager.replayAll();
 
-        new DefaultAssemblyReader().mergeComponentsWithMainAssembly( assembly, configSource );
+        new DefaultAssemblyReader().mergeComponentsWithMainAssembly( assembly, null, configSource );
 
         final List<FileSet> fileSets = assembly.getFileSets();
 
@@ -551,7 +553,7 @@ public class DefaultAssemblyReaderTest
 
         mockManager.replayAll();
 
-        final Assembly result = new DefaultAssemblyReader().readAssembly( sr, "testLocation", configSource );
+        final Assembly result = new DefaultAssemblyReader().readAssembly( sr, "testLocation", null, configSource );
 
         assertEquals( assembly.getId(), result.getId() );
 
@@ -598,7 +600,7 @@ public class DefaultAssemblyReaderTest
 
         mockManager.replayAll();
 
-        final Assembly result = new DefaultAssemblyReader().readAssembly( sr, "testLocation", configSource );
+        final Assembly result = new DefaultAssemblyReader().readAssembly( sr, "testLocation", null, configSource );
 
         assertEquals( assembly.getId(), result.getId() );
 
@@ -650,7 +652,7 @@ public class DefaultAssemblyReaderTest
 
         mockManager.replayAll();
 
-        final Assembly result = new DefaultAssemblyReader().readAssembly( sr, "testLocation", configSource );
+        final Assembly result = new DefaultAssemblyReader().readAssembly( sr, "testLocation", null, configSource );
 
         assertEquals( assembly.getId(), result.getId() );
 
@@ -720,7 +722,7 @@ public class DefaultAssemblyReaderTest
 
         mockManager.replayAll();
 
-        final Assembly result = new DefaultAssemblyReader().readAssembly( sr, "testLocation", configSource );
+        final Assembly result = new DefaultAssemblyReader().readAssembly( sr, "testLocation", null, configSource );
 
         assertEquals( assembly.getId(), result.getId() );
 
@@ -791,7 +793,7 @@ public class DefaultAssemblyReaderTest
 
         mockManager.replayAll();
 
-        final Assembly result = new DefaultAssemblyReader().readAssembly( sr, "testLocation", configSource );
+        final Assembly result = new DefaultAssemblyReader().readAssembly( sr, "testLocation", null, configSource );
 
         assertEquals( assembly.getId(), result.getId() );
 
@@ -838,7 +840,7 @@ public class DefaultAssemblyReaderTest
 
         mockManager.replayAll();
 
-        final Assembly result = new DefaultAssemblyReader().readAssembly( sr, "testLocation", configSource );
+        final Assembly result = new DefaultAssemblyReader().readAssembly( sr, "testLocation", null, configSource );
 
         assertEquals( "group-assembly", result.getId() );
 
@@ -1112,7 +1114,8 @@ public class DefaultAssemblyReaderTest
         assertEquals( assembly2.getId(), result2.getId() );
     }
 
-    private List<String> writeAssembliesToFile( final List<Assembly> assemblies, final File dir ) throws IOException
+    private List<String> writeAssembliesToFile( final List<Assembly> assemblies, final File dir )
+        throws IOException
     {
         final List<String> files = new ArrayList<String>();
 

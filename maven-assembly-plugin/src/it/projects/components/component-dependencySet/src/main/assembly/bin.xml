@@ -1,0 +1,9 @@
+<assembly>
+  <id>bin</id>
+  <formats>
+    <format>dir</format>
+  </formats>
+  <componentDescriptors>
+    <componentDescriptor>src/main/assembly/depset.xml</componentDescriptor>
+  </componentDescriptors>
+</assembly>

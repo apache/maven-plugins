@@ -25,7 +25,6 @@ import org.apache.maven.plugin.assembly.InvalidAssemblerConfigurationException;
 import org.apache.maven.plugin.assembly.model.Assembly;
 
 import java.io.File;
-import java.io.Reader;
 import java.util.List;
 
 /**
@@ -41,9 +40,6 @@ public interface AssemblyReader
         throws AssemblyReadException, InvalidAssemblerConfigurationException;
 
     public Assembly getAssemblyFromDescriptorFile( File file, AssemblerConfigurationSource configSource )
-        throws AssemblyReadException, InvalidAssemblerConfigurationException;
-
-    public Assembly readAssembly( Reader reader, String locationDescription, AssemblerConfigurationSource configSource )
         throws AssemblyReadException, InvalidAssemblerConfigurationException;
 
     public void includeSiteInAssembly( Assembly assembly, AssemblerConfigurationSource configSource )
