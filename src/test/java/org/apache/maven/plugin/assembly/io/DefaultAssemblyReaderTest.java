@@ -65,6 +65,10 @@ public class DefaultAssemblyReaderTest
 
     private AssemblerConfigurationSource configSource;
 
+    private ArtifactRepository localRepo;
+
+    private MockControl localRepoControl;
+
     @Override
     public void setUp()
     {
@@ -76,10 +80,12 @@ public class DefaultAssemblyReaderTest
 
         configSource = (AssemblerConfigurationSource) configSourceControl.getMock();
 
-        final MockControl localRepoControl = MockControl.createControl( ArtifactRepository.class );
-        final ArtifactRepository localRepo = (ArtifactRepository) localRepoControl.getMock();
-
+        localRepoControl = MockControl.createControl( ArtifactRepository.class );
+        localRepo = (ArtifactRepository) localRepoControl.getMock();
         mockManager.add( localRepoControl );
+
+        localRepo.getBasedir();
+        localRepoControl.setReturnValue( "/path/to/local/repo", MockControl.ZERO_OR_MORE );
 
         configSource.getLocalRepository();
         configSourceControl.setReturnValue( localRepo, MockControl.ZERO_OR_MORE );
