@@ -144,7 +144,15 @@ public final class ProjectUtils
 
         if ( moduleBasedir == null )
         {
-            moduleBasedir = new File( "." );
+            if ( moduleFile != null )
+            {
+                moduleBasedir = moduleFile.getParentFile();
+            }
+
+            if ( moduleBasedir == null )
+            {
+                moduleBasedir = new File( "." );
+            }
         }
 
         moduleBasedir = moduleBasedir.getCanonicalFile();
