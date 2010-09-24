@@ -53,7 +53,6 @@ public abstract class AbstractSiteDeployWebDavTest
             siteTargetPath.mkdirs();
             FileUtils.cleanDirectory( siteTargetPath );
         }
-        getContainer().getLoggerManager().setThreshold( com.jcraft.jsch.Logger.DEBUG );
     }
     
     abstract String getMojoName();

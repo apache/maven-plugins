@@ -30,6 +30,7 @@ import org.apache.maven.artifact.repository.RepositoryRequest;
 import org.apache.maven.artifact.resolver.filter.ExclusionSetFilter;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.lifecycle.LifecycleExecutor;
+import org.apache.maven.model.Model;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.plugin.MavenPluginManager;
 import org.apache.maven.plugin.Mojo;
@@ -123,7 +124,7 @@ public class DefaultMavenReportExecutor
                                                                "org.apache.maven.doxia.sink.SinkEventAttributes" );
 
     private static final Set<String> EXCLUDES = new HashSet<String>( Arrays.asList( "doxia-site-renderer",
-                                                                                    "doxia-sink-api", "maven-reporting-api" ) );//, "plexus-archiver" ) );
+                                                                                    "doxia-sink-api", "maven-reporting-api" ) );
 
     public List<MavenReportExecution> buildMavenReports( MavenReportExecutorRequest mavenReportExecutorRequest )
         throws MojoExecutionException
@@ -150,7 +151,8 @@ public class DefaultMavenReportExecutor
                 plugin.setGroupId( reportPlugin.getGroupId() );
                 plugin.setArtifactId( reportPlugin.getArtifactId() );
                 plugin.setVersion( getPluginVersion( reportPlugin, repositoryRequest, mavenReportExecutorRequest ) );
-
+                mergePluginToReportPlugin( mavenReportExecutorRequest, plugin, reportPlugin );
+               
                 if ( logger.isInfoEnabled() )
                 {
                     logger.info( "configuring report plugin " + plugin.getId() );
@@ -159,10 +161,10 @@ public class DefaultMavenReportExecutor
                 Set<String> goals = new HashSet<String>();
 
                 List<RemoteRepository> remoteRepositories = session.getCurrentProject().getRemotePluginRepositories();
-                
+               
                 PluginDescriptor pluginDescriptor = mavenPluginManager
                     .getPluginDescriptor( plugin, remoteRepositories, session.getRepositorySession() );
-
+                
                 if ( reportPlugin.getReportSets().isEmpty() && reportPlugin.getReports().isEmpty() )
                 {
                     List<MojoDescriptor> mojoDescriptors = pluginDescriptor.getMojos();
@@ -264,7 +266,7 @@ public class DefaultMavenReportExecutor
             throw new MojoExecutionException( "failed to get Reports ", e );
         }
     }
-
+    
     private boolean canGenerateReport( MavenReport mavenReport, MojoExecution mojoExecution )
     {
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
@@ -529,5 +531,31 @@ public class DefaultMavenReportExecutor
             }
         }
         return null;
+    }
+    
+    /**
+     * TODO other stuff to merge ?
+     * <p>
+     * this method will "merge" some part of the plugin declaration existing in the build section 
+     * to the fake plugin build for report execution :
+     * <ul>
+     *   <li>dependencies</li>
+     * </ul>
+     * </p>
+     * @param mavenReportExecutorRequest
+     * @param buildPlugin
+     * @param reportPlugin
+     */
+    private void mergePluginToReportPlugin( MavenReportExecutorRequest mavenReportExecutorRequest, Plugin buildPlugin,
+                                            ReportPlugin reportPlugin )
+    {
+        Plugin configuredPlugin = find( reportPlugin, mavenReportExecutorRequest.getProject().getBuild().getPlugins() );
+        if ( configuredPlugin != null )
+        {
+            if ( !configuredPlugin.getDependencies().isEmpty() )
+            {
+                buildPlugin.getDependencies().addAll( configuredPlugin.getDependencies() );
+            }
+        }
     }
 }
