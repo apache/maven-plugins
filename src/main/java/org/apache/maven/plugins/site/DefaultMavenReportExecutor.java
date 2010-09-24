@@ -123,7 +123,7 @@ public class DefaultMavenReportExecutor
                                                                "org.apache.maven.doxia.sink.SinkEventAttributes" );
 
     private static final Set<String> EXCLUDES = new HashSet<String>( Arrays.asList( "doxia-site-renderer",
-                                                                                    "doxia-sink-api" ) );
+                                                                                    "doxia-sink-api", "maven-reporting-api" ) );//, "plexus-archiver" ) );
 
     public List<MavenReportExecution> buildMavenReports( MavenReportExecutorRequest mavenReportExecutorRequest )
         throws MojoExecutionException
@@ -226,7 +226,7 @@ public class DefaultMavenReportExecutor
                     }                    
 
                     mojoExecution.setMojoDescriptor( mojoDescriptor );
-
+                    
                     mavenPluginManager.setupPluginRealm( pluginDescriptor,
                                                          mavenReportExecutorRequest.getMavenSession(),
                                                          Thread.currentThread().getContextClassLoader(), IMPORTS,
@@ -251,7 +251,7 @@ public class DefaultMavenReportExecutor
                                                                    mavenReportExecutorRequest.getMavenSession() );
                     }
 
-                    if ( canGenerateReport( mavenReport ) )
+                    if ( canGenerateReport( mavenReport, mojoExecution ) )
                     {
                         reports.add( mavenReportExecution );
                     }
@@ -265,10 +265,13 @@ public class DefaultMavenReportExecutor
         }
     }
 
-    private boolean canGenerateReport( MavenReport mavenReport )
+    private boolean canGenerateReport( MavenReport mavenReport, MojoExecution mojoExecution )
     {
+        ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         try
         {
+            Thread.currentThread().setContextClassLoader( mojoExecution.getMojoDescriptor().getRealm() );
+            
             return mavenReport.canGenerateReport();
         }
         catch ( AbstractMethodError e )
@@ -282,7 +285,10 @@ public class DefaultMavenReportExecutor
                                + " - AbstractMethodError: canGenerateReport()" );
             return true;
         }
-
+        finally
+        {
+            Thread.currentThread().setContextClassLoader( originalClassLoader );
+        } 
     }
 
     private MavenReport getConfiguredMavenReport( MojoExecution mojoExecution, PluginDescriptor pluginDescriptor,

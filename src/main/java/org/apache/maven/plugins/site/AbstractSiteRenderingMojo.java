@@ -217,10 +217,11 @@ public abstract class AbstractSiteRenderingMojo
             MavenReport report = mavenReportExecution.getMavenReport();
             try
             {
-                if ( report.canGenerateReport() )
-                {
+                // report.canGenerateReport already done in DefaultMavenReportExecutor
+                //if ( report.canGenerateReport() )
+                //{
                     filteredReports.add( mavenReportExecution );
-                }
+                //}
             }
             catch ( AbstractMethodError e )
             {

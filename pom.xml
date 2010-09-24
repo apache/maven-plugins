@@ -228,13 +228,13 @@ under the License.
     <dependency>
       <groupId>org.sonatype.aether</groupId>
       <artifactId>aether-util</artifactId>
-      <version>1.2</version>
+      <version>1.5</version>
     </dependency>
 
     <dependency>
       <groupId>org.sonatype.aether</groupId>
       <artifactId>aether-api</artifactId>
-      <version>1.2</version>
+      <version>1.5</version>
     </dependency>
 
     <!-- Doxia -->
@@ -393,7 +393,13 @@ under the License.
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-archiver</artifactId>
-      <version>1.0-alpha-7</version>
+      <version>1.0-alpha-9</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.codehaus.plexus</groupId>
+          <artifactId>plexus-component-api</artifactId>
+        </exclusion>
+      </exclusions>      
     </dependency>
 
     <dependency>
@@ -411,6 +417,12 @@ under the License.
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-utils</artifactId>
       <version>1.5.10</version>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.apache.ant</groupId>
+      <artifactId>ant</artifactId>
+      <version>1.8.1</version>
     </dependency>
 
     <dependency>
