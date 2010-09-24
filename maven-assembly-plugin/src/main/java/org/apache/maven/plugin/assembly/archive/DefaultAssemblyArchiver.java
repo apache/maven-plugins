@@ -136,6 +136,8 @@ public class DefaultAssemblyArchiver
                                final AssemblerConfigurationSource configSource )
         throws ArchiveCreationException, AssemblyFormattingException, InvalidAssemblerConfigurationException
     {
+        validate( assembly );
+        
         String filename = fullName;
         if ( !configSource.isIgnoreDirFormatExtensions() || !format.startsWith( "dir" ) )
         {
@@ -205,6 +207,15 @@ public class DefaultAssemblyArchiver
         }
 
         return destFile;
+    }
+
+    private void validate( Assembly assembly )
+        throws InvalidAssemblerConfigurationException
+    {
+        if ( assembly.getId() == null || assembly.getId().trim().length() < 1 )
+        {
+            throw new InvalidAssemblerConfigurationException( "Assembly ID must be present and non-empty." );
+        }
     }
 
     private List<ContainerDescriptorHandler> selectContainerDescriptorHandlers( List<ContainerDescriptorHandlerConfig> requestedContainerDescriptorHandlers,

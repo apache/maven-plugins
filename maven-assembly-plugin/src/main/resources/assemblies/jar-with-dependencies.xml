@@ -30,15 +30,9 @@
   <dependencySets>
     <dependencySet>
       <outputDirectory>/</outputDirectory>
-      <useProjectArtifact>false</useProjectArtifact>
+      <useProjectArtifact>true</useProjectArtifact>
       <unpack>true</unpack>
       <scope>runtime</scope>
     </dependencySet>
   </dependencySets>
-  <fileSets>
-    <fileSet>
-      <directory>${project.build.outputDirectory}</directory>
-      <outputDirectory>/</outputDirectory>
-    </fileSet>
-  </fileSets>
 </assembly>
