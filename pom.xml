@@ -93,7 +93,7 @@ under the License.
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-archiver</artifactId>
-      <version>1.0-alpha-12</version>
+      <version>1.0.1-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <groupId>org.codehaus.plexus</groupId>
@@ -335,14 +335,16 @@ under the License.
       </pluginRepositories>
 
       <properties>
-        <invokerPluginVersion>1.3</invokerPluginVersion>
+        <invokerPluginVersion>1.5</invokerPluginVersion>
         <itParent>${java.io.tmpdir}/assembly-ITs/it-project-parent</itParent>
         <itProjects>${java.io.tmpdir}/assembly-ITs/projects</itProjects>
         <localRepositoryPath>${project.build.directory}/local-repository</localRepositoryPath>
         <test.remote.repo.url>file://${project.build.testOutputDirectory}/remote-repository</test.remote.repo.url>
         <it.pomIncludes>**/pom.xml</it.pomIncludes>
         <it.streamLogs>false</it.streamLogs>
+        <it.debug>true</it.debug>
         <testVersion>${project.version}</testVersion>
+        <useJvmChmod>false</useJvmChmod>
       </properties>
 
       <build>
@@ -371,10 +373,12 @@ under the License.
             <configuration>
               <localRepositoryPath>${localRepositoryPath}</localRepositoryPath>
               <properties>
+                <useJvmChmod>${useJvmChmod}</useJvmChmod> 
                 <testVersion>${testVersion}</testVersion>
                 <localRepositoryPath>${localRepositoryPath}</localRepositoryPath>
                 <invokerPluginVersion>${invokerPluginVersion}</invokerPluginVersion>
               </properties>
+              <showVersion>true</showVersion>
             </configuration>
             <executions>
               <execution>
@@ -407,8 +411,11 @@ under the License.
                   <projectsDirectory>src/it/projects</projectsDirectory>
                   <cloneProjectsTo>${itProjects}</cloneProjectsTo>
                   <testPropertiesFile>test.properties</testPropertiesFile>
-                  <debug>true</debug>
-
+                  <testProperties>
+                    <useJvmChmod>${useJvmChmod}</useJvmChmod>
+                  </testProperties>
+                  <debug>${it.debug}</debug>
+                  <settingsFile>src/it/settings.xml</settingsFile> 
                   <pomIncludes>
                     <pomInclude>${it.pomIncludes}</pomInclude>
                   </pomIncludes>
