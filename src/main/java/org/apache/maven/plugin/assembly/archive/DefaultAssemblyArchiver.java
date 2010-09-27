@@ -133,7 +133,7 @@ public class DefaultAssemblyArchiver
      * </ol>
      */
     public File createArchive( final Assembly assembly, final String fullName, final String format,
-                               final AssemblerConfigurationSource configSource )
+                               final AssemblerConfigurationSource configSource, boolean useJvmChmod )
         throws ArchiveCreationException, AssemblyFormattingException, InvalidAssemblerConfigurationException
     {
         validate( assembly );
@@ -168,7 +168,7 @@ public class DefaultAssemblyArchiver
                 selectContainerDescriptorHandlers( assembly.getContainerDescriptorHandlers(), configSource );
 
             final Archiver archiver =
-                createArchiver( format, assembly.isIncludeBaseDirectory(), basedir, configSource, containerHandlers );
+                createArchiver( format, assembly.isIncludeBaseDirectory(), basedir, configSource, containerHandlers, useJvmChmod );
 
             archiver.setDestFile( destFile );
 
@@ -288,7 +288,7 @@ public class DefaultAssemblyArchiver
      */
     protected Archiver createArchiver( final String format, final boolean includeBaseDir, final String finalName,
                                        final AssemblerConfigurationSource configSource,
-                                       final List<ContainerDescriptorHandler> containerHandlers )
+                                       final List<ContainerDescriptorHandler> containerHandlers, boolean useJvmChmod )
         throws ArchiverException, NoSuchArchiverException
     {
         Archiver archiver;
@@ -331,8 +331,9 @@ public class DefaultAssemblyArchiver
             new AssemblyProxyArchiver( prefix, archiver, containerHandlers, extraSelectors, extraFinalizers,
                                        configSource.getWorkingDirectory(), getLogger(), configSource.isDryRun() );
 
+        archiver.setUseJvmChmod( useJvmChmod );
         archiver.setForced( !configSource.isUpdateOnly() );
-
+        
         return archiver;
     }
 

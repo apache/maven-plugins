@@ -52,6 +52,8 @@ public class TrackingArchiverStub
     public final List<Addition> added = new ArrayList<Addition>();
 
     public boolean created;
+    
+    private boolean useJvmChmod;
 
     public void createArchive()
         throws ArchiverException, IOException
@@ -360,5 +362,15 @@ public class TrackingArchiverStub
                 this.permissions = permissions;
             }
         }
+    }
+
+    public boolean isUseJvmChmod()
+    {
+        return useJvmChmod;
+    }
+
+    public void setUseJvmChmod( boolean useJvmChmod )
+    {
+        this.useJvmChmod = useJvmChmod;
     }
 }

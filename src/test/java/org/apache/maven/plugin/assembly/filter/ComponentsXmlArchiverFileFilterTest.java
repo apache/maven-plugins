@@ -384,6 +384,8 @@ public class ComponentsXmlArchiverFileFilterTest
         private File inputFile;
 
         private String destFileName;
+        
+        private boolean useJvmChmod;
 
         public void addDirectory( final File directory ) throws ArchiverException
         {
@@ -597,6 +599,16 @@ public class ComponentsXmlArchiverFileFilterTest
         public void setFileMode( final int mode )
         {
             throw new UnsupportedOperationException( "not supported" );
+        }
+
+        public boolean isUseJvmChmod()
+        {
+            return useJvmChmod;
+        }
+
+        public void setUseJvmChmod( boolean useJvmChmod )
+        {
+            this.useJvmChmod = useJvmChmod;
         }
     }
 
