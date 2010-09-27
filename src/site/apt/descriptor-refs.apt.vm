@@ -62,33 +62,7 @@ Pre-defined Descriptor Files
 
   Below is the <<<bin>>> descriptor format:
 
------
-<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0 http://maven.apache.org/xsd/assembly-1.1.0.xsd">
-  <id>bin</id>
-  <formats>
-    <format>tar.gz</format>
-    <format>tar.bz2</format>
-    <format>zip</format>
-  </formats>
-  <fileSets>
-    <fileSet>
-      <includes>
-        <include>${project.basedir}/README*</include>
-        <include>${project.basedir}/LICENSE*</include>
-        <include>${project.basedir}/NOTICE*</include>
-      </includes>
-    </fileSet>
-    <fileSet>
-      <directory>${project.build.directory}</directory>
-      <includes>
-        <include>*.jar</include>
-      </includes>
-    </fileSet>
-  </fileSets>
-</assembly>
-------
+%{snippet|id=bin|url=${project.scm.url}/src/main/resources/assemblies/bin.xml}
 
 * {jar-with-dependencies}
 
@@ -100,28 +74,7 @@ Pre-defined Descriptor Files
 
   Below is the <<<jar-with-dependencies>>> descriptor format:
 
------
-<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0 http://maven.apache.org/xsd/assembly-1.1.0.xsd">
-  <id>jar-with-dependencies</id>
-  <formats>
-    <format>jar</format>
-  </formats>
-  <includeBaseDirectory>false</includeBaseDirectory>
-  <dependencySets>
-    <dependencySet>
-      <unpack>true</unpack>
-      <scope>runtime</scope>
-    </dependencySet>
-  </dependencySets>
-  <fileSets>
-    <fileSet>
-      <directory>${project.build.outputDirectory}</directory>
-    </fileSet>
-  </fileSets>
-</assembly>
------
+%{snippet|id=jar-with-dependencies|url=${project.scm.url}/src/main/resources/assemblies/jar-with-dependencies.xml}
 
 * {src}
 
@@ -133,33 +86,7 @@ Pre-defined Descriptor Files
 
   Below is the <<<src>>> descriptor format:
 
------
-<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0 http://maven.apache.org/xsd/assembly-1.1.0.xsd">
-  <id>src</id>
-  <formats>
-    <format>tar.gz</format>
-    <format>tar.bz2</format>
-    <format>zip</format>
-  </formats>
-  <fileSets>
-    <fileSet>
-      <includes>
-        <include>${project.basedir}/README*</include>
-        <include>${project.basedir}/LICENSE*</include>
-        <include>${project.basedir}/NOTICE*</include>
-        <include>${project.basedir}/pom.xml</include>
-      </includes>
-      <useDefaultExcludes>true</useDefaultExcludes>
-    </fileSet>
-    <fileSet>
-      <directory>${project.basedir}/src</directory>
-      <useDefaultExcludes>true</useDefaultExcludes>
-    </fileSet>
-  </fileSets>
-</assembly>
------
+%{snippet|id=src|url=${project.scm.url}/src/main/resources/assemblies/src.xml}
 
 * {project}
 
@@ -173,24 +100,4 @@ Pre-defined Descriptor Files
 
   The following is the assembly descriptor for the <<<project>>> descriptorRef:
 
----
-<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0 http://maven.apache.org/xsd/assembly-1.1.0.xsd">
-  <id>project</id>
-  <formats>
-    <format>tar.gz</format>
-    <format>tar.bz2</format>
-    <format>zip</format>
-  </formats>
-  <fileSets>
-    <fileSet>
-      <directory>${project.basedir}</directory>
-      <useDefaultExcludes>true</useDefaultExcludes>
-      <excludes>
-        <exclude>${project.build.directory}/**</exclude>
-      </excludes>
-    </fileSet>
-  </fileSets>
-</assembly>
----
+%{snippet|id=project|url=${project.scm.url}/src/main/resources/assemblies/project.xml}
