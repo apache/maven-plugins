@@ -25,37 +25,37 @@ under the License.
   name="Maven Assembly plugin">
   <body>
     <menu name="Reference">
-      <item name="Features" href="features.html"/>
-      <item name="Descriptor Format" href="assembly.html"/>
-      <item name="Component Format" href="component.html"/>
-      <item name="Predefined Descriptors" href="descriptor-refs.html"/>
+      <item name="Features" href="./features.html"/>
+      <item name="Descriptor Format" href="./assembly.html"/>
+      <item name="Component Format" href="./component.html"/>
+      <item name="Predefined Descriptors" href="./descriptor-refs.html"/>
     </menu>
 
     <menu name="Overview">
-      <item name="Introduction" href="index.html"/>
-      <item name="Goals" href="plugin-info.html"/>
-      <item name="Usage" href="usage.html"/>
-      <item name="FAQ" href="faq.html"/>
+      <item name="Introduction" href="./index.html"/>
+      <item name="Goals" href="./plugin-info.html"/>
+      <item name="Usage" href="./usage.html"/>
+      <item name="FAQ" href="./faq.html"/>
     </menu>
 
     <menu name="Advanced Topics">
-      <item name="Assembly Descriptors" href="advanced-descriptor-topics.html"/>
-      <item name="ModuleSets" href="advanced-module-set-topics.html"/>
+      <item name="Assembly Descriptors" href="./advanced-descriptor-topics.html"/>
+      <item name="ModuleSets" href="./advanced-module-set-topics.html"/>
     </menu>
 
     <menu name="Examples">
-      <item name="Examples Index" href="examples/index.html"/>
-      <item name="Single Project" collapse="false" href="examples/single/index.html">
-        <item name="Filtering Some Distribution Files" href="examples/single/filtering-some-distribution-files.html"/>
-        <item name="Including/Excluding Artifacts" href="examples/single/including-and-excluding-artifacts.html"/>
-        <item name="Using Component Descriptors" href="examples/single/using-components.html"/>
-        <item name="Using Repositories" href="examples/single/using-repositories.html"/>
+      <item name="Examples Index" href="./examples/index.html"/>
+      <item name="Single Project" collapse="false" href="./examples/single/index.html">
+        <item name="Filtering Some Distribution Files" href="./examples/single/filtering-some-distribution-files.html"/>
+        <item name="Including/Excluding Artifacts" href="./examples/single/including-and-excluding-artifacts.html"/>
+        <item name="Using Component Descriptors" href="./examples/single/using-components.html"/>
+        <item name="Using Repositories" href="./examples/single/using-repositories.html"/>
       </item>
-      <item name="Multimodule Projects" collapse="false" href="examples/multimodule/index.html">
-        <item name="Include Module Artifacts" href="examples/multimodule/module-binary-inclusion-simple.html"/>
-        <item name="Include Module Sources" href="examples/multimodule/module-source-inclusion-simple.html"/>
+      <item name="Multimodule Projects" collapse="false" href="./examples/multimodule/index.html">
+        <item name="Include Module Artifacts" href="./examples/multimodule/module-binary-inclusion-simple.html"/>
+        <item name="Include Module Sources" href="./examples/multimodule/module-source-inclusion-simple.html"/>
       </item>
-      <item name="Sharing Assembly Descriptors" href="examples/sharing-descriptors.html"/>
+      <item name="Sharing Assembly Descriptors" href="./examples/sharing-descriptors.html"/>
     </menu>
   </body>
 </project>
