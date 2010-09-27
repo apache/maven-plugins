@@ -34,6 +34,7 @@ import org.codehaus.plexus.components.io.fileselectors.FileInfo;
 import org.codehaus.plexus.components.io.fileselectors.FileSelector;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.logging.console.ConsoleLogger;
+import org.codehaus.plexus.util.FileUtils;
 import org.easymock.MockControl;
 import org.junit.AfterClass;
 import org.junit.Test;
@@ -138,6 +139,7 @@ public class AssemblyProxyArchiverTest
         final Archiver delegate = new JarArchiver();
 
         final File output = fileManager.createTempFile();
+        
         delegate.setDestFile( output );
 
         final CounterSelector counter = new CounterSelector( true );
@@ -149,6 +151,7 @@ public class AssemblyProxyArchiverTest
                                        new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ), false );
 
         final File dir = fileManager.createTempDir();
+        FileUtils.cleanDirectory( dir );
         fileManager.createFile( dir, "file.txt", "This is a test." );
 
         archiver.addDirectory( dir );

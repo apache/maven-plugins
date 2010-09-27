@@ -81,6 +81,11 @@ public class AssemblyProxyArchiver
     private final Set<String> seenPaths = new HashSet<String>();
 
     private final String assemblyWorkPath;
+    
+    /**
+     * @since 2.2-beta-6
+     */
+    private boolean useJvmChmod;
 
     public AssemblyProxyArchiver( final String rootPrefix, final Archiver delegate,
                                   final List<ContainerDescriptorHandler> containerDescriptorHandlers,
@@ -140,7 +145,7 @@ public class AssemblyProxyArchiver
 
         if ( !selectors.isEmpty() )
         {
-            this.selectors = selectors.toArray( new FileSelector[0] );
+            this.selectors = selectors.toArray( new FileSelector[selectors.size()] );
         }
     }
 
@@ -964,6 +969,16 @@ public class AssemblyProxyArchiver
         {
             inPublicApi.set( null );
         }
+    }
+
+    public boolean isUseJvmChmod()
+    {
+        return useJvmChmod;
+    }
+
+    public void setUseJvmChmod( boolean useJvmChmod )
+    {
+        this.useJvmChmod = useJvmChmod;
     }
 
 }
