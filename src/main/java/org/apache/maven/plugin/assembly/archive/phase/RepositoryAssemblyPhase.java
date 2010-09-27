@@ -118,7 +118,6 @@ public class RepositoryAssemblyPhase
                 task.setFileMode( fileMode );
             }
 
-            task.setUseDefaultExcludes( repository.isUseDefaultExcludes() );
             task.setOutputDirectory( outputDirectory );
 
             task.execute( archiver, configSource );
