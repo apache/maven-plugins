@@ -1188,7 +1188,8 @@
           <version>1.1.0+</version>
           <description>
             <![CDATA[
-            Set of file and/or directory patterns for matching items to be included from an archive as it is unpacked. (Since 2.2)
+            Set of file and/or directory patterns for matching items to be included from an archive as it is unpacked. 
+            Each item is specified as &lt;include&gt;some/path&lt;/include&gt; (Since 2.2)
             ]]>
           </description>
           <association>
@@ -1201,7 +1202,8 @@
           <version>1.1.0+</version>
           <description>
             <![CDATA[
-            Set of file and/or directory patterns for matching items to be excluded from an archive as it is unpacked. (Since 2.2)
+            Set of file and/or directory patterns for matching items to be excluded from an archive as it is unpacked.
+            Each item is specified as &lt;exclude&gt;some/path&lt;/exclude&gt; (Since 2.2)
             ]]>
           </description>
           <association>
