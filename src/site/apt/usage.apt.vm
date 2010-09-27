@@ -28,6 +28,20 @@
 
 Configuration and Usage
 
+* DEPRECATION NOTICE
+
+  Usage of the <<<assembly:assembly>>>, <<<assembly:attached>>>,
+  <<<assembly:directory>>>, and <<<assembly:directory-inline>>> are <<DEPRECATED>>,
+  since they wreak havoc with normal build processes and promote non-standard
+  build practices. 
+  
+  Additionally, the <<<assembly:single-directory>>> mojo is
+  redundant, and has been deprecated in favor of the <<<dir>>> assembly format.
+
+  Finally, the <<<assembly:unpack>>> mojo has been deprecated in favor of the far 
+  more comprehensive {{{http://maven.apache.org/plugins/maven-dependency-plugin/}Maven 
+  Dependency Plugin}}.
+
 * Introduction
 
   This document is intended to provide instructions for using the
@@ -108,111 +122,18 @@ Configuration and Usage
   
   <<NOTE:>> Many other configuration options are available for the various mojos
   in the Assembly Plugin. For more information, see the
-  {{{examples/index.html}examples section}} or the {{{plugin-info.html}plugin
+  {{{./examples/index.html}examples section}} or the {{{./plugin-info.html}plugin
   parameter documentation}}.
   
 * Executing: Building an Assembly
 
   Once you've configured the various <<<descriptors>>> and <<<descriptorRefs>>>
-  for the assemblies you want the project to produce, it's time to determine how
-  you want to build them.
+  for the assemblies you want the project to produce, it's time to build them.
   
-  Currently, there are two basic approaches to building assemblies: as a
-  dedicated build action, or bound to a phase of the normal build lifecycle.
-  Beyond this, it's also possible to have the Assembly Plugin simply create an
-  assembly directory for any given <<<descriptor>>> or <<<descriptorRef>>>,
-  instead of creating archives.
-  
-** Building an Assembly as a Standalone Process
-
-  First, let's examine how we can build an assembly directly, as a process
-  separate from the normal build lifecycle. In this case, assemblies won't be
-  produced when the normal build is executed, only in special circumstances.
-
-  <<NOTE:>> Invoking the <<<assembly>>> and <<<directory>>> mojos will cause
-  Maven to build the project using the normal lifecycle, up to the <<<package>>>
-  phase. Because many assemblies will contain compiled classes and other
-  binaries, it's reasonable to assume that the package phase will be required to
-  ensure those binaries exist and have been tested. The main advantage of
-  producing an assembly in this way is to avoid producing it as part of your
-  normal build process. In some cases, you may only want to create an assembly
-  periodically; these mojos provide two ways to accomplish that goal.
-
-*** Normal Assemblies
-
-  You can build an assembly directly by executing:
-  
-+---+
-mvn assembly:assembly
-+---+
-
-  When this build completes, you should see a file in the target directory with
-  a name similar to the following:
-  
-+---+
-target/sample-1.0-SNAPSHOT-jar-with-dependencies.jar
-+---+
-
-  Notice the artifact classifier, between the end of the version and the
-  beginning of the file extension, <<<jar-with-dependencies>>>. This is the
-  <<<id>>> of the assembly descriptor used to create this artifact.
-
-*** Assembly Directories
-
-  You can construct an assembly directory directly from the command line by
-  executing:
-  
-+---+
-mvn assembly:directory
-+---+
-
-  When completed, you should see a directory structure similar to this:
-  
-+---+
-target
-|-- sample-1.0-SNAPSHOT-jar-with-dependencies
-|   |-- META-INF
-|   |   |-- MANIFEST.MF
-|   |   `-- maven
-|   |       `-- org.sample
-|   |           `-- sample
-|   |               |-- pom.properties
-|   |               `-- pom.xml
-|   |-- junit
-[...]
-|   |       `-- TestRunner.class
-|   |-- junit3.8.1
-|   |-- org
-|   |   `-- sample
-|   |       `-- App.class
-|   `-- stylesheet.css
-+---+
-
-** Building an Assembly as Part of the Build Lifecycle
-
-  If you need to ensure that assemblies are produced whenever your project
-  builds, or when a particular profile is activated (also useful for configuring
-  other plugins during this special process), then the following two mojos are
-  probably what you're looking for. The <<<single>>> and
-  <<<single-directory>>> mojos are functional counterparts of the mojos
-  discussed above, except that they are meant to bind into the default build
-  lifecycle.
-  
-  The <<<assembly>>> mojo forces a <<<package>>> phase build to execute, in
-  order to guarantee the availability of project binaries. Unfortunately, this
-  currently means that binding the <<<assembly>>> mojo to the default lifecycle
-  will cause Maven to execute the build twice - once for the main process, and
-  once again in a forked lifecycle which is spawned by the <<<assembly>>> mojo
-  itself.
-  
-  By contrast, the <<<single>>> mojo assumes that the build has already
-  produced project binaries or whatever else it needs prior to building the
-  assembly itself. Because they depend on correct binding to the lifecycle in
-  order to gain access to the files required by your project assembly, the
-  <<<single>>> and <<<single-directory>>> mojos require the user to have much
-  more intimate knowledge of the build process.
-
-*** Normal Assemblies
+  In most cases, you'll want to make sure your assemblies are created as part
+  of your normal build process. This ensures the assembly archives are made 
+  available for installation and deployment, and that they are created during
+  the release of your project. This is handled by the <<<assembly:single>>> mojo.
 
   To bind the <<<single>>> mojo to a project's build lifecycle, you can add
   this configuration (assuming you're using the <<<jar-with-dependencies>>>
@@ -263,88 +184,17 @@ target/sample-1.0-SNAPSHOT-jar-with-dependencies.jar
   Notice the artifact classifier, between the end of the version and the
   beginning of the file extension, <<<jar-with-dependencies>>>. This is the
   <<<id>>> of the assembly descriptor used to create this artifact.
-
-*** Assembly Directories
-
-  If instead you want to bind the <<<single-directory>>> mojo to a project's
-  build lifecycle - so you can construct a directory containing your assembly -
-  you can add this configuration (assuming you're using the
-  <<<jar-with-dependencies>>> prefabricated descriptor):
   
-+---+
-<project>
-  [...]
-  <build>
-    [...]
-    <plugins>
-      <plugin>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <version>${project.version}</version>
-        <configuration>
-          <descriptorRefs>
-            <descriptorRef>jar-with-dependencies</descriptorRef>
-          </descriptorRefs>
-        </configuration>
-        <executions>
-          <execution>
-            <id>make-assembly</id> <!-- this is used for inheritance merges -->
-            <phase>package</phase> <!-- append to the packaging phase. -->
-            <goals>
-              <goal>single-directory</goal> <!-- goals == mojos -->
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      [...]
-</project>
-+---+
+** GOTCHA!
 
-  Then, to create a project assembly, simple execute the normal <<<package>>>
-  phase from the default lifecycle:
-  
-+---+
-mvn package
-+---+
-
-  When completed, you should see a directory structure similar to this:
-  
-+---+
-target
-|-- sample-1.0-SNAPSHOT-jar-with-dependencies.dir
-|   |-- META-INF
-|   |   |-- MANIFEST.MF
-|   |   `-- maven
-|   |       `-- org.sample
-|   |           `-- sample
-|   |               |-- pom.properties
-|   |               `-- pom.xml
-|   |-- junit
-[...]
-|   |       `-- TestRunner.class
-|   |-- junit3.8.1
-|   |-- org
-|   |   `-- sample
-|   |       `-- App.class
-|   `-- stylesheet.css
-+---+
+  In most cases, the <<<single>>> mojo should be bound to the <<<package>>> phase
+  of the build. However, if your assembly doesn't require binaries, or if you need
+  to use one assembly as input for another, you may need to change this. While it's
+  possible to assign the <<<single>>> mojo to any phase of the build lifecycle, you should
+  be careful to make sure the resources included in your assembly exist before that
+  assembly is created.
 
 * Advanced Configuration
-
-~~
-~~ 'single' and 'single-directory' should nearly always replace 'attached' and 'directory-inline'.
-~~
-~~** Creating Assemblies from Multiple Projects in a Multimodule Build
-~~
-~~  In certain cases, you may need to create several assembly archives from
-~~  different points in a multimodule build. For this reason, two new assembly
-~~  mojos have been introduced: <<<assembly:single>>>, and
-~~  <<<assembly:directory-single>>>. These mojos will perform the usual tasks
-~~  associated with creating assembly archives or directories, without running in
-~~  a once-per-build mode. However, it's important to note that the use of the
-~~  <<<\<moduleSets\>>>> section in the assembly descriptor may be limited in
-~~  these cases, since the assembly mojo will not have access to the full list of
-~~  projects in the current build. See the examples entry in the
-~~  {{{#Resources}Resources}} section below for more information.
 
 ** Creating an Executable Jar
 
@@ -396,22 +246,19 @@ Main-Class: org.sample.App
   
 ** GOTCHA!
 
-  At this point, only the <<<jar>>> assembly format supports the <<<\<archive\>>>>
-  configuration element. By definition, directory-based assembly mojos -
-  <<<assembly:directory>>>, <<<assembly:directory-inline>>>, and
-  <<<assembly:directory-single>>> - do not produce a jar-format archive, and
-  therefore do not support the <<<\<archive\>>>> element.
+  At this point, only the <<<jar>>> and <<<war>>> assembly formats support the <<<\<archive\>>>>
+  configuration element.
 
 * {Resources}
 
   [[1]] For more information on writing your own assembly descriptor, read the 
-        {{{assembly.html}Assembly Descriptor}}
+        {{{./assembly.html}Assembly Descriptor}}
         
   [[2]] For more information about the <<<maven-jar-plugin>>>, look
         {{{http://maven.apache.org/plugins/maven-jar-plugin/}here}}.
         
   [[3]] For more information on advanced <<<maven-assembly-plugin>>>
-        configuration, see the {{{examples/index.html}examples}}.
+        configuration, see the {{{./examples/index.html}examples}}.
   
   []
 

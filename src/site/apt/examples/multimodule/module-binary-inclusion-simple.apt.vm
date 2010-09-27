@@ -35,6 +35,13 @@ Including Module Binaries
   sorts and executes project builds within a multimodule context. Please
   read {{{../../faq.html#module-binaries}this FAQ entry}} if you decide to use them.
   
+  <<NOTE:>> The new (since 2.2) <<<useAllReactorProjects>>> flag in the <<<moduleSet>>> section
+  allows you to consume module binaries from child modules in a multimodule build. This
+  is an important to resolve the conflict between Maven's build ordering and the old
+  approach to module binaries, where the assembly was build from the parent POM.
+  Please read the FAQ entry above for more information, and read the documentation 
+  below (carefully!) to see the new approach in action.
+  
 * Introduction
 
   It is common practice to create an assembly using the parent POM of a
@@ -61,6 +68,11 @@ Including Module Binaries
   <includeBaseDirectory>false</includeBaseDirectory>
   <moduleSets>
     <moduleSet>
+    
+      <!-- Enable access to all projects in the current multimodule build! -->
+      <useAllReactorProjects>true</useAllReactorProjects>
+      
+      <!-- Now, select which projects to include in this module-set. -->
       <includes>
         <include>org.test:child1</include>
       </includes>
@@ -83,11 +95,17 @@ Including Module Binaries
   its dependency artifacts. These artifacts should be contained within the
   directory structure <<<modules/child1>>> for this module, since the
   outputDirectory expression will be interpolated on a module-by-module basis.
+  
+  <<Finally>>, notice the <<new>> <<<useAllReactorProjects>>> flag. This enables
+  access to all projects in the current reactor (multimodule build), even from 
+  a child module. Using this flag, it's now possible to use a child module - sorted
+  to the end of the multimodule build process using appropriate dependency 
+  declarations - to generate an assembly containing module binaries.
 
 * The POM
 
   Now, let's review the POM configuration necessary to enable the building of
-  this assembly via the <assembly:directory> mojo:
+  this assembly via the <<<assembly:single>>> mojo. First, let's look at the parent POM:
 
 +---+
 <?xml version="1.0" encoding="UTF-8"?>
@@ -107,33 +125,95 @@ Including Module Binaries
     <module>child1</module>
     <module>child2</module>
     <module>child3</module>
+    <module>distribution</module>
   </modules>
 
   <build>
-    <plugins>
-      <plugin>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <version>${project.version}</version>
-        <configuration>
-          <descriptors>
-            <descriptor>src/assemble/bin.xml</descriptor>
-          </descriptors>
-        </configuration>
-      </plugin>
-    </plugins>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <artifactId>maven-assembly-plugin</artifactId>
+          <version>${project.version}</version>
+          <configuration>
+            <descriptors>
+              <descriptor>src/assemble/bin.xml</descriptor>
+            </descriptors>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
   </build>
 </project>
 +---+
 
-  This POM simply directs the Assembly Plugin to use the <<<bin.xml>>>
-  assembly descriptor when executing.
+  <<NOTE:>> The last module - <<<distribution>>> - is the child in which the assembly will be created.
+  
+  That POM looks like this:
+  
++---+
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  
+  <parent>
+    <groupId>org.test</groupId>
+    <artifactId>parent</artifactId>
+    <version>1.0</version>
+  </parent>
+  
+  <artifactId>distribution</artifactId>
+
+  <packaging>pom</packaging>
+
+  <name>Distribution</name>
+  
+  <!-- NOTE: These dependency declarations are only required to sort this project to the 
+       end of the line in the multimodule build. 
+       
+       Since we only include the child1 module in our assembly, we only need to ensure this
+       distribution project builds AFTER that one...
+  -->
+  <dependencies>
+    <dependency>
+      <groupId>org.test</groupId>
+      <artifactId>child1</artifactId>
+      <version>1.0</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugin>
+      <artifactId>maven-assembly-plugin</artifactId>
+      <executions>
+        <execution>
+          <id>distro-assembly</id>
+          <phase>package</phase>
+          <goals>
+            <goal>single</goal>
+          </goals>
+          <configuration>
+            <descriptors>
+              <descriptor>src/assemble/bin.xml</descriptor>
+            </descriptors>
+          </configuration>
+        </execution>
+      </executions>
+    </plugin>
+  </build>
+</project>
++---+
+
+  This POM directs the Assembly Plugin to execute the <<<single>>> goal when the build reaches the 
+  <<<package>>> phase, and tells it to use the <<<bin.xml>>> assembly descriptor when executing.
 
 * Execute!
 
   To build the assembly, we issue the following command:
 
 +---+
-mvn clean package assembly:directory
+mvn clean package
 +---+
 
   This will ensure that the output directory (normally, <<<target>>>), is
@@ -147,10 +227,13 @@ mvn clean package assembly:directory
 * Examining the Output
 
   When the Maven execution completes, the following directory structure should
-  be left:
+  be left. Remember, our assembly format was <<<dir>>>, which is why the output
+  is a directory and not an archive of some sort.
+  
+  Here are the directory contents:
 
 +---+
-target/parent-1.0-bin
+target/distribution/distribution-1.0-bin
 `-- modules
     `-- child1
         |-- child1-1.0.jar

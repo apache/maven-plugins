@@ -29,10 +29,6 @@
 
 Maven Assembly Plugin
 
-~~ * Status
-~~
-~~   <<Current Assembly Plugin Version is: 2.1>>
-~~
 * Introduction
 
   Do you want to create a binary distribution from a Maven project that includes
@@ -97,7 +93,7 @@ What is an Assembly?
 
 The Maven Assembly Plugin
 
-  The Assembly Plugin for Maven 2.0 is primarily intended to allow users to
+  The Assembly Plugin for Maven is primarily intended to allow users to
   aggregate the project output along with its dependencies, modules, site
   documentation, and other files into a single distributable archive.
 
@@ -109,14 +105,33 @@ The Maven Assembly Plugin
   modules, file-sets, and individual files are packaged in the assembly.
 
 
+* DEPRECATION NOTICE
+
+  Usage of the <<<assembly:assembly>>>, <<<assembly:attached>>>,
+  <<<assembly:directory>>>, and <<<assembly:directory-inline>>> are <<DEPRECATED>>,
+  since they wreak havoc with normal build processes and promote non-standard
+  build practices. 
+
+  Additionally, the <<<assembly:single-directory>>> mojo is
+  redundant, and has been deprecated in favor of the <<<dir>>> assembly format.
+
+  Finally, the <<<assembly:unpack>>> mojo has been deprecated in favor of the far 
+  more comprehensive {{{http://maven.apache.org/plugins/maven-dependency-plugin/}Maven 
+  Dependency Plugin}}.
+    
 * Goals
+
+  The main goal in the assembly plugin is the {{{./single-mojo.html}single}} mojo. It is used to create all assemblies. 
+  <<All other mojos are currently deprecated.>>>
 
   For more information about the goals that are available in the Assembly Plugin, see {{{./plugin-info.html}the plugin documentation page}}.
 
 
 * Assembly Descriptor Schemas (XSD)
 
-  * {{{http://maven.apache.org/xsd/assembly-1.1.1.xsd}http://maven.apache.org/xsd/assembly-1.1.1.xsd}} (for version 2.2-beta-4 and higher)
+  * {{{http://maven.apache.org/xsd/assembly-1.1.1.xsd}http://maven.apache.org/xsd/assembly-1.1.2.xsd}} (for version 2.2-beta-6 and higher)
+
+  * {{{http://maven.apache.org/xsd/assembly-1.1.1.xsd}http://maven.apache.org/xsd/assembly-1.1.1.xsd}} (for version 2.2-beta-5 and lower)
 
   * {{{http://maven.apache.org/xsd/assembly-1.1.0.xsd}http://maven.apache.org/xsd/assembly-1.1.0.xsd}} (for version 2.2-beta-3 and lower)
 
