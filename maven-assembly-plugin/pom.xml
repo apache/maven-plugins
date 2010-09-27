@@ -52,6 +52,7 @@ under the License.
   <properties>
     <mdoVersion>1.1.2</mdoVersion>
     <mavenVersion>2.2.1</mavenVersion>
+    <testOutputToFile>true</testOutputToFile>
   </properties>
 
   <dependencies>
@@ -93,7 +94,7 @@ under the License.
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-archiver</artifactId>
-      <version>1.0.1-SNAPSHOT</version>
+      <version>1.1-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <groupId>org.codehaus.plexus</groupId>
@@ -205,11 +206,11 @@ under the License.
       <scope>test</scope>
     </dependency>
     <dependency>
-    	<groupId>org.codehaus.plexus</groupId>
-    	<artifactId>plexus-component-annotations</artifactId>
-    	<version>1.5.4</version>
-    	<type>jar</type>
-    	<scope>compile</scope>
+      <groupId>org.codehaus.plexus</groupId>
+      <artifactId>plexus-component-annotations</artifactId>
+      <version>1.5.4</version>
+      <type>jar</type>
+      <scope>compile</scope>
     </dependency>
   </dependencies>
 
@@ -286,6 +287,12 @@ under the License.
     <pluginManagement>
       <plugins>
         <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-clean-plugin</artifactId>
+          <version>2.4.1</version>
+        </plugin>      
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
           <version>2.3.1</version>
           <configuration>
@@ -294,14 +301,19 @@ under the License.
           </configuration>
         </plugin>
         <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
+          <version>2.6</version>
           <configuration>
             <excludes>
               <exclude>**/BasicAbstractAssemblyMojoFeaturesTest*</exclude>
               <exclude>**/AllTests*</exclude>
               <exclude>**/testutils/*</exclude>
             </excludes>
-            <redirectTestOutputToFile>true</redirectTestOutputToFile>
+            <redirectTestOutputToFile>${testOutputToFile}</redirectTestOutputToFile>
+            <systemPropertyVariables>
+              <java.io.tmpdir>${basedir}/target/tmpdir</java.io.tmpdir>
+            </systemPropertyVariables>
           </configuration>
         </plugin>
       </plugins>

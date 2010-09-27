@@ -330,6 +330,16 @@ public abstract class AbstractAssemblyMojo
      * @since 2.2-beta-6
      */
     private boolean updateOnly;
+    
+    /**
+     * <p>
+     * will use the jvm chmod, this is available for user and all level
+     * group level will be ignored
+     * </p>
+     * @parameter expression="${assembly.useJvmChmod}" default-value="false"
+     * @since 2.2-beta-6
+     */
+    protected boolean useJvmChmod;
 
     /**
      * Create the binary distribution.
@@ -381,7 +391,7 @@ public abstract class AbstractAssemblyMojo
 
                 for ( final String format : assembly.getFormats() )
                 {
-                    final File destFile = assemblyArchiver.createArchive( assembly, fullName, format, this );
+                    final File destFile = assemblyArchiver.createArchive( assembly, fullName, format, this, useJvmChmod );
 
                     final MavenProject project = getProject();
                     final String classifier = getClassifier();
