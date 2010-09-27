@@ -33,23 +33,10 @@ Pre-defined Descriptor Files
   As of version 2.2, there are now four predefined descriptor formats available
   for reuse, packaged within the Assembly Plugin, instead of the original three.
   Their descriptorIds are:
+  
+%{toc|fromDepth=2|toDepth=2}
 
-  * {{{#bin}bin}} - can be used for general assembly of binary packages.
-
-  * {{{#jar-with-dependencies}jar-with-dependencies}} - can be used for general
-  assembly of a binary package with all the dependency libraries included
-  unpacked inside the archive.
-
-  * {{{#src}src}} - can be used for general assembly of a source archive which can
-  be used to build your project.
-
-  * {{{#project}project}} - <<new in version 2.2>>, this is used to create an
-  assembly of the entire source project, including the Maven POM and other files
-  outside of your source directory structure, but excluding all SCM files and
-  the target directory. <<GOTCHA:>> If you use an output directory other than
-  /target, this descriptorRef may include the output from your build process.
-
-* {bin}
+* bin
 
   Use <<<bin>>> as the <<<descriptorRef>>> of your assembly-plugin configuration
   in order to create a binary distribution archive of your project.
@@ -62,9 +49,9 @@ Pre-defined Descriptor Files
 
   Below is the <<<bin>>> descriptor format:
 
-%{snippet|id=bin|url=${project.scm.url}/src/main/resources/assemblies/bin.xml}
+%{snippet|id=bin|file=src/main/resources/assemblies/bin.xml}
 
-* {jar-with-dependencies}
+* jar-with-dependencies
 
   Use <<<jar-with-dependencies>>> as the <<<descriptorRef>>> of your
   assembly-plugin configuration in order to create a jar archive which contains
@@ -74,9 +61,9 @@ Pre-defined Descriptor Files
 
   Below is the <<<jar-with-dependencies>>> descriptor format:
 
-%{snippet|id=jar-with-dependencies|url=${project.scm.url}/src/main/resources/assemblies/jar-with-dependencies.xml}
+%{snippet|id=jar-with-dependencies|file=src/main/resources/assemblies/jar-with-dependencies.xml}
 
-* {src}
+* src
 
   Use <<<src>>> as the <<<descriptorRef>>> in your assembly-plugin configuration
   to create source archives for your project.  The archive will contain the
@@ -86,9 +73,11 @@ Pre-defined Descriptor Files
 
   Below is the <<<src>>> descriptor format:
 
-%{snippet|id=src|url=${project.scm.url}/src/main/resources/assemblies/src.xml}
+%{snippet|id=src|file=src/main/resources/assemblies/src.xml}
 
-* {project}
+* project
+
+  (Since 2.2)
 
   Using the <<<project>>> <<<\<descriptorRef\>>>> in your assembly plugin
   configuration will produce an assembly containing your entire project, minus
@@ -100,4 +89,4 @@ Pre-defined Descriptor Files
 
   The following is the assembly descriptor for the <<<project>>> descriptorRef:
 
-%{snippet|id=project|url=${project.scm.url}/src/main/resources/assemblies/project.xml}
+%{snippet|id=project|file=src/main/resources/assemblies/project.xml}

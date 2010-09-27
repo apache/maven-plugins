@@ -25,6 +25,12 @@ under the License.
   xsi:schemaLocation="http://maven.apache.org/FML/1.0.1 http://maven.apache.org/xsd/fml-1.0.1.xsd"
   id="FAQ" title="Frequently Asked Questions">
   <part id="General">
+    <faq id="getting-started">
+      <question>There seem to be a large number of mojos available in the assembly plugin. Which goal should I use to build my assembly?</question>
+      <answer>
+        <p>You should use the <code>single</code> mojo. All mojos except for <code>single</code> have been deprecated.</p>
+      </answer>
+    </faq>
     <faq id="deploy">
       <question>If the Assembly Plugin is run during the package phase, do my assemblies get deployed during the deploy phase?</question>
       <answer>
@@ -49,7 +55,10 @@ under the License.
     <faq id="binding">
       <question>What goal should I use to create an assembly as part of my normal build process?</question>
       <answer>
-        <p>Use the <a href="single-mojo.html">single</a> or <a href="directory-single-mojo.html">directory-single</a> goal.</p>
+        <p>Use the <a href="single-mojo.html">single</a> goal.</p>
+        <p><b>NOTE:</b> All other mojos have been deprecated, either because they can cause strange and unpredictable behavior in a variety of situations, or
+           because they are redundant given the availability of the <code>dir</code> assembly format and the <code>maven-dependency-plugin</code>.
+        </p>
         <p>Since the <a href="assembly-mojo.html">assembly</a>, <a href="attached-mojo.html">attached</a>, <a href="directory-mojo.html">directory</a>, and <a href="directory-inline-mojo.html">directory-inline</a> goals are all aggregators, they will execute at most once
            per execution of Maven. See <a href="http://docs.codehaus.org/display/MAVEN/Atypical+Plugin+Use+Cases">Atypical+Plugin+Use+Cases</a> (wiki) for more
            information on the problems associated with aggregator mojos.
@@ -59,9 +68,9 @@ under the License.
     <faq id="module-binaries">
       <question>The Assembly Plugin is saying it cannot find files for the module binaries included by my assembly descriptor. What gives?</question>
       <answer>
-        <p>If your assembly includes module binaries, those binaries won't be available to the assembly plugin except in special cases. This is normally seen
-           when the Assembly Plugin is bound to a phase of the standard build lifecycle. It happens because of the way Maven sorts and executes the build process for
-           a multimodule project layout.
+        <p><b>If your assembly includes module binaries, those binaries won't be available to the assembly plugin except in special cases.</b> This is normally seen
+           when the Assembly Plugin is bound to a phase of the standard build lifecycle in the <b>parent POM</b> of a multimodule build.
+           It is a result of the way Maven sorts and executes the build process for a multimodule project layout.
         </p>
         <p>In a multimodule hierarchy, when a child module declares the parent POM in its &lt;parent/&gt; section, Maven interprets this to mean that the parent
            project's build must be completed before the child build can start. This ensures that the parent project is in its final form by the time the child
@@ -73,19 +82,20 @@ under the License.
            the build will fail.
         </p>
         <p>In many cases, you can avoid this problem by adding a new child module whose sole purpose is to produce your assembly. In the POM for this new project,
-           add dependency definitions for any of the module binaries you had previously referenced. Then, move your assembly descriptor into this new child module,
-           and change all module-binary references to dependencySet references. Obviously, any fileSet or file references you may have in this descriptor may need
+           add dependency definitions for any of the module binaries you had previously referenced. This will ensure the new assembly child is built last.
+           Then, move your assembly descriptor into this new child module. At this point, you have the option of either changing all moduleSet/binaries references 
+           to dependencySet references, <b>or you can keep the moduleSets and instead set the useAllReactorProjects flag to <i>true</i> for each moduleSet.</b>
+        </p>
+        <p>
+           Obviously, any fileSet or file references you may have in this descriptor may need
            to be adjusted or have the files they reference moved into the new child module alongside the descriptor itself.
         </p>
-        <p>In cases where you absolutely must use module-binaries references, you should avoid binding your assembly into the main build lifecycle. Modify your POM
-           so that the Assembly Plugin configuration is defined in the main the plugin declaration, then remove the executions block from that plugin declaration
-           (which supplies the phase and goal specifications that create the lifecycle binding). Finally, to process this assembly, you'll need to execute something like
-           this:
+        <p>In cases where you absolutely must use module-binaries references, you should create an assembly-child POM mentioned above, then insert
+           <code>&lt;useAllReactorProjects&gt;true&lt;useAllReactorProjects&gt;</code> to each of your <code>moduleSet</code> sections. Then, bind the assembly
+           in your assembly-child POM (normally to the <code>package</code> phase) using the <code>single</code> goal. When you execute the build from the top-level POM,
+           Maven should generated your assembly in the new child project.
         </p>
-        <p><code>mvn package assembly:assembly</code></p>
-        <p>to force Maven to build the entire multimodule structure to the 'package' phase <b>before</b> attempting
-           to process the assembly. This ensures the module artifacts are present to satisfy your module-binaries definitions.
-        </p>
+        <p><b>NOTE:</b> The useAllReactorProjects flag is only available in version 2.2-beta-6 and higher.</p>
       </answer>
     </faq>
   </part>
