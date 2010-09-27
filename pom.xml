@@ -179,6 +179,7 @@ under the License.
     <javadocPluginVersion>2.6.1</javadocPluginVersion>
     <projectInfoReportsPluginVersion>2.2</projectInfoReportsPluginVersion>
     <checkstylePluginVersion>2.5</checkstylePluginVersion>
+    <scmVersion>1.4</scmVersion>
   </properties>
 
   <dependencies>
@@ -387,6 +388,24 @@ under the License.
           <artifactId>slf4j-nop</artifactId>
         </exclusion>
       </exclusions>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.apache.maven.wagon</groupId>
+      <artifactId>wagon-scm</artifactId>
+      <version>${wagonVersion}</version>
+    </dependency>
+    
+    <!-- adding at least svn -->
+    <dependency>
+      <groupId>org.apache.maven.scm</groupId> 
+      <artifactId>maven-scm-api</artifactId> 
+      <version>${scmVersion}</version>
+    </dependency>    
+    <dependency>
+      <groupId>org.apache.maven.scm</groupId> 
+      <artifactId>maven-scm-provider-svnexe</artifactId> 
+      <version>${scmVersion}</version>
     </dependency>
     
     <!-- Plexus -->
