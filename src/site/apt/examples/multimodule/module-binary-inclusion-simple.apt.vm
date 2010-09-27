@@ -34,7 +34,7 @@ Including Module Binaries
   involves some tricky considerations that are a result of the way Maven
   sorts and executes project builds within a multimodule context. Please
   read {{{../../faq.html#module-binaries}this FAQ entry}} if you decide to use them.
-
+  
 * Introduction
 
   It is common practice to create an assembly using the parent POM of a
