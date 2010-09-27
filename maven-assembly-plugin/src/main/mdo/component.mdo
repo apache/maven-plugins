@@ -146,9 +146,13 @@
       </fields>
     </class>
 
+    <!-- Shared with component descriptor from here on. -->
     <class>
-      <name>SetBase</name>
+      <name>FileSet</name>
       <version>1.0.0+</version>
+      <description>
+        A fileSet allows the inclusion of groups of files into the assembly.
+      </description>
       <fields>
         <field>
           <name>useDefaultExcludes</name>
@@ -158,7 +162,7 @@
           <description>
             Whether standard exclusion patterns, such as those matching CVS and Subversion
             metadata files, should be used when calculating the files affected by this set.
-            For backward compatibility, the default value is true.
+            For backward compatibility, the default value is true. (Since 2.2)
           </description>
         </field>
         <field>
@@ -211,6 +215,7 @@
           <description>
             <![CDATA[
             Similar to a UNIX permission, sets the file mode of the files included.
+            THIS IS AN OCTAL VALUE.
             Format: (User)(Group)(Other) where each component is a sum of Read = 4,
             Write = 2, and Execute = 1.  For example, the value 0644
             translates to User read-write, Group and Other read-only.
@@ -228,23 +233,15 @@
           <description>
             <![CDATA[
             Similar to a UNIX permission, sets the directory mode of the directories
-            included. Format: (User)(Group)(Other) where each component is a sum of
+            included. 
+            THIS IS AN OCTAL VALUE.
+            Format: (User)(Group)(Other) where each component is a sum of
             Read = 4, Write = 2, and Execute = 1.  For example, the value
             0755 translates to User read-write, Group and Other read-only.
             <a href="http://www.onlamp.com/pub/a/bsd/2000/09/06/FreeBSD_Basics.html">(more on unix-style permissions)</a>
           	]]>
           </description>
         </field>
-      </fields>
-    </class>
-    <class>
-      <name>FileSet</name>
-      <version>1.0.0+</version>
-      <superClass>SetBase</superClass>
-      <description>
-        A fileSet allows the inclusion of groups of files into the assembly.
-      </description>
-      <fields>
         <field>
           <name>directory</name>
           <version>1.0.0+</version>
@@ -279,7 +276,7 @@
           <version>1.1.0+</version>
           <description>
           Whether to filter symbols in the files as they are copied, using
-          properties from the build configuration.
+          properties from the build configuration. (Since 2.2)
           </description>
           <defaultValue>false</defaultValue>
           <type>boolean</type>
@@ -334,6 +331,7 @@
           <description>
             <![CDATA[
             Similar to a UNIX permission, sets the file mode of the files included.
+            THIS IS AN OCTAL VALUE.
             Format: (User)(Group)(Other) where each component is a sum of Read = 4,
             Write = 2, and Execute = 1.  For example, the value 0644
             translates to User read-write, Group and Other read-only.
@@ -373,12 +371,97 @@
     <class>
       <name>DependencySet</name>
       <version>1.0.0+</version>
-      <superClass>SetBase</superClass>
       <description>
         A dependencySet allows inclusion and exclusion of project dependencies
         in the assembly.
       </description>
       <fields>
+        <field>
+          <name>outputDirectory</name>
+          <version>1.0.0+</version>
+          <type>String</type>
+          <description>
+            Sets the output directory relative to the root
+            of the root directory of the assembly. For example,
+            "log" will put the specified files in the log directory,
+            directly beneath the root of the archive.
+          </description>
+        </field>
+        <field>
+          <name>includes</name>
+          <version>1.0.0+</version>
+          <association>
+            <type>String</type>
+            <multiplicity>*</multiplicity>
+          </association>
+          <description>
+            <![CDATA[
+            When &lt;include&gt; subelements are present, they define a set of
+            artifact coordinates to include. If none is present, then
+            &lt;includes&gt; represents all valid values.
+
+            Artifact coordinatess may be given in simple groupId:artifactId form,
+            or they may be fully qualified in the form groupId:artifactId:type:version[:classifier].
+            Additionally, wildcards can be used, as in *:maven-*
+            ]]>
+          </description>
+        </field>
+        <field>
+          <name>excludes</name>
+          <version>1.0.0+</version>
+          <association>
+            <type>String</type>
+            <multiplicity>*</multiplicity>
+          </association>
+          <description>
+            <![CDATA[
+            When &lt;exclude&gt; subelements are present, they define a set of
+            dependency artifact coordinates to exclude. If none is present, then
+            &lt;excludes&gt; represents no exclusions.
+
+            Artifact coordinatess may be given in simple groupId:artifactId form,
+            or they may be fully qualified in the form groupId:artifactId:type:version[:classifier].
+            Additionally, wildcards can be used, as in *:maven-*
+            ]]>
+          </description>
+        </field>
+        <field>
+          <name>fileMode</name>
+          <version>1.0.0+</version>
+          <type>String</type>
+          <!-- 
+          <defaultValue>0644</defaultValue>
+          -->
+          <description>
+            <![CDATA[
+            Similar to a UNIX permission, sets the file mode of the files included.
+            THIS IS AN OCTAL VALUE.
+            Format: (User)(Group)(Other) where each component is a sum of Read = 4,
+            Write = 2, and Execute = 1.  For example, the value 0644
+            translates to User read-write, Group and Other read-only.
+            <a href="http://www.onlamp.com/pub/a/bsd/2000/09/06/FreeBSD_Basics.html">(more on unix-style permissions)</a>
+          	]]>
+          </description>
+        </field>
+        <field>
+          <name>directoryMode</name>
+          <version>1.0.0+</version>
+          <type>String</type>
+          <!-- 
+          <defaultValue>0755</defaultValue>
+          -->
+          <description>
+            <![CDATA[
+            Similar to a UNIX permission, sets the directory mode of the directories
+            included. 
+            THIS IS AN OCTAL VALUE.
+            Format: (User)(Group)(Other) where each component is a sum of
+            Read = 4, Write = 2, and Execute = 1.  For example, the value
+            0755 translates to User read-write, Group and Other read-only.
+            <a href="http://www.onlamp.com/pub/a/bsd/2000/09/06/FreeBSD_Basics.html">(more on unix-style permissions)</a>
+          	]]>
+          </description>
+        </field>
         <field>
           <name>useStrictFiltering</name>
           <version>1.1.2+</version>
@@ -397,22 +480,21 @@
           <type>String</type>
           <defaultValue>${artifact.artifactId}-${artifact.version}${dashClassifier?}.${artifact.extension}</defaultValue>
           <description>
-            Sets the mapping pattern for all NON-UNPACKED dependencies included in this
+            Sets the mapping pattern for all dependencies included in this
             assembly. Default is ${artifact.artifactId}-${artifact.version}${dashClassifier?}.${artifact.extension}.
-            If the artifact doesn't have a classifier, that part of the pattern will be left off.
-            (Since 2.2-beta-2; 2.2-beta-1 uses ${artifactId}-${version}${dashClassifier?}.${extension}) NOTE: If the 
-            dependencySet specifies unpack == true, outputFileNameMapping WILL NOT BE USED; in these cases, use outputDirectory.
+            (Since 2.2-beta-2; 2.2-beta-1 uses ${artifactId}-${version}${dashClassifier?}.${extension})
           </description>
         </field>
         <field>
           <name>unpack</name>
+          <version>1.0.0+</version>
           <type>boolean</type>
           <defaultValue>false</defaultValue>
           <description>
             If set to true, this property will unpack all dependencies
             into the specified output directory. When set to false
-            dependencies will be includes as archives (jars).
-            Default value is false.
+            dependencies will be includes as archives (jars). Can only unpack
+            jar, zip, tar.gz, and tar.bz archives. Default value is false.
           </description>
         </field>
         <field>
@@ -420,7 +502,7 @@
           <version>1.1.0+</version>
           <description>
           Allows the specification of includes and excludes, along with filtering options, for items
-          unpacked from a dependency artifact.
+          unpacked from a dependency artifact. (Since 2.2)
           </description>
           <association>
             <type>UnpackOptions</type>
@@ -428,7 +510,7 @@
         </field>
         <field>
           <name>scope</name>
-          <version>1.0.0+</version>
+          <version>1.0.0+</version>              
           <type>String</type>
           <defaultValue>runtime</defaultValue>
           <required>true</required>
@@ -491,196 +573,19 @@
     </class>
 
     <class>
-      <name>Repository</name>
-      <version>1.1.0+</version>
-      <superClass>SetBase</superClass>
-      <description>Defines a Maven repository to be included in the assembly.</description>
-      <fields>
-        <field>
-          <name>includeMetadata</name>
-          <version>1.1.0+</version>
-          <type>boolean</type>
-          <defaultValue>false</defaultValue>
-          <description>
-            If set to true, this property will trigger the creation of repository
-            metadata which will allow the repository to be used as a functional remote
-            repository.
-          </description>
-        </field>
-        <field>
-          <name>groupVersionAlignments</name>
-          <version>1.1.0+</version>
-          <description>Align a group to a version or an individual artifact.</description>
-          <association>
-            <type>GroupVersionAlignment</type>
-            <multiplicity>*</multiplicity>
-          </association>
-        </field>
-        <field>
-          <name>scope</name>
-          <version>1.1.0+</version>              
-          <type>String</type>
-          <defaultValue>runtime</defaultValue>
-          <required>true</required>
-          <description>
-            Specifies the scope for artifacts included in this repository.
-            Default scope value is "runtime".
-          </description>
-        </field>
-      </fields>
-    </class>
-    <class>
-      <name>GroupVersionAlignment</name>
-      <version>1.1.0+</version>
-      <description>Defines a Maven repository to be included in the assembly.</description>
-      <fields>
-        <field>
-          <name>id</name>
-          <version>1.1.0+</version>
-          <type>String</type>
-          <description>The groupId for which you want to align the versions.</description>
-        </field>
-        <field>
-          <name>version</name>
-          <version>1.1.0+</version>
-          <type>String</type>
-          <description>The version you want to align this group to.</description>
-        </field>
-        <field>
-          <name>excludes</name>
-          <version>1.1.0+</version>
-          <description>Artifact Ids of the artifacts you want excluded from version alignment.</description>
-          <association>
-            <type>String</type>
-            <multiplicity>*</multiplicity>
-          </association>
-        </field>
-      </fields>
-    </class>
-    <class>
-      <name>UnpackOptions</name>
-      <version>1.1.0+</version>
-      <description>
-      Specifies options for including/excluding/filtering items extracted from an archive.
-      </description>
-      <fields>
-        <field>
-          <name>includes</name>
-          <version>1.1.0+</version>
-          <description>
-          Set of patterns for matching items to be included from an archive as it is unpacked.
-          </description>
-          <association>
-            <type>String</type>
-            <multiplicity>*</multiplicity>
-          </association>
-        </field>
-        <field>
-          <name>excludes</name>
-          <version>1.1.0+</version>
-          <description>
-          Set of patterns for matching items to be excluded from an archive as it is unpacked.
-          </description>
-          <association>
-            <type>String</type>
-            <multiplicity>*</multiplicity>
-          </association>
-        </field>
-        <field>
-          <name>filtered</name>
-          <version>1.1.0+</version>
-          <description>
-          Whether to filter symbols in the files as they are unpacked from the archive, using
-          properties from the build configuration.
-          </description>
-          <defaultValue>false</defaultValue>
-          <type>boolean</type>
-        </field>
-        <field>
-          <name>lineEnding</name>
-          <version>1.1.2+</version>
-          <type>String</type>
-          <description>
-            <![CDATA[
-            Sets the line-endings of the files. (Since 2.2)
-            Valid values:
-            <ul>
-              <li><b>"keep"</b> - Preserve all line endings</li>
-              <li><b>"unix"</b> - Use Unix-style line endings</li>
-              <li><b>"lf"</b> - Use a single line-feed line endings</li>
-              <li><b>"dos"</b> - Use DOS-style line endings</li>
-              <li><b>"crlf"</b> - Use Carraige-return, line-feed line endings</li>
-            </ul>
-            ]]>
-          </description>
-        </field>
-        <field>
-          <name>useStrictFiltering</name>
-          <version>1.1.2+</version>
-          <type>boolean</type>
-          <defaultValue>false</defaultValue>
-          <description>
-          When specified as true, any include/exclude patterns which aren't used to filter an actual
-          artifact during assembly creation will cause the build to fail with an error. This is meant
-          to highlight obsolete inclusions or exclusions, or else signal that the assembly descriptor
-          is incorrectly configured. (Since 2.2)
-          </description>
-        </field>
-        <field>
-          <name>useDefaultExcludes</name>
-          <version>1.1.2+</version>
-          <type>boolean</type>
-          <defaultValue>true</defaultValue>
-          <description>
-            Whether standard exclusion patterns, such as those matching CVS and Subversion
-            metadata files, should be used when calculating the files affected by this set.
-            For backward compatibility, the default value is true. (Since 2.2)
-          </description>
-        </field>
-      </fields>
-    </class>
-    <class>
-      <name>ContainerDescriptorHandlerConfig</name>
-      <version>1.1.0+</version>
-      <description>
-        Configures a filter for files headed into the assembly archive, to enable
-        aggregation of various types of descriptor fragments, such as components.xml,
-        web.xml, etc.
-      </description>
-      <fields>
-        <field>
-          <name>handlerName</name>
-          <version>1.1.0+</version>
-          <description>
-            The handler's plexus role-hint, for lookup from the container.
-          </description>
-          <type>String</type>
-          <required>true</required>
-        </field>
-        <field>
-          <name>configuration</name>
-          <version>1.1.1+</version>
-          <description>
-            Configuration options for the handler.
-          </description>
-          <type>DOM</type>
-        </field>
-      </fields>
-    </class>
-    <class>
       <name>ModuleSet</name>
       <description>
         <![CDATA[
         A moduleSet represent one or more project &lt;module&gt; present inside
         a project's pom.xml. This allows you to include sources or binaries
         belonging to a project's &lt;modules&gt;.
-    
+
         <br/><b>NOTE:</b> When using &lt;moduleSets&gt; from the command-line, it
         is required to pass first the package phase by doing: "mvn package
         assembly:assembly". This bug/issue is scheduled to be addressed by Maven 2.1.
         ]]>
       </description>
-      <version>1.0.0+</version>
+      <version>1.1.2+</version>
       <fields>
         <field>
           <name>useAllReactorProjects</name>
@@ -707,33 +612,40 @@
         <field>
           <name>includes</name>
           <version>1.1.2+</version>
-          <description>
-            <![CDATA[
-            This is a list of &lt;include/&gt; subelements, each containing a
-            module reference of the type groupId:artifactId. Modules matching
-            these elements will be included in this set. If none is present,
-            then &lt;includes&gt; represents all valid values.
-            ]]>
-          </description>
           <association>
             <type>String</type>
             <multiplicity>*</multiplicity>
           </association>
+          <description>
+            <![CDATA[
+            When &lt;include&gt; subelements are present, they define a set of
+            project coordinates to include. If none is present, then
+            &lt;includes&gt; represents all valid values.
+
+            Artifact coordinatess may be given in simple groupId:artifactId form,
+            or they may be fully qualified in the form groupId:artifactId:type:version[:classifier].
+            Additionally, wildcards can be used, as in *:maven-*
+            ]]>
+          </description>
         </field>
         <field>
           <name>excludes</name>
           <version>1.1.2+</version>
-          <description>
-            <![CDATA[
-            This is a list of &lt;exclude/&gt; subelements, each containing a
-            module reference of the type groupId:artifactId. Modules matching
-            these elements will be excluded from this set.
-            ]]>
-          </description>
           <association>
             <type>String</type>
             <multiplicity>*</multiplicity>
           </association>
+          <description>
+            <![CDATA[
+            When &lt;exclude&gt; subelements are present, they define a set of
+            project artifact coordinates to exclude. If none is present, then
+            &lt;excludes&gt; represents no exclusions.
+
+            Artifact coordinatess may be given in simple groupId:artifactId form,
+            or they may be fully qualified in the form groupId:artifactId:type:version[:classifier].
+            Additionally, wildcards can be used, as in *:maven-*
+            ]]>
+          </description>
         </field>
         <field>
           <name>sources</name>
@@ -759,16 +671,103 @@
         </field>
       </fields>
     </class>
-    
+
     <class>
       <name>ModuleSources</name>
       <version>1.1.2+</version>
-      <superClass>SetBase</superClass>
       <description>
         Contains configuration options for including the source files of a
         project module in an assembly.
       </description>
       <fields>
+        <field>
+          <name>useDefaultExcludes</name>
+          <version>1.1.2+</version>
+          <type>boolean</type>
+          <defaultValue>true</defaultValue>
+          <description>
+            Whether standard exclusion patterns, such as those matching CVS and Subversion
+            metadata files, should be used when calculating the files affected by this set.
+            For backward compatibility, the default value is true. (Since 2.2)
+          </description>
+        </field>
+        <field>
+          <name>outputDirectory</name>
+          <version>1.1.2+</version>
+          <type>String</type>
+          <description>
+            Sets the output directory relative to the root
+            of the root directory of the assembly. For example,
+            "log" will put the specified files in the log directory.
+          </description>
+        </field>
+        <field>
+          <name>includes</name>
+          <version>1.1.2+</version>
+          <association>
+            <type>String</type>
+            <multiplicity>*</multiplicity>
+          </association>
+          <description>
+            <![CDATA[
+            When &lt;include&gt; subelements are present, they define a set of
+            files and directory to include. If none is present, then
+            &lt;includes&gt; represents all valid values.
+            ]]>
+          </description>
+        </field>
+        <field>
+          <name>excludes</name>
+          <version>1.1.2+</version>
+          <association>
+            <type>String</type>
+            <multiplicity>*</multiplicity>
+          </association>
+          <description>
+            <![CDATA[
+            When &lt;exclude&gt; subelements are present, they define a set of
+            files and directory to exclude. If none is present, then
+            &lt;excludes&gt; represents no exclusions.
+            ]]>
+          </description>
+        </field>
+        <field>
+          <name>fileMode</name>
+          <version>1.1.2+</version>
+          <type>String</type>
+          <!-- 
+          <defaultValue>0644</defaultValue>
+          -->
+          <description>
+            <![CDATA[
+            Similar to a UNIX permission, sets the file mode of the files included.
+            THIS IS AN OCTAL VALUE.
+            Format: (User)(Group)(Other) where each component is a sum of Read = 4,
+            Write = 2, and Execute = 1.  For example, the value 0644
+            translates to User read-write, Group and Other read-only.
+            <a href="http://www.onlamp.com/pub/a/bsd/2000/09/06/FreeBSD_Basics.html">(more on unix-style permissions)</a>
+          	]]>
+          </description>
+        </field>
+        <field>
+          <name>directoryMode</name>
+          <version>1.1.2+</version>
+          <type>String</type>
+          <!-- 
+          <defaultValue>0755</defaultValue>
+          -->
+          <description>
+            <![CDATA[
+            Similar to a UNIX permission, sets the directory mode of the directories
+            included. 
+            THIS IS AN OCTAL VALUE.
+            Format: (User)(Group)(Other) where each component is a sum of
+            Read = 4, Write = 2, and Execute = 1.  For example, the value
+            0755 translates to User read-write, Group and Other read-only.
+            <a href="http://www.onlamp.com/pub/a/bsd/2000/09/06/FreeBSD_Basics.html">(more on unix-style permissions)</a>
+          	]]>
+          </description>
+        </field>
         <field>
           <name>fileSets</name>
           <version>1.1.2+</version>
@@ -823,16 +822,101 @@
         </field>
       </fields>
     </class>
-    
+
     <class>
       <name>ModuleBinaries</name>
       <version>1.1.2+</version>
-      <superClass>SetBase</superClass>
       <description>
         Contains configuration options for including the binary files of a
         project module in an assembly.
       </description>
       <fields>
+        <field>
+          <name>outputDirectory</name>
+          <version>1.1.2+</version>
+          <type>String</type>
+          <description>
+            Sets the output directory relative to the root
+            of the root directory of the assembly. For example,
+            "log" will put the specified files in the log directory,
+            directly beneath the root of the archive.
+          </description>
+        </field>
+        <field>
+          <name>includes</name>
+          <version>1.1.2+</version>
+          <association>
+            <type>String</type>
+            <multiplicity>*</multiplicity>
+          </association>
+          <description>
+            <![CDATA[
+            When &lt;include&gt; subelements are present, they define a set of
+            artifact coordinates to include. If none is present, then
+            &lt;includes&gt; represents all valid values.
+
+            Artifact coordinatess may be given in simple groupId:artifactId form,
+            or they may be fully qualified in the form groupId:artifactId:type:version[:classifier].
+            Additionally, wildcards can be used, as in *:maven-*
+            ]]>
+          </description>
+        </field>
+        <field>
+          <name>excludes</name>
+          <version>1.1.2+</version>
+          <association>
+            <type>String</type>
+            <multiplicity>*</multiplicity>
+          </association>
+          <description>
+            <![CDATA[
+            When &lt;exclude&gt; subelements are present, they define a set of
+            dependency artifact coordinates to exclude. If none is present, then
+            &lt;excludes&gt; represents no exclusions.
+
+            Artifact coordinatess may be given in simple groupId:artifactId form,
+            or they may be fully qualified in the form groupId:artifactId:type:version[:classifier].
+            Additionally, wildcards can be used, as in *:maven-*
+            ]]>
+          </description>
+        </field>
+        <field>
+          <name>fileMode</name>
+          <version>1.1.2+</version>
+          <type>String</type>
+          <!-- 
+          <defaultValue>0644</defaultValue>
+          -->
+          <description>
+            <![CDATA[
+            Similar to a UNIX permission, sets the file mode of the files included.
+            THIS IS AN OCTAL VALUE.
+            Format: (User)(Group)(Other) where each component is a sum of Read = 4,
+            Write = 2, and Execute = 1.  For example, the value 0644
+            translates to User read-write, Group and Other read-only.
+            <a href="http://www.onlamp.com/pub/a/bsd/2000/09/06/FreeBSD_Basics.html">(more on unix-style permissions)</a>
+          	]]>
+          </description>
+        </field>
+        <field>
+          <name>directoryMode</name>
+          <version>1.1.2+</version>
+          <type>String</type>
+          <!-- 
+          <defaultValue>0755</defaultValue>
+          -->
+          <description>
+            <![CDATA[
+            Similar to a UNIX permission, sets the directory mode of the directories
+            included. 
+            THIS IS AN OCTAL VALUE.
+            Format: (User)(Group)(Other) where each component is a sum of
+            Read = 4, Write = 2, and Execute = 1.  For example, the value
+            0755 translates to User read-write, Group and Other read-only.
+            <a href="http://www.onlamp.com/pub/a/bsd/2000/09/06/FreeBSD_Basics.html">(more on unix-style permissions)</a>
+          	]]>
+          </description>
+        </field>
         <field>
           <name>attachmentClassifier</name>
           <version>1.1.2+</version>
@@ -908,6 +992,291 @@
         </field>
       </fields>
     </class>
+
+    <class>
+      <name>Repository</name>
+      <version>1.0.0+</version>
+      <description>
+        <![CDATA[
+        Defines a Maven repository to be included in the assembly. The artifacts
+        available to be included in a repository are your project's dependency
+        artifacts. The repository created contains the needed metadata entries
+        and also contains both sha1 and md5 checksums. This is useful for creating
+        archives which will be deployed to internal repositories.
+
+        <br/><b>NOTE:</b> Currently, only artifacts from the central repository
+        are allowed.
+        ]]>
+      </description>
+      <fields>
+        <field>
+          <name>outputDirectory</name>
+          <version>1.0.0+</version>
+          <type>String</type>
+          <description>
+            Sets the output directory relative to the root
+            of the root directory of the assembly. For example,
+            "log" will put the specified files in the log directory,
+            directly beneath the root of the archive.
+          </description>
+        </field>
+        <field>
+          <name>includes</name>
+          <version>1.0.0+</version>
+          <association>
+            <type>String</type>
+            <multiplicity>*</multiplicity>
+          </association>
+          <description>
+            <![CDATA[
+            When &lt;include&gt; subelements are present, they define a set of
+            artifact coordinates to include. If none is present, then
+            &lt;includes&gt; represents all valid values.
+
+            Artifact coordinatess may be given in simple groupId:artifactId form,
+            or they may be fully qualified in the form groupId:artifactId:type:version[:classifier].
+            Additionally, wildcards can be used, as in *:maven-*
+            ]]>
+          </description>
+        </field>
+        <field>
+          <name>excludes</name>
+          <version>1.0.0+</version>
+          <association>
+            <type>String</type>
+            <multiplicity>*</multiplicity>
+          </association>
+          <description>
+            <![CDATA[
+            When &lt;exclude&gt; subelements are present, they define a set of
+            dependency artifact coordinates to exclude. If none is present, then
+            &lt;excludes&gt; represents no exclusions.
+
+            Artifact coordinatess may be given in simple groupId:artifactId form,
+            or they may be fully qualified in the form groupId:artifactId:type:version[:classifier].
+            Additionally, wildcards can be used, as in *:maven-*
+            ]]>
+          </description>
+        </field>
+        <field>
+          <name>fileMode</name>
+          <version>1.0.0+</version>
+          <type>String</type>
+          <!-- 
+          <defaultValue>0644</defaultValue>
+          -->
+          <description>
+            <![CDATA[
+            Similar to a UNIX permission, sets the file mode of the files included.
+            THIS IS AN OCTAL VALUE.
+            Format: (User)(Group)(Other) where each component is a sum of Read = 4,
+            Write = 2, and Execute = 1.  For example, the value 0644
+            translates to User read-write, Group and Other read-only.
+            <a href="http://www.onlamp.com/pub/a/bsd/2000/09/06/FreeBSD_Basics.html">(more on unix-style permissions)</a>
+          	]]>
+          </description>
+        </field>
+        <field>
+          <name>directoryMode</name>
+          <version>1.0.0+</version>
+          <type>String</type>
+          <!-- 
+          <defaultValue>0755</defaultValue>
+          -->
+          <description>
+            <![CDATA[
+            Similar to a UNIX permission, sets the directory mode of the directories
+            included. 
+            THIS IS AN OCTAL VALUE.
+            Format: (User)(Group)(Other) where each component is a sum of
+            Read = 4, Write = 2, and Execute = 1.  For example, the value
+            0755 translates to User read-write, Group and Other read-only.
+            <a href="http://www.onlamp.com/pub/a/bsd/2000/09/06/FreeBSD_Basics.html">(more on unix-style permissions)</a>
+          	]]>
+          </description>
+        </field>
+        <field>
+          <name>includeMetadata</name>
+          <version>1.0.0+</version>
+          <type>boolean</type>
+          <defaultValue>false</defaultValue>
+          <description>
+            If set to true, this property will trigger the creation of repository
+            metadata which will allow the repository to be used as a functional remote
+            repository. Default value is false.
+          </description>
+        </field>
+        <field>
+          <name>groupVersionAlignments</name>
+          <version>1.0.0+</version>
+          <description>
+            <![CDATA[
+            Specifies that you want to align a group of artifacts to a specified
+            version. A groupVersionAlignment is specified by providing one or
+            more of &lt;groupVersionAlignment&gt; subelements.
+            ]]>
+          </description>
+          <association>
+            <type>GroupVersionAlignment</type>
+            <multiplicity>*</multiplicity>
+          </association>
+        </field>
+        <field>
+          <name>scope</name>
+          <version>1.1.0+</version>              
+          <type>String</type>
+          <defaultValue>runtime</defaultValue>
+          <required>true</required>
+          <description>
+            Specifies the scope for artifacts included in this repository.
+            Default scope value is "runtime". (Since 2.2)
+          </description>
+        </field>
+      </fields>
+    </class>
+    <class>
+      <name>GroupVersionAlignment</name>
+      <version>1.0.0+</version>
+      <description>
+        Allows a group of artifacts to be aligned to a specified version.
+      </description>
+      <fields>
+        <field>
+          <name>id</name>
+          <version>1.0.0+</version>
+          <type>String</type>
+          <description>
+            The groupId of the artifacts for which you want to align the
+            versions.
+          </description>
+        </field>
+        <field>
+          <name>version</name>
+          <version>1.0.0+</version>
+          <type>String</type>
+          <description>
+            The version you want to align this group to.
+          </description>
+        </field>
+        <field>
+          <name>excludes</name>
+          <version>1.0.0+</version>
+          <description>
+            <![CDATA[
+            When &lt;exclude&gt; subelements are present, they define the
+            artifactIds of the artifacts to exclude. If none is present, then
+            &lt;excludes&gt; represents no exclusions. An exclude is specified
+            by providing one or more of &lt;exclude&gt; subelements.
+            ]]>
+          </description>
+          <association>
+            <type>String</type>
+            <multiplicity>*</multiplicity>
+          </association>
+        </field>
+      </fields>
+    </class>
+    <class>
+      <name>UnpackOptions</name>
+      <version>1.1.0+</version>
+      <description>
+      Specifies options for including/excluding/filtering items extracted from an archive. (Since 2.2)
+      </description>
+      <fields>
+        <field>
+          <name>includes</name>
+          <version>1.1.0+</version>
+          <description>
+            <![CDATA[
+            Set of file and/or directory patterns for matching items to be included from an archive as it is unpacked. (Since 2.2)
+            ]]>
+          </description>
+          <association>
+            <type>String</type>
+            <multiplicity>*</multiplicity>
+          </association>
+        </field>
+        <field>
+          <name>excludes</name>
+          <version>1.1.0+</version>
+          <description>
+            <![CDATA[
+            Set of file and/or directory patterns for matching items to be excluded from an archive as it is unpacked. (Since 2.2)
+            ]]>
+          </description>
+          <association>
+            <type>String</type>
+            <multiplicity>*</multiplicity>
+          </association>
+        </field>
+        <field>
+          <name>filtered</name>
+          <version>1.1.0+</version>
+          <description>
+          Whether to filter symbols in the files as they are unpacked from the archive, using
+          properties from the build configuration. (Since 2.2)
+          </description>
+          <defaultValue>false</defaultValue>
+          <type>boolean</type>
+        </field>
+        <field>
+          <name>lineEnding</name>
+          <version>1.1.2+</version>
+          <type>String</type>
+          <description>
+            <![CDATA[
+            Sets the line-endings of the files. (Since 2.2)
+            Valid values:
+            <ul>
+              <li><b>"keep"</b> - Preserve all line endings</li>
+              <li><b>"unix"</b> - Use Unix-style line endings</li>
+              <li><b>"lf"</b> - Use a single line-feed line endings</li>
+              <li><b>"dos"</b> - Use DOS-style line endings</li>
+              <li><b>"crlf"</b> - Use Carraige-return, line-feed line endings</li>
+            </ul>
+            ]]>
+          </description>
+        </field>
+        <field>
+          <name>useDefaultExcludes</name>
+          <version>1.1.2+</version>
+          <type>boolean</type>
+          <defaultValue>true</defaultValue>
+          <description>
+            Whether standard exclusion patterns, such as those matching CVS and Subversion
+            metadata files, should be used when calculating the files affected by this set.
+            For backward compatibility, the default value is true. (Since 2.2)
+          </description>
+        </field>
+      </fields>
+    </class>
+    <class>
+      <name>ContainerDescriptorHandlerConfig</name>
+      <version>1.1.0+</version>
+      <description>
+        Configures a filter for files headed into the assembly archive, to enable
+        aggregation of various types of descriptor fragments, such as components.xml,
+        web.xml, etc.
+      </description>
+      <fields>
+        <field>
+          <name>handlerName</name>
+          <version>1.1.0+</version>
+          <description>
+            The handler's plexus role-hint, for lookup from the container.
+          </description>
+          <type>String</type>
+          <required>true</required>
+        </field>
+        <field>
+          <name>configuration</name>
+          <version>1.1.1+</version>
+          <description>
+            Configuration options for the handler.
+          </description>
+          <type>DOM</type>
+        </field>
+      </fields>
+    </class>
   </classes>
 </model>
-
