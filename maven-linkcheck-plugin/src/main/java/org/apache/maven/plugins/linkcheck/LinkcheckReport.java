@@ -210,7 +210,7 @@ public class LinkcheckReport
      * @parameter
      * @see {@link org.apache.commons.httpclient.HttpStatus} for all defined values.
      */
-    private int[] excludedHttpStatusErrors;
+    private Integer[] excludedHttpStatusErrors;
 
     /**
      * The list of HTTP warnings to ignored, like <code>301</code>.
@@ -218,7 +218,7 @@ public class LinkcheckReport
      * @parameter
      * @see {@link org.apache.commons.httpclient.HttpStatus} for all defined values.
      */
-    private int[] excludedHttpStatusWarnings;
+    private Integer[] excludedHttpStatusWarnings;
 
     /**
      * The list of site pages to exclude. By default, this report, i.e. <code>linkcheck.html</code>, will be excluded.
@@ -486,8 +486,8 @@ public class LinkcheckReport
         linkCheck.setLinkCheckCache( linkcheckCache );
         linkCheck.setExcludedLinks( excludedLinks );
         linkCheck.setExcludedPages( getExcludedPages() );
-        linkCheck.setExcludedHttpStatusErrors( excludedHttpStatusErrors );
-        linkCheck.setExcludedHttpStatusWarnings( excludedHttpStatusWarnings );
+        linkCheck.setExcludedHttpStatusErrors( asIntArray( excludedHttpStatusErrors ) );
+        linkCheck.setExcludedHttpStatusWarnings( asIntArray( excludedHttpStatusWarnings ) );
         linkCheck.setEncoding( ( StringUtils.isNotEmpty( encoding ) ? encoding : WriterFactory.UTF_8 ) );
 
         HttpBean bean = new HttpBean();
@@ -1435,7 +1435,7 @@ public class LinkcheckReport
      * @param a not null
      * @return the array comma separated.
      */
-    private static String toString( int[] a )
+    private static String toString( Object[] a )
     {
         if ( a == null || a.length == 0 )
         {
@@ -1452,5 +1452,21 @@ public class LinkcheckReport
         }
 
         return buf.toString();
+    }
+
+    private static int[] asIntArray( Integer[] array )
+    {
+        if ( array == null )
+        {
+            return null;
+        }
+
+        int[] newArray = new int[array.length];
+
+        for ( int i = 0; i < array.length; i++ ) {
+            newArray[i] = array[i].intValue();
+        }
+
+        return newArray;
     }
 }
