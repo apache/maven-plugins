@@ -368,15 +368,8 @@ public class LinkcheckReport
             }
             catch ( IOException e )
             {
-                String msg = "IOException: " + e.getMessage();
-                if ( getLog().isDebugEnabled() )
-                {
-                    getLog().error( msg, e );
-                }
-                else
-                {
-                    getLog().error( msg );
-                }
+                getLog().error( "IOException: " + e.getMessage() );
+                getLog().debug( e );
             }
 
             // if the site was not already generated, invoke it
@@ -396,12 +389,8 @@ public class LinkcheckReport
         }
         else
         {
-            if ( getLog().isWarnEnabled() )
-            {
-                getLog().warn(
-                               "WARRANTY: The number of documents analyzed by Linkcheck could differ with the real "
+            getLog().warn( "The number of documents analyzed by Linkcheck could differ from the real "
                                    + "number of documents!" );
-            }
 
             basedir = outputDirectory;
             basedir.mkdirs();
@@ -545,13 +534,8 @@ public class LinkcheckReport
         String mavenHome = getMavenHome();
         if ( StringUtils.isEmpty( mavenHome ) )
         {
-            if ( getLog().isErrorEnabled() )
-            {
-                String msg =
-                    "Could NOT invoke Maven because no Maven Home is defined. You need to have set the M2_HOME "
-                        + "system env variable or a 'maven.home' Java system properties.";
-                getLog().error( msg );
-            }
+            getLog().error( "Could NOT invoke Maven because no Maven Home is defined. "
+                + "You need to set the M2_HOME system env variable or a 'maven.home' Java system property." );
             return;
         }
 
@@ -648,11 +632,8 @@ public class LinkcheckReport
         }
         catch ( MavenInvocationException e )
         {
-            if ( getLog().isDebugEnabled() )
-            {
-                getLog().error( "MavenInvocationException: " + e.getMessage(), e );
-            }
             getLog().error( "Error when invoking Maven, consult the invoker log." );
+            getLog().debug( e );
             return;
         }
 
@@ -665,15 +646,8 @@ public class LinkcheckReport
         }
         catch ( IOException e )
         {
-            String msg = "IOException: " + e.getMessage();
-            if ( getLog().isDebugEnabled() )
-            {
-                getLog().error( msg, e );
-            }
-            else
-            {
-                getLog().error( msg );
-            }
+            getLog().error( "IOException: " + e.getMessage() );
+            getLog().debug( e );
         }
         finally
         {
@@ -696,11 +670,8 @@ public class LinkcheckReport
             }
             catch ( MavenInvocationException e )
             {
-                if ( getLog().isDebugEnabled() )
-                {
-                    getLog().error( "MavenInvocationException: " + e.getMessage(), e );
-                }
                 getLog().error( "Error when reinvoking Maven, consult the invoker log." );
+                getLog().debug( e );
                 return;
             }
         }
@@ -819,27 +790,16 @@ public class LinkcheckReport
             }
             catch ( IOException e )
             {
-                String msg = "IOException: " + e.getMessage();
-                if ( getLog().isDebugEnabled() )
-                {
-                    getLog().error( msg, e );
-                }
-                else
-                {
-                    getLog().error( msg );
-                }
+                getLog().error( "IOException: " + e.getMessage() );
+                getLog().debug( e );
             }
         }
 
         File m2Home = new File( mavenHome );
         if ( !m2Home.exists() )
         {
-            if ( getLog().isErrorEnabled() )
-            {
-                getLog().error(
-                                "Cannot find Maven application directory. Either specify \'maven.home\' "
-                                    + "system property, or M2_HOME environment variable." );
-            }
+            getLog().error( "Cannot find Maven application directory. Either specify \'maven.home\' "
+                + "system property, or M2_HOME environment variable." );
         }
 
         return mavenHome;
@@ -858,15 +818,8 @@ public class LinkcheckReport
         }
         catch ( IOException e )
         {
-            String msg = "IOException: " + e.getMessage();
-            if ( getLog().isDebugEnabled() )
-            {
-                getLog().error( msg, e );
-            }
-            else
-            {
-                getLog().error( msg );
-            }
+            getLog().error( "IOException: " + e.getMessage() );
+            getLog().debug( e );
         }
 
         return mavenOpts;
@@ -898,26 +851,15 @@ public class LinkcheckReport
             }
             catch ( IOException e )
             {
-                String msg = "IOException: " + e.getMessage();
-                if ( getLog().isDebugEnabled() )
-                {
-                    getLog().error( msg, e );
-                }
-                else
-                {
-                    getLog().error( msg );
-                }
+                getLog().error( "IOException: " + e.getMessage() );
+                getLog().debug( e );
             }
         }
 
         if ( javaHome == null || !javaHome.exists() )
         {
-            if ( getLog().isErrorEnabled() )
-            {
-                getLog().error(
-                                "Cannot find Java application directory. Either specify \'java.home\' "
-                                    + "system property, or JAVA_HOME environment variable." );
-            }
+            getLog().error( "Cannot find Java application directory. Either specify \'java.home\' "
+                + "system property, or JAVA_HOME environment variable." );
         }
 
         return javaHome;
@@ -936,15 +878,8 @@ public class LinkcheckReport
         }
         catch ( IOException e )
         {
-            String msg = "IOException: " + e.getMessage();
-            if ( getLog().isDebugEnabled() )
-            {
-                getLog().error( msg, e );
-            }
-            else
-            {
-                getLog().error( msg );
-            }
+            getLog().error( "IOException: " + e.getMessage() );
+            getLog().debug( e );
         }
 
         return javaOpts;
@@ -1463,7 +1398,8 @@ public class LinkcheckReport
 
         int[] newArray = new int[array.length];
 
-        for ( int i = 0; i < array.length; i++ ) {
+        for ( int i = 0; i < array.length; i++ )
+        {
             newArray[i] = array[i].intValue();
         }
 
