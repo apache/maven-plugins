@@ -84,7 +84,7 @@ public abstract class AbstractDirectoryMojo
 
         try
         {
-            archiver.createArchive( assembly, fullName, "dir", this, useJvmChmod );
+            archiver.createArchive( assembly, fullName, "dir", this );
         }
         catch ( final ArchiveCreationException e )
         {

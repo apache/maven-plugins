@@ -203,7 +203,7 @@ public class AddDependencySetsTask
             mapping = defaultOutputFileNameMapping;
         }
 
-        if ( ( dir != null && dir.indexOf( "${" ) < 0 ) || ( mapping != null && mapping.indexOf( "${" ) < 0 ) )
+        if ( ( dir == null || dir.indexOf( "${" ) < 0 ) && ( mapping == null || mapping.indexOf( "${" ) < 0 ) )
         {
             logger.warn( "NOTE: Your assembly specifies a dependencySet that matches multiple artifacts, but specifies a concrete output format. "
                             + "THIS MAY RESULT IN ONE OR MORE ARTIFACTS BEING OBSCURED!\n\nOutput directory: '"
@@ -259,6 +259,8 @@ public class AddDependencySetsTask
             unarchiver.setDestDirectory( dir );
             unarchiver.setOverwrite( true );
             unarchiver.setSourceFile( depArtifact.getFile() );
+            unarchiver.setIgnorePermissions( configSource.isIgnorePermissions() );
+
             try
             {
                 unarchiver.extract();

@@ -1,0 +1,22 @@
+<assembly>
+  <id>bin</id>
+  <formats>
+    <format>dir</format>
+  </formats>
+  <dependencySets>
+    <dependencySet>
+      <outputDirectory>lib</outputDirectory>
+      <scope>test</scope>
+    </dependencySet>
+  </dependencySets>
+  <fileSets>
+    <fileSet>
+      <directory>${project.basedir}</directory>
+      <outputDirectory>/</outputDirectory>
+      <excludes>
+        <exclude>target/**</exclude>
+      </excludes>
+      <fileMode>777</fileMode>
+    </fileSet>
+  </fileSets>
+</assembly>
