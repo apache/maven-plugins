@@ -43,8 +43,6 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
-import org.codehaus.plexus.component.annotations.Component;
-import org.codehaus.plexus.component.annotations.Requirement;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 import org.codehaus.plexus.logging.Logger;
 
@@ -63,17 +61,21 @@ import java.util.Set;
  * Handles the &lt;moduleSets/&gt; top-level section of the assembly descriptor.
  * 
  * @version $Id$
+ * @plexus.component role="org.apache.maven.plugin.assembly.archive.phase.AssemblyArchiverPhase" role-hint="module-sets"
  */
-@Component( role = AssemblyArchiverPhase.class, hint = "module-sets" )
 public class ModuleSetAssemblyPhase
     extends AbstractLogEnabled
     implements AssemblyArchiverPhase
 {
 
-    @Requirement
+    /**
+     * @plexus.requirement
+     */
     private MavenProjectBuilder projectBuilder;
 
-    @Requirement
+    /**
+     * @plexus.requirement
+     */
     private ArchiverManager archiverManager;
 
     public ModuleSetAssemblyPhase()

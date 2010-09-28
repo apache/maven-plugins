@@ -42,8 +42,6 @@ import org.apache.maven.plugin.assembly.model.Repository;
 import org.apache.maven.plugin.assembly.utils.FilterUtils;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.artifact.InvalidDependencyVersionException;
-import org.codehaus.plexus.component.annotations.Component;
-import org.codehaus.plexus.component.annotations.Requirement;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.util.StringUtils;
@@ -59,23 +57,31 @@ import java.util.Set;
 /**
  * @author jdcasey
  * @version $Id$
+ * @plexus.component role="org.apache.maven.plugin.assembly.artifact.DependencyResolver"
  */
-@Component( role = DependencyResolver.class )
 public class DefaultDependencyResolver
     extends AbstractLogEnabled
     implements DependencyResolver
 {
 
-    @Requirement
+    /**
+     * @plexus.requirement
+     */
     private ArtifactResolver resolver;
 
-    @Requirement
+    /**
+     * @plexus.requirement
+     */
     private ArtifactMetadataSource metadataSource;
 
-    @Requirement
+    /**
+     * @plexus.requirement
+     */
     private ArtifactFactory factory;
 
-    @Requirement
+    /**
+     * @plexus.requirement
+     */
     private ArtifactCollector collector;
 
     public DefaultDependencyResolver()
