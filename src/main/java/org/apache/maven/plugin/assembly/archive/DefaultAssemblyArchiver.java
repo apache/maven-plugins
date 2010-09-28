@@ -48,8 +48,6 @@ import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
 import org.codehaus.plexus.archiver.tar.TarArchiver;
 import org.codehaus.plexus.archiver.tar.TarLongFileMode;
 import org.codehaus.plexus.archiver.war.WarArchiver;
-import org.codehaus.plexus.component.annotations.Component;
-import org.codehaus.plexus.component.annotations.Requirement;
 import org.codehaus.plexus.component.configurator.ComponentConfigurationException;
 import org.codehaus.plexus.component.configurator.ComponentConfigurator;
 import org.codehaus.plexus.component.configurator.ConfigurationListener;
@@ -83,23 +81,31 @@ import java.util.Map;
  * activities.
  * 
  * @version $Id$
+ * @plexus.component role="org.apache.maven.plugin.assembly.archive.AssemblyArchiver"
  */
-@Component( role = AssemblyArchiver.class )
 public class DefaultAssemblyArchiver
     extends AbstractLogEnabled
     implements AssemblyArchiver, Contextualizable
 {
 
-    @Requirement
+    /**
+     * @plexus.requirement
+     */
     private ArchiverManager archiverManager;
 
-    @Requirement
+    /**
+     * @plexus.requirement
+     */
     private DependencyResolver dependencyResolver;
 
-    @Requirement( role = AssemblyArchiverPhase.class )
+    /**
+     * @plexus.requirement role="org.apache.maven.plugin.assembly.archive.phase.AssemblyArchiverPhase"
+     */
     private List<AssemblyArchiverPhase> assemblyPhases;
 
-    @Requirement( role = ContainerDescriptorHandler.class )
+    /**
+     * @plexus.requirement role="org.apache.maven.plugin.assembly.filter.ContainerDescriptorHandler"
+     */
     private Map<String, ContainerDescriptorHandler> containerDescriptorHandlers;
 
     private PlexusContainer container;

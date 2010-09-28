@@ -69,8 +69,8 @@ import java.util.Set;
 
 /**
  * @version $Id$
+ * @plexus.component role="org.apache.maven.plugin.assembly.io.AssemblyReader"
  */
-@org.codehaus.plexus.component.annotations.Component( role = AssemblyReader.class )
 public class DefaultAssemblyReader
     extends AbstractLogEnabled
     implements AssemblyReader
