@@ -33,6 +33,6 @@ public interface AssemblyArchiver
 {
     String ROLE = AssemblyArchiver.class.getName();
 
-    File createArchive( Assembly assembly, String fullName, String format, AssemblerConfigurationSource configSource, boolean useJvmChmod )
+    File createArchive( Assembly assembly, String fullName, String format, AssemblerConfigurationSource configSource )
         throws ArchiveCreationException, AssemblyFormattingException, InvalidAssemblerConfigurationException;
 }

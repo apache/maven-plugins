@@ -133,11 +133,11 @@ public class DefaultAssemblyArchiver
      * </ol>
      */
     public File createArchive( final Assembly assembly, final String fullName, final String format,
-                               final AssemblerConfigurationSource configSource, boolean useJvmChmod )
+                               final AssemblerConfigurationSource configSource )
         throws ArchiveCreationException, AssemblyFormattingException, InvalidAssemblerConfigurationException
     {
         validate( assembly );
-        
+
         String filename = fullName;
         if ( !configSource.isIgnoreDirFormatExtensions() || !format.startsWith( "dir" ) )
         {
@@ -168,7 +168,7 @@ public class DefaultAssemblyArchiver
                 selectContainerDescriptorHandlers( assembly.getContainerDescriptorHandlers(), configSource );
 
             final Archiver archiver =
-                createArchiver( format, assembly.isIncludeBaseDirectory(), basedir, configSource, containerHandlers, useJvmChmod );
+                createArchiver( format, assembly.isIncludeBaseDirectory(), basedir, configSource, containerHandlers );
 
             archiver.setDestFile( destFile );
 
@@ -209,10 +209,12 @@ public class DefaultAssemblyArchiver
         return destFile;
     }
 
-    private void validate( Assembly assembly )
+    private void validate( final Assembly assembly )
         throws InvalidAssemblerConfigurationException
     {
-        if ( assembly.getId() == null || assembly.getId().trim().length() < 1 )
+        if ( assembly.getId() == null || assembly.getId()
+                                                 .trim()
+                                                 .length() < 1 )
         {
             throw new InvalidAssemblerConfigurationException( "Assembly ID must be present and non-empty." );
         }
@@ -288,7 +290,7 @@ public class DefaultAssemblyArchiver
      */
     protected Archiver createArchiver( final String format, final boolean includeBaseDir, final String finalName,
                                        final AssemblerConfigurationSource configSource,
-                                       final List<ContainerDescriptorHandler> containerHandlers, boolean useJvmChmod )
+                                       final List<ContainerDescriptorHandler> containerHandlers )
         throws ArchiverException, NoSuchArchiverException
     {
         Archiver archiver;
@@ -331,9 +333,10 @@ public class DefaultAssemblyArchiver
             new AssemblyProxyArchiver( prefix, archiver, containerHandlers, extraSelectors, extraFinalizers,
                                        configSource.getWorkingDirectory(), getLogger(), configSource.isDryRun() );
 
-        archiver.setUseJvmChmod( useJvmChmod );
+        archiver.setUseJvmChmod( configSource.isUpdateOnly() );
+        archiver.setIgnorePermissions( configSource.isIgnorePermissions() );
         archiver.setForced( !configSource.isUpdateOnly() );
-        
+
         return archiver;
     }
 

@@ -81,7 +81,7 @@ public class AssemblyProxyArchiver
     private final Set<String> seenPaths = new HashSet<String>();
 
     private final String assemblyWorkPath;
-    
+
     /**
      * @since 2.2-beta-6
      */
@@ -976,9 +976,19 @@ public class AssemblyProxyArchiver
         return useJvmChmod;
     }
 
-    public void setUseJvmChmod( boolean useJvmChmod )
+    public void setUseJvmChmod( final boolean useJvmChmod )
     {
         this.useJvmChmod = useJvmChmod;
+    }
+
+    public boolean isIgnorePermissions()
+    {
+        return delegate.isIgnorePermissions();
+    }
+
+    public void setIgnorePermissions( final boolean ignorePermissions )
+    {
+        delegate.setIgnorePermissions( ignorePermissions );
     }
 
 }

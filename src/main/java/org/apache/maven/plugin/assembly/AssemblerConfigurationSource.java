@@ -91,4 +91,8 @@ public interface AssemblerConfigurationSource
     MavenFileFilter getMavenFileFilter();
 
     boolean isUpdateOnly();
+
+    boolean isUseJvmChmod();
+
+    boolean isIgnorePermissions();
 }

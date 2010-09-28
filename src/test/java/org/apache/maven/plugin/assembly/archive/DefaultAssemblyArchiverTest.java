@@ -117,7 +117,7 @@ public class DefaultAssemblyArchiverTest
         mm.replayAll();
 
         final DefaultAssemblyArchiver archiver = createSubject( macMgr, null, null );
-        archiver.createArchive( new Assembly(), "full-name", "zip", configSource, false );
+        archiver.createArchive( new Assembly(), "full-name", "zip", configSource );
 
         mm.verifyAll();
     }
@@ -191,6 +191,9 @@ public class DefaultAssemblyArchiverTest
         configSource.isUpdateOnly();
         csControl.setReturnValue( false, MockControl.ZERO_OR_MORE );
 
+        configSource.isIgnorePermissions();
+        csControl.setReturnValue( true, MockControl.ZERO_OR_MORE );
+
         final Assembly assembly = new Assembly();
         assembly.setId( "id" );
 
@@ -210,7 +213,7 @@ public class DefaultAssemblyArchiverTest
 
         final DefaultAssemblyArchiver subject = createSubject( macMgr, Collections.singletonList( phase ), null );
 
-        subject.createArchive( assembly, "full-name", "zip", configSource, false );
+        subject.createArchive( assembly, "full-name", "zip", configSource );
 
         mm.verifyAll();
     }
@@ -263,6 +266,9 @@ public class DefaultAssemblyArchiverTest
         configSource.getLocalRepository();
         configCtl.setReturnValue( lr, MockControl.ZERO_OR_MORE );
 
+        configSource.isIgnorePermissions();
+        configCtl.setReturnValue( true, MockControl.ZERO_OR_MORE );
+
         mm.add( configCtl );
 
         mm.replayAll();
@@ -270,7 +276,7 @@ public class DefaultAssemblyArchiverTest
         final DefaultAssemblyArchiver subject =
             createSubject( macArchiverManager, new ArrayList<AssemblyArchiverPhase>(), null );
 
-        subject.createArchiver( "dummy", false, "finalName", configSource, null,false );
+        subject.createArchiver( "dummy", false, "finalName", configSource, null );
 
         assertEquals( simpleConfig, archiver.getSimpleConfig() );
 
@@ -313,6 +319,9 @@ public class DefaultAssemblyArchiverTest
         configSource.isUpdateOnly();
         configCtl.setReturnValue( false, MockControl.ZERO_OR_MORE );
 
+        configSource.isIgnorePermissions();
+        configCtl.setReturnValue( true, MockControl.ZERO_OR_MORE );
+
         mm.add( configCtl );
 
         mm.replayAll();
@@ -320,7 +329,7 @@ public class DefaultAssemblyArchiverTest
         final DefaultAssemblyArchiver subject =
             createSubject( macArchiverManager, new ArrayList<AssemblyArchiverPhase>(), null );
 
-        subject.createArchiver( "tar", false, "finalName", configSource, null, false );
+        subject.createArchiver( "tar", false, "finalName", configSource, null );
 
         assertNull( ttArchiver.compressionMethod );
         assertEquals( TarLongFileMode.FAIL, ttArchiver.longFileMode.getValue() );
@@ -361,6 +370,9 @@ public class DefaultAssemblyArchiverTest
         configSource.isUpdateOnly();
         configCtl.setReturnValue( false, MockControl.ZERO_OR_MORE );
 
+        configSource.isIgnorePermissions();
+        configCtl.setReturnValue( true, MockControl.ZERO_OR_MORE );
+
         mm.add( configCtl );
 
         mm.replayAll();
@@ -368,7 +380,7 @@ public class DefaultAssemblyArchiverTest
         final DefaultAssemblyArchiver subject =
             createSubject( macArchiverManager, new ArrayList<AssemblyArchiverPhase>(), null );
 
-        subject.createArchiver( "war", false, null, configSource, null, false );
+        subject.createArchiver( "war", false, null, configSource, null );
 
         assertFalse( twArchiver.ignoreWebxml );
     }
@@ -400,6 +412,9 @@ public class DefaultAssemblyArchiverTest
         configSource.isUpdateOnly();
         configCtl.setReturnValue( false, MockControl.ZERO_OR_MORE );
 
+        configSource.isIgnorePermissions();
+        configCtl.setReturnValue( true, MockControl.ZERO_OR_MORE );
+
         mm.add( configCtl );
 
         mm.replayAll();
@@ -407,7 +422,7 @@ public class DefaultAssemblyArchiverTest
         final DefaultAssemblyArchiver subject =
             createSubject( macArchiverManager, new ArrayList<AssemblyArchiverPhase>(), null );
 
-        subject.createArchiver( "zip", false, null, configSource, null, false );
+        subject.createArchiver( "zip", false, null, configSource, null );
     }
 
     // TODO: Re-implement these tests on the createArchiver(..) method. For now, they're no big loss.
@@ -706,6 +721,10 @@ public class DefaultAssemblyArchiverTest
             archiver.setForced( false );
             archiverControl.setMatcher( MockControl.ALWAYS_MATCHER );
             archiverControl.setVoidCallable( MockControl.ZERO_OR_MORE );
+
+            archiver.setIgnorePermissions( false );
+            archiverControl.setMatcher( MockControl.ALWAYS_MATCHER );
+            archiverControl.setVoidCallable( MockControl.ZERO_OR_MORE );
         }
 
         // void expectSetArchiverFilters()
@@ -807,8 +826,10 @@ public class DefaultAssemblyArchiverTest
     {
 
         private String simpleConfig;
-        
+
         private boolean useJvmChmod;
+
+        private boolean ignorePermissions;
 
         public void setSimpleConfig( final String simpleConfig )
         {
@@ -1003,9 +1024,19 @@ public class DefaultAssemblyArchiverTest
             return useJvmChmod;
         }
 
-        public void setUseJvmChmod( boolean useJvmChmod )
+        public void setUseJvmChmod( final boolean useJvmChmod )
         {
             this.useJvmChmod = useJvmChmod;
+        }
+
+        public boolean isIgnorePermissions()
+        {
+            return ignorePermissions;
+        }
+
+        public void setIgnorePermissions( final boolean ignorePermissions )
+        {
+            this.ignorePermissions = ignorePermissions;
         }
 
     }
