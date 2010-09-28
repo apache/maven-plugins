@@ -84,7 +84,7 @@ under the License.
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
       <artifactId>maven-common-artifact-filters</artifactId>
-      <version>1.3-SNAPSHOT</version>
+      <version>1.3</version>
     </dependency>
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
@@ -94,7 +94,7 @@ under the License.
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-archiver</artifactId>
-      <version>1.1-SNAPSHOT</version>
+      <version>1.1</version>
       <exclusions>
         <exclusion>
           <groupId>org.codehaus.plexus</groupId>
