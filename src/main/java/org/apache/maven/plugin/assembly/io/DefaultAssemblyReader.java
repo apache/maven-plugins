@@ -215,9 +215,8 @@ public class DefaultAssemblyReader
                                                         final List<Assembly> assemblies )
         throws AssemblyReadException, InvalidAssemblerConfigurationException
     {
-        final InputStream resourceAsStream = Thread.currentThread()
-                                                   .getContextClassLoader()
-                                                   .getResourceAsStream( "assemblies/" + ref + ".xml" );
+        final InputStream resourceAsStream =
+            Thread.currentThread().getContextClassLoader().getResourceAsStream( "assemblies/" + ref + ".xml" );
 
         if ( resourceAsStream == null )
         {
@@ -301,15 +300,13 @@ public class DefaultAssemblyReader
             {
                 getLogger().debug( "Ignoring missing assembly descriptor with ID '" + spec
                                                    + "' per configuration.\nLocator output was:\n\n"
-                                                   + locator.getMessageHolder()
-                                                            .render() );
+                                                   + locator.getMessageHolder().render() );
                 return null;
             }
             else
             {
                 throw new AssemblyReadException( "Error locating assembly descriptor: " + spec + "\n\n"
-                                + locator.getMessageHolder()
-                                         .render() );
+                                + locator.getMessageHolder().render() );
             }
         }
 
@@ -322,8 +319,7 @@ public class DefaultAssemblyReader
             File dir = null;
             if ( location.getFile() != null )
             {
-                dir = location.getFile()
-                              .getParentFile();
+                dir = location.getFile().getParentFile();
             }
 
             final Assembly assembly = readAssembly( r, spec, dir, configSource );
@@ -355,8 +351,7 @@ public class DefaultAssemblyReader
         try
         {
             final Map<String, String> context = new HashMap<String, String>();
-            for ( final Object k : System.getProperties()
-                                         .keySet() )
+            for ( final Object k : System.getProperties().keySet() )
             {
                 final String key = (String) k;
                 context.put( key, System.getProperty( key ) );
@@ -377,18 +372,21 @@ public class DefaultAssemblyReader
         }
         catch ( final IOException e )
         {
-            throw new AssemblyReadException( "Error reading descriptor at: " + locationDescription + ": "
-                            + e.getMessage(), e );
+            throw new AssemblyReadException(
+                                             "Error reading descriptor: " + locationDescription + ": " + e.getMessage(),
+                                             e );
         }
         catch ( final XmlPullParserException e )
         {
-            throw new AssemblyReadException( "Error reading descriptor at: " + locationDescription + ": "
-                            + e.getMessage(), e );
+            throw new AssemblyReadException(
+                                             "Error reading descriptor: " + locationDescription + ": " + e.getMessage(),
+                                             e );
         }
         catch ( final AssemblyInterpolationException e )
         {
-            throw new AssemblyReadException( "Error reading descriptor at: " + locationDescription + ": "
-                            + e.getMessage(), e );
+            throw new AssemblyReadException(
+                                             "Error reading descriptor: " + locationDescription + ": " + e.getMessage(),
+                                             e );
         }
         finally
         {
@@ -455,8 +453,7 @@ public class DefaultAssemblyReader
             // allow expressions in path to component descriptor... MASSEMBLY-486
             try
             {
-                location = aee.evaluate( location )
-                              .toString();
+                location = aee.evaluate( location ).toString();
             }
             catch ( final Exception eee )
             {
@@ -469,6 +466,7 @@ public class DefaultAssemblyReader
             {
                 throw new AssemblyReadException( "Failed to locate component descriptor: " + location );
             }
+
             Component component = null;
             Reader reader = null;
             try
@@ -478,11 +476,13 @@ public class DefaultAssemblyReader
             }
             catch ( final IOException e )
             {
-                throw new AssemblyReadException( "Error reading component descriptor", e );
+                throw new AssemblyReadException( "Error reading component descriptor: " + location + " (resolved to: "
+                                + resolvedLocation.getSpecification() + ")", e );
             }
             catch ( final XmlPullParserException e )
             {
-                throw new AssemblyReadException( "Error reading component descriptor", e );
+                throw new AssemblyReadException( "Error reading component descriptor: " + location + " (resolved to: "
+                                + resolvedLocation.getSpecification() + ")", e );
             }
             finally
             {

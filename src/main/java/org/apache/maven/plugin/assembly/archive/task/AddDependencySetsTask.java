@@ -219,21 +219,20 @@ public class AddDependencySetsTask
     {
         logger.debug( "Adding dependency artifact" + depArtifact.getId() + " after filtering the unpacked contents." );
 
-        final StringBuilder sb = new StringBuilder().append( depArtifact.getGroupId() )
-                                                    .append( "_" )
-                                                    .append( depArtifact.getArtifactId() )
-                                                    .append( "_" )
-                                                    .append( depArtifact.getVersion() );
+        final StringBuilder sb =
+            new StringBuilder().append( depArtifact.getGroupId() )
+                               .append( "_" )
+                               .append( depArtifact.getArtifactId() )
+                               .append( "_" )
+                               .append( depArtifact.getVersion() );
 
         final String classifier = depArtifact.getClassifier();
         if ( classifier != null )
         {
-            sb.append( "_" )
-              .append( classifier );
+            sb.append( "_" ).append( classifier );
         }
 
-        sb.append( "." )
-          .append( depArtifact.getType() );
+        sb.append( "." ).append( depArtifact.getType() );
 
         final File dir = new File( configSource.getWorkingDirectory(), sb.toString() );
         if ( dir.exists() )
@@ -443,8 +442,7 @@ public class AddDependencySetsTask
 
         outputDirectory =
             AssemblyFormatUtils.getOutputDirectory( outputDirectory, configSource.getProject(), moduleProject,
-                                                    depProject, depProject.getBuild()
-                                                                          .getFinalName(), configSource );
+                                                    depProject, depProject.getBuild().getFinalName(), configSource );
 
         final String destName =
             AssemblyFormatUtils.evaluateFileNameMapping( dependencySet.getOutputFileNameMapping(), depArtifact,
