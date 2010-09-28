@@ -36,8 +36,6 @@ import org.apache.maven.shared.repository.RepositoryAssemblyException;
 import org.apache.maven.shared.repository.RepositoryBuilderConfigSource;
 import org.apache.maven.shared.repository.model.RepositoryInfo;
 import org.codehaus.plexus.archiver.Archiver;
-import org.codehaus.plexus.component.annotations.Component;
-import org.codehaus.plexus.component.annotations.Requirement;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 
 import java.io.File;
@@ -46,14 +44,17 @@ import java.util.List;
 
 /**
  * @version $Id$
+ * @plexus.component role="org.apache.maven.plugin.assembly.archive.phase.AssemblyArchiverPhase"
+ *                   role-hint="repositories"
  */
-@Component( role = AssemblyArchiverPhase.class, hint = "repositories" )
 public class RepositoryAssemblyPhase
     extends AbstractLogEnabled
     implements AssemblyArchiverPhase
 {
 
-    @Requirement
+    /**
+     * @plexus.requirement
+     */
     private RepositoryAssembler repositoryAssembler;
 
     public RepositoryAssemblyPhase()

@@ -27,7 +27,6 @@ import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
 import org.apache.maven.plugin.assembly.model.Assembly;
 import org.apache.maven.plugin.assembly.model.FileSet;
 import org.codehaus.plexus.archiver.Archiver;
-import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 
 import java.util.List;
@@ -36,8 +35,8 @@ import java.util.List;
  * Handles the &lt;fileSets/&gt; top-level section of the assembly descriptor.
  * 
  * @version $Id$
+ * @plexus.component role="org.apache.maven.plugin.assembly.archive.phase.AssemblyArchiverPhase" role-hint="file-sets"
  */
-@Component( role = AssemblyArchiverPhase.class, hint = "file-sets" )
 public class FileSetAssemblyPhase
     extends AbstractLogEnabled
     implements AssemblyArchiverPhase

@@ -139,7 +139,7 @@ public class AssemblyProxyArchiverTest
         final Archiver delegate = new JarArchiver();
 
         final File output = fileManager.createTempFile();
-        
+
         delegate.setDestFile( output );
 
         final CounterSelector counter = new CounterSelector( true );
@@ -185,6 +185,7 @@ public class AssemblyProxyArchiverTest
             if ( fileInfo.isFile() )
             {
                 count++;
+                System.out.println( "Counting file: " + fileInfo.getName() + ". Current count: " + count );
             }
 
             return answer;
