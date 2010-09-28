@@ -71,12 +71,14 @@ public class ComponentsXmlArchiverFileFilterTest
     }
 
     @Override
-    public void tearDown() throws IOException
+    public void tearDown()
+        throws IOException
     {
         fileManager.cleanUp();
     }
 
-    public void testAddComponentsXml_ShouldAddComponentWithoutRoleHint() throws IOException, XmlPullParserException
+    public void testAddComponentsXml_ShouldAddComponentWithoutRoleHint()
+        throws IOException, XmlPullParserException
     {
         final Reader reader =
             writeComponentsXml( Collections.singletonList( new ComponentDef( "role", null, "org.apache.maven.Impl" ) ) );
@@ -94,7 +96,8 @@ public class ComponentsXmlArchiverFileFilterTest
                                                            .getValue() );
     }
 
-    public void testAddComponentsXml_ShouldAddComponentWithRoleHint() throws IOException, XmlPullParserException
+    public void testAddComponentsXml_ShouldAddComponentWithRoleHint()
+        throws IOException, XmlPullParserException
     {
         final Reader reader =
             writeComponentsXml( Collections.singletonList( new ComponentDef( "role", "hint", "org.apache.maven.Impl" ) ) );
@@ -113,7 +116,8 @@ public class ComponentsXmlArchiverFileFilterTest
                                                            .getValue() );
     }
 
-    public void testAddComponentsXml_ShouldAddTwoComponentsWithRoleHints() throws IOException, XmlPullParserException
+    public void testAddComponentsXml_ShouldAddTwoComponentsWithRoleHints()
+        throws IOException, XmlPullParserException
     {
         final List<ComponentDef> defs = new ArrayList<ComponentDef>();
 
@@ -199,7 +203,8 @@ public class ComponentsXmlArchiverFileFilterTest
         assertEquals( "impl", ( (Text) implementation.selectSingleNode( doc ) ).getText() );
     }
 
-    public void testAddToArchive_ShouldWriteTwoComponentToFile() throws IOException, ArchiverException, JDOMException
+    public void testAddToArchive_ShouldWriteTwoComponentToFile()
+        throws IOException, ArchiverException, JDOMException
     {
         filter.components = new LinkedHashMap<String, Xpp3Dom>();
 
@@ -320,7 +325,8 @@ public class ComponentsXmlArchiverFileFilterTest
         return dom;
     }
 
-    private Reader writeComponentsXml( final List<ComponentDef> componentDefs ) throws IOException
+    private Reader writeComponentsXml( final List<ComponentDef> componentDefs )
+        throws IOException
     {
         final StringWriter writer = new StringWriter();
 
@@ -384,15 +390,19 @@ public class ComponentsXmlArchiverFileFilterTest
         private File inputFile;
 
         private String destFileName;
-        
+
         private boolean useJvmChmod;
 
-        public void addDirectory( final File directory ) throws ArchiverException
+        private boolean ignorePermissions;
+
+        public void addDirectory( final File directory )
+            throws ArchiverException
         {
             throw new UnsupportedOperationException( "not supported" );
         }
 
-        public void addDirectory( final File directory, final String prefix ) throws ArchiverException
+        public void addDirectory( final File directory, final String prefix )
+            throws ArchiverException
         {
             throw new UnsupportedOperationException( "not supported" );
         }
@@ -404,12 +414,14 @@ public class ComponentsXmlArchiverFileFilterTest
         }
 
         public void addDirectory( final File directory, final String prefix, final String[] includes,
-                                  final String[] excludes ) throws ArchiverException
+                                  final String[] excludes )
+            throws ArchiverException
         {
             throw new UnsupportedOperationException( "not supported" );
         }
 
-        public void addFile( final File inputFile, final String destFileName ) throws ArchiverException
+        public void addFile( final File inputFile, final String destFileName )
+            throws ArchiverException
         {
             this.inputFile = inputFile;
             this.destFileName = destFileName;
@@ -431,7 +443,8 @@ public class ComponentsXmlArchiverFileFilterTest
             throw new UnsupportedOperationException( "not supported" );
         }
 
-        public void createArchive() throws ArchiverException, IOException
+        public void createArchive()
+            throws ArchiverException, IOException
         {
             throw new UnsupportedOperationException( "not supported" );
         }
@@ -482,12 +495,14 @@ public class ComponentsXmlArchiverFileFilterTest
             throw new UnsupportedOperationException( "not supported" );
         }
 
-        public void addArchivedFileSet( final File archiveFile ) throws ArchiverException
+        public void addArchivedFileSet( final File archiveFile )
+            throws ArchiverException
         {
             throw new UnsupportedOperationException( "not supported" );
         }
 
-        public void addArchivedFileSet( final File archiveFile, final String prefix ) throws ArchiverException
+        public void addArchivedFileSet( final File archiveFile, final String prefix )
+            throws ArchiverException
         {
             throw new UnsupportedOperationException( "not supported" );
         }
@@ -499,7 +514,8 @@ public class ComponentsXmlArchiverFileFilterTest
         }
 
         public void addArchivedFileSet( final File archiveFile, final String prefix, final String[] includes,
-                                        final String[] excludes ) throws ArchiverException
+                                        final String[] excludes )
+            throws ArchiverException
         {
             throw new UnsupportedOperationException( "not supported" );
         }
@@ -523,12 +539,14 @@ public class ComponentsXmlArchiverFileFilterTest
         {
         }
 
-        public void addArchivedFileSet( final ArchivedFileSet fileSet ) throws ArchiverException
+        public void addArchivedFileSet( final ArchivedFileSet fileSet )
+            throws ArchiverException
         {
             throw new UnsupportedOperationException( "not supported" );
         }
 
-        public void addFileSet( final FileSet fileSet ) throws ArchiverException
+        public void addFileSet( final FileSet fileSet )
+            throws ArchiverException
         {
             throw new UnsupportedOperationException( "not supported" );
         }
@@ -539,22 +557,26 @@ public class ComponentsXmlArchiverFileFilterTest
             throw new UnsupportedOperationException( "not supported" );
         }
 
-        public void addResources( final PlexusIoResourceCollection resources ) throws ArchiverException
+        public void addResources( final PlexusIoResourceCollection resources )
+            throws ArchiverException
         {
             throw new UnsupportedOperationException( "not supported" );
         }
 
-        public ResourceIterator getResources() throws ArchiverException
+        public ResourceIterator getResources()
+            throws ArchiverException
         {
             return new ResourceIterator()
             {
 
-                public boolean hasNext() throws ArchiverException
+                public boolean hasNext()
+                    throws ArchiverException
                 {
                     return false;
                 }
 
-                public ArchiveEntry next() throws ArchiverException
+                public ArchiveEntry next()
+                    throws ArchiverException
                 {
                     throw new NoSuchElementException();
                 }
@@ -606,9 +628,19 @@ public class ComponentsXmlArchiverFileFilterTest
             return useJvmChmod;
         }
 
-        public void setUseJvmChmod( boolean useJvmChmod )
+        public void setUseJvmChmod( final boolean useJvmChmod )
         {
             this.useJvmChmod = useJvmChmod;
+        }
+
+        public boolean isIgnorePermissions()
+        {
+            return ignorePermissions;
+        }
+
+        public void setIgnorePermissions( final boolean ignorePermissions )
+        {
+            this.ignorePermissions = ignorePermissions;
         }
     }
 

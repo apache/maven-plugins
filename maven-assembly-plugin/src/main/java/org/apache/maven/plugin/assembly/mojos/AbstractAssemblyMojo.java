@@ -330,16 +330,31 @@ public abstract class AbstractAssemblyMojo
      * @since 2.2-beta-6
      */
     private boolean updateOnly;
-    
+
     /**
      * <p>
-     * will use the jvm chmod, this is available for user and all level
-     * group level will be ignored
+     * will use the jvm chmod, this is available for user and all level group level will be ignored
      * </p>
+     * 
      * @parameter expression="${assembly.useJvmChmod}" default-value="false"
      * @since 2.2-beta-6
      */
-    protected boolean useJvmChmod;
+    private boolean useJvmChmod;
+
+    /**
+     * <p>
+     * Set to <code>true</code> in order to avoid all chmod calls.
+     * </p>
+     * 
+     * <p>
+     * <b>NOTE:</b> This will cause the assembly plugin to <b>DISREGARD</b> all fileMode/directoryMode settings in the
+     * assembly descriptor, and all file permissions in unpacked dependencies!
+     * </p>
+     * 
+     * @parameter expression="${assembly.ignorePermissions}" default-value="false"
+     * @since 2.2-beta-6
+     */
+    private boolean ignorePermissions;
 
     /**
      * Create the binary distribution.
@@ -391,7 +406,7 @@ public abstract class AbstractAssemblyMojo
 
                 for ( final String format : assembly.getFormats() )
                 {
-                    final File destFile = assemblyArchiver.createArchive( assembly, fullName, format, this, useJvmChmod );
+                    final File destFile = assemblyArchiver.createArchive( assembly, fullName, format, this );
 
                     final MavenProject project = getProject();
                     final String classifier = getClassifier();
@@ -798,5 +813,15 @@ public abstract class AbstractAssemblyMojo
     public boolean isUpdateOnly()
     {
         return updateOnly;
+    }
+
+    public boolean isUseJvmChmod()
+    {
+        return useJvmChmod;
+    }
+
+    public boolean isIgnorePermissions()
+    {
+        return ignorePermissions;
     }
 }

@@ -173,4 +173,14 @@ public class ConfigSourceStub
         return false;
     }
 
+    public boolean isIgnorePermissions()
+    {
+        return true;
+    }
+
+    public boolean isUseJvmChmod()
+    {
+        return true;
+    }
+
 }
