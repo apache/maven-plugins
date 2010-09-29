@@ -221,9 +221,14 @@ public class LinkcheckReport
     private Integer[] excludedHttpStatusWarnings;
 
     /**
-     * The list of site pages to exclude. By default, this report, i.e. <code>linkcheck.html</code>, will be excluded.
+     * A list of pages to exclude.
      * <br/>
-     * <b>Note</b>: No pattern is allowed for excludedPage, only specific file names.
+     * <b>Note</b>:
+     * <br/>
+     * <ul>
+     * <li>This report, i.e. <code>linkcheck.html</code>, is always excluded.</li>
+     * <li>May contain Ant-style wildcards and double wildcards, e.g. <code>apidocs/**</code>, etc.</li>
+     * </ul>
      *
      * @parameter
      */
