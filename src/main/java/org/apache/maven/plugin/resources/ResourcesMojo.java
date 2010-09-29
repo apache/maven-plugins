@@ -209,7 +209,10 @@ public class ResourcesMojo
     protected boolean useDefaultDelimiters;
     
     /**
-     * List of plexus components hint which implements {@link MavenResourcesFiltering#filterResources(MavenResourcesExecution)}
+     * <p>
+     * List of plexus components hint which implements {@link MavenResourcesFiltering#filterResources(MavenResourcesExecution)}.
+     * They will be executed after the resources copying/filtering.
+     * </p>
      * @parameter
      * @since 2.4
      */
