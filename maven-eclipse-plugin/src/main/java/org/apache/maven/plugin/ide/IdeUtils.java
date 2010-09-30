@@ -444,6 +444,17 @@ public class IdeUtils
         catch ( ArtifactNotFoundException e )
         {
             // ignore, the jar has not been found
+
+            /*
+             * This method gets called with no remote repositories to avoid remote trips (which would ideally be
+             * realized by means of a per-request offline flag), the set of available remote repos can however affect
+             * the resolution from the local repo as well, in particular in Maven 3. So double check whether the local
+             * file is really not present.
+             */
+            if ( artifact.getFile() != null && artifact.getFile().isFile() )
+            {
+                artifact.setResolved( true );
+            }
         }
         catch ( ArtifactResolutionException e )
         {
