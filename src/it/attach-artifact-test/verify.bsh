@@ -14,6 +14,15 @@ try
         System.out.println( "Zip file not installed: " + installedZipFile );
         return false;
     }
+
+    String zipWithouClassifierFilePath = "../../local-repo/antrun-plugin/test/antrun-plugin-attach-artifact-test/1.0-SNAPSHOT/antrun-plugin-attach-artifact-test-1.0-SNAPSHOT.zip"; 
+    File installedZipWithouClassifierFile = new File( basedir, zipWithouClassifierFilePath );
+
+    if ( ! installedZipWithouClassifierFile.exists() )
+    {
+        System.out.println( "Zip file (without classifier) not installed: " + installedZipWithouClassifierFile );
+        return false;
+    }
 }
 catch( Throwable t )
 {
