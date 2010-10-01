@@ -82,21 +82,14 @@ public class AttachArtifactTask
         
         MavenProject mavenProject = (MavenProject) this.getProject().getReference( mavenProjectRefId );
 
-        if ( classifier == null )
+        if ( this.getProject().getReference( mavenProjectHelperRefId ) == null )
         {
-            mavenProject.getArtifact().setFile( file );
+            throw new BuildException( "Maven project helper reference not found: " + mavenProjectHelperRefId );
         }
-        else
-        {
-            if ( this.getProject().getReference( mavenProjectHelperRefId ) == null )
-            {
-                throw new BuildException( "Maven project helper reference not found: " + mavenProjectHelperRefId );
-            }
 
-            log( "Attaching " + file + " as an attached artifact", Project.MSG_VERBOSE );
-            MavenProjectHelper projectHelper = (MavenProjectHelper) getProject().getReference( mavenProjectHelperRefId );
-            projectHelper.attachArtifact( mavenProject, type, classifier, file );
-        }
+        log( "Attaching " + file + " as an attached artifact", Project.MSG_VERBOSE );
+        MavenProjectHelper projectHelper = (MavenProjectHelper) getProject().getReference( mavenProjectHelperRefId );
+        projectHelper.attachArtifact( mavenProject, type, classifier, file );
     }
 
     public File getFile()

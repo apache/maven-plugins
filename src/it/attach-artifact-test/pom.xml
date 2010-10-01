@@ -50,6 +50,7 @@ under the License.
                      includes="*.xml"
                   />
                 <attachartifact file="junk.zip" classifier="foo" type="zip"/>
+                <attachartifact file="junk.zip" type="zip"/>
               </tasks>
             </configuration>
           </execution>
