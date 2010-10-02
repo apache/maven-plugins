@@ -361,7 +361,16 @@ under the License.
       <artifactId>wagon-provider-api</artifactId>
       <version>${wagonVersion}</version>
     </dependency>
-    <!-- providers not anymore in core  -->
+    <dependency>
+      <groupId>org.apache.maven.wagon</groupId>
+      <artifactId>wagon-file</artifactId>
+      <version>${wagonVersion}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.wagon</groupId>
+      <artifactId>wagon-http-lightweight</artifactId>
+      <version>${wagonVersion}</version>
+    </dependency>
     <dependency>
       <groupId>org.apache.maven.wagon</groupId>
       <artifactId>wagon-ssh</artifactId>
