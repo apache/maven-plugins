@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.maven.doxia.site.decoration.DecorationModel;
 import org.apache.maven.doxia.site.decoration.io.xpp3.DecorationXpp3Reader;
 import org.apache.maven.doxia.site.decoration.io.xpp3.DecorationXpp3Writer;
@@ -38,6 +39,7 @@ import org.apache.maven.project.MavenProjectHelper;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.WriterFactory;
+import org.codehaus.plexus.util.xml.XmlStreamReader;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 /**
@@ -86,9 +88,11 @@ public class SiteDescriptorAttachMojo
                 props.put( "modules", "<menu ref=\"modules\"/>" );
 
                 DecorationModel decoration;
+                XmlStreamReader reader = null;
                 try
                 {
-                    String siteDescriptorContent = IOUtil.toString( ReaderFactory.newXmlReader( descriptorFile ) );
+                    reader = ReaderFactory.newXmlReader( descriptorFile );
+                    String siteDescriptorContent = IOUtil.toString( reader );
 
                     siteDescriptorContent =
                         siteTool.getInterpolatedSiteDescriptorContent( props, project, siteDescriptorContent,
@@ -107,6 +111,10 @@ public class SiteDescriptorAttachMojo
                 catch ( SiteToolException e )
                 {
                     throw new MojoExecutionException( "Error when interpolating site descriptor", e );
+                }
+                finally
+                {
+                    IOUtils.closeQuietly( reader );
                 }
 
                 MavenProject parentProject = siteTool.getParentProject( project, reactorProjects, localRepository );
@@ -140,10 +148,11 @@ public class SiteDescriptorAttachMojo
                 File interpolatedDescriptorFile = new File( project.getBuild().getDirectory(), filename );
                 interpolatedDescriptorFile.getParentFile().mkdirs();
 
+                Writer writer = null;
                 try
                 {
                     // Write the interpolated site descriptor to a file
-                    Writer writer = WriterFactory.newXmlWriter( interpolatedDescriptorFile );
+                    writer = WriterFactory.newXmlWriter( interpolatedDescriptorFile );
                     new DecorationXpp3Writer().write( writer, decoration );
                     // Attach the interpolated site descriptor
                     getLog().debug( "Attaching the site descriptor '" + interpolatedDescriptorFile.getAbsolutePath()
@@ -153,6 +162,10 @@ public class SiteDescriptorAttachMojo
                 catch ( IOException e )
                 {
                     throw new MojoExecutionException( "Unable to store interpolated site descriptor", e );
+                }
+                finally
+                {
+                    IOUtils.closeQuietly( writer );
                 }
             }
         }
