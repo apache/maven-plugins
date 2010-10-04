@@ -46,6 +46,7 @@ import org.apache.maven.doxia.linkcheck.model.LinkcheckFile;
 import org.apache.maven.doxia.linkcheck.model.LinkcheckFileResult;
 import org.apache.maven.doxia.linkcheck.model.LinkcheckModel;
 import org.apache.maven.doxia.siterenderer.Renderer;
+import org.apache.maven.model.Profile;
 import org.apache.maven.model.Reporting;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
@@ -573,6 +574,7 @@ public class LinkcheckReport
         }
 
         clone.getOriginalModel().getReporting().setOutputDirectory( tmpReportingOutputDirectory.getAbsolutePath() );
+        List profileIds = getActiveProfileIds( clone );
 
         // create the original model as tmp pom file for the invoker
         File tmpProjectFile = FileUtils.createTempFile( "pom", ".xml", project.getBasedir() );
@@ -590,7 +592,7 @@ public class LinkcheckReport
         // invoke it
         try
         {
-            invoke( tmpProjectFile, invokerLog, mavenHome, goals, properties );
+            invoke( tmpProjectFile, invokerLog, mavenHome, goals, profileIds, properties );
         }
         finally
         {
@@ -601,6 +603,18 @@ public class LinkcheckReport
         }
     }
 
+    private List getActiveProfileIds( MavenProject clone )
+    {
+        List profileIds = new ArrayList();
+
+        for ( Iterator it = clone.getActiveProfiles().iterator(); it.hasNext(); )
+        {
+            profileIds.add( ( (Profile) it.next() ).getId() );
+        }
+
+        return profileIds;
+    }
+
     /**
      * @param projectFile not null, should be in the ${project.basedir}
      * @param invokerLog not null
@@ -608,7 +622,8 @@ public class LinkcheckReport
      * @param goals the list of goals
      * @param properties the properties for the invoker
      */
-    private void invoke( File projectFile, File invokerLog, String mavenHome, List goals, Properties properties )
+    private void invoke( File projectFile, File invokerLog, String mavenHome,
+        List goals, List activeProfiles, Properties properties )
     {
         Invoker invoker = new DefaultInvoker();
         invoker.setMavenHome( new File( mavenHome ) );
@@ -620,6 +635,8 @@ public class LinkcheckReport
         request.setDebug( getLog().isDebugEnabled() );
         request.setGoals( goals );
         request.setProperties( properties );
+        request.setProfiles( activeProfiles );
+
         File javaHome = getJavaHome();
         if ( javaHome != null )
         {
