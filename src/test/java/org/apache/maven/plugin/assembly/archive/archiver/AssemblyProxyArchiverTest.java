@@ -67,7 +67,9 @@ public class AssemblyProxyArchiverTest
 
         final TrackingArchiverStub tracker = new TrackingArchiverStub();
         final AssemblyProxyArchiver archiver =
-            new AssemblyProxyArchiver( "", tracker, null, null, null, workdir, logger, true );
+            new AssemblyProxyArchiver( "", tracker, null, null, null, workdir, logger, false );
+
+        archiver.setForced( true );
 
         final DefaultFileSet fs = new DefaultFileSet();
         fs.setDirectory( workdir );
@@ -84,10 +86,16 @@ public class AssemblyProxyArchiverTest
         final File sources = fileManager.createTempDir();
 
         final File workdir = new File( sources, "workdir" );
+        workdir.mkdir();
+
+        fileManager.createFile( sources, "test-included.txt", "This is included" );
+        fileManager.createFile( workdir, "test-excluded.txt", "This is excluded" );
 
         final TrackingArchiverStub tracker = new TrackingArchiverStub();
         final AssemblyProxyArchiver archiver =
-            new AssemblyProxyArchiver( "", tracker, null, null, null, workdir, logger, true );
+            new AssemblyProxyArchiver( "", tracker, null, null, null, workdir, logger, false );
+
+        archiver.setForced( true );
 
         final DefaultFileSet fs = new DefaultFileSet();
         fs.setDirectory( sources );
@@ -121,7 +129,9 @@ public class AssemblyProxyArchiverTest
 
         final AssemblyProxyArchiver archiver =
             new AssemblyProxyArchiver( "", delegate, null, selectors, null, new File( "." ),
-                                       new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ), true );
+                                       new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ), false );
+
+        archiver.setForced( true );
 
         final File inputFile = fileManager.createTempFile();
 
@@ -148,7 +158,9 @@ public class AssemblyProxyArchiverTest
 
         final AssemblyProxyArchiver archiver =
             new AssemblyProxyArchiver( "", delegate, null, selectors, null, new File( "." ),
-                                       new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ), true );
+                                       new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ), false );
+
+        archiver.setForced( true );
 
         final File dir = fileManager.createTempDir();
         FileUtils.cleanDirectory( dir );
