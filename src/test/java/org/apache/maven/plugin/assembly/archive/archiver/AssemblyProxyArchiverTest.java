@@ -121,6 +121,9 @@ public class AssemblyProxyArchiverTest
         delegateControl.setMatcher( MockControl.ALWAYS_MATCHER );
         delegateControl.setVoidCallable();
 
+        delegate.setForced( true );
+        delegateControl.setVoidCallable( MockControl.ZERO_OR_MORE );
+
         final CounterSelector counter = new CounterSelector( true );
         final List<FileSelector> selectors = new ArrayList<FileSelector>();
         selectors.add( counter );
