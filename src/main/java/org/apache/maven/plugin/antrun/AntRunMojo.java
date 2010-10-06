@@ -460,7 +460,7 @@ public class AntRunMojo
         // Have to use an XML writer because in Maven 2.x the PlexusConfig toString() method loses XML attributes
         StringWriter writer = new StringWriter();
         AntrunXmlPlexusConfigurationWriter xmlWriter = new AntrunXmlPlexusConfigurationWriter();
-        xmlWriter.write( writer, target );
+        xmlWriter.write( target, writer );
         
         StringBuffer antProjectConfig = writer.getBuffer();
 

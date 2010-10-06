@@ -51,6 +51,8 @@ under the License.
               <tasks>
                 <!-- non-ASCII chars: ÅÄÖ -->
                 <echo message="non-ASCII chars: ÅÄÖ" />
+                <!-- escaped characters -->
+                <echo message="Some &quot;strange and mysterious&quot; result"/>
               </tasks>
             </configuration>
           </execution>
