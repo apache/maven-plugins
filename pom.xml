@@ -312,7 +312,8 @@ under the License.
             </excludes>
             <redirectTestOutputToFile>${testOutputToFile}</redirectTestOutputToFile>
             <systemPropertyVariables>
-              <java.io.tmpdir>${basedir}/target/tmpdir</java.io.tmpdir>
+              <!-- NOTE: Ensure the tmp dir configured for Surefire exists or some JREs (e.g. 1.5) will fail to create temp files -->
+              <java.io.tmpdir>${project.build.testOutputDirectory}</java.io.tmpdir>
             </systemPropertyVariables>
           </configuration>
         </plugin>
