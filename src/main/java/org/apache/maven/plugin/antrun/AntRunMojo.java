@@ -84,7 +84,7 @@ public class AntRunMojo
     /**
      * The default encoding to use for the generated Ant build.
      */
-    public final static String DEFAULT_ANT_BUILD_ENCODING = "UTF-8";
+    public final static String UTF_8 = "UTF-8";
 
     /**
      * The name used for the ant target
@@ -457,12 +457,6 @@ public class AntRunMojo
     private File writeTargetToProjectFile()
         throws IOException, PlexusConfigurationException
     {
-        String encoding = project.getProperties().getProperty( "project.build.sourceEncoding" );
-        if ( encoding == null )
-        {
-            encoding = DEFAULT_ANT_BUILD_ENCODING;
-        }
-        
         // Have to use an XML writer because in Maven 2.x the PlexusConfig toString() method loses XML attributes
         StringWriter writer = new StringWriter();
         AntrunXmlPlexusConfigurationWriter xmlWriter = new AntrunXmlPlexusConfigurationWriter();
@@ -488,7 +482,7 @@ public class AntRunMojo
             xmlns = "xmlns:" + customTaskPrefix + "=\"" + TASK_URI + "\""; 
         }
         
-        final String xmlHeader = "<?xml version=\"1.0\" encoding=\"" + encoding + "\" ?>\n";
+        final String xmlHeader = "<?xml version=\"1.0\" encoding=\"" + UTF_8 + "\" ?>\n";
         antProjectConfig.insert( 0, xmlHeader );
         final String projectOpen = "<project name=\"maven-antrun-\" default=\"" + antTargetName + "\" " + xmlns +" >\n";
         int index = antProjectConfig.indexOf( "<target" );
@@ -502,7 +496,7 @@ public class AntRunMojo
         File buildFile = new File( project.getBuild().getDirectory(), "/antrun/" + fileName );
 
         buildFile.getParentFile().mkdirs();
-        FileUtils.fileWrite( buildFile.getAbsolutePath(), encoding, antProjectConfig.toString() );
+        FileUtils.fileWrite( buildFile.getAbsolutePath(), UTF_8, antProjectConfig.toString() );
         return buildFile;
     }
 
