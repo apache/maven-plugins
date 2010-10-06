@@ -20,128 +20,79 @@ package org.apache.maven.plugin.antrun;
  */
 
 import org.codehaus.plexus.configuration.PlexusConfiguration;
+import org.codehaus.plexus.util.xml.PrettyPrintXMLWriter;
+import org.codehaus.plexus.util.xml.XMLWriter;
 
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.io.Writer;
 
 /**
  * Write a plexus configuration to a stream
- * Note: this is a copy of a class from plexus-container-default.  It is duplicated here
+ * Note: This class was originally copied from plexus-container-default.  It is duplicated here
  * to maintain compatibility with both Maven 2.x and Maven 3.x.
  *
  */
 public class AntrunXmlPlexusConfigurationWriter
 {
 
-    public void write( OutputStream outputStream, PlexusConfiguration configuration )
-        throws IOException
-    {
-        write( new OutputStreamWriter( outputStream, "UTF-8" ), configuration );
-    }
-
-    public void write( Writer writer, PlexusConfiguration configuration )
+    public void write( PlexusConfiguration configuration, Writer writer )
         throws IOException
     {
         int depth = 0;
 
-        display( configuration, writer, depth );
+        PrettyPrintXMLWriter xmlWriter = new PrettyPrintXMLWriter( writer );
+        write( configuration, xmlWriter, depth );
     }
 
-    private void display( PlexusConfiguration c, Writer w, int depth )
+    private void write( PlexusConfiguration c, XMLWriter w, int depth )
         throws IOException
     {
         int count = c.getChildCount();
 
         if ( count == 0 )
         {
-            displayTag( c, w, depth );
+            writeTag( c, w, depth );
         }
         else
         {
-            indent( depth, w );
-            w.write( '<' );
-            w.write( c.getName() );
-
-            attributes( c, w );
-
-            w.write( '>' );
-            w.write( '\n' );
+            w.startElement( c.getName() );
+            writeAttributes( c, w );
 
             for ( int i = 0; i < count; i++ )
             {
                 PlexusConfiguration child = c.getChild( i );
 
-                display( child, w, depth + 1 );
+                write( child, w, depth + 1 );
             }
-
-            indent( depth, w );
-            w.write( '<' );
-            w.write( '/' );
-            w.write( c.getName() );
-            w.write( '>' );
-            w.write( '\n' );
+            
+            w.endElement();
         }
     }
 
-    private void displayTag( PlexusConfiguration c, Writer w, int depth )
+    private void writeTag( PlexusConfiguration c, XMLWriter w, int depth )
         throws IOException
     {
+        w.startElement( c.getName() );
+        
+        writeAttributes( c, w );
+        
         String value = c.getValue( null );
-
         if ( value != null )
         {
-            indent( depth, w );
-            w.write( '<' );
-            w.write( c.getName() );
-
-            attributes( c, w );
-
-            w.write( '>' );
-            w.write( c.getValue( null ) );
-            w.write( '<' );
-            w.write( '/' );
-            w.write( c.getName() );
-            w.write( '>' );
-            w.write( '\n' );
+            w.writeText( value );
         }
-        else
-        {
-            indent( depth, w );
-            w.write( '<' );
-            w.write( c.getName() );
 
-            attributes( c, w );
-
-            w.write( '/' );
-            w.write( '>' );
-            w.write( "\n" );
-        }
+        w.endElement();
     }
 
-    private void attributes( PlexusConfiguration c, Writer w )
+    private void writeAttributes( PlexusConfiguration c, XMLWriter w )
         throws IOException
     {
         String[] names = c.getAttributeNames();
 
         for ( int i = 0; i < names.length; i++ )
         {
-            w.write( ' ' );
-            w.write( names[i] );
-            w.write( '=' );
-            w.write( '"' );
-            w.write( c.getAttribute( names[i], null ) );
-            w.write( '"' );
-        }
-    }
-
-    private void indent( int depth, Writer w )
-        throws IOException
-    {
-        for ( int i = 0; i < depth; i++ )
-        {
-            w.write( ' ' );
+            w.addAttribute( names[i], c.getAttribute( names[i], null ) );
         }
     }
 
