@@ -208,17 +208,18 @@ public final class AssemblyFormatUtils
         }
 
         Properties commandLineProperties = System.getProperties();
-        try
+        if ( session != null )
         {
-            if ( session != null )
+            commandLineProperties = new Properties();
+            if ( session.getExecutionProperties() != null )
             {
-                commandLineProperties = session.getExecutionProperties();
+                commandLineProperties.putAll( session.getExecutionProperties() );
             }
 
-        }
-        catch ( final NoSuchMethodError nsmer )
-        {
-            // OK, so user is using Maven <= 2.0.8. No big deal.
+            if ( session.getUserProperties() != null )
+            {
+                commandLineProperties.putAll( session.getUserProperties() );
+            }
         }
 
         // 7
@@ -435,17 +436,18 @@ public final class AssemblyFormatUtils
         }
 
         Properties commandLineProperties = System.getProperties();
-        try
+        if ( session != null )
         {
-            if ( session != null )
+            commandLineProperties = new Properties();
+            if ( session.getExecutionProperties() != null )
             {
-                commandLineProperties = session.getExecutionProperties();
+                commandLineProperties.putAll( session.getExecutionProperties() );
             }
 
-        }
-        catch ( final NoSuchMethodError nsmer )
-        {
-            // OK, so user is using Maven <= 2.0.8. No big deal.
+            if ( session.getUserProperties() != null )
+            {
+                commandLineProperties.putAll( session.getUserProperties() );
+            }
         }
 
         // 8
