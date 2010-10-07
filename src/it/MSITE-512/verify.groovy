@@ -18,11 +18,11 @@
  * under the License.
  */
 
-assert new File(basedir, 'target/site/issue-tracking.html').exists();
-
 assert new File(basedir, 'parent-usage-test/target/site/xref/index.html').exists();
 assert new File(basedir, 'parent-usage-test/target/site/xref-test/index.html').exists();
-assert new File(basedir, 'parent-usage-test/target/site/issue-tracking.html').exists();
 assert new File(basedir, 'parent-usage-test/target/site/apidocs').exists();
+
+assert new File(basedir, 'parent-usage-test/target/site/apidocs').exists();
+assert !new File(basedir, 'parent-usage-test/target/site/apidocs/org/apache/maven/titi/AppFoo.html').exists();
 
 return true;
