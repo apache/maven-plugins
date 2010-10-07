@@ -19,6 +19,7 @@ package org.apache.maven.plugin.assembly.io;
  * under the License.
  */
 
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
@@ -60,11 +61,13 @@ import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 /**
@@ -351,10 +354,32 @@ public class DefaultAssemblyReader
         try
         {
             final Map<String, String> context = new HashMap<String, String>();
-            for ( final Object k : System.getProperties().keySet() )
+            final MavenSession session = configSource.getMavenSession();
+
+            Properties commandLineProperties = System.getProperties();
+            if ( session != null )
             {
-                final String key = (String) k;
-                context.put( key, System.getProperty( key ) );
+                commandLineProperties = new Properties();
+                if ( session.getExecutionProperties() != null )
+                {
+                    commandLineProperties.putAll( session.getExecutionProperties() );
+                }
+
+                if ( session.getUserProperties() != null )
+                {
+                    commandLineProperties.putAll( session.getUserProperties() );
+                }
+            }
+
+            for ( final Enumeration<Object> e = commandLineProperties.keys(); e.hasMoreElements(); )
+            {
+                final String key = (String) e.nextElement();
+                if ( key == null || key.trim().length() < 1 )
+                {
+                    continue;
+                }
+
+                context.put( key, commandLineProperties.getProperty( key ) );
             }
 
             context.put( "basedir", basedir.getAbsolutePath() );
