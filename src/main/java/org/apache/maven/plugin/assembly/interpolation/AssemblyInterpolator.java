@@ -136,8 +136,7 @@ public class AssemblyInterpolator
             {
                 final ObjectInterpolationWarning warning = it.next();
 
-                sb.append( '\n' )
-                  .append( warning );
+                sb.append( '\n' ).append( warning );
             }
 
             sb.append( "\n\nThese values were SKIPPED, but the assembly process will continue.\n" );
@@ -184,33 +183,30 @@ public class AssemblyInterpolator
         final Properties settingsProperties = new Properties();
         if ( configSource.getLocalRepository() != null )
         {
-            settingsProperties.setProperty( "localRepository", configSource.getLocalRepository()
-                                                                           .getBasedir() );
-            settingsProperties.setProperty( "settings.localRepository", configSource.getLocalRepository()
-                                                                                    .getBasedir() );
+            settingsProperties.setProperty( "localRepository", configSource.getLocalRepository().getBasedir() );
+            settingsProperties.setProperty( "settings.localRepository", configSource.getLocalRepository().getBasedir() );
         }
         else if ( session != null && session.getSettings() != null )
         {
-            settingsProperties.setProperty( "localRepository", session.getSettings()
-                                                                      .getLocalRepository() );
-            settingsProperties.setProperty( "settings.localRepository", configSource.getLocalRepository()
-                                                                                    .getBasedir() );
+            settingsProperties.setProperty( "localRepository", session.getSettings().getLocalRepository() );
+            settingsProperties.setProperty( "settings.localRepository", configSource.getLocalRepository().getBasedir() );
         }
 
         interpolator.addValueSource( new PropertiesBasedValueSource( settingsProperties ) );
 
         Properties commandLineProperties = System.getProperties();
-        try
+        if ( session != null )
         {
-            if ( session != null )
+            commandLineProperties = new Properties();
+            if ( session.getExecutionProperties() != null )
             {
-                commandLineProperties = session.getExecutionProperties();
+                commandLineProperties.putAll( session.getExecutionProperties() );
             }
-
-        }
-        catch ( final NoSuchMethodError nsmer )
-        {
-            // OK, so user is using Maven <= 2.0.8. No big deal.
+            
+            if ( session.getUserProperties() != null )
+            {
+                commandLineProperties.putAll( session.getUserProperties() );
+            }
         }
 
         // 7
