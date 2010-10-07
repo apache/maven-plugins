@@ -35,12 +35,11 @@ import java.util.Properties;
 
 import junit.framework.TestCase;
 
-
 public class AssemblyFormatUtilsTest
     extends TestCase
 {
 
-    private MockManager mockManager = new MockManager();
+    private final MockManager mockManager = new MockManager();
 
     public void testGetDistroName_ShouldUseJustFinalNameWithNoAppendAssemblyIdOrClassifier()
     {
@@ -59,200 +58,215 @@ public class AssemblyFormatUtilsTest
     }
 
     public void testGetOutputDir_ShouldResolveArtifactIdInOutDir_UseArtifactInfo()
-    throws AssemblyFormattingException
+        throws AssemblyFormattingException
     {
-        verifyOutputDirUsingArtifactProject( "${artifact.artifactId}", null, null, "artifact", null, null, null, "artifact/" );
+        verifyOutputDirUsingArtifactProject( "${artifact.artifactId}", null, null, "artifact", null, null, null,
+                                             "artifact/" );
     }
 
     public void testGetOutputDir_ShouldResolveVersionInOutDir_UseArtifactInfo()
-    throws AssemblyFormattingException
+        throws AssemblyFormattingException
     {
         verifyOutputDirUsingArtifactProject( "${artifact.version}", null, null, null, "version", null, null, "version/" );
     }
 
     public void testGetOutputDir_ShouldResolveBuildFinalNameInOutDir_UseArtifactInfo()
-    throws AssemblyFormattingException
+        throws AssemblyFormattingException
     {
-        verifyOutputDirUsingArtifactProject( "${artifact.build.finalName}", null, null, null, null, "finalName", null, "finalName/" );
+        verifyOutputDirUsingArtifactProject( "${artifact.build.finalName}", null, null, null, null, "finalName", null,
+                                             "finalName/" );
     }
 
     public void testGetOutputDir_ShouldResolveGroupIdInOutDir_UseModuleInfo()
-    throws AssemblyFormattingException
+        throws AssemblyFormattingException
     {
         verifyOutputDirUsingModuleProject( "${module.groupId}", null, "group", null, null, null, null, "group/" );
     }
 
     public void testGetOutputDir_ShouldResolveArtifactIdInOutDir_UseModuleInfo()
-    throws AssemblyFormattingException
+        throws AssemblyFormattingException
     {
-        verifyOutputDirUsingModuleProject( "${module.artifactId}", null, null, "artifact", null, null, null, "artifact/" );
+        verifyOutputDirUsingModuleProject( "${module.artifactId}", null, null, "artifact", null, null, null,
+                                           "artifact/" );
     }
 
     public void testGetOutputDir_ShouldResolveVersionInOutDir_UseModuleInfo()
-    throws AssemblyFormattingException
+        throws AssemblyFormattingException
     {
         verifyOutputDirUsingModuleProject( "${module.version}", null, null, null, "version", null, null, "version/" );
     }
 
     public void testGetOutputDir_ShouldResolveBuildFinalNameInOutDir_UseModuleInfo()
-    throws AssemblyFormattingException
+        throws AssemblyFormattingException
     {
-        verifyOutputDirUsingModuleProject( "${module.build.finalName}", null, null, null, null, "finalName", null, "finalName/" );
+        verifyOutputDirUsingModuleProject( "${module.build.finalName}", null, null, null, null, "finalName", null,
+                                           "finalName/" );
     }
 
     public void testGetOutputDir_ShouldResolveGroupIdInOutDir_UseExplicitMainProject()
-    throws AssemblyFormattingException
+        throws AssemblyFormattingException
     {
         verifyOutputDirUsingMainProject( "${pom.groupId}", null, "group", null, null, null, null, "group/" );
     }
 
     public void testGetOutputDir_ShouldResolveArtifactIdInOutDir_UseExplicitMainProject()
-    throws AssemblyFormattingException
+        throws AssemblyFormattingException
     {
         verifyOutputDirUsingMainProject( "${pom.artifactId}", null, null, "artifact", null, null, null, "artifact/" );
     }
 
     public void testGetOutputDir_ShouldResolveVersionInOutDir_UseExplicitMainProject()
-    throws AssemblyFormattingException
+        throws AssemblyFormattingException
     {
         verifyOutputDirUsingMainProject( "${pom.version}", null, null, null, "version", null, null, "version/" );
     }
 
     public void testGetOutputDir_ShouldResolveBuildFinalNameInOutDir_UseExplicitMainProject()
-    throws AssemblyFormattingException
+        throws AssemblyFormattingException
     {
-        verifyOutputDirUsingMainProject( "${pom.build.finalName}", null, null, null, null, "finalName", null, "finalName/" );
+        verifyOutputDirUsingMainProject( "${pom.build.finalName}", null, null, null, null, "finalName", null,
+                                         "finalName/" );
     }
 
     public void testGetOutputDir_ShouldResolveGroupIdInOutDir_UseExplicitMainProject_projectRef()
-    throws AssemblyFormattingException
+        throws AssemblyFormattingException
     {
         verifyOutputDirUsingMainProject( "${project.groupId}", null, "group", null, null, null, null, "group/" );
     }
 
     public void testGetOutputDir_ShouldResolveArtifactIdInOutDir_UseExplicitMainProject_projectRef()
-    throws AssemblyFormattingException
+        throws AssemblyFormattingException
     {
         verifyOutputDirUsingMainProject( "${project.artifactId}", null, null, "artifact", null, null, null, "artifact/" );
     }
 
     public void testGetOutputDir_ShouldResolveVersionInOutDir_UseExplicitMainProject_projectRef()
-    throws AssemblyFormattingException
+        throws AssemblyFormattingException
     {
         verifyOutputDirUsingMainProject( "${project.version}", null, null, null, "version", null, null, "version/" );
     }
 
     public void testGetOutputDir_ShouldResolveBuildFinalNameInOutDir_UseExplicitMainProject_projectRef()
-    throws AssemblyFormattingException
+        throws AssemblyFormattingException
     {
         verifyOutputDir( "${project.build.finalName}", null, "finalName", "finalName/" );
     }
 
     public void testGetOutputDir_ShouldNotAlterOutDirWhenIncludeBaseFalseAndNoExpressions()
-    throws AssemblyFormattingException
+        throws AssemblyFormattingException
     {
         verifyOutputDir( "dir/", "finalName", null, "dir/" );
     }
 
     public void testGetOutputDir_ShouldNotAlterOutDirWhenIncludeBaseFalseAndNoExpressions_CheckWithBackslash()
-    throws AssemblyFormattingException
+        throws AssemblyFormattingException
     {
         verifyOutputDir( "dir\\", "finalName", null, "dir\\" );
     }
 
     public void testGetOutputDir_ShouldAppendSlashToOutDirWhenMissingAndIncludeBaseFalseAndNoExpressions()
-    throws AssemblyFormattingException
+        throws AssemblyFormattingException
     {
         verifyOutputDir( "dir", "finalName", null, "dir/" );
     }
 
     public void testGetOutputDir_ShouldResolveGroupIdInOutDir()
-    throws AssemblyFormattingException
+        throws AssemblyFormattingException
     {
         verifyOutputDirUsingMainProject( "${groupId}", "finalName", "group", null, null, null, null, "group/" );
     }
 
     public void testGetOutputDir_ShouldResolveArtifactIdInOutDir()
-    throws AssemblyFormattingException
+        throws AssemblyFormattingException
     {
         verifyOutputDirUsingMainProject( "${artifactId}", "finalName", null, "artifact", null, null, null, "artifact/" );
     }
 
     public void testGetOutputDir_ShouldResolveVersionInOutDir()
-    throws AssemblyFormattingException
+        throws AssemblyFormattingException
     {
         verifyOutputDirUsingMainProject( "${version}", "finalName", null, null, "version", null, null, "version/" );
     }
 
     public void testGetOutputDir_ShouldResolveVersionInLargerOutDirExpr()
-    throws AssemblyFormattingException
+        throws AssemblyFormattingException
     {
-        verifyOutputDirUsingMainProject( "my-special-${version}", "finalName", null, null, "99", null, null, "my-special-99/" );
+        verifyOutputDirUsingMainProject( "my-special-${version}", "finalName", null, null, "99", null, null,
+                                         "my-special-99/" );
     }
 
     public void testGetOutputDir_ShouldResolveFinalNameInOutDir()
-    throws AssemblyFormattingException
+        throws AssemblyFormattingException
     {
         verifyOutputDir( "${finalName}", "finalName", null, "finalName/" );
     }
 
     public void testGetOutputDir_ShouldResolveBuildFinalNameInOutDir()
-    throws AssemblyFormattingException
+        throws AssemblyFormattingException
     {
         verifyOutputDir( "${build.finalName}", "finalName", null, "finalName/" );
     }
 
     public void testGetOutputDir_ShouldReturnEmptyPathWhenAllInputIsEmptyAndIncludeBaseFalse()
-    throws AssemblyFormattingException
+        throws AssemblyFormattingException
     {
         verifyOutputDir( null, null, null, "" );
     }
 
-    public void testGetOutputDir_ShouldResolveProjectProperty() throws AssemblyFormattingException
+    public void testGetOutputDir_ShouldResolveProjectProperty()
+        throws AssemblyFormattingException
     {
-        Properties props = new Properties();
+        final Properties props = new Properties();
         props.setProperty( "myProperty", "value" );
 
         verifyOutputDirUsingMainProject( "file.${myProperty}", null, null, null, null, null, props, "file.value/" );
     }
 
-    public void testGetOutputDir_ShouldResolveProjectPropertyAltExpr() throws AssemblyFormattingException
+    public void testGetOutputDir_ShouldResolveProjectPropertyAltExpr()
+        throws AssemblyFormattingException
     {
-        Properties props = new Properties();
+        final Properties props = new Properties();
         props.setProperty( "myProperty", "value" );
 
-        verifyOutputDirUsingMainProject( "file.${pom.properties.myProperty}", null, null, null, null, null, props, "file.value/" );
+        verifyOutputDirUsingMainProject( "file.${pom.properties.myProperty}", null, null, null, null, null, props,
+                                         "file.value/" );
     }
 
     public void testEvalFileNameMapping_ShouldResolveArtifactIdAndBaseVersionInOutDir_UseArtifactInfo_WithValidMainProject()
-    throws AssemblyFormattingException
+        throws AssemblyFormattingException
     {
-        MavenProject mainProject = createProject( "group", "main", "1", null );
+        final MavenProject mainProject = createProject( "group", "main", "1", null );
 
-        String artifactVersion = "2-20070807.112233-1";
-        String artifactBaseVersion = "2-SNAPSHOT";
-        MavenProject artifactProject = createProject( "group", "artifact", artifactVersion, null );
-        ArtifactMock artifactMock = new ArtifactMock( mockManager, "group", "artifact", artifactVersion, "jar", true, artifactBaseVersion );
+        final String artifactVersion = "2-20070807.112233-1";
+        final String artifactBaseVersion = "2-SNAPSHOT";
+        final MavenProject artifactProject = createProject( "group", "artifact", artifactVersion, null );
+        final ArtifactMock artifactMock =
+            new ArtifactMock( mockManager, "group", "artifact", artifactVersion, "jar", true, artifactBaseVersion );
 
         artifactProject.setArtifact( artifactMock.getArtifact() );
 
-        MockControl sessionCtl = MockClassControl.createControl( MavenSession.class );
+        final MockControl sessionCtl = MockClassControl.createControl( MavenSession.class );
         mockManager.add( sessionCtl );
-        
-        MavenSession session = (MavenSession) sessionCtl.getMock();
+
+        final MavenSession session = (MavenSession) sessionCtl.getMock();
         session.getExecutionProperties();
         sessionCtl.setReturnValue( null, MockControl.ZERO_OR_MORE );
-        
-        MockControl csCtl = MockControl.createControl( AssemblerConfigurationSource.class );
+
+        session.getUserProperties();
+        sessionCtl.setReturnValue( new Properties(), MockControl.ZERO_OR_MORE );
+
+        final MockControl csCtl = MockControl.createControl( AssemblerConfigurationSource.class );
         mockManager.add( csCtl );
-        
-        AssemblerConfigurationSource cs = (AssemblerConfigurationSource) csCtl.getMock();
+
+        final AssemblerConfigurationSource cs = (AssemblerConfigurationSource) csCtl.getMock();
         cs.getMavenSession();
         csCtl.setReturnValue( session, MockControl.ZERO_OR_MORE );
-        
+
         mockManager.replayAll();
 
-        String result = AssemblyFormatUtils.evaluateFileNameMapping( "${artifact.artifactId}-${artifact.baseVersion}", artifactMock.getArtifact(), mainProject, artifactProject, cs );
+        final String result =
+            AssemblyFormatUtils.evaluateFileNameMapping( "${artifact.artifactId}-${artifact.baseVersion}",
+                                                         artifactMock.getArtifact(), mainProject, artifactProject, cs );
 
         assertEquals( "artifact-2-SNAPSHOT", result );
 
@@ -263,238 +277,277 @@ public class AssemblyFormatUtilsTest
     }
 
     public void testEvalFileNameMapping_ShouldResolveGroupIdInOutDir_UseArtifactInfo()
-    throws AssemblyFormattingException
+        throws AssemblyFormattingException
     {
-        verifyEvalFileNameMappingUsingArtifactProject( "${artifact.groupId}", null, "group", null, null, null, "group", null );
+        verifyEvalFileNameMappingUsingArtifactProject( "${artifact.groupId}", null, "group", null, null, null, "group",
+                                                       null );
     }
 
     public void testEvalFileNameMapping_ShouldResolveArtifactIdInOutDir_UseArtifactInfo()
-    throws AssemblyFormattingException
+        throws AssemblyFormattingException
     {
-        verifyEvalFileNameMappingUsingArtifactProject( "${artifact.artifactId}", null, null, "artifact", null, null, "artifact", null );
+        verifyEvalFileNameMappingUsingArtifactProject( "${artifact.artifactId}", null, null, "artifact", null, null,
+                                                       "artifact", null );
     }
 
     public void testEvalFileNameMapping_ShouldResolveVersionInOutDir_UseArtifactInfo()
-    throws AssemblyFormattingException
+        throws AssemblyFormattingException
     {
-        verifyEvalFileNameMappingUsingArtifactProject( "${artifact.version}", null, null, null, "version", null, "version", null );
+        verifyEvalFileNameMappingUsingArtifactProject( "${artifact.version}", null, null, null, "version", null,
+                                                       "version", null );
     }
 
     public void testEvalFileNameMapping_ShouldResolveGroupIdInOutDir_UseArtifactInfoAndModulePrefix()
-    throws AssemblyFormattingException
+        throws AssemblyFormattingException
     {
-        verifyEvalFileNameMappingUsingModuleProject( "${module.groupId}", null, "group", null, null, null, "group", null );
+        verifyEvalFileNameMappingUsingModuleProject( "${module.groupId}", null, "group", null, null, null, "group",
+                                                     null );
     }
 
     public void testEvalFileNameMapping_ShouldResolveArtifactIdInOutDir_UseArtifactInfoAndModulePrefix()
-    throws AssemblyFormattingException
+        throws AssemblyFormattingException
     {
-        verifyEvalFileNameMappingUsingModuleProject( "${module.artifactId}", null, null, "artifact", null, null, "artifact", null );
+        verifyEvalFileNameMappingUsingModuleProject( "${module.artifactId}", null, null, "artifact", null, null,
+                                                     "artifact", null );
     }
 
     public void testEvalFileNameMapping_ShouldResolveVersionInOutDir_UseArtifactInfoAndModulePrefix()
-    throws AssemblyFormattingException
+        throws AssemblyFormattingException
     {
-        verifyEvalFileNameMappingUsingModuleProject( "${module.version}", null, null, null, "version", null, "version", null );
+        verifyEvalFileNameMappingUsingModuleProject( "${module.version}", null, null, null, "version", null, "version",
+                                                     null );
     }
 
     public void testEvalFileNameMapping_ShouldResolveGroupIdInOutDir_UseExplicitMainProject()
-    throws AssemblyFormattingException
+        throws AssemblyFormattingException
     {
         verifyEvalFileNameMappingUsingMainProject( "${pom.groupId}", null, "group", null, null, null, "group", null );
     }
 
     public void testEvalFileNameMapping_ShouldResolveArtifactIdInOutDir_UseExplicitMainProject()
-    throws AssemblyFormattingException
+        throws AssemblyFormattingException
     {
-        verifyEvalFileNameMappingUsingMainProject( "${pom.artifactId}", null, null, "artifact", null, null, "artifact", null );
+        verifyEvalFileNameMappingUsingMainProject( "${pom.artifactId}", null, null, "artifact", null, null, "artifact",
+                                                   null );
     }
 
     public void testEvalFileNameMapping_ShouldResolveVersionInOutDir_UseExplicitMainProject()
-    throws AssemblyFormattingException
+        throws AssemblyFormattingException
     {
         verifyEvalFileNameMappingUsingMainProject( "${pom.version}", null, null, null, "version", null, "version", null );
     }
 
     public void testEvalFileNameMapping_ShouldResolveGroupIdInOutDir_UseExplicitMainProject_projectRef()
-    throws AssemblyFormattingException
+        throws AssemblyFormattingException
     {
         verifyEvalFileNameMappingUsingMainProject( "${project.groupId}", null, "group", null, null, null, "group", null );
     }
 
     public void testEvalFileNameMapping_ShouldResolveArtifactIdInOutDir_UseExplicitMainProject_projectRef()
-    throws AssemblyFormattingException
+        throws AssemblyFormattingException
     {
-        verifyEvalFileNameMappingUsingMainProject( "${project.artifactId}", null, null, "artifact", null, null, "artifact", null );
+        verifyEvalFileNameMappingUsingMainProject( "${project.artifactId}", null, null, "artifact", null, null,
+                                                   "artifact", null );
     }
 
     public void testEvalFileNameMapping_ShouldResolveVersionInOutDir_UseExplicitMainProject_projectRef()
-    throws AssemblyFormattingException
+        throws AssemblyFormattingException
     {
-        verifyEvalFileNameMappingUsingMainProject( "${project.version}", null, null, null, "version", null, "version", null );
+        verifyEvalFileNameMappingUsingMainProject( "${project.version}", null, null, null, "version", null, "version",
+                                                   null );
     }
 
-    public void testEvalFileNameMapping_ShouldPassExpressionThroughUnchanged() throws AssemblyFormattingException
+    public void testEvalFileNameMapping_ShouldPassExpressionThroughUnchanged()
+        throws AssemblyFormattingException
     {
         verifyEvalFileNameMapping( "filename", null, null, "filename", null );
     }
 
-    public void testEvalFileNameMapping_ShouldInsertClassifierAheadOfExtension() throws AssemblyFormattingException
+    public void testEvalFileNameMapping_ShouldInsertClassifierAheadOfExtension()
+        throws AssemblyFormattingException
     {
-        verifyEvalFileNameMapping( "filename-${artifact.classifier}.ext", "classifier", null, "filename-classifier.ext", null );
+        verifyEvalFileNameMapping( "filename-${artifact.classifier}.ext", "classifier", null,
+                                   "filename-classifier.ext", null );
     }
 
-    public void testEvalFileNameMapping_ShouldAppendDashClassifierWhenClassifierPresent() throws AssemblyFormattingException
+    public void testEvalFileNameMapping_ShouldAppendDashClassifierWhenClassifierPresent()
+        throws AssemblyFormattingException
     {
         verifyEvalFileNameMapping( "filename${dashClassifier?}", "classifier", null, "filename-classifier", null );
     }
 
-    public void testEvalFileNameMapping_ShouldNotAppendDashClassifierWhenClassifierMissing() throws AssemblyFormattingException
+    public void testEvalFileNameMapping_ShouldNotAppendDashClassifierWhenClassifierMissing()
+        throws AssemblyFormattingException
     {
         verifyEvalFileNameMapping( "filename${dashClassifier?}", null, null, "filename", null );
     }
 
-    public void testEvalFileNameMapping_ShouldResolveGroupId() throws AssemblyFormattingException
+    public void testEvalFileNameMapping_ShouldResolveGroupId()
+        throws AssemblyFormattingException
     {
         verifyEvalFileNameMappingUsingMainProject( "${groupId}", null, "group", null, null, null, "group", null );
     }
 
-    public void testEvalFileNameMapping_ShouldResolveArtifactId() throws AssemblyFormattingException
+    public void testEvalFileNameMapping_ShouldResolveArtifactId()
+        throws AssemblyFormattingException
     {
-        verifyEvalFileNameMappingUsingMainProject( "${artifactId}", null, null, "artifact", null, null, "artifact", null );
+        verifyEvalFileNameMappingUsingMainProject( "${artifactId}", null, null, "artifact", null, null, "artifact",
+                                                   null );
     }
 
-    public void testEvalFileNameMapping_ShouldResolveVersion() throws AssemblyFormattingException
+    public void testEvalFileNameMapping_ShouldResolveVersion()
+        throws AssemblyFormattingException
     {
         verifyEvalFileNameMappingUsingMainProject( "${version}", null, null, null, "version", null, "version", null );
     }
 
-    public void testEvalFileNameMapping_ShouldResolveExtension() throws AssemblyFormattingException
+    public void testEvalFileNameMapping_ShouldResolveExtension()
+        throws AssemblyFormattingException
     {
         verifyEvalFileNameMapping( "file.${artifact.extension}", null, "ext", "file.ext", null );
     }
 
-    public void testEvalFileNameMapping_ShouldResolveProjectProperty() throws AssemblyFormattingException
+    public void testEvalFileNameMapping_ShouldResolveProjectProperty()
+        throws AssemblyFormattingException
     {
-        Properties props = new Properties();
+        final Properties props = new Properties();
         props.setProperty( "myProperty", "value" );
 
         verifyEvalFileNameMapping( "file.${myProperty}", null, null, "file.value", props );
     }
 
-    public void testEvalFileNameMapping_ShouldResolveProjectPropertyAltExpr() throws AssemblyFormattingException
+    public void testEvalFileNameMapping_ShouldResolveProjectPropertyAltExpr()
+        throws AssemblyFormattingException
     {
-        Properties props = new Properties();
+        final Properties props = new Properties();
         props.setProperty( "myProperty", "value" );
 
         verifyEvalFileNameMapping( "file.${pom.properties.myProperty}", null, null, "file.value", props );
     }
 
-    public void testEvalFileNameMapping_ShouldResolveSystemPropertyWithoutMainProjectPresent() throws AssemblyFormattingException
-    {
-        verifyEvalFileNameMapping( "file.${java.version}", null, null, "file." + System.getProperty( "java.version" ), null );
-    }
-    
-    private void verifyEvalFileNameMapping( String expression, String classifier, String extension, String checkValue, Properties projectProperties )
+    public void testEvalFileNameMapping_ShouldResolveSystemPropertyWithoutMainProjectPresent()
         throws AssemblyFormattingException
     {
-        verifyEvalFileNameMappingUsingMainProject( expression, classifier, null, null, null, extension, checkValue, projectProperties );
+        verifyEvalFileNameMapping( "file.${java.version}", null, null, "file." + System.getProperty( "java.version" ),
+                                   null );
     }
-    
-    private void verifyEvalFileNameMappingUsingMainProject( String expression, String classifier, String groupId,
-                                                            String artifactId, String version, String extension,
-                                                            String checkValue, Properties projectProperties )
+
+    private void verifyEvalFileNameMapping( final String expression, final String classifier, final String extension,
+                                            final String checkValue, final Properties projectProperties )
         throws AssemblyFormattingException
     {
-        MavenProject mainProject = createProject( groupId, artifactId, version, projectProperties );
-
-        MavenProject artifactProject = createProject( "unknown", "unknown", "unknown", null );
-        MavenProject moduleProject = createProject( "unknown", "unknown", "unknown", null );
-        
-        verifyEvalFileNameMapping( expression, classifier, extension, mainProject, moduleProject, artifactProject, checkValue );
+        verifyEvalFileNameMappingUsingMainProject( expression, classifier, null, null, null, extension, checkValue,
+                                                   projectProperties );
     }
-    
-    private void verifyEvalFileNameMappingUsingArtifactProject( String expression, String classifier, String groupId,
-                                                                String artifactId, String version, String extension,
-                                                                String checkValue, Properties projectProperties )
+
+    private void verifyEvalFileNameMappingUsingMainProject( final String expression, final String classifier,
+                                                            final String groupId, final String artifactId,
+                                                            final String version, final String extension,
+                                                            final String checkValue, final Properties projectProperties )
         throws AssemblyFormattingException
     {
-        MavenProject artifactProject = createProject( groupId, artifactId, version, projectProperties );
+        final MavenProject mainProject = createProject( groupId, artifactId, version, projectProperties );
 
-        MavenProject mainProject = createProject( "unknown", "unknown", "unknown", null );
-        MavenProject moduleProject = createProject( "unknown", "unknown", "unknown", null );
-        
-        verifyEvalFileNameMapping( expression, classifier, extension, mainProject, moduleProject, artifactProject, checkValue );
+        final MavenProject artifactProject = createProject( "unknown", "unknown", "unknown", null );
+        final MavenProject moduleProject = createProject( "unknown", "unknown", "unknown", null );
+
+        verifyEvalFileNameMapping( expression, classifier, extension, mainProject, moduleProject, artifactProject,
+                                   checkValue );
     }
-    
-    private void verifyEvalFileNameMappingUsingModuleProject( String expression, String classifier, String groupId, String artifactId,
-                                            String version, String extension, String checkValue, Properties projectProperties )
+
+    private void verifyEvalFileNameMappingUsingArtifactProject( final String expression, final String classifier,
+                                                                final String groupId, final String artifactId,
+                                                                final String version, final String extension,
+                                                                final String checkValue,
+                                                                final Properties projectProperties )
         throws AssemblyFormattingException
     {
-        MavenProject moduleProject = createProject( groupId, artifactId, version, projectProperties );
+        final MavenProject artifactProject = createProject( groupId, artifactId, version, projectProperties );
 
-        MavenProject mainProject = createProject( "unknown", "unknown", "unknown", null );
-        MavenProject artifactProject = createProject( "unknown", "unknown", "unknown", null );
-        
-        verifyEvalFileNameMapping( expression, classifier, extension, mainProject, moduleProject, artifactProject, checkValue );
-    }
-    
-        private MavenProject createProject( String groupId, String artifactId, String version, Properties projectProperties )
-    {
-            if ( artifactId == null )
-            {
-                artifactId = "artifact";
-            }
+        final MavenProject mainProject = createProject( "unknown", "unknown", "unknown", null );
+        final MavenProject moduleProject = createProject( "unknown", "unknown", "unknown", null );
 
-            if ( groupId == null )
-            {
-                groupId = "group";
-            }
-
-            if ( version == null )
-            {
-                version = "version";
-            }
-
-            Model model = new Model();
-            model.setGroupId( groupId );
-            model.setArtifactId( artifactId );
-            model.setVersion( version );
-
-            model.setProperties( projectProperties );
-
-            return new MavenProject( model );
+        verifyEvalFileNameMapping( expression, classifier, extension, mainProject, moduleProject, artifactProject,
+                                   checkValue );
     }
 
-    private void verifyEvalFileNameMapping( String expression, String classifier, String extension, MavenProject mainProject,
-                                            MavenProject moduleProject, MavenProject artifactProject, String checkValue )
+    private void verifyEvalFileNameMappingUsingModuleProject( final String expression, final String classifier,
+                                                              final String groupId, final String artifactId,
+                                                              final String version, final String extension,
+                                                              final String checkValue,
+                                                              final Properties projectProperties )
         throws AssemblyFormattingException
     {
-        ArtifactMock artifactMock =
+        final MavenProject moduleProject = createProject( groupId, artifactId, version, projectProperties );
+
+        final MavenProject mainProject = createProject( "unknown", "unknown", "unknown", null );
+        final MavenProject artifactProject = createProject( "unknown", "unknown", "unknown", null );
+
+        verifyEvalFileNameMapping( expression, classifier, extension, mainProject, moduleProject, artifactProject,
+                                   checkValue );
+    }
+
+    private MavenProject createProject( String groupId, String artifactId, String version,
+                                        final Properties projectProperties )
+    {
+        if ( artifactId == null )
+        {
+            artifactId = "artifact";
+        }
+
+        if ( groupId == null )
+        {
+            groupId = "group";
+        }
+
+        if ( version == null )
+        {
+            version = "version";
+        }
+
+        final Model model = new Model();
+        model.setGroupId( groupId );
+        model.setArtifactId( artifactId );
+        model.setVersion( version );
+
+        model.setProperties( projectProperties );
+
+        return new MavenProject( model );
+    }
+
+    private void verifyEvalFileNameMapping( final String expression, final String classifier, final String extension,
+                                            final MavenProject mainProject, final MavenProject moduleProject,
+                                            final MavenProject artifactProject, final String checkValue )
+        throws AssemblyFormattingException
+    {
+        final ArtifactMock artifactMock =
             new ArtifactMock( mockManager, artifactProject.getGroupId(), artifactProject.getArtifactId(),
                               artifactProject.getVersion(), extension, classifier, false, null );
-        
-        ArtifactMock moduleArtifactMock =
+
+        final ArtifactMock moduleArtifactMock =
             new ArtifactMock( mockManager, moduleProject.getGroupId(), moduleProject.getArtifactId(),
                               moduleProject.getVersion(), "jar", false, null );
-        
-        MockControl sessionCtl = MockClassControl.createControl( MavenSession.class );
+
+        final MockControl sessionCtl = MockClassControl.createControl( MavenSession.class );
         mockManager.add( sessionCtl );
-        
-        MavenSession session = (MavenSession) sessionCtl.getMock();
+
+        final MavenSession session = (MavenSession) sessionCtl.getMock();
         session.getExecutionProperties();
         sessionCtl.setReturnValue( System.getProperties(), MockControl.ZERO_OR_MORE );
-        
-        MockControl csCtl = MockControl.createControl( AssemblerConfigurationSource.class );
+
+        session.getUserProperties();
+        sessionCtl.setReturnValue( new Properties(), MockControl.ZERO_OR_MORE );
+
+        final MockControl csCtl = MockControl.createControl( AssemblerConfigurationSource.class );
         mockManager.add( csCtl );
-        
-        AssemblerConfigurationSource cs = (AssemblerConfigurationSource) csCtl.getMock();
+
+        final AssemblerConfigurationSource cs = (AssemblerConfigurationSource) csCtl.getMock();
         cs.getMavenSession();
         csCtl.setReturnValue( session, MockControl.ZERO_OR_MORE );
 
         mockManager.replayAll();
 
-        String result =
+        final String result =
             AssemblyFormatUtils.evaluateFileNameMapping( expression, artifactMock.getArtifact(), mainProject,
                                                          moduleProject, moduleArtifactMock.getArtifact(),
                                                          artifactProject, cs );
@@ -507,118 +560,129 @@ public class AssemblyFormatUtilsTest
         mockManager.clear();
     }
 
-    private void verifyOutputDir( String outDir, String finalName, String projectFinalName, String checkValue )
+    private void verifyOutputDir( final String outDir, final String finalName, final String projectFinalName,
+                                  final String checkValue )
         throws AssemblyFormattingException
     {
         verifyOutputDirUsingMainProject( outDir, finalName, null, null, null, projectFinalName, null, checkValue );
     }
-    
-    private void verifyOutputDirUsingMainProject( String outDir, String finalName, String groupId, String artifactId,
-                                                  String version, String projectFinalName, Properties properties,
-                                                  String checkValue )
+
+    private void verifyOutputDirUsingMainProject( final String outDir, final String finalName, final String groupId,
+                                                  final String artifactId, final String version,
+                                                  final String projectFinalName, final Properties properties,
+                                                  final String checkValue )
         throws AssemblyFormattingException
     {
-        MavenProject project = createProject( groupId, artifactId, version, properties );
-        
+        final MavenProject project = createProject( groupId, artifactId, version, properties );
+
         if ( projectFinalName != null )
         {
-            Build build = new Build();
+            final Build build = new Build();
             build.setFinalName( projectFinalName );
 
             project.getModel().setBuild( build );
         }
-        
-        MavenProject mainProject = project;
-        MavenProject moduleProject = createProject( "unknown", "unknown", "unknown", null );
-        MavenProject artifactProject = createProject( "unknown", "unknown", "unknown", null );
-        
+
+        final MavenProject mainProject = project;
+        final MavenProject moduleProject = createProject( "unknown", "unknown", "unknown", null );
+        final MavenProject artifactProject = createProject( "unknown", "unknown", "unknown", null );
+
         verifyOutputDir( outDir, finalName, mainProject, moduleProject, artifactProject, checkValue );
     }
 
-    private void verifyOutputDirUsingModuleProject( String outDir, String finalName, String groupId, String artifactId,
-                                                  String version, String projectFinalName, Properties properties,
-                                                  String checkValue )
+    private void verifyOutputDirUsingModuleProject( final String outDir, final String finalName, final String groupId,
+                                                    final String artifactId, final String version,
+                                                    final String projectFinalName, final Properties properties,
+                                                    final String checkValue )
         throws AssemblyFormattingException
     {
-        MavenProject project = createProject( groupId, artifactId, version, properties );
-        
+        final MavenProject project = createProject( groupId, artifactId, version, properties );
+
         if ( projectFinalName != null )
         {
-            Build build = new Build();
+            final Build build = new Build();
             build.setFinalName( projectFinalName );
 
             project.getModel().setBuild( build );
         }
-        
-        MavenProject moduleProject = project;
-        MavenProject mainProject = createProject( "unknown", "unknown", "unknown", null );
-        MavenProject artifactProject = createProject( "unknown", "unknown", "unknown", null );
-        
+
+        final MavenProject moduleProject = project;
+        final MavenProject mainProject = createProject( "unknown", "unknown", "unknown", null );
+        final MavenProject artifactProject = createProject( "unknown", "unknown", "unknown", null );
+
         verifyOutputDir( outDir, finalName, mainProject, moduleProject, artifactProject, checkValue );
     }
 
-    private void verifyOutputDirUsingArtifactProject( String outDir, String finalName, String groupId, String artifactId,
-                                                  String version, String projectFinalName, Properties properties,
-                                                  String checkValue )
+    private void verifyOutputDirUsingArtifactProject( final String outDir, final String finalName,
+                                                      final String groupId, final String artifactId,
+                                                      final String version, final String projectFinalName,
+                                                      final Properties properties, final String checkValue )
         throws AssemblyFormattingException
     {
-        MavenProject project = createProject( groupId, artifactId, version, properties );
-        
+        final MavenProject project = createProject( groupId, artifactId, version, properties );
+
         if ( projectFinalName != null )
         {
-            Build build = new Build();
+            final Build build = new Build();
             build.setFinalName( projectFinalName );
 
             project.getModel().setBuild( build );
         }
-        
-        MavenProject artifactProject = project;
-        MavenProject moduleProject = createProject( "unknown", "unknown", "unknown", null );
-        MavenProject mainProject = createProject( "unknown", "unknown", "unknown", null );
-        
+
+        final MavenProject artifactProject = project;
+        final MavenProject moduleProject = createProject( "unknown", "unknown", "unknown", null );
+        final MavenProject mainProject = createProject( "unknown", "unknown", "unknown", null );
+
         verifyOutputDir( outDir, finalName, mainProject, moduleProject, artifactProject, checkValue );
     }
 
-    private void verifyOutputDir( String outDir, String finalName, MavenProject mainProject,
-                                  MavenProject moduleProject, MavenProject artifactProject, String checkValue )
+    private void verifyOutputDir( final String outDir, final String finalName, final MavenProject mainProject,
+                                  final MavenProject moduleProject, final MavenProject artifactProject,
+                                  final String checkValue )
         throws AssemblyFormattingException
     {
-        MockControl sessionCtl = MockClassControl.createControl( MavenSession.class );
+        final MockControl sessionCtl = MockClassControl.createControl( MavenSession.class );
         mockManager.add( sessionCtl );
-        
-        MavenSession session = (MavenSession) sessionCtl.getMock();
+
+        final MavenSession session = (MavenSession) sessionCtl.getMock();
         session.getExecutionProperties();
         sessionCtl.setReturnValue( System.getProperties(), MockControl.ZERO_OR_MORE );
-        
-        MockControl csCtl = MockControl.createControl( AssemblerConfigurationSource.class );
+
+        session.getUserProperties();
+        sessionCtl.setReturnValue( new Properties(), MockControl.ZERO_OR_MORE );
+
+        final MockControl csCtl = MockControl.createControl( AssemblerConfigurationSource.class );
         mockManager.add( csCtl );
-        
-        AssemblerConfigurationSource cs = (AssemblerConfigurationSource) csCtl.getMock();
+
+        final AssemblerConfigurationSource cs = (AssemblerConfigurationSource) csCtl.getMock();
         cs.getMavenSession();
         csCtl.setReturnValue( session, MockControl.ZERO_OR_MORE );
 
         String result;
-        
+
         mockManager.replayAll();
-        result = AssemblyFormatUtils.getOutputDirectory( outDir, mainProject, moduleProject, artifactProject, finalName, cs );
+        result =
+            AssemblyFormatUtils.getOutputDirectory( outDir, mainProject, moduleProject, artifactProject, finalName, cs );
 
         assertEquals( checkValue, result );
-        
+
         mockManager.verifyAll();
-        
+
         mockManager.clear();
     }
 
-    private void verifyDistroName( String assemblyId, String classifier, String finalName, boolean appendAssemblyId, String checkValue )
+    private void verifyDistroName( final String assemblyId, final String classifier, final String finalName,
+                                   final boolean appendAssemblyId, final String checkValue )
     {
-        MockAndControlForGetDistroName mac = new MockAndControlForGetDistroName( finalName, appendAssemblyId, classifier );
+        final MockAndControlForGetDistroName mac =
+            new MockAndControlForGetDistroName( finalName, appendAssemblyId, classifier );
 
         mockManager.replayAll();
 
-        Assembly assembly = new Assembly();
+        final Assembly assembly = new Assembly();
         assembly.setId( assemblyId );
 
-        String result = AssemblyFormatUtils.getDistributionName( assembly, mac.configSource );
+        final String result = AssemblyFormatUtils.getDistributionName( assembly, mac.configSource );
 
         assertEquals( checkValue, result );
 
@@ -631,13 +695,17 @@ public class AssemblyFormatUtilsTest
     private final class MockAndControlForGetDistroName
     {
         MockControl control;
+
         AssemblerConfigurationSource configSource;
 
         private final String classifier;
+
         private final boolean isAssemblyIdAppended;
+
         private final String finalName;
 
-        public MockAndControlForGetDistroName( String finalName, boolean isAssemblyIdAppended, String classifier )
+        public MockAndControlForGetDistroName( final String finalName, final boolean isAssemblyIdAppended,
+                                               final String classifier )
         {
             this.finalName = finalName;
             this.isAssemblyIdAppended = isAssemblyIdAppended;
