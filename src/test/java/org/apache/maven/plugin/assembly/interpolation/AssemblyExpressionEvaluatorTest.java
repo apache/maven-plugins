@@ -119,6 +119,9 @@ public class AssemblyExpressionEvaluatorTest
         session.getExecutionProperties();
         sessionControl.setReturnValue( execProps, MockControl.ZERO_OR_MORE );
 
+        session.getUserProperties();
+        sessionControl.setReturnValue( new Properties(), MockControl.ZERO_OR_MORE );
+
         final MockControl csControl = MockControl.createControl( AssemblerConfigurationSource.class );
         final AssemblerConfigurationSource cs = (AssemblerConfigurationSource) csControl.getMock();
 
