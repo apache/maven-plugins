@@ -158,7 +158,7 @@ public class WebappStructure
      * the file is not registered yet, a simple registration is performed. If the
      * file already exists, the owner changes to the specified one.
      * <p/>
-     * Beware that the semantic of the return boolean is different thant the one
+     * Beware that the semantic of the return boolean is different than the one
      * from {@link #registerFile(String, String)}; returns <tt>true</tt> if an
      * owner replacement was made and <tt>false</tt> if the file was simply registered
      * for the first time.
