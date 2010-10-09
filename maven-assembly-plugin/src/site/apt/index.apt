@@ -122,7 +122,7 @@ The Maven Assembly Plugin
 * Goals
 
   The main goal in the assembly plugin is the {{{./single-mojo.html}single}} mojo. It is used to create all assemblies. 
-  <<All other mojos are currently deprecated.>>>
+  <<All other mojos are currently deprecated.>>
 
   For more information about the goals that are available in the Assembly Plugin, see {{{./plugin-info.html}the plugin documentation page}}.
 
