@@ -27,6 +27,7 @@ import org.apache.maven.plugin.war.stub.EJBArtifactStubWithClassifier;
 import org.apache.maven.plugin.war.stub.EJBClientArtifactStub;
 import org.apache.maven.plugin.war.stub.IncludeExcludeWarArtifactStub;
 import org.apache.maven.plugin.war.stub.JarArtifactStub;
+import org.apache.maven.plugin.war.stub.MarArtifactStub;
 import org.apache.maven.plugin.war.stub.MavenProjectArtifactsStub;
 import org.apache.maven.plugin.war.stub.MavenProjectBasicStub;
 import org.apache.maven.plugin.war.stub.PARArtifactStub;
@@ -588,6 +589,43 @@ public class WarExplodedMojoTest
         File expectedWebSource2File = new File( webAppDirectory, "org/web/app/last-exile.jsp" );
         // final name form is <artifactId>-<version>.<type>
         File expectedJarArtifact = new File( webAppDirectory, "WEB-INF/services/aarartifact-0.0-Test.jar" );
+
+        assertTrue( "source files not found: " + expectedWebSourceFile.toString(), expectedWebSourceFile.exists() );
+        assertTrue( "source files not found: " + expectedWebSource2File.toString(), expectedWebSource2File.exists() );
+        assertTrue( "jar artifact not found: " + expectedJarArtifact.toString(), expectedJarArtifact.exists() );
+
+        // house keeping
+        expectedWebSourceFile.delete();
+        expectedWebSource2File.delete();
+        expectedJarArtifact.delete();
+    }
+
+    public void testExplodedWarWithMar()
+        throws Exception
+    {
+        // setup test data
+        String testId = "ExplodedWarWithMar";
+        MavenProjectArtifactsStub project = new MavenProjectArtifactsStub();
+        File webAppDirectory = new File( getTestDirectory(), testId );
+        File webAppSource = createWebAppSource( testId );
+        File classesDir = createClassesDir( testId, true );
+        // Fake here since the mar artifact handler does not exist: no biggie
+        ArtifactHandler artifactHandler = (ArtifactHandler) lookup( ArtifactHandler.ROLE, "jar" );
+        ArtifactStub marArtifact = new MarArtifactStub( getBasedir(), artifactHandler );
+        File marFile = marArtifact.getFile();
+
+        assertTrue( "jar not found: " + marFile.toString(), marFile.exists() );
+
+        // configure mojo
+        project.addArtifact( marArtifact );
+        this.configureMojo( mojo, new LinkedList(), classesDir, webAppSource, webAppDirectory, project );
+        mojo.execute();
+
+        // validate operation
+        File expectedWebSourceFile = new File( webAppDirectory, "pansit.jsp" );
+        File expectedWebSource2File = new File( webAppDirectory, "org/web/app/last-exile.jsp" );
+        // final name form is <artifactId>-<version>.<type>
+        File expectedJarArtifact = new File( webAppDirectory, "WEB-INF/modules/marartifact-0.0-Test.jar" );
 
         assertTrue( "source files not found: " + expectedWebSourceFile.toString(), expectedWebSourceFile.exists() );
         assertTrue( "source files not found: " + expectedWebSource2File.toString(), expectedWebSource2File.exists() );
