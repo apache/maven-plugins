@@ -309,7 +309,7 @@ public class EclipsePlugin
 
     /**
      * The version of WTP for which configuration files will be generated. The default value is "none" (don't generate
-     * WTP configuration), supported versions are "R7", "1.0", and "1.5"
+     * WTP configuration), supported versions are "R7", "1.0", "1.5" and "2.0"
      * 
      * @parameter expression="${wtpversion}" default-value="none"
      */
