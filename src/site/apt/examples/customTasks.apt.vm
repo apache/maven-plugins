@@ -40,51 +40,46 @@ Using tasks not included in Ant's default jar
 
   <build>
     <plugins>
-       <plugin>
-         <groupId>org.apache.maven.plugins</groupId>
-         <artifactId>maven-antrun-plugin</artifactId>
-         <version>${project.version}</version>
-         <executions>
-           <execution>
-             <id>ftp</id>
-             <phase>deploy</phase>
-             <configuration>
-               <target>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>${project.version}</version>
+        <executions>
+          <execution>
+            <id>ftp</id>
+            <phase>deploy</phase>
+            <configuration>
+              <target>
 
-                 <ftp action="send" server="myhost" remotedir="/home/test" userid="x" password="y" depends="yes" verbose="yes">
-                   <fileset dir="\${project.build.directory}">
-                     <include name="*.jar" />
-                   </fileset>
-                 </ftp>
+                <ftp action="send" server="myhost" remotedir="/home/test" userid="x" password="y" depends="yes" verbose="yes">
+                  <fileset dir="\${project.build.directory}">
+                    <include name="*.jar" />
+                  </fileset>
+                </ftp>
 
-                 <taskdef name="myTask" classname="com.acme.MyTask" classpathref="maven.plugin.classpath"/>
-                 <myTask a="b"/>
+                <taskdef name="myTask" classname="com.acme.MyTask" classpathref="maven.plugin.classpath"/>
+                <myTask a="b"/>
 
-               </target>
-             </configuration>
-             <goals>
-               <goal>run</goal>
-             </goals>
-           </execution>
-         </executions>
-         <dependencies>
-           <dependency>
-             <groupId>commons-net</groupId>
-             <artifactId>commons-net</artifactId>
-             <version>1.4.1</version>
-           </dependency>
-           <dependency>
-             <groupId>ant</groupId>
-             <artifactId>ant-commons-net</artifactId>
-             <version>1.6.5</version>
-           </dependency>
-           <dependency>
-             <groupId>ant</groupId>
-             <artifactId>ant-nodeps</artifactId>
-             <version>1.6.5</version>
-           </dependency>
-         </dependencies>
-       </plugin>
+              </target>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+        </executions>
+        <dependencies>
+          <dependency>
+            <groupId>commons-net</groupId>
+            <artifactId>commons-net</artifactId>
+            <version>1.4.1</version>
+          </dependency>
+          <dependency>
+            <groupId>org.apache.ant</groupId>
+            <artifactId>ant-commons-net</artifactId>
+            <version>1.8.1</version>
+          </dependency>
+        </dependencies>
+      </plugin>
     </plugins>
   </build>
 </project>
