@@ -397,7 +397,8 @@ public class WarMojoTest
         while ( enumeration.hasMoreElements() )
         {
             entry = (JarEntry) enumeration.nextElement();
-            jarContent.put( entry.getName(), entry );
+            Object previousValue = jarContent.put( entry.getName(), entry );
+            assertNull( "Duplicate Entry in Jar File: " + entry.getName(), previousValue );
         }
 
         for ( int i = 0; i < files.length; i++ )
