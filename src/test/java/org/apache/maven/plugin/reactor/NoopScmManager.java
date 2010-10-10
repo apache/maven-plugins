@@ -251,12 +251,10 @@ public class NoopScmManager
     public void setScmProvider( String providerType, ScmProvider provider )
     {
 
-
     }
 
     public void setScmProviderImplementation( String providerType, String providerImplementation )
     {
-
 
     }
 
