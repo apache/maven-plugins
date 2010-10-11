@@ -22,8 +22,7 @@ import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.logging.console.ConsoleLogger;
 import org.easymock.MockControl;
 
-import edu.emory.mathcs.backport.java.util.Collections;
-
+import java.util.Collections;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
