@@ -21,6 +21,7 @@ package org.apache.maven.plugins.linkcheck;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -279,6 +280,13 @@ public class LinkcheckReport
     /** Result of the linkcheck in {@link #execute()} */
     private LinkcheckModel result;
 
+    protected static final String ICON_SUCCESS = "images/icon_success_sml.gif";
+    protected static final String ICON_WARNING = "images/icon_warning_sml.gif";
+    protected static final String ICON_INFO = "images/icon_info_sml.gif";
+    protected static final String ICON_ERROR = "images/icon_error_sml.gif";
+    private static final String pluginResourcesBase = "org/apache/maven/plugin/linkcheck";
+    private static final String resourceNames[] = { ICON_SUCCESS, ICON_WARNING, ICON_INFO, ICON_ERROR };
+
     // ----------------------------------------------------------------------
     // Public methods
     // ----------------------------------------------------------------------
@@ -523,6 +531,27 @@ public class LinkcheckReport
 
         reportGenerator.generateReport( locale, linkcheckModel, getSink() );
         closeReport();
+
+        // Copy the images
+        copyStaticResources();
+    }
+
+    private void copyStaticResources()
+    {
+        try
+        {
+            getLog().debug( "Copying static linkcheck resources." );
+            for ( int i = 0; i < resourceNames.length; i++ )
+            {
+                URL url = this.getClass().getClassLoader().getResource( pluginResourcesBase + "/" + resourceNames[i] );
+                FileUtils.copyURLToFile( url, new File( getReportOutputDirectory(), resourceNames[i] ) );
+            }
+        }
+        catch ( IOException e )
+        {
+            getLog().error( "Unable to copy icons for linkcheck report." );
+            getLog().debug( e );
+        }
     }
 
     private static int[] asIntArray( Integer[] array )

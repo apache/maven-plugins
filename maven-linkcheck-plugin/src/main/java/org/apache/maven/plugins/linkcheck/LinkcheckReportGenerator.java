@@ -569,8 +569,7 @@ public class LinkcheckReportGenerator
         sink.figureCaption();
         sink.text( i18n.getString( "linkcheck-report", locale, "report.linkcheck.icon.error" ) );
         sink.figureCaption_();
-        // should be defined in skins
-        sink.figureGraphics( "images/icon_error_sml.gif" );
+        sink.figureGraphics( LinkcheckReport.ICON_ERROR );
         sink.figure_();
     }
 
@@ -580,8 +579,7 @@ public class LinkcheckReportGenerator
         sink.figureCaption();
         sink.text( i18n.getString( "linkcheck-report", locale, "report.linkcheck.icon.valid" ) );
         sink.figureCaption_();
-        // should be defined in skins
-        sink.figureGraphics( "images/icon_success_sml.gif" );
+        sink.figureGraphics( LinkcheckReport.ICON_SUCCESS );
         sink.figure_();
     }
 
@@ -591,8 +589,7 @@ public class LinkcheckReportGenerator
         sink.figureCaption();
         sink.text( i18n.getString( "linkcheck-report", locale, "report.linkcheck.icon.warning" ) );
         sink.figureCaption_();
-        // should be defined in skins
-        sink.figureGraphics( "images/icon_warning_sml.gif" );
+        sink.figureGraphics( LinkcheckReport.ICON_WARNING );
         sink.figure_();
     }
 
