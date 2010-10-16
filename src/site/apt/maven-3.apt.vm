@@ -31,7 +31,7 @@
    
 Site plugin with maven 3.x
 
-  Due to MNG-4162, all reporting logic has been removed from trunk.
+  Due to {{{http://jira.codehaus.org/browse/MNG-4162}MNG-4162}}, all reporting logic has been removed from trunk.
   So a branch of the site plugin has been created https://svn.apache.org/repos/asf/maven/plugins/branches/maven-site-plugin-3.x/ in order to have a site plugin working with maven 3.x.
   Using previous versions of maven-site-plugin with Maven 3.x won't generate any report from any report plugin: only hand-written Doxia documents (apt, xdoc, ...) will be rendered.
 
