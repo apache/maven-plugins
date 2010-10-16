@@ -181,8 +181,11 @@ Version Resolution
   Report Plugin version can be empty. The following order/strategy will be used to find/resolve a version:
 
   * search same groupId/artifactId in the build.plugins section.
+  
   * search same groupId/artifactId in the build.pluginManagement.plugins section
+  
   * resolve with current repositories (can include auto SNAPSHOT resolution)
+
 
 Using maven-site-plugin 2.x with Maven 2.x and maven-site-plugin 3.x with Maven 3.x
 
