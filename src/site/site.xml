@@ -29,6 +29,7 @@ under the License.
       <item name="Usage" href="usage.html"/>
       <item name="FAQ" href="faq.html"/>
       <item name="Migrate" href="migrate.html"/>
+      <item name="Maven 3" href="maven-3.html"/>
     </menu>
     <menu name="Configuration">
       <item name="Internationalization" href="i18n.html"/>

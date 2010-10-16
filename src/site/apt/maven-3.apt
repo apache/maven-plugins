@@ -1,0 +1,233 @@
+ ------
+ With Maven 3
+ ------
+ Olivier Lamy
+ ------
+ 2010-10-16
+ ------
+ 
+
+ ~~ Licensed to the Apache Software Foundation (ASF) under one
+ ~~ or more contributor license agreements.  See the NOTICE file
+ ~~ distributed with this work for additional information
+ ~~ regarding copyright ownership.  The ASF licenses this file
+ ~~ to you under the Apache License, Version 2.0 (the
+ ~~ "License"); you may not use this file except in compliance
+ ~~ with the License.  You may obtain a copy of the License at
+ ~~
+ ~~   http://www.apache.org/licenses/LICENSE-2.0
+ ~~
+ ~~ Unless required by applicable law or agreed to in writing,
+ ~~ software distributed under the License is distributed on an
+ ~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ ~~ KIND, either express or implied.  See the License for the
+ ~~ specific language governing permissions and limitations
+ ~~ under the License.
+
+ ~~ NOTE: For help with the syntax of this file, see:
+ ~~ http://maven.apache.org/doxia/references/apt-format.html
+ 
+   Content migrated from {{{https://cwiki.apache.org/confluence/x/sokr}Maven 3.x and site plugin}}
+   
+Site plugin with maven 3.x
+
+  Due to MNG-4162, all reporting logic has been removed from trunk.
+  So a branch of the site plugin has been created https://svn.apache.org/repos/asf/maven/plugins/branches/maven-site-plugin-3.x/ in order to have a site plugin working with maven 3.x.
+  Using previous versions of maven-site-plugin with Maven 3.x won't generate any report from any report plugin: only hand-written Doxia documents (apt, xdoc, ...) will be rendered.
+
+Plugins Compatibility Matrix
+
+* Plugins Maintained by the Apache Maven Community
+
+  Tests have been made on the reporting profile of the maven parent pom which enables some reports.
+  Some of those plugins will need releases to work with maven 3.x:
+  
+*--------+---------+
+|<<Plugin>>	 |<<Version>>  |
+*--------+---------+
+|maven-javadoc-plugin | 2.6.1 |
+*--------+---------+
+|maven-project-info-reports-plugin | 2.2 |
+*--------+---------+
+|surefire-report | 2.4.3 |
+*--------+---------+		 
+|jxr | 2.1 |
+*--------+---------+
+| maven-changelog-plugin | 2.1 |
+*--------+---------+		 
+|maven-changes-plugin | 2.1 |
+*--------+---------+
+|maven-checkstyle-plugin | 2.5 |
+*--------+---------+
+|maven-plugin-plugin | 2.5.1 |
+*--------+---------+		 
+|maven-pmd-plugin | 2.4 |
+*--------+---------+
+		 
+* Plugins Maintained by the Mojo Community
+
+*--------+---------+
+|<<Plugin>>	 |<<Version>>  |
+*--------+---------+
+| cobertura-maven-plugin | 2.3 |
+*--------+---------+		 
+| emma-maven-plugin | 1.0-alpha-2 |
+*--------+---------+		 
+	 
+
+Configuration format.
+
+  The current reporting section of the pom have to be moved in a new site plugin configuration.
+  The proposal is to have a configuration as much similar as possible with the current one.
+  The model builder will transform it on the fly, displaying a warning concerning this change. (as of Maven 3.0-alpha-6, on the fly transformation seems ok, but without warning)
+
+* Old configuration
+
++-----+
+  <reporting>
+    <excludeDefaults>true</excludeDefaults>
+    <outputDirectory></outputDirectory>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-project-info-reports-plugin</artifactId>
+        <version>@projectInfoReportsPluginVersion@</version>
+        <configuration>
+          <dependencyDetailsEnabled>false</dependencyDetailsEnabled>
+          <dependencyLocationsEnabled>false</dependencyLocationsEnabled>
+          <filters>
+            <filter>+hello.*</filter>
+            <filter>+byebye.*</filter>
+          </filters>
+        </configuration>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>foo</report>
+            </reports>
+            <configuration>
+              <dependencyDetailsEnabled>true</dependencyDetailsEnabled>
+              <dependencyLocationsEnabled>true</dependencyLocationsEnabled>
+              <filters>
+                <filter>+foo.*</filter>
+                <filter>+toto.*</filter>
+              </filters>
+            </configuration>
+          </reportSet>
+          <reportSet>
+            <reports>
+              <report>toto</report>
+            </reports>
+          </reportSet>
+          <configuration>
+            <dependencyDetailsEnabled>true</dependencyDetailsEnabled>
+            <dependencyLocationsEnabled>true</dependencyLocationsEnabled>
+            <filters>
+              <filter>+foo.*</filter>
+              <filter>+toto.*</filter>
+            </filters>
+          </configuration>
+        </reportSets>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>${javadocPluginVersion}</version>
+      </plugin>
+
+    </plugins>
+  </reporting>
++-----+  
+  
+* New Configuration
+
++-----+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-site-plugin</artifactId>
+        <version>@project.version@</version>
+        <configuration>
+          .....
+          <reportPlugins>
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-project-info-reports-plugin</artifactId>
+              <version>@projectInfoReportsPluginVersion@</version>
+              <configuration>
+                <dependencyDetailsEnabled>false</dependencyDetailsEnabled>
+                <dependencyLocationsEnabled>false</dependencyLocationsEnabled>
+              </configuration>
+              <reports>
+                <report>foo</report>
+                <report>toto</report>
+              </reports>
+            </plugin>
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-javadoc-plugin</artifactId>
+              <version>${javadocPluginVersion}</version>
+            </plugin>
+          </reportPlugins>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
++-----+  
+
+Version Resolution
+
+  Report Plugin version can be empty. The following order/strategy will be used to find/resolve a version:
+
+  search same groupId/artifactId in the build.plugins section.
+  search same groupId/artifactId in the build.pluginManagement.plugins section
+  resolve with current repositories (can include auto SNAPSHOT resolution)
+
+Using maven-site-plugin 2.x with Maven 2.x and maven-site-plugin 3.x with Maven 3.x
+
+  Regarding site:attach-descriptor (have a look 
+  here {{{https://cwiki.apache.org/confluence/display/MAVEN/Maven+3.x+Compatibility+Notes#Maven3.xCompatibilityNotes-SiteandReporting}}}.
+
+  The following snipped automatically activates maven-site-plugin 3.x when run with Maven 3.x:
+
++-----+
+  <profiles>
+    <profile>
+      <id>maven-3</id>
+      <activation>
+        <file>
+          <!--  This employs that the basedir expression is only recognized by Maven 3.x (see MNG-2363) -->
+          <exists>${basedir}</exists>
+        </file>
+      </activation>
+      <build>
+        <pluginManagement>
+          <plugins>
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-site-plugin</artifactId>
+              <version>3.0-beta-1</version>
+            </plugin>
+          </plugins>
+        </pluginManagement>
+        <plugins>
+          <plugin>
+            <artifactId>maven-site-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>attach-descriptor</id>
+                <goals>
+                  <goal>attach-descriptor</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>   
++-----+   
+   
+   
+   

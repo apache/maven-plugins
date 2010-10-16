@@ -74,3 +74,7 @@ Migrate
     []
 
   []
+  
+* From 2.x to 3.x
+
+  * <<Maven 3>> need to update {{{./maven-3.html}some report plugins versions}}   
