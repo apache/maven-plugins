@@ -32,7 +32,7 @@ Usage
 
   The maven-antrun-plugin has only one goal, <<<run>>>.
 
-  This allows Maven 2 to run Ant tasks. To do so, there must be an existing
+  This allows Maven to run Ant tasks. To do so, there must be an existing
   project and maven-antrun-plugin must have its <<<\<target\>>>> tag
   configured (although it would still execute without the <<<\<target\>>>> tag,
   it would not do anything). Below is the template for
