@@ -28,7 +28,7 @@
 
 Adding and Filtering External Web Resources
 
- The default resource directory for all Maven 2 projects is <<<src/main/resources>>> which
+ The default resource directory for all Maven projects is <<<src/main/resources>>> which
  will end up in <<<target/classes>>> and in <<<WEB-INF/classes>>> in the WAR. The directory
  structure will be preserved in the process.
 
