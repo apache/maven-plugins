@@ -58,7 +58,7 @@ Maven Assembly Plugin
 
     * and any other format that the ArchiveManager has been configured for
 
-  To use the Assembly Plugin in Maven 2, you simply need to:
+  To use the Assembly Plugin in Maven, you simply need to:
 
     * choose or write the assembly descriptor to use,
 
@@ -83,7 +83,7 @@ What is an Assembly?
 
   The Assembly Plugin provides a descriptor format which allows you to define
   an arbitrary assembly of files and directories from a project.  For example,
-  if your Maven 2 project contains the directory "src/main/bin", you can
+  if your Maven project contains the directory "src/main/bin", you can
   instruct the Assembly Plugin to copy the contents of this directory to the
   "bin" directory of an assembly and to change the permissions of the files in
   the "bin" directory to UNIX mode 755.  The parameters for configuring this
