@@ -23,7 +23,7 @@
 ~~ specific language governing permissions and limitations
 ~~ under the License.
 
-Maven 2 Reactor Plugin
+Maven Reactor Plugin
 
  This plugin can build a subset of interdependent projects in a
  reactor.  It should be useful in large reactor builds that include
