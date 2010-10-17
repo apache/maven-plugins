@@ -28,7 +28,7 @@
 
 Maven AntRun Plugin
 
-  This plugin provides the ability to run Ant tasks from within Maven 2. You can
+  This plugin provides the ability to run Ant tasks from within Maven. You can
   even embed your Ant scripts in the POM!
 
   It is <not> the intention of this plugin to provide a means of polluting the
@@ -37,13 +37,13 @@ Maven AntRun Plugin
   {{{http://ant.apache.org/manual/CoreTasks/ant.html}\<ant/\> task}}.
 
   One of the main purposes of this plugin is to facilitate the migration from Ant
-  based projects to Maven 2. Some projects may not currently be able to migrate
-  because they depend on custom build functionality that Maven 2 doesn't provide
+  based projects to Maven. Some projects may not currently be able to migrate
+  because they depend on custom build functionality that Maven doesn't provide
   by default.
 
 * Goals Overview
 
-  * {{{./run-mojo.html}antrun:run}} runs Ant tasks for Maven 2.
+  * {{{./run-mojo.html}antrun:run}} runs Ant tasks for Maven.
 
 * Usage
 
