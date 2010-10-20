@@ -49,6 +49,10 @@ under the License.
     <url>http://jira.codehaus.org/browse/MANTRUN</url>
   </issueManagement>
 
+  <properties>
+    <mavenComponentsVersion>2.0.11</mavenComponentsVersion>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>org.apache.maven</groupId>
@@ -113,9 +117,4 @@ under the License.
       </build>
     </profile>
   </profiles>
-  
-  <properties>
-    <mavenComponentsVersion>2.0.11</mavenComponentsVersion>
-  </properties>
-  
 </project>
