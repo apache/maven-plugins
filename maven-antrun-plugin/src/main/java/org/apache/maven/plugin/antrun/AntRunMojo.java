@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
@@ -49,7 +50,7 @@ import org.codehaus.plexus.util.StringUtils;
 
 /**
  * Maven AntRun Mojo.
- *
+ * <br/>
  * This plugin provides the capability of calling Ant tasks
  * from a POM by running the nested ant tasks inside the &lt;tasks/&gt;
  * parameter. It is encouraged to move the actual tasks to
@@ -204,6 +205,14 @@ public class AntRunMojo
     private boolean skip;
 
     /**
+     * Specifies whether the Ant properties should be propagated to the Maven properties.
+     *
+     * @parameter default-value="false"
+     * @since 1.7
+     */
+    private boolean exportAntProperties;
+
+    /**
      * @see org.apache.maven.plugin.Mojo#execute()
      */
     public void execute()
@@ -287,6 +296,8 @@ public class AntRunMojo
             {
                 getLog().info( "Executed tasks" );
             }
+
+            copyProperties( antProject, mavenProject );
         }
         catch ( DependencyResolutionRequiredException e )
         {
@@ -415,6 +426,38 @@ public class AntRunMojo
             String propName = getDependencyArtifactPropertyName( artifact );
 
             antProject.setProperty( propName, artifact.getFile().getPath() );
+        }
+    }
+
+    /**
+     * Copy properties from the ant project to the maven project.
+     *
+     * @param antProject not null
+     * @param mavenProject not null
+     * @since 1.7
+     */
+    public void copyProperties( Project antProject, MavenProject mavenProject )
+    {
+        if ( !exportAntProperties )
+        {
+            return;
+        }
+
+        getLog().debug( "Propagated Ant properties to Maven properties" );
+        Hashtable antProps = antProject.getProperties();
+        Iterator iter = antProps.keySet().iterator();
+        while ( iter.hasNext() )
+        {
+            String key = (String) iter.next();
+
+            Properties mavenProperties = mavenProject.getProperties();
+            if ( mavenProperties.getProperty( key ) != null )
+            {
+                getLog().debug( "Ant property '" + key +"=" +mavenProperties.getProperty( key )
+                                   + "' clashs with an existing Maven property, SKIPPING this Ant property propagation." );
+                continue;
+            }
+            mavenProperties.setProperty( key, antProps.get( key ).toString() );
         }
     }
 
