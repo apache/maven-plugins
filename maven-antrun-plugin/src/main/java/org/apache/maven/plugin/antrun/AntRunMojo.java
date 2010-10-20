@@ -103,7 +103,7 @@ public class AntRunMojo
 
     /**
      * The Maven project object
-     * 
+     *
      * @parameter expression="${project}"
      * @readonly
      */
@@ -111,14 +111,14 @@ public class AntRunMojo
 
     /**
      * The Maven project helper object
-     * 
+     *
      * @component
      */
     private MavenProjectHelper projectHelper;
 
     /**
      * The plugin dependencies.
-     * 
+     *
      * @parameter expression="${plugin.artifacts}"
      * @required
      * @readonly
@@ -127,7 +127,7 @@ public class AntRunMojo
 
     /**
      * The local Maven repository
-     * 
+     *
      * @parameter expression="${localRepository}"
      * @readonly
      */
@@ -135,7 +135,7 @@ public class AntRunMojo
 
     /**
      * String to prepend to project and dependency property names.
-     * 
+     *
      * @parameter default-value=""
      * @since 1.4
      */
@@ -145,7 +145,7 @@ public class AntRunMojo
      * The xml tag prefix to use for the built in Ant tasks. This prefix needs to be prepended to each task referenced
      * in the antrun target config. For example, a prefix of "mvn" means that the attachartifact task is referenced by
      * "&lt;mvn:attachartifact&gt;" The default value of an empty string means that no prefix is used for the tasks.
-     * 
+     *
      * @parameter default-value=""
      * @since 1.5
      */
@@ -154,7 +154,7 @@ public class AntRunMojo
     /**
      * The name of a property containing the list of all dependency versions. This is used for the removing the versions
      * from the filenames.
-     * 
+     *
      * @parameter default-value="maven.project.dependencies.versions"
      */
     private String versionsPropertyName;
@@ -162,7 +162,7 @@ public class AntRunMojo
     /**
      * The XML for the Ant task. You can add anything you can add between &lt;target&gt; and &lt;/target&gt; in a
      * build.xml.
-     * 
+     *
      * @deprecated Use target instead
      * @parameter
      */
@@ -171,7 +171,7 @@ public class AntRunMojo
     /**
      * The XML for the Ant target. You can add anything you can add between &lt;target&gt; and &lt;/target&gt; in a
      * build.xml.
-     * 
+     *
      * @parameter
      * @since 1.5
      */
@@ -180,7 +180,7 @@ public class AntRunMojo
     /**
      * This folder is added to the list of those folders containing source to be compiled. Use this if your ant script
      * generates source code.
-     * 
+     *
      * @parameter expression="${sourceRoot}"
      * @deprecated Use the build-helper-maven-plugin to bind source directories
      */
@@ -189,11 +189,19 @@ public class AntRunMojo
     /**
      * This folder is added to the list of those folders containing source to be compiled for testing. Use this if your
      * ant script generates test source code.
-     * 
+     *
      * @parameter expression="${testSourceRoot}"
      * @deprecated Use the build-helper-maven-plugin to bind test source directories
      */
     private File testSourceRoot;
+
+    /**
+     * Specifies whether the Antrun execution should be skipped.
+     *
+     * @parameter expression="${maven.antrun.skip}" default-value="false"
+     * @since 1.7
+     */
+    private boolean skip;
 
     /**
      * @see org.apache.maven.plugin.Mojo#execute()
@@ -201,6 +209,12 @@ public class AntRunMojo
     public void execute()
         throws MojoExecutionException
     {
+        if ( skip )
+        {
+            getLog().info( "Skipping Antrun execution" );
+            return;
+        }
+
         MavenProject mavenProject = getMavenProject();
 
         if ( tasks != null )
@@ -208,7 +222,7 @@ public class AntRunMojo
             getLog().warn( "Parameter tasks is deprecated, use target instead" );
             target = tasks;
         }
-        
+
         if ( target == null )
         {
             getLog().info( "No ant target defined - SKIPPED" );
@@ -334,7 +348,7 @@ public class AntRunMojo
 
     /**
      * Copy properties from the maven project to the ant project.
-     * 
+     *
      * @param mavenProject
      * @param antProject
      */
@@ -409,11 +423,11 @@ public class AntRunMojo
      * @deprecated This should only be used for generating the old property format.
      */
     public static final String DEPENDENCY_PREFIX = "maven.dependency.";
-    
+
     /**
      * Returns a property name for a dependency artifact.  The name is in the format
      * maven.dependency.groupId.artifactId[.classifier].type.path
-     * 
+     *
      * @param artifact
      * @return property name
      * @deprecated The dependency conflict ID should be used as the property name.
@@ -428,7 +442,7 @@ public class AntRunMojo
 
     /**
      * Get the current Maven project
-     * 
+     *
      * @return current Maven project
      */
     public MavenProject getMavenProject()
@@ -451,7 +465,7 @@ public class AntRunMojo
 
     /**
      * Write the ant target and surrounding tags to a temporary file
-     * 
+     *
      * @throws PlexusConfigurationException
      */
     private File writeTargetToProjectFile()
@@ -461,7 +475,7 @@ public class AntRunMojo
         StringWriter writer = new StringWriter();
         AntrunXmlPlexusConfigurationWriter xmlWriter = new AntrunXmlPlexusConfigurationWriter();
         xmlWriter.write( target, writer );
-        
+
         StringBuffer antProjectConfig = writer.getBuffer();
 
         // replace deprecated tasks tag with standard Ant target
@@ -479,9 +493,9 @@ public class AntRunMojo
         String xmlns = "";
         if ( ! customTaskPrefix.trim().equals( "" ) )
         {
-            xmlns = "xmlns:" + customTaskPrefix + "=\"" + TASK_URI + "\""; 
+            xmlns = "xmlns:" + customTaskPrefix + "=\"" + TASK_URI + "\"";
         }
-        
+
         final String xmlHeader = "<?xml version=\"1.0\" encoding=\"" + UTF_8 + "\" ?>\n";
         antProjectConfig.insert( 0, xmlHeader );
         final String projectOpen = "<project name=\"maven-antrun-\" default=\"" + antTargetName + "\" " + xmlns +" >\n";
@@ -501,9 +515,9 @@ public class AntRunMojo
     }
 
     /**
-     * Replace text in a StringBuffer.  If the match text is not found, the StringBuffer 
+     * Replace text in a StringBuffer.  If the match text is not found, the StringBuffer
      * is returned unchanged.
-     * 
+     *
      * @param text The string buffer containing the text
      * @param match The string to match and remove
      * @param with The string to insert
