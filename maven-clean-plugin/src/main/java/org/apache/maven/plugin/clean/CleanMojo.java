@@ -96,7 +96,22 @@ public class CleanMojo
     private Boolean verbose;
 
     /**
-     * The list of file sets to delete, in addition to the default directories.
+     * The list of file sets to delete, in addition to the default directories. For example:
+     * <pre>
+     * &lt;filesets&gt;
+     *   &lt;fileset&gt;
+     *     &lt;directory&gt;src/main/generated&lt;/directory&gt;
+     *     &lt;followSymlinks&gt;false&lt;/followSymlinks&gt;
+     *     &lt;useDefaultExcludes&gt;true&lt;/useDefaultExcludes&gt;
+     *     &lt;includes&gt;
+     *       &lt;include&gt;*.java&lt;/include&gt;
+     *     &lt;/includes&gt;
+     *     &lt;excludes&gt;
+     *       &lt;exclude&gt;Template*&lt;/exclude&gt;
+     *     &lt;/excludes&gt;
+     *   &lt;/fileset&gt;
+     * &lt;/filesets&gt;
+     * </pre>
      *
      * @parameter
      * @since 2.1
