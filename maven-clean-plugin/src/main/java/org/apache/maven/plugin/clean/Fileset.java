@@ -43,6 +43,8 @@ public class Fileset
 
     private boolean followSymlinks;
 
+    private boolean useDefaultExcludes;
+
     public File getDirectory()
     {
         return directory;
@@ -61,6 +63,11 @@ public class Fileset
     public boolean isFollowSymlinks()
     {
         return followSymlinks;
+    }
+
+    public boolean isUseDefaultExcludes()
+    {
+        return useDefaultExcludes;
     }
 
     /**
