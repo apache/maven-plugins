@@ -188,7 +188,8 @@ public class CleanMojo
                     {
                         throw new MojoExecutionException( "Missing base directory for " + fileset );
                     }
-                    GlobSelector selector = new GlobSelector( fileset.getIncludes(), fileset.getExcludes() );
+                    GlobSelector selector =
+                        new GlobSelector( fileset.getIncludes(), fileset.getExcludes(), fileset.isUseDefaultExcludes() );
                     cleaner.delete( fileset.getDirectory(), selector, fileset.isFollowSymlinks(), failOnError,
                                     retryOnError );
                 }
