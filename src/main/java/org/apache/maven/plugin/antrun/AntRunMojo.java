@@ -21,6 +21,7 @@ package org.apache.maven.plugin.antrun;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.LineNumberReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -46,6 +47,8 @@ import org.apache.tools.ant.types.Path;
 import org.codehaus.plexus.configuration.PlexusConfiguration;
 import org.codehaus.plexus.configuration.PlexusConfigurationException;
 import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
@@ -305,9 +308,16 @@ public class AntRunMojo
         }
         catch ( BuildException e )
         {
-            throw new MojoExecutionException( "An Ant BuildException has occured: " + e.getMessage(), e );
+            StringBuffer sb = new StringBuffer();
+            sb.append( "An Ant BuildException has occured: " + e.getMessage() );
+            String fragment = findFragment( e );
+            if ( fragment != null )
+            {
+                sb.append( "\n" ).append( fragment );
+            }
+            throw new MojoExecutionException( sb.toString(), e );
         }
-        catch ( Exception e )
+        catch ( Throwable e )
         {
             throw new MojoExecutionException( "Error executing ant tasks: " + e.getMessage(), e );
         }
@@ -445,6 +455,7 @@ public class AntRunMojo
 
         getLog().debug( "Propagated Ant properties to Maven properties" );
         Hashtable antProps = antProject.getProperties();
+
         Iterator iter = antProps.keySet().iterator();
         while ( iter.hasNext() )
         {
@@ -585,4 +596,49 @@ public class AntRunMojo
         return targetName;
     }
 
+    /**
+     * @param buildException not null
+     * @return the fragment XML part where the buildException occurs.
+     * @since 1.7
+     */
+    private String findFragment( BuildException buildException )
+    {
+        if ( buildException == null || buildException.getLocation() == null
+            || buildException.getLocation().getFileName() == null )
+        {
+            return null;
+        }
+
+        File antFile = new File( buildException.getLocation().getFileName() );
+        if ( !antFile.exists() )
+        {
+            return null;
+        }
+
+        LineNumberReader reader = null;
+        try
+        {
+            reader = new LineNumberReader( ReaderFactory.newXmlReader( antFile ) );
+            String line = "";
+            while ( ( line = reader.readLine() ) != null )
+            {
+                if ( reader.getLineNumber() == buildException.getLocation().getLineNumber() )
+                {
+                    return "around Ant part ..." + line.trim() + "... @ " + buildException.getLocation().getLineNumber() + ":"
+                        + buildException.getLocation().getColumnNumber() + " in " + antFile.getAbsolutePath();
+                }
+            }
+        }
+        catch ( Exception e )
+        {
+            getLog().debug( e.getMessage(), e );
+            return null;
+        }
+        finally
+        {
+            IOUtil.close( reader );
+        }
+
+        return null;
+    }
 }
