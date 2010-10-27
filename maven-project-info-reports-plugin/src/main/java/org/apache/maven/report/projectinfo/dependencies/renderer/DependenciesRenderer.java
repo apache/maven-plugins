@@ -406,24 +406,25 @@ public class DependenciesRenderer
         String version = getI18nString( "column.version" );
         String classifier = getI18nString( "column.classifier" );
         String type = getI18nString( "column.type" );
+        String license = getI18nString( "column.license" );
         String optional = getI18nString( "column.optional" );
 
         if ( withClassifier )
         {
             if ( withOptional )
             {
-                return new String[] { groupId, artifactId, version, classifier, type, optional };
+                return new String[] { groupId, artifactId, version, classifier, type, license, optional };
             }
 
-            return new String[] { groupId, artifactId, version, classifier, type };
+            return new String[] { groupId, artifactId, version, classifier, type, license };
         }
 
         if ( withOptional )
         {
-            return new String[] { groupId, artifactId, version, type, optional };
+            return new String[] { groupId, artifactId, version, type, license, optional };
         }
 
-        return new String[] { groupId, artifactId, version, type };
+        return new String[] { groupId, artifactId, version, type, license };
     }
 
     private void renderSectionProjectDependencies()
@@ -826,18 +827,36 @@ public class DependenciesRenderer
                                                    localRepository );
         String artifactIdCell = ProjectInfoReportUtils.getArtifactIdCell( artifact.getArtifactId(), url );
 
+        MavenProject artifactProject;
+        StringBuffer sb = new StringBuffer();
+        try
+        {
+            artifactProject = repoUtils.getMavenProjectFromRepository( artifact );
+            List licenses = artifactProject.getLicenses();
+            for ( Iterator iterator = licenses.iterator(); iterator.hasNext(); )
+            {
+                License license = (License) iterator.next();
+                String artifactIdCell2 = ProjectInfoReportUtils.getArtifactIdCell( license.getName(), license.getUrl() );
+                sb.append( artifactIdCell2 );
+            }
+        }
+        catch ( ProjectBuildingException e )
+        {
+            log.error( e.getMessage(), e );
+        }
+
         String content[];
         if ( withClassifier )
         {
             content =
                 new String[] { artifact.getGroupId(), artifactIdCell, artifact.getVersion(), artifact.getClassifier(),
-                    artifact.getType(), isOptional };
+                    artifact.getType(), sb.toString(), isOptional };
         }
         else
         {
             content =
                 new String[] { artifact.getGroupId(), artifactIdCell, artifact.getVersion(), artifact.getType(),
-                    isOptional };
+                    sb.toString(), isOptional };
         }
 
         tableRow( withOptional, content );
