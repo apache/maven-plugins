@@ -67,6 +67,16 @@ public class LicenseReport
      */
     private boolean offline;
 
+    /**
+     * Whether the only render links to the license documents instead of inlining them.
+     * <br/>
+     * If the system is in {@link #offline} mode, the linkOnly parameter will be always <code>true</code>.
+     *
+     * @parameter default-value="false"
+     * @since 2.3
+     */
+    private boolean linkOnly;
+
     // ----------------------------------------------------------------------
     // Public methods
     // ----------------------------------------------------------------------
@@ -74,7 +84,7 @@ public class LicenseReport
     /** {@inheritDoc} */
     public void executeReport( Locale locale )
     {
-        LicenseRenderer r = new LicenseRenderer( getSink(), getProject(), i18n, locale, settings );
+        LicenseRenderer r = new LicenseRenderer( getSink(), getProject(), i18n, locale, settings, linkOnly );
 
         r.render();
     }
@@ -107,6 +117,13 @@ public class LicenseReport
 
             if ( licenseUrl != null && licenseUrl.getProtocol().equals( "file" ) )
             {
+                return true;
+            }
+
+            if ( licenseUrl != null
+                && ( licenseUrl.getProtocol().equals( "http" ) || licenseUrl.getProtocol().equals( "https" ) ) )
+            {
+                linkOnly = true;
                 return true;
             }
         }
@@ -189,17 +206,21 @@ public class LicenseReport
     private static class LicenseRenderer
         extends AbstractProjectInfoRenderer
     {
-        private MavenProject project;
+        private final MavenProject project;
 
-        private Settings settings;
+        private final Settings settings;
 
-        LicenseRenderer( Sink sink, MavenProject project, I18N i18n, Locale locale, Settings settings )
+        private final boolean linkOnly;
+
+        LicenseRenderer( Sink sink, MavenProject project, I18N i18n, Locale locale, Settings settings, boolean linkOnly )
         {
             super( sink, i18n, locale );
 
             this.project = project;
 
             this.settings = settings;
+
+            this.linkOnly = linkOnly;
         }
 
         protected String getI18Nsection()
@@ -264,7 +285,7 @@ public class LicenseReport
                         paragraph( e.getMessage() );
                     }
 
-                    if ( licenseUrl != null )
+                    if ( licenseUrl != null && !linkOnly)
                     {
                         String licenseContent = null;
                         try
@@ -301,6 +322,11 @@ public class LicenseReport
                             }
                         }
                     }
+                    else if ( licenseUrl != null && linkOnly )
+                    {
+                        link( licenseUrl.toExternalForm(), licenseUrl.toExternalForm() );
+                    }
+
                 }
 
                 endSection();
