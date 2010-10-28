@@ -24,6 +24,7 @@ import java.net.URL;
 import com.meterware.httpunit.GetMethodWebRequest;
 import com.meterware.httpunit.TextBlock;
 import com.meterware.httpunit.WebConversation;
+import com.meterware.httpunit.WebLink;
 import com.meterware.httpunit.WebRequest;
 import com.meterware.httpunit.WebResponse;
 
@@ -72,5 +73,46 @@ public class LicenseReportTest
         assertEquals( textBlocks[1].getText(), getString( "report.license.overview.intro" ) );
         assertEquals( textBlocks[2].getText(), getString( "report.license.name" ) );
         assertEquals( textBlocks[3].getText(), "The Apache Software License, Version 2.0" );
+
+        // only 1 link in default report
+        final WebLink[] links = response.getLinks();
+        assertEquals(1, links.length);
+        assertEquals("http://maven.apache.org/", links[0].getURLString());
+    }
+    
+    public void testReportLinksOnly()
+        throws Exception
+    {
+        generateReport( "license", "license-plugin-config-linkonly.xml" );
+        assertTrue( "Test html generated", getGeneratedReport( "license.html" ).exists() );
+
+        URL reportURL = getGeneratedReport( "license.html" ).toURI().toURL();
+        assertNotNull( reportURL );
+
+        // HTTPUnit
+        WebRequest request = new GetMethodWebRequest( reportURL.toString() );
+        WebResponse response = WEB_CONVERSATION.getResponse( request );
+
+        // Basic HTML tests
+        assertTrue( response.isHTML() );
+        assertTrue( response.getContentLength() > 0 );
+
+        // Test the Page title
+        assertEquals( getString( "report.license.name" ) + " - " + getString( "report.license.title" ), response
+            .getTitle() );
+
+        // Test the texts
+        TextBlock[] textBlocks = response.getTextBlocks();
+        assertEquals( textBlocks[0].getText(), getString( "report.license.overview.title" ) );
+        assertEquals( textBlocks[1].getText(), getString( "report.license.overview.intro" ) );
+        assertEquals( textBlocks[2].getText(), getString( "report.license.name" ) );
+        assertEquals( textBlocks[3].getText(), "The Apache Software License, Version 2.0" );
+
+        // here's our specific test
+        final WebLink[] links = response.getLinks();
+        assertEquals(2, links.length);
+        assertEquals("http://maven.apache.org/", links[0].getURLString());
+        assertEquals("http://www.apache.org/licenses/LICENSE-2.0.txt", links[1].getURLString());
+        assertEquals("http://www.apache.org/licenses/LICENSE-2.0.txt", links[1].getText());
     }
 }
