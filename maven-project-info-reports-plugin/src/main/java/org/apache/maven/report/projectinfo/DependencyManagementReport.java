@@ -23,10 +23,15 @@ import java.util.List;
 import java.util.Locale;
 
 import org.apache.maven.artifact.factory.ArtifactFactory;
+import org.apache.maven.artifact.manager.WagonManager;
 import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.artifact.repository.metadata.RepositoryMetadataManager;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.report.projectinfo.dependencies.ManagementDependencies;
+import org.apache.maven.report.projectinfo.dependencies.RepositoryUtils;
 import org.apache.maven.report.projectinfo.dependencies.renderer.DependencyManagementRenderer;
+import org.apache.maven.settings.Settings;
+import org.apache.maven.shared.dependency.tree.DependencyTreeBuilder;
 
 
 /**
@@ -59,6 +64,22 @@ public class DependencyManagementReport
      */
     private ArtifactFactory artifactFactory;
 
+    /**
+     * Wagon manager component.
+     *
+     * @since 2.3
+     * @component
+     */
+    private WagonManager wagonManager;
+
+    /**
+     * Repository metadata component.
+     *
+     * @since 2.3
+     * @component
+     */
+    private RepositoryMetadataManager repositoryMetadataManager;
+
     // ----------------------------------------------------------------------
     // Mojo parameters
     // ----------------------------------------------------------------------
@@ -72,6 +93,16 @@ public class DependencyManagementReport
     private List<ArtifactRepository> remoteRepositories;
 
     /**
+     * The current user system settings for use in Maven.
+     *
+     * @since 2.3
+     * @parameter expression="${settings}"
+     * @required
+     * @readonly
+     */
+    private Settings settings;
+
+    /**
      * Lazy instantiation for management dependencies.
      */
     private ManagementDependencies managementDependencies;
@@ -83,10 +114,16 @@ public class DependencyManagementReport
     /** {@inheritDoc} */
     public void executeReport( Locale locale )
     {
-        DependencyManagementRenderer r = new DependencyManagementRenderer( getSink(), locale, i18n, getLog(),
-                                                                           getManagementDependencies(),
-                                                                           artifactFactory, mavenProjectBuilder,
-                                                                           remoteRepositories, localRepository );
+        RepositoryUtils repoUtils =
+            new RepositoryUtils( getLog(), wagonManager, settings,
+                                 mavenProjectBuilder, factory, resolver, project.getRemoteArtifactRepositories(),
+                                 project.getPluginArtifactRepositories(), localRepository,
+                                 repositoryMetadataManager );
+
+        DependencyManagementRenderer r =
+            new DependencyManagementRenderer( getSink(), locale, i18n, getLog(), getManagementDependencies(),
+                                              artifactFactory, mavenProjectBuilder, remoteRepositories,
+                                              localRepository, repoUtils );
         r.render();
     }
 
