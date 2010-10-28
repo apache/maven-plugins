@@ -71,7 +71,7 @@ public class DependencyManagementReportTest
         WebTable[] webTables = response.getTables();
         assertEquals( webTables.length, 1 );
 
-        assertEquals( webTables[0].getColumnCount(), 4 );
+        assertEquals( webTables[0].getColumnCount(), 5 );
         assertEquals( webTables[0].getRowCount(),
                       1 + getTestMavenProject().getDependencyManagement().getDependencies().size() );
 

@@ -842,7 +842,7 @@ public class DependenciesRenderer
         }
         catch ( ProjectBuildingException e )
         {
-            log.error( e.getMessage(), e );
+            log.warn( "Unable to create Maven project from repository.", e );
         }
 
         String content[];
@@ -1006,7 +1006,7 @@ public class DependenciesRenderer
             }
             catch ( ProjectBuildingException e )
             {
-                log.error( "ProjectBuildingException error : ", e );
+                log.warn( "Unable to create Maven project from repository.", e );
             }
         }
         else

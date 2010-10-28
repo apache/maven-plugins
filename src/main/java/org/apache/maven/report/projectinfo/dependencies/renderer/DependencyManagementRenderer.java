@@ -21,6 +21,7 @@ package org.apache.maven.report.projectinfo.dependencies.renderer;
 
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -30,11 +31,15 @@ import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.model.Dependency;
+import org.apache.maven.model.License;
 import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
+import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.report.projectinfo.AbstractProjectInfoRenderer;
 import org.apache.maven.report.projectinfo.ProjectInfoReportUtils;
 import org.apache.maven.report.projectinfo.dependencies.ManagementDependencies;
+import org.apache.maven.report.projectinfo.dependencies.RepositoryUtils;
 import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.util.StringUtils;
 
@@ -58,6 +63,8 @@ public class DependencyManagementRenderer
 
     private final ArtifactRepository localRepository;
 
+    private final RepositoryUtils repoUtils;
+
     /**
      * Default constructor
      *
@@ -70,11 +77,13 @@ public class DependencyManagementRenderer
      * @param mavenProjectBuilder
      * @param remoteRepositories
      * @param localRepository
+     * @param repoUtils
      */
     public DependencyManagementRenderer( Sink sink, Locale locale, I18N i18n, Log log,
                                          ManagementDependencies dependencies, ArtifactFactory artifactFactory,
                                          MavenProjectBuilder mavenProjectBuilder,
-                                         List<ArtifactRepository> remoteRepositories, ArtifactRepository localRepository )
+                                         List<ArtifactRepository> remoteRepositories,
+                                         ArtifactRepository localRepository, RepositoryUtils repoUtils )
     {
         super( sink, i18n, locale );
 
@@ -84,6 +93,7 @@ public class DependencyManagementRenderer
         this.mavenProjectBuilder = mavenProjectBuilder;
         this.remoteRepositories = remoteRepositories;
         this.localRepository = localRepository;
+        this.repoUtils = repoUtils;
     }
 
     // ----------------------------------------------------------------------
@@ -147,13 +157,14 @@ public class DependencyManagementRenderer
         String version = getI18nString( "column.version" );
         String classifier = getI18nString( "column.classifier" );
         String type = getI18nString( "column.type" );
+        String license = getI18nString( "column.license" );
 
         if ( hasClassifier )
         {
-            return new String[] { groupId, artifactId, version, classifier, type };
+            return new String[] { groupId, artifactId, version, classifier, type, license };
         }
 
-        return new String[] { groupId, artifactId, version, type };
+        return new String[] { groupId, artifactId, version, type, license };
     }
 
     private void renderDependenciesForScope( String scope, List<Dependency> artifacts )
@@ -200,14 +211,32 @@ public class DependencyManagementRenderer
                                                    localRepository );
         String artifactIdCell = ProjectInfoReportUtils.getArtifactIdCell( artifact.getArtifactId(), url );
 
+        MavenProject artifactProject;
+        StringBuffer sb = new StringBuffer();
+        try
+        {
+            artifactProject = repoUtils.getMavenProjectFromRepository( artifact );
+            List licenses = artifactProject.getLicenses();
+            for ( Iterator iterator = licenses.iterator(); iterator.hasNext(); )
+            {
+                License license = (License) iterator.next();
+                String artifactIdCell2 = ProjectInfoReportUtils.getArtifactIdCell( license.getName(), license.getUrl() );
+                sb.append( artifactIdCell2 );
+            }
+        }
+        catch ( ProjectBuildingException e )
+        {
+            log.warn( "Unable to create Maven project from repository.", e );
+        }
+
         if ( hasClassifier )
         {
             return new String[] { dependency.getGroupId(), artifactIdCell, dependency.getVersion(),
-                dependency.getClassifier(), dependency.getType() };
+                dependency.getClassifier(), dependency.getType(), sb.toString() };
         }
 
         return new String[] { dependency.getGroupId(), artifactIdCell, dependency.getVersion(),
-            dependency.getType() };
+            dependency.getType(), sb.toString() };
     }
 
     private Comparator<Dependency> getDependencyComparator()
