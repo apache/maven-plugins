@@ -52,7 +52,7 @@ under the License.
   </issueManagement>
 
   <properties>
-    <wagonVersion>1.0-beta-2</wagonVersion>
+    <wagonVersion>1.0-beta-3</wagonVersion>
     <mavenVersion>2.0.10</mavenVersion>
   </properties>
 
