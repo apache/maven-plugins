@@ -20,12 +20,15 @@ package org.apache.maven.report.projectinfo;
  */
 
 import org.apache.commons.lang.SystemUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.model.Contributor;
 import org.apache.maven.model.Developer;
 import org.apache.maven.model.Model;
+import org.apache.maven.plugin.logging.Log;
 import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.util.StringUtils;
+import org.joda.time.DateTimeZone;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,6 +36,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
+import java.util.TimeZone;
 
 /**
  * Generates the Project Team report.
@@ -52,7 +56,7 @@ public class TeamListReport
     /** {@inheritDoc} */
     public void executeReport( Locale locale )
     {
-        TeamListRenderer r = new TeamListRenderer( getSink(), project.getModel(), i18n, locale );
+        TeamListRenderer r = new TeamListRenderer( getSink(), project.getModel(), i18n, locale, getLog() );
 
         r.render();
     }
@@ -96,15 +100,18 @@ public class TeamListReport
 
         private static final String ID = "id";
 
-        private Model model;
+        private final Model model;
+
+        private final Log log;
 
         private static final String[] EMPTY_STRING_ARRAY = new String[0];
 
-        TeamListRenderer( Sink sink, Model model, I18N i18n, Locale locale )
+        TeamListRenderer( Sink sink, Model model, I18N i18n, Locale locale, Log log )
         {
             super( sink, i18n, locale );
 
             this.model = model;
+            this.log = log;
         }
 
         protected String getI18Nsection()
@@ -159,12 +166,12 @@ public class TeamListReport
                 tableHeader( requiredHeaders );
 
                 // To handle JS
-                int developersRows = 0;
+                int developersRowId = 0;
                 for ( Developer developer : developers )
                 {
-                    renderDeveloper( developer, developersRows, headersMap, javascript );
+                    renderDeveloper( developer, developersRowId, headersMap, javascript );
 
-                    developersRows++;
+                    developersRowId++;
                 }
 
                 endTable();
@@ -194,12 +201,12 @@ public class TeamListReport
                 tableHeader( requiredHeaders );
 
                 // To handle JS
-                int contributorsRows = 0;
+                int contributorsRowId = 0;
                 for ( Contributor contributor : contributors )
                 {
-                    renderContributor( contributor, contributorsRows, headersMap, javascript );
+                    renderContributor( contributor, contributorsRowId, headersMap, javascript );
 
-                    contributorsRows++;
+                    contributorsRowId++;
                 }
 
                 endTable();
@@ -215,7 +222,7 @@ public class TeamListReport
             endSection();
         }
 
-        private void renderDeveloper( Developer developer, int developerRow, Map<String, Boolean> headersMap,
+        private void renderDeveloper( Developer developer, int developerRowId, Map<String, Boolean> headersMap,
                                       StringBuffer javascript )
         {
             // To handle JS
@@ -261,18 +268,68 @@ public class TeamListReport
             {
                 tableCell( developer.getTimezone() );
 
-                // To handle JS
-                sink.tableCell();
-                sink.rawText( "<span id=\"developer-" + developerRow + "\">" );
-                text( developer.getTimezone() );
-                if ( !StringUtils.isEmpty( developer.getTimezone() ) )
+                if ( !NumberUtils.isNumber( developer.getTimezone() )
+                    && StringUtils.isNotEmpty( developer.getTimezone() ) )
                 {
-                    javascript.append( "    offsetDate('developer-" ).append( developerRow ).append( "', '" );
-                    javascript.append( developer.getTimezone() );
-                    javascript.append( "');" ).append( SystemUtils.LINE_SEPARATOR );
+                    String tz = developer.getTimezone().trim();
+                    try
+                    {
+                        // check if it is a valid timeZone
+                        DateTimeZone.forID( tz );
+
+                        sink.tableCell();
+                        sink.rawText( "<span id=\"developer-" + developerRowId + "\">" );
+                        text( tz );
+                        String offSet =
+                            String.valueOf( TimeZone.getTimeZone( tz ).getRawOffset() / 3600000 );
+                        javascript.append( "    offsetDate('developer-" ).append( developerRowId ).append( "', '" );
+                        javascript.append( offSet );
+                        javascript.append( "');" ).append( SystemUtils.LINE_SEPARATOR );
+                        sink.rawText( "</span>" );
+                        sink.tableCell_();
+                    }
+                    catch ( IllegalArgumentException e )
+                    {
+                        log.warn( "The time zone '" + tz + "' for the developer '" + developer.getName()
+                            + "' is not a recognised time zone, use a number in the range -12 to +14 instead of." );
+
+                        sink.tableCell();
+                        sink.rawText( "<span id=\"developer-" + developerRowId + "\">" );
+                        text( null );
+                        sink.rawText( "</span>" );
+                        sink.tableCell_();
+                    }
                 }
-                sink.rawText( "</span>" );
-                sink.tableCell_();
+                else
+                {
+                    // To handle JS
+                    sink.tableCell();
+                    sink.rawText( "<span id=\"developer-" + developerRowId + "\">" );
+                    if ( StringUtils.isNotEmpty( developer.getTimezone() ) )
+                    {
+                        // check if number is between -12 and +14
+                        int tz = NumberUtils.toInt( developer.getTimezone().trim(), Integer.MIN_VALUE );
+                        if ( tz == Integer.MIN_VALUE || !( tz >= -12 && tz <= 14 ) )
+                        {
+                            text( null );
+                            log.warn( "The time zone '" + tz + "' for the developer '" + developer.getName()
+                                + "' is not a recognised time zone, use a number in the range -12 to +14 instead of." );
+                        }
+                        else
+                        {
+                            text( developer.getTimezone() );
+                            javascript.append( "    offsetDate('developer-" ).append( developerRowId ).append( "', '" );
+                            javascript.append( developer.getTimezone() );
+                            javascript.append( "');" ).append( SystemUtils.LINE_SEPARATOR );
+                        }
+                    }
+                    else
+                    {
+                        text( null );
+                    }
+                    sink.rawText( "</span>" );
+                    sink.tableCell_();
+                }
             }
 
             if ( headersMap.get( PROPERTIES ) == Boolean.TRUE )
@@ -291,7 +348,7 @@ public class TeamListReport
             sink.tableRow_();
         }
 
-        private void renderContributor( Contributor contributor, int contributorRow, Map<String, Boolean> headersMap,
+        private void renderContributor( Contributor contributor, int contributorRowId, Map<String, Boolean> headersMap,
                                         StringBuffer javascript )
         {
             sink.tableRow();
@@ -326,25 +383,73 @@ public class TeamListReport
                 {
                     tableCell( null );
                 }
-
             }
             if ( headersMap.get( TIME_ZONE ) == Boolean.TRUE )
             {
                 tableCell( contributor.getTimezone() );
 
-                // To handle JS
-                sink.tableCell();
-                sink.rawText( "<span id=\"contributor-" + contributorRow + "\">" );
-                text( contributor.getTimezone() );
-                if ( !StringUtils.isEmpty( contributor.getTimezone() ) )
+                if ( !NumberUtils.isNumber( contributor.getTimezone() )
+                    && StringUtils.isNotEmpty( contributor.getTimezone() ) )
                 {
-                    javascript.append( "    offsetDate('contributor-" ).append( contributorRow )
-                        .append( "', '" );
-                    javascript.append( contributor.getTimezone() );
-                    javascript.append( "');" ).append( SystemUtils.LINE_SEPARATOR );
+                    String tz = contributor.getTimezone().trim();
+                    try
+                    {
+                        // check if it is a valid timeZone
+                        DateTimeZone.forID( tz );
+
+                        sink.tableCell();
+                        sink.rawText( "<span id=\"contributor-" + contributorRowId + "\">" );
+                        text( tz );
+                        String offSet =
+                            String.valueOf( TimeZone.getTimeZone( tz ).getRawOffset() / 3600000 );
+                        javascript.append( "    offsetDate('contributor-" ).append( contributorRowId ).append( "', '" );
+                        javascript.append( offSet );
+                        javascript.append( "');" ).append( SystemUtils.LINE_SEPARATOR );
+                        sink.rawText( "</span>" );
+                        sink.tableCell_();
+                    }
+                    catch ( IllegalArgumentException e )
+                    {
+                        log.warn( "The time zone '" + tz + "' for the contributor '" + contributor.getName()
+                            + "' is not a recognised time zone, use a number in the range -12 and +14 instead of." );
+
+                        sink.tableCell();
+                        sink.rawText( "<span id=\"contributor-" + contributorRowId + "\">" );
+                        text( null );
+                        sink.rawText( "</span>" );
+                        sink.tableCell_();
+                    }
                 }
-                sink.rawText( "</span>" );
-                sink.tableCell_();
+                else
+                {
+                    // To handle JS
+                    sink.tableCell();
+                    sink.rawText( "<span id=\"contributor-" + contributorRowId + "\">" );
+                    if ( StringUtils.isNotEmpty( contributor.getTimezone() ) )
+                    {
+                        // check if number is between -12 and +14
+                        int tz = NumberUtils.toInt( contributor.getTimezone().trim(), Integer.MIN_VALUE );
+                        if ( tz == Integer.MIN_VALUE || !( tz >= -12 && tz <= 14 ) )
+                        {
+                            text( null );
+                            log.warn( "The time zone '" + tz + "' for the contributor '" + contributor.getName()
+                                + "' is not a recognised time zone, use a number in the range -12 to +14 instead of." );
+                        }
+                        else
+                        {
+                            text( contributor.getTimezone() );
+                            javascript.append( "    offsetDate('contributor-" ).append( contributorRowId ).append( "', '" );
+                            javascript.append( contributor.getTimezone() );
+                            javascript.append( "');" ).append( SystemUtils.LINE_SEPARATOR );
+                        }
+                    }
+                    else
+                    {
+                        text( null );
+                    }
+                    sink.rawText( "</span>" );
+                    sink.tableCell_();
+                }
             }
 
             if ( headersMap.get( PROPERTIES ) == Boolean.TRUE )

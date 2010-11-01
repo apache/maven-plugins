@@ -52,12 +52,24 @@ under the License.
     <developer>
       <id>foo</id>
       <email>http://mailhide.recaptcha.net/d?k=01ebFB9eM2hZL-T96IpUgRmA==&amp;c=AI-pouLFNTr5xMTBVDaj8iKeIFI5dy9Wj5cxSY0Nuhw=</email>
-        ...
+      ...
     </developer>
     ...
   </developers>
   ...
 </project>]]></source>
+        </p>
+      </answer>
+    </faq>
+
+    <faq id="How to use developer/contributor time zone">
+      <question>How to use developer/contributor time zone?</question>
+      <answer>
+        <p>
+          According the <a href="http://maven.apache.org/xsd/maven-4.0.0.xsd">Maven XSD</a>, the developer/contributor
+          time zone fields are string so you could use a time zone as a number in the range
+          <a href="http://en.wikipedia.org/wiki/UTC%E2%88%9212:00">-12</a> to <a href="http://en.wikipedia.org/wiki/UTC%2B14:00">+14</a>
+          or a valid time zone id like "America/Montreal" (UTC-05:00) or "Europe/Paris" (UTC+01:00).
         </p>
       </answer>
     </faq>
