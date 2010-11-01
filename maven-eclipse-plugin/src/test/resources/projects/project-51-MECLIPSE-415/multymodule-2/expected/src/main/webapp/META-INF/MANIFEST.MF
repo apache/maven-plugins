@@ -1,6 +1,0 @@
-Manifest-Version: 1.0
-Class-Path: deps-direct-compile-1.0.jar deps-refproject-compile-1.0.ja
- r direct-compile-1.0.jar direct-optional-1.0.jar direct-sysdep.jar pr
- efix-multymodule-1-1.0.jar multymodule-4-1.0.jar refproject-compile-1
- .0.jar refproject-sysdep.jar
-

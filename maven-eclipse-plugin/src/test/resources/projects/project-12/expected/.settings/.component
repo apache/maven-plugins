@@ -1,5 +1,0 @@
-<project-modules id="moduleCoreId">
-  <wb-module deploy-name="maven-eclipse-plugin-test-project-12">
-    <wb-resource deploy-path="/" source-path="src/main/application"/>
-  </wb-module>
-</project-modules>

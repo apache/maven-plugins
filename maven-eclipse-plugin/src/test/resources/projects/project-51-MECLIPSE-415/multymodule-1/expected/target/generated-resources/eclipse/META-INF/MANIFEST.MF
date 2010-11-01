@@ -1,5 +1,0 @@
-Manifest-Version: 1.0
-Class-Path: deps-refproject-compile-1.0.jar multymodule-4-1.0.jar refp
- roject-compile-1.0.jar refproject-optional-1.0.jar refproject-sysdep.
- jar
-

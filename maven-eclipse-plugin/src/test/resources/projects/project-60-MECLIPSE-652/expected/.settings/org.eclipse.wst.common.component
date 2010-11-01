@@ -1,7 +1,0 @@
-<project-modules id="moduleCoreId" project-version="2.0">
-  <wb-module deploy-name="maven-eclipse-plugin-test-project-60">
-    <property name="context-root" value=""/>
-    <wb-resource deploy-path="/" source-path="src/main/webapp"/>
-    <property name="java-output-path" value="/target/classes"/>
-  </wb-module>
-</project-modules>
