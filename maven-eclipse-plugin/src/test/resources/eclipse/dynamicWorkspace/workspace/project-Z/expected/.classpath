@@ -1,0 +1,8 @@
+<classpath>
+  <classpathentry kind="src" path="src/main/java" including="**/*.java"/>
+  <classpathentry kind="output" path="target/classes"/>
+  <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+  <classpathentry kind="src" path="/module-A1"/>
+  <classpathentry kind="var" path="M2_REPO/eclipse/module-A2/1/module-A2-1.jar"/>
+  <classpathentry kind="src" path="/project-O"/>
+</classpath>

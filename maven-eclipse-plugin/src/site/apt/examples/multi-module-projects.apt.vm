@@ -1,0 +1,297 @@
+ ------
+ Multi-module projects with WTP
+ ------
+ Roland Asmann
+ Richard van Nieuwenhoven
+ ------
+ 17 October 2007
+ ------
+
+Using maven-eclipse-plugin in multi-module projects with WTP
+
+ Developing Multi-module projects with Maven and Eclipse can be done efficiently
+ using the the best of both Maven 2 and Eclipse's WTP. 
+ 
+ Especially with projects that have EJB and EAR modules, it can be difficult to
+ use Maven 2.0 and WTP. There are however good solutions to these obstacles,
+ without losing any of the functionality of either Maven nor WTP.
+ 
+* The flat project structure
+
+ One of the major problems that occur when using Maven and Eclipse together, is
+ that Maven encourages the use of deep project structures, whereas eclipse can't
+ handle those. A solution to this problem is to force Maven to use the flat
+ structure:
+ 
++-----
+.....
+<modules>
+  <module>../module1</module>
+  <module>../module2</module>
+</modules>
+.....
++-----
+
+ This has some very big drawbacks: You will lose the possibility to use several
+ of Maven's tools (eg the release-plugin), because these are unable to handle
+ flat structures.
+ 
+ The best approach is to do everything the way it was intended in Maven, and
+ let the maven-eclipse-plugin bend WTP to its will. Therefore, the recommendation
+ would be to use the deep structures:
+
++-----
+.....
+<modules>
+  <module>module1</module>
+  <module>module2</module>
+</modules>
+.....
++-----
+ 
+* The Example project
+
+ This project is an example of a multi-module projects, containing some JAR-, a
+ WAR- and an EAR-project. You can download it from {{{j2ee-simple.tar.gz}here}}.
+ The project is based on the j2ee-simple archetype.
+ 
+** Step by step
+
+ Follow the example steps to install the multi-module project in your Eclipse.
+ 
+  * create a new workspace with Eclipse 3.3 and WTP 2.0
+  
+  * define the <<<M2_REPO>>> variable in Eclipse
+  
+  * extract the example project somewhere
+  
+  * start '<<<mvn eclipse:eclipse install>>>' from the command-line in the root project (j2ee-simple)
+  
+  * use the {{Multi Project Import/Export Plugin}} to import all the modules into Eclipse
+  
+  * define your favorite application server in the WTP Server view
+  
+  * add and publish the project to the server 
+  
+  * start the server
+  
+  * open your browser to {{http://localhost:8080/servlet/hello}}
+  
+  * your maven project is up and running as a eclipse / wtp project
+
+* Source Control Management
+
+ Eclipse and Maven support a wide range of SCM systems (like CVS and SVN). The 
+ usage in a WTP/Maven project has some peculiarities, which we will
+ discuss below.
+
+** Control files
+
+ Do not check in the Eclipse control files in your SCM, you can (and should)
+ regenerate them every time you need them!
+ 
+ When using CVS, put these files in the .cvsignore file of every module.
+ A basic version will look something like this:
+
++---
+.classpath
+.project
+.settings
+target
++---
+ 
+ For SVN, use the svn:ignore property in the root directory of each project.
+ 
+** The organization project
+
+ One solution to sharing the exact Maven configuration between all developers,
+ is to create a project containing the Maven binary release. This project can
+ also be included in the SCM system, so that any updates (be it a new version or
+ a configuration.change) are received by all developers.
+
+* {Multi Project Import/Export Plugin}
+
+ There is an Eclipe plugin available that can help a lot when using multi-module
+ projects. This plugin can import several projects at once, and it can do so from
+ both a deep and a flat structure.
+ 
+ The plugin is called "Multi Project Import/Export Plugin" and can be found
+ {{{http://eclipse-tools.sourceforge.net/}here}}. You can also reference the
+ update site in eclipse, using the URL: <<http://eclipse-tools.sourceforge.net/updates/>>
+
+* Project names
+
+ The project names in Eclipse do not have to be the same as the name of the 
+ folder. Instead of forcing Maven to generate artifacts without version name
+ (which is considered bad practice), the maven-eclipse-plugin can adapt the project
+ names to include the version name! This way the artifact Eclipse generates, will have
+ the same name as the artifact the Maven generates!
+ 
+ Many problems in the area of "the eclipse exported ear works, but the maven 
+ generated not" (or vice-versa) come from this different "final name"
+ problem.
+ 
+ The best way to evade such problems is to use this setting for the 
+ maven-eclipse-plugin:
+ 
++----
+<projectNameTemplate>[artifactId]-[version]</projectNameTemplate>
++----
+
+* The pom modules
+
+ The root of the projects in Maven is always a POM-module. These projects can be
+ imported into Eclipse as well, which then enables you to create and use
+ <<External Tool-launches>> with workspace-locations. This makes the launches
+ also exchangeable between developers and they can therefore also be stored in
+ SCM.
+
+** Duplicate folders
+
+ Some peculiarities you will have to remember when you checked out the root pom
+ project in your workspace:
+ 
+  * first synchronize the modules
+  
+  * then <<refresh>> the pom project (this step is <<very>> important!)
+  
+  * then synchonize the root pom project \
+    (only necessary when the root pom changed or you created a new module)
+
+ Watch out that the files accessible in modules under the root pom project, are 
+ <<physically>> the same files as in the imported projects.
+ Eclipse will show the any changes after the next refresh.
+
+* Maven builds as launches
+
+ As was said above, it is very useful to have your Maven builds inside Eclipse
+ as a Launch-configuration. To create these, you should create a new External Tool
+ and fill out the following values:
+ 
+  * Name:
+  
+    The name for the launch -- this can be chosen freely.
+    
+  * Location:
+  
++---
+    ${env_var:JAVA_HOME}/bin/java
++---
+    
+    If you're on Windows, you should add the '.exe' extension to the above command.
+
+    Or, if you really want to make the builds interoperable, all developers should
+    create a variable in their workspace called 'JAVA_EXECUTABLE', holding either
+    the value 'java' (linux) or 'java.exe' (windows). The above command can then
+    be changed into
+    
++---
+    ${env_var:JAVA_HOME}/bin/${JAVA_EXECUTABLE}
++---
+    
+  * Working Directory: 
+
+    Select the root pom project here.
+
++---
+    ${workspace_loc:/j2ee-simple}
++---
+    
+  * Arguments:
+  
+    In the example below, we presume you have made the organization-project containing
+    the Maven distribution. The project is called 'organization'.
+    
++---
+  -Dclassworlds.conf=${resource_loc:organization/maven-2.0/bin/m2.conf}
+  -Dmaven.home=${resource_loc:organization/maven-2.0}
+  -classpath ${resource_loc:organization/maven-2.0/core/boot/classworlds-1.1.jar}
+   org.codehaus.classworlds.Launcher
+
+  -DdownloadSources=true
+  -Dmaven.test.skip=${string_prompt:maven.test.skip:false}
+   clean eclipse:clean eclipse:eclipse install
++---
+
+    The last three lines are configurations for plugins and the actual goals to
+    run. These can be changed if necessary.
+    
+    The second to last line is used to have Eclipse prompt for running or skipping
+    tests. Enter 'true' to skip the tests, anything else will run the tests.
+
+  * Refresh / Refresh resources upon completion
+  
+    Best to activate "The entire workspace" just to be sure all projects are aware
+    of changes.
+    
+  * Common / Save as Shared file
+  
+    Best to select the Root pom project location. The resulting launch file can 
+    be put under SCM control.
+
+* The EAR project
+
+ WTP saves some extra information in the application.xml that would otherwise be 
+ generated by the maven-ear-plugin. We do not want to interfere with the 
+ maven-ear-plugin, so the maven-eclipse-plugin generates a special application.xml 
+ for WTP. This enables you to use the WTP deployer in the server view.
+  
+ Important: this generated version of the application.xml will <<NOT>> be used in
+ the maven build.
+  
+* The EJB project
+
+ WTP automatically uses the ejbModule's source folder, but it is not mandatory.
+ Use the Maven location instead: 'src/main/resources' for the ejb-jar.xml (etc) and 
+ 'src/main/java' for the JAVA-beans.
+ 
+ TIP: if WTP can not read your deployment descriptor, check if you included a
+ 'display-name'-tag and specified the <xml encoding> in the xml file.
+
+* The WAR project
+
+ Early versions of WTP had some problems when no toplevel directory was used for
+ the webcontent. As of v1.5 this problem is no longer there! This enables using
+ the standard maven directory 'src/main/webapp' as the web-content folder. 
+ 
+ The WEB-INF/classes directory can still trigger problems, therefore it is best
+ <<not>> to include JAVA classes in a war module. Just put them in a separate
+ JAVA (JAR) module and a lot of undetermined problems disappear. 
+ 
+ WTP needs the context root in the war project, but in Maven it is defined in
+ the ear project. As long as the ear project is available in the reactor (as 
+ part of the same multi module build) the eclipse plugin will take the context
+ root from the ear project configuration. 
+
+* The Eclipse MANIFEST files
+
+ In Maven the manifest is generated by the maven-jar-plugin from the dependencies
+ just before packaging, but WTP needs them to run. The maven-eclipse-plugin will
+ generate a manifest that is available only to Eclipse (located at
+ 'target/generated-resources/eclipse/META-INF/MANIFEST.MF'), meaning that it will
+ be ignored in the normal maven build.
+ 
+* Deploying with WTP
+
+ When you followed all directions described here, there should be no problem to
+ deploy your EARs using the WTP tools for your application server. So there is no
+ need to start a maven build after every change. 
+
+* Finally
+
+ The configuration of the maven-eclipse-plugin used in this description is:
+ 
++-----
+	<plugin>
+		<groupId>org.apache.maven.plugins</groupId>
+		<artifactId>maven-eclipse-plugin</artifactId>
+    <version>${project.version}</version>
+		<configuration>
+			<projectNameTemplate>[artifactId]-[version]</projectNameTemplate>
+			<wtpmanifest>true</wtpmanifest>
+			<wtpapplicationxml>true</wtpapplicationxml>
+			<wtpversion>2.0</wtpversion>
+			<manifest>${basedir}/src/main/resources/META-INF/MANIFEST.MF</manifest>
+		</configuration>
+	</plugin>
++-----

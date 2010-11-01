@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>eclipse</groupId>
+  <artifactId>project-Z</artifactId>
+  <version>1</version>
+  <name>Project Z</name>
+  <packaging>jar</packaging>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-eclipse-plugin</artifactId>
+        <version>test</version>
+        <!-- 
+          Note the lack of configuration. 
+          This project test's that the workspace can be located dynamically.
+        -->
+      </plugin>
+    </plugins>
+  </build>
+  <dependencies>
+    <dependency>
+      <groupId>eclipse</groupId>
+      <artifactId>module-A1</artifactId>
+      <version>1</version>
+    </dependency>
+    <dependency>
+      <groupId>eclipse</groupId>
+      <artifactId>module-A2</artifactId>
+      <version>1</version>
+    </dependency>
+    <dependency>
+      <groupId>eclipse</groupId>
+      <artifactId>project-O</artifactId>
+      <version>1</version>
+    </dependency>
+  </dependencies>
+</project>

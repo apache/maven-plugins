@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<application xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/application_1_4.xsd" id="Application_ID" version="1.4">
+  <description/>
+  <display-name>multymodule-ear-1.0</display-name>
+  <module id="WebModule_00000000">
+    <web>
+      <web-uri>multymodule-war-1.0.war</web-uri>
+      <context-root>/somethingVeryDifferent</context-root>
+    </web>
+  </module>
+</application>

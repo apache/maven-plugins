@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>eclipse</groupId>
+  <artifactId>maven-eclipse-plugin-test-project-myeclipse-05</artifactId>
+  <version>99.0</version>
+  <packaging>jar</packaging>
+  <name>Projet MyEclipse 05</name>
+  
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-eclipse-plugin</artifactId>
+        <version>test</version>
+        <configuration>
+          <workspace>${basedir}/../../eclipse/workspaceDoesNotExist</workspace>
+          <additionalConfig>
+            <file>
+              <name>.checkstyle_content</name>
+              <content>
+                <![CDATA[<fileset-config file-format-version="1.2.0" simple-config="true">
+  <fileset name="all" enabled="true" check-config-name="acme corporate style" local="false">
+    <file-match-pattern match-pattern="." include-pattern="true"/>
+  </fileset>
+  <filter name="NonSrcDirs" enabled="true"/>
+</fileset-config>]]>
+              </content>
+            </file>
+            <file>
+              <name>.checkstyle_file</name>
+              <location>/checkstyle-config.xml</location>
+            </file>
+            <file>
+              <name>.checkstyle_url</name>
+              <url>
+                https://svn.apache.org/repos/asf/maven/plugins/trunk/maven-eclipse-plugin/src/test/resources/projects/project-myeclipse-05/eclipse-settings/checkstyle-config.xml
+              </url>
+            </file>
+          </additionalConfig>
+        </configuration>
+        <dependencies>
+          <!-- Used to find the file from a location -->
+          <dependency>
+            <groupId>eclipsetest</groupId>
+            <artifactId>checkstyle-config</artifactId>
+            <version>1.0</version>
+          </dependency>
+        </dependencies>
+      </plugin>
+    </plugins>
+  </build>
+</project>

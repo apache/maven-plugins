@@ -1,0 +1,8 @@
+<classpath>
+  <classpathentry kind="src" path="src/main/java" including="**/*.java"/>
+  <classpathentry kind="src" path="target/generated-resources/eclipse"/>
+  <classpathentry kind="output" path="target/classes"/>
+  <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+  <classpathentry kind="var" path="M2_REPO/eclipsetest/deps-refproject-compile/1.0/deps-refproject-compile-1.0.jar"/>
+  <classpathentry kind="var" path="M2_REPO/eclipsetest/refproject-compile/1.0/refproject-compile-1.0.jar"/>
+</classpath>

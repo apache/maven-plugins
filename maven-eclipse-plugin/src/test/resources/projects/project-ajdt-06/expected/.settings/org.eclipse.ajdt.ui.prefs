@@ -1,0 +1,8 @@
+#Wed May 28 08:51:11 PDT 2008
+org.eclipse.ajdt.ui.inPath1=M2_REPO/org/springframework/spring-aspects/2.5/spring-aspects-2.5.jar
+org.eclipse.ajdt.ui.inPath.contentKind1=BINARY
+eclipse.preferences.version=1
+org.eclipse.ajdt.ui.inPath.entryKind1=LIBRARY
+org.eclipse.ajdt.ui.aspectPath.contentKind1=BINARY
+org.eclipse.ajdt.ui.aspectPath.entryKind1=LIBRARY
+org.eclipse.ajdt.ui.aspectPath1=M2_REPO/org/springframework/spring-aspects/2.5/spring-aspects-2.5.jar

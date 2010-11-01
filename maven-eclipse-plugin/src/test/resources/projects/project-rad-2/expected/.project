@@ -1,0 +1,46 @@
+<projectDescription>
+  <name>project-rad-2</name>
+  <comment>NO_M2ECLIPSE_SUPPORT: Project files created with the maven-eclipse-plugin are not supported in M2Eclipse.</comment>
+  <projects/>
+  <buildSpec>
+    <buildCommand>
+      <name>com.ibm.wtp.migration.MigrationBuilder</name>
+    </buildCommand>
+    <buildCommand>
+      <name>org.eclipse.jdt.core.javabuilder</name>
+    </buildCommand>
+    <buildCommand>
+      <name>com.ibm.etools.j2ee.ui.LibDirBuilder</name>
+    </buildCommand>
+    <buildCommand>
+      <name>com.ibm.etools.webtools.additions.linksbuilder</name>
+    </buildCommand>
+    <buildCommand>
+      <name>com.ibm.etools.webpage.template.templatebuilder</name>
+    </buildCommand>
+    <buildCommand>
+      <name>com.ibm.etools.siteedit.SiteNavBuilder</name>
+    </buildCommand>
+    <buildCommand>
+      <name>com.ibm.etools.siteedit.SiteUpdateBuilder</name>
+    </buildCommand>
+    <buildCommand>
+      <name>com.ibm.etools.validation.validationbuilder</name>
+    </buildCommand>
+    <buildCommand>
+      <name>com.ibm.wtp.j2ee.LibCopyBuilder</name>
+    </buildCommand>
+    <buildCommand>
+      <name>com.ibm.etools.webtools.additions.jspcompilationbuilder</name>
+    </buildCommand>
+    <buildCommand>
+      <name>com.ibm.sse.model.structuredbuilder</name>
+    </buildCommand>
+  </buildSpec>
+  <natures>
+    <nature>com.ibm.wtp.web.WebNature</nature>
+    <nature>org.eclipse.jdt.core.javanature</nature>
+    <nature>com.ibm.etools.siteedit.WebSiteNature</nature>
+    <nature>com.ibm.etools.webpage.template.templatenature</nature>
+  </natures>
+</projectDescription>

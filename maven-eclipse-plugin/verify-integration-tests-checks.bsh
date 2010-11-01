@@ -1,0 +1,152 @@
+addMavenClasspath() {
+    maven_plugin_classpath = project.getReference("maven.test.classpath");
+    paths = maven_plugin_classpath.list();
+    for( path : paths ) {
+        addClassPath( path );
+    }
+}
+addMavenClasspath();
+
+import org.apache.tools.ant.BuildException;
+import org.apache.commons.io.*;
+import org.apache.commons.io.filefilter.*;
+
+/**
+ * A list of all the generated files (and which class generates them as a comment)
+ */
+generatedFiles = new String[] {
+    // AbstractEclipseManifestWriter(EclipseManifestWriter,RadManifestWriter)
+    "META-INF/MANIFEST.MF",
+    // EclipseWtpApplicationXMLWriter
+    "target/eclipseEar/META-INF/application.xml", 
+    "target/eclipseEar/META-INF/.modulemaps", 
+    // EclipseWtpComponentWriter
+    ".settings/.component",
+    // EclipseWtpComponent15Writer
+    ".settings/org.eclipse.wst.common.component",
+    // EclipseWtpFacetsWriter
+    ".settings/org.eclipse.wst.common.project.facet.core.xml",
+    // EclipseWtpmodulesWriter
+    ".wtpmodules",
+    // EclipseAjdtWriter
+    ".settings/org.eclipse.ajdt.ui.prefs",
+    // EclipseClasspathWriter
+    ".classpath",
+    ".externalToolBuilders/maven-eclipse.xml", // via EclipseAntExternalLaunchConfigurationWriter(EclipseLaunchConfigurationWriter)
+    // EclipseOSGiManifestWriter - only rewrites manifest
+    // EclipseProjectWriter
+    ".project",
+    // EclipseSettingsWriter
+    ".settings/org.eclipse.jdt.core.prefs",
+    // MyEclipseHibernateWriter
+    ".myhibernatedata",
+    // MyEclipseMetadataWriter
+    ".mymetadata",
+    // MyEclipseSpringBeansWriter
+    ".springBeans",
+    // MyEclipseStrutsDataWriter
+    ".mystrutsdata",
+    // RadApplicationXMLWriter
+    "META-INF/application.xml", 
+    "META-INF/.modulemaps",    
+    // RadEjbClasspathWriter
+    "target/websphere/generated-classes/.classpath",
+    // RadJ2EEWriter
+    ".j2ee",
+    // RadLibCopier - copies libraries no way to check
+    // RadWebSettingsWriter
+    ".websettings",
+    // RadWebsiteConfigWriter
+    ".website-config"
+    };
+
+assert( boolean condition ) 
+{
+    if ( !condition ) {
+        print(
+            "Test FAILED: "
+            +"Line: "+ this.namespace.getInvocationLine()
+            +" : "+this.namespace.getInvocationText()
+            +" : while evaluating file: "+getSourceFileInfo()
+        );
+    }
+}
+
+/**
+ * Rebase a file which removes the leading fromDirectory and replaces with the toDirectory.
+ */
+rebase( File f, File fromDirectory, File toDirectory ) {
+    assert( f.getPath().startsWith(fromDirectory.getPath()) );
+    String filePath = f.getPath().substring( fromDirectory.getPath().length() + 1 );
+    return new File( toDirectory, filePath );
+}
+
+integrationTestProjects_source = new File( "src/test/resources/projects" );
+integrationTestProjects_target = new File( "target/test-classes/projects" );
+
+expectedDirectoryName = "expected";
+
+walker = new DirectoryWalker() {
+    FileFilter directoryFilter = new AndFileFilter();
+    directoryFilter.addFileFilter( new NotFileFilter( new NameFileFilter(expectedDirectoryName) ) );
+    directoryFilter.addFileFilter( new NotFileFilter( new NameFileFilter("src") ) );
+    directoryFilter.addFileFilter( new NotFileFilter( new NameFileFilter("target") ) );
+    directoryFilter.addFileFilter( new NotFileFilter( new NameFileFilter(".metadata") ) );
+    directoryFilter.addFileFilter( new NotFileFilter( new NameFileFilter("WebContent") ) );
+         
+    boolean handleDirectory( File directory, int depth, Collection results ) {
+        accepted = directoryFilter.accept( directory );
+        if ( !accepted ) {
+            return accepted;
+        }
+        
+        project.log( "Checking directory = " + directory, project.MSG_DEBUG );
+        expectedDirectory = new File( directory, expectedDirectoryName );
+        
+        for ( fileToCheck : generatedFiles ) {
+            File generatedFile = new File( directory, fileToCheck );
+            expectedFile = new File( expectedDirectory, fileToCheck );
+            project.log( "  generatedFile (exists? " + generatedFile.exists() + ") = " + generatedFile, project.MSG_DEBUG );
+            project.log( "  expectedFile  (exists? " + expectedFile.exists() + ") = " + expectedFile, project.MSG_DEBUG );
+            if ( generatedFile.exists() && !expectedFile.exists() ) {
+                project.log( "  ** generated file exists but no expected file exist to verify integration test", project.MSG_DEBUG );
+                missingExpectedFiles = new ArrayList(2);
+                missingExpectedFiles.add( generatedFile );
+                missingExpectedFiles.add( expectedFile );
+                results.add( missingExpectedFiles );
+            }
+        }
+
+        return accepted;
+    }   
+    
+    find( startDirectory ) {
+        List results = new ArrayList();
+        walk( startDirectory, results );
+        return results;
+    }
+    
+    checkDirectoryFilter() {
+        assert( !directoryFilter.accept( new File( "target/test-classes/projects/project-rad-5/project-rad-2/src") ) );
+        assert( !directoryFilter.accept( new File( "target/test-classes/projects/project-rad-5/project-rad-2/expected") ) );
+        assert( !directoryFilter.accept( new File( "target/test-classes/projects/project-rad-5/project-rad-2/target") ) );
+        assert( directoryFilter.accept( new File( "target/test-classes/projects/project-rad-8/src/main/webapp") ) );
+    }
+
+};
+walker.checkDirectoryFilter();
+project.log( "Checking for generated files that do not have an integration test file to verify against...", project.MSG_INFO );
+missingExpectedFiles = walker.find( integrationTestProjects_target );
+if ( missingExpectedFiles.isEmpty() ) {
+    project.log( "Done.", project.MSG_INFO );
+}
+else {
+    // The files are all in the target directory. In order to provide "seed" values need to rebase to src/test/resources
+    for ( files : missingExpectedFiles ) {
+        seedFile = files.get(0);
+        destFile = rebase( files.get(1), integrationTestProjects_target, integrationTestProjects_source );
+        project.log( "Seeding missing expected file from " + seedFile.getPath() + " to " + destFile.getPath(), project.MSG_INFO );
+        FileUtils.copyFile( seedFile, destFile );
+    }
+    throw new BuildException( "Verify and fix seeded expected files before re-running integrations tests." );
+}

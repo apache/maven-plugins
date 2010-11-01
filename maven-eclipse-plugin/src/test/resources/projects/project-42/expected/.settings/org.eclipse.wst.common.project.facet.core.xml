@@ -1,0 +1,7 @@
+<faceted-project>
+  <runtime name="WebSphere Application Server v6.0 stub"/>
+  <installed facet="com.ibm.websphere.extended.ear" version="6.0"/>
+  <installed facet="com.ibm.websphere.coexistence.ear" version="6.0"/>
+  <fixed facet="jst.ear"/>
+  <installed facet="jst.ear" version="1.4"/>
+</faceted-project>

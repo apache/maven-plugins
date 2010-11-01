@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<modulemap:EARProjectMap xmlns:xmi="http://www.omg.org/XMI" xmlns:application="application.xmi" xmi:version="2.0" xmlns:modulemap="modulemap.xmi" xmi:id="EARProjectMap_0000000">
+  <mappings projectName="ejbs-1.0-SNAPSHOT" xmi:id="ModuleMapping_16200795">
+    <module xmi:type="application:EjbModule" href="META-INF/application.xml#EjbModule_00000000"/>
+  </mappings>
+  <utilityJARMappings uri="logging-1.0-SNAPSHOT.jar" projectName="logging-1.0-SNAPSHOT" xmi:id="UtilityJARMapping_0000000"/>
+  <utilityJARMappings uri="primary-source-1.0-SNAPSHOT.jar" projectName="primary-source-1.0-SNAPSHOT" xmi:id="UtilityJARMapping_0000000"/>
+  <mappings projectName="servlet-1.0-SNAPSHOT" xmi:id="ModuleMapping_00000000">
+    <module xmi:type="application:WebModule" href="META-INF/application.xml#WebModule_00000000"/>
+  </mappings>
+</modulemap:EARProjectMap>

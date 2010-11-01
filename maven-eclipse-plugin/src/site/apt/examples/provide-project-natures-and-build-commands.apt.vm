@@ -1,0 +1,77 @@
+ ------
+ Provide Build Commands
+ ------
+ Edwin Punzalan
+ ------
+ 14 July 2006
+ ------
+
+
+Provide Project Natures And Build Commands for Eclipse
+
+  The default project nature for projects created by the Eclipse Plugin is
+  <<<org.eclipse.jdt.core.javanature>>> and the default build command is
+  <<<org.eclipse.jdt.core.javabuilder>>>. Additional project natures and build
+  commands are also added as needed when WTP is enabled.
+
+  If you want to provide additional project natures and build commands for your
+  project, i.e. Spring project, you can add them in your pom.xml like this:
+
++-----
+<project>
+  [...]
+  <build>
+    [...]
+    <plugins>
+      [...]
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-eclipse-plugin</artifactId>
+        <version>${project.version}</version>
+        <configuration>
+          <additionalProjectnatures>
+            <projectnature>org.springframework.ide.eclipse.core.springnature</projectnature>
+          </additionalProjectnatures>
+          <additionalBuildcommands>
+            <buildcommand>org.springframework.ide.eclipse.core.springbuilder</buildcommand>
+          </additionalBuildcommands>
+        </configuration>
+      </plugin>
+      [...]
+    </plugins>
+    [...]
+  </build>
+  [...]
+</project>
++-----
+
+  To provide your own project natures and build commands which will override
+  the defaults, you can put them in your pom.xml as follows:
+
++-----
+<project>
+  [...]
+  <build>
+    [...]
+    <plugins>
+      [...]
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-eclipse-plugin<artifactId>
+        <version>${project.version}</version>
+        <configuration>
+          <projectnatures>
+            <projectnature>my.own.project.nature</projectnature>
+          </projectnatures>
+          <buildcommands>
+            <buildcommand>my.own.build.command</buildcommand>
+          </buildcommands>
+        </configuration>
+      </plugin>
+      [...]
+    </plugins>
+    [...]
+  </build>
+  [...]
+</project>
++-----

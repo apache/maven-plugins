@@ -1,0 +1,54 @@
+ ------
+ The JDK is being used is different than expected.
+ ------
+ Barrie Treloar
+ ------
+ 24 April 2009
+ ------
+
+Summary
+
+  After running <<<mvn eclipse:eclipse>>> your project's are using a different JDK than expected.
+
+Checklist
+
+* Correct version of Java source specified in <<<maven-compiler-plugin>>>?
+
+  For example, setting the source to 1.6 compliance?
+
++---
+<plugin>
+   <artifactId>maven-compiler-plugin</artifactId>
+   <version>2.0.2</version>
+   <configuration>
+       <source>1.6</source>
+       <target>1.6</target>
+   </configuration>
+</plugin>
++---
+
+* The default JDK defined in eclipse matches what you expect?
+
+  In eclipse's preferences check Java > Installed JREs and that the selected one is the version you expect.
+
+* The Execution Environment for the expected version is bound in eclipse preferences?
+
+  In eclipse's preferences check Java > Installed JREs > Execution Environment has a bound value for compatible JREs.
+
+  For example, JavaSE-1.6 should have "perfect match" or an Installed JRE selected as being compatible.
+
+* The <<<.claspath>>> specifies the correct Java container?
+
+  Open the <<<.classpath>>> file and look for the <<<<classpathentry kind="con">>> entry.
+
+  It should either be using the default JRE:
+
++---
+  <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
++---
+
+  Or it should be a specified execution environment:
+
++---
+  <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
++---

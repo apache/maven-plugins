@@ -1,0 +1,23 @@
+<projectDescription>
+  <name>maven-eclipse-plugin-test-project-3</name>
+  <comment>Tests creating just one sourceroot when test sourceroot and main sourceroot are the same, and tests the same for two
+    resourceroots for the same directory but with different include/excludes. NO_M2ECLIPSE_SUPPORT: Project files created with the maven-eclipse-plugin are not supported in M2Eclipse.</comment>
+  <projects/>
+  <buildSpec>
+    <buildCommand>
+      <name>org.eclipse.jdt.core.javabuilder</name>
+    </buildCommand>
+    <buildCommand>
+      <name>org.eclipse.ui.externaltools.ExternalToolBuilder</name>
+      <arguments>
+        <dictionary>
+          <key>LaunchConfigHandle</key>
+          <value>&lt;project&gt;/.externalToolBuilders/Maven_Ant_Builder.launch</value>
+        </dictionary>
+      </arguments>
+    </buildCommand>
+  </buildSpec>
+  <natures>
+    <nature>org.eclipse.jdt.core.javanature</nature>
+  </natures>
+</projectDescription>

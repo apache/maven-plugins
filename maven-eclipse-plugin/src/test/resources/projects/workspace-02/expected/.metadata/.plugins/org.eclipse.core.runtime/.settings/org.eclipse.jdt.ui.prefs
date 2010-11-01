@@ -1,0 +1,3 @@
+#Mon Jul 09 15:32:24 PDT 2007
+org.eclipse.jdt.ui.formatterprofiles=<?xml version\="1.0" encoding\="UTF-8"?>\n<profiles version\="11">\n<profile kind\="CodeFormatterProfile" name\="format-1" version\="11">\n<setting id\="org.eclipse.jdt.core.formatter.insert_space_before_closing_paren_in_if" value\="insert"/>\n<setting id\="org.eclipse.jdt.core.formatter.insert_space_before_and_in_type_parameter" value\="insert"/>\n</profile>\n<profile kind\="CodeFormatterProfile" name\="format-2" version\="11">\n<setting id\="org.eclipse.jdt.core.formatter.insert_space_before_closing_paren_in_if" value\="insert"/>\n<setting id\="org.eclipse.jdt.core.formatter.insert_space_before_and_in_type_parameter" value\="insert"/>\n</profile>\n</profiles>\n
+formatter_profile=_format-1

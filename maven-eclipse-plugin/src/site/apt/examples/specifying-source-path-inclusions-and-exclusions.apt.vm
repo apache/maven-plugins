@@ -1,0 +1,63 @@
+ ------
+ Specifying source path inclusions and exclusions
+ ------
+ Barrie Treloar
+ ------
+ 31 March 2009
+ ------
+
+Overview
+
+	With the change done as part of {{{http://jira.codehaus.org/browse/MECLIPSE-443}MECLIPSE-443 "Only include **/*.java in Java source directories"}} 
+	the .classpath entries for classpathentry kind="src" now specify an <<<including>>> attribute with a value of <<<"**/*.java">>>.
+	Previously this attribute was not specified	which meant that eclipse would include any file in this src directory as being on the classpath and hence compiled.
+	
+	This broke Ajdt support as <<<"**/*.aj">>> files were no longer included on the classpath and {{{http://jira.codehaus.org/browse/MECLIPSE-538}MECLIPSE-538}} fixed this.
+	
+	{{{http://jira.codehaus.org/browse/MECLIPSE-104}MECLIPSE-104 "Add the ability to specify source inclusions/exclusions"}} was added put back this flexibility.
+	
+	In summary:
+	
+	  * If your project is a java project then "**/*.java" will always be added to the including attribute of source directories.
+	  
+	  * If your project is an ajdt project then "**/*.aj" will always be added to the including attribute of source directories.
+	  
+	  * If you need any additional includes or excludes for source directories then use the configuration elements sourceIncludes/sourceExcludes
+	  
+	  []
+	  
+Example - Specifying sourceIncludes/sourceExcludes
+
++-----
+<project>
+  [...]
+  <build>
+    [...]
+    <plugins>
+      [...]
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-eclipse-plugin</artifactId>
+        <version>${project.version}</version>
+        <configuration>
+          <sourceExcludes>
+            <sourceExclude>**/.svn/**</sourceExclude>
+          </sourceExcludes>
+          <sourceIncludes>
+            <sourceInclude>**/*.myExtension</sourceInclude>
+          </sourceIncludes>
+        </configuration>
+      </plugin>
+      [...]
+    </plugins>
+    [...]
+  </build>
+  [...]
+</project>
++-----
+
+	This will result in the <<<.classpath>>> file having source directory entries similar to this:
+	
++-----
+  <classpathentry kind="src" path="src/main/java" including="**/*.myExtension|**/*.java" excluding="**/.svn/**"/>
++-----
