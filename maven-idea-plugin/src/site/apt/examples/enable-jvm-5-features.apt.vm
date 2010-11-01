@@ -1,0 +1,60 @@
+ ------
+ Enable Assertions and other JVM 5.0 features supported by IDEA
+ ------
+ Edwin Punzalan
+ ------
+ 10 July 2006
+ ------
+
+~~ Licensed to the Apache Software Foundation (ASF) under one
+~~ or more contributor license agreements.  See the NOTICE file
+~~ distributed with this work for additional information
+~~ regarding copyright ownership.  The ASF licenses this file
+~~ to you under the Apache License, Version 2.0 (the
+~~ "License"); you may not use this file except in compliance
+~~ with the License.  You may obtain a copy of the License at
+~~
+~~   http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~ Unless required by applicable law or agreed to in writing,
+~~ software distributed under the License is distributed on an
+~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+~~ KIND, either express or implied.  See the License for the
+~~ specific language governing permissions and limitations
+~~ under the License.
+
+
+Enable Assertions and other JVM 5.0 features supported by IDEA
+
+  IntelliJ IDEA supports JVM 5.0 and its new features. These are not enabled by
+  default if the JVM running is less than 1.5. To enable them, you can use the
+  following command:
+
++-----
+mvn idea:idea -DjdkLevel=1.5
++-----
+
+  or in your pom.xml:
+
++-----
+<project>
+  [...]
+  <build>
+    [...]
+    <plugins>
+      [...]
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-idea-plugin</artifactId>
+        <version>${project.version}</version>
+        <configuration>
+          <jdkLevel>1.5</jdkLevel>
+        </configuration>
+      </plugin>
+      [...]
+    </plugins>
+    [...]
+  </build>
+  [...]
+</project>
++-----

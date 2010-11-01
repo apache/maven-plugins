@@ -1,0 +1,72 @@
+ ------
+ Provide Deployment Descriptor File
+ ------
+ Edwin Punzalan
+ ------
+ 11 July 2006
+ ------
+
+~~ Licensed to the Apache Software Foundation (ASF) under one
+~~ or more contributor license agreements.  See the NOTICE file
+~~ distributed with this work for additional information
+~~ regarding copyright ownership.  The ASF licenses this file
+~~ to you under the Apache License, Version 2.0 (the
+~~ "License"); you may not use this file except in compliance
+~~ with the License.  You may obtain a copy of the License at
+~~
+~~   http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~ Unless required by applicable law or agreed to in writing,
+~~ software distributed under the License is distributed on an
+~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+~~ KIND, either express or implied.  See the License for the
+~~ specific language governing permissions and limitations
+~~ under the License.
+
+
+Provide Deployment Descriptor File
+
+  The default deployment descriptor files are:
+
+  * <<<src/main/webapp/WEB-INF/web.xml>>> for war projects.
+
+  * <<<target/application.xml>>> for ear projects.
+
+  * <<<src/main/resources/META-INF/ejb-jar.xml>>> for ejb projects.
+
+  []
+
+  In cases where you want to provide your own descriptor files or if the
+  descriptor files are located somewhere else, you can use the following on the
+  command-line:
+
++-----
+mvn idea:idea -DdeploymentDescriptorFile=src/webapp/WEB-INF/web.xml
++-----
+
+  For a multiproject setup, where you'll want to have different values for this
+  parameter for projects that use it, you should put the configuration values
+  in their respective poms like so:
+
++-----
+<project>
+  [...]
+  <build>
+    [...]
+    <plugins>
+      [...]
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-idea-plugin</artifactId>
+        <version>${project.version}</version>
+        <configuration>
+          <deploymentDescriptorFile>src/webapp/WEB-INF/web.xml</deploymentDescriptorFile>
+        </configuration>
+      </plugin>
+      [...]
+    </plugins>
+    [...]
+  </build>
+  [...]
+</project>
++-----
