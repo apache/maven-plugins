@@ -159,7 +159,7 @@ public final class DependencyUtil
      * @param file the file to write to
      * @throws IOException if an I/O error occurs
      */
-    public static synchronized void write( String string, File file, Log log )
+    public static synchronized void write( String string, File file, boolean append, Log log )
         throws IOException
     {
         file.getParentFile().mkdirs();
@@ -168,7 +168,7 @@ public final class DependencyUtil
 
         try
         {
-            writer = new FileWriter( file );
+            writer = new FileWriter( file, append );
 
             writer.write( string );
         }

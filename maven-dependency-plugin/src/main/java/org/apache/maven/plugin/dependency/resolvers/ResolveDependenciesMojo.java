@@ -76,7 +76,7 @@ public class ResolveDependenciesMojo
             }
             else
             {
-                DependencyUtil.write( output, outputFile, getLog() );
+                DependencyUtil.write( output, outputFile, appendOutput, getLog() );
             }
         }
         catch ( IOException e )
