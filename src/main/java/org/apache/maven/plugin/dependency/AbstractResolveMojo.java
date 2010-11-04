@@ -69,6 +69,15 @@ public abstract class AbstractResolveMojo
      * @throws ArtifactNotFoundException
      * @throws InvalidDependencyVersionException
      */
+    
+	/**
+	 * Whether to append outputs into the output file or overwrite it.
+	 * 
+	 * @parameter expression="${appendOutput}" default-value="false"
+	 * @since 2.2
+	 */
+	protected boolean appendOutput;
+    
     protected Set resolveDependencyArtifacts( MavenProject theProject )
         throws ArtifactResolutionException, ArtifactNotFoundException, InvalidDependencyVersionException
     {

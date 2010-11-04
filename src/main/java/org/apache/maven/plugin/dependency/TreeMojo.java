@@ -224,7 +224,15 @@ public class TreeMojo extends AbstractMojo
      * The computed dependency tree root node of the Maven project.
      */
     private DependencyNode rootNode;
-
+    
+       /**
+        * Whether to append outputs into the output file or overwrite it.
+        * 
+        * @parameter expression="${appendOutput}" default-value="false"
+        * @since 2.2
+        */
+       private boolean appendOutput;
+    
     // Mojo methods -----------------------------------------------------------
 
     /*
@@ -270,7 +278,7 @@ public class TreeMojo extends AbstractMojo
 
             if ( outputFile != null )
             {
-                DependencyUtil.write( dependencyTreeString, outputFile, getLog() );
+                DependencyUtil.write( dependencyTreeString, outputFile, this.appendOutput ,getLog() );
 
                 getLog().info( "Wrote dependency tree to: " + outputFile );
             }
