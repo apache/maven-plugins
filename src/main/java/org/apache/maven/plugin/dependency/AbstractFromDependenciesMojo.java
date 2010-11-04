@@ -76,7 +76,7 @@ public abstract class AbstractFromDependenciesMojo
      *
      * @parameter expression="${mdep.useSubDirectoryPerScope}" default-value="false"
      * @optional
-     * @since 2.1-alpha-1
+     * @since 2.2
      */
     protected boolean useSubDirectoryPerScope;
 
