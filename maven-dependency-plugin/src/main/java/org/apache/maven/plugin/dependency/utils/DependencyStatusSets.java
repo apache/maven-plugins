@@ -24,9 +24,8 @@ package org.apache.maven.plugin.dependency.utils;
  */
 
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 import org.apache.maven.artifact.Artifact;
 
@@ -37,11 +36,11 @@ import org.apache.maven.artifact.Artifact;
 public class DependencyStatusSets
 {
 
-    TreeSet resolvedDependencies = null;
+    Set resolvedDependencies = null;
 
-    TreeSet unResolvedDependencies = null;
+    Set unResolvedDependencies = null;
 
-    TreeSet skippedDependencies = null;
+    Set skippedDependencies = null;
 
     public DependencyStatusSets()
     {
@@ -52,15 +51,15 @@ public class DependencyStatusSets
     {
         if ( resolved != null )
         {
-            this.resolvedDependencies = new TreeSet( resolved );
+            this.resolvedDependencies = new LinkedHashSet( resolved );
         }
         if ( unResolved != null )
         {
-            this.unResolvedDependencies = new TreeSet( unResolved );
+            this.unResolvedDependencies = new LinkedHashSet( unResolved );
         }
         if ( skipped != null )
         {
-            this.skippedDependencies = new TreeSet( skipped );
+            this.skippedDependencies = new LinkedHashSet( skipped );
         }
     }
 
@@ -80,7 +79,7 @@ public class DependencyStatusSets
     {
         if ( resolvedDependencies != null )
         {
-            this.resolvedDependencies = new TreeSet( resolvedDependencies );
+            this.resolvedDependencies = new LinkedHashSet( resolvedDependencies );
         }
         else
         {
@@ -104,7 +103,7 @@ public class DependencyStatusSets
     {
         if ( skippedDependencies != null )
         {
-            this.skippedDependencies = new TreeSet( skippedDependencies );
+            this.skippedDependencies = new LinkedHashSet( skippedDependencies );
         }
         else
         {
@@ -128,7 +127,7 @@ public class DependencyStatusSets
     {
         if ( unResolvedDependencies != null )
         {
-            this.unResolvedDependencies = new TreeSet( unResolvedDependencies );
+            this.unResolvedDependencies = new LinkedHashSet( unResolvedDependencies );
         }
         else
         {
@@ -180,9 +179,9 @@ public class DependencyStatusSets
         {
             sb.append( "\n" );
             sb.append( "The following files were skipped:\n" );
-            SortedSet sortedSkippedDependencies = new TreeSet();
-            sortedSkippedDependencies.addAll( this.skippedDependencies );
-            for ( Iterator i = sortedSkippedDependencies.iterator(); i.hasNext(); )
+            Set skippedDependencies = new LinkedHashSet();
+            skippedDependencies.addAll( this.skippedDependencies );
+            for ( Iterator i = skippedDependencies.iterator(); i.hasNext(); )
             {
                 sb.append( "   " + ( (Artifact) i.next() ).getId() + "\n" );
             }
@@ -192,9 +191,9 @@ public class DependencyStatusSets
         {
             sb.append( "\n" );
             sb.append( "The following files have NOT been resolved:\n" );
-            SortedSet sortedUnResolvedDependencies = new TreeSet();
-            sortedUnResolvedDependencies.addAll( this.unResolvedDependencies );
-            for ( Iterator i = sortedUnResolvedDependencies.iterator(); i.hasNext(); )
+            Set unResolvedDependencies = new LinkedHashSet();
+            unResolvedDependencies.addAll( this.unResolvedDependencies );
+            for ( Iterator i = unResolvedDependencies.iterator(); i.hasNext(); )
             {
                 sb.append( "   " + ( (Artifact) i.next() ).getId() + "\n" );
             }
