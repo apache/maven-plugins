@@ -306,11 +306,30 @@ public class PurgeLocalRepositoryMojo
         {
             for ( Iterator it = exclusionPatterns.iterator(); it.hasNext(); )
             {
-                String excludedKey = (String) it.next();
-
-                verbose( "Excluding: " + excludedKey + " from refresh operation for project: " + project.getId() );
-
-                deps.remove( excludedKey );
+            	String excludedKey = (String) it.next();
+            	
+            	if (GROUP_ID_FUZZINESS.equals(resolutionFuzziness))
+            	{
+            		verbose( "Excluding groupId: " + excludedKey + " from refresh operation for project: " + project.getId() );
+            		
+            		for ( Iterator deps_it = deps.entrySet().iterator(); deps_it.hasNext(); )
+            		{
+            			Map.Entry dependency = (Map.Entry) deps_it.next();
+            			
+            			Artifact artifact = (Artifact) dependency.getValue();
+            			
+            			if (artifact.getGroupId().equals(excludedKey))
+            			{
+            				deps_it.remove();
+            			}
+            		}
+            	}
+            	else
+            	{
+	                verbose( "Excluding: " + excludedKey + " from refresh operation for project: " + project.getId() );
+	
+	                deps.remove( excludedKey );
+            	}
             }
         }
 
