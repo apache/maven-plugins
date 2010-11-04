@@ -52,6 +52,7 @@ public class TestAnalyzeDepMgt
     Artifact exclusionArtifact;
 
     DependencyManagement depMgt;
+    DependencyManagement depMgtNoExclusions;
     protected void setUp()
         throws Exception
     {

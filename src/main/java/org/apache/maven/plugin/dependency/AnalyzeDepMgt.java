@@ -172,6 +172,7 @@ public class AnalyzeDepMgt
                 Artifact resolvedArtifact = (Artifact) mismatchIter.next();
                 Dependency depMgtDependency = (Dependency) mismatch.get( resolvedArtifact );
                 logMismatch( resolvedArtifact, depMgtDependency );
+                foundError = true;
             }
             if ( !foundError )
             {

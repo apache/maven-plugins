@@ -93,7 +93,8 @@ public class TestUnpackDependenciesMojo
 
     public void assertUnpacked( boolean val, Artifact artifact )
     {
-        File folder = DependencyUtil.getFormattedOutputDirectory( mojo.useSubDirectoryPerType,
+        File folder = DependencyUtil.getFormattedOutputDirectory( mojo.useSubDirectoryPerScope,
+                                                                  mojo.useSubDirectoryPerType,
                                                                   mojo.useSubDirectoryPerArtifact,
                                                                   mojo.useRepositoryLayout, mojo.stripVersion,
                                                                   mojo.outputDirectory, artifact );
@@ -629,7 +630,7 @@ public class TestUnpackDependenciesMojo
 
     public File getUnpackedFile( Artifact artifact )
     {
-        File destDir = DependencyUtil.getFormattedOutputDirectory( mojo.isUseSubDirectoryPerType(), mojo
+        File destDir = DependencyUtil.getFormattedOutputDirectory( mojo.isUseSubDirectoryPerScope(), mojo.isUseSubDirectoryPerType(), mojo
             .isUseSubDirectoryPerArtifact(), mojo.useRepositoryLayout, mojo.stripVersion, mojo.getOutputDirectory(),
                                                                    artifact );
         File unpacked = new File( destDir, DependencyArtifactStubFactory.getUnpackableFileName( artifact ) );

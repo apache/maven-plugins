@@ -82,7 +82,7 @@ public class TestDestFileFilter
                            boolean removeVersion )
         throws IOException
     {
-        File destFolder = DependencyUtil.getFormattedOutputDirectory( useSubDirectoryPerType,
+        File destFolder = DependencyUtil.getFormattedOutputDirectory(false, useSubDirectoryPerType,
                                                                       useSubDirectoryPerArtifact, false, false,
                                                                       outputFolder, artifact );
         File destFile = new File( destFolder, DependencyUtil.getFormattedFileName( artifact, removeVersion ) );

@@ -190,7 +190,7 @@ public class CopyDependenciesMojo
         String destFileName = DependencyUtil.getFormattedFileName( artifact, removeVersion );
 
         File destDir;
-        destDir = DependencyUtil.getFormattedOutputDirectory( useSubDirectoryPerType, useSubDirectoryPerArtifact,
+        destDir = DependencyUtil.getFormattedOutputDirectory( useSubDirectoryPerScope, useSubDirectoryPerType, useSubDirectoryPerArtifact,
                                                               useRepositoryLayout, stripVersion, outputDirectory,
                                                               artifact );
         File destFile = new File( destDir, destFileName );
@@ -241,7 +241,7 @@ public class CopyDependenciesMojo
     protected ArtifactsFilter getMarkedArtifactFilter()
     {
         return new DestFileFilter( this.overWriteReleases, this.overWriteSnapshots, this.overWriteIfNewer,
-                                   this.useSubDirectoryPerArtifact, this.useSubDirectoryPerType,
+                                   this.useSubDirectoryPerArtifact, this.useSubDirectoryPerType, this.useSubDirectoryPerScope,
                                    this.useRepositoryLayout, this.stripVersion, this.outputDirectory );
     }
 }
