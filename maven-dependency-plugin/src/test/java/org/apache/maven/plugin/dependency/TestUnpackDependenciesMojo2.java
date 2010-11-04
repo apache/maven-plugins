@@ -81,7 +81,7 @@ public class TestUnpackDependenciesMojo2
 
     public File getUnpackedFile( Artifact artifact )
     {
-        File destDir = DependencyUtil.getFormattedOutputDirectory( mojo.isUseSubDirectoryPerType(), mojo
+        File destDir = DependencyUtil.getFormattedOutputDirectory( mojo.isUseSubDirectoryPerScope(), mojo.isUseSubDirectoryPerType(), mojo
             .isUseSubDirectoryPerArtifact(), mojo.useRepositoryLayout, mojo.stripVersion, mojo.getOutputDirectory(),
                                                                    artifact );
         File unpacked = new File( destDir, DependencyArtifactStubFactory.getUnpackableFileName( artifact ) );

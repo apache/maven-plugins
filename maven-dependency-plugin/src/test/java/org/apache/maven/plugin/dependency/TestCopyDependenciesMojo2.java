@@ -195,7 +195,7 @@ public class TestCopyDependenciesMojo2
         {
             Artifact artifact = (Artifact) iter.next();
             String fileName = DependencyUtil.getFormattedFileName( artifact, false );
-            File folder = DependencyUtil.getFormattedOutputDirectory( false, true, false, false, mojo.outputDirectory,
+            File folder = DependencyUtil.getFormattedOutputDirectory( false, false, true, false, false, mojo.outputDirectory,
                                                                       artifact );
             File file = new File( folder, fileName );
             assertTrue( file.exists() );
@@ -216,7 +216,28 @@ public class TestCopyDependenciesMojo2
         {
             Artifact artifact = (Artifact) iter.next();
             String fileName = DependencyUtil.getFormattedFileName( artifact, false );
-            File folder = DependencyUtil.getFormattedOutputDirectory( true, true, false, false, mojo.outputDirectory,
+            File folder = DependencyUtil.getFormattedOutputDirectory( false, true, true, false, false, mojo.outputDirectory,
+                                                                      artifact );
+            File file = new File( folder, fileName );
+            assertTrue( file.exists() );
+        }
+    }
+
+    public void testSubPerArtifactAndScope()
+        throws Exception
+    {
+        mojo.project.setArtifacts( stubFactory.getTypedArtifacts() );
+        mojo.project.setDependencyArtifacts( new HashSet() );
+        mojo.useSubDirectoryPerArtifact = true;
+        mojo.useSubDirectoryPerScope = true;
+        mojo.execute();
+
+        Iterator iter = mojo.project.getArtifacts().iterator();
+        while ( iter.hasNext() )
+        {
+            Artifact artifact = (Artifact) iter.next();
+            String fileName = DependencyUtil.getFormattedFileName( artifact, false );
+            File folder = DependencyUtil.getFormattedOutputDirectory( true, false, true, false, false, mojo.outputDirectory,
                                                                       artifact );
             File file = new File( folder, fileName );
             assertTrue( file.exists() );
@@ -326,7 +347,7 @@ public class TestCopyDependenciesMojo2
         {
             Artifact artifact = (Artifact) iter.next();
             String fileName = DependencyUtil.getFormattedFileName( artifact, true );
-            File folder = DependencyUtil.getFormattedOutputDirectory( false, true, false, true, mojo.outputDirectory,
+            File folder = DependencyUtil.getFormattedOutputDirectory( false, false, true, false, true, mojo.outputDirectory,
                                                                       artifact );
             File file = new File( folder, fileName );
             assertTrue( file.exists() );
@@ -348,7 +369,7 @@ public class TestCopyDependenciesMojo2
         {
             Artifact artifact = (Artifact) iter.next();
             String fileName = DependencyUtil.getFormattedFileName( artifact, true );
-            File folder = DependencyUtil.getFormattedOutputDirectory( true, true, false, true, mojo.outputDirectory,
+            File folder = DependencyUtil.getFormattedOutputDirectory( false, true, true, false, true, mojo.outputDirectory,
                                                                       artifact );
             File file = new File( folder, fileName );
             assertTrue( file.exists() );

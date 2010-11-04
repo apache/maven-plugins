@@ -390,7 +390,7 @@ public class TestCopyDependenciesMojo
         {
             Artifact artifact = (Artifact) iter.next();
             String fileName = DependencyUtil.getFormattedFileName( artifact, false );
-            File folder = DependencyUtil.getFormattedOutputDirectory( true, false, false, false, mojo.outputDirectory,
+            File folder = DependencyUtil.getFormattedOutputDirectory( false, true, false, false, false, mojo.outputDirectory,
                                                                       artifact );
             File file = new File( folder, fileName );
             assertTrue( file.exists() );

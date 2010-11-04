@@ -86,9 +86,9 @@ public final class DependencyUtil
      * @param artifact information about the artifact.
      * @return a formatted File object to use for output.
      */
-    public static File getFormattedOutputDirectory( boolean useSubdirsPerType, boolean useSubdirPerArtifact,
-                                                    boolean useRepositoryLayout, boolean removeVersion,
-                                                    File outputDirectory, Artifact artifact )
+    public static File getFormattedOutputDirectory( boolean useSubdirsPerScope, boolean useSubdirsPerType,
+                                                    boolean useSubdirPerArtifact, boolean useRepositoryLayout,
+                                                    boolean removeVersion, File outputDirectory, Artifact artifact )
     {
         StringBuffer sb = new StringBuffer( 128 );
         if ( useRepositoryLayout )
@@ -102,6 +102,10 @@ public final class DependencyUtil
         }
         else
         {
+            if ( useSubdirsPerScope )
+            {
+                sb.append( artifact.getScope() ).append( File.separatorChar );
+            }
             if ( useSubdirsPerType )
             {
                 sb.append( artifact.getType() ).append( "s" ).append( File.separatorChar );

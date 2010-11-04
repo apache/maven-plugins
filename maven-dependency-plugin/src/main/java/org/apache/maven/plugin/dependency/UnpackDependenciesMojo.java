@@ -82,7 +82,7 @@ public class UnpackDependenciesMojo
         {
             Artifact artifact = (Artifact) i.next();
             File destDir;
-            destDir = DependencyUtil.getFormattedOutputDirectory( useSubDirectoryPerType, useSubDirectoryPerArtifact,
+            destDir = DependencyUtil.getFormattedOutputDirectory( useSubDirectoryPerScope, useSubDirectoryPerType, useSubDirectoryPerArtifact,
                                                                   useRepositoryLayout, stripVersion, outputDirectory,
                                                                   artifact );
             unpack( artifact.getFile(), destDir, getIncludes(), getExcludes() );

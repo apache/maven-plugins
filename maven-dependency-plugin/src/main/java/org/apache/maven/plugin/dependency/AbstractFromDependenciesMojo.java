@@ -72,6 +72,16 @@ public abstract class AbstractFromDependenciesMojo
 
     /**
      * Place each type of file in a separate subdirectory. (example
+     * /outputDirectory/runtime /outputDirectory/provided etc)
+     *
+     * @parameter expression="${mdep.useSubDirectoryPerScope}" default-value="false"
+     * @optional
+     * @since 2.1-alpha-1
+     */
+    protected boolean useSubDirectoryPerScope;
+
+    /**
+     * Place each type of file in a separate subdirectory. (example
      * /outputDirectory/jars /outputDirectory/wars etc)
      *
      * @since 2.0-alpha-1
@@ -133,6 +143,23 @@ public abstract class AbstractFromDependenciesMojo
     public void setUseSubDirectoryPerArtifact( boolean theUseSubDirectoryPerArtifact )
     {
         this.useSubDirectoryPerArtifact = theUseSubDirectoryPerArtifact;
+    }
+
+    /**
+     * @return Returns the useSubDirectoryPerScope
+     */
+    public boolean isUseSubDirectoryPerScope()
+    {
+        return this.useSubDirectoryPerScope;
+    }
+    
+    /**
+     * @param theUseSubDirectoryPerScope
+     *          The useSubDirectoryPerScope to set.
+     */
+    public void setUseSubDirectoryPerScope( boolean theUseSubDirectoryPerScope )
+    {
+        this.useSubDirectoryPerScope = theUseSubDirectoryPerScope;
     }
 
     /**
