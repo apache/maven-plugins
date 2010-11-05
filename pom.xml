@@ -282,6 +282,9 @@ under the License.
               <pomIncludes>
                 <pomInclude>*/pom.xml</pomInclude>
               </pomIncludes>
+              <setupIncludes>
+                <setupInclude>setup-custom-analyzer/pom.xml</setupInclude>
+              </setupIncludes>
               <preBuildHookScript>setup</preBuildHookScript>
               <postBuildHookScript>validate</postBuildHookScript>
               <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
