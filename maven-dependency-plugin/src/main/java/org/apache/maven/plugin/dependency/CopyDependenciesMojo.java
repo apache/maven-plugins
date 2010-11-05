@@ -87,7 +87,7 @@ public class CopyDependenciesMojo
         {
             for ( Iterator i = artifacts.iterator(); i.hasNext(); )
             {
-                copyArtifact( (Artifact) i.next(), this.stripVersion );
+	    		copyArtifact( (Artifact) i.next(), this.stripVersion, this.prependGroupId );
             }
         }
         else
@@ -176,18 +176,19 @@ public class CopyDependenciesMojo
      * @param removeVersion
      *            specifies if the version should be removed from the file name
      *            when copying.
-     *
+     * @param prependGroupId
+     *            specifies if the groupId should be prepend to the file while copying.
      * @throws MojoExecutionException
      *             with a message if an error occurs.
      *
      * @see DependencyUtil#copyFile(File, File, Log)
      * @see DependencyUtil#getFormattedFileName(Artifact, boolean)
      */
-    protected void copyArtifact( Artifact artifact, boolean removeVersion )
+    protected void copyArtifact( Artifact artifact, boolean removeVersion, boolean prependGroupId )
         throws MojoExecutionException
     {
 
-        String destFileName = DependencyUtil.getFormattedFileName( artifact, removeVersion );
+        String destFileName = DependencyUtil.getFormattedFileName( artifact, removeVersion, prependGroupId);
 
         File destDir;
         destDir = DependencyUtil.getFormattedOutputDirectory( useSubDirectoryPerScope, useSubDirectoryPerType, useSubDirectoryPerArtifact,
@@ -213,7 +214,8 @@ public class CopyDependenciesMojo
             // Copy the pom
             if ( pomArtifact.getFile() != null && pomArtifact.getFile().exists() )
             {
-                File pomDestFile = new File( destDir, DependencyUtil.getFormattedFileName( pomArtifact, removeVersion ) );
+                File pomDestFile = new File( destDir, DependencyUtil.getFormattedFileName( pomArtifact, removeVersion,
+                                                                                           prependGroupId) );
                 if ( ! pomDestFile.exists() )
                 {
                     copyFile( pomArtifact.getFile(), pomDestFile );

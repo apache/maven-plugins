@@ -206,6 +206,16 @@ public abstract class AbstractDependencyFilterMojo
      * @parameter expression="${overWriteIfNewer}" default-value="true"
      */
     protected boolean overWriteIfNewer;
+    
+    /**
+     * Prepend the groupId during copy.
+     * 
+     * @optional
+     * @since 2.2
+     * @parameter expression="${mdep.prependGroupId}" default-value="false"
+     * @parameter
+     */
+    protected boolean prependGroupId = false;
 
     protected abstract ArtifactsFilter getMarkedArtifactFilter();
 
@@ -383,4 +393,19 @@ public abstract class AbstractDependencyFilterMojo
     }
 
     // TODO: Set marker files.
+
+    /**
+     * @return true, if the groupId should be prepended to the filename. 
+     */
+    public boolean isPrependGroupId() {
+        return prependGroupId;
+    }
+
+    /**
+     * @param prependGroupId - 
+     *            true if the groupId must be prepended during the copy.
+     */
+    public void setPrependGroupId(boolean prependGroupId) {
+        this.prependGroupId = prependGroupId;
+    }
 }

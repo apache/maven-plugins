@@ -40,7 +40,7 @@ public abstract class AbstractFromDependenciesMojo
      * @parameter
      */
     protected boolean stripVersion = false;
-
+    
     /**
      * Default location used for mojo unless overridden in ArtifactItem
      *
@@ -233,4 +233,5 @@ public abstract class AbstractFromDependenciesMojo
     {
         this.copyPom = copyPom;
     }
+
 }

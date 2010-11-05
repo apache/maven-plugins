@@ -45,11 +45,36 @@ public final class DependencyUtil
      * @param artifact File to be formatted.
      * @param removeVersion Specifies if the version should be removed from the file name.
      * @return Formatted file name in the format artifactId-[version]-[classifier].[type]
+     * @see {@link #getFormattedFileName(Artifact, boolean, boolean)}.
      */
-    public static String getFormattedFileName( Artifact artifact, boolean removeVersion )
+    public static String getFormattedFileName( Artifact artifact, boolean removeVersion ) {
+      return getFormattedFileName( artifact, removeVersion , false);
+    }
+  
+    /**
+     * Builds the file name. If removeVersion is set, then the file name must be
+     * reconstructed from the groupId (if <b>prependGroupId</b> is true) artifactId,
+     * Classifier (if used) and Type.
+     * Otherwise, this method returns the artifact file name.
+     * 
+     * @param artifact
+     *            File to be formatted.
+     * @param removeVersion
+     *            Specifies if the version should be removed from the file name.
+     * @param prependGroupId
+     *            Specifies if the groupId should be prepended to the file name.
+     * @return Formatted file name in the format
+     *         [groupId].artifactId-[version]-[classifier].[type]
+     */
+    public static String getFormattedFileName( Artifact artifact, boolean removeVersion,
+        boolean prependGroupId)
     {
-        String destFileName = null;
-
+        StringBuffer destFileName = new StringBuffer();
+        
+        if (prependGroupId) {
+            destFileName.append(artifact.getGroupId()).append(".");
+        }
+        
         String versionString = null;
         if ( !removeVersion )
         {
@@ -66,12 +91,11 @@ public final class DependencyUtil
         {
             classifierString = "-" + artifact.getClassifier();
         }
-
-        destFileName =
-            artifact.getArtifactId() + versionString + classifierString + "."
-                + artifact.getArtifactHandler().getExtension();
-
-        return destFileName;
+        destFileName.append(artifact.getArtifactId()).append(versionString);
+        destFileName.append(classifierString).append(".");
+        destFileName.append(artifact.getArtifactHandler().getExtension());
+        
+        return destFileName.toString();
     }
 
     /**

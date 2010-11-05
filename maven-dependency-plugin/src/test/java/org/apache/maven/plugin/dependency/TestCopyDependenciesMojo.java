@@ -766,4 +766,20 @@ public class TestCopyDependenciesMojo
             assertTrue( file.exists() );
         }
     }
+    
+    public void testPrependGroupId() 
+        throws Exception
+    {
+        mojo.prependGroupId = true;
+        mojo.execute();
+    
+        Iterator iter = mojo.project.getArtifacts().iterator();
+        while ( iter.hasNext() )
+        {
+            Artifact artifact = (Artifact) iter.next();
+            String fileName = DependencyUtil.getFormattedFileName( artifact, false, true );
+            File file = new File( mojo.outputDirectory, fileName );
+            assertTrue( file.exists() );
+        }
+    }
 }
