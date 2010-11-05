@@ -288,7 +288,7 @@ public class BuildClasspathMojo
             // TODO: add param for prepending groupId and version.
             sb.append( prefix );
             sb.append( File.separator );
-            sb.append( DependencyUtil.getFormattedFileName( art, this.stripVersion ) );
+            sb.append( DependencyUtil.getFormattedFileName( art, this.stripVersion, this.prependGroupId) );
         }
     }
 
