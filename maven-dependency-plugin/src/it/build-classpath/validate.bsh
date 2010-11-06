@@ -10,18 +10,11 @@ classpath = StringUtils.replace( classpath, "PREFIX/", "" );
 List actual = Arrays.asList( classpath.split( ":" ) );
 
 List expected = new ArrayList();
-expected.add( "maven-project-2.0.6.jar" );
-expected.add( "maven-settings-2.0.6.jar" );
+expected.add( "maven-profile-2.0.6.jar" );
 expected.add( "maven-model-2.0.6.jar" );
 expected.add( "plexus-utils-1.4.1.jar" );
 expected.add( "plexus-container-default-1.0-alpha-9-stable-1.jar" );
 expected.add( "junit-3.8.1.jar" );
-expected.add( "maven-profile-2.0.6.jar" );
-expected.add( "maven-artifact-manager-2.0.6.jar" );
-expected.add( "maven-repository-metadata-2.0.6.jar" );
-expected.add( "maven-artifact-2.0.6.jar" );
-expected.add( "wagon-provider-api-1.0-beta-2.jar" );
-expected.add( "maven-plugin-registry-2.0.6.jar" );
 
 System.out.println( "Checking classpath... " );
 System.out.println( "Actual  : " + actual );
