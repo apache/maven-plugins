@@ -1,23 +1,5 @@
 package org.apache.maven.plugin.dependency;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import junit.framework.TestCase;
-
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.model.Dependency;
-import org.apache.maven.model.DependencyManagement;
-import org.apache.maven.model.Exclusion;
-import org.apache.maven.plugin.dependency.testUtils.DependencyArtifactStubFactory;
-import org.apache.maven.plugin.dependency.testUtils.stubs.DependencyProjectStub;
-import org.apache.maven.project.MavenProject;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -36,6 +18,24 @@ import org.apache.maven.project.MavenProject;
  * specific language governing permissions and limitations
  * under the License.
  */
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import junit.framework.TestCase;
+
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.model.Dependency;
+import org.apache.maven.model.DependencyManagement;
+import org.apache.maven.model.Exclusion;
+import org.apache.maven.plugin.dependency.testUtils.DependencyArtifactStubFactory;
+import org.apache.maven.plugin.dependency.testUtils.stubs.DependencyProjectStub;
+import org.apache.maven.project.MavenProject;
 
 public class TestAnalyzeDepMgt
     extends TestCase
