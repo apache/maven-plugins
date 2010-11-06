@@ -19,10 +19,6 @@ package org.apache.maven.plugin.dependency.utils.markers;
  * under the License.    
  */
 
-/**
- * 
- */
-
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 

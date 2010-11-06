@@ -19,10 +19,6 @@ package org.apache.maven.plugin.dependency.utils.filters;
  * under the License. 
  */
 
-/**
- * 
- */
-
 import org.apache.maven.plugin.dependency.fromConfiguration.ArtifactItem;
 import org.apache.maven.shared.artifact.filter.collection.ArtifactFilterException;
 

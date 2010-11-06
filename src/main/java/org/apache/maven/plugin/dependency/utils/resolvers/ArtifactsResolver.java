@@ -19,10 +19,6 @@ package org.apache.maven.plugin.dependency.utils.resolvers;
  * under the License.    
  */
 
-/**
- * 
- */
-
 import java.util.Set;
 
 import org.apache.maven.plugin.MojoExecutionException;

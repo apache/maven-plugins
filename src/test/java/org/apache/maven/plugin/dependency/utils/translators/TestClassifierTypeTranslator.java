@@ -18,9 +18,6 @@ package org.apache.maven.plugin.dependency.utils.translators;
  * specific language governing permissions and limitations
  * under the License.    
  */
-/**
- * 
- */
 
 import java.util.HashMap;
 import java.util.HashSet;
