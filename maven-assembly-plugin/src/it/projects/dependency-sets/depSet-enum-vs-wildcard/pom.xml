@@ -12,9 +12,6 @@
   <packaging>pom</packaging>
   <version>1</version>
   
-  <!-- <properties><testVersion>2.2-beta-5</testVersion></properties> -->
-  <!-- <properties><testVersion>2.2-beta-6-SNAPSHOT</testVersion></properties> -->
-  
   <modules>
     <module>enum</module>
     <module>wildcard</module>
