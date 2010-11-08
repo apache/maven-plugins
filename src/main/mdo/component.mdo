@@ -595,7 +595,7 @@
           <description>
           If set to true, the plugin will include all projects in the current reactor for processing 
           in this ModuleSet. These will be subject to include/exclude rules.
-          Default value is true. (Since 2.2-beta-6)
+          Default value is true. (Since 2.2)
           </description>
         </field>
         <field>
