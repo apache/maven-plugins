@@ -16,16 +16,4 @@
     <module>child1</module>
     <module>child2</module>
   </modules>
-  
-  <!-- <properties><testVersion>2.2-beta-6-SNAPSHOT</testVersion></properties>
-  <build>
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <artifactId>maven-assembly-plugin</artifactId>
-          <version>${testVersion}</version>
-        </plugin>
-      </plugins>
-    </pluginManagement>
-  </build> -->
 </project>
