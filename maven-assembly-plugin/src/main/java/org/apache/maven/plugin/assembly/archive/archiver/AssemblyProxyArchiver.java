@@ -83,7 +83,7 @@ public class AssemblyProxyArchiver
     private final String assemblyWorkPath;
 
     /**
-     * @since 2.2-beta-6
+     * @since 2.2
      */
     private boolean useJvmChmod;
 

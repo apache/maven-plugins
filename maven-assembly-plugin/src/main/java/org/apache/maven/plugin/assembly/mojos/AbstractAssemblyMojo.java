@@ -327,7 +327,7 @@ public abstract class AbstractAssemblyMojo
      * This will cause the assembly to only update an existing archive, if it exists.
      * 
      * @parameter expression="${assembly.updatOnly}" default-value="false"
-     * @since 2.2-beta-6
+     * @since 2.2
      */
     private boolean updateOnly;
 
@@ -337,7 +337,7 @@ public abstract class AbstractAssemblyMojo
      * </p>
      * 
      * @parameter expression="${assembly.useJvmChmod}" default-value="false"
-     * @since 2.2-beta-6
+     * @since 2.2
      */
     private boolean useJvmChmod;
 
@@ -352,7 +352,7 @@ public abstract class AbstractAssemblyMojo
      * </p>
      * 
      * @parameter expression="${assembly.ignorePermissions}" default-value="false"
-     * @since 2.2-beta-6
+     * @since 2.2
      */
     private boolean ignorePermissions;
 

@@ -95,7 +95,7 @@ under the License.
            in your assembly-child POM (normally to the <code>package</code> phase) using the <code>single</code> goal. When you execute the build from the top-level POM,
            Maven should generated your assembly in the new child project.
         </p>
-        <p><b>NOTE:</b> The useAllReactorProjects flag is only available in version 2.2-beta-6 and higher.</p>
+        <p><b>NOTE:</b> The useAllReactorProjects flag is only available in version 2.2 and higher.</p>
       </answer>
     </faq>
   </part>
