@@ -3,7 +3,7 @@
  ------
  Dennis Lundberg
  ------
- 2008-11-03
+ 2010-11-08
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -129,7 +129,7 @@ my-assembly-descriptor
             <configuration>
               <!-- This is where we use our shared assembly descriptor -->
               <descriptors>
-                <descriptor>myassembly.xml</descriptor>
+                <descriptor>assemblies/myassembly.xml</descriptor>
               </descriptors>
             </configuration>
           </execution>
