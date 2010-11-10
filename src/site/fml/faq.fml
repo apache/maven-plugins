@@ -51,6 +51,24 @@ under the License.
       </answer>
     </faq>
   </part>
+  <part id="Assembly Descriptors">
+    <faq id="shared-descriptor-bug">
+      <question>
+        In previous versions (before 2.2 final), I followed the example in the documentation for <a href="/examples/sharing-descriptors.html">sharing assembly descriptors</a>, 
+        which recommended using the <code>&lt;descriptors/&gt;</code> configuration section to refer to the shared assembly descriptor. As of version 2.2, 
+        <em>this no longer works</em>. Why not?
+      </question>
+      <answer>
+        <p>The use of <code>&lt;descriptors/&gt;</code> was always incorrect, and counter to the design of this configuration parameter. Unfortunately, 
+           some code was introduced in version 2.2-beta-2 that allowed this parameter to reference descriptors on the classpath, instead of being forced to 
+           use <code>&lt;descriptorRefs/&gt;</code> as is the intention of the design. In version 2.2, this bug was fixed.
+        </p>
+        <p>It is important to note that the correct form, <code>&lt;descriptorRefs/&lt;</code> has always worked, and continues to work. The documentation 
+           has now been fixed to reflect the correct configuration.
+        </p>
+      </answer>
+    </faq>
+  </part>
   <part id="Build Lifecycle">
     <faq id="binding">
       <question>What goal should I use to create an assembly as part of my normal build process?</question>
@@ -96,6 +114,34 @@ under the License.
            Maven should generated your assembly in the new child project.
         </p>
         <p><b>NOTE:</b> The useAllReactorProjects flag is only available in version 2.2 and higher.</p>
+      </answer>
+    </faq>
+    <faq id="required-classifiers">
+      <question>
+        In previous versions (before 2.2 final), leaving off the assembly id and leaving the classifier unconfigured resulted in the 
+        assembly being used as the project's main artifact. With the 2.2 release, this configuration results in a validation error. 
+        My project depended on the previous behavior! Why has this changed, and how can I make this work in my project?
+      </question>
+      <answer>
+        <p>The assembly id is used for reporting and calculating descriptor/component merges. They're also required to avoid collisions with the 
+           main output of the project's build process. It's critical that this id be in place, to overriding the project's main artifact inadvertently, 
+           and to help error-reporting make sense to the user. <em>Leaving off the assembly id has always been an error</em>, but unfortunately previous 
+           releases contained a bug in the model that allowed empty or missing assembly id's. This bug has been fixed in version 2.2.
+        </p>
+        <p>However, in certain cases it makes sense to use the assembly output as the main project artifact. So, what's the correct approach in these 
+           situations? This use case is meant to require deliberate configuration, so your intention to depart from the normal behavior will be clear.
+           To configure the use of the assembly output as the main project artifact, follow these steps:
+        </p>
+        <p>
+          <ol>
+            <li>Make sure your assembly only uses <b>one format</b>. More than one format could mean the assembly artifact used for the project's 
+                main artifact is non-deterministic.
+            </li>
+            <li>Add the configuration: <code>&lt;appendAssemblyId&gt;false&lt;/appendAssemblyId&gt;</code> to your assembly-plugin execution. 
+                This will prevent the assembly artifact from simply being attached to the project.
+            </li>
+          </ol>
+        </p>
       </answer>
     </faq>
   </part>
