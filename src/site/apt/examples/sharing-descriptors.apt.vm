@@ -128,9 +128,9 @@ my-assembly-descriptor
             </goals>
             <configuration>
               <!-- This is where we use our shared assembly descriptor -->
-              <descriptors>
-                <descriptor>assemblies/myassembly.xml</descriptor>
-              </descriptors>
+              <descriptorRefs>
+                <descriptorRef>myassembly</descriptorRef>
+              </descriptorRefs>
             </configuration>
           </execution>
         </executions>
