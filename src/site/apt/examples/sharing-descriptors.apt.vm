@@ -33,6 +33,10 @@ Sharing Assembly Descriptors
   this problem is to create a separate project for your assembly descriptor.
   Let's call the project <my-assembly-descriptor>.
 
+  <<Note:>> This example has been updated for version 2.2. The previous versions
+  of this example were wrong. You must follow the steps below to make your
+  shared assembly descriptors work with version 2.2 or later.
+
 * The Shared Assembly Descriptor Project
 
   Here's what the directory structure for that project looks like:
@@ -50,6 +54,8 @@ my-assembly-descriptor
   There are just two files in this project: your assembly descriptor
   <<<myassembly.xml>>> and a <<<pom.xml>>>.
 
+  <<Note:>> Your assembly descriptors must be in the directory
+  <<</src/main/resources/assemblies>>> to be available to the Assembly Plugin. 
 
   First let's check out the POM for the Shared Assembly Descriptor Project. It
   is quite simple:
@@ -99,6 +105,13 @@ my-assembly-descriptor
   In the project that wants to use our Shared Assembly Descriptor, you need to
   add <<<my-assembly-descriptor>>> as a dependency on the Assembly Plugin. This
   makes our assembly descriptor available for the Assembly Plugin to use.
+
+  <<Note:>> You need to use the file name of your assembly descriptor, without
+  the xml file extension, in <<<\<descriptorRef\>>>>. You can not use the id of
+  your assembly descriptor. The assembly descriptor used in this example have
+  the file name <<<myassembly.xml>>>, but its id is
+  <<<my-assembly-descriptor-id>>>. Therefor we use <<<myassembly>>> to reference
+  that assembly descriptor.
 
 +---+
 <project>
