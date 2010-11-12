@@ -76,6 +76,7 @@ public class SimpleDavServerHandler
                 rq.method = request.getMethod();
                 rq.path = targetPath;
 
+                @SuppressWarnings( "rawtypes" )
                 Enumeration headerNames = request.getHeaderNames();
                 while (headerNames.hasMoreElements())
                 {

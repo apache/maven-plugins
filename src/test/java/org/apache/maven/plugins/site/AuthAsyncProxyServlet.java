@@ -48,7 +48,7 @@ import org.slf4j.LoggerFactory;
 public class AuthAsyncProxyServlet
 extends AsyncProxyServlet
 {
-    private Map authentications;
+    private Map<String, String> authentications;
 
     private long sleepTime = 0;
 
@@ -72,7 +72,7 @@ extends AsyncProxyServlet
      * 
      * @param authentications a map of user/password
      */
-    public AuthAsyncProxyServlet( Map authentications, File siteTargetPath )
+    public AuthAsyncProxyServlet( Map<String, String> authentications, File siteTargetPath )
     {
         this( siteTargetPath );
 
@@ -85,7 +85,7 @@ extends AsyncProxyServlet
      * @param authentications a map of user/password
      * @param sleepTime a positive time to sleep the service thread (for timeout)
      */
-    public AuthAsyncProxyServlet( Map authentications, long sleepTime, File siteTargetPath )
+    public AuthAsyncProxyServlet( Map<String, String> authentications, long sleepTime, File siteTargetPath )
     {
         this( siteTargetPath );
 
@@ -138,6 +138,7 @@ extends AsyncProxyServlet
                     rq.method = request.getMethod();
                     rq.path = targetPath;
 
+                    @SuppressWarnings( "rawtypes" )
                     Enumeration headerNames = request.getHeaderNames();
                     while ( headerNames.hasMoreElements() )
                     {

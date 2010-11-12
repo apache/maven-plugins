@@ -1,8 +1,8 @@
 package org.apache.maven.plugins.site;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -160,7 +160,7 @@ public abstract class AbstractSiteDeployWebDavTest
         FileUtils.cleanDirectory( siteTargetPath );
         //SimpleDavServerHandler simpleDavServerHandler = new SimpleDavServerHandler( siteTargetPath );
         
-        Map authentications = new HashMap();
+        Map<String, String> authentications = new HashMap<String, String>();
         authentications.put( "foo", "titi" );
         
         AuthAsyncProxyServlet servlet = new  AuthAsyncProxyServlet(authentications, siteTargetPath);
@@ -211,15 +211,15 @@ public abstract class AbstractSiteDeployWebDavTest
             else
             {
                 ArtifactRepositoryFactory artifactRepositoryFactory = getContainer().lookup( ArtifactRepositoryFactory.class );
-                ;
+                
                 setVariableValueToObject( mojo, "stagingDirectory", inputDirectory );
-                setVariableValueToObject( mojo, "reactorProjects", new ArrayList() );
+                setVariableValueToObject( mojo, "reactorProjects", Collections.emptyList() );
                 setVariableValueToObject( mojo, "localRepository",
                                           artifactRepositoryFactory.createArtifactRepository( "local", "foo", "default",
                                                                                               null, null ) );
                 setVariableValueToObject( mojo, "siteTool", getContainer().lookup( SiteTool.class ) );
                 setVariableValueToObject( mojo, "siteDirectory", new File("foo") );
-                setVariableValueToObject( mojo, "repositories", new ArrayList() );
+                setVariableValueToObject( mojo, "repositories", Collections.emptyList() );
             }
             mojo.execute();
             

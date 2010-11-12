@@ -50,6 +50,7 @@ public class SiteMojoTest
      *
      * @throws Exception
      */
+    @SuppressWarnings( "rawtypes" )
     @Test
     public void testGetInterpolatedSiteDescriptorContent()
         throws Exception
