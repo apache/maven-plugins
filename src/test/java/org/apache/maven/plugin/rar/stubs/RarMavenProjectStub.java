@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Organization;
 import org.apache.maven.project.MavenProject;
@@ -139,10 +140,14 @@ public class RarMavenProjectStub
         
         artifact.setOptional( optional );
         
+        artifact.setVersionRange( VersionRange.createFromVersion( "1.0" ) );
+        
         artifact.setFile( new File ( getBasedir() + "/src/test/remote-repo/" + artifact.getGroupId().replace( '.', '/' ) + 
                           "/" + artifact.getArtifactId() + "/" + artifact.getVersion() + 
                           "/" + artifact.getArtifactId() + "-" + artifact.getVersion() + ".jar" ) ) ;
         
         return artifact;
     }
+    
+    
 }

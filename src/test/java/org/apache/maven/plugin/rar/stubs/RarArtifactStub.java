@@ -21,6 +21,8 @@ package org.apache.maven.plugin.rar.stubs;
 
 import java.io.File;
 
+import org.apache.maven.artifact.handler.ArtifactHandler;
+import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.plugin.testing.stubs.ArtifactStub;
 
 /**
@@ -110,4 +112,58 @@ public class RarArtifactStub
     {
         return getVersion();
     }
+
+    public VersionRange getVersionRange()
+    {
+        return VersionRange.createFromVersion( this.version );
+    }
+
+    public ArtifactHandler getArtifactHandler()
+    {
+        return new ArtifactHandler()
+        {
+            
+            public boolean isIncludesDependencies()
+            {
+                return false;
+            }
+            
+            public boolean isAddedToClasspath()
+            {
+                return false;
+            }
+            
+            public String getPackaging()
+            {
+                return null;
+            }
+            
+            public String getLanguage()
+            {
+                return null;
+            }
+            
+            public String getExtension()
+            {
+                return null;
+            }
+            
+            public String getDirectory()
+            {
+                return null;
+            }
+            
+            public String getClassifier()
+            {
+                return null;
+            }
+        };
+    }
+
+    public String getType()
+    {
+        return "rar";
+    }
+    
+    
 }
