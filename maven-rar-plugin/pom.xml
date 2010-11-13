@@ -25,7 +25,7 @@ under the License.
   <parent>
     <artifactId>maven-plugins</artifactId>
     <groupId>org.apache.maven.plugins</groupId>
-    <version>17</version>
+    <version>18</version>
   </parent>
 
   <artifactId>maven-rar-plugin</artifactId>
@@ -49,32 +49,41 @@ under the License.
     <system>JIRA</system>
     <url>http://jira.codehaus.org/browse/MRAR</url>
   </issueManagement>
+  
+  <properties>
+    <mavenVersion>2.0.6</mavenVersion>
+  </properties>  
 
   <dependencies>
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-plugin-api</artifactId>
-      <version>2.0</version>
+      <version>${mavenVersion}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-project</artifactId>
-      <version>2.0</version>
+      <version>${mavenVersion}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-artifact</artifactId>
-      <version>2.0.4</version>
+      <version>${mavenVersion}</version>
     </dependency>
+    <dependency>
+      <groupId>org.codehaus.plexus</groupId>
+      <artifactId>plexus-utils</artifactId>
+      <version>2.0.5</version>
+    </dependency>    
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-archiver</artifactId>
-      <version>2.2</version>
+      <version>2.4.1</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.maven.shared</groupId>
+      <groupId>org.apache.maven.plugin-testing</groupId>
       <artifactId>maven-plugin-testing-harness</artifactId>
-      <version>1.0-beta-1</version>
+      <version>1.2</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
