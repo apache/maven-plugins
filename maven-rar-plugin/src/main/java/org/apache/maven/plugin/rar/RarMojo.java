@@ -41,6 +41,7 @@ import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
  * @author <a href="stephane.nicoll@gmail.com">Stephane Nicoll</a>
  * @version $Id$
  * @goal rar
+ * @threadSafe
  * @phase package
  * @requiresDependencyResolution test
  */
@@ -54,7 +55,7 @@ public class RarMojo
     /**
      * Single directory for extra files to include in the RAR.
      *
-     * @parameter expression="${basedir}/src/main/rar"
+     * @parameter default-value="${basedir}/src/main/rar"
      * @required
      */
     private File rarSourceDirectory;
@@ -62,7 +63,7 @@ public class RarMojo
     /**
      * The location of the ra.xml file to be used within the rar file.
      *
-     * @parameter expression="${basedir}/src/main/rar/META-INF/ra.xml"
+     * @parameter default-value="${basedir}/src/main/rar/META-INF/ra.xml"
      */
     private File raXmlFile;
 
@@ -77,14 +78,14 @@ public class RarMojo
     /**
      * The location of the manifest file to be used within the rar file.
      *
-     * @parameter expression="${basedir}/src/main/rar/META-INF/MANIFEST.MF"
+     * @parameter default-value="${basedir}/src/main/rar/META-INF/MANIFEST.MF"
      */
     private File manifestFile;
 
     /**
      * Directory that resources are copied to during the build.
      *
-     * @parameter expression="${project.build.directory}/${project.build.finalName}"
+     * @parameter default-value="${project.build.directory}/${project.build.finalName}"
      * @required
      */
     private String workDirectory;
@@ -92,7 +93,7 @@ public class RarMojo
     /**
      * The directory for the generated RAR.
      *
-     * @parameter expression="${project.build.directory}"
+     * @parameter default-value="${project.build.directory}"
      * @required
      */
     private String outputDirectory;
@@ -100,7 +101,7 @@ public class RarMojo
     /**
      * The name of the RAR file to generate.
      *
-     * @parameter alias="rarName" expression="${project.build.finalName}"
+     * @parameter alias="rarName" default-value="${project.build.finalName}"
      * @required
      */
     private String finalName;
@@ -108,7 +109,7 @@ public class RarMojo
     /**
      * The maven project.
      *
-     * @parameter expression="${project}"
+     * @parameter default-value="${project}"
      * @required
      * @readonly
      */
