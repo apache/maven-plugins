@@ -103,7 +103,6 @@ public class DeployFileMojo
      * In most cases, this parameter will be required for authentication.
      *
      * @parameter expression="${repositoryId}" default-value="remote-repository"
-     * @required
      */
     private String repositoryId;
 
