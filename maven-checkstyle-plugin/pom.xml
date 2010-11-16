@@ -175,9 +175,9 @@ under the License.
 
     <!-- checkstyle -->
     <dependency>
-      <groupId>checkstyle</groupId>
+      <groupId>com.puppycrawl.tools</groupId>
       <artifactId>checkstyle</artifactId>
-      <version>5.0</version>
+      <version>5.3</version>
     </dependency>
 
     <!-- misc -->
