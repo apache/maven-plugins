@@ -266,7 +266,11 @@ public class DefaultCheckstyleExecutor
                 {
                     if ( module instanceof DefaultConfiguration )
                     {
-                        ( (DefaultConfiguration) module ).addAttribute( "cacheFile", request.getCacheFile() );
+                        //MCHECKSTYLE-132 DefaultConfiguration addAttribute has changed in checkstyle 5.3
+                        if ( ( (DefaultConfiguration) module ).getAttribute( "cacheFile" ) == null )
+                        {
+                            ( (DefaultConfiguration) module ).addAttribute( "cacheFile", request.getCacheFile() );
+                        }
                     }
                     else
                     {
