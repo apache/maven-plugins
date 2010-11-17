@@ -20,10 +20,12 @@ package org.apache.maven.report.projectinfo;
  */
 
 import java.util.Locale;
+import java.util.regex.Pattern;
 
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.reporting.AbstractMavenReportRenderer;
 import org.codehaus.plexus.i18n.I18N;
+import org.codehaus.plexus.util.StringUtils;
 
 public abstract class AbstractProjectInfoRenderer
     extends AbstractMavenReportRenderer
@@ -55,6 +57,27 @@ public abstract class AbstractProjectInfoRenderer
     protected String getI18nString( String section, String key )
     {
         return i18n.getString( "project-info-report", locale, "report." + section + '.' + key );
+    }
+
+    protected void text( String text )
+    {
+        if ( StringUtils.isEmpty( text ) ) // Take care of spaces
+        {
+            sink.text( "-" );
+        }
+        else
+        {
+            // custombundle text with xml?
+            String regex = "(.+?)<(\"[^\"]*\"|'[^']*'|[^'\">])*>(.+?)";
+            if ( Pattern.matches( regex, text ) )
+            {
+                sink.rawText( text );
+            }
+            else
+            {
+                sink.text( text );
+            }
+        }
     }
 
     protected abstract String getI18Nsection();

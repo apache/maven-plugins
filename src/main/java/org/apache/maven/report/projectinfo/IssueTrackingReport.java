@@ -45,7 +45,7 @@ public class IssueTrackingReport
     /** {@inheritDoc} */
     public void executeReport( Locale locale )
     {
-        IssueTrackingRenderer r = new IssueTrackingRenderer( getSink(), getProject().getModel(), i18n, locale );
+        IssueTrackingRenderer r = new IssueTrackingRenderer( getSink(), getProject().getModel(), getI18N( locale ), locale );
 
         r.render();
     }

@@ -75,7 +75,7 @@ public class PluginManagementReport
     /** {@inheritDoc} */
     public void executeReport( Locale locale )
     {
-        PluginManagementRenderer r = new PluginManagementRenderer( getLog(), getSink(), locale, i18n, project
+        PluginManagementRenderer r = new PluginManagementRenderer( getLog(), getSink(), locale, getI18N( locale ), project
             .getPluginManagement().getPlugins(), project, mavenProjectBuilder, artifactFactory, localRepository );
         r.render();
     }

@@ -56,7 +56,7 @@ public class TeamListReport
     /** {@inheritDoc} */
     public void executeReport( Locale locale )
     {
-        TeamListRenderer r = new TeamListRenderer( getSink(), project.getModel(), i18n, locale, getLog() );
+        TeamListRenderer r = new TeamListRenderer( getSink(), project.getModel(), getI18N( locale ), locale, getLog() );
 
         r.render();
     }

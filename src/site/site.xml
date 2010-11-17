@@ -32,6 +32,7 @@ under the License.
       <item name="Run Selective Reports" href="examples/selective-project-info-reports.html"/>
       <item name="Run Individual Reports" href="examples/individual-reports.html"/>
       <item name="Customize the SCM Report" href="examples/scm-report.html"/>
+      <item name="Customize Text Reports" href="examples/custom-report.html"/>
     </menu>
   </body>
 </project>

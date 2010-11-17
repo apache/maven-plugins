@@ -84,7 +84,7 @@ public class LicenseReport
     /** {@inheritDoc} */
     public void executeReport( Locale locale )
     {
-        LicenseRenderer r = new LicenseRenderer( getSink(), getProject(), i18n, locale, settings, linkOnly );
+        LicenseRenderer r = new LicenseRenderer( getSink(), getProject(), getI18N( locale ), locale, settings, linkOnly );
 
         r.render();
     }

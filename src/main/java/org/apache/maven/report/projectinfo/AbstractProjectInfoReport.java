@@ -36,17 +36,30 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.MavenReportException;
+import org.apache.maven.settings.Settings;
 import org.codehaus.plexus.i18n.I18N;
+import org.codehaus.plexus.interpolation.EnvarBasedValueSource;
+import org.codehaus.plexus.interpolation.InterpolationException;
+import org.codehaus.plexus.interpolation.PrefixedObjectValueSource;
+import org.codehaus.plexus.interpolation.PropertiesBasedValueSource;
+import org.codehaus.plexus.interpolation.RegexBasedInterpolator;
 import org.codehaus.plexus.util.IOUtil;
+
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 
 /**
  * Base class with the things that should be in AbstractMavenReport anyway.
@@ -92,11 +105,11 @@ public abstract class AbstractProjectInfoReport
     protected ArtifactFactory factory;
 
     /**
-     * Internationalization component.
+     * Internationalization component, could support also custom bundle using {@link #customBundle}.
      *
      * @component
      */
-    protected I18N i18n;
+    private I18N i18n;
 
     // ----------------------------------------------------------------------
     // Mojo parameters
@@ -130,6 +143,25 @@ public abstract class AbstractProjectInfoReport
      */
     protected ArtifactRepository localRepository;
 
+    /**
+     * The current user system settings for use in Maven.
+     *
+     * @parameter expression="${settings}"
+     * @required
+     * @readonly
+     * @since 2.3
+     */
+    protected Settings settings;
+
+    /**
+     * Path for a custom bundle instead of using the default one. <br/>
+     * Using this field, you could change the texts in the generated reports.
+     *
+     * @parameter expression="${project.basedir}/src/site/custom/project-info-report.properties"
+     * @since 2.3
+     */
+    protected String customBundle;
+
     // ----------------------------------------------------------------------
     // Public methods
     // ----------------------------------------------------------------------
@@ -160,8 +192,8 @@ public abstract class AbstractProjectInfoReport
             Artifact defaultSkin =
                 siteTool.getDefaultSkinArtifact( localRepository, project.getRemoteArtifactRepositories() );
 
-            SiteRenderingContext siteContext = siteRenderer.createContextForSkin( defaultSkin.getFile(), attributes,
-                                                                                  model, getName( locale ), locale );
+            SiteRenderingContext siteContext =
+                siteRenderer.createContextForSkin( defaultSkin.getFile(), attributes, model, getName( locale ), locale );
 
             RenderingContext context = new RenderingContext( outputDirectory, filename );
 
@@ -180,23 +212,23 @@ public abstract class AbstractProjectInfoReport
         }
         catch ( RendererException e )
         {
-            throw new MojoExecutionException(
-                "An error has occurred in " + getName( Locale.ENGLISH ) + " report generation.", e );
+            throw new MojoExecutionException( "An error has occurred in " + getName( Locale.ENGLISH )
+                + " report generation.", e );
         }
         catch ( IOException e )
         {
-            throw new MojoExecutionException(
-                "An error has occurred in " + getName( Locale.ENGLISH ) + " report generation.", e );
+            throw new MojoExecutionException( "An error has occurred in " + getName( Locale.ENGLISH )
+                + " report generation.", e );
         }
         catch ( SiteToolException e )
         {
-            throw new MojoExecutionException(
-                "An error has occurred in " + getName( Locale.ENGLISH ) + " report generation.", e );
+            throw new MojoExecutionException( "An error has occurred in " + getName( Locale.ENGLISH )
+                + " report generation.", e );
         }
         catch ( MavenReportException e )
         {
-            throw new MojoExecutionException(
-                "An error has occurred in " + getName( Locale.ENGLISH ) + " report generation.", e );
+            throw new MojoExecutionException( "An error has occurred in " + getName( Locale.ENGLISH )
+                + " report generation.", e );
         }
         finally
         {
@@ -246,7 +278,29 @@ public abstract class AbstractProjectInfoReport
 
     protected String getI18nString( Locale locale, String key )
     {
-        return i18n.getString( "project-info-report", locale, "report." + getI18Nsection() + '.' + key );
+        return getI18N( locale ).getString( "project-info-report", locale, "report." + getI18Nsection() + '.' + key );
+    }
+
+    protected I18N getI18N( Locale locale )
+    {
+        if ( customBundle != null )
+        {
+            File customBundleFile = new File( customBundle );
+            if ( customBundleFile.isFile() && customBundleFile.getName().endsWith( ".properties" ) )
+            {
+                if ( !i18n.getClass().isAssignableFrom( CustomI18N.class ) )
+                {
+                    // first load
+                    i18n = new CustomI18N( project, settings, customBundleFile, locale, i18n );
+                }
+                else if ( !i18n.getDefaultLanguage().equals( locale.getLanguage() ) )
+                {
+                    i18n = new CustomI18N( project, settings, customBundleFile, locale, i18n );
+                }
+            }
+        }
+
+        return i18n;
     }
 
     protected abstract String getI18Nsection();
@@ -261,5 +315,210 @@ public abstract class AbstractProjectInfoReport
     public String getDescription( Locale locale )
     {
         return getI18nString( locale, "description" );
+    }
+
+    private static class CustomI18N
+        implements I18N
+    {
+        private final MavenProject project;
+
+        private final Settings settings;
+
+        private final String bundleName;
+
+        private final Locale locale;
+
+        private final I18N i18nOriginal;
+
+        private ResourceBundle bundle;
+
+        private final Object[] NO_ARGS = new Object[0];
+
+        public CustomI18N( MavenProject project, Settings settings, File customBundleFile, Locale locale,
+                           I18N i18nOriginal )
+        {
+            super();
+            this.project = project;
+            this.settings = settings;
+            this.locale = locale;
+            this.i18nOriginal = i18nOriginal;
+            this.bundleName =
+                customBundleFile.getName().substring( 0, customBundleFile.getName().indexOf( ".properties" ) );
+
+            URLClassLoader classLoader = null;
+            try
+            {
+                classLoader = new URLClassLoader( new URL[] { customBundleFile.getParentFile().toURI().toURL() } );
+            }
+            catch ( MalformedURLException e )
+            {
+            }
+
+            this.bundle = ResourceBundle.getBundle( this.bundleName, locale, classLoader );
+            if ( !this.bundle.getLocale().getLanguage().equals( locale.getLanguage() ) )
+            {
+                this.bundle = ResourceBundle.getBundle( this.bundleName, new Locale( null ), classLoader );
+            }
+        }
+
+        public String getDefaultLanguage()
+        {
+            return locale.getLanguage();
+        }
+
+        public String getDefaultCountry()
+        {
+            return locale.getCountry();
+        }
+
+        public String getDefaultBundleName()
+        {
+            return bundleName;
+        }
+
+        public String[] getBundleNames()
+        {
+            return new String[] { bundleName };
+        }
+
+        public ResourceBundle getBundle()
+        {
+            return bundle;
+        }
+
+        public ResourceBundle getBundle( String bundleName )
+        {
+            return bundle;
+        }
+
+        public ResourceBundle getBundle( String bundleName, String languageHeader )
+        {
+            return bundle;
+        }
+
+        public ResourceBundle getBundle( String bundleName, Locale locale )
+        {
+            return bundle;
+        }
+
+        public Locale getLocale( String languageHeader )
+        {
+            return new Locale( languageHeader );
+        }
+
+        public String getString( String key )
+        {
+            return getString( bundleName, locale, key );
+        }
+
+        public String getString( String key, Locale locale )
+        {
+            return getString( bundleName, locale, key );
+        }
+
+        public String getString( String bundleName, Locale locale, String key )
+        {
+            String value;
+
+            if ( locale == null )
+            {
+                locale = getLocale( null );
+            }
+
+            ResourceBundle rb = getBundle( bundleName, locale );
+            value = getStringOrNull( rb, key );
+
+            if ( value == null )
+            {
+                // try to load default
+                value = i18nOriginal.getString( bundleName, locale, key );
+            }
+
+            if ( value.indexOf( "${" ) < 0 )
+            {
+                return value;
+            }
+
+            final RegexBasedInterpolator interpolator = new RegexBasedInterpolator();
+            try
+            {
+                interpolator.addValueSource( new EnvarBasedValueSource() );
+            }
+            catch ( final IOException e )
+            {
+            }
+
+            interpolator.addValueSource( new PropertiesBasedValueSource( System.getProperties() ) );
+            interpolator.addValueSource( new PropertiesBasedValueSource( project.getProperties() ) );
+            interpolator.addValueSource( new PrefixedObjectValueSource( "project", project ) );
+            interpolator.addValueSource( new PrefixedObjectValueSource( "pom", project ) );
+            interpolator.addValueSource( new PrefixedObjectValueSource( "settings", settings ) );
+
+            try
+            {
+                value = interpolator.interpolate( value );
+            }
+            catch ( final InterpolationException e )
+            {
+            }
+
+            return value;
+        }
+
+        public String format( String key, Object arg1 )
+        {
+            return format( bundleName, locale, key, new Object[] { arg1 } );
+        }
+
+        public String format( String key, Object arg1, Object arg2 )
+        {
+            return format( bundleName, locale, key, new Object[] { arg1, arg2 } );
+        }
+
+        public String format( String bundleName, Locale locale, String key, Object arg1 )
+        {
+            return format( bundleName, locale, key, new Object[] { arg1 } );
+        }
+
+        public String format( String bundleName, Locale locale, String key, Object arg1, Object arg2 )
+        {
+            return format( bundleName, locale, key, new Object[] { arg1, arg2 } );
+        }
+
+        public String format( String bundleName, Locale locale, String key, Object[] args )
+        {
+            if ( locale == null )
+            {
+                locale = getLocale( null );
+            }
+
+            String value = getString( bundleName, locale, key );
+            if ( args == null )
+            {
+                args = NO_ARGS;
+            }
+
+            MessageFormat messageFormat = new MessageFormat( "" );
+            messageFormat.setLocale( locale );
+            messageFormat.applyPattern( value );
+
+            return messageFormat.format( args );
+        }
+
+        private final String getStringOrNull( ResourceBundle rb, String key )
+        {
+            if ( rb != null )
+            {
+                try
+                {
+                    return rb.getString( key );
+                }
+                catch ( MissingResourceException ignored )
+                {
+                    // intentional
+                }
+            }
+            return null;
+        }
     }
 }

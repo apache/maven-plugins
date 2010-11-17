@@ -47,7 +47,7 @@ public class CimReport
     /** {@inheritDoc} */
     public void executeReport( Locale locale )
     {
-        CimRenderer r = new CimRenderer( getSink(), getProject().getModel(), i18n, locale );
+        CimRenderer r = new CimRenderer( getSink(), getProject().getModel(), getI18N( locale ), locale );
 
         r.render();
     }

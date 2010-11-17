@@ -103,7 +103,7 @@ public class ScmReport
     /** {@inheritDoc} */
     public void executeReport( Locale locale )
     {
-        ScmRenderer r = new ScmRenderer( getLog(), scmManager, getSink(), getProject().getModel(), i18n, locale,
+        ScmRenderer r = new ScmRenderer( getLog(), scmManager, getSink(), getProject().getModel(), getI18N( locale ), locale,
                                          checkoutDirectoryName, webAccessUrl, anonymousConnection,
                                          developerConnection );
 

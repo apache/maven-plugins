@@ -52,7 +52,7 @@ public class ModulesReport
     /** {@inheritDoc} */
     public void executeReport( Locale locale )
     {
-        new ModulesRenderer( getSink(), getProject().getModel(), i18n, locale ).render();
+        new ModulesRenderer( getSink(), getProject().getModel(), getI18N( locale ), locale ).render();
     }
 
     /** {@inheritDoc} */
