@@ -20,6 +20,7 @@ package org.apache.maven.report.projectinfo;
  */
 
 import org.apache.maven.doxia.sink.Sink;
+import org.apache.maven.model.DistributionManagement;
 import org.apache.maven.model.Organization;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.MavenReportException;
@@ -131,6 +132,33 @@ public class ProjectSummaryReport
             }
             endTable();
             endSection();
+
+            // download section
+            DistributionManagement distributionManagement = project.getDistributionManagement();
+            if ( distributionManagement != null )
+            {
+                if ( StringUtils.isNotEmpty( distributionManagement.getDownloadUrl() ) )
+                {
+                    startSection( getI18nString( "download" ) );
+                    link( distributionManagement.getDownloadUrl(), distributionManagement.getDownloadUrl() );
+                    endSection();
+                }
+                else if ( distributionManagement.getRepository() != null
+                    && StringUtils.isNotEmpty( distributionManagement.getRepository().getUrl() ) )
+                {
+                    startSection( getI18nString( "download" ) );
+                    String link = distributionManagement.getRepository().getUrl();
+                    if ( !link.endsWith( "/" ) )
+                    {
+                        link += "/";
+                    }
+                    link += StringUtils.replace( project.getGroupId(), ".", "/" );
+                    link += "/";
+                    link += project.getArtifactId();
+                    link( link, link );
+                    endSection();
+                }
+            }
 
             endSection();
         }
@@ -256,7 +284,8 @@ public class ProjectSummaryReport
             // java files in the source directory?
             try
             {
-                if ( FileUtils.getFileNames( new File( project.getBuild().getSourceDirectory() ), "**/*.java", null, false ).size() > 0 )
+                if ( FileUtils.getFileNames( new File( project.getBuild().getSourceDirectory() ), "**/*.java", null,
+                                             false ).size() > 0 )
                 {
                     return true;
                 }
