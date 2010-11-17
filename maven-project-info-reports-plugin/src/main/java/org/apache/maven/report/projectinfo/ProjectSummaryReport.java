@@ -91,28 +91,12 @@ public class ProjectSummaryReport
             startSection( getTitle() );
 
             // general information sub-section
-            String name = project.getName();
-            if ( name == null )
-            {
-                name = "";
-            }
-            String description = project.getDescription();
-            if ( description == null )
-            {
-                description = "";
-            }
-            String homepage = project.getUrl();
-            if ( homepage == null )
-            {
-                homepage = "";
-            }
-
             startSection( getI18nString( "general.title" ) );
             startTable();
             tableHeader( new String[] { getI18nString( "field" ), getI18nString( "value" ) } );
-            tableRow( new String[] { getI18nString( "general.name" ), name } );
-            tableRow( new String[] { getI18nString( "general.description" ), description } );
-            tableRowWithLink( new String[] { getI18nString( "general.homepage" ), homepage } );
+            tableRow( new String[] { getI18nString( "general.name" ), project.getName() } );
+            tableRow( new String[] { getI18nString( "general.description" ), project.getDescription() } );
+            tableRowWithLink( new String[] { getI18nString( "general.homepage" ), project.getUrl() } );
             endTable();
             endSection();
 
@@ -125,15 +109,6 @@ public class ProjectSummaryReport
             }
             else
             {
-                if ( organization.getName() == null )
-                {
-                    organization.setName( "" );
-                }
-                if ( organization.getUrl() == null )
-                {
-                    organization.setUrl( "" );
-                }
-
                 startTable();
                 tableHeader( new String[] { getI18nString( "field" ), getI18nString( "value" ) } );
                 tableRow( new String[] { getI18nString( "organization.name" ), organization.getName() } );
