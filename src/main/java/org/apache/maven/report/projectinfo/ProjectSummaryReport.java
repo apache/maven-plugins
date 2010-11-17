@@ -21,10 +21,14 @@ package org.apache.maven.report.projectinfo;
 
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.model.Organization;
+import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.MavenReportException;
+import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Locale;
 
 /**
@@ -86,7 +90,7 @@ public class ProjectSummaryReport
         {
             startSection( getTitle() );
 
-            //general information sub-section
+            // general information sub-section
             String name = project.getName();
             if ( name == null )
             {
@@ -112,7 +116,7 @@ public class ProjectSummaryReport
             endTable();
             endSection();
 
-            //organization sub-section
+            // organization sub-section
             startSection( getI18nString( "organization.title" ) );
             Organization organization = project.getOrganization();
             if ( organization == null )
@@ -138,7 +142,7 @@ public class ProjectSummaryReport
             }
             endSection();
 
-            //build section
+            // build section
             startSection( getI18nString( "build.title" ) );
             startTable();
             tableHeader( new String[] { getI18nString( "field" ), getI18nString( "value" ) } );
@@ -146,7 +150,10 @@ public class ProjectSummaryReport
             tableRow( new String[] { getI18nString( "build.artifactid" ), project.getArtifactId() } );
             tableRow( new String[] { getI18nString( "build.version" ), project.getVersion() } );
             tableRow( new String[] { getI18nString( "build.type" ), project.getPackaging() } );
-            tableRow( new String[] { getI18nString( "build.jdk" ), getMinimumJavaVersion() } );
+            if ( isJavaProject( project ) )
+            {
+                tableRow( new String[] { getI18nString( "build.jdk" ), getMinimumJavaVersion() } );
+            }
             endTable();
             endSection();
 
@@ -248,6 +255,51 @@ public class ProjectSummaryReport
             }
 
             sink.tableRow_();
+        }
+
+        /**
+         * @param project not null
+         * @return return <code>true</code> if the Maven project sounds like a Java Project, i.e. has a java type
+         *         packaging (like jar, war...) or java files in the source directory, <code>false</code> otherwise.
+         * @since 2.3
+         */
+        private boolean isJavaProject( MavenProject project )
+        {
+            String packaging = project.getPackaging().trim().toLowerCase( Locale.ENGLISH );
+            if ( packaging.equals( "pom" ) )
+            {
+                return false;
+            }
+
+            // some commons java packaging
+            if ( packaging.equals( "jar" ) || packaging.equals( "ear" ) || packaging.equals( "war" )
+                || packaging.equals( "rar" ) || packaging.equals( "sar" ) || packaging.equals( "har" ) )
+            {
+                return true;
+            }
+
+            // java files in the source directory?
+            try
+            {
+                if ( FileUtils.getFileNames( new File( project.getBuild().getSourceDirectory() ), "**/*.java", null, false ).size() > 0 )
+                {
+                    return true;
+                }
+            }
+            catch ( IOException e )
+            {
+                // ignored
+            }
+
+            // maven-compiler-plugin ?
+            Xpp3Dom pluginConfig =
+                project.getGoalConfiguration( "org.apache.maven.plugins", "maven-compiler-plugin", null, null );
+            if ( pluginConfig != null )
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }
