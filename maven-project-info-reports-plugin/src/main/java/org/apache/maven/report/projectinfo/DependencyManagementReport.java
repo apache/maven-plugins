@@ -30,9 +30,6 @@ import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.report.projectinfo.dependencies.ManagementDependencies;
 import org.apache.maven.report.projectinfo.dependencies.RepositoryUtils;
 import org.apache.maven.report.projectinfo.dependencies.renderer.DependencyManagementRenderer;
-import org.apache.maven.settings.Settings;
-import org.apache.maven.shared.dependency.tree.DependencyTreeBuilder;
-
 
 /**
  * Generates the Project Dependency Management report.
@@ -93,16 +90,6 @@ public class DependencyManagementReport
     private List<ArtifactRepository> remoteRepositories;
 
     /**
-     * The current user system settings for use in Maven.
-     *
-     * @since 2.3
-     * @parameter expression="${settings}"
-     * @required
-     * @readonly
-     */
-    private Settings settings;
-
-    /**
      * Lazy instantiation for management dependencies.
      */
     private ManagementDependencies managementDependencies;
@@ -121,7 +108,7 @@ public class DependencyManagementReport
                                  repositoryMetadataManager );
 
         DependencyManagementRenderer r =
-            new DependencyManagementRenderer( getSink(), locale, i18n, getLog(), getManagementDependencies(),
+            new DependencyManagementRenderer( getSink(), locale, getI18N( locale ), getLog(), getManagementDependencies(),
                                               artifactFactory, mavenProjectBuilder, remoteRepositories,
                                               localRepository, repoUtils );
         r.render();

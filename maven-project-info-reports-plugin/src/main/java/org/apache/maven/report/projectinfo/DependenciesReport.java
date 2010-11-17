@@ -42,7 +42,6 @@ import org.apache.maven.report.projectinfo.dependencies.Dependencies;
 import org.apache.maven.report.projectinfo.dependencies.DependenciesReportConfiguration;
 import org.apache.maven.report.projectinfo.dependencies.RepositoryUtils;
 import org.apache.maven.report.projectinfo.dependencies.renderer.DependenciesRenderer;
-import org.apache.maven.settings.Settings;
 import org.apache.maven.shared.dependency.tree.DependencyNode;
 import org.apache.maven.shared.dependency.tree.DependencyTreeBuilder;
 import org.apache.maven.shared.dependency.tree.DependencyTreeBuilderException;
@@ -136,16 +135,6 @@ public class DependenciesReport
     // ----------------------------------------------------------------------
 
     /**
-     * The current user system settings for use in Maven.
-     *
-     * @since 2.1
-     * @parameter expression="${settings}"
-     * @required
-     * @readonly
-     */
-    private Settings settings;
-
-    /**
      * Remote repositories used for the project.
      *
      * @since 2.1
@@ -210,7 +199,7 @@ public class DependenciesReport
             new DependenciesReportConfiguration( dependencyDetailsEnabled, dependencyLocationsEnabled );
 
         DependenciesRenderer r =
-            new DependenciesRenderer( getSink(), locale, i18n, getLog(), settings, dependencies,
+            new DependenciesRenderer( getSink(), locale, getI18N( locale ), getLog(), settings, dependencies,
                                       dependencyTreeNode, config, repoUtils, artifactFactory, mavenProjectBuilder,
                                       remoteRepositories, localRepository );
         r.render();

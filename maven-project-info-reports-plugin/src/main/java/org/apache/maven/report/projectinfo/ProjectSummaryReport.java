@@ -73,7 +73,7 @@ public class ProjectSummaryReport
     {
         ProjectSummaryRenderer( Sink sink, Locale locale )
         {
-            super( sink, i18n, locale );
+            super( sink, getI18N( locale ), locale );
         }
 
         protected String getI18Nsection()
@@ -192,7 +192,7 @@ public class ProjectSummaryReport
                 // no source, target, compilerVersion: toolchain? default target attribute of current
                 // maven-compiler-plugin's version? analyze packaged jar (like dependencies)?
             }
-            
+
             return minimumJavaVersion;
         }
 

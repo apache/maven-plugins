@@ -310,6 +310,11 @@ under the License.
       <artifactId>plexus-utils</artifactId>
       <version>1.5.5</version>
     </dependency>
+    <dependency>
+      <groupId>org.codehaus.plexus</groupId>
+      <artifactId>plexus-interpolation</artifactId>
+      <version>1.9</version>
+    </dependency>
 
     <dependency>
       <groupId>commons-validator</groupId>

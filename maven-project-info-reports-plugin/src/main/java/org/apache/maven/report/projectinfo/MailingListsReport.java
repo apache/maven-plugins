@@ -27,6 +27,7 @@ import java.util.Locale;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.model.MailingList;
 import org.apache.maven.model.Model;
+import org.apache.maven.plugin.logging.Log;
 import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.util.StringUtils;
 
@@ -48,9 +49,9 @@ public class MailingListsReport
      *
      * @parameter
      * @since 2.2
+     * @deprecated since 2.3, you should use a custom bundle.
      */
-    protected String introduction;    
-
+    protected String introduction;
 
     // ----------------------------------------------------------------------
     // Public methods
@@ -59,7 +60,9 @@ public class MailingListsReport
     /** {@inheritDoc} */
     public void executeReport( Locale locale )
     {
-        MailingListsRenderer r = new MailingListsRenderer( getSink(), getProject().getModel(), i18n, locale, introduction );
+        MailingListsRenderer r =
+            new MailingListsRenderer( getSink(), getProject().getModel(), getI18N( locale ), locale, introduction,
+                                      getLog() );
 
         r.render();
     }
@@ -85,19 +88,23 @@ public class MailingListsReport
     protected static class MailingListsRenderer
         extends AbstractProjectInfoRenderer
     {
-        private Model model;
-
         private static final String[] EMPTY_STRING_ARRAY = new String[0];
-        
-        private String introduction;
 
-        MailingListsRenderer( Sink sink, Model model, I18N i18n, Locale locale, String introduction )
+        private final Model model;
+
+        private final String introduction;
+
+        private final Log log;
+
+        MailingListsRenderer( Sink sink, Model model, I18N i18n, Locale locale, String introduction, Log log )
         {
             super( sink, i18n, locale );
 
             this.model = model;
-            
+
             this.introduction = introduction;
+
+            this.log = log;
         }
 
         protected String getI18Nsection()
@@ -126,13 +133,15 @@ public class MailingListsReport
 
             if ( StringUtils.isNotBlank( introduction ) )
             {
+                log.warn( "Since 2.3, the <introduction/> parameter is deprecated. Please use a <customBundle/>"
+                    + " parameter to configure a custom bundle." );
                 paragraph( introduction );
             }
             else
             {
                 paragraph( getI18nString( "intro" ) );
             }
-            
+
             startTable();
 
             // To beautify the display with other archives
@@ -199,7 +208,7 @@ public class MailingListsReport
 
                     textRow.add( createLinkPatternedText( getArchiveServer( otherArchive ), otherArchive ) );
 
-                    tableRow( (String[]) textRow.toArray( EMPTY_STRING_ARRAY ) );
+                    tableRow( textRow.toArray( EMPTY_STRING_ARRAY ) );
 
                     // Other lines...
                     while ( it.hasNext() )
@@ -226,7 +235,7 @@ public class MailingListsReport
 
                         textRow.add( createLinkPatternedText( getArchiveServer( otherArchive ), otherArchive ) );
 
-                        tableRow( (String[]) textRow.toArray( EMPTY_STRING_ARRAY ) );
+                        tableRow( textRow.toArray( EMPTY_STRING_ARRAY ) );
                     }
                 }
                 else
@@ -236,7 +245,7 @@ public class MailingListsReport
                         textRow.add( null );
                     }
 
-                    tableRow( (String[]) textRow.toArray( EMPTY_STRING_ARRAY ) );
+                    tableRow( textRow.toArray( EMPTY_STRING_ARRAY ) );
                 }
             }
 
