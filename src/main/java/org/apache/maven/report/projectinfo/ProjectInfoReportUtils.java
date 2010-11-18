@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
@@ -51,6 +52,9 @@ import org.codehaus.plexus.util.StringUtils;
 public class ProjectInfoReportUtils
 {
     private static final UrlValidator URL_VALIDATOR = new UrlValidator( new String[] { "http", "https" } );
+
+    /** The timeout when getting the url input stream */
+    private static final int TIMEOUT = 1000 * 5;
 
     /**
      * Get the input stream using ISO-8859-1 as charset from an URL.
@@ -130,7 +134,10 @@ public class ProjectInfoReportUtils
         InputStream in = null;
         try
         {
-            in = url.openStream();
+            URLConnection conn = url.openConnection();
+            conn.setConnectTimeout( TIMEOUT );
+            conn.setReadTimeout( TIMEOUT );
+            in = conn.getInputStream();
 
             if ( encoding == null )
             {
