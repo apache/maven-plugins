@@ -83,6 +83,7 @@ public class Dependencies
      * @param dependencyTreeNode the DependencyNode.
      * @param classesAnalyzer the JarClassesAnalysis.
      */
+    @SuppressWarnings( "unchecked" )
     public Dependencies( MavenProject project, DependencyNode dependencyTreeNode,
                          JarClassesAnalysis classesAnalyzer )
     {
@@ -93,15 +94,7 @@ public class Dependencies
         /*
          * Workaround to ensure proper File objects in the Artifacts from the ReportResolutionListener
          */
-        Map<String, Artifact> projectMap = new HashMap<String, Artifact>();
-        Iterator<Artifact> it = project.getArtifacts().iterator();
-        while ( it.hasNext() )
-        {
-            Artifact artifact = it.next();
-            projectMap.put( ArtifactUtils.versionlessKey( artifact ), artifact );
-        }
-
-        mapArtifactFiles( dependencyTreeNode, projectMap );
+        mapArtifactFiles( this.dependencyTreeNode );
     }
 
     /**
@@ -295,7 +288,7 @@ public class Dependencies
     // Private methods
     // ----------------------------------------------------------------------
 
-    private void mapArtifactFiles( DependencyNode node, Map<String, Artifact> projectMap )
+    private void mapArtifactFiles( DependencyNode node )
     {
         List<DependencyNode> childs = node.getChildren();
         if ( ( childs == null ) || childs.isEmpty() )
@@ -308,14 +301,13 @@ public class Dependencies
         {
             DependencyNode anode = it.next();
             String key = ArtifactUtils.versionlessKey( anode.getArtifact() );
-            Artifact projartifact = (Artifact) projectMap.get( key );
+            Artifact projartifact = (Artifact) project.getArtifactMap().get( key );
             if ( projartifact != null )
             {
-                anode = new DependencyNode( ArtifactUtils.copyArtifact( projartifact ) );
                 anode.getArtifact().setFile( projartifact.getFile() );
             }
 
-            mapArtifactFiles( anode, projectMap );
+            mapArtifactFiles( anode );
         }
     }
 
