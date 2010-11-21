@@ -162,7 +162,7 @@ under the License.
   </contributors>
 
   <prerequisites>
-    <maven>3.0</maven>
+    <maven>${mavenVersion}</maven>
   </prerequisites>
 
   <scm>
