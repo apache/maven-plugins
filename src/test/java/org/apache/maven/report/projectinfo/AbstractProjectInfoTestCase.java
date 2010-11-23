@@ -60,7 +60,7 @@ public abstract class AbstractProjectInfoTestCase
      */
     private I18N i18n;
 
-    /** {@inheritDoc} */
+    @Override
     protected void setUp()
         throws Exception
     {
@@ -76,7 +76,7 @@ public abstract class AbstractProjectInfoTestCase
         Locale.setDefault( DEFAULT_LOCALE );
     }
 
-    /** {@inheritDoc} */
+    @Override
     protected InputStream getCustomConfiguration()
         throws Exception
     {
@@ -93,7 +93,7 @@ public abstract class AbstractProjectInfoTestCase
         return null;
     }
 
-    /** {@inheritDoc} */
+    @Override
     protected void tearDown()
         throws Exception
     {

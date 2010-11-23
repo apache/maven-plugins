@@ -21,6 +21,7 @@ package org.apache.maven.report.projectinfo;
 
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.doxia.sink.SinkEventAttributeSet;
+import org.apache.maven.doxia.sink.SinkEventAttributes;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.MavenReportException;
@@ -74,12 +75,13 @@ public class DependencyConvergenceReport
         return "dependency-convergence";
     }
 
+    @Override
     protected String getI18Nsection()
     {
         return "dependency-convergence";
     }
 
-    /** {@inheritDoc} */
+    @Override
     public boolean canGenerateReport()
     {
         // only generate the convergency report if we are running a reactor build
@@ -90,7 +92,7 @@ public class DependencyConvergenceReport
     // Protected methods
     // ----------------------------------------------------------------------
 
-    /** {@inheritDoc} */
+    @Override
     protected void executeReport( Locale locale )
         throws MavenReportException
     {
@@ -199,7 +201,7 @@ public class DependencyConvergenceReport
         for ( String version : artifactMap.keySet() )
         {
             sink.tableRow();
-            sink.tableCell( new SinkEventAttributeSet( new String[] {SinkEventAttributeSet.WIDTH, "25%"} ) );
+            sink.tableCell( new SinkEventAttributeSet( new String[] {SinkEventAttributes.WIDTH, "25%"} ) );
             sink.text( version );
             sink.tableCell_();
 
@@ -538,10 +540,11 @@ public class DependencyConvergenceReport
 
         for ( MavenProject reactorProject : reactorProjects )
         {
+            @SuppressWarnings( "unchecked" )
             Iterator<Dependency> itdep = reactorProject.getDependencies().iterator();
             while ( itdep.hasNext() )
             {
-                Dependency dep = (Dependency) itdep.next();
+                Dependency dep = itdep.next();
                 String key = dep.getGroupId() + ":" + dep.getArtifactId();
                 List<ReverseDependencyLink> depList = dependencyMap.get( key );
                 if ( depList == null )
@@ -581,7 +584,7 @@ public class DependencyConvergenceReport
             return project;
         }
 
-        /** {@inheritDoc} */
+        @Override
         public String toString()
         {
             return project.getId();

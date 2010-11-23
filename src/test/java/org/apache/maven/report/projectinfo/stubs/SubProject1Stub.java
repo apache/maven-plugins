@@ -32,13 +32,13 @@ import org.apache.maven.model.Dependency;
 public class SubProject1Stub
     extends ProjectInfoProjectStub
 {
-    /** {@inheritDoc} */
+    @Override
     protected String getPOM()
     {
         return "subproject1/pom.xml";
     }
 
-    /** {@inheritDoc} */
+    @Override
     public List<Dependency> getDependencies()
     {
         Dependency d = new Dependency();

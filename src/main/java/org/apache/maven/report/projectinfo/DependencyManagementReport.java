@@ -98,9 +98,10 @@ public class DependencyManagementReport
     // Public methods
     // ----------------------------------------------------------------------
 
-    /** {@inheritDoc} */
+    @Override
     public void executeReport( Locale locale )
     {
+        @SuppressWarnings( "unchecked" )
         RepositoryUtils repoUtils =
             new RepositoryUtils( getLog(), wagonManager, settings,
                                  mavenProjectBuilder, factory, resolver, project.getRemoteArtifactRepositories(),
@@ -120,12 +121,13 @@ public class DependencyManagementReport
         return "dependency-management";
     }
 
+    @Override
     protected String getI18Nsection()
     {
         return "dependencyManagement";
     }
 
-    /** {@inheritDoc} */
+    @Override
     public boolean canGenerateReport()
     {
         return getManagementDependencies().hasDependencies();

@@ -166,7 +166,7 @@ public abstract class AbstractProjectInfoReport
     // Public methods
     // ----------------------------------------------------------------------
 
-    /** {@inheritDoc} */
+    @Override
     public void execute()
         throws MojoExecutionException
     {
@@ -184,7 +184,7 @@ public abstract class AbstractProjectInfoReport
             DecorationModel model = new DecorationModel();
             model.setBody( new Body() );
 
-            Map attributes = new HashMap();
+            Map<String, Object> attributes = new HashMap<String, Object>();
             attributes.put( "outputEncoding", "UTF-8" );
             attributes.put( "project", project );
 
@@ -236,7 +236,7 @@ public abstract class AbstractProjectInfoReport
         }
     }
 
-    /** {@inheritDoc} */
+    @Override
     public String getCategoryName()
     {
         return CATEGORY_PROJECT_INFORMATION;
@@ -246,31 +246,31 @@ public abstract class AbstractProjectInfoReport
     // Protected methods
     // ----------------------------------------------------------------------
 
-    /** {@inheritDoc} */
+    @Override
     protected String getOutputDirectory()
     {
         return outputDirectory.getAbsolutePath();
     }
 
-    /** {@inheritDoc} */
+    @Override
     public File getReportOutputDirectory()
     {
         return outputDirectory;
     }
 
-    /** {@inheritDoc} */
+    @Override
     public void setReportOutputDirectory( File reportOutputDirectory )
     {
         this.outputDirectory = reportOutputDirectory;
     }
 
-    /** {@inheritDoc} */
+    @Override
     protected MavenProject getProject()
     {
         return project;
     }
 
-    /** {@inheritDoc} */
+    @Override
     protected Renderer getSiteRenderer()
     {
         return siteRenderer;
@@ -361,61 +361,73 @@ public abstract class AbstractProjectInfoReport
             }
         }
 
+        /** {@inheritDoc} */
         public String getDefaultLanguage()
         {
             return locale.getLanguage();
         }
 
+        /** {@inheritDoc} */
         public String getDefaultCountry()
         {
             return locale.getCountry();
         }
 
+        /** {@inheritDoc} */
         public String getDefaultBundleName()
         {
             return bundleName;
         }
 
+        /** {@inheritDoc} */
         public String[] getBundleNames()
         {
             return new String[] { bundleName };
         }
 
+        /** {@inheritDoc} */
         public ResourceBundle getBundle()
         {
             return bundle;
         }
 
+        /** {@inheritDoc} */
         public ResourceBundle getBundle( String bundleName )
         {
             return bundle;
         }
 
+        /** {@inheritDoc} */
         public ResourceBundle getBundle( String bundleName, String languageHeader )
         {
             return bundle;
         }
 
+        /** {@inheritDoc} */
         public ResourceBundle getBundle( String bundleName, Locale locale )
         {
             return bundle;
         }
 
+        /** {@inheritDoc} */
         public Locale getLocale( String languageHeader )
         {
             return new Locale( languageHeader );
         }
 
+        /** {@inheritDoc} */
         public String getString( String key )
         {
             return getString( bundleName, locale, key );
         }
 
+        /** {@inheritDoc} */
         public String getString( String key, Locale locale )
         {
             return getString( bundleName, locale, key );
         }
 
+        /** {@inheritDoc} */
         public String getString( String bundleName, Locale locale, String key )
         {
             String value;
@@ -465,26 +477,31 @@ public abstract class AbstractProjectInfoReport
             return value;
         }
 
+        /** {@inheritDoc} */
         public String format( String key, Object arg1 )
         {
             return format( bundleName, locale, key, new Object[] { arg1 } );
         }
 
+        /** {@inheritDoc} */
         public String format( String key, Object arg1, Object arg2 )
         {
             return format( bundleName, locale, key, new Object[] { arg1, arg2 } );
         }
 
+        /** {@inheritDoc} */
         public String format( String bundleName, Locale locale, String key, Object arg1 )
         {
             return format( bundleName, locale, key, new Object[] { arg1 } );
         }
 
+        /** {@inheritDoc} */
         public String format( String bundleName, Locale locale, String key, Object arg1, Object arg2 )
         {
             return format( bundleName, locale, key, new Object[] { arg1, arg2 } );
         }
 
+        /** {@inheritDoc} */
         public String format( String bundleName, Locale locale, String key, Object[] args )
         {
             if ( locale == null )

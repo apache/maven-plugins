@@ -72,9 +72,10 @@ public class PluginsReport
     // Public methods
     // ----------------------------------------------------------------------
 
-    /** {@inheritDoc} */
+    @Override
     public void executeReport( Locale locale )
     {
+        @SuppressWarnings( "unchecked" )
         PluginsRenderer r = new PluginsRenderer( getLog(), getSink(), locale, getI18N( locale ), project.getPluginArtifacts(),
                                                  project.getReportArtifacts(), project, mavenProjectBuilder,
                                                  artifactFactory, localRepository );
@@ -87,12 +88,13 @@ public class PluginsReport
         return "plugins";
     }
 
+    @Override
     protected String getI18Nsection()
     {
         return "plugins";
     }
 
-    /** {@inheritDoc} */
+    @Override
     public boolean canGenerateReport()
     {
         return ( project.getPluginArtifacts() != null && !project.getPluginArtifacts().isEmpty() )
@@ -156,12 +158,13 @@ public class PluginsReport
             this.localRepository = localRepository;
         }
 
+        @Override
         protected String getI18Nsection()
         {
             return "plugins";
         }
 
-        /** {@inheritDoc} */
+        @Override
         public void renderBody()
         {
             // === Section: Project Plugins.
@@ -213,6 +216,7 @@ public class PluginsReport
 
                 Artifact pluginArtifact = artifactFactory.createParentArtifact( artifact.getGroupId(), artifact
                     .getArtifactId(), versionRange.toString() );
+                @SuppressWarnings( "unchecked" )
                 List<ArtifactRepository> artifactRepositories = project.getPluginArtifactRepositories();
                 if ( artifactRepositories == null )
                 {

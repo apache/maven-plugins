@@ -83,7 +83,6 @@ public class Dependencies
      * @param dependencyTreeNode the DependencyNode.
      * @param classesAnalyzer the JarClassesAnalysis.
      */
-    @SuppressWarnings( "unchecked" )
     public Dependencies( MavenProject project, DependencyNode dependencyTreeNode,
                          JarClassesAnalysis classesAnalyzer )
     {
@@ -126,7 +125,8 @@ public class Dependencies
         }
 
         projectDependencies = new ArrayList<Artifact>();
-        for ( Iterator<DependencyNode> i = dependencyTreeNode.getChildren().iterator(); i.hasNext(); )
+        for ( @SuppressWarnings( "unchecked" )
+        Iterator<DependencyNode> i = dependencyTreeNode.getChildren().iterator(); i.hasNext(); )
         {
             DependencyNode dependencyNode = i.next();
 
@@ -163,7 +163,8 @@ public class Dependencies
         }
 
         allDependencies = new ArrayList<Artifact>();
-        for ( Iterator<DependencyNode> i = dependencyTreeNode.getChildren().iterator(); i.hasNext(); )
+        for ( @SuppressWarnings( "unchecked" )
+        Iterator<DependencyNode> i = dependencyTreeNode.getChildren().iterator(); i.hasNext(); )
         {
             DependencyNode dependencyNode = i.next();
 
@@ -290,6 +291,7 @@ public class Dependencies
 
     private void mapArtifactFiles( DependencyNode node )
     {
+        @SuppressWarnings( "unchecked" )
         List<DependencyNode> childs = node.getChildren();
         if ( ( childs == null ) || childs.isEmpty() )
         {
@@ -327,7 +329,8 @@ public class Dependencies
             return;
         }
 
-        for ( Iterator<DependencyNode> i = dependencyNode.getChildren().iterator(); i.hasNext(); )
+        for ( @SuppressWarnings( "unchecked" )
+        Iterator<DependencyNode> i = dependencyNode.getChildren().iterator(); i.hasNext(); )
         {
             DependencyNode subdependencyNode = i.next();
 

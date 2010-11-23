@@ -26,7 +26,7 @@ package org.apache.maven.report.projectinfo.stubs;
 public class CimStub
     extends ProjectInfoProjectStub
 {
-    /** {@inheritDoc} */
+    @Override
     protected String getPOM()
     {
         return "cim-plugin-config.xml";

@@ -40,13 +40,13 @@ public class ProjectIndexPageReport
     // Public methods
     // ----------------------------------------------------------------------
 
-    /** {@inheritDoc} */
+    @Override
     public String getName( Locale locale )
     {
         return getI18nString( locale, "title" );
     }
 
-    /** {@inheritDoc} */
+    @Override
     public String getDescription( Locale locale )
     {
         String desc;
@@ -62,7 +62,7 @@ public class ProjectIndexPageReport
         return desc;
     }
 
-    /** {@inheritDoc} */
+    @Override
     public void executeReport( Locale locale )
     {
         ProjectIndexRenderer r =
@@ -77,6 +77,7 @@ public class ProjectIndexPageReport
         return "index";
     }
 
+    @Override
     protected String getI18Nsection()
     {
         return "index";
@@ -109,13 +110,13 @@ public class ProjectIndexPageReport
             this.name = name;
         }
 
-        /** {@inheritDoc} */
+        @Override
         public String getTitle()
         {
             return title;
         }
 
-        /** {@inheritDoc} */
+        @Override
         public void renderBody()
         {
             startSection( title.trim() + " " + name );

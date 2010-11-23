@@ -42,7 +42,7 @@ public class IssueTrackingReport
     // Public methods
     // ----------------------------------------------------------------------
 
-    /** {@inheritDoc} */
+    @Override
     public void executeReport( Locale locale )
     {
         IssueTrackingRenderer r = new IssueTrackingRenderer( getSink(), getProject().getModel(), getI18N( locale ), locale );
@@ -56,6 +56,7 @@ public class IssueTrackingReport
         return "issue-tracking";
     }
 
+    @Override
     protected String getI18Nsection()
     {
         return "issuetracking";
@@ -80,12 +81,13 @@ public class IssueTrackingReport
             this.model = model;
         }
 
+        @Override
         protected String getI18Nsection()
         {
             return "issuetracking";
         }
 
-        /** {@inheritDoc} */
+        @Override
         public void renderBody()
         {
             IssueManagement issueManagement = model.getIssueManagement();

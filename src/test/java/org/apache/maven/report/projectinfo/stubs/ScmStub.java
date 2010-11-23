@@ -26,7 +26,7 @@ package org.apache.maven.report.projectinfo.stubs;
 public class ScmStub
     extends ProjectInfoProjectStub
 {
-    /** {@inheritDoc} */
+    @Override
     protected String getPOM()
     {
         return "scm-plugin-config.xml";
