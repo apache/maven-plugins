@@ -106,37 +106,37 @@ public abstract class ProjectInfoProjectStub
      */
     protected abstract String getPOM();
 
-    /** {@inheritDoc} */
+    @Override
     public Model getModel()
     {
         return model;
     }
 
-    /** {@inheritDoc} */
+    @Override
     public Build getBuild()
     {
         return build;
     }
 
-    /** {@inheritDoc} */
+    @Override
     public void setBuild( Build build )
     {
         this.build = build;
     }
 
-    /** {@inheritDoc} */
+    @Override
     public File getBasedir()
     {
         return new File( super.getBasedir() + "/src/test/resources/plugin-configs/" );
     }
 
-    /** {@inheritDoc} */
+    @Override
     public Set<Artifact> getArtifacts()
     {
         return Collections.emptySet();
     }
 
-    /** {@inheritDoc} */
+    @Override
     public List<ArtifactRepository> getRemoteArtifactRepositories()
     {
         ArtifactRepository repository = new DefaultArtifactRepository( "central", "http://repo1.maven.org/maven2",
@@ -145,7 +145,7 @@ public abstract class ProjectInfoProjectStub
         return Collections.singletonList( repository );
     }
 
-    /** {@inheritDoc} */
+    @Override
     public Set<Artifact> getDependencyArtifacts()
     {
         Artifact artifact =
@@ -154,13 +154,13 @@ public abstract class ProjectInfoProjectStub
         return Collections.singleton( artifact );
     }
 
-    /** {@inheritDoc} */
+    @Override
     public DependencyManagement getDependencyManagement()
     {
         return model.getDependencyManagement();
     }
 
-    /** {@inheritDoc} */
+    @Override
     public PluginManagement getPluginManagement()
     {
         PluginManagement pluginMgmt = null;

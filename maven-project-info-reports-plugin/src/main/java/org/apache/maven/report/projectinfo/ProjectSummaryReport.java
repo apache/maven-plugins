@@ -48,7 +48,7 @@ public class ProjectSummaryReport
     // Public methods
     // ----------------------------------------------------------------------
 
-    /** {@inheritDoc} */
+    @Override
     protected void executeReport( Locale locale )
         throws MavenReportException
     {
@@ -61,6 +61,7 @@ public class ProjectSummaryReport
         return "project-summary";
     }
 
+    @Override
     protected String getI18Nsection()
     {
         return "summary";
@@ -81,12 +82,13 @@ public class ProjectSummaryReport
             super( sink, getI18N( locale ), locale );
         }
 
+        @Override
         protected String getI18Nsection()
         {
             return "summary";
         }
 
-        /** {@inheritDoc} */
+        @Override
         protected void renderBody()
         {
             startSection( getTitle() );

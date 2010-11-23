@@ -30,7 +30,7 @@ public class DefaultArtifactHandlerStub
 {
     private String language;
 
-    /** {@inheritDoc} */
+    @Override
     public String getLanguage()
     {
         if ( language == null )

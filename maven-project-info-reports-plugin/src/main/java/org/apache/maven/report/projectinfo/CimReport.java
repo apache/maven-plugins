@@ -44,7 +44,7 @@ public class CimReport
     // Public methods
     // ----------------------------------------------------------------------
 
-    /** {@inheritDoc} */
+    @Override
     public void executeReport( Locale locale )
     {
         CimRenderer r = new CimRenderer( getSink(), getProject().getModel(), getI18N( locale ), locale );
@@ -58,6 +58,7 @@ public class CimReport
         return "integration";
     }
 
+    @Override
     protected String getI18Nsection()
     {
         return "cim";
@@ -82,12 +83,13 @@ public class CimReport
             this.model = model;
         }
 
+        @Override
         protected String getI18Nsection()
         {
             return "cim";
         }
 
-        /** {@inheritDoc} */
+        @Override
         public void renderBody()
         {
             CiManagement cim = model.getCiManagement();

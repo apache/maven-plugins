@@ -49,7 +49,7 @@ public class ModulesReport
     // Public methods
     // ----------------------------------------------------------------------
 
-    /** {@inheritDoc} */
+    @Override
     public void executeReport( Locale locale )
     {
         new ModulesRenderer( getSink(), getProject().getModel(), getI18N( locale ), locale ).render();
@@ -61,12 +61,13 @@ public class ModulesReport
         return "modules";
     }
 
+    @Override
     protected String getI18Nsection()
     {
         return "modules";
     }
 
-    /** {@inheritDoc} */
+    @Override
     public boolean canGenerateReport()
     {
         return ( getProject().getModel().getModules() != null && !getProject().getModel().getModules().isEmpty() );
@@ -91,12 +92,13 @@ public class ModulesReport
             this.model = model;
         }
 
+        @Override
         protected String getI18Nsection()
         {
             return "modules";
         }
 
-        /** {@inheritDoc} */
+        @Override
         public void renderBody()
         {
             List<String> modules = model.getModules();

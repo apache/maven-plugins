@@ -26,7 +26,7 @@ package org.apache.maven.report.projectinfo.stubs;
 public class MailingListStub
     extends ProjectInfoProjectStub
 {
-    /** {@inheritDoc} */
+    @Override
     protected String getPOM()
     {
         return "mailing-list-plugin-config.xml";

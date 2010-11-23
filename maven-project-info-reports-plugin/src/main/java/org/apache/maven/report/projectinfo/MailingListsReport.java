@@ -57,7 +57,7 @@ public class MailingListsReport
     // Public methods
     // ----------------------------------------------------------------------
 
-    /** {@inheritDoc} */
+    @Override
     public void executeReport( Locale locale )
     {
         MailingListsRenderer r =
@@ -73,6 +73,7 @@ public class MailingListsReport
         return "mail-lists";
     }
 
+    @Override
     protected String getI18Nsection()
     {
         return "mailing-lists";
@@ -107,12 +108,13 @@ public class MailingListsReport
             this.log = log;
         }
 
+        @Override
         protected String getI18Nsection()
         {
             return "mailing-lists";
         }
 
-        /** {@inheritDoc} */
+        @Override
         public void renderBody()
         {
             List<MailingList> mailingLists = model.getMailingLists();

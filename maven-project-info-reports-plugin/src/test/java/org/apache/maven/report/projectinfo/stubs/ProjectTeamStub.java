@@ -26,7 +26,7 @@ package org.apache.maven.report.projectinfo.stubs;
 public class ProjectTeamStub
     extends ProjectInfoProjectStub
 {
-    /** {@inheritDoc} */
+    @Override
     protected String getPOM()
     {
         return "project-team-plugin-config.xml";

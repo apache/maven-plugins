@@ -27,7 +27,7 @@ package org.apache.maven.report.projectinfo.stubs;
 public class PluginManagementStub
     extends ProjectInfoProjectStub
 {
-    /** {@inheritDoc} */
+    @Override
     protected String getPOM()
     {
         return "plugin-management-plugin-config.xml";

@@ -72,7 +72,7 @@ public class PluginManagementReport
     // Public methods
     // ----------------------------------------------------------------------
 
-    /** {@inheritDoc} */
+    @Override
     public void executeReport( Locale locale )
     {
         PluginManagementRenderer r = new PluginManagementRenderer( getLog(), getSink(), locale, getI18N( locale ), project
@@ -86,12 +86,13 @@ public class PluginManagementReport
         return "plugin-management";
     }
 
+    @Override
     protected String getI18Nsection()
     {
         return "pluginManagement";
     }
 
-    /** {@inheritDoc} */
+    @Override
     public boolean canGenerateReport()
     {
         return project.getPluginManagement() != null && project.getPluginManagement().getPlugins() != null
@@ -152,12 +153,13 @@ public class PluginManagementReport
             this.localRepository = localRepository;
         }
 
+        @Override
         protected String getI18Nsection()
         {
             return "pluginManagement";
         }
 
-        /** {@inheritDoc} */
+        @Override
         public void renderBody()
         {
             // === Section: Project PluginManagement.
@@ -190,6 +192,7 @@ public class PluginManagementReport
 
                 Artifact pluginArtifact = artifactFactory.createParentArtifact( plugin.getGroupId(), plugin
                     .getArtifactId(), versionRange.toString() );
+                @SuppressWarnings( "unchecked" )
                 List<ArtifactRepository> artifactRepositories = project.getPluginArtifactRepositories();
                 if ( artifactRepositories == null )
                 {

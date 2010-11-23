@@ -41,13 +41,13 @@ public class DependencyConvergenceStub
         setExecutionRoot( true );
     }
 
-    /** {@inheritDoc} */
+    @Override
     protected String getPOM()
     {
         return "dependency-convergence-plugin-config.xml";
     }
 
-    /** {@inheritDoc} */
+    @Override
     public List<Dependency> getDependencies()
     {
         return Collections.emptyList();

@@ -118,10 +118,13 @@ public class DependenciesRenderer
      */
     private Map<String, Object> licenseMap = new HashMap<String, Object>()
     {
+        private static final long serialVersionUID = 1L;
+
         /** {@inheritDoc} */
         public Object put( String key, Object value )
         {
             // handle multiple values as a set to avoid duplicates
+            @SuppressWarnings( "unchecked" )
             SortedSet<Object> valueList = (SortedSet<Object>) get( key );
             if ( valueList == null )
             {
@@ -223,6 +226,7 @@ public class DependenciesRenderer
         this.fileLengthDecimalFormat.setDecimalFormatSymbols( new DecimalFormatSymbols( locale ) );
     }
 
+    @Override
     protected String getI18Nsection()
     {
         return "dependencies";
@@ -232,7 +236,7 @@ public class DependenciesRenderer
     // Public methods
     // ----------------------------------------------------------------------
 
-    /** {@inheritDoc} */
+    @Override
     public void renderBody()
     {
         // Dependencies report
@@ -711,6 +715,7 @@ public class DependenciesRenderer
         }
     }
 
+    @SuppressWarnings( "unchecked" )
     private void renderSectionDependencyRepositoryLocations()
     {
         startSection( getI18nString( "repo.locations.title" ) );
@@ -832,10 +837,11 @@ public class DependenciesRenderer
         try
         {
             artifactProject = repoUtils.getMavenProjectFromRepository( artifact );
-            List licenses = artifactProject.getLicenses();
-            for ( Iterator iterator = licenses.iterator(); iterator.hasNext(); )
+            @SuppressWarnings( "unchecked" )
+            List<License> licenses = artifactProject.getLicenses();
+            for ( Iterator<License> iterator = licenses.iterator(); iterator.hasNext(); )
             {
-                License license = (License) iterator.next();
+                License license = iterator.next();
                 String artifactIdCell2 = ProjectInfoReportUtils.getArtifactIdCell( license.getName(), license.getUrl() );
                 sb.append( artifactIdCell2 );
             }
@@ -882,7 +888,8 @@ public class DependenciesRenderer
         {
             boolean toBeIncluded = false;
             List<DependencyNode> subList = new ArrayList<DependencyNode>();
-            for ( Iterator<DependencyNode> deps = node.getChildren().iterator(); deps.hasNext(); )
+            for ( @SuppressWarnings( "unchecked" )
+            Iterator<DependencyNode> deps = node.getChildren().iterator(); deps.hasNext(); )
             {
                 DependencyNode dep = deps.next();
 
@@ -927,6 +934,7 @@ public class DependenciesRenderer
                 String artifactDescription = artifactProject.getDescription();
                 String artifactUrl = artifactProject.getUrl();
                 String artifactName = artifactProject.getName();
+                @SuppressWarnings( "unchecked" )
                 List<License> licenses = artifactProject.getLicenses();
 
                 sink.tableRow();
@@ -1064,6 +1072,7 @@ public class DependenciesRenderer
             sink.text( ": " );
             sink.bold_();
 
+            @SuppressWarnings( "unchecked" )
             SortedSet<String> projects = (SortedSet<String>) entry.getValue();
 
             for ( Iterator<String> iterator = projects.iterator(); iterator.hasNext(); )
@@ -1211,6 +1220,7 @@ public class DependenciesRenderer
 
                     String depUrl = repoUtils.getDependencyUrlFromRepository( dependency, repo );
 
+                    @SuppressWarnings( "cast" )
                     Integer old = (Integer) totalByRepo.get( repokey );
                     if ( old == null )
                     {
@@ -1260,7 +1270,7 @@ public class DependenciesRenderer
             {
                 tableCell( dependency.getId() );
 
-                for ( String repoId : repoIdList )
+                for ( @SuppressWarnings( "unused" ) String repoId : repoIdList )
                 {
                     tableCell( "-" );
                 }

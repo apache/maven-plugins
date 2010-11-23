@@ -26,7 +26,7 @@ package org.apache.maven.report.projectinfo.stubs;
 public class SummaryStub
     extends ProjectInfoProjectStub
 {
-    /** {@inheritDoc} */
+    @Override
     protected String getPOM()
     {
         return "summary-plugin-config.xml";

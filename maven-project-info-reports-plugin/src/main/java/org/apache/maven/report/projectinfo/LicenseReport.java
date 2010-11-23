@@ -81,7 +81,7 @@ public class LicenseReport
     // Public methods
     // ----------------------------------------------------------------------
 
-    /** {@inheritDoc} */
+    @Override
     public void executeReport( Locale locale )
     {
         LicenseRenderer r = new LicenseRenderer( getSink(), getProject(), getI18N( locale ), locale, settings, linkOnly );
@@ -89,7 +89,7 @@ public class LicenseReport
         r.render();
     }
 
-    /** {@inheritDoc} */
+    @Override
     public boolean canGenerateReport()
     {
         if ( !offline )
@@ -137,6 +137,7 @@ public class LicenseReport
         return "license";
     }
 
+    @Override
     protected String getI18Nsection()
     {
         return "license";
@@ -223,12 +224,13 @@ public class LicenseReport
             this.linkOnly = linkOnly;
         }
 
+        @Override
         protected String getI18Nsection()
         {
             return "license";
         }
 
-        /** {@inheritDoc} */
+        @Override
         public void renderBody()
         {
             List<License> licenses = project.getModel().getLicenses();

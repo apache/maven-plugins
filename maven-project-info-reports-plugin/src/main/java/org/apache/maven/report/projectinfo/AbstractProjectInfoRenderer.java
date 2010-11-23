@@ -43,7 +43,7 @@ public abstract class AbstractProjectInfoRenderer
         this.locale = locale;
     }
 
-    /** {@inheritDoc} */
+    @Override
     public String getTitle()
     {
         return getI18nString( "title" );
@@ -59,6 +59,7 @@ public abstract class AbstractProjectInfoRenderer
         return i18n.getString( "project-info-report", locale, "report." + section + '.' + key );
     }
 
+    @Override
     protected void text( String text )
     {
         if ( StringUtils.isEmpty( text ) ) // Take care of spaces

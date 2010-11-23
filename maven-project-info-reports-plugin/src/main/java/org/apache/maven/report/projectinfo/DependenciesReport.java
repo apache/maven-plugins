@@ -167,7 +167,7 @@ public class DependenciesReport
     // Public methods
     // ----------------------------------------------------------------------
 
-    /** {@inheritDoc} */
+    @Override
     public void executeReport( Locale locale )
     {
         if ( settings.isOffline() && dependencyLocationsEnabled )
@@ -185,6 +185,7 @@ public class DependenciesReport
             getLog().error( "Cannot copy ressources", e );
         }
 
+        @SuppressWarnings( "unchecked" )
         RepositoryUtils repoUtils =
             new RepositoryUtils( getLog(), wagonManager, settings,
                                  mavenProjectBuilder, factory, resolver, project.getRemoteArtifactRepositories(),
@@ -211,6 +212,7 @@ public class DependenciesReport
         return "dependencies";
     }
 
+    @Override
     protected String getI18Nsection()
     {
         return "dependencies";
@@ -245,42 +247,55 @@ public class DependenciesReport
     private void copyResources( File outputDirectory )
         throws IOException
     {
-        InputStream resourceList =
-            getClass().getClassLoader().getResourceAsStream( RESOURCES_DIR + "/resources.txt" );
-
-        if ( resourceList != null )
+        InputStream resourceList = null;
+        LineNumberReader reader = null;
+        try
         {
-            LineNumberReader reader =
-                new LineNumberReader( new InputStreamReader( resourceList, ReaderFactory.US_ASCII ) );
+            resourceList = getClass().getClassLoader().getResourceAsStream( RESOURCES_DIR + "/resources.txt" );
 
-            String line = reader.readLine();
-
-            while ( line != null )
+            if ( resourceList != null )
             {
-                InputStream is = getClass().getClassLoader().getResourceAsStream( RESOURCES_DIR + "/" + line );
+                reader = new LineNumberReader( new InputStreamReader( resourceList, ReaderFactory.US_ASCII ) );
 
-                if ( is == null )
+                String line = reader.readLine();
+
+                while ( line != null )
                 {
-                    throw new IOException( "The resource " + line + " doesn't exist." );
+                    InputStream is = getClass().getClassLoader().getResourceAsStream( RESOURCES_DIR + "/" + line );
+
+                    if ( is == null )
+                    {
+                        throw new IOException( "The resource " + line + " doesn't exist." );
+                    }
+
+                    File outputFile = new File( outputDirectory, line );
+
+                    if ( !outputFile.getParentFile().exists() )
+                    {
+                        outputFile.getParentFile().mkdirs();
+                    }
+
+                    FileOutputStream w = null;
+                    try
+                    {
+                        w = new FileOutputStream( outputFile );
+                        IOUtil.copy( is, w );
+                    }
+                    finally
+                    {
+                        IOUtil.close( is );
+
+                        IOUtil.close( w );
+                    }
+
+                    line = reader.readLine();
                 }
-
-                File outputFile = new File( outputDirectory, line );
-
-                if ( !outputFile.getParentFile().exists() )
-                {
-                    outputFile.getParentFile().mkdirs();
-                }
-
-                FileOutputStream w = new FileOutputStream( outputFile );
-
-                IOUtil.copy( is, w );
-
-                IOUtil.close( is );
-
-                IOUtil.close( w );
-
-                line = reader.readLine();
             }
+        }
+        finally
+        {
+            IOUtil.close( resourceList );
+            IOUtil.close( reader );
         }
     }
 }

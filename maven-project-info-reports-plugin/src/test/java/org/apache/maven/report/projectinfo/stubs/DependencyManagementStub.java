@@ -27,7 +27,7 @@ package org.apache.maven.report.projectinfo.stubs;
 public class DependencyManagementStub
     extends ProjectInfoProjectStub
 {
-    /** {@inheritDoc} */
+    @Override
     protected String getPOM()
     {
         return "dependency-management-plugin-config.xml";

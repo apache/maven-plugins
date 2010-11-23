@@ -100,7 +100,7 @@ public class ScmReport
     // Public methods
     // ----------------------------------------------------------------------
 
-    /** {@inheritDoc} */
+    @Override
     public void executeReport( Locale locale )
     {
         ScmRenderer r = new ScmRenderer( getLog(), scmManager, getSink(), getProject().getModel(), getI18N( locale ), locale,
@@ -116,6 +116,7 @@ public class ScmReport
         return "source-repository";
     }
 
+    @Override
     protected String getI18Nsection()
     {
         return "scm";
@@ -169,12 +170,13 @@ public class ScmReport
 
         }
 
+        @Override
         protected String getI18Nsection()
         {
             return "scm";
         }
 
-        /** {@inheritDoc} */
+        @Override
         public void renderBody()
         {
             Scm scm = model.getScm();
@@ -710,6 +712,7 @@ public class ScmReport
          * @param scmUrl an SCM URL
          * @return a valid SCM repository or null
          */
+        @SuppressWarnings( "unchecked" )
         public ScmRepository getScmRepository( String scmUrl )
         {
             if ( StringUtils.isEmpty( scmUrl ) )

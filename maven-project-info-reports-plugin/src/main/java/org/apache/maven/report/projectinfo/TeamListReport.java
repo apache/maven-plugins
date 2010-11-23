@@ -53,7 +53,7 @@ public class TeamListReport
     // Public methods
     // ----------------------------------------------------------------------
 
-    /** {@inheritDoc} */
+    @Override
     public void executeReport( Locale locale )
     {
         TeamListRenderer r = new TeamListRenderer( getSink(), project.getModel(), getI18N( locale ), locale, getLog() );
@@ -67,6 +67,7 @@ public class TeamListReport
         return "team-list";
     }
 
+    @Override
     protected String getI18Nsection()
     {
         return "team-list";
@@ -114,12 +115,13 @@ public class TeamListReport
             this.log = log;
         }
 
+        @Override
         protected String getI18Nsection()
         {
             return "team-list";
         }
 
-        /** {@inheritDoc} */
+        @Override
         public void renderBody()
         {
             startSection( getI18nString( "intro.title" ) );
@@ -491,7 +493,7 @@ public class TeamListReport
             String[] array = new String[requiredArray.size()];
             for ( int i = 0; i < array.length; i++ )
             {
-                array[i] = (String) requiredArray.get( i );
+                array[i] = requiredArray.get( i );
             }
 
             return array;
@@ -527,7 +529,7 @@ public class TeamListReport
             String[] array = new String[requiredArray.size()];
             for ( int i = 0; i < array.length; i++ )
             {
-                array[i] = (String) requiredArray.get( i );
+                array[i] = requiredArray.get( i );
             }
 
             return array;

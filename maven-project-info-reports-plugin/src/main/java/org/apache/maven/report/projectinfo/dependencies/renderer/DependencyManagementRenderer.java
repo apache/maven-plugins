@@ -100,12 +100,13 @@ public class DependencyManagementRenderer
     // Public methods
     // ----------------------------------------------------------------------
 
+    @Override
     protected String getI18Nsection()
     {
         return "dependencyManagement";
     }
 
-    /** {@inheritDoc} */
+    @Override
     public void renderBody()
     {
         // Dependencies report
@@ -216,10 +217,11 @@ public class DependencyManagementRenderer
         try
         {
             artifactProject = repoUtils.getMavenProjectFromRepository( artifact );
-            List licenses = artifactProject.getLicenses();
-            for ( Iterator iterator = licenses.iterator(); iterator.hasNext(); )
+            @SuppressWarnings( "unchecked" )
+            List<License> licenses = artifactProject.getLicenses();
+            for ( Iterator<License> iterator = licenses.iterator(); iterator.hasNext(); )
             {
-                License license = (License) iterator.next();
+                License license = iterator.next();
                 String artifactIdCell2 = ProjectInfoReportUtils.getArtifactIdCell( license.getName(), license.getUrl() );
                 sb.append( artifactIdCell2 );
             }

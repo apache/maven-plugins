@@ -26,7 +26,7 @@ package org.apache.maven.report.projectinfo.stubs;
 public class LicenseStub
     extends ProjectInfoProjectStub
 {
-    /** {@inheritDoc} */
+    @Override
     protected String getPOM()
     {
         return "license-plugin-config.xml";

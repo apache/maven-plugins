@@ -26,7 +26,7 @@ package org.apache.maven.report.projectinfo.stubs;
 public class IssueTrackingStub
     extends ProjectInfoProjectStub
 {
-    /** {@inheritDoc} */
+    @Override
     protected String getPOM()
     {
         return "issue-tracking-plugin-config.xml";
