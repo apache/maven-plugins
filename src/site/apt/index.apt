@@ -3,7 +3,7 @@
  ------
  Maria Odea Ching
  ------
- 2009-03-08
+ 2010-11-25
  ------
 
  ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -61,7 +61,7 @@ Maven Site Plugin
 
    * {{{./jar-mojo.html}site:jar}} bundles the site output into a JAR so that it can be deployed to a repository.
 
-   * {{{./effective-site-mojo.html}site:effective-site}} calculates effective site descriptor, after inheritance and
+   * {{{./effective-site-mojo.html}site:effective-site}} calculates the effective site descriptor, after inheritance and
      interpolation.
 
 * Usage

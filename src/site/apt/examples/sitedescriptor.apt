@@ -42,7 +42,7 @@ Configuring the Site Descriptor
   The format is nearly the same, so you can probably reuse most of your old file.
 
   There is an
-  {{{http://maven.apache.org/doxia/doxia-sitetools-1.0.x/doxia-decoration-model/decoration.html}XML Schema Reference for the site descriptor}}
+  {{{http://maven.apache.org/doxia/doxia-sitetools/doxia-decoration-model/decoration.html}XML Schema Reference for the site descriptor}}
   available.
 
   The XML Schema for the site descriptor is published at {{http://maven.apache.org/xsd/decoration-1.0.0.xsd}}.
