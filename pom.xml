@@ -223,12 +223,13 @@ under the License.
       <id>run-its</id>
       <properties>
         <sitePluginVersion>2.1.1</sitePluginVersion>
+        <invokerPluginVersion>1.5</invokerPluginVersion>
       </properties>
       <build>
         <plugins>
           <plugin>
             <artifactId>maven-invoker-plugin</artifactId>
-            <version>1.5</version>
+            <version>${invokerPluginVersion}</version>
             <configuration>
               <debug>true</debug>
               <projectsDirectory>src/it</projectsDirectory>
