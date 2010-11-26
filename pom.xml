@@ -54,8 +54,8 @@ under the License.
 
   <properties>
     <mavenVersion>2.0.6</mavenVersion>
-    <doxiaVersion>1.0-alpha-11</doxiaVersion>
-    <doxia-sitetoolsVersion>1.0-alpha-11</doxia-sitetoolsVersion>
+    <doxiaVersion>1.1.4</doxiaVersion>
+    <doxia-sitetoolsVersion>1.1.4</doxia-sitetoolsVersion>
   </properties>
 
   <dependencies>
