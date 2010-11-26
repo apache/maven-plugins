@@ -222,7 +222,7 @@ under the License.
     <profile>
       <id>run-its</id>
       <properties>
-        <sitePluginVersion>2.0.1</sitePluginVersion>
+        <sitePluginVersion>2.1.1</sitePluginVersion>
       </properties>
       <build>
         <plugins>
