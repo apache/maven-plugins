@@ -25,7 +25,7 @@ under the License.
   <parent>
     <artifactId>maven-plugins</artifactId>
     <groupId>org.apache.maven.plugins</groupId>
-    <version>17</version>
+    <version>18</version>
   </parent>
 
   <artifactId>maven-invoker-plugin</artifactId>
@@ -228,7 +228,7 @@ under the License.
         <plugins>
           <plugin>
             <artifactId>maven-invoker-plugin</artifactId>
-            <version>1.4</version>
+            <version>1.5</version>
             <configuration>
               <debug>true</debug>
               <projectsDirectory>src/it</projectsDirectory>
@@ -271,7 +271,7 @@ under the License.
         </file>
       </activation>
       <properties>
-        <sitePluginVersion>3.0-beta-2</sitePluginVersion>
+        <sitePluginVersion>3.0-beta-3</sitePluginVersion>
       </properties>
     </profile>
   </profiles>
