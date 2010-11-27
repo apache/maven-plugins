@@ -86,6 +86,7 @@ public abstract class AbstractSiteMojo
      * The local repository.
      *
      * @parameter default-value="${localRepository}"
+     * @readonly
      */
     protected ArtifactRepository localRepository;
 
