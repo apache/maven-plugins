@@ -70,6 +70,9 @@ import java.util.HashMap;
 import java.util.StringTokenizer;
 import java.util.Collections;
 import java.util.Locale;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 
@@ -526,6 +529,14 @@ public abstract class AbstractInvokerMojo
     private boolean showVersion;
     
     /**
+     * number of threads for running tests in parallel.
+     * This will be the number of maven forked process in parallel.
+     * @parameter expression="${invoker.parrallelThreads}" default-value="1"
+     * @since 1.6
+     */
+    private int parrallelThreads;
+    
+    /**
      * The scripter runner that is responsible to execute hook scripts.
      */
     private ScriptRunner scriptRunner;
@@ -557,6 +568,12 @@ public abstract class AbstractInvokerMojo
                 + " If this is incorrect, ensure the skipInvocation parameter is not set to true." );
             return;
         }
+        
+        // done it here to prevent issues with concurrent access in case of parallel run
+        if (!disableReports && !reportsDirectory.exists() )
+        {
+            reportsDirectory.mkdirs();
+        }        
 
         BuildJob[] buildJobs;
         if ( pom != null )
@@ -943,7 +960,7 @@ public abstract class AbstractInvokerMojo
      * @param buildJobs The build jobs to run must not be <code>null</code> nor contain <code>null</code> elements.
      * @throws org.apache.maven.plugin.MojoExecutionException If any build could not be launched.
      */
-    private void runBuilds( File projectsDir, BuildJob[] buildJobs )
+    private void runBuilds( final File projectsDir, BuildJob[] buildJobs )
         throws MojoExecutionException
     {
         if ( !localRepositoryPath.exists() )
@@ -968,10 +985,50 @@ public abstract class AbstractInvokerMojo
 
         try
         {
-            for ( int i = 0; i < buildJobs.length; i++ )
+            if ( isParrallelRun() )
             {
-                BuildJob project = buildJobs[i];
-                runBuild( projectsDir, project, interpolatedSettingsFile );
+                getLog().info( "use parrallelThreads " + parrallelThreads );
+                final File finalInterpolatedSettingsFile = interpolatedSettingsFile;
+                ExecutorService executorService = Executors.newFixedThreadPool( parrallelThreads );
+                for ( int i = 0; i < buildJobs.length; i++ )
+                {
+                    final BuildJob project = buildJobs[i];
+                    executorService.execute( new Runnable()
+                    {
+
+                        public void run()
+                        {
+                            try
+                            {
+                                runBuild( projectsDir, project, finalInterpolatedSettingsFile );
+                            }
+                            catch ( MojoExecutionException e )
+                            {
+                                throw new RuntimeException( e.getMessage(), e );
+                            }
+                        }
+                    } );
+                }
+
+                try
+                {
+                    executorService.shutdown();
+                    // TODO add a configurable time out
+                    executorService.awaitTermination( Long.MAX_VALUE, TimeUnit.MILLISECONDS );
+                }
+                catch ( InterruptedException e )
+                {
+                    throw new MojoExecutionException( e.getMessage(), e );
+                }
+                
+            }
+            else
+            {
+                for ( int i = 0; i < buildJobs.length; i++ )
+                {
+                    BuildJob project = buildJobs[i];
+                    runBuild( projectsDir, project, interpolatedSettingsFile );
+                }
             }
         }
         finally
@@ -1153,11 +1210,6 @@ public abstract class AbstractInvokerMojo
         if ( disableReports )
         {
             return;
-        }
-
-        if ( !reportsDirectory.exists() )
-        {
-            reportsDirectory.mkdirs();
         }
 
         String safeFileName = buildJob.getProject().replace( '/', '_' ).replace( '\\', '_' ).replace( ' ', '_' );
@@ -1953,6 +2005,11 @@ public abstract class AbstractInvokerMojo
             }
         }
         return new InvokerProperties( props );
+    }
+    
+    protected boolean isParrallelRun()
+    {
+        return parrallelThreads > 1;
     }
 
 }
