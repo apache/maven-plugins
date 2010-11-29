@@ -1152,10 +1152,8 @@ public class DependenciesRenderer
             ArtifactRepositoryPolicy snapshotPolicy = repo.getSnapshots();
             tableCell( snapshotPolicy.isEnabled() ? snapshotEnabled : snapshotDisabled );
 
-            if ( !repoUrlBlackListed.isEmpty() )
-            {
-                tableCell( repo.isBlacklisted() ? blacklistedEnabled : blacklistedDisabled );
-            }
+            tableCell( repoUrlBlackListed.contains( repo.getUrl() ) ? blacklistedEnabled : blacklistedDisabled );
+
             sink.tableRow_();
         }
 
