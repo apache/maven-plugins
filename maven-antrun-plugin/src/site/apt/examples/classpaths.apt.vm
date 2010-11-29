@@ -28,17 +28,25 @@
 
 Referencing the Maven Classpaths
 
- A property is set for each dependency with the format 
- "groupId:artifactId[:classifier]:type".  For example, to show the path
- to a dependency with groupId "org.apache" and artifactId "common-util", the following could be used.
+ A property is set in the Ant build for each project dependency.  Each property name uses the format 
+ <<groupId:artifactId:type[:classifier]>>.  For example, to show the path to a 
+ jar dependency with groupId "org.apache" and artifactId "common-util", the following could be used.
 
 ------
 #set( $D = '$' )
-<echo message="Dependency JAR Path: ${D}{org.apache:common-util:jar}"/> 
+<echo message="${D}{org.apache:common-util:jar}"/> 
 ------
  
- Note that the old format "maven.dependency.groupId.artifactId[.classifier].type.path" has been deprecated
- and should no longer be used.
+ If the dependency includes a classifier, the classifier is appended to the property name.
+ For example, groupId "org.apache", artifactId "common-util", type "jar", and classifier "jdk14".
+ 
+------
+#set( $D = '$' )
+<echo message="${D}{org.apache:common-util:jar:jdk14}"/> 
+------
+ 
+ <<Note:>> the old format "maven.dependency.groupId.artifactId[.classifier].type.path" has 
+ been deprecated and should no longer be used.
  
  You can also use these classpath references:
   
