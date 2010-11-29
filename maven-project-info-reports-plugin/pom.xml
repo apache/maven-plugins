@@ -75,11 +75,11 @@ under the License.
   </issueManagement>
 
   <properties>
-    <doxiaVersion>1.1.2</doxiaVersion>
-    <doxia-sitetoolsVersion>1.1.2</doxia-sitetoolsVersion>
+    <doxiaVersion>1.1.4</doxiaVersion>
+    <doxia-sitetoolsVersion>1.1.4</doxia-sitetoolsVersion>
     <mavenVersion>2.2.0</mavenVersion>
-    <wagonVersion>1.0-beta-6</wagonVersion>
-    <scmVersion>1.3</scmVersion>
+    <wagonVersion>1.0-beta-7</wagonVersion>
+    <scmVersion>1.4</scmVersion>
     <sitePluginVersion>2.1</sitePluginVersion>
   </properties>
 
