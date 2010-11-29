@@ -346,6 +346,12 @@ under the License.
       <version>1.4</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.mortbay.jetty</groupId>
+      <artifactId>jetty</artifactId>
+      <version>6.1.5</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>
@@ -359,8 +365,68 @@ under the License.
             <target>1.5</target>
           </configuration>
         </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-jarsigner-plugin</artifactId>
+          <version>1.2</version>
+          <configuration>
+            <keystore>${basedir}/target/jetty.jks</keystore>
+            <keypass>apache</keypass>
+            <storepass>apache</storepass>
+            <alias>apache</alias>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>keytool-maven-plugin</artifactId>
+          <version>1.0</version>
+          <configuration>
+            <keystore>${basedir}/target/jetty.jks</keystore>
+            <dname>cn=jetty, ou=jetty, L=Unknown, ST=Unknown, o=Apache, c=Unknown</dname>
+            <keypass>apache</keypass>
+            <storepass>apache</storepass>
+            <alias>apache</alias>
+            <validity>365</validity>
+            <keyalg>RSA</keyalg>
+          </configuration>
+        </plugin>
       </plugins>
     </pluginManagement>
+    <plugins>
+      <!-- To use jetty ssl in tests -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jarsigner-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>sign</id>
+            <goals>
+              <goal>sign</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>verify</id>
+            <goals>
+              <goal>verify</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>keytool-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>init</id>
+            <phase>initialize</phase>
+            <goals>
+              <goal>clean</goal>
+              <goal>genkey</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
   </build>
 
   <reporting>
