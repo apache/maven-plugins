@@ -19,6 +19,7 @@ package org.apache.maven.report.projectinfo.dependencies;
  * under the License.
  */
 
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,6 +62,8 @@ import org.codehaus.plexus.util.StringUtils;
  */
 public class RepositoryUtils
 {
+    private static final List<String> UNKNOWN_HOSTS = new ArrayList<String>();
+
     private final Log log;
 
     private final WagonManager wagonManager;
@@ -166,8 +169,17 @@ public class RepositoryUtils
             return false;
         }
 
+        if ( UNKNOWN_HOSTS.contains( repo.getUrl() ) )
+        {
+            if ( log.isDebugEnabled() )
+            {
+                log.debug( "The repo url '" + repo.getUrl() + "' is unknowned - Ignored it" );
+            }
+            return false;
+        }
+
         repo = wagonManager.getMirrorRepository( repo );
-        
+
         String id = repo.getId();
         Repository repository = new Repository( id, repo.getUrl() );
 
@@ -241,13 +253,21 @@ public class RepositoryUtils
         }
         catch ( TransferFailedException e )
         {
-            if ( log.isDebugEnabled() )
+            if ( e.getCause().getClass().isAssignableFrom( UnknownHostException.class ) )
             {
-                log.error( "Unable to determine if resource " + artifact + " exists in " + repo.getUrl(), e );
+                log.error( "Unknown host " + e.getCause().getMessage() + " - ignored it" );
+                UNKNOWN_HOSTS.add( repo.getUrl() );
             }
             else
             {
-                log.error( "Unable to determine if resource " + artifact + " exists in " + repo.getUrl() );
+                if ( log.isDebugEnabled() )
+                {
+                    log.error( "Unable to determine if resource " + artifact + " exists in " + repo.getUrl(), e );
+                }
+                else
+                {
+                    log.error( "Unable to determine if resource " + artifact + " exists in " + repo.getUrl() );
+                }
             }
             return false;
         }
