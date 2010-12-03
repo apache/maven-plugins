@@ -253,7 +253,7 @@ public class RepositoryUtils
         }
         catch ( TransferFailedException e )
         {
-            if ( e.getCause().getClass().isAssignableFrom( UnknownHostException.class ) )
+            if ( e.getCause() instanceof UnknownHostException )
             {
                 log.error( "Unknown host " + e.getCause().getMessage() + " - ignored it" );
                 UNKNOWN_HOSTS.add( repo.getUrl() );
