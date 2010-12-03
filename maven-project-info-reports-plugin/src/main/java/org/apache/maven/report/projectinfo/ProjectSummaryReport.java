@@ -278,7 +278,8 @@ public class ProjectSummaryReport
 
             // some commons java packaging
             if ( packaging.equals( "jar" ) || packaging.equals( "ear" ) || packaging.equals( "war" )
-                || packaging.equals( "rar" ) || packaging.equals( "sar" ) || packaging.equals( "har" ) )
+                || packaging.equals( "rar" ) || packaging.equals( "sar" ) || packaging.equals( "har" )
+                || packaging.equals( "par" ) || packaging.equals( "ejb" ) )
             {
                 return true;
             }
