@@ -45,7 +45,7 @@ import org.codehaus.plexus.util.StringUtils;
  * @execute phase=generate-test-sources
  * @requiresDependencyResolution test
  * @see <a href="http://java.sun.com/j2se/javadoc/">Javadoc Tool</a>
- * @see <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#options">Javadoc Options </a>
+ * @see <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#options">Javadoc Options </a>
  */
 public class TestJavadocReport
     extends JavadocReport
@@ -57,7 +57,7 @@ public class TestJavadocReport
     /**
      * Specifies the Test title to be placed near the top of the overview summary file.
      * <br/>
-     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#doctitle">doctitle</a>.
+     * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#doctitle">doctitle</a>.
      * <br/>
      *
      * @parameter expression="${testDoctitle}" alias="doctitle"
@@ -72,7 +72,7 @@ public class TestJavadocReport
      * <br/>
      * <b>Note</b>: could be in conflict with &lt;nooverview/&gt;.
      * <br/>
-     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#overview">overview</a>.
+     * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#overview">overview</a>.
      * <br/>
      *
      * @parameter expression="${testOverview}" alias="overview"
@@ -84,7 +84,7 @@ public class TestJavadocReport
     /**
      * Specifies the Test title to be placed in the HTML title tag.
      * <br/>
-     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#windowtitle">windowtitle</a>.
+     * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#windowtitle">windowtitle</a>.
      * <br/>
      *
      * @parameter expression="${testWindowtitle}" alias="windowtitle"

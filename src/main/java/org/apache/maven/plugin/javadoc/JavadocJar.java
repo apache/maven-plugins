@@ -89,7 +89,7 @@ public class JavadocJar
 
     /**
      * Specifies the destination directory where javadoc saves the generated HTML files.
-     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#d">d</a>.
+     * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#d">d</a>.
      *
      * @parameter expression="${destDir}"
      * @deprecated
