@@ -44,7 +44,7 @@ import org.codehaus.plexus.util.StringUtils;
  * @goal javadoc
  * @execute phase="generate-sources"
  * @see <a href="http://java.sun.com/j2se/javadoc/">Javadoc Tool</a>
- * @see <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#options">Javadoc Options</a>
+ * @see <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#options">Javadoc Options</a>
  */
 public class JavadocReport
     extends AbstractJavadocMojo

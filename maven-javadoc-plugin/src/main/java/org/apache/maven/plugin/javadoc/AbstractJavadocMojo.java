@@ -120,7 +120,7 @@ import org.codehaus.plexus.util.xml.Xpp3Dom;
  * @version $Id$
  * @since 2.0
  * @requiresDependencyResolution compile
- * @see <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html">
+ * @see <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html">
  * The Java API Documentation Generator, 1.4.2</a>
  */
 public abstract class AbstractJavadocMojo
@@ -203,7 +203,7 @@ public abstract class AbstractJavadocMojo
 
     /**
      * For Javadoc options appears since Java 1.4.
-     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/javadoc/whatsnew-1.4.html#summary">
+     * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/javadoc/whatsnew-1.4.html#summary">
      * What's New in Javadoc 1.4</a>
      * @since 2.1
      */
@@ -211,7 +211,7 @@ public abstract class AbstractJavadocMojo
 
     /**
      * For Javadoc options appears since Java 1.4.2.
-     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/javadoc/whatsnew-1.4.2.html#commandlineoptions">
+     * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/javadoc/whatsnew-1.4.2.html#commandlineoptions">
      * What's New in Javadoc 1.4.2</a>
      * @since 2.1
      */
@@ -219,7 +219,7 @@ public abstract class AbstractJavadocMojo
 
     /**
      * For Javadoc options appears since Java 5.0.
-     * See <a href="http://java.sun.com/j2se/1.5.0/docs/guide/javadoc/whatsnew-1.5.0.html#commandlineoptions">
+     * See <a href="http://download.oracle.com/javase/1.5.0/docs/guide/javadoc/whatsnew-1.5.0.html#commandlineoptions">
      * What's New in Javadoc 5.0</a>
      * @since 2.1
      */
@@ -227,7 +227,7 @@ public abstract class AbstractJavadocMojo
 
     /**
      * For Javadoc options appears since Java 6.0.
-     * See <a href="http://java.sun.com/javase/6/docs/technotes/guides/javadoc/index.html">
+     * See <a href="http://download.oracle.com/javase/6/docs/technotes/guides/javadoc/index.html">
      * Javadoc Technology</a>
      * @since 2.4
      */
@@ -347,11 +347,11 @@ public abstract class AbstractJavadocMojo
      * <pre>
      * &lt;additionalJOption&gt;-J-Xss128m&lt;/additionalJOption&gt;
      * </pre>
-     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#J">Jflag</a>.
+     * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#J">Jflag</a>.
      * <br/>
      * See <a href="http://java.sun.com/javase/technologies/hotspot/vmoptions.jsp">vmoptions</a>.
      * <br/>
-     * See <a href="http://java.sun.com/j2se/1.4.2/docs/guide/net/properties.html">Networking Properties</a>.
+     * See <a href="http://download.oracle.com/javase/1.4.2/docs/guide/net/properties.html">Networking Properties</a>.
      *
      * @since 2.3
      * @parameter expression="${additionalJOption}"
@@ -460,7 +460,7 @@ public abstract class AbstractJavadocMojo
     protected boolean failOnError;
 
     /**
-     * Specifies to use the <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#standard">
+     * Specifies to use the <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#standard">
      * options provided by the Standard Doclet</a> for a custom doclet.
      * <br/>
      * Example:
@@ -561,7 +561,7 @@ public abstract class AbstractJavadocMojo
      * Specifies the paths where the boot classes reside. The <code>bootclasspath</code> can contain multiple paths
      * by separating them with a colon (<code>:</code>) or a semi-colon (<code>;</code>).
      * <br/>
-     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#bootclasspath">bootclasspath</a>.
+     * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#bootclasspath">bootclasspath</a>.
      * <br/>
      *
      * @parameter expression="${bootclasspath}"
@@ -572,7 +572,7 @@ public abstract class AbstractJavadocMojo
     /**
      * Specifies the artifacts where the boot classes reside.
      * <br/>
-     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#bootclasspath">bootclasspath</a>.
+     * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#bootclasspath">bootclasspath</a>.
      * <br/>
      * Example:
      * <pre>
@@ -596,9 +596,9 @@ public abstract class AbstractJavadocMojo
     /**
      * Uses the sentence break iterator to determine the end of the first sentence.
      * <br/>
-     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#breakiterator">breakiterator</a>.
+     * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#breakiterator">breakiterator</a>.
      * <br/>
-     * Since <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/javadoc/whatsnew-1.4.html#summary">Java 1.4</a>.
+     * Since <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/javadoc/whatsnew-1.4.html#summary">Java 1.4</a>.
      * <br/>
      *
      * @parameter expression="${breakiterator}" default-value="false"
@@ -608,7 +608,7 @@ public abstract class AbstractJavadocMojo
     /**
      * Specifies the class file that starts the doclet used in generating the documentation.
      * <br/>
-     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#doclet">doclet</a>.
+     * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#doclet">doclet</a>.
      *
      * @parameter expression="${doclet}"
      */
@@ -618,7 +618,7 @@ public abstract class AbstractJavadocMojo
      * Specifies the artifact containing the doclet starting class file (specified with the <code>-doclet</code>
      * option).
      * <br/>
-     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#docletpath">docletpath</a>.
+     * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#docletpath">docletpath</a>.
      * <br/>
      * Example:
      * <pre>
@@ -640,7 +640,7 @@ public abstract class AbstractJavadocMojo
      * Specifies multiple artifacts containing the path for the doclet starting class file (specified with the
      * <code>-doclet</code> option).
      * <br/>
-     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#docletpath">docletpath</a>.
+     * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#docletpath">docletpath</a>.
      * <br/>
      * Example:
      * <pre>
@@ -666,7 +666,7 @@ public abstract class AbstractJavadocMojo
      * any jar files it depends on. The <code>docletPath</code> can contain multiple paths by separating them with
      * a colon (<code>:</code>) or a semi-colon (<code>;</code>).
      * <br/>
-     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#docletpath">docletpath</a>.
+     * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#docletpath">docletpath</a>.
      *
      * @parameter expression="${docletPath}"
      */
@@ -676,7 +676,7 @@ public abstract class AbstractJavadocMojo
      * Specifies the encoding name of the source files. If not specificed, the encoding value will be the value of the
      * <code>file.encoding</code> system property.
      * <br/>
-     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#encoding">encoding</a>.
+     * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#encoding">encoding</a>.
      * <br/>
      * <b>Note</b>: In 2.4, the default value was locked to <code>ISO-8859-1</code> to ensure reproducing build, but
      * this was reverted in 2.5.
@@ -696,9 +696,9 @@ public abstract class AbstractJavadocMojo
      * &lt;excludePackageNames&gt;*.internal:org.acme.exclude1.*:org.acme.exclude2&lt;/excludePackageNames&gt;
      * </pre>
      * <br/>
-     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#exclude">exclude</a>.
+     * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#exclude">exclude</a>.
      * <br/>
-     * Since <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/javadoc/whatsnew-1.4.html#summary">Java 1.4</a>.
+     * Since <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/javadoc/whatsnew-1.4.html#summary">Java 1.4</a>.
      *
      * @parameter expression="${excludePackageNames}"
      */
@@ -708,7 +708,7 @@ public abstract class AbstractJavadocMojo
      * Specifies the directories where extension classes reside. Separate directories in <code>extdirs</code> with a
      * colon (<code>:</code>) or a semi-colon (<code>;</code>).
      * <br/>
-     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#extdirs">extdirs</a>.
+     * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#extdirs">extdirs</a>.
      *
      * @parameter expression="${extdirs}"
      */
@@ -717,7 +717,7 @@ public abstract class AbstractJavadocMojo
     /**
      * Specifies the locale that javadoc uses when generating documentation.
      * <br/>
-     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#locale">locale</a>.
+     * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#locale">locale</a>.
      *
      * @parameter expression="${locale}"
      */
@@ -749,7 +749,7 @@ public abstract class AbstractJavadocMojo
      * This option creates documentation with the appearance and functionality of documentation generated by
      * Javadoc 1.1.
      * <br/>
-     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#1.1">1.1</a>.
+     * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#1.1">1.1</a>.
      * <br/>
      *
      * @parameter expression="${old}" default-value="false"
@@ -762,7 +762,7 @@ public abstract class AbstractJavadocMojo
      * <br/>
      * <b>Note</b>: could be in conflict with &lt;nooverview/&gt;.
      * <br/>
-     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#overview">overview</a>.
+     * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#overview">overview</a>.
      * <br/>
      *
      * @parameter expression="${overview}" default-value="${basedir}/src/main/javadoc/overview.html"
@@ -798,7 +798,7 @@ public abstract class AbstractJavadocMojo
      * Note: was a standard doclet in Java 1.4.2 (refer to bug ID
      * <a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4714350">4714350</a>).
      * <br/>
-     * See <a href="http://java.sun.com/j2se/1.5.0/docs/tooldocs/windows/javadoc.html#quiet">quiet</a>.
+     * See <a href="http://download.oracle.com/javase/1.5.0/docs/tooldocs/windows/javadoc.html#quiet">quiet</a>.
      * <br/>
      * Since Java 5.0.
      * <br/>
@@ -811,13 +811,13 @@ public abstract class AbstractJavadocMojo
      * Specifies the access level for classes and members to show in the Javadocs.
      * Possible values are:
      * <ul>
-     * <li><a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#public">public</a>
+     * <li><a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#public">public</a>
      * (shows only public classes and members)</li>
-     * <li><a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#protected">protected</a>
+     * <li><a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#protected">protected</a>
      * (shows only public and protected classes and members)</li>
-     * <li><a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#package">package</a>
+     * <li><a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#package">package</a>
      * (shows all classes and members not marked private)</li>
-     * <li><a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#private">private</a>
+     * <li><a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#private">private</a>
      * (shows all classes and members)</li>
      * </ul>
      * <br/>
@@ -829,9 +829,9 @@ public abstract class AbstractJavadocMojo
     /**
      * Necessary to enable javadoc to handle assertions present in J2SE v 1.4 source code.
      * <br/>
-     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#source">source</a>.
+     * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#source">source</a>.
      * <br/>
-     * Since <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/javadoc/whatsnew-1.4.html#summary">Java 1.4</a>.
+     * Since <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/javadoc/whatsnew-1.4.html#summary">Java 1.4</a>.
      *
      * @parameter expression="${source}"
      */
@@ -841,7 +841,7 @@ public abstract class AbstractJavadocMojo
      * Specifies the source paths where the subpackages are located. The <code>sourcepath</code> can contain
      * multiple paths by separating them with a colon (<code>:</code>) or a semi-colon (<code>;</code>).
      * <br/>
-     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#sourcepath">sourcepath</a>.
+     * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#sourcepath">sourcepath</a>.
      *
      * @parameter expression="${sourcepath}"
      */
@@ -851,9 +851,9 @@ public abstract class AbstractJavadocMojo
      * Specifies the package directory where javadoc will be executed. Multiple packages can be separated by
      * colons (<code>:</code>).
      * <br/>
-     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#subpackages">subpackages</a>.
+     * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#subpackages">subpackages</a>.
      * <br/>
-     * Since <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/javadoc/whatsnew-1.4.html#summary">Java 1.4</a>.
+     * Since <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/javadoc/whatsnew-1.4.html#summary">Java 1.4</a>.
      *
      * @parameter expression="${subpackages}"
      */
@@ -862,7 +862,7 @@ public abstract class AbstractJavadocMojo
     /**
      * Provides more detailed messages while javadoc is running.
      * <br/>
-     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#verbose">verbose</a>.
+     * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#verbose">verbose</a>.
      * <br/>
      *
      * @parameter expression="${verbose}" default-value="false"
@@ -876,7 +876,7 @@ public abstract class AbstractJavadocMojo
     /**
      * Specifies whether or not the author text is included in the generated Javadocs.
      * <br/>
-     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#author">author</a>.
+     * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#author">author</a>.
      * <br/>
      *
      * @parameter expression="${author}" default-value="true"
@@ -888,7 +888,7 @@ public abstract class AbstractJavadocMojo
      * If you want to use html you have to put it in a CDATA section, <br/>
      * eg. <code>&lt;![CDATA[Copyright 2005, &lt;a href="http://www.mycompany.com">MyCompany, Inc.&lt;a>]]&gt;</code>
      * <br/>
-     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#bottom">bottom</a>.
+     * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#bottom">bottom</a>.
      * <br/>
      *
      * @parameter expression="${bottom}"
@@ -900,7 +900,7 @@ public abstract class AbstractJavadocMojo
      * Specifies the HTML character set for this document. If not specificed, the charset value will be the value of
      * the <code>docencoding</code> parameter.
      * <br/>
-     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#charset">charset</a>.
+     * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#charset">charset</a>.
      * <br/>
      *
      * @parameter expression="${charset}"
@@ -911,7 +911,7 @@ public abstract class AbstractJavadocMojo
      * Specifies the encoding of the generated HTML files. If not specificed, the docencoding value will be
      * <code>UTF-8</code>.
      * <br/>
-     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#docencoding">docencoding</a>.
+     * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#docencoding">docencoding</a>.
      *
      * @parameter expression="${docencoding}" default-value="${project.reporting.outputEncoding}"
      */
@@ -922,10 +922,10 @@ public abstract class AbstractJavadocMojo
      * directory from the <code>javadocDirectory</code> directory (for instance,
      * <code>src/main/javadoc/com/mycompany/myapp/doc-files</code> and <code>src/main/javadoc/resources</code>).
      * <br/>
-     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#docfilessubdirs">
+     * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#docfilessubdirs">
      * docfilessubdirs</a>.
      * <br/>
-     * Since <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/javadoc/whatsnew-1.4.html#summary">Java 1.4</a>.
+     * Since <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/javadoc/whatsnew-1.4.html#summary">Java 1.4</a>.
      * <br/>
      * See <a href="#javadocDirectory">javadocDirectory</a>.
      * <br/>
@@ -939,7 +939,7 @@ public abstract class AbstractJavadocMojo
     /**
      * Specifies the title to be placed near the top of the overview summary file.
      * <br/>
-     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#doctitle">doctitle</a>.
+     * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#doctitle">doctitle</a>.
      * <br/>
      *
      * @parameter expression="${doctitle}" default-value="${project.name} ${project.version} API"
@@ -950,10 +950,10 @@ public abstract class AbstractJavadocMojo
      * Excludes any "doc-files" subdirectories with the given names. Multiple patterns can be excluded
      * by separating them with colons (<code>:</code>).
      * <br/>
-     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#excludedocfilessubdir">
+     * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#excludedocfilessubdir">
      * excludedocfilessubdir</a>.
      * <br/>
-     * Since <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/javadoc/whatsnew-1.4.html#summary">Java 1.4</a>.
+     * Since <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/javadoc/whatsnew-1.4.html#summary">Java 1.4</a>.
      *
      * @parameter expression="${excludedocfilessubdir}"
      * @see #docfilessubdirs
@@ -963,7 +963,7 @@ public abstract class AbstractJavadocMojo
     /**
      * Specifies the footer text to be placed at the bottom of each output file.
      * <br/>
-     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#footer">footer</a>.
+     * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#footer">footer</a>.
      *
      * @parameter expression="${footer}"
      */
@@ -996,7 +996,7 @@ public abstract class AbstractJavadocMojo
      * <b>Note</b>: using <code>java.lang.*</code> for <code>packages</code> would omit the <code>java.lang</code>
      * package but using <code>java.lang*</code> will include it.
      * <br/>
-     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#group">group</a>.
+     * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#group">group</a>.
      * <br/>
      * See <a href="./apidocs/org/apache/maven/plugin/javadoc/options/Group.html">Javadoc</a>.
      * <br/>
@@ -1008,7 +1008,7 @@ public abstract class AbstractJavadocMojo
     /**
      * Specifies the header text to be placed at the top of each output file.
      * <br/>
-     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#header">header</a>.
+     * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#header">header</a>.
      *
      * @parameter expression="${header}"
      */
@@ -1054,7 +1054,7 @@ public abstract class AbstractJavadocMojo
      * Where <code>path/to/your/resource/yourhelp-doc.html</code> is defined in the
      * <code>groupId:artifactId:version</code> javadoc plugin dependency.
      * <br/>
-     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#helpfile">helpfile</a>.
+     * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#helpfile">helpfile</a>.
      *
      * @parameter expression="${helpfile}"
      */
@@ -1063,12 +1063,12 @@ public abstract class AbstractJavadocMojo
     /**
      * Adds HTML meta keyword tags to the generated file for each class.
      * <br/>
-     * See <a href="http://java.sun.com/j2se/1.5.0/docs/tooldocs/windows/javadoc.html#keywords">keywords</a>.
+     * See <a href="http://download.oracle.com/javase/1.5.0/docs/tooldocs/windows/javadoc.html#keywords">keywords</a>.
      * <br/>
-     * Since <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/javadoc/whatsnew-1.4.2.html#commandlineoptions">
+     * Since <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/javadoc/whatsnew-1.4.2.html#commandlineoptions">
      * Java 1.4.2</a>.
      * <br/>
-     * Since <a href="http://java.sun.com/j2se/1.5.0/docs/guide/javadoc/whatsnew-1.5.0.html#commandlineoptions">
+     * Since <a href="http://download.oracle.com/javase/1.5.0/docs/guide/javadoc/whatsnew-1.5.0.html#commandlineoptions">
      * Java 5.0</a>.
      * <br/>
      *
@@ -1086,16 +1086,16 @@ public abstract class AbstractJavadocMojo
      * <li>all given links should have a fetchable <code>/package-list</code> file. For instance:
      * <pre>
      * &lt;links&gt;
-     * &nbsp;&nbsp;&lt;link&gt;http://java.sun.com/j2se/1.4.2/docs/api&lt;/link&gt;
+     * &nbsp;&nbsp;&lt;link&gt;http://download.oracle.com/javase/1.4.2/docs/api&lt;/link&gt;
      * &lt;links&gt;
      * </pre>
-     * will be used because <code>http://java.sun.com/j2se/1.4.2/docs/api/package-list</code> exists.</li>
+     * will be used because <code>http://download.oracle.com/javase/1.4.2/docs/api/package-list</code> exists.</li>
      * <li>if {@link #detectLinks} is defined, the links between the project dependencies are
      * automatically added.</li>
      * <li>if {@link #detectJavaApiLink} is defined, a Java API link, based on the Java verion of the
      * project's sources, will be added automatically.</li>
      * </ol>
-     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#link">link</a>.
+     * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#link">link</a>.
      *
      * @parameter expression="${links}"
      * @see #detectLinks
@@ -1107,9 +1107,9 @@ public abstract class AbstractJavadocMojo
      * Creates an HTML version of each source file (with line numbers) and adds links to them from the standard
      * HTML documentation.
      * <br/>
-     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#linksource">linksource</a>.
+     * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#linksource">linksource</a>.
      * <br/>
-     * Since <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/javadoc/whatsnew-1.4.html#summary">Java 1.4</a>.
+     * Since <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/javadoc/whatsnew-1.4.html#summary">Java 1.4</a>.
      * <br/>
      *
      * @parameter expression="${linksource}" default-value="false"
@@ -1119,9 +1119,9 @@ public abstract class AbstractJavadocMojo
     /**
      * Suppress the entire comment body, including the main description and all tags, generating only declarations.
      * <br/>
-     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#nocomment">nocomment</a>.
+     * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#nocomment">nocomment</a>.
      * <br/>
-     * Since <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/javadoc/whatsnew-1.4.html#summary">Java 1.4</a>.
+     * Since <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/javadoc/whatsnew-1.4.html#summary">Java 1.4</a>.
      * <br/>
      *
      * @parameter expression="${nocomment}" default-value="false"
@@ -1131,7 +1131,7 @@ public abstract class AbstractJavadocMojo
     /**
      * Prevents the generation of any deprecated API at all in the documentation.
      * <br/>
-     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#nodeprecated">nodeprecated</a>.
+     * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#nodeprecated">nodeprecated</a>.
      * <br/>
      *
      * @parameter expression="${nodeprecated}" default-value="false"
@@ -1142,7 +1142,7 @@ public abstract class AbstractJavadocMojo
      * Prevents the generation of the file containing the list of deprecated APIs (deprecated-list.html) and the
      * link in the navigation bar to that page.
      * <br/>
-     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#nodeprecatedlist">
+     * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#nodeprecatedlist">
      * nodeprecatedlist</a>.
      * <br/>
      *
@@ -1155,7 +1155,7 @@ public abstract class AbstractJavadocMojo
      * <br/>
      * <b>Note</b>: could be in conflict with &lt;helpfile/&gt;.
      * <br/>
-     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#nohelp">nohelp</a>.
+     * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#nohelp">nohelp</a>.
      * <br/>
      *
      * @parameter expression="${nohelp}" default-value="false"
@@ -1167,7 +1167,7 @@ public abstract class AbstractJavadocMojo
      * <br/>
      * <b>Note</b>: could be in conflict with &lt;splitindex/&gt;.
      * <br/>
-     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#noindex">noindex</a>.
+     * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#noindex">noindex</a>.
      * <br/>
      *
      * @parameter expression="${noindex}" default-value="false"
@@ -1177,7 +1177,7 @@ public abstract class AbstractJavadocMojo
     /**
      * Omits the navigation bar from the generated docs.
      * <br/>
-     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#nonavbar">nonavbar</a>.
+     * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#nonavbar">nonavbar</a>.
      * <br/>
      *
      * @parameter expression="${nonavbar}" default-value="false"
@@ -1205,9 +1205,9 @@ public abstract class AbstractJavadocMojo
      * or
      * &lt;noqualifier&gt;packagename1:packagename2&lt;/noqualifier&gt;
      * </pre>
-     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#noqualifier">noqualifier</a>.
+     * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#noqualifier">noqualifier</a>.
      * <br/>
-     * Since <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/javadoc/whatsnew-1.4.html#summary">Java 1.4</a>.
+     * Since <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/javadoc/whatsnew-1.4.html#summary">Java 1.4</a>.
      *
      * @parameter expression="${noqualifier}"
      */
@@ -1216,7 +1216,7 @@ public abstract class AbstractJavadocMojo
     /**
      * Omits from the generated docs the "Since" sections associated with the since tags.
      * <br/>
-     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#nosince">nosince</a>.
+     * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#nosince">nosince</a>.
      * <br/>
      *
      * @parameter expression="${nosince}" default-value="false"
@@ -1226,9 +1226,9 @@ public abstract class AbstractJavadocMojo
     /**
      * Suppresses the timestamp, which is hidden in an HTML comment in the generated HTML near the top of each page.
      * <br/>
-     * See <a href="http://java.sun.com/j2se/1.5.0/docs/tooldocs/windows/javadoc.html#notimestamp">notimestamp</a>.
+     * See <a href="http://download.oracle.com/javase/1.5.0/docs/tooldocs/windows/javadoc.html#notimestamp">notimestamp</a>.
      * <br/>
-     * Since <a href="http://java.sun.com/j2se/1.5.0/docs/guide/javadoc/whatsnew-1.5.0.html#commandlineoptions">
+     * Since <a href="http://download.oracle.com/javase/1.5.0/docs/guide/javadoc/whatsnew-1.5.0.html#commandlineoptions">
      * Java 5.0</a>.
      * <br/>
      *
@@ -1240,7 +1240,7 @@ public abstract class AbstractJavadocMojo
     /**
      * Omits the class/interface hierarchy pages from the generated docs.
      * <br/>
-     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#notree">notree</a>.
+     * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#notree">notree</a>.
      * <br/>
      *
      * @parameter expression="${notree}" default-value="false"
@@ -1251,13 +1251,13 @@ public abstract class AbstractJavadocMojo
      * This option is a variation of <code>-link</code>; they both create links to javadoc-generated documentation
      * for external referenced classes.
      * <br/>
-     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#linkoffline">linkoffline</a>.
+     * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#linkoffline">linkoffline</a>.
      * <br/>
      * Example:
      * <pre>
      * &lt;offlineLinks&gt;
      * &nbsp;&nbsp;&lt;offlineLink&gt;
-     * &nbsp;&nbsp;&nbsp;&nbsp;&lt;url&gt;http://java.sun.com/j2se/1.5.0/docs/api/&lt;/url&gt;
+     * &nbsp;&nbsp;&nbsp;&nbsp;&lt;url&gt;http://download.oracle.com/javase/1.5.0/docs/api/&lt;/url&gt;
      * &nbsp;&nbsp;&nbsp;&nbsp;&lt;location&gt;../javadoc/jdk-5.0/&lt;/location&gt;
      * &nbsp;&nbsp;&lt;/offlineLink&gt;
      * &lt;/offlineLinks&gt;
@@ -1276,7 +1276,7 @@ public abstract class AbstractJavadocMojo
     /**
      * Specifies the destination directory where javadoc saves the generated HTML files.
      * <br/>
-     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#d">d</a>.
+     * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#d">d</a>.
      * <br/>
      *
      * @parameter expression="${destDir}" alias="destDir" default-value="${project.build.directory}/apidocs"
@@ -1287,7 +1287,7 @@ public abstract class AbstractJavadocMojo
     /**
      * Specify the text for upper left frame.
      * <br/>
-     * Since <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/javadoc/whatsnew-1.4.2.html#commandlineoptions">
+     * Since <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/javadoc/whatsnew-1.4.2.html#commandlineoptions">
      * Java 1.4.2</a>.
      *
      * @since 2.1
@@ -1298,7 +1298,7 @@ public abstract class AbstractJavadocMojo
     /**
      * Generates compile-time warnings for missing serial tags.
      * <br/>
-     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#serialwarn">serialwarn</a>
+     * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#serialwarn">serialwarn</a>
      * <br/>
      *
      * @parameter expression="${serialwarn}" default-value="false"
@@ -1312,7 +1312,7 @@ public abstract class AbstractJavadocMojo
      * Note: was <code>linksourcetab</code> in Java 1.4.2 (refer to bug ID
      * <a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4788919">4788919</a>).
      * <br/>
-     * Since <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/javadoc/whatsnew-1.4.2.html#commandlineoptions">
+     * Since <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/javadoc/whatsnew-1.4.2.html#commandlineoptions">
      * 1.4.2</a>.
      * <br/>
      * Since Java 5.0.
@@ -1328,7 +1328,7 @@ public abstract class AbstractJavadocMojo
      * <br/>
      * <b>Note</b>: could be in conflict with &lt;noindex/&gt;.
      * <br/>
-     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#splitindex">splitindex</a>.
+     * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#splitindex">splitindex</a>.
      * <br/>
      *
      * @parameter expression="${splitindex}" default-value="false"
@@ -1383,7 +1383,7 @@ public abstract class AbstractJavadocMojo
      * Where <code>path/to/your/resource/yourstylesheet.css</code> is defined in the
      * <code>groupId:artifactId:version</code> javadoc plugin dependency.
      * <br/>
-     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#stylesheetfile">
+     * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#stylesheetfile">
      * stylesheetfile</a>.
      *
      * @parameter expression="${stylesheetfile}"
@@ -1393,9 +1393,9 @@ public abstract class AbstractJavadocMojo
     /**
      * Specifies the class file that starts the taglet used in generating the documentation for that tag.
      * <br/>
-     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#taglet">taglet</a>.
+     * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#taglet">taglet</a>.
      * <br/>
-     * Since <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/javadoc/whatsnew-1.4.html#summary">Java 1.4</a>.
+     * Since <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/javadoc/whatsnew-1.4.html#summary">Java 1.4</a>.
      *
      * @parameter expression="${taglet}"
      */
@@ -1404,7 +1404,7 @@ public abstract class AbstractJavadocMojo
     /**
      * Specifies the Taglet artifact containing the taglet class files (.class).
      * <br/>
-     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#tagletpath">tagletpath</a>.
+     * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#tagletpath">tagletpath</a>.
      * <br/>
      * Example:
      * <pre>
@@ -1436,9 +1436,9 @@ public abstract class AbstractJavadocMojo
      * Specifies several Taglet artifacts containing the taglet class files (.class). These taglets class names will be
      * auto-detect and so no need to specify them.
      * <br/>
-     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#taglet">taglet</a>.
+     * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#taglet">taglet</a>.
      * <br/>
-     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#tagletpath">tagletpath</a>.
+     * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#tagletpath">tagletpath</a>.
      * <br/>
      * Example:
      * <pre>
@@ -1464,9 +1464,9 @@ public abstract class AbstractJavadocMojo
      * Specifies the search paths for finding taglet class files (.class). The <code>tagletpath</code> can contain
      * multiple paths by separating them with a colon (<code>:</code>) or a semi-colon (<code>;</code>).
      * <br/>
-     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#tagletpath">tagletpath</a>.
+     * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#tagletpath">tagletpath</a>.
      * <br/>
-     * Since <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/javadoc/whatsnew-1.4.html#summary">Java 1.4</a>.
+     * Since <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/javadoc/whatsnew-1.4.html#summary">Java 1.4</a>.
      *
      * @parameter expression="${tagletpath}"
      */
@@ -1475,9 +1475,9 @@ public abstract class AbstractJavadocMojo
     /**
      * Enables the Javadoc tool to interpret multiple taglets.
      * <br/>
-     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#taglet">taglet</a>.
+     * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#taglet">taglet</a>.
      * <br/>
-     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#tagletpath">tagletpath</a>.
+     * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#tagletpath">tagletpath</a>.
      * <br/>
      * Example:
      * <pre>
@@ -1505,9 +1505,9 @@ public abstract class AbstractJavadocMojo
     /**
      * Enables the Javadoc tool to interpret a simple, one-argument custom block tag tagname in doc comments.
      * <br/>
-     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#tag">tag</a>.
+     * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#tag">tag</a>.
      * <br/>
-     * Since <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/javadoc/whatsnew-1.4.html#summary">Java 1.4</a>.
+     * Since <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/javadoc/whatsnew-1.4.html#summary">Java 1.4</a>.
      * <br/>
      * Example:
      * <pre>
@@ -1552,7 +1552,7 @@ public abstract class AbstractJavadocMojo
     /**
      * Includes one "Use" page for each documented class and package.
      * <br/>
-     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#use">use</a>.
+     * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#use">use</a>.
      * <br/>
      *
      * @parameter expression="${use}" default-value="true"
@@ -1562,7 +1562,7 @@ public abstract class AbstractJavadocMojo
     /**
      * Includes the version text in the generated docs.
      * <br/>
-     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#version">version</a>.
+     * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#version">version</a>.
      * <br/>
      *
      * @parameter expression="${version}" default-value="true"
@@ -1572,7 +1572,7 @@ public abstract class AbstractJavadocMojo
     /**
      * Specifies the title to be placed in the HTML title tag.
      * <br/>
-     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#windowtitle">windowtitle</a>.
+     * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#windowtitle">windowtitle</a>.
      * <br/>
      *
      * @parameter expression="${windowtitle}" default-value="${project.name} ${project.version} API"
@@ -3772,7 +3772,7 @@ public abstract class AbstractJavadocMojo
      * @throws MavenReportException if any
      * @see #offlineLinks
      * @see #getModulesLinks()
-     * @see <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#package-list">package-list spec</a>
+     * @see <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#package-list">package-list spec</a>
      */
     private void addLinkofflineArguments( List<String> arguments )
         throws MavenReportException
@@ -3821,7 +3821,7 @@ public abstract class AbstractJavadocMojo
      * @see #detectLinks
      * @see #getDependenciesLinks()
      * @see JavadocUtil#fetchURL(Settings, URL)
-     * @see <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#package-list">package-list spec</a>
+     * @see <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#package-list">package-list spec</a>
      */
     private void addLinkArguments( List<String> arguments )
         throws MavenReportException
@@ -3931,7 +3931,7 @@ public abstract class AbstractJavadocMojo
      * Method that copy all <code>doc-files</code> directories from <code>javadocDirectory</code> of
      * the current projet or of the projects in the reactor to the <code>outputDirectory</code>.
      *
-     * @see <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/javadoc/whatsnew-1.2.html#docfiles">Reference
+     * @see <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/javadoc/whatsnew-1.2.html#docfiles">Reference
      * Guide, Copies new "doc-files" directory for holding images and examples</a>
      * @see #docfilessubdirs
      *
@@ -4123,7 +4123,7 @@ public abstract class AbstractJavadocMojo
 
                     /*
                      * Remove the miscellaneous files
-                     * http://java.sun.com/j2se/1.4.2/docs/tooldocs/solaris/javadoc.html#unprocessed
+                     * http://download.oracle.com/javase/1.4.2/docs/tooldocs/solaris/javadoc.html#unprocessed
                      */
                     if ( packagename.indexOf( "doc-files" ) != -1 )
                     {
@@ -4155,7 +4155,7 @@ public abstract class AbstractJavadocMojo
      * Generate an <code>options</code> file for all options and arguments and add the <code>@options</code> in the
      * command line.
      *
-     * @see <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#argumentfiles">
+     * @see <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#argumentfiles">
      * Reference Guide, Command line argument files</a>
      *
      * @param cmd not null
@@ -4189,10 +4189,10 @@ public abstract class AbstractJavadocMojo
      * Generate a file called <code>argfile</code> (or <code>files</code>, depending the JDK) to hold files and add
      * the <code>@argfile</code> (or <code>@file</code>, depending the JDK) in the command line.
      *
-     * @see <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#argumentfiles">
+     * @see <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#argumentfiles">
      * Reference Guide, Command line argument files
      * </a>
-     * @see <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/javadoc/whatsnew-1.4.html#runningjavadoc">
+     * @see <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/javadoc/whatsnew-1.4.html#runningjavadoc">
      * What s New in Javadoc 1.4
      * </a>
      *
@@ -4242,7 +4242,7 @@ public abstract class AbstractJavadocMojo
      * Generate a file called <code>packages</code> to hold all package names and add the <code>@packages</code> in
      * the command line.
      *
-     * @see <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#argumentfiles">
+     * @see <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#argumentfiles">
      * Reference Guide, Command line argument files</a>
      *
      * @param cmd not null
@@ -4460,7 +4460,7 @@ public abstract class AbstractJavadocMojo
      * @param arguments not null
      * @param sourcePaths not null
      * @throws MavenReportException if any
-     * @see <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#javadocoptions">http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#javadocoptions</a>
+     * @see <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#javadocoptions">http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#javadocoptions</a>
      */
     private void addJavadocOptions( List<String> arguments, List<String> sourcePaths )
         throws MavenReportException
@@ -4551,8 +4551,8 @@ public abstract class AbstractJavadocMojo
      * @param javadocOutputDirectory not null
      * @param arguments not null
      * @throws MavenReportException if any
-     * @see <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#standard">
-     * http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#standard</a>
+     * @see <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#standard">
+     * http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#standard</a>
      */
     private void addStandardDocletOptions( File javadocOutputDirectory, List<String> arguments )
         throws MavenReportException
@@ -5484,7 +5484,7 @@ public abstract class AbstractJavadocMojo
      * @param link not null
      * @return <code>true</code> if the link has a <code>/package-list</code>, <code>false</code> otherwise.
      * @since 2.6
-     * @see <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/solaris/javadoc.html#package-list">
+     * @see <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/solaris/javadoc.html#package-list">
      * package-list spec</a>
      */
     private boolean isValidJavadocLink( String link )
