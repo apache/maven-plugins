@@ -151,19 +151,19 @@ public abstract class AbstractJavadocMojo
      * &lt;javaApiLinks&gt;
      *   &lt;property&gt;
      *     &lt;name&gt;api_1.3&lt;/name&gt;
-     *     &lt;value&gt;http://java.sun.com/j2se/1.3/docs/api&lt;/value&gt;
+     *     &lt;value&gt;http://download.oracle.com/javase/1.3/docs/api/&lt;/value&gt;
      *   &lt;/property&gt;
      *   &lt;property&gt;
      *     &lt;name&gt;api_1.4&lt;/name&gt;
-     *     &lt;value&gt;http://java.sun.com/j2se/1.4.2/docs/api/&lt;/value&gt;
+     *     &lt;value&gt;http://download.oracle.com/javase/1.4.2/docs/api/&lt;/value&gt;
      *   &lt;/property&gt;
      *   &lt;property&gt;
      *     &lt;name&gt;api_1.5&lt;/name&gt;
-     *     &lt;value&gt;http://java.sun.com/j2se/1.5.0/docs/api/&lt;/value&gt;
+     *     &lt;value&gt;http://download.oracle.com/javase/1.5.0/docs/api/&lt;/value&gt;
      *   &lt;/property&gt;
      *   &lt;property&gt;
      *     &lt;name&gt;api_1.6&lt;/name&gt;
-     *     &lt;value&gt;http://java.sun.com/javase/6/docs/api/&lt;/value&gt;
+     *     &lt;value&gt;http://download.oracle.com/javase/6/docs/api/&lt;/value&gt;
      *   &lt;/property&gt;
      * &lt;/javaApiLinks&gt;
      * </pre>
@@ -520,7 +520,7 @@ public abstract class AbstractJavadocMojo
     private boolean detectOfflineLinks;
 
     /**
-     * Detect the Java API link for the current build, i.e. <code>http://java.sun.com/j2se/1.4.2/docs/api</code>
+     * Detect the Java API link for the current build, i.e. <code>http://download.oracle.com/javase/1.4.2/docs/api/</code>
      * for Java source 1.4.
      * <br/>
      * By default, the goal detects the Javadoc API link depending the value of the <code>source</code>
@@ -1651,10 +1651,10 @@ public abstract class AbstractJavadocMojo
 
     static
     {
-        DEFAULT_JAVA_API_LINKS.put( "api_1.3", "http://java.sun.com/j2se/1.3/docs/api" );
-        DEFAULT_JAVA_API_LINKS.put( "api_1.4", "http://java.sun.com/j2se/1.4.2/docs/api/" );
-        DEFAULT_JAVA_API_LINKS.put( "api_1.5", "http://java.sun.com/j2se/1.5.0/docs/api/" );
-        DEFAULT_JAVA_API_LINKS.put( "api_1.6", "http://java.sun.com/javase/6/docs/api/" );
+        DEFAULT_JAVA_API_LINKS.put( "api_1.3", "http://download.oracle.com/javase/1.3/docs/api/" );
+        DEFAULT_JAVA_API_LINKS.put( "api_1.4", "http://download.oracle.com/javase/1.4.2/docs/api/" );
+        DEFAULT_JAVA_API_LINKS.put( "api_1.5", "http://download.oracle.com/javase/1.5.0/docs/api/" );
+        DEFAULT_JAVA_API_LINKS.put( "api_1.6", "http://download.oracle.com/javase/6/docs/api/" );
     }
 
     // ----------------------------------------------------------------------

@@ -426,12 +426,8 @@ public class JavadocReportTest
         }
 
         assertTrue( contentOptions != null );
-        if ( JavadocUtilTest.isWebSiteOnline( null, getContainer().getLogger(), "http://java.sun.com" ) )
-        {
-            assertTrue( contentOptions.indexOf( "-link" ) != -1 );
-            assertTrue( contentOptions.indexOf( "http://java.sun.com/j2se/" ) != -1
-                || contentOptions.indexOf( "http://java.sun.com/javase/" ) != -1 );
-        }
+        assertTrue( contentOptions.indexOf( "-link" ) != -1 );
+        assertTrue( contentOptions.indexOf( "http://java.sun.com/j2se/" ) != -1 );
     }
 
     /**
@@ -936,8 +932,8 @@ public class JavadocReportTest
         File options = new File( getBasedir(), "target/test/unit/proxy-test/target/site/apidocs/options" );
         assertTrue( FileUtils.fileExists( options.getAbsolutePath() ) );
         String optionsContent = readFile( options );
-        // NO -link http://java.sun.com/j2se/1.5.0/docs/api/package-list
-        if ( JavadocUtilTest.isWebSiteOnline( null, getContainer().getLogger(), "http://java.sun.com" ) )
+        // NO -link http://download.oracle.com/javase/1.5.0/docs/api/docs/api/package-list
+        if ( JavadocUtilTest.isWebSiteOnline( null, getContainer().getLogger(), "http://download.oracle.com/" ) )
         {
             assertTrue( optionsContent.indexOf( "-link" ) == -1 );
         }
@@ -968,8 +964,8 @@ public class JavadocReportTest
             assertTrue( readed.indexOf( "-J-Dhttp.proxyPort=" + proxyServer.getPort() ) != -1 );
 
             optionsContent = readFile( options );
-            // -link http://java.sun.com/j2se/1.5.0/docs/api/package-list
-            if ( JavadocUtilTest.isWebSiteOnline( null, getContainer().getLogger(), "http://java.sun.com" ) )
+            // -link http://download.oracle.com/javase/1.5.0/docs/api/package-list
+            if ( JavadocUtilTest.isWebSiteOnline( null, getContainer().getLogger(), "http://download.oracle.com/" ) )
             {
                 assertTrue( optionsContent.indexOf( "-link" ) != -1 );
             }
@@ -1017,8 +1013,8 @@ public class JavadocReportTest
             assertTrue( readed.indexOf( "-J-Dhttp.proxyPassword=\\\"bar\\\"" ) != -1 );
 
             optionsContent = readFile( options );
-            // -link http://java.sun.com/j2se/1.5.0/docs/api/package-list
-            if ( JavadocUtilTest.isWebSiteOnline( null, getContainer().getLogger(), "http://java.sun.com" ) )
+            // -link http://download.oracle.com/javase/1.5.0/docs/api/docs/api/package-list
+            if ( JavadocUtilTest.isWebSiteOnline( null, getContainer().getLogger(), "http://download.oracle.com" ) )
             {
                 assertTrue( optionsContent.indexOf( "-link" ) != -1 );
             }
