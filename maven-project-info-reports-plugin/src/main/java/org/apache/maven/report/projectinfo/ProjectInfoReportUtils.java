@@ -296,7 +296,7 @@ public class ProjectInfoReportUtils
             if ( server == null
                 && url.toString().contains( project.getDistributionManagement().getSnapshotRepository().getUrl() ) )
             {
-                server = settings.getServer( project.getDistributionManagement().getRepository().getId() );
+                server = settings.getServer( project.getDistributionManagement().getSnapshotRepository().getId() );
             }
 
             if ( server != null && StringUtils.isNotEmpty( server.getUsername() )
@@ -309,7 +309,7 @@ public class ProjectInfoReportUtils
             }
         }
 
-        if ( HttpsURLConnection.class.isAssignableFrom( conn.getClass() ) )
+        if ( conn instanceof HttpsURLConnection )
         {
             HostnameVerifier hostnameverifier = new HostnameVerifier()
             {
