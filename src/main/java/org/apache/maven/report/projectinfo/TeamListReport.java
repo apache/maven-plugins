@@ -20,7 +20,6 @@ package org.apache.maven.report.projectinfo;
  */
 
 import org.apache.commons.lang.SystemUtils;
-import org.apache.commons.lang.math.NumberUtils;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.model.Contributor;
 import org.apache.maven.model.Developer;
