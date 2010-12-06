@@ -279,7 +279,8 @@ public class TeamListReport
             {
                 tableCell( member.getTimezone() );
 
-                if ( !NumberUtils.isNumber( member.getTimezone() ) && StringUtils.isNotEmpty( member.getTimezone() ) )
+                if ( StringUtils.isNotEmpty( member.getTimezone() )
+                    && ( !ProjectInfoReportUtils.isNumber( member.getTimezone().trim() ) ) )
                 {
                     String tz = member.getTimezone().trim();
                     try
@@ -320,7 +321,7 @@ public class TeamListReport
                     else
                     {
                         // check if number is between -12 and +14
-                        int tz = NumberUtils.toInt( member.getTimezone().trim(), Integer.MIN_VALUE );
+                        int tz = ProjectInfoReportUtils.toInt( member.getTimezone().trim(), Integer.MIN_VALUE );
                         if ( tz == Integer.MIN_VALUE || !( tz >= -12 && tz <= 14 ) )
                         {
                             text( null );
