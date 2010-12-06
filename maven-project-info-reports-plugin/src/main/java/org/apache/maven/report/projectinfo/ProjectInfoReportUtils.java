@@ -41,6 +41,7 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
+import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.validator.UrlValidator;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.ArtifactUtils;
@@ -360,5 +361,23 @@ public class ProjectInfoReportUtils
         }
 
         return conn;
+    }
+
+    public static boolean isNumber( String str )
+    {
+        if ( str.startsWith( "+" ) )
+        {
+            str = str.substring( 1 );
+        }
+        return NumberUtils.isNumber( str );
+    }
+
+    public static int toInt( String str, int defaultValue )
+    {
+        if ( str.startsWith( "+" ) )
+        {
+            str = str.substring( 1 );
+        }
+        return NumberUtils.toInt( str, defaultValue );
     }
 }
