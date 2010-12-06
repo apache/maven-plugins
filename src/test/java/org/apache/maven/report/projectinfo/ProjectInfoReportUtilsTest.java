@@ -47,7 +47,7 @@ import org.mortbay.jetty.webapp.WebAppContext;
 
 /**
  * @author <a href="mailto:vincent.siveton@crim.ca">Vincent Siveton</a>
- * @version $Id:$
+ * @version $Id$
  */
 public class ProjectInfoReportUtilsTest
     extends AbstractMojoTestCase
@@ -140,7 +140,7 @@ public class ProjectInfoReportUtilsTest
         // file
         URL url = new File( getBasedir(), "/target/classes/project-info-report.properties" ).toURI().toURL();
 
-        String content = ProjectInfoReportUtils.getInputStream( url, projectStub, settingsStub, null );
+        String content = ProjectInfoReportUtils.getContent( url, projectStub, settingsStub, null );
         Assert.assertNotNull( content );
         Assert.assertTrue( content.contains( "Licensed to the Apache Software Foundation" ) );
 
@@ -149,7 +149,7 @@ public class ProjectInfoReportUtilsTest
 
         url = new URL( "http://localhost:8080/project-info-report.properties" );
 
-        content = ProjectInfoReportUtils.getInputStream( url, projectStub, settingsStub, null );
+        content = ProjectInfoReportUtils.getContent( url, projectStub, settingsStub, null );
         Assert.assertNotNull( content );
         Assert.assertTrue( content.contains( "Licensed to the Apache Software Foundation" ) );
 
@@ -160,7 +160,7 @@ public class ProjectInfoReportUtilsTest
 
         url = new URL( "http://localhost:8080/project-info-report.properties" );
 
-        content = ProjectInfoReportUtils.getInputStream( url, projectStub, settingsStub, null );
+        content = ProjectInfoReportUtils.getContent( url, projectStub, settingsStub, null );
         Assert.assertNotNull( content );
         Assert.assertTrue( content.contains( "Licensed to the Apache Software Foundation" ) );
 
@@ -171,7 +171,7 @@ public class ProjectInfoReportUtilsTest
 
         url = new URL( "https://localhost:8443/project-info-report.properties" );
 
-        content = ProjectInfoReportUtils.getInputStream( url, projectStub, settingsStub, null );
+        content = ProjectInfoReportUtils.getContent( url, projectStub, settingsStub, null );
         Assert.assertNotNull( content );
         Assert.assertTrue( content.contains( "Licensed to the Apache Software Foundation" ) );
 
@@ -182,7 +182,7 @@ public class ProjectInfoReportUtilsTest
 
         url = new URL( "https://localhost:8443/project-info-report.properties" );
 
-        content = ProjectInfoReportUtils.getInputStream( url, projectStubSec, settingsStub, null );
+        content = ProjectInfoReportUtils.getContent( url, projectStubSec, settingsStub, null );
         Assert.assertNotNull( content );
         Assert.assertTrue( content.contains( "Licensed to the Apache Software Foundation" ) );
 

@@ -78,12 +78,12 @@ public class ProjectInfoReportUtils
      * @param settings not null to handle proxy settings
      * @return the ISO-8859-1 inputstream found.
      * @throws IOException if any
-     * @see #getInputStream(URL, Settings, String)
+     * @see #getContent(URL, Settings, String)
      */
-    public static String getInputStream( URL url, Settings settings )
+    public static String getContent( URL url, Settings settings )
         throws IOException
     {
-        return getInputStream( url, settings, "ISO-8859-1" );
+        return getContent( url, settings, "ISO-8859-1" );
     }
 
     /**
@@ -95,10 +95,10 @@ public class ProjectInfoReportUtils
      * @return the inputstream found depending the wanted encoding.
      * @throws IOException if any
      */
-    public static String getInputStream( URL url, Settings settings, String encoding )
+    public static String getContent( URL url, Settings settings, String encoding )
         throws IOException
     {
-        return getInputStream( url, null, settings, encoding );
+        return getContent( url, null, settings, encoding );
     }
 
     /**
@@ -112,7 +112,7 @@ public class ProjectInfoReportUtils
      * @throws IOException if any
      * @since 2.3
      */
-    public static String getInputStream( URL url, MavenProject project, Settings settings, String encoding )
+    public static String getContent( URL url, MavenProject project, Settings settings, String encoding )
         throws IOException
     {
         String scheme = url.getProtocol();
