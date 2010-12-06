@@ -233,7 +233,14 @@ public class TeamListReport
                 if ( headersMap.get( ID ) == Boolean.TRUE )
                 {
                     String id = ( (Developer) member ).getId();
-                    tableCell( "<a name=\"" + id + "\"></a>" + id, true );
+                    if ( id == null )
+                    {
+                        tableCell( null );
+                    }
+                    else
+                    {
+                        tableCell( "<a name=\"" + id + "\"></a>" + id, true );
+                    }
                 }
             }
             if ( headersMap.get( NAME ) == Boolean.TRUE )
