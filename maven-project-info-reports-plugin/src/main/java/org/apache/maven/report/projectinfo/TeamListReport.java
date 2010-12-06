@@ -149,7 +149,7 @@ public class TeamListReport
 
             startSection( getI18nString( "developers.title" ) );
 
-            if ( developers == null || developers.isEmpty() )
+            if ( isEmpty( developers ) )
             {
                 paragraph( getI18nString( "nodeveloper" ) );
             }
@@ -159,10 +159,8 @@ public class TeamListReport
 
                 startTable();
 
-                // By default we think that all headers not required
-                Map<String, Boolean> headersMap = new HashMap<String, Boolean>();
-                // set true for headers that are required
-                checkRequiredHeaders( headersMap, developers );
+                // By default we think that all headers not required: set true for headers that are required
+                Map<String, Boolean> headersMap = checkRequiredHeaders( developers );
                 String[] requiredHeaders = getRequiredDevHeaderArray( headersMap );
 
                 tableHeader( requiredHeaders );
@@ -171,7 +169,7 @@ public class TeamListReport
                 int developersRowId = 0;
                 for ( Developer developer : developers )
                 {
-                    renderDeveloper( developer, developersRowId, headersMap, javascript );
+                    renderTeamMember( developer, developersRowId, headersMap, javascript );
 
                     developersRowId++;
                 }
@@ -186,7 +184,7 @@ public class TeamListReport
 
             startSection( getI18nString( "contributors.title" ) );
 
-            if ( contributors == null || contributors.isEmpty() )
+            if ( isEmpty( contributors ) )
             {
                 paragraph( getI18nString( "nocontributor" ) );
             }
@@ -196,8 +194,7 @@ public class TeamListReport
 
                 startTable();
 
-                Map<String, Boolean> headersMap = new HashMap<String, Boolean>();
-                checkRequiredHeaders( headersMap, contributors );
+                Map<String, Boolean> headersMap = checkRequiredHeaders( contributors );
                 String[] requiredHeaders = getRequiredContrHeaderArray( headersMap );
 
                 tableHeader( requiredHeaders );
@@ -206,7 +203,7 @@ public class TeamListReport
                 int contributorsRowId = 0;
                 for ( Contributor contributor : contributors )
                 {
-                    renderContributor( contributor, contributorsRowId, headersMap, javascript );
+                    renderTeamMember( contributor, contributorsRowId, headersMap, javascript );
 
                     contributorsRowId++;
                 }
@@ -224,42 +221,47 @@ public class TeamListReport
             endSection();
         }
 
-        private void renderDeveloper( Developer developer, int developerRowId, Map<String, Boolean> headersMap,
-                                      StringBuffer javascript )
+        private void renderTeamMember( Contributor member, int rowId, Map<String, Boolean> headersMap,
+                                       StringBuffer javascript )
         {
-            // To handle JS
             sink.tableRow();
 
-            if ( headersMap.get( ID ) == Boolean.TRUE )
+            String type = "contributor";
+            if ( member instanceof Developer )
             {
-                tableCell( "<a name=\"" + developer.getId() + "\"></a>" + developer.getId(), true );
+                type = "developer";
+                if ( headersMap.get( ID ) == Boolean.TRUE )
+                {
+                    String id = ( (Developer) member ).getId();
+                    tableCell( "<a name=\"" + id + "\"></a>" + id, true );
+                }
             }
             if ( headersMap.get( NAME ) == Boolean.TRUE )
             {
-                tableCell( developer.getName() );
+                tableCell( member.getName() );
             }
             if ( headersMap.get( EMAIL ) == Boolean.TRUE )
             {
-                tableCell( createLinkPatternedText( developer.getEmail(), developer.getEmail() ) );
+                tableCell( createLinkPatternedText( member.getEmail(), member.getEmail() ) );
             }
             if ( headersMap.get( URL ) == Boolean.TRUE )
             {
-                tableCellForUrl( developer.getUrl() );
+                tableCellForUrl( member.getUrl() );
             }
             if ( headersMap.get( ORGANIZATION ) == Boolean.TRUE )
             {
-                tableCell( developer.getOrganization() );
+                tableCell( member.getOrganization() );
             }
             if ( headersMap.get( ORGANIZATION_URL ) == Boolean.TRUE )
             {
-                tableCellForUrl( developer.getOrganizationUrl() );
+                tableCellForUrl( member.getOrganizationUrl() );
             }
             if ( headersMap.get( ROLES ) == Boolean.TRUE )
             {
-                if ( developer.getRoles() != null )
+                if ( member.getRoles() != null )
                 {
                     // Comma separated roles
-                    tableCell( StringUtils.join( developer.getRoles().toArray( EMPTY_STRING_ARRAY ), ", " ) );
+                    tableCell( StringUtils.join( member.getRoles().toArray( EMPTY_STRING_ARRAY ), ", " ) );
                 }
                 else
                 {
@@ -268,155 +270,32 @@ public class TeamListReport
             }
             if ( headersMap.get( TIME_ZONE ) == Boolean.TRUE )
             {
-                tableCell( developer.getTimezone() );
+                tableCell( member.getTimezone() );
 
-                if ( !NumberUtils.isNumber( developer.getTimezone() )
-                    && StringUtils.isNotEmpty( developer.getTimezone() ) )
+                if ( !NumberUtils.isNumber( member.getTimezone() ) && StringUtils.isNotEmpty( member.getTimezone() ) )
                 {
-                    String tz = developer.getTimezone().trim();
+                    String tz = member.getTimezone().trim();
                     try
                     {
                         // check if it is a valid timeZone
                         DateTimeZone.forID( tz );
 
                         sink.tableCell();
-                        sink.rawText( "<span id=\"developer-" + developerRowId + "\">" );
+                        sink.rawText( "<span id=\"" + type + "-" + rowId + "\">" );
                         text( tz );
-                        String offSet =
-                            String.valueOf( TimeZone.getTimeZone( tz ).getRawOffset() / 3600000 );
-                        javascript.append( "    offsetDate('developer-" ).append( developerRowId ).append( "', '" );
-                        javascript.append( offSet );
-                        javascript.append( "');" ).append( SystemUtils.LINE_SEPARATOR );
+                        String offSet = String.valueOf( TimeZone.getTimeZone( tz ).getRawOffset() / 3600000 );
+                        javascript.append( "    offsetDate('" ).append( type ).append( "-" ).append( rowId ).append( "', '" );
+                        javascript.append( offSet ).append( "');" ).append( SystemUtils.LINE_SEPARATOR );
                         sink.rawText( "</span>" );
                         sink.tableCell_();
                     }
                     catch ( IllegalArgumentException e )
                     {
-                        log.warn( "The time zone '" + tz + "' for the developer '" + developer.getName()
-                            + "' is not a recognised time zone, use a number in the range -12 to +14 instead of." );
-
-                        sink.tableCell();
-                        sink.rawText( "<span id=\"developer-" + developerRowId + "\">" );
-                        text( null );
-                        sink.rawText( "</span>" );
-                        sink.tableCell_();
-                    }
-                }
-                else
-                {
-                    // To handle JS
-                    sink.tableCell();
-                    sink.rawText( "<span id=\"developer-" + developerRowId + "\">" );
-                    if ( StringUtils.isNotEmpty( developer.getTimezone() ) )
-                    {
-                        // check if number is between -12 and +14
-                        int tz = NumberUtils.toInt( developer.getTimezone().trim(), Integer.MIN_VALUE );
-                        if ( tz == Integer.MIN_VALUE || !( tz >= -12 && tz <= 14 ) )
-                        {
-                            text( null );
-                            log.warn( "The time zone '" + tz + "' for the developer '" + developer.getName()
-                                + "' is not a recognised time zone, use a number in the range -12 to +14 instead of." );
-                        }
-                        else
-                        {
-                            text( developer.getTimezone() );
-                            javascript.append( "    offsetDate('developer-" ).append( developerRowId ).append( "', '" );
-                            javascript.append( developer.getTimezone() );
-                            javascript.append( "');" ).append( SystemUtils.LINE_SEPARATOR );
-                        }
-                    }
-                    else
-                    {
-                        text( null );
-                    }
-                    sink.rawText( "</span>" );
-                    sink.tableCell_();
-                }
-            }
-
-            if ( headersMap.get( PROPERTIES ) == Boolean.TRUE )
-            {
-                Properties props = developer.getProperties();
-                if ( props != null )
-                {
-                    tableCell( propertiesToString( props ) );
-                }
-                else
-                {
-                    tableCell( null );
-                }
-            }
-
-            sink.tableRow_();
-        }
-
-        private void renderContributor( Contributor contributor, int contributorRowId, Map<String, Boolean> headersMap,
-                                        StringBuffer javascript )
-        {
-            sink.tableRow();
-            if ( headersMap.get( NAME ) == Boolean.TRUE )
-            {
-                tableCell( contributor.getName() );
-            }
-            if ( headersMap.get( EMAIL ) == Boolean.TRUE )
-            {
-                tableCell( createLinkPatternedText( contributor.getEmail(), contributor.getEmail() ) );
-            }
-            if ( headersMap.get( URL ) == Boolean.TRUE )
-            {
-                tableCellForUrl( contributor.getUrl() );
-            }
-            if ( headersMap.get( ORGANIZATION ) == Boolean.TRUE )
-            {
-                tableCell( contributor.getOrganization() );
-            }
-            if ( headersMap.get( ORGANIZATION_URL ) == Boolean.TRUE )
-            {
-                tableCellForUrl( contributor.getOrganizationUrl() );
-            }
-            if ( headersMap.get( ROLES ) == Boolean.TRUE )
-            {
-                if ( contributor.getRoles() != null )
-                {
-                    // Comma separated roles
-                    tableCell( StringUtils.join( contributor.getRoles().toArray( EMPTY_STRING_ARRAY ), ", " ) );
-                }
-                else
-                {
-                    tableCell( null );
-                }
-            }
-            if ( headersMap.get( TIME_ZONE ) == Boolean.TRUE )
-            {
-                tableCell( contributor.getTimezone() );
-
-                if ( !NumberUtils.isNumber( contributor.getTimezone() )
-                    && StringUtils.isNotEmpty( contributor.getTimezone() ) )
-                {
-                    String tz = contributor.getTimezone().trim();
-                    try
-                    {
-                        // check if it is a valid timeZone
-                        DateTimeZone.forID( tz );
-
-                        sink.tableCell();
-                        sink.rawText( "<span id=\"contributor-" + contributorRowId + "\">" );
-                        text( tz );
-                        String offSet =
-                            String.valueOf( TimeZone.getTimeZone( tz ).getRawOffset() / 3600000 );
-                        javascript.append( "    offsetDate('contributor-" ).append( contributorRowId ).append( "', '" );
-                        javascript.append( offSet );
-                        javascript.append( "');" ).append( SystemUtils.LINE_SEPARATOR );
-                        sink.rawText( "</span>" );
-                        sink.tableCell_();
-                    }
-                    catch ( IllegalArgumentException e )
-                    {
-                        log.warn( "The time zone '" + tz + "' for the contributor '" + contributor.getName()
+                        log.warn( "The time zone '" + tz + "' for the " + type + " '" + member.getName()
                             + "' is not a recognised time zone, use a number in the range -12 and +14 instead of." );
 
                         sink.tableCell();
-                        sink.rawText( "<span id=\"contributor-" + contributorRowId + "\">" );
+                        sink.rawText( "<span id=\"" + type + "-" + rowId + "\">" );
                         text( null );
                         sink.rawText( "</span>" );
                         sink.tableCell_();
@@ -426,28 +305,27 @@ public class TeamListReport
                 {
                     // To handle JS
                     sink.tableCell();
-                    sink.rawText( "<span id=\"contributor-" + contributorRowId + "\">" );
-                    if ( StringUtils.isNotEmpty( contributor.getTimezone() ) )
+                    sink.rawText( "<span id=\"" + type + "-" + rowId + "\">" );
+                    if ( StringUtils.isEmpty( member.getTimezone() ) )
+                    {
+                        text( null );
+                    }
+                    else
                     {
                         // check if number is between -12 and +14
-                        int tz = NumberUtils.toInt( contributor.getTimezone().trim(), Integer.MIN_VALUE );
+                        int tz = NumberUtils.toInt( member.getTimezone().trim(), Integer.MIN_VALUE );
                         if ( tz == Integer.MIN_VALUE || !( tz >= -12 && tz <= 14 ) )
                         {
                             text( null );
-                            log.warn( "The time zone '" + tz + "' for the contributor '" + contributor.getName()
+                            log.warn( "The time zone '" + tz + "' for the " + type + " '" + member.getName()
                                 + "' is not a recognised time zone, use a number in the range -12 to +14 instead of." );
                         }
                         else
                         {
-                            text( contributor.getTimezone() );
-                            javascript.append( "    offsetDate('contributor-" ).append( contributorRowId ).append( "', '" );
-                            javascript.append( contributor.getTimezone() );
-                            javascript.append( "');" ).append( SystemUtils.LINE_SEPARATOR );
+                            text( member.getTimezone() );
+                            javascript.append( "    offsetDate('" ).append( type ).append( "-" ).append( rowId ).append( "', '" );
+                            javascript.append( member.getTimezone() ).append( "');" ).append( SystemUtils.LINE_SEPARATOR );
                         }
-                    }
-                    else
-                    {
-                        text( null );
                     }
                     sink.rawText( "</span>" );
                     sink.tableCell_();
@@ -456,7 +334,7 @@ public class TeamListReport
 
             if ( headersMap.get( PROPERTIES ) == Boolean.TRUE )
             {
-                Properties props = contributor.getProperties();
+                Properties props = member.getProperties();
                 if ( props != null )
                 {
                     tableCell( propertiesToString( props ) );
@@ -490,13 +368,7 @@ public class TeamListReport
             setRequiredArray( requiredHeaders, requiredArray, name, email, url, organization, organizationUrl, roles,
                               timeZone, actualTime, properties );
 
-            String[] array = new String[requiredArray.size()];
-            for ( int i = 0; i < array.length; i++ )
-            {
-                array[i] = requiredArray.get( i );
-            }
-
-            return array;
+            return requiredArray.toArray( new String[requiredArray.size()] );
         }
 
         /**
@@ -526,13 +398,7 @@ public class TeamListReport
             setRequiredArray( requiredHeaders, requiredArray, name, email, url, organization, organizationUrl, roles,
                               timeZone, actualTime, properties );
 
-            String[] array = new String[requiredArray.size()];
-            for ( int i = 0; i < array.length; i++ )
-            {
-                array[i] = requiredArray.get( i );
-            }
-
-            return array;
+            return requiredArray.toArray( new String[requiredArray.size()] );
         }
 
         /**
@@ -589,11 +455,13 @@ public class TeamListReport
         }
 
         /**
-         * @param requiredHeaders
-         * @param units
+         * @param units contributors and developers to check
+         * @return required headers
          */
-        private void checkRequiredHeaders( Map<String, Boolean> requiredHeaders, List<?> units )
+        private Map<String, Boolean> checkRequiredHeaders( List<? extends Contributor> units )
         {
+            Map<String, Boolean> requiredHeaders = new HashMap<String, Boolean>();
+
             requiredHeaders.put( ID, Boolean.FALSE );
             requiredHeaders.put( NAME, Boolean.FALSE );
             requiredHeaders.put( EMAIL, Boolean.FALSE );
@@ -604,78 +472,51 @@ public class TeamListReport
             requiredHeaders.put( TIME_ZONE, Boolean.FALSE );
             requiredHeaders.put( PROPERTIES, Boolean.FALSE );
 
-            for ( Object unit : units )
+            for ( Contributor unit : units )
             {
-                String name = null;
-                String email = null;
-                String url = null;
-                String organization = null;
-                String organizationUrl = null;
-                List<String> roles = null;
-                String timeZone = null;
-                Properties properties = null;
-
-                if ( unit.getClass().getName().equals( Contributor.class.getName() ) )
-                {
-                    Contributor contributor = (Contributor) unit;
-                    name = contributor.getName();
-                    email = contributor.getEmail();
-                    url = contributor.getUrl();
-                    organization = contributor.getOrganization();
-                    organizationUrl = contributor.getOrganizationUrl();
-                    roles = contributor.getRoles();
-                    timeZone = contributor.getTimezone();
-                    properties = contributor.getProperties();
-                }
-                else
+                if ( unit instanceof Developer )
                 {
                     Developer developer = (Developer) unit;
-                    name = developer.getName();
-                    email = developer.getEmail();
-                    url = developer.getUrl();
-                    organization = developer.getOrganization();
-                    organizationUrl = developer.getOrganizationUrl();
-                    roles = developer.getRoles();
-                    timeZone = developer.getTimezone();
-                    properties = developer.getProperties();
                     if ( StringUtils.isNotEmpty( developer.getId() ) )
                     {
                         requiredHeaders.put( ID, Boolean.TRUE );
                     }
                 }
-                if ( StringUtils.isNotEmpty( name ) )
+                if ( StringUtils.isNotEmpty( unit.getName() ) )
                 {
                     requiredHeaders.put( NAME, Boolean.TRUE );
                 }
-                if ( StringUtils.isNotEmpty( email ) )
+                if ( StringUtils.isNotEmpty( unit.getEmail() ) )
                 {
                     requiredHeaders.put( EMAIL, Boolean.TRUE );
                 }
-                if ( StringUtils.isNotEmpty( url ) )
+                if ( StringUtils.isNotEmpty( unit.getUrl() ) )
                 {
                     requiredHeaders.put( URL, Boolean.TRUE );
                 }
-                if ( StringUtils.isNotEmpty( organization ) )
+                if ( StringUtils.isNotEmpty( unit.getOrganization() ) )
                 {
                     requiredHeaders.put( ORGANIZATION, Boolean.TRUE );
                 }
-                if ( StringUtils.isNotEmpty( organizationUrl ) )
+                if ( StringUtils.isNotEmpty( unit.getOrganizationUrl() ) )
                 {
                     requiredHeaders.put( ORGANIZATION_URL, Boolean.TRUE );
                 }
-                if ( null != roles && !roles.isEmpty() )
+                if ( !isEmpty( unit.getRoles() ) )
                 {
                     requiredHeaders.put( ROLES, Boolean.TRUE );
                 }
-                if ( StringUtils.isNotEmpty( timeZone ) )
+                if ( StringUtils.isNotEmpty( unit.getTimezone() ) )
                 {
                     requiredHeaders.put( TIME_ZONE, Boolean.TRUE );
                 }
+                Properties properties = unit.getProperties();
                 if ( null != properties && !properties.isEmpty() )
                 {
                     requiredHeaders.put( PROPERTIES, Boolean.TRUE );
                 }
             }
+            return requiredHeaders;
         }
 
         /**
@@ -697,6 +538,11 @@ public class TeamListReport
             }
 
             sink.tableCell_();
+        }
+
+        private boolean isEmpty( List<?> list )
+        {
+            return ( list == null ) || list.isEmpty();
         }
     }
 }
