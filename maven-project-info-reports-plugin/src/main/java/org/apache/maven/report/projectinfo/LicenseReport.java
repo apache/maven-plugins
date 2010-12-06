@@ -293,7 +293,7 @@ public class LicenseReport
                         try
                         {
                             // All licenses are supposed in English...
-                            licenseContent = ProjectInfoReportUtils.getInputStream( licenseUrl, settings );
+                            licenseContent = ProjectInfoReportUtils.getContent( licenseUrl, settings );
                         }
                         catch ( IOException e )
                         {
