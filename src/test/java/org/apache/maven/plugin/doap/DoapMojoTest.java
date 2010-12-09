@@ -95,12 +95,12 @@ public class DoapMojoTest
             assertTrue( readed.indexOf( "<Project rdf:about=\"" + mavenProject.getUrl() + "\">" ) != -1 );
             assertTrue( readed.indexOf( "<homepage rdf:resource=\"" + mavenProject.getUrl() + "\"/>" ) != -1 );
         }
-        assertTrue( readed.indexOf( "<name rdf:resource=\"" + mavenProject.getName() + "\"/>" ) != -1 );
-        assertTrue( readed.indexOf( "<programming-language rdf:resource=\"java\"/>" ) != -1 );
+        assertTrue( readed.indexOf( "<name>" + mavenProject.getName() + "</name>" ) != -1 );
+        assertTrue( readed.indexOf( "<programming-language>java</programming-language>" ) != -1 );
 
         // ASF ext
         assertFalse( readed.indexOf( "<asfext:pmc rdf:resource=\"" + mavenProject.getUrl() + "\"/>" ) != -1 );
-        assertFalse( readed.indexOf( "<asfext:name rdf:resource=\"" + mavenProject.getName() + "\"/>" ) != -1 );
+        assertFalse( readed.indexOf( "<asfext:name>" + mavenProject.getName() + "</name>" ) != -1 );
     }
 
     /**
@@ -144,12 +144,12 @@ public class DoapMojoTest
             assertTrue( readed.indexOf( "<Project rdf:about=\"" + mavenProject.getUrl() + "\">" ) != -1 );
             assertTrue( readed.indexOf( "<homepage rdf:resource=\"" + mavenProject.getUrl() + "\"/>" ) != -1 );
         }
-        assertTrue( readed.indexOf( "<name rdf:resource=\"Apache " + mavenProject.getName() + "\"/>" ) != -1 );
-        assertTrue( readed.indexOf( "<programming-language rdf:resource=\"java\"/>" ) != -1 );
+        assertTrue( readed.indexOf( "<name>Apache " + mavenProject.getName() + "</name>" ) != -1 );
+        assertTrue( readed.indexOf( "<programming-language>java</programming-language>" ) != -1 );
 
         // ASF ext
         assertTrue( readed.indexOf( "<asfext:pmc rdf:resource=\"" + mavenProject.getUrl() + "\"/>" ) != -1 );
-        assertTrue( readed.indexOf( "<asfext:name rdf:resource=\"Apache " + mavenProject.getName() + "\"/>" ) != -1 );
+        assertTrue( readed.indexOf( "<asfext:name>Apache " + mavenProject.getName() + "</asfext:name>" ) != -1 );
     }
 
     /**

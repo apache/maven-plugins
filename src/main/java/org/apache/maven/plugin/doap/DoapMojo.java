@@ -441,11 +441,11 @@ public class DoapMojo
         if ( asfExtOptions.isIncluded()
             && !project.getName().toLowerCase( Locale.ENGLISH ).trim().startsWith( "apache" ) )
         {
-            DoapUtil.writeRdfResourceElement( writer, "name", "Apache " + project.getName() );
+            DoapUtil.writeElement( writer, "name", "Apache " + project.getName() );
         }
         else
         {
-            DoapUtil.writeRdfResourceElement( writer, "name", project.getName() );
+            DoapUtil.writeElement( writer, "name", project.getName() );
         }
     }
 
@@ -549,7 +549,7 @@ public class DoapMojo
                                    + "Refer you to http://projects.apache.org/languages.html" );
             }
 
-            DoapUtil.writeRdfResourceElement( writer, "programming-language", language );
+            DoapUtil.writeElement( writer, "programming-language", language );
         }
 
         if ( StringUtils.isNotEmpty( doapOptions.getProgrammingLanguage() ) )
@@ -565,7 +565,7 @@ public class DoapMojo
                                        + "Refer you to http://projects.apache.org/languages.html" );
                 }
 
-                DoapUtil.writeRdfResourceElement( writer, "programming-language", languages[i].trim() );
+                DoapUtil.writeElement( writer, "programming-language", languages[i].trim() );
             }
         }
     }
@@ -687,7 +687,7 @@ public class DoapMojo
         String[] oses = StringUtils.split( doapOptions.getOs(), "," );
         for ( int i = 0; i < oses.length; i++ )
         {
-            DoapUtil.writeRdfResourceElement( writer, "os", oses[i].trim() );
+            DoapUtil.writeElement( writer, "os", oses[i].trim() );
         }
     }
 
@@ -1366,7 +1366,7 @@ public class DoapMojo
         // asfext:name
         if ( StringUtils.isNotEmpty( asfExtOptions.getName() ) )
         {
-            DoapUtil.writeRdfResourceElement( writer, "asfext:name", asfExtOptions.getName() );
+            DoapUtil.writeElement( writer, "asfext:name", asfExtOptions.getName() );
         }
         else
         {
@@ -1381,11 +1381,11 @@ public class DoapMojo
                 // Respect ASF rule
                 if ( !project.getName().trim().startsWith( "Apache" ) )
                 {
-                    DoapUtil.writeRdfResourceElement( writer, "asfext:name", "Apache " + project.getName().trim() );
+                    DoapUtil.writeElement( writer, "asfext:name", "Apache " + project.getName().trim() );
                 }
                 else
                 {
-                    DoapUtil.writeRdfResourceElement( writer, "asfext:name", project.getName().trim() );
+                    DoapUtil.writeElement( writer, "asfext:name", project.getName().trim() );
                 }
             }
         }
