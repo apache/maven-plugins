@@ -35,7 +35,7 @@ Maven Project Info Reports Plugin
 
 * Goals Overview
 
- The Project Info Reports Plugin has thirteen goals:
+ The Project Info Reports Plugin has the following goals:
 
    * {{{./cim-mojo.html}project-info-reports:cim}} is used to generate the Project Continuous Integration
    System report.
@@ -49,6 +49,12 @@ Maven Project Info Reports Plugin
    * {{{./dependency-management-mojo.html}project-info-reports:dependency-management}} is used to generate the
    Project DependencyManagement report.
 
+   * {{{./distribution-management-mojo.html}project-info-reports:distribution-management}} is used to generate
+   the Project Distribution Management report.
+
+   * {{{./help-mojo.html}project-info-reports:help}} is used to display help information
+   on the Project Info Reports Plugin.
+
    * {{{./index-mojo.html}project-info-reports:index}} is used to generate the Project index page.
 
    * {{{./issue-tracking-mojo.html}project-info-reports:issue-tracking}} is used to generate the Project Issue
@@ -58,6 +64,8 @@ Maven Project Info Reports Plugin
 
    * {{{./mailing-list-mojo.html}project-info-reports:mailing-list}} is used to generate the Project Mailing
    List report.
+
+   * {{{./modules-mojo.html}project-info-reports:modules}} is used to generate the Project Modules report.
 
    * {{{./plugin-management-mojo.html}project-info-reports:plugin-management}} is used to generate the
    Project PluginManagement report.
