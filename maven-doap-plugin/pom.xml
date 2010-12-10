@@ -50,7 +50,7 @@ under the License.
   </issueManagement>
 
   <properties>
-    <scmVersion>1.0</scmVersion>
+    <scmVersion>1.4</scmVersion>
   </properties>
 
   <dependencies>
