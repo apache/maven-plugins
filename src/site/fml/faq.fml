@@ -20,8 +20,8 @@ under the License.
 -->
 
 <faqs xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xmlns="http://maven.apache.org/FML/1.0"
-  xsi:schemaLocation="http://maven.apache.org/FML/1.0 http://maven.apache.org/xsd/fml-1.0.xsd"
+  xmlns="http://maven.apache.org/FML/1.0.1"
+  xsi:schemaLocation="http://maven.apache.org/FML/1.0.1 http://maven.apache.org/xsd/fml-1.0.1.xsd"
   id="FAQ" title="Frequently Asked Questions">
   <part id="General">
     <faq id="What is DOAP">
