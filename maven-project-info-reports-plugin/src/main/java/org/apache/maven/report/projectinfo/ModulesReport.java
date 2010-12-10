@@ -128,6 +128,7 @@ public class ModulesReport
 
                         moduleModel = new Model();
                         moduleModel.setName( module );
+                        moduleModel.setArtifactId( module );
                     }
                 }
                 else
@@ -136,9 +137,23 @@ public class ModulesReport
 
                     moduleModel = new Model();
                     moduleModel.setName( module );
+                    moduleModel.setArtifactId( module );
                 }
 
-                tableRow( new String[] {linkedName( moduleModel.getName(), module ), moduleModel.getDescription()} );
+                final String moduleName = moduleModel.getName();
+
+                String baseURL = model.getUrl();
+
+                // re-read the parent URL because the above gives some relative link (why?)
+                final Model parentModel = readModel( new File( project.getBasedir(), "pom.xml" ) );
+                if ( parentModel != null )
+                {
+                    baseURL = parentModel.getUrl();
+                }
+
+                final String moduleHref = getRelativeLink( baseURL,  moduleModel.getUrl(), moduleModel.getArtifactId() );
+
+                tableRow( new String[] {linkedName( moduleName, moduleHref ), moduleModel.getDescription()} );
             }
 
             endTable();
@@ -147,9 +162,36 @@ public class ModulesReport
         }
     }
 
+    // adapted from DefaultSiteTool#appendMenuItem
+    private String getRelativeLink( String baseUrl, String href, String defaultHref )
+    {
+        String selectedHref = href;
+
+        if ( selectedHref == null )
+        {
+            selectedHref = defaultHref;
+        }
+
+        if ( baseUrl != null )
+        {
+            selectedHref = siteTool.getRelativePath( selectedHref, baseUrl );
+        }
+
+        if ( selectedHref.endsWith( "/" ) )
+        {
+            selectedHref = selectedHref.concat( "index.html" );
+        }
+        else
+        {
+            selectedHref = selectedHref.concat( "/index.html" );
+        }
+
+        return selectedHref;
+    }
+
     private String linkedName( String name, String link )
     {
-        return "{" + name + ", ./" + link + "/}";
+        return "{" + name + ", ./" + link + "}";
     }
 
     /**
