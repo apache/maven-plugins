@@ -47,6 +47,20 @@ under the License.
     <url>http://jira.codehaus.org/browse/MDOAPTEST</url>
   </issueManagement>
 
+  <developers>
+    <developer>
+      <id>jdoe</id>
+      <name>Jane Doe</name>
+      <email>jdoe@example.org</email>
+      <organization>Example Organization</organization>
+      <organizationUrl>http://www.example.org</organizationUrl>
+        <roles>
+          <role>PMC Member</role>
+        </roles>
+      <timezone>-8</timezone>
+    </developer>
+  </developers>
+
   <build>
     <plugins>
       <plugin>

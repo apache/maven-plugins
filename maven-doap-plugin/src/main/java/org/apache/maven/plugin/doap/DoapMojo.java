@@ -33,6 +33,8 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 import java.util.TimeZone;
 
 import org.apache.maven.artifact.Artifact;
@@ -68,11 +70,10 @@ import org.codehaus.plexus.util.xml.XMLWriter;
 import org.codehaus.plexus.util.xml.XmlWriterUtil;
 
 /**
- * Generate a <a href="http://usefulinc.com/ns/doap">Description of a Project (DOAP)</a>
- * file from the main information found in a POM.
- * <br/>
- * <b>Note</b>: The generated file is tailored for use by projects at
- * <a href="http://projects.apache.org/doap.html">Apache</a>.
+ * Generate a <a href="http://usefulinc.com/ns/doap">Description of a Project (DOAP)</a> file from the main information
+ * found in a POM. <br/>
+ * <b>Note</b>: The generated file is tailored for use by projects at <a
+ * href="http://projects.apache.org/doap.html">Apache</a>.
  *
  * @author Jason van Zyl
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
@@ -154,7 +155,7 @@ public class DoapMojo
      * The name of the DOAP file that will be generated.
      *
      * @parameter expression="${doapFile}"
-     * default-value="${project.reporting.outputDirectory}/doap_${project.artifactId}.rdf"
+     *            default-value="${project.reporting.outputDirectory}/doap_${project.artifactId}.rdf"
      * @required
      */
     private File doapFile;
@@ -188,7 +189,7 @@ public class DoapMojo
      *
      * @parameter expression="${category}"
      * @deprecated Since 1.0. Instead of, configure <code>category</code> property in <code>doapOptions</code>
-     * parameter.
+     *             parameter.
      */
     private String category;
 
@@ -197,22 +198,22 @@ public class DoapMojo
      *
      * @parameter expression="${language}"
      * @deprecated Since 1.0. Instead of, configure <code>programmingLanguage</code> property in
-     * <code>doapOptions</code> parameter.
+     *             <code>doapOptions</code> parameter.
      */
     private String language;
 
     /**
-     * Specific DOAP parameters, i.e. options that POM doesn't have any notions.
-     * <br/>
+     * Specific DOAP parameters, i.e. options that POM doesn't have any notions. <br/>
      * Example:
+     *
      * <pre>
      * &lt;doapOptions&gt;
      * &nbsp;&nbsp;&lt;programmingLanguage&gt;java&lt;/programmingLanguage&gt;
      * &lt;/doapOptions&gt;
      * </pre>
+     *
      * <br/>
-     * See <a href="./apidocs/org/apache/maven/plugin/doap/options/DoapOptions.html">Javadoc</a>
-     * <br/>
+     * See <a href="./apidocs/org/apache/maven/plugin/doap/options/DoapOptions.html">Javadoc</a> <br/>
      *
      * @parameter expression="${doapOptions}"
      * @since 1.0
@@ -222,9 +223,9 @@ public class DoapMojo
 
     /**
      * Specific ASF extensions parameters, i.e. options that POM doesn't have any notions but required by ASF DOAP
-     * requirements.
-     * <br/>
+     * requirements. <br/>
      * Example:
+     *
      * <pre>
      * &lt;asfExtOptions&gt;
      * &nbsp;&nbsp;&lt;included&gt;true&lt;/included&gt;
@@ -233,16 +234,15 @@ public class DoapMojo
      * &nbsp;&nbsp;...
      * &lt;/asfExtOptions&gt;
      * </pre>
+     *
      * <b>Note</b>: By default, <code>asfExtOptions/included</code> is set to <code>true</code> to include the ASF
-     * extensions.
-     * <br/>
-     * See <a href="./apidocs/org/apache/maven/plugin/doap/options/ASFExtOptions.html">Javadoc</a>
-     * <br/>
+     * extensions. <br/>
+     * See <a href="./apidocs/org/apache/maven/plugin/doap/options/ASFExtOptions.html">Javadoc</a> <br/>
      *
      * @parameter expression="${asfExtOptions}"
      * @since 1.0
      * @see <a href="http://svn.apache.org/repos/asf/infrastructure/site-tools/trunk/projects/asfext">
-     * http://svn.apache.org/repos/asf/infrastructure/site-tools/trunk/projects/asfext</a>
+     *      http://svn.apache.org/repos/asf/infrastructure/site-tools/trunk/projects/asfext</a>
      * @see <a href="http://projects.apache.org/docs/pmc.html">http://projects.apache.org/docs/pmc.html</a>
      * @see <a href="http://projects.apache.org/docs/standards.html">http://projects.apache.org/docs/standards.html</a>
      */
@@ -250,12 +250,9 @@ public class DoapMojo
 
     /**
      * The value for the <code>xml:lang</code> attribute used by the <code>&lt;rdf:RDF/&gt;<code>,
-     * <code>&lt;description/&gt;</code> and <code>&lt;shortdesc/&gt;</code> elements.
-     * <br/>
-     * POM doesn't have any notions about language.
-     * <br/>
-     * See <a href="http://www.w3.org/TR/REC-xml/#sec-lang-tag">http://www.w3.org/TR/REC-xml/#sec-lang-tag</a>
-     * <br/>
+     * <code>&lt;description/&gt;</code> and <code>&lt;shortdesc/&gt;</code> elements. <br/>
+     * POM doesn't have any notions about language. <br/>
+     * See <a href="http://www.w3.org/TR/REC-xml/#sec-lang-tag">http://www.w3.org/TR/REC-xml/#sec-lang-tag</a> <br/>
      *
      * @parameter expression="${lang}" default-value="en"
      * @required
@@ -264,8 +261,8 @@ public class DoapMojo
     private String lang;
 
     /**
-     * The <code>about</code> URI-reference which should be displayed in the DOAP file.
-     * Example:
+     * The <code>about</code> URI-reference which should be displayed in the DOAP file. Example:
+     *
      * <pre>
      * &lt;rdf:RDF&gt;
      * &nbsp;&nbsp;&lt;Project rdf:about="http://maven.apache.org/"&gt;
@@ -273,9 +270,9 @@ public class DoapMojo
      * &nbsp;&nbsp;&lt;/Project&gt;
      * &lt;/rdf:RDF&gt;
      * </pre>
+     *
      * See <a href="http://www.w3.org/TR/1999/REC-rdf-syntax-19990222/#aboutAttr">
-     * http://www.w3.org/TR/1999/REC-rdf-syntax-19990222/#aboutAttr</a>
-     * <br/>
+     * http://www.w3.org/TR/1999/REC-rdf-syntax-19990222/#aboutAttr</a> <br/>
      *
      * @parameter expression="${about}" default-value="${project.url}"
      * @since 1.0
@@ -414,6 +411,9 @@ public class DoapMojo
         }
 
         writer.endElement(); // Project
+
+        writeOrganizations( writer );
+
         writer.endElement(); // rdf:RDF
 
         try
@@ -537,10 +537,8 @@ public class DoapMojo
         if ( StringUtils.isNotEmpty( doapOptions.getOldHomepage() ) )
         {
             XmlWriterUtil.writeLineBreak( writer );
-            XmlWriterUtil.writeCommentText(
-                                            writer,
-                                            "URL of a project's past homepage, associated with exactly one project.",
-                                            2 );
+            XmlWriterUtil.writeCommentText( writer,
+                                            "URL of a project's past homepage, associated with exactly one project.", 2 );
             DoapUtil.writeRdfResourceElement( writer, "old-homepage", doapOptions.getOldHomepage() );
         }
     }
@@ -550,7 +548,7 @@ public class DoapMojo
      *
      * @param writer not null
      * @see <a href="http://usefulinc.com/ns/doap#programming-language">
-     * http://usefulinc.com/ns/doap#programming-language</a>
+     *      http://usefulinc.com/ns/doap#programming-language</a>
      */
     private void writeProgrammingLanguage( XMLWriter writer )
     {
@@ -566,8 +564,7 @@ public class DoapMojo
         {
             if ( asfExtOptions.isIncluded() && !ASFExtOptions.isProgrammingLanguageSupportedByASF( language ) )
             {
-                getLog().warn(
-                               "The programming language '" + language + "' is not supported by ASF. "
+                getLog().warn( "The programming language '" + language + "' is not supported by ASF. "
                                    + "Refer you to http://projects.apache.org/languages.html" );
             }
 
@@ -582,8 +579,7 @@ public class DoapMojo
                 if ( asfExtOptions.isIncluded()
                     && !ASFExtOptions.isProgrammingLanguageSupportedByASF( languages[i].trim() ) )
                 {
-                    getLog().warn(
-                                   "The programming language '" + languages[i].trim() + "' is not supported by ASF. "
+                    getLog().warn( "The programming language '" + languages[i].trim() + "' is not supported by ASF. "
                                        + "Refer you to http://projects.apache.org/languages.html" );
                 }
 
@@ -605,7 +601,7 @@ public class DoapMojo
             return;
         }
 
-        //TODO: how to lookup category, map it, or just declare it.
+        // TODO: how to lookup category, map it, or just declare it.
         XmlWriterUtil.writeLineBreak( writer );
         XmlWriterUtil.writeCommentText( writer, "A category of project.", 2 );
 
@@ -613,15 +609,13 @@ public class DoapMojo
         {
             if ( asfExtOptions.isIncluded() && !ASFExtOptions.isCategorySupportedByASF( category ) )
             {
-                getLog().warn(
-                               "The given category '" + category + "' is not supported by ASF. "
+                getLog().warn( "The given category '" + category + "' is not supported by ASF. "
                                    + "Refer you to http://projects.apache.org/categories.html" );
             }
 
             if ( asfExtOptions.isIncluded() )
             {
-                DoapUtil
-                    .writeRdfResourceElement( writer, "category", "http://projects.apache.org/category/" + category );
+                DoapUtil.writeRdfResourceElement( writer, "category", "http://projects.apache.org/category/" + category );
             }
             else
             {
@@ -636,8 +630,7 @@ public class DoapMojo
             {
                 if ( asfExtOptions.isIncluded() && !ASFExtOptions.isCategorySupportedByASF( categories[i] ) )
                 {
-                    getLog().warn(
-                                   "The given category '" + categories[i] + "' is not supported by ASF. "
+                    getLog().warn( "The given category '" + categories[i] + "' is not supported by ASF. "
                                        + "Refer you to http://projects.apache.org/categories.html" );
                 }
 
@@ -764,8 +757,8 @@ public class DoapMojo
 
         XmlWriterUtil.writeLineBreak( writer );
         XmlWriterUtil.writeCommentText( writer, "The URI of the license the software is distributed under.", 2 );
-        //TODO: how to map to usefulinc site, or if this is necessary, the OSI page might
-        //      be more appropriate.
+        // TODO: how to map to usefulinc site, or if this is necessary, the OSI page might
+        // be more appropriate.
         for ( Iterator it = project.getLicenses().iterator(); it.hasNext(); )
         {
             License license = (License) it.next();
@@ -864,8 +857,9 @@ public class DoapMojo
     private void writeReleases( XMLWriter writer )
         throws MojoExecutionException
     {
-        Artifact artifact = artifactFactory.createArtifact( project.getGroupId(), project.getArtifactId(), project
-            .getVersion(), null, project.getPackaging() );
+        Artifact artifact =
+            artifactFactory.createArtifact( project.getGroupId(), project.getArtifactId(), project.getVersion(), null,
+                                            project.getPackaging() );
         RepositoryMetadata metadata = new ArtifactRepositoryMetadata( artifact );
 
         for ( Iterator it = remoteRepositories.iterator(); it.hasNext(); )
@@ -941,8 +935,9 @@ public class DoapMojo
             {
                 ArtifactRepository repo = (ArtifactRepository) it2.next();
 
-                Artifact artifactRelease = artifactFactory.createArtifact( project.getGroupId(), project
-                    .getArtifactId(), version, null, project.getPackaging() );
+                Artifact artifactRelease =
+                    artifactFactory.createArtifact( project.getGroupId(), project.getArtifactId(), version, null,
+                                                    project.getPackaging() );
 
                 if ( artifactRelease == null )
                 {
@@ -980,9 +975,8 @@ public class DoapMojo
                 }
                 catch ( ParseException e )
                 {
-                    getLog().error(
-                                    "Unable to parse date '"
-                                        + metadata.getMetadata().getVersioning().getLastUpdated() + "'" );
+                    getLog().error( "Unable to parse date '" + metadata.getMetadata().getVersioning().getLastUpdated()
+                                        + "'" );
                     continue;
                 }
 
@@ -1037,6 +1031,7 @@ public class DoapMojo
 
     /**
      * Write a DOAP repository, for instance:
+     *
      * <pre>
      *   &lt;repository&gt;
      *     &lt;SVNRepository&gt;
@@ -1078,10 +1073,9 @@ public class DoapMojo
         else
         {
             /*
-             * Supported DOAP repositories actually unsupported by SCM:
-             *   BitKeeper (http://usefulinc.com/ns/doap#BKRepository)
-             *   Arch (http://usefulinc.com/ns/doap#ArchRepository)
-             * Other SCM repos are unsupported by DOAP.
+             * Supported DOAP repositories actually unsupported by SCM: BitKeeper
+             * (http://usefulinc.com/ns/doap#BKRepository) Arch (http://usefulinc.com/ns/doap#ArchRepository) Other SCM
+             * repos are unsupported by DOAP.
              */
             writer.startElement( "Repository" );
 
@@ -1124,7 +1118,7 @@ public class DoapMojo
             XmlWriterUtil.writeCommentText( writer, "Contributed persons", 2 );
         }
 
-        List maintainers =  DoapUtil.getDevelopersOrContributorsWithMaintainerRole( i18n, developersOrContributors );
+        List maintainers = DoapUtil.getDevelopersOrContributorsWithMaintainerRole( i18n, developersOrContributors );
         List developers = DoapUtil.getDevelopersOrContributorsWithDeveloperRole( i18n, developersOrContributors );
         List documenters = DoapUtil.getDevelopersOrContributorsWithDocumenterRole( i18n, developersOrContributors );
         List translators = DoapUtil.getDevelopersOrContributorsWithTranslatorRole( i18n, developersOrContributors );
@@ -1171,6 +1165,7 @@ public class DoapMojo
 
     /**
      * Write a DOAP maintainer or developer or documenter or translator or tester or helper, for instance:
+     *
      * <pre>
      *   &lt;maintainer&gt;
      *     &lt;foaf:Person&gt;
@@ -1273,7 +1268,9 @@ public class DoapMojo
         String name;
         String email;
         String organization;
+        String organizationUrl;
         String homepage;
+        String nodeId = null;
 
         if ( Developer.class.isAssignableFrom( developerOrContributor.getClass() ) )
         {
@@ -1281,6 +1278,7 @@ public class DoapMojo
             name = d.getName();
             email = d.getEmail();
             organization = d.getOrganization();
+            organizationUrl = d.getOrganizationUrl();
             homepage = d.getUrl();
         }
         else
@@ -1289,6 +1287,7 @@ public class DoapMojo
             name = c.getName();
             email = c.getEmail();
             organization = c.getOrganization();
+            organizationUrl = c.getOrganizationUrl();
             homepage = c.getUrl();
         }
 
@@ -1298,8 +1297,19 @@ public class DoapMojo
             return;
         }
 
+        if ( !StringUtils.isEmpty( organization ) || !StringUtils.isEmpty( organizationUrl ) )
+        {
+            DoapUtil.Organization doapOrganization = DoapUtil.addOrganization( organization, organizationUrl );
+            nodeId = DoapUtil.getNodeId();
+            doapOrganization.addMember( nodeId );
+        }
+
         writer.startElement( doapType );
         writer.startElement( "foaf:Person" );
+        if ( StringUtils.isNotEmpty( nodeId ) )
+        {
+            writer.addAttribute( "rdf:nodeID", nodeId );
+        }
         writer.startElement( "foaf:name" );
         writer.writeText( name );
         writer.endElement(); // foaf:name
@@ -1307,9 +1317,9 @@ public class DoapMojo
         {
             DoapUtil.writeRdfResourceElement( writer, "foaf:mbox", "mailto:" + email );
         }
-        if ( StringUtils.isNotEmpty( organization ) )
+        if ( StringUtils.isNotEmpty( organization ) || StringUtils.isNotEmpty( organizationUrl ) )
         {
-            DoapUtil.writeRdfResourceElement( writer, "foaf:Organization", organization );
+            DoapUtil.addOrganization( organization, organizationUrl );
         }
         if ( StringUtils.isNotEmpty( homepage ) )
         {
@@ -1358,7 +1368,7 @@ public class DoapMojo
      *
      * @param writer not null
      * @see <a href="http://svn.apache.org/repos/asf/infrastructure/site-tools/trunk/projects/asfext">
-     * http://svn.apache.org/repos/asf/infrastructure/site-tools/trunk/projects/asfext</a>
+     *      http://svn.apache.org/repos/asf/infrastructure/site-tools/trunk/projects/asfext</a>
      * @see <a href="http://projects.apache.org/docs/pmc.html">http://projects.apache.org/docs/pmc.html</a>
      */
     private void writeASFext( XMLWriter writer )
@@ -1375,8 +1385,7 @@ public class DoapMojo
         {
             if ( StringUtils.isEmpty( project.getUrl() ) )
             {
-                getLog().warn(
-                               "No project url discovered! According http://projects.apache.org/docs/pmc.html, "
+                getLog().warn( "No project url discovered! According http://projects.apache.org/docs/pmc.html, "
                                    + "asfext:pmc is required" );
             }
             else
@@ -1394,8 +1403,7 @@ public class DoapMojo
         {
             if ( StringUtils.isEmpty( project.getName() ) )
             {
-                getLog().warn(
-                               "No project name discovered! According http://projects.apache.org/docs/pmc.html, "
+                getLog().warn( "No project name discovered! According http://projects.apache.org/docs/pmc.html, "
                                    + "asfext:name is required" );
             }
             else
@@ -1415,8 +1423,7 @@ public class DoapMojo
         // asfext:charter
         if ( StringUtils.isEmpty( asfExtOptions.getCharter() ) )
         {
-            getLog().warn(
-                           "No charter specified! According http://projects.apache.org/docs/pmc.html, "
+            getLog().warn( "No charter specified! According http://projects.apache.org/docs/pmc.html, "
                                + "charter is required" );
         }
         else
@@ -1446,8 +1453,7 @@ public class DoapMojo
             }
             else
             {
-                getLog().warn(
-                               "No chair man discovered! According http://projects.apache.org/docs/pmc.html, "
+                getLog().warn( "No chair man discovered! According http://projects.apache.org/docs/pmc.html, "
                                    + "asfext:chair is required" );
             }
         }
@@ -1472,7 +1478,7 @@ public class DoapMojo
      *
      * @param writer not null
      * @see <a href="http://svn.apache.org/repos/asf/infrastructure/site-tools/trunk/projects/asfext">
-     * http://svn.apache.org/repos/asf/infrastructure/site-tools/trunk/projects/asfext</a>
+     *      http://svn.apache.org/repos/asf/infrastructure/site-tools/trunk/projects/asfext</a>
      * @see <a href="http://projects.apache.org/docs/standards.html">http://projects.apache.org/docs/standards.html</a>
      */
     private void writeASFImplements( XMLWriter writer )
@@ -1491,8 +1497,7 @@ public class DoapMojo
 
             if ( StringUtils.isEmpty( standard.getTitle() ) )
             {
-                getLog().warn(
-                               "No title specified! According http://projects.apache.org/docs/standards.html, "
+                getLog().warn( "No title specified! According http://projects.apache.org/docs/standards.html, "
                                    + "asfext:title is required" );
             }
             else
@@ -1504,8 +1509,7 @@ public class DoapMojo
 
             if ( StringUtils.isEmpty( standard.getBody() ) )
             {
-                getLog().warn(
-                               "No body specified! According http://projects.apache.org/docs/standards.html, "
+                getLog().warn( "No body specified! According http://projects.apache.org/docs/standards.html, "
                                    + "asfext:body is required" );
             }
             else
@@ -1517,8 +1521,7 @@ public class DoapMojo
 
             if ( StringUtils.isEmpty( standard.getId() ) )
             {
-                getLog().warn(
-                               "No id specified! According http://projects.apache.org/docs/standards.html, "
+                getLog().warn( "No id specified! According http://projects.apache.org/docs/standards.html, "
                                    + "asfext:id is required" );
             }
             else
@@ -1540,14 +1543,54 @@ public class DoapMojo
         }
     }
 
+    /**
+     * Write a Foaf Organization, for instance:
+     *
+     * <pre>
+     *   &lt;<foaf:Organization&gt;
+     *     &lt;foaf:name&gt;YoyoDyne&lt;/foaf:name&gt;
+     *     &lt;foaf:homepage rdf:resource="http://yoyodyne.example.org"/&gt;
+     *     &lt;foaf:member rdf:nodeID="benny_profane"&gt;
+     *   &lt;/foaf:Organization&gt;
+     * </pre>
+     *
+     * @param writer not null
+     * @param developersOrContributors list of <code>{@link Developer}/{@link Contributor}</code>
+     * @param doapType not null
+     * @see #writeDeveloperOrContributor(XMLWriter, Object, String)
+     */
+    private void writeOrganizations( XMLWriter writer )
+    {
+        Set organizations = DoapUtil.getOrganizations();
+
+        for ( Iterator it = organizations.iterator(); it.hasNext(); )
+        {
+            DoapUtil.Organization organization = (DoapUtil.Organization) ( (Map.Entry) it.next() ).getValue();
+            writer.startElement( "foaf:Organization" );
+            if ( !StringUtils.isEmpty( organization.getName() ) )
+            {
+                DoapUtil.writeElement( writer, "foaf:name", organization.getName() );
+            }
+            if ( !StringUtils.isEmpty( organization.getUrl() ) )
+            {
+                DoapUtil.writeRdfResourceElement( writer, "foaf:homepage", organization.getUrl() );
+            }
+            List members = organization.getMembers();
+            for ( Iterator memberIterator = members.iterator(); memberIterator.hasNext(); )
+            {
+                DoapUtil.writeRdfNodeIdElement( writer, "foaf:member", (String) memberIterator.next() );
+            }
+            writer.endElement(); // foaf:Organization
+        }
+    }
+
     // ----------------------------------------------------------------------
     // Static methods
     // ----------------------------------------------------------------------
 
     /**
-     * Compose a URL from two parts: a base URL and a file path. This method
-     * makes sure that there will not be two slash '/' characters after each
-     * other.
+     * Compose a URL from two parts: a base URL and a file path. This method makes sure that there will not be two slash
+     * '/' characters after each other.
      *
      * @param base The base URL
      * @param path The file

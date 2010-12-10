@@ -20,6 +20,7 @@ package org.apache.maven.plugin.doap.stubs;
  */
 
 import java.io.File;
+import java.util.List;
 
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
@@ -60,11 +61,18 @@ public class DoapProjectStub
         setDescription( model.getDescription() );
         setUrl( model.getUrl() );
         setPackaging( model.getPackaging() );
+        setDevelopers( model.getDevelopers() );
     }
 
     /** {@inheritDoc} */
     public File getBasedir()
     {
         return new File( super.getBasedir() + "/src/test/resources/unit/doap-configuration/" );
+    }
+
+    /** {@inheritDoc} */
+    public List getDevelopers()
+    {
+        return model.getDevelopers();
     }
 }
