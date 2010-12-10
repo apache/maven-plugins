@@ -61,5 +61,12 @@ under the License.
             href="./examples/doap-in-use.html">DOAP in Use</a> part.</p>
       </answer>
     </faq>
+    <faq id="Why are not all developers/contributors listed in the DOAP file as maintainer">
+      <question>Why are not all developers/contributors listed in the DOAP file as maintainer?</question>
+      <answer>
+        <p>Developers/contributors having a role containing "<i>emeritus</i>" are no longer active in the
+          project and can't be maintainers therefore.</p>
+      </answer>
+    </faq>
   </part>
 </faqs>

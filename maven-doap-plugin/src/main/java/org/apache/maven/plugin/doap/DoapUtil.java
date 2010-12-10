@@ -347,6 +347,10 @@ public class DoapUtil
                     {
                         ( (List) returnMap.get( "helpers" ) ).add( obj );
                     }
+                    else if ( role.indexOf( getLowerCaseString( i18n, "doap.emeritus" ) ) != -1 )
+                    {
+                        // Don't add as developer nor as contributor as the person is no longer involved
+                    }
                     else
                     {
                         ( (List) returnMap.get( "unknowns" ) ).add( obj );
