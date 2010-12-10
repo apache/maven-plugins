@@ -170,6 +170,22 @@ public class DoapUtilTest
         assertFalse( DoapUtil.getDevelopersOrContributorsWithTesterRole( i18n, developersOrContributors ).isEmpty() );
         assertTrue( DoapUtil.getDevelopersOrContributorsWithTranslatorRole( i18n, developersOrContributors ).isEmpty() );
         assertFalse( DoapUtil.getDevelopersOrContributorsWithUnknownRole( i18n, developersOrContributors ).isEmpty() );
+
+        // Skip emeritus role
+        developersOrContributors.clear();
+
+        dev = new Developer();
+        dev.setId( "dev1" );
+        dev.addRole( "maintainer" );
+        dev.addRole( "unknown" );
+
+        developersOrContributors.add( dev );
+
+        int sizeBeforeEmeritus = DoapUtil.getDevelopersOrContributorsWithUnknownRole( i18n, developersOrContributors).size();
+        dev.addRole( " Emeritus" );
+
+        assertTrue( DoapUtil.getDevelopersOrContributorsWithUnknownRole( i18n, developersOrContributors).size() == sizeBeforeEmeritus );
+
     }
 
     /**
