@@ -57,6 +57,7 @@ under the License.
           <localRepository>${localRepository}</localRepository>
           <doapFile>target/test/unit/doap-configuration/doap-configuration.rdf</doapFile>
           <lang>en</lang>
+          <validate>true</validate>
 
           <doapOptions>
             <programmingLanguage>java</programmingLanguage>

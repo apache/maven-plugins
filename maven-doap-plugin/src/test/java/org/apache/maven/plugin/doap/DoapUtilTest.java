@@ -19,6 +19,7 @@ package org.apache.maven.plugin.doap;
  * under the License.
  */
 
+import java.io.File;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
@@ -169,5 +170,18 @@ public class DoapUtilTest
         assertFalse( DoapUtil.getDevelopersOrContributorsWithTesterRole( i18n, developersOrContributors ).isEmpty() );
         assertTrue( DoapUtil.getDevelopersOrContributorsWithTranslatorRole( i18n, developersOrContributors ).isEmpty() );
         assertFalse( DoapUtil.getDevelopersOrContributorsWithUnknownRole( i18n, developersOrContributors ).isEmpty() );
+    }
+
+    /**
+     * Test method for:
+     * {@link DoapUtil#validate(java.io.File)}
+     *
+     * @throws Exception if any
+     */
+    public void testValidate()
+        throws Exception
+    {
+        File doapFile = new File( getBasedir(), "src/test/resources/generated-doap-1.0.rdf" );
+        assertFalse( DoapUtil.validate( doapFile ).isEmpty() );
     }
 }

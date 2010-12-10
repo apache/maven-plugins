@@ -282,6 +282,14 @@ public class DoapMojo
      */
     private String about;
 
+    /**
+     * Flag to validate the generated DOAP.
+     *
+     * @parameter default-value="true"
+     * @since 1.1
+     */
+    private boolean validate;
+
     // ----------------------------------------------------------------------
     // Public methods
     // ----------------------------------------------------------------------
@@ -415,6 +423,20 @@ public class DoapMojo
         catch ( IOException e )
         {
             throw new MojoExecutionException( "Error when closing the writer.", e );
+        }
+
+        if ( validate )
+        {
+            List errors = DoapUtil.validate( doapFile );
+            if ( !errors.isEmpty() )
+            {
+                for ( int i = 0; i < errors.size(); i++ )
+                {
+                    getLog().error( errors.get( i ).toString() );
+                }
+
+                throw new MojoExecutionException( "Error parsing the generated doap file, see above." );
+            }
         }
     }
 

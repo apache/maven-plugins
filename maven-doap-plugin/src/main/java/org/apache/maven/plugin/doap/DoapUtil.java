@@ -19,6 +19,8 @@ package org.apache.maven.plugin.doap;
  * under the License.
  */
 
+import java.io.File;
+import java.net.MalformedURLException;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -34,6 +36,11 @@ import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.XMLWriter;
 import org.codehaus.plexus.util.xml.XmlWriterUtil;
+
+import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.ModelFactory;
+import com.hp.hpl.jena.rdf.model.RDFReader;
+import com.hp.hpl.jena.rdf.model.impl.RDFDefaultErrorHandler;
 
 /**
  * Utility class for DOAP mojo.
@@ -218,6 +225,45 @@ public class DoapUtil
     public static List getDevelopersOrContributorsWithUnknownRole( I18N i18n, List developersOrContributors )
     {
         return (List) filterDevelopersOrContributorsByDoapRoles( i18n, developersOrContributors ).get( "unknowns" );
+    }
+
+    /**
+     * Validate the given DOAP file.
+     *
+     * @param doapFile not null and should exists.
+     * @return an empty list if the DOAP file is valid, otherwise a list of errors.
+     * @since 1.1
+     */
+    public static List validate( File doapFile )
+    {
+        if ( doapFile == null || !doapFile.isFile() )
+        {
+            throw new IllegalArgumentException( "The DOAP file should exist" );
+        }
+
+        Model model = ModelFactory.createDefaultModel();
+        RDFReader r = model.getReader( "RDF/XML" );
+        r.setProperty( "error-mode", "strict-error" );
+        final List errors = new ArrayList();
+        r.setErrorHandler( new RDFDefaultErrorHandler()
+        {
+            /** {@inheritDoc} */
+            public void error( Exception e )
+            {
+                errors.add( e.getMessage() );
+            }
+        } );
+
+        try
+        {
+            r.read( model, doapFile.toURI().toURL().toString() );
+        }
+        catch ( MalformedURLException e )
+        {
+            // ignored
+        }
+
+        return errors;
     }
 
     // ----------------------------------------------------------------------
