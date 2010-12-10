@@ -28,9 +28,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.Properties;
 
 import org.apache.maven.model.Contributor;
@@ -60,6 +62,12 @@ public class DoapUtil
 
     /** RDF resource attribute */
     protected static final String RDF_RESOURCE = "rdf:resource";
+
+    /** RDF nodeID attribute */
+    protected static final String RDF_NODE_ID = "rdf:nodeID";
+
+    /** DoaP Organizations stored by name */
+    private static Map organizations = new HashMap();
 
     /**
      * Write comments in the DOAP file header
@@ -162,6 +170,28 @@ public class DoapUtil
     }
 
     /**
+     * @param writer not null
+     * @param name not null
+     * @param value could be null. In this case, the element is not written.
+     * @throws IllegalArgumentException if name is null or empty
+     */
+    public static void writeRdfNodeIdElement( XMLWriter writer, String name, String value )
+        throws IllegalArgumentException
+    {
+        if ( StringUtils.isEmpty( name ) )
+        {
+            throw new IllegalArgumentException( "name should be defined" );
+        }
+
+        if ( value != null )
+        {
+            writer.startElement( name );
+            writer.addAttribute( RDF_NODE_ID, value );
+            writer.endElement();
+        }
+    }
+
+    /**
      * @param i18n the internationalization component
      * @param developersOrContributors list of <code>{@link Developer}/{@link Contributor}</code>
      * @return a none null list of developers or contributors which have a <code>developer</code> DOAP role.
@@ -232,6 +262,103 @@ public class DoapUtil
     }
 
     /**
+     * Utility class for keeping track of DOAP organizations in the DoaP mojo.
+     *
+     * @author <a href="mailto:t.fliss@gmail.com">Tim Fliss</a>
+     * @version $Id$
+     * @since 1.1
+     */
+    public static class Organization
+    {
+        private String name;
+
+        private String url;
+
+        private List members = new LinkedList();
+
+        public Organization( String name, String url )
+        {
+            this.name = name;
+            this.url = url;
+        }
+
+        public void setName( String name )
+        {
+            this.name = name;
+        }
+
+        public String getName()
+        {
+            return name;
+        }
+
+        public void setUrl( String url )
+        {
+            this.url = url;
+        }
+
+        public String getUrl()
+        {
+            return url;
+        }
+
+        public void addMember( String nodeId )
+        {
+            members.add( nodeId );
+        }
+
+        public List getMembers()
+        {
+            return members;
+        }
+    };
+
+    /**
+     * put an organization from the pom file in the organization list.
+     *
+     * @param name from the pom file (e.g. Yoyodyne)
+     * @param url from the pom file (e.g. http://yoyodyne.example.org/about)
+     * @return the existing organization if a duplicate, or a new one.
+     */
+    public static Organization addOrganization( String name, String url )
+    {
+        Organization organization = (Organization) organizations.get( name );
+
+        if ( organization == null )
+        {
+            organization = new DoapUtil.Organization( name, url );
+        }
+
+        organizations.put( name, organization );
+        return organization;
+    }
+
+    // unique RDF blank node index scoped internal to the DOAP file
+    private static int nodeNumber = 1;
+
+    /**
+     * get a unique (within the DoaP file) RDF blank node ID
+     *
+     * @return the nodeID
+     * @see <a href="http://www.w3.org/TR/rdf-syntax-grammar/#section-Syntax-blank-nodes">
+     *      http://www.w3.org/TR/rdf-syntax-grammar/#section-Syntax-blank-nodes</a>
+     */
+    public static String getNodeId()
+    {
+        return "b" + nodeNumber++;
+    }
+
+    /**
+     * get the set of Organizations that people are members of
+     *
+     * @return Map.EntrySet of DoapUtil.Organization
+     */
+    public static Set getOrganizations()
+    {
+        return organizations.entrySet();
+    }
+
+    /**
      * Validate the given DOAP file.
      *
      * @param doapFile not null and should exists.
@@ -275,18 +402,16 @@ public class DoapUtil
     // ----------------------------------------------------------------------
 
     /**
-     * Filter the developers/contributors roles by the keys from {@link I18N#getBundle()}.
-     * <br/>
+     * Filter the developers/contributors roles by the keys from {@link I18N#getBundle()}. <br/>
      * I18N roles supported in DOAP, i.e. <code>maintainer</code>, <code>developer</code>, <code>documenter</code>,
-     * <code>translator</code>, <code>tester</code>, <code>helper</code>.
-     * <br/>
+     * <code>translator</code>, <code>tester</code>, <code>helper</code>. <br/>
      * <b>Note:</b> Actually, only English keys are used.
      *
      * @param i18n i18n component
      * @param developersOrContributors list of <code>{@link Developer}/{@link Contributor}</code>
      * @return a none null map with <code>maintainers</code>, <code>developers</code>, <code>documenters</code>,
-     * <code>translators</code>, <code>testers</code>, <code>helpers</code>, <code>unknowns</code> as keys and list of
-     * <code>{@link Developer}/{@link Contributor}</code> as value.
+     *         <code>translators</code>, <code>testers</code>, <code>helpers</code>, <code>unknowns</code> as keys and
+     *         list of <code>{@link Developer}/{@link Contributor}</code> as value.
      */
     private static Map filterDevelopersOrContributorsByDoapRoles( I18N i18n, List developersOrContributors )
     {

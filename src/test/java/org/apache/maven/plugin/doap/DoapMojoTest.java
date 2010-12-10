@@ -65,8 +65,7 @@ public class DoapMojoTest
         throws Exception
     {
         File pluginXmlFile =
-            new File( getBasedir(),
-                      "src/test/resources/unit/doap-configuration/doap-configuration-plugin-config.xml" );
+            new File( getBasedir(), "src/test/resources/unit/doap-configuration/doap-configuration-plugin-config.xml" );
         DoapMojo mojo = (DoapMojo) lookupMojo( "generate", pluginXmlFile );
         assertNotNull( "Mojo found.", mojo );
 
@@ -101,6 +100,14 @@ public class DoapMojoTest
         // ASF ext
         assertFalse( readed.indexOf( "<asfext:pmc rdf:resource=\"" + mavenProject.getUrl() + "\"/>" ) != -1 );
         assertFalse( readed.indexOf( "<asfext:name>" + mavenProject.getName() + "</name>" ) != -1 );
+
+        // Developers and Organizations
+        assertTrue( readed.indexOf( "<maintainer>" ) != -1 );
+        assertTrue( readed.indexOf( "<foaf:Person rdf:nodeID=\"b1\">" ) != -1 );
+        assertTrue( readed.indexOf( "<foaf:name>Jane Doe</foaf:name>" ) != -1 );
+        assertTrue( readed.indexOf( "<foaf:Organization>" ) != -1 );
+        assertTrue( readed.indexOf( "<foaf:homepage rdf:resource=\"http://www.example.org\"/>" ) != -1 );
+        assertTrue( readed.indexOf( "<foaf:member rdf:nodeID=\"b1\"/>" ) != -1 );
     }
 
     /**
@@ -126,8 +133,7 @@ public class DoapMojoTest
 
         mojo.execute();
 
-        File doapFile =
-            new File( getBasedir(), "target/test/unit/asf-doap-configuration/asf-doap-configuration.rdf" );
+        File doapFile = new File( getBasedir(), "target/test/unit/asf-doap-configuration/asf-doap-configuration.rdf" );
         assertTrue( "Doap File was not generated!", doapFile.exists() );
 
         String readed = readFile( doapFile );
@@ -137,8 +143,7 @@ public class DoapMojoTest
         // Pure DOAP
         assertTrue( readed.indexOf( "<rdf:RDF xml:lang=\"en\" xmlns=\"http://usefulinc.com/ns/doap#\" "
             + "xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" "
-            + "xmlns:foaf=\"http://xmlns.com/foaf/0.1/\" "
-            + "xmlns:asfext=\"http://projects.apache.org/ns/asfext#\">" ) != -1 );
+            + "xmlns:foaf=\"http://xmlns.com/foaf/0.1/\" " + "xmlns:asfext=\"http://projects.apache.org/ns/asfext#\">" ) != -1 );
         if ( StringUtils.isNotEmpty( mavenProject.getUrl() ) )
         {
             assertTrue( readed.indexOf( "<Project rdf:about=\"" + mavenProject.getUrl() + "\">" ) != -1 );
@@ -184,8 +189,7 @@ public class DoapMojoTest
     private static List getRemoteRepositories()
     {
         ArtifactRepository repository =
-            new DefaultArtifactRepository( "central", "http://repo1.maven.org/maven2",
-                                           new DefaultRepositoryLayout() );
+            new DefaultArtifactRepository( "central", "http://repo1.maven.org/maven2", new DefaultRepositoryLayout() );
         return Collections.singletonList( repository );
     }
 }
