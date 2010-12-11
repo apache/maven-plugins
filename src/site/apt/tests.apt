@@ -166,5 +166,5 @@ EAR Plugin Tests
 
   * project-068: builds an EAR with the no-version file name mapping
 
+  * project-069: builds an EAR with a custom library-directory and JavaEE 6
 
-   

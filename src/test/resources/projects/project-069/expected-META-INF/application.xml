@@ -17,8 +17,10 @@ KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations
 under the License.
 -->
-
 <application xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/application_6.xsd" version="6">
-  <display-name>maven-ear-plugin-test-project-063</display-name>
-  <library-directory>lib</library-directory>
+  <display-name>maven-ear-plugin-test-project-069</display-name>
+  <module>
+    <ejb>ejb-sample-one-1.0.jar</ejb>
+  </module>
+  <library-directory>myLibs</library-directory>
 </application>
