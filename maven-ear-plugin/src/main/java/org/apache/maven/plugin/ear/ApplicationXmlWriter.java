@@ -103,7 +103,8 @@ final class ApplicationXmlWriter
             securityRole.appendSecurityRole( writer );
         }
 
-        if ( GenerateApplicationXmlMojo.VERSION_5.equals( version ) )
+        if ( GenerateApplicationXmlMojo.VERSION_5.equals( version ) ||
+             GenerateApplicationXmlMojo.VERSION_6.equals( version ) )
         {
             writeLibraryDirectory( context.getLibraryDirectory(), writer );
         }

@@ -726,4 +726,13 @@ public class EarMojoIT
         doTestProject( "project-068", new String[]{ "ejb-sample-one.jar", "ejb-sample-two.jar" } );
     }
 
+     /**
+     * Builds an EAR with a custom library-directory and JavaEE 6.
+     */
+    public void testProject069()
+        throws Exception
+    {
+        doTestProject( "project-069", new String[]{ "ejb-sample-one-1.0.jar", "myLibs/jar-sample-one-1.0.jar" } );
+    }
+
 }
