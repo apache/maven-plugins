@@ -43,11 +43,10 @@ http://svn.apache.org/repos/asf/infrastructure/site-tools/trunk/projects/asfext<
       <fields>
         <field>
           <name>included</name>
-          <description>Flag to use or not the ASF extension in the generated DOAP. Required.</description>
+          <description>Flag to use or not the ASF extension in the generated DOAP.</description>
           <version>1.0.0</version>
           <type>boolean</type>
           <identifier>true</identifier>
-          <defaultValue>true</defaultValue>
         </field>
         <field>
           <name>pmc</name>
@@ -99,6 +98,9 @@ http://svn.apache.org/repos/asf/infrastructure/site-tools/trunk/projects/asfext<
         <codeSegment>
           <code>
             <![CDATA[
+    /** Apache domain name, i.e. apache.org */
+    public static final String APACHE_DOMAIN_NAME = "apache.org";
+
     /** The ASF ext namespace. */
     public static final String ASFEXT_NAMESPACE = "http://projects.apache.org/ns/asfext#";
 
@@ -284,6 +286,89 @@ http://svn.apache.org/repos/asf/infrastructure/site-tools/trunk/projects/asfext<
         }
 
         return pmc;
+    }
+
+    /**
+     * Try to find if the given project is hosted at Apache.
+     *
+     * @param project not null
+     * @return <code>true</code> if the SCM url, distribution management url, project url or organization url is hosted
+     *         in the Apache domain name, <code>false</code> otherwise.
+     * @see #APACHE_DOMAIN_NAME
+     * @since 1.1
+     */
+    public static boolean isASFProject( org.apache.maven.project.MavenProject project )
+    {
+        if ( project == null )
+        {
+            throw new IllegalArgumentException( "project is required" );
+        }
+
+        if ( project.getScm() != null )
+        {
+            if ( org.codehaus.plexus.util.StringUtils.isNotEmpty( project.getScm().getUrl() )
+                && project.getScm().getUrl().indexOf( APACHE_DOMAIN_NAME ) > 0 )
+            {
+                return true;
+            }
+
+            if ( org.codehaus.plexus.util.StringUtils.isNotEmpty( project.getScm().getConnection() )
+                && project.getScm().getConnection().indexOf( APACHE_DOMAIN_NAME ) > 0 )
+            {
+                return true;
+            }
+
+            if ( org.codehaus.plexus.util.StringUtils.isNotEmpty( project.getScm().getDeveloperConnection() )
+                && project.getScm().getDeveloperConnection().indexOf( APACHE_DOMAIN_NAME ) > 0 )
+            {
+                return true;
+            }
+        }
+
+        if ( project.getDistributionManagement() != null )
+        {
+            if ( org.codehaus.plexus.util.StringUtils.isNotEmpty( project.getDistributionManagement().getDownloadUrl() )
+                && project.getDistributionManagement().getDownloadUrl().indexOf( APACHE_DOMAIN_NAME ) > 0 )
+            {
+                return true;
+            }
+
+            if ( project.getDistributionManagement().getRepository() != null
+                && org.codehaus.plexus.util.StringUtils.isNotEmpty( project.getDistributionManagement().getRepository().getUrl() )
+                && project.getDistributionManagement().getRepository().getUrl().indexOf( APACHE_DOMAIN_NAME ) > 0 )
+            {
+                return true;
+            }
+
+            if ( project.getDistributionManagement().getSnapshotRepository() != null
+                && org.codehaus.plexus.util.StringUtils.isNotEmpty( project.getDistributionManagement().getSnapshotRepository().getUrl() )
+                && project.getDistributionManagement().getSnapshotRepository().getUrl().indexOf( APACHE_DOMAIN_NAME ) > 0 )
+            {
+                return true;
+            }
+
+            if ( project.getDistributionManagement().getSite() != null
+                && org.codehaus.plexus.util.StringUtils.isNotEmpty( project.getDistributionManagement().getSite().getUrl() )
+                && project.getDistributionManagement().getSite().getUrl().indexOf( APACHE_DOMAIN_NAME ) > 0 )
+            {
+                return true;
+            }
+        }
+
+        if ( project.getOrganization() != null
+            && org.codehaus.plexus.util.StringUtils.isNotEmpty( project.getOrganization().getUrl() )
+            && project.getOrganization().getUrl().indexOf( APACHE_DOMAIN_NAME ) > 0 )
+        {
+            return true;
+        }
+
+        if ( org.codehaus.plexus.util.StringUtils.isNotEmpty( project.getUrl() )
+            && project.getUrl().indexOf( APACHE_DOMAIN_NAME ) > 0 )
+        {
+            return true;
+        }
+
+        return false;
     }
             ]]>
           </code>
