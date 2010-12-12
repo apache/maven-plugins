@@ -799,7 +799,7 @@ public class DoapMojo
         }
 
         XmlWriterUtil.writeLineBreak( writer );
-        XmlWriterUtil.writeCommentText( writer, "bug database.", 2 );
+        XmlWriterUtil.writeCommentText( writer, "Bug database.", 2 );
         if ( StringUtils.isNotEmpty( project.getIssueManagement().getUrl() ) )
         {
             DoapUtil.writeRdfResourceElement( writer, "bug-database", project.getIssueManagement().getUrl() );
@@ -824,7 +824,7 @@ public class DoapMojo
         }
 
         XmlWriterUtil.writeLineBreak( writer );
-        XmlWriterUtil.writeCommentText( writer, "mailing list.", 2 );
+        XmlWriterUtil.writeCommentText( writer, "Mailing list.", 2 );
         for ( Iterator it = project.getMailingLists().iterator(); it.hasNext(); )
         {
             MailingList mailingList = (MailingList) it.next();
@@ -1435,7 +1435,7 @@ public class DoapMojo
         if ( StringUtils.isEmpty( asfExtOptions.getCharter() ) )
         {
             getLog().warn( "No charter specified! According http://projects.apache.org/docs/pmc.html, "
-                               + "charter is required" );
+                               + "asfext:charter is required" );
         }
         else
         {
