@@ -30,10 +30,9 @@ import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TimeZone;
 
@@ -178,7 +177,7 @@ public class DoapMojo
      * @readonly
      * @since 1.0
      */
-    private List remoteRepositories;
+    private List<ArtifactRepository> remoteRepositories;
 
     // ----------------------------------------------------------------------
     // Doap options
@@ -293,6 +292,7 @@ public class DoapMojo
     // ----------------------------------------------------------------------
 
     /** {@inheritDoc} */
+    @SuppressWarnings( "unchecked" )
     public void execute()
         throws MojoExecutionException
     {
@@ -410,10 +410,10 @@ public class DoapMojo
         writeReleases( writer );
 
         // Developers
-        writeDevelopersOrContributors( writer, project.getDevelopers() );
+        writeContributors( writer, project.getDevelopers() );
 
         // Contributors
-        writeDevelopersOrContributors( writer, project.getContributors() );
+        writeContributors( writer, project.getContributors() );
 
         // ASFext
         if ( asfExtOptions.isIncluded() )
@@ -438,7 +438,7 @@ public class DoapMojo
 
         if ( validate )
         {
-            List errors = DoapUtil.validate( doapFile );
+            List<String> errors = DoapUtil.validate( doapFile );
             if ( !errors.isEmpty() )
             {
                 for ( int i = 0; i < errors.size(); i++ )
@@ -770,10 +770,10 @@ public class DoapMojo
         XmlWriterUtil.writeCommentText( writer, "The URI of the license the software is distributed under.", 2 );
         // TODO: how to map to usefulinc site, or if this is necessary, the OSI page might
         // be more appropriate.
-        for ( Iterator it = project.getLicenses().iterator(); it.hasNext(); )
+        @SuppressWarnings( "unchecked" )
+        List<License> licenses = project.getLicenses();
+        for ( License license : licenses )
         {
-            License license = (License) it.next();
-
             if ( StringUtils.isNotEmpty( license.getUrl() ) )
             {
                 DoapUtil.writeRdfResourceElement( writer, "license", license.getUrl() );
@@ -824,11 +824,11 @@ public class DoapMojo
         }
 
         XmlWriterUtil.writeLineBreak( writer );
-        XmlWriterUtil.writeCommentText( writer, "Mailing list.", 2 );
-        for ( Iterator it = project.getMailingLists().iterator(); it.hasNext(); )
+        XmlWriterUtil.writeCommentText( writer, "Mailing lists.", 2 );
+        @SuppressWarnings( "unchecked" )
+        List<MailingList> mailingLists = project.getMailingLists();
+        for ( MailingList mailingList : mailingLists )
         {
-            MailingList mailingList = (MailingList) it.next();
-
             if ( StringUtils.isNotEmpty( mailingList.getArchive() ) )
             {
                 DoapUtil.writeRdfResourceElement( writer, "mailing-list", mailingList.getArchive() );
@@ -840,10 +840,8 @@ public class DoapMojo
 
             if ( mailingList.getOtherArchives() != null )
             {
-                for ( Iterator it2 = mailingList.getOtherArchives().iterator(); it2.hasNext(); )
+                for ( String otherArchive : mailingList.getOtherArchives() )
                 {
-                    String otherArchive = (String) it2.next();
-
                     if ( StringUtils.isNotEmpty( otherArchive ) )
                     {
                         DoapUtil.writeRdfResourceElement( writer, "mailing-list", otherArchive );
@@ -873,10 +871,8 @@ public class DoapMojo
                                             project.getPackaging() );
         RepositoryMetadata metadata = new ArtifactRepositoryMetadata( artifact );
 
-        for ( Iterator it = remoteRepositories.iterator(); it.hasNext(); )
+        for ( ArtifactRepository repo : remoteRepositories )
         {
-            ArtifactRepository repo = (ArtifactRepository) it.next();
-
             if ( repo.isBlacklisted() )
             {
                 continue;
@@ -906,16 +902,14 @@ public class DoapMojo
             return;
         }
 
-        List versions = metadata.getMetadata().getVersioning().getVersions();
+        List<String> versions = metadata.getMetadata().getVersioning().getVersions();
 
         // Recent releases in first
         Collections.reverse( versions );
         boolean addComment = false;
         int i = 0;
-        for ( Iterator it = versions.iterator(); it.hasNext(); )
+        for ( String version : versions )
         {
-            String version = (String) it.next();
-
             if ( !addComment )
             {
                 XmlWriterUtil.writeLineBreak( writer );
@@ -942,10 +936,8 @@ public class DoapMojo
             writer.endElement(); // revision
 
             // list all file release from all remote repos
-            for ( Iterator it2 = remoteRepositories.iterator(); it2.hasNext(); )
+            for ( ArtifactRepository repo : remoteRepositories )
             {
-                ArtifactRepository repo = (ArtifactRepository) it2.next();
-
                 Artifact artifactRelease =
                     artifactFactory.createArtifact( project.getGroupId(), project.getArtifactId(), version, null,
                                                     project.getPackaging() );
@@ -1108,16 +1100,16 @@ public class DoapMojo
      * Write all DOAP persons.
      *
      * @param writer not null
-     * @param developersOrContributors list of developers or contributors
+     * @param contributors list of developers or contributors
      */
-    private void writeDevelopersOrContributors( XMLWriter writer, List developersOrContributors )
+    private void writeContributors( XMLWriter writer, List<Contributor> contributors )
     {
-        if ( developersOrContributors == null || developersOrContributors.isEmpty() )
+        if ( contributors == null || contributors.isEmpty() )
         {
             return;
         }
 
-        boolean isDeveloper = Developer.class.isAssignableFrom( developersOrContributors.get( 0 ).getClass() );
+        boolean isDeveloper = Developer.class.isAssignableFrom( contributors.get( 0 ).getClass() );
         if ( isDeveloper )
         {
             XmlWriterUtil.writeLineBreak( writer );
@@ -1129,13 +1121,13 @@ public class DoapMojo
             XmlWriterUtil.writeCommentText( writer, "Contributed persons", 2 );
         }
 
-        List maintainers = DoapUtil.getDevelopersOrContributorsWithMaintainerRole( i18n, developersOrContributors );
-        List developers = DoapUtil.getDevelopersOrContributorsWithDeveloperRole( i18n, developersOrContributors );
-        List documenters = DoapUtil.getDevelopersOrContributorsWithDocumenterRole( i18n, developersOrContributors );
-        List translators = DoapUtil.getDevelopersOrContributorsWithTranslatorRole( i18n, developersOrContributors );
-        List testers = DoapUtil.getDevelopersOrContributorsWithTesterRole( i18n, developersOrContributors );
-        List helpers = DoapUtil.getDevelopersOrContributorsWithHelperRole( i18n, developersOrContributors );
-        List unknowns = DoapUtil.getDevelopersOrContributorsWithUnknownRole( i18n, developersOrContributors );
+        List<Contributor> maintainers = DoapUtil.getContributorsWithMaintainerRole( i18n, contributors );
+        List<Contributor> developers = DoapUtil.getContributorsWithDeveloperRole( i18n, contributors );
+        List<Contributor> documenters = DoapUtil.getContributorsWithDocumenterRole( i18n, contributors );
+        List<Contributor> translators = DoapUtil.getContributorsWithTranslatorRole( i18n, contributors );
+        List<Contributor> testers = DoapUtil.getContributorsWithTesterRole( i18n, contributors );
+        List<Contributor> helpers = DoapUtil.getContributorsWithHelperRole( i18n, contributors );
+        List<Contributor> unknowns = DoapUtil.getContributorsWithUnknownRole( i18n, contributors );
 
         // By default, all developers are maintainers and contributors are helpers
         if ( isDeveloper )
@@ -1150,27 +1142,27 @@ public class DoapMojo
         // all alphabetical
         if ( developers.size() != 0 )
         {
-            writeDeveloperOrContributor( writer, developers, "developer" );
+            writeContributor( writer, developers, "developer" );
         }
         if ( documenters.size() != 0 )
         {
-            writeDeveloperOrContributor( writer, documenters, "documenter" );
+            writeContributor( writer, documenters, "documenter" );
         }
         if ( helpers.size() != 0 )
         {
-            writeDeveloperOrContributor( writer, helpers, "helper" );
+            writeContributor( writer, helpers, "helper" );
         }
         if ( maintainers.size() != 0 )
         {
-            writeDeveloperOrContributor( writer, maintainers, "maintainer" );
+            writeContributor( writer, maintainers, "maintainer" );
         }
         if ( testers.size() != 0 )
         {
-            writeDeveloperOrContributor( writer, testers, "tester" );
+            writeContributor( writer, testers, "tester" );
         }
         if ( translators.size() != 0 )
         {
-            writeDeveloperOrContributor( writer, translators, "translator" );
+            writeContributor( writer, translators, "translator" );
         }
     }
 
@@ -1189,9 +1181,9 @@ public class DoapMojo
      * @param writer not null
      * @param developersOrContributors list of <code>{@link Developer}/{@link Contributor}</code>
      * @param doapType not null
-     * @see #writeDeveloperOrContributor(XMLWriter, Object, String)
+     * @see #writeContributor(XMLWriter, Object, String)
      */
-    private void writeDeveloperOrContributor( XMLWriter writer, List developersOrContributors, String doapType )
+    private void writeContributor( XMLWriter writer, List<Contributor> developersOrContributors, String doapType )
     {
         if ( developersOrContributors == null || developersOrContributors.isEmpty() )
         {
@@ -1199,12 +1191,10 @@ public class DoapMojo
         }
 
         // Sort list by names
-        Collections.sort( developersOrContributors, new Comparator()
+        Collections.sort( developersOrContributors, new Comparator<Contributor>()
         {
-            /**
-             * {@inheritDoc}
-             */
-            public int compare( Object arg0, Object arg1 )
+            /** {@inheritDoc} */
+            public int compare( Contributor arg0, Contributor arg1 )
             {
                 if ( Developer.class.isAssignableFrom( arg0.getClass() ) )
                 {
@@ -1223,8 +1213,8 @@ public class DoapMojo
                     return developer0.getName().compareTo( developer1.getName() );
                 }
 
-                Contributor contributor0 = (Contributor) arg0;
-                Contributor contributor1 = (Contributor) arg1;
+                Contributor contributor0 = arg0;
+                Contributor contributor1 = arg1;
 
                 if ( contributor0.getName() == null )
                 {
@@ -1239,10 +1229,9 @@ public class DoapMojo
             }
         } );
 
-        for ( Iterator it = developersOrContributors.iterator(); it.hasNext(); )
+        for ( Contributor developersOrContributor : developersOrContributors )
         {
-            Object obj = it.next();
-            writeDeveloperOrContributor( writer, obj, doapType );
+            writeContributor( writer, developersOrContributor, doapType );
         }
     }
 
@@ -1264,7 +1253,7 @@ public class DoapMojo
      * @see <a href="http://xmlns.com/foaf/0.1/Organization">http://xmlns.com/foaf/0.1/Organization</a>
      * @see <a href="http://xmlns.com/foaf/0.1/homepage">http://xmlns.com/foaf/0.1/homepage</a>
      */
-    private void writeDeveloperOrContributor( XMLWriter writer, Object developerOrContributor, String doapType )
+    private void writeContributor( XMLWriter writer, Contributor developerOrContributor, String doapType )
     {
         if ( developerOrContributor == null )
         {
@@ -1276,31 +1265,12 @@ public class DoapMojo
             throw new IllegalArgumentException( "doapType is required." );
         }
 
-        String name;
-        String email;
-        String organization;
-        String organizationUrl;
-        String homepage;
+        String name = developerOrContributor.getName();
+        String email = developerOrContributor.getEmail();
+        String organization = developerOrContributor.getOrganization();
+        String organizationUrl = developerOrContributor.getOrganizationUrl();
+        String homepage = developerOrContributor.getUrl();
         String nodeId = null;
-
-        if ( Developer.class.isAssignableFrom( developerOrContributor.getClass() ) )
-        {
-            Developer d = (Developer) developerOrContributor;
-            name = d.getName();
-            email = d.getEmail();
-            organization = d.getOrganization();
-            organizationUrl = d.getOrganizationUrl();
-            homepage = d.getUrl();
-        }
-        else
-        {
-            Contributor c = (Contributor) developerOrContributor;
-            name = c.getName();
-            email = c.getEmail();
-            organization = c.getOrganization();
-            organizationUrl = c.getOrganizationUrl();
-            homepage = c.getUrl();
-        }
 
         // Name is required to write doap
         if ( StringUtils.isEmpty( name ) )
@@ -1443,7 +1413,8 @@ public class DoapMojo
         }
 
         // asfext:chair
-        List developers = project.getDevelopers();
+        @SuppressWarnings( "unchecked" )
+        List<Developer> developers = project.getDevelopers();
 
         if ( StringUtils.isNotEmpty( asfExtOptions.getChair() ) )
         {
@@ -1460,7 +1431,7 @@ public class DoapMojo
             Developer chair = ASFExtOptions.findChair( developers );
             if ( chair != null )
             {
-                writeDeveloperOrContributor( writer, chair, "asfext:chair" );
+                writeContributor( writer, chair, "asfext:chair" );
             }
             else
             {
@@ -1472,12 +1443,10 @@ public class DoapMojo
         // asfext:member
         if ( developers != null && developers.size() > 0 )
         {
-            List pmcMember = ASFExtOptions.findPMCMembers( developers );
-            for ( Iterator it = pmcMember.iterator(); it.hasNext(); )
+            List<Developer> pmcMembers = ASFExtOptions.findPMCMembers( developers );
+            for ( Developer pmcMember : pmcMembers )
             {
-                Developer developer = (Developer) it.next();
-
-                writeDeveloperOrContributor( writer, developer, "asfext:member" );
+                writeContributor( writer, pmcMember, "asfext:member" );
             }
         }
 
@@ -1499,10 +1468,8 @@ public class DoapMojo
             return;
         }
 
-        for ( Iterator it = asfExtOptions.getStandards().iterator(); it.hasNext(); )
+        for ( Standard standard : asfExtOptions.getStandards() )
         {
-            Standard standard = (Standard) it.next();
-
             writer.startElement( "asfext:implements" );
             writer.startElement( "asfext:Standard" );
 
@@ -1568,15 +1535,16 @@ public class DoapMojo
      * @param writer not null
      * @param developersOrContributors list of <code>{@link Developer}/{@link Contributor}</code>
      * @param doapType not null
-     * @see #writeDeveloperOrContributor(XMLWriter, Object, String)
+     * @see #writeContributor(XMLWriter, Object, String)
      */
     private void writeOrganizations( XMLWriter writer )
     {
-        Set organizations = DoapUtil.getOrganizations();
+        Set<Entry<String, DoapUtil.Organization>> organizations = DoapUtil.getOrganizations();
 
-        for ( Iterator it = organizations.iterator(); it.hasNext(); )
+        for (Entry<String, DoapUtil.Organization> organizationEntry : organizations )
         {
-            DoapUtil.Organization organization = (DoapUtil.Organization) ( (Map.Entry) it.next() ).getValue();
+            DoapUtil.Organization organization = organizationEntry.getValue();
+
             writer.startElement( "foaf:Organization" );
             if ( !StringUtils.isEmpty( organization.getName() ) )
             {
@@ -1586,10 +1554,10 @@ public class DoapMojo
             {
                 DoapUtil.writeRdfResourceElement( writer, "foaf:homepage", organization.getUrl() );
             }
-            List members = organization.getMembers();
-            for ( Iterator memberIterator = members.iterator(); memberIterator.hasNext(); )
+            List<String> members = organization.getMembers();
+            for ( String member : members )
             {
-                DoapUtil.writeRdfNodeIdElement( writer, "foaf:member", (String) memberIterator.next() );
+                DoapUtil.writeRdfNodeIdElement( writer, "foaf:member", member );
             }
             writer.endElement(); // foaf:Organization
         }

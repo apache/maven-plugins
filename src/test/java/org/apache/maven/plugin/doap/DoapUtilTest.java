@@ -24,6 +24,7 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.maven.model.Contributor;
 import org.apache.maven.model.Developer;
 import org.codehaus.plexus.PlexusTestCase;
 import org.codehaus.plexus.i18n.I18N;
@@ -117,13 +118,13 @@ public class DoapUtilTest
 
     /**
      * Test method for:
-     * {@link DoapUtil#getDevelopersOrContributorsWithDeveloperRole(I18N, List)}
-     * {@link DoapUtil#getDevelopersOrContributorsWithDocumenterRole(I18N, List)}
-     * {@link DoapUtil#getDevelopersOrContributorsWithHelperRole(I18N, List)}
-     * {@link DoapUtil#getDevelopersOrContributorsWithMaintainerRole(I18N, List)}
-     * {@link DoapUtil#getDevelopersOrContributorsWithTesterRole(I18N, List)}
-     * {@link DoapUtil#getDevelopersOrContributorsWithTranslatorRole(I18N, List)}
-     * {@link DoapUtil#getDevelopersOrContributorsWithUnknownRole(I18N, List)}
+     * {@link DoapUtil#getContributorsWithDeveloperRole(I18N, List)}
+     * {@link DoapUtil#getContributorsWithDocumenterRole(I18N, List)}
+     * {@link DoapUtil#getContributorsWithHelperRole(I18N, List)}
+     * {@link DoapUtil#getContributorsWithMaintainerRole(I18N, List)}
+     * {@link DoapUtil#getContributorsWithTesterRole(I18N, List)}
+     * {@link DoapUtil#getContributorsWithTranslatorRole(I18N, List)}
+     * {@link DoapUtil#getContributorsWithUnknownRole(I18N, List)}
      *
      * @throws Exception if any
      */
@@ -134,7 +135,7 @@ public class DoapUtilTest
         assertNotNull( i18n );
         assertNotNull( i18n.getBundle() );
 
-        List developersOrContributors = new ArrayList();
+        List<Contributor> developersOrContributors = new ArrayList<Contributor>();
 
         // One role
         Developer dev = new Developer();
@@ -143,13 +144,13 @@ public class DoapUtilTest
 
         developersOrContributors.add( dev );
 
-        assertTrue( DoapUtil.getDevelopersOrContributorsWithDeveloperRole( i18n, developersOrContributors ).isEmpty() );
-        assertTrue( DoapUtil.getDevelopersOrContributorsWithDocumenterRole( i18n, developersOrContributors ).isEmpty() );
-        assertTrue( DoapUtil.getDevelopersOrContributorsWithHelperRole( i18n, developersOrContributors ).isEmpty() );
-        assertFalse( DoapUtil.getDevelopersOrContributorsWithMaintainerRole( i18n, developersOrContributors ).isEmpty() );
-        assertTrue( DoapUtil.getDevelopersOrContributorsWithTesterRole( i18n, developersOrContributors ).isEmpty() );
-        assertTrue( DoapUtil.getDevelopersOrContributorsWithTranslatorRole( i18n, developersOrContributors ).isEmpty() );
-        assertTrue( DoapUtil.getDevelopersOrContributorsWithUnknownRole( i18n, developersOrContributors ).isEmpty() );
+        assertTrue( DoapUtil.getContributorsWithDeveloperRole( i18n, developersOrContributors ).isEmpty() );
+        assertTrue( DoapUtil.getContributorsWithDocumenterRole( i18n, developersOrContributors ).isEmpty() );
+        assertTrue( DoapUtil.getContributorsWithHelperRole( i18n, developersOrContributors ).isEmpty() );
+        assertFalse( DoapUtil.getContributorsWithMaintainerRole( i18n, developersOrContributors ).isEmpty() );
+        assertTrue( DoapUtil.getContributorsWithTesterRole( i18n, developersOrContributors ).isEmpty() );
+        assertTrue( DoapUtil.getContributorsWithTranslatorRole( i18n, developersOrContributors ).isEmpty() );
+        assertTrue( DoapUtil.getContributorsWithUnknownRole( i18n, developersOrContributors ).isEmpty() );
 
         // Several roles
         developersOrContributors.clear();
@@ -163,13 +164,13 @@ public class DoapUtilTest
 
         developersOrContributors.add( dev );
 
-        assertTrue( DoapUtil.getDevelopersOrContributorsWithDeveloperRole( i18n, developersOrContributors ).isEmpty() );
-        assertTrue( DoapUtil.getDevelopersOrContributorsWithDocumenterRole( i18n, developersOrContributors ).isEmpty() );
-        assertTrue( DoapUtil.getDevelopersOrContributorsWithHelperRole( i18n, developersOrContributors ).isEmpty() );
-        assertFalse( DoapUtil.getDevelopersOrContributorsWithMaintainerRole( i18n, developersOrContributors ).isEmpty() );
-        assertFalse( DoapUtil.getDevelopersOrContributorsWithTesterRole( i18n, developersOrContributors ).isEmpty() );
-        assertTrue( DoapUtil.getDevelopersOrContributorsWithTranslatorRole( i18n, developersOrContributors ).isEmpty() );
-        assertFalse( DoapUtil.getDevelopersOrContributorsWithUnknownRole( i18n, developersOrContributors ).isEmpty() );
+        assertTrue( DoapUtil.getContributorsWithDeveloperRole( i18n, developersOrContributors ).isEmpty() );
+        assertTrue( DoapUtil.getContributorsWithDocumenterRole( i18n, developersOrContributors ).isEmpty() );
+        assertTrue( DoapUtil.getContributorsWithHelperRole( i18n, developersOrContributors ).isEmpty() );
+        assertFalse( DoapUtil.getContributorsWithMaintainerRole( i18n, developersOrContributors ).isEmpty() );
+        assertFalse( DoapUtil.getContributorsWithTesterRole( i18n, developersOrContributors ).isEmpty() );
+        assertTrue( DoapUtil.getContributorsWithTranslatorRole( i18n, developersOrContributors ).isEmpty() );
+        assertFalse( DoapUtil.getContributorsWithUnknownRole( i18n, developersOrContributors ).isEmpty() );
 
         // Skip emeritus role
         developersOrContributors.clear();
@@ -181,10 +182,10 @@ public class DoapUtilTest
 
         developersOrContributors.add( dev );
 
-        int sizeBeforeEmeritus = DoapUtil.getDevelopersOrContributorsWithUnknownRole( i18n, developersOrContributors).size();
+        int sizeBeforeEmeritus = DoapUtil.getContributorsWithUnknownRole( i18n, developersOrContributors).size();
         dev.addRole( " Emeritus" );
 
-        assertTrue( DoapUtil.getDevelopersOrContributorsWithUnknownRole( i18n, developersOrContributors).size() == sizeBeforeEmeritus );
+        assertTrue( DoapUtil.getContributorsWithUnknownRole( i18n, developersOrContributors).size() == sizeBeforeEmeritus );
 
     }
 

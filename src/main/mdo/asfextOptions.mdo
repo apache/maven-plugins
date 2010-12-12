@@ -229,23 +229,20 @@ http://svn.apache.org/repos/asf/infrastructure/site-tools/trunk/projects/asfext<
      * @param developers list of <code>{@link org.apache.maven.model.Developer}</code>
      * @return a Developer or null if not found.
      */
-    public static org.apache.maven.model.Developer findChair( java.util.List developers )
+    public static org.apache.maven.model.Developer findChair( java.util.List<org.apache.maven.model.Developer> developers )
     {
         if ( developers == null || developers.isEmpty() )
         {
             return null;
         }
 
-        for ( java.util.Iterator it = developers.iterator(); it.hasNext(); )
+        for ( org.apache.maven.model.Developer developer : developers )
         {
-            org.apache.maven.model.Developer developer = (org.apache.maven.model.Developer) it.next();
-            java.util.List roles = developer.getRoles();
+            java.util.List<String> roles = developer.getRoles();
 
-            for ( java.util.Iterator it2 = roles.iterator(); it2.hasNext(); )
+            for ( String role : roles )
             {
-                String role = (String) it2.next();
-
-                if ( role.toLowerCase().indexOf( "chair" ) != -1 )
+                if ( role.toLowerCase().contains( "chair" ) )
                 {
                     return developer;
                 }
@@ -261,31 +258,28 @@ http://svn.apache.org/repos/asf/infrastructure/site-tools/trunk/projects/asfext<
      * @param developers list of <code>{@link org.apache.maven.model.Developer}</code>
      * @return a not null list of Developer.
      */
-    public static java.util.List findPMCMembers( java.util.List developers )
+    public static java.util.List<org.apache.maven.model.Developer> findPMCMembers( java.util.List<org.apache.maven.model.Developer> developers )
     {
         if ( developers == null || developers.isEmpty() )
         {
             return null;
         }
 
-        java.util.List pmc = new java.util.ArrayList();
-        for ( java.util.Iterator it = developers.iterator(); it.hasNext(); )
+        java.util.List<org.apache.maven.model.Developer> pmcs = new java.util.ArrayList<org.apache.maven.model.Developer>();
+        for ( org.apache.maven.model.Developer developer : developers )
         {
-            org.apache.maven.model.Developer developer = (org.apache.maven.model.Developer) it.next();
-            java.util.List roles = developer.getRoles();
+            java.util.List<String> roles = developer.getRoles();
 
-            for ( java.util.Iterator it2 = roles.iterator(); it2.hasNext(); )
+            for ( String role : roles )
             {
-                String role = (String) it2.next();
-
-                if ( role.toLowerCase().indexOf( "pmc" ) != -1 )
+                if ( role.toLowerCase().contains( "pmc" ) )
                 {
-                    pmc.add( developer );
+                    pmcs.add( developer );
                 }
             }
         }
 
-        return pmc;
+        return pmcs;
     }
 
     /**
@@ -307,19 +301,19 @@ http://svn.apache.org/repos/asf/infrastructure/site-tools/trunk/projects/asfext<
         if ( project.getScm() != null )
         {
             if ( org.codehaus.plexus.util.StringUtils.isNotEmpty( project.getScm().getUrl() )
-                && project.getScm().getUrl().indexOf( APACHE_DOMAIN_NAME ) > 0 )
+                && project.getScm().getUrl().contains( APACHE_DOMAIN_NAME ) )
             {
                 return true;
             }
 
             if ( org.codehaus.plexus.util.StringUtils.isNotEmpty( project.getScm().getConnection() )
-                && project.getScm().getConnection().indexOf( APACHE_DOMAIN_NAME ) > 0 )
+                && project.getScm().getConnection().contains( APACHE_DOMAIN_NAME ) )
             {
                 return true;
             }
 
             if ( org.codehaus.plexus.util.StringUtils.isNotEmpty( project.getScm().getDeveloperConnection() )
-                && project.getScm().getDeveloperConnection().indexOf( APACHE_DOMAIN_NAME ) > 0 )
+                && project.getScm().getDeveloperConnection().contains( APACHE_DOMAIN_NAME ) )
             {
                 return true;
             }
@@ -328,28 +322,28 @@ http://svn.apache.org/repos/asf/infrastructure/site-tools/trunk/projects/asfext<
         if ( project.getDistributionManagement() != null )
         {
             if ( org.codehaus.plexus.util.StringUtils.isNotEmpty( project.getDistributionManagement().getDownloadUrl() )
-                && project.getDistributionManagement().getDownloadUrl().indexOf( APACHE_DOMAIN_NAME ) > 0 )
+                && project.getDistributionManagement().getDownloadUrl().contains( APACHE_DOMAIN_NAME ) )
             {
                 return true;
             }
 
             if ( project.getDistributionManagement().getRepository() != null
                 && org.codehaus.plexus.util.StringUtils.isNotEmpty( project.getDistributionManagement().getRepository().getUrl() )
-                && project.getDistributionManagement().getRepository().getUrl().indexOf( APACHE_DOMAIN_NAME ) > 0 )
+                && project.getDistributionManagement().getRepository().getUrl().contains( APACHE_DOMAIN_NAME ) )
             {
                 return true;
             }
 
             if ( project.getDistributionManagement().getSnapshotRepository() != null
                 && org.codehaus.plexus.util.StringUtils.isNotEmpty( project.getDistributionManagement().getSnapshotRepository().getUrl() )
-                && project.getDistributionManagement().getSnapshotRepository().getUrl().indexOf( APACHE_DOMAIN_NAME ) > 0 )
+                && project.getDistributionManagement().getSnapshotRepository().getUrl().contains( APACHE_DOMAIN_NAME ) )
             {
                 return true;
             }
 
             if ( project.getDistributionManagement().getSite() != null
                 && org.codehaus.plexus.util.StringUtils.isNotEmpty( project.getDistributionManagement().getSite().getUrl() )
-                && project.getDistributionManagement().getSite().getUrl().indexOf( APACHE_DOMAIN_NAME ) > 0 )
+                && project.getDistributionManagement().getSite().getUrl().contains( APACHE_DOMAIN_NAME ) )
             {
                 return true;
             }
@@ -357,13 +351,13 @@ http://svn.apache.org/repos/asf/infrastructure/site-tools/trunk/projects/asfext<
 
         if ( project.getOrganization() != null
             && org.codehaus.plexus.util.StringUtils.isNotEmpty( project.getOrganization().getUrl() )
-            && project.getOrganization().getUrl().indexOf( APACHE_DOMAIN_NAME ) > 0 )
+            && project.getOrganization().getUrl().contains( APACHE_DOMAIN_NAME ) )
         {
             return true;
         }
 
         if ( org.codehaus.plexus.util.StringUtils.isNotEmpty( project.getUrl() )
-            && project.getUrl().indexOf( APACHE_DOMAIN_NAME ) > 0 )
+            && project.getUrl().contains( APACHE_DOMAIN_NAME ) )
         {
             return true;
         }

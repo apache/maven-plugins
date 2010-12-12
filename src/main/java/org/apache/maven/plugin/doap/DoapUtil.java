@@ -27,11 +27,11 @@ import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.Properties;
 
@@ -67,7 +67,7 @@ public class DoapUtil
     protected static final String RDF_NODE_ID = "rdf:nodeID";
 
     /** DoaP Organizations stored by name */
-    private static Map organizations = new HashMap();
+    private static Map<String,DoapUtil.Organization> organizations = new HashMap<String,DoapUtil.Organization>();
 
     /**
      * Write comments in the DOAP file header
@@ -196,9 +196,9 @@ public class DoapUtil
      * @param developersOrContributors list of <code>{@link Developer}/{@link Contributor}</code>
      * @return a none null list of developers or contributors which have a <code>developer</code> DOAP role.
      */
-    public static List getDevelopersOrContributorsWithDeveloperRole( I18N i18n, List developersOrContributors )
+    public static List<Contributor> getContributorsWithDeveloperRole( I18N i18n, List<Contributor> developersOrContributors )
     {
-        return (List) filterDevelopersOrContributorsByDoapRoles( i18n, developersOrContributors ).get( "developers" );
+        return filterContributorsByDoapRoles( i18n, developersOrContributors ).get( "developers" );
     }
 
     /**
@@ -206,9 +206,9 @@ public class DoapUtil
      * @param developersOrContributors list of <code>{@link Developer}/{@link Contributor}</code>
      * @return a none null list of developers or contributors which have a <code>documenter</code> DOAP role.
      */
-    public static List getDevelopersOrContributorsWithDocumenterRole( I18N i18n, List developersOrContributors )
+    public static List<Contributor> getContributorsWithDocumenterRole( I18N i18n, List<Contributor> developersOrContributors )
     {
-        return (List) filterDevelopersOrContributorsByDoapRoles( i18n, developersOrContributors ).get( "documenters" );
+        return filterContributorsByDoapRoles( i18n, developersOrContributors ).get( "documenters" );
     }
 
     /**
@@ -216,9 +216,9 @@ public class DoapUtil
      * @param developersOrContributors list of <code>{@link Developer}/{@link Contributor}</code>
      * @return a none null list of developers or contributors which have an <code>helper</code> DOAP role.
      */
-    public static List getDevelopersOrContributorsWithHelperRole( I18N i18n, List developersOrContributors )
+    public static List<Contributor> getContributorsWithHelperRole( I18N i18n, List<Contributor> developersOrContributors )
     {
-        return (List) filterDevelopersOrContributorsByDoapRoles( i18n, developersOrContributors ).get( "helpers" );
+        return filterContributorsByDoapRoles( i18n, developersOrContributors ).get( "helpers" );
     }
 
     /**
@@ -226,9 +226,9 @@ public class DoapUtil
      * @param developersOrContributors list of <code>{@link Developer}/{@link Contributor}</code>
      * @return a none null list of developers or contributors which have a <code>maintainer</code> DOAP role.
      */
-    public static List getDevelopersOrContributorsWithMaintainerRole( I18N i18n, List developersOrContributors )
+    public static List<Contributor> getContributorsWithMaintainerRole( I18N i18n, List<Contributor> developersOrContributors )
     {
-        return (List) filterDevelopersOrContributorsByDoapRoles( i18n, developersOrContributors ).get( "maintainers" );
+        return filterContributorsByDoapRoles( i18n, developersOrContributors ).get( "maintainers" );
     }
 
     /**
@@ -236,9 +236,9 @@ public class DoapUtil
      * @param developersOrContributors list of <code>{@link Developer}/{@link Contributor}</code>
      * @return a none null list of developers or contributors which have a <code>tester</code> DOAP role.
      */
-    public static List getDevelopersOrContributorsWithTesterRole( I18N i18n, List developersOrContributors )
+    public static List<Contributor> getContributorsWithTesterRole( I18N i18n, List<Contributor> developersOrContributors )
     {
-        return (List) filterDevelopersOrContributorsByDoapRoles( i18n, developersOrContributors ).get( "testers" );
+        return filterContributorsByDoapRoles( i18n, developersOrContributors ).get( "testers" );
     }
 
     /**
@@ -246,9 +246,9 @@ public class DoapUtil
      * @param developersOrContributors list of <code>{@link Developer}/{@link Contributor}</code>
      * @return a none null list of developers or contributors which have a <code>translator</code> DOAP role.
      */
-    public static List getDevelopersOrContributorsWithTranslatorRole( I18N i18n, List developersOrContributors )
+    public static List<Contributor> getContributorsWithTranslatorRole( I18N i18n, List<Contributor> developersOrContributors )
     {
-        return (List) filterDevelopersOrContributorsByDoapRoles( i18n, developersOrContributors ).get( "translators" );
+        return filterContributorsByDoapRoles( i18n, developersOrContributors ).get( "translators" );
     }
 
     /**
@@ -256,9 +256,9 @@ public class DoapUtil
      * @param developersOrContributors list of <code>{@link Developer}/{@link Contributor}</code>
      * @return a none null list of developers or contributors which have an <code>unknown</code> DOAP role.
      */
-    public static List getDevelopersOrContributorsWithUnknownRole( I18N i18n, List developersOrContributors )
+    public static List<Contributor> getContributorsWithUnknownRole( I18N i18n, List<Contributor> developersOrContributors )
     {
-        return (List) filterDevelopersOrContributorsByDoapRoles( i18n, developersOrContributors ).get( "unknowns" );
+        return filterContributorsByDoapRoles( i18n, developersOrContributors ).get( "unknowns" );
     }
 
     /**
@@ -274,7 +274,7 @@ public class DoapUtil
 
         private String url;
 
-        private List members = new LinkedList();
+        private List<String> members = new LinkedList<String>();
 
         public Organization( String name, String url )
         {
@@ -307,11 +307,11 @@ public class DoapUtil
             members.add( nodeId );
         }
 
-        public List getMembers()
+        public List<String> getMembers()
         {
             return members;
         }
-    };
+    }
 
     /**
      * put an organization from the pom file in the organization list.
@@ -320,9 +320,9 @@ public class DoapUtil
      * @param url from the pom file (e.g. http://yoyodyne.example.org/about)
      * @return the existing organization if a duplicate, or a new one.
      */
-    public static Organization addOrganization( String name, String url )
+    public static DoapUtil.Organization addOrganization( String name, String url )
     {
-        Organization organization = (Organization) organizations.get( name );
+        Organization organization = organizations.get( name );
 
         if ( organization == null )
         {
@@ -330,6 +330,7 @@ public class DoapUtil
         }
 
         organizations.put( name, organization );
+
         return organization;
     }
 
@@ -353,7 +354,7 @@ public class DoapUtil
      *
      * @return Map.EntrySet of DoapUtil.Organization
      */
-    public static Set getOrganizations()
+    public static Set<Entry<String, DoapUtil.Organization>> getOrganizations()
     {
         return organizations.entrySet();
     }
@@ -365,7 +366,7 @@ public class DoapUtil
      * @return an empty list if the DOAP file is valid, otherwise a list of errors.
      * @since 1.1
      */
-    public static List validate( File doapFile )
+    public static List<String> validate( File doapFile )
     {
         if ( doapFile == null || !doapFile.isFile() )
         {
@@ -375,10 +376,10 @@ public class DoapUtil
         Model model = ModelFactory.createDefaultModel();
         RDFReader r = model.getReader( "RDF/XML" );
         r.setProperty( "error-mode", "strict-error" );
-        final List errors = new ArrayList();
+        final List<String> errors = new ArrayList<String>();
         r.setErrorHandler( new RDFDefaultErrorHandler()
         {
-            /** {@inheritDoc} */
+            @Override
             public void error( Exception e )
             {
                 errors.add( e.getMessage() );
@@ -413,82 +414,68 @@ public class DoapUtil
      *         <code>translators</code>, <code>testers</code>, <code>helpers</code>, <code>unknowns</code> as keys and
      *         list of <code>{@link Developer}/{@link Contributor}</code> as value.
      */
-    private static Map filterDevelopersOrContributorsByDoapRoles( I18N i18n, List developersOrContributors )
+    private static Map<String, List<Contributor>> filterContributorsByDoapRoles( I18N i18n, List<Contributor> developersOrContributors )
     {
-        Map returnMap = new HashMap( 7 );
-        returnMap.put( "maintainers", new ArrayList() );
-        returnMap.put( "developers", new ArrayList() );
-        returnMap.put( "documenters", new ArrayList() );
-        returnMap.put( "translators", new ArrayList() );
-        returnMap.put( "testers", new ArrayList() );
-        returnMap.put( "helpers", new ArrayList() );
-        returnMap.put( "unknowns", new ArrayList() );
+        Map<String, List<Contributor>> returnMap = new HashMap<String, List<Contributor>>( 7 );
+        returnMap.put( "maintainers", new ArrayList<Contributor>() );
+        returnMap.put( "developers", new ArrayList<Contributor>() );
+        returnMap.put( "documenters", new ArrayList<Contributor>() );
+        returnMap.put( "translators", new ArrayList<Contributor>() );
+        returnMap.put( "testers", new ArrayList<Contributor>() );
+        returnMap.put( "helpers", new ArrayList<Contributor>() );
+        returnMap.put( "unknowns", new ArrayList<Contributor>() );
 
         if ( developersOrContributors == null || developersOrContributors.isEmpty() )
         {
             return returnMap;
         }
 
-        for ( Iterator it = developersOrContributors.iterator(); it.hasNext(); )
+        for ( Contributor contributor : developersOrContributors )
         {
-            Object obj = it.next();
-
-            List roles;
-            if ( Developer.class.isAssignableFrom( obj.getClass() ) )
-            {
-                Developer developer = (Developer) obj;
-                roles = developer.getRoles();
-            }
-            else
-            {
-                Contributor contributor = (Contributor) obj;
-                roles = contributor.getRoles();
-            }
+            List<String> roles = contributor.getRoles();
 
             if ( roles != null && roles.size() != 0 )
             {
-                for ( Iterator it2 = roles.iterator(); it2.hasNext(); )
+                for ( String role : roles )
                 {
-                    String role = (String) it2.next();
-
                     role = role.toLowerCase( Locale.ENGLISH );
-                    if ( role.indexOf( getLowerCaseString( i18n, "doap.maintainer" ) ) != -1 )
+                    if ( role.contains( getLowerCaseString( i18n, "doap.maintainer" ) ) )
                     {
-                        ( (List) returnMap.get( "maintainers" ) ).add( obj );
+                        returnMap.get( "maintainers" ).add( contributor );
                     }
-                    else if ( role.indexOf( getLowerCaseString( i18n, "doap.developer" ) ) != -1 )
+                    else if ( role.contains( getLowerCaseString( i18n, "doap.developer" ) ) )
                     {
-                        ( (List) returnMap.get( "developers" ) ).add( obj );
+                        returnMap.get( "developers" ).add( contributor );
                     }
-                    else if ( role.indexOf( getLowerCaseString( i18n, "doap.documenter" ) ) != -1 )
+                    else if ( role.contains( getLowerCaseString( i18n, "doap.documenter" ) ) )
                     {
-                        ( (List) returnMap.get( "documenters" ) ).add( obj );
+                        returnMap.get( "documenters" ).add( contributor );
                     }
-                    else if ( role.indexOf( getLowerCaseString( i18n, "doap.translator" ) ) != -1 )
+                    else if ( role.contains( getLowerCaseString( i18n, "doap.translator" ) ) )
                     {
-                        ( (List) returnMap.get( "translators" ) ).add( obj );
+                        returnMap.get( "translators" ).add( contributor );
                     }
-                    else if ( role.indexOf( getLowerCaseString( i18n, "doap.tester" ) ) != -1 )
+                    else if ( role.contains( getLowerCaseString( i18n, "doap.tester" ) ) )
                     {
-                        ( (List) returnMap.get( "testers" ) ).add( obj );
+                        returnMap.get( "testers" ).add( contributor );
                     }
-                    else if ( role.indexOf( getLowerCaseString( i18n, "doap.helper" ) ) != -1 )
+                    else if ( role.contains( getLowerCaseString( i18n, "doap.helper" ) ) )
                     {
-                        ( (List) returnMap.get( "helpers" ) ).add( obj );
+                        returnMap.get( "helpers" ).add( contributor );
                     }
-                    else if ( role.indexOf( getLowerCaseString( i18n, "doap.emeritus" ) ) != -1 )
+                    else if ( role.contains( getLowerCaseString( i18n, "doap.emeritus" ) ) )
                     {
                         // Don't add as developer nor as contributor as the person is no longer involved
                     }
                     else
                     {
-                        ( (List) returnMap.get( "unknowns" ) ).add( obj );
+                        returnMap.get( "unknowns" ).add( contributor );
                     }
                 }
             }
             else
             {
-                ( (List) returnMap.get( "unknowns" ) ).add( obj );
+                returnMap.get( "unknowns" ).add( contributor );
             }
         }
 
