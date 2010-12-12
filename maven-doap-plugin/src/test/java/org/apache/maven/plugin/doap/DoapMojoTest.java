@@ -42,14 +42,14 @@ import org.codehaus.plexus.util.StringUtils;
 public class DoapMojoTest
     extends AbstractMojoTestCase
 {
-    /** {@inheritDoc} */
+    @Override
     protected void setUp()
         throws Exception
     {
         super.setUp();
     }
 
-    /** {@inheritDoc} */
+    @Override
     protected void tearDown()
         throws Exception
     {
@@ -186,7 +186,7 @@ public class DoapMojoTest
     /**
      * @return remote repo
      */
-    private static List getRemoteRepositories()
+    private static List<ArtifactRepository> getRemoteRepositories()
     {
         ArtifactRepository repository =
             new DefaultArtifactRepository( "central", "http://repo1.maven.org/maven2", new DefaultRepositoryLayout() );

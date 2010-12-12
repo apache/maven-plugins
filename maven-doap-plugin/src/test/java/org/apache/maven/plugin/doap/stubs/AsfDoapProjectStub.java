@@ -22,6 +22,7 @@ package org.apache.maven.plugin.doap.stubs;
 import java.io.File;
 import java.util.List;
 
+import org.apache.maven.model.Developer;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
@@ -64,14 +65,14 @@ public class AsfDoapProjectStub
         setDevelopers( model.getDevelopers() );
     }
 
-    /** {@inheritDoc} */
+    @Override
     public File getBasedir()
     {
         return new File( super.getBasedir() + "/src/test/resources/unit/asf-doap-configuration/" );
     }
 
-    /** {@inheritDoc} */
-    public List getDevelopers()
+    @Override
+    public List<Developer> getDevelopers()
     {
         return model.getDevelopers();
     }
