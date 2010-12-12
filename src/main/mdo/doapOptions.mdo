@@ -73,6 +73,15 @@ under the License.
           <identifier>true</identifier>
         </field>
         <field>
+          <name>mailingList</name>
+          <description><![CDATA[Single web page that allows people to find out more information about the mailing lists provided by the project.<br/>
+<b>Note</b>: this field supercedes the default Maven mailing lists.
+@see <a href="http://usefulinc.com/ns/doap#mailing-list">http://usefulinc.com/ns/doap#mailing-list</a>]]></description>
+          <version>1.0.0</version>
+          <type>String</type>
+          <identifier>true</identifier>
+        </field>
+        <field>
           <name>oldHomepage</name>
           <description><![CDATA[URL of a project's past homepage, associated with exactly one project.
 @see <a href="http://usefulinc.com/ns/doap#old-homepage">http://usefulinc.com/ns/doap#old-homepage</a>]]></description>

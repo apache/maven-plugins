@@ -815,40 +815,50 @@ public class DoapMojo
      *
      * @param writer not null
      * @see <a href="http://usefulinc.com/ns/doap#mailing-list">http://usefulinc.com/ns/doap#mailing-list</a>
+     * @see DoapOptions#getMailingList()
+     * @see MavenProject#getMailingLists()
      */
     private void writeMailingList( XMLWriter writer )
     {
-        if ( project.getMailingLists() == null || project.getMailingLists().isEmpty() )
+        if ( StringUtils.isEmpty( doapOptions.getMailingList() ) || project.getMailingLists() == null || project.getMailingLists().isEmpty() )
         {
             return;
         }
 
         XmlWriterUtil.writeLineBreak( writer );
         XmlWriterUtil.writeCommentText( writer, "Mailing lists.", 2 );
-        @SuppressWarnings( "unchecked" )
-        List<MailingList> mailingLists = project.getMailingLists();
-        for ( MailingList mailingList : mailingLists )
+        if ( StringUtils.isNotEmpty( doapOptions.getMailingList() ) )
         {
-            if ( StringUtils.isNotEmpty( mailingList.getArchive() ) )
+            DoapUtil.writeRdfResourceElement( writer, "mailing-list", doapOptions.getMailingList() );
+        }
+        else
+        {
+            @SuppressWarnings( "unchecked" )
+            List<MailingList> mailingLists = project.getMailingLists();
+            for ( MailingList mailingList : mailingLists )
             {
-                DoapUtil.writeRdfResourceElement( writer, "mailing-list", mailingList.getArchive() );
-            }
-            else
-            {
-                getLog().warn( "No archive was specified for mailing list " + mailingList.getName() );
-            }
-
-            if ( mailingList.getOtherArchives() != null )
-            {
-                for ( String otherArchive : mailingList.getOtherArchives() )
+                if ( StringUtils.isNotEmpty( mailingList.getArchive() ) )
                 {
-                    if ( StringUtils.isNotEmpty( otherArchive ) )
+                    DoapUtil.writeRdfResourceElement( writer, "mailing-list", mailingList.getArchive() );
+                }
+                else
+                {
+                    getLog().warn( "No archive was specified for mailing list " + mailingList.getName() );
+
+                    if ( mailingList.getOtherArchives() != null )
                     {
-                        DoapUtil.writeRdfResourceElement( writer, "mailing-list", otherArchive );
-                    }
-                    else
-                    {
-                        getLog().warn( "No other archive was specified for mailing list " + mailingList.getName() );
+                        for ( String otherArchive : mailingList.getOtherArchives() )
+                        {
+                            if ( StringUtils.isNotEmpty( otherArchive ) )
+                            {
+                                DoapUtil.writeRdfResourceElement( writer, "mailing-list", otherArchive );
+                            }
+                            else
+                            {
+                                getLog().warn( "No other archive was specified for mailing list "
+                                                   + mailingList.getName() );
+                            }
+                        }
                     }
                 }
             }
