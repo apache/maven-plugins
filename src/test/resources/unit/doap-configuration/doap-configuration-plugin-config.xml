@@ -34,12 +34,12 @@ under the License.
 
   <name>Maven DOAP Plugin Test</name>
   <description>Test the DOAP plugin</description>
-  <url>http://maven.apache.org/plugins/maven-doap-plugin/tests</url>
+  <url>http://foo.org/plugins/maven-doap-plugin/tests</url>
 
   <scm>
-    <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-doap-plugin/src/test/resources/unit/doap-configuration</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/trunk/maven-doap-plugin/src/test/resources/unit/doap-configuration</developerConnection>
-    <url>http://svn.apache.org/viewvc/maven/plugins/trunk/maven-doap-plugin/src/test/resources/unit/doap-configuration</url>
+    <connection>scm:svn:http://svn.foo.org/repos/asf/maven/plugins/trunk/maven-doap-plugin/src/test/resources/unit/doap-configuration</connection>
+    <developerConnection>scm:svn:https://svn.foo.org/repos/asf/maven/plugins/trunk/maven-doap-plugin/src/test/resources/unit/doap-configuration</developerConnection>
+    <url>http://svn.foo.org/viewvc/maven/plugins/trunk/maven-doap-plugin/src/test/resources/unit/doap-configuration</url>
   </scm>
 
   <issueManagement>

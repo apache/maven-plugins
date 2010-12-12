@@ -235,8 +235,8 @@ public class DoapMojo
      * &lt;/asfExtOptions&gt;
      * </pre>
      *
-     * <b>Note</b>: By default, <code>asfExtOptions/included</code> is set to <code>true</code> to include the ASF
-     * extensions. <br/>
+     * <b>Note</b>: By default, <code>&lt;asfExtOptions&gt;&lt;included/&gt;&lt;/asfExtOptions&gt;</code> will be
+     * automatically set to <code>true</code> if the project is hosted at ASF. <br/>
      * See <a href="./apidocs/org/apache/maven/plugin/doap/options/ASFExtOptions.html">Javadoc</a> <br/>
      *
      * @parameter expression="${asfExtOptions}"
@@ -245,6 +245,7 @@ public class DoapMojo
      *      http://svn.apache.org/repos/asf/infrastructure/site-tools/trunk/projects/asfext</a>
      * @see <a href="http://projects.apache.org/docs/pmc.html">http://projects.apache.org/docs/pmc.html</a>
      * @see <a href="http://projects.apache.org/docs/standards.html">http://projects.apache.org/docs/standards.html</a>
+     * @see ASFExtOptions#isASFProject(MavenProject)
      */
     private ASFExtOptions asfExtOptions;
 
@@ -295,6 +296,16 @@ public class DoapMojo
     public void execute()
         throws MojoExecutionException
     {
+        // ----------------------------------------------------------------------------
+        // Includes ASF extensions
+        // ----------------------------------------------------------------------------
+
+        if ( !asfExtOptions.isIncluded() && ASFExtOptions.isASFProject( project ) )
+        {
+            getLog().info( "This project is an ASF project, ASF Extensions to DOAP will be added." );
+            asfExtOptions.setIncluded( true );
+        }
+
         // ----------------------------------------------------------------------------
         // setup pretty print xml writer
         // ----------------------------------------------------------------------------
