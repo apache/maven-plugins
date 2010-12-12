@@ -188,8 +188,8 @@ public class DoapMojo
      * The category which should be displayed in the DOAP file.
      *
      * @parameter expression="${category}"
-     * @deprecated Since 1.0. Instead of, configure <code>category</code> property in <code>doapOptions</code>
-     *             parameter.
+     * @deprecated Since 1.0. Instead of, configure
+     *             <code>&lt;doapOptions&gt;&lt;category/&gt;&lt;/doapOptions&gt;</code> parameter.
      */
     private String category;
 
@@ -197,8 +197,8 @@ public class DoapMojo
      * The programming language which should be displayed in the DOAP file.
      *
      * @parameter expression="${language}"
-     * @deprecated Since 1.0. Instead of, configure <code>programmingLanguage</code> property in
-     *             <code>doapOptions</code> parameter.
+     * @deprecated Since 1.0. Instead of, configure
+     *             <code>&lt;doapOptions&gt;&lt;programmingLanguage/&gt;&lt;/doapOptions&gt;</code> parameter.
      */
     private String language;
 
