@@ -358,7 +358,16 @@ public class DoapMojo
         writer.startElement( "Project" );
         if ( StringUtils.isNotEmpty( about ) )
         {
-            writer.addAttribute( "rdf:about", about );
+            try
+            {
+                new URL( about );
+
+                writer.addAttribute( "rdf:about", about );
+            }
+            catch ( MalformedURLException e )
+            {
+                getLog().error( "The <about/> parameter " + about + " is not a valid URL. Ignored <about/> tag." );
+            }
         }
         else
         {
