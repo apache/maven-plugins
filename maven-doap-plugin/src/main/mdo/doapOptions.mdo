@@ -39,9 +39,17 @@ under the License.
       <version>1.0.0</version>
       <fields>
         <field>
-          <name>shortdesc</name>
-          <description><![CDATA[Short (8 or 9 words) plain text description of a project.
-@see <a href="http://usefulinc.com/ns/doap#shortdesc">http://usefulinc.com/ns/doap#shortdesc</a>]]></description>
+          <name>audience</name>
+          <description><![CDATA[Description of target user base.
+@see <a href="http://usefulinc.com/ns/doap#audience">http://usefulinc.com/ns/doap#audience</a>]]></description>
+          <version>1.0.0</version>
+          <type>String</type>
+          <identifier>true</identifier>
+        </field>
+        <field>
+          <name>blog</name>
+          <description><![CDATA[URI of a blog related to a project.
+@see <a href="http://usefulinc.com/ns/doap#blog">http://usefulinc.com/ns/doap#blog</a>]]></description>
           <version>1.0.0</version>
           <type>String</type>
           <identifier>true</identifier>
@@ -73,6 +81,23 @@ under the License.
           <identifier>true</identifier>
         </field>
         <field>
+          <name>implementations</name>
+          <description><![CDATA[A specification that a project implements. Could be a standard, API or legally defined level of conformance.<br/>
+<b>Note</b>: This string is comma separated to allow several implementations.
+@see <a href="http://usefulinc.com/ns/doap#implements">http://usefulinc.com/ns/doap#implements</a>]]></description>
+          <version>1.0.0</version>
+          <type>String</type>
+          <identifier>true</identifier>
+        </field>
+        <field>
+          <name>language</name>
+          <description><![CDATA[ISO language code a project has been translated into.
+@see <a href="http://usefulinc.com/ns/doap#language">http://usefulinc.com/ns/doap#language</a>]]></description>
+          <version>1.0.0</version>
+          <type>String</type>
+          <identifier>true</identifier>
+        </field>
+        <field>
           <name>mailingList</name>
           <description><![CDATA[Single web page that allows people to find out more information about the mailing lists provided by the project.<br/>
 <b>Note</b>: this field supercedes the default Maven mailing lists.
@@ -99,6 +124,14 @@ under the License.
           <identifier>true</identifier>
         </field>
         <field>
+          <name>platform</name>
+          <description><![CDATA[Indicator of software platform (non-OS specific), e.g. Java, Firefox, ECMA CLR.
+@see <a href="http://usefulinc.com/ns/doap#platform">http://usefulinc.com/ns/doap#platform</a>]]></description>
+          <version>1.0.0</version>
+          <type>String</type>
+          <identifier>true</identifier>
+        </field>
+        <field>
           <name>programmingLanguage</name>
           <description><![CDATA[Programming language a project is implemented in or intended for use with.<br/>
 <b>Note</b>: This string is comma separated to allow several programming-language.
@@ -112,6 +145,30 @@ under the License.
           <name>screenshots</name>
           <description><![CDATA[Web page with screenshots of project.
 @see <a href="http://usefulinc.com/ns/doap#screenshots">http://usefulinc.com/ns/doap#screenshots</a>]]></description>
+          <version>1.0.0</version>
+          <type>String</type>
+          <identifier>true</identifier>
+        </field>
+        <field>
+          <name>serviceEndpoint</name>
+          <description><![CDATA[URI of a web service endpoint where software as a service may be accessed.
+@see <a href="http://usefulinc.com/ns/doap#service-endpoint">http://usefulinc.com/ns/doap#service-endpoint</a>]]></description>
+          <version>1.0.0</version>
+          <type>String</type>
+          <identifier>true</identifier>
+        </field>
+        <field>
+          <name>shortdesc</name>
+          <description><![CDATA[Short (8 or 9 words) plain text description of a project.
+@see <a href="http://usefulinc.com/ns/doap#shortdesc">http://usefulinc.com/ns/doap#shortdesc</a>]]></description>
+          <version>1.0.0</version>
+          <type>String</type>
+          <identifier>true</identifier>
+        </field>
+        <field>
+          <name>vendor</name>
+          <description><![CDATA[Vendor organization: commercial, free or otherwise.
+@see <a href="http://usefulinc.com/ns/doap#vendor">http://usefulinc.com/ns/doap#vendor</a>]]></description>
           <version>1.0.0</version>
           <type>String</type>
           <identifier>true</identifier>
