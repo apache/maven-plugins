@@ -27,6 +27,7 @@ import java.net.URL;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -370,11 +371,23 @@ public class DoapMojo
         // description
         writeDescription( writer );
 
+        // implements
+        writeImplements( writer );
+
+        // Audience
+        writeAudience( writer );
+
+        // Vendor
+        writeVendor( writer );
+
         // created
         writeCreated( writer );
 
         // homepage and old-homepage
         writeHomepage( writer );
+
+        // Blog
+        writeBlog( writer );
 
         // licenses
         writeLicenses( writer );
@@ -387,6 +400,12 @@ public class DoapMojo
 
         // os
         writeOS( writer );
+
+        // Plateform
+        writePlateform( writer );
+
+        // Language
+        writeLanguage( writer );
 
         // SCM
         writeSourceRepositories( writer );
@@ -402,6 +421,9 @@ public class DoapMojo
 
         // screenshots
         writeScreenshots( writer );
+
+        // service-endpoint
+        writeServiceEndpoint( writer );
 
         // wiki
         writeWiki( writer );
@@ -539,18 +561,38 @@ public class DoapMojo
     {
         if ( StringUtils.isNotEmpty( project.getUrl() ) )
         {
-            XmlWriterUtil.writeLineBreak( writer );
-            XmlWriterUtil.writeCommentText( writer,
-                                            "URL of a project's homepage, associated with exactly one project.", 2 );
-            DoapUtil.writeRdfResourceElement( writer, "homepage", project.getUrl() );
+            try
+            {
+                new URL( project.getUrl() );
+
+                XmlWriterUtil.writeLineBreak( writer );
+                XmlWriterUtil.writeCommentText( writer,
+                                                "URL of a project's homepage, associated with exactly one project.", 2 );
+                DoapUtil.writeRdfResourceElement( writer, "homepage", project.getUrl() );
+            }
+            catch ( MalformedURLException e )
+            {
+                getLog().error( "The project url " + project.getUrl() + " is not a valid URL. Ignored <homepage/> tag." );
+            }
         }
 
         if ( StringUtils.isNotEmpty( doapOptions.getOldHomepage() ) )
         {
-            XmlWriterUtil.writeLineBreak( writer );
-            XmlWriterUtil.writeCommentText( writer,
-                                            "URL of a project's past homepage, associated with exactly one project.", 2 );
-            DoapUtil.writeRdfResourceElement( writer, "old-homepage", doapOptions.getOldHomepage() );
+            try
+            {
+                new URL( project.getUrl() );
+
+                XmlWriterUtil.writeLineBreak( writer );
+                XmlWriterUtil.writeCommentText( writer,
+                                                "URL of a project's past homepage, associated with exactly one project.",
+                                                2 );
+                DoapUtil.writeRdfResourceElement( writer, "old-homepage", doapOptions.getOldHomepage() );
+            }
+            catch ( MalformedURLException e )
+            {
+                getLog().error( "The <doapOptions><oldHomepage/></doapOptions> parameter "
+                                    + doapOptions.getOldHomepage() + " is not a valid URL. Ignored <old-homepage/> tag." );
+            }
         }
     }
 
@@ -748,6 +790,18 @@ public class DoapMojo
             return;
         }
 
+        try
+        {
+            new URL( doapOptions.getWiki() );
+
+        }
+        catch ( MalformedURLException e )
+        {
+            getLog().error( "The <doapOptions><wiki/></doapOptions> parameter " + doapOptions.getWiki()
+                                + " is not a valid URL. Ignored <wiki/> tag." );
+            return;
+        }
+
         XmlWriterUtil.writeLineBreak( writer );
         XmlWriterUtil.writeCommentText( writer, "URL of Wiki for collaborative discussion of project.", 2 );
         DoapUtil.writeRdfResourceElement( writer, "wiki", doapOptions.getWiki() );
@@ -793,21 +847,26 @@ public class DoapMojo
      */
     private void writeBugDatabase( XMLWriter writer )
     {
-        if ( project.getIssueManagement() == null )
+        if ( project.getIssueManagement() == null || StringUtils.isEmpty( project.getIssueManagement().getUrl() ) )
         {
+            return;
+        }
+
+        try
+        {
+            new URL( project.getIssueManagement().getUrl() );
+
+        }
+        catch ( MalformedURLException e )
+        {
+            getLog().error( "The project issueManagement url " + project.getIssueManagement().getUrl()
+                                + " is not a valid URL. Ignored <bug-database/> tag." );
             return;
         }
 
         XmlWriterUtil.writeLineBreak( writer );
         XmlWriterUtil.writeCommentText( writer, "Bug database.", 2 );
-        if ( StringUtils.isNotEmpty( project.getIssueManagement().getUrl() ) )
-        {
-            DoapUtil.writeRdfResourceElement( writer, "bug-database", project.getIssueManagement().getUrl() );
-        }
-        else
-        {
-            getLog().warn( "No URL was specified for issue management" );
-        }
+        DoapUtil.writeRdfResourceElement( writer, "bug-database", project.getIssueManagement().getUrl() );
     }
 
     /**
@@ -820,7 +879,8 @@ public class DoapMojo
      */
     private void writeMailingList( XMLWriter writer )
     {
-        if ( StringUtils.isEmpty( doapOptions.getMailingList() ) || project.getMailingLists() == null || project.getMailingLists().isEmpty() )
+        if ( StringUtils.isEmpty( doapOptions.getMailingList() ) || project.getMailingLists() == null
+            || project.getMailingLists().isEmpty() )
         {
             return;
         }
@@ -908,7 +968,7 @@ public class DoapMojo
 
         if ( metadata.getMetadata().getVersioning() == null )
         {
-            getLog().info( "No versioning was found - ignored writing <release/> tag." );
+            getLog().info( "No versioning was found. Ignored <release/> tag." );
             return;
         }
 
@@ -1551,7 +1611,7 @@ public class DoapMojo
     {
         Set<Entry<String, DoapUtil.Organization>> organizations = DoapUtil.getOrganizations();
 
-        for (Entry<String, DoapUtil.Organization> organizationEntry : organizations )
+        for ( Entry<String, DoapUtil.Organization> organizationEntry : organizations )
         {
             DoapUtil.Organization organization = organizationEntry.getValue();
 
@@ -1570,6 +1630,181 @@ public class DoapMojo
                 DoapUtil.writeRdfNodeIdElement( writer, "foaf:member", member );
             }
             writer.endElement(); // foaf:Organization
+        }
+    }
+
+    /**
+     * Write DOAP audience.
+     *
+     * @param writer not null
+     * @see <a href="http://usefulinc.com/ns/doap#audience">http://usefulinc.com/ns/doap#audience</a>
+     * @since 1.1
+     */
+    private void writeAudience( XMLWriter writer )
+    {
+        if ( StringUtils.isEmpty( doapOptions.getAudience() ) )
+        {
+            return;
+        }
+
+        XmlWriterUtil.writeLineBreak( writer );
+        XmlWriterUtil.writeCommentText( writer, "Audience.", 2 );
+        DoapUtil.writeRdfResourceElement( writer, "audience", doapOptions.getAudience() );
+    }
+
+    /**
+     * Write DOAP blog.
+     *
+     * @param writer not null
+     * @see <a href="http://usefulinc.com/ns/doap#blog">http://usefulinc.com/ns/doap#blog</a>
+     * @since 1.1
+     */
+    private void writeBlog( XMLWriter writer )
+    {
+        if ( StringUtils.isEmpty( doapOptions.getBlog() ) )
+        {
+            return;
+        }
+
+        try
+        {
+            new URL( doapOptions.getBlog() );
+
+        }
+        catch ( MalformedURLException e )
+        {
+            getLog().error( "The <doapOptions><blog/></doapOptions> parameter " + doapOptions.getBlog()
+                                + " is not a valid URL. Ignored <blog/> tag." );
+            return;
+        }
+
+        XmlWriterUtil.writeLineBreak( writer );
+        XmlWriterUtil.writeCommentText( writer, "Blog page.", 2 );
+        DoapUtil.writeRdfResourceElement( writer, "blog", doapOptions.getBlog() );
+    }
+
+    /**
+     * Write DOAP plateform.
+     *
+     * @param writer not null
+     * @see <a href="http://usefulinc.com/ns/doap#plateform">http://usefulinc.com/ns/doap#plateform</a>
+     * @since 1.1
+     */
+    private void writePlateform( XMLWriter writer )
+    {
+        if ( StringUtils.isEmpty( doapOptions.getPlatform() ) )
+        {
+            return;
+        }
+
+        XmlWriterUtil.writeLineBreak( writer );
+        XmlWriterUtil.writeCommentText( writer, "Plateform.", 2 );
+        DoapUtil.writeRdfResourceElement( writer, "plateform", doapOptions.getPlatform() );
+    }
+
+    /**
+     * Write DOAP vendor.
+     *
+     * @param writer not null
+     * @see <a href="http://usefulinc.com/ns/doap#vendor">http://usefulinc.com/ns/doap#vendor</a>
+     * @since 1.1
+     */
+    private void writeVendor( XMLWriter writer )
+    {
+        if ( StringUtils.isEmpty( doapOptions.getVendor() ) || project.getOrganization() == null )
+        {
+            return;
+        }
+
+        XmlWriterUtil.writeLineBreak( writer );
+        XmlWriterUtil.writeCommentText( writer, "Vendor.", 2 );
+        if ( StringUtils.isNotEmpty( doapOptions.getPlatform() ) )
+        {
+            DoapUtil.writeRdfResourceElement( writer, "vendor", doapOptions.getPlatform() );
+        }
+        else if ( StringUtils.isNotEmpty( project.getOrganization().getName() ) )
+        {
+            DoapUtil.writeRdfResourceElement( writer, "vendor", project.getOrganization().getName() );
+        }
+    }
+
+    /**
+     * Write DOAP language.
+     *
+     * @param writer not null
+     * @see <a href="http://usefulinc.com/ns/doap#language">http://usefulinc.com/ns/doap#language</a>
+     * @since 1.1
+     */
+    private void writeLanguage( XMLWriter writer )
+    {
+        if ( StringUtils.isEmpty( doapOptions.getLanguage() ) )
+        {
+            return;
+        }
+
+        if ( Arrays.binarySearch( Locale.getISOLanguages(), doapOptions.getLanguage() ) < 0 )
+        {
+            getLog().error( "The <doapOptions><language/></doapOptions> parameter " + doapOptions.getLanguage()
+                                + " is not a valid ISO language. Ignored <language/> tag." );
+            return;
+        }
+
+        XmlWriterUtil.writeLineBreak( writer );
+        XmlWriterUtil.writeCommentText( writer, "Language.", 2 );
+        DoapUtil.writeRdfResourceElement( writer, "language", doapOptions.getLanguage() );
+    }
+
+    /**
+     * Write DOAP service-endpoint.
+     *
+     * @param writer not null
+     * @see <a href="http://usefulinc.com/ns/doap#service-endpoint">http://usefulinc.com/ns/doap#service-endpoint</a>
+     * @since 1.1
+     */
+    private void writeServiceEndpoint( XMLWriter writer )
+    {
+        if ( StringUtils.isEmpty( doapOptions.getServiceEndpoint() ) )
+        {
+            return;
+        }
+
+        try
+        {
+            new URL( doapOptions.getServiceEndpoint() );
+
+        }
+        catch ( MalformedURLException e )
+        {
+            getLog().error( "The <doapOptions><serviceEndpoint/></doapOptions> parameter "
+                                + doapOptions.getServiceEndpoint() + " is not a valid URL. Ignored <service-endpoint/> tag." );
+            return;
+        }
+
+        XmlWriterUtil.writeLineBreak( writer );
+        XmlWriterUtil.writeCommentText( writer, "Service endpoint.", 2 );
+        DoapUtil.writeRdfResourceElement( writer, "service-endpoint", doapOptions.getServiceEndpoint() );
+    }
+
+    /**
+     * Write DOAP implements.
+     *
+     * @param writer not null
+     * @see <a href="http://usefulinc.com/ns/doap#implements">http://usefulinc.com/ns/doap#implements</a>
+     * @since 1.1
+     */
+    private void writeImplements( XMLWriter writer )
+    {
+        if ( StringUtils.isEmpty( doapOptions.getImplementations() ) )
+        {
+            return;
+        }
+
+        XmlWriterUtil.writeLineBreak( writer );
+        XmlWriterUtil.writeCommentText( writer, "Implements.", 2 );
+        String[] implementations = StringUtils.split( doapOptions.getImplementations(), "," );
+        for ( int i = 0; i < implementations.length; i++ )
+        {
+            DoapUtil.writeRdfResourceElement( writer, "implements", implementations[i].trim() );
         }
     }
 
