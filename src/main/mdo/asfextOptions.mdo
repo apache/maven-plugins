@@ -193,9 +193,9 @@ http://svn.apache.org/repos/asf/infrastructure/site-tools/trunk/projects/asfext<
      */
     public static boolean isCategorySupportedByASF( String category )
     {
-        for ( int i = 0; i < CATEGORIES.length; i++ )
+        for ( String category_ : CATEGORIES )
         {
-            if ( CATEGORIES[i].equalsIgnoreCase( category ) )
+            if ( category_.equalsIgnoreCase( category ) )
             {
                 return true;
             }
@@ -212,9 +212,9 @@ http://svn.apache.org/repos/asf/infrastructure/site-tools/trunk/projects/asfext<
      */
     public static boolean isProgrammingLanguageSupportedByASF( String programmingLanguage )
     {
-        for ( int i = 0; i < PROGRAMMING_LANGUAGES.length; i++ )
+        for ( String programmingLanguage_ : PROGRAMMING_LANGUAGES )
         {
-            if ( PROGRAMMING_LANGUAGES[i].equalsIgnoreCase( programmingLanguage ) )
+            if ( programmingLanguage_.equalsIgnoreCase( programmingLanguage ) )
             {
                 return true;
             }

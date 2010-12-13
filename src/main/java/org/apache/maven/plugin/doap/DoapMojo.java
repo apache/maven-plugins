@@ -463,9 +463,9 @@ public class DoapMojo
             List<String> errors = DoapUtil.validate( doapFile );
             if ( !errors.isEmpty() )
             {
-                for ( int i = 0; i < errors.size(); i++ )
+                for ( String error : errors )
                 {
-                    getLog().error( errors.get( i ).toString() );
+                    getLog().error( error );
                 }
 
                 throw new MojoExecutionException( "Error parsing the generated doap file, see above." );
@@ -591,7 +591,8 @@ public class DoapMojo
             catch ( MalformedURLException e )
             {
                 getLog().error( "The <doapOptions><oldHomepage/></doapOptions> parameter "
-                                    + doapOptions.getOldHomepage() + " is not a valid URL. Ignored <old-homepage/> tag." );
+                                    + doapOptions.getOldHomepage()
+                                    + " is not a valid URL. Ignored <old-homepage/> tag." );
             }
         }
     }
@@ -627,16 +628,15 @@ public class DoapMojo
         if ( StringUtils.isNotEmpty( doapOptions.getProgrammingLanguage() ) )
         {
             String[] languages = StringUtils.split( doapOptions.getProgrammingLanguage(), "," );
-            for ( int i = 0; i < languages.length; i++ )
+            for ( String language : languages )
             {
-                if ( asfExtOptions.isIncluded()
-                    && !ASFExtOptions.isProgrammingLanguageSupportedByASF( languages[i].trim() ) )
+                if ( asfExtOptions.isIncluded() && !ASFExtOptions.isProgrammingLanguageSupportedByASF( language.trim() ) )
                 {
-                    getLog().warn( "The programming language '" + languages[i].trim() + "' is not supported by ASF. "
+                    getLog().warn( "The programming language '" + language.trim() + "' is not supported by ASF. "
                                        + "Refer you to http://projects.apache.org/languages.html" );
                 }
 
-                DoapUtil.writeElement( writer, "programming-language", languages[i].trim() );
+                DoapUtil.writeElement( writer, "programming-language", language.trim() );
             }
         }
     }
@@ -679,22 +679,22 @@ public class DoapMojo
         if ( StringUtils.isNotEmpty( doapOptions.getCategory() ) )
         {
             String[] categories = StringUtils.split( doapOptions.getCategory(), "," );
-            for ( int i = 0; i < categories.length; i++ )
+            for ( String category : categories )
             {
-                if ( asfExtOptions.isIncluded() && !ASFExtOptions.isCategorySupportedByASF( categories[i] ) )
+                if ( asfExtOptions.isIncluded() && !ASFExtOptions.isCategorySupportedByASF( category ) )
                 {
-                    getLog().warn( "The given category '" + categories[i] + "' is not supported by ASF. "
+                    getLog().warn( "The given category '" + category + "' is not supported by ASF. "
                                        + "Refer you to http://projects.apache.org/categories.html" );
                 }
 
                 if ( asfExtOptions.isIncluded() )
                 {
                     DoapUtil.writeRdfResourceElement( writer, "category", "http://projects.apache.org/category/"
-                        + categories[i].trim() );
+                        + category.trim() );
                 }
                 else
                 {
-                    DoapUtil.writeRdfResourceElement( writer, "category", categories[i].trim() );
+                    DoapUtil.writeRdfResourceElement( writer, "category", category.trim() );
                 }
             }
         }
@@ -729,9 +729,9 @@ public class DoapMojo
             XmlWriterUtil.writeLineBreak( writer );
             XmlWriterUtil.writeCommentText( writer, "Mirror of software download web page.", 2 );
             String[] downloadMirrors = StringUtils.split( doapOptions.getDownloadMirror(), "," );
-            for ( int i = 0; i < downloadMirrors.length; i++ )
+            for ( String downloadMirror : downloadMirrors )
             {
-                DoapUtil.writeRdfResourceElement( writer, "download-mirror", downloadMirrors[i].trim() );
+                DoapUtil.writeRdfResourceElement( writer, "download-mirror", downloadMirror.trim() );
             }
         }
     }
@@ -753,9 +753,9 @@ public class DoapMojo
         XmlWriterUtil.writeCommentText( writer, "Operating system that a project is limited to.", 2 );
 
         String[] oses = StringUtils.split( doapOptions.getOs(), "," );
-        for ( int i = 0; i < oses.length; i++ )
+        for ( String os : oses )
         {
-            DoapUtil.writeElement( writer, "os", oses[i].trim() );
+            DoapUtil.writeElement( writer, "os", os.trim() );
         }
     }
 
@@ -1776,7 +1776,8 @@ public class DoapMojo
         catch ( MalformedURLException e )
         {
             getLog().error( "The <doapOptions><serviceEndpoint/></doapOptions> parameter "
-                                + doapOptions.getServiceEndpoint() + " is not a valid URL. Ignored <service-endpoint/> tag." );
+                                + doapOptions.getServiceEndpoint()
+                                + " is not a valid URL. Ignored <service-endpoint/> tag." );
             return;
         }
 
@@ -1802,9 +1803,9 @@ public class DoapMojo
         XmlWriterUtil.writeLineBreak( writer );
         XmlWriterUtil.writeCommentText( writer, "Implements.", 2 );
         String[] implementations = StringUtils.split( doapOptions.getImplementations(), "," );
-        for ( int i = 0; i < implementations.length; i++ )
+        for ( String implementation : implementations )
         {
-            DoapUtil.writeRdfResourceElement( writer, "implements", implementations[i].trim() );
+            DoapUtil.writeRdfResourceElement( writer, "implements", implementation.trim() );
         }
     }
 
