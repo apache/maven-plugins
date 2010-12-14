@@ -145,21 +145,6 @@ public class ProjectSummaryReport
                     link( distributionManagement.getDownloadUrl(), distributionManagement.getDownloadUrl() );
                     endSection();
                 }
-                else if ( distributionManagement.getRepository() != null
-                    && StringUtils.isNotEmpty( distributionManagement.getRepository().getUrl() ) )
-                {
-                    startSection( getI18nString( "download" ) );
-                    String link = distributionManagement.getRepository().getUrl();
-                    if ( !link.endsWith( "/" ) )
-                    {
-                        link += "/";
-                    }
-                    link += StringUtils.replace( project.getGroupId(), ".", "/" );
-                    link += "/";
-                    link += project.getArtifactId();
-                    link( link, link );
-                    endSection();
-                }
             }
 
             endSection();
