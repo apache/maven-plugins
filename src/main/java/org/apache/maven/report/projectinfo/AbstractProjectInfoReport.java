@@ -357,7 +357,7 @@ public abstract class AbstractProjectInfoReport
             this.bundle = ResourceBundle.getBundle( this.bundleName, locale, classLoader );
             if ( !this.bundle.getLocale().getLanguage().equals( locale.getLanguage() ) )
             {
-                this.bundle = ResourceBundle.getBundle( this.bundleName, new Locale( null ), classLoader );
+                this.bundle = ResourceBundle.getBundle( this.bundleName, Locale.getDefault(), classLoader );
             }
         }
 
