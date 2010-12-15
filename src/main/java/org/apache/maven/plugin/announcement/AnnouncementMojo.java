@@ -207,6 +207,16 @@ public class AnnouncementMojo
     private boolean generateJiraAnnouncement;
 
     /**
+     * Defines the filter parameters to restrict which issues are retrieved
+     * from JIRA. The filter parameter uses the same format of url
+     * parameters that is used in a JIRA search.
+     *
+     * @parameter default-value=""
+     * @since 2.4
+     */
+    private String filter;
+
+    /**
      * Include issues from JIRA with these status ids. Multiple status ids can
      * be specified as a comma separated list of ids.
      * <p>
@@ -266,6 +276,22 @@ public class AnnouncementMojo
      * @since 2.1
      */
     private String jiraPassword;
+
+    /**
+     * Defines the http user for basic authentication into the JIRA webserver.
+     *
+     * @parameter default-value=""
+     * @since 2.4
+     */
+    private String webUser;
+
+    /**
+     * Defines the http password for basic authentication into the JIRA webserver.
+     *
+     * @parameter default-value=""
+     * @since 2.4
+     */
+    private String webPassword;
 
     /**
      * The template encoding.
@@ -631,9 +657,15 @@ public class AnnouncementMojo
 
         jiraDownloader.setNbEntries( maxEntries );
 
+        jiraDownloader.setFilter( filter );
+
         jiraDownloader.setJiraUser( jiraUser );
 
         jiraDownloader.setJiraPassword( jiraPassword );
+
+        jiraDownloader.setWebUser( webUser );
+
+        jiraDownloader.setWebPassword( webPassword );
 
         try
         {
