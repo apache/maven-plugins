@@ -53,6 +53,7 @@ import org.codehaus.plexus.velocity.VelocityComponent;
  * @requiresDependencyResolution test
  * @author aramirez@exist.com
  * @version $Id$
+ * @since 2.0-beta-2
  */
 public class AnnouncementMojo
     extends AbstractAnnouncementMojo
