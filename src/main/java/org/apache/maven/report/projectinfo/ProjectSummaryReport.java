@@ -270,17 +270,20 @@ public class ProjectSummaryReport
             }
 
             // java files in the source directory?
-            try
+            final File sourceDir = new File( project.getBuild().getSourceDirectory() );
+            if ( sourceDir.exists() )
             {
-                if ( FileUtils.getFileNames( new File( project.getBuild().getSourceDirectory() ), "**/*.java", null,
-                                             false ).size() > 0 )
+                try
                 {
-                    return true;
+                    if ( FileUtils.getFileNames( sourceDir, "**/*.java", null, false ).size() > 0 )
+                    {
+                        return true;
+                    }
                 }
-            }
-            catch ( IOException e )
-            {
-                // ignored
+                catch ( IOException e )
+                {
+                    //ignored
+                }
             }
 
             // maven-compiler-plugin ?
