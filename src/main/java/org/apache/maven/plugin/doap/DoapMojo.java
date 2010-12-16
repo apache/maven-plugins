@@ -44,6 +44,9 @@ import org.apache.maven.artifact.repository.metadata.ArtifactRepositoryMetadata;
 import org.apache.maven.artifact.repository.metadata.RepositoryMetadata;
 import org.apache.maven.artifact.repository.metadata.RepositoryMetadataManager;
 import org.apache.maven.artifact.repository.metadata.RepositoryMetadataResolutionException;
+import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
+import org.apache.maven.artifact.resolver.ArtifactResolutionException;
+import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.model.Contributor;
 import org.apache.maven.model.Developer;
 import org.apache.maven.model.License;
@@ -52,15 +55,19 @@ import org.apache.maven.model.Scm;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.doap.options.ASFExtOptions;
+import org.apache.maven.plugin.doap.options.DOAPArtifact;
 import org.apache.maven.plugin.doap.options.DoapOptions;
 import org.apache.maven.plugin.doap.options.Standard;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.MavenProjectBuilder;
+import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.scm.manager.NoSuchScmProviderException;
 import org.apache.maven.scm.manager.ScmManager;
 import org.apache.maven.scm.provider.cvslib.repository.CvsScmProviderRepository;
 import org.apache.maven.scm.provider.svn.repository.SvnScmProviderRepository;
 import org.apache.maven.scm.repository.ScmRepository;
 import org.apache.maven.scm.repository.ScmRepositoryException;
+import org.apache.maven.settings.Settings;
 import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.StringUtils;
@@ -154,11 +161,19 @@ public class DoapMojo
     /**
      * The name of the DOAP file that will be generated.
      *
-     * @parameter expression="${doapFile}"
-     *            default-value="${project.reporting.outputDirectory}/doap_${project.artifactId}.rdf"
+     * @parameter expression="${doapFile}" default-value="doap_${project.artifactId}.rdf"
      * @required
      */
-    private File doapFile;
+    private String doapFile;
+
+    /**
+     * The output directory of the DOAP file that will be generated.
+     *
+     * @parameter default-value="${project.reporting.outputDirectory}"
+     * @required
+     * @since 1.1
+     */
+    private File outputDirectory;
 
     /**
      * The local repository where the artifacts are located.
@@ -179,6 +194,40 @@ public class DoapMojo
      * @since 1.0
      */
     private List<ArtifactRepository> remoteRepositories;
+
+    /**
+     * Factory for creating artifact objects
+     *
+     * @component
+     * @since 1.1
+     */
+    private ArtifactFactory factory;
+
+    /**
+     * Project builder
+     *
+     * @component
+     * @since 1.1
+     */
+    private MavenProjectBuilder mavenProjectBuilder;
+
+    /**
+     * Used for resolving artifacts
+     *
+     * @component
+     * @since 1.1
+     */
+    private ArtifactResolver resolver;
+
+    /**
+     * The current user system settings for use in Maven.
+     *
+     * @parameter expression="${settings}"
+     * @required
+     * @readonly
+     * @since 1.1
+     */
+    protected Settings settings;
 
     // ----------------------------------------------------------------------
     // Doap options
@@ -288,6 +337,25 @@ public class DoapMojo
      */
     private boolean validate;
 
+    /**
+     * Another Maven project to generate the DOAP file. Example:
+     *
+     * <pre>
+     * &lt;DOAPArtifact&gt;
+     * &nbsp;&nbsp;&lt;groupId&gt;given-artifact-groupId&lt;/groupId&gt;
+     * &nbsp;&nbsp;&lt;artifactId&gt;given-artifact-artifactId&lt;/artifactId&gt;
+     * &nbsp;&nbsp;&lt;version&gt;given-artifact-version&lt;/version&gt;
+     * &lt;/DOAPArtifact&gt;
+     * </pre>
+     *
+     * <br/>
+     * See <a href="./apidocs/org/apache/maven/plugin/doap/options/DOAPArtifact.html">Javadoc</a> <br/>
+     *
+     * @parameter
+     * @since 1.1
+     */
+    private DOAPArtifact artifact;
+
     // ----------------------------------------------------------------------
     // Public methods
     // ----------------------------------------------------------------------
@@ -297,11 +365,57 @@ public class DoapMojo
     public void execute()
         throws MojoExecutionException
     {
+        MavenProject givenProject = project;
+        File outFile = new File( doapFile );
+        if ( !doapFile.contains( File.separator ) )
+        {
+            outFile = new File( outputDirectory, doapFile );
+        }
+
+        if ( artifact != null && StringUtils.isNotEmpty( artifact.getGroupId() )
+            && StringUtils.isNotEmpty( artifact.getArtifactId() ) && StringUtils.isNotEmpty( artifact.getVersion() ) )
+        {
+            getLog().info( "Using artifact " + artifact.getGroupId() + ":" + artifact.getArtifactId() + ":"
+                               + artifact.getVersion() );
+
+            try
+            {
+                Artifact art =
+                    factory.createProjectArtifact( artifact.getGroupId(), artifact.getArtifactId(),
+                                                   artifact.getVersion(), Artifact.SCOPE_COMPILE );
+
+                if ( art.getFile() == null )
+                {
+                    givenProject = mavenProjectBuilder.buildFromRepository( art, remoteRepositories, localRepository );
+                    art = givenProject.getArtifact();
+
+                    resolver.resolve( art, remoteRepositories, localRepository );
+                }
+
+                outFile = new File( outputDirectory, artifact.getDoapFileName() );
+            }
+            catch ( ArtifactResolutionException e )
+            {
+                getLog().error( "ArtifactResolutionException: " + e.getMessage() );
+                getLog().warn( "Ignored <artifact/> parameter." );
+            }
+            catch ( ArtifactNotFoundException e )
+            {
+                getLog().error( "ArtifactNotFoundException: " + e.getMessage() );
+                getLog().warn( "Ignored <artifact/> parameter." );
+            }
+            catch ( ProjectBuildingException e )
+            {
+                getLog().error( "ProjectBuildingException: " + e.getMessage() );
+                getLog().warn( "Ignored <artifact/> parameter." );
+            }
+        }
+
         // ----------------------------------------------------------------------------
         // Includes ASF extensions
         // ----------------------------------------------------------------------------
 
-        if ( !asfExtOptions.isIncluded() && ASFExtOptions.isASFProject( project ) )
+        if ( !asfExtOptions.isIncluded() && ASFExtOptions.isASFProject( givenProject ) )
         {
             getLog().info( "This project is an ASF project, ASF Extensions to DOAP will be added." );
             asfExtOptions.setIncluded( true );
@@ -314,28 +428,28 @@ public class DoapMojo
         Writer w;
         try
         {
-            if ( !doapFile.getParentFile().exists() )
+            if ( !outFile.getParentFile().exists() )
             {
-                FileUtils.mkdir( doapFile.getParentFile().getAbsolutePath() );
+                FileUtils.mkdir( outFile.getParentFile().getAbsolutePath() );
             }
 
-            w = WriterFactory.newXmlWriter( doapFile );
+            w = WriterFactory.newXmlWriter( outFile );
         }
         catch ( IOException e )
         {
-            throw new MojoExecutionException( "Error creating DOAP file.", e );
+            throw new MojoExecutionException( "Error creating DOAP file " + outFile.getAbsolutePath(), e );
         }
 
         if ( asfExtOptions.isIncluded() )
         {
-            getLog().info( "Generating an ASF DOAP file..." );
+            getLog().info( "Generating an ASF DOAP file " + outFile.getAbsolutePath() );
         }
         else
         {
-            getLog().info( "Generating a pure DOAP file..." );
+            getLog().info( "Generating a pure DOAP file " + outFile.getAbsolutePath() );
         }
 
-        XMLWriter writer = new PrettyPrintXMLWriter( w, project.getModel().getModelEncoding(), null );
+        XMLWriter writer = new PrettyPrintXMLWriter( w, givenProject.getModel().getModelEncoding(), null );
 
         // ----------------------------------------------------------------------------
         // Convert POM to DOAP
@@ -375,10 +489,10 @@ public class DoapMojo
         }
 
         // name
-        writeName( writer );
+        writeName( writer, givenProject );
 
         // description
-        writeDescription( writer );
+        writeDescription( writer, givenProject );
 
         // implements
         writeImplements( writer );
@@ -387,28 +501,28 @@ public class DoapMojo
         writeAudience( writer );
 
         // Vendor
-        writeVendor( writer );
+        writeVendor( writer, givenProject );
 
         // created
-        writeCreated( writer );
+        writeCreated( writer, givenProject );
 
         // homepage and old-homepage
-        writeHomepage( writer );
+        writeHomepage( writer, givenProject );
 
         // Blog
         writeBlog( writer );
 
         // licenses
-        writeLicenses( writer );
+        writeLicenses( writer, givenProject );
 
         // programming-language
-        writeProgrammingLanguage( writer );
+        writeProgrammingLanguage( writer, givenProject );
 
         // category
-        writeCategory( writer );
+        writeCategory( writer, givenProject );
 
         // os
-        writeOS( writer );
+        writeOS( writer, givenProject );
 
         // Plateform
         writePlateform( writer );
@@ -417,39 +531,39 @@ public class DoapMojo
         writeLanguage( writer );
 
         // SCM
-        writeSourceRepositories( writer );
+        writeSourceRepositories( writer, givenProject );
 
         // bug-database
-        writeBugDatabase( writer );
+        writeBugDatabase( writer, givenProject );
 
         // mailing list
-        writeMailingList( writer );
+        writeMailingList( writer, givenProject );
 
         // download-page and download-mirror
-        writeDownloadPage( writer );
+        writeDownloadPage( writer, givenProject );
 
         // screenshots
-        writeScreenshots( writer );
+        writeScreenshots( writer, givenProject );
 
         // service-endpoint
         writeServiceEndpoint( writer );
 
         // wiki
-        writeWiki( writer );
+        writeWiki( writer, givenProject );
 
         // Releases
-        writeReleases( writer );
+        writeReleases( writer, givenProject );
 
         // Developers
-        writeContributors( writer, project.getDevelopers() );
+        writeContributors( writer, givenProject.getDevelopers() );
 
         // Contributors
-        writeContributors( writer, project.getContributors() );
+        writeContributors( writer, givenProject.getContributors() );
 
         // ASFext
         if ( asfExtOptions.isIncluded() )
         {
-            writeASFext( writer );
+            writeASFext( writer, givenProject );
         }
 
         writer.endElement(); // Project
@@ -469,7 +583,7 @@ public class DoapMojo
 
         if ( validate )
         {
-            List<String> errors = DoapUtil.validate( doapFile );
+            List<String> errors = DoapUtil.validate( outFile );
             if ( !errors.isEmpty() )
             {
                 for ( String error : errors )
@@ -490,9 +604,10 @@ public class DoapMojo
      * Write DOAP name.
      *
      * @param writer not null
+     * @param project the Maven project, not null
      * @see <a href="http://usefulinc.com/ns/doap#name">http://usefulinc.com/ns/doap#name</a>
      */
-    private void writeName( XMLWriter writer )
+    private void writeName( XMLWriter writer, MavenProject project )
     {
         if ( StringUtils.isEmpty( project.getName() ) )
         {
@@ -517,10 +632,11 @@ public class DoapMojo
      * Write DOAP description.
      *
      * @param writer not null
+     * @param project the Maven project, not null
      * @see <a href="http://usefulinc.com/ns/doap#description">http://usefulinc.com/ns/doap#description</a>
      * @see <a href="http://usefulinc.com/ns/doap#shortdesc">http://usefulinc.com/ns/doap#shortdesc</a>
      */
-    private void writeDescription( XMLWriter writer )
+    private void writeDescription( XMLWriter writer, MavenProject project )
     {
         if ( StringUtils.isEmpty( project.getDescription() ) )
         {
@@ -544,9 +660,10 @@ public class DoapMojo
      * Write DOAP created.
      *
      * @param writer not null
+     * @param project the Maven project, not null
      * @see <a href="http://usefulinc.com/ns/doap#created">http://usefulinc.com/ns/doap#created</a>
      */
-    private void writeCreated( XMLWriter writer )
+    private void writeCreated( XMLWriter writer, MavenProject project )
     {
         if ( StringUtils.isEmpty( project.getInceptionYear() ) )
         {
@@ -563,10 +680,11 @@ public class DoapMojo
      * Write DOAP homepage and old-homepage.
      *
      * @param writer not null
+     * @param project the Maven project, not null
      * @see <a href="http://usefulinc.com/ns/doap#homepage">http://usefulinc.com/ns/doap#homepage</a>
      * @see <a href="http://usefulinc.com/ns/doap#old-homepage">http://usefulinc.com/ns/doap#old-homepage</a>
      */
-    private void writeHomepage( XMLWriter writer )
+    private void writeHomepage( XMLWriter writer, MavenProject project )
     {
         if ( StringUtils.isNotEmpty( project.getUrl() ) )
         {
@@ -610,10 +728,11 @@ public class DoapMojo
      * Write DOAP programming-language.
      *
      * @param writer not null
+     * @param project the Maven project, not null
      * @see <a href="http://usefulinc.com/ns/doap#programming-language">
      *      http://usefulinc.com/ns/doap#programming-language</a>
      */
-    private void writeProgrammingLanguage( XMLWriter writer )
+    private void writeProgrammingLanguage( XMLWriter writer, MavenProject project )
     {
         if ( StringUtils.isEmpty( doapOptions.getProgrammingLanguage() ) && StringUtils.isEmpty( language ) )
         {
@@ -654,9 +773,10 @@ public class DoapMojo
      * Write DOAP category.
      *
      * @param writer not null
+     * @param project the Maven project, not null
      * @see <a href="http://usefulinc.com/ns/doap#category">http://usefulinc.com/ns/doap#category</a>
      */
-    private void writeCategory( XMLWriter writer )
+    private void writeCategory( XMLWriter writer, MavenProject project )
     {
         if ( StringUtils.isEmpty( doapOptions.getCategory() ) && StringUtils.isEmpty( category ) )
         {
@@ -713,10 +833,11 @@ public class DoapMojo
      * Write DOAP download-page and download-mirror.
      *
      * @param writer not null
+     * @param project the Maven project, not null
      * @see <a href="http://usefulinc.com/ns/doap#download-page">http://usefulinc.com/ns/doap#download-page</a>
      * @see <a href="http://usefulinc.com/ns/doap#download-mirror">http://usefulinc.com/ns/doap#download-mirror</a>
      */
-    private void writeDownloadPage( XMLWriter writer )
+    private void writeDownloadPage( XMLWriter writer, MavenProject project )
     {
         if ( StringUtils.isEmpty( doapOptions.getDownloadPage() ) )
         {
@@ -749,9 +870,10 @@ public class DoapMojo
      * Write DOAP OS.
      *
      * @param writer not null
+     * @param project the Maven project, not null
      * @see <a href="http://usefulinc.com/ns/doap#os">http://usefulinc.com/ns/doap#os</a>
      */
-    private void writeOS( XMLWriter writer )
+    private void writeOS( XMLWriter writer, MavenProject project )
     {
         if ( StringUtils.isEmpty( doapOptions.getOs() ) )
         {
@@ -772,9 +894,10 @@ public class DoapMojo
      * Write DOAP screenshots.
      *
      * @param writer not null
+     * @param project the Maven project, not null
      * @see <a href="http://usefulinc.com/ns/doap#screenshots">http://usefulinc.com/ns/doap#screenshots</a>
      */
-    private void writeScreenshots( XMLWriter writer )
+    private void writeScreenshots( XMLWriter writer, MavenProject project )
     {
         if ( StringUtils.isEmpty( doapOptions.getScreenshots() ) )
         {
@@ -790,9 +913,10 @@ public class DoapMojo
      * Write DOAP wiki.
      *
      * @param writer not null
+     * @param project the Maven project, not null
      * @see <a href="http://usefulinc.com/ns/doap#wiki">http://usefulinc.com/ns/doap#wiki</a>
      */
-    private void writeWiki( XMLWriter writer )
+    private void writeWiki( XMLWriter writer, MavenProject project )
     {
         if ( StringUtils.isEmpty( doapOptions.getWiki() ) )
         {
@@ -820,9 +944,10 @@ public class DoapMojo
      * Write DOAP licenses.
      *
      * @param writer not null
+     * @param project the Maven project, not null
      * @see <a href="http://usefulinc.com/ns/doap#license">http://usefulinc.com/ns/doap#license</a>
      */
-    private void writeLicenses( XMLWriter writer )
+    private void writeLicenses( XMLWriter writer, MavenProject project )
     {
         if ( project.getLicenses() == null || project.getLicenses().isEmpty() )
         {
@@ -852,9 +977,10 @@ public class DoapMojo
      * Write DOAP bug-database.
      *
      * @param writer not null
+     * @param project the Maven project, not null
      * @see <a href="http://usefulinc.com/ns/doap#bug-database">http://usefulinc.com/ns/doap#bug-database</a>
      */
-    private void writeBugDatabase( XMLWriter writer )
+    private void writeBugDatabase( XMLWriter writer, MavenProject project )
     {
         if ( project.getIssueManagement() == null || StringUtils.isEmpty( project.getIssueManagement().getUrl() ) )
         {
@@ -882,11 +1008,12 @@ public class DoapMojo
      * Write DOAP mailing-list.
      *
      * @param writer not null
+     * @param project the Maven project, not null
      * @see <a href="http://usefulinc.com/ns/doap#mailing-list">http://usefulinc.com/ns/doap#mailing-list</a>
      * @see DoapOptions#getMailingList()
      * @see MavenProject#getMailingLists()
      */
-    private void writeMailingList( XMLWriter writer )
+    private void writeMailingList( XMLWriter writer, MavenProject project )
     {
         if ( StringUtils.isEmpty( doapOptions.getMailingList() ) || project.getMailingLists() == null
             || project.getMailingLists().isEmpty() )
@@ -938,11 +1065,12 @@ public class DoapMojo
      * Write all DOAP releases.
      *
      * @param writer not null
+     * @param project the Maven project, not null
      * @throws MojoExecutionException if any
      * @see <a href="http://usefulinc.com/ns/doap#release">http://usefulinc.com/ns/doap#release</a>
      * @see <a href="http://usefulinc.com/ns/doap#Version">http://usefulinc.com/ns/doap#Version</a>
      */
-    private void writeReleases( XMLWriter writer )
+    private void writeReleases( XMLWriter writer, MavenProject project )
         throws MojoExecutionException
     {
         Artifact artifact =
@@ -1082,11 +1210,12 @@ public class DoapMojo
      * Write all DOAP repositories.
      *
      * @param writer not null
+     * @param project the Maven project, not null
      * @see <a href="http://usefulinc.com/ns/doap#Repository">http://usefulinc.com/ns/doap#Repository</a>
      * @see <a href="http://usefulinc.com/ns/doap#CVSRepository">http://usefulinc.com/ns/doap#CVSRepository</a>
      * @see <a href="http://usefulinc.com/ns/doap#SVNRepository">http://usefulinc.com/ns/doap#SVNRepository</a>
      */
-    private void writeSourceRepositories( XMLWriter writer )
+    private void writeSourceRepositories( XMLWriter writer, MavenProject project )
     {
         Scm scm = project.getScm();
         if ( scm == null )
@@ -1099,7 +1228,7 @@ public class DoapMojo
         {
             XmlWriterUtil.writeLineBreak( writer );
             XmlWriterUtil.writeCommentText( writer, "Anonymous Source Repository", 2 );
-            writeSourceRepository( writer, anonymousConnection );
+            writeSourceRepository( writer, project, anonymousConnection );
         }
 
         String developerConnection = scm.getDeveloperConnection();
@@ -1107,7 +1236,7 @@ public class DoapMojo
         {
             XmlWriterUtil.writeLineBreak( writer );
             XmlWriterUtil.writeCommentText( writer, "Developer Source Repository", 2 );
-            writeSourceRepository( writer, developerConnection );
+            writeSourceRepository( writer, project, developerConnection );
         }
     }
 
@@ -1124,12 +1253,13 @@ public class DoapMojo
      * </pre>
      *
      * @param writer not null
+     * @param project the Maven project, not null
      * @param connection not null
      * @see <a href="http://usefulinc.com/ns/doap#Repository">http://usefulinc.com/ns/doap#Repository</a>
      * @see <a href="http://usefulinc.com/ns/doap#CVSRepository">http://usefulinc.com/ns/doap#CVSRepository</a>
      * @see <a href="http://usefulinc.com/ns/doap#SVNRepository">http://usefulinc.com/ns/doap#SVNRepository</a>
      */
-    private void writeSourceRepository( XMLWriter writer, String connection )
+    private void writeSourceRepository( XMLWriter writer, MavenProject project, String connection )
     {
         ScmRepository repository = getScmRepository( connection );
 
@@ -1427,11 +1557,12 @@ public class DoapMojo
      * Write the ASF extensions
      *
      * @param writer not null
+     * @param project the Maven project, not null
      * @see <a href="http://svn.apache.org/repos/asf/infrastructure/site-tools/trunk/projects/asfext">
      *      http://svn.apache.org/repos/asf/infrastructure/site-tools/trunk/projects/asfext</a>
      * @see <a href="http://projects.apache.org/docs/pmc.html">http://projects.apache.org/docs/pmc.html</a>
      */
-    private void writeASFext( XMLWriter writer )
+    private void writeASFext( XMLWriter writer, MavenProject project )
     {
         XmlWriterUtil.writeLineBreak( writer );
         XmlWriterUtil.writeCommentText( writer, "ASF extension", 2 );
@@ -1715,10 +1846,11 @@ public class DoapMojo
      * Write DOAP vendor.
      *
      * @param writer not null
+     * @param project the Maven project, not null
      * @see <a href="http://usefulinc.com/ns/doap#vendor">http://usefulinc.com/ns/doap#vendor</a>
      * @since 1.1
      */
-    private void writeVendor( XMLWriter writer )
+    private void writeVendor( XMLWriter writer, MavenProject project )
     {
         if ( StringUtils.isEmpty( doapOptions.getVendor() ) || project.getOrganization() == null )
         {
