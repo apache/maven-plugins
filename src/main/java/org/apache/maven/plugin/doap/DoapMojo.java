@@ -349,7 +349,7 @@ public class DoapMojo
      * </pre>
      *
      * <br/>
-     * See <a href="./apidocs/org/apache/maven/plugin/doap/options/DOAPArtifact.html">Javadoc</a> <br/>
+     * See <a href="./apidocs/org/apache/maven/plugin/doap/options/DaopArtifact.html">Javadoc</a> <br/>
      *
      * @parameter
      * @since 1.1
