@@ -341,11 +341,11 @@ public class DoapMojo
      * Another Maven project to generate the DOAP file. Example:
      *
      * <pre>
-     * &lt;DOAPArtifact&gt;
+     * &lt;artifact&gt;
      * &nbsp;&nbsp;&lt;groupId&gt;given-artifact-groupId&lt;/groupId&gt;
      * &nbsp;&nbsp;&lt;artifactId&gt;given-artifact-artifactId&lt;/artifactId&gt;
      * &nbsp;&nbsp;&lt;version&gt;given-artifact-version&lt;/version&gt;
-     * &lt;/DOAPArtifact&gt;
+     * &lt;/artifact&gt;
      * </pre>
      *
      * <br/>
