@@ -3,7 +3,7 @@
  ------
  Dennis Lundberg
  ------
- 2009-10-02
+ 2010-12-16
  ------
 
  ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -42,6 +42,8 @@ Maven Changes Plugin
 
   * {{{./announcement-generate-mojo.html}changes:announcement-generate}} generate a release announcement.
 
+  * {{{./changes-check-mojo.html}changes:changes-check}} check that the <<<changes.xml>>> file contains a valid release date.
+
   * {{{./changes-report-mojo.html}changes:changes-report}} create a report showing what has changed between different releases of the project.
 
   * {{{./changes-validate-mojo.html}changes:changes-validate}} validate the <<<changes.xml>>> file.
@@ -77,7 +79,9 @@ Maven Changes Plugin
   To provide you with better understanding of some usages of the Changes Plugin,
   you can take a look at the following examples:
 
-  * {{{./examples/alternate-changes-xml-location.html}Alternate Location for the changes.xml File}}
+  * {{{./examples/alternate-changes-xml-location.html}Alternate Location for the <<<changes.xml>>> File}}
+
+  * {{{./examples/check-changes-file.html}Check Your <<<changes.xml>>> File}}
 
   * {{{./examples/configuring-trac-report.html}Configuring the Trac Report}}
 
@@ -89,4 +93,4 @@ Maven Changes Plugin
 
   * {{{./examples/using-a-custom-announcement-template.html}Using a Custom Announcement Template}}
 
-  * {{{./examples/changes-file-validation.html}Validate your <<<changes.xml>>> file}}
+  * {{{./examples/changes-file-validation.html}Validate Your <<<changes.xml>>> File}}
