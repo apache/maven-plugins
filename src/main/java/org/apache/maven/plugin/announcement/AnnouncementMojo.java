@@ -23,16 +23,14 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.changes.ChangesXML;
+import org.apache.maven.plugin.changes.ReleaseUtils;
 import org.apache.maven.plugin.jira.JiraXML;
-import org.apache.maven.plugins.changes.model.Action;
 import org.apache.maven.plugins.changes.model.Release;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Settings;
@@ -58,7 +56,7 @@ import org.codehaus.plexus.velocity.VelocityComponent;
 public class AnnouncementMojo
     extends AbstractAnnouncementMojo
 {
-    private static final String SNAPSHOT_SUFFIX = "-SNAPSHOT";
+    private ReleaseUtils releaseUtils = new ReleaseUtils( getLog() );
 
     /**
      * Directory where the template file will be generated.
@@ -345,7 +343,7 @@ public class AnnouncementMojo
                 if ( validateIfIssueManagementComplete() )
                 {
                     List jiraReleases = getJiraReleases();
-                    List mergedReleases = mergeReleases( changesReleases, jiraReleases );
+                    List mergedReleases = releaseUtils.mergeReleases( changesReleases, jiraReleases );
                     doGenerate( mergedReleases );
                 }
                 else
@@ -387,7 +385,7 @@ public class AnnouncementMojo
     public void doGenerate( List releases )
         throws MojoExecutionException
     {
-        doGenerate( releases, getLatestRelease( releases )  );
+        doGenerate( releases, releaseUtils.getLatestRelease( releases, getVersion() )  );
     }
 
     protected void doGenerate( List releases, Release release )
@@ -446,110 +444,6 @@ public class AnnouncementMojo
         catch ( VelocityException ve )
         {
             throw new MojoExecutionException( ve.toString(), ve );
-        }
-    }
-
-    /**
-     * Get the latest release by matching the supplied releases
-     * with the version from the pom.
-     *
-     * @param releases list of releases
-     * @return A <code>Release</code> that matches the next release of the current project
-     * @throws MojoExecutionException
-     */
-    public Release getLatestRelease( List releases )
-        throws MojoExecutionException
-    {
-        boolean isFound = false;
-
-        Release release = null;
-
-        // Remove "-SNAPSHOT" from the end, if it's there
-        String pomVersion = getVersion();
-        if ( pomVersion != null && pomVersion.endsWith( SNAPSHOT_SUFFIX ) )
-        {
-            pomVersion = pomVersion.substring( 0, pomVersion.length() - SNAPSHOT_SUFFIX.length() );
-        }
-        getLog().debug( "Found " + releases.size() + " releases." );
-
-        for ( int i = 0; i < releases.size(); i++ )
-        {
-            release = (Release) releases.get( i );
-            if ( getLog().isDebugEnabled() )
-            {
-                getLog().debug( "The release: " + release.getVersion()
-                    + " has " + release.getActions().size() + " actions." );
-            }
-
-            if ( release.getVersion() != null && release.getVersion().equals( pomVersion ) )
-            {
-                isFound = true;
-                if ( getLog().isDebugEnabled() )
-                {
-                    getLog().debug( "Found the correct release: " + release.getVersion() );
-                    logRelease( release );
-                }
-                return release;
-            }
-        }
-
-        release = getRelease( releases, pomVersion );
-        isFound = ( release != null );
-
-        if ( !isFound )
-        {
-            throw new MojoExecutionException( "Couldn't find the release '" + pomVersion
-                + "' among the supplied releases." );
-        }
-        else
-        {
-
-        }
-        return release;
-    }
-
-    /**
-     * Get a release with the specified version from the list of releases.
-     *
-     * @param releases A list of releases
-     * @param version The version we want
-     * @return A Release, or null if no release with the specified version can be found
-     */
-    protected Release getRelease( List releases, String version )
-    {
-        Release release = null;
-        for ( int i = 0; i < releases.size(); i++ )
-        {
-            release = (Release) releases.get( i );
-            if ( getLog().isDebugEnabled() )
-            {
-                getLog().debug( "The release: " + release.getVersion()
-                    + " has " + release.getActions().size() + " actions." );
-            }
-
-            if ( release.getVersion() != null && release.getVersion().equals( version ) )
-            {
-                if ( getLog().isDebugEnabled() )
-                {
-                    getLog().debug( "Found the correct release: " + release.getVersion() );
-                    logRelease( release );
-                }
-                return release;
-            }
-        }
-        return null;
-    }
-
-    private void logRelease( Release release )
-    {
-        Action action;
-        for ( Iterator iterator = release.getActions().iterator(); iterator.hasNext(); )
-        {
-            action = (Action) iterator.next();
-            getLog().debug( "o " + action.getType() );
-            getLog().debug( "issue : " + action.getIssue() );
-            getLog().debug( "action : " + action.getAction() );
-            getLog().debug( "dueTo : " + action.getDueTo() );
         }
     }
 
@@ -689,62 +583,6 @@ public class AnnouncementMojo
         {
             throw new MojoExecutionException( "Failed to extract JIRA issues from the downloaded file", e );
         }
-    }
-
-    /**
-     * Merge releases from one issue tracker with releases from another issue
-     * tracker. If a release is found in both issue trackers, i.e. they have
-     * the same version, their issues are merged into one release.
-     *
-     * @param firstReleases Releases from the first issue tracker
-     * @param secondReleases Releases from the second issue tracker
-     * @return A list containing the merged releases
-     */
-    protected List mergeReleases( final List firstReleases, final List secondReleases )
-    {
-        if ( firstReleases == null && secondReleases == null )
-        {
-            return Collections.EMPTY_LIST;
-        }
-        if ( firstReleases == null )
-        {
-            return secondReleases;
-        }
-        if ( secondReleases == null )
-        {
-            return firstReleases;
-        }
-
-        List mergedReleases = new ArrayList();
-
-        // Loop through the releases from the first issue tracker, merging in
-        // actions from releases with the same version from the second issue
-        // tracker
-        for ( Iterator iterator = firstReleases.iterator(); iterator.hasNext(); )
-        {
-            Release firstRelease = (Release) iterator.next();
-            Release secondRelease = getRelease( secondReleases, firstRelease.getVersion() );
-            if ( secondRelease != null )
-            {
-                if ( secondRelease.getActions() != null )
-                {
-                    firstRelease.getActions().addAll( secondRelease.getActions() );
-                }
-            }
-            mergedReleases.add(firstRelease);
-        }
-
-        // Handle releases that are only in the second issue tracker
-        for ( Iterator iterator = secondReleases.iterator(); iterator.hasNext(); )
-        {
-            Release secondRelease = (Release) iterator.next();
-            Release mergedRelease = getRelease( mergedReleases, secondRelease.getVersion() );
-            if ( mergedRelease == null )
-            {
-                mergedReleases.add(secondRelease);
-            }
-        }
-        return mergedReleases;
     }
 
     /**
