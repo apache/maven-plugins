@@ -348,7 +348,8 @@ public class AnnouncementMojo
                 }
                 else
                 {
-                    throw new MojoExecutionException( "Something is wrong with the Issue Management section. See previous error messages." );
+                    throw new MojoExecutionException( "Something is wrong with the Issue Management section."
+                        + " See previous error messages." );
                 }
             }
             else
@@ -526,7 +527,8 @@ public class AnnouncementMojo
         }
         else
         {
-            throw new MojoExecutionException( "Something is wrong with the Issue Management section. See previous error messages." );
+            throw new MojoExecutionException( "Something is wrong with the Issue Management section."
+                + " See previous error messages." );
         }
     }
 

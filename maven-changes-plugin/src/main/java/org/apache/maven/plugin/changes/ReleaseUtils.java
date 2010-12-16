@@ -1,15 +1,5 @@
 package org.apache.maven.plugin.changes;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.plugins.changes.model.Action;
-import org.apache.maven.plugins.changes.model.Release;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -28,6 +18,16 @@ import org.apache.maven.plugins.changes.model.Release;
  * specific language governing permissions and limitations
  * under the License.
  */
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugins.changes.model.Action;
+import org.apache.maven.plugins.changes.model.Release;
 
 /**
  * A utility class for working with Release objects.
@@ -99,10 +99,7 @@ public class ReleaseUtils
             throw new MojoExecutionException( "Couldn't find the release '" + pomVersion
                 + "' among the supplied releases." );
         }
-        else
-        {
 
-        }
         return release;
     }
 
@@ -196,7 +193,7 @@ public class ReleaseUtils
                     firstRelease.getActions().addAll( secondRelease.getActions() );
                 }
             }
-            mergedReleases.add(firstRelease);
+            mergedReleases.add( firstRelease );
         }
 
         // Handle releases that are only in the second issue tracker
@@ -206,7 +203,7 @@ public class ReleaseUtils
             Release mergedRelease = getRelease( mergedReleases, secondRelease.getVersion() );
             if ( mergedRelease == null )
             {
-                mergedReleases.add(secondRelease);
+                mergedReleases.add( secondRelease );
             }
         }
         return mergedReleases;

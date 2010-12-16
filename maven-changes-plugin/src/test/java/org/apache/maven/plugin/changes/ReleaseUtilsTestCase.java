@@ -1,13 +1,5 @@
 package org.apache.maven.plugin.changes;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import junit.framework.TestCase;
-import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.plugin.testing.SilentLog;
-import org.apache.maven.plugins.changes.model.Release;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -26,6 +18,14 @@ import org.apache.maven.plugins.changes.model.Release;
  * specific language governing permissions and limitations
  * under the License.
  */
+
+import java.util.ArrayList;
+import java.util.List;
+
+import junit.framework.TestCase;
+import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugin.testing.SilentLog;
+import org.apache.maven.plugins.changes.model.Release;
 
 /**
  * @author Dennis Lundberg

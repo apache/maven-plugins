@@ -28,7 +28,9 @@ import org.apache.maven.execution.MavenSession;
  * @version $Id$
  * @since 2.3
  */
-public abstract class AbstractAnnouncementMojo extends AbstractMojo {
+public abstract class AbstractAnnouncementMojo
+    extends AbstractMojo
+{
     /**
      * The current project base directory.
      *
