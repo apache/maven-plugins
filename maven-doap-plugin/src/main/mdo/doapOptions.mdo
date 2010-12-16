@@ -184,7 +184,7 @@ under the License.
       </fields>
     </class>
     <class>
-      <name>DOAPArtifact</name>
+      <name>DoapArtifact</name>
       <description>An Maven artifact object used by DOAP.</description>
       <version>1.0.0+</version>
       <fields>

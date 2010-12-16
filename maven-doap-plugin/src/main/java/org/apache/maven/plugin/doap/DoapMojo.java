@@ -55,7 +55,7 @@ import org.apache.maven.model.Scm;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.doap.options.ASFExtOptions;
-import org.apache.maven.plugin.doap.options.DOAPArtifact;
+import org.apache.maven.plugin.doap.options.DoapArtifact;
 import org.apache.maven.plugin.doap.options.DoapOptions;
 import org.apache.maven.plugin.doap.options.Standard;
 import org.apache.maven.project.MavenProject;
@@ -354,7 +354,7 @@ public class DoapMojo
      * @parameter
      * @since 1.1
      */
-    private DOAPArtifact artifact;
+    private DoapArtifact artifact;
 
     // ----------------------------------------------------------------------
     // Public methods
