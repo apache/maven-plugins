@@ -2,11 +2,8 @@ package org.apache.maven.plugin.announcement;
 
 import java.io.File;
 import java.io.FileReader;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
-import org.apache.maven.plugins.changes.model.Release;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 
@@ -96,46 +93,5 @@ public class AnnouncementMojoTest
     protected void assertContains( String content, String announce )
     {
         assertTrue( announce.indexOf( content ) > 0 );
-    }
-
-    public void testmergeReleases() throws Exception
-    {
-      List firstReleases = new ArrayList();
-      List secondReleases = new ArrayList();
-      List mergedReleases;
-      AnnouncementMojo mojo = new AnnouncementMojo();
-
-      mergedReleases = mojo.mergeReleases(firstReleases, secondReleases);
-      assertEquals("Both empty", 0, mergedReleases.size());
-
-      Release release = new Release();
-      release.setVersion("1.0");
-      firstReleases.add(release);
-
-      mergedReleases = mojo.mergeReleases(firstReleases, secondReleases);
-      assertEquals("One release in first", 1, mergedReleases.size());
-
-      release = new Release();
-      release.setVersion("1.1");
-      secondReleases.add(release);
-
-      mergedReleases = mojo.mergeReleases(firstReleases, secondReleases);
-      assertEquals("One release each", 2, mergedReleases.size());
-
-      release = new Release();
-      release.setVersion("1.1");
-      firstReleases.add(release);
-
-      mergedReleases = mojo.mergeReleases(firstReleases, secondReleases);
-      assertEquals("Two releases in first, one release in second with one version being the same",
-                   2, mergedReleases.size());
-
-      release = new Release();
-      release.setVersion("1.2");
-      secondReleases.add(release);
-
-      mergedReleases = mojo.mergeReleases(firstReleases, secondReleases);
-      assertEquals("Two releases each with one version being the same",
-                   3, mergedReleases.size());
     }
 }
