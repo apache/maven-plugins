@@ -34,46 +34,46 @@ import org.apache.maven.plugins.changes.model.Release;
  */
 public class ReleaseUtilsTestCase extends TestCase
 {
-    public void testmergeReleases() throws Exception
+    public void testMergeReleases()
+        throws Exception
     {
-      Log log = new SilentLog();
-      ReleaseUtils releaseUtils = new ReleaseUtils( log );
+        Log log = new SilentLog();
+        ReleaseUtils releaseUtils = new ReleaseUtils( log );
 
-      List firstReleases = new ArrayList();
-      List secondReleases = new ArrayList();
-      List mergedReleases;
+        List firstReleases = new ArrayList();
+        List secondReleases = new ArrayList();
+        List mergedReleases;
 
-      mergedReleases = releaseUtils.mergeReleases(firstReleases, secondReleases);
-      assertEquals("Both empty", 0, mergedReleases.size());
+        mergedReleases = releaseUtils.mergeReleases( firstReleases, secondReleases );
+        assertEquals( "Both empty", 0, mergedReleases.size() );
 
-      Release release = new Release();
-      release.setVersion("1.0");
-      firstReleases.add(release);
+        Release release = new Release();
+        release.setVersion( "1.0" );
+        firstReleases.add( release );
 
-      mergedReleases = releaseUtils.mergeReleases(firstReleases, secondReleases);
-      assertEquals("One release in first", 1, mergedReleases.size());
+        mergedReleases = releaseUtils.mergeReleases( firstReleases, secondReleases );
+        assertEquals( "One release in first", 1, mergedReleases.size() );
 
-      release = new Release();
-      release.setVersion("1.1");
-      secondReleases.add(release);
+        release = new Release();
+        release.setVersion( "1.1" );
+        secondReleases.add( release );
 
-      mergedReleases = releaseUtils.mergeReleases(firstReleases, secondReleases);
-      assertEquals("One release each", 2, mergedReleases.size());
+        mergedReleases = releaseUtils.mergeReleases( firstReleases, secondReleases );
+        assertEquals( "One release each", 2, mergedReleases.size() );
 
-      release = new Release();
-      release.setVersion("1.1");
-      firstReleases.add(release);
+        release = new Release();
+        release.setVersion( "1.1" );
+        firstReleases.add( release );
 
-      mergedReleases = releaseUtils.mergeReleases(firstReleases, secondReleases);
-      assertEquals("Two releases in first, one release in second with one version being the same",
-                   2, mergedReleases.size());
+        mergedReleases = releaseUtils.mergeReleases( firstReleases, secondReleases );
+        assertEquals( "Two releases in first, one release in second with one version being the same",
+                      2, mergedReleases.size() );
 
-      release = new Release();
-      release.setVersion("1.2");
-      secondReleases.add(release);
+        release = new Release();
+        release.setVersion( "1.2" );
+        secondReleases.add( release );
 
-      mergedReleases = releaseUtils.mergeReleases(firstReleases, secondReleases);
-      assertEquals("Two releases each with one version being the same",
-                   3, mergedReleases.size());
+        mergedReleases = releaseUtils.mergeReleases( firstReleases, secondReleases );
+        assertEquals( "Two releases each with one version being the same", 3, mergedReleases.size() );
     }
 }
