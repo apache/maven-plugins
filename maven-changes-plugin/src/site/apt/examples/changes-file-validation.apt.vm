@@ -3,7 +3,7 @@
  ------
  Olivier Lamy
  ------
- 2008-07-31
+ 2010-12-16
  ------
 
  ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -30,7 +30,8 @@
 Validate Your changes.xml File
 
  Since 2.1, a {{{../changes-validate-mojo.html}mojo}} is
- provided to validate your changes file.\
+ provided to validate your changes file.
+
  You can attach this mojo to the <<<pre-site>>> phase if you want the
  validation to be performed automatically when you generate the site.
 
@@ -45,7 +46,7 @@ Validate Your changes.xml File
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-changes-plugin</artifactId>
-        <version>2.1</version>
+        <version>${project.version}</version>
         <executions>
           <execution>
             <id>validate-changes</id>
