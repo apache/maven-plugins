@@ -41,6 +41,7 @@ under the License.
     </menu>
     <menu name="Examples">
       <item name="Alternate Location for the changes.xml File" href="examples/alternate-changes-xml-location.html"/>
+      <item name="Check Your changes.xml File" href="examples/check-changes-file.html"/>
       <item name="Configuring the Trac Report" href="examples/configuring-trac-report.html"/>
       <item name="Customizing the JIRA Report" href="examples/customizing-jira-report.html"/>
       <item name="SMTP Authentication" href="examples/smtp-authentication.html"/>
