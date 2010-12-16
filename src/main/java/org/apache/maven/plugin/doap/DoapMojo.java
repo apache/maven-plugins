@@ -338,7 +338,8 @@ public class DoapMojo
     private boolean validate;
 
     /**
-     * Another Maven project to generate the DOAP file. Example:
+     * An artifact to generate the DOAP file against. <br/>
+     * Example:
      *
      * <pre>
      * &lt;artifact&gt;
