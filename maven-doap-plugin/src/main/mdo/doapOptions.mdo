@@ -183,5 +183,62 @@ under the License.
         </field>
       </fields>
     </class>
+    <class>
+      <name>DOAPArtifact</name>
+      <description>An Maven artifact object used by DOAP.</description>
+      <version>1.0.0+</version>
+      <fields>
+        <field>
+          <name>groupId</name>
+          <description>The id of the group of the Maven artifact.</description>
+          <version>1.0.0+</version>
+          <type>String</type>
+          <identifier>true</identifier>
+        </field>
+        <field>
+          <name>artifactId</name>
+          <description>The artifact id of the Maven artifact.</description>
+          <version>1.0.0+</version>
+          <type>String</type>
+          <identifier>true</identifier>
+        </field>
+        <field>
+          <name>version</name>
+          <description>The version of the Maven artifact.</description>
+          <version>1.0.0+</version>
+          <type>String</type>
+          <identifier>true</identifier>
+        </field>
+        <field java.getter="false">
+          <name>doapFileName</name>
+          <description>The name of the DOAP file that will be generated, no notion of path.</description>
+          <version>1.0.0+</version>
+          <type>String</type>
+          <identifier>true</identifier>
+        </field>
+      </fields>
+      <codeSegments>
+        <codeSegment>
+          <code>
+            <![CDATA[
+    /**
+     * Get the path of the DOAP file that will be generated, no notion of path. <br/>
+     * If not specified, return <code>"doap_" + this.artifactId + ".rdf"</code> <br/>
+     *
+     * @return String
+     */
+    public String getDoapFileName()
+    {
+        if ( org.codehaus.plexus.util.StringUtils.isEmpty( this.doapFileName ) )
+        {
+            return "doap_" + this.artifactId + ".rdf";
+        }
+        return this.doapFileName;
+    }
+            ]]>
+          </code>
+        </codeSegment>
+      </codeSegments>
+    </class>
   </classes>
 </model>

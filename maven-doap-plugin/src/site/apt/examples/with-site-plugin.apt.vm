@@ -3,7 +3,7 @@
  ------
  Vincent Siveton
  ------
- 2008-07-17
+ 2010-12-16
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -76,5 +76,33 @@ Integrated DOAP Plugin With The Site Plugin
     </head>
     ...
   </body>
+</project>
++-----+
+
+* Generating DOAP from Another Maven Project
+
+ Since 1.1, you could generate the DOAP file against another Maven Project. It could be useful, if you
+ have a main project and a site project.
+
++-----+
+<project>
+  <build>
+    <plugins>
+      ...
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-doap-plugin</artifactId>
+        <version>${project.version}</version>
+        <configuration>
+          <artifact>
+            <groupId>given-artifact-groupId</groupId>
+            <artifactId>given-artifact-artifactId</artifactId>
+            <version>given-artifact-version</version>
+          </artifact>
+        </configuration>
+      </plugin>
+      ...
+    </plugins>
+  </build>
 </project>
 +-----+
