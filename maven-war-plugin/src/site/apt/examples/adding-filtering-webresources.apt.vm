@@ -3,7 +3,7 @@
  ------
  Pete Marvin King
  ------
- 2008-08-03
+ 2010-12-17
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -145,7 +145,7 @@ documentedproject-1.0-SNAPSHOT.war
               <!-- the list has a default value of ** -->
               <includes>
                 <include>**/*.jpg</include>
-              <includes>
+              </includes>
             </resource>
           </webResources>
         </configuration>
@@ -186,7 +186,7 @@ documentedproject-1.0-SNAPSHOT.war
               <!-- the list has a default value of ** -->
               <includes>
                 <include>image2/*.jpg</include>
-              <includes>
+              </includes>
               <!-- there's no default value for this -->
               <excludes>
                 <exclude>**/*.jpg</exclude>
@@ -208,7 +208,7 @@ documentedproject-1.0-SNAPSHOT.war
               <includes>
                 <include>**/pattern1</include>
                 <include>*pattern2</include>
-              <includes>
+              </includes>
               <!-- there's no default value for this -->
               <excludes>
                 <exclude>*pattern3/pattern3</exclude>
