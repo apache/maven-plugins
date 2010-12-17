@@ -26,6 +26,7 @@ import org.apache.maven.reporting.MavenReportException;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -279,7 +280,7 @@ public class JiraReportGenerator
                         break;
 
                     case COLUMN_FIX_VERSION:
-                        sinkCell( sink, issue.getFixVersion() );
+                        sinkCell( sink, printVersions( issue.getFixVersions() ) );
                         break;
 
                     case COLUMN_COMPONENT:
@@ -398,7 +399,7 @@ public class JiraReportGenerator
         {
             issue = (JiraIssue) allIssues.get( i );
 
-            if ( issue.getFixVersion() != null && issue.getFixVersion().equals( releaseVersion ) )
+            if ( issue.getFixVersions() != null && issue.getFixVersions().contains( releaseVersion ) )
             {
                 isFound = true;
                 currentReleaseIssues.add( issue );
@@ -411,5 +412,30 @@ public class JiraReportGenerator
                 "Couldn't find any issues for the version '" + releaseVersion + "' among the supplied issues." );
         }
         return currentReleaseIssues;
+    }
+
+    /**
+     * Print a list of versions separated by commas.
+     *
+     * @param versions The versions to print
+     * @return A nicely formatted string of version.
+     */
+    private static String printVersions( List versions )
+    {
+        StringBuffer sb = new StringBuffer();
+        if( versions != null )
+        {
+            Iterator iterator = versions.iterator();
+            while ( iterator.hasNext() )
+            {
+                String version = (String) iterator.next();
+                sb.append( version );
+                if ( iterator.hasNext() )
+                {
+                    sb.append( ", " );
+                }
+            }
+        }
+        return sb.toString();
     }
 }
