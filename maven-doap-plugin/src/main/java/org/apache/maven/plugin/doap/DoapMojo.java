@@ -173,7 +173,7 @@ public class DoapMojo
      * @required
      * @since 1.1
      */
-    private File outputDirectory;
+    private String outputDirectory;
 
     /**
      * The local repository where the artifacts are located.
@@ -362,61 +362,106 @@ public class DoapMojo
     // ----------------------------------------------------------------------
 
     /** {@inheritDoc} */
-    @SuppressWarnings( "unchecked" )
     public void execute()
         throws MojoExecutionException
     {
-        MavenProject givenProject = project;
+        // single artifact
+        if ( artifact != null )
+        {
+            MavenProject givenProject = getMavenProject( artifact );
+            if ( givenProject != null )
+            {
+                File outFile = new File( outputDirectory, artifact.getDoapFileName() );
+                writeDoapFile( givenProject, outFile );
+                return;
+            }
+        }
+
+        // current project
         File outFile = new File( doapFile );
         if ( !doapFile.contains( File.separator ) )
         {
             outFile = new File( outputDirectory, doapFile );
         }
+        writeDoapFile( project, outFile );
+    }
 
-        if ( artifact != null && StringUtils.isNotEmpty( artifact.getGroupId() )
-            && StringUtils.isNotEmpty( artifact.getArtifactId() ) && StringUtils.isNotEmpty( artifact.getVersion() ) )
+    // ----------------------------------------------------------------------
+    // Private methods
+    // ----------------------------------------------------------------------
+
+    /**
+     * @param artifact not null
+     * @return the maven project for the given doap artifact
+     * @since 1.1
+     */
+    private MavenProject getMavenProject( DoapArtifact artifact )
+    {
+        if ( artifact == null )
         {
-            getLog().info( "Using artifact " + artifact.getGroupId() + ":" + artifact.getArtifactId() + ":"
-                               + artifact.getVersion() );
-
-            try
-            {
-                Artifact art =
-                    factory.createProjectArtifact( artifact.getGroupId(), artifact.getArtifactId(),
-                                                   artifact.getVersion(), Artifact.SCOPE_COMPILE );
-
-                if ( art.getFile() == null )
-                {
-                    givenProject = mavenProjectBuilder.buildFromRepository( art, remoteRepositories, localRepository );
-                    art = givenProject.getArtifact();
-
-                    resolver.resolve( art, remoteRepositories, localRepository );
-                }
-
-                outFile = new File( outputDirectory, artifact.getDoapFileName() );
-            }
-            catch ( ArtifactResolutionException e )
-            {
-                getLog().error( "ArtifactResolutionException: " + e.getMessage() );
-                getLog().warn( "Ignored <artifact/> parameter." );
-            }
-            catch ( ArtifactNotFoundException e )
-            {
-                getLog().error( "ArtifactNotFoundException: " + e.getMessage() );
-                getLog().warn( "Ignored <artifact/> parameter." );
-            }
-            catch ( ProjectBuildingException e )
-            {
-                getLog().error( "ProjectBuildingException: " + e.getMessage() );
-                getLog().warn( "Ignored <artifact/> parameter." );
-            }
+            return null;
         }
 
+        if ( StringUtils.isEmpty( artifact.getGroupId() ) || StringUtils.isEmpty( artifact.getArtifactId() )
+            || StringUtils.isEmpty( artifact.getVersion() ) )
+        {
+            getLog().warn( "Missing groupId or artifactId or version in <artifact/> parameter, ignored it" );
+            return null;
+        }
+
+        getLog().info( "Using artifact " + artifact.getGroupId() + ":" + artifact.getArtifactId() + ":"
+                           + artifact.getVersion() );
+
+        try
+        {
+            Artifact art =
+                factory.createProjectArtifact( artifact.getGroupId(), artifact.getArtifactId(), artifact.getVersion(),
+                                               Artifact.SCOPE_COMPILE );
+
+            if ( art.getFile() == null )
+            {
+                MavenProject proj = mavenProjectBuilder.buildFromRepository( art, remoteRepositories, localRepository );
+                art = proj.getArtifact();
+
+                resolver.resolve( art, remoteRepositories, localRepository );
+
+                return proj;
+            }
+        }
+        catch ( ArtifactResolutionException e )
+        {
+            getLog().error( "ArtifactResolutionException: " + e.getMessage() );
+            getLog().warn( "Ignored <artifact/> parameter." );
+        }
+        catch ( ArtifactNotFoundException e )
+        {
+            getLog().error( "ArtifactNotFoundException: " + e.getMessage() );
+            getLog().warn( "Ignored <artifact/> parameter." );
+        }
+        catch ( ProjectBuildingException e )
+        {
+            getLog().error( "ProjectBuildingException: " + e.getMessage() );
+            getLog().warn( "Ignored <artifact/> parameter." );
+        }
+
+        return null;
+    }
+
+    /**
+     * Write a doap file for the given project.
+     *
+     * @param project not null
+     * @param outputFile not null
+     * @since 1.1
+     */
+    private void writeDoapFile( MavenProject project, File outputFile )
+        throws MojoExecutionException
+    {
         // ----------------------------------------------------------------------------
         // Includes ASF extensions
         // ----------------------------------------------------------------------------
 
-        if ( !asfExtOptions.isIncluded() && ASFExtOptions.isASFProject( givenProject ) )
+        if ( !asfExtOptions.isIncluded() && ASFExtOptions.isASFProject( project ) )
         {
             getLog().info( "This project is an ASF project, ASF Extensions to DOAP will be added." );
             asfExtOptions.setIncluded( true );
@@ -429,28 +474,28 @@ public class DoapMojo
         Writer w;
         try
         {
-            if ( !outFile.getParentFile().exists() )
+            if ( !outputFile.getParentFile().exists() )
             {
-                FileUtils.mkdir( outFile.getParentFile().getAbsolutePath() );
+                FileUtils.mkdir( outputFile.getParentFile().getAbsolutePath() );
             }
 
-            w = WriterFactory.newXmlWriter( outFile );
+            w = WriterFactory.newXmlWriter( outputFile );
         }
         catch ( IOException e )
         {
-            throw new MojoExecutionException( "Error creating DOAP file " + outFile.getAbsolutePath(), e );
+            throw new MojoExecutionException( "Error creating DOAP file " + outputFile.getAbsolutePath(), e );
         }
 
         if ( asfExtOptions.isIncluded() )
         {
-            getLog().info( "Generating an ASF DOAP file " + outFile.getAbsolutePath() );
+            getLog().info( "Generating an ASF DOAP file " + outputFile.getAbsolutePath() );
         }
         else
         {
-            getLog().info( "Generating a pure DOAP file " + outFile.getAbsolutePath() );
+            getLog().info( "Generating a pure DOAP file " + outputFile.getAbsolutePath() );
         }
 
-        XMLWriter writer = new PrettyPrintXMLWriter( w, givenProject.getModel().getModelEncoding(), null );
+        XMLWriter writer = new PrettyPrintXMLWriter( w, project.getModel().getModelEncoding(), null );
 
         // ----------------------------------------------------------------------------
         // Convert POM to DOAP
@@ -473,6 +518,11 @@ public class DoapMojo
         writer.startElement( "Project" );
         if ( StringUtils.isNotEmpty( about ) )
         {
+            if ( artifact != null )
+            {
+                about = project.getUrl();
+            }
+
             try
             {
                 new URL( about );
@@ -490,10 +540,10 @@ public class DoapMojo
         }
 
         // name
-        writeName( writer, givenProject );
+        writeName( writer, project );
 
         // description
-        writeDescription( writer, givenProject );
+        writeDescription( writer, project );
 
         // implements
         writeImplements( writer );
@@ -502,28 +552,28 @@ public class DoapMojo
         writeAudience( writer );
 
         // Vendor
-        writeVendor( writer, givenProject );
+        writeVendor( writer, project );
 
         // created
-        writeCreated( writer, givenProject );
+        writeCreated( writer, project );
 
         // homepage and old-homepage
-        writeHomepage( writer, givenProject );
+        writeHomepage( writer, project );
 
         // Blog
         writeBlog( writer );
 
         // licenses
-        writeLicenses( writer, givenProject );
+        writeLicenses( writer, project );
 
         // programming-language
-        writeProgrammingLanguage( writer, givenProject );
+        writeProgrammingLanguage( writer, project );
 
         // category
-        writeCategory( writer, givenProject );
+        writeCategory( writer, project );
 
         // os
-        writeOS( writer, givenProject );
+        writeOS( writer, project );
 
         // Plateform
         writePlateform( writer );
@@ -532,39 +582,43 @@ public class DoapMojo
         writeLanguage( writer );
 
         // SCM
-        writeSourceRepositories( writer, givenProject );
+        writeSourceRepositories( writer, project );
 
         // bug-database
-        writeBugDatabase( writer, givenProject );
+        writeBugDatabase( writer, project );
 
         // mailing list
-        writeMailingList( writer, givenProject );
+        writeMailingList( writer, project );
 
         // download-page and download-mirror
-        writeDownloadPage( writer, givenProject );
+        writeDownloadPage( writer, project );
 
         // screenshots
-        writeScreenshots( writer, givenProject );
+        writeScreenshots( writer, project );
 
         // service-endpoint
         writeServiceEndpoint( writer );
 
         // wiki
-        writeWiki( writer, givenProject );
+        writeWiki( writer, project );
 
         // Releases
-        writeReleases( writer, givenProject );
+        writeReleases( writer, project );
 
         // Developers
-        writeContributors( writer, givenProject.getDevelopers() );
+        @SuppressWarnings( "unchecked" )
+        List<Contributor> developers = project.getDevelopers();
+        writeContributors( writer, developers );
 
         // Contributors
-        writeContributors( writer, givenProject.getContributors() );
+        @SuppressWarnings( "unchecked" )
+        List<Contributor> contributors = project.getContributors();
+        writeContributors( writer, contributors );
 
         // ASFext
         if ( asfExtOptions.isIncluded() )
         {
-            writeASFext( writer, givenProject );
+            writeASFext( writer, project );
         }
 
         writer.endElement(); // Project
@@ -584,7 +638,7 @@ public class DoapMojo
 
         if ( validate )
         {
-            List<String> errors = DoapUtil.validate( outFile );
+            List<String> errors = DoapUtil.validate( outputFile );
             if ( !errors.isEmpty() )
             {
                 for ( String error : errors )
@@ -596,10 +650,6 @@ public class DoapMojo
             }
         }
     }
-
-    // ----------------------------------------------------------------------
-    // Private methods
-    // ----------------------------------------------------------------------
 
     /**
      * Write DOAP name.

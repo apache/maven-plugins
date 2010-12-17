@@ -60,12 +60,6 @@ Usage
 </project>
 +-----+
 
- To generate the DOAP file you would use the following command:
-
-+-----
-mvn doap:generate
-+-----
-
 * DOAP ASF Configuration
 
 +-----+
@@ -98,6 +92,38 @@ mvn doap:generate
   ...
 </project>
 +-----+
+
+* Advanced DOAP Configuration
+
++-----+
+<project>
+  <build>
+    <plugins>
+      ...
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-doap-plugin</artifactId>
+        <version>${project.version}</version>
+        <configuration>
+          <!-- generate DOAP file for a given artifact -->
+          <artifact>
+            <groupId>given-artifact-groupId</groupId>
+            <artifactId>given-artifact-artifactId</artifactId>
+            <version>given-artifact-version</version>
+          </artifact>
+
+          <!-- To not validate the generate DOAP file -->
+          <validate>false</validate>
+
+          ...
+        </configuration>
+      </plugin>
+      ...
+    </plugins>
+  </build>
+</project>
++-----+
+
 
 * Generate DOAP File
 
