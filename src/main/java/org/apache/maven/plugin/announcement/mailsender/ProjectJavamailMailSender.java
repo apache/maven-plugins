@@ -86,15 +86,24 @@ public class ProjectJavamailMailSender
 
         if ( isSslMode() )
         {
-            Security.addProvider( new com.sun.net.ssl.internal.ssl.Provider() );
+            try
+            {
+                // Try to load the SSL Provider class before we use it, it isn't present in non-Sun JVMs
+                this.getClass().getClassLoader().loadClass( "com.sun.net.ssl.internal.ssl.Provider" );
 
-            props.put( "mail.smtp.socketFactory.port", String.valueOf( getSmtpPort() ) );
+                Security.addProvider( new com.sun.net.ssl.internal.ssl.Provider() );
 
-            props.put( "mail.smtp.socketFactory.class", SSL_FACTORY );
+                props.put( "mail.smtp.socketFactory.port", String.valueOf( getSmtpPort() ) );
 
-            props.put( "mail.smtp.socketFactory.fallback", "false" );
+                props.put( "mail.smtp.socketFactory.class", SSL_FACTORY );
+
+                props.put( "mail.smtp.socketFactory.fallback", "false" );
+            }
+            catch ( ClassNotFoundException e )
+            {
+                getLogger().error( "You can't use sslMode because your system is missing an SSL Provider.", e );
+            }
         }
-
         if ( userProperties != null )
         {
             for ( Iterator i = userProperties.keySet().iterator(); i.hasNext(); )
