@@ -28,6 +28,7 @@ import java.util.List;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.DefaultArtifactRepository;
 import org.apache.maven.artifact.repository.layout.DefaultRepositoryLayout;
+import org.apache.maven.plugin.doap.options.DoapArtifact;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.IOUtil;
@@ -111,6 +112,57 @@ public class DoapMojoTest
     }
 
     /**
+     * Verify the generation of a DOAP file from an artifact.
+     *
+     * @throws Exception if any
+     */
+    public void testGeneratedDoapArtifact()
+        throws Exception
+    {
+        File pluginXmlFile =
+            new File( getBasedir(), "src/test/resources/unit/doap-configuration/doap-configuration-plugin-config.xml" );
+        DoapMojo mojo = (DoapMojo) lookupMojo( "generate", pluginXmlFile );
+        assertNotNull( "Mojo found.", mojo );
+
+        MavenProject mavenProject = (MavenProject) getVariableValueFromObject( mojo, "project" );
+        assertNotNull( mavenProject );
+
+        // Set some Mojo parameters
+        setVariableValueToObject( mojo, "remoteRepositories", getRemoteRepositories() );
+        setVariableValueToObject( mojo, "about", mavenProject.getUrl() );
+        DoapArtifact artifact = new DoapArtifact();
+        artifact.setGroupId( "org.apache.maven" );
+        artifact.setArtifactId( "maven-parent" );
+        artifact.setVersion( "18" );
+        setVariableValueToObject( mojo, "artifact", artifact );
+        setVariableValueToObject( mojo, "outputDirectory", "target/test/unit/doap-configuration/" );
+
+        mojo.execute();
+
+        File doapFile = new File( getBasedir(), "target/test/unit/doap-configuration/doap_maven-parent.rdf" );
+        assertTrue( "Doap File was not generated!", doapFile.exists() );
+
+        String readed = readFile( doapFile );
+
+        // Validate
+
+        // Pure DOAP
+        assertTrue( readed.indexOf( "<rdf:RDF xml:lang=\"en\" xmlns=\"http://usefulinc.com/ns/doap#\" "
+            + "xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" "
+            + "xmlns:foaf=\"http://xmlns.com/foaf/0.1/\" " + "xmlns:asfext=\"http://projects.apache.org/ns/asfext#\">" ) != -1 );
+        if ( StringUtils.isNotEmpty( mavenProject.getUrl() ) )
+        {
+            assertTrue( readed.indexOf( "<Project rdf:about=\"http://maven.apache.org/\">" ) != -1 );
+            assertTrue( readed.indexOf( "<homepage rdf:resource=\"http://maven.apache.org/\"/>" ) != -1 );
+        }
+        assertTrue( readed.indexOf( "<name>Apache Maven</name>" ) != -1 );
+
+        // ASF ext
+        assertTrue( readed.indexOf( "<asfext:pmc rdf:resource=\"http://maven.apache.org/\"/>" ) != -1 );
+        assertTrue( readed.indexOf( "<asfext:name>Apache Maven</asfext:name>" ) != -1 );
+    }
+
+    /**
      * Verify the generation of a DOAP file with ASF extension.
      *
      * @throws Exception if any
@@ -140,7 +192,7 @@ public class DoapMojoTest
 
         // Validate
 
-        // Pure DOAP
+        // ASF DOAP
         assertTrue( readed.indexOf( "<rdf:RDF xml:lang=\"en\" xmlns=\"http://usefulinc.com/ns/doap#\" "
             + "xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" "
             + "xmlns:foaf=\"http://xmlns.com/foaf/0.1/\" " + "xmlns:asfext=\"http://projects.apache.org/ns/asfext#\">" ) != -1 );
