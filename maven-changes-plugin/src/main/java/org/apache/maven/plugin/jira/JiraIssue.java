@@ -31,7 +31,7 @@ public class JiraIssue
 {
     private String component;
 
-    private String fixVersion;
+    private List fixVersions;
 
     private String key;
 
@@ -131,14 +131,18 @@ public class JiraIssue
         this.component = component;
     }
 
-    public String getFixVersion()
+    public List getFixVersions()
     {
-        return fixVersion;
+        return fixVersions;
     }
 
-    public void setFixVersion( String fixVersion )
+    public void addFixVersion( String fixVersion )
     {
-        this.fixVersion = fixVersion;
+        if ( fixVersions == null )
+        {
+            fixVersions = new ArrayList();
+        }
+        fixVersions.add( fixVersion );
     }
 
     public String getPriority()

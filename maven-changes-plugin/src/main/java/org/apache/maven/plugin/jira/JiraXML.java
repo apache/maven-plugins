@@ -133,7 +133,7 @@ public class JiraXML
         }
         else if ( qName.equals( "fixVersion" ) )
         {
-            issue.setFixVersion( currentElement.toString().trim() );
+            issue.addFixVersion( currentElement.toString().trim() );
         }
         else if ( qName.equals( "component" ) )
         {
@@ -172,21 +172,26 @@ public class JiraXML
         {
             JiraIssue issue = (JiraIssue) issues.get( i );
             // Do NOT create a release for issues that lack a fixVersion
-            if ( issue.getFixVersion() != null )
+            if ( issue.getFixVersions() != null )
             {
-                // Try to get a matching Release from the map
-                Release release = (Release) releasesMap.get( issue.getFixVersion() );
-                if ( release == null )
+                for ( Iterator iterator = issue.getFixVersions().iterator(); iterator.hasNext(); )
                 {
-                    // Add a new Release to the Map if it wasn't there
-                    release = new Release();
-                    release.setVersion( issue.getFixVersion() );
-                    releasesMap.put( issue.getFixVersion(), release );
-                }
+                    String fixVersion = (String) iterator.next();
 
-                // Add this issue as an Action to this release
-                Action action = createAction( issue );
-                release.addAction( action );
+                    // Try to get a matching Release from the map
+                    Release release = (Release) releasesMap.get( fixVersion );
+                    if ( release == null )
+                    {
+                        // Add a new Release to the Map if it wasn't there
+                        release = new Release();
+                        release.setVersion( fixVersion );
+                        releasesMap.put( fixVersion, release );
+                    }
+
+                    // Add this issue as an Action to this release
+                    Action action = createAction( issue );
+                    release.addAction( action );
+                }
             }
         }
 
