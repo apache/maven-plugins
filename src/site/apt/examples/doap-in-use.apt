@@ -51,11 +51,11 @@ Generated DOAP In Use
 
 Examples for the Maven DOAP
 
- Our Maven DOAP file is share on SVN {{{http://svn.apache.org/repos/asf/maven/components/trunk/doap_Maven.rdf}here}}.
+ Our Maven DOAP file is share on SVN {{{http://svn.apache.org/repos/asf/maven/maven-3/trunk/doap_Maven.rdf}here}}.
  Here are the result from some Semantic Web directories:
 
  * {{{http://doapstore.org/view.php?uri=http%3A%2F%2FMaven.rdf.apache.org%2F}Doapstore}}
 
- * {{{http://dataviewer.zitgist.com/?uri=http%3A//svn.apache.org/repos/asf/maven/components/trunk/doap_Maven.rdf}Zigtgist RDF Viewer}}
+ * {{{http://dataviewer.zitgist.com/?uri=http%3A//svn.apache.org/repos/asf/maven/maven-3/trunk/doap_Maven.rdf}Zigtgist RDF Viewer}}
 
  []
