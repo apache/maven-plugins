@@ -765,7 +765,7 @@ public class DescribeMojo
             String defaultVal = parameter.getDefaultValue();
             if ( defaultVal == null )
             {
-                // defaultVal is ALWAYS null, this is a bug in PluginDescriptorBuilder
+                // defaultVal is ALWAYS null, this is a bug in PluginDescriptorBuilder (cf. MNG-4941)
                 defaultVal =
                     md.getMojoConfiguration().getChild( parameter.getName() ).getAttribute( "default-value", null );
             }
@@ -780,7 +780,17 @@ public class DescribeMojo
             }
             append( buffer, parameter.getName() + defaultVal, 2 );
 
+            if ( parameter.isRequired() )
+            {
+                append( buffer, "Required", "true", 3 );
+            }
+
             String expression = parameter.getExpression();
+            if ( StringUtils.isEmpty( expression ) )
+            {
+                // expression is ALWAYS null, this is a bug in PluginDescriptorBuilder (cf. MNG-4941).
+                expression = md.getMojoConfiguration().getChild( parameter.getName() ).getValue( null );
+            }
             if ( StringUtils.isNotEmpty( expression ) )
             {
                 append( buffer, "Expression", expression, 3 );
