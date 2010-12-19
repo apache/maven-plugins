@@ -42,10 +42,7 @@ under the License.
         <version>@project.version@</version>
         <configuration>
           <displayName>${null}</displayName>
-          <description>
-            The purpose of this application is to test the ApplicationXmlMojo execution with
-            custom settings.
-          </description>
+          <description>A custom description</description>
           <encoding>UTF-8</encoding>
           <version>6</version>
         </configuration>

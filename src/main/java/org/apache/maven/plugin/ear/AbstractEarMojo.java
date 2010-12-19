@@ -77,14 +77,14 @@ public abstract class AbstractEarMojo
     /**
      * Directory where the deployment descriptor file(s) will be auto-generated.
      *
-     * @parameter expression="${project.build.directory}"
+     * @parameter default-value="${project.build.directory}"
      */
     protected String generatedDescriptorLocation;
 
     /**
      * The maven project.
      *
-     * @parameter expression="${project}"
+     * @parameter default-value="${project}"
      * @required
      * @readonly
      */
@@ -129,7 +129,7 @@ public abstract class AbstractEarMojo
     /**
      * Directory that resources are copied to during the build.
      *
-     * @parameter expression="${project.build.directory}/${project.build.finalName}"
+     * @parameter default-value="${project.build.directory}/${project.build.finalName}"
      * @required
      */
     private File workDirectory;

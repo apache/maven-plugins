@@ -65,7 +65,7 @@ public class EarMojo
     /**
      * Single directory for extra files to include in the EAR.
      *
-     * @parameter expression="${basedir}/src/main/application"
+     * @parameter default-value="${basedir}/src/main/application"
      * @required
      */
     private File earSourceDirectory;
@@ -102,7 +102,7 @@ public class EarMojo
 
     /**
      * A list of file extensions that should not be filtered if
-     * filtering is actived.
+     * filtering is enabled.
      *
      * @parameter
      * @since 2.3.2
@@ -148,7 +148,7 @@ public class EarMojo
     /**
      * The directory for the generated EAR.
      *
-     * @parameter expression="${project.build.directory}"
+     * @parameter default-value="${project.build.directory}"
      * @required
      */
     private String outputDirectory;
@@ -156,7 +156,7 @@ public class EarMojo
     /**
      * The name of the EAR file to generate.
      *
-     * @parameter alias="earName" expression="${project.build.finalName}"
+     * @parameter alias="earName" default-value="${project.build.finalName}"
      * @required
      */
     private String finalName;

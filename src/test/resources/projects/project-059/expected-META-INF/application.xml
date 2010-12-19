@@ -17,10 +17,9 @@ KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations
 under the License.
 -->
-
 <application xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/application_6.xsd" version="6">
-  <description>The purpose of this application is to test the ApplicationXmlMojo execution with
-            custom settings.</description>
+  <description>A custom description</description>
+  <display-name>maven-ear-plugin-test-project-059</display-name>
   <module>
     <ejb>ejb-sample-one-1.0.jar</ejb>
   </module>
