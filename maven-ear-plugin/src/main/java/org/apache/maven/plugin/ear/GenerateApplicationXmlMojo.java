@@ -48,14 +48,14 @@ public class GenerateApplicationXmlMojo
     /**
      * Whether the application.xml should be generated or not.
      *
-     * @parameter
+     * @parameter default-value="true"
      */
     private Boolean generateApplicationXml = Boolean.TRUE;
 
     /**
      * Whether a module ID should be generated if none is specified.
      *
-     * @parameter
+     * @parameter default-value="false"
      */
     private Boolean generateModuleId = Boolean.FALSE;
 
