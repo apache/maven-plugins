@@ -168,3 +168,7 @@ EAR Plugin Tests
 
   * project-069: builds an EAR with a custom library-directory and JavaEE 6
 
+  * project-070: builds an EAR with application-name and initialize-in-order tags
+
+  * project-071: builds an EAR with application-name and initialize-in-order tags for unsupported version
+

@@ -43,8 +43,13 @@ class ApplicationXmlWriterContext
 
     private final String libraryDirectory;
 
+    private final String applicationName;
+
+    private final Boolean initializeInOrder;
+
     public ApplicationXmlWriterContext( File destinationFile, List earModules, List securityRoles, String displayName,
-                                        String description, String libraryDirectory )
+                                        String description, String libraryDirectory, String applicationName,
+                                        Boolean initializeInOrder )
     {
         this.destinationFile = destinationFile;
         this.earModules = earModules;
@@ -52,6 +57,8 @@ class ApplicationXmlWriterContext
         this.displayName = displayName;
         this.description = description;
         this.libraryDirectory = libraryDirectory;
+        this.applicationName = applicationName;
+        this.initializeInOrder = initializeInOrder;
     }
 
     /**
@@ -112,5 +119,26 @@ class ApplicationXmlWriterContext
     public String getLibraryDirectory()
     {
         return libraryDirectory;
+    }
+
+    /**
+     * Returns the application name (as per JavaEE 6).
+     *
+     * @return the application name
+     */
+    public String getApplicationName()
+    {
+        return applicationName;
+    }
+
+    /**
+     * Returns the value of the initialize in order
+     * parameter (as per JavaEE 6).
+     *
+     * @return the initialize in order value
+     */
+    public Boolean getInitializeInOrder()
+    {
+        return initializeInOrder;
     }
 }
