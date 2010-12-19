@@ -75,6 +75,11 @@ final class ApplicationXmlWriter
             writer = initializeRootElementSix( w );
         }
 
+        // JavaEE6 only
+        if (GenerateApplicationXmlMojo.VERSION_6.equals( version )) {
+            writeApplicationName( context.getApplicationName(), writer );
+        }
+
         // IMPORTANT: the order of the description and display-name elements was
         // reversed between J2EE 1.3 and J2EE 1.4.
         if ( GenerateApplicationXmlMojo.VERSION_1_3.equals( version ) )
@@ -87,6 +92,12 @@ final class ApplicationXmlWriter
             writeDescription( context.getDescription(), writer );
             writeDisplayName( context.getDisplayName(), writer );
         }
+
+        // JavaEE6 only
+        if (GenerateApplicationXmlMojo.VERSION_6.equals( version )) {
+            writeInitializeInOrder( context.getInitializeInOrder(), writer );
+        }
+
         // Do not change this unless you really know what you're doing :)
 
         final Iterator moduleIt = context.getEarModules().iterator();
@@ -114,6 +125,16 @@ final class ApplicationXmlWriter
         close( w );
     }
 
+    private void writeApplicationName( String applicationName, XMLWriter writer )
+    {
+        if ( applicationName != null )
+        {
+            writer.startElement( "application-name" );
+            writer.writeText( applicationName );
+            writer.endElement();
+        }
+    }
+
     private void writeDescription( String description, XMLWriter writer )
     {
         if ( description != null )
@@ -130,6 +151,16 @@ final class ApplicationXmlWriter
         {
             writer.startElement( "display-name" );
             writer.writeText( displayName );
+            writer.endElement();
+        }
+    }
+
+     private void writeInitializeInOrder( Boolean initializeInOrder, XMLWriter writer )
+    {
+        if ( initializeInOrder != null )
+        {
+            writer.startElement( "initialize-in-order" );
+            writer.writeText( initializeInOrder.toString() );
             writer.endElement();
         }
     }
