@@ -30,7 +30,7 @@ under the License.
   </parent>
 
   <artifactId>maven-ear-plugin</artifactId>
-  <version>2.4.3-SNAPSHOT</version>
+  <version>2.5-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
   <name>Maven EAR Plugin</name>
