@@ -56,7 +56,11 @@ public class ChangesReportGenerator
 
     private static final String DEFAULT_ISSUE_SYSTEM_KEY = "default";
 
+    private static final String NO_TEAMLIST = "none";
+
     private ChangesXML report;
+
+    private String teamlist;
 
     private String url;
 
@@ -96,6 +100,16 @@ public class ChangesReportGenerator
     public String getIssueLink()
     {
         return (String) issueLinksPerSystem.get( DEFAULT_ISSUE_SYSTEM_KEY );
+    }
+
+    public void setTeamlist( final String teamlist )
+    {
+        this.teamlist = teamlist;
+    }
+
+    public String getTeamlist()
+    {
+        return teamlist;
     }
 
     public void setUrl( String url )
@@ -253,7 +267,14 @@ public class ChangesReportGenerator
 
                 sink.tableCell_();
 
-                sinkCellLink( sink, action.getDev(), "team-list.html#" + action.getDev() );
+                if ( NO_TEAMLIST.equals( teamlist ) )
+                {
+                    sinkCell( sink, action.getDev() );
+                }
+                else
+                {
+                    sinkCellLink( sink, action.getDev(), teamlist + "#" + action.getDev() );
+                }
 
                 if ( this.isAddActionDate() )
                 {
