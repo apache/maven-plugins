@@ -280,11 +280,11 @@ public class JiraReportGenerator
                         break;
 
                     case COLUMN_FIX_VERSION:
-                        sinkCell( sink, printVersions( issue.getFixVersions() ) );
+                        sinkCell( sink, printValues( issue.getFixVersions() ) );
                         break;
 
                     case COLUMN_COMPONENT:
-                        sinkCell( sink, issue.getComponent() );
+                        sinkCell( sink, printValues( issue.getComponents() ) );
                         break;
 
                     default:
@@ -415,21 +415,21 @@ public class JiraReportGenerator
     }
 
     /**
-     * Print a list of versions separated by commas.
+     * Print a list of values separated by commas.
      *
-     * @param versions The versions to print
-     * @return A nicely formatted string of version.
+     * @param values The values to print
+     * @return A nicely formatted string of values.
      */
-    private static String printVersions( List versions )
+    private static String printValues( List values )
     {
         StringBuffer sb = new StringBuffer();
-        if( versions != null )
+        if( values != null )
         {
-            Iterator iterator = versions.iterator();
+            Iterator iterator = values.iterator();
             while ( iterator.hasNext() )
             {
-                String version = (String) iterator.next();
-                sb.append( version );
+                String value = (String) iterator.next();
+                sb.append( value );
                 if ( iterator.hasNext() )
                 {
                     sb.append( ", " );

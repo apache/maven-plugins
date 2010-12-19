@@ -29,7 +29,7 @@ import java.util.List;
  */
 public class JiraIssue
 {
-    private String component;
+    private List components;
 
     private List fixVersions;
 
@@ -121,14 +121,18 @@ public class JiraIssue
         this.assignee = assignee;
     }
 
-    public String getComponent()
+    public List getComponents()
     {
-        return component;
+        return components;
     }
 
-    public void setComponent( String component )
+    public void addComponent( String component )
     {
-        this.component = component;
+        if ( components == null )
+        {
+            components = new ArrayList();
+        }
+        components.add( component );
     }
 
     public List getFixVersions()

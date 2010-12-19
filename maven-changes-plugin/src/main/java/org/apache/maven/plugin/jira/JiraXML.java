@@ -137,7 +137,7 @@ public class JiraXML
         }
         else if ( qName.equals( "component" ) )
         {
-            issue.setComponent( currentElement.toString().trim() );
+            issue.addComponent( currentElement.toString().trim() );
         }
         else if ( qName.equals( "comment" ) )
         {
