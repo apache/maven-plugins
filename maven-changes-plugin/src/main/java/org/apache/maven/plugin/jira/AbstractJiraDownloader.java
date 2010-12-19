@@ -35,6 +35,7 @@ import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Settings;
+import org.apache.maven.wagon.proxy.ProxyInfo;
 import org.codehaus.plexus.util.StringUtils;
 
 import java.io.File;
@@ -332,13 +333,13 @@ public abstract class AbstractJiraDownloader
 
             client.setState( state );
 
-            determineProxy( client );
-
             Map urlMap = getJiraUrlAndIssueId();
 
             String jiraUrl = (String) urlMap.get( "url" );
 
             String jiraId = (String) urlMap.get( "id" );
+
+            determineProxy( jiraUrl, client );
 
             prepareBasicAuthentication( client );
 
@@ -560,7 +561,7 @@ public abstract class AbstractJiraDownloader
      *
      * @param client  the HttpClient
      */
-    private void determineProxy( HttpClient client )
+    private void determineProxy( String jiraUrl, HttpClient client )
     {
         // see whether there is any proxy defined in maven
         Proxy proxy = null;
@@ -587,6 +588,19 @@ public abstract class AbstractJiraDownloader
 
         if ( proxy != null )
         {
+
+            ProxyInfo proxyInfo = new ProxyInfo();
+            proxyInfo.setNonProxyHosts(proxy.getNonProxyHosts());
+
+            // Validation of proxy method copied from org.apache.maven.wagon.proxy.ProxyUtils.
+            // @todo Can use original when maven-changes-plugin references a more recent version of maven-project
+
+            //if ( ProxyUtils.validateNonProxyHosts( proxyInfo, jiraUrl  ) )
+            if ( JiraHelper.validateNonProxyHosts( proxyInfo, jiraUrl  ) )
+            {
+                return;
+            }
+
             proxyHost = settings.getActiveProxy().getHost();
 
             proxyPort = settings.getActiveProxy().getPort();

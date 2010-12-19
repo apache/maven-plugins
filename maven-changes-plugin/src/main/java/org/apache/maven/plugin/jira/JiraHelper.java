@@ -21,10 +21,12 @@ package org.apache.maven.plugin.jira;
 
 import java.text.NumberFormat;
 import java.text.ParsePosition;
+import java.util.StringTokenizer;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.wagon.proxy.ProxyInfo;
 
 /**
  * A helper class with common JIRA related functionality.
@@ -83,5 +85,45 @@ public class JiraHelper
             log.debug( "Found the pid " + jiraId + " at " + issueManagementUrl );
         }
         return jiraId;
+    }
+
+    /**
+     * Check if the specified host is in the list of non proxy hosts.
+     * <p/>
+     * Method copied from org.apache.maven.wagon.proxy.ProxyUtils. Can be deleted when maven-changes-plugin
+     * references a more recent version of maven-project
+     *
+     * @param proxy      the proxy info object contains set of properties.
+     * @param targetHost the target hostname
+     * @return true if the hostname is in the list of non proxy hosts, false otherwise.
+     */
+    public static boolean validateNonProxyHosts( ProxyInfo proxy, String targetHost )
+    {
+        if ( targetHost == null )
+        {
+            targetHost = new String();
+        }
+        if ( proxy == null )
+        {
+            return false;
+        }
+        String nonProxyHosts = proxy.getNonProxyHosts();
+        if ( nonProxyHosts == null )
+        {
+            return false;
+        }
+
+        StringTokenizer tokenizer = new StringTokenizer( nonProxyHosts, "|" );
+
+        while ( tokenizer.hasMoreTokens() )
+        {
+            String pattern = tokenizer.nextToken();
+            pattern = pattern.replaceAll( "\\.", "\\\\." ).replaceAll( "\\*", ".*" );
+            if ( targetHost.matches( pattern ) )
+            {
+                return true;
+            }
+        }
+        return false;
     }
 }
