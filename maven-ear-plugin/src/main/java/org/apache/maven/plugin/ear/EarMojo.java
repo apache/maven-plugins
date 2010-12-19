@@ -25,6 +25,7 @@ import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.ear.util.EarMavenArchiver;
+import org.apache.maven.plugin.ear.util.JavaEEVersion;
 import org.apache.maven.project.MavenProjectHelper;
 import org.apache.maven.shared.filtering.MavenFileFilter;
 import org.apache.maven.shared.filtering.MavenFilteringException;
@@ -242,6 +243,8 @@ public class EarMojo
         // Initializes ear modules
         super.execute();
 
+        final JavaEEVersion javaEEVersion = JavaEEVersion.getJavaEEVersion( version );
+
         // Initializes unpack types
         List unpackTypesList = new ArrayList();
         if ( unpackTypes != null )
@@ -384,7 +387,7 @@ public class EarMojo
 
         // Check if deployment descriptor is there
         File ddFile = new File( getWorkDirectory(), APPLICATION_XML_URI );
-        if ( !ddFile.exists() && ( !( version.equals( VERSION_5 ) || version.equals( VERSION_6 ) ) ) )
+        if ( !ddFile.exists() && ( javaEEVersion.lt( JavaEEVersion.Five ) ) )
         {
             throw new MojoExecutionException(
                 "Deployment descriptor: " + ddFile.getAbsolutePath() + " does not exist." );

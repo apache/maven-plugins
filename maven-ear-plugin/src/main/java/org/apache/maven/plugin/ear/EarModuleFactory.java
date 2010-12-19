@@ -21,6 +21,7 @@ package org.apache.maven.plugin.ear;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.ear.util.ArtifactTypeMappingService;
+import org.apache.maven.plugin.ear.util.JavaEEVersion;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -65,7 +66,7 @@ public final class EarModuleFactory
      * @return an ear module for this artifact
      * @throws UnknownArtifactTypeException if the artifact is not handled
      */
-    public static EarModule newEarModule( Artifact artifact, String javaEEVersion, String defaultLibBundleDir,
+    public static EarModule newEarModule( Artifact artifact, JavaEEVersion javaEEVersion, String defaultLibBundleDir,
                                           Boolean includeInApplicationXml,
                                           ArtifactTypeMappingService typeMappingService )
         throws UnknownArtifactTypeException
@@ -92,8 +93,7 @@ public final class EarModuleFactory
         else if ( "ejb-client".equals( artifactType ) )
         {
             // Somewhat weird way to tackle the problem described in MEAR-85
-            if ( AbstractEarMojo.VERSION_1_3.equals( javaEEVersion ) ||
-                AbstractEarMojo.VERSION_1_4.equals( javaEEVersion ) )
+            if ( javaEEVersion.le( JavaEEVersion.OneDotFour ) )
             {
                 return new EjbClientModule( artifact, null );
             }

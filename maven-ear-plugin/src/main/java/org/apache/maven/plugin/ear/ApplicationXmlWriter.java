@@ -19,6 +19,7 @@ package org.apache.maven.plugin.ear;
  * under the License.
  */
 
+import org.apache.maven.plugin.ear.util.JavaEEVersion;
 import org.codehaus.plexus.util.xml.XMLWriter;
 
 import java.io.Writer;
@@ -41,11 +42,11 @@ final class ApplicationXmlWriter
     private static final String APPLICATION_ELEMENT = "application";
 
 
-    private final String version;
+    private final JavaEEVersion version;
 
     private final Boolean generateModuleId;
 
-    ApplicationXmlWriter( String version, String encoding, Boolean generateModuleId )
+    ApplicationXmlWriter( JavaEEVersion version, String encoding, Boolean generateModuleId )
     {
         super( encoding );
         this.version = version;
@@ -58,31 +59,32 @@ final class ApplicationXmlWriter
         Writer w = initializeWriter( context.getDestinationFile() );
 
         XMLWriter writer = null;
-        if ( GenerateApplicationXmlMojo.VERSION_1_3.equals( version ) )
+        if ( JavaEEVersion.OneDotThree.eq( version ) )
         {
             writer = initializeRootElementOneDotThree( w );
         }
-        else if ( GenerateApplicationXmlMojo.VERSION_1_4.equals( version ) )
+        else if ( JavaEEVersion.OneDotFour.eq( version ) )
         {
             writer = initializeRootElementOneDotFour( w );
         }
-        else if ( GenerateApplicationXmlMojo.VERSION_5.equals( version ) )
+        else if ( JavaEEVersion.Five.eq( version ) )
         {
             writer = initializeRootElementFive( w );
         }
-        else if ( GenerateApplicationXmlMojo.VERSION_6.equals( version ) )
+        else if ( JavaEEVersion.Six.eq( version ) )
         {
             writer = initializeRootElementSix( w );
         }
 
-        // JavaEE6 only
-        if (GenerateApplicationXmlMojo.VERSION_6.equals( version )) {
+        // As from JavaEE6
+        if ( version.ge( JavaEEVersion.Six ) )
+        {
             writeApplicationName( context.getApplicationName(), writer );
         }
 
         // IMPORTANT: the order of the description and display-name elements was
         // reversed between J2EE 1.3 and J2EE 1.4.
-        if ( GenerateApplicationXmlMojo.VERSION_1_3.equals( version ) )
+        if ( version.eq( JavaEEVersion.OneDotThree ) )
         {
             writeDisplayName( context.getDisplayName(), writer );
             writeDescription( context.getDescription(), writer );
@@ -93,8 +95,9 @@ final class ApplicationXmlWriter
             writeDisplayName( context.getDisplayName(), writer );
         }
 
-        // JavaEE6 only
-        if (GenerateApplicationXmlMojo.VERSION_6.equals( version )) {
+        // As from JavaEE6
+        if ( version.ge( JavaEEVersion.Six ) )
+        {
             writeInitializeInOrder( context.getInitializeInOrder(), writer );
         }
 
@@ -104,7 +107,7 @@ final class ApplicationXmlWriter
         while ( moduleIt.hasNext() )
         {
             EarModule module = (EarModule) moduleIt.next();
-            module.appendModule( writer, version, generateModuleId );
+            module.appendModule( writer, version.getVersion(), generateModuleId );
         }
 
         final Iterator securityRoleIt = context.getSecurityRoles().iterator();
@@ -114,8 +117,7 @@ final class ApplicationXmlWriter
             securityRole.appendSecurityRole( writer );
         }
 
-        if ( GenerateApplicationXmlMojo.VERSION_5.equals( version ) ||
-             GenerateApplicationXmlMojo.VERSION_6.equals( version ) )
+        if ( version.ge( JavaEEVersion.Five ) )
         {
             writeLibraryDirectory( context.getLibraryDirectory(), writer );
         }
@@ -155,7 +157,7 @@ final class ApplicationXmlWriter
         }
     }
 
-     private void writeInitializeInOrder( Boolean initializeInOrder, XMLWriter writer )
+    private void writeInitializeInOrder( Boolean initializeInOrder, XMLWriter writer )
     {
         if ( initializeInOrder != null )
         {

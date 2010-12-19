@@ -21,6 +21,7 @@ package org.apache.maven.plugin.ear;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugin.ear.util.JavaEEVersion;
 import org.codehaus.plexus.configuration.PlexusConfiguration;
 import org.codehaus.plexus.configuration.PlexusConfigurationException;
 import org.codehaus.plexus.util.FileUtils;
@@ -118,18 +119,13 @@ public class GenerateApplicationXmlMojo
         }
         else
         {
-            // Check version
-            if ( !version.equals( VERSION_1_3 ) && !version.equals( VERSION_1_4 ) && !version.equals( VERSION_5 ) &&
-                !version.equals( VERSION_6 ) )
-            {
-                throw new MojoExecutionException( "Invalid version[" + version + "]" );
-            }
+            final JavaEEVersion javaEEVersion = JavaEEVersion.getJavaEEVersion( version );
 
             // Generate deployment descriptor and copy it to the build directory
             getLog().info( "Generating application.xml" );
             try
             {
-                generateStandardDeploymentDescriptor();
+                generateStandardDeploymentDescriptor( javaEEVersion );
             }
             catch ( EarPluginException e )
             {
@@ -181,7 +177,7 @@ public class GenerateApplicationXmlMojo
     /**
      * Generates the deployment descriptor.
      */
-    protected void generateStandardDeploymentDescriptor()
+    protected void generateStandardDeploymentDescriptor( JavaEEVersion javaEEVersion )
         throws EarPluginException
     {
         File outputDir = new File( generatedDescriptorLocation );
@@ -192,7 +188,7 @@ public class GenerateApplicationXmlMojo
 
         File descriptor = new File( outputDir, "application.xml" );
 
-        final ApplicationXmlWriter writer = new ApplicationXmlWriter( version, encoding, generateModuleId );
+        final ApplicationXmlWriter writer = new ApplicationXmlWriter( javaEEVersion, encoding, generateModuleId );
         final ApplicationXmlWriterContext context =
             new ApplicationXmlWriterContext( descriptor, getModules(), buildSecurityRoles(), displayName, description,
                                              defaultLibBundleDir, applicationName, initializeInOrder );

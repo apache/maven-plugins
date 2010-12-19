@@ -25,6 +25,7 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.ear.util.ArtifactTypeMappingService;
+import org.apache.maven.plugin.ear.util.JavaEEVersion;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.configuration.PlexusConfiguration;
 import org.codehaus.plexus.configuration.PlexusConfigurationException;
@@ -44,15 +45,6 @@ import java.util.Set;
 public abstract class AbstractEarMojo
     extends AbstractMojo
 {
-
-    public static final String VERSION_1_3 = "1.3";
-
-    public static final String VERSION_1_4 = "1.4";
-
-    public static final String VERSION_5 = "5";
-
-    public static final String VERSION_6 = "6";
-
     public static final String APPLICATION_XML_URI = "META-INF/application.xml";
 
     public static final String META_INF = "META-INF";
@@ -158,6 +150,7 @@ public abstract class AbstractEarMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
+        final JavaEEVersion javaEEVersion = JavaEEVersion.getJavaEEVersion( version );
         getLog().debug( "Resolving artifact type mappings ..." );
         ArtifactTypeMappingService typeMappingService;
         try
@@ -227,7 +220,7 @@ public abstract class AbstractEarMojo
                 if ( !isArtifactRegistered( artifact, allModules ) && !artifact.isOptional() &&
                     filter.include( artifact ) )
                 {
-                    EarModule module = EarModuleFactory.newEarModule( artifact, version, defaultLibBundleDir,
+                    EarModule module = EarModuleFactory.newEarModule( artifact, javaEEVersion, defaultLibBundleDir,
                                                                       includeLibInApplicationXml, typeMappingService );
                     module.setEarExecutionContext( earExecutionContext );
                     allModules.add( module );
