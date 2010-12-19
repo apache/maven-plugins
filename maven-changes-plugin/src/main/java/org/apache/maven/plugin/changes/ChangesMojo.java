@@ -124,6 +124,15 @@ public class ChangesMojo
     protected MavenSession session;
     
     /**
+     * The URI of a file containing all the team members. If this is set to the
+     * special value "none", no links will be generated for the team members.
+     *
+     * @parameter expression="team-list.html"
+     * @since 2.4
+     */
+    private String teamlist;
+
+    /**
      * applying filtering filtering "a la" resources plugin
      *
      * @parameter default-value="false"
@@ -258,6 +267,8 @@ public class ChangesMojo
         report.setIssueLinksPerSystem( issueLinkTemplatePerSystem );
         report.setIssueLink( issueLinkTemplate );
         
+        report.setTeamlist ( teamlist );
+
         report.setUrl( url );
 
         report.setAddActionDate( addActionDate );
@@ -286,6 +297,11 @@ public class ChangesMojo
     public String getOutputName()
     {
         return "changes-report";
+    }
+
+    protected String getTeamlist()
+    {
+        return teamlist;
     }
 
     private ResourceBundle getBundle( Locale locale )
