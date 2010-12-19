@@ -131,45 +131,37 @@ under the License.
       <version>1.0-alpha-9-stable-1</version>
     </dependency>
     <dependency>
-      <groupId>plexus</groupId>
+      <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-mail-sender-api</artifactId>
-      <version>1.0-alpha-2</version>
+      <version>1.0-alpha-7</version>
       <exclusions>
         <exclusion>
-          <groupId>plexus</groupId>
-          <artifactId>plexus-container-default</artifactId>
+          <groupId>org.codehaus.plexus</groupId>
+          <artifactId>plexus-component-api</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>plexus</groupId>
+      <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-mail-sender-javamail</artifactId>
-      <version>1.0-alpha-2</version>
+      <version>1.0-alpha-7</version>
       <exclusions>
         <exclusion>
-          <groupId>plexus</groupId>
-          <artifactId>plexus-container-default</artifactId>
+          <groupId>org.codehaus.plexus</groupId>
+          <artifactId>plexus-component-api</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>plexus</groupId>
+      <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-mail-sender-simple</artifactId>
-      <version>1.0-alpha-2</version>
+      <version>1.0-alpha-7</version>
       <exclusions>
         <exclusion>
-          <groupId>plexus</groupId>
-          <artifactId>plexus-container-default</artifactId>
+          <groupId>org.codehaus.plexus</groupId>
+          <artifactId>plexus-component-api</artifactId>
         </exclusion>
       </exclusions>
-    </dependency>
-    <dependency>
-      <!--  forces use of javamail 1.4 since it's the only version available in the repo. We should remove this as soon
-        as the dependency in plexus-mail-sender-javamail will be updated
-      -->
-      <groupId>javax.mail</groupId>
-      <artifactId>mail</artifactId>
-      <version>1.4</version>
     </dependency>
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
