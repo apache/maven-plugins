@@ -61,7 +61,7 @@ under the License.
     <beanshell-version>2.0b4</beanshell-version>
     <groovy-groupId>org.codehaus.groovy</groovy-groupId>
     <groovy-artifactId>groovy</groovy-artifactId>
-    <groovy-version>1.5.6</groovy-version>
+    <groovy-version>1.7.5</groovy-version>
   </properties>
 
   <dependencies>
@@ -149,7 +149,7 @@ under the License.
     <dependency>
       <groupId>org.apache.ant</groupId>
       <artifactId>ant</artifactId>
-      <version>1.7.1</version>
+      <version>1.8.1</version>
       <exclusions>
         <exclusion>
           <groupId>org.apache.ant</groupId>
