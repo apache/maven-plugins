@@ -24,6 +24,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.invoker.model.BuildJob;
 import org.apache.maven.plugin.invoker.model.io.xpp3.BuildJobXpp3Writer;
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Profile;
 import org.apache.maven.shared.invoker.InvocationRequest;
@@ -535,7 +536,15 @@ public abstract class AbstractInvokerMojo
      * @since 1.6
      */
     private int parrallelThreads;
-    
+
+    /**
+     * @parameter expression="${plugin.artifacts}"
+     * @required
+     * @readonly
+     * @since 1.6
+     */
+    private List<Artifact> pluginArtifacts;
+
     /**
      * The scripter runner that is responsible to execute hook scripts.
      */
@@ -617,10 +626,21 @@ public abstract class AbstractInvokerMojo
                                + ", i.e. build is platform dependent!" );
         }
 
+        final List/*<String>*/ scriptClassPath;
+        if( addTestClassPath )
+        {
+            scriptClassPath = new ArrayList/*<String>*/( testClassPath );
+            for( Artifact pluginArtifact : pluginArtifacts )
+            {
+                scriptClassPath.remove( pluginArtifact.getFile().getAbsolutePath() );
+            }
+        } else {
+            scriptClassPath = null;
+        }
         scriptRunner = new ScriptRunner( getLog() );
         scriptRunner.setScriptEncoding( encoding );
         scriptRunner.setGlobalVariable( "localRepositoryPath", localRepositoryPath );
-        scriptRunner.setClassPath( addTestClassPath ? testClassPath : null );
+        scriptRunner.setClassPath( scriptClassPath );
 
         Collection collectedProjects = new LinkedHashSet();
         for ( int i = 0; i < buildJobs.length; i++ )
