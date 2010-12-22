@@ -17,37 +17,37 @@ KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations
 under the License.
 -->
-<document xmlns="http://maven.apache.org/changes/1.0.0"
-          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-          xsi:schemaLocation="http://maven.apache.org/changes/1.0.0 http://maven.apache.org/xsd/changes-1.0.0.xsd">
-	<properties>
-		<title>Changes report Project</title>
-		<author email="zloug@toto.com">Mr Zloug</author>
-	</properties>
-	<body>
-		<release version="1.1" date="2005-03-01" description="Subsequent release">
-			<action dev="me" type="add">
+<document xmlns="http://maven.apache.org/changes/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/changes/1.0.0 http://maven.apache.org/xsd/changes-1.0.0.xsd">
+  <properties>
+    <title>Changes report Project</title>
+    <author email="zloug@toto.com">Mr Zloug</author>
+  </properties>
+  <body>
+    <release version="1.1" date="2005-03-01" description="Subsequent release">
+      <action dev="me" type="add">
         Added additional documentation on how to configure the plugin.
       </action>
-			<action dev="me" type="fix" issue="MCHANGES-88">
+      <action dev="me" type="fix" issue="MCHANGES-88">
         Enable retrieving component-specific issues.
       </action>
-			<action dev="me" type="fix" issue="1212" system="qc">
+      <action dev="me" type="fix" issue="1212" system="qc">
         Enable retrieving component-specific issues.
       </action>
-			<action dev="jruiz" type="remove" due-to="others" due-to-email="users@users.com">
-        The element type " link " must be terminated by the matching end-tag.
+      <action dev="jruiz" type="remove" due-to="others" due-to-email="users@users.com">
+        The element type " link " must be terminated
+        by the matching end-tag.
         Deleted the erroneous code.
       </action>
-		</release>
-		<release version="1.0" date="2005-01-01" description="First release">
-			<action dev="me" type="update" date="2008-01-01">
+    </release>
+    <release version="1.0" date="2005-01-01" description="First release">
+      <action dev="me" type="update" date="2008-01-01">
         Uploaded documentation on how to use the plugin.
-        <fixes issue="JIRA-XXX"/>
-        <fixes issue="JIRA-YYY"/>
-        <dueto name="John Doe" email="john@doe.com"/>
-        <dueto name="Jane Doe"/>
+        <fixes issue="JIRA-XXX" />
+        <fixes issue="JIRA-YYY" />
+        <dueto name="John Doe" email="john@doe.com" />
+        <dueto name="Jane Doe" />
       </action>
-		</release>
-	</body>
+    </release>
+  </body>
 </document>
