@@ -228,6 +228,13 @@ public class ResourcesMojo
      */     
     private List mavenFilteringComponents = new ArrayList();
     
+    /**
+     * stop searching endToken at the end of line
+     * @parameter expression="${maven.resources.supportMultiLineFiltering}" default-value="false"
+     * @since 2.5
+     */
+    private boolean supportMultiLineFiltering;
+    
     public void contextualize( Context context )
         throws ContextException
     {
@@ -265,6 +272,9 @@ public class ResourcesMojo
             mavenResourcesExecution.setEscapeString( escapeString );
             mavenResourcesExecution.setOverwrite( overwrite );
             mavenResourcesExecution.setIncludeEmptyDirs( includeEmptyDirs );
+            mavenResourcesExecution.setSupportMultiLineFiltering( supportMultiLineFiltering );
+            
+            
             
             // if these are NOT set, just use the defaults, which are '${*}' and '@'.
             if ( delimiters != null && !delimiters.isEmpty() )

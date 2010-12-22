@@ -114,7 +114,7 @@ under the License.
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
       <artifactId>maven-filtering</artifactId>
-      <version>1.0-beta-4</version>
+      <version>1.0-beta-5-SNAPSHOT</version>
     </dependency>
 
     <dependency>
