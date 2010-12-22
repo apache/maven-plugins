@@ -55,6 +55,7 @@ http://svn.apache.org/repos/asf/infrastructure/site-tools/trunk/projects/asfext<
           <version>1.0.0</version>
           <type>String</type>
           <identifier>true</identifier>
+          <defaultValue>${project.url}</defaultValue>
         </field>
         <field>
           <name>name</name>
@@ -63,6 +64,7 @@ http://svn.apache.org/repos/asf/infrastructure/site-tools/trunk/projects/asfext<
           <version>1.0.0</version>
           <type>String</type>
           <identifier>true</identifier>
+          <defaultValue>${project.name}</defaultValue>
         </field>
         <field>
           <name>charter</name>
@@ -187,40 +189,40 @@ http://svn.apache.org/repos/asf/infrastructure/site-tools/trunk/projects/asfext<
 
     /**
      * @param category not null
-     * @return <code>true</code> if the given category is supported by ASF.
+     * @return if the given category is supported by ASF (correctly formatted) or <code>null</code> if not found.
      * @see <a href="http://projects.apache.org/categories.html">http://projects.apache.org/categories.html</a>
      * @see #CATEGORIES
      */
-    public static boolean isCategorySupportedByASF( String category )
+    public static String getCategorySupportedByASF( String category )
     {
         for ( String category_ : CATEGORIES )
         {
             if ( category_.equalsIgnoreCase( category ) )
             {
-                return true;
+                return category_;
             }
         }
 
-        return false;
+        return null;
     }
 
     /**
      * @param programmingLanguage not null
-     * @return <code>true</code> if the given programming language is supported by ASF.
+     * @return the given programming language supported by ASF (correctly formatted) or <code>null</code> if not found.
      * @see <a href="http://projects.apache.org/languages.html">http://projects.apache.org/languages.html</a>
      * @see #PROGRAMMING_LANGUAGES
      */
-    public static boolean isProgrammingLanguageSupportedByASF( String programmingLanguage )
+    public static String getProgrammingLanguageSupportedByASF( String programmingLanguage )
     {
         for ( String programmingLanguage_ : PROGRAMMING_LANGUAGES )
         {
             if ( programmingLanguage_.equalsIgnoreCase( programmingLanguage ) )
             {
-                return true;
+                return programmingLanguage_;
             }
         }
 
-        return false;
+        return null;
     }
 
     /**

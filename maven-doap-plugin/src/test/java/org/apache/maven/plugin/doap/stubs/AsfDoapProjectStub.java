@@ -23,7 +23,11 @@ import java.io.File;
 import java.util.List;
 
 import org.apache.maven.model.Developer;
+import org.apache.maven.model.IssueManagement;
+import org.apache.maven.model.License;
 import org.apache.maven.model.Model;
+import org.apache.maven.model.Organization;
+import org.apache.maven.model.Scm;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
 import org.codehaus.plexus.util.ReaderFactory;
@@ -75,5 +79,29 @@ public class AsfDoapProjectStub
     public List<Developer> getDevelopers()
     {
         return model.getDevelopers();
+    }
+
+    @Override
+    public List<License> getLicenses()
+    {
+        return model.getLicenses();
+    }
+
+    @Override
+    public Organization getOrganization()
+    {
+        return model.getOrganization();
+    }
+
+    @Override
+    public Scm getScm()
+    {
+        return model.getScm();
+    }
+
+    @Override
+    public IssueManagement getIssueManagement()
+    {
+        return model.getIssueManagement();
     }
 }

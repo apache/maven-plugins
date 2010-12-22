@@ -28,6 +28,7 @@ import java.util.List;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.DefaultArtifactRepository;
 import org.apache.maven.artifact.repository.layout.DefaultRepositoryLayout;
+import org.apache.maven.plugin.doap.options.ASFExtOptions;
 import org.apache.maven.plugin.doap.options.DoapArtifact;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.project.MavenProject;
@@ -131,15 +132,15 @@ public class DoapMojoTest
         setVariableValueToObject( mojo, "remoteRepositories", getRemoteRepositories() );
         setVariableValueToObject( mojo, "about", mavenProject.getUrl() );
         DoapArtifact artifact = new DoapArtifact();
-        artifact.setGroupId( "org.apache.maven" );
-        artifact.setArtifactId( "maven-parent" );
-        artifact.setVersion( "18" );
+        artifact.setGroupId( "org.codehaus.plexus" );
+        artifact.setArtifactId( "plexus-utils" );
+        artifact.setVersion( "1.5.5" );
         setVariableValueToObject( mojo, "artifact", artifact );
         setVariableValueToObject( mojo, "outputDirectory", "target/test/unit/doap-configuration/" );
 
         mojo.execute();
 
-        File doapFile = new File( getBasedir(), "target/test/unit/doap-configuration/doap_maven-parent.rdf" );
+        File doapFile = new File( getBasedir(), "target/test/unit/doap-configuration/doap_plexus-utils.rdf" );
         assertTrue( "Doap File was not generated!", doapFile.exists() );
 
         String readed = readFile( doapFile );
@@ -149,17 +150,8 @@ public class DoapMojoTest
         // Pure DOAP
         assertTrue( readed.indexOf( "<rdf:RDF xml:lang=\"en\" xmlns=\"http://usefulinc.com/ns/doap#\" "
             + "xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" "
-            + "xmlns:foaf=\"http://xmlns.com/foaf/0.1/\" " + "xmlns:asfext=\"http://projects.apache.org/ns/asfext#\">" ) != -1 );
-        if ( StringUtils.isNotEmpty( mavenProject.getUrl() ) )
-        {
-            assertTrue( readed.indexOf( "<Project rdf:about=\"http://maven.apache.org/\">" ) != -1 );
-            assertTrue( readed.indexOf( "<homepage rdf:resource=\"http://maven.apache.org/\"/>" ) != -1 );
-        }
-        assertTrue( readed.indexOf( "<name>Apache Maven</name>" ) != -1 );
-
-        // ASF ext
-        assertTrue( readed.indexOf( "<asfext:pmc rdf:resource=\"http://maven.apache.org/\"/>" ) != -1 );
-        assertTrue( readed.indexOf( "<asfext:name>Apache Maven</asfext:name>" ) != -1 );
+            + "xmlns:foaf=\"http://xmlns.com/foaf/0.1/\">" ) != -1 );
+        assertTrue( readed.indexOf( "<name>Plexus Common Utilities</name>" ) != -1 );
     }
 
     /**
@@ -202,7 +194,7 @@ public class DoapMojoTest
             assertTrue( readed.indexOf( "<homepage rdf:resource=\"" + mavenProject.getUrl() + "\"/>" ) != -1 );
         }
         assertTrue( readed.indexOf( "<name>Apache " + mavenProject.getName() + "</name>" ) != -1 );
-        assertTrue( readed.indexOf( "<programming-language>java</programming-language>" ) != -1 );
+        assertTrue( readed.indexOf( "<programming-language>Java</programming-language>" ) != -1 );
 
         // ASF ext
         assertTrue( readed.indexOf( "<asfext:pmc rdf:resource=\"" + mavenProject.getUrl() + "\"/>" ) != -1 );
