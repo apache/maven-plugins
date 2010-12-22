@@ -400,7 +400,7 @@ under the License.
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-invoker-plugin</artifactId>
-            <version>1.4</version>
+            <version>1.5</version>
             <configuration>
               <pomIncludes>
                 <pomInclude>*/pom.xml</pomInclude>
