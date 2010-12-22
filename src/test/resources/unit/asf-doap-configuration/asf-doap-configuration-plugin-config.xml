@@ -23,7 +23,7 @@ under the License.
   <parent>
     <artifactId>maven-plugins</artifactId>
     <groupId>org.apache.maven.plugins</groupId>
-    <version>11</version>
+    <version>18</version>
   </parent>
 
   <groupId>resources.test</groupId>
@@ -36,6 +36,18 @@ under the License.
   <description>Test the DOAP plugin for ASF projects</description>
   <url>http://maven.apache.org/plugins/maven-doap-plugin/tests</url>
 
+  <licenses>
+    <license>
+      <name>The Apache Software License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+  <organization>
+    <name>The Apache Software Foundation</name>
+    <url>http://www.apache.org/</url>
+  </organization>
+
   <scm>
     <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-doap-plugin/src/test/resources/unit/asf-doap-configuration</connection>
     <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/trunk/maven-doap-plugin/src/test/resources/unit/asf-doap-configuration</developerConnection>
@@ -46,6 +58,19 @@ under the License.
     <system>JIRA</system>
     <url>http://jira.codehaus.org/browse/MDOAPTEST</url>
   </issueManagement>
+
+  <developers>
+    <developer>
+      <id>vsiveton</id>
+      <name>Vincent Siveton</name>
+      <email>vsiveton@apache.org</email>
+      <organization>ASF</organization>
+      <roles>
+        <role>PMC Member</role>
+      </roles>
+      <timezone>-5</timezone>
+    </developer>
+  </developers>
 
   <build>
     <plugins>
@@ -60,10 +85,16 @@ under the License.
           <validate>true</validate>
 
           <doapOptions>
+            <shortdesc>test doap</shortdesc>
+            <created>2010-12-22</created>
+            <downloadPage>http://foo.org/download.html</downloadPage>
             <programmingLanguage>java</programmingLanguage>
+            <category>library</category>
           </doapOptions>
 
           <asfExtOptions>
+            <charter>http://maven.apache.org</charter>
+            <chair>Vincent Siveton</chair>
             <included>true</included>
           </asfExtOptions>
         </configuration>
