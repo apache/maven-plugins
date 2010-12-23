@@ -25,7 +25,8 @@ under the License.
   <parent>
     <artifactId>maven-plugins</artifactId>
     <groupId>org.apache.maven.plugins</groupId>
-    <version>18</version>
+    <version>19-SNAPSHOT</version>
+    <relativePath>../maven-plugins/pom.xml</relativePath>
   </parent>
 
   <artifactId>maven-invoker-plugin</artifactId>
@@ -210,6 +211,7 @@ under the License.
       <plugin>
         <groupId>org.codehaus.modello</groupId>
         <artifactId>modello-maven-plugin</artifactId>
+        <version>1.4</version>
         <executions>
           <execution>
             <goals>
