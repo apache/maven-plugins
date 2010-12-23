@@ -59,10 +59,10 @@ import java.io.FileInputStream;
 import java.io.BufferedReader;
 import java.util.Collection;
 import java.util.LinkedHashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Properties;
+import java.util.Set;
 import java.util.TreeSet;
 import java.util.Map;
 import java.util.LinkedHashMap;
@@ -192,7 +192,7 @@ public abstract class AbstractInvokerMojo
      *
      * @parameter
      */
-    private List pomIncludes = Collections.singletonList( "*/pom.xml" );
+    private List<String> pomIncludes = Collections.singletonList( "*/pom.xml" );
 
     /**
      * Exclude patterns for searching the integration test directory. This parameter is meant to be set from the POM. By
@@ -201,7 +201,7 @@ public abstract class AbstractInvokerMojo
      *
      * @parameter
      */
-    private List pomExcludes = Collections.EMPTY_LIST;
+    private List<String> pomExcludes = Collections.emptyList();
 
     /**
      * Include patterns for searching the projects directory for projects that need to be run before the other projects.
@@ -213,14 +213,14 @@ public abstract class AbstractInvokerMojo
      * @parameter
      * @since 1.3
      */
-    private List setupIncludes = Collections.singletonList( "setup*/pom.xml" );
+    private List<String> setupIncludes = Collections.singletonList( "setup*/pom.xml" );
 
     /**
      * The list of goals to execute on each project. Default value is: <code>package</code>.
      *
      * @parameter
      */
-    private List goals = Collections.singletonList( "package" );
+    private List<String> goals = Collections.singletonList( "package" );
 
     /**
      * The name of the project-specific file that contains the enumeration of goals to execute for that test.
@@ -295,7 +295,7 @@ public abstract class AbstractInvokerMojo
      * @parameter
      * @since 1.1
      */
-    private Map properties;
+    private Map<String, String> properties;
 
     /**
      * Whether to show errors in the build output.
@@ -324,7 +324,7 @@ public abstract class AbstractInvokerMojo
      * @parameter
      * @since 1.1
      */
-    private List profiles;
+    private List<String> profiles;
 
     /**
      * List of properties which will be used to interpolate goal files.
@@ -341,7 +341,7 @@ public abstract class AbstractInvokerMojo
      * @parameter
      * @since 1.3
      */
-    private Map filterProperties;
+    private Map<String, String> filterProperties;
 
     /**
      * The Maven Project Object
@@ -450,7 +450,7 @@ public abstract class AbstractInvokerMojo
      * @parameter default-value="${project.testClasspathElements}"
      * @readonly
      */
-    private List testClassPath;
+    private List<String> testClassPath;
 
     /**
      * The name of an optional project-specific file that contains properties used to specify settings for an individual
@@ -626,10 +626,10 @@ public abstract class AbstractInvokerMojo
                                + ", i.e. build is platform dependent!" );
         }
 
-        final List/*<String>*/ scriptClassPath;
+        final List<String> scriptClassPath;
         if( addTestClassPath )
         {
-            scriptClassPath = new ArrayList/*<String>*/( testClassPath );
+            scriptClassPath = new ArrayList<String>( testClassPath );
             for( Artifact pluginArtifact : pluginArtifacts )
             {
                 scriptClassPath.remove( pluginArtifact.getFile().getAbsolutePath() );
@@ -642,7 +642,7 @@ public abstract class AbstractInvokerMojo
         scriptRunner.setGlobalVariable( "localRepositoryPath", localRepositoryPath );
         scriptRunner.setClassPath( scriptClassPath );
 
-        Collection collectedProjects = new LinkedHashSet();
+        Collection<String> collectedProjects = new LinkedHashSet<String>();
         for ( int i = 0; i < buildJobs.length; i++ )
         {
             collectProjects( projectsDirectory, buildJobs[i].getProject(), collectedProjects, true );
@@ -709,7 +709,7 @@ public abstract class AbstractInvokerMojo
      *            corresponding POM.
      * @throws org.apache.maven.plugin.MojoExecutionException If the project tree could not be traversed.
      */
-    private void collectProjects( File projectsDir, String projectPath, Collection projectPaths, boolean included )
+    private void collectProjects( File projectsDir, String projectPath, Collection<String> projectPaths, boolean included )
         throws MojoExecutionException
     {
         projectPath = projectPath.replace( '\\', '/' );
@@ -759,19 +759,17 @@ public abstract class AbstractInvokerMojo
                 collectProjects( projectsDir, parent, projectPaths, false );
             }
 
-            Collection modulePaths = new LinkedHashSet();
+            Collection<String> modulePaths = new LinkedHashSet<String>();
 
             modulePaths.addAll( model.getModules() );
 
-            for ( Iterator it = model.getProfiles().iterator(); it.hasNext(); )
+            for ( Profile profile : (List<Profile>) model.getProfiles())
             {
-                Profile profile = (Profile) it.next();
                 modulePaths.addAll( profile.getModules() );
             }
 
-            for ( Iterator it = modulePaths.iterator(); it.hasNext(); )
+            for ( String modulePath : modulePaths )
             {
-                String modulePath = (String) it.next();
                 String module = relativizePath( new File( projectDir, modulePath ), projectsRoot );
                 if ( module != null )
                 {
@@ -793,7 +791,7 @@ public abstract class AbstractInvokerMojo
      *            <code>null</code> nor contain <code>null</code> elements.
      * @throws org.apache.maven.plugin.MojoExecutionException If the the projects could not be copied/filtered.
      */
-    private void cloneProjects( Collection projectPaths )
+    private void cloneProjects( Collection<String> projectPaths )
         throws MojoExecutionException
     {
         if ( !cloneProjectsTo.mkdirs() && cloneClean )
@@ -810,10 +808,9 @@ public abstract class AbstractInvokerMojo
         }
 
         // determine project directories to clone
-        Collection dirs = new LinkedHashSet();
-        for ( Iterator it = projectPaths.iterator(); it.hasNext(); )
+        Collection<String> dirs = new LinkedHashSet<String>();
+        for ( String projectPath : projectPaths )
         {
-            String projectPath = (String) it.next();
             if ( !new File( projectsDirectory, projectPath ).isDirectory() )
             {
                 projectPath = getParentPath( projectPath );
@@ -828,12 +825,10 @@ public abstract class AbstractInvokerMojo
         {
             filter = !cloneProjectsTo.getCanonicalFile().equals( projectsDirectory.getCanonicalFile() );
 
-            List clonedSubpaths = new ArrayList();
+            List<String> clonedSubpaths = new ArrayList<String>();
 
-            for ( Iterator it = dirs.iterator(); it.hasNext(); )
+            for ( String subpath : dirs )
             {
-                String subpath = (String) it.next();
-
                 // skip this project if its parent directory is also scheduled for cloning
                 if ( !".".equals( subpath ) && dirs.contains( getParentPath( subpath ) ) )
                 {
@@ -886,9 +881,8 @@ public abstract class AbstractInvokerMojo
         // filter cloned POMs
         if ( filter )
         {
-            for ( Iterator it = projectPaths.iterator(); it.hasNext(); )
+            for ( String projectPath : projectPaths )
             {
-                String projectPath = (String) it.next();
                 File pomFile = new File( cloneProjectsTo, projectPath );
                 if ( pomFile.isFile() )
                 {
@@ -958,12 +952,10 @@ public abstract class AbstractInvokerMojo
      *            <code>null</code> elements.
      * @return <code>true</code> if the specified path has already been cloned, <code>false</code> otherwise.
      */
-    static boolean alreadyCloned( String subpath, List clonedSubpaths )
+    static boolean alreadyCloned( String subpath, List<String> clonedSubpaths )
     {
-        for ( Iterator iter = clonedSubpaths.iterator(); iter.hasNext(); )
+        for ( String path : clonedSubpaths )
         {
-            String path = (String) iter.next();
-
             if ( ".".equals( path ) || subpath.equals( path ) || subpath.startsWith( path + File.separator ) )
             {
                 return true;
@@ -1291,19 +1283,18 @@ public abstract class AbstractInvokerMojo
         {
             Properties props = invokerProperties.getProperties();
             getLog().debug( "Using invoker properties:" );
-            for ( Iterator it = new TreeSet( props.keySet() ).iterator(); it.hasNext(); )
+            for ( String key : new TreeSet<String>( (Set) props.keySet() ) )
             {
-                String key = (String) it.next();
                 String value = props.getProperty( key );
                 getLog().debug( "  " + key + " = " + value );
             }
         }
 
-        List goals = getGoals( basedir );
+        List<String> goals = getGoals( basedir );
 
-        List profiles = getProfiles( basedir );
+        List<String> profiles = getProfiles( basedir );
 
-        Map context = new LinkedHashMap();
+        Map<String, Object> context = new LinkedHashMap<String, Object>();
 
         FileLogger logger = setupLogger( basedir );
         try
@@ -1562,7 +1553,7 @@ public abstract class AbstractInvokerMojo
      * @return The list of goals to run when building the project, may be empty but never <code>null</code>.
      * @throws org.apache.maven.plugin.MojoExecutionException If the profile file could not be read.
      */
-    List getGoals( final File basedir )
+    List<String> getGoals( final File basedir )
         throws MojoExecutionException
     {
         try
@@ -1582,7 +1573,7 @@ public abstract class AbstractInvokerMojo
      * @return The list of profiles to activate when building the project, may be empty but never <code>null</code>.
      * @throws org.apache.maven.plugin.MojoExecutionException If the profile file could not be read.
      */
-    List getProfiles( File basedir )
+    List<String> getProfiles( File basedir )
         throws MojoExecutionException
     {
         try
@@ -1613,7 +1604,7 @@ public abstract class AbstractInvokerMojo
         else if ( invokerTest != null )
         {
             String[] testRegexes = StringUtils.split( invokerTest, "," );
-            List /* String */includes = new ArrayList( testRegexes.length );
+            List<String> includes = new ArrayList<String>( testRegexes.length );
 
             for ( int i = 0, size = testRegexes.length; i < size; i++ )
             {
@@ -1627,7 +1618,7 @@ public abstract class AbstractInvokerMojo
         }
         else
         {
-            List excludes = ( pomExcludes != null ) ? new ArrayList( pomExcludes ) : new ArrayList();
+            List<String> excludes = ( pomExcludes != null ) ? new ArrayList<String>( pomExcludes ) : new ArrayList<String>();
             if ( this.settingsFile != null )
             {
                 String exclude = relativizePath( this.settingsFile, projectsDirectory.getCanonicalPath() );
@@ -1643,7 +1634,7 @@ public abstract class AbstractInvokerMojo
 
             BuildJob[] normalPoms = scanProjectsDirectory( pomIncludes, excludes, BuildJob.Type.NORMAL );
 
-            Map uniquePoms = new LinkedHashMap();
+            Map<String, BuildJob> uniquePoms = new LinkedHashMap<String, BuildJob>();
             for ( int i = 0; i < setupPoms.length; i++ )
             {
                 uniquePoms.put( setupPoms[i].getProject(), setupPoms[i] );
@@ -1656,7 +1647,7 @@ public abstract class AbstractInvokerMojo
                 }
             }
 
-            buildJobs = (BuildJob[]) uniquePoms.values().toArray( new BuildJob[uniquePoms.size()] );
+            buildJobs = uniquePoms.values().toArray( new BuildJob[uniquePoms.size()] );
         }
 
         relativizeProjectPaths( buildJobs );
@@ -1676,7 +1667,7 @@ public abstract class AbstractInvokerMojo
      * @return The build jobs matching the patterns, never <code>null</code>.
      * @throws java.io.IOException If the project directory could not be scanned.
      */
-    private BuildJob[] scanProjectsDirectory( List includes, List excludes, String type )
+    private BuildJob[] scanProjectsDirectory( List<String> includes, List<String> excludes, String type )
         throws IOException
     {
         if ( !projectsDirectory.isDirectory() )
@@ -1689,16 +1680,16 @@ public abstract class AbstractInvokerMojo
         scanner.setFollowSymlinks( false );
         if ( includes != null )
         {
-            scanner.setIncludes( (String[]) includes.toArray( new String[includes.size()] ) );
+            scanner.setIncludes( includes.toArray( new String[includes.size()] ) );
         }
         if ( excludes != null )
         {
-            scanner.setExcludes( (String[]) excludes.toArray( new String[excludes.size()] ) );
+            scanner.setExcludes( excludes.toArray( new String[excludes.size()] ) );
         }
         scanner.addDefaultExcludes();
         scanner.scan();
 
-        Map matches = new LinkedHashMap();
+        Map<String, BuildJob> matches = new LinkedHashMap<String, BuildJob>();
 
         String[] includedFiles = scanner.getIncludedFiles();
         for ( int i = 0; i < includedFiles.length; i++ )
@@ -1720,7 +1711,7 @@ public abstract class AbstractInvokerMojo
             }
         }
 
-        return (BuildJob[]) matches.values().toArray( new BuildJob[matches.size()] );
+        return matches.values().toArray( new BuildJob[matches.size()] );
     }
 
     /**
@@ -1795,12 +1786,12 @@ public abstract class AbstractInvokerMojo
      *
      * @return The map-based value source for interpolation, never <code>null</code>.
      */
-    private Map getInterpolationValueSource()
+    private Map<String, Object> getInterpolationValueSource()
     {
-        Map props = new HashMap();
+        Map<String, Object> props = new HashMap<String, Object>();
         if ( interpolationsProperties != null )
         {
-            props.putAll( interpolationsProperties );
+            props.putAll( (Map) interpolationsProperties );
         }
         if ( filterProperties != null )
         {
@@ -1849,10 +1840,10 @@ public abstract class AbstractInvokerMojo
      * @return The list of goal/profile names, may be empty but never <code>null</code>.
      * @throws java.io.IOException If the token file exists but could not be parsed.
      */
-    private List getTokens( File basedir, String filename, List defaultTokens )
+    private List<String> getTokens( File basedir, String filename, List<String> defaultTokens )
         throws IOException
     {
-        List tokens = ( defaultTokens != null ) ? defaultTokens : new ArrayList();
+        List<String> tokens = ( defaultTokens != null ) ? defaultTokens : new ArrayList<String>();
 
         if ( StringUtils.isNotEmpty( filename ) )
         {
@@ -1875,15 +1866,15 @@ public abstract class AbstractInvokerMojo
      * @return The list of tokens, may be empty but never <code>null</code>.
      * @throws java.io.IOException If the token file could not be read.
      */
-    private List readTokens( final File tokenFile )
+    private List<String> readTokens( final File tokenFile )
         throws IOException
     {
-        List result = new ArrayList();
+        List<String> result = new ArrayList<String>();
 
         BufferedReader reader = null;
         try
         {
-            Map composite = getInterpolationValueSource();
+            Map<String, Object> composite = getInterpolationValueSource();
             reader = new BufferedReader( new InterpolationFilterReader( newReader( tokenFile ), composite ) );
 
             String line = null;
@@ -1906,9 +1897,9 @@ public abstract class AbstractInvokerMojo
      * @param csv The line with comma separated tokens, may be <code>null</code>.
      * @return The list of tokens from the line, may be empty but never <code>null</code>.
      */
-    private List collectListFromCSV( final String csv )
+    private List<String> collectListFromCSV( final String csv )
     {
-        final List result = new ArrayList();
+        final List<String> result = new ArrayList<String>();
 
         if ( ( csv != null ) && ( csv.trim().length() > 0 ) )
         {
@@ -1945,7 +1936,7 @@ public abstract class AbstractInvokerMojo
             try
             {
                 // interpolation with token @...@
-                Map composite = getInterpolationValueSource();
+                Map<String, Object> composite = getInterpolationValueSource();
                 reader = ReaderFactory.newXmlReader( originalFile );
                 reader = new InterpolationFilterReader( reader, composite, "@", "@" );
                 xml = IOUtil.toString( reader );
@@ -2008,9 +1999,8 @@ public abstract class AbstractInvokerMojo
 
             Interpolator interpolator = new RegexBasedInterpolator();
             interpolator.addValueSource( new MapBasedValueSource( getInterpolationValueSource() ) );
-            for ( Iterator it = props.keySet().iterator(); it.hasNext(); )
+            for ( String key : (Set<String>) ((Map) props).keySet() )
             {
-                String key = (String) it.next();
                 String value = props.getProperty( key );
                 try
                 {

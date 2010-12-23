@@ -34,9 +34,9 @@ public class SelectorUtilsTest
     extends TestCase
 {
 
-    private List list( int[] numbers )
+    private List<Integer> list( int[] numbers )
     {
-        List result = new ArrayList();
+        List<Integer> result = new ArrayList<Integer>();
 
         for ( int i = 0; i < numbers.length; i++ )
         {
@@ -48,8 +48,8 @@ public class SelectorUtilsTest
 
     public void testParseList()
     {
-        List includes = new ArrayList();
-        List excludes = new ArrayList();
+        List<String> includes = new ArrayList<String>();
+        List<String> excludes = new ArrayList<String>();
 
         SelectorUtils.parseList( null, includes, excludes );
 

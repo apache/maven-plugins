@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -53,17 +52,17 @@ class ScriptRunner
      * The supported script interpreters, indexed by the lower-case file extension of their associated script files,
      * never <code>null</code>.
      */
-    private Map scriptInterpreters;
+    private Map<String, ScriptInterpreter> scriptInterpreters;
 
     /**
      * The common set of global variables to pass into the script interpreter, never <code>null</code>.
      */
-    private Map globalVariables;
+    private Map<String, Object> globalVariables;
 
     /**
      * The additional class path for the script interpreter, never <code>null</code>.
      */
-    private List classPath;
+    private List<String> classPath;
 
     /**
      * The file encoding of the hook scripts or <code>null</code> to use platform encoding.
@@ -82,11 +81,11 @@ class ScriptRunner
             throw new IllegalArgumentException( "missing logger" );
         }
         this.log = log;
-        scriptInterpreters = new LinkedHashMap();
+        scriptInterpreters = new LinkedHashMap<String, ScriptInterpreter>();
         scriptInterpreters.put( "bsh", new BeanShellScriptInterpreter() );
         scriptInterpreters.put( "groovy", new GroovyScriptInterpreter() );
-        globalVariables = new HashMap();
-        classPath = new ArrayList();
+        globalVariables = new HashMap<String, Object>();
+        classPath = new ArrayList<String>();
     }
 
     /**
@@ -118,9 +117,9 @@ class ScriptRunner
      *            the plugin realm should be used for the script evaluation. If specified, this class path will precede
      *            the artifacts from the plugin class path.
      */
-    public void setClassPath( List classPath )
+    public void setClassPath( List<String> classPath )
     {
-        this.classPath = ( classPath != null ) ? new ArrayList( classPath ) : new ArrayList();
+        this.classPath = ( classPath != null ) ? new ArrayList<String>( classPath ) : new ArrayList<String>();
     }
 
     /**
@@ -150,7 +149,7 @@ class ScriptRunner
      * @throws BuildFailureException If the script did not return <code>true</code> of threw an exception.
      */
     public void run( final String scriptDescription, final File basedir, final String relativeScriptPath,
-                     final Map context, final FileLogger logger, String stage, boolean failOnException )
+                     final Map<String, ? extends Object> context, final FileLogger logger, String stage, boolean failOnException )
         throws MojoExecutionException, BuildFailureException
     {
         if ( relativeScriptPath == null )
@@ -165,7 +164,7 @@ class ScriptRunner
             return;
         }
 
-        Map globalVariables = new HashMap( this.globalVariables );
+        Map<String, Object> globalVariables = new HashMap<String, Object>( this.globalVariables );
         globalVariables.put( "basedir", basedir );
         globalVariables.put( "context", context );
 
@@ -244,9 +243,8 @@ class ScriptRunner
     {
         if ( scriptFile != null && !scriptFile.exists() )
         {
-            for ( Iterator it = this.scriptInterpreters.keySet().iterator(); it.hasNext(); )
+            for ( String ext : this.scriptInterpreters.keySet() )
             {
-                String ext = (String) it.next();
                 File candidateFile = new File( scriptFile.getPath() + '.' + ext );
                 if ( candidateFile.exists() )
                 {
@@ -269,10 +267,10 @@ class ScriptRunner
     private ScriptInterpreter getInterpreter( File scriptFile )
     {
         String ext = FileUtils.extension( scriptFile.getName() ).toLowerCase( Locale.ENGLISH );
-        ScriptInterpreter interpreter = (ScriptInterpreter) scriptInterpreters.get( ext );
+        ScriptInterpreter interpreter = scriptInterpreters.get( ext );
         if ( interpreter == null )
         {
-            interpreter = (ScriptInterpreter) scriptInterpreters.get( "bsh" );
+            interpreter = scriptInterpreters.get( "bsh" );
         }
         return interpreter;
     }

@@ -26,7 +26,6 @@ import java.io.Writer;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.TimeZone;
@@ -85,7 +84,7 @@ class MetadataUtils
         {
             File metadataFile = new File( file.getParentFile().getParentFile(), "maven-metadata-local.xml" );
 
-            Set allVersions = new LinkedHashSet();
+            Set<String> allVersions = new LinkedHashSet<String>();
 
             Xpp3Dom metadata = readMetadata( metadataFile );
 
@@ -131,11 +130,10 @@ class MetadataUtils
         return parent;
     }
 
-    private static Xpp3Dom addChildren( Xpp3Dom parent, String childName, Collection childValues )
+    private static Xpp3Dom addChildren( Xpp3Dom parent, String childName, Collection<String> childValues )
     {
-        for ( Iterator it = childValues.iterator(); it.hasNext(); )
+        for ( String childValue : childValues )
         {
-            String childValue = (String) it.next();
             addChild( parent, childName, childValue );
         }
         return parent;

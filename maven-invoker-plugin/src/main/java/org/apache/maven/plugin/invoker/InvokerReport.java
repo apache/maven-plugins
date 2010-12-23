@@ -25,7 +25,6 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
@@ -142,7 +141,7 @@ public class InvokerReport
             return;
         }
 
-        List buildJobs = new ArrayList( reportFiles.length );
+        List<BuildJob> buildJobs = new ArrayList<BuildJob>( reportFiles.length );
         for ( int i = 0, size = reportFiles.length; i < size; i++ )
         {
             File reportFile = reportFiles[i];
@@ -194,9 +193,8 @@ public class InvokerReport
 
         sink.tableRow_();
 
-        for ( Iterator iterator = buildJobs.iterator(); iterator.hasNext(); )
+        for ( BuildJob buildJob : buildJobs )
         {
-            BuildJob buildJob = (BuildJob) iterator.next();
             renderBuildJob( buildJob, locale );
         }
 
@@ -208,7 +206,7 @@ public class InvokerReport
         sink.close();
     }
 
-    private void constructSummarySection( List /* BuildJob */buildJobs, Locale locale )
+    private void constructSummarySection( List<? extends BuildJob> buildJobs, Locale locale )
     {
         Sink sink = getSink();
 
@@ -240,9 +238,8 @@ public class InvokerReport
         int failed = 0;
         double totalTime = 0;
 
-        for ( Iterator iterator = buildJobs.iterator(); iterator.hasNext(); )
+        for ( BuildJob buildJob : buildJobs )
         {
-            BuildJob buildJob = (BuildJob) iterator.next();
             if ( BuildJob.Result.SUCCESS.equals( buildJob.getResult() ) )
             {
                 success++;

@@ -37,7 +37,7 @@ import java.util.Properties;
 class SelectorUtils
 {
 
-    static void parseList( String list, Collection includes, Collection excludes )
+    static void parseList( String list, Collection<String> includes, Collection<String> excludes )
     {
         String[] tokens = ( list != null ) ? StringUtils.split( list, "," ) : new String[0];
 
@@ -58,21 +58,19 @@ class SelectorUtils
 
     static boolean isOsFamily( String osSpec )
     {
-        List includes = new ArrayList();
-        List excludes = new ArrayList();
+        List<String> includes = new ArrayList<String>();
+        List<String> excludes = new ArrayList<String>();
         parseList( osSpec, includes, excludes );
 
         return isOsFamily( includes, true ) && !isOsFamily( excludes, false );
     }
 
-    static boolean isOsFamily( List families, boolean defaultMatch )
+    static boolean isOsFamily( List<String> families, boolean defaultMatch )
     {
         if ( families != null && !families.isEmpty() )
         {
-            for ( Iterator it = families.iterator(); it.hasNext(); )
+            for ( String family : families )
             {
-                String family = (String) it.next();
-
                 if ( Os.isFamily( family ) )
                 {
                     return true;
@@ -112,34 +110,32 @@ class SelectorUtils
 
     static boolean isMavenVersion( String mavenSpec )
     {
-        List includes = new ArrayList();
-        List excludes = new ArrayList();
+        List<String> includes = new ArrayList<String>();
+        List<String> excludes = new ArrayList<String>();
         parseList( mavenSpec, includes, excludes );
 
-        List mavenVersionList = parseVersion( getMavenVersion() );
+        List<Integer> mavenVersionList = parseVersion( getMavenVersion() );
 
         return isJreVersion( mavenVersionList, includes, true ) && !isJreVersion( mavenVersionList, excludes, false );
     }
 
     static boolean isJreVersion( String jreSpec )
     {
-        List includes = new ArrayList();
-        List excludes = new ArrayList();
+        List<String> includes = new ArrayList<String>();
+        List<String> excludes = new ArrayList<String>();
         parseList( jreSpec, includes, excludes );
 
-        List jreVersion = parseVersion( System.getProperty( "java.version", "" ) );
+        List<Integer> jreVersion = parseVersion( System.getProperty( "java.version", "" ) );
 
         return isJreVersion( jreVersion, includes, true ) && !isJreVersion( jreVersion, excludes, false );
     }
 
-    static boolean isJreVersion( List jreVersion, List versionPatterns, boolean defaultMatch )
+    static boolean isJreVersion( List<Integer> jreVersion, List<String> versionPatterns, boolean defaultMatch )
     {
         if ( versionPatterns != null && !versionPatterns.isEmpty() )
         {
-            for ( Iterator it = versionPatterns.iterator(); it.hasNext(); )
+            for ( String versionPattern : versionPatterns )
             {
-                String versionPattern = (String) it.next();
-
                 if ( isJreVersion( jreVersion, versionPattern ) )
                 {
                     return true;
@@ -154,9 +150,9 @@ class SelectorUtils
         }
     }
 
-    static boolean isJreVersion( List jreVersion, String versionPattern )
+    static boolean isJreVersion( List<Integer> jreVersion, String versionPattern )
     {
-        List checkVersion = parseVersion( versionPattern );
+        List<Integer> checkVersion = parseVersion( versionPattern );
 
         if ( versionPattern.endsWith( "+" ) )
         {
@@ -176,13 +172,13 @@ class SelectorUtils
         }
     }
 
-    static List parseVersion( String version )
+    static List<Integer> parseVersion( String version )
     {
         version = version.replaceAll( "[^0-9]", "." );
 
         String[] tokens = StringUtils.split( version, "." );
 
-        List numbers = new ArrayList();
+        List<Integer> numbers = new ArrayList<Integer>();
 
         for ( int i = 0; i < tokens.length; i++ )
         {
@@ -192,9 +188,9 @@ class SelectorUtils
         return numbers;
     }
 
-    static int compareVersions( List version1, List version2 )
+    static int compareVersions( List<Integer> version1, List<Integer> version2 )
     {
-        for ( Iterator it1 = version1.iterator(), it2 = version2.iterator(); ; )
+        for ( Iterator<Integer> it1 = version1.iterator(), it2 = version2.iterator(); ; )
         {
             if ( !it1.hasNext() )
             {
@@ -205,8 +201,8 @@ class SelectorUtils
                 return it1.hasNext() ? 1 : 0;
             }
 
-            Integer num1 = (Integer) it1.next();
-            Integer num2 = (Integer) it2.next();
+            Integer num1 = it1.next();
+            Integer num2 = it2.next();
 
             int rel = num1.compareTo( num2 );
             if ( rel != 0 )

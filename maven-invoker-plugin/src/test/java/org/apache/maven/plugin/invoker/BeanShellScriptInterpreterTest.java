@@ -49,7 +49,7 @@ public class BeanShellScriptInterpreterTest
     public void testEvaluateScriptVars()
         throws Exception
     {
-        Map vars = new HashMap();
+        Map<String, Object> vars = new HashMap<String, Object>();
         vars.put( "testVar", "data" );
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ScriptInterpreter interpreter = new BeanShellScriptInterpreter();

@@ -47,7 +47,7 @@ interface ScriptInterpreter
      * @return The return value from the script, can be <code>null</code>
      * @throws ScriptEvaluationException If the script evaluation produced an error.
      */
-    Object evaluateScript( String script, List classPath, Map globalVariables, PrintStream scriptOutput )
+    Object evaluateScript( String script, List<String> classPath, Map<String, ? extends Object> globalVariables, PrintStream scriptOutput )
         throws ScriptEvaluationException;
 
 }
