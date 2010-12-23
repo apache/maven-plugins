@@ -1,10 +1,10 @@
   ------
-  Configuration and Usage
+  Usage
   ------
   Stephane Nicoll
   <snicoll@apache.org>
   ------
-  September 23, 2005
+  2010-12-23
 
 ~~ Copyright 2006 The Apache Software Foundation.
 ~~
@@ -24,17 +24,17 @@
 ~~ http://maven.apache.org/doxia/references/apt-format.html
 
 
-Configuration and Usage
+Usage
 
 * Introduction
 
-  The EAR plugin allows to generate automatically the descriptor deployment, e.g.
-  application.xml. This generation is already customized by the goal's
+  The EAR Plugin allows to generate automatically the deployment descriptor, e.g.
+  <<<application.xml>>>. This generation is already customized by the goal's
   parameters, see {{{plugin-info.html}the goals description}}.
 
 * Configuring the EAR Plugin
 
-  The configuration of the EAR Plugin is not any different with the configuration
+  The configuration of the EAR Plugin is not any different to the configuration
   of the other plugins. The configuration should be similar to:
 
 +-----
@@ -55,14 +55,14 @@ Configuration and Usage
 </project>
 +-----
 
-  When configuring the EAR Plugin in your pom.xml, you do not declare any
-  \<executions\> elements in it because it is always invoked at least once
-  during the package phase of an <<<ear>>> project.
+  When configuring the EAR Plugin in your <<<pom.xml>>>, you do not declare any
+  <<<\<executions\>>>> elements in it because it is always invoked at least once
+  during the <<<package>>> phase of an <<<ear>>> project.
 
 * Executing and Generating your EAR Package
 
-  The EAR Plugin replaces the Jar Plugin when your project \<packaging\> is
-  <<<ear>>>. So to generate your EAR package, you need only call the package
+  The EAR Plugin replaces the JAR Plugin when your project <<<\<packaging\>>>> is
+  <<<ear>>>. So to generate your EAR package, you need only call the <<<package>>>
   phase like so:
 
 +-----
@@ -73,9 +73,9 @@ mvn package
 
   The default resource directory for an EAR is <<<src/main/application>>> as
   defined by the <<<earSourcesDirectory>>> parameter. The content of this
-  directory may be filterd if necessary using the <<<filtering>>> parameter.
+  directory may be filtered if necessary using the <<<filtering>>> parameter.
 
-  For more details, have a look to the examples.
+  For more details, have a look at the examples.
 
 * Advanced Configuration
 
@@ -88,25 +88,25 @@ mvn package
 
    * <<uri>>: the complete path in the EAR structure for the artifact.
 
-   * <<excluded>>: excludes the artifact from the generated ear.
+   * <<excluded>>: excludes the artifact from the generated EAR.
 
-   * <<unpack>>: unpack the artifact in the generated ear.
+   * <<unpack>>: unpack the artifact in the generated EAR.
 
-  The context root of a Web module might be customized using the contextRoot
+  The context root of a Web module might be customized using the <<<contextRoot>>>
   parameter.
 
   Please note that third party libraries (i.e. JarModule) are not included
-  in the generated application.xml (only ejb-client should be included in
-  a <java> entry). However, a jar dependency could be included in the
-  generated application.xml by specifying the <<<includeInApplicationXml>>> flag.
+  in the generated <<<application.xml>>> (only <<<ejb-client>>> should be included in
+  a <java> entry). However, a <<<jar>>> dependency could be included in the
+  generated <<<application.xml>>> by specifying the <<<includeInApplicationXml>>> flag.
 
   It is also possible to specify a default bundle directory for all third party
   libraries by specifying the <<<defaultLibBundleDir>>> parameter.
 
-  The security settings might be specified under the security parameter.
+  The security settings might be specified under the <<<security>>> parameter.
 
   The artifact's types that should be unpacked by default can be specified
-  using the unpackTypes parameter
+  using the <<<unpackTypes>>> parameter.
 
   The file name mapping to use for artifacts stored in the EAR can be specified
   using the <<<fileNameMapping>>> parameter. Valid values for this parameter
@@ -124,26 +124,26 @@ mvn package
 
 * JBoss support
 
-  The EAR plugin can generate the jboss-app.xml automatically. To do so, the 'jboss'
+  The EAR Plugin can generate the <<<jboss-app.xml>>> automatically. To do so, the <<<\<jboss\>>>>
   element must be configured and takes the following child elements:
 
    * <<version>>: the targeted JBoss version to use, 3.2, 4, 4.2 or 5 (the default is 4).
 
-   * <<library-directory>>: the directory where libraries can be found in the ear (JBoss 4.2+ only)
+   * <<library-directory>>: the directory where libraries can be found in the EAR (JBoss 4.2+ only).
 
-   * <<security-domain>>: the JNDI name of the security manager (JBoss 4+ only)
+   * <<security-domain>>: the JNDI name of the security manager (JBoss 4+ only).
 
-   * <<unauthenticated-principal>>: the unauthenticated principal (JBoss 4+ only)
+   * <<unauthenticated-principal>>: the unauthenticated principal (JBoss 4+ only).
 
-   * <<loader-repository>>: the name of the UnifiedLoaderRepository MBean to use for the ear to provide
+   * <<loader-repository>>: the name of the UnifiedLoaderRepository MBean to use for the EAR to provide
      ear level scoping of classes deployed in the ear. It can have a <<loaderRepositoryClass>> attribute
-     that defines the class loader repository class to use
+     that defines the class loader repository class to use.
 
    * <<loader-repository-config>>: the class loader repository configuration. If no <<loader-repository>>
      element is defined, a default one is added. It can have a <<configParserClass>> attribute that defines
      the class loader's configuration parser class to use.
      
-   The pom snippet below fully configures the following loader repository
+   The POM snippet below fully configures the following loader repository
 
 +-----
 <loader-repository loaderRepositoryClass='dot.com.LoaderRepository'>
@@ -168,11 +168,11 @@ mvn package
 </configuration>
 +-----
    
-   * <<jmx-name>>: the object name of the ear mbean.
+   * <<jmx-name>>: the object name of the EAR MBean.
 
-   * <<module-order>>: specify the order in which the modules specified in the application.xml file gets loaded (JBoss 4.2+ only)
+   * <<module-order>>: specify the order in which the modules specified in the <<<application.xml>>> file gets loaded (JBoss 4.2+ only).
 
-   * <<data-sources>>: specify the desired data source(s) to add into the jboss-app.xml, usage is as follows:
+   * <<data-sources>>: specify the desired data source(s) to add into the <<<jboss-app.xml>>>, usage is as follows:
 
 +-----
 <configuration>
@@ -189,7 +189,7 @@ mvn package
   
 
   Hibernate archives (HAR) and Service archives (SAR) will be recognized automatically
-  and added the the jboss-app.xml file.
+  and added the the <<<jboss-app.xml>>> file.
 
   You can take a look at the examples for more information on the JBoss support.
 
