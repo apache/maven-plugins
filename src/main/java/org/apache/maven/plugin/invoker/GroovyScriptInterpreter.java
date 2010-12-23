@@ -25,7 +25,6 @@ import groovy.lang.GroovyShell;
 import java.io.File;
 import java.io.PrintStream;
 import java.io.PrintWriter;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -45,7 +44,7 @@ class GroovyScriptInterpreter
     /**
      * {@inheritDoc}
      */
-    public Object evaluateScript( String script, List classPath, Map globalVariables, PrintStream scriptOutput )
+    public Object evaluateScript( String script, List<String> classPath, Map<String, ? extends Object> globalVariables, PrintStream scriptOutput )
         throws ScriptEvaluationException
     {
         PrintStream origOut = System.out;
@@ -66,9 +65,8 @@ class GroovyScriptInterpreter
             if ( classPath != null && !classPath.isEmpty() )
             {
                 AntClassLoader childFirstLoader = new AntClassLoader( getClass().getClassLoader(), false );
-                for ( Iterator it = classPath.iterator(); it.hasNext(); )
+                for ( String path : classPath )
                 {
-                    String path = (String) it.next();
                     childFirstLoader.addPathComponent( new File( path ) );
                 }
                 loader = childFirstLoader;

@@ -227,6 +227,7 @@ under the License.
             <model>src/main/mdo/invocation.mdo</model>
           </models>
           <version>1.0.0</version>
+          <useJava5>true</useJava5>
         </configuration>
       </plugin>
     </plugins>

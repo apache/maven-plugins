@@ -21,7 +21,6 @@ package org.apache.maven.plugin.invoker;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.maven.plugin.MojoFailureException;
@@ -36,22 +35,22 @@ import org.apache.maven.plugin.logging.Log;
 class InvokerSession
 {
 
-    private List buildJobs;
+    private List<BuildJob> buildJobs;
 
-    private List failedJobs;
+    private List<BuildJob> failedJobs;
 
-    private List errorJobs;
+    private List<BuildJob> errorJobs;
 
-    private List successfulJobs;
+    private List<BuildJob> successfulJobs;
 
-    private List skippedJobs;
+    private List<BuildJob> skippedJobs;
 
     /**
      * Creates a new empty session.
      */
     public InvokerSession()
     {
-        buildJobs = new ArrayList();
+        buildJobs = new ArrayList<BuildJob>();
     }
 
     /**
@@ -61,7 +60,7 @@ class InvokerSession
      */
     public InvokerSession( BuildJob[] buildJobs )
     {
-        this.buildJobs = new ArrayList( Arrays.asList( buildJobs ) );
+        this.buildJobs = new ArrayList<BuildJob>( Arrays.asList( buildJobs ) );
     }
 
     /**
@@ -81,9 +80,9 @@ class InvokerSession
      * 
      * @param buildJobs The build jobs to set, must not be <code>null</code>.
      */
-    public void setJobs( List buildJobs )
+    public void setJobs( List<? extends BuildJob> buildJobs )
     {
-        this.buildJobs = new ArrayList( buildJobs );
+        this.buildJobs = new ArrayList<BuildJob>( buildJobs );
 
         resetStats();
     }
@@ -93,7 +92,7 @@ class InvokerSession
      * 
      * @return The build jobs in this session, can be empty but never <code>null</code>.
      */
-    public List getJobs()
+    public List<BuildJob> getJobs()
     {
         return buildJobs;
     }
@@ -103,7 +102,7 @@ class InvokerSession
      * 
      * @return The successful build jobs in this session, can be empty but never <code>null</code>.
      */
-    public List getSuccessfulJobs()
+    public List<BuildJob> getSuccessfulJobs()
     {
         updateStats();
 
@@ -115,7 +114,7 @@ class InvokerSession
      * 
      * @return The failed build jobs in this session, can be empty but never <code>null</code>.
      */
-    public List getFailedJobs()
+    public List<BuildJob> getFailedJobs()
     {
         updateStats();
 
@@ -127,7 +126,7 @@ class InvokerSession
      *
      * @return The build jobs in error for this session, can be empty but never <code>null</code>.
      */
-    public List getErrorJobs()
+    public List<BuildJob> getErrorJobs()
     {
         updateStats();
 
@@ -139,7 +138,7 @@ class InvokerSession
      * 
      * @return The skipped build jobs in this session, can be empty but never <code>null</code>.
      */
-    public List getSkippedJobs()
+    public List<BuildJob> getSkippedJobs()
     {
         updateStats();
 
@@ -161,15 +160,13 @@ class InvokerSession
             return;
         }
 
-        successfulJobs = new ArrayList();
-        failedJobs = new ArrayList();
-        skippedJobs = new ArrayList();
-        errorJobs = new ArrayList();
+        successfulJobs = new ArrayList<BuildJob>();
+        failedJobs = new ArrayList<BuildJob>();
+        skippedJobs = new ArrayList<BuildJob>();
+        errorJobs = new ArrayList<BuildJob>();
 
-        for ( Iterator iterator = buildJobs.iterator(); iterator.hasNext(); )
+        for ( BuildJob buildJob : buildJobs )
         {
-            BuildJob buildJob = (BuildJob) iterator.next();
-
             if ( BuildJob.Result.SUCCESS.equals( buildJob.getResult() ) )
             {
                 successfulJobs.add( buildJob );
@@ -219,10 +216,8 @@ class InvokerSession
                 logger.error( heading );
             }
 
-            for ( Iterator it = failedJobs.iterator(); it.hasNext(); )
+            for ( BuildJob buildJob : failedJobs )
             {
-                BuildJob buildJob = (BuildJob) it.next();
-
                 String item = "*  " + buildJob.getProject();
                 if ( ignoreFailures )
                 {

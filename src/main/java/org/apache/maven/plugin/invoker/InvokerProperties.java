@@ -201,13 +201,13 @@ class InvokerProperties
         String goals = get( GOALS, index );
         if ( goals != null )
         {
-            request.setGoals( new ArrayList( Arrays.asList( StringUtils.split( goals, ", \t\n\r\f" ) ) ) );
+            request.setGoals( new ArrayList<String>( Arrays.asList( StringUtils.split( goals, ", \t\n\r\f" ) ) ) );
         }
 
         String profiles = get( PROFILES, index );
         if ( profiles != null )
         {
-            request.setProfiles( new ArrayList( Arrays.asList( StringUtils.split( profiles, ", \t\n\r\f" ) ) ) );
+            request.setProfiles( new ArrayList<String>( Arrays.asList( StringUtils.split( profiles, ", \t\n\r\f" ) ) ) );
         }
 
         String mvnOpts = get( MAVEN_OPTS, index );

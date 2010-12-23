@@ -35,7 +35,7 @@ import org.codehaus.plexus.util.introspection.ReflectionValueExtractor;
  * @version $Id$
  */
 class CompositeMap
-    implements Map
+    implements Map<String, Object>
 {
 
     /**
@@ -46,7 +46,7 @@ class CompositeMap
     /**
      * The set of additional properties from which to extract interpolated values, never <code>null</code>.
      */
-    private Map properties;
+    private Map<String, Object> properties;
 
     /**
      * Creates a new interpolation source backed by the specified Maven project and some user-specified properties.
@@ -55,14 +55,14 @@ class CompositeMap
      * @param properties The set of additional properties from which to extract interpolated values, may be
      *            <code>null</code>.
      */
-    protected CompositeMap( MavenProject mavenProject, Map properties )
+    protected CompositeMap( MavenProject mavenProject, Map<String, Object> properties )
     {
         if ( mavenProject == null )
         {
             throw new IllegalArgumentException( "no project specified" );
         }
         this.mavenProject = mavenProject;
-        this.properties = properties == null ? new Properties() : properties;
+        this.properties = properties == null ? (Map) new Properties() : properties;
     }
 
     /**
@@ -122,7 +122,7 @@ class CompositeMap
      * 
      * @see java.util.Map#entrySet()
      */
-    public Set entrySet()
+    public Set<Entry<String, Object>> entrySet()
     {
         throw new UnsupportedOperationException();
     }
@@ -177,7 +177,7 @@ class CompositeMap
      * 
      * @see java.util.Map#keySet()
      */
-    public Set keySet()
+    public Set<String> keySet()
     {
         throw new UnsupportedOperationException();
     }
@@ -187,7 +187,7 @@ class CompositeMap
      * 
      * @see java.util.Map#put(java.lang.Object, java.lang.Object)
      */
-    public Object put( Object key, Object value )
+    public Object put( String key, Object value )
     {
         throw new UnsupportedOperationException();
     }
@@ -197,7 +197,7 @@ class CompositeMap
      * 
      * @see java.util.Map#putAll(java.util.Map)
      */
-    public void putAll( Map t )
+    public void putAll( Map<? extends String, ? extends Object> t )
     {
         throw new UnsupportedOperationException();
     }
@@ -227,7 +227,7 @@ class CompositeMap
      * 
      * @see java.util.Map#values()
      */
-    public Collection values()
+    public Collection<Object> values()
     {
         throw new UnsupportedOperationException();
     }

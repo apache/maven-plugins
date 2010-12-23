@@ -52,7 +52,7 @@ public class InvokerMojoTest
         setVariableValueToObject( invokerMojo, "project", project );
         setVariableValueToObject( invokerMojo, "settings", new Settings() );
         String dirPath = getBasedir() + "/src/test/resources/unit/goals-from-file/";
-        List goals = invokerMojo.getGoals( new File( dirPath ) );
+        List<String> goals = invokerMojo.getGoals( new File( dirPath ) );
         assertEquals( 3, goals.size() );
     }
 
@@ -62,7 +62,7 @@ public class InvokerMojoTest
         InvokerMojo invokerMojo = new InvokerMojo();
         setVariableValueToObject( invokerMojo, "goalsFile", "validate-goal.txt" );
         String dirPath = getBasedir() + "/src/test/resources/unit";
-        List goals = invokerMojo.getGoals( new File( dirPath ) );
+        List<String> goals = invokerMojo.getGoals( new File( dirPath ) );
         assertEquals( 1, goals.size() );
         setVariableValueToObject( invokerMojo, "projectsDirectory", new File( dirPath ) );
         setVariableValueToObject( invokerMojo, "invokerTest", "*dummy*" );
@@ -77,7 +77,7 @@ public class InvokerMojoTest
         InvokerMojo invokerMojo = new InvokerMojo();
         setVariableValueToObject( invokerMojo, "goalsFile", "validate-goal.txt" );
         String dirPath = getBasedir() + "/src/test/resources/unit";
-        List goals = invokerMojo.getGoals( new File( dirPath ) );
+        List<String> goals = invokerMojo.getGoals( new File( dirPath ) );
         assertEquals( 1, goals.size() );
         setVariableValueToObject( invokerMojo, "projectsDirectory", new File( dirPath ) );
         setVariableValueToObject( invokerMojo, "invokerTest", "*dummy*,*terpolatio*" );
@@ -92,7 +92,7 @@ public class InvokerMojoTest
         InvokerMojo invokerMojo = new InvokerMojo();
         setVariableValueToObject( invokerMojo, "goalsFile", "validate-goal.txt" );
         String dirPath = getBasedir() + "/src/test/resources/unit";
-        List goals = invokerMojo.getGoals( new File( dirPath ) );
+        List<String> goals = invokerMojo.getGoals( new File( dirPath ) );
         assertEquals( 1, goals.size() );
         setVariableValueToObject( invokerMojo, "projectsDirectory", new File( dirPath ) );
         setVariableValueToObject( invokerMojo, "invokerTest", "*" );
@@ -104,7 +104,7 @@ public class InvokerMojoTest
     public void testAlreadyCloned()
         throws Exception
     {
-        assertFalse( AbstractInvokerMojo.alreadyCloned( "dir", Collections.EMPTY_LIST ) );
+        assertFalse( AbstractInvokerMojo.alreadyCloned( "dir", Collections.<String>emptyList() ) );
         assertTrue( AbstractInvokerMojo.alreadyCloned( "dir", Collections.singletonList( "dir" ) ) );
         assertTrue( AbstractInvokerMojo.alreadyCloned( "dir" + File.separator + "sub", Collections.singletonList( "dir" ) ) );
         assertFalse( AbstractInvokerMojo.alreadyCloned( "dirs", Collections.singletonList( "dir" ) ) );

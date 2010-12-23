@@ -22,7 +22,6 @@ package org.apache.maven.plugin.invoker;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -44,7 +43,7 @@ class BeanShellScriptInterpreter
     /**
      * {@inheritDoc}
      */
-    public Object evaluateScript( String script, List classPath, Map globalVariables, PrintStream scriptOutput )
+    public Object evaluateScript( String script, List<String> classPath, Map<String, ? extends Object> globalVariables, PrintStream scriptOutput )
         throws ScriptEvaluationException
     {
         PrintStream origOut = System.out;
@@ -79,9 +78,8 @@ class BeanShellScriptInterpreter
 
             if ( classPath != null && !classPath.isEmpty() )
             {
-                for ( Iterator it = classPath.iterator(); it.hasNext(); )
+                for ( String path : classPath)
                 {
-                    String path = (String) it.next();
                     try
                     {
                         engine.getClassManager().addClassPath( new File( path ).toURI().toURL() );
@@ -95,9 +93,8 @@ class BeanShellScriptInterpreter
 
             if ( globalVariables != null )
             {
-                for ( Iterator it = globalVariables.keySet().iterator(); it.hasNext(); )
+                for ( String variable : globalVariables.keySet() )
                 {
-                    String variable = (String) it.next();
                     Object value = globalVariables.get( variable );
                     try
                     {

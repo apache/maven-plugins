@@ -25,10 +25,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
@@ -115,7 +115,7 @@ public class InstallMojo
      * @parameter default-value="${reactorProjects}"
      * @readonly
      */
-    private Collection reactorProjects;
+    private Collection<MavenProject> reactorProjects;
 
     /**
      * A flag used to disable the installation procedure. This is primarily intended for usage from the command line to
@@ -129,12 +129,12 @@ public class InstallMojo
     /**
      * The identifiers of already installed artifacts, used to avoid multiple installation of the same artifact.
      */
-    private Collection installedArtifacts;
+    private Collection<String> installedArtifacts;
 
     /**
      * The identifiers of already copied artifacts, used to avoid multiple installation of the same artifact.
      */
-    private Collection copiedArtifacts;
+    private Collection<String> copiedArtifacts;
 
     /**
      * Extra dependencies that need to be installed on the local repository.<BR>
@@ -168,13 +168,13 @@ public class InstallMojo
      * @parameter default-value="${project.remoteArtifactRepositories}"
      * @readonly
      */
-    private List remoteArtifactRepositories;
+    private List<ArtifactRepository> remoteArtifactRepositories;
 
     /**
      * @parameter default-value="${project.pluginArtifactRepositories}"
      * @readonly
      */
-    private List remotePluginRepositories;
+    private List<ArtifactRepository> remotePluginRepositories;
 
     /**
      * @component
@@ -197,8 +197,8 @@ public class InstallMojo
 
         ArtifactRepository testRepository = createTestRepository();
 
-        installedArtifacts = new HashSet();
-        copiedArtifacts = new HashSet();
+        installedArtifacts = new HashSet<String>();
+        copiedArtifacts = new HashSet<String>();
 
         installProjectDependencies( project, reactorProjects, testRepository );
         installProjectParents( project, testRepository );
@@ -368,10 +368,9 @@ public class InstallMojo
             }
 
             // Install any attached project artifacts
-            Collection attachedArtifacts = mvnProject.getAttachedArtifacts();
-            for ( Iterator artifactIter = attachedArtifacts.iterator(); artifactIter.hasNext(); )
+            Collection<Artifact> attachedArtifacts = mvnProject.getAttachedArtifacts();
+            for ( Artifact attachedArtifact : attachedArtifacts )
             {
-                Artifact attachedArtifact = (Artifact) artifactIter.next();
                 installArtifact( attachedArtifact.getFile(), attachedArtifact, testRepository );
             }
         }
@@ -450,16 +449,14 @@ public class InstallMojo
      * @param testRepository The local repository to install the POMs to, must not be <code>null</code>.
      * @throws MojoExecutionException If any dependency could not be installed.
      */
-    private void installProjectDependencies( MavenProject mvnProject, Collection reactorProjects,
+    private void installProjectDependencies( MavenProject mvnProject, Collection<MavenProject> reactorProjects,
                                              ArtifactRepository testRepository )
         throws MojoExecutionException
     {
         // index available reactor projects
-        Map projects = new HashMap();
-        for ( Iterator it = reactorProjects.iterator(); it.hasNext(); )
+        Map<String, MavenProject> projects = new HashMap<String, MavenProject>();
+        for ( MavenProject reactorProject : reactorProjects )
         {
-            MavenProject reactorProject = (MavenProject) it.next();
-
             String projectId =
                 reactorProject.getGroupId() + ':' + reactorProject.getArtifactId() + ':' + reactorProject.getVersion();
 
@@ -467,15 +464,13 @@ public class InstallMojo
         }
 
         // group transitive dependencies (even those that don't contribute to the class path like POMs) ...
-        Collection artifacts = mvnProject.getArtifacts();
+        Collection<Artifact> artifacts = mvnProject.getArtifacts();
         // ... into dependencies that were resolved from reactor projects ...
-        Collection dependencyProjects = new LinkedHashSet();
+        Collection<String> dependencyProjects = new LinkedHashSet<String>();
         // ... and those that were resolved from the (local) repo
-        Collection dependencyArtifacts = new LinkedHashSet();
-        for ( Iterator it = artifacts.iterator(); it.hasNext(); )
+        Collection<Artifact> dependencyArtifacts = new LinkedHashSet<Artifact>();
+        for ( Artifact artifact : artifacts )
         {
-            Artifact artifact = (Artifact) it.next();
-
             // workaround for MNG-2961 to ensure the base version does not contain a timestamp
             artifact.isSnapshot();
 
@@ -495,19 +490,15 @@ public class InstallMojo
         try
         {
             // copy dependencies that where resolved from the local repo
-            for ( Iterator it = dependencyArtifacts.iterator(); it.hasNext(); )
+            for ( Artifact artifact : dependencyArtifacts )
             {
-                Artifact artifact = (Artifact) it.next();
-
                 copyArtifact( artifact, testRepository );
             }
 
             // install dependencies that were resolved from the reactor
-            for ( Iterator it = dependencyProjects.iterator(); it.hasNext(); )
+            for ( String projectId : dependencyProjects )
             {
-                String projectId = (String) it.next();
-
-                MavenProject dependencyProject = (MavenProject) projects.get( projectId );
+                MavenProject dependencyProject = projects.get( projectId );
 
                 installProjectArtifacts( dependencyProject, testRepository );
                 installProjectParents( dependencyProject, testRepository );
@@ -630,7 +621,7 @@ public class InstallMojo
                 classifier = gav[4];
             }
 
-            List remoteRepositories;
+            List<ArtifactRepository> remoteRepositories;
             if ( "maven-plugin".equals( type ) )
             {
                 remoteRepositories = this.remotePluginRepositories;
@@ -657,9 +648,9 @@ public class InstallMojo
                     copyPoms( artifact, testRepository );
                 }
 
-                for ( Iterator iterator = arr.getArtifacts().iterator(); iterator.hasNext(); )
+                for ( Artifact arrArtifact : (Set<Artifact>) arr.getArtifacts() )
                 {
-                    copyArtifact( (Artifact) iterator.next(), testRepository );
+                    copyArtifact( arrArtifact, testRepository );
                 }
             }
             catch ( Exception e )
