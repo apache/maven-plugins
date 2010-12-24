@@ -302,7 +302,7 @@ under the License.
             <type>DueTo</type>
             <multiplicity>*</multiplicity>
           </association>
-          <description>A list of contibutors for this issue.</description>
+          <description>A list of contributors for this issue.</description>
         </field>
       </fields>
       <codeSegments>
