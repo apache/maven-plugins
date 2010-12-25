@@ -93,7 +93,7 @@ under the License.
       <name>Body</name>
       <version>1.0.0</version>
       <fields>
-        <field xml.tagName="release">
+        <field>
           <name>releases</name>
           <version>1.0.0</version>
           <association xml.itemsStyle="flat">
@@ -138,7 +138,7 @@ under the License.
             A short description of this release.
           </description>
         </field>
-        <field xml.tagName="action">
+        <field>
           <name>actions</name>
           <version>1.0.0</version>
           <association xml.itemsStyle="flat">
@@ -286,7 +286,7 @@ under the License.
           <type>String</type>
           <description>fix date</description>
         </field>
-        <field xml.tagName="fixes">
+        <field>
           <name>fixedIssues</name>
           <version>1.0.0</version>
           <association xml.itemsStyle="flat" xml.tagName="fixes">
@@ -295,7 +295,7 @@ under the License.
           </association>
           <description>A list of fix issues.</description>
         </field>
-        <field xml.tagName="dueto">
+        <field>
           <name>dueTos</name>
           <version>1.0.0</version>
           <association xml.itemsStyle="flat" xml.tagName="dueto">
