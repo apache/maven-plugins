@@ -20,9 +20,9 @@ package org.apache.maven.plugin.changes.schema;
  */
 
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Reader;
 import java.util.Map;
 
 import javax.xml.transform.stream.StreamSource;
@@ -31,6 +31,8 @@ import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
 import org.codehaus.plexus.util.FastMap;
+import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.xml.XmlStreamReader;
 import org.xml.sax.SAXException;
 
 /**
@@ -55,6 +57,7 @@ public class DefaultChangesSchemaValidator
     public XmlValidationHandler validateXmlWithSchema( File file, String schemaVersion, boolean failOnValidationError )
         throws SchemaValidatorException
     {
+        Reader reader = null;
         try
         {
             String schemaPath = CHANGES_SCHEMA_PATH + "changes-" + schemaVersion + ".xsd";
@@ -67,7 +70,9 @@ public class DefaultChangesSchemaValidator
 
             validator.setErrorHandler( baseHandler );
 
-            validator.validate( new StreamSource( new FileReader( file ) ) );
+            reader = new XmlStreamReader( file );
+
+            validator.validate( new StreamSource( reader ) );
 
             return baseHandler;
         }
@@ -82,6 +87,10 @@ public class DefaultChangesSchemaValidator
         catch ( Exception e )
         {
             throw new SchemaValidatorException( "Exception : " + e.getMessage(), e );
+        }
+        finally
+        {
+            IOUtil.close( reader );
         }
     }
 
@@ -115,9 +124,15 @@ public class DefaultChangesSchemaValidator
             throw new NullPointerException( " impossible to load schema with path " + uriSchema );
         }
 
-        //newInstance de SchemaFactory not ThreadSafe
-        return SchemaFactory.newInstance( W3C_XML_SCHEMA ).newSchema( new StreamSource( is ) );
-
+        try
+        {
+            //newInstance de SchemaFactory not ThreadSafe
+            return SchemaFactory.newInstance( W3C_XML_SCHEMA ).newSchema( new StreamSource( is ) );
+        }
+        finally
+        {
+            IOUtil.close( is );
+        }
     }
 
     /**
@@ -136,6 +151,4 @@ public class DefaultChangesSchemaValidator
         }
 
     }
-
-
 }
