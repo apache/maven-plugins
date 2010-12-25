@@ -59,10 +59,6 @@ public class ReleaseUtils
     public Release getLatestRelease( List releases, String pomVersion )
         throws MojoExecutionException
     {
-        boolean isFound = false;
-
-        Release release = null;
-
         // Remove "-SNAPSHOT" from the end, if it's there
         if ( pomVersion != null && pomVersion.endsWith( SNAPSHOT_SUFFIX ) )
         {
@@ -70,10 +66,9 @@ public class ReleaseUtils
         }
         getLog().debug( "Found " + releases.size() + " releases." );
 
-        release = getRelease( releases, pomVersion );
-        isFound = ( release != null );
+        Release release = getRelease( releases, pomVersion );
 
-        if ( !isFound )
+        if ( release == null )
         {
             throw new MojoExecutionException( "Couldn't find the release '" + pomVersion
                 + "' among the supplied releases." );
