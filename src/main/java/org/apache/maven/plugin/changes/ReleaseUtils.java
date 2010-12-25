@@ -70,27 +70,6 @@ public class ReleaseUtils
         }
         getLog().debug( "Found " + releases.size() + " releases." );
 
-        for ( int i = 0; i < releases.size(); i++ )
-        {
-            release = (Release) releases.get( i );
-            if ( getLog().isDebugEnabled() )
-            {
-                getLog().debug( "The release: " + release.getVersion()
-                    + " has " + release.getActions().size() + " actions." );
-            }
-
-            if ( release.getVersion() != null && release.getVersion().equals( pomVersion ) )
-            {
-                isFound = true;
-                if ( getLog().isDebugEnabled() )
-                {
-                    getLog().debug( "Found the correct release: " + release.getVersion() );
-                    logRelease( release );
-                }
-                return release;
-            }
-        }
-
         release = getRelease( releases, pomVersion );
         isFound = ( release != null );
 
