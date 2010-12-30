@@ -84,6 +84,7 @@ public class JiraReportGenerator
      * @param columnNames The names of the columns to include in the report
      * @param currentVersion The current version of the project
      * @param onlyCurrentVersion If only issues for the current version will be included in the report
+     * @todo Move reading of xml file to JiraMojo and feed an issueList to this report generator
      */
     public JiraReportGenerator( File xmlFile, String columnNames, String currentVersion, boolean onlyCurrentVersion )
         throws MavenReportException
@@ -140,7 +141,7 @@ public class JiraReportGenerator
 
         if ( onlyCurrentVersion )
         {
-            issueList = getIssuesForCurrentRelease( issueList );
+            issueList = getIssuesForVersion( issueList, currentVersion );
             log.info( "The JIRA Report will contain issues only for the current version." );
         }
 
@@ -371,33 +372,35 @@ public class JiraReportGenerator
     }
 
     /**
-     * Find the issues for only the current release, by matching the "Fix for"
-     * version in the supplied list of issues with the current version from the
-     * pom. If the current version is a SNAPSHOT, then that part of the version
+     * Find the issues for only the supplied version, by matching the "Fix for"
+     * version in the supplied list of issues with the supplied version.
+     * If the supplied version is a SNAPSHOT, then that part of the version
      * will be removed prior to the matching.
      *
-     * @param allIssues A list of all issues from JIRA
-     * @return A <code>List</code> of issues for the current release of the current project
+     * @param issues A list of issues from JIRA
+     * @param version The version that issues should be returned for
+     * @return A <code>List</code> of issues for the supplied version
      * @throws org.apache.maven.plugin.MojoExecutionException
-     *          If no issues could be found for the current release
+     *          If no issues could be found for the supplied version
+     * @todo Move to a helper class - it has nothing to do with the report
      */
-    public List getIssuesForCurrentRelease( List allIssues )
+    public static List getIssuesForVersion( List issues, String version )
         throws MojoExecutionException
     {
         List currentReleaseIssues = new ArrayList();
         boolean isFound = false;
         JiraIssue issue = null;
-        String releaseVersion = currentVersion;
+        String releaseVersion = version;
 
         // Remove "-SNAPSHOT" from the end of the version, if it's there
-        if ( currentVersion != null && currentVersion.endsWith( SNAPSHOT_SUFFIX ) )
+        if ( version != null && version.endsWith( SNAPSHOT_SUFFIX ) )
         {
-            releaseVersion = currentVersion.substring( 0, currentVersion.length() - SNAPSHOT_SUFFIX.length() );
+            releaseVersion = version.substring( 0, version.length() - SNAPSHOT_SUFFIX.length() );
         }
 
-        for ( int i = 0; i < allIssues.size(); i++ )
+        for ( int i = 0; i < issues.size(); i++ )
         {
-            issue = (JiraIssue) allIssues.get( i );
+            issue = (JiraIssue) issues.get( i );
 
             if ( issue.getFixVersions() != null && issue.getFixVersions().contains( releaseVersion ) )
             {
