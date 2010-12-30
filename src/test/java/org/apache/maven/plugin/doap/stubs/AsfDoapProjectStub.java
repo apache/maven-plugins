@@ -23,6 +23,7 @@ import java.io.File;
 import java.util.List;
 
 import org.apache.maven.model.Developer;
+import org.apache.maven.model.DistributionManagement;
 import org.apache.maven.model.IssueManagement;
 import org.apache.maven.model.License;
 import org.apache.maven.model.Model;
@@ -103,5 +104,23 @@ public class AsfDoapProjectStub
     public IssueManagement getIssueManagement()
     {
         return model.getIssueManagement();
+    }
+
+    @Override
+    public String getDescription()
+    {
+        return model.getDescription();
+    }
+
+    @Override
+    public String getInceptionYear()
+    {
+        return model.getInceptionYear();
+    }
+
+    @Override
+    public DistributionManagement getDistributionManagement()
+    {
+        return model.getDistributionManagement();
     }
 }
