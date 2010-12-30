@@ -29,6 +29,7 @@ import java.util.Map;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.changes.ChangesXML;
+import org.apache.maven.plugin.changes.ProjectUtils;
 import org.apache.maven.plugin.changes.ReleaseUtils;
 import org.apache.maven.plugin.jira.JiraAdapter;
 import org.apache.maven.plugin.jira.JiraXML;
@@ -341,7 +342,7 @@ public class AnnouncementMojo
             {
                 ChangesXML changesXML =  new ChangesXML( getXmlPath(), getLog() );
                 List changesReleases = changesXML.getReleaseList();
-                if ( validateIfIssueManagementComplete() )
+                if ( ProjectUtils.validateIfIssueManagementComplete( project, "JIRA", "JIRA announcement", getLog() ) )
                 {
                     List jiraReleases = getJiraReleases();
                     List mergedReleases = releaseUtils.mergeReleases( changesReleases, jiraReleases );
@@ -518,7 +519,7 @@ public class AnnouncementMojo
     public void doJiraGenerate()
         throws MojoExecutionException
     {
-        if ( validateIfIssueManagementComplete() )
+        if ( ProjectUtils.validateIfIssueManagementComplete( project, "JIRA", "JIRA announcement", getLog() ) )
         {
             List releases = getJiraReleases();
 
@@ -586,34 +587,6 @@ public class AnnouncementMojo
         {
             throw new MojoExecutionException( "Failed to extract JIRA issues from the downloaded file", e );
         }
-    }
-
-    /**
-     * This method was copied from JiraMojo and modified.
-     */
-    private boolean validateIfIssueManagementComplete()
-    {
-        if ( project.getIssueManagement() == null )
-        {
-            getLog().error( "No Issue Management set. No JIRA announcement will be made." );
-
-            return false;
-        }
-        else if ( ( project.getIssueManagement().getUrl() == null )
-            || ( project.getIssueManagement().getUrl().trim().equals( "" ) ) )
-        {
-            getLog().error( "No URL set in Issue Management. No JIRA announcement will be made." );
-
-            return false;
-        }
-        else if ( ( project.getIssueManagement().getSystem() != null )
-            && !( project.getIssueManagement().getSystem().equalsIgnoreCase( "jira" ) ) )
-        {
-            getLog().error( "No JIRA Issue Management system configured. No JIRA announcement will be made." );
-
-            return false;
-        }
-        return true;
     }
 
     /*

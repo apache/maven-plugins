@@ -25,6 +25,7 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 import org.apache.maven.plugin.changes.AbstractChangesReport;
+import org.apache.maven.plugin.changes.ProjectUtils;
 import org.apache.maven.reporting.MavenReportException;
 import org.apache.maven.settings.Settings;
 
@@ -229,7 +230,7 @@ public class JiraMojo
      */
     public boolean canGenerateReport()
     {
-        return validateIfIssueManagementComplete();
+        return ProjectUtils.validateIfIssueManagementComplete( project, "JIRA", "JIRA Report", getLog() );
     }
 
     public void executeReport( Locale locale )
@@ -334,30 +335,5 @@ public class JiraMojo
         jira.setWebPassword( webPassword );
 
         jira.setSettings( settings );
-    }
-
-    private boolean validateIfIssueManagementComplete()
-    {
-        if ( project.getIssueManagement() == null )
-        {
-            getLog().error( "No Issue Management set. No JIRA Report will be generated." );
-
-            return false;
-        }
-        else if ( ( project.getIssueManagement().getUrl() == null )
-            || ( project.getIssueManagement().getUrl().trim().equals( "" ) ) )
-        {
-            getLog().error( "No URL set in Issue Management. No JIRA Report will be generated." );
-
-            return false;
-        }
-        else if ( ( project.getIssueManagement().getSystem() != null )
-            && !( project.getIssueManagement().getSystem().equalsIgnoreCase( "jira" ) ) )
-        {
-            getLog().error( "The JIRA Report only supports JIRA.  No JIRA Report will be generated." );
-
-            return false;
-        }
-        return true;
     }
 }
