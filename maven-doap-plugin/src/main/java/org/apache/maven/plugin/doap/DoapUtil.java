@@ -38,7 +38,6 @@ import java.util.Set;
 import java.util.Properties;
 
 import org.apache.maven.model.Contributor;
-import org.apache.maven.model.Developer;
 import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
@@ -51,7 +50,7 @@ import com.hp.hpl.jena.rdf.model.RDFReader;
 import com.hp.hpl.jena.rdf.model.impl.RDFDefaultErrorHandler;
 
 /**
- * Utility class for DOAP mojo.
+ * Utility class for {@link DoapMojo} class.
  *
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
