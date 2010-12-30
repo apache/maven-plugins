@@ -113,7 +113,6 @@ public class TracReportGenerator
 
     public void doGenerateReport( ResourceBundle bundle, Sink sink, ArrayList ticketList )
     {
-
         sinkBeginReport( sink, bundle );
 
         constructHeaderRow( sink, ticketList, bundle );
@@ -258,7 +257,9 @@ public class TracReportGenerator
     {
         sink.head();
 
+        sink.title();
         sink.text( bundle.getString( "report.trac.header" ) );
+        sink.title_();
 
         sink.head_();
 
@@ -267,7 +268,6 @@ public class TracReportGenerator
         sink.section1();
 
         sinkSectionTitle1( sink, bundle.getString( "report.trac.header" ) );
-
     }
 
     private void sinkEndReport( Sink sink )
