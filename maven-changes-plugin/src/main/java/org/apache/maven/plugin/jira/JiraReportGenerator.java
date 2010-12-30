@@ -25,7 +25,6 @@ import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.reporting.MavenReportException;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -62,8 +61,6 @@ public class JiraReportGenerator
         /* 9  */ "Fix Version",
         /* 10 */ "Component"
     };
-
-    private static final String SNAPSHOT_SUFFIX = "-SNAPSHOT";
 
     private int[] columnOrder;
 
@@ -141,7 +138,7 @@ public class JiraReportGenerator
 
         if ( onlyCurrentVersion )
         {
-            issueList = getIssuesForVersion( issueList, currentVersion );
+            issueList = JiraHelper.getIssuesForVersion( issueList, currentVersion );
             log.info( "The JIRA Report will contain issues only for the current version." );
         }
 
@@ -369,52 +366,6 @@ public class JiraReportGenerator
         sink.text( text );
 
         sink.sectionTitle1_();
-    }
-
-    /**
-     * Find the issues for only the supplied version, by matching the "Fix for"
-     * version in the supplied list of issues with the supplied version.
-     * If the supplied version is a SNAPSHOT, then that part of the version
-     * will be removed prior to the matching.
-     *
-     * @param issues A list of issues from JIRA
-     * @param version The version that issues should be returned for
-     * @return A <code>List</code> of issues for the supplied version
-     * @throws org.apache.maven.plugin.MojoExecutionException
-     *          If no issues could be found for the supplied version
-     * @todo Move to a helper class - it has nothing to do with the report
-     */
-    public static List getIssuesForVersion( List issues, String version )
-        throws MojoExecutionException
-    {
-        List currentReleaseIssues = new ArrayList();
-        boolean isFound = false;
-        JiraIssue issue = null;
-        String releaseVersion = version;
-
-        // Remove "-SNAPSHOT" from the end of the version, if it's there
-        if ( version != null && version.endsWith( SNAPSHOT_SUFFIX ) )
-        {
-            releaseVersion = version.substring( 0, version.length() - SNAPSHOT_SUFFIX.length() );
-        }
-
-        for ( int i = 0; i < issues.size(); i++ )
-        {
-            issue = (JiraIssue) issues.get( i );
-
-            if ( issue.getFixVersions() != null && issue.getFixVersions().contains( releaseVersion ) )
-            {
-                isFound = true;
-                currentReleaseIssues.add( issue );
-            }
-        }
-
-        if ( !isFound )
-        {
-            throw new MojoExecutionException(
-                "Couldn't find any issues for the version '" + releaseVersion + "' among the supplied issues." );
-        }
-        return currentReleaseIssues;
     }
 
     /**
