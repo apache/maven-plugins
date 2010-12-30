@@ -21,10 +21,8 @@ package org.apache.maven.plugin.jira;
 
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.reporting.MavenReportException;
 
-import java.io.File;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -64,33 +62,17 @@ public class JiraReportGenerator
 
     private int[] columnOrder;
 
-    private String currentVersion = null;
-
-    private JiraXML jira;
-
-    private boolean onlyCurrentVersion = false;
-
     public JiraReportGenerator()
     {
 
     }
 
     /**
-     *
-     * @param xmlFile An xml file containing issues from JIRA
      * @param columnNames The names of the columns to include in the report
-     * @param currentVersion The current version of the project
-     * @param onlyCurrentVersion If only issues for the current version will be included in the report
-     * @todo Move reading of xml file to JiraMojo and feed an issueList to this report generator
      */
-    public JiraReportGenerator( File xmlFile, String columnNames, String currentVersion, boolean onlyCurrentVersion )
+    public JiraReportGenerator( String columnNames )
         throws MavenReportException
     {
-        this.currentVersion = currentVersion;
-        this.onlyCurrentVersion = onlyCurrentVersion;
-
-        jira = new JiraXML( xmlFile );
-
         String[] columnNamesArray = columnNames.split( "," );
         int validColumnNames = 0;
         columnOrder = new int[columnNamesArray.length];
@@ -131,17 +113,9 @@ public class JiraReportGenerator
         sinkEndReport( sink );
     }
 
-    public void doGenerateReport( ResourceBundle bundle, Sink sink, Log log )
+    public void doGenerateReport( ResourceBundle bundle, Sink sink, List issueList )
         throws MojoExecutionException
     {
-        List issueList = jira.getIssueList();
-
-        if ( onlyCurrentVersion )
-        {
-            issueList = JiraHelper.getIssuesForVersion( issueList, currentVersion );
-            log.info( "The JIRA Report will contain issues only for the current version." );
-        }
-
         sinkBeginReport( sink, bundle );
 
         constructHeaderRow( sink, issueList, bundle );
