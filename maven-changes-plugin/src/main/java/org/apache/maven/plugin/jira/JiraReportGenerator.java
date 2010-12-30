@@ -20,7 +20,6 @@ package org.apache.maven.plugin.jira;
  */
 
 import org.apache.maven.doxia.sink.Sink;
-import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.reporting.MavenReportException;
 
 import java.util.Iterator;
@@ -114,7 +113,6 @@ public class JiraReportGenerator
     }
 
     public void doGenerateReport( ResourceBundle bundle, Sink sink, List issueList )
-        throws MojoExecutionException
     {
         sinkBeginReport( sink, bundle );
 
@@ -188,7 +186,6 @@ public class JiraReportGenerator
                     // Do not add a header for this column
                     break;
             }
-
         }
 
         sink.tableRow_();
