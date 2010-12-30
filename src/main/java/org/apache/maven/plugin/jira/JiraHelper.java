@@ -21,10 +21,13 @@ package org.apache.maven.plugin.jira;
 
 import java.text.NumberFormat;
 import java.text.ParsePosition;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.StringTokenizer;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.wagon.proxy.ProxyInfo;
 
@@ -38,6 +41,53 @@ public class JiraHelper
 {
     private static final String PID = "pid=";
 
+    private static final String SNAPSHOT_SUFFIX = "-SNAPSHOT";
+
+    /**
+     * Find the issues for only the supplied version, by matching the "Fix for"
+     * version in the supplied list of issues with the supplied version.
+     * If the supplied version is a SNAPSHOT, then that part of the version
+     * will be removed prior to the matching.
+     *
+     * @param issues A list of issues from JIRA
+     * @param version The version that issues should be returned for
+     * @return A <code>List</code> of issues for the supplied version
+     * @throws org.apache.maven.plugin.MojoExecutionException
+     *          If no issues could be found for the supplied version
+     */
+    public static List getIssuesForVersion( List issues, String version )
+        throws MojoExecutionException
+    {
+        List issuesForVersion = new ArrayList();
+        boolean isFound = false;
+        JiraIssue issue = null;
+        String releaseVersion = version;
+
+        // Remove "-SNAPSHOT" from the end of the version, if it's there
+        if ( version != null && version.endsWith( SNAPSHOT_SUFFIX ) )
+        {
+            releaseVersion = version.substring( 0, version.length() - SNAPSHOT_SUFFIX.length() );
+        }
+
+        for ( int i = 0; i < issues.size(); i++ )
+        {
+            issue = (JiraIssue) issues.get( i );
+
+            if ( issue.getFixVersions() != null && issue.getFixVersions().contains( releaseVersion ) )
+            {
+                isFound = true;
+                issuesForVersion.add( issue );
+            }
+        }
+
+        if ( !isFound )
+        {
+            throw new MojoExecutionException(
+                "Couldn't find any issues for the version '" + releaseVersion + "' among the supplied issues." );
+        }
+        return issuesForVersion;
+    }
+
     /**
      * Try to get a JIRA pid from the issue management URL.
      *
@@ -50,7 +100,7 @@ public class JiraHelper
     {
         String jiraId = null;
         GetMethod gm = new GetMethod( issueManagementUrl );
-    
+
         String projectPage;
         try
         {
