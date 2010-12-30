@@ -28,6 +28,7 @@ import java.util.ResourceBundle;
 
 import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.plugin.changes.AbstractChangesReport;
+import org.apache.maven.plugin.changes.ProjectUtils;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.MavenReportException;
 import org.apache.xmlrpc.XmlRpcException;
@@ -92,7 +93,7 @@ public class TracMojo
      */
     public boolean canGenerateReport()
     {
-        return validateIfIssueManagementComplete();
+        return ProjectUtils.validateIfIssueManagementComplete( project, "Trac", "Trac Report", getLog() );
     }
 
     public void executeReport( Locale locale )
@@ -265,30 +266,4 @@ public class TracMojo
 
         return ticket;
     }
-
-    private boolean validateIfIssueManagementComplete()
-    {
-        if ( project.getIssueManagement() == null )
-        {
-            getLog().error( "No Issue Management set. No Trac Report will be generated." );
-
-            return false;
-        }
-        else if ( ( project.getIssueManagement().getUrl() == null )
-            || ( project.getIssueManagement().getUrl().trim().equals( "" ) ) )
-        {
-            getLog().error( "No URL set in Issue Management. No Trac Report will be generated." );
-
-            return false;
-        }
-        else if ( ( project.getIssueManagement().getSystem() != null )
-            && !( project.getIssueManagement().getSystem().equalsIgnoreCase( "trac" ) ) )
-        {
-            getLog().error( "The Trac Report only supports Trac.  No Trac Report will be generated." );
-
-            return false;
-        }
-        return true;
-    }
-
 }
