@@ -300,6 +300,26 @@ http://svn.apache.org/repos/asf/infrastructure/site-tools/trunk/projects/asfext<
             throw new IllegalArgumentException( "project is required" );
         }
 
+        // check organization name
+        if ( project.getOrganization() != null
+            && org.codehaus.plexus.util.StringUtils.isNotEmpty( project.getOrganization().getName() )
+            && project.getOrganization().getName().trim().equals( "The Apache Software Foundation" ) ) // see org.apache:apache artifact
+        {
+            return true;
+        }
+
+        // check domain name
+        if ( project.getOrganization() != null
+            && isHostedAtASF( project.getOrganization().getUrl() ) )
+        {
+            return true;
+        }
+
+        if ( isHostedAtASF( project.getUrl() ) )
+        {
+            return true;
+        }
+
         if ( project.getScm() != null )
         {
             if ( org.codehaus.plexus.util.StringUtils.isNotEmpty( project.getScm().getUrl() )
@@ -323,45 +343,56 @@ http://svn.apache.org/repos/asf/infrastructure/site-tools/trunk/projects/asfext<
 
         if ( project.getDistributionManagement() != null )
         {
-            if ( org.codehaus.plexus.util.StringUtils.isNotEmpty( project.getDistributionManagement().getDownloadUrl() )
-                && project.getDistributionManagement().getDownloadUrl().contains( APACHE_DOMAIN_NAME ) )
+            if ( isHostedAtASF( project.getDistributionManagement().getDownloadUrl() ) )
             {
                 return true;
             }
 
             if ( project.getDistributionManagement().getRepository() != null
-                && org.codehaus.plexus.util.StringUtils.isNotEmpty( project.getDistributionManagement().getRepository().getUrl() )
-                && project.getDistributionManagement().getRepository().getUrl().contains( APACHE_DOMAIN_NAME ) )
+                && isHostedAtASF( project.getDistributionManagement().getRepository().getUrl() ) )
             {
                 return true;
             }
 
             if ( project.getDistributionManagement().getSnapshotRepository() != null
-                && org.codehaus.plexus.util.StringUtils.isNotEmpty( project.getDistributionManagement().getSnapshotRepository().getUrl() )
-                && project.getDistributionManagement().getSnapshotRepository().getUrl().contains( APACHE_DOMAIN_NAME ) )
+                && isHostedAtASF( project.getDistributionManagement().getSnapshotRepository().getUrl() ) )
             {
                 return true;
             }
 
             if ( project.getDistributionManagement().getSite() != null
-                && org.codehaus.plexus.util.StringUtils.isNotEmpty( project.getDistributionManagement().getSite().getUrl() )
-                && project.getDistributionManagement().getSite().getUrl().contains( APACHE_DOMAIN_NAME ) )
+                && isHostedAtASF( project.getDistributionManagement().getSite().getUrl() ) )
             {
                 return true;
             }
         }
 
-        if ( project.getOrganization() != null
-            && org.codehaus.plexus.util.StringUtils.isNotEmpty( project.getOrganization().getUrl() )
-            && project.getOrganization().getUrl().contains( APACHE_DOMAIN_NAME ) )
+        return false;
+    }
+
+    /**
+     * @param str an url could be null
+     * @return <code>true</code> if the str is hosted by ASF.
+     * @see #APACHE_DOMAIN_NAME
+     */
+    private static boolean isHostedAtASF( String str )
+    {
+        if ( org.codehaus.plexus.util.StringUtils.isEmpty( str ) )
         {
-            return true;
+            return false;
         }
 
-        if ( org.codehaus.plexus.util.StringUtils.isNotEmpty( project.getUrl() )
-            && project.getUrl().contains( APACHE_DOMAIN_NAME ) )
+        str = str.trim();
+        try
         {
-            return true;
+            java.net.URL url = new java.net.URL( str );
+            if ( url.getHost().endsWith( APACHE_DOMAIN_NAME ) )
+            {
+                return true;
+            }
+        }
+        catch ( java.net.MalformedURLException e )
+        {
         }
 
         return false;
