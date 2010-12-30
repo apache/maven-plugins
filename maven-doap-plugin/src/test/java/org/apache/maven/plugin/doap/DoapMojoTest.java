@@ -88,28 +88,28 @@ public class DoapMojoTest
         // Validate
 
         // Pure DOAP
-        assertTrue( readed.indexOf( "<rdf:RDF xml:lang=\"en\" xmlns=\"http://usefulinc.com/ns/doap#\" "
+        assertTrue( readed.contains( "<rdf:RDF xml:lang=\"en\" xmlns=\"http://usefulinc.com/ns/doap#\" "
             + "xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" "
-            + "xmlns:foaf=\"http://xmlns.com/foaf/0.1/\">" ) != -1 );
+            + "xmlns:foaf=\"http://xmlns.com/foaf/0.1/\">" ) );
         if ( StringUtils.isNotEmpty( mavenProject.getUrl() ) )
         {
-            assertTrue( readed.indexOf( "<Project rdf:about=\"" + mavenProject.getUrl() + "\">" ) != -1 );
-            assertTrue( readed.indexOf( "<homepage rdf:resource=\"" + mavenProject.getUrl() + "\"/>" ) != -1 );
+            assertTrue( readed.contains( "<Project rdf:about=\"" + mavenProject.getUrl() + "\">" ) );
+            assertTrue( readed.contains( "<homepage rdf:resource=\"" + mavenProject.getUrl() + "\"/>" ) );
         }
-        assertTrue( readed.indexOf( "<name>" + mavenProject.getName() + "</name>" ) != -1 );
-        assertTrue( readed.indexOf( "<programming-language>java</programming-language>" ) != -1 );
+        assertTrue( readed.contains( "<name>" + mavenProject.getName() + "</name>" ) );
+        assertTrue( readed.contains( "<programming-language>java</programming-language>" ) );
 
         // ASF ext
-        assertFalse( readed.indexOf( "<asfext:pmc rdf:resource=\"" + mavenProject.getUrl() + "\"/>" ) != -1 );
-        assertFalse( readed.indexOf( "<asfext:name>" + mavenProject.getName() + "</name>" ) != -1 );
+        assertFalse( readed.contains( "<asfext:pmc rdf:resource=\"" + mavenProject.getUrl() + "\"/>" ) );
+        assertFalse( readed.contains( "<asfext:name>" + mavenProject.getName() + "</name>" ) );
 
         // Developers and Organizations
-        assertTrue( readed.indexOf( "<maintainer>" ) != -1 );
-        assertTrue( readed.indexOf( "<foaf:Person rdf:nodeID=\"b1\">" ) != -1 );
-        assertTrue( readed.indexOf( "<foaf:name>Jane Doe</foaf:name>" ) != -1 );
-        assertTrue( readed.indexOf( "<foaf:Organization>" ) != -1 );
-        assertTrue( readed.indexOf( "<foaf:homepage rdf:resource=\"http://www.example.org\"/>" ) != -1 );
-        assertTrue( readed.indexOf( "<foaf:member rdf:nodeID=\"b1\"/>" ) != -1 );
+        assertTrue( readed.contains( "<maintainer>" ) );
+        assertTrue( readed.contains( "<foaf:Person rdf:nodeID=\"b1\">" ) );
+        assertTrue( readed.contains( "<foaf:name>Jane Doe</foaf:name>" ) );
+        assertTrue( readed.contains( "<foaf:Organization>" ) );
+        assertTrue( readed.contains( "<foaf:homepage rdf:resource=\"http://www.example.org\"/>" ) );
+        assertTrue( readed.contains( "<foaf:member rdf:nodeID=\"b1\"/>" ) );
     }
 
     /**
@@ -148,10 +148,10 @@ public class DoapMojoTest
         // Validate
 
         // Pure DOAP
-        assertTrue( readed.indexOf( "<rdf:RDF xml:lang=\"en\" xmlns=\"http://usefulinc.com/ns/doap#\" "
+        assertTrue( readed.contains( "<rdf:RDF xml:lang=\"en\" xmlns=\"http://usefulinc.com/ns/doap#\" "
             + "xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" "
-            + "xmlns:foaf=\"http://xmlns.com/foaf/0.1/\">" ) != -1 );
-        assertTrue( readed.indexOf( "<name>Plexus Common Utilities</name>" ) != -1 );
+            + "xmlns:foaf=\"http://xmlns.com/foaf/0.1/\">" ) );
+        assertTrue( readed.contains( "<name>Plexus Common Utilities</name>" ) );
     }
 
     /**
@@ -185,20 +185,20 @@ public class DoapMojoTest
         // Validate
 
         // ASF DOAP
-        assertTrue( readed.indexOf( "<rdf:RDF xml:lang=\"en\" xmlns=\"http://usefulinc.com/ns/doap#\" "
+        assertTrue( readed.contains( "<rdf:RDF xml:lang=\"en\" xmlns=\"http://usefulinc.com/ns/doap#\" "
             + "xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" "
-            + "xmlns:foaf=\"http://xmlns.com/foaf/0.1/\" " + "xmlns:asfext=\"http://projects.apache.org/ns/asfext#\">" ) != -1 );
+            + "xmlns:foaf=\"http://xmlns.com/foaf/0.1/\" " + "xmlns:asfext=\"http://projects.apache.org/ns/asfext#\">" ) );
         if ( StringUtils.isNotEmpty( mavenProject.getUrl() ) )
         {
-            assertTrue( readed.indexOf( "<Project rdf:about=\"" + mavenProject.getUrl() + "\">" ) != -1 );
-            assertTrue( readed.indexOf( "<homepage rdf:resource=\"" + mavenProject.getUrl() + "\"/>" ) != -1 );
+            assertTrue( readed.contains( "<Project rdf:about=\"" + mavenProject.getUrl() + "\">" ) );
+            assertTrue( readed.contains( "<homepage rdf:resource=\"" + mavenProject.getUrl() + "\"/>" ) );
         }
-        assertTrue( readed.indexOf( "<name>Apache " + mavenProject.getName() + "</name>" ) != -1 );
-        assertTrue( readed.indexOf( "<programming-language>Java</programming-language>" ) != -1 );
+        assertTrue( readed.contains( "<name>Apache " + mavenProject.getName() + "</name>" ) );
+        assertTrue( readed.contains( "<programming-language>Java</programming-language>" ) );
 
         // ASF ext
-        assertTrue( readed.indexOf( "<asfext:pmc rdf:resource=\"" + mavenProject.getUrl() + "\"/>" ) != -1 );
-        assertTrue( readed.indexOf( "<asfext:name>Apache " + mavenProject.getName() + "</asfext:name>" ) != -1 );
+        assertTrue( readed.contains( "<asfext:pmc rdf:resource=\"" + mavenProject.getUrl() + "\"/>" ) );
+        assertTrue( readed.contains( "<asfext:name>Apache " + mavenProject.getName() + "</asfext:name>" ) );
     }
 
     /**

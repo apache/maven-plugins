@@ -53,11 +53,13 @@ under the License.
     <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/trunk/maven-doap-plugin/src/test/resources/unit/asf-doap-configuration</developerConnection>
     <url>http://svn.apache.org/viewvc/maven/plugins/trunk/maven-doap-plugin/src/test/resources/unit/asf-doap-configuration</url>
   </scm>
-
   <issueManagement>
     <system>JIRA</system>
     <url>http://jira.codehaus.org/browse/MDOAPTEST</url>
   </issueManagement>
+  <distributionManagement>
+    <downloadUrl>http://foo.org/download.html</downloadUrl>
+  </distributionManagement>
 
   <developers>
     <developer>
@@ -67,6 +69,7 @@ under the License.
       <organization>ASF</organization>
       <roles>
         <role>PMC Member</role>
+        <role>chairman</role>
       </roles>
       <timezone>-5</timezone>
     </developer>
@@ -85,17 +88,24 @@ under the License.
           <validate>true</validate>
 
           <doapOptions>
-            <shortdesc>test doap</shortdesc>
-            <created>2010-12-22</created>
-            <downloadPage>http://foo.org/download.html</downloadPage>
-            <programmingLanguage>java</programmingLanguage>
+            <audience>developers</audience>
+            <blog>http://myblog.apache.org</blog>
             <category>library</category>
+            <downloadMirror>http://mirror.apache.org</downloadMirror>
+            <downloadPage>http://foo.apache.org/download.html</downloadPage>
+            <implementations>JSR-foo</implementations>
+            <language>en,fr</language>
+            <oldHomepage>http://old.apache.org</oldHomepage>
+            <os>windows,linux,mac</os>
+            <platform>java</platform>
+            <programmingLanguage>java</programmingLanguage>
+            <screenshots>http://screenshot.apache.org</screenshots>
+            <serviceEndpoint>http://webservice.apache.org</serviceEndpoint>
+            <wiki>http://wiki.apache.org</wiki>
           </doapOptions>
 
           <asfExtOptions>
-            <charter>http://maven.apache.org</charter>
-            <chair>Vincent Siveton</chair>
-            <included>true</included>
+            <charter>This is an ASF project</charter>
           </asfExtOptions>
         </configuration>
       </plugin>

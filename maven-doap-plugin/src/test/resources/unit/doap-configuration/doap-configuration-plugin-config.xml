@@ -36,16 +36,30 @@ under the License.
   <description>Test the DOAP plugin</description>
   <url>http://foo.org/plugins/maven-doap-plugin/tests</url>
 
+  <licenses>
+    <license>
+      <name>The Apache Software License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+  <organization>
+    <name>foo</name>
+    <url>http://www.foo.org/</url>
+  </organization>
+
   <scm>
     <connection>scm:svn:http://svn.foo.org/repos/asf/maven/plugins/trunk/maven-doap-plugin/src/test/resources/unit/doap-configuration</connection>
     <developerConnection>scm:svn:https://svn.foo.org/repos/asf/maven/plugins/trunk/maven-doap-plugin/src/test/resources/unit/doap-configuration</developerConnection>
     <url>http://svn.foo.org/viewvc/maven/plugins/trunk/maven-doap-plugin/src/test/resources/unit/doap-configuration</url>
   </scm>
-
   <issueManagement>
     <system>JIRA</system>
     <url>http://jira.codehaus.org/browse/MDOAPTEST</url>
   </issueManagement>
+  <distributionManagement>
+    <downloadUrl>http://foo.org/download.html</downloadUrl>
+  </distributionManagement>
 
   <developers>
     <developer>
@@ -74,7 +88,19 @@ under the License.
           <validate>true</validate>
 
           <doapOptions>
+            <audience>developers</audience>
+            <blog>http://myblog.foo.org</blog>
+            <category>library</category>
+            <downloadMirror>http://mirror.foo.org</downloadMirror>
+            <implementations>JSR-foo</implementations>
+            <language>en,fr</language>
+            <oldHomepage>http://old.foo.org</oldHomepage>
+            <os>windows,linux,mac</os>
+            <platform>java</platform>
             <programmingLanguage>java</programmingLanguage>
+            <screenshots>http://screenshot.foo.org</screenshots>
+            <serviceEndpoint>http://webservice.foo.org</serviceEndpoint>
+            <wiki>http://wiki.foo.org</wiki>
           </doapOptions>
 
           <asfExtOptions>
