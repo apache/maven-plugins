@@ -20,6 +20,7 @@ package org.apache.maven.plugin.jira;
  */
 
 import java.io.File;
+import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -246,10 +247,18 @@ public class JiraMojo
 
             if ( jiraXmlPath.isFile() )
             {
-                report = new JiraReportGenerator( jiraXmlPath, columnNames, project.getVersion(),
-                                                  onlyCurrentVersion );
+                JiraXML jira = new JiraXML( jiraXmlPath );
+                List issueList = jira.getIssueList();
 
-                report.doGenerateReport( getBundle( locale ), getSink(), getLog() );
+                report = new JiraReportGenerator( columnNames );
+
+                if ( onlyCurrentVersion )
+                {
+                    issueList = JiraHelper.getIssuesForVersion( issueList, project.getVersion() );
+                    getLog().info( "The JIRA Report will contain issues only for the current version." );
+                }
+
+                report.doGenerateReport( getBundle( locale ), getSink(), issueList );
             }
             else
             {
