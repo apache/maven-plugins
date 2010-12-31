@@ -104,6 +104,7 @@ public class TracMojo
             throw new MavenReportException( "Issue Management is out of order." );
         }
 
+        // Create and configure an XML-RPC client
         XmlRpcClientConfigImpl config = new XmlRpcClientConfigImpl();
 
         try
@@ -119,11 +120,11 @@ public class TracMojo
         config.setBasicUserName( tracUser );
         config.setBasicPassword( tracPassword );
 
-        Object[] queryResult = null;
         XmlRpcClient client = new XmlRpcClient();
 
         client.setConfig( config );
 
+        // Fetch tickets from Trac
         String qstr = "";
 
         if ( !StringUtils.isEmpty( query ) )
@@ -132,61 +133,44 @@ public class TracMojo
         }
 
         Object[] params = new Object[] { new String( qstr ) };
+        Object[] queryResult = null;
+        ArrayList ticketList = new ArrayList();
         try
         {
             queryResult = (Object[]) client.execute( "ticket.query", params );
+
+            for ( int i = 0; i < queryResult.length; i++ )
+            {
+                params = new Object[] { queryResult[i] };
+                Object[] ticketGetResult = null;
+                ticketGetResult = (Object[]) client.execute( "ticket.get", params );
+                ticketList.add( createTicket( ticketGetResult ) );
+            }
         }
         catch ( XmlRpcException e )
         {
             throw new MavenReportException( "XmlRpc Error.", e );
         }
 
-        ArrayList ticketList = new ArrayList();
-        TracTicket matchTicket;
-
+        // Generate the report
         TracReportGenerator report = new TracReportGenerator( columnNames );
 
-        if ( queryResult.length == 0 )
+        if ( ticketList.isEmpty() )
         {
-
             report.doGenerateEmptyReport( getBundle( locale ), getSink() );
             getLog().warn( "No ticket has matched." );
-
         }
         else
         {
-
-            for ( int i = 0; i < queryResult.length; i++ )
-            {
-                params = new Object[] { queryResult[i] };
-                try
-                {
-                    Object[] ticketresult = null;
-                    matchTicket = new TracTicket();
-                    ticketresult = (Object[]) client.execute( "ticket.get", params );
-                    ticketList.add( setQueryResult( ticketresult, matchTicket ) );
-
-                }
-                catch ( XmlRpcException e )
-                {
-                    throw new MavenReportException( "XmlRpc Error.", e );
-                }
-            }
             try
             {
-
                 report.doGenerateReport( getBundle( locale ), getSink(), ticketList );
-
             }
             catch ( Exception e )
-
             {
                 e.printStackTrace();
-
             }
-
         }
-
     }
 
     public String getName( Locale locale )
@@ -232,8 +216,9 @@ public class TracMojo
         return tracUrl;
     }
 
-    private TracTicket setQueryResult( Object[] ticketObj, TracTicket ticket )
+    private TracTicket createTicket( Object[] ticketObj )
     {
+        TracTicket ticket = new TracTicket();
 
         ticket.setId( String.valueOf( ticketObj[0] ) );
 
