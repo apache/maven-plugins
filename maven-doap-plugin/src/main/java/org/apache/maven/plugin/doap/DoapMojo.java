@@ -55,6 +55,7 @@ import org.apache.maven.model.Scm;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.doap.options.ASFExtOptions;
+import org.apache.maven.plugin.doap.options.ASFExtOptionsUtil;
 import org.apache.maven.plugin.doap.options.DoapArtifact;
 import org.apache.maven.plugin.doap.options.DoapOptions;
 import org.apache.maven.plugin.doap.options.Standard;
@@ -491,7 +492,7 @@ public class DoapMojo
         // Includes ASF extensions
         // ----------------------------------------------------------------------------
 
-        if ( !asfExtOptions.isIncluded() && ASFExtOptions.isASFProject( project ) )
+        if ( !asfExtOptions.isIncluded() && ASFExtOptionsUtil.isASFProject( project ) )
         {
             getLog().info( "This project is an ASF project, ASF Extensions to DOAP will be added." );
             asfExtOptions.setIncluded( true );
@@ -541,7 +542,7 @@ public class DoapMojo
         writer.addAttribute( "xmlns:foaf", "http://xmlns.com/foaf/0.1/" );
         if ( asfExtOptions.isIncluded() )
         {
-            writer.addAttribute( "xmlns:asfext", ASFExtOptions.ASFEXT_NAMESPACE );
+            writer.addAttribute( "xmlns:asfext", ASFExtOptionsUtil.ASFEXT_NAMESPACE );
         }
 
         // Project
@@ -687,9 +688,9 @@ public class DoapMojo
             }
             getLog().error( "" );
 
-            if ( ASFExtOptions.isASFProject( project ) )
+            if ( ASFExtOptionsUtil.isASFProject( project ) )
             {
-                getLog().error( "For more information about the errors and possible solutions, please read the following articles:" );
+                getLog().error( "For more information about the errors and possible solutions, please read the plugin documentation:" );
                 getLog().error( "http://maven.apache.org/plugins/maven-doap-plugin/usage.html#DOAP_ASF_Configuration" );
                 throw new MojoExecutionException( "The generated DOAP doesn't respect ASF rules, see above." );
             }
@@ -914,12 +915,12 @@ public class DoapMojo
 
             if ( asfExtOptions.isIncluded() )
             {
-                String asfLanguage = ASFExtOptions.getProgrammingLanguageSupportedByASF( language );
+                String asfLanguage = ASFExtOptionsUtil.getProgrammingLanguageSupportedByASF( language );
                 if ( asfLanguage == null )
                 {
                     errorMessages.add( "The deprecated <language>" + language
                         + "</language> parameter is not supported by ASF. Should be one of "
-                        + Arrays.toString( ASFExtOptions.PROGRAMMING_LANGUAGES ) );
+                        + Arrays.toString( ASFExtOptionsUtil.PROGRAMMING_LANGUAGES ) );
                 }
                 else
                 {
@@ -947,12 +948,12 @@ public class DoapMojo
 
                 if ( asfExtOptions.isIncluded() )
                 {
-                    String asfLanguage = ASFExtOptions.getProgrammingLanguageSupportedByASF( language );
+                    String asfLanguage = ASFExtOptionsUtil.getProgrammingLanguageSupportedByASF( language );
                     if ( asfLanguage == null )
                     {
                         errorMessages.add( "The <doapOptions><programmingLanguage>" + language
                             + "</programmingLanguage></doapOptions> parameter is not supported by ASF. "
-                            + "Should be one of " + Arrays.toString( ASFExtOptions.PROGRAMMING_LANGUAGES ) );
+                            + "Should be one of " + Arrays.toString( ASFExtOptionsUtil.PROGRAMMING_LANGUAGES ) );
                     }
                     else
                     {
@@ -1004,19 +1005,19 @@ public class DoapMojo
 
             if ( asfExtOptions.isIncluded() )
             {
-                String asfCategory = ASFExtOptions.getCategorySupportedByASF( category );
+                String asfCategory = ASFExtOptionsUtil.getCategorySupportedByASF( category );
                 if ( asfCategory == null )
                 {
                     errorMessages.add( "The deprecated <category>" + category
                         + "</category> parameter is not supported by ASF. Should be one of "
-                        + Arrays.toString( ASFExtOptions.CATEGORIES ) );
+                        + Arrays.toString( ASFExtOptionsUtil.CATEGORIES ) );
                 }
                 else
                 {
                     XmlWriterUtil.writeLineBreak( writer );
                     XmlWriterUtil.writeCommentText( writer, "A category of project.", 2 );
                     addComment = true;
-                    DoapUtil.writeRdfResourceElement( writer, "category", ASFExtOptions.CATEGORY_RESOURCE + asfCategory );
+                    DoapUtil.writeRdfResourceElement( writer, "category", ASFExtOptionsUtil.CATEGORY_RESOURCE + asfCategory );
                 }
             }
             else
@@ -1037,12 +1038,12 @@ public class DoapMojo
 
                 if ( asfExtOptions.isIncluded() )
                 {
-                    String asfCategory = ASFExtOptions.getCategorySupportedByASF( category );
+                    String asfCategory = ASFExtOptionsUtil.getCategorySupportedByASF( category );
                     if ( asfCategory == null )
                     {
                         errorMessages.add( "The <doapOptions><category>" + category
                             + "</category></doapOptions> parameter is not supported by ASF. Should be one of "
-                            + Arrays.toString( ASFExtOptions.CATEGORIES ) );
+                            + Arrays.toString( ASFExtOptionsUtil.CATEGORIES ) );
                     }
                     else
                     {
@@ -1052,7 +1053,7 @@ public class DoapMojo
                             XmlWriterUtil.writeCommentText( writer, "A category of project.", 2 );
                             addComment = true;
                         }
-                        DoapUtil.writeRdfResourceElement( writer, "category", ASFExtOptions.CATEGORY_RESOURCE
+                        DoapUtil.writeRdfResourceElement( writer, "category", ASFExtOptionsUtil.CATEGORY_RESOURCE
                             + asfCategory );
                     }
                 }
@@ -1797,7 +1798,7 @@ public class DoapMojo
      */
     private void writeASFext( XMLWriter writer, MavenProject project )
     {
-        if ( !ASFExtOptions.isASFProject( project ) )
+        if ( !ASFExtOptionsUtil.isASFProject( project ) )
         {
             return;
         }
@@ -1874,7 +1875,7 @@ public class DoapMojo
         }
         else
         {
-            Developer chair = ASFExtOptions.findChair( developers );
+            Developer chair = ASFExtOptionsUtil.findChair( developers );
             if ( chair != null )
             {
                 writeContributor( writer, chair, "asfext:chair" );
@@ -1889,7 +1890,7 @@ public class DoapMojo
         // asfext:member
         if ( developers != null && developers.size() > 0 )
         {
-            List<Developer> pmcMembers = ASFExtOptions.findPMCMembers( developers );
+            List<Developer> pmcMembers = ASFExtOptionsUtil.findPMCMembers( developers );
             for ( Developer pmcMember : pmcMembers )
             {
                 writeContributor( writer, pmcMember, "asfext:member" );
