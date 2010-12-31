@@ -32,7 +32,9 @@ import java.util.Map;
  * An adapter that can adapt JIRA specific data models to the data model used
  * by a changes.xml file.
  *
- * @version $Id: JiraAdapter.java 1050925 2010-12-19 18:09:36Z dennisl $
+ * @author Dennis Lundberg
+ * @version $Id$
+ * @since 2.4
  */
 public class JiraAdapter
 {
