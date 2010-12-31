@@ -68,6 +68,11 @@ public class ChangesReportGenerator
 
     private boolean addActionDate;
 
+    /**
+     * @since 2.4
+     */
+    private boolean escapeHTML;
+
     public ChangesReportGenerator()
     {
         issueLinksPerSystem = new HashMap();
@@ -77,6 +82,22 @@ public class ChangesReportGenerator
     {
         this();
         report = new ChangesXML( xmlPath, log );
+    }
+
+    /**
+     * @since 2.4
+     */
+    public boolean isEscapeHTML()
+    {
+        return escapeHTML;
+    }
+
+    /**
+     * @since 2.4
+     */
+    public void setEscapeHTML( boolean escapeHTML )
+    {
+        this.escapeHTML = escapeHTML;
     }
 
     /**
@@ -240,7 +261,14 @@ public class ChangesReportGenerator
 
                 sink.tableCell();
 
-                sink.text( action.getAction() );
+                if( escapeHTML )
+                {
+                    sink.text( action.getAction() );
+                }
+                else
+                {
+                    sink.rawText( action.getAction() );
+                }
 
                 // no null check needed classes from modello return a new ArrayList
                 if ( StringUtils.isNotEmpty( action.getIssue() ) || ( !action.getFixedIssues().isEmpty() ) )

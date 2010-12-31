@@ -133,6 +133,25 @@ public class ChangesMojo
     private String teamlist;
 
     /**
+     * Whether HTML code within an action should be escaped. By changing this to
+     * <code>false</code> you can restore the behavior that was in version 2.2
+     * of this plugin, allowing you to use HTML code to format the content of an
+     * action.
+     * <p>
+     * <strong>Note:</strong> If you use HTML code in an action you need to
+     * place it inside a CDATA section.
+     * </p>
+     * <strong>Note:</strong> Putting any kind of markup inside a CDATA section
+     * might mess up the Changes Report or other generated documents, such as
+     * PDFs, that are based on your <code>changes.xml</code> file if you are not
+     * careful.
+     *
+     * @parameter default-value="true"
+     * @since 2.4
+     */
+    private boolean escapeHTML;
+
+    /**
      * applying filtering filtering "a la" resources plugin
      *
      * @parameter default-value="false"
@@ -264,6 +283,8 @@ public class ChangesMojo
 
         ChangesReportGenerator report = new ChangesReportGenerator( xmlPath, getLog() );
         
+        report.setEscapeHTML ( escapeHTML );
+
         report.setIssueLinksPerSystem( issueLinkTemplatePerSystem );
         report.setIssueLink( issueLinkTemplate );
         
