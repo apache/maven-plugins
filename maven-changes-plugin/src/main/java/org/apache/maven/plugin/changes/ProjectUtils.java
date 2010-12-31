@@ -25,7 +25,9 @@ import org.apache.maven.project.MavenProject;
 /**
  * A utility class for working with Project objects.
  *
+ * @author Dennis Lundberg
  * @version $Id$
+ * @since 2.4
  */
 public class ProjectUtils
 {
