@@ -236,15 +236,15 @@ public class JiraMojo
     public void executeReport( Locale locale )
         throws MavenReportException
     {
-        JiraDownloader jiraDownloader = new JiraDownloader();
+        JiraDownloader issueDownloader = new JiraDownloader();
 
-        setJiraDownloaderParameters( jiraDownloader );
+        configureIssueDownloader( issueDownloader );
 
         JiraReportGenerator report;
 
         try
         {
-            jiraDownloader.doExecute();
+            issueDownloader.doExecute();
 
             if ( jiraXmlPath.isFile() )
             {
@@ -270,7 +270,7 @@ public class JiraMojo
         }
         catch ( MavenReportException mre )
         {
-            // Rethrow this error from JiraReportGenerator( String, String )
+            // Rethrow this error from JiraReportGenerator( String )
             // so that the build fails
             throw mre;
         }
@@ -300,40 +300,40 @@ public class JiraMojo
         return ResourceBundle.getBundle( "jira-report", locale, this.getClass().getClassLoader() );
     }
 
-    private void setJiraDownloaderParameters( JiraDownloader jira )
+    private void configureIssueDownloader( JiraDownloader issueDownloader )
     {
-        jira.setLog( getLog() );
+        issueDownloader.setLog( getLog() );
 
-        jira.setMavenProject( project );
+        issueDownloader.setMavenProject( project );
 
-        jira.setOutput( jiraXmlPath );
+        issueDownloader.setOutput( jiraXmlPath );
 
-        jira.setNbEntries( maxEntries );
+        issueDownloader.setNbEntries( maxEntries );
 
-        jira.setComponent( component );
+        issueDownloader.setComponent( component );
 
-        jira.setFixVersionIds( fixVersionIds );
+        issueDownloader.setFixVersionIds( fixVersionIds );
 
-        jira.setStatusIds( statusIds );
+        issueDownloader.setStatusIds( statusIds );
 
-        jira.setResolutionIds( resolutionIds );
+        issueDownloader.setResolutionIds( resolutionIds );
 
-        jira.setPriorityIds( priorityIds );
+        issueDownloader.setPriorityIds( priorityIds );
 
-        jira.setSortColumnNames( sortColumnNames );
+        issueDownloader.setSortColumnNames( sortColumnNames );
 
-        jira.setFilter( filter );
+        issueDownloader.setFilter( filter );
 
-        jira.setJiraUser( jiraUser );
+        issueDownloader.setJiraUser( jiraUser );
 
-        jira.setJiraPassword( jiraPassword );
+        issueDownloader.setJiraPassword( jiraPassword );
 
-        jira.setTypeIds( typeIds );
+        issueDownloader.setTypeIds( typeIds );
 
-        jira.setWebUser( webUser );
+        issueDownloader.setWebUser( webUser );
 
-        jira.setWebPassword( webPassword );
+        issueDownloader.setWebPassword( webPassword );
 
-        jira.setSettings( settings );
+        issueDownloader.setSettings( settings );
     }
 }
