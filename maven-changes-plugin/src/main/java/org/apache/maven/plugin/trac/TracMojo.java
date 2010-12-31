@@ -104,13 +104,11 @@ public class TracMojo
             throw new MavenReportException( "Issue Management is out of order." );
         }
 
-        parseTracUrl();
-
         XmlRpcClientConfigImpl config = new XmlRpcClientConfigImpl();
 
         try
         {
-            config.setServerURL( new URL( project.getIssueManagement().getUrl() + "/login/xmlrpc" ) );
+            config.setServerURL( new URL( getTracUrl() + "/login/xmlrpc" ) );
         }
         catch ( MalformedURLException e1 )
         {
@@ -221,16 +219,17 @@ public class TracMojo
         return ResourceBundle.getBundle( "trac-report", locale, this.getClass().getClassLoader() );
     }
 
-    private void parseTracUrl()
+    private String getTracUrl()
     {
 
         String tracUrl = project.getIssueManagement().getUrl();
 
         if ( tracUrl.endsWith( "/" ) )
         {
-            project.getIssueManagement().setUrl( tracUrl.substring( 0, tracUrl.length() - 1 ) );
+            tracUrl = tracUrl.substring( 0, tracUrl.length() - 1 );
         }
 
+        return tracUrl;
     }
 
     private TracTicket setQueryResult( Object[] ticketObj, TracTicket ticket )
@@ -238,7 +237,7 @@ public class TracMojo
 
         ticket.setId( String.valueOf( ticketObj[0] ) );
 
-        ticket.setLink( project.getIssueManagement().getUrl() + "/ticket/" + String.valueOf( ticketObj[0] ) );
+        ticket.setLink( getTracUrl() + "/ticket/" + String.valueOf( ticketObj[0] ) );
 
         ticket.setTimeCreated( String.valueOf( ticketObj[1] ) );
 
