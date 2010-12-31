@@ -441,7 +441,9 @@ under the License.
             <version>${project.version}</version>
             <configuration>
               <!-- For Announcement -->
-              <generateJiraAnnouncement>true</generateJiraAnnouncement>
+              <issueManagementSystems>
+                <issueManagementSystem>JIRA</issueManagementSystem>
+              </issueManagementSystems>
               <!-- For Changes-report -->
               <issueLinkTemplatePerSystem>
                 <default>%URL%/%ISSUE%</default>
