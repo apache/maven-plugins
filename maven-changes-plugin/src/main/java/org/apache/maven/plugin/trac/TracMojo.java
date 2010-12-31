@@ -99,11 +99,6 @@ public class TracMojo
     public void executeReport( Locale locale )
         throws MavenReportException
     {
-        if ( !canGenerateReport() )
-        {
-            throw new MavenReportException( "Issue Management is out of order." );
-        }
-
         // Create and configure an XML-RPC client
         XmlRpcClientConfigImpl config = new XmlRpcClientConfigImpl();
 
