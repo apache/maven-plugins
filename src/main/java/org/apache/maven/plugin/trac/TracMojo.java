@@ -20,10 +20,8 @@ package org.apache.maven.plugin.trac;
  */
 
 import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.ResourceBundle;
 
 import org.apache.maven.doxia.siterenderer.Renderer;
@@ -32,9 +30,6 @@ import org.apache.maven.plugin.changes.ProjectUtils;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.MavenReportException;
 import org.apache.xmlrpc.XmlRpcException;
-import org.apache.xmlrpc.client.XmlRpcClient;
-import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
-import org.codehaus.plexus.util.StringUtils;
 
 /**
  * Goal which downloads issues from the Issue Tracking System and generates a
@@ -96,75 +91,56 @@ public class TracMojo
         return ProjectUtils.validateIfIssueManagementComplete( project, "Trac", "Trac Report", getLog() );
     }
 
+    private void configureIssueDownloader( TracDownloader issueDownloader )
+    {
+        issueDownloader.setProject( project );
+
+        issueDownloader.setQuery( query );
+
+        issueDownloader.setTracPassword( tracPassword );
+
+        issueDownloader.setTracUser( tracUser );
+    }
+
     public void executeReport( Locale locale )
         throws MavenReportException
     {
-        // Create and configure an XML-RPC client
-        XmlRpcClientConfigImpl config = new XmlRpcClientConfigImpl();
+        TracDownloader issueDownloader = new TracDownloader();
+        configureIssueDownloader( issueDownloader );
 
         try
         {
-            config.setServerURL( new URL( getTracUrl() + "/login/xmlrpc" ) );
-        }
-        catch ( MalformedURLException e1 )
-        {
+            List ticketList = issueDownloader.getIssueList();
 
-            throw new MavenReportException( "The Trac URL is incorrect." );
+            // Generate the report
+            TracReportGenerator report = new TracReportGenerator( columnNames );
 
-        }
-        config.setBasicUserName( tracUser );
-        config.setBasicPassword( tracPassword );
-
-        XmlRpcClient client = new XmlRpcClient();
-
-        client.setConfig( config );
-
-        // Fetch tickets from Trac
-        String qstr = "";
-
-        if ( !StringUtils.isEmpty( query ) )
-        {
-            qstr = query;
-        }
-
-        Object[] params = new Object[] { new String( qstr ) };
-        Object[] queryResult = null;
-        ArrayList ticketList = new ArrayList();
-        try
-        {
-            queryResult = (Object[]) client.execute( "ticket.query", params );
-
-            for ( int i = 0; i < queryResult.length; i++ )
+            if ( ticketList.isEmpty() )
             {
-                params = new Object[] { queryResult[i] };
-                Object[] ticketGetResult = null;
-                ticketGetResult = (Object[]) client.execute( "ticket.get", params );
-                ticketList.add( createTicket( ticketGetResult ) );
+                report.doGenerateEmptyReport( getBundle( locale ), getSink() );
+                getLog().warn( "No ticket has matched." );
             }
+            else
+            {
+                try
+                {
+                    report.doGenerateReport( getBundle( locale ), getSink(), ticketList );
+                }
+                catch ( Exception e )
+                {
+                    e.printStackTrace();
+                }
+            }
+        }
+        catch ( MalformedURLException e )
+        {
+            // Rethrow this error so that the build fails
+            throw new MavenReportException( "The Trac URL is incorrect." );
         }
         catch ( XmlRpcException e )
         {
+            // Rethrow this error so that the build fails
             throw new MavenReportException( "XmlRpc Error.", e );
-        }
-
-        // Generate the report
-        TracReportGenerator report = new TracReportGenerator( columnNames );
-
-        if ( ticketList.isEmpty() )
-        {
-            report.doGenerateEmptyReport( getBundle( locale ), getSink() );
-            getLog().warn( "No ticket has matched." );
-        }
-        else
-        {
-            try
-            {
-                report.doGenerateReport( getBundle( locale ), getSink(), ticketList );
-            }
-            catch ( Exception e )
-            {
-                e.printStackTrace();
-            }
         }
     }
 
@@ -196,53 +172,5 @@ public class TracMojo
     private ResourceBundle getBundle( Locale locale )
     {
         return ResourceBundle.getBundle( "trac-report", locale, this.getClass().getClassLoader() );
-    }
-
-    private String getTracUrl()
-    {
-
-        String tracUrl = project.getIssueManagement().getUrl();
-
-        if ( tracUrl.endsWith( "/" ) )
-        {
-            tracUrl = tracUrl.substring( 0, tracUrl.length() - 1 );
-        }
-
-        return tracUrl;
-    }
-
-    private TracTicket createTicket( Object[] ticketObj )
-    {
-        TracTicket ticket = new TracTicket();
-
-        ticket.setId( String.valueOf( ticketObj[0] ) );
-
-        ticket.setLink( getTracUrl() + "/ticket/" + String.valueOf( ticketObj[0] ) );
-
-        ticket.setTimeCreated( String.valueOf( ticketObj[1] ) );
-
-        ticket.setTimeChanged( String.valueOf( ticketObj[2] ) );
-
-        Map attributes = (Map) ticketObj[3];
-
-        ticket.setType( (String) attributes.get( "type" ) );
-
-        ticket.setSummary( (String) attributes.get( "summary" ) );
-
-        ticket.setStatus( (String) attributes.get( "status" ) );
-
-        ticket.setResolution( (String) attributes.get( "resolution" ) );
-
-        ticket.setOwner( (String) attributes.get( "owner" ) );
-
-        ticket.setMilestone( (String) attributes.get( "milestone" ) );
-
-        ticket.setPriority( (String) attributes.get( "priority" ) );
-
-        ticket.setReporter( (String) attributes.get( "reporter" ) );
-
-        ticket.setComponent( (String) attributes.get( "component" ) );
-
-        return ticket;
     }
 }

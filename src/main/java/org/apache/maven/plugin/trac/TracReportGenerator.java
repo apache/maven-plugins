@@ -20,7 +20,6 @@ package org.apache.maven.plugin.trac;
  */
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -111,7 +110,7 @@ public class TracReportGenerator
         sinkEndReport( sink );
     }
 
-    public void doGenerateReport( ResourceBundle bundle, Sink sink, ArrayList ticketList )
+    public void doGenerateReport( ResourceBundle bundle, Sink sink, List ticketList )
     {
         sinkBeginReport( sink, bundle );
 
