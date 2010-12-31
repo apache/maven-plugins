@@ -3,8 +3,9 @@
  ------
  Johnny R. Ruiz III
  Allan Ramirez
+ Dennis Lundberg
  ------
- 2009-08-04
+ 2010-12-31
  ------
 
  ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -218,12 +219,57 @@ mvn site
 mvn changes:announcement-generate
 -------------------
 
-  If you want to generate the announcement based on JIRA you would either
-  configure it in your <<<pom.xml>>> or you would add the appropriate parameter
-  on the command line, like this:
+  If you want to generate the announcement based on JIRA you need to
+  configure that in your <<<pom.xml>>>, like this:
 
 -------------------
-mvn changes:announcement-generate -DgenerateJiraAnnouncement=true
+<project>
+  ...
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-changes-plugin</artifactId>
+        <version>${project.version}</version>
+        <configuration>
+          ...
+          <issueManagementSystems>
+            <issueManagementSystem>JIRA</issueManagementSystem>
+          </issueManagementSystems>
+          ...
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  ...
+</project>
+-------------------
+
+  To generate the announcement based on <<both>> a <<<changes.xml>>> file and JIRA
+  you should configure your <<<pom.xml>>> like this:
+
+-------------------
+<project>
+  ...
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-changes-plugin</artifactId>
+        <version>${project.version}</version>
+        <configuration>
+          ...
+          <issueManagementSystems>
+            <issueManagementSystem>changes.xml</issueManagementSystem>
+            <issueManagementSystem>JIRA</issueManagementSystem>
+          </issueManagementSystems>
+          ...
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  ...
+</project>
 -------------------
 
   This is how you send an email with the generated announcement:
