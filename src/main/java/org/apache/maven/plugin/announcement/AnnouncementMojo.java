@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -58,6 +59,10 @@ import org.codehaus.plexus.velocity.VelocityComponent;
 public class AnnouncementMojo
     extends AbstractAnnouncementMojo
 {
+    private static final String CHANGES_XML = "changes.xml";
+
+    private static final String JIRA = "JIRA";
+
     private ReleaseUtils releaseUtils = new ReleaseUtils( getLog() );
 
     /**
@@ -203,6 +208,7 @@ public class AnnouncementMojo
      *
      * @parameter expression="${generateJiraAnnouncement}" default-value="false"
      * @required
+     * @deprecated Since version 2.4 this parameter has been deprecated. Please use the issueManagementSystems parameter instead.
      */
     private boolean generateJiraAnnouncement;
 
@@ -307,6 +313,7 @@ public class AnnouncementMojo
      *
      * @parameter expression="${changes.jiraMerge}" default-value="false"
      * @since 2.1
+     * @deprecated Since version 2.4 this parameter has been deprecated. Please use the issueManagementSystems parameter instead.
      */
     private boolean jiraMerge;
 
@@ -318,6 +325,23 @@ public class AnnouncementMojo
      * @since 2.1
      */
     private Map announceParameters;
+
+    /**
+     * A list of issue management systems to fetch releases from. This parameter
+     * replaces the parameters <code>generateJiraAnnouncement</code> and
+     * <code>jiraMerge</code>.
+     * <p>
+     * Valid values are: <code>changes.xml</code> and <code>JIRA</code>.
+     * </p>
+     * <strong>Note:</strong> Only one issue management system that is
+     * configured in &lt;project&gt;/&lt;issueManagement&gt; can be used. This
+     * currently means that you can combine a changes.xml file with one other
+     * issue management system. 
+     *
+     * @parameter
+     * @since 2.4
+     */
+    private List issueManagementSystems;
 
     //=======================================//
     //    announcement-generate execution    //
@@ -338,43 +362,73 @@ public class AnnouncementMojo
         }
         else
         {
-            if ( this.jiraMerge )
+            if ( issueManagementSystems == null )
             {
-                ChangesXML changesXML =  new ChangesXML( getXmlPath(), getLog() );
-                List changesReleases = changesXML.getReleaseList();
-                if ( ProjectUtils.validateIfIssueManagementComplete( project, "JIRA", "JIRA announcement", getLog() ) )
+                issueManagementSystems = new ArrayList();
+            }
+
+            // Handle deprecated parameters, in a backward compatible way
+            if ( issueManagementSystems.isEmpty() )
+            {
+                if ( this.jiraMerge )
                 {
-                    List jiraReleases = getJiraReleases();
-                    List mergedReleases = releaseUtils.mergeReleases( changesReleases, jiraReleases );
-                    doGenerate( mergedReleases );
+                    issueManagementSystems.add( CHANGES_XML );
+                    issueManagementSystems.add( JIRA );
+                }
+                else if ( generateJiraAnnouncement )
+                {
+                    issueManagementSystems.add( JIRA );
                 }
                 else
                 {
-                    throw new MojoExecutionException( "Something is wrong with the Issue Management section."
-                        + " See previous error messages." );
+                    issueManagementSystems.add( CHANGES_XML );
                 }
+            }
+
+            // Fetch releases from the configured issue management systems
+            List releases = null;
+
+            if ( issueManagementSystems.contains( CHANGES_XML ) )
+            {
+                if ( getXmlPath().exists() )
+                {
+                    ChangesXML changesXML = new ChangesXML( getXmlPath(), getLog() );
+                    List changesReleases = changesXML.getReleaseList();
+                    releases = releaseUtils.mergeReleases( releases, changesReleases );
+                    getLog().info( "Including issues from file " + getXmlPath() + " in announcement..." );
+                }
+                else
+                {
+                    getLog().warn( "changes.xml file " + getXmlPath().getAbsolutePath() + " does not exist." );
+                }
+            }
+
+            if ( issueManagementSystems.contains( JIRA ) )
+            {
+                if ( ProjectUtils.validateIfIssueManagementComplete( project, JIRA, "JIRA announcement", getLog() ) )
+                {
+                    List jiraReleases = getJiraReleases();
+                    releases = releaseUtils.mergeReleases( releases, jiraReleases );
+                    getLog().info( "Including issues from JIRA in announcement..." );
+                }
+                else
+                {
+                    throw new MojoExecutionException(
+                        "Something is wrong with the Issue Management section." + " See previous error messages." );
+                }
+            }
+
+            // @todo Add more issue management systems here...
+
+            // Generate the report
+            if ( releases == null || releases.isEmpty() )
+            {
+                throw new MojoExecutionException(
+                    "No releases found in any of the configured issue management systems." );
             }
             else
             {
-                if ( !generateJiraAnnouncement )
-                {
-                    if ( getXmlPath().exists() )
-                    {
-                        setXml( new ChangesXML( getXmlPath(), getLog() ) );
-
-                        getLog().info( "Creating announcement file from " + getXmlPath() + "..." );
-
-                        doGenerate( getXml().getReleaseList() );
-                    }
-                    else
-                    {
-                        getLog().warn( "changes.xml file " + getXmlPath().getAbsolutePath() + " does not exist." );
-                    }
-                }
-                else
-                {
-                    doJiraGenerate();
-                }
+                doGenerate( releases );
             }
         }
     }
@@ -513,24 +567,6 @@ public class AnnouncementMojo
                 getLog().warn( e.getCause() );
             }
             throw new MojoExecutionException( e.toString(), e.getCause() );
-        }
-    }
-
-    public void doJiraGenerate()
-        throws MojoExecutionException
-    {
-        if ( ProjectUtils.validateIfIssueManagementComplete( project, "JIRA", "JIRA announcement", getLog() ) )
-        {
-            List releases = getJiraReleases();
-
-            getLog().info( "Creating announcement file from JIRA releases..." );
-
-            doGenerate( releases );
-        }
-        else
-        {
-            throw new MojoExecutionException( "Something is wrong with the Issue Management section."
-                + " See previous error messages." );
         }
     }
 
