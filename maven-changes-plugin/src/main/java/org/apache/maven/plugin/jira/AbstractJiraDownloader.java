@@ -42,6 +42,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -57,6 +58,8 @@ import java.util.Map;
  */
 public abstract class AbstractJiraDownloader
 {
+    private static final String UTF_8 = "UTF-8";
+
     /** Log for debug output. */
     private Log log;
     /** Output file for xml document. */
@@ -486,24 +489,24 @@ public abstract class AbstractJiraDownloader
 
         loginLink.append( "/login.jsp?os_destination=/secure/" );
 
-        loginLink.append( "&os_username=" ).append( jiraUser );
-
-        String password = null;
-        if ( jiraPassword != null )
-        {
-            password = StringUtils.repeat( "*", jiraPassword.length() );
-        }
-        getLog().debug( "Login URL: " + loginLink + "&os_password=" + password );
-
-        loginLink.append( "&os_password=" ).append( jiraPassword );
-
-        loginUrl = loginLink.toString();
-
-        // execute the login
-        GetMethod loginGet = new GetMethod( loginUrl );
-
         try
         {
+            loginLink.append( "&os_username=" ).append( URLEncoder.encode( jiraUser, UTF_8 ) );
+
+            String password = null;
+            if ( jiraPassword != null )
+            {
+                password = StringUtils.repeat( "*", jiraPassword.length() );
+            }
+            getLog().debug( "Login URL: " + loginLink + "&os_password=" + password );
+
+            loginLink.append( "&os_password=" ).append( URLEncoder.encode( jiraPassword, UTF_8 ) );
+
+            loginUrl = loginLink.toString();
+
+            // execute the login
+            GetMethod loginGet = new GetMethod( loginUrl );
+
             client.executeMethod( loginGet );
 
             if ( loginSucceeded( loginGet ) )
