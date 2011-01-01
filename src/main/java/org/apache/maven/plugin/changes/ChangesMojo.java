@@ -127,7 +127,7 @@ public class ChangesMojo
      * The URI of a file containing all the team members. If this is set to the
      * special value "none", no links will be generated for the team members.
      *
-     * @parameter expression="team-list.html"
+     * @parameter default-value="team-list.html"
      * @since 2.4
      */
     private String teamlist;
