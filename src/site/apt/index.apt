@@ -87,6 +87,8 @@ Maven Changes Plugin
 
   * {{{./examples/customizing-jira-report.html}Customizing the JIRA Report}}
 
+  * {{{./examples/include-announcement-file.html}Include an Announcement File in Your Packaging}}
+
   * {{{./examples/smtp-authentication.html}SMTP authentication}}
 
   * {{{./examples/specifying-mail-sender.html}Specifying the mail sender}}

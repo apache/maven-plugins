@@ -74,6 +74,15 @@ public class AnnouncementMojo
     private File outputDirectory;
 
     /**
+     * The name of the file which will contain the generated announcement. If
+     * no value is specified the plugin will use the name of the template.
+     *
+     * @parameter expression="${changes.announcementFile}"
+     * @since 2.4
+     */
+    private String announcementFile;
+
+    /**
      * @parameter expression="${project.groupId}"
      * @readonly
      */
@@ -501,7 +510,7 @@ public class AnnouncementMojo
             }
 
 
-            processTemplate( context, getOutputDirectory(), template );
+            processTemplate( context, getOutputDirectory(), template, announcementFile );
         }
         catch ( ResourceNotFoundException rnfe )
         {
@@ -519,16 +528,23 @@ public class AnnouncementMojo
      * @param context velocity context that has the parameter values
      * @param outputDirectory directory where the file will be generated
      * @param template velocity template which will the context be merged
+     * @param announcementFile The file name of the generated announcement
      * @throws ResourceNotFoundException, VelocityException, IOException
      */
-    public void processTemplate( Context context, File outputDirectory, String template )
+    public void processTemplate( Context context, File outputDirectory, String template, String announcementFile )
         throws ResourceNotFoundException, VelocityException, MojoExecutionException
     {
         File f;
 
+        // Use the name of the template as a default value
+        if ( StringUtils.isEmpty( announcementFile ) )
+        {
+            announcementFile = template;
+        }
+
         try
         {
-            f = new File( outputDirectory, template );
+            f = new File( outputDirectory, announcementFile );
 
             if ( !f.getParentFile().exists() )
             {
