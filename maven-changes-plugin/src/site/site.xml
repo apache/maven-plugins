@@ -44,6 +44,7 @@ under the License.
       <item name="Check Your changes.xml File" href="examples/check-changes-file.html"/>
       <item name="Configuring the Trac Report" href="examples/configuring-trac-report.html"/>
       <item name="Customizing the JIRA Report" href="examples/customizing-jira-report.html"/>
+      <item name="Include an Announcement File in Your Packaging" href="examples/include-announcement-file.html"/>
       <item name="SMTP Authentication" href="examples/smtp-authentication.html"/>
       <item name="Specifying the Mail Sender" href="examples/specifying-mail-sender.html"/>
       <item name="Using a Custom Announcement Template" href="examples/using-a-custom-announcement-template.html"/>
