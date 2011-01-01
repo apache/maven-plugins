@@ -20,18 +20,16 @@ package org.apache.maven.plugin.jira;
  */
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import org.apache.maven.plugins.changes.model.Action;
-import org.apache.maven.plugins.changes.model.Release;
 import org.xml.sax.Attributes;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -53,9 +51,10 @@ public class JiraXML
 
     private JiraIssue issue;
 
-    public JiraXML( File xmlPath )
+    public JiraXML( File xmlPath, String encoding )
     {
         SAXParserFactory factory = SAXParserFactory.newInstance();
+        FileInputStream fis = null;
 
         issueList = new ArrayList();
 
@@ -63,11 +62,29 @@ public class JiraXML
         {
             SAXParser saxParser = factory.newSAXParser();
 
-            saxParser.parse( xmlPath, this );
+            fis = new FileInputStream( xmlPath );
+            InputSource inputSource = new InputSource( fis );
+            inputSource.setEncoding( encoding );
+
+            saxParser.parse( inputSource, this );
         }
         catch ( Throwable t )
         {
             t.printStackTrace();
+        }
+        finally
+        {
+            if ( fis != null )
+            {
+                try
+                {
+                    fis.close();
+                }
+                catch ( IOException e )
+                {
+                    // Ignore
+                }
+            }
         }
     }
 

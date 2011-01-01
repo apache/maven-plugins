@@ -42,11 +42,20 @@ public class JiraMojo
     /**
      * Path to the JIRA XML file, which will be parsed.
      *
-     * @parameter expression="${project.build.directory}/jira-results.xml "
+     * @parameter expression="${project.build.directory}/jira-results.xml"
      * @required
      * @readonly
      */
     private File jiraXmlPath;
+
+    /**
+     * The encoding used in the JIRA XML file. You only need to change this if
+     * your JIRA server is returning responses in an encoding other than UTF-8.
+     *
+     * @parameter default-value="UTF-8" expression="${changes.jiraXmlEncoding}"
+     * @since 2.4
+     */
+    private String jiraXmlEncoding;
 
     /**
      * Settings XML configuration.
@@ -248,7 +257,7 @@ public class JiraMojo
 
             if ( jiraXmlPath.isFile() )
             {
-                JiraXML jira = new JiraXML( jiraXmlPath );
+                JiraXML jira = new JiraXML( jiraXmlPath, jiraXmlEncoding );
                 List issueList = jira.getIssueList();
 
                 report = new JiraReportGenerator( columnNames );

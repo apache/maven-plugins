@@ -247,13 +247,22 @@ public class AnnouncementMojo
     private String resolutionIds;
 
     /**
-     * The path of the XML file of JIRA-announcements to be parsed.
+     * Path to the JIRA XML file, which will be parsed.
      *
      * @parameter expression="${project.build.directory}/jira-announcement.xml"
      * @required
      * @readonly
      */
     private File jiraXML;
+
+    /**
+     * The encoding used in the JIRA XML file. You only need to change this if
+     * your JIRA server is returning responses in an encoding other than UTF-8.
+     *
+     * @parameter default-value="UTF-8" expression="${changes.jiraXmlEncoding}"
+     * @since 2.4
+     */
+    private String jiraXmlEncoding;
 
     /**
      * The maximum number of issues to fetch from JIRA.
@@ -607,7 +616,7 @@ public class AnnouncementMojo
 
             if ( jiraXMLFile.exists() )
             {
-                JiraXML jiraParser = new JiraXML( jiraXMLFile );
+                JiraXML jiraParser = new JiraXML( jiraXMLFile, jiraXmlEncoding );
 
                 List issues = jiraParser.getIssueList();
 
