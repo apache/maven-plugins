@@ -293,22 +293,7 @@ public class ChangesMojo
         addIssueLinkTemplate( ChangesReportGenerator.DEFAULT_ISSUE_SYSTEM_KEY, issueLinkTemplate );
 
         // Show the current issueLinkTemplatePerSystem configuration
-        if ( getLog().isDebugEnabled() )
-        {
-            if ( issueLinkTemplatePerSystem == null )
-            {
-                getLog().debug( "No issueLinkTemplatePerSystem configuration was found" );
-            }
-            else
-            {
-                Iterator iterator = issueLinkTemplatePerSystem.entrySet().iterator();
-                while ( iterator.hasNext() )
-                {
-                    Map.Entry entry = (Map.Entry) iterator.next();
-                    getLog().debug( "issueLinkTemplatePerSystem[" + entry.getKey() + "] = " + entry.getValue() );
-                }
-            }
-        }
+        logIssueLinkTemplatePerSystem( issueLinkTemplatePerSystem );
 
         report.setIssueLinksPerSystem( issueLinkTemplatePerSystem );
         
@@ -346,6 +331,26 @@ public class ChangesMojo
         if ( !issueLinkTemplatePerSystem.containsKey( system ) )
         {
             issueLinkTemplatePerSystem.put( system, issueLinkTemplate );
+        }
+    }
+
+    private void logIssueLinkTemplatePerSystem( Map issueLinkTemplatePerSystem )
+    {
+        if ( getLog().isDebugEnabled() )
+        {
+            if ( issueLinkTemplatePerSystem == null )
+            {
+                getLog().debug( "No issueLinkTemplatePerSystem configuration was found" );
+            }
+            else
+            {
+                Iterator iterator = issueLinkTemplatePerSystem.entrySet().iterator();
+                while ( iterator.hasNext() )
+                {
+                    Map.Entry entry = (Map.Entry) iterator.next();
+                    getLog().debug( "issueLinkTemplatePerSystem[" + entry.getKey() + "] = " + entry.getValue() );
+                }
+            }
         }
     }
 
