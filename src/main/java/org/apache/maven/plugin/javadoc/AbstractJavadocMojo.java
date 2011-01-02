@@ -5173,9 +5173,9 @@ public abstract class AbstractJavadocMojo
     }
 
     /**
-     * Load the plugin pom.properties to get the current plugin version.
+     * Get the full javadoc goal. Loads the plugin's pom.properties to get the current plugin version.
      *
-     * @return <code>org.apache.maven.plugins:maven-javadoc-plugin:CURRENT_VERSION:javadoc</code>
+     * @return <code>org.apache.maven.plugins:maven-javadoc-plugin:CURRENT_VERSION:[test-]javadoc</code>
      */
     private String getFullJavadocGoal()
     {
@@ -5209,14 +5209,13 @@ public abstract class AbstractJavadocMojo
 
         StringBuffer sb = new StringBuffer();
 
-        sb.append( "org.apache.maven.plugins" ).append( ":" );
-        sb.append( "maven-javadoc-plugin" ).append( ":" );
+        sb.append( "org.apache.maven.plugins:maven-javadoc-plugin:" );
         if ( StringUtils.isNotEmpty( javadocPluginVersion ) )
         {
             sb.append( javadocPluginVersion ).append( ":" );
         }
 
-        if ( TestJavadocReport.class.isAssignableFrom( getClass() ) )
+        if ( this instanceof TestJavadocReport )
         {
             sb.append( "test-javadoc" );
         }
@@ -5246,87 +5245,84 @@ public abstract class AbstractJavadocMojo
             return Collections.emptyList();
         }
 
-        getLog().debug( "Try to add links for modules..." );
+        getLog().debug( "Trying to add links for modules..." );
 
         List<OfflineLink> modulesLinks = new ArrayList<OfflineLink>();
         String javadocDirRelative = PathUtils.toRelative( project.getBasedir(), getOutputDirectory() );
         for ( MavenProject p : reactorProjects )
         {
-            if ( p.getPackaging().equals( "pom" ) )
-            {
-                continue;
-            }
-
-            if ( p.getId().equals( project.getId() ) )
+            if ( p.getPackaging().equals( "pom" ) || p.getId().equals( project.getId() ) || ( p.getUrl() == null ) )
             {
                 continue;
             }
 
             File location = new File( p.getBasedir(), javadocDirRelative );
-            if ( p.getUrl() != null )
+
+            if ( !location.exists() )
             {
-                if ( !location.exists() )
+                if ( getLog().isDebugEnabled() )
                 {
-                    String javadocGoal = getFullJavadocGoal();
-                    getLog().info(
-                                   "The goal '" + javadocGoal
-                                       + "' has not be previously called for the project: '" + p.getId()
-                                       + "'. Trying to invoke it..." );
-
-                    File invokerDir = new File( project.getBuild().getDirectory(), "invoker" );
-                    invokerDir.mkdirs();
-                    File invokerLogFile = FileUtils.createTempFile( "maven-javadoc-plugin", ".txt", invokerDir );
-                    try
-                    {
-                        JavadocUtil.invokeMaven( getLog(), new File( localRepository.getBasedir() ), p.getFile(),
-                                                 Collections.singletonList( javadocGoal ), null, invokerLogFile );
-                    }
-                    catch ( MavenInvocationException e )
-                    {
-                        if ( getLog().isDebugEnabled() )
-                        {
-                            getLog().error( "MavenInvocationException: " + e.getMessage(), e );
-                        }
-                        else
-                        {
-                            getLog().error( "MavenInvocationException: " + e.getMessage() );
-                        }
-
-                        String invokerLogContent = JavadocUtil.readFile( invokerLogFile, "UTF-8" );
-                        
-                        // TODO: Why are we only interested in cases where the JVM won't start?
-                        // [MJAVADOC-275][jdcasey] I changed the logic here to only throw an error WHEN 
-                        //   the JVM won't start (opposite of what it was).
-                        if ( invokerLogContent != null && invokerLogContent.indexOf( JavadocUtil.ERROR_INIT_VM ) > -1 )
-                        {
-                            throw new MavenReportException( e.getMessage(), e );
-                        }
-                    }
-                    finally
-                    {
-                        // just create the directory to prevent repeated invokations..
-                        if ( !location.exists() )
-                        {
-                            location.mkdirs();
-                        }
-                    }
+                    getLog().debug( "Javadoc directory not found: " + location );
                 }
 
-                if ( location.exists() )
+                String javadocGoal = getFullJavadocGoal();
+                getLog().info( "The goal '" + javadocGoal + "' has not been previously called for the module: '"
+                                   + p.getId() + "'. Trying to invoke it..." );
+
+                File invokerDir = new File( project.getBuild().getDirectory(), "invoker" );
+                invokerDir.mkdirs();
+                File invokerLogFile = FileUtils.createTempFile( "maven-javadoc-plugin", ".txt", invokerDir );
+                try
                 {
-                    String url = getJavadocLink( p );
-
-                    OfflineLink ol = new OfflineLink();
-                    ol.setUrl( url );
-                    ol.setLocation( location.getAbsolutePath() );
-
+                    JavadocUtil.invokeMaven( getLog(), new File( localRepository.getBasedir() ), p.getFile(),
+                                             Collections.singletonList( javadocGoal ), null, invokerLogFile );
+                }
+                catch ( MavenInvocationException e )
+                {
                     if ( getLog().isDebugEnabled() )
                     {
-                        getLog().debug( "Added Javadoc link: " + url + " for the project: " + p.getId() );
+                        getLog().error( "MavenInvocationException: " + e.getMessage(), e );
+                    }
+                    else
+                    {
+                        getLog().error( "MavenInvocationException: " + e.getMessage() );
                     }
 
-                    modulesLinks.add( ol );
+                    String invokerLogContent = JavadocUtil.readFile( invokerLogFile, "UTF-8" );
+                    
+                    // TODO: Why are we only interested in cases where the JVM won't start?
+                    // [MJAVADOC-275][jdcasey] I changed the logic here to only throw an error WHEN 
+                    //   the JVM won't start (opposite of what it was).
+                    if ( invokerLogContent != null && invokerLogContent.contains( JavadocUtil.ERROR_INIT_VM ) )
+                    {
+                        throw new MavenReportException( e.getMessage(), e );
+                    }
                 }
+                finally
+                {
+                    // just create the directory to prevent repeated invocations..
+                    if ( !location.exists() )
+                    {
+                        getLog().warn( "Creating fake javadoc directory to prevent repeated invocations: " + location );
+                        location.mkdirs();
+                    }
+                }
+            }
+
+            if ( location.exists() )
+            {
+                String url = getJavadocLink( p );
+
+                OfflineLink ol = new OfflineLink();
+                ol.setUrl( url );
+                ol.setLocation( location.getAbsolutePath() );
+
+                if ( getLog().isDebugEnabled() )
+                {
+                    getLog().debug( "Added Javadoc offline link: " + url + " for the module: " + p.getId() );
+                }
+
+                modulesLinks.add( ol );
             }
         }
 
@@ -5348,7 +5344,7 @@ public abstract class AbstractJavadocMojo
             return Collections.emptyList();
         }
 
-        getLog().debug( "Try to add links for dependencies..." );
+        getLog().debug( "Trying to add links for dependencies..." );
 
         List<String> dependenciesLinks = new ArrayList<String>();
         for ( Iterator<Artifact> it = project.getDependencyArtifacts().iterator(); it.hasNext(); )
@@ -5369,7 +5365,7 @@ public abstract class AbstractJavadocMojo
                         if ( getLog().isDebugEnabled() )
                         {
                             getLog().debug(
-                                            "Added Javadoc link: " + url + " for the project: "
+                                            "Added Javadoc link: " + url + " for the artifact: "
                                                 + artifactProject.getId() );
                         }
                         dependenciesLinks.add( url );
@@ -5445,33 +5441,30 @@ public abstract class AbstractJavadocMojo
         }
 
         String javaApiLink = null;
-        if ( sourceVersion >= 1.3f && sourceVersion < 1.4f && javaApiLinks.getProperty( "api_1.3" ) != null )
+        if ( sourceVersion >= 1.3f && sourceVersion < 1.4f )
         {
-            javaApiLink = javaApiLinks.getProperty( "api_1.3" ).toString();
+            javaApiLink = javaApiLinks.getProperty( "api_1.3" );
         }
-        else if ( sourceVersion >= 1.4f && sourceVersion < 1.5f && javaApiLinks.getProperty( "api_1.4" ) != null )
+        else if ( sourceVersion >= 1.4f && sourceVersion < 1.5f )
         {
-            javaApiLink = javaApiLinks.getProperty( "api_1.4" ).toString();
+            javaApiLink = javaApiLinks.getProperty( "api_1.4" );
         }
-        else if ( sourceVersion >= 1.5f && sourceVersion < 1.6f && javaApiLinks.getProperty( "api_1.5" ) != null )
+        else if ( sourceVersion >= 1.5f && sourceVersion < 1.6f )
         {
-            javaApiLink = javaApiLinks.getProperty( "api_1.5" ).toString();
+            javaApiLink = javaApiLinks.getProperty( "api_1.5" );
         }
-        else if ( sourceVersion >= 1.6f && javaApiLinks.getProperty( "api_1.6" ) != null )
+        else if ( sourceVersion >= 1.6f )
         {
-            javaApiLink = javaApiLinks.getProperty( "api_1.6" ).toString();
+            javaApiLink = javaApiLinks.getProperty( "api_1.6" );
         }
 
-        if ( StringUtils.isNotEmpty( javaApiLink ) )
+        if ( getLog().isDebugEnabled() )
         {
-            if ( getLog().isDebugEnabled() )
+            if ( StringUtils.isNotEmpty( javaApiLink ) )
             {
                 getLog().debug( "Found Java API link: " + javaApiLink );
             }
-        }
-        else
-        {
-            if ( getLog().isDebugEnabled() )
+            else
             {
                 getLog().debug( "No Java API link found." );
             }
@@ -5492,10 +5485,10 @@ public abstract class AbstractJavadocMojo
         try
         {
             URI linkUri;
-            if ( link.trim().toLowerCase( Locale.ENGLISH ).startsWith( "http" )
-                || link.trim().toLowerCase( Locale.ENGLISH ).startsWith( "https" )
-                || link.trim().toLowerCase( Locale.ENGLISH ).startsWith( "ftp" )
-                || link.trim().toLowerCase( Locale.ENGLISH ).startsWith( "file" ) )
+            if ( link.trim().toLowerCase( Locale.ENGLISH ).startsWith( "http:" )
+                || link.trim().toLowerCase( Locale.ENGLISH ).startsWith( "https:" )
+                || link.trim().toLowerCase( Locale.ENGLISH ).startsWith( "ftp:" )
+                || link.trim().toLowerCase( Locale.ENGLISH ).startsWith( "file:" ) )
             {
                 linkUri = new URI( link + "/package-list" );
             }
@@ -5585,12 +5578,7 @@ public abstract class AbstractJavadocMojo
          * see main.usage and main.Building_tree keys from
          * com.sun.tools.javadoc.resources.javadoc bundle in tools.jar
          */
-        if ( output.indexOf( "Javadoc" ) != -1 || output.indexOf( "javadoc" ) != -1 )
-        {
-            return false;
-        }
-
-        return true;
+        return !( output.contains( "Javadoc" ) || output.contains( "javadoc" ) );
     }
 
     // ----------------------------------------------------------------------
@@ -5654,18 +5642,17 @@ public abstract class AbstractJavadocMojo
      */
     private static Plugin getPlugin( MavenProject p, String pluginId )
     {
-        Plugin plugin = null;
-        if ( p.getBuild() != null && p.getBuild().getPluginsAsMap() != null )
+        if ( ( p.getBuild() == null)  || ( p.getBuild().getPluginsAsMap() == null ) )
         {
-            plugin = (Plugin) p.getBuild().getPluginsAsMap().get( pluginId );
-            if ( plugin == null )
-            {
-                if ( p.getBuild().getPluginManagement() != null
-                    && p.getBuild().getPluginManagement().getPluginsAsMap() != null )
-                {
-                    plugin = (Plugin) p.getBuild().getPluginManagement().getPluginsAsMap().get( pluginId );
-                }
-            }
+            return null;
+        }
+
+        Plugin plugin = (Plugin) p.getBuild().getPluginsAsMap().get( pluginId );
+
+        if ( ( plugin == null ) && ( p.getBuild().getPluginManagement() != null )
+            && ( p.getBuild().getPluginManagement().getPluginsAsMap() != null ) )
+        {
+            plugin = (Plugin) p.getBuild().getPluginManagement().getPluginsAsMap().get( pluginId );
         }
 
         return plugin;
