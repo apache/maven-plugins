@@ -45,12 +45,12 @@ public class ChangesReportGenerator
 {
 
     /**
-     * The token in {@link #issueLink} denoting the base URL for the issue management.
+     * The token in {@link #issueLinksPerSystem} denoting the base URL for the issue management.
      */
     private static final String URL_TOKEN = "%URL%";
 
     /**
-     * The token in {@link #issueLink} denoting the issue ID.
+     * The token in {@link #issueLinksPerSystem} denoting the issue ID.
      */
     private static final String ISSUE_TOKEN = "%ISSUE%";
 
@@ -145,8 +145,9 @@ public class ChangesReportGenerator
     }
 
     /**
-     * Checks whether links to the issues can be generated.
+     * Checks whether links to the issues can be generated for the given system.
      *
+     * @param system The issue management system
      * @return <code>true</code> if issue links can be generated, <code>false</code> otherwise.
      */
     public boolean canGenerateIssueLinks( String system )
@@ -157,13 +158,13 @@ public class ChangesReportGenerator
         }
         String issueLink = (String) this.issueLinksPerSystem.get( system );
 
-        // If the issue entry is blank no links possible
+        // If the issue link entry is blank then no links are possible
         if ( StringUtils.isBlank( issueLink ) )
         {
             return false;
         }
 
-        // If we have %URL% then the URL must be set.
+        // If the %URL% token is used then the issue management system URL must be set.
         if ( issueLink.indexOf( URL_TOKEN ) >= 0 && StringUtils.isBlank( getUrl() ) )
         {
             return false;
@@ -353,6 +354,13 @@ public class ChangesReportGenerator
         }
     }
 
+    /**
+     * Replace tokens in the issue link template with the real values.
+     *
+     * @param issue The issue identifier
+     * @param system The issue management system
+     * @return An interpolated issue link
+     */
     private String parseIssueLink( String issue, String system )
     {
         String parseLink;
@@ -520,7 +528,11 @@ public class ChangesReportGenerator
     }
 
     /**
+     * Construct links to the issues that were solved by an action.
+     *
      * @param issue The issue specified by attributes
+     * @param system The issue management system
+     * @param sink The sink
      * @param fixes The List of issues specified as fixes elements
      */
     private void constructIssueLink( String issue, String system, Sink sink, List fixes )
@@ -560,7 +572,11 @@ public class ChangesReportGenerator
     }
 
     /**
+     * Construct a text that references (but does not link to) the issues that
+     * were solved by an action.
+     *
      * @param issue The issue specified by attributes
+     * @param sink The sink
      * @param fixes The List of issues specified as fixes elements
      */
     private void constructIssueText( String issue, Sink sink, List fixes )
@@ -593,9 +609,12 @@ public class ChangesReportGenerator
     }
 
     /**
-     * @param sink
-     * @param action
-     * @param bundle
+     * Construct a text or link that mention the people that helped with an action.
+     *
+     * @param sink The sink
+     * @param action The action that was done
+     * @param bundle A resource bundle for i18n
+     * @param dueTos Other people that helped with an action
      */
     private void constructDueTo( Sink sink, Action action, ResourceBundle bundle, List dueTos )
     {
