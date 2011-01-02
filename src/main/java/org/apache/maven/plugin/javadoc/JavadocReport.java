@@ -293,14 +293,15 @@ public class JavadocReport
         }
         catch ( MavenReportException e )
         {
+            String message =
+                "An error has occurred in " + getName( Locale.ENGLISH ) + " report generation:" + e.getMessage();
+
             if ( failOnError )
             {
-                throw new MojoExecutionException( "An error has occurred in " + getName( Locale.ENGLISH )
-                    + " report generation:" + e.getMessage(), e );
+                throw new MojoExecutionException( message, e );
             }
 
-            getLog().error( "An error has occurred in " + getName( Locale.ENGLISH )
-                    + " report generation:" + e.getMessage(), e );
+            getLog().error( message, e );
         }
         catch ( RuntimeException e )
         {
@@ -313,7 +314,7 @@ public class JavadocReport
         }
     }
 
-    /** {@inheritDoc} */
+    @Override
     protected boolean isAggregator()
     {
         // only here for backward compatibility, this flag does not work reliably
