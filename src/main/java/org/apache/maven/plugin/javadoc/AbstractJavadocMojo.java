@@ -1608,7 +1608,7 @@ public abstract class AbstractJavadocMojo
     private boolean includeTransitiveDependencySources;
     
     /**
-     * List of included dependency-source patterns. Example: org.apache.maven:*
+     * List of included dependency-source patterns. Example: <code>org.apache.maven:*</code>
      *
      * 
      * @parameter
@@ -1618,7 +1618,7 @@ public abstract class AbstractJavadocMojo
     private List<String> dependencySourceIncludes;
 
     /**
-     * List of excluded dependency-source patterns. Example: org.apache.maven.shared:*
+     * List of excluded dependency-source patterns. Example: <code>org.apache.maven.shared:*</code>
      *
      * 
      * @parameter
@@ -2491,8 +2491,7 @@ public abstract class AbstractJavadocMojo
 
             if ( compileArtifactMap.get( newArtifact.getDependencyConflictId() ) != null )
             {
-                Artifact oldArtifact =
-                    (Artifact) compileArtifactMap.get( newArtifact.getDependencyConflictId() );
+                Artifact oldArtifact = compileArtifactMap.get( newArtifact.getDependencyConflictId() );
 
                 ArtifactVersion oldVersion = new DefaultArtifactVersion( oldArtifact.getVersion() );
                 ArtifactVersion newVersion = new DefaultArtifactVersion( newArtifact.getVersion() );
@@ -5100,14 +5099,7 @@ public abstract class AbstractJavadocMojo
                 }
                 catch ( Exception e )
                 {
-                    if ( getLog().isDebugEnabled() )
-                    {
-                        getLog().error( "Unable to retrieve the dependency: " + dependency + ". Ignored.", e );
-                    }
-                    else
-                    {
-                        getLog().error( "Unable to retrieve the dependency: " + dependency + ". Ignored." );
-                    }
+                    logError( "Unable to retrieve the dependency: " + dependency + ". Ignored.", e );
                 }
 
                 if ( artifact != null && artifact.getFile().exists() )
@@ -5127,14 +5119,7 @@ public abstract class AbstractJavadocMojo
                 }
                 catch ( IOException e )
                 {
-                    if ( getLog().isDebugEnabled() )
-                    {
-                        getLog().error( "IOException: " + e.getMessage(), e );
-                    }
-                    else
-                    {
-                        getLog().error( "IOException: " + e.getMessage() );
-                    }
+                    logError( "IOException: " + e.getMessage(), e );
                 }
             }
         }
@@ -5240,7 +5225,7 @@ public abstract class AbstractJavadocMojo
     private List<OfflineLink> getModulesLinks()
         throws MavenReportException
     {
-        if ( !( detectOfflineLinks && !isAggregator() && reactorProjects != null ) )
+        if ( !detectOfflineLinks || isAggregator() || reactorProjects == null )
         {
             return Collections.emptyList();
         }
@@ -5279,14 +5264,7 @@ public abstract class AbstractJavadocMojo
                 }
                 catch ( MavenInvocationException e )
                 {
-                    if ( getLog().isDebugEnabled() )
-                    {
-                        getLog().error( "MavenInvocationException: " + e.getMessage(), e );
-                    }
-                    else
-                    {
-                        getLog().error( "MavenInvocationException: " + e.getMessage() );
-                    }
+                    logError( "MavenInvocationException: " + e.getMessage(), e );
 
                     String invokerLogContent = JavadocUtil.readFile( invokerLogFile, "UTF-8" );
                     
@@ -5378,12 +5356,8 @@ public abstract class AbstractJavadocMojo
                         getLog().debug(
                                        "Error when building the artifact: " + artifact.toString()
                                            + ". Ignored to add Javadoc link." );
-                        getLog().error( "ProjectBuildingException: " + e.getMessage(), e );
                     }
-                    else
-                    {
-                        getLog().error( "ProjectBuildingException: " + e.getMessage() );
-                    }
+                    logError( "ProjectBuildingException: " + e.getMessage(), e );
                 }
             }
         }
@@ -5553,14 +5527,7 @@ public abstract class AbstractJavadocMojo
         }
         catch ( IOException e )
         {
-            if ( getLog().isDebugEnabled() )
-            {
-                getLog().error( "Unable to write '" + commandLineFile.getName() + "' debug script file", e );
-            }
-            else
-            {
-                getLog().error( "Unable to write '" + commandLineFile.getName() + "' debug script file" );
-            }
+            logError( "Unable to write '" + commandLineFile.getName() + "' debug script file", e );
         }
     }
 
@@ -5752,5 +5719,23 @@ public abstract class AbstractJavadocMojo
     {
         return JAVADOC_RESOURCES_ATTACHMENT_CLASSIFIER;
     }
-    
+
+    /**
+     * Logs an error with throwable content only if in debug.
+     * 
+     * @param message
+     * @param t
+     */
+    protected void logError( String message, Throwable t )
+    {
+        if ( getLog().isDebugEnabled() )
+        {
+            getLog().error( message, t );
+        }
+        else
+        {
+            getLog().error( message );
+        }
+    }
+
 }
