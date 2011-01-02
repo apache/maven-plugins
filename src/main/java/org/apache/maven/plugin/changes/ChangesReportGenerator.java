@@ -171,15 +171,6 @@ public class ChangesReportGenerator
         return true;
     }
 
-    public boolean canGenerateIssueLinks()
-    {
-        if ( this.issueLinksPerSystem == null || this.issueLinksPerSystem.isEmpty() )
-        {
-            return false;
-        }
-        return this.issueLinksPerSystem.containsKey( DEFAULT_ISSUE_SYSTEM_KEY );
-    }
-
     public void doGenerateEmptyReport( ResourceBundle bundle, Sink sink, String message )
     {
         sinkBeginReport( sink, bundle );

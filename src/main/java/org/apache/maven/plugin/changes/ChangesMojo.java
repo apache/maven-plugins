@@ -40,6 +40,7 @@ import org.apache.maven.shared.filtering.MavenFilteringException;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
+import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.XmlStreamReader;
 
 /**
@@ -317,7 +318,7 @@ public class ChangesMojo
 
         report.setAddActionDate( addActionDate );
         
-        if ( !report.canGenerateIssueLinks() )
+        if ( StringUtils.isEmpty( url ) )
         {
             getLog().warn( "No issue management URL defined in POM. Links to your issues will not work correctly." );
         }
