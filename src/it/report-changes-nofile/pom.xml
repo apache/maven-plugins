@@ -81,7 +81,9 @@
         <artifactId>maven-changes-plugin</artifactId>
         <version>@pom.version@</version>
         <configuration>
-          <issueLinkTemplate>http://myjira/browse/%ISSUE%</issueLinkTemplate>
+          <issueLinkTemplatePerSystem>
+            <jira>http://myjira/browse/%ISSUE%</jira>
+          </issueLinkTemplatePerSystem>
         </configuration>
         <reportSets>
           <reportSet>

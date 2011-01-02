@@ -100,7 +100,7 @@ Usage
 </project>
 -------------------
 
-  and execute the site goal to generate the report.
+  and execute the <<<site>>> phase to generate the report.
 
 -------------------
 mvn site
@@ -110,12 +110,59 @@ mvn site
 
   If you use the <<<issue>>> attribute in your <<<changes.xml>>> file and have
   the <<<\<issueManagement\>>>> element configured in your <<<pom.xml>>>, the
-  report will contain links to the issues in your issue management system. The
-  default configuration produces links to JIRA, but that can be
-  {{{changes-report-mojo.html}configured}}.
+  report will contain links to the issues in your issue management system.
 
-  <<Note:>> If you have
-  another issue tracker, make sure that your <<<\<issueManagement\>/\<url\>>>> is
+  Starting with version 2.4 the plugin comes pre-configured for a whole bunch of
+  different issue management systems. All you have to to is enter your issue
+  management system and the URL to it in your POM. It can look like this:
+
+-----
+<project>
+  ...
+  <issueManagement>
+    <system>JIRA</system>
+    <url>http://jira.company.com/</url>
+  </issueManagement>
+  ...
+</project>
+-----
+
+  If you have a previous configuration for <<<\<issueLinkTemplatePerSystem\>>>>
+  in your POM, you can probably throw that away when you start using version 2.4,
+  unless you use more than one issue management system.
+
+  The following table shows the pre-configured issue management systems and the
+  templates they use to create links from your Changes Report directly to the
+  issues in your issue management system.
+
+*-------------+-------------------------------+
+| <<System>>  | <<Issue Link Template>>       |
+*-------------+-------------------------------+
+| Bugzilla    | %URL%/show_bug.cgi?id=%ISSUE% |
+*-------------+-------------------------------+
+| GoogleCode  | %URL%/detail?id=%ISSUE%       |
+*-------------+-------------------------------+
+| JIRA        | %URL%/%ISSUE%                 |
+*-------------+-------------------------------+
+| Mantis      | %URL%/view.php?id=%ISSUE%     |
+*-------------+-------------------------------+
+| Redmine     | %URL%/issues/show/%ISSUE%     |
+*-------------+-------------------------------+
+| Scarab      | %URL%/issues/id/%ISSUE%       |
+*-------------+-------------------------------+
+| SourceForge | http://sourceforge.net/support/tracker.php?aid=%ISSUE% |
+*-------------+-------------------------------+
+| Trac        | %URL%/ticket/%ISSUE%          |
+*-------------+-------------------------------+
+
+  If you use an issue management system other than the ones above, you need to
+  {{{changes-report-mojo.html#issueLinkTemplatePerSystem}configure an issue
+  link template for it}}.
+  We would love to extend the table above with more issue management systems,
+  so if you have a working configuration that is not listed above, please tell
+  us about it by {{{issue-tracking.html}creating an issue for it}}.
+
+  <<Note:>> Make sure that your <<<\<issueManagement\>/\<url\>>>> is
   correct. In particular, make sure that it has a trailing slash if it needs one.
   The plugin can't add this for you, because it needs to handle different issue
   management systems. If your issue management system is at
