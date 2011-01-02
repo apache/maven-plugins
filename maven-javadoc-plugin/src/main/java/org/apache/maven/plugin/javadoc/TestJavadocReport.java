@@ -151,7 +151,7 @@ public class TestJavadocReport
     // Report public methods
     // ----------------------------------------------------------------------
 
-    /** {@inheritDoc} */
+    @Override
     protected void executeReport( Locale unusedLocale )
         throws MavenReportException
     {
@@ -160,7 +160,7 @@ public class TestJavadocReport
         super.executeReport( unusedLocale );
     }
 
-    /** {@inheritDoc} */
+    @Override
     public String getName( Locale locale )
     {
         if ( StringUtils.isEmpty( testName ) )
@@ -171,7 +171,7 @@ public class TestJavadocReport
         return testName;
     }
 
-    /** {@inheritDoc} */
+    @Override
     public String getDescription( Locale locale )
     {
         if ( StringUtils.isEmpty( testDescription ) )
@@ -182,13 +182,13 @@ public class TestJavadocReport
         return testDescription;
     }
 
-    /** {@inheritDoc} */
+    @Override
     public String getOutputName()
     {
         return destDir + "/index";
     }
 
-    /** {@inheritDoc} */
+    @Override
     public File getReportOutputDirectory()
     {
         if ( reportOutputDirectory == null )
@@ -204,11 +204,13 @@ public class TestJavadocReport
      *
      * @param reportOutputDirectory the directory file to be set
      */
+    @Override
     public void setReportOutputDirectory( File reportOutputDirectory )
     {
         updateReportOutputDirectory( reportOutputDirectory, destDir );
     }
 
+    @Override
     public void setDestDir( String destDir )
     {
         this.destDir = destDir;
@@ -233,7 +235,7 @@ public class TestJavadocReport
     // Important Note: should be inline with methods defined in TestJavadocJar
     // ----------------------------------------------------------------------
 
-    /** {@inheritDoc} */
+    @Override
     protected List<String> getProjectBuildOutputDirs( MavenProject p )
     {
         List<String> dirs = new ArrayList<String>();
@@ -249,7 +251,7 @@ public class TestJavadocReport
         return dirs;
     }
 
-    /** {@inheritDoc} */
+    @Override
     protected List<String> getProjectSourceRoots( MavenProject p )
     {
         if ( "pom".equals( p.getPackaging().toLowerCase() ) )
@@ -261,7 +263,7 @@ public class TestJavadocReport
                         : new LinkedList<String>( p.getTestCompileSourceRoots() ) );
     }
 
-    /** {@inheritDoc} */
+    @Override
     protected List<String> getExecutionProjectSourceRoots( MavenProject p )
     {
         if ( "pom".equals( p.getExecutionProject().getPackaging().toLowerCase() ) )
@@ -273,38 +275,38 @@ public class TestJavadocReport
                         : new LinkedList<String>( p.getExecutionProject().getTestCompileSourceRoots() ) );
     }
 
-    /** {@inheritDoc} */
+    @Override
     protected List<Artifact> getProjectArtifacts( MavenProject p )
     {
         return ( p.getTestArtifacts() == null ? Collections.EMPTY_LIST
                         : new LinkedList<Artifact>( p.getTestArtifacts() ) );
     }
 
-    /** {@inheritDoc} */
+    @Override
     protected File getJavadocDirectory()
     {
         return testJavadocDirectory;
     }
 
-    /** {@inheritDoc} */
+    @Override
     protected String getDoctitle()
     {
         return testDoctitle;
     }
 
-    /** {@inheritDoc} */
+    @Override
     protected File getOverview()
     {
         return testOverview;
     }
 
-    /** {@inheritDoc} */
+    @Override
     protected String getWindowtitle()
     {
         return testWindowtitle;
     }
 
-    /** {@inheritDoc} */
+    @Override
     protected List<Artifact> getCompileArtifacts( ArtifactResolutionResult result )
     {
         return JavadocUtil.getCompileArtifacts( result.getArtifacts(), true );
@@ -344,6 +346,7 @@ public class TestJavadocReport
      * 
      * {@inheritDoc}
      */
+    @Override
     protected SourceResolverConfig configureDependencySourceResolution( final SourceResolverConfig config )
     {
         return super.configureDependencySourceResolution( config ).withoutCompileSources().withTestSources();

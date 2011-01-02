@@ -1,3 +1,5 @@
+package org.apache.maven.plugin.javadoc.resolver;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -17,19 +19,17 @@
  * under the License.
  */
 
-package org.apache.maven.plugin.javadoc.resolver;
-
 import org.apache.maven.plugin.javadoc.options.JavadocOptions;
 
 import java.io.File;
 
 public class JavadocBundle
 {
-    
+
     private final File resourcesDirectory;
-    
+
     private final JavadocOptions options;
-    
+
     public JavadocBundle( final JavadocOptions options, final File resourcesDirectory )
     {
         this.options = options;

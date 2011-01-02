@@ -112,7 +112,7 @@ public class TestJavadocJar
     // Protected methods
     // ----------------------------------------------------------------------
 
-    /** {@inheritDoc} */
+    @Override
     protected String getClassifier()
     {
         return "test-javadoc";
@@ -122,37 +122,37 @@ public class TestJavadocJar
     // Important Note: should be inline with methods defined in TestJavadocReport
     // ----------------------------------------------------------------------
 
-    /** {@inheritDoc} */
+    @Override
     protected String getOutputDirectory()
     {
         return outputDirectory.getAbsoluteFile().toString();
     }
 
-    /** {@inheritDoc} */
+    @Override
     protected File getJavadocDirectory()
     {
         return testJavadocDirectory;
     }
 
-    /** {@inheritDoc} */
+    @Override
     protected String getDoctitle()
     {
         return testDoctitle;
     }
 
-    /** {@inheritDoc} */
+    @Override
     protected File getOverview()
     {
         return testOverview;
     }
 
-    /** {@inheritDoc} */
+    @Override
     protected String getWindowtitle()
     {
         return testWindowtitle;
     }
 
-    /** {@inheritDoc} */
+    @Override
     protected List<String> getProjectBuildOutputDirs( MavenProject p )
     {
         List<String> dirs = new ArrayList<String>();
@@ -168,7 +168,7 @@ public class TestJavadocJar
         return dirs;
     }
 
-    /** {@inheritDoc} */
+    @Override
     protected List<String> getProjectSourceRoots( MavenProject p )
     {
         if ( "pom".equals( p.getPackaging().toLowerCase() ) )
@@ -179,7 +179,7 @@ public class TestJavadocJar
         return p.getTestCompileSourceRoots();
     }
 
-    /** {@inheritDoc} */
+    @Override
     protected List<String> getExecutionProjectSourceRoots( MavenProject p )
     {
         if ( "pom".equals( p.getExecutionProject().getPackaging().toLowerCase() ) )
@@ -190,13 +190,13 @@ public class TestJavadocJar
         return p.getExecutionProject().getTestCompileSourceRoots();
     }
 
-    /** {@inheritDoc} */
+    @Override
     protected List<Artifact> getProjectArtifacts( MavenProject p )
     {
         return p.getTestArtifacts();
     }
 
-    /** {@inheritDoc} */
+    @Override
     protected List<Artifact> getCompileArtifacts( ArtifactResolutionResult result )
     {
         return JavadocUtil.getCompileArtifacts( result.getArtifacts(), true );
@@ -207,6 +207,7 @@ public class TestJavadocJar
      * 
      * {@inheritDoc}
      */
+    @Override
     protected SourceResolverConfig configureDependencySourceResolution( final SourceResolverConfig config )
     {
         return super.configureDependencySourceResolution( config ).withoutCompileSources().withTestSources();

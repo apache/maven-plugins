@@ -32,7 +32,7 @@ package org.apache.maven.plugin.javadoc;
 public class AggregatorTestJavadocJar
     extends TestJavadocJar
 {
-    /** {@inheritDoc} */
+    @Override
     protected boolean isAggregator()
     {
         return true;
