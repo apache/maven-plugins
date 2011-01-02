@@ -60,6 +60,14 @@ public class ChangesReportGenerator
 
     private ChangesXML report;
 
+    /**
+     * The issue management system to use, for actions that do not specify a
+     * system.
+     *
+     * @since 2.4
+     */
+    private String system;
+
     private String teamlist;
 
     private String url;
@@ -98,6 +106,22 @@ public class ChangesReportGenerator
     public void setEscapeHTML( boolean escapeHTML )
     {
         this.escapeHTML = escapeHTML;
+    }
+
+    /**
+     * @since 2.4
+     */
+    public String getSystem()
+    {
+        return system;
+    }
+
+    /**
+     * @since 2.4
+     */
+    public void setSystem( String system )
+    {
+        this.system = system;
     }
 
     public void setTeamlist( final String teamlist )
@@ -244,8 +268,18 @@ public class ChangesReportGenerator
                 {
                     sink.text( " " + bundle.getString( "report.changes.text.fixes" ) + " " );
 
+                    // Try to get the issue management system specified in the changes.xml file
                     String system = action.getSystem();
-                    system = StringUtils.isEmpty( system ) ? DEFAULT_ISSUE_SYSTEM_KEY : system;
+                    // Try to get the issue management system configured in the POM
+                    if ( StringUtils.isEmpty( system ) )
+                    {
+                        system = this.system;
+                    }
+                    // Use the default issue management system
+                    if ( StringUtils.isEmpty( system ) )
+                    {
+                        system = DEFAULT_ISSUE_SYSTEM_KEY;
+                    }
                     if ( !canGenerateIssueLinks( system ) )
                     {
                         constructIssueText( action.getIssue(), sink, action.getFixedIssues() );

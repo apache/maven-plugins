@@ -87,7 +87,9 @@
         <version>@pom.version@</version>
         <configuration>
           <filteringChanges>true</filteringChanges>
-          <issueLinkTemplate>http://myjira/browse/%ISSUE%</issueLinkTemplate>
+          <issueLinkTemplatePerSystem>
+            <jira>http://myjira/browse/%ISSUE%</jira>
+          </issueLinkTemplatePerSystem>
           <publishDateLocale>en</publishDateLocale>
           <publishDateFormat>yyyy-MM-dd</publishDateFormat>
         </configuration>

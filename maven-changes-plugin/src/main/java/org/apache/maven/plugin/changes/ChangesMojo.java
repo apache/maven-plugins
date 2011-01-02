@@ -25,13 +25,13 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
+import org.apache.commons.collections.map.CaseInsensitiveMap;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.reporting.MavenReportException;
 import org.apache.maven.shared.filtering.MavenFileFilter;
@@ -78,7 +78,7 @@ public class ChangesMojo
     
     /**
      * Template strings per system that is used to discover the URL to use to display an issue report. Each key in this
-     * map denotes the (case-sensitive) identifier of the issue tracking system and its value gives the URL template.
+     * map denotes the (case-insensitive) identifier of the issue tracking system and its value gives the URL template.
      * <p>
      * There are 2 template tokens you can use. <code>%URL%</code>: this is computed by getting the
      * <code>&lt;issueManagement&gt;/&lt;url&gt;</code> value from the POM, and removing the last '/'
@@ -92,6 +92,13 @@ public class ChangesMojo
      * @since 2.1
      */
     private Map issueLinkTemplatePerSystem;
+
+    /**
+     * @parameter default-value="${project.issueManagement.system}"
+     * @readonly
+     * @since 2.4
+     */
+    private String system;
 
     /**
      * @parameter default-value="${project.issueManagement.url}"
@@ -201,7 +208,8 @@ public class ChangesMojo
     */
     private String publishDateLocale;
     
-    
+    private CaseInsensitiveMap caseInsensitiveIssueLinkTemplatePerSystem;
+
     public boolean canGenerateReport()
     {
         return xmlPath.isFile();
@@ -288,15 +296,37 @@ public class ChangesMojo
         
         report.setEscapeHTML ( escapeHTML );
 
+        // Create a case insensitive version of issueLinkTemplatePerSystem
+        // We need something case insensitive to maintain backward compatibility 
+        if ( issueLinkTemplatePerSystem == null )
+        {
+            caseInsensitiveIssueLinkTemplatePerSystem = new CaseInsensitiveMap();
+        }
+        else
+        {
+            caseInsensitiveIssueLinkTemplatePerSystem = new CaseInsensitiveMap( issueLinkTemplatePerSystem );
+        }
+
         // Set good default values for issue management systems here, but only
         // if they have not been configured already by the user
         addIssueLinkTemplate( ChangesReportGenerator.DEFAULT_ISSUE_SYSTEM_KEY, issueLinkTemplate );
+        addIssueLinkTemplate( "Bugzilla", "%URL%/show_bug.cgi?id=%ISSUE%" );
+        addIssueLinkTemplate( "GoogleCode", "%URL%/detail?id=%ISSUE%" );
+        addIssueLinkTemplate( "JIRA", "%URL%/%ISSUE%" );
+        addIssueLinkTemplate( "Mantis", "%URL%/view.php?id=%ISSUE%" );
+        addIssueLinkTemplate( "Redmine", "%URL%/issues/show/%ISSUE%" );
+        addIssueLinkTemplate( "Scarab", "%URL%/issues/id/%ISSUE%" );
+        addIssueLinkTemplate( "SourceForge", "http://sourceforge.net/support/tracker.php?aid=%ISSUE%" );
+        addIssueLinkTemplate( "Trac", "%URL%/ticket/%ISSUE%" );
+        // @todo Add more issue management systems here
 
         // Show the current issueLinkTemplatePerSystem configuration
-        logIssueLinkTemplatePerSystem( issueLinkTemplatePerSystem );
+        logIssueLinkTemplatePerSystem( caseInsensitiveIssueLinkTemplatePerSystem );
 
-        report.setIssueLinksPerSystem( issueLinkTemplatePerSystem );
+        report.setIssueLinksPerSystem( caseInsensitiveIssueLinkTemplatePerSystem );
         
+        report.setSystem( system );
+
         report.setTeamlist ( teamlist );
 
         report.setUrl( url );
@@ -324,13 +354,13 @@ public class ChangesMojo
      */
     private void addIssueLinkTemplate( String system, String issueLinkTemplate )
     {
-        if ( issueLinkTemplatePerSystem == null )
+        if ( caseInsensitiveIssueLinkTemplatePerSystem == null )
         {
-            issueLinkTemplatePerSystem = new HashMap();
+            caseInsensitiveIssueLinkTemplatePerSystem = new CaseInsensitiveMap();
         }
-        if ( !issueLinkTemplatePerSystem.containsKey( system ) )
+        if ( !caseInsensitiveIssueLinkTemplatePerSystem.containsKey( system ) )
         {
-            issueLinkTemplatePerSystem.put( system, issueLinkTemplate );
+            caseInsensitiveIssueLinkTemplatePerSystem.put( system, issueLinkTemplate );
         }
     }
 
