@@ -54,7 +54,7 @@ public class ChangesReportGenerator
      */
     private static final String ISSUE_TOKEN = "%ISSUE%";
 
-    private static final String DEFAULT_ISSUE_SYSTEM_KEY = "default";
+    static final String DEFAULT_ISSUE_SYSTEM_KEY = "default";
 
     private static final String NO_TEAMLIST = "none";
 
@@ -98,29 +98,6 @@ public class ChangesReportGenerator
     public void setEscapeHTML( boolean escapeHTML )
     {
         this.escapeHTML = escapeHTML;
-    }
-
-    /**
-     * @deprecated
-     */
-    public void setIssueLink( String issueLink )
-    {
-        if ( this.issueLinksPerSystem == null )
-        {
-            this.issueLinksPerSystem = new HashMap();
-        }
-        if ( !this.issueLinksPerSystem.containsKey( DEFAULT_ISSUE_SYSTEM_KEY ) )
-        {
-            this.issueLinksPerSystem.put( DEFAULT_ISSUE_SYSTEM_KEY, issueLink );
-        }
-    }
-
-    /**
-     * @deprecated
-     */
-    public String getIssueLink()
-    {
-        return (String) issueLinksPerSystem.get( DEFAULT_ISSUE_SYSTEM_KEY );
     }
 
     public void setTeamlist( final String teamlist )

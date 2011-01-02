@@ -25,6 +25,8 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
@@ -285,8 +287,29 @@ public class ChangesMojo
         
         report.setEscapeHTML ( escapeHTML );
 
+        // Set good default values for issue management systems here, but only
+        // if they have not been configured already by the user
+        addIssueLinkTemplate( ChangesReportGenerator.DEFAULT_ISSUE_SYSTEM_KEY, issueLinkTemplate );
+
+        // Show the current issueLinkTemplatePerSystem configuration
+        if ( getLog().isDebugEnabled() )
+        {
+            if ( issueLinkTemplatePerSystem == null )
+            {
+                getLog().debug( "No issueLinkTemplatePerSystem configuration was found" );
+            }
+            else
+            {
+                Iterator iterator = issueLinkTemplatePerSystem.entrySet().iterator();
+                while ( iterator.hasNext() )
+                {
+                    Map.Entry entry = (Map.Entry) iterator.next();
+                    getLog().debug( "issueLinkTemplatePerSystem[" + entry.getKey() + "] = " + entry.getValue() );
+                }
+            }
+        }
+
         report.setIssueLinksPerSystem( issueLinkTemplatePerSystem );
-        report.setIssueLink( issueLinkTemplate );
         
         report.setTeamlist ( teamlist );
 
@@ -303,6 +326,26 @@ public class ChangesMojo
 
         // Copy the images
         copyStaticResources();
+    }
+
+    /**
+     * Add the issue link template for the given issue management system,
+     * but only if it has not already been configured.
+     *
+     * @param system The issue management system
+     * @param issueLinkTemplate The issue link template to use
+     * @since 2.4
+     */
+    private void addIssueLinkTemplate( String system, String issueLinkTemplate )
+    {
+        if ( issueLinkTemplatePerSystem == null )
+        {
+            issueLinkTemplatePerSystem = new HashMap();
+        }
+        if ( !issueLinkTemplatePerSystem.containsKey( system ) )
+        {
+            issueLinkTemplatePerSystem.put( system, issueLinkTemplate );
+        }
     }
 
     public String getName( Locale locale )
