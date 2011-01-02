@@ -17,8 +17,8 @@ specific language governing permissions and limitations
 under the License.
 -->
 
-<model xmlns="http://modello.codehaus.org/MODELLO/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://modello.codehaus.org/MODELLO/1.0.0 http://modello.codehaus.org/xsd/modello-1.0.0.xsd"
+<model xmlns="http://modello.codehaus.org/MODELLO/1.1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://modello.codehaus.org/MODELLO/1.1.0 http://modello.codehaus.org/xsd/modello-1.1.0.xsd"
        xml.namespace="http://maven.apache.org/plugins/maven-remote-resources-plugin/supplemental-model/${version}"
        xml.schemaLocation="http://maven.apache.org/plugins/maven-remote-resources-plugin/xsd/supplemental-model-${version}.xsd">
   <id>supplementalModel</id>
@@ -36,11 +36,11 @@ under the License.
       <version>1.0.0</version>
       <description>Root element of the supplemental-models.xml file.</description>
       <fields>
-        <field xml.listStyle="flat">
+        <field>
           <name>supplement</name>
           <version>1.0.0</version>
           <description>Snippets of POM xml files used to supplement the data model.</description>
-          <association>
+          <association xml.itemsStyle="flat">
             <type>Supplement</type>
             <multiplicity>*</multiplicity>
           </association>
