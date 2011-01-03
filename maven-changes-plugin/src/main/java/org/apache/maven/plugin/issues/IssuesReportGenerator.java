@@ -91,11 +91,7 @@ public class IssuesReportGenerator
             switch ( columns[columnIndex] )
             {
                 case IssuesReportHelper.COLUMN_ASSIGNEE:
-                    sinkHeader( sink, bundle.getString( "report.issues.label.by" ) );
-                    break;
-
-                case IssuesReportHelper.COLUMN_CHANGED:
-                    sinkHeader( sink, bundle.getString( "report.issues.label.changed" ) );
+                    sinkHeader( sink, bundle.getString( "report.issues.label.assignee" ) );
                     break;
 
                 case IssuesReportHelper.COLUMN_COMPONENT:
@@ -142,6 +138,10 @@ public class IssuesReportGenerator
                     sinkHeader( sink, bundle.getString( "report.issues.label.type" ) );
                     break;
 
+                case IssuesReportHelper.COLUMN_UPDATED:
+                    sinkHeader( sink, bundle.getString( "report.issues.label.updated" ) );
+                    break;
+
                 case IssuesReportHelper.COLUMN_VERSION:
                     sinkHeader( sink, bundle.getString( "report.issues.label.version" ) );
                     break;
@@ -184,10 +184,6 @@ public class IssuesReportGenerator
                 {
                     case IssuesReportHelper.COLUMN_ASSIGNEE:
                         sinkCell( sink, issue.getAssignee() );
-                        break;
-
-                    case IssuesReportHelper.COLUMN_CHANGED:
-                        sinkCell( sink, sdf.format( issue.getUpdated() ) );
                         break;
 
                     case IssuesReportHelper.COLUMN_COMPONENT:
@@ -240,6 +236,10 @@ public class IssuesReportGenerator
 
                     case IssuesReportHelper.COLUMN_TYPE:
                         sinkCell( sink, issue.getType() );
+                        break;
+
+                    case IssuesReportHelper.COLUMN_UPDATED:
+                        sinkCell( sink, sdf.format( issue.getUpdated() ) );
                         break;
 
                     case IssuesReportHelper.COLUMN_VERSION:
