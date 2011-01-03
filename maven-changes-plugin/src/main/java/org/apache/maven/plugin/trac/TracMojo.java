@@ -30,7 +30,6 @@ import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.plugin.changes.AbstractChangesReport;
 import org.apache.maven.plugin.changes.ProjectUtils;
 import org.apache.maven.plugin.jira.JiraMojo;
-import org.apache.maven.plugin.jira.JiraReportGenerator;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.MavenReportException;
 import org.apache.xmlrpc.XmlRpcException;
