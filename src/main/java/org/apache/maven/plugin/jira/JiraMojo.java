@@ -29,6 +29,7 @@ import java.util.ResourceBundle;
 
 import org.apache.maven.plugin.changes.AbstractChangesReport;
 import org.apache.maven.plugin.changes.ProjectUtils;
+import org.apache.maven.plugin.issues.IssuesReportGenerator;
 import org.apache.maven.reporting.MavenReportException;
 import org.apache.maven.settings.Settings;
 
@@ -288,7 +289,7 @@ public class JiraMojo
 
         configureIssueDownloader( issueDownloader );
 
-        JiraReportGenerator report;
+        IssuesReportGenerator report;
 
         try
         {
@@ -306,7 +307,7 @@ public class JiraMojo
                     throw new MavenReportException(
                         "maven-changes-plugin: None of the configured columnNames '" + columnNames + "' are valid." );
                 }
-                report = new JiraReportGenerator( toIntArray( columnIds ) );
+                report = new IssuesReportGenerator( toIntArray( columnIds ) );
 
                 if ( onlyCurrentVersion )
                 {
@@ -318,14 +319,14 @@ public class JiraMojo
             }
             else
             {
-                report = new JiraReportGenerator( null );
+                report = new IssuesReportGenerator( null );
 
                 report.doGenerateEmptyReport( getBundle( locale ), getSink() );
             }
         }
         catch ( MavenReportException mre )
         {
-            // Rethrow this error from JiraReportGenerator( String )
+            // Rethrow this error from IssuesReportGenerator( String )
             // so that the build fails
             throw mre;
         }
