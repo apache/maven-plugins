@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.jira;
+package org.apache.maven.plugin.issues;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -19,36 +19,28 @@ package org.apache.maven.plugin.jira;
  * under the License.
  */
 
-import junit.framework.Test;
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
-public class JiraIssueTest
+/**
+ * Tests for the Issue class.
+ *
+ * @author Dennis Lundberg
+ * @version $Id$
+ */
+public class IssueTestCase
     extends TestCase
 {
-    JiraIssue issue;
-
-    public JiraIssueTest( String testName )
-    {
-        super( testName );
-    }
+    Issue issue;
 
     protected void setUp()
         throws Exception
     {
-        issue = new JiraIssue();
+        issue = new Issue();
     }
 
     protected void tearDown()
         throws Exception
     {
-    }
-
-    public static Test suite()
-    {
-        TestSuite suite = new TestSuite( JiraIssueTest.class );
-
-        return suite;
     }
 
     public void testGetSetKey()

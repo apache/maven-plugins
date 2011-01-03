@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.jira;
+package org.apache.maven.plugin.issues;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -20,18 +20,24 @@ package org.apache.maven.plugin.jira;
  */
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
- * A JIRA issue.
+ * An issue.
  *
+ * @author Dennis Lundberg
  * @version $Id$
  */
-public class JiraIssue
+public class Issue
 {
     private List components;
 
+    private Date created;
+
     private List fixVersions;
+
+    private String id;
 
     private String key;
 
@@ -47,6 +53,8 @@ public class JiraIssue
 
     private String type;
 
+    private Date updated;
+
     private String version;
 
     private String resolution;
@@ -57,7 +65,7 @@ public class JiraIssue
 
     private String title;
 
-    public JiraIssue()
+    public Issue()
     {
     }
 
@@ -135,6 +143,16 @@ public class JiraIssue
         components.add( component );
     }
 
+    public Date getCreated()
+    {
+        return created;
+    }
+
+    public void setCreated( Date created )
+    {
+        this.created = created;
+    }
+
     public List getFixVersions()
     {
         return fixVersions;
@@ -147,6 +165,16 @@ public class JiraIssue
             fixVersions = new ArrayList();
         }
         fixVersions.add( fixVersion );
+    }
+
+    public String getId()
+    {
+        return id;
+    }
+
+    public void setId( String id )
+    {
+        this.id = id;
     }
 
     public String getPriority()
@@ -177,6 +205,16 @@ public class JiraIssue
     public void setType( String type )
     {
         this.type = type;
+    }
+
+    public Date getUpdated()
+    {
+        return updated;
+    }
+
+    public void setUpdated( Date updated )
+    {
+        this.updated = updated;
     }
 
     public String getVersion()

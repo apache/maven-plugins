@@ -28,6 +28,7 @@ import java.util.StringTokenizer;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.issues.Issue;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.wagon.proxy.ProxyInfo;
 
@@ -60,7 +61,7 @@ public class JiraHelper
     {
         List issuesForVersion = new ArrayList();
         boolean isFound = false;
-        JiraIssue issue = null;
+        Issue issue = null;
         String releaseVersion = version;
 
         // Remove "-SNAPSHOT" from the end of the version, if it's there
@@ -71,7 +72,7 @@ public class JiraHelper
 
         for ( int i = 0; i < issues.size(); i++ )
         {
-            issue = (JiraIssue) issues.get( i );
+            issue = (Issue) issues.get( i );
 
             if ( issue.getFixVersions() != null && issue.getFixVersions().contains( releaseVersion ) )
             {

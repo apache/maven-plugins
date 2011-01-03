@@ -19,6 +19,7 @@ package org.apache.maven.plugin.trac;
  * under the License.
  */
 
+import org.apache.maven.plugin.issues.Issue;
 import org.apache.maven.project.MavenProject;
 import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.client.XmlRpcClient;
@@ -27,8 +28,13 @@ import org.codehaus.plexus.util.StringUtils;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -49,17 +55,17 @@ public class TracDownloader
     /** The username for authentication into a private Trac installation. */
     private String tracUser;
 
-    private TracTicket createTicket( Object[] ticketObj )
+    private Issue createTicket( Object[] ticketObj )
     {
-        TracTicket ticket = new TracTicket();
+        Issue ticket = new Issue();
 
         ticket.setId( String.valueOf( ticketObj[0] ) );
 
         ticket.setLink( getUrl() + "/ticket/" + String.valueOf( ticketObj[0] ) );
 
-        ticket.setTimeCreated( String.valueOf( ticketObj[1] ) );
+        ticket.setCreated( parseDate( String.valueOf( ticketObj[1] ) ) );
 
-        ticket.setTimeChanged( String.valueOf( ticketObj[2] ) );
+        ticket.setUpdated( parseDate( String.valueOf( ticketObj[2] ) ) );
 
         Map attributes = (Map) ticketObj[3];
 
@@ -71,15 +77,15 @@ public class TracDownloader
 
         ticket.setResolution( (String) attributes.get( "resolution" ) );
 
-        ticket.setOwner( (String) attributes.get( "owner" ) );
+        ticket.setAssignee( (String) attributes.get( "owner" ) );
 
-        ticket.setMilestone( (String) attributes.get( "milestone" ) );
+        ticket.addFixVersion( (String) attributes.get( "milestone" ) );
 
         ticket.setPriority( (String) attributes.get( "priority" ) );
 
         ticket.setReporter( (String) attributes.get( "reporter" ) );
 
-        ticket.setComponent( (String) attributes.get( "component" ) );
+        ticket.addComponent( (String) attributes.get( "component" ) );
 
         return ticket;
     }
@@ -165,5 +171,29 @@ public class TracDownloader
     public void setTracUser( String tracUser )
     {
         this.tracUser = tracUser;
+    }
+
+    private Date parseDate( String timeCreated )
+        throws RuntimeException
+    {
+        try
+        {
+            long millis = Long.parseLong( timeCreated );
+            Calendar cld = Calendar.getInstance();
+            cld.setTimeInMillis( millis * 1000L );
+            return cld.getTime();
+        }
+        catch ( NumberFormatException e )
+        {
+            SimpleDateFormat format = new SimpleDateFormat( "EEE MMM dd HH:mm:ss z yyyy", Locale.ENGLISH );
+            try
+            {
+                return format.parse( timeCreated );
+            }
+            catch ( ParseException e1 )
+            {
+                throw new RuntimeException( "Failed to parse date '" + timeCreated + "' as a date.", e1 );
+            }
+        }
     }
 }

@@ -24,6 +24,8 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.maven.doxia.sink.Sink;
+import org.apache.maven.plugin.issues.Issue;
+import org.apache.maven.plugin.issues.IssuesReportGenerator;
 import org.apache.maven.reporting.MavenReportException;
 
 /**
@@ -192,7 +194,7 @@ public class TracReportGenerator
         {
             SimpleDateFormat sdf = new SimpleDateFormat( bundle.getString( "report.trac.dateformat" ) );
 
-            TracTicket ticket = (TracTicket) ticketList.get( idx );
+            Issue ticket = (Issue) ticketList.get( idx );
 
             sink.tableRow();
 
@@ -214,7 +216,7 @@ public class TracReportGenerator
                         sinkCell( sink, ticket.getSummary() );
                         break;
                     case COLUMN_OWNER:
-                        sinkCell( sink, ticket.getOwner() );
+                        sinkCell( sink, ticket.getAssignee() );
                         break;
                     case COLUMN_REPORTER:
                         sinkCell( sink, ticket.getReporter() );
@@ -229,16 +231,16 @@ public class TracReportGenerator
                         sinkCell( sink, ticket.getResolution() );
                         break;
                     case COLUMN_CREATED:
-                        sinkCell( sink, sdf.format( ticket.getTimeCreated() ) );
+                        sinkCell( sink, sdf.format( ticket.getCreated() ) );
                         break;
                     case COLUMN_CHANGED:
-                        sinkCell( sink, sdf.format( ticket.getTimeChanged() ) );
+                        sinkCell( sink, sdf.format( ticket.getUpdated() ) );
                         break;
                     case COLUMN_MILESTONE:
-                        sinkCell( sink, ticket.getMilestone() );
+                        sinkCell( sink, IssuesReportGenerator.printValues( ticket.getFixVersions() ) );
                         break;
                     case COLUMN_COMPONENT:
-                        sinkCell( sink, ticket.getComponent() );
+                        sinkCell( sink, IssuesReportGenerator.printValues( ticket.getComponents() ) );
                         break;
                     default:
                         // Do not add details for this column
