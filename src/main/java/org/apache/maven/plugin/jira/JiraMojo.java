@@ -314,7 +314,7 @@ public class JiraMojo
             }
             else
             {
-                report = new JiraReportGenerator();
+                report = new JiraReportGenerator( null );
 
                 report.doGenerateEmptyReport( getBundle( locale ), getSink() );
             }

@@ -40,11 +40,6 @@ public class JiraReportGenerator
      */
     private int[] columns;
 
-    public JiraReportGenerator()
-    {
-
-    }
-
     /**
      * @param includedColumns The id:s of the columns to include in the report
      */
@@ -73,7 +68,7 @@ public class JiraReportGenerator
 
         constructHeaderRow( sink, issueList, bundle );
 
-        constructDetailRows( sink, issueList );
+        constructDetailRows( sink, issueList, bundle );
 
         sinkEndReport( sink );
     }
@@ -146,7 +141,7 @@ public class JiraReportGenerator
         sink.tableRow_();
     }
 
-    private void constructDetailRows( Sink sink, List issueList )
+    private void constructDetailRows( Sink sink, List issueList, ResourceBundle bundle )
     {
         if ( issueList == null )
         {
@@ -212,7 +207,7 @@ public class JiraReportGenerator
                         break;
 
                     default:
-                        // Do not add a cell for this column
+                        // Do not add this column
                         break;
                 }
             }
