@@ -112,20 +112,20 @@ public class TracReportGenerator
         sinkEndReport( sink );
     }
 
-    public void doGenerateReport( ResourceBundle bundle, Sink sink, List ticketList )
+    public void doGenerateReport( ResourceBundle bundle, Sink sink, List issueList )
     {
         sinkBeginReport( sink, bundle );
 
-        constructHeaderRow( sink, ticketList, bundle );
+        constructHeaderRow( sink, issueList, bundle );
 
-        constructDetailRows( sink, ticketList, bundle );
+        constructDetailRows( sink, issueList, bundle );
 
         sinkEndReport( sink );
     }
 
-    private void constructHeaderRow( Sink sink, List ticketList, ResourceBundle bundle )
+    private void constructHeaderRow( Sink sink, List issueList, ResourceBundle bundle )
     {
-        if ( ticketList == null )
+        if ( issueList == null )
         {
             return;
         }
@@ -183,18 +183,18 @@ public class TracReportGenerator
         sink.tableRow_();
     }
 
-    private void constructDetailRows( Sink sink, List ticketList, ResourceBundle bundle )
+    private void constructDetailRows( Sink sink, List issueList, ResourceBundle bundle )
     {
-        if ( ticketList == null )
+        if ( issueList == null )
         {
             return;
         }
 
-        for ( int idx = 0; idx < ticketList.size(); idx++ )
+        for ( int idx = 0; idx < issueList.size(); idx++ )
         {
             SimpleDateFormat sdf = new SimpleDateFormat( bundle.getString( "report.trac.dateformat" ) );
 
-            Issue ticket = (Issue) ticketList.get( idx );
+            Issue issue = (Issue) issueList.get( idx );
 
             sink.tableRow();
 
@@ -204,43 +204,43 @@ public class TracReportGenerator
                 {
                     case COLUMN_ID:
                         sink.tableCell();
-                        sink.link( ticket.getLink() );
-                        sink.text( ticket.getId() );
+                        sink.link( issue.getLink() );
+                        sink.text( issue.getId() );
                         sink.link_();
                         sink.tableCell_();
                         break;
                     case COLUMN_TYPE:
-                        sinkCell( sink, ticket.getType() );
+                        sinkCell( sink, issue.getType() );
                         break;
                     case COLUMN_SUMMARY:
-                        sinkCell( sink, ticket.getSummary() );
+                        sinkCell( sink, issue.getSummary() );
                         break;
                     case COLUMN_OWNER:
-                        sinkCell( sink, ticket.getAssignee() );
+                        sinkCell( sink, issue.getAssignee() );
                         break;
                     case COLUMN_REPORTER:
-                        sinkCell( sink, ticket.getReporter() );
+                        sinkCell( sink, issue.getReporter() );
                         break;
                     case COLUMN_PRIORITY:
-                        sinkCell( sink, ticket.getPriority() );
+                        sinkCell( sink, issue.getPriority() );
                         break;
                     case COLUMN_STATUS:
-                        sinkCell( sink, ticket.getStatus() );
+                        sinkCell( sink, issue.getStatus() );
                         break;
                     case COLUMN_RESOLUTION:
-                        sinkCell( sink, ticket.getResolution() );
+                        sinkCell( sink, issue.getResolution() );
                         break;
                     case COLUMN_CREATED:
-                        sinkCell( sink, sdf.format( ticket.getCreated() ) );
+                        sinkCell( sink, sdf.format( issue.getCreated() ) );
                         break;
                     case COLUMN_CHANGED:
-                        sinkCell( sink, sdf.format( ticket.getUpdated() ) );
+                        sinkCell( sink, sdf.format( issue.getUpdated() ) );
                         break;
                     case COLUMN_MILESTONE:
-                        sinkCell( sink, IssuesReportGenerator.printValues( ticket.getFixVersions() ) );
+                        sinkCell( sink, IssuesReportGenerator.printValues( issue.getFixVersions() ) );
                         break;
                     case COLUMN_COMPONENT:
-                        sinkCell( sink, IssuesReportGenerator.printValues( ticket.getComponents() ) );
+                        sinkCell( sink, IssuesReportGenerator.printValues( issue.getComponents() ) );
                         break;
                     default:
                         // Do not add details for this column

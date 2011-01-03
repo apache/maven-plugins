@@ -55,39 +55,39 @@ public class TracDownloader
     /** The username for authentication into a private Trac installation. */
     private String tracUser;
 
-    private Issue createTicket( Object[] ticketObj )
+    private Issue createIssue( Object[] ticketObj )
     {
-        Issue ticket = new Issue();
+        Issue issue = new Issue();
 
-        ticket.setId( String.valueOf( ticketObj[0] ) );
+        issue.setId( String.valueOf( ticketObj[0] ) );
 
-        ticket.setLink( getUrl() + "/ticket/" + String.valueOf( ticketObj[0] ) );
+        issue.setLink( getUrl() + "/ticket/" + String.valueOf( ticketObj[0] ) );
 
-        ticket.setCreated( parseDate( String.valueOf( ticketObj[1] ) ) );
+        issue.setCreated( parseDate( String.valueOf( ticketObj[1] ) ) );
 
-        ticket.setUpdated( parseDate( String.valueOf( ticketObj[2] ) ) );
+        issue.setUpdated( parseDate( String.valueOf( ticketObj[2] ) ) );
 
         Map attributes = (Map) ticketObj[3];
 
-        ticket.setType( (String) attributes.get( "type" ) );
+        issue.setType( (String) attributes.get( "type" ) );
 
-        ticket.setSummary( (String) attributes.get( "summary" ) );
+        issue.setSummary( (String) attributes.get( "summary" ) );
 
-        ticket.setStatus( (String) attributes.get( "status" ) );
+        issue.setStatus( (String) attributes.get( "status" ) );
 
-        ticket.setResolution( (String) attributes.get( "resolution" ) );
+        issue.setResolution( (String) attributes.get( "resolution" ) );
 
-        ticket.setAssignee( (String) attributes.get( "owner" ) );
+        issue.setAssignee( (String) attributes.get( "owner" ) );
 
-        ticket.addFixVersion( (String) attributes.get( "milestone" ) );
+        issue.addFixVersion( (String) attributes.get( "milestone" ) );
 
-        ticket.setPriority( (String) attributes.get( "priority" ) );
+        issue.setPriority( (String) attributes.get( "priority" ) );
 
-        ticket.setReporter( (String) attributes.get( "reporter" ) );
+        issue.setReporter( (String) attributes.get( "reporter" ) );
 
-        ticket.addComponent( (String) attributes.get( "component" ) );
+        issue.addComponent( (String) attributes.get( "component" ) );
 
-        return ticket;
+        return issue;
     }
 
     public List getIssueList() throws MalformedURLException, XmlRpcException
@@ -110,7 +110,7 @@ public class TracDownloader
 
         client.setConfig( config );
 
-        // Fetch tickets
+        // Fetch issues
         String qstr = "";
 
         if ( !StringUtils.isEmpty( query ) )
@@ -120,7 +120,7 @@ public class TracDownloader
 
         Object[] params = new Object[] { new String( qstr ) };
         Object[] queryResult = null;
-        ArrayList ticketList = new ArrayList();
+        ArrayList issueList = new ArrayList();
         try
         {
             queryResult = (Object[]) client.execute( "ticket.query", params );
@@ -130,14 +130,14 @@ public class TracDownloader
                 params = new Object[] { queryResult[i] };
                 Object[] ticketGetResult = null;
                 ticketGetResult = (Object[]) client.execute( "ticket.get", params );
-                ticketList.add( createTicket( ticketGetResult ) );
+                issueList.add( createIssue( ticketGetResult ) );
             }
         }
         catch ( XmlRpcException e )
         {
             throw new XmlRpcException( "XmlRpc Error.", e );
         }
-        return ticketList;
+        return issueList;
     }
 
     private String getUrl()
