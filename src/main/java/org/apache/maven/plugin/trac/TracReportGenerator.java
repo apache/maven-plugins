@@ -49,27 +49,9 @@ public class TracReportGenerator
     private static final int COLUMN_CREATED = 10;
     private static final int COLUMN_CHANGED = 11;
 
-    /**
-     * Valid Trac columns.
-     */
-    private static final String[] TRAC_COLUMNS = {
-            /* 0 */ "id",
-            /* 1 */ "type",
-            /* 2 */ "summary",
-            /* 3 */ "status",
-            /* 4 */ "resolution",
-            /* 5 */ "milestone",
-            /* 6 */ "owner",
-            /* 7 */ "priority",
-            /* 8 */ "reporter",
-            /* 9 */ "component",
-            /* 10 */ "created",
-            /* 11 */ "changed"
-    };
-
     private int[] columnOrder;
 
-    public TracReportGenerator( String columnNames )
+    public TracReportGenerator( String columnNames, String[] columns )
         throws MavenReportException
     {
         String[] columnNamesArray = columnNames.split( "," );
@@ -79,10 +61,10 @@ public class TracReportGenerator
         {
             // Default to -1, indicating that the column should not be included in the report
             columnOrder[i] = -1;
-            for ( int columnIndex = 0; columnIndex < TRAC_COLUMNS.length; columnIndex++ )
+            for ( int columnIndex = 0; columnIndex < columns.length; columnIndex++ )
             {
                 String columnName = columnNamesArray[i].trim();
-                if ( TRAC_COLUMNS[columnIndex].equalsIgnoreCase( columnName ) )
+                if ( columns[columnIndex].equalsIgnoreCase( columnName ) )
                 {
                     // Found a valid column name - add it
                     columnOrder[i] = columnIndex;

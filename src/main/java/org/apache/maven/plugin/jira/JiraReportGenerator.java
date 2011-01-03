@@ -46,20 +46,10 @@ public class JiraReportGenerator
     private static final int COLUMN_FIX_VERSION = 9;
     private static final int COLUMN_COMPONENT = 10;
 
-    private static final String[] JIRA_COLUMNS = new String[] {
-        /* 0  */ "Key",
-        /* 1  */ "Summary",
-        /* 2  */ "Status",
-        /* 3  */ "Resolution",
-        /* 4  */ "Assignee",
-        /* 5  */ "Reporter",
-        /* 6  */ "Type",
-        /* 7  */ "Priority",
-        /* 8  */ "Version",
-        /* 9  */ "Fix Version",
-        /* 10 */ "Component"
-    };
-
+    /**
+     * Holds the id:s for the columns to include in the report, in the order
+     * that they should appear in the report.
+     */
     private int[] columnOrder;
 
     public JiraReportGenerator()
@@ -69,8 +59,9 @@ public class JiraReportGenerator
 
     /**
      * @param columnNames The names of the columns to include in the report
+     * @param columns All column names available to this issue management system
      */
-    public JiraReportGenerator( String columnNames )
+    public JiraReportGenerator( String columnNames, String[] columns )
         throws MavenReportException
     {
         String[] columnNamesArray = columnNames.split( "," );
@@ -80,10 +71,11 @@ public class JiraReportGenerator
         {
             // Default to -1, indicating that the column should not be included in the report
             columnOrder[i] = -1;
-            for ( int columnIndex = 0; columnIndex < JIRA_COLUMNS.length; columnIndex++ )
+            // Loop through the names of all columns
+            for ( int columnIndex = 0; columnIndex < columns.length; columnIndex++ )
             {
                 String columnName = columnNamesArray[i].trim();
-                if ( JIRA_COLUMNS[columnIndex].equalsIgnoreCase( columnName ) )
+                if ( columns[columnIndex].equalsIgnoreCase( columnName ) )
                 {
                     // Found a valid column name - add it
                     columnOrder[i] = columnIndex;

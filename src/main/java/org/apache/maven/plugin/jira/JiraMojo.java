@@ -39,6 +39,20 @@ import org.apache.maven.settings.Settings;
 public class JiraMojo
     extends AbstractChangesReport
 {
+    private static final String[] JIRA_COLUMNS = new String[] {
+        /* 0  */ "Key",
+        /* 1  */ "Summary",
+        /* 2  */ "Status",
+        /* 3  */ "Resolution",
+        /* 4  */ "Assignee",
+        /* 5  */ "Reporter",
+        /* 6  */ "Type",
+        /* 7  */ "Priority",
+        /* 8  */ "Version",
+        /* 9  */ "Fix Version",
+        /* 10 */ "Component"
+    };
+
     /**
      * Path to the JIRA XML file, which will be parsed.
      *
@@ -260,7 +274,7 @@ public class JiraMojo
                 JiraXML jira = new JiraXML( jiraXmlPath, jiraXmlEncoding );
                 List issueList = jira.getIssueList();
 
-                report = new JiraReportGenerator( columnNames );
+                report = new JiraReportGenerator( columnNames, JIRA_COLUMNS );
 
                 if ( onlyCurrentVersion )
                 {
