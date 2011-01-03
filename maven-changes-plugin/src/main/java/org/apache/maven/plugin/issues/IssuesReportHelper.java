@@ -26,9 +26,9 @@ import java.util.List;
  * A helper class for generation of reports based on issues.
  *
  * @author Dennis Lundberg
- * @version $Id: Issue.java 1050925 2010-12-19 18:09:36Z dennisl $
+ * @version $Id$
  */
-public class IssuesReportGenerator
+public class IssuesReportHelper
 {
     /**
      * Print a list of values separated by commas.

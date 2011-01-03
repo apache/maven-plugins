@@ -21,7 +21,7 @@ package org.apache.maven.plugin.jira;
 
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.plugin.issues.Issue;
-import org.apache.maven.plugin.issues.IssuesReportGenerator;
+import org.apache.maven.plugin.issues.IssuesReportHelper;
 import org.apache.maven.reporting.MavenReportException;
 
 import java.util.List;
@@ -163,11 +163,11 @@ public class JiraReportGenerator
                         break;
 
                     case JiraMojo.COLUMN_COMPONENT:
-                        sinkCell( sink, IssuesReportGenerator.printValues( issue.getComponents() ) );
+                        sinkCell( sink, IssuesReportHelper.printValues( issue.getComponents() ) );
                         break;
 
                     case JiraMojo.COLUMN_FIX_VERSION:
-                        sinkCell( sink, IssuesReportGenerator.printValues( issue.getFixVersions() ) );
+                        sinkCell( sink, IssuesReportHelper.printValues( issue.getFixVersions() ) );
                         break;
 
                     case JiraMojo.COLUMN_KEY:
