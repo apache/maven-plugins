@@ -26,12 +26,10 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.plugin.changes.AbstractChangesReport;
 import org.apache.maven.plugin.changes.ProjectUtils;
 import org.apache.maven.plugin.issues.IssuesReportGenerator;
 import org.apache.maven.plugin.issues.IssuesReportHelper;
-import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.MavenReportException;
 import org.apache.xmlrpc.XmlRpcException;
 
@@ -185,16 +183,6 @@ public class TracMojo
     public String getDescription( Locale locale )
     {
         return "Report on Ticket from the Trac.";
-    }
-
-    protected Renderer getSiteRenderer()
-    {
-        return siteRenderer;
-    }
-
-    protected MavenProject getProject()
-    {
-        return project;
     }
 
     public String getOutputName()
