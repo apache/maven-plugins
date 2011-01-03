@@ -20,8 +20,11 @@ package org.apache.maven.plugin.jira;
  */
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import org.apache.maven.plugin.changes.AbstractChangesReport;
@@ -39,19 +42,34 @@ import org.apache.maven.settings.Settings;
 public class JiraMojo
     extends AbstractChangesReport
 {
-    private static final String[] JIRA_COLUMNS = new String[] {
-        /* 0  */ "Key",
-        /* 1  */ "Summary",
-        /* 2  */ "Status",
-        /* 3  */ "Resolution",
-        /* 4  */ "Assignee",
-        /* 5  */ "Reporter",
-        /* 6  */ "Type",
-        /* 7  */ "Priority",
-        /* 8  */ "Version",
-        /* 9  */ "Fix Version",
-        /* 10 */ "Component"
-    };
+    static final int COLUMN_KEY = 0;
+    static final int COLUMN_SUMMARY = 1;
+    static final int COLUMN_STATUS = 2;
+    static final int COLUMN_RESOLUTION = 3;
+    static final int COLUMN_ASSIGNEE = 4;
+    static final int COLUMN_REPORTER = 5;
+    static final int COLUMN_TYPE = 6;
+    static final int COLUMN_PRIORITY = 7;
+    static final int COLUMN_VERSION = 8;
+    static final int COLUMN_FIX_VERSION = 9;
+    static final int COLUMN_COMPONENT = 10;
+
+    private static Map JIRA_COLUMNS = new HashMap();
+
+    static
+    {
+        JIRA_COLUMNS.put( "Key", new Integer( COLUMN_KEY ) );
+        JIRA_COLUMNS.put( "Summary", new Integer( COLUMN_SUMMARY ) );
+        JIRA_COLUMNS.put( "Status", new Integer( COLUMN_STATUS ) );
+        JIRA_COLUMNS.put( "Resolution", new Integer( COLUMN_RESOLUTION ) );
+        JIRA_COLUMNS.put( "Assignee", new Integer( COLUMN_ASSIGNEE ) );
+        JIRA_COLUMNS.put( "Reporter", new Integer( COLUMN_REPORTER ) );
+        JIRA_COLUMNS.put( "Type", new Integer( COLUMN_TYPE ) );
+        JIRA_COLUMNS.put( "Priority", new Integer( COLUMN_PRIORITY ) );
+        JIRA_COLUMNS.put( "Version", new Integer( COLUMN_VERSION ) );
+        JIRA_COLUMNS.put( "Fix Version", new Integer( COLUMN_FIX_VERSION ) );
+        JIRA_COLUMNS.put( "Component", new Integer( COLUMN_COMPONENT ) );
+    }
 
     /**
      * Path to the JIRA XML file, which will be parsed.
@@ -274,7 +292,7 @@ public class JiraMojo
                 JiraXML jira = new JiraXML( jiraXmlPath, jiraXmlEncoding );
                 List issueList = jira.getIssueList();
 
-                report = new JiraReportGenerator( columnNames, JIRA_COLUMNS );
+                report = new JiraReportGenerator( toIntArray( getColumnIds( columnNames, JIRA_COLUMNS ) ) );
 
                 if ( onlyCurrentVersion )
                 {
@@ -301,6 +319,45 @@ public class JiraMojo
         {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Get a list of id:s for the columns that are to be included in the report.
+     *
+     * @param columnNames The names of the columns
+     * @param allColumns A mapping from column name to column id
+     * @return A List of column id:s
+     */
+    private List getColumnIds( String columnNames, Map allColumns )
+    {
+        List columnIds = new ArrayList();
+        String[] columnNamesArray = columnNames.split( "," );
+        // Loop through the names of the columns, to validate each of them and add their id to the list
+        for ( int i = 0; i < columnNamesArray.length; i++ )
+        {
+            String columnName = columnNamesArray[i].trim();
+            if ( allColumns.containsKey( columnName ) )
+            {
+                columnIds.add( (Integer) allColumns.get( columnName ) );
+            }
+        }
+        return columnIds;
+    }
+
+    /**
+     * Convert a List of Integers to an int array.
+     *
+     * @param list The List to convert
+     * @return An in array
+     */
+    private int[] toIntArray( List list )
+    {
+        int[] intArray = new int[list.size()];
+        for ( int j = 0; j < intArray.length; j++ )
+        {
+            intArray[j] = ( (Integer) list.get( j ) ).intValue();
+        }
+        return intArray;
     }
 
     public String getName( Locale locale )
