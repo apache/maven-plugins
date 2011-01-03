@@ -90,52 +90,52 @@ public class TracReportGenerator
         {
             switch ( columns[columnIndex] )
             {
-                case TracMojo.COLUMN_ID:
-                    sinkHeader( sink, bundle.getString( "report.issues.label.id" ) );
+                case TracMojo.COLUMN_CHANGED:
+                    sinkHeader( sink, bundle.getString( "report.issues.label.changed" ) );
                     break;
 
-                case TracMojo.COLUMN_TYPE:
-                    sinkHeader( sink, bundle.getString( "report.issues.label.type" ) );
-                    break;
-
-                case TracMojo.COLUMN_SUMMARY:
-                    sinkHeader( sink, bundle.getString( "report.issues.label.summary" ) );
-                    break;
-
-                case TracMojo.COLUMN_OWNER:
-                    sinkHeader( sink, bundle.getString( "report.issues.label.owner" ) );
-                    break;
-
-                case TracMojo.COLUMN_REPORTER:
-                    sinkHeader( sink, bundle.getString( "report.issues.label.reporter" ) );
-                    break;
-
-                case TracMojo.COLUMN_PRIORITY:
-                    sinkHeader( sink, bundle.getString( "report.issues.label.priority" ) );
-                    break;
-
-                case TracMojo.COLUMN_STATUS:
-                    sinkHeader( sink, bundle.getString( "report.issues.label.status" ) );
-                    break;
-
-                case TracMojo.COLUMN_RESOLUTION:
-                    sinkHeader( sink, bundle.getString( "report.issues.label.resolution" ) );
+                case TracMojo.COLUMN_COMPONENT:
+                    sinkHeader( sink, bundle.getString( "report.issues.label.component" ) );
                     break;
 
                 case TracMojo.COLUMN_CREATED:
                     sinkHeader( sink, bundle.getString( "report.issues.label.created" ) );
                     break;
 
-                case TracMojo.COLUMN_CHANGED:
-                    sinkHeader( sink, bundle.getString( "report.issues.label.changed" ) );
+                case TracMojo.COLUMN_ID:
+                    sinkHeader( sink, bundle.getString( "report.issues.label.id" ) );
                     break;
 
                 case TracMojo.COLUMN_MILESTONE:
                     sinkHeader( sink, bundle.getString( "report.issues.label.milestone" ) );
                     break;
 
-                case TracMojo.COLUMN_COMPONENT:
-                    sinkHeader( sink, bundle.getString( "report.issues.label.component" ) );
+                case TracMojo.COLUMN_OWNER:
+                    sinkHeader( sink, bundle.getString( "report.issues.label.owner" ) );
+                    break;
+
+                case TracMojo.COLUMN_PRIORITY:
+                    sinkHeader( sink, bundle.getString( "report.issues.label.priority" ) );
+                    break;
+
+                case TracMojo.COLUMN_REPORTER:
+                    sinkHeader( sink, bundle.getString( "report.issues.label.reporter" ) );
+                    break;
+
+                case TracMojo.COLUMN_RESOLUTION:
+                    sinkHeader( sink, bundle.getString( "report.issues.label.resolution" ) );
+                    break;
+
+                case TracMojo.COLUMN_STATUS:
+                    sinkHeader( sink, bundle.getString( "report.issues.label.status" ) );
+                    break;
+
+                case TracMojo.COLUMN_SUMMARY:
+                    sinkHeader( sink, bundle.getString( "report.issues.label.summary" ) );
+                    break;
+
+                case TracMojo.COLUMN_TYPE:
+                    sinkHeader( sink, bundle.getString( "report.issues.label.type" ) );
                     break;
 
                 default:
@@ -166,6 +166,18 @@ public class TracReportGenerator
             {
                 switch ( columns[columnIndex] )
                 {
+                    case TracMojo.COLUMN_CHANGED:
+                        sinkCell( sink, sdf.format( issue.getUpdated() ) );
+                        break;
+
+                    case TracMojo.COLUMN_COMPONENT:
+                        sinkCell( sink, IssuesReportGenerator.printValues( issue.getComponents() ) );
+                        break;
+
+                    case TracMojo.COLUMN_CREATED:
+                        sinkCell( sink, sdf.format( issue.getCreated() ) );
+                        break;
+
                     case TracMojo.COLUMN_ID:
                         sink.tableCell();
                         sink.link( issue.getLink() );
@@ -174,48 +186,36 @@ public class TracReportGenerator
                         sink.tableCell_();
                         break;
 
-                    case TracMojo.COLUMN_TYPE:
-                        sinkCell( sink, issue.getType() );
-                        break;
-
-                    case TracMojo.COLUMN_SUMMARY:
-                        sinkCell( sink, issue.getSummary() );
+                    case TracMojo.COLUMN_MILESTONE:
+                        sinkCell( sink, IssuesReportGenerator.printValues( issue.getFixVersions() ) );
                         break;
 
                     case TracMojo.COLUMN_OWNER:
                         sinkCell( sink, issue.getAssignee() );
                         break;
 
-                    case TracMojo.COLUMN_REPORTER:
-                        sinkCell( sink, issue.getReporter() );
-                        break;
-
                     case TracMojo.COLUMN_PRIORITY:
                         sinkCell( sink, issue.getPriority() );
                         break;
 
-                    case TracMojo.COLUMN_STATUS:
-                        sinkCell( sink, issue.getStatus() );
+                    case TracMojo.COLUMN_REPORTER:
+                        sinkCell( sink, issue.getReporter() );
                         break;
 
                     case TracMojo.COLUMN_RESOLUTION:
                         sinkCell( sink, issue.getResolution() );
                         break;
 
-                    case TracMojo.COLUMN_CREATED:
-                        sinkCell( sink, sdf.format( issue.getCreated() ) );
+                    case TracMojo.COLUMN_STATUS:
+                        sinkCell( sink, issue.getStatus() );
                         break;
 
-                    case TracMojo.COLUMN_CHANGED:
-                        sinkCell( sink, sdf.format( issue.getUpdated() ) );
+                    case TracMojo.COLUMN_SUMMARY:
+                        sinkCell( sink, issue.getSummary() );
                         break;
 
-                    case TracMojo.COLUMN_MILESTONE:
-                        sinkCell( sink, IssuesReportGenerator.printValues( issue.getFixVersions() ) );
-                        break;
-
-                    case TracMojo.COLUMN_COMPONENT:
-                        sinkCell( sink, IssuesReportGenerator.printValues( issue.getComponents() ) );
+                    case TracMojo.COLUMN_TYPE:
+                        sinkCell( sink, issue.getType() );
                         break;
 
                     default:
