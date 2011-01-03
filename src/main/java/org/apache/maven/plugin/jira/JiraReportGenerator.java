@@ -55,7 +55,7 @@ public class JiraReportGenerator
 
         sink.paragraph();
 
-        sink.text( bundle.getString( "report.jira.error" ) );
+        sink.text( bundle.getString( "report.issues.error" ) );
 
         sink.paragraph_();
 
@@ -89,47 +89,47 @@ public class JiraReportGenerator
             switch ( columns[columnIndex] )
             {
                 case JiraMojo.COLUMN_KEY:
-                    sinkHeader( sink, bundle.getString( "report.jira.label.key" ) );
+                    sinkHeader( sink, bundle.getString( "report.issues.label.key" ) );
                     break;
 
                 case JiraMojo.COLUMN_SUMMARY:
-                    sinkHeader( sink, bundle.getString( "report.jira.label.summary" ) );
+                    sinkHeader( sink, bundle.getString( "report.issues.label.summary" ) );
                     break;
 
                 case JiraMojo.COLUMN_STATUS:
-                    sinkHeader( sink, bundle.getString( "report.jira.label.status" ) );
+                    sinkHeader( sink, bundle.getString( "report.issues.label.status" ) );
                     break;
 
                 case JiraMojo.COLUMN_RESOLUTION:
-                    sinkHeader( sink, bundle.getString( "report.jira.label.resolution" ) );
+                    sinkHeader( sink, bundle.getString( "report.issues.label.resolution" ) );
                     break;
 
                 case JiraMojo.COLUMN_ASSIGNEE:
-                    sinkHeader( sink, bundle.getString( "report.jira.label.by" ) );
+                    sinkHeader( sink, bundle.getString( "report.issues.label.by" ) );
                     break;
 
                 case JiraMojo.COLUMN_REPORTER:
-                    sinkHeader( sink, bundle.getString( "report.jira.label.reporter" ) );
+                    sinkHeader( sink, bundle.getString( "report.issues.label.reporter" ) );
                     break;
 
                 case JiraMojo.COLUMN_TYPE:
-                    sinkHeader( sink, bundle.getString( "report.jira.label.type" ) );
+                    sinkHeader( sink, bundle.getString( "report.issues.label.type" ) );
                     break;
 
                 case JiraMojo.COLUMN_PRIORITY:
-                    sinkHeader( sink, bundle.getString( "report.jira.label.priority" ) );
+                    sinkHeader( sink, bundle.getString( "report.issues.label.priority" ) );
                     break;
 
                 case JiraMojo.COLUMN_VERSION:
-                    sinkHeader( sink, bundle.getString( "report.jira.label.version" ) );
+                    sinkHeader( sink, bundle.getString( "report.issues.label.version" ) );
                     break;
 
                 case JiraMojo.COLUMN_FIX_VERSION:
-                    sinkHeader( sink, bundle.getString( "report.jira.label.fixVersion" ) );
+                    sinkHeader( sink, bundle.getString( "report.issues.label.fixVersion" ) );
                     break;
 
                 case JiraMojo.COLUMN_COMPONENT:
-                    sinkHeader( sink, bundle.getString( "report.jira.label.component" ) );
+                    sinkHeader( sink, bundle.getString( "report.issues.label.component" ) );
                     break;
 
                 default:
@@ -223,7 +223,7 @@ public class JiraReportGenerator
         sink.head();
 
         sink.title();
-        sink.text( bundle.getString( "report.jira.header" ) );
+        sink.text( bundle.getString( "report.issues.header" ) );
         sink.title_();
 
         sink.head_();
@@ -232,7 +232,7 @@ public class JiraReportGenerator
 
         sink.section1();
 
-        sinkSectionTitle1( sink, bundle.getString( "report.jira.header" ) );
+        sinkSectionTitle1( sink, bundle.getString( "report.issues.header" ) );
     }
 
     private void sinkEndReport( Sink sink )

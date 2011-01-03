@@ -57,7 +57,7 @@ public class TracReportGenerator
 
         sink.paragraph();
 
-        sink.text( bundle.getString( "report.trac.error" ) );
+        sink.text( bundle.getString( "report.issues.error" ) );
 
         sink.paragraph_();
 
@@ -91,51 +91,51 @@ public class TracReportGenerator
             switch ( columns[columnIndex] )
             {
                 case TracMojo.COLUMN_ID:
-                    sinkHeader( sink, bundle.getString( "report.trac.label.id" ) );
+                    sinkHeader( sink, bundle.getString( "report.issues.label.id" ) );
                     break;
 
                 case TracMojo.COLUMN_TYPE:
-                    sinkHeader( sink, bundle.getString( "report.trac.label.type" ) );
+                    sinkHeader( sink, bundle.getString( "report.issues.label.type" ) );
                     break;
 
                 case TracMojo.COLUMN_SUMMARY:
-                    sinkHeader( sink, bundle.getString( "report.trac.label.summary" ) );
+                    sinkHeader( sink, bundle.getString( "report.issues.label.summary" ) );
                     break;
 
                 case TracMojo.COLUMN_OWNER:
-                    sinkHeader( sink, bundle.getString( "report.trac.label.owner" ) );
+                    sinkHeader( sink, bundle.getString( "report.issues.label.owner" ) );
                     break;
 
                 case TracMojo.COLUMN_REPORTER:
-                    sinkHeader( sink, bundle.getString( "report.trac.label.reporter" ) );
+                    sinkHeader( sink, bundle.getString( "report.issues.label.reporter" ) );
                     break;
 
                 case TracMojo.COLUMN_PRIORITY:
-                    sinkHeader( sink, bundle.getString( "report.trac.label.priority" ) );
+                    sinkHeader( sink, bundle.getString( "report.issues.label.priority" ) );
                     break;
 
                 case TracMojo.COLUMN_STATUS:
-                    sinkHeader( sink, bundle.getString( "report.trac.label.status" ) );
+                    sinkHeader( sink, bundle.getString( "report.issues.label.status" ) );
                     break;
 
                 case TracMojo.COLUMN_RESOLUTION:
-                    sinkHeader( sink, bundle.getString( "report.trac.label.resolution" ) );
+                    sinkHeader( sink, bundle.getString( "report.issues.label.resolution" ) );
                     break;
 
                 case TracMojo.COLUMN_CREATED:
-                    sinkHeader( sink, bundle.getString( "report.trac.label.created" ) );
+                    sinkHeader( sink, bundle.getString( "report.issues.label.created" ) );
                     break;
 
                 case TracMojo.COLUMN_CHANGED:
-                    sinkHeader( sink, bundle.getString( "report.trac.label.changed" ) );
+                    sinkHeader( sink, bundle.getString( "report.issues.label.changed" ) );
                     break;
 
                 case TracMojo.COLUMN_MILESTONE:
-                    sinkHeader( sink, bundle.getString( "report.trac.label.milestone" ) );
+                    sinkHeader( sink, bundle.getString( "report.issues.label.milestone" ) );
                     break;
 
                 case TracMojo.COLUMN_COMPONENT:
-                    sinkHeader( sink, bundle.getString( "report.trac.label.component" ) );
+                    sinkHeader( sink, bundle.getString( "report.issues.label.component" ) );
                     break;
 
                 default:
@@ -156,7 +156,7 @@ public class TracReportGenerator
 
         for ( int idx = 0; idx < issueList.size(); idx++ )
         {
-            SimpleDateFormat sdf = new SimpleDateFormat( bundle.getString( "report.trac.dateformat" ) );
+            SimpleDateFormat sdf = new SimpleDateFormat( bundle.getString( "report.issues.dateformat" ) );
 
             Issue issue = (Issue) issueList.get( idx );
 
@@ -235,7 +235,7 @@ public class TracReportGenerator
         sink.head();
 
         sink.title();
-        sink.text( bundle.getString( "report.trac.header" ) );
+        sink.text( bundle.getString( "report.issues.header" ) );
         sink.title_();
 
         sink.head_();
@@ -244,7 +244,7 @@ public class TracReportGenerator
 
         sink.section1();
 
-        sinkSectionTitle1( sink, bundle.getString( "report.trac.header" ) );
+        sinkSectionTitle1( sink, bundle.getString( "report.issues.header" ) );
     }
 
     private void sinkEndReport( Sink sink )
