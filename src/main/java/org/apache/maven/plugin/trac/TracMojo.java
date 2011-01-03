@@ -114,17 +114,6 @@ public class TracMojo
         return ProjectUtils.validateIfIssueManagementComplete( project, "Trac", "Trac Report", getLog() );
     }
 
-    private void configureIssueDownloader( TracDownloader issueDownloader )
-    {
-        issueDownloader.setProject( project );
-
-        issueDownloader.setQuery( query );
-
-        issueDownloader.setTracPassword( tracPassword );
-
-        issueDownloader.setTracUser( tracUser );
-    }
-
     public void executeReport( Locale locale )
         throws MavenReportException
     {
@@ -177,12 +166,12 @@ public class TracMojo
 
     public String getName( Locale locale )
     {
-        return "Trac Report";
+        return getBundle( locale ).getString( "report.issues.name" );
     }
 
     public String getDescription( Locale locale )
     {
-        return "Report on Ticket from the Trac.";
+        return getBundle( locale ).getString( "report.issues.description" );
     }
 
     public String getOutputName()
@@ -193,5 +182,16 @@ public class TracMojo
     private ResourceBundle getBundle( Locale locale )
     {
         return ResourceBundle.getBundle( "trac-report", locale, this.getClass().getClassLoader() );
+    }
+
+    private void configureIssueDownloader( TracDownloader issueDownloader )
+    {
+        issueDownloader.setProject( project );
+
+        issueDownloader.setQuery( query );
+
+        issueDownloader.setTracPassword( tracPassword );
+
+        issueDownloader.setTracUser( tracUser );
     }
 }
