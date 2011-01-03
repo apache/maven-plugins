@@ -54,18 +54,18 @@ public class TracMojo
 
     static
     {
+        TRAC_COLUMNS.put( "changed", new Integer( IssuesReportHelper.COLUMN_UPDATED ) );
+        TRAC_COLUMNS.put( "component", new Integer( IssuesReportHelper.COLUMN_COMPONENT ) );
+        TRAC_COLUMNS.put( "created", new Integer( IssuesReportHelper.COLUMN_CREATED ) );
         TRAC_COLUMNS.put( "id", new Integer( IssuesReportHelper.COLUMN_ID ) );
-        TRAC_COLUMNS.put( "type", new Integer( IssuesReportHelper.COLUMN_TYPE ) );
-        TRAC_COLUMNS.put( "summary", new Integer( IssuesReportHelper.COLUMN_SUMMARY ) );
-        TRAC_COLUMNS.put( "status", new Integer( IssuesReportHelper.COLUMN_STATUS ) );
-        TRAC_COLUMNS.put( "resolution", new Integer( IssuesReportHelper.COLUMN_RESOLUTION ) );
         TRAC_COLUMNS.put( "milestone", new Integer( IssuesReportHelper.COLUMN_FIX_VERSION ) );
         TRAC_COLUMNS.put( "owner", new Integer( IssuesReportHelper.COLUMN_ASSIGNEE ) );
         TRAC_COLUMNS.put( "priority", new Integer( IssuesReportHelper.COLUMN_PRIORITY ) );
         TRAC_COLUMNS.put( "reporter", new Integer( IssuesReportHelper.COLUMN_REPORTER ) );
-        TRAC_COLUMNS.put( "component", new Integer( IssuesReportHelper.COLUMN_COMPONENT ) );
-        TRAC_COLUMNS.put( "created", new Integer( IssuesReportHelper.COLUMN_CREATED ) );
-        TRAC_COLUMNS.put( "changed", new Integer( IssuesReportHelper.COLUMN_CHANGED ) );
+        TRAC_COLUMNS.put( "resolution", new Integer( IssuesReportHelper.COLUMN_RESOLUTION ) );
+        TRAC_COLUMNS.put( "status", new Integer( IssuesReportHelper.COLUMN_STATUS ) );
+        TRAC_COLUMNS.put( "summary", new Integer( IssuesReportHelper.COLUMN_SUMMARY ) );
+        TRAC_COLUMNS.put( "type", new Integer( IssuesReportHelper.COLUMN_TYPE ) );
     }
 
     /**

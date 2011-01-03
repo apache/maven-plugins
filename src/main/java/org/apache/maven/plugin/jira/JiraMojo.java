@@ -50,17 +50,17 @@ public class JiraMojo
 
     static
     {
-        JIRA_COLUMNS.put( "Key", new Integer( IssuesReportHelper.COLUMN_KEY ) );
-        JIRA_COLUMNS.put( "Summary", new Integer( IssuesReportHelper.COLUMN_SUMMARY ) );
-        JIRA_COLUMNS.put( "Status", new Integer( IssuesReportHelper.COLUMN_STATUS ) );
-        JIRA_COLUMNS.put( "Resolution", new Integer( IssuesReportHelper.COLUMN_RESOLUTION ) );
         JIRA_COLUMNS.put( "Assignee", new Integer( IssuesReportHelper.COLUMN_ASSIGNEE ) );
-        JIRA_COLUMNS.put( "Reporter", new Integer( IssuesReportHelper.COLUMN_REPORTER ) );
-        JIRA_COLUMNS.put( "Type", new Integer( IssuesReportHelper.COLUMN_TYPE ) );
-        JIRA_COLUMNS.put( "Priority", new Integer( IssuesReportHelper.COLUMN_PRIORITY ) );
-        JIRA_COLUMNS.put( "Version", new Integer( IssuesReportHelper.COLUMN_VERSION ) );
-        JIRA_COLUMNS.put( "Fix Version", new Integer( IssuesReportHelper.COLUMN_FIX_VERSION ) );
         JIRA_COLUMNS.put( "Component", new Integer( IssuesReportHelper.COLUMN_COMPONENT ) );
+        JIRA_COLUMNS.put( "Fix Version", new Integer( IssuesReportHelper.COLUMN_FIX_VERSION ) );
+        JIRA_COLUMNS.put( "Key", new Integer( IssuesReportHelper.COLUMN_KEY ) );
+        JIRA_COLUMNS.put( "Priority", new Integer( IssuesReportHelper.COLUMN_PRIORITY ) );
+        JIRA_COLUMNS.put( "Reporter", new Integer( IssuesReportHelper.COLUMN_REPORTER ) );
+        JIRA_COLUMNS.put( "Resolution", new Integer( IssuesReportHelper.COLUMN_RESOLUTION ) );
+        JIRA_COLUMNS.put( "Status", new Integer( IssuesReportHelper.COLUMN_STATUS ) );
+        JIRA_COLUMNS.put( "Summary", new Integer( IssuesReportHelper.COLUMN_SUMMARY ) );
+        JIRA_COLUMNS.put( "Type", new Integer( IssuesReportHelper.COLUMN_TYPE ) );
+        JIRA_COLUMNS.put( "Version", new Integer( IssuesReportHelper.COLUMN_VERSION ) );
     }
 
     /**

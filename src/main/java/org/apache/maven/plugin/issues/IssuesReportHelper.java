@@ -32,33 +32,33 @@ import java.util.Map;
  */
 public class IssuesReportHelper
 {
-    public static final int COLUMN_KEY = 0;
+    public static final int COLUMN_ASSIGNEE = 0;
 
-    public static final int COLUMN_SUMMARY = 1;
+    public static final int COLUMN_COMPONENT = 1;
 
-    public static final int COLUMN_STATUS = 2;
+    public static final int COLUMN_CREATED = 2;
 
-    public static final int COLUMN_RESOLUTION = 3;
+    public static final int COLUMN_FIX_VERSION = 3;
 
-    public static final int COLUMN_ASSIGNEE = 4;
+    public static final int COLUMN_ID = 4;
 
-    public static final int COLUMN_REPORTER = 5;
+    public static final int COLUMN_KEY = 5;
 
-    public static final int COLUMN_TYPE = 6;
+    public static final int COLUMN_PRIORITY = 6;
 
-    public static final int COLUMN_PRIORITY = 7;
+    public static final int COLUMN_REPORTER = 7;
 
-    public static final int COLUMN_VERSION = 8;
+    public static final int COLUMN_RESOLUTION = 8;
 
-    public static final int COLUMN_FIX_VERSION = 9;
+    public static final int COLUMN_STATUS = 9;
 
-    public static final int COLUMN_COMPONENT = 10;
+    public static final int COLUMN_SUMMARY = 10;
 
-    public static final int COLUMN_ID = 11;
+    public static final int COLUMN_TYPE = 11;
 
-    public static final int COLUMN_CREATED = 12;
+    public static final int COLUMN_UPDATED = 12;
 
-    public static final int COLUMN_CHANGED = 13;
+    public static final int COLUMN_VERSION = 13;
 
     /**
      * Get a list of id:s for the columns that are to be included in the report.
