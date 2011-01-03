@@ -30,7 +30,7 @@ import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.plugin.changes.AbstractChangesReport;
 import org.apache.maven.plugin.changes.ProjectUtils;
 import org.apache.maven.plugin.issues.IssuesReportGenerator;
-import org.apache.maven.plugin.jira.JiraMojo;
+import org.apache.maven.plugin.issues.IssuesReportHelper;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.MavenReportException;
 import org.apache.xmlrpc.XmlRpcException;
@@ -54,18 +54,18 @@ public class TracMojo
 
     static
     {
-        TRAC_COLUMNS.put( "id", new Integer( JiraMojo.COLUMN_ID ) );
-        TRAC_COLUMNS.put( "type", new Integer( JiraMojo.COLUMN_TYPE ) );
-        TRAC_COLUMNS.put( "summary", new Integer( JiraMojo.COLUMN_SUMMARY ) );
-        TRAC_COLUMNS.put( "status", new Integer( JiraMojo.COLUMN_STATUS ) );
-        TRAC_COLUMNS.put( "resolution", new Integer( JiraMojo.COLUMN_RESOLUTION ) );
-        TRAC_COLUMNS.put( "milestone", new Integer( JiraMojo.COLUMN_FIX_VERSION ) );
-        TRAC_COLUMNS.put( "owner", new Integer( JiraMojo.COLUMN_ASSIGNEE ) );
-        TRAC_COLUMNS.put( "priority", new Integer( JiraMojo.COLUMN_PRIORITY ) );
-        TRAC_COLUMNS.put( "reporter", new Integer( JiraMojo.COLUMN_REPORTER ) );
-        TRAC_COLUMNS.put( "component", new Integer( JiraMojo.COLUMN_COMPONENT ) );
-        TRAC_COLUMNS.put( "created", new Integer( JiraMojo.COLUMN_CREATED ) );
-        TRAC_COLUMNS.put( "changed", new Integer( JiraMojo.COLUMN_CHANGED ) );
+        TRAC_COLUMNS.put( "id", new Integer( IssuesReportHelper.COLUMN_ID ) );
+        TRAC_COLUMNS.put( "type", new Integer( IssuesReportHelper.COLUMN_TYPE ) );
+        TRAC_COLUMNS.put( "summary", new Integer( IssuesReportHelper.COLUMN_SUMMARY ) );
+        TRAC_COLUMNS.put( "status", new Integer( IssuesReportHelper.COLUMN_STATUS ) );
+        TRAC_COLUMNS.put( "resolution", new Integer( IssuesReportHelper.COLUMN_RESOLUTION ) );
+        TRAC_COLUMNS.put( "milestone", new Integer( IssuesReportHelper.COLUMN_FIX_VERSION ) );
+        TRAC_COLUMNS.put( "owner", new Integer( IssuesReportHelper.COLUMN_ASSIGNEE ) );
+        TRAC_COLUMNS.put( "priority", new Integer( IssuesReportHelper.COLUMN_PRIORITY ) );
+        TRAC_COLUMNS.put( "reporter", new Integer( IssuesReportHelper.COLUMN_REPORTER ) );
+        TRAC_COLUMNS.put( "component", new Integer( IssuesReportHelper.COLUMN_COMPONENT ) );
+        TRAC_COLUMNS.put( "created", new Integer( IssuesReportHelper.COLUMN_CREATED ) );
+        TRAC_COLUMNS.put( "changed", new Integer( IssuesReportHelper.COLUMN_CHANGED ) );
     }
 
     /**
@@ -137,7 +137,7 @@ public class TracMojo
         {
             List issueList = issueDownloader.getIssueList();
 
-            List columnIds = JiraMojo.getColumnIds( columnNames, TRAC_COLUMNS );
+            List columnIds = IssuesReportHelper.getColumnIds( columnNames, TRAC_COLUMNS );
             if ( columnIds.size() == 0 )
             {
                 // This can happen if the user has configured column names and they are all invalid
@@ -146,7 +146,7 @@ public class TracMojo
             }
 
             // Generate the report
-            IssuesReportGenerator report = new IssuesReportGenerator( JiraMojo.toIntArray( columnIds ) );
+            IssuesReportGenerator report = new IssuesReportGenerator( IssuesReportHelper.toIntArray( columnIds ) );
 
             if ( issueList.isEmpty() )
             {

@@ -19,8 +19,10 @@ package org.apache.maven.plugin.issues;
  * under the License.
  */
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * A helper class for generation of reports based on issues.
@@ -30,6 +32,57 @@ import java.util.List;
  */
 public class IssuesReportHelper
 {
+    public static final int COLUMN_KEY = 0;
+
+    public static final int COLUMN_SUMMARY = 1;
+
+    public static final int COLUMN_STATUS = 2;
+
+    public static final int COLUMN_RESOLUTION = 3;
+
+    public static final int COLUMN_ASSIGNEE = 4;
+
+    public static final int COLUMN_REPORTER = 5;
+
+    public static final int COLUMN_TYPE = 6;
+
+    public static final int COLUMN_PRIORITY = 7;
+
+    public static final int COLUMN_VERSION = 8;
+
+    public static final int COLUMN_FIX_VERSION = 9;
+
+    public static final int COLUMN_COMPONENT = 10;
+
+    public static final int COLUMN_ID = 11;
+
+    public static final int COLUMN_CREATED = 12;
+
+    public static final int COLUMN_CHANGED = 13;
+
+    /**
+     * Get a list of id:s for the columns that are to be included in the report.
+     *
+     * @param columnNames The names of the columns
+     * @param allColumns A mapping from column name to column id
+     * @return A List of column id:s
+     */
+    public static List getColumnIds( String columnNames, Map allColumns )
+    {
+        List columnIds = new ArrayList();
+        String[] columnNamesArray = columnNames.split( "," );
+        // Loop through the names of the columns, to validate each of them and add their id to the list
+        for ( int i = 0; i < columnNamesArray.length; i++ )
+        {
+            String columnName = columnNamesArray[i].trim();
+            if ( allColumns.containsKey( columnName ) )
+            {
+                columnIds.add( (Integer) allColumns.get( columnName ) );
+            }
+        }
+        return columnIds;
+    }
+
     /**
      * Print a list of values separated by commas.
      *
@@ -53,5 +106,21 @@ public class IssuesReportHelper
             }
         }
         return sb.toString();
+    }
+
+    /**
+     * Convert a List of Integers to an int array.
+     *
+     * @param list The List to convert
+     * @return An in array
+     */
+    public static int[] toIntArray( List list )
+    {
+        int[] intArray = new int[list.size()];
+        for ( int j = 0; j < intArray.length; j++ )
+        {
+            intArray[j] = ( (Integer) list.get( j ) ).intValue();
+        }
+        return intArray;
     }
 }
