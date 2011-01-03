@@ -20,9 +20,10 @@ package org.apache.maven.plugin.jira;
  */
 
 import org.apache.maven.doxia.sink.Sink;
+import org.apache.maven.plugin.issues.Issue;
+import org.apache.maven.plugin.issues.IssuesReportGenerator;
 import org.apache.maven.reporting.MavenReportException;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -200,7 +201,7 @@ public class JiraReportGenerator
 
         for ( int idx = 0; idx < issueList.size(); idx++ )
         {
-            JiraIssue issue = (JiraIssue) issueList.get( idx );
+            Issue issue = (Issue) issueList.get( idx );
 
             sink.tableRow();
 
@@ -249,11 +250,11 @@ public class JiraReportGenerator
                         break;
 
                     case COLUMN_FIX_VERSION:
-                        sinkCell( sink, printValues( issue.getFixVersions() ) );
+                        sinkCell( sink, IssuesReportGenerator.printValues( issue.getFixVersions() ) );
                         break;
 
                     case COLUMN_COMPONENT:
-                        sinkCell( sink, printValues( issue.getComponents() ) );
+                        sinkCell( sink, IssuesReportGenerator.printValues( issue.getComponents() ) );
                         break;
 
                     default:
@@ -337,30 +338,5 @@ public class JiraReportGenerator
         sink.text( text );
 
         sink.sectionTitle1_();
-    }
-
-    /**
-     * Print a list of values separated by commas.
-     *
-     * @param values The values to print
-     * @return A nicely formatted string of values.
-     */
-    private static String printValues( List values )
-    {
-        StringBuffer sb = new StringBuffer();
-        if( values != null )
-        {
-            Iterator iterator = values.iterator();
-            while ( iterator.hasNext() )
-            {
-                String value = (String) iterator.next();
-                sb.append( value );
-                if ( iterator.hasNext() )
-                {
-                    sb.append( ", " );
-                }
-            }
-        }
-        return sb.toString();
     }
 }

@@ -19,6 +19,7 @@ package org.apache.maven.plugin.jira;
  * under the License.
  */
 
+import org.apache.maven.plugin.issues.Issue;
 import org.apache.maven.plugins.changes.model.Action;
 import org.apache.maven.plugins.changes.model.Release;
 
@@ -39,7 +40,7 @@ import java.util.Map;
 public class JiraAdapter
 {
     /**
-     * Adapt a <code>List</code> of <code>JiraIssue</code>s to a
+     * Adapt a <code>List</code> of <code>Issue</code>s to a
      * <code>List</code> of <code>Release</code>s.
      *
      * @param issues The JIRA issues
@@ -53,7 +54,7 @@ public class JiraAdapter
         // Loop through all issues looking for fixVersions
         for ( int i = 0; i < issues.size(); i++ )
         {
-            JiraIssue issue = (JiraIssue) issues.get( i );
+            Issue issue = (Issue) issues.get( i );
             // Do NOT create a release for issues that lack a fixVersion
             if ( issue.getFixVersions() != null )
             {
@@ -89,12 +90,12 @@ public class JiraAdapter
     }
 
     /**
-     * Create an <code>Action</code> from a JIRA issue.
+     * Create an <code>Action</code> from an issue.
      *
      * @param issue The issue to extract the information from
      * @return An <code>Action</code>
      */
-    public static Action createAction( JiraIssue issue )
+    public static Action createAction( Issue issue )
     {
         Action action = new Action();
 

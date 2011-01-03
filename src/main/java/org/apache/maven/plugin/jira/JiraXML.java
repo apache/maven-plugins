@@ -28,15 +28,16 @@ import java.util.List;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.apache.maven.plugin.issues.Issue;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
- * XML parser for <code>JiraIssue</code>s. This works on an XML file downloaded
- * from JIRA and creates a List of issues that is exposed to the user of the
- * class.
+ * XML parser that extracts <code>Issue</code>s from JIRA. This works on an XML
+ * file downloaded from JIRA and creates a <code>List</code> of issues that is
+ * exposed to the user of the class.
  *
  * @version $Id$
  */
@@ -49,7 +50,7 @@ public class JiraXML
 
     private String currentParent = "";
 
-    private JiraIssue issue;
+    private Issue issue;
 
     public JiraXML( File xmlPath, String encoding )
     {
@@ -93,7 +94,7 @@ public class JiraXML
     {
         if ( qName.equals( "item" ) )
         {
-            issue = new JiraIssue();
+            issue = new Issue();
 
             currentParent = "item";
         }
