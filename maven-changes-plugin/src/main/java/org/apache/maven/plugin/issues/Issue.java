@@ -31,6 +31,10 @@ import java.util.List;
  */
 public class Issue
 {
+    private String assignee;
+
+    private List comments;
+
     private List components;
 
     private Date created;
@@ -47,9 +51,13 @@ public class Issue
 
     private String reporter;
 
+    private String resolution;
+
     private String summary;
 
     private String status;
+
+    private String title;
 
     private String type;
 
@@ -57,66 +65,8 @@ public class Issue
 
     private String version;
 
-    private String resolution;
-
-    private String assignee;
-
-    private List comments;
-
-    private String title;
-
     public Issue()
     {
-    }
-
-    public String getKey()
-    {
-        return key;
-    }
-
-    public void setKey( String key )
-    {
-        this.key = key;
-    }
-
-    public String getLink()
-    {
-        return link;
-    }
-
-    public void setLink( String link )
-    {
-        this.link = link;
-    }
-
-    public String getSummary()
-    {
-        return summary;
-    }
-
-    public void setSummary( String summary )
-    {
-        this.summary = summary;
-    }
-
-    public String getStatus()
-    {
-        return status;
-    }
-
-    public void setStatus( String status )
-    {
-        this.status = status;
-    }
-
-    public String getResolution()
-    {
-        return resolution;
-    }
-
-    public void setResolution( String resolution )
-    {
-        this.resolution = resolution;
     }
 
     public String getAssignee()
@@ -127,6 +77,20 @@ public class Issue
     public void setAssignee( String assignee )
     {
         this.assignee = assignee;
+    }
+
+    public List getComments()
+    {
+        return comments;
+    }
+
+    public void addComment( String comment )
+    {
+        if ( comments == null )
+        {
+            comments = new ArrayList();
+        }
+        comments.add( comment );
     }
 
     public List getComponents()
@@ -177,6 +141,26 @@ public class Issue
         this.id = id;
     }
 
+    public String getKey()
+    {
+        return key;
+    }
+
+    public void setKey( String key )
+    {
+        this.key = key;
+    }
+
+    public String getLink()
+    {
+        return link;
+    }
+
+    public void setLink( String link )
+    {
+        this.link = link;
+    }
+
     public String getPriority()
     {
         return priority;
@@ -195,6 +179,46 @@ public class Issue
     public void setReporter( String reporter )
     {
         this.reporter = reporter;
+    }
+
+    public String getResolution()
+    {
+        return resolution;
+    }
+
+    public void setResolution( String resolution )
+    {
+        this.resolution = resolution;
+    }
+
+    public String getStatus()
+    {
+        return status;
+    }
+
+    public void setStatus( String status )
+    {
+        this.status = status;
+    }
+
+    public String getSummary()
+    {
+        return summary;
+    }
+
+    public void setSummary( String summary )
+    {
+        this.summary = summary;
+    }
+
+    public String getTitle()
+    {
+        return title;
+    }
+
+    public void setTitle( String title )
+    {
+        this.title = title;
     }
 
     public String getType()
@@ -225,29 +249,5 @@ public class Issue
     public void setVersion( String version )
     {
         this.version = version;
-    }
-
-    public void addComment( String comment )
-    {
-        if ( comments == null )
-        {
-            comments = new ArrayList();
-        }
-        comments.add( comment );
-    }
-
-    public List getComments()
-    {
-        return comments;
-    }
-
-    public String getTitle()
-    {
-        return title;
-    }
-
-    public void setTitle( String title )
-    {
-        this.title = title;
     }
 }

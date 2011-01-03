@@ -43,25 +43,18 @@ public class IssueTestCase
     {
     }
 
+    public void testGetSetAssignee()
+    {
+        issue.setAssignee( "assignee" );
+
+        assertEquals( "assignee", issue.getAssignee() );
+    }
+
     public void testGetSetKey()
     {
         issue.setKey( "key" );
 
         assertEquals( "key", issue.getKey() );
-    }
-
-    public void testGetSetSummary()
-    {
-        issue.setSummary( "summary" );
-
-        assertEquals( "summary", issue.getSummary() );
-    }
-
-    public void testGetSetStatus()
-    {
-        issue.setStatus( "status" );
-
-        assertEquals( "status", issue.getStatus() );
     }
 
     public void testGetSetResolution()
@@ -71,11 +64,17 @@ public class IssueTestCase
         assertEquals( "resolution", issue.getResolution() );
     }
 
-    public void testGetSetAssignee()
+    public void testGetSetStatus()
     {
-        issue.setAssignee( "assignee" );
+        issue.setStatus( "status" );
 
-        assertEquals( "assignee", issue.getAssignee() );
+        assertEquals( "status", issue.getStatus() );
     }
 
+    public void testGetSetSummary()
+    {
+        issue.setSummary( "summary" );
+
+        assertEquals( "summary", issue.getSummary() );
+    }
 }

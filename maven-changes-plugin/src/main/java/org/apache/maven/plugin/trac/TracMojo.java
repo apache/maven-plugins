@@ -110,12 +110,12 @@ public class TracMojo
 
         try
         {
-            List ticketList = issueDownloader.getIssueList();
+            List issueList = issueDownloader.getIssueList();
 
             // Generate the report
             TracReportGenerator report = new TracReportGenerator( columnNames );
 
-            if ( ticketList.isEmpty() )
+            if ( issueList.isEmpty() )
             {
                 report.doGenerateEmptyReport( getBundle( locale ), getSink() );
                 getLog().warn( "No ticket has matched." );
@@ -124,7 +124,7 @@ public class TracMojo
             {
                 try
                 {
-                    report.doGenerateReport( getBundle( locale ), getSink(), ticketList );
+                    report.doGenerateReport( getBundle( locale ), getSink(), issueList );
                 }
                 catch ( Exception e )
                 {
