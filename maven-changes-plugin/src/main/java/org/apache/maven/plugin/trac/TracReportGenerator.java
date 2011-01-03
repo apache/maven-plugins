@@ -91,6 +91,10 @@ public class TracReportGenerator
         {
             switch ( columns[columnIndex] )
             {
+                case JiraMojo.COLUMN_ASSIGNEE:
+                    sinkHeader( sink, bundle.getString( "report.issues.label.by" ) );
+                    break;
+
                 case JiraMojo.COLUMN_CHANGED:
                     sinkHeader( sink, bundle.getString( "report.issues.label.changed" ) );
                     break;
@@ -103,16 +107,12 @@ public class TracReportGenerator
                     sinkHeader( sink, bundle.getString( "report.issues.label.created" ) );
                     break;
 
-                case JiraMojo.COLUMN_ID:
-                    sinkHeader( sink, bundle.getString( "report.issues.label.id" ) );
-                    break;
-
                 case JiraMojo.COLUMN_FIX_VERSION:
                     sinkHeader( sink, bundle.getString( "report.issues.label.fixVersion" ) );
                     break;
 
-                case JiraMojo.COLUMN_ASSIGNEE:
-                    sinkHeader( sink, bundle.getString( "report.issues.label.by" ) );
+                case JiraMojo.COLUMN_ID:
+                    sinkHeader( sink, bundle.getString( "report.issues.label.id" ) );
                     break;
 
                 case JiraMojo.COLUMN_PRIORITY:
@@ -167,6 +167,10 @@ public class TracReportGenerator
             {
                 switch ( columns[columnIndex] )
                 {
+                    case JiraMojo.COLUMN_ASSIGNEE:
+                        sinkCell( sink, issue.getAssignee() );
+                        break;
+
                     case JiraMojo.COLUMN_CHANGED:
                         sinkCell( sink, sdf.format( issue.getUpdated() ) );
                         break;
@@ -179,20 +183,16 @@ public class TracReportGenerator
                         sinkCell( sink, sdf.format( issue.getCreated() ) );
                         break;
 
+                    case JiraMojo.COLUMN_FIX_VERSION:
+                        sinkCell( sink, IssuesReportGenerator.printValues( issue.getFixVersions() ) );
+                        break;
+
                     case JiraMojo.COLUMN_ID:
                         sink.tableCell();
                         sink.link( issue.getLink() );
                         sink.text( issue.getId() );
                         sink.link_();
                         sink.tableCell_();
-                        break;
-
-                    case JiraMojo.COLUMN_FIX_VERSION:
-                        sinkCell( sink, IssuesReportGenerator.printValues( issue.getFixVersions() ) );
-                        break;
-
-                    case JiraMojo.COLUMN_ASSIGNEE:
-                        sinkCell( sink, issue.getAssignee() );
                         break;
 
                     case JiraMojo.COLUMN_PRIORITY:
