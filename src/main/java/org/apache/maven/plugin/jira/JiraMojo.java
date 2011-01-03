@@ -20,7 +20,6 @@ package org.apache.maven.plugin.jira;
  */
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -30,6 +29,7 @@ import java.util.ResourceBundle;
 import org.apache.maven.plugin.changes.AbstractChangesReport;
 import org.apache.maven.plugin.changes.ProjectUtils;
 import org.apache.maven.plugin.issues.IssuesReportGenerator;
+import org.apache.maven.plugin.issues.IssuesReportHelper;
 import org.apache.maven.reporting.MavenReportException;
 import org.apache.maven.settings.Settings;
 
@@ -43,22 +43,6 @@ import org.apache.maven.settings.Settings;
 public class JiraMojo
     extends AbstractChangesReport
 {
-    //@todo Move to utility class
-    public static final int COLUMN_KEY = 0;
-    public static final int COLUMN_SUMMARY = 1;
-    public static final int COLUMN_STATUS = 2;
-    public static final int COLUMN_RESOLUTION = 3;
-    public static final int COLUMN_ASSIGNEE = 4;
-    public static final int COLUMN_REPORTER = 5;
-    public static final int COLUMN_TYPE = 6;
-    public static final int COLUMN_PRIORITY = 7;
-    public static final int COLUMN_VERSION = 8;
-    public static final int COLUMN_FIX_VERSION = 9;
-    public static final int COLUMN_COMPONENT = 10;
-    public static final int COLUMN_ID = 11;
-    public static final int COLUMN_CREATED = 12;
-    public static final int COLUMN_CHANGED = 13;
-
     /**
      * Valid JIRA columns.
      */
@@ -66,17 +50,17 @@ public class JiraMojo
 
     static
     {
-        JIRA_COLUMNS.put( "Key", new Integer( COLUMN_KEY ) );
-        JIRA_COLUMNS.put( "Summary", new Integer( COLUMN_SUMMARY ) );
-        JIRA_COLUMNS.put( "Status", new Integer( COLUMN_STATUS ) );
-        JIRA_COLUMNS.put( "Resolution", new Integer( COLUMN_RESOLUTION ) );
-        JIRA_COLUMNS.put( "Assignee", new Integer( COLUMN_ASSIGNEE ) );
-        JIRA_COLUMNS.put( "Reporter", new Integer( COLUMN_REPORTER ) );
-        JIRA_COLUMNS.put( "Type", new Integer( COLUMN_TYPE ) );
-        JIRA_COLUMNS.put( "Priority", new Integer( COLUMN_PRIORITY ) );
-        JIRA_COLUMNS.put( "Version", new Integer( COLUMN_VERSION ) );
-        JIRA_COLUMNS.put( "Fix Version", new Integer( COLUMN_FIX_VERSION ) );
-        JIRA_COLUMNS.put( "Component", new Integer( COLUMN_COMPONENT ) );
+        JIRA_COLUMNS.put( "Key", new Integer( IssuesReportHelper.COLUMN_KEY ) );
+        JIRA_COLUMNS.put( "Summary", new Integer( IssuesReportHelper.COLUMN_SUMMARY ) );
+        JIRA_COLUMNS.put( "Status", new Integer( IssuesReportHelper.COLUMN_STATUS ) );
+        JIRA_COLUMNS.put( "Resolution", new Integer( IssuesReportHelper.COLUMN_RESOLUTION ) );
+        JIRA_COLUMNS.put( "Assignee", new Integer( IssuesReportHelper.COLUMN_ASSIGNEE ) );
+        JIRA_COLUMNS.put( "Reporter", new Integer( IssuesReportHelper.COLUMN_REPORTER ) );
+        JIRA_COLUMNS.put( "Type", new Integer( IssuesReportHelper.COLUMN_TYPE ) );
+        JIRA_COLUMNS.put( "Priority", new Integer( IssuesReportHelper.COLUMN_PRIORITY ) );
+        JIRA_COLUMNS.put( "Version", new Integer( IssuesReportHelper.COLUMN_VERSION ) );
+        JIRA_COLUMNS.put( "Fix Version", new Integer( IssuesReportHelper.COLUMN_FIX_VERSION ) );
+        JIRA_COLUMNS.put( "Component", new Integer( IssuesReportHelper.COLUMN_COMPONENT ) );
     }
 
     /**
@@ -300,14 +284,14 @@ public class JiraMojo
                 JiraXML jira = new JiraXML( jiraXmlPath, jiraXmlEncoding );
                 List issueList = jira.getIssueList();
 
-                List columnIds = getColumnIds( columnNames, JIRA_COLUMNS );
+                List columnIds = IssuesReportHelper.getColumnIds( columnNames, JIRA_COLUMNS );
                 if ( columnIds.size() == 0 )
                 {
                     // This can happen if the user has configured column names and they are all invalid
                     throw new MavenReportException(
                         "maven-changes-plugin: None of the configured columnNames '" + columnNames + "' are valid." );
                 }
-                report = new IssuesReportGenerator( toIntArray( columnIds ) );
+                report = new IssuesReportGenerator( IssuesReportHelper.toIntArray( columnIds ) );
 
                 if ( onlyCurrentVersion )
                 {
@@ -334,47 +318,6 @@ public class JiraMojo
         {
             e.printStackTrace();
         }
-    }
-
-    /**
-     * Get a list of id:s for the columns that are to be included in the report.
-     *
-     * @param columnNames The names of the columns
-     * @param allColumns A mapping from column name to column id
-     * @return A List of column id:s
-     * @todo Move to helper class
-     */
-    public static List getColumnIds( String columnNames, Map allColumns )
-    {
-        List columnIds = new ArrayList();
-        String[] columnNamesArray = columnNames.split( "," );
-        // Loop through the names of the columns, to validate each of them and add their id to the list
-        for ( int i = 0; i < columnNamesArray.length; i++ )
-        {
-            String columnName = columnNamesArray[i].trim();
-            if ( allColumns.containsKey( columnName ) )
-            {
-                columnIds.add( (Integer) allColumns.get( columnName ) );
-            }
-        }
-        return columnIds;
-    }
-
-    /**
-     * Convert a List of Integers to an int array.
-     *
-     * @param list The List to convert
-     * @return An in array
-     * @todo Move to helper class
-     */
-    public static int[] toIntArray( List list )
-    {
-        int[] intArray = new int[list.size()];
-        for ( int j = 0; j < intArray.length; j++ )
-        {
-            intArray[j] = ( (Integer) list.get( j ) ).intValue();
-        }
-        return intArray;
     }
 
     public String getName( Locale locale )

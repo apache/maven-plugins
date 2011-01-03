@@ -20,9 +20,7 @@ package org.apache.maven.plugin.issues;
  */
 
 import org.apache.maven.doxia.sink.Sink;
-import org.apache.maven.plugin.jira.JiraMojo;
 import org.apache.maven.reporting.MavenReportException;
-import org.codehaus.plexus.util.StringUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -92,59 +90,59 @@ public class IssuesReportGenerator
         {
             switch ( columns[columnIndex] )
             {
-                case JiraMojo.COLUMN_ASSIGNEE:
+                case IssuesReportHelper.COLUMN_ASSIGNEE:
                     sinkHeader( sink, bundle.getString( "report.issues.label.by" ) );
                     break;
 
-                case JiraMojo.COLUMN_CHANGED:
+                case IssuesReportHelper.COLUMN_CHANGED:
                     sinkHeader( sink, bundle.getString( "report.issues.label.changed" ) );
                     break;
 
-                case JiraMojo.COLUMN_COMPONENT:
+                case IssuesReportHelper.COLUMN_COMPONENT:
                     sinkHeader( sink, bundle.getString( "report.issues.label.component" ) );
                     break;
 
-                case JiraMojo.COLUMN_CREATED:
+                case IssuesReportHelper.COLUMN_CREATED:
                     sinkHeader( sink, bundle.getString( "report.issues.label.created" ) );
                     break;
 
-                case JiraMojo.COLUMN_FIX_VERSION:
+                case IssuesReportHelper.COLUMN_FIX_VERSION:
                     sinkHeader( sink, bundle.getString( "report.issues.label.fixVersion" ) );
                     break;
 
-                case JiraMojo.COLUMN_ID:
+                case IssuesReportHelper.COLUMN_ID:
                     sinkHeader( sink, bundle.getString( "report.issues.label.id" ) );
                     break;
 
-                case JiraMojo.COLUMN_KEY:
+                case IssuesReportHelper.COLUMN_KEY:
                     sinkHeader( sink, bundle.getString( "report.issues.label.key" ) );
                     break;
 
-                case JiraMojo.COLUMN_PRIORITY:
+                case IssuesReportHelper.COLUMN_PRIORITY:
                     sinkHeader( sink, bundle.getString( "report.issues.label.priority" ) );
                     break;
 
-                case JiraMojo.COLUMN_REPORTER:
+                case IssuesReportHelper.COLUMN_REPORTER:
                     sinkHeader( sink, bundle.getString( "report.issues.label.reporter" ) );
                     break;
 
-                case JiraMojo.COLUMN_RESOLUTION:
+                case IssuesReportHelper.COLUMN_RESOLUTION:
                     sinkHeader( sink, bundle.getString( "report.issues.label.resolution" ) );
                     break;
 
-                case JiraMojo.COLUMN_STATUS:
+                case IssuesReportHelper.COLUMN_STATUS:
                     sinkHeader( sink, bundle.getString( "report.issues.label.status" ) );
                     break;
 
-                case JiraMojo.COLUMN_SUMMARY:
+                case IssuesReportHelper.COLUMN_SUMMARY:
                     sinkHeader( sink, bundle.getString( "report.issues.label.summary" ) );
                     break;
 
-                case JiraMojo.COLUMN_TYPE:
+                case IssuesReportHelper.COLUMN_TYPE:
                     sinkHeader( sink, bundle.getString( "report.issues.label.type" ) );
                     break;
 
-                case JiraMojo.COLUMN_VERSION:
+                case IssuesReportHelper.COLUMN_VERSION:
                     sinkHeader( sink, bundle.getString( "report.issues.label.version" ) );
                     break;
 
@@ -184,27 +182,27 @@ public class IssuesReportGenerator
             {
                 switch ( columns[columnIndex] )
                 {
-                    case JiraMojo.COLUMN_ASSIGNEE:
+                    case IssuesReportHelper.COLUMN_ASSIGNEE:
                         sinkCell( sink, issue.getAssignee() );
                         break;
 
-                    case JiraMojo.COLUMN_CHANGED:
+                    case IssuesReportHelper.COLUMN_CHANGED:
                         sinkCell( sink, sdf.format( issue.getUpdated() ) );
                         break;
 
-                    case JiraMojo.COLUMN_COMPONENT:
+                    case IssuesReportHelper.COLUMN_COMPONENT:
                         sinkCell( sink, IssuesReportHelper.printValues( issue.getComponents() ) );
                         break;
 
-                    case JiraMojo.COLUMN_CREATED:
+                    case IssuesReportHelper.COLUMN_CREATED:
                         sinkCell( sink, sdf.format( issue.getCreated() ) );
                         break;
 
-                    case JiraMojo.COLUMN_FIX_VERSION:
+                    case IssuesReportHelper.COLUMN_FIX_VERSION:
                         sinkCell( sink, IssuesReportHelper.printValues( issue.getFixVersions() ) );
                         break;
 
-                    case JiraMojo.COLUMN_ID:
+                    case IssuesReportHelper.COLUMN_ID:
                         sink.tableCell();
                         sink.link( issue.getLink() );
                         sink.text( issue.getId() );
@@ -212,7 +210,7 @@ public class IssuesReportGenerator
                         sink.tableCell_();
                         break;
 
-                    case JiraMojo.COLUMN_KEY:
+                    case IssuesReportHelper.COLUMN_KEY:
                         sink.tableCell();
                         sink.link( issue.getLink() );
                         sink.text( issue.getKey() );
@@ -220,31 +218,31 @@ public class IssuesReportGenerator
                         sink.tableCell_();
                         break;
 
-                    case JiraMojo.COLUMN_PRIORITY:
+                    case IssuesReportHelper.COLUMN_PRIORITY:
                         sinkCell( sink, issue.getPriority() );
                         break;
 
-                    case JiraMojo.COLUMN_REPORTER:
+                    case IssuesReportHelper.COLUMN_REPORTER:
                         sinkCell( sink, issue.getReporter() );
                         break;
 
-                    case JiraMojo.COLUMN_RESOLUTION:
+                    case IssuesReportHelper.COLUMN_RESOLUTION:
                         sinkCell( sink, issue.getResolution() );
                         break;
 
-                    case JiraMojo.COLUMN_STATUS:
+                    case IssuesReportHelper.COLUMN_STATUS:
                         sinkCell( sink, issue.getStatus() );
                         break;
 
-                    case JiraMojo.COLUMN_SUMMARY:
+                    case IssuesReportHelper.COLUMN_SUMMARY:
                         sinkCell( sink, issue.getSummary() );
                         break;
 
-                    case JiraMojo.COLUMN_TYPE:
+                    case IssuesReportHelper.COLUMN_TYPE:
                         sinkCell( sink, issue.getType() );
                         break;
 
-                    case JiraMojo.COLUMN_VERSION:
+                    case IssuesReportHelper.COLUMN_VERSION:
                         sinkCell( sink, issue.getVersion() );
                         break;
 
