@@ -46,19 +46,6 @@ import org.apache.xmlrpc.XmlRpcException;
 public class TracMojo
     extends AbstractChangesReport
 {
-    static final int COLUMN_ID = 0;
-    static final int COLUMN_TYPE = 1;
-    static final int COLUMN_SUMMARY = 2;
-    static final int COLUMN_STATUS = 3;
-    static final int COLUMN_RESOLUTION = 4;
-    static final int COLUMN_MILESTONE = 5;
-    static final int COLUMN_OWNER = 6;
-    static final int COLUMN_PRIORITY = 7;
-    static final int COLUMN_REPORTER = 8;
-    static final int COLUMN_COMPONENT = 9;
-    static final int COLUMN_CREATED = 10;
-    static final int COLUMN_CHANGED = 11;
-
     /**
      * Valid Trac columns.
      */
@@ -66,18 +53,18 @@ public class TracMojo
 
     static
     {
-        TRAC_COLUMNS.put( "id", new Integer( COLUMN_ID ) );
-        TRAC_COLUMNS.put( "type", new Integer( COLUMN_TYPE ) );
-        TRAC_COLUMNS.put( "summary", new Integer( COLUMN_SUMMARY ) );
-        TRAC_COLUMNS.put( "status", new Integer( COLUMN_STATUS ) );
-        TRAC_COLUMNS.put( "resolution", new Integer( COLUMN_RESOLUTION ) );
-        TRAC_COLUMNS.put( "milestone", new Integer( COLUMN_MILESTONE ) );
-        TRAC_COLUMNS.put( "owner", new Integer( COLUMN_OWNER ) );
-        TRAC_COLUMNS.put( "priority", new Integer( COLUMN_PRIORITY ) );
-        TRAC_COLUMNS.put( "reporter", new Integer( COLUMN_REPORTER ) );
-        TRAC_COLUMNS.put( "component", new Integer( COLUMN_COMPONENT ) );
-        TRAC_COLUMNS.put( "created", new Integer( COLUMN_CREATED ) );
-        TRAC_COLUMNS.put( "changed", new Integer( COLUMN_CHANGED ) );
+        TRAC_COLUMNS.put( "id", new Integer( JiraMojo.COLUMN_ID ) );
+        TRAC_COLUMNS.put( "type", new Integer( JiraMojo.COLUMN_TYPE ) );
+        TRAC_COLUMNS.put( "summary", new Integer( JiraMojo.COLUMN_SUMMARY ) );
+        TRAC_COLUMNS.put( "status", new Integer( JiraMojo.COLUMN_STATUS ) );
+        TRAC_COLUMNS.put( "resolution", new Integer( JiraMojo.COLUMN_RESOLUTION ) );
+        TRAC_COLUMNS.put( "milestone", new Integer( JiraMojo.COLUMN_FIX_VERSION ) );
+        TRAC_COLUMNS.put( "owner", new Integer( JiraMojo.COLUMN_ASSIGNEE ) );
+        TRAC_COLUMNS.put( "priority", new Integer( JiraMojo.COLUMN_PRIORITY ) );
+        TRAC_COLUMNS.put( "reporter", new Integer( JiraMojo.COLUMN_REPORTER ) );
+        TRAC_COLUMNS.put( "component", new Integer( JiraMojo.COLUMN_COMPONENT ) );
+        TRAC_COLUMNS.put( "created", new Integer( JiraMojo.COLUMN_CREATED ) );
+        TRAC_COLUMNS.put( "changed", new Integer( JiraMojo.COLUMN_CHANGED ) );
     }
 
     /**
