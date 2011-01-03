@@ -54,6 +54,9 @@ public class JiraMojo
     static final int COLUMN_FIX_VERSION = 9;
     static final int COLUMN_COMPONENT = 10;
 
+    /**
+     * Valid JIRA columns.
+     */
     private static Map JIRA_COLUMNS = new HashMap();
 
     static
@@ -292,7 +295,14 @@ public class JiraMojo
                 JiraXML jira = new JiraXML( jiraXmlPath, jiraXmlEncoding );
                 List issueList = jira.getIssueList();
 
-                report = new JiraReportGenerator( toIntArray( getColumnIds( columnNames, JIRA_COLUMNS ) ) );
+                List columnIds = getColumnIds( columnNames, JIRA_COLUMNS );
+                if ( columnIds.size() == 0 )
+                {
+                    // This can happen if the user has configured column names and they are all invalid
+                    throw new MavenReportException(
+                        "maven-changes-plugin: None of the configured columnNames '" + columnNames + "' are valid." );
+                }
+                report = new JiraReportGenerator( toIntArray( columnIds ) );
 
                 if ( onlyCurrentVersion )
                 {
@@ -327,8 +337,9 @@ public class JiraMojo
      * @param columnNames The names of the columns
      * @param allColumns A mapping from column name to column id
      * @return A List of column id:s
+     * @todo Move to helper class
      */
-    private List getColumnIds( String columnNames, Map allColumns )
+    public static List getColumnIds( String columnNames, Map allColumns )
     {
         List columnIds = new ArrayList();
         String[] columnNamesArray = columnNames.split( "," );
@@ -349,8 +360,9 @@ public class JiraMojo
      *
      * @param list The List to convert
      * @return An in array
+     * @todo Move to helper class
      */
-    private int[] toIntArray( List list )
+    public static int[] toIntArray( List list )
     {
         int[] intArray = new int[list.size()];
         for ( int j = 0; j < intArray.length; j++ )

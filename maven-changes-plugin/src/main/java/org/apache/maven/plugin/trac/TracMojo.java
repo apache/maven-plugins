@@ -20,13 +20,17 @@ package org.apache.maven.plugin.trac;
  */
 
 import java.net.MalformedURLException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.plugin.changes.AbstractChangesReport;
 import org.apache.maven.plugin.changes.ProjectUtils;
+import org.apache.maven.plugin.jira.JiraMojo;
+import org.apache.maven.plugin.jira.JiraReportGenerator;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.MavenReportException;
 import org.apache.xmlrpc.XmlRpcException;
@@ -43,23 +47,39 @@ import org.apache.xmlrpc.XmlRpcException;
 public class TracMojo
     extends AbstractChangesReport
 {
+    static final int COLUMN_ID = 0;
+    static final int COLUMN_TYPE = 1;
+    static final int COLUMN_SUMMARY = 2;
+    static final int COLUMN_STATUS = 3;
+    static final int COLUMN_RESOLUTION = 4;
+    static final int COLUMN_MILESTONE = 5;
+    static final int COLUMN_OWNER = 6;
+    static final int COLUMN_PRIORITY = 7;
+    static final int COLUMN_REPORTER = 8;
+    static final int COLUMN_COMPONENT = 9;
+    static final int COLUMN_CREATED = 10;
+    static final int COLUMN_CHANGED = 11;
+
     /**
      * Valid Trac columns.
      */
-    private static final String[] TRAC_COLUMNS = {
-            /* 0 */ "id",
-            /* 1 */ "type",
-            /* 2 */ "summary",
-            /* 3 */ "status",
-            /* 4 */ "resolution",
-            /* 5 */ "milestone",
-            /* 6 */ "owner",
-            /* 7 */ "priority",
-            /* 8 */ "reporter",
-            /* 9 */ "component",
-            /* 10 */ "created",
-            /* 11 */ "changed"
-    };
+    private static Map TRAC_COLUMNS = new HashMap();
+
+    static
+    {
+        TRAC_COLUMNS.put( "id", new Integer( COLUMN_ID ) );
+        TRAC_COLUMNS.put( "type", new Integer( COLUMN_TYPE ) );
+        TRAC_COLUMNS.put( "summary", new Integer( COLUMN_SUMMARY ) );
+        TRAC_COLUMNS.put( "status", new Integer( COLUMN_STATUS ) );
+        TRAC_COLUMNS.put( "resolution", new Integer( COLUMN_RESOLUTION ) );
+        TRAC_COLUMNS.put( "milestone", new Integer( COLUMN_MILESTONE ) );
+        TRAC_COLUMNS.put( "owner", new Integer( COLUMN_OWNER ) );
+        TRAC_COLUMNS.put( "priority", new Integer( COLUMN_PRIORITY ) );
+        TRAC_COLUMNS.put( "reporter", new Integer( COLUMN_REPORTER ) );
+        TRAC_COLUMNS.put( "component", new Integer( COLUMN_COMPONENT ) );
+        TRAC_COLUMNS.put( "created", new Integer( COLUMN_CREATED ) );
+        TRAC_COLUMNS.put( "changed", new Integer( COLUMN_CHANGED ) );
+    }
 
     /**
      * Defines the Trac username for authentication into a private Trac
@@ -130,8 +150,16 @@ public class TracMojo
         {
             List issueList = issueDownloader.getIssueList();
 
+            List columnIds = JiraMojo.getColumnIds( columnNames, TRAC_COLUMNS );
+            if ( columnIds.size() == 0 )
+            {
+                // This can happen if the user has configured column names and they are all invalid
+                throw new MavenReportException(
+                    "maven-changes-plugin: None of the configured columnNames '" + columnNames + "' are valid." );
+            }
+
             // Generate the report
-            TracReportGenerator report = new TracReportGenerator( columnNames, TRAC_COLUMNS );
+            TracReportGenerator report = new TracReportGenerator( JiraMojo.toIntArray( columnIds ) );
 
             if ( issueList.isEmpty() )
             {
