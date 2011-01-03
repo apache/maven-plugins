@@ -44,6 +44,24 @@ public class TracMojo
     extends AbstractChangesReport
 {
     /**
+     * Valid Trac columns.
+     */
+    private static final String[] TRAC_COLUMNS = {
+            /* 0 */ "id",
+            /* 1 */ "type",
+            /* 2 */ "summary",
+            /* 3 */ "status",
+            /* 4 */ "resolution",
+            /* 5 */ "milestone",
+            /* 6 */ "owner",
+            /* 7 */ "priority",
+            /* 8 */ "reporter",
+            /* 9 */ "component",
+            /* 10 */ "created",
+            /* 11 */ "changed"
+    };
+
+    /**
      * Defines the Trac username for authentication into a private Trac
      * installation.
      *
@@ -113,7 +131,7 @@ public class TracMojo
             List issueList = issueDownloader.getIssueList();
 
             // Generate the report
-            TracReportGenerator report = new TracReportGenerator( columnNames );
+            TracReportGenerator report = new TracReportGenerator( columnNames, TRAC_COLUMNS );
 
             if ( issueList.isEmpty() )
             {
