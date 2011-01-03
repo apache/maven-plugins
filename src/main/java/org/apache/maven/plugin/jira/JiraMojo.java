@@ -42,17 +42,21 @@ import org.apache.maven.settings.Settings;
 public class JiraMojo
     extends AbstractChangesReport
 {
-    static final int COLUMN_KEY = 0;
-    static final int COLUMN_SUMMARY = 1;
-    static final int COLUMN_STATUS = 2;
-    static final int COLUMN_RESOLUTION = 3;
-    static final int COLUMN_ASSIGNEE = 4;
-    static final int COLUMN_REPORTER = 5;
-    static final int COLUMN_TYPE = 6;
-    static final int COLUMN_PRIORITY = 7;
-    static final int COLUMN_VERSION = 8;
-    static final int COLUMN_FIX_VERSION = 9;
-    static final int COLUMN_COMPONENT = 10;
+    //@todo Move to utility class
+    public static final int COLUMN_KEY = 0;
+    public static final int COLUMN_SUMMARY = 1;
+    public static final int COLUMN_STATUS = 2;
+    public static final int COLUMN_RESOLUTION = 3;
+    public static final int COLUMN_ASSIGNEE = 4;
+    public static final int COLUMN_REPORTER = 5;
+    public static final int COLUMN_TYPE = 6;
+    public static final int COLUMN_PRIORITY = 7;
+    public static final int COLUMN_VERSION = 8;
+    public static final int COLUMN_FIX_VERSION = 9;
+    public static final int COLUMN_COMPONENT = 10;
+    public static final int COLUMN_ID = 11;
+    public static final int COLUMN_CREATED = 12;
+    public static final int COLUMN_CHANGED = 13;
 
     /**
      * Valid JIRA columns.
