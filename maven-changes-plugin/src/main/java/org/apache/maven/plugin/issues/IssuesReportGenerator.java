@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.trac;
+package org.apache.maven.plugin.issues;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -20,22 +20,23 @@ package org.apache.maven.plugin.trac;
  */
 
 import org.apache.maven.doxia.sink.Sink;
-import org.apache.maven.plugin.issues.Issue;
-import org.apache.maven.plugin.issues.IssuesReportHelper;
 import org.apache.maven.plugin.jira.JiraMojo;
 import org.apache.maven.reporting.MavenReportException;
+import org.codehaus.plexus.util.StringUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 /**
- * Generates a Trac report.
+ * Generates a report on issues.
  *
  * @author Noriko Kinugasa
+ * @author Dennis Lundberg
  * @version $Id$
  */
-public class TracReportGenerator
+public class IssuesReportGenerator
 {
     /**
      * Holds the id:s for the columns to include in the report, in the order
@@ -46,7 +47,7 @@ public class TracReportGenerator
     /**
      * @param includedColumns The id:s of the columns to include in the report
      */
-    public TracReportGenerator( int[] includedColumns )
+    public IssuesReportGenerator( int[] includedColumns )
         throws MavenReportException
     {
         this.columns = includedColumns;
@@ -115,6 +116,10 @@ public class TracReportGenerator
                     sinkHeader( sink, bundle.getString( "report.issues.label.id" ) );
                     break;
 
+                case JiraMojo.COLUMN_KEY:
+                    sinkHeader( sink, bundle.getString( "report.issues.label.key" ) );
+                    break;
+
                 case JiraMojo.COLUMN_PRIORITY:
                     sinkHeader( sink, bundle.getString( "report.issues.label.priority" ) );
                     break;
@@ -139,6 +144,10 @@ public class TracReportGenerator
                     sinkHeader( sink, bundle.getString( "report.issues.label.type" ) );
                     break;
 
+                case JiraMojo.COLUMN_VERSION:
+                    sinkHeader( sink, bundle.getString( "report.issues.label.version" ) );
+                    break;
+
                 default:
                     // Do not add a header for this column
                     break;
@@ -157,7 +166,15 @@ public class TracReportGenerator
 
         for ( int idx = 0; idx < issueList.size(); idx++ )
         {
-            SimpleDateFormat sdf = new SimpleDateFormat( bundle.getString( "report.issues.dateformat" ) );
+            SimpleDateFormat sdf;
+            try
+            {
+                sdf = new SimpleDateFormat( bundle.getString( "report.issues.dateformat" ) );
+            }
+            catch ( MissingResourceException mre )
+            {
+                sdf = new SimpleDateFormat();
+            }
 
             Issue issue = (Issue) issueList.get( idx );
 
@@ -195,6 +212,14 @@ public class TracReportGenerator
                         sink.tableCell_();
                         break;
 
+                    case JiraMojo.COLUMN_KEY:
+                        sink.tableCell();
+                        sink.link( issue.getLink() );
+                        sink.text( issue.getKey() );
+                        sink.link_();
+                        sink.tableCell_();
+                        break;
+
                     case JiraMojo.COLUMN_PRIORITY:
                         sinkCell( sink, issue.getPriority() );
                         break;
@@ -217,6 +242,10 @@ public class TracReportGenerator
 
                     case JiraMojo.COLUMN_TYPE:
                         sinkCell( sink, issue.getType() );
+                        break;
+
+                    case JiraMojo.COLUMN_VERSION:
+                        sinkCell( sink, issue.getVersion() );
                         break;
 
                     default:

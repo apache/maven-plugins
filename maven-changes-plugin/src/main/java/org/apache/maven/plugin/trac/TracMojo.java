@@ -29,6 +29,7 @@ import java.util.ResourceBundle;
 import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.plugin.changes.AbstractChangesReport;
 import org.apache.maven.plugin.changes.ProjectUtils;
+import org.apache.maven.plugin.issues.IssuesReportGenerator;
 import org.apache.maven.plugin.jira.JiraMojo;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.MavenReportException;
@@ -145,7 +146,7 @@ public class TracMojo
             }
 
             // Generate the report
-            TracReportGenerator report = new TracReportGenerator( JiraMojo.toIntArray( columnIds ) );
+            IssuesReportGenerator report = new IssuesReportGenerator( JiraMojo.toIntArray( columnIds ) );
 
             if ( issueList.isEmpty() )
             {
