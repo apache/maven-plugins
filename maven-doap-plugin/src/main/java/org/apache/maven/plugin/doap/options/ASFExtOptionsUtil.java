@@ -32,16 +32,13 @@ import org.codehaus.plexus.util.StringUtils;
  * Utility class for {@link ASFExtOptions} class.
  *
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
- * @version $Id:$
+ * @version $Id$
  * @since 1.1
  */
 public class ASFExtOptionsUtil
 {
     /** Apache domain name, i.e. apache.org */
-    public static final String APACHE_DOMAIN_NAME = "apache.org";
-
-    /** The ASF ext namespace. */
-    public static final String ASFEXT_NAMESPACE = "http://projects.apache.org/ns/asfext#";
+    private static final String APACHE_DOMAIN_NAME = "apache.org";
 
     /**
      * The ASF category resource.
