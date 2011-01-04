@@ -51,11 +51,6 @@
           <artifactId>maven-site-plugin</artifactId>
           <version>@sitePluginVersion@</version>
         </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-project-info-reports-plugin</artifactId>
-          <version>@projectInfoReportsPluginVersion@</version>
-        </plugin>
       </plugins>
     </pluginManagement>
   </build>
@@ -72,11 +67,6 @@
           <docfilessubdirs>true</docfilessubdirs>
           <noqualifier>all</noqualifier>
         </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-project-info-reports-plugin</artifactId>
-        <version>@projectInfoReportsPluginVersion@</version>
       </plugin>
     </plugins>
   </reporting>
