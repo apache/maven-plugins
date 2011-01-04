@@ -27,7 +27,6 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.plugins.site.wagon.repository.Repository;
-import org.codehaus.plexus.util.PathTool;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
@@ -45,7 +44,7 @@ import org.codehaus.plexus.util.StringUtils;
  * @requiresDependencyResolution test
  */
 public class SiteStageMojo
-    extends SiteMojo
+    extends SiteDeployMojo
 {
     protected static final String DEFAULT_STAGING_DIRECTORY = "staging";
 
@@ -59,12 +58,31 @@ public class SiteStageMojo
     protected File stagingDirectory;
 
     /**
+     * The reactor projects.
+     *
+     * @parameter default-value="${reactorProjects}"
+     * @required
+     * @readonly
+     * @since 2.3
+     */
+    protected List<MavenProject> reactorProjects;
+
+    /**
      * @see org.apache.maven.plugin.Mojo#execute()
      */
     public void execute()
-        throws MojoExecutionException, MojoFailureException
+        throws MojoExecutionException
     {
-        String structureProject = getStructure( project, false );
+        String structureProject;
+
+        try
+        {
+            structureProject = getStructure( project, false );
+        }
+        catch ( MojoFailureException ex )
+        {
+            throw new MojoExecutionException( "Missing site information.", ex );
+        }
 
         if ( structureProject == null )
         {
@@ -74,7 +92,7 @@ public class SiteStageMojo
         stagingDirectory = getStagingDirectory( project, reactorProjects, stagingDirectory );
         getLog().info( "Using this directory for staging: " + stagingDirectory );
 
-        outputDirectory = new File( stagingDirectory, structureProject );
+        final File outputDirectory = new File( stagingDirectory, structureProject );
 
         // Safety
         if ( !outputDirectory.exists() )
@@ -82,34 +100,10 @@ public class SiteStageMojo
             outputDirectory.mkdirs();
         }
 
-        String outputRelativePath = PathTool.getRelativePath( stagingDirectory.getAbsolutePath(), new File(
-            outputDirectory, "dummy.html" ).getAbsolutePath() );
-        project.setUrl( outputRelativePath + "/" + structureProject );
+        final String url = "file://" + outputDirectory.getAbsolutePath();
+        final String id = "stagingLocal";
 
-        MavenProject parent = siteTool.getParentProject( project, reactorProjects, localRepository );
-        if ( parent != null )
-        {
-            String structureParentProject = getStructure( parent, true );
-            if ( structureParentProject != null )
-            {
-                parent.setUrl( outputRelativePath + "/" + structureParentProject );
-            }
-        }
-
-        if ( reactorProjects != null && reactorProjects.size() > 1 )
-        {
-            for ( MavenProject reactorProject : reactorProjects )
-            {
-                if ( reactorProject != null && reactorProject.getParent() != null
-                    && project.getArtifactId().equals( reactorProject.getParent().getArtifactId() ) )
-                {
-                    String structureReactorProject = getStructure( reactorProject, false );
-                    reactorProject.setUrl( outputRelativePath + "/" + structureReactorProject );
-                }
-            }
-        }
-
-        super.execute();
+        deployTo( id, url );
     }
 
     /**
