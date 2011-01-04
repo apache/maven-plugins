@@ -144,7 +144,7 @@ public class TracMojo
             {
                 try
                 {
-                    report.doGenerateReport( getBundle( locale ), getSink(), issueList );
+                    report.doGenerateReport( getBundle( locale ), getSink(), issueList, locale );
                 }
                 catch ( Exception e )
                 {
