@@ -22,8 +22,11 @@ package org.apache.maven.plugin.jira;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -52,6 +55,8 @@ public class JiraXML
 
     private Issue issue;
 
+    private SimpleDateFormat sdf;
+
     public JiraXML( File xmlPath, String encoding )
     {
         SAXParserFactory factory = SAXParserFactory.newInstance();
@@ -59,6 +64,7 @@ public class JiraXML
 
         issueList = new ArrayList();
 
+        sdf = new SimpleDateFormat( "EEE, d MMM yyyy HH:mm:ss Z (z)", Locale.ENGLISH );
         try
         {
             SAXParser saxParser = factory.newSAXParser();
@@ -97,6 +103,14 @@ public class JiraXML
             issue = new Issue();
 
             currentParent = "item";
+        }
+        else if ( qName.equals( "key" ) )
+        {
+            String id = attrs.getValue( "id" );
+            if ( id != null )
+            {
+                issue.setId( id.trim() );
+            }
         }
     }
 
@@ -164,6 +178,28 @@ public class JiraXML
         else if ( qName.equals( "title" ) && currentParent.equals( "item" ) )
         {
             issue.setTitle( currentElement.toString().trim() );
+        }
+        else if ( qName.equals( "created" ) && currentParent.equals( "item" ) )
+        {
+            try
+            {
+                issue.setCreated( sdf.parse( currentElement.toString().trim() ) );
+            }
+            catch ( ParseException e )
+            {
+                throw new SAXException( "Unable to parse the date: 'created'.", e );
+            }
+        }
+        else if ( qName.equals( "updated" ) && currentParent.equals( "item" ) )
+        {
+            try
+            {
+                issue.setUpdated( sdf.parse( currentElement.toString().trim() ) );
+            }
+            catch ( ParseException e )
+            {
+                throw new SAXException( "Unable to parse the date: 'updated'.", e );
+            }
         }
 
         currentElement.setLength( 0 );

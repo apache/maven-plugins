@@ -52,7 +52,9 @@ public class JiraMojo
     {
         JIRA_COLUMNS.put( "Assignee", new Integer( IssuesReportHelper.COLUMN_ASSIGNEE ) );
         JIRA_COLUMNS.put( "Component", new Integer( IssuesReportHelper.COLUMN_COMPONENT ) );
+        JIRA_COLUMNS.put( "Created", new Integer( IssuesReportHelper.COLUMN_CREATED ) );
         JIRA_COLUMNS.put( "Fix Version", new Integer( IssuesReportHelper.COLUMN_FIX_VERSION ) );
+        JIRA_COLUMNS.put( "Id", new Integer( IssuesReportHelper.COLUMN_ID ) );
         JIRA_COLUMNS.put( "Key", new Integer( IssuesReportHelper.COLUMN_KEY ) );
         JIRA_COLUMNS.put( "Priority", new Integer( IssuesReportHelper.COLUMN_PRIORITY ) );
         JIRA_COLUMNS.put( "Reporter", new Integer( IssuesReportHelper.COLUMN_REPORTER ) );
@@ -60,6 +62,7 @@ public class JiraMojo
         JIRA_COLUMNS.put( "Status", new Integer( IssuesReportHelper.COLUMN_STATUS ) );
         JIRA_COLUMNS.put( "Summary", new Integer( IssuesReportHelper.COLUMN_SUMMARY ) );
         JIRA_COLUMNS.put( "Type", new Integer( IssuesReportHelper.COLUMN_TYPE ) );
+        JIRA_COLUMNS.put( "Updated", new Integer( IssuesReportHelper.COLUMN_UPDATED ) );
         JIRA_COLUMNS.put( "Version", new Integer( IssuesReportHelper.COLUMN_VERSION ) );
     }
 
@@ -181,15 +184,15 @@ public class JiraMojo
     private String typeIds;
 
     /**
-     * Sets the column names that you want to show in the report. The columns
+     * Sets the names of the columns that you want in the report. The columns
      * will appear in the report in the same order as you specify them here.
      * Multiple values can be separated by commas.
      * <p>
      * Valid columns are: <code>Key</code>, <code>Summary</code>,
      * <code>Status</code>, <code>Resolution</code>, <code>Assignee</code>,
      * <code>Reporter</code>, <code>Type</code>, <code>Priority</code>,
-     * <code>Version</code>, <code>Fix Version</code> and
-     * <code>Component</code>.
+     * <code>Version</code>, <code>Fix Version</code>, <code>Component</code>,
+     * <code>Created</code>, <code>Id</code> and <code>Updated</code>.
      * </p>
      *
      * @parameter default-value="Key,Summary,Status,Resolution,Assignee"
