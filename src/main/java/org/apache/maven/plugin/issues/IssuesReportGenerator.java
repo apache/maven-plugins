@@ -70,13 +70,16 @@ public class IssuesReportGenerator
         sinkEndReport( sink );
     }
 
-    public void doGenerateReport( ResourceBundle bundle, Sink sink, List issueList, Locale locale )
+    public void doGenerateReport( ResourceBundle bundle, Sink sink, List issueList )
     {
         sinkBeginReport( sink, bundle );
 
         constructHeaderRow( sink, issueList, bundle );
 
-        constructDetailRows( sink, issueList, bundle, locale );
+        // Always use the international date format as recommended by the W3C:
+        // http://www.w3.org/QA/Tips/iso-date
+        // This date format is used in the Swedish locale.
+        constructDetailRows( sink, issueList, bundle, new Locale( "sv" ) );
 
         sinkEndReport( sink );
     }
@@ -170,7 +173,7 @@ public class IssuesReportGenerator
 
         for ( int idx = 0; idx < issueList.size(); idx++ )
         {
-            // Use a DateFormat based on the the Locale
+            // Use a DateFormat based on the Locale
             DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT, locale);
 
             Issue issue = (Issue) issueList.get( idx );
