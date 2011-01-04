@@ -262,6 +262,15 @@ public class JiraMojo
     private boolean onlyCurrentVersion;
 
     /**
+     * The pattern used by dates in the JIRA XML-file. This is used to parse
+     * the Created and Updated fields.
+     *
+     * @parameter default-value="EEE, d MMM yyyy HH:mm:ss Z"
+     * @since 2.4
+     */
+    private String jiraDatePattern;
+
+    /**
      * @see org.apache.maven.reporting.AbstractMavenReport#canGenerateReport()
      */
     public boolean canGenerateReport()
@@ -284,7 +293,7 @@ public class JiraMojo
 
             if ( jiraXmlPath.isFile() )
             {
-                JiraXML jira = new JiraXML( jiraXmlPath, jiraXmlEncoding );
+                JiraXML jira = new JiraXML( jiraXmlPath, jiraXmlEncoding, getLog(), jiraDatePattern );
                 List issueList = jira.getIssueList();
 
                 List columnIds = IssuesReportHelper.getColumnIds( columnNames, JIRA_COLUMNS );
