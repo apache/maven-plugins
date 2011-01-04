@@ -44,6 +44,8 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
 import java.net.MalformedURLException;
+import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.Map;
 
 /**
@@ -245,12 +247,14 @@ public class InstallFileMojo
             artifact.setRelease( true );
         }
 
+        Collection metadataFiles = new LinkedHashSet();
+
         // TODO: maybe not strictly correct, while we should enforce that packaging has a type handler of the same id,
         // we don't
         try
         {
             installer.install( file, artifact, localRepository );
-            installChecksums( artifact );
+            installChecksums( artifact, metadataFiles );
         }
         catch ( ArtifactInstallationException e )
         {
@@ -271,7 +275,7 @@ public class InstallFileMojo
             try
             {
                 installer.install( sources, artifact, localRepository );
-                installChecksums( artifact );
+                installChecksums( artifact, metadataFiles );
             }
             catch ( ArtifactInstallationException e )
             {
@@ -285,13 +289,15 @@ public class InstallFileMojo
             try
             {
                 installer.install( javadoc, artifact, localRepository );
-                installChecksums( artifact );
+                installChecksums( artifact, metadataFiles );
             }
             catch ( ArtifactInstallationException e )
             {
                 throw new MojoExecutionException( "Error installing API docs " + javadoc + ": " + e.getMessage(), e );
             }
         }
+
+        installChecksums( metadataFiles );
     }
 
     /**
