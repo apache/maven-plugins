@@ -73,6 +73,13 @@ under the License.
     </mailingList>
   </mailingLists>
 
+  <developers>
+    <developer>
+      <id>nobody</id>
+      <name>Nobody</name>
+    </developer>
+  </developers>
+
   <properties>
     <maven.test.skip>true</maven.test.skip>
   </properties>
@@ -84,4 +91,25 @@ under the License.
       <version>2.0</version>
     </dependency>
   </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-doap-plugin</artifactId>
+        <version>@project.version@</version>
+        <configuration>
+          <doapOptions>
+            <programmingLanguage>java</programmingLanguage>
+            <category>build-management</category>
+            <downloadPage>${project.url}/downloads</downloadPage>
+          </doapOptions>
+          <asfExtOptions>
+           <charter>World Domination</charter>
+           <chair>Nobody</chair>
+          </asfExtOptions>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>
