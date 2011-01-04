@@ -118,17 +118,18 @@ public abstract class AbstractInstallMojo
     }
 
     /**
-     * Installs the checksums for the specified artifact (and its metadata files) if this has been enabled in the plugin
-     * configuration. This method creates checksums for files that have already been installed to the local repo to
-     * account for on-the-fly generated/updated files. For example, in Maven 2.0.4- the
-     * <code>ProjectArtifactMetadata</code> did not install the original POM file (cf. MNG-2820). While the plugin
-     * currently requires Maven 2.0.6, we continue to hash the installed POM for robustness with regard to future
-     * changes like re-introducing some kind of POM filtering.
-     *
+     * Installs the checksums for the specified artifact if this has been enabled in the plugin configuration. This
+     * method creates checksums for files that have already been installed to the local repo to account for on-the-fly
+     * generated/updated files. For example, in Maven 2.0.4- the <code>ProjectArtifactMetadata</code> did not install
+     * the original POM file (cf. MNG-2820). While the plugin currently requires Maven 2.0.6, we continue to hash the
+     * installed POM for robustness with regard to future changes like re-introducing some kind of POM filtering.
+     * 
      * @param artifact The artifact for which to create checksums, must not be <code>null</code>.
+     * @param metadataFiles The set where additional metadata files will be registered for later checksum installation,
+     *            must not be <code>null</code>.
      * @throws MojoExecutionException If the checksums could not be installed.
      */
-    protected void installChecksums( Artifact artifact )
+    protected void installChecksums( Artifact artifact, Collection metadataFiles )
         throws MojoExecutionException
     {
         if ( !createChecksum )
@@ -146,8 +147,24 @@ public abstract class AbstractInstallMojo
             {
                 ArtifactMetadata metadata = (ArtifactMetadata) it.next();
                 File metadataFile = getLocalRepoFile( metadata );
-                installChecksums( metadataFile );
+                metadataFiles.add( metadataFile );
             }
+        }
+    }
+
+    /**
+     * Installs the checksums for the specified metadata files.
+     * 
+     * @param metadataFiles The collection of metadata files to install checksums for, must not be <code>null</code>.
+     * @throws MojoExecutionException If the checksums could not be installed.
+     */
+    protected void installChecksums( Collection metadataFiles )
+        throws MojoExecutionException
+    {
+        for ( Iterator it = metadataFiles.iterator(); it.hasNext(); )
+        {
+            File metadataFile = (File) it.next();
+            installChecksums( metadataFile );
         }
     }
 

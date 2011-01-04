@@ -26,7 +26,9 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.artifact.ProjectArtifactMetadata;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 /**
@@ -84,10 +86,12 @@ public class InstallMojo
 
         try
         {
+            Collection metadataFiles = new LinkedHashSet();
+
             if ( isPomArtifact )
             {
                 installer.install( pomFile, artifact, localRepository );
-                installChecksums( artifact );
+                installChecksums( artifact, metadataFiles );
             }
             else
             {
@@ -101,7 +105,7 @@ public class InstallMojo
                 if ( file != null && file.isFile() )
                 {
                     installer.install( file, artifact, localRepository );
-                    installChecksums( artifact );
+                    installChecksums( artifact, metadataFiles );
                 }
                 else if ( !attachedArtifacts.isEmpty() )
                 {
@@ -117,7 +121,7 @@ public class InstallMojo
                     }
 
                     installer.install( pomFile, pomArtifact, localRepository );
-                    installChecksums( pomArtifact );
+                    installChecksums( pomArtifact, metadataFiles );
                 }
                 else
                 {
@@ -131,8 +135,10 @@ public class InstallMojo
                 Artifact attached = (Artifact) i.next();
 
                 installer.install( attached.getFile(), attached, localRepository );
-                installChecksums( attached );
+                installChecksums( attached, metadataFiles );
             }
+
+            installChecksums( metadataFiles );
         }
         catch ( ArtifactInstallationException e )
         {
