@@ -19,6 +19,7 @@
  */
 
 import java.io.*;
+import org.codehaus.plexus.util.*;
 
 boolean result = true;
 
@@ -45,21 +46,9 @@ try
         return false;
     }
 
-    String str = "", strTmp = "";
-    BufferedReader in = new BufferedReader( new FileReader( options ) );
-    try
-    {
-        while ( ( strTmp = in.readLine() ) != null )
-        {
-            str = str + " " + strTmp;
-        }
-    }
-    finally
-    {
-        in.close();
-    }
+    String str = FileUtils.fileRead( options );
 
-    if ( str.indexOf( "junit-3.8.2.jar" ) == -1 )
+    if ( !str.contains( "junit-3.8.2.jar" ) )
     {
         System.err.println( "Javadoc doesn't used correct artifacts." );
         return false;
