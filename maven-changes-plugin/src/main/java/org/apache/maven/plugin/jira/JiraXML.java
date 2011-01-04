@@ -32,6 +32,7 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.apache.maven.plugin.issues.Issue;
+import org.apache.maven.plugin.logging.Log;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -53,18 +54,34 @@ public class JiraXML
 
     private String currentParent = "";
 
+    private String datePattern = null;
+
     private Issue issue;
 
-    private SimpleDateFormat sdf;
+    private Log log = null;
 
-    public JiraXML( File xmlPath, String encoding )
+    private SimpleDateFormat sdf = null;
+
+    public JiraXML( File xmlPath, String encoding, Log log, String datePattern )
     {
+        this.log = log;
+        this.datePattern = datePattern;
+
+        if ( datePattern == null )
+        {
+            sdf = null;
+        }
+        else
+        {
+            // @todo Do we need to be able to configure the locale of the JIRA server as well?
+            sdf = new SimpleDateFormat( datePattern, Locale.ENGLISH );
+        }
+
         SAXParserFactory factory = SAXParserFactory.newInstance();
         FileInputStream fis = null;
 
         issueList = new ArrayList();
 
-        sdf = new SimpleDateFormat( "EEE, d MMM yyyy HH:mm:ss Z (z)", Locale.ENGLISH );
         try
         {
             SAXParser saxParser = factory.newSAXParser();
@@ -179,7 +196,7 @@ public class JiraXML
         {
             issue.setTitle( currentElement.toString().trim() );
         }
-        else if ( qName.equals( "created" ) && currentParent.equals( "item" ) )
+        else if ( qName.equals( "created" ) && currentParent.equals( "item" ) && sdf != null )
         {
             try
             {
@@ -187,10 +204,10 @@ public class JiraXML
             }
             catch ( ParseException e )
             {
-                throw new SAXException( "Unable to parse the date: 'created'.", e );
+                log.warn( "Element \"Created\". " + e.getMessage() + ". Using the pattern \"" + datePattern + "\"");
             }
         }
-        else if ( qName.equals( "updated" ) && currentParent.equals( "item" ) )
+        else if ( qName.equals( "updated" ) && currentParent.equals( "item" ) && sdf != null )
         {
             try
             {
@@ -198,7 +215,7 @@ public class JiraXML
             }
             catch ( ParseException e )
             {
-                throw new SAXException( "Unable to parse the date: 'updated'.", e );
+                log.warn( "Element \"Updated\". " + e.getMessage() + ". Using the pattern \"" + datePattern + "\"");
             }
         }
 

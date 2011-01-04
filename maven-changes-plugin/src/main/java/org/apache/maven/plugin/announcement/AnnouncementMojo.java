@@ -632,7 +632,7 @@ public class AnnouncementMojo
 
             if ( jiraXMLFile.exists() )
             {
-                JiraXML jiraParser = new JiraXML( jiraXMLFile, jiraXmlEncoding );
+                JiraXML jiraParser = new JiraXML( jiraXMLFile, jiraXmlEncoding, getLog(), null );
 
                 List issues = jiraParser.getIssueList();
 

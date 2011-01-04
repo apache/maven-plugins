@@ -38,6 +38,11 @@ import java.util.ResourceBundle;
 public class IssuesReportGenerator
 {
     /**
+     * Fallback value that is used if date field are not available.
+     */
+    private static final String NOT_AVAILABLE = "n/a";
+
+    /**
      * Holds the id:s for the columns to include in the report, in the order
      * that they should appear in the report.
      */
@@ -185,7 +190,12 @@ public class IssuesReportGenerator
                         break;
 
                     case IssuesReportHelper.COLUMN_CREATED:
-                        sinkCell( sink, df.format( issue.getCreated() ) );
+                        String created = NOT_AVAILABLE;
+                        if ( issue.getCreated() != null )
+                        {
+                            created = df.format( issue.getCreated() );
+                        }
+                        sinkCell( sink, created );
                         break;
 
                     case IssuesReportHelper.COLUMN_FIX_VERSION:
@@ -233,7 +243,12 @@ public class IssuesReportGenerator
                         break;
 
                     case IssuesReportHelper.COLUMN_UPDATED:
-                        sinkCell( sink, df.format( issue.getUpdated() ) );
+                        String updated = NOT_AVAILABLE;
+                        if ( issue.getUpdated() != null )
+                        {
+                            updated = df.format( issue.getUpdated() );
+                        }
+                        sinkCell( sink, updated );
                         break;
 
                     case IssuesReportHelper.COLUMN_VERSION:

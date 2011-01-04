@@ -450,7 +450,7 @@ under the License.
               </issueLinkTemplatePerSystem>
               <xmlPath>${basedir}/src/site/changes/sample-changes.xml</xmlPath>
               <!-- For JIRA-report -->
-              <columnNames>Type,Key,Summary,Assignee,Status,Resolution,Fix Version</columnNames>
+              <columnNames>Type,Key,Summary,Assignee,Status,Resolution,Created</columnNames>
               <maxEntries>200</maxEntries>
               <onlyCurrentVersion>true</onlyCurrentVersion>
               <resolutionIds>Closed</resolutionIds>
