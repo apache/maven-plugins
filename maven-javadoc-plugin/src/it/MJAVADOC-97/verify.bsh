@@ -19,6 +19,7 @@
  */
 
 import java.io.*;
+import org.codehaus.plexus.util.*;
 
 boolean result = true;
 
@@ -52,47 +53,9 @@ try
     }
 
     // Read files
-    String strTmp = "";
-    String contentOptions1 = "";
-    BufferedReader in = new BufferedReader( new FileReader( options1 ) );
-    try
-    {
-        while ( ( strTmp = in.readLine() ) != null )
-        {
-            contentOptions1 = contentOptions1 + " " + strTmp;
-        }
-    }
-    finally
-    {
-        in.close();
-    }
-    String contentOptions2 = "";
-    BufferedReader in = new BufferedReader( new FileReader( options2 ) );
-    try
-    {
-        while ( ( strTmp = in.readLine() ) != null )
-        {
-            contentOptions2 = contentOptions2 + " " + strTmp;
-        }
-    }
-    finally
-    {
-        in.close();
-    }
-
-    String log = "";
-    BufferedReader in = new BufferedReader( new FileReader( new File( basedir, "build.log" ) ) );
-    try
-    {
-        while ( ( strTmp = in.readLine() ) != null )
-        {
-            log += "\n" + strTmp;
-        }
-    }
-    finally
-    {
-        in.close();
-    }
+    String contentOptions1 = FileUtils.fileRead( options1 );
+    String contentOptions2 = FileUtils.fileRead( options2 );
+    String log = FileUtils.fileRead( new File( basedir, "build.log" ) );
 
     // Generated files content checks
     int linkoffline1 = contentOptions1.indexOf( "-linkoffline" );
@@ -101,7 +64,7 @@ try
         System.err.println( "-linkoffline not added: " + options1 );
         return false;
     }
-    if ( contentOptions1.indexOf( apidocs2.getAbsolutePath().replaceAll( "\\\\", "/" ), linkoffline1 ) < 0 )
+    if ( !contentOptions1.substring( linkoffline1 ).contains( apidocs2.getAbsolutePath().replaceAll( "\\\\", "/" ) ) )
     {
         System.err.println( apidocs2.getAbsolutePath().replaceAll( "\\\\", "/" ) + " not added: " + options1 );
         return false;
@@ -112,23 +75,23 @@ try
         System.err.println( "-link not added: " + options1 );
         return false;
     }
-    if ( contentOptions1.indexOf( "http://commons.apache.org/lang/apidocs", link1 ) < 0 )
+    if ( !contentOptions1.substring( link1 ).contains( "http://commons.apache.org/lang/apidocs" ) )
     {
         System.err.println( "link for commons-lang not added: " + options1 );
-        if ( log.indexOf( "Error fetching link: http://commons.apache.org/lang/apidocs" ) < 0 )
+        if ( !log.contains( "Error fetching link: http://commons.apache.org/lang/apidocs" ) )
         {
             return false;
         }
     }
-    if ( contentOptions1.indexOf( "http://junit.org/apidocs", link1 ) < 0 )
+    if ( !contentOptions1.substring( link1 ).contains( "http://junit.org/apidocs" ) )
     {
         System.err.println( "link for junit not added: " + options1 );
-        if ( log.indexOf( "Error fetching link: http://junit.org/apidocs" ) < 0 )
+        if ( !log.contains( "Error fetching link: http://junit.org/apidocs" ) )
         {
             return false;
         }
     }
-    if ( contentOptions1.indexOf( "http://maven.apache.org/maven-core/apidocs" ) != -1 )
+    if ( contentOptions1.contains( "http://maven.apache.org/maven-core/apidocs" ) )
     {
         System.err.println( "link for maven-core added: " + options1 );
         return false;
@@ -140,34 +103,34 @@ try
         System.err.println( "-linkoffline not added: " + options2 );
         return false;
     }
-    if ( contentOptions2.indexOf( apidocs1.getAbsolutePath().replaceAll( "\\\\", "/" ), linkoffline2 ) < 0 )
+    if ( !contentOptions2.substring( linkoffline2 ).contains( apidocs1.getAbsolutePath().replaceAll( "\\\\", "/" ) ) )
     {
         System.err.println( apidocs1.getAbsolutePath().replaceAll( "\\\\", "/" ) + " not added: " + options2 );
         return false;
     }
     int link2 = contentOptions2.indexOf( "-link" );
-    if ( link2 < 0 )
+    if ( link2 == -1 )
     {
         System.err.println( "-link not added: " + options2 );
         return false;
     }
-    if ( contentOptions2.indexOf( "http://commons.apache.org/lang/apidocs", link2 ) < 0 )
+    if ( !contentOptions2.substring( link2 ).contains( "http://commons.apache.org/lang/apidocs" ) )
     {
         System.err.println( "link for commons-lang not added: " + options2 );
-        if ( log.indexOf( "Error fetching link: http://commons.apache.org/lang/apidocs" ) < 0 )
+        if ( !log.contains( "Error fetching link: http://commons.apache.org/lang/apidocs" ) )
         {
             return false;
         }
     }
-    if ( contentOptions2.indexOf( "http://junit.org/apidocs", link2 ) < 0 )
+    if ( !contentOptions2.substring( link2 ).contains( "http://junit.org/apidocs" ) )
     {
         System.err.println( "link for junit not added: " + options2 );
-        if ( log.indexOf( "Error fetching link: http://junit.org/apidocs" ) < 0 )
+        if ( !log.contains( "Error fetching link: http://junit.org/apidocs" ) )
         {
             return false;
         }
     }
-    if ( contentOptions2.indexOf( "http://maven.apache.org/maven-core/apidocs" ) != -1 )
+    if ( contentOptions2.contains( "http://maven.apache.org/maven-core/apidocs" ) )
     {
         System.err.println( "link for maven-core added: " + options2 );
         return false;
