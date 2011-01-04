@@ -302,7 +302,7 @@ public class JiraMojo
                     getLog().info( "The JIRA Report will contain issues only for the current version." );
                 }
 
-                report.doGenerateReport( getBundle( locale ), getSink(), issueList );
+                report.doGenerateReport( getBundle( locale ), getSink(), issueList, locale );
             }
             else
             {

@@ -22,9 +22,10 @@ package org.apache.maven.plugin.issues;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.reporting.MavenReportException;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
-import java.util.MissingResourceException;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 /**
@@ -64,13 +65,13 @@ public class IssuesReportGenerator
         sinkEndReport( sink );
     }
 
-    public void doGenerateReport( ResourceBundle bundle, Sink sink, List issueList )
+    public void doGenerateReport( ResourceBundle bundle, Sink sink, List issueList, Locale locale )
     {
         sinkBeginReport( sink, bundle );
 
         constructHeaderRow( sink, issueList, bundle );
 
-        constructDetailRows( sink, issueList, bundle );
+        constructDetailRows( sink, issueList, bundle, locale );
 
         sinkEndReport( sink );
     }
@@ -155,7 +156,7 @@ public class IssuesReportGenerator
         sink.tableRow_();
     }
 
-    private void constructDetailRows( Sink sink, List issueList, ResourceBundle bundle )
+    private void constructDetailRows( Sink sink, List issueList, ResourceBundle bundle, Locale locale )
     {
         if ( issueList == null )
         {
@@ -164,15 +165,8 @@ public class IssuesReportGenerator
 
         for ( int idx = 0; idx < issueList.size(); idx++ )
         {
-            SimpleDateFormat sdf;
-            try
-            {
-                sdf = new SimpleDateFormat( bundle.getString( "report.issues.dateformat" ) );
-            }
-            catch ( MissingResourceException mre )
-            {
-                sdf = new SimpleDateFormat();
-            }
+            // Use a DateFormat based on the the Locale
+            DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT, locale);
 
             Issue issue = (Issue) issueList.get( idx );
 
@@ -191,7 +185,7 @@ public class IssuesReportGenerator
                         break;
 
                     case IssuesReportHelper.COLUMN_CREATED:
-                        sinkCell( sink, sdf.format( issue.getCreated() ) );
+                        sinkCell( sink, df.format( issue.getCreated() ) );
                         break;
 
                     case IssuesReportHelper.COLUMN_FIX_VERSION:
@@ -239,7 +233,7 @@ public class IssuesReportGenerator
                         break;
 
                     case IssuesReportHelper.COLUMN_UPDATED:
-                        sinkCell( sink, sdf.format( issue.getUpdated() ) );
+                        sinkCell( sink, df.format( issue.getUpdated() ) );
                         break;
 
                     case IssuesReportHelper.COLUMN_VERSION:
