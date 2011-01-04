@@ -104,6 +104,24 @@ public class DoapUtil
     }
 
     /**
+     * Write comment.
+     *
+     * @param writer not null
+     * @param comment not null
+     * @since 1.1
+     */
+    public static void writeComment( XMLWriter writer, String comment )
+    {
+        if ( StringUtils.isEmpty( comment ) )
+        {
+            throw new IllegalArgumentException( "comment should be defined" );
+        }
+
+        XmlWriterUtil.writeLineBreak( writer );
+        XmlWriterUtil.writeCommentText( writer, comment, 2 );
+    }
+
+    /**
      * @param writer not null
      * @param xmlnsPrefix could be null
      * @param name not null
