@@ -241,22 +241,18 @@ public class PmdReportTest
     private String readFile( File file )
         throws IOException
     {
-        String str = "", strTmp = "";
-
+        String strTmp;
+        StringBuffer str = new StringBuffer( (int)file.length() );
         BufferedReader in = new BufferedReader( new FileReader( file ) );
-        try
-        {
-            while ( ( strTmp = in.readLine() ) != null )
-            {
-                str += " " + strTmp;
-            }
-        }
-        finally
-        {
-            in.close();
-        }
 
-        return str;
+        while ( ( strTmp = in.readLine() ) != null )
+        {
+            str.append( ' ' );
+            str.append( strTmp );
+        }
+        in.close();
+
+        return str.toString();
     }
 
 
