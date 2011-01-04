@@ -157,7 +157,7 @@ public class SiteMap
         sink.body_();
     }
 
-    private void extractItems( List<MenuItem> items, Sink sink )
+    private static void extractItems( List<MenuItem> items, Sink sink )
     {
         if ( items == null || items.isEmpty() )
         {
@@ -169,7 +169,7 @@ public class SiteMap
         for ( MenuItem item : items )
         {
             sink.listItem();
-            sink.link( item.getHref() );
+            sink.link( relativePath( item.getHref() ) );
             sink.text( item.getName() );
             sink.link_();
             extractItems( item.getItems(), sink );
@@ -177,5 +177,11 @@ public class SiteMap
         }
 
         sink.list_();
+    }
+
+    // sitemap.html gets generated into top-level so we only have to check leading slashes
+    private static String relativePath( String href )
+    {
+        return href.startsWith( "/" ) ? "." + href : href;
     }
 }
