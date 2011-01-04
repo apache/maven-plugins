@@ -48,7 +48,7 @@ import org.codehaus.plexus.util.StringUtils;
 public class JavadocReportTest
     extends AbstractMojoTestCase
 {
-    private static final String LINE_SEPARATOR = " ";
+    private static final char LINE_SEPARATOR = ' ';
 
     /** flag to copy repo only one time */
     private static boolean TEST_REPO_CREATED = false;
@@ -152,8 +152,8 @@ public class JavadocReportTest
     private static String readFile( File file )
         throws IOException
     {
-        String strTmp = "";
-        StringBuffer str = new StringBuffer( (int)file.length() );
+        String strTmp;
+        StringBuffer str = new StringBuffer( (int) file.length() );
         BufferedReader in = new BufferedReader( new FileReader( file ) );
 
         try
