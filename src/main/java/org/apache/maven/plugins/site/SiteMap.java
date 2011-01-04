@@ -172,9 +172,8 @@ public class SiteMap
             sink.link( item.getHref() );
             sink.text( item.getName() );
             sink.link_();
-            sink.listItem_();
-
             extractItems( item.getItems(), sink );
+            sink.listItem_();
         }
 
         sink.list_();
