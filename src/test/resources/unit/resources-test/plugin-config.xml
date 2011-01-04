@@ -26,6 +26,7 @@
         <artifactId>maven-resources-plugin</artifactId>
         <configuration>
           <outputDirectory>/test-classes/unit/resources-test</outputDirectory>
+          <encoding>UTF-8</encoding>
         </configuration>
       </plugin>
     </plugins>
