@@ -138,11 +138,6 @@ public class SiteDeployMojo
     public void execute()
         throws MojoExecutionException
     {
-        if ( !inputDirectory.exists() )
-        {
-            throw new MojoExecutionException( "The site does not exist, please run site:site first" );
-        }
-
         DistributionManagement distributionManagement = project.getDistributionManagement();
 
         if ( distributionManagement == null )
@@ -167,9 +162,30 @@ public class SiteDeployMojo
             throw new MojoExecutionException( "The URL to the site is missing in the project descriptor." );
         }
         getLog().debug( "The site will be deployed to '" + url + "'");
+        getLog().debug( "Using credentials from repository '" + id + "'" );
+
+        deployTo( id, url );
+    }
+
+    /**
+     * Use wagon to deploy the generated site to a given repository.
+     *
+     * @param id the id that is used to look up credentials for the deploy. Not null.
+     * @param url a valid scm url to deploy to. Not null.
+     *
+     * @throws MojoExecutionException if the deploy fails.
+     *
+     * @since 2.3
+     */
+    protected void deployTo( final String id, final String url )
+            throws MojoExecutionException
+    {
+        if ( !inputDirectory.exists() )
+        {
+            throw new MojoExecutionException( "The site does not exist, please run site:site first" );
+        }
 
         Repository repository = new Repository( id, url );
-
         // TODO: work on moving this into the deployer like the other deploy methods
 
         Wagon wagon;
