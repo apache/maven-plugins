@@ -82,7 +82,6 @@ import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.WriterFactory;
 import org.codehaus.plexus.util.xml.PrettyPrintXMLWriter;
 import org.codehaus.plexus.util.xml.XMLWriter;
-import org.codehaus.plexus.util.xml.XmlWriterUtil;
 
 /**
  * Generate a <a href="http://usefulinc.com/ns/doap">Description of a Project (DOAP)</a> file from the main information
@@ -724,7 +723,7 @@ public class DoapMojo
 
         // Extra DOAP
         @SuppressWarnings( "unchecked" )
-        Map<String,String> map = doapOptions.getExtra();
+        Map<String, String> map = doapOptions.getExtra();
         writeExtra( writer, project, "Extra DOAP vocabulary.", map, doapOptions.getXmlnsPrefix() );
 
         // ASFext
@@ -806,8 +805,7 @@ public class DoapMojo
             return;
         }
 
-        XmlWriterUtil.writeLineBreak( writer );
-        XmlWriterUtil.writeCommentText( writer, "A name of something.", 2 );
+        DoapUtil.writeComment( writer, "A name of something." );
 
         if ( asfExtOptions.isIncluded() && !name.toLowerCase( Locale.ENGLISH ).startsWith( "apache" ) )
         {
@@ -837,13 +835,12 @@ public class DoapMojo
         }
         else
         {
-            XmlWriterUtil.writeLineBreak( writer );
-            XmlWriterUtil.writeCommentText( writer, "Plain text description of a project, of 2-4 sentences in length.",
-                                            2 );
+            DoapUtil.writeComment( writer, "Plain text description of a project, of 2-4 sentences in length." );
             addComment = true;
             DoapUtil.writeElement( writer, doapOptions.getXmlnsPrefix(), "description", description, lang );
         }
 
+        String comment = "Short plain text description of a project.";
         String shortdesc = interpolate( doapOptions.getShortdesc(), project, settings );
         if ( StringUtils.isEmpty( shortdesc ) )
         {
@@ -861,16 +858,14 @@ public class DoapMojo
             }
             if ( !addComment )
             {
-                XmlWriterUtil.writeLineBreak( writer );
-                XmlWriterUtil.writeCommentText( writer, "Short plain text description of a project.", 2 );
+                DoapUtil.writeComment( writer, comment );
             }
             DoapUtil.writeElement( writer, doapOptions.getXmlnsPrefix(), "shortdesc", sentence, lang );
             return;
         }
         if ( !addComment )
         {
-            XmlWriterUtil.writeLineBreak( writer );
-            XmlWriterUtil.writeCommentText( writer, "Short plain text description of a project.", 2 );
+            DoapUtil.writeComment( writer, comment );
         }
         DoapUtil.writeElement( writer, doapOptions.getXmlnsPrefix(), "shortdesc", shortdesc, lang );
     }
@@ -902,9 +897,7 @@ public class DoapMojo
             return;
         }
 
-        XmlWriterUtil.writeLineBreak( writer );
-        XmlWriterUtil.writeCommentText( writer, "Date when something was created, in YYYY-MM-DD form. e.g. 2004-04-05",
-                                        2 );
+        DoapUtil.writeComment( writer, "Date when something was created, in YYYY-MM-DD form. e.g. 2004-04-05" );
         DoapUtil.writeElement( writer, doapOptions.getXmlnsPrefix(), "created", created );
     }
 
@@ -929,9 +922,7 @@ public class DoapMojo
             {
                 new URL( homepage );
 
-                XmlWriterUtil.writeLineBreak( writer );
-                XmlWriterUtil.writeCommentText( writer,
-                                                "URL of a project's homepage, associated with exactly one project.", 2 );
+                DoapUtil.writeComment( writer, "URL of a project's homepage, associated with exactly one project." );
                 DoapUtil.writeRdfResourceElement( writer, doapOptions.getXmlnsPrefix(), "homepage", homepage );
             }
             catch ( MalformedURLException e )
@@ -953,10 +944,7 @@ public class DoapMojo
             {
                 new URL( oldHomepage );
 
-                XmlWriterUtil.writeLineBreak( writer );
-                XmlWriterUtil.writeCommentText( writer,
-                                                "URL of a project's past homepage, associated with exactly one project.",
-                                                2 );
+                DoapUtil.writeComment( writer, "URL of a project's past homepage, associated with exactly one project." );
                 DoapUtil.writeRdfResourceElement( writer, doapOptions.getXmlnsPrefix(), "old-homepage", oldHomepage );
             }
             catch ( MalformedURLException e )
@@ -984,6 +972,7 @@ public class DoapMojo
         }
 
         boolean addComment = false;
+        String comment = "Programming language.";
         if ( StringUtils.isNotEmpty( language ) ) // backward compatible
         {
             getLog().warn( "The <language/> parameter is deprecated, please use <doapOptions><programmingLanguage/></doapOptions> parameter instead of." );
@@ -1001,8 +990,7 @@ public class DoapMojo
                 }
                 else
                 {
-                    XmlWriterUtil.writeLineBreak( writer );
-                    XmlWriterUtil.writeCommentText( writer, "Programming language.", 2 );
+                    DoapUtil.writeComment( writer, comment );
                     addComment = true;
                     DoapUtil.writeElement( writer, doapOptions.getXmlnsPrefix(), "programming-language",
                                            asfLanguage.trim() );
@@ -1010,8 +998,7 @@ public class DoapMojo
             }
             else
             {
-                XmlWriterUtil.writeLineBreak( writer );
-                XmlWriterUtil.writeCommentText( writer, "Programming language.", 2 );
+                DoapUtil.writeComment( writer, comment );
                 addComment = true;
                 DoapUtil.writeElement( writer, doapOptions.getXmlnsPrefix(), "programming-language", language.trim() );
             }
@@ -1037,8 +1024,7 @@ public class DoapMojo
                     {
                         if ( !addComment )
                         {
-                            XmlWriterUtil.writeLineBreak( writer );
-                            XmlWriterUtil.writeCommentText( writer, "Programming language.", 2 );
+                            DoapUtil.writeComment( writer, comment );
                             addComment = true;
                         }
                         DoapUtil.writeElement( writer, doapOptions.getXmlnsPrefix(), "programming-language",
@@ -1049,8 +1035,7 @@ public class DoapMojo
                 {
                     if ( !addComment )
                     {
-                        XmlWriterUtil.writeLineBreak( writer );
-                        XmlWriterUtil.writeCommentText( writer, "Programming language.", 2 );
+                        DoapUtil.writeComment( writer, comment );
                         addComment = true;
                     }
                     DoapUtil.writeElement( writer, doapOptions.getXmlnsPrefix(), "programming-language", language );
@@ -1076,6 +1061,7 @@ public class DoapMojo
 
         // TODO: how to lookup category, map it, or just declare it.
         boolean addComment = false;
+        String comment = "A category of project.";
         if ( StringUtils.isNotEmpty( category ) ) // backward compatible
         {
             getLog().warn( "The <category/> parameter is deprecated, please use <doapOptions><category/></doapOptions> parameter instead of." );
@@ -1093,8 +1079,7 @@ public class DoapMojo
                 }
                 else
                 {
-                    XmlWriterUtil.writeLineBreak( writer );
-                    XmlWriterUtil.writeCommentText( writer, "A category of project.", 2 );
+                    DoapUtil.writeComment( writer, comment );
                     addComment = true;
                     DoapUtil.writeRdfResourceElement( writer, doapOptions.getXmlnsPrefix(), "category",
                                                       ASFExtOptionsUtil.CATEGORY_RESOURCE + asfCategory );
@@ -1102,8 +1087,7 @@ public class DoapMojo
             }
             else
             {
-                XmlWriterUtil.writeLineBreak( writer );
-                XmlWriterUtil.writeCommentText( writer, "A category of project.", 2 );
+                DoapUtil.writeComment( writer, comment );
                 addComment = true;
                 DoapUtil.writeElement( writer, doapOptions.getXmlnsPrefix(), "category", category );
             }
@@ -1129,8 +1113,7 @@ public class DoapMojo
                     {
                         if ( !addComment )
                         {
-                            XmlWriterUtil.writeLineBreak( writer );
-                            XmlWriterUtil.writeCommentText( writer, "A category of project.", 2 );
+                            DoapUtil.writeComment( writer, comment );
                             addComment = true;
                         }
                         DoapUtil.writeRdfResourceElement( writer, doapOptions.getXmlnsPrefix(), "category",
@@ -1141,8 +1124,7 @@ public class DoapMojo
                 {
                     if ( !addComment )
                     {
-                        XmlWriterUtil.writeLineBreak( writer );
-                        XmlWriterUtil.writeCommentText( writer, "A category of project.", 2 );
+                        DoapUtil.writeComment( writer, comment );
                         addComment = true;
                     }
                     DoapUtil.writeElement( writer, doapOptions.getXmlnsPrefix(), "category", category );
@@ -1172,8 +1154,7 @@ public class DoapMojo
         {
             new URL( downloadPage );
 
-            XmlWriterUtil.writeLineBreak( writer );
-            XmlWriterUtil.writeCommentText( writer, "Download page.", 2 );
+            DoapUtil.writeComment( writer, "Download page." );
             DoapUtil.writeRdfResourceElement( writer, doapOptions.getXmlnsPrefix(), "download-page", downloadPage );
         }
         catch ( MalformedURLException e )
@@ -1196,8 +1177,7 @@ public class DoapMojo
 
                     if ( !addComment )
                     {
-                        XmlWriterUtil.writeLineBreak( writer );
-                        XmlWriterUtil.writeCommentText( writer, "Mirror of software download web page.", 2 );
+                        DoapUtil.writeComment( writer, "Mirror of software download web page." );
                         addComment = true;
                     }
                     DoapUtil.writeRdfResourceElement( writer, doapOptions.getXmlnsPrefix(), "download-mirror",
@@ -1226,8 +1206,7 @@ public class DoapMojo
             return;
         }
 
-        XmlWriterUtil.writeLineBreak( writer );
-        XmlWriterUtil.writeCommentText( writer, "Operating system that a project is limited to.", 2 );
+        DoapUtil.writeComment( writer, "Operating system that a project is limited to." );
         String[] oses = StringUtils.split( doapOptions.getOs(), "," );
         for ( String os : oses )
         {
@@ -1261,8 +1240,7 @@ public class DoapMojo
             return;
         }
 
-        XmlWriterUtil.writeLineBreak( writer );
-        XmlWriterUtil.writeCommentText( writer, "Web page with screenshots of project.", 2 );
+        DoapUtil.writeComment( writer, "Web page with screenshots of project." );
         DoapUtil.writeRdfResourceElement( writer, doapOptions.getXmlnsPrefix(), "screenshots", screenshots );
     }
 
@@ -1291,8 +1269,7 @@ public class DoapMojo
             return;
         }
 
-        XmlWriterUtil.writeLineBreak( writer );
-        XmlWriterUtil.writeCommentText( writer, "URL of Wiki for collaborative discussion of project.", 2 );
+        DoapUtil.writeComment( writer, "URL of Wiki for collaborative discussion of project." );
         DoapUtil.writeRdfResourceElement( writer, doapOptions.getXmlnsPrefix(), "wiki", wiki );
     }
 
@@ -1311,8 +1288,7 @@ public class DoapMojo
             return;
         }
 
-        XmlWriterUtil.writeLineBreak( writer );
-        XmlWriterUtil.writeCommentText( writer, "The URI of the license the software is distributed under.", 2 );
+        DoapUtil.writeComment( writer, "The URI of the license the software is distributed under." );
         // TODO: how to map to usefulinc site, or if this is necessary, the OSI page might
         // be more appropriate.
         @SuppressWarnings( "unchecked" )
@@ -1366,8 +1342,7 @@ public class DoapMojo
             return;
         }
 
-        XmlWriterUtil.writeLineBreak( writer );
-        XmlWriterUtil.writeCommentText( writer, "Bug database.", 2 );
+        DoapUtil.writeComment( writer, "Bug database." );
         DoapUtil.writeRdfResourceElement( writer, doapOptions.getXmlnsPrefix(), "bug-database", issueManagementUrl );
     }
 
@@ -1392,8 +1367,7 @@ public class DoapMojo
         {
             new URL( ml );
 
-            XmlWriterUtil.writeLineBreak( writer );
-            XmlWriterUtil.writeCommentText( writer, "Mailing lists.", 2 );
+            DoapUtil.writeComment( writer, "Mailing lists." );
             DoapUtil.writeRdfResourceElement( writer, doapOptions.getXmlnsPrefix(), "mailing-list", ml );
         }
         catch ( MalformedURLException e )
@@ -1461,8 +1435,7 @@ public class DoapMojo
         {
             if ( !addComment )
             {
-                XmlWriterUtil.writeLineBreak( writer );
-                XmlWriterUtil.writeCommentText( writer, "Project releases.", 2 );
+                DoapUtil.writeComment( writer, "Project releases." );
                 addComment = true;
             }
 
@@ -1546,16 +1519,14 @@ public class DoapMojo
         String anonymousConnection = scm.getConnection();
         if ( StringUtils.isNotEmpty( anonymousConnection ) )
         {
-            XmlWriterUtil.writeLineBreak( writer );
-            XmlWriterUtil.writeCommentText( writer, "Anonymous Source Repository", 2 );
+            DoapUtil.writeComment( writer, "Anonymous Source Repository" );
             writeSourceRepository( writer, project, anonymousConnection );
         }
 
         String developerConnection = scm.getDeveloperConnection();
         if ( StringUtils.isNotEmpty( developerConnection ) )
         {
-            XmlWriterUtil.writeLineBreak( writer );
-            XmlWriterUtil.writeCommentText( writer, "Developer Source Repository", 2 );
+            DoapUtil.writeComment( writer, "Developer Source Repository" );
             writeSourceRepository( writer, project, developerConnection );
         }
     }
@@ -1643,13 +1614,11 @@ public class DoapMojo
         boolean isDeveloper = Developer.class.isAssignableFrom( contributors.get( 0 ).getClass() );
         if ( isDeveloper )
         {
-            XmlWriterUtil.writeLineBreak( writer );
-            XmlWriterUtil.writeCommentText( writer, "Main committers", 2 );
+            DoapUtil.writeComment( writer, "Main committers" );
         }
         else
         {
-            XmlWriterUtil.writeLineBreak( writer );
-            XmlWriterUtil.writeCommentText( writer, "Contributed persons", 2 );
+            DoapUtil.writeComment( writer, "Contributed persons" );
         }
 
         List<Contributor> maintainers = DoapUtil.getContributorsWithMaintainerRole( i18n, contributors );
@@ -1888,8 +1857,7 @@ public class DoapMojo
             return;
         }
 
-        XmlWriterUtil.writeLineBreak( writer );
-        XmlWriterUtil.writeCommentText( writer, "ASF extension", 2 );
+        DoapUtil.writeComment( writer, "ASF extension" );
 
         // asfext:pmc
         String pmc = interpolate( asfExtOptions.getPmc(), project, settings );
@@ -1985,7 +1953,7 @@ public class DoapMojo
         writeASFImplements( writer );
 
         @SuppressWarnings( "unchecked" )
-        Map<String,String> map = asfExtOptions.getExtra();
+        Map<String, String> map = asfExtOptions.getExtra();
         writeExtra( writer, project, "Extra ASFExt vocabulary.", map, asfExtOptions.getXmlnsPrefix() );
     }
 
@@ -2121,8 +2089,7 @@ public class DoapMojo
             return;
         }
 
-        XmlWriterUtil.writeLineBreak( writer );
-        XmlWriterUtil.writeCommentText( writer, "Audience.", 2 );
+        DoapUtil.writeComment( writer, "Audience." );
         DoapUtil.writeElement( writer, doapOptions.getXmlnsPrefix(), "audience", doapOptions.getAudience().trim() );
     }
 
@@ -2151,8 +2118,7 @@ public class DoapMojo
             return;
         }
 
-        XmlWriterUtil.writeLineBreak( writer );
-        XmlWriterUtil.writeCommentText( writer, "Blog page.", 2 );
+        DoapUtil.writeComment( writer, "Blog page." );
         DoapUtil.writeRdfResourceElement( writer, doapOptions.getXmlnsPrefix(), "blog", blog );
     }
 
@@ -2170,8 +2136,7 @@ public class DoapMojo
             return;
         }
 
-        XmlWriterUtil.writeLineBreak( writer );
-        XmlWriterUtil.writeCommentText( writer, "Plateform.", 2 );
+        DoapUtil.writeComment( writer, "Plateform." );
         DoapUtil.writeElement( writer, doapOptions.getXmlnsPrefix(), "plateform", doapOptions.getPlatform().trim() );
     }
 
@@ -2191,8 +2156,7 @@ public class DoapMojo
             return;
         }
 
-        XmlWriterUtil.writeLineBreak( writer );
-        XmlWriterUtil.writeCommentText( writer, "Vendor.", 2 );
+        DoapUtil.writeComment( writer, "Vendor." );
         DoapUtil.writeElement( writer, doapOptions.getXmlnsPrefix(), "vendor", vendor );
     }
 
@@ -2225,8 +2189,7 @@ public class DoapMojo
 
             if ( !addComment )
             {
-                XmlWriterUtil.writeLineBreak( writer );
-                XmlWriterUtil.writeCommentText( writer, "Language.", 2 );
+                DoapUtil.writeComment( writer, "Language." );
                 addComment = true;
             }
             DoapUtil.writeElement( writer, doapOptions.getXmlnsPrefix(), "language", language );
@@ -2259,8 +2222,7 @@ public class DoapMojo
             return;
         }
 
-        XmlWriterUtil.writeLineBreak( writer );
-        XmlWriterUtil.writeCommentText( writer, "Service endpoint.", 2 );
+        DoapUtil.writeComment( writer, "Service endpoint." );
         DoapUtil.writeRdfResourceElement( writer, doapOptions.getXmlnsPrefix(), "service-endpoint", serviceEndpoint );
     }
 
@@ -2278,8 +2240,7 @@ public class DoapMojo
             return;
         }
 
-        XmlWriterUtil.writeLineBreak( writer );
-        XmlWriterUtil.writeCommentText( writer, "Implements.", 2 );
+        DoapUtil.writeComment( writer, "Implements." );
         String[] implementations = StringUtils.split( doapOptions.getImplementations(), "," );
         for ( String implementation : implementations )
         {
@@ -2292,12 +2253,13 @@ public class DoapMojo
      *
      * @param writer not null
      * @param project not null
-     * @param message not null
+     * @param comment not null
      * @param map not null
      * @param xmlnsPrefix not null
      * @since 1.1
      */
-    private void writeExtra( XMLWriter writer, MavenProject project, String message, Map<String, String> map, String xmlnsPrefix )
+    private void writeExtra( XMLWriter writer, MavenProject project, String comment, Map<String, String> map,
+                             String xmlnsPrefix )
     {
         if ( map == null || map.isEmpty() )
         {
@@ -2305,7 +2267,7 @@ public class DoapMojo
         }
 
         boolean addComment = false;
-        for (Map.Entry<String, String> entry : map.entrySet())
+        for ( Map.Entry<String, String> entry : map.entrySet() )
         {
             String key = entry.getKey();
             String value = entry.getValue();
@@ -2321,10 +2283,9 @@ public class DoapMojo
                 continue;
             }
 
-            if ( !addComment)
+            if ( !addComment )
             {
-                XmlWriterUtil.writeLineBreak( writer );
-                XmlWriterUtil.writeCommentText( writer, message, 2 );
+                DoapUtil.writeComment( writer, comment );
                 addComment = true;
             }
 
@@ -2357,7 +2318,7 @@ public class DoapMojo
         for ( ExtOptions extOption : extOptions )
         {
             @SuppressWarnings( "unchecked" )
-            Map<String,String> map = extOption.getExtensions();
+            Map<String, String> map = extOption.getExtensions();
             writeExtra( writer, project, "Other extension vocabulary.", map, extOption.getXmlnsPrefix() );
         }
     }
