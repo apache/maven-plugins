@@ -20,8 +20,13 @@ package org.apache.maven.plugin.doap.stubs;
  */
 
 import java.io.File;
+import java.util.Collections;
 import java.util.List;
 
+import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.artifact.repository.ArtifactRepositoryPolicy;
+import org.apache.maven.artifact.repository.DefaultArtifactRepository;
+import org.apache.maven.artifact.repository.layout.DefaultRepositoryLayout;
 import org.apache.maven.model.Developer;
 import org.apache.maven.model.DistributionManagement;
 import org.apache.maven.model.IssueManagement;
@@ -122,5 +127,14 @@ public class AsfDoapProjectStub
     public DistributionManagement getDistributionManagement()
     {
         return model.getDistributionManagement();
+    }
+
+    @Override
+    public List<ArtifactRepository> getRemoteArtifactRepositories()
+    {
+        ArtifactRepository repository = new DefaultArtifactRepository( "central", "http://repo2.maven.org/maven2/",
+                                                                       new DefaultRepositoryLayout() );
+
+        return Collections.singletonList( repository );
     }
 }

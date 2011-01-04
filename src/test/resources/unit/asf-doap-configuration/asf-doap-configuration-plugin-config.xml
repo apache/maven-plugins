@@ -107,6 +107,8 @@ under the License.
           <asfExtOptions>
             <charter>This is an ASF project</charter>
           </asfExtOptions>
+
+          <extOptions/>
         </configuration>
       </plugin>
     </plugins>

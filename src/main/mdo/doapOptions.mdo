@@ -40,6 +40,19 @@ some POM options.
       <version>1.0.0</version>
       <fields>
         <field>
+          <name>xmlnsPrefix</name>
+          <description>The DOAP xmlns prefix</description>
+          <version>1.0.0</version>
+          <type>String</type>
+        </field>
+        <field>
+          <name>xmlnsNamespaceURI</name>
+          <description>The URI of the DOAP xmlns namespace</description>
+          <version>1.0.0</version>
+          <type>String</type>
+          <defaultValue>http://usefulinc.com/ns/doap#</defaultValue>
+        </field>
+        <field>
           <name>audience</name>
           <description><![CDATA[Description of target user base.
 @see <a href="http://usefulinc.com/ns/doap#audience">http://usefulinc.com/ns/doap#audience</a>]]></description>
@@ -222,6 +235,17 @@ some POM options.
           <version>1.0.0</version>
           <type>String</type>
           <identifier>true</identifier>
+        </field>
+        <field>
+          <name>extra</name>
+          <description><![CDATA[Extra DOAP vocabulary as key/value, not actually defined as plugin options.]]></description>
+          <version>1.0.0</version>
+          <identifier>true</identifier>
+          <type>Map</type>
+          <association xml.mapStyle="inline">
+            <type>String</type>
+            <multiplicity>*</multiplicity>
+          </association>
         </field>
       </fields>
     </class>

@@ -105,11 +105,12 @@ public class DoapUtil
 
     /**
      * @param writer not null
+     * @param xmlnsPrefix could be null
      * @param name not null
      * @param value could be null. In this case, the element is not written.
      * @throws IllegalArgumentException if name is null or empty
      */
-    public static void writeElement( XMLWriter writer, String name, String value )
+    public static void writeElement( XMLWriter writer, String xmlnsPrefix, String name, String value )
         throws IllegalArgumentException
     {
         if ( StringUtils.isEmpty( name ) )
@@ -119,7 +120,7 @@ public class DoapUtil
 
         if ( value != null )
         {
-            writer.startElement( name );
+            writeStartElement( writer, xmlnsPrefix, name );
             writer.writeText( value );
             writer.endElement();
         }
@@ -127,17 +128,18 @@ public class DoapUtil
 
     /**
      * @param writer not null
+     * @param xmlnsPrefix could be null
      * @param name not null
      * @param lang not null
      * @param value could be null. In this case, the element is not written.
      * @throws IllegalArgumentException if name is null or empty
      */
-    public static void writeElement( XMLWriter writer, String name, String value, String lang )
+    public static void writeElement( XMLWriter writer, String xmlnsPrefix, String name, String value, String lang )
         throws IllegalArgumentException
     {
         if ( StringUtils.isEmpty( lang ) )
         {
-            writeElement( writer, name, value );
+            writeElement( writer, xmlnsPrefix, name, value );
             return;
         }
 
@@ -148,7 +150,7 @@ public class DoapUtil
 
         if ( value != null )
         {
-            writer.startElement( name );
+            writeStartElement( writer, xmlnsPrefix, name );
             writer.addAttribute( "xml:lang", lang );
             writer.writeText( value );
             writer.endElement();
@@ -157,11 +159,37 @@ public class DoapUtil
 
     /**
      * @param writer not null
+     * @param xmlnsPrefix could be null
+     * @param name not null
+     * @throws IllegalArgumentException if name is null or empty
+     * @since 1.1
+     */
+    public static void writeStartElement( XMLWriter writer, String xmlnsPrefix, String name )
+        throws IllegalArgumentException
+    {
+        if ( StringUtils.isEmpty( name ) )
+        {
+            throw new IllegalArgumentException( "name should be defined" );
+        }
+
+        if ( StringUtils.isNotEmpty( xmlnsPrefix ) )
+        {
+            writer.startElement( xmlnsPrefix + ":" + name );
+        }
+        else
+        {
+            writer.startElement( name );
+        }
+    }
+
+    /**
+     * @param writer not null
+     * @param xmlnsPrefix could be null
      * @param name not null
      * @param value could be null. In this case, the element is not written.
      * @throws IllegalArgumentException if name is null or empty
      */
-    public static void writeRdfResourceElement( XMLWriter writer, String name, String value )
+    public static void writeRdfResourceElement( XMLWriter writer, String xmlnsPrefix, String name, String value )
         throws IllegalArgumentException
     {
         if ( StringUtils.isEmpty( name ) )
@@ -171,7 +199,7 @@ public class DoapUtil
 
         if ( value != null )
         {
-            writer.startElement( name );
+            writeStartElement( writer, xmlnsPrefix, name );
             writer.addAttribute( RDF_RESOURCE, value );
             writer.endElement();
         }
@@ -183,7 +211,7 @@ public class DoapUtil
      * @param value could be null. In this case, the element is not written.
      * @throws IllegalArgumentException if name is null or empty
      */
-    public static void writeRdfNodeIdElement( XMLWriter writer, String name, String value )
+    public static void writeRdfNodeIdElement( XMLWriter writer, String xmlnsPrefix, String name, String value )
         throws IllegalArgumentException
     {
         if ( StringUtils.isEmpty( name ) )
@@ -193,7 +221,7 @@ public class DoapUtil
 
         if ( value != null )
         {
-            writer.startElement( name );
+            writeStartElement( writer, xmlnsPrefix, name );
             writer.addAttribute( RDF_NODE_ID, value );
             writer.endElement();
         }

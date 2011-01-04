@@ -42,6 +42,20 @@ http://svn.apache.org/repos/asf/infrastructure/site-tools/trunk/projects/asfext<
       <version>1.0.0</version>
       <fields>
         <field>
+          <name>xmlnsPrefix</name>
+          <description>The ASFext xmlns prefix</description>
+          <version>1.0.0</version>
+          <type>String</type>
+          <defaultValue>asfext</defaultValue>
+        </field>
+        <field>
+          <name>xmlnsNamespaceURI</name>
+          <description>The URI of the ASFext xmlns namespace</description>
+          <version>1.0.0</version>
+          <type>String</type>
+          <defaultValue>http://projects.apache.org/ns/asfext#</defaultValue>
+        </field>
+        <field>
           <name>included</name>
           <description>Flag to use or not the ASF extension in the generated DOAP.</description>
           <version>1.0.0</version>
@@ -91,6 +105,17 @@ http://svn.apache.org/repos/asf/infrastructure/site-tools/trunk/projects/asfext<
 @see <a href="http://projects.apache.org/docs/standards.html">http://projects.apache.org/docs/standards.html</a>]]></description>
           <association>
             <type>Standard</type>
+            <multiplicity>*</multiplicity>
+          </association>
+        </field>
+        <field>
+          <name>extra</name>
+          <description><![CDATA[Extra ASFext vocabulary as key/value, not actually defined as plugin options.]]></description>
+          <version>1.0.0</version>
+          <identifier>true</identifier>
+          <type>Map</type>
+          <association xml.mapStyle="inline">
+            <type>String</type>
             <multiplicity>*</multiplicity>
           </association>
         </field>

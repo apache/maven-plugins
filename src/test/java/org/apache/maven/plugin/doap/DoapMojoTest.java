@@ -22,13 +22,7 @@ package org.apache.maven.plugin.doap;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
 
-import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.repository.DefaultArtifactRepository;
-import org.apache.maven.artifact.repository.layout.DefaultRepositoryLayout;
-import org.apache.maven.plugin.doap.options.ASFExtOptions;
 import org.apache.maven.plugin.doap.options.DoapArtifact;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.project.MavenProject;
@@ -75,7 +69,7 @@ public class DoapMojoTest
         assertNotNull( mavenProject );
 
         // Set some Mojo parameters
-        setVariableValueToObject( mojo, "remoteRepositories", getRemoteRepositories() );
+        setVariableValueToObject( mojo, "remoteRepositories", mavenProject.getRemoteArtifactRepositories() );
         setVariableValueToObject( mojo, "about", mavenProject.getUrl() );
 
         mojo.execute();
@@ -129,8 +123,9 @@ public class DoapMojoTest
         assertNotNull( mavenProject );
 
         // Set some Mojo parameters
-        setVariableValueToObject( mojo, "remoteRepositories", getRemoteRepositories() );
+        setVariableValueToObject( mojo, "remoteRepositories", mavenProject.getRemoteArtifactRepositories() );
         setVariableValueToObject( mojo, "about", mavenProject.getUrl() );
+
         DoapArtifact artifact = new DoapArtifact();
         artifact.setGroupId( "org.codehaus.plexus" );
         artifact.setArtifactId( "plexus-utils" );
@@ -172,7 +167,7 @@ public class DoapMojoTest
         assertNotNull( mavenProject );
 
         // Set some Mojo parameters
-        setVariableValueToObject( mojo, "remoteRepositories", getRemoteRepositories() );
+        setVariableValueToObject( mojo, "remoteRepositories", mavenProject.getRemoteArtifactRepositories() );
         setVariableValueToObject( mojo, "about", mavenProject.getUrl() );
 
         mojo.execute();
@@ -201,6 +196,40 @@ public class DoapMojoTest
         assertTrue( readed.contains( "<asfext:name>Apache " + mavenProject.getName() + "</asfext:name>" ) );
     }
 
+
+    /**
+     * Verify the generation of a DOAP file with extra extension.
+     *
+     * @throws Exception if any
+     */
+    public void testGeneratedExtraDoap()
+        throws Exception
+    {
+        File pluginXmlFile =
+            new File( getBasedir(),
+                      "src/test/resources/unit/doap-configuration/doap-extra-configuration-plugin-config.xml" );
+        DoapMojo mojo = (DoapMojo) lookupMojo( "generate", pluginXmlFile );
+        assertNotNull( "Mojo found.", mojo );
+
+        MavenProject mavenProject = (MavenProject) getVariableValueFromObject( mojo, "project" );
+        assertNotNull( mavenProject );
+
+        // Set some Mojo parameters
+        setVariableValueToObject( mojo, "remoteRepositories", mavenProject.getRemoteArtifactRepositories() );
+        setVariableValueToObject( mojo, "about", mavenProject.getUrl() );
+
+        mojo.execute();
+
+        File doapFile = new File( getBasedir(), "target/test/unit/doap-configuration/doap-extra-configuration.rdf" );
+        assertTrue( "Doap File was not generated!", doapFile.exists() );
+
+        String readed = readFile( doapFile );
+
+        assertTrue( readed.contains( "<ciManagement rdf:resource=\"http://ci.foo.org\"/>" ) );
+        assertTrue( readed.contains( "<asfext:status>active</asfext:status>" ) );
+        assertTrue( readed.contains( "<labs:status>active</labs:status>" ) );
+    }
+
     /**
      * @param file
      * @return
@@ -225,15 +254,5 @@ public class DoapMojoTest
         }
 
         return result;
-    }
-
-    /**
-     * @return remote repo
-     */
-    private static List<ArtifactRepository> getRemoteRepositories()
-    {
-        ArtifactRepository repository =
-            new DefaultArtifactRepository( "central", "http://repo1.maven.org/maven2", new DefaultRepositoryLayout() );
-        return Collections.singletonList( repository );
     }
 }

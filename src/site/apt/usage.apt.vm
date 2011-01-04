@@ -2,8 +2,9 @@
  Usage
  ------
  Jason van Zyl
+ Vincent Siveton
  ------
- 2008-07-17
+ 2011-01-03
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -68,7 +69,7 @@ Usage
 
 * {DOAP ASF Configuration}
 
-This is the minimal POM to be ASF compliant.
+  This is the minimal POM to be ASF compliant.
 
 +-----+
 <project>
@@ -202,6 +203,43 @@ This is the minimal POM to be ASF compliant.
           <!-- To not validate the generate DOAP file -->
           <validate>false</validate>
 
+          <doapOptions>
+            <!-- To add a custom DOAP xmlns prefix -->
+            <xmlnsPrefix>doap</xmlnsPrefix>
+            <!-- Default DOAP xmlns namespace URI -->
+            <xmlnsNamespaceURI>http://usefulinc.com/ns/doap#</xmlnsNamespaceURI>
+
+            <!-- Some extra DOAP vocabulary -->
+            <extra>
+              <!-- For example, i.e. actually unsupported by DOAP schema -->
+              <ciManagement>http://ci.foo.org</ciManagement>
+            </extra>
+          </doapOptions>
+
+          <asfExtOptions>
+            <!-- Default ASFext xmlns prefix -->
+            <xmlnsPrefix>asfext</xmlnsPrefix>
+            <!-- Default ASFext xmlns namespace URI -->
+            <xmlnsNamespaceURI>http://projects.apache.org/ns/asfext#</xmlnsNamespaceURI>
+
+            <!-- Some extra ASFExt vocabulary -->
+            <extra>
+              <!-- Actually unsupported by ASFext -->
+              <status>active</status>
+            </extra>
+          </asfExtOptions>
+
+          <!-- More extensions -->
+          <extOptions>
+            <!-- ASF labs extension, http://labs.apache.org/doapizer.html -->
+            <extOption>
+              <xmlnsPrefix>labs</xmlnsPrefix>
+              <xmlnsNamespaceURI>http://labs.apache.org/doap-ext/1.0#</xmlnsNamespaceURI>
+              <extensions>
+                <status>active</status>
+              </extensions>
+            </extOption>
+          </extOptions>
           ...
         </configuration>
       </plugin>

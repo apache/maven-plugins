@@ -59,12 +59,12 @@ public class DoapUtilTest
      *
      * @throws Exception if any
      */
-    public void testWriteElementXMLWriterStringStringString()
+    public void testWriteElement()
         throws Exception
     {
         StringWriter w = new StringWriter();
         XMLWriter writer = new PrettyPrintXMLWriter( w );
-        DoapUtil.writeElement( writer, "name", "value" );
+        DoapUtil.writeElement( writer, null, "name", "value" );
         w.close();
         assertEquals( w.toString(), "<name>value</name>" );
 
@@ -72,7 +72,7 @@ public class DoapUtilTest
         writer = new PrettyPrintXMLWriter( w );
         try
         {
-            DoapUtil.writeElement( writer, null, null );
+            DoapUtil.writeElement( writer, null, null, null );
             assertTrue( "Null not catched", false );
         }
         catch ( IllegalArgumentException e )
@@ -95,7 +95,7 @@ public class DoapUtilTest
     {
         StringWriter w = new StringWriter();
         XMLWriter writer = new PrettyPrintXMLWriter( w );
-        DoapUtil.writeRdfResourceElement( writer, "name", "value" );
+        DoapUtil.writeRdfResourceElement( writer, null, "name", "value" );
         w.close();
         assertEquals( w.toString(), "<name " + DoapUtil.RDF_RESOURCE + "=\"value\"/>" );
 
@@ -103,7 +103,7 @@ public class DoapUtilTest
         writer = new PrettyPrintXMLWriter( w );
         try
         {
-            DoapUtil.writeRdfResourceElement( writer, null, null );
+            DoapUtil.writeRdfResourceElement( writer, null, null, null );
             assertTrue( "Null not catched", false );
         }
         catch ( IllegalArgumentException e )

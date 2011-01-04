@@ -20,61 +20,10 @@ under the License.
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <artifactId>maven-plugins</artifactId>
-    <groupId>org.apache.maven.plugins</groupId>
-    <version>11</version>
-  </parent>
-
   <groupId>resources.test</groupId>
   <artifactId>resources-test</artifactId>
   <packaging>jar</packaging>
   <version>1.0-SNAPSHOT</version>
-  <inceptionYear>2008</inceptionYear>
-
-  <name>Maven DOAP Plugin Test</name>
-  <description>Test the DOAP plugin</description>
-  <url>http://foo.org/plugins/maven-doap-plugin/tests</url>
-
-  <licenses>
-    <license>
-      <name>The Apache Software License, Version 2.0</name>
-      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-      <distribution>repo</distribution>
-    </license>
-  </licenses>
-  <organization>
-    <name>foo</name>
-    <url>http://www.foo.org/</url>
-  </organization>
-
-  <scm>
-    <connection>scm:svn:http://svn.foo.org/repos/asf/maven/plugins/trunk/maven-doap-plugin/src/test/resources/unit/doap-configuration</connection>
-    <developerConnection>scm:svn:https://svn.foo.org/repos/asf/maven/plugins/trunk/maven-doap-plugin/src/test/resources/unit/doap-configuration</developerConnection>
-    <url>http://svn.foo.org/viewvc/maven/plugins/trunk/maven-doap-plugin/src/test/resources/unit/doap-configuration</url>
-  </scm>
-  <issueManagement>
-    <system>JIRA</system>
-    <url>http://jira.codehaus.org/browse/MDOAPTEST</url>
-  </issueManagement>
-  <distributionManagement>
-    <downloadUrl>http://foo.org/download.html</downloadUrl>
-  </distributionManagement>
-
-  <developers>
-    <developer>
-      <id>jdoe</id>
-      <name>Jane Doe</name>
-      <email>jdoe@example.org</email>
-      <organization>Example Organization</organization>
-      <organizationUrl>http://www.example.org</organizationUrl>
-        <roles>
-          <role>chairman</role>
-          <role>PMC Member</role>
-        </roles>
-      <timezone>-8</timezone>
-    </developer>
-  </developers>
 
   <build>
     <plugins>
@@ -84,7 +33,7 @@ under the License.
         <configuration>
           <project implementation="org.apache.maven.plugin.doap.stubs.DoapProjectStub"/>
           <localRepository>${localRepository}</localRepository>
-          <doapFile>target/test/unit/doap-configuration/doap-configuration.rdf</doapFile>
+          <doapFile>target/test/unit/doap-configuration/doap-extra-configuration.rdf</doapFile>
           <lang>en</lang>
           <validate>true</validate>
 
@@ -102,13 +51,31 @@ under the License.
             <screenshots>http://screenshot.foo.org</screenshots>
             <serviceEndpoint>http://webservice.foo.org</serviceEndpoint>
             <wiki>http://wiki.foo.org</wiki>
+            <extra>
+              <ciManagement>http://ci.foo.org</ciManagement>
+            </extra>
           </doapOptions>
 
           <asfExtOptions>
-            <included>false</included>
+            <included>true</included>
+            <xmlnsPrefix>asfext</xmlnsPrefix>
+            <xmlnsNamespaceURI>http://projects.apache.org/ns/asfext#</xmlnsNamespaceURI>
+            <charter>Apache foo</charter>
+
+            <extra>
+              <status>active</status>
+            </extra>
           </asfExtOptions>
 
-          <extOptions/>
+          <extOptions>
+            <extOption>
+              <xmlnsPrefix>labs</xmlnsPrefix>
+              <xmlnsNamespaceURI>http://labs.apache.org/doap-ext/1.0#</xmlnsNamespaceURI>
+              <extensions>
+                <status>active</status>
+              </extensions>
+            </extOption>
+          </extOptions>
         </configuration>
       </plugin>
     </plugins>
