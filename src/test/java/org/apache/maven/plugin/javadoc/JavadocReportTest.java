@@ -152,14 +152,16 @@ public class JavadocReportTest
     private static String readFile( File file )
         throws IOException
     {
-        String str = "", strTmp = "";
+        String strTmp = "";
+        StringBuffer str = new StringBuffer( (int)file.length() );
         BufferedReader in = new BufferedReader( new FileReader( file ) );
 
         try
         {
             while ( ( strTmp = in.readLine() ) != null )
             {
-                str = str + LINE_SEPARATOR + strTmp;
+                str.append( LINE_SEPARATOR );
+                str.append( strTmp );
             }
         }
         finally
@@ -167,7 +169,7 @@ public class JavadocReportTest
             in.close();
         }
 
-        return str;
+        return str.toString();
     }
 
     /**
