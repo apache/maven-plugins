@@ -1468,6 +1468,15 @@ public class DoapMojo
                 }
 
                 String fileRelease = repo.getUrl() + "/" + repo.pathOf( artifactRelease );
+                try
+                {
+                    DoapUtil.fetchURL( settings, new URL( fileRelease ) );
+                }
+                catch ( IOException e )
+                {
+                    getLog().debug( "IOException :" + e.getMessage() );
+                    continue;
+                }
                 DoapUtil.writeElement( writer, doapOptions.getXmlnsPrefix(), "file-release", fileRelease );
 
                 Date releaseDate = null;
