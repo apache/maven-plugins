@@ -379,8 +379,10 @@ public class ChangesReportGenerator
 
             sink.section2();
 
+            final String date = ( release.getDateRelease() == null ) ? "" : " - " + release.getDateRelease();
+
             sinkSectionTitle2Anchor( sink, bundle.getString( "report.changes.label.release" ) + " "
-                + release.getVersion() + " - " + release.getDateRelease(), release.getVersion() );
+                + release.getVersion() + date, release.getVersion() );
 
             constructActions( sink, release.getActions(), bundle );
 
