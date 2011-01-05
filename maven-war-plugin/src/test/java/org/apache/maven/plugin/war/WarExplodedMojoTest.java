@@ -36,12 +36,9 @@ import org.apache.maven.plugin.war.stub.TLDArtifactStub;
 import org.apache.maven.plugin.war.stub.WarArtifactStub;
 import org.codehaus.plexus.util.FileUtils;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.StringReader;
 import java.text.SimpleDateFormat;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Locale;
 
 public class WarExplodedMojoTest
