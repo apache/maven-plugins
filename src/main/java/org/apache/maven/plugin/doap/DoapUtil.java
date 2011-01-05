@@ -20,9 +20,12 @@ package org.apache.maven.plugin.doap;
  */
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.net.SocketTimeoutException;
+import java.net.URL;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -37,7 +40,20 @@ import java.util.regex.Pattern;
 import java.util.Set;
 import java.util.Properties;
 
+import org.apache.commons.httpclient.Credentials;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpStatus;
+import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
+import org.apache.commons.httpclient.UsernamePasswordCredentials;
+import org.apache.commons.httpclient.auth.AuthScope;
+import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.httpclient.params.HttpClientParams;
+import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.apache.maven.model.Contributor;
+import org.apache.maven.settings.Proxy;
+import org.apache.maven.settings.Settings;
+import org.apache.maven.wagon.proxy.ProxyInfo;
+import org.apache.maven.wagon.proxy.ProxyUtils;
 import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
@@ -67,6 +83,9 @@ public class DoapUtil
 
     /** Magic number to repeat '=' */
     private static final int REPEAT_EQUALS = 21;
+
+    /** The default timeout used when fetching url, i.e. 2000. */
+    public static final int DEFAULT_TIMEOUT = 2000;
 
     /** RDF resource attribute */
     protected static final String RDF_RESOURCE = "rdf:resource";
@@ -108,9 +127,11 @@ public class DoapUtil
      *
      * @param writer not null
      * @param comment not null
+     * @throws IllegalArgumentException if comment is null or empty
      * @since 1.1
      */
     public static void writeComment( XMLWriter writer, String comment )
+        throws IllegalArgumentException
     {
         if ( StringUtils.isEmpty( comment ) )
         {
@@ -471,6 +492,95 @@ public class DoapUtil
 
         Matcher matcher = EMAIL_PATTERN.matcher( str );
         return matcher.matches();
+    }
+
+    /**
+     * Fetch an URL
+     *
+     * @param settings the user settings used to fetch the url with an active proxy, if defined.
+     * @param url the url to fetch
+     * @throws IOException if any
+     * @see #DEFAULT_TIMEOUT
+     * @since 1.1
+     */
+    public static void fetchURL( Settings settings, URL url )
+        throws IOException
+    {
+        if ( url == null )
+        {
+            throw new IllegalArgumentException( "The url is null" );
+        }
+
+        if ( "file".equals( url.getProtocol() ) )
+        {
+            InputStream in = null;
+            try
+            {
+                in = url.openStream();
+            }
+            finally
+            {
+                IOUtil.close( in );
+            }
+
+            return;
+        }
+
+        // http, https...
+        HttpClient httpClient = new HttpClient( new MultiThreadedHttpConnectionManager() );
+        httpClient.getHttpConnectionManager().getParams().setConnectionTimeout( DEFAULT_TIMEOUT );
+        httpClient.getHttpConnectionManager().getParams().setSoTimeout( DEFAULT_TIMEOUT );
+        httpClient.getParams().setBooleanParameter( HttpClientParams.ALLOW_CIRCULAR_REDIRECTS, true );
+
+        // Some web servers don't allow the default user-agent sent by httpClient
+        httpClient.getParams().setParameter( HttpMethodParams.USER_AGENT,
+                                             "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.0)" );
+
+        if ( settings != null && settings.getActiveProxy() != null )
+        {
+            Proxy activeProxy = settings.getActiveProxy();
+
+            ProxyInfo proxyInfo = new ProxyInfo();
+            proxyInfo.setNonProxyHosts( activeProxy.getNonProxyHosts() );
+
+            if ( StringUtils.isNotEmpty( activeProxy.getHost() )
+                && !ProxyUtils.validateNonProxyHosts( proxyInfo, url.getHost() ) )
+            {
+                httpClient.getHostConfiguration().setProxy( activeProxy.getHost(), activeProxy.getPort() );
+
+                if ( StringUtils.isNotEmpty( activeProxy.getUsername() ) && activeProxy.getPassword() != null )
+                {
+                    Credentials credentials =
+                        new UsernamePasswordCredentials( activeProxy.getUsername(), activeProxy.getPassword() );
+
+                    httpClient.getState().setProxyCredentials( AuthScope.ANY, credentials );
+                }
+            }
+        }
+
+        GetMethod getMethod = new GetMethod( url.toString() );
+        try
+        {
+            int status;
+            try
+            {
+                status = httpClient.executeMethod( getMethod );
+            }
+            catch ( SocketTimeoutException e )
+            {
+                // could be a sporadic failure, one more retry before we give up
+                status = httpClient.executeMethod( getMethod );
+            }
+
+            if ( status != HttpStatus.SC_OK )
+            {
+                throw new FileNotFoundException( url.toString() );
+            }
+        }
+        finally
+        {
+            getMethod.releaseConnection();
+        }
     }
 
     // ----------------------------------------------------------------------
