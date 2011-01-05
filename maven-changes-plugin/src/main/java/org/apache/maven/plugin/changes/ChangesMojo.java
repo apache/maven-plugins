@@ -158,6 +158,7 @@ public class ChangesMojo
      *
      * @parameter default-value="true"
      * @since 2.4
+     * @deprecated using markup inside CDATA sections does not work for all output formats!
      */
     private boolean escapeHTML;
 
