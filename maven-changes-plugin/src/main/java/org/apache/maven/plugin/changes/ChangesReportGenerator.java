@@ -232,11 +232,11 @@ public class ChangesReportGenerator
 
             sink.tableRow();
 
-            sinkHeader( sink, bundle.getString( "report.changes.label.type" ) );
+            sinkHeader( sink, bundle.getString( "report.issues.label.type" ) );
 
-            sinkHeader( sink, bundle.getString( "report.changes.label.changes" ) );
+            sinkHeader( sink, bundle.getString( "report.issues.label.summary" ) );
 
-            sinkHeader( sink, bundle.getString( "report.changes.label.by" ) );
+            sinkHeader( sink, bundle.getString( "report.issues.label.assignee" ) );
 
             if ( this.isAddActionDate() )
             {
@@ -470,7 +470,7 @@ public class ChangesReportGenerator
 
         sink.tableRow();
 
-        sinkHeader( sink, bundle.getString( "report.changes.label.version" ) );
+        sinkHeader( sink, bundle.getString( "report.issues.label.fixVersion" ) );
 
         sinkHeader( sink, bundle.getString( "report.changes.label.date" ) );
 
