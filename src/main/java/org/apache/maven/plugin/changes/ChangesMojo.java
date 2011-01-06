@@ -319,6 +319,7 @@ public class ChangesMojo
         addIssueLinkTemplate( "Scarab", "%URL%/issues/id/%ISSUE%" );
         addIssueLinkTemplate( "SourceForge", "http://sourceforge.net/support/tracker.php?aid=%ISSUE%" );
         addIssueLinkTemplate( "Trac", "%URL%/ticket/%ISSUE%" );
+        addIssueLinkTemplate( "YouTrack", "%URL%/issue/%ISSUE%" );
         // @todo Add more issue management systems here
 
         // Show the current issueLinkTemplatePerSystem configuration
