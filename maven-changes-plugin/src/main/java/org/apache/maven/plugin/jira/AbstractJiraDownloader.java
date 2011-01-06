@@ -426,6 +426,12 @@ public abstract class AbstractJiraDownloader
 
         String url = project.getIssueManagement().getUrl();
 
+        if ( url.endsWith( "/" ) )
+        {
+            // MCHANGES-218
+            url = url.substring( 0, url.lastIndexOf( '/' ) );
+        }
+
         // chop off the parameter part
         int pos = url.indexOf( "?" );
 
