@@ -28,6 +28,7 @@ import java.util.List;
  *
  * @author Dennis Lundberg
  * @version $Id$
+ * @since 2.4
  */
 public class Issue
 {
@@ -53,9 +54,9 @@ public class Issue
 
     private String resolution;
 
-    private String summary;
-
     private String status;
+
+    private String summary;
 
     private String title;
 
