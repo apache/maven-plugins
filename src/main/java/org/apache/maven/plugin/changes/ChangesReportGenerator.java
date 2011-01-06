@@ -240,7 +240,7 @@ public class ChangesReportGenerator
 
             if ( this.isAddActionDate() )
             {
-                sinkHeader( sink, bundle.getString( "report.changes.label.date" ) );
+                sinkHeader( sink, bundle.getString( "report.issues.label.updated" ) );
             }
             sink.tableRow_();
 
@@ -474,7 +474,7 @@ public class ChangesReportGenerator
 
         sinkHeader( sink, bundle.getString( "report.changes.label.releaseDate" ) );
 
-        sinkHeader( sink, bundle.getString( "report.changes.label.description" ) );
+        sinkHeader( sink, bundle.getString( "report.changes.label.releaseDescription" ) );
 
         sink.tableRow_();
 
