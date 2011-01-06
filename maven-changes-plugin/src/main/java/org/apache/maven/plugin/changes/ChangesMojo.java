@@ -395,12 +395,12 @@ public class ChangesMojo
 
     public String getName( Locale locale )
     {
-        return getBundle( locale ).getString( "report.changes.name" );
+        return getBundle( locale ).getString( "report.issues.name" );
     }
 
     public String getDescription( Locale locale )
     {
-        return getBundle( locale ).getString( "report.changes.description" );
+        return getBundle( locale ).getString( "report.issues.description" );
     }
 
     public String getOutputName()

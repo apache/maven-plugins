@@ -560,7 +560,7 @@ public class ChangesReportGenerator
         }
         else
         {
-            title = bundle.getString( "report.changes.header" );
+            title = bundle.getString( "report.issues.header" );
         }
         sink.title();
         sink.text( title );
