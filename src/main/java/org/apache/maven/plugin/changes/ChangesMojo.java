@@ -87,6 +87,13 @@ public class ChangesMojo
      * <p>
      * <strong>Note:</strong> The deprecated issueLinkTemplate will be used for a system called "default".
      * </p>
+     * <p>
+     * <strong>Note:</strong> Starting with version 2.4 you usually don't need
+     * to specify this, unless you need to link to an issue management system in
+     * your Changes report that isn't supported out of the box. See the
+     * <a href="./usage.html">Usage page</a> for more
+     * information.
+     * </p>
      *
      * @parameter
      * @since 2.1
