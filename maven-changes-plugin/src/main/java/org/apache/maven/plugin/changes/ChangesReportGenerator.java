@@ -319,6 +319,144 @@ public class ChangesReportGenerator
         }
     }
 
+    /**
+     * Construct a text or link that mention the people that helped with an action.
+     *
+     * @param sink The sink
+     * @param action The action that was done
+     * @param bundle A resource bundle for i18n
+     * @param dueTos Other people that helped with an action
+     */
+    private void constructDueTo( Sink sink, Action action, ResourceBundle bundle, List dueTos )
+    {
+
+        // Create a Map with key : dueTo name, value : dueTo email
+        Map namesEmailMap = new LinkedHashMap();
+
+        // Only add the dueTo specified as attributes, if it has either a dueTo or a dueToEmail
+        if ( StringUtils.isNotEmpty( action.getDueTo() ) || StringUtils.isNotEmpty( action.getDueToEmail() ) )
+        {
+            namesEmailMap.put( action.getDueTo(), action.getDueToEmail() );
+        }
+
+        for ( Iterator iterator = dueTos.iterator(); iterator.hasNext(); )
+        {
+            DueTo dueTo = (DueTo) iterator.next();
+            namesEmailMap.put( dueTo.getName(), dueTo.getEmail() );
+        }
+
+        if ( namesEmailMap.isEmpty() )
+        {
+            return;
+        }
+
+        sink.text( " " + bundle.getString( "report.changes.text.thanx" ) + " " );
+        int i = 0;
+        for ( Iterator iterator = namesEmailMap.keySet().iterator(); iterator.hasNext(); )
+        {
+            String currentDueTo = (String) iterator.next();
+            String currentDueToEmail = (String) namesEmailMap.get( currentDueTo );
+            i++;
+
+            if ( StringUtils.isNotEmpty( currentDueToEmail ) )
+            {
+                sinkLink( sink, currentDueTo, "mailto:" + currentDueToEmail );
+            }
+            else if ( StringUtils.isNotEmpty( currentDueTo ) )
+            {
+                sink.text( currentDueTo );
+            }
+
+            if ( i < namesEmailMap.size() )
+            {
+                sink.text( ", " );
+            }
+        }
+
+        sink.text( "." );
+    }
+
+    /**
+     * Construct links to the issues that were solved by an action.
+     *
+     * @param issue The issue specified by attributes
+     * @param system The issue management system
+     * @param sink The sink
+     * @param fixes The List of issues specified as fixes elements
+     */
+    private void constructIssueLink( String issue, String system, Sink sink, List fixes )
+    {
+        if ( StringUtils.isNotEmpty( issue ) )
+        {
+            sink.link( parseIssueLink( issue, system ) );
+
+            sink.text( issue );
+
+            sink.link_();
+
+            if ( !fixes.isEmpty() )
+            {
+                sink.text( ", " );
+            }
+        }
+
+        for ( Iterator iterator = fixes.iterator(); iterator.hasNext(); )
+        {
+            FixedIssue fixedIssue = (FixedIssue) iterator.next();
+            String currentIssueId = fixedIssue.getIssue();
+            if ( StringUtils.isNotEmpty( currentIssueId ) )
+            {
+                sink.link( parseIssueLink( currentIssueId, system ) );
+
+                sink.text( currentIssueId );
+
+                sink.link_();
+            }
+
+            if ( iterator.hasNext() )
+            {
+                sink.text( ", " );
+            }
+        }
+    }
+
+    /**
+     * Construct a text that references (but does not link to) the issues that
+     * were solved by an action.
+     *
+     * @param issue The issue specified by attributes
+     * @param sink The sink
+     * @param fixes The List of issues specified as fixes elements
+     */
+    private void constructIssueText( String issue, Sink sink, List fixes )
+    {
+        if ( StringUtils.isNotEmpty( issue ) )
+        {
+            sink.text( issue );
+
+            if ( !fixes.isEmpty() )
+            {
+                sink.text( ", " );
+            }
+        }
+
+        for ( Iterator iterator = fixes.iterator(); iterator.hasNext(); )
+        {
+            FixedIssue fixedIssue = (FixedIssue) iterator.next();
+
+            String currentIssueId = fixedIssue.getIssue();
+            if ( StringUtils.isNotEmpty( currentIssueId ) )
+            {
+                sink.text( currentIssueId );
+            }
+
+            if ( iterator.hasNext() )
+            {
+                sink.text( ", " );
+            }
+        }
+    }
+
     private void constructReleaseHistory( Sink sink, ResourceBundle bundle )
     {
         sink.section2();
@@ -564,144 +702,6 @@ public class ChangesReportGenerator
         sinkFigure( sink, image, altText );
 
         sink.tableCell_();
-    }
-
-    /**
-     * Construct links to the issues that were solved by an action.
-     *
-     * @param issue The issue specified by attributes
-     * @param system The issue management system
-     * @param sink The sink
-     * @param fixes The List of issues specified as fixes elements
-     */
-    private void constructIssueLink( String issue, String system, Sink sink, List fixes )
-    {
-        if ( StringUtils.isNotEmpty( issue ) )
-        {
-            sink.link( parseIssueLink( issue, system ) );
-
-            sink.text( issue );
-
-            sink.link_();
-
-            if ( !fixes.isEmpty() )
-            {
-                sink.text( ", " );
-            }
-        }
-
-        for ( Iterator iterator = fixes.iterator(); iterator.hasNext(); )
-        {
-            FixedIssue fixedIssue = (FixedIssue) iterator.next();
-            String currentIssueId = fixedIssue.getIssue();
-            if ( StringUtils.isNotEmpty( currentIssueId ) )
-            {
-                sink.link( parseIssueLink( currentIssueId, system ) );
-
-                sink.text( currentIssueId );
-
-                sink.link_();
-            }
-
-            if ( iterator.hasNext() )
-            {
-                sink.text( ", " );
-            }
-        }
-    }
-
-    /**
-     * Construct a text that references (but does not link to) the issues that
-     * were solved by an action.
-     *
-     * @param issue The issue specified by attributes
-     * @param sink The sink
-     * @param fixes The List of issues specified as fixes elements
-     */
-    private void constructIssueText( String issue, Sink sink, List fixes )
-    {
-        if ( StringUtils.isNotEmpty( issue ) )
-        {
-            sink.text( issue );
-
-            if ( !fixes.isEmpty() )
-            {
-                sink.text( ", " );
-            }
-        }
-
-        for ( Iterator iterator = fixes.iterator(); iterator.hasNext(); )
-        {
-            FixedIssue fixedIssue = (FixedIssue) iterator.next();
-
-            String currentIssueId = fixedIssue.getIssue();
-            if ( StringUtils.isNotEmpty( currentIssueId ) )
-            {
-                sink.text( currentIssueId );
-            }
-
-            if ( iterator.hasNext() )
-            {
-                sink.text( ", " );
-            }
-        }
-    }
-
-    /**
-     * Construct a text or link that mention the people that helped with an action.
-     *
-     * @param sink The sink
-     * @param action The action that was done
-     * @param bundle A resource bundle for i18n
-     * @param dueTos Other people that helped with an action
-     */
-    private void constructDueTo( Sink sink, Action action, ResourceBundle bundle, List dueTos )
-    {
-
-        // Create a Map with key : dueTo name, value : dueTo email
-        Map namesEmailMap = new LinkedHashMap();
-
-        // Only add the dueTo specified as attributes, if it has either a dueTo or a dueToEmail
-        if ( StringUtils.isNotEmpty( action.getDueTo() ) || StringUtils.isNotEmpty( action.getDueToEmail() ) )
-        {
-            namesEmailMap.put( action.getDueTo(), action.getDueToEmail() );
-        }
-
-        for ( Iterator iterator = dueTos.iterator(); iterator.hasNext(); )
-        {
-            DueTo dueTo = (DueTo) iterator.next();
-            namesEmailMap.put( dueTo.getName(), dueTo.getEmail() );
-        }
-
-        if ( namesEmailMap.isEmpty() )
-        {
-            return;
-        }
-
-        sink.text( " " + bundle.getString( "report.changes.text.thanx" ) + " " );
-        int i = 0;
-        for ( Iterator iterator = namesEmailMap.keySet().iterator(); iterator.hasNext(); )
-        {
-            String currentDueTo = (String) iterator.next();
-            String currentDueToEmail = (String) namesEmailMap.get( currentDueTo );
-            i++;
-
-            if ( StringUtils.isNotEmpty( currentDueToEmail ) )
-            {
-                sinkLink( sink, currentDueTo, "mailto:" + currentDueToEmail );
-            }
-            else if ( StringUtils.isNotEmpty( currentDueTo ) )
-            {
-                sink.text( currentDueTo );
-            }
-
-            if ( i < namesEmailMap.size() )
-            {
-                sink.text( ", " );
-            }
-        }
-
-        sink.text( "." );
     }
 
 }
