@@ -34,6 +34,7 @@ import java.util.ResourceBundle;
  * @author Noriko Kinugasa
  * @author Dennis Lundberg
  * @version $Id$
+ * @since 2.4
  */
 public class IssuesReportGenerator
 {

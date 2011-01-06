@@ -29,6 +29,7 @@ import java.util.Map;
  *
  * @author Dennis Lundberg
  * @version $Id$
+ * @since 2.4
  */
 public class IssuesReportHelper
 {
