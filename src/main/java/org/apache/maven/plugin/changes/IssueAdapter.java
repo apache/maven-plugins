@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.jira;
+package org.apache.maven.plugin.changes;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -30,20 +30,20 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * An adapter that can adapt JIRA specific data models to the data model used
- * by a changes.xml file.
+ * An adapter that can adapt issue management system data models to the data model used
+ * in the changes.xml file.
  *
  * @author Dennis Lundberg
  * @version $Id$
  * @since 2.4
  */
-public class JiraAdapter
+public class IssueAdapter
 {
     /**
      * Adapt a <code>List</code> of <code>Issue</code>s to a
      * <code>List</code> of <code>Release</code>s.
      *
-     * @param issues The JIRA issues
+     * @param issues The issues
      * @return A list of releases
      */
     public static List getReleases( List issues )
@@ -99,8 +99,10 @@ public class JiraAdapter
     {
         Action action = new Action();
 
+        // @todo We need to add something like issue.getPresentationIdentifier() to be able to support other IMSes beside JIRA
         action.setIssue( issue.getKey() );
 
+        // @todo To support types for different IMSes we need some way to map these values to the ones used in a particular IMS
         String type = "";
         if ( issue.getType().equals( "Bug" ) )
         {

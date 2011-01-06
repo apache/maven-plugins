@@ -29,10 +29,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.changes.IssueAdapter;
 import org.apache.maven.plugin.changes.ChangesXML;
 import org.apache.maven.plugin.changes.ProjectUtils;
 import org.apache.maven.plugin.changes.ReleaseUtils;
-import org.apache.maven.plugin.jira.JiraAdapter;
 import org.apache.maven.plugin.jira.JiraXML;
 import org.apache.maven.plugins.changes.model.Release;
 import org.apache.maven.project.MavenProject;
@@ -636,7 +636,7 @@ public class AnnouncementMojo
 
                 List issues = jiraParser.getIssueList();
 
-                return JiraAdapter.getReleases( issues );
+                return IssueAdapter.getReleases( issues );
             }
             else
             {
