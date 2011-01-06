@@ -276,7 +276,7 @@ public class IssuesReportGenerator
         sink.head();
 
         String title = null;
-        title = bundle.getString( "report.changes.header" );
+        title = bundle.getString( "report.issues.header" );
         sink.title();
         sink.text( title );
         sink.title_();
