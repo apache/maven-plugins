@@ -472,7 +472,7 @@ public class ChangesReportGenerator
 
         sinkHeader( sink, bundle.getString( "report.issues.label.fixVersion" ) );
 
-        sinkHeader( sink, bundle.getString( "report.changes.label.date" ) );
+        sinkHeader( sink, bundle.getString( "report.changes.label.releaseDate" ) );
 
         sinkHeader( sink, bundle.getString( "report.changes.label.description" ) );
 
