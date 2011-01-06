@@ -437,7 +437,7 @@ public class DoapMojo
 
         // current project
         File outFile = new File( doapFile );
-        if ( !doapFile.contains( File.separator ) )
+        if ( !doapFile.replaceAll( "\\\\", "/" ).contains( "/" ) )
         {
             outFile = new File( outputDirectory, doapFile );
         }
