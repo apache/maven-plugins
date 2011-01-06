@@ -79,7 +79,17 @@ public class ChangesReportGenerator
     /**
      * @since 2.4
      */
+    private String author;
+
+    /**
+     * @since 2.4
+     */
     private boolean escapeHTML;
+
+    /**
+     * @since 2.4
+     */
+    private String title;
 
     public ChangesReportGenerator()
     {
@@ -90,6 +100,8 @@ public class ChangesReportGenerator
     {
         this();
         report = new ChangesXML( xmlPath, log );
+        author = report.getAuthor();
+        title = report.getTitle();
     }
 
     /**
@@ -554,9 +566,9 @@ public class ChangesReportGenerator
         sink.head();
 
         String title = null;
-        if ( report.getTitle() != null )
+        if ( this.title != null )
         {
-            title = report.getTitle();
+            title = this.title;
         }
         else
         {
@@ -566,10 +578,10 @@ public class ChangesReportGenerator
         sink.text( title );
         sink.title_();
 
-        if ( StringUtils.isNotEmpty( report.getAuthor() ) )
+        if ( StringUtils.isNotEmpty( author ) )
         {
             sink.author();
-            sink.text( report.getAuthor() );
+            sink.text( author );
             sink.author_();
         }
 
