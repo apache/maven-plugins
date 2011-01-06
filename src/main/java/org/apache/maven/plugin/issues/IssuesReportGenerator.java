@@ -317,15 +317,6 @@ public class IssuesReportGenerator
         sink.close();
     }
 
-    private void sinkFigure( Sink sink, String image )
-    {
-        sink.figure();
-
-        sink.figureGraphics( image );
-
-        sink.figure_();
-    }
-
     private void sinkHeader( Sink sink, String header )
     {
         sink.tableHeaderCell();
