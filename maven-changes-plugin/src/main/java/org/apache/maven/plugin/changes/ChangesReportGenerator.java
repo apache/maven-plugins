@@ -414,6 +414,7 @@ public class ChangesReportGenerator
     private void sinkBeginReport( Sink sink, ResourceBundle bundle )
     {
         sink.head();
+
         String title = null;
         if ( report.getTitle() != null )
         {
@@ -472,7 +473,7 @@ public class ChangesReportGenerator
         sink.close();
     }
 
-    private void sinkFigure( String image, Sink sink, String altText )
+    private void sinkFigure( Sink sink, String image, String altText )
     {
         sink.figure();
 
@@ -508,7 +509,9 @@ public class ChangesReportGenerator
     private void sinkSectionTitle1Anchor( Sink sink, String text, String anchor )
     {
         sink.sectionTitle1();
+
         sink.text( text );
+
         sink.sectionTitle1_();
 
         sink.anchor( HtmlTools.encodeId( anchor ) );
@@ -558,7 +561,7 @@ public class ChangesReportGenerator
 
         sink.tableCell();
 
-        sinkFigure( image, sink, altText );
+        sinkFigure( sink, image, altText );
 
         sink.tableCell_();
     }

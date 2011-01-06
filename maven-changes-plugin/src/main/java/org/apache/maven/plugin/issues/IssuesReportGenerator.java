@@ -274,8 +274,10 @@ public class IssuesReportGenerator
     {
         sink.head();
 
+        String title = null;
+        title = bundle.getString( "report.changes.header" );
         sink.title();
-        sink.text( bundle.getString( "report.issues.header" ) );
+        sink.text( title );
         sink.title_();
 
         sink.head_();
@@ -284,7 +286,23 @@ public class IssuesReportGenerator
 
         sink.section1();
 
-        sinkSectionTitle1( sink, bundle.getString( "report.issues.header" ) );
+        sinkSectionTitle1( sink, title );
+    }
+
+    private void sinkCell( Sink sink, String text )
+    {
+        sink.tableCell();
+
+        if ( text != null )
+        {
+            sink.text( text );
+        }
+        else
+        {
+            sink.rawText( "&nbsp;" );
+        }
+
+        sink.tableCell_();
     }
 
     private void sinkEndReport( Sink sink )
@@ -314,22 +332,6 @@ public class IssuesReportGenerator
         sink.text( header );
 
         sink.tableHeaderCell_();
-    }
-
-    private void sinkCell( Sink sink, String text )
-    {
-        sink.tableCell();
-
-        if ( text != null )
-        {
-            sink.text( text );
-        }
-        else
-        {
-            sink.rawText( "&nbsp;" );
-        }
-
-        sink.tableCell_();
     }
 
     private void sinkSectionTitle1( Sink sink, String text )
