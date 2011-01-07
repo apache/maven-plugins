@@ -274,11 +274,11 @@ public class ChangesMojo
                 Date now = new Date();
                 SimpleDateFormat simpleDateFormat =
                     new SimpleDateFormat( publishDateFormat, new Locale( publishDateLocale ) );
-                Properties additionnalProperties = new Properties();
-                additionnalProperties.put( "publishDate", simpleDateFormat.format( now ) );
+                Properties additionalProperties = new Properties();
+                additionalProperties.put( "publishDate", simpleDateFormat.format( now ) );
                 MavenFileFilterRequest mavenFileFilterRequest =
                     new MavenFileFilterRequest( xmlPath, resultFile, true, project, Collections.EMPTY_LIST, false,
-                                                encoding, session, additionnalProperties );
+                                                encoding, session, additionalProperties );
                 mavenFileFilter.copyFile( mavenFileFilterRequest );
                 xmlPath = resultFile;
             }
