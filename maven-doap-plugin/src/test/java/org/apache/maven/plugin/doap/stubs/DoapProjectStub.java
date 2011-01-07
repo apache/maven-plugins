@@ -55,7 +55,9 @@ public class DoapProjectStub
         try
         {
             model =
-                pomReader.read( ReaderFactory.newXmlReader( new File( getBasedir(),
+                pomReader.read( ReaderFactory.newXmlReader( new File(
+                                                                      new File( super.getBasedir(),
+                                                                                "/src/test/resources/unit/doap-configuration/" ),
                                                                       "doap-configuration-plugin-config.xml" ) ) );
             setModel( model );
         }
@@ -72,12 +74,6 @@ public class DoapProjectStub
         setUrl( model.getUrl() );
         setPackaging( model.getPackaging() );
         setDevelopers( model.getDevelopers() );
-    }
-
-    @Override
-    public File getBasedir()
-    {
-        return new File( super.getBasedir() + "/src/test/resources/unit/doap-configuration/" );
     }
 
     @Override
@@ -131,8 +127,8 @@ public class DoapProjectStub
     @Override
     public List<ArtifactRepository> getRemoteArtifactRepositories()
     {
-        ArtifactRepository repository = new DefaultArtifactRepository( "central", "http://repo2.maven.org/maven2/",
-                                                                       new DefaultRepositoryLayout() );
+        ArtifactRepository repository =
+            new DefaultArtifactRepository( "central", "http://repo2.maven.org/maven2/", new DefaultRepositoryLayout() );
 
         return Collections.singletonList( repository );
     }
