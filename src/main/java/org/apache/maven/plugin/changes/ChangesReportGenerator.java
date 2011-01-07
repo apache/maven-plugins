@@ -59,8 +59,6 @@ public class ChangesReportGenerator extends AbstractIssuesReportGenerator
 
     private static final String NO_TEAMLIST = "none";
 
-    private ChangesXML report;
-
     /**
      * The issue management system to use, for actions that do not specify a
      * system.
@@ -82,17 +80,22 @@ public class ChangesReportGenerator extends AbstractIssuesReportGenerator
      */
     private boolean escapeHTML;
 
+    /**
+     * @since 2.4
+     */
+    private List releaseList;
+
     public ChangesReportGenerator()
     {
         issueLinksPerSystem = new HashMap();
     }
 
-    public ChangesReportGenerator( File xmlPath, Log log )
+    public ChangesReportGenerator( ChangesXML changesXML )
     {
         this();
-        report = new ChangesXML( xmlPath, log );
-        author = report.getAuthor();
-        title = report.getTitle();
+        author = changesXML.getAuthor();
+        releaseList = changesXML.getReleaseList();
+        title = changesXML.getTitle();
     }
 
     /**
@@ -212,9 +215,9 @@ public class ChangesReportGenerator extends AbstractIssuesReportGenerator
     {
         sinkBeginReport( sink, bundle );
 
-        constructReleaseHistory( sink, bundle );
+        constructReleaseHistory( sink, bundle, releaseList );
 
-        constructReleases( sink, bundle );
+        constructReleases( sink, bundle, releaseList );
 
         sinkEndReport( sink );
     }
@@ -460,14 +463,12 @@ public class ChangesReportGenerator extends AbstractIssuesReportGenerator
         }
     }
 
-    private void constructReleaseHistory( Sink sink, ResourceBundle bundle )
+    private void constructReleaseHistory( Sink sink, ResourceBundle bundle, List releaseList )
     {
         sink.section2();
 
         sinkSectionTitle2Anchor( sink, bundle.getString( "report.changes.label.releasehistory" ),
                                  bundle.getString( "report.changes.label.releasehistory" ) );
-
-        List releaseList = report.getReleaseList();
 
         sink.table();
 
@@ -510,9 +511,8 @@ public class ChangesReportGenerator extends AbstractIssuesReportGenerator
         sink.section2_();
     }
 
-    private void constructReleases( Sink sink, ResourceBundle bundle )
+    private void constructReleases( Sink sink, ResourceBundle bundle, List releaseList )
     {
-        List releaseList = report.getReleaseList();
 
         for ( int idx = 0; idx < releaseList.size(); idx++ )
         {
