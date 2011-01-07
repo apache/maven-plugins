@@ -615,27 +615,51 @@ public class DoapMojo
 
         // Project
         DoapUtil.writeStartElement( writer, doapOptions.getXmlnsPrefix(), "Project" );
-        if ( StringUtils.isNotEmpty( about ) )
+        boolean added = false;
+        if ( artifact != null )
         {
-            if ( artifact != null )
+            String about_ = project.getUrl();
+
+            if ( StringUtils.isNotEmpty( about_ ) )
             {
-                about = project.getUrl();
+                try
+                {
+                    new URL( about_ );
+
+                    writer.addAttribute( "rdf:about", about_ );
+                    added = true;
+                }
+                catch ( MalformedURLException e )
+                {
+                }
             }
 
-            try
+            if ( !added )
             {
-                new URL( about );
-
-                writer.addAttribute( "rdf:about", about );
-            }
-            catch ( MalformedURLException e )
-            {
-                errorMessages.add( "The <about/> parameter " + about + " is not a valid URL." );
+                warnMessages.add( "The project's url from " + artifact.toStringConfiguration()
+                    + " is empty or not valid, using <about/> parameter." );
             }
         }
-        else
+
+        if ( !added )
         {
-            warnMessages.add( "rdf:about should be required" );
+            if ( StringUtils.isNotEmpty( about ) )
+            {
+                try
+                {
+                    new URL( about );
+
+                    writer.addAttribute( "rdf:about", about );
+                }
+                catch ( MalformedURLException e )
+                {
+                    errorMessages.add( "The <about/> parameter is not a valid URL." );
+                }
+            }
+            else
+            {
+                errorMessages.add( "The <about/> parameter is required." );
+            }
         }
 
         // name
