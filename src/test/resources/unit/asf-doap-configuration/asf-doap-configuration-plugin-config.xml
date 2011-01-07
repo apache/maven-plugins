@@ -84,6 +84,7 @@ under the License.
           <project implementation="org.apache.maven.plugin.doap.stubs.AsfDoapProjectStub"/>
           <localRepository>${localRepository}</localRepository>
           <doapFile>target/test/unit/asf-doap-configuration/asf-doap-configuration.rdf</doapFile>
+          <outputDirectory>target/test/unit/asf-doap-configuration</outputDirectory>
           <lang>en</lang>
           <validate>true</validate>
 
