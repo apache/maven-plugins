@@ -19,7 +19,6 @@ package org.apache.maven.plugin.changes;
  * under the License.
  */
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -31,7 +30,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.doxia.util.HtmlTools;
 import org.apache.maven.plugin.issues.AbstractIssuesReportGenerator;
-import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugins.changes.model.Action;
 import org.apache.maven.plugins.changes.model.DueTo;
 import org.apache.maven.plugins.changes.model.FixedIssue;
@@ -90,12 +88,10 @@ public class ChangesReportGenerator extends AbstractIssuesReportGenerator
         issueLinksPerSystem = new HashMap();
     }
 
-    public ChangesReportGenerator( ChangesXML changesXML )
+    public ChangesReportGenerator( List releaseList )
     {
         this();
-        author = changesXML.getAuthor();
-        releaseList = changesXML.getReleaseList();
-        title = changesXML.getTitle();
+        this.releaseList = releaseList;
     }
 
     /**
