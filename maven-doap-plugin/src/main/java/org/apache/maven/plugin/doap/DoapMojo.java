@@ -429,7 +429,12 @@ public class DoapMojo
             MavenProject givenProject = getMavenProject( artifact );
             if ( givenProject != null )
             {
-                File outFile = new File( outputDirectory, artifact.getDoapFileName() );
+                File outDir = new File( outputDirectory );
+                if ( !outDir.isAbsolute() )
+                {
+                    outDir = new File( project.getBasedir(), outputDirectory );
+                }
+                File outFile = new File( outDir, artifact.getDoapFileName() );
                 writeDoapFile( givenProject, outFile );
                 return;
             }
@@ -439,7 +444,12 @@ public class DoapMojo
         File outFile = new File( doapFile );
         if ( !doapFile.replaceAll( "\\\\", "/" ).contains( "/" ) )
         {
-            outFile = new File( outputDirectory, doapFile );
+            File outDir = new File( outputDirectory );
+            if ( !outDir.isAbsolute() )
+            {
+                outDir = new File( project.getBasedir(), outputDirectory );
+            }
+            outFile = new File( outDir, doapFile );
         }
         writeDoapFile( project, outFile );
     }
