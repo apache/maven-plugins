@@ -300,7 +300,7 @@ public class ChangesMojo
 
         }
 
-        ChangesReportGenerator report = new ChangesReportGenerator( xmlPath, getLog() );
+        ChangesReportGenerator report = new ChangesReportGenerator( new ChangesXML( xmlPath, getLog() ) );
         
         report.setEscapeHTML ( escapeHTML );
 
