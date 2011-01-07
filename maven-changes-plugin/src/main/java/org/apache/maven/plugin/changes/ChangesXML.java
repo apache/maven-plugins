@@ -31,7 +31,7 @@ import org.apache.maven.plugins.changes.model.Properties;
 import org.apache.maven.plugins.changes.model.io.xpp3.ChangesXpp3Reader;
 
 /**
- * XML Parser for changes.xml files.
+ * A facade for a changes.xml file.
  *
  * @version $Id$
  */
@@ -66,7 +66,7 @@ public class ChangesXML
 
             if ( changesDocument == null )
             {
-                log.error( "cannot build changes from file " + xmlPath.getPath() );
+                log.error( "Cannot build Changes Report from file: " + xmlPath.getPath() );
                 return;
             }
 
@@ -88,14 +88,14 @@ public class ChangesXML
 
             if ( body != null )
             {
-                this.releaseList = changesDocument.getBody().getReleases();
+                this.releaseList = body.getReleases();
             }
 
         }
         catch ( Throwable e )
         {
             // FIXME throw an Exception ?
-            log.error( "An error occured when parsing the changes.xml file:", e );
+            log.error( "An error occurred when parsing the changes.xml file: ", e );
         }
     }
 
