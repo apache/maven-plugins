@@ -60,7 +60,14 @@ public abstract class AbstractIssuesReportGenerator
     {
         sink.tableCell();
 
-        sink.text( text );
+        if ( text != null )
+        {
+            sink.text( text );
+        }
+        else
+        {
+            sink.rawText( "&nbsp;" );
+        }
 
         sink.tableCell_();
     }

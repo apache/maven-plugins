@@ -23,7 +23,6 @@ import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.reporting.MavenReportException;
 
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -36,7 +35,7 @@ import java.util.ResourceBundle;
  * @version $Id$
  * @since 2.4
  */
-public class IssuesReportGenerator
+public class IssuesReportGenerator extends AbstractIssuesReportGenerator
 {
     /**
      * Fallback value that is used if date field are not available.
@@ -269,69 +268,5 @@ public class IssuesReportGenerator
         }
 
         sink.table_();
-    }
-
-    private void sinkBeginReport( Sink sink, ResourceBundle bundle )
-    {
-        sink.head();
-
-        String title = null;
-        title = bundle.getString( "report.issues.header" );
-        sink.title();
-        sink.text( title );
-        sink.title_();
-
-        sink.head_();
-
-        sink.body();
-
-        sink.section1();
-
-        sinkSectionTitle1( sink, title );
-    }
-
-    private void sinkCell( Sink sink, String text )
-    {
-        sink.tableCell();
-
-        if ( text != null )
-        {
-            sink.text( text );
-        }
-        else
-        {
-            sink.rawText( "&nbsp;" );
-        }
-
-        sink.tableCell_();
-    }
-
-    private void sinkEndReport( Sink sink )
-    {
-        sink.section1_();
-
-        sink.body_();
-
-        sink.flush();
-
-        sink.close();
-    }
-
-    private void sinkHeader( Sink sink, String header )
-    {
-        sink.tableHeaderCell();
-
-        sink.text( header );
-
-        sink.tableHeaderCell_();
-    }
-
-    private void sinkSectionTitle1( Sink sink, String text )
-    {
-        sink.sectionTitle1();
-
-        sink.text( text );
-
-        sink.sectionTitle1_();
     }
 }
