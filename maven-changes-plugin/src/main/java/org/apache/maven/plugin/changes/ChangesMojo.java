@@ -300,8 +300,12 @@ public class ChangesMojo
 
         }
 
-        ChangesReportGenerator report = new ChangesReportGenerator( new ChangesXML( xmlPath, getLog() ) );
-        
+        ChangesXML changesXml = new ChangesXML( xmlPath, getLog() );
+        ChangesReportGenerator report = new ChangesReportGenerator( changesXml.getReleaseList() );
+
+        report.setAuthor( changesXml.getAuthor() );
+        report.setTitle( changesXml.getTitle() );
+
         report.setEscapeHTML ( escapeHTML );
 
         // Create a case insensitive version of issueLinkTemplatePerSystem
