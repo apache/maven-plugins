@@ -301,6 +301,21 @@ some POM options.
         }
         return this.doapFileName;
     }
+
+    /**
+     * @return String the configuration of this class.
+     */
+    public String toStringConfiguration()
+    {
+        java.lang.StringBuilder sb = new java.lang.StringBuilder();
+        sb.append( "<artifact>" );
+        sb.append( "<groupId>" ).append( this.groupId ).append( "</groupId>" );
+        sb.append( "<artifactId>" ).append( this.artifactId ).append( "</artifactId>" );
+        sb.append( "<version>" ).append( this.version ).append( "</version>" );
+        sb.append( "</artifact>" );
+
+        return sb.toString();
+    }
             ]]>
           </code>
         </codeSegment>
