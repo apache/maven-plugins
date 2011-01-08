@@ -75,7 +75,7 @@ Configuring the Trac Report
 
  If your Trac is protected by basic authentication then you'll need to add
  the <<<\<tracUser\>>>> and <<<\<tracPassword\>>>> configuration elements
- so that the pluign knows who to authenticate as.
+ so that the plugin knows who to authenticate as.
 
 +-----------------+
 <project>

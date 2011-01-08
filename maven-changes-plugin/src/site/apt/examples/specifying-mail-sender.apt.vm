@@ -30,7 +30,7 @@
 Specifying the Mail Sender
 
  The identify used to send the announcement mail can be customized. It can be
- either a member of the <<<\<developers\>>>> section of the pom or it can be
+ either a member of the <<<\<developers\>>>> section of the POM or it can be
  specified explicitly with the <<<\<mailSender\>>>> parameter of the plugin.
 
 * Specifying the developer to use
@@ -78,7 +78,7 @@ mvn -Dchanges.fromDeveloperId=jsmith announcement-mail
 
 * Specifying the sender explicitly
 
- If you want to specify the sender explicitly and not rely on the <<<developers>>> section of your pom,
+ If you want to specify the sender explicitly and not rely on the <<<developers>>> section of your POM,
  define the <<<mailSender>>> parameter of the plugin.
 
 +-----------------+

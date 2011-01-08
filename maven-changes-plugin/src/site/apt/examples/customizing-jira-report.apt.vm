@@ -181,7 +181,7 @@ Customizing the JIRA Report
 
   Another way to filter and sort issues is to configure the plugin using a JIRA
   syntaxed filter. You can grab this from the URL if you filter and sort issues
-  in the Issue Navigator in JIRA. Just remember that you have to excape the
+  in the Issue Navigator in JIRA. Just remember that you have to escape the
   ampersand (&) characters, when you put them into the xml based POM.
 
   In this example we are filtering out issues with <Fixed> as resolution and
