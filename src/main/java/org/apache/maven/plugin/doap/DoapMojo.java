@@ -442,6 +442,10 @@ public class DoapMojo
 
         // current project
         File outFile = new File( doapFile );
+        if ( !outFile.isAbsolute() )
+        {
+            outFile = new File( project.getBasedir(), doapFile );
+        }
         if ( !doapFile.replaceAll( "\\\\", "/" ).contains( "/" ) )
         {
             File outDir = new File( outputDirectory );
