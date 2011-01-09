@@ -19,8 +19,8 @@ under the License.
 
 <model xmlns="http://modello.codehaus.org/MODELLO/1.1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://modello.codehaus.org/MODELLO/1.1.0 http://modello.codehaus.org/xsd/modello-1.1.0.xsd"
-       xml.namespace="http://maven.apache.org/plugins/maven-remote-resources-plugin/supplemental-model/${version}"
-       xml.schemaLocation="http://maven.apache.org/plugins/maven-remote-resources-plugin/xsd/supplemental-model-${version}.xsd">
+       xml.namespace="http://maven.apache.org/supplemental-model/${version}"
+       xml.schemaLocation="http://maven.apache.org/xsd/supplemental-model-${version}.xsd">
   <id>supplemental-model</id>
   <name>SupplementalDataModel</name>
   <description>Provides access to supplemental POM data models.</description>
