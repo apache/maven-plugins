@@ -305,7 +305,7 @@ some POM options.
     /**
      * @return String the configuration of this class.
      */
-    public String toStringConfiguration()
+    public String toConfiguration()
     {
         java.lang.StringBuilder sb = new java.lang.StringBuilder();
         sb.append( "<artifact>" );

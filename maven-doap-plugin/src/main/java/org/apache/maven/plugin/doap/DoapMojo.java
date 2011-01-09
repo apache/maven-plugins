@@ -396,18 +396,11 @@ public class DoapMojo
     private ExtOptions[] extOptions;
 
     /**
-     * All POM/DOAP error messages.
+     * All warn/error messages for the user.
      *
      * @since 1.1
      */
-    private List<String> errorMessages = new ArrayList<String>();
-
-    /**
-     * All POM/DOAP warn messages.
-     *
-     * @since 1.1
-     */
-    private List<String> warnMessages = new ArrayList<String>();
+    private UserMessages messages = new UserMessages();
 
     // ----------------------------------------------------------------------
     // Public methods
@@ -576,14 +569,14 @@ public class DoapMojo
         DoapUtil.writeStartElement( writer, "rdf", "RDF" );
         if ( Arrays.binarySearch( Locale.getISOLanguages(), lang ) < 0 )
         {
-            throw new MojoExecutionException( "The <doapOptions><lang>" + lang
-                + "</lang></doapOptions> parameter is not a valid ISO language." );
+            messages.addMessage( new String[] { "doapOptions", "lang" }, lang, UserMessages.INVALID_ISO_DATE );
+            throw new MojoExecutionException( messages.getErrorMessages().get( 0 ) );
         }
         writer.addAttribute( "xml:lang", lang );
         if ( StringUtils.isEmpty( doapOptions.getXmlnsNamespaceURI() ) )
         {
-            throw new MojoExecutionException( "The <doapOptions><xmlnsNamespaceURI/></doapOptions>"
-                + " parameter is required." );
+            messages.addMessage( new String[] { "doapOptions", "xmlnsNamespaceURI" }, null, UserMessages.REQUIRED );
+            throw new MojoExecutionException( messages.getErrorMessages().get( 0 ) );
         }
         writer.addAttribute( "xmlns"
                                  + ( StringUtils.isEmpty( doapOptions.getXmlnsPrefix() ) ? "" : ":"
@@ -594,13 +587,12 @@ public class DoapMojo
         {
             if ( StringUtils.isEmpty( asfExtOptions.getXmlnsPrefix() ) )
             {
-                throw new MojoExecutionException( "The <asfExtOptions><xmlnsPrefix/></asfExtOptions>"
-                    + " parameter is required." );
+                messages.addMessage( new String[] { "doapOptions", "xmlnsPrefix" }, null, UserMessages.REQUIRED );
+                throw new MojoExecutionException( messages.getErrorMessages().get( 0 ) );
             }
             if ( StringUtils.isEmpty( asfExtOptions.getXmlnsNamespaceURI() ) )
             {
-                throw new MojoExecutionException( "The <asfExtOptions><xmlnsNamespaceURI/></asfExtOptions>"
-                    + " parameter is required." );
+                messages.addMessage( new String[] { "doapOptions", "xmlnsNamespaceURI" }, null, UserMessages.REQUIRED );
             }
             writer.addAttribute( "xmlns"
                                      + ( StringUtils.isEmpty( asfExtOptions.getXmlnsPrefix() ) ? "" : ":"
@@ -612,13 +604,15 @@ public class DoapMojo
             {
                 if ( StringUtils.isEmpty( extOption.getXmlnsPrefix() ) )
                 {
-                    throw new MojoExecutionException( "The <extOptions><extOption><xmlnsPrefix/></extOption>"
-                        + "</extOptions> parameter is required." );
+                    messages.addMessage( new String[] { "extOptions", "extOption", "xmlnsPrefix" }, null,
+                                         UserMessages.REQUIRED );
+                    throw new MojoExecutionException( messages.getErrorMessages().get( 0 ) );
                 }
                 if ( StringUtils.isEmpty( extOption.getXmlnsNamespaceURI() ) )
                 {
-                    throw new MojoExecutionException( "The <extOptions><extOption><xmlnsNamespaceURI/></extOption>"
-                        + "</extOptions> parameter is required." );
+                    messages.addMessage( new String[] { "extOptions", "extOption", "xmlnsNamespaceURI" }, null,
+                                         UserMessages.REQUIRED );
+                    throw new MojoExecutionException( messages.getErrorMessages().get( 0 ) );
                 }
                 writer.addAttribute( "xmlns"
                                          + ( StringUtils.isEmpty( extOption.getXmlnsPrefix() ) ? "" : ":"
@@ -650,8 +644,8 @@ public class DoapMojo
 
             if ( !added )
             {
-                warnMessages.add( "The project's url from " + artifact.toStringConfiguration()
-                    + " is empty or not valid, using <about/> parameter." );
+                messages.getWarnMessages().add( "The project's url defined from " + artifact.toConfiguration()
+                                                    + " is empty or not valid, using <about/> parameter." );
             }
         }
 
@@ -667,13 +661,15 @@ public class DoapMojo
                 }
                 catch ( MalformedURLException e )
                 {
-                    errorMessages.add( "The <about/> parameter is not a valid URL." );
+                    messages.addMessage( new String[] { "about" }, null, UserMessages.INVALID_URL );
                 }
+                added = true;
             }
-            else
-            {
-                errorMessages.add( "The <about/> parameter is required." );
-            }
+        }
+
+        if ( !added )
+        {
+            messages.addMessage( new String[] { "about" }, null, UserMessages.RECOMMENDED );
         }
 
         // name
@@ -747,7 +743,8 @@ public class DoapMojo
         List<Contributor> developers = project.getDevelopers();
         if ( developers == null || developers.isEmpty() )
         {
-            addPomMessage( "developers" );
+            messages.addMessage( new String[] { "project", "developers" }, null,
+                                 UserMessages.REQUIRED_BY_ASF_OR_RECOMMENDED );
         }
         else
         {
@@ -785,18 +782,18 @@ public class DoapMojo
             throw new MojoExecutionException( "Error when closing the writer.", e );
         }
 
-        if ( !warnMessages.isEmpty() )
+        if ( !messages.getWarnMessages().isEmpty() )
         {
-            for ( String warn : warnMessages )
+            for ( String warn : messages.getWarnMessages() )
             {
                 getLog().warn( warn );
             }
         }
 
-        if ( !errorMessages.isEmpty() )
+        if ( !messages.getErrorMessages().isEmpty() )
         {
             getLog().error( "" );
-            for ( String error : errorMessages )
+            for ( String error : messages.getErrorMessages() )
             {
                 getLog().error( error );
             }
@@ -839,7 +836,7 @@ public class DoapMojo
         String name = interpolate( doapOptions.getName(), project, settings );
         if ( StringUtils.isEmpty( name ) )
         {
-            addDoapMessage( "name" );
+            messages.addMessage( new String[] { "doapOptions", "name" }, null, UserMessages.REQUIRED_BY_ASF_OR_RECOMMENDED );
             return;
         }
 
@@ -869,7 +866,8 @@ public class DoapMojo
         String description = interpolate( doapOptions.getDescription(), project, settings );
         if ( StringUtils.isEmpty( description ) )
         {
-            addDoapMessage( "description" );
+            messages.addMessage( new String[] { "doapOptions", "description" }, null,
+                                 UserMessages.REQUIRED_BY_ASF_OR_RECOMMENDED );
         }
         else
         {
@@ -882,7 +880,8 @@ public class DoapMojo
         String shortdesc = interpolate( doapOptions.getShortdesc(), project, settings );
         if ( StringUtils.isEmpty( shortdesc ) )
         {
-            addDoapMessage( "shortdesc" );
+            messages.addMessage( new String[] { "doapOptions", "shortdesc" }, null,
+                                 UserMessages.REQUIRED_BY_ASF_OR_RECOMMENDED );
             return;
         }
         if ( description.equals( shortdesc ) )
@@ -891,7 +890,8 @@ public class DoapMojo
             String sentence = StringUtils.split( shortdesc, "." )[0];
             if ( StringUtils.split( sentence, " " ).length > 10 )
             {
-                addDoapMessage( "shortdesc" );
+                messages.addMessage( new String[] { "doapOptions", "shortdesc" }, null,
+                                     UserMessages.REQUIRED_BY_ASF_OR_RECOMMENDED );
                 return;
             }
             if ( !addComment )
@@ -920,7 +920,8 @@ public class DoapMojo
         String created = interpolate( doapOptions.getCreated(), project, settings );
         if ( StringUtils.isEmpty( created ) )
         {
-            addDoapMessage( "created" );
+            messages.addMessage( new String[] { "doapOptions", "created" }, null,
+                                 UserMessages.REQUIRED_BY_ASF_OR_RECOMMENDED );
             return;
         }
 
@@ -930,8 +931,7 @@ public class DoapMojo
         }
         catch ( ParseException e )
         {
-            errorMessages.add( "The <doapOptions><created>" + created
-                + "</created></doapOptions> parameter should be in YYYY-MM-DD." );
+            messages.addMessage( new String[] { "doapOptions", "created" }, null, UserMessages.INVALID_DATE );
             return;
         }
 
@@ -952,7 +952,8 @@ public class DoapMojo
         String homepage = interpolate( doapOptions.getHomepage(), project, settings );
         if ( StringUtils.isEmpty( homepage ) )
         {
-            addDoapMessage( "homepage" );
+            messages.addMessage( new String[] { "doapOptions", "homepage" }, null,
+                                 UserMessages.REQUIRED_BY_ASF_OR_RECOMMENDED );
         }
         else
         {
@@ -965,8 +966,7 @@ public class DoapMojo
             }
             catch ( MalformedURLException e )
             {
-                errorMessages.add( "The <doapOptions><homepage>" + homepage
-                    + "</homepage></doapOptions> parameter is not a valid URL." );
+                messages.addMessage( new String[] { "doapOptions", "homepage" }, homepage, UserMessages.INVALID_URL );
             }
         }
 
@@ -987,8 +987,7 @@ public class DoapMojo
             }
             catch ( MalformedURLException e )
             {
-                errorMessages.add( "The <doapOptions><oldHomepage>" + oldHomepage
-                    + "</oldHomepage></doapOptions> parameter is not a valid URL." );
+                messages.addMessage( new String[] { "doapOptions", "oldHomepage" }, oldHomepage, UserMessages.INVALID_URL );
             }
         }
     }
@@ -1005,7 +1004,8 @@ public class DoapMojo
     {
         if ( StringUtils.isEmpty( doapOptions.getProgrammingLanguage() ) && StringUtils.isEmpty( language ) )
         {
-            addDoapMessage( "programmingLanguage" );
+            messages.addMessage( new String[] { "doapOptions", "programmingLanguage" }, null,
+                                 UserMessages.REQUIRED_BY_ASF_OR_RECOMMENDED );
             return;
         }
 
@@ -1013,7 +1013,9 @@ public class DoapMojo
         String comment = "Programming language.";
         if ( StringUtils.isNotEmpty( language ) ) // backward compatible
         {
-            getLog().warn( "The <language/> parameter is deprecated, please use <doapOptions><programmingLanguage/></doapOptions> parameter instead of." );
+            getLog().warn( "The <language/> parameter is deprecated, please use "
+                               + messages.toConfiguration( new String[] { "doapOptions", "programmingLanguage" }, null )
+                               + " parameter instead of." );
 
             language = language.trim();
 
@@ -1022,9 +1024,11 @@ public class DoapMojo
                 String asfLanguage = ASFExtOptionsUtil.getProgrammingLanguageSupportedByASF( language );
                 if ( asfLanguage == null )
                 {
-                    errorMessages.add( "The deprecated <language>" + language
-                        + "</language> parameter is not supported by ASF. Should be one of "
-                        + Arrays.toString( ASFExtOptionsUtil.PROGRAMMING_LANGUAGES ) );
+                    messages.getErrorMessages().add( "The deprecated "
+                                                         + messages.toConfiguration( new String[] { "language" },
+                                                                                     language )
+                                                         + " parameter is not supported by ASF. Should be one of "
+                                                         + Arrays.toString( ASFExtOptionsUtil.PROGRAMMING_LANGUAGES ) );
                 }
                 else
                 {
@@ -1054,9 +1058,12 @@ public class DoapMojo
                     String asfLanguage = ASFExtOptionsUtil.getProgrammingLanguageSupportedByASF( language );
                     if ( asfLanguage == null )
                     {
-                        errorMessages.add( "The <doapOptions><programmingLanguage>" + language
-                            + "</programmingLanguage></doapOptions> parameter is not supported by ASF. "
-                            + "Should be one of " + Arrays.toString( ASFExtOptionsUtil.PROGRAMMING_LANGUAGES ) );
+                        messages.getErrorMessages().add( "The "
+                                                             + messages.toConfiguration( new String[] { "doapOptions",
+                                                                 "programmingLanguage" }, language )
+                                                             + " parameter is not supported by ASF. "
+                                                             + "Should be one of "
+                                                             + Arrays.toString( ASFExtOptionsUtil.PROGRAMMING_LANGUAGES ) );
                     }
                     else
                     {
@@ -1093,7 +1100,8 @@ public class DoapMojo
     {
         if ( StringUtils.isEmpty( doapOptions.getCategory() ) && StringUtils.isEmpty( category ) )
         {
-            addDoapMessage( "category" );
+            messages.addMessage( new String[] { "doapOptions", "category" }, null,
+                                 UserMessages.REQUIRED_BY_ASF_OR_RECOMMENDED );
             return;
         }
 
@@ -1102,7 +1110,9 @@ public class DoapMojo
         String comment = "A category of project.";
         if ( StringUtils.isNotEmpty( category ) ) // backward compatible
         {
-            getLog().warn( "The <category/> parameter is deprecated, please use <doapOptions><category/></doapOptions> parameter instead of." );
+            getLog().warn( "The <category/> parameter is deprecated, please use "
+                               + messages.toConfiguration( new String[] { "doapOptions", "category" }, null )
+                               + " parameter instead of." );
 
             category = category.trim();
 
@@ -1111,9 +1121,11 @@ public class DoapMojo
                 String asfCategory = ASFExtOptionsUtil.getCategorySupportedByASF( category );
                 if ( asfCategory == null )
                 {
-                    errorMessages.add( "The deprecated <category>" + category
-                        + "</category> parameter is not supported by ASF. Should be one of "
-                        + Arrays.toString( ASFExtOptionsUtil.CATEGORIES ) );
+                    messages.getErrorMessages().add( "The deprecated "
+                                                         + messages.toConfiguration( new String[] { "category" },
+                                                                                     category )
+                                                         + " parameter is not supported by ASF. Should be one of "
+                                                         + Arrays.toString( ASFExtOptionsUtil.CATEGORIES ) );
                 }
                 else
                 {
@@ -1143,9 +1155,11 @@ public class DoapMojo
                     String asfCategory = ASFExtOptionsUtil.getCategorySupportedByASF( category );
                     if ( asfCategory == null )
                     {
-                        errorMessages.add( "The <doapOptions><category>" + category
-                            + "</category></doapOptions> parameter is not supported by ASF. Should be one of "
-                            + Arrays.toString( ASFExtOptionsUtil.CATEGORIES ) );
+                        messages.getErrorMessages().add( "The "
+                                                             + messages.toConfiguration( new String[] { "doapOptions",
+                                                                 "category" }, category )
+                                                             + " parameter is not supported by ASF. Should be one of "
+                                                             + Arrays.toString( ASFExtOptionsUtil.CATEGORIES ) );
                     }
                     else
                     {
@@ -1184,7 +1198,8 @@ public class DoapMojo
         String downloadPage = interpolate( doapOptions.getDownloadPage(), project, settings );
         if ( StringUtils.isEmpty( downloadPage ) )
         {
-            addDoapMessage( "downloadPage" );
+            messages.addMessage( new String[] { "doapOptions", "downloadPage" }, null,
+                                 UserMessages.REQUIRED_BY_ASF_OR_RECOMMENDED );
             return;
         }
 
@@ -1197,8 +1212,7 @@ public class DoapMojo
         }
         catch ( MalformedURLException e )
         {
-            errorMessages.add( "The <doapOptions><downloadPage>" + downloadPage
-                + "</downloadPage></doapOptions> parameter is not a valid URL." );
+            messages.addMessage( new String[] { "doapOptions", "downloadPage" }, downloadPage, UserMessages.INVALID_URL );
         }
 
         if ( StringUtils.isNotEmpty( doapOptions.getDownloadMirror() ) )
@@ -1223,8 +1237,8 @@ public class DoapMojo
                 }
                 catch ( MalformedURLException e )
                 {
-                    errorMessages.add( "The <doapOptions><downloadMirror>" + downloadMirror
-                        + "</downloadMirror></doapOptions> parameter is not a valid URL." );
+                    messages.addMessage( new String[] { "doapOptions", "downloadMirror" }, downloadMirror,
+                                         UserMessages.INVALID_URL );
                 }
             }
         }
@@ -1273,8 +1287,7 @@ public class DoapMojo
         }
         catch ( MalformedURLException e )
         {
-            errorMessages.add( "The <doapOptions><screenshots>" + screenshots
-                + "</screenshots></doapOptions> parameter is not a valid URL." );
+            messages.addMessage( new String[] { "doapOptions", "screenshots" }, screenshots, UserMessages.INVALID_URL );
             return;
         }
 
@@ -1303,7 +1316,7 @@ public class DoapMojo
         }
         catch ( MalformedURLException e )
         {
-            errorMessages.add( "The <doapOptions><wiki>" + wiki + "</wiki></doapOptions> parameter is not a valid URL." );
+            messages.addMessage( new String[] { "doapOptions", "wiki" }, wiki, UserMessages.INVALID_URL );
             return;
         }
 
@@ -1322,7 +1335,7 @@ public class DoapMojo
     {
         if ( project.getLicenses() == null || project.getLicenses().isEmpty() )
         {
-            addPomMessage( "licenses" );
+            messages.addMessage( new String[] { "project", "licenses" }, null, UserMessages.REQUIRED_BY_ASF_OR_RECOMMENDED );
             return;
         }
 
@@ -1347,8 +1360,8 @@ public class DoapMojo
             }
             catch ( MalformedURLException e )
             {
-                errorMessages.add( "The POM <project><licenses><license><url>" + licenseUrl
-                    + "</url></license></licenses></project> value is not a valid URL." );
+                messages.addMessage( new String[] { "project", "licenses", "license", "url" }, licenseUrl,
+                                     UserMessages.INVALID_URL );
             }
         }
     }
@@ -1364,7 +1377,8 @@ public class DoapMojo
     {
         if ( project.getIssueManagement() == null || StringUtils.isEmpty( project.getIssueManagement().getUrl() ) )
         {
-            addPomMessage( "issueManagement" );
+            messages.addMessage( new String[] { "project", "issueManagement" }, null,
+                                 UserMessages.REQUIRED_BY_ASF_OR_RECOMMENDED );
             return;
         }
 
@@ -1375,8 +1389,8 @@ public class DoapMojo
         }
         catch ( MalformedURLException e )
         {
-            errorMessages.add( "The POM <project><issueManagement><url>" + issueManagementUrl
-                + "</url></issueManagement></project> value is not a valid URL." );
+            messages.addMessage( new String[] { "project", "issueManagement", "url" }, issueManagementUrl,
+                                 UserMessages.INVALID_URL );
             return;
         }
 
@@ -1397,7 +1411,8 @@ public class DoapMojo
         String ml = interpolate( doapOptions.getMailingList(), project, settings );
         if ( StringUtils.isEmpty( ml ) )
         {
-            addDoapMessage( "mailingList" );
+            messages.addMessage( new String[] { "doapOptions", "mailingList" }, null,
+                                 UserMessages.REQUIRED_BY_ASF_OR_RECOMMENDED );
             return;
         }
 
@@ -1410,8 +1425,7 @@ public class DoapMojo
         }
         catch ( MalformedURLException e )
         {
-            errorMessages.add( "The <doapOptions><mailingList>" + ml
-                + "</mailingList></doapOptions> value is not a valid URL." );
+            messages.addMessage( new String[] { "project", "mailingList" }, ml, UserMessages.INVALID_URL );
         }
     }
 
@@ -1459,7 +1473,8 @@ public class DoapMojo
 
         if ( metadata.getMetadata().getVersioning() == null )
         {
-            warnMessages.add( "No versioning was found. Ignored DOAP <release/> tag." );
+            messages.getWarnMessages().add( "No versioning was found for " + artifact.getGroupId() + ":" + artifact.getArtifactId()
+                                                + ". Ignored DOAP <release/> tag." );
             return;
         }
 
@@ -1559,7 +1574,7 @@ public class DoapMojo
         Scm scm = project.getScm();
         if ( scm == null )
         {
-            addPomMessage( "scm" );
+            messages.addMessage( new String[] { "project", "scm" }, null, UserMessages.REQUIRED_BY_ASF_OR_RECOMMENDED );
             return;
         }
 
@@ -1787,8 +1802,8 @@ public class DoapMojo
         // Name is required to write doap
         if ( StringUtils.isEmpty( name ) )
         {
-            errorMessages.add( "The POM <project><developers|contributors><developer|contributor><name/>"
-                + "</developer|contributor></developers|contributors></project> value is missing." );
+            messages.addMessage( new String[] { "project", "developers|contributors", "developer|contributor", "name" },
+                                 null, UserMessages.REQUIRED );
             return;
         }
 
@@ -1816,9 +1831,8 @@ public class DoapMojo
             }
             else
             {
-                warnMessages.add( "The POM <project><developers|contributors><developer|contributor><email>"
-                    + email
-                    + "</email></developer|contributor></developers|contributors></project> value is not a valid email." );
+                messages.addMessage( new String[] { "project", "developers|contributors", "developer|contributor",
+                    "email" }, null, UserMessages.INVALID_EMAIL );
             }
         }
         if ( StringUtils.isNotEmpty( organization ) && StringUtils.isNotEmpty( organizationUrl ) )
@@ -1831,9 +1845,8 @@ public class DoapMojo
             }
             catch ( MalformedURLException e )
             {
-                errorMessages.add( "The POM <project><developers|contributors><developer|contributor><organizationUrl>"
-                    + organizationUrl
-                    + "</organizationUrl></developer|contributor></developers|contributors></project> value is not a valid URL." );
+                messages.addMessage( new String[] { "project", "developers|contributors", "developer|contributor",
+                    "organizationUrl" }, organizationUrl, UserMessages.INVALID_URL );
             }
         }
         if ( StringUtils.isNotEmpty( homepage ) )
@@ -1846,8 +1859,8 @@ public class DoapMojo
             }
             catch ( MalformedURLException e )
             {
-                errorMessages.add( "The POM <project><developers|contributors><developer|contributor><url>" + homepage
-                    + "</url></developer|contributor></developers|contributors></project> value is not a valid URL." );
+                messages.addMessage( new String[] { "project", "developers|contributors", "developer|contributor",
+                    "homepage" }, homepage, UserMessages.INVALID_URL );
             }
         }
         writer.endElement(); // foaf:Person
@@ -1914,7 +1927,7 @@ public class DoapMojo
         }
         else
         {
-            errorMessages.add( "A <asfExtOptions><pmc/></asfExtOptions> parameter is required by ASF." );
+            messages.addMessage( new String[] { "asfExtOptions", "pmc" }, null, UserMessages.REQUIRED_BY_ASF );
         }
 
         // asfext:name
@@ -1929,7 +1942,7 @@ public class DoapMojo
         }
         else
         {
-            errorMessages.add( "A <asfExtOptions><name/></asfExtOptions> parameter is required by ASF." );
+            messages.addMessage( new String[] { "asfExtOptions", "name" }, null, UserMessages.REQUIRED_BY_ASF );
         }
 
         String homepage = interpolate( doapOptions.getHomepage(), project, settings );
@@ -1943,15 +1956,14 @@ public class DoapMojo
             }
             catch ( MalformedURLException e )
             {
-                errorMessages.add( "The <doapOptions><homepage>" + homepage
-                    + "</homepage></doapOptions> parameter is not a valid URL." );
+                messages.addMessage( new String[] { "doapOptions", "homepage" }, homepage, UserMessages.INVALID_URL );
             }
         }
 
         // asfext:charter
         if ( StringUtils.isEmpty( asfExtOptions.getCharter() ) )
         {
-            errorMessages.add( "A <asfExtOptions><charter/></asfExtOptions> parameter is required by ASF." );
+            messages.addMessage( new String[] { "asfExtOptions", "charter" }, null, UserMessages.REQUIRED_BY_ASF );
         }
         else
         {
@@ -1983,7 +1995,7 @@ public class DoapMojo
             }
             else
             {
-                errorMessages.add( "A <asfExtOptions><chair/></asfExtOptions> parameter is required by ASF." );
+                messages.addMessage( new String[] { "asfExtOptions", "chair" }, null, UserMessages.REQUIRED_BY_ASF );
             }
         }
 
@@ -2026,43 +2038,46 @@ public class DoapMojo
 
             if ( StringUtils.isEmpty( standard.getTitle() ) )
             {
-                errorMessages.add( "A <asfExtOptions><standards><title/></standards></asfExtOptions> parameter is required by ASF." );
+                messages.addMessage( new String[] { "asfExtOptions", "standards", "title" }, null,
+                                     UserMessages.REQUIRED_BY_ASF );
             }
             else
             {
-                DoapUtil.writeElement( writer, asfExtOptions.getXmlnsPrefix(), "title", standard.getTitle() );
+                DoapUtil.writeElement( writer, asfExtOptions.getXmlnsPrefix(), "title", standard.getTitle().trim() );
             }
 
             if ( StringUtils.isEmpty( standard.getBody() ) )
             {
-                errorMessages.add( "A <asfExtOptions><standards><body/></standards></asfExtOptions> parameter is required by ASF." );
+                messages.addMessage( new String[] { "asfExtOptions", "standards", "body" }, null,
+                                     UserMessages.REQUIRED_BY_ASF );
             }
             else
             {
-                DoapUtil.writeElement( writer, asfExtOptions.getXmlnsPrefix(), "body", standard.getBody() );
+                DoapUtil.writeElement( writer, asfExtOptions.getXmlnsPrefix(), "body", standard.getBody().trim() );
             }
 
             if ( StringUtils.isEmpty( standard.getId() ) )
             {
-                errorMessages.add( "A <asfExtOptions><standards><id/></standards></asfExtOptions> parameter is required by ASF." );
+                messages.addMessage( new String[] { "asfExtOptions", "standards", "id" }, null,
+                                     UserMessages.REQUIRED_BY_ASF );
             }
             else
             {
-                DoapUtil.writeElement( writer, asfExtOptions.getXmlnsPrefix(), "id", standard.getId() );
+                DoapUtil.writeElement( writer, asfExtOptions.getXmlnsPrefix(), "id", standard.getId().trim() );
             }
 
             if ( StringUtils.isNotEmpty( standard.getUrl() ) )
             {
                 try
                 {
-                    new URL( standard.getUrl() );
+                    new URL( standard.getUrl().trim() );
 
-                    DoapUtil.writeElement( writer, asfExtOptions.getXmlnsPrefix(), "url", standard.getUrl() );
+                    DoapUtil.writeElement( writer, asfExtOptions.getXmlnsPrefix(), "url", standard.getUrl().trim() );
                 }
                 catch ( MalformedURLException e )
                 {
-                    errorMessages.add( "The <asfExtOptions><standards><url>" + standard.getUrl()
-                        + "<url></standards></asfExtOptions> parameter is not a valid URL." );
+                    messages.addMessage( new String[] { "asfExtOptions", "standards", "url" },
+                                         standard.getUrl().trim(), UserMessages.INVALID_URL );
                 }
             }
 
@@ -2110,7 +2125,8 @@ public class DoapMojo
                 }
                 catch ( MalformedURLException e )
                 {
-                    errorMessages.add( "The organization URL " + organization.getUrl() + " is not a valid URL." );
+                    messages.errorMessages.add( "The organization URL " + organization.getUrl()
+                        + " is not a valid URL." );
                 }
             }
             List<String> members = organization.getMembers();
@@ -2161,7 +2177,7 @@ public class DoapMojo
         }
         catch ( MalformedURLException e )
         {
-            errorMessages.add( "The <doapOptions><blog>" + blog + "</blog></doapOptions> parameter is not a valid URL." );
+            messages.addMessage( new String[] { "doapOptions", "blog" }, blog, UserMessages.INVALID_URL );
             return;
         }
 
@@ -2229,8 +2245,7 @@ public class DoapMojo
 
             if ( Arrays.binarySearch( Locale.getISOLanguages(), language ) < 0 )
             {
-                errorMessages.add( "The <doapOptions><languages>" + language
-                    + "</languages></doapOptions> parameter is not a valid ISO language." );
+                messages.addMessage( new String[] { "doapOptions", "languages" }, language, UserMessages.INVALID_ISO_DATE );
                 continue;
             }
 
@@ -2264,8 +2279,8 @@ public class DoapMojo
         }
         catch ( MalformedURLException e )
         {
-            errorMessages.add( "The <doapOptions><serviceEndpoint>" + serviceEndpoint
-                + "</serviceEndpoint></doapOptions> parameter is not a valid URL." );
+            messages.addMessage( new String[] { "doapOptions", "serviceEndpoint" }, serviceEndpoint,
+                                 UserMessages.INVALID_URL );
             return;
         }
 
@@ -2367,40 +2382,6 @@ public class DoapMojo
             @SuppressWarnings( "unchecked" )
             Map<String, String> map = extOption.getExtensions();
             writeExtra( writer, project, "Other extension vocabulary.", map, extOption.getXmlnsPrefix() );
-        }
-    }
-
-    /**
-     * @param tag not null
-     * @since 1.1
-     */
-    private void addDoapMessage( String tag )
-    {
-        if ( asfExtOptions.isIncluded() )
-        {
-            errorMessages.add( "A <doapOptions><" + tag + "/></doapOptions> parameter is required by ASF." );
-        }
-        else
-        {
-            warnMessages.add( "No <doapOptions><" + tag
-                + "/></doapOptions> parameter defined, it is highly recommended to have one." );
-        }
-    }
-
-    /**
-     * @param tag not null
-     * @since 1.1
-     */
-    private void addPomMessage( String tag )
-    {
-        if ( asfExtOptions.isIncluded() )
-        {
-            errorMessages.add( "A POM <project><" + tag + "/></project> value is required by ASF." );
-        }
-        else
-        {
-            warnMessages.add( "No POM <project><" + tag
-                + "/></project> value defined, it is highly recommended to have one." );
         }
     }
 
@@ -2546,5 +2527,175 @@ public class DoapMojo
                 return contributor1.getName().compareTo( contributor2.getName() );
             }
         } );
+    }
+
+    /**
+     * Encapsulates all user messages.
+     *
+     * @since 1.1
+     */
+    private class UserMessages
+    {
+        public static final int REQUIRED = 10;
+
+        public static final int REQUIRED_BY_ASF_OR_RECOMMENDED = 11;
+
+        public static final int REQUIRED_BY_ASF = 12;
+
+        public static final int RECOMMENDED = 20;
+
+        public static final int INVALID_URL = 30;
+
+        public static final int INVALID_DATE = 31;
+
+        public static final int INVALID_ISO_DATE = 32;
+
+        public static final int INVALID_EMAIL = 33;
+
+        private List<String> errorMessages = new ArrayList<String>();
+
+        private List<String> warnMessages = new ArrayList<String>();
+
+        /**
+         * @return the error messages
+         */
+        public List<String> getErrorMessages()
+        {
+            return errorMessages;
+        }
+
+        /**
+         * @return the warn messages
+         */
+        public List<String> getWarnMessages()
+        {
+            return warnMessages;
+        }
+
+        /**
+         * @param tags not null
+         * @param value could be null
+         * @param errorId positive id
+         */
+        protected void addMessage( String[] tags, String value, int errorId )
+        {
+            if ( tags == null )
+            {
+                throw new IllegalArgumentException( "tags is required" );
+            }
+
+            boolean isPom = false;
+            if ( tags[0].equalsIgnoreCase( "project" ) )
+            {
+                isPom = true;
+            }
+            switch ( errorId )
+            {
+                case REQUIRED:
+                    errorMessages.add( "A " + toConfiguration( tags, null ) + "  parameter is required." );
+                    break;
+                case REQUIRED_BY_ASF_OR_RECOMMENDED:
+                    if ( isPom )
+                    {
+                        if ( asfExtOptions.isIncluded() )
+                        {
+                            errorMessages.add( "A POM " + toConfiguration( tags, null ) + " value is required by ASF." );
+                        }
+                        else
+                        {
+                            warnMessages.add( "No POM " + toConfiguration( tags, null )
+                                + " value is defined, it is highly recommended to have one." );
+                        }
+                    }
+                    else
+                    {
+                        if ( asfExtOptions.isIncluded() )
+                        {
+                            errorMessages.add( "A " + toConfiguration( tags, null ) + " parameter is required by ASF." );
+                        }
+                        else
+                        {
+                            warnMessages.add( "No " + toConfiguration( tags, null )
+                                + " parameter defined, it is highly recommended to have one." );
+                        }
+                    }
+                    break;
+                case REQUIRED_BY_ASF:
+                    if ( isPom )
+                    {
+                        errorMessages.add( "A POM " + toConfiguration( tags, null ) + " value is required by ASF." );
+                    }
+                    else
+                    {
+                        errorMessages.add( "A " + toConfiguration( tags, null ) + " parameter is required by ASF." );
+                    }
+                    break;
+                case RECOMMENDED:
+                    warnMessages.add( "No " + toConfiguration( tags, null )
+                        + " parameter defined, it is highly recommended to have one." );
+                    break;
+                case INVALID_URL:
+                    if ( isPom )
+                    {
+                        errorMessages.add( "The POM " + toConfiguration( tags, value ) + " value is not a valid URL." );
+                    }
+                    else
+                    {
+                        errorMessages.add( "The " + toConfiguration( tags, value ) + " parameter is not a valid URL." );
+                    }
+                    break;
+                case INVALID_DATE:
+                    errorMessages.add( "The " + toConfiguration( tags, value ) + " parameter should be in YYYY-MM-DD." );
+                    break;
+                case INVALID_EMAIL:
+                    errorMessages.add( "The POM " + toConfiguration( tags, value ) + " value is not a valid email." );
+                    break;
+                case INVALID_ISO_DATE:
+                    errorMessages.add( "The " + toConfiguration( tags, value )
+                        + " parameter is not a valid ISO language." );
+                    break;
+                default:
+                    throw new IllegalArgumentException( "Unknown errorId=" + errorId );
+            }
+        }
+
+        /**
+         * @param tags not null
+         * @param value of the last tag, could be null
+         * @return the XML configuration defined in tags.
+         */
+        protected String toConfiguration( String[] tags, String value )
+        {
+            if ( tags == null )
+            {
+                throw new IllegalArgumentException( "tags is required" );
+            }
+
+            StringBuffer sb = new StringBuffer();
+            for ( int i = 0; i < tags.length; i++ )
+            {
+                if ( i == tags.length - 1 && StringUtils.isEmpty( value ) )
+                {
+                    sb.append( "<" ).append( tags[i] ).append( "/>" );
+                }
+                else
+                {
+                    sb.append( "<" ).append( tags[i] ).append( ">" );
+                }
+            }
+            if ( StringUtils.isNotEmpty( value ) )
+            {
+                sb.append( value );
+            }
+            for ( int i = tags.length - 1; i >= 0; i-- )
+            {
+                if ( !( i == tags.length - 1 && StringUtils.isEmpty( value ) ) )
+                {
+                    sb.append( "</" ).append( tags[i] ).append( ">" );
+                }
+            }
+
+            return sb.toString();
+        }
     }
 }
