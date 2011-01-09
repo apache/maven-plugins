@@ -118,6 +118,7 @@ import java.util.TreeMap;
  *
  * @goal process
  * @phase generate-resources
+ * @threadSafe
  */
 // NOTE: Removed the following in favor of maven-artifact-resolver library, for MRRESOURCES-41
 // If I leave this intact, interdependent projects within the reactor that haven't been built

@@ -38,6 +38,7 @@ import java.util.List;
  *
  * @goal bundle
  * @phase generate-resources
+ * @threadSafe
  */
 public class BundleRemoteResourcesMojo
     extends AbstractMojo
