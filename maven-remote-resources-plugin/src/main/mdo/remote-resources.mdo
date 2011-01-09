@@ -21,7 +21,7 @@ under the License.
        xsi:schemaLocation="http://modello.codehaus.org/MODELLO/1.1.0 http://modello.codehaus.org/xsd/modello-1.1.0.xsd"
        xml.namespace="http://maven.apache.org/plugins/maven-remote-resources-plugin/remote-resources/${version}"
        xml.schemaLocation="http://maven.apache.org/plugins/maven-remote-resources-plugin/xsd/remote-resources-${version}.xsd">
-  <id>remoteResourcesBundle</id>
+  <id>remote-resources</id>
   <name>RemoteResourcesBundle</name>
   <description><![CDATA[
     A bundle of remote resources.

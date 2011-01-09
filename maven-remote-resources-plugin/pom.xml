@@ -207,11 +207,38 @@ under the License.
         <version>1.1</version>
         <executions>
           <execution>
+            <id>generate-xsd-site-remote-resources</id>
+            <phase>pre-site</phase>
+            <goals>
+              <goal>xsd</goal>
+            </goals>
+            <configuration>
+              <version>1.1.0</version>
+              <outputDirectory>${project.reporting.outputDirectory}/xsd</outputDirectory>
+              <models>
+                <model>src/main/mdo/remote-resources.mdo</model>
+              </models>
+            </configuration>
+          </execution>
+          <execution>
+            <id>generate-xsd-site-supplemental-model</id>
+            <phase>pre-site</phase>
+            <goals>
+              <goal>xsd</goal>
+            </goals>
+            <configuration>
+              <version>1.0.0</version>
+              <outputDirectory>${project.reporting.outputDirectory}/xsd</outputDirectory>
+              <models>
+                <model>src/main/mdo/supplemental-model.mdo</model>
+              </models>
+            </configuration>
+          </execution>
+          <execution>
             <id>site-docs-remote-resources</id>
             <phase>pre-site</phase>
             <goals>
               <goal>xdoc</goal>
-              <goal>xsd</goal>
             </goals>
             <configuration>
               <version>1.1.0</version>
@@ -225,7 +252,6 @@ under the License.
             <phase>pre-site</phase>
             <goals>
               <goal>xdoc</goal>
-              <goal>xsd</goal>
             </goals>
             <configuration>
               <version>1.0.0</version>
