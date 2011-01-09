@@ -257,6 +257,42 @@ public class RemoteResourcesMojoTest
         assertTrue( data.indexOf( "default-filterbundles" ) != -1 );
     }
 
+    public void testFilteredBundlesWithProjectProperties()
+      throws Exception
+    {
+        final MavenProjectResourcesStub project = createTestProject( "default-filterbundles-two" );
+        final ProcessRemoteResourcesMojo mojo =
+            lookupProcessMojoWithSettings( project, new String[]{"test-filtered-bundles:test-filtered-bundles:2"} );
+
+        mojo.includeProjectProperties = true;
+        setupDefaultProject( project );
+
+        project.addProperty( "testingPropertyOne", "maven" );
+        project.addProperty( "testingPropertyTwo", "rules" );
+
+        ArtifactRepository repo = (ArtifactRepository) getVariableValueFromObject( mojo, "localRepository" );
+        String path = repo.pathOf( new DefaultArtifact( "test-filtered-bundles", "test-filtered-bundles",
+                                                        VersionRange.createFromVersion( "2" ), null, "jar", "",
+                                                        new DefaultArtifactHandler() ) );
+
+        File file = new File( repo.getBasedir() + "/" + path + ".jar" );
+        file.getParentFile().mkdirs();
+        buildResourceBundle( "default-filterbundles-two-create", null, new String[]{"PROPERTIES.txt.vm"}, file );
+
+        mojo.execute();
+        // executing a second time (example: forked lifecycle) should still work
+        mojo.execute();
+
+        file = (File) getVariableValueFromObject( mojo, "outputDirectory" );
+        file = new File( file, "PROPERTIES.txt" );
+
+        assertTrue( file.exists() );
+
+        String data = FileUtils.fileRead( file );
+        assertTrue( data.indexOf( "maven" ) != -1 );
+        assertTrue( data.indexOf( "rules" ) != -1 );
+    }
+
     protected void buildResourceBundle( String id,
                                        String sourceEncoding,
                                        String resourceNames[],

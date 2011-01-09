@@ -96,6 +96,7 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -301,6 +302,14 @@ public class ProcessRemoteResourcesMojo
     private Map<String, String> properties = new HashMap<String, String>();
 
     /**
+     * Whether to include properties defined in the project when filtering resources.
+     *
+     * @parameter default-value="false"
+     * @since 1.2
+     */
+    protected boolean includeProjectProperties = false;
+    
+    /**
      * The list of resources defined for the project.
      *
      * @parameter expression="${project.resources}"
@@ -477,6 +486,15 @@ public class ProcessRemoteResourcesMojo
         }
         locator.addSearchPath( "url", "" );
         locator.setOutputDirectory( new File( project.getBuild().getDirectory() ) );
+
+        if ( includeProjectProperties )
+        {
+            final Properties projectProperties = project.getProperties();
+            for ( Object key : projectProperties.keySet() )
+            {
+                properties.put( key.toString(), projectProperties.get( key ).toString() );
+            }
+        }
 
         ClassLoader origLoader = Thread.currentThread().getContextClassLoader();
         try
