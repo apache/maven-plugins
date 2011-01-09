@@ -25,7 +25,7 @@ under the License.
   <parent>
     <groupId>org.apache.maven.plugins</groupId>
     <artifactId>maven-plugins</artifactId>
-    <version>17</version>
+    <version>18</version>
   </parent>
 
   <artifactId>maven-remote-resources-plugin</artifactId>
