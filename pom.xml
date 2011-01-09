@@ -38,7 +38,7 @@ under the License.
     a remote repository. The primary use case being satisfied is the consistent
     inclusion of common resources in a large set of projects. Maven projects at
     Apache use this plug-in to satisfy licensing requirements at Apache where
-    each project much include license and notice files for each release.
+    each project must include license and notice files for each release.
   </description>
 
   <prerequisites>
@@ -207,7 +207,7 @@ under the License.
         <version>1.1</version>
         <executions>
           <execution>
-            <id>site-docs</id>
+            <id>site-docs-supplemental-models</id>
             <phase>pre-site</phase>
             <goals>
               <goal>xdoc</goal>
@@ -221,7 +221,7 @@ under the License.
             </configuration>
           </execution>
           <execution>
-            <id>site-docs-supplement</id>
+            <id>site-docs-remote-resources</id>
             <phase>pre-site</phase>
             <goals>
               <goal>xdoc</goal>
@@ -305,9 +305,9 @@ under the License.
                     <goal>test</goal>
                   </goals>
                   <configuration>
-      	            <includes>
-      	              <include>**/IT*.java</include>
-      	            </includes>
+                    <includes>
+                      <include>**/IT*.java</include>
+                    </includes>
                     <systemProperties>
                       <property>
                         <!-- Pass this through to the tests (if set!) to have them pick the right repository -->
@@ -315,14 +315,14 @@ under the License.
                         <value>${project.build.directory}/it-repo</value>
                       </property>
                     </systemProperties>
-      	          </configuration>
-      	        </execution>
-      	      </executions>
-  	        </plugin>
-  	      </plugins>
-  	    </pluginManagement>
-  	    
-  	    <plugins>
+                  </configuration>
+                </execution>
+              </executions>
+            </plugin>
+          </plugins>
+        </pluginManagement>
+
+        <plugins>
           <plugin>
             <artifactId>maven-invoker-plugin</artifactId>
             <version>1.4</version>
