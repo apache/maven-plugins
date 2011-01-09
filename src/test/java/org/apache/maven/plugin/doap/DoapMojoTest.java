@@ -107,6 +107,62 @@ public class DoapMojoTest
     }
 
     /**
+     * @throws Exception if any
+     */
+    public void testLangParameters()
+        throws Exception
+    {
+
+        File pluginXmlFile =
+            new File( getBasedir(), "src/test/resources/unit/doap-configuration/doap-configuration-plugin-config.xml" );
+        DoapMojo mojo = (DoapMojo) lookupMojo( "generate", pluginXmlFile );
+        assertNotNull( "Mojo found.", mojo );
+
+        MavenProject mavenProject = (MavenProject) getVariableValueFromObject( mojo, "project" );
+        assertNotNull( mavenProject );
+
+        // check invalid lang
+        setVariableValueToObject( mojo, "remoteRepositories", mavenProject.getRemoteArtifactRepositories() );
+        setVariableValueToObject( mojo, "lang", "foo" );
+        try
+        {
+            mojo.execute();
+            assertTrue( "No lang checked", false );
+        }
+        catch ( Exception e )
+        {
+            assertTrue( true );
+        }
+    }
+
+    /**
+     * @throws Exception if any
+     */
+    public void testAboutParameter()
+        throws Exception
+    {
+        File pluginXmlFile =
+            new File( getBasedir(), "src/test/resources/unit/doap-configuration/doap-configuration-plugin-config.xml" );
+        DoapMojo mojo = (DoapMojo) lookupMojo( "generate", pluginXmlFile );
+        assertNotNull( "Mojo found.", mojo );
+
+        MavenProject mavenProject = (MavenProject) getVariableValueFromObject( mojo, "project" );
+        assertNotNull( mavenProject );
+
+        // check invalid lang
+        setVariableValueToObject( mojo, "remoteRepositories", mavenProject.getRemoteArtifactRepositories() );
+        setVariableValueToObject( mojo, "about", "foo" );
+        try
+        {
+            mojo.execute();
+        }
+        catch ( Exception e )
+        {
+            assertTrue( true );
+        }
+    }
+
+    /**
      * Verify the generation of a DOAP file from an artifact.
      *
      * @throws Exception if any
@@ -195,7 +251,6 @@ public class DoapMojoTest
         assertTrue( readed.contains( "<asfext:pmc rdf:resource=\"" + mavenProject.getUrl() + "\"/>" ) );
         assertTrue( readed.contains( "<asfext:name>Apache " + mavenProject.getName() + "</asfext:name>" ) );
     }
-
 
     /**
      * Verify the generation of a DOAP file with extra extension.
