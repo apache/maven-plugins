@@ -107,9 +107,9 @@ under the License.
       <version>1.0-alpha-9</version>
     </dependency>
     <dependency>
-      <groupId>velocity</groupId>
-      <artifactId>velocity-dep</artifactId>
-      <version>1.4</version>
+      <groupId>org.apache.velocity</groupId>
+      <artifactId>velocity</artifactId>
+      <version>1.6.4</version>
     </dependency>
     <dependency>
         <groupId>org.apache.maven.shared</groupId>
