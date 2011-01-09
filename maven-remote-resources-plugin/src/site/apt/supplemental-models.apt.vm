@@ -1,9 +1,9 @@
  ------
- Supplementing Missing POM Information - Maven Remote Resources Plugin
+ Supplementing Missing POM Information
  ------
  John Casey
  ------
- 14 September 2009
+ 2011-01-09
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -23,14 +23,14 @@
 ~~ specific language governing permissions and limitations
 ~~ under the License.
 
-Supplementing Missing POM Information - Maven Remote Resources Plugin
+Supplementing Missing POM Information
 
- (<Since 1.0-alpha-5>)
- 
+  <<Note:>> This feature was added in version 1.0-alpha-5.
+
  One of Maven's great strengths is that it allows you, the user, to build directly on the work of
  others with minimal effort. For instance, by adding five lines (or less) to your POM, you can 
  declare a dependency on someone else's library, and instruct Maven to use that library during
- the build for your own project. Since the library's jar is usually accompanied by a POM of its
+ the build for your own project. Since the library's JAR is usually accompanied by a POM of its
  own, your project doesn't need to provide an exhaustive listing of all libraries used by all
  of your direct dependencies. 
  
@@ -42,21 +42,22 @@ Supplementing Missing POM Information - Maven Remote Resources Plugin
  For example, the templates used by many Apache distributions assemble a listing of project
  dependencies according to their organization name (and URL), along with the URL each project's
  website. When dependency POMs are missing this information, the dependency notice file
- that the remote-resources plugin renders can be invalid. 
+ that the Remote Resources Plugin renders can be invalid.
  
  To compensate for incomplete dependency POMs, you can use the supplemental models support, introduced 
- to the remote-resources plugin in version 1.0-alpha-5, and improved in version 1.1.
- 
+ to the Remote Resources Plugin in version 1.0-alpha-5, and improved in version 1.1.
+
+
 * Fixing Incomplete POMs: Using Supplemental Models
 
  For those cases where your project's dependencies don't list organization name, organization URL,
- project URL, or whatever other metadata you require for you legal notice files, the remote-resources
- plugin allows you to configure a series of supplemental models. These models consist of one or more
+ project URL, or whatever other metadata you require for you legal notice files, the Remote Resources
+ Plugin allows you to configure a series of supplemental models. These models consist of one or more
  model files, each of which contains one or more POM fragments that can be merged into existing 
  dependency POMs to supplement the metadata provided there. The plugin uses the key <<<groupId:artifactId>>>
  to match each supplemental model with the dependency POM into which it should be merged.
  
- For example, imagine your project's POM declared the following two dependencies:
+ For example, imagine that your project's POM has declared the following two dependencies:
  
 +---+
     <dependency>
@@ -87,7 +88,7 @@ From: Apache Software Foundation (http://www.apache.org/)
  specific URL (the <<<url>>> element of the POM).
  
  To fix these omissions for the purposes of resource generation, we can simply provide a supplemental-model file that
- contains the missing information. The file, located in <<<src/main/appended-resources/supplemental-models.xml>>>,
+ contains the missing information. The file, located at <<<src/main/appended-resources/supplemental-models.xml>>>,
  would look something like this:
  
 +---+
@@ -115,43 +116,44 @@ From: Apache Software Foundation (http://www.apache.org/)
 </supplementalDataModels>
 +---+
 
- Finally, we tell the remote-resources plugin to use the new supplemental-model file:
+ Finally, we tell the Remote Resources Plugin to use the new supplemental-model file:
  
 +---+
-<plugin>
-  <artifactId>maven-remote-resources-plugin</artifactId>
-  <version>${project.version}</version>
-  [...]
-  
-  <executions>
-    <execution>
-      <id>process-remote-resources</id>
-      <goals>
-        <goal>process</goal>
-      </goals>
-      <configuration>
-        <supplementalModels>
-          <supplementalModel>supplemental-models.xml</supplementalModel>
-        </supplementalModels>
-        [...]
-      </configuration>
-    </execution>
-  </executions>
-</plugin>
+      <plugin>
+        <artifactId>maven-remote-resources-plugin</artifactId>
+        <version>${project.version}</version>
+        <executions>
+          <execution>
+            <id>process-remote-resources</id>
+            <goals>
+              <goal>process</goal>
+            </goals>
+            <configuration>
+              <supplementalModels>
+                <supplementalModel>supplemental-models.xml</supplementalModel>
+              </supplementalModels>
+              [...]
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
 +---+
 
  After re-running the project build, the supplemental information we provided will be merged with the metadata 
  from the dependency POMs, providing enough information to complete the dependencies listing.
 
-* Publishing and Reusing Supplemental Models (<Since 1.1>)
+
+* Publishing and Reusing Supplemental Models
+
+  <<Note:>> This feature was added in version 1.1.
 
  The configuration above is fine for single projects that need to address deficiencies in their dependencies'
  metadata. But what happens when your organization wants to use these same deficient dependencies across multiple
  projects? The configuration we just examined cannot handle reuse of supplemental-model files.
  
- To address this shortcoming, version 1.1 of the remote-resources plugin introduces a new parameter: 
+ To address this shortcoming, version 1.1 of the Remote Resources Plugin introduces a new parameter: 
  <<<supplementalModelArtifacts>>>. When combined with the <<<supplementalModels>>> parameter used above, this new
- parameter allows the remote-resources plugin to resolve artifacts containing supplemental model information, then
+ parameter allows the Remote Resources Plugin to resolve artifacts containing supplemental model information, then
  search those artifacts for the paths given in the <<<supplementalModels>>> listing.
  
  To make the supplemental models above reusable using this mechanism, we first publish them in their own project:
@@ -169,7 +171,7 @@ From: Apache Software Foundation (http://www.apache.org/)
 </project>
 +---+
 
- Note that this is just a simple, unadorned jar artifact. We then move the above POM and supplemental-models.xml file
+ Note that this is just a simple, unadorned JAR artifact. We then move the above POM and <<<supplemental-models.xml>>> file
  into a separate project directory structure:
  
 +---+
@@ -180,37 +182,35 @@ From: Apache Software Foundation (http://www.apache.org/)
             `-- supplemental-models.xml
 +---+
 
- Once we install this new project, we can reference it from the configuration for the remote-resources plugin, 
+ Once we install this new project, we can reference it from the configuration for the Remote Resources Plugin, 
  like this:
  
 +---+
-<plugin>
-  <artifactId>maven-remote-resources-plugin</artifactId>
-  <version>${project.version}</version>
-  [...]
-  
-  <executions>
-    <execution>
-      <id>process-remote-resources</id>
-      <goals>
-        <goal>process</goal>
-      </goals>
-      <configuration>
-        <!-- reference the supplemental-model artifact from above. -->
-        <supplementalModelArtifacts>
-          <supplementalModelArtifact>org.myco:dependency-resource-supplement:1</supplementalModelArtifact>
-        </supplementalModelArtifacts>
-        
-        <!-- specify the path, relative to the jar root, where the supplemental model file is located -->
-        <supplementalModels>
-          <supplementalModel>supplemental-models.xml</supplementalModel>
-        </supplementalModels>
-        [...]
-      </configuration>
-    </execution>
-  </executions>
-</plugin>
+      <plugin>
+        <artifactId>maven-remote-resources-plugin</artifactId>
+        <version>${project.version}</version>
+        <executions>
+          <execution>
+            <id>process-remote-resources</id>
+            <goals>
+              <goal>process</goal>
+            </goals>
+            <configuration>
+              <!-- Reference the supplemental-model artifact from above -->
+              <supplementalModelArtifacts>
+                <supplementalModelArtifact>org.myco:dependency-resource-supplement:1</supplementalModelArtifact>
+              </supplementalModelArtifacts>
+
+              <!-- Specify the path, relative to the JAR root, where the supplemental model file is located -->
+              <supplementalModels>
+                <supplementalModel>supplemental-models.xml</supplementalModel>
+              </supplementalModels>
+              [...]
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
 +---+
 
- Once the supplemental-model project is released and deployed, any number of projects can then make use of the
+ Once the <<<supplemental-model>>> project is released and deployed, any number of projects can then make use of the
  supplemental information it provides.

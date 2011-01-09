@@ -38,7 +38,7 @@ under the License.
       </answer>
     </faq>
     <faq id="question2">
-      <question>The generated files have a lot of missing information.  Looking at the poms from
+      <question>The generated files have a lot of missing information.  Looking at the POMs from
         the dependencies, the information isn't there either.  What can I do?</question>
       <answer>
         <p>
@@ -75,9 +75,9 @@ under the License.
                 </supplement>
               </supplementalDataModels>]]>
             </source>
-            That location for that file can then be configured in the
-            <code>supplementalModels</code> configuration element for the process mojo.  The
-            supplemental information is merged into the information provided from the repository.
+            That location of that file can then be configured with the
+            <code>supplementalModels</code> configuration element for the <code>process</code> goal.  The
+            supplemental information is merged with the information provided from the repository.
           </li>
         </ol>
       </answer>

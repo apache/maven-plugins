@@ -3,7 +3,7 @@
  ------
  Jason van Zyl
  ------
- 27 November 2006
+ 2011-01-09
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -26,7 +26,7 @@
 Maven Remote Resources Plugin
 
   This plugin is used to retrieve JARs of resources from remote repositories,
-  processes those resources, and incorporate them into JARs you build with
+  process those resources, and incorporate them into JARs you build with
   Maven. A very common use-case is the need to package certain resources in a
   consistent way across your organization: at Apache it is required that every
   JAR produced contains a copy of the Apache license and a notice file that
