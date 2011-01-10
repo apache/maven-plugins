@@ -46,6 +46,7 @@ import java.util.List;
 
 /**
  * Copy resources for the main source code to the main output directory.
+ * Always uses the project.build.resources element to specify the resources to copy.
  *
  * @author <a href="michal.maczka@dimatics.com">Michal Maczka</a>
  * @author <a href="mailto:jason@maven.org">Jason van Zyl</a>
@@ -168,7 +169,7 @@ public class ResourcesMojo
     protected boolean includeEmptyDirs;
     
     /**
-     * Additionnal file extensions to not apply filtering (already defined are : jpg, jpeg, gif, bmp, png)
+     * Additional file extensions to not apply filtering (already defined are : jpg, jpeg, gif, bmp, png)
      * @parameter 
      * @since 2.3
      */

@@ -41,15 +41,27 @@ Maven Resources Plugin
 
 * Goals Overview
 
+   The Resources Plugin copies files specified by Resource elements, to an output directory.  The three
+   variations below only differ in how the resource and output directory elements are specified or defaulted.
    The Resources Plugin has three goals:
 
    * {{{./resources-mojo.html}resources:resources}} copies the
      resources for the main source code to the main output directory.
+     
+     This goal usually executes automatically, because it is bound by default to the process-resources life-cycle phase.
+     It always uses the project.build.resources element to specify the resources, and by default uses the 
+     project.build.outputDirectory to specify the copy destination.
 
    * {{{./testResources-mojo.html}resources:testResources}} copies the
      resources for the test source code to the test output directory.
+     
+     This goal usually executes automatically, because it is bound by default to the process-test-resources life-cycle phase.
+     It always uses the project.build.testResources element to specify the resources, and by default uses the 
+     project.build.testOutputDirectory to specify the copy destination.
 
    * {{{./copy-resources-mojo.html}resources:copy-resources}} copies resources to an output directory.
+     
+     This goal requires that you configure the resources to be copied, and specify the outputDirectory.
 
 * Usage
 
