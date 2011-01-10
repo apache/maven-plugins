@@ -24,6 +24,7 @@ import java.util.List;
 
 /**
  * Copy resources for the test source code to the test output directory.
+ * Always uses the project.build.testResources element to specify the resources to copy.
  *
  * @author <a href="michal.maczka@dimatics.com">Michal Maczka</a>
  * @author <a href="mailto:jason@maven.org">Jason van Zyl</a>

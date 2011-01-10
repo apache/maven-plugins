@@ -45,7 +45,8 @@ public class CopyResourcesMojo
     private File outputDirectory;
 
     /**
-     * The list of resources we want to transfer.
+     * The list of resources we want to transfer. See the Maven Model for a
+     * description of how to code the resources element.
      *
      * @parameter 
      * @required

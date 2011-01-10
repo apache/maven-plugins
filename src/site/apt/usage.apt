@@ -37,7 +37,8 @@ Usage
 mvn resources:resources
 +-----+
 
- Upon executing this command, the resources for your main source code will be
+ Upon executing this command, the resources for your main source code,
+ as specified by the \<resources> element, will be
  copied to your main build output directory. This does not affect the
  resources for your test code.
 
@@ -50,7 +51,21 @@ mvn resources:testResources
 +-----+
 
  Like the first goal this goal copies resources, but this time for your test source code to your
- test build output directory. Also, this does not affect the resources for the main source
+ test build output directory, as specified by the \<testResources> element. 
+ Also, this does not affect the resources for the main source
  code.
 
  Furthermore, this is bound to the <<<process-test-resources>>> phase.
+
+* Copy resources specified by a \<resources> configuration element
+
++-----+
+mvn resources:copy-resources
++-----+
+
+ Rather than using the \<resources> or \<testResources> elements or their
+ defaults, this uses a \<resources> element that is specified as part of the
+ configuration.
+ 
+ See the examples for how to configure this.  See the Maven Model for 
+ how to write \<resources> elements.
