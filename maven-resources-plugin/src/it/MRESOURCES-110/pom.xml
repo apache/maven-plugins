@@ -8,7 +8,6 @@
   <packaging>jar</packaging>
 
   <name>MRESOURCES-110</name>
-  <url>http://maven.apache.org</url>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -22,7 +21,6 @@
         <filtering>true</filtering>
       </resource>
     </resources>
-
     <plugins>
       <plugin>
          <artifactId>maven-resources-plugin</artifactId>
@@ -33,13 +31,4 @@
       </plugin>
     </plugins>
   </build>
-
-  <dependencies>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>3.8.1</version>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
 </project>
