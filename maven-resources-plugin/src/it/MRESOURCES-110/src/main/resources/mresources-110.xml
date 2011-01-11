@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+    <!-- This is a comment ... until filtering ... -->
+   <broken-tag>Why are my !\${\}\! static.content broken if the escapeString occure ?!?</broken-tag>
+   <broken-tag>Content with replacement: ${replaceThis} !</broken-tag>
+   <broken-tag>Content with escaped replacement: Do not !${replaceThis} !</broken-tag>
+</root>
