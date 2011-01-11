@@ -43,14 +43,16 @@ http://svn.apache.org/repos/asf/infrastructure/site-tools/trunk/projects/asfext<
       <fields>
         <field>
           <name>xmlnsPrefix</name>
-          <description>The ASFext xmlns prefix</description>
+          <description><![CDATA[The ASFext xmlns prefix.<br/>
+<b>Default value</b>: asfext]]></description>
           <version>1.0.0</version>
           <type>String</type>
           <defaultValue>asfext</defaultValue>
         </field>
         <field>
           <name>xmlnsNamespaceURI</name>
-          <description>The URI of the ASFext xmlns namespace</description>
+          <description><![CDATA[The URI of the ASFext xmlns namespace.<br/>
+<b>Default value</b>: http://projects.apache.org/ns/asfext#]]></description>
           <version>1.0.0</version>
           <type>String</type>
           <defaultValue>http://projects.apache.org/ns/asfext#</defaultValue>
@@ -64,7 +66,8 @@ http://svn.apache.org/repos/asf/infrastructure/site-tools/trunk/projects/asfext<
         </field>
         <field>
           <name>pmc</name>
-          <description><![CDATA[The top level element within a file. Optional will be discovered from POM.
+          <description><![CDATA[The top level element within a file. Optional will be discovered from POM.<br/>
+<b>Default value</b>: ${project.url}
 @see <a href="http://projects.apache.org/docs/pmc.html">http://projects.apache.org/docs/pmc.html</a>]]></description>
           <version>1.0.0</version>
           <type>String</type>
@@ -73,7 +76,8 @@ http://svn.apache.org/repos/asf/infrastructure/site-tools/trunk/projects/asfext<
         </field>
         <field>
           <name>name</name>
-          <description><![CDATA[The name of the PMC, including the 'Apache ', e.g. 'Apache Forrest'. Optional will be discovered from POM.
+          <description><![CDATA[The name of the PMC, including the 'Apache ', e.g. 'Apache Forrest'. Optional will be discovered from POM.<br/>
+<b>Default value</b>: ${project.name}
 @see <a href="http://projects.apache.org/docs/pmc.html">http://projects.apache.org/docs/pmc.html</a>]]></description>
           <version>1.0.0</version>
           <type>String</type>
@@ -91,7 +95,8 @@ http://svn.apache.org/repos/asf/infrastructure/site-tools/trunk/projects/asfext<
         </field>
         <field>
           <name>chair</name>
-          <description><![CDATA[This should contain the name of the current PMC chairperson. Optional.
+          <description><![CDATA[This should contain the name of the current PMC chairperson. Optional.<br/>
+<b>Note</b>: it will be discovered from ${project.developers.roles}
 @see <a href="http://projects.apache.org/docs/pmc.html">http://projects.apache.org/docs/pmc.html</a>]]></description>
           <version>1.0.0</version>
           <type>String</type>
