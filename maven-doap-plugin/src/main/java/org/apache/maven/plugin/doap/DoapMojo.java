@@ -52,7 +52,6 @@ import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.model.Contributor;
 import org.apache.maven.model.Developer;
 import org.apache.maven.model.License;
-import org.apache.maven.model.Scm;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.doap.options.ASFExtOptions;
@@ -72,11 +71,6 @@ import org.apache.maven.scm.repository.ScmRepository;
 import org.apache.maven.scm.repository.ScmRepositoryException;
 import org.apache.maven.settings.Settings;
 import org.codehaus.plexus.i18n.I18N;
-import org.codehaus.plexus.interpolation.EnvarBasedValueSource;
-import org.codehaus.plexus.interpolation.InterpolationException;
-import org.codehaus.plexus.interpolation.PrefixedObjectValueSource;
-import org.codehaus.plexus.interpolation.PropertiesBasedValueSource;
-import org.codehaus.plexus.interpolation.RegexBasedInterpolator;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.WriterFactory;
@@ -645,7 +639,7 @@ public class DoapMojo
             if ( !added )
             {
                 messages.getWarnMessages().add( "The project's url defined from " + artifact.toConfiguration()
-                                                    + " is empty or not valid, using <about/> parameter." );
+                                                    + " is empty or not a valid URL, using <about/> parameter." );
             }
         }
 
@@ -661,7 +655,7 @@ public class DoapMojo
                 }
                 catch ( MalformedURLException e )
                 {
-                    messages.addMessage( new String[] { "about" }, null, UserMessages.INVALID_URL );
+                    messages.addMessage( new String[] { "about" }, about, UserMessages.INVALID_URL );
                 }
                 added = true;
             }
@@ -741,15 +735,7 @@ public class DoapMojo
         // Developers
         @SuppressWarnings( "unchecked" )
         List<Contributor> developers = project.getDevelopers();
-        if ( developers == null || developers.isEmpty() )
-        {
-            messages.addMessage( new String[] { "project", "developers" }, null,
-                                 UserMessages.REQUIRED_BY_ASF_OR_RECOMMENDED );
-        }
-        else
-        {
-            writeContributors( writer, developers );
-        }
+        writeContributors( writer, developers );
 
         // Contributors
         @SuppressWarnings( "unchecked" )
@@ -833,23 +819,20 @@ public class DoapMojo
      */
     private void writeName( XMLWriter writer, MavenProject project )
     {
-        String name = interpolate( doapOptions.getName(), project, settings );
+        String name = DoapUtil.interpolate( doapOptions.getName(), project, settings );
         if ( StringUtils.isEmpty( name ) )
         {
-            messages.addMessage( new String[] { "doapOptions", "name" }, null, UserMessages.REQUIRED_BY_ASF_OR_RECOMMENDED );
+            messages.addMessage( new String[] { "doapOptions", "name" }, null,
+                                 UserMessages.REQUIRED_BY_ASF_OR_RECOMMENDED );
             return;
         }
 
         DoapUtil.writeComment( writer, "A name of something." );
-
-        if ( asfExtOptions.isIncluded() && !name.toLowerCase( Locale.ENGLISH ).startsWith( "apache" ) )
+        if ( ASFExtOptionsUtil.isASFProject( project ) && !name.toLowerCase( Locale.ENGLISH ).startsWith( "apache" ) )
         {
-            DoapUtil.writeElement( writer, doapOptions.getXmlnsPrefix(), "name", "Apache " + name );
+            name = "Apache " + name;
         }
-        else
-        {
-            DoapUtil.writeElement( writer, doapOptions.getXmlnsPrefix(), "name", name );
-        }
+        DoapUtil.writeElement( writer, doapOptions.getXmlnsPrefix(), "name", name );
     }
 
     /**
@@ -863,7 +846,7 @@ public class DoapMojo
     private void writeDescription( XMLWriter writer, MavenProject project )
     {
         boolean addComment = false;
-        String description = interpolate( doapOptions.getDescription(), project, settings );
+        String description = DoapUtil.interpolate( doapOptions.getDescription(), project, settings );
         if ( StringUtils.isEmpty( description ) )
         {
             messages.addMessage( new String[] { "doapOptions", "description" }, null,
@@ -877,7 +860,7 @@ public class DoapMojo
         }
 
         String comment = "Short plain text description of a project.";
-        String shortdesc = interpolate( doapOptions.getShortdesc(), project, settings );
+        String shortdesc = DoapUtil.interpolate( doapOptions.getShortdesc(), project, settings );
         if ( StringUtils.isEmpty( shortdesc ) )
         {
             messages.addMessage( new String[] { "doapOptions", "shortdesc" }, null,
@@ -917,7 +900,7 @@ public class DoapMojo
      */
     private void writeCreated( XMLWriter writer, MavenProject project )
     {
-        String created = interpolate( doapOptions.getCreated(), project, settings );
+        String created = DoapUtil.interpolate( doapOptions.getCreated(), project, settings );
         if ( StringUtils.isEmpty( created ) )
         {
             messages.addMessage( new String[] { "doapOptions", "created" }, null,
@@ -949,7 +932,7 @@ public class DoapMojo
      */
     private void writeHomepage( XMLWriter writer, MavenProject project )
     {
-        String homepage = interpolate( doapOptions.getHomepage(), project, settings );
+        String homepage = DoapUtil.interpolate( doapOptions.getHomepage(), project, settings );
         if ( StringUtils.isEmpty( homepage ) )
         {
             messages.addMessage( new String[] { "doapOptions", "homepage" }, null,
@@ -972,7 +955,7 @@ public class DoapMojo
 
         if ( StringUtils.isNotEmpty( doapOptions.getOldHomepage() ) )
         {
-            String oldHomepage = interpolate( doapOptions.getOldHomepage(), project, settings );
+            String oldHomepage = DoapUtil.interpolate( doapOptions.getOldHomepage(), project, settings );
             if ( StringUtils.isEmpty( oldHomepage ) )
             {
                 return;
@@ -987,7 +970,8 @@ public class DoapMojo
             }
             catch ( MalformedURLException e )
             {
-                messages.addMessage( new String[] { "doapOptions", "oldHomepage" }, oldHomepage, UserMessages.INVALID_URL );
+                messages.addMessage( new String[] { "doapOptions", "oldHomepage" }, oldHomepage,
+                                     UserMessages.INVALID_URL );
             }
         }
     }
@@ -1195,7 +1179,7 @@ public class DoapMojo
      */
     private void writeDownloadPage( XMLWriter writer, MavenProject project )
     {
-        String downloadPage = interpolate( doapOptions.getDownloadPage(), project, settings );
+        String downloadPage = DoapUtil.interpolate( doapOptions.getDownloadPage(), project, settings );
         if ( StringUtils.isEmpty( downloadPage ) )
         {
             messages.addMessage( new String[] { "doapOptions", "downloadPage" }, null,
@@ -1253,16 +1237,17 @@ public class DoapMojo
      */
     private void writeOS( XMLWriter writer, MavenProject project )
     {
-        if ( StringUtils.isEmpty( doapOptions.getOs() ) )
+        String os = DoapUtil.interpolate( doapOptions.getOs(), project, settings );
+        if ( StringUtils.isEmpty( os ) )
         {
             return;
         }
 
         DoapUtil.writeComment( writer, "Operating system that a project is limited to." );
-        String[] oses = StringUtils.split( doapOptions.getOs(), "," );
-        for ( String os : oses )
+        String[] oses = StringUtils.split( os, "," );
+        for ( String os_ : oses )
         {
-            DoapUtil.writeElement( writer, doapOptions.getXmlnsPrefix(), "os", os.trim() );
+            DoapUtil.writeElement( writer, doapOptions.getXmlnsPrefix(), "os", os_.trim() );
         }
     }
 
@@ -1275,12 +1260,13 @@ public class DoapMojo
      */
     private void writeScreenshots( XMLWriter writer, MavenProject project )
     {
-        if ( StringUtils.isEmpty( doapOptions.getScreenshots() ) )
+        String screenshots = DoapUtil.interpolate( doapOptions.getScreenshots(), project, settings );
+        if ( StringUtils.isEmpty( screenshots ) )
         {
             return;
         }
 
-        String screenshots = doapOptions.getScreenshots().trim();
+        screenshots = screenshots.trim();
         try
         {
             new URL( screenshots );
@@ -1304,12 +1290,13 @@ public class DoapMojo
      */
     private void writeWiki( XMLWriter writer, MavenProject project )
     {
-        if ( StringUtils.isEmpty( doapOptions.getWiki() ) )
+        String wiki = DoapUtil.interpolate( doapOptions.getWiki(), project, settings );
+        if ( StringUtils.isEmpty( wiki ) )
         {
             return;
         }
 
-        String wiki = doapOptions.getWiki().trim();
+        wiki = wiki.trim();
         try
         {
             new URL( wiki );
@@ -1333,36 +1320,55 @@ public class DoapMojo
      */
     private void writeLicenses( XMLWriter writer, MavenProject project )
     {
-        if ( project.getLicenses() == null || project.getLicenses().isEmpty() )
+        String license = DoapUtil.interpolate( doapOptions.getLicense(), project, settings );
+        if ( StringUtils.isEmpty( license ) )
         {
-            messages.addMessage( new String[] { "project", "licenses" }, null, UserMessages.REQUIRED_BY_ASF_OR_RECOMMENDED );
+            boolean added = false;
+            @SuppressWarnings( "unchecked" )
+            List<License> licenses = project.getLicenses();
+            if ( licenses.size() > 1 )
+            {
+                for ( int i = 1; i < licenses.size(); i++ )
+                {
+                    if ( StringUtils.isEmpty( licenses.get( i ).getUrl() ) )
+                    {
+                        continue;
+                    }
+
+                    String licenseUrl = licenses.get( i ).getUrl().trim();
+                    try
+                    {
+                        new URL( licenseUrl );
+
+                        DoapUtil.writeRdfResourceElement( writer, doapOptions.getXmlnsPrefix(), "license", licenseUrl );
+                        added = true;
+                    }
+                    catch ( MalformedURLException e )
+                    {
+                        messages.addMessage( new String[] { "project", "licenses", "license", "url" }, licenseUrl,
+                                             UserMessages.INVALID_URL );
+                    }
+                }
+            }
+
+            if ( !added )
+            {
+                messages.addMessage( new String[] { "doapOptions", "license" }, null,
+                                     UserMessages.REQUIRED_BY_ASF_OR_RECOMMENDED );
+            }
             return;
         }
 
-        DoapUtil.writeComment( writer, "The URI of the license the software is distributed under." );
-        // TODO: how to map to usefulinc site, or if this is necessary, the OSI page might
-        // be more appropriate.
-        @SuppressWarnings( "unchecked" )
-        List<License> licenses = project.getLicenses();
-        for ( License license : licenses )
+        try
         {
-            if ( StringUtils.isEmpty( license.getUrl() ) )
-            {
-                continue;
-            }
+            new URL( license );
 
-            String licenseUrl = license.getUrl().trim();
-            try
-            {
-                new URL( licenseUrl );
-
-                DoapUtil.writeRdfResourceElement( writer, doapOptions.getXmlnsPrefix(), "license", licenseUrl );
-            }
-            catch ( MalformedURLException e )
-            {
-                messages.addMessage( new String[] { "project", "licenses", "license", "url" }, licenseUrl,
-                                     UserMessages.INVALID_URL );
-            }
+            DoapUtil.writeComment( writer, "The URI of the license the software is distributed under." );
+            DoapUtil.writeRdfResourceElement( writer, doapOptions.getXmlnsPrefix(), "license", license );
+        }
+        catch ( MalformedURLException e )
+        {
+            messages.addMessage( new String[] { "doapOptions", "license" }, license, UserMessages.INVALID_URL );
         }
     }
 
@@ -1375,27 +1381,25 @@ public class DoapMojo
      */
     private void writeBugDatabase( XMLWriter writer, MavenProject project )
     {
-        if ( project.getIssueManagement() == null || StringUtils.isEmpty( project.getIssueManagement().getUrl() ) )
+        String bugDatabase = DoapUtil.interpolate( doapOptions.getBugDatabase(), project, settings );
+        if ( StringUtils.isEmpty( bugDatabase ) )
         {
-            messages.addMessage( new String[] { "project", "issueManagement" }, null,
+            messages.addMessage( new String[] { "doapOptions", "bugDatabase" }, null,
                                  UserMessages.REQUIRED_BY_ASF_OR_RECOMMENDED );
             return;
         }
 
-        String issueManagementUrl = project.getIssueManagement().getUrl().trim();
         try
         {
-            new URL( issueManagementUrl );
+            new URL( bugDatabase );
+
+            DoapUtil.writeComment( writer, "Bug database." );
+            DoapUtil.writeRdfResourceElement( writer, doapOptions.getXmlnsPrefix(), "bug-database", bugDatabase );
         }
         catch ( MalformedURLException e )
         {
-            messages.addMessage( new String[] { "project", "issueManagement", "url" }, issueManagementUrl,
-                                 UserMessages.INVALID_URL );
-            return;
+            messages.addMessage( new String[] { "doapOptions", "bugDatabase" }, bugDatabase, UserMessages.INVALID_URL );
         }
-
-        DoapUtil.writeComment( writer, "Bug database." );
-        DoapUtil.writeRdfResourceElement( writer, doapOptions.getXmlnsPrefix(), "bug-database", issueManagementUrl );
     }
 
     /**
@@ -1408,7 +1412,7 @@ public class DoapMojo
      */
     private void writeMailingList( XMLWriter writer, MavenProject project )
     {
-        String ml = interpolate( doapOptions.getMailingList(), project, settings );
+        String ml = DoapUtil.interpolate( doapOptions.getMailingList(), project, settings );
         if ( StringUtils.isEmpty( ml ) )
         {
             messages.addMessage( new String[] { "doapOptions", "mailingList" }, null,
@@ -1425,7 +1429,7 @@ public class DoapMojo
         }
         catch ( MalformedURLException e )
         {
-            messages.addMessage( new String[] { "project", "mailingList" }, ml, UserMessages.INVALID_URL );
+            messages.addMessage( new String[] { "doapOptions", "mailingList" }, ml, UserMessages.INVALID_URL );
         }
     }
 
@@ -1473,8 +1477,8 @@ public class DoapMojo
 
         if ( metadata.getMetadata().getVersioning() == null )
         {
-            messages.getWarnMessages().add( "No versioning was found for " + artifact.getGroupId() + ":" + artifact.getArtifactId()
-                                                + ". Ignored DOAP <release/> tag." );
+            messages.getWarnMessages().add( "No versioning was found for " + artifact.getGroupId() + ":"
+                                                + artifact.getArtifactId() + ". Ignored DOAP <release/> tag." );
             return;
         }
 
@@ -1571,25 +1575,56 @@ public class DoapMojo
      */
     private void writeSourceRepositories( XMLWriter writer, MavenProject project )
     {
-        Scm scm = project.getScm();
-        if ( scm == null )
+        String anonymousConnection = DoapUtil.interpolate( doapOptions.getScmAnonymous(), project, settings );
+        if ( StringUtils.isEmpty( anonymousConnection ) )
         {
-            messages.addMessage( new String[] { "project", "scm" }, null, UserMessages.REQUIRED_BY_ASF_OR_RECOMMENDED );
-            return;
+            messages.addMessage( new String[] { "doapOptions", "scmAnonymousConnection" }, null,
+                                 UserMessages.REQUIRED_BY_ASF_OR_RECOMMENDED );
+        }
+        else
+        {
+            DoapUtil.writeComment( writer, "Anonymous Source Repository." );
+
+            try
+            {
+                new URL( anonymousConnection );
+
+                DoapUtil.writeStartElement( writer, doapOptions.getXmlnsPrefix(), "repository" );
+                DoapUtil.writeStartElement( writer, doapOptions.getXmlnsPrefix(), "Repository" );
+                DoapUtil.writeRdfResourceElement( writer, doapOptions.getXmlnsPrefix(), "location", anonymousConnection );
+                writer.endElement(); // Repository
+                writer.endElement(); // repository
+            }
+            catch ( MalformedURLException e )
+            {
+                writeSourceRepository( writer, project, anonymousConnection );
+            }
         }
 
-        String anonymousConnection = scm.getConnection();
-        if ( StringUtils.isNotEmpty( anonymousConnection ) )
+        String devConnection = DoapUtil.interpolate( doapOptions.getScmDeveloper(), project, settings );
+        if ( StringUtils.isEmpty( devConnection ) )
         {
-            DoapUtil.writeComment( writer, "Anonymous Source Repository" );
-            writeSourceRepository( writer, project, anonymousConnection );
+            messages.addMessage( new String[] { "doapOptions", "scmDeveloperConnection" }, null,
+                                 UserMessages.REQUIRED_BY_ASF_OR_RECOMMENDED );
         }
-
-        String developerConnection = scm.getDeveloperConnection();
-        if ( StringUtils.isNotEmpty( developerConnection ) )
+        else
         {
-            DoapUtil.writeComment( writer, "Developer Source Repository" );
-            writeSourceRepository( writer, project, developerConnection );
+            DoapUtil.writeComment( writer, "Developer Source Repository." );
+
+            try
+            {
+                new URL( devConnection );
+
+                DoapUtil.writeStartElement( writer, doapOptions.getXmlnsPrefix(), "repository" );
+                DoapUtil.writeStartElement( writer, doapOptions.getXmlnsPrefix(), "Repository" );
+                DoapUtil.writeRdfResourceElement( writer, doapOptions.getXmlnsPrefix(), "location", devConnection );
+                writer.endElement(); // Repository
+                writer.endElement(); // repository
+            }
+            catch ( MalformedURLException e )
+            {
+                writeSourceRepository( writer, project, devConnection );
+            }
         }
     }
 
@@ -1669,18 +1704,17 @@ public class DoapMojo
     {
         if ( contributors == null || contributors.isEmpty() )
         {
-            // no msg there, only dev are req
             return;
         }
 
         boolean isDeveloper = Developer.class.isAssignableFrom( contributors.get( 0 ).getClass() );
         if ( isDeveloper )
         {
-            DoapUtil.writeComment( writer, "Main committers" );
+            DoapUtil.writeComment( writer, "Main committers." );
         }
         else
         {
-            DoapUtil.writeComment( writer, "Contributed persons" );
+            DoapUtil.writeComment( writer, "Contributed persons." );
         }
 
         List<Contributor> maintainers = DoapUtil.getContributorsWithMaintainerRole( i18n, contributors );
@@ -1917,10 +1951,10 @@ public class DoapMojo
             return;
         }
 
-        DoapUtil.writeComment( writer, "ASF extension" );
+        DoapUtil.writeComment( writer, "ASF extension." );
 
         // asfext:pmc
-        String pmc = interpolate( asfExtOptions.getPmc(), project, settings );
+        String pmc = DoapUtil.interpolate( asfExtOptions.getPmc(), project, settings );
         if ( StringUtils.isNotEmpty( pmc ) )
         {
             DoapUtil.writeRdfResourceElement( writer, asfExtOptions.getXmlnsPrefix(), "pmc", pmc );
@@ -1931,7 +1965,7 @@ public class DoapMojo
         }
 
         // asfext:name
-        String name = interpolate( asfExtOptions.getName(), project, settings );
+        String name = DoapUtil.interpolate( asfExtOptions.getName(), project, settings );
         if ( StringUtils.isNotEmpty( name ) )
         {
             if ( !name.toLowerCase( Locale.ENGLISH ).trim().startsWith( "apache" ) )
@@ -1945,7 +1979,7 @@ public class DoapMojo
             messages.addMessage( new String[] { "asfExtOptions", "name" }, null, UserMessages.REQUIRED_BY_ASF );
         }
 
-        String homepage = interpolate( doapOptions.getHomepage(), project, settings );
+        String homepage = DoapUtil.interpolate( doapOptions.getHomepage(), project, settings );
         if ( StringUtils.isNotEmpty( homepage ) )
         {
             try
@@ -2068,16 +2102,17 @@ public class DoapMojo
 
             if ( StringUtils.isNotEmpty( standard.getUrl() ) )
             {
+                String standardUrl = standard.getUrl().trim();
                 try
                 {
-                    new URL( standard.getUrl().trim() );
+                    new URL( standardUrl );
 
-                    DoapUtil.writeElement( writer, asfExtOptions.getXmlnsPrefix(), "url", standard.getUrl().trim() );
+                    DoapUtil.writeElement( writer, asfExtOptions.getXmlnsPrefix(), "url", standardUrl );
                 }
                 catch ( MalformedURLException e )
                 {
-                    messages.addMessage( new String[] { "asfExtOptions", "standards", "url" },
-                                         standard.getUrl().trim(), UserMessages.INVALID_URL );
+                    messages.addMessage( new String[] { "asfExtOptions", "standards", "url" }, standardUrl,
+                                         UserMessages.INVALID_URL );
                 }
             }
 
@@ -2147,13 +2182,14 @@ public class DoapMojo
      */
     private void writeAudience( XMLWriter writer )
     {
-        if ( StringUtils.isEmpty( doapOptions.getAudience() ) )
+        String audience = DoapUtil.interpolate( doapOptions.getAudience(), project, settings );
+        if ( StringUtils.isEmpty( audience ) )
         {
             return;
         }
 
         DoapUtil.writeComment( writer, "Audience." );
-        DoapUtil.writeElement( writer, doapOptions.getXmlnsPrefix(), "audience", doapOptions.getAudience().trim() );
+        DoapUtil.writeElement( writer, doapOptions.getXmlnsPrefix(), "audience", audience );
     }
 
     /**
@@ -2165,12 +2201,13 @@ public class DoapMojo
      */
     private void writeBlog( XMLWriter writer )
     {
+        String blog = DoapUtil.interpolate( doapOptions.getBlog(), project, settings );
         if ( StringUtils.isEmpty( doapOptions.getBlog() ) )
         {
             return;
         }
 
-        String blog = doapOptions.getBlog().trim();
+        blog = blog.trim();
         try
         {
             new URL( blog );
@@ -2199,8 +2236,12 @@ public class DoapMojo
             return;
         }
 
-        DoapUtil.writeComment( writer, "Plateform." );
-        DoapUtil.writeElement( writer, doapOptions.getXmlnsPrefix(), "plateform", doapOptions.getPlatform().trim() );
+        DoapUtil.writeComment( writer, "Platform." );
+        String[] platforms = StringUtils.split( doapOptions.getPlatform(), "," );
+        for ( String platform : platforms )
+        {
+            DoapUtil.writeElement( writer, doapOptions.getXmlnsPrefix(), "platform", platform.trim() );
+        }
     }
 
     /**
@@ -2213,7 +2254,7 @@ public class DoapMojo
      */
     private void writeVendor( XMLWriter writer, MavenProject project )
     {
-        String vendor = interpolate( doapOptions.getVendor(), project, settings );
+        String vendor = DoapUtil.interpolate( doapOptions.getVendor(), project, settings );
         if ( StringUtils.isEmpty( vendor ) )
         {
             return;
@@ -2245,7 +2286,8 @@ public class DoapMojo
 
             if ( Arrays.binarySearch( Locale.getISOLanguages(), language ) < 0 )
             {
-                messages.addMessage( new String[] { "doapOptions", "languages" }, language, UserMessages.INVALID_ISO_DATE );
+                messages.addMessage( new String[] { "doapOptions", "languages" }, language,
+                                     UserMessages.INVALID_ISO_DATE );
                 continue;
             }
 
@@ -2267,12 +2309,13 @@ public class DoapMojo
      */
     private void writeServiceEndpoint( XMLWriter writer )
     {
-        if ( StringUtils.isEmpty( doapOptions.getServiceEndpoint() ) )
+        String serviceEndpoint = DoapUtil.interpolate( doapOptions.getServiceEndpoint(), project, settings );
+        if ( StringUtils.isEmpty( serviceEndpoint ) )
         {
             return;
         }
 
-        String serviceEndpoint = doapOptions.getServiceEndpoint().trim();
+        serviceEndpoint = serviceEndpoint.trim();
         try
         {
             new URL( serviceEndpoint );
@@ -2339,7 +2382,7 @@ public class DoapMojo
                 continue;
             }
 
-            String interpolatedValue = interpolate( value, project, settings );
+            String interpolatedValue = DoapUtil.interpolate( value, project, settings );
             if ( interpolatedValue == null )
             {
                 continue;
@@ -2413,62 +2456,6 @@ public class DoapMojo
         }
 
         return false;
-    }
-
-    /**
-     * Interpolate a string with project and settings.
-     *
-     * @param value not null
-     * @param project not null
-     * @param settings not null
-     * @return the value trimmed and interpolated or null if interpolation doesn't work.
-     * @since 1.1
-     */
-    private static String interpolate( String value, MavenProject project, Settings settings )
-    {
-        if ( StringUtils.isEmpty( value ) || project == null )
-        {
-            throw new IllegalArgumentException( "parameters are required" );
-        }
-
-        if ( !value.contains( "${" ) )
-        {
-            return value.trim();
-        }
-
-        RegexBasedInterpolator interpolator = new RegexBasedInterpolator();
-        try
-        {
-            interpolator.addValueSource( new EnvarBasedValueSource() );
-        }
-        catch ( IOException e )
-        {
-        }
-
-        interpolator.addValueSource( new PropertiesBasedValueSource( System.getProperties() ) );
-        interpolator.addValueSource( new PropertiesBasedValueSource( project.getProperties() ) );
-        interpolator.addValueSource( new PrefixedObjectValueSource( "project", project ) );
-        interpolator.addValueSource( new PrefixedObjectValueSource( "pom", project ) );
-        if ( settings != null )
-        {
-            interpolator.addValueSource( new PrefixedObjectValueSource( "settings", settings ) );
-        }
-
-        String interpolatedValue = value;
-        try
-        {
-            interpolatedValue = interpolator.interpolate( value );
-        }
-        catch ( InterpolationException e )
-        {
-        }
-
-        if ( interpolatedValue.contains( "${" ) )
-        {
-            return null;
-        }
-
-        return interpolatedValue.trim();
     }
 
     /**

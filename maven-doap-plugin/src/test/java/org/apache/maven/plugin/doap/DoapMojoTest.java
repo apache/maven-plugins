@@ -24,6 +24,7 @@ import java.io.FileReader;
 import java.io.IOException;
 
 import org.apache.maven.plugin.doap.options.DoapArtifact;
+import org.apache.maven.plugin.doap.options.DoapOptions;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.IOUtil;
@@ -85,13 +86,37 @@ public class DoapMojoTest
         assertTrue( readed.contains( "<rdf:RDF xml:lang=\"en\" xmlns=\"http://usefulinc.com/ns/doap#\" "
             + "xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" "
             + "xmlns:foaf=\"http://xmlns.com/foaf/0.1/\">" ) );
-        if ( StringUtils.isNotEmpty( mavenProject.getUrl() ) )
-        {
-            assertTrue( readed.contains( "<Project rdf:about=\"" + mavenProject.getUrl() + "\">" ) );
-            assertTrue( readed.contains( "<homepage rdf:resource=\"" + mavenProject.getUrl() + "\"/>" ) );
-        }
+        assertTrue( readed.contains( "<Project rdf:about=\"" + mavenProject.getUrl() + "\">" ) );
+        assertTrue( readed.contains( "<description xml:lang=\"en\">Test the DOAP plugin</description>" ) );
+        assertTrue( readed.contains( "<shortdesc xml:lang=\"en\">Test the DOAP plugin</shortdesc>" ) );
+        assertTrue( readed.contains( "<homepage rdf:resource=\"" + mavenProject.getUrl() + "\"/>" ) );
+        assertTrue( readed.contains( "<category>library</category>" ) );
+        assertTrue( readed.contains( "<created>2008-01-01</created>" ) );
         assertTrue( readed.contains( "<name>" + mavenProject.getName() + "</name>" ) );
-        assertTrue( readed.contains( "<programming-language>java</programming-language>" ) );
+        assertTrue( readed.contains( "<download-page rdf:resource=\"http://foo.org/download.html\"/>" ) );
+        assertTrue( readed.contains( "<programming-language>Java</programming-language>" ) );
+        assertTrue( readed.contains( "<bug-database rdf:resource=\"http://jira.codehaus.org/browse/MDOAPTEST\"/>" ) );
+        assertTrue( readed.contains( "<license rdf:resource=\"http://www.apache.org/licenses/LICENSE-2.0.txt\"/>" ) );
+        assertTrue( readed.contains( "<SVNRepository>" ) );
+        assertTrue( readed.contains( "<location rdf:resource=\"http://svn.foo.org/repos/asf/maven/plugins/trunk/maven-doap-plugin/src/test/resources/unit/doap-configuration\"/>" ) );
+        assertTrue( readed.contains( "<browse rdf:resource=\"http://svn.foo.org/viewvc/maven/plugins/trunk/maven-doap-plugin/src/test/resources/unit/doap-configuration\"/>" ) );
+        assertTrue( readed.contains( "<location rdf:resource=\"https://svn.foo.org/repos/asf/maven/plugins/trunk/maven-doap-plugin/src/test/resources/unit/doap-configuration\"/>" ) );
+
+        // conf
+        assertTrue( readed.contains( "<audience>developers</audience>" ) );
+        assertTrue( readed.contains( "<blog rdf:resource=\"http://myblog.foo.org\"/>" ) );
+        assertTrue( readed.contains( "<implements>JSR-foo</implements>" ) );
+        assertTrue( readed.contains( "<language>en</language>" ) );
+        assertTrue( readed.contains( "<language>fr</language>" ) );
+        assertTrue( readed.contains( "<old-homepage rdf:resource=\"http://old.foo.org\"/>" ) );
+        assertTrue( readed.contains( "<os>windows</os>" ) );
+        assertTrue( readed.contains( "<os>linux</os>" ) );
+        assertTrue( readed.contains( "<os>mac</os>" ) );
+        assertTrue( readed.contains( "<platform>java</platform>" ) );
+        assertTrue( readed.contains( "<platform>firefox</platform>" ) );
+        assertTrue( readed.contains( "<screenshots rdf:resource=\"" + mavenProject.getUrl() +"/screenshots.html\"/>" ) );
+        assertTrue( readed.contains( "<service-endpoint rdf:resource=\"http://webservice.foo.org\"/>" ) );
+        assertTrue( readed.contains( "<wiki rdf:resource=\"http://wiki.foo.org\"/>" ) );
 
         // ASF ext
         assertFalse( readed.contains( "<asfext:pmc rdf:resource=\"" + mavenProject.getUrl() + "\"/>" ) );
@@ -109,10 +134,9 @@ public class DoapMojoTest
     /**
      * @throws Exception if any
      */
-    public void testLangParameters()
+    public void testLangParameter()
         throws Exception
     {
-
         File pluginXmlFile =
             new File( getBasedir(), "src/test/resources/unit/doap-configuration/doap-configuration-plugin-config.xml" );
         DoapMojo mojo = (DoapMojo) lookupMojo( "generate", pluginXmlFile );
@@ -181,6 +205,11 @@ public class DoapMojoTest
         // Set some Mojo parameters
         setVariableValueToObject( mojo, "remoteRepositories", mavenProject.getRemoteArtifactRepositories() );
         setVariableValueToObject( mojo, "about", mavenProject.getUrl() );
+        DoapOptions doapOptions = (DoapOptions)getVariableValueFromObject(  mojo, "doapOptions" );
+        doapOptions.setDescription( "Common Utilities" );
+        doapOptions.setShortdesc( "Common Utilities" );
+        doapOptions.setDownloadPage( "http://plexus.codehaus.org/download-binaries.html" );
+        setVariableValueToObject( mojo, "doapOptions", doapOptions );
 
         DoapArtifact artifact = new DoapArtifact();
         artifact.setGroupId( "org.codehaus.plexus" );
@@ -202,7 +231,111 @@ public class DoapMojoTest
         assertTrue( readed.contains( "<rdf:RDF xml:lang=\"en\" xmlns=\"http://usefulinc.com/ns/doap#\" "
             + "xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" "
             + "xmlns:foaf=\"http://xmlns.com/foaf/0.1/\">" ) );
+        assertTrue( readed.contains( "<Project rdf:about=\"http://plexus.codehaus.org/plexus-utils\">" ) );
         assertTrue( readed.contains( "<name>Plexus Common Utilities</name>" ) );
+        assertTrue( readed.contains( "<description xml:lang=\"en\">Common Utilities</description>" ) );
+        assertTrue( readed.contains( "<shortdesc xml:lang=\"en\">Common Utilities</shortdesc>" ) );
+        assertTrue( readed.contains( "<created>2001-01-01</created>" ) );
+        assertTrue( readed.contains( "<download-page rdf:resource=\"http://plexus.codehaus.org/download-binaries.html\"/>" ) );
+        assertTrue( readed.contains( "<programming-language>Java</programming-language>" ) );
+        assertTrue( readed.contains( "<bug-database rdf:resource=\"http://jira.codehaus.org/browse/PLXUTILS\"/>" ) );
+        assertTrue( readed.contains( "<license rdf:resource=\"http://www.apache.org/licenses/LICENSE-2.0.txt\"/>" ) );
+        assertTrue( readed.contains( "<SVNRepository>" ) );
+        assertTrue( readed.contains( "<location rdf:resource=\"http://svn.codehaus.org/plexus/plexus-utils/tags/plexus-utils-1.5.5\"/>" ) );
+        assertTrue( readed.contains( "<browse rdf:resource=\"http://fisheye.codehaus.org/browse/plexus/plexus-utils/tags/plexus-utils-1.5.5\"/>" ) );
+
+        // conf
+        assertTrue( readed.contains( "<audience>developers</audience>" ) );
+        assertTrue( readed.contains( "<blog rdf:resource=\"http://myblog.foo.org\"/>" ) );
+        assertTrue( readed.contains( "<implements>JSR-foo</implements>" ) );
+        assertTrue( readed.contains( "<language>en</language>" ) );
+        assertTrue( readed.contains( "<language>fr</language>" ) );
+        assertTrue( readed.contains( "<old-homepage rdf:resource=\"http://old.foo.org\"/>" ) );
+        assertTrue( readed.contains( "<os>windows</os>" ) );
+        assertTrue( readed.contains( "<os>linux</os>" ) );
+        assertTrue( readed.contains( "<os>mac</os>" ) );
+        assertTrue( readed.contains( "<platform>java</platform>" ) );
+        assertTrue( readed.contains( "<screenshots rdf:resource=\"http://plexus.codehaus.org/plexus-utils/screenshots.html\"/>" ) );
+        assertTrue( readed.contains( "<service-endpoint rdf:resource=\"http://webservice.foo.org\"/>" ) );
+        assertTrue( readed.contains( "<wiki rdf:resource=\"http://wiki.foo.org\"/>" ) );
+    }
+
+    /**
+     * Verify the generation of a DOAP file from a minimalist artifact.
+     *
+     * @throws Exception if any
+     */
+    public void testGeneratedDoapArtifactMinimalist()
+        throws Exception
+    {
+        File pluginXmlFile =
+            new File( getBasedir(), "src/test/resources/unit/doap-configuration/doap-configuration-plugin-config.xml" );
+        DoapMojo mojo = (DoapMojo) lookupMojo( "generate", pluginXmlFile );
+        assertNotNull( "Mojo found.", mojo );
+
+        MavenProject mavenProject = (MavenProject) getVariableValueFromObject( mojo, "project" );
+        assertNotNull( mavenProject );
+
+        // Set some Mojo parameters
+        setVariableValueToObject( mojo, "remoteRepositories", mavenProject.getRemoteArtifactRepositories() );
+        setVariableValueToObject( mojo, "about", "foo" );
+        DoapOptions doapOptions = new DoapOptions();
+        doapOptions.setName( "XStream" );
+        doapOptions.setDescription( "XStream is a simple library to serialize objects to XML and back again." );
+        doapOptions.setShortdesc( "XML Serializer" );
+        doapOptions.setHomepage( "http://xstream.codehaus.org/" );
+        doapOptions.setDownloadPage( "http://xstream.codehaus.org/download.html" );
+        doapOptions.setBugDatabase( "http://jira.codehaus.org/browse/XSTR" );
+        doapOptions.setLicense( "http://xstream.codehaus.org/license.html" );
+        doapOptions.setScmDeveloper( "http://svn.codehaus.org/xstream/trunk/xstream" );
+        doapOptions.setMailingList( "http://xstream.codehaus.org/list-user.html" );
+        doapOptions.setCreated( "2000-01-01");
+        setVariableValueToObject( mojo, "doapOptions", doapOptions );
+
+        DoapArtifact artifact = new DoapArtifact();
+        artifact.setGroupId( "xstream" );
+        artifact.setArtifactId( "xstream" );
+        artifact.setVersion( "1.1" );
+        setVariableValueToObject( mojo, "artifact", artifact );
+        setVariableValueToObject( mojo, "outputDirectory", "target/test/unit/doap-configuration/" );
+
+        mojo.execute();
+
+        File doapFile = new File( getBasedir(), "target/test/unit/doap-configuration/doap_xstream.rdf" );
+        assertTrue( "Doap File was not generated!", doapFile.exists() );
+
+        String readed = readFile( doapFile );
+
+        // Validate
+
+        // Pure DOAP
+        assertTrue( readed.contains( "<rdf:RDF xml:lang=\"en\" xmlns=\"http://usefulinc.com/ns/doap#\" "
+            + "xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" "
+            + "xmlns:foaf=\"http://xmlns.com/foaf/0.1/\">" ) );
+        assertTrue( readed.contains( "<Project>" ) );
+        assertTrue( readed.contains( "<name>XStream</name>" ) );
+        assertTrue( readed.contains( "<description xml:lang=\"en\">XStream is a simple library to serialize objects to XML and back again.</description>" ) );
+        assertTrue( readed.contains( "<shortdesc xml:lang=\"en\">XML Serializer</shortdesc>" ) );
+        assertTrue( readed.contains( "<created>2000-01-01</created>" ) );
+        assertTrue( readed.contains( "<download-page rdf:resource=\"http://xstream.codehaus.org/download.html\"/>" ) );
+        assertTrue( readed.contains( "<programming-language>Java</programming-language>" ) );
+        assertTrue( readed.contains( "<bug-database rdf:resource=\"http://jira.codehaus.org/browse/XSTR\"/>" ) );
+        assertTrue( readed.contains( "<license rdf:resource=\"http://xstream.codehaus.org/license.html\"/>" ) );
+        assertTrue( readed.contains( "<Repository>" ) );
+        assertTrue( readed.contains( "<location rdf:resource=\"http://svn.codehaus.org/xstream/trunk/xstream\"/>" ) );
+        assertTrue( readed.contains( "<mailing-list rdf:resource=\"http://xstream.codehaus.org/list-user.html\"/>" ) );
+
+        // conf
+        assertFalse( readed.contains( "<audience>" ) );
+        assertFalse( readed.contains( "<blog rdf:resource=" ) );
+        assertFalse( readed.contains( "<implements>" ) );
+        assertFalse( readed.contains( "<language>" ) );
+        assertFalse( readed.contains( "<old-homepage rdf:resource=" ) );
+        assertFalse( readed.contains( "<os>" ) );
+        assertFalse( readed.contains( "<platform>" ) );
+        assertFalse( readed.contains( "<screenshots rdf:resource=" ) );
+        assertFalse( readed.contains( "<service-endpoint rdf:resource=" ) );
+        assertFalse( readed.contains( "<wiki rdf:resource=" ) );
     }
 
     /**
@@ -246,10 +379,13 @@ public class DoapMojoTest
         }
         assertTrue( readed.contains( "<name>Apache " + mavenProject.getName() + "</name>" ) );
         assertTrue( readed.contains( "<programming-language>Java</programming-language>" ) );
+        assertTrue( readed.contains( "<category rdf:resource=\"http://projects.apache.org/category/library\"/>" ) );
 
         // ASF ext
         assertTrue( readed.contains( "<asfext:pmc rdf:resource=\"" + mavenProject.getUrl() + "\"/>" ) );
         assertTrue( readed.contains( "<asfext:name>Apache " + mavenProject.getName() + "</asfext:name>" ) );
+        assertTrue( readed.contains( "<asfext:charter>" ) );
+        assertTrue( readed.contains( "<asfext:chair>" ) );
     }
 
     /**
