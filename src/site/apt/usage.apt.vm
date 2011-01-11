@@ -4,7 +4,7 @@
  Jason van Zyl
  Vincent Siveton
  ------
- 2011-01-03
+ 2011-01-11
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -46,12 +46,18 @@ Usage
         <configuration>
           <doapOptions>
             <!-- Default values -->
+            <bugDatabase>\${project.issueManagement.url}</bugDatabase>
+            <category>library</category>
             <created>\${project.inceptionYear}-01-01</created>
             <description>\${project.description}</description>
             <downloadPage>\${project.distributionManagement.downloadUrl}</downloadPage>
             <homepage>\${project.url}</homepage>
+            <license>\${project.licenses[0].url}</license>
             <mailingList>\${project.url}/mail-lists.html</mailingList>
             <name>\${project.name}</name>
+            <programmingLanguage>Java</programmingLanguage>
+            <scmAnonymousConnection>\${project.scm.connection}</scmAnonymousConnection>
+            <scmDeveloperConnection>\${project.scm.developerConnection}</scmDeveloperConnection>
             <shortdesc>\${project.description}</shortdesc>
             <vendor>\${project.organization.name}</vendor>
             ...
@@ -111,7 +117,7 @@ Usage
       <email>XXX@apache.org</email>
       <organization>ASF</organization>
       <roles>
-        <!-- For <asfext:chair/> -->
+        <!-- For <asfext:chair/>, will be detected -->
         <role>PMC Chair</role>
       </roles>
     </developer>
@@ -141,12 +147,16 @@ Usage
             <category>build-management</category>
 
             <!-- Default values -->
+            <bugDatabase>\${project.issueManagement.url}</bugDatabase>
             <created>\${project.inceptionYear}-01-01</created>
             <description>\${project.description}</description>
             <downloadPage>\${project.distributionManagement.downloadUrl}</downloadPage>
             <homepage>\${project.url}</homepage>
+            <license>\${project.licenses[0].url}</license>
             <mailingList>\${project.url}/mail-lists.html</mailingList>
             <name>\${project.name}</name>
+            <scmAnonymousConnection>\${project.scm.connection}</scmAnonymousConnection>
+            <scmDeveloperConnection>\${project.scm.developerConnection}</scmDeveloperConnection>
             <shortdesc>\${project.description}</shortdesc>
             <vendor>\${project.organization.name}</vendor>
             ...
