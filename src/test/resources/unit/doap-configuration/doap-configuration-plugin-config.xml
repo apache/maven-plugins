@@ -92,15 +92,13 @@ under the License.
           <doapOptions>
             <audience>developers</audience>
             <blog>http://myblog.foo.org</blog>
-            <category>library</category>
             <downloadMirror>http://mirror.foo.org</downloadMirror>
             <implementations>JSR-foo</implementations>
             <language>en,fr</language>
             <oldHomepage>http://old.foo.org</oldHomepage>
             <os>windows,linux,mac</os>
-            <platform>java</platform>
-            <programmingLanguage>java</programmingLanguage>
-            <screenshots>http://screenshot.foo.org</screenshots>
+            <platform>java,firefox</platform>
+            <screenshots>${project.url}/screenshots.html</screenshots>
             <serviceEndpoint>http://webservice.foo.org</serviceEndpoint>
             <wiki>http://wiki.foo.org</wiki>
           </doapOptions>

@@ -22,10 +22,13 @@ package org.apache.maven.plugin.doap;
 import java.io.File;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.maven.model.Contributor;
 import org.apache.maven.model.Developer;
+import org.apache.maven.model.License;
+import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.PlexusTestCase;
 import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.util.xml.PrettyPrintXMLWriter;
@@ -200,5 +203,48 @@ public class DoapUtilTest
     {
         File doapFile = new File( getBasedir(), "src/test/resources/generated-doap-1.0.rdf" );
         assertFalse( DoapUtil.validate( doapFile ).isEmpty() );
+    }
+
+    /**
+     * Test method for:
+     * {@link DoapUtil#interpolate(String, MavenProject, org.apache.maven.settings.Settings)}
+     *
+     * @throws Exception if any
+     */
+    public void testInterpolate()
+        throws Exception
+    {
+        License license = new License();
+        license.setName( "licenseName" );
+        license.setUrl( "licenseUrl" );
+
+        List<Developer> developers = new ArrayList<Developer>();
+        Developer developer1 = new Developer();
+        developer1.setId( "id1" );
+        developer1.setName( "developerName1" );
+        developers.add( developer1 );
+        Developer developer2 = new Developer();
+        developer2.setId( "id1" );
+        developer2.setName( "developerName2" );
+        developers.add( developer2 );
+
+        MavenProject project = new MavenProject();
+        project.setName( "projectName" );
+        project.setDescription( "projectDescription" );
+        project.setLicenses( Collections.singletonList( license ) );
+        project.setDevelopers( developers );
+        project.getProperties().put( "myKey", "myValue" );
+
+        assertEquals( DoapUtil.interpolate( "${project.name}", project, null ), "projectName" );
+        assertEquals( DoapUtil.interpolate( "my name is ${project.name}", project, null ), "my name is projectName" );
+        assertEquals( DoapUtil.interpolate( "my name is ${project.invalid}", project, null ), "my name is ${project.invalid}" );
+        assertEquals( DoapUtil.interpolate( "${pom.description}", project, null ), "projectDescription" );
+        assertNull( DoapUtil.interpolate( "${project.licenses.name}", project, null ) );
+        assertEquals( DoapUtil.interpolate( "${project.licenses[0].name}", project, null ), "licenseName" );
+        assertNull( DoapUtil.interpolate( "${project.licenses[1].name}", project, null ) );
+        assertNotNull( DoapUtil.interpolate( "${project.developers}", project, null ) );
+        assertEquals( DoapUtil.interpolate( "${project.developers[0].name}", project, null ), "developerName1" );
+        assertEquals( DoapUtil.interpolate( "${project.developers[1].name}", project, null ), "developerName2" );
+        assertEquals( DoapUtil.interpolate( "${myKey}", project, null ), "myValue" );
     }
 }

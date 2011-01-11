@@ -23,17 +23,21 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.StringTokenizer;
+import java.util.WeakHashMap;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -50,13 +54,21 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.params.HttpClientParams;
 import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.apache.maven.model.Contributor;
+import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Settings;
 import org.apache.maven.wagon.proxy.ProxyInfo;
 import org.apache.maven.wagon.proxy.ProxyUtils;
 import org.codehaus.plexus.i18n.I18N;
+import org.codehaus.plexus.interpolation.EnvarBasedValueSource;
+import org.codehaus.plexus.interpolation.InterpolationException;
+import org.codehaus.plexus.interpolation.ObjectBasedValueSource;
+import org.codehaus.plexus.interpolation.PrefixedObjectValueSource;
+import org.codehaus.plexus.interpolation.PropertiesBasedValueSource;
+import org.codehaus.plexus.interpolation.RegexBasedInterpolator;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
+import org.codehaus.plexus.util.introspection.ClassMap;
 import org.codehaus.plexus.util.xml.XMLWriter;
 import org.codehaus.plexus.util.xml.XmlWriterUtil;
 
@@ -583,6 +595,84 @@ public class DoapUtil
         }
     }
 
+    /**
+     * Interpolate a string with project and settings.
+     *
+     * @param value could be null
+     * @param project not null
+     * @param settings could be null
+     * @return the value trimmed and interpolated or null if the interpolation doesn't work.
+     * @since 1.1
+     */
+    public static String interpolate( String value, final MavenProject project, Settings settings )
+    {
+        if ( project == null )
+        {
+            throw new IllegalArgumentException( "project is required" );
+        }
+
+        if ( value == null )
+        {
+            return value;
+        }
+
+        if ( !value.contains( "${" ) )
+        {
+            return value.trim();
+        }
+
+        RegexBasedInterpolator interpolator = new RegexBasedInterpolator();
+        try
+        {
+            interpolator.addValueSource( new EnvarBasedValueSource() );
+        }
+        catch ( IOException e )
+        {
+        }
+        interpolator.addValueSource( new PropertiesBasedValueSource( System.getProperties() ) );
+        interpolator.addValueSource( new PropertiesBasedValueSource( project.getProperties() ) );
+        interpolator.addValueSource( new PrefixedObjectValueSource( "project", project ) );
+        interpolator.addValueSource( new PrefixedObjectValueSource( "pom", project ) );
+        interpolator.addValueSource( new ObjectBasedValueSource( project )
+        {
+            @Override
+            public Object getValue( String expression )
+            {
+                try
+                {
+                    return ReflectionValueExtractor.evaluate( expression, project, true );
+                }
+                catch ( Exception e )
+                {
+                    addFeedback( "Failed to extract \'" + expression + "\' from: " + project, e );
+                }
+
+                return null;
+            }
+        } );
+
+        if ( settings != null )
+        {
+            interpolator.addValueSource( new PrefixedObjectValueSource( "settings", settings ) );
+        }
+
+        String interpolatedValue = value;
+        try
+        {
+            interpolatedValue = interpolator.interpolate( value ).trim();
+        }
+        catch ( InterpolationException e )
+        {
+        }
+
+        if ( interpolatedValue.startsWith( "${" ) )
+        {
+            return null;
+        }
+
+        return interpolatedValue;
+    }
+
     // ----------------------------------------------------------------------
     // Private methods
     // ----------------------------------------------------------------------
@@ -729,6 +819,132 @@ public class DoapUtil
         finally
         {
             IOUtil.close( is );
+        }
+    }
+
+    /**
+     * Fork of {@link org.codehaus.plexus.interpolation.reflection.ReflectionValueExtractor} to care of list or arrays.
+     */
+    static class ReflectionValueExtractor
+    {
+        @SuppressWarnings( "rawtypes" )
+        private static final Class[] CLASS_ARGS = new Class[0];
+
+        private static final Object[] OBJECT_ARGS = new Object[0];
+
+        /**
+         * Use a WeakHashMap here, so the keys (Class objects) can be garbage collected. This approach prevents permgen
+         * space overflows due to retention of discarded classloaders.
+         */
+        @SuppressWarnings( "rawtypes" )
+        private static final Map<Class,ClassMap> classMaps = new WeakHashMap<Class,ClassMap>();
+
+        private ReflectionValueExtractor()
+        {
+        }
+
+        public static Object evaluate( String expression, Object root )
+            throws Exception
+        {
+            return evaluate( expression, root, true );
+        }
+
+        // TODO: don't throw Exception
+        public static Object evaluate( String expression, Object root, boolean trimRootToken )
+            throws Exception
+        {
+            // if the root token refers to the supplied root object parameter, remove it.
+            if ( trimRootToken )
+            {
+                expression = expression.substring( expression.indexOf( '.' ) + 1 );
+            }
+
+            Object value = root;
+
+            // ----------------------------------------------------------------------
+            // Walk the dots and retrieve the ultimate value desired from the
+            // MavenProject instance.
+            // ----------------------------------------------------------------------
+
+            StringTokenizer parser = new StringTokenizer( expression, "." );
+
+            while ( parser.hasMoreTokens() )
+            {
+                String token = parser.nextToken();
+                if ( value == null )
+                {
+                    return null;
+                }
+
+                StringTokenizer parser2 = new StringTokenizer( token, "[]" );
+                int index = -1;
+                if ( parser2.countTokens() > 1 )
+                {
+                    token = parser2.nextToken();
+                    try
+                    {
+                        index = Integer.valueOf( parser2.nextToken() ).intValue();
+                    }
+                    catch ( NumberFormatException e )
+                    {
+                    }
+                }
+
+                final ClassMap classMap = getClassMap( value.getClass() );
+
+                final String methodBase = StringUtils.capitalizeFirstLetter( token );
+
+                String methodName = "get" + methodBase;
+
+                Method method = classMap.findMethod( methodName, CLASS_ARGS );
+
+                if ( method == null )
+                {
+                    // perhaps this is a boolean property??
+                    methodName = "is" + methodBase;
+
+                    method = classMap.findMethod( methodName, CLASS_ARGS );
+                }
+
+                if ( method == null )
+                {
+                    return null;
+                }
+
+                value = method.invoke( value, OBJECT_ARGS );
+                if ( value == null )
+                {
+                    return null;
+                }
+                if ( Collection.class.isAssignableFrom( value.getClass() ) )
+                {
+                    ClassMap classMap2 = getClassMap( value.getClass() );
+
+                    Method method2 = classMap2.findMethod( "toArray", CLASS_ARGS );
+
+                    value = method2.invoke( value, OBJECT_ARGS );
+                }
+                if ( value.getClass().isArray() )
+                {
+                    value = ( (Object[]) value )[index];
+                }
+            }
+
+            return value;
+        }
+
+        private static ClassMap getClassMap( Class<? extends Object> clazz )
+        {
+            ClassMap classMap = classMaps.get( clazz );
+
+            if ( classMap == null )
+            {
+                classMap = new ClassMap( clazz );
+
+                classMaps.put( clazz, classMap );
+            }
+
+            return classMap;
         }
     }
 }
