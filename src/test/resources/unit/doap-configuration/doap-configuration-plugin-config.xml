@@ -85,21 +85,20 @@ under the License.
           <project implementation="org.apache.maven.plugin.doap.stubs.DoapProjectStub"/>
           <localRepository>${localRepository}</localRepository>
           <doapFile>target/test/unit/doap-configuration/doap-configuration.rdf</doapFile>
+          <outputDirectory>target/test/unit/doap-configuration</outputDirectory>
           <lang>en</lang>
           <validate>true</validate>
 
           <doapOptions>
             <audience>developers</audience>
             <blog>http://myblog.foo.org</blog>
-            <category>library</category>
             <downloadMirror>http://mirror.foo.org</downloadMirror>
             <implementations>JSR-foo</implementations>
             <language>en,fr</language>
             <oldHomepage>http://old.foo.org</oldHomepage>
             <os>windows,linux,mac</os>
-            <platform>java</platform>
-            <programmingLanguage>java</programmingLanguage>
-            <screenshots>http://screenshot.foo.org</screenshots>
+            <platform>java,firefox</platform>
+            <screenshots>${project.url}/screenshots.html</screenshots>
             <serviceEndpoint>http://webservice.foo.org</serviceEndpoint>
             <wiki>http://wiki.foo.org</wiki>
           </doapOptions>

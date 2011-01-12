@@ -34,6 +34,7 @@ under the License.
           <project implementation="org.apache.maven.plugin.doap.stubs.DoapProjectStub"/>
           <localRepository>${localRepository}</localRepository>
           <doapFile>target/test/unit/doap-configuration/doap-extra-configuration.rdf</doapFile>
+          <outputDirectory>target/test/unit/doap-configuration</outputDirectory>
           <lang>en</lang>
           <validate>true</validate>
 
