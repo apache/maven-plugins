@@ -5232,11 +5232,18 @@ public abstract class AbstractJavadocMojo
 
         getLog().debug( "Trying to add links for modules..." );
 
+        Set<String> dependencyArtifactIds = new HashSet<String>();
+        for ( Iterator<Artifact> it = project.getDependencyArtifacts().iterator(); it.hasNext(); )
+        {
+            Artifact artifact = it.next();
+            dependencyArtifactIds.add( artifact.getId() );
+        }
+
         List<OfflineLink> modulesLinks = new ArrayList<OfflineLink>();
         String javadocDirRelative = PathUtils.toRelative( project.getBasedir(), getOutputDirectory() );
         for ( MavenProject p : reactorProjects )
         {
-            if ( p.getPackaging().equals( "pom" ) || p.getId().equals( project.getId() ) || ( p.getUrl() == null ) )
+            if ( !dependencyArtifactIds.contains( p.getArtifact().getId() ) || ( p.getUrl() == null ) )
             {
                 continue;
             }

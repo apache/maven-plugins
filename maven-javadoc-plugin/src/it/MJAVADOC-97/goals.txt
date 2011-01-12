@@ -1,1 +1,1 @@
-clean javadoc:javadoc
+clean compile javadoc:javadoc

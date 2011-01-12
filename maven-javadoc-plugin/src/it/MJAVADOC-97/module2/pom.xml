@@ -31,4 +31,12 @@
   <packaging>jar</packaging>
   <version>1.0-SNAPSHOT</version>
   <url>http://myhost/module2</url>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.maven.plugins.maven-javadoc-plugin.it</groupId>
+      <artifactId>linkoffline-test-module1</artifactId>
+      <version>1.0-SNAPSHOT</version>
+    </dependency>
+  </dependencies>
 </project>
