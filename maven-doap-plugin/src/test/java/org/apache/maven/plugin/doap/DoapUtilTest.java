@@ -58,7 +58,7 @@ public class DoapUtilTest
     }
 
     /**
-     * Test method for {@link DoapUtil#writeElement(XMLWriter, String, String, String).
+     * Test method for {@link DoapUtil#writeElement(XMLWriter, String, String, String)}.
      *
      * @throws Exception if any
      */
@@ -89,7 +89,7 @@ public class DoapUtilTest
     }
 
     /**
-     * Test method for {@link DoapUtil#writeRdfResourceElement(XMLWriter, String, String).
+     * Test method for {@link DoapUtil#writeRdfResourceElement(XMLWriter, String, String)}.
      *
      * @throws Exception if any
      */
