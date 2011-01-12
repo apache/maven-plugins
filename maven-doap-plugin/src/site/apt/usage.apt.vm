@@ -52,7 +52,7 @@ Usage
             <description>\${project.description}</description>
             <downloadPage>\${project.distributionManagement.downloadUrl}</downloadPage>
             <homepage>\${project.url}</homepage>
-            <license>\${project.licenses[0].url}</license>
+            <license>\$\{project.licenses[0].url}</license>
             <mailingList>\${project.url}/mail-lists.html</mailingList>
             <name>\${project.name}</name>
             <programmingLanguage>Java</programmingLanguage>
@@ -152,7 +152,7 @@ Usage
             <description>\${project.description}</description>
             <downloadPage>\${project.distributionManagement.downloadUrl}</downloadPage>
             <homepage>\${project.url}</homepage>
-            <license>\${project.licenses[0].url}</license>
+            <license>\$\{project.licenses[0].url}</license>
             <mailingList>\${project.url}/mail-lists.html</mailingList>
             <name>\${project.name}</name>
             <scmAnonymousConnection>\${project.scm.connection}</scmAnonymousConnection>
