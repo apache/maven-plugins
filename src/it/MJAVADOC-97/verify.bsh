@@ -58,15 +58,9 @@ try
     String log = FileUtils.fileRead( new File( basedir, "build.log" ) );
 
     // Generated files content checks
-    int linkoffline1 = contentOptions1.indexOf( "-linkoffline" );
-    if ( linkoffline1 < 0 )
-    {
-        System.err.println( "-linkoffline not added: " + options1 );
-        return false;
-    }
-    if ( !contentOptions1.substring( linkoffline1 ).contains( apidocs2.getAbsolutePath().replaceAll( "\\\\", "/" ) ) )
-    {
-        System.err.println( apidocs2.getAbsolutePath().replaceAll( "\\\\", "/" ) + " not added: " + options1 );
+    if ( contentOptions1.contains( "-linkoffline" ) )
+    { // module1 does not depend on module2, then it should not link
+        System.err.println( "module1 -linkoffline module2 added: " + options1 );
         return false;
     }
     int link1 = contentOptions1.indexOf( "-link" );
@@ -99,8 +93,8 @@ try
 
     int linkoffline2 = contentOptions2.indexOf( "-linkoffline" );
     if ( linkoffline2 < 0 )
-    {
-        System.err.println( "-linkoffline not added: " + options2 );
+    { // module2 depends on module1, then it should link
+        System.err.println( "module2 -linkoffline module1 not added: " + options2 );
         return false;
     }
     if ( !contentOptions2.substring( linkoffline2 ).contains( apidocs1.getAbsolutePath().replaceAll( "\\\\", "/" ) ) )

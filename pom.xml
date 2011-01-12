@@ -382,7 +382,7 @@ under the License.
                 <pomInclude>**/MJAVADOC-206/pom.xml</pomInclude>
                 <pomInclude>**/MJAVADOC-226/pom.xml</pomInclude>
                 <pomInclude>**/MJAVADOC-97/pom.xml</pomInclude>
-                <pomInclude>**/MJAVADOC-181/pom.xml</pomInclude>
+                <!-- pomInclude>**/MJAVADOC-181/pom.xml</pomInclude--><!-- seems to be wrong, see comment in Jira issue  -->
                 <pomInclude>**/MJAVADOC-257/pom.xml</pomInclude>
                 <pomInclude>**/MJAVADOC-259/pom.xml</pomInclude>
                 <pomInclude>**/MJAVADOC-262/pom.xml</pomInclude>
