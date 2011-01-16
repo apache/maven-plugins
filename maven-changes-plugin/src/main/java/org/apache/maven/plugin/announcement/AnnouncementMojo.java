@@ -622,6 +622,8 @@ public class AnnouncementMojo
 
         jiraDownloader.setJiraPassword( jiraPassword );
 
+        jiraDownloader.setJiraXmlEncoding( jiraXmlEncoding );
+
         jiraDownloader.setWebUser( webUser );
 
         jiraDownloader.setWebPassword( webPassword );
@@ -630,19 +632,16 @@ public class AnnouncementMojo
         {
             jiraDownloader.doExecute();
 
-            if ( jiraXMLFile.exists() )
+            List issues = jiraDownloader.getIssueList();
+
+            if ( issues.isEmpty() )
             {
-                JiraXML jiraParser = new JiraXML( jiraXMLFile, jiraXmlEncoding, getLog(), null );
-
-                List issues = jiraParser.getIssueList();
-
-                return IssueAdapter.getReleases( issues );
+                return Collections.EMPTY_LIST;
             }
             else
             {
-                getLog().warn( "jira file " + jiraXMLFile.getPath() + " doesn't exists " );
+                return IssueAdapter.getReleases( issues );
             }
-            return Collections.EMPTY_LIST;
         }
         catch ( Exception e )
         {

@@ -289,34 +289,31 @@ public class JiraMojo
                 "maven-changes-plugin: None of the configured columnNames '" + columnNames + "' are valid." );
         }
 
-        // Download issues
-        JiraDownloader issueDownloader = new JiraDownloader();
-        configureIssueDownloader( issueDownloader );
-
-        // Generate the report
-        IssuesReportGenerator report;
-        report = new IssuesReportGenerator( IssuesReportHelper.toIntArray( columnIds ) );
-
         try
         {
+            // Download issues
+            JiraDownloader issueDownloader = new JiraDownloader();
+            configureIssueDownloader( issueDownloader );
             issueDownloader.doExecute();
 
-            if ( jiraXmlPath.isFile() )
+            List issueList = issueDownloader.getIssueList();
+
+            if ( onlyCurrentVersion )
             {
-                JiraXML jira = new JiraXML( jiraXmlPath, jiraXmlEncoding, getLog(), jiraDatePattern );
-                List issueList = jira.getIssueList();
+                issueList = JiraHelper.getIssuesForVersion( issueList, project.getVersion() );
+                getLog().info( "The JIRA Report will contain issues only for the current version." );
+            }
 
-                if ( onlyCurrentVersion )
-                {
-                    issueList = JiraHelper.getIssuesForVersion( issueList, project.getVersion() );
-                    getLog().info( "The JIRA Report will contain issues only for the current version." );
-                }
+            // Generate the report
+            IssuesReportGenerator report = new IssuesReportGenerator( IssuesReportHelper.toIntArray( columnIds ) );
 
-                report.doGenerateReport( getBundle( locale ), getSink(), issueList );
+            if ( issueList.isEmpty() )
+            {
+                report.doGenerateEmptyReport( getBundle( locale ), getSink() );
             }
             else
             {
-                report.doGenerateEmptyReport( getBundle( locale ), getSink() );
+                report.doGenerateReport( getBundle( locale ), getSink(), issueList );
             }
         }
         catch ( Exception e )
@@ -369,9 +366,13 @@ public class JiraMojo
 
         issueDownloader.setFilter( filter );
 
+        issueDownloader.setJiraDatePattern( jiraDatePattern );
+
         issueDownloader.setJiraUser( jiraUser );
 
         issueDownloader.setJiraPassword( jiraPassword );
+
+        issueDownloader.setJiraXmlEncoding( jiraXmlEncoding );
 
         issueDownloader.setTypeIds( typeIds );
 
