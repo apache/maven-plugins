@@ -188,11 +188,11 @@ public class JiraMojo
      * will appear in the report in the same order as you specify them here.
      * Multiple values can be separated by commas.
      * <p>
-     * Valid columns are: <code>Key</code>, <code>Summary</code>,
-     * <code>Status</code>, <code>Resolution</code>, <code>Assignee</code>,
-     * <code>Reporter</code>, <code>Type</code>, <code>Priority</code>,
-     * <code>Version</code>, <code>Fix Version</code>, <code>Component</code>,
-     * <code>Created</code>, <code>Id</code> and <code>Updated</code>.
+     * Valid columns are: <code>Assignee</code>, <code>Component</code>,
+     * <code>Created</code>, <code>Fix Version</code>, <code>Id</code>,
+     * <code>Key</code>, <code>Priority</code>, <code>Reporter</code>,
+     * <code>Resolution</code>, <code>Status</code>, <code>Summary</code>,
+     * <code>Type</code>, <code>Updated</code> and <code>Version</code>.
      * </p>
      *
      * @parameter default-value="Key,Summary,Status,Resolution,Assignee"
@@ -210,12 +210,11 @@ public class JiraMojo
      * possible to specify <code>ASC</code> for consistency. The previous
      * example would then become <code>Fix Version DESC, Type ASC</code>. 
      * <p>
-     * Valid columns are: <code>Key</code>, <code>Summary</code>,
-     * <code>Status</code>, <code>Resolution</code>, <code>Assignee</code>,
-     * <code>Reporter</code>, <code>Type</code>, <code>Priority</code>,
-     * <code>Version</code>, <code>Fix Version</code>,
-     * <code>Component</code>, <code>Created</code> and
-     * <code>Updated</code>.
+     * Valid columns are: <code>Assignee</code>, <code>Component</code>,
+     * <code>Created</code>, <code>Fix Version</code>, <code>Id</code>,
+     * <code>Key</code>, <code>Priority</code>, <code>Reporter</code>,
+     * <code>Resolution</code>, <code>Status</code>, <code>Summary</code>,
+     * <code>Type</code>, <code>Updated</code> and <code>Version</code>.
      * </p>
      *
      * @parameter default-value="Priority DESC, Created DESC"
