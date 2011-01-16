@@ -344,9 +344,10 @@ public abstract class AbstractJiraDownloader
 
             client.setState( state );
 
-            Map urlMap = getJiraUrlAndIssueId();
+            Map urlMap = JiraHelper.getJiraUrlAndIssueId( project.getIssueManagement().getUrl() );
 
             String jiraUrl = (String) urlMap.get( "url" );
+            getLog().debug( "JIRA lives at: " + jiraUrl );
 
             String jiraId = (String) urlMap.get( "id" );
 
@@ -418,51 +419,6 @@ public abstract class AbstractJiraDownloader
     protected String getFixFor()
     {
         return null;
-    }
-
-    /**
-     * Parse out the base URL for JIRA and the JIRA project id from the issue
-     * management section of the POM.
-     *
-     * @return A <code>Map</code> containing the URL and project id
-     */
-    private Map getJiraUrlAndIssueId()
-    {
-        HashMap urlMap = new HashMap();
-
-        String url = project.getIssueManagement().getUrl();
-
-        if ( url.endsWith( "/" ) )
-        {
-            // MCHANGES-218
-            url = url.substring( 0, url.lastIndexOf( '/' ) );
-        }
-
-        // chop off the parameter part
-        int pos = url.indexOf( "?" );
-
-        // and get the id while we're at it
-        String id = "";
-
-        if ( pos >= 0 )
-        {
-            // project id
-            id = url.substring( url.lastIndexOf( "=" ) + 1 );
-        }
-
-        String jiraUrl = url.substring( 0, url.lastIndexOf( "/" ) );
-
-        if ( jiraUrl.endsWith( "secure" ) || jiraUrl.endsWith( "browse" ) )
-        {
-            jiraUrl = jiraUrl.substring( 0, jiraUrl.lastIndexOf( "/" ) );
-        }
-        getLog().debug( "JIRA lives at: " + jiraUrl );
-
-        urlMap.put( "url", jiraUrl );
-
-        urlMap.put( "id", id );
-
-        return urlMap;
     }
 
     /**
