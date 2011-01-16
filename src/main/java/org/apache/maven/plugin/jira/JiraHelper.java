@@ -22,7 +22,9 @@ package org.apache.maven.plugin.jira;
 import java.text.NumberFormat;
 import java.text.ParsePosition;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.StringTokenizer;
 
 import org.apache.commons.httpclient.HttpClient;
@@ -87,6 +89,51 @@ public class JiraHelper
                 "Couldn't find any issues for the version '" + releaseVersion + "' among the supplied issues." );
         }
         return issuesForVersion;
+    }
+
+    /**
+     * Parse out the base URL for JIRA and the JIRA project id from the issue
+     * management URL.
+     *
+     * @param issueManagementUrl The URL to the issue management system
+     * @return A <code>Map</code> containing the URL and project id
+     */
+    static Map getJiraUrlAndIssueId( String issueManagementUrl )
+    {
+        HashMap urlMap = new HashMap();
+
+        String url = issueManagementUrl;
+
+        if ( url.endsWith( "/" ) )
+        {
+            // MCHANGES-218
+            url = url.substring( 0, url.lastIndexOf( '/' ) );
+        }
+
+        // chop off the parameter part
+        int pos = url.indexOf( "?" );
+
+        // and get the id while we're at it
+        String id = "";
+
+        if ( pos >= 0 )
+        {
+            // project id
+            id = url.substring( url.lastIndexOf( "=" ) + 1 );
+        }
+
+        String jiraUrl = url.substring( 0, url.lastIndexOf( "/" ) );
+
+        if ( jiraUrl.endsWith( "secure" ) || jiraUrl.endsWith( "browse" ) )
+        {
+            jiraUrl = jiraUrl.substring( 0, jiraUrl.lastIndexOf( "/" ) );
+        }
+
+        urlMap.put( "url", jiraUrl );
+
+        urlMap.put( "id", id );
+
+        return urlMap;
     }
 
     /**
