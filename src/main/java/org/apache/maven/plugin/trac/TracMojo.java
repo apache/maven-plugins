@@ -135,23 +135,25 @@ public class TracMojo
     public void executeReport( Locale locale )
         throws MavenReportException
     {
-        TracDownloader issueDownloader = new TracDownloader();
-        configureIssueDownloader( issueDownloader );
+        // Validate parameters
+        List columnIds = IssuesReportHelper.getColumnIds( columnNames, TRAC_COLUMNS, DEPRECATED_TRAC_COLUMNS, getLog() );
+        if ( columnIds.size() == 0 )
+        {
+            // This can happen if the user has configured column names and they are all invalid
+            throw new MavenReportException(
+                "maven-changes-plugin: None of the configured columnNames '" + columnNames + "' are valid." );
+        }
 
         try
         {
-            List columnIds = IssuesReportHelper.getColumnIds( columnNames, TRAC_COLUMNS, DEPRECATED_TRAC_COLUMNS, getLog() );
-            if ( columnIds.size() == 0 )
-            {
-                // This can happen if the user has configured column names and they are all invalid
-                throw new MavenReportException(
-                    "maven-changes-plugin: None of the configured columnNames '" + columnNames + "' are valid." );
-            }
+            // Download issues
+            TracDownloader issueDownloader = new TracDownloader();
+            configureIssueDownloader( issueDownloader );
+
+            List issueList = issueDownloader.getIssueList();
 
             // Generate the report
             IssuesReportGenerator report = new IssuesReportGenerator( IssuesReportHelper.toIntArray( columnIds ) );
-
-            List issueList = issueDownloader.getIssueList();
 
             if ( issueList.isEmpty() )
             {

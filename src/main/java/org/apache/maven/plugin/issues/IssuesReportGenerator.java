@@ -52,7 +52,6 @@ public class IssuesReportGenerator extends AbstractIssuesReportGenerator
      * @param includedColumns The id:s of the columns to include in the report
      */
     public IssuesReportGenerator( int[] includedColumns )
-        throws MavenReportException
     {
         this.columns = includedColumns;
     }
