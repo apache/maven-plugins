@@ -280,11 +280,22 @@ public class JiraMojo
     public void executeReport( Locale locale )
         throws MavenReportException
     {
-        JiraDownloader issueDownloader = new JiraDownloader();
+        // Validate parameters
+        List columnIds = IssuesReportHelper.getColumnIds( columnNames, JIRA_COLUMNS );
+        if ( columnIds.size() == 0 )
+        {
+            // This can happen if the user has configured column names and they are all invalid
+            throw new MavenReportException(
+                "maven-changes-plugin: None of the configured columnNames '" + columnNames + "' are valid." );
+        }
 
+        // Download issues
+        JiraDownloader issueDownloader = new JiraDownloader();
         configureIssueDownloader( issueDownloader );
 
+        // Generate the report
         IssuesReportGenerator report;
+        report = new IssuesReportGenerator( IssuesReportHelper.toIntArray( columnIds ) );
 
         try
         {
@@ -294,15 +305,6 @@ public class JiraMojo
             {
                 JiraXML jira = new JiraXML( jiraXmlPath, jiraXmlEncoding, getLog(), jiraDatePattern );
                 List issueList = jira.getIssueList();
-
-                List columnIds = IssuesReportHelper.getColumnIds( columnNames, JIRA_COLUMNS );
-                if ( columnIds.size() == 0 )
-                {
-                    // This can happen if the user has configured column names and they are all invalid
-                    throw new MavenReportException(
-                        "maven-changes-plugin: None of the configured columnNames '" + columnNames + "' are valid." );
-                }
-                report = new IssuesReportGenerator( IssuesReportHelper.toIntArray( columnIds ) );
 
                 if ( onlyCurrentVersion )
                 {
@@ -314,16 +316,8 @@ public class JiraMojo
             }
             else
             {
-                report = new IssuesReportGenerator( null );
-
                 report.doGenerateEmptyReport( getBundle( locale ), getSink() );
             }
-        }
-        catch ( MavenReportException mre )
-        {
-            // Rethrow this error from IssuesReportGenerator( String )
-            // so that the build fails
-            throw mre;
         }
         catch ( Exception e )
         {
