@@ -124,9 +124,20 @@ public class JiraHelper
 
         String jiraUrl = url.substring( 0, url.lastIndexOf( "/" ) );
 
-        if ( jiraUrl.endsWith( "secure" ) || jiraUrl.endsWith( "browse" ) )
+        if ( jiraUrl.endsWith( "secure" ) )
         {
             jiraUrl = jiraUrl.substring( 0, jiraUrl.lastIndexOf( "/" ) );
+        }
+        else
+        {
+            // If the issueManagement.url points to a component, then "browse"
+            // will not be at the end - it might be in the middle somewhere.
+            // Try to find it.
+            final int index = jiraUrl.indexOf( "/browse" );
+            if ( index != -1 )
+            {
+                jiraUrl = jiraUrl.substring( 0, index );
+            }
         }
 
         urlMap.put( "url", jiraUrl );

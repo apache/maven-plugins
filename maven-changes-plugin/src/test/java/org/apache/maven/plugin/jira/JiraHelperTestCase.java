@@ -43,5 +43,11 @@ public class JiraHelperTestCase
         // MCHANGES-218
         map = JiraHelper.getJiraUrlAndProjectId( "http://jira.codehaus.org/browse/DOXIA/" );
         assertEquals( "http://jira.codehaus.org", map.get( "url" ) );
+
+        // MCHANGES-222
+        map = JiraHelper.getJiraUrlAndProjectId( "http://jira.codehaus.org/secure/IssueNavigator.jspa?pid=11761&reset=true" );
+        assertEquals( "http://jira.codehaus.org", map.get( "url" ) );
+        map = JiraHelper.getJiraUrlAndProjectId( "http://jira.codehaus.org/browse/MSHARED/component/13380" );
+        assertEquals( "http://jira.codehaus.org", map.get( "url" ) );
     }
 }
