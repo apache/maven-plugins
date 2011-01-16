@@ -88,7 +88,10 @@ public class JiraXML
 
             fis = new FileInputStream( xmlPath );
             InputSource inputSource = new InputSource( fis );
-            inputSource.setEncoding( encoding );
+            if ( encoding != null )
+            {
+                inputSource.setEncoding( encoding );
+            }
 
             saxParser.parse( inputSource, this );
         }

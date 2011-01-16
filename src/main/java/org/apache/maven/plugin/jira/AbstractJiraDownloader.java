@@ -45,7 +45,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URLEncoder;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -104,6 +106,10 @@ public abstract class AbstractJiraDownloader
     protected Map priorityMap = new HashMap();
     /** Mapping containing all allowed JIRA type values. */
     protected Map typeMap = new HashMap();
+    /** The pattern used to parse dates from the JIRA xml file. */
+    private String jiraDatePattern;
+    /** The encoding used to read the JIRA XML file. */
+    private String jiraXmlEncoding;
 
     /**
      * Creates a filter given the parameters and some defaults.
@@ -739,6 +745,28 @@ public abstract class AbstractJiraDownloader
                 getLog().error( "Error downloading issues from JIRA. Cause is " + e.getLocalizedMessage() );
             }
         }
+    }
+
+    public List getIssueList() {
+        if ( output.isFile() )
+        {
+            JiraXML jira = new JiraXML( output, jiraXmlEncoding, log, jiraDatePattern );
+            return jira.getIssueList();
+        }
+        else {
+            getLog().warn( "JIRA file " + output.getPath() + " doesn't exist." );
+            return Collections.EMPTY_LIST;
+        }
+    }
+
+    public void setJiraDatePattern( String jiraDatePattern )
+    {
+        this.jiraDatePattern = jiraDatePattern;
+    }
+
+    public void setJiraXmlEncoding( String jiraXmlEncoding )
+    {
+        this.jiraXmlEncoding = jiraXmlEncoding;
     }
 
     /**
