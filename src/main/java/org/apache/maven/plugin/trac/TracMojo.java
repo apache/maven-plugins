@@ -46,24 +46,42 @@ public class TracMojo
     extends AbstractChangesReport
 {
     /**
+     * Deprecated Trac columns.
+     */
+    private static Map DEPRECATED_TRAC_COLUMNS = new HashMap();
+
+    /**
      * Valid Trac columns.
      */
     private static Map TRAC_COLUMNS = new HashMap();
 
     static
     {
-        TRAC_COLUMNS.put( "changed", new Integer( IssuesReportHelper.COLUMN_UPDATED ) );
-        TRAC_COLUMNS.put( "component", new Integer( IssuesReportHelper.COLUMN_COMPONENT ) );
-        TRAC_COLUMNS.put( "created", new Integer( IssuesReportHelper.COLUMN_CREATED ) );
-        TRAC_COLUMNS.put( "id", new Integer( IssuesReportHelper.COLUMN_ID ) );
-        TRAC_COLUMNS.put( "milestone", new Integer( IssuesReportHelper.COLUMN_FIX_VERSION ) );
-        TRAC_COLUMNS.put( "owner", new Integer( IssuesReportHelper.COLUMN_ASSIGNEE ) );
-        TRAC_COLUMNS.put( "priority", new Integer( IssuesReportHelper.COLUMN_PRIORITY ) );
-        TRAC_COLUMNS.put( "reporter", new Integer( IssuesReportHelper.COLUMN_REPORTER ) );
-        TRAC_COLUMNS.put( "resolution", new Integer( IssuesReportHelper.COLUMN_RESOLUTION ) );
-        TRAC_COLUMNS.put( "status", new Integer( IssuesReportHelper.COLUMN_STATUS ) );
-        TRAC_COLUMNS.put( "summary", new Integer( IssuesReportHelper.COLUMN_SUMMARY ) );
-        TRAC_COLUMNS.put( "type", new Integer( IssuesReportHelper.COLUMN_TYPE ) );
+        DEPRECATED_TRAC_COLUMNS.put( "changed", new Integer( IssuesReportHelper.COLUMN_UPDATED ) );
+        DEPRECATED_TRAC_COLUMNS.put( "component", new Integer( IssuesReportHelper.COLUMN_COMPONENT ) );
+        DEPRECATED_TRAC_COLUMNS.put( "created", new Integer( IssuesReportHelper.COLUMN_CREATED ) );
+        DEPRECATED_TRAC_COLUMNS.put( "id", new Integer( IssuesReportHelper.COLUMN_ID ) );
+        DEPRECATED_TRAC_COLUMNS.put( "milestone", new Integer( IssuesReportHelper.COLUMN_FIX_VERSION ) );
+        DEPRECATED_TRAC_COLUMNS.put( "owner", new Integer( IssuesReportHelper.COLUMN_ASSIGNEE ) );
+        DEPRECATED_TRAC_COLUMNS.put( "priority", new Integer( IssuesReportHelper.COLUMN_PRIORITY ) );
+        DEPRECATED_TRAC_COLUMNS.put( "reporter", new Integer( IssuesReportHelper.COLUMN_REPORTER ) );
+        DEPRECATED_TRAC_COLUMNS.put( "resolution", new Integer( IssuesReportHelper.COLUMN_RESOLUTION ) );
+        DEPRECATED_TRAC_COLUMNS.put( "status", new Integer( IssuesReportHelper.COLUMN_STATUS ) );
+        DEPRECATED_TRAC_COLUMNS.put( "summary", new Integer( IssuesReportHelper.COLUMN_SUMMARY ) );
+        DEPRECATED_TRAC_COLUMNS.put( "type", new Integer( IssuesReportHelper.COLUMN_TYPE ) );
+
+        TRAC_COLUMNS.put( "Assignee", new Integer( IssuesReportHelper.COLUMN_ASSIGNEE ) );
+        TRAC_COLUMNS.put( "Component", new Integer( IssuesReportHelper.COLUMN_COMPONENT ) );
+        TRAC_COLUMNS.put( "Created", new Integer( IssuesReportHelper.COLUMN_CREATED ) );
+        TRAC_COLUMNS.put( "Fix Version", new Integer( IssuesReportHelper.COLUMN_FIX_VERSION ) );
+        TRAC_COLUMNS.put( "Id", new Integer( IssuesReportHelper.COLUMN_ID ) );
+        TRAC_COLUMNS.put( "Priority", new Integer( IssuesReportHelper.COLUMN_PRIORITY ) );
+        TRAC_COLUMNS.put( "Reporter", new Integer( IssuesReportHelper.COLUMN_REPORTER ) );
+        TRAC_COLUMNS.put( "Resolution", new Integer( IssuesReportHelper.COLUMN_RESOLUTION ) );
+        TRAC_COLUMNS.put( "Status", new Integer( IssuesReportHelper.COLUMN_STATUS ) );
+        TRAC_COLUMNS.put( "Summary", new Integer( IssuesReportHelper.COLUMN_SUMMARY ) );
+        TRAC_COLUMNS.put( "Type", new Integer( IssuesReportHelper.COLUMN_TYPE ) );
+        TRAC_COLUMNS.put( "Updated", new Integer( IssuesReportHelper.COLUMN_UPDATED ) );
     }
 
     /**
@@ -94,14 +112,14 @@ public class TracMojo
      * will appear in the report in the same order as you specify them here.
      * Multiple values can be separated by commas.
      * <p>
-     * Valid columns are: <code>id</code>, <code>type</code>,
-     * <code>summary</code>, <code>status</code>, <code>resolution</code>,
-     * <code>milestone</code>, <code>owner</code>, <code>priority</code>,
-     * <code>reporter</code>, <code>component</code>, <code>created</code>,
-     * <code>changed</code>.
+     * Valid columns are: <code>Assignee</code>, <code>Component</code>,
+     * <code>Created</code>, <code>Fix Version</code>, <code>Id</code>,
+     * <code>Priority</code>, <code>Reporter</code>, <code>Resolution</code>,
+     * <code>Status</code>, <code>Summary</code>, <code>Type</code> and
+     * <code>Updated</code>.
      * </p>
      *
-     * @parameter default-value="id,type,summary,owner,reporter,priority,status,resolution,created,changed"
+     * @parameter default-value="Id,Type,Summary,Assignee,Reporter,Priority,Status,Resolution,Created,Updated"
      * @since 2.2
      */
     private String columnNames;
@@ -122,9 +140,7 @@ public class TracMojo
 
         try
         {
-            List issueList = issueDownloader.getIssueList();
-
-            List columnIds = IssuesReportHelper.getColumnIds( columnNames, TRAC_COLUMNS );
+            List columnIds = IssuesReportHelper.getColumnIds( columnNames, TRAC_COLUMNS, DEPRECATED_TRAC_COLUMNS, getLog() );
             if ( columnIds.size() == 0 )
             {
                 // This can happen if the user has configured column names and they are all invalid
@@ -134,6 +150,8 @@ public class TracMojo
 
             // Generate the report
             IssuesReportGenerator report = new IssuesReportGenerator( IssuesReportHelper.toIntArray( columnIds ) );
+
+            List issueList = issueDownloader.getIssueList();
 
             if ( issueList.isEmpty() )
             {
