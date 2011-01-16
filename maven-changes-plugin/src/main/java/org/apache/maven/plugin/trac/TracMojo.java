@@ -162,14 +162,7 @@ public class TracMojo
             }
             else
             {
-                try
-                {
-                    report.doGenerateReport( getBundle( locale ), getSink(), issueList );
-                }
-                catch ( Exception e )
-                {
-                    e.printStackTrace();
-                }
+                report.doGenerateReport( getBundle( locale ), getSink(), issueList );
             }
         }
         catch ( MalformedURLException e )
@@ -181,6 +174,10 @@ public class TracMojo
         {
             // Rethrow this error so that the build fails
             throw new MavenReportException( "XmlRpc Error.", e );
+        }
+        catch ( Exception e )
+        {
+            e.printStackTrace();
         }
     }
 
