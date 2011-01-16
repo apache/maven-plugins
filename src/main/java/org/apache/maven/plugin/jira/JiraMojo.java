@@ -270,6 +270,21 @@ public class JiraMojo
     private String jiraDatePattern;
 
     /**
+     * The prefix used when naming versions in JIRA.
+     * <p>
+     * If you have a project in JIRA with several components that have different
+     * release cycles, it is an often used pattern to prefix the version with
+     * the name of the component, e.g. maven-filtering-1.0 etc. To fetch issues
+     * from JIRA for a release of the "maven-filtering" component you would need
+     * to set this parameter to "maven-filtering-".
+     * </p>
+     *
+     * @parameter default-value=""
+     * @since 2.4
+     */
+    private String versionPrefix;
+
+    /**
      * @see org.apache.maven.reporting.AbstractMavenReport#canGenerateReport()
      */
     public boolean canGenerateReport()
@@ -300,7 +315,8 @@ public class JiraMojo
 
             if ( onlyCurrentVersion )
             {
-                issueList = JiraHelper.getIssuesForVersion( issueList, project.getVersion() );
+                String version = ( versionPrefix == null ? "" : versionPrefix ) + project.getVersion();
+                issueList = JiraHelper.getIssuesForVersion( issueList, version );
                 getLog().info( "The JIRA Report will contain issues only for the current version." );
             }
 
