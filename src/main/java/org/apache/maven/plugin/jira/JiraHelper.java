@@ -98,7 +98,7 @@ public class JiraHelper
      * @param issueManagementUrl The URL to the issue management system
      * @return A <code>Map</code> containing the URL and project id
      */
-    static Map getJiraUrlAndIssueId( String issueManagementUrl )
+    static Map getJiraUrlAndProjectId( String issueManagementUrl )
     {
         HashMap urlMap = new HashMap();
 

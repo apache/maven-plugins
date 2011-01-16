@@ -344,7 +344,7 @@ public abstract class AbstractJiraDownloader
 
             client.setState( state );
 
-            Map urlMap = JiraHelper.getJiraUrlAndIssueId( project.getIssueManagement().getUrl() );
+            Map urlMap = JiraHelper.getJiraUrlAndProjectId( project.getIssueManagement().getUrl() );
 
             String jiraUrl = (String) urlMap.get( "url" );
             getLog().debug( "JIRA lives at: " + jiraUrl );
