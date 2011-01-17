@@ -46,33 +46,31 @@ public class ChangesValidatorMojo
 {
 
     /**
-     * The path of the <code>changes.xml</code> file that will be converted into an HTML report.
-     *
-     * @parameter expression="${changes.xmlPath}" default-value="src/changes/changes.xml"
+     * @component role="org.apache.maven.plugin.changes.schema.ChangesSchemaValidator" roleHint="default"
      */
-    private File xmlPath;
-    
+    private ChangesSchemaValidator changesSchemaValidator;
+
     /**
      * The changes xsd version.
      *
      * @parameter expression="${changes.xsdVersion}" default-value="1.0.0"
      */
     private String changesXsdVersion;
-    
-    /**
-     * 
-     * @component role="org.apache.maven.plugin.changes.schema.ChangesSchemaValidator" roleHint="default"
-     *  
-     */
-    private ChangesSchemaValidator changesSchemaValidator;
-    
+
     /**
      * Mojo failure if validation failed. If not and validation failed only a warning will be logged.
      *
      * @parameter expression="${changes.validate.failed}" default-value="false"
-     */    
+     */
     private boolean failOnError;
-    
+
+    /**
+     * The path of the <code>changes.xml</code> file that will be converted into an HTML report.
+     *
+     * @parameter expression="${changes.xmlPath}" default-value="src/changes/changes.xml"
+     */
+    private File xmlPath;
+
     /** 
      * @see org.apache.maven.plugin.Mojo#execute()
      */

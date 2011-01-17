@@ -54,11 +54,51 @@ public class ChangesMojo
     extends AbstractChangesReport
 {
     /**
-     * The path of the <code>changes.xml</code> file that will be converted into an HTML report.
+     * A flag whether the report should also include the dates of individual actions. If set to <code>false</code>, only
+     * the dates of releases will be written to the report.
      *
-     * @parameter expression="${changes.xmlPath}" default-value="src/changes/changes.xml"
+     * @parameter expression="${changes.addActionDate}" default-value="false"
+     * @since 2.1
      */
-    private File xmlPath;
+    private boolean addActionDate;
+
+    /**
+     * Whether HTML code within an action should be escaped. By changing this to
+     * <code>false</code> you can restore the behavior that was in version 2.2
+     * of this plugin, allowing you to use HTML code to format the content of an
+     * action.
+     * <p>
+     * <strong>Note:</strong> If you use HTML code in an action you need to
+     * place it inside a CDATA section.
+     * </p>
+     * <strong>Note:</strong> Putting any kind of markup inside a CDATA section
+     * might mess up the Changes Report or other generated documents, such as
+     * PDFs, that are based on your <code>changes.xml</code> file if you are not
+     * careful.
+     *
+     * @parameter default-value="true"
+     * @since 2.4
+     * @deprecated using markup inside CDATA sections does not work for all output formats!
+     */
+    private boolean escapeHTML;
+
+    /**
+     * The directory for interpolated changes.xml.
+     *
+     * @parameter expression="${project.build.directory}/changes"
+     * @required
+     * @readonly
+     * @since 2.2
+     */
+    private File filteredOutputDirectory;
+
+    /**
+     * applying filtering filtering "a la" resources plugin
+     *
+     * @parameter default-value="false"
+     * @since 2.2
+     */
+    private boolean filteringChanges;
 
     /**
      * Template string that is used to discover the URL to use to display an issue report.
@@ -75,7 +115,7 @@ public class ChangesMojo
      * @deprecated As of 2.1 use issueLinkTemplatePerSystem : this one will be with system default
      */
     private String issueLinkTemplate;
-    
+
     /**
      * Template strings per system that is used to discover the URL to use to display an issue report. Each key in this
      * map denotes the (case-insensitive) identifier of the issue tracking system and its value gives the URL template.
@@ -101,45 +141,44 @@ public class ChangesMojo
     private Map issueLinkTemplatePerSystem;
 
     /**
+     * @component
+     * @since 2.2
+     */
+    private MavenFileFilter mavenFileFilter;
+
+    /**
+     * Format to use for publishDate. The value will be available with the following expression ${publishDate}
+     *
+     * @see SimpleDateFormat
+     * @parameter default-value="yyyy-MM-dd"
+     * @since 2.2
+     */
+    private String publishDateFormat;
+
+   /**
+    * Locale to use for publishDate when formatting
+    *
+    * @see Locale
+    * @parameter default-value="en"
+    * @since 2.2
+    */
+    private String publishDateLocale;
+
+    /**
+     * @parameter expression="${session}"
+     * @readonly
+     * @required
+     * @since 2.2
+     */
+    protected MavenSession session;
+
+    /**
      * @parameter default-value="${project.issueManagement.system}"
      * @readonly
      * @since 2.4
      */
     private String system;
 
-    /**
-     * @parameter default-value="${project.issueManagement.url}"
-     * @readonly
-     */
-    private String url;
-
-    /**
-     * A flag whether the report should also include the dates of individual actions. If set to <code>false</code>, only
-     * the dates of releases will be written to the report.
-     *
-     * @parameter expression="${changes.addActionDate}" default-value="false"
-     * @since 2.1
-     */
-    private boolean addActionDate;
-    
-    /**
-     *
-     * @component
-     *
-     * @since 2.2
-     */
-    private MavenFileFilter mavenFileFilter;
-    
-    /**
-     * @parameter expression="${session}"
-     * @readonly
-     * @required
-     *
-     * @since 2.2
-     *
-     */
-    protected MavenSession session;
-    
     /**
      * The URI of a file containing all the team members. If this is set to the
      * special value "none", no links will be generated for the team members.
@@ -150,109 +189,33 @@ public class ChangesMojo
     private String teamlist;
 
     /**
-     * Whether HTML code within an action should be escaped. By changing this to
-     * <code>false</code> you can restore the behavior that was in version 2.2
-     * of this plugin, allowing you to use HTML code to format the content of an
-     * action.
-     * <p>
-     * <strong>Note:</strong> If you use HTML code in an action you need to
-     * place it inside a CDATA section.
-     * </p>
-     * <strong>Note:</strong> Putting any kind of markup inside a CDATA section
-     * might mess up the Changes Report or other generated documents, such as
-     * PDFs, that are based on your <code>changes.xml</code> file if you are not
-     * careful.
-     *
-     * @parameter default-value="true"
-     * @since 2.4
-     * @deprecated using markup inside CDATA sections does not work for all output formats!
+     * @parameter default-value="${project.issueManagement.url}"
+     * @readonly
      */
-    private boolean escapeHTML;
+    private String url;
 
     /**
-     * applying filtering filtering "a la" resources plugin
+     * The path of the <code>changes.xml</code> file that will be converted into an HTML report.
      *
-     * @parameter default-value="false"
-     *
-     * @since 2.2
+     * @parameter expression="${changes.xmlPath}" default-value="src/changes/changes.xml"
      */
-    private boolean filteringChanges;
-    
-    /**
-     * The directory for interpolated changes.xml.
-     *
-     * @parameter expression="${project.build.directory}/changes"
-     * @required
-     * @readonly
-     *
-     * @since 2.2
-     *
-     */
-    private File filteredOutputDirectory;    
-    
-    /**
-     *
-     * Format to use for publishDate. The value will be available with the following expression ${publishDate}
-     *
-     * @see SimpleDateFormat
-     *
-     * @parameter default-value="yyyy-MM-dd"
-     *
-     * @since 2.2
-     *
-     */
-    private String publishDateFormat;
-    
-    /**
-    *
-    * Locale to use for publishDate when formatting
-    *
-    * @see Locale
-    *
-    * @parameter default-value="en"
-    *
-    * @since 2.2
-    *
-    */
-    private String publishDateLocale;
-    
+    private File xmlPath;
+
     private CaseInsensitiveMap caseInsensitiveIssueLinkTemplatePerSystem;
+
+    /* --------------------------------------------------------------------- */
+    /* Public methods                                                        */
+    /* --------------------------------------------------------------------- */
 
     public boolean canGenerateReport()
     {
         return xmlPath.isFile();
     }
 
-    private void copyStaticResources()
-        throws MavenReportException
-    {
-        final String pluginResourcesBase = "org/apache/maven/plugin/changes";
-        String resourceNames[] = {
-            "images/add.gif",
-            "images/fix.gif",
-            "images/icon_help_sml.gif",
-            "images/remove.gif",
-            "images/rss.png",
-            "images/update.gif" };
-        try
-        {
-            getLog().debug( "Copying static resources." );
-            for ( int i = 0; i < resourceNames.length; i++ )
-            {
-                URL url = this.getClass().getClassLoader().getResource( pluginResourcesBase + "/" + resourceNames[i] );
-                FileUtils.copyURLToFile( url, new File( getReportOutputDirectory(), resourceNames[i] ) );
-            }
-        }
-        catch ( IOException e )
-        {
-            throw new MavenReportException( "Unable to copy static resources." );
-        }
-    }
-
     public void executeReport( Locale locale )
         throws MavenReportException
     {
-        
+
         if ( !xmlPath.exists() )
         {
             getLog().warn( "changes.xml file " + xmlPath.getAbsolutePath() + " does not exist." );
@@ -309,7 +272,7 @@ public class ChangesMojo
         report.setEscapeHTML ( escapeHTML );
 
         // Create a case insensitive version of issueLinkTemplatePerSystem
-        // We need something case insensitive to maintain backward compatibility 
+        // We need something case insensitive to maintain backward compatibility
         if ( issueLinkTemplatePerSystem == null )
         {
             caseInsensitiveIssueLinkTemplatePerSystem = new CaseInsensitiveMap();
@@ -337,7 +300,7 @@ public class ChangesMojo
         logIssueLinkTemplatePerSystem( caseInsensitiveIssueLinkTemplatePerSystem );
 
         report.setIssueLinksPerSystem( caseInsensitiveIssueLinkTemplatePerSystem );
-        
+
         report.setSystem( system );
 
         report.setTeamlist ( teamlist );
@@ -345,7 +308,7 @@ public class ChangesMojo
         report.setUrl( url );
 
         report.setAddActionDate( addActionDate );
-        
+
         if ( StringUtils.isEmpty( url ) )
         {
             getLog().warn( "No issue management URL defined in POM. Links to your issues will not work correctly." );
@@ -356,6 +319,25 @@ public class ChangesMojo
         // Copy the images
         copyStaticResources();
     }
+
+    public String getDescription( Locale locale )
+    {
+        return getBundle( locale ).getString( "report.issues.description" );
+    }
+
+    public String getName( Locale locale )
+    {
+        return getBundle( locale ).getString( "report.issues.name" );
+    }
+
+    public String getOutputName()
+    {
+        return "changes-report";
+    }
+
+    /* --------------------------------------------------------------------- */
+    /* Private methods                                                       */
+    /* --------------------------------------------------------------------- */
 
     /**
      * Add the issue link template for the given issue management system,
@@ -377,6 +359,42 @@ public class ChangesMojo
         }
     }
 
+    private void copyStaticResources()
+        throws MavenReportException
+    {
+        final String pluginResourcesBase = "org/apache/maven/plugin/changes";
+        String resourceNames[] = {
+            "images/add.gif",
+            "images/fix.gif",
+            "images/icon_help_sml.gif",
+            "images/remove.gif",
+            "images/rss.png",
+            "images/update.gif" };
+        try
+        {
+            getLog().debug( "Copying static resources." );
+            for ( int i = 0; i < resourceNames.length; i++ )
+            {
+                URL url = this.getClass().getClassLoader().getResource( pluginResourcesBase + "/" + resourceNames[i] );
+                FileUtils.copyURLToFile( url, new File( getReportOutputDirectory(), resourceNames[i] ) );
+            }
+        }
+        catch ( IOException e )
+        {
+            throw new MavenReportException( "Unable to copy static resources." );
+        }
+    }
+
+    private ResourceBundle getBundle( Locale locale )
+    {
+        return ResourceBundle.getBundle( "changes-report", locale, this.getClass().getClassLoader() );
+    }
+
+    protected String getTeamlist()
+    {
+        return teamlist;
+    }
+
     private void logIssueLinkTemplatePerSystem( Map issueLinkTemplatePerSystem )
     {
         if ( getLog().isDebugEnabled() )
@@ -395,30 +413,5 @@ public class ChangesMojo
                 }
             }
         }
-    }
-
-    public String getName( Locale locale )
-    {
-        return getBundle( locale ).getString( "report.issues.name" );
-    }
-
-    public String getDescription( Locale locale )
-    {
-        return getBundle( locale ).getString( "report.issues.description" );
-    }
-
-    public String getOutputName()
-    {
-        return "changes-report";
-    }
-
-    protected String getTeamlist()
-    {
-        return teamlist;
-    }
-
-    private ResourceBundle getBundle( Locale locale )
-    {
-        return ResourceBundle.getBundle( "changes-report", locale, this.getClass().getClassLoader() );
     }
 }

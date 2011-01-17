@@ -85,29 +85,6 @@ public class TracMojo
     }
 
     /**
-     * Defines the Trac username for authentication into a private Trac
-     * installation.
-     *
-     * @parameter default-value=""
-     */
-    private String tracUser;
-
-    /**
-     * Defines the Trac password for authentication into a private Trac
-     * installation.
-     *
-     * @parameter default-value=""
-     */
-    private String tracPassword;
-
-    /**
-     * Defines the Trac query for searching ticket.
-     *
-     * @parameter default-value="order=id"
-     */
-    private String query;
-
-    /**
      * Sets the column names that you want to show in the report. The columns
      * will appear in the report in the same order as you specify them here.
      * Multiple values can be separated by commas.
@@ -123,6 +100,33 @@ public class TracMojo
      * @since 2.2
      */
     private String columnNames;
+
+    /**
+     * Defines the Trac query for searching ticket.
+     *
+     * @parameter default-value="order=id"
+     */
+    private String query;
+
+    /**
+     * Defines the Trac password for authentication into a private Trac
+     * installation.
+     *
+     * @parameter default-value=""
+     */
+    private String tracPassword;
+
+    /**
+     * Defines the Trac username for authentication into a private Trac
+     * installation.
+     *
+     * @parameter default-value=""
+     */
+    private String tracUser;
+
+    /* --------------------------------------------------------------------- */
+    /* Public methods                                                        */
+    /* --------------------------------------------------------------------- */
 
     /**
      * @see org.apache.maven.reporting.AbstractMavenReport#canGenerateReport()
@@ -181,20 +185,24 @@ public class TracMojo
         }
     }
 
-    public String getName( Locale locale )
-    {
-        return getBundle( locale ).getString( "report.issues.name" );
-    }
-
     public String getDescription( Locale locale )
     {
         return getBundle( locale ).getString( "report.issues.description" );
+    }
+
+    public String getName( Locale locale )
+    {
+        return getBundle( locale ).getString( "report.issues.name" );
     }
 
     public String getOutputName()
     {
         return "trac-report";
     }
+
+    /* --------------------------------------------------------------------- */
+    /* Private methods                                                       */
+    /* --------------------------------------------------------------------- */
 
     private ResourceBundle getBundle( Locale locale )
     {
