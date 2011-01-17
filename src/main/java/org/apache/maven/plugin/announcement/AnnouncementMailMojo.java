@@ -53,6 +53,48 @@ public class AnnouncementMailMojo
     //=========================================
 
     /**
+     * Possible senders.
+     *
+     * @parameter expression="${project.developers}"
+     * @required
+     * @readonly
+     */
+    private List from;
+
+    /**
+     * The id of the developer sending the announcement mail. Only used if the <tt>mailSender</tt>
+     * attribute is not set. In this case, this should match the id of one of the developers in
+     * the pom. If a matching developer is not found, then the first developer in the pom will be
+     * used.
+     *
+     * @parameter expression="${changes.fromDeveloperId}"
+     */
+    private String fromDeveloperId;
+
+    /**
+     * Mail content type to use.
+     * @parameter default-value="text/plain"
+     * @required
+     * @since 2.1
+     */
+    private String mailContentType;
+
+    /**
+     * Defines the sender of the announcement if the list of developer is empty or
+     * if the sender is not a member of the development team.
+     *
+     * @parameter expression="${changes.mailSender}"
+     */
+    private MailSender mailSender;
+
+    /**
+     * The password used to send the email.
+     *
+     * @parameter expression="${changes.password}"
+     */
+    private String password;
+
+    /**
      * @parameter expression="${project}"
      * @readonly
      */
@@ -75,25 +117,12 @@ public class AnnouncementMailMojo
     private int smtpPort;
 
     /**
-     * The username used to send the email.
-     *
-     * @parameter expression="${changes.username}"
-     */
-    private String username;
-
-    /**
-     * The password used to send the email.
-     *
-     * @parameter expression="${changes.password}"
-     */
-    private String password;
-
-    /**
      * If the email should be sent in SSL mode.
      *
      * @parameter default-value="false" expression="${changes.sslMode}"
      */
     private boolean sslMode;
+
 
     /**
      * Subject for the email.
@@ -104,40 +133,12 @@ public class AnnouncementMailMojo
     private String subject;
 
     /**
-     * The id of the developer sending the announcement mail. Only used if the <tt>mailSender</tt>
-     * attribute is not set. In this case, this should match the id of one of the developers in
-     * the pom. If a matching developer is not found, then the first developer in the pom will be
-     * used.
+     * The Velocity template used to format the announcement.
      *
-     * @parameter expression="${changes.fromDeveloperId}"
-     */
-    private String fromDeveloperId;
-
-    /**
-     * Defines the sender of the announcement if the list of developer is empty or
-     * if the sender is not a member of the development team.
-     *
-     * @parameter expression="${changes.mailSender}"
-     */
-    private MailSender mailSender;
-
-
-    /**
-     * Recipient email address.
-     *
-     * @parameter
+     * @parameter default-value="announcement.vm" expression="${changes.template}"
      * @required
      */
-    private List toAddresses;
-
-    /**
-     * Possible senders.
-     *
-     * @parameter expression="${project.developers}"
-     * @required
-     * @readonly
-     */
-    private List from;
+    private String template;
 
     /**
      * Directory which contains the template for announcement email.
@@ -148,20 +149,19 @@ public class AnnouncementMailMojo
     private File templateOutputDirectory;
 
     /**
-     * The Velocity template used to format the announcement.
+     * Recipient email address.
      *
-     * @parameter default-value="announcement.vm" expression="${changes.template}"
+     * @parameter
      * @required
      */
-    private String template;
+    private List toAddresses;
 
     /**
-     * Mail content type to use.
-     * @parameter default-value="text/plain"
-     * @required
-     * @since 2.1
+     * The username used to send the email.
+     *
+     * @parameter expression="${changes.username}"
      */
-    private String mailContentType;
+    private String username;
 
     private ProjectJavamailMailSender mailer = new ProjectJavamailMailSender();
 
@@ -341,6 +341,56 @@ public class AnnouncementMailMojo
     // announcement-mail accessors
     //================================
 
+    public List getFrom()
+    {
+        return from;
+    }
+
+    public void setFrom( List from )
+    {
+        this.from = from;
+    }
+
+    public String getFromDeveloperId()
+    {
+        return fromDeveloperId;
+    }
+
+    public void setFromDeveloperId( String fromDeveloperId )
+    {
+        this.fromDeveloperId = fromDeveloperId;
+    }
+
+    public MailSender getMailSender()
+    {
+        return mailSender;
+    }
+
+    public void setMailSender( MailSender mailSender )
+    {
+        this.mailSender = mailSender;
+    }
+
+    public String getPassword()
+    {
+        return password;
+    }
+
+    public void setPassword( String password )
+    {
+        this.password = password;
+    }
+
+    public MavenProject getProject()
+    {
+        return project;
+    }
+
+    public void setProject( MavenProject project )
+    {
+        this.project = project;
+    }
+
     public String getSmtpHost()
     {
         return smtpHost;
@@ -361,77 +411,6 @@ public class AnnouncementMailMojo
         this.smtpPort = smtpPort;
     }
 
-    public String getSubject()
-    {
-        return subject;
-    }
-
-    public void setSubject( String subject )
-    {
-        this.subject = subject;
-    }
-
-    public List getFrom()
-    {
-        return from;
-    }
-
-    public void setFrom( List from )
-    {
-        this.from = from;
-    }
-
-    public MavenProject getProject()
-    {
-        return project;
-    }
-
-    public void setProject( MavenProject project )
-    {
-        this.project = project;
-    }
-
-    public List getToAddresses()
-    {
-        return toAddresses;
-    }
-
-    public void setToAddresses( List toAddresses )
-    {
-        this.toAddresses = toAddresses;
-    }
-
-    public String getFromDeveloperId()
-    {
-        return fromDeveloperId;
-    }
-
-    public void setFromDeveloperId( String fromDeveloperId )
-    {
-        this.fromDeveloperId = fromDeveloperId;
-    }
-
-
-    public String getUsername()
-    {
-        return username;
-    }
-
-    public void setUsername( String username )
-    {
-        this.username = username;
-    }
-
-    public String getPassword()
-    {
-        return password;
-    }
-
-    public void setPassword( String password )
-    {
-        this.password = password;
-    }
-
     public boolean isSslMode()
     {
         return sslMode;
@@ -442,14 +421,24 @@ public class AnnouncementMailMojo
         this.sslMode = sslMode;
     }
 
-    public MailSender getMailSender()
+    public String getSubject()
     {
-        return mailSender;
+        return subject;
     }
 
-    public void setMailSender( MailSender mailSender )
+    public void setSubject( String subject )
     {
-        this.mailSender = mailSender;
+        this.subject = subject;
+    }
+
+    public String getTemplate()
+    {
+        return template;
+    }
+
+    public void setTemplate( String template )
+    {
+        this.template = template;
     }
 
     public File getTemplateOutputDirectory()
@@ -462,13 +451,23 @@ public class AnnouncementMailMojo
         this.templateOutputDirectory = templateOutputDirectory;
     }
 
-    public String getTemplate()
+    public List getToAddresses()
     {
-        return template;
+        return toAddresses;
     }
 
-    public void setTemplate( String template )
+    public void setToAddresses( List toAddresses )
     {
-        this.template = template;
+        this.toAddresses = toAddresses;
+    }
+
+    public String getUsername()
+    {
+        return username;
+    }
+
+    public void setUsername( String username )
+    {
+        this.username = username;
     }
 }

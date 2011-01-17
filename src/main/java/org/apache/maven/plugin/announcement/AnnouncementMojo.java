@@ -63,16 +63,6 @@ public class AnnouncementMojo
 
     private static final String JIRA = "JIRA";
 
-    private ReleaseUtils releaseUtils = new ReleaseUtils( getLog() );
-
-    /**
-     * Directory where the template file will be generated.
-     *
-     * @parameter expression="${project.build.directory}/announcement"
-     * @required
-     */
-    private File outputDirectory;
-
     /**
      * The name of the file which will contain the generated announcement. If
      * no value is specified the plugin will use the name of the template.
@@ -83,65 +73,19 @@ public class AnnouncementMojo
     private String announcementFile;
 
     /**
-     * @parameter expression="${project.groupId}"
-     * @readonly
+     * Map of custom parameters for the announcement.
+     * This Map will be passed to the template.
+     *
+     * @parameter
+     * @since 2.1
      */
-    private String groupId;
+    private Map announceParameters;
 
     /**
      * @parameter expression="${project.artifactId}"
      * @readonly
      */
     private String artifactId;
-
-    /**
-     * Version of the artifact.
-     *
-     * @parameter expression="${changes.version}" default-value="${project.version}"
-     * @required
-     */
-    private String version;
-
-    /**
-     * Distribution URL of the artifact.
-     * This parameter will be passed to the template.
-     *
-     * @parameter expression="${project.url}"
-     */
-    private String url;
-
-    /**
-     * Packaging structure for the artifact.
-     *
-     * @parameter expression="${project.packaging}"
-     * @readonly
-     */
-    private String packaging;
-
-    /**
-     * The name of the artifact to be used in the announcement.
-     *
-     * @parameter expression="${changes.finalName}" default-value="${project.build.finalName}"
-     * @required
-     */
-    private String finalName;
-
-    /**
-     * URL where the artifact can be downloaded. If not specified,
-     * no URL is used.
-     * This parameter will be passed to the template.
-     *
-     * @parameter
-     */
-    private String urlDownload;
-
-    /**
-     * The path of the changes.xml file.
-     *
-     * @parameter expression="${basedir}/src/changes/changes.xml"
-     * @required
-     */
-    private File xmlPath;
 
     /**
      * Name of the team that develops the artifact.
@@ -153,6 +97,20 @@ public class AnnouncementMojo
     private String developmentTeam;
 
     /**
+     * The name of the artifact to be used in the announcement.
+     *
+     * @parameter expression="${changes.finalName}" default-value="${project.build.finalName}"
+     * @required
+     */
+    private String finalName;
+
+    /**
+     * @parameter expression="${project.groupId}"
+     * @readonly
+     */
+    private String groupId;
+
+    /**
      * Short description or introduction of the released artifact.
      * This parameter will be passed to the template.
      *
@@ -161,12 +119,37 @@ public class AnnouncementMojo
     private String introduction;
 
     /**
-     * Velocity Component.
+     * A list of issue management systems to fetch releases from. This parameter
+     * replaces the parameters <code>generateJiraAnnouncement</code> and
+     * <code>jiraMerge</code>.
+     * <p>
+     * Valid values are: <code>changes.xml</code> and <code>JIRA</code>.
+     * </p>
+     * <strong>Note:</strong> Only one issue management system that is
+     * configured in &lt;project&gt;/&lt;issueManagement&gt; can be used. This
+     * currently means that you can combine a changes.xml file with one other
+     * issue management system.
      *
-     * @component role="org.codehaus.plexus.velocity.VelocityComponent" roleHint="maven-changes-plugin"
+     * @parameter
+     * @since 2.4
+     */
+    private List issueManagementSystems;
+
+    /**
+     * Directory where the template file will be generated.
+     *
+     * @parameter expression="${project.build.directory}/announcement"
+     * @required
+     */
+    private File outputDirectory;
+
+    /**
+     * Packaging structure for the artifact.
+     *
+     * @parameter expression="${project.packaging}"
      * @readonly
      */
-    private VelocityComponent velocity;
+    private String packaging;
 
     /**
      * The Velocity template used to format the announcement.
@@ -188,38 +171,56 @@ public class AnnouncementMojo
      */
     private String templateDirectory;
 
-    private ChangesXML xml;
+    /**
+     * The template encoding.
+     *
+     * @parameter expression="${changes.templateEncoding}" default-value="${project.build.sourceEncoding}"
+     * @since 2.1
+     */
+    private String templateEncoding;
+
+    /**
+     * Distribution URL of the artifact.
+     * This parameter will be passed to the template.
+     *
+     * @parameter expression="${project.url}"
+     */
+    private String url;
+
+    /**
+     * URL where the artifact can be downloaded. If not specified,
+     * no URL is used.
+     * This parameter will be passed to the template.
+     *
+     * @parameter
+     */
+    private String urlDownload;
+
+    /**
+     * Velocity Component.
+     *
+     * @component role="org.codehaus.plexus.velocity.VelocityComponent" roleHint="maven-changes-plugin"
+     * @readonly
+     */
+    private VelocityComponent velocity;
+    /**
+     * Version of the artifact.
+     *
+     * @parameter expression="${changes.version}" default-value="${project.version}"
+     * @required
+     */
+    private String version;
+    /**
+     * The path of the changes.xml file.
+     *
+     * @parameter expression="${basedir}/src/changes/changes.xml"
+     * @required
+     */
+    private File xmlPath;
 
     //=======================================//
     //  JIRA-Announcement Needed Parameters  //
     //=======================================//
-
-    /**
-     * The Maven Project.
-     *
-     * @parameter expression="${project}"
-     * @required
-     * @readonly
-     */
-    private MavenProject project;
-
-    /**
-     * Settings XML configuration.
-     *
-     * @parameter expression="${settings}"
-     * @required
-     * @readonly
-     */
-    private Settings settings;
-
-    /**
-     * Flag to determine if the plugin will generate a JIRA announcement.
-     *
-     * @parameter expression="${generateJiraAnnouncement}" default-value="false"
-     * @required
-     * @deprecated Since version 2.4 this parameter has been deprecated. Please use the issueManagementSystems parameter instead.
-     */
-    private boolean generateJiraAnnouncement;
 
     /**
      * Defines the filter parameters to restrict which issues are retrieved
@@ -232,28 +233,39 @@ public class AnnouncementMojo
     private String filter;
 
     /**
-     * Include issues from JIRA with these status ids. Multiple status ids can
-     * be specified as a comma separated list of ids.
-     * <p>
-     * <b>Note:</b> In versions 2.0-beta-3 and earlier this parameter was
-     * called "statusId".
-     * </p>
+     * Flag to determine if the plugin will generate a JIRA announcement.
      *
-     * @parameter default-value="Closed" expression="${changes.statusIds}"
+     * @parameter expression="${generateJiraAnnouncement}" default-value="false"
+     * @required
+     * @deprecated Since version 2.4 this parameter has been deprecated. Please use the issueManagementSystems parameter instead.
      */
-    private String statusIds;
+    private boolean generateJiraAnnouncement;
 
     /**
-     * Include issues from JIRA with these resolution ids. Multiple resolution
-     * ids can be specified as a comma separated list of ids.
-     * <p>
-     * <b>Note:</b> In versions 2.0-beta-3 and earlier this parameter was
-     * called "resolutionId".
-     * </p>
+     * If releases from JIRA should be merged with the releases from a
+     * changes.xml file.
      *
-     * @parameter default-value="Fixed" expression="${changes.resolutionIds}"
+     * @parameter expression="${changes.jiraMerge}" default-value="false"
+     * @since 2.1
+     * @deprecated Since version 2.4 this parameter has been deprecated. Please use the issueManagementSystems parameter instead.
      */
-    private String resolutionIds;
+    private boolean jiraMerge;
+
+    /**
+     * Defines the JIRA password for authentication into a private JIRA installation.
+     *
+     * @parameter default-value="" expression="${changes.jiraPassword}"
+     * @since 2.1
+     */
+    private String jiraPassword;
+
+    /**
+     * Defines the JIRA username for authentication into a private JIRA installation.
+     *
+     * @parameter default-value="" expression="${changes.jiraUser}"
+     * @since 2.1
+     */
+    private String jiraUser;
 
     /**
      * Path to the JIRA XML file, which will be parsed.
@@ -286,20 +298,46 @@ public class AnnouncementMojo
     private int maxEntries;
 
     /**
-     * Defines the JIRA username for authentication into a private JIRA installation.
+     * The Maven Project.
      *
-     * @parameter default-value="" expression="${changes.jiraUser}"
-     * @since 2.1
+     * @parameter expression="${project}"
+     * @required
+     * @readonly
      */
-    private String jiraUser;
+    private MavenProject project;
 
     /**
-     * Defines the JIRA password for authentication into a private JIRA installation.
+     * Include issues from JIRA with these resolution ids. Multiple resolution
+     * ids can be specified as a comma separated list of ids.
+     * <p>
+     * <b>Note:</b> In versions 2.0-beta-3 and earlier this parameter was
+     * called "resolutionId".
+     * </p>
      *
-     * @parameter default-value="" expression="${changes.jiraPassword}"
-     * @since 2.1
+     * @parameter default-value="Fixed" expression="${changes.resolutionIds}"
      */
-    private String jiraPassword;
+    private String resolutionIds;
+
+    /**
+     * Settings XML configuration.
+     *
+     * @parameter expression="${settings}"
+     * @required
+     * @readonly
+     */
+    private Settings settings;
+
+    /**
+     * Include issues from JIRA with these status ids. Multiple status ids can
+     * be specified as a comma separated list of ids.
+     * <p>
+     * <b>Note:</b> In versions 2.0-beta-3 and earlier this parameter was
+     * called "statusId".
+     * </p>
+     *
+     * @parameter default-value="Closed" expression="${changes.statusIds}"
+     */
+    private String statusIds;
 
     /**
      * Defines the http user for basic authentication into the JIRA webserver.
@@ -317,49 +355,9 @@ public class AnnouncementMojo
      */
     private String webPassword;
 
-    /**
-     * The template encoding.
-     *
-     * @parameter expression="${changes.templateEncoding}" default-value="${project.build.sourceEncoding}"
-     * @since 2.1
-     */
-    private String templateEncoding;
+    private ReleaseUtils releaseUtils = new ReleaseUtils( getLog() );
 
-    /**
-     * If releases from JIRA should be merged with the releases from a
-     * changes.xml file.
-     *
-     * @parameter expression="${changes.jiraMerge}" default-value="false"
-     * @since 2.1
-     * @deprecated Since version 2.4 this parameter has been deprecated. Please use the issueManagementSystems parameter instead.
-     */
-    private boolean jiraMerge;
-
-    /**
-     * Map of custom parameters for the announcement.
-     * This Map will be passed to the template.
-     *
-     * @parameter
-     * @since 2.1
-     */
-    private Map announceParameters;
-
-    /**
-     * A list of issue management systems to fetch releases from. This parameter
-     * replaces the parameters <code>generateJiraAnnouncement</code> and
-     * <code>jiraMerge</code>.
-     * <p>
-     * Valid values are: <code>changes.xml</code> and <code>JIRA</code>.
-     * </p>
-     * <strong>Note:</strong> Only one issue management system that is
-     * configured in &lt;project&gt;/&lt;issueManagement&gt; can be used. This
-     * currently means that you can combine a changes.xml file with one other
-     * issue management system. 
-     *
-     * @parameter
-     * @since 2.4
-     */
-    private List issueManagementSystems;
+    private ChangesXML xml;
 
     //=======================================//
     //    announcement-generate execution    //
@@ -653,36 +651,6 @@ public class AnnouncementMojo
      * accessors
      */
 
-    public File getXmlPath()
-    {
-        return xmlPath;
-    }
-
-    public void setXmlPath( File xmlPath )
-    {
-        this.xmlPath = xmlPath;
-    }
-
-    public File getOutputDirectory()
-    {
-        return outputDirectory;
-    }
-
-    public void setOutputDirectory( File outputDirectory )
-    {
-        this.outputDirectory = outputDirectory;
-    }
-
-    public String getGroupId()
-    {
-        return groupId;
-    }
-
-    public void setGroupId( String groupId )
-    {
-        this.groupId = groupId;
-    }
-
     public String getArtifactId()
     {
         return artifactId;
@@ -691,46 +659,6 @@ public class AnnouncementMojo
     public void setArtifactId( String artifactId )
     {
         this.artifactId = artifactId;
-    }
-
-    public String getVersion()
-    {
-        return version;
-    }
-
-    public void setVersion( String version )
-    {
-        this.version = version;
-    }
-
-    public String getUrl()
-    {
-        return url;
-    }
-
-    public void setUrl( String url )
-    {
-        this.url = url;
-    }
-
-    public ChangesXML getXml()
-    {
-        return xml;
-    }
-
-    public void setXml( ChangesXML xml )
-    {
-        this.xml = xml;
-    }
-
-    public String getPackaging()
-    {
-        return packaging;
-    }
-
-    public void setPackaging( String packaging )
-    {
-        this.packaging = packaging;
     }
 
     public String getDevelopmentTeam()
@@ -743,6 +671,26 @@ public class AnnouncementMojo
         this.developmentTeam = developmentTeam;
     }
 
+    public String getFinalName()
+    {
+        return finalName;
+    }
+
+    public void setFinalName( String finalName )
+    {
+        this.finalName = finalName;
+    }
+
+    public String getGroupId()
+    {
+        return groupId;
+    }
+
+    public void setGroupId( String groupId )
+    {
+        this.groupId = groupId;
+    }
+
     public String getIntroduction()
     {
         return introduction;
@@ -751,6 +699,46 @@ public class AnnouncementMojo
     public void setIntroduction( String introduction )
     {
         this.introduction = introduction;
+    }
+
+    public File getOutputDirectory()
+    {
+        return outputDirectory;
+    }
+
+    public void setOutputDirectory( File outputDirectory )
+    {
+        this.outputDirectory = outputDirectory;
+    }
+
+    public String getPackaging()
+    {
+        return packaging;
+    }
+
+    public void setPackaging( String packaging )
+    {
+        this.packaging = packaging;
+    }
+
+    public String getUrl()
+    {
+        return url;
+    }
+
+    public void setUrl( String url )
+    {
+        this.url = url;
+    }
+
+    public String getUrlDownload()
+    {
+        return urlDownload;
+    }
+
+    public void setUrlDownload( String urlDownload )
+    {
+        this.urlDownload = urlDownload;
     }
 
     public VelocityComponent getVelocity()
@@ -763,23 +751,33 @@ public class AnnouncementMojo
         this.velocity = velocity;
     }
 
-    public String getFinalName()
+    public String getVersion()
     {
-        return finalName;
+        return version;
     }
 
-    public void setFinalName( String finalName )
+    public void setVersion( String version )
     {
-        this.finalName = finalName;
+        this.version = version;
     }
 
-    public String getUrlDownload()
+    public ChangesXML getXml()
     {
-        return urlDownload;
+        return xml;
     }
 
-    public void setUrlDownload( String urlDownload )
+    public void setXml( ChangesXML xml )
     {
-        this.urlDownload = urlDownload;
+        this.xml = xml;
+    }
+
+    public File getXmlPath()
+    {
+        return xmlPath;
+    }
+
+    public void setXmlPath( File xmlPath )
+    {
+        this.xmlPath = xmlPath;
     }
 }

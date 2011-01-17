@@ -69,39 +69,30 @@ public class JiraMojo
     }
 
     /**
-     * Path to the JIRA XML file, which will be parsed.
+     * Sets the names of the columns that you want in the report. The columns
+     * will appear in the report in the same order as you specify them here.
+     * Multiple values can be separated by commas.
+     * <p>
+     * Valid columns are: <code>Assignee</code>, <code>Component</code>,
+     * <code>Created</code>, <code>Fix Version</code>, <code>Id</code>,
+     * <code>Key</code>, <code>Priority</code>, <code>Reporter</code>,
+     * <code>Resolution</code>, <code>Status</code>, <code>Summary</code>,
+     * <code>Type</code>, <code>Updated</code> and <code>Version</code>.
+     * </p>
      *
-     * @parameter expression="${project.build.directory}/jira-results.xml"
-     * @required
-     * @readonly
+     * @parameter default-value="Key,Summary,Status,Resolution,Assignee"
+     * @since 2.0
      */
-    private File jiraXmlPath;
+    private String columnNames;
 
     /**
-     * The encoding used in the JIRA XML file. You only need to change this if
-     * your JIRA server is returning responses in an encoding other than UTF-8.
+     * Sets the component(s) that you want to limit your report to include.
+     * Multiple values can be separated by commas (such as 10011,10012).
+     * If this is set to empty - that means all components will be included.
      *
-     * @parameter default-value="UTF-8" expression="${changes.jiraXmlEncoding}"
-     * @since 2.4
+     * @parameter default-value=""
      */
-    private String jiraXmlEncoding;
-
-    /**
-     * Settings XML configuration.
-     *
-     * @parameter expression="${settings}"
-     * @required
-     * @readonly
-     */
-    private Settings settings;
-
-    /**
-     * Maximum number of entries to be fetched from JIRA.
-     *
-     * @parameter default-value=100
-     *
-     */
-    private int maxEntries;
+    private String component;
 
     /**
      * Defines the filter parameters to restrict which issues are retrieved
@@ -124,18 +115,74 @@ public class JiraMojo
     private String fixVersionIds;
 
     /**
-     * Sets the status(es) that you want to fetch from JIRA.
-     * Valid statuses are: <code>Open</code>, <code>In Progress</code>,
-     * <code>Reopened</code>, <code>Resolved</code> and <code>Closed</code>.
-     * Multiple values can be separated by commas.
-     * <p>
-     * <b>Note:</b> In versions 2.0-beta-3 and earlier this parameter had no
-     * default value.
-     * </p>
+     * The pattern used by dates in the JIRA XML-file. This is used to parse
+     * the Created and Updated fields.
      *
-     * @parameter default-value="Closed"
+     * @parameter default-value="EEE, d MMM yyyy HH:mm:ss Z"
+     * @since 2.4
      */
-    private String statusIds;
+    private String jiraDatePattern;
+
+    /**
+     * Defines the JIRA password for authentication into a private JIRA installation.
+     *
+     * @parameter default-value=""
+     */
+    private String jiraPassword;
+
+    /**
+     * Defines the JIRA username for authentication into a private JIRA installation.
+     *
+     * @parameter default-value=""
+     */
+    private String jiraUser;
+
+    /**
+     * The encoding used in the JIRA XML file. You only need to change this if
+     * your JIRA server is returning responses in an encoding other than UTF-8.
+     *
+     * @parameter default-value="UTF-8" expression="${changes.jiraXmlEncoding}"
+     * @since 2.4
+     */
+    private String jiraXmlEncoding;
+
+    /**
+     * Path to the JIRA XML file, which will be parsed.
+     *
+     * @parameter expression="${project.build.directory}/jira-results.xml"
+     * @required
+     * @readonly
+     */
+    private File jiraXmlPath;
+
+    /**
+     * Maximum number of entries to be fetched from JIRA.
+     *
+     * @parameter default-value=100
+     *
+     */
+    private int maxEntries;
+
+    /**
+     * If you only want to show issues for the current version in the report.
+     * The current version being used is <code>${project.version}</code> minus
+     * any "-SNAPSHOT" suffix.
+     *
+     * @parameter default-value="false"
+     * @since 2.0
+     */
+    private boolean onlyCurrentVersion;
+
+    /**
+     * Sets the priority(s) that you want to limit your report to include.
+     * Valid statuses are <code>Blocker</code>, <code>Critical</code>,
+     * <code>Major</code>, <code>Minor</code> and <code>Trivial</code>.
+     * Multiple values can be separated by commas.
+     * If this is set to empty - that means all priorities will be included.
+     *
+     * @parameter default-value=""
+     */
+    private String priorityIds;
 
     /**
      * Sets the resolution(s) that you want to fetch from JIRA.
@@ -153,24 +200,49 @@ public class JiraMojo
     private String resolutionIds;
 
     /**
-     * Sets the priority(s) that you want to limit your report to include.
-     * Valid statuses are <code>Blocker</code>, <code>Critical</code>,
-     * <code>Major</code>, <code>Minor</code> and <code>Trivial</code>.
-     * Multiple values can be separated by commas.
-     * If this is set to empty - that means all priorities will be included.
+     * Settings XML configuration.
      *
-     * @parameter default-value=""
+     * @parameter expression="${settings}"
+     * @required
+     * @readonly
      */
-    private String priorityIds;
+    private Settings settings;
 
     /**
-     * Sets the component(s) that you want to limit your report to include.
-     * Multiple values can be separated by commas (such as 10011,10012).
-     * If this is set to empty - that means all components will be included.
+     * Sets the column names that you want to sort the report by. Add
+     * <code>DESC</code> following the column name
+     * to specify <i>descending</i> sequence. For
+     * example <code>Fix Version DESC, Type</code> sorts first by
+     * the Fix Version in descending order and then by Type in
+     * ascending order. By default sorting is done in ascending order, but is
+     * possible to specify <code>ASC</code> for consistency. The previous
+     * example would then become <code>Fix Version DESC, Type ASC</code>.
+     * <p>
+     * Valid columns are: <code>Assignee</code>, <code>Component</code>,
+     * <code>Created</code>, <code>Fix Version</code>, <code>Id</code>,
+     * <code>Key</code>, <code>Priority</code>, <code>Reporter</code>,
+     * <code>Resolution</code>, <code>Status</code>, <code>Summary</code>,
+     * <code>Type</code>, <code>Updated</code> and <code>Version</code>.
+     * </p>
      *
-     * @parameter default-value=""
+     * @parameter default-value="Priority DESC, Created DESC"
+     * @since 2.0
      */
-    private String component;
+    private String sortColumnNames;
+
+    /**
+     * Sets the status(es) that you want to fetch from JIRA.
+     * Valid statuses are: <code>Open</code>, <code>In Progress</code>,
+     * <code>Reopened</code>, <code>Resolved</code> and <code>Closed</code>.
+     * Multiple values can be separated by commas.
+     * <p>
+     * <b>Note:</b> In versions 2.0-beta-3 and earlier this parameter had no
+     * default value.
+     * </p>
+     *
+     * @parameter default-value="Closed"
+     */
+    private String statusIds;
 
     /**
      * Sets the types(s) that you want to limit your report to include.
@@ -186,92 +258,6 @@ public class JiraMojo
     private String typeIds;
 
     /**
-     * Sets the names of the columns that you want in the report. The columns
-     * will appear in the report in the same order as you specify them here.
-     * Multiple values can be separated by commas.
-     * <p>
-     * Valid columns are: <code>Assignee</code>, <code>Component</code>,
-     * <code>Created</code>, <code>Fix Version</code>, <code>Id</code>,
-     * <code>Key</code>, <code>Priority</code>, <code>Reporter</code>,
-     * <code>Resolution</code>, <code>Status</code>, <code>Summary</code>,
-     * <code>Type</code>, <code>Updated</code> and <code>Version</code>.
-     * </p>
-     *
-     * @parameter default-value="Key,Summary,Status,Resolution,Assignee"
-     * @since 2.0
-     */
-    private String columnNames;
-
-    /**
-     * Sets the column names that you want to sort the report by. Add
-     * <code>DESC</code> following the column name
-     * to specify <i>descending</i> sequence. For
-     * example <code>Fix Version DESC, Type</code> sorts first by
-     * the Fix Version in descending order and then by Type in
-     * ascending order. By default sorting is done in ascending order, but is
-     * possible to specify <code>ASC</code> for consistency. The previous
-     * example would then become <code>Fix Version DESC, Type ASC</code>. 
-     * <p>
-     * Valid columns are: <code>Assignee</code>, <code>Component</code>,
-     * <code>Created</code>, <code>Fix Version</code>, <code>Id</code>,
-     * <code>Key</code>, <code>Priority</code>, <code>Reporter</code>,
-     * <code>Resolution</code>, <code>Status</code>, <code>Summary</code>,
-     * <code>Type</code>, <code>Updated</code> and <code>Version</code>.
-     * </p>
-     *
-     * @parameter default-value="Priority DESC, Created DESC"
-     * @since 2.0
-     */
-    private String sortColumnNames;
-
-    /**
-     * Defines the JIRA username for authentication into a private JIRA installation.
-     *
-     * @parameter default-value=""
-     */
-    private String jiraUser;
-
-    /**
-     * Defines the JIRA password for authentication into a private JIRA installation.
-     *
-     * @parameter default-value=""
-     */
-    private String jiraPassword;
-
-    /**
-     * Defines the http user for basic authentication into the JIRA webserver.
-     *
-     * @parameter default-value=""
-     */
-    private String webUser;
-
-    /**
-     * Defines the http password for basic authentication into the JIRA webserver.
-     *
-     * @parameter default-value=""
-     */
-    private String webPassword;
-
-    /**
-     * If you only want to show issues for the current version in the report.
-     * The current version being used is <code>${project.version}</code> minus
-     * any "-SNAPSHOT" suffix.
-     *
-     * @parameter default-value="false"
-     * @since 2.0
-     */
-    private boolean onlyCurrentVersion;
-
-    /**
-     * The pattern used by dates in the JIRA XML-file. This is used to parse
-     * the Created and Updated fields.
-     *
-     * @parameter default-value="EEE, d MMM yyyy HH:mm:ss Z"
-     * @since 2.4
-     */
-    private String jiraDatePattern;
-
-    /**
      * The prefix used when naming versions in JIRA.
      * <p>
      * If you have a project in JIRA with several components that have different
@@ -285,6 +271,24 @@ public class JiraMojo
      * @since 2.4
      */
     private String versionPrefix;
+
+    /**
+     * Defines the http password for basic authentication into the JIRA webserver.
+     *
+     * @parameter default-value=""
+     */
+    private String webPassword;
+
+    /**
+     * Defines the http user for basic authentication into the JIRA webserver.
+     *
+     * @parameter default-value=""
+     */
+    private String webUser;
+
+    /* --------------------------------------------------------------------- */
+    /* Public methods                                                        */
+    /* --------------------------------------------------------------------- */
 
     /**
      * @see org.apache.maven.reporting.AbstractMavenReport#canGenerateReport()
@@ -348,20 +352,24 @@ public class JiraMojo
         }
     }
 
-    public String getName( Locale locale )
-    {
-        return getBundle( locale ).getString( "report.issues.name" );
-    }
-
     public String getDescription( Locale locale )
     {
         return getBundle( locale ).getString( "report.issues.description" );
+    }
+
+    public String getName( Locale locale )
+    {
+        return getBundle( locale ).getString( "report.issues.name" );
     }
 
     public String getOutputName()
     {
         return "jira-report";
     }
+
+    /* --------------------------------------------------------------------- */
+    /* Private methods                                                       */
+    /* --------------------------------------------------------------------- */
 
     private ResourceBundle getBundle( Locale locale )
     {
