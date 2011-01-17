@@ -26,8 +26,10 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.maven.plugin.changes.AbstractChangesReport;
 import org.apache.maven.plugin.changes.ProjectUtils;
+import org.apache.maven.plugin.issues.IssueUtils;
 import org.apache.maven.plugin.issues.IssuesReportGenerator;
 import org.apache.maven.plugin.issues.IssuesReportHelper;
 import org.apache.maven.reporting.MavenReportException;
@@ -312,6 +314,14 @@ public class JiraMojo
             issueDownloader.doExecute();
 
             List issueList = issueDownloader.getIssueList();
+
+            if ( StringUtils.isNotEmpty( versionPrefix ) )
+            {
+                int originalNumberOfIssues = issueList.size();
+                issueList = IssueUtils.filterIssuesWithVersionPrefix( issueList, versionPrefix );
+                getLog().debug( "Filtered out " + issueList.size() + " issues of " + originalNumberOfIssues
+                    + " that matched the versionPrefix '" + versionPrefix + "'." );
+            }
 
             if ( onlyCurrentVersion )
             {
