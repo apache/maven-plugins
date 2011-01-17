@@ -33,6 +33,8 @@ import java.util.List;
  */
 public class IssueUtils
 {
+    public static final String SNAPSHOT_SUFFIX = "-SNAPSHOT";
+
     /**
      * Find the issues that has a Fix Version that matches the supplied prefix.
      *
@@ -74,5 +76,50 @@ public class IssueUtils
                 "Couldn't find any issues with a Fix Version prefix of '" + prefix + "' among the supplied issues." );
         }
         return filteredIssues;
+    }
+
+    /**
+     * Find the issues for only the supplied version, by matching the "Fix for"
+     * version in the supplied list of issues with the supplied version.
+     * If the supplied version is a SNAPSHOT, then that part of the version
+     * will be removed prior to the matching.
+     *
+     * @param issues A list of issues
+     * @param version The version that issues should be returned for
+     * @return A <code>List</code> of issues for the supplied version
+     * @throws org.apache.maven.plugin.MojoExecutionException
+     *          If no issues could be found for the supplied version
+     */
+    public static List getIssuesForVersion( List issues, String version )
+        throws MojoExecutionException
+    {
+        List issuesForVersion = new ArrayList();
+        boolean isFound = false;
+        Issue issue = null;
+        String releaseVersion = version;
+
+        // Remove "-SNAPSHOT" from the end of the version, if it's there
+        if ( version != null && version.endsWith( SNAPSHOT_SUFFIX ) )
+        {
+            releaseVersion = version.substring( 0, version.length() - SNAPSHOT_SUFFIX.length() );
+        }
+
+        for ( int i = 0; i < issues.size(); i++ )
+        {
+            issue = (Issue) issues.get( i );
+
+            if ( issue.getFixVersions() != null && issue.getFixVersions().contains( releaseVersion ) )
+            {
+                isFound = true;
+                issuesForVersion.add( issue );
+            }
+        }
+
+        if ( !isFound )
+        {
+            throw new MojoExecutionException(
+                "Couldn't find any issues for the version '" + releaseVersion + "' among the supplied issues." );
+        }
+        return issuesForVersion;
     }
 }
