@@ -326,7 +326,7 @@ public class JiraMojo
             if ( onlyCurrentVersion )
             {
                 String version = ( versionPrefix == null ? "" : versionPrefix ) + project.getVersion();
-                issueList = JiraHelper.getIssuesForVersion( issueList, version );
+                issueList = IssueUtils.getIssuesForVersion( issueList, version );
                 getLog().info( "The JIRA Report will contain issues only for the current version." );
             }
 
