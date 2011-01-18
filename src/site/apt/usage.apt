@@ -118,6 +118,15 @@ mvn site-deploy
   project and its modules.
 
   Just execute the <<<{{{./stage-mojo.html}site:stage}}>>> goal from your project
+
++-----+
+mvn site:stage
++-----+
+
+  <<Note:>> Since version 2.3, a site must be generated first before executing <<<site:stage>>>.
+
+  By default, the site will be staged in a directory <<<target/staging/>>>.
+  A different staging location can be chosen
   with the <<<stagingDirectory>>> parameter as shown below:
 
 +-----+
@@ -135,9 +144,10 @@ mvn site:stage -DstagingDirectory=C:\fullsite
   for more information on this.
 
 +-----+
-mvn site:stage-deploy -DstagingDirectory=C:\fullsite \
-  -DstagingSiteURL=scp://www.mycompany.com/www/project/
+mvn site:stage-deploy -DstagingSiteURL=scp://www.mycompany.com/www/project/
 +-----+
+
+  <<Note:>> Since version 2.3, a site must be generated first before executing <<<site:stage-deploy>>>.
 
   <<Note:>> Due to a bug in Wagon, the password is not always picked up when
   you run the <<<site:stage-deploy>>> goal. The bug has been fixed, but the

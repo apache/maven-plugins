@@ -147,35 +147,7 @@ Configuring the Site Descriptor
 
 * Inheritance
 
-  Site descriptors are inherited along the same lines as project descriptors
-  are. If you want your project's site descriptor to be inherited, you need to
-  attach it to the project's main artifact. You use the
-  <<<site:attach-descriptor>>> goal to attach the site descriptor to your
-  project's main artifact.
-
-  In Maven 2 the site descriptor is attached automatically for projects with
-  packaging set to "pom".
-
-  By default, only the basic settings are inherited. From the body, <<only>>
-  the links are inherited, and these accumulate to contain all the parents'
-  site descriptor links.
-
-  However, it is possible to inherit menus as well. To do so, use the <<<inherit>>> attribute in the site descriptor. This can
-  be either <<<top>>> or <<<bottom>>>, indicating where the inherited menu will be placed. For example:
-
-+-----+
-<project>
-  ...
-  <body>
-    ...
-    <menu name="My Inherited Menu" inherit="top">
-      ...
-    </menu>
-    ...
-  </body>
-  ...
-</project>
-+-----+
+  See {{{./multimodule.html} Building multi-module sites}}.
 
 * Including Generated Content
 
