@@ -42,7 +42,7 @@ under the License.
   </description>
 
   <prerequisites>
-    <maven>2.0.6</maven>
+    <maven>${mavenVersion}</maven>
   </prerequisites>
 
   <scm>
@@ -56,7 +56,7 @@ under the License.
   </issueManagement>
 
   <properties>
-    <mavenVersion>2.0.5</mavenVersion>
+    <mavenVersion>2.0.6</mavenVersion>
   </properties>
 
   <dependencies>
