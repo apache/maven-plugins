@@ -57,7 +57,7 @@ under the License.
 
   <properties>
     <mavenVersion>2.0.6</mavenVersion>
-    <mavenFilteringVersion>1.0-beta-3</mavenFilteringVersion>
+    <mavenFilteringVersion>1.0-SNAPSHOT</mavenFilteringVersion>
   </properties>
 
   <dependencies>
