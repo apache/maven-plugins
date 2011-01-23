@@ -221,7 +221,7 @@ public abstract class AbstractJiraDownloader
         if ( sortColumnNames != null )
         {
             String[] sortColumnNamesArray = sortColumnNames.split( "," );
-            // N.B. Add in reverse order (it's the way JIRA likes it!!)
+            // N.B. Add in reverse order (it's the way JIRA 3 likes it!!)
             for ( int i = sortColumnNamesArray.length - 1; i >= 0; i-- )
             {
                 String lowerColumnName = sortColumnNamesArray[i].trim().toLowerCase( Locale.ENGLISH );
