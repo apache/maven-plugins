@@ -215,6 +215,13 @@ public class JiraMojo
      * <code>Resolution</code>, <code>Status</code>, <code>Summary</code>,
      * <code>Type</code>, <code>Updated</code> and <code>Version</code>.
      * </p>
+     * <p>
+     * <strong>Note:</strong> If you are using JIRA 4 you need to put your
+     * sort column names in the reverse order. The handling of this changed
+     * between JIRA 3 and JIRA 4. The current default value is suitable for
+     * JIRA 3. This may change in the future, so please configure your sort
+     * column names in an order that works for your own JIRA version. 
+     * </p>
      *
      * @parameter default-value="Priority DESC, Created DESC"
      * @since 2.0
