@@ -34,6 +34,7 @@ import org.apache.maven.plugin.changes.ChangesXML;
 import org.apache.maven.plugin.changes.ProjectUtils;
 import org.apache.maven.plugin.changes.ReleaseUtils;
 import org.apache.maven.plugin.jira.JiraXML;
+import org.apache.maven.plugin.trac.TracDownloader;
 import org.apache.maven.plugins.changes.model.Release;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Settings;
@@ -62,6 +63,8 @@ public class AnnouncementMojo
     private static final String CHANGES_XML = "changes.xml";
 
     private static final String JIRA = "JIRA";
+
+    private static final String TRAC = "Trac";
 
     /**
      * The name of the file which will contain the generated announcement. If
@@ -150,6 +153,15 @@ public class AnnouncementMojo
      * @readonly
      */
     private String packaging;
+
+    /**
+     * The Maven Project.
+     *
+     * @parameter expression="${project}"
+     * @required
+     * @readonly
+     */
+    private MavenProject project;
 
     /**
      * The Velocity template used to format the announcement.
@@ -289,15 +301,6 @@ public class AnnouncementMojo
     private int maxEntries;
 
     /**
-     * The Maven Project.
-     *
-     * @parameter expression="${project}"
-     * @required
-     * @readonly
-     */
-    private MavenProject project;
-
-    /**
      * Include issues from JIRA with these resolution ids. Multiple resolution
      * ids can be specified as a comma separated list of ids.
      * <p>
@@ -345,6 +348,36 @@ public class AnnouncementMojo
      * @since 2.4
      */
     private String webPassword;
+
+    //=======================================//
+    //  Trac Parameters                      //
+    //=======================================//
+
+    /**
+     * Defines the Trac password for authentication into a private Trac
+     * installation.
+     *
+     * @parameter default-value="" expression="${changes.tracPassword}"
+     * @since 2.4
+     */
+    private String tracPassword;
+
+    /**
+     * Defines the Trac query for searching for tickets.
+     *
+     * @parameter default-value="order=id"
+     * @since 2.4
+     */
+    private String tracQuery;
+
+    /**
+     * Defines the Trac username for authentication into a private Trac
+     * installation.
+     *
+     * @parameter default-value="" expression="${changes.tracUser}"
+     * @since 2.4
+     */
+    private String tracUser;
 
     private ReleaseUtils releaseUtils = new ReleaseUtils( getLog() );
 
@@ -425,7 +458,29 @@ public class AnnouncementMojo
                 }
             }
 
-            // @todo Add more issue management systems here...
+            if ( issueManagementSystems.contains( TRAC ) )
+            {
+                if ( ProjectUtils.validateIfIssueManagementComplete( project, TRAC, "Trac announcement", getLog() ) )
+                {
+                    List tracReleases = getTracReleases();
+                    releases = releaseUtils.mergeReleases( releases, tracReleases );
+                    getLog().info( "Including issues from Trac in announcement..." );
+                }
+                else
+                {
+                    throw new MojoExecutionException(
+                        "Something is wrong with the Issue Management section." + " See previous error messages." );
+                }
+            }
+
+            // @todo Add more issue management systems here.
+
+            // Follow these steps:
+            // 1. Add a constant for the name of the issue management system
+            // 2. Add the @parameters needed to configure the issue management system
+            // 3. Add a protected List get<IMSname>Releases() method that retrieves a list of releases
+            // 4. Merge those releases into the "releases" variable
+            // For help with these steps, you can have a look at how this has been done for JIRA or Trac
 
             // Generate the report
             if ( releases == null || releases.isEmpty() )
@@ -619,20 +674,46 @@ public class AnnouncementMojo
         {
             jiraDownloader.doExecute();
 
-            List issues = jiraDownloader.getIssueList();
-
-            if ( issues.isEmpty() )
-            {
-                return Collections.EMPTY_LIST;
-            }
-            else
-            {
-                return IssueAdapter.getReleases( issues );
-            }
+            return getReleases( jiraDownloader.getIssueList() );
         }
         catch ( Exception e )
         {
-            throw new MojoExecutionException( "Failed to extract JIRA issues from the downloaded file", e );
+            throw new MojoExecutionException( "Failed to extract issues from JIRA.", e );
+        }
+    }
+
+    private List getReleases( List issues )
+    {
+        if ( issues.isEmpty() )
+        {
+            return Collections.EMPTY_LIST;
+        }
+        else
+        {
+            return IssueAdapter.getReleases( issues );
+        }
+    }
+
+    protected List getTracReleases()
+        throws MojoExecutionException
+    {
+        TracDownloader issueDownloader = new TracDownloader();
+
+        issueDownloader.setProject( project );
+
+        issueDownloader.setQuery( tracQuery );
+
+        issueDownloader.setTracPassword( tracPassword );
+
+        issueDownloader.setTracUser( tracUser );
+
+        try
+        {
+            return getReleases( issueDownloader.getIssueList() );
+        }
+        catch ( Exception e )
+        {
+            throw new MojoExecutionException( "Failed to extract issues from Trac.", e );
         }
     }
 
