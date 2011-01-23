@@ -1772,7 +1772,7 @@ public class PdfMojo
         public void text( String text )
         {
             // workaround to fix quotes introduced with MPIR-59 (then removed in MPIR-136)
-            super.write( StringUtils.replace( text, "\u0092", "'" ) );
+            super.text( StringUtils.replace( text, "\u0092", "'" ) );
         }
     }
 
