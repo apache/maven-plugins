@@ -55,6 +55,8 @@ public class JiraXML
 
     private Issue issue;
 
+    private String jiraVersion = null;
+
     private Log log = null;
 
     private SimpleDateFormat sdf = null;
@@ -107,6 +109,10 @@ public class JiraXML
                 issue.setId( id.trim() );
             }
         }
+        else if ( qName.equals( "build-info" ) )
+        {
+            currentParent = "build-info";
+        }
     }
 
     public void endElement( String namespaceURI, String sName, String qName )
@@ -157,6 +163,10 @@ public class JiraXML
         else if ( qName.equals( "version" ) && currentParent.equals( "item" ) )
         {
             issue.setVersion( currentElement.toString().trim() );
+        }
+        else if ( qName.equals( "version" ) && currentParent.equals( "build-info" ) )
+        {
+            jiraVersion = currentElement.toString().trim();
         }
         else if ( qName.equals( "fixVersion" ) )
         {
@@ -209,5 +219,10 @@ public class JiraXML
     public List getIssueList()
     {
         return this.issueList;
+    }
+
+    public String getJiraVersion()
+    {
+        return jiraVersion;
     }
 }

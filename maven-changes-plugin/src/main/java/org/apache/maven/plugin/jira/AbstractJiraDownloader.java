@@ -705,6 +705,7 @@ public abstract class AbstractJiraDownloader
         if ( output.isFile() )
         {
             JiraXML jira = new JiraXML( output, log, jiraDatePattern );
+            getLog().info( "The JIRA version is '" + jira.getJiraVersion() + "'" );
             return jira.getIssueList();
         }
         else {
