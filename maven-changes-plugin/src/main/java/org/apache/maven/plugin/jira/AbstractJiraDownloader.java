@@ -108,8 +108,6 @@ public abstract class AbstractJiraDownloader
     protected Map typeMap = new HashMap();
     /** The pattern used to parse dates from the JIRA xml file. */
     private String jiraDatePattern;
-    /** The encoding used to read the JIRA XML file. */
-    private String jiraXmlEncoding;
 
     /**
      * Creates a filter given the parameters and some defaults.
@@ -706,7 +704,7 @@ public abstract class AbstractJiraDownloader
     public List getIssueList() {
         if ( output.isFile() )
         {
-            JiraXML jira = new JiraXML( output, jiraXmlEncoding, log, jiraDatePattern );
+            JiraXML jira = new JiraXML( output, log, jiraDatePattern );
             return jira.getIssueList();
         }
         else {
@@ -718,11 +716,6 @@ public abstract class AbstractJiraDownloader
     public void setJiraDatePattern( String jiraDatePattern )
     {
         this.jiraDatePattern = jiraDatePattern;
-    }
-
-    public void setJiraXmlEncoding( String jiraXmlEncoding )
-    {
-        this.jiraXmlEncoding = jiraXmlEncoding;
     }
 
     /**

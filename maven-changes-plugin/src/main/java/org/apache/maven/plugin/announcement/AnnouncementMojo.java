@@ -277,15 +277,6 @@ public class AnnouncementMojo
     private File jiraXML;
 
     /**
-     * The encoding used in the JIRA XML file. You only need to change this if
-     * your JIRA server is returning responses in an encoding other than UTF-8.
-     *
-     * @parameter default-value="UTF-8" expression="${changes.jiraXmlEncoding}"
-     * @since 2.4
-     */
-    private String jiraXmlEncoding;
-
-    /**
      * The maximum number of issues to fetch from JIRA.
      * <p>
      * <b>Note:</b> In versions 2.0-beta-3 and earlier this parameter was
@@ -619,8 +610,6 @@ public class AnnouncementMojo
         jiraDownloader.setJiraUser( jiraUser );
 
         jiraDownloader.setJiraPassword( jiraPassword );
-
-        jiraDownloader.setJiraXmlEncoding( jiraXmlEncoding );
 
         jiraDownloader.setWebUser( webUser );
 
