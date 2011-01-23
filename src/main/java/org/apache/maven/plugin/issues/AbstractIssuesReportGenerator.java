@@ -86,7 +86,7 @@ public abstract class AbstractIssuesReportGenerator
         }
         else
         {
-            sink.rawText( "&nbsp;" );
+            sink.nonBreakingSpace();
         }
 
         sink.tableCell_();
