@@ -138,15 +138,6 @@ public class JiraMojo
     private String jiraUser;
 
     /**
-     * The encoding used in the JIRA XML file. You only need to change this if
-     * your JIRA server is returning responses in an encoding other than UTF-8.
-     *
-     * @parameter default-value="UTF-8" expression="${changes.jiraXmlEncoding}"
-     * @since 2.4
-     */
-    private String jiraXmlEncoding;
-
-    /**
      * Path to the JIRA XML file, which will be parsed.
      *
      * @parameter expression="${project.build.directory}/jira-results.xml"
@@ -405,8 +396,6 @@ public class JiraMojo
         issueDownloader.setJiraUser( jiraUser );
 
         issueDownloader.setJiraPassword( jiraPassword );
-
-        issueDownloader.setJiraXmlEncoding( jiraXmlEncoding );
 
         issueDownloader.setTypeIds( typeIds );
 

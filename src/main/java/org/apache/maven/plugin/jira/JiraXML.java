@@ -20,8 +20,6 @@ package org.apache.maven.plugin.jira;
  */
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -34,7 +32,6 @@ import javax.xml.parsers.SAXParserFactory;
 import org.apache.maven.plugin.issues.Issue;
 import org.apache.maven.plugin.logging.Log;
 import org.xml.sax.Attributes;
-import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -62,7 +59,7 @@ public class JiraXML
 
     private SimpleDateFormat sdf = null;
 
-    public JiraXML( File xmlPath, String encoding, Log log, String datePattern )
+    public JiraXML( File xmlPath, Log log, String datePattern )
     {
         this.log = log;
         this.datePattern = datePattern;
@@ -78,7 +75,6 @@ public class JiraXML
         }
 
         SAXParserFactory factory = SAXParserFactory.newInstance();
-        FileInputStream fis = null;
 
         issueList = new ArrayList();
 
@@ -86,32 +82,11 @@ public class JiraXML
         {
             SAXParser saxParser = factory.newSAXParser();
 
-            fis = new FileInputStream( xmlPath );
-            InputSource inputSource = new InputSource( fis );
-            if ( encoding != null )
-            {
-                inputSource.setEncoding( encoding );
-            }
-
-            saxParser.parse( inputSource, this );
+            saxParser.parse( xmlPath, this );
         }
         catch ( Throwable t )
         {
             t.printStackTrace();
-        }
-        finally
-        {
-            if ( fis != null )
-            {
-                try
-                {
-                    fis.close();
-                }
-                catch ( IOException e )
-                {
-                    // Ignore
-                }
-            }
         }
     }
 
