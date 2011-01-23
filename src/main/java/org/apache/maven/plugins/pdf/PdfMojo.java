@@ -461,11 +461,10 @@ public class PdfMojo
     {
         if ( !outputDirectory.getCanonicalPath().equals( workingDirectory.getCanonicalPath() ) )
         {
-            String outputName = getDocumentModel( getDefaultLocale() ).getOutputName();
-            final String extension = FileUtils.getExtension( outputName );
-            if ( StringUtils.isNotEmpty( extension ) )
+            String outputName = getDocumentModel( getDefaultLocale() ).getOutputName().trim();
+            if ( !outputName.endsWith( ".pdf" ) )
             {
-                outputName = outputName.substring( 0, outputName.indexOf( extension ) - 1 );
+                outputName = outputName.concat( ".pdf" );
             }
 
             for ( final Iterator iterator = getAvailableLocales().iterator(); iterator.hasNext(); )
@@ -476,11 +475,11 @@ public class PdfMojo
                 if ( !locale.getLanguage().equals( getDefaultLocale().getLanguage() ) )
                 {
                     generatedPdfSource =
-                        new File( workingDirectory, locale.getLanguage() + File.separator + outputName + ".pdf" );
+                        new File( workingDirectory, locale.getLanguage() + File.separator + outputName );
                 }
                 else
                 {
-                    generatedPdfSource = new File( workingDirectory, outputName + ".pdf" );
+                    generatedPdfSource = new File( workingDirectory, outputName );
                 }
 
                 if ( !generatedPdfSource.exists() )
@@ -493,11 +492,11 @@ public class PdfMojo
                 if ( !locale.getLanguage().equals( getDefaultLocale().getLanguage() ) )
                 {
                     generatedPdfDest =
-                        new File( outputDirectory, locale.getLanguage() + File.separator + outputName + ".pdf" );
+                        new File( outputDirectory, locale.getLanguage() + File.separator + outputName );
                 }
                 else
                 {
-                    generatedPdfDest = new File( outputDirectory, outputName + ".pdf" );
+                    generatedPdfDest = new File( outputDirectory, outputName );
                 }
 
                 FileUtils.copyFile( generatedPdfSource, generatedPdfDest );
