@@ -48,7 +48,7 @@ public class JiraMojo
     /**
      * Valid JIRA columns.
      */
-    private static Map JIRA_COLUMNS = new HashMap();
+    private static final Map JIRA_COLUMNS = new HashMap( 16 );
 
     static
     {
@@ -301,7 +301,7 @@ public class JiraMojo
     {
         // Validate parameters
         List columnIds = IssuesReportHelper.getColumnIds( columnNames, JIRA_COLUMNS );
-        if ( columnIds.size() == 0 )
+        if ( columnIds.isEmpty() )
         {
             // This can happen if the user has configured column names and they are all invalid
             throw new MavenReportException(
@@ -346,7 +346,7 @@ public class JiraMojo
         }
         catch ( Exception e )
         {
-            e.printStackTrace();
+            getLog().warn( e );
         }
     }
 

@@ -23,6 +23,7 @@ import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -45,23 +46,45 @@ import org.xml.sax.helpers.DefaultHandler;
 public class JiraXML
     extends DefaultHandler
 {
-    private List issueList;
+    private final List issueList;
 
-    private StringBuffer currentElement = new StringBuffer( 1024 );
+    private final StringBuffer currentElement = new StringBuffer( 1024 );
 
     private String currentParent = "";
 
-    private String datePattern = null;
+    private final String datePattern;
 
     private Issue issue;
 
     private String jiraVersion = null;
 
-    private Log log = null;
+    private final Log log;
 
     private SimpleDateFormat sdf = null;
 
+    /**
+     *
+     * @param xmlPath
+     * @param log not null
+     * @param datePattern
+     *
+     * @deprecated use {@link #JiraXML(org.apache.maven.plugin.logging.Log, java.lang.String)} instead.
+     */
     public JiraXML( File xmlPath, Log log, String datePattern )
+
+    {
+        this( log, datePattern );
+
+        parse( xmlPath );
+    }
+
+    /**
+     *
+     * @param log not null.
+     * @param datePattern may be null.
+     * @since 2.4
+     */
+    public JiraXML( Log log, String datePattern )
     {
         this.log = log;
         this.datePattern = datePattern;
@@ -76,19 +99,33 @@ public class JiraXML
             sdf = new SimpleDateFormat( datePattern, Locale.ENGLISH );
         }
 
-        SAXParserFactory factory = SAXParserFactory.newInstance();
+        this.issueList = new ArrayList( 16 );
+    }
 
-        issueList = new ArrayList();
+    /**
+     * Parse the given xml file. The list of issues can then be retrieved with {@link #getIssueList()}.
+     *
+     * @param xmlPath the file to pares.
+     *
+     * @since 2.4
+     */
+    public void parseXML( File xmlPath )
+    {
+        parse( xmlPath );
+    }
 
+    private void parse( File xmlPath )
+    {
         try
         {
+            SAXParserFactory factory = SAXParserFactory.newInstance();
             SAXParser saxParser = factory.newSAXParser();
 
             saxParser.parse( xmlPath, this );
         }
         catch ( Throwable t )
         {
-            t.printStackTrace();
+            log.warn( t );
         }
     }
 
@@ -218,7 +255,7 @@ public class JiraXML
 
     public List getIssueList()
     {
-        return this.issueList;
+        return Collections.unmodifiableList( this.issueList );
     }
 
     public String getJiraVersion()

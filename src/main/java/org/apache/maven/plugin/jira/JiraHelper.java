@@ -21,16 +21,12 @@ package org.apache.maven.plugin.jira;
 
 import java.text.NumberFormat;
 import java.text.ParsePosition;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.issues.Issue;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.wagon.proxy.ProxyInfo;
 
@@ -53,8 +49,6 @@ public class JiraHelper
      */
     static Map getJiraUrlAndProjectId( String issueManagementUrl )
     {
-        HashMap urlMap = new HashMap();
-
         String url = issueManagementUrl;
 
         if ( url.endsWith( "/" ) )
@@ -64,7 +58,7 @@ public class JiraHelper
         }
 
         // chop off the parameter part
-        int pos = url.indexOf( "?" );
+        int pos = url.indexOf( '?');
 
         // and get the id while we're at it
         String id = "";
@@ -72,14 +66,14 @@ public class JiraHelper
         if ( pos >= 0 )
         {
             // project id
-            id = url.substring( url.lastIndexOf( "=" ) + 1 );
+            id = url.substring( url.lastIndexOf( '=') + 1 );
         }
 
-        String jiraUrl = url.substring( 0, url.lastIndexOf( "/" ) );
+        String jiraUrl = url.substring( 0, url.lastIndexOf( '/') );
 
         if ( jiraUrl.endsWith( "secure" ) )
         {
-            jiraUrl = jiraUrl.substring( 0, jiraUrl.lastIndexOf( "/" ) );
+            jiraUrl = jiraUrl.substring( 0, jiraUrl.lastIndexOf( '/') );
         }
         else
         {
@@ -92,6 +86,8 @@ public class JiraHelper
                 jiraUrl = jiraUrl.substring( 0, index );
             }
         }
+
+        HashMap urlMap = new HashMap( 4 );
 
         urlMap.put( "url", jiraUrl );
 
@@ -161,9 +157,10 @@ public class JiraHelper
      */
     public static boolean validateNonProxyHosts( ProxyInfo proxy, String targetHost )
     {
-        if ( targetHost == null )
+        String tHost = targetHost;
+        if ( tHost == null )
         {
-            targetHost = new String();
+            tHost = new String();
         }
         if ( proxy == null )
         {
@@ -181,11 +178,16 @@ public class JiraHelper
         {
             String pattern = tokenizer.nextToken();
             pattern = pattern.replaceAll( "\\.", "\\\\." ).replaceAll( "\\*", ".*" );
-            if ( targetHost.matches( pattern ) )
+            if ( tHost.matches( pattern ) )
             {
                 return true;
             }
         }
         return false;
+    }
+
+    private JiraHelper()
+    {
+        // utility class
     }
 }
