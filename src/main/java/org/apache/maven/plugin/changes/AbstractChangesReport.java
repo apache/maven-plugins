@@ -19,6 +19,7 @@ package org.apache.maven.plugin.changes;
  * under the License.
  */
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
@@ -40,6 +41,7 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.MavenReportException;
 import org.codehaus.plexus.i18n.I18N;
+import org.codehaus.plexus.util.ReaderFactory;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -69,6 +71,16 @@ public abstract class AbstractChangesReport
      * @parameter default-value="${project.reporting.outputDirectory}"
      */
     private File outputDirectory;
+
+    /**
+     * Report output encoding. Note that this parameter is only relevant if the goal is run from the command line or
+     * from the default build lifecycle. If the goal is run indirectly as part of a site generation, the output
+     * encoding configured in the Maven Site Plugin is used instead.
+     *
+     * @parameter expression="${outputEncoding}" default-value="${project.reporting.outputEncoding}"
+     * @since 2.4
+     */
+    private String outputEncoding;
 
     /**
      * Doxia Site Renderer.
@@ -161,10 +173,11 @@ public abstract class AbstractChangesReport
             DecorationModel model = new DecorationModel();
             model.setBody( new Body() );
             Map attributes = new HashMap();
-            attributes.put( "outputEncoding", "UTF-8" );
+            attributes.put( "outputEncoding", getOutputEncoding() );
             Locale locale = Locale.getDefault();
             SiteRenderingContext siteContext = siteRenderer.createContextForSkin( getSkinArtifactFile(), attributes,
                                                                                   model, getName( locale ), locale );
+            siteContext.setOutputEncoding( getOutputEncoding() );
 
             RenderingContext context = new RenderingContext( outputDirectory, getOutputName() + ".html" );
 
@@ -203,6 +216,17 @@ public abstract class AbstractChangesReport
     protected String getOutputDirectory()
     {
         return outputDirectory.getAbsolutePath();
+    }
+
+    /**
+     * Get the effective reporting output file encoding.
+     *
+     * @return The effective reporting output file encoding, never <code>null</code>.
+     * @since 2.4
+     */
+    protected String getOutputEncoding()
+    {
+        return ( outputEncoding != null ) ? outputEncoding : ReaderFactory.UTF_8;
     }
 
     /**
