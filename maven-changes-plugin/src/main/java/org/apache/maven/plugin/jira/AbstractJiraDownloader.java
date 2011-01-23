@@ -99,13 +99,13 @@ public abstract class AbstractJiraDownloader
     /** The maven settings. */
     private Settings settings;
     /** Mapping containing all allowed JIRA status values. */
-    protected Map statusMap = new HashMap();
+    protected final Map statusMap = new HashMap( 8 );
     /** Mapping containing all allowed JIRA resolution values. */
-    protected Map resolutionMap = new HashMap();
+    protected final Map resolutionMap = new HashMap( 8 );
     /** Mapping containing all allowed JIRA priority values. */
-    protected Map priorityMap = new HashMap();
+    protected final Map priorityMap = new HashMap( 8 );
     /** Mapping containing all allowed JIRA type values. */
-    protected Map typeMap = new HashMap();
+    protected final Map typeMap = new HashMap( 8 );
     /** The pattern used to parse dates from the JIRA xml file. */
     private String jiraDatePattern;
 
@@ -122,7 +122,7 @@ public abstract class AbstractJiraDownloader
             return this.filter;
         }
 
-        StringBuffer localFilter = new StringBuffer();
+        StringBuffer localFilter = new StringBuffer( 16 );
 
         // add fix versions
         if ( fixVersionIds != null )
@@ -133,7 +133,7 @@ public abstract class AbstractJiraDownloader
             {
                 if ( fixVersions[i].length() > 0 )
                 {
-                    localFilter.append( "&fixfor=" + fixVersions[i].trim() );
+                    localFilter.append( "&fixfor=" ).append( fixVersions[i].trim());
                 }
             }
         }
@@ -149,7 +149,7 @@ public abstract class AbstractJiraDownloader
 
                 if ( statusParam != null )
                 {
-                    localFilter.append( "&statusIds=" + statusParam );
+                    localFilter.append( "&statusIds=" ).append( statusParam);
                 }
             }
         }
@@ -165,7 +165,7 @@ public abstract class AbstractJiraDownloader
 
                 if ( priorityParam != null )
                 {
-                    localFilter.append( "&priorityIds=" + priorityParam );
+                    localFilter.append( "&priorityIds=" ).append( priorityParam);
                 }
             }
         }
@@ -181,7 +181,7 @@ public abstract class AbstractJiraDownloader
 
                 if ( resoParam != null )
                 {
-                    localFilter.append( "&resolutionIds=" + resoParam );
+                    localFilter.append( "&resolutionIds=" ).append( resoParam);
                 }
             }
         }
@@ -195,7 +195,7 @@ public abstract class AbstractJiraDownloader
             {
                 if ( components[i].length() > 0 )
                 {
-                    localFilter.append( "&component=" + components[i] );
+                    localFilter.append( "&component=" ).append( components[i]);
                 }
             }
         }
@@ -211,7 +211,7 @@ public abstract class AbstractJiraDownloader
 
                 if ( typeParam != null )
                 {
-                    localFilter.append( "&type=" + typeParam );
+                    localFilter.append( "&type=" ).append( typeParam);
                 }
             }
         }
@@ -704,7 +704,8 @@ public abstract class AbstractJiraDownloader
     public List getIssueList() {
         if ( output.isFile() )
         {
-            JiraXML jira = new JiraXML( output, log, jiraDatePattern );
+            JiraXML jira = new JiraXML( log, jiraDatePattern );
+            jira.parseXML( output );
             getLog().info( "The JIRA version is '" + jira.getJiraVersion() + "'" );
             return jira.getIssueList();
         }
