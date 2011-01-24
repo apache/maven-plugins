@@ -141,7 +141,8 @@ public class TracMojo
         throws MavenReportException
     {
         // Validate parameters
-        List columnIds = IssuesReportHelper.getColumnIds( columnNames, TRAC_COLUMNS, DEPRECATED_TRAC_COLUMNS, getLog() );
+        List columnIds = IssuesReportHelper.getColumnIds( columnNames, TRAC_COLUMNS, DEPRECATED_TRAC_COLUMNS,
+                                                          getLog() );
         if ( columnIds.size() == 0 )
         {
             // This can happen if the user has configured column names and they are all invalid

@@ -58,7 +58,7 @@ public class JiraHelper
         }
 
         // chop off the parameter part
-        int pos = url.indexOf( '?');
+        int pos = url.indexOf( '?' );
 
         // and get the id while we're at it
         String id = "";
@@ -66,14 +66,14 @@ public class JiraHelper
         if ( pos >= 0 )
         {
             // project id
-            id = url.substring( url.lastIndexOf( '=') + 1 );
+            id = url.substring( url.lastIndexOf( '=' ) + 1 );
         }
 
-        String jiraUrl = url.substring( 0, url.lastIndexOf( '/') );
+        String jiraUrl = url.substring( 0, url.lastIndexOf( '/' ) );
 
         if ( jiraUrl.endsWith( "secure" ) )
         {
-            jiraUrl = jiraUrl.substring( 0, jiraUrl.lastIndexOf( '/') );
+            jiraUrl = jiraUrl.substring( 0, jiraUrl.lastIndexOf( '/' ) );
         }
         else
         {
