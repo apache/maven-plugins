@@ -111,6 +111,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
  * @author ltheussl
  * @version $Id$
  * @goal pdf
+ * @threadSafe
  */
 public class PdfMojo
     extends AbstractMojo
