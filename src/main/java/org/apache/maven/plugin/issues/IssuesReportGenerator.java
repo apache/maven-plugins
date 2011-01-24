@@ -20,7 +20,6 @@ package org.apache.maven.plugin.issues;
  */
 
 import org.apache.maven.doxia.sink.Sink;
-import org.apache.maven.reporting.MavenReportException;
 
 import java.text.DateFormat;
 import java.util.List;
@@ -173,7 +172,7 @@ public class IssuesReportGenerator extends AbstractIssuesReportGenerator
         for ( int idx = 0; idx < issueList.size(); idx++ )
         {
             // Use a DateFormat based on the Locale
-            DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT, locale);
+            DateFormat df = DateFormat.getDateInstance( DateFormat.SHORT, locale );
 
             Issue issue = (Issue) issueList.get( idx );
 

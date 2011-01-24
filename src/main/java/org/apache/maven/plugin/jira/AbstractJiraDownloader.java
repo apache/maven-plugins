@@ -133,7 +133,7 @@ public abstract class AbstractJiraDownloader
             {
                 if ( fixVersions[i].length() > 0 )
                 {
-                    localFilter.append( "&fixfor=" ).append( fixVersions[i].trim());
+                    localFilter.append( "&fixfor=" ).append( fixVersions[i].trim() );
                 }
             }
         }
@@ -149,7 +149,7 @@ public abstract class AbstractJiraDownloader
 
                 if ( statusParam != null )
                 {
-                    localFilter.append( "&statusIds=" ).append( statusParam);
+                    localFilter.append( "&statusIds=" ).append( statusParam );
                 }
             }
         }
@@ -165,7 +165,7 @@ public abstract class AbstractJiraDownloader
 
                 if ( priorityParam != null )
                 {
-                    localFilter.append( "&priorityIds=" ).append( priorityParam);
+                    localFilter.append( "&priorityIds=" ).append( priorityParam );
                 }
             }
         }
@@ -181,7 +181,7 @@ public abstract class AbstractJiraDownloader
 
                 if ( resoParam != null )
                 {
-                    localFilter.append( "&resolutionIds=" ).append( resoParam);
+                    localFilter.append( "&resolutionIds=" ).append( resoParam );
                 }
             }
         }
@@ -195,7 +195,7 @@ public abstract class AbstractJiraDownloader
             {
                 if ( components[i].length() > 0 )
                 {
-                    localFilter.append( "&component=" ).append( components[i]);
+                    localFilter.append( "&component=" ).append( components[i] );
                 }
             }
         }
@@ -211,7 +211,7 @@ public abstract class AbstractJiraDownloader
 
                 if ( typeParam != null )
                 {
-                    localFilter.append( "&type=" ).append( typeParam);
+                    localFilter.append( "&type=" ).append( typeParam );
                 }
             }
         }
@@ -561,7 +561,7 @@ public abstract class AbstractJiraDownloader
         {
 
             ProxyInfo proxyInfo = new ProxyInfo();
-            proxyInfo.setNonProxyHosts(proxy.getNonProxyHosts());
+            proxyInfo.setNonProxyHosts( proxy.getNonProxyHosts() );
 
             // Validation of proxy method copied from org.apache.maven.wagon.proxy.ProxyUtils.
             // @todo Can use original when maven-changes-plugin references a more recent version of maven-project
@@ -701,7 +701,8 @@ public abstract class AbstractJiraDownloader
         }
     }
 
-    public List getIssueList() {
+    public List getIssueList()
+    {
         if ( output.isFile() )
         {
             JiraXML jira = new JiraXML( log, jiraDatePattern );
@@ -709,7 +710,8 @@ public abstract class AbstractJiraDownloader
             getLog().info( "The JIRA version is '" + jira.getJiraVersion() + "'" );
             return jira.getIssueList();
         }
-        else {
+        else
+        {
             getLog().warn( "JIRA file " + output.getPath() + " doesn't exist." );
             return Collections.EMPTY_LIST;
         }

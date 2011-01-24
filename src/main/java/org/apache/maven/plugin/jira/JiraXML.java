@@ -213,7 +213,7 @@ public class JiraXML
             }
             catch ( ParseException e )
             {
-                log.warn( "Element \"Created\". " + e.getMessage() + ". Using the pattern \"" + datePattern + "\"");
+                log.warn( "Element \"Created\". " + e.getMessage() + ". Using the pattern \"" + datePattern + "\"" );
             }
         }
         else if ( qName.equals( "updated" ) && currentParent.equals( "item" ) && sdf != null )
@@ -224,7 +224,7 @@ public class JiraXML
             }
             catch ( ParseException e )
             {
-                log.warn( "Element \"Updated\". " + e.getMessage() + ". Using the pattern \"" + datePattern + "\"");
+                log.warn( "Element \"Updated\". " + e.getMessage() + ". Using the pattern \"" + datePattern + "\"" );
             }
         }
 

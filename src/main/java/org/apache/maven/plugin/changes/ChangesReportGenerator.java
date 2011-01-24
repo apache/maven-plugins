@@ -256,7 +256,7 @@ public class ChangesReportGenerator extends AbstractIssuesReportGenerator
 
                 sink.tableCell();
 
-                if( escapeHTML )
+                if ( escapeHTML )
                 {
                     sink.text( action.getAction() );
                 }

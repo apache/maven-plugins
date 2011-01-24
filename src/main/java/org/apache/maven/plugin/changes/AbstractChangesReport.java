@@ -19,7 +19,6 @@ package org.apache.maven.plugin.changes;
  * under the License.
  */
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
