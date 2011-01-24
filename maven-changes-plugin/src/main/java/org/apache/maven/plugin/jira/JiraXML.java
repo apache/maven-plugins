@@ -64,22 +64,6 @@ public class JiraXML
 
     /**
      *
-     * @param xmlPath
-     * @param log not null
-     * @param datePattern
-     *
-     * @deprecated use {@link #JiraXML(org.apache.maven.plugin.logging.Log, java.lang.String)} instead.
-     */
-    public JiraXML( File xmlPath, Log log, String datePattern )
-
-    {
-        this( log, datePattern );
-
-        parse( xmlPath );
-    }
-
-    /**
-     *
      * @param log not null.
      * @param datePattern may be null.
      * @since 2.4
