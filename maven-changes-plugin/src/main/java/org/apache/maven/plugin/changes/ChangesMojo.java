@@ -49,6 +49,7 @@ import org.codehaus.plexus.util.xml.XmlStreamReader;
  * @goal changes-report
  * @author <a href="mailto:jruiz@exist.com">Johnny R. Ruiz III</a>
  * @version $Id$
+ * @threadSafe
  */
 public class ChangesMojo
     extends AbstractChangesReport

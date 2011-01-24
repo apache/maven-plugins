@@ -44,6 +44,7 @@ import org.codehaus.plexus.util.IOUtil;
  * @goal announcement-mail
  * @execute goal="announcement-generate"
  * @since 2.0-beta-2
+ * @threadSafe
  */
 public class AnnouncementMailMojo
     extends AbstractAnnouncementMojo
