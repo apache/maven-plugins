@@ -227,7 +227,7 @@ public class DocumentModelBuilder
             return null;
         }
 
-        final List ret = new ArrayList();
+        final List ret = new ArrayList( 4 );
 
         for ( final Iterator it = project.getDevelopers().iterator(); it.hasNext(); )
         {
@@ -245,7 +245,7 @@ public class DocumentModelBuilder
 
                 if ( roles == null )
                 {
-                    roles = new StringBuffer();
+                    roles = new StringBuffer( 32 );
                 }
 
                 roles.append( role );

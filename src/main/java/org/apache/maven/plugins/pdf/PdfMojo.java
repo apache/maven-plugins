@@ -400,7 +400,7 @@ public class PdfMojo
 
         try
         {
-            generatedPdf();
+            generatePdf();
         }
         catch ( IOException e )
         {
@@ -418,6 +418,10 @@ public class PdfMojo
             throw new MojoExecutionException( "Error copying generated PDF: " + e.getMessage(), e );
         }
     }
+
+    // ----------------------------------------------------------------------
+    // Private methods
+    // ----------------------------------------------------------------------
 
     /**
      * Init and validate parameters
@@ -505,10 +509,6 @@ public class PdfMojo
         }
     }
 
-    // ----------------------------------------------------------------------
-    // Private methods
-    // ----------------------------------------------------------------------
-
     /**
      * Generate the PDF.
      *
@@ -516,7 +516,7 @@ public class PdfMojo
      * @throws IOException if any
      * @since 1.1
      */
-    private void generatedPdf()
+    private void generatePdf()
         throws MojoExecutionException, IOException
     {
         Locale.setDefault( getDefaultLocale() );
@@ -865,7 +865,7 @@ public class PdfMojo
 
                     String siteDescriptorContent = IOUtil.toString( reader );
                     siteDescriptorContent =
-                        siteTool.getInterpolatedSiteDescriptorContent( new HashMap(), project,
+                        siteTool.getInterpolatedSiteDescriptorContent( new HashMap( 2 ), project,
                                                                        siteDescriptorContent, enc, enc );
 
                     decoration = new DecorationXpp3Reader().read( new StringReader( siteDescriptorContent ) );
@@ -935,7 +935,7 @@ public class PdfMojo
         try
         {
             final SiteRenderingContext context =
-                siteRenderer.createContextForSkin( skinFile, new HashMap(), decorationModel, project.getName(),
+                siteRenderer.createContextForSkin( skinFile, new HashMap( 2 ), decorationModel, project.getName(),
                                                    locale );
             context.addSiteDirectory( new File( siteDirectory, locale.getLanguage() ) );
 
@@ -1033,7 +1033,7 @@ public class PdfMojo
 
             if (pluginDescriptor != null)
             {
-                List goals = new ArrayList();
+                List goals = new ArrayList( 8 );
                 for ( final Iterator it2 = reportPlugin.getReportSets().iterator(); it2.hasNext(); )
                 {
                     final ReportSet reportSet = (ReportSet) it2.next();
@@ -1298,14 +1298,14 @@ public class PdfMojo
             if ( getLog().isErrorEnabled() )
             {
                 ClassRealm reportPluginRealm = mojoDescriptor.getPluginDescriptor().getClassRealm();
-                StringBuffer sb = new StringBuffer();
+                StringBuffer sb = new StringBuffer( 1024 );
                 sb.append( report.getClass().getName() ).append( "#generate(...) caused a linkage error (" );
                 sb.append( e.getClass().getName() )
                         .append( ") and may be out-of-date. Check the realms:" ).append( EOL );
-                sb.append( "Maven Report Plugin realm = " + reportPluginRealm.getId() ).append( EOL );
+                sb.append( "Maven Report Plugin realm = " ).append( reportPluginRealm.getId()).append( EOL );
                 for ( int i = 0; i < reportPluginRealm.getConstituents().length; i++ )
                 {
-                    sb.append( "urls[" + i + "] = " + reportPluginRealm.getConstituents()[i] );
+                    sb.append( "urls[" ).append( i ).append( "] = " ).append( reportPluginRealm.getConstituents()[i]);
                     if ( i != ( reportPluginRealm.getConstituents().length - 1 ) )
                     {
                         sb.append( EOL );
@@ -1344,12 +1344,12 @@ public class PdfMojo
     {
         if ( this.generatedMavenReports == null )
         {
-            this.generatedMavenReports = new HashMap();
+            this.generatedMavenReports = new HashMap( 2 );
         }
 
         if ( this.generatedMavenReports.get( locale ) == null )
         {
-            this.generatedMavenReports.put( locale, new ArrayList() );
+            this.generatedMavenReports.put( locale, new ArrayList( 2 ) );
         }
 
         return ( (List) this.generatedMavenReports.get( locale ) );
@@ -1386,9 +1386,9 @@ public class PdfMojo
         documentTOCItem.setName( i18n.getString( "pdf-plugin", locale, "toc.project-info.item" ) );
         documentTOCItem.setRef( "/project-info" ); // see #generateMavenReports(Locale)
 
-        List addedRef = new ArrayList();
+        List addedRef = new ArrayList( 4 );
 
-        List items = new ArrayList();
+        List items = new ArrayList( 4 );
 
         // append generated report defined as MavenReport
         for ( final Iterator it = getGeneratedMavenReports( locale ).iterator(); it.hasNext(); )
@@ -1428,7 +1428,7 @@ public class PdfMojo
                     for ( final Iterator it2 = generatedFiles.iterator(); it2.hasNext(); )
                     {
                         final String generatedFile = it2.next().toString();
-                        final String ref = generatedFile.substring( 0, generatedFile.lastIndexOf( "." ) );
+                        final String ref = generatedFile.substring( 0, generatedFile.lastIndexOf( '.') );
 
                         if ( !addedRef.contains( ref ) )
                         {
@@ -1540,7 +1540,7 @@ public class PdfMojo
         }
         catch ( ParseException e )
         {
-            StringBuffer sb = new StringBuffer();
+            StringBuffer sb = new StringBuffer( 1024 );
 
             sb.append( EOL ).append( EOL );
             sb.append( "Error when parsing the generated report: " ).append( generatedReport.getAbsolutePath() );
@@ -1569,7 +1569,7 @@ public class PdfMojo
             else
             {
                 sb.append( "You could also contact the Plugin team:" ).append( EOL );
-                if ( pluginProject.getMailingLists() != null && pluginProject.getMailingLists().size() != 0 )
+                if ( pluginProject.getMailingLists() != null && !pluginProject.getMailingLists().isEmpty() )
                 {
                     boolean appended = false;
                     for ( Iterator i = pluginProject.getMailingLists().iterator(); i.hasNext(); )
@@ -1605,7 +1605,7 @@ public class PdfMojo
                 }
             }
 
-            sb.append( EOL ).append( "Ignoring the \"" + localReportName + "\" report in the PDF." ).append( EOL );
+            sb.append( EOL ).append( "Ignoring the \"" ).append( localReportName ).append( "\" report in the PDF.").append( EOL );
 
             if ( getLog().isDebugEnabled() )
             {
@@ -1704,13 +1704,12 @@ public class PdfMojo
             return;
         }
 
-        // see PdfSink#table()
-        content = StringUtils.replace( content, "<table><table", "<table" );
         Writer writer = null;
         try
         {
             writer = WriterFactory.newXmlWriter( toFile );
-            writer.write( content );
+            // see PdfSink#table()
+            writer.write( StringUtils.replace( content, "<table><table", "<table" ) );
         }
         finally
         {
@@ -1789,7 +1788,7 @@ public class PdfMojo
 
         private final Locale locale;
 
-        public ProjectInfoRenderer( Sink sink, List generatedReports, I18N i18n, Locale locale )
+        ProjectInfoRenderer( Sink sink, List generatedReports, I18N i18n, Locale locale )
         {
             super( sink );
 
@@ -1888,7 +1887,7 @@ public class PdfMojo
     {
         private final Sink sink;
 
-        public SinkDelegate( Sink sink )
+        SinkDelegate( Sink sink )
         {
             this.sink = sink;
         }
