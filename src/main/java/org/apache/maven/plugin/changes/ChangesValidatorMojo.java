@@ -40,6 +40,7 @@ import org.xml.sax.SAXException;
  * @author <a href="mailto:olamy@apache.org">olamy</a>
  * @version $Id$
  * @since 2.1
+ * @threadSafe
  */
 public class ChangesValidatorMojo
     extends AbstractMojo

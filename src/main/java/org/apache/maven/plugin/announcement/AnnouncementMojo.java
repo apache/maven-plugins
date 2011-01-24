@@ -56,6 +56,7 @@ import org.codehaus.plexus.velocity.VelocityComponent;
  * @author aramirez@exist.com
  * @version $Id$
  * @since 2.0-beta-2
+ * @threadSafe
  */
 public class AnnouncementMojo
     extends AbstractAnnouncementMojo

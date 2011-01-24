@@ -41,6 +41,7 @@ import org.apache.xmlrpc.XmlRpcException;
  * @author Noriko Kinugasa
  * @version $Id$
  * @since 2.1
+ * @threadSafe
  */
 public class TracMojo
     extends AbstractChangesReport

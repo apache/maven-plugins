@@ -36,6 +36,7 @@ import org.apache.maven.plugins.changes.model.Release;
  * @author Justin Edelson
  * @author Dennis Lundberg
  * @since 2.4
+ * @threadSafe
  */
 public class ChangesCheckMojo extends AbstractMojo
 {

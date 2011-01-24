@@ -41,6 +41,7 @@ import org.apache.maven.settings.Settings;
  * @goal jira-report
  * @author <a href="mailto:jruiz@exist.com">Johnny R. Ruiz III</a>
  * @version $Id$
+ * @threadSafe
  */
 public class JiraMojo
     extends AbstractChangesReport
