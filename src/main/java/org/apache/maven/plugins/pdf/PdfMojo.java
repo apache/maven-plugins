@@ -426,11 +426,8 @@ public class PdfMojo
 
     /**
      * Init and validate parameters
-     *
-     * @throws MojoFailureException if any
      */
     private void init()
-        throws MojoFailureException
     {
         if ( "fo".equalsIgnoreCase( implementation ) )
         {
@@ -442,15 +439,19 @@ public class PdfMojo
         }
         else
         {
-            throw new MojoFailureException( "Not a valid 'implementation' parameter: '" + implementation
-                + "'. Should be 'fo' or 'itext'." );
+            getLog().warn( "Invalid 'implementation' parameter: '" + implementation
+                    + "', using 'fo' as default." );
+
+            this.docRenderer = foRenderer;
         }
 
-        if ( !( "none".equalsIgnoreCase( generateTOC ) || "start".equalsIgnoreCase( generateTOC ) || "end"
-                                                                                                          .equalsIgnoreCase( generateTOC ) ) )
+        if ( !( "none".equalsIgnoreCase( generateTOC )
+                || "start".equalsIgnoreCase( generateTOC ) || "end".equalsIgnoreCase( generateTOC ) ) )
         {
-            throw new MojoFailureException( "Not a valid 'generateTOC' parameter: '" + generateTOC
-                + "'. Should be 'none', 'start' or 'end'." );
+            getLog().warn( "Invalid 'generateTOC' parameter: '" + generateTOC
+                    + "', using 'start' as default." );
+
+            this.generateTOC = "start";
         }
     }
 
@@ -534,10 +535,8 @@ public class PdfMojo
                 siteDirectoryFile = new File( getSiteDirectoryTmp(), locale.getLanguage() );
             }
 
-            // Copy extra-resources
             copyResources( locale );
 
-            // generate reports
             generateMavenReports( locale );
 
             DocumentRendererContext context = new DocumentRendererContext();
@@ -550,25 +549,16 @@ public class PdfMojo
             context.put( "generateTOC", generateTOC );
             context.put( "validate", Boolean.valueOf( validate ) );
 
+            final DocumentModel model = aggregate ? getDocumentModel( locale ) : null;
+
             try
             {
                 // TODO use interface see DOXIASITETOOLS-30
-                if ( aggregate )
-                {
-                    ( (AbstractDocumentRenderer) docRenderer ).render( siteDirectoryFile, workingDir,
-                                                                       getDocumentModel( locale ), context );
-                }
-                else
-                {
-                    ( (AbstractDocumentRenderer) docRenderer ).render( siteDirectoryFile, workingDir, null,
-                                                                       context );
-                }
+                ( (AbstractDocumentRenderer) docRenderer ).render( siteDirectoryFile, workingDir, model, context );
             }
             catch ( DocumentRendererException e )
             {
-                getLog().debug( e );
-
-                throw new MojoExecutionException( "Error during document generation: " + e.getMessage() );
+                throw new MojoExecutionException( "Error during document generation: " + e.getMessage(), e );
             }
         }
     }
