@@ -677,8 +677,7 @@ public class PdfMojo
 
                 if ( siteFiles.contains( generatedSiteFile ) )
                 {
-                    getLog().warn(
-                                   "Generated-site already contains a file in site: " + generatedSiteFile
+                    getLog().warn( "Generated-site already contains a file in site: " + generatedSiteFile
                                        + ". Ignoring copying it!" );
                     continue;
                 }
@@ -1193,10 +1192,7 @@ public class PdfMojo
         String localReportName = report.getName( locale );
         if ( !report.canGenerateReport() )
         {
-            if ( getLog().isInfoEnabled() )
-            {
-                getLog().info( "Skipped \"" + localReportName + "\" report." );
-            }
+            getLog().info( "Skipped \"" + localReportName + "\" report." );
             getLog().debug( "canGenerateReport() was false." );
 
             return;
@@ -1204,10 +1200,7 @@ public class PdfMojo
 
         if ( report.isExternalReport() )
         {
-            if ( getLog().isInfoEnabled() )
-            {
-                getLog().info( "Skipped external \"" + localReportName + "\" report." );
-            }
+            getLog().info( "Skipped external \"" + localReportName + "\" report." );
             getLog().debug( "isExternalReport() was false." );
 
             return;
@@ -1441,14 +1434,8 @@ public class PdfMojo
         }
         catch ( IOException e )
         {
-            if ( getLog().isDebugEnabled() )
-            {
-                getLog().error( "IOException: " + e.getMessage(), e );
-            }
-            else
-            {
-                getLog().error( "IOException: " + e.getMessage() );
-            }
+            getLog().error( "IOException: " + e.getMessage() );
+            getLog().debug( e );
         }
 
         // append to Toc
@@ -1479,26 +1466,14 @@ public class PdfMojo
         }
         catch ( ParseException e )
         {
-            if ( getLog().isDebugEnabled() )
-            {
-                getLog().error( "ParseException: " + e.getMessage(), e );
-            }
-            else
-            {
-                getLog().error( "ParseException: " + e.getMessage() );
-            }
+            getLog().error( "ParseException: " + e.getMessage() );
+            getLog().debug( e );
             return null;
         }
         catch ( ParserNotFoundException e )
         {
-            if ( getLog().isDebugEnabled() )
-            {
-                getLog().error( "ParserNotFoundException: " + e.getMessage(), e );
-            }
-            else
-            {
-                getLog().error( "ParserNotFoundException: " + e.getMessage() );
-            }
+            getLog().error( "ParserNotFoundException: " + e.getMessage() );
+            getLog().debug( e );
             return null;
         }
         finally
@@ -1598,40 +1573,22 @@ public class PdfMojo
 
             sb.append( EOL ).append( "Ignoring the \"" ).append( localReportName ).append( "\" report in the PDF.").append( EOL );
 
-            if ( getLog().isDebugEnabled() )
-            {
-                getLog().error( sb.toString(), e );
-            }
-            else
-            {
-                getLog().error( sb.toString() );
-            }
+            getLog().error( sb.toString() );
+            getLog().debug( e );
 
             return false;
         }
         catch ( ParserNotFoundException e )
         {
-            if ( getLog().isDebugEnabled() )
-            {
-                getLog().error( "ParserNotFoundException: " + e.getMessage(), e );
-            }
-            else
-            {
-                getLog().error( "ParserNotFoundException: " + e.getMessage() );
-            }
+            getLog().error( "ParserNotFoundException: " + e.getMessage() );
+            getLog().debug( e );
 
             return false;
         }
         catch ( IOException e )
         {
-            if ( getLog().isDebugEnabled() )
-            {
-                getLog().error( "IOException: " + e.getMessage(), e );
-            }
-            else
-            {
-                getLog().error( "IOException: " + e.getMessage() );
-            }
+            getLog().error( "IOException: " + e.getMessage() );
+            getLog().debug( e );
 
             return false;
         }
@@ -1660,14 +1617,8 @@ public class PdfMojo
         }
         catch ( ProjectBuildingException e )
         {
-            if ( getLog().isDebugEnabled() )
-            {
-                getLog().error( "ProjectBuildingException: " + e.getMessage(), e );
-            }
-            else
-            {
-                getLog().error( "ProjectBuildingException: " + e.getMessage() );
-            }
+            getLog().error( "ProjectBuildingException: " + e.getMessage() );
+            getLog().debug( e );
         }
 
         return null;
