@@ -42,6 +42,13 @@ Migrate
 
   []
 
+* From 2.2.x to 2.3.x
+
+  * The <<<site:stage>>> and <<<site:stage-deploy>>> goals have been decoupled from site generation.
+  Executing these goals without generating the site first will lead to a build failure.
+
+  []
+
 * From 2.1.x to 2.2.x
 
   * The plugin now requires at least <<Maven 2.2.0>> to run, you cannot use it
