@@ -31,6 +31,11 @@ under the License.
   <body>
     <section name="Configuring Reports">
       <p>
+        <strong>Note for Maven 3 users</strong>: due to the changes in the reporting API,
+        report inclusion does <strong>not</strong> work with Maven 3.
+        See <a href="http://jira.codehaus.org/browse/MPDF-41">MPDF-41</a>.
+      </p>
+      <p>
         Since version 1.1, all Maven reports will be included by default in the generated PDF.
         You should configure the &lt;reporting/&gt; section of your POM similar than the
         <a href="http://maven.apache.org/plugins/maven-site-plugin/examples/configuring-reports.html">site plugin</a>
