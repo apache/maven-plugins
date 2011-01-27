@@ -89,7 +89,6 @@ import org.apache.maven.plugin.version.PluginVersionResolutionException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
-import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.AbstractMavenReportRenderer;
 import org.apache.maven.reporting.MavenReport;
 import org.apache.maven.reporting.MavenReportException;
@@ -1021,7 +1020,7 @@ public class PdfMojo
 
             final PluginDescriptor pluginDescriptor = getPluginDescriptor( reportPlugin );
 
-            if (pluginDescriptor != null)
+            if ( pluginDescriptor != null )
             {
                 List goals = new ArrayList( 8 );
                 for ( final Iterator it2 = reportPlugin.getReportSets().iterator(); it2.hasNext(); )
@@ -1264,13 +1263,9 @@ public class PdfMojo
         try
         {
             sink = new PdfSink( sw );
-            org.codehaus.doxia.sink.Sink proxy =
-                (org.codehaus.doxia.sink.Sink) Proxy
-                                                    .newProxyInstance(
-                                                                       org.codehaus.doxia.sink.Sink.class
-                                                                                                         .getClassLoader(),
-                                                                       new Class[] { org.codehaus.doxia.sink.Sink.class },
-                                                                       new SinkDelegate( sink ) );
+            org.codehaus.doxia.sink.Sink proxy = (org.codehaus.doxia.sink.Sink) Proxy.newProxyInstance(
+                org.codehaus.doxia.sink.Sink.class.getClassLoader(),
+                new Class[] { org.codehaus.doxia.sink.Sink.class }, new SinkDelegate( sink ) );
             report.generate( proxy, locale );
         }
         catch ( MavenReportException e )
@@ -1286,10 +1281,10 @@ public class PdfMojo
                 sb.append( report.getClass().getName() ).append( "#generate(...) caused a linkage error (" );
                 sb.append( e.getClass().getName() )
                         .append( ") and may be out-of-date. Check the realms:" ).append( EOL );
-                sb.append( "Maven Report Plugin realm = " ).append( reportPluginRealm.getId()).append( EOL );
+                sb.append( "Maven Report Plugin realm = " ).append( reportPluginRealm.getId() ).append( EOL );
                 for ( int i = 0; i < reportPluginRealm.getConstituents().length; i++ )
                 {
-                    sb.append( "urls[" ).append( i ).append( "] = " ).append( reportPluginRealm.getConstituents()[i]);
+                    sb.append( "urls[" ).append( i ).append( "] = " ).append( reportPluginRealm.getConstituents()[i] );
                     if ( i != ( reportPluginRealm.getConstituents().length - 1 ) )
                     {
                         sb.append( EOL );
@@ -1412,7 +1407,7 @@ public class PdfMojo
                     for ( final Iterator it2 = generatedFiles.iterator(); it2.hasNext(); )
                     {
                         final String generatedFile = it2.next().toString();
-                        final String ref = generatedFile.substring( 0, generatedFile.lastIndexOf( '.') );
+                        final String ref = generatedFile.substring( 0, generatedFile.lastIndexOf( '.' ) );
 
                         if ( !addedRef.contains( ref ) )
                         {
@@ -1571,7 +1566,8 @@ public class PdfMojo
                 }
             }
 
-            sb.append( EOL ).append( "Ignoring the \"" ).append( localReportName ).append( "\" report in the PDF.").append( EOL );
+            sb.append( EOL ).append( "Ignoring the \"" ).append( localReportName )
+                    .append( "\" report in the PDF." ).append( EOL );
 
             getLog().error( sb.toString() );
             getLog().debug( e );
@@ -1631,7 +1627,8 @@ public class PdfMojo
     /**
      * Write the given content to the given file.
      * <br/>
-     * <b>Note</b>: try also to fix the content due to some issues in the {@link AbstractMavenReport}.
+     * <b>Note</b>: try also to fix the content due to some issues in
+     * {@link org.apache.maven.reporting.AbstractMavenReport}.
      *
      * @param content the given content
      * @param toFile the report file
