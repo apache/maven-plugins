@@ -20,6 +20,7 @@ package org.apache.maven.plugins.site;
  */
 
 import java.io.File;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -27,7 +28,6 @@ import org.apache.maven.artifact.manager.WagonConfigurationException;
 import org.apache.maven.artifact.manager.WagonManager;
 import org.apache.maven.model.DistributionManagement;
 import org.apache.maven.model.Site;
-import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
@@ -77,7 +77,7 @@ import org.codehaus.plexus.util.xml.Xpp3Dom;
  * @goal deploy
  */
 public class SiteDeployMojo
-    extends AbstractMojo implements Contextualizable
+    extends AbstractSiteMojo implements Contextualizable
 {
     /**
      * Directory containing the generated project sites and report distributions.
@@ -113,13 +113,6 @@ public class SiteDeployMojo
      * @since 2.1
      */
     private String chmodOptions;
-
-    /**
-     * @parameter expression="${project}"
-     * @required
-     * @readonly
-     */
-    protected MavenProject project;
 
     /**
      * @component
@@ -391,6 +384,32 @@ public class SiteDeployMojo
         throws ContextException
     {
         container = (PlexusContainer) context.get( PlexusConstants.PLEXUS_KEY );
+    }
+
+    /**
+     * Find the top level parent in the reactor, i.e. the execution root.
+     *
+     * @param reactorProjects The projects in the reactor. May be null in which case null is returnned.
+     * @return The top level project in the reactor, or <code>null</code> if none can be found
+     *
+     * @since 2.3
+     */
+    protected static MavenProject getTopLevelProject( List<MavenProject> reactorProjects )
+    {
+        if ( reactorProjects == null )
+        {
+            return null;
+        }
+
+        for ( MavenProject reactorProject : reactorProjects )
+        {
+            if ( reactorProject.isExecutionRoot() )
+            {
+                return reactorProject;
+            }
+        }
+
+        return null;
     }
 
     private static Site getSite( final MavenProject project )

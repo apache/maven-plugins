@@ -19,12 +19,11 @@ package org.apache.maven.plugins.site;
  * under the License.
  */
 
-import org.apache.maven.doxia.tools.SiteTool;
+import java.util.List;
+
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
-
-import java.util.List;
 
 /**
  * Deploys the generated site to a staging or mock directory to the site URL
@@ -69,16 +68,9 @@ public class SiteStageDeployMojo
     private String stagingRepositoryId;
 
     /**
-     * SiteTool.
-     *
-     * @component
-     * @since 2.3
-     */
-    private SiteTool siteTool;
-
-    /**
      * {@inheritDoc}
      */
+    @Override
     public void execute()
         throws MojoExecutionException
     {
