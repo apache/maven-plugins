@@ -20,6 +20,7 @@ package org.apache.maven.plugins.site;
  */
 
 import java.io.File;
+
 import java.util.List;
 
 import org.apache.maven.model.Site;
@@ -27,6 +28,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.plugins.site.wagon.repository.Repository;
+
 import org.codehaus.plexus.util.StringUtils;
 
 /**
@@ -58,18 +60,9 @@ public class SiteStageMojo
     protected File stagingDirectory;
 
     /**
-     * The reactor projects.
-     *
-     * @parameter default-value="${reactorProjects}"
-     * @required
-     * @readonly
-     * @since 2.3
-     */
-    protected List<MavenProject> reactorProjects;
-
-    /**
      * @see org.apache.maven.plugin.Mojo#execute()
      */
+    @Override
     public void execute()
         throws MojoExecutionException
     {
@@ -142,28 +135,6 @@ public class SiteStageMojo
         }
 
         return new File( buildDirectory, DEFAULT_STAGING_DIRECTORY );
-    }
-
-    /**
-     * Find the top level parent in the reactor, i.e. the execution root.
-     *
-     * @param reactorProjects The projects in the reactor
-     * @return The top level project in the reactor, or <code>null</code> if none can be found
-     */
-    protected MavenProject getTopLevelProject( List<MavenProject> reactorProjects )
-    {
-        MavenProject topLevelProject = null;
-        if ( reactorProjects != null )
-        {
-            for ( MavenProject reactorProject : reactorProjects )
-            {
-                if ( reactorProject.isExecutionRoot() )
-                {
-                    topLevelProject = reactorProject;
-                }
-            }
-        }
-        return topLevelProject;
     }
 
     /**
