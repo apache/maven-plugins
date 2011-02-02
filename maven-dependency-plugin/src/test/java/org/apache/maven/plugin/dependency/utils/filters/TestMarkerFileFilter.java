@@ -123,19 +123,27 @@ public class TestMarkerFileFilter
     public void testMarkerTimestamp()
         throws IOException, MojoExecutionException, ArtifactFilterException
     {
+        // filter includes release artifact because no marker present
+        // filter includes snapshot artifact becaues it is newer than marker
         DependencyArtifactStubFactory fileFact = new DependencyArtifactStubFactory( outputFolder, true );
         Artifact snap = fileFact.getSnapshotArtifact();
         Artifact release = fileFact.getReleaseArtifact();
         HashSet tempArtifacts = new HashSet();
         tempArtifacts.add( snap );
         tempArtifacts.add( release );
-        snap.getFile().setLastModified( snap.getFile().lastModified() + 1500 );
         DefaultFileMarkerHandler handler = new DefaultFileMarkerHandler( snap, outputFolder );
         handler.setMarker();
+        snap.getFile().setLastModified( snap.getFile().lastModified() + 1500 );
         MarkerFileFilter filter = new MarkerFileFilter( false, false, true, new DefaultFileMarkerHandler( outputFolder ) );
         Set result = filter.filter( tempArtifacts);
         assertEquals( 2, result.size() );
 
+        // update marker; filter won't include snapshot because timestamps equal
+        handler.setMarker();
+        result = filter.filter( tempArtifacts );
+        assertEquals( 1, result.size() );
+        
+        // filter won't include snapshot because it is older than marker
         snap.getFile().setLastModified( snap.getFile().lastModified() - 10000 );
 
         result = filter.filter( tempArtifacts );
