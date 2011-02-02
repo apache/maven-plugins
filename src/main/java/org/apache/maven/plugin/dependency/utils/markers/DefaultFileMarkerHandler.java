@@ -113,7 +113,25 @@ public class DefaultFileMarkerHandler
         {
             throw new MojoExecutionException( "Unable to create Marker: " + marker.getAbsolutePath(), e );
         }
-
+        
+        // update marker file timestamp
+        try
+        {
+            long ts;
+            if ( this.artifact != null && this.artifact.getFile() != null )
+            {
+                ts = this.artifact.getFile().lastModified();
+            }
+            else
+            {
+                ts = System.currentTimeMillis();
+            }
+            marker.setLastModified( ts );
+        }
+        catch ( Exception e )
+        {
+            throw new MojoExecutionException( "Unable to update Marker timestamp: " + marker.getAbsolutePath(), e );
+        }
     }
 
     /**
