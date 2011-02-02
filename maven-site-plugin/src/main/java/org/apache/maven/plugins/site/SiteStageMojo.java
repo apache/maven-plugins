@@ -27,7 +27,7 @@ import org.apache.maven.model.Site;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.plugins.site.wagon.repository.Repository;
+import org.apache.maven.wagon.repository.Repository;
 
 import org.codehaus.plexus.util.StringUtils;
 
