@@ -192,7 +192,7 @@ public final class AssemblyFileUtils
             }
             else
             {
-                throw new AssemblyFormattingException( "Illlegal lineEnding specified: '" + lineEnding + "'" );
+                throw new AssemblyFormattingException( "Illegal lineEnding specified: '" + lineEnding + "'" );
             }
         }
 
