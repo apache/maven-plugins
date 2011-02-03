@@ -365,10 +365,11 @@
             Valid values:
             <ul>
               <li><b>"keep"</b> - Preserve all line endings</li>
-              <li><b>"unix"</b> - Use Unix-style line endings</li>
-              <li><b>"lf"</b> - Use a single line-feed line endings</li>
-              <li><b>"dos"</b> - Use DOS-style line endings</li>
-              <li><b>"crlf"</b> - Use Carraige-return, line-feed line endings</li>
+              <li><b>"unix"</b> - Use Unix-style line endings (i.e. "\n")</li>
+              <li><b>"lf"</b> - Use a single line-feed line endings (i.e. "\n")</li>
+              <li><b>"dos"</b> - Use DOS-/Windows-style line endings (i.e. "\r\n")</li>
+              <li><b>"windows"</b> - Use DOS-/Windows-style line endings (i.e. "\r\n")</li>
+              <li><b>"crlf"</b> - Use carriage-return, line-feed line endings (i.e. "\r\n")</li>
             </ul>
             ]]>
           </description>
@@ -451,10 +452,11 @@
             Valid values are:
             <ul>
               <li><b>"keep"</b> - Preserve all line endings</li>
-              <li><b>"unix"</b> - Use Unix-style line endings</li>
-              <li><b>"lf"</b> - Use a single line-feed line endings</li>
-              <li><b>"dos"</b> - Use DOS-style line endings</li>
-              <li><b>"crlf"</b> - Use Carraige-return, line-feed line endings</li>
+              <li><b>"unix"</b> - Use Unix-style line endings (i.e. "\n")</li>
+              <li><b>"lf"</b> - Use a single line-feed line endings (i.e. "\n")</li>
+              <li><b>"dos"</b> - Use DOS-/Windows-style line endings (i.e. "\r\n")</li>
+              <li><b>"windows"</b> - Use DOS-/Windows-style line endings (i.e. "\r\n")</li>
+              <li><b>"crlf"</b> - Use carriage-return, line-feed line endings (i.e. "\r\n")</li>
             </ul>
             ]]>
           </description>

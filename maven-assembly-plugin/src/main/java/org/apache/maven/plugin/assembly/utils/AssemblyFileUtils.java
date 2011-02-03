@@ -45,6 +45,7 @@ public final class AssemblyFileUtils
 
     public static final String LINE_ENDING_KEEP = "keep";
     public static final String LINE_ENDING_DOS = "dos";
+    public static final String LINE_ENDING_WINDOWS = "windows";
     public static final String LINE_ENDING_UNIX = "unix";
     public static final String LINE_ENDING_CRLF = "crlf";
     public static final String LINE_ENDING_LF = "lf";
@@ -182,7 +183,7 @@ public final class AssemblyFileUtils
             {
                 value = null;
             }
-            else if ( LINE_ENDING_DOS.equals( lineEnding ) || LINE_ENDING_CRLF.equals( lineEnding ) )
+            else if ( LINE_ENDING_DOS.equals( lineEnding ) || LINE_ENDING_WINDOWS.equals( lineEnding ) || LINE_ENDING_CRLF.equals( lineEnding ) )
             {
                 value = "\r\n";
             }
