@@ -97,7 +97,6 @@
             one of the following values in a &lt;format&gt; subelement:
             <ul>
               <li><b>"zip"</b> - Creates a ZIP file format</li>
-              <li><b>"gz"</b> - Creates a GZIP format</li>
               <li><b>"tar"</b> - Creates a TAR format</li>
               <li><b>"tar.gz"</b> - Creates a gzip'd TAR format</li>
               <li><b>"tar.bz2"</b> - Creates a bzip'd TAR format</li>
