@@ -30,44 +30,6 @@ Usage
   {{{http://maven.apache.org/shared/maven-filtering/index.html}Maven Filtering}} ${mavenFilteringVersion}.
 
 
-* Running Once in a Multi-Module Build
-
-  <<Note:>> This feature was added in version 1.1.
-
-  In many cases, an application build consists of multiple Maven modules, but you only need to 
-  include the license files, dependencies listing, etc. once for the entire application. Of course,
-  in such cases, the dependencies listing needs to aggregate all dependencies of all modules.
-  
-  To accomplish this, you can use the <<<runOnlyAtExecutionRoot>>> parameter when you configure
-  the Remote Resources Plugin in your application parent POM. This parameter limits execution of the
-  Remote Resources Plugin to the root directory in which the build was run. In most cases, the
-  application's distribution archives will be created at this top directory, so this is a natural
-  location into which licensing and dependency information should be generated.
-  
-  To run the Remote Resources Plugin only in the execution root, use the following:
-  
-+---+
-  <plugin>
-    <artifactId>maven-remote-resources-plugin</artifactId>
-    <version>${project.version}</version>
-    [...]
-    
-    <executions>
-      <execution>
-        <id>process-remote-resources</id>
-        <goals>
-          <goal>process</goal>
-        </goals>
-        <configuration>
-          <runOnlyAtExecutionRoot>true</runOnlyAtExecutionRoot>
-          [...]
-        </configuration>
-      </execution>
-    </executions>
-  </plugin>
-+---+
-
-
 * How to Create a Resource Bundle
 
  To turn on the bundle resource manifest generation you need to configure the plugin as follows:
@@ -135,6 +97,44 @@ Usage
  This will retrieve the <<<apache-jar-resource-bundle-1.0.jar>>> from the remote repositories
  specified in your POM, process each resource in the bundle and deposit them in your projects
  <<<${basedir}/target/classes>>> directory. 
+
+
+* Running Once in a Multi-Module Build
+
+  <<Note:>> This feature was added in version 1.1.
+
+  In many cases, an application build consists of multiple Maven modules, but you only need to
+  include the license files, dependencies listing, etc. once for the entire application. Of course,
+  in such cases, the dependencies listing needs to aggregate all dependencies of all modules.
+
+  To accomplish this, you can use the <<<runOnlyAtExecutionRoot>>> parameter when you configure
+  the Remote Resources Plugin in your application parent POM. This parameter limits execution of the
+  Remote Resources Plugin to the root directory in which the build was run. In most cases, the
+  application's distribution archives will be created at this top directory, so this is a natural
+  location into which licensing and dependency information should be generated.
+
+  To run the Remote Resources Plugin only in the execution root, use the following:
+
++---+
+  <plugin>
+    <artifactId>maven-remote-resources-plugin</artifactId>
+    <version>${project.version}</version>
+    [...]
+
+    <executions>
+      <execution>
+        <id>process-remote-resources</id>
+        <goals>
+          <goal>process</goal>
+        </goals>
+        <configuration>
+          <runOnlyAtExecutionRoot>true</runOnlyAtExecutionRoot>
+          [...]
+        </configuration>
+      </execution>
+    </executions>
+  </plugin>
++---+
 
 
 * Specifying Delimiters for Filterable Expressions
