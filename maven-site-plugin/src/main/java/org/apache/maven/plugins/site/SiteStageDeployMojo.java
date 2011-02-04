@@ -22,7 +22,6 @@ package org.apache.maven.plugins.site;
 import java.util.List;
 
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 
 /**
@@ -37,7 +36,7 @@ import org.apache.maven.project.MavenProject;
  * @requiresDependencyResolution test
  */
 public class SiteStageDeployMojo
-    extends SiteStageMojo
+    extends AbstractDeployMojo
 {
     /**
      * The staged site will be deployed to this URL.
@@ -67,31 +66,25 @@ public class SiteStageDeployMojo
      */
     private String stagingRepositoryId;
 
-    /**
-     * {@inheritDoc}
-     */
+    private static final String DEFAULT_STAGING_DIRECTORY = "staging";
+
+
     @Override
-    public void execute()
+    protected String getDeployRepositoryID()
         throws MojoExecutionException
     {
-        deployStagingSite();
+        return stagingRepositoryId;
     }
 
-    /**
-     * Deploy the staging directory using the stagingSiteURL.
-     *
-     * @throws org.apache.maven.plugin.MojoExecutionException
-     *          if any
-     * @throws org.apache.maven.plugin.MojoFailureException
-     *          if any
-     */
-    private void deployStagingSite()
+    @Override
+    protected String getDeployRepositoryURL()
         throws MojoExecutionException
     {
         stagingSiteURL = getStagingSiteURL( project, reactorProjects, stagingSiteURL );
+
         getLog().info( "Using this URL for stage deploy: " + stagingSiteURL );
 
-        deployTo( stagingRepositoryId, stagingSiteURL );
+        return stagingSiteURL;
     }
 
     /**
@@ -102,7 +95,7 @@ public class SiteStageDeployMojo
      * @param usersStagingSiteURL The staging site URL as suggested by the user's configuration
      * @return the site URL for staging
      */
-    protected String getStagingSiteURL( MavenProject currentProject, List<MavenProject> reactorProjects,
+    private String getStagingSiteURL( MavenProject currentProject, List<MavenProject> reactorProjects,
                                         String usersStagingSiteURL )
     {
         String topLevelURL = null;

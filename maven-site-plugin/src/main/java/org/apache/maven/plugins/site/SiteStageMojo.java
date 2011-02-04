@@ -46,7 +46,7 @@ import org.codehaus.plexus.util.StringUtils;
  * @requiresDependencyResolution test
  */
 public class SiteStageMojo
-    extends SiteDeployMojo
+    extends AbstractDeployMojo
 {
     protected static final String DEFAULT_STAGING_DIRECTORY = "staging";
 
@@ -57,13 +57,17 @@ public class SiteStageMojo
      *
      * @parameter expression="${stagingDirectory}"
      */
-    protected File stagingDirectory;
+    private File stagingDirectory;
 
-    /**
-     * @see org.apache.maven.plugin.Mojo#execute()
-     */
     @Override
-    public void execute()
+    protected String getDeployRepositoryID()
+        throws MojoExecutionException
+    {
+        return "stagingLocal";
+    }
+
+    @Override
+    protected String getDeployRepositoryURL()
         throws MojoExecutionException
     {
         String structureProject;
@@ -93,10 +97,7 @@ public class SiteStageMojo
             outputDirectory.mkdirs();
         }
 
-        final String url = "file://" + outputDirectory.getAbsolutePath();
-        final String id = "stagingLocal";
-
-        deployTo( id, url );
+        return "file://" + outputDirectory.getAbsolutePath();
     }
 
     /**
@@ -107,7 +108,7 @@ public class SiteStageMojo
      * @param usersStagingDirectory The staging directory as suggested by the user's configuration
      * @return the directory for staging
      */
-    protected File getStagingDirectory( MavenProject currentProject, List<MavenProject> reactorProjects,
+    private File getStagingDirectory( MavenProject currentProject, List<MavenProject> reactorProjects,
                                         File usersStagingDirectory )
     {
         // Check if the user has specified a stagingDirectory
@@ -118,23 +119,7 @@ public class SiteStageMojo
         }
         getLog().debug( "stagingDirectory NOT specified by the user." );
 
-        // Find the top level project in the reactor
-        MavenProject topLevelProject = getTopLevelProject( reactorProjects );
-
-        // Use the top level project's build directory if there is one, otherwise use this project's build directory
-        File buildDirectory;
-        if ( topLevelProject == null )
-        {
-            getLog().debug( "No top level project found in the reactor, using the current project." );
-            buildDirectory = new File( currentProject.getBuild().getDirectory() );
-        }
-        else
-        {
-            getLog().debug( "Using the top level project found in the reactor." );
-            buildDirectory = new File( topLevelProject.getBuild().getDirectory() );
-        }
-
-        return new File( buildDirectory, DEFAULT_STAGING_DIRECTORY );
+        return new File( getTopLevelBuildDirectory(), DEFAULT_STAGING_DIRECTORY );
     }
 
     /**
@@ -146,7 +131,7 @@ public class SiteStageMojo
      * @return the structure relative path
      * @throws MojoFailureException if any
      */
-    protected static String getStructure( MavenProject project, boolean ignoreMissingSiteUrl )
+    private static String getStructure( MavenProject project, boolean ignoreMissingSiteUrl )
         throws MojoFailureException
     {
         if ( project.getDistributionManagement() == null )
