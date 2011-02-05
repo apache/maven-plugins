@@ -29,15 +29,19 @@
 
 Usage
 
- Some brief examples on how to use this plugin. If you want to use advanced
- configurations you should have a look at the documentation for
- {{{http://maven.apache.org/shared/maven-archiver/}Maven Archiver}}.
+  Some brief examples on how to use this plugin. If you want to use advanced
+  configurations you should have a look at the documentation for
+  {{{http://maven.apache.org/shared/maven-archiver/}Maven Archiver}}.
 
-  Note: Originally, this plugin was meant to sign JARs as well. As of version 2.3, the corresponding goals are no
+  To handle archiving this version of Maven JAR Plugin uses
+  {{{http://maven.apache.org/shared/maven-archiver/index.html}Maven Archiver}} ${mavenArchiverVersion}.
+
+  <<Note:>> Originally, this plugin was meant to sign JARs as well. As of version 2.3, the corresponding goals are no
   longer supported and users are advised to use the dedicated
   {{{http://maven.apache.org/plugins/maven-jarsigner-plugin/}Maven Jarsigner Plugin}} instead.
 
-* How to build a jar file
+
+* How to build a JAR file
 
   If the packaging of your project is set to 'jar', this plugin is executed
   whenever it passes the "package" phase. You can execute it
@@ -48,6 +52,7 @@ mvn package
 +-----------------+
 
   In your project's <<<target>>> directory you'll able to see the generated jar file.
+
 
 * How to include/exclude content from jar artifact
 
@@ -80,6 +85,7 @@ mvn package
 
   Note that the patterns need to be relative to the path specified for the plugin's
   <<<classesDirectory>>> parameter.
+
 
 * How to create an additional attached jar artifact from the project
 
