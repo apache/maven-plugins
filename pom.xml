@@ -245,6 +245,10 @@ under the License.
         <configuration>
           <useJava5>true</useJava5>
           <version>${mdoVersion}</version>
+          <models>
+            <model>src/main/mdo/descriptor.mdo</model>
+            <model>src/main/mdo/component.mdo</model>
+          </models>
         </configuration>
         <executions>
           <execution>
@@ -256,12 +260,6 @@ under the License.
               <goal>java</goal>
               <goal>xsd</goal>
             </goals>
-            <configuration>
-              <models>
-                <model>src/main/mdo/descriptor.mdo</model>
-                <model>src/main/mdo/component.mdo</model>
-              </models>
-            </configuration>
           </execution>
           <execution>
             <id>mdo-site</id>
@@ -270,12 +268,6 @@ under the License.
               <goal>xdoc</goal>
               <goal>xsd</goal>
             </goals>
-            <configuration>
-              <models>
-                <model>src/main/mdo/descriptor.mdo</model>
-                <model>src/main/mdo/component.mdo</model>
-              </models>
-            </configuration>
           </execution>
         </executions>
       </plugin>
