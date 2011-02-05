@@ -17,12 +17,14 @@
   -->
 
 <!-- Note Definitions of FileSet, FileItem, and DependencySet are
-     already defined in descriptor.mod, but repeated  here since
+     already defined in descriptor.mdo, but repeated  here since
      Modello currently does not have capability to share files
 -->
 
-<model xsd.namespace="http://maven.apache.org/plugins/maven-assembly-plugin/component/1.1.2" 
-       xsd.targetNamespace="http://maven.apache.org/plugins/maven-assembly-plugin/component/1.1.2">
+<model xmlns="http://modello.codehaus.org/MODELLO/1.4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://modello.codehaus.org/MODELLO/1.4.0 http://modello.codehaus.org/xsd/modello-1.4.0.xsd"
+       xsd.namespace="http://maven.apache.org/plugins/maven-assembly-plugin/component/${version}" 
+       xsd.targetNamespace="http://maven.apache.org/plugins/maven-assembly-plugin/component/${version}">
        
   <id>component</id>
   <name>Component</name>
