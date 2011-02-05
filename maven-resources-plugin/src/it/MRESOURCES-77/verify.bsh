@@ -109,7 +109,7 @@ try
     }
     
     //var3=Bar-Bar/Stuff     
-    indexOf = paramContent.indexOf( "var3=Bar-Bar/Stuff" );
+    indexOf = paramContent.indexOf( "var3=Foo-Bar/Stuff" );
     if ( indexOf < 0)
     {
       System.err.println( "SomeResource.txt not contains var3=Bar-Bar/Stuff" );
