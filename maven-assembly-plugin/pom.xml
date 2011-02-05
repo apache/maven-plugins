@@ -51,6 +51,8 @@ under the License.
 
   <properties>
     <mdoVersion>1.1.2</mdoVersion>
+    <mavenArchiverVersion>2.4.1</mavenArchiverVersion>
+    <mavenFilteringVersion>1.0-SNAPSHOT</mavenFilteringVersion>
     <mavenVersion>2.2.1</mavenVersion>
     <testOutputToFile>true</testOutputToFile>
   </properties>
@@ -115,7 +117,7 @@ under the License.
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
       <artifactId>maven-filtering</artifactId>
-      <version>1.0-SNAPSHOT</version>
+      <version>${mavenFilteringVersion}</version>
     </dependency>
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
@@ -131,7 +133,7 @@ under the License.
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-archiver</artifactId>
-      <version>2.4.1</version>
+      <version>${mavenArchiverVersion}</version>
     </dependency>
     <!-- FIXME: I'm specifying a dependency on plexus-container-default
                 in order to force the version to be compatible with maven
