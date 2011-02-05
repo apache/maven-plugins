@@ -17,14 +17,16 @@
   -->
 
 <!--
-  Since modello does not have the capability to share descriptor,
-  If you make changes to FileSet, FileItem, DependendencySet, or
+  Since Modello does not have the capability to share descriptor,
+  if you make changes to FileSet, FileItem, DependendencySet, or
   adding new collection, make sure to propagate your changes
   to "component.mdo".
 -->
 
-<model xsd.namespace="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2" 
-       xsd.targetNamespace="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2">
+<model xmlns="http://modello.codehaus.org/MODELLO/1.4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://modello.codehaus.org/MODELLO/1.4.0 http://modello.codehaus.org/xsd/modello-1.4.0.xsd"
+       xsd.namespace="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/${version}" 
+       xsd.targetNamespace="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/${version}">
        
   <id>assembly</id>
   <name>Assembly</name>
