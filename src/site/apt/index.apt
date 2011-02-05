@@ -70,9 +70,9 @@ Maven Remote Resources Plugin
   {{{./source-repository.html}source repository}} and will find supplementary information in the
   {{{http://maven.apache.org/guides/development/guide-helping.html}guide to helping with Maven}}.
 
-~~* Examples
-~~
-~~  To provide you with better understanding of some usages of the Remote Resources Plugin,
-~~  you can take a look at the following examples:
-~~
-~~  * {{{./examples/example.html}Sample Example}}
+* Examples
+
+  To provide you with better understanding of some usages of the Remote Resources Plugin,
+  you can take a look at the following examples:
+
+  * {{{./examples/sharing-resources.html}Sharing Resources Example}}

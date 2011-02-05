@@ -1,0 +1,170 @@
+ ------
+ Sharing Resources
+ ------
+ Dennis Lundberg
+ ------
+ 2011-02-05
+ ------
+
+~~ Licensed to the Apache Software Foundation (ASF) under one
+~~ or more contributor license agreements.  See the NOTICE file
+~~ distributed with this work for additional information
+~~ regarding copyright ownership.  The ASF licenses this file
+~~ to you under the Apache License, Version 2.0 (the
+~~ "License"); you may not use this file except in compliance
+~~ with the License.  You may obtain a copy of the License at
+~~
+~~   http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~ Unless required by applicable law or agreed to in writing,
+~~ software distributed under the License is distributed on an
+~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+~~ KIND, either express or implied.  See the License for the
+~~ specific language governing permissions and limitations
+~~ under the License.
+
+Sharing Resources
+
+  The Remote Resources Plugin can also be used to share resources between
+  modules in a multi module build. In the following example we have a set of
+  files that are used to set up a test environment for a database. We want to
+  reuse these resources in several modules in our project.
+
+
+* Set up a module for the resources to be shared
+
+  Create a new module called <<<shared-resources>>>. Put the files in a
+  directory layout like the one below, making sure that your resource files are
+  in the <<<src/main/resources>>> directory:
+
+-------------------
+shared-resources
+|
++- src
+|  |
+|  `- main
+|     |
+|     `- resources
+|        |
+|        +- database.ddl
+|        |
+|        `- database.sql
+|
+`- pom.xml
+-------------------
+
+  The POM for <<<shared-resources>>> should look like this:
+
+-------------------
+<project>
+  ...  
+  <groupId>org.test</groupId>
+  <artifactId>shared-resources</artifactId>
+  ...
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-remote-resources-plugin</artifactId>
+        <version>${project.version}</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>bundle</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <includes>
+            <include>**/*.ddl</include>
+            <include>**/*.sql</include>
+          </includes>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  ...
+</project>
+------------------- 
+ 
+  This will bundle the shared resources in a JAR file during the
+  <<<generate-resources>>> phase. This means that others modules can consume
+  these resources in any phase after that. 
+
+
+* Configure other modules to use the shared module 
+
+  To use the shared resources in another module you need to configure the plugin
+  as follows:
+
+-------------------
+<project>
+  ...
+  <groupId>org.test</groupId>
+  <artifactId>resource-consumer</artifactId>
+  ...
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-remote-resources-plugin</artifactId>
+        <version>${project.version}</version>
+        <configuration>
+          <resourceBundles>
+            <resourceBundle>org.test:shared-resources:\${project.version}</resourceBundle>
+          </resourceBundles>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>process</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      ...
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>sql-maven-plugin</artifactId>
+        <version>1.4</version>
+        ...
+        <!-- Not showing dependencies or configuration here for brevity -->
+        ...
+        <executions>
+          <execution>
+            <id>create-schema</id>
+            <phase>process-test-resources</phase>
+            <goals>
+              <goal>execute</goal>
+            </goals>
+            <configuration>
+              <autocommit>true</autocommit>
+              <srcFiles>
+                <srcFile>\${project.build.directory}/maven-shared-archive-resources/database.ddl</srcFile>
+                <srcFile>\${project.build.directory}/maven-shared-archive-resources/database.sql</srcFile>
+              </srcFiles>
+            </configuration>
+          </execution>
+          ...
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  ...
+  <dependencies>
+    <dependency>
+      <groupId>\${project.groupId}</groupId>
+      <artifactId>shared-resources</artifactId>
+      <version>\${project.version}</version>
+    </dependency>
+  </dependencies>
+</project>
+-------------------
+
+  This will retrieve the bundled resources of the <<<shared-resources>>>
+  module, process each resource in the bundle and put them in the
+  <<<\${project.build.directory}/shared-resources>>> directory of the
+  <<<resource-consumer>>> module.
+
+  That means we can use those files in the SQL Maven Plugin to set up the
+  database schema using a DDL file, and add some data to the database using an
+  SQL file.

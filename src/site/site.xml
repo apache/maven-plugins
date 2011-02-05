@@ -27,10 +27,13 @@ under the License.
       <item name="Introduction" href="index.html"/>
       <item name="Goals" href="plugin-info.html"/>
       <item name="Usage" href="usage.html"/>
-      <item name="Advanced Usage">
-        <item name="Supplemental Models" href="supplemental-models.html"/>
-      </item>
       <item name="FAQ" href="faq.html"/>
+    </menu>
+    <menu name="Examples">
+      <item name="Sharing Resources" href="examples/sharing-resources.html"/>
+    </menu>
+    <menu name="Advanced Usage">
+      <item name="Supplemental Models" href="supplemental-models.html"/>
     </menu>
   </body>
 </project>
