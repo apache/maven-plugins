@@ -112,17 +112,17 @@ The Maven Assembly Plugin
   since they wreak havoc with normal build processes and promote non-standard
   build practices. 
 
-  Additionally, the <<<assembly:single-directory>>> mojo is
+  Additionally, the <<<assembly:single-directory>>> goal is
   redundant, and has been deprecated in favor of the <<<dir>>> assembly format.
 
-  Finally, the <<<assembly:unpack>>> mojo has been deprecated in favor of the far 
+  Finally, the <<<assembly:unpack>>> goal has been deprecated in favor of the far
   more comprehensive {{{http://maven.apache.org/plugins/maven-dependency-plugin/}Maven 
   Dependency Plugin}}.
     
 * Goals
 
-  The main goal in the assembly plugin is the {{{./single-mojo.html}single}} mojo. It is used to create all assemblies. 
-  <<All other mojos are currently deprecated.>>
+  The main goal in the assembly plugin is the {{{./single-mojo.html}single}} goal. It is used to create all assemblies.
+  <<All other goals are currently deprecated.>>
 
   For more information about the goals that are available in the Assembly Plugin, see {{{./plugin-info.html}the plugin documentation page}}.
 
