@@ -59,6 +59,7 @@ under the License.
   </issueManagement>
 
   <properties>
+    <mavenFilteringVersion>1.0-SNAPSHOT</mavenFilteringVersion>
     <mavenVersion>2.0.6</mavenVersion>
   </properties>
     
@@ -114,7 +115,7 @@ under the License.
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
       <artifactId>maven-filtering</artifactId>
-      <version>1.0-SNAPSHOT</version>
+      <version>${mavenFilteringVersion}</version>
     </dependency>
 
     <dependency>

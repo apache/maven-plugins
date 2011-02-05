@@ -3,7 +3,7 @@
  ------
  Franz Allan See
  ------
- 2008-09-05
+ 2011-02-05
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -31,6 +31,10 @@ Usage
  The Resources Plugin handles the copying of project resources to the output
  directory. The following examples describe the basic usage of the Plugin.
 
+  To handle filtering this version of Maven Resources Plugin uses
+  {{{http://maven.apache.org/shared/maven-filtering/index.html}Maven Filtering}} ${mavenFilteringVersion}.
+
+
 * Copy resources for the main source code
 
 +-----+
@@ -43,6 +47,7 @@ mvn resources:resources
  resources for your test code.
 
  Moreover, this goal is bound to the <<<process-resources>>> phase.
+
 
 * Copy resources for the unit tests
 
@@ -57,6 +62,7 @@ mvn resources:testResources
 
  Furthermore, this is bound to the <<<process-test-resources>>> phase.
 
+
 * Copy resources specified by a \<resources> configuration element
 
 +-----+
@@ -65,7 +71,7 @@ mvn resources:copy-resources
 
  Rather than using the \<resources> or \<testResources> elements or their
  defaults, this uses a \<resources> element that is specified as part of the
- configuration.
+ plugin configuration.
  
  See the examples for how to configure this.  See the Maven Model for 
  how to write \<resources> elements.
