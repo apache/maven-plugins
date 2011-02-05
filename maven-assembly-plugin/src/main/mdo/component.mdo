@@ -23,8 +23,8 @@
 
 <model xmlns="http://modello.codehaus.org/MODELLO/1.4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://modello.codehaus.org/MODELLO/1.4.0 http://modello.codehaus.org/xsd/modello-1.4.0.xsd"
-       xsd.namespace="http://maven.apache.org/plugins/maven-assembly-plugin/component/${version}" 
-       xsd.targetNamespace="http://maven.apache.org/plugins/maven-assembly-plugin/component/${version}">
+       xml.namespace="http://maven.apache.org/plugins/maven-assembly-plugin/component/${version}" 
+       xml.schemaLocation="http://maven.apache.org/xsd/component-${version}.xsd">
        
   <id>component</id>
   <name>Component</name>
