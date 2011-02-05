@@ -105,7 +105,7 @@ Including Module Binaries
 * The POM
 
   Now, let's review the POM configuration necessary to enable the building of
-  this assembly via the <<<assembly:single>>> mojo. First, let's look at the parent POM:
+  this assembly via the <<<assembly:single>>> goal. First, let's look at the parent POM:
 
 +---+
 <?xml version="1.0" encoding="UTF-8"?>
@@ -220,7 +220,7 @@ mvn clean package
   removed before building the assembly directory.
 
   <<Note:>> Because of a quirk in Maven 2.0's execution model relating to
-  aggregator mojos and the inheritance hierarchy, we need to explicitly execute
+  aggregator goals and the inheritance hierarchy, we need to explicitly execute
   the package phase ahead of the assembly invocation, to ensure all modules have
   been built.
 

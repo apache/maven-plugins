@@ -129,7 +129,7 @@ Usage
   Additionally, it's possible to specify a mixture of <<<descriptors>>> and
   <<<descriptorRefs>>> within the same configuration.
   
-  <<NOTE:>> Many other configuration options are available for the various mojos
+  <<Note:>> Many other configuration options are available for the various goals
   in the Assembly Plugin. For more information, see the
   {{{./examples/index.html}examples section}} or the {{{./plugin-info.html}plugin
   parameter documentation}}.
@@ -143,9 +143,9 @@ Usage
   In most cases, you'll want to make sure your assemblies are created as part
   of your normal build process. This ensures the assembly archives are made 
   available for installation and deployment, and that they are created during
-  the release of your project. This is handled by the <<<assembly:single>>> mojo.
+  the release of your project. This is handled by the <<<assembly:single>>> goal.
 
-  To bind the <<<single>>> mojo to a project's build lifecycle, you can add
+  To bind the <<<single>>> goal to a project's build lifecycle, you can add
   this configuration (assuming you're using the <<<jar-with-dependencies>>>
   prefabricated descriptor):
   
@@ -168,7 +168,7 @@ Usage
             <id>make-assembly</id> <!-- this is used for inheritance merges -->
             <phase>package</phase> <!-- append to the packaging phase. -->
             <goals>
-              <goal>single</goal> <!-- goals == mojos -->
+              <goal>single</goal>
             </goals>
           </execution>
         </executions>
@@ -197,10 +197,10 @@ target/sample-1.0-SNAPSHOT-jar-with-dependencies.jar
   
 ** GOTCHA!
 
-  In most cases, the <<<single>>> mojo should be bound to the <<<package>>> phase
+  In most cases, the <<<single>>> goal should be bound to the <<<package>>> phase
   of the build. However, if your assembly doesn't require binaries, or if you need
   to use one assembly as input for another, you may need to change this. While it's
-  possible to assign the <<<single>>> mojo to any phase of the build lifecycle, you should
+  possible to assign the <<<single>>> goal to any phase of the build lifecycle, you should
   be careful to make sure the resources included in your assembly exist before that
   assembly is created.
 

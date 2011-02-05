@@ -79,7 +79,7 @@ Including Module Sources
 * The POM
 
   Now, let's review the POM configuration necessary to enable the building of
-  this assembly via the <assembly:directory> mojo:
+  this assembly via the <assembly:directory> goal:
 
 +---+
 <?xml version="1.0" encoding="UTF-8"?>
