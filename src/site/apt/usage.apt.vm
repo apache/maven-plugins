@@ -1,9 +1,9 @@
  ------
-  Configuration and Usage
+ Usage
  ------
-  John Casey
+ John Casey
  ------
-  2 November 2006
+ 2011-02-05
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -26,21 +26,29 @@
 ~~ NOTE: For help with the syntax of this file, see:
 ~~ http://maven.apache.org/doxia/references/apt-format.html
 
-Configuration and Usage
+Usage
 
-* DEPRECATION NOTICE
+  To handle filtering this version of Maven Assembly Plugin uses
+  {{{http://maven.apache.org/shared/maven-filtering/index.html}Maven Filtering}} ${mavenFilteringVersion}.
+
+  To handle archiving this version of Maven Assembly Plugin uses
+  {{{http://maven.apache.org/shared/maven-archiver/index.html}Maven Archiver}} ${mavenArchiverVersion}.
+
+
+* Deprecation notice
 
   Usage of the <<<assembly:assembly>>>, <<<assembly:attached>>>,
-  <<<assembly:directory>>>, and <<<assembly:directory-inline>>> are <<DEPRECATED>>,
+  <<<assembly:directory>>>, and <<<assembly:directory-inline>>> are <<deprecated>>,
   since they wreak havoc with normal build processes and promote non-standard
   build practices. 
   
-  Additionally, the <<<assembly:single-directory>>> mojo is
-  redundant, and has been deprecated in favor of the <<<dir>>> assembly format.
+  Additionally, the <<<assembly:single-directory>>> goal is
+  redundant, and has been <<deprecated>> in favor of the <<<dir>>> assembly format.
 
-  Finally, the <<<assembly:unpack>>> mojo has been deprecated in favor of the far 
+  Finally, the <<<assembly:unpack>>> goal has been <<deprecated>> in favor of the far 
   more comprehensive {{{http://maven.apache.org/plugins/maven-dependency-plugin/}Maven 
   Dependency Plugin}}.
+
 
 * Introduction
 
@@ -49,6 +57,7 @@ Configuration and Usage
   critical to cover two topics: configuration of the plugin - both inside the
   POM and, where possible, from the command line - and the different execution
   styles. For the sake of clarity, we'll cover configuration before execution.
+
 
 * Configuring the Assembly Plugin
 
@@ -124,7 +133,8 @@ Configuration and Usage
   in the Assembly Plugin. For more information, see the
   {{{./examples/index.html}examples section}} or the {{{./plugin-info.html}plugin
   parameter documentation}}.
-  
+
+
 * Executing: Building an Assembly
 
   Once you've configured the various <<<descriptors>>> and <<<descriptorRefs>>>
@@ -194,9 +204,10 @@ target/sample-1.0-SNAPSHOT-jar-with-dependencies.jar
   be careful to make sure the resources included in your assembly exist before that
   assembly is created.
 
+
 * Advanced Configuration
 
-** Creating an Executable Jar
+** Creating an Executable JAR
 
   As you've no doubt noticed, the Assembly Plugin can be a very useful way to
   create a self-contained binary artifact for your project, among many other
@@ -232,7 +243,7 @@ target/sample-1.0-SNAPSHOT-jar-with-dependencies.jar
 </project>
 +---+
 
-  If we add this configuration to the <<<single>>> mojo example above and
+  If we add this configuration to the <<<single>>> goal example above and
   rebuild, we will see an entry like this in the META-INF/MANIFEST.MF file of
   the resulting jar:
   
@@ -249,6 +260,7 @@ Main-Class: org.sample.App
   At this point, only the <<<jar>>> and <<<war>>> assembly formats support the <<<\<archive\>>>>
   configuration element.
 
+
 * {Resources}
 
   [[1]] For more information on writing your own assembly descriptor, read the 
@@ -261,5 +273,3 @@ Main-Class: org.sample.App
         configuration, see the {{{./examples/index.html}examples}}.
   
   []
-
-
