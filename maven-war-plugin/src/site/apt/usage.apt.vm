@@ -43,6 +43,10 @@ Usage
  <<Note:>> When using the <<<war:>>> goals it is assumed that the <<<compile>>> phase is already done.
  The WAR Plugin is not responsible for compiling the java sources or copying the resources.
 
+ To handle archiving this version of Maven WAR Plugin uses
+ {{{http://maven.apache.org/shared/maven-archiver/index.html}Maven Archiver}} ${mavenArchiverVersion}.
+
+
 *Using the <<<package>>> phase with the project package type as war / invocation of the <<<war:war>>> goal
 
  This is the normal way of using the WAR Plugin.
