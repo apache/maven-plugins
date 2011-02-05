@@ -131,11 +131,11 @@ The Maven Assembly Plugin
 
   * {{{http://maven.apache.org/xsd/assembly-1.1.2.xsd}http://maven.apache.org/xsd/assembly-1.1.2.xsd}} (for version 2.2 and higher)
 
-  * {{{http://maven.apache.org/xsd/assembly-1.1.1.xsd}http://maven.apache.org/xsd/assembly-1.1.1.xsd}} (for version 2.2-beta-5 and lower)
+  * {{{http://maven.apache.org/xsd/assembly-1.1.1.xsd}http://maven.apache.org/xsd/assembly-1.1.1.xsd}} (for version 2.2-beta-4 - 2.2-beta-5)
 
-  * {{{http://maven.apache.org/xsd/assembly-1.1.0.xsd}http://maven.apache.org/xsd/assembly-1.1.0.xsd}} (for version 2.2-beta-3 and lower)
+  * {{{http://maven.apache.org/xsd/assembly-1.1.0.xsd}http://maven.apache.org/xsd/assembly-1.1.0.xsd}} (for version 2.2-beta-1 - 2.2-beta-3)
 
-  * {{{http://maven.apache.org/xsd/assembly-1.0.0.xsd}http://maven.apache.org/xsd/assembly-1.0.0.xsd}} (for versions 2.1 and lower)
+  * {{{http://maven.apache.org/xsd/assembly-1.0.0.xsd}http://maven.apache.org/xsd/assembly-1.0.0.xsd}} (for version 2.1 and lower)
 
   []
 
