@@ -3,7 +3,7 @@
  ------
  John Casey
  ------
- 2011-02-05
+ 2011-02-07
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -34,24 +34,6 @@ Usage
   To handle archiving this version of Maven Assembly Plugin uses
   {{{http://maven.apache.org/shared/maven-archiver/index.html}Maven Archiver}} ${mavenArchiverVersion}.
 
-
-* Deprecation notice
-
-  Usage of the <<<assembly:assembly>>>, <<<assembly:attached>>>,
-  <<<assembly:directory>>>, and <<<assembly:directory-inline>>> are <<deprecated>>,
-  since they wreak havoc with normal build processes and promote non-standard
-  build practices. 
-  
-  Additionally, the <<<assembly:single-directory>>> goal is
-  redundant, and has been <<deprecated>> in favor of the <<<dir>>> assembly format.
-
-  Finally, the <<<assembly:unpack>>> goal has been <<deprecated>> in favor of the far 
-  more comprehensive {{{http://maven.apache.org/plugins/maven-dependency-plugin/}Maven 
-  Dependency Plugin}}.
-
-
-* Introduction
-
   This document is intended to provide instructions for using the
   maven-assembly-plugin. In order for this discussion to be useful, it's
   critical to cover two topics: configuration of the plugin - both inside the
@@ -59,7 +41,13 @@ Usage
   styles. For the sake of clarity, we'll cover configuration before execution.
 
 
-* Configuring the Assembly Plugin
+* Deprecation notice
+
+  All goals except <<<assembly:single>>> have been <<deprecated>>. See the
+  {{{./index.html}introduction page}} for more details.
+
+
+* Configuration
 
   Getting started with the Assembly Plugin is pretty simple. If you're using one
   of the prefabricated assembly descriptors, you just tell it which one; if
@@ -68,11 +56,10 @@ Usage
   produce assemblies from multiple descriptors, allowing you maximum flexibility
   to customize the suite of binaries your project produces. When the assembly is
   created it will use the assemblyId as the artifact's classifier and will attach
-  the created assembly to the project and will be uploaded into the repository
-  on an install and deploy goal.
-  
-  
-  For example, imagine that our project produces a jar. If we want to create an
+  the created assembly to the project so that it will be uploaded into the repository
+  on the install and deploy goals.
+
+  For example, imagine that our project produces a JAR. If we want to create an
   assembly binary that includes our project's dependencies, we can take
   advantage of one of the Assembly Plugin's prefabricated descriptors, as
   follows:
@@ -104,8 +91,8 @@ Usage
   
   Alternatively, we've created a custom assembly descriptor called
   <<<src.xml>>> in the <<<src/main/assembly>>> directory (see the
-  {{{#Resources}Resources}} section for more information), we can tell the
-  Assembly Plugin to use it instead:
+  {{{#Resources}Resources}} section for more information). We can tell the
+  Assembly Plugin to use that instead:
   
 +---+
 <project>
@@ -135,7 +122,7 @@ Usage
   parameter documentation}}.
 
 
-* Executing: Building an Assembly
+* Execution: Building an Assembly
 
   Once you've configured the various <<<descriptors>>> and <<<descriptorRefs>>>
   for the assemblies you want the project to produce, it's time to build them.
@@ -166,7 +153,7 @@ Usage
         <executions>
           <execution>
             <id>make-assembly</id> <!-- this is used for inheritance merges -->
-            <phase>package</phase> <!-- append to the packaging phase. -->
+            <phase>package</phase> <!-- bind to the packaging phase -->
             <goals>
               <goal>single</goal>
             </goals>
@@ -184,7 +171,7 @@ Usage
 mvn package
 +---+
 
-  When this build completes, you should see a file in the target directory with
+  When this build completes, you should see a file in the <<<target>>> directory with
   a name similar to the following:
   
 +---+
@@ -211,14 +198,14 @@ target/sample-1.0-SNAPSHOT-jar-with-dependencies.jar
 
   As you've no doubt noticed, the Assembly Plugin can be a very useful way to
   create a self-contained binary artifact for your project, among many other
-  things. However, once you've created this self-contained jar, you will
+  things. However, once you've created this self-contained JAR, you will
   probably want the ability to execute it using the <<<-jar>>> JVM switch.
   
   To accommodate this, the Assembly Plugin supports configuration of an
-  <<<\<archive\>>>> element which is identical to that supported by the
-  <<<maven-jar-plugin>>> (see {{{#Resources}Resources}}). Using this
+  <<<\<archive\>>>> element which is handled by <<<maven-archiver>>>
+  (see {{{#Resources}Resources}}). Using this
   configuration, it's easy to configure the <<<Main-Class>>> attribute of the
-  jar manifest:
+  JAR manifest:
   
 +---+
 <project>
@@ -244,8 +231,8 @@ target/sample-1.0-SNAPSHOT-jar-with-dependencies.jar
 +---+
 
   If we add this configuration to the <<<single>>> goal example above and
-  rebuild, we will see an entry like this in the META-INF/MANIFEST.MF file of
-  the resulting jar:
+  rebuild, we will see an entry like this in the <<<META-INF/MANIFEST.MF>>> file of
+  the resulting JAR:
   
 +---+
 [...]
@@ -266,8 +253,8 @@ Main-Class: org.sample.App
   [[1]] For more information on writing your own assembly descriptor, read the 
         {{{./assembly.html}Assembly Descriptor}}
         
-  [[2]] For more information about the <<<maven-jar-plugin>>>, look
-        {{{http://maven.apache.org/plugins/maven-jar-plugin/}here}}.
+  [[2]] For more information about <<<maven-archiver>>>, look
+        {{{http://maven.apache.org/shared/maven-archiver/index.html}here}}.
         
   [[3]] For more information on advanced <<<maven-assembly-plugin>>>
         configuration, see the {{{./examples/index.html}examples}}.
