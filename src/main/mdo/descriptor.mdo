@@ -238,8 +238,14 @@
           <description>
             <![CDATA[
             Specifies the shared components xml file locations to include in the
-            assembly. The locations specified must be relative to the basedir of
-            the project. When multiple componentDescriptors are found, their
+            assembly. The locations specified must be relative to the base location
+            of the descriptor. If the descriptor was found via a &lt;descriptorRef/&gt; 
+            element in the
+            classpath, any components it specifies will also be found on the classpath.
+            If it is found by pathname via a &lt;descriptor/&gt; element 
+            the value here will be interpreted
+            as a path relative to the project basedir.
+            When multiple componentDescriptors are found, their
             contents are merged. Check out the <a href="component.html">
             descriptor components</a> for more information. A
             componentDescriptor is specified by providing one or more of

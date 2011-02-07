@@ -148,8 +148,11 @@ public abstract class AbstractAssemblyMojo
     private String[] descriptors;
 
     /**
-     * A list of built-in descriptor references to generate from. You can select from <code>bin</code>,
-     * <code>jar-with-dependencies</code>, or <code>src</code>.
+     * A list of references to assembly descriptors available on the plugin's classpath. The default classpath
+     * includes these built-in descriptors: <code>bin</code>,
+     * <code>jar-with-dependencies</code>, <code>src</code>, and 
+     * <code>project</code>. You can add others by adding dependencies
+     * to the plugin.
      * 
      * @parameter
      */
