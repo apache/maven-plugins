@@ -31,6 +31,7 @@ import org.apache.maven.project.MavenProject;
  * @version $Id$
  * @goal single
  * @inheritByDefault false
+ * @threadSafe
  */
 public class SingleAssemblyMojo
     extends AbstractAssemblyMojo
