@@ -4,7 +4,7 @@
   John Casey
   Edwin Punzalan
   ---
-  2 November 2006
+  2011-02-07
   ---
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -31,16 +31,17 @@ Maven Assembly Plugin
 
 * Introduction
 
-  Do you want to create a binary distribution from a Maven project that includes
-  supporting scripts, configuration files, and all runtime dependencies?  You
-  need to use the Assembly Plugin to create a distribution for your project.
+  The Assembly Plugin for Maven is primarily intended to allow users to
+  aggregate the project output along with its dependencies, modules, site
+  documentation, and other files into a single distributable archive.
 
-  This plugin generates "assemblies". It is the equivalent of the Maven 1
-  distribution plug-in.  This plugin provides the capability to create binary
-  and source distributions.  These distributions (assemblies) are defined using
-  an assembly descriptor.  You can write your own {{{./assembly.html}descriptor}}
-  to create a custom assembly, or you can reuse one of the three
-  {{{./descriptor-refs.html}pre-defined assemblies}}.
+  Your project can build distribution "assemblies" easily, using one of the
+  convenient, {{{./descriptor-refs.html}prefabricated assembly descriptors}}.
+  These descriptors handle many common operations, such as packaging a project's
+  artifact along with its dependencies in a single JAR. Alternatively, your
+  project can provide its own {{{./assembly.html}descriptor}} and assume a much
+  higher level of control over how dependencies, modules, file-sets, and
+  individual files are packaged in the assembly.
 
   Currently it can create distributions in the following formats:
 
@@ -62,15 +63,15 @@ Maven Assembly Plugin
 
     * choose or write the assembly descriptor to use,
 
-    * configure the Assembly Plugin in your project's pom.xml, and
+    * configure the Assembly Plugin in your project's <<<pom.xml>>>, and
 
-    * run "mvn assembly:assembly" on your project.
+    * run "mvn assembly:single" on your project.
 
   To write your own custom assembly, you will need to refer to the
   {{{./assembly.html}Assembly Descriptor Format}} reference.
 
 
-What is an Assembly?
+* What is an Assembly?
 
   An "assembly" is a group of files, directories, and dependencies that are
   assembled into an archive format and distributed.  For example, assume that
@@ -91,40 +92,25 @@ What is an Assembly?
   {{{./assembly.html}assembly descriptor}}.
 
 
-The Maven Assembly Plugin
-
-  The Assembly Plugin for Maven is primarily intended to allow users to
-  aggregate the project output along with its dependencies, modules, site
-  documentation, and other files into a single distributable archive.
-
-  Your project build can build distribution assemblies easily, using one of the
-  convenient, prefabricated assembly descriptors. These descriptors handle many
-  common operations, such as packaging a project's artifact along with its
-  dependencies in a single jar. Alternatively, your project can provide its own
-  descriptor and assume a much higher level of control over how dependencies,
-  modules, file-sets, and individual files are packaged in the assembly.
-
-
-* DEPRECATION NOTICE
-
-  Usage of the <<<assembly:assembly>>>, <<<assembly:attached>>>,
-  <<<assembly:directory>>>, and <<<assembly:directory-inline>>> are <<DEPRECATED>>,
-  since they wreak havoc with normal build processes and promote non-standard
-  build practices. 
-
-  Additionally, the <<<assembly:single-directory>>> goal is
-  redundant, and has been deprecated in favor of the <<<dir>>> assembly format.
-
-  Finally, the <<<assembly:unpack>>> goal has been deprecated in favor of the far
-  more comprehensive {{{http://maven.apache.org/plugins/maven-dependency-plugin/}Maven 
-  Dependency Plugin}}.
-    
 * Goals
 
   The main goal in the assembly plugin is the {{{./single-mojo.html}single}} goal. It is used to create all assemblies.
-  <<All other goals are currently deprecated.>>
+  <<All other goals are deprecated and will be removed in a future release.>>
 
-  For more information about the goals that are available in the Assembly Plugin, see {{{./plugin-info.html}the plugin documentation page}}.
+  For more information about the goals that are available in the Assembly Plugin,
+  see {{{./plugin-info.html}the plugin documentation page}}.
+
+  Usage of the <<<assembly:assembly>>>, <<<assembly:attached>>>,
+  <<<assembly:directory>>>, and <<<assembly:directory-inline>>> are <<deprecated>>,
+  since they wreak havoc with normal build processes and promote non-standard
+  build practices.
+
+  The <<<assembly:single-directory>>> goal is redundant, and has been <<deprecated>>
+  in favor of the <<<dir>>> assembly format.
+
+  Finally, the <<<assembly:unpack>>> goal has been <<deprecated>> in favor of the far
+  more comprehensive {{{http://maven.apache.org/plugins/maven-dependency-plugin/}Maven
+  Dependency Plugin}}.
 
 
 * Assembly Descriptor Schemas (XSD)
@@ -159,6 +145,7 @@ The Maven Assembly Plugin
   Of course, patches are welcome, too. Contributors can check out the project from our
   {{{./source-repository.html}source repository}} and will find supplementary information in the
   {{{http://maven.apache.org/guides/development/guide-helping.html}guide to helping with Maven}}.
+
 
 * Examples
 
