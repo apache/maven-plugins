@@ -53,6 +53,7 @@ import org.codehaus.plexus.util.FileUtils;
  * @goal install
  * @phase pre-integration-test
  * @requiresDependencyResolution runtime
+ * @threadSafe
  * @since 1.2
  * @author Paul Gier
  * @author Benjamin Bentmann
