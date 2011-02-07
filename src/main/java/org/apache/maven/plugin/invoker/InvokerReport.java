@@ -47,6 +47,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
  * 
  * @goal report
  * @author <a href="mailto:olamy@apache.org">olamy</a>
+ * @threadSafe
  * @since 1.4
  */
 public class InvokerReport

@@ -34,6 +34,7 @@ import java.io.IOException;
  *
  * @goal verify
  * @phase verify
+ * @threadSafe
  * @author <a href="mailto:olamy@apache.org">olamy</a>
  * @since 1.4
  */

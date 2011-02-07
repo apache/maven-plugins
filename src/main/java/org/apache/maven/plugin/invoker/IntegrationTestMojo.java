@@ -28,6 +28,7 @@ import org.apache.maven.plugin.MojoFailureException;
  * @goal integration-test
  * @phase integration-test
  * @requiresDependencyResolution test
+ * @threadSafe
  * @since 1.4
  *
  * @author <a href="mailto:stephenconnolly at codehaus">Stephen Connolly</a>
