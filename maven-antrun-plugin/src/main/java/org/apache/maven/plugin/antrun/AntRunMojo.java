@@ -256,7 +256,27 @@ public class AntRunMojo
             DefaultLogger antLogger = new DefaultLogger();
             antLogger.setOutputPrintStream( System.out );
             antLogger.setErrorPrintStream( System.err );
-            antLogger.setMessageOutputLevel( getLog().isDebugEnabled() ? Project.MSG_DEBUG : Project.MSG_INFO );
+            
+            if ( getLog().isDebugEnabled() )
+            {
+                antLogger.setMessageOutputLevel( Project.MSG_DEBUG );
+            }
+            else if ( getLog().isInfoEnabled() )
+            {
+                antLogger.setMessageOutputLevel( Project.MSG_INFO );
+            }
+            else if ( getLog().isWarnEnabled() )
+            {
+                antLogger.setMessageOutputLevel( Project.MSG_WARN );
+            }
+            else if ( getLog().isErrorEnabled() )
+            {
+                antLogger.setMessageOutputLevel( Project.MSG_ERR );
+            }
+            else
+            {
+                antLogger.setMessageOutputLevel( Project.MSG_VERBOSE );
+            }
 
             antProject.addBuildListener( antLogger );
             antProject.setBaseDir( mavenProject.getBasedir() );
