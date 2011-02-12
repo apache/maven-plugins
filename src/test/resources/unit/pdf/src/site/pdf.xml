@@ -37,7 +37,6 @@
     <item name="Limitations" ref="limitations.apt"/>
     <item name="Links" ref="ref/links.apt"/>
     <item name="FAQ" ref="faq.fml"/>
-    <item name="Entities" ref="entities.xml"/>
   </toc>
 
 </document>
