@@ -154,8 +154,10 @@ public class ReportDocumentRenderer
 
         try
         {
+            // try extended multi-page API
             if ( !generateMultiPage( locale, sf, sink ) )
             {
+                // fallback to old single-page-only API
                 try
                 {
                     report.generate( sink, locale );
@@ -213,6 +215,11 @@ public class ReportDocumentRenderer
         }
     }
 
+    /**
+     * Try to generate report with extended multi-page API.
+     * 
+     * @return <code>true</code> if the report was compatible with the extended API
+     */
     private boolean generateMultiPage( Locale locale, SinkFactory sf, Sink sink )
         throws MavenReportException
     {
