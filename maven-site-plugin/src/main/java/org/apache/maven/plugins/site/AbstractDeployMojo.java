@@ -23,8 +23,6 @@ import java.io.File;
 
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
-
 import org.apache.maven.artifact.manager.WagonConfigurationException;
 import org.apache.maven.artifact.manager.WagonManager;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -56,6 +54,7 @@ import org.codehaus.plexus.configuration.xml.XmlPlexusConfiguration;
 import org.codehaus.plexus.context.Context;
 import org.codehaus.plexus.context.ContextException;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
+import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 
 /**
@@ -374,8 +373,9 @@ public abstract class AbstractDeployMojo
             if ( StringUtils.contains( nonProxyHost, "*" ) )
             {
                 // Handle wildcard at the end, beginning or middle of the nonProxyHost
-                String nonProxyHostPrefix = StringUtils.substringBefore( nonProxyHost, "*" );
-                String nonProxyHostSuffix = StringUtils.substringAfter( nonProxyHost, "*" );
+                final int pos = nonProxyHost.indexOf( '*' );
+                String nonProxyHostPrefix = nonProxyHost.substring( 0, pos );
+                String nonProxyHostSuffix = nonProxyHost.substring( pos + 1 );
                 // prefix*
                 if ( StringUtils.isNotEmpty( nonProxyHostPrefix ) && host.startsWith( nonProxyHostPrefix )
                     && StringUtils.isEmpty( nonProxyHostSuffix ) )
