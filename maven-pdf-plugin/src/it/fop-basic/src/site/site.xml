@@ -24,6 +24,7 @@ under the License.
     <menu name="Overview">
       <item name="Introduction" href="index.html"/>
       <item name="Usage" href="usage.html"/>
+      <item name="Entities" href="entities.xml"/>
     </menu>
   </body>
 </project>
