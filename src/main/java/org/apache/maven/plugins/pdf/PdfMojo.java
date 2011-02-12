@@ -479,13 +479,7 @@ public class PdfMojo
         {
             final Locale locale = (Locale) iterator.next();
 
-            String filename = outputName;
-            if ( !locale.getLanguage().equals( getDefaultLocale().getLanguage() ) )
-            {
-                filename = locale.getLanguage() + File.separator + outputName;
-            }
-
-            File generatedPdfSource = new File( workingDirectory, filename );
+            File generatedPdfSource = new File( getLocaleDirectory( workingDirectory, locale), outputName );
 
             if ( !generatedPdfSource.exists() )
             {
@@ -493,7 +487,7 @@ public class PdfMojo
                 continue;
             }
 
-            File generatedPdfDest = new File( outputDirectory, filename );
+            File generatedPdfDest = new File( getLocaleDirectory( outputDirectory, locale), outputName );
 
             FileUtils.copyFile( generatedPdfSource, generatedPdfDest );
             generatedPdfSource.delete();
@@ -516,13 +510,9 @@ public class PdfMojo
         {
             final Locale locale = (Locale) iterator.next();
 
-            final File workingDir = getWorkingDirectory( locale );
+            final File workingDir = getLocaleDirectory( workingDirectory, locale );
 
-            File siteDirectoryFile = getSiteDirectoryTmp();
-            if ( !locale.getLanguage().equals( getDefaultLocale().getLanguage() ) )
-            {
-                siteDirectoryFile = new File( getSiteDirectoryTmp(), locale.getLanguage() );
-            }
+            File siteDirectoryFile = getLocaleDirectory( getSiteDirectoryTmp(), locale );
 
             copyResources( locale );
 
@@ -773,19 +763,20 @@ public class PdfMojo
     }
 
     /**
-     * Return the working directory for a given Locale and the current default Locale.
+     * Return the directory for a given Locale and the current default Locale.
      *
+     * @param basedir the base directory
      * @param locale a Locale.
      * @return File.
      */
-    private File getWorkingDirectory( Locale locale )
+    private File getLocaleDirectory( File basedir, Locale locale )
     {
         if ( locale.getLanguage().equals( getDefaultLocale().getLanguage() ) )
         {
-            return workingDirectory;
+            return basedir;
         }
 
-        return new File( workingDirectory, locale.getLanguage() );
+        return new File( basedir, locale.getLanguage() );
     }
 
     /**
