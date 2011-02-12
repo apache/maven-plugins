@@ -464,49 +464,39 @@ public class PdfMojo
     private void copyGeneratedPdf()
         throws MojoExecutionException, IOException
     {
-        if ( !outputDirectory.getCanonicalPath().equals( workingDirectory.getCanonicalPath() ) )
+        if ( outputDirectory.getCanonicalPath().equals( workingDirectory.getCanonicalPath() ) )
         {
-            String outputName = getDocumentModel( getDefaultLocale() ).getOutputName().trim();
-            if ( !outputName.endsWith( ".pdf" ) )
+            return;
+        }
+
+        String outputName = getDocumentModel( getDefaultLocale() ).getOutputName().trim();
+        if ( !outputName.endsWith( ".pdf" ) )
+        {
+            outputName = outputName.concat( ".pdf" );
+        }
+
+        for ( final Iterator iterator = getAvailableLocales().iterator(); iterator.hasNext(); )
+        {
+            final Locale locale = (Locale) iterator.next();
+
+            String filename = outputName;
+            if ( !locale.getLanguage().equals( getDefaultLocale().getLanguage() ) )
             {
-                outputName = outputName.concat( ".pdf" );
+                filename = locale.getLanguage() + File.separator + outputName;
             }
 
-            for ( final Iterator iterator = getAvailableLocales().iterator(); iterator.hasNext(); )
+            File generatedPdfSource = new File( workingDirectory, filename );
+
+            if ( !generatedPdfSource.exists() )
             {
-                final Locale locale = (Locale) iterator.next();
-
-                File generatedPdfSource;
-                if ( !locale.getLanguage().equals( getDefaultLocale().getLanguage() ) )
-                {
-                    generatedPdfSource =
-                        new File( workingDirectory, locale.getLanguage() + File.separator + outputName );
-                }
-                else
-                {
-                    generatedPdfSource = new File( workingDirectory, outputName );
-                }
-
-                if ( !generatedPdfSource.exists() )
-                {
-                    getLog().warn( "Unable to find the generated pdf: " + generatedPdfSource.getAbsolutePath() );
-                    continue;
-                }
-
-                File generatedPdfDest;
-                if ( !locale.getLanguage().equals( getDefaultLocale().getLanguage() ) )
-                {
-                    generatedPdfDest =
-                        new File( outputDirectory, locale.getLanguage() + File.separator + outputName );
-                }
-                else
-                {
-                    generatedPdfDest = new File( outputDirectory, outputName );
-                }
-
-                FileUtils.copyFile( generatedPdfSource, generatedPdfDest );
-                generatedPdfSource.delete();
+                getLog().warn( "Unable to find the generated pdf: " + generatedPdfSource.getAbsolutePath() );
+                continue;
             }
+
+            File generatedPdfDest = new File( outputDirectory, filename );
+
+            FileUtils.copyFile( generatedPdfSource, generatedPdfDest );
+            generatedPdfSource.delete();
         }
     }
 
