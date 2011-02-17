@@ -25,7 +25,7 @@ under the License.
   <parent>
     <groupId>org.apache.maven.plugins</groupId>
     <artifactId>maven-plugins</artifactId>
-    <version>18</version>
+    <version>19</version>
   </parent>
 
   <artifactId>maven-remote-resources-plugin</artifactId>
@@ -192,7 +192,6 @@ under the License.
       <plugins>
         <plugin>
           <artifactId>maven-compiler-plugin</artifactId>
-          <version>2.0.2</version>
           <configuration>
             <source>1.5</source>
             <target>1.5</target>
@@ -200,16 +199,11 @@ under the License.
         </plugin>
         <plugin>
           <artifactId>maven-surefire-plugin</artifactId>
-          <version>2.4.3</version>
           <configuration>
             <includes>
               <include>**/*Test.java</include>
             </includes>
           </configuration>
-        </plugin>
-        <plugin>
-          <artifactId>maven-resources-plugin</artifactId>
-          <version>2.4</version>
         </plugin>
       </plugins>
     </pluginManagement>
@@ -217,7 +211,6 @@ under the License.
       <plugin>
         <groupId>org.codehaus.modello</groupId>
         <artifactId>modello-maven-plugin</artifactId>
-        <version>1.1</version>
         <executions>
           <execution>
             <id>generate-xsd-site-remote-resources</id>
@@ -364,7 +357,6 @@ under the License.
         <plugins>
           <plugin>
             <artifactId>maven-invoker-plugin</artifactId>
-            <version>1.4</version>
             <executions>
               <execution>
                 <id>install-descriptor</id>
