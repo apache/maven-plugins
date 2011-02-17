@@ -26,6 +26,7 @@ import org.apache.maven.plugin.war.Overlay;
 import org.apache.maven.plugin.war.util.PathSet;
 import org.apache.maven.shared.filtering.MavenFilteringException;
 import org.codehaus.plexus.util.DirectoryScanner;
+import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.XmlStreamReader;
 
@@ -291,7 +292,14 @@ public class WarProjectPackagingTask
         throws IOException
     {
         XmlStreamReader xmlReader = new XmlStreamReader( webXml );
-        return xmlReader.getEncoding();
+        try
+        {
+            return xmlReader.getEncoding();
+        }
+        finally
+        {
+            IOUtil.close( xmlReader );
+        }
     }
 
     /**
