@@ -319,20 +319,20 @@ under the License.
   <profiles>
     <profile>
       <id>run-its</id>
-	  <repositories>
-	    <repository>
-	      <id>codehaus.org</id>
-	      <url>http://snapshots.repository.codehaus.org</url>
-	      <releases>
-	        <enabled>false</enabled>
-	      </releases>
-	    </repository>
-	  </repositories>
-	  <pluginRepositories>
-	    <pluginRepository>
-	      <id>codehaus.snapshots</id>
-	      <url>http://snapshots.repository.codehaus.org</url>
-	    </pluginRepository>
+      <repositories>
+        <repository>
+          <id>codehaus.org</id>
+          <url>http://snapshots.repository.codehaus.org</url>
+          <releases>
+            <enabled>false</enabled>
+          </releases>
+        </repository>
+      </repositories>
+      <pluginRepositories>
+        <pluginRepository>
+          <id>codehaus.snapshots</id>
+          <url>http://snapshots.repository.codehaus.org</url>
+        </pluginRepository>
         <pluginRepository>
           <id>apache.snapshots</id>
           <url>http://repository.apache.org/snapshots</url>
