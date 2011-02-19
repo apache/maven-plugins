@@ -180,18 +180,16 @@ public abstract class AbstractSiteRenderingMojo
     protected MavenSession mavenSession;
 
     /**
-    *
-    * @component
-    * @readonly
-    */
+     * @component
+     * @readonly
+     */
     protected PlexusContainer plexusContainer;
 
-   /**
-   *
-   * @component
-   * @readonly
-   */
-   protected MavenReportExecutor mavenReportExecutor;
+    /**
+     * @component
+     * @readonly
+     */
+    protected MavenReportExecutor mavenReportExecutor;
 
     protected List<MavenReportExecution> getReports()
         throws MojoExecutionException
