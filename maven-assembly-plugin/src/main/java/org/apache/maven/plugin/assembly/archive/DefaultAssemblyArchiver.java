@@ -230,7 +230,7 @@ public class DefaultAssemblyArchiver
                                                                                 final AssemblerConfigurationSource configSource )
         throws InvalidAssemblerConfigurationException
     {
-        getLogger().debug( "All known ContainerDescritporHandler components: "
+        getLogger().debug( "All known ContainerDescriptorHandler components: "
                                            + ( containerDescriptorHandlers == null ? "none; map is null." : ""
                                                            + containerDescriptorHandlers.keySet() ) );
 
