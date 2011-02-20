@@ -132,14 +132,11 @@ public class DefaultMavenReportExecutor
     public List<MavenReportExecution> buildMavenReports( MavenReportExecutorRequest mavenReportExecutorRequest )
         throws MojoExecutionException
     {
-        if (mavenReportExecutorRequest.getReportPlugins() == null)
+        if ( mavenReportExecutorRequest.getReportPlugins() == null )
         {
             return Collections.emptyList();
         }
-        if ( getLog().isDebugEnabled() )
-        {
-            getLog().debug( "DefaultMavenReportExecutor.buildMavenReports()" );
-        }
+        getLog().debug( "DefaultMavenReportExecutor.buildMavenReports()" );
         
         ExclusionsDependencyFilter exclusionSetFilter = new ExclusionsDependencyFilter( EXCLUDES );
 
@@ -149,7 +146,7 @@ public class DefaultMavenReportExecutor
 
         MavenSession session = mavenReportExecutorRequest.getMavenSession();
         
-        List<String> reportPluginKeys = new ArrayList<String>(mavenReportExecutorRequest.getReportPlugins().length);
+        List<String> reportPluginKeys = new ArrayList<String>( mavenReportExecutorRequest.getReportPlugins().length );
         
         try
         {
@@ -163,7 +160,7 @@ public class DefaultMavenReportExecutor
                 String pluginKey = reportPlugin.getGroupId() + ":" + reportPlugin.getArtifactId();
                 if ( reportPluginKeys.contains( pluginKey ) )
                 {
-                    getLog().info( "plugin " + pluginKey + " will be executed more than one time" );
+                    logger.info( "plugin " + pluginKey + " will be executed more than one time" );
                 }
                 else
                 {
@@ -173,10 +170,7 @@ public class DefaultMavenReportExecutor
                 plugin.setVersion( getPluginVersion( reportPlugin, repositoryRequest, mavenReportExecutorRequest ) );
                 mergePluginToReportPlugin( mavenReportExecutorRequest, plugin, reportPlugin );
                
-                if ( logger.isInfoEnabled() )
-                {
-                    logger.info( "configuring report plugin " + plugin.getId() );
-                }
+                logger.info( "configuring report plugin " + plugin.getId() );
 
                 Map<String, PlexusConfiguration> goalsWithConfiguration = new TreeMap<String, PlexusConfiguration>();
 
@@ -199,7 +193,7 @@ public class DefaultMavenReportExecutor
                     {
                         for ( ReportSet reportSet : reportPlugin.getReportSets() )
                         {
-                            for (String report : reportSet.getReports())
+                            for ( String report : reportSet.getReports() )
                             {
                                 goalsWithConfiguration.put( report, reportSet.getConfiguration() );
                             }
@@ -207,7 +201,7 @@ public class DefaultMavenReportExecutor
                     }
                     if ( !reportPlugin.getReports().isEmpty() )
                     {
-                        for (String report : reportPlugin.getReports())
+                        for ( String report : reportPlugin.getReports() )
                         {
                             goalsWithConfiguration.put( report, reportPlugin.getConfiguration() );
                         }
@@ -219,18 +213,18 @@ public class DefaultMavenReportExecutor
                     MojoDescriptor mojoDescriptor = pluginDescriptor.getMojo( entry.getKey() );
                     if ( mojoDescriptor == null )
                     {
-                        throw new MojoNotFoundException(  entry.getKey(), pluginDescriptor );
+                        throw new MojoNotFoundException( entry.getKey(), pluginDescriptor );
                     }
 
-                    MojoExecution mojoExecution = new MojoExecution( plugin,  entry.getKey(), "report:" +  entry.getKey() );
+                    MojoExecution mojoExecution = new MojoExecution( plugin, entry.getKey(), "report:" + entry.getKey() );
 
                     mojoExecution.setConfiguration( convert( mojoDescriptor ) );
                     
                     if ( reportPlugin.getConfiguration() != null || entry.getValue() != null )
                     {
-                        Xpp3Dom reportConfiguration = reportPlugin.getConfiguration() == null ? new Xpp3Dom( "fake" )
-                                                                                             : convert( reportPlugin
-                                                                                                 .getConfiguration() );
+                        Xpp3Dom reportConfiguration =
+                            reportPlugin.getConfiguration() == null ? new Xpp3Dom( "fake" )
+                                            : convert( reportPlugin.getConfiguration() );
 
                         // MSITE-512 configuration from ReportSet must win
                         Xpp3Dom mergedConfigurationWithReportSet = Xpp3DomUtils
@@ -533,7 +527,8 @@ public class DefaultMavenReportExecutor
         plugin.setGroupId( reportPlugin.getGroupId() );
         plugin.setArtifactId( reportPlugin.getArtifactId() );
         
-        PluginVersionRequest pluginVersionRequest = new DefaultPluginVersionRequest( plugin , mavenReportExecutorRequest.getMavenSession() );
+        PluginVersionRequest pluginVersionRequest =
+            new DefaultPluginVersionRequest( plugin, mavenReportExecutorRequest.getMavenSession() );
         //pluginVersionRequest.setOffline( mavenReportExecutorRequest.getMavenSession().getRequest().isOffline() );
 
         //pluginVersionRequest.setForceUpdate( mavenReportExecutorRequest.getMavenSession().getRequest().isUpdateSnapshots() );
@@ -564,7 +559,7 @@ public class DefaultMavenReportExecutor
         }
         return null;
     }
-    
+
     /**
      * TODO other stuff to merge ?
      * <p>
@@ -581,7 +576,6 @@ public class DefaultMavenReportExecutor
     private void mergePluginToReportPlugin( MavenReportExecutorRequest mavenReportExecutorRequest, Plugin buildPlugin,
                                             ReportPlugin reportPlugin )
     {
- 
         Plugin configuredPlugin = find( reportPlugin, mavenReportExecutorRequest.getProject().getBuild().getPlugins() );
         if ( configuredPlugin != null )
         {
@@ -591,5 +585,4 @@ public class DefaultMavenReportExecutor
             }
         }
     }   
-    
 }
