@@ -156,7 +156,7 @@ public class SiteRunMojo
             mavenReportExecution.getMavenReport().setReportOutputDirectory( tempWebappDirectory );
         }
 
-        List<MavenReportExecution> filteredReports = filterReports( getReports() );
+        List<MavenReportExecution> reports = getReports();
 
         List<Locale> localesList = siteTool.getAvailableLocales( locales );
         webapp.setAttribute( DoxiaFilter.LOCALES_LIST_KEY, localesList );
@@ -175,7 +175,7 @@ public class SiteRunMojo
                 i18nContext.setInputEncoding( getInputEncoding() );
                 i18nContext.setOutputEncoding( getOutputEncoding() );
 
-                Map<String, DocumentRenderer> i18nDocuments = locateDocuments( i18nContext, filteredReports, locale );
+                Map<String, DocumentRenderer> i18nDocuments = locateDocuments( i18nContext, reports, locale );
                 DoxiaBean doxiaBean;
                 if ( defaultLocale.equals( locale ) )
                 {

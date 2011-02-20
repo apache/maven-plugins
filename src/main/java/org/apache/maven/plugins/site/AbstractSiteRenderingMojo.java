@@ -164,7 +164,7 @@ public abstract class AbstractSiteRenderingMojo
     protected File generatedSiteDirectory;
 
     /**
-     * The Maven project.
+     * The current Maven project.
      *
      * @parameter expression="${project}"
      * @required
@@ -173,6 +173,8 @@ public abstract class AbstractSiteRenderingMojo
     protected MavenProject project;
 
     /**
+     * The current Maven session.
+     * 
      * @parameter expression="${session}"
      * @required
      * @readonly
@@ -180,12 +182,16 @@ public abstract class AbstractSiteRenderingMojo
     protected MavenSession mavenSession;
 
     /**
+     * The Plexus container.
+     * 
      * @component
      * @readonly
      */
     protected PlexusContainer plexusContainer;
 
     /**
+     * The report executor.
+     * 
      * @component
      * @readonly
      */
@@ -198,38 +204,14 @@ public abstract class AbstractSiteRenderingMojo
         {
             return Collections.emptyList();
         }
+
         MavenReportExecutorRequest mavenReportExecutorRequest = new MavenReportExecutorRequest();
         mavenReportExecutorRequest.setLocalRepository( localRepository );
         mavenReportExecutorRequest.setMavenSession( mavenSession );
         mavenReportExecutorRequest.setProject( project );
         mavenReportExecutorRequest.setReportPlugins( reportPlugins );
+
         return mavenReportExecutor.buildMavenReports( mavenReportExecutorRequest );
-    }
-
-    protected List<MavenReportExecution> filterReports( List<MavenReportExecution> reports )
-    {
-        List<MavenReportExecution> filteredReports = new ArrayList<MavenReportExecution>();
-        for ( MavenReportExecution mavenReportExecution : reports )
-        {
-            // noinspection ErrorNotRethrown,UnusedCatchParameter
-            MavenReport report = mavenReportExecution.getMavenReport();
-            try
-            {
-                filteredReports.add( mavenReportExecution );
-            }
-            catch ( AbstractMethodError e )
-            {
-                // the canGenerateReport() has been added just before the 2.0 release and will cause all the reporting
-                // plugins with an earlier version to fail (most of the org.codehaus mojo now fails)
-                // be nice with them, output a warning and don't let them break anything
-
-                getLog().warn(
-                               "Error loading report " + report.getClass().getName()
-                                   + " - AbstractMethodError: canGenerateReport()" );
-                filteredReports.add( mavenReportExecution );
-            }
-        }
-        return filteredReports;
     }
 
     protected SiteRenderingContext createSiteRenderingContext( Locale locale )

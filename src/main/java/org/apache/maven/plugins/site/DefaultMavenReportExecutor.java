@@ -135,7 +135,7 @@ public class DefaultMavenReportExecutor
             return Collections.emptyList();
         }
         getLog().debug( "DefaultMavenReportExecutor.buildMavenReports()" );
-        
+
         RepositoryRequest repositoryRequest = new DefaultRepositoryRequest();
         repositoryRequest.setLocalRepository( mavenReportExecutorRequest.getLocalRepository() );
         repositoryRequest.setRemoteRepositories( mavenReportExecutorRequest.getProject().getPluginArtifactRepositories() );
@@ -143,7 +143,8 @@ public class DefaultMavenReportExecutor
         MavenSession session = mavenReportExecutorRequest.getMavenSession();
         List<String> reportPluginKeys = new ArrayList<String>();
         List<MavenReportExecution> reports = new ArrayList<MavenReportExecution>();
-        
+
+        String pluginKey = "";
         try
         {
             for ( ReportPlugin reportPlugin : mavenReportExecutorRequest.getReportPlugins() )
@@ -152,7 +153,7 @@ public class DefaultMavenReportExecutor
                 plugin.setGroupId( reportPlugin.getGroupId() );
                 plugin.setArtifactId( reportPlugin.getArtifactId() );
 
-                String pluginKey = reportPlugin.getGroupId() + ":" + reportPlugin.getArtifactId();
+                pluginKey = reportPlugin.getGroupId() + ":" + reportPlugin.getArtifactId();
                 if ( reportPluginKeys.contains( pluginKey ) )
                 {
                     logger.info( "plugin " + pluginKey + " will be executed more than one time" );
@@ -284,7 +285,7 @@ public class DefaultMavenReportExecutor
         }
         catch ( Exception e )
         {
-            throw new MojoExecutionException( "failed to get Reports ", e );
+            throw new MojoExecutionException( "failed to get report for " + pluginKey, e );
         }
     }
     
@@ -299,8 +300,8 @@ public class DefaultMavenReportExecutor
         }
         catch ( AbstractMethodError e )
         {
-            // the canGenerateReport() has been added just before the 2.0 release and will cause all the reporting
-            // plugins with an earlier version to fail (most of the org.codehaus mojo now fails)
+            // the canGenerateReport() has been added just before Maven 2.0 release and will cause all the reporting
+            // plugins with an earlier version to fail (most of the org.codehaus mojo fail as of october 2005)
             // be nice with them, output a warning and don't let them break anything
 
             getLog().warn(

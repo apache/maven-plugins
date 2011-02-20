@@ -99,14 +99,14 @@ public class SiteMojo
             getLog().debug( "executing Site Mojo" );
         }
 
-        List<MavenReportExecution> filteredReports;
+        List<MavenReportExecution> reports;
         if ( generateReports )
         {
-            filteredReports = filterReports( getReports() );
+            reports = getReports();
         }
         else
         {
-            filteredReports = Collections.emptyList();
+            reports = Collections.emptyList();
         }
 
         try
@@ -119,7 +119,7 @@ public class SiteMojo
 
             for ( Locale locale : localesList )
             {
-                renderLocale( locale, filteredReports );
+                renderLocale( locale, reports );
             }
         }
         catch ( RendererException e )
