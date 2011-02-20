@@ -685,7 +685,7 @@ public abstract class AbstractAssemblyMojo
     /**
      * {@inheritDoc}
      * 
-     * @deprecated This has been replaced by {@link #setDescriptors()}
+     * @deprecated This has been replaced by {@link #setDescriptors(String[])}
      */
     @Deprecated
     public void setDescriptor( final String descriptor )
@@ -696,7 +696,7 @@ public abstract class AbstractAssemblyMojo
     /**
      * {@inheritDoc}
      * 
-     * @deprecated This has been replaced by {@link #setDescriptorReferences()}
+     * @deprecated This has been replaced by {@link #setDescriptorRefs(String[])}
      */
     @Deprecated
     public void setDescriptorId( final String descriptorId )
