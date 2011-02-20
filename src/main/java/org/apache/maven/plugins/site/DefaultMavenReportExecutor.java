@@ -22,11 +22,9 @@ package org.apache.maven.plugins.site;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.TreeMap;
 
 import org.apache.maven.artifact.repository.DefaultRepositoryRequest;
@@ -72,7 +70,7 @@ import org.sonatype.aether.util.filter.ExclusionsDependencyFilter;
  * <p>
  *   <b>Note</b> if no version is defined in the report plugin the version will be search 
  *   with method {@link #getPluginVersion(ReportPlugin, RepositoryRequest, MavenReportExecutorRequest)}
- *   Steps to find a plugin version stop after each step if a non <code>null</code> has been found
+ *   Steps to find a plugin version stop after each step if a non <code>null</code> value has been found:
  *   <ul>
  *     <li>use the one defined in the reportPlugin configuration</li>
  *     <li>search similar (same groupId and artifactId) mojo in the build/plugins section of the pom</li>
@@ -86,8 +84,8 @@ import org.sonatype.aether.util.filter.ExclusionsDependencyFilter;
  *     <li>get {@link PluginDescriptor} from the {@link MavenPluginManager#getPluginDescriptor(Plugin, RepositoryRequest)}</li>
  *     <li>setup a {@link ClassLoader} with the Mojo Site plugin {@link ClassLoader} as parent for the report execution. 
  *       You must note some classes are imported from the current Site Mojo {@link ClassRealm} see {@link #IMPORTS}.
- *       The artifact resolution excludes the following artifacts (with using an {@link ExclusionSetFilter} : 
- *       doxia-site-renderer, doxia-sink-api.
+ *       The artifact resolution excludes the following artifacts (with using an {@link ExclusionSetFilter}: 
+ *       doxia-site-renderer, doxia-sink-api, maven-reporting-api.
  *       done using {@link MavenPluginManager#setupPluginRealm(PluginDescriptor, org.apache.maven.execution.MavenSession, ClassLoader, List, org.apache.maven.artifact.resolver.filter.ArtifactFilter)}
  *     </li>
  *     <li>
@@ -95,7 +93,7 @@ import org.sonatype.aether.util.filter.ExclusionsDependencyFilter;
  *     </li>
  *     <li>
  *       verify with {@link LifecycleExecutor#calculateForkedExecutions(MojoExecution, org.apache.maven.execution.MavenSession)}
- *       if any forked execution is needed : if yes executes the forked execution here
+ *       if any forked execution is needed: if yes executes the forked execution here
  *     </li>
  *   </ul>
  * </p>
@@ -126,8 +124,8 @@ public class DefaultMavenReportExecutor
                                                                "org.apache.maven.doxia.sink.Sink",
                                                                "org.apache.maven.doxia.sink.SinkEventAttributes" );
 
-    private static final Set<String> EXCLUDES = new HashSet<String>( Arrays.asList( "doxia-site-renderer",
-                                                                                    "doxia-sink-api", "maven-reporting-api" ) );
+    private static final ExclusionsDependencyFilter EXCLUDES =
+        new ExclusionsDependencyFilter( Arrays.asList( "doxia-site-renderer", "doxia-sink-api", "maven-reporting-api" ) );
 
     public List<MavenReportExecution> buildMavenReports( MavenReportExecutorRequest mavenReportExecutorRequest )
         throws MojoExecutionException
@@ -138,25 +136,22 @@ public class DefaultMavenReportExecutor
         }
         getLog().debug( "DefaultMavenReportExecutor.buildMavenReports()" );
         
-        ExclusionsDependencyFilter exclusionSetFilter = new ExclusionsDependencyFilter( EXCLUDES );
-
         RepositoryRequest repositoryRequest = new DefaultRepositoryRequest();
         repositoryRequest.setLocalRepository( mavenReportExecutorRequest.getLocalRepository() );
         repositoryRequest.setRemoteRepositories( mavenReportExecutorRequest.getProject().getPluginArtifactRepositories() );
 
         MavenSession session = mavenReportExecutorRequest.getMavenSession();
-        
-        List<String> reportPluginKeys = new ArrayList<String>( mavenReportExecutorRequest.getReportPlugins().length );
+        List<String> reportPluginKeys = new ArrayList<String>();
+        List<MavenReportExecution> reports = new ArrayList<MavenReportExecution>();
         
         try
         {
-            List<MavenReportExecution> reports = new ArrayList<MavenReportExecution>();
-
             for ( ReportPlugin reportPlugin : mavenReportExecutorRequest.getReportPlugins() )
             {
                 Plugin plugin = new Plugin();
                 plugin.setGroupId( reportPlugin.getGroupId() );
                 plugin.setArtifactId( reportPlugin.getArtifactId() );
+
                 String pluginKey = reportPlugin.getGroupId() + ":" + reportPlugin.getArtifactId();
                 if ( reportPluginKeys.contains( pluginKey ) )
                 {
@@ -258,7 +253,7 @@ public class DefaultMavenReportExecutor
                     mavenPluginManager.setupPluginRealm( pluginDescriptor,
                                                          mavenReportExecutorRequest.getMavenSession(),
                                                          Thread.currentThread().getContextClassLoader(), IMPORTS,
-                                                         exclusionSetFilter );
+                                                         EXCLUDES );
                     MavenReport mavenReport =
                         getConfiguredMavenReport( mojoExecution, pluginDescriptor, mavenReportExecutorRequest );
 
@@ -453,11 +448,19 @@ public class DefaultMavenReportExecutor
     }
 
     /**
-     * 
-     * @param reportPlugin
-     * @param repositoryRequest
-     * @param mavenReportExecutorRequest
-     * @return the plugin version
+     * Resolve report plugin version. 
+     * Steps to find a plugin version stop after each step if a non <code>null</code> value has been found:
+     * <ol>
+     *   <li>use the one defined in the reportPlugin configuration</li>
+     *   <li>search similar (same groupId and artifactId) mojo in the build/plugins section of the pom</li>
+     *   <li>search similar (same groupId and artifactId) mojo in the build/pluginManagement section of the pom</li>
+     *   <li>ask {@link PluginVersionResolver} to get a version and display a warning as it's not a recommended use</li>  
+     * </ol>
+     *
+     * @param reportPlugin the report plugin to resolve the version
+     * @param repositoryRequest TODO: unused, to be removed?
+     * @param mavenReportExecutorRequest the current report execution context
+     * @return the report plugin version
      * @throws PluginVersionResolutionException
      */
     protected String getPluginVersion( ReportPlugin reportPlugin, RepositoryRequest repositoryRequest,
@@ -465,11 +468,12 @@ public class DefaultMavenReportExecutor
         throws PluginVersionResolutionException
     {
         String reportPluginKey = reportPlugin.getGroupId() + ':' + reportPlugin.getArtifactId();
-
         if ( getLog().isDebugEnabled() )
         {
             getLog().debug( "resolving version for " + reportPluginKey );
         }
+
+        // look for version defined in the reportPlugin configuration
         if ( reportPlugin.getVersion() != null )
         {
             if ( getLog().isDebugEnabled() )
@@ -529,12 +533,7 @@ public class DefaultMavenReportExecutor
         
         PluginVersionRequest pluginVersionRequest =
             new DefaultPluginVersionRequest( plugin, mavenReportExecutorRequest.getMavenSession() );
-        //pluginVersionRequest.setOffline( mavenReportExecutorRequest.getMavenSession().getRequest().isOffline() );
 
-        //pluginVersionRequest.setForceUpdate( mavenReportExecutorRequest.getMavenSession().getRequest().isUpdateSnapshots() );
-
-        pluginVersionRequest.setGroupId( reportPlugin.getGroupId() );
-        pluginVersionRequest.setArtifactId( reportPlugin.getArtifactId() );
         PluginVersionResult result = pluginVersionResolver.resolve( pluginVersionRequest );
         if ( getLog().isDebugEnabled() )
         {
@@ -543,6 +542,13 @@ public class DefaultMavenReportExecutor
         return result.getVersion();
     }
 
+    /**
+     * Search similar (same groupId and artifactId) mojo as a given report plugin.
+     * 
+     * @param reportPlugin the report plugin to search for a similar mojo
+     * @param plugins the candidate mojos 
+     * @return the first similar mojo
+     */
     private Plugin find( ReportPlugin reportPlugin, List<Plugin> plugins )
     {
         if ( plugins == null )
@@ -564,7 +570,7 @@ public class DefaultMavenReportExecutor
      * TODO other stuff to merge ?
      * <p>
      * this method will "merge" some part of the plugin declaration existing in the build section 
-     * to the fake plugin build for report execution :
+     * to the fake plugin build for report execution:
      * <ul>
      *   <li>dependencies</li>
      * </ul>
