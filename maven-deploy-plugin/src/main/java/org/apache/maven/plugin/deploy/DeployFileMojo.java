@@ -21,6 +21,7 @@ package org.apache.maven.plugin.deploy;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.deployer.ArtifactDeploymentException;
+import org.apache.maven.artifact.installer.ArtifactInstallationException;
 import org.apache.maven.artifact.metadata.ArtifactMetadata;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout;
@@ -97,6 +98,22 @@ public class DeployFileMojo
      * @required
      */
     private File file;
+
+    /**
+     * The bundled API docs for the artifact.
+     *
+     * @parameter expression="${javadoc}"
+     * @since 2.6
+     */
+    private File javadoc;
+
+    /**
+     * The bundled sources for the artifact.
+     *
+     * @parameter expression="${sources}"
+     * @since 2.6
+     */
+    private File sources;
 
     /**
      * Server Id to map on the &lt;id&gt; under &lt;server&gt; section of settings.xml
@@ -238,6 +255,33 @@ public class DeployFileMojo
         {
             throw new MojoExecutionException( e.getMessage(), e );
         }
+
+        if ( sources != null )
+        {
+            artifact = artifactFactory.createArtifactWithClassifier( groupId, artifactId, version, "jar", "sources" );
+            try
+            {
+                getDeployer().deploy( sources, artifact, deploymentRepository, getLocalRepository() );
+            }
+            catch ( ArtifactDeploymentException e )
+            {
+                throw new MojoExecutionException( "Error deploying sources " + sources + ": " + e.getMessage(), e );
+            }
+        }
+
+        if ( javadoc != null )
+        {
+            artifact = artifactFactory.createArtifactWithClassifier( groupId, artifactId, version, "jar", "javadoc" );
+            try
+            {
+                getDeployer().deploy( javadoc, artifact, deploymentRepository, getLocalRepository() );
+            }
+            catch ( ArtifactDeploymentException e )
+            {
+                throw new MojoExecutionException( "Error deploying API docs " + javadoc + ": " + e.getMessage(), e );
+            }
+        }
+
     }
 
     /**
