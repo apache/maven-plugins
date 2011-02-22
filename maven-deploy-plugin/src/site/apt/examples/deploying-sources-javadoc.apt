@@ -1,9 +1,8 @@
   ----
-  Project Deployment
+  Deploy sources and javadocs for an artifact
   ------
-  Allan Ramirez
   ------
-  July 2006
+  February 2011
   ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -26,20 +25,25 @@
 ~~ NOTE: For help with the syntax of this file, see:
 ~~ http://maven.apache.org/doxia/references/apt-format.html
 
-File Deployment
+Deploy sources and javadoc jars
 
-  Here are examples of using the deploy plugin for file deployment:
+  A project may include a main jar and associated sources and javadoc jars.
 
-  * {{{./examples/disabling-generic-pom.html}Disable the generation of pom}}
++---+
+  artifact-name-1.0.jar
+  artifact-name-1.0-sources.jar
+  artifact-name-1.0-javadoc.jar
++---+
 
-  * {{{./examples/deploying-with-customed-pom.html}Deploy an artifact with a customized pom}}
+  The sources jar contains the Java sources, and the javadoc jar contains the generated javadocs.
+  To include these files in your deployment, set the <<sources>> and <<javadoc>> parameters to 
+  the paths to the sources and javadoc jar files.
 
-  * {{{./examples/deploying-with-classifiers.html}Deploy an artifact with classifier}}
-
-  * {{{./examples/deploying-sources-javadoc.html}Deploy an artifact with sources and javadoc jars}}
-
-  * {{{./examples/disabling-timestamps-suffix.html}Disable timestamps suffix in an artifact}}
-
-  * {{{./examples/deploying-in-legacy-layout.html}Deploy an artifact in legacy layout}}
-
-  []
++---+
+mvn deploy:deploy-file -Durl=file:///home/me/m2-repo \
+                       -DrepositoryId=some.repo.id \
+                       -Dfile=./path/to/artifact-name-1.0.jar \
+                       -DpomFile=./path/to/pom.xml \
+                       -Dsources=./path/to/artifact-name-1.0-sources.jar \
+                       -Djavadoc=./path/to/artifact-name-1.0-javadoc.jar
++---+
