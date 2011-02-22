@@ -41,6 +41,7 @@ under the License.
         <item name="Disable the generation of pom" href="examples/disabling-generic-pom.html"/>
         <item name="Deploy an artifact with a customed pom" href="examples/deploying-with-customed-pom.html"/>
         <item name="Deploy an artifact with classifier" href="examples/deploying-with-classifiers.html"/>
+        <item name="Deploy an artifact with sources and javadoc" href="examples/deploying-sources-javadoc.html"/>
         <item name="Disable timestamps suffix in an artifact" href="examples/disabling-timestamps-suffix.html"/>
         <item name="Deploy an artifact in legacy layout" href="examples/deploying-in-legacy-layout.html"/>
       </item>
