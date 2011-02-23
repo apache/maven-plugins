@@ -33,7 +33,11 @@ import org.codehaus.plexus.interpolation.StringSearchInterpolator;
 import org.codehaus.plexus.util.StringUtils;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
+import java.util.ListIterator;
 import java.util.Properties;
 
 /**
@@ -260,8 +264,7 @@ public final class AssemblyFormatUtils
 
         value = StringUtils.replace( value, "//", "/" );
         value = StringUtils.replace( value, "\\\\", "\\" );
-        value = StringUtils.replace( value, "./", "" );
-        value = StringUtils.replace( value, ".\\", "" );
+        value = fixRelativeRefs( value );
 
         return value;
     }
@@ -478,10 +481,59 @@ public final class AssemblyFormatUtils
 
         value = StringUtils.replace( value, "//", "/" );
         value = StringUtils.replace( value, "\\\\", "\\" );
-        value = StringUtils.replace( value, "./", "" );
-        value = StringUtils.replace( value, ".\\", "" );
+        value = fixRelativeRefs( value );
 
         return value;
     }
 
+    public static String fixRelativeRefs( String src )
+    {
+        String value = src;
+        
+        String[] separators = {
+            "/", "\\"
+        };
+        
+        String finalSep = null;
+        for ( String sep : separators )
+        {
+            if ( value.endsWith( sep ) )
+            {
+                finalSep = sep;
+            }
+            
+            if ( value.indexOf( "." + sep ) > -1 )
+            {
+                List<String> parts = new ArrayList<String>();
+                parts.addAll( Arrays.asList( value.split( sep ) ) );
+                
+                for ( ListIterator<String> it = parts.listIterator(); it.hasNext(); )
+                {
+                    String part = it.next();
+                    if ( ".".equals( part ) )
+                    {
+                        it.remove();
+                    }
+                    else if ( "..".equals( part ) )
+                    {
+                        it.remove();
+                        if ( it.hasPrevious() )
+                        {
+                            it.previous();
+                            it.remove();
+                        }
+                    }
+                }
+                
+                value = StringUtils.join( parts.iterator(), sep );
+            }
+        }
+        
+        if ( finalSep != null && value.length() > 0 && !value.endsWith( finalSep ) )
+        {
+            value += finalSep;
+        }
+        
+        return value;
+    }
 }
