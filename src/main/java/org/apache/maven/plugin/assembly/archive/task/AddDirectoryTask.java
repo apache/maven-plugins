@@ -21,6 +21,7 @@ package org.apache.maven.plugin.assembly.archive.task;
 
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
+import org.apache.maven.plugin.assembly.utils.AssemblyFormatUtils;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.util.DefaultFileSet;
@@ -111,11 +112,13 @@ public class AddDirectoryTask
                         int i = 0;
                         for ( final Iterator<String> it = includes.iterator(); it.hasNext(); )
                         {
-                            String value = it.next();
-                            if ( value.startsWith( "./" ) || value.startsWith( ".\\" ) )
-                            {
-                                value = value.substring( 2 );
-                            }
+//                          String value = it.next();
+                            String value = AssemblyFormatUtils.fixRelativeRefs( it.next() );
+                            
+//                            if ( value.startsWith( "./" ) || value.startsWith( ".\\" ) )
+//                            {
+//                                value = value.substring( 2 );
+//                            }
 
                             if ( value.startsWith( "/" ) || value.startsWith( "\\" ) )
                             {
@@ -134,11 +137,13 @@ public class AddDirectoryTask
                     int i = 0;
                     for ( final Iterator<String> it = directoryExcludes.iterator(); it.hasNext(); )
                     {
-                        String value = it.next();
-                        if ( value.startsWith( "./" ) || value.startsWith( ".\\" ) )
-                        {
-                            value = value.substring( 2 );
-                        }
+//                        String value = it.next();
+                        String value = AssemblyFormatUtils.fixRelativeRefs( it.next() );
+                        
+//                        if ( value.startsWith( "./" ) || value.startsWith( ".\\" ) )
+//                        {
+//                            value = value.substring( 2 );
+//                        }
 
                         if ( value.startsWith( "/" ) || value.startsWith( "\\" ) )
                         {

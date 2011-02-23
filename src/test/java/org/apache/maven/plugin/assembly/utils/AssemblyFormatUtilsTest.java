@@ -41,6 +41,30 @@ public class AssemblyFormatUtilsTest
 
     private final MockManager mockManager = new MockManager();
 
+    public void testFixRelativePathRefs_ShouldRemoveRelativeRefToCurrentDir()
+        throws AssemblyFormattingException
+    {
+        assertEquals( "path/", AssemblyFormatUtils.fixRelativeRefs( "./path/" ) );
+    }
+
+    public void testFixRelativePathRefs_ShouldRemoveEmbeddedSameDirRef()
+        throws AssemblyFormattingException
+    {
+        assertEquals( "some/path/", AssemblyFormatUtils.fixRelativeRefs( "some/./path/" ) );
+    }
+
+    public void testFixRelativePathRefs_ShouldRemoveEmbeddedParentDirRef()
+        throws AssemblyFormattingException
+    {
+        assertEquals( "path/", AssemblyFormatUtils.fixRelativeRefs( "some/../path/" ) );
+    }
+
+    public void testFixRelativePathRefs_ShouldTruncateRelativeRefToParentDir()
+        throws AssemblyFormattingException
+    {
+        assertEquals( "path/", AssemblyFormatUtils.fixRelativeRefs( "../path/" ) );
+    }
+
     public void testGetDistroName_ShouldUseJustFinalNameWithNoAppendAssemblyIdOrClassifier()
     {
         verifyDistroName( "assembly", null, "finalName", false, "finalName" );
@@ -212,6 +236,30 @@ public class AssemblyFormatUtilsTest
     {
         verifyOutputDir( null, null, null, "" );
     }
+    
+    public void testGetOutputDir_ShouldRemoveRelativeRefToCurrentDir()
+        throws AssemblyFormattingException
+    {
+        verifyOutputDir( "./path/", null, null, "path/" );
+    }
+
+    public void testGetOutputDir_ShouldRemoveEmbeddedSameDirRef()
+        throws AssemblyFormattingException
+    {
+        verifyOutputDir( "some/./path/", null, null, "some/path/" );
+    }
+
+    public void testGetOutputDir_ShouldRemoveEmbeddedParentDirRef()
+        throws AssemblyFormattingException
+    {
+        verifyOutputDir( "some/../path/", null, null, "path/" );
+    }
+
+    public void testGetOutputDir_ShouldTruncateRelativeRefToParentDir()
+        throws AssemblyFormattingException
+    {
+        verifyOutputDir( "../path/", null, null, "path/" );
+    }
 
     public void testGetOutputDir_ShouldResolveProjectProperty()
         throws AssemblyFormattingException
@@ -354,6 +402,34 @@ public class AssemblyFormatUtilsTest
         throws AssemblyFormattingException
     {
         verifyEvalFileNameMappingUsingMainProject( "${project.version}", null, null, null, "version", null, "version",
+                                                   null );
+    }
+
+    public void testEvalFileNameMapping_ShouldRemoveRelativeRefToCurrentDir()
+        throws AssemblyFormattingException
+    {
+        verifyEvalFileNameMappingUsingMainProject( "./path/", null, null, null, null, null, "path/",
+                                                   null );
+    }
+
+    public void testEvalFileNameMapping_ShouldRemoveEmbeddedSameDirRef()
+        throws AssemblyFormattingException
+    {
+        verifyEvalFileNameMappingUsingMainProject( "some/./path/", null, null, null, null, null, "some/path/",
+                                                   null );
+    }
+
+    public void testEvalFileNameMapping_ShouldRemoveEmbeddedParentDirRef()
+        throws AssemblyFormattingException
+    {
+        verifyEvalFileNameMappingUsingMainProject( "some/../path/", null, null, null, null, null, "path/",
+                                                   null );
+    }
+
+    public void testEvalFileNameMapping_ShouldTruncateRelativeRefToParentDir()
+        throws AssemblyFormattingException
+    {
+        verifyEvalFileNameMappingUsingMainProject( "../path/", null, null, null, null, null, "path/",
                                                    null );
     }
 
