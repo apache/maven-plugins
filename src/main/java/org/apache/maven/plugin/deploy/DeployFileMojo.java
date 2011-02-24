@@ -35,6 +35,7 @@ import org.apache.maven.project.MavenProjectHelper;
 import org.apache.maven.project.artifact.ProjectArtifactMetadata;
 import org.apache.maven.project.validation.ModelValidationResult;
 import org.apache.maven.project.validation.ModelValidator;
+import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
@@ -98,6 +99,7 @@ public class DeployFileMojo
 
     /**
      * Type of the artifact to be deployed.  Retrieved from POM file if specified.
+     * Defaults to file extension if not specified via command line or POM.
      *
      * @parameter expression="${packaging}"
      */
@@ -209,6 +211,11 @@ public class DeployFileMojo
 
             processModel( model );
         }
+        
+        if ( packaging == null && file != null )
+        {
+            packaging = FileUtils.getExtension( file.getName() );
+        }
     }
 
     public void execute()
@@ -216,14 +223,14 @@ public class DeployFileMojo
     {
         failIfOffline();
 
-        initProperties();
-
-        validateArtifactInformation();
-
         if ( !file.exists() )
         {
             throw new MojoExecutionException( file.getPath() + " not found." );
         }
+
+        initProperties();
+
+        validateArtifactInformation();
 
         ArtifactRepositoryLayout layout = getLayout( repositoryLayout );
 
