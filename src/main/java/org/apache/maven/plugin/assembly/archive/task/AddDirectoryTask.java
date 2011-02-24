@@ -112,14 +112,8 @@ public class AddDirectoryTask
                         int i = 0;
                         for ( final Iterator<String> it = includes.iterator(); it.hasNext(); )
                         {
-//                          String value = it.next();
                             String value = AssemblyFormatUtils.fixRelativeRefs( it.next() );
                             
-//                            if ( value.startsWith( "./" ) || value.startsWith( ".\\" ) )
-//                            {
-//                                value = value.substring( 2 );
-//                            }
-
                             if ( value.startsWith( "/" ) || value.startsWith( "\\" ) )
                             {
                                 value = value.substring( 1 );
@@ -137,14 +131,8 @@ public class AddDirectoryTask
                     int i = 0;
                     for ( final Iterator<String> it = directoryExcludes.iterator(); it.hasNext(); )
                     {
-//                        String value = it.next();
                         String value = AssemblyFormatUtils.fixRelativeRefs( it.next() );
                         
-//                        if ( value.startsWith( "./" ) || value.startsWith( ".\\" ) )
-//                        {
-//                            value = value.substring( 2 );
-//                        }
-
                         if ( value.startsWith( "/" ) || value.startsWith( "\\" ) )
                         {
                             value = value.substring( 1 );
