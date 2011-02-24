@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
+import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
 import org.apache.maven.model.Model;
 
 /**
@@ -39,6 +40,8 @@ public class DeployFileMojoTest
 
     private File remoteRepo;
 
+    MavenProjectStub projectStub = new MavenProjectStub();
+    
     public void setUp()
         throws Exception
     {
@@ -50,6 +53,8 @@ public class DeployFileMojoTest
         {
             remoteRepo.mkdirs();
         }
+        
+        projectStub.setAttachedArtifacts( new ArrayList() );
     }
 
     public void testDeployTestEnvironment()
@@ -70,6 +75,8 @@ public class DeployFileMojoTest
         DeployFileMojo mojo = (DeployFileMojo) lookupMojo( "deploy-file", testPom );
 
         assertNotNull( mojo );
+        
+        setVariableValueToObject( mojo, "project", projectStub );
 
         String groupId = (String) getVariableValueFromObject( mojo, "groupId" );
 
@@ -165,6 +172,8 @@ public class DeployFileMojoTest
 
         assertNotNull( mojo );
 
+        setVariableValueToObject( mojo, "project", projectStub );
+
         File pomFile = ( File ) getVariableValueFromObject( mojo, "pomFile" );
 
         assertNotNull( pomFile );
@@ -182,6 +191,8 @@ public class DeployFileMojoTest
         DeployFileMojo mojo = (DeployFileMojo) lookupMojo( "deploy-file", testPom );
 
         assertNotNull( mojo );
+
+        setVariableValueToObject( mojo, "project", projectStub );
 
         String classifier = ( String ) getVariableValueFromObject( mojo, "classifier" );
 
@@ -223,6 +234,8 @@ public class DeployFileMojoTest
 
         assertNotNull( mojo );
 
+        setVariableValueToObject( mojo, "project", projectStub );
+
         String groupId = (String) getVariableValueFromObject( mojo, "groupId" );
 
         String artifactId = (String) getVariableValueFromObject( mojo, "artifactId" );
@@ -256,6 +269,8 @@ public class DeployFileMojoTest
         DeployFileMojo mojo = (DeployFileMojo) lookupMojo( "deploy-file", testPom );
 
         assertNotNull( mojo );
+
+        setVariableValueToObject( mojo, "project", projectStub );
 
         String repositoryLayout = (String) getVariableValueFromObject(  mojo, "repositoryLayout" );
 
