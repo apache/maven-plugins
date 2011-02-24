@@ -30,6 +30,8 @@ import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.MavenProjectHelper;
 import org.apache.maven.project.artifact.ProjectArtifactMetadata;
 import org.apache.maven.project.validation.ModelValidationResult;
 import org.apache.maven.project.validation.ModelValidator;
@@ -44,6 +46,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Installs the artifact in the remote repository.
@@ -55,6 +59,22 @@ import java.io.Writer;
 public class DeployFileMojo
     extends AbstractDeployMojo
 {
+    /**
+     * The default Maven project created when building the plugin
+     * 
+     * @parameter default-value="${project}"
+     * @required
+     * @readonly
+     */
+    private MavenProject project;
+
+    /**
+     * Used for attaching the source and javadoc jars to the project.
+     *
+     * @component
+     */
+    private MavenProjectHelper projectHelper;
+
     /**
      * GroupId of the artifact to be deployed.  Retrieved from POM file if specified.
      *
@@ -245,6 +265,8 @@ public class DeployFileMojo
         {
             artifact.setRelease( true );
         }
+        
+        project.setArtifact( artifact );
 
         try
         {
@@ -257,27 +279,27 @@ public class DeployFileMojo
 
         if ( sources != null )
         {
-            artifact = artifactFactory.createArtifactWithClassifier( groupId, artifactId, version, "jar", "sources" );
-            try
-            {
-                getDeployer().deploy( sources, artifact, deploymentRepository, getLocalRepository() );
-            }
-            catch ( ArtifactDeploymentException e )
-            {
-                throw new MojoExecutionException( "Error deploying sources " + sources + ": " + e.getMessage(), e );
-            }
+            projectHelper.attachArtifact( project, "jar", "sources", sources );
         }
 
         if ( javadoc != null )
         {
-            artifact = artifactFactory.createArtifactWithClassifier( groupId, artifactId, version, "jar", "javadoc" );
+            projectHelper.attachArtifact( project, "jar", "javadoc", javadoc );
+        }
+
+        List attachedArtifacts = project.getAttachedArtifacts();
+
+        for ( Iterator i = attachedArtifacts.iterator(); i.hasNext(); )
+        {
+            Artifact attached = ( Artifact ) i.next();
+
             try
             {
-                getDeployer().deploy( javadoc, artifact, deploymentRepository, getLocalRepository() );
+                getDeployer().deploy( attached.getFile(), attached, deploymentRepository, getLocalRepository() );
             }
             catch ( ArtifactDeploymentException e )
             {
-                throw new MojoExecutionException( "Error deploying API docs " + javadoc + ": " + e.getMessage(), e );
+                throw new MojoExecutionException( "Error deploying attached artifact " + attached.getFile() + ": " + e.getMessage(), e );
             }
         }
 
