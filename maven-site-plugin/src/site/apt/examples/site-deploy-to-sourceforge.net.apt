@@ -35,7 +35,7 @@ ssh -t <username>,<project name>@shell.sf.net create
     ...
     <site>
       <id>your_project.sf.net</id>
-      <url>scp://shell.sourceforge.net/home/groups/y/yo/your_project/htdocs</url>
+      <url>scp://shell.sourceforge.net/home/project-web/your_project/htdocs</url>
     </site>
   </distributionManagement>
 ---
@@ -78,7 +78,7 @@ For path information and login help, type "sf-help".
     ...
     <site>
       <id>qifcon.sf.net</id>
-      <url>scp://shell.sourceforge.net/home/groups/q/qi/qifcon/htdocs</url>
+      <url>scp://shell.sourceforge.net/home/project-web/qifcon/htdocs</url>
     </site>
   </distributionManagement>
   ...
