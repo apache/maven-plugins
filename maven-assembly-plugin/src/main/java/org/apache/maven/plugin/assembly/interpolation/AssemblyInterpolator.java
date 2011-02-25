@@ -23,7 +23,6 @@ import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.model.Assembly;
 import org.apache.maven.plugin.assembly.utils.AssemblyFileUtils;
-import org.apache.maven.plugin.assembly.utils.CommandLineUtils;
 import org.apache.maven.plugin.assembly.utils.InterpolationConstants;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.interpolation.InterpolationException;
@@ -40,6 +39,7 @@ import org.codehaus.plexus.interpolation.object.ObjectInterpolationWarning;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.logging.console.ConsoleLogger;
+import org.codehaus.plexus.util.cli.CommandLineUtils;
 
 import java.io.File;
 import java.io.IOException;
