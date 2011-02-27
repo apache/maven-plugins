@@ -45,27 +45,35 @@ import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.WriterFactory;
 
 /**
- * Renders a Maven report.
+ * Renders a Maven report in a doxia site.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
 public class ReportDocumentRenderer
     implements DocumentRenderer
 {
-    private MavenReportExecution mavenReportExecution;
+    private final MavenReport report;
 
-    private RenderingContext renderingContext;
+    private final RenderingContext renderingContext;
 
-    private Log log;
+    private final String pluginInfo;
+
+    private final ClassLoader classLoader;
+    
+    private final Log log;
 
     public ReportDocumentRenderer( MavenReportExecution mavenReportExecution, RenderingContext renderingContext, Log log )
     {
-        this.mavenReportExecution = mavenReportExecution;
+        this.report = mavenReportExecution.getMavenReport();
 
         this.renderingContext = renderingContext;
 
-        this.log = log;
+        this.pluginInfo =
+            mavenReportExecution.getPlugin().getArtifactId() + ':' + mavenReportExecution.getPlugin().getVersion();
 
+        this.classLoader = mavenReportExecution.getClassLoader();
+
+        this.log = log;
     }
 
     private static class MySink
@@ -144,19 +152,16 @@ public class ReportDocumentRenderer
         throws RendererException, FileNotFoundException
     {
         Locale locale = siteRenderingContext.getLocale();
-
-        MavenReport report = mavenReportExecution.getMavenReport();
-
         String localReportName = report.getName( locale );
-        String pluginInfo =
-            mavenReportExecution.getPlugin().getArtifactId() + ':' + mavenReportExecution.getPlugin().getVersion();
-        log.info( "Generating \"" + localReportName + "\" report    --- " + pluginInfo );
+
+        log.info( "Generating \"" + localReportName + "\" report"
+                  + ( pluginInfo == null ? "." : ( "    --- " + pluginInfo ) ) );
 
         MySinkFactory sf = new MySinkFactory( renderingContext );
 
         SiteRendererSink sink = new SiteRendererSink( renderingContext );
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
-        Thread.currentThread().setContextClassLoader( this.mavenReportExecution.getClassLoader() );
+        Thread.currentThread().setContextClassLoader( classLoader );
         try
         {
             if ( report instanceof MavenMultiPageReport )
@@ -244,6 +249,6 @@ public class ReportDocumentRenderer
      */
     public boolean isExternalReport()
     {
-        return mavenReportExecution.getMavenReport().isExternalReport();
+        return report.isExternalReport();
     }
 }
