@@ -19,6 +19,13 @@ package org.apache.maven.plugins.site;
  * under the License.
  */
 
+import java.io.FileNotFoundException;
+import java.io.Writer;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.doxia.sink.render.RenderingContext;
 import org.apache.maven.doxia.siterenderer.DocumentRenderer;
@@ -29,13 +36,8 @@ import org.apache.maven.doxia.siterenderer.sink.SiteRendererSink;
 import org.apache.maven.doxia.tools.MojoLogWrapper;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.reporting.MavenReport;
-import org.codehaus.plexus.i18n.I18N;
 
-import java.io.FileNotFoundException;
-import java.io.Writer;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
+import org.codehaus.plexus.i18n.I18N;
 
 /**
  * Renders a Maven report.

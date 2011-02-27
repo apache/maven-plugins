@@ -24,6 +24,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -36,7 +37,9 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.site.webapp.DoxiaBean;
 import org.apache.maven.plugins.site.webapp.DoxiaFilter;
 import org.apache.maven.reporting.MavenReport;
+
 import org.codehaus.plexus.util.IOUtil;
+
 import org.mortbay.jetty.Connector;
 import org.mortbay.jetty.Handler;
 import org.mortbay.jetty.Server;
