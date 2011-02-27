@@ -175,23 +175,8 @@ public abstract class AbstractSiteRenderingMojo
         List<MavenReport> filteredReports = new ArrayList<MavenReport>( reports.size() );
         for ( MavenReport report : reports )
         {
-            //noinspection ErrorNotRethrown,UnusedCatchParameter
-            try
+            if ( report.canGenerateReport() )
             {
-                if ( report.canGenerateReport() )
-                {
-                    filteredReports.add( report );
-                }
-            }
-            catch ( AbstractMethodError e )
-            {
-                // the canGenerateReport() has been added just before the 2.0 release and will cause all the reporting
-                // plugins with an earlier version to fail (most of the org.codehaus mojo now fails)
-                // be nice with them, output a warning and don't let them break anything
-
-                getLog().warn(
-                               "Error loading report " + report.getClass().getName()
-                                   + " - AbstractMethodError: canGenerateReport()" );
                 filteredReports.add( report );
             }
         }
