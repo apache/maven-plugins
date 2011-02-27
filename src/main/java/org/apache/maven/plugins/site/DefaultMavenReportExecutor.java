@@ -115,7 +115,7 @@ public class DefaultMavenReportExecutor
 
     @Requirement
     protected PluginVersionResolver pluginVersionResolver;
-    
+
     private static final List<String> IMPORTS = Arrays.asList( "org.apache.maven.reporting.MavenReport",
                                                                "org.apache.maven.reporting.MavenMultiPageReport",
                                                                "org.apache.maven.doxia.siterenderer.Renderer",
@@ -162,19 +162,19 @@ public class DefaultMavenReportExecutor
                 {
                     reportPluginKeys.add( pluginKey );
                 }
-                    
+
                 plugin.setVersion( getPluginVersion( reportPlugin, repositoryRequest, mavenReportExecutorRequest ) );
                 mergePluginToReportPlugin( mavenReportExecutorRequest, plugin, reportPlugin );
-               
+
                 logger.info( "configuring report plugin " + plugin.getId() );
 
                 Map<String, PlexusConfiguration> goalsWithConfiguration = new TreeMap<String, PlexusConfiguration>();
 
                 List<RemoteRepository> remoteRepositories = session.getCurrentProject().getRemotePluginRepositories();
-               
+
                 PluginDescriptor pluginDescriptor = mavenPluginManager
                     .getPluginDescriptor( plugin, remoteRepositories, session.getRepositorySession() );
-                
+
                 if ( reportPlugin.getReportSets().isEmpty() && reportPlugin.getReports().isEmpty() )
                 {
                     List<MojoDescriptor> mojoDescriptors = pluginDescriptor.getMojos();
@@ -215,7 +215,7 @@ public class DefaultMavenReportExecutor
                     MojoExecution mojoExecution = new MojoExecution( plugin, entry.getKey(), "report:" + entry.getKey() );
 
                     mojoExecution.setConfiguration( convert( mojoDescriptor ) );
-                    
+
                     if ( reportPlugin.getConfiguration() != null || entry.getValue() != null )
                     {
                         Xpp3Dom reportConfiguration =
@@ -250,7 +250,7 @@ public class DefaultMavenReportExecutor
                     }                    
 
                     mojoExecution.setMojoDescriptor( mojoDescriptor );
-                    
+
                     mavenPluginManager.setupPluginRealm( pluginDescriptor,
                                                          mavenReportExecutorRequest.getMavenSession(),
                                                          Thread.currentThread().getContextClassLoader(), IMPORTS,
@@ -288,26 +288,15 @@ public class DefaultMavenReportExecutor
             throw new MojoExecutionException( "failed to get report for " + pluginKey, e );
         }
     }
-    
+
     private boolean canGenerateReport( MavenReport mavenReport, MojoExecution mojoExecution )
     {
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         try
         {
             Thread.currentThread().setContextClassLoader( mojoExecution.getMojoDescriptor().getRealm() );
-            
-            return mavenReport.canGenerateReport();
-        }
-        catch ( AbstractMethodError e )
-        {
-            // the canGenerateReport() has been added just before Maven 2.0 release and will cause all the reporting
-            // plugins with an earlier version to fail (most of the org.codehaus mojo fail as of october 2005)
-            // be nice with them, output a warning and don't let them break anything
 
-            getLog().warn(
-                           "Error loading report " + mavenReport.getClass().getName()
-                               + " - AbstractMethodError: canGenerateReport()" );
-            return true;
+            return mavenReport.canGenerateReport();
         }
         finally
         {
@@ -329,7 +318,7 @@ public class DefaultMavenReportExecutor
             Mojo mojo = mavenPluginManager.getConfiguredMojo( Mojo.class,
                                                               mavenReportExecutorRequest.getMavenSession(),
                                                               mojoExecution );
-            
+
             return (MavenReport) mojo;
         }
         catch ( ClassCastException e )
