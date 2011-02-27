@@ -46,28 +46,65 @@ import java.util.Locale;
 import java.util.List;
 
 /**
- * Renders a Maven report.
+ * Renders a Maven report in a doxia site.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
 public class ReportDocumentRenderer
     implements DocumentRenderer
 {
-    private MavenReport report;
+    private final MavenReport report;
 
-    private RenderingContext renderingContext;
+    private final RenderingContext renderingContext;
 
-    private Log log;
+    private final String pluginInfo;
+
+    private final Log log;
 
     public ReportDocumentRenderer( MavenReport report, RenderingContext renderingContext, Log log )
     {
         this.report = report;
+
+        pluginInfo = getPluginInfo( report );
 
         this.renderingContext = renderingContext;
 
         this.log = log;
     }
 
+    /**
+     * Get plugin information from report's Manifest.
+     * 
+     * @param report the Maven report
+     * @return plugin information as Specification Title followed by Specification Version if set in Manifest and
+     *         supported by JVM
+     */
+    private String getPluginInfo( MavenReport report )
+    {
+        Package pkg = report.getClass().getPackage();
+
+        if ( pkg != null )
+        {
+            String title = pkg.getSpecificationTitle();
+            String version = pkg.getSpecificationVersion();
+            
+            if ( title == null )
+            {
+                return version;
+            }
+            else if ( version == null )
+            {
+                return title;
+            }
+            else
+            {
+                return title + ' ' + version;
+            }
+        }
+
+        return null;
+    }
+    
     private static class MySink
         extends SiteRendererSink
     {
@@ -145,7 +182,9 @@ public class ReportDocumentRenderer
     {
         Locale locale = siteRenderingContext.getLocale();
         String localReportName = report.getName( locale );
-        log.info( "Generating \"" + localReportName + "\" report." );
+
+        log.info( "Generating \"" + localReportName + "\" report"
+            + ( pluginInfo == null ? "." : ( "    --- " + pluginInfo ) ) );
 
         MySinkFactory sf = new MySinkFactory( renderingContext );
 
