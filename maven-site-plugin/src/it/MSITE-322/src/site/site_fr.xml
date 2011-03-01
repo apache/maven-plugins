@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="ISO-8859-15"?>
+
+<project name="${project.name}">
+	<version position="left" />
+	
+	<body>
+		<menu name="${project.name}">
+			<item name="Accueil" href="index.html" />
+			<item name="Contacts" href="contact.html" />
+			<item name="Retour" href="../index.html" />
+		</menu>
+		<menu name="Doc">
+			<item name="specs" href="doc.html" />
+			<item name="guide" href="gettingstarted.html" />
+		</menu>
+        <menu ref="modules"/> 
+	<menu ref="reports"/>
+	</body>
+</project>

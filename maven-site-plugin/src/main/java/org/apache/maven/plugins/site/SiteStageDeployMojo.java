@@ -97,14 +97,6 @@ public class SiteStageDeployMojo
     private String getStagingSiteURL( MavenProject currentProject,
                                         String usersStagingSiteURL )
     {
-        // Find the relative path between the top parent and the current distribution URLs, if any
-        final MavenProject parentProject = getTopLevelParent( currentProject );
-        String relative = "/" + siteTool.getRelativePath( currentProject.getDistributionManagement().getSite().getUrl(),
-                                                   parentProject.getDistributionManagement().getSite().getUrl() );
-        // SiteTool.getRelativePath() uses File.separatorChar,
-        // so we need to convert '\' to '/' in order for the URL to be valid for Windows users
-        relative = relative.replace( '\\', '/' );
-
         String topLevelURL = null;
 
         if ( usersStagingSiteURL != null )
@@ -117,14 +109,14 @@ public class SiteStageDeployMojo
         {
             // The user didn't specify a URL, use the top level target dir
             topLevelURL =
-                parentProject.getDistributionManagement().getSite().getUrl() + "/" + DEFAULT_STAGING_DIRECTORY;
+                getTopLevelParent( project ).getDistributionManagement().getSite().getUrl() + "/" + DEFAULT_STAGING_DIRECTORY;
             getLog().debug( "stagingSiteURL NOT specified, using the top level project: " + topLevelURL );
         }
 
         // Return either
-        //   usersURL + relative(from parent, to child)
+        //   usersURL
         // or
-        //   topLevelProjectURL + staging + relative(from parent, to child)
-        return topLevelURL + relative;
+        //   topLevelProjectURL + "staging"
+        return topLevelURL;
     }
 }

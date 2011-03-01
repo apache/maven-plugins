@@ -22,6 +22,7 @@ package org.apache.maven.plugins.site;
 import java.io.File;
 
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.maven.artifact.manager.WagonConfigurationException;
 import org.apache.maven.artifact.manager.WagonManager;
@@ -139,6 +140,7 @@ public abstract class AbstractDeployMojo
 
     /**
      * Specifies the target URL for the deploy.
+     * This should be the top-level URL, ie above modules and locale sub-directories.
      *
      * @return the url to deploy to. Not null.
      *
@@ -146,6 +148,21 @@ public abstract class AbstractDeployMojo
      */
     protected abstract String getDeployRepositoryURL()
         throws MojoExecutionException;
+
+    /**
+     * Find the relative path between the distribution URLs of the top parent and the current project.
+     *
+     * @return a String starting with "/".
+     */
+    protected String getDeployModuleDirectory()
+    {
+        String relative = "/" + siteTool.getRelativePath( project.getDistributionManagement().getSite().getUrl(),
+            getTopLevelParent( project ).getDistributionManagement().getSite().getUrl() );
+
+        // SiteTool.getRelativePath() uses File.separatorChar,
+        // so we need to convert '\' to '/' in order for the URL to be valid for Windows users
+        return relative.replace( '\\', '/' );
+    }
 
     /**
      * Use wagon to deploy the generated site to a given repository.
@@ -171,9 +188,6 @@ public abstract class AbstractDeployMojo
                 + "',\n    Using credentials from server id '" + repository.getId() + "'" );
         }
 
-        // TODO: deploy to top level site? is it safe to assume that modules deploy to the same site?
-        //Site topLevelSite = getSite( getTopLevelProject( reactorProjects ) );
-
         deploy( inputDirectory, repository );
     }
 
@@ -194,7 +208,8 @@ public abstract class AbstractDeployMojo
 
         try
         {
-            push( inputDirectory, repository, wagonManager, wagon );
+            push( inputDirectory, repository, wagonManager, wagon,
+                siteTool.getAvailableLocales( locales ), getDeployModuleDirectory() );
 
             if ( chmod )
             {
@@ -272,7 +287,7 @@ public abstract class AbstractDeployMojo
     }
 
     private static void push( final File inputDirectory, final Repository repository,
-        final WagonManager manager, final Wagon wagon )
+        final WagonManager manager, final Wagon wagon, final List<Locale> localesList, final String relativeDir )
         throws MojoExecutionException
     {
         try
@@ -294,7 +309,23 @@ public abstract class AbstractDeployMojo
                 wagon.connect( repository, manager.getAuthenticationInfo( repository.getId() ), proxyInfo );
             }
 
-            wagon.putDirectory( inputDirectory, "." );
+            // Default is first in the list
+            final String defaultLocale = localesList.get( 0 ).getLanguage();
+
+            for ( Locale locale : localesList )
+            {
+                if ( locale.getLanguage().equals( defaultLocale ) )
+                {
+                    // TODO: this also uploads the non-default locales,
+                    // is there a way to exlude directories in wagon?
+                    wagon.putDirectory( inputDirectory, relativeDir );
+                }
+                else
+                {
+                    wagon.putDirectory( new File( inputDirectory, locale.getLanguage() ),
+                        locale.getLanguage() + relativeDir );
+                }
+            }
         }
         catch ( ResourceDoesNotExistException e )
         {

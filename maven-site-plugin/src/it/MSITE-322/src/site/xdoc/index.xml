@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="ISO-8859-15"?>
+<document>
+	<properties>
+		<author>A. Gerodolle</author>
+		<title>Welcome on multimodule project</title>
+	</properties>
+	<body>
+
+		<section name="first section">
+			<p>
+				 this is the multimodule page in english 
+			</p>
+		</section>
+
+	</body>
+</document>
