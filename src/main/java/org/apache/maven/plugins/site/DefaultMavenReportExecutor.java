@@ -57,7 +57,6 @@ import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.Xpp3DomUtils;
-import org.mortbay.log.Log;
 import org.sonatype.aether.repository.RemoteRepository;
 import org.sonatype.aether.util.filter.ExclusionsDependencyFilter;
 
@@ -339,7 +338,7 @@ public class DefaultMavenReportExecutor
                 // too noisy, only in debug mode + e.getMessage() );
                 if ( getLog().isDebugEnabled() )
                 {
-                    Log.debug( e.getMessage(), e );
+                    getLog().debug( e.getMessage(), e );
                 }
                 return null;
             }
