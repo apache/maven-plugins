@@ -51,7 +51,7 @@ public class SiteDeployMojo
     {
         if ( site == null )
         {
-            site = getSite( project );
+            site = getSite( getTopLevelParent( project ) );
         }
 
         return site.getId();
@@ -63,7 +63,7 @@ public class SiteDeployMojo
     {
         if ( site == null )
         {
-            site = getSite( project );
+            site = getSite( getTopLevelParent( project ) );
         }
 
         return site.getUrl();
