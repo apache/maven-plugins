@@ -33,6 +33,7 @@ import org.apache.maven.doxia.tools.SiteTool;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.MavenReport;
+import org.apache.maven.reporting.exec.ReportPlugin;
 import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.util.ReaderFactory;
 

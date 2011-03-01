@@ -35,6 +35,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.site.webapp.DoxiaBean;
 import org.apache.maven.plugins.site.webapp.DoxiaFilter;
+import org.apache.maven.reporting.exec.MavenReportExecution;
 import org.codehaus.plexus.util.IOUtil;
 import org.mortbay.jetty.Connector;
 import org.mortbay.jetty.Handler;

@@ -46,6 +46,9 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.MavenReport;
+import org.apache.maven.reporting.exec.MavenReportExecution;
+import org.apache.maven.reporting.exec.MavenReportExecutor;
+import org.apache.maven.reporting.exec.MavenReportExecutorRequest;
 import org.codehaus.plexus.PlexusContainer;
 
 /**

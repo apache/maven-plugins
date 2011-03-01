@@ -41,6 +41,7 @@ import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.reporting.MavenMultiPageReport;
 import org.apache.maven.reporting.MavenReport;
 import org.apache.maven.reporting.MavenReportException;
+import org.apache.maven.reporting.exec.MavenReportExecution;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.WriterFactory;
 

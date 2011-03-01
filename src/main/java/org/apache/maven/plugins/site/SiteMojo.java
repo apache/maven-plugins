@@ -32,6 +32,7 @@ import org.apache.maven.doxia.siterenderer.SiteRenderingContext;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.reporting.MavenReport;
+import org.apache.maven.reporting.exec.MavenReportExecution;
 
 /**
  * Generates the site for a single project.
