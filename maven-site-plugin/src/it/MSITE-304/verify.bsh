@@ -39,16 +39,8 @@ try
     }
 
     String tmpDir = System.getProperty( "java.io.tmpdir" );
-    String strippedTmpDir = tmpDir.replaceAll( "[\\:\\?\\*]", "" );
 
-    File parentDirectory = new File ( stagingDirectory, "localhost/" + strippedTmpDir + "/www.example.com/parent" );
-    if ( !parentDirectory.exists() || !parentDirectory.isDirectory() )
-    {
-        System.err.println( "Staging directory for parent '" + parentDirectory + "' is missing or not a directory." );
-        return false;
-    }
-
-    File childDirectory = new File ( stagingDirectory, "localhost/" + strippedTmpDir + "/www.example.com/parent/MSITE-304-child" );
+    File childDirectory = new File ( stagingDirectory, "MSITE-304-child" );
     if ( !childDirectory.exists() || !childDirectory.isDirectory() )
     {
         System.err.println( "Staging directory for child '" + childDirectory + "' is missing or not a directory." );
