@@ -82,59 +82,35 @@ public class SiteStageMojo
      * Find the directory where staging will take place.
      *
      * @param currentProject        The currently executing project
-     * @param reactorProjects       The projects in the reactor
      * @param usersStagingDirectory The staging directory as suggested by the user's configuration
+     *
      * @return the directory for staging
      */
     private String getStagingDirectory( MavenProject currentProject,
                                         String usersStagingDirectory )
     {
-        String topLevelURL = null;
-        String relative = "";
+        // Find the relative path between the top parent and the current distribution URLs, if any
+        final MavenProject parentProject = getTopLevelParent( currentProject );
+        String relative = "/" + siteTool.getRelativePath( currentProject.getDistributionManagement().getSite().getUrl(),
+                                                   parentProject.getDistributionManagement().getSite().getUrl() );
+        // SiteTool.getRelativePath() uses File.separatorChar,
+        // so we need to convert '\' to '/' in order for the URL to be valid for Windows users
+        relative = relative.replace( '\\', '/' );
 
-        // If the user has specified a stagingDirectory - use it
+        String topLevelURL = null;
+
         if ( usersStagingDirectory != null )
         {
+            // the user has specified a stagingDirectory - use it
             getLog().debug( "stagingDirectory specified by the user: " + usersStagingDirectory );
             topLevelURL = usersStagingDirectory;
         }
         else
         {
-            getLog().debug( "stagingDirectory NOT specified by the user." );
-        }
-
-        MavenProject parentProject = getTopLevelParent( currentProject );
-
-        // Take the distributionManagement site url from the top level project,
-        // if there is one, otherwise take it from the current project
-        if ( parentProject == null )
-        {
-            if ( topLevelURL == null )
-            {
-                // The user didn't specify a URL and there is no top level project in the reactor
-                // Use current project
-                topLevelURL =
-                    getTopLevelBuildDirectory().getAbsolutePath() + "/" + DEFAULT_STAGING_DIRECTORY;
-                getLog().debug( "No top level project found in the reactor, using the current project: " + topLevelURL );
-            }
-        }
-        else
-        {
-            // Find the relative path between the parent and child distribution URLs, if any
-            relative = "/" + siteTool.getRelativePath( currentProject.getDistributionManagement().getSite().getUrl(),
-                                                       parentProject.getDistributionManagement().getSite().getUrl() );
-            // SiteTool.getRelativePath() uses File.separatorChar, so we need to convert '\' to '/' in order for the URL
-            // to be valid for Windows users
-            relative = relative.replace( '\\', '/' );
-
-            if ( topLevelURL == null )
-            {
-                // The user didn't specify a URL and there is a top level project in the reactor
-                // Use the top level project
-                topLevelURL =
-                    getTopLevelBuildDirectory().getAbsolutePath() + "/" + DEFAULT_STAGING_DIRECTORY;
-                getLog().debug( "Using the top level project: " + topLevelURL );
-            }
+            // The user didn't specify a URL, use the top level target dir
+            topLevelURL =
+                getTopLevelBuildDirectory().getAbsolutePath() + "/" + DEFAULT_STAGING_DIRECTORY;
+            getLog().debug( "stagingDirectory NOT specified, using the top level project: " + topLevelURL );
         }
 
         // Return either
