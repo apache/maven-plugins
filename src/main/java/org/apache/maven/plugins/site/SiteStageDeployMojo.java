@@ -19,7 +19,6 @@ package org.apache.maven.plugins.site;
  * under the License.
  */
 
-import java.util.List;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
@@ -80,7 +79,7 @@ public class SiteStageDeployMojo
     protected String getDeployRepositoryURL()
         throws MojoExecutionException
     {
-        stagingSiteURL = getStagingSiteURL( project, reactorProjects, stagingSiteURL );
+        stagingSiteURL = getStagingSiteURL( project, stagingSiteURL );
 
         getLog().info( "Using this URL for stage deploy: " + stagingSiteURL );
 
@@ -95,7 +94,7 @@ public class SiteStageDeployMojo
      * @param usersStagingSiteURL The staging site URL as suggested by the user's configuration
      * @return the site URL for staging
      */
-    private String getStagingSiteURL( MavenProject currentProject, List<MavenProject> reactorProjects,
+    private String getStagingSiteURL( MavenProject currentProject,
                                         String usersStagingSiteURL )
     {
         String topLevelURL = null;
@@ -104,32 +103,34 @@ public class SiteStageDeployMojo
         // If the user has specified a stagingSiteURL - use it
         if ( usersStagingSiteURL != null )
         {
-            getLog().debug( "stagingSiteURL specified by the user." );
+            getLog().debug( "stagingSiteURL specified by the user: " + usersStagingSiteURL );
             topLevelURL = usersStagingSiteURL;
         }
-        getLog().debug( "stagingSiteURL NOT specified by the user." );
+        else
+        {
+            getLog().debug( "stagingSiteURL NOT specified by the user." );
+        }
 
-        // Find the top level project in the reactor
-        MavenProject topLevelProject = getTopLevelProject( reactorProjects );
+        MavenProject parentProject = getTopLevelParent( currentProject );
 
         // Take the distributionManagement site url from the top level project,
         // if there is one, otherwise take it from the current project
-        if ( topLevelProject == null )
+        if ( parentProject == null )
         {
             if ( topLevelURL == null )
             {
                 // The user didn't specify a URL and there is no top level project in the reactor
                 // Use current project
-                getLog().debug( "No top level project found in the reactor, using the current project." );
                 topLevelURL =
                     currentProject.getDistributionManagement().getSite().getUrl() + "/" + DEFAULT_STAGING_DIRECTORY;
+                getLog().debug( "No top level project found in the reactor, using the current project: " + topLevelURL );
             }
         }
         else
         {
             // Find the relative path between the parent and child distribution URLs, if any
             relative = "/" + siteTool.getRelativePath( currentProject.getDistributionManagement().getSite().getUrl(),
-                                                       topLevelProject.getDistributionManagement().getSite().getUrl() );
+                                                       parentProject.getDistributionManagement().getSite().getUrl() );
             // SiteTool.getRelativePath() uses File.separatorChar, so we need to convert '\' to '/' in order for the URL
             // to be valid for Windows users
             relative = relative.replace( '\\', '/' );
@@ -138,9 +139,9 @@ public class SiteStageDeployMojo
             {
                 // The user didn't specify a URL and there is a top level project in the reactor
                 // Use the top level project
-                getLog().debug( "Using the top level project found in the reactor." );
                 topLevelURL =
-                    topLevelProject.getDistributionManagement().getSite().getUrl() + "/" + DEFAULT_STAGING_DIRECTORY;
+                    parentProject.getDistributionManagement().getSite().getUrl() + "/" + DEFAULT_STAGING_DIRECTORY;
+                getLog().debug( "Using the top level project: " + topLevelURL );
             }
         }
 

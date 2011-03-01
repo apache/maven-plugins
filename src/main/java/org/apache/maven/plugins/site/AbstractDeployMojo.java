@@ -497,4 +497,28 @@ public abstract class AbstractDeployMojo
 
         return null;
     }
+
+    /**
+     * Return the top level parent of the given project.
+     *
+     * @param project the MavenProject. May be null in which case null is returned.
+     *
+     * @return the upper-most parent MavenProject, or the original project if it has no parent.
+     */
+    protected static MavenProject getTopLevelParent( final MavenProject project )
+    {
+        if ( project == null )
+        {
+            return null;
+        }
+
+        MavenProject parent = project;
+
+        while ( parent.getParent() != null )
+        {
+            parent = parent.getParent();
+        }
+
+        return parent;
+    }
 }
