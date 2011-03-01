@@ -25,7 +25,7 @@ under the License.
   <parent>
     <groupId>org.apache.maven.plugins</groupId>
     <artifactId>maven-plugins</artifactId>
-    <version>18</version>
+    <version>19</version>
   </parent>
 
   <artifactId>maven-site-plugin</artifactId>
@@ -183,10 +183,11 @@ under the License.
     <mavenVersion>3.0</mavenVersion>
     <wagonVersion>1.0-beta-6</wagonVersion>
     <plexusVersion>1.5.4</plexusVersion>
+    <scmVersion>1.4</scmVersion>
+    <!-- for ITs -->
     <javadocPluginVersion>2.6.1</javadocPluginVersion>
     <projectInfoReportsPluginVersion>2.2</projectInfoReportsPluginVersion>
     <checkstylePluginVersion>2.5</checkstylePluginVersion>
-    <scmVersion>1.4</scmVersion>
   </properties>
 
   <dependencies>
@@ -518,32 +519,11 @@ under the License.
       <plugins>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-clean-plugin</artifactId>
-          <version>2.4.1</version>
-        </plugin>      
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
-          <version>2.3.1</version>
           <configuration>
             <source>1.5</source>
             <target>1.5</target>
           </configuration>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-plugin-plugin</artifactId>
-          <version>2.6</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-resources-plugin</artifactId>
-          <version>2.4.2</version>
-        </plugin>        
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-site-plugin</artifactId>
-          <version>2.0.1</version>
         </plugin>
       </plugins>
     </pluginManagement>
@@ -564,25 +544,6 @@ under the License.
     </plugins>
   </build>
 
-  <reporting>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-project-info-reports-plugin</artifactId>
-        <version>${projectInfoReportsPluginVersion}</version>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-checkstyle-plugin</artifactId>
-        <version>${checkstylePluginVersion}</version>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>cobertura-maven-plugin</artifactId>
-        <version>2.4</version>
-      </plugin>      
-    </plugins>
-  </reporting>
   <profiles>
     <profile>
       <id>run-its</id>
@@ -665,16 +626,6 @@ under the License.
                 <locale>zh_TW</locale>
               </locales>
             </configuration>
-          </plugin>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-project-info-reports-plugin</artifactId>
-            <version>${projectInfoReportsPluginVersion}</version>
-          </plugin>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-javadoc-plugin</artifactId>
-            <version>${javadocPluginVersion}</version>
           </plugin>
         </plugins>
       </reporting>
