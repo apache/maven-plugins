@@ -170,6 +170,19 @@ public abstract class AbstractSiteRenderingMojo
      */
     protected File generatedSiteDirectory;
 
+    /**
+     * Make links in the site descriptor relative to the project URL.
+     * By default, any absolute links that appear in the site descriptor,
+     * e.g. banner hrefs, breadcrumbs, menu links, etc., will be made relative to project.url.
+     *
+     * Links will not be changed if this is set to false, or if the project has no URL defined.
+     *
+     * @parameter expression="${relativizeDecorationLinks}" default-value="true"
+     *
+     * @since 2.3
+     */
+    private boolean relativizeDecorationLinks;
+
     protected List<MavenReport> filterReports( List<MavenReport> reports )
     {
         List<MavenReport> filteredReports = new ArrayList<MavenReport>( reports.size() );
@@ -221,6 +234,22 @@ public abstract class AbstractSiteRenderingMojo
         {
             throw new MojoExecutionException( "SiteToolException: " + e.getMessage(), e );
         }
+
+        if ( relativizeDecorationLinks )
+        {
+            final String url = project.getUrl();
+
+            if ( url == null )
+            {
+                getLog().warn( "No project URL defined - decoration links will not be relativized!" );
+            }
+            else
+            {
+                getLog().info( "Relativizing decoration links with respect to project URL: " + url );
+                assembler.resolvePaths( decorationModel, url );
+            }
+        }
+
         if ( template != null )
         {
             if ( templateFile != null )
