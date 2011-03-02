@@ -22,7 +22,6 @@ package org.apache.maven.plugins.site;
 import java.io.File;
 
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.project.MavenProject;
 
 /**
  * Generates a site in a local staging or mock directory based on the site URL
@@ -64,7 +63,7 @@ public class SiteStageMojo
         throws MojoExecutionException
     {
         final String stageDir = ( stagingDirectory == null ) ? null : stagingDirectory.getAbsolutePath();
-        final String outputDir = getStagingDirectory( project, stageDir );
+        final String outputDir = getStagingDirectory( stageDir );
 
         getLog().info( "Using this directory for staging: " + outputDir );
 
@@ -81,13 +80,11 @@ public class SiteStageMojo
     /**
      * Find the directory where staging will take place.
      *
-     * @param currentProject        The currently executing project
      * @param usersStagingDirectory The staging directory as suggested by the user's configuration
      *
      * @return the directory for staging
      */
-    private String getStagingDirectory( MavenProject currentProject,
-                                        String usersStagingDirectory )
+    private String getStagingDirectory( String usersStagingDirectory )
     {
         String topLevelURL = null;
 

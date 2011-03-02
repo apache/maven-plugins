@@ -21,7 +21,6 @@ package org.apache.maven.plugins.site;
 
 
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.project.MavenProject;
 
 /**
  * Deploys the generated site to a staging or mock directory to the site URL
@@ -79,7 +78,7 @@ public class SiteStageDeployMojo
     protected String getDeployRepositoryURL()
         throws MojoExecutionException
     {
-        stagingSiteURL = getStagingSiteURL( project, stagingSiteURL );
+        stagingSiteURL = getStagingSiteURL( stagingSiteURL );
 
         getLog().info( "Using this URL for stage deploy: " + stagingSiteURL );
 
@@ -89,13 +88,11 @@ public class SiteStageDeployMojo
     /**
      * Find the URL where staging will take place.
      *
-     * @param currentProject      The currently executing project
      * @param usersStagingSiteURL The staging site URL as suggested by the user's configuration
      * 
      * @return the site URL for staging
      */
-    private String getStagingSiteURL( MavenProject currentProject,
-                                        String usersStagingSiteURL )
+    private String getStagingSiteURL( String usersStagingSiteURL )
     {
         String topLevelURL = null;
 
