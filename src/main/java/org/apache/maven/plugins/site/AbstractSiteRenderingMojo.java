@@ -49,6 +49,7 @@ import org.apache.maven.reporting.MavenReport;
 import org.apache.maven.reporting.exec.MavenReportExecution;
 import org.apache.maven.reporting.exec.MavenReportExecutor;
 import org.apache.maven.reporting.exec.MavenReportExecutorRequest;
+import org.apache.maven.reporting.exec.ReportPlugin;
 import org.codehaus.plexus.PlexusContainer;
 
 /**
@@ -193,7 +194,24 @@ public abstract class AbstractSiteRenderingMojo
     protected PlexusContainer plexusContainer;
 
     /**
-     * The report executor.
+     * Reports (Maven 2).
+     * 
+     * @parameter expression="${reports}"
+     * @required
+     * @readonly
+     */
+    protected List<MavenReport> reports;
+
+    /**
+     * Report plugins (Maven 3).
+     * 
+     * @parameter
+     * @since 3.0-beta-1
+     */
+    private ReportPlugin[] reportPlugins;
+
+    /**
+     * The report executor (Maven 3).
      * 
      * @component
      * @readonly
@@ -203,18 +221,26 @@ public abstract class AbstractSiteRenderingMojo
     protected List<MavenReportExecution> getReports()
         throws MojoExecutionException
     {
-        if ( reportPlugins == null || reportPlugins.length <= 0 )
-        {
-            return Collections.emptyList();
+        if ( reportPlugins != null && reportPlugins.length > 0 )
+        { // to be reviewed : is this the right test to detect Maven 3?
+            MavenReportExecutorRequest mavenReportExecutorRequest = new MavenReportExecutorRequest();
+            mavenReportExecutorRequest.setLocalRepository( localRepository );
+            mavenReportExecutorRequest.setMavenSession( mavenSession );
+            mavenReportExecutorRequest.setProject( project );
+            mavenReportExecutorRequest.setReportPlugins( reportPlugins );
+
+            return mavenReportExecutor.buildMavenReports( mavenReportExecutorRequest );
         }
 
-        MavenReportExecutorRequest mavenReportExecutorRequest = new MavenReportExecutorRequest();
-        mavenReportExecutorRequest.setLocalRepository( localRepository );
-        mavenReportExecutorRequest.setMavenSession( mavenSession );
-        mavenReportExecutorRequest.setProject( project );
-        mavenReportExecutorRequest.setReportPlugins( reportPlugins );
-
-        return mavenReportExecutor.buildMavenReports( mavenReportExecutorRequest );
+        List<MavenReportExecution> reportExecutions = new ArrayList<MavenReportExecution>( reports.size() );
+        for ( MavenReport report : reports )
+        {
+            if ( report.canGenerateReport() )
+            {
+                reportExecutions.add( new MavenReportExecution( report ) );
+            }
+        }
+        return reportExecutions;
     }
 
     protected SiteRenderingContext createSiteRenderingContext( Locale locale )

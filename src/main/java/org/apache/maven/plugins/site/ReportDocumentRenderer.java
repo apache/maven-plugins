@@ -69,12 +69,52 @@ public class ReportDocumentRenderer
 
         this.renderingContext = renderingContext;
 
-        this.pluginInfo =
-            mavenReportExecution.getPlugin().getArtifactId() + ':' + mavenReportExecution.getPlugin().getVersion();
+        if ( mavenReportExecution.getPlugin() == null )
+        {
+            this.pluginInfo = getPluginInfo( report );
+        }
+        else
+        {
+            this.pluginInfo =
+                mavenReportExecution.getPlugin().getArtifactId() + ':' + mavenReportExecution.getPlugin().getVersion();
+        }
 
         this.classLoader = mavenReportExecution.getClassLoader();
 
         this.log = log;
+    }
+
+    /**
+     * Get plugin information from report's Manifest.
+     * 
+     * @param report the Maven report
+     * @return plugin information as Specification Title followed by Specification Version if set in Manifest and
+     *         supported by JVM
+     */
+    private String getPluginInfo( MavenReport report )
+    {
+        Package pkg = report.getClass().getPackage();
+
+        if ( pkg != null )
+        {
+            String title = pkg.getSpecificationTitle();
+            String version = pkg.getSpecificationVersion();
+            
+            if ( title == null )
+            {
+                return version;
+            }
+            else if ( version == null )
+            {
+                return title;
+            }
+            else
+            {
+                return title + ' ' + version;
+            }
+        }
+
+        return null;
     }
 
     private static class MySink
@@ -162,7 +202,10 @@ public class ReportDocumentRenderer
 
         SiteRendererSink sink = new SiteRendererSink( renderingContext );
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
-        Thread.currentThread().setContextClassLoader( classLoader );
+        if ( classLoader != null )
+        {
+            Thread.currentThread().setContextClassLoader( classLoader );
+        }
         try
         {
             if ( report instanceof MavenMultiPageReport )
@@ -170,7 +213,7 @@ public class ReportDocumentRenderer
                 // extended multi-page API
                 ( (MavenMultiPageReport) report ).generate( sink, sf, locale );
             }
-            else
+            else // TODO: insert Maven 2 reflection-based MavenMultiPageReport detection
             {
                 // old single-page-only API
                 report.generate( sink, locale );
@@ -187,7 +230,10 @@ public class ReportDocumentRenderer
         }
         finally
         {
-            Thread.currentThread().setContextClassLoader( originalClassLoader );
+            if ( classLoader != null )
+            {
+                Thread.currentThread().setContextClassLoader( originalClassLoader );
+            }
             sink.close();
         }
 
