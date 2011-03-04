@@ -232,5 +232,6 @@ Using maven-site-plugin 2.x with Maven 2.x and maven-site-plugin 3.x with Maven 
   </profiles>   
 +-----+   
    
-   
+   <<NOTE>> Be aware that you should also use <<<pluginManagement>>> for the maven-site-plugin-2.x to specify the version. 
+   If you define the plugin-version directly inside the <<<plugins>>>-section of the <<<build>>>-tag then that version is always used, no matter the Maven version.  
    
