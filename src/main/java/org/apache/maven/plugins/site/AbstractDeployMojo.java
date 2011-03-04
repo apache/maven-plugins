@@ -26,6 +26,8 @@ import java.util.Locale;
 
 import org.apache.maven.artifact.manager.WagonConfigurationException;
 import org.apache.maven.artifact.manager.WagonManager;
+import org.apache.maven.model.DistributionManagement;
+import org.apache.maven.model.Site;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
@@ -551,5 +553,44 @@ public abstract class AbstractDeployMojo
         }
 
         return parent;
+    }
+
+    /**
+     * Extract the distributionManagment site from the given MavenProject.
+     *
+     * @param project the MavenProject. Not null.
+     *
+     * @return the project site. Not null.
+     *      Also site.getUrl() and site.getId() are guaranteed to be not null.
+     *
+     * @throws MojoExecutionException if any of the site info is missing.
+     */
+    protected static Site getSite( final MavenProject project )
+        throws MojoExecutionException
+    {
+        final String name = project.getName() + " ("
+            + project.getGroupId() + ":" + project.getArtifactId() + ":" + project.getVersion() + ")";
+
+        final DistributionManagement distributionManagement = project.getDistributionManagement();
+
+        if ( distributionManagement == null )
+        {
+            throw new MojoExecutionException( "Missing distribution management in project " + name );
+        }
+
+        final Site site = distributionManagement.getSite();
+
+        if ( site == null )
+        {
+            throw new MojoExecutionException(
+                "Missing site information in the distribution management of the project " + name );
+        }
+
+        if ( site.getUrl() == null || site.getId() == null )
+        {
+            throw new MojoExecutionException( "Missing site data: specify url and id for project " + name );
+        }
+
+        return site;
     }
 }
