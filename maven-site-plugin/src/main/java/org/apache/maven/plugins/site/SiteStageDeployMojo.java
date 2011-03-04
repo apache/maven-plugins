@@ -93,6 +93,7 @@ public class SiteStageDeployMojo
      * @return the site URL for staging
      */
     private String getStagingSiteURL( String usersStagingSiteURL )
+        throws MojoExecutionException
     {
         String topLevelURL = null;
 
@@ -106,7 +107,7 @@ public class SiteStageDeployMojo
         {
             // The user didn't specify a URL, use the top level target dir
             topLevelURL =
-                getTopLevelParent( project ).getDistributionManagement().getSite().getUrl() + "/" + DEFAULT_STAGING_DIRECTORY;
+                getSite( getTopLevelParent( project ) ).getUrl() + "/" + DEFAULT_STAGING_DIRECTORY;
             getLog().debug( "stagingSiteURL NOT specified, using the top level project: " + topLevelURL );
         }
 
