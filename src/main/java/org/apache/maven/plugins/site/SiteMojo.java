@@ -96,6 +96,8 @@ public class SiteMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
+        checkMavenVersion();
+
         List<MavenReport> filteredReports;
         if ( generateReports )
         {

@@ -22,6 +22,7 @@ package org.apache.maven.plugins.site;
 import java.io.File;
 
 import java.util.List;
+import java.util.Properties;
 
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.doxia.tools.SiteTool;
@@ -153,4 +154,34 @@ public abstract class AbstractSiteMojo
 
         return relative;
     }
+
+    /**
+     * Check the current Maven version and emit a warning if it's Maven 3.
+     * This plugin does not work with Maven 3.x.
+     */
+    protected void checkMavenVersion()
+    {
+        try
+        {
+            // This relies on the fact that MavenProject is the in core classloader
+            // and that the core classloader is for the maven-core artifact
+            // and that should have a pom.properties file
+            // if this ever changes, we will have to revisit this code.
+            final Properties properties = new Properties();
+            properties.load( MavenProject.class.getClassLoader().getResourceAsStream(
+                "META-INF/maven/org.apache.maven/maven-core/pom.properties" ) );
+
+            final String version = properties.getProperty( "version" ).trim();
+
+            if ( version.startsWith( "3" ) )
+            {
+                getLog().warn( "Running 2.x site-plugin with Maven 3, use site-plugin-3.x instead!" );
+            }
+        }
+        catch ( Exception e )
+        {
+            getLog().debug( "Unable to determine Maven version", e );
+        }
+    }
+
 }
