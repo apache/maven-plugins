@@ -46,6 +46,7 @@ public class SiteStageMojo
      * Staging directory location. This needs to be an absolute path, like
      * <code>C:\stagingArea\myProject\</code> on Windows or
      * <code>/stagingArea/myProject/</code> on Unix.
+     * If this is not specified, the site will be staged in ${project.build.directory}/staging.
      *
      * @parameter expression="${stagingDirectory}"
      */
