@@ -23,19 +23,15 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.doxia.sink.render.RenderingContext;
 import org.apache.maven.doxia.site.decoration.DecorationModel;
-import org.apache.maven.doxia.site.decoration.inheritance.DecorationModelInheritanceAssembler;
 import org.apache.maven.doxia.siterenderer.DocumentRenderer;
 import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.doxia.siterenderer.RendererException;
@@ -44,13 +40,11 @@ import org.apache.maven.doxia.tools.SiteToolException;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.MavenReport;
 import org.apache.maven.reporting.exec.MavenReportExecution;
 import org.apache.maven.reporting.exec.MavenReportExecutor;
 import org.apache.maven.reporting.exec.MavenReportExecutorRequest;
 import org.apache.maven.reporting.exec.ReportPlugin;
-import org.codehaus.plexus.PlexusContainer;
 
 /**
  * Base class for site rendering mojos.
@@ -79,21 +73,7 @@ public abstract class AbstractSiteRenderingMojo
      *
      * @parameter
      */
-    protected Map<String, String> moduleExcludes;
-
-    /**
-     * The component for assembling inheritance.
-     *
-     * @component
-     */
-    protected DecorationModelInheritanceAssembler assembler;
-
-    /**
-     * The component that is used to resolve additional artifacts required.
-     *
-     * @component
-     */
-    protected ArtifactResolver artifactResolver;
+    private Map<String, String> moduleExcludes;
 
     /**
      * Remote repositories used for the project.
@@ -101,14 +81,7 @@ public abstract class AbstractSiteRenderingMojo
      * @todo this is used for site descriptor resolution - it should relate to the actual project but for some reason they are not always filled in
      * @parameter expression="${project.remoteArtifactRepositories}"
      */
-    protected List<ArtifactRepository> repositories;
-
-    /**
-     * The component used for creating artifact instances.
-     *
-     * @component
-     */
-    protected ArtifactFactory artifactFactory;
+    private List<ArtifactRepository> repositories;
 
     /**
      * Directory containing the template page.
@@ -140,7 +113,7 @@ public abstract class AbstractSiteRenderingMojo
      *
      * @parameter expression="${attributes}"
      */
-    protected Map<Object, Object> attributes;
+    private Map<Object, Object> attributes;
 
     /**
      * Site renderer.
@@ -168,15 +141,6 @@ public abstract class AbstractSiteRenderingMojo
     protected File generatedSiteDirectory;
 
     /**
-     * The current Maven project.
-     *
-     * @parameter expression="${project}"
-     * @required
-     * @readonly
-     */
-    protected MavenProject project;
-
-    /**
      * The current Maven session.
      * 
      * @parameter expression="${session}"
@@ -184,14 +148,6 @@ public abstract class AbstractSiteRenderingMojo
      * @readonly
      */
     protected MavenSession mavenSession;
-
-    /**
-     * The Plexus container.
-     * 
-     * @component
-     * @readonly
-     */
-    protected PlexusContainer plexusContainer;
 
     /**
      * Reports (Maven 2).
@@ -216,7 +172,7 @@ public abstract class AbstractSiteRenderingMojo
      * @component
      * @readonly
      */
-    protected MavenReportExecutor mavenReportExecutor;
+    private MavenReportExecutor mavenReportExecutor;
 
     protected List<MavenReportExecution> getReports()
         throws MojoExecutionException

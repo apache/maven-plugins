@@ -53,7 +53,6 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 public class SiteDescriptorAttachMojo
     extends AbstractSiteMojo
 {
-
     /**
      * @parameter expression="${basedir}"
      * @required
