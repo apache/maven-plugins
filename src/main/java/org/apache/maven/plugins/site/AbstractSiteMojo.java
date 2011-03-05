@@ -44,13 +44,6 @@ import org.codehaus.plexus.util.ReaderFactory;
 public abstract class AbstractSiteMojo
     extends AbstractMojo
 {
-
-    /**
-     * @parameter
-     * @since 3.0-beta-1
-     */
-    protected ReportPlugin[] reportPlugins;
-
     /**
      * A comma separated list of locales supported by Maven. The first valid token will be the default Locale
      * for this instance of the Java Virtual Machine.

@@ -145,6 +145,11 @@ public abstract class AbstractSiteRenderingMojo
      */
     protected Renderer siteRenderer;
 
+    /**
+     * @parameter
+     * @since 3.0-beta-1
+     */
+    private ReportPlugin[] reportPlugins;
 
     /**
      * Alternative directory for xdoc source, useful for m1 to m2 migration
