@@ -71,7 +71,7 @@ public abstract class AbstractSiteRenderingMojo
      *
      * @parameter
      */
-    protected Map<String, String> moduleExcludes;
+    private Map<String, String> moduleExcludes;
 
     /**
      * Remote repositories used for the project.
@@ -79,7 +79,7 @@ public abstract class AbstractSiteRenderingMojo
      * @todo this is used for site descriptor resolution - it should relate to the actual project but for some reason they are not always filled in
      * @parameter expression="${project.remoteArtifactRepositories}"
      */
-    protected List<ArtifactRepository> repositories;
+    private List<ArtifactRepository> repositories;
 
     /**
      * Directory containing the template page.
@@ -111,7 +111,7 @@ public abstract class AbstractSiteRenderingMojo
      *
      * @parameter expression="${attributes}"
      */
-    protected Map<Object, Object> attributes;
+    private Map<Object, Object> attributes;
 
     /**
      * Site renderer.
@@ -167,7 +167,7 @@ public abstract class AbstractSiteRenderingMojo
      * @component
      * @readonly
      */
-    protected MavenReportExecutor mavenReportExecutor;
+    private MavenReportExecutor mavenReportExecutor;
 
     protected List<MavenReportExecution> getReports()
         throws MojoExecutionException
