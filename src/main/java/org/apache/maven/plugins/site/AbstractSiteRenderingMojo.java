@@ -41,7 +41,6 @@ import org.apache.maven.doxia.tools.SiteToolException;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.MavenReport;
 
 /**
