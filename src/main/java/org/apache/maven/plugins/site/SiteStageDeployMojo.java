@@ -67,6 +67,11 @@ public class SiteStageDeployMojo
      * "${project.distributionManagement.site.url}/staging", where "project" is
      * either the current project or, in a reactor build, the top level project
      * in the reactor.
+     * <p>
+     * Note that even if you specify this plugin parameter you still need to indicate
+     * ${project.distributionManagement.site.url} at least in your top level project
+     * in order for relative links between modules to be resolved correctly.
+     * </p>
      *
      * @parameter expression="${stagingSiteURL}"
      * @see <a href="http://maven.apache.org/maven-model/maven.html#class_site">MavenModel#class_site</a>
