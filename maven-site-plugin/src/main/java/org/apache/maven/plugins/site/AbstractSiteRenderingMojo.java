@@ -73,14 +73,14 @@ public abstract class AbstractSiteRenderingMojo
      *
      * @parameter
      */
-    protected Map<String, String> moduleExcludes;
+    private Map<String, String> moduleExcludes;
 
     /**
      * The component for assembling inheritance.
      *
      * @component
      */
-    protected DecorationModelInheritanceAssembler assembler;
+    private DecorationModelInheritanceAssembler assembler;
 
     /**
      * Remote repositories used for the project.
@@ -89,7 +89,7 @@ public abstract class AbstractSiteRenderingMojo
      * @parameter default-value="${project.remoteArtifactRepositories}"
      * @readonly
      */
-    protected List<ArtifactRepository> repositories;
+    private List<ArtifactRepository> repositories;
 
     /**
      * Directory containing the template page.
@@ -121,7 +121,7 @@ public abstract class AbstractSiteRenderingMojo
      *
      * @parameter expression="${attributes}"
      */
-    protected Map<Object, Object> attributes;
+    private Map<Object, Object> attributes;
 
     /**
      * Site renderer.
