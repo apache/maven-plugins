@@ -54,15 +54,6 @@ public class SiteDescriptorAttachMojo
     extends AbstractSiteMojo
 {
     /**
-     * The maven project.
-     *
-     * @parameter default-value="${project}"
-     * @required
-     * @readonly
-     */
-    private MavenProject project;
-
-    /**
      * @parameter expression="${basedir}"
      * @required
      * @readonly

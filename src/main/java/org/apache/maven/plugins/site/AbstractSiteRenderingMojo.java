@@ -144,15 +144,6 @@ public abstract class AbstractSiteRenderingMojo
     protected File generatedSiteDirectory;
 
     /**
-     * The current Maven project.
-     *
-     * @parameter expression="${project}"
-     * @required
-     * @readonly
-     */
-    protected MavenProject project;
-
-    /**
      * The current Maven session.
      * 
      * @parameter expression="${session}"

@@ -74,6 +74,15 @@ public abstract class AbstractSiteMojo
     protected File siteDirectory;
 
     /**
+     * The maven project.
+     *
+     * @parameter default-value="${project}"
+     * @required
+     * @readonly
+     */
+    protected MavenProject project;
+
+    /**
      * The local repository.
      *
      * @parameter default-value="${localRepository}"
