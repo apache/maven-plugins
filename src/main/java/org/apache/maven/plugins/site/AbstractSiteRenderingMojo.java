@@ -30,12 +30,9 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.doxia.sink.render.RenderingContext;
 import org.apache.maven.doxia.site.decoration.DecorationModel;
-import org.apache.maven.doxia.site.decoration.inheritance.DecorationModelInheritanceAssembler;
 import org.apache.maven.doxia.siterenderer.DocumentRenderer;
 import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.doxia.siterenderer.RendererException;
@@ -46,7 +43,6 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.MavenReport;
-import org.codehaus.plexus.PlexusContainer;
 
 /**
  * Base class for site rendering mojos.
@@ -78,33 +74,12 @@ public abstract class AbstractSiteRenderingMojo
     protected Map<String, String> moduleExcludes;
 
     /**
-     * The component for assembling inheritance.
-     *
-     * @component
-     */
-    protected DecorationModelInheritanceAssembler assembler;
-
-    /**
-     * The component that is used to resolve additional artifacts required.
-     *
-     * @component
-     */
-    protected ArtifactResolver artifactResolver;
-
-    /**
      * Remote repositories used for the project.
      *
      * @todo this is used for site descriptor resolution - it should relate to the actual project but for some reason they are not always filled in
      * @parameter expression="${project.remoteArtifactRepositories}"
      */
     protected List<ArtifactRepository> repositories;
-
-    /**
-     * The component used for creating artifact instances.
-     *
-     * @component
-     */
-    protected ArtifactFactory artifactFactory;
 
     /**
      * Directory containing the template page.
@@ -185,14 +160,6 @@ public abstract class AbstractSiteRenderingMojo
      * @readonly
      */
     protected MavenSession mavenSession;
-
-    /**
-     * The Plexus container.
-     * 
-     * @component
-     * @readonly
-     */
-    protected PlexusContainer plexusContainer;
 
     /**
      * The report executor.
