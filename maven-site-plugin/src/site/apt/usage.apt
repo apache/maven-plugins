@@ -143,6 +143,9 @@ mvn site:stage -DstagingDirectory=C:\fullsite
   {{{http://maven.apache.org/guides/mini/guide-deployment-security-settings.html}Guide to Deployment and Security Settings}}
   for more information on this.
 
+  By default, the site will be stage-deployed to <<<${distributionManagement.site.url}/staging/>>>.
+  A different location can be chosen with the <<<stagingSiteURL>>> parameter as shown below:
+
 +-----+
 mvn site:stage-deploy -DstagingSiteURL=scp://www.mycompany.com/www/project/
 +-----+
@@ -167,3 +170,6 @@ mvn site:run
   The server will, by default, be started on <<<http://localhost:8080/>>>. See
   {{{http://jetty.mortbay.org/}http://jetty.mortbay.org/}} for more information about
   the Jetty server.
+
+  <<Note:>> Running a site only works for single-module sites.
+  To preview a multi-module site one should use <<<site:stage>>>.
