@@ -19,32 +19,16 @@ package org.apache.maven.plugins.site;
  * under the License.
  */
 
-import java.io.File;
-import java.util.List;
-
-import javax.inject.Inject;
-
-import org.apache.maven.artifact.manager.WagonManager;
+import org.apache.maven.doxia.tools.SiteTool;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.repository.legacy.WagonConfigurationException;
 import org.apache.maven.settings.Settings;
 import org.apache.maven.settings.crypto.SettingsDecrypter;
-import org.apache.maven.wagon.CommandExecutionException;
-import org.apache.maven.wagon.CommandExecutor;
-import org.apache.maven.wagon.ConnectionException;
-import org.apache.maven.wagon.ResourceDoesNotExistException;
-import org.apache.maven.wagon.TransferFailedException;
-import org.apache.maven.wagon.UnsupportedProtocolException;
-import org.apache.maven.wagon.Wagon;
-import org.apache.maven.wagon.authentication.AuthenticationException;
-import org.apache.maven.wagon.authentication.AuthenticationInfo;
-import org.apache.maven.wagon.authorization.AuthorizationException;
-import org.apache.maven.wagon.observers.Debug;
-import org.apache.maven.wagon.proxy.ProxyInfo;
-import org.apache.maven.wagon.repository.Repository;
 import org.codehaus.plexus.PlexusContainer;
+
+import java.util.List;
+import javax.inject.Inject;
 
 /**
  * Deploys the generated site to a staging or mock directory to the site URL
@@ -89,36 +73,12 @@ public class SiteStageDeployMojo
     private String stagingRepositoryId;
 
     /**
-     * Whether to run the "chmod" command on the remote site after the deploy.
-     * Defaults to "true".
+     * SiteTool.
      *
-     * @parameter expression="${maven.site.chmod}" default-value="true"
-     * @since 2.1
-     */
-    private boolean chmod;
-
-    /**
-     * The mode used by the "chmod" command. Only used if chmod = true.
-     * Defaults to "g+w,a+rX".
-     *
-     * @parameter expression="${maven.site.chmod.mode}" default-value="g+w,a+rX"
-     * @since 2.1
-     */
-    private String chmodMode;
-
-    /**
-     * The options used by the "chmod" command. Only used if chmod = true.
-     * Defaults to "-Rf".
-     *
-     * @parameter expression="${maven.site.chmod.options}" default-value="-Rf"
-     * @since 2.1
-     */
-    private String chmodOptions;
-
-    /**
      * @component
+     * @since 2.3
      */
-    private WagonManager wagonManager;
+    private SiteTool siteTool;
 
     /**
      * The current user system settings for use in Maven.
@@ -143,10 +103,8 @@ public class SiteStageDeployMojo
      * {@inheritDoc}
      */
     public void execute()
-        throws MojoExecutionException, MojoFailureException
+        throws MojoExecutionException
     {
-        super.execute();
-
         deployStagingSite();
     }
 
@@ -162,116 +120,13 @@ public class SiteStageDeployMojo
      *          if any
      */
     private void deployStagingSite()
-        throws MojoExecutionException, MojoFailureException
+        throws MojoExecutionException
     {
         stagingSiteURL = getStagingSiteURL( project, reactorProjects, stagingSiteURL );
-        getLog().info( "Using this URL for staging: " + stagingSiteURL );
-
-        Repository repository = new Repository( stagingRepositoryId, stagingSiteURL );
-
-        // TODO: work on moving this into the deployer like the other deploy methods
-
-        Wagon wagon;
-        
-        String protocol = repository.getProtocol();
-        
-        getLog().debug( "repository protocol " + protocol );
-        
-        ProxyInfo proxyInfo = SiteDeployMojo.getProxy( protocol, stagingSiteURL, getLog(), mavenSession, settingsDecrypter );
-        getLog().debug( "found proxyInfo "
-                            + ( proxyInfo == null ? "null" : "host:port " + proxyInfo.getHost() + ":"
-                                + proxyInfo.getPort() + ", " + proxyInfo.getUserName() ) );
-        AuthenticationInfo authenticationInfo = wagonManager.getAuthenticationInfo( stagingRepositoryId );
-        getLog().debug( "authenticationInfo with id '" + stagingRepositoryId + "' : " + authenticationInfo.getUserName() );        
-        
-        try
-        {
-            wagon = wagonManager.getWagon( repository );
-            SiteDeployMojo.configureWagon( wagon, repository, settings, container, getLog() );
-        }
-        catch ( UnsupportedProtocolException e )
-        {
-            throw new MojoExecutionException( "Unsupported protocol: '" + repository.getProtocol() + "'", e );
-        }
-        catch ( WagonConfigurationException e )
-        {
-            throw new MojoExecutionException( "Unable to configure Wagon: '" + repository.getProtocol() + "'", e );
-        }
+        getLog().info( "Using this URL for stage deploy: " + stagingSiteURL );
 
 
-        if ( !wagon.supportsDirectoryCopy() )
-        {
-            throw new MojoExecutionException(
-                "Wagon protocol '" + repository.getProtocol() + "' doesn't support directory copying" );
-        }
-
-        try
-        {
-            Debug debug = new Debug();
-
-            wagon.addSessionListener( debug );
-
-            wagon.addTransferListener( debug );
-
-            if ( proxyInfo != null )
-            {
-                getLog().debug( "connect with proxyInfo" );
-                wagon.connect( repository, authenticationInfo, proxyInfo );
-            }
-            else if ( proxyInfo == null && authenticationInfo != null )
-            {
-                getLog().debug( "connect with authenticationInfo and without proxyInfo" );
-                wagon.connect( repository, authenticationInfo );
-            }
-            else
-            {
-                getLog().debug( "connect without authenticationInfo and without proxyInfo" );
-                wagon.connect( repository );
-            }
-            wagon.putDirectory( new File( stagingDirectory, getStructure( project, false ) ), "." );
-
-            getLog().debug( "putDirectory end ok " );
-            if ( chmod && wagon instanceof CommandExecutor )
-            {
-                CommandExecutor exec = (CommandExecutor) wagon;
-                exec.executeCommand( "chmod " + chmodOptions + " " + chmodMode + " " + repository.getBasedir() );
-            }
-        }
-        catch ( ResourceDoesNotExistException e )
-        {
-            throw new MojoExecutionException( "Error uploading site", e );
-        }
-        catch ( TransferFailedException e )
-        {
-            throw new MojoExecutionException( "Error uploading site", e );
-        }
-        catch ( AuthorizationException e )
-        {
-            throw new MojoExecutionException( "Error uploading site", e );
-        }
-        catch ( ConnectionException e )
-        {
-            throw new MojoExecutionException( "Error uploading site", e );
-        }
-        catch ( AuthenticationException e )
-        {
-            throw new MojoExecutionException( "Error uploading site", e );
-        }
-        catch ( CommandExecutionException e )
-        {
-            throw new MojoExecutionException( "Error uploading site", e );
-        }
-        finally
-        {
-            try
-            {
-                wagon.disconnect();
-            }
-            catch ( ConnectionException e )
-            {
-                getLog().error( "Error disconnecting wagon - ignored", e );
-            }
-        }
+        deployTo( stagingRepositoryId, stagingSiteURL );
     }
 
     /**

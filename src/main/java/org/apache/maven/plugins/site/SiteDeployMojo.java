@@ -123,7 +123,7 @@ public class SiteDeployMojo
      * @required
      * @readonly
      */
-    private MavenProject project;
+    protected MavenProject project;
 
     /**
      * @component
