@@ -24,7 +24,6 @@ import org.apache.maven.wagon.WagonConstants;
 import org.apache.maven.wagon.repository.RepositoryPermissions;
 import org.codehaus.plexus.util.StringUtils;
 
-import java.io.Serializable;
 import java.util.Properties;
 
 /**
@@ -39,7 +38,7 @@ import java.util.Properties;
  * @todo [BP] some things are specific to certain wagons (eg key stuff in authInfo, permissions)
  */
 public class Repository
-    implements Serializable
+    extends org.apache.maven.wagon.repository.Repository
 {
     private static final long serialVersionUID = 1312227676322136247L;
 
