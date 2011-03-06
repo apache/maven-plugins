@@ -294,13 +294,9 @@ under the License.
       <artifactId>plexus-velocity</artifactId>
       <version>1.1.8</version>
       <exclusions>
-        <exclusion>
-          <groupId>commons-collections</groupId>
-          <artifactId>commons-collections</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>velocity</groupId>
+        <exclusion><!-- not needed with 1.1.9+ -->
           <artifactId>velocity</artifactId>
+          <groupId>velocity</groupId>
         </exclusion>
       </exclusions>
     </dependency>
