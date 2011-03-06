@@ -1,1 +1,1 @@
-clean site:stage-deploy
+clean site:site site:stage site:stage-deploy

@@ -19,18 +19,13 @@ package org.apache.maven.plugins.site;
  * under the License.
  */
 
-import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.List;
-
 import org.apache.commons.lang.StringUtils;
+
 import org.apache.maven.artifact.manager.WagonManager;
 import org.apache.maven.execution.MavenExecutionRequest;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.DistributionManagement;
 import org.apache.maven.model.Site;
-import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
@@ -54,6 +49,7 @@ import org.apache.maven.wagon.authorization.AuthorizationException;
 import org.apache.maven.wagon.observers.Debug;
 import org.apache.maven.wagon.proxy.ProxyInfo;
 import org.apache.maven.wagon.repository.Repository;
+
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.component.annotations.Requirement;
 import org.codehaus.plexus.component.configurator.ComponentConfigurationException;
@@ -63,6 +59,11 @@ import org.codehaus.plexus.component.repository.exception.ComponentLookupExcepti
 import org.codehaus.plexus.configuration.PlexusConfiguration;
 import org.codehaus.plexus.configuration.xml.XmlPlexusConfiguration;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
+
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.List;
 
 /**
  * Deploys the generated site using <code>scp</code> or <code>file</code>
@@ -81,7 +82,7 @@ import org.codehaus.plexus.util.xml.Xpp3Dom;
  * @goal deploy
  */
 public class SiteDeployMojo
-    extends AbstractMojo
+    extends AbstractSiteMojo
 {
     /**
      * Directory containing the generated project sites and report distributions.
@@ -117,13 +118,6 @@ public class SiteDeployMojo
      * @since 2.1
      */
     private String chmodOptions;
-
-    /**
-     * @parameter expression="${project}"
-     * @required
-     * @readonly
-     */
-    private MavenProject project;
 
     /**
      * @component
@@ -163,38 +157,36 @@ public class SiteDeployMojo
     public void execute()
         throws MojoExecutionException
     {
+        final Site site = getSite( project );
+
+        if ( getLog().isDebugEnabled() )
+        {
+            getLog().debug( "The site will be deployed to '" + site.getUrl() + "'");
+            getLog().debug( "Using credentials from repository '" + site.getId() + "'" );
+        }
+
+        deployTo( site.getId(), site.getUrl() );
+    }
+
+    /**
+     * Use wagon to deploy the generated site to a given repository.
+     *
+     * @param id the id that is used to look up credentials for the deploy. Not null.
+     * @param url a valid scm url to deploy to. Not null.
+     *
+     * @throws MojoExecutionException if the deploy fails.
+     *
+     * @since 2.3
+     */
+    protected void deployTo( final String id, final String url )
+            throws MojoExecutionException
+    {
         if ( !inputDirectory.exists() )
         {
             throw new MojoExecutionException( "The site does not exist, please run site:site first" );
         }
 
-        DistributionManagement distributionManagement = project.getDistributionManagement();
-
-        if ( distributionManagement == null )
-        {
-            throw new MojoExecutionException( "Missing distribution management information in the project" );
-        }
-
-        Site site = distributionManagement.getSite();
-
-        if ( site == null )
-        {
-            throw new MojoExecutionException(
-                "Missing site information in the distribution management element in the project.." );
-        }
-
-        String url = site.getUrl();
-
-        String id = site.getId();
-
-        if ( url == null )
-        {
-            throw new MojoExecutionException( "The URL to the site is missing in the project descriptor." );
-        }
-        getLog().debug( "The site will be deployed to url '" + url + "' with id '" + id + "'");
-
         Repository repository = new Repository( id, url );
-
         // TODO: work on moving this into the deployer like the other deploy methods
 
         Wagon wagon;
@@ -503,4 +495,55 @@ public class SiteDeployMojo
         }
     }
 
+    /**
+     * Find the top level parent in the reactor, i.e. the execution root.
+     *
+     * @param reactorProjects The projects in the reactor. May be null in which case null is returnned.
+     * @return The top level project in the reactor, or <code>null</code> if none can be found
+     *
+     * @since 2.3
+     */
+    protected static MavenProject getTopLevelProject( List<MavenProject> reactorProjects )
+    {
+        if ( reactorProjects == null )
+        {
+            return null;
+        }
+
+        for ( MavenProject reactorProject : reactorProjects )
+        {
+            if ( reactorProject.isExecutionRoot() )
+            {
+                return reactorProject;
+            }
+        }
+
+        return null;
+    }
+
+    private static Site getSite( final MavenProject project )
+            throws MojoExecutionException
+    {
+        final DistributionManagement distributionManagement = project.getDistributionManagement();
+
+        if ( distributionManagement == null )
+        {
+            throw new MojoExecutionException( "Missing distribution management information in the project." );
+        }
+
+        final Site site = distributionManagement.getSite();
+
+        if ( site == null )
+        {
+            throw new MojoExecutionException(
+                "Missing site information in the distribution management element in the project." );
+        }
+
+        if ( site.getUrl() == null || site.getId() == null )
+        {
+            throw new MojoExecutionException( "Missing site data for deploy: specify url and id!" );
+        }
+
+        return site;
+    }
 }

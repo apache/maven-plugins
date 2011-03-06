@@ -116,6 +116,7 @@ under the License.
           In a multi module build it is important for the parent and child
           modules to have <strong>different</strong> URLs. If they have the
           same URL, then links within the combined site will not work.
+          Note that a proper URL <strong>should</strong> also be terminated by a slash ("/").
         </p>
       </answer>
     </faq>

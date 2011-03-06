@@ -20,19 +20,14 @@ package org.apache.maven.plugins.site;
  */
 
 import java.io.File;
-import java.util.Iterator;
+
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
 import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.doxia.site.decoration.DecorationModel;
-import org.apache.maven.doxia.site.decoration.Menu;
-import org.apache.maven.doxia.site.decoration.MenuItem;
 import org.apache.maven.doxia.tools.SiteTool;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.reporting.MavenReport;
+
 import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.util.ReaderFactory;
 
@@ -130,50 +125,6 @@ public abstract class AbstractSiteMojo
     protected String getOutputEncoding()
     {
         return ( outputEncoding == null ) ? ReaderFactory.UTF_8 : outputEncoding;
-    }
-
-    protected void populateReportItems( DecorationModel decorationModel, Locale locale,
-                                        Map<String, MavenReport> reportsByOutputName )
-    {
-        for ( Iterator<Menu> i = decorationModel.getMenus().iterator(); i.hasNext(); )
-        {
-            Menu menu = i.next();
-
-            populateItemRefs( menu.getItems(), locale, reportsByOutputName );
-        }
-    }
-
-    private void populateItemRefs( List<MenuItem> items, Locale locale, Map<String, MavenReport> reportsByOutputName )
-    {
-        for ( Iterator<MenuItem> i = items.iterator(); i.hasNext(); )
-        {
-            MenuItem item = i.next();
-
-            if ( item.getRef() != null )
-            {
-                MavenReport report = reportsByOutputName.get( item.getRef() );
-
-                if ( report != null )
-                {
-
-                    if ( item.getName() == null )
-                    {
-                        item.setName( report.getName( locale ) );
-                    }
-
-                    if ( item.getHref() == null || item.getHref().length() == 0 )
-                    {
-                        item.setHref( report.getOutputName() + ".html" );
-                    }
-                }
-                else
-                {
-                    getLog().warn( "Unrecognised reference: '" + item.getRef() + "'" );
-                    i.remove();
-                }
-            }
-            populateItemRefs( item.getItems(), locale, reportsByOutputName );
-        }
     }
 
     /**
