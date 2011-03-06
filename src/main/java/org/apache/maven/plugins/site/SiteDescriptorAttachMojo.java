@@ -23,18 +23,14 @@ import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.Writer;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.doxia.site.decoration.DecorationModel;
 import org.apache.maven.doxia.site.decoration.io.xpp3.DecorationXpp3Reader;
 import org.apache.maven.doxia.site.decoration.io.xpp3.DecorationXpp3Writer;
-import org.apache.maven.doxia.tools.SiteToolException;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
@@ -82,20 +78,12 @@ public class SiteDescriptorAttachMojo
 
             if ( descriptorFile.exists() )
             {
-                Map<String, String> props = new HashMap<String, String>();
-                props.put( "reports", "<menu ref=\"reports\"/>" );
-                props.put( "modules", "<menu ref=\"modules\"/>" );
-
                 DecorationModel decoration;
                 XmlStreamReader reader = null;
                 try
                 {
                     reader = ReaderFactory.newXmlReader( descriptorFile );
                     String siteDescriptorContent = IOUtil.toString( reader );
-
-                    siteDescriptorContent =
-                        siteTool.getInterpolatedSiteDescriptorContent( props, project, siteDescriptorContent,
-                                                                       getInputEncoding(), getOutputEncoding() );
 
                     decoration = new DecorationXpp3Reader().read( new StringReader( siteDescriptorContent ) );
                 }
@@ -107,27 +95,9 @@ public class SiteDescriptorAttachMojo
                 {
                     throw new MojoExecutionException( "Error reading site descriptor", e );
                 }
-                catch ( SiteToolException e )
-                {
-                    throw new MojoExecutionException( "Error when interpolating site descriptor", e );
-                }
                 finally
                 {
                     IOUtils.closeQuietly( reader );
-                }
-
-                MavenProject parentProject = siteTool.getParentProject( project, reactorProjects, localRepository );
-                if ( parentProject != null && project.getUrl() != null && parentProject.getUrl() != null )
-                {
-                    siteTool.populateParentMenu( decoration, locale, project, parentProject, true );
-                }
-                try
-                {
-                    siteTool.populateModulesMenu( project, reactorProjects, localRepository, decoration, locale, true );
-                }
-                catch ( SiteToolException e )
-                {
-                    throw new MojoExecutionException( "Error when populating modules", e );
                 }
 
                 // Calculate the classifier to use
