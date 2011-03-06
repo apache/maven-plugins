@@ -19,12 +19,8 @@ package org.apache.maven.plugins.site;
  * under the License.
  */
 
-import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.List;
-
 import org.apache.commons.lang.StringUtils;
+
 import org.apache.maven.artifact.manager.WagonManager;
 import org.apache.maven.execution.MavenExecutionRequest;
 import org.apache.maven.execution.MavenSession;
@@ -54,6 +50,7 @@ import org.apache.maven.wagon.authorization.AuthorizationException;
 import org.apache.maven.wagon.observers.Debug;
 import org.apache.maven.wagon.proxy.ProxyInfo;
 import org.apache.maven.wagon.repository.Repository;
+
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.component.annotations.Requirement;
 import org.codehaus.plexus.component.configurator.ComponentConfigurationException;
@@ -63,6 +60,11 @@ import org.codehaus.plexus.component.repository.exception.ComponentLookupExcepti
 import org.codehaus.plexus.configuration.PlexusConfiguration;
 import org.codehaus.plexus.configuration.xml.XmlPlexusConfiguration;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
+
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.List;
 
 /**
  * Deploys the generated site using <code>scp</code> or <code>file</code>
@@ -163,33 +165,15 @@ public class SiteDeployMojo
     public void execute()
         throws MojoExecutionException
     {
-        DistributionManagement distributionManagement = project.getDistributionManagement();
+        final Site site = getSite( project );
 
-        if ( distributionManagement == null )
+        if ( getLog().isDebugEnabled() )
         {
-            throw new MojoExecutionException( "Missing distribution management information in the project" );
+            getLog().debug( "The site will be deployed to '" + site.getUrl() + "'");
+            getLog().debug( "Using credentials from repository '" + site.getId() + "'" );
         }
 
-        Site site = distributionManagement.getSite();
-
-        if ( site == null )
-        {
-            throw new MojoExecutionException(
-                "Missing site information in the distribution management element in the project.." );
-        }
-
-        String url = site.getUrl();
-
-        String id = site.getId();
-
-        if ( url == null )
-        {
-            throw new MojoExecutionException( "The URL to the site is missing in the project descriptor." );
-        }
-        getLog().debug( "The site will be deployed to url '" + url + "' with id '" + id + "'");
-        getLog().debug( "Using credentials from repository '" + id + "'" );
-
-        deployTo( id, url );
+        deployTo( site.getId(), site.getUrl() );
     }
 
     /**
@@ -519,4 +503,29 @@ public class SiteDeployMojo
         }
     }
 
+    private static Site getSite( final MavenProject project )
+            throws MojoExecutionException
+    {
+        final DistributionManagement distributionManagement = project.getDistributionManagement();
+
+        if ( distributionManagement == null )
+        {
+            throw new MojoExecutionException( "Missing distribution management information in the project." );
+        }
+
+        final Site site = distributionManagement.getSite();
+
+        if ( site == null )
+        {
+            throw new MojoExecutionException(
+                "Missing site information in the distribution management element in the project." );
+        }
+
+        if ( site.getUrl() == null || site.getId() == null )
+        {
+            throw new MojoExecutionException( "Missing site data for deploy: specify url and id!" );
+        }
+
+        return site;
+    }
 }
