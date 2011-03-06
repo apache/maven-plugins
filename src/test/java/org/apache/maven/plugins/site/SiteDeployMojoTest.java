@@ -19,10 +19,9 @@ package org.apache.maven.plugins.site;
  * under the License.
  */
 
-import junit.framework.TestCase;
-
-import org.apache.maven.artifact.manager.DefaultWagonManager;
+import org.apache.maven.artifact.manager.WagonManager;
 import org.apache.maven.wagon.repository.Repository;
+import org.codehaus.plexus.PlexusTestCase;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,18 +32,18 @@ import org.junit.runners.JUnit4;
  */
 @RunWith(JUnit4.class)
 public class SiteDeployMojoTest
-    extends TestCase
+    extends PlexusTestCase
 {
-    DefaultWagonManager wagonManager;
+    private WagonManager wagonManager;
 
-    Repository repository;
+    private Repository repository;
 
     @Before
     public void setUp()
         throws Exception
     {
         super.setUp();
-        wagonManager = new DefaultWagonManager();
+        wagonManager = getContainer().lookup( WagonManager.class );
         repository = new Repository( "my-repository", "scp://repository-host/var/maven2" );
     }
 
