@@ -19,7 +19,6 @@ package org.apache.maven.plugins.site;
  * under the License.
  */
 
-import org.apache.maven.doxia.tools.SiteTool;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
@@ -73,14 +72,6 @@ public class SiteStageDeployMojo
     private String stagingRepositoryId;
 
     /**
-     * SiteTool.
-     *
-     * @component
-     * @since 2.3
-     */
-    private SiteTool siteTool;
-
-    /**
      * The current user system settings for use in Maven.
      *
      * @parameter expression="${settings}"
@@ -102,6 +93,7 @@ public class SiteStageDeployMojo
     /**
      * {@inheritDoc}
      */
+    @Override
     public void execute()
         throws MojoExecutionException
     {
