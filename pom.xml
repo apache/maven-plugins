@@ -161,10 +161,6 @@ under the License.
     </contributor>
   </contributors>
 
-  <prerequisites>
-    <maven>${mavenVersion}</maven>
-  </prerequisites>
-
   <scm>
     <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/branches/maven-site-plugin-3.x</connection>
     <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/branches/maven-site-plugin-3.x</developerConnection>

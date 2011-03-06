@@ -23,15 +23,16 @@ import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.Writer;
+
 import java.util.List;
 import java.util.Locale;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.maven.doxia.site.decoration.DecorationModel;
 import org.apache.maven.doxia.site.decoration.io.xpp3.DecorationXpp3Reader;
 import org.apache.maven.doxia.site.decoration.io.xpp3.DecorationXpp3Writer;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProjectHelper;
+
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.WriterFactory;
@@ -97,7 +98,7 @@ public class SiteDescriptorAttachMojo
                 }
                 finally
                 {
-                    IOUtils.closeQuietly( reader );
+                    IOUtil.close( reader );
                 }
 
                 // Calculate the classifier to use
@@ -134,7 +135,7 @@ public class SiteDescriptorAttachMojo
                 }
                 finally
                 {
-                    IOUtils.closeQuietly( writer );
+                    IOUtil.close( writer );
                 }
             }
         }

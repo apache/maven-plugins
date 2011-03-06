@@ -72,9 +72,11 @@ Building multi-module sites
   In Maven 3 you must attach the site descriptor yourself, even for projects
   with packaging set to "pom".
 
-  By default, only the basic settings are inherited. From the body, <<only>>
-  the links and breadcrumbs are inherited, and these accumulate to contain all the parents'
+  By default, all the parent descriptor settings are inherited with the only exception of menus, see below.
+  From the body, the links and breadcrumbs accumulate to contain all the parent's
   site descriptor links and breadcrumbs.
+  If the parent contains some breadcrumb and the inheriting site descriptor doesn't,
+  a breadcrumb with the current site descriptor's name will be added automatically.
 
   However, it is possible to inherit menus as well. To do so, use the <<<inherit>>> attribute in the site descriptor. This can
   be either <<<top>>> or <<<bottom>>>, indicating where the inherited menu will be placed. For example:

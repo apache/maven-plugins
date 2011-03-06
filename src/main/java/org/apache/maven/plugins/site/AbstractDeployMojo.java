@@ -25,8 +25,6 @@ import java.net.URL;
 
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
-
 import org.apache.maven.artifact.manager.WagonManager;
 import org.apache.maven.execution.MavenExecutionRequest;
 import org.apache.maven.execution.MavenSession;
@@ -65,6 +63,7 @@ import org.codehaus.plexus.configuration.xml.XmlPlexusConfiguration;
 import org.codehaus.plexus.context.Context;
 import org.codehaus.plexus.context.ContextException;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
+import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 
 /**
@@ -409,8 +408,9 @@ public abstract class AbstractDeployMojo
             if ( StringUtils.contains( nonProxyHost, "*" ) )
             {
                 // Handle wildcard at the end, beginning or middle of the nonProxyHost
-                String nonProxyHostPrefix = StringUtils.substringBefore( nonProxyHost, "*" );
-                String nonProxyHostSuffix = StringUtils.substringAfter( nonProxyHost, "*" );
+                final int pos = nonProxyHost.indexOf( '*' );
+                String nonProxyHostPrefix = nonProxyHost.substring( 0, pos );
+                String nonProxyHostSuffix = nonProxyHost.substring( pos + 1 );
                 // prefix*
                 if ( StringUtils.isNotEmpty( nonProxyHostPrefix ) && host.startsWith( nonProxyHostPrefix )
                     && StringUtils.isEmpty( nonProxyHostSuffix ) )
@@ -451,10 +451,10 @@ public abstract class AbstractDeployMojo
         // but the real protocol (transport layer) is http(s)
         // and it's the one use in wagon to find the proxy arghhh
         // so we will check both
-        if (StringUtils.equalsIgnoreCase( "dav", protocol ) && StringUtils.startsWith( url, "dav:" ))
+        if ( StringUtils.equalsIgnoreCase( "dav", protocol ) && url.startsWith( "dav:" ) )
         {
-            url = StringUtils.substringAfter( url, "dav:" );
-            if (StringUtils.startsWith( url, "http" ))
+            url = url.substring( 4 );
+            if ( url.startsWith( "http" ) )
             {
                 try
                 {
