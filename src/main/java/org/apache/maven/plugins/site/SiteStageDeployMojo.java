@@ -20,14 +20,9 @@ package org.apache.maven.plugins.site;
  */
 
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.settings.Settings;
-import org.apache.maven.settings.crypto.SettingsDecrypter;
-import org.codehaus.plexus.PlexusContainer;
 
 import java.util.List;
-import javax.inject.Inject;
 
 /**
  * Deploys the generated site to a staging or mock directory to the site URL
@@ -70,25 +65,6 @@ public class SiteStageDeployMojo
      * @since 2.0.1
      */
     private String stagingRepositoryId;
-
-    /**
-     * The current user system settings for use in Maven.
-     *
-     * @parameter expression="${settings}"
-     * @required
-     * @readonly
-     */
-    private Settings settings;
-    
-    /**
-     * @since 3.0-beta-2
-     * @component
-     * @readonly
-     */
-    private SettingsDecrypter settingsDecrypter;   
-    
-    @Inject
-    private PlexusContainer container;
 
     /**
      * {@inheritDoc}
