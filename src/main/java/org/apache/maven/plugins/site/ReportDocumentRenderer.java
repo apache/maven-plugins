@@ -19,14 +19,15 @@ package org.apache.maven.plugins.site;
  * under the License.
  */
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Writer;
+import java.io.File;
+
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
+import java.util.List;
 
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.doxia.sink.SinkFactory;
@@ -42,6 +43,7 @@ import org.apache.maven.reporting.MavenMultiPageReport;
 import org.apache.maven.reporting.MavenReport;
 import org.apache.maven.reporting.MavenReportException;
 import org.apache.maven.reporting.exec.MavenReportExecution;
+
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.WriterFactory;
 
