@@ -19,27 +19,27 @@ package org.apache.maven.plugins.site;
  * under the License.
  */
 
-import junit.framework.TestCase;
-import org.apache.maven.artifact.manager.DefaultWagonManager;
 import org.apache.maven.artifact.manager.WagonManager;
 import org.apache.maven.wagon.proxy.ProxyInfo;
 import org.apache.maven.wagon.repository.Repository;
+import org.codehaus.plexus.PlexusTestCase;
 
 /**
  * @author <a href="mailto:cleclerc@xebia.fr">Cyrille Le Clerc</a>
  */
 public class SiteDeployMojoTest
-    extends TestCase
+    extends PlexusTestCase
 {
-    WagonManager wagonManager;
+    private WagonManager wagonManager;
 
-    Repository repository;
+    private Repository repository;
 
+    @Override
     protected void setUp()
         throws Exception
     {
         super.setUp();
-        wagonManager = new DefaultWagonManager();
+        wagonManager = (WagonManager) getContainer().lookup( WagonManager.ROLE );
         repository = new Repository( "my-repository", "scp://repository-host/var/maven2" );
     }
 
