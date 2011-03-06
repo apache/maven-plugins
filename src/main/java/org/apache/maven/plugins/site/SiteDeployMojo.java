@@ -24,10 +24,6 @@ import org.apache.maven.model.Site;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 
-import org.codehaus.plexus.PlexusContainer;
-import org.codehaus.plexus.component.annotations.Requirement;
-
-
 /**
  * Deploys the generated site using <code>scp</code> or <code>file</code>
  * protocol to the site URL specified in the
@@ -48,9 +44,6 @@ public class SiteDeployMojo
     extends AbstractDeployMojo
 {
     private Site site;
-
-    @Requirement
-    private PlexusContainer container;
 
     @Override
     public String getDeployRepositoryID()
