@@ -1,9 +1,5 @@
 package org.apache.maven.plugins.site;
 
-import java.io.File;
-
-import org.apache.maven.plugin.AbstractMojo;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -23,6 +19,10 @@ import org.apache.maven.plugin.AbstractMojo;
  * under the License.
  */
 
+import java.io.File;
+
+import org.apache.maven.plugin.AbstractMojo;
+
 /**
  * @author <a href="mailto:olamy@apache.org">olamy</a>
  * @since 3.0-beta-2
@@ -39,7 +39,8 @@ public class SiteDeployWebDavTest
     }
 
     @Override
-    AbstractMojo getMojo( File pluginXmlFile ) throws Exception
+    AbstractMojo getMojo( File pluginXmlFile )
+        throws Exception
     {
         return (SiteDeployMojo) lookupMojo( getMojoName(), pluginXmlFile );
     }

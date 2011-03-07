@@ -1,5 +1,24 @@
 package org.apache.maven.plugins.site;
 
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
 import java.io.File;
 import java.util.Arrays;
 import java.util.Collections;
@@ -28,8 +47,6 @@ import org.junit.runners.JUnit4;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
-
 /**
  * @author <a href="mailto:olamy@apache.org">olamy</a>
  * @version $Id$
@@ -39,7 +56,7 @@ public abstract class AbstractSiteDeployWebDavTest
     extends AbstractMojoTestCase
 {
     
-    File siteTargetPath = new File(getBasedir() + File.separator + "target" +  File.separator + "siteTargetDeploy");
+    File siteTargetPath = new File( getBasedir() + File.separator + "target" + File.separator + "siteTargetDeploy" );
     
     private Logger log = LoggerFactory.getLogger( getClass() );
     
@@ -48,7 +65,7 @@ public abstract class AbstractSiteDeployWebDavTest
         throws Exception
     {
         super.setUp();
-        if (!siteTargetPath.exists())
+        if ( !siteTargetPath.exists() )
         {
             siteTargetPath.mkdirs();
             FileUtils.cleanDirectory( siteTargetPath );
@@ -57,10 +74,12 @@ public abstract class AbstractSiteDeployWebDavTest
     
     abstract String getMojoName();
     
-    abstract AbstractMojo getMojo( File pluginXmlFile ) throws Exception;
+    abstract AbstractMojo getMojo( File pluginXmlFile )
+        throws Exception;
     
     @Test
-    public void noAuthzDavDeploy() throws Exception
+    public void noAuthzDavDeploy()
+        throws Exception
     {
         FileUtils.cleanDirectory( siteTargetPath );
         SimpleDavServerHandler simpleDavServerHandler = new SimpleDavServerHandler( siteTargetPath );
@@ -69,7 +88,8 @@ public abstract class AbstractSiteDeployWebDavTest
             File pluginXmlFile = getTestFile( "src/test/resources/unit/deploy-dav/pom.xml" );
             AbstractMojo mojo = getMojo( pluginXmlFile );
             assertNotNull( mojo );
-            SiteMavenProjectStub siteMavenProjectStub = new SiteMavenProjectStub("src/test/resources/unit/deploy-dav/pom.xml"); 
+            SiteMavenProjectStub siteMavenProjectStub =
+                new SiteMavenProjectStub( "src/test/resources/unit/deploy-dav/pom.xml" );
             
             siteMavenProjectStub.getDistributionManagement().getSite()
                 .setUrl( "dav:http://localhost:" + simpleDavServerHandler.getPort() + "/site/" );
@@ -77,7 +97,7 @@ public abstract class AbstractSiteDeployWebDavTest
             setVariableValueToObject( mojo, "project", siteMavenProjectStub );
             Settings settings = new Settings();
             setVariableValueToObject( mojo, "settings", settings );
-            File inputDirectory = new File("src/test/resources/unit/deploy-dav/target/site");
+            File inputDirectory = new File( "src/test/resources/unit/deploy-dav/target/site" );
             
             setVariableValueToObject( mojo, "inputDirectory", inputDirectory );
             mojo.execute();
@@ -103,7 +123,8 @@ public abstract class AbstractSiteDeployWebDavTest
             File pluginXmlFile = getTestFile( "src/test/resources/unit/deploy-dav/pom.xml" );
             AbstractMojo mojo = getMojo( pluginXmlFile );
             assertNotNull( mojo );
-            SiteMavenProjectStub siteMavenProjectStub = new SiteMavenProjectStub("src/test/resources/unit/deploy-dav/pom.xml");
+            SiteMavenProjectStub siteMavenProjectStub =
+                new SiteMavenProjectStub( "src/test/resources/unit/deploy-dav/pom.xml" );
             // olamy, Note : toto is something like foo or bar for french folks :-)
             String siteUrl = "dav:http://toto.com/site/";
             siteMavenProjectStub.getDistributionManagement().getSite().setUrl( siteUrl );
@@ -131,7 +152,7 @@ public abstract class AbstractSiteDeployWebDavTest
             SettingsDecrypter settingsDecrypter = getContainer().lookup( SettingsDecrypter.class );
             setVariableValueToObject( mojo, "settingsDecrypter", settingsDecrypter );
             
-            File inputDirectory = new File("src/test/resources/unit/deploy-dav/target/site");
+            File inputDirectory = new File( "src/test/resources/unit/deploy-dav/target/site" );
             
             setVariableValueToObject( mojo, "inputDirectory", inputDirectory );
             mojo.execute();
@@ -140,7 +161,7 @@ public abstract class AbstractSiteDeployWebDavTest
             
             assertTrue( requestsContainsProxyUse( simpleDavServerHandler.httpRequests ) );
             
-            for (HttpRequest rq : simpleDavServerHandler.httpRequests)
+            for ( HttpRequest rq : simpleDavServerHandler.httpRequests )
             {
                 log.info( rq.toString() );
             }
@@ -163,7 +184,7 @@ public abstract class AbstractSiteDeployWebDavTest
         Map<String, String> authentications = new HashMap<String, String>();
         authentications.put( "foo", "titi" );
         
-        AuthAsyncProxyServlet servlet = new  AuthAsyncProxyServlet(authentications, siteTargetPath);
+        AuthAsyncProxyServlet servlet = new AuthAsyncProxyServlet( authentications, siteTargetPath );
 
         SimpleDavServerHandler simpleDavServerHandler = new SimpleDavServerHandler( servlet );        
         try
@@ -171,7 +192,8 @@ public abstract class AbstractSiteDeployWebDavTest
             File pluginXmlFile = getTestFile( "src/test/resources/unit/deploy-dav/pom.xml" );
             AbstractMojo mojo = getMojo( pluginXmlFile );
             assertNotNull( mojo );
-            SiteMavenProjectStub siteMavenProjectStub = new SiteMavenProjectStub("src/test/resources/unit/deploy-dav/pom.xml"); 
+            SiteMavenProjectStub siteMavenProjectStub =
+                new SiteMavenProjectStub( "src/test/resources/unit/deploy-dav/pom.xml" );
             
             siteMavenProjectStub.getDistributionManagement().getSite()
                 .setUrl( "dav:http://toto.com/site/" );
@@ -201,10 +223,10 @@ public abstract class AbstractSiteDeployWebDavTest
             SettingsDecrypter settingsDecrypter = getContainer().lookup( SettingsDecrypter.class );
             setVariableValueToObject( mojo, "settingsDecrypter", settingsDecrypter );
             
-            File inputDirectory = new File("src/test/resources/unit/deploy-dav/target/site");
+            File inputDirectory = new File( "src/test/resources/unit/deploy-dav/target/site" );
             
             // test which mojo we are using
-            if (ReflectionUtils.getFieldByNameIncludingSuperclasses( "inputDirectory", mojo.getClass() ) != null)
+            if ( ReflectionUtils.getFieldByNameIncludingSuperclasses( "inputDirectory", mojo.getClass() ) != null )
             {
                 setVariableValueToObject( mojo, "inputDirectory", inputDirectory );
             }
@@ -225,8 +247,8 @@ public abstract class AbstractSiteDeployWebDavTest
             
             assertContentInFiles();
             assertTrue( requestsContainsProxyUse( servlet.httpRequests ) );
-            assertAtLeastOneRequestContainsHeader(servlet.httpRequests, "Proxy-Authorization");
-            for (HttpRequest rq : servlet.httpRequests)
+            assertAtLeastOneRequestContainsHeader( servlet.httpRequests, "Proxy-Authorization" );
+            for ( HttpRequest rq : servlet.httpRequests )
             {
                 log.info( rq.toString() );
             }

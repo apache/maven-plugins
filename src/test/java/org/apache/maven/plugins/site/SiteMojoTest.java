@@ -18,6 +18,7 @@ package org.apache.maven.plugins.site;
  * specific language governing permissions and limitations
  * under the License.
  */
+
 import java.io.File;
 import java.util.HashMap;
 
