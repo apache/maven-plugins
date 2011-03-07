@@ -21,15 +21,7 @@ package org.apache.maven.plugins.site;
 
 import java.io.File;
 
-import java.util.List;
-
-import org.apache.maven.model.Site;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.project.MavenProject;
-import org.apache.maven.plugins.site.wagon.repository.Repository;
-
-import org.codehaus.plexus.util.StringUtils;
 
 /**
  * Generates a site in a local staging or mock directory based on the site URL
@@ -54,6 +46,7 @@ public class SiteStageMojo
      * Staging directory location. This needs to be an absolute path, like
      * <code>C:\stagingArea\myProject\</code> on Windows or
      * <code>/stagingArea/myProject/</code> on Unix.
+     * If this is not specified, the site will be staged in ${project.build.directory}/staging.
      *
      * @parameter expression="${stagingDirectory}"
      */
@@ -70,27 +63,12 @@ public class SiteStageMojo
     protected String getDeployRepositoryURL()
         throws MojoExecutionException
     {
-        String structureProject;
+        final String stageDir = ( stagingDirectory == null ) ? null : stagingDirectory.getAbsolutePath();
+        final String outputDir = getStagingDirectory( stageDir );
 
-        try
-        {
-            structureProject = getStructure( project, false );
-        }
-        catch ( MojoFailureException ex )
-        {
-            throw new MojoExecutionException( "Missing site information.", ex );
-        }
+        getLog().info( "Using this directory for staging: " + outputDir );
 
-        if ( structureProject == null )
-        {
-            throw new MojoExecutionException( "Missing site information." );
-        }
-
-        stagingDirectory = getStagingDirectory( project, reactorProjects, stagingDirectory );
-        getLog().info( "Using this directory for staging: " + stagingDirectory );
-
-        final File outputDirectory = new File( stagingDirectory, structureProject );
-
+        final File outputDirectory = new File( outputDir );
         // Safety
         if ( !outputDirectory.exists() )
         {
@@ -103,86 +81,32 @@ public class SiteStageMojo
     /**
      * Find the directory where staging will take place.
      *
-     * @param currentProject        The currently executing project
-     * @param reactorProjects       The projects in the reactor
      * @param usersStagingDirectory The staging directory as suggested by the user's configuration
+     *
      * @return the directory for staging
      */
-    private File getStagingDirectory( MavenProject currentProject, List<MavenProject> reactorProjects,
-                                        File usersStagingDirectory )
+    private String getStagingDirectory( String usersStagingDirectory )
     {
-        // Check if the user has specified a stagingDirectory
+        String topLevelURL = null;
+
         if ( usersStagingDirectory != null )
         {
-            getLog().debug( "stagingDirectory specified by the user." );
-            return usersStagingDirectory;
+            // the user has specified a stagingDirectory - use it
+            getLog().debug( "stagingDirectory specified by the user: " + usersStagingDirectory );
+            topLevelURL = usersStagingDirectory;
         }
-        getLog().debug( "stagingDirectory NOT specified by the user." );
-
-        return new File( getTopLevelBuildDirectory(), DEFAULT_STAGING_DIRECTORY );
-    }
-
-    /**
-     * Generates the site structure using the project hiearchy (project and its modules) or using the
-     * distributionManagement elements from the pom.xml.
-     *
-     * @param project
-     * @param ignoreMissingSiteUrl
-     * @return the structure relative path
-     * @throws MojoFailureException if any
-     */
-    private static String getStructure( MavenProject project, boolean ignoreMissingSiteUrl )
-        throws MojoFailureException
-    {
-        if ( project.getDistributionManagement() == null )
+        else
         {
-            String hierarchy = project.getArtifactId();
-
-            MavenProject parent = project.getParent();
-            while ( parent != null )
-            {
-                hierarchy = parent.getArtifactId() + "/" + hierarchy;
-                parent = parent.getParent();
-            }
-
-            return hierarchy;
+            // The user didn't specify a URL, use the top level target dir
+            topLevelURL =
+                getTopLevelBuildDirectory().getAbsolutePath() + "/" + DEFAULT_STAGING_DIRECTORY;
+            getLog().debug( "stagingDirectory NOT specified, using the top level project: " + topLevelURL );
         }
 
-        Site site = project.getDistributionManagement().getSite();
-        if ( site == null )
-        {
-            if ( !ignoreMissingSiteUrl )
-            {
-                throw new MojoFailureException(
-                    "Missing site information in the distribution management element in the project: '"
-                    + project.getName() + "'." );
-            }
-
-            return null;
-        }
-
-        if ( StringUtils.isEmpty( site.getUrl() ) )
-        {
-            if ( !ignoreMissingSiteUrl )
-            {
-                throw new MojoFailureException( "The URL in the site is missing in the project descriptor." );
-            }
-
-            return null;
-        }
-
-        Repository repository = new Repository( site.getId(), site.getUrl() );
-        StringBuffer hierarchy = new StringBuffer( 1024 );
-        hierarchy.append( repository.getHost() );
-        if ( !StringUtils.isEmpty( repository.getBasedir() ) )
-        {
-            if ( !repository.getBasedir().startsWith( "/" ) )
-            {
-                hierarchy.append( '/' );
-            }
-            hierarchy.append( repository.getBasedir() );
-        }
-
-        return hierarchy.toString().replaceAll( "[\\:\\?\\*]", "" );
+        // Return either
+        //   usersURL
+        // or
+        //   topLevelProjectURL + "staging"
+        return topLevelURL;
     }
 }

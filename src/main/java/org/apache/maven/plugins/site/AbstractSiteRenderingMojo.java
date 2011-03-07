@@ -19,12 +19,25 @@ package org.apache.maven.plugins.site;
  * under the License.
  */
 
+import java.io.File;
+import java.io.IOException;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.doxia.sink.render.RenderingContext;
 import org.apache.maven.doxia.site.decoration.DecorationModel;
 import org.apache.maven.doxia.site.decoration.Menu;
 import org.apache.maven.doxia.site.decoration.MenuItem;
+import org.apache.maven.doxia.site.decoration.inheritance.DecorationModelInheritanceAssembler;
 import org.apache.maven.doxia.siterenderer.DocumentRenderer;
 import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.doxia.siterenderer.RendererException;
@@ -39,16 +52,6 @@ import org.apache.maven.reporting.exec.MavenReportExecutor;
 import org.apache.maven.reporting.exec.MavenReportExecutorRequest;
 import org.apache.maven.reporting.exec.ReportPlugin;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
 /**
  * Base class for site rendering mojos.
@@ -78,6 +81,13 @@ public abstract class AbstractSiteRenderingMojo
      * @parameter
      */
     private Map<String, String> moduleExcludes;
+
+    /**
+     * The component for assembling inheritance.
+     *
+     * @component
+     */
+    private DecorationModelInheritanceAssembler assembler;
 
     /**
      * Remote repositories used for the project.
@@ -166,6 +176,19 @@ public abstract class AbstractSiteRenderingMojo
      */
     private MavenReportExecutor mavenReportExecutor;
 
+    /**
+     * Make links in the site descriptor relative to the project URL.
+     * By default, any absolute links that appear in the site descriptor,
+     * e.g. banner hrefs, breadcrumbs, menu links, etc., will be made relative to project.url.
+     *
+     * Links will not be changed if this is set to false, or if the project has no URL defined.
+     *
+     * @parameter expression="${relativizeDecorationLinks}" default-value="true"
+     *
+     * @since 2.3
+     */
+    private boolean relativizeDecorationLinks;
+
     protected List<MavenReportExecution> getReports()
         throws MojoExecutionException
     {
@@ -208,7 +231,7 @@ public abstract class AbstractSiteRenderingMojo
 
         // Put any of the properties in directly into the Velocity context
         attributes.putAll( project.getProperties() );
-       
+
         DecorationModel decorationModel;
         try
         {
@@ -221,6 +244,22 @@ public abstract class AbstractSiteRenderingMojo
         {
             throw new MojoExecutionException( "SiteToolException: " + e.getMessage(), e );
         }
+
+        if ( relativizeDecorationLinks )
+        {
+            final String url = project.getUrl();
+
+            if ( url == null )
+            {
+                getLog().warn( "No project URL defined - decoration links will not be relativized!" );
+            }
+            else
+            {
+                getLog().info( "Relativizing decoration links with respect to project URL: " + url );
+                assembler.resolvePaths( decorationModel, url );
+            }
+        }
+
         if ( template != null )
         {
             if ( templateFile != null )

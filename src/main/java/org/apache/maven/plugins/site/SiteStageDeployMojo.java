@@ -19,10 +19,9 @@ package org.apache.maven.plugins.site;
  * under the License.
  */
 
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.project.MavenProject;
 
-import java.util.List;
+import org.apache.maven.plugin.MojoExecutionException;
+
 
 /**
  * Deploys the generated site to a staging or mock directory to the site URL
@@ -68,6 +67,7 @@ public class SiteStageDeployMojo
 
     private static final String DEFAULT_STAGING_DIRECTORY = "staging";
 
+
     @Override
     protected String getDeployRepositoryID()
         throws MojoExecutionException
@@ -79,7 +79,7 @@ public class SiteStageDeployMojo
     protected String getDeployRepositoryURL()
         throws MojoExecutionException
     {
-        stagingSiteURL = getStagingSiteURL( project, reactorProjects, stagingSiteURL );
+        stagingSiteURL = getStagingSiteURL( stagingSiteURL );
 
         getLog().info( "Using this URL for stage deploy: " + stagingSiteURL );
 
@@ -89,64 +89,33 @@ public class SiteStageDeployMojo
     /**
      * Find the URL where staging will take place.
      *
-     * @param currentProject      The currently executing project
-     * @param reactorProjects     The projects in the reactor
      * @param usersStagingSiteURL The staging site URL as suggested by the user's configuration
+     * 
      * @return the site URL for staging
      */
-    private String getStagingSiteURL( MavenProject currentProject, List<MavenProject> reactorProjects,
-                                        String usersStagingSiteURL )
+    private String getStagingSiteURL( String usersStagingSiteURL )
+        throws MojoExecutionException
     {
         String topLevelURL = null;
-        String relative = "";
 
-        // If the user has specified a stagingSiteURL - use it
         if ( usersStagingSiteURL != null )
         {
-            getLog().debug( "stagingSiteURL specified by the user." );
+            // the user has specified a stagingSiteURL - use it
+            getLog().debug( "stagingSiteURL specified by the user: " + usersStagingSiteURL );
             topLevelURL = usersStagingSiteURL;
-        }
-        getLog().debug( "stagingSiteURL NOT specified by the user." );
-
-        // Find the top level project in the reactor
-        MavenProject topLevelProject = getTopLevelProject( reactorProjects );
-
-        // Take the distributionManagement site url from the top level project,
-        // if there is one, otherwise take it from the current project
-        if ( topLevelProject == null )
-        {
-            if ( topLevelURL == null )
-            {
-                // The user didn't specify a URL and there is no top level project in the reactor
-                // Use current project
-                getLog().debug( "No top level project found in the reactor, using the current project." );
-                topLevelURL =
-                    currentProject.getDistributionManagement().getSite().getUrl() + "/" + DEFAULT_STAGING_DIRECTORY;
-            }
         }
         else
         {
-            // Find the relative path between the parent and child distribution URLs, if any
-            relative = "/" + siteTool.getRelativePath( currentProject.getDistributionManagement().getSite().getUrl(),
-                                                       topLevelProject.getDistributionManagement().getSite().getUrl() );
-            // SiteTool.getRelativePath() uses File.separatorChar, so we need to convert '\' to '/' in order for the URL
-            // to be valid for Windows users
-            relative = relative.replace( '\\', '/' );
-
-            if ( topLevelURL == null )
-            {
-                // The user didn't specify a URL and there is a top level project in the reactor
-                // Use the top level project
-                getLog().debug( "Using the top level project found in the reactor." );
-                topLevelURL =
-                    topLevelProject.getDistributionManagement().getSite().getUrl() + "/" + DEFAULT_STAGING_DIRECTORY;
-            }
+            // The user didn't specify a URL, use the top level target dir
+            topLevelURL =
+                getSite( getTopLevelParent( project ) ).getUrl() + "/" + DEFAULT_STAGING_DIRECTORY;
+            getLog().debug( "stagingSiteURL NOT specified, using the top level project: " + topLevelURL );
         }
 
         // Return either
-        //   usersURL + relative(from parent, to child)
+        //   usersURL
         // or
-        //   topLevelProjectURL + staging + relative(from parent, to child)
-        return topLevelURL + relative;
+        //   topLevelProjectURL + "staging"
+        return topLevelURL;
     }
 }

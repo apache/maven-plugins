@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>site-plugin-its</groupId>
+    <artifactId>pom</artifactId>
+    <version>1-SNAPSHOT</version>
+    <relativePath>../pom/pom.xml</relativePath>
+  </parent>
+
+  <artifactId>aggregator</artifactId>
+  <version>1-SNAPSHOT</version>
+  <packaging>pom</packaging>
+
+  <name>Plugins</name>
+  <url>http://example.net/plugins/</url>
+
+  <distributionManagement>
+    <!-- override parent because artifactId does not match -->
+    <site>
+      <id>website</id>
+      <url>file://@project.build.directory@/it/site-stage-deploy/deploy/plugins/</url>
+    </site>
+  </distributionManagement>
+
+  <modules>
+    <module>maven-rocks-plugin</module>
+  </modules>
+
+</project>

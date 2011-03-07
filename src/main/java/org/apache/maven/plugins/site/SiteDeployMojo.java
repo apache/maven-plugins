@@ -19,10 +19,8 @@ package org.apache.maven.plugins.site;
  * under the License.
  */
 
-import org.apache.maven.model.DistributionManagement;
 import org.apache.maven.model.Site;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.project.MavenProject;
 
 /**
  * Deploys the generated site using <code>scp</code> or <code>file</code>
@@ -51,7 +49,7 @@ public class SiteDeployMojo
     {
         if ( site == null )
         {
-            site = getSite( project );
+            site = getSite( getTopLevelParent( project ) );
         }
 
         return site.getId();
@@ -63,35 +61,9 @@ public class SiteDeployMojo
     {
         if ( site == null )
         {
-            site = getSite( project );
+            site = getSite( getTopLevelParent( project ) );
         }
 
         return site.getUrl();
-    }
-
-    private static Site getSite( final MavenProject project )
-        throws MojoExecutionException
-    {
-        final DistributionManagement distributionManagement = project.getDistributionManagement();
-
-        if ( distributionManagement == null )
-        {
-            throw new MojoExecutionException( "Missing distribution management information in the project." );
-        }
-
-        final Site site = distributionManagement.getSite();
-
-        if ( site == null )
-        {
-            throw new MojoExecutionException(
-                "Missing site information in the distribution management element in the project." );
-        }
-
-        if ( site.getUrl() == null || site.getId() == null )
-        {
-            throw new MojoExecutionException( "Missing site data for deploy: specify url and id!" );
-        }
-
-        return site;
     }
 }
