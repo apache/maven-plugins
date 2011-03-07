@@ -233,7 +233,7 @@ under the License.
       <artifactId>maven-settings-builder</artifactId>
       <version>${mavenVersion}</version>
     </dependency>    
-    
+
     <dependency>
       <groupId>org.sonatype.aether</groupId>
       <artifactId>aether-util</artifactId>
@@ -246,7 +246,6 @@ under the License.
     </dependency>
 
     <!-- Doxia -->
-
     <dependency>
       <groupId>org.apache.maven.doxia</groupId>
       <artifactId>doxia-sink-api</artifactId>
@@ -292,7 +291,7 @@ under the License.
       <version>${doxiaVersion}</version>
       <scope>runtime</scope>
     </dependency>
-    
+
     <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>servlet-api</artifactId>
@@ -309,17 +308,6 @@ under the License.
       <groupId>org.apache.maven.doxia</groupId>
       <artifactId>doxia-site-renderer</artifactId>
       <version>${doxiaSitetoolsVersion}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.codehaus.plexus</groupId>
-      <artifactId>plexus-velocity</artifactId>
-      <version>1.1.8</version>
-      <exclusions>
-        <exclusion><!-- not needed with 1.1.9+ -->
-          <artifactId>velocity</artifactId>
-          <groupId>velocity</groupId>
-        </exclusion>
-      </exclusions>
     </dependency>
 
     <dependency>
@@ -419,6 +407,17 @@ under the License.
         <exclusion>
           <groupId>org.codehaus.plexus</groupId>
           <artifactId>plexus-component-api</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.plexus</groupId>
+      <artifactId>plexus-velocity</artifactId>
+      <version>1.1.8</version>
+      <exclusions>
+        <exclusion><!-- not needed with 1.1.9+ -->
+          <artifactId>velocity</artifactId>
+          <groupId>velocity</groupId>
         </exclusion>
       </exclusions>
     </dependency>
