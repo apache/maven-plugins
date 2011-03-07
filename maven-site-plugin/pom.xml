@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?>
+<?xml version="1.0" encoding="UTF-8"?>
 
 <!--
 Licensed to the Apache Software Foundation (ASF) under one
@@ -217,17 +217,30 @@ under the License.
     <!-- Doxia -->
     <dependency>
       <groupId>org.apache.maven.doxia</groupId>
-      <artifactId>doxia-module-xhtml</artifactId>
-      <version>${doxiaVersion}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven.doxia</groupId>
       <artifactId>doxia-sink-api</artifactId>
       <version>${doxiaVersion}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.doxia</groupId>
       <artifactId>doxia-logging-api</artifactId>
+      <version>${doxiaVersion}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.maven.doxia</groupId>
+      <artifactId>doxia-core</artifactId>
+      <version>${doxiaVersion}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>commons-logging</groupId>
+          <artifactId>commons-logging</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.maven.doxia</groupId>
+      <artifactId>doxia-module-xhtml</artifactId>
       <version>${doxiaVersion}</version>
     </dependency>
     <dependency>
@@ -246,6 +259,12 @@ under the License.
       <artifactId>doxia-module-fml</artifactId>
       <version>${doxiaVersion}</version>
       <scope>runtime</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>servlet-api</artifactId>
+      <version>2.5</version>
     </dependency>
 
     <!-- Doxia-sitetools -->
@@ -314,11 +333,6 @@ under the License.
 
     <!-- misc -->
     <dependency>
-      <groupId>org.apache.velocity</groupId>
-      <artifactId>velocity</artifactId>
-      <version>1.5</version>
-    </dependency>
-    <dependency>
       <groupId>org.mortbay.jetty</groupId>
       <artifactId>jetty</artifactId>
       <version>6.1.5</version>
@@ -376,6 +390,7 @@ under the License.
             <configuration>
               <projectsDirectory>src/it</projectsDirectory>
               <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
+              <showVersion>true</showVersion>
               <pomIncludes>
                 <pomInclude>*/pom.xml</pomInclude>
               </pomIncludes>
@@ -402,6 +417,17 @@ under the License.
     </profile>
     <profile>
       <id>reporting</id>
+      <build>
+        <pluginManagement>
+          <plugins>
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-site-plugin</artifactId>
+              <version>${project.version}</version>
+            </plugin>
+          </plugins>
+        </pluginManagement>
+      </build>
       <reporting>
         <plugins>
           <plugin>
