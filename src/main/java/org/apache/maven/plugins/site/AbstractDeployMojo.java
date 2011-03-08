@@ -55,17 +55,14 @@ import org.apache.maven.wagon.observers.Debug;
 import org.apache.maven.wagon.proxy.ProxyInfo;
 import org.apache.maven.wagon.repository.Repository;
 
-import org.codehaus.plexus.PlexusConstants;
 import org.codehaus.plexus.PlexusContainer;
+import org.codehaus.plexus.component.annotations.Requirement;
 import org.codehaus.plexus.component.configurator.ComponentConfigurationException;
 import org.codehaus.plexus.component.configurator.ComponentConfigurator;
 import org.codehaus.plexus.component.repository.exception.ComponentLifecycleException;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.codehaus.plexus.configuration.PlexusConfiguration;
 import org.codehaus.plexus.configuration.xml.XmlPlexusConfiguration;
-import org.codehaus.plexus.context.Context;
-import org.codehaus.plexus.context.ContextException;
-import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 
@@ -78,7 +75,7 @@ import org.codehaus.plexus.util.xml.Xpp3Dom;
  * @since 2.3
  */
 public abstract class AbstractDeployMojo
-    extends AbstractSiteMojo implements Contextualizable
+    extends AbstractSiteMojo
 {
     /**
      * Directory containing the generated project sites and report distributions.
@@ -145,7 +142,7 @@ public abstract class AbstractDeployMojo
      */
     private SettingsDecrypter settingsDecrypter;
 
-//    @Requirement
+    @Requirement
     private PlexusContainer container;
 
     /** {@inheritDoc} */
@@ -614,12 +611,6 @@ public abstract class AbstractDeployMojo
                 }
             }
         }
-    }
-
-    public void contextualize( Context context )
-        throws ContextException
-    {
-        container = (PlexusContainer) context.get( PlexusConstants.PLEXUS_KEY );
     }
 
     /**
