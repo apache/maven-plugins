@@ -156,10 +156,11 @@ public abstract class AbstractDeployMojo
      *
      * @return a String starting with "/".
      */
-    protected String getDeployModuleDirectory()
+    private String getDeployModuleDirectory()
+        throws MojoExecutionException
     {
-        String relative = "/" + siteTool.getRelativePath( project.getDistributionManagement().getSite().getUrl(),
-            getTopLevelParent( project ).getDistributionManagement().getSite().getUrl() );
+        String relative = "/" + siteTool.getRelativePath( getSite( project ).getUrl(),
+            getRootSite( project ).getUrl() );
 
         // SiteTool.getRelativePath() uses File.separatorChar,
         // so we need to convert '\' to '/' in order for the URL to be valid for Windows users
@@ -513,7 +514,7 @@ public abstract class AbstractDeployMojo
      *
      * @return The top level project in the reactor, or <code>null</code> if none can be found
      */
-    protected static MavenProject getTopLevelProject( List<MavenProject> reactorProjects )
+    private static MavenProject getTopLevelProject( List<MavenProject> reactorProjects )
     {
         if ( reactorProjects == null )
         {
@@ -532,30 +533,6 @@ public abstract class AbstractDeployMojo
     }
 
     /**
-     * Return the top level parent of the given project.
-     *
-     * @param project the MavenProject. May be null in which case null is returned.
-     *
-     * @return the upper-most parent MavenProject, or the original project if it has no parent.
-     */
-    protected static MavenProject getTopLevelParent( final MavenProject project )
-    {
-        if ( project == null )
-        {
-            return null;
-        }
-
-        MavenProject parent = project;
-
-        while ( parent.getParent() != null )
-        {
-            parent = parent.getParent();
-        }
-
-        return parent;
-    }
-
-    /**
      * Extract the distributionManagment site from the given MavenProject.
      *
      * @param project the MavenProject. Not null.
@@ -565,7 +542,7 @@ public abstract class AbstractDeployMojo
      *
      * @throws MojoExecutionException if any of the site info is missing.
      */
-    protected static Site getSite( final MavenProject project )
+    private static Site getSite( final MavenProject project )
         throws MojoExecutionException
     {
         final String name = project.getName() + " ("
@@ -589,6 +566,42 @@ public abstract class AbstractDeployMojo
         if ( site.getUrl() == null || site.getId() == null )
         {
             throw new MojoExecutionException( "Missing site data: specify url and id for project " + name );
+        }
+
+        return site;
+    }
+
+    /**
+     * Extract the distributionManagment site of the top level parent of the given MavenProject.
+     * This climbs up the project hirarchy and returns the site of the last project
+     * for which {@link #getSite(org.apache.maven.project.MavenProject)} returns a site.
+     *
+     * @param project the MavenProject. Not null.
+     *
+     * @return the top level site. Not null.
+     *      Also site.getUrl() and site.getId() are guaranteed to be not null.
+     *
+     * @throws MojoExecutionException if no site info is found in the tree.
+     */
+    protected static Site getRootSite( MavenProject project )
+        throws MojoExecutionException
+    {
+        Site site = getSite( project );
+
+        MavenProject parent = project;
+
+        while ( parent.getParent() != null )
+        {
+            parent = parent.getParent();
+
+            try
+            {
+                site = getSite( parent );
+            }
+            catch ( MojoExecutionException e )
+            {
+                break;
+            }
         }
 
         return site;
