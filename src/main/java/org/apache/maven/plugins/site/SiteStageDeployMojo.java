@@ -108,7 +108,7 @@ public class SiteStageDeployMojo
         {
             // The user didn't specify a URL, use the top level target dir
             topLevelURL =
-                getSite( getTopLevelParent( project ) ).getUrl() + "/" + DEFAULT_STAGING_DIRECTORY;
+                getRootSite( project ).getUrl() + "/" + DEFAULT_STAGING_DIRECTORY;
             getLog().debug( "stagingSiteURL NOT specified, using the top level project: " + topLevelURL );
         }
 
