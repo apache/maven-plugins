@@ -136,6 +136,7 @@ public abstract class AbstractDeployMojo
      * @return the id to look up credentials for the deploy. Not null.
      *
      * @throws MojoExecutionException
+     *      if the ID cannot be determined
      */
     protected abstract String getDeployRepositoryID()
         throws MojoExecutionException;
@@ -147,6 +148,7 @@ public abstract class AbstractDeployMojo
      * @return the url to deploy to. Not null.
      *
      * @throws MojoExecutionException
+     *      if the URL cannot be constructed
      */
     protected abstract String getDeployRepositoryURL()
         throws MojoExecutionException;
@@ -155,6 +157,8 @@ public abstract class AbstractDeployMojo
      * Find the relative path between the distribution URLs of the top parent and the current project.
      *
      * @return a String starting with "/".
+     *
+     * @throws MojoExecutionException
      */
     private String getDeployModuleDirectory()
         throws MojoExecutionException
@@ -194,7 +198,7 @@ public abstract class AbstractDeployMojo
         deploy( inputDirectory, repository );
     }
 
-    private void deploy( final File inputDirectory, final Repository repository )
+    private void deploy( final File directory, final Repository repository )
         throws MojoExecutionException
     {
         // TODO: work on moving this into the deployer like the other deploy methods
@@ -211,7 +215,7 @@ public abstract class AbstractDeployMojo
 
         try
         {
-            push( inputDirectory, repository, wagonManager, wagon,
+            push( directory, repository, wagonManager, wagon,
                 siteTool.getAvailableLocales( locales ), getDeployModuleDirectory() );
 
             if ( chmod )
@@ -501,6 +505,7 @@ public abstract class AbstractDeployMojo
         }
     }
 
+    /** {@inheritDoc} */
     public void contextualize( Context context )
         throws ContextException
     {
