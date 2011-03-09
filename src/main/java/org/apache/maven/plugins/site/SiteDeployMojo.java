@@ -21,7 +21,6 @@ package org.apache.maven.plugins.site;
 
 import org.apache.maven.model.Site;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.project.MavenProject;
 
 /**
  * Deploys the generated site using <code>scp</code> or <code>file</code>
