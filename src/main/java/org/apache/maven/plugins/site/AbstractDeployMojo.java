@@ -142,7 +142,10 @@ public abstract class AbstractDeployMojo
      */
     private SettingsDecrypter settingsDecrypter;
 
-    @Requirement
+    /**
+     * @component
+     * @readonly
+     */
     private PlexusContainer container;
 
     /** {@inheritDoc} */
@@ -586,7 +589,7 @@ public abstract class AbstractDeployMojo
                     try
                     {
                         // FIXME role-hint basic ?
-                        componentConfigurator = (ComponentConfigurator) container.lookup( ComponentConfigurator.ROLE );
+                        componentConfigurator = (ComponentConfigurator) container.lookup( ComponentConfigurator.ROLE, "basic" );
                         componentConfigurator.configureComponent( wagon, plexusConf, container.getContainerRealm() );
                     }
                     catch ( final ComponentLookupException e )
