@@ -588,7 +588,6 @@ public abstract class AbstractDeployMojo
                     ComponentConfigurator componentConfigurator = null;
                     try
                     {
-                        // FIXME role-hint basic ?
                         componentConfigurator = (ComponentConfigurator) container.lookup( ComponentConfigurator.ROLE, "basic" );
                         componentConfigurator.configureComponent( wagon, plexusConf, container.getContainerRealm() );
                     }
