@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>msite312</groupId>
+    <artifactId>parent</artifactId>
+    <version>1.0</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
+
+  <artifactId>child</artifactId>
+
+  <name>Child</name>
+
+  <properties>
+    <childprop>child</childprop>
+  </properties>
+
+</project>
