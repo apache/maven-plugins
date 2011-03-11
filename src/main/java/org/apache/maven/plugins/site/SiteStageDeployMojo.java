@@ -22,7 +22,6 @@ package org.apache.maven.plugins.site;
 
 import org.apache.maven.plugin.MojoExecutionException;
 
-
 /**
  * Deploys the generated site to a staging or mock directory to the site URL
  * specified in the <code>&lt;distributionManagement&gt;</code> section of the

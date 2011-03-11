@@ -393,7 +393,8 @@ public abstract class AbstractSiteRenderingMojo
         return categories;
     }
 
-    protected Map<String, DocumentRenderer> locateDocuments( SiteRenderingContext context, List<MavenReportExecution> reports, Locale locale )
+    protected Map<String, DocumentRenderer> locateDocuments( SiteRenderingContext context, List<MavenReportExecution> reports,
+                                                             Locale locale )
         throws IOException, RendererException
     {
         Map<String, DocumentRenderer> documents = siteRenderer.locateDocumentFiles( context );
