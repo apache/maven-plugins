@@ -93,7 +93,8 @@ public abstract class AbstractSiteRenderingMojo
      * Remote repositories used for the project.
      *
      * @todo this is used for site descriptor resolution - it should relate to the actual project but for some reason they are not always filled in
-     * @parameter expression="${project.remoteArtifactRepositories}"
+     * @parameter default-value="${project.remoteArtifactRepositories}"
+     * @readonly
      */
     private List<ArtifactRepository> repositories;
 
