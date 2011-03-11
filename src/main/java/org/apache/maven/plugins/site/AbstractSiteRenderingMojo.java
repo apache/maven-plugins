@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.doxia.sink.render.RenderingContext;
 import org.apache.maven.doxia.site.decoration.DecorationModel;
@@ -249,8 +250,11 @@ public abstract class AbstractSiteRenderingMojo
         File skinFile;
         try
         {
-            skinFile = siteTool.getSkinArtifactFromRepository( localRepository, repositories, decorationModel )
-                .getFile();
+            Artifact skinArtifact =
+                siteTool.getSkinArtifactFromRepository( localRepository, repositories, decorationModel );
+            getLog().info( "Rendering site with " + skinArtifact.getId() + " skin." );
+
+            skinFile = skinArtifact.getFile();
         }
         catch ( SiteToolException e )
         {
