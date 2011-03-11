@@ -48,7 +48,6 @@ import org.apache.maven.reporting.MavenReportException;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.WriterFactory;
 
-
 /**
  * Renders a Maven report in a doxia site.
  *
