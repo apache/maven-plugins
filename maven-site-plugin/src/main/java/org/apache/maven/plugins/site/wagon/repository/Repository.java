@@ -74,7 +74,7 @@ public class Repository
      */
     public Repository()
     {
-
+        // no op
     }
 
     public Repository( String id, String url )
