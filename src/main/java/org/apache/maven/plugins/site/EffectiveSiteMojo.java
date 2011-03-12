@@ -51,6 +51,7 @@ import org.codehaus.plexus.util.xml.XmlWriterUtil;
  * @author <a href="mailto:hboutemy@apache.org">Hervé Boutemy</a>
  * @version $Id$
  * @goal effective-site
+ * @since 2.2
  */
 public class EffectiveSiteMojo
     extends AbstractSiteRenderingMojo

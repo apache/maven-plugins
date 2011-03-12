@@ -24,10 +24,13 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.maven.artifact.manager.WagonManager;
 import org.apache.maven.execution.MavenExecutionRequest;
 import org.apache.maven.execution.MavenSession;
+import org.apache.maven.model.DistributionManagement;
+import org.apache.maven.model.Site;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
@@ -52,17 +55,14 @@ import org.apache.maven.wagon.observers.Debug;
 import org.apache.maven.wagon.proxy.ProxyInfo;
 import org.apache.maven.wagon.repository.Repository;
 
-import org.codehaus.plexus.PlexusConstants;
 import org.codehaus.plexus.PlexusContainer;
+import org.codehaus.plexus.component.annotations.Requirement;
 import org.codehaus.plexus.component.configurator.ComponentConfigurationException;
 import org.codehaus.plexus.component.configurator.ComponentConfigurator;
 import org.codehaus.plexus.component.repository.exception.ComponentLifecycleException;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.codehaus.plexus.configuration.PlexusConfiguration;
 import org.codehaus.plexus.configuration.xml.XmlPlexusConfiguration;
-import org.codehaus.plexus.context.Context;
-import org.codehaus.plexus.context.ContextException;
-import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 
@@ -75,7 +75,7 @@ import org.codehaus.plexus.util.xml.Xpp3Dom;
  * @since 2.3
  */
 public abstract class AbstractDeployMojo
-    extends AbstractSiteMojo implements Contextualizable
+    extends AbstractSiteMojo
 {
     /**
      * Directory containing the generated project sites and report distributions.
@@ -142,7 +142,10 @@ public abstract class AbstractDeployMojo
      */
     private SettingsDecrypter settingsDecrypter;
 
-//    @Requirement
+    /**
+     * @component
+     * @readonly
+     */
     private PlexusContainer container;
 
     /** {@inheritDoc} */
@@ -159,19 +162,40 @@ public abstract class AbstractDeployMojo
      * @return the id to look up credentials for the deploy. Not null.
      *
      * @throws MojoExecutionException
+     *      if the ID cannot be determined
      */
     protected abstract String getDeployRepositoryID()
         throws MojoExecutionException;
 
     /**
      * Specifies the target URL for the deploy.
+     * This should be the top-level URL, ie above modules and locale sub-directories.
      *
      * @return the url to deploy to. Not null.
      *
      * @throws MojoExecutionException
+     *      if the URL cannot be constructed
      */
     protected abstract String getDeployRepositoryURL()
         throws MojoExecutionException;
+
+    /**
+     * Find the relative path between the distribution URLs of the top parent and the current project.
+     *
+     * @return a String starting with "/".
+     *
+     * @throws MojoExecutionException
+     */
+    private String getDeployModuleDirectory()
+        throws MojoExecutionException
+    {
+        String relative = "/" + siteTool.getRelativePath( getSite( project ).getUrl(),
+            getRootSite( project ).getUrl() );
+
+        // SiteTool.getRelativePath() uses File.separatorChar,
+        // so we need to convert '\' to '/' in order for the URL to be valid for Windows users
+        return relative.replace( '\\', '/' );
+    }
 
     /**
      * Use wagon to deploy the generated site to a given repository.
@@ -197,13 +221,10 @@ public abstract class AbstractDeployMojo
                 + "',\n    Using credentials from server id '" + repository.getId() + "'" );
         }
 
-        // TODO: deploy to top level site? is it safe to assume that modules deploy to the same site?
-        //Site topLevelSite = getSite( getTopLevelProject( reactorProjects ) );
-
         deploy( inputDirectory, repository );
     }
 
-    private void deploy( final File inputDirectory, final Repository repository )
+    private void deploy( final File directory, final Repository repository )
         throws MojoExecutionException
     {
         // TODO: work on moving this into the deployer like the other deploy methods
@@ -211,7 +232,7 @@ public abstract class AbstractDeployMojo
 
         try
         {
-            configureWagon( wagon, repository, settings, container, getLog() );
+            configureWagon( wagon, repository.getId(), settings, container, getLog() );
         }
         catch ( WagonConfigurationException e )
         {
@@ -222,7 +243,8 @@ public abstract class AbstractDeployMojo
         {
             final ProxyInfo proxyInfo = getProxy( repository, getLog(), mavenSession, settingsDecrypter );
 
-            push( inputDirectory, repository, wagonManager, wagon, proxyInfo, getLog() );
+            push( directory, repository, wagonManager, wagon, proxyInfo,
+                siteTool.getAvailableLocales( locales ), getDeployModuleDirectory(), getLog() );
 
             if ( chmod )
             {
@@ -300,7 +322,8 @@ public abstract class AbstractDeployMojo
     }
 
     private static void push( final File inputDirectory, final Repository repository,
-        final WagonManager manager, final Wagon wagon, final ProxyInfo proxyInfo,final Log log )
+        final WagonManager manager, final Wagon wagon, final ProxyInfo proxyInfo,
+        final List<Locale> localesList, final String relativeDir, final Log log )
         throws MojoExecutionException
     {
         AuthenticationInfo authenticationInfo = manager.getAuthenticationInfo( repository.getId() );
@@ -329,7 +352,23 @@ public abstract class AbstractDeployMojo
                 log.debug( "connect without authenticationInfo and without proxyInfo" );
                 wagon.connect( repository );
             }
-            wagon.putDirectory( inputDirectory, "." );
+            // Default is first in the list
+            final String defaultLocale = localesList.get( 0 ).getLanguage();
+
+            for ( Locale locale : localesList )
+            {
+                if ( locale.getLanguage().equals( defaultLocale ) )
+                {
+                    // TODO: this also uploads the non-default locales,
+                    // is there a way to exlude directories in wagon?
+                    wagon.putDirectory( inputDirectory, relativeDir );
+                }
+                else
+                {
+                    wagon.putDirectory( new File( inputDirectory, locale.getLanguage() ),
+                        locale.getLanguage() + relativeDir );
+                }
+            }
         }
         catch ( ResourceDoesNotExistException e )
         {
@@ -527,8 +566,8 @@ public abstract class AbstractDeployMojo
      * @param log
      * @throws WagonConfigurationException
      */
-    static void configureWagon( Wagon wagon, Repository repository, Settings settings, PlexusContainer container,
-                                Log log )
+    private static void configureWagon( Wagon wagon, String repositoryId, Settings settings, PlexusContainer container,
+        Log log )
         throws WagonConfigurationException
     {
         log.debug( " configureWagon " );
@@ -539,7 +578,7 @@ public abstract class AbstractDeployMojo
             Server server = (Server) settings.getServers().get( i );
             log.debug( "configureWagon server " + server.getId() );
             String id = server.getId();
-            if ( id != null && id.equals( repository.getId() ) )
+            if ( id != null && id.equals( repositoryId ) )
             {
                 if ( server.getConfiguration() != null )
                 {
@@ -549,19 +588,18 @@ public abstract class AbstractDeployMojo
                     ComponentConfigurator componentConfigurator = null;
                     try
                     {
-                        // FIXME role-hint basic ?
-                        componentConfigurator = (ComponentConfigurator) container.lookup( ComponentConfigurator.ROLE );
+                        componentConfigurator = (ComponentConfigurator) container.lookup( ComponentConfigurator.ROLE, "basic" );
                         componentConfigurator.configureComponent( wagon, plexusConf, container.getContainerRealm() );
                     }
                     catch ( final ComponentLookupException e )
                     {
-                        throw new WagonConfigurationException( repository.getId(), "Unable to lookup wagon configurator."
+                        throw new WagonConfigurationException( repositoryId, "Unable to lookup wagon configurator."
                             + " Wagon configuration cannot be applied.", e );
                     }
                     catch ( ComponentConfigurationException e )
                     {
-                        throw new WagonConfigurationException( repository.getId(), "Unable to apply wagon configuration.",
-                                                               e );
+                        throw new WagonConfigurationException( repositoryId, "Unable to apply wagon configuration.",
+                            e );
                     }
                     finally
                     {
@@ -582,12 +620,6 @@ public abstract class AbstractDeployMojo
         }
     }
 
-    public void contextualize( Context context )
-        throws ContextException
-    {
-        container = (PlexusContainer) context.get( PlexusConstants.PLEXUS_KEY );
-    }
-
     /**
      * Find the top level parent in the reactor, i.e. the execution root.
      *
@@ -595,7 +627,7 @@ public abstract class AbstractDeployMojo
      *
      * @return The top level project in the reactor, or <code>null</code> if none can be found
      */
-    protected static MavenProject getTopLevelProject( List<MavenProject> reactorProjects )
+    private static MavenProject getTopLevelProject( List<MavenProject> reactorProjects )
     {
         if ( reactorProjects == null )
         {
@@ -611,5 +643,80 @@ public abstract class AbstractDeployMojo
         }
 
         return null;
+    }
+
+    /**
+     * Extract the distributionManagment site from the given MavenProject.
+     *
+     * @param project the MavenProject. Not null.
+     *
+     * @return the project site. Not null.
+     *      Also site.getUrl() and site.getId() are guaranteed to be not null.
+     *
+     * @throws MojoExecutionException if any of the site info is missing.
+     */
+    private static Site getSite( final MavenProject project )
+        throws MojoExecutionException
+    {
+        final String name = project.getName() + " ("
+            + project.getGroupId() + ":" + project.getArtifactId() + ":" + project.getVersion() + ")";
+
+        final DistributionManagement distributionManagement = project.getDistributionManagement();
+
+        if ( distributionManagement == null )
+        {
+            throw new MojoExecutionException( "Missing distribution management in project " + name );
+        }
+
+        final Site site = distributionManagement.getSite();
+
+        if ( site == null )
+        {
+            throw new MojoExecutionException(
+                "Missing site information in the distribution management of the project " + name );
+        }
+
+        if ( site.getUrl() == null || site.getId() == null )
+        {
+            throw new MojoExecutionException( "Missing site data: specify url and id for project " + name );
+        }
+
+        return site;
+    }
+
+    /**
+     * Extract the distributionManagment site of the top level parent of the given MavenProject.
+     * This climbs up the project hirarchy and returns the site of the last project
+     * for which {@link #getSite(org.apache.maven.project.MavenProject)} returns a site.
+     *
+     * @param project the MavenProject. Not null.
+     *
+     * @return the top level site. Not null.
+     *      Also site.getUrl() and site.getId() are guaranteed to be not null.
+     *
+     * @throws MojoExecutionException if no site info is found in the tree.
+     */
+    protected static Site getRootSite( MavenProject project )
+        throws MojoExecutionException
+    {
+        Site site = getSite( project );
+
+        MavenProject parent = project;
+
+        while ( parent.getParent() != null )
+        {
+            parent = parent.getParent();
+
+            try
+            {
+                site = getSite( parent );
+            }
+            catch ( MojoExecutionException e )
+            {
+                break;
+            }
+        }
+
+        return site;
     }
 }

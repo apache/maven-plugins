@@ -47,6 +47,12 @@ public class SiteMap
     private String encoding;
     private I18N i18n;
 
+    /**
+     * Constructor sets default values.
+     *
+     * @param encoding the default encoding to use when writing the output file.
+     * @param i18n the default I18N for translations.
+     */
     public SiteMap( String encoding, I18N i18n )
     {
         this.encoding = encoding;
