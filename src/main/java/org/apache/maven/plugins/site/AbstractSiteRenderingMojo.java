@@ -38,6 +38,12 @@ import org.apache.maven.reporting.exec.MavenReportExecution;
 import org.apache.maven.reporting.exec.MavenReportExecutor;
 import org.apache.maven.reporting.exec.MavenReportExecutorRequest;
 import org.apache.maven.reporting.exec.ReportPlugin;
+import org.codehaus.plexus.PlexusConstants;
+import org.codehaus.plexus.PlexusContainer;
+import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
+import org.codehaus.plexus.context.Context;
+import org.codehaus.plexus.context.ContextException;
+import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
 
 import java.io.File;
 import java.io.IOException;
@@ -56,7 +62,7 @@ import java.util.Map;
  * @version $Id$
  */
 public abstract class AbstractSiteRenderingMojo
-    extends AbstractSiteMojo
+    extends AbstractSiteMojo implements Contextualizable
 {
     /**
      * Module type exclusion mappings
@@ -169,13 +175,13 @@ public abstract class AbstractSiteRenderingMojo
      */
     private ReportPlugin[] reportPlugins;
 
-    /**
-     * The report executor (Maven 3).
-     * 
-     * @component
-     * @readonly
-     */
-    private MavenReportExecutor mavenReportExecutor;
+    private PlexusContainer container;
+    
+    public void contextualize( Context context )
+        throws ContextException
+    {
+        container = (PlexusContainer) context.get( PlexusConstants.PLEXUS_KEY );
+    }
 
     protected List<MavenReportExecution> getReports()
         throws MojoExecutionException
@@ -188,6 +194,15 @@ public abstract class AbstractSiteRenderingMojo
             mavenReportExecutorRequest.setProject( project );
             mavenReportExecutorRequest.setReportPlugins( reportPlugins );
 
+            MavenReportExecutor mavenReportExecutor;
+            try
+            {
+                mavenReportExecutor = container.lookup( MavenReportExecutor.class );
+            }
+            catch ( ComponentLookupException e )
+            {
+                throw new MojoExecutionException( "could not get MavenReportExecutor component", e );
+            }
             return mavenReportExecutor.buildMavenReports( mavenReportExecutorRequest );
         }
 
