@@ -1,10 +1,23 @@
 import java.io.*;
+import org.codehaus.plexus.util.*;
 
 File pdfFile = new File( basedir, "target/pdf/test.pdf" );
 System.out.println( "Checking for existence of " + pdfFile );
 if ( !pdfFile.isFile() )
 {
     throw new FileNotFoundException( pdfFile + " missing" );
+}
+
+InputStream in = new FileInputStream( pdfFile );
+byte[] bytes = IOUtil.toByteArray( in );
+in.close();
+
+String content = new String( bytes, "ISO-8859-1" );
+
+if ( content.indexOf( "/Title (Continuous Integration)" ) < 0 )
+{
+    System.err.println( "MPIR CIM report not included in pdf." );
+    // return false; MPDF-48: known issue...
 }
 
 return true;
