@@ -22,6 +22,7 @@ package org.apache.maven.plugin.dependency;
 import java.io.File;
 import java.util.Set;
 
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.project.MavenProject;
 
 public class TestIncludeExcludeUnpackDependenciesMojo
@@ -57,8 +58,8 @@ public class TestIncludeExcludeUnpackDependenciesMojo
         assertNotNull( mojo.getProject() );
         MavenProject project = mojo.getProject();
 
-        Set artifacts = this.stubFactory.getScopedArtifacts();
-        Set directArtifacts = this.stubFactory.getReleaseAndSnapshotArtifacts();
+        Set<Artifact> artifacts = this.stubFactory.getScopedArtifacts();
+        Set<Artifact> directArtifacts = this.stubFactory.getReleaseAndSnapshotArtifacts();
         artifacts.addAll( directArtifacts );
 
         project.setArtifacts( artifacts );

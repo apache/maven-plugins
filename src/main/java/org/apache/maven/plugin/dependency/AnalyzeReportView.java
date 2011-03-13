@@ -64,7 +64,7 @@ public class AnalyzeReportView
         }
         else
         {
-            Iterator iter = analysis.getUsedDeclaredArtifacts().iterator();
+            Iterator<Artifact> iter = analysis.getUsedDeclaredArtifacts().iterator();
             generateDependenciesTable( sink, iter );
         }
         sink.section2_();
@@ -83,7 +83,7 @@ public class AnalyzeReportView
         }
         else
         {
-            Iterator iter = analysis.getUsedUndeclaredArtifacts().iterator();
+            Iterator<Artifact> iter = analysis.getUsedUndeclaredArtifacts().iterator();
             generateDependenciesTable( sink, iter );
         }
         sink.section2_();
@@ -102,7 +102,7 @@ public class AnalyzeReportView
         }
         else
         {
-            Iterator iter = analysis.getUnusedDeclaredArtifacts().iterator();
+            Iterator<Artifact> iter = analysis.getUnusedDeclaredArtifacts().iterator();
             generateDependenciesTable( sink, iter );
         }
         sink.section2_();
@@ -118,7 +118,7 @@ public class AnalyzeReportView
     /**
      * Generate a table for the given dependencies iterator.
      */
-    public void generateDependenciesTable( Sink sink, Iterator iter )
+    public void generateDependenciesTable( Sink sink, Iterator<Artifact> iter )
     {
         sink.table();
 
@@ -168,7 +168,7 @@ public class AnalyzeReportView
         sink.tableRow_();
         while ( iter.hasNext() )
         {
-            Artifact artifact = (Artifact) iter.next();
+            Artifact artifact = iter.next();
 
             sink.tableRow();
             sink.tableCell();

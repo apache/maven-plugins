@@ -127,11 +127,11 @@ public class AnalyzeReportMojo
         //remove everything that's not in the compile scope
         if ( ignoreNonCompile )
         {
-            Set filteredUnusedDeclared = new HashSet( analysis.getUnusedDeclaredArtifacts() );
-            Iterator iter = filteredUnusedDeclared.iterator();
+            Set<Artifact> filteredUnusedDeclared = new HashSet<Artifact>( analysis.getUnusedDeclaredArtifacts() );
+            Iterator<Artifact> iter = filteredUnusedDeclared.iterator();
             while ( iter.hasNext() )
             {
-                Artifact artifact = (Artifact) iter.next();
+                Artifact artifact = iter.next();
                 if ( !artifact.getScope().equals( Artifact.SCOPE_COMPILE ) )
                 {
                     iter.remove();

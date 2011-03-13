@@ -20,8 +20,7 @@ package org.apache.maven.plugin.dependency.fromConfiguration;
  */
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.List;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.dependency.utils.filters.ArtifactItemFilter;
@@ -84,11 +83,9 @@ public final class UnpackMojo
     {
         if ( !isSkip() )
         {
-            ArrayList processedItems = getProcessedArtifactItems( false );
-            Iterator iter = processedItems.iterator();
-            while ( iter.hasNext() )
+            List<ArtifactItem> processedItems = getProcessedArtifactItems( false );
+            for ( ArtifactItem artifactItem : processedItems )
             {
-                ArtifactItem artifactItem = (ArtifactItem) iter.next();
                 if ( artifactItem.isNeedsProcessing() )
                 {
                     unpackArtifact( artifactItem );
@@ -128,14 +125,12 @@ public final class UnpackMojo
                                      this.isOverWriteIfNewer(), handler );
     }
 
-    protected ArrayList getProcessedArtifactItems( boolean removeVersion )
+    protected List<ArtifactItem> getProcessedArtifactItems( boolean removeVersion )
         throws MojoExecutionException
     {
-        ArrayList items = super.getProcessedArtifactItems( removeVersion );
-        Iterator iter = items.iterator();
-        while ( iter.hasNext() )
+        List<ArtifactItem> items = super.getProcessedArtifactItems( removeVersion );
+        for ( ArtifactItem artifactItem : items )
         {
-            ArtifactItem artifactItem = (ArtifactItem) iter.next();
             if ( StringUtils.isEmpty( artifactItem.getIncludes() ) )
             {
                 artifactItem.setIncludes( getIncludes() );

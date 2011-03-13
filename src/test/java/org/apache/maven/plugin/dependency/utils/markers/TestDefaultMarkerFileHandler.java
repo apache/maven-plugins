@@ -44,7 +44,7 @@ import org.apache.maven.plugin.testing.SilentLog;
 public class TestDefaultMarkerFileHandler
     extends TestCase
 {
-    List artifacts = new ArrayList();
+    List<Artifact> artifacts = new ArrayList<Artifact>();
 
     Log log = new SilentLog();
 
@@ -80,7 +80,7 @@ public class TestDefaultMarkerFileHandler
     public void testSetMarker()
         throws MojoExecutionException
     {
-        DefaultFileMarkerHandler handler = new DefaultFileMarkerHandler( (Artifact) artifacts.get( 0 ),
+        DefaultFileMarkerHandler handler = new DefaultFileMarkerHandler( artifacts.get( 0 ),
                                                                          this.outputFolder );
         assertFalse( handler.isMarkerSet() );
         handler.setMarker();
@@ -102,7 +102,7 @@ public class TestDefaultMarkerFileHandler
     public void testMarkerFile()
         throws MojoExecutionException, IOException
     {
-        DefaultFileMarkerHandler handler = new DefaultFileMarkerHandler( (Artifact) artifacts.get( 0 ),
+        DefaultFileMarkerHandler handler = new DefaultFileMarkerHandler( artifacts.get( 0 ),
                                                                          this.outputFolder );
 
         File handle = handler.getMarkerFile();
@@ -129,7 +129,7 @@ public class TestDefaultMarkerFileHandler
         File theFile = new File( outputFolder, "theFile.jar" );
         outputFolder.mkdirs();
         theFile.createNewFile();
-        Artifact theArtifact = (Artifact) artifacts.get( 0 );
+        Artifact theArtifact = artifacts.get( 0 );
         theArtifact.setFile( theFile );
         DefaultFileMarkerHandler handler = new DefaultFileMarkerHandler( theArtifact, this.outputFolder );
         assertFalse( handler.isMarkerSet() );
@@ -150,7 +150,7 @@ public class TestDefaultMarkerFileHandler
     public void testMarkerFileException()
     {
         // this stub wraps the file with an object to throw exceptions
-        StubDefaultFileMarkerHandler handler = new StubDefaultFileMarkerHandler( (Artifact) artifacts.get( 0 ),
+        StubDefaultFileMarkerHandler handler = new StubDefaultFileMarkerHandler( artifacts.get( 0 ),
                                                                                  this.outputFolder );
         try
         {
@@ -167,7 +167,7 @@ public class TestDefaultMarkerFileHandler
     {
         DefaultFileMarkerHandler handler = new DefaultFileMarkerHandler( null, null );
         assertTrue( handler.getArtifact() == null );
-        handler.setArtifact( (Artifact) artifacts.get( 0 ) );
+        handler.setArtifact( artifacts.get( 0 ) );
         assertSame( artifacts.get( 0 ), handler.getArtifact() );
 
         assertTrue( handler.getMarkerFilesDirectory() == null );
@@ -182,7 +182,7 @@ public class TestDefaultMarkerFileHandler
         // folder. We must clear the
         // marker to avoid leaving test droppings in root.
         DefaultFileMarkerHandler handler = new DefaultFileMarkerHandler( null, null );
-        handler.setArtifact( (Artifact) artifacts.get( 0 ) );
+        handler.setArtifact( artifacts.get( 0 ) );
         handler.setMarker();
         assertTrue( handler.isMarkerSet() );
         handler.clearMarker();

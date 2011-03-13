@@ -21,7 +21,6 @@ package org.apache.maven.plugin.dependency;
 
 import java.io.File;
 import java.net.MalformedURLException;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -65,7 +64,7 @@ public class CopyDependenciesMojo
     /**
      * @component role="org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout"
      */
-    private Map repositoryLayouts;
+    private Map<String, ArtifactRepositoryLayout> repositoryLayouts;
 
     /**
      * Main entry into mojo. Gets the list of dependencies and iterates through
@@ -81,13 +80,13 @@ public class CopyDependenciesMojo
         throws MojoExecutionException
     {
         DependencyStatusSets dss = getDependencySets( this.failOnMissingClassifierArtifact );
-        Set artifacts = dss.getResolvedDependencies();
+        Set<Artifact> artifacts = dss.getResolvedDependencies();
 
         if ( !useRepositoryLayout )
         {
-            for ( Iterator i = artifacts.iterator(); i.hasNext(); )
+            for ( Artifact artifact : artifacts )
             {
-	    		copyArtifact( (Artifact) i.next(), this.stripVersion, this.prependGroupId );
+	    		copyArtifact( artifact, this.stripVersion, this.prependGroupId );
             }
         }
         else
@@ -99,9 +98,9 @@ public class CopyDependenciesMojo
                         outputDirectory.toURL().toExternalForm(),
                         (ArtifactRepositoryLayout) repositoryLayouts.get( "default" ),
                         false /*uniqueVersion*/ );
-                for ( Iterator i = artifacts.iterator(); i.hasNext(); )
+                for ( Artifact artifact : artifacts )
                 {
-                    installArtifact( (Artifact) i.next(), targetRepository );
+                    installArtifact( artifact, targetRepository );
                 }
             }
             catch ( MalformedURLException e )
@@ -110,10 +109,9 @@ public class CopyDependenciesMojo
             }
         }
 
-        Set skippedArtifacts = dss.getSkippedDependencies();
-        for ( Iterator i = skippedArtifacts.iterator(); i.hasNext(); )
+        Set<Artifact> skippedArtifacts = dss.getSkippedDependencies();
+        for ( Artifact artifact : skippedArtifacts )
         {
-            Artifact artifact = (Artifact) i.next();
             getLog().info( artifact.getFile().getName() + " already exists in destination." );
         }
 
@@ -202,13 +200,12 @@ public class CopyDependenciesMojo
     /**
      * Copy the pom files associated with the artifacts.
      */
-    public void copyPoms( File destDir, Set artifacts, boolean removeVersion ) throws MojoExecutionException
+    public void copyPoms( File destDir, Set<Artifact> artifacts, boolean removeVersion )
+        throws MojoExecutionException
 
     {
-        Iterator iter = artifacts.iterator();
-        while ( iter.hasNext() )
+        for ( Artifact artifact : artifacts )
         {
-            Artifact artifact = (Artifact)iter.next();
             Artifact pomArtifact = getResolvedPomArtifact( artifact );
 
             // Copy the pom

@@ -22,14 +22,14 @@ package org.apache.maven.plugin.dependency.testUtils;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
+import java.util.List;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.dependency.fromConfiguration.ArtifactItem;
 import org.apache.maven.plugin.testing.ArtifactStubFactory;
 
 public class DependencyArtifactStubFactory
-extends ArtifactStubFactory
+    extends ArtifactStubFactory
 {
  
     /**
@@ -47,13 +47,12 @@ extends ArtifactStubFactory
         return item;
     }
 
-    public ArrayList getArtifactItems( Collection artifacts )
+    public List<ArtifactItem> getArtifactItems( Collection<Artifact> artifacts )
     {
-        ArrayList list = new ArrayList();
-        Iterator iter = artifacts.iterator();
-        while ( iter.hasNext() )
+        List<ArtifactItem> list = new ArrayList<ArtifactItem>();
+        for ( Artifact artifact : artifacts )
         {
-            list.add( getArtifactItem( (Artifact) iter.next() ) );
+            list.add( getArtifactItem( artifact ) );
         }
         return list;
     }

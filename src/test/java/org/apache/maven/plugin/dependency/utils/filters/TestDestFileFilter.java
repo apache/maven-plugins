@@ -42,7 +42,7 @@ import org.apache.maven.shared.artifact.filter.collection.ArtifactFilterExceptio
 public class TestDestFileFilter
     extends TestCase
 {
-    Set artifacts = new HashSet();
+    Set<Artifact> artifacts = new HashSet<Artifact>();
 
     Log log = new SilentLog();
 
@@ -79,9 +79,9 @@ public class TestDestFileFilter
                            boolean removeVersion )
         throws IOException
     {
-        File destFolder = DependencyUtil.getFormattedOutputDirectory(false, useSubDirectoryPerType,
-                                                                      useSubDirectoryPerArtifact, false, false,
-                                                                      outputFolder, artifact );
+        File destFolder =
+            DependencyUtil.getFormattedOutputDirectory( false, useSubDirectoryPerType, useSubDirectoryPerArtifact,
+                                                        false, false, outputFolder, artifact );
         File destFile = new File( destFolder, DependencyUtil.getFormattedFileName( artifact, removeVersion ) );
 
         destFile.getParentFile().mkdirs();

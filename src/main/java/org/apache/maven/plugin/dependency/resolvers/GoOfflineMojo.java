@@ -1,4 +1,5 @@
 package org.apache.maven.plugin.dependency.resolvers;
+
 /* 
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,7 +19,6 @@ package org.apache.maven.plugin.dependency.resolvers;
  * under the License.    
  */
 
-import java.util.Iterator;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
@@ -53,13 +53,13 @@ public class GoOfflineMojo
     public void execute()
         throws MojoExecutionException
     {
-        Set artifacts = project.getArtifacts();
+        Set<Artifact> artifacts = project.getArtifacts();
 
         if ( !silent )
         {
-            for ( Iterator i = artifacts.iterator(); i.hasNext(); )
+            for ( Artifact artifact : artifacts )
             {
-                this.getLog().info( "Resolved: " + DependencyUtil.getFormattedFileName( (Artifact) i.next(), false ) );
+                this.getLog().info( "Resolved: " + DependencyUtil.getFormattedFileName( artifact, false ) );
             }
         }
     }

@@ -1,3 +1,5 @@
+package org.apache.maven.plugin.dependency.its;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,7 +18,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugin.dependency.its;
 
 /**
  * This class executes the IT tests. The setup will create a pom-test.xml from the plugin pom. The version is changed to

@@ -22,7 +22,6 @@ package org.apache.maven.plugin.dependency;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -116,7 +115,7 @@ public class AnalyzeDepMgt
 
         getLog().info( "Found Resolved Dependency / DependencyManagement mismatches:" );
 
-        List depMgtDependencies = null;
+        List<Dependency> depMgtDependencies = null;
 
         DependencyManagement depMgt = project.getDependencyManagement();
         if ( depMgt != null )
@@ -127,12 +126,10 @@ public class AnalyzeDepMgt
         if ( depMgtDependencies != null && !depMgtDependencies.isEmpty() )
         {
             // put all the dependencies from depMgt into a map for quick lookup
-            Map depMgtMap = new HashMap();
-            Map exclusions = new HashMap();
-            Iterator iter = depMgtDependencies.iterator();
-            while ( iter.hasNext() )
+            Map<String, Dependency> depMgtMap = new HashMap<String, Dependency>();
+            Map<String, Exclusion> exclusions = new HashMap<String, Exclusion>();
+            for ( Dependency depMgtDependency : depMgtDependencies )
             {
-                Dependency depMgtDependency = (Dependency) iter.next();
                 depMgtMap.put( depMgtDependency.getManagementKey(), depMgtDependency );
 
                 // now put all the exclusions into a map for quick lookup
@@ -140,23 +137,21 @@ public class AnalyzeDepMgt
             }
 
             // get dependencies for the project (including transitive)
-            Set allDependencyArtifacts = new HashSet( project.getArtifacts() );
+            Set<Artifact> allDependencyArtifacts = new HashSet<Artifact>( project.getArtifacts() );
 
             // don't warn if a dependency that is directly listed overrides
             // depMgt. That's ok.
             if ( this.ignoreDirect )
             {
                 getLog().info( "\tIgnoring Direct Dependencies." );
-                Set directDependencies = project.getDependencyArtifacts();
+                Set<Artifact> directDependencies = project.getDependencyArtifacts();
                 allDependencyArtifacts.removeAll( directDependencies );
             }
 
             // log exclusion errors
-            List exclusionErrors = getExclusionErrors( exclusions, allDependencyArtifacts );
-            Iterator exclusionIter = exclusionErrors.iterator();
-            while ( exclusionIter.hasNext() )
+            List<Artifact> exclusionErrors = getExclusionErrors( exclusions, allDependencyArtifacts );
+            for ( Artifact exclusion : exclusionErrors )
             {
-                Artifact exclusion = (Artifact) exclusionIter.next();
                 getLog().info(
                                StringUtils.stripEnd( getArtifactManagementKey( exclusion ), ":" )
                                    + " was excluded in DepMgt, but version " + exclusion.getVersion()
@@ -165,13 +160,10 @@ public class AnalyzeDepMgt
             }
 
             // find and log version mismatches
-            Map mismatch = getMismatch( depMgtMap, allDependencyArtifacts );
-            Iterator mismatchIter = mismatch.keySet().iterator();
-            while ( mismatchIter.hasNext() )
+            Map<Artifact, Dependency> mismatch = getMismatch( depMgtMap, allDependencyArtifacts );
+            for ( Map.Entry<Artifact, Dependency> entry : mismatch.entrySet() )
             {
-                Artifact resolvedArtifact = (Artifact) mismatchIter.next();
-                Dependency depMgtDependency = (Dependency) mismatch.get( resolvedArtifact );
-                logMismatch( resolvedArtifact, depMgtDependency );
+                logMismatch( entry.getKey(), entry.getValue() );
                 foundError = true;
             }
             if ( !foundError )
@@ -198,15 +190,13 @@ public class AnalyzeDepMgt
      * @return a map of the exclusions using the Dependency ManagementKey as the
      *         keyset.
      */
-    public Map addExclusions( List exclusionList )
+    public Map<String, Exclusion> addExclusions( List<Exclusion> exclusionList )
     {
-        Map exclusions = new HashMap();
+        Map<String, Exclusion> exclusions = new HashMap<String, Exclusion>();
         if ( exclusionList != null )
         {
-            Iterator exclusionIter = exclusionList.iterator();
-            while ( exclusionIter.hasNext() )
+            for ( Exclusion exclusion : exclusionList )
             {
-                Exclusion exclusion = (Exclusion) exclusionIter.next();
                 exclusions.put( getExclusionKey( exclusion ), exclusion );
             }
         }
@@ -224,14 +214,12 @@ public class AnalyzeDepMgt
      *            resolved artifacts to be compared.
      * @return list of artifacts that should have been excluded.
      */
-    public List getExclusionErrors( Map exclusions, Set allDependencyArtifacts )
+    public List<Artifact> getExclusionErrors( Map<String, Exclusion> exclusions, Set<Artifact> allDependencyArtifacts )
     {
-        List list = new ArrayList();
+        List<Artifact> list = new ArrayList<Artifact>();
 
-        Iterator iter = allDependencyArtifacts.iterator();
-        while ( iter.hasNext() )
+        for ( Artifact artifact : allDependencyArtifacts )
         {
-            Artifact artifact = (Artifact) iter.next();
             if ( exclusions.containsKey( getExclusionKey( artifact ) ) )
             {
                 list.add( artifact );
@@ -263,18 +251,16 @@ public class AnalyzeDepMgt
      * @return a map containing the resolved artifact as the key and the listed
      *         dependency as the value.
      */
-    public Map getMismatch( Map depMgtMap, Set allDependencyArtifacts )
+    public Map<Artifact, Dependency> getMismatch( Map<String, Dependency> depMgtMap,
+                                                  Set<Artifact> allDependencyArtifacts )
     {
-        Map mismatchMap = new HashMap();
+        Map<Artifact, Dependency> mismatchMap = new HashMap<Artifact, Dependency>();
 
-        Iterator iter = allDependencyArtifacts.iterator();
-        while ( iter.hasNext() )
+        for ( Artifact dependencyArtifact : allDependencyArtifacts )
         {
-            Artifact dependencyArtifact = (Artifact) iter.next();
-            Dependency depFromDepMgt = (Dependency) depMgtMap.get( getArtifactManagementKey( dependencyArtifact ) );
+            Dependency depFromDepMgt = depMgtMap.get( getArtifactManagementKey( dependencyArtifact ) );
             if ( depFromDepMgt != null )
             {
-
                 //workaround for MNG-2961
                 dependencyArtifact.isSnapshot();
 

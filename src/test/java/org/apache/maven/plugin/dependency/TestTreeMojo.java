@@ -25,7 +25,6 @@ import java.io.FileReader;
 import java.util.Set;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.testing.stubs.StubArtifactRepository;
@@ -73,8 +72,8 @@ public class TestTreeMojo
         MavenProject project = mojo.getProject();
         project.setArtifact( this.stubFactory.createArtifact( "testGroupId", "project", "1.0" ) );
 
-        Set artifacts = this.stubFactory.getScopedArtifacts();
-        Set directArtifacts = this.stubFactory.getReleaseAndSnapshotArtifacts();
+        Set<Artifact> artifacts = this.stubFactory.getScopedArtifacts();
+        Set<Artifact> directArtifacts = this.stubFactory.getReleaseAndSnapshotArtifacts();
         artifacts.addAll( directArtifacts );
 
         project.setArtifacts( artifacts );
@@ -97,7 +96,7 @@ public class TestTreeMojo
     public void testTreeDotSerializing()
         throws Exception
     {
-        List contents = runTreeMojo( "tree1.dot", "dot" );
+        List<String> contents = runTreeMojo( "tree1.dot", "dot" );
         assertTrue( findString( contents, "digraph \"testGroupId:project:jar:1.0:compile\" {" ) );
         assertTrue( findString( contents,
                                 "\"testGroupId:project:jar:1.0:compile\" -> \"testGroupId:snapshot:jar:2.0-SNAPSHOT:compile\"" ) );
@@ -113,7 +112,7 @@ public class TestTreeMojo
     public void testTreeGraphMLSerializing()
         throws Exception
     {
-        List contents = runTreeMojo( "tree1.graphml", "graphml" );
+        List<String> contents = runTreeMojo( "tree1.graphml", "graphml" );
 
         assertTrue( findString( contents, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" ) );
         assertTrue( findString( contents, "<y:NodeLabel>testGroupId:project:jar:1.0:compile</y:NodeLabel>" ) );
@@ -131,7 +130,7 @@ public class TestTreeMojo
     public void testTreeTGFSerializing()
         throws Exception
     {
-        List contents = runTreeMojo( "tree1.tgf", "tgf" );
+        List<String> contents = runTreeMojo( "tree1.tgf", "tgf" );
         assertTrue( findString( contents, "testGroupId:project:jar:1.0:compile" ) );
         assertTrue( findString( contents, "testGroupId:snapshot:jar:2.0-SNAPSHOT:compile" ) );
         assertTrue( findString( contents, "testGroupId:release:jar:1.0:compile" ) );
@@ -143,7 +142,7 @@ public class TestTreeMojo
      * @param format
      * @return list of strings in the output file
      */
-    private List runTreeMojo( String outputFile, String format )
+    private List<String> runTreeMojo( String outputFile, String format )
              throws Exception
     {
         File testPom = new File( getBasedir(), "target/test-classes/unit/tree-test/plugin-config.xml" );
@@ -158,8 +157,8 @@ public class TestTreeMojo
         MavenProject project = mojo.getProject();
         project.setArtifact( this.stubFactory.createArtifact( "testGroupId", "project", "1.0" ) );
 
-        Set artifacts = this.stubFactory.getScopedArtifacts();
-        Set directArtifacts = this.stubFactory.getReleaseAndSnapshotArtifacts();
+        Set<Artifact> artifacts = this.stubFactory.getScopedArtifacts();
+        Set<Artifact> directArtifacts = this.stubFactory.getReleaseAndSnapshotArtifacts();
         artifacts.addAll( directArtifacts );
 
         project.setArtifacts( artifacts );
@@ -168,7 +167,7 @@ public class TestTreeMojo
         mojo.execute();
 
         BufferedReader fp1 = new BufferedReader( new FileReader( outputFileName ) );
-        List contents = new ArrayList();
+        List<String> contents = new ArrayList<String>();
 
         String line = null;
         while ( ( line = fp1.readLine() ) != null )
@@ -185,11 +184,10 @@ public class TestTreeMojo
      * @param contents
      * @param str
      */
-    private boolean findString( List contents, String str )
+    private boolean findString( List<String> contents, String str )
     {
-        for ( Iterator it = contents.iterator(); it.hasNext(); )
+        for ( String line : contents )
         {
-            String line = (String) it.next();
             if ( line.indexOf( str ) != -1 )
             {
                 // if match then return here

@@ -53,7 +53,7 @@ import org.codehaus.plexus.util.StringUtils;
  */
 public class BuildClasspathMojo
     extends AbstractDependencyFilterMojo
-    implements Comparator
+    implements Comparator<Artifact>
 {
 
     /**
@@ -194,21 +194,21 @@ public class BuildClasspathMojo
             localRepoProperty = "${M2_REPO}";
         }
 
-        Set artifacts = getResolvedDependencies( true );
+        Set<Artifact> artifacts = getResolvedDependencies( true );
 
         if ( artifacts == null || artifacts.isEmpty() )
         {
             getLog().info( "No dependencies found." );
         }
 
-        List artList = new ArrayList( artifacts );
+        List<Artifact> artList = new ArrayList<Artifact>( artifacts );
 
         StringBuffer sb = new StringBuffer();
-        Iterator i = artList.iterator();
+        Iterator<Artifact> i = artList.iterator();
 
         if ( i.hasNext() )
         {
-            appendArtifactPath( (Artifact) i.next(), sb );
+            appendArtifactPath( i.next(), sb );
 
             while ( i.hasNext() )
             {
@@ -398,41 +398,31 @@ public class BuildClasspathMojo
     /**
      * Compares artifacts lexicographically, using pattern [group_id][artifact_id][version].
      *
-     * @param arg1 first object
-     * @param arg2 second object
+     * @param art1 first object
+     * @param art2 second object
      * @return the value <code>0</code> if the argument string is equal to this string; a value less than
      *         <code>0</code> if this string is lexicographically less than the string argument; and a value greater
      *         than <code>0</code> if this string is lexicographically greater than the string argument.
      */
-    public int compare( Object arg1, Object arg2 )
+    public int compare( Artifact art1, Artifact art2 )
     {
-        if ( arg1 instanceof Artifact && arg2 instanceof Artifact )
-        {
-            if ( arg1 == arg2 )
-            {
-                return 0;
-            }
-            else if ( arg1 == null )
-            {
-                return -1;
-            }
-            else if ( arg2 == null )
-            {
-                return +1;
-            }
-
-            Artifact art1 = (Artifact) arg1;
-            Artifact art2 = (Artifact) arg2;
-
-            String s1 = art1.getGroupId() + art1.getArtifactId() + art1.getVersion();
-            String s2 = art2.getGroupId() + art2.getArtifactId() + art2.getVersion();
-
-            return s1.compareTo( s2 );
-        }
-        else
+        if ( art1 == art2 )
         {
             return 0;
         }
+        else if ( art1 == null )
+        {
+            return -1;
+        }
+        else if ( art2 == null )
+        {
+            return +1;
+        }
+
+        String s1 = art1.getGroupId() + art1.getArtifactId() + art1.getVersion();
+        String s2 = art2.getGroupId() + art2.getArtifactId() + art2.getVersion();
+
+        return s1.compareTo( s2 );
     }
 
     protected ArtifactsFilter getMarkedArtifactFilter()

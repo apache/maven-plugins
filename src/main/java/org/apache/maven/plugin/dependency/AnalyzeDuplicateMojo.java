@@ -71,13 +71,13 @@ public class AnalyzeDuplicateMojo
             throw new MojoExecutionException( "IOException: " + e.getMessage(), e );
         }
 
-        Set duplicateDependencies = new HashSet();
+        Set<String> duplicateDependencies = new HashSet<String>();
         if ( model.getDependencies() != null )
         {
             duplicateDependencies = findDuplicateDependencies( model.getDependencies() );
         }
 
-        Set duplicateDependenciesManagement = new HashSet();
+        Set<String> duplicateDependenciesManagement = new HashSet<String>();
         if ( model.getDependencyManagement() != null && model.getDependencyManagement().getDependencies() != null )
         {
             duplicateDependenciesManagement =
@@ -91,9 +91,9 @@ public class AnalyzeDuplicateMojo
             if ( !duplicateDependencies.isEmpty() )
             {
                 sb.append( "List of duplicate dependencies defined in <dependencies/> in your pom.xml:\n" );
-                for ( Iterator it = duplicateDependencies.iterator(); it.hasNext(); )
+                for ( Iterator<String> it = duplicateDependencies.iterator(); it.hasNext(); )
                 {
-                    String dup = (String) it.next();
+                    String dup = it.next();
 
                     sb.append( "\to " + dup );
                     if ( it.hasNext() )
@@ -111,9 +111,9 @@ public class AnalyzeDuplicateMojo
                 }
                 sb.append( "List of duplicate dependencies defined in <dependencyManagement/> in "
                     + "your pom.xml:\n" );
-                for ( Iterator it = duplicateDependenciesManagement.iterator(); it.hasNext(); )
+                for ( Iterator<String> it = duplicateDependenciesManagement.iterator(); it.hasNext(); )
                 {
-                    String dup = (String) it.next();
+                    String dup = it.next();
 
                     sb.append( "\to " + dup );
                     if ( it.hasNext() )
@@ -134,16 +134,15 @@ public class AnalyzeDuplicateMojo
         }
     }
 
-    private Set findDuplicateDependencies( List modelDependencies )
+    private Set<String> findDuplicateDependencies( List<Dependency> modelDependencies )
     {
-        List modelDependencies2 = new ArrayList();
-        for ( Iterator it = modelDependencies.iterator(); it.hasNext(); )
+        List<String> modelDependencies2 = new ArrayList<String>();
+        for ( Dependency dep : modelDependencies )
         {
-            Dependency dep = (Dependency) it.next();
-
             modelDependencies2.add( dep.getManagementKey() );
         }
 
-        return new HashSet( CollectionUtils.disjunction( modelDependencies2, new HashSet( modelDependencies2 ) ) );
+        return new HashSet<String>( CollectionUtils.disjunction( modelDependencies2,
+                                                                 new HashSet<String>( modelDependencies2 ) ) );
     }
 }

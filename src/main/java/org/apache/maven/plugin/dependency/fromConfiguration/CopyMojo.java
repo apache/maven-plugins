@@ -20,8 +20,7 @@ package org.apache.maven.plugin.dependency.fromConfiguration;
  */
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.List;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.dependency.utils.filters.ArtifactItemFilter;
@@ -62,11 +61,9 @@ public class CopyMojo
     {
         if ( !isSkip() )
         {
-            ArrayList theArtifactItems = getProcessedArtifactItems( this.stripVersion );
-            Iterator iter = theArtifactItems.iterator();
-            while ( iter.hasNext() )
+            List<ArtifactItem> theArtifactItems = getProcessedArtifactItems( this.stripVersion );
+            for ( ArtifactItem artifactItem : theArtifactItems )
             {
-                ArtifactItem artifactItem = (ArtifactItem) iter.next();
                 if ( artifactItem.isNeedsProcessing() )
                 {
                     copyArtifact( artifactItem );
@@ -97,9 +94,9 @@ public class CopyMojo
 
     protected ArtifactItemFilter getMarkedArtifactFilter( ArtifactItem item )
     {
-        ArtifactItemFilter destinationNameOverrideFilter = new DestFileFilter( this.isOverWriteReleases(), this
-            .isOverWriteSnapshots(), this.isOverWriteIfNewer(), false, false, false, false, this.stripVersion, item
-            .getOutputDirectory() );
+        ArtifactItemFilter destinationNameOverrideFilter =
+            new DestFileFilter( this.isOverWriteReleases(), this.isOverWriteSnapshots(), this.isOverWriteIfNewer(),
+                                false, false, false, false, this.stripVersion, item.getOutputDirectory() );
         return destinationNameOverrideFilter;
     }
 

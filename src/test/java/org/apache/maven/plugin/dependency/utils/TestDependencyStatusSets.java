@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.dependency.AbstractDependencyMojoTestCase;
 
 public class TestDependencyStatusSets
@@ -60,7 +61,7 @@ public class TestDependencyStatusSets
     public void testDependencyStatusLog()
         throws IOException
     {
-        Set artifacts = this.stubFactory.getMixedArtifacts();
+        Set<Artifact> artifacts = this.stubFactory.getMixedArtifacts();
         doTestDependencyStatusLog( artifacts );
     }
 
@@ -68,16 +69,16 @@ public class TestDependencyStatusSets
         throws IOException
     {
         this.stubFactory.setCreateFiles( false );
-        Set artifacts = this.stubFactory.getMixedArtifacts();
+        Set<Artifact> artifacts = this.stubFactory.getMixedArtifacts();
         doTestDependencyStatusLog( artifacts );
     }
 
     public void testDependencyStatusEmptySet()
     {
-        doTestDependencyStatusLog( new HashSet() );
+        doTestDependencyStatusLog( new HashSet<Artifact>() );
     }
 
-    public void doTestDependencyStatusLog( Set artifacts )
+    public void doTestDependencyStatusLog( Set<Artifact> artifacts )
     {
         // TODO: implement logger to check correct output
         // this test is just looking for unexpected exceptions.

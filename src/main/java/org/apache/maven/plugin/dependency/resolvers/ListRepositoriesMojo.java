@@ -61,9 +61,9 @@ public class ListRepositoriesMojo
 					new ScopeArtifactFilter( Artifact.SCOPE_TEST ),
 					new ArrayList() );
 			HashSet repos = new HashSet();
-            for ( Iterator i = result.getArtifactResolutionNodes().iterator(); i.hasNext(); )
+            for ( Iterator<ResolutionNode> i = result.getArtifactResolutionNodes().iterator(); i.hasNext(); )
 			{
-				ResolutionNode node = (ResolutionNode) i.next();
+				ResolutionNode node = i.next();
                 repos.addAll( node.getRemoteRepositories() );
 			}
 
