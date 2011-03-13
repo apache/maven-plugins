@@ -525,7 +525,8 @@ public class TestUnpackMojo
 
         assertTrue( time == unpackedFile.lastModified() );
         mojo.execute();
-        assertTrue( time != unpackedFile.lastModified() );
+        assertTrue( "unpackedFile '" + unpackedFile + "' lastModified() == " + time + ": should be different",
+                    time != unpackedFile.lastModified() );
     }
 
     public void assertUnpacked( ArtifactItem item, boolean overWrite )
