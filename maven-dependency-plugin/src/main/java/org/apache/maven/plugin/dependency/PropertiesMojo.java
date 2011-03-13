@@ -19,7 +19,6 @@ package org.apache.maven.plugin.dependency;
  * under the License.
  */
 
-import java.util.Iterator;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
@@ -59,11 +58,10 @@ public class PropertiesMojo
     public void execute()
         throws MojoExecutionException
     {
-        Set artifacts = getProject().getArtifacts();
+        Set<Artifact> artifacts = getProject().getArtifacts();
         
-        for ( Iterator i = artifacts.iterator(); i.hasNext(); )
+        for ( Artifact artifact : artifacts )
         {
-            Artifact artifact = (Artifact) i.next();
             project.getProperties().setProperty( artifact.getDependencyConflictId(),
                                                  artifact.getFile().getAbsolutePath() );
         }

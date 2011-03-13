@@ -20,8 +20,6 @@ package org.apache.maven.plugin.dependency.fromConfiguration;
  */
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.maven.artifact.Artifact;
@@ -103,7 +101,7 @@ public abstract class AbstractFromConfigurationMojo
      * @required
      * @since 1.0
      */
-    private ArrayList artifactItems;
+    private List<ArtifactItem> artifactItems;
 
     /**
      * To look up ArtifactRepository implementation
@@ -138,7 +136,7 @@ public abstract class AbstractFromConfigurationMojo
      * @throws MojoExecutionException with a message if an error occurs.
      * @see ArtifactItem
      */
-    protected ArrayList getProcessedArtifactItems( boolean removeVersion )
+    protected List<ArtifactItem> getProcessedArtifactItems( boolean removeVersion )
         throws MojoExecutionException
     {
         if ( artifactItems == null || artifactItems.size() < 1 )
@@ -146,10 +144,8 @@ public abstract class AbstractFromConfigurationMojo
             throw new MojoExecutionException( "There are no artifactItems configured." );
         }
 
-        Iterator iter = artifactItems.iterator();
-        while ( iter.hasNext() )
+        for ( ArtifactItem artifactItem : artifactItems )
         {
-            ArtifactItem artifactItem = (ArtifactItem) iter.next();
             this.getLog().info( "Configured Artifact: " + artifactItem.toString() );
 
             if ( artifactItem.getOutputDirectory() == null )
@@ -269,7 +265,7 @@ public abstract class AbstractFromConfigurationMojo
     }
 
     /**
-     * Tries to find missing version from dependancy list and dependency management. If found, the artifact is updated
+     * Tries to find missing version from dependency list and dependency management. If found, the artifact is updated
      * with the correct version. It will first look for an exact match on artifactId/groupId/classifier/type and if it
      * doesn't find a match, it will try again looking for artifactId and groupId only.
      * 
@@ -280,13 +276,11 @@ public abstract class AbstractFromConfigurationMojo
         throws MojoExecutionException
     {
         if ( !findDependencyVersion( artifact, project.getDependencies(), false )
-            && ( project.getDependencyManagement() == null || !findDependencyVersion(
-                                                                                      artifact,
+            && ( project.getDependencyManagement() == null || !findDependencyVersion( artifact,
                                                                                       project.getDependencyManagement().getDependencies(),
                                                                                       false ) )
             && !findDependencyVersion( artifact, project.getDependencies(), true )
-            && ( project.getDependencyManagement() == null || !findDependencyVersion(
-                                                                                      artifact,
+            && ( project.getDependencyManagement() == null || !findDependencyVersion( artifact,
                                                                                       project.getDependencyManagement().getDependencies(),
                                                                                       true ) ) )
         {
@@ -300,17 +294,16 @@ public abstract class AbstractFromConfigurationMojo
      * version.
      * 
      * @param artifact representing configured file.
-     * @param list list of dependencies to search.
+     * @param dependencies list of dependencies to search.
      * @param looseMatch only look at artifactId and groupId
      * @return the found dependency
      */
-    private boolean findDependencyVersion( ArtifactItem artifact, List list, boolean looseMatch )
+    private boolean findDependencyVersion( ArtifactItem artifact, List<Dependency> dependencies, boolean looseMatch )
     {
         boolean result = false;
 
-        for ( int i = 0; i < list.size(); i++ )
+        for ( Dependency dependency : dependencies )
         {
-            Dependency dependency = (Dependency) list.get( i );
             if ( StringUtils.equals( dependency.getArtifactId(), artifact.getArtifactId() )
                 && StringUtils.equals( dependency.getGroupId(), artifact.getGroupId() )
                 && ( looseMatch || StringUtils.equals( dependency.getClassifier(), artifact.getClassifier() ) )
@@ -373,7 +366,7 @@ public abstract class AbstractFromConfigurationMojo
     /**
      * @return Returns the artifactItems.
      */
-    public ArrayList getArtifactItems()
+    public List<ArtifactItem> getArtifactItems()
     {
         return this.artifactItems;
     }
@@ -381,7 +374,7 @@ public abstract class AbstractFromConfigurationMojo
     /**
      * @param theArtifactItems The artifactItems to set.
      */
-    public void setArtifactItems( ArrayList theArtifactItems )
+    public void setArtifactItems( List<ArtifactItem> theArtifactItems )
     {
         this.artifactItems = theArtifactItems;
     }

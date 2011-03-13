@@ -436,7 +436,7 @@ public class TreeMojo extends AbstractMojo
      */
     private DependencyNodeFilter createDependencyNodeFilter()
     {
-        List filters = new ArrayList();
+        List<DependencyNodeFilter> filters = new ArrayList<DependencyNodeFilter>();
 
         // filter node states
         if ( !verbose )
@@ -449,7 +449,7 @@ public class TreeMojo extends AbstractMojo
         // filter includes
         if ( includes != null )
         {
-            List patterns = Arrays.asList( includes.split( "," ) );
+            List<String> patterns = Arrays.asList( includes.split( "," ) );
 
             getLog().debug( "+ Filtering dependency tree by artifact include patterns: " + patterns );
 
@@ -460,7 +460,7 @@ public class TreeMojo extends AbstractMojo
         // filter excludes
         if ( excludes != null )
         {
-            List patterns = Arrays.asList( excludes.split( "," ) );
+            List<String> patterns = Arrays.asList( excludes.split( "," ) );
 
             getLog().debug( "+ Filtering dependency tree by artifact exclude patterns: " + patterns );
 
@@ -492,9 +492,9 @@ public class TreeMojo extends AbstractMojo
         if ( recommendedVersion == null )
         {
 
-            for ( Iterator i = allowedRange.getRestrictions().iterator(); i.hasNext() && !matched; )
+            for ( Iterator<Restriction> i = allowedRange.getRestrictions().iterator(); i.hasNext() && !matched; )
             {
-                Restriction restriction = (Restriction) i.next();
+                Restriction restriction = i.next();
                 if ( restriction.containsVersion( theVersion ) )
                 {
                     matched = true;

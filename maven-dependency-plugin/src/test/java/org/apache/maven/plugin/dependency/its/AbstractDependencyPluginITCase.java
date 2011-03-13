@@ -1,3 +1,5 @@
+package org.apache.maven.plugin.dependency.its;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,12 +18,11 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugin.dependency.its;
 
 import java.io.File;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
@@ -85,7 +86,7 @@ public abstract class AbstractDependencyPluginITCase
     /**
      * @see org.codehaus.plexus.PlexusTestCase#setUp()
      */
-    protected void setUp ()
+    protected void setUp()
         throws Exception
     {
         if ( !installed )
@@ -145,19 +146,17 @@ public abstract class AbstractDependencyPluginITCase
     /**
      * @see org.codehaus.plexus.PlexusTestCase#tearDown()
      */
-    protected void tearDown ()
+    protected void tearDown()
         throws Exception
     {
         super.tearDown();
 
-        List containers = new ArrayList();
+        List<PlexusContainer> containers = new ArrayList<PlexusContainer>();
 
         containers.add( getContainer() );
 
-        for ( Iterator iter = containers.iterator(); iter.hasNext(); )
+        for ( PlexusContainer container : containers )
         {
-            PlexusContainer container = (PlexusContainer) iter.next();
-
             if ( container != null )
             {
                 container.dispose();
@@ -180,7 +179,7 @@ public abstract class AbstractDependencyPluginITCase
      *            execute
      * @throws Exception any exception generated during test
      */
-    protected void testProject ( String projectName, String goalList )
+    protected void testProject( String projectName, String goalList )
         throws Exception
     {
         Properties props = new Properties();
@@ -196,21 +195,14 @@ public abstract class AbstractDependencyPluginITCase
      *            execute
      * @throws Exception any exception generated during test
      */
-    protected void testProject ( String projectName, Properties properties, String goalList )
+    protected void testProject( String projectName, Properties properties, String goalList )
         throws Exception
     {
         File theBasedir = getTestFile( "target/test-classes/its/" + projectName );
 
         File pom = new File( theBasedir, "pom.xml" );
 
-        String[] goal = goalList.split( "," );
-
-        List goals = new ArrayList();
-
-        for ( int i = 0; i < goal.length; i++ )
-        {
-            goals.add( goal[i] );
-        }
+        List<String> goals = Arrays.asList( goalList.split( "," ) );
 
         executeMaven( pom, properties, goals );
 
@@ -230,18 +222,18 @@ public abstract class AbstractDependencyPluginITCase
          */
     }
 
-    protected File getOutputDirectory ( String projectName )
+    protected File getOutputDirectory( String projectName )
     {
         return getTestFile( "target/test-classes/projects/" + projectName );
     }
 
-    protected void executeMaven ( File pom, Properties properties, List goals )
+    protected void executeMaven( File pom, Properties properties, List<String> goals )
         throws TestToolsException, ExecutionFailedException
     {
         executeMaven( pom, properties, goals, true );
     }
 
-    protected void executeMaven ( File pom, Properties properties, List goals, boolean switchLocalRepo )
+    protected void executeMaven( File pom, Properties properties, List<String> goals, boolean switchLocalRepo )
         throws TestToolsException, ExecutionFailedException
     {
         // insert the test property to activate the test
@@ -249,15 +241,10 @@ public abstract class AbstractDependencyPluginITCase
         properties.setProperty( "test", "true" );
         new File( BUILD_OUTPUT_DIRECTORY ).mkdirs();
 
-        NullPointerException npe = new NullPointerException();
-        StackTraceElement[] trace = npe.getStackTrace();
-
         File buildLog = null;
 
-        for ( int i = 0; i < trace.length; i++ )
+        for ( StackTraceElement element : new NullPointerException().getStackTrace() )
         {
-            StackTraceElement element = trace[i];
-
             String methodName = element.getMethodName();
 
             if ( methodName.startsWith( "test" ) && !methodName.equals( "testProject" ) )
@@ -307,13 +294,13 @@ public abstract class AbstractDependencyPluginITCase
         }
     }
 
-    protected MavenProject readProject ( File pom )
+    protected MavenProject readProject( File pom )
         throws TestToolsException
     {
         return projectTool.readProject( pom, localRepositoryDirectory );
     }
 
-    protected String getPluginCLISpecification ()
+    protected String getPluginCLISpecification()
     {
         String pluginSpec = GROUP_ID + ":" + ARTIFACT_ID + ":";
 

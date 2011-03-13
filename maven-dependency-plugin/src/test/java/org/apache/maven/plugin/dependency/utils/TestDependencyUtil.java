@@ -42,7 +42,7 @@ import org.apache.maven.plugin.testing.stubs.DefaultArtifactHandlerStub;
 public class TestDependencyUtil
     extends TestCase
 {
-    List artifacts = new ArrayList();
+    List<Artifact> artifacts = new ArrayList<Artifact>();
 
     Log log = new SilentLog();
 
@@ -89,7 +89,7 @@ public class TestDependencyUtil
         throws MojoExecutionException
     {
         File folder = new File( "target/a" );
-        final Artifact artifact = (Artifact) artifacts.get( 0 );
+        final Artifact artifact = artifacts.get( 0 );
         File name = DependencyUtil.getFormattedOutputDirectory( false, false, false, false, false, folder, artifact );
         // object is the same.
         assertEquals( folder, name );
@@ -136,7 +136,7 @@ public class TestDependencyUtil
         throws MojoExecutionException
     {
         File folder = new File( "target/a" );
-        final Artifact artifact = (Artifact) artifacts.get( 1 );
+        final Artifact artifact = artifacts.get( 1 );
         File name = DependencyUtil.getFormattedOutputDirectory( false, false, false, false, false, folder, artifact );
         // object is the same.
         assertEquals( folder, name );
@@ -184,7 +184,7 @@ public class TestDependencyUtil
     public void testFileName()
         throws MojoExecutionException
     {
-        Artifact artifact = (Artifact) artifacts.get( 0 );
+        Artifact artifact = artifacts.get( 0 );
 
         String name = DependencyUtil.getFormattedFileName( artifact, false );
         String expectedResult = "one-1.1-sources.jar";

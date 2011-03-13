@@ -20,7 +20,6 @@ package org.apache.maven.plugin.dependency.utils.resolvers;
  */
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -62,15 +61,13 @@ public class DefaultArtifactsResolver
      * @see org.apache.mojo.dependency.utils.resolvers.ArtifactsResolver#resolve(java.util.Set,
      *      org.apache.maven.plugin.logging.Log)
      */
-    public Set resolve( Set artifacts, Log log )
+    public Set<Artifact> resolve( Set<Artifact> artifacts, Log log )
         throws MojoExecutionException
     {
 
-        Set resolvedArtifacts = new HashSet();
-        Iterator iter = artifacts.iterator();
-        while ( iter.hasNext() )
+        Set<Artifact> resolvedArtifacts = new HashSet<Artifact>();
+        for ( Artifact artifact : artifacts )
         {
-            Artifact artifact = (Artifact) iter.next();
             try
             {
                 resolver.resolve( artifact, remoteRepositories, local );

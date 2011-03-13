@@ -21,7 +21,6 @@ package org.apache.maven.plugin.dependency.treeSerializers ;
 
 import java.io.Writer;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.maven.shared.dependency.tree.DependencyNode;
@@ -95,7 +94,7 @@ public class TGFDependencyNodeVisitor extends AbstractSerializingVisitor
     /**
      * List of edges.
      */
-    private List edges = new ArrayList();
+    private List<EdgeAppender> edges = new ArrayList<EdgeAppender>();
 
     /**
      * Constructor.
@@ -116,9 +115,9 @@ public class TGFDependencyNodeVisitor extends AbstractSerializingVisitor
         {
             // dump edges on last node endVisit
             writer.println( "#" );
-            for ( Iterator iterator = edges.iterator(); iterator.hasNext(); )
+            for ( EdgeAppender edge : edges )
             {
-                writer.println( iterator.next().toString() );
+                writer.println( edge.toString() );
             }
         }
         else

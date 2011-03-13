@@ -79,7 +79,7 @@ public class PurgeLocalRepositoryMojo
      * @required
      * @readonly
      */
-    private List projects;
+    private List<MavenProject> projects;
 
     /**
      * The list of dependencies in the form of groupId:artifactId which should
@@ -87,7 +87,7 @@ public class PurgeLocalRepositoryMojo
      * 
      * @parameter
      */
-    private List excludes;
+    private List<String> excludes;
 
     /**
      * Comma-separated list of groupId:artifactId entries, which should be used
@@ -174,12 +174,10 @@ public class PurgeLocalRepositoryMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        List exclusionPatterns = buildExclusionPatternsList();
+        List<String> exclusionPatterns = buildExclusionPatternsList();
 
-        for ( Iterator it = projects.iterator(); it.hasNext(); )
+        for ( MavenProject project : projects )
         {
-            MavenProject project = (MavenProject) it.next();
-
             try
             {
                 refreshDependenciesForProject( project, exclusionPatterns );
@@ -198,9 +196,9 @@ public class PurgeLocalRepositoryMojo
         }
     }
 
-    private List buildExclusionPatternsList()
+    private List<String> buildExclusionPatternsList()
     {
-        List patterns = new ArrayList();
+        List<String> patterns = new ArrayList<String>();
 
         if ( exclude != null )
         {
@@ -216,20 +214,18 @@ public class PurgeLocalRepositoryMojo
         return patterns;
     }
 
-    private Map createArtifactMap( MavenProject project )
+    private Map<String, Artifact> createArtifactMap( MavenProject project )
     {
-        Map artifactMap = Collections.EMPTY_MAP;
+        Map<String, Artifact> artifactMap = Collections.emptyMap();
 
-        List dependencies = project.getDependencies();
+        List<Dependency> dependencies = project.getDependencies();
 
         List remoteRepositories = Collections.EMPTY_LIST;
 
-        Set dependencyArtifacts = new HashSet();
+        Set<Artifact> dependencyArtifacts = new HashSet<Artifact>();
 
-        for ( Iterator it = dependencies.iterator(); it.hasNext(); )
+        for ( Dependency dependency : dependencies )
         {
-            Dependency dependency = (Dependency) it.next();
-
             VersionRange vr = VersionRange.createFromVersion( dependency.getVersion() );
 
             Artifact artifact = factory.createDependencyArtifact( dependency.getGroupId(), dependency.getArtifactId(),
@@ -258,11 +254,9 @@ public class PurgeLocalRepositoryMojo
         }
         else
         {
-            artifactMap = new HashMap();
-            for ( Iterator it = dependencyArtifacts.iterator(); it.hasNext(); )
+            artifactMap = new HashMap<String, Artifact>();
+            for ( Artifact artifact : dependencyArtifacts )
             {
-                Artifact artifact = (Artifact) it.next();
-
                 try
                 {
                     resolver.resolve( artifact, remoteRepositories, localRepository );
@@ -291,10 +285,10 @@ public class PurgeLocalRepositoryMojo
         }
     }
 
-    private void refreshDependenciesForProject( MavenProject project, List exclusionPatterns )
+    private void refreshDependenciesForProject( MavenProject project, List<String> exclusionPatterns )
         throws ArtifactResolutionException, MojoFailureException
     {
-        Map deps = createArtifactMap( project );
+        Map<String, Artifact> deps = createArtifactMap( project );
 
         if ( deps.isEmpty() )
         {
@@ -304,21 +298,20 @@ public class PurgeLocalRepositoryMojo
 
         if ( !exclusionPatterns.isEmpty() )
         {
-            for ( Iterator it = exclusionPatterns.iterator(); it.hasNext(); )
+            for ( String excludedKey : exclusionPatterns )
             {
-            	String excludedKey = (String) it.next();
-            	
-            	if (GROUP_ID_FUZZINESS.equals(resolutionFuzziness))
-            	{
-            		verbose( "Excluding groupId: " + excludedKey + " from refresh operation for project: " + project.getId() );
-            		
-            		for ( Iterator deps_it = deps.entrySet().iterator(); deps_it.hasNext(); )
-            		{
-            			Map.Entry dependency = (Map.Entry) deps_it.next();
+                if ( GROUP_ID_FUZZINESS.equals( resolutionFuzziness ) )
+                {
+                    verbose( "Excluding groupId: " + excludedKey + " from refresh operation for project: "
+                        + project.getId() );
+
+                    for ( Iterator<Map.Entry<String, Artifact>> deps_it = deps.entrySet().iterator(); deps_it.hasNext(); )
+                    {
+                        Map.Entry<String, Artifact> dependency = deps_it.next();
             			
-            			Artifact artifact = (Artifact) dependency.getValue();
+            			Artifact artifact = dependency.getValue();
             			
-            			if (artifact.getGroupId().equals(excludedKey))
+                        if ( artifact.getGroupId().equals( excludedKey ) )
             			{
             				deps_it.remove();
             			}
@@ -335,12 +328,10 @@ public class PurgeLocalRepositoryMojo
 
         verbose( "Processing dependencies for project: " + project.getId() );
 
-        List missingArtifacts = new ArrayList();
-        for ( Iterator it = deps.entrySet().iterator(); it.hasNext(); )
+        List<Artifact> missingArtifacts = new ArrayList<Artifact>();
+        for ( Map.Entry<String, Artifact> entry : deps.entrySet() )
         {
-            Map.Entry entry = (Map.Entry) it.next();
-
-            Artifact artifact = (Artifact) entry.getValue();
+            Artifact artifact = entry.getValue();
 
             verbose( "Processing artifact: " + artifact.getId() );
 
@@ -391,9 +382,8 @@ public class PurgeLocalRepositoryMojo
         if ( missingArtifacts.size() > 0 )
         {
             String message = "required artifacts missing:\n";
-            for ( Iterator i = missingArtifacts.iterator(); i.hasNext(); )
+            for ( Artifact missingArtifact : missingArtifacts )
             {
-                Artifact missingArtifact = (Artifact) i.next();
                 message += "  " + missingArtifact.getId() + "\n";
             }
             message += "\nfor the artifact:";

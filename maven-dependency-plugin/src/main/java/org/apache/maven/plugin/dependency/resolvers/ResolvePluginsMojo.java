@@ -19,7 +19,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -78,7 +77,7 @@ public class ResolvePluginsMojo
 
         try
         {
-            Set plugins = resolvePluginArtifacts();
+            Set<Artifact> plugins = resolvePluginArtifacts();
 
             if ( this.outputFile != null )
             {
@@ -87,10 +86,8 @@ public class ResolvePluginsMojo
                 outputWriter = new FileWriter( outputFile );
             }
 
-            for ( Iterator i = plugins.iterator(); i.hasNext(); )
+            for ( Artifact plugin : plugins )
             {
-                Artifact plugin = (Artifact) i.next();
-
                 String logStr = "Plugin Resolved: " + DependencyUtil.getFormattedFileName( plugin, false );
                 if ( !silent )
                 {
@@ -105,12 +102,10 @@ public class ResolvePluginsMojo
 
                 if ( !excludeTransitive )
                 {
-                    Set transitiveDependencies = this.resolveArtifactDependencies( plugin );
-
-                    for ( Iterator transIter = transitiveDependencies.iterator(); transIter.hasNext(); )
+                    for ( Artifact artifact : resolveArtifactDependencies( plugin ) )
                     {
-                        logStr = "    Plugin Dependency Resolved: "
-                            + DependencyUtil.getFormattedFileName( (Artifact) transIter.next(), false );
+                        logStr =
+                            "    Plugin Dependency Resolved: " + DependencyUtil.getFormattedFileName( artifact, false );
 
                         if ( !silent )
                         {
@@ -172,19 +167,18 @@ public class ResolvePluginsMojo
      * @throws ArtifactResolutionException
      * @throws ArtifactNotFoundException
      */
-    protected Set resolvePluginArtifacts()
+    protected Set<Artifact> resolvePluginArtifacts()
         throws ArtifactResolutionException, ArtifactNotFoundException
     {
-        Set plugins = project.getPluginArtifacts();
-        Set reports = project.getReportArtifacts();
+        Set<Artifact> plugins = project.getPluginArtifacts();
+        Set<Artifact> reports = project.getReportArtifacts();
 
-        Set artifacts = new HashSet();
+        Set<Artifact> artifacts = new HashSet<Artifact>();
         artifacts.addAll( reports );
         artifacts.addAll( plugins );
 
-        for ( Iterator i = artifacts.iterator(); i.hasNext(); )
+        for ( Artifact artifact : artifacts )
         {
-            Artifact artifact = (Artifact) i.next();
             // resolve the new artifact
             this.resolver.resolve( artifact, this.remotePluginRepositories, this.getLocal() );
         }

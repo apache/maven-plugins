@@ -41,7 +41,7 @@ import org.apache.maven.plugin.testing.SilentLog;
 public class TestClassifierTypeTranslator
     extends AbstractDependencyMojoTestCase
 {
-    Set artifacts = new HashSet();
+    Set<Artifact> artifacts = new HashSet<Artifact>();
 
     ArtifactFactory artifactFactory;
 
@@ -77,18 +77,15 @@ public class TestClassifierTypeTranslator
         String type = "zip";
 
         ArtifactTranslator at = new ClassifierTypeTranslator( classifier, type, artifactFactory );
-        Set results = at.translate( artifacts, log );
+        Set<Artifact> results = at.translate( artifacts, log );
 
-        Iterator iter = artifacts.iterator();
-
-        while ( iter.hasNext() )
+        for ( Artifact artifact : artifacts )
         {
-            Artifact artifact = (Artifact) iter.next();
-            Iterator resultIter = results.iterator();
+            Iterator<Artifact> resultIter = results.iterator();
             boolean found = false;
             while ( !found && resultIter.hasNext() )
             {
-                Artifact translatedArtifact = (Artifact) resultIter.next();
+                Artifact translatedArtifact = resultIter.next();
                 if ( artifact.getArtifactId() == translatedArtifact.getArtifactId()
                     && artifact.getGroupId() == translatedArtifact.getGroupId()
                     && artifact.getScope() == translatedArtifact.getScope() )
@@ -120,18 +117,15 @@ public class TestClassifierTypeTranslator
         String classifier = "jdk5";
 
         ArtifactTranslator at = new ClassifierTypeTranslator( classifier, type, artifactFactory );
-        Set results = at.translate( artifacts, log );
+        Set<Artifact> results = at.translate( artifacts, log );
 
-        Iterator iter = artifacts.iterator();
-
-        while ( iter.hasNext() )
+        for ( Artifact artifact : artifacts )
         {
-            Artifact artifact = (Artifact) iter.next();
-            Iterator resultIter = results.iterator();
+            Iterator<Artifact> resultIter = results.iterator();
             boolean found = false;
             while ( !found && resultIter.hasNext() )
             {
-                Artifact translatedArtifact = (Artifact) resultIter.next();
+                Artifact translatedArtifact = resultIter.next();
                 if ( artifact.getArtifactId() == translatedArtifact.getArtifactId()
                     && artifact.getGroupId() == translatedArtifact.getGroupId()
                     && artifact.getScope() == translatedArtifact.getScope() )
@@ -153,18 +147,15 @@ public class TestClassifierTypeTranslator
         String classifier = "jdk14";
         String type = "sources";
         ArtifactTranslator at = new ClassifierTypeTranslator( classifier, type, artifactFactory );
-        Set results = at.translate( artifacts, log );
+        Set<Artifact> results = at.translate( artifacts, log );
 
-        Iterator iter = artifacts.iterator();
-
-        while ( iter.hasNext() )
+        for ( Artifact artifact : artifacts )
         {
-            Artifact artifact = (Artifact) iter.next();
-            Iterator resultIter = results.iterator();
+            Iterator<Artifact> resultIter = results.iterator();
             boolean found = false;
             while ( !found && resultIter.hasNext() )
             {
-                Artifact translatedArtifact = (Artifact) resultIter.next();
+                Artifact translatedArtifact = resultIter.next();
                 if ( artifact.getArtifactId() == translatedArtifact.getArtifactId()
                     && artifact.getGroupId() == translatedArtifact.getGroupId()
                     && artifact.getScope() == translatedArtifact.getScope() )

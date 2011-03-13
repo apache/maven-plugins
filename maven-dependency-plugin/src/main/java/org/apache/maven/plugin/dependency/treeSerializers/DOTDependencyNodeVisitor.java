@@ -24,7 +24,6 @@ import org.apache.maven.shared.dependency.tree.DependencyNode;
 
 import java.io.Writer;
 import java.util.List;
-import java.util.Iterator;
 
 /**
  * A dependency node visitor that serializes visited nodes to DOT format
@@ -59,17 +58,17 @@ public class DOTDependencyNodeVisitor extends AbstractSerializingVisitor
 
         // Generate "currentNode -> Child" lines
 
-        List children = node.getChildren() ;
+        List<DependencyNode> children = node.getChildren();
 
-        for ( Iterator it = children.iterator () ; it.hasNext (); )
+        for ( DependencyNode child : children )
         {
-            StringBuffer sb = new StringBuffer() ;
-            sb.append( "\t\"" ) ;
-            sb.append(node.toNodeString()) ;
-            sb.append( "\" -> \"" ) ;
-            sb.append( ((DependencyNode)it.next()).toNodeString() ) ;
-            sb.append( "\" ; " ) ;
-            writer.println( sb.toString() ) ;
+            StringBuffer sb = new StringBuffer();
+            sb.append( "\t\"" );
+            sb.append( node.toNodeString() );
+            sb.append( "\" -> \"" );
+            sb.append( child.toNodeString() );
+            sb.append( "\" ; " );
+            writer.println( sb.toString() );
         }
 
         return true;

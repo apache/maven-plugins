@@ -20,7 +20,6 @@ package org.apache.maven.plugin.dependency.utils.translators;
  */
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
@@ -55,16 +54,14 @@ public class ClassifierTypeTranslator
      * @see org.apache.mojo.dependency.utils.translators.ArtifactTranslator#translate(java.util.Set,
      *      org.apache.maven.plugin.logging.Log)
      */
-    public Set translate( Set artifacts, Log log )
+    public Set<Artifact> translate( Set<Artifact> artifacts, Log log )
     {
-        Set results = artifacts;
+        Set<Artifact> results = artifacts;
 
         log.debug( "Translating Artifacts using Classifier: " + this.classifier + " and Type: " + this.type );
-        results = new HashSet();
-        for ( Iterator i = artifacts.iterator(); i.hasNext(); )
+        results = new HashSet<Artifact>();
+        for ( Artifact artifact : artifacts )
         {
-            Artifact artifact = (Artifact) i.next();
-
             // this translator must pass both type and classifier here so we
             // will use the
             // base artifact value if null comes in

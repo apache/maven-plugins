@@ -23,7 +23,6 @@ package org.apache.maven.plugin.dependency.utils;
  *
  */
 
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -36,37 +35,37 @@ import org.apache.maven.artifact.Artifact;
 public class DependencyStatusSets
 {
 
-    Set resolvedDependencies = null;
+    Set<Artifact> resolvedDependencies = null;
 
-    Set unResolvedDependencies = null;
+    Set<Artifact> unResolvedDependencies = null;
 
-    Set skippedDependencies = null;
+    Set<Artifact> skippedDependencies = null;
 
     public DependencyStatusSets()
     {
 
     }
 
-    public DependencyStatusSets( Set resolved, Set unResolved, Set skipped )
+    public DependencyStatusSets( Set<Artifact> resolved, Set<Artifact> unResolved, Set<Artifact> skipped )
     {
         if ( resolved != null )
         {
-            this.resolvedDependencies = new LinkedHashSet( resolved );
+            this.resolvedDependencies = new LinkedHashSet<Artifact>( resolved );
         }
         if ( unResolved != null )
         {
-            this.unResolvedDependencies = new LinkedHashSet( unResolved );
+            this.unResolvedDependencies = new LinkedHashSet<Artifact>( unResolved );
         }
         if ( skipped != null )
         {
-            this.skippedDependencies = new LinkedHashSet( skipped );
+            this.skippedDependencies = new LinkedHashSet<Artifact>( skipped );
         }
     }
 
     /**
      * @return Returns the resolvedDependencies.
      */
-    public Set getResolvedDependencies()
+    public Set<Artifact> getResolvedDependencies()
     {
         return this.resolvedDependencies;
     }
@@ -75,11 +74,11 @@ public class DependencyStatusSets
      * @param resolvedDependencies
      *            The resolvedDependencies to set.
      */
-    public void setResolvedDependencies( Set resolvedDependencies )
+    public void setResolvedDependencies( Set<Artifact> resolvedDependencies )
     {
         if ( resolvedDependencies != null )
         {
-            this.resolvedDependencies = new LinkedHashSet( resolvedDependencies );
+            this.resolvedDependencies = new LinkedHashSet<Artifact>( resolvedDependencies );
         }
         else
         {
@@ -90,7 +89,7 @@ public class DependencyStatusSets
     /**
      * @return Returns the skippedDependencies.
      */
-    public Set getSkippedDependencies()
+    public Set<Artifact> getSkippedDependencies()
     {
         return this.skippedDependencies;
     }
@@ -99,11 +98,11 @@ public class DependencyStatusSets
      * @param skippedDependencies
      *            The skippedDependencies to set.
      */
-    public void setSkippedDependencies( Set skippedDependencies )
+    public void setSkippedDependencies( Set<Artifact> skippedDependencies )
     {
         if ( skippedDependencies != null )
         {
-            this.skippedDependencies = new LinkedHashSet( skippedDependencies );
+            this.skippedDependencies = new LinkedHashSet<Artifact>( skippedDependencies );
         }
         else
         {
@@ -114,7 +113,7 @@ public class DependencyStatusSets
     /**
      * @return Returns the unResolvedDependencies.
      */
-    public Set getUnResolvedDependencies()
+    public Set<Artifact> getUnResolvedDependencies()
     {
         return this.unResolvedDependencies;
     }
@@ -123,11 +122,11 @@ public class DependencyStatusSets
      * @param unResolvedDependencies
      *            The unResolvedDependencies to set.
      */
-    public void setUnResolvedDependencies( Set unResolvedDependencies )
+    public void setUnResolvedDependencies( Set<Artifact> unResolvedDependencies )
     {
         if ( unResolvedDependencies != null )
         {
-            this.unResolvedDependencies = new LinkedHashSet( unResolvedDependencies );
+            this.unResolvedDependencies = new LinkedHashSet<Artifact>( unResolvedDependencies );
         }
         else
         {
@@ -151,9 +150,8 @@ public class DependencyStatusSets
         }
         else
         {
-            for ( Iterator i = resolvedDependencies.iterator(); i.hasNext(); )
+            for ( Artifact artifact : resolvedDependencies )
             {
-                Artifact artifact = (Artifact) i.next();
                 String artifactFilename = null;
                 if ( outputAbsoluteArtifactFilename )
                 {
@@ -179,11 +177,11 @@ public class DependencyStatusSets
         {
             sb.append( "\n" );
             sb.append( "The following files were skipped:\n" );
-            Set skippedDependencies = new LinkedHashSet();
+            Set<Artifact> skippedDependencies = new LinkedHashSet<Artifact>();
             skippedDependencies.addAll( this.skippedDependencies );
-            for ( Iterator i = skippedDependencies.iterator(); i.hasNext(); )
+            for ( Artifact artifact : skippedDependencies )
             {
-                sb.append( "   " + ( (Artifact) i.next() ).getId() + "\n" );
+                sb.append( "   " + artifact.getId() + "\n" );
             }
         }
 
@@ -191,11 +189,11 @@ public class DependencyStatusSets
         {
             sb.append( "\n" );
             sb.append( "The following files have NOT been resolved:\n" );
-            Set unResolvedDependencies = new LinkedHashSet();
+            Set<Artifact> unResolvedDependencies = new LinkedHashSet<Artifact>();
             unResolvedDependencies.addAll( this.unResolvedDependencies );
-            for ( Iterator i = unResolvedDependencies.iterator(); i.hasNext(); )
+            for ( Artifact artifact : unResolvedDependencies )
             {
-                sb.append( "   " + ( (Artifact) i.next() ).getId() + "\n" );
+                sb.append( "   " + artifact.getId() + "\n" );
             }
         }
         sb.append( "\n" );

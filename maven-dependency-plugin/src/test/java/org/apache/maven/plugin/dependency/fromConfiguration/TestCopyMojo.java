@@ -23,7 +23,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.maven.artifact.Artifact;
@@ -72,8 +71,8 @@ public class TestCopyMojo
     public ArtifactItem getSingleArtifactItem( boolean removeVersion )
         throws MojoExecutionException
     {
-        ArrayList list = mojo.getProcessedArtifactItems( removeVersion );
-        return (ArtifactItem) list.get( 0 );
+        List<ArtifactItem> list = mojo.getProcessedArtifactItems( removeVersion );
+        return list.get( 0 );
     }
 
     public void testGetArtifactItems()
@@ -86,7 +85,7 @@ public class TestCopyMojo
         item.setGroupId( "groupId" );
         item.setVersion( "1.0" );
 
-        ArrayList list = new ArrayList( 1 );
+        List<ArtifactItem> list = new ArrayList<ArtifactItem>( 1 );
         list.add( item );
 
         mojo.setArtifactItems( list );
@@ -100,12 +99,11 @@ public class TestCopyMojo
         assertEquals( output, result.getOutputDirectory() );
     }
 
-    public void assertFilesExist( Collection items, boolean exist )
+    public void assertFilesExist( Collection<ArtifactItem> items, boolean exist )
     {
-        Iterator iter = items.iterator();
-        while ( iter.hasNext() )
+        for ( ArtifactItem item : items )
         {
-            assertFileExists( (ArtifactItem) iter.next(), exist );
+            assertFileExists( item, exist );
         }
     }
 
@@ -126,7 +124,7 @@ public class TestCopyMojo
     public void testCopyFile()
         throws IOException, MojoExecutionException
     {
-        ArrayList list = stubFactory.getArtifactItems( stubFactory.getClassifiedArtifacts() );
+        List<ArtifactItem> list = stubFactory.getArtifactItems( stubFactory.getClassifiedArtifacts() );
 
         mojo.setArtifactItems( list );
 
@@ -138,17 +136,15 @@ public class TestCopyMojo
     public void testSkip()
         throws IOException, MojoExecutionException
     {
-        ArrayList list = stubFactory.getArtifactItems( stubFactory.getClassifiedArtifacts() );
+        List<ArtifactItem> list = stubFactory.getArtifactItems( stubFactory.getClassifiedArtifacts() );
 
         mojo.setSkip( true );
         mojo.setArtifactItems( list );
 
         mojo.execute();
-        Iterator iter = list.iterator();
-        while ( iter.hasNext() )
+        for ( ArtifactItem item : list )
         {
             //these will be null because no processing has occured only when everything is skipped
-            ArtifactItem item = (ArtifactItem) iter.next();
             assertEquals( null, item.getOutputDirectory() );
             assertEquals( null, item.getDestFileName() );
         }
@@ -158,14 +154,10 @@ public class TestCopyMojo
     public void testCopyFileNoOverwrite()
         throws IOException, MojoExecutionException
     {
+        List<ArtifactItem> list = stubFactory.getArtifactItems( stubFactory.getClassifiedArtifacts() );
 
-        ArrayList list = stubFactory.getArtifactItems( stubFactory.getClassifiedArtifacts() );
-
-        Iterator iter = list.iterator();
-        while ( iter.hasNext() )
+        for ( ArtifactItem item : list )
         {
-            ArtifactItem item = (ArtifactItem) iter.next();
-            
             // make sure that we copy even if false is set - MDEP-80
             item.setOverWrite( "false" );
         }
@@ -179,7 +171,7 @@ public class TestCopyMojo
     public void testCopyToLocation()
         throws IOException, MojoExecutionException
     {
-        ArrayList list = stubFactory.getArtifactItems( stubFactory.getClassifiedArtifacts() );
+        List<ArtifactItem> list = stubFactory.getArtifactItems( stubFactory.getClassifiedArtifacts() );
         ArtifactItem item = (ArtifactItem) list.get( 0 );
         item.setOutputDirectory( new File( mojo.getOutputDirectory(), "testOverride" ) );
 
@@ -193,7 +185,7 @@ public class TestCopyMojo
     public void testCopyStripVersionSetInMojo()
         throws IOException, MojoExecutionException
     {
-        ArrayList list = stubFactory.getArtifactItems( stubFactory.getClassifiedArtifacts() );
+        List<ArtifactItem> list = stubFactory.getArtifactItems( stubFactory.getClassifiedArtifacts() );
         ArtifactItem item = (ArtifactItem) list.get( 0 );
         item.setOutputDirectory( new File( mojo.getOutputDirectory(), "testOverride" ) );
         mojo.setStripVersion( true );
@@ -209,7 +201,7 @@ public class TestCopyMojo
     public void testNonClassifierStrip()
         throws IOException, MojoExecutionException
     {
-        ArrayList list = stubFactory.getArtifactItems( stubFactory.getReleaseAndSnapshotArtifacts() );
+        List<ArtifactItem> list = stubFactory.getArtifactItems( stubFactory.getReleaseAndSnapshotArtifacts() );
         mojo.setStripVersion( true );
         mojo.setArtifactItems( list );
 
@@ -221,7 +213,7 @@ public class TestCopyMojo
     public void testNonClassifierNoStrip()
         throws IOException, MojoExecutionException
     {
-        ArrayList list = stubFactory.getArtifactItems( stubFactory.getReleaseAndSnapshotArtifacts() );
+        List<ArtifactItem> list = stubFactory.getArtifactItems( stubFactory.getReleaseAndSnapshotArtifacts() );
 
         mojo.setArtifactItems( list );
 
@@ -240,7 +232,7 @@ public class TestCopyMojo
         item.setGroupId( "groupId" );
         item.setType( "type" );
 
-        ArrayList list = new ArrayList();
+        List<ArtifactItem> list = new ArrayList<ArtifactItem>();
         list.add( item );
         mojo.setArtifactItems( list );
 
@@ -255,7 +247,7 @@ public class TestCopyMojo
         }
     }
 
-    public List getDependencyList( ArtifactItem item )
+    public List<Dependency> getDependencyList( ArtifactItem item )
     {
         Dependency dep = new Dependency();
         dep.setArtifactId( item.getArtifactId() );
@@ -271,7 +263,7 @@ public class TestCopyMojo
         dep2.setType( item.getType() );
         dep2.setVersion( "2.1" );
 
-        List list = new ArrayList( 2 );
+        List<Dependency> list = new ArrayList<Dependency>( 2 );
         list.add( dep2 );
         list.add( dep );
 
@@ -288,7 +280,7 @@ public class TestCopyMojo
         item.setGroupId( "groupId" );
         item.setType( "type" );
 
-        ArrayList list = new ArrayList();
+        List<ArtifactItem> list = new ArrayList<ArtifactItem>();
         list.add( item );
         mojo.setArtifactItems( list );
 
@@ -316,7 +308,7 @@ public class TestCopyMojo
         item.setClassifier( "sources" );
         item.setType( "jar" );
 
-        ArrayList list = new ArrayList();
+        List<ArtifactItem> list = new ArrayList<ArtifactItem>();
         list.add( item );
         mojo.setArtifactItems( list );
 
@@ -335,7 +327,7 @@ public class TestCopyMojo
         item.setGroupId( "groupId" );
         item.setType( "type" );
 
-        ArrayList list = new ArrayList();
+        List<ArtifactItem> list = new ArrayList<ArtifactItem>();
         list.add( item );
         mojo.setArtifactItems( list );
 
@@ -347,7 +339,7 @@ public class TestCopyMojo
         assertEquals( "2.1", item.getVersion() );
     }
 
-    public List getDependencyMgtList( ArtifactItem item )
+    public List<Dependency> getDependencyMgtList( ArtifactItem item )
     {
         Dependency dep = new Dependency();
         dep.setArtifactId( item.getArtifactId() );
@@ -363,7 +355,7 @@ public class TestCopyMojo
         dep2.setType( item.getType() );
         dep2.setVersion( "3.1" );
 
-        List list = new ArrayList( 2 );
+        List<Dependency> list = new ArrayList<Dependency>( 2 );
         list.add( dep2 );
         list.add( dep );
 
@@ -390,7 +382,7 @@ public class TestCopyMojo
         item.setGroupId( "groupId" );
         item.setType( "type" );
 
-        ArrayList list = new ArrayList();
+        List<ArtifactItem> list = new ArrayList<ArtifactItem>();
         list.add( item );
 
         mojo.setArtifactItems( list );
@@ -423,7 +415,7 @@ public class TestCopyMojo
         item.setGroupId( "groupId" );
         item.setType( "type" );
 
-        ArrayList list = new ArrayList();
+        List<ArtifactItem> list = new ArrayList<ArtifactItem>();
         list.add( item );
 
         mojo.setArtifactItems( list );
@@ -457,7 +449,7 @@ public class TestCopyMojo
         item.setGroupId( "groupId" );
         item.setType( "type" );
 
-        ArrayList list = new ArrayList();
+        List<ArtifactItem> list = new ArrayList<ArtifactItem>();
         list.add( item );
 
         mojo.setArtifactItems( list );
@@ -493,7 +485,7 @@ public class TestCopyMojo
         item.setType( "type" );
         item.setVersion( "1.0" );
 
-        ArrayList list = new ArrayList();
+        List<ArtifactItem> list = new ArrayList<ArtifactItem>();
         list.add( item );
         mojo.setArtifactItems( list );
 
@@ -543,7 +535,7 @@ public class TestCopyMojo
 
         ArtifactItem item = new ArtifactItem( release );
 
-        ArrayList list = new ArrayList( 1 );
+        List<ArtifactItem> list = new ArrayList<ArtifactItem>( 1 );
         list.add( item );
         mojo.setArtifactItems( list );
 
@@ -574,7 +566,7 @@ public class TestCopyMojo
 
         ArtifactItem item = new ArtifactItem( artifact );
 
-        ArrayList list = new ArrayList( 1 );
+        List<ArtifactItem> list = new ArrayList<ArtifactItem>( 1 );
         list.add( item );
         mojo.setArtifactItems( list );
 
@@ -605,7 +597,7 @@ public class TestCopyMojo
 
         ArtifactItem item = new ArtifactItem( release );
 
-        ArrayList list = new ArrayList( 1 );
+        List<ArtifactItem> list = new ArrayList<ArtifactItem>( 1 );
         list.add( item );
         mojo.setArtifactItems( list );
 
@@ -633,7 +625,7 @@ public class TestCopyMojo
 
         ArtifactItem item = new ArtifactItem( artifact );
 
-        ArrayList list = new ArrayList( 1 );
+        List<ArtifactItem> list = new ArrayList<ArtifactItem>( 1 );
         list.add( item );
         mojo.setArtifactItems( list );
 
@@ -662,7 +654,7 @@ public class TestCopyMojo
 
         ArtifactItem item = new ArtifactItem( artifact );
 
-        ArrayList list = new ArrayList( 1 );
+        List<ArtifactItem> list = new ArrayList<ArtifactItem>( 1 );
         list.add( item );
         mojo.setArtifactItems( list );
         mojo.setOverWriteIfNewer( true );
@@ -685,7 +677,7 @@ public class TestCopyMojo
     public void testCopyFileWithOverideLocalRepo()
         throws IOException, MojoExecutionException
     {
-        ArrayList list = stubFactory.getArtifactItems( stubFactory.getClassifiedArtifacts() );
+        List<ArtifactItem> list = stubFactory.getArtifactItems( stubFactory.getClassifiedArtifacts() );
 
         mojo.setArtifactItems( list );
         mojo.setLocal( new StubArtifactRepository( this.testDir.getAbsolutePath() ) );

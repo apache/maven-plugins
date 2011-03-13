@@ -21,6 +21,7 @@ package org.apache.maven.plugin.dependency.utils.resolvers;
 
 import java.util.Set;
 
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 
@@ -30,6 +31,6 @@ import org.apache.maven.plugin.logging.Log;
  */
 public interface ArtifactsResolver
 {
-    Set resolve( Set artifacts, Log log )
+    Set<Artifact> resolve( Set<Artifact> artifacts, Log log )
         throws MojoExecutionException;
 }

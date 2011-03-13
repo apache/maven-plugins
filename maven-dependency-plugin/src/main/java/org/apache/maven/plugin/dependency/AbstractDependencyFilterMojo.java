@@ -19,6 +19,7 @@ import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.dependency.utils.DependencyStatusSets;
 import org.apache.maven.plugin.dependency.utils.DependencyUtil;
@@ -225,7 +226,7 @@ public abstract class AbstractDependencyFilterMojo
      * @return A HashSet of artifacts
      * @throws MojoExecutionException
      */
-    protected Set getResolvedDependencies( boolean stopOnFailure )
+    protected Set<Artifact> getResolvedDependencies( boolean stopOnFailure )
         throws MojoExecutionException
 
     {
@@ -269,7 +270,7 @@ public abstract class AbstractDependencyFilterMojo
                                                 DependencyUtil.cleanToBeTokenizedString( this.excludeArtifactIds ) ) );
 
         // start with all artifacts.
-        Set artifacts = project.getArtifacts();
+        Set<Artifact> artifacts = project.getArtifacts();
 
         // perform filtering
         try
@@ -305,11 +306,11 @@ public abstract class AbstractDependencyFilterMojo
      *         on the projects dependencies
      * @throws MojoExecutionException
      */
-    protected DependencyStatusSets getClassifierTranslatedDependencies( Set artifacts, boolean stopOnFailure )
+    protected DependencyStatusSets getClassifierTranslatedDependencies( Set<Artifact> artifacts, boolean stopOnFailure )
         throws MojoExecutionException
     {
-        Set unResolvedArtifacts = new HashSet();
-        Set resolvedArtifacts = artifacts;
+        Set<Artifact> unResolvedArtifacts = new HashSet<Artifact>();
+        Set<Artifact> resolvedArtifacts = artifacts;
         DependencyStatusSets status = new DependencyStatusSets();
 
         // possibly translate artifacts into a new set of artifacts based on the
@@ -349,7 +350,7 @@ public abstract class AbstractDependencyFilterMojo
      * @return
      * @throws MojoExecutionException
      */
-    protected DependencyStatusSets filterMarkedDependencies( Set artifacts )
+    protected DependencyStatusSets filterMarkedDependencies( Set<Artifact> artifacts )
         throws MojoExecutionException
     {
         // remove files that have markers already
@@ -357,7 +358,7 @@ public abstract class AbstractDependencyFilterMojo
         filter.clearFilters();
         filter.addFilter( getMarkedArtifactFilter() );
 
-        Set unMarkedArtifacts;
+        Set<Artifact> unMarkedArtifacts;
         try
         {
             unMarkedArtifacts = filter.filter( artifacts );
@@ -368,7 +369,7 @@ public abstract class AbstractDependencyFilterMojo
         }
 
         // calculate the skipped artifacts
-        Set skippedArtifacts = new HashSet();
+        Set<Artifact> skippedArtifacts = new HashSet<Artifact>();
         skippedArtifacts.addAll( artifacts );
         skippedArtifacts.removeAll( unMarkedArtifacts );
 
@@ -397,7 +398,8 @@ public abstract class AbstractDependencyFilterMojo
     /**
      * @return true, if the groupId should be prepended to the filename. 
      */
-    public boolean isPrependGroupId() {
+    public boolean isPrependGroupId()
+    {
         return prependGroupId;
     }
 
@@ -405,7 +407,8 @@ public abstract class AbstractDependencyFilterMojo
      * @param prependGroupId - 
      *            true if the groupId must be prepended during the copy.
      */
-    public void setPrependGroupId(boolean prependGroupId) {
+    public void setPrependGroupId( boolean prependGroupId )
+    {
         this.prependGroupId = prependGroupId;
     }
 }

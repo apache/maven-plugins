@@ -20,7 +20,6 @@ package org.apache.maven.plugin.dependency;
  */
 
 import java.io.File;
-import java.util.Iterator;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
@@ -78,15 +77,15 @@ public abstract class AbstractResolveMojo
 	 */
 	protected boolean appendOutput;
     
-    protected Set resolveDependencyArtifacts( MavenProject theProject )
+    protected Set<Artifact> resolveDependencyArtifacts( MavenProject theProject )
         throws ArtifactResolutionException, ArtifactNotFoundException, InvalidDependencyVersionException
     {
-        Set artifacts = theProject.createArtifacts( this.factory, Artifact.SCOPE_TEST,
-                                                    new ScopeArtifactFilter( Artifact.SCOPE_TEST ) );
+        Set<Artifact> artifacts =
+            theProject.createArtifacts( this.factory, Artifact.SCOPE_TEST,
+                                        new ScopeArtifactFilter( Artifact.SCOPE_TEST ) );
 
-        for ( Iterator i = artifacts.iterator(); i.hasNext(); )
+        for ( Artifact artifact : artifacts )
         {
-            Artifact artifact = (Artifact) i.next();
             // resolve the new artifact
             this.resolver.resolve( artifact, this.remoteRepos, this.getLocal() );
         }
@@ -106,7 +105,7 @@ public abstract class AbstractResolveMojo
      * @throws ProjectBuildingException
      * @throws InvalidDependencyVersionException
      */
-    protected Set resolveArtifactDependencies( Artifact artifact )
+    protected Set<Artifact> resolveArtifactDependencies( Artifact artifact )
         throws ArtifactResolutionException, ArtifactNotFoundException, ProjectBuildingException,
         InvalidDependencyVersionException
     {

@@ -20,8 +20,6 @@ package org.apache.maven.plugin.dependency;
  */
 
 import java.io.File;
-import java.util.Iterator;
-import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -76,11 +74,9 @@ public class UnpackDependenciesMojo
         throws MojoExecutionException
     {
         DependencyStatusSets dss = getDependencySets( this.failOnMissingClassifierArtifact );
-        Set artifacts = dss.getResolvedDependencies();
 
-        for ( Iterator i = artifacts.iterator(); i.hasNext(); )
+        for ( Artifact artifact : dss.getResolvedDependencies() )
         {
-            Artifact artifact = (Artifact) i.next();
             File destDir;
             destDir = DependencyUtil.getFormattedOutputDirectory( useSubDirectoryPerScope, useSubDirectoryPerType, useSubDirectoryPerArtifact,
                                                                   useRepositoryLayout, stripVersion, outputDirectory,
@@ -90,10 +86,8 @@ public class UnpackDependenciesMojo
             handler.setMarker();
         }
 
-        artifacts = dss.getSkippedDependencies();
-        for ( Iterator i = artifacts.iterator(); i.hasNext(); )
+        for ( Artifact artifact : dss.getSkippedDependencies() )
         {
-            Artifact artifact = (Artifact) i.next();
             getLog().info( artifact.getFile().getName() + " already exists in destination." );
         }
     }

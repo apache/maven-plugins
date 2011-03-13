@@ -36,7 +36,6 @@ import org.apache.maven.shared.dependency.analyzer.ProjectDependencyAnalyzer;
 import org.apache.maven.shared.dependency.analyzer.ProjectDependencyAnalyzerException;
 import org.codehaus.plexus.PlexusConstants;
 import org.codehaus.plexus.PlexusContainer;
-import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.codehaus.plexus.context.Context;
 import org.codehaus.plexus.context.ContextException;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
@@ -211,17 +210,17 @@ public abstract class AbstractAnalyzeMojo
             throw new MojoExecutionException( "Cannot analyze dependencies", exception );
         }
 
-        Set usedDeclared = analysis.getUsedDeclaredArtifacts();
-        Set usedUndeclared = analysis.getUsedUndeclaredArtifacts();
-        Set unusedDeclared = analysis.getUnusedDeclaredArtifacts();
+        Set<Artifact> usedDeclared = analysis.getUsedDeclaredArtifacts();
+        Set<Artifact> usedUndeclared = analysis.getUsedUndeclaredArtifacts();
+        Set<Artifact> unusedDeclared = analysis.getUnusedDeclaredArtifacts();
 
         if ( ignoreNonCompile )
         {
-            Set filteredUnusedDeclared = new HashSet( unusedDeclared );
-            Iterator iter = filteredUnusedDeclared.iterator();
+            Set<Artifact> filteredUnusedDeclared = new HashSet<Artifact>( unusedDeclared );
+            Iterator<Artifact> iter = filteredUnusedDeclared.iterator();
             while ( iter.hasNext() )
             {
-                Artifact artifact = (Artifact) iter.next();
+                Artifact artifact = iter.next();
                 if ( !artifact.getScope().equals( Artifact.SCOPE_COMPILE ) )
                 {
                     iter.remove();
@@ -270,7 +269,7 @@ public abstract class AbstractAnalyzeMojo
         return !usedUndeclared.isEmpty() || !unusedDeclared.isEmpty();
     }
 
-    private void logArtifacts( Set artifacts, boolean warn )
+    private void logArtifacts( Set<Artifact> artifacts, boolean warn )
     {
         if ( artifacts.isEmpty() )
         {
@@ -278,10 +277,8 @@ public abstract class AbstractAnalyzeMojo
         }
         else
         {
-            for ( Iterator iterator = artifacts.iterator(); iterator.hasNext(); )
+            for ( Artifact artifact : artifacts )
             {
-                Artifact artifact = (Artifact) iterator.next();
-
                 // called because artifact will set the version to -SNAPSHOT only if I do this. MNG-2961
                 artifact.isSnapshot();
 
@@ -298,7 +295,7 @@ public abstract class AbstractAnalyzeMojo
         }
     }
 
-    private void writeDependencyXML( Set artifacts )
+    private void writeDependencyXML( Set<Artifact> artifacts )
     {
         if ( !artifacts.isEmpty() )
         {
@@ -307,11 +304,8 @@ public abstract class AbstractAnalyzeMojo
             StringWriter out = new StringWriter();
             PrettyPrintXMLWriter writer = new PrettyPrintXMLWriter( out );
 
-            Iterator iter = artifacts.iterator();
-            while ( iter.hasNext() )
+            for ( Artifact artifact : artifacts )
             {
-                Artifact artifact = (Artifact) iter.next();
-
                 // called because artifact will set the version to -SNAPSHOT only if I do this. MNG-2961
                 artifact.isSnapshot();
 
@@ -345,18 +339,16 @@ public abstract class AbstractAnalyzeMojo
         }
     }
 
-    private void writeScriptableOutput( Set artifacts )
+    private void writeScriptableOutput( Set<Artifact> artifacts )
     {
         if ( !artifacts.isEmpty() )
         {
             getLog().info( "Missing dependencies: " );
             String pomFile = baseDir.getAbsolutePath() + File.separatorChar + "pom.xml";
             StringBuffer buf = new StringBuffer();
-            Iterator iter = artifacts.iterator();
-            while ( iter.hasNext() )
-            {
-                Artifact artifact = (Artifact) iter.next();
 
+            for ( Artifact artifact : artifacts )
+            {
                 // called because artifact will set the version to -SNAPSHOT only if I do this. MNG-2961
                 artifact.isSnapshot();
 

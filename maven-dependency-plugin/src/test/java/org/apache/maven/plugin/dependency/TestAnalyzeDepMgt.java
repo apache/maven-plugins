@@ -62,8 +62,8 @@ public class TestAnalyzeDepMgt
 
         stubFactory = new DependencyArtifactStubFactory( new File( "" ), false );
 
-        Set allArtifacts = stubFactory.getMixedArtifacts();
-        Set directArtifacts = stubFactory.getClassifiedArtifacts();
+        Set<Artifact> allArtifacts = stubFactory.getMixedArtifacts();
+        Set<Artifact> directArtifacts = stubFactory.getClassifiedArtifacts();
 
 
         exclusionArtifact = stubFactory.getReleaseArtifact();
@@ -80,7 +80,7 @@ public class TestAnalyzeDepMgt
         exclusion.setVersion( "3.0" );
 
         exclusion.addExclusion( ex );
-        ArrayList list = new ArrayList();
+        List<Dependency> list = new ArrayList<Dependency>();
         list.add( exclusion );
 
         depMgt = new DependencyManagement();
@@ -151,9 +151,9 @@ public class TestAnalyzeDepMgt
 
         assertEquals( 0, mojo.addExclusions( null ).size() );
 
-        ArrayList list = new ArrayList();
+        List<Exclusion> list = new ArrayList<Exclusion>();
         list.add( ex );
-        Map map = mojo.addExclusions( list );
+        Map<String, Exclusion> map = mojo.addExclusions( list );
 
         assertEquals( 1,map.size() );
         assertTrue( map.containsKey( mojo.getExclusionKey( ex ) ) );
@@ -162,13 +162,13 @@ public class TestAnalyzeDepMgt
 
     public void testGetExclusionErrors()
     {
-        ArrayList list = new ArrayList();
+        List<Exclusion> list = new ArrayList<Exclusion>();
         list.add( ex );
 
         // already tested this method so I can trust it.
-        Map map = mojo.addExclusions( list );
+        Map<String, Exclusion> map = mojo.addExclusions( list );
 
-        List l = mojo.getExclusionErrors( map, mojo.getProject().getArtifacts() );
+        List<Artifact> l = mojo.getExclusionErrors( map, mojo.getProject().getArtifacts() );
 
         assertEquals( 1, l.size() );
 
@@ -178,11 +178,11 @@ public class TestAnalyzeDepMgt
     public void testGetMismatch()
         throws IOException
     {
-        Map depMgtMap = new HashMap();
+        Map<String, Dependency> depMgtMap = new HashMap<String, Dependency>();
 
         depMgtMap.put( exclusion.getManagementKey(), exclusion );
 
-        Map results = mojo.getMismatch( depMgtMap, mojo.getProject().getArtifacts() );
+        Map<Artifact, Dependency> results = mojo.getMismatch( depMgtMap, mojo.getProject().getArtifacts() );
 
         assertEquals( 1, results.size() );
         // the release artifact is used to create the exclusion

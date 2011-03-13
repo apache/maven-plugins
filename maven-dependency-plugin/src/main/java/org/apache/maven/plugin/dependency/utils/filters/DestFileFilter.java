@@ -94,13 +94,13 @@ public class DestFileFilter
     public Set filter( Set artifacts )
         throws ArtifactFilterException
     {
-        Set result = new HashSet();
+        Set<Artifact> result = new HashSet<Artifact>();
 
-        Iterator iter = artifacts.iterator();
+        Iterator<Artifact> iter = artifacts.iterator();
         
         while ( iter.hasNext() )
         {
-            Artifact artifact = (Artifact) iter.next();
+            Artifact artifact = iter.next();
             if ( isArtifactIncluded( new ArtifactItem( artifact ) ) )
             {
                 result.add( artifact );

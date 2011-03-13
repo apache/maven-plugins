@@ -42,7 +42,7 @@ import org.apache.maven.shared.artifact.filter.collection.ArtifactFilterExceptio
 public class TestMarkerFileFilter
     extends TestCase
 {
-    Set artifacts = new HashSet();
+    Set<Artifact> artifacts = new HashSet<Artifact>();
 
     Log log = new SilentLog();
 
@@ -73,7 +73,7 @@ public class TestMarkerFileFilter
        
     {
         MarkerFileFilter filter = new MarkerFileFilter( true, true, false, new DefaultFileMarkerHandler( outputFolder ) );
-        Set result = filter.filter( artifacts );
+        Set<Artifact> result = filter.filter( artifacts );
         assertEquals( 2, result.size() );
 
         filter.setOverWriteReleases( false );
@@ -89,7 +89,7 @@ public class TestMarkerFileFilter
         handler.setMarker();
 
         MarkerFileFilter filter = new MarkerFileFilter( true, false, false, new DefaultFileMarkerHandler( outputFolder ) );
-        Set result = filter.filter( artifacts );
+        Set<Artifact> result = filter.filter( artifacts );
         assertEquals( 1, result.size() );
 
         filter.setOverWriteSnapshots( true );
@@ -108,7 +108,7 @@ public class TestMarkerFileFilter
 
         MarkerFileFilter filter = new MarkerFileFilter( false, false, false,
                                                         new DefaultFileMarkerHandler( outputFolder ) );
-        Set result = filter.filter( artifacts);
+        Set<Artifact> result = filter.filter( artifacts );
         assertEquals( 1, result.size() );
 
         filter.setOverWriteReleases( true );
@@ -128,14 +128,14 @@ public class TestMarkerFileFilter
         DependencyArtifactStubFactory fileFact = new DependencyArtifactStubFactory( outputFolder, true );
         Artifact snap = fileFact.getSnapshotArtifact();
         Artifact release = fileFact.getReleaseArtifact();
-        HashSet tempArtifacts = new HashSet();
+        Set<Artifact> tempArtifacts = new HashSet<Artifact>();
         tempArtifacts.add( snap );
         tempArtifacts.add( release );
         DefaultFileMarkerHandler handler = new DefaultFileMarkerHandler( snap, outputFolder );
         handler.setMarker();
         snap.getFile().setLastModified( snap.getFile().lastModified() + 1500 );
         MarkerFileFilter filter = new MarkerFileFilter( false, false, true, new DefaultFileMarkerHandler( outputFolder ) );
-        Set result = filter.filter( tempArtifacts);
+        Set<Artifact> result = filter.filter( tempArtifacts );
         assertEquals( 2, result.size() );
 
         // update marker; filter won't include snapshot because timestamps equal

@@ -23,8 +23,11 @@ import java.io.File;
 import java.lang.reflect.Field;
 import java.util.List;
 
+import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
+import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactCollector;
+import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.dependency.utils.DependencySilentLog;
@@ -52,14 +55,14 @@ public abstract class AbstractDependencyMojo
      *
      * @component
      */
-    protected org.apache.maven.artifact.factory.ArtifactFactory factory;
+    protected ArtifactFactory factory;
 
     /**
      * Used to look up Artifacts in the remote repository.
      *
      * @component
      */
-    protected org.apache.maven.artifact.resolver.ArtifactResolver resolver;
+    protected ArtifactResolver resolver;
 
     /**
      * Artifact collector, needed to resolve dependencies.
@@ -85,7 +88,7 @@ public abstract class AbstractDependencyMojo
      * @readonly
      * @required
      */
-    private org.apache.maven.artifact.repository.ArtifactRepository local;
+    private ArtifactRepository local;
 
     /**
      * List of Remote Repositories used by the resolver
@@ -94,7 +97,7 @@ public abstract class AbstractDependencyMojo
      * @readonly
      * @required
      */
-    protected java.util.List remoteRepos;
+    protected List remoteRepos;
 
     /**
      * To look up Archiver/UnArchiver implementations
@@ -332,7 +335,7 @@ public abstract class AbstractDependencyMojo
     /**
      * @return Returns the remoteRepos.
      */
-    public java.util.List getRemoteRepos ()
+    public List getRemoteRepos ()
     {
         return this.remoteRepos;
     }
@@ -340,7 +343,7 @@ public abstract class AbstractDependencyMojo
     /**
      * @param remoteRepos The remoteRepos to set.
      */
-    public void setRemoteRepos ( java.util.List remoteRepos )
+    public void setRemoteRepos ( List remoteRepos )
     {
         this.remoteRepos = remoteRepos;
     }
@@ -356,7 +359,7 @@ public abstract class AbstractDependencyMojo
     /**
      * @param resolver The resolver to set.
      */
-    public void setResolver ( org.apache.maven.artifact.resolver.ArtifactResolver resolver )
+    public void setResolver ( ArtifactResolver resolver )
     {
         this.resolver = resolver;
     }

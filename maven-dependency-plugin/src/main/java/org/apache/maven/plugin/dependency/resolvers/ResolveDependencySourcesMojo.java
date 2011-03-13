@@ -20,7 +20,6 @@ package org.apache.maven.plugin.dependency.resolvers;
  */
 
 import java.io.IOException;
-import java.util.Iterator;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -73,19 +72,15 @@ public class ResolveDependencySourcesMojo
         SourcesFileMarkerHandler handler = new SourcesFileMarkerHandler( this.markersDirectory );
         handler.setResolved( true );
 
-        Iterator iter = results.getResolvedDependencies().iterator();
-        while ( iter.hasNext() )
+        for ( Artifact artifact : results.getResolvedDependencies() )
         {
-            Artifact artifact = (Artifact) iter.next();
             handler.setArtifact( artifact );
             handler.setMarker();
         }
 
         handler.setResolved( false );
-        iter = results.getUnResolvedDependencies().iterator();
-        while ( iter.hasNext() )
+        for ( Artifact artifact : results.getUnResolvedDependencies() )
         {
-            Artifact artifact = (Artifact) iter.next();
             handler.setArtifact( artifact );
             handler.setMarker();
         }

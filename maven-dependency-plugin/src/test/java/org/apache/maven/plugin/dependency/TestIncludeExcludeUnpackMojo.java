@@ -22,7 +22,7 @@ package org.apache.maven.plugin.dependency;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
+import java.util.List;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -63,7 +63,7 @@ public class TestIncludeExcludeUnpackMojo
         stubFactory.setSrcFile( new File( getBasedir() + File.separatorChar + PACKED_FILE_PATH ) );
         Artifact artifact = stubFactory.createArtifact( "test", "test", "1.0", Artifact.SCOPE_COMPILE, "jar", null );
         ArtifactItem item = stubFactory.getArtifactItem( artifact );
-        ArrayList list = new ArrayList( 1 );
+        List<ArtifactItem> list = new ArrayList<ArtifactItem>( 1 );
         list.add( item );
         assertNotNull( mojo );
         assertNotNull( mojo.getProject() );
@@ -83,12 +83,11 @@ public class TestIncludeExcludeUnpackMojo
         System.gc();
     }
 
-    public void assertMarkerFiles( Collection items, boolean exist )
+    public void assertMarkerFiles( Collection<ArtifactItem> items, boolean exist )
     {
-        Iterator iter = items.iterator();
-        while ( iter.hasNext() )
+        for ( ArtifactItem item : items )
         {
-            assertMarkerFile( exist, (ArtifactItem) iter.next() );
+            assertMarkerFile( exist, item );
         }
     }
 
@@ -105,7 +104,7 @@ public class TestIncludeExcludeUnpackMojo
         }
     }
 
-    private void assertUnpacked(boolean unpacked, String fileName)
+    private void assertUnpacked( boolean unpacked, String fileName )
     {
     	File destFile = new File( mojo.getOutputDirectory().getAbsolutePath() , fileName );
     	assertEquals(unpacked, destFile.exists());
@@ -217,7 +216,7 @@ public class TestIncludeExcludeUnpackMojo
         Artifact artifact = stubFactory.createArtifact( "test", "test", "1.0", Artifact.SCOPE_COMPILE, "jar", null );
         ArtifactItem item = stubFactory.getArtifactItem( artifact );
         item.setIncludes( "**/*" );
-        ArrayList list = new ArrayList( 1 );
+        List<ArtifactItem> list = new ArrayList<ArtifactItem>( 1 );
         list.add( item );
         mojo.setArtifactItems( list );
         mojo.setIncludes( "**/test2" + UNPACKED_FILE_SUFFIX );
@@ -234,7 +233,7 @@ public class TestIncludeExcludeUnpackMojo
         Artifact artifact = stubFactory.createArtifact( "test", "test", "1.0", Artifact.SCOPE_COMPILE, "jar", null );
         ArtifactItem item = stubFactory.getArtifactItem( artifact );
         item.setExcludes( "**/*" );
-        ArrayList list = new ArrayList( 1 );
+        List<ArtifactItem> list = new ArrayList<ArtifactItem>( 1 );
         list.add( item );
         mojo.setArtifactItems( list );
         mojo.setExcludes( "**/test2" + UNPACKED_FILE_SUFFIX );
@@ -248,7 +247,7 @@ public class TestIncludeExcludeUnpackMojo
     public void testIncludeArtifactItemMultipleMarker()
     	throws Exception
 	{
-        ArrayList list = new ArrayList();
+        List<ArtifactItem> list = new ArrayList<ArtifactItem>();
         Artifact artifact = stubFactory.createArtifact( "test", "test", "1.0", Artifact.SCOPE_COMPILE, "jar", null );
         ArtifactItem item = stubFactory.getArtifactItem( artifact );
         item.setOverWrite( "false" );
@@ -270,7 +269,7 @@ public class TestIncludeExcludeUnpackMojo
     public void testIncludeArtifactItemMultipleExecutions()
     	throws Exception
 	{
-        ArrayList list = new ArrayList();
+        List<ArtifactItem> list = new ArrayList<ArtifactItem>();
         Artifact artifact = stubFactory.createArtifact( "test", "test", "1.0", Artifact.SCOPE_COMPILE, "jar", null );
         ArtifactItem item = stubFactory.getArtifactItem( artifact );
         item.setOverWrite( "false" );

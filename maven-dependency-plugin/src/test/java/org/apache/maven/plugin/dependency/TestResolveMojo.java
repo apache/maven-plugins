@@ -22,6 +22,7 @@ package org.apache.maven.plugin.dependency;
 import java.io.File;
 import java.util.Set;
 
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.dependency.resolvers.ResolveDependenciesMojo;
 import org.apache.maven.plugin.dependency.utils.DependencyStatusSets;
 import org.apache.maven.plugin.testing.SilentLog;
@@ -54,8 +55,8 @@ public class TestResolveMojo
         MavenProject project = mojo.getProject();
 
         mojo.silent = true;
-        Set artifacts = this.stubFactory.getScopedArtifacts();
-        Set directArtifacts = this.stubFactory.getReleaseAndSnapshotArtifacts();
+        Set<Artifact> artifacts = this.stubFactory.getScopedArtifacts();
+        Set<Artifact> directArtifacts = this.stubFactory.getReleaseAndSnapshotArtifacts();
         artifacts.addAll( directArtifacts );
 
         project.setArtifacts( artifacts );
