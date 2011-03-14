@@ -24,6 +24,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Writer;
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -215,7 +217,11 @@ public class ReportDocumentRenderer
                 // extended multi-page API
                 ( (MavenMultiPageReport) report ).generate( sink, sf, locale );
             }
-            else // TODO: insert Maven 2 reflection-based MavenMultiPageReport detection
+            else if ( generateMultiPage( locale, sf, sink ) )
+            {
+             // extended multi-page API for Maven 2.2, only accessible by reflection API
+            }
+            else
             {
                 // old single-page-only API
                 report.generate( sink, locale );
@@ -274,6 +280,47 @@ public class ReportDocumentRenderer
             }
 
             renderer.generateDocument( writer, sink, siteRenderingContext );
+        }
+    }
+
+    /**
+     * Try to generate report with extended multi-page API.
+     * 
+     * @return <code>true</code> if the report was compatible with the extended API
+     */
+    private boolean generateMultiPage( Locale locale, SinkFactory sf, Sink sink )
+        throws MavenReportException
+    {
+        try
+        {
+            // MavenMultiPageReport is not in Maven Core, then the class is different in site plugin and in each report
+            // plugin: only reflection can let us invoke its method
+            Method generate =
+                report.getClass().getMethod( "generate", Sink.class, SinkFactory.class, Locale.class );
+
+            generate.invoke( report, sink, sf, locale );
+
+            return true;
+        }
+        catch ( SecurityException se )
+        {
+            return false;
+        }
+        catch ( NoSuchMethodException nsme )
+        {
+            return false;
+        }
+        catch ( IllegalArgumentException iae )
+        {
+            throw new MavenReportException( "error while invoking generate", iae );
+        }
+        catch ( IllegalAccessException iae )
+        {
+            throw new MavenReportException( "error while invoking generate", iae );
+        }
+        catch ( InvocationTargetException ite )
+        {
+            throw new MavenReportException( "error while invoking generate", ite );
         }
     }
 
