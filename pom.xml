@@ -162,7 +162,7 @@ under the License.
   </contributors>
 
   <prerequisites>
-    <maven>${mavenVersion}</maven>
+    <maven>2.2.2-RC1-SNAPSHOT</maven><!-- see MNG-5043 -->
   </prerequisites>
 
   <scm>
@@ -205,6 +205,11 @@ under the License.
     <!-- Maven -->
     <dependency>
       <groupId>org.apache.maven</groupId>
+      <artifactId>maven-artifact</artifactId>
+      <version>${mavenVersion}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
       <artifactId>maven-compat</artifactId>
       <version>${mavenVersion}</version>
     </dependency>
@@ -229,17 +234,6 @@ under the License.
       <version>${mavenVersion}</version>
     </dependency>
     
-    <dependency>
-      <groupId>org.sonatype.aether</groupId>
-      <artifactId>aether-util</artifactId>
-      <version>1.7</version>
-    </dependency>
-    <dependency>
-      <groupId>org.sonatype.aether</groupId>
-      <artifactId>aether-api</artifactId>
-      <version>1.7</version>
-    </dependency>
-
     <!-- Doxia -->
 
     <dependency>
