@@ -73,8 +73,8 @@ public class SiteDescriptorAttachMojo
 
         for ( Locale locale : localesList )
         {
-            File descriptorFile = siteTool.getSiteDescriptorFromBasedir( toRelative( project.getBasedir(),
-                                                                                     siteDirectory.getAbsolutePath() ),
+            File descriptorFile = siteTool.getSiteDescriptorFromBasedir(
+                siteTool.getRelativePath( siteDirectory.getAbsolutePath(), project.getBasedir().getAbsolutePath() ),
                                                                          basedir, locale );
 
             if ( descriptorFile.exists() )
