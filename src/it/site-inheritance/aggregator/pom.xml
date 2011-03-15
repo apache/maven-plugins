@@ -12,7 +12,7 @@
   <distributionManagement>
     <site>
       <id>website</id>
-      <url>file://@project.build.directory@/it/site-inheritance/webhost.company.com/deploy/</url>
+      <url>file:///@project.build.directory@/it/site-inheritance/webhost.company.com/deploy/</url>
     </site>
   </distributionManagement>
 
@@ -24,7 +24,7 @@
           <version>@project.version@</version>
           <configuration>
             <stagingDirectory>@project.build.directory@/it/site-inheritance/webhost.company.com/staging/</stagingDirectory>
-            <stagingSiteURL>file://@project.build.directory@/it/site-inheritance/webhost.company.com/deploy/staging/</stagingSiteURL>
+            <stagingSiteURL>file:///@project.build.directory@/it/site-inheritance/webhost.company.com/deploy/staging/</stagingSiteURL>
           </configuration>
         </plugin>
       </plugins>

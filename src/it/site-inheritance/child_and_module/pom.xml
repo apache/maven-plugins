@@ -16,7 +16,7 @@
   <distributionManagement>
     <site>
       <id>website</id>
-      <url>file://@project.build.directory@/it/site-inheritance/webhost.company.com/deploy/www/website/deep/down/below/</url>
+      <url>file:///@project.build.directory@/it/site-inheritance/webhost.company.com/deploy/www/website/deep/down/below/</url>
     </site>
   </distributionManagement>
 
