@@ -162,7 +162,7 @@ under the License.
   </contributors>
 
   <prerequisites>
-    <maven>2.2.2-RC1-SNAPSHOT</maven><!-- see MNG-5043 -->
+    <maven>2.2.0</maven>
   </prerequisites>
 
   <scm>
@@ -212,6 +212,7 @@ under the License.
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-compat</artifactId>
       <version>${mavenVersion}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
@@ -500,6 +501,33 @@ under the License.
               <goal>generate-metadata</goal>
               <!--goal>generate-test-metadata</goal-->
             </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <artifactSet>
+                <includes>
+                  <include>org.apache.maven.reporting:maven-reporting-api</include>
+                </includes>
+              </artifactSet>
+              <filters>
+                <filter>
+                  <artifact>org.apache.maven.reporting:maven-reporting-api</artifact>
+                  <includes><!-- class not included in maven-reporting-api included in Maven 2.2 -->
+                    <include>**/MavenMultiPageReport.class</include>
+                  </includes>
+                </filter>
+              </filters>
+            </configuration>
           </execution>
         </executions>
       </plugin>
