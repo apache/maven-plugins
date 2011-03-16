@@ -34,7 +34,6 @@ import org.apache.maven.model.Site;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.repository.legacy.WagonConfigurationException;
 import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Server;
 import org.apache.maven.settings.Settings;
@@ -56,7 +55,6 @@ import org.apache.maven.wagon.proxy.ProxyInfo;
 import org.apache.maven.wagon.repository.Repository;
 
 import org.codehaus.plexus.PlexusContainer;
-import org.codehaus.plexus.component.annotations.Requirement;
 import org.codehaus.plexus.component.configurator.ComponentConfigurationException;
 import org.codehaus.plexus.component.configurator.ComponentConfigurator;
 import org.codehaus.plexus.component.repository.exception.ComponentLifecycleException;
@@ -234,7 +232,7 @@ public abstract class AbstractDeployMojo
         {
             configureWagon( wagon, repository.getId(), settings, container, getLog() );
         }
-        catch ( WagonConfigurationException e )
+        catch ( TransferFailedException e )
         {
             throw new MojoExecutionException( "Unable to configure Wagon: '" + repository.getProtocol() + "'", e );
         }
@@ -307,7 +305,7 @@ public abstract class AbstractDeployMojo
         {
             throw new MojoExecutionException( "Unsupported protocol: '" + repository.getProtocol() + "'", e );
         }
-        catch ( WagonConfigurationException e )
+        catch ( TransferFailedException e )
         {
             throw new MojoExecutionException( "Unable to configure Wagon: '" + repository.getProtocol() + "'", e );
         }
@@ -568,7 +566,7 @@ public abstract class AbstractDeployMojo
      */
     private static void configureWagon( Wagon wagon, String repositoryId, Settings settings, PlexusContainer container,
         Log log )
-        throws WagonConfigurationException
+        throws TransferFailedException
     {
         log.debug( " configureWagon " );
 
@@ -593,13 +591,13 @@ public abstract class AbstractDeployMojo
                     }
                     catch ( final ComponentLookupException e )
                     {
-                        throw new WagonConfigurationException( repositoryId, "Unable to lookup wagon configurator."
-                            + " Wagon configuration cannot be applied.", e );
+                        throw new TransferFailedException( "While configuring wagon for \'" + repositoryId
+                            + "\': Unable to lookup wagon configurator." + " Wagon configuration cannot be applied.", e );
                     }
                     catch ( ComponentConfigurationException e )
                     {
-                        throw new WagonConfigurationException( repositoryId, "Unable to apply wagon configuration.",
-                            e );
+                        throw new TransferFailedException( "While configuring wagon for \'" + repositoryId
+                            + "\': Unable to apply wagon configuration.", e );
                     }
                     finally
                     {
