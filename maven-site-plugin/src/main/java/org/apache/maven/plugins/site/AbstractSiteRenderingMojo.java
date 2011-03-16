@@ -168,6 +168,15 @@ public abstract class AbstractSiteRenderingMojo
      */
     private boolean relativizeDecorationLinks;
 
+    /**
+     * Whether to generate the summary page for project reports: project-info.html.
+     *
+     * @parameter expression="${generateProjectInfo}" default-value="true"
+     *
+     * @since 2.3
+     */
+    private boolean generateProjectInfo;
+
     protected List<MavenReport> filterReports( List<MavenReport> reports )
     {
         List<MavenReport> filteredReports = new ArrayList<MavenReport>( reports.size() );
@@ -379,7 +388,7 @@ public abstract class AbstractSiteRenderingMojo
         siteTool.populateReportsMenu( context.getDecoration(), locale, categories );
         populateReportItems( context.getDecoration(), locale, reportsByOutputName );
 
-        if ( categories.containsKey( MavenReport.CATEGORY_PROJECT_INFORMATION ) )
+        if ( categories.containsKey( MavenReport.CATEGORY_PROJECT_INFORMATION ) && generateProjectInfo )
         {
             List<MavenReport> categoryReports = categories.get( MavenReport.CATEGORY_PROJECT_INFORMATION );
 
