@@ -29,37 +29,37 @@ try
     if ( !siteDirectory.exists() || !siteDirectory.isDirectory() )
     {
         System.err.println( "site is missing or not a directory." );
-        return false;
+        result = false;
     }
 
     final File deployDirectory = new File ( siteDirectory, "deploy" );
     if ( !deployDirectory.exists() || !deployDirectory.isDirectory() )
     {
         System.err.println( "deployDirectory is missing or not a directory." );
-        return false;
+        result = false;
     }
 
     // junk directory (aggregator)
     File junkDirectory = new File ( deployDirectory, "junk" );
     if ( !junkDirectory.exists() || !junkDirectory.isDirectory() )
     {
-        System.err.println( "junkDirectory is missing or not a directory." );
-        return false;
+        System.err.println( "deployed junkDirectory is missing or not a directory." );
+        result = false;
     }
 
     File index = new File ( junkDirectory, "index.html" );
     if ( !index.exists() || index.isDirectory() )
     {
-        System.err.println( "no index file in junk or is a directory." );
-        return false;
+        System.err.println( "no index file in deployed junk or is a directory." );
+        result = false;
     }
 
     String content = IOUtil.toString ( new FileInputStream ( index ), "UTF-8" );
     int indexOf = content.indexOf( "<a href=\"../index.html\" title=\"Aggregator\">Aggregator</a>" );
     if ( indexOf < 0)
     {
-        System.err.println( "junk index.html is missing module link!" );
-        return false;
+        System.err.println( "deployed junk index.html is missing module link!" );
+        result = false;
     }
 
     // deploy directory (main site)
@@ -67,7 +67,7 @@ try
     if ( !index.exists() || index.isDirectory() )
     {
         System.err.println( "no index file in deploy or is a directory." );
-        return false;
+        result = false;
     }
 
     content = IOUtil.toString ( new FileInputStream ( index ), "UTF-8" );
@@ -78,37 +78,37 @@ try
     if ( index1 < 0 || index2 < 0 || index3 < 0 || index4 < 0 )
     {
         System.err.println( "deploy index.html is missing module link!" );
-        return false;
+        result = false;
     }
 
     // parent directory
     File parentDirectory = new File ( deployDirectory, "www/website" );
     if ( !parentDirectory.exists() || !parentDirectory.isDirectory() )
     {
-        System.err.println( "parentDirectory is missing or not a directory." );
-        return false;
+        System.err.println( "deployed parentDirectory is missing or not a directory." );
+        result = false;
     }
 
     index = new File ( parentDirectory, "index.html" );
     if ( index.exists() || index.isDirectory() )
     {
-        System.err.println( "incorrect index file in parent!" );
-        return false;
+        System.err.println( "incorrect index file in deployed parent!" );
+        result = false;
     }
 
     // child_and_module
     File deepDownBelow = new File ( parentDirectory, "deep/down/below" );
     if ( !deepDownBelow.exists() || !deepDownBelow.isDirectory() )
     {
-        System.err.println( "deepDownBelow is missing or not a directory." );
-        return false;
+        System.err.println( "deployed deepDownBelow is missing or not a directory." );
+        result = false;
     }
 
     index = new File ( deepDownBelow, "index.html" );
     if ( !index.exists() || index.isDirectory() )
     {
-        System.err.println( "incorrect index file in deepDownBelow!" );
-        return false;
+        System.err.println( "incorrect index file in deployed deepDownBelow!" );
+        result = false;
     }
 
     content = IOUtil.toString ( new FileInputStream ( index ), "UTF-8" );
@@ -118,23 +118,23 @@ try
     index4 = content.indexOf( "<a href=\"../../../../../index.html\" title=\"Parent\">Parent</a>" );
     if ( index1 < 0 || index2 < 0 || index3 < 0 || index4 < 0 )
     {
-        System.err.println( "deepDownBelow index.html is missing links!" );
-        return false;
+        System.err.println( "deployed deepDownBelow index.html is missing links!" );
+        result = false;
     }
 
     // inheriting_child
     File inheritingChild = new File ( deployDirectory, "inheriting_child" );
     if ( !inheritingChild.exists() || !inheritingChild.isDirectory() )
     {
-        System.err.println( "inheritingChild is missing or not a directory." );
-        return false;
+        System.err.println( "deployed inheritingChild is missing or not a directory." );
+        result = false;
     }
 
     index = new File ( inheritingChild, "index.html" );
     if ( !index.exists() || index.isDirectory() )
     {
-        System.err.println( "incorrect index file in inheritingChild!" );
-        return false;
+        System.err.println( "incorrect index file in deployed inheritingChild!" );
+        result = false;
     }
 
     content = IOUtil.toString ( new FileInputStream ( index ), "UTF-8" );
@@ -144,23 +144,23 @@ try
     index4 = content.indexOf( "<a href=\"../index.html\" title=\"Parent\">Parent</a>" );
     if ( index1 < 0 || index2 < 0 || index3 < 0 || index4 < 0 )
     {
-        System.err.println( "inheritingChild index.html is missing links!" );
-        return false;
+        System.err.println( "deployed inheritingChild index.html is missing links!" );
+        result = false;
     }
 
     // module
     File moduleDirectory = new File ( parentDirectory, "module" );
     if ( !moduleDirectory.exists() || !moduleDirectory.isDirectory() )
     {
-        System.err.println( "moduleDirectory is missing or not a directory." );
-        return false;
+        System.err.println( "deployed moduleDirectory is missing or not a directory." );
+        result = false;
     }
 
     index = new File ( moduleDirectory, "index.html" );
     if ( !index.exists() || index.isDirectory() )
     {
-        System.err.println( "incorrect index file in moduleDirectory!" );
-        return false;
+        System.err.println( "incorrect index file in deployed moduleDirectory!" );
+        result = false;
     }
 
     content = IOUtil.toString ( new FileInputStream ( index ), "UTF-8" );
@@ -169,8 +169,8 @@ try
     index3 = content.indexOf( "<a href=\"../sub_module/index.html\" title=\"Sub-Module\">Sub-Module</a>" );
     if ( index1 < 0 || index2 < 0 || index3 < 0 )
     {
-        System.err.println( "moduleDirectory index.html has wrong links!" );
-        return false;
+        System.err.println( "deployed moduleDirectory index.html has wrong links!" );
+        result = false;
     }
 
 
@@ -178,15 +178,15 @@ try
     File subModuleDirectory = new File ( parentDirectory, "sub_module" );
     if ( !subModuleDirectory.exists() || !subModuleDirectory.isDirectory() )
     {
-        System.err.println( "subModuleDirectory is missing or not a directory." );
-        return false;
+        System.err.println( "deployed subModuleDirectory is missing or not a directory." );
+        result = false;
     }
 
     index = new File ( subModuleDirectory, "index.html" );
     if ( !index.exists() || index.isDirectory() )
     {
-        System.err.println( "incorrect index file in subModuleDirectory!" );
-        return false;
+        System.err.println( "incorrect index file in deployed subModuleDirectory!" );
+        result = false;
     }
 
     content = IOUtil.toString ( new FileInputStream ( index ), "UTF-8" );
@@ -196,8 +196,8 @@ try
     index4 = content.indexOf( "<a href=\"../module/index.html\" title=\"Module\">Module</a>" );
     if ( index1 < 0 || index2 < 0 || index3 < 0 )
     {
-        System.err.println( "moduleDirectory index.html has wrong links!" );
-        return false;
+        System.err.println( "deployed subModuleDirectory index.html has wrong links!" );
+        result = false;
     }
 
 
@@ -208,7 +208,7 @@ try
     if ( !stageDirectory.exists() || !stageDirectory.isDirectory() )
     {
         System.err.println( "stageDirectory is missing or not a directory." );
-        return false;
+        result = false;
     }
 
     // the created directory structure in
@@ -222,14 +222,14 @@ try
     if ( !junkDirectory.exists() || !junkDirectory.isDirectory() )
     {
         System.err.println( "staging junkDirectory is missing or not a directory." );
-        return false;
+        result = false;
     }
 
     index = new File ( junkDirectory, "index.html" );
     if ( !index.exists() || index.isDirectory() )
     {
         System.err.println( "no index file in staging junk or is a directory." );
-        return false;
+        result = false;
     }
 
     content = IOUtil.toString ( new FileInputStream ( index ), "UTF-8" );
@@ -237,7 +237,7 @@ try
     if ( indexOf < 0)
     {
         System.err.println( "staging junk index.html is missing module link!" );
-        return false;
+        result = false;
     }
 
     // deploy directory (main site)
@@ -245,7 +245,7 @@ try
     if ( !index.exists() || index.isDirectory() )
     {
         System.err.println( "no index file in staging or is a directory." );
-        return false;
+        result = false;
     }
 
     content = IOUtil.toString ( new FileInputStream ( index ), "UTF-8" );
@@ -256,7 +256,7 @@ try
     if ( index1 < 0 || index2 < 0 || index3 < 0 || index4 < 0 )
     {
         System.err.println( "staging index.html is missing module link!" );
-        return false;
+        result = false;
     }
 
     // parent directory
@@ -264,14 +264,14 @@ try
     if ( !parentDirectory.exists() || !parentDirectory.isDirectory() )
     {
         System.err.println( "staging parentDirectory is missing or not a directory." );
-        return false;
+        result = false;
     }
 
     index = new File ( parentDirectory, "index.html" );
     if ( index.exists() || index.isDirectory() )
     {
         System.err.println( "incorrect staging index file in parent!" );
-        return false;
+        result = false;
     }
 
     // child_and_module
@@ -279,14 +279,14 @@ try
     if ( !deepDownBelow.exists() || !deepDownBelow.isDirectory() )
     {
         System.err.println( "staging deepDownBelow is missing or not a directory." );
-        return false;
+        result = false;
     }
 
     index = new File ( deepDownBelow, "index.html" );
     if ( !index.exists() || index.isDirectory() )
     {
         System.err.println( "incorrect index file in staging deepDownBelow!" );
-        return false;
+        result = false;
     }
 
     content = IOUtil.toString ( new FileInputStream ( index ), "UTF-8" );
@@ -297,7 +297,7 @@ try
     if ( index1 < 0 || index2 < 0 || index3 < 0 || index4 < 0 )
     {
         System.err.println( "staging deepDownBelow index.html is missing links!" );
-        return false;
+        result = false;
     }
 
     // inheriting_child
@@ -305,14 +305,14 @@ try
     if ( !inheritingChild.exists() || !inheritingChild.isDirectory() )
     {
         System.err.println( "staging inheritingChild is missing or not a directory." );
-        return false;
+        result = false;
     }
 
     index = new File ( inheritingChild, "index.html" );
     if ( !index.exists() || index.isDirectory() )
     {
         System.err.println( "incorrect index file in staging inheritingChild!" );
-        return false;
+        result = false;
     }
 
     content = IOUtil.toString ( new FileInputStream ( index ), "UTF-8" );
@@ -323,7 +323,7 @@ try
     if ( index1 < 0 || index2 < 0 || index3 < 0 || index4 < 0 )
     {
         System.err.println( "staging inheritingChild index.html is missing links!" );
-        return false;
+        result = false;
     }
 
     // module
@@ -331,14 +331,14 @@ try
     if ( !moduleDirectory.exists() || !moduleDirectory.isDirectory() )
     {
         System.err.println( "staging moduleDirectory is missing or not a directory." );
-        return false;
+        result = false;
     }
 
     index = new File ( moduleDirectory, "index.html" );
     if ( !index.exists() || index.isDirectory() )
     {
         System.err.println( "incorrect index file in staging moduleDirectory!" );
-        return false;
+        result = false;
     }
 
     content = IOUtil.toString ( new FileInputStream ( index ), "UTF-8" );
@@ -348,7 +348,7 @@ try
     if ( index1 < 0 || index2 < 0 || index3 < 0 )
     {
         System.err.println( "staging moduleDirectory index.html has wrong links!" );
-        return false;
+        result = false;
     }
 
 
@@ -357,14 +357,14 @@ try
     if ( !subModuleDirectory.exists() || !subModuleDirectory.isDirectory() )
     {
         System.err.println( "staging subModuleDirectory is missing or not a directory." );
-        return false;
+        result = false;
     }
 
     index = new File ( subModuleDirectory, "index.html" );
     if ( !index.exists() || index.isDirectory() )
     {
         System.err.println( "incorrect index file in staging subModuleDirectory!" );
-        return false;
+        result = false;
     }
 
     content = IOUtil.toString ( new FileInputStream ( index ), "UTF-8" );
@@ -374,8 +374,8 @@ try
     index4 = content.indexOf( "<a href=\"../module/index.html\" title=\"Module\">Module</a>" );
     if ( index1 < 0 || index2 < 0 || index3 < 0 )
     {
-        System.err.println( "staging moduleDirectory index.html has wrong links!" );
-        return false;
+        System.err.println( "staging subModuleDirectory index.html has wrong links!" );
+        result = false;
     }
 
     // STAGE DEPLOY
@@ -385,7 +385,7 @@ try
     if ( !stageDeployDirectory.exists() || !stageDeployDirectory.isDirectory() )
     {
         System.err.println( "stageDeployDirectory is missing or not a directory." );
-        return false;
+        result = false;
     }
 
     // the created directory structure in
@@ -398,14 +398,14 @@ try
     if ( !junkDirectory.exists() || !junkDirectory.isDirectory() )
     {
         System.err.println( "stagedeploy junkDirectory is missing or not a directory." );
-        return false;
+        result = false;
     }
 
     index = new File ( junkDirectory, "index.html" );
     if ( !index.exists() || index.isDirectory() )
     {
         System.err.println( "no index file in stagedeploy junk or is a directory." );
-        return false;
+        result = false;
     }
 
     content = IOUtil.toString ( new FileInputStream ( index ), "UTF-8" );
@@ -413,7 +413,7 @@ try
     if ( indexOf < 0)
     {
         System.err.println( "stagedeploy junk index.html is missing module link!" );
-        return false;
+        result = false;
     }
 
     // deploy directory (main site)
@@ -421,7 +421,7 @@ try
     if ( !index.exists() || index.isDirectory() )
     {
         System.err.println( "no index file in stagedeploy or is a directory." );
-        return false;
+        result = false;
     }
 
     content = IOUtil.toString ( new FileInputStream ( index ), "UTF-8" );
@@ -432,7 +432,7 @@ try
     if ( index1 < 0 || index2 < 0 || index3 < 0 || index4 < 0 )
     {
         System.err.println( "stagedeploy index.html is missing module link!" );
-        return false;
+        result = false;
     }
 
     // parent directory
@@ -440,14 +440,14 @@ try
     if ( !parentDirectory.exists() || !parentDirectory.isDirectory() )
     {
         System.err.println( "stagedeploy parentDirectory is missing or not a directory." );
-        return false;
+        result = false;
     }
 
     index = new File ( parentDirectory, "index.html" );
     if ( index.exists() || index.isDirectory() )
     {
         System.err.println( "incorrect index file in stagedeploy parent!" );
-        return false;
+        result = false;
     }
 
     // child_and_module
@@ -455,14 +455,14 @@ try
     if ( !deepDownBelow.exists() || !deepDownBelow.isDirectory() )
     {
         System.err.println( "stagedeploy deepDownBelow is missing or not a directory." );
-        return false;
+        result = false;
     }
 
     index = new File ( deepDownBelow, "index.html" );
     if ( !index.exists() || index.isDirectory() )
     {
         System.err.println( "incorrect index file in stagedeploy deepDownBelow!" );
-        return false;
+        result = false;
     }
 
     content = IOUtil.toString ( new FileInputStream ( index ), "UTF-8" );
@@ -473,7 +473,7 @@ try
     if ( index1 < 0 || index2 < 0 || index3 < 0 || index4 < 0 )
     {
         System.err.println( "stagedeploy deepDownBelow index.html is missing links!" );
-        return false;
+        result = false;
     }
 
     // inheriting_child
@@ -481,14 +481,14 @@ try
     if ( !inheritingChild.exists() || !inheritingChild.isDirectory() )
     {
         System.err.println( "stagedeploy inheritingChild is missing or not a directory." );
-        return false;
+        result = false;
     }
 
     index = new File ( inheritingChild, "index.html" );
     if ( !index.exists() || index.isDirectory() )
     {
         System.err.println( "incorrect index file in stagedeploy inheritingChild!" );
-        return false;
+        result = false;
     }
 
     content = IOUtil.toString ( new FileInputStream ( index ), "UTF-8" );
@@ -499,7 +499,7 @@ try
     if ( index1 < 0 || index2 < 0 || index3 < 0 || index4 < 0 )
     {
         System.err.println( "stagedeploy inheritingChild index.html is missing links!" );
-        return false;
+        result = false;
     }
 
     // module
@@ -507,14 +507,14 @@ try
     if ( !moduleDirectory.exists() || !moduleDirectory.isDirectory() )
     {
         System.err.println( "stagedeploy moduleDirectory is missing or not a directory." );
-        return false;
+        result = false;
     }
 
     index = new File ( moduleDirectory, "index.html" );
     if ( !index.exists() || index.isDirectory() )
     {
         System.err.println( "incorrect index file in stagedeploy moduleDirectory!" );
-        return false;
+        result = false;
     }
 
     content = IOUtil.toString ( new FileInputStream ( index ), "UTF-8" );
@@ -524,7 +524,7 @@ try
     if ( index1 < 0 || index2 < 0 || index3 < 0 )
     {
         System.err.println( "stagedeploy moduleDirectory index.html has wrong links!" );
-        return false;
+        result = false;
     }
 
 
@@ -533,14 +533,14 @@ try
     if ( !subModuleDirectory.exists() || !subModuleDirectory.isDirectory() )
     {
         System.err.println( "stagedeploy subModuleDirectory is missing or not a directory." );
-        return false;
+        result = false;
     }
 
     index = new File ( subModuleDirectory, "index.html" );
     if ( !index.exists() || index.isDirectory() )
     {
         System.err.println( "incorrect index file in stagedeploy subModuleDirectory!" );
-        return false;
+        result = false;
     }
 
     content = IOUtil.toString ( new FileInputStream ( index ), "UTF-8" );
@@ -550,8 +550,8 @@ try
     index4 = content.indexOf( "<a href=\"../module/index.html\" title=\"Module\">Module</a>" );
     if ( index1 < 0 || index2 < 0 || index3 < 0 )
     {
-        System.err.println( "stagedeploy moduleDirectory index.html has wrong links!" );
-        return false;
+        System.err.println( "stagedeploy subModuleDirectory index.html has wrong links!" );
+        result = false;
     }
 
 }
