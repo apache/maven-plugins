@@ -32,6 +32,10 @@ try
         result = false;
     }
 
+
+    // DEPLOY
+
+
     final File deployDirectory = new File ( siteDirectory, "deploy" );
     if ( !deployDirectory.exists() || !deployDirectory.isDirectory() )
     {
@@ -201,18 +205,18 @@ try
     }
 
 
-    // STAGING
+    // STAGE
 
 
-    final File stageDirectory = new File ( siteDirectory, "staging" );
+    final File stageDirectory = new File ( siteDirectory, "stage" );
     if ( !stageDirectory.exists() || !stageDirectory.isDirectory() )
     {
-        System.err.println( "stageDirectory is missing or not a directory." );
+        System.err.println( "stage directory is missing or not a directory." );
         result = false;
     }
 
     // the created directory structure in
-    //      target/it/site-inheritance/webhost.company.com/staging/
+    //      target/it/site-inheritance/webhost.company.com/stage/
     // should match the deploy structure in
     //      target/it/site-inheritance/webhost.company.com/deploy/
 
@@ -221,14 +225,14 @@ try
     junkDirectory = new File ( stageDirectory, "junk" );
     if ( !junkDirectory.exists() || !junkDirectory.isDirectory() )
     {
-        System.err.println( "staging junkDirectory is missing or not a directory." );
+        System.err.println( "staged junkDirectory is missing or not a directory." );
         result = false;
     }
 
     index = new File ( junkDirectory, "index.html" );
     if ( !index.exists() || index.isDirectory() )
     {
-        System.err.println( "no index file in staging junk or is a directory." );
+        System.err.println( "no index file in staged junk or is a directory." );
         result = false;
     }
 
@@ -236,7 +240,7 @@ try
     int indexOf = content.indexOf( "<a href=\"../index.html\" title=\"Aggregator\">Aggregator</a>" );
     if ( indexOf < 0)
     {
-        System.err.println( "staging junk index.html is missing module link!" );
+        System.err.println( "staged junk index.html is missing module link!" );
         result = false;
     }
 
@@ -244,7 +248,7 @@ try
     index = new File ( stageDirectory, "index.html" );
     if ( !index.exists() || index.isDirectory() )
     {
-        System.err.println( "no index file in staging or is a directory." );
+        System.err.println( "no index file in stage or is a directory." );
         result = false;
     }
 
@@ -255,7 +259,7 @@ try
     int index4 = content.indexOf( "<a href=\"\" title=\"Aggregator\">Aggregator</a>" );
     if ( index1 < 0 || index2 < 0 || index3 < 0 || index4 < 0 )
     {
-        System.err.println( "staging index.html is missing module link!" );
+        System.err.println( "staged index.html is missing module link!" );
         result = false;
     }
 
@@ -263,14 +267,14 @@ try
     parentDirectory = new File ( stageDirectory, "www/website" );
     if ( !parentDirectory.exists() || !parentDirectory.isDirectory() )
     {
-        System.err.println( "staging parentDirectory is missing or not a directory." );
+        System.err.println( "staged parentDirectory is missing or not a directory." );
         result = false;
     }
 
     index = new File ( parentDirectory, "index.html" );
     if ( index.exists() || index.isDirectory() )
     {
-        System.err.println( "incorrect staging index file in parent!" );
+        System.err.println( "incorrect staged index file in parent!" );
         result = false;
     }
 
@@ -278,14 +282,14 @@ try
     deepDownBelow = new File ( parentDirectory, "deep/down/below" );
     if ( !deepDownBelow.exists() || !deepDownBelow.isDirectory() )
     {
-        System.err.println( "staging deepDownBelow is missing or not a directory." );
+        System.err.println( "staged deepDownBelow is missing or not a directory." );
         result = false;
     }
 
     index = new File ( deepDownBelow, "index.html" );
     if ( !index.exists() || index.isDirectory() )
     {
-        System.err.println( "incorrect index file in staging deepDownBelow!" );
+        System.err.println( "incorrect index file in staged deepDownBelow!" );
         result = false;
     }
 
@@ -296,7 +300,7 @@ try
     index4 = content.indexOf( "<a href=\"../../../../../index.html\" title=\"Parent\">Parent</a>" );
     if ( index1 < 0 || index2 < 0 || index3 < 0 || index4 < 0 )
     {
-        System.err.println( "staging deepDownBelow index.html is missing links!" );
+        System.err.println( "staged deepDownBelow index.html is missing links!" );
         result = false;
     }
 
@@ -304,14 +308,14 @@ try
     inheritingChild = new File ( stageDirectory, "inheriting_child" );
     if ( !inheritingChild.exists() || !inheritingChild.isDirectory() )
     {
-        System.err.println( "staging inheritingChild is missing or not a directory." );
+        System.err.println( "staged inheritingChild is missing or not a directory." );
         result = false;
     }
 
     index = new File ( inheritingChild, "index.html" );
     if ( !index.exists() || index.isDirectory() )
     {
-        System.err.println( "incorrect index file in staging inheritingChild!" );
+        System.err.println( "incorrect index file in staged inheritingChild!" );
         result = false;
     }
 
@@ -322,7 +326,7 @@ try
     index4 = content.indexOf( "<a href=\"../index.html\" title=\"Parent\">Parent</a>" );
     if ( index1 < 0 || index2 < 0 || index3 < 0 || index4 < 0 )
     {
-        System.err.println( "staging inheritingChild index.html is missing links!" );
+        System.err.println( "staged inheritingChild index.html is missing links!" );
         result = false;
     }
 
@@ -330,14 +334,14 @@ try
     moduleDirectory = new File ( parentDirectory, "module" );
     if ( !moduleDirectory.exists() || !moduleDirectory.isDirectory() )
     {
-        System.err.println( "staging moduleDirectory is missing or not a directory." );
+        System.err.println( "staged moduleDirectory is missing or not a directory." );
         result = false;
     }
 
     index = new File ( moduleDirectory, "index.html" );
     if ( !index.exists() || index.isDirectory() )
     {
-        System.err.println( "incorrect index file in staging moduleDirectory!" );
+        System.err.println( "incorrect index file in staged moduleDirectory!" );
         result = false;
     }
 
@@ -347,7 +351,7 @@ try
     index3 = content.indexOf( "<a href=\"../sub_module/index.html\" title=\"Sub-Module\">Sub-Module</a>" );
     if ( index1 < 0 || index2 < 0 || index3 < 0 )
     {
-        System.err.println( "staging moduleDirectory index.html has wrong links!" );
+        System.err.println( "staged moduleDirectory index.html has wrong links!" );
         result = false;
     }
 
@@ -356,14 +360,14 @@ try
     subModuleDirectory = new File ( parentDirectory, "sub_module" );
     if ( !subModuleDirectory.exists() || !subModuleDirectory.isDirectory() )
     {
-        System.err.println( "staging subModuleDirectory is missing or not a directory." );
+        System.err.println( "staged subModuleDirectory is missing or not a directory." );
         result = false;
     }
 
     index = new File ( subModuleDirectory, "index.html" );
     if ( !index.exists() || index.isDirectory() )
     {
-        System.err.println( "incorrect index file in staging subModuleDirectory!" );
+        System.err.println( "incorrect index file in staged subModuleDirectory!" );
         result = false;
     }
 
@@ -374,22 +378,23 @@ try
     index4 = content.indexOf( "<a href=\"../module/index.html\" title=\"Module\">Module</a>" );
     if ( index1 < 0 || index2 < 0 || index3 < 0 )
     {
-        System.err.println( "staging subModuleDirectory index.html has wrong links!" );
+        System.err.println( "staged subModuleDirectory index.html has wrong links!" );
         result = false;
     }
+
 
     // STAGE DEPLOY
 
 
-    final File stageDeployDirectory = new File ( deployDirectory, "staging" );
+    final File stageDeployDirectory = new File ( siteDirectory, "stage-deploy" );
     if ( !stageDeployDirectory.exists() || !stageDeployDirectory.isDirectory() )
     {
-        System.err.println( "stageDeployDirectory is missing or not a directory." );
+        System.err.println( "stage-deploy directory is missing or not a directory." );
         result = false;
     }
 
     // the created directory structure in
-    //      target/it/site-inheritance/webhost.company.com/deploy/staging/
+    //      target/it/site-inheritance/webhost.company.com/stage-deploy/
     // should match the deploy structure in
     //      target/it/site-inheritance/webhost.company.com/deploy/
 
@@ -397,14 +402,14 @@ try
     junkDirectory = new File ( stageDeployDirectory, "junk" );
     if ( !junkDirectory.exists() || !junkDirectory.isDirectory() )
     {
-        System.err.println( "stagedeploy junkDirectory is missing or not a directory." );
+        System.err.println( "stage-deployed junkDirectory is missing or not a directory." );
         result = false;
     }
 
     index = new File ( junkDirectory, "index.html" );
     if ( !index.exists() || index.isDirectory() )
     {
-        System.err.println( "no index file in stagedeploy junk or is a directory." );
+        System.err.println( "no index file in stage-deployed junk or is a directory." );
         result = false;
     }
 
@@ -412,7 +417,7 @@ try
     int indexOf = content.indexOf( "<a href=\"../index.html\" title=\"Aggregator\">Aggregator</a>" );
     if ( indexOf < 0)
     {
-        System.err.println( "stagedeploy junk index.html is missing module link!" );
+        System.err.println( "stage-deployed junk index.html is missing module link!" );
         result = false;
     }
 
@@ -420,7 +425,7 @@ try
     index = new File ( stageDeployDirectory, "index.html" );
     if ( !index.exists() || index.isDirectory() )
     {
-        System.err.println( "no index file in stagedeploy or is a directory." );
+        System.err.println( "no index file in stage-deploy or is a directory." );
         result = false;
     }
 
@@ -431,7 +436,7 @@ try
     int index4 = content.indexOf( "<a href=\"\" title=\"Aggregator\">Aggregator</a>" );
     if ( index1 < 0 || index2 < 0 || index3 < 0 || index4 < 0 )
     {
-        System.err.println( "stagedeploy index.html is missing module link!" );
+        System.err.println( "stage-deployed index.html is missing module link!" );
         result = false;
     }
 
@@ -439,14 +444,14 @@ try
     parentDirectory = new File ( stageDeployDirectory, "www/website" );
     if ( !parentDirectory.exists() || !parentDirectory.isDirectory() )
     {
-        System.err.println( "stagedeploy parentDirectory is missing or not a directory." );
+        System.err.println( "stage-deployed parentDirectory is missing or not a directory." );
         result = false;
     }
 
     index = new File ( parentDirectory, "index.html" );
     if ( index.exists() || index.isDirectory() )
     {
-        System.err.println( "incorrect index file in stagedeploy parent!" );
+        System.err.println( "incorrect index file in stage-deployed parent!" );
         result = false;
     }
 
@@ -454,14 +459,14 @@ try
     deepDownBelow = new File ( parentDirectory, "deep/down/below" );
     if ( !deepDownBelow.exists() || !deepDownBelow.isDirectory() )
     {
-        System.err.println( "stagedeploy deepDownBelow is missing or not a directory." );
+        System.err.println( "stage-deployed deepDownBelow is missing or not a directory." );
         result = false;
     }
 
     index = new File ( deepDownBelow, "index.html" );
     if ( !index.exists() || index.isDirectory() )
     {
-        System.err.println( "incorrect index file in stagedeploy deepDownBelow!" );
+        System.err.println( "incorrect index file in stage-deployed deepDownBelow!" );
         result = false;
     }
 
@@ -472,7 +477,7 @@ try
     index4 = content.indexOf( "<a href=\"../../../../../index.html\" title=\"Parent\">Parent</a>" );
     if ( index1 < 0 || index2 < 0 || index3 < 0 || index4 < 0 )
     {
-        System.err.println( "stagedeploy deepDownBelow index.html is missing links!" );
+        System.err.println( "stage-deployed deepDownBelow index.html is missing links!" );
         result = false;
     }
 
@@ -480,14 +485,14 @@ try
     inheritingChild = new File ( stageDeployDirectory, "inheriting_child" );
     if ( !inheritingChild.exists() || !inheritingChild.isDirectory() )
     {
-        System.err.println( "stagedeploy inheritingChild is missing or not a directory." );
+        System.err.println( "stage-deployed inheritingChild is missing or not a directory." );
         result = false;
     }
 
     index = new File ( inheritingChild, "index.html" );
     if ( !index.exists() || index.isDirectory() )
     {
-        System.err.println( "incorrect index file in stagedeploy inheritingChild!" );
+        System.err.println( "incorrect index file in stage-deployed inheritingChild!" );
         result = false;
     }
 
@@ -498,7 +503,7 @@ try
     index4 = content.indexOf( "<a href=\"../index.html\" title=\"Parent\">Parent</a>" );
     if ( index1 < 0 || index2 < 0 || index3 < 0 || index4 < 0 )
     {
-        System.err.println( "stagedeploy inheritingChild index.html is missing links!" );
+        System.err.println( "stage-deployed inheritingChild index.html is missing links!" );
         result = false;
     }
 
@@ -506,14 +511,14 @@ try
     moduleDirectory = new File ( parentDirectory, "module" );
     if ( !moduleDirectory.exists() || !moduleDirectory.isDirectory() )
     {
-        System.err.println( "stagedeploy moduleDirectory is missing or not a directory." );
+        System.err.println( "stage-deployed moduleDirectory is missing or not a directory." );
         result = false;
     }
 
     index = new File ( moduleDirectory, "index.html" );
     if ( !index.exists() || index.isDirectory() )
     {
-        System.err.println( "incorrect index file in stagedeploy moduleDirectory!" );
+        System.err.println( "incorrect index file in stage-deployed moduleDirectory!" );
         result = false;
     }
 
@@ -523,7 +528,7 @@ try
     index3 = content.indexOf( "<a href=\"../sub_module/index.html\" title=\"Sub-Module\">Sub-Module</a>" );
     if ( index1 < 0 || index2 < 0 || index3 < 0 )
     {
-        System.err.println( "stagedeploy moduleDirectory index.html has wrong links!" );
+        System.err.println( "stage-deployed moduleDirectory index.html has wrong links!" );
         result = false;
     }
 
@@ -532,14 +537,14 @@ try
     subModuleDirectory = new File ( parentDirectory, "sub_module" );
     if ( !subModuleDirectory.exists() || !subModuleDirectory.isDirectory() )
     {
-        System.err.println( "stagedeploy subModuleDirectory is missing or not a directory." );
+        System.err.println( "stage-deployed subModuleDirectory is missing or not a directory." );
         result = false;
     }
 
     index = new File ( subModuleDirectory, "index.html" );
     if ( !index.exists() || index.isDirectory() )
     {
-        System.err.println( "incorrect index file in stagedeploy subModuleDirectory!" );
+        System.err.println( "incorrect index file in stage-deployed subModuleDirectory!" );
         result = false;
     }
 
@@ -550,7 +555,7 @@ try
     index4 = content.indexOf( "<a href=\"../module/index.html\" title=\"Module\">Module</a>" );
     if ( index1 < 0 || index2 < 0 || index3 < 0 )
     {
-        System.err.println( "stagedeploy subModuleDirectory index.html has wrong links!" );
+        System.err.println( "stage-deployed subModuleDirectory index.html has wrong links!" );
         result = false;
     }
 

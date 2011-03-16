@@ -22,8 +22,8 @@
           <artifactId>maven-site-plugin</artifactId>
           <version>@project.version@</version>
           <configuration>
-            <stagingDirectory>@project.build.directory@/it/site-inheritance/webhost.company.com/staging/www/website/module</stagingDirectory>
-            <stagingSiteURL>file:///@project.build.directory@/it/site-inheritance/webhost.company.com/deploy/staging/www/website/module</stagingSiteURL>
+            <stagingDirectory>@project.build.directory@/it/site-inheritance/webhost.company.com/stage/www/website/module</stagingDirectory>
+            <stagingSiteURL>file:///@project.build.directory@/it/site-inheritance/webhost.company.com/stage-deploy/www/website/module</stagingSiteURL>
           </configuration>
         </plugin>
       </plugins>

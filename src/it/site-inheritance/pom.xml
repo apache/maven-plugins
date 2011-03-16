@@ -23,8 +23,8 @@
           <artifactId>maven-site-plugin</artifactId>
           <version>@project.version@</version>
           <configuration>
-            <stagingDirectory>@project.build.directory@/it/site-inheritance/webhost.company.com/staging/junk/</stagingDirectory>
-            <stagingSiteURL>file:///@project.build.directory@/it/site-inheritance/webhost.company.com/deploy/staging/junk/</stagingSiteURL>
+            <stagingDirectory>@project.build.directory@/it/site-inheritance/webhost.company.com/stage/junk/</stagingDirectory>
+            <stagingSiteURL>file:///@project.build.directory@/it/site-inheritance/webhost.company.com/stage-deploy/junk/</stagingSiteURL>
           </configuration>
         </plugin>
       </plugins>
