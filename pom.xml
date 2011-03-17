@@ -59,7 +59,8 @@ under the License.
     <module>maven-help-plugin</module>
     <module>maven-idea-plugin</module>
     <module>maven-install-plugin</module>
-    <module>maven-invoker-plugin</module>
+    <!--Excluded as a workaround for MNG-3814
+    <module>maven-invoker-plugin</module>-->
     <module>maven-jar-plugin</module>
     <module>maven-jarsigner-plugin</module>
     <module>maven-javadoc-plugin</module>
@@ -95,6 +96,7 @@ under the License.
         </file>
       </activation>
       <modules>
+        <module>maven-invoker-plugin</module>
         <module>maven-project-info-reports-plugin</module>
         <module>maven-remote-resources-plugin</module>
       </modules>
