@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>org.apache.maven.plugins.its.msite548</groupId>
+  <artifactId>aggregator</artifactId>
+  <packaging>pom</packaging>
+  <name>MSITE-548 - aggregator</name>
+  <version>1.0-SNAPSHOT</version>
+
+  <url>http://dummy.com/junk/</url>
+
+  <distributionManagement>
+    <site>
+      <id>MSITE-548</id>
+      <url>file://@project.build.directory@/it/MSITE-548/deploy/MSITE-548/junk/</url>
+    </site>
+  </distributionManagement>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-site-plugin</artifactId>
+        <version>@project.version@</version>
+        <configuration>
+          <reportPlugins>
+            <plugin>
+              <artifactId>maven-project-info-reports-plugin</artifactId>
+              <version>2.3.1</version>
+              <reports>
+                <report>index</report>
+              </reports>
+            </plugin>
+          </reportPlugins>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+  <modules>
+    <module>root</module>
+  </modules>
+
+</project>
