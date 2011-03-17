@@ -178,6 +178,13 @@ under the License.
       <groupId>com.puppycrawl.tools</groupId>
       <artifactId>checkstyle</artifactId>
       <version>5.3</version>
+      <exclusions>
+        <!-- MCHECKSTYLE-156 -->
+        <exclusion>
+          <groupId>com.sun</groupId>
+          <artifactId>tools</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <!-- misc -->
