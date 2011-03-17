@@ -45,6 +45,8 @@ under the License.
             href="/examples/copy-resources.html"/>
       <item name="Binaries Filtering"
             href="/examples/binaries-filtering.html"/>
+      <item name="Custom Resources Filters"
+            href="/examples/custom-resource-filters.html"/>
     </menu>
   </body>
 </project>
