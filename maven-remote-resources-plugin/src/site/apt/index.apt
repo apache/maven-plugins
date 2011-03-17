@@ -53,7 +53,7 @@ Maven Remote Resources Plugin
   
   If you need help using some of the more advanced features of the plugin, check out the advanced help pages:
    
-  * {{{supplemental-models.html}Patching Bad POMs with Supplemental Models}}
+  * {{{./supplemental-models.html}Patching Bad POMs with Supplemental Models}}
   
   []
 
