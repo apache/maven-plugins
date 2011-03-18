@@ -25,8 +25,8 @@ under the License.
   <parent>
     <groupId>org.apache.maven.plugins</groupId>
     <artifactId>maven-plugins</artifactId>
-    <version>17</version>
-    <relativePath>../pom.xml</relativePath>
+    <version>19</version>
+    <relativePath>../maven-plugins/pom.xml</relativePath>
   </parent>
 
   <artifactId>maven-javadoc-plugin</artifactId>
