@@ -25,7 +25,8 @@ under the License.
   <parent>
     <artifactId>maven-plugins</artifactId>
     <groupId>org.apache.maven.plugins</groupId>
-    <version>18</version>
+    <version>19</version>
+    <relativePath>../maven-plugins/pom.xml</relativePath>
   </parent>
 
   <artifactId>maven-antrun-plugin</artifactId>
