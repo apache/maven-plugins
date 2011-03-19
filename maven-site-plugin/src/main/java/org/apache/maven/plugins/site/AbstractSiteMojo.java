@@ -20,6 +20,7 @@ package org.apache.maven.plugins.site;
  */
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 
 import java.util.List;
@@ -139,32 +140,38 @@ public abstract class AbstractSiteMojo
     {
         try
         {
-            // This relies on the fact that MavenProject is the in core classloader
-            // and that the core classloader is for the maven-core artifact
-            // and that should have a pom.properties file
-            // if this ever changes, we will have to revisit this code.
-            final Properties properties = new Properties();
-            final InputStream in =
-                MavenProject.class.getResourceAsStream( "META-INF/maven/org.apache.maven/maven-core/pom.properties" );
-            try
-            {
-                properties.load( in );
-            }
-            finally
-            {
-                IOUtil.close( in );
-            }
-
-            final String version = properties.getProperty( "version" ).trim();
+            final String version = getMavenVersion();
 
             if ( version.startsWith( "3" ) )
             {
                 getLog().warn( "Running 2.x site-plugin with Maven 3, use site-plugin-3.x instead!" );
             }
         }
-        catch ( Exception e )
+        catch ( IOException e )
         {
             getLog().debug( "Unable to determine Maven version", e );
         }
+    }
+
+    protected String getMavenVersion()
+        throws IOException
+    {
+        // This relies on the fact that MavenProject is the in core classloader
+        // and that the core classloader is for the maven-core artifact
+        // and that should have a pom.properties file
+        // if this ever changes, we will have to revisit this code.
+        final Properties properties = new Properties();
+        final InputStream in =
+            MavenProject.class.getResourceAsStream( "META-INF/maven/org.apache.maven/maven-core/pom.properties" );
+        try
+        {
+            properties.load( in );
+        }
+        finally
+        {
+            IOUtil.close( in );
+        }
+
+        return properties.getProperty( "version" ).trim();
     }
 }
