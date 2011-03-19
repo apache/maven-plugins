@@ -41,6 +41,7 @@ import org.apache.maven.wagon.TransferFailedException;
 import org.apache.maven.wagon.UnsupportedProtocolException;
 import org.apache.maven.wagon.Wagon;
 import org.apache.maven.wagon.authentication.AuthenticationException;
+import org.apache.maven.wagon.authentication.AuthenticationInfo;
 import org.apache.maven.wagon.authorization.AuthorizationException;
 import org.apache.maven.wagon.observers.Debug;
 import org.apache.maven.wagon.proxy.ProxyInfo;
@@ -126,8 +127,8 @@ public abstract class AbstractDeployMojo
     public void execute()
         throws MojoExecutionException
     {
-        deployTo( new org.apache.maven.plugins.site.wagon.repository.Repository(
-            getDeployRepositoryID(), getDeployRepositoryURL() ) );
+        deployTo( new org.apache.maven.plugins.site.wagon.repository.Repository( getDeployRepositoryID(),
+                                                                                 getDeployRepositoryURL() ) );
     }
 
     /**
@@ -215,8 +216,10 @@ public abstract class AbstractDeployMojo
 
         try
         {
-            push( directory, repository, wagonManager, wagon,
-                siteTool.getAvailableLocales( locales ), getDeployModuleDirectory() );
+            final ProxyInfo proxyInfo = getProxyInfo( repository, wagonManager );
+
+            push( directory, repository, wagonManager, wagon, proxyInfo,
+                siteTool.getAvailableLocales( locales ), getDeployModuleDirectory(), getLog() );
 
             if ( chmod )
             {
@@ -293,10 +296,14 @@ public abstract class AbstractDeployMojo
         return wagon;
     }
 
-    private static void push( final File inputDirectory, final Repository repository,
-        final WagonManager manager, final Wagon wagon, final List<Locale> localesList, final String relativeDir )
+    private static void push( final File inputDirectory, final Repository repository, final WagonManager manager,
+                              final Wagon wagon, final ProxyInfo proxyInfo, final List<Locale> localesList,
+                              final String relativeDir, final Log log )
         throws MojoExecutionException
     {
+        AuthenticationInfo authenticationInfo = manager.getAuthenticationInfo( repository.getId() );
+        log.debug( "authenticationInfo with id '" + repository.getId() + "': " + authenticationInfo.getUserName() );
+
         try
         {
             Debug debug = new Debug();
@@ -305,15 +312,20 @@ public abstract class AbstractDeployMojo
 
             wagon.addTransferListener( debug );
 
-            ProxyInfo proxyInfo = getProxyInfo( repository, manager );
-
-            if ( proxyInfo == null )
+            if ( proxyInfo != null )
             {
-                wagon.connect( repository, manager.getAuthenticationInfo( repository.getId() ) );
+                log.debug( "connect with proxyInfo" );
+                wagon.connect( repository, authenticationInfo, proxyInfo );
+            }
+            else if ( proxyInfo == null && authenticationInfo != null )
+            {
+                log.debug( "connect with authenticationInfo and without proxyInfo" );
+                wagon.connect( repository, authenticationInfo );
             }
             else
             {
-                wagon.connect( repository, manager.getAuthenticationInfo( repository.getId() ), proxyInfo );
+                log.debug( "connect without authenticationInfo and without proxyInfo" );
+                wagon.connect( repository );
             }
 
             // Default is first in the list
@@ -324,7 +336,7 @@ public abstract class AbstractDeployMojo
                 if ( locale.getLanguage().equals( defaultLocale ) )
                 {
                     // TODO: this also uploads the non-default locales,
-                    // is there a way to exlude directories in wagon?
+                    // is there a way to exclude directories in wagon?
                     wagon.putDirectory( inputDirectory, relativeDir );
                 }
                 else
@@ -453,14 +465,19 @@ public abstract class AbstractDeployMojo
      * @throws WagonConfigurationException
      */
     private static void configureWagon( Wagon wagon, String repositoryId, Settings settings, PlexusContainer container,
-        Log log )
+                                        Log log )
         throws WagonConfigurationException
     {
+        log.debug( " configureWagon " );
+
         // MSITE-25: Make sure that the server settings are inserted
         for ( int i = 0; i < settings.getServers().size(); i++ )
         {
             Server server = (Server) settings.getServers().get( i );
             String id = server.getId();
+
+            log.debug( "configureWagon server " + id );
+
             if ( id != null && id.equals( repositoryId ) )
             {
                 if ( server.getConfiguration() != null )
@@ -498,9 +515,7 @@ public abstract class AbstractDeployMojo
                             }
                         }
                     }
-
                 }
-
             }
         }
     }
