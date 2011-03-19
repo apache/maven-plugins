@@ -10,6 +10,15 @@
   <name>Parent Not As Ref</name>
   <url>http://example.com/</url>
 
+  <distributionManagement>
+    <site>
+      <id>website</id>
+      <name>Example web site</name>
+      <!-- needed for relative link resolution -->
+      <url>file://@project.build.directory@/it/inheritedMenus/deploy/</url>
+    </site>
+  </distributionManagement>
+
   <build>
     <pluginManagement>
       <plugins>
