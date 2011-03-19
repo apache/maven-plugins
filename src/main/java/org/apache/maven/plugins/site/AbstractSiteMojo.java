@@ -162,7 +162,7 @@ public abstract class AbstractSiteMojo
         // if this ever changes, we will have to revisit this code.
         final Properties properties = new Properties();
         final InputStream in =
-            MavenProject.class.getResourceAsStream( "META-INF/maven/org.apache.maven/maven-core/pom.properties" );
+            MavenProject.class.getClassLoader().getResourceAsStream( "META-INF/maven/org.apache.maven/maven-core/pom.properties" );
         try
         {
             properties.load( in );
