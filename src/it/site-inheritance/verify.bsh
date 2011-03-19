@@ -78,7 +78,7 @@ try
     int index1 = content.indexOf( "<a href=\"www/website/deep/down/below/index.html\" title=\"Child and Module\">Child and Module</a>" );
     int index2 = content.indexOf( "<a href=\"inheriting_child/index.html\" title=\"Inheriting Child\">Inheriting Child</a>" );
     int index3 = content.indexOf( "<a href=\"www/website/module/index.html\" title=\"Module\">Module</a>" );
-    int index4 = content.indexOf( "<a href=\"\" title=\"Aggregator\">Aggregator</a>" );
+    int index4 = content.indexOf( "<a href=\"./\" title=\"Aggregator\">Aggregator</a>" );
     if ( index1 < 0 || index2 < 0 || index3 < 0 || index4 < 0 )
     {
         System.err.println( "deploy index.html is missing module link!" );
@@ -256,7 +256,7 @@ try
     int index1 = content.indexOf( "<a href=\"www/website/deep/down/below/index.html\" title=\"Child and Module\">Child and Module</a>" );
     int index2 = content.indexOf( "<a href=\"inheriting_child/index.html\" title=\"Inheriting Child\">Inheriting Child</a>" );
     int index3 = content.indexOf( "<a href=\"www/website/module/index.html\" title=\"Module\">Module</a>" );
-    int index4 = content.indexOf( "<a href=\"\" title=\"Aggregator\">Aggregator</a>" );
+    int index4 = content.indexOf( "<a href=\"./\" title=\"Aggregator\">Aggregator</a>" );
     if ( index1 < 0 || index2 < 0 || index3 < 0 || index4 < 0 )
     {
         System.err.println( "staged index.html is missing module link!" );
@@ -433,7 +433,7 @@ try
     int index1 = content.indexOf( "<a href=\"www/website/deep/down/below/index.html\" title=\"Child and Module\">Child and Module</a>" );
     int index2 = content.indexOf( "<a href=\"inheriting_child/index.html\" title=\"Inheriting Child\">Inheriting Child</a>" );
     int index3 = content.indexOf( "<a href=\"www/website/module/index.html\" title=\"Module\">Module</a>" );
-    int index4 = content.indexOf( "<a href=\"\" title=\"Aggregator\">Aggregator</a>" );
+    int index4 = content.indexOf( "<a href=\"./\" title=\"Aggregator\">Aggregator</a>" );
     if ( index1 < 0 || index2 < 0 || index3 < 0 || index4 < 0 )
     {
         System.err.println( "stage-deployed index.html is missing module link!" );

@@ -49,11 +49,10 @@ try
     String content = IOUtil.toString ( new FileInputStream ( parentIndex ), "UTF-8" );
     int index1 = content.indexOf( "<strong>Parent Relative Home Inherited</strong>" );
     int index2 = content.indexOf( "<strong>Parent Relative Home Inherited with dot</strong>" );
-    // FIXME! this doesn't work
-    int index3 = content.indexOf( "<strong>Parent Absolute Home Inherited</strong>" );
+    int index3 = content.indexOf( "<a href=\"./\" title=\"Parent Absolute Home Inherited\">Parent Absolute Home Inherited</a>" );
     int index4 = content.indexOf( "<strong>Parent Absolute Home Inherited with index</strong>" );
 
-    if ( index1 < 0 || index2 < 0 || index4 < 0 )
+    if ( index1 < 0 || index2 < 0 || index3 < 0 || index4 < 0 )
     {
         System.err.println( "parent index.html has wrong inherited menu items!" );
         result = false;
@@ -61,8 +60,7 @@ try
 
     index1 = content.indexOf( "<strong>Parent Relative Home Local</strong>" );
     index2 = content.indexOf( "<strong>Parent Relative Home Local with dot</strong>" );
-    // FIXME! this doesn't work
-    index3 = content.indexOf( "<strong>Parent Absolute Home Local</strong>" );
+    index3 = content.indexOf( "<a href=\"./\" title=\"Parent Absolute Home Local\">Parent Absolute Home Local</a>" );
     index4 = content.indexOf( "<strong>Parent Absolute Home Local with index</strong>" );
 
     if ( index1 < 0 || index2 < 0 || index4 < 0 )
@@ -120,11 +118,10 @@ try
 
     index1 = content.indexOf( "<strong>Child Relative Home Local</strong>" );
     index2 = content.indexOf( "<strong>Child Relative Home Local with dot</strong>" );
-    // FIXME! this doesn't work
-    index3 = content.indexOf( "<strong>Child Absolute Home Local</strong>" );
+    index3 = content.indexOf( "<a href=\"./\" title=\"Child Absolute Home Local\">Child Absolute Home Local</a>" );
     index4 = content.indexOf( "<strong>Child Absolute Home Local with index</strong>" );
 
-    if ( index1 < 0 || index2 < 0 || index4 < 0 )
+    if ( index1 < 0 || index2 < 0 || index3 < 0 || index4 < 0 )
     {
         System.err.println( "child index.html has wrong menu items in local menu!" );
         result = false;
@@ -186,11 +183,10 @@ try
 
     index1 = content.indexOf( "<strong>Grand Child Relative Home Local</strong>" );
     index2 = content.indexOf( "<strong>Grand Child Relative Home Local with dot</strong>" );
-    // FIXME! this doesn't work
-    index3 = content.indexOf( "<strong>Grand Child Absolute Home Local</strong>" );
+    index3 = content.indexOf( "<a href=\"./\" title=\"Grand Child Absolute Home Local\">Grand Child Absolute Home Local</a>" );
     index4 = content.indexOf( "<strong>Grand Child Absolute Home Local with index</strong>" );
 
-    if ( index1 < 0 || index2 < 0 || index4 < 0 )
+    if ( index1 < 0 || index2 < 0 || index3 < 0 || index4 < 0 )
     {
         System.err.println( "grandchild index.html has wrong menu items in local menu!" );
         result = false;

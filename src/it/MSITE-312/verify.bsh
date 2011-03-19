@@ -40,7 +40,7 @@ try
     }
 
     String content = IOUtil.toString ( new FileInputStream ( parentIndex ), "UTF-8" );
-    int index1 = content.indexOf( "<a href=\"\" title=\"Parent\">Parent</a>" );
+    int index1 = content.indexOf( "<a href=\"./\" title=\"Parent\">Parent</a>" );
     int index2 = content.indexOf( "<a href=\"inherited/parent\" title=\"parent\">parent</a>" );
     int index3 = content.indexOf( "<a href=\"inherited/${childprop}\" title=\"${childprop}\">${childprop}</a>" );
 
