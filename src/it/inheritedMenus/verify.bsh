@@ -1,0 +1,223 @@
+
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+import java.io.*;
+import org.codehaus.plexus.util.*;
+
+boolean result = true;
+
+try
+{
+    File parentDirectory = new File ( basedir, "parentNotAsRef" );
+    if ( !parentDirectory.exists() || !parentDirectory.isDirectory() )
+    {
+        System.err.println( "parent is missing or not a directory." );
+        result = false;
+    }
+
+    File parentSiteDirectory = new File ( parentDirectory, "target/site" );
+    if ( !parentSiteDirectory.exists() || !parentSiteDirectory.isDirectory() )
+    {
+        System.err.println( "parent site is missing or not a directory." );
+        result = false;
+    }
+
+    File parentIndex = new File ( parentSiteDirectory, "index.html" );
+    if ( !parentIndex.exists() || parentIndex.isDirectory() )
+    {
+        System.err.println( "no index file in parent or is a directory." );
+        result = false;
+    }
+
+    String content = IOUtil.toString ( new FileInputStream ( parentIndex ), "UTF-8" );
+    int index1 = content.indexOf( "<strong>Parent Relative Home Inherited</strong>" );
+    int index2 = content.indexOf( "<strong>Parent Relative Home Inherited with dot</strong>" );
+    // FIXME! this doesn't work
+    int index3 = content.indexOf( "<strong>Parent Absolute Home Inherited</strong>" );
+    int index4 = content.indexOf( "<strong>Parent Absolute Home Inherited with index</strong>" );
+
+    if ( index1 < 0 || index2 < 0 || index4 < 0 )
+    {
+        System.err.println( "parent index.html has wrong inherited menu items!" );
+        result = false;
+    }
+
+    index1 = content.indexOf( "<strong>Parent Relative Home Local</strong>" );
+    index2 = content.indexOf( "<strong>Parent Relative Home Local with dot</strong>" );
+    // FIXME! this doesn't work
+    index3 = content.indexOf( "<strong>Parent Absolute Home Local</strong>" );
+    index4 = content.indexOf( "<strong>Parent Absolute Home Local with index</strong>" );
+
+    if ( index1 < 0 || index2 < 0 || index4 < 0 )
+    {
+        System.err.println( "parent index.html has wrong local menu items!" );
+        result = false;
+    }
+
+    index1 = content.indexOf( "<a href=\"childNotAsRef/index.html\" title=\"Child Not As Ref\">Child Not As Ref</a>" );
+    index2 = content.indexOf( "<a href=\"project-info.html\" title=\"Project Information\">Project Information</a>" );
+    index3 = content.indexOf( "<h5>Parent Project</h5>" );
+
+    if ( index1 < 0 || index2 < 0 || index3 >= 0 )
+    {
+        System.err.println( "parent index.html has wrong reference menu items!" );
+        result = false;
+    }
+
+
+    // CHILD
+
+
+    File childDirectory = new File ( parentDirectory, "childNotAsRef" );
+    if ( !childDirectory.exists() || !childDirectory.isDirectory() )
+    {
+        System.err.println( "child is missing or not a directory." );
+        result = false;
+    }
+
+    File childSiteDirectory = new File ( childDirectory, "target/site" );
+    if ( !childSiteDirectory.exists() || !childSiteDirectory.isDirectory() )
+    {
+        System.err.println( "child site is missing or not a directory." );
+        result = false;
+    }
+
+    File childIndex = new File ( childSiteDirectory, "index.html" );
+    if ( !childIndex.exists() || childIndex.isDirectory() )
+    {
+        System.err.println( "no index file in child or is a directory." );
+        result = false;
+    }
+
+    content = IOUtil.toString ( new FileInputStream ( childIndex ), "UTF-8" );
+    index1 = content.indexOf( "<a href=\"../index.html\" title=\"Parent Relative Home Inherited\">Parent Relative Home Inherited</a>" );
+    index2 = content.indexOf( "<a href=\"../index.html\" title=\"Parent Relative Home Inherited with dot\">Parent Relative Home Inherited with dot</a>" );
+    index3 = content.indexOf( "<a href=\"../\" title=\"Parent Absolute Home Inherited\">Parent Absolute Home Inherited</a>" );
+    index4 = content.indexOf( "<a href=\"../index.html\" title=\"Parent Absolute Home Inherited with index\">Parent Absolute Home Inherited with index</a>" );
+
+    if ( index1 < 0 || index2 < 0 || index3 < 0 || index4 < 0 )
+    {
+        System.err.println( "child index.html has wrong menu items in inherited menu!" );
+        result = false;
+    }
+
+    index1 = content.indexOf( "<strong>Child Relative Home Local</strong>" );
+    index2 = content.indexOf( "<strong>Child Relative Home Local with dot</strong>" );
+    // FIXME! this doesn't work
+    index3 = content.indexOf( "<strong>Child Absolute Home Local</strong>" );
+    index4 = content.indexOf( "<strong>Child Absolute Home Local with index</strong>" );
+
+    if ( index1 < 0 || index2 < 0 || index4 < 0 )
+    {
+        System.err.println( "child index.html has wrong menu items in local menu!" );
+        result = false;
+    }
+
+    index1 = content.indexOf( "<a href=\"grandChildNotAsRef/index.html\" title=\"GrandChild Not As Ref\">GrandChild Not As Ref</a>" );
+    index2 = content.indexOf( "<a href=\"project-summary.html\" title=\"Project Summary\">Project Summary</a>" );
+    index3 = content.indexOf( "<a href=\"../index.html\" title=\"Parent Not As Ref\">Parent Not As Ref</a>" );
+
+    if ( index1 < 0 || index2 < 0 || index3 < 0 )
+    {
+        System.err.println( "child index.html has wrong reference menu items!" );
+        result = false;
+    }
+
+    File childSummary = new File ( childSiteDirectory, "project-summary.html" );
+    if ( !childSummary.exists() || childSummary.isDirectory() )
+    {
+        System.err.println( "no summary file in child or is a directory." );
+        result = false;
+    }
+
+
+    // GRANDCHILD
+
+
+    File grandChildDirectory = new File ( childDirectory, "grandChildNotAsRef" );
+    if ( !grandChildDirectory.exists() || !grandChildDirectory.isDirectory() )
+    {
+        System.err.println( "grandchild is missing or not a directory." );
+        result = false;
+    }
+
+    File grandChildSiteDirectory = new File ( grandChildDirectory, "target/site" );
+    if ( !grandChildSiteDirectory.exists() || !grandChildSiteDirectory.isDirectory() )
+    {
+        System.err.println( "grandchild site is missing or not a directory." );
+        result = false;
+    }
+
+    File grandChildIndex = new File ( grandChildSiteDirectory, "index.html" );
+    if ( !grandChildIndex.exists() || grandChildIndex.isDirectory() )
+    {
+        System.err.println( "no index file in grandchild or is a directory." );
+        result = false;
+    }
+
+    content = IOUtil.toString ( new FileInputStream ( grandChildIndex ), "UTF-8" );
+    index1 = content.indexOf( "<a href=\"../../index.html\" title=\"Parent Relative Home Inherited\">Parent Relative Home Inherited</a>" );
+    index2 = content.indexOf( "<a href=\"../../index.html\" title=\"Parent Relative Home Inherited with dot\">Parent Relative Home Inherited with dot</a>" );
+    index3 = content.indexOf( "<a href=\"../../\" title=\"Parent Absolute Home Inherited\">Parent Absolute Home Inherited</a>" );
+    index4 = content.indexOf( "<a href=\"../../index.html\" title=\"Parent Absolute Home Inherited with index\">Parent Absolute Home Inherited with index</a>" );
+
+    if ( index1 < 0 || index2 < 0 || index3 < 0 || index4 < 0 )
+    {
+        System.err.println( "grandchild index.html has wrong menu items in inherited menu!" );
+        result = false;
+    }
+
+    index1 = content.indexOf( "<strong>Grand Child Relative Home Local</strong>" );
+    index2 = content.indexOf( "<strong>Grand Child Relative Home Local with dot</strong>" );
+    // FIXME! this doesn't work
+    index3 = content.indexOf( "<strong>Grand Child Absolute Home Local</strong>" );
+    index4 = content.indexOf( "<strong>Grand Child Absolute Home Local with index</strong>" );
+
+    if ( index1 < 0 || index2 < 0 || index4 < 0 )
+    {
+        System.err.println( "grandchild index.html has wrong menu items in local menu!" );
+        result = false;
+    }
+
+    index1 = content.indexOf( "<a href=\"../index.html\" title=\"Child Not As Ref\">Child Not As Ref</a>" );
+    index2 = content.indexOf( "<a href=\"source-repository.html\" title=\"Source Repository\">Source Repository</a>" );
+    index3 = content.indexOf( "<h5>Modules</h5>" );
+
+    if ( index1 < 0 || index2 < 0 || index3 >= 0 )
+    {
+        System.err.println( "grandchild index.html has wrong reference menu items!" );
+        result = false;
+    }
+
+    File grandChildScm = new File ( grandChildSiteDirectory, "source-repository.html" );
+    if ( !grandChildScm.exists() || grandChildScm.isDirectory() )
+    {
+        System.err.println( "no source-repository file in grandchild or is a directory." );
+        result = false;
+    }
+
+}
+catch( IOException e )
+{
+    e.printStackTrace();
+    result = false;
+}
+
+return result;

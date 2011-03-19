@@ -1,0 +1,7 @@
+
+The projects under parentNotAsRef/ and parentAsRef/ are identical
+except for the inheritAsRef parameter in the parent's site.xml.
+
+No tests are run for parentAsRef/, it is only built for comparison.
+
+See some FIXMEs in verify.bsh!
