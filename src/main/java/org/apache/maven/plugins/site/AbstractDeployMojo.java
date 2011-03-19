@@ -54,6 +54,7 @@ import org.apache.maven.wagon.observers.Debug;
 import org.apache.maven.wagon.proxy.ProxyInfo;
 import org.apache.maven.wagon.repository.Repository;
 
+import org.codehaus.plexus.PlexusConstants;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.component.configurator.ComponentConfigurationException;
 import org.codehaus.plexus.component.configurator.ComponentConfigurator;
@@ -61,6 +62,9 @@ import org.codehaus.plexus.component.repository.exception.ComponentLifecycleExce
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.codehaus.plexus.configuration.PlexusConfiguration;
 import org.codehaus.plexus.configuration.xml.XmlPlexusConfiguration;
+import org.codehaus.plexus.context.Context;
+import org.codehaus.plexus.context.ContextException;
+import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 
@@ -73,7 +77,7 @@ import org.codehaus.plexus.util.xml.Xpp3Dom;
  * @since 2.3
  */
 public abstract class AbstractDeployMojo
-    extends AbstractSiteMojo
+    extends AbstractSiteMojo implements Contextualizable
 {
     /**
      * Directory containing the generated project sites and report distributions.
@@ -132,17 +136,6 @@ public abstract class AbstractDeployMojo
      */
     protected MavenSession mavenSession;
 
-    /**
-     * @since 3.0-beta-2
-     * @component
-     * @readonly
-     */
-    private SettingsDecrypter settingsDecrypter;
-
-    /**
-     * @component
-     * @readonly
-     */
     private PlexusContainer container;
 
     /** {@inheritDoc} */
@@ -238,7 +231,24 @@ public abstract class AbstractDeployMojo
 
         try
         {
-            final ProxyInfo proxyInfo = getProxy( repository, getLog(), mavenSession, settingsDecrypter );
+            final ProxyInfo proxyInfo;
+            if ( getMavenVersion().startsWith( "2." ) )
+            {
+                proxyInfo = getProxyInfo( repository, wagonManager );
+            }
+            else
+            {
+                try
+                {
+                    SettingsDecrypter settingsDecrypter = container.lookup( SettingsDecrypter.class );
+
+                    proxyInfo = getProxy( repository, getLog(), mavenSession, settingsDecrypter );
+                }
+                catch ( ComponentLookupException cle )
+                {
+                    throw new MojoExecutionException( "Unable to lookup SettingsDecrypter: " + cle.getMessage(), cle );
+                }
+            }
 
             push( directory, repository, wagonManager, wagon, proxyInfo,
                 siteTool.getAvailableLocales( locales ), getDeployModuleDirectory(), getLog() );
@@ -324,7 +334,8 @@ public abstract class AbstractDeployMojo
         throws MojoExecutionException
     {
         AuthenticationInfo authenticationInfo = manager.getAuthenticationInfo( repository.getId() );
-        log.debug( "authenticationInfo with id '" + repository.getId() + "': " + authenticationInfo.getUserName() );
+        log.debug( "authenticationInfo with id '" + repository.getId() + "': "
+                   + ( ( authenticationInfo == null ) ? "-" : authenticationInfo.getUserName() ) );
 
         try
         {
@@ -427,7 +438,7 @@ public abstract class AbstractDeployMojo
      * @param wagonManager the WagonManager used to connect to the Repository.
      * @return a ProxyInfo object instantiated or <code>null</code> if no matching proxy is found
      */
-    public static ProxyInfo getProxyInfo( Repository repository, WagonManager wagonManager )
+    public ProxyInfo getProxyInfo( Repository repository, WagonManager wagonManager )
     {
         ProxyInfo proxyInfo = wagonManager.getProxy( repository.getProtocol() );
 
@@ -484,7 +495,7 @@ public abstract class AbstractDeployMojo
      * @param settingsDecrypter
      * @return
      */
-    private static ProxyInfo getProxy( Repository repository, Log log, MavenSession mavenSession, SettingsDecrypter settingsDecrypter )
+    private ProxyInfo getProxy( Repository repository, Log log, MavenSession mavenSession, SettingsDecrypter settingsDecrypter )
     {
         String protocol = repository.getProtocol();
         String url = repository.getUrl();
@@ -626,6 +637,13 @@ public abstract class AbstractDeployMojo
                 }
             }
         }
+    }
+
+    /** {@inheritDoc} */
+    public void contextualize( Context context )
+        throws ContextException
+    {
+        container = (PlexusContainer) context.get( PlexusConstants.PLEXUS_KEY );
     }
 
     /**

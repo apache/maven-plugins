@@ -128,9 +128,6 @@ public abstract class AbstractSiteDeployWebDavTest
             
             setVariableValueToObject( mojo, "mavenSession", mavenSession );
             
-            SettingsDecrypter settingsDecrypter = getContainer().lookup( SettingsDecrypter.class );
-            setVariableValueToObject( mojo, "settingsDecrypter", settingsDecrypter );
-            
             File inputDirectory = new File("src/test/resources/unit/deploy-dav/target/site");
             
             setVariableValueToObject( mojo, "inputDirectory", inputDirectory );
@@ -197,9 +194,6 @@ public abstract class AbstractSiteDeployWebDavTest
             MavenSession mavenSession = new MavenSession( getContainer(), null, request, null );
             
             setVariableValueToObject( mojo, "mavenSession", mavenSession );
-            
-            SettingsDecrypter settingsDecrypter = getContainer().lookup( SettingsDecrypter.class );
-            setVariableValueToObject( mojo, "settingsDecrypter", settingsDecrypter );
             
             File inputDirectory = new File("src/test/resources/unit/deploy-dav/target/site");
             
