@@ -75,7 +75,7 @@ try
         return false;
     }
 
-    index1 = content.indexOf( "<a href=\"\" title=\"Child\">Child</a>" );
+    index1 = content.indexOf( "<a href=\"./\" title=\"Child\">Child</a>" );
     index2 = content.indexOf( "<a href=\"local/parent\" title=\"parent\">parent</a>" );
     index3 = content.indexOf( "<a href=\"local/child\" title=\"child\">child</a>" );
 
