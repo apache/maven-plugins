@@ -21,23 +21,14 @@ package org.apache.maven.plugins.site;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.StringReader;
-import java.io.Writer;
 
 import java.util.List;
 import java.util.Locale;
 
-import org.apache.maven.doxia.site.decoration.DecorationModel;
-import org.apache.maven.doxia.site.decoration.io.xpp3.DecorationXpp3Reader;
-import org.apache.maven.doxia.site.decoration.io.xpp3.DecorationXpp3Writer;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProjectHelper;
 
-import org.codehaus.plexus.util.IOUtil;
-import org.codehaus.plexus.util.ReaderFactory;
-import org.codehaus.plexus.util.WriterFactory;
-import org.codehaus.plexus.util.xml.XmlStreamReader;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
+import org.codehaus.plexus.util.FileUtils;
 
 /**
  * Adds the site descriptor (<code>site.xml</code>) to the list of files to be installed/deployed.
@@ -73,71 +64,47 @@ public class SiteDescriptorAttachMojo
 
         for ( Locale locale : localesList )
         {
-            File descriptorFile = siteTool.getSiteDescriptorFromBasedir( toRelative( project.getBasedir(),
-                                                                                     siteDirectory.getAbsolutePath() ),
+            File descriptorFile = siteTool.getSiteDescriptorFromBasedir(
+                siteTool.getRelativePath( siteDirectory.getAbsolutePath(), project.getBasedir().getAbsolutePath() ),
                                                                          basedir, locale );
 
             if ( descriptorFile.exists() )
             {
-                DecorationModel decoration;
-                XmlStreamReader reader = null;
-                try
-                {
-                    reader = ReaderFactory.newXmlReader( descriptorFile );
-                    String siteDescriptorContent = IOUtil.toString( reader );
-
-                    decoration = new DecorationXpp3Reader().read( new StringReader( siteDescriptorContent ) );
-                }
-                catch ( XmlPullParserException e )
-                {
-                    throw new MojoExecutionException( "Error parsing site descriptor", e );
-                }
-                catch ( IOException e )
-                {
-                    throw new MojoExecutionException( "Error reading site descriptor", e );
-                }
-                finally
-                {
-                    IOUtil.close( reader );
-                }
-
                 // Calculate the classifier to use
-                String classifier = null;
-                int index = descriptorFile.getName().lastIndexOf( '.' );
-                if ( index > 0 )
-                {
-                    classifier = descriptorFile.getName().substring( 0, index );
-                }
-                else
-                {
-                    throw new MojoExecutionException( "Unable to determine the classifier to use" );
-                }
-
+                String classifier = getClassifier( descriptorFile );
                 // Prepare a file for the interpolated site descriptor
                 String filename = project.getArtifactId() + "-" + project.getVersion() + "-" + descriptorFile.getName();
-                File interpolatedDescriptorFile = new File( project.getBuild().getDirectory(), filename );
-                interpolatedDescriptorFile.getParentFile().mkdirs();
+                File targetDescriptorFile = new File( project.getBuild().getDirectory(), filename );
 
-                Writer writer = null;
                 try
                 {
-                    // Write the interpolated site descriptor to a file
-                    writer = WriterFactory.newXmlWriter( interpolatedDescriptorFile );
-                    new DecorationXpp3Writer().write( writer, decoration );
-                    // Attach the interpolated site descriptor
-                    getLog().debug( "Attaching the site descriptor '" + interpolatedDescriptorFile.getAbsolutePath()
+                    // Copy the site descriptor to a file
+                    FileUtils.copyFile( descriptorFile, targetDescriptorFile );
+                    // Attach the site descriptor
+                    getLog().debug( "Attaching the site descriptor '" + targetDescriptorFile.getAbsolutePath()
                         + "' with classifier '" + classifier + "' to the project." );
-                    projectHelper.attachArtifact( project, "xml", classifier, interpolatedDescriptorFile );
+                    projectHelper.attachArtifact( project, "xml", classifier, targetDescriptorFile );
                 }
                 catch ( IOException e )
                 {
-                    throw new MojoExecutionException( "Unable to store interpolated site descriptor", e );
-                }
-                finally
-                {
-                    IOUtil.close( writer );
+                    throw new MojoExecutionException( "Unable to copy site descriptor", e );
                 }
             }
+        }
+    }
+
+    private static String getClassifier( final File descriptorFile )
+        throws MojoExecutionException
+    {
+        final int index = descriptorFile.getName().lastIndexOf( '.' );
+
+        if ( index > 0 )
+        {
+            return descriptorFile.getName().substring( 0, index );
+        }
+        else
+        {
+            throw new MojoExecutionException( "Unable to determine the classifier to use" );
         }
     }
 }

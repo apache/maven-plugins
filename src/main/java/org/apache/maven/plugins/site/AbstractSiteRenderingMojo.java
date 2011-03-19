@@ -207,6 +207,15 @@ public abstract class AbstractSiteRenderingMojo
      */
     private boolean relativizeDecorationLinks;
 
+    /**
+     * Whether to generate the summary page for project reports: project-info.html.
+     *
+     * @parameter expression="${generateProjectInfo}" default-value="true"
+     *
+     * @since 2.3
+     */
+    private boolean generateProjectInfo;
+
     protected List<MavenReportExecution> getReports()
         throws MojoExecutionException
     {
@@ -271,8 +280,8 @@ public abstract class AbstractSiteRenderingMojo
         try
         {
             decorationModel = siteTool.getDecorationModel( project, reactorProjects, localRepository, repositories,
-                                                           toRelative( project.getBasedir(),
-                                                                       siteDirectory.getAbsolutePath() ),
+                                                           siteTool.getRelativePath( siteDirectory.getAbsolutePath(),
+                                                           project.getBasedir().getAbsolutePath() ),
                                                            locale, getInputEncoding(), getOutputEncoding() );
         }
         catch ( SiteToolException e )
@@ -442,7 +451,7 @@ public abstract class AbstractSiteRenderingMojo
         siteTool.populateReportsMenu( context.getDecoration(), locale, categories );
         populateReportItems( context.getDecoration(), locale, reportsByOutputName );
 
-        if ( categories.containsKey( MavenReport.CATEGORY_PROJECT_INFORMATION ) )
+        if ( categories.containsKey( MavenReport.CATEGORY_PROJECT_INFORMATION ) && generateProjectInfo )
         {
             List<MavenReport> categoryReports = categories.get( MavenReport.CATEGORY_PROJECT_INFORMATION );
 
