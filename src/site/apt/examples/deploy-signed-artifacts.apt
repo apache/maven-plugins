@@ -3,7 +3,7 @@
  ------
  Dennis Lundberg
  ------
- 10 December 2006
+ 2011-03-19
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -44,15 +44,15 @@ mvn deploy -Dgpg.passphrase=thephrase
 
 
 
-Issue with invalid signatures on the pom files
+* Issue with invalid signatures on the POM files
   
-  Maven 2.0.5 fixes a problem where the pom files would end up changing between 
-  signing them and deploying them.   If the signatures on the pom files are invalid, 
+  Maven 2.0.5 fixes a problem where the POM files would end up changing between
+  signing them and deploying them.   If the signatures on the POM files are invalid,
   make sure you upgrade to Maven 2.0.5.
 
 
-Install/Deploy without configuring the plugin in the pom
- 
+* Install/Deploy without configuring the plugin in the POM
+
   Currently this is not easily accomplished.   gpg signs the artifacts attached to the
   build at the point that gpg runs.   However, we want to "inject" the gpg into the phases.
   What MIGHT work is:
@@ -61,4 +61,4 @@ Install/Deploy without configuring the plugin in the pom
 mvn verify gpg:sign install:install deploy:deploy
 +----------+
 
-  However, if there are other plugins configured for phases after the verify phase, they will not be run.
+  However, if there are other plugins configured for phases after the <<<verify>>> phase, they will not be run.

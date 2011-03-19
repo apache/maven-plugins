@@ -3,7 +3,7 @@
  ------
  Dennis Lundberg
  ------
- 10 December 2006
+ 2011-03-19
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -68,7 +68,7 @@ mvn verify -Dgpg.passphrase=thephrase
 
   If you don't specify a passphrase, it will prompt for one.
 
-  <Note:> When using the GPG Plugin in combination with the Maven Release Plugin, you might need to specify the passphrase
+  <<Note:>> When using the GPG Plugin in combination with the Maven Release Plugin, you might need to specify the passphrase
   like this:
 
 +----------+
