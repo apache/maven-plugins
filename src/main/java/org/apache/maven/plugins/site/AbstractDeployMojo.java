@@ -302,7 +302,8 @@ public abstract class AbstractDeployMojo
         throws MojoExecutionException
     {
         AuthenticationInfo authenticationInfo = manager.getAuthenticationInfo( repository.getId() );
-        log.debug( "authenticationInfo with id '" + repository.getId() + "': " + authenticationInfo.getUserName() );
+        log.debug( "authenticationInfo with id '" + repository.getId() + "': "
+            + ( ( authenticationInfo == null ) ? "-" : authenticationInfo.getUserName() ) );
 
         try
         {
