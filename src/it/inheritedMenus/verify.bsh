@@ -107,14 +107,12 @@ try
     }
 
     content = IOUtil.toString ( new FileInputStream ( childIndex ), "UTF-8" );
-    // FIXME! this doesn't work
-    index1 = content.indexOf( "<a href=\"../\" title=\"Parent Relative Home Inherited\">Parent Relative Home Inherited</a>" );
-    // FIXME! this doesn't work
-    index2 = content.indexOf( "<a href=\"../\" title=\"Parent Relative Home Inherited with dot\">Parent Relative Home Inherited with dot</a>" );
+    index1 = content.indexOf( "<a href=\"../index.html\" title=\"Parent Relative Home Inherited\">Parent Relative Home Inherited</a>" );
+    index2 = content.indexOf( "<a href=\"../index.html\" title=\"Parent Relative Home Inherited with dot\">Parent Relative Home Inherited with dot</a>" );
     index3 = content.indexOf( "<a href=\"../\" title=\"Parent Absolute Home Inherited\">Parent Absolute Home Inherited</a>" );
     index4 = content.indexOf( "<a href=\"../index.html\" title=\"Parent Absolute Home Inherited with index\">Parent Absolute Home Inherited with index</a>" );
 
-    if ( index3 < 0 || index4 < 0 )
+    if ( index1 < 0 || index2 < 0 || index3 < 0 || index4 < 0 )
     {
         System.err.println( "child index.html has wrong menu items in inherited menu!" );
         result = false;
@@ -175,14 +173,12 @@ try
     }
 
     content = IOUtil.toString ( new FileInputStream ( grandChildIndex ), "UTF-8" );
-    // FIXME! this doesn't work
-    index1 = content.indexOf( "<a href=\"../\" title=\"Parent Relative Home Inherited\">Parent Relative Home Inherited</a>" );
-    // FIXME! this doesn't work
-    index2 = content.indexOf( "<a href=\"../\" title=\"Parent Relative Home Inherited with dot\">Parent Relative Home Inherited with dot</a>" );
+    index1 = content.indexOf( "<a href=\"../../index.html\" title=\"Parent Relative Home Inherited\">Parent Relative Home Inherited</a>" );
+    index2 = content.indexOf( "<a href=\"../../index.html\" title=\"Parent Relative Home Inherited with dot\">Parent Relative Home Inherited with dot</a>" );
     index3 = content.indexOf( "<a href=\"../../\" title=\"Parent Absolute Home Inherited\">Parent Absolute Home Inherited</a>" );
     index4 = content.indexOf( "<a href=\"../../index.html\" title=\"Parent Absolute Home Inherited with index\">Parent Absolute Home Inherited with index</a>" );
 
-    if ( index3 < 0 || index4 < 0 )
+    if ( index1 < 0 || index2 < 0 || index3 < 0 || index4 < 0 )
     {
         System.err.println( "grandchild index.html has wrong menu items in inherited menu!" );
         result = false;
