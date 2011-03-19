@@ -56,7 +56,6 @@ import org.apache.maven.wagon.proxy.ProxyInfo;
 import org.apache.maven.wagon.repository.Repository;
 
 import org.codehaus.plexus.PlexusContainer;
-import org.codehaus.plexus.component.annotations.Requirement;
 import org.codehaus.plexus.component.configurator.ComponentConfigurationException;
 import org.codehaus.plexus.component.configurator.ComponentConfigurator;
 import org.codehaus.plexus.component.repository.exception.ComponentLifecycleException;
@@ -134,7 +133,6 @@ public abstract class AbstractDeployMojo
      */
     protected MavenSession mavenSession;
 
-
     /**
      * @since 3.0-beta-2
      * @component
@@ -152,8 +150,8 @@ public abstract class AbstractDeployMojo
     public void execute()
         throws MojoExecutionException
     {
-        deployTo( new org.apache.maven.plugins.site.wagon.repository.Repository(
-            getDeployRepositoryID(), getDeployRepositoryURL() ) );
+        deployTo( new org.apache.maven.plugins.site.wagon.repository.Repository( getDeployRepositoryID(),
+                                                                                 getDeployRepositoryURL() ) );
     }
 
     /**
@@ -321,13 +319,13 @@ public abstract class AbstractDeployMojo
         return wagon;
     }
 
-    private static void push( final File inputDirectory, final Repository repository,
-        final WagonManager manager, final Wagon wagon, final ProxyInfo proxyInfo,
-        final List<Locale> localesList, final String relativeDir, final Log log )
+    private static void push( final File inputDirectory, final Repository repository, final WagonManager manager,
+                              final Wagon wagon, final ProxyInfo proxyInfo, final List<Locale> localesList,
+                              final String relativeDir, final Log log )
         throws MojoExecutionException
     {
         AuthenticationInfo authenticationInfo = manager.getAuthenticationInfo( repository.getId() );
-        log.debug( "authenticationInfo with id '" + repository.getId() + "' : " + authenticationInfo.getUserName() );
+        log.debug( "authenticationInfo with id '" + repository.getId() + "': " + authenticationInfo.getUserName() );
 
         try
         {
@@ -352,6 +350,7 @@ public abstract class AbstractDeployMojo
                 log.debug( "connect without authenticationInfo and without proxyInfo" );
                 wagon.connect( repository );
             }
+
             // Default is first in the list
             final String defaultLocale = localesList.get( 0 ).getLanguage();
 
@@ -360,7 +359,7 @@ public abstract class AbstractDeployMojo
                 if ( locale.getLanguage().equals( defaultLocale ) )
                 {
                     // TODO: this also uploads the non-default locales,
-                    // is there a way to exlude directories in wagon?
+                    // is there a way to exclude directories in wagon?
                     wagon.putDirectory( inputDirectory, relativeDir );
                 }
                 else
@@ -477,7 +476,15 @@ public abstract class AbstractDeployMojo
         return proxyInfo;
     }
 
-
+    /**
+     * Get proxy information for Maven 3.
+     * 
+     * @param repository
+     * @param log
+     * @param mavenSession
+     * @param settingsDecrypter
+     * @return
+     */
     private static ProxyInfo getProxy( Repository repository, Log log, MavenSession mavenSession, SettingsDecrypter settingsDecrypter )
     {
         String protocol = repository.getProtocol();
@@ -567,7 +574,7 @@ public abstract class AbstractDeployMojo
      * @throws WagonConfigurationException
      */
     private static void configureWagon( Wagon wagon, String repositoryId, Settings settings, PlexusContainer container,
-        Log log )
+                                        Log log )
         throws WagonConfigurationException
     {
         log.debug( " configureWagon " );
@@ -576,8 +583,10 @@ public abstract class AbstractDeployMojo
         for ( int i = 0; i < settings.getServers().size(); i++ )
         {
             Server server = (Server) settings.getServers().get( i );
-            log.debug( "configureWagon server " + server.getId() );
             String id = server.getId();
+
+            log.debug( "configureWagon server " + id );
+
             if ( id != null && id.equals( repositoryId ) )
             {
                 if ( server.getConfiguration() != null )
