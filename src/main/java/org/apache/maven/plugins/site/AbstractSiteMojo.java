@@ -20,6 +20,7 @@ package org.apache.maven.plugins.site;
  */
 
 import java.io.File;
+import java.io.InputStream;
 
 import java.util.List;
 import java.util.Properties;
@@ -30,6 +31,7 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.project.MavenProject;
 
 import org.codehaus.plexus.i18n.I18N;
+import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
 
 /**
@@ -142,8 +144,16 @@ public abstract class AbstractSiteMojo
             // and that should have a pom.properties file
             // if this ever changes, we will have to revisit this code.
             final Properties properties = new Properties();
-            properties.load( MavenProject.class.getClassLoader().getResourceAsStream(
-                "META-INF/maven/org.apache.maven/maven-core/pom.properties" ) );
+            final InputStream in =
+                MavenProject.class.getResourceAsStream( "META-INF/maven/org.apache.maven/maven-core/pom.properties" );
+            try
+            {
+                properties.load( in );
+            }
+            finally
+            {
+                IOUtil.close( in );
+            }
 
             final String version = properties.getProperty( "version" ).trim();
 
@@ -157,5 +167,4 @@ public abstract class AbstractSiteMojo
             getLog().debug( "Unable to determine Maven version", e );
         }
     }
-
 }
