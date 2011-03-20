@@ -29,7 +29,7 @@
 
 Excluding Document Formats
 
-  To exclude specific document formats from the generated site, you can use the <<<excludeModules>>> parameter.
+  To exclude specific document formats from the generated site, you can use the <<<moduleExcludes>>> parameter.
 
   For example, you have the following site content in your POM
 
@@ -59,7 +59,9 @@ Module1
         <artifactId>maven-site-plugin</artifactId>
         <version>${project.version}</version>
         <configuration>
-          <excludeModules>fml</excludeModules>
+          <moduleExcludes>
+            <fml>*.fml</fml>
+          </moduleExcludes>
         </configuration>
       </plugin>
     </plugins>
@@ -69,3 +71,6 @@ Module1
 +-----+
 
   You will see that no <<<sample-fml.html>>> will be present in the generated site.
+
+  See the documentation of the {{{../site-mojo.html#moduleExcludes}moduleExcludes}}
+  Mojo parameter for more details.
