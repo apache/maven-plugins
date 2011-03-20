@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Properties;
 
 import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.artifact.versioning.ComparableVersion;
 import org.apache.maven.doxia.tools.SiteTool;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.project.MavenProject;
@@ -130,6 +131,11 @@ public abstract class AbstractSiteMojo
     protected String getOutputEncoding()
     {
         return ( outputEncoding == null ) ? ReaderFactory.UTF_8 : outputEncoding;
+    }
+    
+    protected boolean isMaven3OrMore()
+    {
+        return new ComparableVersion( getMavenVersion() ).compareTo( new ComparableVersion( "3.0" ) ) >= 0;
     }
 
     protected String getMavenVersion()

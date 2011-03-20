@@ -21,10 +21,8 @@ package org.apache.maven.plugins.site;
 
 import java.io.File;
 import java.io.IOException;
-
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -216,10 +214,11 @@ public abstract class AbstractSiteRenderingMojo
      */
     private boolean generateProjectInfo;
 
+    
     protected List<MavenReportExecution> getReports()
         throws MojoExecutionException
     {
-        if ( reportPlugins != null && reportPlugins.length > 0 )
+        if ( isMaven3OrMore() )// reportPlugins != null && reportPlugins.length > 0 )
         { // to be reviewed : is this the right test to detect Maven 3?
             MavenReportExecutorRequest mavenReportExecutorRequest = new MavenReportExecutorRequest();
             mavenReportExecutorRequest.setLocalRepository( localRepository );

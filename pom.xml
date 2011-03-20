@@ -523,6 +523,7 @@ under the License.
               <artifactSet>
                 <includes>
                   <include>org.apache.maven.reporting:maven-reporting-api</include>
+                  <include>org.apache.maven:maven-artifact</include>
                 </includes>
               </artifactSet>
               <filters>
@@ -532,6 +533,13 @@ under the License.
                     <include>**/MavenMultiPageReport.class</include>
                   </includes>
                 </filter>
+                <filter>
+                  <artifact>org.apache.maven:maven-artifact</artifact>
+                  <includes>
+                    <include>**/ComparableVersion.class</include>
+                    <include>**/ComparableVersion$*.class</include>
+                  </includes>
+                </filter>                
               </filters>
             </configuration>
           </execution>
