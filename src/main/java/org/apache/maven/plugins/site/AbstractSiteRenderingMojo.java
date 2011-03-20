@@ -230,7 +230,9 @@ public abstract class AbstractSiteRenderingMojo
             MavenReportExecutor mavenReportExecutor;
             try
             {
-                mavenReportExecutor = container.lookup( MavenReportExecutor.class );
+                // not available in container used with mvn 2.x
+                //mavenReportExecutor = container.lookup( MavenReportExecutor.class );
+                mavenReportExecutor = (MavenReportExecutor) container.lookup( MavenReportExecutor.class.getName() );
             }
             catch ( ComponentLookupException e )
             {

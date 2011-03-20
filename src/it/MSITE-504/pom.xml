@@ -11,9 +11,9 @@
     <module>maven-plugin-consumer</module>
   </modules>
 
-  <prerequisites>
+  <!--prerequisites>
     <maven>3.0</maven>
-  </prerequisites>
+  </prerequisites-->
 
   <build>
     <pluginManagement>
