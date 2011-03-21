@@ -37,6 +37,7 @@ under the License.
 
   <modules>
     <module>maven-plugins</module>
+    <module>maven-acr-plugin</module>
     <module>maven-ant-plugin</module>
     <module>maven-antrun-plugin</module>
 
