@@ -1,0 +1,37 @@
+import java.io.*;
+import java.util.*;
+import java.util.zip.*;
+import java.util.regex.*;
+
+File jarFile = new File( basedir, "target/maven-acr-plugin-it03-1.0.jar" );
+System.out.println( "Checking for existence of " + jarFile );
+if ( !jarFile.isFile() )
+{
+    throw new FileNotFoundException( "Missing " + jarFile );
+}
+
+ZipInputStream zis = new ZipInputStream( new FileInputStream( jarFile ) );
+
+int count = 0;
+
+while (true)
+{
+    ZipEntry entry = zis.getNextEntry();
+    if ( entry == null )
+    {
+        break;
+    }
+    if ( entry.getName().equals( "META-INF/application-client.xml" ) )
+    {
+        count++;
+    }
+}
+
+zis.close();
+
+if ( count != 1 )
+{
+    throw new IllegalStateException( "Wrong number of application-client.xml's in archive: " + count );
+}
+
+return true;

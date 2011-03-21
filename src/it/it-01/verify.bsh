@@ -1,0 +1,40 @@
+import java.io.*;
+import java.util.*;
+import java.util.jar.*;
+import java.util.regex.*;
+
+try
+{
+    File jarFile = new File( basedir, "target/maven-acr-plugin-it01-1.0.jar" );
+    System.out.println( "Checking for existence of " + jarFile );
+    if ( !jarFile.isFile() )
+    {
+        System.out.println( "FAILURE!" );
+        return false;
+    }
+
+    JarFile jar = new JarFile( jarFile );
+
+    String[] includedEntries = {
+        "META-INF/application-client.xml",
+        "org/apache/maven/plugin/acr/it/it01/SampleApp.class",
+    };
+    for ( String included : includedEntries )
+    {
+        System.out.println( "Checking for existence of " + included );
+        if ( jar.getEntry( included ) == null )
+        {
+            System.out.println( "FAILURE!" );
+            return false;
+        }
+    }
+
+    jar.close();
+}
+catch( Throwable t )
+{
+    t.printStackTrace();
+    return false;
+}
+
+return true;
