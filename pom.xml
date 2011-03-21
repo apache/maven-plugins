@@ -88,6 +88,33 @@ under the License.
     </dependency>
   </dependencies>
 
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-changes-plugin</artifactId>
+          <version>2.4</version>
+          <configuration>
+            <generateJiraAnnouncement>true</generateJiraAnnouncement>
+            <maxEntries>1000</maxEntries>
+            <runOnlyAtExecutionRoot>true</runOnlyAtExecutionRoot>
+            <subject>[ANN] ${project.name} ${project.version} Released</subject>
+            <templateDirectory>org/apache/maven/plugins</templateDirectory>
+            <toAddresses>
+              <toAddress implementation="java.lang.String">announce@maven.apache.org</toAddress>
+              <toAddress implementation="java.lang.String">users@maven.apache.org</toAddress>
+              <toAddress implementation="java.lang.String">dev@maven.apache.org</toAddress>
+            </toAddresses>
+            <!-- These values need to be specified as properties in the profile apache-release in your settings.xml -->
+            <fromDeveloperId>${apache.availid}</fromDeveloperId>
+            <smtpHost>${smtp.host}</smtpHost>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+
   <profiles>
     <profile>
       <id>run-its</id>
