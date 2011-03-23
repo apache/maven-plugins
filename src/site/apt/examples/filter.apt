@@ -140,7 +140,7 @@ Hello world
   <build>
     ...
     <filters>
-      <filter> [a filter property] </filter>
+      <filter>[a filter property]</filter>
     </filters>
     ...
   </build>
