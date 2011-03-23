@@ -159,7 +159,7 @@ Including and excluding files and directories
         <directory> src/my-resources </directory>
         <includes>
           <include> **/*.txt </include>
-        </inclues>
+        </includes>
         <excludes>
           <exclude> **/*test*.* </exclude>
         </excludes>
