@@ -49,7 +49,7 @@ Project
    ...
    <resources>
      <resource>
-       <directory> [your folder here] </directory>
+       <directory>[your folder here]</directory>
      </resource>
    </resources>
    ...

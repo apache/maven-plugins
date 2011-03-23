@@ -43,13 +43,13 @@ Including and excluding files and directories
     ...
     <resources>
       <resource>
-        <directory> [your directory] </directory>
+        <directory>[your directory]</directory>
         <includes>
-          <include> [resource file #1] </include>
-          <include> [resource file #2] </include>
-          <include> [resource file #3] </include>
+          <include>[resource file #1]</include>
+          <include>[resource file #2]</include>
+          <include>[resource file #3]</include>
           ...
-          <include> [resource file #n] </include>
+          <include>[resource file #n]</include>
         </includes>
       </resource>
       ...
@@ -71,13 +71,13 @@ Including and excluding files and directories
     ...
     <resources>
       <resource>
-        <directory> [your directory] </directory>
+        <directory>[your directory]</directory>
         <excludes>
-          <exclude> [non-resource file #1] </exclude>
-          <exclude> [non-resource file #2] </exclude>
-          <exclude> [non-resource file #3] </exclude>
+          <exclude>[non-resource file #1]</exclude>
+          <exclude>[non-resource file #2]</exclude>
+          <exclude>[non-resource file #3]</exclude>
           ...
-          <exclude> [non-resource file #n] </exclude>
+          <exclude>[non-resource file #n]</exclude>
         </excludes>
       </resource>
       ...
@@ -101,10 +101,10 @@ Including and excluding files and directories
     ...
     <resources>
       <resource>
-        <directory> src/my-resources </directory>
+        <directory>src/my-resources</directory>
         <includes>
-          <include> **/*.txt </include>
-          <include> **/*.rtf </include>
+          <include>**/*.txt</include>
+          <include>**/*.rtf</include>
         </includes>
       </resource>
       ...
@@ -127,12 +127,12 @@ Including and excluding files and directories
     ...
     <resources>
       <resource>
-        <directory> src/my-resources </directory>
+        <directory>src/my-resources</directory>
         <excludes>
-          <exclude> **/*.bmp </exclude>
-          <exclude> **/*.jpg </exclude>
-          <exclude> **/*.jpeg </exclude>
-          <exclude> **/*.gif </exclude>
+          <exclude>**/*.bmp</exclude>
+          <exclude>**/*.jpg</exclude>
+          <exclude>**/*.jpeg</exclude>
+          <exclude>**/*.gif</exclude>
         </excludes>
       </resource>
       ...
@@ -156,12 +156,12 @@ Including and excluding files and directories
     ...
     <resources>
       <resource>
-        <directory> src/my-resources </directory>
+        <directory>src/my-resources</directory>
         <includes>
-          <include> **/*.txt </include>
+          <include>**/*.txt</include>
         </includes>
         <excludes>
-          <exclude> **/*test*.* </exclude>
+          <exclude>**/*test*.*</exclude>
         </excludes>
       </resource>
       ...
