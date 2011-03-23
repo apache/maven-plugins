@@ -352,6 +352,8 @@ public abstract class AbstractDeployMojo
                 wagon.connect( repository );
             }
 
+            log.info( "Pushing " + inputDirectory );
+
             // Default is first in the list
             final String defaultLocale = localesList.get( 0 ).getLanguage();
 
@@ -362,11 +364,13 @@ public abstract class AbstractDeployMojo
                     // TODO: this also uploads the non-default locales,
                     // is there a way to exclude directories in wagon?
                     wagon.putDirectory( inputDirectory, relativeDir );
+                    log.info( "   to " + repository.getUrl() + relativeDir + ": done" );
                 }
                 else
                 {
                     wagon.putDirectory( new File( inputDirectory, locale.getLanguage() ),
                         locale.getLanguage() + relativeDir );
+                    log.info( "   to " + repository.getUrl() + locale.getLanguage() + relativeDir + ": done" );
                 }
             }
         }
