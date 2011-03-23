@@ -80,7 +80,7 @@ public class SiteStageDeployMojo
     {
         stagingSiteURL = getStagingSiteURL( stagingSiteURL );
 
-        getLog().info( "Using this URL for stage deploy: " + stagingSiteURL );
+        getLog().info( "Using this base URL for stage deploy: " + stagingSiteURL );
 
         return stagingSiteURL;
     }

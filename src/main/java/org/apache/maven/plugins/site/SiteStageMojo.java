@@ -66,7 +66,7 @@ public class SiteStageMojo
         final String stageDir = ( stagingDirectory == null ) ? null : stagingDirectory.getAbsolutePath();
         final String outputDir = getStagingDirectory( stageDir );
 
-        getLog().info( "Using this directory for staging: " + outputDir );
+        getLog().info( "Using this base directory for staging: " + outputDir );
 
         final File outputDirectory = new File( outputDir );
         // Safety
