@@ -12,9 +12,6 @@
   <artifactId>child</artifactId>
 
   <name>Child</name>
-  <!-- necessary even though it's equivalent to the default value
-        because m2 does not append the slash in the end, which makes the relative links go boing -->
-  <url>http://example.com/parent/child/</url>
 
   <properties>
     <childprop>child</childprop>
