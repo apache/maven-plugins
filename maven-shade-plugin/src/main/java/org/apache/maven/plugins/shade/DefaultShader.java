@@ -56,6 +56,7 @@ public class DefaultShader
     implements Shader
 {
 
+    private List classCache = new ArrayList();
     public void shade( Set jars, File uberJar, List filters, List relocators, List resourceTransformers )
         throws IOException
     {
@@ -145,7 +146,10 @@ public class DefaultShader
 
                     if ( name.endsWith( ".class" ) )
                     {
-                        addRemappedClass( remapper, jos, jar, name, is );
+                        if (!classCache.contains(name)) {
+                            classCache.add(name);
+                            addRemappedClass( remapper, jos, jar, name, is );
+                        }
                     }
                     else
                     {
