@@ -138,7 +138,7 @@ under the License.
               <settingsFile>src/it/settings.xml</settingsFile>
               <goals>
                 <goal>clean</goal>
-                <goal>package</goal>
+                <goal>install</goal>
               </goals>
             </configuration>
             <executions>

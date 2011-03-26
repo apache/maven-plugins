@@ -30,6 +30,15 @@ try
     }
 
     jar.close();
+
+    // Make sure that the jar has been added with a .jar extension
+    File localRepo = new File( basedir.getParentFile().getParentFile(), "local-repo" );
+    File repoFile = new File(localRepo,
+        "/org/apache/maven/plugin/maven-acr-plugin-it01/1.0/maven-acr-plugin-it01-1.0.jar");
+    if (!repoFile.exists()) {
+        System.out.println("Jar file for application client not found in repo [" + repoFile.getAbsolutePath() + "]");
+        return false;
+    }
 }
 catch( Throwable t )
 {
