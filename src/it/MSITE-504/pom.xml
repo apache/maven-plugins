@@ -12,7 +12,7 @@
   </modules>
 
   <prerequisites>
-    <maven>3.0</maven>
+    <maven>2.2</maven>
   </prerequisites>
 
   <build>
