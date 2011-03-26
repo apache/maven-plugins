@@ -19,8 +19,7 @@ specific language governing permissions and limitations
 under the License.
 -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
@@ -30,7 +29,7 @@ under the License.
   </parent>
 
   <artifactId>maven-acr-plugin</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0</version>
   <packaging>maven-plugin</packaging>
 
   <name>Maven ACR Plugin</name>
@@ -41,10 +40,10 @@ under the License.
   </prerequisites>
 
   <scm>
-    <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-acr-plugin/</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/trunk/maven-acr-plugin/
+    <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/tags/maven-acr-plugin-1.0</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/tags/maven-acr-plugin-1.0
     </developerConnection>
-    <url>http://svn.apache.org/viewvc/maven/plugins/trunk/maven-acr-plugin/</url>
+    <url>http://svn.apache.org/viewvc/maven/plugins/tags/maven-acr-plugin-1.0</url>
   </scm>
   <issueManagement>
     <system>JIRA</system>
