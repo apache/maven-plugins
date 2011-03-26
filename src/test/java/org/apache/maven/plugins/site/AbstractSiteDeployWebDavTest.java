@@ -38,7 +38,6 @@ import org.apache.maven.plugins.site.SimpleDavServerHandler.HttpRequest;
 import org.apache.maven.plugins.site.stubs.SiteMavenProjectStub;
 import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Settings;
-import org.apache.maven.settings.crypto.SettingsDecrypter;
 import org.codehaus.plexus.util.ReflectionUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -149,9 +148,6 @@ public abstract class AbstractSiteDeployWebDavTest
             
             setVariableValueToObject( mojo, "mavenSession", mavenSession );
             
-            SettingsDecrypter settingsDecrypter = getContainer().lookup( SettingsDecrypter.class );
-            setVariableValueToObject( mojo, "settingsDecrypter", settingsDecrypter );
-            
             File inputDirectory = new File( "src/test/resources/unit/deploy-dav/target/site" );
             
             setVariableValueToObject( mojo, "inputDirectory", inputDirectory );
@@ -219,9 +215,6 @@ public abstract class AbstractSiteDeployWebDavTest
             MavenSession mavenSession = new MavenSession( getContainer(), null, request, null );
             
             setVariableValueToObject( mojo, "mavenSession", mavenSession );
-            
-            SettingsDecrypter settingsDecrypter = getContainer().lookup( SettingsDecrypter.class );
-            setVariableValueToObject( mojo, "settingsDecrypter", settingsDecrypter );
             
             File inputDirectory = new File( "src/test/resources/unit/deploy-dav/target/site" );
             

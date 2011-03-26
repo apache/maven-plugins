@@ -24,7 +24,6 @@ import java.io.IOException;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -51,7 +50,12 @@ import org.apache.maven.reporting.exec.MavenReportExecution;
 import org.apache.maven.reporting.exec.MavenReportExecutor;
 import org.apache.maven.reporting.exec.MavenReportExecutorRequest;
 import org.apache.maven.reporting.exec.ReportPlugin;
-
+import org.codehaus.plexus.PlexusConstants;
+import org.codehaus.plexus.PlexusContainer;
+import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
+import org.codehaus.plexus.context.Context;
+import org.codehaus.plexus.context.ContextException;
+import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
 
 /**
  * Base class for site rendering mojos.
@@ -60,7 +64,7 @@ import org.apache.maven.reporting.exec.ReportPlugin;
  * @version $Id$
  */
 public abstract class AbstractSiteRenderingMojo
-    extends AbstractSiteMojo
+    extends AbstractSiteMojo implements Contextualizable
 {
     /**
      * Module type exclusion mappings
@@ -138,12 +142,6 @@ public abstract class AbstractSiteRenderingMojo
     protected Renderer siteRenderer;
 
     /**
-     * @parameter
-     * @since 3.0-beta-1
-     */
-    private ReportPlugin[] reportPlugins;
-
-    /**
      * Alternative directory for xdoc source, useful for m1 to m2 migration
      *
      * @parameter default-value="${basedir}/xdocs"
@@ -170,12 +168,23 @@ public abstract class AbstractSiteRenderingMojo
     protected MavenSession mavenSession;
 
     /**
-     * The report executor.
+     * Reports (Maven 2).
      * 
-     * @component
+     * @parameter expression="${reports}"
+     * @required
      * @readonly
      */
-    private MavenReportExecutor mavenReportExecutor;
+    protected List<MavenReport> reports;
+
+    /**
+     * Report plugins (Maven 3).
+     * 
+     * @parameter
+     * @since 3.0-beta-1
+     */
+    private ReportPlugin[] reportPlugins;
+
+    private PlexusContainer container;
 
     /**
      * Make links in the site descriptor relative to the project URL.
@@ -199,21 +208,45 @@ public abstract class AbstractSiteRenderingMojo
      */
     private boolean generateProjectInfo;
 
+    /** {@inheritDoc} */
+    public void contextualize( Context context )
+        throws ContextException
+    {
+        container = (PlexusContainer) context.get( PlexusConstants.PLEXUS_KEY );
+    }
+
     protected List<MavenReportExecution> getReports()
         throws MojoExecutionException
     {
-        if ( reportPlugins == null || reportPlugins.length <= 0 )
+        if ( isMaven3OrMore() )
         {
-            return Collections.emptyList();
+            MavenReportExecutorRequest mavenReportExecutorRequest = new MavenReportExecutorRequest();
+            mavenReportExecutorRequest.setLocalRepository( localRepository );
+            mavenReportExecutorRequest.setMavenSession( mavenSession );
+            mavenReportExecutorRequest.setProject( project );
+            mavenReportExecutorRequest.setReportPlugins( reportPlugins );
+
+            MavenReportExecutor mavenReportExecutor;
+            try
+            {
+                mavenReportExecutor = (MavenReportExecutor) container.lookup( MavenReportExecutor.class.getName() );
+            }
+            catch ( ComponentLookupException e )
+            {
+                throw new MojoExecutionException( "could not get MavenReportExecutor component", e );
+            }
+            return mavenReportExecutor.buildMavenReports( mavenReportExecutorRequest );
         }
 
-        MavenReportExecutorRequest mavenReportExecutorRequest = new MavenReportExecutorRequest();
-        mavenReportExecutorRequest.setLocalRepository( localRepository );
-        mavenReportExecutorRequest.setMavenSession( mavenSession );
-        mavenReportExecutorRequest.setProject( project );
-        mavenReportExecutorRequest.setReportPlugins( reportPlugins );
-
-        return mavenReportExecutor.buildMavenReports( mavenReportExecutorRequest );
+        List<MavenReportExecution> reportExecutions = new ArrayList<MavenReportExecution>( reports.size() );
+        for ( MavenReport report : reports )
+        {
+            if ( report.canGenerateReport() )
+            {
+                reportExecutions.add( new MavenReportExecution( report ) );
+            }
+        }
+        return reportExecutions;
     }
 
     protected SiteRenderingContext createSiteRenderingContext( Locale locale )
@@ -483,7 +516,6 @@ public abstract class AbstractSiteRenderingMojo
 
                 if ( report != null )
                 {
-
                     if ( item.getName() == null )
                     {
                         item.setName( report.getName( locale ) );

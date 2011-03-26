@@ -20,15 +20,20 @@ package org.apache.maven.plugins.site;
  */
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 
 import java.util.List;
+import java.util.Properties;
 
 import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.artifact.versioning.ComparableVersion;
 import org.apache.maven.doxia.tools.SiteTool;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.project.MavenProject;
 
 import org.codehaus.plexus.i18n.I18N;
+import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
 
 /**
@@ -126,5 +131,35 @@ public abstract class AbstractSiteMojo
     protected String getOutputEncoding()
     {
         return ( outputEncoding == null ) ? ReaderFactory.UTF_8 : outputEncoding;
+    }
+    
+    protected boolean isMaven3OrMore()
+    {
+        return new ComparableVersion( getMavenVersion() ).compareTo( new ComparableVersion( "3.0" ) ) >= 0;
+    }
+
+    protected String getMavenVersion()
+    {
+        // This relies on the fact that MavenProject is the in core classloader
+        // and that the core classloader is for the maven-core artifact
+        // and that should have a pom.properties file
+        // if this ever changes, we will have to revisit this code.
+        final Properties properties = new Properties();
+        final InputStream in =
+            MavenProject.class.getClassLoader().getResourceAsStream( "META-INF/maven/org.apache.maven/maven-core/pom.properties" );
+        try
+        {
+            properties.load( in );
+        }
+        catch ( IOException ioe )
+        {
+            return "";
+        }
+        finally
+        {
+            IOUtil.close( in );
+        }
+
+        return properties.getProperty( "version" ).trim();
     }
 }

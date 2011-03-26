@@ -162,7 +162,7 @@ under the License.
   </contributors>
 
   <prerequisites>
-    <maven>${mavenVersion}</maven>
+    <maven>2.2.0</maven>
   </prerequisites>
 
   <scm>
@@ -207,6 +207,7 @@ under the License.
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-compat</artifactId>
       <version>${mavenVersion}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
@@ -238,11 +239,13 @@ under the License.
       <groupId>org.sonatype.aether</groupId>
       <artifactId>aether-util</artifactId>
       <version>1.7</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.sonatype.aether</groupId>
       <artifactId>aether-api</artifactId>
       <version>1.7</version>
+      <scope>provided</scope>
     </dependency>
 
     <!-- Doxia -->
@@ -510,6 +513,42 @@ under the License.
               <goal>generate-metadata</goal>
               <!--goal>generate-test-metadata</goal-->
             </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>1.4</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <artifactSet>
+                <includes>
+                  <include>org.apache.maven.reporting:maven-reporting-api</include>
+                  <include>org.apache.maven:maven-artifact</include>
+                </includes>
+              </artifactSet>
+              <filters>
+                <filter>
+                  <artifact>org.apache.maven.reporting:maven-reporting-api</artifact>
+                  <includes><!-- class not included in maven-reporting-api from Maven 2.2 -->
+                    <include>**/MavenMultiPageReport.class</include>
+                  </includes>
+                </filter>
+                <filter>
+                  <artifact>org.apache.maven:maven-artifact</artifact>
+                  <includes>
+                    <include>**/ComparableVersion.class</include>
+                    <include>**/ComparableVersion$*.class</include>
+                  </includes>
+                </filter>                
+              </filters>
+            </configuration>
           </execution>
         </executions>
       </plugin>

@@ -58,6 +58,11 @@ public class MavenReportExecution
         this.classLoader = classLoader;
     }
 
+    public MavenReportExecution( MavenReport mavenReport )
+    {
+        this( null, mavenReport, null );
+    }
+
     public MavenReport getMavenReport()
     {
         return mavenReport;

@@ -34,7 +34,6 @@ import org.apache.maven.model.Site;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.repository.legacy.WagonConfigurationException;
 import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Server;
 import org.apache.maven.settings.Settings;
@@ -55,6 +54,7 @@ import org.apache.maven.wagon.observers.Debug;
 import org.apache.maven.wagon.proxy.ProxyInfo;
 import org.apache.maven.wagon.repository.Repository;
 
+import org.codehaus.plexus.PlexusConstants;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.component.configurator.ComponentConfigurationException;
 import org.codehaus.plexus.component.configurator.ComponentConfigurator;
@@ -62,6 +62,9 @@ import org.codehaus.plexus.component.repository.exception.ComponentLifecycleExce
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.codehaus.plexus.configuration.PlexusConfiguration;
 import org.codehaus.plexus.configuration.xml.XmlPlexusConfiguration;
+import org.codehaus.plexus.context.Context;
+import org.codehaus.plexus.context.ContextException;
+import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 
@@ -74,7 +77,7 @@ import org.codehaus.plexus.util.xml.Xpp3Dom;
  * @since 2.3
  */
 public abstract class AbstractDeployMojo
-    extends AbstractSiteMojo
+    extends AbstractSiteMojo implements Contextualizable
 {
     /**
      * Directory containing the generated project sites and report distributions.
@@ -133,17 +136,6 @@ public abstract class AbstractDeployMojo
      */
     protected MavenSession mavenSession;
 
-    /**
-     * @since 3.0-beta-2
-     * @component
-     * @readonly
-     */
-    private SettingsDecrypter settingsDecrypter;
-
-    /**
-     * @component
-     * @readonly
-     */
     private PlexusContainer container;
 
     /** {@inheritDoc} */
@@ -232,14 +224,31 @@ public abstract class AbstractDeployMojo
         {
             configureWagon( wagon, repository.getId(), settings, container, getLog() );
         }
-        catch ( WagonConfigurationException e )
+        catch ( TransferFailedException e )
         {
             throw new MojoExecutionException( "Unable to configure Wagon: '" + repository.getProtocol() + "'", e );
         }
 
         try
         {
-            final ProxyInfo proxyInfo = getProxy( repository, getLog(), mavenSession, settingsDecrypter );
+            final ProxyInfo proxyInfo;
+            if ( !isMaven3OrMore() )
+            {
+                proxyInfo = getProxyInfo( repository, wagonManager );
+            }
+            else
+            {
+                try
+                {
+                    SettingsDecrypter settingsDecrypter = container.lookup( SettingsDecrypter.class );
+
+                    proxyInfo = getProxy( repository, getLog(), mavenSession, settingsDecrypter );
+                }
+                catch ( ComponentLookupException cle )
+                {
+                    throw new MojoExecutionException( "Unable to lookup SettingsDecrypter: " + cle.getMessage(), cle );
+                }
+            }
 
             push( directory, repository, wagonManager, wagon, proxyInfo,
                 siteTool.getAvailableLocales( locales ), getDeployModuleDirectory(), getLog() );
@@ -305,7 +314,7 @@ public abstract class AbstractDeployMojo
         {
             throw new MojoExecutionException( "Unsupported protocol: '" + repository.getProtocol() + "'", e );
         }
-        catch ( WagonConfigurationException e )
+        catch ( TransferFailedException e )
         {
             throw new MojoExecutionException( "Unable to configure Wagon: '" + repository.getProtocol() + "'", e );
         }
@@ -580,7 +589,7 @@ public abstract class AbstractDeployMojo
      */
     private static void configureWagon( Wagon wagon, String repositoryId, Settings settings, PlexusContainer container,
                                         Log log )
-        throws WagonConfigurationException
+        throws TransferFailedException
     {
         log.debug( " configureWagon " );
 
@@ -607,13 +616,13 @@ public abstract class AbstractDeployMojo
                     }
                     catch ( final ComponentLookupException e )
                     {
-                        throw new WagonConfigurationException( repositoryId, "Unable to lookup wagon configurator."
-                            + " Wagon configuration cannot be applied.", e );
+                        throw new TransferFailedException( "While configuring wagon for \'" + repositoryId
+                            + "\': Unable to lookup wagon configurator." + " Wagon configuration cannot be applied.", e );
                     }
                     catch ( ComponentConfigurationException e )
                     {
-                        throw new WagonConfigurationException( repositoryId, "Unable to apply wagon configuration.",
-                            e );
+                        throw new TransferFailedException( "While configuring wagon for \'" + repositoryId
+                            + "\': Unable to apply wagon configuration.", e );
                     }
                     finally
                     {
@@ -632,6 +641,13 @@ public abstract class AbstractDeployMojo
                 }
             }
         }
+    }
+
+    /** {@inheritDoc} */
+    public void contextualize( Context context )
+        throws ContextException
+    {
+        container = (PlexusContainer) context.get( PlexusConstants.PLEXUS_KEY );
     }
 
     /**
