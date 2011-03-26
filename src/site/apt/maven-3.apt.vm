@@ -189,6 +189,9 @@ Version Resolution
 
 Using maven-site-plugin 2.x with Maven 2.x and maven-site-plugin 3.x with Maven 3.x
 
+  Note: starting with maven-site-plugin 3.0-beta-4, these instructions are not necessary any more, since the plugin
+  is compatible both with Maven 2.2.x and Maven 3.x
+
   Regarding site:attach-descriptor (have a look 
   here {{{https://cwiki.apache.org/confluence/display/MAVEN/Maven+3.x+Compatibility+Notes#Maven3.xCompatibilityNotes-SiteandReporting}}}.
 
