@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -497,7 +498,7 @@ public class TestUnpackMojo
     {
         stubFactory.setCreateFiles( true );
         Artifact artifact = stubFactory.getSnapshotArtifact();
-        artifact.getFile().setLastModified( System.currentTimeMillis() - 2000 );
+        assertTrue( artifact.getFile().setLastModified( System.currentTimeMillis() - 2000 ) );
 
         ArtifactItem item = new ArtifactItem( artifact );
 
@@ -514,21 +515,33 @@ public class TestUnpackMojo
         // go back 10 more seconds for linux
         time -= 10000;
         // set to known value
-        unpackedFile.setLastModified( time );
+        assertTrue( unpackedFile.setLastModified( time ) );
         // set source to be newer
-        artifact.getFile().setLastModified( time + 4000 );
+        assertTrue( artifact.getFile().setLastModified( time + 4000 ) );
 
         // manually set markerfile (must match getMarkerFile in
         // DefaultMarkerFileHandler)
         File marker = new File( mojo.getMarkersDirectory(), artifact.getId().replace( ':', '-' ) + ".marker" );
-        marker.setLastModified( time );
+        assertTrue( marker.setLastModified( time ) );
 
-        assertTrue( time == unpackedFile.lastModified() );
+        displayFile( "unpackedFile", unpackedFile );
+        displayFile( "artifact    ", artifact.getFile() );
+        displayFile( "marker      ", marker );
+        System.out.println( "mojo.execute()" );
         mojo.execute();
+        displayFile( "unpackedFile", unpackedFile );
+        displayFile( "artifact    ", artifact.getFile() );
+        displayFile( "marker      ", marker );
         assertTrue( "unpackedFile '" + unpackedFile + "' lastModified() == " + time + ": should be different",
                     time != unpackedFile.lastModified() );
     }
 
+    private void displayFile( String description, File file )
+    {
+        System.out.println( description + ' ' + DateFormatUtils.ISO_DATETIME_FORMAT.format( file.lastModified() ) + ' '
+            + file.getPath().substring( getBasedir().length() ) );
+    }
+    
     public void assertUnpacked( ArtifactItem item, boolean overWrite )
         throws InterruptedException, MojoExecutionException
     {
