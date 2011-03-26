@@ -20,6 +20,7 @@ package org.apache.maven.plugin.dependency;
  */
 
 import java.io.FileReader;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -34,6 +35,8 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.ReaderFactory;
 
 /**
  * Analyzes the <code>&lt;dependencies/&gt;</code> and <code>&lt;dependencyManagement/&gt;</code> tags in the
@@ -62,13 +65,19 @@ public class AnalyzeDuplicateMojo
     {
         MavenXpp3Reader pomReader = new MavenXpp3Reader();
         Model model = null;
+        Reader reader = null;
         try
         {
-            model = pomReader.read( new FileReader( project.getFile() ) );
+            reader = ReaderFactory.newXmlReader( project.getFile() );
+            model = pomReader.read( reader );
         }
         catch ( Exception e )
         {
             throw new MojoExecutionException( "IOException: " + e.getMessage(), e );
+        }
+        finally
+        {
+            IOUtil.close( reader );
         }
 
         Set<String> duplicateDependencies = new HashSet<String>();
