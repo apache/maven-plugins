@@ -40,7 +40,7 @@ import java.io.IOException;
 import java.util.List;
 
 /**
- * Build a JEE Application Client jar file from the current project.
+ * Build a JavaEE Application Client jar file from the current project.
  *
  * @author <a href="pablo@anahata-it.com">Pablo Rodriguez</a>
  * @author <a href="snicoll@apache.org">Stephane Nicoll</a>
@@ -136,7 +136,7 @@ public class AcrMojo
      * An expression preceded with this String won't be interpolated.
      * \${foo} will be replaced with ${foo}.
      *
-     * @parameter expression="${car.escapeString}"
+     * @parameter expression="${acr.escapeString}"
      */
     protected String escapeString;
 
@@ -168,13 +168,14 @@ public class AcrMojo
     private MavenSession session;
 
     /**
-     * Generates the application client jar file
+     * Generates the application client jar file.
      *
-     * @todo Add license files in META-INF directory.
      */
     public void execute()
         throws MojoExecutionException
     {
+        //todo: Add license files in META-INF directory
+
         if ( getLog().isInfoEnabled() )
         {
             getLog().info( "Building JavaEE Application client: " + jarName );
