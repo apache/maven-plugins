@@ -197,7 +197,7 @@ public abstract class AbstractFromConfigurationMojo
     }
 
     /**
-     * Resolves the Artifact from the remote repository if nessessary. If no version is specified, it will be retrieved
+     * Resolves the Artifact from the remote repository if necessary. If no version is specified, it will be retrieved
      * from the dependency list or from the DependencyManagement section of the pom.
      * 
      * @param artifactItem containing information about artifact from plugin configuration.
@@ -239,8 +239,7 @@ public abstract class AbstractFromConfigurationMojo
 
         try
         {
-            // mdep-50 - rolledback for now because it's breaking some
-            // functionality.
+            // mdep-50 - rolledback for now because it's breaking some functionality.
             /*
              * List listeners = new ArrayList(); Set theSet = new HashSet(); theSet.add( artifact );
              * ArtifactResolutionResult artifactResolutionResult = artifactCollector.collect( theSet, project
@@ -275,14 +274,13 @@ public abstract class AbstractFromConfigurationMojo
     private void fillMissingArtifactVersion( ArtifactItem artifact )
         throws MojoExecutionException
     {
-        if ( !findDependencyVersion( artifact, project.getDependencies(), false )
-            && ( project.getDependencyManagement() == null || !findDependencyVersion( artifact,
-                                                                                      project.getDependencyManagement().getDependencies(),
-                                                                                      false ) )
-            && !findDependencyVersion( artifact, project.getDependencies(), true )
-            && ( project.getDependencyManagement() == null || !findDependencyVersion( artifact,
-                                                                                      project.getDependencyManagement().getDependencies(),
-                                                                                      true ) ) )
+        List<Dependency> deps = project.getDependencies();
+        List<Dependency> depMngt = project.getDependencyManagement().getDependencies();
+
+        if ( !findDependencyVersion( artifact, deps, false )
+            && ( project.getDependencyManagement() == null || !findDependencyVersion( artifact, depMngt, false ) )
+            && !findDependencyVersion( artifact, deps, true )
+            && ( project.getDependencyManagement() == null || !findDependencyVersion( artifact, depMngt, true ) ) )
         {
             throw new MojoExecutionException( "Unable to find artifact version of " + artifact.getGroupId() + ":"
                 + artifact.getArtifactId() + " in either dependency list or in project's dependency management." );
@@ -300,8 +298,6 @@ public abstract class AbstractFromConfigurationMojo
      */
     private boolean findDependencyVersion( ArtifactItem artifact, List<Dependency> dependencies, boolean looseMatch )
     {
-        boolean result = false;
-
         for ( Dependency dependency : dependencies )
         {
             if ( StringUtils.equals( dependency.getArtifactId(), artifact.getArtifactId() )
@@ -309,15 +305,13 @@ public abstract class AbstractFromConfigurationMojo
                 && ( looseMatch || StringUtils.equals( dependency.getClassifier(), artifact.getClassifier() ) )
                 && ( looseMatch || StringUtils.equals( dependency.getType(), artifact.getType() ) ) )
             {
-
                 artifact.setVersion( dependency.getVersion() );
 
-                result = true;
-                break;
+                return true;
             }
         }
 
-        return result;
+        return false;
     }
 
     /*
@@ -344,21 +338,22 @@ public abstract class AbstractFromConfigurationMojo
             return this.overrideLocalRepository;
         }
 
+        ArtifactRepository local = super.getLocal();
+
         if ( this.localRepositoryDirectory != null )
         {
             // create a new local repo using existing layout, snapshots, and releases policy
+            String url = "file://" + this.localRepositoryDirectory.getAbsolutePath();
             this.overrideLocalRepository =
-                artifactRepositoryManager.createArtifactRepository( super.getLocal().getId(), "file://"
-                    + this.localRepositoryDirectory.getAbsolutePath(), super.getLocal().getLayout(),
-                                                                    super.getLocal().getSnapshots(),
-                                                                    super.getLocal().getReleases() );
+                artifactRepositoryManager.createArtifactRepository( local.getId(), url, local.getLayout(),
+                                                                    local.getSnapshots(), local.getReleases() );
 
             this.getLog().debug( "Execution local repository is at: " + this.overrideLocalRepository.getBasedir() );
-
-            return this.overrideLocalRepository;
         }
-
-        this.overrideLocalRepository = super.getLocal();
+        else
+        {
+            this.overrideLocalRepository = local;
+        }
 
         return this.overrideLocalRepository;
     }

@@ -39,6 +39,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.dependency.utils.DependencyUtil;
 import org.apache.maven.project.MavenProjectHelper;
 import org.apache.maven.shared.artifact.filter.collection.ArtifactsFilter;
+import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
@@ -170,23 +171,8 @@ public class BuildClasspathMojo
         }
 
         // initialize the separators.
-        if ( StringUtils.isEmpty( fileSeparator ) )
-        {
-            isFileSepSet = false;
-        }
-        else
-        {
-            isFileSepSet = true;
-        }
-
-        if ( StringUtils.isEmpty( pathSeparator ) )
-        {
-            isPathSepSet = false;
-        }
-        else
-        {
-            isPathSepSet = true;
-        }
+        isFileSepSet = StringUtils.isNotEmpty( fileSeparator );
+        isPathSepSet = StringUtils.isNotEmpty( pathSeparator );
 
         //don't allow them to have absolute paths when they attach.
         if ( attach && StringUtils.isEmpty( localRepoProperty ) )
@@ -323,36 +309,24 @@ public class BuildClasspathMojo
     private void storeClasspathFile( String cpString, File out )
         throws MojoExecutionException
     {
-
         //make sure the parent path exists.
         out.getParentFile().mkdirs();
 
+        Writer w = null;
         try
         {
-
-
-            Writer w = new BufferedWriter( new FileWriter( out ) );
-
-            try
-            {
-                w.write( cpString );
-
-                getLog().info( "Wrote classpath file '" + out + "'." );
-            }
-            catch ( IOException ex )
-            {
-                throw new MojoExecutionException( "Error while writting to classpath file '" + out + "': "
-                    + ex.toString(), ex );
-            }
-            finally
-            {
-                w.close();
-            }
+            w = new BufferedWriter( new FileWriter( out ) );
+            w.write( cpString );
+            getLog().info( "Wrote classpath file '" + out + "'." );
         }
         catch ( IOException ex )
         {
-            throw new MojoExecutionException( "Error while opening/closing classpath file '" + out + "': "
+            throw new MojoExecutionException( "Error while writting to classpath file '" + out + "': "
                 + ex.toString(), ex );
+        }
+        finally
+        {
+            IOUtil.close( w );
         }
     }
 
@@ -360,7 +334,7 @@ public class BuildClasspathMojo
      * Reads into a string the file specified by the mojo param 'outputFile'. Assumes, the instance variable 'outputFile' is not
      * null.
      *
-     * @return the string contained in the classpathFile, if exists, or null ortherwise.
+     * @return the string contained in the classpathFile, if exists, or null otherwise.
      * @throws MojoExecutionException
      */
     protected String readClasspathFile()
@@ -377,10 +351,11 @@ public class BuildClasspathMojo
             return null;
         }
         StringBuffer sb = new StringBuffer();
-        BufferedReader r = new BufferedReader( new FileReader( outputFile ) );
+        BufferedReader r = null;
 
         try
         {
+            r = new BufferedReader( new FileReader( outputFile ) );
             String l;
             while ( ( l = r.readLine() ) != null )
             {
@@ -391,7 +366,7 @@ public class BuildClasspathMojo
         }
         finally
         {
-            r.close();
+            IOUtil.close( r );
         }
     }
 

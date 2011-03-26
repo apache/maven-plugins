@@ -187,7 +187,6 @@ public class ResolvePluginsMojo
 
     protected ArtifactsFilter getMarkedArtifactFilter()
     {
-        // TODO Auto-generated method stub
         return null;
     }
 }

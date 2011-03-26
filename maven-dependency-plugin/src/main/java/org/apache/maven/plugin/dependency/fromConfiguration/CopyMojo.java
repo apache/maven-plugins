@@ -59,19 +59,21 @@ public class CopyMojo
     public void execute()
         throws MojoExecutionException
     {
-        if ( !isSkip() )
+        if ( isSkip() )
         {
-            List<ArtifactItem> theArtifactItems = getProcessedArtifactItems( this.stripVersion );
-            for ( ArtifactItem artifactItem : theArtifactItems )
+            return;
+        }
+
+        List<ArtifactItem> theArtifactItems = getProcessedArtifactItems( this.stripVersion );
+        for ( ArtifactItem artifactItem : theArtifactItems )
+        {
+            if ( artifactItem.isNeedsProcessing() )
             {
-                if ( artifactItem.isNeedsProcessing() )
-                {
-                    copyArtifact( artifactItem );
-                }
-                else
-                {
-                    this.getLog().info( artifactItem + " already exists in " + artifactItem.getOutputDirectory() );
-                }
+                copyArtifact( artifactItem );
+            }
+            else
+            {
+                this.getLog().info( artifactItem + " already exists in " + artifactItem.getOutputDirectory() );
             }
         }
     }

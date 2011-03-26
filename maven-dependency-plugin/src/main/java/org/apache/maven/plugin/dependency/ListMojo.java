@@ -30,7 +30,8 @@ import org.apache.maven.plugin.dependency.resolvers.ResolveDependenciesMojo;
  * @goal list
  * @requiresDependencyResolution test
  */
-public class ListMojo extends ResolveDependenciesMojo
+public class ListMojo
+    extends ResolveDependenciesMojo
 {
     // alias for dependency:resolve
 }

@@ -20,7 +20,6 @@ package org.apache.maven.plugin.dependency.utils.filters;
  */
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
@@ -65,13 +64,11 @@ public class MarkerFileFilter
     public Set filter( Set artifacts )
         throws ArtifactFilterException
     {
+        Set<Artifact> artifacts_ = artifacts;
         Set<Artifact> result = new HashSet<Artifact>();
-
-        Iterator<Artifact> iter = artifacts.iterator();
-
-        while ( iter.hasNext() )
+        
+        for( Artifact artifact : artifacts_ )
         {
-            Artifact artifact = iter.next();
             if ( isArtifactIncluded( new ArtifactItem( artifact ) ) )
             {
                 result.add( artifact );
@@ -84,29 +81,20 @@ public class MarkerFileFilter
       throws ArtifactFilterException
     {
         Artifact artifact = item.getArtifact();
-        boolean overWrite = false;
-        boolean result = false;
-        if ( ( artifact.isSnapshot() && this.overWriteSnapshots )
-            || ( !artifact.isSnapshot() && this.overWriteReleases ) )
-        {
-            overWrite = true;
-        }
+
+        boolean overWrite = ( artifact.isSnapshot() && this.overWriteSnapshots )
+            || ( !artifact.isSnapshot() && this.overWriteReleases );
 
         handler.setArtifact( artifact );
 
         try
         {
-            if ( overWrite || ( !handler.isMarkerSet() || ( overWriteIfNewer && handler.isMarkerOlder( artifact ) ) ) )
-            {
-                result = true;
-            }
+            return overWrite || ( !handler.isMarkerSet() || ( overWriteIfNewer && handler.isMarkerOlder( artifact ) ) );
         }
         catch ( MojoExecutionException e )
         {
             throw new ArtifactFilterException( e.getMessage(), e );
         }
-
-        return result;
     }
 
     /**

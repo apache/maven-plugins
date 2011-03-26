@@ -220,7 +220,7 @@ public class PurgeLocalRepositoryMojo
 
         List<Dependency> dependencies = project.getDependencies();
 
-        List remoteRepositories = Collections.EMPTY_LIST;
+        List<ArtifactRepository> remoteRepositories = Collections.emptyList();
 
         Set<Artifact> dependencyArtifacts = new HashSet<Artifact>();
 

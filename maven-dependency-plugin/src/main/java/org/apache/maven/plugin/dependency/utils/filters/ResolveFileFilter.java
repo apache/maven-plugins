@@ -37,7 +37,8 @@ public class ResolveFileFilter
         super( true, true, true, handler );
     }
 
-    public boolean isArtifactIncluded( ArtifactItem item ) throws ArtifactFilterException
+    public boolean isArtifactIncluded( ArtifactItem item )
+        throws ArtifactFilterException
     {
         handler.setArtifact( item.getArtifact() );
         try

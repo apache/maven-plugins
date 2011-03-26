@@ -87,7 +87,7 @@ public class DefaultFileMarkerHandler
         else
         {
             // if the marker doesn't exist, we want to copy so assume it is
-            // infinately older
+            // infinitely older
             return true;
         }
     }

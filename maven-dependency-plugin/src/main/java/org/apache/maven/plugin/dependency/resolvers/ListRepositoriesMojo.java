@@ -22,6 +22,7 @@ package org.apache.maven.plugin.dependency.resolvers;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
@@ -55,15 +56,14 @@ public class ListRepositoriesMojo
 	{
 		try
 		{
-			ArtifactResolutionResult result = this.artifactCollector.collect(
-					project.getArtifacts(), project.getArtifact(), this.getLocal(),
-					this.remoteRepos, this.artifactMetadataSource,
-					new ScopeArtifactFilter( Artifact.SCOPE_TEST ),
-					new ArrayList() );
-			HashSet repos = new HashSet();
-            for ( Iterator<ResolutionNode> i = result.getArtifactResolutionNodes().iterator(); i.hasNext(); )
+            ArtifactResolutionResult result =
+                this.artifactCollector.collect( project.getArtifacts(), project.getArtifact(), this.getLocal(),
+                                                this.remoteRepos, this.artifactMetadataSource,
+                                                new ScopeArtifactFilter( Artifact.SCOPE_TEST ), new ArrayList() );
+			Set repos = new HashSet();
+			Set<ResolutionNode> nodes = result.getArtifactResolutionNodes();
+            for ( ResolutionNode node : nodes )
 			{
-				ResolutionNode node = i.next();
                 repos.addAll( node.getRemoteRepositories() );
 			}
 

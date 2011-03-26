@@ -298,8 +298,7 @@ public class AnalyzeDepMgt
     }
 
     /**
-     * This function returns a string comparable with
-     * Dependency.GetManagementKey.
+     * This function returns a string comparable with Dependency.GetManagementKey.
      *
      * @param artifact
      *            to gen the key for

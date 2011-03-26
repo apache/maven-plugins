@@ -42,12 +42,12 @@ public class DefaultArtifactsResolver
 
     ArtifactRepository local;
 
-    List remoteRepositories;
+    List<ArtifactRepository> remoteRepositories;
 
     boolean stopOnFailure;
 
     public DefaultArtifactsResolver( ArtifactResolver theResolver, ArtifactRepository theLocal,
-                                    List theRemoteRepositories, boolean theStopOnFailure )
+                                    List<ArtifactRepository> theRemoteRepositories, boolean theStopOnFailure )
     {
         this.resolver = theResolver;
         this.local = theLocal;

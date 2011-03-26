@@ -254,11 +254,11 @@ public abstract class AbstractDependencyFilterMojo
 
         filter.addFilter( new ProjectTransitivityFilter( project.getDependencyArtifacts(), this.excludeTransitive ) );
 
-        filter.addFilter( new ScopeFilter( DependencyUtil.cleanToBeTokenizedString( this.includeScope ), DependencyUtil
-            .cleanToBeTokenizedString( this.excludeScope ) ) );
+        filter.addFilter( new ScopeFilter( DependencyUtil.cleanToBeTokenizedString( this.includeScope ),
+                                           DependencyUtil.cleanToBeTokenizedString( this.excludeScope ) ) );
 
-        filter.addFilter( new TypeFilter( DependencyUtil.cleanToBeTokenizedString( this.includeTypes ), DependencyUtil
-            .cleanToBeTokenizedString( this.excludeTypes ) ) );
+        filter.addFilter( new TypeFilter( DependencyUtil.cleanToBeTokenizedString( this.includeTypes ),
+                                          DependencyUtil.cleanToBeTokenizedString( this.excludeTypes ) ) );
 
         filter.addFilter( new ClassifierFilter( DependencyUtil.cleanToBeTokenizedString( this.includeClassifiers ),
                                                 DependencyUtil.cleanToBeTokenizedString( this.excludeClassifiers ) ) );

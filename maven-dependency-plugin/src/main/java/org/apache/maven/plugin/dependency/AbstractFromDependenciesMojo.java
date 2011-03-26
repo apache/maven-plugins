@@ -92,7 +92,7 @@ public abstract class AbstractFromDependenciesMojo
 
     /**
      * Place each file in a separate subdirectory. (example
-     * /outputDirectory/junit-3.8.1-jar)
+     * <code>/outputDirectory/junit-3.8.1-jar</code>)
      *
      * @since 2.0-alpha-1
      * @parameter expression="${mdep.useSubDirectoryPerArtifact}"

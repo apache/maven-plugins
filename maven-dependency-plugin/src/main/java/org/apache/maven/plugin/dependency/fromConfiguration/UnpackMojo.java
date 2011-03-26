@@ -81,19 +81,21 @@ public final class UnpackMojo
     public void execute()
         throws MojoExecutionException
     {
-        if ( !isSkip() )
+        if ( isSkip() )
         {
-            List<ArtifactItem> processedItems = getProcessedArtifactItems( false );
-            for ( ArtifactItem artifactItem : processedItems )
+            return;
+        }
+
+        List<ArtifactItem> processedItems = getProcessedArtifactItems( false );
+        for ( ArtifactItem artifactItem : processedItems )
+        {
+            if ( artifactItem.isNeedsProcessing() )
             {
-                if ( artifactItem.isNeedsProcessing() )
-                {
-                    unpackArtifact( artifactItem );
-                }
-                else
-                {
-                    this.getLog().info( artifactItem.getArtifact().getFile().getName() + " already unpacked." );
-                }
+                unpackArtifact( artifactItem );
+            }
+            else
+            {
+                this.getLog().info( artifactItem.getArtifact().getFile().getName() + " already unpacked." );
             }
         }
     }

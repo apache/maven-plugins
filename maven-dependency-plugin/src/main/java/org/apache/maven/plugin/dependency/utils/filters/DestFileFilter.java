@@ -21,7 +21,6 @@ package org.apache.maven.plugin.dependency.utils.filters;
 
 import java.io.File;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
@@ -94,13 +93,11 @@ public class DestFileFilter
     public Set filter( Set artifacts )
         throws ArtifactFilterException
     {
+        Set<Artifact> artifacts_ = artifacts;
         Set<Artifact> result = new HashSet<Artifact>();
-
-        Iterator<Artifact> iter = artifacts.iterator();
         
-        while ( iter.hasNext() )
+        for( Artifact artifact : artifacts_ )
         {
-            Artifact artifact = iter.next();
             if ( isArtifactIncluded( new ArtifactItem( artifact ) ) )
             {
                 result.add( artifact );
@@ -249,15 +246,11 @@ public class DestFileFilter
 
     public boolean isArtifactIncluded( ArtifactItem item )
     {
-        boolean overWrite = false;
-        boolean result = false;
         Artifact artifact = item.getArtifact();
 
-        if ( ( artifact.isSnapshot() && this.overWriteSnapshots )
-            || ( !artifact.isSnapshot() && this.overWriteReleases ) )
-        {
-            overWrite = true;
-        }
+        boolean overWrite =
+            ( artifact.isSnapshot() && this.overWriteSnapshots )
+            || ( !artifact.isSnapshot() && this.overWriteReleases );
 
         File destFolder = item.getOutputDirectory();
         if ( destFolder == null )
@@ -277,12 +270,8 @@ public class DestFileFilter
             destFile = new File( destFolder, item.getDestFileName() );
         }
 
-        if ( overWrite
-            || ( !destFile.exists() || ( overWriteIfNewer && artifact.getFile().lastModified() > destFile
-                .lastModified() ) ) )
-        {
-            result = true;
-        }
-        return result;
+        return overWrite
+            || ( !destFile.exists()
+                            || ( overWriteIfNewer && artifact.getFile().lastModified() > destFile.lastModified() ) );
     }
 }

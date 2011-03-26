@@ -27,6 +27,7 @@ import java.io.StringReader;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.logging.Log;
+import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
@@ -47,8 +48,9 @@ public final class DependencyUtil
      * @return Formatted file name in the format artifactId-[version]-[classifier].[type]
      * @see {@link #getFormattedFileName(Artifact, boolean, boolean)}.
      */
-    public static String getFormattedFileName( Artifact artifact, boolean removeVersion ) {
-      return getFormattedFileName( artifact, removeVersion , false);
+    public static String getFormattedFileName( Artifact artifact, boolean removeVersion )
+    {
+        return getFormattedFileName( artifact, removeVersion, false );
     }
   
     /**
@@ -66,13 +68,13 @@ public final class DependencyUtil
      * @return Formatted file name in the format
      *         [groupId].artifactId-[version]-[classifier].[type]
      */
-    public static String getFormattedFileName( Artifact artifact, boolean removeVersion,
-        boolean prependGroupId)
+    public static String getFormattedFileName( Artifact artifact, boolean removeVersion, boolean prependGroupId )
     {
         StringBuffer destFileName = new StringBuffer();
         
-        if (prependGroupId) {
-            destFileName.append(artifact.getGroupId()).append(".");
+        if ( prependGroupId )
+        {
+            destFileName.append( artifact.getGroupId() ).append( "." );
         }
         
         String versionString = null;
@@ -91,9 +93,9 @@ public final class DependencyUtil
         {
             classifierString = "-" + artifact.getClassifier();
         }
-        destFileName.append(artifact.getArtifactId()).append(versionString);
-        destFileName.append(classifierString).append(".");
-        destFileName.append(artifact.getArtifactHandler().getExtension());
+        destFileName.append( artifact.getArtifactId() ).append( versionString );
+        destFileName.append( classifierString ).append( "." );
+        destFileName.append( artifact.getArtifactHandler().getExtension() );
         
         return destFileName.toString();
     }
@@ -103,7 +105,7 @@ public final class DependencyUtil
      * 
      * @param useSubdirsPerType if a new sub directory should be used for each type.
      * @param useSubdirPerArtifact if a new sub directory should be used for each artifact.
-     * @param useRepositoryLayout if dependendies must be moved into a Maven repository layout, if set, other settings
+     * @param useRepositoryLayout if dependencies must be moved into a Maven repository layout, if set, other settings
      *            will be ignored.
      * @param removeVersion if the version must not be mentioned in the filename
      * @param outputDirectory base outputDirectory.
@@ -198,17 +200,7 @@ public final class DependencyUtil
         }
         finally
         {
-            if ( writer != null )
-            {
-                try
-                {
-                    writer.close();
-                }
-                catch ( IOException exception )
-                {
-                    log.error( "Cannot close file", exception );
-                }
-            }
+            IOUtil.close( writer );
         }
     }
 
