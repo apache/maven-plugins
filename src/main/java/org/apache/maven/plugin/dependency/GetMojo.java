@@ -169,7 +169,9 @@ public class GetMojo
             artifactId = tokens[1];
             version = tokens[2];
             if ( tokens.length == 4 )
+            {
                 packaging = tokens[3];
+            }
         }
         Artifact toDownload = artifactFactory.createBuildArtifact( groupId, artifactId, version, packaging );
         Artifact dummyOriginatingArtifact =
@@ -190,6 +192,7 @@ public class GetMojo
         List repoList = new ArrayList( pomRemoteRepositories );
         if ( remoteRepositories != null )
         {
+            // TODO: remote repositories as Strings?
             repoList.addAll( Arrays.asList( StringUtils.split( remoteRepositories, "," ) ) );
         }
 
@@ -204,7 +207,7 @@ public class GetMojo
             }
             else
             {
-                artifactResolver.resolve ( toDownload, repoList, localRepository );
+                artifactResolver.resolve( toDownload, repoList, localRepository );
             }
 
         }

@@ -184,7 +184,7 @@ public abstract class AbstractAnalyzeMojo
         }
         catch ( Exception exception )
         {
-            throw new MojoExecutionException( "Failed to instantiate " + "ProjectDependencyAnalyser with role " + role
+            throw new MojoExecutionException( "Failed to instantiate ProjectDependencyAnalyser with role " + role
                 + " / role-hint " + roleHint,exception );
         }
     }

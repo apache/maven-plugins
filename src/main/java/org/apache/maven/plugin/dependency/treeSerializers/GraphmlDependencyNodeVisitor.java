@@ -39,7 +39,8 @@ public class GraphmlDependencyNodeVisitor extends AbstractSerializingVisitor
      * Graphml xml file header. Define Schema and root element. We also define 2 key as meta data.
      */
     private static final String GRAPHML_HEADER =
-        "<?xml version=\"1.0\" encoding=\"UTF-8\"?> " + "<graphml xmlns=\"http://graphml.graphdrawing.org/xmlns\" "
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?> "
+            + "<graphml xmlns=\"http://graphml.graphdrawing.org/xmlns\" "
             + "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "
             + "xmlns:y=\"http://www.yworks.com/xml/graphml\" "
             + "xsi:schemaLocation=\"http://graphml.graphdrawing.org/xmlns "

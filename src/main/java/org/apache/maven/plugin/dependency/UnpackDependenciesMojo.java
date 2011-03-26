@@ -45,7 +45,9 @@ public class UnpackDependenciesMojo
 {
     /**
      * A comma separated list of file patterns to include when unpacking the
-     * artifact.  i.e.  **\/*.xml,**\/*.properties NOTE: Excludes patterns override the includes. (component code = return isIncluded( name ) AND !isExcluded( name );)
+     * artifact.  i.e. <code>**\/*.xml,**\/*.properties</code>
+     * NOTE: Excludes patterns override the includes.
+     * (component code = <code>return isIncluded( name ) AND !isExcluded( name );</code>)
      * @since 2.0
      * @parameter expression="${mdep.unpack.includes}"
      */
@@ -53,7 +55,9 @@ public class UnpackDependenciesMojo
 
     /**
      * A comma separated list of file patterns to exclude when unpacking the
-     * artifact.  i.e.  **\/*.xml,**\/*.properties. NOTE: Excludes patterns override the includes. (component code = return isIncluded( name ) AND !isExcluded( name );)
+     * artifact.  i.e. <code>**\/*.xml,**\/*.properties</code>
+     * NOTE: Excludes patterns override the includes.
+     * (component code = <code>return isIncluded( name ) AND !isExcluded( name );</code>)
      * @since 2.0
      * @parameter expression="${mdep.unpack.excludes}"
      */
@@ -101,7 +105,7 @@ public class UnpackDependenciesMojo
     /**
      * @return Returns a comma separated list of excluded items
      */
-    public String getExcludes ()
+    public String getExcludes()
     {
         return DependencyUtil.cleanToBeTokenizedString( this.excludes );
     }
@@ -109,9 +113,9 @@ public class UnpackDependenciesMojo
     /**
      * @param excludes
      * 			A comma separated list of items to exclude
-     * 			i.e.  **\/*.xml, **\/*.properties
+     * 			i.e. <code>**\/*.xml, **\/*.properties</code>
      */
-    public void setExcludes ( String excludes )
+    public void setExcludes( String excludes )
     {
         this.excludes = excludes;
     }
@@ -127,9 +131,9 @@ public class UnpackDependenciesMojo
     /**
      * @param includes
      * 			A comma separated list of items to include
-     * 			i.e.  **\/*.xml, **\/*.properties
+     *          i.e. <code>**\/*.xml, **\/*.properties</code>
      */
-    public void setIncludes ( String includes )
+    public void setIncludes( String includes )
     {
         this.includes = includes;
     }

@@ -25,7 +25,6 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.maven.artifact.factory.ArtifactFactory;
@@ -238,7 +237,8 @@ public class TreeMojo extends AbstractMojo
     /*
      * @see org.apache.maven.plugin.Mojo#execute()
      */
-    public void execute() throws MojoExecutionException, MojoFailureException
+    public void execute()
+        throws MojoExecutionException, MojoFailureException
     {
 
         ArtifactVersion detectedMavenVersion = rti.getApplicationVersion();
@@ -249,12 +249,12 @@ public class TreeMojo extends AbstractMojo
             if ( !containsVersion( vr, detectedMavenVersion ) )
             {
                 getLog().warn(
-                               "The tree mojo requires at least Maven 2.0.8 to function properly. You may get eroneous results on earlier versions" );
+                               "The tree mojo requires at least Maven 2.0.8 to function properly. You may get erroneous results on earlier versions" );
             }
         }
         catch ( InvalidVersionSpecificationException e )
         {
-            throw new MojoExecutionException( e.getLocalizedMessage() );
+            throw new MojoExecutionException( e.getLocalizedMessage(), e );
         }
 
 
@@ -487,27 +487,21 @@ public class TreeMojo extends AbstractMojo
      */
     public static boolean containsVersion( VersionRange allowedRange, ArtifactVersion theVersion )
     {
-        boolean matched = false;
         ArtifactVersion recommendedVersion = allowedRange.getRecommendedVersion();
         if ( recommendedVersion == null )
         {
-
-            for ( Iterator<Restriction> i = allowedRange.getRestrictions().iterator(); i.hasNext() && !matched; )
+            List<Restriction> restrictions = allowedRange.getRestrictions();
+            for ( Restriction restriction : restrictions )
             {
-                Restriction restriction = i.next();
                 if ( restriction.containsVersion( theVersion ) )
                 {
-                    matched = true;
+                    return true;
                 }
             }
         }
-        else
-        {
-            // only singular versions ever have a recommendedVersion
-            int compareTo = recommendedVersion.compareTo( theVersion );
-            matched = ( compareTo <= 0 );
-        }
-        return matched;
+
+        // only singular versions ever have a recommendedVersion
+        return recommendedVersion.compareTo( theVersion ) <= 0;
     }
 
 }

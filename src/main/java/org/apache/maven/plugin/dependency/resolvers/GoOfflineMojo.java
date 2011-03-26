@@ -66,7 +66,6 @@ public class GoOfflineMojo
 
     protected ArtifactsFilter getMarkedArtifactFilter()
     {
-        // TODO Auto-generated method stub
         return null;
     }
 }

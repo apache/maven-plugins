@@ -100,85 +100,61 @@ public class DependencySilentLog
 
     public void debug( String message )
     {
-        // TODO Auto-generated method stub
-
     }
 
     public void debug( String message, Throwable throwable )
     {
-        // TODO Auto-generated method stub
-
     }
 
     public void info( String message )
     {
-        // TODO Auto-generated method stub
-
     }
 
     public void info( String message, Throwable throwable )
     {
-        // TODO Auto-generated method stub
-
     }
 
     public void warn( String message )
     {
-        // TODO Auto-generated method stub
-
     }
 
     public void warn( String message, Throwable throwable )
     {
-        // TODO Auto-generated method stub
-
     }
 
     public void error( String message )
     {
-        // TODO Auto-generated method stub
-
     }
 
     public void error( String message, Throwable throwable )
     {
-        // TODO Auto-generated method stub
-
     }
 
     public void fatalError( String message )
     {
-        // TODO Auto-generated method stub
-
     }
 
     public void fatalError( String message, Throwable throwable )
     {
-        // TODO Auto-generated method stub
-
     }
 
     public boolean isFatalErrorEnabled()
     {
-        // TODO Auto-generated method stub
         return false;
     }
 
     public Logger getChildLogger( String name )
     {
-        // TODO Auto-generated method stub
         return null;
     }
 
     public int getThreshold()
     {
-        // TODO Auto-generated method stub
         return 0;
     }
 
     public String getName()
     {
-        // TODO Auto-generated method stub
         return null;
     }
 
@@ -187,7 +163,5 @@ public class DependencySilentLog
      */
     public void setThreshold( int theThreshold )
     {
-        // TODO Auto-generated method stub
-        
     }
 }

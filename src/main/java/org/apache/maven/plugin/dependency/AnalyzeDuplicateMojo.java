@@ -19,7 +19,6 @@ package org.apache.maven.plugin.dependency;
  * under the License.
  */
 
-import java.io.FileReader;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.HashSet;

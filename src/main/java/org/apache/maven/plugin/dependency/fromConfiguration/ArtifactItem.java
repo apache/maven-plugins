@@ -131,14 +131,11 @@ public class ArtifactItem
 
     private String filterEmptyString( String in )
     {
-        if ( in == null || in.equals( "" ) )
+        if ( "".equals( in ) )
         {
             return null;
         }
-        else
-        {
-            return in;
-        }
+        return in;
     }
 
     /**
@@ -334,8 +331,8 @@ public class ArtifactItem
 
     /**
      * @param excludes
-     * 			A comma seperated list of items to exclude
-     * 			i.e.  **\/*.xml, **\/*.properties
+     * 			A comma separated list of items to exclude
+     * 			i.e.  <code>**\/*.xml, **\/*.properties</code>
      */
     public void setExcludes ( String excludes )
     {
@@ -343,7 +340,7 @@ public class ArtifactItem
     }
 
     /**
-     * @return Returns a comma seperated list of included items
+     * @return Returns a comma separated list of included items
      */
     public String getIncludes()
     {
@@ -352,8 +349,8 @@ public class ArtifactItem
 
     /**
      * @param includes
-     * 			A comma seperated list of items to inmclude
-     * 			i.e.  **\/*.xml, **\/*.properties
+     * 			A comma separated list of items to include
+     * 			i.e.  <code>**\/*.xml, **\/*.properties</code>
      */
     public void setIncludes ( String includes )
     {
