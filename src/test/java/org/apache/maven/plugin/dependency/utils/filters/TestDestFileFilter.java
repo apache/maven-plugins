@@ -99,7 +99,7 @@ public class TestDestFileFilter
         createFile( artifact );
         assertFalse( filter.isArtifactIncluded( artifact) );
 
-        filter.overWriteReleases = true;
+        filter.setOverWriteReleases( true );
         assertTrue( filter.isArtifactIncluded( artifact ) );
     }
 
@@ -113,7 +113,7 @@ public class TestDestFileFilter
         createFile( artifact );
         assertFalse( filter.isArtifactIncluded( artifact ) );
 
-        filter.overWriteSnapshots = true;
+        filter.setOverWriteSnapshots( true );
         assertTrue( filter.isArtifactIncluded( artifact ) );
     }
 
@@ -122,13 +122,13 @@ public class TestDestFileFilter
     {
         DestFileFilter filter = new DestFileFilter( outputFolder );
         Artifact artifact = fact.getSnapshotArtifact();
-        filter.removeVersion = true;
+        filter.setRemoveVersion( true );
 
         assertTrue( filter.isArtifactIncluded( artifact) );
         createFile( artifact, false, false, true );
         assertFalse( filter.isArtifactIncluded( artifact ) );
 
-        filter.overWriteSnapshots = true;
+        filter.setOverWriteSnapshots( true );
         assertTrue( filter.isArtifactIncluded( artifact ) );
     }
 
@@ -137,13 +137,13 @@ public class TestDestFileFilter
     {
         DestFileFilter filter = new DestFileFilter( outputFolder );
         Artifact artifact = fact.getSnapshotArtifact();
-        filter.useSubDirectoryPerArtifact = true;
+        filter.setUseSubDirectoryPerArtifact( true );
 
         assertTrue( filter.isArtifactIncluded( artifact ) );
         createFile( artifact, true, false, false );
         assertFalse( filter.isArtifactIncluded( artifact ) );
 
-        filter.overWriteSnapshots = true;
+        filter.setOverWriteSnapshots( true );
         assertTrue( filter.isArtifactIncluded( artifact ) );
     }
 
@@ -152,13 +152,13 @@ public class TestDestFileFilter
     {
         DestFileFilter filter = new DestFileFilter( outputFolder );
         Artifact artifact = fact.getSnapshotArtifact();
-        filter.useSubDirectoryPerType = true;
+        filter.setUseSubDirectoryPerType( true );
 
         assertTrue( filter.isArtifactIncluded( artifact) );
         createFile( artifact, false, true, false );
         assertFalse( filter.isArtifactIncluded( artifact ) );
 
-        filter.overWriteSnapshots = true;
+        filter.setOverWriteSnapshots( true );
         assertTrue( filter.isArtifactIncluded( artifact ) );
     }
 
@@ -171,7 +171,7 @@ public class TestDestFileFilter
         Artifact artifact = fact.getSnapshotArtifact();
         File artifactFile = artifact.getFile();
         artifactFile.setLastModified( artifactFile.lastModified() );
-        filter.overWriteIfNewer = true;
+        filter.setOverWriteIfNewer( true );
 
         // should pass because the file doesn't exist yet.
         assertTrue( filter.isArtifactIncluded( artifact) );

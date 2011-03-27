@@ -47,7 +47,7 @@ public class ResolveFileFilter
         }
         catch ( MojoExecutionException e )
         {
-            throw new ArtifactFilterException( e.getMessage(),e);
+            throw new ArtifactFilterException( e.getMessage(), e );
         }
     }
 }

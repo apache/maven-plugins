@@ -38,13 +38,13 @@ public class MarkerFileFilter
     implements ArtifactItemFilter
 {
 
-    boolean overWriteReleases;
+    private boolean overWriteReleases;
 
-    boolean overWriteSnapshots;
+    private boolean overWriteSnapshots;
 
-    boolean overWriteIfNewer;
+    private boolean overWriteIfNewer;
 
-    MarkerHandler handler;
+    protected final MarkerHandler handler;
 
     public MarkerFileFilter( boolean overWriteReleases, boolean overWriteSnapshots, boolean overWriteIfNewer,
                             MarkerHandler handler )
@@ -89,7 +89,7 @@ public class MarkerFileFilter
 
         try
         {
-            return overWrite || ( !handler.isMarkerSet() || ( overWriteIfNewer && handler.isMarkerOlder( artifact ) ) );
+            return overWrite || !handler.isMarkerSet() || ( overWriteIfNewer && handler.isMarkerOlder( artifact ) );
         }
         catch ( MojoExecutionException e )
         {

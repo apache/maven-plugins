@@ -38,24 +38,23 @@ public class DestFileFilter
     extends AbstractArtifactsFilter
     implements ArtifactItemFilter
 {
+    private boolean overWriteReleases;
 
-    boolean overWriteReleases;
+    private boolean overWriteSnapshots;
 
-    boolean overWriteSnapshots;
+    private boolean overWriteIfNewer;
 
-    boolean overWriteIfNewer;
+    private boolean useSubDirectoryPerArtifact;
 
-    boolean useSubDirectoryPerArtifact;
+    private boolean useSubDirectoryPerType;
 
-    boolean useSubDirectoryPerType;
+    private boolean useSubDirectoryPerScope;
 
-    boolean useSubDirectoryPerScope;
+    private boolean useRepositoryLayout;
 
-    boolean useRepositoryLayout;
+    private boolean removeVersion;
 
-    boolean removeVersion;
-
-    File outputFileDirectory;
+    private File outputFileDirectory;
 
     public DestFileFilter( File outputFileDirectory )
     {
@@ -270,8 +269,7 @@ public class DestFileFilter
             destFile = new File( destFolder, item.getDestFileName() );
         }
 
-        return overWrite
-            || ( !destFile.exists()
-                            || ( overWriteIfNewer && artifact.getFile().lastModified() > destFile.lastModified() ) );
+        return overWrite || !destFile.exists()
+            || ( overWriteIfNewer && artifact.getFile().lastModified() > destFile.lastModified() );
     }
 }
