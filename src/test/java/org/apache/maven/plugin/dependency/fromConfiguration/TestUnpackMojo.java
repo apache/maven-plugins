@@ -58,7 +58,7 @@ public class TestUnpackMojo
         mojo = (UnpackMojo) lookupMojo( "unpack", testPom );
         mojo.setOutputDirectory( new File( this.testDir, "outputDirectory" ) );
         mojo.setMarkersDirectory( new File( this.testDir, "markers" ) );
-        mojo.silent = true;
+        mojo.silent = false;
 
         assertNotNull( mojo );
         assertNotNull( mojo.getProject() );
@@ -519,8 +519,7 @@ public class TestUnpackMojo
         // set source to be newer
         assertTrue( artifact.getFile().setLastModified( time + 4000 ) );
 
-        // manually set markerfile (must match getMarkerFile in
-        // DefaultMarkerFileHandler)
+        // manually set markerfile (must match getMarkerFile in DefaultMarkerFileHandler)
         File marker = new File( mojo.getMarkersDirectory(), artifact.getId().replace( ':', '-' ) + ".marker" );
         assertTrue( marker.setLastModified( time ) );
 
@@ -569,8 +568,9 @@ public class TestUnpackMojo
 
     public File getUnpackedFile( ArtifactItem item )
     {
-        File unpackedFile = new File( item.getOutputDirectory(), DependencyArtifactStubFactory.getUnpackableFileName( item
-            .getArtifact() ) );
+        File unpackedFile =
+            new File( item.getOutputDirectory(),
+                      DependencyArtifactStubFactory.getUnpackableFileName( item.getArtifact() ) );
 
         assertTrue( unpackedFile.exists() );
         return unpackedFile;

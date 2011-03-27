@@ -89,7 +89,6 @@ public class DefaultFileMarkerHandler
             System.out.println( "    artifact1 lastModified: " + artifact1.getFile().lastModified() );
             System.out.println( "    marker lastModified: " + marker.lastModified() );
             System.out.println( "< " + ( artifact1.getFile().lastModified() > marker.lastModified() ) + " = marker older than artifact?"  );
-            new Exception().printStackTrace( System.out );
             return artifact1.getFile().lastModified() > marker.lastModified();
         }
         else
