@@ -116,7 +116,6 @@ public final class UnpackMojo
         unpack( artifactItem.getArtifact().getFile(), artifactItem.getOutputDirectory(), artifactItem.getIncludes(),
                 artifactItem.getExcludes() );
         handler.setMarker();
-
     }
 
     ArtifactItemFilter getMarkedArtifactFilter( ArtifactItem item )
