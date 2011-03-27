@@ -79,13 +79,22 @@ public class DefaultFileMarkerHandler
     public boolean isMarkerOlder( Artifact artifact1 )
         throws MojoExecutionException
     {
+        // temporary debug to find out why this intermittent failure on Sonatype grid Windows
+        System.out.println( "> isMarkerOlder:" );
         File marker = getMarkerFile();
+        System.out.println( "  artifact1 = " + artifact1.getFile().getPath() );
+        System.out.println( "  marker    = " + marker.getPath() );
         if ( marker.exists() )
         {
+            System.out.println( "    artifact1 lastModified: " + artifact1.getFile().lastModified() );
+            System.out.println( "    marker lastModified: " + marker.lastModified() );
+            System.out.println( "< " + ( artifact1.getFile().lastModified() > marker.lastModified() ) + " = marker older than artifact?"  );
+            new Exception().printStackTrace( System.out );
             return artifact1.getFile().lastModified() > marker.lastModified();
         }
         else
         {
+            System.out.println( "< true : marker does not exist" );
             // if the marker doesn't exist, we want to copy so assume it is
             // infinitely older
             return true;
