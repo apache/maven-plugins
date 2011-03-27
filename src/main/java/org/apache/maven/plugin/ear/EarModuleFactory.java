@@ -45,6 +45,7 @@ public final class EarModuleFactory
         temp.add( "ejb3" );
         temp.add( "par" );
         temp.add( "ejb-client" );
+        temp.add( "app-client" );
         temp.add( "rar" );
         temp.add( "war" );
         temp.add( "sar" );
@@ -101,6 +102,10 @@ public final class EarModuleFactory
             {
                 return new EjbClientModule( artifact, defaultLibBundleDir );
             }
+        }
+        else if ( "app-client".equals( artifactType ) )
+        {
+            return new AppClientModule( artifact, defaultLibBundleDir );
         }
         else if ( "rar".equals( artifactType ) )
         {
