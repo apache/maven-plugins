@@ -21,6 +21,7 @@ under the License.
   <components>
     <component>
       <role>org.codehaus.plexus.velocity.VelocityComponent</role>
+      <role>default</role>
       <implementation>org.codehaus.plexus.velocity.DefaultVelocityComponent</implementation>
       <configuration>
         <properties>
