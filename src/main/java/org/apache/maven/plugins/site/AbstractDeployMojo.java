@@ -138,12 +138,38 @@ public abstract class AbstractDeployMojo
 
     private PlexusContainer container;
 
+    /**
+     * The String "staging/".
+     */
+    protected static final String DEFAULT_STAGING_DIRECTORY = "staging/";
+
     /** {@inheritDoc} */
     public void execute()
         throws MojoExecutionException
     {
-        deployTo( new org.apache.maven.plugins.site.wagon.repository.Repository( getDeployRepositoryID(),
-                                                                                 getDeployRepositoryURL() ) );
+        deployTo( new org.apache.maven.plugins.site.wagon.repository.Repository(
+            getDeployRepositoryID(),
+            appendSlash( getDeployRepositoryURL() ) ) );
+    }
+
+    /**
+     * Make sure the given url ends with a slash.
+     *
+     * @param url a String.
+     *
+     * @return if url already ends with '/' it is returned unchanged,
+     *      otherwise a '/' character is appended.
+     */
+    protected static String appendSlash( final String url )
+    {
+        if ( url.endsWith( "/" ) )
+        {
+            return url;
+        }
+        else
+        {
+            return url + "/";
+        }
     }
 
     /**
@@ -172,19 +198,21 @@ public abstract class AbstractDeployMojo
     /**
      * Find the relative path between the distribution URLs of the top parent and the current project.
      *
-     * @return a String starting with "/".
+     * @return the relative path or "./" if the two URLs are the same.
      *
      * @throws MojoExecutionException
      */
     private String getDeployModuleDirectory()
         throws MojoExecutionException
     {
-        String relative = "/" + siteTool.getRelativePath( getSite( project ).getUrl(),
+        String relative = siteTool.getRelativePath( getSite( project ).getUrl(),
             getRootSite( project ).getUrl() );
 
         // SiteTool.getRelativePath() uses File.separatorChar,
         // so we need to convert '\' to '/' in order for the URL to be valid for Windows users
-        return relative.replace( '\\', '/' );
+        relative = relative.replace( '\\', '/' );
+
+        return ( "".equals( relative ) ) ? "./" : relative;
     }
 
     /**
@@ -372,14 +400,16 @@ public abstract class AbstractDeployMojo
                 {
                     // TODO: this also uploads the non-default locales,
                     // is there a way to exclude directories in wagon?
+                    log.info( "   >>> to " + repository.getUrl() + relativeDir );
+
                     wagon.putDirectory( inputDirectory, relativeDir );
-                    log.info( "   to " + repository.getUrl() + relativeDir + ": done" );
                 }
                 else
                 {
+                    log.info( "   >>> to " + repository.getUrl() + locale.getLanguage() + "/" + relativeDir );
+
                     wagon.putDirectory( new File( inputDirectory, locale.getLanguage() ),
-                        locale.getLanguage() + relativeDir );
-                    log.info( "   to " + repository.getUrl() + locale.getLanguage() + relativeDir + ": done" );
+                        locale.getLanguage() + "/" + relativeDir );
                 }
             }
         }

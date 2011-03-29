@@ -40,8 +40,6 @@ import org.apache.maven.plugin.MojoExecutionException;
 public class SiteStageMojo
     extends AbstractDeployMojo
 {
-    protected static final String DEFAULT_STAGING_DIRECTORY = "staging";
-
     /**
      * Staging directory location. This needs to be an absolute path, like
      * <code>C:\stagingArea\myProject\</code> on Windows or
