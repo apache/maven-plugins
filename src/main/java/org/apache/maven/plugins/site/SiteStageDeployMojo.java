@@ -64,9 +64,6 @@ public class SiteStageDeployMojo
      */
     private String stagingRepositoryId;
 
-    private static final String DEFAULT_STAGING_DIRECTORY = "staging";
-
-
     @Override
     protected String getDeployRepositoryID()
         throws MojoExecutionException
@@ -106,8 +103,8 @@ public class SiteStageDeployMojo
         else
         {
             // The user didn't specify a URL, use the top level target dir
-            topLevelURL =
-                getRootSite( project ).getUrl() + "/" + DEFAULT_STAGING_DIRECTORY;
+            topLevelURL = appendSlash( getRootSite( project ).getUrl() )
+                + DEFAULT_STAGING_DIRECTORY;
             getLog().debug( "stagingSiteURL NOT specified, using the top level project: " + topLevelURL );
         }
 
