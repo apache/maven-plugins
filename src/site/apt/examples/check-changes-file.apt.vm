@@ -3,7 +3,7 @@
  ------
  Dennis Lundberg
  ------
- 2010-12-16
+ 2011-03-30
  ------
 
  ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -32,8 +32,8 @@ Check Your changes.xml File
   Since version 2.4 this plugin has a {{{../changes-check-mojo.html}goal}} that
   checks that your <<<changes.xml>>> file has a valid release date.
 
-  You can attach this goal to the <<<release>>> phase if you want the check to
-  be performed automatically when you release the project.
+  You can attach this goal to the <<<verify>>> phase if you want the check to
+  be performed automatically when you build the project.
 
 * Configuring the Plugin
 
@@ -52,7 +52,7 @@ Check Your changes.xml File
         <executions>
           <execution>
             <id>check-changes</id>
-            <phase>release</phase>
+            <phase>verify</phase>
             <goals>
               <goal>changes-check</goal>
             </goals>
