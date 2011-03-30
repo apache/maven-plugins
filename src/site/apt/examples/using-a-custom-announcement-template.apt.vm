@@ -3,7 +3,7 @@
  ------
  Dennis Lundberg
  ------
- 7 July 2007
+ 2011-03-30
  ------
 
  ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -29,7 +29,7 @@
 
 Using a Custom Announcement Template
 
- The announcement goal uses a {{{http://velocity.apache.org/}Velocity}}
+ The <<<announcement-generate>>> goal uses a {{{http://velocity.apache.org/}Velocity}}
  template to create an announcement. If you want to, you can create your own
  custom template.
 
@@ -45,7 +45,7 @@ Using a Custom Announcement Template
 +-----------------+
 <project>
   ...
-  <reporting>
+  <build>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -57,7 +57,7 @@ Using a Custom Announcement Template
         </configuration>
       </plugin>
     </plugins>
-  </reporting>
+  </build>
   ...
 </project>
 +-----------------+

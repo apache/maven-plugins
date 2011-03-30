@@ -3,7 +3,7 @@
  ------
  Stephane Nicoll
  ------
- 16 September 2007
+ 2011-03-30
  ------
 
  ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -29,7 +29,7 @@
 
 Specifying the Mail Sender
 
- The identify used to send the announcement mail can be customized. It can be
+ The identity used to send the announcement mail can be customized. It can be
  either a member of the <<<\<developers\>>>> section of the POM or it can be
  specified explicitly with the <<<\<mailSender\>>>> parameter of the plugin.
 
@@ -50,7 +50,7 @@ Specifying the Mail Sender
     ...
   </developers>
   ...
-  <reporting>
+  <build>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -61,7 +61,7 @@ Specifying the Mail Sender
         </configuration>
       </plugin>
     </plugins>
-  </reporting>
+  </build>
   ...
 </project>
 +-----------------+
@@ -72,7 +72,7 @@ Specifying the Mail Sender
  changes between releases.
 
 +-----------------+
-mvn -Dchanges.fromDeveloperId=jsmith announcement-mail
+mvn -Dchanges.fromDeveloperId=jsmith changes:announcement-mail
 +-----------------+
 
 
@@ -84,7 +84,7 @@ mvn -Dchanges.fromDeveloperId=jsmith announcement-mail
 +-----------------+
 <project>
   ...
-  <reporting>
+  <build>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -98,7 +98,7 @@ mvn -Dchanges.fromDeveloperId=jsmith announcement-mail
         </configuration>
       </plugin>
     </plugins>
-  </reporting>
+  </build>
   ...
 </project>
 +-----------------+

@@ -3,7 +3,7 @@
  ------
  Olivier Lamy
  ------
- 2010-12-16
+ 2011-03-30
  ------
 
  ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -29,19 +29,20 @@
 
 Validate Your changes.xml File
 
- Since 2.1, a {{{../changes-validate-mojo.html}mojo}} is
- provided to validate your changes file.
+ Since 2.1, a {{{../changes-validate-mojo.html}goal}} is
+ provided to validate your <<<changes.xml>>> file.
 
- You can attach this mojo to the <<<pre-site>>> phase if you want the
+ You can attach this goal to the <<<pre-site>>> phase if you want the
  validation to be performed automatically when you generate the site.
 
 * Configuring the Plugin
 
- First you must configure the plugin and tell it to validate your changes file.
+ First you must configure the plugin and tell it to validate your <<<changes.xml>>> file.
 
 +-----------------+
 <project>
   ...
+  <build>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -63,6 +64,7 @@ Validate Your changes.xml File
         </executions>
       </plugin>
     </plugins>
+  </build>
   ...
 </project>
 +-----------------+
