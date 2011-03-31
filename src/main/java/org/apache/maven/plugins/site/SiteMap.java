@@ -22,7 +22,6 @@ package org.apache.maven.plugins.site;
 import java.io.File;
 import java.io.IOException;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
@@ -144,10 +143,8 @@ public class SiteMap
         sink.text( i18n.getString( "site-plugin", locale, "site.sitemap.description" ) );
         sink.paragraph_();
 
-        for ( Iterator<Menu> it = decoration.getMenus().iterator(); it.hasNext(); )
+        for ( Menu menu : decoration.getMenus() )
         {
-            Menu menu = it.next();
-
             sink.section3();
             sink.sectionTitle3();
             sink.text( menu.getName() );

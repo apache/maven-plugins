@@ -132,7 +132,7 @@ public abstract class AbstractSiteRenderingMojo
      *
      * @parameter expression="${attributes}"
      */
-    private Map<Object, Object> attributes;
+    private Map<String, Object> attributes;
 
     /**
      * Site renderer.
@@ -254,7 +254,7 @@ public abstract class AbstractSiteRenderingMojo
     {
         if ( attributes == null )
         {
-            attributes = new HashMap<Object, Object>();
+            attributes = new HashMap<String, Object>();
         }
 
         if ( attributes.get( "project" ) == null )
@@ -273,7 +273,10 @@ public abstract class AbstractSiteRenderingMojo
         }
 
         // Put any of the properties in directly into the Velocity context
-        attributes.putAll( project.getProperties() );
+        for ( Map.Entry<Object, Object> entry : project.getProperties().entrySet() )
+        {
+            attributes.put( (String) entry.getKey(), entry.getValue() );
+        }
 
         DecorationModel decorationModel;
         try
