@@ -57,8 +57,9 @@ public class SiteMojoTest
         assertTrue( siteDescriptorContent.indexOf( "${project.name}" ) != -1 );
 
         SiteTool siteTool = (SiteTool) lookup( SiteTool.ROLE );
-        siteDescriptorContent = siteTool.getInterpolatedSiteDescriptorContent( new HashMap(), siteMojo.project,
-                                                                               siteDescriptorContent, "UTF-8", "UTF-8" );
+        siteDescriptorContent =
+            siteTool.getInterpolatedSiteDescriptorContent( new HashMap<String, String>(), siteMojo.project,
+                                                           siteDescriptorContent, "UTF-8", "UTF-8" );
         assertNotNull( siteDescriptorContent );
         assertTrue( siteDescriptorContent.indexOf( "${project.name}" ) == -1 );
     }
