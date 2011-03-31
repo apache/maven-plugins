@@ -105,7 +105,7 @@ public class SiteMojo
         }
         else
         {
-            filteredReports = Collections.EMPTY_LIST;
+            filteredReports = Collections.emptyList();
         }
 
         try

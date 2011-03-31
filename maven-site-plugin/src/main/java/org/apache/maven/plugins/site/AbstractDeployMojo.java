@@ -628,7 +628,7 @@ public abstract class AbstractDeployMojo
 
     /**
      * Extract the distributionManagment site of the top level parent of the given MavenProject.
-     * This climbs up the project hirarchy and returns the site of the last project
+     * This climbs up the project hierarchy and returns the site of the last project
      * for which {@link #getSite(org.apache.maven.project.MavenProject)} returns a site.
      *
      * @param project the MavenProject. Not null.
