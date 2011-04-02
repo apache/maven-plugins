@@ -413,20 +413,23 @@ public abstract class AbstractDependencyMojo
 
         if ( includes != null && excludes != null )
         {
-            msg.append( " with includes " );
+            msg.append( " with includes \"" );
             msg.append( includes );
-            msg.append( " and excludes " );
+            msg.append( "\" and excludes \"" );
             msg.append( excludes );
+            msg.append( "\"" );
         }
         else if ( includes != null )
         {
-            msg.append( " with includes " );
+            msg.append( " with includes \"" );
             msg.append( includes );
+            msg.append( "\"" );
         }
         else if ( excludes != null )
         {
-            msg.append( " with excludes " );
+            msg.append( " with excludes \"" );
             msg.append( excludes );
+            msg.append( "\"" );
         }
 
         getLog().info( msg.toString() );
