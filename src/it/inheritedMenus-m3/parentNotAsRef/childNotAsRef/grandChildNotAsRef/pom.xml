@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>inheritAsRef</groupId>
+    <artifactId>childNotAsRef</artifactId>
+    <version>1.0</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
+
+  <artifactId>grandChildNotAsRef</artifactId>
+  <packaging>pom</packaging>
+
+  <name>GrandChild Not As Ref</name>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <artifactId>maven-site-plugin</artifactId>
+          <configuration>
+              <reportPlugins>
+                <plugin>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <reports>
+                  <report>index</report>
+                  <report>summary</report>
+                  <report>scm</report>
+                </reports>
+              </plugin>
+              </reportPlugins>
+            </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+
+</project>
