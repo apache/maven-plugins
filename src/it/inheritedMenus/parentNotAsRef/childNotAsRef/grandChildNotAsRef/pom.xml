@@ -14,26 +14,20 @@
 
   <name>GrandChild Not As Ref</name>
 
-  <build>
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <artifactId>maven-site-plugin</artifactId>
-          <configuration>
-              <reportPlugins>
-                <plugin>
-                <artifactId>maven-project-info-reports-plugin</artifactId>
-                <reports>
-                  <report>index</report>
-                  <report>summary</report>
-                  <report>scm</report>
-                </reports>
-              </plugin>
-              </reportPlugins>
-            </configuration>
-        </plugin>
-      </plugins>
-    </pluginManagement>
-  </build>
+  <reporting>
+    <plugins>
+      <plugin>
+        <artifactId>maven-project-info-reports-plugin</artifactId>
+        <version>2.3.1</version>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>scm</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
+    </plugins>
+  </reporting>
 
 </project>
