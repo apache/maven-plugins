@@ -58,7 +58,7 @@ public class TestUnpackMojo
         mojo = (UnpackMojo) lookupMojo( "unpack", testPom );
         mojo.setOutputDirectory( new File( this.testDir, "outputDirectory" ) );
         mojo.setMarkersDirectory( new File( this.testDir, "markers" ) );
-        mojo.silent = false;
+        mojo.silent = true;
 
         assertNotNull( mojo );
         assertNotNull( mojo.getProject() );
@@ -496,6 +496,7 @@ public class TestUnpackMojo
     public void testUnpackOverWriteIfNewer()
         throws IOException, MojoExecutionException, InterruptedException
     {
+        mojo.silent = false;
         stubFactory.setCreateFiles( true );
         Artifact artifact = stubFactory.getSnapshotArtifact();
         assertTrue( artifact.getFile().setLastModified( System.currentTimeMillis() - 2000 ) );
@@ -531,6 +532,8 @@ public class TestUnpackMojo
         displayFile( "unpackedFile", unpackedFile );
         displayFile( "artifact    ", artifact.getFile() );
         displayFile( "marker      ", marker );
+        System.out.println( "marker.lastModified() = " + time );
+        System.out.println( "unpackedFile.lastModified() = " + unpackedFile.lastModified() );
         assertTrue( "unpackedFile '" + unpackedFile + "' lastModified() == " + time + ": should be different",
                     time != unpackedFile.lastModified() );
     }

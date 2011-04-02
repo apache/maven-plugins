@@ -208,14 +208,11 @@ public abstract class AbstractDependencyMojo
      * Unpacks the archive file.
      *
      * @param file File to be unpacked.
-     * @param location Location where to put the unpacked
-     *            files.
-     * @param includes Comma separated list of file patterns
-     *            to include i.e. **&#47;.xml,
-     *            **&#47;*.properties
-     * @param excludes Comma separated list of file patterns
-     *            to exclude i.e. **&#47;*.xml,
-     *            **&#47;*.properties
+     * @param location Location where to put the unpacked files.
+     * @param includes Comma separated list of file patterns to include i.e. <code>**&#47;.xml,
+     *            **&#47;*.properties</code>
+     * @param excludes Comma separated list of file patterns to exclude i.e. <code>**&#47;*.xml,
+     *            **&#47;*.properties</code>
      */
     protected void unpack( File file, File location, String includes, String excludes )
         throws MojoExecutionException
