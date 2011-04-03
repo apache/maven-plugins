@@ -38,7 +38,7 @@ under the License.
   <inceptionYear>2004</inceptionYear>
 
   <prerequisites>
-    <maven>2.0.6</maven>
+    <maven>${mavenVersion}</maven>
   </prerequisites>
 
   <scm>
