@@ -37,7 +37,7 @@ under the License.
   <description>Assists in integration testing by means of evaluating success/error conditions read from a configuration file.</description>
 
   <prerequisites>
-    <maven>2.0.6</maven>
+    <maven>${mavenVersion}</maven>
   </prerequisites>
 
   <scm>
@@ -50,11 +50,15 @@ under the License.
     <url>http://jira.codehaus.org/browse/MVERIFIER</url>
   </issueManagement>
 
+  <properties>
+    <mavenVersion>2.0.6</mavenVersion>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-plugin-api</artifactId>
-      <version>2.0.6</version>
+      <version>${mavenVersion}</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
