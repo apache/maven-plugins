@@ -37,7 +37,7 @@ under the License.
   <description>Runs Ant scripts embedded in the POM</description>
 
   <prerequisites>
-    <maven>2.0.6</maven>
+    <maven>${mavenVersion}</maven>
   </prerequisites>
 
   <scm>
@@ -51,24 +51,24 @@ under the License.
   </issueManagement>
 
   <properties>
-    <mavenComponentsVersion>2.0.11</mavenComponentsVersion>
+    <mavenVersion>2.0.11</mavenVersion>
   </properties>
 
   <dependencies>
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-plugin-api</artifactId>
-      <version>${mavenComponentsVersion}</version>
+      <version>${mavenVersion}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-project</artifactId>
-      <version>${mavenComponentsVersion}</version>
+      <version>${mavenVersion}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-artifact</artifactId>
-      <version>${mavenComponentsVersion}</version>
+      <version>${mavenVersion}</version>
     </dependency>
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
