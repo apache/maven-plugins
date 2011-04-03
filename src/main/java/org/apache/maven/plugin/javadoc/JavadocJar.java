@@ -308,7 +308,7 @@ public class JavadocJar
 
         try
         {
-            // we dont want Maven stuff
+            // we don't want Maven stuff
             archive.setAddMavenDescriptor( false );
             archiver.createArchive( project, archive );
         }

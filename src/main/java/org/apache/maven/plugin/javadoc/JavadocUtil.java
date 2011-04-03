@@ -1129,7 +1129,7 @@ public class JavadocUtil
      * </pre>
      *
      * @param path which can contain multiple paths separated with a colon (<code>:</code>) or a
-     * semi-colon (<code>;</code>), plateform independent. Could be null.
+     * semi-colon (<code>;</code>), platform independent. Could be null.
      * @return the path splitted by colon or semi-colon or <code>null</code> if path was <code>null</code>.
      * @since 2.6.1
      */
@@ -1151,7 +1151,7 @@ public class JavadocUtil
     }
 
     /**
-     * Unify the given path with the current System path separator, to be plateform independent.
+     * Unify the given path with the current System path separator, to be platform independent.
      * Examples:
      * <pre>
      * unifyPathSeparator( "/home:/tmp" ) = "/home:/tmp" (Solaris box)
@@ -1159,7 +1159,7 @@ public class JavadocUtil
      * </pre>
      *
      * @param path which can contain multiple paths by separating them with a colon (<code>:</code>) or a
-     * semi-colon (<code>;</code>), plateform independent. Could be null.
+     * semi-colon (<code>;</code>), platform independent. Could be null.
      * @return the same path but separated with the current System path separator or <code>null</code> if path was
      * <code>null</code>.
      * @since 2.6.1
@@ -1314,7 +1314,7 @@ public class JavadocUtil
     /**
      * @param log a logger could be null
      * @return the Maven home defined in the <code>maven.home</code> system property or defined
-     * in <code>M2_HOME</code> system env variables or null if never setted.
+     * in <code>M2_HOME</code> system env variables or null if never set.
      * @since 2.6
      */
     private static String getMavenHome( Log log )
