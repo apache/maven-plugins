@@ -52,6 +52,8 @@ Maven EAR Plugin
 
   * har
 
+  * app-client
+
   []
 
   For available configuration options for these artifacts, please see the
@@ -121,4 +123,6 @@ Maven EAR Plugin
 
   * {{{./examples/generating-modules-id.html} Generating modules id}}
 
-   []
+  * {{{./examples/using-app-client.html} Using JavaEE application clients}}
+
+  []

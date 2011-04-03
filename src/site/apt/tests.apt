@@ -172,3 +172,6 @@ EAR Plugin Tests
 
   * project-071: builds an EAR with application-name and initialize-in-order tags for unsupported version
 
+  * project-072: builds an EAR with an application client module (app-client)
+
+  * project-073: builds an EAR with an application client module (app-client) and a default bundle directory for _java_ modules

@@ -753,4 +753,24 @@ public class EarMojoIT
         doTestProject( "project-071", new String[]{ "ejb-sample-one-1.0.jar", "jar-sample-one-1.0.jar" } );
     }
 
+    /**
+     * Builds an EAR with an application client module (app-client).
+     */
+    public void testProject072()
+        throws Exception
+    {
+        doTestProject( "project-072", new String[]{ "ejb-sample-one-1.0.jar", "app-client-sample-one-1.0.jar" } );
+    }
+
+    /**
+     * Builds an EAR with an application client module (app-client) and a default bundle directory for
+     * _java_ modules.
+     */
+    public void testProject073()
+        throws Exception
+    {
+        doTestProject( "project-073", new String[]{ "ejb-sample-one-1.0.jar", "app-client-sample-one-1.0.jar",
+            "APP-INF/lib/jar-sample-one-1.0.jar", "APP-INF/lib/jar-sample-two-1.0.jar" } );
+    }
+
 }

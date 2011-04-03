@@ -20,6 +20,7 @@ package org.apache.maven.plugin.ear;
  */
 
 import org.apache.maven.artifact.Artifact;
+import org.codehaus.plexus.util.xml.XMLWriter;
 
 /**
  * The {@link EarModule} implementation for an application client module.
@@ -27,18 +28,28 @@ import org.apache.maven.artifact.Artifact;
  * @author Stephane Nicoll
  */
 public class AppClientModule
-    extends JarModule
+    extends AbstractEarModule
 {
 
     public AppClientModule()
     {
-        super();
     }
 
-
-    public AppClientModule( Artifact a, String defaultLibBundleDir )
+    public AppClientModule( Artifact a )
     {
-        super( a, defaultLibBundleDir, Boolean.TRUE );
+        super( a );
+    }
+
+    public void appendModule( XMLWriter writer, String version, Boolean generateId )
+    {
+        startModuleElement( writer, generateId );
+        writer.startElement( JAVA_MODULE );
+        writer.writeText( getUri() );
+        writer.endElement();
+
+        writeAltDeploymentDescriptor( writer, version );
+
+        writer.endElement();
     }
 
     public String getType()
@@ -46,3 +57,4 @@ public class AppClientModule
         return "app-client";
     }
 }
+
