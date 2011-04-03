@@ -37,7 +37,7 @@ under the License.
   <description>A Maven plugin to create archives of your project's sources, classes, dependencies etc. from flexible assembly descriptors.</description>
 
   <prerequisites>
-    <maven>2.2.1</maven>
+    <maven>${mavenVersion}</maven>
   </prerequisites>
 
   <scm>

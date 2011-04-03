@@ -36,7 +36,7 @@ under the License.
   <description>Generates a J2EE Application Client file.</description>
 
   <prerequisites>
-    <maven>2.0.6</maven>
+    <maven>${mavenVersion}</maven>
   </prerequisites>
 
   <scm>

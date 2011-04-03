@@ -36,7 +36,7 @@ under the License.
   <name>Maven Toolchains Plugin</name>
 
   <prerequisites>
-    <maven>2.0.9</maven>
+    <maven>${mavenVersion}</maven>
   </prerequisites>
 
   <scm>
@@ -44,22 +44,25 @@ under the License.
     <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/trunk/maven-toolchains-plugin/</developerConnection>
     <url>http://svn.apache.org/viewvc/maven/plugins/trunk/maven-toolchains-plugin/</url>
   </scm>
-
   <issueManagement>
     <system>jira</system>
     <url>http://jira.codehaus.org/browse/MTOOLCHAINS</url>
   </issueManagement>
 
+  <properties>
+    <mavenVersion>2.0.9</mavenVersion>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-plugin-api</artifactId>
-      <version>2.0.9</version>
+      <version>${mavenVersion}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-toolchain</artifactId>
-      <version>2.0.9</version>
+      <version>${mavenVersion}</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>

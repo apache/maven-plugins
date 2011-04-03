@@ -37,20 +37,23 @@ under the License.
   <description>Creates bundles of artifacts that should be manually uploaded to the central Maven repository.</description>
 
   <prerequisites>
-    <maven>2.0.6</maven>
+    <maven>${mavenVersion}</maven>
   </prerequisites>
-  
+
   <scm>
     <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-repository-plugin/</connection>
     <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/trunk/maven-repository-plugin/</developerConnection>
     <url>http://svn.apache.org/viewvc/maven/plugins/trunk/maven-repository-plugin/</url>
   </scm>
-  
   <issueManagement>
     <system>JIRA</system>
     <url>http://jira.codehaus.org/browse/MREPOSITORY</url>
   </issueManagement>
   
+  <properties>
+    <mavenVersion>2.0.6</mavenVersion>
+  </properties>
+
   <dependencyManagement>
     <dependencies>
       <dependency>
@@ -70,33 +73,33 @@ under the License.
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-artifact</artifactId>
-      <version>2.0.6</version>
+      <version>${mavenVersion}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-artifact-manager</artifactId>
-      <version>2.0.6</version>
+      <version>${mavenVersion}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-model</artifactId>
-      <version>2.0.6</version>
+      <version>${mavenVersion}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-plugin-api</artifactId>
-      <version>2.0.6</version>
+      <version>${mavenVersion}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-project</artifactId>
-      <version>2.0.6</version>
+      <version>${mavenVersion}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-settings</artifactId>
-      <version>2.0.6</version>
+      <version>${mavenVersion}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
