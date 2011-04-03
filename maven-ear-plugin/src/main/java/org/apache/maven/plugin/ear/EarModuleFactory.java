@@ -105,7 +105,7 @@ public final class EarModuleFactory
         }
         else if ( "app-client".equals( artifactType ) )
         {
-            return new AppClientModule( artifact, defaultLibBundleDir );
+            return new AppClientModule( artifact );
         }
         else if ( "rar".equals( artifactType ) )
         {

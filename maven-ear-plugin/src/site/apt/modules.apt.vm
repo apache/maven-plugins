@@ -48,6 +48,8 @@ EAR Modules
 
   * {{{#harModule}harModule}}
 
+  * {{{#appClientModule}appClientModule}}
+
   []
 
   If the artifact you want to configure is not listed above, you can create your
@@ -400,6 +402,42 @@ EAR Modules
 
   * <<unpack>> - set to true to unpack this artifact into the ear archive according
   to its uri. Default is false.
+
+* {appClientModule} Properties
+
+  The following configuration options are available for AppClientModule:
+
+  * <<groupId>> - sets the groupId of the application client artifact you want to
+  configure.
+
+  * <<artifactId>> - sets the artifactId of the applicant client artifact you want to
+  configure.
+
+  * <<classifier>> - sets the classifier of the application client  artifact you want to
+  configure if multiple application client artifacts matches the groupId/artifact.  Use
+  the mainArtifactId ('none' by default) to define the main artifact (e.g.
+  the artifact without a classifier)
+
+  * <<bundleDir>> - sets the location of this artifact inside the ear archive.
+  If not set, this artifact will be packaged in the root of the archive.
+
+  * <<bundleFileName>> - sets the new name of this artifact inside the ear
+  archive. If not set, the artifact's filename in the repository is used.
+
+  * <<excluded>> - set to true to exclude this artifact from being packaged into
+  the ear archive. Default is false.
+
+  * <<uri>> - sets the uri path of this artifact within the ear archive.
+  Automatically determined when not set.
+
+  * <<unpack>> - set to true to unpack this artifact into the ear archive according
+  to its uri. Default is false.
+
+  * <<altDeploymentDescriptor>> - sets the alternative deployment descriptor for
+  this module.
+
+  * <<moduleId>> - sets the id of the module in the generated application.xml.
+
 
 * Adding {Custom Artifact Types}
 
