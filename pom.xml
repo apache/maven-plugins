@@ -37,7 +37,7 @@ under the License.
   <description>Generates a J2EE Enterprise JavaBean (EJB) file as well as the associated client JAR.</description>
 
   <prerequisites>
-    <maven>2.0.6</maven>
+    <maven>${mavenVersion}</maven>
   </prerequisites>
 
   <scm>
