@@ -342,7 +342,7 @@ public class TestJavadocReport
     }
     
     /**
-     * Overriden to enable the resolution of -test-sources jar files.
+     * Overridden to enable the resolution of -test-sources jar files.
      * 
      * {@inheritDoc}
      */

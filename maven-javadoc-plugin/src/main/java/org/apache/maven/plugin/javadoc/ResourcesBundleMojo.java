@@ -1,3 +1,5 @@
+package org.apache.maven.plugin.javadoc;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,8 +18,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
-package org.apache.maven.plugin.javadoc;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -107,7 +107,8 @@ public class ResourcesBundleMojo
         }
         
         File optionsFile = getJavadocOptionsFile();
-        File bundleFile = new File( getProject().getBuild().getDirectory(), finalName + "-" + getAttachmentClassifier() + ".jar" );
+        File bundleFile =
+            new File( getProject().getBuild().getDirectory(), finalName + "-" + getAttachmentClassifier() + ".jar" );
         try
         {
             archiver.addFile( optionsFile, BUNDLE_OPTIONS_PATH );
@@ -123,11 +124,13 @@ public class ResourcesBundleMojo
         }
         catch ( ArchiverException e )
         {
-            throw new MojoExecutionException( "Failed to assemble javadoc-resources bundle archive. Reason: " + e.getMessage(), e );
+            throw new MojoExecutionException( "Failed to assemble javadoc-resources bundle archive. Reason: "
+                + e.getMessage(), e );
         }
         catch ( IOException e )
         {
-            throw new MojoExecutionException( "Failed to assemble javadoc-resources bundle archive. Reason: " + e.getMessage(), e );
+            throw new MojoExecutionException( "Failed to assemble javadoc-resources bundle archive. Reason: "
+                + e.getMessage(), e );
         }
         
         projectHelper.attachArtifact( getProject(), bundleFile, getAttachmentClassifier() );
