@@ -59,7 +59,13 @@ public class SiteStageDeployMojo
      * corresponding <code>&lt;server&gt;</code> entry from the <code>settings.xml</code>. If a matching
      * <code>&lt;server&gt;</code> entry is found, its configured credentials will be used for authentication.
      *
-     * @parameter expression="${stagingRepositoryId}" default-value="stagingSite"
+     * If this is not specified, then the corresponding value of <code>distributionManagement.site.id</code>
+     * will be taken as default, unless this is not defined either then the String
+     * <code>"stagingSite"</code> is used. (<strong>Note</strong>:
+     * until v. 2.3 and 3.0-beta-3 the String <code>"stagingSite"</code> is always used.)
+     *
+     * @parameter expression="${stagingRepositoryId}"
+     *
      * @since 2.0.1
      */
     private String stagingRepositoryId;
@@ -68,6 +74,10 @@ public class SiteStageDeployMojo
     protected String getDeployRepositoryID()
         throws MojoExecutionException
     {
+        stagingRepositoryId =  stagingRepoId ( stagingRepositoryId );
+
+        getLog().info( "Using this server ID for stage deploy: " + stagingRepositoryId );
+
         return stagingRepositoryId;
     }
 
@@ -75,7 +85,7 @@ public class SiteStageDeployMojo
     protected String getDeployRepositoryURL()
         throws MojoExecutionException
     {
-        stagingSiteURL = getStagingSiteURL( stagingSiteURL );
+        stagingSiteURL = stagingSiteURL( stagingSiteURL );
 
         getLog().info( "Using this base URL for stage deploy: " + stagingSiteURL );
 
@@ -89,7 +99,7 @@ public class SiteStageDeployMojo
      * 
      * @return the site URL for staging
      */
-    private String getStagingSiteURL( String usersStagingSiteURL )
+    private String stagingSiteURL( final String usersStagingSiteURL )
         throws MojoExecutionException
     {
         String topLevelURL = null;
@@ -113,5 +123,22 @@ public class SiteStageDeployMojo
         // or
         //   topLevelProjectURL + "staging"
         return topLevelURL;
+    }
+
+    private String stagingRepoId( final String stagingRepoId )
+    {
+        if ( stagingRepoId != null )
+        {
+            return stagingRepoId;
+        }
+
+        try
+        {
+            return getSite( project ).getId();
+        }
+        catch ( MojoExecutionException ex )
+        {
+            return "stagingSite";
+        }
     }
 }

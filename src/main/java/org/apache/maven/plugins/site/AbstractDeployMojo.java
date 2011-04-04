@@ -715,7 +715,7 @@ public abstract class AbstractDeployMojo
      *
      * @throws MojoExecutionException if any of the site info is missing.
      */
-    private static Site getSite( final MavenProject project )
+    protected static Site getSite( final MavenProject project )
         throws MojoExecutionException
     {
         final String name = project.getName() + " ("
