@@ -154,7 +154,7 @@ public abstract class AbstractSiteRenderingMojo
      * This is used to pick up other source docs that might have been generated at build time.
      *
      * @parameter alias="workingDirectory" default-value="${project.build.directory}/generated-site"
-     * @required
+     *
      * @todo should we deprecate in favour of reports?
      */
     protected File generatedSiteDirectory;
