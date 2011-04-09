@@ -29,11 +29,14 @@
  
    Content migrated from {{{https://cwiki.apache.org/confluence/x/sokr}Maven 3.x and site plugin}}
    
-Site plugin with maven 3.x
+Site plugin with maven 3.x: maven-site-plugin 3.x
 
   Due to {{{http://jira.codehaus.org/browse/MNG-4162}MNG-4162}}, all reporting logic has been removed from trunk.
-  So a branch of the site plugin has been created https://svn.apache.org/repos/asf/maven/plugins/branches/maven-site-plugin-3.x/ in order to have a site plugin working with maven 3.x.
-  Using previous versions of maven-site-plugin with Maven 3.x won't generate any report from any report plugin: only hand-written Doxia documents (apt, xdoc, ...) will be rendered.
+  So a branch of the site plugin has been created,
+  <<<{{{https://svn.apache.org/repos/asf/maven/plugins/branches/maven-site-plugin-3.x/}/maven/plugins/branches/maven-site-plugin-3.x}}>>>
+  in order to have a site plugin working with maven 3.x.
+  Using previous versions of maven-site-plugin with Maven 3.x won't generate any report from any report plugin:
+  only hand-written Doxia documents (apt, xdoc, ...) will be rendered.
 
 Plugins Compatibility Matrix
 
@@ -42,37 +45,37 @@ Plugins Compatibility Matrix
   Tests have been made on the reporting profile of the maven parent pom which enables some reports.
   Some of those plugins will need releases to work with maven 3.x:
   
-*--------+---------+
-|<<Plugin>>	 |<<Version>>  |
-*--------+---------+
-|maven-javadoc-plugin | 2.6.1 |
-*--------+---------+
-|maven-project-info-reports-plugin | 2.2 |
-*--------+---------+
-|surefire-report | 2.4.3 |
-*--------+---------+		 
-|jxr | 2.1 |
-*--------+---------+
-| maven-changelog-plugin | 2.1 |
-*--------+---------+		 
-|maven-changes-plugin | 2.1 |
-*--------+---------+
-|maven-checkstyle-plugin | 2.5 |
-*--------+---------+
-|maven-plugin-plugin | 2.5.1 |
-*--------+---------+		 
-|maven-pmd-plugin | 2.4 |
-*--------+---------+
+*----------------------------------+-----------+
+|<<Plugin>>	                       |<<Version>>|
+*----------------------------------+-----------+
+|maven-javadoc-plugin              | 2.6.1     |
+*----------------------------------+-----------+
+|maven-project-info-reports-plugin | 2.2       |
+*----------------------------------+-----------+
+|surefire-report                   | 2.4.3     |
+*----------------------------------+-----------+
+|jxr                               | 2.1       |
+*----------------------------------+-----------+
+| maven-changelog-plugin           | 2.1       |
+*----------------------------------+-----------+
+|maven-changes-plugin              | 2.1       |
+*----------------------------------+-----------+
+|maven-checkstyle-plugin           | 2.5       |
+*----------------------------------+-----------+
+|maven-plugin-plugin               | 2.5.1     |
+*----------------------------------+-----------+
+|maven-pmd-plugin                  | 2.4       |
+*----------------------------------+-----------+
 		 
 * Plugins Maintained by the Mojo Community
 
-*--------+---------+
-|<<Plugin>>	 |<<Version>>  |
-*--------+---------+
-| cobertura-maven-plugin | 2.3 |
-*--------+---------+		 
-| emma-maven-plugin | 1.0-alpha-2 |
-*--------+---------+		 
+*----------------------------------+-----------+
+|<<Plugin>>	                       |<<Version>>|
+*----------------------------------+-----------+
+| cobertura-maven-plugin           | 2.3       |
+*----------------------------------+-----------+
+| emma-maven-plugin                | 1.0-alpha-2 |
+*----------------------------------+-----------+
 	 
 
 Configuration format.
@@ -82,6 +85,8 @@ Configuration format.
   The model builder will transform it on the fly, displaying a warning concerning this change. (as of Maven 3.0-alpha-6, on the fly transformation seems ok, but without warning)
 
 * Old configuration
+
+  Reports are configured in <<<reporting>>> section of the pom:
 
 +-----+
   <reporting>
@@ -134,13 +139,15 @@ Configuration format.
         <artifactId>maven-javadoc-plugin</artifactId>
         <version>2.2</version>
       </plugin>
-
     </plugins>
   </reporting>
 +-----+  
   
 * New Configuration
 
+  Reports are configured in <<<maven-site-plugin>>>'s configuration as <<<reportPlugins>>> attribute:
+
+~~~ TODO: why are there filters in previous Maven 2 example, but not in Maven 3? Both should represent the same configuration.
 +-----+
   <build>
     <plugins>
@@ -178,22 +185,30 @@ Configuration format.
 
 Version Resolution
 
-  Report Plugin version can be empty. The following order/strategy will be used to find/resolve a version:
+  When used with Maven 3, report plugin version can be empty.
+  The following order/strategy will be used to find/resolve a version:
 
-  * search same groupId/artifactId in the build.plugins section.
+  * search same groupId/artifactId in the build.plugins section,
   
-  * search same groupId/artifactId in the build.pluginManagement.plugins section
+  * search same groupId/artifactId in the build.pluginManagement.plugins section,
   
-  * resolve with current repositories (can include auto SNAPSHOT resolution)
+  * resolve with current repositories (can include auto SNAPSHOT resolution).
 
+Site descriptor attachment
+
+  <<<site:attach-descriptor>>> have been removed from Maven 3's built-in lifecycle: have a look at
+  {{{https://cwiki.apache.org/confluence/display/MAVEN/Maven+3.x+Compatibility+Notes#Maven3.xCompatibilityNotes-SiteandReporting}Maven 3.x Compatibility Notes - Site and Reporting}}.
 
 Using maven-site-plugin 2.x with Maven 2.x and maven-site-plugin 3.x with Maven 3.x
 
-  Note: starting with maven-site-plugin 3.0-beta-4, these instructions are not necessary any more, since the plugin
-  is compatible both with Maven 2.2.x and Maven 3.x
+  Before maven-site-plugin 3.0-beta-4, maven-site-plugin 2.x was compatible only with Maven 2 and maven-site-plugin
+  3.x was compatible only with Maven 3: a trick was needed to let Maven 2 use one version of the plugin and Maven
+  another with the same <<<pom.xml>>>.
 
-  Regarding site:attach-descriptor (have a look 
-  here {{{https://cwiki.apache.org/confluence/display/MAVEN/Maven+3.x+Compatibility+Notes#Maven3.xCompatibilityNotes-SiteandReporting}}}.
+  Starting with maven-site-plugin 3.0-beta-4, the plugin can run both with Maven 2.x and 3.x: result should
+  be exactly the same when Maven 2 <<<reporting>>> configuration style is used, while Maven 3 <<<reportPlugins>>> and 
+  report version selection work only when run with Maven 3. 
+
 
   The following snipped automatically activates maven-site-plugin 3.x when run with Maven 3.x:
 
@@ -234,7 +249,7 @@ Using maven-site-plugin 2.x with Maven 2.x and maven-site-plugin 3.x with Maven 
     </profile>
   </profiles>   
 +-----+   
-   
+
    <<NOTE>> Be aware that you should also use <<<pluginManagement>>> for the maven-site-plugin-2.x to specify the version. 
-   If you define the plugin-version directly inside the <<<plugins>>>-section of the <<<build>>>-tag then that version is always used, no matter the Maven version.  
-   
+   If you define the plugin-version directly inside the <<<plugins>>>-section of the <<<build>>>-tag then that version is
+   always used, no matter the Maven version.
