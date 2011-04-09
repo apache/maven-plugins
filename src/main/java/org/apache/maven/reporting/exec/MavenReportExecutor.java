@@ -22,8 +22,12 @@ package org.apache.maven.reporting.exec;
 import java.util.List;
 
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.reporting.MavenReport;
 
 /**
+ * This component builds some {@link MavenReportExecution} from {@link MavenReportExecutorRequest}.
+ * If a {@link MavenReport} need to fork a lifecycle, this fork is executed here. 
+ * The component asks the core to get some informations on the plugin configuration in order to correctly setup {@link MavenReport}.
  *
  * @author Olivier Lamy
  * @since 3.0-beta-1

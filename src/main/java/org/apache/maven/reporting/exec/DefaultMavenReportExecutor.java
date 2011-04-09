@@ -29,7 +29,6 @@ import java.util.TreeMap;
 
 import org.apache.maven.artifact.repository.DefaultRepositoryRequest;
 import org.apache.maven.artifact.repository.RepositoryRequest;
-import org.apache.maven.artifact.resolver.filter.ExclusionSetFilter;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.lifecycle.LifecycleExecutor;
 import org.apache.maven.model.Plugin;
@@ -61,41 +60,33 @@ import org.sonatype.aether.repository.RemoteRepository;
 import org.sonatype.aether.util.filter.ExclusionsDependencyFilter;
 
 /**
- * <p>
- *   This component will build some {@link MavenReportExecution} from {@link MavenReportExecutorRequest}.
- *   If a {@link MavenReport} need to fork a lifecycle, this fork is executed here. 
- *   It will ask the core to get some informations in order to correctly setup {@link MavenReport}.
- * </p>
- * <p>
- *   <b>Note</b> if no version is defined in the report plugin the version will be search 
- *   with method {@link #getPluginVersion(ReportPlugin, RepositoryRequest, MavenReportExecutorRequest)}
- *   Steps to find a plugin version stop after each step if a non <code>null</code> value has been found:
- *   <ul>
- *     <li>use the one defined in the reportPlugin configuration</li>
- *     <li>search similar (same groupId and artifactId) mojo in the build/plugins section of the pom</li>
- *     <li>search similar (same groupId and artifactId) mojo in the build/pluginManagement section of the pom</li>
- *     <li>ask {@link PluginVersionResolver} to get a version and display a warning as it's not a recommended use</li>  
- *   </ul>
- * </p>
- * <p>
- *   Following steps are done
- *   <ul>
- *     <li>get {@link PluginDescriptor} from the {@link MavenPluginManager#getPluginDescriptor(Plugin, RepositoryRequest)}</li>
- *     <li>setup a {@link ClassLoader} with the Mojo Site plugin {@link ClassLoader} as parent for the report execution. 
- *       You must note some classes are imported from the current Site Mojo {@link ClassRealm} see {@link #IMPORTS}.
- *       The artifact resolution excludes the following artifacts (with using an {@link ExclusionSetFilter}: 
- *       doxia-site-renderer, doxia-sink-api, maven-reporting-api.
- *       done using {@link MavenPluginManager#setupPluginRealm(PluginDescriptor, org.apache.maven.execution.MavenSession, ClassLoader, List, org.apache.maven.artifact.resolver.filter.ArtifactFilter)}
- *     </li>
- *     <li>
- *       setup the mojo using {@link MavenPluginManager#getConfiguredMojo(Class, org.apache.maven.execution.MavenSession, MojoExecution)}
- *     </li>
- *     <li>
- *       verify with {@link LifecycleExecutor#calculateForkedExecutions(MojoExecution, org.apache.maven.execution.MavenSession)}
- *       if any forked execution is needed: if yes executes the forked execution here
- *     </li>
- *   </ul>
- * </p>
+ * This component builds some {@link MavenReportExecution} from {@link MavenReportExecutorRequest}.
+ * If a {@link MavenReport} need to fork a lifecycle, this fork is executed here. 
+ * The component asks the core to get some informations on the plugin configuration in order to correctly setup
+ * the {@link MavenReport}.
+ * 
+ * <h3>version resolution</h3>
+ * If no version is defined for the report plugin, the version will be searched 
+ * with {@link #getPluginVersion(ReportPlugin, RepositoryRequest, MavenReportExecutorRequest)} method.
+ * 
+ * <h3>component execution</h3>
+ * Following steps are executed:
+ * <ul>
+ *   <li>get {@link PluginDescriptor} from the {@link MavenPluginManager#getPluginDescriptor(Plugin, RepositoryRequest)} core method</li>
+ *   <li>setup a {@link ClassLoader} with the Maven Site plugin {@link ClassLoader} as parent for the report execution,
+ *     using {@link MavenPluginManager#setupPluginRealm(PluginDescriptor, org.apache.maven.execution.MavenSession, ClassLoader, List, org.apache.maven.artifact.resolver.filter.ArtifactFilter)} 
+ *     Note that some classes are imported from the current Site Mojo {@link ClassRealm} - see {@link #IMPORTS},
+ *     and the artifact resolution excludes some artifacts - see {@link #EXCLUDES}.
+ *   </li>
+ *   <li>
+ *     setup the mojo using {@link MavenPluginManager#getConfiguredMojo(Class, org.apache.maven.execution.MavenSession, MojoExecution)}
+ *   </li>
+ *   <li>
+ *     verify with {@link LifecycleExecutor#calculateForkedExecutions(MojoExecution, org.apache.maven.execution.MavenSession)}
+ *     if any forked execution is needed: if yes, execute the forked execution here
+ *   </li>
+ * </ul>
+ * 
  * @author Olivier Lamy
  * @since 3.0-beta-1
  */
@@ -115,15 +106,15 @@ public class DefaultMavenReportExecutor
     @Requirement
     protected PluginVersionResolver pluginVersionResolver;
 
-    private static final List<String> IMPORTS = Arrays.asList( "org.apache.maven.reporting.MavenReport",
-                                                               "org.apache.maven.reporting.MavenMultiPageReport",
-                                                               "org.apache.maven.doxia.siterenderer.Renderer",
-                                                               "org.apache.maven.doxia.sink.SinkFactory",
-                                                               "org.codehaus.doxia.sink.Sink",
-                                                               "org.apache.maven.doxia.sink.Sink",
-                                                               "org.apache.maven.doxia.sink.SinkEventAttributes" );
+    protected static final List<String> IMPORTS = Arrays.asList( "org.apache.maven.reporting.MavenReport",
+                                                                 "org.apache.maven.reporting.MavenMultiPageReport",
+                                                                 "org.apache.maven.doxia.siterenderer.Renderer",
+                                                                 "org.apache.maven.doxia.sink.SinkFactory",
+                                                                 "org.codehaus.doxia.sink.Sink",
+                                                                 "org.apache.maven.doxia.sink.Sink",
+                                                                 "org.apache.maven.doxia.sink.SinkEventAttributes" );
 
-    private static final ExclusionsDependencyFilter EXCLUDES =
+    protected static final ExclusionsDependencyFilter EXCLUDES =
         new ExclusionsDependencyFilter( Arrays.asList( "doxia-site-renderer", "doxia-sink-api", "maven-reporting-api" ) );
 
     public List<MavenReportExecution> buildMavenReports( MavenReportExecutorRequest mavenReportExecutorRequest )
@@ -437,13 +428,13 @@ public class DefaultMavenReportExecutor
     }
 
     /**
-     * Resolve report plugin version. 
-     * Steps to find a plugin version stop after each step if a non <code>null</code> value has been found:
+     * Resolve report plugin version.
+     * These steps are followed, stopping if a non <code>null</code> value has been found:
      * <ol>
-     *   <li>use the one defined in the reportPlugin configuration</li>
-     *   <li>search similar (same groupId and artifactId) mojo in the build/plugins section of the pom</li>
-     *   <li>search similar (same groupId and artifactId) mojo in the build/pluginManagement section of the pom</li>
-     *   <li>ask {@link PluginVersionResolver} to get a version and display a warning as it's not a recommended use</li>  
+     *   <li>use the one defined in the <code>reportPlugin</code> configuration,</li>
+     *   <li>search similar (same groupId and artifactId) mojo in the <code>build/plugins</code> section of the pom,</li>
+     *   <li>search similar (same groupId and artifactId) mojo in the <code>build/pluginManagement</code> section of the pom,</li>
+     *   <li>ask {@link PluginVersionResolver} to get a version and display a warning as it's not a recommended use.</li>  
      * </ol>
      *
      * @param reportPlugin the report plugin to resolve the version

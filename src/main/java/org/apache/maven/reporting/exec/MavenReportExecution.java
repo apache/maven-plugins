@@ -23,22 +23,18 @@ import org.apache.maven.model.Plugin;
 import org.apache.maven.reporting.MavenReport;
 
 /**
- * <p>
- *   Since maven 3 reporting plugin {@link MavenReport} are not anymore injected by maven core
- *   This class will store all necessary information for {@link MavenReport} execution :
- *   <ul>
- *     <li>a build {@link MavenReport}</li>
- *     <li>The associated {@link ClassLoader} for the Report Mojo execution</li>
- *     <li>The {@link Plugin} associated to the {@link MavenReport}</li>
- *   </ul> 
- * </p>
- * <p>
- *   With this it's possible to execute the {@link MavenReport} generate with settings
- *   the current {@link Thread} classLoader first with {@link #classLoader}
- * </p>
- * <p>
- *   This beans will be build by {@link MavenReportExecutor}.
- * </p>
+ * Since reporting plugin {@link MavenReport} are not any more injected by Maven 3 core,
+ * this class stores every necessary information for {@link MavenReport} execution:
+ * <ul>
+ *   <li>a build {@link MavenReport}</li>
+ *   <li>The associated {@link ClassLoader} for the Report Mojo execution</li>
+ *   <li>The {@link Plugin} associated to the {@link MavenReport}</li>
+ * </ul>
+ *  
+ * With this it's possible to execute the {@link MavenReport} generate with settings
+ * the current {@link Thread} classLoader first with {@link #classLoader}
+ *
+ * This beans is built by {@link MavenReportExecutor}.
  * 
  * @author Olivier Lamy
  * @since 3.0-beta-1

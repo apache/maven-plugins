@@ -26,6 +26,7 @@ import org.codehaus.plexus.configuration.PlexusConfiguration;
 
 /**
  * Represents a set of reports and configuration to be used to generate them.
+ * 
  * @since 3.0-beta-1
  */
 public class ReportSet
