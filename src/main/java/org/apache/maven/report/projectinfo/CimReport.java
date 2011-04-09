@@ -132,6 +132,10 @@ public class CimReport
             {
                 linkPatternedText( getI18nString( "hudson.intro" ) );
             }
+            else if ( isCimSystem( system, "jenkins" ) )
+            {
+                linkPatternedText( getI18nString( "jenkins.intro" ) );
+            }
             else if ( isCimSystem( system, "luntbuild" ) )
             {
                 linkPatternedText( getI18nString( "luntbuild.intro" ) );
