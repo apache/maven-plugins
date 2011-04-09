@@ -126,11 +126,6 @@ public class DefaultMavenReportExecutor
         }
         getLog().debug( "DefaultMavenReportExecutor.buildMavenReports()" );
 
-        RepositoryRequest repositoryRequest = new DefaultRepositoryRequest();
-        repositoryRequest.setLocalRepository( mavenReportExecutorRequest.getLocalRepository() );
-        repositoryRequest.setRemoteRepositories( mavenReportExecutorRequest.getProject().getPluginArtifactRepositories() );
-
-        MavenSession session = mavenReportExecutorRequest.getMavenSession();
         List<String> reportPluginKeys = new ArrayList<String>();
         List<MavenReportExecution> reports = new ArrayList<MavenReportExecution>();
 
@@ -139,143 +134,149 @@ public class DefaultMavenReportExecutor
         {
             for ( ReportPlugin reportPlugin : mavenReportExecutorRequest.getReportPlugins() )
             {
-                Plugin plugin = new Plugin();
-                plugin.setGroupId( reportPlugin.getGroupId() );
-                plugin.setArtifactId( reportPlugin.getArtifactId() );
-
                 pluginKey = reportPlugin.getGroupId() + ":" + reportPlugin.getArtifactId();
-                if ( reportPluginKeys.contains( pluginKey ) )
-                {
-                    logger.info( "plugin " + pluginKey + " will be executed more than one time" );
-                }
-                else
-                {
-                    reportPluginKeys.add( pluginKey );
-                }
 
-                plugin.setVersion( getPluginVersion( reportPlugin, repositoryRequest, mavenReportExecutorRequest ) );
-                mergePluginToReportPlugin( mavenReportExecutorRequest, plugin, reportPlugin );
-
-                logger.info( "configuring report plugin " + plugin.getId() );
-
-                Map<String, PlexusConfiguration> goalsWithConfiguration = new TreeMap<String, PlexusConfiguration>();
-
-                List<RemoteRepository> remoteRepositories = session.getCurrentProject().getRemotePluginRepositories();
-
-                PluginDescriptor pluginDescriptor = mavenPluginManager
-                    .getPluginDescriptor( plugin, remoteRepositories, session.getRepositorySession() );
-
-                if ( reportPlugin.getReportSets().isEmpty() && reportPlugin.getReports().isEmpty() )
-                {
-                    List<MojoDescriptor> mojoDescriptors = pluginDescriptor.getMojos();
-                    for ( MojoDescriptor mojoDescriptor : mojoDescriptors )
-                    {
-                        goalsWithConfiguration.put( mojoDescriptor.getGoal(), mojoDescriptor.getConfiguration() );
-                    }
-                }
-                else
-                {
-                    if ( reportPlugin.getReportSets() != null )
-                    {
-                        for ( ReportSet reportSet : reportPlugin.getReportSets() )
-                        {
-                            for ( String report : reportSet.getReports() )
-                            {
-                                goalsWithConfiguration.put( report, reportSet.getConfiguration() );
-                            }
-                        }
-                    }
-                    if ( !reportPlugin.getReports().isEmpty() )
-                    {
-                        for ( String report : reportPlugin.getReports() )
-                        {
-                            goalsWithConfiguration.put( report, reportPlugin.getConfiguration() );
-                        }
-                    }
-                }
-
-                for ( Entry<String, PlexusConfiguration> entry : goalsWithConfiguration.entrySet() )
-                {
-                    MojoDescriptor mojoDescriptor = pluginDescriptor.getMojo( entry.getKey() );
-                    if ( mojoDescriptor == null )
-                    {
-                        throw new MojoNotFoundException( entry.getKey(), pluginDescriptor );
-                    }
-
-                    MojoExecution mojoExecution = new MojoExecution( plugin, entry.getKey(), "report:" + entry.getKey() );
-
-                    mojoExecution.setConfiguration( convert( mojoDescriptor ) );
-
-                    if ( reportPlugin.getConfiguration() != null || entry.getValue() != null )
-                    {
-                        Xpp3Dom reportConfiguration =
-                            reportPlugin.getConfiguration() == null ? new Xpp3Dom( "fake" )
-                                            : convert( reportPlugin.getConfiguration() );
-
-                        // MSITE-512 configuration from ReportSet must win
-                        Xpp3Dom mergedConfigurationWithReportSet = Xpp3DomUtils
-                            .mergeXpp3Dom( convert( entry.getValue() ), reportConfiguration );
-
-                        Xpp3Dom mergedConfiguration = Xpp3DomUtils.mergeXpp3Dom( mergedConfigurationWithReportSet,
-                                                                                 convert( mojoDescriptor ) );
-
-                        Xpp3Dom cleanedConfiguration = new Xpp3Dom( "configuration" );
-                        if ( mergedConfiguration.getChildren() != null )
-                        {
-                            for ( Xpp3Dom parameter : mergedConfiguration.getChildren() )
-                            {
-                                if ( mojoDescriptor.getParameterMap().containsKey( parameter.getName() ) )
-                                {
-                                    cleanedConfiguration.addChild( parameter );
-                                }
-                            }
-                        }
-                        if ( getLog().isDebugEnabled() )
-                        {
-                            getLog().debug( "mojoExecution mergedConfiguration: " + mergedConfiguration );
-                            getLog().debug( "mojoExecution cleanedConfiguration: " + cleanedConfiguration );
-                        }
-
-                        mojoExecution.setConfiguration( cleanedConfiguration );
-                    }                    
-
-                    mojoExecution.setMojoDescriptor( mojoDescriptor );
-
-                    mavenPluginManager.setupPluginRealm( pluginDescriptor,
-                                                         mavenReportExecutorRequest.getMavenSession(),
-                                                         Thread.currentThread().getContextClassLoader(), IMPORTS,
-                                                         EXCLUDES );
-                    MavenReport mavenReport =
-                        getConfiguredMavenReport( mojoExecution, pluginDescriptor, mavenReportExecutorRequest );
-
-                    if ( mavenReport == null )
-                    {
-                        continue;
-                    }
-                    MavenReportExecution mavenReportExecution =
-                        new MavenReportExecution( mojoExecution.getPlugin(), mavenReport,
-                                                  pluginDescriptor.getClassRealm() );
-
-                    lifecycleExecutor.calculateForkedExecutions( mojoExecution,
-                                                                 mavenReportExecutorRequest.getMavenSession() );
-
-                    if ( !mojoExecution.getForkedExecutions().isEmpty() )
-                    {
-                        lifecycleExecutor.executeForkedExecutions( mojoExecution,
-                                                                   mavenReportExecutorRequest.getMavenSession() );
-                    }
-
-                    if ( canGenerateReport( mavenReport, mojoExecution ) )
-                    {
-                        reports.add( mavenReportExecution );
-                    }
-                }
+                buildReportPlugin( mavenReportExecutorRequest, reportPlugin, reportPluginKeys, reports );
             }
             return reports;
         }
         catch ( Exception e )
         {
             throw new MojoExecutionException( "failed to get report for " + pluginKey, e );
+        }
+    }
+
+    protected void buildReportPlugin( MavenReportExecutorRequest mavenReportExecutorRequest, ReportPlugin reportPlugin,
+                                      List<String> reportPluginKeys, List<MavenReportExecution> reports )
+        throws Exception
+    {
+        Plugin plugin = new Plugin();
+        plugin.setGroupId( reportPlugin.getGroupId() );
+        plugin.setArtifactId( reportPlugin.getArtifactId() );
+
+        String pluginKey = reportPlugin.getGroupId() + ":" + reportPlugin.getArtifactId();
+        if ( reportPluginKeys.contains( pluginKey ) )
+        {
+            logger.info( "plugin " + pluginKey + " will be executed more than one time" );
+        }
+        else
+        {
+            reportPluginKeys.add( pluginKey );
+        }
+
+        RepositoryRequest repositoryRequest = new DefaultRepositoryRequest();
+        repositoryRequest.setLocalRepository( mavenReportExecutorRequest.getLocalRepository() );
+        repositoryRequest.setRemoteRepositories( mavenReportExecutorRequest.getProject().getPluginArtifactRepositories() );
+
+        plugin.setVersion( getPluginVersion( reportPlugin, repositoryRequest, mavenReportExecutorRequest ) );
+
+        mergePluginToReportPlugin( mavenReportExecutorRequest, plugin, reportPlugin );
+
+        logger.info( "configuring report plugin " + plugin.getId() );
+
+        MavenSession session = mavenReportExecutorRequest.getMavenSession();
+        List<RemoteRepository> remoteRepositories = session.getCurrentProject().getRemotePluginRepositories();
+
+        PluginDescriptor pluginDescriptor =
+            mavenPluginManager.getPluginDescriptor( plugin, remoteRepositories, session.getRepositorySession() );
+
+        Map<String, PlexusConfiguration> goalsWithConfiguration = new TreeMap<String, PlexusConfiguration>();
+
+        if ( reportPlugin.getReportSets().isEmpty() && reportPlugin.getReports().isEmpty() )
+        {
+            List<MojoDescriptor> mojoDescriptors = pluginDescriptor.getMojos();
+            for ( MojoDescriptor mojoDescriptor : mojoDescriptors )
+            {
+                goalsWithConfiguration.put( mojoDescriptor.getGoal(), mojoDescriptor.getConfiguration() );
+            }
+        }
+        else
+        {
+            for ( ReportSet reportSet : reportPlugin.getReportSets() )
+            {
+                for ( String report : reportSet.getReports() )
+                {
+                    goalsWithConfiguration.put( report, reportSet.getConfiguration() );
+                }
+            }
+
+            for ( String report : reportPlugin.getReports() )
+            {
+                goalsWithConfiguration.put( report, reportPlugin.getConfiguration() );
+            }
+        }
+
+        for ( Entry<String, PlexusConfiguration> entry : goalsWithConfiguration.entrySet() )
+        {
+            MojoDescriptor mojoDescriptor = pluginDescriptor.getMojo( entry.getKey() );
+            if ( mojoDescriptor == null )
+            {
+                throw new MojoNotFoundException( entry.getKey(), pluginDescriptor );
+            }
+
+            MojoExecution mojoExecution = new MojoExecution( plugin, entry.getKey(), "report:" + entry.getKey() );
+
+            mojoExecution.setConfiguration( convert( mojoDescriptor ) );
+
+            if ( reportPlugin.getConfiguration() != null || entry.getValue() != null )
+            {
+                Xpp3Dom reportConfiguration =
+                    reportPlugin.getConfiguration() == null ? new Xpp3Dom( "fake" )
+                                    : convert( reportPlugin.getConfiguration() );
+
+                // MSITE-512 configuration from ReportSet must win
+                Xpp3Dom mergedConfigurationWithReportSet =
+                    Xpp3DomUtils.mergeXpp3Dom( convert( entry.getValue() ), reportConfiguration );
+
+                Xpp3Dom mergedConfiguration =
+                    Xpp3DomUtils.mergeXpp3Dom( mergedConfigurationWithReportSet, convert( mojoDescriptor ) );
+
+                Xpp3Dom cleanedConfiguration = new Xpp3Dom( "configuration" );
+                if ( mergedConfiguration.getChildren() != null )
+                {
+                    for ( Xpp3Dom parameter : mergedConfiguration.getChildren() )
+                    {
+                        if ( mojoDescriptor.getParameterMap().containsKey( parameter.getName() ) )
+                        {
+                            cleanedConfiguration.addChild( parameter );
+                        }
+                    }
+                }
+                if ( getLog().isDebugEnabled() )
+                {
+                    getLog().debug( "mojoExecution mergedConfiguration: " + mergedConfiguration );
+                    getLog().debug( "mojoExecution cleanedConfiguration: " + cleanedConfiguration );
+                }
+
+                mojoExecution.setConfiguration( cleanedConfiguration );
+            }
+
+            mojoExecution.setMojoDescriptor( mojoDescriptor );
+
+            mavenPluginManager.setupPluginRealm( pluginDescriptor, mavenReportExecutorRequest.getMavenSession(),
+                                                 Thread.currentThread().getContextClassLoader(), IMPORTS, EXCLUDES );
+            MavenReport mavenReport =
+                getConfiguredMavenReport( mojoExecution, pluginDescriptor, mavenReportExecutorRequest );
+
+            if ( mavenReport == null )
+            {
+                continue;
+            }
+
+            MavenReportExecution mavenReportExecution =
+                new MavenReportExecution( mojoExecution.getPlugin(), mavenReport, pluginDescriptor.getClassRealm() );
+
+            lifecycleExecutor.calculateForkedExecutions( mojoExecution, mavenReportExecutorRequest.getMavenSession() );
+
+            if ( !mojoExecution.getForkedExecutions().isEmpty() )
+            {
+                lifecycleExecutor.executeForkedExecutions( mojoExecution, mavenReportExecutorRequest.getMavenSession() );
+            }
+
+            if ( canGenerateReport( mavenReport, mojoExecution ) )
+            {
+                reports.add( mavenReportExecution );
+            }
         }
     }
 
@@ -349,7 +350,7 @@ public class DefaultMavenReportExecutor
         }
         catch ( ClassNotFoundException e )
         {
-            getLog().warn( "skip ClassNotFoundException mojoExecution.goal : " + mojoExecution.getGoal() + " : "
+            getLog().warn( "skip ClassNotFoundException mojoExecution.goal '" + mojoExecution.getGoal() + "': "
                                + e.getMessage(), e );
             return false;
         }
@@ -383,7 +384,7 @@ public class DefaultMavenReportExecutor
         }
         catch ( LinkageError e )
         {
-            getLog().warn( "skip LinkageError mojoExecution.goal : " + mojoExecution.getGoal() + " : " + e.getMessage(),
+            getLog().warn( "skip LinkageError mojoExecution.goal '" + mojoExecution.getGoal() + "': " + e.getMessage(),
                            e );
             return false;
         }
