@@ -438,10 +438,8 @@ public abstract class AbstractSiteRenderingMojo
     protected void populateReportItems( DecorationModel decorationModel, Locale locale,
                                         Map<String, MavenReport> reportsByOutputName )
     {
-        for ( Iterator<Menu> i = decorationModel.getMenus().iterator(); i.hasNext(); )
+        for ( Menu menu : decorationModel.getMenus() )
         {
-            Menu menu = i.next();
-
             populateItemRefs( menu.getItems(), locale, reportsByOutputName );
         }
     }
