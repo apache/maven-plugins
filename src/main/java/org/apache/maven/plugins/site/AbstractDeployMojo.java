@@ -626,7 +626,7 @@ public abstract class AbstractDeployMojo
         // MSITE-25: Make sure that the server settings are inserted
         for ( int i = 0; i < settings.getServers().size(); i++ )
         {
-            Server server = (Server) settings.getServers().get( i );
+            Server server = settings.getServers().get( i );
             String id = server.getId();
 
             log.debug( "configureWagon server " + id );
