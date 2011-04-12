@@ -27,9 +27,9 @@
  ~~ NOTE: For help with the syntax of this file, see:
  ~~ http://maven.apache.org/doxia/references/apt-format.html
  
-   Content migrated from {{{https://cwiki.apache.org/confluence/x/sokr}Maven 3.x and site plugin}}
+   Content initially migrated from {{{https://cwiki.apache.org/confluence/x/sokr}Maven 3.x and site plugin}}
    
-Site plugin with maven 3.x: maven-site-plugin 3.x
+Site plugin with Maven 3.x: maven-site-plugin 3.x
 
   Due to {{{http://jira.codehaus.org/browse/MNG-4162}MNG-4162}}, all reporting logic has been removed from trunk.
   So a branch of the site plugin has been created,
@@ -80,9 +80,9 @@ Plugins Compatibility Matrix
 
 Configuration format.
 
-  The current reporting section of the pom have to be moved in a new site plugin configuration.
-  The proposal is to have a configuration as much similar as possible with the current one.
-  The model builder will transform it on the fly, displaying a warning concerning this change. (as of Maven 3.0-alpha-6, on the fly transformation seems ok, but without warning)
+  The current reporting section of the pom have to be moved in a new site plugin configuration,
+  with content as much similar as possible with the current one.
+  The <<<maven-reporting-exec>>> component transforms it on the fly.
 
 * Old configuration
 
@@ -100,44 +100,20 @@ Configuration format.
         <configuration>
           <dependencyDetailsEnabled>false</dependencyDetailsEnabled>
           <dependencyLocationsEnabled>false</dependencyLocationsEnabled>
-          <filters>
-            <filter>+hello.*</filter>
-            <filter>+byebye.*</filter>
-          </filters>
         </configuration>
         <reportSets>
           <reportSet>
             <reports>
               <report>foo</report>
-            </reports>
-            <configuration>
-              <dependencyDetailsEnabled>true</dependencyDetailsEnabled>
-              <dependencyLocationsEnabled>true</dependencyLocationsEnabled>
-              <filters>
-                <filter>+foo.*</filter>
-                <filter>+toto.*</filter>
-              </filters>
-            </configuration>
-          </reportSet>
-          <reportSet>
-            <reports>
               <report>toto</report>
             </reports>
           </reportSet>
-          <configuration>
-            <dependencyDetailsEnabled>true</dependencyDetailsEnabled>
-            <dependencyLocationsEnabled>true</dependencyLocationsEnabled>
-            <filters>
-              <filter>+foo.*</filter>
-              <filter>+toto.*</filter>
-            </filters>
-          </configuration>
         </reportSets>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>2.2</version>
+        <version>2.7</version>
       </plugin>
     </plugins>
   </reporting>
@@ -147,7 +123,7 @@ Configuration format.
 
   Reports are configured in <<<maven-site-plugin>>>'s configuration as <<<reportPlugins>>> attribute:
 
-~~~ TODO: why are there filters in previous Maven 2 example, but not in Maven 3? Both should represent the same configuration.
+~~~ TODO: why are there reportSets in previous Maven 2 example, but not in Maven 3? Both should represent the same configuration.
 +-----+
   <build>
     <plugins>
@@ -202,8 +178,8 @@ Site descriptor attachment
 Using maven-site-plugin 2.x with Maven 2.x and maven-site-plugin 3.x with Maven 3.x
 
   Before maven-site-plugin 3.0-beta-4, maven-site-plugin 2.x was compatible only with Maven 2 and maven-site-plugin
-  3.x was compatible only with Maven 3: a trick was needed to let Maven 2 use one version of the plugin and Maven
-  another with the same <<<pom.xml>>>.
+  3.x was compatible only with Maven 3: a trick was needed to let Maven 2 use one version of the plugin and Maven 3
+  another version with the same <<<pom.xml>>>.
 
   Starting with maven-site-plugin 3.0-beta-4, the plugin can run both with Maven 2.x and 3.x: result should
   be exactly the same when Maven 2 <<<reporting>>> configuration style is used, while Maven 3 <<<reportPlugins>>> and 
