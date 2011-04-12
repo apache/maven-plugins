@@ -1,0 +1,93 @@
+
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+import java.io.*;
+import org.codehaus.plexus.util.*;
+
+boolean result = true;
+
+try
+{
+    File parentSiteDirectory = new File ( basedir, "target/site" );
+    if ( !parentSiteDirectory.exists() || !parentSiteDirectory.isDirectory() )
+    {
+        System.err.println( "parent site is missing or not a directory." );
+        result = false;
+    }
+
+    File parentIndex = new File ( parentSiteDirectory, "index.html" );
+    if ( !parentIndex.exists() || parentIndex.isDirectory() )
+    {
+        System.err.println( "no index file in parent or is a directory." );
+        result = false;
+    }
+
+    String content = IOUtil.toString ( new FileInputStream ( parentIndex ), "UTF-8" );
+    int index1 = content.indexOf( "<a href=\"child/index.html\" title=\"MSITE-456 - child\">MSITE-456 - child</a>" );
+    int index2 = content.indexOf( "<a href=\"project-info.html\" title=\"Project Information\">Project Information</a>" );
+
+
+    if ( index1 < 0 || index2 < 0 )
+    {
+        System.err.println( "parent index.html has wrong navigation menu!" );
+        result = false;
+    }
+
+    // CHILD
+
+
+    File childDirectory = new File ( basedir, "child" );
+    if ( !childDirectory.exists() || !childDirectory.isDirectory() )
+    {
+        System.err.println( "child is missing or not a directory." );
+        result = false;
+    }
+
+    File childSiteDirectory = new File ( childDirectory, "target/site" );
+    if ( !childSiteDirectory.exists() || !childSiteDirectory.isDirectory() )
+    {
+        System.err.println( "child site is missing or not a directory." );
+        result = false;
+    }
+
+    File childIndex = new File ( childSiteDirectory, "index.html" );
+    if ( !childIndex.exists() || childIndex.isDirectory() )
+    {
+        System.err.println( "no index file in child or is a directory." );
+        result = false;
+    }
+
+    content = IOUtil.toString ( new FileInputStream ( childIndex ), "UTF-8" );
+    index1 = content.indexOf( "<a href=\"../index.html\" title=\"MSITE-456 - parent\">MSITE-456 - parent</a>" );
+    index2 = content.indexOf( "<a href=\"project-info.html\" title=\"Project Information\">Project Information</a>" );
+
+    if ( index1 < 0 || index2 < 0 )
+    {
+        System.err.println( "child index.html has wrong navigation menu!" );
+        result = false;
+    }
+}
+catch( IOException e )
+{
+    e.printStackTrace();
+    result = false;
+}
+
+return result;
