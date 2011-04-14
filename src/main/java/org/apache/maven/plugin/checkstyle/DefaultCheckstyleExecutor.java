@@ -374,7 +374,7 @@ public class DefaultCheckstyleExecutor
         }
         if ( request.getSuppressionsFileExpression() != null )
         {
-            String suppresionFile = request.getSuppressionsFileExpression();
+            String suppresionFile = request.getSuppressionsLocation();
 
             if ( suppresionFile != null )
             {
