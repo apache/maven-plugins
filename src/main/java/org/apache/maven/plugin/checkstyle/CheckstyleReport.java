@@ -820,7 +820,7 @@ public class CheckstyleReport
     public boolean canGenerateReport()
     {
         // TODO: would be good to scan the files here
-        return sourceDirectory.exists();
+        return sourceDirectory.exists() || ( includeTestSourceDirectory && testSourceDirectory.exists() );
     }
     
     /** {@inheritDoc} */
