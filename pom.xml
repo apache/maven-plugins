@@ -203,6 +203,11 @@ under the License.
       <artifactId>maven-reporting-api</artifactId>
       <version>3.0</version>
     </dependency>
+    <dependency>
+      <groupId>org.apache.maven.reporting</groupId>
+      <artifactId>maven-reporting-exec</artifactId>
+      <version>1.0-SNAPSHOT</version>
+    </dependency>
 
     <!-- Maven -->
     <dependency>
