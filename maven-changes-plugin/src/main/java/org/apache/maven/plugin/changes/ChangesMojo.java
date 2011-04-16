@@ -286,6 +286,7 @@ public class ChangesMojo
         // Set good default values for issue management systems here, but only
         // if they have not been configured already by the user
         addIssueLinkTemplate( ChangesReportGenerator.DEFAULT_ISSUE_SYSTEM_KEY, issueLinkTemplate );
+        addIssueLinkTemplate( "Bitbucket", "%URL%/issue/%ISSUE%" );
         addIssueLinkTemplate( "Bugzilla", "%URL%/show_bug.cgi?id=%ISSUE%" );
         addIssueLinkTemplate( "GoogleCode", "%URL%/detail?id=%ISSUE%" );
         addIssueLinkTemplate( "JIRA", "%URL%/%ISSUE%" );
