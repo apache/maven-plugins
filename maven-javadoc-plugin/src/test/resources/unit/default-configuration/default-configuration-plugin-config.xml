@@ -36,6 +36,7 @@ under the License.
           <project implementation="org.apache.maven.plugin.javadoc.stubs.DefaultConfigurationMavenProjectStub"/>
           <localRepository>${localRepository}</localRepository>
           <outputDirectory>${basedir}/target/test/unit/default-configuration/target/site/apidocs</outputDirectory>
+          <javadocOptionsDir>${basedir}/target/test/unit/default-configuration/target/javadoc-bundle-options</javadocOptionsDir>
           <breakiterator>false</breakiterator>
           <old>false</old>
           <show>protected</show>
@@ -61,11 +62,9 @@ under the License.
           <use>true</use>
           <version>true</version>
           <windowtitle>Maven Javadoc Plugin Default configuration Test 1.0-SNAPSHOT API</windowtitle>
-          <links>
-             <param>http://java.sun.com/j2se/1.4.2/docs/api</param>
-          </links>
           <debug>true</debug>
           <failOnError>true</failOnError>
+          <detectJavaApiLink>true</detectJavaApiLink>
         </configuration>
       </plugin>
     </plugins>
