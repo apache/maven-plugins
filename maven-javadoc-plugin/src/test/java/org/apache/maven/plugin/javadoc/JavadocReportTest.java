@@ -189,7 +189,7 @@ public class JavadocReportTest
         File generatedFile = new File( getBasedir(),
                                        "target/test/unit/default-configuration/target/site/apidocs/def/configuration/App.html" );
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
-        //assertTrue( FileUtils.fileRead( generatedFile, "UTF-8" ).contains( s ) );
+        assertTrue( FileUtils.fileRead( generatedFile, "UTF-8" ).contains( "docs/api/java/lang/Object.html?is-external=true" ) );
 
         generatedFile = new File( getBasedir(),
                                   "target/test/unit/default-configuration/target/site/apidocs/def/configuration/AppSample.html" );
