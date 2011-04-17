@@ -3819,7 +3819,6 @@ public abstract class AbstractJavadocMojo
      * @throws MavenReportException 
      * @see #detectLinks
      * @see #getDependenciesLinks()
-     * @see JavadocUtil#fetchURL(Settings, URL)
      * @see <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#package-list">package-list spec</a>
      */
     private void addLinkArguments( List<String> arguments )
@@ -3839,10 +3838,7 @@ public abstract class AbstractJavadocMojo
                 link = link.substring( 0, link.lastIndexOf( "/" ) );
             }
 
-            if ( isValidJavadocLink( link ) )
-            {
-                addArgIfNotEmpty( arguments, "-link", JavadocUtil.quotedPathArgument( link ), true );
-            }
+            addArgIfNotEmpty( arguments, "-link", JavadocUtil.quotedPathArgument( link ), true );
         }
     }
 
@@ -5320,6 +5316,7 @@ public abstract class AbstractJavadocMojo
      * @return the detected Javadoc links using the Maven conventions for all dependencies defined in the current
      * project or an empty list.
      * @see #detectLinks
+     * @see #isValidJavadocLink(String)
      * @since 2.6
      */
     private List<String> getDependenciesLinks()
@@ -5332,40 +5329,35 @@ public abstract class AbstractJavadocMojo
         getLog().debug( "Trying to add links for dependencies..." );
 
         List<String> dependenciesLinks = new ArrayList<String>();
-        for ( Iterator<Artifact> it = project.getDependencyArtifacts().iterator(); it.hasNext(); )
+
+        final Set<Artifact> dependencies = project.getDependencyArtifacts();
+        for ( Artifact artifact : dependencies )
         {
-            Artifact artifact = it.next();
-
-            if ( artifact != null && artifact.getFile() != null && artifact.getFile().exists() )
+            if ( artifact.getFile() == null || !artifact.getFile().exists() )
             {
-                try
+                continue;
+            }
+
+            try
+            {
+                MavenProject artifactProject =
+                    mavenProjectBuilder.buildFromRepository( artifact, remoteRepositories, localRepository );
+
+                if ( StringUtils.isNotEmpty( artifactProject.getUrl() ) )
                 {
-                    MavenProject artifactProject =
-                        mavenProjectBuilder.buildFromRepository( artifact, remoteRepositories, localRepository );
+                    String url = getJavadocLink( artifactProject );
 
-                    if ( StringUtils.isNotEmpty( artifactProject.getUrl() ) )
+                    if ( isValidJavadocLink( url ) )
                     {
-                        String url = getJavadocLink( artifactProject );
+                        getLog().debug( "Added Javadoc link: " + url + " for " + artifactProject.getId() );
 
-                        if ( getLog().isDebugEnabled() )
-                        {
-                            getLog().debug(
-                                            "Added Javadoc link: " + url + " for the artifact: "
-                                                + artifactProject.getId() );
-                        }
                         dependenciesLinks.add( url );
                     }
                 }
-                catch ( ProjectBuildingException e )
-                {
-                    if ( getLog().isDebugEnabled() )
-                    {
-                        getLog().debug(
-                                       "Error when building the artifact: " + artifact.toString()
-                                           + ". Ignored to add Javadoc link." );
-                    }
-                    logError( "ProjectBuildingException: " + e.getMessage(), e );
-                }
+            }
+            catch ( ProjectBuildingException e )
+            {
+                logError( "ProjectBuildingException for " + artifact.toString() + ": " + e.getMessage(), e );
             }
         }
 
@@ -5401,24 +5393,16 @@ public abstract class AbstractJavadocMojo
             }
             catch ( NumberFormatException e )
             {
-                if ( getLog().isDebugEnabled() )
-                {
-                    getLog().debug(
-                                    "NumberFormatException for the source parameter in the maven-compiler-plugin. "
-                                        + "Ignored it", e );
-                }
+                getLog().debug( "NumberFormatException for the source parameter in the maven-compiler-plugin. "
+                                    + "Ignored it", e );
             }
         }
         else
         {
-            if ( getLog().isDebugEnabled() )
-            {
-                getLog().debug(
-                                "No maven-compiler-plugin defined in ${build.plugins} or in "
-                                    + "${project.build.pluginManagement} for the " + project.getId()
-                                    + ". Added Javadoc API link according the javadoc executable version i.e.: "
-                                    + fJavadocVersion );
-            }
+            getLog().debug( "No maven-compiler-plugin defined in ${build.plugins} or in "
+                                + "${project.build.pluginManagement} for the " + project.getId()
+                                + ". Added Javadoc API link according the javadoc executable version i.e.: "
+                                + fJavadocVersion );
         }
 
         String javaApiLink = null;

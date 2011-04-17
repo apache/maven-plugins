@@ -19,19 +19,26 @@ package org.apache.maven.plugin.javadoc.stubs;
  * under the License.
  */
 
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Build;
+import org.apache.maven.plugin.testing.stubs.ArtifactStub;
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
  */
-public class ProxyTestMavenProjectStub extends MavenProjectStub
+public class ProxyTestMavenProjectStub
+    extends MavenProjectStub
 {
+    private Set<Artifact> dependencyArtifacts = new HashSet<Artifact>();
+
     public ProxyTestMavenProjectStub()
     {
         readModel( new File( getBasedir(), "proxy-test-plugin-config.xml" ) );
@@ -52,11 +59,26 @@ public class ProxyTestMavenProjectStub extends MavenProjectStub
         List<String> compileSourceRoots = new ArrayList<String>();
         compileSourceRoots.add( getBasedir() + "/src/main/java" );
         setCompileSourceRoots( compileSourceRoots );
+
+        ArtifactStub artifact = new ArtifactStub();
+        artifact.setGroupId( "org.apache.maven.shared" );
+        artifact.setArtifactId( "maven-filtering" );
+        artifact.setVersion( "1.0-beta-4" );
+        artifact.setScope( Artifact.SCOPE_RUNTIME );
+        artifact.setType( "jar" );
+        artifact.setFile( getBasedir() );
+
+        dependencyArtifacts.add( artifact );
     }
 
     /** {@inheritDoc} */
     public File getBasedir()
     {
         return new File( super.getBasedir() + "/src/test/resources/unit/proxy-test" );
+    }
+
+    public Set<Artifact> getDependencyArtifacts()
+    {
+        return dependencyArtifacts;
     }
 }

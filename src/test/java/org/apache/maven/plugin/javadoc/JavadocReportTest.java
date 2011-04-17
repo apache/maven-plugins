@@ -902,6 +902,10 @@ public class JavadocReportTest
     public void testProxy()
         throws Exception
     {
+        final boolean isMavenSiteOnline =
+            JavadocUtilTest.isWebSiteOnline( null, getContainer().getLogger(),
+                                             "http://maven.apache.org/shared/maven-filtering/apidocs/package-list" );
+
         Settings settings = new Settings();
         Proxy proxy = new Proxy();
 
@@ -919,6 +923,7 @@ public class JavadocReportTest
         JavadocReport mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
         assertNotNull( mojo );
         setVariableValueToObject( mojo, "settings", settings );
+        setVariableValueToObject( mojo, "remoteRepositories", mojo.project.getRemoteArtifactRepositories() );
         mojo.execute();
 
         File commandLine = new File( getBasedir(), "target/test/unit/proxy-test/target/site/apidocs/javadoc." + ( SystemUtils.IS_OS_WINDOWS ? "bat" : "sh" ) );
@@ -934,10 +939,10 @@ public class JavadocReportTest
         File options = new File( getBasedir(), "target/test/unit/proxy-test/target/site/apidocs/options" );
         assertTrue( FileUtils.fileExists( options.getAbsolutePath() ) );
         String optionsContent = readFile( options );
-        // NO -link http://download.oracle.com/javase/1.5.0/docs/api/docs/api/package-list
-        if ( JavadocUtilTest.isWebSiteOnline( null, getContainer().getLogger(), "http://download.oracle.com/" ) )
+        if ( isMavenSiteOnline )
         {
-            assertTrue( optionsContent.indexOf( "-link" ) == -1 );
+            // NO -link http://maven.apache.org/shared/maven-filtering/apidocs/package-list
+            assertTrue( !optionsContent.contains( "-link 'http://maven.apache.org/shared/maven-filtering/apidocs'" ) );
         }
 
         // real proxy
@@ -959,6 +964,7 @@ public class JavadocReportTest
 
             mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
             setVariableValueToObject( mojo, "settings", settings );
+            setVariableValueToObject( mojo, "remoteRepositories", mojo.project.getRemoteArtifactRepositories() );
             mojo.execute();
             readed = readFile( commandLine );
             assertTrue( readed.indexOf( "-J-Dhttp.proxySet=true" ) != -1 );
@@ -966,10 +972,10 @@ public class JavadocReportTest
             assertTrue( readed.indexOf( "-J-Dhttp.proxyPort=" + proxyServer.getPort() ) != -1 );
 
             optionsContent = readFile( options );
-            // -link http://download.oracle.com/javase/1.5.0/docs/api/package-list
-            if ( JavadocUtilTest.isWebSiteOnline( null, getContainer().getLogger(), "http://download.oracle.com/" ) )
+            if ( isMavenSiteOnline )
             {
-                assertTrue( optionsContent.indexOf( "-link" ) != -1 );
+                // -link http://maven.apache.org/shared/maven-filtering/apidocs/package-list
+                assertTrue( optionsContent.contains( "-link 'http://maven.apache.org/shared/maven-filtering/apidocs'" ) );
             }
             assertTrue( true );
         }
@@ -1006,6 +1012,7 @@ public class JavadocReportTest
 
             mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
             setVariableValueToObject( mojo, "settings", settings );
+            setVariableValueToObject( mojo, "remoteRepositories", mojo.project.getRemoteArtifactRepositories() );
             mojo.execute();
             readed = readFile( commandLine );
             assertTrue( readed.indexOf( "-J-Dhttp.proxySet=true" ) != -1 );
@@ -1015,10 +1022,10 @@ public class JavadocReportTest
             assertTrue( readed.indexOf( "-J-Dhttp.proxyPassword=\\\"bar\\\"" ) != -1 );
 
             optionsContent = readFile( options );
-            // -link http://download.oracle.com/javase/1.5.0/docs/api/docs/api/package-list
-            if ( JavadocUtilTest.isWebSiteOnline( null, getContainer().getLogger(), "http://download.oracle.com" ) )
+            if ( isMavenSiteOnline )
             {
-                assertTrue( optionsContent.indexOf( "-link" ) != -1 );
+                // -link http://maven.apache.org/shared/maven-filtering/apidocs/package-list
+                assertTrue( optionsContent.contains( "-link 'http://maven.apache.org/shared/maven-filtering/apidocs'" ) );
             }
             assertTrue( true );
         }
