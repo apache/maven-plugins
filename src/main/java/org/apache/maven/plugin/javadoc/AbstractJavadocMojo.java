@@ -26,9 +26,11 @@ import static org.apache.maven.plugin.javadoc.JavadocUtil.isNotEmpty;
 import static org.apache.maven.plugin.javadoc.JavadocUtil.isEmpty;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -1082,7 +1084,7 @@ public abstract class AbstractJavadocMojo
      * <br/>
      * <b>Notes</b>:
      * <ol>
-     * <li>only used is {@link #isOffline} is set to <code>false</code>.</li>
+     * <li>only used if {@link #isOffline} is set to <code>false</code>.</li>
      * <li>all given links should have a fetchable <code>/package-list</code> file. For instance:
      * <pre>
      * &lt;links&gt;
@@ -1092,7 +1094,7 @@ public abstract class AbstractJavadocMojo
      * will be used because <code>http://download.oracle.com/javase/1.4.2/docs/api/package-list</code> exists.</li>
      * <li>if {@link #detectLinks} is defined, the links between the project dependencies are
      * automatically added.</li>
-     * <li>if {@link #detectJavaApiLink} is defined, a Java API link, based on the Java verion of the
+     * <li>if {@link #detectJavaApiLink} is defined, a Java API link, based on the Java version of the
      * project's sources, will be added automatically.</li>
      * </ol>
      * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#link">link</a>.
@@ -2854,12 +2856,6 @@ public abstract class AbstractJavadocMojo
             links.addAll( this.links );
         }
         
-        String javaApiLink = getDefaultJavadocApiLink();
-        if ( javaApiLink != null )
-        {
-            links.add( javaApiLink );
-        }
-
         links.addAll( getDependenciesLinks() );
         
         return links;
@@ -2982,6 +2978,12 @@ public abstract class AbstractJavadocMojo
         throws MavenReportException
     {
         Set<OfflineLink> result = new LinkedHashSet<OfflineLink>();
+
+        OfflineLink javaApiLink = getDefaultJavadocApiLink();
+        if ( javaApiLink != null )
+        {
+            result.add( javaApiLink );
+        }
 
         if ( includeDependencySources )
         {
@@ -5375,7 +5377,7 @@ public abstract class AbstractJavadocMojo
      * @see #DEFAULT_JAVA_API_LINKS
      * @see <a href="http://maven.apache.org/plugins/maven-compiler-plugin/compile-mojo.html#source">source parameter</a>
      */
-    private String getDefaultJavadocApiLink()
+    private OfflineLink getDefaultJavadocApiLink()
     {
         if ( !detectJavaApiLink )
         {
@@ -5405,23 +5407,24 @@ public abstract class AbstractJavadocMojo
                                 + fJavadocVersion );
         }
 
-        String javaApiLink = null;
+        String apiVersion = null;
         if ( sourceVersion >= 1.3f && sourceVersion < 1.4f )
         {
-            javaApiLink = javaApiLinks.getProperty( "api_1.3" );
+            apiVersion = "1.3";
         }
         else if ( sourceVersion >= 1.4f && sourceVersion < 1.5f )
         {
-            javaApiLink = javaApiLinks.getProperty( "api_1.4" );
+            apiVersion = "1.4";
         }
         else if ( sourceVersion >= 1.5f && sourceVersion < 1.6f )
         {
-            javaApiLink = javaApiLinks.getProperty( "api_1.5" );
+            apiVersion = "1.5";
         }
         else if ( sourceVersion >= 1.6f )
         {
-            javaApiLink = javaApiLinks.getProperty( "api_1.6" );
+            apiVersion = "1.6";
         }
+        String javaApiLink = javaApiLinks.getProperty( "api_" + apiVersion, null );
 
         if ( getLog().isDebugEnabled() )
         {
@@ -5435,7 +5438,36 @@ public abstract class AbstractJavadocMojo
             }
         }
 
-        return javaApiLink;
+        if ( javaApiLink == null )
+        {
+            return null;
+        }
+
+        File javaApiPackageListFile = new File( getJavadocOptionsFile().getParentFile(), "package-list" );
+
+        OfflineLink link = new OfflineLink();
+        link.setLocation( javaApiPackageListFile.getParentFile().getAbsolutePath() );
+        link.setUrl( javaApiLink );
+
+        InputStream in = this.getClass().getResourceAsStream( "java-api-package-list-" + apiVersion );
+        OutputStream out = null;
+        try
+        {
+            out = new FileOutputStream( javaApiPackageListFile );
+            IOUtil.copy( in, out );
+        }
+        catch ( IOException ioe )
+        {
+            logError( "Can't get java-api-package-list-" + apiVersion + ": " + ioe.getMessage(), ioe );
+            return null;
+        }
+        finally
+        {
+            IOUtil.close( in );
+            IOUtil.close( out );
+        }
+
+        return link;
     }
 
     /**
