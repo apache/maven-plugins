@@ -34,6 +34,7 @@ import org.apache.maven.plugin.javadoc.ProxyServer.AuthAsyncProxyServlet;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Settings;
+import org.apache.webdav.lib.properties.GetLastModifiedProperty;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
@@ -762,7 +763,7 @@ public class JavadocReportTest
     public void testProxy()
         throws Exception
     {
-        final boolean isMavenSiteOnline =
+        boolean isMavenSiteOnline =
             JavadocUtilTest.isWebSiteOnline( null, getContainer().getLogger(),
                                              "http://maven.apache.org/shared/maven-filtering/apidocs/package-list" );
 
@@ -832,10 +833,17 @@ public class JavadocReportTest
             assertTrue( readed.indexOf( "-J-Dhttp.proxyPort=" + proxyServer.getPort() ) != -1 );
 
             optionsContent = readFile( options );
+            isMavenSiteOnline =
+                JavadocUtilTest.isWebSiteOnline( settings, getContainer().getLogger(),
+                                                 "http://maven.apache.org/shared/maven-filtering/apidocs/package-list" );
             if ( isMavenSiteOnline )
             {
                 // -link http://maven.apache.org/shared/maven-filtering/apidocs/package-list
                 assertTrue( optionsContent.contains( "-link 'http://maven.apache.org/shared/maven-filtering/apidocs'" ) );
+            }
+            else
+            {
+                getContainer().getLogger().warn( "unable to reach maven.apache.org: link detection test unavailable." );
             }
             assertTrue( true );
         }
