@@ -288,6 +288,7 @@ public class ChangesMojo
         addIssueLinkTemplate( ChangesReportGenerator.DEFAULT_ISSUE_SYSTEM_KEY, issueLinkTemplate );
         addIssueLinkTemplate( "Bitbucket", "%URL%/issue/%ISSUE%" );
         addIssueLinkTemplate( "Bugzilla", "%URL%/show_bug.cgi?id=%ISSUE%" );
+        addIssueLinkTemplate( "GitHub", "%URL%/%ISSUE%" );
         addIssueLinkTemplate( "GoogleCode", "%URL%/detail?id=%ISSUE%" );
         addIssueLinkTemplate( "JIRA", "%URL%/%ISSUE%" );
         addIssueLinkTemplate( "Mantis", "%URL%/view.php?id=%ISSUE%" );

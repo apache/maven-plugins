@@ -5,7 +5,7 @@
  Allan Ramirez
  Dennis Lundberg
  ------
- 2010-12-31
+ 2011-04-19
  ------
 
  ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -141,6 +141,8 @@ mvn site
 | Bitbucket   | %URL%/issue/%ISSUE%           |
 *-------------+-------------------------------+
 | Bugzilla    | %URL%/show_bug.cgi?id=%ISSUE% |
+*-------------+-------------------------------+
+| GitHub      | %URL%/%ISSUE%                 |
 *-------------+-------------------------------+
 | GoogleCode  | %URL%/detail?id=%ISSUE%       |
 *-------------+-------------------------------+
