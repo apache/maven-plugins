@@ -44,6 +44,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.net.URLEncoder;
 import java.util.Collections;
 import java.util.HashMap;
@@ -563,11 +565,27 @@ public abstract class AbstractJiraDownloader
             ProxyInfo proxyInfo = new ProxyInfo();
             proxyInfo.setNonProxyHosts( proxy.getNonProxyHosts() );
 
-            // Validation of proxy method copied from org.apache.maven.wagon.proxy.ProxyUtils.
-            // @todo Can use original when maven-changes-plugin references a more recent version of maven-project
+            // Get the host out of the JIRA URL
+            URL url = null;
+            try
+            {
+                url = new URL( jiraUrl );
+            }
+            catch( MalformedURLException e )
+            {
+                getLog().error( "Invalid JIRA URL: " + jiraUrl + ". " + e.getMessage() );
+            }
+            String jiraHost = null;
+            if( url != null )
+            {
+                jiraHost = url.getHost();
+            }
 
-            //if ( ProxyUtils.validateNonProxyHosts( proxyInfo, jiraUrl  ) )
-            if ( JiraHelper.validateNonProxyHosts( proxyInfo, jiraUrl  ) )
+            // Validation of proxy method copied from org.apache.maven.wagon.proxy.ProxyUtils.
+            // @todo Can use original when maven-changes-plugin requires a more recent version of Maven
+
+            //if ( ProxyUtils.validateNonProxyHosts( proxyInfo, jiraHost ) )
+            if ( JiraHelper.validateNonProxyHosts( proxyInfo, jiraHost ) )
             {
                 return;
             }
