@@ -19,6 +19,7 @@ package org.apache.maven.plugin.changes;
  * under the License.
  */
 
+import org.apache.commons.io.IOUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
@@ -43,7 +44,8 @@ import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.util.ReaderFactory;
 
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.HashMap;
@@ -167,6 +169,7 @@ public abstract class AbstractChangesReport
         }
 
         // TODO: push to a helper? Could still be improved by taking more of the site information from the site plugin
+        FileOutputStream fileOutputStream = null;
         try
         {
             DecorationModel model = new DecorationModel();
@@ -185,7 +188,9 @@ public abstract class AbstractChangesReport
 
             outputDirectory.mkdirs();
 
-            Writer writer = new FileWriter( new File( outputDirectory, getOutputName() + ".html" ) );
+            File file = new File( outputDirectory, getOutputName() + ".html" );
+            fileOutputStream = new FileOutputStream( file ) ;
+            Writer writer = new OutputStreamWriter( fileOutputStream, getOutputEncoding() );
 
             siteRenderer.generateDocument( writer, sink, siteContext );
 
@@ -206,6 +211,9 @@ public abstract class AbstractChangesReport
         {
             throw new MojoExecutionException(
                 "An error has occurred in " + getName( Locale.ENGLISH ) + " report generation.", e );
+        }
+        finally {
+            IOUtils.closeQuietly( fileOutputStream );
         }
     }
 
