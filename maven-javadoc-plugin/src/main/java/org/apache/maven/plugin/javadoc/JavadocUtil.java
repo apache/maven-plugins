@@ -19,6 +19,7 @@ package org.apache.maven.plugin.javadoc;
  * under the License.
  */
 
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -26,6 +27,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintStream;
@@ -731,7 +733,7 @@ public class JavadocUtil
      * @param settings the user settings used to fetch the url with an active proxy, if defined.
      * @param url the url to fetch
      * @throws IOException if any
-     * @see #DEFAULT_TIMEOUT
+     * @see #createHttpClient(org.apache.maven.settings.Settings, java.net.URL)
      */
     protected static void fetchURL( Settings settings, URL url )
         throws IOException
@@ -757,36 +759,7 @@ public class JavadocUtil
         }
 
         // http, https...
-        HttpClient httpClient = new HttpClient( new MultiThreadedHttpConnectionManager() );
-        httpClient.getHttpConnectionManager().getParams().setConnectionTimeout( DEFAULT_TIMEOUT );
-        httpClient.getHttpConnectionManager().getParams().setSoTimeout( DEFAULT_TIMEOUT );
-        httpClient.getParams().setBooleanParameter( HttpClientParams.ALLOW_CIRCULAR_REDIRECTS, true );
-
-        // Some web servers don't allow the default user-agent sent by httpClient
-        httpClient.getParams().setParameter( HttpMethodParams.USER_AGENT,
-                                             "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.0)" );
-
-        if ( settings != null && settings.getActiveProxy() != null )
-        {
-            Proxy activeProxy = settings.getActiveProxy();
-
-            ProxyInfo proxyInfo = new ProxyInfo();
-            proxyInfo.setNonProxyHosts( activeProxy.getNonProxyHosts() );
-
-            if ( StringUtils.isNotEmpty( activeProxy.getHost() )
-                && !ProxyUtils.validateNonProxyHosts( proxyInfo, url.getHost() ) )
-            {
-                httpClient.getHostConfiguration().setProxy( activeProxy.getHost(), activeProxy.getPort() );
-
-                if ( StringUtils.isNotEmpty( activeProxy.getUsername() ) && activeProxy.getPassword() != null )
-                {
-                    Credentials credentials =
-                        new UsernamePasswordCredentials( activeProxy.getUsername(), activeProxy.getPassword() );
-
-                    httpClient.getState().setProxyCredentials( AuthScope.ANY, credentials );
-                }
-            }
-        }
+        HttpClient httpClient = createHttpClient( settings, url );
 
         GetMethod getMethod = new GetMethod( url.toString() );
         try
@@ -1717,5 +1690,179 @@ public class JavadocUtil
     {
         return collection == null || collection.isEmpty();
     }
-    
+
+    /**
+     * Validates an <code>URL</code> to point to a valid <code>package-list</code> resource.
+     *
+     * @param url The URL to validate.
+     * @param settings The user settings used to configure the connection to the URL or {@code null}.
+     * @param validateContent <code>true</code> to validate the content of the <code>package-list</code> resource;
+     * <code>false</code> to only check the existence of the <code>package-list</code> resource.
+     *
+     * @return <code>true</code> if <code>url</code> points to a valid <code>package-list</code> resource;
+     * <code>false</code> else.
+     *
+     * @throws IOException if reading the resource fails.
+     *
+     * @see #createHttpClient(org.apache.maven.settings.Settings, java.net.URL)
+     *
+     * @since 2.8
+     */
+    public static boolean isValidPackageList( URL url, Settings settings, boolean validateContent )
+        throws IOException
+    {
+        if ( url == null )
+        {
+            throw new NullPointerException( "url" );
+        }
+
+        BufferedReader reader = null;
+        GetMethod httpMethod = null;
+
+        try
+        {
+            if ( "file".equals( url.getProtocol() ) )
+            {
+                // Intentionally using the platform default encoding here since this is what Javadoc uses internally.
+                reader = new BufferedReader( new InputStreamReader( url.openStream() ) );
+            }
+            else
+            {
+                // http, https...
+                HttpClient httpClient = createHttpClient( settings, url );
+
+                httpMethod = new GetMethod( url.toString() );
+                int status;
+                try
+                {
+                    status = httpClient.executeMethod( httpMethod );
+                }
+                catch ( SocketTimeoutException e )
+                {
+                    // could be a sporadic failure, one more retry before we give up
+                    status = httpClient.executeMethod( httpMethod );
+                }
+
+                if ( status != HttpStatus.SC_OK )
+                {
+                    throw new IOException(
+                        "Unexpected HTTP status code " + status + " getting resource " + url.toExternalForm() + "." );
+
+                }
+
+                // Intentionally using the platform default encoding here since this is what Javadoc uses internally.
+                reader = new BufferedReader( new InputStreamReader( httpMethod.getResponseBodyAsStream() ) );
+            }
+
+            if ( validateContent )
+            {
+                String line;
+                while ( ( line = reader.readLine() ) != null )
+                {
+                    if ( !isValidPackageName( line ) )
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
+        finally
+        {
+            IOUtil.close( reader );
+
+            if ( httpMethod != null )
+            {
+                httpMethod.releaseConnection();
+            }
+        }
+    }
+
+    private static boolean isValidPackageName( String str )
+    {
+        if ( StringUtils.isEmpty( str ) )
+        {
+            return false;
+        }
+
+        int idx;
+        while ( ( idx = str.indexOf( '.' ) ) != -1 )
+        {
+            if ( !isValidClassName( str.substring( 0, idx ) ) )
+            {
+                return false;
+            }
+
+            str = str.substring( idx + 1 );
+        }
+
+        return isValidClassName( str );
+    }
+
+    private static boolean isValidClassName( String str )
+    {
+        if ( StringUtils.isEmpty( str ) || !Character.isJavaIdentifierStart( str.charAt( 0 ) ) )
+        {
+            return false;
+        }
+
+        for ( int i = str.length() - 1; i > 0; i-- )
+        {
+            if ( !Character.isJavaIdentifierPart( str.charAt( i ) ) )
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Creates a new {@code HttpClient} instance.
+     *
+     * @param settings The settings to use for setting up the client or {@code null}.
+     * @param url The {@code URL} to use for setting up the client or {@code null}.
+     *
+     * @return A new {@code HttpClient} instance.
+     *
+     * @see #DEFAULT_TIMEOUT
+     * @since 2.8
+     */
+    private static HttpClient createHttpClient( Settings settings, URL url )
+    {
+        HttpClient httpClient = new HttpClient( new MultiThreadedHttpConnectionManager() );
+        httpClient.getHttpConnectionManager().getParams().setConnectionTimeout( DEFAULT_TIMEOUT );
+        httpClient.getHttpConnectionManager().getParams().setSoTimeout( DEFAULT_TIMEOUT );
+        httpClient.getParams().setBooleanParameter( HttpClientParams.ALLOW_CIRCULAR_REDIRECTS, true );
+
+        // Some web servers don't allow the default user-agent sent by httpClient
+        httpClient.getParams().setParameter( HttpMethodParams.USER_AGENT,
+                                             "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.0)" );
+
+        if ( settings != null && settings.getActiveProxy() != null )
+        {
+            Proxy activeProxy = settings.getActiveProxy();
+
+            ProxyInfo proxyInfo = new ProxyInfo();
+            proxyInfo.setNonProxyHosts( activeProxy.getNonProxyHosts() );
+
+            if ( StringUtils.isNotEmpty( activeProxy.getHost() )
+                 && ( url == null || !ProxyUtils.validateNonProxyHosts( proxyInfo, url.getHost() ) ) )
+            {
+                httpClient.getHostConfiguration().setProxy( activeProxy.getHost(), activeProxy.getPort() );
+
+                if ( StringUtils.isNotEmpty( activeProxy.getUsername() ) && activeProxy.getPassword() != null )
+                {
+                    Credentials credentials =
+                        new UsernamePasswordCredentials( activeProxy.getUsername(), activeProxy.getPassword() );
+
+                    httpClient.getState().setProxyCredentials( AuthScope.ANY, credentials );
+                }
+            }
+        }
+
+        return httpClient;
+    }
+
 }
