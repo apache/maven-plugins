@@ -555,6 +555,15 @@ public abstract class AbstractJavadocMojo
      */
     private Properties javaApiLinks;
 
+    /**
+     * Flag controlling content validation of <code>package-list</code> resources. If set, the content of
+     * <code>package-list</code> resources will be validated.
+     *
+     * @parameter expression="${validateLinks}" default-value="false"
+     * @since 2.8
+     */
+    private boolean validateLinks;
+
     // ----------------------------------------------------------------------
     // Javadoc Options - all alphabetical
     // ----------------------------------------------------------------------
@@ -5504,7 +5513,15 @@ public abstract class AbstractJavadocMojo
                 linkUri = new File( dir, "package-list" ).toURI();
             }
 
-            JavadocUtil.fetchURL( settings, linkUri.toURL() );
+            if ( !JavadocUtil.isValidPackageList( linkUri.toURL(), settings, validateLinks ) )
+            {
+                if ( getLog().isErrorEnabled() )
+                {
+                    getLog().error( "Invalid link: " + link + "/package-list. Ignored it." );
+                }
+
+                return false;
+            }
 
             return true;
         }
