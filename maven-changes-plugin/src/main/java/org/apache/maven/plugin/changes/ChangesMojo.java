@@ -161,7 +161,7 @@ public class ChangesMojo
     /**
      * Format to use for publishDate. The value will be available with the following expression ${publishDate}
      *
-     * @see java.text.SimpleDateFormat
+     * @see SimpleDateFormat
      * @parameter default-value="yyyy-MM-dd"
      * @since 2.2
      */
@@ -170,7 +170,7 @@ public class ChangesMojo
    /**
     * Locale to use for publishDate when formatting
     *
-    * @see java.util.Locale
+    * @see Locale
     * @parameter default-value="en"
     * @since 2.2
     */
