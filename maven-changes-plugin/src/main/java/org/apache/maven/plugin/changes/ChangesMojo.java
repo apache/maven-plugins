@@ -26,6 +26,7 @@ import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
@@ -33,6 +34,7 @@ import java.util.ResourceBundle;
 
 import org.apache.commons.collections.map.CaseInsensitiveMap;
 import org.apache.maven.execution.MavenSession;
+import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.MavenReportException;
 import org.apache.maven.shared.filtering.MavenFileFilter;
 import org.apache.maven.shared.filtering.MavenFileFilterRequest;
@@ -54,6 +56,15 @@ import org.codehaus.plexus.util.xml.XmlStreamReader;
 public class ChangesMojo
     extends AbstractChangesReport
 {
+    /**
+     * A flag whether the report should also include changes from child modules. If set to <code>false</code>, only
+     * the changes from current project will be written to the report.
+     *
+     * @parameter default-value="false"
+     * @since 2.5
+     */
+    private boolean aggregated;
+
     /**
      * A flag whether the report should also include the dates of individual actions. If set to <code>false</code>, only
      * the dates of releases will be written to the report.
@@ -150,7 +161,7 @@ public class ChangesMojo
     /**
      * Format to use for publishDate. The value will be available with the following expression ${publishDate}
      *
-     * @see SimpleDateFormat
+     * @see java.text.SimpleDateFormat
      * @parameter default-value="yyyy-MM-dd"
      * @since 2.2
      */
@@ -159,7 +170,7 @@ public class ChangesMojo
    /**
     * Locale to use for publishDate when formatting
     *
-    * @see Locale
+    * @see java.util.Locale
     * @parameter default-value="en"
     * @since 2.2
     */
@@ -202,6 +213,8 @@ public class ChangesMojo
      */
     private File xmlPath;
 
+    private ReleaseUtils releaseUtils = new ReleaseUtils( getLog() );
+
     private CaseInsensitiveMap caseInsensitiveIssueLinkTemplatePerSystem;
 
     /* --------------------------------------------------------------------- */
@@ -216,55 +229,40 @@ public class ChangesMojo
     public void executeReport( Locale locale )
         throws MavenReportException
     {
+        Date now = new Date();
+        SimpleDateFormat simpleDateFormat =
+                new SimpleDateFormat(publishDateFormat, new Locale(publishDateLocale));
+        Properties additionalProperties = new Properties();
+        additionalProperties.put("publishDate", simpleDateFormat.format(now));
 
-        if ( !xmlPath.exists() )
+        ChangesXML changesXml = getChangesFromFile( xmlPath, project, additionalProperties);
+        if ( changesXml == null ) return;
+
+        if ( aggregated )
         {
-            getLog().warn( "changes.xml file " + xmlPath.getAbsolutePath() + " does not exist." );
-            return;
-        }
-        if ( filteringChanges )
-        {
-            if ( !filteredOutputDirectory.exists() )
+            final String basePath = project.getBasedir().getAbsolutePath();
+            final String absolutePath = xmlPath.getAbsolutePath();
+            if ( !absolutePath.startsWith( basePath ) )
             {
-                filteredOutputDirectory.mkdirs();
+                getLog().warn( "xmlPath should be within the project dir for aggregated changes report." );
+                return;
             }
-            XmlStreamReader xmlStreamReader = null;
-            try
+            final String relativePath = absolutePath.substring( basePath.length() );
+
+            List releaseList = changesXml.getReleaseList();
+            for ( Iterator iterator = project.getCollectedProjects().iterator(); iterator.hasNext(); )
             {
-                // so we get encoding from the file itself
-                xmlStreamReader = ReaderFactory.newXmlReader( xmlPath );
-                String encoding = xmlStreamReader.getEncoding();
-                File resultFile = new File( filteredOutputDirectory, "changes.xml" );
-                Date now = new Date();
-                SimpleDateFormat simpleDateFormat =
-                    new SimpleDateFormat( publishDateFormat, new Locale( publishDateLocale ) );
-                Properties additionalProperties = new Properties();
-                additionalProperties.put( "publishDate", simpleDateFormat.format( now ) );
-                MavenFileFilterRequest mavenFileFilterRequest =
-                    new MavenFileFilterRequest( xmlPath, resultFile, true, project, Collections.EMPTY_LIST, false,
-                                                encoding, session, additionalProperties );
-                mavenFileFilter.copyFile( mavenFileFilterRequest );
-                xmlPath = resultFile;
-            }
-            catch ( IOException e )
-            {
-                throw new MavenReportException( "Exception during filtering changes file : " + e.getMessage(), e );
-            }
-            catch ( MavenFilteringException e )
-            {
-                throw new MavenReportException( "Exception during filtering changes file : " + e.getMessage(), e );
-            }
-            finally
-            {
-                if ( xmlStreamReader != null )
+                final MavenProject childProject = (MavenProject) iterator.next();
+                final File changesFile = new File( childProject.getBasedir(), relativePath );
+                final ChangesXML childXml = getChangesFromFile( changesFile, childProject, additionalProperties );
+                if ( childXml != null )
                 {
-                    IOUtil.close( xmlStreamReader );
+                    releaseList = releaseUtils.mergeReleases( releaseList, childXml.getReleaseList() );
                 }
             }
-
+            changesXml.setReleaseList( releaseList );
         }
 
-        ChangesXML changesXml = new ChangesXML( xmlPath, getLog() );
         ChangesReportGenerator report = new ChangesReportGenerator( changesXml.getReleaseList() );
 
         report.setAuthor( changesXml.getAuthor() );
@@ -341,6 +339,65 @@ public class ChangesMojo
     /* --------------------------------------------------------------------- */
     /* Private methods                                                       */
     /* --------------------------------------------------------------------- */
+
+    /**
+     * Parses specified changes.xml file. It also makes filtering if needed. If specified file doesn't exist
+     * it will log warning and return <code>null</code>.
+     *
+     * @param changesXml changes xml file to parse
+     * @param project maven project to parse changes for
+     * @param additionalProperties additional properties used for filtering
+     * @return parsed <code>ChangesXML</code> instance or null if file doesn't exist
+     * @throws MavenReportException if any errors occurs while parsing
+     */
+    private ChangesXML getChangesFromFile( File changesXml, MavenProject project, Properties additionalProperties )
+        throws MavenReportException
+    {
+        if ( !changesXml.exists() )
+        {
+            getLog().warn( "changes.xml file " + changesXml.getAbsolutePath() + " does not exist." );
+            return null;
+        }
+
+        if ( filteringChanges )
+        {
+            if ( !filteredOutputDirectory.exists() )
+            {
+                filteredOutputDirectory.mkdirs();
+            }
+            XmlStreamReader xmlStreamReader = null;
+            try
+            {
+                // so we get encoding from the file itself
+                xmlStreamReader = ReaderFactory.newXmlReader( changesXml );
+                String encoding = xmlStreamReader.getEncoding();
+                File resultFile = new File( filteredOutputDirectory, project.getGroupId() + "." + project.getArtifactId() + "-changes.xml" );
+
+                final MavenFileFilterRequest mavenFileFilterRequest =
+                        new MavenFileFilterRequest( changesXml, resultFile, true, project, Collections.EMPTY_LIST, false,
+                                encoding, session, additionalProperties );
+                mavenFileFilter.copyFile( mavenFileFilterRequest );
+                changesXml = resultFile;
+            }
+            catch ( IOException e )
+            {
+                throw new MavenReportException( "Exception during filtering changes file : " + e.getMessage(), e );
+            }
+            catch ( MavenFilteringException e )
+            {
+                throw new MavenReportException( "Exception during filtering changes file : " + e.getMessage(), e );
+            }
+            finally
+            {
+                if ( xmlStreamReader != null )
+                {
+                    IOUtil.close( xmlStreamReader );
+                }
+            }
+
+        }
+        return new ChangesXML( changesXml, getLog() );
+    }
 
     /**
      * Add the issue link template for the given issue management system,
