@@ -238,6 +238,20 @@ under the License.
     </dependency>
   </dependencies>
 
+  <!-- @todo Temporary until plexus-archiver 1.3 is released -->
+  <repositories>
+    <repository>
+      <id>Plexus Snapshots</id>
+      <url>https://oss.sonatype.org/content/repositories/plexus-snapshots/</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+    </repository>
+  </repositories>
+
   <build>
     <pluginManagement>
       <plugins>
