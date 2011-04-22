@@ -167,6 +167,26 @@ under the License.
             }
           ]]></code>
         </codeSegment>
+        <codeSegment>
+          <version>1.0.0</version>
+          <code><![CDATA[
+              private final java.util.List components = new java.util.ArrayList();
+
+              public void addComponent(String name, Release release)
+              {
+                  final Component component = new Component();
+                  component.setName(name);
+                  component.setDescription(release.getDescription());
+                  component.setActions(release.getActions());
+                  components.add(component);
+              }
+
+              public java.util.List getComponents()
+              {
+                  return components;
+              }
+          ]]></code>
+        </codeSegment>
       </codeSegments>
 
     </class>
@@ -192,6 +212,40 @@ under the License.
           <description>
             The page author email.
           </description>
+        </field>
+      </fields>
+    </class>
+    <class>
+      <name>Component</name>
+      <version>1.0.0</version>
+      <description>
+        A component as a part of current release.
+      </description>
+      <fields>
+        <field>
+          <name>name</name>
+          <version>1.0.0</version>
+          <type>String</type>
+          <description>
+            The component name.
+          </description>
+        </field>
+        <field>
+          <name>description</name>
+          <version>1.0.0</version>
+          <type>String</type>
+          <description>
+            The component description.
+          </description>
+        </field>
+        <field>
+          <name>actions</name>
+          <version>1.0.0</version>
+          <association>
+            <type>Action</type>
+            <multiplicity>*</multiplicity>
+          </association>
+          <description>The list of actions for this component.</description>
         </field>
       </fields>
     </class>

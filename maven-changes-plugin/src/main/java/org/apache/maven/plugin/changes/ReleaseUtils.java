@@ -182,4 +182,57 @@ public class ReleaseUtils
         }
         return mergedReleases;
     }
+
+    /**
+     * Merge releases from parent component with releases from child component.
+     * If a release is found in both components, i.e. they have the same version,
+     * their issues are merged into one (parent) release with component marker
+     * for component issues.
+     *
+     * @param releases Releases from the parent component
+     * @param componentName child component name (retrieved from project name)
+     * @param componentReleases Releases from the child component
+     * @return A list containing the merged releases
+     */
+    public List mergeReleases( final List releases, final String componentName, final List componentReleases ) {
+        if ( releases == null && componentReleases == null )
+        {
+            return Collections.EMPTY_LIST;
+        }
+        if ( componentReleases == null )
+        {
+            return releases;
+        }
+
+        final List mergedReleases = new ArrayList();
+
+        if ( releases != null )
+        {
+            for ( Iterator iterator = releases.iterator(); iterator.hasNext(); )
+            {
+                final Release release = (Release) iterator.next();
+                final Release componentRelease = getRelease( componentReleases, release.getVersion() );
+                if ( componentRelease != null ) {
+                    release.addComponent( componentName, componentRelease );
+                }
+                mergedReleases.add( release );
+            }
+        }
+
+        for ( Iterator iterator = componentReleases.iterator(); iterator.hasNext(); )
+        {
+            final Release release = (Release) iterator.next();
+            final Release mergedRelease = getRelease( mergedReleases, release.getVersion() );
+            if ( mergedRelease == null )
+            {
+                final Release componentRelease = new Release();
+                componentRelease.setVersion( release.getVersion() );
+                componentRelease.setDateRelease( release.getDateRelease() );
+                componentRelease.addComponent( componentName, release );
+                mergedReleases.add( componentRelease );
+            }
+        }
+
+        return mergedReleases;
+    }
 }

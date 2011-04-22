@@ -257,7 +257,7 @@ public class ChangesMojo
                 final ChangesXML childXml = getChangesFromFile( changesFile, childProject, additionalProperties );
                 if ( childXml != null )
                 {
-                    releaseList = releaseUtils.mergeReleases( releaseList, childXml.getReleaseList() );
+                    releaseList = releaseUtils.mergeReleases( releaseList, childProject.getName(), childXml.getReleaseList() );
                 }
             }
             changesXml.setReleaseList( releaseList );
