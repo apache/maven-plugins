@@ -212,9 +212,9 @@ public class ChangesReportGenerator extends AbstractIssuesReportGenerator
     {
         sinkBeginReport( sink, bundle );
 
-        constructReleaseHistory(sink, bundle, releaseList);
+        constructReleaseHistory( sink, bundle, releaseList );
 
-        constructReleases(sink, bundle, releaseList);
+        constructReleases( sink, bundle, releaseList );
 
         sinkEndReport( sink );
     }
@@ -230,7 +230,7 @@ public class ChangesReportGenerator extends AbstractIssuesReportGenerator
     {
         sink.tableRow();
 
-        sinkShowTypeIcon(sink, action.getType());
+        sinkShowTypeIcon( sink, action.getType() );
 
         sink.tableCell();
 
@@ -312,7 +312,7 @@ public class ChangesReportGenerator extends AbstractIssuesReportGenerator
         // Only add the dueTo specified as attributes, if it has either a dueTo or a dueToEmail
         if ( StringUtils.isNotEmpty( action.getDueTo() ) || StringUtils.isNotEmpty( action.getDueToEmail() ) )
         {
-            namesEmailMap.put(action.getDueTo(), action.getDueToEmail());
+            namesEmailMap.put( action.getDueTo(), action.getDueToEmail() );
         }
 
         for ( Iterator iterator = dueTos.iterator(); iterator.hasNext(); )
@@ -349,7 +349,7 @@ public class ChangesReportGenerator extends AbstractIssuesReportGenerator
             }
         }
 
-        sink.text(".");
+        sink.text( "." );
     }
 
     /**
@@ -408,7 +408,7 @@ public class ChangesReportGenerator extends AbstractIssuesReportGenerator
     {
         if ( StringUtils.isNotEmpty( issue ) )
         {
-            sink.text(issue);
+            sink.text( issue );
 
             if ( !fixes.isEmpty() )
             {
@@ -423,7 +423,7 @@ public class ChangesReportGenerator extends AbstractIssuesReportGenerator
             String currentIssueId = fixedIssue.getIssue();
             if ( StringUtils.isNotEmpty( currentIssueId ) )
             {
-                sink.text(currentIssueId);
+                sink.text( currentIssueId );
             }
 
             if ( iterator.hasNext() )
@@ -492,7 +492,7 @@ public class ChangesReportGenerator extends AbstractIssuesReportGenerator
     {
         for ( int idx = 0; idx < releaseList.size(); idx++ )
         {
-            Release release = (Release) releaseList.get(idx);
+            Release release = (Release) releaseList.get( idx );
             constructRelease( sink, bundle, release );
         }
     }
@@ -510,13 +510,13 @@ public class ChangesReportGenerator extends AbstractIssuesReportGenerator
 
         final String date = ( release.getDateRelease() == null ) ? "" : " - " + release.getDateRelease();
 
-        sinkSectionTitle2Anchor(sink, bundle.getString("report.changes.label.release") + " "
-                + release.getVersion() + date, release.getVersion());
+        sinkSectionTitle2Anchor( sink, bundle.getString("report.changes.label.release") + " "
+                + release.getVersion() + date, release.getVersion() );
 
         if ( isReleaseEmpty( release ) )
         {
             sink.paragraph();
-            sink.text( bundle.getString("report.changes.text.no.changes") );
+            sink.text( bundle.getString( "report.changes.text.no.changes" ) );
             sink.paragraph_();
         }
         else
@@ -526,20 +526,20 @@ public class ChangesReportGenerator extends AbstractIssuesReportGenerator
             sink.tableRow();
             sinkHeader( sink, bundle.getString( "report.issues.label.type" ) );
             sinkHeader( sink, bundle.getString( "report.issues.label.summary" ) );
-            sinkHeader(sink, bundle.getString("report.issues.label.assignee"));
+            sinkHeader( sink, bundle.getString( "report.issues.label.assignee" ) );
             if ( this.isAddActionDate() )
             {
                 sinkHeader( sink, bundle.getString( "report.issues.label.updated" ) );
             }
             sink.tableRow_();
 
-            for (Iterator iterator = release.getActions().iterator(); iterator.hasNext();)
+            for ( Iterator iterator = release.getActions().iterator(); iterator.hasNext(); )
             {
                 Action action = (Action) iterator.next();
-                constructAction(sink, bundle, action);
+                constructAction( sink, bundle, action );
             }
 
-            for (Iterator iterator = release.getComponents().iterator(); iterator.hasNext();)
+            for ( Iterator iterator = release.getComponents().iterator(); iterator.hasNext(); )
             {
                 Component component = (Component) iterator.next();
                 constructComponent( sink, bundle, component );
@@ -569,7 +569,7 @@ public class ChangesReportGenerator extends AbstractIssuesReportGenerator
             sink.tableHeaderCell_();
 
             sink.tableHeaderCell();
-            sink.text(component.getName());
+            sink.text( component.getName() );
             sink.tableHeaderCell_();
 
             sink.tableHeaderCell();
@@ -597,13 +597,14 @@ public class ChangesReportGenerator extends AbstractIssuesReportGenerator
      * @param release Release to check
      * @return <code>true</code> if release doesn't contain any issues, <code>false</code> otherwise
      */
-    private boolean isReleaseEmpty( Release release ) {
+    private boolean isReleaseEmpty( Release release )
+    {
         if ( !release.getActions().isEmpty() )
         {
             return false;
         }
 
-        for (Iterator iterator = release.getComponents().iterator(); iterator.hasNext();)
+        for ( Iterator iterator = release.getComponents().iterator(); iterator.hasNext(); )
         {
             Component component = (Component) iterator.next();
             if ( !component.getActions().isEmpty() )
@@ -635,5 +636,4 @@ public class ChangesReportGenerator extends AbstractIssuesReportGenerator
 
         return parseLink;
     }
-
 }
