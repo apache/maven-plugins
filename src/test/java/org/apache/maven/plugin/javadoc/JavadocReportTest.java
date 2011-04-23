@@ -762,10 +762,6 @@ public class JavadocReportTest
     public void testProxy()
         throws Exception
     {
-        boolean isMavenSiteOnline =
-            JavadocUtilTest.isWebSiteOnline( null, getContainer().getLogger(),
-                                             "http://maven.apache.org/shared/maven-filtering/apidocs/package-list" );
-
         Settings settings = new Settings();
         Proxy proxy = new Proxy();
 
@@ -799,11 +795,8 @@ public class JavadocReportTest
         File options = new File( getBasedir(), "target/test/unit/proxy-test/target/site/apidocs/options" );
         assertTrue( FileUtils.fileExists( options.getAbsolutePath() ) );
         String optionsContent = readFile( options );
-        if ( isMavenSiteOnline )
-        {
-            // NO -link http://maven.apache.org/shared/maven-filtering/apidocs/package-list
-            assertFalse( optionsContent.contains( "-link 'http://maven.apache.org/shared/maven-filtering/apidocs'" ) );
-        }
+        // NO -link http://maven.apache.org/shared/maven-filtering/apidocs/package-list
+        assertFalse( optionsContent.contains( "-link 'http://maven.apache.org/shared/maven-filtering/apidocs'" ) );
 
         // real proxy
         ProxyServer proxyServer = null;
@@ -832,18 +825,8 @@ public class JavadocReportTest
             assertTrue( readed.contains( "-J-Dhttp.proxyPort=" + proxyServer.getPort() ) );
 
             optionsContent = readFile( options );
-            isMavenSiteOnline =
-                JavadocUtilTest.isWebSiteOnline( settings, getContainer().getLogger(),
-                                                 "http://maven.apache.org/shared/maven-filtering/apidocs/package-list" );
-            if ( isMavenSiteOnline )
-            {
-                // -link http://maven.apache.org/shared/maven-filtering/apidocs/package-list
-                assertTrue( optionsContent.contains( "-link 'http://maven.apache.org/shared/maven-filtering/apidocs'" ) );
-            }
-            else
-            {
-                getContainer().getLogger().warn( "unable to reach maven.apache.org: link detection test unavailable." );
-            }
+            // -link http://maven.apache.org/shared/maven-filtering/apidocs/package-list
+            assertTrue( optionsContent.contains( "-link 'http://maven.apache.org/shared/maven-filtering/apidocs'" ) );
         }
         finally
         {
@@ -884,11 +867,8 @@ public class JavadocReportTest
             assertTrue( readed.contains( "-J-Dhttp.proxyPassword=\\\"bar\\\"" ) );
 
             optionsContent = readFile( options );
-            if ( isMavenSiteOnline )
-            {
-                // -link http://maven.apache.org/shared/maven-filtering/apidocs/package-list
-                assertTrue( optionsContent.contains( "-link 'http://maven.apache.org/shared/maven-filtering/apidocs'" ) );
-            }
+            // -link http://maven.apache.org/shared/maven-filtering/apidocs/package-list
+            assertTrue( optionsContent.contains( "-link 'http://maven.apache.org/shared/maven-filtering/apidocs'" ) );
         }
         finally
         {
