@@ -233,8 +233,8 @@ public class JavadocReportTest
         File apidocs = new File( getBasedir(), "target/test/unit/subpackages-test/target/site/apidocs" );
 
         // check the excluded packages
-        assertTrue( !new File( apidocs, "subpackages/test/excluded" ).exists() );
-        assertTrue( !new File( apidocs, "subpackages/test/included/exclude" ).exists() );
+        assertFalse( new File( apidocs, "subpackages/test/excluded" ).exists() );
+        assertFalse( new File( apidocs, "subpackages/test/included/exclude" ).exists() );
 
         // check if the classes in the specified subpackages were included
         assertTrue( new File( apidocs, "subpackages/test/App.html" ).exists() );
@@ -261,8 +261,8 @@ public class JavadocReportTest
         assertTrue( new File( apidocs, "doc-files" ).exists() );
         assertTrue( new File( apidocs, "doc-files/included-dir1/sample-included1.gif" ).exists() );
         assertTrue( new File( apidocs, "doc-files/included-dir2/sample-included2.gif" ).exists() );
-        assertTrue( !new File( apidocs, "doc-files/excluded-dir1" ).exists() );
-        assertTrue( !new File( apidocs, "doc-files/excluded-dir2" ).exists() );
+        assertFalse( new File( apidocs, "doc-files/excluded-dir1" ).exists() );
+        assertFalse( new File( apidocs, "doc-files/excluded-dir2" ).exists() );
 
         testPom = new File( unit, "docfiles-with-java-test/docfiles-with-java-test-plugin-config.xml" );
         mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
@@ -285,22 +285,22 @@ public class JavadocReportTest
         File apidocs = new File( getBasedir(), "target/test/unit/custom-configuration/target/site/apidocs" );
 
         // check if there is a tree page generated (notree == true)
-        assertTrue( !new File( apidocs, "overview-tree.html" ).exists() );
-        assertTrue( !new File( apidocs, "custom/configuration/package-tree.html" ).exists() );
+        assertFalse( new File( apidocs, "overview-tree.html" ).exists() );
+        assertFalse( new File( apidocs, "custom/configuration/package-tree.html" ).exists() );
 
         // check if the main index page was generated (noindex == true)
-        assertTrue( !new File( apidocs, "index-all.html" ).exists() );
+        assertFalse( new File( apidocs, "index-all.html" ).exists() );
 
         // check if the deprecated list and the deprecated api were generated (nodeprecated == true)
         // @todo Fix: the class-use of the deprecated api is still created eventhough the deprecated api of that class
         // is no longer generated
-        assertTrue( !new File( apidocs, "deprecated-list.html" ).exists() );
-        assertTrue( !new File( apidocs, "custom/configuration/App.html" ).exists() );
+        assertFalse( new File( apidocs, "deprecated-list.html" ).exists() );
+        assertFalse( new File( apidocs, "custom/configuration/App.html" ).exists() );
 
         // read the contents of the html files based on some of the parameter values
         // author == false
         String str = readFile( new File( apidocs, "custom/configuration/AppSample.html" ) );
-        assertTrue( !str.toLowerCase().contains( "author" ) );
+        assertFalse( str.toLowerCase().contains( "author" ) );
 
         // bottom
         assertTrue( str.toUpperCase().contains( "SAMPLE BOTTOM CONTENT" ) );
@@ -315,12 +315,12 @@ public class JavadocReportTest
         assertTrue( str.toUpperCase().contains( "MAVEN JAVADOC PLUGIN TEST FOOTER" ) );
 
         // nohelp == true
-        assertTrue( !str.toUpperCase().contains( "/HELP-DOC.HTML" ) );
+        assertFalse( str.toUpperCase().contains( "/HELP-DOC.HTML" ) );
 
         // check the wildcard (*) package exclusions -- excludePackageNames parameter
         assertTrue( new File( apidocs, "custom/configuration/exclude1/Exclude1App.html" ).exists() );
-        assertTrue( !new File( apidocs, "custom/configuration/exclude1/subexclude/SubexcludeApp.html" ).exists() );
-        assertTrue( !new File( apidocs, "custom/configuration/exclude2/Exclude2App.html" ).exists() );
+        assertFalse( new File( apidocs, "custom/configuration/exclude1/subexclude/SubexcludeApp.html" ).exists() );
+        assertFalse( new File( apidocs, "custom/configuration/exclude2/Exclude2App.html" ).exists() );
 
         File options = new File( apidocs, "options" );
         assertTrue( options.isFile() );
@@ -1056,7 +1056,7 @@ public class JavadocReportTest
         assertTrue( content.contains( "/* Javadoc style sheet */" ) );
 
         String optionsContent = readFile( options );
-        assertTrue( !optionsContent.contains( "-stylesheetfile" ) );
+        assertFalse( optionsContent.contains( "-stylesheetfile" ) );
 
         // stylesheet == maven
         setVariableValueToObject( mojo, "stylesheet", "maven" );
