@@ -69,9 +69,6 @@ under the License.
           <tags/>
           <use>true</use>
           <version>true</version>
-          <links>
-             <param>http://java.sun.com/j2se/1.4.2/docs/api</param>
-          </links>
           <debug>true</debug>
           <failOnError>true</failOnError>
         </configuration>

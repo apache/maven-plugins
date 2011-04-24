@@ -65,9 +65,6 @@ under the License.
           <use>true</use>
           <version>true</version>
           <windowtitle>Maven Javadoc Plugin Javadoc Jar Invalid Destdir Test 1.0-SNAPSHOT API</windowtitle>
-          <links>
-             <param>http://java.sun.com/j2se/1.4.2/docs/api</param>
-          </links>
           <debug>true</debug>
           <failOnError>true</failOnError>
         </configuration>
