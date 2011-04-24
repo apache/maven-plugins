@@ -34,7 +34,6 @@ import org.apache.maven.plugin.javadoc.ProxyServer.AuthAsyncProxyServlet;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Settings;
-import org.apache.webdav.lib.properties.GetLastModifiedProperty;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
@@ -234,8 +233,8 @@ public class JavadocReportTest
         File apidocs = new File( getBasedir(), "target/test/unit/subpackages-test/target/site/apidocs" );
 
         // check the excluded packages
-        assertTrue( !new File( apidocs, "subpackages/test/excluded" ).exists() );
-        assertTrue( !new File( apidocs, "subpackages/test/included/exclude" ).exists() );
+        assertFalse( new File( apidocs, "subpackages/test/excluded" ).exists() );
+        assertFalse( new File( apidocs, "subpackages/test/included/exclude" ).exists() );
 
         // check if the classes in the specified subpackages were included
         assertTrue( new File( apidocs, "subpackages/test/App.html" ).exists() );
@@ -262,8 +261,8 @@ public class JavadocReportTest
         assertTrue( new File( apidocs, "doc-files" ).exists() );
         assertTrue( new File( apidocs, "doc-files/included-dir1/sample-included1.gif" ).exists() );
         assertTrue( new File( apidocs, "doc-files/included-dir2/sample-included2.gif" ).exists() );
-        assertTrue( !new File( apidocs, "doc-files/excluded-dir1" ).exists() );
-        assertTrue( !new File( apidocs, "doc-files/excluded-dir2" ).exists() );
+        assertFalse( new File( apidocs, "doc-files/excluded-dir1" ).exists() );
+        assertFalse( new File( apidocs, "doc-files/excluded-dir2" ).exists() );
 
         testPom = new File( unit, "docfiles-with-java-test/docfiles-with-java-test-plugin-config.xml" );
         mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
@@ -286,22 +285,22 @@ public class JavadocReportTest
         File apidocs = new File( getBasedir(), "target/test/unit/custom-configuration/target/site/apidocs" );
 
         // check if there is a tree page generated (notree == true)
-        assertTrue( !new File( apidocs, "overview-tree.html" ).exists() );
-        assertTrue( !new File( apidocs, "custom/configuration/package-tree.html" ).exists() );
+        assertFalse( new File( apidocs, "overview-tree.html" ).exists() );
+        assertFalse( new File( apidocs, "custom/configuration/package-tree.html" ).exists() );
 
         // check if the main index page was generated (noindex == true)
-        assertTrue( !new File( apidocs, "index-all.html" ).exists() );
+        assertFalse( new File( apidocs, "index-all.html" ).exists() );
 
         // check if the deprecated list and the deprecated api were generated (nodeprecated == true)
         // @todo Fix: the class-use of the deprecated api is still created eventhough the deprecated api of that class
         // is no longer generated
-        assertTrue( !new File( apidocs, "deprecated-list.html" ).exists() );
-        assertTrue( !new File( apidocs, "custom/configuration/App.html" ).exists() );
+        assertFalse( new File( apidocs, "deprecated-list.html" ).exists() );
+        assertFalse( new File( apidocs, "custom/configuration/App.html" ).exists() );
 
         // read the contents of the html files based on some of the parameter values
         // author == false
         String str = readFile( new File( apidocs, "custom/configuration/AppSample.html" ) );
-        assertTrue( !str.toLowerCase().contains( "author" ) );
+        assertFalse( str.toLowerCase().contains( "author" ) );
 
         // bottom
         assertTrue( str.toUpperCase().contains( "SAMPLE BOTTOM CONTENT" ) );
@@ -316,12 +315,12 @@ public class JavadocReportTest
         assertTrue( str.toUpperCase().contains( "MAVEN JAVADOC PLUGIN TEST FOOTER" ) );
 
         // nohelp == true
-        assertTrue( !str.toUpperCase().contains( "/HELP-DOC.HTML" ) );
+        assertFalse( str.toUpperCase().contains( "/HELP-DOC.HTML" ) );
 
         // check the wildcard (*) package exclusions -- excludePackageNames parameter
         assertTrue( new File( apidocs, "custom/configuration/exclude1/Exclude1App.html" ).exists() );
-        assertTrue( !new File( apidocs, "custom/configuration/exclude1/subexclude/SubexcludeApp.html" ).exists() );
-        assertTrue( !new File( apidocs, "custom/configuration/exclude2/Exclude2App.html" ).exists() );
+        assertFalse( new File( apidocs, "custom/configuration/exclude1/subexclude/SubexcludeApp.html" ).exists() );
+        assertFalse( new File( apidocs, "custom/configuration/exclude2/Exclude2App.html" ).exists() );
 
         File options = new File( apidocs, "options" );
         assertTrue( options.isFile() );
@@ -338,8 +337,8 @@ public class JavadocReportTest
         }
 
         assertTrue( contentOptions != null );
-        assertTrue( contentOptions.indexOf( "-link" ) != -1 );
-        assertTrue( contentOptions.indexOf( "http://java.sun.com/j2se/" ) != -1 );
+        assertTrue( contentOptions.contains( "-link" ) );
+        assertTrue( contentOptions.contains( "http://java.sun.com/j2se/" ) );
     }
 
     /**
@@ -365,7 +364,7 @@ public class JavadocReportTest
         File optionsFile = new File( mojo.getOutputDirectory(), "options" );
         assertTrue( optionsFile.exists() );
         String options = readFile( optionsFile );
-        assertTrue( options.indexOf( "/target/local-repo/umlgraph/UMLGraph/2.1/UMLGraph-2.1.jar" ) != -1 );
+        assertTrue( options.contains( "/target/local-repo/umlgraph/UMLGraph/2.1/UMLGraph-2.1.jar" ) );
 
         // ----------------------------------------------------------------------
         // doclet-path: check if the file generated by UmlGraph exists and if
@@ -382,8 +381,8 @@ public class JavadocReportTest
         optionsFile = new File( mojo.getOutputDirectory(), "options" );
         assertTrue( optionsFile.exists() );
         options = readFile( optionsFile );
-        assertTrue( options.indexOf( "/target/local-repo/umlgraph/UMLGraph/2.1/UMLGraph-2.1.jar" ) != -1 );
-        assertTrue( options.indexOf( "/target/local-repo/umlgraph/UMLGraph-bis/2.1/UMLGraph-bis-2.1.jar" ) != -1 );
+        assertTrue( options.contains( "/target/local-repo/umlgraph/UMLGraph/2.1/UMLGraph-2.1.jar" ) );
+        assertTrue( options.contains( "/target/local-repo/umlgraph/UMLGraph-bis/2.1/UMLGraph-bis-2.1.jar" ) );
     }
 
     /**
@@ -492,7 +491,7 @@ public class JavadocReportTest
         File appFile = new File( apidocs, "taglet/test/App.html" );
         assertTrue( appFile.exists() );
         String appString = readFile( appFile );
-        assertTrue( appString.indexOf( "<b>To Do:</b>" ) != -1 );
+        assertTrue( appString.contains( "<b>To Do:</b>" ) );
     }
 
     /**
@@ -586,13 +585,13 @@ public class JavadocReportTest
         app = new File( apidocs, "resources/test/App.html" );
         assertTrue( app.exists() );
         content = readFile( app );
-        assertTrue( content.indexOf( "<img src=\"doc-files/maven-feather.png\" alt=\"Maven\"/>" ) != -1 );
+        assertTrue( content.contains( "<img src=\"doc-files/maven-feather.png\" alt=\"Maven\"/>" ) );
         assertFalse( new File( apidocs, "resources/test/doc-files/maven-feather.png" ).exists() );
 
         app2 = new File( apidocs, "resources/test2/App2.html" );
         assertTrue( app2.exists() );
         content = readFile( app2 );
-        assertTrue( content.indexOf( "<img src=\"doc-files/maven-feather.png\" alt=\"Maven\"/>" ) != -1 );
+        assertTrue( content.contains( "<img src=\"doc-files/maven-feather.png\" alt=\"Maven\"/>" ) );
         assertTrue( new File( apidocs, "resources/test2/doc-files/maven-feather.png" ).exists() );
     }
 
@@ -631,7 +630,7 @@ public class JavadocReportTest
         File app = new File( apidocs, "resources/test/App.html" );
         assertTrue( app.exists() );
         readed = readFile( app );
-        assertTrue( readed.indexOf( "<img src=\"doc-files/maven-feather.png\" alt=\"Maven\"/>" ) != -1 );
+        assertTrue( readed.contains( "<img src=\"doc-files/maven-feather.png\" alt=\"Maven\"/>" ) );
         assertTrue( new File( apidocs, "resources/test/doc-files/maven-feather.png" ).exists() );
     }
 
@@ -665,11 +664,11 @@ public class JavadocReportTest
         File app = new File( getBasedir(), "target/test/unit/tag-test/target/site/apidocs/tag/test/App.html" );
         assertTrue( FileUtils.fileExists( app.getAbsolutePath() ) );
         String readed = readFile( app );
-        assertTrue( readed.indexOf( "<B>To do something:</B>" ) != -1 );
-        assertTrue( readed.indexOf( "<B>Generator Class:</B>" ) != -1 );
-        assertTrue( readed.indexOf( "<B>Version:</B>" ) != -1 );
-        assertTrue( readed.indexOf( "<DT><B>Version:</B></DT>" + LINE_SEPARATOR + "  <DD>1.0</DD>" + LINE_SEPARATOR
-            + "</DL>" ) != -1 );
+        assertTrue( readed.contains( "<B>To do something:</B>" ) );
+        assertTrue( readed.contains( "<B>Generator Class:</B>" ) );
+        assertTrue( readed.contains( "<B>Version:</B>" ) );
+        assertTrue( readed.contains( "<DT><B>Version:</B></DT>" + LINE_SEPARATOR + "  <DD>1.0</DD>" + LINE_SEPARATOR
+            + "</DL>" ) );
     }
 
     /**
@@ -743,16 +742,16 @@ public class JavadocReportTest
         File overviewSummary = new File( apidocs, "overview-summary.html" );
         assertTrue( overviewSummary.exists() );
         String content = readFile( overviewSummary );
-        assertTrue( content.indexOf( "Top - Copyright &#169; All rights reserved." ) != -1 );
-        assertTrue( content.indexOf( "Header - Copyright &#169; All rights reserved." ) != -1 );
-        assertTrue( content.indexOf( "Footer - Copyright &#169; All rights reserved." ) != -1 );
+        assertTrue( content.contains( "Top - Copyright &#169; All rights reserved." ) );
+        assertTrue( content.contains( "Header - Copyright &#169; All rights reserved." ) );
+        assertTrue( content.contains( "Footer - Copyright &#169; All rights reserved." ) );
 
         File packageSummary = new File( apidocs, "jdk6/test/package-summary.html" );
         assertTrue( packageSummary.exists() );
         content = readFile( packageSummary );
-        assertTrue( content.indexOf( "Top - Copyright &#169; All rights reserved." ) != -1 );
-        assertTrue( content.indexOf( "Header - Copyright &#169; All rights reserved." ) != -1 );
-        assertTrue( content.indexOf( "Footer - Copyright &#169; All rights reserved." ) != -1 );
+        assertTrue( content.contains( "Top - Copyright &#169; All rights reserved." ) );
+        assertTrue( content.contains( "Header - Copyright &#169; All rights reserved." ) );
+        assertTrue( content.contains( "Footer - Copyright &#169; All rights reserved." ) );
     }
 
     /**
@@ -763,10 +762,6 @@ public class JavadocReportTest
     public void testProxy()
         throws Exception
     {
-        boolean isMavenSiteOnline =
-            JavadocUtilTest.isWebSiteOnline( null, getContainer().getLogger(),
-                                             "http://maven.apache.org/shared/maven-filtering/apidocs/package-list" );
-
         Settings settings = new Settings();
         Proxy proxy = new Proxy();
 
@@ -790,21 +785,18 @@ public class JavadocReportTest
         File commandLine = new File( getBasedir(), "target/test/unit/proxy-test/target/site/apidocs/javadoc." + ( SystemUtils.IS_OS_WINDOWS ? "bat" : "sh" ) );
         assertTrue( FileUtils.fileExists( commandLine.getAbsolutePath() ) );
         String readed = readFile( commandLine );
-        assertTrue( readed.indexOf( "-J-Dhttp.proxySet=true" ) != -1 );
-        assertTrue( readed.indexOf( "-J-Dhttp.proxyHost=127.0.0.1" ) != -1 );
-        assertTrue( readed.indexOf( "-J-Dhttp.proxyPort=80" ) != -1 );
-        assertTrue( readed.indexOf( "-J-Dhttp.proxyUser=\\\"toto\\\"" ) != -1 );
-        assertTrue( readed.indexOf( "-J-Dhttp.proxyPassword=\\\"toto\\\"" ) != -1 );
-        assertTrue( readed.indexOf( "-J-Dhttp.nonProxyHosts=\\\"www.google.com|*.somewhere.com\\\"" ) != -1 );
+        assertTrue( readed.contains( "-J-Dhttp.proxySet=true" ) );
+        assertTrue( readed.contains( "-J-Dhttp.proxyHost=127.0.0.1" ) );
+        assertTrue( readed.contains( "-J-Dhttp.proxyPort=80" ) );
+        assertTrue( readed.contains( "-J-Dhttp.proxyUser=\\\"toto\\\"" ) );
+        assertTrue( readed.contains( "-J-Dhttp.proxyPassword=\\\"toto\\\"" ) );
+        assertTrue( readed.contains( "-J-Dhttp.nonProxyHosts=\\\"www.google.com|*.somewhere.com\\\"" ) );
 
         File options = new File( getBasedir(), "target/test/unit/proxy-test/target/site/apidocs/options" );
         assertTrue( FileUtils.fileExists( options.getAbsolutePath() ) );
         String optionsContent = readFile( options );
-        if ( isMavenSiteOnline )
-        {
-            // NO -link http://maven.apache.org/shared/maven-filtering/apidocs/package-list
-            assertTrue( !optionsContent.contains( "-link 'http://maven.apache.org/shared/maven-filtering/apidocs'" ) );
-        }
+        // NO -link http://maven.apache.org/shared/maven-filtering/apidocs/package-list
+        assertFalse( optionsContent.contains( "-link 'http://maven.apache.org/shared/maven-filtering/apidocs'" ) );
 
         // real proxy
         ProxyServer proxyServer = null;
@@ -828,28 +820,13 @@ public class JavadocReportTest
             setVariableValueToObject( mojo, "remoteRepositories", mojo.project.getRemoteArtifactRepositories() );
             mojo.execute();
             readed = readFile( commandLine );
-            assertTrue( readed.indexOf( "-J-Dhttp.proxySet=true" ) != -1 );
-            assertTrue( readed.indexOf( "-J-Dhttp.proxyHost=" + proxyServer.getHostName() ) != -1 );
-            assertTrue( readed.indexOf( "-J-Dhttp.proxyPort=" + proxyServer.getPort() ) != -1 );
+            assertTrue( readed.contains( "-J-Dhttp.proxySet=true" ) );
+            assertTrue( readed.contains( "-J-Dhttp.proxyHost=" + proxyServer.getHostName() ) );
+            assertTrue( readed.contains( "-J-Dhttp.proxyPort=" + proxyServer.getPort() ) );
 
             optionsContent = readFile( options );
-            isMavenSiteOnline =
-                JavadocUtilTest.isWebSiteOnline( settings, getContainer().getLogger(),
-                                                 "http://maven.apache.org/shared/maven-filtering/apidocs/package-list" );
-            if ( isMavenSiteOnline )
-            {
-                // -link http://maven.apache.org/shared/maven-filtering/apidocs/package-list
-                assertTrue( optionsContent.contains( "-link 'http://maven.apache.org/shared/maven-filtering/apidocs'" ) );
-            }
-            else
-            {
-                getContainer().getLogger().warn( "unable to reach maven.apache.org: link detection test unavailable." );
-            }
-            assertTrue( true );
-        }
-        catch ( Exception e )
-        {
-            assertTrue( false );
+            // -link http://maven.apache.org/shared/maven-filtering/apidocs/package-list
+            assertTrue( optionsContent.contains( "-link 'http://maven.apache.org/shared/maven-filtering/apidocs'" ) );
         }
         finally
         {
@@ -883,23 +860,15 @@ public class JavadocReportTest
             setVariableValueToObject( mojo, "remoteRepositories", mojo.project.getRemoteArtifactRepositories() );
             mojo.execute();
             readed = readFile( commandLine );
-            assertTrue( readed.indexOf( "-J-Dhttp.proxySet=true" ) != -1 );
-            assertTrue( readed.indexOf( "-J-Dhttp.proxyHost=" + proxyServer.getHostName() ) != -1 );
-            assertTrue( readed.indexOf( "-J-Dhttp.proxyPort=" + proxyServer.getPort() ) != -1 );
-            assertTrue( readed.indexOf( "-J-Dhttp.proxyUser=\\\"foo\\\"" ) != -1 );
-            assertTrue( readed.indexOf( "-J-Dhttp.proxyPassword=\\\"bar\\\"" ) != -1 );
+            assertTrue( readed.contains( "-J-Dhttp.proxySet=true" ) );
+            assertTrue( readed.contains( "-J-Dhttp.proxyHost=" + proxyServer.getHostName() ) );
+            assertTrue( readed.contains( "-J-Dhttp.proxyPort=" + proxyServer.getPort() ) );
+            assertTrue( readed.contains( "-J-Dhttp.proxyUser=\\\"foo\\\"" ) );
+            assertTrue( readed.contains( "-J-Dhttp.proxyPassword=\\\"bar\\\"" ) );
 
             optionsContent = readFile( options );
-            if ( isMavenSiteOnline )
-            {
-                // -link http://maven.apache.org/shared/maven-filtering/apidocs/package-list
-                assertTrue( optionsContent.contains( "-link 'http://maven.apache.org/shared/maven-filtering/apidocs'" ) );
-            }
-            assertTrue( true );
-        }
-        catch ( Exception e )
-        {
-            assertTrue( false );
+            // -link http://maven.apache.org/shared/maven-filtering/apidocs/package-list
+            assertTrue( optionsContent.contains( "-link 'http://maven.apache.org/shared/maven-filtering/apidocs'" ) );
         }
         finally
         {
@@ -1067,7 +1036,7 @@ public class JavadocReportTest
         assertTrue( content.contains( "/* Javadoc style sheet */" ) );
 
         String optionsContent = readFile( options );
-        assertTrue( !optionsContent.contains( "-stylesheetfile" ) );
+        assertFalse( optionsContent.contains( "-stylesheetfile" ) );
 
         // stylesheet == maven
         setVariableValueToObject( mojo, "stylesheet", "maven" );
@@ -1147,34 +1116,34 @@ public class JavadocReportTest
         mojo.execute();
 
         String content = readFile( helpfile );
-        assertTrue( content.indexOf( "<!-- Generated by javadoc" ) != -1 );
+        assertTrue( content.contains( "<!-- Generated by javadoc" ) );
 
         String optionsContent = readFile( options );
-        assertTrue( optionsContent.indexOf( "-helpfile" ) == -1 );
+        assertFalse( optionsContent.contains( "-helpfile" ) );
 
         // helpfile defined in a javadoc plugin dependency
         setVariableValueToObject( mojo, "helpfile", "com/mycompany/app/javadoc/helpfile/help-doc.html" );
         mojo.execute();
 
         content = readFile( helpfile );
-        assertTrue( content.indexOf( "<!--  Help file from artefact -->" ) != -1 );
+        assertTrue( content.contains( "<!--  Help file from artefact -->" ) );
 
         optionsContent = readFile( options );
-        assertTrue( optionsContent.indexOf( "-helpfile" ) != -1 );
+        assertTrue( optionsContent.contains( "-helpfile" ) );
         File help = new File( apidocs, "help-doc.html" );
-        assertTrue( optionsContent.indexOf( "'" + help.getAbsolutePath().replaceAll( "\\\\", "/" ) + "'" ) != -1 );
+        assertTrue( optionsContent.contains( "'" + help.getAbsolutePath().replaceAll( "\\\\", "/" ) + "'" ) );
 
         // helpfile defined as a project resource
         setVariableValueToObject( mojo, "helpfile", "com/mycompany/app/javadoc/helpfile2/help-doc.html" );
         mojo.execute();
 
         content = readFile( helpfile );
-        assertTrue( content.indexOf( "<!--  Help file from file -->" ) != -1 );
+        assertTrue( content.contains( "<!--  Help file from file -->" ) );
 
         optionsContent = readFile( options );
-        assertTrue( optionsContent.indexOf( "-helpfile" ) != -1 );
+        assertTrue( optionsContent.contains( "-helpfile" ) );
         help = new File( unit, "helpfile-test/src/main/resources/com/mycompany/app/javadoc/helpfile2/help-doc.html" );
-        assertTrue( optionsContent.indexOf( "'" + help.getAbsolutePath().replaceAll( "\\\\", "/" ) + "'" ) != -1 );
+        assertTrue( optionsContent.contains( "'" + help.getAbsolutePath().replaceAll( "\\\\", "/" ) + "'" ) );
 
         // helpfile defined as file
         help = new File( unit, "helpfile-test/src/main/resources/com/mycompany/app/javadoc/helpfile2/help-doc.html" );
@@ -1182,10 +1151,10 @@ public class JavadocReportTest
         mojo.execute();
 
         content = readFile( helpfile );
-        assertTrue( content.indexOf( "<!--  Help file from file -->" ) != -1 );
+        assertTrue( content.contains( "<!--  Help file from file -->" ) );
 
         optionsContent = readFile( options );
-        assertTrue( optionsContent.indexOf( "-helpfile" ) != -1 );
-        assertTrue( optionsContent.indexOf( "'" + help.getAbsolutePath().replaceAll( "\\\\", "/" ) + "'" ) != -1 );
+        assertTrue( optionsContent.contains( "-helpfile" ) );
+        assertTrue( optionsContent.contains( "'" + help.getAbsolutePath().replaceAll( "\\\\", "/" ) + "'" ) );
     }
 }
