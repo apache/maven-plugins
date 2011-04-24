@@ -61,9 +61,9 @@ public class ProxyTestMavenProjectStub
         setCompileSourceRoots( compileSourceRoots );
 
         ArtifactStub artifact = new ArtifactStub();
-        artifact.setGroupId( "org.apache.maven.shared" );
-        artifact.setArtifactId( "maven-filtering" );
-        artifact.setVersion( "1.0-beta-4" );
+        artifact.setGroupId( "org.apache.maven.plugins" );
+        artifact.setArtifactId( "maven-javadoc-plugin" );
+        artifact.setVersion( "2.7" );
         artifact.setScope( Artifact.SCOPE_RUNTIME );
         artifact.setType( "jar" );
         artifact.setFile( getBasedir() );
