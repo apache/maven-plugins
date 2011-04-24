@@ -841,7 +841,7 @@ public class JavadocReportTest
         authentications.put( "foo", "bar" );
         try
         {
-            proxyServlet = new AuthAsyncProxyServlet();
+            proxyServlet = new AuthAsyncProxyServlet( authentications );
             proxyServer = new ProxyServer( proxyServlet );
             proxyServer.start();
 
