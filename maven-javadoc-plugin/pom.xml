@@ -117,6 +117,11 @@ under the License.
       <artifactId>maven-invoker</artifactId>
       <version>2.0.9</version>
     </dependency>
+    <dependency>
+      <groupId>org.apache.maven.shared</groupId>
+      <artifactId>maven-common-artifact-filters</artifactId>
+      <version>1.2</version>
+    </dependency>
 
     <!-- Doxia -->
     <dependency>
@@ -237,13 +242,6 @@ under the License.
       <artifactId>jetty-client</artifactId>
       <version>6.1.19</version>
       <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven.shared</groupId>
-      <artifactId>maven-common-artifact-filters</artifactId>
-      <version>1.2</version>
-      <type>jar</type>
-      <scope>compile</scope>
     </dependency>
   </dependencies>
 
