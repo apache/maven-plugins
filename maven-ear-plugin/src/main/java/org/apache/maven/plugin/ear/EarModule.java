@@ -99,12 +99,12 @@ public interface EarModule
 
     /**
      * Resolves the {@link Artifact} represented by the module. Note
-     * that the {@link EarExecutionContext} might be used to customiz
+     * that the {@link EarExecutionContext} might be used to customize
      * further the resolution.
      *
      * @param artifacts the project's artifacts
      * @throws EarPluginException   if the artifact could not be resolved
-     * @throws MojoFailureException if an unexpected error occured
+     * @throws MojoFailureException if an unexpected error occurred
      */
     public void resolveArtifact( Set artifacts )
         throws EarPluginException, MojoFailureException;

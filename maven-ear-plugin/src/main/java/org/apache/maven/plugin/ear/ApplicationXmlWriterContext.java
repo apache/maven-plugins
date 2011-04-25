@@ -82,7 +82,7 @@ class ApplicationXmlWriterContext
     }
 
     /**
-     * Returns the list of {Žlink SecurityRole} instances.
+     * Returns the list of {@link SecurityRole} instances.
      *
      * @return the security roles
      */

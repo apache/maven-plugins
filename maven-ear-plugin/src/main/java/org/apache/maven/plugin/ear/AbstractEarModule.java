@@ -122,7 +122,7 @@ public abstract class AbstractEarModule
                 }
                 else
                 {
-                    throw new MojoFailureException( "Artifact[" + this + "] " + "is not a dependency of the project." );
+                    throw new MojoFailureException( "Artifact[" + this + "] is not a dependency of the project." );
                 }
             }
         }
@@ -356,7 +356,7 @@ public abstract class AbstractEarModule
     }
 
     /**
-     * Sets the URI of the module explicitely for testing purposes.
+     * Sets the URI of the module explicitly for testing purposes.
      *
      * @param uri the uri
      */
