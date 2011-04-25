@@ -765,7 +765,7 @@ public class JavadocReportTest
         Settings settings = new Settings();
         Proxy proxy = new Proxy();
 
-        //dummy proxy
+        // dummy proxy
         proxy.setActive( true );
         proxy.setHost( "127.0.0.1" );
         proxy.setPort( 80 );
@@ -795,8 +795,8 @@ public class JavadocReportTest
         File options = new File( getBasedir(), "target/test/unit/proxy-test/target/site/apidocs/options" );
         assertTrue( FileUtils.fileExists( options.getAbsolutePath() ) );
         String optionsContent = readFile( options );
-        // NO -link http://maven.apache.org/shared/maven-filtering/apidocs/package-list
-        assertFalse( optionsContent.contains( "-link 'http://maven.apache.org/shared/maven-filtering/apidocs'" ) );
+        // NO -link expected
+        assertFalse( optionsContent.contains( "-link" ) );
 
         // real proxy
         ProxyServer proxyServer = null;
@@ -825,8 +825,8 @@ public class JavadocReportTest
             assertTrue( readed.contains( "-J-Dhttp.proxyPort=" + proxyServer.getPort() ) );
 
             optionsContent = readFile( options );
-            // -link http://maven.apache.org/shared/maven-filtering/apidocs/package-list
-            assertTrue( optionsContent.contains( "-link 'http://maven.apache.org/shared/maven-filtering/apidocs'" ) );
+            // -link expected
+            assertTrue( optionsContent.contains( "-link 'http://jakarta.apache.org/commons/logging/apidocs'" ) );
         }
         finally
         {
@@ -841,7 +841,7 @@ public class JavadocReportTest
         authentications.put( "foo", "bar" );
         try
         {
-            proxyServlet = new AuthAsyncProxyServlet();
+            proxyServlet = new AuthAsyncProxyServlet( authentications );
             proxyServer = new ProxyServer( proxyServlet );
             proxyServer.start();
 
@@ -867,8 +867,8 @@ public class JavadocReportTest
             assertTrue( readed.contains( "-J-Dhttp.proxyPassword=\\\"bar\\\"" ) );
 
             optionsContent = readFile( options );
-            // -link http://maven.apache.org/shared/maven-filtering/apidocs/package-list
-            assertTrue( optionsContent.contains( "-link 'http://maven.apache.org/shared/maven-filtering/apidocs'" ) );
+            // -link expected
+            assertTrue( optionsContent.contains( "-link 'http://jakarta.apache.org/commons/logging/apidocs'" ) );
         }
         finally
         {
