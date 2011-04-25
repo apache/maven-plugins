@@ -70,7 +70,7 @@ public abstract class AbstractEarPluginIT
      * @param projectName the name of the project
      * @param properties  extra properties to be used by the embedder
      * @return the base directory of the project
-     * @throws Exception if an error occured
+     * @throws Exception if an error occurred
      */
     protected File executeMojo( final String projectName, final Properties properties, boolean expectNoError )
         throws Exception
@@ -113,7 +113,7 @@ public abstract class AbstractEarPluginIT
      * @param projectName the name of the project
      * @param properties  extra properties to be used by the embedder
      * @return the base directory of the project
-     * @throws Exception if an error occured
+     * @throws Exception if an error occurred
      */
     protected File executeMojo( final String projectName, final Properties properties )
         throws Exception
@@ -128,7 +128,7 @@ public abstract class AbstractEarPluginIT
      * @param projectName               the project to test
      * @param expectedArtifacts         the list of artifacts to be found in the EAR archive
      * @param artifactsDirectory        whether the artifact is an exploded artifactsDirectory or not
-     * @param testDeploymentDescriptors whether we should test deployemnt descriptors
+     * @param testDeploymentDescriptors whether we should test deployment descriptors
      * @return the base directory of the project
      * @throws Exception
      */
@@ -175,7 +175,7 @@ public abstract class AbstractEarPluginIT
      *
      * @param projectName               the project to test
      * @param expectedArtifacts         the list of artifacts to be found in the EAR archive
-     * @param testDeploymentDescriptors whether we should test deployemnt descriptors
+     * @param testDeploymentDescriptors whether we should test deployment descriptors
      * @return the base directory of the project
      * @throws Exception
      */
@@ -280,14 +280,7 @@ public abstract class AbstractEarPluginIT
         {
             public boolean accept( File dir, String name )
             {
-                if ( name.equals( "META-INF" ) )
-                {
-                    return false;
-                }
-                else
-                {
-                    return true;
-                }
+                return !name.equals( "META-INF" );
             }
 
         } );
@@ -424,7 +417,6 @@ public abstract class AbstractEarPluginIT
     {
         return ddDirectory.listFiles( new FilenameFilter()
         {
-
             public boolean accept( File dir, String name )
             {
                 return !name.equalsIgnoreCase( "manifest.mf" );

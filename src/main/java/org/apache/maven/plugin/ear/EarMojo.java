@@ -48,7 +48,7 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Builds J2EE Enteprise Archive (EAR) files.
+ * Builds J2EE Enterprise Archive (EAR) files.
  *
  * @author <a href="snicoll@apache.org">Stephane Nicoll</a>
  * @version $Id$

@@ -78,9 +78,9 @@ EAR Plugin Tests
 
   * project-024: builds an EAR and make sure that a single classified dependency is detected when specifying the classifier
 
-  * project-025: builds an EAR and make sure that a classified dependency with mutiple candidates is detected when specifying the classifier
+  * project-025: builds an EAR and make sure that a classified dependency with multiple candidates is detected when specifying the classifier
 
-  * project-026: builds an EAR and make sure that the build fails if a unclassifed module configuration with mutiple candidates is specified
+  * project-026: builds an EAR and make sure that the build fails if a unclassified module configuration with multiple candidates is specified
 
   * project-027: builds an EAR and make sure that provided dependencies are not included in the EAR
 
@@ -98,7 +98,7 @@ EAR Plugin Tests
 
   * project-034: builds an EAR with custom security settings
 
-  * project-035: builds an EAR with a full filename mapping and make sure that custom locations are not overriden
+  * project-035: builds an EAR with a full filename mapping and make sure that custom locations are not overridden
 
   * project-036: builds an EAR with a full filename mapping and make sure that groupIds with dots are replaced by dashes in filenames
 

@@ -235,7 +235,7 @@ class JbossConfiguration
     /**
      * The unauthenticated-principal element specifies the name of the principal
      * that will be returned by the EJBContext.getCallerPrincipal() method if there
-     * is no authenticated user. This Principal has no roles or privaledges to call
+     * is no authenticated user. This Principal has no roles or privileges to call
      * any other beans.
      * <p/>
      * Only available as from JBoss 4.
