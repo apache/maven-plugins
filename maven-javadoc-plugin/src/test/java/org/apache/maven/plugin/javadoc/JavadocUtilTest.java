@@ -35,7 +35,6 @@ import org.apache.maven.plugin.javadoc.ProxyServer.AuthAsyncProxyServlet;
 import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Settings;
 import org.codehaus.plexus.PlexusTestCase;
-import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.util.FileUtils;
 
 /**
@@ -265,11 +264,11 @@ public class JavadocUtilTest
     }
 
     /**
-     * Method to test fetchURL()
+     * Method to test isValidPackageList()
      *
      * @throws Exception if any
      */
-    public void testFetchURL()
+    public void testIsValidPackageList()
         throws Exception
     {
         Settings settings = null;
@@ -279,8 +278,8 @@ public class JavadocUtilTest
         URL wrongUrl = null;
         try
         {
-            JavadocUtil.fetchURL( settings, url );
-            assertTrue( false );
+            JavadocUtil.isValidPackageList( url, settings, false );
+            fail();
         }
         catch ( IllegalArgumentException e )
         {
@@ -288,26 +287,25 @@ public class JavadocUtilTest
         }
 
         url = new File( getBasedir(), "/pom.xml" ).toURL();
-        JavadocUtil.fetchURL( settings, url );
-        assertTrue( true );
+        assertTrue( JavadocUtil.isValidPackageList( url, settings, false ) );
 
-        if ( !isWebSiteOnline( settings, getContainer().getLogger(), "http://maven.apache.org" ) )
+        try
         {
-            getContainer().getLogger().warn(
-                                             "http://maven.apache.org should be on line to run '"
-                                                 + getClass().getName() + "#" + getName() + "()'." );
-            return;
+            assertFalse( JavadocUtil.isValidPackageList( url, settings, true ) );
+        }
+        catch ( IOException e )
+        {
+            assertTrue( true );
         }
 
         url = new URL( "http://maven.apache.org/plugins/maven-javadoc-plugin/apidocs/package-list" );
-        JavadocUtil.fetchURL( settings, url );
-        assertTrue( true );
+        assertTrue( JavadocUtil.isValidPackageList( url, settings, true ) );
 
         wrongUrl = new URL( "http://maven.apache.org/plugins/maven-javadoc-plugin/apidocs/package-list2" );
         try
         {
-            JavadocUtil.fetchURL( settings, wrongUrl );
-            assertTrue( false );
+            JavadocUtil.isValidPackageList( wrongUrl, settings, false );
+            fail();
         }
         catch ( IOException e )
         {
@@ -325,22 +323,17 @@ public class JavadocUtilTest
 
             settings = new Settings();
 
-            JavadocUtil.fetchURL( settings, url );
-            assertTrue( true );
+            assertTrue( JavadocUtil.isValidPackageList( url, settings, true ) );
 
             try
             {
-                JavadocUtil.fetchURL( settings, wrongUrl );
-                assertTrue( false );
+                JavadocUtil.isValidPackageList( wrongUrl, settings, false );
+                fail();
             }
             catch ( IOException e )
             {
                 assertTrue( true );
             }
-        }
-        catch ( Exception e )
-        {
-            assertTrue( false );
         }
         finally
         {
@@ -367,16 +360,12 @@ public class JavadocUtilTest
             proxy.setProtocol( "http" );
             settings.addProxy( proxy );
 
-            JavadocUtil.fetchURL( settings, url );
-            assertTrue( false );
+            JavadocUtil.isValidPackageList( url, settings, false );
+            fail();
         }
         catch ( FileNotFoundException e )
         {
             assertTrue( true );
-        }
-        catch ( Exception e )
-        {
-            assertTrue( false );
         }
         finally
         {
@@ -403,22 +392,17 @@ public class JavadocUtilTest
             proxy.setPassword( "bar" );
             settings.addProxy( proxy );
 
-            JavadocUtil.fetchURL( settings, url );
-            assertTrue( true );
+            assertTrue( JavadocUtil.isValidPackageList( url, settings, true ) );
 
             try
             {
-                JavadocUtil.fetchURL( settings, wrongUrl );
-                assertTrue( false );
+                JavadocUtil.isValidPackageList( wrongUrl, settings, false );
+                fail();
             }
             catch ( IOException e )
             {
                 assertTrue( true );
             }
-        }
-        catch ( FileNotFoundException e )
-        {
-            assertTrue( false );
         }
         finally
         {
@@ -445,8 +429,8 @@ public class JavadocUtilTest
             proxy.setPassword( "bar" );
             settings.addProxy( proxy );
 
-            JavadocUtil.fetchURL( settings, url );
-            assertTrue( false );
+            JavadocUtil.isValidPackageList( url, settings, true );
+            fail();
         }
         catch ( SocketTimeoutException e )
         {
@@ -478,10 +462,7 @@ public class JavadocUtilTest
             proxy.setNonProxyHosts( "maven.apache.org" );
             settings.addProxy( proxy );
 
-            url = new URL( "http://maven.apache.org/plugins/maven-javadoc-plugin/apidocs/package-list" );
-
-            JavadocUtil.fetchURL( settings, url );
-            assertTrue( true );
+            assertTrue( JavadocUtil.isValidPackageList( url, settings, true ) );
         }
         finally
         {
@@ -610,33 +591,5 @@ public class JavadocUtilTest
         assertEquals( path1 + ps + path2, JavadocUtil.unifyPathSeparator( path1 + ":" + path2 ) );
         assertEquals( path1 + ps + path2 + ps + path1 + ps + path2, JavadocUtil.unifyPathSeparator( path1 + ";"
             + path2 + ":" + path1 + ":" + path2 ) );
-    }
-
-    /**
-     * @param settings could be null
-     * @param logger could be null
-     * @param websiteUrl not null
-     * @return <code>true</code> if we are able to fetch websiteUrl, <code>false</code> otherwise.
-     * @since 2.6.1
-     */
-    protected static boolean isWebSiteOnline( Settings settings, Logger logger, String websiteUrl )
-    {
-        try
-        {
-            JavadocUtil.fetchURL( settings, new URL( websiteUrl ) );
-            return true;
-        }
-        catch ( IOException e )
-        {
-            if ( logger == null )
-            {
-                e.printStackTrace();
-            }
-            else
-            {
-                logger.fatalError( "Error when fetching " + websiteUrl + ". Is it available?" );
-            }
-            return false;
-        }
     }
 }
