@@ -43,7 +43,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -1729,8 +1728,8 @@ public abstract class AbstractJavadocMojo
             return Collections.emptyList();
         }
 
-        return ( p.getExecutionProject().getCompileSourceRoots() == null ? Collections.EMPTY_LIST
-                        : new LinkedList( p.getExecutionProject().getCompileSourceRoots() ) );
+        return ( p.getExecutionProject().getCompileSourceRoots() == null ? Collections.<String>emptyList()
+                        : new LinkedList<String>( p.getExecutionProject().getCompileSourceRoots() ) );
     }
 
     /**
@@ -1739,7 +1738,7 @@ public abstract class AbstractJavadocMojo
      */
     protected List<Artifact> getProjectArtifacts( MavenProject p )
     {
-        return ( p.getCompileArtifacts() == null ? Collections.EMPTY_LIST
+        return ( p.getCompileArtifacts() == null ? Collections.<Artifact>emptyList()
                         : new LinkedList<Artifact>( p.getCompileArtifacts() ) );
     }
 
@@ -2252,16 +2251,7 @@ public abstract class AbstractJavadocMojo
         if ( StringUtils.isNotEmpty( subpackages ) && excludedNames != null )
         {
             // add the excludedpackage names
-            for ( Iterator<String> it = excludedNames.iterator(); it.hasNext(); )
-            {
-                String str = it.next();
-                excludeArg = excludeArg + str;
-
-                if ( it.hasNext() )
-                {
-                    excludeArg = excludeArg + ":";
-                }
-            }
+            excludeArg = StringUtils.join( excludedNames.iterator(), ":" );
         }
 
         return excludeArg;
@@ -3218,9 +3208,8 @@ public abstract class AbstractJavadocMojo
                 Map<String, Artifact> compileArtifactMap = new HashMap<String, Artifact>();
                 populateCompileArtifactMap( compileArtifactMap, artifacts );
 
-                for ( String key : compileArtifactMap.keySet() )
+                for ( Artifact a : compileArtifactMap.values() )
                 {
-                    Artifact a = compileArtifactMap.get( key );
                     path.add( a.getFile().getAbsolutePath() );
                 }
             }
@@ -5052,10 +5041,9 @@ public abstract class AbstractJavadocMojo
         }
 
         classPath.clear();
-        for ( Iterator<Resource> it = project.getBuild().getResources().iterator(); it.hasNext(); )
+        List<Resource> resources = project.getBuild().getResources();
+        for ( Resource resource : resources )
         {
-            Resource resource = it.next();
-
             classPath.add( resource.getDirectory() );
         }
         resourceURL = getResource( classPath, inputResourceName );
@@ -5082,10 +5070,9 @@ public abstract class AbstractJavadocMojo
         Plugin javadocPlugin = getPlugin( project, pluginId );
         if ( javadocPlugin != null && javadocPlugin.getDependencies() != null )
         {
-            for ( Iterator<Dependency> it = javadocPlugin.getDependencies().iterator(); it.hasNext(); )
+            List<Dependency> dependencies = javadocPlugin.getDependencies();
+            for ( Dependency dependency : dependencies )
             {
-                Dependency dependency = it.next();
-
                 JavadocPathArtifact javadocPathArtifact = new JavadocPathArtifact();
                 javadocPathArtifact.setGroupId( dependency.getGroupId() );
                 javadocPathArtifact.setArtifactId( dependency.getArtifactId() );
@@ -5231,9 +5218,9 @@ public abstract class AbstractJavadocMojo
         getLog().debug( "Trying to add links for modules..." );
 
         Set<String> dependencyArtifactIds = new HashSet<String>();
-        for ( Iterator<Artifact> it = project.getDependencyArtifacts().iterator(); it.hasNext(); )
+        final Set<Artifact> dependencyArtifacts = project.getDependencyArtifacts();
+        for ( Artifact artifact : dependencyArtifacts )
         {
-            Artifact artifact = it.next();
             dependencyArtifactIds.add( artifact.getId() );
         }
 

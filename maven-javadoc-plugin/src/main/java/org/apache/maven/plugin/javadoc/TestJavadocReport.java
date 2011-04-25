@@ -259,7 +259,7 @@ public class TestJavadocReport
             return Collections.emptyList();
         }
 
-        return ( p.getTestCompileSourceRoots() == null ? Collections.EMPTY_LIST
+        return ( p.getTestCompileSourceRoots() == null ? Collections.<String>emptyList()
                         : new LinkedList<String>( p.getTestCompileSourceRoots() ) );
     }
 
@@ -271,14 +271,14 @@ public class TestJavadocReport
             return Collections.emptyList();
         }
 
-        return ( p.getExecutionProject().getTestCompileSourceRoots() == null ? Collections.EMPTY_LIST
+        return ( p.getExecutionProject().getTestCompileSourceRoots() == null ? Collections.<String>emptyList()
                         : new LinkedList<String>( p.getExecutionProject().getTestCompileSourceRoots() ) );
     }
 
     @Override
     protected List<Artifact> getProjectArtifacts( MavenProject p )
     {
-        return ( p.getTestArtifacts() == null ? Collections.EMPTY_LIST
+        return ( p.getTestArtifacts() == null ? Collections.<Artifact>emptyList()
                         : new LinkedList<Artifact>( p.getTestArtifacts() ) );
     }
 

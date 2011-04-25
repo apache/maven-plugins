@@ -45,7 +45,7 @@ public class TestFixJavadocMojo
     /** {@inheritDoc} */
     protected List<String> getProjectSourceRoots( MavenProject p )
     {
-        return ( p.getTestCompileSourceRoots() == null ? Collections.EMPTY_LIST
+        return ( p.getTestCompileSourceRoots() == null ? Collections.<String>emptyList()
                         : new LinkedList<String>( p.getTestCompileSourceRoots() ) );
     }
 
@@ -53,7 +53,7 @@ public class TestFixJavadocMojo
     protected List<String> getCompileClasspathElements( MavenProject p )
         throws DependencyResolutionRequiredException
     {
-        return ( p.getTestClasspathElements() == null ? Collections.EMPTY_LIST
+        return ( p.getTestClasspathElements() == null ? Collections.<String>emptyList()
                         : new LinkedList<String>( p.getTestClasspathElements() ) );
     }
 
