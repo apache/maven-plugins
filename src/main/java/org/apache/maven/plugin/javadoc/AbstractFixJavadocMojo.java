@@ -431,7 +431,7 @@ public abstract class AbstractFixJavadocMojo
      */
     protected List<String> getProjectSourceRoots( MavenProject p )
     {
-        return ( p.getCompileSourceRoots() == null ? Collections.EMPTY_LIST
+        return ( p.getCompileSourceRoots() == null ? Collections.<String>emptyList()
                         : new LinkedList<String>( p.getCompileSourceRoots() ) );
     }
 
@@ -443,7 +443,7 @@ public abstract class AbstractFixJavadocMojo
     protected List<String> getCompileClasspathElements( MavenProject p )
         throws DependencyResolutionRequiredException
     {
-        return ( p.getCompileClasspathElements() == null ? Collections.EMPTY_LIST
+        return ( p.getCompileClasspathElements() == null ? Collections.<String>emptyList()
                         : new LinkedList<String>( p.getCompileClasspathElements() ) );
     }
 
