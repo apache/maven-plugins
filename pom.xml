@@ -59,8 +59,8 @@ under the License.
     <doxiaVersion>1.0</doxiaVersion>
     <doxia-sitetoolsVersion>1.0</doxia-sitetoolsVersion>
     <wagonVersion>1.0-beta-6</wagonVersion>
-    <sitePluginVersion>2.0.1</sitePluginVersion>
-    <projectInfoReportsPluginVersion>2.1.2</projectInfoReportsPluginVersion>
+    <sitePluginVersion>2.2</sitePluginVersion>
+    <projectInfoReportsPluginVersion>2.3.1</projectInfoReportsPluginVersion>
   </properties>
 
   <dependencies>
@@ -120,7 +120,7 @@ under the License.
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
       <artifactId>maven-common-artifact-filters</artifactId>
-      <version>1.2</version>
+      <version>1.3</version>
     </dependency>
 
     <!-- Doxia -->
@@ -456,8 +456,7 @@ under the License.
         </file>
       </activation>
       <properties>
-        <sitePluginVersion>3.0-beta-2</sitePluginVersion>
-        <projectInfoReportsPluginVersion>2.2</projectInfoReportsPluginVersion>
+        <sitePluginVersion>3.0-beta-3</sitePluginVersion>
       </properties>
     </profile>
   </profiles>
