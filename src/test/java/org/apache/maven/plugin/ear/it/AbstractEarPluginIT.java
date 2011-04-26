@@ -20,22 +20,26 @@ package org.apache.maven.plugin.ear.it;
  */
 
 import junit.framework.TestCase;
+
 import org.apache.maven.it.VerificationException;
 import org.apache.maven.it.Verifier;
 import org.apache.maven.it.util.ResourceExtractor;
-import org.codehaus.plexus.util.ReaderFactory;
+import org.apache.maven.plugin.ear.util.ResourceEntityResolver;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLAssert;
 import org.custommonkey.xmlunit.examples.RecursiveElementNameAndTextQualifier;
+import org.xml.sax.helpers.DefaultHandler;
 
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 /**
  * Base class for ear test cases.
@@ -378,16 +382,19 @@ public abstract class AbstractEarPluginIT
                 assertEquals( "File name mismatch", expectedDeploymentDescriptor.getName(),
                               actualDeploymentDescriptor.getName() );
 
-                Reader expected = null;
-                Reader actual = null;
                 try
                 {
-                    expected = ReaderFactory.newXmlReader( expectedDeploymentDescriptor );
-                    actual = ReaderFactory.newXmlReader( actualDeploymentDescriptor );
+                    DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+                    dbf.setValidating( true );
+                    DocumentBuilder docBuilder = dbf.newDocumentBuilder();
+                    docBuilder.setEntityResolver( new ResourceEntityResolver() );
+                    docBuilder.setErrorHandler( new DefaultHandler() );
 
                     // Make sure that it matches even if the elements are not in
                     // the exact same order
-                    final Diff myDiff = new Diff( expected, actual );
+                    final Diff myDiff =
+                        new Diff( docBuilder.parse( expectedDeploymentDescriptor ),
+                                  docBuilder.parse( actualDeploymentDescriptor ) );
                     myDiff.overrideElementQualifier( new RecursiveElementNameAndTextQualifier() );
                     XMLAssert.assertXMLEqual(
                         "Wrong deployment descriptor generated for[" + expectedDeploymentDescriptor.getName() + "]",
@@ -397,17 +404,6 @@ public abstract class AbstractEarPluginIT
                 {
                     e.printStackTrace();
                     fail( "Could not assert deployment descriptor " + e.getMessage() );
-                }
-                finally
-                {
-                    if ( expected != null )
-                    {
-                        expected.close();
-                    }
-                    if ( actual != null )
-                    {
-                        actual.close();
-                    }
                 }
             }
         }
