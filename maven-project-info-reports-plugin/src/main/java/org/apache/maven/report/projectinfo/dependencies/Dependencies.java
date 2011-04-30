@@ -156,29 +156,8 @@ public class Dependencies
         }
 
         allDependencies = new ArrayList<Artifact>();
-        for ( @SuppressWarnings( "unchecked" )
-        Iterator<DependencyNode> i = dependencyTreeNode.getChildren().iterator(); i.hasNext(); )
-        {
-            DependencyNode dependencyNode = i.next();
 
-            if ( dependencyNode.getState() != DependencyNode.INCLUDED )
-            {
-                continue;
-            }
-
-            if ( dependencyNode.getArtifact().getGroupId().equals( project.getGroupId() )
-                && dependencyNode.getArtifact().getArtifactId().equals( project.getArtifactId() )
-                && dependencyNode.getArtifact().getVersion().equals( project.getVersion() ) )
-            {
-                continue;
-            }
-
-            if ( !allDependencies.contains( dependencyNode.getArtifact() ) )
-            {
-                allDependencies.add( dependencyNode.getArtifact() );
-            }
-            getAllDependencies( dependencyNode );
-        }
+        addAllChildrenDependencies( dependencyTreeNode );
 
         return allDependencies;
     }
@@ -287,17 +266,8 @@ public class Dependencies
      *
      * @param dependencyNode not null
      */
-    private void getAllDependencies( DependencyNode dependencyNode )
+    private void addAllChildrenDependencies( DependencyNode dependencyNode )
     {
-        if ( dependencyNode == null || dependencyNode.getChildren() == null )
-        {
-            if ( !allDependencies.contains( dependencyNode.getArtifact() ) )
-            {
-                allDependencies.add( dependencyNode.getArtifact() );
-            }
-            return;
-        }
-
         for ( @SuppressWarnings( "unchecked" )
         Iterator<DependencyNode> i = dependencyNode.getChildren().iterator(); i.hasNext(); )
         {
@@ -308,18 +278,22 @@ public class Dependencies
                 continue;
             }
 
-            if ( subdependencyNode.getArtifact().getGroupId().equals( project.getGroupId() )
-                && subdependencyNode.getArtifact().getArtifactId().equals( project.getArtifactId() )
-                && subdependencyNode.getArtifact().getVersion().equals( project.getVersion() ) )
+            Artifact artifact = subdependencyNode.getArtifact();
+
+            if ( artifact.getGroupId().equals( project.getGroupId() )
+                && artifact.getArtifactId().equals( project.getArtifactId() )
+                && artifact.getVersion().equals( project.getVersion() ) )
             {
                 continue;
             }
 
-            if ( !allDependencies.contains( subdependencyNode.getArtifact() ) )
+            if ( !allDependencies.contains( artifact ) )
             {
-                allDependencies.add( subdependencyNode.getArtifact() );
+                allDependencies.add( artifact );
             }
-            getAllDependencies( subdependencyNode );
+
+            addAllChildrenDependencies( subdependencyNode );
         }
+
     }
 }
