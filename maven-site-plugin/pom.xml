@@ -177,7 +177,7 @@ under the License.
   </issueManagement>
 
   <properties>
-    <doxiaVersion>1.2-SNAPSHOT</doxiaVersion>
+    <doxiaVersion>1.2</doxiaVersion>
     <doxiaSitetoolsVersion>1.2-SNAPSHOT</doxiaSitetoolsVersion>
     <mavenVersion>2.2.0</mavenVersion>
     <wagonVersion>1.0-beta-6</wagonVersion>
