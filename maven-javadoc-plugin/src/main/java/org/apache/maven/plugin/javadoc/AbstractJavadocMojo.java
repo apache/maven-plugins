@@ -72,6 +72,7 @@ import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.javadoc.options.BootclasspathArtifact;
 import org.apache.maven.plugin.javadoc.options.DocletArtifact;
 import org.apache.maven.plugin.javadoc.options.Group;
@@ -2438,9 +2439,8 @@ public abstract class AbstractJavadocMojo
             }
         }
 
-        for ( String key : compileArtifactMap.keySet() )
+        for ( Artifact a : compileArtifactMap.values() )
         {
-            Artifact a = compileArtifactMap.get( key );
             classpathElements.add( a.getFile().toString() );
         }
 
@@ -2449,7 +2449,7 @@ public abstract class AbstractJavadocMojo
 
     /**
      * TODO remove the part with ToolchainManager lookup once we depend on
-     * 3.0.9 (have it as prerequisite). Define as regular component field then.
+     * 2.0.9 (have it as prerequisite). Define as regular component field then.
      *
      * @return Toolchain instance
      */
@@ -5765,4 +5765,18 @@ public abstract class AbstractJavadocMojo
         }
     }
 
+    protected void failOnError( String prefix, Exception e )
+        throws MojoExecutionException
+    {
+        if ( failOnError )
+        {
+            if ( e instanceof RuntimeException )
+            {
+                throw (RuntimeException) e;
+            }
+            throw new MojoExecutionException( prefix + e.getMessage(), e );
+        }
+
+        getLog().error( prefix + e.getMessage(), e );
+    }
 }

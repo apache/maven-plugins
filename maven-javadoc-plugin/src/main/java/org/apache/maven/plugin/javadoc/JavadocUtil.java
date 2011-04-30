@@ -1806,4 +1806,27 @@ public class JavadocUtil
         return httpClient;
     }
 
+    static boolean equalsIgnoreCase( String value, String... strings )
+    {
+        for ( String s : strings )
+        {
+            if ( s.equalsIgnoreCase( value ) )
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    static boolean equals( String value, String... strings )
+    {
+        for ( String s : strings )
+        {
+            if ( s.equals( value ) )
+            {
+                return true;
+            }
+        }
+        return false;
+    }
 }

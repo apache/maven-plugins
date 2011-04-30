@@ -164,16 +164,12 @@ public class JavadocJar
             innerDestDir = new File( getOutputDirectory() );
         }
 
-        if ( !( "pom".equals( project.getPackaging().toLowerCase( Locale.ENGLISH ) ) && isAggregator() ) )
+        if ( !( "pom".equalsIgnoreCase( project.getPackaging() ) && isAggregator() ) )
         {
             ArtifactHandler artifactHandler = project.getArtifact().getArtifactHandler();
             if ( !"java".equals( artifactHandler.getLanguage() ) )
             {
-                if ( getLog().isInfoEnabled() )
-                {
-                    getLog().info( "Not executing Javadoc as the project is not a Java classpath-capable package" );
-                }
-
+                getLog().info( "Not executing Javadoc as the project is not a Java classpath-capable package" );
                 return;
             }
         }
@@ -188,10 +184,7 @@ public class JavadocJar
 
                 if ( !attach )
                 {
-                    if ( getLog().isInfoEnabled() )
-                    {
-                        getLog().info( "NOT adding javadoc to attached artifacts list." );
-                    }
+                    getLog().info( "NOT adding javadoc to attached artifacts list." );
                 }
                 else
                 {
@@ -203,41 +196,19 @@ public class JavadocJar
         }
         catch ( ArchiverException e )
         {
-            if ( failOnError )
-            {
-                throw new MojoExecutionException( "ArchiverException: Error while creating archive:"
-                    + e.getMessage(), e );
-            }
-
-            getLog().error( "ArchiverException: Error while creating archive:" + e.getMessage(), e );
+            failOnError( "ArchiverException: Error while creating archive: ", e );
         }
         catch ( IOException e )
         {
-            if ( failOnError )
-            {
-                throw new MojoExecutionException( "IOException: Error while creating archive:" + e.getMessage(), e );
-            }
-
-            getLog().error( "IOException: Error while creating archive:" + e.getMessage(), e );
+            failOnError( "IOException: Error while creating archive: ", e );
         }
         catch ( MavenReportException e )
         {
-            if ( failOnError )
-            {
-                throw new MojoExecutionException( "MavenReportException: Error while creating archive:"
-                                                  + e.getMessage(), e );
-            }
-
-            getLog().error( "MavenReportException: Error while creating archive:" + e.getMessage(), e );
+            failOnError( "MavenReportException: Error while creating archive: ", e );
         }
         catch ( RuntimeException e )
         {
-            if ( failOnError )
-            {
-                throw e;
-            }
-
-            getLog().error( e.getMessage(), e );
+            failOnError( "RuntimeException: Error while creating archive: ", e );
         }
     }
 
