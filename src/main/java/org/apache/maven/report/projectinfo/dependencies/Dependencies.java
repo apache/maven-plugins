@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.dependency.tree.DependencyNode;
 import org.apache.maven.shared.jar.JarAnalyzer;
@@ -83,17 +82,11 @@ public class Dependencies
      * @param dependencyTreeNode the DependencyNode.
      * @param classesAnalyzer the JarClassesAnalysis.
      */
-    public Dependencies( MavenProject project, DependencyNode dependencyTreeNode,
-                         JarClassesAnalysis classesAnalyzer )
+    public Dependencies( MavenProject project, DependencyNode dependencyTreeNode, JarClassesAnalysis classesAnalyzer )
     {
         this.project = project;
         this.dependencyTreeNode = dependencyTreeNode;
         this.classesAnalyzer = classesAnalyzer;
-
-        /*
-         * Workaround to ensure proper File objects in the Artifacts from the ReportResolutionListener
-         */
-        mapArtifactFiles( this.dependencyTreeNode );
     }
 
     /**
@@ -288,30 +281,6 @@ public class Dependencies
     // ----------------------------------------------------------------------
     // Private methods
     // ----------------------------------------------------------------------
-
-    private void mapArtifactFiles( DependencyNode node )
-    {
-        @SuppressWarnings( "unchecked" )
-        List<DependencyNode> childs = node.getChildren();
-        if ( ( childs == null ) || childs.isEmpty() )
-        {
-            return;
-        }
-
-        Iterator<DependencyNode> it = childs.iterator();
-        while ( it.hasNext() )
-        {
-            DependencyNode anode = it.next();
-            String key = ArtifactUtils.versionlessKey( anode.getArtifact() );
-            Artifact projartifact = (Artifact) project.getArtifactMap().get( key );
-            if ( projartifact != null )
-            {
-                anode.getArtifact().setFile( projartifact.getFile() );
-            }
-
-            mapArtifactFiles( anode );
-        }
-    }
 
     /**
      * Recursive method to get all dependencies from a given <code>dependencyNode</code>
