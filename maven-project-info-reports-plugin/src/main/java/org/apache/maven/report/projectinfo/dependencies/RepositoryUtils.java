@@ -190,12 +190,12 @@ public class RepositoryUtils
         }
         catch ( UnsupportedProtocolException e )
         {
-            log.error( "Unsupported protocol: '" + repo.getProtocol() + "'", e );
+            logError( "Unsupported protocol: '" + repo.getProtocol() + "'", e );
             return false;
         }
         catch ( WagonConfigurationException e )
         {
-            log.error( "Unsupported protocol: '" + repo.getProtocol() + "'", e );
+            logError( "Unsupported protocol: '" + repo.getProtocol() + "'", e );
             return false;
         }
 
@@ -229,26 +229,12 @@ public class RepositoryUtils
         }
         catch ( ConnectionException e )
         {
-            if ( log.isDebugEnabled() )
-            {
-                log.error( "Unable to connect to: " + repo.getUrl(), e );
-            }
-            else
-            {
-                log.error( "Unable to connect to: " + repo.getUrl() );
-            }
+            logError( "Unable to connect to: " + repo.getUrl(), e );
             return false;
         }
         catch ( AuthenticationException e )
         {
-            if ( log.isDebugEnabled() )
-            {
-                log.error( "Unable to connect to: " + repo.getUrl(), e );
-            }
-            else
-            {
-                log.error( "Unable to connect to: " + repo.getUrl() );
-            }
+            logError( "Unable to connect to: " + repo.getUrl(), e );
             return false;
         }
         catch ( TransferFailedException e )
@@ -260,27 +246,13 @@ public class RepositoryUtils
             }
             else
             {
-                if ( log.isDebugEnabled() )
-                {
-                    log.error( "Unable to determine if resource " + artifact + " exists in " + repo.getUrl(), e );
-                }
-                else
-                {
-                    log.error( "Unable to determine if resource " + artifact + " exists in " + repo.getUrl() );
-                }
+                logError( "Unable to determine if resource " + artifact + " exists in " + repo.getUrl(), e );
             }
             return false;
         }
         catch ( AuthorizationException e )
         {
-            if ( log.isDebugEnabled() )
-            {
-                log.error( "Unable to connect to: " + repo.getUrl(), e );
-            }
-            else
-            {
-                log.error( "Unable to connect to: " + repo.getUrl() );
-            }
+            logError( "Unable to connect to: " + repo.getUrl(), e );
             return false;
         }
         catch ( AbstractMethodError e )
@@ -296,14 +268,7 @@ public class RepositoryUtils
             }
             catch ( ConnectionException e )
             {
-                if ( log.isDebugEnabled() )
-                {
-                    log.error( "Error disconnecting wagon - ignored", e );
-                }
-                else
-                {
-                    log.error( "Error disconnecting wagon - ignored" );
-                }
+                logError( "Error disconnecting wagon - ignored", e );
             }
         }
     }
@@ -424,5 +389,23 @@ public class RepositoryUtils
         }
 
         return proxyInfo;
+    }
+
+    /**
+     * Log an error, adding the stacktrace only is debug is enabled.
+     * 
+     * @param message the error message
+     * @param e the cause
+     */
+    private void logError( String message, Exception e )
+    {
+        if ( log.isDebugEnabled() )
+        {
+            log.error( message, e );
+        }
+        else
+        {
+            log.error( message );
+        }
     }
 }
