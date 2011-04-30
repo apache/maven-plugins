@@ -185,7 +185,7 @@ under the License.
   <url>http://maven.apache.org/plugins/maven-site-plugin-${project.version}</url>
 
   <properties>
-    <doxiaVersion>1.2-SNAPSHOT</doxiaVersion>
+    <doxiaVersion>1.2</doxiaVersion>
     <doxiaSitetoolsVersion>1.2-SNAPSHOT</doxiaSitetoolsVersion>
     <mavenVersion>3.0</mavenVersion>
     <wagonVersion>1.0-beta-6</wagonVersion>
