@@ -143,6 +143,18 @@
       <artifactId>maven-artifact</artifactId>
       <version>2.1.0</version>
     </dependency>
+    <dependency>
+      <groupId>org.apache.maven.doxia</groupId>
+      <artifactId>doxia-core</artifactId>
+      <version>1.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.doxia</groupId>
+      <artifactId>doxia-core</artifactId>
+      <version>1.2</version>
+      <classifier>tests</classifier>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>
@@ -166,6 +178,7 @@
         <version>@pom.version@</version>
         <configuration>
           <introduction>mail list intro text foo</introduction>
+          <dependencyLocationsEnabled>false</dependencyLocationsEnabled>
         </configuration>
       </plugin>
     </plugins>
