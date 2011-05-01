@@ -15,7 +15,7 @@ boolean check( String project, boolean filtered )
     }
 
     String xml = FileUtils.fileRead( pomFile, "UTF-8" );
-    
+
     String[] values = {
             "<prop0>pom-filtering-reactor</prop0>",
         };

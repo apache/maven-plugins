@@ -31,26 +31,26 @@ try
         System.err.println( "target file is missing or not a directory." );
         return false;
     }
-    File webAppDirectory = new File ( target, "webAppDirectory" );
+    File webAppDirectory = new File( target, "webAppDirectory" );
     if ( !webAppDirectory.exists() || !webAppDirectory.isDirectory() )
     {
         System.err.println( "webAppDirectory is missing or a not directory." );
         return false;
-    }    
-    File devProperties = new File ( webAppDirectory, "dev.properties" );
+    }
+    File devProperties = new File( webAppDirectory, "dev.properties" );
     if ( devProperties.exists() )
     {
         System.err.println( "dev.properties has not been excluded." );
         return false;
     }
-    
-    File testProperties = new File ( webAppDirectory, "test.properties" );
+
+    File testProperties = new File( webAppDirectory, "test.properties" );
     if ( testProperties.exists() )
     {
         System.err.println( "test.properties has not been excluded." );
         return false;
-    }    
-        
+    }
+
 }
 catch( Throwable e )
 {

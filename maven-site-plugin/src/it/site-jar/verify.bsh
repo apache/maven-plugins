@@ -34,7 +34,7 @@ try
         return false;
     }
 
-    File siteJar = new File ( target, "site-jar-1.0-SNAPSHOT-site.jar" );
+    File siteJar = new File( target, "site-jar-1.0-SNAPSHOT-site.jar" );
     if ( !siteJar.exists() || siteJar.isDirectory() )
     {
         System.err.println( "siteJar file is missing or a directory." );
@@ -42,7 +42,7 @@ try
     }
 
     String[] fileNames =  new String[] { "images/h3.jpg", "download.html", "index.html", "releases/release1.6.html" };
-    
+
     Set contents = new HashSet();
 
     JarFile jar = new JarFile( siteJar );
@@ -66,7 +66,7 @@ try
         	return false;
         }
     }
-    
+
 }
 catch( IOException e )
 {

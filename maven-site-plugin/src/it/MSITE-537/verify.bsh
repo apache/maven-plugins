@@ -25,7 +25,7 @@ boolean result = true;
 
 try
 {
-    final File stageDeployDirectory = new File ( basedir, "staging" );
+    final File stageDeployDirectory = new File( basedir, "staging" );
     if ( !stageDeployDirectory.exists() || !stageDeployDirectory.isDirectory() )
     {
         System.err.println( "stageDeployDirectory is missing or not a directory." );
@@ -33,7 +33,7 @@ try
     }
 
     // module directory
-    final File moduleDirectory = new File ( stageDeployDirectory, "module" );
+    final File moduleDirectory = new File( stageDeployDirectory, "module" );
     if ( !moduleDirectory.exists() || !moduleDirectory.isDirectory() )
     {
         System.err.println( "stage deploy moduleDirectory is missing or not a directory." );

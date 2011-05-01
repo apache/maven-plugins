@@ -33,14 +33,14 @@ try
         System.err.println( "target file is missing or not a directory." );
         return false;
     }
-    
-    File deployedFile = new File ( target, "org/apache/maven/its/deploy/45/test/0.1/test-0.1-mdp45.war" );
+
+    File deployedFile = new File( target, "org/apache/maven/its/deploy/45/test/0.1/test-0.1-mdp45.war" );
     if ( !deployedFile.exists() || deployedFile.isDirectory() )
     {
         System.err.println( "deployedFile file is missing or a directory." );
         return false;
-    }    
-        
+    }
+
 }
 catch( Throwable e )
 {

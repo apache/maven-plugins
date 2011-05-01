@@ -32,25 +32,24 @@ try
         System.err.println( "target file is missing or a directory." );
         return false;
     }
-    
+
     File someResource = new File( target, "/classes/config.properties" );
     if ( !someResource.exists() || someResource.isDirectory() )
     {
         System.err.println( "config.properties is missing or not a file." );
         return false;
-    }    
-    
-    FileInputStream fis = new FileInputStream ( someResource );
-    String paramContent = IOUtil.toString ( fis );
+    }
+
+    String paramContent = FileUtils.fileRead( someResource );
 
     int indexOf = paramContent.indexOf( "env=production" );
-    if ( indexOf < 0)
+    if ( indexOf < 0 )
     {
       System.err.println( "config.properties not contains env=production" );
       return false;
-    }    
+    }
 
-            
+
 }
 catch( IOException e )
 {

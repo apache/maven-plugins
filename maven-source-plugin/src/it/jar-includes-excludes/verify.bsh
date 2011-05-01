@@ -44,8 +44,8 @@ try
             return false;
         }
     }
-    
-    
+
+
     File jarFile = new File( basedir, "target/jar-1.0-SNAPSHOT-test-sources.jar" );
     System.out.println( "Checking for existence of " + jarFile );
     if ( !jarFile.isFile() )
@@ -84,7 +84,7 @@ try
             return false;
         }
     }
-    
+
 }
 catch( Throwable t )
 {

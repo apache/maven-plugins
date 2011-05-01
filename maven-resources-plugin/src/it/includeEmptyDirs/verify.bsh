@@ -32,7 +32,7 @@ try
         System.err.println( "target file is missing or not a directory." );
         return false;
     }
-    
+
     File classes = new File( target, "classes" );
     if ( !classes.exists() || !classes.isDirectory() )
     {
@@ -46,11 +46,11 @@ try
         System.err.println( "target/classes/empty-dir file is missing or not a directory." );
         return false;
     }
-    
+
     if ( emptyDir.list().length != 0 )
     {
         System.err.println( "target/classes/empty-dir file has child." );
-        return false;    
+        return false;
     }
 
     File emptyDirChild = new File( classes, "empty-dir-child" );
@@ -63,96 +63,95 @@ try
     if ( emptyDirChild.list().length != 1 )
     {
         System.err.println( "target/classes/empty-dir-child file has child." );
-        return false;    
+        return false;
     }
-    
+
     File child = new File( emptyDirChild, "child" );
     if ( !child.exists() || !child.isDirectory() )
     {
         System.err.println( "target/classes/empty-dir-child/child file is missing or not a directory." );
         return false;
-    }    
-    
+    }
+
     if ( child.list().length != 0 )
     {
         System.err.println( "target/classes/empty-dir-child/child file has child." );
-        return false;    
-    }    
-    
+        return false;
+    }
+
     File someResource = new File( target, "/classes/SomeResource.txt" );
     if ( !someResource.exists() || someResource.isDirectory() )
     {
         System.err.println( "SomeResource.txt is missing or not a file." );
         return false;
-    }    
-    
-    FileInputStream fis = new FileInputStream ( someResource );
-    String paramContent = IOUtil.toString ( fis );
-    
+    }
+
+    String paramContent = FileUtils.fileRead( someResource );
+
     //test:direct resolution project.version=1.0-SNAPSHOT
     int indexOf = paramContent.indexOf( "test:direct resolution project.version=1.0-SNAPSHOT" );
-    if ( indexOf < 0)
+    if ( indexOf < 0 )
     {
       System.err.println( "SomeResource.txt not contains test:direct resolution project.version=1.0-SNAPSHOT" );
       return false;
-    }    
-    
+    }
+
 
     //test:filter resolution project.version=1.0-SNAPSHOT
     indexOf = paramContent.indexOf( "test:filter resolution project.version=1.0-SNAPSHOT" );
-    if ( indexOf < 0)
+    if ( indexOf < 0 )
     {
       System.err.println( "SomeResource.txt not contains test:filter resolution project.version=1.0-SNAPSHOT" );
       return false;
-    } 
-    
+    }
+
     //test:filter direct projectProperty=foo-projectProperty-bar
     indexOf = paramContent.indexOf( "test:filter direct projectProperty=foo-projectProperty-bar" );
-    if ( indexOf < 0)
+    if ( indexOf < 0 )
     {
       System.err.println( "SomeResource.txt not contains test:filter direct projectProperty=foo-projectProperty-bar" );
       return false;
-    }    
-    
+    }
+
     //test:filter resolution projectProperty=foo-projectProperty-bar
     indexOf = paramContent.indexOf( "test:filter resolution projectProperty=foo-projectProperty-bar" );
-    if ( indexOf < 0)
+    if ( indexOf < 0 )
     {
       System.err.println( "SomeResource.txt not contains test:filter resolution projectProperty=foo-projectProperty-bar" );
       return false;
-    }         
-    
-    //test:filter direct profileProperty=foo-profileProperty-bar    
+    }
+
+    //test:filter direct profileProperty=foo-profileProperty-bar
     indexOf = paramContent.indexOf( "test:filter direct profileProperty=foo-profileProperty-bar" );
-    if ( indexOf < 0)
+    if ( indexOf < 0 )
     {
       System.err.println( "SomeResource.txt not contains test:filter direct profileProperty=foo-profileProperty-bar" );
       return false;
-    }     
-    
-    //test:filter resolution profileProperty=foo-profileProperty-bar    
+    }
+
+    //test:filter resolution profileProperty=foo-profileProperty-bar
     indexOf = paramContent.indexOf( "test:filter resolution profileProperty=foo-profileProperty-bar" );
-    if ( indexOf < 0)
+    if ( indexOf < 0 )
     {
       System.err.println( "SomeResource.txt not contains test:filter resolution profileProperty=foo-profileProperty-bar" );
       return false;
     }
-    
+
     //test:filter syspropsExecutionPropsWins=fromExecProps
     indexOf = paramContent.indexOf( "test:filter syspropsExecutionPropsWins=fromExecProps" );
-    if ( indexOf < 0)
+    if ( indexOf < 0 )
     {
       System.err.println( "SomeResource.txt not contains test:filter syspropsExecutionPropsWins=fromExecProps" );
       return false;
-    }   
-    
-    //newToken=foo     
+    }
+
+    //newToken=foo
     indexOf = paramContent.indexOf( "newToken=foo" );
-    if ( indexOf < 0)
+    if ( indexOf < 0 )
     {
       System.err.println( "SomeResource.txt not contains newToken=foo" );
       return false;
-    }       
+    }
 }
 catch( IOException e )
 {

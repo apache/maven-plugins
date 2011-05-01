@@ -26,21 +26,21 @@ boolean result = true;
 
 try
 {
-    final File siteDirectory = new File ( basedir, "target/site" );
+    final File siteDirectory = new File( basedir, "target/site" );
     if ( !siteDirectory.exists() || !siteDirectory.isDirectory() )
     {
         System.err.println( "site is missing or not a directory." );
         result = false;
     }
 
-    File index = new File ( siteDirectory, "index.html" );
+    File index = new File( siteDirectory, "index.html" );
     if ( !index.exists() || index.isDirectory() )
     {
         System.err.println( "no index file or is a directory." );
         result = false;
     }
 
-    String content = IOUtil.toString ( new FileInputStream ( index ), "UTF-8" );
+    String content = FileUtils.fileRead( index, "UTF-8" );
     int index1 = content.indexOf( "<a href=\"http://webhost.company.com/index.html\" class=\"externalLink\" title=\"Breadcrumb\">Breadcrumb</a>" );
     int index2 = content.indexOf( "<a href=\"http://webhost.company.com/\" class=\"externalLink\" title=\"Link\">Link</a>" );
     int index3 = content.indexOf( "<a href=\"http://webhost.company.com/\" class=\"externalLink\" title=\"Menu\">Menu</a>" );

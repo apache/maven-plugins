@@ -33,20 +33,20 @@ try
         System.err.println( "target file is missing or not a directory." );
         return false;
     }
-    
-    File artifact = new File ( target, "maven-jar-plugin-test-mjar-90-99.0.jar" );
+
+    File artifact = new File( target, "maven-jar-plugin-test-mjar-90-99.0.jar" );
     if ( !artifact.exists() || artifact.isDirectory() )
     {
         System.err.println( "artifact file is missing or a directory." );
         return false;
-    }     
-    
-    File testArtifact = new File ( target, "maven-jar-plugin-test-mjar-90-99.0-tests.jar" );
+    }
+
+    File testArtifact = new File( target, "maven-jar-plugin-test-mjar-90-99.0-tests.jar" );
     if ( testArtifact.exists() )
     {
         System.err.println( "testArtifact file has been created with maven.Test.skip=true." );
         return false;
-    }    
+    }
 }
 catch( Throwable e )
 {

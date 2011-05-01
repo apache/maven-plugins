@@ -27,13 +27,13 @@ if ( !target.isDirectory() )
     throw new IOException( "target file is missing or not a directory: " + target );
 }
 
-File jarFile = new File ( target, "MJAR-70-no-recreation-1.0-SNAPSHOT.jar" );
+File jarFile = new File( target, "MJAR-70-no-recreation-1.0-SNAPSHOT.jar" );
 if ( !jarFile.isFile() )
 {
     throw new IOException( "artifact file is missing or a directory: " + jarFile );
 }
 
-File refFile = new File ( target, "reference.jar" );
+File refFile = new File( target, "reference.jar" );
 if ( !refFile.isFile() )
 {
     throw new IOException( "reference file is missing or a directory: " + refFile );

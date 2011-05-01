@@ -31,17 +31,17 @@ try
         return false;
     }
 
-    String[] reports = { "dependencies", 
-                         "index", 
-                         "integration", 
-                         "issue-tracking", 
-                         "license", 
-                         "mail-lists", 
+    String[] reports = { "dependencies",
+                         "index",
+                         "integration",
+                         "issue-tracking",
+                         "license",
+                         "mail-lists",
                          "plugin-management",
-                         "plugins", 
-                         "project-info", 
-                         "project-summary", 
-                         "source-repository", 
+                         "plugins",
+                         "project-info",
+                         "project-summary",
+                         "source-repository",
                          "team-list"
                        };
     for ( String report : reports )
@@ -53,22 +53,22 @@ try
             return false;
         }
     }
-    
+
     File maillist = new File( siteDir, "mail-lists.html");
     String content = FileUtils.fileRead( maillist, "UTF-8" );
     if ( !content.contains( "mail list intro text foo" ) )
     {
         System.err.println( "mail-lists.html doesn't contain mail list intro text foo" );
         return false;
-    }    
-    
+    }
+
     File dependencies = new File( siteDir, "dependencies.html");
     content = FileUtils.fileRead( dependencies, "UTF-8" );
     if ( !content.contains( "doxia-core-1.2.jar" ) )
     {
         System.err.println( "dependencies.html doesn't contain doxia-core-1.2.jar" );
         return false;
-    }    
+    }
 }
 catch( Throwable t )
 {

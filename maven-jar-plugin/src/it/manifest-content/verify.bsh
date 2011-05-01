@@ -33,73 +33,73 @@ try
         System.err.println( "target file is missing or not a directory." );
         return false;
     }
-    
-    File artifact = new File ( target, "manifest-content-1.0-SNAPSHOT.jar" );
+
+    File artifact = new File( target, "manifest-content-1.0-SNAPSHOT.jar" );
     if ( !artifact.exists() || artifact.isDirectory() )
     {
         System.err.println( "artifact file is missing or a directory." );
         return false;
-    }    
-    
+    }
+
     JarFile jar = new JarFile( artifact );
-    
+
     Attributes manifest = jar.getManifest().getMainAttributes();
-   
+
     if ( !"Apache Maven".equals( manifest.get( new Attributes.Name( "Created-By" ) ) ) )
     {
         System.err.println( "Created-By not equals Apache Maven" );
-        return false;    
-    }  
-    
-    
+        return false;
+    }
+
+
     if ( !"manifest-content-it".equals( manifest.get( Attributes.Name.SPECIFICATION_TITLE ) ) )
     {
         System.err.println( Attributes.Name.SPECIFICATION_TITLE.toString() + " not equals manifest-content-it" );
-        return false;    
-    }    
-    
+        return false;
+    }
+
     if ( !"1.0-SNAPSHOT".equals( manifest.get( Attributes.Name.SPECIFICATION_VERSION ) ) )
     {
         System.err.println( Attributes.Name.SPECIFICATION_VERSION.toString() + " not equals 1.0-SNAPSHOT" );
-        return false;    
-    }     
-    
+        return false;
+    }
+
     if ( !"jar plugin it".equals( manifest.get( Attributes.Name.SPECIFICATION_VENDOR ) ) )
     {
         System.err.println( Attributes.Name.SPECIFICATION_VENDOR.toString() + " not equals jar plugin it" );
-        return false;    
-    }    
-    
+        return false;
+    }
+
     if ( !"manifest-content-it".equals( manifest.get( Attributes.Name.IMPLEMENTATION_TITLE ) ) )
     {
         System.err.println( Attributes.Name.IMPLEMENTATION_TITLE.toString() + " not equals manifest-content-it" );
-        return false;    
+        return false;
     }
 
     if ( !"1.0-SNAPSHOT".equals( manifest.get( Attributes.Name.IMPLEMENTATION_VERSION ) ) )
     {
         System.err.println( Attributes.Name.SPECIFICATION_VERSION.toString() + " not equals 1.0-SNAPSHOT" );
-        return false;    
+        return false;
     }
-    
+
     if ( !"org.apache.maven.plugins".equals( manifest.get( Attributes.Name.IMPLEMENTATION_VENDOR_ID ) ) )
     {
         System.err.println( Attributes.Name.IMPLEMENTATION_VENDOR_ID.toString() + " not equals org.apache.maven.plugins" );
-        return false;    
-    }    
+        return false;
+    }
 
     if ( !"jar plugin it".equals( manifest.get( Attributes.Name.IMPLEMENTATION_VENDOR ) ) )
     {
         System.err.println( Attributes.Name.IMPLEMENTATION_VENDOR.toString() + " not equals jar plugin it" );
-        return false;    
+        return false;
     }
-    
+
     if ( !"myproject.HelloWorld".equals( manifest.get( Attributes.Name.MAIN_CLASS ) ) )
     {
         System.err.println( Attributes.Name.MAIN_CLASS.toString() + " not equals myproject.HelloWorld" );
-        return false;    
-    }    
-    
+        return false;
+    }
+
 }
 catch( Throwable e )
 {

@@ -32,40 +32,39 @@ try
         return false;
     }
 
-    File siteDirectory = new File ( target, "site-deployed" );
+    File siteDirectory = new File( target, "site-deployed" );
     if ( !siteDirectory.exists() || !siteDirectory.isDirectory() )
     {
         System.err.println( "site file is missing or not a directory." );
         return false;
     }
 
-    File releaseDirectory = new File ( siteDirectory, "releases" );
+    File releaseDirectory = new File( siteDirectory, "releases" );
     if ( !releaseDirectory.exists() || !releaseDirectory.isDirectory() )
     {
         System.err.println( "releaseDirectory file is missing or not a directory." );
         return false;
     }
-    File release163 = new File ( releaseDirectory, "release1.6.3.html" );
+    File release163 = new File( releaseDirectory, "release1.6.3.html" );
     if ( !release163.exists() || release163.isDirectory() )
     {
         System.err.println( "release163 file is missing or a directory." );
         return false;
     }
-    File release16 = new File ( releaseDirectory, "release1.6.html" );
+    File release16 = new File( releaseDirectory, "release1.6.html" );
     if ( !release16.exists() || release16.isDirectory() )
     {
         System.err.println( "release16 file is missing or a directory." );
         return false;
     }
 
-    File download = new File ( siteDirectory, "download.html" );
+    File download = new File( siteDirectory, "download.html" );
     if ( !download.exists() || download.isDirectory() )
     {
         System.err.println( "download.html file is missing or a directory." );
         return false;
     }
-    FileInputStream fis = new FileInputStream ( download );
-    String downloadContent = IOUtil.toString ( fis, "UTF-8" );
+    String downloadContent = FileUtils.fileRead( download, "UTF-8" );
     int indexOf = downloadContent.indexOf( "Download Maven 2.0.7" );
     if ( indexOf < 0)
     {
@@ -73,7 +72,7 @@ try
         return false;
     }
 
-    
+
 }
 catch( IOException e )
 {

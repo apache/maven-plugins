@@ -23,33 +23,11 @@ import org.codehaus.plexus.util.*;
 boolean result = true;
 try
 {
-    String encoding = "UTF-8";
-
-    Reader fileReader = null;
-
     File buildLog = new File( basedir, "build.log" );
-    String logContent;
-    try
-    {
-        fileReader = ReaderFactory.newReader( buildLog, encoding );
-        logContent = IOUtil.toString( fileReader );
-    }
-    finally
-    {
-        IOUtil.close( fileReader );
-    }
+    String logContent = FileUtils.fileRead( buildLog, "UTF-8" );
 
     File javaFile = new File( basedir, "/src/main/java/fix/test/App.java" );
-    String content;
-    try
-    {
-        fileReader = ReaderFactory.newReader( javaFile, encoding );
-        content = IOUtil.toString( fileReader );
-    }
-    finally
-    {
-        IOUtil.close( fileReader );
-    }
+    String content = FileUtils.fileRead( javaFile, "UTF-8" );
 
     result = result && ( StringUtils.countMatches( content, " * App class" ) == 1 );
     result = result && ( StringUtils.countMatches( content, " * @generatorClass toto" ) == 1 );
@@ -63,15 +41,7 @@ try
     result = result && ( StringUtils.countMatches( content, "     * @param str a {@link java.lang.String} object." ) == 1 );
 
     javaFile = new File( basedir, "/src/main/java/fix/test/ClassWithNoJavadoc.java" );
-    try
-    {
-        fileReader = ReaderFactory.newReader( javaFile, encoding );
-        content = IOUtil.toString( fileReader );
-    }
-    finally
-    {
-        IOUtil.close( fileReader );
-    }
+    content = FileUtils.fileRead( javaFile, "UTF-8" );
 
     result = result && ( StringUtils.countMatches( content, " * <p>ClassWithNoJavadoc class.</p>" ) == 1 );
     result = result && ( StringUtils.countMatches( content, " * @version $Id: $" ) == 1 );
@@ -83,15 +53,7 @@ try
     result = result && ( StringUtils.countMatches( content, "     * @param str a {@link java.lang.String} object." ) == 0 );
 
     javaFile = new File( basedir, "/src/main/java/fix/test/ClassWithJavadoc.java" );
-    try
-    {
-        fileReader = ReaderFactory.newReader( javaFile, encoding );
-        content = IOUtil.toString( fileReader );
-    }
-    finally
-    {
-        IOUtil.close( fileReader );
-    }
+    content = FileUtils.fileRead( javaFile, "UTF-8" );
 
     result = result && ( StringUtils.countMatches( content, " * Some Javadoc." ) == 1 );
     result = result && ( StringUtils.countMatches( content, " * @since 1.0" ) == 1 );
@@ -112,15 +74,7 @@ try
     result = result && ( StringUtils.countMatches( logContent, "[WARNING] Fixed unknown param 'str' defined in fix.test.ClassWithJavadoc#methodWithWrongJavadocParameters(aString)" ) == 1 );
 
     javaFile = new File( basedir, "/src/main/java/fix/test/InterfaceWithNoJavadoc.java" );
-    try
-    {
-        fileReader = ReaderFactory.newReader( javaFile, encoding );
-        content = IOUtil.toString( fileReader );
-    }
-    finally
-    {
-        IOUtil.close( fileReader );
-    }
+    content = FileUtils.fileRead( javaFile, "UTF-8" );
 
     result = result && ( StringUtils.countMatches( content, " * <p>InterfaceWithNoJavadoc interface.</p>" ) == 1 );
     result = result && ( StringUtils.countMatches( content, " * @version $Id: $" ) == 1 );
@@ -130,15 +84,7 @@ try
     result = result && ( StringUtils.countMatches( content, "     * @param aString a {@link java.lang.String} object." ) == 1 );
 
     javaFile = new File( basedir, "/src/main/java/fix/test/InterfaceWithJavadoc.java" );
-    try
-    {
-        fileReader = ReaderFactory.newReader( javaFile, encoding );
-        content = IOUtil.toString( fileReader );
-    }
-    finally
-    {
-        IOUtil.close( fileReader );
-    }
+    content = FileUtils.fileRead( javaFile, "UTF-8" );
 
     result = result && ( StringUtils.countMatches( content, " * Some Javadoc." ) == 1 );
     result = result && ( StringUtils.countMatches( content, " * @version $Id: $" ) == 1 );

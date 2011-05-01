@@ -32,32 +32,29 @@ try
         System.err.println( "target file is missing or a directory." );
         return false;
     }
-    
+
     File resource = new File( target, "/extra-resources/configuration.properties" );
     if ( !resource.exists() || resource.isDirectory() )
     {
         System.err.println( "configuration.properties is missing or not a file." );
         return false;
-    }    
-    
-    FileInputStream fis = new FileInputStream ( resource );
-    String paramContent = IOUtil.toString ( fis );
+    }
+
+    String paramContent = FileUtils.fileRead( resource );
 
     int indexOf = paramContent.indexOf( "artifactId=maven-resources-plugin-copy-resources-it" );
-    if ( indexOf < 0)
+    if ( indexOf < 0 )
     {
       System.err.println( "configuration.properties not contains artifactId=maven-resources-plugin-copy-resources-it" );
       return false;
-    }    
-    
+    }
+
     int indexOf = paramContent.indexOf( "version=1.0.1-SNAPSHOT" );
-    if ( indexOf < 0)
+    if ( indexOf < 0 )
     {
       System.err.println( "configuration.properties not contains version=1.0.1-SNAPSHOT" );
       return false;
-    }        
-
-            
+    }
 }
 catch( IOException e )
 {

@@ -20,7 +20,7 @@ try
 
     File textFile = new File( basedir, "src/it/project/target/local-repo-path.txt" );
     BufferedReader reader = new BufferedReader( new InputStreamReader( new FileInputStream( textFile ), "UTF-8" ) );
-    File localRepoPathOfSubBuild = new File ( reader.readLine() );
+    File localRepoPathOfSubBuild = new File( reader.readLine() );
     reader.close();
     System.out.println("Local repository of sub build: " + localRepoPathOfSubBuild);
 

@@ -12,8 +12,8 @@ try
     }
 
     String[] paths = {
-            "no-pom", 
-            "no-pom/build.log", 
+            "no-pom",
+            "no-pom/build.log",
     };
     for ( String path : paths )
     {

@@ -11,9 +11,9 @@ try
   File build;
   File mavenBuild;
   File mavenBuildProperties;
-  
+
   // Webapp project
-  
+
   build = new File( basedir, "build.xml" );
   if ( build.isDirectory() || !build.exists() )
   {
@@ -44,7 +44,7 @@ try
     System.err.println( "The file '" + mavenBuildProperties.getAbsolutePath() + "' is a directory or doesn't exist." );
     return false;
   }
-  
+
   warFile = new File( basedir, "target/ant-webapp-test.war" );
   System.out.println( "Checking for existence of WAR file: " + warFile );
   if ( !warFile.isFile() )
@@ -52,7 +52,7 @@ try
     System.err.println( "FAILED!" );
     return false;
   }
-  
+
   JarFile war = new JarFile( warFile );
 
   String[] expected = {
@@ -90,7 +90,7 @@ try
       return false;
     }
   }
-  
+
   String[] unexpected = {
     "org/MyClass.class",
   };

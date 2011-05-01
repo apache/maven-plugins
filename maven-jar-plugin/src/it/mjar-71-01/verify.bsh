@@ -33,14 +33,14 @@ try
         System.err.println( "target file is missing or not a directory." );
         return false;
     }
-    
-    File artifact = new File ( target, "mjar-71-1.0.jar" );
+
+    File artifact = new File( target, "mjar-71-1.0.jar" );
     if ( !artifact.exists() || artifact.isDirectory() )
     {
         System.err.println( "artifact file " + file + " is missing or a directory." );
         return false;
-    }    
-    
+    }
+
     JarFile jar = new JarFile( artifact );
     Enumeration jarEntries = jar.entries();
     while ( jarEntries.hasMoreElements() )
@@ -49,21 +49,21 @@ try
         if ( !entry.isDirectory() )
         {
             // Only compare files
-            if ( entry.getName().equals ("META-INF/MANIFEST.MF") )
+            if ( entry.getName().equals( "META-INF/MANIFEST.MF" ) )
             {
-            	String manifest = IOUtil.toString ( jar.getInputStream ( entry ) );
-            	int index = manifest.indexOf ( "Archiver-Version: foobar-1.23456" );
+            	String manifest = IOUtil.toString( jar.getInputStream ( entry ) );
+            	int index = manifest.indexOf( "Archiver-Version: foobar-1.23456" );
             	if ( index <= 0 )
             	{	
-            		System.err.println ( "MANIFEST doens t contain: 'Archiver-Version: foobar-1.23456'" );
-            		return false; 
+            		System.err.println( "MANIFEST doesn't contain: 'Archiver-Version: foobar-1.23456'" );
+            		return false;
             	}
             	return true;
             }
         }
     }
-    System.err.println ( "MANIFEST.MF not found" );
-    return false;    
+    System.err.println( "MANIFEST.MF not found" );
+    return false;
 }
 catch( Throwable e )
 {

@@ -31,14 +31,14 @@ try
         System.err.println( "target file is missing or a directory." );
         return false;
     }
-    
+
     File someResource = new File( target, "/classes/filter.properties" );
     if ( !someResource.exists() || !someResource.isFile() )
     {
         System.err.println( "file.txt is missing or not a file." );
         return false;
-    }    
-    
+    }
+
     FileInputStream fis = new FileInputStream( someResource );
     Properties p = new Properties();
     p.load( fis );

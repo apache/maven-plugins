@@ -30,48 +30,48 @@ try
         System.err.println( "target file is missing or a directory." );
         return false;
     }
-    
+
     File webappDirectory = new File( target, "simple-war-no-webxml-1.0-SNAPSHOT" );
     if ( !webappDirectory.exists() || !webappDirectory.isDirectory() )
     {
         System.err.println( "webappDirectory is missing or not a directory." );
         return false;
-    }    
-    
+    }
+
     File webInfFile = new File( webappDirectory, "WEB-INF/web.xml" );
     if ( webInfFile.exists())
     {
         System.err.println( "web.xml should not be there." );
         return false;
-    }  
-    
+    }
+
     File indexJsp = new File( webappDirectory, "index.jsp" );
     if ( !indexJsp.exists() || indexJsp.isDirectory() )
     {
         System.err.println( "indexJsp is missing or a directory." );
         return false;
     }
-    
-    File warFile = new File (target, "simple-war-no-webxml-1.0-SNAPSHOT.war" );
+
+    File warFile = new File( target, "simple-war-no-webxml-1.0-SNAPSHOT.war" );
     if ( !warFile.exists() || warFile.isDirectory() )
     {
         System.err.println( "warFile is missing or a directory." );
         return false;
-    }   
-    
-    File libDir = new File ( webappDirectory, "WEB-INF/lib" );
+    }
+
+    File libDir = new File( webappDirectory, "WEB-INF/lib" );
     if ( !libDir.exists() || !libDir.isDirectory() )
     {
         System.err.println( "WEB-INF/lib is missing or not a directory." );
         return false;
-    }    
-    
-    File plexusUtilsDependency = new File ( libDir, "plexus-utils-1.4.6.jar" );
+    }
+
+    File plexusUtilsDependency = new File( libDir, "plexus-utils-1.4.6.jar" );
     if ( !plexusUtilsDependency.exists() || plexusUtilsDependency.isDirectory() )
     {
         System.err.println( "plexus-utils-1.4.6.jar is missing or a directory." );
         return false;
-    }    
+    }
 }
 catch( IOException e )
 {

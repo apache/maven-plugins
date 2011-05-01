@@ -6,7 +6,7 @@ import org.codehaus.plexus.util.*;
 
 try
 {
-    String zipFilePath = "../../local-repo/antrun-plugin/test/antrun-plugin-attach-artifact-test/1.0-SNAPSHOT/antrun-plugin-attach-artifact-test-1.0-SNAPSHOT-foo.zip"; 
+    String zipFilePath = "../../local-repo/antrun-plugin/test/antrun-plugin-attach-artifact-test/1.0-SNAPSHOT/antrun-plugin-attach-artifact-test-1.0-SNAPSHOT-foo.zip";
     File installedZipFile = new File( basedir, zipFilePath );
 
     if ( ! installedZipFile.exists() )
@@ -15,7 +15,7 @@ try
         return false;
     }
 
-    String zipWithouClassifierFilePath = "../../local-repo/antrun-plugin/test/antrun-plugin-attach-artifact-test/1.0-SNAPSHOT/antrun-plugin-attach-artifact-test-1.0-SNAPSHOT.zip"; 
+    String zipWithouClassifierFilePath = "../../local-repo/antrun-plugin/test/antrun-plugin-attach-artifact-test/1.0-SNAPSHOT/antrun-plugin-attach-artifact-test-1.0-SNAPSHOT.zip";
     File installedZipWithouClassifierFile = new File( basedir, zipWithouClassifierFilePath );
 
     if ( ! installedZipWithouClassifierFile.exists() )
