@@ -57,10 +57,8 @@ public class IssueAdapter
             // Do NOT create a release for issues that lack a fixVersion
             if ( issue.getFixVersions() != null )
             {
-                for ( Iterator iterator = issue.getFixVersions().iterator(); iterator.hasNext(); )
+                for ( String fixVersion : issue.getFixVersions() )
                 {
-                    String fixVersion = (String) iterator.next();
-
                     // Try to get a matching Release from the map
                     Release release = releasesMap.get( fixVersion );
                     if ( release == null )

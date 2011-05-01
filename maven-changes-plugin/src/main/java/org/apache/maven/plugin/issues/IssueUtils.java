@@ -57,9 +57,8 @@ public class IssueUtils
 
             if ( issue.getFixVersions() != null )
             {
-                for ( int j = 0; j < issue.getFixVersions().size(); j++ )
+                for ( String fixVersion : issue.getFixVersions() )
                 {
-                    String fixVersion = (String) issue.getFixVersions().get( j );
                     if ( prefix == null || fixVersion.startsWith( prefix ) )
                     {
                         isFound = true;
