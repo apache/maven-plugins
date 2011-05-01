@@ -74,10 +74,10 @@ under the License.
   </issueManagement>
 
   <properties>
-    <doxiaVersion>1.0</doxiaVersion>
-    <doxiaSitetoolsVersion>1.0</doxiaSitetoolsVersion>
-    <mavenVersion>2.0.6</mavenVersion>
-    <sitePluginVersion>2.0.1</sitePluginVersion>
+    <doxiaVersion>1.2</doxiaVersion>
+    <doxiaSitetoolsVersion>1.2</doxiaSitetoolsVersion>
+    <mavenVersion>2.2.1</mavenVersion>
+    <sitePluginVersion>2.3-SNAPSHOT</sitePluginVersion>
   </properties>
 
   <dependencies>
