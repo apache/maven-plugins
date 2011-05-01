@@ -137,7 +137,7 @@ public class AnnouncementMojo
      * @parameter
      * @since 2.4
      */
-    private List issueManagementSystems;
+    private List<String> issueManagementSystems;
 
     /**
      * Directory where the template file will be generated.
@@ -405,7 +405,7 @@ public class AnnouncementMojo
         {
             if ( issueManagementSystems == null )
             {
-                issueManagementSystems = new ArrayList();
+                issueManagementSystems = new ArrayList<String>();
             }
 
             // Handle deprecated parameters, in a backward compatible way
