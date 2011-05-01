@@ -44,10 +44,10 @@ public class IssueUtils
      * @throws org.apache.maven.plugin.MojoExecutionException
      *          If no issues could be found for the supplied prefix
      */
-    public static List filterIssuesWithVersionPrefix( List issues, String prefix )
+    public static List<Issue> filterIssuesWithVersionPrefix( List<Issue> issues, String prefix )
         throws MojoExecutionException
     {
-        List filteredIssues = new ArrayList();
+        List<Issue> filteredIssues = new ArrayList<Issue>();
         boolean isFound = false;
         Issue issue = null;
 
@@ -90,10 +90,10 @@ public class IssueUtils
      * @throws org.apache.maven.plugin.MojoExecutionException
      *          If no issues could be found for the supplied version
      */
-    public static List getIssuesForVersion( List issues, String version )
+    public static List<Issue> getIssuesForVersion( List<Issue> issues, String version )
         throws MojoExecutionException
     {
-        List issuesForVersion = new ArrayList();
+        List<Issue> issuesForVersion = new ArrayList<Issue>();
         boolean isFound = false;
         Issue issue = null;
         String releaseVersion = version;

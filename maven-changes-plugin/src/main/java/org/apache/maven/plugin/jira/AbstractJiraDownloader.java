@@ -31,6 +31,7 @@ import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.params.HttpClientParams;
 import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.maven.plugin.issues.Issue;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Proxy;
@@ -719,7 +720,7 @@ public abstract class AbstractJiraDownloader
         }
     }
 
-    public List getIssueList()
+    public List<Issue> getIssueList()
     {
         if ( output.isFile() )
         {
@@ -731,7 +732,7 @@ public abstract class AbstractJiraDownloader
         else
         {
             getLog().warn( "JIRA file " + output.getPath() + " doesn't exist." );
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
     }
 
