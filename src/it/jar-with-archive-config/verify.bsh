@@ -43,7 +43,7 @@ try
             return false;
         }
     }
-    
+
     System.out.println( "Checking manifest for attribute: Implementation-Version " );
     Map manifestAttributes = jar.getManifest().getMainAttributes();
     String implVersion = manifestAttributes.getValue( "Implementation-Version" );
