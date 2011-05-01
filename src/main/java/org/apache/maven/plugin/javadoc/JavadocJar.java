@@ -196,19 +196,19 @@ public class JavadocJar
         }
         catch ( ArchiverException e )
         {
-            failOnError( "ArchiverException: Error while creating archive: ", e );
+            failOnError( "ArchiverException: Error while creating archive", e );
         }
         catch ( IOException e )
         {
-            failOnError( "IOException: Error while creating archive: ", e );
+            failOnError( "IOException: Error while creating archive", e );
         }
         catch ( MavenReportException e )
         {
-            failOnError( "MavenReportException: Error while creating archive: ", e );
+            failOnError( "MavenReportException: Error while creating archive", e );
         }
         catch ( RuntimeException e )
         {
-            failOnError( "RuntimeException: Error while creating archive: ", e );
+            failOnError( "RuntimeException: Error while creating archive", e );
         }
     }
 
