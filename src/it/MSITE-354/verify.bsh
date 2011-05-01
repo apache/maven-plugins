@@ -38,7 +38,7 @@ try
         return false;
     }
 
-    File projectInfo = new File ( site, "project-info.html" );
+    File projectInfo = new File( site, "project-info.html" );
     if ( projectInfo.exists() || projectInfo.isDirectory() )
     {
         System.err.println( "project-info.html file is present although it shouldn't, or is a directory." );

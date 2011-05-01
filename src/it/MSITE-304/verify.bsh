@@ -31,7 +31,7 @@ try
         return false;
     }
 
-    File stagingDirectory = new File ( target, "staging" );
+    File stagingDirectory = new File( target, "staging" );
     if ( !stagingDirectory.exists() || !stagingDirectory.isDirectory() )
     {
         System.err.println( "Staging directory '" + stagingDirectory + "' is missing or not a directory." );
@@ -40,28 +40,28 @@ try
 
     String tmpDir = System.getProperty( "java.io.tmpdir" );
 
-    File childDirectory = new File ( stagingDirectory, "MSITE-304-child" );
+    File childDirectory = new File( stagingDirectory, "MSITE-304-child" );
     if ( !childDirectory.exists() || !childDirectory.isDirectory() )
     {
         System.err.println( "Staging directory for child '" + childDirectory + "' is missing or not a directory." );
         return false;
     }
 
-    File stageDeployDirectory = new File ( tmpDir + "/www.example.com/parent" );
+    File stageDeployDirectory = new File( tmpDir + "/www.example.com/parent" );
     if ( !stageDeployDirectory.exists() || !stageDeployDirectory.isDirectory() )
     {
         System.err.println( "Stage deploy directory '" + stageDeployDirectory + "' is missing or not a directory." );
         return false;
     }
 
-    File validChildStageDeployDirectory = new File ( stageDeployDirectory, "staging/MSITE-304-child" );
+    File validChildStageDeployDirectory = new File( stageDeployDirectory, "staging/MSITE-304-child" );
     if ( !validChildStageDeployDirectory.exists() || !validChildStageDeployDirectory.isDirectory() )
     {
         System.err.println( "Valid stage deploy directory for child '" + validChildStageDeployDirectory + "' is missing or not a directory." );
         return false;
     }
 
-    File invalidChildStageDeployDirectory = new File ( stageDeployDirectory, "MSITE-304-child/staging" );
+    File invalidChildStageDeployDirectory = new File( stageDeployDirectory, "MSITE-304-child/staging" );
     if ( invalidChildStageDeployDirectory.exists() && invalidChildStageDeployDirectory.isDirectory() )
     {
         System.err.println( "Invalid stage deploy directory for child '" + invalidChildStageDeployDirectory + "' is present." );

@@ -25,21 +25,21 @@ boolean result = true;
 
 try
 {
-    File parentSiteDirectory = new File ( basedir, "target/site" );
+    File parentSiteDirectory = new File( basedir, "target/site" );
     if ( !parentSiteDirectory.exists() || !parentSiteDirectory.isDirectory() )
     {
         System.err.println( "parent site is missing or not a directory." );
         result = false;
     }
 
-    File parentIndex = new File ( parentSiteDirectory, "index.html" );
+    File parentIndex = new File( parentSiteDirectory, "index.html" );
     if ( !parentIndex.exists() || parentIndex.isDirectory() )
     {
         System.err.println( "no index file in parent or is a directory." );
         result = false;
     }
 
-    String content = IOUtil.toString ( new FileInputStream ( parentIndex ), "UTF-8" );
+    String content = FileUtils.fileRead( parentIndex, "UTF-8" );
     int index1 = content.indexOf( "<a href=\"child/index.html\" title=\"MSITE-456 - child\">MSITE-456 - child</a>" );
     int index2 = content.indexOf( "<a href=\"project-info.html\" title=\"Project Information\">Project Information</a>" );
 
@@ -53,28 +53,28 @@ try
     // CHILD
 
 
-    File childDirectory = new File ( basedir, "child" );
+    File childDirectory = new File( basedir, "child" );
     if ( !childDirectory.exists() || !childDirectory.isDirectory() )
     {
         System.err.println( "child is missing or not a directory." );
         result = false;
     }
 
-    File childSiteDirectory = new File ( childDirectory, "target/site" );
+    File childSiteDirectory = new File( childDirectory, "target/site" );
     if ( !childSiteDirectory.exists() || !childSiteDirectory.isDirectory() )
     {
         System.err.println( "child site is missing or not a directory." );
         result = false;
     }
 
-    File childIndex = new File ( childSiteDirectory, "index.html" );
+    File childIndex = new File( childSiteDirectory, "index.html" );
     if ( !childIndex.exists() || childIndex.isDirectory() )
     {
         System.err.println( "no index file in child or is a directory." );
         result = false;
     }
 
-    content = IOUtil.toString ( new FileInputStream ( childIndex ), "UTF-8" );
+    content = FileUtils.fileRead( childIndex, "UTF-8" );
     index1 = content.indexOf( "<a href=\"../index.html\" title=\"MSITE-456 - parent\">MSITE-456 - parent</a>" );
     index2 = content.indexOf( "<a href=\"project-info.html\" title=\"Project Information\">Project Information</a>" );
 

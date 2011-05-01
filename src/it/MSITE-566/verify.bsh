@@ -32,14 +32,14 @@ try
         result = false;
     }
 
-    File siteDescriptor = new File ( target, "test-1.0-SNAPSHOT-site.xml" );
+    File siteDescriptor = new File( target, "test-1.0-SNAPSHOT-site.xml" );
     if ( !siteDescriptor.exists() || siteDescriptor.isDirectory() )
     {
         System.err.println( "siteDescriptor file is missing from target or is a directory." );
         result = false;
     }
 
-    String content = IOUtil.toString ( new FileInputStream ( siteDescriptor ), "UTF-8" );
+    String content = FileUtils.fileRead( siteDescriptor, "UTF-8" );
     int index1 = content.indexOf( "name=\"${project.name}\"" );
     int index2 = content.indexOf( "<menu name=\"${menu.title}\">" );
     int index3 = content.indexOf( "<!-- a comment -->" );
@@ -57,14 +57,14 @@ try
         result = false;
     }
 
-    File index = new File ( site, "index.html" );
+    File index = new File( site, "index.html" );
     if ( !index.exists() || index.isDirectory() )
     {
         System.err.println( "index.html is missing from target or is a directory." );
         result = false;
     }
 
-    content = IOUtil.toString ( new FileInputStream ( index ), "UTF-8" );
+    content = FileUtils.fileRead( index, "UTF-8" );
     index1 = content.indexOf( "MSITE-566 IT" );
     index2 = content.indexOf( "<h5>Documentation</h5>" );
     if ( index1 < 0 || index2 < 0 )
