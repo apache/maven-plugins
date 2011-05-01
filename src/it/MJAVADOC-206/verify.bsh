@@ -30,8 +30,8 @@ boolean checkEncoding( String module, String sourceEncoding, String reportingEnc
     File source = new File( basedir, module + "/src/main/java/Test.java" );
     File javadoc = new File( basedir, module + "/target/site/apidocs/Test.html" );
 
-    String java = IOUtil.toString( new FileInputStream( source ), sourceEncoding );
-    String html = IOUtil.toString( new FileInputStream( javadoc ), reportingEncoding );
+    String java = FileUtils.fileRead( source, sourceEncoding );
+    String html = FileUtils.fileRead( javadoc, reportingEncoding );
 
     if ( html.indexOf( "text/html; charset=" + reportingEncoding ) < 0 )
     {
