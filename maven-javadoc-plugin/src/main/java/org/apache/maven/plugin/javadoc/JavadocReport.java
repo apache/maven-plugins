@@ -121,7 +121,26 @@ public class JavadocReport
     {
         outputDirectory = getReportOutputDirectory();
 
-        executeReport( locale );
+        try
+        {
+            executeReport( locale );
+        }
+        catch ( MavenReportException e )
+        {
+            if ( failOnError )
+            {
+                throw e;
+            }
+            getLog().error( "Error while creating javadoc report: " + e.getMessage(), e );
+        }
+        catch ( RuntimeException e )
+        {
+            if ( failOnError )
+            {
+                throw e;
+            }
+            getLog().error( "Error while creating javadoc report: " + e.getMessage(), e );
+        }
     }
 
     /** {@inheritDoc} */
@@ -293,11 +312,11 @@ public class JavadocReport
         }
         catch ( MavenReportException e )
         {
-            failOnError( "An error has occurred in " + getName( Locale.ENGLISH ) + " report generation:", e );
+            failOnError( "An error has occurred in " + getName( Locale.ENGLISH ) + " report generation", e );
         }
         catch ( RuntimeException e )
         {
-            failOnError( "An error has occurred in " + getName( Locale.ENGLISH ) + " report generation:", e );
+            failOnError( "An error has occurred in " + getName( Locale.ENGLISH ) + " report generation", e );
         }
     }
 

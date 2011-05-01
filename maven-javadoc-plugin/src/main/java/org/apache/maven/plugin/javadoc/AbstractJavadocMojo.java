@@ -454,7 +454,7 @@ public abstract class AbstractJavadocMojo
     protected boolean skip;
 
     /**
-     * Specifies whether the build will continue even if there are errors.
+     * Specifies if the build will fail if there are errors during javadoc execution or not.
      *
      * @parameter expression="${maven.javadoc.failOnError}" default-value="true"
      * @since 2.5
@@ -5774,9 +5774,9 @@ public abstract class AbstractJavadocMojo
             {
                 throw (RuntimeException) e;
             }
-            throw new MojoExecutionException( prefix + e.getMessage(), e );
+            throw new MojoExecutionException( prefix + ": " + e.getMessage(), e );
         }
 
-        getLog().error( prefix + e.getMessage(), e );
+        getLog().error( prefix + ": " + e.getMessage(), e );
     }
 }

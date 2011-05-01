@@ -371,21 +371,22 @@ under the License.
               <projectsDirectory>src/it</projectsDirectory>
               <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
               <pomIncludes>
-                <pomInclude>**/MJAVADOC-110/pom.xml</pomInclude>
-                <pomInclude>**/MJAVADOC-126/pom.xml</pomInclude>
-                <pomInclude>**/MJAVADOC-137/pom.xml</pomInclude>
-                <pomInclude>**/MJAVADOC-172/pom.xml</pomInclude>
-                <pomInclude>**/MJAVADOC-180/pom.xml</pomInclude>
-                <pomInclude>**/MJAVADOC-194/pom.xml</pomInclude>
-                <pomInclude>**/MJAVADOC-206/pom.xml</pomInclude>
-                <pomInclude>**/MJAVADOC-226/pom.xml</pomInclude>
-                <pomInclude>**/MJAVADOC-97/pom.xml</pomInclude>
+                <pomInclude>MJAVADOC-110/pom.xml</pomInclude>
+                <pomInclude>MJAVADOC-126/pom.xml</pomInclude>
+                <pomInclude>MJAVADOC-137/pom.xml</pomInclude>
+                <pomInclude>MJAVADOC-172/pom.xml</pomInclude>
+                <pomInclude>MJAVADOC-180/pom.xml</pomInclude>
+                <pomInclude>MJAVADOC-194/pom.xml</pomInclude>
+                <pomInclude>MJAVADOC-206/pom.xml</pomInclude>
+                <pomInclude>MJAVADOC-226/pom.xml</pomInclude>
+                <pomInclude>MJAVADOC-97/pom.xml</pomInclude>
                 <!-- pomInclude>**/MJAVADOC-181/pom.xml</pomInclude--><!-- seems to be wrong, see comment in Jira issue  -->
-                <pomInclude>**/MJAVADOC-257/pom.xml</pomInclude>
-                <pomInclude>**/MJAVADOC-259/pom.xml</pomInclude>
-                <pomInclude>**/MJAVADOC-262/pom.xml</pomInclude>
+                <pomInclude>MJAVADOC-257/pom.xml</pomInclude>
+                <pomInclude>MJAVADOC-259/pom.xml</pomInclude>
+                <pomInclude>MJAVADOC-262/pom.xml</pomInclude>
                 <pomInclude>MJAVADOC-275/pom.xml</pomInclude>
                 <pomInclude>MJAVADOC-280-*/pom.xml</pomInclude>
+                <pomInclude>site-failOnError/pom.xml</pomInclude>
               </pomIncludes>
               <postBuildHookScript>verify</postBuildHookScript>
               <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
