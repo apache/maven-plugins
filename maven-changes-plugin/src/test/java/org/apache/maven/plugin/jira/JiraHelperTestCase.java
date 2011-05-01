@@ -35,7 +35,7 @@ public class JiraHelperTestCase
 {
     public void testGetJiraUrlAndProjectId()
     {
-        Map map;
+        Map<String,String> map;
 
         map = JiraHelper.getJiraUrlAndProjectId( "http://jira.codehaus.org/browse/DOXIA" );
         assertEquals( "http://jira.codehaus.org", map.get( "url" ) );
