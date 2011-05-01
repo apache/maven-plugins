@@ -37,7 +37,7 @@ try
     result = result && ( StringUtils.countMatches( content, " * @since 1.0" ) == 1 );
     result = result && ( StringUtils.countMatches( content, "     * The main method" ) == 1 );
     result = result && ( StringUtils.countMatches( content, "     * @param args  an array of strings that contains the arguments" ) == 1 );
-    result = result && ( StringUtils.countMatches( content, "     * <p>sampleMethod</p>" ) == 1 );
+    result = result && ( StringUtils.countMatches( content, "     * <p>sampleMethod.</p>" ) == 1 );
     result = result && ( StringUtils.countMatches( content, "     * @param str a {@link java.lang.String} object." ) == 1 );
 
     javaFile = new File( basedir, "/src/main/java/fix/test/ClassWithNoJavadoc.java" );
@@ -46,10 +46,10 @@ try
     result = result && ( StringUtils.countMatches( content, " * <p>ClassWithNoJavadoc class.</p>" ) == 1 );
     result = result && ( StringUtils.countMatches( content, " * @version $Id: $" ) == 1 );
     result = result && ( StringUtils.countMatches( content, " * @since 1.0" ) == 1 );
-    result = result && ( StringUtils.countMatches( content, "     * <p>main</p>" ) == 1 );
+    result = result && ( StringUtils.countMatches( content, "     * <p>main.</p>" ) == 1 );
     result = result && ( StringUtils.countMatches( content, "     * @param args an array of {@link java.lang.String} objects." ) == 1 );
     // private sampleMethod
-    result = result && ( StringUtils.countMatches( content, "     * <p>sampleMethod</p>" ) == 0 );
+    result = result && ( StringUtils.countMatches( content, "     * <p>sampleMethod.</p>" ) == 0 );
     result = result && ( StringUtils.countMatches( content, "     * @param str a {@link java.lang.String} object." ) == 0 );
 
     javaFile = new File( basedir, "/src/main/java/fix/test/ClassWithJavadoc.java" );
@@ -62,9 +62,9 @@ try
     result = result && ( StringUtils.countMatches( content, "    /** Constant <code>EOL=\"System.getProperty( line.separator )\"</code> */" ) == 1 );
     // private constant
     result = result && ( StringUtils.countMatches( content, "    /** Constant <code>MY_PRIVATE_CONSTANT=\"\"</code> */" ) == 0 );
-    result = result && ( StringUtils.countMatches( content, "     * <p>main</p>" ) == 1 );
+    result = result && ( StringUtils.countMatches( content, "     * <p>main.</p>" ) == 1 );
     result = result && ( StringUtils.countMatches( content, "     * @param args an array of {@link java.lang.String} objects." ) == 1 );
-    result = result && ( StringUtils.countMatches( content, "     * <p>methodWithMissingParameters</p>" ) == 1 );
+    result = result && ( StringUtils.countMatches( content, "     * <p>methodWithMissingParameters.</p>" ) == 1 );
     result = result && ( StringUtils.countMatches( content, "     * @param str a {@link java.lang.String} object." ) == 1 );
     result = result && ( StringUtils.countMatches( content, "     * @param b a boolean." ) == 1 );
     result = result && ( StringUtils.countMatches( content, "     * @param i a int." ) == 1 );
@@ -80,7 +80,7 @@ try
     result = result && ( StringUtils.countMatches( content, " * @version $Id: $" ) == 1 );
     result = result && ( StringUtils.countMatches( content, " * @since 1.0" ) == 1 );
     result = result && ( StringUtils.countMatches( content, "    /** Constant <code>MY_STRING_CONSTANT=\"value\"</code> */" ) == 1 );
-    result = result && ( StringUtils.countMatches( content, "     * <p>method</p>" ) == 1 );
+    result = result && ( StringUtils.countMatches( content, "     * <p>method.</p>" ) == 1 );
     result = result && ( StringUtils.countMatches( content, "     * @param aString a {@link java.lang.String} object." ) == 1 );
 
     javaFile = new File( basedir, "/src/main/java/fix/test/InterfaceWithJavadoc.java" );
@@ -90,7 +90,7 @@ try
     result = result && ( StringUtils.countMatches( content, " * @version $Id: $" ) == 1 );
     result = result && ( StringUtils.countMatches( content, " * @since 1.0" ) == 1 );
     result = result && ( StringUtils.countMatches( content, "    /** comment */" ) == 1 );
-    result = result && ( StringUtils.countMatches( content, "     * My method" ) == 1 );
+    result = result && ( StringUtils.countMatches( content, "     * My method." ) == 1 );
     result = result && ( StringUtils.countMatches( content, "     * @param aString a {@link java.lang.String} object." ) == 1 );
 
 }
