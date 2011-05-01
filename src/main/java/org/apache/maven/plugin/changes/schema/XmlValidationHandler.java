@@ -38,11 +38,11 @@ public class XmlValidationHandler
    
     private boolean parsingError = false;
 
-    private List /* SAXParseException */errors = new ArrayList();
+    private List<SAXParseException> errors = new ArrayList<SAXParseException>();
 
-    private List /* SAXParseException */fatalErrors = new ArrayList();
+    private List<SAXParseException> fatalErrors = new ArrayList<SAXParseException>();
 
-    private List /* SAXParseException */warnings = new ArrayList();
+    private List<SAXParseException> warnings = new ArrayList<SAXParseException>();
 
     private boolean failOnValidationError;
 
@@ -115,32 +115,32 @@ public class XmlValidationHandler
         this.parsingError = error;
     }
 
-    public List /* SAXParseException */getErrors()
+    public List<SAXParseException> getErrors()
     {
         return errors;
     }
 
-    public void setErrors( List errors )
+    public void setErrors( List<SAXParseException> errors )
     {
         this.errors = errors;
     }
 
-    public List /* SAXParseException */getFatalErrors()
+    public List<SAXParseException> getFatalErrors()
     {
         return fatalErrors;
     }
 
-    public void setFatalErrors( List fatalErrors )
+    public void setFatalErrors( List<SAXParseException> fatalErrors )
     {
         this.fatalErrors = fatalErrors;
     }
 
-    public List /* SAXParseException */ getWarnings()
+    public List<SAXParseException> getWarnings()
     {
         return warnings;
     }
 
-    public void setWarnings( List warnings )
+    public void setWarnings( List<SAXParseException> warnings )
     {
         this.warnings = warnings;
     }

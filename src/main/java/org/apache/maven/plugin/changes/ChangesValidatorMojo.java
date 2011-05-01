@@ -20,7 +20,6 @@ package org.apache.maven.plugin.changes;
  */
 
 import java.io.File;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.maven.plugin.AbstractMojo;
@@ -29,7 +28,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.changes.schema.ChangesSchemaValidator;
 import org.apache.maven.plugin.changes.schema.SchemaValidatorException;
 import org.apache.maven.plugin.changes.schema.XmlValidationHandler;
-import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 
 /**
  * 
@@ -114,13 +113,12 @@ public class ChangesValidatorMojo
         }
     }
 
-    private void logSchemaValidation( List /*SAXException*/errors )
+    private void logSchemaValidation( List<SAXParseException> errors )
     {
         getLog().warn( "failed to validate changes.xml file " + xmlPath.getAbsolutePath() );
         getLog().warn( "validation errors: " );
-        for ( Iterator iterator = errors.iterator(); iterator.hasNext(); )
+        for ( SAXParseException error : errors )
         {
-            SAXException error = (SAXException) iterator.next();
             getLog().warn( error.getMessage() );
         }
     }
