@@ -46,15 +46,14 @@ public class IssueAdapter
      * @param issues The issues
      * @return A list of releases
      */
-    public static List getReleases( List issues )
+    public static List getReleases( List<Issue> issues )
     {
         // A Map of releases keyed by fixVersion
-        Map releasesMap = new HashMap();
+        Map<String,Release> releasesMap = new HashMap<String,Release>();
 
         // Loop through all issues looking for fixVersions
-        for ( int i = 0; i < issues.size(); i++ )
+        for ( Issue issue : issues )
         {
-            Issue issue = (Issue) issues.get( i );
             // Do NOT create a release for issues that lack a fixVersion
             if ( issue.getFixVersions() != null )
             {
@@ -63,7 +62,7 @@ public class IssueAdapter
                     String fixVersion = (String) iterator.next();
 
                     // Try to get a matching Release from the map
-                    Release release = (Release) releasesMap.get( fixVersion );
+                    Release release = releasesMap.get( fixVersion );
                     if ( release == null )
                     {
                         // Add a new Release to the Map if it wasn't there
@@ -80,11 +79,11 @@ public class IssueAdapter
         }
 
         // Extract the releases from the Map to a List
-        List releasesList = new ArrayList();
-        for ( Iterator iterator = releasesMap.entrySet().iterator(); iterator.hasNext(); )
+        // @todo Generify this list when Modello generates types collections from changes.xml
+        List/*<Release>*/ releasesList = new ArrayList/*<Release>*/();
+        for ( Release release : releasesMap.values() )
         {
-            Release o = (Release) ( (Map.Entry) iterator.next() ).getValue();
-            releasesList.add( o );
+            releasesList.add( release );
         }
         return releasesList;
     }
