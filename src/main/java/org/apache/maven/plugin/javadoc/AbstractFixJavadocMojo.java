@@ -2934,7 +2934,7 @@ public abstract class AbstractFixJavadocMojo
 
             if ( clazz.getFieldByName( field ) == null )
             {
-                return "<p>" + javaMethod.getName() + "</p>";
+                return "<p>" + javaMethod.getName() + ".</p>";
             }
 
             StringBuffer sb = new StringBuffer();
@@ -2953,7 +2953,7 @@ public abstract class AbstractFixJavadocMojo
             return sb.toString();
         }
 
-        return "<p>" + javaMethod.getName() + "</p>";
+        return "<p>" + javaMethod.getName() + ".</p>";
     }
 
     /**
