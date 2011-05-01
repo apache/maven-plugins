@@ -333,7 +333,7 @@ public class ChangesReportGenerator extends AbstractIssuesReportGenerator
     {
 
         // Create a Map with key : dueTo name, value : dueTo email
-        Map namesEmailMap = new LinkedHashMap();
+        Map<String,String> namesEmailMap = new LinkedHashMap<String,String>();
 
         // Only add the dueTo specified as attributes, if it has either a dueTo or a dueToEmail
         if ( StringUtils.isNotEmpty( action.getDueTo() ) || StringUtils.isNotEmpty( action.getDueToEmail() ) )
@@ -354,10 +354,9 @@ public class ChangesReportGenerator extends AbstractIssuesReportGenerator
 
         sink.text( " " + bundle.getString( "report.changes.text.thanx" ) + " " );
         int i = 0;
-        for ( Iterator iterator = namesEmailMap.keySet().iterator(); iterator.hasNext(); )
+        for ( String currentDueTo : namesEmailMap.keySet() )
         {
-            String currentDueTo = (String) iterator.next();
-            String currentDueToEmail = (String) namesEmailMap.get( currentDueTo );
+            String currentDueToEmail = namesEmailMap.get( currentDueTo );
             i++;
 
             if ( StringUtils.isNotEmpty( currentDueToEmail ) )
