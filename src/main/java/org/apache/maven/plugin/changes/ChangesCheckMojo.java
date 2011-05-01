@@ -22,6 +22,7 @@ package org.apache.maven.plugin.changes;
 import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.maven.plugin.AbstractMojo;
@@ -76,7 +77,9 @@ public class ChangesCheckMojo extends AbstractMojo
         if ( xmlPath.exists() )
         {
             ChangesXML xml = new ChangesXML( xmlPath, getLog() );
-            Release release = releaseUtils.getLatestRelease( xml.getReleaseList(), version );
+            ReleaseUtils releaseUtils = new ReleaseUtils( getLog() );
+            Release release = releaseUtils.getLatestRelease( releaseUtils.convertReleaseList( xml.getReleaseList() ),
+                                                             version );
             if ( !isValidDate( release.getDateRelease(), releaseDateFormat ) )
             {
                 throw new MojoExecutionException(

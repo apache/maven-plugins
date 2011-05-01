@@ -29,12 +29,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.changes.IssueAdapter;
 import org.apache.maven.plugin.changes.ChangesXML;
+import org.apache.maven.plugin.changes.IssueAdapter;
 import org.apache.maven.plugin.changes.ProjectUtils;
 import org.apache.maven.plugin.changes.ReleaseUtils;
 import org.apache.maven.plugin.issues.Issue;
-import org.apache.maven.plugin.jira.JiraXML;
 import org.apache.maven.plugin.trac.TracDownloader;
 import org.apache.maven.plugins.changes.model.Release;
 import org.apache.maven.project.MavenProject;
@@ -428,14 +427,14 @@ public class AnnouncementMojo
             }
 
             // Fetch releases from the configured issue management systems
-            List releases = null;
+            List<Release> releases = null;
 
             if ( issueManagementSystems.contains( CHANGES_XML ) )
             {
                 if ( getXmlPath().exists() )
                 {
                     ChangesXML changesXML = new ChangesXML( getXmlPath(), getLog() );
-                    List changesReleases = changesXML.getReleaseList();
+                    List<Release> changesReleases = releaseUtils.convertReleaseList( changesXML.getReleaseList() );
                     releases = releaseUtils.mergeReleases( releases, changesReleases );
                     getLog().info( "Including issues from file " + getXmlPath() + " in announcement..." );
                 }
@@ -449,7 +448,7 @@ public class AnnouncementMojo
             {
                 if ( ProjectUtils.validateIfIssueManagementComplete( project, JIRA, "JIRA announcement", getLog() ) )
                 {
-                    List jiraReleases = getJiraReleases();
+                    List<Release> jiraReleases = getJiraReleases();
                     releases = releaseUtils.mergeReleases( releases, jiraReleases );
                     getLog().info( "Including issues from JIRA in announcement..." );
                 }
@@ -464,7 +463,7 @@ public class AnnouncementMojo
             {
                 if ( ProjectUtils.validateIfIssueManagementComplete( project, TRAC, "Trac announcement", getLog() ) )
                 {
-                    List tracReleases = getTracReleases();
+                    List<Release> tracReleases = getTracReleases();
                     releases = releaseUtils.mergeReleases( releases, tracReleases );
                     getLog().info( "Including issues from Trac in announcement..." );
                 }
@@ -503,13 +502,13 @@ public class AnnouncementMojo
      * @param releases A <code>List</code> of <code>Release</code>s
      * @throws MojoExecutionException
      */
-    public void doGenerate( List releases )
+    public void doGenerate( List<Release> releases )
         throws MojoExecutionException
     {
         doGenerate( releases, releaseUtils.getLatestRelease( releases, getVersion() )  );
     }
 
-    protected void doGenerate( List releases, Release release )
+    protected void doGenerate( List<Release> releases, Release release )
         throws MojoExecutionException
     {
         try
@@ -641,7 +640,7 @@ public class AnnouncementMojo
         }
     }
 
-    protected List getJiraReleases()
+    protected List<Release> getJiraReleases()
         throws MojoExecutionException
     {
         JiraDownloader jiraDownloader = new JiraDownloader();
@@ -684,7 +683,7 @@ public class AnnouncementMojo
         }
     }
 
-    private List getReleases( List<Issue> issues )
+    private List<Release> getReleases( List<Issue> issues )
     {
         if ( issues.isEmpty() )
         {
@@ -696,7 +695,7 @@ public class AnnouncementMojo
         }
     }
 
-    protected List getTracReleases()
+    protected List<Release> getTracReleases()
         throws MojoExecutionException
     {
         TracDownloader issueDownloader = new TracDownloader();

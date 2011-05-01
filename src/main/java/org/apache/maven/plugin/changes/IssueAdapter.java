@@ -46,7 +46,7 @@ public class IssueAdapter
      * @param issues The issues
      * @return A list of releases
      */
-    public static List getReleases( List<Issue> issues )
+    public static List<Release> getReleases( List<Issue> issues )
     {
         // A Map of releases keyed by fixVersion
         Map<String,Release> releasesMap = new HashMap<String,Release>();
@@ -77,8 +77,7 @@ public class IssueAdapter
         }
 
         // Extract the releases from the Map to a List
-        // @todo Generify this list when Modello generates types collections from changes.xml
-        List/*<Release>*/ releasesList = new ArrayList/*<Release>*/();
+        List<Release> releasesList = new ArrayList<Release>();
         for ( Release release : releasesMap.values() )
         {
             releasesList.add( release );

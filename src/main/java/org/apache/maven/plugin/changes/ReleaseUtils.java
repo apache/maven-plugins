@@ -56,7 +56,7 @@ public class ReleaseUtils
      * @return A <code>Release</code> that matches the next release of the current project
      * @throws org.apache.maven.plugin.MojoExecutionException If a release can't be found
      */
-    public Release getLatestRelease( List releases, String pomVersion )
+    public Release getLatestRelease( List<Release> releases, String pomVersion )
         throws MojoExecutionException
     {
         // Remove "-SNAPSHOT" from the end, if it's there
@@ -89,12 +89,10 @@ public class ReleaseUtils
      * @param version The version we want
      * @return A Release, or null if no release with the specified version can be found
      */
-    protected Release getRelease( List releases, String version )
+    protected Release getRelease( List<Release> releases, String version )
     {
-        Release release = null;
-        for ( int i = 0; i < releases.size(); i++ )
+        for ( Release release : releases )
         {
-            release = (Release) releases.get( i );
             if ( getLog().isDebugEnabled() )
             {
                 getLog().debug( "The release: " + release.getVersion()
@@ -136,11 +134,11 @@ public class ReleaseUtils
      * @param secondReleases Releases from the second issue tracker
      * @return A list containing the merged releases
      */
-    public List mergeReleases( final List firstReleases, final List secondReleases )
+    public List<Release> mergeReleases( final List<Release> firstReleases, final List<Release> secondReleases )
     {
         if ( firstReleases == null && secondReleases == null )
         {
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
         if ( firstReleases == null )
         {
@@ -151,14 +149,13 @@ public class ReleaseUtils
             return firstReleases;
         }
 
-        List mergedReleases = new ArrayList();
+        List<Release> mergedReleases = new ArrayList<Release>();
 
         // Loop through the releases from the first issue tracker, merging in
         // actions from releases with the same version from the second issue
         // tracker
-        for ( Iterator iterator = firstReleases.iterator(); iterator.hasNext(); )
+        for ( Release firstRelease : firstReleases )
         {
-            Release firstRelease = (Release) iterator.next();
             Release secondRelease = getRelease( secondReleases, firstRelease.getVersion() );
             if ( secondRelease != null )
             {
@@ -171,9 +168,8 @@ public class ReleaseUtils
         }
 
         // Handle releases that are only in the second issue tracker
-        for ( Iterator iterator = secondReleases.iterator(); iterator.hasNext(); )
+        for ( Release secondRelease : secondReleases )
         {
-            Release secondRelease = (Release) iterator.next();
             Release mergedRelease = getRelease( mergedReleases, secondRelease.getVersion() );
             if ( mergedRelease == null )
             {
@@ -181,5 +177,26 @@ public class ReleaseUtils
             }
         }
         return mergedReleases;
+    }
+
+    /**
+     * Convert an untyped List of Release objects that comes from changes.xml
+     * into a typed List of Release objects.
+     *
+     * @param changesReleases An untyped List of Release objects
+     * @return A type List of Release objects
+     * @todo When Modello can generate typed collections this method is no longer needed
+     */
+    public List<Release> convertReleaseList( List changesReleases ) {
+        List<Release> releases = new ArrayList<Release>();
+
+        // Loop through the List of releases from changes.xml and casting each
+        // release to a Release
+        for ( Iterator iterator = changesReleases.iterator(); iterator.hasNext(); )
+        {
+            Release release = (Release) iterator.next();
+            releases.add( release );
+        }
+        return releases;
     }
 }
