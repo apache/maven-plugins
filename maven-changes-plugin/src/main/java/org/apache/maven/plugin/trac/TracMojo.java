@@ -49,12 +49,12 @@ public class TracMojo
     /**
      * Deprecated Trac columns.
      */
-    private static Map DEPRECATED_TRAC_COLUMNS = new HashMap();
+    private static Map<String,Integer> DEPRECATED_TRAC_COLUMNS = new HashMap<String,Integer>();
 
     /**
      * Valid Trac columns.
      */
-    private static Map TRAC_COLUMNS = new HashMap();
+    private static Map<String,Integer> TRAC_COLUMNS = new HashMap<String,Integer>();
 
     static
     {
@@ -141,8 +141,8 @@ public class TracMojo
         throws MavenReportException
     {
         // Validate parameters
-        List columnIds = IssuesReportHelper.getColumnIds( columnNames, TRAC_COLUMNS, DEPRECATED_TRAC_COLUMNS,
-                                                          getLog() );
+        List<Integer> columnIds = IssuesReportHelper.getColumnIds( columnNames, TRAC_COLUMNS, DEPRECATED_TRAC_COLUMNS,
+                                                                   getLog() );
         if ( columnIds.size() == 0 )
         {
             // This can happen if the user has configured column names and they are all invalid
