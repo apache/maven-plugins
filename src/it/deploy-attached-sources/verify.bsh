@@ -33,17 +33,17 @@ try
         System.err.println( "target file is missing or not a directory." );
         return false;
     }
-    
-    File deployedDir = new File ( target, "repo/org/apache/maven/its/deploy/test/1.0-SNAPSHOT/" );
+
+    File deployedDir = new File( target, "repo/org/apache/maven/its/deploy/test/1.0-SNAPSHOT/" );
     if ( !deployedDir.isDirectory() )
     {
         System.err.println( "deployedDir is missing or is not a directory." );
         return false;
-    }   
-    
+    }
+
     boolean sourcesExists = false;
     boolean javadocsExists = false;
-    
+
     String [] fileList = deployedDir.list();
     for ( int i=0; i<fileList.length; ++i )
     {
@@ -56,19 +56,19 @@ try
             javadocsExists = true;
         }
     }
-    
+
     if ( !sourcesExists )
     {
         System.err.println( "Unable to find deployed sources jar" );
         return false;
     }
-    
+
     if ( !javadocsExists )
     {
         System.err.println( "Unable to find deployed javadocs jar" );
         return false;
     }
-        
+
 }
 catch( Throwable e )
 {
