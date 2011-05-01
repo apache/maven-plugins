@@ -20,6 +20,24 @@
 import java.io.*;
 import org.codehaus.plexus.util.*;
 
+assertContains( String content, String value )
+{
+    if ( StringUtils.countMatches( content, value ) != 1 )
+    {
+        System.err.println( "not found expected text: '" + value + "'" );
+        return false;
+    }
+}
+
+assertNotContains( String content, String value )
+{
+    if ( StringUtils.countMatches( content, value ) != 0 )
+    {
+        System.err.println( "found unexpected text: '" + value + "'" );
+        return false;
+    }
+}
+
 boolean result = true;
 try
 {
@@ -29,69 +47,69 @@ try
     File javaFile = new File( basedir, "/src/main/java/fix/test/App.java" );
     String content = FileUtils.fileRead( javaFile, "UTF-8" );
 
-    result = result && ( StringUtils.countMatches( content, " * App class" ) == 1 );
-    result = result && ( StringUtils.countMatches( content, " * @generatorClass toto" ) == 1 );
-    result = result && ( StringUtils.countMatches( content, " * @todo review it" ) == 1 );
-    result = result && ( StringUtils.countMatches( content, " * @version 1.0" ) == 1 );
-    result = result && ( StringUtils.countMatches( content, " * @author <a href=\"mailto:vincent.siveton@gmail.com\">Vincent Siveton</a>" ) == 1 );
-    result = result && ( StringUtils.countMatches( content, " * @since 1.0" ) == 1 );
-    result = result && ( StringUtils.countMatches( content, "     * The main method" ) == 1 );
-    result = result && ( StringUtils.countMatches( content, "     * @param args  an array of strings that contains the arguments" ) == 1 );
-    result = result && ( StringUtils.countMatches( content, "     * <p>sampleMethod.</p>" ) == 1 );
-    result = result && ( StringUtils.countMatches( content, "     * @param str a {@link java.lang.String} object." ) == 1 );
+    assertContains( content, " * App class" );
+    assertContains( content, " * @generatorClass toto" );
+    assertContains( content, " * @todo review it" );
+    assertContains( content, " * @version 1.0" );
+    assertContains( content, " * @author <a href=\"mailto:vincent.siveton@gmail.com\">Vincent Siveton</a>" );
+    assertContains( content, " * @since 1.0" );
+    assertContains( content, "     * The main method" );
+    assertContains( content, "     * @param args  an array of strings that contains the arguments" );
+    assertContains( content, "     * <p>sampleMethod.</p>" );
+    assertContains( content, "     * @param str a {@link java.lang.String} object." );
 
     javaFile = new File( basedir, "/src/main/java/fix/test/ClassWithNoJavadoc.java" );
     content = FileUtils.fileRead( javaFile, "UTF-8" );
 
-    result = result && ( StringUtils.countMatches( content, " * <p>ClassWithNoJavadoc class.</p>" ) == 1 );
-    result = result && ( StringUtils.countMatches( content, " * @version $Id: $" ) == 1 );
-    result = result && ( StringUtils.countMatches( content, " * @since 1.0" ) == 1 );
-    result = result && ( StringUtils.countMatches( content, "     * <p>main.</p>" ) == 1 );
-    result = result && ( StringUtils.countMatches( content, "     * @param args an array of {@link java.lang.String} objects." ) == 1 );
+    assertContains( content, " * <p>ClassWithNoJavadoc class.</p>" );
+    assertContains( content, " * @version $Id: $" );
+    assertContains( content, " * @since 1.0" );
+    assertContains( content, "     * <p>main.</p>" );
+    assertContains( content, "     * @param args an array of {@link java.lang.String} objects." );
     // private sampleMethod
-    result = result && ( StringUtils.countMatches( content, "     * <p>sampleMethod.</p>" ) == 0 );
-    result = result && ( StringUtils.countMatches( content, "     * @param str a {@link java.lang.String} object." ) == 0 );
+    assertNotContains( content, "     * <p>sampleMethod.</p>" );
+    assertNotContains( content, "     * @param str a {@link java.lang.String} object." );
 
     javaFile = new File( basedir, "/src/main/java/fix/test/ClassWithJavadoc.java" );
     content = FileUtils.fileRead( javaFile, "UTF-8" );
 
-    result = result && ( StringUtils.countMatches( content, " * Some Javadoc." ) == 1 );
-    result = result && ( StringUtils.countMatches( content, " * @since 1.0" ) == 1 );
-    result = result && ( StringUtils.countMatches( content, "    /** Constant <code>MY_STRING_CONSTANT=\"value\"</code> */" ) == 1 );
-    result = result && ( StringUtils.countMatches( content, "    /** Constant <code>MY_INT_CONSTANT=1</code> */" ) == 1 );
-    result = result && ( StringUtils.countMatches( content, "    /** Constant <code>EOL=\"System.getProperty( line.separator )\"</code> */" ) == 1 );
+    assertContains( content, " * Some Javadoc." );
+    assertContains( content, " * @since 1.0" );
+    assertContains( content, "    /** Constant <code>MY_STRING_CONSTANT=\"value\"</code> */" );
+    assertContains( content, "    /** Constant <code>MY_INT_CONSTANT=1</code> */" );
+    assertContains( content, "    /** Constant <code>EOL=\"System.getProperty( line.separator )\"</code> */" );
     // private constant
-    result = result && ( StringUtils.countMatches( content, "    /** Constant <code>MY_PRIVATE_CONSTANT=\"\"</code> */" ) == 0 );
-    result = result && ( StringUtils.countMatches( content, "     * <p>main.</p>" ) == 1 );
-    result = result && ( StringUtils.countMatches( content, "     * @param args an array of {@link java.lang.String} objects." ) == 1 );
-    result = result && ( StringUtils.countMatches( content, "     * <p>methodWithMissingParameters.</p>" ) == 1 );
-    result = result && ( StringUtils.countMatches( content, "     * @param str a {@link java.lang.String} object." ) == 1 );
-    result = result && ( StringUtils.countMatches( content, "     * @param b a boolean." ) == 1 );
-    result = result && ( StringUtils.countMatches( content, "     * @param i a int." ) == 1 );
-    result = result && ( StringUtils.countMatches( content, "     * @return a {@link java.lang.String} object." ) == 1 );
+    assertNotContains( content, "    /** Constant <code>MY_PRIVATE_CONSTANT=\"\"</code> */" );
+    assertContains( content, "     * <p>main.</p>" );
+    assertContains( content, "     * @param args an array of {@link java.lang.String} objects." );
+    assertContains( content, "     * <p>methodWithMissingParameters.</p>" );
+    assertContains( content, "     * @param str a {@link java.lang.String} object." );
+    assertContains( content, "     * @param b a boolean." );
+    assertContains( content, "     * @param i a int." );
+    assertContains( content, "     * @return a {@link java.lang.String} object." );
 
     // check unknown param
-    result = result && ( StringUtils.countMatches( logContent, "[WARNING] Fixed unknown param 'str' defined in fix.test.ClassWithJavadoc#methodWithWrongJavadocParameters(aString)" ) == 1 );
+    assertContains( logContent, "[WARNING] Fixed unknown param 'str' defined in fix.test.ClassWithJavadoc#methodWithWrongJavadocParameters(aString)" );
 
     javaFile = new File( basedir, "/src/main/java/fix/test/InterfaceWithNoJavadoc.java" );
     content = FileUtils.fileRead( javaFile, "UTF-8" );
 
-    result = result && ( StringUtils.countMatches( content, " * <p>InterfaceWithNoJavadoc interface.</p>" ) == 1 );
-    result = result && ( StringUtils.countMatches( content, " * @version $Id: $" ) == 1 );
-    result = result && ( StringUtils.countMatches( content, " * @since 1.0" ) == 1 );
-    result = result && ( StringUtils.countMatches( content, "    /** Constant <code>MY_STRING_CONSTANT=\"value\"</code> */" ) == 1 );
-    result = result && ( StringUtils.countMatches( content, "     * <p>method.</p>" ) == 1 );
-    result = result && ( StringUtils.countMatches( content, "     * @param aString a {@link java.lang.String} object." ) == 1 );
+    assertContains( content, " * <p>InterfaceWithNoJavadoc interface.</p>" );
+    assertContains( content, " * @version $Id: $" );
+    assertContains( content, " * @since 1.0" );
+    assertContains( content, "    /** Constant <code>MY_STRING_CONSTANT=\"value\"</code> */" );
+    assertContains( content, "     * <p>method.</p>" );
+    assertContains( content, "     * @param aString a {@link java.lang.String} object." );
 
     javaFile = new File( basedir, "/src/main/java/fix/test/InterfaceWithJavadoc.java" );
     content = FileUtils.fileRead( javaFile, "UTF-8" );
 
-    result = result && ( StringUtils.countMatches( content, " * Some Javadoc." ) == 1 );
-    result = result && ( StringUtils.countMatches( content, " * @version $Id: $" ) == 1 );
-    result = result && ( StringUtils.countMatches( content, " * @since 1.0" ) == 1 );
-    result = result && ( StringUtils.countMatches( content, "    /** comment */" ) == 1 );
-    result = result && ( StringUtils.countMatches( content, "     * My method." ) == 1 );
-    result = result && ( StringUtils.countMatches( content, "     * @param aString a {@link java.lang.String} object." ) == 1 );
+    assertContains( content, " * Some Javadoc." );
+    assertContains( content, " * @version $Id: $" );
+    assertContains( content, " * @since 1.0" );
+    assertContains( content, "    /** comment */" );
+    assertContains( content, "     * My method." );
+    assertContains( content, "     * @param aString a {@link java.lang.String} object." );
 
 }
 catch( Throwable e )
