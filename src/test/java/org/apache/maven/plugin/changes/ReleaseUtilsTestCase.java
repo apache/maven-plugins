@@ -40,9 +40,9 @@ public class ReleaseUtilsTestCase extends TestCase
         Log log = new SilentLog();
         ReleaseUtils releaseUtils = new ReleaseUtils( log );
 
-        List firstReleases = new ArrayList();
-        List secondReleases = new ArrayList();
-        List mergedReleases;
+        List<Release> firstReleases = new ArrayList<Release>();
+        List<Release> secondReleases = new ArrayList<Release>();
+        List<Release> mergedReleases;
 
         mergedReleases = releaseUtils.mergeReleases( firstReleases, secondReleases );
         assertEquals( "Both empty", 0, mergedReleases.size() );
