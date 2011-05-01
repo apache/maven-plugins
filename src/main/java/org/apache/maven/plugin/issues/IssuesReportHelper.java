@@ -71,7 +71,7 @@ public class IssuesReportHelper
      * @param allColumns A mapping from column name to column id
      * @return A List of column id:s
      */
-    public static List getColumnIds( String columnNames, Map allColumns )
+    public static List<Integer> getColumnIds( String columnNames, Map<String,Integer> allColumns )
     {
         return getColumnIds( columnNames, allColumns, null, null );
     }
@@ -88,10 +88,11 @@ public class IssuesReportHelper
      * @param log A log
      * @return A List of column id:s
      */
-    public static List getColumnIds( String columnNames, Map allColumns, Map deprecatedColumns, Log log )
+    public static List<Integer> getColumnIds( String columnNames, Map<String,Integer> allColumns,
+                                              Map<String,Integer> deprecatedColumns, Log log )
     {
         DualHashBidiMap bidiColumns = null;
-        List columnIds = new ArrayList();
+        List<Integer> columnIds = new ArrayList<Integer>();
         String[] columnNamesArray = columnNames.split( "," );
 
         if ( deprecatedColumns != null )
@@ -105,11 +106,11 @@ public class IssuesReportHelper
             String columnName = columnNamesArray[i].trim();
             if ( allColumns.containsKey( columnName ) )
             {
-                columnIds.add( (Integer) allColumns.get( columnName ) );
+                columnIds.add( allColumns.get( columnName ) );
             }
             else if ( deprecatedColumns != null && deprecatedColumns.containsKey( columnName ) )
             {
-                Integer columnId = (Integer) deprecatedColumns.get( columnName );
+                Integer columnId = deprecatedColumns.get( columnName );
                 columnIds.add( columnId );
                 if ( log != null )
                 {
@@ -152,12 +153,12 @@ public class IssuesReportHelper
      * @param list The List to convert
      * @return An in array
      */
-    public static int[] toIntArray( List list )
+    public static int[] toIntArray( List<Integer> list )
     {
         int[] intArray = new int[list.size()];
         for ( int j = 0; j < intArray.length; j++ )
         {
-            intArray[j] = ( (Integer) list.get( j ) ).intValue();
+            intArray[j] = ( list.get( j ) ).intValue();
         }
         return intArray;
     }
