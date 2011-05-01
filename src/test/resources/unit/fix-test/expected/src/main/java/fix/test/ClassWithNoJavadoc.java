@@ -71,7 +71,7 @@ public class ClassWithNoJavadoc
 
     // take care of primitive
     /**
-     * <p>missingJavadocTagsForPrimitives</p>
+     * <p>missingJavadocTagsForPrimitives.</p>
      *
      * @param i a int.
      * @param b a byte.
@@ -88,7 +88,7 @@ public class ClassWithNoJavadoc
 
     // take care of object
     /**
-     * <p>missingJavadocTagsForObjects</p>
+     * <p>missingJavadocTagsForObjects.</p>
      *
      * @param s a {@link java.lang.String} object.
      * @param m a {@link java.util.Map} object.
@@ -107,7 +107,7 @@ public class ClassWithNoJavadoc
     // ----------------------------------------------------------------------
 
     /**
-     * <p>newClassMethod</p>
+     * <p>newClassMethod.</p>
      *
      * @param aString a {@link java.lang.String} object.
      * @return a {@link java.lang.String} object.
