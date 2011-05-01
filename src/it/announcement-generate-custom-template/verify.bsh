@@ -33,23 +33,22 @@ try
         System.err.println( "report file is missing or a directory." );
         return false;
     }
-    FileInputStream fis = new FileInputStream ( report );
-    String reportContent = IOUtil.toString ( fis );    
-    
+    String reportContent = FileUtils.fileRead( report );
+
     int indexOf = reportContent.indexOf( "maven-changes-plugin-test-1.1 release" );
-    if ( indexOf < 0)
+    if ( indexOf < 0 )
     {
       System.err.println( "test-announce.vm doesn't maven-changes-plugin-test-1.1 release" );
       return false;
-    }    
-    
+    }
+
     indexOf = reportContent.indexOf( "Test Announcement Custom template" );
-    if ( indexOf < 0)
+    if ( indexOf < 0 )
     {
       System.err.println( "Test Announcement Custom template" );
       return false;
     }
-    
+
 }
 catch( Throwable e )
 {

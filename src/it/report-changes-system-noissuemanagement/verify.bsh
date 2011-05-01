@@ -33,42 +33,41 @@ try
         System.err.println( "report file is missing or a directory." );
         return false;
     }
-    FileInputStream fis = new FileInputStream ( report );
-    String reportContent = IOUtil.toString ( fis );    
-    
+    String reportContent = FileUtils.fileRead( report );
+
     int indexOf = reportContent.indexOf( "Changes Report" );
-    if ( indexOf < 0)
+    if ( indexOf < 0 )
     {
       System.err.println( "changes-report.html doesn't contains Changes Report title" );
       return false;
-    }    
-    
+    }
+
     indexOf = reportContent.indexOf( "href=\"http://myjira/browse/MCHANGES-88\"" );
-    if ( indexOf < 0)
+    if ( indexOf < 0 )
     {
       System.err.println( "changes-report.html doesn't contains jira issue link" );
       return false;
     }
     indexOf = reportContent.indexOf( "href=\"http://localhost/1212\"" );
-    if ( indexOf < 0)
+    if ( indexOf < 0 )
     {
       System.err.println( "changes-report.html doesn't contains qc issue link" );
       return false;
-    }    
+    }
     indexOf = reportContent.indexOf( "href=\"http://www.redmine.org/show/issue/88\"" );
-    if ( indexOf < 0)
+    if ( indexOf < 0 )
     {
       System.err.println( "changes-report.html doesn't contains redmine issue link" );
       return false;
-    }    
+    }
     indexOf = reportContent.indexOf( "2008-01-01" );
-    if ( indexOf < 0)
+    if ( indexOf < 0 )
     {
       System.err.println( "changes-report.html doesn't contains date 2008-01-01" );
       return false;
-    }     
-    
-    
+    }
+
+
 }
 catch( Throwable e )
 {
