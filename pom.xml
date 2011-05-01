@@ -99,8 +99,10 @@ under the License.
             <generateJiraAnnouncement>true</generateJiraAnnouncement>
             <maxEntries>1000</maxEntries>
             <runOnlyAtExecutionRoot>true</runOnlyAtExecutionRoot>
-            <subject>[ANN] ${project.name} ${project.version} Released</subject>
+            <!-- Used by announcement-generate goal -->
             <templateDirectory>org/apache/maven/plugins</templateDirectory>
+            <!-- Used by announcement-mail goal -->
+            <subject>[ANN] ${project.name} ${project.version} Released</subject>
             <toAddresses>
               <toAddress implementation="java.lang.String">announce@maven.apache.org</toAddress>
               <toAddress implementation="java.lang.String">users@maven.apache.org</toAddress>
@@ -111,6 +113,7 @@ under the License.
             <smtpHost>${smtp.host}</smtpHost>
           </configuration>
           <dependencies>
+            <!-- Used by announcement-generate goal -->
             <dependency>
               <groupId>org.apache.maven.shared</groupId>
               <artifactId>maven-shared-resources</artifactId>
