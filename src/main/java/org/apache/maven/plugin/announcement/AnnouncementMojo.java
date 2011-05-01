@@ -33,6 +33,7 @@ import org.apache.maven.plugin.changes.IssueAdapter;
 import org.apache.maven.plugin.changes.ChangesXML;
 import org.apache.maven.plugin.changes.ProjectUtils;
 import org.apache.maven.plugin.changes.ReleaseUtils;
+import org.apache.maven.plugin.issues.Issue;
 import org.apache.maven.plugin.jira.JiraXML;
 import org.apache.maven.plugin.trac.TracDownloader;
 import org.apache.maven.plugins.changes.model.Release;
@@ -683,11 +684,11 @@ public class AnnouncementMojo
         }
     }
 
-    private List getReleases( List issues )
+    private List getReleases( List<Issue> issues )
     {
         if ( issues.isEmpty() )
         {
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
         else
         {

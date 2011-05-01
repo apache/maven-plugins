@@ -90,7 +90,7 @@ public class TracDownloader
         return issue;
     }
 
-    public List getIssueList() throws MalformedURLException, XmlRpcException
+    public List<Issue> getIssueList() throws MalformedURLException, XmlRpcException
     {
         // Create and configure an XML-RPC client
         XmlRpcClientConfigImpl config = new XmlRpcClientConfigImpl();
@@ -120,7 +120,7 @@ public class TracDownloader
 
         Object[] params = new Object[] { new String( qstr ) };
         Object[] queryResult = null;
-        ArrayList issueList = new ArrayList();
+        ArrayList<Issue> issueList = new ArrayList<Issue>();
         try
         {
             queryResult = (Object[]) client.execute( "ticket.query", params );
