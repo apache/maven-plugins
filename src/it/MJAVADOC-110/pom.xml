@@ -25,9 +25,15 @@
   <packaging>pom</packaging>
   <version>1.0-SNAPSHOT</version>
   <name>Maven Javadoc Test</name>
+
   <modules>
     <module>test-module</module>
   </modules>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
   <build>
     <pluginManagement>
       <plugins>

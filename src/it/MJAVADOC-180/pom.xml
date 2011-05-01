@@ -22,13 +22,18 @@
 
   <groupId>org.apache.maven.plugins.maven-javadoc-plugin.it</groupId>
   <artifactId>MJAVADOC-180</artifactId>
-  <packaging>pom</packaging>
   <version>1.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
+
   <name>MJAVADOC-180</name>
 
   <modules>
     <module>module1</module>
   </modules>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
 
   <build>
     <pluginManagement>

@@ -11,6 +11,10 @@
     <module>MJAVADOC-280-4-distro</module>
   </modules>
   
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
   <!-- <properties>
     <javadocPluginVersion>@pom.version@</javadocPluginVersion>
   </properties>

@@ -24,10 +24,15 @@
 
   <groupId>org.apache.maven.plugins.maven-javadoc-plugin.it</groupId>
   <artifactId>myapp</artifactId>
-  <packaging>jar</packaging>
   <version>1.0-SNAPSHOT</version>
+  <packaging>jar</packaging>
+
   <name>myapp</name>
   <url>http://maven.apache.org</url>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
 
   <dependencies>
     <dependency>

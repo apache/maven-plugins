@@ -23,8 +23,13 @@
   <groupId>org.apache.maven.plugins.maven-javadoc-plugin.it</groupId>
   <artifactId>testProject</artifactId>
   <version>1.0-SNAPSHOT</version>
-  <name>Javadoc Test Project</name>
   <packaging>jar</packaging>
+
+  <name>Javadoc Test Project</name>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
 
   <build>
     <defaultGoal>install</defaultGoal>
@@ -54,8 +59,4 @@
       </plugin>
     </plugins>
   </build>
-
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-  </properties>
 </project>

@@ -22,9 +22,21 @@
 
   <groupId>org.apache.maven.plugins.maven-javadoc-plugin.it</groupId>
   <artifactId>parent</artifactId>
-  <packaging>pom</packaging>
   <version>1.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
+
   <name>Maven Javadoc Test</name>
+
+  <modules>
+    <module>res1</module>
+    <module>res2</module>
+    <module>test</module>
+  </modules>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
   <build>
     <pluginManagement>
       <plugins>
@@ -35,11 +47,7 @@
       </plugins>
     </pluginManagement>
   </build>
-  <modules>
-    <module>res1</module>
-    <module>res2</module>
-    <module>test</module>
-  </modules>
+
   <repositories>
     <repository>
       <id>codehaus.snapshots</id>
