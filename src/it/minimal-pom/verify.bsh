@@ -30,17 +30,17 @@ try
         return false;
     }
 
-    String[] reports = { "dependencies", 
-                         "index", 
-                         "integration", 
-                         "issue-tracking", 
-                         "license", 
-                         "mail-lists", 
+    String[] reports = { "dependencies",
+                         "index",
+                         "integration",
+                         "issue-tracking",
+                         "license",
+                         "mail-lists",
                          "plugin-management",
-                         "plugins", 
-                         "project-info", 
-                         "project-summary", 
-                         "source-repository", 
+                         "plugins",
+                         "project-info",
+                         "project-summary",
+                         "source-repository",
                          "team-list"
                        };
     for ( String report : reports )
