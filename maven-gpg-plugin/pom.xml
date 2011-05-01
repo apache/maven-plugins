@@ -110,6 +110,13 @@ under the License.
             <fromDeveloperId>${apache.availid}</fromDeveloperId>
             <smtpHost>${smtp.host}</smtpHost>
           </configuration>
+          <dependencies>
+            <dependency>
+              <groupId>org.apache.maven.shared</groupId>
+              <artifactId>maven-shared-resources</artifactId>
+              <version>1-SNAPSHOT</version>
+            </dependency>
+          </dependencies>
         </plugin>
       </plugins>
     </pluginManagement>
