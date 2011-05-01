@@ -33,18 +33,18 @@ try
         System.err.println( "target file is missing or not a directory." );
         return false;
     }
-    
-    File artifact = new File ( target, "maven-jar-plugin-test-mjar-30-02-99.0.jar" );
+
+    File artifact = new File( target, "maven-jar-plugin-test-mjar-30-02-99.0.jar" );
     if ( !artifact.exists() || artifact.isDirectory() )
     {
         System.err.println( "artifact file is missing or a directory." );
         return false;
-    }    
-    
+    }
+
     String[] artifactNames = new String[] { "service/TestInterface.class", "META-INF/MANIFEST.MF",
             "META-INF/maven/org.apache.maven.plugins/maven-jar-plugin-test-mjar-30-02/pom.properties",
             "META-INF/maven/org.apache.maven.plugins/maven-jar-plugin-test-mjar-30-02/pom.xml" };
-    
+
     Set contents = new HashSet();
 
     JarFile jar = new JarFile( artifact );
@@ -72,8 +72,8 @@ try
         	System.err.println( "Artifact[" + artifactName + "] not found in jar archive" );
         	return false;
         }
-    }    
-    
+    }
+
 }
 catch( Throwable e )
 {
