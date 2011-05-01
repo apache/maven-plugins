@@ -12,7 +12,7 @@ try
         System.err.println( "Could not find Ant generated file: " + phase1 );
         return false;
     }
-    
+
     File phase2 = new File( basedir, "phase-2.txt" );
     if ( ! phase2.exists() )
     {

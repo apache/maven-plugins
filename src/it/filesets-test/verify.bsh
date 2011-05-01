@@ -8,8 +8,8 @@ try
 {
     File depsDir = new File( basedir, "target/dependencies" );
     File antJar = new File( depsDir, "ant-1.7.1.jar" );
-    File junitJar = new File ( depsDir, "junit-3.8.2.jar" );
-    
+    File junitJar = new File( depsDir, "junit-3.8.2.jar" );
+
     if ( ! antJar.exists() || antJar.isDirectory() )
     {
       System.out.println( "Ant jar file does not exist: " + antJar );
@@ -20,11 +20,11 @@ try
       System.out.println( "Junit jar file does not exist: " + junitJar );
       return false;
     }
-    
+
     File deps2Dir = new File( basedir, "target/dependencies2" );
     antJar = new File( deps2Dir, "ant-1.7.1.jar" );
-    junitJar = new File ( deps2Dir, "junit-3.8.2.jar" );
-    
+    junitJar = new File( deps2Dir, "junit-3.8.2.jar" );
+
     if ( ! antJar.exists() || antJar.isDirectory() )
     {
       System.out.println( "Ant jar file does not exist: " + antJar );
