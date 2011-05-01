@@ -35,7 +35,7 @@ filesAreIdentical( File expected, File current )
     try
     {
         byte[] expectedBuffer = IOUtil.toByteArray( expectedIn );
-        
+
         byte[] currentBuffer = IOUtil.toByteArray( currentIn );
         if (expectedBuffer.length != currentBuffer.length)
         {
@@ -71,19 +71,19 @@ try
       System.err.println( "filtered images happy_duke.gif are not identical." );
       return false;
   }
-  
+
   originalImg = new File( basedir, "src/main/resources/duke-beerjpg.img" );
-  
+
   targetImg = new File( basedir, "target/classes/duke-beerjpg.img" );
-  
+
   identical = filesAreIdentical( originalImg, targetImg );
 
   if (!identical)
   {
       System.err.println( "filtered .img duke-beer.jpg.img are not identical." );
       return false;
-  }  
-    
+  }
+
 }
 catch( Throwable e )
 {

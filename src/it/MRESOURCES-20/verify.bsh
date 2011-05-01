@@ -32,25 +32,22 @@ try
         System.err.println( "target file is missing or a directory." );
         return false;
     }
-    
+
     File someResource = new File( target, "/classes/resource.txt" );
     if ( !someResource.exists() || someResource.isDirectory() )
     {
         System.err.println( "SomeResource.txt is missing or not a file." );
         return false;
-    }    
-    
-    FileInputStream fis = new FileInputStream ( someResource );
-    String paramContent = IOUtil.toString ( fis );
+    }
+
+    String paramContent = FileUtils.fileRead( someResource );
 
     int indexOf = paramContent.indexOf( "fileValue=${foo.file}" );
-    if ( indexOf < 0)
+    if ( indexOf < 0 )
     {
       System.err.println( "SomeResource.txt not contains fileValue=${foo.file}" );
       return false;
-    }    
-
-            
+    }
 }
 catch( IOException e )
 {
