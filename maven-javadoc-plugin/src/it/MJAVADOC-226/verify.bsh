@@ -24,8 +24,7 @@ assertContains( String content, String value )
 {
     if ( StringUtils.countMatches( content, value ) != 1 )
     {
-        System.err.println( "not found expected text: '" + value + "'" );
-        return false;
+        throw new IllegalArgumentException( "not found expected text: '" + value + "'" );
     }
 }
 
@@ -33,8 +32,7 @@ assertNotContains( String content, String value )
 {
     if ( StringUtils.countMatches( content, value ) != 0 )
     {
-        System.err.println( "found unexpected text: '" + value + "'" );
-        return false;
+        throw new IllegalArgumentException( "found unexpected text: '" + value + "'" );
     }
 }
 
@@ -108,7 +106,7 @@ try
     assertContains( content, " * @version $Id: $" );
     assertContains( content, " * @since 1.0" );
     assertContains( content, "    /** comment */" );
-    assertContains( content, "     * My method." );
+    assertContains( content, "     * My method" );
     assertContains( content, "     * @param aString a {@link java.lang.String} object." );
 
 }
