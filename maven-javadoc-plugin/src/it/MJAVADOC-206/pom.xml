@@ -22,14 +22,21 @@
 
   <groupId>org.apache.maven.plugins.maven-javadoc-plugin.it</groupId>
   <artifactId>MJAVADOC-206</artifactId>
-  <packaging>pom</packaging>
   <version>1.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
+
   <name>Maven Javadoc output encoding Test</name>
+
   <modules>
     <module>default</module>
     <module>encoding</module>
     <module>docencoding</module>
   </modules>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
   <build>
     <pluginManagement>
       <plugins>
@@ -47,8 +54,4 @@
       </plugins>
     </pluginManagement>
   </build>
-
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-  </properties>
 </project>
