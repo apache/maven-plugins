@@ -76,7 +76,7 @@ try
         System.err.println( "download.html doesn't contain 'charset=UTF-8' directive" );
         return false;
     }
-    if ( downloadContent.indexOf( "demo character: &#x20ac; (euro)" ) < 0)
+    if ( downloadContent.indexOf( "demo character: &#x20ac; (euro)" ) < 0 )
     {
         System.err.println( "download.html doesn't contain euro symbol" );
         return false;
