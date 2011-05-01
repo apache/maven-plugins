@@ -102,13 +102,13 @@ public abstract class AbstractJiraDownloader
     /** The maven settings. */
     private Settings settings;
     /** Mapping containing all allowed JIRA status values. */
-    protected final Map statusMap = new HashMap( 8 );
+    protected final Map<String,String> statusMap = new HashMap<String,String>( 8 );
     /** Mapping containing all allowed JIRA resolution values. */
-    protected final Map resolutionMap = new HashMap( 8 );
+    protected final Map<String,String> resolutionMap = new HashMap<String,String>( 8 );
     /** Mapping containing all allowed JIRA priority values. */
-    protected final Map priorityMap = new HashMap( 8 );
+    protected final Map<String,String> priorityMap = new HashMap<String,String>( 8 );
     /** Mapping containing all allowed JIRA type values. */
-    protected final Map typeMap = new HashMap( 8 );
+    protected final Map<String,String> typeMap = new HashMap<String,String>( 8 );
     /** The pattern used to parse dates from the JIRA xml file. */
     private String jiraDatePattern;
 
@@ -148,7 +148,7 @@ public abstract class AbstractJiraDownloader
 
             for ( int i = 0; i < stats.length; i++ )
             {
-                String statusParam = (String) statusMap.get( stats[i] );
+                String statusParam = statusMap.get( stats[i] );
 
                 if ( statusParam != null )
                 {
@@ -164,7 +164,7 @@ public abstract class AbstractJiraDownloader
 
             for ( int i = 0; i < prios.length; i++ )
             {
-                String priorityParam = (String) priorityMap.get( prios[i] );
+                String priorityParam = priorityMap.get( prios[i] );
 
                 if ( priorityParam != null )
                 {
@@ -180,7 +180,7 @@ public abstract class AbstractJiraDownloader
 
             for ( int i = 0; i < resos.length; i++ )
             {
-                String resoParam = (String) resolutionMap.get( resos[i] );
+                String resoParam = resolutionMap.get( resos[i] );
 
                 if ( resoParam != null )
                 {
@@ -210,7 +210,7 @@ public abstract class AbstractJiraDownloader
 
             for ( int i = 0; i < types.length; i++ )
             {
-                String typeParam = (String) typeMap.get( types[i].trim() );
+                String typeParam = typeMap.get( types[i].trim() );
 
                 if ( typeParam != null )
                 {
@@ -345,12 +345,12 @@ public abstract class AbstractJiraDownloader
 
             client.setState( state );
 
-            Map urlMap = JiraHelper.getJiraUrlAndProjectId( project.getIssueManagement().getUrl() );
+            Map<String,String> urlMap = JiraHelper.getJiraUrlAndProjectId( project.getIssueManagement().getUrl() );
 
-            String jiraUrl = (String) urlMap.get( "url" );
+            String jiraUrl = urlMap.get( "url" );
             getLog().debug( "JIRA lives at: " + jiraUrl );
 
-            String jiraId = (String) urlMap.get( "id" );
+            String jiraId = urlMap.get( "id" );
 
             determineProxy( jiraUrl, client );
 
