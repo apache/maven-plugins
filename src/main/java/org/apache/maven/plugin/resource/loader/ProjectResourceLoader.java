@@ -45,14 +45,14 @@ public class ProjectResourceLoader
     /**
      * The paths to search for templates.
      */
-    private List paths = null;
+    private List<String> paths = null;
 
     /**
      * Used to map the path that a template was found on
      * so that we can properly check the modification
      * times of the files.
      */
-    private Hashtable templatePaths = new Hashtable();
+    private Hashtable<String,String> templatePaths = new Hashtable<String,String>();
 
     public void init( ExtendedProperties configuration )
     {
@@ -65,7 +65,7 @@ public class ProjectResourceLoader
 
         rsvc.getLog().info( "path :" + path );
         
-        paths = new ArrayList();
+        paths = new ArrayList<String>();
 
         paths.add( path );
         
@@ -73,7 +73,7 @@ public class ProjectResourceLoader
 
         for ( int i = 0; i < sz; i++ )
         {
-            rsvc.getLog().info( "ProjectResourceLoader : adding path '" + (String) paths.get( i ) + "'" );
+            rsvc.getLog().info( "ProjectResourceLoader : adding path '" + paths.get( i ) + "'" );
         }
         rsvc.getLog().info( "ProjectResourceLoader : initialization complete." );
     }
@@ -123,12 +123,10 @@ public class ProjectResourceLoader
         }
         
         // MCHANGES-118 adding the basedir path
-        paths.add( rsvc.getApplicationAttribute( "baseDirectory" ) );
+        paths.add( (String) rsvc.getApplicationAttribute( "baseDirectory" ) );
 
-        int size = paths.size();
-        for ( int i = 0; i < size; i++ )
+        for ( String path : paths )
         {
-            String path = (String) paths.get( i );
             InputStream inputStream = findTemplate( path, template );
 
             if ( inputStream != null )
@@ -203,12 +201,12 @@ public class ProjectResourceLoader
         boolean modified = true;
 
         String fileName = resource.getName();
-        String path = (String) templatePaths.get( fileName );
+        String path = templatePaths.get( fileName );
         File currentFile = null;
 
         for ( int i = 0; currentFile == null && i < paths.size(); i++ )
         {
-            String testPath = (String) paths.get( i );
+            String testPath = paths.get( i );
             File testFile = new File( testPath, fileName );
             if ( testFile.canRead() )
             {
@@ -246,7 +244,7 @@ public class ProjectResourceLoader
 
     public long getLastModified( Resource resource )
     {
-        String path = (String) templatePaths.get( resource.getName() );
+        String path = templatePaths.get( resource.getName() );
         File file = new File( path, resource.getName() );
 
         if ( file.canRead() )
