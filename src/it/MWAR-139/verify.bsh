@@ -31,38 +31,37 @@ try
         System.err.println( "target file is missing or not a directory." );
         return false;
     }
-  
+
     File webappDirectory = new File( target, "MWAR-139-1.0-SNAPSHOT" );
     if ( !webappDirectory.exists() || !webappDirectory.isDirectory() )
     {
         System.err.println( "webappDirectory is missing or not a directory." );
         return false;
-    }   
-    
-    File param = new File ( webappDirectory, "filterme.xml" );
+    }
+
+    File param = new File( webappDirectory, "filterme.xml" );
     if ( !param.exists() || param.isDirectory() )
     {
         System.err.println( "filterme.xml file is missing or a directory." );
         return false;
     }
 
-    FileInputStream fis = new FileInputStream ( param );
-    String paramContent = IOUtil.toString ( fis );
-    
+    String paramContent = FileUtils.fileRead( param );
+
     int indexOf = paramContent.indexOf( "<text>hallo @@ hallo</text>" );
-    if ( indexOf < 0)
+    if ( indexOf < 0 )
     {
         System.err.println( "filterme.xml does not contains <text>hallo @@ hallo</text>" );
         return false;
     }
-    
+
     indexOf = paramContent.indexOf( "<text2>start-${}-end</text2>" );
-    if ( indexOf < 0)
+    if ( indexOf < 0 )
     {
         System.err.println( "filterme.xml does not contains <text2>start-${}-end</text2>" );
         return false;
-    }    
-    
+    }
+
 }
 catch( Throwable e )
 {

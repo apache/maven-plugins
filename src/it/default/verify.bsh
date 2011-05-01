@@ -14,9 +14,9 @@ try
     }
 
     String[] expectedPaths = {
-            "index.html", 
-            "WEB-INF/classes/org/apache/maven/it0016/Person.class", 
-            "WEB-INF/lib/commons-logging-1.0.3.jar", 
+            "index.html",
+            "WEB-INF/classes/org/apache/maven/it0016/Person.class",
+            "WEB-INF/lib/commons-logging-1.0.3.jar",
     };
     for ( String path : expectedPaths )
     {
@@ -30,7 +30,7 @@ try
     }
 
     String[] unexpectedPaths = {
-            "WEB-INF/lib/servlet-api-2.4.jar", 
+            "WEB-INF/lib/servlet-api-2.4.jar",
     };
     for ( String path : unexpectedPaths )
     {

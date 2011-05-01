@@ -31,32 +31,31 @@ try
         System.err.println( "target file is missing or not a directory." );
         return false;
     }
-    
+
     File webappDirectory = new File( target, "profile2" );
     if ( !webappDirectory.exists() || !webappDirectory.isDirectory() )
     {
         System.err.println( "webappDirectory is missing or not a directory." );
         return false;
-    }    
-    
-    File param = new File ( webappDirectory, "param.jsp" );
+    }
+
+    File param = new File( webappDirectory, "param.jsp" );
     if ( !param.exists() || param.isDirectory() )
     {
         System.err.println( "param.jsp file is missing or a directory." );
         return false;
-    }    
-    System.out.println (" before reading param " );
-    FileInputStream fis = new FileInputStream ( param );
-    String paramContent = IOUtil.toString ( fis );
-    
-    
+    }
+    System.out.println( " before reading param " );
+    String paramContent = FileUtils.fileRead( param );
+
+
     int indexOf = paramContent.indexOf( "<c:set var=\"app_version\" value=\"1.0-SNAPSHOT\"/>" );
-    if ( indexOf < 0)
+    if ( indexOf < 0 )
     {
         System.err.println( "param.jsp not contains <c:set var=\"app_version\" value=\"1.0-SNAPSHOT\"/>" );
         return false;
     }
-    
+
 }
 catch( Throwable e )
 {

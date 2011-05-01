@@ -31,22 +31,22 @@ try
         System.err.println( "target file is missing or not a directory." );
         return false;
     }
-  
+
     File webappDirectory = new File( target, "MWAR-96-1.0-SNAPSHOT" );
     if ( !webappDirectory.exists() || !webappDirectory.isDirectory() )
     {
         System.err.println( "webappDirectory is missing or not a directory." );
         return false;
-    }   
-    
-    File param = new File ( webappDirectory, "index.jsp" );
+    }
+
+    File param = new File( webappDirectory, "index.jsp" );
     if ( !param.exists() || param.isDirectory() )
     {
         System.err.println( "index.jsp file is missing or a directory." );
         return false;
-    }    
+    }
     String paramContent = FileUtils.fileRead( param );
-    
+
     String javaVersion = System.getProperty( "java.version" );
     int indexOf = paramContent.indexOf( "<td>java version : " + javaVersion + "</td>" );
     if ( indexOf < 0 )
@@ -56,14 +56,14 @@ try
             + paramContent.substring( 0, paramContent.indexOf( "</td>" ) + 5 ) );
         return false;
     }
-    
+
     indexOf = paramContent.indexOf("<td>okitworks</td>" );
     if ( indexOf < 0 )
     {
         System.err.println( "index.jsp not contains <td>okitworks</td>" );
         return false;
     }
-    
+
 }
 catch( Throwable e )
 {

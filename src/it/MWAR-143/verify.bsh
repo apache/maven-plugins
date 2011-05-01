@@ -35,15 +35,15 @@ filesAreIdentical( File expected, File current )
     try
     {
         byte[] expectedBuffer = IOUtil.toByteArray( expectedIn );
-        
+
         byte[] currentBuffer = IOUtil.toByteArray( currentIn );
-        if (expectedBuffer.length != currentBuffer.length)
+        if ( expectedBuffer.length != currentBuffer.length )
         {
             return false;
         }
-        for (int i = 0,size = expectedBuffer.length;i<size;i++)
+        for ( int i = 0,size = expectedBuffer.length; i<size; i++ )
         {
-            if(expectedBuffer[i]!= currentBuffer[i])
+            if ( expectedBuffer[i] != currentBuffer[i] )
             {
                 return false;
             }
@@ -66,7 +66,7 @@ try
 
     boolean identical = filesAreIdentical( originalImg, targetImg );
 
-    if (!identical)
+    if ( !identical )
     {
         System.err.println( "filtered images are not identical in war-common." );
         return false;
@@ -78,42 +78,41 @@ try
         System.err.println( "target file is missing or not a directory." );
         return false;
     }
-  
+
     File webappDirectory = new File( target, "custom-manifest-1.0-SNAPSHOT" );
     if ( !webappDirectory.exists() || !webappDirectory.isDirectory() )
     {
         System.err.println( "webappDirectory is missing or not a directory." );
         return false;
-    }   
-    
-    File param = new File ( webappDirectory, "WEB-INF/classes/filter.properties" );
+    }
+
+    File param = new File( webappDirectory, "WEB-INF/classes/filter.properties" );
     if ( !param.exists() || param.isDirectory() )
     {
         System.err.println( "filter.properties file is missing or a directory." );
         return false;
     }
 
-    
-    FileInputStream fis = new FileInputStream ( param );
-    String paramContent = IOUtil.toString ( fis );
-    
+
+    String paramContent = FileUtils.fileRead( param );
+
     int indexOf = paramContent.indexOf( "debug.test = hello world !" );
-    if ( indexOf < 0)
+    if ( indexOf < 0 )
     {
         System.err.println( "filter.properties does not contains debug.test = hello world !" );
         return false;
     }
-    
+
     targetImg = new File( basedir, "war-filter-overlay/target/custom-manifest-1.0-SNAPSHOT/duke-beer.jpg" );
 
     boolean identical = filesAreIdentical( originalImg, targetImg );
-    
-    if (!identical)
+
+    if ( !identical )
     {
         System.err.println( "filtered images are not identical with overlay." );
         return false;
-    }    
-    
+    }
+
 }
 catch( Throwable e )
 {
