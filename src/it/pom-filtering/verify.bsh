@@ -23,7 +23,7 @@ try
     }
 
     String xml = FileUtils.fileRead( pomFile, "UTF-8" );
-    
+
     String[] values = {
             "<prop0>${project.version}</prop0>",
             "<prop1>1.0-SNAPSHOT</prop1>",
@@ -46,7 +46,7 @@ try
             return false;
         }
     }
-    
+
     String[] badValues = {
             "<prop9>@basedir@</prop9>",
             "<prop9>FAILED</prop9>",

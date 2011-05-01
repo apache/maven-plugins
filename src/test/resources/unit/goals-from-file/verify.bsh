@@ -26,16 +26,15 @@ boolean result = true;
 try
 {
     
-    File build = new File ( basedir, "build.log" );
+    File build = new File( basedir, "build.log" );
     if ( !build.exists() || build.isDirectory() )
     {
         System.err.println( "build.log file is missing or a directory." );
         return false;
     }    
-    FileInputStream fis = new FileInputStream ( build );
-    String buildContent = IOUtil.toString ( fis );
+    String buildContent = FileUtils.fileRead( build );
     int indexOf = buildContent.indexOf( "BUILD SUCCESSFUL" );
-    if ( indexOf < 0)
+    if ( indexOf < 0 )
     {
     	System.err.println( "build.log doesn't contains BUILD SUCCESSFUL" );
     }    

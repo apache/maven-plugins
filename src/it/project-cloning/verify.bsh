@@ -13,9 +13,9 @@ try
 
     // NOTE: It is part of the test design that "module" is a prefix of "module-1"
     String[] paths = {
-            "module", 
-            "module/pom.xml", 
-            "module-1", 
+            "module",
+            "module/pom.xml",
+            "module-1",
             "module-1/pom.xml",
             "module-1/empty-dir",
             "module-1/sub-module",
