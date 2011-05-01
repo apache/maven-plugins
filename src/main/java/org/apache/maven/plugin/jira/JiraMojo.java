@@ -29,6 +29,7 @@ import java.util.ResourceBundle;
 import org.apache.commons.lang.StringUtils;
 import org.apache.maven.plugin.changes.AbstractChangesReport;
 import org.apache.maven.plugin.changes.ProjectUtils;
+import org.apache.maven.plugin.issues.Issue;
 import org.apache.maven.plugin.issues.IssueUtils;
 import org.apache.maven.plugin.issues.IssuesReportGenerator;
 import org.apache.maven.plugin.issues.IssuesReportHelper;
@@ -316,7 +317,7 @@ public class JiraMojo
             configureIssueDownloader( issueDownloader );
             issueDownloader.doExecute();
 
-            List issueList = issueDownloader.getIssueList();
+            List<Issue> issueList = issueDownloader.getIssueList();
 
             if ( StringUtils.isNotEmpty( versionPrefix ) )
             {

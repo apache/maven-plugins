@@ -46,7 +46,7 @@ import org.xml.sax.helpers.DefaultHandler;
 public class JiraXML
     extends DefaultHandler
 {
-    private final List issueList;
+    private final List<Issue> issueList;
 
     private final StringBuffer currentElement = new StringBuffer( 1024 );
 
@@ -83,7 +83,7 @@ public class JiraXML
             sdf = new SimpleDateFormat( datePattern, Locale.ENGLISH );
         }
 
-        this.issueList = new ArrayList( 16 );
+        this.issueList = new ArrayList<Issue>( 16 );
     }
 
     /**
@@ -237,7 +237,7 @@ public class JiraXML
         currentElement.append( buf, offset, len );
     }
 
-    public List getIssueList()
+    public List<Issue> getIssueList()
     {
         return Collections.unmodifiableList( this.issueList );
     }
