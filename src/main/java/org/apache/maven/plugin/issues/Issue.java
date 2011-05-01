@@ -34,13 +34,13 @@ public class Issue
 {
     private String assignee;
 
-    private List comments;
+    private List<String> comments;
 
-    private List components;
+    private List<String> components;
 
     private Date created;
 
-    private List fixVersions;
+    private List<String> fixVersions;
 
     private String id;
 
@@ -80,7 +80,7 @@ public class Issue
         this.assignee = assignee;
     }
 
-    public List getComments()
+    public List<String> getComments()
     {
         return comments;
     }
@@ -89,12 +89,12 @@ public class Issue
     {
         if ( comments == null )
         {
-            comments = new ArrayList();
+            comments = new ArrayList<String>();
         }
         comments.add( comment );
     }
 
-    public List getComponents()
+    public List<String> getComponents()
     {
         return components;
     }
@@ -103,7 +103,7 @@ public class Issue
     {
         if ( components == null )
         {
-            components = new ArrayList();
+            components = new ArrayList<String>();
         }
         components.add( component );
     }
@@ -118,7 +118,7 @@ public class Issue
         this.created = created;
     }
 
-    public List getFixVersions()
+    public List<String> getFixVersions()
     {
         return fixVersions;
     }
@@ -127,7 +127,7 @@ public class Issue
     {
         if ( fixVersions == null )
         {
-            fixVersions = new ArrayList();
+            fixVersions = new ArrayList<String>();
         }
         fixVersions.add( fixVersion );
     }

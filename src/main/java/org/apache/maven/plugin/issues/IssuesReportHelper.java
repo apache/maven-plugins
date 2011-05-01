@@ -128,15 +128,15 @@ public class IssuesReportHelper
      * @param values The values to print
      * @return A nicely formatted string of values.
      */
-    public static String printValues( List values )
+    public static String printValues( List<String> values )
     {
         StringBuffer sb = new StringBuffer();
         if ( values != null )
         {
-            Iterator iterator = values.iterator();
+            Iterator<String> iterator = values.iterator();
             while ( iterator.hasNext() )
             {
-                String value = (String) iterator.next();
+                String value = iterator.next();
                 sb.append( value );
                 if ( iterator.hasNext() )
                 {
