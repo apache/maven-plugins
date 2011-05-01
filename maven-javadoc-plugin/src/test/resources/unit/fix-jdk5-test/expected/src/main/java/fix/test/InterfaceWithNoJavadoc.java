@@ -38,7 +38,7 @@ public interface InterfaceWithNoJavadoc
     Map<String, String> MY_MAP_CONSTANT = Collections.singletonMap( "key", "value" );
 
     /**
-     * <p>withGenericParameters</p>
+     * <p>withGenericParameters.</p>
      *
      * @param aList a {@link java.util.List} object.
      * @param aMap a {@link java.util.Map} object.
@@ -50,7 +50,7 @@ public interface InterfaceWithNoJavadoc
     // ----------------------------------------------------------------------
 
     /**
-     * <p>newInterfaceMethod</p>
+     * <p>newInterfaceMethod.</p>
      *
      * @param aList a {@link java.util.List} object.
      * @param aMap a {@link java.util.Map} object.

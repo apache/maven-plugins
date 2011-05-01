@@ -54,7 +54,7 @@ public class ClassWithJavadoc
     }
 
     /**
-     * <p>missingJavadocTags</p>
+     * <p>missingJavadocTags.</p>
      *
      * @param str a {@link java.lang.String} object.
      * @param b a boolean.
@@ -67,7 +67,7 @@ public class ClassWithJavadoc
     }
 
     /**
-     * <p>missingJavadocTags2</p>
+     * <p>missingJavadocTags2.</p>
      *
      * @param str a {@link java.lang.String} object.
      * @throws java.lang.UnsupportedOperationException if any
@@ -82,7 +82,7 @@ public class ClassWithJavadoc
     }
 
     /**
-     * <p>wrongJavadocTag</p>
+     * <p>wrongJavadocTag.</p>
      *
      * @param aString a {@link java.lang.String} object.
      */
@@ -91,7 +91,7 @@ public class ClassWithJavadoc
     }
 
     /**
-     * <p>multiLinesJavadocTags</p>
+     * <p>multiLinesJavadocTags.</p>
      *
      * @param aString
      *      a string

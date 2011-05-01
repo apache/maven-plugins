@@ -49,7 +49,7 @@ public class ClassWithNoJavadoc
 
     // QDOX-155
     /**
-     * <p>withGenericParameter</p>
+     * <p>withGenericParameter.</p>
      *
      * @param request a T object.
      * @param <T> a T object.
@@ -67,7 +67,7 @@ public class ClassWithNoJavadoc
     // ----------------------------------------------------------------------
 
     /**
-     * <p>withGenericParameter2</p>
+     * <p>withGenericParameter2.</p>
      *
      * @param name a {@link java.lang.String} object.
      * @param <K> a K object.
@@ -81,7 +81,7 @@ public class ClassWithNoJavadoc
     }
 
     /**
-     * <p>newClassMethod</p>
+     * <p>newClassMethod.</p>
      *
      * @param aList a {@link java.util.List} object.
      * @param aMap a {@link java.util.Map} object.

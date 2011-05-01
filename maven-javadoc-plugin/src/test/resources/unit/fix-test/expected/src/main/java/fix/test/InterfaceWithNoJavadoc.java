@@ -31,7 +31,7 @@ public interface InterfaceWithNoJavadoc
     String MY_STRING_CONSTANT = "value";
 
     /**
-     * <p>missingJavadoc</p>
+     * <p>missingJavadoc.</p>
      *
      * @param aString a {@link java.lang.String} object.
      */
@@ -39,7 +39,7 @@ public interface InterfaceWithNoJavadoc
 
     // take care of identifier
     /**
-     * <p>missingJavadoc2</p>
+     * <p>missingJavadoc2.</p>
      *
      * @param aString a {@link java.lang.String} object.
      */
@@ -50,7 +50,7 @@ public interface InterfaceWithNoJavadoc
     // ----------------------------------------------------------------------
 
     /**
-     * <p>newInterfaceMethod</p>
+     * <p>newInterfaceMethod.</p>
      *
      * @param aString a {@link java.lang.String} object.
      * @return a {@link java.lang.String} object.
