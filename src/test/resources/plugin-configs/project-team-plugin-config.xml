@@ -43,6 +43,11 @@ under the License.
       </roles>
       <timezone>-5</timezone>
     </developer>
+    <developer>
+      <id>fractional</id>
+      <name>Mr Fraction</name>
+      <timezone>-5.5</timezone>
+    </developer>
   </developers>
   <build>
     <plugins>

@@ -320,7 +320,7 @@ public class TeamListReport
                     else
                     {
                         // check if number is between -12 and +14
-                        int tz = ProjectInfoReportUtils.toInt( member.getTimezone().trim(), Integer.MIN_VALUE );
+                        float tz = ProjectInfoReportUtils.toFloat( member.getTimezone().trim(), Integer.MIN_VALUE );
                         if ( tz == Integer.MIN_VALUE || !( tz >= -12 && tz <= 14 ) )
                         {
                             text( null );
@@ -330,7 +330,7 @@ public class TeamListReport
                         }
                         else
                         {
-                            text( member.getTimezone() );
+                            text( member.getTimezone().trim() );
                             javascript.append( "    offsetDate('" ).append( type ).append( "-" ).append( rowId ).append( "', '" );
                             javascript.append( member.getTimezone() ).append( "');" ).append( SystemUtils.LINE_SEPARATOR );
                         }

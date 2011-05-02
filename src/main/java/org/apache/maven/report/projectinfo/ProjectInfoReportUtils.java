@@ -372,12 +372,12 @@ public class ProjectInfoReportUtils
         return NumberUtils.isNumber( str );
     }
 
-    public static int toInt( String str, int defaultValue )
+    public static float toFloat( String str, float defaultValue )
     {
         if ( str.startsWith( "+" ) )
         {
             str = str.substring( 1 );
         }
-        return NumberUtils.toInt( str, defaultValue );
+        return NumberUtils.toFloat( str, defaultValue );
     }
 }
