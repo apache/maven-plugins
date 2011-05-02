@@ -324,7 +324,8 @@ public class TeamListReport
                         if ( tz == Integer.MIN_VALUE || !( tz >= -12 && tz <= 14 ) )
                         {
                             text( null );
-                            log.warn( "The time zone '" + tz + "' for the " + type + " '" + member.getName()
+                            log.warn( "The time zone '" + member.getTimezone().trim() + "' for the " + type + " '"
+                                + member.getName()
                                 + "' is not a recognised time zone, use a number in the range -12 to +14 instead of." );
                         }
                         else
