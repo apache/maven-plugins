@@ -98,8 +98,8 @@ public class JavadocUtil
 
     /** Error message when VM could not be started using invoker. */
     protected static final String ERROR_INIT_VM =
-        "Error occurred during initialization of VM, try to reduce the Java heap size for the MAVEN_OPTS " +
-        "environnement variable using -Xms:<size> and -Xmx:<size>.";
+        "Error occurred during initialization of VM, try to reduce the Java heap size for the MAVEN_OPTS "
+        + "environnement variable using -Xms:<size> and -Xmx:<size>.";
 
     /**
      * Method that removes the invalid directories in the specified directories.
@@ -1026,7 +1026,7 @@ public class JavadocUtil
         {
             return FileUtils.fileRead( javaFile, encoding );
         }
-        catch (IOException e )
+        catch ( IOException e )
         {
             return null;
         }
