@@ -1160,7 +1160,8 @@ public class DependenciesRenderer
         endTable();
     }
 
-    private void printArtifactsLocations( Map<String, ArtifactRepository> repoMap, List<String> repoUrlBlackListed, List<Artifact> alldeps )
+    private void printArtifactsLocations( Map<String, ArtifactRepository> repoMap, List<String> repoUrlBlackListed,
+                                          List<Artifact> alldeps )
     {
         // i18n
         String artifact = getI18nString( "repo.locations.column.artifact" );
@@ -1175,7 +1176,7 @@ public class DependenciesRenderer
         {
             String repokey = entry.getKey();
             ArtifactRepository repo = entry.getValue();
-            if ( !(repo.isBlacklisted() || repoUrlBlackListed.contains( repo.getUrl() ) ) )
+            if ( !( repo.isBlacklisted() || repoUrlBlackListed.contains( repo.getUrl() ) ) )
             {
                 repoIdList.add( repokey );
             }
