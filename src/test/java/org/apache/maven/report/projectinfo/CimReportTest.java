@@ -67,7 +67,7 @@ public class CimReportTest
 
         // Test the texts
         TextBlock[] textBlocks = response.getTextBlocks();
-        assertEquals( textBlocks[0].getText(), getString( "report.cim.name" ) );
-        assertEquals( textBlocks[1].getText(), getString( "report.cim.nocim" ) );
+        assertEquals( getString( "report.cim.name" ), textBlocks[0].getText() );
+        assertEquals( getString( "report.cim.nocim" ), textBlocks[1].getText() );
     }
 }

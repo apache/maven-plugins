@@ -76,7 +76,7 @@ public class DependencyManagementReportTest
 
         // Test the texts
         TextBlock[] textBlocks = response.getTextBlocks();
-        assertEquals( textBlocks[0].getText(), getString( "report.dependencyManagement.title" ) );
-        assertEquals( textBlocks[1].getText(), "test" );
+        assertEquals( getString( "report.dependencyManagement.title" ), textBlocks[0].getText() );
+        assertEquals( "test", textBlocks[1].getText() );
     }
 }
