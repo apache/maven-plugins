@@ -33,6 +33,7 @@ import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.metadata.Metadata;
 import org.apache.maven.artifact.repository.metadata.RepositoryMetadataManager;
 import org.apache.maven.artifact.repository.metadata.SnapshotArtifactRepositoryMetadata;
+import org.apache.maven.artifact.repository.metadata.Versioning;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
@@ -341,9 +342,10 @@ public class RepositoryUtils
                         SnapshotArtifactRepositoryMetadata snapshotMetadata = (SnapshotArtifactRepositoryMetadata) m;
 
                         Metadata metadata = snapshotMetadata.getMetadata();
-                        if ( metadata.getVersioning() == null || metadata.getVersioning().getSnapshot() == null
-                            || metadata.getVersioning().getSnapshot().isLocalCopy()
-                            || metadata.getVersioning().getSnapshot().getTimestamp() == null )
+                        Versioning versioning = metadata.getVersioning();
+                        if ( versioning == null || versioning.getSnapshot() == null
+                            || versioning.getSnapshot().isLocalCopy()
+                            || versioning.getSnapshot().getTimestamp() == null )
                         {
                             continue;
                         }
@@ -351,8 +353,8 @@ public class RepositoryUtils
                         // create the version according SnapshotTransformation
                         String version =
                             StringUtils.replace( copyArtifact.getVersion(), Artifact.SNAPSHOT_VERSION,
-                                                 metadata.getVersioning().getSnapshot().getTimestamp() )
-                                + "-" + metadata.getVersioning().getSnapshot().getBuildNumber();
+                                                 versioning.getSnapshot().getTimestamp() )
+                                + "-" + versioning.getSnapshot().getBuildNumber();
                         copyArtifact.setVersion( version );
                     }
                 }
@@ -374,19 +376,20 @@ public class RepositoryUtils
      */
     private ProxyInfo getProxyInfo()
     {
-        ProxyInfo proxyInfo = null;
-        if ( settings != null && settings.getActiveProxy() != null )
+        if ( settings == null || settings.getActiveProxy() == null )
         {
-            Proxy settingsProxy = settings.getActiveProxy();
-
-            proxyInfo = new ProxyInfo();
-            proxyInfo.setHost( settingsProxy.getHost() );
-            proxyInfo.setType( settingsProxy.getProtocol() );
-            proxyInfo.setPort( settingsProxy.getPort() );
-            proxyInfo.setNonProxyHosts( settingsProxy.getNonProxyHosts() );
-            proxyInfo.setUserName( settingsProxy.getUsername() );
-            proxyInfo.setPassword( settingsProxy.getPassword() );
+            return null;
         }
+
+        Proxy settingsProxy = settings.getActiveProxy();
+
+        ProxyInfo proxyInfo = new ProxyInfo();
+        proxyInfo.setHost( settingsProxy.getHost() );
+        proxyInfo.setType( settingsProxy.getProtocol() );
+        proxyInfo.setPort( settingsProxy.getPort() );
+        proxyInfo.setNonProxyHosts( settingsProxy.getNonProxyHosts() );
+        proxyInfo.setUserName( settingsProxy.getUsername() );
+        proxyInfo.setPassword( settingsProxy.getPassword() );
 
         return proxyInfo;
     }

@@ -680,9 +680,17 @@ public class DependenciesRenderer
         for ( ArtifactRepository repo : repos.values() )
         {
             // ping repo
-            if ( !repo.isBlacklisted() )
+            if ( repo.isBlacklisted() )
             {
-                if ( !repoUrlBlackListed.contains( repo.getUrl() ) )
+                repoUrlBlackListed.add( repo.getUrl() );
+            }
+            else
+            {
+                if ( repoUrlBlackListed.contains( repo.getUrl() ) )
+                {
+                    repo.setBlacklisted( true );
+                }
+                else
                 {
                     try
                     {
@@ -703,14 +711,6 @@ public class DependenciesRenderer
                         repoUrlBlackListed.add( repo.getUrl() );
                     }
                 }
-                else
-                {
-                    repo.setBlacklisted( true );
-                }
-            }
-            else
-            {
-                repoUrlBlackListed.add( repo.getUrl() );
             }
         }
     }
@@ -839,11 +839,9 @@ public class DependenciesRenderer
             artifactProject = repoUtils.getMavenProjectFromRepository( artifact );
             @SuppressWarnings( "unchecked" )
             List<License> licenses = artifactProject.getLicenses();
-            for ( Iterator<License> iterator = licenses.iterator(); iterator.hasNext(); )
+            for ( License license : licenses )
             {
-                License license = iterator.next();
-                String artifactIdCell2 = ProjectInfoReportUtils.getArtifactIdCell( license.getName(), license.getUrl() );
-                sb.append( artifactIdCell2 );
+                sb.append( ProjectInfoReportUtils.getArtifactIdCell( license.getName(), license.getUrl() ) );
             }
         }
         catch ( ProjectBuildingException e )
@@ -888,18 +886,15 @@ public class DependenciesRenderer
         {
             boolean toBeIncluded = false;
             List<DependencyNode> subList = new ArrayList<DependencyNode>();
-            for ( @SuppressWarnings( "unchecked" )
-            Iterator<DependencyNode> deps = node.getChildren().iterator(); deps.hasNext(); )
+            @SuppressWarnings( "unchecked" )
+            List<DependencyNode> deps = node.getChildren();
+            for ( DependencyNode dep : deps )
             {
-                DependencyNode dep = deps.next();
-
-                if ( !dependencies.getAllDependencies().contains( dep.getArtifact() ) )
+                if ( dependencies.getAllDependencies().contains( dep.getArtifact() ) )
                 {
-                    continue;
+                    subList.add( dep );
+                    toBeIncluded = true;
                 }
-
-                subList.add( dep );
-                toBeIncluded = true;
             }
 
             if ( toBeIncluded )
