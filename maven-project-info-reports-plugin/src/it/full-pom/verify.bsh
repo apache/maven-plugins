@@ -95,6 +95,14 @@ try
         System.err.println( "dependencies.html doesn't contain doxia-core-1.2.jar" );
         return false;
     }
+
+    File dependencyMgmt = new File( siteDir, "dependency-management.html");
+    content = FileUtils.fileRead( dependencyMgmt, "UTF-8" );
+    if ( !content.contains( "http://maven.apache.org/doxia/doxia/doxia-sink-api/" ) )
+    {
+        System.err.println( "dependency-management doesn't contain doxia-sink-api url http://maven.apache.org/doxia/doxia/doxia-sink-api/" );
+        return false;
+    }
 }
 catch( Throwable t )
 {

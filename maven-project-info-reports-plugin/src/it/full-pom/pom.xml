@@ -131,9 +131,9 @@
   <dependencyManagement>
     <dependencies>
       <dependency>
-        <groupId>org.codehaus.plexus</groupId>
-        <artifactId>plexus-utils</artifactId>
-        <version>1.5.5</version>
+        <groupId>org.apache.maven.doxia</groupId>
+        <artifactId>doxia-sink-api</artifactId>
+        <version>[1.0,)</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

@@ -27,7 +27,10 @@ import java.util.Map;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
+import org.apache.maven.artifact.metadata.ArtifactMetadataRetrievalException;
+import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.License;
@@ -54,6 +57,8 @@ public class DependencyManagementRenderer
 
     private final Log log;
 
+    private final ArtifactMetadataSource artifactMetadataSource;
+
     private final ArtifactFactory artifactFactory;
 
     private final MavenProjectBuilder mavenProjectBuilder;
@@ -79,8 +84,9 @@ public class DependencyManagementRenderer
      * @param repoUtils
      */
     public DependencyManagementRenderer( Sink sink, Locale locale, I18N i18n, Log log,
-                                         ManagementDependencies dependencies, ArtifactFactory artifactFactory,
-                                         MavenProjectBuilder mavenProjectBuilder,
+                                         ManagementDependencies dependencies,
+                                         ArtifactMetadataSource artifactMetadataSource,
+                                         ArtifactFactory artifactFactory, MavenProjectBuilder mavenProjectBuilder,
                                          List<ArtifactRepository> remoteRepositories,
                                          ArtifactRepository localRepository, RepositoryUtils repoUtils )
     {
@@ -88,6 +94,7 @@ public class DependencyManagementRenderer
 
         this.log = log;
         this.dependencies = dependencies;
+        this.artifactMetadataSource = artifactMetadataSource;
         this.artifactFactory = artifactFactory;
         this.mavenProjectBuilder = mavenProjectBuilder;
         this.remoteRepositories = remoteRepositories;
@@ -202,41 +209,63 @@ public class DependencyManagementRenderer
         }
     }
 
+    @SuppressWarnings( "unchecked" )
     private String[] getDependencyRow( Dependency dependency, boolean hasClassifier )
     {
-        Artifact artifact = artifactFactory.createParentArtifact( dependency.getGroupId(), dependency.getArtifactId(),
-                                                                  dependency.getVersion() );
-        String url =
-            ProjectInfoReportUtils.getArtifactUrl( artifactFactory, artifact, mavenProjectBuilder, remoteRepositories,
-                                                   localRepository );
-        String artifactIdCell = ProjectInfoReportUtils.getArtifactIdCell( artifact.getArtifactId(), url );
+        Artifact artifact =
+            artifactFactory.createProjectArtifact( dependency.getGroupId(), dependency.getArtifactId(),
+                                                   dependency.getVersion() );
 
-        MavenProject artifactProject;
-        StringBuffer sb = new StringBuffer();
+        StringBuffer licensesBuffer = new StringBuffer();
+        String url = null;
         try
         {
-            artifactProject = repoUtils.getMavenProjectFromRepository( artifact );
-            @SuppressWarnings( "unchecked" )
+            List<ArtifactVersion> versions =
+                artifactMetadataSource.retrieveAvailableVersions( artifact, localRepository, remoteRepositories );
+
+            if ( versions.size() > 0 )
+            {
+                Collections.sort( versions );
+                
+                artifact.setVersion( versions.get( versions.size() - 1 ).toString() );
+            }
+
+            url =
+                ProjectInfoReportUtils.getArtifactUrl( artifactFactory, artifact, mavenProjectBuilder,
+                                                       remoteRepositories, localRepository );
+
+            MavenProject artifactProject = repoUtils.getMavenProjectFromRepository( artifact );
+
             List<License> licenses = artifactProject.getLicenses();
             for ( License license : licenses )
             {
-                String artifactIdCell2 = ProjectInfoReportUtils.getArtifactIdCell( license.getName(), license.getUrl() );
-                sb.append( artifactIdCell2 );
+                String licenseCell = ProjectInfoReportUtils.getArtifactIdCell( license.getName(), license.getUrl() );
+                if ( licensesBuffer.length() > 0 )
+                {
+                    licensesBuffer.append( ", " );
+                }
+                licensesBuffer.append( licenseCell );
             }
+        }
+        catch ( ArtifactMetadataRetrievalException e )
+        {
+            log.warn( "Unable to retrieve versions for " + artifact.getId() + " from repository.", e );
         }
         catch ( ProjectBuildingException e )
         {
-            log.warn( "Unable to create Maven project from repository.", e );
+            log.warn( "Unable to create Maven project for " + artifact.getId() + " from repository.", e );
         }
+
+        String artifactIdCell = ProjectInfoReportUtils.getArtifactIdCell( artifact.getArtifactId(), url );
 
         if ( hasClassifier )
         {
             return new String[] { dependency.getGroupId(), artifactIdCell, dependency.getVersion(),
-                dependency.getClassifier(), dependency.getType(), sb.toString() };
+                dependency.getClassifier(), dependency.getType(), licensesBuffer.toString() };
         }
 
         return new String[] { dependency.getGroupId(), artifactIdCell, dependency.getVersion(),
-            dependency.getType(), sb.toString() };
+            dependency.getType(), licensesBuffer.toString() };
     }
 
     private Comparator<Dependency> getDependencyComparator()

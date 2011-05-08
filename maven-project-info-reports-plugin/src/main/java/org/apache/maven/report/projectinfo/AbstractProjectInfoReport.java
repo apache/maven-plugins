@@ -56,6 +56,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.text.MessageFormat;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.MissingResourceException;
@@ -142,6 +143,14 @@ public abstract class AbstractProjectInfoReport
      * @readonly
      */
     protected ArtifactRepository localRepository;
+
+    /**
+     * Remote repositories used for the project.
+     *
+     * @since 2.1
+     * @parameter expression="${project.remoteArtifactRepositories}"
+     */
+    protected List<ArtifactRepository> remoteRepositories;
 
     /**
      * The current user system settings for use in Maven.

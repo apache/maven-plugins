@@ -19,8 +19,6 @@ package org.apache.maven.report.projectinfo;
  * under the License.
  */
 
-import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.profiles.DefaultProfileManager;
 import org.apache.maven.profiles.ProfileManager;
@@ -159,18 +157,17 @@ public abstract class AbstractProjectInfoTestCase
         throws Exception
     {
         File pluginXmlFile = new File( getBasedir(), "src/test/resources/plugin-configs/" + pluginXml );
-        Mojo mojo = lookupMojo( goal, pluginXmlFile );
+        AbstractProjectInfoReport mojo = (AbstractProjectInfoReport) lookupMojo( goal, pluginXmlFile );
         assertNotNull( "Mojo found.", mojo );
+
+        setVariableValueToObject( mojo, "remoteRepositories", mojo.project.getRemoteArtifactRepositories() );
 
         mojo.execute();
 
         MavenProjectBuilder builder = (MavenProjectBuilder) lookup( MavenProjectBuilder.ROLE );
         ProfileManager profileManager = new DefaultProfileManager( getContainer(), null, null );
 
-        ArtifactRepository localRepository = (ArtifactRepository) getVariableValueFromObject( mojo,
-                                                                                              "localRepository" );
-
-        testMavenProject = builder.buildWithDependencies( pluginXmlFile, localRepository, profileManager );
+        testMavenProject = builder.buildWithDependencies( pluginXmlFile, mojo.localRepository, profileManager );
 
         MavenReport reportMojo = (MavenReport) mojo;
         File outputDir = reportMojo.getReportOutputDirectory();
