@@ -1,3 +1,5 @@
+package org.apache.maven.plugin.checkstyle;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,7 +18,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugin.checkstyle;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -406,8 +407,8 @@ public class DefaultCheckstyleExecutor
             excludesStr.append( defaultExcludes[i] );
         }
 
-        if (request.getSourceDirectory() == null || !request.getSourceDirectory().exists())
-        {
+        if ( request.getSourceDirectory() == null || !request.getSourceDirectory().exists() )
+     {
             return EMPTY_FILE_ARRAY;
         }
 

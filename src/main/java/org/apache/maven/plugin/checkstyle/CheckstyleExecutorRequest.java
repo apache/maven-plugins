@@ -210,7 +210,7 @@ public class CheckstyleExecutorRequest
         return this;
     }
     
-    public CheckstyleExecutorRequest setConsoleListener(DefaultLogger defaultLogger)
+    public CheckstyleExecutorRequest setConsoleListener( DefaultLogger defaultLogger )
     {
         this.defaultLogger = defaultLogger;
         return this;
