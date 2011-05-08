@@ -68,16 +68,16 @@ public class IssueTrackingReportTest
 
         // Test the links
         WebLink[] weblinks = response.getLinks();
-        assertEquals( weblinks.length, 3 );
+        assertEquals( 3, weblinks.length );
 
-        assertEquals( weblinks[1].getText(), "JIRA" );
+        assertEquals( "JIRA", weblinks[1].getText() );
 
-        assertEquals( weblinks[2].getText(), "http://localhost/jira" );
+        assertEquals( "http://localhost/jira", weblinks[2].getText() );
 
         // Test the texts
         TextBlock[] textBlocks = response.getTextBlocks();
-        assertEquals( textBlocks[0].getText(), getString( "report.issuetracking.overview.title" ) );
-        assertEquals( textBlocks[1].getText(), "This project uses JIRA a J2EE-based, issue tracking and project management application." ); // due to link pattern
-        assertEquals( textBlocks[2].getText(), getString( "report.issuetracking.name" ) );
+        assertEquals( getString( "report.issuetracking.overview.title" ), textBlocks[0].getText() );
+        assertEquals( "This project uses JIRA a J2EE-based, issue tracking and project management application.", textBlocks[1].getText() ); // due to link pattern
+        assertEquals( getString( "report.issuetracking.name" ), textBlocks[2].getText() );
     }
 }

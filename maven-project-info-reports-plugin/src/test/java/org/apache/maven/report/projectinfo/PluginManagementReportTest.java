@@ -68,13 +68,13 @@ public class PluginManagementReportTest
 
         // Test the tables
         WebTable[] webTables = response.getTables();
-        assertEquals( webTables.length, 1 );
+        assertEquals( 1, webTables.length );
 
-        assertEquals( webTables[0].getColumnCount(), 3 );
+        assertEquals( 3, webTables[0].getColumnCount() );
         assertEquals( 3, webTables[0].getRowCount() );
 
         // Test the texts
         TextBlock[] textBlocks = response.getTextBlocks();
-        assertEquals( textBlocks[0].getText(), getString( "report.pluginManagement.title" ) );
+        assertEquals( getString( "report.pluginManagement.title" ), textBlocks[0].getText() );
     }
 }

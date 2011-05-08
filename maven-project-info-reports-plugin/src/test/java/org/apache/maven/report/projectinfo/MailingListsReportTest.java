@@ -72,8 +72,8 @@ public class MailingListsReportTest
 
         // Test the texts
         TextBlock[] textBlocks = response.getTextBlocks();
-        assertEquals( textBlocks[0].getText(), getString( "report.mailing-lists.title" ) );
-        assertEquals( textBlocks[1].getText(), getString( "report.mailing-lists.intro" ) );
+        assertEquals( getString( "report.mailing-lists.title" ), textBlocks[0].getText() );
+        assertEquals( getString( "report.mailing-lists.intro" ), textBlocks[1].getText() );
     }
 
     /**
