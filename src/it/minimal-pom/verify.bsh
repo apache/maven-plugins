@@ -41,7 +41,8 @@ try
                          "project-info",
                          "project-summary",
                          "source-repository",
-                         "team-list"
+                         "team-list",
+                         "distribution-management"
                        };
     for ( String report : reports )
     {
