@@ -72,7 +72,8 @@ public class DefaultCheckstyleRssGenerator
 
         try
         {
-            vtemplate.generate( checkstyleRssGeneratorRequest.getOutputDirectory().getPath() + "/checkstyle.rss", "checkstyle-rss.vm", context );
+            vtemplate.generate( checkstyleRssGeneratorRequest.getOutputDirectory().getPath() + "/checkstyle.rss",
+                                "checkstyle-rss.vm", context );
         }
         catch ( ResourceNotFoundException e )
         {
