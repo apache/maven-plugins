@@ -64,8 +64,7 @@ public class DependencyManagementReportTest
         assertTrue( response.getContentLength() > 0 );
 
         // Test the Page title
-        assertEquals( getString( "report.dependencyManagement.name" ) + " - "
-                        + getString( "report.dependencyManagement.title" ), response.getTitle() );
+        assertEquals( getString( "report.dependencyManagement.title" ), response.getTitle() );
 
         // Test the tables
         WebTable[] webTables = response.getTables();

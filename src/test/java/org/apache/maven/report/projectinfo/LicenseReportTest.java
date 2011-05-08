@@ -64,8 +64,7 @@ public class LicenseReportTest
         assertTrue( response.getContentLength() > 0 );
 
         // Test the Page title
-        assertEquals( getString( "report.license.name" ) + " - " + getString( "report.license.title" ), response
-            .getTitle() );
+        assertEquals( getString( "report.license.title" ), response.getTitle() );
 
         // Test the texts
         TextBlock[] textBlocks = response.getTextBlocks();
@@ -98,8 +97,7 @@ public class LicenseReportTest
         assertTrue( response.getContentLength() > 0 );
 
         // Test the Page title
-        assertEquals( getString( "report.license.name" ) + " - " + getString( "report.license.title" ), response
-            .getTitle() );
+        assertEquals( getString( "report.license.title" ), response.getTitle() );
 
         // Test the texts
         TextBlock[] textBlocks = response.getTextBlocks();

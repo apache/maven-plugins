@@ -64,8 +64,7 @@ public class IssueTrackingReportTest
         assertTrue( response.getContentLength() > 0 );
 
         // Test the Page title
-        assertEquals( getString( "report.issuetracking.name" ) + " - " + getString( "report.issuetracking.title" ),
-                      response.getTitle() );
+        assertEquals( getString( "report.issuetracking.title" ), response.getTitle() );
 
         // Test the links
         WebLink[] weblinks = response.getLinks();

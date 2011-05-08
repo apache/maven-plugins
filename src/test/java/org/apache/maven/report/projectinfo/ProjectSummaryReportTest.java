@@ -63,8 +63,7 @@ public class ProjectSummaryReportTest
         assertTrue( response.getContentLength() > 0 );
 
         // Test the Page title
-        assertEquals( getString( "report.summary.name" ) + " - " + getString( "report.summary.title" ),
-                      response.getTitle() );
+        assertEquals( getString( "report.summary.title" ), response.getTitle() );
 
         // Test the texts
         TextBlock[] textBlocks = response.getTextBlocks();

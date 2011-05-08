@@ -62,8 +62,7 @@ public class ModulesReportTest
         assertTrue( response.getContentLength() > 0 );
 
         // Test the Page title
-        assertEquals( getString( "report.modules.name" ) + " - " + getString( "report.modules.title" ),
-                      response.getTitle() );
+        assertEquals( getString( "report.modules.title" ), response.getTitle() );
 
         // Test the texts
         TextBlock[] textBlocks = response.getTextBlocks();

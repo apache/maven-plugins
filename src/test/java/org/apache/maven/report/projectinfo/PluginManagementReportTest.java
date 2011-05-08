@@ -64,8 +64,7 @@ public class PluginManagementReportTest
         assertTrue( response.getContentLength() > 0 );
 
         // Test the Page title
-        assertEquals( getString( "report.pluginManagement.name" ) + " - "
-                      + getString( "report.pluginManagement.title" ), response.getTitle() );
+        assertEquals( getString( "report.pluginManagement.title" ), response.getTitle() );
 
         // Test the tables
         WebTable[] webTables = response.getTables();
