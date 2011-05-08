@@ -22,7 +22,6 @@ package org.apache.maven.report.projectinfo.dependencies;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -118,12 +117,11 @@ public class Dependencies
         }
 
         projectDependencies = new ArrayList<Artifact>();
-        for ( @SuppressWarnings( "unchecked" )
-        Iterator<DependencyNode> i = dependencyTreeNode.getChildren().iterator(); i.hasNext(); )
+        @SuppressWarnings( "unchecked" )
+        List<DependencyNode> deps = dependencyTreeNode.getChildren();
+        for ( DependencyNode dep : deps )
         {
-            DependencyNode dependencyNode = i.next();
-
-            projectDependencies.add( dependencyNode.getArtifact() );
+            projectDependencies.add( dep.getArtifact() );
         }
 
         return projectDependencies;
@@ -268,11 +266,10 @@ public class Dependencies
      */
     private void addAllChildrenDependencies( DependencyNode dependencyNode )
     {
-        for ( @SuppressWarnings( "unchecked" )
-        Iterator<DependencyNode> i = dependencyNode.getChildren().iterator(); i.hasNext(); )
+        @SuppressWarnings( "unchecked" )
+        List<DependencyNode> deps = dependencyNode.getChildren();
+        for ( DependencyNode subdependencyNode : deps )
         {
-            DependencyNode subdependencyNode = i.next();
-
             if ( subdependencyNode.getState() != DependencyNode.INCLUDED )
             {
                 continue;
@@ -294,6 +291,5 @@ public class Dependencies
 
             addAllChildrenDependencies( subdependencyNode );
         }
-
     }
 }
