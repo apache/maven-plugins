@@ -642,7 +642,8 @@ public class CheckstyleReport
 
     private void generateMainReport( CheckstyleResults results, ResourceBundle bundle )
     {
-        CheckstyleReportGenerator generator = new CheckstyleReportGenerator( getSink(), bundle, project.getBasedir(), siteTool );
+        CheckstyleReportGenerator generator =
+            new CheckstyleReportGenerator( getSink(), bundle, project.getBasedir(), siteTool );
 
         generator.setLog( getLog() );
         generator.setEnableRulesSummary( enableRulesSummary );
