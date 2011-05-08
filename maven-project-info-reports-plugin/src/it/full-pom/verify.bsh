@@ -31,19 +31,24 @@ try
         return false;
     }
 
-    String[] reports = { "dependencies",
-                         "index",
-                         "integration",
-                         "issue-tracking",
-                         "license",
-                         "mail-lists",
-                         "plugin-management",
-                         "plugins",
-                         "project-info",
-                         "project-summary",
-                         "source-repository",
-                         "team-list"
+    String[] reports = { "index",                  // <report>index</report>
+                         "project-summary",        // <report>summary</report>
+                         "license",                // <report>license</report>
+                         "team-list",              // <report>project-team</report>
+                         "source-repository",      // <report>scm</report>
+                         "issue-tracking",         // <report>issue-tracking</report>
+                         "mail-lists",             // <report>mailing-list</report>
+                         "dependency-management",  // <report>dependency-management</report>
+                         "dependencies",           // <report>dependencies</report>
+                         "integration",            // <report>cim</report>
+                         "plugin-management",      // <report>plugin-management</report>
+                         "plugins",                // <report>plugins</report>
+                         "distribution-management" // <report>distribution-management</report>
                        };
+    String info = FileUtils.fileRead( new File( siteDir, "project-info.html"), "UTF-8" );
+    int index1 = 10;
+    int index2 = 10;
+    String previousReportLink;
     for ( String report : reports )
     {
         File reportFile = new File( siteDir, report + ".html" );
@@ -52,6 +57,27 @@ try
             System.out.println( "Report file not existent: " + reportFile );
             return false;
         }
+
+        String link = "<a href=\"" + reportFile.getName() + "\"";
+        int i1 = info.indexOf( link );
+        int i2 = info.indexOf( link, i1 + 1 );
+        if ( i1 < index1 )
+        {
+            System.out.println( "Wrong order for first report link: expected " + previousReportLink + " -> " + link + ", but found " + i1 + " < " + index1 );
+            System.out.println( "   previous report link: " + info.substring( index1 - 10, index1 + 70 ) );
+            System.out.println( "     actual report link: " + info.substring( i1 - 10, i1 + 70 ) );
+            //return false; // test known to fail: MPIR-182
+        }
+        if ( i2 < index2 )
+        {
+            System.out.println( "Wrong order for second report link: expected " + previousReportLink + " -> " + link + ", but found " + i2 + " < " + index2 );
+            System.out.println( "   previous report link: " + info.substring( index2 - 10, index2 + 70 ) );
+            System.out.println( "     actual report link: " + info.substring( i2 - 10, i2 + 70 ) );
+            //return false; // test known to fail: MPIR-182
+        }
+        index1 = i1;
+        index2 = i2;
+        previousReportLink = link;
     }
 
     File maillist = new File( siteDir, "mail-lists.html");
