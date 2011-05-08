@@ -40,8 +40,8 @@ under the License.
         <configuration>
           <outputDirectory>target/test-harness/dependencies</outputDirectory>
           <localRepository>${localRepository}</localRepository>
-            <project implementation="org.apache.maven.report.projectinfo.stubs.DependenciesStub"/>
-            <settings implementation="org.apache.maven.report.projectinfo.stubs.SettingsStub"/>
+          <project implementation="org.apache.maven.report.projectinfo.stubs.DependenciesStub"/>
+          <settings implementation="org.apache.maven.report.projectinfo.stubs.SettingsStub"/>
         </configuration>
       </plugin>
     </plugins>

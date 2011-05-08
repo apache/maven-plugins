@@ -135,16 +135,6 @@ public class DependenciesReport
     // ----------------------------------------------------------------------
 
     /**
-     * Remote repositories used for the project.
-     *
-     * @since 2.1
-     * @parameter expression="${project.remoteArtifactRepositories}"
-     * @required
-     * @readonly
-     */
-    private List<ArtifactRepository> remoteRepositories;
-
-    /**
      * Display file details for each dependency, such as: file size, number of
      * classes, number of packages etc.
      *
