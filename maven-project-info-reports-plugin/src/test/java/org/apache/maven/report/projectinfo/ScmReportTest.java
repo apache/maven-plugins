@@ -66,8 +66,7 @@ public class ScmReportTest
         assertTrue( response.getContentLength() > 0 );
 
         // Test the Page title
-        assertEquals( getString( "report.scm.name" ) + " - " + getString( "report.scm.title" ),
-                      response.getTitle() );
+        assertEquals( getString( "report.scm.title" ), response.getTitle() );
 
         // Test the texts
         TextBlock[] textBlocks = response.getTextBlocks();

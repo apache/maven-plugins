@@ -63,8 +63,7 @@ public class TeamListReportTest
         assertTrue( response.getContentLength() > 0 );
 
         // Test the Page title
-        assertEquals( getString( "report.team-list.name" ) + " - " + getString( "report.team-list.title" ),
-                      response.getTitle() );
+        assertEquals( getString( "report.team-list.title" ), response.getTitle() );
 
         // Test the texts
         TextBlock[] textBlocks = response.getTextBlocks();

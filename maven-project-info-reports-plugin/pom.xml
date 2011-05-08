@@ -83,12 +83,12 @@ under the License.
   </issueManagement>
 
   <properties>
-    <doxiaVersion>1.1.4</doxiaVersion>
-    <doxia-sitetoolsVersion>1.1.4</doxia-sitetoolsVersion>
+    <doxiaVersion>1.2</doxiaVersion>
+    <doxia-sitetoolsVersion>1.2</doxia-sitetoolsVersion>
     <mavenVersion>2.2.0</mavenVersion>
     <wagonVersion>1.0-beta-7</wagonVersion>
     <scmVersion>1.4</scmVersion>
-    <sitePluginVersion>2.1</sitePluginVersion>
+    <sitePluginVersion>2.2</sitePluginVersion>
   </properties>
 
   <dependencies>
@@ -96,12 +96,6 @@ under the License.
       <groupId>org.apache.maven.reporting</groupId>
       <artifactId>maven-reporting-api</artifactId>
       <version>3.0</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.apache.maven.doxia</groupId>
-          <artifactId>doxia-sink-api</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.reporting</groupId>
@@ -153,7 +147,7 @@ under the License.
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
       <artifactId>maven-doxia-tools</artifactId>
-      <version>1.2.1</version>
+      <version>1.4</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
@@ -171,13 +165,6 @@ under the License.
       <groupId>org.apache.maven.wagon</groupId>
       <artifactId>wagon-ssh</artifactId>
       <version>${wagonVersion}</version>
-      <exclusions>
-        <!-- Using org.codehaus.plexus:plexus-utils instead of -->
-        <exclusion>
-          <groupId>plexus</groupId>
-          <artifactId>plexus-utils</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.wagon</groupId>
