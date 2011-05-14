@@ -182,7 +182,7 @@ public class EarMojo
      * The directory to get the resources from.
      *
      * @parameter
-     * @deprecated please use earSourcesDirectory instead
+     * @deprecated please use earSourceDirectory instead
      */
     private File resourcesDir;
 
