@@ -135,29 +135,31 @@ mvn site
   templates they use to create links from your Changes Report directly to the
   issues in your issue management system.
 
-*-------------+-------------------------------+
-| <<System>>  | <<Issue Link Template>>       |
-*-------------+-------------------------------+
-| Bitbucket   | %URL%/issue/%ISSUE%           |
-*-------------+-------------------------------+
-| Bugzilla    | %URL%/show_bug.cgi?id=%ISSUE% |
-*-------------+-------------------------------+
-| GitHub      | %URL%/%ISSUE%                 |
-*-------------+-------------------------------+
-| GoogleCode  | %URL%/detail?id=%ISSUE%       |
-*-------------+-------------------------------+
-| JIRA        | %URL%/%ISSUE%                 |
-*-------------+-------------------------------+
-| Mantis      | %URL%/view.php?id=%ISSUE%     |
-*-------------+-------------------------------+
-| Redmine     | %URL%/issues/show/%ISSUE%     |
-*-------------+-------------------------------+
-| Scarab      | %URL%/issues/id/%ISSUE%       |
-*-------------+-------------------------------+
-| SourceForge | http://sourceforge.net/support/tracker.php?aid=%ISSUE% |
-*-------------+-------------------------------+
-| Trac        | %URL%/ticket/%ISSUE%          |
-*-------------+-------------------------------+
+*---------------+--------------------------------------------------------+
+| <<System>>    | <<Issue Link Template>>                                |
+*---------------+--------------------------------------------------------+
+| Bitbucket     | %URL%/issue/%ISSUE%                                    |
+*---------------+--------------------------------------------------------+
+| Bugzilla      | %URL%/show_bug.cgi?id=%ISSUE%                          |
+*---------------+--------------------------------------------------------+
+| GitHub        | %URL%/%ISSUE%                                          |
+*---------------+--------------------------------------------------------+
+| GoogleCode    | %URL%/detail?id=%ISSUE%                                |
+*---------------+--------------------------------------------------------+
+| JIRA          | %URL%/%ISSUE%                                          |
+*---------------+--------------------------------------------------------+
+| Mantis        | %URL%/view.php?id=%ISSUE%                              |
+*---------------+--------------------------------------------------------+
+| MKS Integrity | %URL%/viewissue?selection=%ISSUE%                      |
+*---------------+--------------------------------------------------------+
+| Redmine       | %URL%/issues/show/%ISSUE%                              |
+*---------------+--------------------------------------------------------+
+| Scarab        | %URL%/issues/id/%ISSUE%                                |
+*---------------+--------------------------------------------------------+
+| SourceForge   | http://sourceforge.net/support/tracker.php?aid=%ISSUE% |
+*---------------+--------------------------------------------------------+
+| Trac          | %URL%/ticket/%ISSUE%                                   |
+*---------------+--------------------------------------------------------+
 
   If you use an issue management system other than the ones above, you need to
   {{{changes-report-mojo.html#issueLinkTemplatePerSystem}configure an issue
