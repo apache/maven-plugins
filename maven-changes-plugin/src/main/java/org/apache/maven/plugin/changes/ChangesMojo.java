@@ -292,6 +292,7 @@ public class ChangesMojo
         addIssueLinkTemplate( "GoogleCode", "%URL%/detail?id=%ISSUE%" );
         addIssueLinkTemplate( "JIRA", "%URL%/%ISSUE%" );
         addIssueLinkTemplate( "Mantis", "%URL%/view.php?id=%ISSUE%" );
+        addIssueLinkTemplate( "MKS", "%URL%/viewissue?selection=%ISSUE%" );
         addIssueLinkTemplate( "Redmine", "%URL%/issues/show/%ISSUE%" );
         addIssueLinkTemplate( "Scarab", "%URL%/issues/id/%ISSUE%" );
         addIssueLinkTemplate( "SourceForge", "http://sourceforge.net/support/tracker.php?aid=%ISSUE%" );
