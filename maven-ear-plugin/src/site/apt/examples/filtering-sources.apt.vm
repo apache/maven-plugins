@@ -27,7 +27,7 @@
 Filtering the sources
 
   Filtering the content of the <<<src/main/application>>> directory or the
-  one defined by the <<<earSourcesDirectory>>> parameter is as easy as:
+  one defined by the <<<earSourceDirectory>>> parameter is as easy as:
 
 +--------
   <build>
