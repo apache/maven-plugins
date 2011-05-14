@@ -25,7 +25,7 @@ under the License.
   <parent>
     <artifactId>maven-plugins</artifactId>
     <groupId>org.apache.maven.plugins</groupId>
-    <version>19</version>
+    <version>20-SNAPSHOT</version>
     <relativePath>../maven-plugins/pom.xml</relativePath>
   </parent>
 
@@ -87,43 +87,6 @@ under the License.
       <version>2.0.5</version>
     </dependency>
   </dependencies>
-
-  <build>
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-changes-plugin</artifactId>
-          <version>2.4</version>
-          <configuration>
-            <generateJiraAnnouncement>true</generateJiraAnnouncement>
-            <maxEntries>1000</maxEntries>
-            <runOnlyAtExecutionRoot>true</runOnlyAtExecutionRoot>
-            <!-- Used by announcement-generate goal -->
-            <templateDirectory>org/apache/maven/plugins</templateDirectory>
-            <!-- Used by announcement-mail goal -->
-            <subject>[ANN] ${project.name} ${project.version} Released</subject>
-            <toAddresses>
-              <toAddress implementation="java.lang.String">announce@maven.apache.org</toAddress>
-              <toAddress implementation="java.lang.String">users@maven.apache.org</toAddress>
-              <toAddress implementation="java.lang.String">dev@maven.apache.org</toAddress>
-            </toAddresses>
-            <!-- These values need to be specified as properties in the profile apache-release in your settings.xml -->
-            <fromDeveloperId>${apache.availid}</fromDeveloperId>
-            <smtpHost>${smtp.host}</smtpHost>
-          </configuration>
-          <dependencies>
-            <!-- Used by announcement-generate goal -->
-            <dependency>
-              <groupId>org.apache.maven.shared</groupId>
-              <artifactId>maven-shared-resources</artifactId>
-              <version>1</version>
-            </dependency>
-          </dependencies>
-        </plugin>
-      </plugins>
-    </pluginManagement>
-  </build>
 
   <profiles>
     <profile>
