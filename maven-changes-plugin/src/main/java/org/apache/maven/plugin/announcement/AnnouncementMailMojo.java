@@ -158,6 +158,24 @@ public class AnnouncementMailMojo
     private List toAddresses;
 
     /**
+     * Recipient cc email address.
+     *
+     * @parameter
+     * @required
+     * @since 2.5
+     */
+    private List ccAddresses;
+
+    /**
+     * Recipient bcc email address.
+     *
+     * @parameter
+     * @required
+     * @since 2.5
+     */
+    private List bccAddresses;
+
+    /**
      * The username used to send the email.
      *
      * @parameter expression="${changes.username}"
@@ -254,7 +272,20 @@ public class AnnouncementMailMojo
                 email = it.next().toString();
                 getLog().info( "Sending mail to " + email + "..." );
                 mailMsg.addTo( email, "" );
-
+            }
+            final Iterator it2 = getCcAddresses().iterator();
+            while ( it2.hasNext() )
+            {
+                email = it2.next().toString();
+                getLog().info( "Sending cc mail to " + email + "..." );
+                mailMsg.addCc( email, "" );
+            }
+            final Iterator it3 = getBccAddresses().iterator();
+            while ( it3.hasNext() )
+            {
+                email = it3.next().toString();
+                getLog().info( "Sending bcc mail to " + email + "..." );
+                mailMsg.addBcc( email, "" );
             }
             mailer.send( mailMsg );
             getLog().info( "Sent..." );
@@ -341,6 +372,26 @@ public class AnnouncementMailMojo
     //================================
     // announcement-mail accessors
     //================================
+
+    public List getBccAddresses()
+    {
+        return bccAddresses;
+    }
+
+    public void setBccAddresses( List bccAddresses )
+    {
+        this.bccAddresses = bccAddresses;
+    }
+
+    public List getCcAddresses()
+    {
+        return ccAddresses;
+    }
+
+    public void setCcAddresses( List ccAddresses )
+    {
+        this.ccAddresses = ccAddresses;
+    }
 
     public List getFrom()
     {
