@@ -607,8 +607,17 @@ public class DependenciesRenderer
                         totalsealed.incrementTotal( artifact.getScope() );
                     }
 
-                    tableRow( hasSealed, new String[] { artifactFile.getName(),
-                        fileLengthDecimalFormat.format( artifactFile.length() ),
+                    String name = artifactFile.getName();
+                    String fileLength = fileLengthDecimalFormat.format( artifactFile.length() );
+
+                    if ( artifactFile.isDirectory() )
+                    {
+                        File parent = artifactFile.getParentFile();
+                        name = parent.getParentFile().getName() + '/' + parent.getName() + '/' + artifactFile.getName();
+                        fileLength = "-";
+                    }
+
+                    tableRow( hasSealed, new String[] { name, fileLength,
                         DEFAULT_DECIMAL_FORMAT.format( jarDetails.getNumEntries() ),
                         DEFAULT_DECIMAL_FORMAT.format( jarDetails.getNumClasses() ),
                         DEFAULT_DECIMAL_FORMAT.format( jarDetails.getNumPackages() ), jarDetails.getJdkRevision(),
@@ -739,7 +748,7 @@ public class DependenciesRenderer
             }
             catch ( ProjectBuildingException e )
             {
-                log.warn( "Unable to create Maven project from repository.", e );
+                log.warn( "Unable to create Maven project from repository for artifact " + artifact.getId(), e );
             }
         }
 
@@ -1011,7 +1020,7 @@ public class DependenciesRenderer
             }
             catch ( ProjectBuildingException e )
             {
-                log.warn( "Unable to create Maven project from repository.", e );
+                log.warn( "Unable to create Maven project from repository for artifact " + artifact.getId(), e );
             }
         }
         else
@@ -1374,7 +1383,7 @@ public class DependenciesRenderer
                 }
                 catch ( IOException e )
                 {
-                    log.error( "IOException: " + e.getMessage(), e );
+                    log.error( "Artifact: " + artifact.getId() + " caused IOException: " + e.getMessage(), e );
                 }
             }
         }
