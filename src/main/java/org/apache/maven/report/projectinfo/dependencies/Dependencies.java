@@ -24,12 +24,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.jar.JarEntry;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.dependency.tree.DependencyNode;
 import org.apache.maven.shared.jar.JarAnalyzer;
 import org.apache.maven.shared.jar.JarData;
+import org.apache.maven.shared.jar.classes.JarClasses;
 import org.apache.maven.shared.jar.classes.JarClassesAnalysis;
 
 /**
@@ -234,25 +236,37 @@ public class Dependencies
             dependencyDetails = new HashMap<String, JarData>();
         }
 
-        JarData old = dependencyDetails.get( artifact.getId() );
-        if ( dependencyDetails.get( artifact.getId() ) != null )
+        JarData jarData = dependencyDetails.get( artifact.getId() );
+        if ( jarData != null )
         {
-            return old;
+            return jarData;
         }
 
-        JarAnalyzer jarAnalyzer = new JarAnalyzer( artifact.getFile() );
-        try
+        if ( artifact.getFile().isDirectory() )
         {
-            classesAnalyzer.analyze( jarAnalyzer );
+            jarData = new JarData( artifact.getFile(), null, new ArrayList<JarEntry>() );
+
+            jarData.setJarClasses( new JarClasses() );
         }
-        finally
+        else
         {
-            jarAnalyzer.closeQuietly();
+            JarAnalyzer jarAnalyzer = new JarAnalyzer( artifact.getFile() );
+
+            try
+            {
+                classesAnalyzer.analyze( jarAnalyzer );
+            }
+            finally
+            {
+                jarAnalyzer.closeQuietly();
+            }
+            
+            jarData = jarAnalyzer.getJarData();
         }
 
-        dependencyDetails.put( artifact.getId(), jarAnalyzer.getJarData() );
-
-        return jarAnalyzer.getJarData();
+        dependencyDetails.put( artifact.getId(), jarData );
+    
+        return jarData;
     }
 
     // ----------------------------------------------------------------------
