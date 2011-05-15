@@ -34,6 +34,7 @@ import org.apache.maven.plugin.changes.IssueAdapter;
 import org.apache.maven.plugin.changes.ProjectUtils;
 import org.apache.maven.plugin.changes.ReleaseUtils;
 import org.apache.maven.plugin.issues.Issue;
+import org.apache.maven.plugin.issues.IssueUtils;
 import org.apache.maven.plugin.trac.TracDownloader;
 import org.apache.maven.plugins.changes.model.Release;
 import org.apache.maven.project.MavenProject;
@@ -350,6 +351,21 @@ public class AnnouncementMojo
      */
     private String webPassword;
 
+    /**
+     * The prefix used when naming versions in JIRA.
+     * <p>
+     * If you have a project in JIRA with several components that have different
+     * release cycles, it is an often used pattern to prefix the version with
+     * the name of the component, e.g. maven-filtering-1.0 etc. To fetch issues
+     * from JIRA for a release of the "maven-filtering" component you would need
+     * to set this parameter to "maven-filtering-".
+     * </p>
+     *
+     * @parameter default-value=""
+     * @since 2.5
+     */
+    private String versionPrefix;
+
     //=======================================//
     //  Trac Parameters                      //
     //=======================================//
@@ -505,7 +521,9 @@ public class AnnouncementMojo
     public void doGenerate( List<Release> releases )
         throws MojoExecutionException
     {
-        doGenerate( releases, releaseUtils.getLatestRelease( releases, getVersion() )  );
+        String version = ( versionPrefix == null ? "" : versionPrefix ) + getVersion();
+
+        doGenerate( releases, releaseUtils.getLatestRelease( releases, version )  );
     }
 
     protected void doGenerate( List<Release> releases, Release release )
@@ -675,7 +693,17 @@ public class AnnouncementMojo
         {
             jiraDownloader.doExecute();
 
-            return getReleases( jiraDownloader.getIssueList() );
+            List<Issue> issueList = jiraDownloader.getIssueList();
+
+            if ( StringUtils.isNotEmpty( versionPrefix ) )
+            {
+                int originalNumberOfIssues = issueList.size();
+                issueList = IssueUtils.filterIssuesWithVersionPrefix( issueList, versionPrefix );
+                getLog().debug( "Filtered out " + issueList.size() + " issues of " + originalNumberOfIssues
+                    + " that matched the versionPrefix '" + versionPrefix + "'." );
+            }
+
+            return getReleases( issueList );
         }
         catch ( Exception e )
         {
