@@ -130,7 +130,9 @@ under the License.
           <artifactId>maven-changes-plugin</artifactId>
           <version>2.4</version>
           <configuration>
-            <generateJiraAnnouncement>true</generateJiraAnnouncement>
+            <issueManagementSystems>
+              <issueManagementSystem>JIRA</issueManagementSystem>
+            </issueManagementSystems>
             <maxEntries>1000</maxEntries>
             <runOnlyAtExecutionRoot>true</runOnlyAtExecutionRoot>
             <!-- Used by announcement-generate goal -->
