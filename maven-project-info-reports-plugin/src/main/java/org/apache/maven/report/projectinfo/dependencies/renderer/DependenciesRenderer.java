@@ -86,7 +86,7 @@ public class DependenciesRenderer
     /** Used to format decimal values in the "Dependency File Details" table */
     protected static final DecimalFormat DEFAULT_DECIMAL_FORMAT = new DecimalFormat( "#,##0" );
 
-    private static final Set<String> JAR_SUBTYPE = new HashSet<String>();
+    private static final Set<String> JAR_SUBTYPE;
 
     /**
      * An HTML script tag with the Javascript used by the dependencies report.
@@ -145,13 +145,15 @@ public class DependenciesRenderer
 
     static
     {
-        JAR_SUBTYPE.add( "jar" );
-        JAR_SUBTYPE.add( "war" );
-        JAR_SUBTYPE.add( "ear" );
-        JAR_SUBTYPE.add( "sar" );
-        JAR_SUBTYPE.add( "rar" );
-        JAR_SUBTYPE.add( "par" );
-        JAR_SUBTYPE.add( "ejb" );
+        Set<String> jarSubtype = new HashSet<String>();
+        jarSubtype.add( "jar" );
+        jarSubtype.add( "war" );
+        jarSubtype.add( "ear" );
+        jarSubtype.add( "sar" );
+        jarSubtype.add( "rar" );
+        jarSubtype.add( "par" );
+        jarSubtype.add( "ejb" );
+        JAR_SUBTYPE = Collections.unmodifiableSet( jarSubtype );
 
         try
         {
@@ -1204,22 +1206,28 @@ public class DependenciesRenderer
 
             sink.tableRow();
 
-            if ( !Artifact.SCOPE_SYSTEM.equals( dependency.getScope() ) )
-            {
-                tableCell( dependency.getId() );
+            tableCell( dependency.getId() );
 
+            if ( Artifact.SCOPE_SYSTEM.equals( dependency.getScope() ) )
+            {
+                for ( @SuppressWarnings( "unused" ) String repoId : repoIdList )
+                {
+                    tableCell( "-" );
+                }
+            }
+            else
+            {
                 for ( String repokey : repoIdList )
                 {
                     ArtifactRepository repo = repoMap.get( repokey );
 
                     String depUrl = repoUtils.getDependencyUrlFromRepository( dependency, repo );
 
-                    @SuppressWarnings( "cast" )
-                    Integer old = (Integer) totalByRepo.get( repokey );
+                    Integer old = totalByRepo.get( repokey );
                     if ( old == null )
                     {
-                        totalByRepo.put( repokey, new Integer( 0 ) );
                         old = new Integer( 0 );
+                        totalByRepo.put( repokey, old );
                     }
 
                     boolean dependencyExists = false;
@@ -1258,15 +1266,6 @@ public class DependenciesRenderer
                     {
                         tableCell( "-" );
                     }
-                }
-            }
-            else
-            {
-                tableCell( dependency.getId() );
-
-                for ( @SuppressWarnings( "unused" ) String repoId : repoIdList )
-                {
-                    tableCell( "-" );
                 }
             }
 
