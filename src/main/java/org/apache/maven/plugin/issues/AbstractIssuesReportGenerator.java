@@ -20,6 +20,8 @@ package org.apache.maven.plugin.issues;
  */
 
 import org.apache.maven.doxia.sink.Sink;
+import org.apache.maven.doxia.sink.SinkEventAttributeSet;
+import org.apache.maven.doxia.sink.SinkEventAttributes;
 import org.apache.maven.doxia.util.HtmlTools;
 import org.codehaus.plexus.util.StringUtils;
 
@@ -133,15 +135,13 @@ public abstract class AbstractIssuesReportGenerator
 
     protected void sinkFigure( Sink sink, String image, String altText )
     {
-        sink.figure();
+        SinkEventAttributes attributes = new SinkEventAttributeSet();
+        attributes.addAttribute( "alt", altText );
+        attributes.addAttribute( "title", altText );
 
-        sink.figureGraphics( image );
+        sink.figure( null );
 
-        sink.figureCaption();
-
-        sink.text( altText );
-
-        sink.figureCaption_();
+        sink.figureGraphics( image, attributes );
 
         sink.figure_();
     }
