@@ -167,6 +167,8 @@ documentedprojectdependency-1.0-SNAPSHOT.war
   structure of the webapp.
 
   * <<skip>> - set to <<<true>>> to skip this overlay. Default value is: <<<false>>>.
+  
+  * <<filtered>> - whether to apply filtering to this overlay. Default value is <<<false>>>.
 
   []
 
