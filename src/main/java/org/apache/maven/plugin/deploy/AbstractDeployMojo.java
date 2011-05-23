@@ -170,7 +170,8 @@ public abstract class AbstractDeployMojo
             catch ( ArtifactDeploymentException e )
             {
                 if (count + 1 < retryFailedDeploymentCount) {
-                    getLog().warn( "Something went wrong with the deployment, will try again", e );
+                    getLog().warn( "Encountered issue during deployment: " + e.getLocalizedMessage());
+                    getLog().debug( e );
                 }
                 if ( exception == null )
                 {
