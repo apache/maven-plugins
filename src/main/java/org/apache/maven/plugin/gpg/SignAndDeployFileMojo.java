@@ -19,13 +19,6 @@ package org.apache.maven.plugin.gpg;
  * under the License.
  */
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.Reader;
-import java.io.Writer;
-import java.util.Map;
-
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.deployer.ArtifactDeployer;
 import org.apache.maven.artifact.deployer.ArtifactDeploymentException;
@@ -40,14 +33,27 @@ import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.MavenProjectHelper;
+import org.apache.maven.project.artifact.AttachedArtifact;
 import org.apache.maven.project.artifact.ProjectArtifactMetadata;
 import org.apache.maven.project.validation.ModelValidationResult;
 import org.apache.maven.project.validation.ModelValidator;
+import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.WriterFactory;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.Writer;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Signs artifacts and installs the artifact in the remote repository.
@@ -100,7 +106,8 @@ public class SignAndDeployFileMojo
 
     /**
      * Type of the artifact to be deployed. Retrieved from POM file if specified.
-     * 
+     * Defaults to file extension if not specified via command line or POM.
+     *
      * @parameter expression="${packaging}"
      */
     private String packaging;
@@ -213,6 +220,57 @@ public class SignAndDeployFileMojo
      */
     private ModelValidator modelValidator;
 
+    /**
+     * The default Maven project created when building the plugin
+     *
+     * @parameter default-value="${project}"
+     * @required
+     * @readonly
+     * @since 1.3
+     */
+    private MavenProject project;
+
+    /**
+     * Used for attaching the source and javadoc jars to the project.
+     *
+     * @component
+     * @since 1.3
+     */
+    private MavenProjectHelper projectHelper;
+
+    /**
+     * The bundled API docs for the artifact.
+     *
+     * @parameter expression="${javadoc}"
+     * @since 1.3
+     */
+    private File javadoc;
+
+    /**
+     * The bundled sources for the artifact.
+     *
+     * @parameter expression="${sources}"
+     * @since 1.3
+     */
+    private File sources;
+
+    /**
+     * Parameter used to control how many times a failed deployment will be retried before giving up and failing.
+     * If a value outside the range 1-10 is specified it will be pulled to the nearest value within the range 1-10.
+     *
+     * @parameter expression="${retryFailedDeploymentCount}" default-value="1"
+     * @since 1.3
+     */
+    private int retryFailedDeploymentCount;
+
+    /**
+     * Parameter used to update the metadata to make the artifact as release.
+     *
+     * @parameter expression="${updateReleaseInfo}" default-value="false"
+     * @since 1.3
+     */
+    protected boolean updateReleaseInfo;
+
     private void initProperties()
         throws MojoExecutionException
     {
@@ -224,6 +282,11 @@ public class SignAndDeployFileMojo
             Model model = readModel( pomFile );
 
             processModel( model );
+        }
+
+        if ( packaging == null && file != null )
+        {
+            packaging = FileUtils.getExtension( file.getName() );
         }
     }
 
@@ -291,14 +354,51 @@ public class SignAndDeployFileMojo
             }
         }
 
+        if ( updateReleaseInfo )
+        {
+            artifact.setRelease( true );
+        }
+
+        project.setArtifact( artifact );
+
         try
         {
-            deployer.deploy( file, artifact, deploymentRepository, localRepository );
+            deploy( file, artifact, deploymentRepository, localRepository );
         }
         catch ( ArtifactDeploymentException e )
         {
             throw new MojoExecutionException( e.getMessage(), e );
         }
+
+        if ( sources != null )
+        {
+            projectHelper.attachArtifact( project, "jar", "sources", sources );
+        }
+
+        if ( javadoc != null )
+        {
+            projectHelper.attachArtifact( project, "jar", "javadoc", javadoc );
+        }
+
+        List attachedArtifacts = project.getAttachedArtifacts();
+
+        for ( Iterator i = attachedArtifacts.iterator(); i.hasNext(); )
+        {
+            Artifact attached = (Artifact) i.next();
+
+            fileSig = signer.generateSignatureForArtifact( attached.getFile() );
+            attached = new AttachedSignedArtifact(attached, new AscArtifactMetadata( attached, fileSig, false ) );
+            try
+            {
+                deploy( attached.getFile(), attached, deploymentRepository, localRepository );
+            }
+            catch ( ArtifactDeploymentException e )
+            {
+                throw new MojoExecutionException(
+                    "Error deploying attached artifact " + attached.getFile() + ": " + e.getMessage(), e );
+            }
+        }
+
     }
 
     /**
@@ -416,8 +516,27 @@ public class SignAndDeployFileMojo
     }
 
     /**
-     * Generates a minimal model from the user-supplied artifact information.
+     * Validates the user-supplied artifact information.
      * 
+     * @throws MojoFailureException If any artifact coordinate is invalid.
+     */
+    private void validateArtifactInformation()
+        throws MojoFailureException
+    {
+        Model model = generateModel();
+
+        ModelValidationResult result = modelValidator.validate( model );
+
+        if ( result.getMessageCount() > 0 )
+        {
+            throw new MojoFailureException( "The artifact information is incomplete or not valid:\n"
+                + result.render( "  " ) );
+        }
+    }
+
+    /**
+     * Generates a minimal model from the user-supplied artifact information.
+     *
      * @return The generated model, never <code>null</code>.
      */
     private Model generateModel()
@@ -437,22 +556,51 @@ public class SignAndDeployFileMojo
     }
 
     /**
-     * Validates the user-supplied artifact information.
-     * 
-     * @throws MojoFailureException If any artifact coordinate is invalid.
+     * Deploy an artifact from a particular file.
+     *
+     * @param source the file to deploy
+     * @param artifact the artifact definition
+     * @param deploymentRepository the repository to deploy to
+     * @param localRepository the local repository to install into
+     * @throws ArtifactDeploymentException if an error occurred deploying the artifact
      */
-    private void validateArtifactInformation()
-        throws MojoFailureException
+    protected void deploy( File source, Artifact artifact, ArtifactRepository deploymentRepository,
+                           ArtifactRepository localRepository )
+        throws ArtifactDeploymentException
     {
-        Model model = generateModel();
-
-        ModelValidationResult result = modelValidator.validate( model );
-
-        if ( result.getMessageCount() > 0 )
+        int retryFailedDeploymentCount = Math.max( 1, Math.min( 10, this.retryFailedDeploymentCount ) );
+        ArtifactDeploymentException exception = null;
+        for ( int count = 0; count < retryFailedDeploymentCount; count++ )
         {
-            throw new MojoFailureException( "The artifact information is incomplete or not valid:\n"
-                + result.render( "  " ) );
+            try
+            {
+                if (count > 0)
+                {
+                    getLog().info(
+                        "Retrying deployment attempt " + ( count + 1 ) + " of " + retryFailedDeploymentCount );
+                }
+                deployer.deploy( source, artifact, deploymentRepository, localRepository );
+                for ( Iterator i = artifact.getMetadataList().iterator(); i.hasNext(); )
+                {
+                    ArtifactMetadata metadata = (ArtifactMetadata) i.next();
+                    getLog().info( "Metadata[" + metadata.getKey() + "].filename = " + metadata.getRemoteFilename());
+                }
+                exception = null;
+            }
+            catch ( ArtifactDeploymentException e )
+            {
+                if (count + 1 < retryFailedDeploymentCount) {
+                    getLog().warn( "Something went wrong with the deployment, will try again", e );
+                }
+                if ( exception == null )
+                {
+                    exception = e;
+                }
+            }
+        }
+        if ( exception != null )
+        {
+            throw exception;
         }
     }
-
 }
