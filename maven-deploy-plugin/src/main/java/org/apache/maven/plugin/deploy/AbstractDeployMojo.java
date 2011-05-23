@@ -19,9 +19,12 @@ package org.apache.maven.plugin.deploy;
  * under the License.
  */
 
+import java.io.File;
 import java.util.Map;
 
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.deployer.ArtifactDeployer;
+import org.apache.maven.artifact.deployer.ArtifactDeploymentException;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.ArtifactRepositoryFactory;
@@ -84,6 +87,14 @@ public abstract class AbstractDeployMojo
      */
     protected boolean updateReleaseInfo;
 
+    /**
+     * Parameter used to control how many times a failed deployment will be retried before giving up and failing.
+     * If a value outside the range 1-10 is specified it will be pulled to the nearest value within the range 1-10.
+     *
+     * @parameter expression="${retryFailedDeploymentCount}" default-value="1"
+     */
+    private int retryFailedDeploymentCount;
+
     /* Setters and Getters */
 
     public ArtifactDeployer getDeployer()
@@ -128,4 +139,37 @@ public abstract class AbstractDeployMojo
         return layout;
     }
 
+    protected void deploy( File file1, Artifact attached, ArtifactRepository deploymentRepository,
+                           ArtifactRepository localRepository )
+        throws ArtifactDeploymentException
+    {
+        int retryFailedDeploymentCount = Math.max( 1, Math.min( 10, this.retryFailedDeploymentCount ) );
+        ArtifactDeploymentException exception = null;
+        for ( int count = 0; count < retryFailedDeploymentCount; count++ )
+        {
+            try
+            {
+                if (count > 0)
+                {
+                    getLog().info( "Retrying deployment attempt " + (count + 1) + " of " + retryFailedDeploymentCount );
+                }
+                getDeployer().deploy( file1, attached, deploymentRepository, localRepository );
+                exception = null;
+            }
+            catch ( ArtifactDeploymentException e )
+            {
+                if (count + 1 < retryFailedDeploymentCount) {
+                    getLog().warn( "Something went wrong with the deployment, will try again", e );
+                }
+                if ( exception == null )
+                {
+                    exception = e;
+                }
+            }
+        }
+        if ( exception != null )
+        {
+            throw exception;
+        }
+    }
 }

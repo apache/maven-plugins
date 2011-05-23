@@ -145,7 +145,7 @@ public class DeployMojo
         {
             if ( isPomArtifact )
             {
-                getDeployer().deploy( pomFile, artifact, repo, getLocalRepository() );
+                deploy( pomFile, artifact, repo, getLocalRepository() );
             }
             else
             {
@@ -153,7 +153,7 @@ public class DeployMojo
 
                 if ( file != null && file.isFile() )
                 {
-                    getDeployer().deploy( file, artifact, repo, getLocalRepository() );
+                    deploy( file, artifact, repo, getLocalRepository() );
                 }
                 else if ( !attachedArtifacts.isEmpty() )
                 {
@@ -168,7 +168,7 @@ public class DeployMojo
                         pomArtifact.setRelease( true );
                     }
 
-                    getDeployer().deploy( pomFile, pomArtifact, repo, getLocalRepository() );
+                    deploy( pomFile, pomArtifact, repo, getLocalRepository() );
 
                     // propagate the timestamped version to the main artifact for the attached artifacts to pick it up
                     artifact.setResolvedVersion( pomArtifact.getVersion() );
@@ -184,7 +184,7 @@ public class DeployMojo
             {
                 Artifact attached = ( Artifact ) i.next();
 
-                getDeployer().deploy( attached.getFile(), attached, repo, getLocalRepository() );
+                deploy( attached.getFile(), attached, repo, getLocalRepository() );
             }
         }
         catch ( ArtifactDeploymentException e )
