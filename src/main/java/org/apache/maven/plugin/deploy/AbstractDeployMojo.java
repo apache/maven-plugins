@@ -140,7 +140,16 @@ public abstract class AbstractDeployMojo
         return layout;
     }
 
-    protected void deploy( File file1, Artifact attached, ArtifactRepository deploymentRepository,
+    /**
+     * Deploy an artifact from a particular file.
+     *
+     * @param source the file to deploy
+     * @param artifact the artifact definition
+     * @param deploymentRepository the repository to deploy to
+     * @param localRepository the local repository to install into
+     * @throws ArtifactDeploymentException if an error occurred deploying the artifact
+     */
+    protected void deploy( File source, Artifact artifact, ArtifactRepository deploymentRepository,
                            ArtifactRepository localRepository )
         throws ArtifactDeploymentException
     {
@@ -152,9 +161,10 @@ public abstract class AbstractDeployMojo
             {
                 if (count > 0)
                 {
-                    getLog().info( "Retrying deployment attempt " + (count + 1) + " of " + retryFailedDeploymentCount );
+                    getLog().info(
+                        "Retrying deployment attempt " + ( count + 1 ) + " of " + retryFailedDeploymentCount );
                 }
-                getDeployer().deploy( file1, attached, deploymentRepository, localRepository );
+                getDeployer().deploy( source, artifact, deploymentRepository, localRepository );
                 exception = null;
             }
             catch ( ArtifactDeploymentException e )
