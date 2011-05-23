@@ -394,6 +394,12 @@ public class DeployFileMojo
         }
     }
 
+    /**
+     * Generates a minimal POM from the user-supplied artifact information.
+     *
+     * @return The path to the generated POM file, never <code>null</code>.
+     * @throws MojoExecutionException If the generation failed.
+     */
     private File generatePomFile()
         throws MojoExecutionException
     {
