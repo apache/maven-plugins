@@ -277,7 +277,7 @@ public class DeployFileMojo
 
         try
         {
-            getDeployer().deploy( file, artifact, deploymentRepository, getLocalRepository() );
+            deploy( file, artifact, deploymentRepository, getLocalRepository() );
         }
         catch ( ArtifactDeploymentException e )
         {
@@ -302,7 +302,7 @@ public class DeployFileMojo
 
             try
             {
-                getDeployer().deploy( attached.getFile(), attached, deploymentRepository, getLocalRepository() );
+                deploy( attached.getFile(), attached, deploymentRepository, getLocalRepository() );
             }
             catch ( ArtifactDeploymentException e )
             {
