@@ -92,6 +92,7 @@ public abstract class AbstractDeployMojo
      * If a value outside the range 1-10 is specified it will be pulled to the nearest value within the range 1-10.
      *
      * @parameter expression="${retryFailedDeploymentCount}" default-value="1"
+     * @since 2.7
      */
     private int retryFailedDeploymentCount;
 
