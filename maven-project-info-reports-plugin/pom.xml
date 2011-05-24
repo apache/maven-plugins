@@ -88,7 +88,7 @@ under the License.
     <mavenVersion>2.2.0</mavenVersion>
     <wagonVersion>1.0-beta-7</wagonVersion>
     <scmVersion>1.4</scmVersion>
-    <sitePluginVersion>2.2</sitePluginVersion>
+    <sitePluginVersion>2.3</sitePluginVersion>
   </properties>
 
   <dependencies>
