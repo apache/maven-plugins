@@ -36,6 +36,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipException;
 
+import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.shade.relocation.Relocator;
 import org.apache.maven.plugins.shade.resource.ManifestResourceTransformer;
 import org.apache.maven.plugins.shade.resource.ResourceTransformer;
@@ -57,7 +58,7 @@ public class DefaultShader
 {
 
     public void shade( Set jars, File uberJar, List filters, List relocators, List resourceTransformers )
-        throws IOException
+        throws IOException, MojoExecutionException
     {
         Set resources = new HashSet();
 
@@ -241,7 +242,7 @@ public class DefaultShader
 
     private void addRemappedClass( RelocatorRemapper remapper, JarOutputStream jos, File jar, String name,
                                    InputStream is )
-        throws IOException
+        throws IOException, MojoExecutionException
     {
         if ( !remapper.hasRelocators() )
         {
@@ -264,7 +265,12 @@ public class DefaultShader
 
         ClassVisitor cv = new TempRemappingClassAdapter( cw, remapper );
 
-        cr.accept( cv, ClassReader.EXPAND_FRAMES );
+        try {
+        	cr.accept( cv, ClassReader.EXPAND_FRAMES );
+        } catch ( Throwable ise ) {
+        	throw new MojoExecutionException ("Error in ASM processing class "
+        			+ name, ise );
+        }
 
         byte[] renamedClass = cw.toByteArray();
 

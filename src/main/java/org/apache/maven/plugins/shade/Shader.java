@@ -24,11 +24,26 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
-/** @author Jason van Zyl */
+import org.apache.maven.plugin.MojoExecutionException;
+
+/**
+ * Interface that defines the process of shading. 
+ *
+ */
 public interface Shader
 {
     String ROLE = Shader.class.getName();
 
+    /**
+     * Perform a shading operation.
+     * @param jars which jars
+     * @param uberJar output jar
+     * @param filters the filters
+     * @param relocators the relocators
+     * @param resourceTransformers the transformers
+     * @throws IOException for IO errors reading the thing
+     * @throws MojoExecutionException for anything else that goes wrong.
+     */
     void shade( Set jars, File uberJar, List filters, List relocators, List resourceTransformers )
-        throws IOException;
+        throws IOException, MojoExecutionException;
 }
