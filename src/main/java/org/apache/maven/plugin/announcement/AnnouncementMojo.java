@@ -35,6 +35,7 @@ import org.apache.maven.plugin.changes.ProjectUtils;
 import org.apache.maven.plugin.changes.ReleaseUtils;
 import org.apache.maven.plugin.issues.Issue;
 import org.apache.maven.plugin.issues.IssueUtils;
+import org.apache.maven.plugin.jira.JiraDownloader;
 import org.apache.maven.plugin.trac.TracDownloader;
 import org.apache.maven.plugins.changes.model.Release;
 import org.apache.maven.project.MavenProject;
