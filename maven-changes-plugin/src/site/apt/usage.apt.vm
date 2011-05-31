@@ -162,6 +162,8 @@ mvn site
 *---------------+--------------------------------------------------------+
 | Trackplus     | %URL%/printItem.action?key=%ISSUE%                     |
 *---------------+--------------------------------------------------------+
+| YouTrack      | %URL%/issue/%ISSUE%                                    |
+*---------------+--------------------------------------------------------+
 
   If you use an issue management system other than the ones above, you need to
   {{{changes-report-mojo.html#issueLinkTemplatePerSystem}configure an issue
