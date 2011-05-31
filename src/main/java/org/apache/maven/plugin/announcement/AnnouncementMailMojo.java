@@ -161,7 +161,6 @@ public class AnnouncementMailMojo
      * Recipient cc email address.
      *
      * @parameter
-     * @required
      * @since 2.5
      */
     private List ccAddresses;
@@ -170,7 +169,6 @@ public class AnnouncementMailMojo
      * Recipient bcc email address.
      *
      * @parameter
-     * @required
      * @since 2.5
      */
     private List bccAddresses;
@@ -266,6 +264,7 @@ public class AnnouncementMailMojo
             mailMsg.setContent( IOUtil.toString( readAnnouncement( templateFile ) ) );
             mailMsg.setContentType( this.mailContentType );
             mailMsg.setFrom( fromAddress, fromName );
+
             final Iterator it = getToAddresses().iterator();
             while ( it.hasNext() )
             {
@@ -273,20 +272,29 @@ public class AnnouncementMailMojo
                 getLog().info( "Sending mail to " + email + "..." );
                 mailMsg.addTo( email, "" );
             }
-            final Iterator it2 = getCcAddresses().iterator();
-            while ( it2.hasNext() )
+
+            if(getCcAddresses() != null)
             {
-                email = it2.next().toString();
-                getLog().info( "Sending cc mail to " + email + "..." );
-                mailMsg.addCc( email, "" );
+                final Iterator it2 = getCcAddresses().iterator();
+                while ( it2.hasNext() )
+                {
+                    email = it2.next().toString();
+                    getLog().info( "Sending cc mail to " + email + "..." );
+                    mailMsg.addCc( email, "" );
+                }
             }
-            final Iterator it3 = getBccAddresses().iterator();
-            while ( it3.hasNext() )
+
+            if(getBccAddresses() != null)
             {
-                email = it3.next().toString();
-                getLog().info( "Sending bcc mail to " + email + "..." );
-                mailMsg.addBcc( email, "" );
+                final Iterator it3 = getBccAddresses().iterator();
+                while ( it3.hasNext() )
+                {
+                    email = it3.next().toString();
+                    getLog().info( "Sending bcc mail to " + email + "..." );
+                    mailMsg.addBcc( email, "" );
+                }
             }
+
             mailer.send( mailMsg );
             getLog().info( "Sent..." );
         }
