@@ -5,7 +5,7 @@
  Allan Ramirez
  Dennis Lundberg
  ------
- 2011-04-19
+ 2011-05-31
  ------
 
  ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -159,6 +159,8 @@ mvn site
 | SourceForge   | http://sourceforge.net/support/tracker.php?aid=%ISSUE% |
 *---------------+--------------------------------------------------------+
 | Trac          | %URL%/ticket/%ISSUE%                                   |
+*---------------+--------------------------------------------------------+
+| Trackplus     | %URL%/printItem.action?key=%ISSUE%                     |
 *---------------+--------------------------------------------------------+
 
   If you use an issue management system other than the ones above, you need to

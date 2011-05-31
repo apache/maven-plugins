@@ -297,8 +297,10 @@ public class ChangesMojo
         addIssueLinkTemplate( "Scarab", "%URL%/issues/id/%ISSUE%" );
         addIssueLinkTemplate( "SourceForge", "http://sourceforge.net/support/tracker.php?aid=%ISSUE%" );
         addIssueLinkTemplate( "Trac", "%URL%/ticket/%ISSUE%" );
+        addIssueLinkTemplate( "Trackplus", "%URL%/printItem.action?key=%ISSUE%" );
         addIssueLinkTemplate( "YouTrack", "%URL%/issue/%ISSUE%" );
         // @todo Add more issue management systems here
+        // Remember to also add documentation in usage.apt.vm
 
         // Show the current issueLinkTemplatePerSystem configuration
         logIssueLinkTemplatePerSystem( caseInsensitiveIssueLinkTemplatePerSystem );
