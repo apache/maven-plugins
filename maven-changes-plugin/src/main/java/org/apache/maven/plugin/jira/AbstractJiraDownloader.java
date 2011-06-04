@@ -154,6 +154,15 @@ public abstract class AbstractJiraDownloader
                 if ( statusParam != null )
                 {
                     localFilter.append( "&statusIds=" ).append( statusParam );
+                } else {
+                    // if it's numeric we can handle it too.
+                    try {
+                        Integer.parseInt( stat );
+                        localFilter.append( "&statusIds=" ).append( stat );
+                    } catch (NumberFormatException nfe) {
+                        getLog().error( "maven-changes-plugin: invalid statusId " + stat );
+                    }
+                    
                 }
             }
         }
