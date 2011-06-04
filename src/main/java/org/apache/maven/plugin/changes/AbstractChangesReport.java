@@ -174,7 +174,7 @@ public abstract class AbstractChangesReport
         {
             DecorationModel model = new DecorationModel();
             model.setBody( new Body() );
-            Map attributes = new HashMap();
+            Map<String, String> attributes = new HashMap<String, String>();
             attributes.put( "outputEncoding", getOutputEncoding() );
             Locale locale = Locale.getDefault();
             SiteRenderingContext siteContext = siteRenderer.createContextForSkin( getSkinArtifactFile(), attributes,
