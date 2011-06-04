@@ -71,7 +71,7 @@ Usage
 </document>
 -------------------
 
- See the {{{changes.html}Changes Reference}} for details regarding the
+ See the {{{./changes.html}Changes Reference}} for details regarding the
  <<<\<release\>>>> and <<<\<action\>>>> elements and their attributes.
 
  To generate the Changes Report, insert the Changes Plugin in the
@@ -166,11 +166,11 @@ mvn site
 *---------------+--------------------------------------------------------+
 
   If you use an issue management system other than the ones above, you need to
-  {{{changes-report-mojo.html#issueLinkTemplatePerSystem}configure an issue
+  {{{./changes-report-mojo.html#issueLinkTemplatePerSystem}configure an issue
   link template for it}}.
   We would love to extend the table above with more issue management systems,
   so if you have a working configuration that is not listed above, please tell
-  us about it by {{{issue-tracking.html}creating an issue for it}}.
+  us about it by {{{./issue-tracking.html}creating an issue for it}}.
 
   <<Note:>> Make sure that your <<<\<issueManagement\>/\<url\>>>> is
   correct. In particular, make sure that it has a trailing slash if it needs one.
@@ -231,7 +231,7 @@ mvn site
 -------------------
 
   For info on how to modify the JIRA Report see the
-  {{{examples/customizing-jira-report.html}Customizing the JIRA Report}}
+  {{{./examples/customizing-jira-report.html}Customizing the JIRA Report}}
   example.
 
 
@@ -242,7 +242,7 @@ mvn site
   announcement emails.
 
   For info on how to change the sender of the email see the
-  {{{examples/specifying-mail-sender.html}Specifying the mail sender}} example.
+  {{{./examples/specifying-mail-sender.html}Specifying the mail sender}} example.
 
 -------------------
 <project>

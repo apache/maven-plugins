@@ -162,7 +162,7 @@ Customizing the JIRA Report
         <artifactId>maven-changes-plugin</artifactId>
         <version>${project.version}</version>
         <configuration>
-          <resolutionIds>Closed</resolutionIds>
+          <resolutionIds>Fixed</resolutionIds>
           <statusIds>Resolved, Closed</statusIds>
           <typeIds>Bug, New Feature, Improvement, Wish</typeIds>
         </configuration>

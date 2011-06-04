@@ -31,6 +31,7 @@ import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.params.HttpClientParams;
 import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.issues.Issue;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
@@ -145,10 +146,10 @@ public abstract class AbstractJiraDownloader
         if ( statusIds != null )
         {
             String[] stats = statusIds.split( "," );
-
-            for ( int i = 0; i < stats.length; i++ )
+            for ( String stat : stats ) 
             {
-                String statusParam = statusMap.get( stats[i] );
+                stat = stat.trim();
+                String statusParam = statusMap.get( stats );
 
                 if ( statusParam != null )
                 {
@@ -162,9 +163,10 @@ public abstract class AbstractJiraDownloader
         {
             String[] prios = priorityIds.split( "," );
 
-            for ( int i = 0; i < prios.length; i++ )
+            for ( String prio : prios ) 
             {
-                String priorityParam = priorityMap.get( prios[i] );
+                prio = prio.trim();
+                String priorityParam = priorityMap.get( prio );
 
                 if ( priorityParam != null )
                 {
@@ -178,9 +180,10 @@ public abstract class AbstractJiraDownloader
         {
             String[] resos = resolutionIds.split( "," );
 
-            for ( int i = 0; i < resos.length; i++ )
+            for ( String reso : resos ) 
             {
-                String resoParam = resolutionMap.get( resos[i] );
+                reso = reso.trim();
+                String resoParam = resolutionMap.get( reso );
 
                 if ( resoParam != null )
                 {
@@ -194,11 +197,12 @@ public abstract class AbstractJiraDownloader
         {
             String[] components = component.split( "," );
 
-            for ( int i = 0; i < components.length; i++ )
+            for ( String component : components ) 
             {
-                if ( components[i].length() > 0 )
+                component = component.trim();
+                if ( component.length() > 0 )
                 {
-                    localFilter.append( "&component=" ).append( components[i] );
+                    localFilter.append( "&component=" ).append( components );
                 }
             }
         }
@@ -208,9 +212,9 @@ public abstract class AbstractJiraDownloader
         {
             String[] types = typeIds.split( "," );
 
-            for ( int i = 0; i < types.length; i++ )
+            for ( String type : types )
             {
-                String typeParam = typeMap.get( types[i].trim() );
+                String typeParam = typeMap.get( type.trim() );
 
                 if ( typeParam != null )
                 {
@@ -720,7 +724,7 @@ public abstract class AbstractJiraDownloader
         }
     }
 
-    public List<Issue> getIssueList()
+    public List<Issue> getIssueList() throws MojoExecutionException
     {
         if ( output.isFile() )
         {

@@ -484,7 +484,7 @@ under the License.
               <columnNames>Type,Key,Summary,Assignee,Status,Resolution,Created</columnNames>
               <maxEntries>200</maxEntries>
               <onlyCurrentVersion>true</onlyCurrentVersion>
-              <resolutionIds>Closed</resolutionIds>
+              <resolutionIds>Fixed</resolutionIds>
               <sortColumnNames>Type,Key</sortColumnNames>
             </configuration>
             <reportSets>

@@ -30,6 +30,7 @@ import java.util.Locale;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.issues.Issue;
 import org.apache.maven.plugin.logging.Log;
 import org.xml.sax.Attributes;
@@ -90,15 +91,16 @@ public class JiraXML
      * Parse the given xml file. The list of issues can then be retrieved with {@link #getIssueList()}.
      *
      * @param xmlPath the file to pares.
+     * @throws MojoExecutionException 
      *
      * @since 2.4
      */
-    public void parseXML( File xmlPath )
+    public void parseXML( File xmlPath ) throws MojoExecutionException
     {
         parse( xmlPath );
     }
 
-    private void parse( File xmlPath )
+    private void parse( File xmlPath ) throws MojoExecutionException
     {
         try
         {
@@ -109,7 +111,7 @@ public class JiraXML
         }
         catch ( Throwable t )
         {
-            log.warn( t );
+            throw new MojoExecutionException ( "Failed to parse JIRA XML.", t );
         }
     }
 
