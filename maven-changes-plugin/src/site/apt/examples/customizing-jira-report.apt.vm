@@ -147,7 +147,7 @@ Customizing the JIRA Report
 
 ** Using Maven syntax
 
- In the following example we are only including issues that have <Closed> as
+ In the following example we are only including issues that have <Fixed> as
  their resolution. The status must be either <Resolved> or <Closed>. Only
  issues with one of the types <Bug>, <New Feature>, <Improvement> or <Wish> are
  included in the report.
