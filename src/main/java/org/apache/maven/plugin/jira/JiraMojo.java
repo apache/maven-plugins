@@ -236,6 +236,16 @@ public class JiraMojo
      * <code>Reopened</code>, <code>Resolved</code> and <code>Closed</code>.
      * Multiple values can be separated by commas.
      * <p>
+     * If your installation of JIRA uses custom status IDs, you can reference
+     * them here by their numeric values.
+     * You can obtain them on the Statuses page 
+     * (in 4.0.2 it's under Administration > Issue Settings > Statuses) 
+     * - just hover over the Edit link for the status you want and 
+     * you'll see something like 
+     * &lt;your JIRA URL&gt;/secure/admin/EditStatus!default.jspa?id=12345;
+     * in this case the value is 12345.
+     * </p>
+     * <p>
      * <b>Note:</b> In versions 2.0-beta-3 and earlier this parameter had no
      * default value.
      * </p>
