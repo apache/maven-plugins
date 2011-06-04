@@ -150,7 +150,7 @@ public class AnnouncementMojo
      * </p> 
      * 
      * @parameter
-     * @since 2.5
+     * @since 2.6
      */
     private Map<String, String> issueTypes;
     
