@@ -98,8 +98,12 @@ public class DeployFileMojo
     private String version;
 
     /**
-     * Type of the artifact to be deployed.  Retrieved from POM file if specified.
-     * Defaults to file extension if not specified via command line or POM.
+     * Type of the artifact to be deployed. 
+     * Retrieved from the &lt;packaging&gt element of the POM file if a POM file specified.
+     * Defaults to the file extension if it is not specified via command line or POM.<br/>
+     * Maven uses two terms to refer to this datum: the &lt;packaging&gt; element 
+     * for the entire POM, and the &lt;type&gt; element in a dependency specification.
+     * 
      *
      * @parameter expression="${packaging}"
      */
