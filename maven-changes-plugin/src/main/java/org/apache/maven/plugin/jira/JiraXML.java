@@ -20,6 +20,8 @@ package org.apache.maven.plugin.jira;
  */
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -34,14 +36,14 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.issues.Issue;
 import org.apache.maven.plugin.logging.Log;
 import org.xml.sax.Attributes;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
- * XML parser that extracts <code>Issue</code>s from JIRA. This works on an XML
- * file downloaded from JIRA and creates a <code>List</code> of issues that is
- * exposed to the user of the class.
- *
+ * XML parser that extracts <code>Issue</code>s from JIRA. This works on an XML file downloaded from JIRA and creates a
+ * <code>List</code> of issues that is exposed to the user of the class.
+ * 
  * @version $Id$
  */
 public class JiraXML
@@ -64,7 +66,6 @@ public class JiraXML
     private SimpleDateFormat sdf = null;
 
     /**
-     *
      * @param log not null.
      * @param datePattern may be null.
      * @since 2.4
@@ -89,29 +90,49 @@ public class JiraXML
 
     /**
      * Parse the given xml file. The list of issues can then be retrieved with {@link #getIssueList()}.
-     *
+     * 
      * @param xmlPath the file to pares.
-     * @throws MojoExecutionException 
-     *
+     * @throws MojoExecutionException
      * @since 2.4
      */
-    public void parseXML( File xmlPath ) throws MojoExecutionException
+    public void parseXML( File xmlPath )
+        throws MojoExecutionException
     {
-        parse( xmlPath );
+        FileInputStream xmlStream = null;
+        try
+        {
+            InputSource inputSource = new InputSource( xmlStream );
+            parse( inputSource );
+        }
+        finally
+        {
+            if ( xmlStream != null )
+            {
+                try
+                {
+                    xmlStream.close();
+                }
+                catch ( IOException e )
+                {
+                    //
+                }
+            }
+        }
     }
 
-    private void parse( File xmlPath ) throws MojoExecutionException
+    void parse( InputSource xmlSource )
+        throws MojoExecutionException
     {
         try
         {
             SAXParserFactory factory = SAXParserFactory.newInstance();
             SAXParser saxParser = factory.newSAXParser();
 
-            saxParser.parse( xmlPath, this );
+            saxParser.parse( xmlSource, this );
         }
         catch ( Throwable t )
         {
-            throw new MojoExecutionException ( "Failed to parse JIRA XML.", t );
+            throw new MojoExecutionException( "Failed to parse JIRA XML.", t );
         }
     }
 

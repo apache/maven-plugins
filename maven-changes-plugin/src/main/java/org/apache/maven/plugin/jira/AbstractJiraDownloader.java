@@ -69,7 +69,7 @@ public abstract class AbstractJiraDownloader
     private static final String UTF_8 = "UTF-8";
 
     /** Log for debug output. */
-    private Log log;
+    protected Log log;
     /** Output file for xml document. */
     private File output;
     /** The maximum number of entries to show. */
@@ -111,7 +111,7 @@ public abstract class AbstractJiraDownloader
     /** Mapping containing all allowed JIRA type values. */
     protected final Map<String,String> typeMap = new HashMap<String,String>( 8 );
     /** The pattern used to parse dates from the JIRA xml file. */
-    private String jiraDatePattern;
+    protected String jiraDatePattern;
 
     /**
      * Creates a filter given the parameters and some defaults.
@@ -421,7 +421,12 @@ public abstract class AbstractJiraDownloader
         }
         catch ( Exception e )
         {
-            getLog().error( "Error accessing " + project.getIssueManagement().getUrl(), e );
+            if ( project.getIssueManagement() != null)
+            {
+                getLog().error( "Error accessing " + project.getIssueManagement().getUrl(), e );
+            } else {
+                getLog().error( "Error accessing mock project issues", e );
+            }
         }
     }
 

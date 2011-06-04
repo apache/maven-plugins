@@ -295,6 +295,11 @@ public class JiraMojo
      * @parameter default-value=""
      */
     private String webUser;
+    
+    /*
+     * Used for tests.
+     */
+    private AbstractJiraDownloader mockDownloader;
 
     /* --------------------------------------------------------------------- */
     /* Public methods                                                        */
@@ -305,6 +310,10 @@ public class JiraMojo
      */
     public boolean canGenerateReport()
     {
+        if ( mockDownloader != null) 
+        {
+            return true;
+        }
         return ProjectUtils.validateIfIssueManagementComplete( project, "JIRA", "JIRA Report", getLog() );
     }
 
@@ -323,7 +332,13 @@ public class JiraMojo
         try
         {
             // Download issues
-            JiraDownloader issueDownloader = new JiraDownloader();
+            AbstractJiraDownloader issueDownloader;
+            if ( mockDownloader != null) 
+            {
+                issueDownloader = mockDownloader;
+            } else {
+                issueDownloader = new JiraDownloader();
+            }
             configureIssueDownloader( issueDownloader );
             issueDownloader.doExecute();
 
@@ -386,7 +401,7 @@ public class JiraMojo
         return ResourceBundle.getBundle( "jira-report", locale, this.getClass().getClassLoader() );
     }
 
-    private void configureIssueDownloader( JiraDownloader issueDownloader )
+    private void configureIssueDownloader( AbstractJiraDownloader issueDownloader )
     {
         issueDownloader.setLog( getLog() );
 
@@ -423,5 +438,15 @@ public class JiraMojo
         issueDownloader.setWebPassword( webPassword );
 
         issueDownloader.setSettings( settings );
+    }
+
+    public void setMockDownloader( AbstractJiraDownloader mockDownloader )
+    {
+        this.mockDownloader = mockDownloader;
+    }
+
+    public AbstractJiraDownloader getMockDownloader()
+    {
+        return mockDownloader;
     }
 }
