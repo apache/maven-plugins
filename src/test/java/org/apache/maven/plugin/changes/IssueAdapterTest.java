@@ -29,7 +29,7 @@ import junit.framework.TestCase;
 
 /**
  * @author Alan Parkinson
- * @since 2.5
+ * @since 2.6
  */
 public class IssueAdapterTest
     extends TestCase
