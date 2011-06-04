@@ -25,7 +25,6 @@ import org.apache.maven.plugins.changes.model.Release;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -39,6 +38,43 @@ import java.util.Map;
  */
 public class IssueAdapter
 {
+    private static final String[] DEFAULT_ADD_TYPE = { "New Feature" };
+
+    private static final String[] DEFAULT_FIX_TYPE = { "Bug" };
+
+    private static final String[] DEFAULT_UPDATE_TYPE = { "Improvement" };
+
+    private Map<String, String> issueMap = new HashMap<String, String>();
+
+    public IssueAdapter() {
+        this( null );
+    }
+                        
+    public IssueAdapter( Map<String, String> issueTypes )
+    {
+        addIssueTypesToMap( "add", issueTypes, DEFAULT_ADD_TYPE );
+        addIssueTypesToMap( "fix", issueTypes, DEFAULT_FIX_TYPE );
+        addIssueTypesToMap( "update", issueTypes, DEFAULT_UPDATE_TYPE );
+    }
+
+    private void addIssueTypesToMap( String actionKey, Map<String, String> issueTypes, String[] defaultTypes )
+    {
+        String[] types;
+        if ( issueTypes != null && issueTypes.containsKey( actionKey ) )
+        {
+            types = issueTypes.get( actionKey ).split( "," );
+        }
+        else
+        {
+            types = defaultTypes;
+        }
+
+        for ( String type : types )
+        {
+            issueMap.put( type.trim(), actionKey );
+        }
+    }
+	
     /**
      * Adapt a <code>List</code> of <code>Issue</code>s to a
      * <code>List</code> of <code>Release</code>s.
@@ -46,7 +82,7 @@ public class IssueAdapter
      * @param issues The issues
      * @return A list of releases
      */
-    public static List<Release> getReleases( List<Issue> issues )
+    public List<Release> getReleases( List<Issue> issues )
     {
         // A Map of releases keyed by fixVersion
         Map<String,Release> releasesMap = new HashMap<String,Release>();
@@ -91,26 +127,17 @@ public class IssueAdapter
      * @param issue The issue to extract the information from
      * @return An <code>Action</code>
      */
-    public static Action createAction( Issue issue )
+    public Action createAction( Issue issue )
     {
         Action action = new Action();
 
         // @todo We need to add something like issue.getPresentationIdentifier() to be able to support other IMSes beside JIRA
         action.setIssue( issue.getKey() );
 
-        // @todo To support types for different IMSes we need some way to map these values to the ones used in a particular IMS
         String type = "";
-        if ( issue.getType().equals( "Bug" ) )
+        if ( issueMap.containsKey( issue.getType() ) )
         {
-            type = "fix";
-        }
-        else if ( issue.getType().equals( "New Feature" ) )
-        {
-            type = "add";
-        }
-        else if ( issue.getType().equals( "Improvement" ) )
-        {
-            type = "update";
+            type = issueMap.get( issue.getType() );
         }
         action.setType( type );
 

@@ -140,7 +140,20 @@ public class AnnouncementMojo
      * @since 2.4
      */
     private List<String> issueManagementSystems;
-
+ 
+    /**
+     * Maps issues types to action types for grouping issues in announcements.
+     * If issue types are not defined for a action type then the default issue type
+     * will be applied. 
+     * <p>
+     * Valid action types: <code>add</code>, <code>fix</code> and <code>update</code>.
+     * </p> 
+     * 
+     * @parameter
+     * @since 2.5
+     */
+    private Map<String, String> issueTypes;
+    
     /**
      * Directory where the template file will be generated.
      *
@@ -720,7 +733,8 @@ public class AnnouncementMojo
         }
         else
         {
-            return IssueAdapter.getReleases( issues );
+        	IssueAdapter adapter = new IssueAdapter(issueTypes);
+            return adapter.getReleases( issues );
         }
     }
 
@@ -800,6 +814,14 @@ public class AnnouncementMojo
     {
         this.introduction = introduction;
     }
+    
+	public void setIssueTypes(Map<String, String> issueTypes) {
+		this.issueTypes = issueTypes;
+	}
+
+	public Map<String, String> getIssueTypes() {
+		return issueTypes;
+	}
 
     public File getOutputDirectory()
     {
