@@ -211,7 +211,7 @@ public abstract class AbstractJiraDownloader
                 component = component.trim();
                 if ( component.length() > 0 )
                 {
-                    localFilter.append( "&component=" ).append( components );
+                    localFilter.append( "&component=" ).append( component );
                 }
             }
         }
