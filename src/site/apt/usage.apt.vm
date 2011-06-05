@@ -243,6 +243,15 @@ mvn site
 
   For info on how to change the sender of the email see the
   {{{./examples/specifying-mail-sender.html}Specifying the mail sender}} example.
+  
+  If you have customizations for JIRA that add additional issue types,
+  or if you are using an IMS that isn't fully-supported in this plugin,
+  you will need to configure any additional issue types here.
+  
+  For each issue type, you have to map it to one of three action types:
+  <add>, <fix>, or <update>. These terms are a bit arbitrary. By default, for JIRA,
+  <add> corresponds to 'New Feature', <fix> corresponds to 'Bug', and <update>
+  corresponds to 'Improvement'.
 
 -------------------
 <project>
@@ -261,6 +270,11 @@ mvn site
             <toAddress implementation="java.lang.String">someones@email.com</toAddress>
             <toAddress implementation="java.lang.String">anothersomeone@email.com</toAddress>
           </toAddresses>
+          ...
+          <issueTypes>
+	        <add>Story</add>
+          	<fix>Defect, Malfunction</fix>
+          </issueTypes>
           ...
         </configuration>
       </plugin>
