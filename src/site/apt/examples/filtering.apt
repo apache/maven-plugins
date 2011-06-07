@@ -36,9 +36,9 @@ Filtering Document Descriptor
 *----------------------------------+--------------+
 | $\{JAVA_HOME\}                   | The JAVA_HOME environment value.
 *----------------------------------+--------------+
-| $\{project.name\}                | The project name defined in \<name/\> tag in the pom.xml.
+| $\{project.name\}                | The project name as defined by the \<name/\> tag in pom.xml.
 *----------------------------------+--------------+
-| $\{project.developers[0].email\} | The email of the first developed defined in \<developers/\> tag in the pom.xml.
+| $\{project.developers[0].email\} | The email of the first developer as defined by the \<developers/\> tag in the pom.xml.
 *----------------------------------+--------------+
 | $\{date}                         | The current date displayed in ISO-8601 format (i.e. <<<yyyy-MM-dd>>>), for instance <<<2009-06-22>>>.
 *----------------------------------+--------------+
@@ -48,7 +48,7 @@ Filtering Document Descriptor
 *----------------------------------+--------------+
 | $\{year} $\{month\} $\{day\}     | The single date informations.
 *----------------------------------+--------------+
-| $\{hour} $\{minutes\} $\{second\}| The single time informations.
+| $\{hour} $\{minute\} $\{second\} | The single time informations.
 *----------------------------------+--------------+
 
 Example
