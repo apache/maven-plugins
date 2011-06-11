@@ -1,3 +1,5 @@
+package org.apache.maven.plugin.jira;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -17,8 +19,6 @@
  * under the License.
  */
 
-package org.apache.maven.plugin.jira;
-
 import java.io.StringReader;
 import java.util.List;
 
@@ -30,7 +30,8 @@ import org.xml.sax.InputSource;
  * Allow test cases in the jira mojo without actually talking to jira.
  *
  */
-public class MockJiraDownloader extends AbstractJiraDownloader
+public class MockJiraDownloader
+    extends AbstractJiraDownloader
 {
     @Override
     public void doExecute()
@@ -40,12 +41,13 @@ public class MockJiraDownloader extends AbstractJiraDownloader
     }
 
     private String jiraXml;
+
     @Override
     public List<Issue> getIssueList()
         throws MojoExecutionException
     {
         JiraXML jira = new JiraXML( log, jiraDatePattern );
-        InputSource inputSource = new InputSource ( new StringReader( jiraXml ));
+        InputSource inputSource = new InputSource( new StringReader( jiraXml ) );
         jira.parse( inputSource );
         log.info( "The JIRA version is '" + jira.getJiraVersion() + "'" );
         return jira.getIssueList();
