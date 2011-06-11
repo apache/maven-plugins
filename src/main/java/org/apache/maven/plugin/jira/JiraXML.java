@@ -20,6 +20,8 @@ package org.apache.maven.plugin.jira;
  */
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -101,8 +103,13 @@ public class JiraXML
         InputStream xmlStream = null;
         try
         {
+            xmlStream = new FileInputStream( xmlPath );
             InputSource inputSource = new InputSource( xmlStream );
             parse( inputSource );
+        }
+        catch ( FileNotFoundException e )
+        {
+            throw new MojoExecutionException( "Failed to open JIRA XML file " + xmlPath, e );
         }
         finally
         {
