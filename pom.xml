@@ -333,7 +333,7 @@ under the License.
       <plugin>
         <groupId>org.codehaus.modello</groupId>
         <artifactId>modello-maven-plugin</artifactId>
-        <version>1.0.1</version>
+        <version>1.0.1</version><!-- cannot upgrade because of MODELLO-254 -->
         <executions>
           <execution>
             <id>site-docs</id>
