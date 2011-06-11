@@ -146,7 +146,7 @@ public abstract class AbstractJiraDownloader
         if ( statusIds != null )
         {
             String[] stats = statusIds.split( "," );
-            for ( String stat : stats ) 
+            for ( String stat : stats )
             {
                 stat = stat.trim();
                 String statusParam = statusMap.get( stats );
@@ -154,15 +154,19 @@ public abstract class AbstractJiraDownloader
                 if ( statusParam != null )
                 {
                     localFilter.append( "&statusIds=" ).append( statusParam );
-                } else {
+                }
+                else
+                {
                     // if it's numeric we can handle it too.
-                    try {
+                    try
+                    {
                         Integer.parseInt( stat );
                         localFilter.append( "&statusIds=" ).append( stat );
-                    } catch (NumberFormatException nfe) {
+                    }
+                    catch ( NumberFormatException nfe )
+                    {
                         getLog().error( "maven-changes-plugin: invalid statusId " + stat );
                     }
-                    
                 }
             }
         }
@@ -421,10 +425,12 @@ public abstract class AbstractJiraDownloader
         }
         catch ( Exception e )
         {
-            if ( project.getIssueManagement() != null)
+            if ( project.getIssueManagement() != null )
             {
                 getLog().error( "Error accessing " + project.getIssueManagement().getUrl(), e );
-            } else {
+            }
+            else
+            {
                 getLog().error( "Error accessing mock project issues", e );
             }
         }
@@ -595,7 +601,7 @@ public abstract class AbstractJiraDownloader
                 getLog().error( "Invalid JIRA URL: " + jiraUrl + ". " + e.getMessage() );
             }
             String jiraHost = null;
-            if( url != null )
+            if ( url != null )
             {
                 jiraHost = url.getHost();
             }
@@ -738,7 +744,8 @@ public abstract class AbstractJiraDownloader
         }
     }
 
-    public List<Issue> getIssueList() throws MojoExecutionException
+    public List<Issue> getIssueList()
+        throws MojoExecutionException
     {
         if ( output.isFile() )
         {
