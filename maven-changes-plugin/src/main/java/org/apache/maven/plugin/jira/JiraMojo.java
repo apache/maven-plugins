@@ -310,7 +310,7 @@ public class JiraMojo
      */
     public boolean canGenerateReport()
     {
-        if ( mockDownloader != null) 
+        if ( mockDownloader != null ) 
         {
             return true;
         }
@@ -333,10 +333,12 @@ public class JiraMojo
         {
             // Download issues
             AbstractJiraDownloader issueDownloader;
-            if ( mockDownloader != null) 
+            if ( mockDownloader != null )
             {
                 issueDownloader = mockDownloader;
-            } else {
+            }
+            else
+            {
                 issueDownloader = new JiraDownloader();
             }
             configureIssueDownloader( issueDownloader );

@@ -1,3 +1,5 @@
+package org.apache.maven.plugin.jira;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -17,8 +19,6 @@
  * under the License.
  */
 
-package org.apache.maven.plugin.jira;
-
 import java.io.File;
 import java.io.InputStream;
 
@@ -29,14 +29,18 @@ import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 /**
  *
  */
-public class JiraUnicodeTestCase extends AbstractMojoTestCase
+public class JiraUnicodeTestCase
+    extends AbstractMojoTestCase
 {
     /*
      * Something in Doxia escapes all non-Ascii even when the charset is UTF-8.
      * This test will fail if that ever changes.
      */
     private final static String TEST_TURTLES = "&#x6d77;&#x9f9f;&#x4e00;&#x8def;&#x4e0b;&#x8dcc;&#x3002;";
-    public void testUnicodeReport() throws Exception {
+
+    public void testUnicodeReport()
+        throws Exception
+    {
         
         File pom = new File( getBasedir(), "/src/test/unit/jira-plugin-config.xml" );
         assertNotNull( pom );

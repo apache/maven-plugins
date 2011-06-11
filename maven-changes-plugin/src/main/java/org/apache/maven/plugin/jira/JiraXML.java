@@ -20,8 +20,7 @@ package org.apache.maven.plugin.jira;
  */
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -35,6 +34,7 @@ import javax.xml.parsers.SAXParserFactory;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.issues.Issue;
 import org.apache.maven.plugin.logging.Log;
+import org.codehaus.plexus.util.IOUtil;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -98,7 +98,7 @@ public class JiraXML
     public void parseXML( File xmlPath )
         throws MojoExecutionException
     {
-        FileInputStream xmlStream = null;
+        InputStream xmlStream = null;
         try
         {
             InputSource inputSource = new InputSource( xmlStream );
@@ -106,17 +106,7 @@ public class JiraXML
         }
         finally
         {
-            if ( xmlStream != null )
-            {
-                try
-                {
-                    xmlStream.close();
-                }
-                catch ( IOException e )
-                {
-                    //
-                }
-            }
+            IOUtil.close( xmlStream );
         }
     }
 
