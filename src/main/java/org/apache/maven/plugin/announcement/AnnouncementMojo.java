@@ -461,7 +461,7 @@ public class AnnouncementMojo
             
             // Fetch releases from the configured issue management systems
             List<Release> releases = null;
-            if ( issueManagementSystems.contains ( CHANGES_XML ) )
+            if ( issueManagementSystems.contains( CHANGES_XML ) )
             {
                 if ( getXmlPath().exists() )
                 {
@@ -476,7 +476,7 @@ public class AnnouncementMojo
                 }
             }
 
-            if ( issueManagementSystems.contains(  JIRA ) ) 
+            if ( issueManagementSystems.contains( JIRA ) )
             {
                 if ( ProjectUtils.validateIfIssueManagementComplete( project, JIRA, "JIRA announcement", getLog() ) )
                 {
@@ -487,7 +487,7 @@ public class AnnouncementMojo
                 else
                 {
                     throw new MojoExecutionException(
-                        "Something is wrong with the Issue Management section." + " See previous error messages." );
+                        "Something is wrong with the Issue Management section. See previous error messages." );
                 }
             }
 
@@ -502,7 +502,7 @@ public class AnnouncementMojo
                 else
                 {
                     throw new MojoExecutionException(
-                        "Something is wrong with the Issue Management section." + " See previous error messages." );
+                        "Something is wrong with the Issue Management section. See previous error messages." );
                 }
             }
 
@@ -539,7 +539,7 @@ public class AnnouncementMojo
     {
         String version = ( versionPrefix == null ? "" : versionPrefix ) + getVersion();
 
-        doGenerate( releases, releaseUtils.getLatestRelease( releases, version )  );
+        doGenerate( releases, releaseUtils.getLatestRelease( releases, version ) );
     }
 
     protected void doGenerate( List<Release> releases, Release release )
@@ -727,7 +727,8 @@ public class AnnouncementMojo
         }
     }
 
-    private List<Release> getReleases( List<Issue> issues, IssueManagementSystem ims ) throws MojoExecutionException
+    private List<Release> getReleases( List<Issue> issues, IssueManagementSystem ims )
+        throws MojoExecutionException
     {
         if ( issueTypes != null ) 
         {
@@ -739,7 +740,7 @@ public class AnnouncementMojo
         }
         else
         {
-        	IssueAdapter adapter = new IssueAdapter(ims);
+            IssueAdapter adapter = new IssueAdapter( ims );
             return adapter.getReleases( issues );
         }
     }
@@ -821,11 +822,13 @@ public class AnnouncementMojo
         this.introduction = introduction;
     }
     
-	public void setIssueTypes(Map<String, String> issueTypes) {
+    public void setIssueTypes( Map<String, String> issueTypes )
+    {
 		this.issueTypes = issueTypes;
 	}
 
-	public Map<String, String> getIssueTypes() {
+    public Map<String, String> getIssueTypes()
+    {
 		return issueTypes;
 	}
 
