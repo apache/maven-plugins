@@ -29,30 +29,31 @@ import junit.framework.TestCase;
 public class ChangesCheckMojoTestCase
     extends TestCase
 {
-    public void testIsValidDate() throws Exception
+    public void testIsValidDate()
+        throws Exception
     {
         String pattern;
 
         // null pattern
         pattern = null;
-        assertFalse(ChangesCheckMojo.isValidDate( null, pattern ));
-        assertFalse(ChangesCheckMojo.isValidDate( "", pattern ));
-        assertFalse(ChangesCheckMojo.isValidDate( "2010-12-16", pattern ));
-        assertFalse(ChangesCheckMojo.isValidDate( "pending", pattern ));
+        assertFalse( ChangesCheckMojo.isValidDate( null, pattern ) );
+        assertFalse( ChangesCheckMojo.isValidDate( "", pattern ) );
+        assertFalse( ChangesCheckMojo.isValidDate( "2010-12-16", pattern ) );
+        assertFalse( ChangesCheckMojo.isValidDate( "pending", pattern ) );
 
         // empty pattern
         pattern = "";
-        assertFalse(ChangesCheckMojo.isValidDate( null, pattern ));
-        assertFalse(ChangesCheckMojo.isValidDate( "", pattern ));
-        assertFalse(ChangesCheckMojo.isValidDate( "2010-12-16", pattern ));
-        assertFalse(ChangesCheckMojo.isValidDate( "pending", pattern ));
+        assertFalse( ChangesCheckMojo.isValidDate( null, pattern ) );
+        assertFalse( ChangesCheckMojo.isValidDate( "", pattern ) );
+        assertFalse( ChangesCheckMojo.isValidDate( "2010-12-16", pattern ) );
+        assertFalse( ChangesCheckMojo.isValidDate( "pending", pattern ) );
 
         // valid pattern
         pattern = "yyyy-MM-dd";
-        assertFalse(ChangesCheckMojo.isValidDate( null, pattern ));
-        assertFalse(ChangesCheckMojo.isValidDate( "", pattern ));
-        assertFalse(ChangesCheckMojo.isValidDate( "2010-DD-MM", pattern ));
-        assertTrue(ChangesCheckMojo.isValidDate( "2010-12-16", pattern ));
-        assertFalse(ChangesCheckMojo.isValidDate( "pending", pattern ));
+        assertFalse( ChangesCheckMojo.isValidDate( null, pattern ) );
+        assertFalse( ChangesCheckMojo.isValidDate( "", pattern ) );
+        assertFalse( ChangesCheckMojo.isValidDate( "2010-DD-MM", pattern ) );
+        assertTrue( ChangesCheckMojo.isValidDate( "2010-12-16", pattern ) );
+        assertFalse( ChangesCheckMojo.isValidDate( "pending", pattern ) );
     }
 }

@@ -1,17 +1,5 @@
 package org.apache.maven.plugin.changes;
 
-import java.io.File;
-import java.util.Iterator;
-import java.util.List;
-
-import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.plugins.changes.model.Action;
-import org.apache.maven.plugins.changes.model.FixedIssue;
-import org.apache.maven.plugins.changes.model.Release;
-import org.codehaus.plexus.PlexusTestCase;
-import org.codehaus.plexus.logging.Logger;
-import org.codehaus.plexus.logging.console.ConsoleLogger;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -30,6 +18,18 @@ import org.codehaus.plexus.logging.console.ConsoleLogger;
  * specific language governing permissions and limitations
  * under the License.
  */
+
+import java.io.File;
+import java.util.Iterator;
+import java.util.List;
+
+import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugins.changes.model.Action;
+import org.apache.maven.plugins.changes.model.FixedIssue;
+import org.apache.maven.plugins.changes.model.Release;
+import org.codehaus.plexus.PlexusTestCase;
+import org.codehaus.plexus.logging.Logger;
+import org.codehaus.plexus.logging.console.ConsoleLogger;
 
 /**
  * @author <a href="mailto:olamy@apache.org">olamy</a>

@@ -1,12 +1,5 @@
 package org.apache.maven.plugin.announcement;
 
-import java.io.File;
-import java.io.FileReader;
-
-import org.apache.maven.plugin.testing.AbstractMojoTestCase;
-import org.codehaus.plexus.util.FileUtils;
-import org.codehaus.plexus.util.IOUtil;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -25,6 +18,13 @@ import org.codehaus.plexus.util.IOUtil;
  * specific language governing permissions and limitations
  * under the License.
  */
+
+import java.io.File;
+import java.io.FileReader;
+
+import org.apache.maven.plugin.testing.AbstractMojoTestCase;
+import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.IOUtil;
 
 /**
  * @author <a href="mailto:olamy@apache.org">olamy</a>

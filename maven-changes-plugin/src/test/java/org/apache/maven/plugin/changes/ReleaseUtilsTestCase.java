@@ -32,7 +32,8 @@ import org.apache.maven.plugins.changes.model.Release;
  * @version $Id$
  * @since 2.4
  */
-public class ReleaseUtilsTestCase extends TestCase
+public class ReleaseUtilsTestCase
+    extends TestCase
 {
     public void testMergeReleases()
         throws Exception

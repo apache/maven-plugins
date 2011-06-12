@@ -114,7 +114,9 @@ public class IssueAdapter
         {
             type = getIssueTypeMap().get( issue.getType() );
             action.setType( type.modelRepresentation() );
-        } else {
+        }
+        else
+        {
             action.setType( UNKNOWN_ISSUE_TYPE );
         }
 

@@ -1,3 +1,5 @@
+package org.apache.maven.plugin.changes;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,7 +18,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugin.changes;
 
 /**
  * Cross-IMS types of issues.
@@ -24,6 +25,7 @@ package org.apache.maven.plugin.changes;
 public enum IssueType
 {
     ADD( "add" ), FIX( "fix" ), UPDATE( "update" );
+
     private String configurationKey;
 
     private IssueType( String configurationKey )

@@ -1,3 +1,5 @@
+package org.apache.maven.plugin.changes;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -17,18 +19,18 @@
  * under the License.
  */ 
  
- package org.apache.maven.plugin.changes;
-
 /**
  * The standard issue types for JIRA. 
  */
-public class JIRAIssueManagmentSystem extends AbstractIssueManagementSystem
+public class JIRAIssueManagmentSystem
+    extends AbstractIssueManagementSystem
 {
-    private static final String DEFAULT_ADD_TYPE =  "New Feature" ;
-    private static final String DEFAULT_FIX_TYPE =  "Bug" ;
-    private static final String DEFAULT_UPDATE_TYPE = "Improvement" ;
+    private static final String DEFAULT_ADD_TYPE = "New Feature";
+    private static final String DEFAULT_FIX_TYPE = "Bug";
+    private static final String DEFAULT_UPDATE_TYPE = "Improvement";
 
-    public JIRAIssueManagmentSystem() {
+    public JIRAIssueManagmentSystem()
+    {
         super();
         issueTypeMap.put( DEFAULT_ADD_TYPE, IssueType.ADD );
         issueTypeMap.put( DEFAULT_FIX_TYPE, IssueType.FIX );

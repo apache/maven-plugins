@@ -1,3 +1,5 @@
+package org.apache.maven.plugin.changes;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,7 +18,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugin.changes;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -33,7 +34,8 @@ import org.apache.maven.plugin.MojoExecutionException;
  * configuration for an IMS. Users are expected to add entries to the map via configuration
  * to reflect their customizations.
  */
-public abstract class AbstractIssueManagementSystem implements IssueManagementSystem
+public abstract class AbstractIssueManagementSystem
+    implements IssueManagementSystem
 {
     protected Map<String, IssueType> issueTypeMap;
 
@@ -58,7 +60,8 @@ public abstract class AbstractIssueManagementSystem implements IssueManagementSy
     /* (non-Javadoc)
      * @see org.apache.maven.plugin.changes.IssueManagementSystem#applyConfiguration(java.util.Map)
      */
-    public void applyConfiguration( Map<String, String> issueTypes ) throws MojoExecutionException
+    public void applyConfiguration( Map<String, String> issueTypes )
+        throws MojoExecutionException
     {
         for ( Map.Entry<String, String> me : issueTypes.entrySet() )
         {
