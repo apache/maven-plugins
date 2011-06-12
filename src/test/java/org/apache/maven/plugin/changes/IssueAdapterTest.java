@@ -19,9 +19,6 @@ package org.apache.maven.plugin.changes;
  * under the License.
  */
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.maven.plugin.issues.Issue;
 import org.apache.maven.plugins.changes.model.Action;
 
@@ -37,7 +34,7 @@ public class IssueAdapterTest
 
     public void testDefaultIssueTypeMapping()
     {
-        IssueAdapter adapter = new IssueAdapter( null );
+        IssueAdapter adapter = new IssueAdapter( new JIRAIssueManagmentSystem( ) );
 
         Issue issue = createIssue( "TST-1", "New Feature" );
         Action action = adapter.createAction( issue );
@@ -58,11 +55,10 @@ public class IssueAdapterTest
 
     public void testCustomIssueTypeMappingOveridesDefaultMapping()
     {
-        Map<String, String> typeMapping = new HashMap<String, String>();
-        typeMapping.put( "add", "" );
-        typeMapping.put( "fix", "" );
-        typeMapping.put( "update", "" );
-        IssueAdapter adapter = new IssueAdapter( typeMapping );
+        IssueManagementSystem ims = new JIRAIssueManagmentSystem( );
+        
+        ims.getIssueTypeMap().clear();
+        IssueAdapter adapter = new IssueAdapter( ims );
 
         Issue issue = createIssue( "TST-1", "New Feature" );
         Action action = adapter.createAction( issue );
@@ -83,10 +79,12 @@ public class IssueAdapterTest
 
     public void testCustomIssueTypeMapping()
     {
-        Map<String, String> typeMapping = new HashMap<String, String>();
-        typeMapping.put( "add", "Story,Epic" );
-        typeMapping.put( "fix", "Defect, Error" );
-        IssueAdapter adapter = new IssueAdapter( typeMapping );
+        IssueManagementSystem ims = new JIRAIssueManagmentSystem( );
+        ims.getIssueTypeMap().put( "Story", IssueType.ADD);
+        ims.getIssueTypeMap().put( "Epic", IssueType.ADD);
+        ims.getIssueTypeMap().put( "Defect", IssueType.FIX);
+        ims.getIssueTypeMap().put( "Error", IssueType.FIX);
+        IssueAdapter adapter = new IssueAdapter( ims );
 
         Issue issue = createIssue( "TST-1", "Story" );
         Action action = adapter.createAction( issue );

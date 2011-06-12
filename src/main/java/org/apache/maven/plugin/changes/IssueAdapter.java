@@ -29,63 +29,37 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * An adapter that can adapt issue management system data models to the data model used
- * in the changes.xml file.
- *
+ * An adapter that can adapt issue management system data models to the data model used in the changes.xml file.
+ * 
  * @author Dennis Lundberg
  * @version $Id$
  * @since 2.4
  */
 public class IssueAdapter
 {
-    private static final String[] DEFAULT_ADD_TYPE = { "New Feature" };
+    private static final String UNKNOWN_ISSUE_TYPE = "";
+    private IssueManagementSystem ims;
 
-    private static final String[] DEFAULT_FIX_TYPE = { "Bug" };
-
-    private static final String[] DEFAULT_UPDATE_TYPE = { "Improvement" };
-
-    private Map<String, String> issueMap = new HashMap<String, String>();
-
-    public IssueAdapter() {
-        this( null );
-    }
-                        
-    public IssueAdapter( Map<String, String> issueTypes )
+    public IssueAdapter( IssueManagementSystem ims )
     {
-        addIssueTypesToMap( "add", issueTypes, DEFAULT_ADD_TYPE );
-        addIssueTypesToMap( "fix", issueTypes, DEFAULT_FIX_TYPE );
-        addIssueTypesToMap( "update", issueTypes, DEFAULT_UPDATE_TYPE );
+        this.ims = ims;
     }
 
-    private void addIssueTypesToMap( String actionKey, Map<String, String> issueTypes, String[] defaultTypes )
+    private Map<String, IssueType> getIssueTypeMap()
     {
-        String[] types;
-        if ( issueTypes != null && issueTypes.containsKey( actionKey ) )
-        {
-            types = issueTypes.get( actionKey ).split( "," );
-        }
-        else
-        {
-            types = defaultTypes;
-        }
-
-        for ( String type : types )
-        {
-            issueMap.put( type.trim(), actionKey );
-        }
+        return ims.getIssueTypeMap();
     }
-	
+
     /**
-     * Adapt a <code>List</code> of <code>Issue</code>s to a
-     * <code>List</code> of <code>Release</code>s.
-     *
+     * Adapt a <code>List</code> of <code>Issue</code>s to a <code>List</code> of <code>Release</code>s.
+     * 
      * @param issues The issues
      * @return A list of releases
      */
     public List<Release> getReleases( List<Issue> issues )
     {
         // A Map of releases keyed by fixVersion
-        Map<String,Release> releasesMap = new HashMap<String,Release>();
+        Map<String, Release> releasesMap = new HashMap<String, Release>();
 
         // Loop through all issues looking for fixVersions
         for ( Issue issue : issues )
@@ -123,7 +97,7 @@ public class IssueAdapter
 
     /**
      * Create an <code>Action</code> from an issue.
-     *
+     * 
      * @param issue The issue to extract the information from
      * @return An <code>Action</code>
      */
@@ -131,21 +105,24 @@ public class IssueAdapter
     {
         Action action = new Action();
 
-        // @todo We need to add something like issue.getPresentationIdentifier() to be able to support other IMSes beside JIRA
+        // @todo We need to add something like issue.getPresentationIdentifier() to be able to support other IMSes
+        // beside JIRA
         action.setIssue( issue.getKey() );
 
-        String type = "";
-        if ( issueMap.containsKey( issue.getType() ) )
+        IssueType type = null;
+        if ( getIssueTypeMap().containsKey( issue.getType() ) )
         {
-            type = issueMap.get( issue.getType() );
+            type = getIssueTypeMap().get( issue.getType() );
+            action.setType( type.modelRepresentation() );
+        } else {
+            action.setType( UNKNOWN_ISSUE_TYPE );
         }
-        action.setType( type );
 
         action.setDev( issue.getAssignee() );
 
         // Set dueTo to the empty String instead of null to make Velocity happy
         action.setDueTo( "" );
-        //action.setDueTo( issue.getReporter() );
+        // action.setDueTo( issue.getReporter() );
 
         action.setAction( issue.getSummary() );
         return action;

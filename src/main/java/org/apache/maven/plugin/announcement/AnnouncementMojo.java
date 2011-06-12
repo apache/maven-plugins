@@ -30,9 +30,12 @@ import java.util.Map;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.changes.ChangesXML;
+import org.apache.maven.plugin.changes.JIRAIssueManagmentSystem;
 import org.apache.maven.plugin.changes.IssueAdapter;
+import org.apache.maven.plugin.changes.IssueManagementSystem;
 import org.apache.maven.plugin.changes.ProjectUtils;
 import org.apache.maven.plugin.changes.ReleaseUtils;
+import org.apache.maven.plugin.changes.TRACIssueManagmentSystem;
 import org.apache.maven.plugin.issues.Issue;
 import org.apache.maven.plugin.issues.IssueUtils;
 import org.apache.maven.plugin.jira.JiraDownloader;
@@ -455,11 +458,10 @@ public class AnnouncementMojo
                     issueManagementSystems.add( CHANGES_XML );
                 }
             }
-
+            
             // Fetch releases from the configured issue management systems
             List<Release> releases = null;
-
-            if ( issueManagementSystems.contains( CHANGES_XML ) )
+            if ( issueManagementSystems.contains ( CHANGES_XML ) )
             {
                 if ( getXmlPath().exists() )
                 {
@@ -474,7 +476,7 @@ public class AnnouncementMojo
                 }
             }
 
-            if ( issueManagementSystems.contains( JIRA ) )
+            if ( issueManagementSystems.contains(  JIRA ) ) 
             {
                 if ( ProjectUtils.validateIfIssueManagementComplete( project, JIRA, "JIRA announcement", getLog() ) )
                 {
@@ -717,7 +719,7 @@ public class AnnouncementMojo
                     + " that matched the versionPrefix '" + versionPrefix + "'." );
             }
 
-            return getReleases( issueList );
+            return getReleases( issueList, new JIRAIssueManagmentSystem() );
         }
         catch ( Exception e )
         {
@@ -725,15 +727,19 @@ public class AnnouncementMojo
         }
     }
 
-    private List<Release> getReleases( List<Issue> issues )
+    private List<Release> getReleases( List<Issue> issues, IssueManagementSystem ims ) throws MojoExecutionException
     {
+        if ( issueTypes != null ) 
+        {
+            ims.applyConfiguration( issueTypes );
+        }
         if ( issues.isEmpty() )
         {
             return Collections.emptyList();
         }
         else
         {
-        	IssueAdapter adapter = new IssueAdapter(issueTypes);
+        	IssueAdapter adapter = new IssueAdapter(ims);
             return adapter.getReleases( issues );
         }
     }
@@ -753,7 +759,7 @@ public class AnnouncementMojo
 
         try
         {
-            return getReleases( issueDownloader.getIssueList() );
+            return getReleases( issueDownloader.getIssueList(), new TRACIssueManagmentSystem() );
         }
         catch ( Exception e )
         {
