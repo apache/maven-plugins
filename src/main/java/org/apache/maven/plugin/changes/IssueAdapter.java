@@ -30,7 +30,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * An adapter that can adapt issue management system data models to the data model used in the changes.xml file.
+ * An adapter that can adapt data models from other issue management system to the data models used in the changes.xml
+ * file.
  * 
  * @author Dennis Lundberg
  * @version $Id$
@@ -41,6 +42,11 @@ public class IssueAdapter
     private static final String UNKNOWN_ISSUE_TYPE = "";
     private IssueManagementSystem ims;
 
+    /**
+     * Create a new adapter.
+     *
+     * @param ims The issue management system that has the data that should be adapted
+     */
     public IssueAdapter( IssueManagementSystem ims )
     {
         this.ims = ims;
@@ -110,6 +116,7 @@ public class IssueAdapter
         // beside JIRA
         action.setIssue( issue.getKey() );
 
+        // Try to map the IMS-specific issue type to one that is used in a changes.xml file
         IssueType type = null;
         if ( getIssueTypeMap().containsKey( issue.getType() ) )
         {
