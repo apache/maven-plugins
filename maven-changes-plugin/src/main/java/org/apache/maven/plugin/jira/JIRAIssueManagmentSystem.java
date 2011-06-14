@@ -23,7 +23,7 @@ import org.apache.maven.plugin.changes.IssueType;
 import org.apache.maven.plugin.issues.AbstractIssueManagementSystem;
 
 /**
- * The standard issue types for JIRA. 
+ * The JIRA issue management system.
  */
 public class JIRAIssueManagmentSystem
     extends AbstractIssueManagementSystem
@@ -35,6 +35,7 @@ public class JIRAIssueManagmentSystem
     public JIRAIssueManagmentSystem()
     {
         super();
+        // Add the standard issue types for JIRA
         issueTypeMap.put( DEFAULT_ADD_TYPE, IssueType.ADD );
         issueTypeMap.put( DEFAULT_FIX_TYPE, IssueType.FIX );
         issueTypeMap.put( DEFAULT_UPDATE_TYPE, IssueType.UPDATE );

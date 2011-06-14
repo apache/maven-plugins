@@ -20,7 +20,7 @@ package org.apache.maven.plugin.changes;
  */
 
 /**
- * Cross-IMS types of issues.
+ * The types of issues that can be used in a <code>changes.xml</code> file.
  */
 public enum IssueType
 {

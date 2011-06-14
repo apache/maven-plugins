@@ -23,7 +23,7 @@ import org.apache.maven.plugin.changes.IssueType;
 import org.apache.maven.plugin.issues.AbstractIssueManagementSystem;
 
 /**
- * The standard issue types for TRAC. (probably wrong).
+ * The Trac issue management system.
  */
 public class TracIssueManagmentSystem
     extends AbstractIssueManagementSystem
@@ -35,6 +35,7 @@ public class TracIssueManagmentSystem
     public TracIssueManagmentSystem()
     {
         super();
+        // The standard issue types for Trac (probably wrong)
         issueTypeMap.put( DEFAULT_ADD_TYPE, IssueType.ADD );
         issueTypeMap.put( DEFAULT_FIX_TYPE, IssueType.FIX );
         issueTypeMap.put( DEFAULT_UPDATE_TYPE, IssueType.UPDATE );
