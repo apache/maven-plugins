@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.changes;
+package org.apache.maven.plugin.trac;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -17,19 +17,22 @@ package org.apache.maven.plugin.changes;
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
- */ 
- 
+ */
+
+import org.apache.maven.plugin.changes.AbstractIssueManagementSystem;
+import org.apache.maven.plugin.changes.IssueType;
+
 /**
  * The standard issue types for TRAC. (probably wrong).
  */
-public class TRACIssueManagmentSystem
+public class TracIssueManagmentSystem
     extends AbstractIssueManagementSystem
 {
     private static final String DEFAULT_ADD_TYPE = "New Feature";
     private static final String DEFAULT_FIX_TYPE = "Bug";
     private static final String DEFAULT_UPDATE_TYPE = "Improvement";
 
-    public TRACIssueManagmentSystem()
+    public TracIssueManagmentSystem()
     {
         super();
         issueTypeMap.put( DEFAULT_ADD_TYPE, IssueType.ADD );
@@ -40,7 +43,7 @@ public class TRACIssueManagmentSystem
     @Override
     public String getName()
     {
-        return "TRAC";
+        return "Trac";
     }
 
 }
