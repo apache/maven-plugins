@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.changes;
+package org.apache.maven.plugin.jira;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -17,8 +17,11 @@ package org.apache.maven.plugin.changes;
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
- */ 
- 
+ */
+
+import org.apache.maven.plugin.changes.AbstractIssueManagementSystem;
+import org.apache.maven.plugin.changes.IssueType;
+
 /**
  * The standard issue types for JIRA. 
  */

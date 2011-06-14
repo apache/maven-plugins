@@ -30,7 +30,6 @@ import java.util.Map;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.changes.ChangesXML;
-import org.apache.maven.plugin.changes.JIRAIssueManagmentSystem;
 import org.apache.maven.plugin.changes.IssueAdapter;
 import org.apache.maven.plugin.changes.IssueManagementSystem;
 import org.apache.maven.plugin.changes.ProjectUtils;
@@ -38,6 +37,7 @@ import org.apache.maven.plugin.changes.ReleaseUtils;
 import org.apache.maven.plugin.issues.Issue;
 import org.apache.maven.plugin.issues.IssueUtils;
 import org.apache.maven.plugin.jira.JiraDownloader;
+import org.apache.maven.plugin.jira.JIRAIssueManagmentSystem;
 import org.apache.maven.plugin.trac.TracDownloader;
 import org.apache.maven.plugin.trac.TracIssueManagmentSystem;
 import org.apache.maven.plugins.changes.model.Release;

@@ -20,6 +20,7 @@ package org.apache.maven.plugin.changes;
  */
 
 import org.apache.maven.plugin.issues.Issue;
+import org.apache.maven.plugin.jira.JIRAIssueManagmentSystem;
 import org.apache.maven.plugins.changes.model.Action;
 
 import junit.framework.TestCase;
