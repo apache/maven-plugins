@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.changes;
+package org.apache.maven.plugin.issues;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -23,13 +23,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.changes.IssueType;
 
 /**
  * Historically, this plugin started out working against an IMS-neutral XML file, and then added extensive support for
  * JIRA with some small snippets of code for other issue management systems. This class is intended to start a cleaner
  * modularity for support of multiple systems.<br>
  * Initially, all it provides is a structure for mapping from per-IMS issue types to the three categories defined in
- * {@link IssueAdapter}. <br/>
+ * {@link org.apache.maven.plugin.changes.IssueAdapter}. <br/>
  * Note that the map in here is <strong>not</strong> immutable. It contains the default
  * configuration for an IMS. Users are expected to add entries to the map via configuration
  * to reflect their customizations.
@@ -45,7 +46,7 @@ public abstract class AbstractIssueManagementSystem
     }
 
     /* (non-Javadoc)
-     * @see org.apache.maven.plugin.changes.IssueManagementSystem#getIssueTypeMap()
+     * @see org.apache.maven.plugin.issues.IssueManagementSystem#getIssueTypeMap()
      */
     public Map<String, IssueType> getIssueTypeMap()
     {
@@ -53,12 +54,12 @@ public abstract class AbstractIssueManagementSystem
     }
     
     /* (non-Javadoc)
-     * @see org.apache.maven.plugin.changes.IssueManagementSystem#getName()
+     * @see org.apache.maven.plugin.issues.IssueManagementSystem#getName()
      */
     public abstract String getName();
 
     /* (non-Javadoc)
-     * @see org.apache.maven.plugin.changes.IssueManagementSystem#applyConfiguration(java.util.Map)
+     * @see org.apache.maven.plugin.issues.IssueManagementSystem#applyConfiguration(java.util.Map)
      */
     public void applyConfiguration( Map<String, String> issueTypes )
         throws MojoExecutionException
