@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.changes;
+package org.apache.maven.plugin.issues;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -22,6 +22,7 @@ package org.apache.maven.plugin.changes;
 import java.util.Map;
 
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.changes.IssueType;
 
 public interface IssueManagementSystem
 {

@@ -19,8 +19,8 @@ package org.apache.maven.plugin.trac;
  * under the License.
  */
 
-import org.apache.maven.plugin.changes.AbstractIssueManagementSystem;
 import org.apache.maven.plugin.changes.IssueType;
+import org.apache.maven.plugin.issues.AbstractIssueManagementSystem;
 
 /**
  * The standard issue types for TRAC. (probably wrong).
