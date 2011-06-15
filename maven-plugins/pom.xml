@@ -29,7 +29,7 @@ under the License.
 
   <groupId>org.apache.maven.plugins</groupId>
   <artifactId>maven-plugins</artifactId>
-  <version>21-SNAPSHOT</version>
+  <version>21</version>
   <packaging>pom</packaging>
 
   <name>Maven Plugins</name>
@@ -111,9 +111,9 @@ under the License.
   </mailingLists>
 
   <scm>
-    <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-plugins/</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/trunk/maven-plugins/</developerConnection>
-    <url>http://svn.apache.org/viewvc/maven/plugins/trunk/maven-plugins/</url>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/tags/maven-plugins-21</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/tags/maven-plugins-21</developerConnection>
+    <url>http://svn.apache.org/viewvc/maven/plugins/tags/maven-plugins-21</url>
   </scm>
   <ciManagement>
     <system>Jenkins</system>
