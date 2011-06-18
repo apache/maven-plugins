@@ -507,7 +507,6 @@ under the License.
               <locales>
                 <locale>de</locale>
                 <locale>fr</locale>
-                <locale>pt_BR</locale>
                 <locale>sv</locale>
               </locales>
             </configuration>
