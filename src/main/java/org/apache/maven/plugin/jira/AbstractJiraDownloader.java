@@ -149,7 +149,7 @@ public abstract class AbstractJiraDownloader
             for ( String stat : stats )
             {
                 stat = stat.trim();
-                String statusParam = statusMap.get( stats );
+                String statusParam = statusMap.get( stat );
 
                 if ( statusParam != null )
                 {
