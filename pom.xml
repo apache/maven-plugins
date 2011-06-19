@@ -30,7 +30,7 @@ under the License.
   </parent>
 
   <artifactId>maven-changes-plugin</artifactId>
-  <version>2.7-SNAPSHOT</version>
+  <version>2.6-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
   <name>Maven Changes Report Plugin</name>
