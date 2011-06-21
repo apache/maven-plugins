@@ -586,6 +586,7 @@ public class SignAndDeployFileMojo
                     getLog().info( "Metadata[" + metadata.getKey() + "].filename = " + metadata.getRemoteFilename());
                 }
                 exception = null;
+                break;
             }
             catch ( ArtifactDeploymentException e )
             {
