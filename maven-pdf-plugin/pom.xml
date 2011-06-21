@@ -59,6 +59,15 @@ under the License.
     </developer>
   </developers>
 
+  <contributors>
+    <contributor>
+      <name>Taciano Tres</name>
+      <roles>
+        <role>Translator: Portuguese (Brazil)</role>
+      </roles>
+    </contributor>
+  </contributors>
+
   <prerequisites>
     <maven>${mavenVersion}</maven>
   </prerequisites>
@@ -396,6 +405,7 @@ under the License.
                 <locale>de</locale>
                 <locale>en</locale>
                 <locale>fr</locale>
+                <locale>pt_BR</locale>
               </locales>
             </configuration>
           </plugin>
