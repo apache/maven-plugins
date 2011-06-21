@@ -166,6 +166,7 @@ public abstract class AbstractDeployMojo
                 }
                 getDeployer().deploy( source, artifact, deploymentRepository, localRepository );
                 exception = null;
+                break;
             }
             catch ( ArtifactDeploymentException e )
             {
