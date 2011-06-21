@@ -271,6 +271,30 @@ public class SignAndDeployFileMojo
      */
     protected boolean updateReleaseInfo;
 
+    /**
+     * A comma separated list of types for each of the extra side artifacts to deploy. If there is a mis-match in
+     * the number of entries in {@link #files} or {@link #classifiers}, then an error will be raised.
+     *
+     * @parameter expression="${types}";
+     */
+    private String types;
+
+    /**
+     * A comma separated list of classifiers for each of the extra side artifacts to deploy. If there is a mis-match in
+     * the number of entries in {@link #files} or {@link #types}, then an error will be raised.
+     *
+     * @parameter expression="${classifiers}";
+     */
+    private String classifiers;
+
+    /**
+     * A comma separated list of files for each of the extra side artifacts to deploy. If there is a mis-match in
+     * the number of entries in {@link #types} or {@link #classifiers}, then an error will be raised.
+     *
+     * @parameter expression="${files}"
+     */
+    private String files;
+
     private void initProperties()
         throws MojoExecutionException
     {
@@ -379,6 +403,88 @@ public class SignAndDeployFileMojo
         {
             projectHelper.attachArtifact( project, "jar", "javadoc", javadoc );
         }
+
+        if ( files != null )
+        {
+            if ( types == null )
+            {
+                throw new MojoExecutionException( "You must specify 'types' if you specify 'files'" );
+            }
+            if ( classifiers == null )
+            {
+                throw new MojoExecutionException( "You must specify 'classifiers' if you specify 'files'" );
+            }
+            int filesLength = StringUtils.countMatches( files, "," );
+            int typesLength = StringUtils.countMatches( types, "," );
+            int classifiersLength = StringUtils.countMatches( classifiers, "," );
+            if ( typesLength != filesLength )
+            {
+                throw new MojoExecutionException( "You must specify the same number of entries in 'files' and " +
+                        "'types' (respectively " + filesLength + " and " + typesLength + " entries )" );
+            }
+            if ( classifiersLength != filesLength )
+            {
+                throw new MojoExecutionException( "You must specify the same number of entries in 'files' and " +
+                        "'classifiers' (respectively " + filesLength + " and " + classifiersLength + " entries )" );
+            }
+            int fi = 0;
+            int ti = 0;
+            int ci = 0;
+            for ( int i = 0; i <= filesLength; i++ )
+            {
+                int nfi = files.indexOf( ',', fi );
+                if ( nfi == -1 )
+                {
+                    nfi = files.length();
+                }
+                int nti = types.indexOf( ',', ti );
+                if ( nti == -1 )
+                {
+                    nti = types.length();
+                }
+                int nci = classifiers.indexOf( ',', ci );
+                if ( nci == -1 )
+                {
+                    nci = classifiers.length();
+                }
+                File file = new File( files.substring( fi, nfi ) );
+                if ( !file.isFile() )
+                {
+                    // try relative to the project basedir just in case
+                    file = new File( project.getBasedir(), files.substring( fi, nfi ) );
+                }
+                if ( file.isFile() )
+                {   
+                    if ( StringUtils.isWhitespace( classifiers.substring( ci, nci ) ) )
+                    {
+                        projectHelper.attachArtifact( project, types.substring( ti, nti ).trim(), file );
+                    }
+                    else
+                    {
+                        projectHelper.attachArtifact( project, types.substring( ti, nti).trim(),
+                                classifiers.substring( ci, nci ).trim(), file);
+                    } 
+                }
+                else
+                {
+                    throw new MojoExecutionException( "Specified side artifact " + file + " does not exist" );
+                }
+                fi = nfi + 1;
+                ti = nti + 1;
+                ci = nci + 1;
+            }
+        }   
+        else    
+        {               
+            if ( types != null )
+            {
+                throw new MojoExecutionException( "You must specify 'files' if you specify 'types'" );
+            }   
+            if ( classifiers != null )
+            {   
+                throw new MojoExecutionException( "You must specify 'files' if you specify 'classifiers'" );
+            }       
+        }       
 
         List attachedArtifacts = project.getAttachedArtifacts();
 
