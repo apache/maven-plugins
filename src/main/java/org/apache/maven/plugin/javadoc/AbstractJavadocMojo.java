@@ -838,9 +838,9 @@ public abstract class AbstractJavadocMojo
     private String show;
 
     /**
-     * Necessary to enable javadoc to handle assertions present in J2SE v 1.4 source code.
+     * Necessary to enable javadoc to handle assertions introduced in J2SE v 1.4 source code or generics introduced in J2SE v5.
      * <br/>
-     * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#source">source</a>.
+     * See <a href="http://download.oracle.com/javase/6/docs/technotes/tools/windows/javadoc.html#source">source</a>.
      * <br/>
      * Since <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/javadoc/whatsnew-1.4.html#summary">Java 1.4</a>.
      *
