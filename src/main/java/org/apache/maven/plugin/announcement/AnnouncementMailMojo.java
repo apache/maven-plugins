@@ -26,6 +26,9 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
+
 import org.apache.maven.model.Developer;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.announcement.mailsender.ProjectJavamailMailSender;
@@ -81,12 +84,27 @@ public class AnnouncementMailMojo
     private String mailContentType;
 
     /**
-     * Defines the sender of the announcement if the list of developer is empty or
-     * if the sender is not a member of the development team.
+     * Defines the sender of the announcement email. This takes precedence over the list
+     * of developers specified in the POM.
+     * if the sender is not a member of the development team. Note that since this is a bean type,
+     * you cannot specify it from command level with <pre>-D</pre>. Use 
+     * <pre>-Dchanges.sender='Your Name &lt;you@domain>'</pre> instead.
      *
      * @parameter expression="${changes.mailSender}"
      */
     private MailSender mailSender;
+    
+    /**
+     * Defines the sender of the announcement. This takes precedence over both ${changes.mailSender}
+     * and the list of developers in the POM. 
+     * 
+     * This parameter parses an email address in standard RFC822 format, e.g.
+     * <pre>-Dchanges.sender='Your Name &lt;you@domain>'</pre>.
+     *
+     * @parameter expression="${changes.sender}"
+     * @since 2.7
+     */
+    private String senderString;
 
     /**
      * The password used to send the email.
@@ -345,6 +363,18 @@ public class AnnouncementMailMojo
     protected MailSender getActualMailSender()
         throws MojoExecutionException
     {
+        if (senderString != null) 
+        {
+            try
+            {
+                InternetAddress ia = new InternetAddress(senderString, true);
+                return new MailSender(ia.getPersonal(), ia.getAddress());
+            }
+            catch ( AddressException e )
+            {
+                throw new MojoExecutionException("Invalid value for change.sender: ", e);
+            }
+        }
         if ( mailSender != null && mailSender.getEmail() != null )
         {
             return mailSender;
