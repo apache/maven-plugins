@@ -291,7 +291,7 @@ public class AnnouncementMailMojo
                 mailMsg.addTo( email, "" );
             }
 
-            if(getCcAddresses() != null)
+            if ( getCcAddresses() != null )
             {
                 final Iterator it2 = getCcAddresses().iterator();
                 while ( it2.hasNext() )
@@ -302,7 +302,7 @@ public class AnnouncementMailMojo
                 }
             }
 
-            if(getBccAddresses() != null)
+            if ( getBccAddresses() != null )
             {
                 final Iterator it3 = getBccAddresses().iterator();
                 while ( it3.hasNext() )
@@ -363,16 +363,16 @@ public class AnnouncementMailMojo
     protected MailSender getActualMailSender()
         throws MojoExecutionException
     {
-        if (senderString != null) 
+        if ( senderString != null )
         {
             try
             {
-                InternetAddress ia = new InternetAddress(senderString, true);
-                return new MailSender(ia.getPersonal(), ia.getAddress());
+                InternetAddress ia = new InternetAddress( senderString, true );
+                return new MailSender( ia.getPersonal(), ia.getAddress() );
             }
             catch ( AddressException e )
             {
-                throw new MojoExecutionException("Invalid value for change.sender: ", e);
+                throw new MojoExecutionException( "Invalid value for change.sender: ", e );
             }
         }
         if ( mailSender != null && mailSender.getEmail() != null )
