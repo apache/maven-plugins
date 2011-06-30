@@ -60,7 +60,7 @@ under the License.
     <module>maven-help-plugin</module>
     <module>maven-idea-plugin</module>
     <module>maven-install-plugin</module>
-    <!--Excluded as a workaround for MNG-3814
+    <!--Moved to maven-3 profile as a workaround for MNG-3814
     <module>maven-invoker-plugin</module>-->
     <module>maven-jar-plugin</module>
     <module>maven-jarsigner-plugin</module>
@@ -70,11 +70,11 @@ under the License.
     <module>maven-patch-plugin</module>
     <module>maven-pdf-plugin</module>
     <module>maven-pmd-plugin</module>
-    <!--Excluded as a workaround for MNG-3814
+    <!--Moved to maven-3 profile as a workaround for MNG-3814
     <module>maven-project-info-reports-plugin</module>-->
     <module>maven-rar-plugin</module>
     <module>maven-reactor-plugin</module>
-    <!--Excluded as a workaround for MNG-3814
+    <!--Moved to maven-3 profile as a workaround for MNG-3814
     <module>maven-remote-resources-plugin</module-->
     <module>maven-repository-plugin</module>
     <module>maven-resources-plugin</module>
