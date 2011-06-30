@@ -59,6 +59,10 @@ Pre-defined Descriptor Files
   This built-in descriptor produces an assembly with the classifier
   <<<jar-with-dependencies>>> using the JAR archive format.
 
+  Note that <<<jar-with-dependencies>>> provides only basic support for uber-jars. 
+  For more control, use the
+  {{{http://maven.apache.org/plugins/maven-shade-plugin/} Maven Shade Plugin}}.
+
   Below is the <<<jar-with-dependencies>>> descriptor format:
 
 %{snippet|id=jar-with-dependencies|file=src/main/resources/assemblies/jar-with-dependencies.xml}
