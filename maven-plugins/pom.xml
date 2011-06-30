@@ -257,18 +257,12 @@ under the License.
         <plugins>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-project-info-reports-plugin</artifactId>
-            <version>2.2</version>
-          </plugin>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-checkstyle-plugin</artifactId>
             <version>2.6</version>
           </plugin>
-          <plugin>
+          <plugin><!-- to be removed when upgrading parent to 21 -->
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-javadoc-plugin</artifactId>
-            <version>2.7</version>
             <configuration>
               <tagletArtifacts>
                 <tagletArtifact>
@@ -297,7 +291,7 @@ under the License.
       </activation>
       <build>
         <plugins>
-          <!-- if releasing current pom with maven 3 site descriptor must be attached -->
+          <!-- if releasing current pom with Maven 3, site descriptor must be attached -->
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-site-plugin</artifactId>
