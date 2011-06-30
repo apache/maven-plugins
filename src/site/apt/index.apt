@@ -38,10 +38,11 @@ Maven Assembly Plugin
   Your project can build distribution "assemblies" easily, using one of the
   convenient, {{{./descriptor-refs.html}prefabricated assembly descriptors}}.
   These descriptors handle many common operations, such as packaging a project's
-  artifact along with its dependencies in a single JAR. Alternatively, your
-  project can provide its own {{{./assembly.html}descriptor}} and assume a much
-  higher level of control over how dependencies, modules, file-sets, and
-  individual files are packaged in the assembly.
+  artifact along with generated documentation into a 
+  {{{./descriptor-refs.html#bin}single zip archive}}. 
+  Alternatively, your project can provide its own {{{./assembly.html}descriptor}} 
+  and assume a much higher level of control over how dependencies, modules, 
+  file-sets, and individual files are packaged in the assembly.
 
   Currently it can create distributions in the following formats:
 
@@ -59,6 +60,10 @@ Maven Assembly Plugin
 
     * and any other format that the ArchiveManager has been configured for
 
+  If your project wants to package your artifact in an uber-jar, the assembly
+  plugin provides only basic support. For more control, use the
+  {{{http://maven.apache.org/plugins/maven-shade-plugin/} Maven Shade Plugin}}.
+
   To use the Assembly Plugin in Maven, you simply need to:
 
     * choose or write the assembly descriptor to use,
@@ -69,7 +74,6 @@ Maven Assembly Plugin
 
   To write your own custom assembly, you will need to refer to the
   {{{./assembly.html}Assembly Descriptor Format}} reference.
-
 
 * What is an Assembly?
 

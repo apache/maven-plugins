@@ -56,8 +56,9 @@ Advanced Module-Set Topics
   The following examples describe how to select certain modules in the project
   hierarchy using basic artifact includes/excludes. It does <<not>> describe
   what to do with the selected modules; to learn about the actions available for
-  selected modules, see {{including module sources}} and {{including module
-  binaries}} below. For other, more advanced module-handling options, read on!
+  selected modules, see {{{Including_Module_Sources}including module sources}} 
+  and {{{Including_Module_Binaries}including module binaries}} 
+  below. For other, more advanced module-handling options, read on!
 
 ** Example: Select one from a set of child projects
 
@@ -137,7 +138,7 @@ ${module.groupId}-${module.artifactId}-${module.version}.${module.extension}
   to determine what you want included from each module. This usually depends on
   the purpose of the assembly. For instance, if you're building a binary
   assembly, for use in a runtime context, you probably want to include module
-  binaries only (see the {{Including Module Binaries}} section below). However,
+  binaries only (see the {{Including_Module_Binaries}} section below). However,
   if your assembly is meant to include project sources, either as a reference or
   to allow users to build your project (or for some other reason altogether),
   then you're probably interested in the <<<sources>>> section of the
