@@ -737,7 +737,10 @@ public class EclipsePluginIT
         testProject( "project-62-MECLIPSE-561" );
     }
 
-    
+    public void testGroovy()
+        throws Exception {
+        testProject("groovy");
+    }
     
     public void testJeeSimple()
         throws Exception
