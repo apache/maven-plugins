@@ -29,7 +29,29 @@ Resource Transformers
   overlap. Otherwise, some kind of logic to merge resources from several JARs is required. This is where resource
   transformers kick in.
 
-* Merging Plexus Component Descriptors
+  
+*-----------------------------------------+--------------------------------------+
+| {{ApacheLicenseResourceTransformer}}    | Prevents license duplication         |
+*-----------------------------------------+--------------------------------------+
+| ApacheNoticeResourceTransformer         | Prepares merged NOTICE               |
+*-----------------------------------------+--------------------------------------+
+| {{AppendingTransformer}}                | Adds content to a resource           |
+*-----------------------------------------+--------------------------------------+
+| {{ComponentsXmlResourceTransformer}}    | Aggregates Plexus <<<components.xml>>>|
+*-----------------------------------------+--------------------------------------+
+| {{DontIncludeResourceTransformer}}      | Prevents inclusion of matching resources |
+*-----------------------------------------+--------------------------------------+
+| {{IncludeResourceTransformer}}          | Adds files from the project          |
+*-----------------------------------------+--------------------------------------+
+| {{ManifestResourceTransformer}}         | Sets entries in the <<<MANIFEST>>>   |
+*-----------------------------------------+--------------------------------------+
+| {{ServicesResourceTransformer}}         | Merges <<<META-INF/services>>> resources |
+*-----------------------------------------+--------------------------------------+
+| {{XmlAppendingTransformer}}             | Adds XML content to an XML resource  | 
+*-----------------------------------------+--------------------------------------+
+Transformers in <<<org.apache.maven.plugins.shade.resource>>>
+  
+* Merging Plexus Component Descriptors with the {ComponentsXmlResourceTransformer}
 
   JARs for components targeting the Plexus IoC container contain a <<<META-INF/plexus/components.xml>>> entry that
   declares the component and its requirements. If the uber JAR aggregates multiple Plexus components, a
@@ -67,7 +89,7 @@ Resource Transformers
   Since plugin version 1.3, this resource transformer will also update the descriptor to account for relocation of
   component interfaces/implementations (if any).
 
-* Concatenating Service Entries
+* Concatenating Service Entries with the {ServicesResourceTransformer}
 
   JAR files providing implementations of some interfaces often ship with a <<<META-INF/services/>>> directory that
   maps interfaces to their implementation classes for lookup by the service locator. To merge multiple implementations
@@ -102,7 +124,7 @@ Resource Transformers
 </project>
 +-----
 
-* Merging Content of Specific Files
+* Merging Content of Specific Files with {AppendingTransformer} and XmlAppendingTransformer
 
   Some jars contain additional resources (such as properties files) that have the same file name. To avoid overwriting, you can
   opt to merge them by appending their content into one file. One good example for this is when aggregating both the spring-context 
@@ -143,7 +165,7 @@ Resource Transformers
 </project>
 +----- 
 
-  For XML files, you can use the <<<XmlAppendingTransformer>>> instead:
+  For XML files, you can use the <<<{XmlAppendingTransformer}>>> instead:
 
 +-----
 <project>
@@ -184,3 +206,177 @@ Resource Transformers
   transformation, e.g. when using the Crimson XML parser as used in some JRE 1.4. If the transformed resource uses
   external entities, DTD resolution can either be turned back on or a plugin dependency on <<<xerces:xercesImpl:2.9.1>>>
   is added to the POM.
+
+* Excluding Resources with the {DontIncludeResourceTransformer}
+
+  The <<<DontIncludeResourceTransformer>>> allows resources to be excluded when
+  their name ends in a given value.
+
+  For example, the following sample excludes all resources ending in <<<.txt>>>.
+
++-----
+<project>
+  ...
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>${project.version}</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <transformers>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.DontIncludeResourceTransformer">
+                    <resource>.txt</resource>
+                </transformer>
+              </transformers>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  ...
+</project>
++----- 
+
+* Adding New Resources with the {IncludeResourceTransformer}
+
+  The <<<IncludeResourceTransformer>>> allows project files to be included in
+  the package under a given name.
+
+  For example, the following sample includes <<<README.txt>>> in the package
+  as <<<README>>> in the <<<META-INF>>> directory.
+
++-----
+<project>
+  ...
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>${project.version}</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <transformers>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.IncludeResourceTransformer">
+                    <resource>META-INF/README</resource>
+                    <file>README.txt</file>
+                </transformer>
+              </transformers>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  ...
+</project>
++----- 
+
+
+* Setting Manifest Entries with the {ManifestResourceTransformer}
+
+  The <<<ManifestResourceTransformer>>> allows existing entries in the <<<MANIFEST>>>
+  to be replaced and new entries added. 
+
+  For example, the following sample sets
+   
+    * the <<<Main-Class>>> entry to the value of the <<<app.main.class>>> property,
+                            
+    * the <<<X-Compile-Source-JDK>>> entry to the value of the <<<maven.compile.source>>> property and
+                            
+    * the <<<X-Compile-Target-JDK>>> entry to the value of the <<<maven.compile.target>>> property.
+
+                            
++-----
+<project>
+  ...
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>${project.version}</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <transformers>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                  <manifestEntries>
+                    <Main-Class>${app.main.class}</Main-Class>
+                    <X-Compile-Source-JDK>${maven.compile.source}</X-Compile-Source-JDK>
+                    <X-Compile-Target-JDK>${maven.compile.target}</X-Compile-Target-JDK>
+                  </manifestEntries>
+                </transformer>
+              </transformers>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  ...
+</project>
++----- 
+
+
+* Licensing
+
+** Preventing License Duplication with the {ApacheLicenseResourceTransformer}
+
+  Some open source producers 
+  (including the {{{http://www.apache.org} Apache Software Foundation}}) 
+  include a copy of their license in the META-INF directory. These are conventionally named
+  either <<<LICENSE>>> or <<<LICENSE.txt>>>. When merging these dependencies, adding these
+  resources may cause confusion.
+  The <<<ApacheLicenseResourceTransformer>>> ensures that duplicate licenses (named according
+  to this convention) are not merged. 
+
+  For example, the following prevents the license from a <<<commons-collections>>> dependency
+  being merged in
+                            
++-----
+<project>
+  ...
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>${project.version}</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <transformers>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ApacheLicenseResourceTransformer">
+                </transformer>
+              </transformers>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  ...
+</project>
++----- 
