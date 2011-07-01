@@ -57,6 +57,12 @@ under the License.
       <version>0.2</version>
       <classifier>client</classifier>
     </dependency>
+    <dependency>
+      <groupId>org.apache.maven.its.shade.drp</groupId>
+      <artifactId>c</artifactId>
+      <version>1</version>
+      <type>pom</type>
+    </dependency>
   </dependencies>
 
   <build>
@@ -73,6 +79,8 @@ under the License.
               <goal>shade</goal>
             </goals>
             <configuration>
+	      <!-- allow testing that pom dependencies are omitted with p-t-d -->
+	      <promoteTransitiveDependencies>true</promoteTransitiveDependencies>
               <shadedArtifactAttached>false</shadedArtifactAttached>
               <createDependencyReducedPom>true</createDependencyReducedPom>
             </configuration>
