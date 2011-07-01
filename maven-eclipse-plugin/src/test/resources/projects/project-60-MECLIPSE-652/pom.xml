@@ -23,6 +23,7 @@
         <artifactId>maven-eclipse-plugin</artifactId>
         <version>test</version>
         <configuration>
+          <workspace>${basedir}/../../eclipse/workspaceDoesNotExist</workspace>
           <wtpversion>2.0</wtpversion>
           <wtpContextName>ROOT</wtpContextName>
         </configuration>

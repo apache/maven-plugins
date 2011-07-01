@@ -15,6 +15,7 @@
 				<artifactId>maven-eclipse-plugin</artifactId>
 				<version>test</version>
 				<configuration>
+          <workspace>${basedir}/../../eclipse/workspaceDoesNotExist</workspace>
 					<linkedResources>
 						<linkedResource>
 							<name>src/test/resources/oracle-ds.xml</name>

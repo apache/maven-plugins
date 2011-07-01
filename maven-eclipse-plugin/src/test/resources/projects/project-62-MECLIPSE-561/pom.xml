@@ -12,6 +12,7 @@
         <artifactId>maven-eclipse-plugin</artifactId>
         <version>test</version>
         <configuration>
+          <workspace>${basedir}/../../eclipse/workspaceDoesNotExist</workspace>
           <testSourcesLast>true</testSourcesLast>
         </configuration>
       </plugin>
