@@ -757,6 +757,12 @@ public class ShadeMojo
         {
             Artifact artifact = (Artifact) it.next();
 
+          if ( "pom".equals( artifact.getType() ) )
+          {
+              // don't include pom type dependencies in dependency reduced pom
+              continue;
+          }
+            
             //promote
             Dependency dep = new Dependency();
             dep.setArtifactId( artifact.getArtifactId() );
