@@ -75,6 +75,7 @@ under the License.
           <artifactId>maven-eclipse-plugin</artifactId>
           <version>2.4</version>
           <configuration>
+            <workspace>${basedir}/../../eclipse/workspaceDoesNotExist</workspace>
 <!--
             <projectNameTemplate>[groupId].[artifactId]</projectNameTemplate>
 -->
