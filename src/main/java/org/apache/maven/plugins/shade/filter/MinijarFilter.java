@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -79,8 +80,34 @@ public class MinijarFilter
         }
 
         removable = cp.getClazzes();
+        removePackages(artifactUnit);
         removable.removeAll( artifactUnit.getClazzes() );
         removable.removeAll( artifactUnit.getTransitiveDependencies() );
+    }
+
+    private void removePackages(ClazzpathUnit artifactUnit)
+    {
+        Set packageNames = new HashSet();
+        removePackages(artifactUnit.getClazzes(), packageNames);
+        removePackages(artifactUnit.getTransitiveDependencies(), packageNames);
+    }
+
+    private void removePackages(Set clazzes, Set packageNames)
+    {
+        Iterator it = clazzes.iterator();
+        while(it.hasNext())
+        {
+            Clazz clazz = (Clazz) it.next();
+            String name = clazz.getName();
+            while(name.contains("."))
+            {
+                name = name.substring(0, name.lastIndexOf('.'));
+                if(packageNames.add(name))
+                {
+                    removable.remove(new Clazz(name + ".package-info"));
+                }
+            }
+        }
     }
 
     public boolean canFilter( File jar )
