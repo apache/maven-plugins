@@ -49,7 +49,7 @@ public class ApacheNoticeResourceTransformer
     Set entries = new LinkedHashSet();
     Map organizationEntries = new LinkedHashMap();
 
-    String projectName;
+    String projectName = ""; // MSHADE-101 :: NullPointerException when projectName is missing
     boolean addHeader = true;
 
     String preamble1 =
