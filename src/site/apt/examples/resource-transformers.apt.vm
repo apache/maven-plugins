@@ -33,7 +33,7 @@ Resource Transformers
 *-----------------------------------------+--------------------------------------+
 | {{ApacheLicenseResourceTransformer}}    | Prevents license duplication         |
 *-----------------------------------------+--------------------------------------+
-| ApacheNoticeResourceTransformer         | Prepares merged NOTICE               |
+| {{ApacheNoticeResourceTransformer}}     | Prepares merged NOTICE               |
 *-----------------------------------------+--------------------------------------+
 | {{AppendingTransformer}}                | Adds content to a resource           |
 *-----------------------------------------+--------------------------------------+
@@ -369,6 +369,46 @@ Transformers in <<<org.apache.maven.plugins.shade.resource>>>
             <configuration>
               <transformers>
                 <transformer implementation="org.apache.maven.plugins.shade.resource.ApacheLicenseResourceTransformer">
+                </transformer>
+              </transformers>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  ...
+</project>
++----- 
+
+** Aggregating Notices with the {ApacheNoticeResourceTransformer}
+
+  Some licenses 
+  (including the {{{http://www.apache.org/licenses/LICENSE-2.0.html} Apache License, Version 2}})
+  require that notices are preserved by downstream distributors. <<<ApacheNoticeResourceTransformer>>>
+  automates the assembly of an appropriate <<<NOTICE>>>.
+
+  For example, to simply merge in dependent notices:
+                            
++-----
+<project>
+  ...
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>${project.version}</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <transformers>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ApacheNoticeResourceTransformer">
+                    <addHeader>false</addHeader>
                 </transformer>
               </transformers>
             </configuration>
