@@ -31,9 +31,11 @@ Maven Plugins Parent POM
     This POM is the common parent of all of the Maven plugins
     in the Apache Maven project.
 
-    Every Maven plugin provide ITs (Integration Tests) to check real plugin execution.
-    Nothing is defined in this parent POM about ITs since every project has its own requirements
-    to run its ITs, but by convention, these ITs are defined by every plugin in a <<<run-its>>> profile:
+The <<<run-its>>> Profile
+
+    This POM provides <<<run-its>>> profile for running Integration Tests to check real plugin execution.
+    A default configuration for <<<maven-invoker-plugin>>> is defined, that every plugin needs to enhance
+    to match its prerequisite. Then ITs are launched in every plugin with following command:
 
 +---
 mvn -Prun-its verify
