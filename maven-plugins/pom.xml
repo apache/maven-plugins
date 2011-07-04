@@ -275,7 +275,8 @@ under the License.
                 <id>integration-test</id>
                 <goals>
                   <goal>install</goal>
-                  <goal>run</goal>
+                  <goal>integration-test</goal>
+                  <goal>verify</goal>
                 </goals>
               </execution>
             </executions>
