@@ -104,6 +104,13 @@ public class GetMojo
     private String version;
 
     /**
+     * The classifier of the artifact to download. Ignored if {@link #artifact} is used.
+     * @parameter expression="${classifier}"
+     * @since 2.3
+     */
+    private String classifier;
+
+    /**
      * The packaging of the artifact to download
      * @parameter expression="${packaging}" default-value="jar"
      */
@@ -129,7 +136,7 @@ public class GetMojo
     private String remoteRepositories;
 
     /**
-     * A string of the form groupId:artifactId:version[:packaging].
+     * A string of the form groupId:artifactId:version[:packaging][:classifier].
      * @parameter expression="${artifact}"
      */
     private String artifact;
@@ -160,20 +167,32 @@ public class GetMojo
         if ( artifactId == null )
         {
             String[] tokens = StringUtils.split( artifact, ":" );
-            if ( tokens.length != 3 && tokens.length != 4 )
+            if ( tokens.length < 3 && tokens.length > 5 )
             {
-                throw new MojoFailureException( "Invalid artifact, you must specify "
-                    + "groupId:artifactId:version[:packaging] " + artifact );
+                throw new MojoFailureException(
+                    "Invalid artifact, you must specify groupId:artifactId:version[:packaging][:classifier] "
+                        + artifact );
             }
             groupId = tokens[0];
             artifactId = tokens[1];
             version = tokens[2];
-            if ( tokens.length == 4 )
+            if ( tokens.length >= 4 )
             {
                 packaging = tokens[3];
             }
+            if ( tokens.length == 5 )
+            {
+                classifier = tokens[4];
+            }
+            else
+            {
+                classifier = null;
+            }
         }
-        Artifact toDownload = artifactFactory.createBuildArtifact( groupId, artifactId, version, packaging );
+
+        Artifact toDownload = classifier == null
+            ? artifactFactory.createBuildArtifact( groupId, artifactId, version, packaging )
+            : artifactFactory.createArtifactWithClassifier( groupId, artifactId, version, packaging, classifier );
         Artifact dummyOriginatingArtifact =
             artifactFactory.createBuildArtifact( "org.apache.maven.plugins", "maven-downloader-plugin", "1.0", "jar" );
 
