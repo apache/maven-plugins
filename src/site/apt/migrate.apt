@@ -3,7 +3,7 @@
  ------
  Dennis Lundberg
  ------
- 2010-08-11
+ 2011-07-05
  ------
 
  ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -35,10 +35,9 @@ Migrate
 
 * From 2.x to 3.0
 
-  * Version 3 of the plugin requires at least <<Maven 3.0-beta-3>> to run.
+  * Version 3 of the plugin requires at least <<Maven 2.2.0>> to run.
 
-  * Read more at the site for
-  {{{http://maven.apache.org/plugins/maven-site-plugin-3.x/}Maven Site Plugin 3.x}}.
+  * If you use <<Maven 3>> you need to update {{{./maven-3.html}some report plugins versions}}.
 
 ~~ TODO Copy the content from the wiki to here and kill the wiki page when we are ready for the 3.0 release
 
@@ -81,7 +80,3 @@ Migrate
     []
 
   []
-  
-* From 2.x to 3.x
-
-  * <<Maven 3>> need to update {{{./maven-3.html}some report plugins versions}}   
