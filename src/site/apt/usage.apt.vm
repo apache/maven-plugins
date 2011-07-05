@@ -644,6 +644,23 @@ mvn dependency:tree
 mvn dependency:tree -Doutput=/path/to/file
 +-----+
 
+  Also, the <<<outputType>>> parameter can be used to generate different formats of output.  The
+  following formats are currently supported:
+
+   * text
+
+   * dot
+
+   * graphml
+
+   * tgf
+
+   []
+
++-----+
+mvn dependency:tree -Doutput=/path/to/file.graphml -DoutputType=graphml
++-----+
+
 * The <<<dependency:list-repositories>>> Mojo
 
   This mojo is used to list all the repositories that this build depends upon. It will show repositories defined in your settings, 
