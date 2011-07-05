@@ -517,8 +517,8 @@ public class TestUnpackMojo
         time -= 10000;
         // set to known value
         assertTrue( unpackedFile.setLastModified( time ) );
-        // set source to be newer
-        assertTrue( artifact.getFile().setLastModified( time + 4000 ) );
+        // set source to be newer was 4s but test is brittle on MacOS if less than 5s
+        assertTrue( artifact.getFile().setLastModified( time + 5000 ) );
 
         // manually set markerfile (must match getMarkerFile in DefaultMarkerFileHandler)
         File marker = new File( mojo.getMarkersDirectory(), artifact.getId().replace( ':', '-' ) + ".marker" );
