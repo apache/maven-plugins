@@ -20,8 +20,9 @@
   ------
   Allan Ramirez
   Brian Fox
+  Stephen Connolly
   ------
-  Mar 2007
+  Jul 2011
   ------
 
 Copying specific artifacts
@@ -74,10 +75,74 @@ Copying specific artifacts
     Then after executing <<<mvn package>>> the artifact (junit) is copied to the
     given alternateLocation.
 
+    Artifacts are resolved from the following sources in order:
+
+      * The current reactor,
+
+      * The local repository,
+
+      * The configured remote repositories.
+
+      []
+
+    If the artifact cannot be resolved from the above sources then the build
+
+    If the artifact is also listed as a dependency, the <<<version>>> of the <<<artifactItem>>> will default to
+    the version from the <<<dependencies>>> or <<<dependencyManagement>>>, e.g.
+
++---+
+<project>
+  [...]
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+  [...]
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>${project.version}</version>
+        <executions>
+          <execution>
+            <id>copy</id>
+            <phase>package</phase>
+            <goals>
+              <goal>copy</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>junit</groupId>
+                  <artifactId>junit</artifactId>
+                  <overWrite>false</overWrite>
+                  <outputDirectory>\${project.build.directory}/alternateLocation</outputDirectory>
+                  <destFileName>optional-new-name.jar</destFileName>
+                </artifactItem>
+              </artifactItems>
+              <outputDirectory>\${project.build.directory}/wars</outputDirectory>
+              <overWriteReleases>false</overWriteReleases>
+              <overWriteSnapshots>true</overWriteSnapshots>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  [...]
+</project>
++---+
+
     The <<<dependency:copy>>> goal can also be used to copy the just built
     artifact to a custom location if desired. It must be bound after the
-    install phase so that the artifact exists in the repository. The following
-    configuration shows how:
+    to any phase after the package phase so that the artifact exists in the
+    repository. The following configuration shows how (binding to the
+    install phase in this case):
 
 +---+
 <project>

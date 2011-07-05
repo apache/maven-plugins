@@ -55,7 +55,7 @@ Maven Dependency Plugin
 
   *{{{./copy-mojo.html}dependency:copy}} takes a list of artifacts defined in the plugin configuration section and
   copies them to a specified location, renaming them or stripping the version if desired. This goal can resolve
-  the artifacts from remote repositories if they don't exist in local.
+  the artifacts from remote repositories if they don't exist in either the local repository or the reactor.
 
   *{{{./copy-dependencies-mojo.html}dependency:copy-dependencies}} takes the list of project direct dependencies and
   optionally transitive dependencies and copies them to a specified location, stripping the version if desired.
@@ -83,8 +83,7 @@ Maven Dependency Plugin
 
   *{{{./tree-mojo.html}dependency:tree}} displays the dependency tree for this project.
 
-  *{{{./unpack-mojo.html}dependency:unpack}} removes the project dependencies from the local repository, and optionally
-  re-resolve them.
+  *{{{./unpack-mojo.html}dependency:unpack}} like copy but unpacks.
 
   *{{{./unpack-dependencies-mojo.html}dependency:unpack-dependencies}} like
   copy-dependencies but unpacks.
