@@ -1,0 +1,19 @@
+import java.io.*;
+
+File libDir = new File( basedir, "child-b/target/dependency" );
+
+String[] expectedFiles = {
+    "child-a-1.0-SNAPSHOT.jar",
+};
+
+for ( String expectedFile : expectedFiles )
+{
+    File file = new File( libDir, expectedFile );
+    System.out.println( "Checking for existence of " + file );
+    if ( !file.isFile() )
+    {
+        throw new Exception( "Missing file " + file );
+    }
+}
+
+return true;

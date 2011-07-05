@@ -20,9 +20,12 @@ package org.apache.maven.plugin.dependency.fromConfiguration;
  */
 
 import java.io.File;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.ArtifactRepositoryFactory;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
@@ -34,7 +37,9 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.dependency.AbstractDependencyMojo;
 import org.apache.maven.plugin.dependency.utils.DependencyUtil;
 import org.apache.maven.plugin.dependency.utils.filters.ArtifactItemFilter;
+import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.artifact.filter.collection.ArtifactFilterException;
+import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
@@ -92,6 +97,15 @@ public abstract class AbstractFromConfigurationMojo
      * @parameter expression="${mdep.overIfNewer}" default-value="true"
      */
     private boolean overWriteIfNewer;
+
+    /**
+     * To search for artifacts within the reactor and ensure consistent behaviour between Maven 2 and Maven 3.
+     *
+     * @parameter expression="${reactorProjects}"
+     * @required
+     * @readonly
+     */
+    protected List<MavenProject> reactorProjects;
 
     /**
      * Collection of ArtifactItems to work on. (ArtifactItem contains groupId, artifactId, version, type, classifier,
@@ -237,6 +251,13 @@ public abstract class AbstractFromConfigurationMojo
                                                   Artifact.SCOPE_COMPILE );
         }
 
+        // Maven 3 will search the reactor for the artifact but Maven 2 does not
+        // to keep consistent behaviour, we search the reactor ourselves.
+        Artifact result = getArtifactFomReactor( artifact );
+        if ( result != null )
+        {
+            return result;
+        }
         try
         {
             // mdep-50 - rolledback for now because it's breaking some functionality.
@@ -264,6 +285,71 @@ public abstract class AbstractFromConfigurationMojo
     }
 
     /**
+     * Checks to see if the specified artifact is available from the reactor.
+     * @param artifact The artifact we are looking for.
+     * @return The resolved artifact that is the same as the one we were looking for or <code>null</code> if one could
+     * not be found.
+     */
+    private Artifact getArtifactFomReactor( Artifact artifact )
+    {
+        // check project dependencies first off
+        for ( Artifact a : (Set<Artifact>) project.getArtifacts() )
+        {
+            if ( equals( artifact, a ) && hasFile( a ) )
+            {
+                return a;
+            }
+        }
+        // check reactor projects
+        for ( MavenProject p : reactorProjects == null ? Collections.<MavenProject>emptyList() : reactorProjects )
+        {
+            // check the main artifact
+            if ( equals( artifact, p.getArtifact() ) && hasFile( p.getArtifact() ) )
+            {
+                return p.getArtifact();
+            }
+            // check any side artifacts
+            for ( Artifact a : (List<Artifact>) p.getAttachedArtifacts() )
+            {
+                if ( equals( artifact, a ) && hasFile( a ) )
+                {
+                    return a;
+                }
+            }
+        }
+        // not available
+        return null;
+    }
+
+    /**
+     * Returns <code>true</code> if the artifact has a file.
+     * @param artifact the artifact (may be null)
+     * @return <code>true</code> if and only if the artifact is non-null and has a file.
+     */
+    private static boolean hasFile( Artifact artifact )
+    {
+        return artifact != null && artifact.getFile() != null && artifact.getFile().isFile();
+    }
+
+    /**
+     * Null-safe compare of two artifacts based on groupId, artifactId, version, type and classifier.
+     * @param a the first artifact.
+     * @param b the second artifact.
+     * @return <code>true</code> if and only if the two artifacts have the same groupId, artifactId, version,
+     * type and classifier.
+     */
+    private static boolean equals( Artifact a, Artifact b )
+    {
+        return a == b
+            || !( a == null || b == null )
+            && StringUtils.equals( a.getGroupId(), b.getGroupId() )
+            && StringUtils.equals( a.getArtifactId(), b.getArtifactId() )
+            && StringUtils.equals( a.getVersion(), b.getVersion() )
+            && StringUtils.equals( a.getType(), b.getType() )
+            && StringUtils.equals( a.getClassifier(), b.getClassifier() );
+    }
+
+    /**
      * Tries to find missing version from dependency list and dependency management. If found, the artifact is updated
      * with the correct version. It will first look for an exact match on artifactId/groupId/classifier/type and if it
      * doesn't find a match, it will try again looking for artifactId and groupId only.
@@ -275,7 +361,9 @@ public abstract class AbstractFromConfigurationMojo
         throws MojoExecutionException
     {
         List<Dependency> deps = project.getDependencies();
-        List<Dependency> depMngt = project.getDependencyManagement().getDependencies();
+        List<Dependency> depMngt = project.getDependencyManagement() == null
+            ? Collections.<Dependency>emptyList()
+            : project.getDependencyManagement().getDependencies();
 
         if ( !findDependencyVersion( artifact, deps, false )
             && ( project.getDependencyManagement() == null || !findDependencyVersion( artifact, depMngt, false ) )
