@@ -85,7 +85,7 @@ under the License.
   <properties>
     <mavenVersion>2.0.9</mavenVersion>
     <doxiaVersion>1.0</doxiaVersion>
-    <pluginTestingVersion>1.3-SNAPSHOT</pluginTestingVersion>
+    <pluginTestingVersion>1.2</pluginTestingVersion>
   </properties>
 
   <dependencies>
