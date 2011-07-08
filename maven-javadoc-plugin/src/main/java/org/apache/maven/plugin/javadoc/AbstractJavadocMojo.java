@@ -65,6 +65,8 @@ import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.artifact.resolver.MultipleArtifactsNotFoundException;
 import org.apache.maven.artifact.resolver.filter.AndArtifactFilter;
+import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
+import org.apache.maven.artifact.resolver.filter.IncludesArtifactFilter;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.apache.maven.execution.MavenSession;
@@ -2156,18 +2158,22 @@ public abstract class AbstractJavadocMojo
         final List<String> dependencyIncludes = dependencySourceIncludes;
         final List<String> dependencyExcludes = dependencySourceExcludes;
 
-        if ( isNotEmpty( dependencyIncludes ) || isNotEmpty( dependencyExcludes ) )
+        if ( !includeTransitiveDependencySources
+             || isNotEmpty( dependencyIncludes ) || isNotEmpty( dependencyExcludes ) )
         {
+            if ( !includeTransitiveDependencySources )
+            {
+                andFilter.add( createDependencyArtifactFilter() );
+            }
+
             if ( isNotEmpty( dependencyIncludes ) )
             {
-                andFilter.add( new PatternIncludesArtifactFilter( dependencyIncludes,
-                                                                  !includeTransitiveDependencySources ) );
+                andFilter.add( new PatternIncludesArtifactFilter( dependencyIncludes, false ) );
             }
 
             if ( isNotEmpty( dependencyExcludes ) )
             {
-                andFilter.add( new PatternExcludesArtifactFilter( dependencyExcludes,
-                                                                  !includeTransitiveDependencySources ) );
+                andFilter.add( new PatternExcludesArtifactFilter( dependencyExcludes, false ) );
             }
 
             config.withFilter( andFilter );
@@ -2187,6 +2193,25 @@ public abstract class AbstractJavadocMojo
             throw new MavenReportException( "Failed to resolve one or more javadoc source/resource artifacts:\n\n"
                 + e.getMessage(), e );
         }
+    }
+
+    /**
+     * Returns a ArtifactFilter that only includes direct dependencies of this project
+     * (verified via groupId and artifactId).
+     *
+     * @return
+     */
+    private ArtifactFilter createDependencyArtifactFilter()
+    {
+        Set<Artifact> dependencyArtifacts =  project.getDependencyArtifacts();
+
+        List<String> artifactPatterns = new ArrayList<String>(dependencyArtifacts.size());
+        for (Artifact artifact : dependencyArtifacts)
+        {
+            artifactPatterns.add(artifact.getGroupId() + ":" + artifact.getArtifactId());
+        }
+
+        return new IncludesArtifactFilter(artifactPatterns);
     }
 
     /**
@@ -2733,9 +2758,8 @@ public abstract class AbstractJavadocMojo
 
         if ( StringUtils.isEmpty( path.toString() ) && getLog().isWarnEnabled() )
         {
-            getLog().warn(
-                           "No docletpath option was found. Please review <docletpath/> or <docletArtifact/>"
-                               + " or <doclets/>." );
+            getLog().warn( "No docletpath option was found. Please review <docletpath/> or <docletArtifact/>"
+                           + " or <doclets/>." );
         }
 
         return path.toString();

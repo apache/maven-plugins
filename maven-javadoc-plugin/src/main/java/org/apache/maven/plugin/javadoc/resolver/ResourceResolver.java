@@ -329,12 +329,22 @@ public final class ResourceResolver
         final ArtifactRepository localRepo = config.localRepository();
         final List<ArtifactRepository> remoteRepos = config.project().getRemoteArtifactRepositories();
         final ArtifactMetadataSource metadataSource = config.artifactMetadataSource();
+
         final ArtifactFilter filter = config.filter();
+        ArtifactFilter resolutionFilter = null;
+        if ( filter != null )
+        {
+            // Wrap the filter in a ProjectArtifactFilter in order to always include the pomArtifact for resolution.
+            // NOTE that this is necessary, b/c the -sources artifacts are added dynamically to the pomArtifact
+            // and the resolver also checks the dependency trail with the given filter, thus the pomArtifact has
+            // to be explicitly included by the filter, otherwise the -sources artifacts won't be resolved.
+            resolutionFilter = new ProjectArtifactFilter(pomArtifact, filter);
+        }
 
         final ArtifactResolver resolver = config.artifactResolver();
 
-        final ArtifactResolutionResult resolutionResult =
-            resolver.resolveTransitively( artifactSet, pomArtifact, localRepo, remoteRepos, metadataSource, filter );
+        final ArtifactResolutionResult resolutionResult = resolver.resolveTransitively(
+                artifactSet, pomArtifact, localRepo, remoteRepos, metadataSource, resolutionFilter );
 
         final List<String> result = new ArrayList<String>( artifacts.size() );
         for ( final Artifact a : (Collection<Artifact>) resolutionResult.getArtifacts() )
@@ -389,21 +399,24 @@ public final class ResourceResolver
     {
         final List<String> dirs = new ArrayList<String>();
 
-        if ( config.includeCompileSources() )
+        if ( config.filter() == null || config.filter().include( artifact ) )
         {
-            final List<String> srcRoots = reactorProject.getCompileSourceRoots();
-            for ( final String root : srcRoots )
+            if ( config.includeCompileSources() )
             {
-                dirs.add( root );
+                final List<String> srcRoots = reactorProject.getCompileSourceRoots();
+                for ( final String root : srcRoots )
+                {
+                    dirs.add( root );
+                }
             }
-        }
 
-        if ( config.includeTestSources() )
-        {
-            final List<String> srcRoots = reactorProject.getTestCompileSourceRoots();
-            for ( final String root : srcRoots )
+            if ( config.includeTestSources() )
             {
-                dirs.add( root );
+                final List<String> srcRoots = reactorProject.getTestCompileSourceRoots();
+                for ( final String root : srcRoots )
+                {
+                    dirs.add( root );
+                }
             }
         }
 
