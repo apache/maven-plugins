@@ -239,7 +239,6 @@ public class ResourcesMojo
     public void contextualize( Context context )
         throws ContextException
     {
-        getLog().debug( "execute contextualize" );
         plexusContainer = (PlexusContainer) context.get( PlexusConstants.PLEXUS_KEY );
     }
 
