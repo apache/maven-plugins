@@ -120,7 +120,7 @@ Maven Site Plugin with Maven 3.x
   
 ** New Configuration (Maven 3)
 
-  Reports are configured in the configuration for <<<maven-site-plugin>>> as <<<\<reportPlugins\>>>> elements.
+  Reports can be configured in the configuration for <<<maven-site-plugin>>> as <<<\<reportPlugins\>>>> elements.
 
 +-----+
   <build>
@@ -157,6 +157,11 @@ Maven Site Plugin with Maven 3.x
     </plugins>
   </build>
 +-----+
+
+  Notice that as of Maven 3.0.x, the new format does not support report plugins configuration inheritance: see
+  {{{http://jira.codehaus.org/browse/MSITE-484}MSITE-484}}. This format was technically necessary to remove reporting logic
+  from Maven 3, but a new inheritance mecanism still needs to be added to Maven to make it as flexible as old format.
+  Then the new format is not ready for direct use for now.
 
 * Version Resolution
 
