@@ -27,6 +27,7 @@ under the License.
   <skin>
     <groupId>org.apache.maven.skins</groupId>
     <artifactId>maven-stylus-skin</artifactId>
+    <version>1.3</version>
   </skin>
   <body>
     <breadcrumbs>
