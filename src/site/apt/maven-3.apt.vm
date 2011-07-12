@@ -83,7 +83,7 @@ Maven Site Plugin with Maven 3.x
   The content of the configuration has been kept as similar as possible to Maven 2.
   The <<<{{{/shared/maven-reporting-exec/}maven-reporting-exec}}>>> component transforms the configuration on the fly.
 
-** Old configuration (Maven 2)
+** Old configuration (Maven 2 & 3)
 
   Reports are configured in the <<<\<reporting\>>>> section of the POM.
 
@@ -118,9 +118,9 @@ Maven Site Plugin with Maven 3.x
   </reporting>
 +-----+  
   
-** New Configuration (Maven 3)
+** New Configuration (Maven 3 only, no reports configuration inheritance)
 
-  Reports can be configured in the configuration for <<<maven-site-plugin>>> as <<<\<reportPlugins\>>>> elements.
+  Reports can be configured in the configuration for <<<maven-site-plugin>>> too as <<<\<reportPlugins\>>>> elements.
 
 +-----+
   <build>
@@ -178,6 +178,48 @@ Maven Site Plugin with Maven 3.x
 
   <<<site:attach-descriptor>>> have been removed from the built-in lifecycle of Maven 3. Have a look at
   {{{https://cwiki.apache.org/confluence/display/MAVEN/Maven+3.x+Compatibility+Notes#Maven3.xCompatibilityNotes-SiteandReporting}Maven 3.x Compatibility Notes - Site and Reporting}}.
+
+* Using one version of maven-site-plugin for both Maven 2.2.x and Maven 3.x
+
+  Starting with maven-site-plugin 3.0, the plugin can run with both Maven 2.2.x and 3.x. The
+  results should be exactly the same if reports are configured in the old Maven 2 way, in the <<<\<reporting\>>>>
+  section. If you use the new Maven 3 way of configuring reports, in the <<<\<reportPlugins\>>>> section, it will only
+  work with Maven 3.
+
+  The following snipped automatically activates <<<site:attach-descriptor>>> when run with Maven 3.x:
+
++-----+
+  <profiles>
+    <profile>
+      <id>maven-3</id>
+      <activation>
+        <file>
+          <!--  This employs that the basedir expression is only recognized by Maven 3.x (see MNG-2363) -->
+          <exists>${basedir}</exists>
+        </file>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-site-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>attach-descriptor</id>
+                <goals>
+                  <goal>attach-descriptor</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
++-----+
+
+~~ Questions:
+~~ - should we promote adding this goal without profile? (ie. no conflict/duplicate with default binding when under Maven 2.2?)
+~~ - should the attach-descriptor goal activate only if pom packaging? to avoid site.xml deployment for jars, which won't be used later AFAIK
 
 * Using maven-site-plugin 2.x with Maven 2.x and maven-site-plugin 3.x with Maven 3.x
 
@@ -242,10 +284,3 @@ Maven Site Plugin with Maven 3.x
     </pluginManagement>
   </build>
 +-----+
-
-* Using one version of maven-site-plugin for both Maven 2.2.x and Maven 3.x
-
-  Starting with maven-site-plugin 3.0-beta-4, that version of the plugin can run with both Maven 2.2.x and 3.x. The
-  results should be exactly the same if reports are configured in the old Maven 2 way, in the <<<\<reporting\>>>>
-  section. If you use the new Maven 3 way of configuring reports, in the <<<\<reportPlugins\>>>> section, it will only
-  work with Maven 3.
