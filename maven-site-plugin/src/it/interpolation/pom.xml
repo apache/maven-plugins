@@ -39,16 +39,6 @@ under the License.
     <site.repository>file://@project.build.directory@/it/${interpolated}/target/site-deployed/</site.repository>
   </properties>
 
-<!-- FIXME: moving the distMngmnt section from parent to here makes it work!? -->
-<!--
-  <distributionManagement>
-    <site>
-      <id>${site.server}</id>
-      <url>${site.repository}</url>
-    </site>
-  </distributionManagement>
--->
-
   <build>
     <plugins>
       <plugin>

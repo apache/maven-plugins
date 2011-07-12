@@ -638,7 +638,7 @@ public abstract class AbstractDeployMojo
      *
      * @throws MojoExecutionException if no site info is found in the tree.
      */
-    protected static Site getRootSite( MavenProject project )
+    protected Site getRootSite( MavenProject project )
         throws MojoExecutionException
     {
         Site site = getSite( project );
@@ -647,7 +647,8 @@ public abstract class AbstractDeployMojo
 
         while ( parent.getParent() != null )
         {
-            parent = parent.getParent();
+            // MSITE-585, MNG-1943
+            parent = siteTool.getParentProject( parent, reactorProjects, localRepository );
 
             try
             {
