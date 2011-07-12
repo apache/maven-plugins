@@ -31,6 +31,8 @@ under the License.
 
   <properties>
     <interpolated>interpolation</interpolated>
+    <site.server>site-deploy</site.server>
+    <site.repository>file://@project.build.directory@/it/${interpolated}/target/site-deployed/parent/</site.repository>
   </properties>
 
   <distributionManagement>
