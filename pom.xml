@@ -602,10 +602,6 @@ under the License.
               <pomIncludes>
                 <pomInclude>*/pom.xml</pomInclude>
               </pomIncludes>
-              <!-- FIXME: remove! -->
-              <pomExcludes>
-                <pomInclude>interpolation/pom.xml</pomInclude>
-              </pomExcludes>
               <postBuildHookScript>verify</postBuildHookScript>
               <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
               <goals>

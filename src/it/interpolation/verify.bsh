@@ -29,10 +29,11 @@ try
     if ( !target.exists() || !target.isDirectory() )
     {
         System.err.println( "target file is missing or not a directory." );
+        System.err.println( target.getAbsolutePath() );
         result = false;
     }
 
-    File siteDirectory = new File( target, "site-deployed" );
+    File siteDirectory = new File( target, "site-deployed/interpolation" );
     if ( !siteDirectory.exists() || !siteDirectory.isDirectory() )
     {
         System.err.println( "site file is missing or not a directory." );
@@ -44,6 +45,7 @@ try
     if ( !index.exists() || index.isDirectory() )
     {
         System.err.println( "index.html file is missing or a directory." );
+        System.err.println( index.getAbsolutePath() );
         result = false;
     }
 }
