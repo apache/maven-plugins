@@ -115,6 +115,14 @@ public abstract class AbstractDeployMojo
     private String chmodOptions;
 
     /**
+     * Set this to 'true' to skip site deployment.
+     *
+     * @parameter expression="${maven.site.deploy.skip}" default-value="false"
+     * @since 3.0
+     */
+    private boolean skipDeploy;
+
+    /**
      * @component
      */
     private WagonManager wagonManager;
@@ -147,6 +155,12 @@ public abstract class AbstractDeployMojo
     public void execute()
         throws MojoExecutionException
     {
+        if ( skipDeploy )
+        {
+            getLog().info( "maven.site.deploy.skip = true: Skipping site deployment" );
+            return;
+        }
+
         deployTo( new org.apache.maven.plugins.site.wagon.repository.Repository(
             getDeployRepositoryID(),
             appendSlash( getDeployRepositoryURL() ) ) );
@@ -522,7 +536,7 @@ public abstract class AbstractDeployMojo
 
     /**
      * Get proxy information for Maven 3.
-     * 
+     *
      * @param repository
      * @param log
      * @param mavenSession
