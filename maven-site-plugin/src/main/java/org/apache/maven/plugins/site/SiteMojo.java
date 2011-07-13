@@ -84,6 +84,14 @@ public class SiteMojo
     private boolean validate;
 
     /**
+     * Set this to 'true' to skip site generation.
+     *
+     * @parameter expression="${maven.site.skip}" default-value="false"
+     * @since 2.4
+     */
+    private boolean skip;
+
+    /**
      * {@inheritDoc}
      *
      * Generate the project site
@@ -95,6 +103,12 @@ public class SiteMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
+        if ( skip )
+        {
+            getLog().info( "maven.site.skip = true: Skipping site generation" );
+            return;
+        }
+
         checkMavenVersion();
 
         List<MavenReport> filteredReports;
