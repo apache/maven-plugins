@@ -24,10 +24,10 @@ boolean result = true;
 try
 {
 	String tmpDir = System.getProperty( "java.io.tmpdir" );
-	File dirToClean = new File(tmpDir, "www.example.com" );
+	File dirToClean = new File( tmpDir, "www.example.com" );
 	FileUtils.deleteDirectory( dirToClean );
 }
-catch( IOException e )
+catch ( IOException e )
 {
     e.printStackTrace();
     result = false;

@@ -25,28 +25,28 @@ boolean result = true;
 
 try
 {
-    File parentDirectory = new File ( basedir, "parentNotAsRef" );
+    File parentDirectory = new File( basedir, "parentNotAsRef" );
     if ( !parentDirectory.exists() || !parentDirectory.isDirectory() )
     {
         System.err.println( "parent is missing or not a directory." );
         result = false;
     }
 
-    File parentSiteDirectory = new File ( parentDirectory, "target/site" );
+    File parentSiteDirectory = new File( parentDirectory, "target/site" );
     if ( !parentSiteDirectory.exists() || !parentSiteDirectory.isDirectory() )
     {
         System.err.println( "parent site is missing or not a directory." );
         result = false;
     }
 
-    File parentIndex = new File ( parentSiteDirectory, "index.html" );
+    File parentIndex = new File( parentSiteDirectory, "index.html" );
     if ( !parentIndex.exists() || parentIndex.isDirectory() )
     {
         System.err.println( "no index file in parent or is a directory." );
         result = false;
     }
 
-    String content = IOUtil.toString ( new FileInputStream ( parentIndex ), "UTF-8" );
+    String content = FileUtils.fileRead( parentIndex, "UTF-8" );
     int index1 = content.indexOf( "<strong>Parent Relative Home Inherited</strong>" );
     int index2 = content.indexOf( "<strong>Parent Relative Home Inherited with dot</strong>" );
     int index3 = content.indexOf( "<a href=\"./\" title=\"Parent Absolute Home Inherited\">Parent Absolute Home Inherited</a>" );
@@ -83,28 +83,28 @@ try
     // CHILD
 
 
-    File childDirectory = new File ( parentDirectory, "childNotAsRef" );
+    File childDirectory = new File( parentDirectory, "childNotAsRef" );
     if ( !childDirectory.exists() || !childDirectory.isDirectory() )
     {
         System.err.println( "child is missing or not a directory." );
         result = false;
     }
 
-    File childSiteDirectory = new File ( childDirectory, "target/site" );
+    File childSiteDirectory = new File( childDirectory, "target/site" );
     if ( !childSiteDirectory.exists() || !childSiteDirectory.isDirectory() )
     {
         System.err.println( "child site is missing or not a directory." );
         result = false;
     }
 
-    File childIndex = new File ( childSiteDirectory, "index.html" );
+    File childIndex = new File( childSiteDirectory, "index.html" );
     if ( !childIndex.exists() || childIndex.isDirectory() )
     {
         System.err.println( "no index file in child or is a directory." );
         result = false;
     }
 
-    content = IOUtil.toString ( new FileInputStream ( childIndex ), "UTF-8" );
+    content = FileUtils.fileRead( childIndex, "UTF-8" );
     index1 = content.indexOf( "<a href=\"../index.html\" title=\"Parent Relative Home Inherited\">Parent Relative Home Inherited</a>" );
     index2 = content.indexOf( "<a href=\"../index.html\" title=\"Parent Relative Home Inherited with dot\">Parent Relative Home Inherited with dot</a>" );
     index3 = content.indexOf( "<a href=\"../\" title=\"Parent Absolute Home Inherited\">Parent Absolute Home Inherited</a>" );
@@ -137,7 +137,7 @@ try
         result = false;
     }
 
-    File childSummary = new File ( childSiteDirectory, "project-summary.html" );
+    File childSummary = new File( childSiteDirectory, "project-summary.html" );
     if ( !childSummary.exists() || childSummary.isDirectory() )
     {
         System.err.println( "no summary file in child or is a directory." );
@@ -148,28 +148,28 @@ try
     // GRANDCHILD
 
 
-    File grandChildDirectory = new File ( childDirectory, "grandChildNotAsRef" );
+    File grandChildDirectory = new File( childDirectory, "grandChildNotAsRef" );
     if ( !grandChildDirectory.exists() || !grandChildDirectory.isDirectory() )
     {
         System.err.println( "grandchild is missing or not a directory." );
         result = false;
     }
 
-    File grandChildSiteDirectory = new File ( grandChildDirectory, "target/site" );
+    File grandChildSiteDirectory = new File( grandChildDirectory, "target/site" );
     if ( !grandChildSiteDirectory.exists() || !grandChildSiteDirectory.isDirectory() )
     {
         System.err.println( "grandchild site is missing or not a directory." );
         result = false;
     }
 
-    File grandChildIndex = new File ( grandChildSiteDirectory, "index.html" );
+    File grandChildIndex = new File( grandChildSiteDirectory, "index.html" );
     if ( !grandChildIndex.exists() || grandChildIndex.isDirectory() )
     {
         System.err.println( "no index file in grandchild or is a directory." );
         result = false;
     }
 
-    content = IOUtil.toString ( new FileInputStream ( grandChildIndex ), "UTF-8" );
+    content = FileUtils.fileRead( grandChildIndex, "UTF-8" );
     index1 = content.indexOf( "<a href=\"../../index.html\" title=\"Parent Relative Home Inherited\">Parent Relative Home Inherited</a>" );
     index2 = content.indexOf( "<a href=\"../../index.html\" title=\"Parent Relative Home Inherited with dot\">Parent Relative Home Inherited with dot</a>" );
     index3 = content.indexOf( "<a href=\"../../\" title=\"Parent Absolute Home Inherited\">Parent Absolute Home Inherited</a>" );
@@ -202,7 +202,7 @@ try
         result = false;
     }
 
-    File grandChildScm = new File ( grandChildSiteDirectory, "source-repository.html" );
+    File grandChildScm = new File( grandChildSiteDirectory, "source-repository.html" );
     if ( !grandChildScm.exists() || grandChildScm.isDirectory() )
     {
         System.err.println( "no source-repository file in grandchild or is a directory." );
@@ -210,7 +210,7 @@ try
     }
 
 }
-catch( IOException e )
+catch ( IOException e )
 {
     e.printStackTrace();
     result = false;

@@ -28,28 +28,28 @@ try
 {
     // STAGING
 
-    File topLevelDirectory = new File ( basedir, "target/staging" );
+    File topLevelDirectory = new File( basedir, "target/staging" );
     if ( !topLevelDirectory.exists() || !topLevelDirectory.isDirectory() )
     {
         System.err.println( "Staging directory '" + topLevelDirectory + "' is missing or not a directory." );
         return false;
     }
 
-    File moduleDirectory = new File ( topLevelDirectory, "mymodule" );
+    File moduleDirectory = new File( topLevelDirectory, "mymodule" );
     if ( !moduleDirectory.exists() || !moduleDirectory.isDirectory() )
     {
         System.err.println( "Staging module directory '" + moduleDirectory + "' is missing or not a directory." );
         return false;
     }
 
-    File frDirectory = new File ( topLevelDirectory, "fr" );
+    File frDirectory = new File( topLevelDirectory, "fr" );
     if ( !frDirectory.exists() || !frDirectory.isDirectory() )
     {
         System.err.println( "Staging fr directory '" + frDirectory + "' is missing or not a directory." );
         return false;
     }
 
-    File frModuleDirectory = new File ( frDirectory, "mymodule" );
+    File frModuleDirectory = new File( frDirectory, "mymodule" );
     if ( !frModuleDirectory.exists() || !frModuleDirectory.isDirectory() )
     {
         System.err.println( "Staging fr module directory '" + frModuleDirectory + "' is missing or not a directory." );
@@ -58,28 +58,28 @@ try
 
     // DEPLOY
 
-    topLevelDirectory = new File ( basedir, "deploy" );
+    topLevelDirectory = new File( basedir, "deploy" );
     if ( !topLevelDirectory.exists() || !topLevelDirectory.isDirectory() )
     {
         System.err.println( "Deploy directory '" + topLevelDirectory + "' is missing or not a directory." );
         return false;
     }
 
-    moduleDirectory = new File ( topLevelDirectory, "mymodule" );
+    moduleDirectory = new File( topLevelDirectory, "mymodule" );
     if ( !moduleDirectory.exists() || !moduleDirectory.isDirectory() )
     {
         System.err.println( "Staging module directory '" + moduleDirectory + "' is missing or not a directory." );
         return false;
     }
 
-    frDirectory = new File ( topLevelDirectory, "fr" );
+    frDirectory = new File( topLevelDirectory, "fr" );
     if ( !frDirectory.exists() || !frDirectory.isDirectory() )
     {
         System.err.println( "Staging fr directory '" + frDirectory + "' is missing or not a directory." );
         return false;
     }
 
-    frModuleDirectory = new File ( frDirectory, "mymodule" );
+    frModuleDirectory = new File( frDirectory, "mymodule" );
     if ( !frModuleDirectory.exists() || !frModuleDirectory.isDirectory() )
     {
         System.err.println( "Staging fr module directory '" + frModuleDirectory + "' is missing or not a directory." );
@@ -88,35 +88,35 @@ try
 
     // STAGE DEPLOY
 
-    topLevelDirectory = new File ( topLevelDirectory, "staging" );
+    topLevelDirectory = new File( topLevelDirectory, "staging" );
     if ( !topLevelDirectory.exists() || !topLevelDirectory.isDirectory() )
     {
         System.err.println( "Stage deploy directory '" + topLevelDirectory + "' is missing or not a directory." );
         return false;
     }
 
-    moduleDirectory = new File ( topLevelDirectory, "mymodule" );
+    moduleDirectory = new File( topLevelDirectory, "mymodule" );
     if ( !moduleDirectory.exists() || !moduleDirectory.isDirectory() )
     {
         System.err.println( "Staging module directory '" + moduleDirectory + "' is missing or not a directory." );
         return false;
     }
 
-    frDirectory = new File ( topLevelDirectory, "fr" );
+    frDirectory = new File( topLevelDirectory, "fr" );
     if ( !frDirectory.exists() || !frDirectory.isDirectory() )
     {
         System.err.println( "Staging fr directory '" + frDirectory + "' is missing or not a directory." );
         return false;
     }
 
-    frModuleDirectory = new File ( frDirectory, "mymodule" );
+    frModuleDirectory = new File( frDirectory, "mymodule" );
     if ( !frModuleDirectory.exists() || !frModuleDirectory.isDirectory() )
     {
         System.err.println( "Staging fr module directory '" + frModuleDirectory + "' is missing or not a directory." );
         return false;
     }
 }
-catch( IOException e )
+catch ( IOException e )
 {
     e.printStackTrace();
     result = false;

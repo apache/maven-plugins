@@ -25,7 +25,7 @@ boolean result = true;
 
 try
 {
-    final File deployDirectory = new File ( basedir, "deploy" );
+    final File deployDirectory = new File( basedir, "deploy" );
     if ( !deployDirectory.exists() || !deployDirectory.isDirectory() )
     {
         System.err.println( "deployDirectory is missing or not a directory." );
@@ -33,7 +33,7 @@ try
     }
 
     // junk directory (aggregator)
-    File junkDirectory = new File ( deployDirectory, "junk" );
+    File junkDirectory = new File( deployDirectory, "junk" );
     if ( !junkDirectory.exists() || !junkDirectory.isDirectory() )
     {
         System.err.println( "junkDirectory is missing or not a directory." );
@@ -41,7 +41,7 @@ try
     }
 
     // plugins directory
-    File pluginsDirectory = new File ( deployDirectory, "plugins" );
+    File pluginsDirectory = new File( deployDirectory, "plugins" );
     if ( !pluginsDirectory.exists() || !pluginsDirectory.isDirectory() )
     {
         System.err.println( "deploy pluginsDirectory is missing or not a directory." );
@@ -49,7 +49,7 @@ try
     }
 
     // plugin
-    File mavenRocksDirectory = new File ( pluginsDirectory, "maven-rocks-plugin" );
+    File mavenRocksDirectory = new File( pluginsDirectory, "maven-rocks-plugin" );
     if ( !mavenRocksDirectory.exists() || !mavenRocksDirectory.isDirectory() )
     {
         System.err.println( "deploy mavenRocksDirectory is missing or not a directory." );
@@ -58,7 +58,7 @@ try
 
     // STAGING
 
-    final File stageDirectory = new File ( basedir, "target/staging" );
+    final File stageDirectory = new File( basedir, "target/staging" );
     if ( !stageDirectory.exists() || !stageDirectory.isDirectory() )
     {
         System.err.println( "stageDirectory is missing or not a directory." );
@@ -66,7 +66,7 @@ try
     }
 
     // plugins directory
-    pluginsDirectory = new File ( stageDirectory, "plugins" );
+    pluginsDirectory = new File( stageDirectory, "plugins" );
     if ( !pluginsDirectory.exists() || !pluginsDirectory.isDirectory() )
     {
         System.err.println( "staging pluginsDirectory is missing or not a directory." );
@@ -74,7 +74,7 @@ try
     }
 
     // plugin
-    mavenRocksDirectory = new File ( pluginsDirectory, "maven-rocks-plugin" );
+    mavenRocksDirectory = new File( pluginsDirectory, "maven-rocks-plugin" );
     if ( !mavenRocksDirectory.exists() || !mavenRocksDirectory.isDirectory() )
     {
         System.err.println( "staging mavenRocksDirectory is missing or not a directory." );
@@ -83,7 +83,7 @@ try
 
     // STAGE DEPLOY
 
-    final File stageDeployDirectory = new File ( basedir, "deploy/staging" );
+    final File stageDeployDirectory = new File( basedir, "deploy/staging" );
     if ( !stageDeployDirectory.exists() || !stageDeployDirectory.isDirectory() )
     {
         System.err.println( "stageDeployDirectory is missing or not a directory." );
@@ -91,7 +91,7 @@ try
     }
 
     // plugins directory
-    pluginsDirectory = new File ( stageDeployDirectory, "plugins" );
+    pluginsDirectory = new File( stageDeployDirectory, "plugins" );
     if ( !pluginsDirectory.exists() || !pluginsDirectory.isDirectory() )
     {
         System.err.println( "stage deploy pluginsDirectory is missing or not a directory." );
@@ -99,14 +99,14 @@ try
     }
 
     // plugin
-    mavenRocksDirectory = new File ( pluginsDirectory, "maven-rocks-plugin" );
+    mavenRocksDirectory = new File( pluginsDirectory, "maven-rocks-plugin" );
     if ( !mavenRocksDirectory.exists() || !mavenRocksDirectory.isDirectory() )
     {
         System.err.println( "stage deploy mavenRocksDirectory is missing or not a directory." );
         return false;
     }
 }
-catch( IOException e )
+catch ( IOException e )
 {
     e.printStackTrace();
     result = false;

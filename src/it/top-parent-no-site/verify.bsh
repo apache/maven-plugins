@@ -24,28 +24,28 @@ boolean result = true;
 
 try
 {
-    File deployDirectory = new File ( basedir, "deploy" );
+    File deployDirectory = new File( basedir, "deploy" );
     if ( !deployDirectory.exists() || !deployDirectory.isDirectory() )
     {
         System.err.println( "deploy directory is missing or not a directory:" + deployDirectory.getAbsolutePath() );
         return false;
     }
 
-    File stageDeployDirectory = new File ( deployDirectory, "staging" );
+    File stageDeployDirectory = new File( deployDirectory, "staging" );
     if ( !stageDeployDirectory.exists() || !stageDeployDirectory.isDirectory() )
     {
         System.err.println( "stageDeployDirectory file is missing or not a directory." );
         return false;
     }
 
-    File stageDirectory = new File ( basedir, "target/staging" );
+    File stageDirectory = new File( basedir, "target/staging" );
     if ( !stageDirectory.exists() || !stageDirectory.isDirectory() )
     {
         System.err.println( "stageDirectory file is missing or not a directory." );
         return false;
     }
 }
-catch( IOException e )
+catch ( IOException e )
 {
     e.printStackTrace();
     result = false;

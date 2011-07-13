@@ -33,18 +33,17 @@ try
         System.err.println( "report file is missing or a directory." );
         return false;
     }
-    FileInputStream fis = new FileInputStream ( report );
-    String reportContent = IOUtil.toString ( fis );
+    String reportContent = FileUtils.fileRead( report );
 
     int indexOf = reportContent.indexOf( "Changes Report" );
-    if ( indexOf < 0)
+    if ( indexOf < 0 )
     {
       System.err.println( "changes-report.html doesn't contains Changes Report title" );
       return false;
     }
 
     indexOf = reportContent.indexOf( "href=\"http://myjira/browse/MCHANGES-88\"" );
-    if ( indexOf < 0)
+    if ( indexOf < 0 )
     {
       System.err.println( "changes-report.html doesn't contains jira issue link" );
       return false;
@@ -52,7 +51,7 @@ try
 
     // Test for output problem caused by only using <dueTo> elements
     indexOf = reportContent.indexOf( "Thanks to , " );
-    if ( indexOf != -1)
+    if ( indexOf != -1 )
     {
       System.err.println( "changes-report.html has too many dueTos in the Map" );
       return false;
@@ -60,20 +59,20 @@ try
 
     // Tests output problems caused by only using <fixes> element
     indexOf = reportContent.indexOf( "bug-12345" );
-    if ( indexOf < 0)
+    if ( indexOf < 0 )
     {
       System.err.println( "changes-report.html doesn't contains issue text for issue specified with <fixes> element" );
       return false;
     }
     indexOf = reportContent.indexOf( "Fixes ." );
-    if ( indexOf != -1)
+    if ( indexOf != -1 )
     {
       System.err.println( "changes-report.html doesn't handle empty fixes attribute properly" );
       return false;
     }
 
 }
-catch( Throwable e )
+catch ( Throwable e )
 {
     e.printStackTrace();
     result = false;

@@ -25,21 +25,21 @@ boolean result = true;
 
 try
 {
-    final File parentDirectory = new File ( basedir, "target/site" );
+    final File parentDirectory = new File( basedir, "target/site" );
     if ( !parentDirectory.exists() || !parentDirectory.isDirectory() )
     {
         System.err.println( "parent is missing or not a directory." );
         return false;
     }
 
-    File parentIndex = new File ( parentDirectory, "index.html" );
+    File parentIndex = new File( parentDirectory, "index.html" );
     if ( !parentIndex.exists() || parentIndex.isDirectory() )
     {
         System.err.println( "no index file in parent or is a directory." );
         return false;
     }
 
-    String content = IOUtil.toString ( new FileInputStream ( parentIndex ), "UTF-8" );
+    String content = FileUtils.fileRead( parentIndex, "UTF-8" );
     int index1 = content.indexOf( "<a href=\"./\" title=\"Parent\">Parent</a>" );
     int index2 = content.indexOf( "<a href=\"inherited/parent\" title=\"parent\">parent</a>" );
     int index3 = content.indexOf( "<a href=\"inherited/${childprop}\" title=\"${childprop}\">${childprop}</a>" );
@@ -50,21 +50,21 @@ try
         return false;
     }
 
-    final File childDirectory = new File ( basedir, "child/target/site" );
+    final File childDirectory = new File( basedir, "child/target/site" );
     if ( !childDirectory.exists() || !childDirectory.isDirectory() )
     {
         System.err.println( "child is missing or not a directory." );
         return false;
     }
 
-    File childIndex = new File ( childDirectory, "index.html" );
+    File childIndex = new File( childDirectory, "index.html" );
     if ( !childIndex.exists() || childIndex.isDirectory() )
     {
         System.err.println( "no index file in child or is a directory." );
         return false;
     }
 
-    content = IOUtil.toString ( new FileInputStream ( childIndex ), "UTF-8" );
+    content = FileUtils.fileRead( childIndex, "UTF-8" );
     int index1 = content.indexOf( "<a href=\"../\" title=\"Parent\">Parent</a>" );
     int index2 = content.indexOf( "<a href=\"inherited/parent\" title=\"parent\">parent</a>" );
     int index3 = content.indexOf( "<a href=\"inherited/${childprop}\" title=\"${childprop}\">${childprop}</a>" );
@@ -85,7 +85,7 @@ try
         return false;
     }
 }
-catch( IOException e )
+catch ( IOException e )
 {
     e.printStackTrace();
     result = false;
