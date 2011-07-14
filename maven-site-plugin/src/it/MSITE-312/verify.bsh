@@ -85,7 +85,7 @@ try
         return false;
     }
 }
-catch( IOException e )
+catch ( IOException e )
 {
     e.printStackTrace();
     result = false;

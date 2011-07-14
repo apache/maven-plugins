@@ -71,10 +71,8 @@ try
         System.err.println( "download.html doesn't contain Download Maven 2.0.7" );
         return false;
     }
-
-
 }
-catch( IOException e )
+catch ( IOException e )
 {
     e.printStackTrace();
     result = false;
