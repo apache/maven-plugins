@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>inheritAsRef</groupId>
+    <artifactId>childAsRef</artifactId>
+    <version>1.0</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
+
+  <artifactId>grandChildAsRef</artifactId>
+  <packaging>pom</packaging>
+
+  <name>Grand Child As Ref</name>
+
+  <reporting>
+    <plugins>
+      <plugin>
+        <artifactId>maven-project-info-reports-plugin</artifactId>
+        <version>2.3.1</version>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>scm</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
+    </plugins>
+  </reporting>
+
+</project>
