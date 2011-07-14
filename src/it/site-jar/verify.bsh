@@ -42,7 +42,7 @@ try
     }
 
     String[] fileNames =  new String[] { "images/h3.jpg", "download.html", "index.html", "releases/release1.6.html" };
-    
+
     Set contents = new HashSet();
 
     JarFile jar = new JarFile( siteJar );
@@ -66,7 +66,6 @@ try
         	return false;
         }
     }
-    
 }
 catch ( IOException e )
 {

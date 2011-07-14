@@ -19,7 +19,7 @@
  */
 assert new File( basedir, 'target/surefire-reports' ).exists();
 assert new File( basedir, 'target/surefire-reports/org.apache.maven.plugins.site.its.AppTest.txt' ).exists();
-content = new File( basedir, 'target/surefire-reports/org.apache.maven.plugins.site.its.AppTest.txt').text;
+content = new File( basedir, 'target/surefire-reports/org.apache.maven.plugins.site.its.AppTest.txt' ).text;
 
 assert content.contains( 'Test set: org.apache.maven.plugins.site.its.AppTest' );
 
@@ -39,7 +39,7 @@ assert new File( basedir, 'target/site/taglist.html' ).exists();
 assert new File( basedir, 'target/site/team-list.html' ).exists();
 
 assert new File( basedir, 'target/site/dependencies.html' ).exists();
-content = new File( basedir, 'target/site/dependencies.html').text;
+content = new File( basedir, 'target/site/dependencies.html' ).text;
 assert content.contains( 'junit:junit:jar:3.8.2' );
 
 return true;

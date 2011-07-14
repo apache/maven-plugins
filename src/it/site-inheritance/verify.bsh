@@ -60,7 +60,7 @@ try
 
     String content = FileUtils.fileRead( index, "UTF-8" );
     int indexOf = content.indexOf( "<a href=\"../index.html\" title=\"Aggregator\">Aggregator</a>" );
-    if ( indexOf < 0)
+    if ( indexOf < 0 )
     {
         System.err.println( "deployed junk index.html is missing module link!" );
         result = false;
@@ -238,7 +238,7 @@ try
 
     content = FileUtils.fileRead( index, "UTF-8" );
     int indexOf = content.indexOf( "<a href=\"../index.html\" title=\"Aggregator\">Aggregator</a>" );
-    if ( indexOf < 0)
+    if ( indexOf < 0 )
     {
         System.err.println( "staged junk index.html is missing module link!" );
         result = false;
@@ -415,7 +415,7 @@ try
 
     content = FileUtils.fileRead( index, "UTF-8" );
     int indexOf = content.indexOf( "<a href=\"../index.html\" title=\"Aggregator\">Aggregator</a>" );
-    if ( indexOf < 0)
+    if ( indexOf < 0 )
     {
         System.err.println( "stage-deployed junk index.html is missing module link!" );
         result = false;
