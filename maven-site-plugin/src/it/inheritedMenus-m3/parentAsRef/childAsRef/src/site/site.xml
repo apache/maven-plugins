@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="Child As Ref Site">
+
+  <body>
+
+    <menu name="Not Inherited">
+      <item name="Child Relative Home Local" href="index.html" />
+      <item name="Child Relative Home Local with dot" href="./index.html" />
+      <item name="Child Absolute Home Local" href="http://example.com/childAsRef/" />
+      <item name="Child Absolute Home Local with index" href="http://example.com/childAsRef/index.html" />
+    </menu>
+
+  </body>
+
+</project>
