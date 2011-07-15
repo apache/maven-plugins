@@ -120,7 +120,7 @@ public abstract class AbstractSiteRenderingMojo
     /**
      * The template properties for rendering the site.
      *
-     * @parameter expression="${attributes}"
+     * @parameter
      */
     private Map<String, Object> attributes;
 
