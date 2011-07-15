@@ -37,17 +37,6 @@ under the License.
             <enabled>true</enabled>
           </snapshots>
         </repository>
-        <repository>
-          <id>apache.snapshots</id>
-          <name>Apache Snapshot Repository</name>
-          <url>http://repository.apache.org/content/groups/snapshots-group/</url>
-          <releases>
-            <enabled>false</enabled>
-          </releases>
-          <snapshots>
-            <enabled>true</enabled>
-          </snapshots>
-        </repository>
       </repositories>
       <pluginRepositories>
         <pluginRepository>
@@ -60,17 +49,6 @@ under the License.
             <enabled>true</enabled>
           </snapshots>
         </pluginRepository>
-        <pluginRepository>
-          <id>apache.snapshots</id>
-          <name>Apache Snapshot Repository</name>
-          <url>http://repository.apache.org/content/groups/snapshots-group/</url>
-          <releases>
-            <enabled>false</enabled>
-          </releases>
-          <snapshots>
-            <enabled>true</enabled>
-          </snapshots>
-        </pluginRepository>        
       </pluginRepositories>
     </profile>
   </profiles>
