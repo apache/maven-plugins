@@ -181,6 +181,10 @@ under the License.
     <doxiaSitetoolsVersion>1.2.1-SNAPSHOT</doxiaSitetoolsVersion>
     <mavenVersion>2.2.0</mavenVersion>
     <wagonVersion>1.0-beta-6</wagonVersion>
+    <!-- for ITs -->
+    <javadocPluginVersion>2.6.1</javadocPluginVersion>
+    <projectInfoReportsPluginVersion>2.2</projectInfoReportsPluginVersion>
+    <checkstylePluginVersion>2.5</checkstylePluginVersion>
   </properties>
 
   <dependencies>
