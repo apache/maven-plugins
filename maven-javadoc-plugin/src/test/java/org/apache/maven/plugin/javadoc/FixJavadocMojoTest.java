@@ -426,9 +426,12 @@ public class FixJavadocMojoTest
 
         assertEquals( 5, javaMethod.getTags().length );
 
+        AbstractFixJavadocMojo mojoInstance = new FixJavadocMojo();
+        setVariableValueToObject( mojoInstance, "fixTagsSplitted", new String[] { "all" } );
+
         DocletTag tag = javaMethod.getTags()[0];
         String tagJavadoc =
-            (String) PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "getJavadocComment", new Class[] {
+            (String) PrivateAccessor.invoke( mojoInstance, "getJavadocComment", new Class[] {
                 String.class, AbstractInheritableJavaEntity.class, DocletTag.class }, new Object[] { content,
                 javaMethod, tag } );
         assertEquals( "     * @param args not" + EOL +
@@ -441,7 +444,7 @@ public class FixJavadocMojoTest
 
         tag = javaMethod.getTags()[1];
         tagJavadoc =
-            (String) PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "getJavadocComment", new Class[] {
+            (String) PrivateAccessor.invoke( mojoInstance, "getJavadocComment", new Class[] {
                 String.class, AbstractInheritableJavaEntity.class, DocletTag.class }, new Object[] { content,
                 javaMethod, tag } );
         assertEquals( "     * @param i non negative", tagJavadoc );
@@ -452,7 +455,7 @@ public class FixJavadocMojoTest
 
         tag = javaMethod.getTags()[2];
         tagJavadoc =
-            (String) PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "getJavadocComment", new Class[] {
+            (String) PrivateAccessor.invoke( mojoInstance, "getJavadocComment", new Class[] {
                 String.class, AbstractInheritableJavaEntity.class, DocletTag.class }, new Object[] { content,
                 javaMethod, tag } );
         assertEquals( "     * @param object could" + EOL +
@@ -465,7 +468,7 @@ public class FixJavadocMojoTest
 
         tag = javaMethod.getTags()[3];
         tagJavadoc =
-            (String) PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "getJavadocComment", new Class[] {
+            (String) PrivateAccessor.invoke( mojoInstance, "getJavadocComment", new Class[] {
                 String.class, AbstractInheritableJavaEntity.class, DocletTag.class }, new Object[] { content,
                 javaMethod, tag } );
         assertEquals( "     * @return a" + EOL +
@@ -478,7 +481,7 @@ public class FixJavadocMojoTest
 
         tag = javaMethod.getTags()[4];
         tagJavadoc =
-            (String) PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "getJavadocComment", new Class[] {
+            (String) PrivateAccessor.invoke( mojoInstance, "getJavadocComment", new Class[] {
                 String.class, AbstractInheritableJavaEntity.class, DocletTag.class }, new Object[] { content,
                 javaMethod, tag } );
         assertEquals( "     * @throws Exception if" + EOL +
@@ -540,30 +543,33 @@ public class FixJavadocMojoTest
 
         assertEquals( 4, javaMethod.getTags().length );
 
+        AbstractFixJavadocMojo mojoInstance = new FixJavadocMojo();
+        setVariableValueToObject( mojoInstance, "fixTagsSplitted", new String[] { "all" } );
+
         DocletTag tag = javaMethod.getTags()[0];
         String tagJavadoc =
-            (String) PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "getJavadocComment", new Class[] {
+            (String) PrivateAccessor.invoke( mojoInstance, "getJavadocComment", new Class[] {
                 String.class, AbstractInheritableJavaEntity.class, DocletTag.class }, new Object[] { content,
                 javaMethod, tag } );
         assertEquals( "     * @param <K>  The Key type for the method", tagJavadoc );
 
         tag = javaMethod.getTags()[1];
         tagJavadoc =
-            (String) PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "getJavadocComment", new Class[] {
+            (String) PrivateAccessor.invoke( mojoInstance, "getJavadocComment", new Class[] {
                 String.class, AbstractInheritableJavaEntity.class, DocletTag.class }, new Object[] { content,
                 javaMethod, tag } );
         assertEquals( "     * @param <V>  The Value type for the method", tagJavadoc );
 
         tag = javaMethod.getTags()[2];
         tagJavadoc =
-            (String) PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "getJavadocComment", new Class[] {
+            (String) PrivateAccessor.invoke( mojoInstance, "getJavadocComment", new Class[] {
                 String.class, AbstractInheritableJavaEntity.class, DocletTag.class }, new Object[] { content,
                 javaMethod, tag } );
         assertEquals( "     * @param name The name.", tagJavadoc );
 
         tag = javaMethod.getTags()[3];
         tagJavadoc =
-            (String) PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "getJavadocComment", new Class[] {
+            (String) PrivateAccessor.invoke( mojoInstance, "getJavadocComment", new Class[] {
                 String.class, AbstractInheritableJavaEntity.class, DocletTag.class }, new Object[] { content,
                 javaMethod, tag } );
         assertEquals( "     * @return A map configured.", tagJavadoc );
