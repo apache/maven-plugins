@@ -1,0 +1,86 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+import java.io.*;
+import org.codehaus.plexus.util.*;
+
+try
+{
+    File javaFile = new File( basedir, "/src/main/java/foo/bar/ALotOfLinkTags.java" );
+    String content = FileUtils.fileRead( javaFile, "UTF-8" );
+    
+    // @link replacement cover classes, methods and constructors
+    // it doesn't cover fields and nested classes (yet), neither package or parameters. 
+    
+    int matches = StringUtils.countMatches( content, "{@link java.lang.Double}" );
+    if ( matches != 3 )
+    {
+    	System.err.println( "Expected {@link java.lang.Double} 3 times, but was " + matches );
+    	return false;
+    }
+    matches = StringUtils.countMatches( content, "{@link Double}" );
+    if ( matches != 2 )
+    {
+    	System.err.println( "Expected {@link Double} 2 times, but was " + matches );
+    	return false;
+    }
+
+    int matches = StringUtils.countMatches( content, "{@link java.lang.Float}" );
+    if ( matches != 3 )
+    {
+    	System.err.println( "Expected {@link java.lang.Float} 3 times, but was " + matches );
+    	return false;
+    }
+
+	matches = StringUtils.countMatches( content, "{@link java.util.HashSet#hashCode()}" ); 
+    if ( matches  != 3 )
+    {
+    	System.err.println( "Expected {@link java.util.HashSet#hashCode()} 3 times, but was " + matches );
+    	return false;
+    }
+
+	matches = StringUtils.countMatches( content, "{@link java.util.Hashtable#clear()}" ); 
+    if ( matches  != 3 )
+    {
+    	System.err.println( "Expected {@link java.util.Hashtable#clear()} 3 times, but was " + matches );
+    	return false;
+    }
+
+	matches = StringUtils.countMatches( content, "{@link foo.bar.ALotOfLinkTags.ANestedClass}" ); 
+    if ( matches  != 3 )
+    {
+    	System.err.println( "Expected {@link foo.bar.ALotOfLinkTags.ANestedClass} 3 times, but was " + matches );
+    	return false;
+    }
+
+	matches = StringUtils.countMatches( content, "{@link UNKNOWN}" ); 
+    if ( matches  != 5 )
+    {
+    	System.err.println( "Expected {@link UNKOWN} 5 times, but was " + matches );
+    	return false;
+    }
+    
+}
+catch( Throwable e )
+{
+    e.printStackTrace();
+    return false;
+}
+
+return true;

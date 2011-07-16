@@ -41,6 +41,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.StringTokenizer;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.ClassUtils;
@@ -105,6 +106,9 @@ public abstract class AbstractFixJavadocMojo
 
     /** Tag name for &#64;throws **/
     private static final String THROWS_TAG = "throws";
+
+    /** Tag name for &#64;link **/
+    private static final String LINK_TAG = "link";
 
     /** Tag name for {&#64;inheritDoc} **/
     private static final String INHERITED_TAG = "{@inheritDoc}";
@@ -227,6 +231,7 @@ public abstract class AbstractFixJavadocMojo
      * <li>param (fix only &#64;param tag)</li>
      * <li>return (fix only &#64;return tag)</li>
      * <li>throws (fix only &#64;throws tag)</li>
+     * <li>link (fix only &#64;link tag)</li>
      * </ul>
      *
      * @parameter expression="${fixTags}" default-value="all"
@@ -492,7 +497,7 @@ public abstract class AbstractFixJavadocMojo
             {
                 String s = split[j].trim();
                 if ( JavadocUtil.equalsIgnoreCase( s, FIX_TAGS_ALL, AUTHOR_TAG, VERSION_TAG, SINCE_TAG, PARAM_TAG,
-                                                   THROWS_TAG ) )
+                                                   THROWS_TAG, LINK_TAG ) )
                 {
                     filtered.add( s );
                 }
@@ -1661,12 +1666,81 @@ public abstract class AbstractFixJavadocMojo
             comment = comment.substring( 0, comment.indexOf( END_JAVADOC ) );
         }
 
+        if ( fixTag( LINK_TAG ) )
+        {
+            comment = replaceLinkTags( comment, entity );
+        }
+        
         String[] lines = getLines( comment );
         for ( int i = 0; i < lines.length; i++ )
         {
             sb.append( indent ).append( " " ).append( lines[i].trim() );
             sb.append( EOL );
         }
+        
+        
+    }
+
+    private static final String replaceLinkTags( String comment, AbstractInheritableJavaEntity entity )
+    {
+        StringBuffer resolvedComment = new StringBuffer();
+        // scan comment for {@link someClassName} and try to resolve this
+        Matcher linktagMatcher = Pattern.compile( "\\{@link\\s" ).matcher( comment );
+        int startIndex = 0;
+        while ( linktagMatcher.find() )
+        {
+            int startName = linktagMatcher.end();
+            resolvedComment.append( comment.substring( startIndex, startName ) );
+            int endName = comment.indexOf( "}", startName );
+            if ( endName >= 0 )
+            {
+                String name;
+                String link = comment.substring( startName, endName );
+                int hashIndex = link.indexOf( '#' );
+                if ( hashIndex >= 0 )
+                {
+                    name = link.substring( 0, hashIndex );
+                }
+                else {
+                    name = link;
+                }
+                if ( StringUtils.isNotBlank( name ))
+                {
+                    String typeName;
+                    if ( entity instanceof JavaClass) 
+                    {
+                        typeName = ((JavaClass) entity).resolveType( name.trim() );
+                    }
+                    else 
+                    {
+                        typeName = entity.getParentClass().resolveType( name.trim() );
+                    }
+                    
+                    if ( typeName == null )
+                    {
+                        typeName = name.trim();
+                    }
+                    else {
+                        typeName = typeName.replaceAll( "\\$", "." );
+                    }
+                    //adjust name for inner classes
+                    resolvedComment.append( typeName  );
+                }
+                if ( hashIndex >= 0 )
+                {
+                    resolvedComment.append( link.substring( hashIndex ).trim() )  ;
+                }
+                startIndex = endName;
+            }
+            else
+            {
+                startIndex = startName;
+            }
+
+        }
+        resolvedComment.append( comment.substring( startIndex ) );
+        return resolvedComment.toString();
+
     }
 
     /**
@@ -2019,7 +2093,7 @@ public abstract class AbstractFixJavadocMojo
             sb.append( " if any." );
         }
     }
-
+    
     /**
      * Add missing tags not already written.
      *
@@ -3082,7 +3156,7 @@ public abstract class AbstractFixJavadocMojo
      * @return the javadoc comment for the entity without Javadoc tags.
      * @throws IOException if any
      */
-    private static String getJavadocComment( final String javaClassContent,
+    private String getJavadocComment( final String javaClassContent,
                                              final AbstractInheritableJavaEntity entity, final DocletTag docletTag )
         throws IOException
     {
@@ -3106,6 +3180,10 @@ public abstract class AbstractFixJavadocMojo
             if ( l.startsWith( "* @" + docletTag.getName() + " " + paramValue )
                 || l.startsWith( "*@" + docletTag.getName() + " " + paramValue ) )
             {
+                if ( fixTag( LINK_TAG ) )
+                {
+                    line = replaceLinkTags( line, entity );
+                }
                 sb.append( line ).append( EOL );
                 found = true;
             }
@@ -3117,6 +3195,10 @@ public abstract class AbstractFixJavadocMojo
                 }
                 if ( found )
                 {
+                    if ( fixTag( LINK_TAG ) )
+                    {
+                        line = replaceLinkTags( line, entity );
+                    }
                     sb.append( line ).append( EOL );
                 }
             }
