@@ -14,20 +14,4 @@
 
   <name>Grand Child As Ref</name>
 
-  <reporting>
-    <plugins>
-      <plugin>
-        <artifactId>maven-project-info-reports-plugin</artifactId>
-        <version>2.3.1</version>
-        <reportSets>
-          <reportSet>
-            <reports>
-              <report>scm</report>
-            </reports>
-          </reportSet>
-        </reportSets>
-      </plugin>
-    </plugins>
-  </reporting>
-
 </project>

@@ -137,13 +137,6 @@ try
         result = false;
     }
 
-    File childSummary = new File( childSiteDirectory, "project-summary.html" );
-    if ( !childSummary.exists() || childSummary.isDirectory() )
-    {
-        System.err.println( "no summary file in child or is a directory." );
-        result = false;
-    }
-
 
     // GRANDCHILD
 
@@ -199,13 +192,6 @@ try
     if ( index1 < 0 || index2 < 0 || index3 >= 0 )
     {
         System.err.println( "grandchild index.html has wrong reference menu items!" );
-        result = false;
-    }
-
-    File grandChildScm = new File( grandChildSiteDirectory, "source-repository.html" );
-    if ( !grandChildScm.exists() || grandChildScm.isDirectory() )
-    {
-        System.err.println( "no source-repository file in grandchild or is a directory." );
         result = false;
     }
 
