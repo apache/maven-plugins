@@ -144,7 +144,7 @@ under the License.
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-changes-plugin</artifactId>
-          <version>2.4</version>
+          <version>2.6</version>
           <configuration>
             <issueManagementSystems>
               <issueManagementSystem>JIRA</issueManagementSystem>
@@ -158,8 +158,10 @@ under the License.
             <toAddresses>
               <toAddress implementation="java.lang.String">announce@maven.apache.org</toAddress>
               <toAddress implementation="java.lang.String">users@maven.apache.org</toAddress>
-              <toAddress implementation="java.lang.String">dev@maven.apache.org</toAddress>
             </toAddresses>
+            <ccAddresses>
+              <ccAddress implementation="java.lang.String">dev@maven.apache.org</ccAddress>
+            </ccAddresses>
             <!-- These values need to be specified as properties in the profile apache-release in your settings.xml -->
             <fromDeveloperId>${apache.availid}</fromDeveloperId>
             <smtpHost>${smtp.host}</smtpHost>
