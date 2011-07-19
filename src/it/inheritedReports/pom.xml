@@ -9,7 +9,7 @@
   <version>1.0</version>
   <packaging>pom</packaging>
 
-  <name>MSITE-595 parent</name>
+  <name>MSITE-596 parent</name>
 
   <build>
     <pluginManagement>
