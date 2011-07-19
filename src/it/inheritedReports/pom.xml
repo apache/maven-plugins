@@ -1,23 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>inheritAsRef</groupId>
-  <artifactId>parentAsRef</artifactId>
+  <groupId>inheritReports</groupId>
+  <artifactId>parent</artifactId>
   <version>1.0</version>
   <packaging>pom</packaging>
 
-  <name>Parent As Ref</name>
-  <url>http://example.com/</url>
-
-  <distributionManagement>
-    <site>
-      <id>website</id>
-      <name>Example web site</name>
-      <!-- needed for relative link resolution -->
-      <url>file://@project.build.directory@/it/inheritedMenus/deploy/</url>
-    </site>
-  </distributionManagement>
+  <name>MSITE-595 parent</name>
 
   <build>
     <pluginManagement>
@@ -48,7 +40,7 @@
   </reporting>
 
   <modules>
-    <module>childAsRef</module>
+    <module>child</module>
   </modules>
 
 </project>
