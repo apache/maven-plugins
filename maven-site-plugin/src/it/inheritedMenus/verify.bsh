@@ -128,10 +128,9 @@ try
     }
 
     index1 = content.indexOf( "<a href=\"grandChildNotAsRef/index.html\" title=\"GrandChild Not As Ref\">GrandChild Not As Ref</a>" );
-    index2 = content.indexOf( "<a href=\"project-summary.html\" title=\"Project Summary\">Project Summary</a>" );
-    index3 = content.indexOf( "<a href=\"../index.html\" title=\"Parent Not As Ref\">Parent Not As Ref</a>" );
+    index2 = content.indexOf( "<a href=\"../index.html\" title=\"Parent Not As Ref\">Parent Not As Ref</a>" );
 
-    if ( index1 < 0 || index2 < 0 || index3 < 0 )
+    if ( index1 < 0 || index2 < 0 )
     {
         System.err.println( "child index.html has wrong reference menu items!" );
         result = false;
@@ -186,10 +185,8 @@ try
     }
 
     index1 = content.indexOf( "<a href=\"../index.html\" title=\"Child Not As Ref\">Child Not As Ref</a>" );
-    index2 = content.indexOf( "<a href=\"source-repository.html\" title=\"Source Repository\">Source Repository</a>" );
-    index3 = content.indexOf( "<h5>Modules</h5>" );
 
-    if ( index1 < 0 || index2 < 0 || index3 >= 0 )
+    if ( index1 < 0 )
     {
         System.err.println( "grandchild index.html has wrong reference menu items!" );
         result = false;
