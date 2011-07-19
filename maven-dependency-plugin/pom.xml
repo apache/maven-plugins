@@ -335,6 +335,7 @@ under the License.
             <configuration>
               <locales>
                 <locale>de</locale>
+                <locale>pt_BR</locale>
                 <locale>sv</locale>
               </locales>
             </configuration>
