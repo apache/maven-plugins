@@ -29,6 +29,10 @@ under the License.
 
   <name>site-attach-descriptor IT</name>
 
+  <modules>
+    <module>child</module>
+  </modules>
+
   <properties>
     <currentVersion>2.0.7</currentVersion>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -83,4 +87,31 @@ under the License.
       </plugin>
     </plugins>
   </reporting>
+
+  <profiles>
+    <profile>
+      <id>maven-3</id>
+      <activation>
+        <file>
+          <!--  This employs that the basedir expression is only recognized by Maven 3.x (see MNG-2363) -->
+          <exists>${basedir}</exists>
+        </file>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-site-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>attach-descriptor</id>
+                <goals>
+                  <goal>attach-descriptor</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>

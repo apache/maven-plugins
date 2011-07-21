@@ -47,20 +47,41 @@ try
     }
 
 
-    File artifactsDirectory = new File( target, "snapshot-repo/org/apache/maven/plugins/site/its/site-attach-descriptor/1.0-SNAPSHOT");
+    File artifactsDirectory = new File( target, "snapshot-repo/org/apache/maven/plugins/site/its/site-attach-descriptor/1.0-SNAPSHOT" );
+    boolean pomSiteDescriptor = false;
     File[] files = artifactsDirectory.listFiles();
-    for (int i = 0; i < files.length; i++)
+    for ( int i = 0; i < files.length; i++ )
     {
-        //site-attach-descriptor-1.0-20090823.204852-1-site.xml
-        if (files[i].getName().startsWith( "site-attach-descriptor-1.0" ) && files[i].getName().endsWith( "-site.xml" ) )
+        String name = files[i].getName();
+        // site-attach-descriptor-1.0-20090823.204852-1-site.xml
+        if ( name.endsWith( "-site.xml" ) )
         {
-            return true;
-        }
+	        pomSiteDescriptor = pomSiteDescriptor || name.startsWith( "site-attach-descriptor-1.0" );
+	    }
     }
-    System.err.println( "site descriptor not deployed." );
-    return false;
+    if ( !pomSiteDescriptor )
+    {
+        System.err.println( "site descriptor not deployed for pom packaging." );
+        return false;
+    }
 
-
+    artifactsDirectory = new File( target, "snapshot-repo/org/apache/maven/plugins/site/its/jar-site-attach-descriptor/1.0-SNAPSHOT" );
+    boolean jarSiteDescriptor = false;
+    files = artifactsDirectory.listFiles();
+    for ( int i = 0; i < files.length; i++ )
+    {
+        String name = files[i].getName();
+        // jar-site-attach-descriptor-1.0-20090823.204852-1-site.xml
+        if ( name.endsWith( "-site.xml" ) )
+        {
+	        jarSiteDescriptor = jarSiteDescriptor || name.startsWith( "jar-site-attach-descriptor-1.0" );
+	    }
+    }
+    if ( jarSiteDescriptor )
+    {
+        System.err.println( "site descriptor deployed for jar packaging." );
+        return false;
+    }
 }
 catch ( IOException e )
 {

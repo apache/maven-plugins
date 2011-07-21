@@ -217,9 +217,7 @@ Maven Site Plugin with Maven 3.x
   </profiles>
 +-----+
 
-~~ Questions:
-~~ - should we promote adding this goal without profile? (ie. no conflict/duplicate with default binding when under Maven 2.2?)
-~~ - should the attach-descriptor goal activate only if pom packaging? to avoid site.xml deployment for jars, which won't be used later AFAIK
+ Notice: the profile is needed to avoid duplicate install and deploy under Maven 2.2 due to pom default lifecycle mapping
 
 * Using maven-site-plugin 2.x with Maven 2.x and maven-site-plugin 3.x with Maven 3.x
 

@@ -1,1 +1,1 @@
-clean site:attach-descriptor deploy
+clean deploy
