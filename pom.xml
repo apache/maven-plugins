@@ -32,7 +32,7 @@ under the License.
   <version>3.0-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
-  <name>Maven Site Plugin - 3.x</name>
+  <name>Maven Site Plugin 3</name>
   <description>The Maven Site Plugin is a plugin that generates a site for the current project.</description>
 
   <contributors>
