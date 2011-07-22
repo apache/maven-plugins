@@ -3,7 +3,7 @@
  ------
  Maria Odea Ching
  ------
- 2010-11-25
+ 2011-07-22
  ------
 
  ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -34,7 +34,7 @@ Maven Site Plugin - 3.x
 
  This is the site for <<version 3>> of the maven-site-plugin. It requires at least Maven 2.2.0 to run.
 
- Please read the {{{./migrate.html}migration guide}} if you want to upgrade the Site Plugin.
+ Please read the {{{./migrate.html}migration guide}} if you want to upgrade from a previous version.
 
 * Goals Overview
 
