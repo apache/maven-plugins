@@ -44,7 +44,7 @@ under the License.
     <!-- HACK: Deliberately put before other plugins that employ maven-antrun-plugin to workaround MNG-1323 -->
     <module>maven-eclipse-plugin</module>
 
-    <!-- Excluded due to ongoing failures <module>maven-assembly-plugin</module> -->
+    <module>maven-assembly-plugin</module>
     <module>maven-changelog-plugin</module>
     <module>maven-changes-plugin</module>
     <module>maven-checkstyle-plugin</module>
@@ -89,11 +89,11 @@ under the License.
 
   <profiles>
     <profile>
-      <id>maven-3</id> 
+      <id>maven-3</id>
       <activation>
         <file>
-          <!--  This employs that the basedir expression is only recognized by Maven 3.x (see MNG-2363) --> 
-          <exists>${basedir}</exists> 
+          <!--  This employs that the basedir expression is only recognized by Maven 3.x (see MNG-2363) -->
+          <exists>${basedir}</exists>
         </file>
       </activation>
       <modules>
@@ -101,6 +101,6 @@ under the License.
         <module>maven-project-info-reports-plugin</module>
         <module>maven-remote-resources-plugin</module>
       </modules>
-    </profile> 
+    </profile>
   </profiles>
 </project>
