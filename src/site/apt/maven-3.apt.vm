@@ -191,7 +191,6 @@ Maven Site Plugin with Maven 3.x
     <plugins>
       <plugin>
         <artifactId>maven-site-plugin</artifactId>
-        <version>3.0-beta-2</version>
         <executions>
           <execution>
             <id>attach-descriptor</id>
