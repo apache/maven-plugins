@@ -181,7 +181,7 @@ under the License.
     <system>JIRA</system>
     <url>http://jira.codehaus.org/browse/MSITE</url>
   </issueManagement>
-  
+
   <url>http://maven.apache.org/plugins/maven-site-plugin-${project.version}</url>
 
   <properties>
@@ -245,7 +245,7 @@ under the License.
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-settings-builder</artifactId>
       <version>${mavenVersion}</version>
-    </dependency>    
+    </dependency>
 
     <dependency>
       <groupId>org.sonatype.aether</groupId>
@@ -388,25 +388,25 @@ under the License.
         </exclusion>
       </exclusions>
     </dependency>
-    
+
     <dependency>
       <groupId>org.apache.maven.wagon</groupId>
       <artifactId>wagon-scm</artifactId>
       <version>${wagonVersion}</version>
     </dependency>
-    
+
     <!-- adding at least svn -->
     <dependency>
-      <groupId>org.apache.maven.scm</groupId> 
-      <artifactId>maven-scm-api</artifactId> 
-      <version>${scmVersion}</version>
-    </dependency>    
-    <dependency>
-      <groupId>org.apache.maven.scm</groupId> 
-      <artifactId>maven-scm-provider-svnexe</artifactId> 
+      <groupId>org.apache.maven.scm</groupId>
+      <artifactId>maven-scm-api</artifactId>
       <version>${scmVersion}</version>
     </dependency>
-    
+    <dependency>
+      <groupId>org.apache.maven.scm</groupId>
+      <artifactId>maven-scm-provider-svnexe</artifactId>
+      <version>${scmVersion}</version>
+    </dependency>
+
     <!-- Plexus -->
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
@@ -447,48 +447,48 @@ under the License.
       <artifactId>jetty</artifactId>
       <version>6.1.25</version>
     </dependency>
-    
+
     <dependency>
       <groupId>org.mortbay.jetty</groupId>
       <artifactId>jetty-client</artifactId>
       <version>6.1.25</version>
       <scope>test</scope>
     </dependency>
-    
+
     <!-- note slf4j- upgrade possible until upgrade wagon-webdav-jackrabbit is upgraded too -->
-    
+
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
       <version>1.5.3</version>
       <scope>test</scope>
-    </dependency>    
-    
+    </dependency>
+
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-simple</artifactId>
       <version>1.5.3</version>
       <scope>test</scope>
     </dependency>
-    
+
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>jcl-over-slf4j</artifactId>
       <version>1.6.1</version>
       <scope>test</scope>
-    </dependency>   
-    
+    </dependency>
+
     <dependency>
       <groupId>commons-lang</groupId>
       <artifactId>commons-lang</artifactId>
       <version>2.5</version>
-    </dependency> 
-    
+    </dependency>
+
     <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
       <version>1.4</version>
-    </dependency>    
+    </dependency>
 
     <!-- test -->
     <dependency>
@@ -561,7 +561,7 @@ under the License.
                     <include>**/ComparableVersion.class</include>
                     <include>**/ComparableVersion$*.class</include>
                   </includes>
-                </filter>                
+                </filter>
               </filters>
             </configuration>
           </execution>
