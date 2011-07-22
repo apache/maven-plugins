@@ -306,3 +306,19 @@ Using it with Maven 3
     </pluginManagement>
   </build>
 +-----+
+
+* Inheritance of reports
+
+  Maven 2 and Maven 3 works differently when dealing with inheritance of reports
+  that are configured in the old configuration format. In Maven 2 inherited
+  reports are added, whereas in Maven 3 they are replaced.
+
+  Given a multi module build where the parent POM has the <<<index>>> report
+  configured and the child POM has the <<<summary>>> report configured.
+
+  In Maven 2 the child site will have both the <<<index>>> and <<<summary>>>
+  reports.
+
+  In Maven 3 the child site will have only the <<<summary>>> report.
+
+  For more info see {{{http://jira.codehaus.org/browse/MSITE-596}MSITE-596}}.
