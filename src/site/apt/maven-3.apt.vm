@@ -29,12 +29,17 @@
 
 Maven Site Plugin with Maven 3.x
 
-  Due to {{{http://jira.codehaus.org/browse/MNG-4162}MNG-4162}}, all reporting logic has been removed from Maven 3.
-  So a branch of the Site Plugin has been created,
-  <<<{{{https://svn.apache.org/repos/asf/maven/plugins/branches/maven-site-plugin-3.x/}/maven/plugins/branches/maven-site-plugin-3.x}}>>>
-  in order to get the Site Plugin working with Maven 3.x.
+  A major aim of the refactoring in Maven 3.x was to decouple the Maven core from Doxia
+  and to allow arbitrary reporting systems to be developed. For this reason, all reporting
+  related code has been removed from the core of Maven 3
+  ({{{http://jira.codehaus.org/browse/MNG-4162}MNG-4162}}).
+  As a result, the 2.x versions of the Maven Site Plugin will no longer work with Maven 3.
   Using previous versions of maven-site-plugin with Maven 3.x won't generate reports from any report plugin,
   only hand-written Doxia documents (apt, xdoc, ...) will be rendered.
+
+  Therefore this
+  <<<{{{https://svn.apache.org/repos/asf/maven/plugins/branches/maven-site-plugin-3.x/}3.x branch}}>>>
+  of the Site Plugin has been created, in order to get the Site Plugin working with Maven 3.x.
 
 * Plugins Compatibility Matrix
 
@@ -43,7 +48,7 @@ Maven Site Plugin with Maven 3.x
   Tests have been made on the reporting profile of the Maven parent POM which enables some reports.
   You will need so update some of those plugins for them to work with Maven 3.x. Below you will find the minimum version
   required for these plugins to work in Maven 3.
-  
+
 *-----------------------------------+-----------+
 | <<Plugin>>                        |<<Version>>|
 *-----------------------------------+-----------+
@@ -116,8 +121,8 @@ Maven Site Plugin with Maven 3.x
       </plugin>
     </plugins>
   </reporting>
-+-----+  
-  
++-----+
+
 ** New Configuration (Maven 3 only, no reports configuration inheritance)
 
   Reports can be configured in the configuration for <<<maven-site-plugin>>> too as <<<\<reportPlugins\>>>> elements.
@@ -169,15 +174,36 @@ Maven Site Plugin with Maven 3.x
   The following order/strategy will be used to find/resolve a version:
 
   * search same groupId/artifactId in the build.plugins section
-  
+
   * search same groupId/artifactId in the build.pluginManagement.plugins section
-  
+
   * resolve with current repositories (can include auto SNAPSHOT resolution)
 
 * Site descriptor attachment
 
-  <<<site:attach-descriptor>>> have been removed from the built-in lifecycle of Maven 3. Have a look at
-  {{{https://cwiki.apache.org/confluence/display/MAVEN/Maven+3.x+Compatibility+Notes#Maven3.xCompatibilityNotes-SiteandReporting}Maven 3.x Compatibility Notes - Site and Reporting}}.
+  In Maven 3, the default execution of <<<site:attach-descriptor>>> has been removed from the
+  built-in lifecycle bindings for projects with packaging "pom". Users that actually use those
+  projects to provide a common site descriptor for sub modules will need to explicitly define
+  the following goal execution to restore the intended behavior:
+
++-----+
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-site-plugin</artifactId>
+        <version>3.0-beta-2</version>
+        <executions>
+          <execution>
+            <id>attach-descriptor</id>
+            <goals>
+              <goal>attach-descriptor</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
++-----+
 
 * Using one version of maven-site-plugin for both Maven 2.2.x and Maven 3.x
 
