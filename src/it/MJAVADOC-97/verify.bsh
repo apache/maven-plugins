@@ -85,9 +85,9 @@ try
             return false;
         }
     }
-    if ( contentOptions1.contains( "http://maven.apache.org/maven-artifact/apidocs" ) )
+    if ( contentOptions1.contains( "http://maven.apache.org/maven2/maven-script/maven-script-marmalade/apidocs" ) )
     {
-        System.err.println( "link for maven-artifact added: " + options1 );
+        System.err.println( "link for maven-script-marmalade added: " + options1 );
         return false;
     }
 
@@ -124,9 +124,9 @@ try
             return false;
         }
     }
-    if ( contentOptions2.contains( "http://maven.apache.org/maven-artifact/apidocs" ) )
+    if ( contentOptions2.contains( "http://maven.apache.org/maven2/maven-script/maven-script-marmalade/apidocs" ) )
     {
-        System.err.println( "link for maven-artifact added: " + options2 );
+        System.err.println( "link for maven-script-marmalade added: " + options2 );
         return false;
     }
 }
