@@ -826,7 +826,7 @@ public class JavadocReportTest
 
             optionsContent = readFile( options );
             // -link expected
-            assertTrue( optionsContent.contains( "-link 'http://jakarta.apache.org/commons/logging/apidocs'" ) );
+            assertTrue( optionsContent.contains( "-link 'http://commons.apache.org/logging/apidocs'" ) );
         }
         finally
         {
@@ -868,7 +868,7 @@ public class JavadocReportTest
 
             optionsContent = readFile( options );
             // -link expected
-            assertTrue( optionsContent.contains( "-link 'http://jakarta.apache.org/commons/logging/apidocs'" ) );
+            assertTrue( optionsContent.contains( "-link 'http://commons.apache.org/logging/apidocs'" ) );
         }
         finally
         {

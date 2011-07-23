@@ -63,7 +63,7 @@ public class ProxyTestMavenProjectStub
         ArtifactStub artifact = new ArtifactStub();
         artifact.setGroupId( "commons-logging" );
         artifact.setArtifactId( "commons-logging" );
-        artifact.setVersion( "1.0.4" );
+        artifact.setVersion( "1.1.1" );
         artifact.setScope( Artifact.SCOPE_RUNTIME );
         artifact.setType( "jar" );
         artifact.setFile( getBasedir() );
