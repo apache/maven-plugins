@@ -62,7 +62,7 @@ public class SiteDeployMojoTest
         ProxyInfo proxyInfo = SiteDeployMojo.getProxyInfo( repository, wagonManager );
         assertNull( "ProxyInfo must be null because http != scp", proxyInfo );
     }
-    
+
     public void testGetProxyInfoForRepositoryHostExactlyMatchesNonProxyHosts()
     {
         wagonManager.addProxy( "scp", "localhost", 8080, "my-user", "my-password",
