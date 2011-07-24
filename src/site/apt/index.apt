@@ -32,7 +32,8 @@ Maven Site Plugin - 3.x
  The Site Plugin is used to generate a site for the project. The generated site also includes the project's reports
  that were configured in the POM.
 
- This is the site for <<version 3>> of the maven-site-plugin. It requires at least Maven 2.2.0 to run.
+ This is the site for <<version 3>> of the maven-site-plugin. It requires at least Maven 2.2.0 to run. If you
+ are looking for <<version 2>> you can find it {{{/plugins/maven-site-plugin-2.x/index.html}here}}.
 
  Please read the {{{./migrate.html}migration guide}} if you want to upgrade from a previous version.
 
