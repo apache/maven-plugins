@@ -97,6 +97,8 @@ Maven Site Plugin 3
 
    * {{{./examples/configuring-reports.html}Configuring Reports}}
 
+   * {{{./examples/adding-deploy-protocol.html}Adding a Protocol to Deploy the Site}}
+
    * {{{./examples/siterun.html}Configuring Site Run}}
 
    * {{{./examples/templatefile.html}Changing the Template File}}
