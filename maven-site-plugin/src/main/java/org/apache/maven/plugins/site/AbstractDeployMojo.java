@@ -260,7 +260,7 @@ public abstract class AbstractDeployMojo
         throws MojoExecutionException
     {
         // TODO: work on moving this into the deployer like the other deploy methods
-        final Wagon wagon = getWagon( repository, wagonManager );
+        final Wagon wagon = getWagon( repository, wagonManager, getLog() );
 
         try
         {
@@ -343,7 +343,7 @@ public abstract class AbstractDeployMojo
         return buildDirectory;
     }
 
-    private static Wagon getWagon( final Repository repository, final WagonManager manager )
+    private  Wagon getWagon( final Repository repository, final WagonManager manager, final Log log )
         throws MojoExecutionException
     {
         final Wagon wagon;
@@ -354,7 +354,13 @@ public abstract class AbstractDeployMojo
         }
         catch ( UnsupportedProtocolException e )
         {
-            throw new MojoExecutionException( "Unsupported protocol: '" + repository.getProtocol() + "'", e );
+            log.error( "Unavailable protocol for site deployment: '" + repository.getProtocol() + "'" );
+
+            throw new MojoExecutionException(
+                                              this,
+                                              "Unavailable protocol for site deployment: '" + repository.getProtocol() + "'",
+                                              "To add a new protocol to site plugin, see "
+                                                  + "http://maven.apache.org/plugins/maven-site-plugin/examples/adding-deploy-protocol.html" );
         }
         catch ( TransferFailedException e )
         {

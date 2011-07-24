@@ -337,69 +337,18 @@ under the License.
       <artifactId>wagon-provider-api</artifactId>
       <version>${wagonVersion}</version>
     </dependency>
-    <dependency>
-      <groupId>org.apache.maven.wagon</groupId>
-      <artifactId>wagon-file</artifactId>
-      <version>${wagonVersion}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven.wagon</groupId>
-      <artifactId>wagon-http-lightweight</artifactId>
-      <version>${wagonVersion}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven.wagon</groupId>
-      <artifactId>wagon-ssh</artifactId>
-      <version>${wagonVersion}</version>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven.wagon</groupId>
-      <artifactId>wagon-ssh-external</artifactId>
-      <version>${wagonVersion}</version>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven.wagon</groupId>
-      <artifactId>wagon-ftp</artifactId>
-      <version>${wagonVersion}</version>
-      <scope>runtime</scope>
-    </dependency>
 
     <dependency>
       <groupId>org.apache.maven.wagon</groupId>
       <artifactId>wagon-webdav-jackrabbit</artifactId>
       <version>${wagonVersion}</version>
-      <scope>runtime</scope>
+      <scope>test</scope>
       <exclusions>
         <exclusion>
           <groupId>org.slf4j</groupId>
           <artifactId>slf4j-nop</artifactId>
         </exclusion>
       </exclusions>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.maven.wagon</groupId>
-      <artifactId>wagon-scm</artifactId>
-      <version>${wagonVersion}</version>
-      <scope>runtime</scope>
-    </dependency>
-
-    <!-- adding at least svn -->
-    <dependency>
-      <groupId>org.apache.maven.scm</groupId>
-      <artifactId>maven-scm-api</artifactId>
-      <version>${scmVersion}</version>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven.scm</groupId>
-      <artifactId>maven-scm-provider-svnexe</artifactId>
-      <version>${scmVersion}</version>
-      <scope>runtime</scope>
     </dependency>
 
     <!-- Plexus -->
