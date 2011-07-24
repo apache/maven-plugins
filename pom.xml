@@ -26,14 +26,13 @@ under the License.
     <groupId>org.apache.maven.plugins</groupId>
     <artifactId>maven-plugins</artifactId>
     <version>21</version>
-    <relativePath>../maven-plugins/pom.xml</relativePath>
   </parent>
 
   <artifactId>maven-site-plugin</artifactId>
-  <version>2.4-SNAPSHOT</version>
+  <version>3.0-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
-  <name>Maven Site Plugin 2</name>
+  <name>Maven Site Plugin 3</name>
   <description>The Maven Site Plugin is a plugin that generates a site for the current project.</description>
 
   <contributors>
@@ -147,6 +146,13 @@ under the License.
       </roles>
     </contributor>
     <contributor>
+      <name>Marvin Froeder</name>
+      <email>velo.br@gmail.com</email>
+      <roles>
+        <role>msite-504</role>
+      </roles>
+    </contributor>
+    <contributor>
       <name>Yevgeny Nyden</name>
       <email>yev@curre.net</email>
       <roles>
@@ -163,24 +169,28 @@ under the License.
   </contributors>
 
   <prerequisites>
-    <maven>${mavenVersion}</maven>
+    <maven>2.2.0</maven>
   </prerequisites>
 
   <scm>
-    <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-site-plugin/</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/trunk/maven-site-plugin/</developerConnection>
-    <url>http://svn.apache.org/viewvc/maven/plugins/trunk/maven-site-plugin/</url>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/branches/maven-site-plugin-3.x</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/branches/maven-site-plugin-3.x</developerConnection>
+    <url>http://svn.apache.org/viewvc/maven/plugins/branches/maven-site-plugin-3.x</url>
   </scm>
   <issueManagement>
     <system>JIRA</system>
     <url>http://jira.codehaus.org/browse/MSITE</url>
   </issueManagement>
 
+  <url>http://maven.apache.org/plugins/maven-site-plugin-${project.version}</url>
+
   <properties>
     <doxiaVersion>1.2</doxiaVersion>
-    <doxiaSitetoolsVersion>1.2.1-SNAPSHOT</doxiaSitetoolsVersion>
-    <mavenVersion>2.2.0</mavenVersion>
-    <wagonVersion>1.0-beta-6</wagonVersion>
+    <doxiaSitetoolsVersion>1.2</doxiaSitetoolsVersion>
+    <mavenVersion>3.0</mavenVersion>
+    <wagonVersion>1.0</wagonVersion>
+    <plexusVersion>1.5.4</plexusVersion>
+    <scmVersion>1.4</scmVersion>
     <!-- for ITs -->
     <javadocPluginVersion>2.6.1</javadocPluginVersion>
     <projectInfoReportsPluginVersion>2.2</projectInfoReportsPluginVersion>
@@ -193,6 +203,11 @@ under the License.
       <artifactId>maven-reporting-api</artifactId>
       <version>3.0</version>
     </dependency>
+    <dependency>
+      <groupId>org.apache.maven.reporting</groupId>
+      <artifactId>maven-reporting-exec</artifactId>
+      <version>1.0</version>
+    </dependency>
 
     <!-- Maven -->
     <dependency>
@@ -202,7 +217,13 @@ under the License.
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
-      <artifactId>maven-artifact-manager</artifactId>
+      <artifactId>maven-compat</artifactId>
+      <version>${mavenVersion}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-core</artifactId>
       <version>${mavenVersion}</version>
     </dependency>
     <dependency>
@@ -217,13 +238,26 @@ under the License.
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
-      <artifactId>maven-project</artifactId>
+      <artifactId>maven-settings</artifactId>
       <version>${mavenVersion}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
-      <artifactId>maven-settings</artifactId>
+      <artifactId>maven-settings-builder</artifactId>
       <version>${mavenVersion}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.sonatype.aether</groupId>
+      <artifactId>aether-util</artifactId>
+      <version>1.7</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.sonatype.aether</groupId>
+      <artifactId>aether-api</artifactId>
+      <version>1.7</version>
+      <scope>provided</scope>
     </dependency>
 
     <!-- Doxia -->
@@ -295,6 +329,20 @@ under the License.
       <groupId>org.apache.maven.shared</groupId>
       <artifactId>maven-doxia-tools</artifactId>
       <version>1.4</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.maven</groupId>
+          <artifactId>maven-artifact-manager</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.maven</groupId>
+          <artifactId>maven-repository-metadata</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.maven</groupId>
+          <artifactId>maven-project</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <!-- Wagon -->
@@ -303,6 +351,61 @@ under the License.
       <artifactId>wagon-provider-api</artifactId>
       <version>${wagonVersion}</version>
     </dependency>
+    <dependency>
+      <groupId>org.apache.maven.wagon</groupId>
+      <artifactId>wagon-file</artifactId>
+      <version>${wagonVersion}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.wagon</groupId>
+      <artifactId>wagon-http-lightweight</artifactId>
+      <version>${wagonVersion}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.wagon</groupId>
+      <artifactId>wagon-ssh</artifactId>
+      <version>${wagonVersion}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.wagon</groupId>
+      <artifactId>wagon-ssh-external</artifactId>
+      <version>${wagonVersion}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.wagon</groupId>
+      <artifactId>wagon-ftp</artifactId>
+      <version>${wagonVersion}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.maven.wagon</groupId>
+      <artifactId>wagon-webdav-jackrabbit</artifactId>
+      <version>${wagonVersion}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-nop</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.maven.wagon</groupId>
+      <artifactId>wagon-scm</artifactId>
+      <version>${wagonVersion}</version>
+    </dependency>
+
+    <!-- adding at least svn -->
+    <dependency>
+      <groupId>org.apache.maven.scm</groupId>
+      <artifactId>maven-scm-api</artifactId>
+      <version>${scmVersion}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.scm</groupId>
+      <artifactId>maven-scm-provider-svnexe</artifactId>
+      <version>${scmVersion}</version>
+    </dependency>
 
     <!-- Plexus -->
     <dependency>
@@ -310,11 +413,7 @@ under the License.
       <artifactId>plexus-archiver</artifactId>
       <version>1.0</version>
     </dependency>
-    <dependency>
-      <groupId>org.codehaus.plexus</groupId>
-      <artifactId>plexus-container-default</artifactId>
-      <version>1.0-alpha-9</version>
-    </dependency>
+
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-i18n</artifactId>
@@ -343,19 +442,65 @@ under the License.
       <version>1.5.10</version>
     </dependency>
 
-    <!-- misc -->
     <dependency>
       <groupId>org.mortbay.jetty</groupId>
       <artifactId>jetty</artifactId>
-      <version>6.1.5</version>
+      <version>6.1.25</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.mortbay.jetty</groupId>
+      <artifactId>jetty-client</artifactId>
+      <version>6.1.25</version>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- note slf4j- upgrade possible until upgrade wagon-webdav-jackrabbit is upgraded too -->
+
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>1.5.3</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-simple</artifactId>
+      <version>1.5.3</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>jcl-over-slf4j</artifactId>
+      <version>1.6.1</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>commons-lang</groupId>
+      <artifactId>commons-lang</artifactId>
+      <version>2.5</version>
+    </dependency>
+
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+      <version>1.4</version>
     </dependency>
 
     <!-- test -->
     <dependency>
       <groupId>org.apache.maven.plugin-testing</groupId>
       <artifactId>maven-plugin-testing-harness</artifactId>
-      <version>1.2</version>
+      <version>2.0-alpha-1</version>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.8.1</version>
     </dependency>
   </dependencies>
 
@@ -372,6 +517,57 @@ under the License.
         </plugin>
       </plugins>
     </pluginManagement>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.plexus</groupId>
+        <artifactId>plexus-component-metadata</artifactId>
+        <version>${plexusVersion}</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>generate-metadata</goal>
+              <!--goal>generate-test-metadata</goal-->
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>1.4</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <artifactSet>
+                <includes>
+                  <include>org.apache.maven.reporting:maven-reporting-api</include>
+                  <include>org.apache.maven:maven-artifact</include>
+                </includes>
+              </artifactSet>
+              <filters>
+                <filter>
+                  <artifact>org.apache.maven.reporting:maven-reporting-api</artifact>
+                  <includes><!-- class not included in maven-reporting-api from Maven 2.2 -->
+                    <include>**/MavenMultiPageReport.class</include>
+                  </includes>
+                </filter>
+                <filter>
+                  <artifact>org.apache.maven:maven-artifact</artifact>
+                  <includes>
+                    <include>**/ComparableVersion.class</include>
+                    <include>**/ComparableVersion$*.class</include>
+                  </includes>
+                </filter>
+              </filters>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
   </build>
 
   <reporting>
@@ -482,5 +678,59 @@ under the License.
         </plugins>
       </reporting>
     </profile>
+    <profile>
+      <id>m2e</id>
+      <activation>
+        <property>
+          <name>m2e.version</name>
+        </property>
+      </activation>
+      <properties>
+        <m2BuildDirectory>target</m2BuildDirectory>
+      </properties>
+      <build>
+        <directory>${m2BuildDirectory}</directory>
+        <plugins>
+          <plugin>
+            <groupId>org.maven.ide.eclipse</groupId>
+            <artifactId>lifecycle-mapping</artifactId>
+            <version>0.10.0</version>
+            <configuration>
+              <mappingId>customizable</mappingId>
+              <configurators>
+                <configurator id="org.maven.ide.eclipse.jdt.javaConfigurator" />
+                <configurator id="org.maven.ide.eclipse.plexus.annotations.plexusConfigurator" />
+              </configurators>
+              <mojoExecutions>
+                <mojoExecution>org.apache.maven.plugins:maven-resources-plugin::</mojoExecution>
+              </mojoExecutions>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <id>dev</id>
+      <build>
+        <pluginManagement>
+          <plugins>
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-site-plugin</artifactId>
+              <version>${project.version}</version>
+            </plugin>
+          </plugins>
+        </pluginManagement>
+      </build>
+    </profile>
   </profiles>
+
+  <distributionManagement>
+    <site>
+      <id>apache.website</id>
+      <url>scp://people.apache.org/www/maven.apache.org/plugins/maven-site-plugin-${project.version}</url>
+    </site>
+  </distributionManagement>
+
 </project>

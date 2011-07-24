@@ -71,4 +71,10 @@ under the License.
       </plugin>
     </plugins>
   </build>
+  <distributionManagement>
+    <site>
+      <id>foo</id>
+      <name>bar</name>
+    </site>
+  </distributionManagement>
 </project>

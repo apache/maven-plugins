@@ -69,8 +69,8 @@ Building multi-module sites
   <<<{{{../attach-descriptor-mojo.html}site:attach-descriptor}}>>>
   goal to attach the site descriptor to your project's main artifact.
 
-  In Maven 2 the site descriptor is attached automatically for projects with
-  packaging set to "pom".
+  In Maven 3 you must attach the site descriptor yourself, even for projects
+  with packaging set to "pom".
 
   By default, all the parent descriptor settings are inherited with the only exception of menus, see below.
   From the body, the links and breadcrumbs accumulate to contain all the parent's

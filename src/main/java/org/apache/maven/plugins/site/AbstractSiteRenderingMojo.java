@@ -42,10 +42,20 @@ import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.doxia.siterenderer.RendererException;
 import org.apache.maven.doxia.siterenderer.SiteRenderingContext;
 import org.apache.maven.doxia.tools.SiteToolException;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.reporting.MavenReport;
-
+import org.apache.maven.reporting.exec.MavenReportExecution;
+import org.apache.maven.reporting.exec.MavenReportExecutor;
+import org.apache.maven.reporting.exec.MavenReportExecutorRequest;
+import org.apache.maven.reporting.exec.ReportPlugin;
+import org.codehaus.plexus.PlexusConstants;
+import org.codehaus.plexus.PlexusContainer;
+import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
+import org.codehaus.plexus.context.Context;
+import org.codehaus.plexus.context.ContextException;
+import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
 
 /**
  * Base class for site rendering mojos.
@@ -54,7 +64,7 @@ import org.apache.maven.reporting.MavenReport;
  * @version $Id$
  */
 public abstract class AbstractSiteRenderingMojo
-    extends AbstractSiteMojo
+    extends AbstractSiteMojo implements Contextualizable
 {
     /**
      * Module type exclusion mappings
@@ -132,13 +142,6 @@ public abstract class AbstractSiteRenderingMojo
     protected Renderer siteRenderer;
 
     /**
-     * @parameter expression="${reports}"
-     * @required
-     * @readonly
-     */
-    protected List<MavenReport> reports;
-
-    /**
      * Alternative directory for xdoc source, useful for m1 to m2 migration
      *
      * @parameter default-value="${basedir}/xdocs"
@@ -155,6 +158,34 @@ public abstract class AbstractSiteRenderingMojo
      * @todo should we deprecate in favour of reports?
      */
     protected File generatedSiteDirectory;
+
+    /**
+     * The current Maven session.
+     * 
+     * @parameter expression="${session}"
+     * @required
+     * @readonly
+     */
+    protected MavenSession mavenSession;
+
+    /**
+     * Reports (Maven 2).
+     * 
+     * @parameter expression="${reports}"
+     * @required
+     * @readonly
+     */
+    protected List<MavenReport> reports;
+
+    /**
+     * Report plugins (Maven 3).
+     * 
+     * @parameter
+     * @since 3.0-beta-1
+     */
+    private ReportPlugin[] reportPlugins;
+
+    private PlexusContainer container;
 
     /**
      * Make links in the site descriptor relative to the project URL.
@@ -178,17 +209,45 @@ public abstract class AbstractSiteRenderingMojo
      */
     private boolean generateProjectInfo;
 
-    protected List<MavenReport> filterReports( List<MavenReport> reports )
+    /** {@inheritDoc} */
+    public void contextualize( Context context )
+        throws ContextException
     {
-        List<MavenReport> filteredReports = new ArrayList<MavenReport>( reports.size() );
+        container = (PlexusContainer) context.get( PlexusConstants.PLEXUS_KEY );
+    }
+
+    protected List<MavenReportExecution> getReports()
+        throws MojoExecutionException
+    {
+        if ( isMaven3OrMore() )
+        {
+            MavenReportExecutorRequest mavenReportExecutorRequest = new MavenReportExecutorRequest();
+            mavenReportExecutorRequest.setLocalRepository( localRepository );
+            mavenReportExecutorRequest.setMavenSession( mavenSession );
+            mavenReportExecutorRequest.setProject( project );
+            mavenReportExecutorRequest.setReportPlugins( reportPlugins );
+
+            MavenReportExecutor mavenReportExecutor;
+            try
+            {
+                mavenReportExecutor = (MavenReportExecutor) container.lookup( MavenReportExecutor.class.getName() );
+            }
+            catch ( ComponentLookupException e )
+            {
+                throw new MojoExecutionException( "could not get MavenReportExecutor component", e );
+            }
+            return mavenReportExecutor.buildMavenReports( mavenReportExecutorRequest );
+        }
+
+        List<MavenReportExecution> reportExecutions = new ArrayList<MavenReportExecution>( reports.size() );
         for ( MavenReport report : reports )
         {
             if ( report.canGenerateReport() )
             {
-                filteredReports.add( report );
+                reportExecutions.add( new MavenReportExecution( report ) );
             }
         }
-        return filteredReports;
+        return reportExecutions;
     }
 
     protected SiteRenderingContext createSiteRenderingContext( Locale locale )
@@ -324,13 +383,16 @@ public abstract class AbstractSiteRenderingMojo
      * @return A map with all reports keyed by filename having the report itself as value.
      * The map will be used to populate a menu.
      */
-    protected Map<String, MavenReport> locateReports( List<MavenReport> reports,
+    protected Map<String, MavenReport> locateReports( List<MavenReportExecution> reports,
                                                       Map<String, DocumentRenderer> documents, Locale locale )
     {
+        // copy Collection to prevent ConcurrentModificationException
+        List<MavenReportExecution> filtered = new ArrayList<MavenReportExecution>( reports );
+
         Map<String, MavenReport> reportsByOutputName = new HashMap<String, MavenReport>();
-        for ( Iterator<MavenReport> i = reports.iterator(); i.hasNext(); )
+        for ( MavenReportExecution mavenReportExecution : filtered )
         {
-            MavenReport report = i.next();
+            MavenReport report = mavenReportExecution.getMavenReport();
 
             String outputName = report.getOutputName() + ".html";
 
@@ -343,12 +405,12 @@ public abstract class AbstractSiteRenderingMojo
 
                 getLog().info( "Skipped \"" + report.getName( locale ) + "\" report, file \"" + outputName
                                    + "\" already exists for the " + displayLanguage + " version." );
-                i.remove();
+                reports.remove( mavenReportExecution );
             }
             else
             {
                 RenderingContext renderingContext = new RenderingContext( siteDirectory, outputName );
-                ReportDocumentRenderer renderer = new ReportDocumentRenderer( report, renderingContext, getLog() );
+                DocumentRenderer renderer = new ReportDocumentRenderer( mavenReportExecution, renderingContext, getLog() );
                 documents.put( outputName, renderer );
             }
         }
@@ -378,7 +440,7 @@ public abstract class AbstractSiteRenderingMojo
         return categories;
     }
 
-    protected Map<String, DocumentRenderer> locateDocuments( SiteRenderingContext context, List<MavenReport> reports,
+    protected Map<String, DocumentRenderer> locateDocuments( SiteRenderingContext context, List<MavenReportExecution> reports,
                                                              Locale locale )
         throws IOException, RendererException
     {
@@ -456,7 +518,6 @@ public abstract class AbstractSiteRenderingMojo
 
                 if ( report != null )
                 {
-
                     if ( item.getName() == null )
                     {
                         item.setName( report.getName( locale ) );

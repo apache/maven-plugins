@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Writer;
 import java.io.File;
-
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
@@ -42,8 +41,10 @@ import org.apache.maven.doxia.siterenderer.SiteRenderingContext;
 import org.apache.maven.doxia.siterenderer.sink.SiteRendererSink;
 import org.apache.maven.doxia.tools.MojoLogWrapper;
 import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.reporting.MavenMultiPageReport;
 import org.apache.maven.reporting.MavenReport;
 import org.apache.maven.reporting.MavenReportException;
+import org.apache.maven.reporting.exec.MavenReportExecution;
 
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.WriterFactory;
@@ -62,15 +63,27 @@ public class ReportDocumentRenderer
 
     private final String pluginInfo;
 
+    private final ClassLoader classLoader;
+    
     private final Log log;
 
-    public ReportDocumentRenderer( MavenReport report, RenderingContext renderingContext, Log log )
+    public ReportDocumentRenderer( MavenReportExecution mavenReportExecution, RenderingContext renderingContext, Log log )
     {
-        this.report = report;
-
-        pluginInfo = getPluginInfo( report );
+        this.report = mavenReportExecution.getMavenReport();
 
         this.renderingContext = renderingContext;
+
+        if ( mavenReportExecution.getPlugin() == null )
+        {
+            this.pluginInfo = getPluginInfo( report );
+        }
+        else
+        {
+            this.pluginInfo =
+                mavenReportExecution.getPlugin().getArtifactId() + ':' + mavenReportExecution.getPlugin().getVersion();
+        }
+
+        this.classLoader = mavenReportExecution.getClassLoader();
 
         this.log = log;
     }
@@ -107,7 +120,7 @@ public class ReportDocumentRenderer
 
         return null;
     }
-    
+
     private static class MySink
         extends SiteRendererSink
     {
@@ -187,35 +200,48 @@ public class ReportDocumentRenderer
         String localReportName = report.getName( locale );
 
         log.info( "Generating \"" + localReportName + "\" report"
-            + ( pluginInfo == null ? "." : ( "    --- " + pluginInfo ) ) );
+                  + ( pluginInfo == null ? "." : ( "    --- " + pluginInfo ) ) );
 
         MySinkFactory sf = new MySinkFactory( renderingContext );
 
         SiteRendererSink sink = new SiteRendererSink( renderingContext );
-        sink.enableLogging( new MojoLogWrapper( log ) );
-
+        ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
+        if ( classLoader != null )
+        {
+            Thread.currentThread().setContextClassLoader( classLoader );
+        }
         try
         {
-            // try extended multi-page API
-            if ( !generateMultiPage( locale, sf, sink ) )
+            if ( report instanceof MavenMultiPageReport )
             {
-                // fallback to old single-page-only API
-                try
-                {
-                    report.generate( sink, locale );
-                }
-                catch ( NoSuchMethodError e )
-                {
-                    throw new RendererException( "No method on " + report.getClass(), e );
-                }
+                // extended multi-page API
+                ( (MavenMultiPageReport) report ).generate( sink, sf, locale );
+            }
+            else if ( generateMultiPage( locale, sf, sink ) )
+            {
+             // extended multi-page API for Maven 2.2, only accessible by reflection API
+            }
+            else
+            {
+                // old single-page-only API
+                report.generate( sink, locale );
             }
         }
         catch ( MavenReportException e )
         {
             throw new RendererException( "Error rendering Maven report: " + e.getMessage(), e );
         }
+        catch ( LinkageError e )
+        {
+            log.warn( "An issue has occurred with report " + report.getClass().getName() + ", skip LinkageError "
+                          + e.getMessage() + ", please report an issue to Maven dev team.", e );
+        }
         finally
         {
+            if ( classLoader != null )
+            {
+                Thread.currentThread().setContextClassLoader( originalClassLoader );
+            }
             sink.close();
         }
 

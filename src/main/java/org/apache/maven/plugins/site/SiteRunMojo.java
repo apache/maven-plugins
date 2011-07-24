@@ -36,7 +36,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.site.webapp.DoxiaBean;
 import org.apache.maven.plugins.site.webapp.DoxiaFilter;
-import org.apache.maven.reporting.MavenReport;
+import org.apache.maven.reporting.exec.MavenReportExecution;
 
 import org.codehaus.plexus.util.IOUtil;
 
@@ -155,12 +155,12 @@ public class SiteRunMojo
 
         // For external reports
         project.getReporting().setOutputDirectory( tempWebappDirectory.getAbsolutePath() );
-        for ( MavenReport report : reports )
+        for ( MavenReportExecution mavenReportExecution : getReports() )
         {
-            report.setReportOutputDirectory( tempWebappDirectory );
+            mavenReportExecution.getMavenReport().setReportOutputDirectory( tempWebappDirectory );
         }
 
-        List<MavenReport> filteredReports = filterReports( reports );
+        List<MavenReportExecution> reports = getReports(); // TODO: is it sane to call getReports() method a second time?
 
         List<Locale> localesList = siteTool.getAvailableLocales( locales );
         webapp.setAttribute( DoxiaFilter.LOCALES_LIST_KEY, localesList );
@@ -179,7 +179,7 @@ public class SiteRunMojo
                 i18nContext.setInputEncoding( getInputEncoding() );
                 i18nContext.setOutputEncoding( getOutputEncoding() );
 
-                Map<String, DocumentRenderer> i18nDocuments = locateDocuments( i18nContext, filteredReports, locale );
+                Map<String, DocumentRenderer> i18nDocuments = locateDocuments( i18nContext, reports, locale );
                 DoxiaBean doxiaBean;
                 if ( defaultLocale.equals( locale ) )
                 {

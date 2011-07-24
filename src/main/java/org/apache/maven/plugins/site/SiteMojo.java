@@ -33,6 +33,7 @@ import org.apache.maven.doxia.siterenderer.SiteRenderingContext;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.reporting.MavenReport;
+import org.apache.maven.reporting.exec.MavenReportExecution;
 
 /**
  * Generates the site for a single project.
@@ -87,7 +88,7 @@ public class SiteMojo
      * Set this to 'true' to skip site generation.
      *
      * @parameter expression="${maven.site.skip}" default-value="false"
-     * @since 2.4
+     * @since 3.0
      */
     private boolean skip;
 
@@ -109,16 +110,19 @@ public class SiteMojo
             return;
         }
 
-        checkMavenVersion();
+        if ( getLog().isDebugEnabled() )
+        {
+            getLog().debug( "executing Site Mojo" );
+        }
 
-        List<MavenReport> filteredReports;
+        List<MavenReportExecution> reports;
         if ( generateReports )
         {
-            filteredReports = filterReports( reports );
+            reports = getReports();
         }
         else
         {
-            filteredReports = Collections.emptyList();
+            reports = Collections.emptyList();
         }
 
         try
@@ -131,7 +135,7 @@ public class SiteMojo
 
             for ( Locale locale : localesList )
             {
-                renderLocale( locale, filteredReports );
+                renderLocale( locale, reports );
             }
         }
         catch ( RendererException e )
@@ -144,7 +148,7 @@ public class SiteMojo
         }
     }
 
-    private void renderLocale( Locale locale, List<MavenReport> reports )
+    private void renderLocale( Locale locale, List<MavenReportExecution> reports )
         throws IOException, RendererException, MojoFailureException, MojoExecutionException
     {
         SiteRenderingContext context = createSiteRenderingContext( locale );
@@ -162,8 +166,9 @@ public class SiteMojo
         File outputDir = getOutputDirectory( locale );
 
         // For external reports
-        for ( MavenReport report : reports )
+        for ( MavenReportExecution mavenReportExecution : reports )
         {
+            MavenReport report = mavenReportExecution.getMavenReport();
             report.setReportOutputDirectory( outputDir );
         }
 

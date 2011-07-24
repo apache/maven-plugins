@@ -32,6 +32,8 @@ import org.codehaus.plexus.util.FileUtils;
 
 /**
  * Adds the site descriptor (<code>site.xml</code>) to the list of files to be installed/deployed.
+ * By default, this is enabled only when the project has pom packaging since it will be used by modules inheriting,
+ * but this can be enabled for other projects packaging if needed.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  * @version $Id$
@@ -57,9 +59,20 @@ public class SiteDescriptorAttachMojo
      */
     private MavenProjectHelper projectHelper;
 
+    /**
+     * @parameter default-value="true"
+     */
+    private boolean pomPackagingOnly;
+
     public void execute()
         throws MojoExecutionException
     {
+        if ( pomPackagingOnly && !"pom".equals( project.getPackaging() ) )
+        {
+            // http://jira.codehaus.org/browse/MSITE-597
+            return;
+        }
+
         List<Locale> localesList = siteTool.getAvailableLocales( locales );
 
         for ( Locale locale : localesList )

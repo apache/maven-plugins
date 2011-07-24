@@ -20,19 +20,26 @@ package org.apache.maven.plugins.site;
  */
 
 import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import java.util.List;
 import java.util.Locale;
 
-import org.apache.maven.artifact.manager.WagonConfigurationException;
 import org.apache.maven.artifact.manager.WagonManager;
+import org.apache.maven.execution.MavenExecutionRequest;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.DistributionManagement;
 import org.apache.maven.model.Site;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Server;
 import org.apache.maven.settings.Settings;
+import org.apache.maven.settings.crypto.DefaultSettingsDecryptionRequest;
+import org.apache.maven.settings.crypto.SettingsDecrypter;
+import org.apache.maven.settings.crypto.SettingsDecryptionResult;
 import org.apache.maven.wagon.CommandExecutionException;
 import org.apache.maven.wagon.CommandExecutor;
 import org.apache.maven.wagon.ConnectionException;
@@ -111,7 +118,7 @@ public abstract class AbstractDeployMojo
      * Set this to 'true' to skip site deployment.
      *
      * @parameter expression="${maven.site.deploy.skip}" default-value="false"
-     * @since 2.4
+     * @since 3.0
      */
     private boolean skipDeploy;
 
@@ -128,6 +135,14 @@ public abstract class AbstractDeployMojo
      * @readonly
      */
     private Settings settings;
+
+    /**
+     * @parameter expression="${session}"
+     * @required
+     * @readonly
+     * @since 3.0-beta-2
+     */
+    protected MavenSession mavenSession;
 
     private PlexusContainer container;
 
@@ -251,14 +266,31 @@ public abstract class AbstractDeployMojo
         {
             configureWagon( wagon, repository.getId(), settings, container, getLog() );
         }
-        catch ( WagonConfigurationException e )
+        catch ( TransferFailedException e )
         {
             throw new MojoExecutionException( "Unable to configure Wagon: '" + repository.getProtocol() + "'", e );
         }
 
         try
         {
-            final ProxyInfo proxyInfo = getProxyInfo( repository, wagonManager );
+            final ProxyInfo proxyInfo;
+            if ( !isMaven3OrMore() )
+            {
+                proxyInfo = getProxyInfo( repository, wagonManager );
+            }
+            else
+            {
+                try
+                {
+                    SettingsDecrypter settingsDecrypter = container.lookup( SettingsDecrypter.class );
+
+                    proxyInfo = getProxy( repository, getLog(), mavenSession, settingsDecrypter );
+                }
+                catch ( ComponentLookupException cle )
+                {
+                    throw new MojoExecutionException( "Unable to lookup SettingsDecrypter: " + cle.getMessage(), cle );
+                }
+            }
 
             push( directory, repository, wagonManager, wagon, proxyInfo,
                 siteTool.getAvailableLocales( locales ), getDeployModuleDirectory(), getLog() );
@@ -324,7 +356,7 @@ public abstract class AbstractDeployMojo
         {
             throw new MojoExecutionException( "Unsupported protocol: '" + repository.getProtocol() + "'", e );
         }
-        catch ( WagonConfigurationException e )
+        catch ( TransferFailedException e )
         {
             throw new MojoExecutionException( "Unable to configure Wagon: '" + repository.getProtocol() + "'", e );
         }
@@ -345,7 +377,7 @@ public abstract class AbstractDeployMojo
     {
         AuthenticationInfo authenticationInfo = manager.getAuthenticationInfo( repository.getId() );
         log.debug( "authenticationInfo with id '" + repository.getId() + "': "
-            + ( ( authenticationInfo == null ) ? "-" : authenticationInfo.getUserName() ) );
+                   + ( ( authenticationInfo == null ) ? "-" : authenticationInfo.getUserName() ) );
 
         try
         {
@@ -503,6 +535,92 @@ public abstract class AbstractDeployMojo
     }
 
     /**
+     * Get proxy information for Maven 3.
+     *
+     * @param repository
+     * @param log
+     * @param mavenSession
+     * @param settingsDecrypter
+     * @return
+     */
+    private static ProxyInfo getProxy( Repository repository, Log log, MavenSession mavenSession, SettingsDecrypter settingsDecrypter )
+    {
+        String protocol = repository.getProtocol();
+        String url = repository.getUrl();
+
+        log.debug( "repository protocol " + protocol );
+
+        String originalProtocol = protocol;
+        // olamy : hackish here protocol (wagon hint in fact !) is dav
+        // but the real protocol (transport layer) is http(s)
+        // and it's the one use in wagon to find the proxy arghhh
+        // so we will check both
+        if ( StringUtils.equalsIgnoreCase( "dav", protocol ) && url.startsWith( "dav:" ) )
+        {
+            url = url.substring( 4 );
+            if ( url.startsWith( "http" ) )
+            {
+                try
+                {
+                    URL urlSite = new URL( url );
+                    protocol = urlSite.getProtocol();
+                    log.debug( "find dav protocol so transform to real transport protocol " + protocol );
+                }
+                catch ( MalformedURLException e )
+                {
+                    log.warn( "fail to build URL with " + url );
+                }
+
+            }
+        }
+        else
+        {
+            log.debug( "getProxy 'protocol' : " +  protocol );
+        }
+        if ( mavenSession != null && protocol != null )
+        {
+            MavenExecutionRequest request = mavenSession.getRequest();
+
+            if ( request != null )
+            {
+                List<Proxy> proxies = request.getProxies();
+
+                if ( proxies != null )
+                {
+                    for ( Proxy proxy : proxies )
+                    {
+                        if ( proxy.isActive()
+                            && ( protocol.equalsIgnoreCase( proxy.getProtocol() ) || originalProtocol
+                                .equalsIgnoreCase( proxy.getProtocol() ) ) )
+                        {
+                            SettingsDecryptionResult result = settingsDecrypter
+                                .decrypt( new DefaultSettingsDecryptionRequest( proxy ) );
+                            proxy = result.getProxy();
+
+                            ProxyInfo proxyInfo = new ProxyInfo();
+                            proxyInfo.setHost( proxy.getHost() );
+                            // so hackish for wagon the protocol is https for site dav : dav:https://dav.codehaus.org/mojo/
+                            proxyInfo.setType( protocol );//proxy.getProtocol() );
+                            proxyInfo.setPort( proxy.getPort() );
+                            proxyInfo.setNonProxyHosts( proxy.getNonProxyHosts() );
+                            proxyInfo.setUserName( proxy.getUsername() );
+                            proxyInfo.setPassword( proxy.getPassword() );
+
+                            log.debug( "found proxyInfo "
+                                + ( proxyInfo == null ? "null" : "host:port " + proxyInfo.getHost() + ":"
+                                + proxyInfo.getPort() + ", " + proxyInfo.getUserName() ) );
+
+                            return proxyInfo;
+                        }
+                    }
+                }
+            }
+        }
+        log.debug( "getProxy 'protocol' : " +  protocol  + " no ProxyInfo found");
+        return null;
+    }
+
+    /**
      * Configure the Wagon with the information from serverConfigurationMap ( which comes from settings.xml )
      *
      * @todo Remove when {@link WagonManager#getWagon(Repository) is available}. It's available in Maven 2.0.5.
@@ -515,7 +633,7 @@ public abstract class AbstractDeployMojo
      */
     private static void configureWagon( Wagon wagon, String repositoryId, Settings settings, PlexusContainer container,
                                         Log log )
-        throws WagonConfigurationException
+        throws TransferFailedException
     {
         log.debug( " configureWagon " );
 
@@ -537,18 +655,18 @@ public abstract class AbstractDeployMojo
                     ComponentConfigurator componentConfigurator = null;
                     try
                     {
-                        componentConfigurator = (ComponentConfigurator) container.lookup( ComponentConfigurator.ROLE );
+                        componentConfigurator = (ComponentConfigurator) container.lookup( ComponentConfigurator.ROLE, "basic" );
                         componentConfigurator.configureComponent( wagon, plexusConf, container.getContainerRealm() );
                     }
                     catch ( final ComponentLookupException e )
                     {
-                        throw new WagonConfigurationException( repositoryId, "Unable to lookup wagon configurator."
-                            + " Wagon configuration cannot be applied.", e );
+                        throw new TransferFailedException( "While configuring wagon for \'" + repositoryId
+                            + "\': Unable to lookup wagon configurator." + " Wagon configuration cannot be applied.", e );
                     }
                     catch ( ComponentConfigurationException e )
                     {
-                        throw new WagonConfigurationException( repositoryId, "Unable to apply wagon configuration.",
-                            e );
+                        throw new TransferFailedException( "While configuring wagon for \'" + repositoryId
+                            + "\': Unable to apply wagon configuration.", e );
                     }
                     finally
                     {

@@ -3,7 +3,7 @@
  ------
  Dennis Lundberg
  ------
- 2010-08-11
+ 2011-07-05
  ------
 
  ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -33,12 +33,11 @@ Migrate
   adjustments to their environment, documents or configuration. Below is a list
   of these changes and what you as a user need to be aware of.
 
-* From 2.x to 3.0
+* From 2.x to 3.x
 
-  * Version 3 of the plugin requires at least <<Maven 3.0-beta-3>> to run.
+  * Version 3 of the plugin requires at least <<Maven 2.2.0>> to run.
 
-  * Read more at the site for
-  {{{http://maven.apache.org/plugins/maven-site-plugin-3.x/}Maven Site Plugin 3.x}}.
+  * If you use <<Maven 3>> please read the {{{./maven-3.html}Maven 3}} guide about relevant issues.
 
   []
 

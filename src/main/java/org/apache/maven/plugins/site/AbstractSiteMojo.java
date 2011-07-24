@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Properties;
 
 import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.artifact.versioning.ComparableVersion;
 import org.apache.maven.doxia.tools.SiteTool;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.project.MavenProject;
@@ -131,30 +132,13 @@ public abstract class AbstractSiteMojo
     {
         return ( outputEncoding == null ) ? ReaderFactory.UTF_8 : outputEncoding;
     }
-
-    /**
-     * Check the current Maven version and emit a warning if it's Maven 3.
-     * This plugin does not work with Maven 3.x.
-     */
-    protected void checkMavenVersion()
+    
+    protected boolean isMaven3OrMore()
     {
-        try
-        {
-            final String version = getMavenVersion();
-
-            if ( version.startsWith( "3" ) )
-            {
-                getLog().warn( "Running 2.x site-plugin with Maven 3, use site-plugin-3.x instead!" );
-            }
-        }
-        catch ( IOException e )
-        {
-            getLog().debug( "Unable to determine Maven version", e );
-        }
+        return new ComparableVersion( getMavenVersion() ).compareTo( new ComparableVersion( "3.0" ) ) >= 0;
     }
 
     protected String getMavenVersion()
-        throws IOException
     {
         // This relies on the fact that MavenProject is the in core classloader
         // and that the core classloader is for the maven-core artifact
@@ -166,6 +150,10 @@ public abstract class AbstractSiteMojo
         try
         {
             properties.load( in );
+        }
+        catch ( IOException ioe )
+        {
+            return "";
         }
         finally
         {
