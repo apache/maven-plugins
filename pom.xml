@@ -167,9 +167,9 @@ under the License.
   </prerequisites>
 
   <scm>
-    <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-site-plugin/</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/trunk/maven-site-plugin/</developerConnection>
-    <url>http://svn.apache.org/viewvc/maven/plugins/trunk/maven-site-plugin/</url>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/branches/maven-site-plugin-2.x/</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/branches/maven-site-plugin-2.x/</developerConnection>
+    <url>http://svn.apache.org/viewvc/maven/plugins/branches/maven-site-plugin-2.x/</url>
   </scm>
   <issueManagement>
     <system>JIRA</system>
