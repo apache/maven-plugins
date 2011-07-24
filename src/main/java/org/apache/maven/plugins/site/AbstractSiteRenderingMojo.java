@@ -456,7 +456,6 @@ public abstract class AbstractSiteRenderingMojo
 
                 if ( report != null )
                 {
-
                     if ( item.getName() == null )
                     {
                         item.setName( report.getName( locale ) );

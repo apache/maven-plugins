@@ -107,7 +107,7 @@ public class ReportDocumentRenderer
 
         return null;
     }
-    
+
     private static class MySink
         extends SiteRendererSink
     {
@@ -187,7 +187,7 @@ public class ReportDocumentRenderer
         String localReportName = report.getName( locale );
 
         log.info( "Generating \"" + localReportName + "\" report"
-            + ( pluginInfo == null ? "." : ( "    --- " + pluginInfo ) ) );
+                  + ( pluginInfo == null ? "." : ( "    --- " + pluginInfo ) ) );
 
         MySinkFactory sf = new MySinkFactory( renderingContext );
 
