@@ -176,6 +176,8 @@ under the License.
     <url>http://jira.codehaus.org/browse/MSITE</url>
   </issueManagement>
 
+  <url>http://maven.apache.org/plugins/maven-site-plugin-${project.version}</url>
+
   <properties>
     <doxiaVersion>1.2</doxiaVersion>
     <doxiaSitetoolsVersion>1.2.1-SNAPSHOT</doxiaSitetoolsVersion>
@@ -427,6 +429,7 @@ under the License.
         </plugins>
       </build>
     </profile>
+
     <profile>
       <id>reporting</id>
       <build>
@@ -483,4 +486,11 @@ under the License.
       </reporting>
     </profile>
   </profiles>
+
+  <distributionManagement>
+    <site>
+      <id>apache.website</id>
+      <url>scp://people.apache.org/www/maven.apache.org/plugins/maven-site-plugin-${project.version}</url>
+    </site>
+  </distributionManagement>
 </project>
