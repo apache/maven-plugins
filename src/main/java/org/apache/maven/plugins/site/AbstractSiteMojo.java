@@ -132,7 +132,10 @@ public abstract class AbstractSiteMojo
     {
         return ( outputEncoding == null ) ? ReaderFactory.UTF_8 : outputEncoding;
     }
-    
+
+    /**
+     * Check the current Maven version to see if it's Maven 3.0 or newer.
+     */
     protected boolean isMaven3OrMore()
     {
         return new ComparableVersion( getMavenVersion() ).compareTo( new ComparableVersion( "3.0" ) ) >= 0;
