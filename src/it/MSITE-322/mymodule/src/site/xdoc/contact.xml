@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="ISO-8859-15"?>
+<document>
+	<properties>
+		<author>A. Gerodolle</author>
+		<title>mymodule : contacts</title>
+	</properties>
+	<body>
+
+		<section name="Contacts">
+
+			<ul>
+				<li>
+					<a
+						href="mailto:anne.gerodolle@orange-ftgroup.com">
+						Anne Gerodolle
+					</a>
+				</li>
+			</ul>
+
+		</section>
+
+	</body>
+</document>

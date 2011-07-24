@@ -1,0 +1,59 @@
+
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+import java.io.*;
+
+import org.codehaus.plexus.util.*;
+
+boolean result = true;
+
+try
+{
+    final File siteDirectory = new File( basedir, "target/site" );
+    if ( !siteDirectory.exists() || !siteDirectory.isDirectory() )
+    {
+        System.err.println( "site is missing or not a directory." );
+        result = false;
+    }
+
+    File index = new File( siteDirectory, "index.html" );
+    if ( !index.exists() || index.isDirectory() )
+    {
+        System.err.println( "no index file or is a directory." );
+        result = false;
+    }
+
+    String content = FileUtils.fileRead( index, "UTF-8" );
+    int index1 = content.indexOf( "<a href=\"http://webhost.company.com/index.html\" class=\"externalLink\" title=\"Breadcrumb\">Breadcrumb</a>" );
+    int index2 = content.indexOf( "<a href=\"http://webhost.company.com/\" class=\"externalLink\" title=\"Link\">Link</a>" );
+    int index3 = content.indexOf( "<a href=\"http://webhost.company.com/\" class=\"externalLink\" title=\"Menu\">Menu</a>" );
+    if ( index1 < 0 || index2 < 0 || index3 < 0 )
+    {
+        System.err.println( "index.html has incorrect links!" );
+        result = false;
+    }
+}
+catch ( IOException e )
+{
+    e.printStackTrace();
+    result = false;
+}
+
+return result;
