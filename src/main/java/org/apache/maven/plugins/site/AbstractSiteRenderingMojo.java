@@ -142,6 +142,15 @@ public abstract class AbstractSiteRenderingMojo
     protected Renderer siteRenderer;
 
     /**
+     * Reports (Maven 2).
+     * 
+     * @parameter expression="${reports}"
+     * @required
+     * @readonly
+     */
+    protected List<MavenReport> reports;
+
+    /**
      * Alternative directory for xdoc source, useful for m1 to m2 migration
      *
      * @parameter default-value="${basedir}/xdocs"
@@ -167,15 +176,6 @@ public abstract class AbstractSiteRenderingMojo
      * @readonly
      */
     protected MavenSession mavenSession;
-
-    /**
-     * Reports (Maven 2).
-     * 
-     * @parameter expression="${reports}"
-     * @required
-     * @readonly
-     */
-    protected List<MavenReport> reports;
 
     /**
      * Report plugins (Maven 3).
