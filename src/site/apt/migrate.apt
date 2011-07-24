@@ -33,15 +33,6 @@ Migrate
   adjustments to their environment, documents or configuration. Below is a list
   of these changes and what you as a user need to be aware of.
 
-* From 2.x to 3.0
-
-  * Version 3 of the plugin requires at least <<Maven 3.0-beta-3>> to run.
-
-  * Read more at the site for
-  {{{http://maven.apache.org/plugins/maven-site-plugin-3.x/}Maven Site Plugin 3.x}}.
-
-  []
-
 * From 2.2.x to 2.3.x
 
   * The <<<site:stage>>> and <<<site:stage-deploy>>> goals have been decoupled from site generation.
