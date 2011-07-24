@@ -41,6 +41,7 @@ under the License.
       <item name="Building a multi-module site" href="/examples/multimodule.html"/>
       <item name="Configuring Reports" href="/examples/configuring-reports.html"/>
       <item name="Configuring Site Run" href="/examples/siterun.html"/>
+      <item name="Adding a Protocol to Deploy the Site" href="/examples/adding-deploy-protocol.html"/>
       <item name="Changing the Template File" href="/examples/templatefile.html"/>
       <item name="Creating Skins" href="/examples/creatingskins.html"/>
       <item name="Excluding Document Formats" href="/examples/moduleexcludes.html"/>
