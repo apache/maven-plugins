@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>inheritAsRef</groupId>
+    <artifactId>parentNotAsRef</artifactId>
+    <version>1.0</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
+
+  <artifactId>childNotAsRef</artifactId>
+  <packaging>pom</packaging>
+
+  <name>Child Not As Ref</name>
+
+  <modules>
+    <module>grandChildNotAsRef</module>
+  </modules>
+
+</project>

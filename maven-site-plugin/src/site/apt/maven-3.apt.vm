@@ -1,0 +1,324 @@
+ ------
+ Using it with Maven 3
+ ------
+ Olivier Lamy
+ ------
+ 2011-07-22
+ ------
+
+ ~~ Licensed to the Apache Software Foundation (ASF) under one
+ ~~ or more contributor license agreements.  See the NOTICE file
+ ~~ distributed with this work for additional information
+ ~~ regarding copyright ownership.  The ASF licenses this file
+ ~~ to you under the Apache License, Version 2.0 (the
+ ~~ "License"); you may not use this file except in compliance
+ ~~ with the License.  You may obtain a copy of the License at
+ ~~
+ ~~   http://www.apache.org/licenses/LICENSE-2.0
+ ~~
+ ~~ Unless required by applicable law or agreed to in writing,
+ ~~ software distributed under the License is distributed on an
+ ~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ ~~ KIND, either express or implied.  See the License for the
+ ~~ specific language governing permissions and limitations
+ ~~ under the License.
+
+ ~~ NOTE: For help with the syntax of this file, see:
+ ~~ http://maven.apache.org/doxia/references/apt-format.html
+
+
+Using it with Maven 3
+
+  A major aim of the refactoring in Maven 3 was to decouple the Maven core from Doxia
+  and to allow arbitrary reporting systems to be developed. For this reason, all reporting
+  related code has been removed from the core of Maven 3
+  ({{{http://jira.codehaus.org/browse/MNG-4162}MNG-4162}}).
+
+  As a result, the 2.x versions of the Maven Site Plugin will not work with Maven 3.
+  Using such versions of Maven Site Plugin with Maven 3 won't generate any reports from reporting plugin,
+  only hand-written Doxia documents (apt, xdoc, ...) will be rendered.
+
+  You need to use version 3.x of the Site Plugin, in order for it to work with Maven 3.
+
+* Plugins Compatibility Matrix for Maven 3
+
+** Plugins Maintained by the Apache Maven Community
+
+  Tests have been made on the reporting profile of the Maven parent POM which enables some reports.
+  You will need so update some of these plugins for them to work with Maven 3. Below you will find the minimum version
+  required for these plugins to work in Maven 3.
+
+*-----------------------------------+-----------+
+| <<Plugin>>                        |<<Version>>|
+*-----------------------------------+-----------+
+| maven-changelog-plugin            | 2.1       |
+*-----------------------------------+-----------+
+| maven-changes-plugin              | 2.1       |
+*-----------------------------------+-----------+
+| maven-checkstyle-plugin           | 2.5       |
+*-----------------------------------+-----------+
+| maven-javadoc-plugin              | 2.6.1     |
+*-----------------------------------+-----------+
+| maven-jxr-plugin                  | 2.1       |
+*-----------------------------------+-----------+
+| maven-plugin-plugin               | 2.5.1     |
+*-----------------------------------+-----------+
+| maven-pmd-plugin                  | 2.4       |
+*-----------------------------------+-----------+
+| maven-project-info-reports-plugin | 2.2       |
+*-----------------------------------+-----------+
+| maven-surefire-report-plugin      | 2.4.3     |
+*-----------------------------------+-----------+
+
+** Plugins Maintained by the Mojo Community
+
+*----------------------------------+-------------+
+| <<Plugin>>                       |<<Version>>  |
+*----------------------------------+-------------+
+| cobertura-maven-plugin           | 2.3         |
+*----------------------------------+-------------+
+| emma-maven-plugin                | 1.0-alpha-2 |
+*----------------------------------+-------------+
+
+
+* Configuration formats
+
+  The <<<\<reporting\>>>> section of the POM has been moved to the Site Plugin's configuration in Maven 3.
+  The content of the configuration has been kept as similar as possible to Maven 2.
+  The <<<{{{/shared/maven-reporting-exec/}maven-reporting-exec}}>>> component transforms the configuration on the fly.
+
+** Old configuration (Maven 2 & 3)
+
+  Reports are configured in the <<<\<reporting\>>>> section of the POM.
+
++-----+
+  <reporting>
+    <excludeDefaults>true</excludeDefaults>
+    <outputDirectory></outputDirectory>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-project-info-reports-plugin</artifactId>
+        <version>2.4</version>
+        <configuration>
+          <dependencyDetailsEnabled>false</dependencyDetailsEnabled>
+          <dependencyLocationsEnabled>false</dependencyLocationsEnabled>
+        </configuration>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>dependencies</report>
+              <report>scm</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>2.8</version>
+      </plugin>
+    </plugins>
+  </reporting>
++-----+
+
+** New Configuration (Maven 3 only, no reports configuration inheritance)
+
+  Reports are configured in the configuration for <<<maven-site-plugin>>> as <<<\<reportPlugins\>>>> elements.
+
++-----+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-site-plugin</artifactId>
+        <version>${project.version}</version>
+        <configuration>
+          ...
+          <reportPlugins>
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-project-info-reports-plugin</artifactId>
+              <version>2.4</version>
+              <configuration>
+                <dependencyDetailsEnabled>false</dependencyDetailsEnabled>
+                <dependencyLocationsEnabled>false</dependencyLocationsEnabled>
+              </configuration>
+              <!-- simpler configuration without reportSets available for usual cases -->
+              <reports>
+                <report>dependencies</report>
+                <report>scm</report>
+              </reports>
+            </plugin>
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-javadoc-plugin</artifactId>
+              <version>2.8</version>
+            </plugin>
+          </reportPlugins>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
++-----+
+
+  <<Note:>> In Maven 3, the new format does not support report plugins configuration inheritance: see
+  {{{http://jira.codehaus.org/browse/MSITE-484}MSITE-484}}. This format was technically necessary to remove reporting logic
+  from Maven 3, but a new inheritance mechanism still needs to be added to Maven 3 to make it as flexible as the old format.
+  So the new format is not ready for direct use for now.
+
+* Version Resolution
+
+  When used with Maven 3, a report plugin version can be empty.
+  The following order/strategy will be used to find/resolve a version:
+
+  * search the same groupId/artifactId in the build.plugins section
+
+  * search the same groupId/artifactId in the build.pluginManagement.plugins section
+
+  * resolve with current repositories (can include automatic SNAPSHOT resolution)
+
+* Site descriptor attachment
+
+  In Maven 3, the default execution of <<<site:attach-descriptor>>> has been removed from the
+  built-in lifecycle bindings for projects with packaging "pom". Users that actually use those
+  projects to provide a common site descriptor for sub modules will need to explicitly define
+  the following goal execution to restore the intended behavior:
+
++-----+
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-site-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>attach-descriptor</id>
+            <goals>
+              <goal>attach-descriptor</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
++-----+
+
+* Using the same version of maven-site-plugin for both Maven 2 and Maven 3
+
+  Starting with version 3.0, maven-site-plugin can run with both Maven 2.2.x and 3.x. The
+  results should be exactly the same if reports are configured in the old Maven 2 way, in the <<<\<reporting\>>>>
+  section. If you use the new Maven 3 way of configuring reports, in the <<<\<reportPlugins\>>>> section, it will only
+  work with Maven 3.
+
+  The following snippet automatically activates <<<site:attach-descriptor>>> when run with Maven 3:
+
++-----+
+  <profiles>
+    <profile>
+      <id>maven-3</id>
+      <activation>
+        <file>
+          <!--  This employs that the basedir expression is only recognized by Maven 3.x (see MNG-2363) -->
+          <exists>${basedir}</exists>
+        </file>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-site-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>attach-descriptor</id>
+                <goals>
+                  <goal>attach-descriptor</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
++-----+
+
+  <<Note:>> The profile is needed to avoid duplicate install and deploy of the site descriptor when running with Maven 2.2.x due to POM default lifecycle mappings.
+
+* Using maven-site-plugin 2.x with Maven 2 and maven-site-plugin 3.x with Maven 3
+
+  Before maven-site-plugin 3.0, maven-site-plugin 2.x was compatible only with Maven 2 and maven-site-plugin
+  3.0-betas were compatible only with Maven 3. A trick is needed to let Maven 2 use one version of the plugin and Maven 3
+  another version in the same <<<pom.xml>>>.
+
+  The following snippet automatically activates maven-site-plugin 3.x when run with Maven 3:
+
++-----+
+  <profiles>
+    <profile>
+      <id>maven-3</id>
+      <activation>
+        <file>
+          <!--  This employs that the basedir expression is only recognized by Maven 3.x (see MNG-2363) -->
+          <exists>${basedir}</exists>
+        </file>
+      </activation>
+      <build>
+        <pluginManagement>
+          <plugins>
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-site-plugin</artifactId>
+              <version>${project.version}</version>
+            </plugin>
+          </plugins>
+        </pluginManagement>
+        <plugins>
+          <plugin>
+            <artifactId>maven-site-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>attach-descriptor</id>
+                <goals>
+                  <goal>attach-descriptor</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
++-----+
+
+  <<Note:>> Be aware that you should also use <<<\<pluginManagement\>>>> to specify the version for maven-site-plugin 2.x.
+  If you define the plugin version directly inside the <<<\<plugins\>>>> section of the <<<\<build\>>>> element
+  then that version is always used, no matter which version of Maven is used. That snippet would look like this:
+
++-----+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-site-plugin</artifactId>
+          <version>2.3</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
++-----+
+
+* Inheritance of reports
+
+  Maven 2 and Maven 3 works differently when dealing with inheritance of reports
+  that are configured in the old configuration format. In Maven 2 inherited
+  reports are added, whereas in Maven 3 they are replaced.
+
+  Given a multi module build where the parent POM has the <<<index>>> report
+  configured and the child POM has the <<<summary>>> report configured.
+
+  In Maven 2 the child site will have both the <<<index>>> and <<<summary>>>
+  reports.
+
+  In Maven 3 the child site will have only the <<<summary>>> report.
+
+  For more info see {{{http://jira.codehaus.org/browse/MSITE-596}MSITE-596}}.
