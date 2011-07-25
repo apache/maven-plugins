@@ -27,14 +27,16 @@
  ~~ http://maven.apache.org/doxia/references/apt-format.html
 
 
-Adding a Protocol to Deploy the Site 
+Adding a Protocol to Deploy the Site
 
-  Maven 3 - then Maven Site Plugin - comes with minimal built-in protocol support: <<<file>>>, <<<http>>>, <<<https>>>.
-  Maven 2 adds <<<scp>>> to this list.
+  Out of the box, Maven 3 only supports <<<file:>>>, <<<http:>>> and <<<https:>>> as transport protocols.
+  Maven 2 adds <<<scp:>>> to this list.
 
-  To deploy a site with a non-built-in protocol, you'll need to add a new {{{http://maven.apache.org/wagon}wagon provider}}.
+  To deploy a site with a non-built-in protocol, you need to add the corresponding
+  {{{http://maven.apache.org/wagon/}wagon provider}}.
 
-  You can add it either as a global extension, or just let it at site plugin level:
+  You can add it either as a {{{http://maven.apache.org/guides/mini/guide-using-extensions.html}global extension}},
+  or declare it at as a dependency of the site plugin:
 
 +-----+
 <project>
