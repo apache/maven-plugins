@@ -35,10 +35,12 @@ Using it with Maven 3
   ({{{http://jira.codehaus.org/browse/MNG-4162}MNG-4162}}).
 
   As a result, the 2.x versions of the Maven Site Plugin will not work with Maven 3.
-  Using such versions of Maven Site Plugin with Maven 3 won't generate any reports from reporting plugin,
+  Using such versions of Maven Site Plugin with Maven 3 won't generate any reports from reporting plugins,
   only hand-written Doxia documents (apt, xdoc, ...) will be rendered.
 
   You need to use version 3.x of the Site Plugin, in order for it to work with Maven 3.
+
+%{toc|section=1|fromDepth=2|toDepth=3}
 
 * Plugins Compatibility Matrix for Maven 3
 
