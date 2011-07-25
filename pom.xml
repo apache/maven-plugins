@@ -205,7 +205,7 @@ under the License.
     <dependency>
       <groupId>org.apache.maven.reporting</groupId>
       <artifactId>maven-reporting-exec</artifactId>
-      <version>1.0</version>
+      <version>1.0.1-SNAPSHOT</version>
     </dependency>
 
     <!-- Maven -->
