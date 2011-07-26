@@ -25,6 +25,7 @@ import java.net.URL;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import org.apache.maven.artifact.manager.WagonManager;
 import org.apache.maven.execution.MavenExecutionRequest;
@@ -343,7 +344,7 @@ public abstract class AbstractDeployMojo
         return buildDirectory;
     }
 
-    private static Wagon getWagon( final Repository repository, final WagonManager manager, final Log log )
+    private Wagon getWagon( final Repository repository, final WagonManager manager, final Log log )
         throws MojoExecutionException
     {
         final Wagon wagon;
@@ -354,12 +355,13 @@ public abstract class AbstractDeployMojo
         }
         catch ( UnsupportedProtocolException e )
         {
-            log.error( "Unsupported protocol for site deployment: '" + repository.getProtocol()
-                + "'. For adding new protocols to the site plugin, see "
+            log.error( "Unsupported protocol for site deployment: '" + repository.getProtocol() + "'." );
+            log.error( "Supported protocols at this moment: " + getSupportedProtocols() + "." );
+            log.error( "For adding new protocols to the site plugin, see "
                 + "http://maven.apache.org/plugins/maven-site-plugin/examples/adding-deploy-protocol.html" );
 
-            throw new MojoExecutionException( "Unsupported protocol for site deployment: '"
-                + repository.getProtocol() + "'.", e );
+            throw new MojoExecutionException( "Unsupported protocol for site deployment: '" + repository.getProtocol()
+                + "'.", e );
         }
         catch ( TransferFailedException e )
         {
@@ -373,6 +375,21 @@ public abstract class AbstractDeployMojo
         }
 
         return wagon;
+    }
+
+    private String getSupportedProtocols()
+    {
+        try
+        {
+            Set<String> protocols = container.lookupMap( Wagon.class ).keySet();
+
+            return StringUtils.join( protocols.iterator(), ", " );
+        }
+        catch ( ComponentLookupException e )
+        {
+            // ignore
+        }
+        return "";
     }
 
     private static void push( final File inputDirectory, final Repository repository, final WagonManager manager,
