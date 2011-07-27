@@ -1981,6 +1981,19 @@ public class EclipsePlugin
     }
 
     /**
+     * Utility method that locates a project producing the given artifact 
+     * and verifies if it's a valid Eclipse project.
+     * 
+     * @param artifact the artifact a project should produce.
+     * @return <code>true</code> if the artifact is produced by a reactor projectart.
+     */
+    protected boolean isAvailableAsAReactorProject( Artifact artifact )
+    {
+        MavenProject project = getReactorProject( artifact );
+        return ( project != null && new File( project.getBasedir(), ".project" ).exists() ) ;
+    }
+    
+    /**
      * Utility method that locates a project in the workspace for the given artifact.
      * 
      * @param artifact the artifact a project should produce.
