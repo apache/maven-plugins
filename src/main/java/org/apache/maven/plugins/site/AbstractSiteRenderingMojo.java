@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -327,7 +328,7 @@ public abstract class AbstractSiteRenderingMojo
     protected Map<String, MavenReport> locateReports( List<MavenReport> reports,
                                                       Map<String, DocumentRenderer> documents, Locale locale )
     {
-        Map<String, MavenReport> reportsByOutputName = new HashMap<String, MavenReport>();
+        Map<String, MavenReport> reportsByOutputName = new LinkedHashMap<String, MavenReport>();
         for ( Iterator<MavenReport> i = reports.iterator(); i.hasNext(); )
         {
             MavenReport report = i.next();
@@ -364,7 +365,7 @@ public abstract class AbstractSiteRenderingMojo
      */
     protected Map<String, List<MavenReport>> categoriseReports( Collection<MavenReport> reports )
     {
-        Map<String, List<MavenReport>> categories = new HashMap<String, List<MavenReport>>();
+        Map<String, List<MavenReport>> categories = new LinkedHashMap<String, List<MavenReport>>();
         for ( MavenReport report : reports )
         {
             List<MavenReport> categoryReports = categories.get( report.getCategoryName() );
