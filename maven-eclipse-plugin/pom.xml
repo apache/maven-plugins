@@ -25,7 +25,7 @@ under the License.
   <parent>
     <artifactId>maven-plugins</artifactId>
     <groupId>org.apache.maven.plugins</groupId>
-    <version>19</version>
+    <version>21</version>
     <relativePath>../maven-plugins/pom.xml</relativePath>
   </parent>
 
@@ -237,10 +237,10 @@ under the License.
             <id>verify-integration-tests-checks</id>
             <phase>post-integration-test</phase>
             <configuration>
-              <tasks>
+              <target>
                 <property name="script" location="verify-integration-tests-checks.bsh" />
                 <script language="beanshell" src="${script}" />
-              </tasks>
+              </target>
             </configuration>
             <goals>
               <goal>run</goal>
@@ -294,12 +294,9 @@ under the License.
             <exclude>**/project/**</exclude>
             <exclude>**/Abstract*.java</exclude>
           </excludes>
-          <systemProperties>
-            <property>
-              <name>maven.home</name>
-              <value>${maven.home}</value>
-            </property>
-          </systemProperties>
+          <systemPropertyVariables>
+            <maven.home>${maven.home}</maven.home>
+          </systemPropertyVariables>
           <argLine>${maven.test.jvmargs}</argLine>
         </configuration>
       </plugin>
@@ -319,12 +316,9 @@ under the License.
           <plugin>
             <artifactId>maven-surefire-plugin</artifactId>
             <configuration>
-              <systemProperties combine.children="append">
-                <property>
-                  <name>maven.repo.local</name>
-                  <value>${maven.repo.local}</value>
-                </property>
-              </systemProperties>
+              <systemPropertyVariables>
+                <maven.repo.local>${maven.repo.local}</maven.repo.local>
+              </systemPropertyVariables>
             </configuration>
           </plugin>
         </plugins>
@@ -335,21 +329,14 @@ under the License.
       <build>
         <plugins>
           <plugin>
-            <artifactId>maven-surefire-plugin</artifactId>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-failsafe-plugin</artifactId>
+            <version>2.9</version>
             <executions>
               <execution>
-                <phase>integration-test</phase>
                 <goals>
-                  <goal>test</goal>
+                  <goal>integration-test</goal>
                 </goals>
-                <configuration>
-                  <includes>
-                    <include>**/*IT.java</include>
-                  </includes>
-                  <excludes>
-                    <exclude>specified only to override configuration from default execution</exclude>
-                  </excludes>
-                </configuration>
               </execution>
             </executions>
           </plugin>
