@@ -355,13 +355,20 @@ public abstract class AbstractDeployMojo
         }
         catch ( UnsupportedProtocolException e )
         {
-            log.error( "Unsupported protocol for site deployment: '" + repository.getProtocol() + "'." );
-            log.error( "Supported protocols at this moment: " + getSupportedProtocols() + "." );
-            log.error( "For adding new protocols to the site plugin, see "
-                + "http://maven.apache.org/plugins/maven-site-plugin/examples/adding-deploy-protocol.html" );
+            String shortMessage =
+                "Unsupported protocol: '" + repository.getProtocol() + "' for site deployment to "
+                    + "distributionManagement.site.url=" + repository.getUrl() + ".";
+            String longMessage =
+                "Supported protocols at this moment: " + getSupportedProtocols() + ".\n"
+                    + "    You can add protocols through wagon providers either as maven-site-plugin dependency or "
+                    + "extension.\n"
+                    + "    For more information, see "
+                    + "http://maven.apache.org/plugins/maven-site-plugin/examples/adding-deploy-protocol.html";
 
-            throw new MojoExecutionException( "Unsupported protocol for site deployment: '" + repository.getProtocol()
-                + "'.", e );
+            log.error( shortMessage );
+            log.error( longMessage );
+
+            throw new MojoExecutionException( null, shortMessage, "\n" + shortMessage + "\n" + longMessage );
         }
         catch ( TransferFailedException e )
         {
