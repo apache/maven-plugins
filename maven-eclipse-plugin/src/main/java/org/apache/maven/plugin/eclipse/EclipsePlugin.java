@@ -242,7 +242,7 @@ public class EclipsePlugin
      * <pre>
      * &lt;additionalBuildcommands&gt;
      *    &lt;buildCommand&gt;
-     *      &lt;name&gt;org.ui.externaltools.ExternalToolBuilder&lt;/name&gt;
+     *      &lt;name&gt;org.eclipse.ui.externaltools.ExternalToolBuilder&lt;/name&gt;
      *      &lt;triggers&gt;auto,full,incremental,&lt;/triggers&gt;
      *      &lt;arguments&gt;
      *        &lt;LaunchConfigHandle&gt;&amp;lt;project&amp;gt;./externalToolBuilders/MavenBuilder.launch&lt;/LaunchConfighandle&gt;
