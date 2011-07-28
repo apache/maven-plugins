@@ -48,7 +48,6 @@ Adding a Protocol to Deploy the Site
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-site-plugin</artifactId>
           <version>${project.version}</version>
-          <dependencies>
             <dependencies>
               <dependency><!-- add support for ssh/scp -->
                 <groupId>org.apache.maven.wagon</groupId>
@@ -56,7 +55,6 @@ Adding a Protocol to Deploy the Site
                 <version>1.0</version>
               </dependency>
             </dependencies>
-          </dependencies>
         </plugin>
       </plugins>
     </pluginManagement>
