@@ -30,19 +30,19 @@ Maven Eclipse Plugin: Usage
 
  This mini guide explains howto use Maven in Eclipse IDE.
 
- * {{{#Maven repository}Maven repository}}
+ * {{{Maven_repository}Maven repository}}
 
- * {{{#Maven as an external tool}Maven as an external tool}}
+ * {{{Maven_as_an_external_tool}Maven as an external tool}}
 
- * {{{#Simple Project}Simple Project}}
+ * {{{Simple_Project}Simple Project}}
 
- * {{{#Project with Dependencies}Project with Dependencies}}
+ * {{{Project_with_Dependencies}Project with Dependencies}}
 
- * {{{#Multiple Module Projects}Multiple Module Projects}}
+ * {{{Multiple_Module_Projects}Multiple Module Projects}}
 
- * {{{#Eclipse PDE Projects}Eclipse PDE Projects}}
+ * {{{Eclipse_PDE_Projects}Eclipse PDE Projects}}
 
-* {Maven repository}
+* Maven repository
 
  Eclipse needs to know the path to the local maven repository. Therefore the
  classpath variable <M2_REPO> has to be set. Execute the following command:
@@ -55,7 +55,7 @@ mvn -Declipse.workspace=<path-to-eclipse-workspace> eclipse:add-maven-repo
  bar, select Window > Preferences. Select the Java > Build Path > Classpath
  Variables page.
 
-* {Maven as an external tool}
+* Maven as an external tool
 
  You might want to execute some maven goals from inside Eclipse. This is
  possible by configuring an external launcher.
@@ -76,7 +76,7 @@ mvn -Declipse.workspace=<path-to-eclipse-workspace> eclipse:add-maven-repo
  For further information please refer to the Eclipse help.
 
 
-* {Simple Project}
+* Simple Project
 
  If you have a simple java project which is made up of only one module, using
  Eclipse is very simple. To generate the Eclipse project files from your POM
@@ -93,7 +93,7 @@ mvn eclipse:eclipse
  should not be located in your workspace, because Eclipse might come into
  trouble, especially if you want to use Eclipse as the scm client.
 
-* {Project with Dependencies}
+* Project with Dependencies
 
  If your maven project has dependencies, the eclipse classpath will be
  synchronised with the current list of maven dependencies, as well as
@@ -103,7 +103,7 @@ mvn eclipse:eclipse
  rerun <eclipse:eclipse> and refresh your eclipse workspace for the
  new dependencies to take effect.
 
-* {Multiple Module Projects}
+* Multiple Module Projects
 
  If your maven project consists of a number of aggregated projects with
  a common root pom, and if some of these aggregated projects depend on
@@ -116,7 +116,7 @@ mvn eclipse:eclipse
 
  For further details, see {{{./reactor.html}Multiple Module Projects}}.
 
-* {Eclipse PDE Projects}
+* Eclipse PDE Projects
 
  This plugin is capable of creating and / or synchronising an Eclipse
  Plugin Development Environment project.

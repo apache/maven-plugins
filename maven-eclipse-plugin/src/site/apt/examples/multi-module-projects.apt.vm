@@ -52,7 +52,7 @@ Using maven-eclipse-plugin in multi-module projects with WTP
 * The Example project
 
  This project is an example of a multi-module projects, containing some JAR-, a
- WAR- and an EAR-project. You can download it from {{{j2ee-simple.tar.gz}here}}.
+ WAR- and an EAR-project. You can download it from {{{./j2ee-simple.tar.gz}here}}.
  The project is based on the j2ee-simple archetype.
  
 ** Step by step
@@ -67,7 +67,7 @@ Using maven-eclipse-plugin in multi-module projects with WTP
   
   * start '<<<mvn eclipse:eclipse install>>>' from the command-line in the root project (j2ee-simple)
   
-  * use the {{Multi Project Import/Export Plugin}} to import all the modules into Eclipse
+  * use the {{{Multi_Project_Import_Export_Plugin}Multi Project Import/Export Plugin}} to import all the modules into Eclipse
   
   * define your favorite application server in the WTP Server view
   
@@ -109,7 +109,7 @@ target
  also be included in the SCM system, so that any updates (be it a new version or
  a configuration.change) are received by all developers.
 
-* {Multi Project Import/Export Plugin}
+* Multi Project Import/Export Plugin
 
  There is an Eclipe plugin available that can help a lot when using multi-module
  projects. This plugin can import several projects at once, and it can do so from
@@ -175,7 +175,7 @@ target
   * Location:
   
 +---
-    ${env_var:JAVA_HOME}/bin/java
+#set($varline = '${env_var:JAVA_HOME}/bin/java')  ${varline}
 +---
     
     If you're on Windows, you should add the '.exe' extension to the above command.
@@ -186,7 +186,7 @@ target
     be changed into
     
 +---
-    ${env_var:JAVA_HOME}/bin/${JAVA_EXECUTABLE}
+#set($varline = '${env_var:JAVA_HOME}/bin/${JAVA_EXECUTABLE}')  ${varline}
 +---
     
   * Working Directory: 
@@ -194,7 +194,7 @@ target
     Select the root pom project here.
 
 +---
-    ${workspace_loc:/j2ee-simple}
+#set($varline = '${workspace_loc:/j2ee-simple}')  ${varline}
 +---
     
   * Arguments:
@@ -203,13 +203,13 @@ target
     the Maven distribution. The project is called 'organization'.
     
 +---
-  -Dclassworlds.conf=${resource_loc:organization/maven-2.0/bin/m2.conf}
-  -Dmaven.home=${resource_loc:organization/maven-2.0}
-  -classpath ${resource_loc:organization/maven-2.0/core/boot/classworlds-1.1.jar}
+#set($varline = '-Dclassworlds.conf=${resource_loc:organization/maven-2.0/bin/m2.conf}')  ${varline} 
+#set($varline = '-Dmaven.home=${resource_loc:organization/maven-2.0}')  ${varline}
+#set($varline = '-classpath ${resource_loc:organization/maven-2.0/core/boot/classworlds-1.1.jar}')  ${varline}
    org.codehaus.classworlds.Launcher
 
   -DdownloadSources=true
-  -Dmaven.test.skip=${string_prompt:maven.test.skip:false}
+#set($varline = '-Dmaven.test.skip=${string_prompt:maven.test.skip:false}')  ${varline}  
    clean eclipse:clean eclipse:eclipse install
 +---
 
@@ -282,16 +282,16 @@ target
  The configuration of the maven-eclipse-plugin used in this description is:
  
 +-----
-	<plugin>
-		<groupId>org.apache.maven.plugins</groupId>
-		<artifactId>maven-eclipse-plugin</artifactId>
+  <plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-eclipse-plugin</artifactId>
     <version>${project.version}</version>
-		<configuration>
-			<projectNameTemplate>[artifactId]-[version]</projectNameTemplate>
-			<wtpmanifest>true</wtpmanifest>
-			<wtpapplicationxml>true</wtpapplicationxml>
-			<wtpversion>2.0</wtpversion>
-			<manifest>${basedir}/src/main/resources/META-INF/MANIFEST.MF</manifest>
-		</configuration>
-	</plugin>
+    <configuration>
+      <projectNameTemplate>[artifactId]-[version]</projectNameTemplate>
+      <wtpmanifest>true</wtpmanifest>
+      <wtpapplicationxml>true</wtpapplicationxml>
+      <wtpversion>2.0</wtpversion>
+      <manifest>${basedir}/src/main/resources/META-INF/MANIFEST.MF</manifest>
+    </configuration>
+  </plugin>
 +-----
