@@ -533,7 +533,8 @@ public class TestUnpackMojo
         displayFile( "artifact    ", artifact.getFile() );
         displayFile( "marker      ", marker );
         System.out.println( "marker.lastModified() = " + time );
-        System.out.println( "unpackedFile.lastModified() = " + unpackedFile.lastModified() );
+        long unpackedFileTime = unpackedFile.lastModified();
+        System.out.println( "unpackedFile.lastModified() = " + unpackedFileTime );
         assertTrue( "unpackedFile '" + unpackedFile + "' lastModified() == " + time + ": should be different",
                     time != unpackedFile.lastModified() );
     }
