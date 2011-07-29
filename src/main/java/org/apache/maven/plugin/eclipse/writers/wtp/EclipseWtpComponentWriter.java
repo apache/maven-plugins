@@ -101,7 +101,7 @@ public class EclipseWtpComponentWriter
         }
 
         // create a .component file and write out to it
-        XMLWriter writer = new PrettyPrintXMLWriter( w );
+        XMLWriter writer = new PrettyPrintXMLWriter( w, "UTF-8", null );
 
         writeModuleTypeComponent( writer, config.getPackaging(), config.getBuildOutputDirectory(),
                                   config.getSourceDirs(), config.getLocalRepository() );

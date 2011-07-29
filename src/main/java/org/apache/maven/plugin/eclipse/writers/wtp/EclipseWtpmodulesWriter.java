@@ -65,7 +65,7 @@ public class EclipseWtpmodulesWriter
             throw new MojoExecutionException( Messages.getString( "EclipsePlugin.erroropeningfile" ), ex ); //$NON-NLS-1$
         }
 
-        XMLWriter writer = new PrettyPrintXMLWriter( w );
+        XMLWriter writer = new PrettyPrintXMLWriter( w, "UTF-8", null );
         writer.startElement( ELT_PROJECT_MODULES );
         writer.addAttribute( ATTR_MODULE_ID, "moduleCoreId" ); //$NON-NLS-1$
 

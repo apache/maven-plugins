@@ -172,7 +172,7 @@ public class EclipseClasspathWriter
             throw new MojoExecutionException( Messages.getString( "EclipsePlugin.erroropeningfile" ), ex ); //$NON-NLS-1$
         }
 
-        XMLWriter writer = new PrettyPrintXMLWriter( w );
+        XMLWriter writer = new PrettyPrintXMLWriter( w, "UTF-8", null );
 
         writer.startElement( ELT_CLASSPATH );
 
