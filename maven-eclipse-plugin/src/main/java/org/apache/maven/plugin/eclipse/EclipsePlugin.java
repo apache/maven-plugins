@@ -1876,7 +1876,7 @@ public class EclipsePlugin
                 && workspaceArtefact.getGroupId().equals( artifact.getGroupId() )
                 && workspaceArtefact.getArtifactId().equals( artifact.getArtifactId() ) )
             {
-                if ( workspaceArtefact.getVersion().equals( artifact.getVersion() ) )
+                if ( workspaceArtefact.getVersion().equals( artifact.getBaseVersion() ) )
                 {
                     return workspaceArtefact.getEclipseProjectName();
                 }
@@ -2008,7 +2008,7 @@ public class EclipsePlugin
             if ( workspaceArtefact.getGroupId().equals( artifact.getGroupId() )
                 && workspaceArtefact.getArtifactId().equals( artifact.getArtifactId() ) )
             {
-                if ( workspaceArtefact.getVersion().equals( artifact.getVersion() ) )
+                if ( workspaceArtefact.getVersion().equals( artifact.getBaseVersion() ) )
                 {
                     workspaceArtefact.setAddedToClasspath( true );
                     getLog().debug( "Using workspace project: " + workspaceArtefact.getEclipseProjectName() );
@@ -2020,7 +2020,7 @@ public class EclipsePlugin
                                    "Artifact "
                                        + artifact.getId()
                                        + " already available as a workspace project, but with different version. Expected: "
-                                       + artifact.getVersion() + ", found: " + workspaceArtefact.getVersion() );
+                                       + artifact.getBaseVersion() + ", found: " + workspaceArtefact.getVersion() );
                 }
             }
         }
