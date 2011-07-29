@@ -344,36 +344,26 @@ under the License.
           </testResource>
         </testResources>
         
-        <pluginManagement>
-          <plugins>
-            <plugin>
-              <artifactId>maven-surefire-plugin</artifactId>
-              <executions>
-                <execution>
-                  <id>integration-tests</id>
-                  <phase>integration-test</phase>
-                  <goals>
-                    <goal>test</goal>
-                  </goals>
-                  <configuration>
-                    <includes>
-                      <include>**/IT*.java</include>
-                    </includes>
-                    <systemProperties>
-                      <property>
-                        <!-- Pass this through to the tests (if set!) to have them pick the right repository -->
-                        <name>maven.repo.local</name>
-                        <value>${project.build.directory}/it-repo</value>
-                      </property>
-                    </systemProperties>
-                  </configuration>
-                </execution>
-              </executions>
-            </plugin>
-          </plugins>
-        </pluginManagement>
 
         <plugins>
+          <plugin>
+            <artifactId>maven-failsafe-plugin</artifactId>
+            <version>2.9</version>
+            <executions>
+              <execution>
+                <id>integration-tests</id>
+                <goals>
+                  <goal>integration-test</goal>
+                </goals>
+                <configuration>
+                  <systemPropertyVariables>
+                    <!-- Pass this through to the tests (if set!) to have them pick the right repository -->
+                    <maven.repo.local>${project.build.directory}/it-repo</maven.repo.local>
+                  </systemPropertyVariables>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
           <plugin>
             <artifactId>maven-invoker-plugin</artifactId>
             <executions>
