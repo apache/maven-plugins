@@ -261,7 +261,7 @@ public abstract class AbstractDeployMojo
         throws MojoExecutionException
     {
         // TODO: work on moving this into the deployer like the other deploy methods
-        final Wagon wagon = getWagon( repository, wagonManager, getLog() );
+        final Wagon wagon = getWagon( repository, wagonManager );
 
         try
         {
@@ -285,7 +285,7 @@ public abstract class AbstractDeployMojo
                 {
                     SettingsDecrypter settingsDecrypter = container.lookup( SettingsDecrypter.class );
 
-                    proxyInfo = getProxy( repository, getLog(), mavenSession, settingsDecrypter );
+                    proxyInfo = getProxy( repository, settingsDecrypter );
                 }
                 catch ( ComponentLookupException cle )
                 {
@@ -293,8 +293,8 @@ public abstract class AbstractDeployMojo
                 }
             }
 
-            push( directory, repository, wagonManager, wagon, proxyInfo,
-                siteTool.getAvailableLocales( locales ), getDeployModuleDirectory(), getLog() );
+            push( directory, repository, wagon, proxyInfo, siteTool.getAvailableLocales( locales ),
+                  getDeployModuleDirectory() );
 
             if ( chmod )
             {
@@ -344,7 +344,7 @@ public abstract class AbstractDeployMojo
         return buildDirectory;
     }
 
-    private Wagon getWagon( final Repository repository, final WagonManager manager, final Log log )
+    private Wagon getWagon( final Repository repository, final WagonManager manager )
         throws MojoExecutionException
     {
         final Wagon wagon;
@@ -365,7 +365,7 @@ public abstract class AbstractDeployMojo
                     + "    For more information, see "
                     + "http://maven.apache.org/plugins/maven-site-plugin/examples/adding-deploy-protocol.html";
 
-            log.error( longMessage );
+            getLog().error( longMessage );
 
             throw new MojoExecutionException( shortMessage );
         }
@@ -399,14 +399,13 @@ public abstract class AbstractDeployMojo
         return "";
     }
 
-    private static void push( final File inputDirectory, final Repository repository, final WagonManager manager,
-                              final Wagon wagon, final ProxyInfo proxyInfo, final List<Locale> localesList,
-                              final String relativeDir, final Log log )
+    private void push( final File inputDirectory, final Repository repository, final Wagon wagon,
+                       final ProxyInfo proxyInfo, final List<Locale> localesList, final String relativeDir )
         throws MojoExecutionException
     {
-        AuthenticationInfo authenticationInfo = manager.getAuthenticationInfo( repository.getId() );
-        log.debug( "authenticationInfo with id '" + repository.getId() + "': "
-                   + ( ( authenticationInfo == null ) ? "-" : authenticationInfo.getUserName() ) );
+        AuthenticationInfo authenticationInfo = wagonManager.getAuthenticationInfo( repository.getId() );
+        getLog().debug( "authenticationInfo with id '" + repository.getId() + "': "
+                            + ( ( authenticationInfo == null ) ? "-" : authenticationInfo.getUserName() ) );
 
         try
         {
@@ -418,21 +417,21 @@ public abstract class AbstractDeployMojo
 
             if ( proxyInfo != null )
             {
-                log.debug( "connect with proxyInfo" );
+                getLog().debug( "connect with proxyInfo" );
                 wagon.connect( repository, authenticationInfo, proxyInfo );
             }
             else if ( proxyInfo == null && authenticationInfo != null )
             {
-                log.debug( "connect with authenticationInfo and without proxyInfo" );
+                getLog().debug( "connect with authenticationInfo and without proxyInfo" );
                 wagon.connect( repository, authenticationInfo );
             }
             else
             {
-                log.debug( "connect without authenticationInfo and without proxyInfo" );
+                getLog().debug( "connect without authenticationInfo and without proxyInfo" );
                 wagon.connect( repository );
             }
 
-            log.info( "Pushing " + inputDirectory );
+            getLog().info( "Pushing " + inputDirectory );
 
             // Default is first in the list
             final String defaultLocale = localesList.get( 0 ).getLanguage();
@@ -443,13 +442,13 @@ public abstract class AbstractDeployMojo
                 {
                     // TODO: this also uploads the non-default locales,
                     // is there a way to exclude directories in wagon?
-                    log.info( "   >>> to " + repository.getUrl() + relativeDir );
+                    getLog().info( "   >>> to " + repository.getUrl() + relativeDir );
 
                     wagon.putDirectory( inputDirectory, relativeDir );
                 }
                 else
                 {
-                    log.info( "   >>> to " + repository.getUrl() + locale.getLanguage() + "/" + relativeDir );
+                    getLog().info( "   >>> to " + repository.getUrl() + locale.getLanguage() + "/" + relativeDir );
 
                     wagon.putDirectory( new File( inputDirectory, locale.getLanguage() ),
                         locale.getLanguage() + "/" + relativeDir );
@@ -478,8 +477,8 @@ public abstract class AbstractDeployMojo
         }
     }
 
-    private static void chmod( final Wagon wagon, final Repository repository,
-        final String chmodOptions, final String chmodMode )
+    private static void chmod( final Wagon wagon, final Repository repository, final String chmodOptions,
+                               final String chmodMode )
         throws MojoExecutionException
     {
         try
@@ -572,15 +571,15 @@ public abstract class AbstractDeployMojo
      * @param settingsDecrypter
      * @return
      */
-    private static ProxyInfo getProxy( Repository repository, Log log, MavenSession mavenSession, SettingsDecrypter settingsDecrypter )
+    private ProxyInfo getProxy( Repository repository, SettingsDecrypter settingsDecrypter )
     {
         String protocol = repository.getProtocol();
         String url = repository.getUrl();
 
-        log.debug( "repository protocol " + protocol );
+        getLog().debug( "repository protocol " + protocol );
 
         String originalProtocol = protocol;
-        // olamy : hackish here protocol (wagon hint in fact !) is dav
+        // olamy: hackish here protocol (wagon hint in fact !) is dav
         // but the real protocol (transport layer) is http(s)
         // and it's the one use in wagon to find the proxy arghhh
         // so we will check both
@@ -593,18 +592,18 @@ public abstract class AbstractDeployMojo
                 {
                     URL urlSite = new URL( url );
                     protocol = urlSite.getProtocol();
-                    log.debug( "find dav protocol so transform to real transport protocol " + protocol );
+                    getLog().debug( "found dav protocol so transform to real transport protocol " + protocol );
                 }
                 catch ( MalformedURLException e )
                 {
-                    log.warn( "fail to build URL with " + url );
+                    getLog().warn( "fail to build URL with " + url );
                 }
 
             }
         }
         else
         {
-            log.debug( "getProxy 'protocol' : " +  protocol );
+            getLog().debug( "getProxy 'protocol': " +  protocol );
         }
         if ( mavenSession != null && protocol != null )
         {
@@ -635,9 +634,9 @@ public abstract class AbstractDeployMojo
                             proxyInfo.setUserName( proxy.getUsername() );
                             proxyInfo.setPassword( proxy.getPassword() );
 
-                            log.debug( "found proxyInfo "
-                                + ( proxyInfo == null ? "null" : "host:port " + proxyInfo.getHost() + ":"
-                                + proxyInfo.getPort() + ", " + proxyInfo.getUserName() ) );
+                            getLog().debug( "found proxyInfo "
+                                                + ( proxyInfo == null ? "null" : "host:port " + proxyInfo.getHost()
+                                                    + ":" + proxyInfo.getPort() + ", " + proxyInfo.getUserName() ) );
 
                             return proxyInfo;
                         }
@@ -645,7 +644,7 @@ public abstract class AbstractDeployMojo
                 }
             }
         }
-        log.debug( "getProxy 'protocol' : " +  protocol  + " no ProxyInfo found");
+        getLog().debug( "getProxy 'protocol': " +  protocol  + " no ProxyInfo found");
         return null;
     }
 
@@ -726,7 +725,7 @@ public abstract class AbstractDeployMojo
     /**
      * Find the top level parent in the reactor, i.e. the execution root.
      *
-     * @param reactorProjects The projects in the reactor. May be null in which case null is returnned.
+     * @param reactorProjects The projects in the reactor. May be null in which case null is returned.
      *
      * @return The top level project in the reactor, or <code>null</code> if none can be found
      */
