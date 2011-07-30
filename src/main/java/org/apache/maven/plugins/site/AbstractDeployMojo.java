@@ -359,16 +359,15 @@ public abstract class AbstractDeployMojo
                 "Unsupported protocol: '" + repository.getProtocol() + "' for site deployment to "
                     + "distributionManagement.site.url=" + repository.getUrl() + ".";
             String longMessage =
-                "Supported protocols at this moment: " + getSupportedProtocols( log ) + ".\n"
-                    + "    You can add protocols through wagon providers either as maven-site-plugin dependency or "
-                    + "extension.\n"
+                "\n" + shortMessage + "\n" +
+                "Currently supported protocols are: " + getSupportedProtocols() + ".\n"
+                    + "    Protocols may be added through wagon providers.\n"
                     + "    For more information, see "
                     + "http://maven.apache.org/plugins/maven-site-plugin/examples/adding-deploy-protocol.html";
 
-            log.error( shortMessage );
             log.error( longMessage );
 
-            throw new MojoExecutionException( null, shortMessage, "\n" + shortMessage + "\n" + longMessage );
+            throw new MojoExecutionException( shortMessage );
         }
         catch ( TransferFailedException e )
         {
@@ -384,7 +383,7 @@ public abstract class AbstractDeployMojo
         return wagon;
     }
 
-    private String getSupportedProtocols( final Log log )
+    private String getSupportedProtocols()
     {
         try
         {
@@ -395,7 +394,7 @@ public abstract class AbstractDeployMojo
         catch ( ComponentLookupException e )
         {
             // in the unexpected case there is a problem when instantiating a wagon provider
-            log.error( e );
+            getLog().error( e );
         }
         return "";
     }
