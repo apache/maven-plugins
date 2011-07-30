@@ -77,7 +77,7 @@ under the License.
     <doxiaVersion>1.2</doxiaVersion>
     <doxiaSitetoolsVersion>1.2</doxiaSitetoolsVersion>
     <mavenVersion>2.2.1</mavenVersion>
-    <sitePluginVersion>2.3-SNAPSHOT</sitePluginVersion>
+    <sitePluginVersion>2.3</sitePluginVersion>
   </properties>
 
   <dependencies>
