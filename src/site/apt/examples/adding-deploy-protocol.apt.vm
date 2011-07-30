@@ -32,7 +32,17 @@ Adding a Protocol to Deploy the Site
   Out of the box, Maven 3 only supports <<<file:>>>, <<<http:>>> and <<<https:>>> as transport protocols.
   Maven 2 adds <<<scp:>>> to this list.
 
-  To deploy a site with a non-built-in protocol, you need to add the corresponding
+  If you try to deploy a site with an unsupported protocol, you'll get an error:
+
++-----+
+[ERROR] 
+Unsupported protocol: '...' for site deployment to distributionManagement.site.url=...
+Currently supported protocols are: ...
+    Protocols may be added through wagon providers.
+    For more information, see http://maven.apache.org/plugins/maven-site-plugin/examples/adding-deploy-protocol.html
++-----+
+
+  As explained in the error message, to deploy a site with a non-built-in protocol, you need to add the corresponding
   {{{http://maven.apache.org/wagon/}wagon provider}}.
 
   You can add it either as a {{{http://maven.apache.org/guides/mini/guide-using-extensions.html}global extension}},
@@ -48,13 +58,13 @@ Adding a Protocol to Deploy the Site
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-site-plugin</artifactId>
           <version>${project.version}</version>
-            <dependencies>
-              <dependency><!-- add support for ssh/scp -->
-                <groupId>org.apache.maven.wagon</groupId>
-                <artifactId>wagon-ssh</artifactId>
-                <version>1.0</version>
-              </dependency>
-            </dependencies>
+          <dependencies>
+            <dependency><!-- add support for ssh/scp -->
+              <groupId>org.apache.maven.wagon</groupId>
+              <artifactId>wagon-ssh</artifactId>
+              <version>1.0</version>
+            </dependency>
+          </dependencies>
         </plugin>
       </plugins>
     </pluginManagement>
