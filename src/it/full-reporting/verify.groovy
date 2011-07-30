@@ -78,14 +78,14 @@ for ( String report : reports )
         println "Wrong order for first report link: expected $previousReportLink -> $link, but found $i1 < $index1";
         println "   previous report link: " + info.substring( index1 - 10, index1 + 70 );
         println "     actual report link: " + info.substring( i1 - 10, i1 + 70 );
-        //return false; // does not work with Maven 2.2 for the moment
+        return false;
     }
     if ( i2 < index2 )
     {
         println "Wrong order for second report link: expected $previousReportLink -> $link, but found $i2 < $index2";
         println "   previous report link: " + info.substring( index2 - 10, index2 + 70 );
         println "     actual report link: " + info.substring( i2 - 10, i2 + 70 );
-        //return false; // does not work with Maven 2.2 for the moment
+        return false;
     }
     index1 = i1;
     index2 = i2;
