@@ -293,10 +293,18 @@ public class LicenseReport
 
                 if ( url != null )
                 {
-                    URL licenseUrl = null;
                     try
                     {
-                        licenseUrl = getLicenseURL( project, url );
+                        URL licenseUrl = getLicenseURL( project, url );
+
+                        if ( linkOnly )
+                        {
+                            link( licenseUrl.toExternalForm(), licenseUrl.toExternalForm() );
+                        }
+                        else
+                        {
+                            renderLicenseContent( licenseUrl );
+                        }
                     }
                     catch ( MalformedURLException e )
                     {
@@ -308,55 +316,52 @@ public class LicenseReport
                         // I18N message
                         paragraph( e.getMessage() );
                     }
-
-                    if ( licenseUrl != null && !linkOnly)
-                    {
-                        String licenseContent = null;
-                        try
-                        {
-                            // All licenses are supposed in English...
-                            licenseContent = ProjectInfoReportUtils.getContent( licenseUrl, settings );
-                        }
-                        catch ( IOException e )
-                        {
-                            paragraph( "Can't read the url [" + licenseUrl + "] : " + e.getMessage() );
-                        }
-
-                        if ( licenseContent != null )
-                        {
-                            // TODO: we should check for a text/html mime type instead, and possibly use a html parser to do this a bit more cleanly/reliably.
-                            String licenseContentLC = licenseContent.toLowerCase( Locale.ENGLISH );
-                            int bodyStart = licenseContentLC.indexOf( "<body" );
-                            int bodyEnd = licenseContentLC.indexOf( "</body>" );
-                            if ( ( licenseContentLC.startsWith( "<!doctype html" )
-                                || licenseContentLC.startsWith( "<html>" ) ) && bodyStart >= 0 && bodyEnd >= 0 )
-                            {
-                                bodyStart = licenseContentLC.indexOf( ">", bodyStart ) + 1;
-                                String body = licenseContent.substring( bodyStart, bodyEnd );
-
-                                link( licenseUrl.toExternalForm(), "[Original text]" );
-                                paragraph( "Copy of the license follows." );
-
-                                body = replaceRelativeLinks( body, baseURL( licenseUrl ).toExternalForm() );
-                                sink.rawText( body );
-                            }
-                            else
-                            {
-                                verbatimText( licenseContent );
-                            }
-                        }
-                    }
-                    else if ( licenseUrl != null && linkOnly )
-                    {
-                        link( licenseUrl.toExternalForm(), licenseUrl.toExternalForm() );
-                    }
-
                 }
 
                 endSection();
             }
 
             endSection();
+        }
+
+        /**
+         * Render the license content into the report.
+         *
+         * @param licenseUrl the license URL
+         */
+        private void renderLicenseContent( URL licenseUrl )
+        {
+            try
+            {
+                // All licenses are supposed in English...
+                String licenseContent = ProjectInfoReportUtils.getContent( licenseUrl, settings );
+
+                // TODO: we should check for a text/html mime type instead, and possibly use a html parser to do this a bit more cleanly/reliably.
+                String licenseContentLC = licenseContent.toLowerCase( Locale.ENGLISH );
+                int bodyStart = licenseContentLC.indexOf( "<body" );
+                int bodyEnd = licenseContentLC.indexOf( "</body>" );
+
+                if ( ( licenseContentLC.startsWith( "<!doctype html" )
+                    || licenseContentLC.startsWith( "<html>" ) ) && bodyStart >= 0 && bodyEnd >= 0 )
+                {
+                    bodyStart = licenseContentLC.indexOf( ">", bodyStart ) + 1;
+                    String body = licenseContent.substring( bodyStart, bodyEnd );
+
+                    link( licenseUrl.toExternalForm(), "[Original text]" );
+                    paragraph( "Copy of the license follows." );
+
+                    body = replaceRelativeLinks( body, baseURL( licenseUrl ).toExternalForm() );
+                    sink.rawText( body );
+                }
+                else
+                {
+                    verbatimText( licenseContent );
+                }
+            }
+            catch ( IOException e )
+            {
+                paragraph( "Can't read the url [" + licenseUrl + "] : " + e.getMessage() );
+            }
         }
 
         private static URL baseURL( URL aUrl )
