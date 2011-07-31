@@ -54,16 +54,9 @@ public class ProjectInfoReportUtilsTest
 {
     private static final int MAX_IDLE_TIME = 30000;
 
-    // TODO: is there a better way to choose a port than arbitrary choice (hoping nobody will choose the same)?
-    private int httpPort = 8585;
-
-    private int httpsPort = 8586;
-
-    private MavenProject projectStub;
+    private int port = -1;
 
     private Settings settingsStub;
-
-    private MavenProject projectStubSec;
 
     private Server jettyServer;
 
@@ -102,33 +95,22 @@ public class ProjectInfoReportUtilsTest
             }
         };
 
+    }
+
+    private MavenProject getMavenProjectStub( boolean https )
+    {
         final DistributionManagement distributionManagement = new DistributionManagement();
         DeploymentRepository repository = new DeploymentRepository();
         repository.setId( "localhost" );
-        repository.setUrl( "http://localhost:" + httpPort );
+        repository.setUrl( ( https ? "https" : "http" ) + "://localhost:" + port );
         distributionManagement.setRepository( repository );
         distributionManagement.setSnapshotRepository( repository );
-        projectStub = new MavenProjectStub()
+        return new MavenProjectStub()
         {
             @Override
             public DistributionManagement getDistributionManagement()
             {
                 return distributionManagement;
-            }
-        };
-
-        final DistributionManagement distributionManagementSec = new DistributionManagement();
-        DeploymentRepository repositorySec = new DeploymentRepository();
-        repositorySec.setId( "localhost" );
-        repositorySec.setUrl( "https://localhost:" + httpsPort );
-        distributionManagementSec.setRepository( repositorySec );
-        distributionManagementSec.setSnapshotRepository( repositorySec );
-        projectStubSec = new MavenProjectStub()
-        {
-            @Override
-            public DistributionManagement getDistributionManagement()
-            {
-                return distributionManagementSec;
             }
         };
     }
@@ -145,16 +127,16 @@ public class ProjectInfoReportUtilsTest
         // file
         URL url = new File( getBasedir(), "/target/classes/project-info-report.properties" ).toURI().toURL();
 
-        String content = ProjectInfoReportUtils.getContent( url, projectStub, settingsStub, null );
+        String content = ProjectInfoReportUtils.getContent( url, getMavenProjectStub( false ), settingsStub, null );
         Assert.assertNotNull( content );
         Assert.assertTrue( content.contains( "Licensed to the Apache Software Foundation" ) );
 
         // http + no auth
         startJetty( false, false );
 
-        url = new URL( "http://localhost:" + httpPort + "/project-info-report.properties" );
+        url = new URL( "http://localhost:" + port + "/project-info-report.properties" );
 
-        content = ProjectInfoReportUtils.getContent( url, projectStub, settingsStub, null );
+        content = ProjectInfoReportUtils.getContent( url, getMavenProjectStub( false ), settingsStub, null );
         Assert.assertNotNull( content );
         Assert.assertTrue( content.contains( "Licensed to the Apache Software Foundation" ) );
 
@@ -163,9 +145,9 @@ public class ProjectInfoReportUtilsTest
         // http + auth
         startJetty( false, true );
 
-        url = new URL( "http://localhost:" + httpPort + "/project-info-report.properties" );
+        url = new URL( "http://localhost:" + port + "/project-info-report.properties" );
 
-        content = ProjectInfoReportUtils.getContent( url, projectStub, settingsStub, null );
+        content = ProjectInfoReportUtils.getContent( url, getMavenProjectStub( false ), settingsStub, null );
         Assert.assertNotNull( content );
         Assert.assertTrue( content.contains( "Licensed to the Apache Software Foundation" ) );
 
@@ -174,9 +156,9 @@ public class ProjectInfoReportUtilsTest
         // https + no auth
         startJetty( true, false );
 
-        url = new URL( "https://localhost:" + httpsPort + "/project-info-report.properties" );
+        url = new URL( "https://localhost:" + port + "/project-info-report.properties" );
 
-        content = ProjectInfoReportUtils.getContent( url, projectStub, settingsStub, null );
+        content = ProjectInfoReportUtils.getContent( url, getMavenProjectStub( true ), settingsStub, null );
         Assert.assertNotNull( content );
         Assert.assertTrue( content.contains( "Licensed to the Apache Software Foundation" ) );
 
@@ -185,9 +167,9 @@ public class ProjectInfoReportUtilsTest
         // https + auth
         startJetty( true, true );
 
-        url = new URL( "https://localhost:" + httpsPort + "/project-info-report.properties" );
+        url = new URL( "https://localhost:" + port + "/project-info-report.properties" );
 
-        content = ProjectInfoReportUtils.getContent( url, projectStubSec, settingsStub, null );
+        content = ProjectInfoReportUtils.getContent( url, getMavenProjectStub( true ), settingsStub, null );
         Assert.assertNotNull( content );
         Assert.assertTrue( content.contains( "Licensed to the Apache Software Foundation" ) );
 
@@ -238,6 +220,8 @@ public class ProjectInfoReportUtilsTest
         jettyServer.setHandlers( handlers );
 
         jettyServer.start();
+
+        port = connector.getLocalPort();
     }
 
     private void stopJetty()
@@ -248,13 +232,14 @@ public class ProjectInfoReportUtilsTest
             jettyServer.stop();
 
             jettyServer = null;
+
+            port = -1;
         }
     }
 
     private Connector getDefaultConnector()
     {
         Connector connector = new SelectChannelConnector();
-        connector.setPort( httpPort );
         connector.setMaxIdleTime( MAX_IDLE_TIME );
         return connector;
     }
@@ -262,7 +247,6 @@ public class ProjectInfoReportUtilsTest
     private Connector getSSLConnector()
     {
         SslSocketConnector connector = new SslSocketConnector();
-        connector.setPort( httpsPort );
         connector.setKeystore( getBasedir() + "/target/jetty.jks" );
         connector.setPassword( "apache" );
         connector.setKeyPassword( "apache" );
