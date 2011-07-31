@@ -341,8 +341,8 @@ public class LicenseReport
                 int bodyStart = licenseContentLC.indexOf( "<body" );
                 int bodyEnd = licenseContentLC.indexOf( "</body>" );
 
-                if ( ( licenseContentLC.startsWith( "<!doctype html" )
-                    || licenseContentLC.startsWith( "<html>" ) ) && bodyStart >= 0 && bodyEnd >= 0 )
+                if ( ( licenseContentLC.contains( "<!doctype html" ) || licenseContentLC.contains( "<html>" ) ) 
+                    && ( ( bodyStart >= 0 ) && ( bodyEnd > bodyStart ) ) )
                 {
                     bodyStart = licenseContentLC.indexOf( ">", bodyStart ) + 1;
                     String body = licenseContent.substring( bodyStart, bodyEnd );
