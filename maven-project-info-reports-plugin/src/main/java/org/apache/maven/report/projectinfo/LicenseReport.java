@@ -257,19 +257,25 @@ public class LicenseReport
             // License
             startSection( getI18nString( "title" ) );
 
-            boolean renderLicenseIndex = ( ( licenses.size() > 1 ) && !linkOnly );
-            if ( renderLicenseIndex )
+            if ( licenses.size() > 1 )
             {
-                sink.list();
-                for ( License license : licenses )
-                {
-                    String name = license.getName();
+                // multiple licenses
+                paragraph( getI18nString( "multiple" ) );
 
-                    sink.listItem();
-                    link( "#" + HtmlTools.encodeId( name ), name );
-                    sink.listItem_();
+                if ( !linkOnly )
+                {
+                    // add an index before licenses content
+                    sink.list();
+                    for ( License license : licenses )
+                    {
+                        String name = license.getName();
+    
+                        sink.listItem();
+                        link( "#" + HtmlTools.encodeId( name ), name );
+                        sink.listItem_();
+                    }
+                    sink.list_();
                 }
-                sink.list_();
             }
 
             for ( License license : licenses )
