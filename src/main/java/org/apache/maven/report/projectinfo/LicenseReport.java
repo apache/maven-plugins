@@ -21,6 +21,7 @@ package org.apache.maven.report.projectinfo;
 
 import org.apache.commons.validator.UrlValidator;
 import org.apache.maven.doxia.sink.Sink;
+import org.apache.maven.doxia.util.HtmlTools;
 import org.apache.maven.model.License;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Settings;
@@ -255,6 +256,21 @@ public class LicenseReport
 
             // License
             startSection( getI18nString( "title" ) );
+
+            boolean renderIndex = ( ( licenses.size() > 1 ) && !linkOnly );
+            if ( renderIndex )
+            {
+                sink.rawText( "<ul>" );
+                for ( License license : licenses )
+                {
+                    String name = license.getName();
+
+                    sink.rawText( "<li>" );
+                    link( "#" + HtmlTools.encodeId( name ), name );
+                    sink.rawText( "</li>" );
+                }
+                sink.rawText( "</ul>" );
+            }
 
             for ( License license : licenses )
             {
