@@ -54,6 +54,11 @@ public class ProjectInfoReportUtilsTest
 {
     private static final int MAX_IDLE_TIME = 30000;
 
+    // TODO: is there a better way to choose a port than arbitrary choice (hoping nobody will choose the same)?
+    private int httpPort = 8585;
+
+    private int httpsPort = 8586;
+
     private MavenProject projectStub;
 
     private Settings settingsStub;
@@ -100,7 +105,7 @@ public class ProjectInfoReportUtilsTest
         final DistributionManagement distributionManagement = new DistributionManagement();
         DeploymentRepository repository = new DeploymentRepository();
         repository.setId( "localhost" );
-        repository.setUrl( "http://localhost:8080" );
+        repository.setUrl( "http://localhost:" + httpPort );
         distributionManagement.setRepository( repository );
         distributionManagement.setSnapshotRepository( repository );
         projectStub = new MavenProjectStub()
@@ -115,7 +120,7 @@ public class ProjectInfoReportUtilsTest
         final DistributionManagement distributionManagementSec = new DistributionManagement();
         DeploymentRepository repositorySec = new DeploymentRepository();
         repositorySec.setId( "localhost" );
-        repositorySec.setUrl( "https://localhost:8443" );
+        repositorySec.setUrl( "https://localhost:" + httpsPort );
         distributionManagementSec.setRepository( repositorySec );
         distributionManagementSec.setSnapshotRepository( repositorySec );
         projectStubSec = new MavenProjectStub()
@@ -147,7 +152,7 @@ public class ProjectInfoReportUtilsTest
         // http + no auth
         startJetty( false, false );
 
-        url = new URL( "http://localhost:8080/project-info-report.properties" );
+        url = new URL( "http://localhost:" + httpPort + "/project-info-report.properties" );
 
         content = ProjectInfoReportUtils.getContent( url, projectStub, settingsStub, null );
         Assert.assertNotNull( content );
@@ -158,7 +163,7 @@ public class ProjectInfoReportUtilsTest
         // http + auth
         startJetty( false, true );
 
-        url = new URL( "http://localhost:8080/project-info-report.properties" );
+        url = new URL( "http://localhost:" + httpPort + "/project-info-report.properties" );
 
         content = ProjectInfoReportUtils.getContent( url, projectStub, settingsStub, null );
         Assert.assertNotNull( content );
@@ -169,7 +174,7 @@ public class ProjectInfoReportUtilsTest
         // https + no auth
         startJetty( true, false );
 
-        url = new URL( "https://localhost:8443/project-info-report.properties" );
+        url = new URL( "https://localhost:" + httpsPort + "/project-info-report.properties" );
 
         content = ProjectInfoReportUtils.getContent( url, projectStub, settingsStub, null );
         Assert.assertNotNull( content );
@@ -180,7 +185,7 @@ public class ProjectInfoReportUtilsTest
         // https + auth
         startJetty( true, true );
 
-        url = new URL( "https://localhost:8443/project-info-report.properties" );
+        url = new URL( "https://localhost:" + httpsPort + "/project-info-report.properties" );
 
         content = ProjectInfoReportUtils.getContent( url, projectStubSec, settingsStub, null );
         Assert.assertNotNull( content );
@@ -249,7 +254,7 @@ public class ProjectInfoReportUtilsTest
     private Connector getDefaultConnector()
     {
         Connector connector = new SelectChannelConnector();
-        connector.setPort( 8080 );
+        connector.setPort( httpPort );
         connector.setMaxIdleTime( MAX_IDLE_TIME );
         return connector;
     }
@@ -257,7 +262,7 @@ public class ProjectInfoReportUtilsTest
     private Connector getSSLConnector()
     {
         SslSocketConnector connector = new SslSocketConnector();
-        connector.setPort( 8443 );
+        connector.setPort( httpsPort );
         connector.setKeystore( getBasedir() + "/target/jetty.jks" );
         connector.setPassword( "apache" );
         connector.setKeyPassword( "apache" );
