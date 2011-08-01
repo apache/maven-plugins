@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
   <name>maven-eclipse-plugin-test-project-3</name>
   <comment>Tests creating just one sourceroot when test sourceroot and main sourceroot are the same, and tests the same for two
