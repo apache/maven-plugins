@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <classpath>
   <classpathentry kind="src" path="src/main/java" including="**/*.tst|**/*.java" excluding="**/CVS/**"/>
   <classpathentry kind="src" path="src/main/resources" excluding="**/*.java"/>

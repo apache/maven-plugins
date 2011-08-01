@@ -108,7 +108,7 @@ public abstract class AbstractEclipsePluginIT
      */
     protected static final String VERSION = "test";
 
-    private static final String BUILD_OUTPUT_DIRECTORY = "target/surefire-reports/build-output";
+    private static final String BUILD_OUTPUT_DIRECTORY = "target/failsafe-reports/build-output";
 
     private static boolean installed = false;
 
