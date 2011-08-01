@@ -60,6 +60,7 @@ under the License.
 
   <properties>
     <mavenVersion>2.0.6</mavenVersion>
+    <checkstyleVersion>5.4</checkstyleVersion>
     <doxiaVersion>1.1.3</doxiaVersion>
     <sitePluginVersion>2.1.1</sitePluginVersion>
   </properties>
@@ -178,7 +179,7 @@ under the License.
     <dependency>
       <groupId>com.puppycrawl.tools</groupId>
       <artifactId>checkstyle</artifactId>
-      <version>5.4</version>
+      <version>${checkstyleVersion}</version>
       <exclusions>
         <!-- MCHECKSTYLE-156 -->
         <exclusion>
