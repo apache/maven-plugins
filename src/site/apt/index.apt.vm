@@ -3,7 +3,7 @@
  ------
  Maria Odea Ching
  ------
- 20 July 2006
+ 2011-08-01
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -31,7 +31,7 @@ Maven Checkstyle Plugin
 
   The Checkstyle Plugin generates a report regarding the code style used by the developers. For more information about Checkstyle,
   see {{{http://checkstyle.sourceforge.net/}http://checkstyle.sourceforge.net/}}.
-  This version of the plugin uses Checkstyle 5.0.
+  This version of the plugin uses Checkstyle ${checkstyleVersion}.
 
   The plugin can be configured in the project's POM. Predefined rulesets are included with the plugin, these are:
   <<<sun_checks.xml>>>, <<<turbine_checks.xml>>>, <<<avalon_checks.xml>>> and <<<maven_checks.xml>>>. You can also use a custom ruleset by
