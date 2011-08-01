@@ -178,7 +178,7 @@ under the License.
     <dependency>
       <groupId>com.puppycrawl.tools</groupId>
       <artifactId>checkstyle</artifactId>
-      <version>5.3</version>
+      <version>5.4</version>
       <exclusions>
         <!-- MCHECKSTYLE-156 -->
         <exclusion>
