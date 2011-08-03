@@ -52,7 +52,7 @@ import com.puppycrawl.tools.checkstyle.api.CheckstyleException;
  * @version $Id$
  * @goal check
  * @phase verify
- * @requiresDependencyResolution compile
+ * @requiresDependencyResolution test
  * @threadSafe
  */
 public class CheckstyleViolationCheckMojo
