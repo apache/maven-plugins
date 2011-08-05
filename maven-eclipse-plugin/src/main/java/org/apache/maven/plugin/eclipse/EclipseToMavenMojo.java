@@ -527,11 +527,11 @@ public class EclipseToMavenMojo
     {
         if ( stripQualifier && StringUtils.countMatches( version, "." ) > 2 ) //$NON-NLS-1$
         {
-            version = StringUtils.substring( version, 0, version.lastIndexOf( "." ) ); //$NON-NLS-1$
+            version = StringUtils.substring( version, 0, version.lastIndexOf( '.' ) ); //$NON-NLS-1$
         }
         else if ( StringUtils.countMatches( version, "." ) > 2 ) //$NON-NLS-1$
         {
-            int lastDot = version.lastIndexOf( "." ); //$NON-NLS-1$
+            int lastDot = version.lastIndexOf( '.' ); //$NON-NLS-1$
             if ( StringUtils.isNotEmpty( forcedQualifier ) )
             {
                 version = StringUtils.substring( version, 0, lastDot ) + "-" + forcedQualifier; //$NON-NLS-1$
@@ -606,7 +606,7 @@ public class EclipseToMavenMojo
      */
     protected String createGroupId( String bundleName )
     {
-        int i = bundleName.lastIndexOf( "." ); //$NON-NLS-1$
+        int i = bundleName.lastIndexOf( '.' ); //$NON-NLS-1$
         if ( i > 0 )
         {
             return bundleName.substring( 0, i );
@@ -623,7 +623,7 @@ public class EclipseToMavenMojo
      */
     protected String createArtifactId( String bundleName )
     {
-        int i = bundleName.lastIndexOf( "." ); //$NON-NLS-1$
+        int i = bundleName.lastIndexOf( '.' ); //$NON-NLS-1$
         if ( i > 0 )
         {
             return bundleName.substring( i + 1 );
@@ -708,7 +708,7 @@ public class EclipseToMavenMojo
             if ( StringUtils.countMatches( group, "." ) > 2 ) //$NON-NLS-1$
             {
                 // build number found, fix it
-                int lastDot = group.lastIndexOf( "." ); //$NON-NLS-1$
+                int lastDot = group.lastIndexOf( '.' ); //$NON-NLS-1$
                 group = StringUtils.substring( group, 0, lastDot ) + "-" //$NON-NLS-1$
                     + StringUtils.substring( group, lastDot + 1, group.length() );
             }

@@ -269,7 +269,7 @@ public class EclipseSourceDir
     public String toString()
     {
         StringBuffer buffer = new StringBuffer();
-        buffer.append( ( isResource ? "re" : "" ) + "source " );
+        buffer.append( isResource ? "resource " : "source " );
         buffer.append( path );
         buffer.append( ": " );
         buffer.append( "output=" ).append( output ).append( ", " );
