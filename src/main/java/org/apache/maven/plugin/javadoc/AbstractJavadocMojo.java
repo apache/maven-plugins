@@ -1657,6 +1657,13 @@ public abstract class AbstractJavadocMojo
      * @since 2.7
      */
     private transient List<JavadocBundle> dependencyJavadocBundles;
+
+    /**
+     * capability to add optionnal dependencies to the javadoc classpath
+     * @parameter
+     * @since 2.8.1
+     */
+    private List<Dependency> additionnalDependencies;
     
     // ----------------------------------------------------------------------
     // static
@@ -2469,8 +2476,42 @@ public abstract class AbstractJavadocMojo
             classpathElements.add( a.getFile().toString() );
         }
 
-        return StringUtils.join( classpathElements.iterator(), File.pathSeparator );
-    }
+        if ( additionnalDependencies != null )
+         {
+             for ( Dependency dependency : additionnalDependencies )
+             {
+                 Artifact artifact = resolveDependency( dependency );
+                 String path = artifact.getFile().toString();
+                 getLog().debug( "add additionnal artifact with path " + path );
+                 classpathElements.add( path );
+             }
+         }
+
+         return StringUtils.join( classpathElements.iterator(), File.pathSeparator );
+     }
+
+     public Artifact resolveDependency( Dependency dependency )
+         throws MavenReportException
+     {
+         Artifact artifact = factory.createArtifactWithClassifier( dependency.getGroupId(), dependency.getArtifactId(),
+                                                                   dependency.getVersion(), dependency.getType(),
+                                                                   dependency.getClassifier() );
+         try
+         {
+             resolver.resolve( artifact, remoteRepositories, localRepository );
+         }
+         catch ( ArtifactNotFoundException e )
+         {
+             throw new MavenReportException( "artifact not found - " + e.getMessage(), e );
+         }
+         catch ( ArtifactResolutionException e )
+         {
+             throw new MavenReportException( "artifact resolver problem - " + e.getMessage(), e );
+         }
+         return artifact;
+     }
+
+
 
     /**
      * TODO remove the part with ToolchainManager lookup once we depend on
