@@ -536,15 +536,32 @@ public class EclipsePlugin
     private List sourceIncludes;
 
     /**
-     * A list of links to local files in the system. A configuration like this one in the pom : &lt;plugin&gt;
-     * &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt; &lt;artifactId&gt;maven-eclipse-plugin&lt;/artifactId&gt;
-     * &lt;configuration&gt; &lt;linkedResources&gt; &lt;linkedResource&gt;
-     * &lt;name&gt;src/test/resources/oracle-ds.xml&lt;/name&gt; &lt;type&gt;1&lt;/type&gt;
-     * &lt;location&gt;C://jboss/server/default/deploy/oracle-ds.xml&lt;/location&gt; &lt;/linkedResource&gt;
-     * &lt;/linkedResources&gt; &lt;/configuration&gt; &lt;/plugin&gt; will produce in the .project :
-     * &lt;linkedResources&gt; &lt;link&gt; &lt;name&gt;src/test/resources/oracle-ds.xml&lt;/name&gt;
-     * &lt;type&gt;1&lt;/type&gt; &lt;location&gt;C://jboss/server/default/deploy/oracle-ds.xml&lt;/location&gt;
-     * &lt;/link&gt; &lt;/linkedResources&gt;
+     * A list of links to local files in the system. A configuration like this one in the pom : 
+     * <pre>
+     * &lt;plugin&gt;
+     *   &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+     *   &lt;artifactId&gt;maven-eclipse-plugin&lt;/artifactId&gt;
+     *   &lt;configuration&gt; 
+     *     &lt;linkedResources&gt; 
+     *       &lt;linkedResource&gt;
+     *         &lt;name&gt;src/test/resources/oracle-ds.xml&lt;/name&gt;
+     *         &lt;type&gt;1&lt;/type&gt;
+     *         &lt;location&gt;C://jboss/server/default/deploy/oracle-ds.xml&lt;/location&gt; 
+     *       &lt;/linkedResource&gt;
+     *     &lt;/linkedResources&gt; 
+     *   &lt;/configuration&gt; 
+     * &lt;/plugin&gt;
+     * </pre>
+     * will produce in the .project :
+     * <pre>
+     * &lt;linkedResources&gt;
+     *   &lt;link&gt;
+     *     &lt;name&gt;src/test/resources/oracle-ds.xml&lt;/name&gt;
+     *     &lt;type&gt;1&lt;/type&gt; 
+     *     &lt;location&gt;C://jboss/server/default/deploy/oracle-ds.xml&lt;/location&gt;
+     *   &lt;/link&gt;
+     * &lt;/linkedResources&gt;
+     * </pre>
      * 
      * @since 2.8
      * @parameter
