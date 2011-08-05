@@ -1660,6 +1660,16 @@ public abstract class AbstractJavadocMojo
 
     /**
      * capability to add optionnal dependencies to the javadoc classpath
+     * Exemple :
+     * <pre>
+     * &lt;additionnalDependencies&gt;
+     * &nbsp;&nbsp;&lt;additionnalDependency&gt;
+     * &nbsp;&nbsp;&nbsp;&nbsp;&lt;groupId&gt;geronimo-spec&lt;/groupId&gt;
+     * &nbsp;&nbsp;&nbsp;&nbsp;&lt;artifactId&gt;geronimo-spec-jta&lt;/artifactId&gt;
+     * &nbsp;&nbsp;&nbsp;&nbsp;&lt;version&gt;1.0.1B-rc4:&lt;/version&gt;
+     * &nbsp;&nbsp;&lt;/additionnalDependency&gt;
+     * &lt;/additionnalDependencies&gt;
+     * </pre>
      * @parameter
      * @since 2.8.1
      */
