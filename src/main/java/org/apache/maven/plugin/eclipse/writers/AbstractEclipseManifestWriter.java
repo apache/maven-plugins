@@ -134,7 +134,7 @@ public abstract class AbstractEclipseManifestWriter
             }
             else
             {
-                classpath.append( dependency.getEclipseProjectName() + ".jar" );
+                classpath.append( dependency.getEclipseProjectName() ).append( ".jar" );
             }
         }
     }
