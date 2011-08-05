@@ -50,6 +50,7 @@ under the License.
       <item name="Generating Test Javadocs" href="/examples/test-javadocs.html"/>
       <item name="Selective Javadocs Reports" href="/examples/selective-javadocs-report.html"/>
       <item name="Fixing Javadoc Comments" href="/examples/fix-javadocs.html"/>
+      <item name="Adding additionnal dependencies" href="/examples/additionnal-dependencies.html"/>
     </menu>
   </body>
 </project>
