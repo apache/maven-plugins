@@ -376,7 +376,9 @@ under the License.
               <projectsDirectory>src/it</projectsDirectory>
               <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
               <pomIncludes>
+                <!-- those its are 1.6 required doclava need 1.6
                 <pomInclude>additionnal-dependencies*/pom.xml</pomInclude>
+                -->
                 <pomInclude>MJAVADOC-110/pom.xml</pomInclude>
                 <pomInclude>MJAVADOC-126/pom.xml</pomInclude>
                 <pomInclude>MJAVADOC-137/pom.xml</pomInclude>
