@@ -36,6 +36,8 @@ public class JeeDescriptor
 
     public static final String JEE_5_0 = "5.0";
 
+    public static final String JEE_6_0 = "6.0";
+
     public static final String EJB_1_1 = "1.1";
 
     public static final String EJB_2_0 = "2.0";
@@ -43,6 +45,8 @@ public class JeeDescriptor
     public static final String EJB_2_1 = "2.1";
 
     public static final String EJB_3_0 = "3.0";
+
+    public static final String EJB_3_1 = "3.1";
 
     public static final String SERVLET_2_2 = "2.2";
 
@@ -52,6 +56,8 @@ public class JeeDescriptor
 
     public static final String SERVLET_2_5 = "2.5";
 
+    public static final String SERVLET_3_0 = "3.0";
+
     public static final String JSP_1_1 = "1.1";
 
     public static final String JSP_1_2 = "1.2";
@@ -59,6 +65,8 @@ public class JeeDescriptor
     public static final String JSP_2_0 = "2.0";
 
     public static final String JSP_2_1 = "2.1";
+
+    public static final String JSP_2_2 = "2.2";
 
     /**
      * @param jeeVersion
