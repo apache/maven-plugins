@@ -499,7 +499,7 @@ public class TestUnpackMojo
         mojo.silent = false;
         stubFactory.setCreateFiles( true );
         Artifact artifact = stubFactory.getSnapshotArtifact();
-        assertTrue( artifact.getFile().setLastModified( System.currentTimeMillis() - 2000 ) );
+        assertTrue( artifact.getFile().setLastModified( System.currentTimeMillis() - 20000 ) );
 
         ArtifactItem item = new ArtifactItem( artifact );
 
