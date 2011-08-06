@@ -85,11 +85,11 @@ public class SiteStageDeployMojo
     protected String getDeployRepositoryURL()
         throws MojoExecutionException
     {
-        stagingSiteURL = stagingSiteURL( stagingSiteURL );
+        String stagingURL = determineStagingSiteURL( stagingSiteURL );
 
-        getLog().info( "Using this base URL for stage deploy: " + stagingSiteURL );
+        getLog().info( "Using this base URL for stage deploy: " + stagingURL );
 
-        return stagingSiteURL;
+        return stagingURL;
     }
 
     /**
@@ -99,7 +99,7 @@ public class SiteStageDeployMojo
      * 
      * @return the site URL for staging
      */
-    private String stagingSiteURL( final String usersStagingSiteURL )
+    private String determineStagingSiteURL( final String usersStagingSiteURL )
         throws MojoExecutionException
     {
         String topLevelURL = null;
@@ -112,7 +112,7 @@ public class SiteStageDeployMojo
         }
         else
         {
-            // The user didn't specify a URL, use the top level target dir
+            // The user didn't specify a URL, use the top level site distribution URL and add "[/]staging/" to it
             topLevelURL = appendSlash( getRootSite( project ).getUrl() )
                 + DEFAULT_STAGING_DIRECTORY;
             getLog().debug( "stagingSiteURL NOT specified, using the top level project: " + topLevelURL );
