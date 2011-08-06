@@ -20,7 +20,13 @@ package org.apache.maven.plugins.site;
  */
 
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.maven.model.Build;
+import org.apache.maven.model.Plugin;
+import org.apache.maven.model.Site;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.util.xml.Xpp3Dom;
 
 /**
  * Deploys the generated site to a staging or mock directory to the site URL
@@ -71,6 +77,40 @@ public class SiteStageDeployMojo
     private String stagingRepositoryId;
 
     @Override
+    /**
+     * Find the relative path between the distribution URLs of the parent that
+     * supplied the staging deploy URL and the current project.
+     *
+     * @return the relative path or "./" if the two URLs are the same.
+     *
+     * @throws MojoExecutionException
+     */
+    protected String getDeployModuleDirectory()
+        throws MojoExecutionException
+    {
+        // MSITE-602: If the user specified an explicit stagingSiteURL, use a special relative path
+        if( StringUtils.isNotEmpty( stagingSiteURL ) )
+        {
+            // We need to calculate the relative path between this project and
+            // the first one that supplied a stagingSiteURL
+            String relative = siteTool.getRelativePath( getSite( project ).getUrl(),
+                getSiteForFirstParentWithStagingSiteURL( project ).getUrl() );
+
+            // SiteTool.getRelativePath() uses File.separatorChar,
+            // so we need to convert '\' to '/' in order for the URL to be valid for Windows users
+            relative = relative.replace( '\\', '/' );
+
+            getLog().debug( "The stagingSiteURL is configured, using special way to calculate relative path." );
+            return ( "".equals( relative ) ) ? "./" : relative;
+        }
+        else
+        {
+            getLog().debug( "No stagingSiteURL is configured, using standard way to calculate relative path." );
+            return super.getDeployModuleDirectory();
+        }
+    }
+
+    @Override
     protected String getDeployRepositoryID()
         throws MojoExecutionException
     {
@@ -90,6 +130,83 @@ public class SiteStageDeployMojo
         getLog().info( "Using this base URL for stage deploy: " + stagingURL );
 
         return stagingURL;
+    }
+
+    /**
+     * Extract the distributionManagement.site of the first project up the
+     * hierarchy that specifies a stagingSiteURL, starting at the given
+     * MavenProject.
+     * <p/>
+     * This climbs up the project hierarchy and returns the site of the first
+     * project for which
+     * {@link #getStagingSiteURL(org.apache.maven.project.MavenProject)} returns
+     * a URL.
+     *
+     * @param project the MavenProject. Not null.
+     * @return the site for the first project that has a stagingSiteURL. Not null.
+     */
+    protected Site getSiteForFirstParentWithStagingSiteURL( MavenProject project )
+    {
+        Site site = project.getDistributionManagement().getSite();
+
+        MavenProject parent = project;
+
+        // @todo Should we check that the stagingSiteURL equals the one in this project instead of being non-empty?
+        while ( parent != null
+                && StringUtils.isNotEmpty( getStagingSiteURL( parent ) ) )
+        {
+            site = parent.getDistributionManagement().getSite();
+
+            // MSITE-585, MNG-1943
+            parent = siteTool.getParentProject( parent, reactorProjects, localRepository );
+        }
+
+        return site;
+    }
+
+    /**
+     * Extract the value of the stagingSiteURL configuration parameter of
+     * maven-site-plugin for the given project.
+     *
+     * @param project The MavenProject, not null
+     * @return The stagingSiteURL for the project, or null if it doesn't have one
+     */
+    private String getStagingSiteURL( MavenProject project )
+    {
+        final String sitePluginKey = "org.apache.maven.plugins:maven-site-plugin";
+
+        if ( project == null )
+        {
+            return null;
+        }
+
+        final Build build = project.getBuild();
+        if ( build == null )
+        {
+            return null;
+        }
+
+        final Plugin sitePlugin = build.getPluginsAsMap().get( sitePluginKey );
+        if( sitePlugin == null )
+        {
+            return null;
+        }
+
+        final Xpp3Dom sitePluginConfiguration = (Xpp3Dom) sitePlugin.getConfiguration();
+        if ( sitePluginConfiguration == null )
+        {
+            return null;
+        }
+
+        final Xpp3Dom child = sitePluginConfiguration.getChild( "stagingSiteURL" );
+        if ( child == null )
+        {
+            return null;
+        }
+        else
+        {
+            return child.getValue();
+        }
     }
 
     /**

@@ -217,7 +217,7 @@ public abstract class AbstractDeployMojo
      *
      * @throws MojoExecutionException
      */
-    private String getDeployModuleDirectory()
+    protected String getDeployModuleDirectory()
         throws MojoExecutionException
     {
         String relative = siteTool.getRelativePath( getSite( project ).getUrl(),
@@ -785,7 +785,7 @@ public abstract class AbstractDeployMojo
     }
 
     /**
-     * Extract the distributionManagment site of the top level parent of the given MavenProject.
+     * Extract the distributionManagement site of the top level parent of the given MavenProject.
      * This climbs up the project hierarchy and returns the site of the last project
      * for which {@link #getSite(org.apache.maven.project.MavenProject)} returns a site.
      *
