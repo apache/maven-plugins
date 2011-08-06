@@ -30,6 +30,8 @@ import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
+import org.apache.maven.artifact.versioning.ArtifactVersion;
+import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.model.PluginExecution;
@@ -38,7 +40,6 @@ import org.apache.maven.plugin.eclipse.Messages;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.FileUtils;
-import org.codehaus.plexus.util.PropertyUtils;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 
@@ -234,13 +235,58 @@ public class IdeUtils
 
     /**
      * Extracts the version of the first matching artifact in the given list.
-     *
+     * <p>
+     * The {@code len} parameter indicated what to to return:
+     * <ul>
+     *   <li><strong>1</strong> indicated <code>major</code> version</li>
+     *   <li><strong>3</strong> indicated <code>major dot minor</code> version</li>
+     *   <li><strong>5 and above</strong> indicates <code>major dot minor dot incremental</code> version
+     * </ul>
+     * 
      * @param artifactIds artifact names to compare against for extracting version
      * @param artifacts Set of artifacts for our project
      * @param len expected length of the version sub-string
      * @return
      */
     public static String getArtifactVersion( String[] artifactIds, List dependencies, int len )
+    {
+        String version = null;
+        ArtifactVersion artifactVersion = getArtifactVersion( artifactIds, dependencies );
+        if ( artifactVersion != null )
+        {
+            StringBuffer versionBuffer = new StringBuffer();
+            if( len >= 1 )
+            {
+                versionBuffer.append( artifactVersion.getMajorVersion() );
+            }
+            if( len >= 2 )
+            {
+                versionBuffer.append( '.' );
+            }            
+            if( len >= 3 )
+            {
+                versionBuffer.append( artifactVersion.getMinorVersion() );
+            }
+            if( len >= 4 )
+            {
+                versionBuffer.append( '.' );
+            }            
+            if( len >= 5 )
+            {
+                versionBuffer.append( artifactVersion.getIncrementalVersion() );
+            }
+            version = versionBuffer.toString();
+        }
+        return version;
+    }
+    
+    /**
+     * 
+     * @param artifactIds an array of artifactIds, should not be <code>null</code>
+     * @param dependencies a list of {@link Dependency}-objects, should not be <code>null</code>
+     * @return the resolved ArtifactVersion, otherwise <code>null</code>
+     */
+    public static ArtifactVersion getArtifactVersion( String[] artifactIds, List /*<Dependency>*/ dependencies )
     {
         for ( int j = 0; j < artifactIds.length; j++ )
         {
@@ -251,7 +297,7 @@ public class IdeUtils
                 Dependency dep = (Dependency) depIter.next();
                 if ( id.equals( dep.getArtifactId() ) )
                 {
-                    return StringUtils.substring( dep.getVersion(), 0, len );
+                    return VersionRange.createFromVersion( dep.getVersion() ).getRecommendedVersion();
                 }
 
             }

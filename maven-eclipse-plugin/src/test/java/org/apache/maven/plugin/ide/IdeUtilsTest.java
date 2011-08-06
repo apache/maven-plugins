@@ -20,9 +20,11 @@ package org.apache.maven.plugin.ide;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
 
 import junit.framework.TestCase;
 
+import org.apache.maven.model.Dependency;
 import org.codehaus.plexus.util.Os;
 
 /**
@@ -136,6 +138,39 @@ public class IdeUtilsTest
         String expected = "target/main-output";
 
         assertEquals( expected, actual );
+    }
+    
+    public void testGetArtifactVersion()
+    {
+        Dependency dep = new Dependency();
+        dep.setArtifactId( "artifactId" );
+
+        dep.setVersion( "5" );
+        assertEquals( "5",
+                      IdeUtils.getArtifactVersion( new String[] { "artifactId" }, Collections.singletonList( dep ), 1 ) );
+        assertEquals( "5.0",
+                      IdeUtils.getArtifactVersion( new String[] { "artifactId" }, Collections.singletonList( dep ), 3 ) );
+        assertEquals( "5.0.0",
+                      IdeUtils.getArtifactVersion( new String[] { "artifactId" }, Collections.singletonList( dep ), 5 ) );
+
+        dep.setVersion( "5.3" );
+        assertEquals( "5",
+                      IdeUtils.getArtifactVersion( new String[] { "artifactId" }, Collections.singletonList( dep ), 1 ) );
+        assertEquals( "5.3",
+                      IdeUtils.getArtifactVersion( new String[] { "artifactId" }, Collections.singletonList( dep ), 3 ) );
+        assertEquals( "5.3.0",
+                      IdeUtils.getArtifactVersion( new String[] { "artifactId" }, Collections.singletonList( dep ), 5 ) );
+
+        dep.setVersion( "5.3.1" );
+        assertEquals( "5",
+                      IdeUtils.getArtifactVersion( new String[] { "artifactId" }, Collections.singletonList( dep ), 1 ) );
+        assertEquals( "5.3",
+                      IdeUtils.getArtifactVersion( new String[] { "artifactId" }, Collections.singletonList( dep ), 3 ) );
+        assertEquals( "5.3.1",
+                      IdeUtils.getArtifactVersion( new String[] { "artifactId" }, Collections.singletonList( dep ), 5 ) );
+        
+        assertNull( IdeUtils.getArtifactVersion( new String[] { "artifactId" }, Collections.EMPTY_LIST, 5 ) );
+        assertNull( IdeUtils.getArtifactVersion( new String[0], Collections.singletonList( dep ), 5 ) );
     }
 
 }
