@@ -177,17 +177,25 @@ public class RadApplicationXMLWriter
      */
     private Xpp3Dom createNewApplicationXml()
     {
-        String j2eeVersion = JeeUtils.resolveJeeVersion( config.getProject() );
+        String jeeVersion;
+        if ( config.getJeeVersion() != null )
+        {
+            jeeVersion = JeeUtils.getJeeDescriptorFromJeeVersion( config.getJeeVersion() ).getJeeVersion();
+        }
+        else
+        {
+            jeeVersion = JeeUtils.resolveJeeVersion( config.getProject() );
+        }
         // By default J2EE version is in the format X.X
         // Must be fixed for JEE < 1.4. Schemas didn't exist
         Xpp3Dom result = new Xpp3Dom( APPLICATION_XML_APPLICATION );
         result.setAttribute( ID, "Application_ID" );
-        result.setAttribute( VERSION, j2eeVersion );
+        result.setAttribute( VERSION, jeeVersion );
         result.setAttribute( XMLNS, "http://java.sun.com/xml/ns/j2ee" );
         result.setAttribute( XMLNS_XSI, "http://www.w3.org/2001/XMLSchema-instance" );
         result.setAttribute( XMLNS_SCHEMA_LOCATION,
                              "http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/application_"
-                                 + j2eeVersion.charAt( 0 ) + "_" + j2eeVersion.charAt( 2 ) + ".xsd" );
+                                 + jeeVersion.charAt( 0 ) + "_" + jeeVersion.charAt( 2 ) + ".xsd" );
         result.addChild( new Xpp3Dom( APPLICATION_XML_DESCRIPTION ) );
         Xpp3Dom name = new Xpp3Dom( APPLICATION_XML_DISPLAY_NAME );
         name.setValue( config.getProject().getArtifactId() );

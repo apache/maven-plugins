@@ -1,0 +1,71 @@
+
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+import java.io.*;
+import java.util.*;
+import java.util.jar.*;
+import org.codehaus.plexus.util.*;
+
+boolean result = true;
+
+try
+{
+  File earModuleFacetCore = new File( basedir, "ear-module/.settings/org.eclipse.wst.common.project.facet.core.xml");
+  if( !earModuleFacetCore.exists() ) 
+  {
+    System.err.println( "Expected ear-module/.settings/org.eclipse.wst.common.project.facet.core.xml, but file doesn't exist" );
+    return false;
+  }
+
+  String earModuleFacetCoreContent = FileUtils.fileRead( earModuleFacetCore, "UTF-8" );
+  if ( earModuleFacetCoreContent.indexOf( "<installed facet=\"jst.ear\" version=\"6.0\"/>" ) < 0 )
+  {
+    System.err.println( "Expected ear-module/.settings/org.eclipse.wst.common.project.facet.core.xml to contain '<installed facet=\"jst.ear\" version=\"6.0\"/>', but it didn't" );
+    return false;
+  }
+
+  File ejbModuleFacetCore = new File( basedir, "ejb-module/.settings/org.eclipse.wst.common.project.facet.core.xml");
+  if( !ejbModuleFacetCore.exists() ) 
+  {
+    System.err.println( "Expected ejb-module/.settings/org.eclipse.wst.common.project.facet.core.xml, but file doesn't exist" );
+    return false;
+  }
+  
+  File warModuleFacetCore = new File( basedir, "war-module/.settings/org.eclipse.wst.common.project.facet.core.xml");
+  if( !warModuleFacetCore.exists() ) 
+  {
+    System.err.println( "Expected war-module/.settings/org.eclipse.wst.common.project.facet.core.xml, but file doesn't exist" );
+    return false;
+  }
+  
+  String warModuleFacetCoreContent = FileUtils.fileRead( warModuleFacetCore, "UTF-8" );
+  if ( warModuleFacetCoreContent.indexOf( "<installed facet=\"jst.web\" version=\"3.0\"/>" ) < 0 )
+  {
+    System.err.println( "Expected war-module/.settings/org.eclipse.wst.common.project.facet.core.xml to contain '<installed facet=\"jst.web\" version=\"3.0\"/>', but it didn't" );
+    return false;
+  }
+  
+}
+catch ( Exception e)
+{
+    e.printStackTrace();
+    result = false;
+}
+return result;

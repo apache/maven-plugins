@@ -155,6 +155,11 @@ public class EclipseWriterConfig
      * @See {@link EclipsePlugin#classpathContainersLast}
      */
     private boolean classpathContainersLast;
+    
+    /**
+     * @see {@link EclipsePlugin#jeeversion}
+     */
+    private String jeeVersion;
 
     public WorkspaceConfiguration getWorkspaceConfiguration()
     {
@@ -646,6 +651,24 @@ public class EclipseWriterConfig
     public void setClasspathContainersLast(boolean classpathContainersLast)
     {
         this.classpathContainersLast = classpathContainersLast;
+    }
+
+    /**
+     * Sets the jeeversion.
+     * @return the jeeversion
+     */
+    public String getJeeVersion()
+    {
+        return jeeVersion;
+    }
+
+    /**
+     * Returns the jeeversion
+     * @param jeeversion the jeeversion
+     */
+    public void setJeeVersion( String jeeVersion )
+    {
+        this.jeeVersion = jeeVersion;
     }
 
 }

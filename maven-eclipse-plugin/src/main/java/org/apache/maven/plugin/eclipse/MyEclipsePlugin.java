@@ -278,14 +278,22 @@ public class MyEclipsePlugin
 
         if ( Constants.PROJECT_PACKAGING_WAR.equals( packaging ) )
         {
-            String jeeVersion =
-                JeeUtils.getJeeDescriptorFromServletVersion( JeeUtils.resolveServletVersion( project ) ).getJeeVersion();
+            String j2eeVersion;
+            if ( this.jeeversion != null )
+            {
+                j2eeVersion = JeeUtils.getJeeDescriptorFromJeeVersion( this.jeeversion ).getJeeVersion();
+            }
+            else
+            {
+                j2eeVersion =
+                    JeeUtils.getJeeDescriptorFromServletVersion( JeeUtils.resolveServletVersion( project ) ).getJeeVersion();
+            }
 
-            if ( "1.3".equals( jeeVersion ) )
+            if ( "1.3".equals( j2eeVersion ) )
             {
                 getClasspathContainers().add( MYECLIPSE_J2EE_13_CLASSPATH_CONTAINER );
             }
-            else if ( "1.4".equals( jeeVersion ) )
+            else if ( "1.4".equals( j2eeVersion ) )
             {
                 getClasspathContainers().add( MYECLIPSE_J2EE_14_CLASSPATH_CONTAINER );
             }

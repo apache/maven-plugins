@@ -104,19 +104,43 @@ public class RadJ2EEWriter
         if ( Constants.PROJECT_PACKAGING_WAR.equalsIgnoreCase( packaging ) )
         {
             // In format X.X
-            String servletVersion = JeeUtils.resolveServletVersion( config.getProject() );
+            String servletVersion;
+            if ( config.getJeeVersion() != null )
+            {
+                servletVersion = JeeUtils.getJeeDescriptorFromJeeVersion( config.getJeeVersion() ).getServletVersion();
+            }
+            else
+            {
+                servletVersion = JeeUtils.resolveServletVersion( config.getProject() );
+            }
             writer.writeText( "" + servletVersion.charAt( 0 ) + servletVersion.charAt( 2 ) );
         }
         else if ( Constants.PROJECT_PACKAGING_EJB.equalsIgnoreCase( packaging ) )
         {
             // In format X.X
-            String ejbVersion = JeeUtils.resolveEjbVersion( config.getProject() );
+            String ejbVersion;
+            if ( config.getJeeVersion() != null )
+            {
+                ejbVersion = JeeUtils.getJeeDescriptorFromJeeVersion( config.getJeeVersion() ).getEjbVersion();
+            }
+            else
+            {
+                ejbVersion = JeeUtils.resolveEjbVersion( config.getProject() );
+            }
             writer.writeText( "" + ejbVersion.charAt( 0 ) + ejbVersion.charAt( 2 ) );
         }
         else if ( Constants.PROJECT_PACKAGING_EAR.equalsIgnoreCase( packaging ) )
         {
             // In format X.X
-            String jeeVersion = JeeUtils.resolveJeeVersion( config.getProject() );
+            String jeeVersion;
+            if ( config.getJeeVersion() != null )
+            {
+                jeeVersion = JeeUtils.getJeeDescriptorFromJeeVersion( config.getJeeVersion() ).getJeeVersion();
+            }
+            else
+            {
+                jeeVersion = JeeUtils.resolveJeeVersion( config.getProject() );
+            }
             writer.writeText( "" + jeeVersion.charAt( 0 ) + jeeVersion.charAt( 2 ) );
         }
         writer.endElement();
