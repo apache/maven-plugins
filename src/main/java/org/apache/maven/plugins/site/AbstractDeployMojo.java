@@ -566,8 +566,6 @@ public abstract class AbstractDeployMojo
      * Get proxy information for Maven 3.
      *
      * @param repository
-     * @param log
-     * @param mavenSession
      * @param settingsDecrypter
      * @return
      */
@@ -657,7 +655,7 @@ public abstract class AbstractDeployMojo
      * @param settings
      * @param container
      * @param log
-     * @throws WagonConfigurationException
+     * @throws TransferFailedException
      */
     private static void configureWagon( Wagon wagon, String repositoryId, Settings settings, PlexusContainer container,
                                         Log log )
@@ -748,7 +746,7 @@ public abstract class AbstractDeployMojo
     }
 
     /**
-     * Extract the distributionManagment site from the given MavenProject.
+     * Extract the distributionManagement site from the given MavenProject.
      *
      * @param project the MavenProject. Not null.
      *
