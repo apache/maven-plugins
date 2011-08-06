@@ -154,8 +154,16 @@ public class MyEclipseMetadataWriter
      */
     private String getJeeVersion()
     {
-        String jeeVersion =
-            JeeUtils.getJeeDescriptorFromServletVersion( JeeUtils.resolveServletVersion( config.getProject() ) ).getJeeVersion();
+        String jeeVersion;
+        if ( config.getJeeVersion() != null )
+        {
+            jeeVersion = JeeUtils.getJeeDescriptorFromJeeVersion( config.getJeeVersion() ).getJeeVersion();
+        }
+        else
+        {
+            jeeVersion =
+                JeeUtils.getJeeDescriptorFromServletVersion( JeeUtils.resolveServletVersion( config.getProject() ) ).getJeeVersion();
+        }
 
         if ( jeeVersion == null )
         {

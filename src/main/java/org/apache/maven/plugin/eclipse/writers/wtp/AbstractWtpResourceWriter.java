@@ -91,8 +91,16 @@ public abstract class AbstractWtpResourceWriter
             writer.addAttribute( ATTR_MODULE_TYPE_ID, "jst.web" ); //$NON-NLS-1$
 
             writer.startElement( ELT_VERSION );
-
-            writer.writeText( JeeUtils.resolveServletVersion( config.getProject() ) );
+            String servletVersion;
+            if ( config.getJeeVersion() != null )
+            {
+                servletVersion = JeeUtils.getJeeDescriptorFromJeeVersion( config.getJeeVersion() ).getServletVersion();
+            }
+            else
+            {
+                servletVersion = JeeUtils.resolveServletVersion( config.getProject() );
+            }
+            writer.writeText( servletVersion );
             writer.endElement();
 
             String contextRoot = config.getContextName();
@@ -107,7 +115,17 @@ public abstract class AbstractWtpResourceWriter
             writer.addAttribute( ATTR_MODULE_TYPE_ID, "jst.ejb" ); //$NON-NLS-1$
 
             writer.startElement( ELT_VERSION );
-            writer.writeText( JeeUtils.resolveEjbVersion( config.getProject() ) );
+
+            String ejbVersion;
+            if ( config.getJeeVersion() != null )
+            {
+                ejbVersion = JeeUtils.getJeeDescriptorFromJeeVersion( config.getJeeVersion() ).getEjbVersion();
+            }
+            else
+            {
+                ejbVersion = JeeUtils.resolveEjbVersion( config.getProject() );
+            }
+            writer.writeText( ejbVersion );
 
             writer.endElement();
 
@@ -123,7 +141,16 @@ public abstract class AbstractWtpResourceWriter
             writer.addAttribute( ATTR_MODULE_TYPE_ID, "jst.ear" ); //$NON-NLS-1$
 
             writer.startElement( ELT_VERSION );
-            writer.writeText( JeeUtils.resolveJeeVersion( config.getProject() ) );
+            String jeeVersion;
+            if ( config.getJeeVersion() != null )
+            {
+                jeeVersion = JeeUtils.getJeeDescriptorFromJeeVersion( config.getJeeVersion() ).getJeeVersion();
+            }
+            else
+            {
+                jeeVersion = JeeUtils.resolveJeeVersion( config.getProject() );
+            }
+            writer.writeText( jeeVersion );
             writer.endElement();
         }
         else

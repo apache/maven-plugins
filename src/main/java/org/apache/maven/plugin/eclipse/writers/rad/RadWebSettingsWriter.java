@@ -151,7 +151,16 @@ public class RadWebSettingsWriter
         writer.writeText( "J2EE" );
         writer.endElement();
         writer.startElement( WEBSETTINGS_JSP_LEVEL );
-        writer.writeText( JeeUtils.resolveJspVersion( config.getProject() ) );
+        String jspVersion;
+        if ( config.getJeeVersion() != null )
+        {
+            jspVersion = JeeUtils.getJeeDescriptorFromJeeVersion( config.getJeeVersion() ).getJspVersion();
+        }
+        else
+        {
+            jspVersion = JeeUtils.resolveJspVersion( config.getProject() );
+        }
+        writer.writeText( jspVersion );
         writer.endElement();
         writer.startElement( WEBSETTINGS_FEATURES );
         writer.startElement( WEBSETTINGS_FEATURE );

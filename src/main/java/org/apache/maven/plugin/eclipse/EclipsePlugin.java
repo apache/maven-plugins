@@ -590,6 +590,28 @@ public class EclipsePlugin
      * @parameter expression="${eclipse.testSourcesLast}" default-value="false"
      */
     protected boolean testSourcesLast;
+    
+    /**
+     * The plugin is often capable in predicting the required jee version based on the dependencies of the project.
+     * By setting this parameter to one of the {@code jeeversion} options the version will be locked. 
+     *  
+     * <table>
+     *  <thead>
+     *    <tr><th>jeeversion</th><th>EJB version</th><th>Servlet version</th><th>JSP version</th></tr>
+     *  </thead>
+     *  <tbody>
+     *    <tr><td>6.0</td><td>3.1</td><td>3.0</td><td>2.2</td></tr>
+     *    <tr><td>5.0</td><td>3.0</td><td>2.5</td><td>2.1</td></tr>
+     *    <tr><td>1.4</td><td>2.1</td><td>2.4</td><td>2.0</td></tr>
+     *    <tr><td>1.3</td><td>2.0</td><td>2.3</td><td>1.2</td></tr>
+     *    <tr><td>1.2</td><td>1.1</td><td>2.2</td><td>1.1</td></tr>
+     *  </tbody>
+     * </table>
+     * 
+     * @since 2.9
+     * @parameter expression="${eclipse.jeeversion}"
+     */
+    protected String jeeversion;
 
     protected final boolean isJavaProject()
     {
@@ -1331,6 +1353,7 @@ public class EclipsePlugin
         config.setPackaging( packaging );
         config.setLinkedResources( linkedResources );
         config.setClasspathContainersLast( classpathContainersLast );
+        config.setJeeVersion( jeeversion );
 
         collectWarContextRootsFromReactorEarConfiguration( config );
 

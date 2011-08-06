@@ -122,14 +122,33 @@ public class EclipseWtpFacetsWriter
         {
             writeFacetFixedElement( writer, FACET_JST_JAVA ); // fixed
             writeFacetFixedElement( writer, FACET_JST_WEB ); // fixed
-            writeFacetInstalledElement( writer, FACET_JST_WEB, JeeUtils.resolveServletVersion( config.getProject() ) ); // installed
+            String servletVersion;
+            if ( config.getJeeVersion() != null )
+            {
+                servletVersion = JeeUtils.getJeeDescriptorFromJeeVersion( config.getJeeVersion() ).getServletVersion();
+            }
+            else
+            {
+                servletVersion = JeeUtils.resolveServletVersion( config.getProject() );
+            }
+            writeFacetInstalledElement( writer, FACET_JST_WEB, servletVersion ); // installed
             writeFacetInstalledElement( writer, FACET_JST_JAVA, IdeUtils.resolveJavaVersion( config.getProject() ) ); // installed
         }
         else if ( Constants.PROJECT_PACKAGING_EJB.equalsIgnoreCase( packaging ) ) //$NON-NLS-1$
         {
             writeFacetFixedElement( writer, FACET_JST_JAVA ); // fixed
             writeFacetFixedElement( writer, FACET_JST_EJB ); // fixed
-            writeFacetInstalledElement( writer, FACET_JST_EJB, JeeUtils.resolveEjbVersion( config.getProject() ) ); // installed
+            
+            String ejbVersion;
+            if ( config.getJeeVersion() != null )
+            {
+                ejbVersion = JeeUtils.getJeeDescriptorFromJeeVersion( config.getJeeVersion() ).getEjbVersion();
+            }
+            else
+            {
+                ejbVersion = JeeUtils.resolveEjbVersion( config.getProject() );
+            }
+            writeFacetInstalledElement( writer, FACET_JST_EJB, ejbVersion ); // installed
             writeFacetInstalledElement( writer, FACET_JST_JAVA, IdeUtils.resolveJavaVersion( config.getProject() ) ); // installed
         }
         else if ( Constants.PROJECT_PACKAGING_EAR.equalsIgnoreCase( packaging ) ) //$NON-NLS-1$
@@ -147,7 +166,16 @@ public class EclipseWtpFacetsWriter
 
             }
             writeFacetFixedElement( writer, FACET_JST_EAR ); // fixed
-            writeFacetInstalledElement( writer, FACET_JST_EAR, JeeUtils.resolveJeeVersion( config.getProject() ) ); // installed
+            String jeeVersion;
+            if ( config.getJeeVersion() != null )
+            {
+                jeeVersion = JeeUtils.getJeeDescriptorFromJeeVersion( config.getJeeVersion() ).getJeeVersion();
+            }
+            else
+            {
+                jeeVersion = JeeUtils.resolveJeeVersion( config.getProject() );
+            }
+            writeFacetInstalledElement( writer, FACET_JST_EAR, jeeVersion ); // installed
 
         }
         else if ( Constants.PROJECT_PACKAGING_JAR.equalsIgnoreCase( packaging ) ) //$NON-NLS-1$
