@@ -38,6 +38,9 @@ public class LinkedResource
     /** Resource location */
     private String location;
 
+    /** Resource localtionURI */
+    private String locationURI;
+
     public String getName()
     {
         return name;
@@ -66,6 +69,16 @@ public class LinkedResource
     public void setLocation( String location )
     {
         this.location = location;
+    }
+
+    public String getLocationURI()
+    {
+        return locationURI;
+    }
+
+    public void setLocationURI( String locationURI )
+    {
+        this.locationURI = locationURI;
     }
 
     /**
@@ -104,10 +117,15 @@ public class LinkedResource
         type = typeNode.getValue();
 
         Xpp3Dom locationNode = node.getChild( "location" );
+        Xpp3Dom locationURINode = node.getChild( "locationURI" );
 
-        if ( locationNode == null )
+        if ( locationNode == null && locationURINode == null )
         {
-            throw new IllegalArgumentException( "No location node." );
+            throw new IllegalArgumentException( "No location or locationURI node." );
+        }
+        else if ( locationNode != null && locationURINode != null )
+        {
+            throw new IllegalArgumentException( "Both location and locationURI nodes are set." );
         }
 
         location = locationNode.getValue();
@@ -125,9 +143,18 @@ public class LinkedResource
         writer.writeText( type );
         writer.endElement(); // type
 
-        writer.startElement( "location" );
-        writer.writeText( location );
-        writer.endElement(); // location
+        if ( location != null )
+        {
+            writer.startElement( "location" );
+            writer.writeText( location );
+            writer.endElement(); // location
+        }
+        else if ( locationURI != null )
+        {
+            writer.startElement( "locationURI" );
+            writer.writeText( locationURI );
+            writer.endElement(); // locationURI
+        }
         writer.endElement();// link
     }
 
@@ -138,7 +165,8 @@ public class LinkedResource
             LinkedResource b = (LinkedResource) obj;
 
             return name.equals( b.name ) && ( type == null ? b.type == null : type.equals( b.type ) )
-                && ( location == null ? b.location == null : location.equals( b.location ) );
+                && ( location == null ? b.location == null : location.equals( b.location ) )
+                && ( locationURI == null ? b.locationURI == null : locationURI.equals( b.locationURI ) );
         }
         else
         {
@@ -149,6 +177,7 @@ public class LinkedResource
     public int hashCode()
     {
         return name.hashCode() + ( type == null ? 0 : 13 * type.hashCode() )
-            + ( location == null ? 0 : 17 * location.hashCode() );
+            + ( location == null ? 0 : 17 * location.hashCode() )
+            + ( locationURI == null ? 0 : 19 * locationURI.hashCode() );
     }
 }

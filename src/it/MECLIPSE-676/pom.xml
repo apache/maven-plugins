@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>org.apache.maven.plugins.it</groupId>
+  <artifactId>meclipse-676</artifactId>
+  <version>0.1-SNAPSHOT</version>
+  <name>meclipse676</name>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-eclipse-plugin</artifactId>
+        <version>@project.version@</version>
+        <configuration>
+          <linkedResources>
+            <linkedResource>
+              <name>src/main/webapp/docroot/myfolder</name>
+              <type>2</type>
+              <locationURI>FOLDER_VAR/otherfolder/myfolder</locationURI>
+            </linkedResource>
+          </linkedResources>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
