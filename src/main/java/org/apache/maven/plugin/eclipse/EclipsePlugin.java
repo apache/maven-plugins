@@ -174,9 +174,10 @@ public class EclipsePlugin
     private List projectnatures;
 
     /**
-     * List of artifact to exclude from eclipse classpath, beeing provided by some eclipse classPathContainer
-     * [MECLIPSE-79]
-     * 
+     * List of artifacts, represented as <code>groupId:artifactId</code>, to exclude from the eclipse classpath, 
+     * being provided by some eclipse classPathContainer.
+     *
+     * @see http://jira.codehaus.org/browse/MECLIPSE-79
      * @since 2.5
      * @parameter
      */
