@@ -92,7 +92,7 @@ public class EclipseWorkspaceIT
 
         assertNotNull( "Test M2_REPO has a value", M2_REPO );
 
-        String localRepo = PlexusTestCase.getBasedir() + "/target/test-classes/m2repo";
+        String localRepo = new File( PlexusTestCase.getBasedir(), "target/test-classes/m2repo" ).getCanonicalPath();
 
         // comparing repo's all in lower case because windows is case insensitive and settings.xml may have
         // a repository specified with different case
