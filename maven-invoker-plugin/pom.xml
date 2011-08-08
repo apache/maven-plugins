@@ -214,6 +214,7 @@ under the License.
         <version>1.4</version>
         <executions>
           <execution>
+            <id>standard</id>
             <goals>
               <!-- Generate the xpp3 reader code -->
               <goal>xpp3-reader</goal>
@@ -222,6 +223,16 @@ under the License.
               <!-- Generate the Java sources for the model itself -->
               <goal>java</goal>
             </goals>
+          </execution>
+          <execution>
+            <id>site-docs</id>
+            <phase>pre-site</phase>
+            <goals>
+              <goal>xdoc</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>src/site/xdoc/</outputDirectory>
+            </configuration>
           </execution>
         </executions>
         <configuration>
