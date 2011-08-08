@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang.time.DateFormatUtils;
@@ -496,22 +497,23 @@ public class TestUnpackMojo
     public void testUnpackOverWriteIfNewer()
         throws IOException, MojoExecutionException, InterruptedException
     {
+        final long now = System.currentTimeMillis();
+        
         mojo.silent = false;
         stubFactory.setCreateFiles( true );
         Artifact artifact = stubFactory.getSnapshotArtifact();
-        assertTrue( artifact.getFile().setLastModified( System.currentTimeMillis() - 20000 ) );
+        assertTrue( artifact.getFile().setLastModified( now - 20000 ) );
 
         ArtifactItem item = new ArtifactItem( artifact );
 
-        List<ArtifactItem> list = new ArrayList<ArtifactItem>( 1 );
-        list.add( item );
+        List<ArtifactItem> list = Collections.singletonList( item );
         mojo.setArtifactItems( list );
         mojo.setOverWriteIfNewer( true );
         mojo.execute();
         File unpackedFile = getUnpackedFile( item );
 
         // round down to the last second
-        long time = System.currentTimeMillis();
+        long time = now;
         time = time - ( time % 1000 );
         // go back 10 more seconds for linux
         time -= 10000;
@@ -532,11 +534,10 @@ public class TestUnpackMojo
         displayFile( "unpackedFile", unpackedFile );
         displayFile( "artifact    ", artifact.getFile() );
         displayFile( "marker      ", marker );
-        System.out.println( "marker.lastModified() = " + time );
-        long unpackedFileTime = unpackedFile.lastModified();
-        System.out.println( "unpackedFile.lastModified() = " + unpackedFileTime );
-        assertTrue( "unpackedFile '" + unpackedFile + "' lastModified() == " + time + ": should be different",
-                    time != unpackedFile.lastModified() );
+        System.out.println( "marker.lastModified() = " + marker.lastModified() );
+        System.out.println( "unpackedFile.lastModified() = " + unpackedFile.lastModified() );
+        assertTrue( "unpackedFile '" + unpackedFile + "' lastModified() == " + marker.lastModified() + ": should be different",
+                    marker.lastModified() != unpackedFile.lastModified() );
     }
 
     private void displayFile( String description, File file )
