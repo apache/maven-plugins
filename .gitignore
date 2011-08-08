@@ -4,4 +4,3 @@ target
 .settings
 *.iml
 maven-changes-plugin/src/site/xdoc/changes.xml
-maven-invoker-plugin/src/site/xdoc/build-job.xml
