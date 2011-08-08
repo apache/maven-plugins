@@ -112,7 +112,7 @@ public class VelocityTemplate
 
         catch ( ResourceNotFoundException e )
         {
-            throw new ResourceNotFoundException( "Template not found: " + templateDirectory + "/" + template );
+            throw new ResourceNotFoundException( "Template not found: " + templateDirectory + "/" + template, e );
         }
         catch ( VelocityException e )
         {
