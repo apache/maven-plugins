@@ -376,9 +376,7 @@ under the License.
               <projectsDirectory>src/it</projectsDirectory>
               <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
               <pomIncludes>
-                <!-- those its are 1.6 required doclava need 1.6
                 <pomInclude>additionnal-dependencies*/pom.xml</pomInclude>
-                -->
                 <pomInclude>MJAVADOC-110/pom.xml</pomInclude>
                 <pomInclude>MJAVADOC-126/pom.xml</pomInclude>
                 <pomInclude>MJAVADOC-137/pom.xml</pomInclude>
@@ -493,26 +491,6 @@ under the License.
               <excludes>
                 <exlude>**/*Test*.java</exlude>
               </excludes>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  <profile>
-    <id>doclava</id>
-    <activation>
-      <jdk>1.6</jdk>
-    </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-invoker-plugin</artifactId>
-            <configuration>
-              <!-- those tests use doclava which is 1.6 required -->
-              <pomIncludes combine.children="append">
-                <pomInclude>additionnal-dependencies*/pom.xml</pomInclude>
-              </pomIncludes>
             </configuration>
           </plugin>
         </plugins>
