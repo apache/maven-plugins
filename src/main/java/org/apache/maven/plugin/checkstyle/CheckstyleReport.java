@@ -592,7 +592,7 @@ public class CheckstyleReport
             {
                 throw new MavenReportException( "Failed during checkstyle configuration", e );
             }
-            catch (CheckstyleExecutorException e)
+            catch ( CheckstyleExecutorException e )
             {
                 throw new MavenReportException( "Failed during checkstyle execution", e );
             }
