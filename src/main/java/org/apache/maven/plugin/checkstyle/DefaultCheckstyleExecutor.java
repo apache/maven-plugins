@@ -27,6 +27,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
@@ -196,11 +197,7 @@ public class DefaultCheckstyleExecutor
 
         checker.addListener( sinkListener );
 
-        List<File> filesList = new ArrayList<File>();
-        for ( int i = 0; i < files.length; i++ )
-        {
-            filesList.add( files[i] );
-        }
+        List<File> filesList = Arrays.asList( files );
         int nbErrors = checker.process( filesList );
 
         checker.destroy();
