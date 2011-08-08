@@ -30,6 +30,9 @@ under the License.
       <item name="Usage" href="usage.html"/>
       <item name="FAQ" href="faq.html"/>
     </menu>
+    <menu name="reference">
+      <item name="build-job.xml" href="build-job.html"/>
+    </menu>
 
     <menu name="Examples">
       <item name="Accessing Test Classes" href="examples/access-test-classes.html"/>
