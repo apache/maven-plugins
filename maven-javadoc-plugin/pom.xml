@@ -509,6 +509,7 @@ under the License.
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-invoker-plugin</artifactId>
             <configuration>
+              <!-- those tests use doclava which is 1.6 required -->
               <pomIncludes combine.children="append">
                 <pomInclude>additionnal-dependencies*/pom.xml</pomInclude>
               </pomIncludes>
