@@ -31,6 +31,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
@@ -304,9 +305,15 @@ public class DefaultCheckstyleExecutor
                 File propertiesFile = locator.getResourceAsFile( request.getPropertiesLocation(),
                                                                  "checkstyle-checker.properties" );
 
-                if ( propertiesFile != null )
+                FileInputStream properties = new FileInputStream( propertiesFile );
+                try
                 {
-                    p.load( new FileInputStream( propertiesFile ) );
+                    if ( propertiesFile != null )
+                    {
+                        p.load( properties );
+                    }
+                } finally {
+                    IOUtils.closeQuietly( properties );
                 }
             }
 
