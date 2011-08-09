@@ -357,9 +357,6 @@ under the License.
             <goals>
               <goal>xdoc</goal>
             </goals>
-            <configuration>
-              <outputDirectory>src/site/xdoc/</outputDirectory>
-            </configuration>
           </execution>
           <execution>
             <id>standard</id>
