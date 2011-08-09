@@ -3,4 +3,3 @@ target
 .project
 .settings
 *.iml
-maven-changes-plugin/src/site/xdoc/changes.xml
