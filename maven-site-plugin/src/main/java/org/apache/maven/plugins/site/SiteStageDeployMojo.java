@@ -20,9 +20,11 @@ package org.apache.maven.plugins.site;
  */
 
 
+import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Plugin;
+import org.apache.maven.model.PluginManagement;
 import org.apache.maven.model.Site;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
@@ -94,7 +96,7 @@ public class SiteStageDeployMojo
             // We need to calculate the relative path between this project and
             // the first one that supplied a stagingSiteURL
             String relative = siteTool.getRelativePath( getSite( project ).getUrl(),
-                getSiteForFirstParentWithStagingSiteURL( project ).getUrl() );
+                getSiteForTopMostParentWithStagingSiteURL( project ).getUrl() );
 
             // SiteTool.getRelativePath() uses File.separatorChar,
             // so we need to convert '\' to '/' in order for the URL to be valid for Windows users
@@ -133,19 +135,19 @@ public class SiteStageDeployMojo
     }
 
     /**
-     * Extract the distributionManagement.site of the first project up the
+     * Extract the distributionManagement.site of the top most project in the
      * hierarchy that specifies a stagingSiteURL, starting at the given
      * MavenProject.
      * <p/>
-     * This climbs up the project hierarchy and returns the site of the first
+     * This climbs up the project hierarchy and returns the site of the top most
      * project for which
      * {@link #getStagingSiteURL(org.apache.maven.project.MavenProject)} returns
      * a URL.
      *
      * @param project the MavenProject. Not null.
-     * @return the site for the first project that has a stagingSiteURL. Not null.
+     * @return the site for the top most project that has a stagingSiteURL. Not null.
      */
-    protected Site getSiteForFirstParentWithStagingSiteURL( MavenProject project )
+    private Site getSiteForTopMostParentWithStagingSiteURL( MavenProject project )
     {
         Site site = project.getDistributionManagement().getSite();
 
@@ -186,7 +188,20 @@ public class SiteStageDeployMojo
             return null;
         }
 
-        final Plugin sitePlugin = build.getPluginsAsMap().get( sitePluginKey );
+        Map<String, Plugin> plugins = build.getPluginsAsMap();
+
+        Plugin sitePlugin = plugins.get( sitePluginKey );
+        if ( sitePlugin == null ) {
+            final PluginManagement buildPluginManagement = build.getPluginManagement();
+            if ( buildPluginManagement == null )
+            {
+                return null;
+            }
+
+            plugins = buildPluginManagement.getPluginsAsMap();
+            sitePlugin = plugins.get( sitePluginKey );
+        }
+
         if( sitePlugin == null )
         {
             return null;
