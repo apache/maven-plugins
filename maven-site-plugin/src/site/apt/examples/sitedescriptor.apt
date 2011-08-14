@@ -6,7 +6,7 @@
  Maria Odea Ching
  Dennis Lundberg
  ------
- 2010-08-12
+ 2011-08-14
  ------
 
  ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -41,11 +41,11 @@ Configuring the Site Descriptor
   <<<navigation.xml>>> file has been replaced by the site descriptor in Maven 2.
   The format is nearly the same, so you can probably reuse most of your old file.
 
-  There is an
-  {{{http://maven.apache.org/doxia/doxia-sitetools/doxia-decoration-model/decoration.html}XML Schema Reference for the site descriptor}}
+  There is a
+  {{{http://maven.apache.org/doxia/doxia-sitetools/doxia-decoration-model/decoration.html}reference documentation for the site descriptor}}
   available.
 
-  The XML Schema for the site descriptor is published at {{http://maven.apache.org/xsd/decoration-1.0.0.xsd}}.
+  The XML Schema for the site descriptor is published at {{http://maven.apache.org/xsd/decoration-1.1.0.xsd}}.
 
   Have a look at the
   {{{http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-site-plugin/src/site/site.xml}site descriptor for Maven Site Plugin}}
