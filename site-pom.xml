@@ -62,6 +62,7 @@ under the License.
         <artifactId>maven-site-plugin</artifactId>
         <configuration>
           <siteDirectory>${basedir}/src/site-docs</siteDirectory>
+          <stagingSiteURL>scp://people.apache.org/www/maven.apache.org/pom/maven-plugins-${project.version}/</stagingSiteURL>
         </configuration>
       </plugin>
     </plugins>
