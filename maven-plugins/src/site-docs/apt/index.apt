@@ -3,7 +3,7 @@
  -----
  Hervé Boutemy
  -----
- 2011-06-30
+ 2011-08-15
  -----
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -49,13 +49,13 @@ History
 *--------------+------------+
 || <<Version>> || <<Release Date>> ||
 *--------------+------------+
-| {{{http://svn.apache.org/viewvc/maven/plugins/trunk/maven-plugins/pom.xml?view=markup}22-SNAPSHOT}} | - |
+| {{{http://svn.apache.org/viewvc/maven/plugins/tags/maven-plugins-22/pom.xml?view=markup}22}} ({{{http://svn.apache.org/viewvc/maven/plugins/tags/maven-plugins-22/pom.xml?r1=HEAD&r2=1135903&diff_format=h}diff}}) | 2011-08-18 |
 *--------------+------------+
-| {{{http://svn.apache.org/viewvc/maven/plugins/tags/maven-plugins-21/pom.xml?view=markup}21}} ({{{http://svn.apache.org/viewvc/maven/plugins/trunk/maven-plugins/pom.xml?r1=1135903&r2=1103416&diff_format=h}diff}}) | 2011-06-18 |
+| {{{http://svn.apache.org/viewvc/maven/plugins/tags/maven-plugins-21/pom.xml?view=markup}21}} ({{{http://svn.apache.org/viewvc/maven/plugins/tags/maven-plugins-21/pom.xml?r1=HEAD&r2=1103416&diff_format=h}diff}}) | 2011-06-18 |
 *--------------+------------+
-| {{{http://svn.apache.org/viewvc/maven/plugins/tags/maven-plugins-20/pom.xml?view=markup}20}} ({{{http://svn.apache.org/viewvc/maven/plugins/trunk/maven-plugins/pom.xml?r1=1103416&r2=1069632&diff_format=h}diff}}) | 2011-05-18 |
+| {{{http://svn.apache.org/viewvc/maven/plugins/tags/maven-plugins-20/pom.xml?view=markup}20}} ({{{http://svn.apache.org/viewvc/maven/plugins/tags/maven-plugins-20/pom.xml?r1=HEAD&r2=1069632&diff_format=h}diff}}) | 2011-05-18 |
 *--------------+------------+
-| {{{http://svn.apache.org/viewvc/maven/plugins/tags/maven-plugins-19/pom.xml?view=markup}19}} ({{{http://svn.apache.org/viewvc/maven/plugins/trunk/maven-plugins/pom.xml?r1=1069632&r2=940021&diff_format=h}diff}}) | 2011-02-15 |
+| {{{http://svn.apache.org/viewvc/maven/plugins/tags/maven-plugins-19/pom.xml?view=markup}19}} ({{{http://svn.apache.org/viewvc/maven/plugins/tags/maven-plugins-19/pom.xml?r1=HEAD&r2=940021&diff_format=h}diff}}) | 2011-02-15 |
 *--------------+------------+
-| {{{http://svn.apache.org/viewvc/maven/plugins/tags/maven-plugins-18/pom.xml?view=markup}18}} ({{{http://svn.apache.org/viewvc/maven/plugins/trunk/maven-plugins/pom.xml?r1=940021&r2=905056&diff_format=h}diff}}) | 2010-05-04 |
+| {{{http://svn.apache.org/viewvc/maven/plugins/tags/maven-plugins-18/pom.xml?view=markup}18}} ({{{http://svn.apache.org/viewvc/maven/plugins/tags/maven-plugins-18/pom.xml?r1=HEAD&r2=905056&diff_format=h}diff}}) | 2010-05-04 |
 *--------------+------------+
