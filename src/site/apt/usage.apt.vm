@@ -130,7 +130,7 @@ mvn package
 </project>
 +-----------------+
 
-* How to create a jat containing test classes
+* How to create a jar containing test classes
 
 +-----------------+
 <project>
@@ -156,6 +156,25 @@ mvn package
   ...
 </project>
 +-----------------+
+
+  You can produce a jar which will include your test classes and resources.
+  To reuse this artifact in an other project, you must declare this dependency with classifier test-jar :
+
++-----------------+
+<project>
+  ...
+  <dependencies>
+    <dependency>
+      <groupId>groupId</groupId>
+      <artifactId>artifactId</artifactId>
+      <type>test-jar</type>
+      <version>version</version>
+    </dependency>
+  </dependencies>
+  ...
+</project>
++-----------------+
+
 
 
 
