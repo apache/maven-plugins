@@ -170,6 +170,7 @@ mvn package
       <artifactId>artifactId</artifactId>
       <type>test-jar</type>
       <version>version</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
   ...
