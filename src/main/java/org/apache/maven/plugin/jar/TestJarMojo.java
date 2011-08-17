@@ -48,7 +48,7 @@ public class TestJarMojo
     /**
      * Directory containing the test classes and resource files that should be packaged into the JAR.
      *
-     * @parameter expression="${project.build.testOutputDirectory}"
+     * @parameter default-value="${project.build.testOutputDirectory}"
      * @required
      */
     private File testClassesDirectory;
