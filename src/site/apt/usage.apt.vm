@@ -3,8 +3,9 @@
  ------
  Jerome Lacoste
  Dennis Lundberg
+ Olivier Lamy
  ------
- 12 July 2006
+ 2011-08-17
  ------
 
  ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -128,5 +129,34 @@ mvn package
   ...
 </project>
 +-----------------+
+
+* How to create a jat containing test classes
+
++-----------------+
+<project>
+  ...
+  <build>
+    <plugins>
+      ...
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>${project.version}</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>test-jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      ...
+    </plugins>
+  </build>
+  ...
+</project>
++-----------------+
+
+
 
   For full documentation, click {{{plugin-info.html}here}}.
