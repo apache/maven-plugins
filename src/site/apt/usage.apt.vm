@@ -131,6 +131,17 @@ mvn package
 +-----------------+
 
 * How to create a jar containing test classes
+
+  When you want to create a jar containing test-classes, you would probably want to reuse those classes.
+  There are two ways to solve this:
+  
+  * Create an attached jar with the test-classes from the current project and loose its transitive <<<test>>>-scoped dependencies.
+  
+  * Create a separate project with the test-classes.
+  
+  []
+  
+** The easy way 
   
   You can produce a jar which will include your test classes and resources.
 
@@ -177,7 +188,44 @@ mvn package
 </project>
 +-----------------+
 
+  <<Note:>> The downside of this solution is that you don't get the transitive <<<test>>>-scoped dependencies automatically. 
+  Maven only resolves the <<<compile>>>-time dependencies, so you'll have to add all the other required <<<test>>>-scoped dependencies by hand.
 
+** The preferred way
 
+  In order to let Maven resolve all <<<test>>>-scoped transitive dependencies you should create a separate project.
+  
++-----------------+
+<project>
+   <groupId>groupId</groupId>
+    <artifactId>artifactId-tests</artifactId>
+    <version>version</version>
+  ...
+</project>
++-----------------+
 
-  For full documentation, click {{{plugin-info.html}here}}.
+   * Move the sources files from <<<src/test/java>>> you want to share from the original project to the <<<src/main/java>>> of this project.
+     The same type of movement counts for the resources as well of course.
+   
+   * Move the required <<<test>>>-scoped dependencies and from the original project to this project and remove the scope (i.e. changing it to the <<<compile>>>-scope).
+     And yes, that means that the junit dependency (or any other testing framework dependency) gets the default scope too.
+     You'll probably need to add some project specific dependencies as well to let it all compile again.
+  
+  Now you have your reusable test-classes and you can refer to it as you're used to:
+   
++-----------------+
+<project>
+  ...
+  <dependencies>
+    <dependency>
+      <groupId>groupId</groupId>
+      <artifactId>artifactId-tests</artifactId>
+      <version>version</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+  ...
+</project>
++-----------------+
+
+  For full documentation, click {{{./plugin-info.html}here}}.
