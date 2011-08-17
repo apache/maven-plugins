@@ -38,7 +38,7 @@ public class JarMojo
     /**
      * Directory containing the classes and resource files that should be packaged into the JAR.
      *
-     * @parameter expression="${project.build.outputDirectory}"
+     * @parameter default-value="${project.build.outputDirectory}"
      * @required
      */
     private File classesDirectory;

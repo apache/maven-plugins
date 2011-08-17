@@ -62,7 +62,7 @@ public abstract class AbstractJarMojo
     /**
      * Directory containing the generated JAR.
      *
-     * @parameter expression="${project.build.directory}"
+     * @parameter default-value="${project.build.directory}"
      * @required
      */
     private File outputDirectory;
@@ -85,7 +85,7 @@ public abstract class AbstractJarMojo
     /**
      * The Maven project.
      *
-     * @parameter expression="${project}"
+     * @parameter default-value="${project}"
      * @required
      * @readonly
      */
@@ -103,7 +103,7 @@ public abstract class AbstractJarMojo
      * Path to the default MANIFEST file to use. It will be used if
      * <code>useDefaultManifestFile</code> is set to <code>true</code>.
      *
-     * @parameter expression="${project.build.outputDirectory}/META-INF/MANIFEST.MF"
+     * @parameter default-value="${project.build.outputDirectory}/META-INF/MANIFEST.MF"
      * @required
      * @readonly
      * @since 2.2
