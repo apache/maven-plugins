@@ -380,7 +380,7 @@ public class PmdReport
      * @param name the name of the file whose location is to be resolved
      * @return a String that contains the absolute file name of the file
      */
-    private String getLocationTemp( String name )
+    protected String getLocationTemp( String name )
     {
         String loc = name;
         if ( loc.indexOf( '/' ) != -1 )
@@ -391,6 +391,13 @@ public class PmdReport
         {
             loc = loc.substring( loc.lastIndexOf( '\\' ) + 1 );
         }
+        
+        // MPMD-127 in the case that the rules are defined externally on a url
+        // we need to replace some special url characters that cannot be
+        // used in filenames on disk or produce ackward filenames.
+        // replace all occurrences of the following characters:  ? : & = %
+        loc = loc.replaceAll("[\\?\\:\\&\\=\\%]", "_");
+        
         getLog().debug( "Before: " + name + " After: " + loc );
         return loc;
     }
