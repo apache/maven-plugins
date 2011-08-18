@@ -30,7 +30,7 @@ under the License.
   </parent>
 
   <artifactId>maven-jar-plugin</artifactId>
-  <version>2.5-SNAPSHOT</version>
+  <version>2.4-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
   <name>Maven JAR Plugin</name>
