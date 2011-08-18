@@ -255,5 +255,23 @@ public class PmdReportTest
         return str.toString();
     }
 
+    /**
+     * Verify the correct working of the localtionTemp method
+     * 
+     * @throws Exception
+     */
+    public void testLocationTemp()
+        throws Exception
+    {
+
+        File testPom = new File( getBasedir(),
+                                 "src/test/resources/unit/default-configuration/default-configuration-plugin-config.xml" );
+        PmdReport mojo = (PmdReport) lookupMojo( "pmd", testPom );
+
+        assertEquals( "locationTemp is not correctly encoding filename",
+                      "export_format_pmd_language_java_name_some_2520name", mojo.getLocationTemp(
+            "http://nemo.sonarsource.org/sonar/profiles/export?format=pmd&language=java&name=some%2520name" ) );
+
+    }
 
 }
