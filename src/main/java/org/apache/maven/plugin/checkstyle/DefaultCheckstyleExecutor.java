@@ -266,8 +266,16 @@ public class DefaultCheckstyleExecutor
                     if ( module instanceof DefaultConfiguration )
                     {
                         //MCHECKSTYLE-132 DefaultConfiguration addAttribute has changed in checkstyle 5.3
-                        if ( ( (DefaultConfiguration) module ).getAttribute( "cacheFile" ) == null )
+                        try 
                         {
+                            if ( ( (DefaultConfiguration) module ).getAttribute( "cacheFile" ) == null )
+                            {
+                                ( (DefaultConfiguration) module ).addAttribute( "cacheFile", request.getCacheFile() );
+                            }
+                        }
+                        catch ( CheckstyleException ex ) 
+                        {
+                            //MCHECKSTYLE-159 - checkstyle 5.4 throws an exception instead of return null if "cacheFile" doesn't exist
                             ( (DefaultConfiguration) module ).addAttribute( "cacheFile", request.getCacheFile() );
                         }
                     }
