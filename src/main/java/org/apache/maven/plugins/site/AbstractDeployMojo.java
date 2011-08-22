@@ -19,14 +19,6 @@ package org.apache.maven.plugins.site;
  * under the License.
  */
 
-import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
-
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-
 import org.apache.maven.artifact.manager.WagonManager;
 import org.apache.maven.execution.MavenExecutionRequest;
 import org.apache.maven.execution.MavenSession;
@@ -54,7 +46,7 @@ import org.apache.maven.wagon.authorization.AuthorizationException;
 import org.apache.maven.wagon.observers.Debug;
 import org.apache.maven.wagon.proxy.ProxyInfo;
 import org.apache.maven.wagon.repository.Repository;
-
+import org.codehaus.classworlds.ClassRealm;
 import org.codehaus.plexus.PlexusConstants;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.component.configurator.ComponentConfigurationException;
@@ -69,16 +61,24 @@ import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 
+import java.io.File;
+import java.lang.reflect.Method;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
+
 /**
  * Abstract base class for deploy mojos.
  * Since 2.3 this includes {@link SiteStageMojo} and {@link SiteStageDeployMojo}.
  *
  * @author ltheussl
- *
  * @since 2.3
  */
 public abstract class AbstractDeployMojo
-    extends AbstractSiteMojo implements Contextualizable
+    extends AbstractSiteMojo
+    implements Contextualizable
 {
     /**
      * Directory containing the generated project sites and report distributions.
@@ -152,7 +152,9 @@ public abstract class AbstractDeployMojo
      */
     protected static final String DEFAULT_STAGING_DIRECTORY = "staging/";
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public void execute()
         throws MojoExecutionException
     {
@@ -162,18 +164,16 @@ public abstract class AbstractDeployMojo
             return;
         }
 
-        deployTo( new org.apache.maven.plugins.site.wagon.repository.Repository(
-            getDeployRepositoryID(),
-            appendSlash( getDeployRepositoryURL() ) ) );
+        deployTo( new org.apache.maven.plugins.site.wagon.repository.Repository( getDeployRepositoryID(), appendSlash(
+            getDeployRepositoryURL() ) ) );
     }
 
     /**
      * Make sure the given url ends with a slash.
      *
      * @param url a String.
-     *
      * @return if url already ends with '/' it is returned unchanged,
-     *      otherwise a '/' character is appended.
+     *         otherwise a '/' character is appended.
      */
     protected static String appendSlash( final String url )
     {
@@ -191,9 +191,7 @@ public abstract class AbstractDeployMojo
      * Specifies the id to look up credential settings.
      *
      * @return the id to look up credentials for the deploy. Not null.
-     *
-     * @throws MojoExecutionException
-     *      if the ID cannot be determined
+     * @throws MojoExecutionException if the ID cannot be determined
      */
     protected abstract String getDeployRepositoryID()
         throws MojoExecutionException;
@@ -203,9 +201,7 @@ public abstract class AbstractDeployMojo
      * This should be the top-level URL, ie above modules and locale sub-directories.
      *
      * @return the url to deploy to. Not null.
-     *
-     * @throws MojoExecutionException
-     *      if the URL cannot be constructed
+     * @throws MojoExecutionException if the URL cannot be constructed
      */
     protected abstract String getDeployRepositoryURL()
         throws MojoExecutionException;
@@ -214,14 +210,12 @@ public abstract class AbstractDeployMojo
      * Find the relative path between the distribution URLs of the top parent and the current project.
      *
      * @return the relative path or "./" if the two URLs are the same.
-     *
      * @throws MojoExecutionException
      */
     protected String getDeployModuleDirectory()
         throws MojoExecutionException
     {
-        String relative = siteTool.getRelativePath( getSite( project ).getUrl(),
-            getRootSite( project ).getUrl() );
+        String relative = siteTool.getRelativePath( getSite( project ).getUrl(), getRootSite( project ).getUrl() );
 
         // SiteTool.getRelativePath() uses File.separatorChar,
         // so we need to convert '\' to '/' in order for the URL to be valid for Windows users
@@ -234,10 +228,9 @@ public abstract class AbstractDeployMojo
      * Use wagon to deploy the generated site to a given repository.
      *
      * @param repository the repository to deply to.
-     *      This needs to contain a valid, non-null {@link Repository#getId() id}
-     *      to look up credentials for the deploy, and a valid, non-null
-     *      {@link Repository#getUrl() scm url} to deploy to.
-     *
+     *                   This needs to contain a valid, non-null {@link Repository#getId() id}
+     *                   to look up credentials for the deploy, and a valid, non-null
+     *                   {@link Repository#getUrl() scm url} to deploy to.
      * @throws MojoExecutionException if the deploy fails.
      */
     private void deployTo( final Repository repository )
@@ -250,8 +243,8 @@ public abstract class AbstractDeployMojo
 
         if ( getLog().isDebugEnabled() )
         {
-            getLog().debug( "Deploying to '" + repository.getUrl()
-                + "',\n    Using credentials from server id '" + repository.getId() + "'" );
+            getLog().debug( "Deploying to '" + repository.getUrl() + "',\n    Using credentials from server id '"
+                                + repository.getId() + "'" );
         }
 
         deploy( inputDirectory, repository );
@@ -355,14 +348,11 @@ public abstract class AbstractDeployMojo
         }
         catch ( UnsupportedProtocolException e )
         {
-            String shortMessage =
-                "Unsupported protocol: '" + repository.getProtocol() + "' for site deployment to "
-                    + "distributionManagement.site.url=" + repository.getUrl() + ".";
+            String shortMessage = "Unsupported protocol: '" + repository.getProtocol() + "' for site deployment to "
+                + "distributionManagement.site.url=" + repository.getUrl() + ".";
             String longMessage =
-                "\n" + shortMessage + "\n" +
-                "Currently supported protocols are: " + getSupportedProtocols() + ".\n"
-                    + "    Protocols may be added through wagon providers.\n"
-                    + "    For more information, see "
+                "\n" + shortMessage + "\n" + "Currently supported protocols are: " + getSupportedProtocols() + ".\n"
+                    + "    Protocols may be added through wagon providers.\n" + "    For more information, see "
                     + "http://maven.apache.org/plugins/maven-site-plugin/examples/adding-deploy-protocol.html";
 
             getLog().error( longMessage );
@@ -404,8 +394,9 @@ public abstract class AbstractDeployMojo
         throws MojoExecutionException
     {
         AuthenticationInfo authenticationInfo = wagonManager.getAuthenticationInfo( repository.getId() );
-        getLog().debug( "authenticationInfo with id '" + repository.getId() + "': "
-                            + ( ( authenticationInfo == null ) ? "-" : authenticationInfo.getUserName() ) );
+        getLog().debug( "authenticationInfo with id '" + repository.getId() + "': " + ( ( authenticationInfo == null )
+            ? "-"
+            : authenticationInfo.getUserName() ) );
 
         try
         {
@@ -451,7 +442,7 @@ public abstract class AbstractDeployMojo
                     getLog().info( "   >>> to " + repository.getUrl() + locale.getLanguage() + "/" + relativeDir );
 
                     wagon.putDirectory( new File( inputDirectory, locale.getLanguage() ),
-                        locale.getLanguage() + "/" + relativeDir );
+                                        locale.getLanguage() + "/" + relativeDir );
                 }
             }
         }
@@ -510,7 +501,7 @@ public abstract class AbstractDeployMojo
      * Defensively support for comma (",") and semi colon (";") in addition to pipe ("|") as separator.
      * </p>
      *
-     * @param repository the Repository to extract the ProxyInfo from.
+     * @param repository   the Repository to extract the ProxyInfo from.
      * @param wagonManager the WagonManager used to connect to the Repository.
      * @return a ProxyInfo object instantiated or <code>null</code> if no matching proxy is found
      */
@@ -542,8 +533,8 @@ public abstract class AbstractDeployMojo
                     return null;
                 }
                 // *suffix
-                if ( StringUtils.isEmpty( nonProxyHostPrefix )
-                    && StringUtils.isNotEmpty( nonProxyHostSuffix ) && host.endsWith( nonProxyHostSuffix ) )
+                if ( StringUtils.isEmpty( nonProxyHostPrefix ) && StringUtils.isNotEmpty( nonProxyHostSuffix )
+                    && host.endsWith( nonProxyHostSuffix ) )
                 {
                     return null;
                 }
@@ -601,7 +592,7 @@ public abstract class AbstractDeployMojo
         }
         else
         {
-            getLog().debug( "getProxy 'protocol': " +  protocol );
+            getLog().debug( "getProxy 'protocol': " + protocol );
         }
         if ( mavenSession != null && protocol != null )
         {
@@ -615,12 +606,11 @@ public abstract class AbstractDeployMojo
                 {
                     for ( Proxy proxy : proxies )
                     {
-                        if ( proxy.isActive()
-                            && ( protocol.equalsIgnoreCase( proxy.getProtocol() ) || originalProtocol
-                                .equalsIgnoreCase( proxy.getProtocol() ) ) )
+                        if ( proxy.isActive() && ( protocol.equalsIgnoreCase( proxy.getProtocol() )
+                            || originalProtocol.equalsIgnoreCase( proxy.getProtocol() ) ) )
                         {
-                            SettingsDecryptionResult result = settingsDecrypter
-                                .decrypt( new DefaultSettingsDecryptionRequest( proxy ) );
+                            SettingsDecryptionResult result =
+                                settingsDecrypter.decrypt( new DefaultSettingsDecryptionRequest( proxy ) );
                             proxy = result.getProxy();
 
                             ProxyInfo proxyInfo = new ProxyInfo();
@@ -632,9 +622,10 @@ public abstract class AbstractDeployMojo
                             proxyInfo.setUserName( proxy.getUsername() );
                             proxyInfo.setPassword( proxy.getPassword() );
 
-                            getLog().debug( "found proxyInfo "
-                                                + ( proxyInfo == null ? "null" : "host:port " + proxyInfo.getHost()
-                                                    + ":" + proxyInfo.getPort() + ", " + proxyInfo.getUserName() ) );
+                            getLog().debug( "found proxyInfo " + ( proxyInfo == null
+                                ? "null"
+                                : "host:port " + proxyInfo.getHost() + ":" + proxyInfo.getPort() + ", "
+                                    + proxyInfo.getUserName() ) );
 
                             return proxyInfo;
                         }
@@ -642,20 +633,20 @@ public abstract class AbstractDeployMojo
                 }
             }
         }
-        getLog().debug( "getProxy 'protocol': " +  protocol  + " no ProxyInfo found");
+        getLog().debug( "getProxy 'protocol': " + protocol + " no ProxyInfo found" );
         return null;
     }
 
     /**
      * Configure the Wagon with the information from serverConfigurationMap ( which comes from settings.xml )
      *
-     * @todo Remove when {@link WagonManager#getWagon(Repository) is available}. It's available in Maven 2.0.5.
      * @param wagon
      * @param repositoryId
      * @param settings
      * @param container
      * @param log
      * @throws TransferFailedException
+     * @todo Remove when {@link WagonManager#getWagon(Repository) is available}. It's available in Maven 2.0.5.
      */
     private static void configureWagon( Wagon wagon, String repositoryId, Settings settings, PlexusContainer container,
                                         Log log )
@@ -681,18 +672,28 @@ public abstract class AbstractDeployMojo
                     ComponentConfigurator componentConfigurator = null;
                     try
                     {
-                        componentConfigurator = (ComponentConfigurator) container.lookup( ComponentConfigurator.ROLE, "basic" );
-                        componentConfigurator.configureComponent( wagon, plexusConf, container.getContainerRealm() );
+                        componentConfigurator =
+                            (ComponentConfigurator) container.lookup( ComponentConfigurator.ROLE, "basic" );
+                        if ( isMaven3OrMore() )
+                        {
+                            componentConfigurator.configureComponent( wagon, plexusConf,
+                                                                      container.getContainerRealm() );
+                        }
+                        else
+                        {
+                            configureWagonWithMaven2( componentConfigurator, wagon, plexusConf, container );
+                        }
                     }
                     catch ( final ComponentLookupException e )
                     {
-                        throw new TransferFailedException( "While configuring wagon for \'" + repositoryId
-                            + "\': Unable to lookup wagon configurator." + " Wagon configuration cannot be applied.", e );
+                        throw new TransferFailedException(
+                            "While configuring wagon for \'" + repositoryId + "\': Unable to lookup wagon configurator."
+                                + " Wagon configuration cannot be applied.", e );
                     }
                     catch ( ComponentConfigurationException e )
                     {
                         throw new TransferFailedException( "While configuring wagon for \'" + repositoryId
-                            + "\': Unable to apply wagon configuration.", e );
+                                                               + "\': Unable to apply wagon configuration.", e );
                     }
                     finally
                     {
@@ -713,7 +714,36 @@ public abstract class AbstractDeployMojo
         }
     }
 
-    /** {@inheritDoc} */
+    private static void configureWagonWithMaven2( ComponentConfigurator componentConfigurator, Wagon wagon,
+                                                  PlexusConfiguration plexusConf, PlexusContainer container )
+        throws ComponentConfigurationException
+    {
+        // in maven 2.x   :
+        // * container.getContainerRealm() -> org.codehaus.classworlds.ClassRealm
+        // * componentConfiguration 3rd param is org.codehaus.classworlds.ClassRealm
+        // so use some reflection see MSITE-609
+        try
+        {
+            Method methodContainerRealm = container.getClass().getMethod( "getContainerRealm" );
+            ClassRealm realm = (ClassRealm) methodContainerRealm.invoke( container, null );
+
+            Method methodConfigure = componentConfigurator.getClass().getMethod( "configureComponent",
+                                                                                 new Class[]{ Object.class,
+                                                                                     PlexusConfiguration.class,
+                                                                                     ClassRealm.class } );
+
+            methodConfigure.invoke( componentConfigurator, wagon, plexusConf, realm );
+        }
+        catch ( Exception e )
+        {
+            throw new ComponentConfigurationException(
+                "fail to configure wagon component for a maven2 use " + e.getMessage(), e );
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public void contextualize( Context context )
         throws ContextException
     {
@@ -724,7 +754,6 @@ public abstract class AbstractDeployMojo
      * Find the top level parent in the reactor, i.e. the execution root.
      *
      * @param reactorProjects The projects in the reactor. May be null in which case null is returned.
-     *
      * @return The top level project in the reactor, or <code>null</code> if none can be found
      */
     private static MavenProject getTopLevelProject( List<MavenProject> reactorProjects )
@@ -749,17 +778,16 @@ public abstract class AbstractDeployMojo
      * Extract the distributionManagement site from the given MavenProject.
      *
      * @param project the MavenProject. Not null.
-     *
      * @return the project site. Not null.
-     *      Also site.getUrl() and site.getId() are guaranteed to be not null.
-     *
+     *         Also site.getUrl() and site.getId() are guaranteed to be not null.
      * @throws MojoExecutionException if any of the site info is missing.
      */
     protected static Site getSite( final MavenProject project )
         throws MojoExecutionException
     {
-        final String name = project.getName() + " ("
-            + project.getGroupId() + ":" + project.getArtifactId() + ":" + project.getVersion() + ")";
+        final String name =
+            project.getName() + " (" + project.getGroupId() + ":" + project.getArtifactId() + ":" + project.getVersion()
+                + ")";
 
         final DistributionManagement distributionManagement = project.getDistributionManagement();
 
@@ -790,10 +818,8 @@ public abstract class AbstractDeployMojo
      * for which {@link #getSite(org.apache.maven.project.MavenProject)} returns a site.
      *
      * @param project the MavenProject. Not null.
-     *
      * @return the top level site. Not null.
-     *      Also site.getUrl() and site.getId() are guaranteed to be not null.
-     *
+     *         Also site.getUrl() and site.getId() are guaranteed to be not null.
      * @throws MojoExecutionException if no site info is found in the tree.
      */
     protected Site getRootSite( MavenProject project )

@@ -136,12 +136,12 @@ public abstract class AbstractSiteMojo
     /**
      * Check the current Maven version to see if it's Maven 3.0 or newer.
      */
-    protected boolean isMaven3OrMore()
+    protected static boolean isMaven3OrMore()
     {
         return new ComparableVersion( getMavenVersion() ).compareTo( new ComparableVersion( "3.0" ) ) >= 0;
     }
 
-    protected String getMavenVersion()
+    protected static String getMavenVersion()
     {
         // This relies on the fact that MavenProject is the in core classloader
         // and that the core classloader is for the maven-core artifact
