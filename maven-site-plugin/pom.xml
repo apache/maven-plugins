@@ -25,7 +25,7 @@ under the License.
   <parent>
     <groupId>org.apache.maven.plugins</groupId>
     <artifactId>maven-plugins</artifactId>
-    <version>21</version>
+    <version>22</version>
     <relativePath>../maven-plugins/pom.xml</relativePath>
   </parent>
 
@@ -540,37 +540,30 @@ under the License.
     <profile>
       <id>run-its</id>
       <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-invoker-plugin</artifactId>
-            <version>1.5</version>
-            <configuration>
-              <projectsDirectory>src/it</projectsDirectory>
-              <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
-              <showVersion>true</showVersion>
-              <pomIncludes>
-                <pomInclude>*/pom.xml</pomInclude>
-              </pomIncludes>
-              <postBuildHookScript>verify</postBuildHookScript>
-              <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
-              <goals>
-                <goal>clean</goal>
-                <goal>${project.groupId}:${project.artifactId}:${project.version}:site</goal>
-              </goals>
-              <settingsFile>src/it/settings.xml</settingsFile>
-            </configuration>
-            <executions>
-              <execution>
-                <id>integration-test</id>
+        <pluginManagement>
+          <plugins>
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-invoker-plugin</artifactId>
+              <version>1.5</version>
+              <configuration>
+                <projectsDirectory>src/it</projectsDirectory>
+                <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
+                <showVersion>true</showVersion>
+                <pomIncludes>
+                  <pomInclude>*/pom.xml</pomInclude>
+                </pomIncludes>
+                <postBuildHookScript>verify</postBuildHookScript>
+                <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
                 <goals>
-                  <goal>install</goal>
-                  <goal>run</goal>
+                  <goal>clean</goal>
+                  <goal>${project.groupId}:${project.artifactId}:${project.version}:site</goal>
                 </goals>
-              </execution>
-           </executions>
-          </plugin>
-        </plugins>
+                <settingsFile>src/it/settings.xml</settingsFile>
+              </configuration>
+            </plugin>
+          </plugins>
+        </pluginManagement>
       </build>
     </profile>
 
