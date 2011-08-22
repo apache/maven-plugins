@@ -57,6 +57,7 @@ import java.util.List;
  * @author <a href="mailto:aramirez@apache.org">Allan Ramirez</a>
  * @goal deploy-file
  * @requiresProject false
+ * @threadSafe
  */
 public class DeployFileMojo
     extends AbstractDeployMojo
