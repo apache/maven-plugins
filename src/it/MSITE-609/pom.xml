@@ -23,11 +23,11 @@ under the License.
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.apache.maven.plugins.site.its</groupId>
-  <artifactId>site-deploy</artifactId>
+  <artifactId>MSITE-609</artifactId>
   <version>1.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
-  <name>site-deploy IT</name>
+  <name>MSITE-609 IT</name>
 
   <properties>
     <currentVersion>2.0.7</currentVersion>
