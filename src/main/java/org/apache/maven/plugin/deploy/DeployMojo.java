@@ -43,6 +43,7 @@ import java.util.regex.Pattern;
  * @version $Id$
  * @goal deploy
  * @phase deploy
+ * @threadSafe
  */
 public class DeployMojo
     extends AbstractDeployMojo
