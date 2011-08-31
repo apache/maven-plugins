@@ -139,6 +139,14 @@ public class FileSetFormatterTest
 
         final FileSetFormatter formatter = new FileSetFormatter( configSource, logger );
 
+        configSource.getTemporaryRootDirectory();
+        configSourceControl.setReturnValue( dir );
+
+        configSource.getEncoding();
+        configSourceControl.setReturnValue( "UTF-8", MockControl.ONE_OR_MORE );
+
+        mockManager.replayAll();
+        
         final File result = formatter.formatFileSetForAssembly( dir, fs );
 
         assertFalse( dir.equals( result ) );
@@ -173,6 +181,14 @@ public class FileSetFormatterTest
 
         final FileSetFormatter formatter = new FileSetFormatter( configSource, logger );
 
+        configSource.getTemporaryRootDirectory();
+        configSourceControl.setReturnValue( dir );
+
+        configSource.getEncoding();
+        configSourceControl.setReturnValue( "UTF-8", MockControl.ONE_OR_MORE );
+
+        mockManager.replayAll();
+        
         final File result = formatter.formatFileSetForAssembly( dir, fs );
 
         assertFalse( dir.equals( result ) );
@@ -207,6 +223,14 @@ public class FileSetFormatterTest
 
         final FileSetFormatter formatter = new FileSetFormatter( configSource, logger );
 
+        configSource.getTemporaryRootDirectory();
+        configSourceControl.setReturnValue( dir );
+
+        configSource.getEncoding();
+        configSourceControl.setReturnValue( "UTF-8", MockControl.ONE_OR_MORE );
+
+        mockManager.replayAll();
+        
         final File result = formatter.formatFileSetForAssembly( dir, fs );
 
         assertFalse( dir.equals( result ) );
@@ -239,6 +263,14 @@ public class FileSetFormatterTest
 
         final FileSetFormatter formatter = new FileSetFormatter( configSource, logger );
 
+        configSource.getTemporaryRootDirectory();
+        configSourceControl.setReturnValue( dir );
+
+        configSource.getEncoding();
+        configSourceControl.setReturnValue( "UTF-8", MockControl.ONE_OR_MORE );
+
+        mockManager.replayAll();
+        
         final File result = formatter.formatFileSetForAssembly( dir, fs );
 
         assertFalse( dir.equals( result ) );
@@ -321,6 +353,9 @@ public class FileSetFormatterTest
 
         configSource.getFilters();
         configSourceControl.setReturnValue( Collections.EMPTY_LIST, MockControl.ONE_OR_MORE );
+
+        configSource.getEncoding();
+        configSourceControl.setReturnValue( "UTF-8", MockControl.ONE_OR_MORE );
     }
 
 }

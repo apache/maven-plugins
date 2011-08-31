@@ -19,6 +19,14 @@ package org.apache.maven.plugin.assembly.artifact;
  * under the License.
  */
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
@@ -42,46 +50,32 @@ import org.apache.maven.plugin.assembly.model.Repository;
 import org.apache.maven.plugin.assembly.utils.FilterUtils;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.artifact.InvalidDependencyVersionException;
+import org.codehaus.plexus.component.annotations.Component;
+import org.codehaus.plexus.component.annotations.Requirement;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
-
 /**
  * @author jdcasey
  * @version $Id$
- * @plexus.component role="org.apache.maven.plugin.assembly.artifact.DependencyResolver"
  */
+@Component( role = DependencyResolver.class )
 public class DefaultDependencyResolver
     extends AbstractLogEnabled
     implements DependencyResolver
 {
 
-    /**
-     * @plexus.requirement
-     */
+    @Requirement
     private ArtifactResolver resolver;
 
-    /**
-     * @plexus.requirement
-     */
+    @Requirement
     private ArtifactMetadataSource metadataSource;
 
-    /**
-     * @plexus.requirement
-     */
+    @Requirement
     private ArtifactFactory factory;
 
-    /**
-     * @plexus.requirement
-     */
+    @Requirement
     private ArtifactCollector collector;
 
     public DefaultDependencyResolver()
@@ -158,7 +152,7 @@ public class DefaultDependencyResolver
                 if ( getLogger().isDebugEnabled() )
                 {
                     getLogger().debug( "Failed to resolve: " + depArtifact.getId() + " for assembly: "
-                                                       + assembly.getId() );
+                                           + assembly.getId() );
                 }
                 missing.add( depArtifact );
             }
@@ -167,7 +161,7 @@ public class DefaultDependencyResolver
                 if ( getLogger().isDebugEnabled() )
                 {
                     getLogger().debug( "Failed to resolve: " + depArtifact.getId() + " for assembly: "
-                                                       + assembly.getId() );
+                                           + assembly.getId() );
                 }
                 missing.add( depArtifact );
             }
@@ -331,13 +325,13 @@ public class DefaultDependencyResolver
                     {
                         throw new DependencyResolutionException(
                                                                  "Failed to create dependency artifacts for resolution. Assembly: "
-                                                                                 + assembly.getId(), e );
+                                                                     + assembly.getId(), e );
                     }
                 }
 
                 requirements.addArtifacts( dependencyArtifacts );
                 getLogger().debug( "Dependencies for project: " + project.getId() + " are:\n"
-                                                   + StringUtils.join( dependencyArtifacts.iterator(), "\n" ) );
+                                       + StringUtils.join( dependencyArtifacts.iterator(), "\n" ) );
             }
         }
     }

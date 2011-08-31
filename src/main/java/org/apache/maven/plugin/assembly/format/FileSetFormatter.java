@@ -97,7 +97,7 @@ public class FileSetFormatter
                     File sourceFile = new File( fileSetDir, file );
                     try
                     {
-                        sourceFile = fileFormatter.format( sourceFile, set.isFiltered(), lineEndingHint, formattedDir );
+                        sourceFile = fileFormatter.format( sourceFile, set.isFiltered(), lineEndingHint, formattedDir, configSource.getEncoding() );
                         AssemblyFileUtils.copyFile( sourceFile, targetFile );
                     }
                     catch ( AssemblyFormattingException e )

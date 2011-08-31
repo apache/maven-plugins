@@ -197,6 +197,12 @@ under the License.
       <version>4.8.1</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.codehaus.plexus</groupId>
+      <artifactId>plexus-component-annotations</artifactId>
+      <version>1.5.5</version>
+      <scope>provided</scope>
+    </dependency>
   </dependencies>
 
   <build>
@@ -212,31 +218,15 @@ under the License.
     <plugins>
       <plugin>
         <groupId>org.codehaus.plexus</groupId>
-        <artifactId>plexus-maven-plugin</artifactId>
+        <artifactId>plexus-component-metadata</artifactId>
+        <version>1.5.5</version>
         <executions>
           <execution>
-            <id>create-component-descriptor</id>
-            <phase>generate-resources</phase>
-            <goals>
-              <goal>descriptor</goal>
+          	<id>descriptors</id>
+          	<goals>
+              <goal>generate-metadata</goal>
+              <goal>generate-test-metadata</goal>
             </goals>
-            <configuration>
-              <outputDirectory>${project.build.directory}/generated-resources/plexus</outputDirectory>
-            </configuration>
-          </execution>
-          <execution>
-            <id>merge-metadata</id>
-            <phase>process-resources</phase>
-            <goals>
-              <goal>merge-descriptors</goal>
-            </goals>
-            <configuration>
-              <!-- <output>${project.build.outputDirectory}/META-INF/plexus/components.xml</output> -->
-              <!-- <resources>
-                <resource>${project.build.outputDirectory}/META-INF/plexus/components.xml</resource>
-                <resource>${project.build.directory}/generated-resources/plexus/META-INF/plexus/components.xml</resource>
-              </resources> -->
-            </configuration>
           </execution>
         </executions>
       </plugin>

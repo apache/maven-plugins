@@ -201,5 +201,9 @@ public class ConfigSourceStub
     {
         return true;
     }
+    
+    public String getEncoding() {
+    	return null;
+    }
 
 }

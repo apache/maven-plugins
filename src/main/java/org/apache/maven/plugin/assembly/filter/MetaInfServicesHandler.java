@@ -19,12 +19,10 @@ package org.apache.maven.plugin.assembly.filter;
  * under the License.
  */
 
+import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.components.io.fileselectors.FileInfo;
 
-/**
- * @plexus.component role="org.apache.maven.plugin.assembly.filter.ContainerDescriptorHandler"
- *                   role-hint="metaInf-services"
- */
+@Component( role = ContainerDescriptorHandler.class, hint = "metaInf-services" )
 public class MetaInfServicesHandler
     extends AbstractLineAggregatingHandler
 {

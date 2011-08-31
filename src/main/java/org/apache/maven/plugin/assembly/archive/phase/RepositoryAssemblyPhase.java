@@ -19,6 +19,10 @@ package org.apache.maven.plugin.assembly.archive.phase;
  * under the License.
  */
 
+import java.io.File;
+import java.util.Iterator;
+import java.util.List;
+
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.AssemblyContext;
 import org.apache.maven.plugin.assembly.InvalidAssemblerConfigurationException;
@@ -36,25 +40,20 @@ import org.apache.maven.shared.repository.RepositoryAssemblyException;
 import org.apache.maven.shared.repository.RepositoryBuilderConfigSource;
 import org.apache.maven.shared.repository.model.RepositoryInfo;
 import org.codehaus.plexus.archiver.Archiver;
+import org.codehaus.plexus.component.annotations.Component;
+import org.codehaus.plexus.component.annotations.Requirement;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
-
-import java.io.File;
-import java.util.Iterator;
-import java.util.List;
 
 /**
  * @version $Id$
- * @plexus.component role="org.apache.maven.plugin.assembly.archive.phase.AssemblyArchiverPhase"
- *                   role-hint="repositories"
  */
+@Component( role = AssemblyArchiverPhase.class, hint = "repositories" )
 public class RepositoryAssemblyPhase
     extends AbstractLogEnabled
     implements AssemblyArchiverPhase
 {
 
-    /**
-     * @plexus.requirement
-     */
+    @Requirement
     private RepositoryAssembler repositoryAssembler;
 
     public RepositoryAssemblyPhase()

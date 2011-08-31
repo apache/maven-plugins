@@ -25,6 +25,8 @@ import org.apache.maven.shared.filtering.MavenFilteringException;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.ReaderFactory;
+import org.codehaus.plexus.util.StringUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -49,21 +51,28 @@ public class FileFormatter
         this.logger = logger;
     }
 
-    public File format( File source, boolean filter, String lineEnding )
+    public File format( File source, boolean filter, String lineEnding, String encoding )
         throws AssemblyFormattingException
     {
-        return format ( source, filter, lineEnding, configSource.getTemporaryRootDirectory() );
+        return format ( source, filter, lineEnding, configSource.getTemporaryRootDirectory(), encoding );
     }
 
-    public File format( File source, boolean filter, String lineEnding, File tempRoot )
+    public File format( File source, boolean filter, String lineEnding, File tempRoot, String encoding )
         throws AssemblyFormattingException
     {
         AssemblyFileUtils.verifyTempDirectoryAvailability( tempRoot, logger );
 
         File result = source;
+        
+        if ( StringUtils.isEmpty( encoding ) && filter )
+        {
+            logger.warn(
+                           "File encoding has not been set, using platform encoding " + ReaderFactory.FILE_ENCODING
+                               + ", i.e. build is platform dependent!" );
+        }
 
         if ( filter )
-            result = doFileFilter( source, tempRoot );
+            result = doFileFilter( source, tempRoot, encoding );
 
         String lineEndingChars = AssemblyFileUtils.getLineEndingCharacters( lineEnding );
         if ( lineEndingChars != null )
@@ -74,7 +83,7 @@ public class FileFormatter
         return result;
     }
 
-    private File doFileFilter( File source, File tempRoot )
+    private File doFileFilter( File source, File tempRoot, String encoding )
         throws AssemblyFormattingException
     {
         try
@@ -85,7 +94,7 @@ public class FileFormatter
             boolean isPropertiesFile = source.getName().toLowerCase( Locale.ENGLISH ).endsWith( ".properties" );
 
             configSource.getMavenFileFilter().copyFile( source, target, true, configSource.getProject(),
-                    configSource.getFilters(), isPropertiesFile, null, configSource.getMavenSession() );
+                    configSource.getFilters(), isPropertiesFile, encoding, configSource.getMavenSession() );
 
             return target;
         }
