@@ -78,7 +78,7 @@ public class FileFormatterTest
 
         mockManager.replayAll();
 
-        final File result = new FileFormatter( configSource, logger ).format( file, false, "dos" );
+        final File result = new FileFormatter( configSource, logger ).format( file, false, "dos", "UTF-8" );
 
         assertTrue( !file.equals( result ) );
 
@@ -106,7 +106,7 @@ public class FileFormatterTest
 
         mockManager.replayAll();
 
-        final File result = new FileFormatter( configSource, logger ).format( file, false, null );
+        final File result = new FileFormatter( configSource, logger ).format( file, false, null, "UTF-8" );
 
         assertEquals( file, result );
 
@@ -125,7 +125,7 @@ public class FileFormatterTest
 
         mockManager.replayAll();
 
-        final File result = new FileFormatter( configSource, logger ).format( file, false, "dos" );
+        final File result = new FileFormatter( configSource, logger ).format( file, false, "dos", "UTF-8" );
 
         assertEquals( "This is a\r\ntest.\r\n", fileManager.getFileContents( result ) );
 
@@ -144,7 +144,7 @@ public class FileFormatterTest
 
         mockManager.replayAll();
 
-        final File result = new FileFormatter( configSource, logger ).format( file, false, "unix" );
+        final File result = new FileFormatter( configSource, logger ).format( file, false, "unix", "UTF-8" );
 
         assertEquals( "This is a\ntest.\n", fileManager.getFileContents( result ) );
 
@@ -162,7 +162,7 @@ public class FileFormatterTest
 
         mockManager.replayAll();
 
-        final File result = new FileFormatter( configSource, logger ).format( file, true, null );
+        final File result = new FileFormatter( configSource, logger ).format( file, true, null, "UTF-8" );
 
         assertEquals( "This is a test for project: artifact artifact.", fileManager.getFileContents( result ) );
 
@@ -186,7 +186,7 @@ public class FileFormatterTest
 
         mockManager.replayAll();
 
-        final File result = new FileFormatter( configSource, logger ).format( file, true, null );
+        final File result = new FileFormatter( configSource, logger ).format( file, true, null, "UTF-8" );
 
         // expect: C:\\out\\deeper
         assertEquals( "out=C:\\\\out\\\\deeper", fileManager.getFileContents( result ) );
@@ -210,7 +210,7 @@ public class FileFormatterTest
 
         mockManager.replayAll();
 
-        final File result = new FileFormatter( configSource, logger ).format( file, true, null );
+        final File result = new FileFormatter( configSource, logger ).format( file, true, null, "UTF-8" );
 
         assertEquals( "project.basedirA=C:\\out\\deeper", fileManager.getFileContents( result ) );
 
@@ -230,7 +230,7 @@ public class FileFormatterTest
 
         mockManager.replayAll();
 
-        final File result = new FileFormatter( configSource, logger ).format( file, true, null );
+        final File result = new FileFormatter( configSource, logger ).format( file, true, null, "UTF-8" );
 
         assertEquals( "This is a test for project: Test Test.", fileManager.getFileContents( result ) );
 
@@ -249,7 +249,7 @@ public class FileFormatterTest
 
         mockManager.replayAll();
 
-        final File result = new FileFormatter( configSource, logger ).format( file, true, null );
+        final File result = new FileFormatter( configSource, logger ).format( file, true, null, "UTF-8" );
 
         assertEquals( "project: C:\\\\Test C:\\\\Test.", fileManager.getFileContents( result ) );
 
@@ -269,7 +269,7 @@ public class FileFormatterTest
 
         mockManager.replayAll();
 
-        final File result = new FileFormatter( configSource, logger ).format( file, true, null );
+        final File result = new FileFormatter( configSource, logger ).format( file, true, null, "UTF-8" );
 
         assertEquals( "This is a test for project: C:\\Test C:\\Test.", fileManager.getFileContents( result ) );
 
@@ -287,7 +287,7 @@ public class FileFormatterTest
 
         mockManager.replayAll();
 
-        final File result = new FileFormatter( configSource, logger ).format( file, true, null );
+        final File result = new FileFormatter( configSource, logger ).format( file, true, null, "UTF-8" );
 
         assertEquals( "testing ${bean.id} which used to resolve to project.id", fileManager.getFileContents( result ) );
 
@@ -313,7 +313,7 @@ public class FileFormatterTest
 
         mockManager.replayAll();
 
-        final File result = new FileFormatter( configSource, logger ).format( file, true, null );
+        final File result = new FileFormatter( configSource, logger ).format( file, true, null, "UTF-8" );
 
         assertEquals( "property: Test Test otherProperty: OtherValue OtherValue.", fileManager.getFileContents( result ) );
 
@@ -337,7 +337,7 @@ public class FileFormatterTest
 
         mockManager.replayAll();
 
-        final File result = new FileFormatter( configSource, logger ).format( file, true, null );
+        final File result = new FileFormatter( configSource, logger ).format( file, true, null, "UTF-8" );
 
         assertEquals( "property: OtherValue OtherValue.", fileManager.getFileContents( result ) );
 
@@ -360,7 +360,7 @@ public class FileFormatterTest
 
         mockManager.replayAll();
 
-        final File result = new FileFormatter( configSource, logger ).format( file, true, null );
+        final File result = new FileFormatter( configSource, logger ).format( file, true, null, "UTF-8" );
 
         assertEquals( "project artifact-id: Test Test.", fileManager.getFileContents( result ) );
 

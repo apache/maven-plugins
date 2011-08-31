@@ -117,6 +117,8 @@ public class FileItemAssemblyPhaseTest
                                    TypeConversionUtils.modeToInt( "777", new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) ) );
 
         assembly.addFile( fi );
+        
+        macCS.expectGetEncoding();
 
         mm.replayAll();
 
@@ -165,6 +167,8 @@ public class FileItemAssemblyPhaseTest
                                    TypeConversionUtils.modeToInt( "777", new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) ) );
 
         assembly.addFile( fi );
+
+        macCS.expectGetEncoding();
 
         mm.replayAll();
 
@@ -241,6 +245,8 @@ public class FileItemAssemblyPhaseTest
         assembly.addFile( readmeFileItem );
         assembly.addFile( licenseFileItem );
         assembly.addFile( configFileItem );
+
+        macCS.expectGetEncoding();
 
         mm.replayAll();
 
@@ -321,6 +327,8 @@ public class FileItemAssemblyPhaseTest
         assembly.addFile( licenseFileItem );
         assembly.addFile( configFileItem );
 
+        macCS.expectGetEncoding();
+
         mm.replayAll();
 
         createPhase( macLogger.logger ).execute( assembly, macArchiver.archiver, macCS.configSource,
@@ -397,6 +405,8 @@ public class FileItemAssemblyPhaseTest
         assembly.addFile( readmeFileItem );
         assembly.addFile( licenseFileItem );
         assembly.addFile( configFileItem );
+
+        macCS.expectGetEncoding();
 
         mm.replayAll();
 
@@ -481,7 +491,13 @@ public class FileItemAssemblyPhaseTest
             configSource.getBasedir();
             control.setReturnValue( basedir, MockControl.ONE_OR_MORE );
         }
-    }
+
+        public void expectGetEncoding( )
+        {
+            configSource.getEncoding();
+            control.setReturnValue( "UTF-8", MockControl.ONE_OR_MORE );
+        }
+}
 
     private final class MockAndControlForLogger
     {

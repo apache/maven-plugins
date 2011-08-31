@@ -19,6 +19,10 @@ package org.apache.maven.plugin.assembly.archive.phase;
  * under the License.
  */
 
+import java.io.File;
+import java.util.Iterator;
+import java.util.List;
+
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.AssemblyContext;
 import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
@@ -30,18 +34,15 @@ import org.apache.maven.plugin.assembly.utils.AssemblyFormatUtils;
 import org.apache.maven.plugin.assembly.utils.TypeConversionUtils;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
+import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
-
-import java.io.File;
-import java.util.Iterator;
-import java.util.List;
 
 /**
  * Handles the top-level &lt;files/&gt; section of the assembly descriptor.
  * 
  * @version $Id$
- * @plexus.component role="org.apache.maven.plugin.assembly.archive.phase.AssemblyArchiverPhase" role-hint="file-items"
  */
+@Component( role = AssemblyArchiverPhase.class, hint = "file-items" )
 public class FileItemAssemblyPhase
     extends AbstractLogEnabled
     implements AssemblyArchiverPhase
@@ -76,7 +77,9 @@ public class FileItemAssemblyPhase
                 source = new File( basedir, sourcePath );
             }
 
-            source = fileFormatter.format( source, fileItem.isFiltered(), fileItem.getLineEnding() );
+            source =
+                fileFormatter.format( source, fileItem.isFiltered(), fileItem.getLineEnding(),
+                                      configSource.getEncoding() );
 
             String destName = fileItem.getDestName();
 

@@ -19,6 +19,16 @@ package org.apache.maven.plugin.assembly.archive;
  * under the License.
  */
 
+import java.io.File;
+import java.io.IOException;
+import java.io.StringReader;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.maven.plugin.DebugConfigurationListener;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.AssemblyContext;
@@ -48,6 +58,8 @@ import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
 import org.codehaus.plexus.archiver.tar.TarArchiver;
 import org.codehaus.plexus.archiver.tar.TarLongFileMode;
 import org.codehaus.plexus.archiver.war.WarArchiver;
+import org.codehaus.plexus.component.annotations.Component;
+import org.codehaus.plexus.component.annotations.Requirement;
 import org.codehaus.plexus.component.configurator.ComponentConfigurationException;
 import org.codehaus.plexus.component.configurator.ComponentConfigurator;
 import org.codehaus.plexus.component.configurator.ConfigurationListener;
@@ -64,16 +76,6 @@ import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.StringReader;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
 /**
  * Controller component designed to organize the many activities involved in creating an assembly archive. This includes
  * locating and configuring {@link Archiver} instances, executing multiple {@link AssemblyArchiverPhase} instances to
@@ -81,31 +83,23 @@ import java.util.Map;
  * activities.
  * 
  * @version $Id$
- * @plexus.component role="org.apache.maven.plugin.assembly.archive.AssemblyArchiver"
  */
+@Component( role = AssemblyArchiver.class )
 public class DefaultAssemblyArchiver
     extends AbstractLogEnabled
     implements AssemblyArchiver, Contextualizable
 {
 
-    /**
-     * @plexus.requirement
-     */
+    @Requirement
     private ArchiverManager archiverManager;
 
-    /**
-     * @plexus.requirement
-     */
+    @Requirement
     private DependencyResolver dependencyResolver;
 
-    /**
-     * @plexus.requirement role="org.apache.maven.plugin.assembly.archive.phase.AssemblyArchiverPhase"
-     */
+    @Requirement( role = AssemblyArchiverPhase.class )
     private List<AssemblyArchiverPhase> assemblyPhases;
 
-    /**
-     * @plexus.requirement role="org.apache.maven.plugin.assembly.filter.ContainerDescriptorHandler"
-     */
+    @Requirement( role = ContainerDescriptorHandler.class )
     private Map<String, ContainerDescriptorHandler> containerDescriptorHandlers;
 
     private PlexusContainer container;
@@ -126,7 +120,6 @@ public class DefaultAssemblyArchiver
 
     /**
      * Create the assembly archive. Generally:
-     * 
      * <ol>
      * <li>Setup any directory structures for temporary files</li>
      * <li>Calculate the output directory/file for the assembly</li>
@@ -194,22 +187,22 @@ public class DefaultAssemblyArchiver
         catch ( final ArchiverException e )
         {
             throw new ArchiveCreationException( "Error creating assembly archive " + assembly.getId() + ": "
-                            + e.getMessage(), e );
+                + e.getMessage(), e );
         }
         catch ( final IOException e )
         {
             throw new ArchiveCreationException( "Error creating assembly archive " + assembly.getId() + ": "
-                            + e.getMessage(), e );
+                + e.getMessage(), e );
         }
         catch ( final NoSuchArchiverException e )
         {
             throw new ArchiveCreationException( "Unable to obtain archiver for extension '" + format
-                            + "', for assembly: '" + assembly.getId() + "'", e );
+                + "', for assembly: '" + assembly.getId() + "'", e );
         }
         catch ( final DependencyResolutionException e )
         {
             throw new ArchiveCreationException( "Unable to resolve dependencies for assembly '" + assembly.getId()
-                            + "'", e );
+                + "'", e );
         }
 
         return destFile;
@@ -218,9 +211,7 @@ public class DefaultAssemblyArchiver
     private void validate( final Assembly assembly )
         throws InvalidAssemblerConfigurationException
     {
-        if ( assembly.getId() == null || assembly.getId()
-                                                 .trim()
-                                                 .length() < 1 )
+        if ( assembly.getId() == null || assembly.getId().trim().length() < 1 )
         {
             throw new InvalidAssemblerConfigurationException( "Assembly ID must be present and non-empty." );
         }
@@ -231,8 +222,8 @@ public class DefaultAssemblyArchiver
         throws InvalidAssemblerConfigurationException
     {
         getLogger().debug( "All known ContainerDescriptorHandler components: "
-                                           + ( containerDescriptorHandlers == null ? "none; map is null." : ""
-                                                           + containerDescriptorHandlers.keySet() ) );
+                               + ( containerDescriptorHandlers == null ? "none; map is null." : ""
+                                   + containerDescriptorHandlers.keySet() ) );
 
         if ( requestedContainerDescriptorHandlers == null )
         {
@@ -255,11 +246,11 @@ public class DefaultAssemblyArchiver
                 {
                     throw new InvalidAssemblerConfigurationException(
                                                                       "Cannot find ContainerDescriptorHandler with hint: "
-                                                                                      + hint );
+                                                                          + hint );
                 }
 
                 getLogger().debug( "Found container descriptor handler with hint: " + hint + " (component: " + handler
-                                                   + ")" );
+                                       + ")" );
 
                 if ( config.getConfiguration() != null )
                 {
@@ -284,8 +275,7 @@ public class DefaultAssemblyArchiver
     /**
      * Creates the necessary archiver to build the distribution file.
      * 
-     * @param format
-     *            Archive format
+     * @param format Archive format
      * @param includeBaseDir
      * @param finalName
      * @param configSource
@@ -350,8 +340,7 @@ public class DefaultAssemblyArchiver
                                                       final AssemblerConfigurationSource configSource )
         throws InvalidAssemblerConfigurationException
     {
-        getLogger().debug( "Configuring handler: '" + handler.getClass()
-                                                             .getName() + "' -->" );
+        getLogger().debug( "Configuring handler: '" + handler.getClass().getName() + "' -->" );
 
         try
         {
@@ -359,14 +348,13 @@ public class DefaultAssemblyArchiver
         }
         catch ( final ComponentConfigurationException e )
         {
-            throw new InvalidAssemblerConfigurationException( "Failed to configure handler: " + handler.getClass()
-                                                                                                       .getName(), e );
+            throw new InvalidAssemblerConfigurationException( "Failed to configure handler: "
+                + handler.getClass().getName(), e );
         }
         catch ( final ComponentLookupException e )
         {
             throw new InvalidAssemblerConfigurationException( "Failed to lookup configurator for setup of handler: "
-                            + handler.getClass()
-                                     .getName(), e );
+                + handler.getClass().getName(), e );
         }
 
         getLogger().debug( "-- end configuration --" );
@@ -382,17 +370,18 @@ public class DefaultAssemblyArchiver
         }
         catch ( final XmlPullParserException e )
         {
-            throw new ArchiverException( "Failed to parse archiver configuration for: " + archiver.getClass()
-                                                                                                  .getName(), e );
+            throw new ArchiverException(
+                                         "Failed to parse archiver configuration for: " + archiver.getClass().getName(),
+                                         e );
         }
         catch ( final IOException e )
         {
-            throw new ArchiverException( "Failed to parse archiver configuration for: " + archiver.getClass()
-                                                                                                  .getName(), e );
+            throw new ArchiverException(
+                                         "Failed to parse archiver configuration for: " + archiver.getClass().getName(),
+                                         e );
         }
 
-        getLogger().debug( "Configuring archiver: '" + archiver.getClass()
-                                                               .getName() + "' -->" );
+        getLogger().debug( "Configuring archiver: '" + archiver.getClass().getName() + "' -->" );
 
         try
         {
@@ -400,14 +389,12 @@ public class DefaultAssemblyArchiver
         }
         catch ( final ComponentConfigurationException e )
         {
-            throw new ArchiverException( "Failed to configure archiver: " + archiver.getClass()
-                                                                                    .getName(), e );
+            throw new ArchiverException( "Failed to configure archiver: " + archiver.getClass().getName(), e );
         }
         catch ( final ComponentLookupException e )
         {
-            throw new ArchiverException( "Failed to lookup configurator for setup of archiver: " + archiver.getClass()
-                                                                                                           .getName(),
-                                         e );
+            throw new ArchiverException( "Failed to lookup configurator for setup of archiver: "
+                + archiver.getClass().getName(), e );
         }
 
         getLogger().debug( "-- end configuration --" );
@@ -468,8 +455,7 @@ public class DefaultAssemblyArchiver
          */
         try
         {
-            final Method getContainerRealm = container.getClass()
-                                                      .getMethod( "getContainerRealm" );
+            final Method getContainerRealm = container.getClass().getMethod( "getContainerRealm" );
             return new Object[] { getContainerRealm.invoke( container ), getContainerRealm.getReturnType() };
         }
         catch ( final NoSuchMethodException e )

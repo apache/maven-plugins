@@ -19,6 +19,25 @@ package org.apache.maven.plugin.assembly.io;
  * under the License.
  */
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -51,29 +70,10 @@ import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-
 /**
  * @version $Id$
- * @plexus.component role="org.apache.maven.plugin.assembly.io.AssemblyReader"
  */
+@org.codehaus.plexus.component.annotations.Component( role = AssemblyReader.class )
 public class DefaultAssemblyReader
     extends AbstractLogEnabled
     implements AssemblyReader
@@ -150,12 +150,12 @@ public class DefaultAssemblyReader
                 final StackTraceElement frameZero = e.getStackTrace()[0];
 
                 if ( "org.codehaus.plexus.util.DirectoryScanner".equals( frameZero.getClassName() )
-                                && "scandir".equals( frameZero.getMethodName() ) )
+                    && "scandir".equals( frameZero.getMethodName() ) )
                 {
                     if ( getLogger().isDebugEnabled() )
                     {
                         getLogger().debug( "Caught filesystem error while scanning directories..."
-                                                           + "using zero-length list as the result.", e );
+                                               + "using zero-length list as the result.", e );
                     }
                 }
                 else
@@ -302,14 +302,14 @@ public class DefaultAssemblyReader
             if ( configSource.isIgnoreMissingDescriptor() )
             {
                 getLogger().debug( "Ignoring missing assembly descriptor with ID '" + spec
-                                                   + "' per configuration.\nLocator output was:\n\n"
-                                                   + locator.getMessageHolder().render() );
+                                       + "' per configuration.\nLocator output was:\n\n"
+                                       + locator.getMessageHolder().render() );
                 return null;
             }
             else
             {
                 throw new AssemblyReadException( "Error locating assembly descriptor: " + spec + "\n\n"
-                                + locator.getMessageHolder().render() );
+                    + locator.getMessageHolder().render() );
             }
         }
 
@@ -436,7 +436,7 @@ public class DefaultAssemblyReader
         catch ( final IOException e )
         {
             getLogger().debug( "Failed to print debug message with assembly descriptor listing, and message: "
-                                               + message, e );
+                                   + message, e );
         }
 
         getLogger().debug( message + "\n\n" + sWriter.toString() + "\n\n" );
@@ -502,12 +502,12 @@ public class DefaultAssemblyReader
             catch ( final IOException e )
             {
                 throw new AssemblyReadException( "Error reading component descriptor: " + location + " (resolved to: "
-                                + resolvedLocation.getSpecification() + ")", e );
+                    + resolvedLocation.getSpecification() + ")", e );
             }
             catch ( final XmlPullParserException e )
             {
                 throw new AssemblyReadException( "Error reading component descriptor: " + location + " (resolved to: "
-                                + resolvedLocation.getSpecification() + ")", e );
+                    + resolvedLocation.getSpecification() + ")", e );
             }
             finally
             {

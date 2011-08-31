@@ -95,4 +95,6 @@ public interface AssemblerConfigurationSource
     boolean isUseJvmChmod();
 
     boolean isIgnorePermissions();
+    
+    String getEncoding();
 }

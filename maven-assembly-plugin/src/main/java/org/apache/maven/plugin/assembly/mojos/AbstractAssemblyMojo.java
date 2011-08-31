@@ -55,6 +55,12 @@ public abstract class AbstractAssemblyMojo
     extends AbstractMojo
     implements AssemblerConfigurationSource
 {
+	/**
+     * The character encoding scheme to be applied when filtering resources.
+     *
+     * @parameter expression="${encoding}" default-value="${project.build.sourceEncoding}"
+     */
+    protected String encoding;
 
     /**
      * Flag allowing one or more executions of the assembly plugin to be configured as skipped for a particular build.
@@ -827,5 +833,9 @@ public abstract class AbstractAssemblyMojo
     public boolean isIgnorePermissions()
     {
         return ignorePermissions;
+    }
+    
+    public String getEncoding() {
+    	return encoding;
     }
 }
