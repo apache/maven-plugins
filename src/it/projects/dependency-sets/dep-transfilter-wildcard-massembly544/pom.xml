@@ -6,8 +6,9 @@
     <artifactId>it-project-parent</artifactId>
     <version>1</version>
   </parent>
-  <artifactId>project</artifactId>
-  <name>project</name>
+  
+  <artifactId>dep-transfilter-wildcard-massembly544</artifactId>
+  <name>dep-transfilter-wildcard-massembly544</name>
 
   <dependencies>
     <dependency>
@@ -23,8 +24,8 @@
     </dependency>
     <dependency>
     	<groupId>org.apache.maven.reporting</groupId>
-    	<artifactId>maven-reporting-impl</artifactId>
-    	<version>2.0.4.1</version>
+    	<artifactId>maven-reporting-api</artifactId>
+    	<version>2.0.4</version>
     </dependency>
   </dependencies>
   
@@ -34,7 +35,7 @@
         <artifactId>maven-assembly-plugin</artifactId>
         <executions>
           <execution>
-            <id>assemly</id>
+            <id>assembly</id>
             <phase>package</phase>
             <goals>
               <goal>single</goal>
