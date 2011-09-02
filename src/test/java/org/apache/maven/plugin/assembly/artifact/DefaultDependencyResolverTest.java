@@ -19,6 +19,13 @@ package org.apache.maven.plugin.assembly.artifact;
  * under the License.
  */
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
@@ -40,13 +47,6 @@ import org.codehaus.plexus.PlexusTestCase;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.logging.console.ConsoleLogger;
 import org.easymock.MockControl;
-
-import java.util.Collections;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
 
 public class DefaultDependencyResolverTest
     extends PlexusTestCase
@@ -110,18 +110,13 @@ public class DefaultDependencyResolverTest
         assertTrue( info.isResolutionRequired() );
         assertFalse( info.isResolvedTransitively() );
 
-        assertTrue( info.getScopeFilter()
-                        .isIncludeCompileScope() );
-        assertTrue( info.getScopeFilter()
-                        .isIncludeSystemScope() );
+        assertTrue( info.getScopeFilter().isIncludeCompileScope() );
+        assertTrue( info.getScopeFilter().isIncludeSystemScope() );
 
-        assertTrue( info.getScopeFilter()
-                        .isIncludeProvidedScope() );
+        assertTrue( info.getScopeFilter().isIncludeProvidedScope() );
 
-        assertFalse( info.getScopeFilter()
-                         .isIncludeRuntimeScope() );
-        assertFalse( info.getScopeFilter()
-                         .isIncludeTestScope() );
+        assertFalse( info.getScopeFilter().isIncludeRuntimeScope() );
+        assertFalse( info.getScopeFilter().isIncludeTestScope() );
     }
 
     public void test_getModuleSetResolutionRequirements()
@@ -144,23 +139,18 @@ public class DefaultDependencyResolverTest
         final MavenProject module1b =
             createMavenProject( "group1.b", "module-1b", "1", new File( module1Dir, "module-1b" ) );
 
-        module1.getModel()
-               .addModule( module1a.getArtifactId() );
-        module1.getModel()
-               .addModule( module1b.getArtifactId() );
+        module1.getModel().addModule( module1a.getArtifactId() );
+        module1.getModel().addModule( module1b.getArtifactId() );
 
         final File module2Dir = new File( rootDir, "module-2" );
         final MavenProject module2 = createMavenProject( "main-group", "module-2", "1", module2Dir );
         final MavenProject module2a =
             createMavenProject( "main-group", "module-2a", "1", new File( module2Dir, "module-2a" ) );
 
-        module2.getModel()
-               .addModule( module2a.getArtifactId() );
+        module2.getModel().addModule( module2a.getArtifactId() );
 
-        project.getModel()
-               .addModule( module1.getArtifactId() );
-        project.getModel()
-               .addModule( module2.getArtifactId() );
+        project.getModel().addModule( module1.getArtifactId() );
+        project.getModel().addModule( module2.getArtifactId() );
 
         final List<MavenProject> allProjects = new ArrayList<MavenProject>();
         allProjects.add( project );
@@ -236,18 +226,13 @@ public class DefaultDependencyResolverTest
         assertTrue( enabledProjects.contains( module2a ) );
 
         // these are the two we directly set above.
-        assertTrue( info.getScopeFilter()
-                        .isIncludeTestScope() );
-        assertTrue( info.getScopeFilter()
-                        .isIncludeCompileScope() );
+        assertTrue( info.getScopeFilter().isIncludeTestScope() );
+        assertTrue( info.getScopeFilter().isIncludeCompileScope() );
 
         // this combination should be implied by the two direct scopes set above.
-        assertTrue( info.getScopeFilter()
-                        .isIncludeRuntimeScope() );
-        assertTrue( info.getScopeFilter()
-                        .isIncludeProvidedScope() );
-        assertTrue( info.getScopeFilter()
-                        .isIncludeSystemScope() );
+        assertTrue( info.getScopeFilter().isIncludeRuntimeScope() );
+        assertTrue( info.getScopeFilter().isIncludeProvidedScope() );
+        assertTrue( info.getScopeFilter().isIncludeSystemScope() );
 
         mm.verifyAll();
     }
@@ -279,18 +264,13 @@ public class DefaultDependencyResolverTest
 
         assertTrue( info.isResolutionRequired() );
 
-        assertTrue( info.getScopeFilter()
-                        .isIncludeCompileScope() );
-        assertTrue( info.getScopeFilter()
-                        .isIncludeSystemScope() );
+        assertTrue( info.getScopeFilter().isIncludeCompileScope() );
+        assertTrue( info.getScopeFilter().isIncludeSystemScope() );
 
-        assertTrue( info.getScopeFilter()
-                        .isIncludeProvidedScope() );
+        assertTrue( info.getScopeFilter().isIncludeProvidedScope() );
 
-        assertFalse( info.getScopeFilter()
-                         .isIncludeRuntimeScope() );
-        assertFalse( info.getScopeFilter()
-                         .isIncludeTestScope() );
+        assertFalse( info.getScopeFilter().isIncludeRuntimeScope() );
+        assertFalse( info.getScopeFilter().isIncludeTestScope() );
     }
 
     public void test_aggregateRemoteArtifactRepositories()
@@ -318,7 +298,6 @@ public class DefaultDependencyResolverTest
         final MavenProject project = createMavenProject( "group", "artifact", "1", new File( "base" ) );
         project.setRemoteArtifactRepositories( projectRepos );
 
-        @SuppressWarnings( "unchecked" )
         final List<ArtifactRepository> aggregated =
             new DefaultDependencyResolver( resolver, metadataSource, factory, collector, logger ).aggregateRemoteArtifactRepositories( externalRepos,
                                                                                                                                        Collections.singleton( project ) );
