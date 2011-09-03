@@ -25,7 +25,7 @@ under the License.
   <parent>
     <artifactId>maven-plugins</artifactId>
     <groupId>org.apache.maven.plugins</groupId>
-    <version>19</version>
+    <version>22</version>
     <relativePath>../maven-plugins/pom.xml</relativePath>
   </parent>
 
@@ -86,9 +86,9 @@ under the License.
     <doxiaVersion>1.2</doxiaVersion>
     <doxia-sitetoolsVersion>1.2</doxia-sitetoolsVersion>
     <mavenVersion>2.2.0</mavenVersion>
-    <wagonVersion>1.0-beta-7</wagonVersion>
+    <wagonVersion>1.0</wagonVersion>
     <scmVersion>1.4</scmVersion>
-    <sitePluginVersion>2.3</sitePluginVersion>
+    <sitePluginVersion>3.0</sitePluginVersion>
   </properties>
 
   <dependencies>
@@ -354,14 +354,6 @@ under the License.
       <plugins>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-compiler-plugin</artifactId>
-          <configuration>
-            <source>1.5</source>
-            <target>1.5</target>
-          </configuration>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-jarsigner-plugin</artifactId>
           <version>1.2</version>
           <configuration>
@@ -435,7 +427,7 @@ under the License.
             <others>
               <property>
                 <name>Maven Site Plugin</name>
-                <value>2.1</value>
+                <value>3.0</value>
               </property>
             </others>
           </requirements>
@@ -449,17 +441,6 @@ under the License.
       <id>reporting</id>
       <reporting>
         <plugins>
-          <plugin>
-            <artifactId>maven-pmd-plugin</artifactId>
-            <configuration>
-              <targetJdk>1.5</targetJdk>
-            </configuration>
-          </plugin>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-checkstyle-plugin</artifactId>
-            <version>2.6</version>
-          </plugin>
           <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>l10n-maven-plugin</artifactId>
@@ -493,7 +474,7 @@ under the License.
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-changes-plugin</artifactId>
-            <version>2.1</version>
+            <version>2.6</version>
             <configuration>
               <!-- For JIRA-report -->
               <columnNames>Type,Key,Summary,Assignee,Status,Resolution,Fix Version</columnNames>
@@ -519,10 +500,7 @@ under the License.
         <plugins>
           <plugin>
             <artifactId>maven-invoker-plugin</artifactId>
-            <version>1.5</version>
             <configuration>
-              <debug>true</debug>
-              <projectsDirectory>src/it</projectsDirectory>
               <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
               <pomIncludes>
                 <pomInclude>*/pom.xml</pomInclude>
@@ -530,37 +508,14 @@ under the License.
               <pomExcludes>
                 <pomExclude>pom.xml</pomExclude>
               </pomExcludes>
-              <postBuildHookScript>verify</postBuildHookScript>
               <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
-              <settingsFile>src/it/settings.xml</settingsFile>
               <goals>
                 <goal>site</goal>
               </goals>
             </configuration>
-            <executions>
-              <execution>
-                <id>integration-test</id>
-                <goals>
-                  <goal>install</goal>
-                  <goal>run</goal>
-                </goals>
-              </execution>
-            </executions>
           </plugin>
         </plugins>
       </build>
-    </profile>
-    <profile>
-      <id>maven-3</id>
-      <activation>
-        <file>
-          <!-- This employs that the basedir expression is only recognized by Maven 3.x (see MNG-2363) -->
-          <exists>${basedir}</exists>
-        </file>
-      </activation>
-      <properties>
-        <sitePluginVersion>3.0-beta-2</sitePluginVersion>
-      </properties>
     </profile>
   </profiles>
 </project>
