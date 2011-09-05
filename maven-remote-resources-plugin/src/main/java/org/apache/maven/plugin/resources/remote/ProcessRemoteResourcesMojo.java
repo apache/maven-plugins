@@ -189,7 +189,7 @@ public class ProcessRemoteResourcesMojo
     /**
      * The local repository taken from Maven's runtime. Typically $HOME/.m2/repository.
      *
-     * @parameter expression="${localRepository}"
+     * @parameter default-value="${localRepository}"
      * @readonly
      * @required
      */
@@ -198,7 +198,7 @@ public class ProcessRemoteResourcesMojo
     /**
      * List of Remote Repositories used by the resolver
      *
-     * @parameter expression="${project.remoteArtifactRepositories}"
+     * @parameter default-value="${project.remoteArtifactRepositories}"
      * @readonly
      * @required
      */
@@ -207,7 +207,7 @@ public class ProcessRemoteResourcesMojo
     /**
      * The current Maven project.
      *
-     * @parameter expression="${project}"
+     * @parameter default-value="${project}"
      * @readonly
      * @required
      */
@@ -216,14 +216,14 @@ public class ProcessRemoteResourcesMojo
     /**
      * The directory where processed resources will be placed for packaging.
      *
-     * @parameter expression="${project.build.directory}/maven-shared-archive-resources"
+     * @parameter default-value="${project.build.directory}/maven-shared-archive-resources"
      */
     private File outputDirectory;
 
     /**
      * The directory containing extra information appended to the generated resources.
      *
-     * @parameter expression="${basedir}/src/main/appended-resources"
+     * @parameter default-value="${basedir}/src/main/appended-resources"
      */
     private File appendedResourcesDirectory;
 
@@ -313,7 +313,7 @@ public class ProcessRemoteResourcesMojo
     /**
      * The list of resources defined for the project.
      *
-     * @parameter expression="${project.resources}"
+     * @parameter default-value="${project.build.resources}"
      * @readonly
      * @required
      */
@@ -356,7 +356,7 @@ public class ProcessRemoteResourcesMojo
     /**
      * The Maven session.
      *
-     * @parameter expression="${session}"
+     * @parameter default-value="${session}"
      * @readonly
      * @required
      */

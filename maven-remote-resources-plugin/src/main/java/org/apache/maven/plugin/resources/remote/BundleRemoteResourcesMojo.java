@@ -54,14 +54,14 @@ public class BundleRemoteResourcesMojo
     /**
      * The directory which contains the resources you want packaged up in this resource bundle.
      *
-     * @parameter expression="${basedir}/src/main/resources"
+     * @parameter default-value="${basedir}/src/main/resources"
      */
     private File resourcesDirectory;
 
     /**
      * The directory where you want the resource bundle manifest written to.
      *
-     * @parameter expression="${project.build.outputDirectory}"
+     * @parameter default-value="${project.build.outputDirectory}"
      */
     private File outputDirectory;
 
@@ -88,7 +88,7 @@ public class BundleRemoteResourcesMojo
      *
      * @since 1.1
      * @optional
-     * @parameter expression="${project.build.sourceEncoding}"
+     * @parameter default-value="${project.build.sourceEncoding}"
      */
     private String sourceEncoding;
 
