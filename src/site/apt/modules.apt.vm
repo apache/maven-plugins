@@ -28,33 +28,33 @@ EAR Modules
 
   The EAR Plugin supports additional configurations of the following modules:
 
-  * {{{#ejbClientModule}ejbClientModule}}
+  * {{{ejbClientModule}ejbClientModule}}
 
-  * {{{#ejbModule}ejbModule}}
+  * {{{ejbModule}ejbModule}}
 
-  * {{{#ejbModule}ejb3Module}} (deprecated. ejbModule provides the same functionality)
+  * {{{ejbModule}ejb3Module}} (deprecated. ejbModule provides the same functionality)
 
-  * {{{#jarModule}jarModule}} (previously know as javaModule and deprecated)
+  * {{{jarModule}jarModule}} (previously know as javaModule and deprecated)
 
-  * {{{#parModule}parModule}}
+  * {{{parModule}parModule}}
 
-  * {{{#rarModule}rarModule}}
+  * {{{rarModule}rarModule}}
 
-  * {{{#sarModule}sarModule}}
+  * {{{sarModule}sarModule}}
 
-  * {{{#webModule}webModule}}
+  * {{{webModule}webModule}}
 
-  * {{{#wsrModule}wsrModule}}
+  * {{{wsrModule}wsrModule}}
 
-  * {{{#harModule}harModule}}
+  * {{{harModule}harModule}}
 
-  * {{{#appClientModule}appClientModule}}
+  * {{{appClientModule}appClientModule}}
 
   []
 
   If the artifact you want to configure is not listed above, you can create your
   own custom artifact configuration by following the
-  {{{#Custom Artifact Types}adding custom artifact types}} guide below this page.
+  {{{Custom_Artifact_Types}adding custom artifact types}} guide below this page.
 
   These module names go into the <<<modules>>> parameter of the EAR Plugin. For
   example, to configure the properties of an EjbModule, the EAR Plugin
