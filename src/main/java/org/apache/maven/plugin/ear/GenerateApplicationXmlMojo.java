@@ -32,7 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A Mojo that generates the EAR deployment descriptor file(s).
+ * Generates the EAR deployment descriptor file(s).
  *
  * @author <a href="snicoll@apache.org">Stephane Nicoll</a>
  * @version $Id$
