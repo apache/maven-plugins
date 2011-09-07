@@ -30,7 +30,7 @@ Usage
 
   The EAR Plugin allows to generate automatically the deployment descriptor, e.g.
   <<<application.xml>>>. This generation is already customized by the goal's
-  parameters, see {{{plugin-info.html}the goals description}}.
+  parameters, see {{{./plugin-info.html}the goals description}}.
 
 * Configuring the EAR Plugin
 
@@ -117,7 +117,7 @@ mvn package
   is omitted.
 
   For more information on EAR modules, please see the
-  {{{modules.html}modules configuration}} page.
+  {{{./modules.html}modules configuration}} page.
 
   You can take a look at the examples for more information on these advanced
   configurations.
