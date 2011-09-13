@@ -2799,15 +2799,14 @@ public abstract class AbstractJavadocMojo
             }
         }
         
-        StringBuffer path = new StringBuffer();
-        path.append( StringUtils.join( pathParts.iterator(), File.pathSeparator ) );
-
         if ( !StringUtils.isEmpty( docletPath ) )
         {
-            path.append( JavadocUtil.unifyPathSeparator( docletPath ) );
+            pathParts.add( JavadocUtil.unifyPathSeparator( docletPath ) );
         }
 
-        if ( StringUtils.isEmpty( path.toString() ) && getLog().isWarnEnabled() )
+        String path = StringUtils.join( pathParts.iterator(), File.pathSeparator );
+
+        if ( StringUtils.isEmpty( path ) && getLog().isWarnEnabled() )
         {
             getLog().warn( "No docletpath option was found. Please review <docletpath/> or <docletArtifact/>"
                            + " or <doclets/>." );

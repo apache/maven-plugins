@@ -99,6 +99,7 @@
             <version>1.0.3</version>
           </docletArtifact>
           <doclet>com.google.doclava.Doclava</doclet>
+          <docletPath>/</docletPath>
           <!--
             | bootclasspath required by Sun's JVM
           -->
