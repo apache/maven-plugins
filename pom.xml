@@ -25,7 +25,7 @@ under the License.
   <parent>
     <groupId>org.apache.maven.plugins</groupId>
     <artifactId>maven-plugins</artifactId>
-    <version>21</version>
+    <version>22</version>
     <relativePath>../maven-plugins/pom.xml</relativePath>
   </parent>
 
@@ -59,7 +59,7 @@ under the License.
     <doxiaVersion>1.0</doxiaVersion>
     <doxia-sitetoolsVersion>1.0</doxia-sitetoolsVersion>
     <wagonVersion>1.0-beta-6</wagonVersion>
-    <sitePluginVersion>2.2</sitePluginVersion>
+    <sitePluginVersion>3.0</sitePluginVersion>
     <projectInfoReportsPluginVersion>2.3.1</projectInfoReportsPluginVersion>
   </properties>
 
@@ -255,19 +255,6 @@ under the License.
       <plugins>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-compiler-plugin</artifactId>
-          <configuration>
-            <source>1.5</source>
-            <target>1.5</target>
-          </configuration>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-dependency-plugin</artifactId>
-          <version>2.1</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-shade-plugin</artifactId>
           <version>1.2.1</version>
         </plugin>
@@ -288,7 +275,6 @@ under the License.
         </executions>
         <configuration>
           <version>1.1.0</version>
-          <useJava5>true</useJava5>
           <models>
             <model>src/main/mdo/javadocOptions.mdo</model>
           </models>
@@ -373,7 +359,6 @@ under the License.
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-invoker-plugin</artifactId>
             <configuration>
-              <projectsDirectory>src/it</projectsDirectory>
               <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
               <pomIncludes>
                 <pomInclude>additionnal-dependencies*/pom.xml</pomInclude>
@@ -396,20 +381,8 @@ under the License.
                 <pomInclude>site-failOnError/pom.xml</pomInclude>
                 <pomInclude>MJAVADOC-320/pom.xml</pomInclude>
               </pomIncludes>
-              <postBuildHookScript>verify</postBuildHookScript>
               <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
-              <settingsFile>src/it/settings.xml</settingsFile>
-              <debug>true</debug>
             </configuration>
-            <executions>
-              <execution>
-                <id>integration-test</id>
-                <goals>
-                  <goal>install</goal>
-                  <goal>run</goal>
-                </goals>
-              </execution>
-           </executions>
           </plugin>
         </plugins>
       </build>
@@ -418,17 +391,6 @@ under the License.
       <id>reporting</id>
       <reporting>
         <plugins>
-          <plugin>
-            <artifactId>maven-pmd-plugin</artifactId>
-            <configuration>
-              <targetJdk>1.5</targetJdk>
-            </configuration>
-          </plugin>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-checkstyle-plugin</artifactId>
-            <version>2.6</version>
-          </plugin>
           <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>l10n-maven-plugin</artifactId>
@@ -468,19 +430,7 @@ under the License.
       </reporting>
     </profile>
     <profile>
-      <id>maven-3</id>
-      <activation>
-        <file>
-          <!-- This employs that the basedir expression is only recognized by Maven 3.x (see MNG-2363) -->
-          <exists>${basedir}</exists>
-        </file>
-      </activation>
-      <properties>
-        <sitePluginVersion>3.0</sitePluginVersion>
-      </properties>
-    </profile>
-    <profile>
-      <!-- simple profile which exclude units tests to be able to run only it tests -->
+      <!-- simple profile which exclude units tests to be able to run only IT tests -->
       <id>only-its</id>
       <build>
         <plugins>
