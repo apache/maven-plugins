@@ -50,12 +50,13 @@ under the License.
       </answer>
     </faq>
     <!-- mention docbook explicitly so google can find this -->
-    <faq id="How to include a custom Doxia module, like Twiki or Simple DocBook">
-      <question>How to include a custom Doxia module, like Twiki or Simple DocBook?</question>
+    <faq id="How to include a custom Doxia module, like Twiki">
+      <question>How to include a custom Doxia module, like Twiki?</question>
       <answer>
         <p>
           The site plugin handles out-of-box apt, xdoc and fml formats.
-          If you want to use a custom format like Twiki (or any other document format
+          If you want to use a custom format like Twiki, Simple DocBook, or XHTML
+          (or any other document format
           for which a doxia parser exists, see the list of
           <a href="http://maven.apache.org/doxia/references/index.html">Doxia Markup Languages</a>),
           you need to specify the corresponding Doxia module dependency, e.g. for Twiki:
