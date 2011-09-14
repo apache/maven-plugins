@@ -53,9 +53,12 @@ under the License.
       <question>How to include a custom Doxia module, like Twiki?</question>
       <answer>
         <p>
-          The site plugin handles out-of-box apt, xdoc and fml formats. If you
-          want to use a custom format like Twiki, you need to specify the
-          Doxia Twiki dependency, i.e.:
+          The site plugin handles out-of-box apt, xdoc and fml formats.
+          If you want to use a custom format like Twiki (or any other document format
+          for which a doxia parser exists, see the list of
+          <a href="http://maven.apache.org/doxia/references/index.html">Doxia Markup Languages</a>),
+          you need to specify the corresponding Doxia dependency, e.g. for Twiki:
+        </p>
           <source>
 <![CDATA[<project>
   ...
@@ -69,7 +72,7 @@ under the License.
           <dependency>
             <groupId>org.apache.maven.doxia</groupId>
             <artifactId>doxia-module-twiki</artifactId>
-            <version>1.0</version>
+            <version><!-- adapt to your site plugin version! --></version>
           </dependency>
         </dependencies>
       </plugin>
@@ -77,6 +80,11 @@ under the License.
   </build>
   ...
 </project>]]></source>
+        <p>
+          <strong>Note</strong> that the doxia version has to be adjusted to the
+          site-plugin version you are using, see the <a href="migrate.html">Migration Guide</a>.
+          In particular, for site plugin versions <code>&gt;=2.1</code>
+          you need to use doxia <code>&gt;=1.1</code>.
         </p>
       </answer>
     </faq>
