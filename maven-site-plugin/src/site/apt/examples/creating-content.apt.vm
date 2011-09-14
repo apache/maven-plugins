@@ -55,26 +55,34 @@ Creating Content
  document formats. Let's take a look at examples of the various document
  formats.
 
+  * APT:
   The APT format ("Almost Plain Text") is a wiki-like format that allows you to
   write simple, structured documents (like this one) very quickly. A full
   reference of the
   {{{http://maven.apache.org/doxia/references/apt-format.html} APT Format}} is
   available.
 
+  * FML:
   The FML format is the FAQ format. This is the same that were used in Maven 1.x.
   For more info about the
   {{{http://maven.apache.org/doxia/references/fml-format.html}FML Format}}
   check the {{{http://maven.apache.org/doxia/}Doxia}} site.
 
+  * XDoc:
   The XDoc format is the same as
   {{{http://maven.apache.org/maven-1.x/using/site.html} used in Maven 1.x}}.
   A reference for the
   {{{http://maven.apache.org/doxia/references/xdoc-format.html} XDoc Format}}
   is available.
 
-  Other formats are available, but at this point these 3 are the best tested.
-  There are also several possible output formats, but currently only XHTML is
-  available.
+  []
+
+  Other formats are available, but the above three are recognized by default by the site plugin.
+  Any other document format for which a doxia parser exists can be used as well (see the list of
+  {{{http://maven.apache.org/doxia/references/index.html}Doxia Markup Languages}}),
+  but in this case you need to add the corresponding Doxia dependency to your site plugin configuration.
+  Check this {{{../faq.html\#How_to_include_a_custom_Doxia_module_like_Twiki}FAQ entry}} for details.
+  Note that Doxia also supports several output formats, the site plugin only creates XHTML.
 
   Note that all of the above is optional - just one index file is required in
   one of the input trees. The paths under each format will be merged together
