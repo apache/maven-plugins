@@ -40,6 +40,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.StringTokenizer;
@@ -391,6 +392,13 @@ public class ChangeLogReport
      */
     protected List developers;
 
+    /**
+     * List of provider implementations.
+     *
+     * @parameter
+     */
+    private Map providerImplementations;
+    
     // temporary field holder while generating the report
     private String rptRepository, rptOneRepoParam, rptMultiRepoParam;
 
@@ -422,6 +430,18 @@ public class ChangeLogReport
             return;
         }
 
+        if ( providerImplementations != null )
+        {
+            for ( Iterator i = providerImplementations.keySet().iterator(); i.hasNext(); )
+            {
+                String providerType = (String) i.next();
+                String providerImplementation = (String) providerImplementations.get( providerType );
+                getLog().info( "Change the default '" + providerType + "' provider implementation to '"
+                    + providerImplementation + "'." );
+                manager.setScmProviderImplementation( providerType, providerImplementation );
+            }
+        }
+        
         initializeDefaultConfigurationParameters();
 
         initializeDeveloperMaps();

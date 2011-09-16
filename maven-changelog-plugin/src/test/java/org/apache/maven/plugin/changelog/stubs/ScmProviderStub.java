@@ -26,6 +26,7 @@ import org.apache.maven.scm.ScmFileSet;
 import org.apache.maven.scm.ScmTagParameters;
 import org.apache.maven.scm.ScmVersion;
 import org.apache.maven.scm.command.add.AddScmResult;
+import org.apache.maven.scm.command.blame.BlameScmResult;
 import org.apache.maven.scm.command.branch.BranchScmResult;
 import org.apache.maven.scm.command.changelog.ChangeLogScmResult;
 import org.apache.maven.scm.command.checkin.CheckInScmResult;
@@ -33,6 +34,7 @@ import org.apache.maven.scm.command.checkout.CheckOutScmResult;
 import org.apache.maven.scm.command.diff.DiffScmResult;
 import org.apache.maven.scm.command.edit.EditScmResult;
 import org.apache.maven.scm.command.list.ListScmResult;
+import org.apache.maven.scm.command.mkdir.MkdirScmResult;
 import org.apache.maven.scm.command.remove.RemoveScmResult;
 import org.apache.maven.scm.command.status.StatusScmResult;
 import org.apache.maven.scm.command.tag.TagScmResult;
@@ -483,4 +485,16 @@ public class ScmProviderStub
     {
         return null;
     }
+
+	public BlameScmResult blame(ScmRepository arg0, ScmFileSet arg1, String arg2)
+			throws ScmException {
+
+		return null;
+	}
+
+	public MkdirScmResult mkdir(ScmRepository arg0, ScmFileSet arg1,
+			String arg2, boolean arg3) throws ScmException {
+
+		return null;
+	}
 }
