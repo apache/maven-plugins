@@ -24,6 +24,7 @@ import org.apache.maven.scm.ScmException;
 import org.apache.maven.scm.ScmFileSet;
 import org.apache.maven.scm.ScmVersion;
 import org.apache.maven.scm.command.add.AddScmResult;
+import org.apache.maven.scm.command.blame.BlameScmResult;
 import org.apache.maven.scm.command.branch.BranchScmResult;
 import org.apache.maven.scm.command.changelog.ChangeLogScmResult;
 import org.apache.maven.scm.command.checkin.CheckInScmResult;
@@ -32,6 +33,7 @@ import org.apache.maven.scm.command.diff.DiffScmResult;
 import org.apache.maven.scm.command.edit.EditScmResult;
 import org.apache.maven.scm.command.export.ExportScmResult;
 import org.apache.maven.scm.command.list.ListScmResult;
+import org.apache.maven.scm.command.mkdir.MkdirScmResult;
 import org.apache.maven.scm.command.remove.RemoveScmResult;
 import org.apache.maven.scm.command.status.StatusScmResult;
 import org.apache.maven.scm.command.tag.TagScmResult;
@@ -386,4 +388,18 @@ public class ScmManagerStub
     {
         // nop
     }
+
+    /** {@inheritDoc} */
+	public BlameScmResult blame(ScmRepository arg0, ScmFileSet arg1, String arg2)
+			throws ScmException {
+
+		return this.getProviderByRepository( arg0 ).blame(arg0, arg1, arg2);
+	}
+
+	/** {@inheritDoc} */
+	public MkdirScmResult mkdir(ScmRepository arg0, ScmFileSet arg1,
+			String arg2, boolean arg3) throws ScmException {
+
+		return this.getProviderByRepository(arg0).mkdir(arg0, arg1, arg2, arg3);
+	}
 }
