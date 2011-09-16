@@ -19,6 +19,7 @@ package org.apache.maven.plugin.changelog.stubs;
  * under the License.
  */
 
+import org.apache.maven.scm.CommandParameters;
 import org.apache.maven.scm.ScmBranch;
 import org.apache.maven.scm.ScmBranchParameters;
 import org.apache.maven.scm.ScmException;
@@ -33,6 +34,7 @@ import org.apache.maven.scm.command.checkin.CheckInScmResult;
 import org.apache.maven.scm.command.checkout.CheckOutScmResult;
 import org.apache.maven.scm.command.diff.DiffScmResult;
 import org.apache.maven.scm.command.edit.EditScmResult;
+import org.apache.maven.scm.command.info.InfoScmResult;
 import org.apache.maven.scm.command.list.ListScmResult;
 import org.apache.maven.scm.command.mkdir.MkdirScmResult;
 import org.apache.maven.scm.command.remove.RemoveScmResult;
@@ -497,4 +499,11 @@ public class ScmProviderStub
 
 		return null;
 	}
+
+    public InfoScmResult info( ScmProviderRepository scmProviderRepository, ScmFileSet scmFileSet,
+                               CommandParameters commandParameters )
+        throws ScmException
+    {
+        return null;
+    }
 }
