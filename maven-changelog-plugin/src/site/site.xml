@@ -29,6 +29,7 @@ under the License.
       <item name="Goals" href="plugin-info.html"/>
       <item name="Usage" href="usage.html"/>
       <item name="FAQ" href="faq.html"/>
+      <item name="Change Scm implementation" href="changing-scm-impl.html"/>
     </menu>
     <menu name="Examples">
       <item name="Changing the Heading Date Format" href="/examples/changing-heading-date-format.html"/>
