@@ -343,6 +343,7 @@ under the License.
                 <goal>clean</goal>
                 <goal>site</goal>
               </goals>
+              <showErrors>true</showErrors>
             </configuration>
             <executions>
               <execution>

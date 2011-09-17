@@ -63,6 +63,7 @@
             <plugin>
               <groupId>org.apache.maven.plugins</groupId>
               <artifactId>maven-changelog-plugin</artifactId>
+              <version>@pom.version@</version>
               <configuration>
                 <issueIDRegexPattern>[A-Z]{2,}-\d+</issueIDRegexPattern>
                 <issueLinkUrl>http://jira.example.co.uk</issueLinkUrl>
