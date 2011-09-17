@@ -3,7 +3,7 @@
  ------
  Olivier Lamy
  ------
- 2011-09-16
+ 2011-09-17
  ------
 
  ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -29,7 +29,56 @@
 Changing Scm Implementation
 
  Starting version 2.3, you can change Apache Maven Scm implementation used for your scm (ie javasvn for svn scm).
- It's only available with Maven 3 and the new site plugin configuration.
+
+ Standard configuration :
+
++-----+
+<project>
+  .....
+  <build>
+    <extensions>
+      <extension>
+        <groupId>com.google.code.maven-scm-provider-svnjava</groupId>
+        <artifactId>maven-scm-provider-svnjava</artifactId>
+        <version>1.13</version>
+      </extension>
+    </extensions>
+
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-changelog-plugin</artifactId>
+        <version>${project.version}</version>
+        <dependencies>
+          <dependency>
+            <groupId>com.google.code.maven-scm-provider-svnjava</groupId>
+            <artifactId>maven-scm-provider-svnjava</artifactId>
+            <version>1.13</version>
+          </dependency>
+        </dependencies>
+      </plugin>
+    </plugins>
+
+  </build>
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-changelog-plugin</artifactId>
+        <version>${project.version}</version>
+        <configuration>
+          <providerImplementations>
+            <svn>javasvn</svn>
+          </providerImplementations>
+        </configuration>
+      </plugin>
+    </plugins>
+  </reporting>
+  ...
+</project>
++-----+
+
+ Configuration with Maven 3 only and the new site plugin configuration.
 
 +-----+
 <project>
