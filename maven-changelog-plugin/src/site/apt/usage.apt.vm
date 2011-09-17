@@ -81,18 +81,18 @@ Usage
 
 [images/sample-changelog-report.PNG] Sample Changelog Report
 
- For a live report {{{changelog.html}look here}}.
+ For a live report {{{./changelog.html}look here}}.
 
 
 *Sample Developer Activity report
 
 [images/sample-dev-activity-report.PNG] Sample Developer Activity Report
 
- For a live report {{{dev-activity.html}look here}}.
+ For a live report {{{./dev-activity.html}look here}}.
 
 
 *Sample File Activity report
 
 [images/sample-file-activity-report.PNG] Sample File Activity Report
 
- For a live report {{{file-activity.html}look here}}.
+ For a live report {{{./file-activity.html}look here}}.
