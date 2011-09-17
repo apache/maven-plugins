@@ -19,6 +19,7 @@ package org.apache.maven.plugin.changelog;
  * under the License.
  */
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.maven.scm.ChangeFile;
 
 import java.util.Comparator;
@@ -34,7 +35,9 @@ import java.util.List;
 public class FileActivityComparator
     implements Comparator
 {
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public int compare( Object o1, Object o2 )
         throws ClassCastException
     {
@@ -98,6 +101,16 @@ public class FileActivityComparator
 
         String revision2 = getLatestRevision( list2 );
 
+        if ( revision1 == null )
+        {
+            return -1;
+        }
+
+        if ( revision2 == null )
+        {
+            return 1;
+        }
+
         return revision1.compareTo( revision2 );
     }
 
@@ -115,7 +128,7 @@ public class FileActivityComparator
         {
             ChangeFile file = (ChangeFile) i.next();
 
-            if ( latest.length() == 0 )
+            if ( StringUtils.isNotBlank( latest) )
             {
                 latest = file.getRevision();
             }
