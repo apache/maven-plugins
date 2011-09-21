@@ -23,6 +23,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -1236,6 +1237,7 @@ public class EclipsePlugin
                         }
                         else
                         {
+                            // TODO: [MECLIPSE-696] Note: This fails behind a firewall for testProject44
                             inStream = file.getURL().openConnection().getInputStream();
                         }
                         OutputStream outStream = new FileOutputStream( projectRelativeFile );
@@ -1245,14 +1247,19 @@ public class EclipsePlugin
                         }
                         finally
                         {
-                            inStream.close();
-                            outStream.close();
+                            IOUtil.close(inStream);
+                            IOUtil.close(outStream);
                         }
                     }
                     else
                     {
                         FileUtils.fileWrite( projectRelativeFile.getAbsolutePath(), file.getContent() );
                     }
+                }
+                catch ( SocketException e ) {
+                    throw new MojoExecutionException(Messages.getString("EclipsePlugin.socketexception", //$NON-NLS-1$
+                                                                        new Object[] { file.getURL(),
+                                                                            e.getMessage() }));                    
                 }
                 catch ( IOException e )
                 {
