@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <modulemap:EARProjectMap xmlns:xmi="http://www.omg.org/XMI" xmlns:application="application.xmi" xmi:version="2.0" xmlns:modulemap="modulemap.xmi" xmi:id="EARProjectMap_5369678">
-  <utilityJARMappings uri="direct-compile.jar" projectName="direct-compile" xmi:id="UtilityJARMapping_20313166"/>
-  <utilityJARMappings uri="deps-direct-compile.jar" projectName="deps-direct-compile" xmi:id="UtilityJARMapping_20591791"/>
+  <utilityJARMappings uri="direct-compile.jar" projectName="direct-compile" xmi:id="UtilityJARMapping_00000000"/>
+  <utilityJARMappings uri="deps-direct-compile.jar" projectName="deps-direct-compile" xmi:id="UtilityJARMapping_00000000"/>
 </modulemap:EARProjectMap>
