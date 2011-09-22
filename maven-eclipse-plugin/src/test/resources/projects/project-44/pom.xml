@@ -21,6 +21,10 @@
             </file>
             <file>
               <name>.checkstyle2</name>
+              <!-- 
+                Note: This fails behind a firewall, See [MECLIPSE-696]
+                See EclipsePlugin.writeAdditionalConfig() - inStream = file.getURL().openConnection().getInputStream()
+                -->
               <url>
                 https://svn.apache.org/repos/asf/maven/plugins/trunk/maven-eclipse-plugin/src/test/resources/projects/project-44/eclipse-settings/checkstyle-config.xml
               </url>

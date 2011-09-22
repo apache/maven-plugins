@@ -211,13 +211,15 @@ public class EclipseProjectWriter
 
         writer.startElement( "projects" ); //$NON-NLS-1$
 
+        IdeDependency[] dependencies = config.getDeps();
+        
         // referenced projects should not be added for plugins
         if ( !config.isPde() )
         {
             List duplicates = new ArrayList();
-            for ( int j = 0; j < config.getDepsOrdered().length; j++ )
+            for ( int j = 0; j < dependencies.length; j++ )
             {
-                IdeDependency dep = config.getDepsOrdered()[j];
+                IdeDependency dep = dependencies[j];
                 // Avoid duplicates entries when same project is refered using multiple types
                 // (ejb, test-jar ...)
                 if ( dep.isReferencedProject() && !duplicates.contains( dep.getEclipseProjectName() ) )
@@ -254,7 +256,7 @@ public class EclipseProjectWriter
 
         boolean addLinks = !config.getProjectBaseDir().equals( config.getEclipseProjectDirectory() );
 
-        if ( addLinks || ( config.isPde() && config.getDepsOrdered().length > 0 ) || linkedResources.size() > 0 )
+        if ( addLinks || ( config.isPde() && dependencies.length > 0 ) || linkedResources.size() > 0 )
         {
             writer.startElement( "linkedResources" ); //$NON-NLS-1$
             // preserve the symbolic links
@@ -286,9 +288,9 @@ public class EclipseProjectWriter
 
             if ( config.isPde() )
             {
-                for ( int j = 0; j < config.getDepsOrdered().length; j++ )
+                for ( int j = 0; j < dependencies.length; j++ )
                 {
-                    IdeDependency dep = config.getDepsOrdered()[j];
+                    IdeDependency dep = dependencies[j];
 
                     if ( dep.isAddedToClasspath() && !dep.isProvided() && !dep.isReferencedProject()
                         && !dep.isTestDependency() && !dep.isOsgiBundle() )

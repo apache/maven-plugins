@@ -2,11 +2,11 @@
 <project-modules id="moduleCoreId" project-version="2.0">
   <wb-module deploy-name="multymodule-ear-1.0">
     <wb-resource deploy-path="/" source-path="target/eclipseEar"/>
-    <dependent-module archiveName="../maven-core-98.0.jar" deploy-path="lib" handle="module:/classpath/var/M2_REPO/maven/maven-core/98.0/maven-core-98.0.jar">
-      <dependency-type>uses</dependency-type>
-    </dependent-module>
     <dependent-module archiveName="multymodule-war-1.0.war" deploy-path="/" handle="module:/resource/multymodule-war-1.0/multymodule-war-1.0">
       <dependent-object>WebModule_00000000</dependent-object>
+      <dependency-type>uses</dependency-type>
+    </dependent-module>
+    <dependent-module archiveName="../maven-core-98.0.jar" deploy-path="lib" handle="module:/classpath/var/M2_REPO/maven/maven-core/98.0/maven-core-98.0.jar">
       <dependency-type>uses</dependency-type>
     </dependent-module>
   </wb-module>

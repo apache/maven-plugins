@@ -3,13 +3,13 @@
   <wb-module deploy-name="ear-1.0-SNAPSHOT">
     <wb-resource deploy-path="/" source-path="target/eclipseEar"/>
     <dependent-module archiveName="ejbs-1.0-SNAPSHOT.jar" deploy-path="/" handle="module:/resource/ejbs-1.0-SNAPSHOT/ejbs-1.0-SNAPSHOT">
-      <dependent-object>EjbModule_16200795</dependent-object>
-      <dependency-type>uses</dependency-type>
-    </dependent-module>
-    <dependent-module archiveName="logging-1.0-SNAPSHOT.jar" deploy-path="/" handle="module:/resource/logging-1.0-SNAPSHOT/logging-1.0-SNAPSHOT">
+      <dependent-object>EjbModule_000000</dependent-object>
       <dependency-type>uses</dependency-type>
     </dependent-module>
     <dependent-module archiveName="primary-source-1.0-SNAPSHOT.jar" deploy-path="/" handle="module:/resource/primary-source-1.0-SNAPSHOT/primary-source-1.0-SNAPSHOT">
+      <dependency-type>uses</dependency-type>
+    </dependent-module>
+    <dependent-module archiveName="logging-1.0-SNAPSHOT.jar" deploy-path="/" handle="module:/resource/logging-1.0-SNAPSHOT/logging-1.0-SNAPSHOT">
       <dependency-type>uses</dependency-type>
     </dependent-module>
     <dependent-module archiveName="servlet-1.0-SNAPSHOT.war" deploy-path="/" handle="module:/resource/servlet-1.0-SNAPSHOT/servlet-1.0-SNAPSHOT">

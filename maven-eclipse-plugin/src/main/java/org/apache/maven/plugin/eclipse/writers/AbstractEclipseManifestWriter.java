@@ -194,7 +194,7 @@ public abstract class AbstractEclipseManifestWriter
     protected String constructManifestClasspath()
     {
         StringBuffer stringBuffer = new StringBuffer();
-        IdeDependency[] deps = this.config.getDepsOrdered();
+        IdeDependency[] deps = this.config.getDeps();
 
         for ( int index = 0; index < deps.length; index++ )
         {
