@@ -62,6 +62,7 @@ import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
+import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLAssert;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.xml.sax.EntityResolver;
@@ -121,6 +122,11 @@ public abstract class AbstractEclipsePluginIT
      * The XML Header used to check if the file contains XML content.
      */
     private static final String XML_HEADER = "<?xml";
+
+    /**
+     * .classpath file name
+     */
+    private static final String CLASSPATH_FILENAME = ".classpath";
 
     /**
      * @see org.codehaus.plexus.PlexusTestCase#setUp()
@@ -539,13 +545,7 @@ public abstract class AbstractEclipsePluginIT
                 File expectedFile = expectedFilesToCompare[j];
                 File actualFile = getActualFile( projectOutputDir, basedir, expectedFile );
 
-                if ( !actualFile.exists() )
-                {
-                    throw new AssertionFailedError( "Expected file not found: " + actualFile.getAbsolutePath() );
-                }
-
                 assertFileEquals( expectedFile, actualFile );
-
             }
         }
     }
@@ -555,7 +555,7 @@ public abstract class AbstractEclipsePluginIT
     {
         if ( !actualFile.exists() )
         {
-            throw new AssertionFailedError( "Expected file not found: " + actualFile.getAbsolutePath() );
+            throw new AssertionFailedError( "Generated file not found: " + actualFile.getAbsolutePath() );
         }
 
         HashMap variableReplacement = new HashMap();
@@ -592,8 +592,16 @@ public abstract class AbstractEclipsePluginIT
     {
         try
         {
-            XMLAssert.assertXMLEqual( "Comparing '" + IdeUtils.getCanonicalPath( actualFile ) + "' against '"
-                + IdeUtils.getCanonicalPath( expectedFile ), expectedFileContents, actualFileContents );
+            String message =
+                "Comparing '" + IdeUtils.getCanonicalPath(actualFile) + "' against '"
+                    + IdeUtils.getCanonicalPath(expectedFile);
+            if (CLASSPATH_FILENAME.equals(actualFile.getName())) {                
+                Diff diff = new Diff(expectedFileContents, actualFileContents);
+                XMLAssert.assertXMLIdentical( message, diff, true );
+            }
+            else {
+                XMLAssert.assertXMLEqual( message, expectedFileContents, actualFileContents );
+            }
         }
         catch ( IOException e )
         {

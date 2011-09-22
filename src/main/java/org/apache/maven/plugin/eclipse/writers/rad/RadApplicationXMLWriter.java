@@ -157,7 +157,7 @@ public class RadApplicationXMLWriter
                 IdeUtils.getPluginConfigurationDom( config.getProject(), JeeUtils.ARTIFACT_MAVEN_EAR_PLUGIN,
                                                     new String[] { "modules", "webModule" } );
 
-            IdeDependency[] deps = config.getDepsOrdered();
+            IdeDependency[] deps = config.getDeps();
             for ( int index = 0; index < deps.length; index++ )
             {
                 updateApplicationXml( applicationXmlDom, modulemapsXmlDom, deps[index] );

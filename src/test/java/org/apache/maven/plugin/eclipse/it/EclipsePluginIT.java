@@ -510,6 +510,8 @@ public class EclipsePluginIT
 
     /**
      * [MECLIPSE-219]
+     * Note: This fails behind a firewall, See [MECLIPSE-696]
+     * See EclipsePlugin.writeAdditionalConfig() - inStream = file.getURL().openConnection().getInputStream()
      * 
      * @since 2.5
      * @throws Exception
@@ -736,6 +738,29 @@ public class EclipsePluginIT
     {
         testProject( "project-62-MECLIPSE-561" );
     }
+    
+    /**
+     * [MECLIPSE-338] Correct classpath ordering in .classpath
+     * 
+     * @throws Exception
+     */
+    public void testProject63()
+        throws Exception
+    {
+        testProject( "project-63-MECLIPSE-388" );
+    }
+
+    /**
+     * [MECLIPSE-338] Correct classpath ordering in .classpath
+     * 
+     * @throws Exception
+     */
+    public void testProject64()
+        throws Exception
+    {
+        testProject( "project-64-MECLIPSE-388" );
+    }
+    
 
     public void testGroovy()
         throws Exception {

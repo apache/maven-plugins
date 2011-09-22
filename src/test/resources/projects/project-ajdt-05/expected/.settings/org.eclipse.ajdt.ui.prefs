@@ -1,8 +1,8 @@
-#Wed May 28 08:51:08 PDT 2008
-org.eclipse.ajdt.ui.inPath2=M2_REPO/org/springframework/spring-aspects/2.5/spring-aspects-2.5.jar
+#Thu Sep 22 10:24:14 CST 2011
+org.eclipse.ajdt.ui.inPath2=M2_REPO/commons-logging/commons-logging/1.1/commons-logging-1.1.jar
 org.eclipse.ajdt.ui.inPath.contentKind2=BINARY
 org.eclipse.ajdt.ui.inPath.entryKind2=LIBRARY
-org.eclipse.ajdt.ui.inPath1=M2_REPO/commons-logging/commons-logging/1.1/commons-logging-1.1.jar
+org.eclipse.ajdt.ui.inPath1=M2_REPO/org/springframework/spring-aspects/2.5/spring-aspects-2.5.jar
 org.eclipse.ajdt.ui.inPath.contentKind1=BINARY
 eclipse.preferences.version=1
 org.eclipse.ajdt.ui.inPath.entryKind1=LIBRARY

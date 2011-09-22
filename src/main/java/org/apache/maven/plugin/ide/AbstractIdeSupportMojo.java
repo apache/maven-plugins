@@ -25,10 +25,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
@@ -734,8 +734,8 @@ public abstract class AbstractIdeSupportMojo
     private Set getProjectArtifacts()
         throws MojoExecutionException
     {
-        // keep it sorted, this should avoid random classpath order in tests
-        Set artifacts = new TreeSet();
+        // [MECLIPSE-388] Don't sort this, the order should be identical to getProject.getDependencies()
+        Set artifacts = new LinkedHashSet();
 
         for ( Iterator dependencies = getProject().getDependencies().iterator(); dependencies.hasNext(); )
         {

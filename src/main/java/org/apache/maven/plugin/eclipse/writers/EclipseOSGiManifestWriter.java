@@ -27,7 +27,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.util.Arrays;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.eclipse.Messages;
@@ -242,11 +241,7 @@ public class EclipseOSGiManifestWriter
         // @todo handle expanded plugins
         bundleClasspathSb.append( " ." );
 
-        IdeDependency[] deps = config.getDepsOrdered();
-
-        // since Manifest is supposed to be in SVN, having the order of classpath entries shuffled at each run is very
-        // annoying. For now just sort them by using groupId/artifactId
-        Arrays.sort( deps );
+        IdeDependency[] deps = config.getDeps();
 
         for ( int j = 0; j < deps.length; j++ )
         {

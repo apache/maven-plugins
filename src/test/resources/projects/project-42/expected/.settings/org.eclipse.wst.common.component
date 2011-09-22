@@ -2,10 +2,10 @@
 <project-modules id="moduleCoreId" project-version="1.5.0">
   <wb-module deploy-name="maven-eclipse-plugin-test-project-42">
     <wb-resource deploy-path="/" source-path="target/eclipseEar"/>
-    <dependent-module archiveName="deps-direct-compile-1.0.jar" deploy-path="/" handle="module:/classpath/var/M2_REPO/eclipsetest/deps-direct-compile/1.0/deps-direct-compile-1.0.jar">
+    <dependent-module archiveName="direct-compile.jar" deploy-path="/" handle="module:/resource/direct-compile/direct-compile">
       <dependency-type>uses</dependency-type>
     </dependent-module>
-    <dependent-module archiveName="direct-compile.jar" deploy-path="/" handle="module:/resource/direct-compile/direct-compile">
+    <dependent-module archiveName="deps-direct-compile-1.0.jar" deploy-path="/" handle="module:/classpath/var/M2_REPO/eclipsetest/deps-direct-compile/1.0/deps-direct-compile-1.0.jar">
       <dependency-type>uses</dependency-type>
     </dependent-module>
   </wb-module>
