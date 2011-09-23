@@ -129,7 +129,6 @@ public class EclipseProjectWriterTest
         reader = new InputStreamReader( new FileInputStream( dotProject ), "UTF-8" );
         Xpp3Dom linkedResourcesElement1 = dom.getChild( "linkedResources" );
         assertNotNull( "No linkedResources present", linkedResourcesElement1 );
-        Xpp3Dom[] currentLinks = linkedResourcesElement.getChildren( "link" );
         String currentName = existingLinks[0].getChild( "name" ).getValue();
         String currentType = existingLinks[0].getChild( "type" ).getValue();
         String currentLocation = existingLinks[0].getChild( "location" ).getValue();

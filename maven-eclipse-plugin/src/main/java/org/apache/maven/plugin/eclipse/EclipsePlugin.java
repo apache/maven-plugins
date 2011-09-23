@@ -1357,7 +1357,6 @@ public class EclipsePlugin
         config.setProjectnatures( projectnatures );
         config.setProjectFacets( additionalProjectFacets );
         config.setSourceDirs( sourceDirs );
-        config.setAddVersionToProjectName( isAddVersionToProjectName() );
         config.setPackaging( packaging );
         config.setLinkedResources( linkedResources );
         config.setClasspathContainersLast( classpathContainersLast );
