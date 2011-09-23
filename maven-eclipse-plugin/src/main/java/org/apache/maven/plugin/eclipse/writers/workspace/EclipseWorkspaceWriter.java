@@ -28,7 +28,12 @@ public class EclipseWorkspaceWriter
      */
     public static final String ECLIPSE_CORE_RUNTIME_SETTINGS_DIR =
         ECLIPSE_PLUGINS_METADATA_DIR + "/org.eclipse.core.runtime/.settings"; //$NON-NLS-1$
-
+    
+    /**
+     * Directory where workspace specific settings are written.
+     */
+    public static final String DIR_DOT_SETTINGS = ".settings"; //$NON-NLS-1$   
+    
     /**
      * File that stores the Eclipse JDT Core preferences.
      */

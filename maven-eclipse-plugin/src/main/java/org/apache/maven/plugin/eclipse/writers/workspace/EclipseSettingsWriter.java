@@ -16,20 +16,21 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugin.eclipse.writers;
+package org.apache.maven.plugin.eclipse.writers.workspace;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Properties;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Properties;
 
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.eclipse.Messages;
+import org.apache.maven.plugin.eclipse.writers.AbstractEclipseWriter;
 import org.apache.maven.plugin.ide.IdeUtils;
 
 /**
@@ -44,11 +45,7 @@ public class EclipseSettingsWriter
 
     private static final String JDK_1_2_SOURCES = "1.2"; //$NON-NLS-1$
 
-    private static final String FILE_ECLIPSE_JDT_CORE_PREFS = "org.eclipse.jdt.core.prefs"; //$NON-NLS-1$
-
     private static final String PROP_ECLIPSE_PREFERENCES_VERSION = "eclipse.preferences.version"; //$NON-NLS-1$
-
-    private static final String DIR_DOT_SETTINGS = ".settings"; //$NON-NLS-1$
 
     private static final String PROP_JDT_CORE_COMPILER_COMPLIANCE = "org.eclipse.jdt.core.compiler.compliance"; //$NON-NLS-1$
 
@@ -133,7 +130,7 @@ public class EclipseSettingsWriter
         // write the settings, if needed
         if ( !coreSettings.isEmpty() )
         {
-            File settingsDir = new File( config.getEclipseProjectDirectory(), DIR_DOT_SETTINGS ); //$NON-NLS-1$
+            File settingsDir = new File( config.getEclipseProjectDirectory(), EclipseWorkspaceWriter.DIR_DOT_SETTINGS ); //$NON-NLS-1$
 
             settingsDir.mkdirs();
 
@@ -143,7 +140,7 @@ public class EclipseSettingsWriter
             {
                 File oldCoreSettingsFile;
 
-                File coreSettingsFile = new File( settingsDir, FILE_ECLIPSE_JDT_CORE_PREFS );
+                File coreSettingsFile = new File( settingsDir, EclipseWorkspaceWriter.ECLIPSE_JDT_CORE_PREFS_FILE );
 
                 if ( coreSettingsFile.exists() )
                 {

@@ -22,6 +22,7 @@ import java.io.File;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.eclipse.writers.workspace.EclipseWorkspaceWriter;
 import org.apache.maven.plugin.ide.IdeUtils;
 
 /**
@@ -47,36 +48,6 @@ public class EclipseCleanMojo
      * Project definition file for an Eclipse Project.
      */
     private static final String FILE_DOT_PROJECT = ".project"; //$NON-NLS-1$
-
-    /**
-     * Web Project definition file for Eclipse Web Tools Project (Release 1.0x).
-     */
-    private static final String DIR_DOT_SETTINGS = ".settings"; //$NON-NLS-1$
-
-    /**
-     * File name where the WTP component settings will be stored - WTP 1.0 name.
-     */
-    private static final String FILE_DOT_COMPONENT = ".settings/.component"; //$NON-NLS-1$
-
-    /**
-     * File name where the WTP component settings will be stored - WTP 1.5 name.
-     */
-    private static final String FILE_DOT_COMPONENT_15 = ".settings/org.eclipse.wst.common.component"; //$NON-NLS-1$
-
-    /**
-     * File name where Eclipse Project's Facet configuration will be stored.
-     */
-    private static final String FILE_FACET_CORE_XML = ".settings/org.eclipse.wst.common.project.facet.core.xml"; //$NON-NLS-1$
-
-    /**
-     * General project preferences.
-     */
-    private static final String FILE_ECLIPSE_JDT_CORE_PREFS = ".settings/org.eclipse.jdt.core.prefs"; //$NON-NLS-1$
-
-    /**
-     * AJDT preferences.
-     */
-    private static final String FILE_AJDT_PREFS = ".settings/org.eclipse.ajdt.ui.prefs"; //$NON-NLS-1$
 
     /**
      * Packaging for the current project.
@@ -126,13 +97,7 @@ public class EclipseCleanMojo
         delete( new File( basedir, FILE_DOT_CLASSPATH ) );
         delete( new File( basedir, FILE_DOT_WTPMODULES ) );
 
-        delete( new File( basedir, FILE_DOT_COMPONENT ) );
-        delete( new File( basedir, FILE_DOT_COMPONENT_15 ) );
-        delete( new File( basedir, FILE_FACET_CORE_XML ) );
-        delete( new File( basedir, FILE_ECLIPSE_JDT_CORE_PREFS ) );
-        delete( new File( basedir, FILE_AJDT_PREFS ) );
-
-        File settingsDir = new File( basedir, DIR_DOT_SETTINGS );
+        File settingsDir = new File( basedir, EclipseWorkspaceWriter.DIR_DOT_SETTINGS );
         if ( settingsDir.exists() && settingsDir.isDirectory() && settingsDir.list().length == 0 )
         {
             delete( settingsDir );
