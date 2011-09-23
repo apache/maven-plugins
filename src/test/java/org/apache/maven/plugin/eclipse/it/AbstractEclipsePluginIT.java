@@ -30,8 +30,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Map.Entry;
+import java.util.Properties;
 
 import junit.framework.AssertionFailedError;
 
@@ -55,7 +55,6 @@ import org.apache.maven.shared.invoker.InvocationResult;
 import org.apache.maven.shared.test.plugin.BuildTool;
 import org.apache.maven.shared.test.plugin.PluginTestTool;
 import org.apache.maven.shared.test.plugin.ProjectTool;
-import org.apache.maven.shared.test.plugin.RepositoryTool;
 import org.apache.maven.shared.test.plugin.TestToolsException;
 import org.codehaus.classworlds.ClassRealm;
 import org.codehaus.plexus.PlexusContainer;
@@ -81,8 +80,6 @@ public abstract class AbstractEclipsePluginIT
     private BuildTool buildTool;
 
     private ProjectTool projectTool;
-
-    private RepositoryTool repositoryTool;
 
     /**
      * Test repository directory.
@@ -144,8 +141,6 @@ public abstract class AbstractEclipsePluginIT
         buildTool = (BuildTool) lookup( BuildTool.ROLE, "default" );
 
         projectTool = (ProjectTool) lookup( ProjectTool.ROLE, "default" );
-
-        repositoryTool = (RepositoryTool) lookup( RepositoryTool.ROLE, "default" );
 
         String mavenHome = System.getProperty( "maven.home" );
 

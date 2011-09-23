@@ -447,12 +447,6 @@ public class IdeUtils
         return getProjectName( template, project.getGroupId(), project.getArtifactId(), project.getVersion() );
     }
 
-    private static String getProjectName( IdeDependency dep, boolean addVersionToProjectName )
-    {
-        return getProjectName( addVersionToProjectName ? PROJECT_NAME_WITH_VERSION_TEMPLATE
-                        : PROJECT_NAME_DEFAULT_TEMPLATE, dep );
-    }
-
     public static String getProjectName( MavenProject project, boolean addVersionToProjectName )
     {
         return getProjectName( addVersionToProjectName ? PROJECT_NAME_WITH_VERSION_TEMPLATE
