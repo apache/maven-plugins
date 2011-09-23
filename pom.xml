@@ -524,6 +524,10 @@ under the License.
                 <pomIncludes>
                   <pomInclude>*/pom.xml</pomInclude>
                 </pomIncludes>
+                <pomExcludes>
+                  <!-- FIXME! MSITE-600 -->
+                  <pomExclude>top-parent-different-site/pom.xml</pomExclude>
+                </pomExcludes>
                 <postBuildHookScript>verify</postBuildHookScript>
                 <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
                 <goals>
