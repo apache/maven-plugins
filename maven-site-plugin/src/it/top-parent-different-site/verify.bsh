@@ -1,0 +1,75 @@
+
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+import java.io.*;
+
+boolean result = true;
+
+try
+{
+    File deployDirectory = new File( basedir, "deploy" );
+    if ( !deployDirectory.exists() || !deployDirectory.isDirectory() )
+    {
+        System.err.println( "deploy directory is missing or not a directory:" );
+        return false;
+    }
+
+    File deployModuleDirectory = new File( deployDirectory, "module1" );
+    if ( !deployModuleDirectory.exists() || !deployModuleDirectory.isDirectory() )
+    {
+        System.err.println( "deploy module directory is missing or not a directory:" );
+        return false;
+    }
+
+    File stageDeployDirectory = new File( deployDirectory, "staging" );
+    if ( !stageDeployDirectory.exists() || !stageDeployDirectory.isDirectory() )
+    {
+        System.err.println( "stageDeployDirectory file is missing or not a directory." );
+        return false;
+    }
+
+    File stageDeployModuleDirectory = new File( stageDeployDirectory, "module1" );
+    if ( !stageDeployModuleDirectory.exists() || !stageDeployModuleDirectory.isDirectory() )
+    {
+        System.err.println( "stageDeployModuleDirectory file is missing or not a directory." );
+        return false;
+    }
+
+    File stageDirectory = new File( basedir, "target/staging" );
+    if ( !stageDirectory.exists() || !stageDirectory.isDirectory() )
+    {
+        System.err.println( "stageDirectory file is missing or not a directory." );
+        return false;
+    }
+
+    File stageModuleDirectory = new File( stageDirectory, "module1" );
+    if ( !stageModuleDirectory.exists() || !stageModuleDirectory.isDirectory() )
+    {
+        System.err.println( "stageModuleDirectory file is missing or not a directory." );
+        return false;
+    }
+}
+catch ( IOException e )
+{
+    e.printStackTrace();
+    result = false;
+}
+
+return result;

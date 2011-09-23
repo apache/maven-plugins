@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.apache.maven.plugins.its.differentparentsite</groupId>
+    <artifactId>root</artifactId>
+    <version>1.0-SNAPSHOT</version>
+	<relativePath>root/pom.xml</relativePath>
+  </parent>
+
+  <groupId>org.apache.maven.plugins.its.differentparentsite</groupId>
+  <artifactId>main</artifactId>
+  <packaging>pom</packaging>
+  <name>main</name>
+  <version>1.0-SNAPSHOT</version>
+
+  <url>http://dummy.com/</url>
+
+  <distributionManagement>
+    <site>
+      <id>website</id>
+      <url>file://@project.build.directory@/it/top-parent-different-site/deploy/</url>
+    </site>
+  </distributionManagement>
+
+  <modules>
+    <module>module1</module>
+  </modules>
+
+</project>
