@@ -68,6 +68,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import org.apache.maven.doxia.site.decoration.inheritance.URIPathDescriptor;
 
 /**
  * Abstract base class for deploy mojos.
@@ -834,6 +835,8 @@ public abstract class AbstractDeployMojo
             // MSITE-585, MNG-1943
             parent = siteTool.getParentProject( parent, reactorProjects, localRepository );
 
+            Site oldSite = site;
+
             try
             {
                 site = getSite( parent );
@@ -841,6 +844,15 @@ public abstract class AbstractDeployMojo
             catch ( MojoExecutionException e )
             {
                 break;
+            }
+
+            // MSITE-600
+            URIPathDescriptor siteURI = new URIPathDescriptor( site.getUrl(), "" );
+            URIPathDescriptor oldSiteURI = new URIPathDescriptor( oldSite.getUrl(), "" );
+
+            if ( !siteURI.sameSite( oldSiteURI.getBaseURI() ) )
+            {
+                return oldSite;
             }
         }
 
