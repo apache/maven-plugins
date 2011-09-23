@@ -27,7 +27,7 @@
     <dependent-module archiveName="refproject-compile-1.0.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/var/M2_REPO/eclipsetest/refproject-compile/1.0/refproject-compile-1.0.jar">
       <dependency-type>uses</dependency-type>
     </dependent-module>
-    <dependent-module archiveName="refproject-sysdep.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/D:/ide/maven/maven-eclipse-plugin/target/test-classes/projects/master-test/module-1/refproject-sysdep.jar">
+    <dependent-module archiveName="refproject-sysdep.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/${basedir}/target/test-classes/projects/master-test/module-1/refproject-sysdep.jar">
       <dependency-type>uses</dependency-type>
     </dependent-module>
     <wb-resource deploy-path="/WEB-INF/classes" source-path="src/main/java"/>

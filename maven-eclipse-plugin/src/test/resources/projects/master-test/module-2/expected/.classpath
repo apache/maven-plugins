@@ -11,6 +11,6 @@
   <classpathentry kind="var" path="M2_REPO/eclipsetest/direct-test/1.0/direct-test-1.0.jar"/>
   <classpathentry kind="src" path="/module-1"/>
   <classpathentry kind="var" path="M2_REPO/eclipsetest/refproject-compile/1.0/refproject-compile-1.0.jar"/>
-  <classpathentry kind="lib" path="D:/ide/maven/maven-eclipse-plugin/target/test-classes/projects/master-test/module-1/refproject-sysdep.jar"/>
+  <classpathentry kind="lib" path="${basedir}/target/test-classes/projects/master-test/module-1/refproject-sysdep.jar"/>
   <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 </classpath>
