@@ -20,6 +20,7 @@ package org.apache.maven.plugins.site;
  */
 
 import org.apache.maven.artifact.manager.WagonManager;
+import org.apache.maven.doxia.site.decoration.inheritance.URIPathDescriptor;
 import org.apache.maven.execution.MavenExecutionRequest;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.DistributionManagement;
@@ -68,7 +69,6 @@ import java.net.URL;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
-import org.apache.maven.doxia.site.decoration.inheritance.URIPathDescriptor;
 
 /**
  * Abstract base class for deploy mojos.
@@ -847,8 +847,8 @@ public abstract class AbstractDeployMojo
             }
 
             // MSITE-600
-            URIPathDescriptor siteURI = new URIPathDescriptor( site.getUrl(), "" );
-            URIPathDescriptor oldSiteURI = new URIPathDescriptor( oldSite.getUrl(), "" );
+            URIPathDescriptor siteURI = new URIPathDescriptor( URIEncoder.encodeURI( site.getUrl() ), "" );
+            URIPathDescriptor oldSiteURI = new URIPathDescriptor( URIEncoder.encodeURI( oldSite.getUrl() ), "" );
 
             if ( !siteURI.sameSite( oldSiteURI.getBaseURI() ) )
             {
@@ -857,5 +857,33 @@ public abstract class AbstractDeployMojo
         }
 
         return site;
+    }
+
+    private static class URIEncoder
+    {
+        private static final String mark = "-_.!~*'()";
+        private static final String reserved = ";/?:@&=+$,";
+
+        public static String encodeURI( final String uriString )
+        {
+            final char[] chars = uriString.toCharArray();
+            final StringBuilder uri = new StringBuilder( chars.length );
+
+            for ( int i = 0; i < chars.length; i++ )
+            {
+                final char c = chars[i];
+                if ( ( c >= '0' && c <= '9' ) || ( c >= 'a' && c <= 'z' ) || ( c >= 'A' && c <= 'Z' )
+                        || mark.indexOf( c ) != -1  || reserved.indexOf( c ) != -1 )
+                {
+                    uri.append( c );
+                }
+                else
+                {
+                    uri.append( '%' );
+                    uri.append( Integer.toHexString( (int) c ) );
+                }
+            }
+            return uri.toString();
+        }
     }
 }
