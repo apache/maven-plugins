@@ -150,7 +150,7 @@ public abstract class AbstractJavadocMojo
 
     /**
      * The default Javadoc API urls according the
-     * <a href="http://java.sun.com/reference/api/index.html">Sun API Specifications</a>:
+     * <a href="http://www.oracle.com/technetwork/java/javase/documentation/api-jsp-136079.html">Sun API Specifications</a>:
      * <pre>
      * &lt;javaApiLinks&gt;
      *   &lt;property&gt;
@@ -168,6 +168,10 @@ public abstract class AbstractJavadocMojo
      *   &lt;property&gt;
      *     &lt;name&gt;api_1.6&lt;/name&gt;
      *     &lt;value&gt;http://download.oracle.com/javase/6/docs/api/&lt;/value&gt;
+     *   &lt;/property&gt;
+     *   &lt;property&gt;
+     *     &lt;name&gt;api_1.7&lt;/name&gt;
+     *     &lt;value&gt;http://download.oracle.com/javase/7/docs/api/&lt;/value&gt;
      *   &lt;/property&gt;
      * &lt;/javaApiLinks&gt;
      * </pre>
@@ -1622,7 +1626,6 @@ public abstract class AbstractJavadocMojo
     
     /**
      * List of included dependency-source patterns. Example: <code>org.apache.maven:*</code>
-     *
      * 
      * @parameter
      * @since 2.7
@@ -1632,7 +1635,6 @@ public abstract class AbstractJavadocMojo
 
     /**
      * List of excluded dependency-source patterns. Example: <code>org.apache.maven.shared:*</code>
-     *
      * 
      * @parameter
      * @since 2.7
@@ -1659,8 +1661,8 @@ public abstract class AbstractJavadocMojo
     private transient List<JavadocBundle> dependencyJavadocBundles;
 
     /**
-     * capability to add optionnal dependencies to the javadoc classpath
-     * Exemple :
+     * capability to add optionnal dependencies to the javadoc classpath.
+     * Exemple:
      * <pre>
      * &lt;additionnalDependencies&gt;
      * &nbsp;&nbsp;&lt;additionnalDependency&gt;
@@ -1685,6 +1687,7 @@ public abstract class AbstractJavadocMojo
         DEFAULT_JAVA_API_LINKS.put( "api_1.4", "http://download.oracle.com/javase/1.4.2/docs/api/" );
         DEFAULT_JAVA_API_LINKS.put( "api_1.5", "http://download.oracle.com/javase/1.5.0/docs/api/" );
         DEFAULT_JAVA_API_LINKS.put( "api_1.6", "http://download.oracle.com/javase/6/docs/api/" );
+        DEFAULT_JAVA_API_LINKS.put( "api_1.7", "http://download.oracle.com/javase/7/docs/api/" );
     }
 
     // ----------------------------------------------------------------------
@@ -2165,7 +2168,8 @@ public abstract class AbstractJavadocMojo
         }
         catch ( IOException e )
         {
-            throw new MavenReportException( "Failed to delete cache directory: " + sourceDependencyCacheDir + "\nReason: " + e.getMessage(), e );
+            throw new MavenReportException( "Failed to delete cache directory: " + sourceDependencyCacheDir
+                + "\nReason: " + e.getMessage(), e );
         }
         
         final SourceResolverConfig config = getDependencySourceResolverConfig();
@@ -2222,13 +2226,13 @@ public abstract class AbstractJavadocMojo
     {
         Set<Artifact> dependencyArtifacts =  project.getDependencyArtifacts();
 
-        List<String> artifactPatterns = new ArrayList<String>(dependencyArtifacts.size());
-        for (Artifact artifact : dependencyArtifacts)
+        List<String> artifactPatterns = new ArrayList<String>( dependencyArtifacts.size() );
+        for ( Artifact artifact : dependencyArtifacts )
         {
-            artifactPatterns.add(artifact.getGroupId() + ":" + artifact.getArtifactId());
+            artifactPatterns.add( artifact.getGroupId() + ":" + artifact.getArtifactId() );
         }
 
-        return new IncludesArtifactFilter(artifactPatterns);
+        return new IncludesArtifactFilter( artifactPatterns );
     }
 
     /**
@@ -5490,9 +5494,13 @@ public abstract class AbstractJavadocMojo
         {
             apiVersion = "1.5";
         }
-        else if ( sourceVersion >= 1.6f )
+        else if ( sourceVersion >= 1.6f && sourceVersion < 1.7f )
         {
             apiVersion = "1.6";
+        }
+        else if ( sourceVersion >= 1.7f )
+        {
+            apiVersion = "1.7";
         }
         String javaApiLink = javaApiLinks.getProperty( "api_" + apiVersion, null );
 
