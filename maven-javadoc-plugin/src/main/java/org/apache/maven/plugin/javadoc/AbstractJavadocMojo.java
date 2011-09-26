@@ -3916,7 +3916,7 @@ public abstract class AbstractJavadocMojo
                 link = link.substring( 0, link.lastIndexOf( "/" ) );
             }
 
-            addArgIfNotEmpty( arguments, "-link", JavadocUtil.quotedPathArgument( link ), true );
+            addArgIfNotEmpty( arguments, "-link", JavadocUtil.quotedPathArgument( link ), true, false );
         }
     }
 
