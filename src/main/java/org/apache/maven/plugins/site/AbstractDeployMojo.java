@@ -26,6 +26,7 @@ import java.util.Locale;
 
 import org.apache.maven.artifact.manager.WagonConfigurationException;
 import org.apache.maven.artifact.manager.WagonManager;
+import org.apache.maven.doxia.site.decoration.inheritance.URIPathDescriptor;
 import org.apache.maven.model.DistributionManagement;
 import org.apache.maven.model.Site;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -664,6 +665,8 @@ public abstract class AbstractDeployMojo
             // MSITE-585, MNG-1943
             parent = siteTool.getParentProject( parent, reactorProjects, localRepository );
 
+            Site oldSite = site;
+
             try
             {
                 site = getSite( parent );
@@ -671,6 +674,15 @@ public abstract class AbstractDeployMojo
             catch ( MojoExecutionException e )
             {
                 break;
+            }
+
+            // MSITE-600
+            URIPathDescriptor siteURI = new URIPathDescriptor( site.getUrl(), "" );
+            URIPathDescriptor oldSiteURI = new URIPathDescriptor( oldSite.getUrl(), "" );
+
+            if ( !siteURI.sameSite( oldSiteURI.getBaseURI() ) )
+            {
+                return oldSite;
             }
         }
 
