@@ -677,8 +677,8 @@ public abstract class AbstractDeployMojo
             }
 
             // MSITE-600
-            URIPathDescriptor siteURI = new URIPathDescriptor( site.getUrl(), "" );
-            URIPathDescriptor oldSiteURI = new URIPathDescriptor( oldSite.getUrl(), "" );
+            URIPathDescriptor siteURI = new URIPathDescriptor( URIEncoder.encodeURI( site.getUrl() ), "" );
+            URIPathDescriptor oldSiteURI = new URIPathDescriptor( URIEncoder.encodeURI( oldSite.getUrl() ), "" );
 
             if ( !siteURI.sameSite( oldSiteURI.getBaseURI() ) )
             {
@@ -687,5 +687,33 @@ public abstract class AbstractDeployMojo
         }
 
         return site;
+    }
+
+    private static class URIEncoder
+    {
+        private static final String mark = "-_.!~*'()";
+        private static final String reserved = ";/?:@&=+$,";
+
+        public static String encodeURI( final String uriString )
+        {
+            final char[] chars = uriString.toCharArray();
+            final StringBuilder uri = new StringBuilder( chars.length );
+
+            for ( int i = 0; i < chars.length; i++ )
+            {
+                final char c = chars[i];
+                if ( ( c >= '0' && c <= '9' ) || ( c >= 'a' && c <= 'z' ) || ( c >= 'A' && c <= 'Z' )
+                        || mark.indexOf( c ) != -1  || reserved.indexOf( c ) != -1 )
+                {
+                    uri.append( c );
+                }
+                else
+                {
+                    uri.append( '%' );
+                    uri.append( Integer.toHexString( (int) c ) );
+                }
+            }
+            return uri.toString();
+        }
     }
 }
