@@ -380,6 +380,7 @@ under the License.
                 <pomInclude>MJAVADOC-280-*/pom.xml</pomInclude>
                 <pomInclude>site-failOnError/pom.xml</pomInclude>
                 <pomInclude>MJAVADOC-320/pom.xml</pomInclude>
+                <pomInclude>MJAVADOC-325/pom.xml</pomInclude>
               </pomIncludes>
               <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
             </configuration>
