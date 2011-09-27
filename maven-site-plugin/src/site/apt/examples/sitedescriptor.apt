@@ -71,6 +71,31 @@ Configuring the Site Descriptor
 </project>
 +-----+
 
+* Banner
+
+  You can include some logos on top of your site, using the following syntax:
+
++-----+
+<project>
+  ...
+  <bannerLeft>
+    <name>Project Name</name>
+    <src>http://maven.apache.org/images/apache-maven-project-2.png</src>
+    <href>http://maven.apache.org/</href>
+  </bannerLeft>
+
+  <bannerRight>
+    <src>http://maven.apache.org/images/maven-logo-2.gif</src>
+  </bannerRight>
+  ...
+</project>
++-----+
+
+  Refer to the site descriptor
+  {{{http://maven.apache.org/doxia/doxia-sitetools/doxia-decoration-model/decoration.html}reference}}
+  for a complete tag description.
+
+
 * Publish Date
 
   With the out-of-the-box Velocity template, the position of the "Last Published" date is configurable.
@@ -103,6 +128,8 @@ Configuring the Site Descriptor
   {{{http://www.w3.org/QA/Tips/iso-date}recommended by the W3C}}. Because the
   web has an international, cross-cultural audience it is recommended to <not>
   change the date format.
+  There is however a <<<format>>> attribute to the <<<\<publishDate\>>>> element
+  that can be used if you really need a different date format.
 
 * Version
 
@@ -203,6 +230,101 @@ Configuring the Site Descriptor
 
   []
 
+* Inject xhtml into \<head\>
+
+  You can inject some xhtml into the generated \<head\> element of each page by adding a head element
+  to the body element of your project’s site descriptor. The following example adds some javascript:
+
++-----+
+<project>
+  ...
+  <body>
+    ...
+    <head>
+      <script src="http://www.google-analytics.com/urchin.js" type="text/javascript">
+    </head>
+    ...
+  </body>
+  ...
+</project>
++-----+
+
+* Links
+
+  To add links below your site logo, just add a links element to the body element of the site descriptor.
+  Each item in the links element will be rendered as a link in a bar directly below your project’s logo.
+
++-----+
+<project>
+  ...
+  <body>
+    ...
+    <links>
+        <item name="Apache" href="http://www.apache.org"/>
+        <item name="Maven" href="http://maven.apache.org"/>
+    </links>
+    ...
+  </body>
+  ...
+</project>
++-----+
+
+* Breadcrumbs
+
+  If there exists a logical hierarchy within your site modules, you may want to generate a series of
+  breadcrumbs to give a way to easily navigate the project tree.
+  To configure breadcrumbs, add a breadcrumbs element to the body element in the site descriptor.
+  Each item element will render a link, and the items in the breadcrumbs element will be rendered in order.
+  The breadcrumb items should be listed from highest level to lowest level.
+
++-----+
+<project>
+  ...
+  <body>
+    ...
+    <breadcrumbs>
+      <item name="Doxia" href="http://maven.apache.org/doxia/index.html"/>
+      <item name="Trunk" href="http://maven.apache.org/doxia/doxia/index.html"/>
+    </breadcrumbs>
+    ...
+  </body>
+  ...
+</project>
++-----+
+
+  <<Note>> that in a multi-module build, if the parent contains a breadcrumb and the inheriting site
+  descriptor doesn't, a breadcrumb with the current site descriptor's name will be added automatically.
+  See the notes on {{{./multimodule.html}building a multi-module site}} for more details.
+
+* Custom footer
+
+  You can replace the auto-generated footer content by specifying a custom \<footer\> element:
+
++-----+
+<project>
+  ...
+  <body>
+    ...
+    <footer>All rights reserved.</footer>
+    ...
+  </body>
+  ...
+</project>
++-----+
+
+* Custom content
+
+  There is also a dummy \<custom\> element then can be used to specify some arbitrary content.
+  Note that you need to write your own velocity template to make use of this element,
+  it is ignored by the default velocity template used by the site plugin.
+
++-----+
+<project>
+  ...
+  <custom>Custom content</footer>
+  ...
+</project>
++-----+
 
 * Skinning
 
