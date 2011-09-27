@@ -21,32 +21,22 @@
 import java.io.*;
 import org.codehaus.plexus.util.*;
 
-boolean result = true;
+File optionsFile = new File( basedir, "target/site/apidocs/options" );
 
-try
+if ( !optionsFile.exists() ) 
 {
-    File optionsFile = new File( basedir, "target/site/apidocs/options" );
-    
-    if( !optionsFile.exists() ) 
-    {
-        System.err.println( optionsFile.getAbsolutePath() + " is missing." );
-        return false;
-    }
-
-	String optionsContent = FileUtils.fileRead( optionsFile );
-	String javaApiLink = "-link\r\n'http://download.oracle.com/javase/1,5,0/docs/api'";
-	
-	if ( optionsContent.indexOf( javaApiLink ) < 0 )
-	{
-        System.err.println( "Options is missing the following line:" );
-        System.err.println( javaApiLink );
-        return false;
-	} 
-}
-catch( RuntimeException e )
-{
-    e.printStackTrace();
+    System.err.println( optionsFile.getAbsolutePath() + " is missing." );
     return false;
 }
 
-return result;
+String optionsContent = FileUtils.fileRead( optionsFile );
+String javaApiLink = "'http://download.oracle.com/javase/1,5,0/docs/api'";
+
+if ( !optionsContent.contains( javaApiLink ) )
+{
+    System.err.println( "Options is missing the following line:" );
+    System.err.println( javaApiLink );
+    return false;
+} 
+
+return true;
