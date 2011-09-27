@@ -51,6 +51,8 @@ Configuring the Site Descriptor
   {{{http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-site-plugin/src/site/site.xml}site descriptor for Maven Site Plugin}}
   for a real life example.
 
+%{toc|section=1|fromDepth=2|toDepth=3}
+
 * Title
 
   The title of each generated page will be a combination of the <site title>

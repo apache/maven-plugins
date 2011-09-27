@@ -32,6 +32,10 @@ Creating Content
   Now it's time to create some content for your site. In Maven 2, the site
   content is structured by format, as there are several formats supported.
 
+%{toc|section=1|fromDepth=2|toDepth=3}
+
+* Documentation formats
+
   Here's an example of a directory structure for a site:
 
 -------------------

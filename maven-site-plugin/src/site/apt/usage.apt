@@ -39,6 +39,8 @@ Usage
  let Maven generate some {{{./examples/configuring-reports.html}reports}} for you,
  based on the contents of your POM.
 
+%{toc|section=1|fromDepth=2|toDepth=3}
+
 * Generating a Site
 
   To generate the project's site and reports, execute:
