@@ -233,7 +233,7 @@ Configuring the Site Descriptor
 * Inject xhtml into \<head\>
 
   You can inject some xhtml into the generated \<head\> element of each page by adding a head element
-  to the body element of your project’s site descriptor. The following example adds some javascript:
+  to the body element of your project's site descriptor. The following example adds some javascript:
 
 +-----+
 <project>
@@ -252,7 +252,7 @@ Configuring the Site Descriptor
 * Links
 
   To add links below your site logo, just add a links element to the body element of the site descriptor.
-  Each item in the links element will be rendered as a link in a bar directly below your project’s logo.
+  Each item in the links element will be rendered as a link in a bar directly below your project's logo.
 
 +-----+
 <project>
@@ -316,7 +316,7 @@ Configuring the Site Descriptor
 
   There is also a dummy \<custom\> element then can be used to specify some arbitrary content.
   Note that you need to write your own velocity template to make use of this element,
-  it is ignored by the default velocity template used by the site plugin.
+  it is ignored by the default Velocity template used by the Site Plugin.
 
 +-----+
 <project>
