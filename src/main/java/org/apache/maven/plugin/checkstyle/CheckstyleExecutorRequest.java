@@ -85,8 +85,14 @@ public class CheckstyleExecutorRequest
 
     private String encoding;
 
+    /**
+     * @since 2.8
+     */
     private boolean aggregate = false;
 
+    /**
+     * @since 2.8
+     */
     private List<MavenProject> reactorProjects;
 
     /**
