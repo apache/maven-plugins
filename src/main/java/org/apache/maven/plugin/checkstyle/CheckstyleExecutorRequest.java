@@ -21,6 +21,7 @@ package org.apache.maven.plugin.checkstyle;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.util.List;
 
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
@@ -35,7 +36,7 @@ import com.puppycrawl.tools.checkstyle.api.AuditListener;
  */
 public class CheckstyleExecutorRequest
 {
-   
+
     /**
      * Specifies the names filter of the source files to be used for Checkstyle.
      */
@@ -45,50 +46,62 @@ public class CheckstyleExecutorRequest
      * Specifies the names filter of the source files to be excluded for Checkstyle.
      */
     private String excludes;
-    
+
     private MavenProject project;
-    
+
     private Log log;
-    
+
     private String suppressionsLocation;
-    
+
     private boolean includeTestSourceDirectory;
-    
+
     private File testSourceDirectory;
-    
+
     private File sourceDirectory;
-    
+
     private boolean failsOnError;
-    
+
     private AuditListener listener;
-    
+
     private boolean consoleOutput;
-    
+
     private DefaultLogger defaultLogger;
-    
+
     private ByteArrayOutputStream stringOutputStream;
-    
+
     private String propertiesLocation;
-    
+
     //
-    
+
     private String configLocation;
 
     private String propertyExpansion;
-    
-    private String headerLocation; 
-    
-    private String cacheFile;  
-    
-    private String suppressionsFileExpression;
-    
-    private String encoding; 
 
+    private String headerLocation;
+
+    private String cacheFile;
+
+    private String suppressionsFileExpression;
+
+    private String encoding;
+
+    private boolean aggregate = false;
+
+    private List<MavenProject> reactorProjects;
+
+    /**
+     * Constructor.
+     */
     public CheckstyleExecutorRequest( )
     {
-        //nothing 
-    }    
-    
+        //nothing
+    }
+
+    /**
+     * Returns the includes parameter.
+     *
+     * @return The includes parameter.
+     */
     public String getIncludes()
     {
         return includes;
@@ -209,7 +222,7 @@ public class CheckstyleExecutorRequest
         this.consoleOutput = consoleOutput;
         return this;
     }
-    
+
     public CheckstyleExecutorRequest setConsoleListener( DefaultLogger defaultLogger )
     {
         this.defaultLogger = defaultLogger;
@@ -231,7 +244,7 @@ public class CheckstyleExecutorRequest
         this.stringOutputStream = stringOutputStream;
         return this;
     }
-    
+
     public String getConfigLocation()
     {
         return configLocation;
@@ -253,7 +266,7 @@ public class CheckstyleExecutorRequest
         this.propertyExpansion = propertyExpansion;
         return this;
     }
-    
+
     public String getHeaderLocation()
     {
         return headerLocation;
@@ -296,8 +309,8 @@ public class CheckstyleExecutorRequest
     {
         this.encoding = encoding;
         return this;
-    }    
-    
+    }
+
     public String getPropertiesLocation()
     {
         return propertiesLocation;
@@ -306,5 +319,49 @@ public class CheckstyleExecutorRequest
     public void setPropertiesLocation( String propertiesLocation )
     {
         this.propertiesLocation = propertiesLocation;
-    }    
+    }
+
+    /**
+     * Returns true if the report is aggregated.
+     *
+     * @return <code>true</code> if the report is aggregated.
+     */
+    public boolean isAggregate()
+    {
+        return aggregate;
+    }
+
+    /**
+     * Sets the aggregate parameter.
+     *
+     * @param pAggregate <code>true</code> if an aggregated report is desidered.
+     * @return This object.
+     */
+    public CheckstyleExecutorRequest setAggregate( boolean pAggregate )
+    {
+        this.aggregate = pAggregate;
+        return this;
+    }
+
+    /**
+     * Returns the list of reactor projects.
+     *
+     * @return The reactor projects.
+     */
+    public List<MavenProject> getReactorProjects()
+    {
+        return reactorProjects;
+    }
+
+    /**
+     * Sets the list of reactor projects.
+     *
+     * @param pReactorProjects The reactor projects.
+     * @return This object.
+     */
+    public CheckstyleExecutorRequest setReactorProjects( List<MavenProject> pReactorProjects )
+    {
+        this.reactorProjects = pReactorProjects;
+        return this;
+    }
 }
