@@ -20,46 +20,24 @@ package org.apache.maven.plugin.checkstyle;
  */
 
 import java.io.File;
-import java.net.URL;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
+import java.util.List;
 
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.MavenReportException;
-import org.codehaus.plexus.util.StringUtils;
 
 /**
- * Perform a Checkstyle analysis, and generate a report on violations.
+ * Perform a Checkstyle analysis, and generate a report on violations,
+ * aggregating the result in the project which started this mojo.
  *
- * @author <a href="mailto:evenisse@apache.org">Emmanuel Venisse</a>
- * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
- * @author <a href="mailto:joakim@erdfelt.com">Joakim Erdfelt</a>
- * @version $Id$
- * @goal checkstyle
+ * @version $Id: CheckstyleReport.java 1155028 2011-08-08 17:53:46Z olamy $
+ * @goal checkstyle-aggregate
+ * @aggregator
  * @requiresDependencyResolution compile
  * @threadSafe
  */
-public class CheckstyleReport
+public class CheckstyleAggregateReport
     extends AbstractCheckstyleReport
 {
-    /**
-     * @deprecated Remove with format parameter.
-     */
-    private static final Map<String, String> FORMAT_TO_CONFIG_LOCATION;
-
-    static
-    {
-        Map<String, String> fmt2Cfg = new HashMap<String, String>();
-
-        fmt2Cfg.put( "sun", "config/sun_checks.xml" );
-        fmt2Cfg.put( "turbine", "config/turbine_checks.xml" );
-        fmt2Cfg.put( "avalon", "config/avalon_checks.xml" );
-        fmt2Cfg.put( "maven", "config/maven_checks.xml" );
-
-        FORMAT_TO_CONFIG_LOCATION = Collections.unmodifiableMap( fmt2Cfg );
-    }
 
     /**
      * Specifies the names filter of the source files to be used for Checkstyle.
@@ -114,15 +92,6 @@ public class CheckstyleReport
     private String configLocation;
 
     /**
-     * Specifies what predefined check set to use. Available sets are "sun" (for
-     * the Sun coding conventions), "turbine", and "avalon".
-     *
-     * @parameter default-value="sun"
-     * @deprecated Use configLocation instead.
-     */
-    private String format;
-
-    /**
      * <p>
      * Specifies the location of the properties file.
      * </p>
@@ -145,24 +114,6 @@ public class CheckstyleReport
      * @since 2.0-beta-2
      */
     private String propertiesLocation;
-
-    /**
-     * Specifies the location of the Checkstyle properties file that will be used to
-     * check the source.
-     *
-     * @parameter
-     * @deprecated Use propertiesLocation instead.
-     */
-    private File propertiesFile;
-
-    /**
-     * Specifies the URL of the Checkstyle properties that will be used to check
-     * the source.
-     *
-     * @parameter
-     * @deprecated Use propertiesLocation instead.
-     */
-    private URL propertiesURL;
 
     /**
      * Allows for specifying raw property expansion information.
@@ -196,16 +147,6 @@ public class CheckstyleReport
      * @since 2.0-beta-2
      */
     private String headerLocation;
-
-    /**
-     * Specifies the location of the License file (a.k.a. the header file) that
-     * is used by Checkstyle to verify that source code has the correct
-     * license header.
-     *
-     * @parameter expression="${basedir}/LICENSE.txt"
-     * @deprecated Use headerLocation instead.
-     */
-    private File headerFile;
 
     /**
      * Specifies the cache file used to speed up Checkstyle on successive runs.
@@ -244,46 +185,6 @@ public class CheckstyleReport
      * @since 2.1
      */
     private String suppressionsFileExpression;
-
-    /**
-     * Specifies the location of the suppressions XML file to use. The plugin
-     * defines a Checkstyle property named
-     * <code>checkstyle.suppressions.file</code> with the value of this
-     * property. This allows using the Checkstyle property in your own custom
-     * checkstyle configuration file when specifying a suppressions file.
-     *
-     * @parameter
-     * @deprecated Use suppressionsLocation instead.
-     */
-    private String suppressionsFile;
-
-    /**
-     * <p>
-     * Specifies the location of the package names XML to be used to configure
-     * the Checkstyle <a
-     * href="http://checkstyle.sourceforge.net/config.html#Packages">Packages</a>.
-     * </p>
-     *
-     * <p>
-     * This parameter is resolved as resource, URL, then file. If resolved to a
-     * resource, or a URL, the contents of the package names XML is copied into
-     * the <code>${project.build.directory}/checkstyle-packagenames.xml</code>
-     * file before being passed to Checkstyle for loading.
-     * </p>
-     *
-     * @parameter
-     * @since 2.0-beta-2
-     */
-    private String packageNamesLocation;
-
-    /**
-     * Specifies the location of the package names XML to be used to configure
-     * Checkstyle.
-     *
-     * @parameter
-     * @deprecated Use packageNamesLocation instead.
-     */
-    private String packageNamesFile;
 
     /**
      * Specifies if the build should fail upon a violation.
@@ -334,18 +235,19 @@ public class CheckstyleReport
      */
     private String encoding;
 
+    /**
+     * The projects in the reactor for aggregation report.
+     *
+     * @parameter expression="${reactorProjects}"
+     * @readonly
+     * @since 2.8
+     */
+    private List<MavenProject> reactorProjects;
+
     /** {@inheritDoc} */
     protected MavenProject getProject()
     {
         return project;
-    }
-
-    /** {@inheritDoc} */
-    public void executeReport( Locale locale )
-        throws MavenReportException
-    {
-        mergeDeprecatedInfo();
-        super.executeReport( locale );
     }
 
     /**
@@ -355,7 +257,9 @@ public class CheckstyleReport
             throws MavenReportException
     {
         CheckstyleExecutorRequest request = new CheckstyleExecutorRequest();
-        request.setConsoleListener( getConsoleListener() ).setConsoleOutput( consoleOutput )
+        request.setAggregate( true )
+            .setReactorProjects( reactorProjects )
+            .setConsoleListener( getConsoleListener() ).setConsoleOutput( consoleOutput )
             .setExcludes( excludes ).setFailsOnError( failsOnError ).setIncludes( includes )
             .setIncludeTestSourceDirectory( includeTestSourceDirectory ).setListener( getListener() )
             .setLog( getLog() ).setProject( project ).setSourceDirectory( sourceDirectory )
@@ -367,62 +271,17 @@ public class CheckstyleReport
         return request;
     }
 
+
     /** {@inheritDoc} */
     public String getOutputName()
     {
-        return "checkstyle";
+        return "checkstyle-aggregate";
     }
 
     /** {@inheritDoc} */
     public boolean canGenerateReport()
     {
         // TODO: would be good to scan the files here
-        return !skip && ( sourceDirectory.exists() || ( includeTestSourceDirectory && testSourceDirectory.exists() ) );
+        return !skip && project.isExecutionRoot();
     }
-
-    /**
-     * Merge in the deprecated parameters to the new ones, unless the new
-     * parameters have values.
-     *
-     * @deprecated Remove when deprecated params are removed.
-     */
-    private void mergeDeprecatedInfo()
-    {
-        if ( "config/sun_checks.xml".equals( configLocation ) && !"sun".equals( format ) )
-        {
-            configLocation = (String) FORMAT_TO_CONFIG_LOCATION.get( format );
-        }
-
-        if ( StringUtils.isEmpty( propertiesLocation ) )
-        {
-            if ( propertiesFile != null )
-            {
-                propertiesLocation = propertiesFile.getPath();
-            }
-            else if ( propertiesURL != null )
-            {
-                propertiesLocation = propertiesURL.toExternalForm();
-            }
-        }
-
-        if ( "LICENSE.txt".equals( headerLocation ) )
-        {
-            File defaultHeaderFile = new File( project.getBasedir(), "LICENSE.txt" );
-            if ( !defaultHeaderFile.equals( headerFile ) )
-            {
-                headerLocation = headerFile.getPath();
-            }
-        }
-
-        if ( StringUtils.isEmpty( suppressionsLocation ) )
-        {
-            suppressionsLocation = suppressionsFile;
-        }
-
-        if ( StringUtils.isEmpty( packageNamesLocation ) )
-        {
-            packageNamesLocation = packageNamesFile;
-        }
-    }
-
 }

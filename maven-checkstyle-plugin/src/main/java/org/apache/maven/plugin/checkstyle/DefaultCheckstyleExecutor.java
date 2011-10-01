@@ -28,7 +28,6 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
@@ -56,7 +55,8 @@ import com.puppycrawl.tools.checkstyle.filters.SuppressionsLoader;
 
 /**
  * @author <a href="mailto:olamy@apache.org">olamy</a>
- * @plexus.component role="org.apache.maven.plugin.checkstyle.CheckstyleExecutor" role-hint="default" instantiation-strategy="per-lookup"
+ * @plexus.component role="org.apache.maven.plugin.checkstyle.CheckstyleExecutor" role-hint="default"
+ *                   instantiation-strategy="per-lookup"
  * @since 2.5
  * @version $Id$
  */
@@ -86,7 +86,8 @@ public class DefaultCheckstyleExecutor
         {
             getLogger().debug( "executeCheckstyle start headerLocation : " + request.getHeaderLocation() );
         }
-        locator.setOutputDirectory( new File( request.getProject().getBuild().getDirectory() ) );
+        MavenProject project = request.getProject();
+        locator.setOutputDirectory( new File( project.getBuild().getDirectory() ) );
         File[] files;
         try
         {
@@ -105,26 +106,18 @@ public class DefaultCheckstyleExecutor
         // for ..." errors
         List<String> classPathStrings = new ArrayList<String>();
         List<String> outputDirectories = new ArrayList<String>();
-        try
+        File sourceDirectory = request.getSourceDirectory();
+        File testSourceDirectory = request.getTestSourceDirectory();
+        prepareCheckstylePaths( request, project, classPathStrings, outputDirectories, sourceDirectory,
+                                testSourceDirectory );
+        if ( request.isAggregate() )
         {
-            classPathStrings = request.getProject().getCompileClasspathElements();
-            outputDirectories.add( request.getProject().getBuild().getOutputDirectory() );
-
-            if ( request.isIncludeTestSourceDirectory() && ( request.getSourceDirectory() != null )
-                && ( request.getTestSourceDirectory().exists() ) && ( request.getTestSourceDirectory().isDirectory() ) )
+            for ( MavenProject childProject : request.getReactorProjects() )
             {
-                classPathStrings = request.getProject().getTestClasspathElements();
-                outputDirectories.add( request.getProject().getBuild().getTestOutputDirectory() );
+                prepareCheckstylePaths( request, childProject, classPathStrings, outputDirectories,
+                                        new File( childProject.getBuild().getSourceDirectory() ),
+                                        new File( childProject.getBuild().getTestSourceDirectory() ) );
             }
-        }
-        catch ( DependencyResolutionRequiredException e )
-        {
-            throw new CheckstyleExecutorException( e.getMessage(), e );
-        }
-
-        if ( classPathStrings == null )
-        {
-            classPathStrings = Collections.EMPTY_LIST;
         }
 
         List<URL> urls = new ArrayList<URL>( classPathStrings.size() );
@@ -188,11 +181,15 @@ public class DefaultCheckstyleExecutor
             checker.addListener( request.getConsoleListener() );
         }
 
-        CheckstyleReportListener sinkListener = new CheckstyleReportListener( request.getSourceDirectory(), configuration );
-        if ( request.isIncludeTestSourceDirectory() && ( request.getTestSourceDirectory() != null )
-            && ( request.getTestSourceDirectory().exists() ) && ( request.getTestSourceDirectory().isDirectory() ) )
+        CheckstyleReportListener sinkListener = new CheckstyleReportListener( configuration );
+        addSourceDirectory( sinkListener, sourceDirectory, testSourceDirectory, request );
+        if ( request.isAggregate() )
         {
-            sinkListener.addSourceDirectory( request.getTestSourceDirectory() );
+            for ( MavenProject childProject : request.getReactorProjects() )
+            {
+                addSourceDirectory( sinkListener, new File( childProject.getBuild().getSourceDirectory() ),
+                                    new File( childProject.getBuild().getSourceDirectory() ), request );
+            }
         }
 
         checker.addListener( sinkListener );
@@ -220,6 +217,20 @@ public class DefaultCheckstyleExecutor
         }
 
         return sinkListener.getResults();
+    }
+
+    protected void addSourceDirectory( CheckstyleReportListener sinkListener, File sourceDirectory,
+                                       File testSourceDirectory, CheckstyleExecutorRequest request )
+    {
+        if (sourceDirectory != null)
+        {
+            sinkListener.addSourceDirectory( sourceDirectory );
+        }
+        if ( request.isIncludeTestSourceDirectory() && ( testSourceDirectory != null )
+            && ( testSourceDirectory.exists() ) && ( testSourceDirectory.isDirectory() ) )
+        {
+            sinkListener.addSourceDirectory( testSourceDirectory );
+        }
     }
 
     public Configuration getConfiguration( CheckstyleExecutorRequest request )
@@ -266,16 +277,17 @@ public class DefaultCheckstyleExecutor
                     if ( module instanceof DefaultConfiguration )
                     {
                         //MCHECKSTYLE-132 DefaultConfiguration addAttribute has changed in checkstyle 5.3
-                        try 
+                        try
                         {
                             if ( ( (DefaultConfiguration) module ).getAttribute( "cacheFile" ) == null )
                             {
                                 ( (DefaultConfiguration) module ).addAttribute( "cacheFile", request.getCacheFile() );
                             }
                         }
-                        catch ( CheckstyleException ex ) 
+                        catch ( CheckstyleException ex )
                         {
-                            //MCHECKSTYLE-159 - checkstyle 5.4 throws an exception instead of return null if "cacheFile" doesn't exist
+                            //MCHECKSTYLE-159 - checkstyle 5.4 throws an exception instead of return null if "cacheFile"
+                            // doesn't exist
                             ( (DefaultConfiguration) module ).addAttribute( "cacheFile", request.getCacheFile() );
                         }
                     }
@@ -290,6 +302,32 @@ public class DefaultCheckstyleExecutor
         catch ( CheckstyleException e )
         {
             throw new CheckstyleExecutorException( "Failed during checkstyle configuration", e );
+        }
+    }
+
+    private void prepareCheckstylePaths( CheckstyleExecutorRequest request, MavenProject project,
+                                         List<String> classPathStrings, List<String> outputDirectories,
+                                         File sourceDirectory, File testSourceDirectory )
+        throws CheckstyleExecutorException
+    {
+        try
+        {
+            outputDirectories.add( project.getBuild().getOutputDirectory() );
+
+            if ( request.isIncludeTestSourceDirectory() && ( sourceDirectory != null )
+                && ( testSourceDirectory.exists() ) && ( testSourceDirectory.isDirectory() ) )
+            {
+                classPathStrings.addAll( project.getTestClasspathElements() );
+                outputDirectories.add( project.getBuild().getTestOutputDirectory() );
+            }
+            else
+            {
+                classPathStrings.addAll( project.getCompileClasspathElements() );
+            }
+        }
+        catch ( DependencyResolutionRequiredException e )
+        {
+            throw new CheckstyleExecutorException( e.getMessage(), e );
         }
     }
 
@@ -317,7 +355,9 @@ public class DefaultCheckstyleExecutor
                     {
                         p.load( properties );
                     }
-                } finally {
+                }
+                finally
+                {
                     IOUtils.closeQuietly( properties );
                 }
             }
@@ -419,21 +459,38 @@ public class DefaultCheckstyleExecutor
             excludesStr.append( defaultExcludes[i] );
         }
 
-        if ( request.getSourceDirectory() == null || !request.getSourceDirectory().exists() )
-     {
-            return EMPTY_FILE_ARRAY;
-        }
+        File sourceDirectory = request.getSourceDirectory();
 
-        List<File> files =
-            FileUtils.getFiles( request.getSourceDirectory(), request.getIncludes(), excludesStr.toString() );
-        if ( request.isIncludeTestSourceDirectory() && ( request.getTestSourceDirectory() != null )
-            && ( request.getTestSourceDirectory().exists() ) && ( request.getTestSourceDirectory().isDirectory() ) )
+        List<File> files = new ArrayList<File>();
+        addFilesToProcess( request, excludesStr, sourceDirectory, files );
+        if ( request.isAggregate() )
         {
-            files.addAll( FileUtils.getFiles( request.getTestSourceDirectory(), request.getIncludes(),
-                                              excludesStr.toString() ) );
+            for ( MavenProject project : request.getReactorProjects() )
+            {
+                addFilesToProcess( request, excludesStr, new File( project.getBuild().getSourceDirectory() ), files );
+            }
         }
 
         return (File[]) files.toArray( EMPTY_FILE_ARRAY );
+    }
+
+    private void addFilesToProcess( CheckstyleExecutorRequest request, StringBuffer excludesStr, File sourceDirectory,
+                                    List<File> files )
+        throws IOException
+    {
+        if ( sourceDirectory == null || !sourceDirectory.exists() )
+        {
+            return;
+        }
+        files.addAll(
+            FileUtils.getFiles( sourceDirectory, request.getIncludes(), excludesStr.toString() ) );
+        File testSourceDirectory = request.getTestSourceDirectory();
+        if ( request.isIncludeTestSourceDirectory() && ( testSourceDirectory != null )
+            && ( testSourceDirectory.exists() ) && ( testSourceDirectory.isDirectory() ) )
+        {
+            files.addAll( FileUtils.getFiles( testSourceDirectory, request.getIncludes(),
+                                              excludesStr.toString() ) );
+        }
     }
 
     private FilterSet getSuppressions( CheckstyleExecutorRequest request )
@@ -472,7 +529,7 @@ public class DefaultCheckstyleExecutor
             {
                 getLogger().debug( "request.getConfigLocation() " + request.getConfigLocation() );
             }
-            
+
             MavenProject parent = request.getProject();
             while ( parent != null && parent.getFile() != null )
             {
