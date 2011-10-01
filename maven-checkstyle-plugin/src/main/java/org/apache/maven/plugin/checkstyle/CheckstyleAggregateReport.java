@@ -34,6 +34,7 @@ import org.apache.maven.reporting.MavenReportException;
  * @aggregator
  * @requiresDependencyResolution compile
  * @threadSafe
+ * @since 2.8
  */
 public class CheckstyleAggregateReport
     extends AbstractCheckstyleReport
