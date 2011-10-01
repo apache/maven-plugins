@@ -74,6 +74,16 @@ public class CheckstyleReportListener
     }
 
     /**
+     * @param configuration checkstyle configuration
+     * @since 2.5
+     */
+    public CheckstyleReportListener( Configuration configuration )
+    {
+        this.sourceDirectories = new ArrayList<File>();
+        this.checkstyleConfiguration = configuration;
+    }
+
+    /**
      * @param sourceDirectory assume that is <code>sourceDirectory</code> is a not null directory and exists
      */
     public void addSourceDirectory( File sourceDirectory )

@@ -42,23 +42,23 @@ under the License.
     <!-- See http://checkstyle.sf.net/config_misc.html#Translation -->
     <!-- module name="Translation"/ -->
 
-    <module name="FileLength"/>    
+    <module name="FileLength"/>
 
     <!-- Checks for Headers                              -->
     <!-- See http://checkstyle.sf.net/config_header.html -->
     <module name="RegexpHeader">
       <property name="headerFile" value="${checkstyle.header.file}"/>
-    </module>    
+    </module>
 
     <module name="FileTabCharacter">
         <property name="eachLine" value="true"/>
-    </module>    
+    </module>
 
     <!-- Line with trailing spaces (disabled as it's too noisy) -->
     <!--<module name="RegexpSingleline">
         <property name="format" value="\s+$"/>
         <property name="message" value="Line has trailing spaces."/>
-    </module>-->    
+    </module>-->
 
     <module name="TreeWalker">
 
@@ -89,6 +89,7 @@ under the License.
         </module>
         <module name="JavadocType">
           <property name="scope" value="protected"/>
+          <property name="allowUnknownTags" value="true" />
         </module>
         <module name="JavadocVariable">
           <property name="severity" value="info"/>
