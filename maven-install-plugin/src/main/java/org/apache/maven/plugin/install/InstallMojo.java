@@ -32,7 +32,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 
 /**
- * Installs the project's main artifact in the local repository.
+ * Installs the project's main artifact, and any other artifacts attached by other plugins in the lifecycle, to the local repository.
  *
  * @author <a href="mailto:evenisse@apache.org">Emmanuel Venisse</a>
  * @version $Id$
