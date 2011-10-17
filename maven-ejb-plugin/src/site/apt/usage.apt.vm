@@ -52,7 +52,7 @@ Usage
 
   * The EJB version to use
 
-  * {{{examples/generating-ejb-client.html}Generating and customizing an ejb-client}}
+  * {{{./examples/generating-ejb-client.html}Generating and customizing an ejb-client}}
 
  <<Note:>> The dependencies will not be package with the EJB jar.
 
