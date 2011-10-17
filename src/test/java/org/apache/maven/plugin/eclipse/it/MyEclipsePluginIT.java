@@ -18,6 +18,8 @@
  */
 package org.apache.maven.plugin.eclipse.it;
 
+import java.util.Properties;
+
 /**
  * Unit Tests for MyEclipse plugin
  * 
@@ -34,7 +36,7 @@ public class MyEclipsePluginIT
     public void testProject01()
         throws Exception
     {
-        testMyEclipseProject( "project-myeclipse-01" );
+        doMyEclipseProjectTest( "project-myeclipse-01" );
     }
 
     /**
@@ -45,7 +47,7 @@ public class MyEclipsePluginIT
     public void testProject02()
         throws Exception
     {
-        testMyEclipseProject( "project-myeclipse-02" );
+        doMyEclipseProjectTest( "project-myeclipse-02" );
     }
 
     /**
@@ -56,7 +58,7 @@ public class MyEclipsePluginIT
     public void testProject03()
         throws Exception
     {
-        testMyEclipseProject( "project-myeclipse-03" );
+        doMyEclipseProjectTest( "project-myeclipse-03" );
     }
 
     /**
@@ -67,7 +69,7 @@ public class MyEclipsePluginIT
     public void testProject04()
         throws Exception
     {
-        testMyEclipseProject( "project-myeclipse-04" );
+        doMyEclipseProjectTest( "project-myeclipse-04" );
     }
 
     /**
@@ -78,7 +80,7 @@ public class MyEclipsePluginIT
     public void testProject05()
         throws Exception
     {
-        testMyEclipseProject( "project-myeclipse-05" );
+        doMyEclipseProjectTest( "project-myeclipse-05" );
     }
 
     /**
@@ -89,7 +91,7 @@ public class MyEclipsePluginIT
     public void testMyEclipseProject06MECLIPSE427()
         throws Exception
     {
-        testMyEclipseProject( "project-myeclipse-06-MECLIPSE-427" );
+        doMyEclipseProjectTest( "project-myeclipse-06-MECLIPSE-427" );
     }
 
     /**
@@ -101,13 +103,13 @@ public class MyEclipsePluginIT
     public void testProject07MECLIPSE445()
         throws Exception
     {
-        testMyEclipseProject( "project-myeclipse-07-MECLIPSE-445" );
+        doMyEclipseProjectTest( "project-myeclipse-07-MECLIPSE-445" );
     }
 
-    public void testMyEclipseProject( String project )
+    private void doMyEclipseProjectTest( String project )
         throws Exception
     {
-        testProject( project, null, "myeclipse-clean", "myeclipse" );
+        testProject( project, new Properties(), "myeclipse-clean", "myeclipse" );
     }
 
 }
