@@ -535,8 +535,7 @@ public class EclipseClasspathWriter
                 {
                     // NB eclipse (3.1) doesn't support variables in javadoc paths, so we need to add the
                     // full path for the maven repo
-                    javadocpath =
-                        StringUtils.replace( IdeUtils.getCanonicalPath( dep.getJavadocAttachment() ), "\\", "/" ); //$NON-NLS-1$ //$NON-NLS-2$
+                    javadocpath = IdeUtils.fixSeparator( IdeUtils.getCanonicalPath( dep.getJavadocAttachment() ) );
                 }
 
             }

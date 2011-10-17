@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+  <classpathentry kind="src" path="src/main/java" including="**/*.java"/>
+  <classpathentry kind="src" path="src/main/resources" excluding="**/*.java"/>
+  <classpathentry kind="src" path="${basedir}/target/test-classes/projects/project-65-MECLIPSE-642/shared-resources" excluding="**/*.java"/>
+  <classpathentry kind="src" path="${basedir}/target/test-classes/projects/project-65-MECLIPSE-642/s" excluding="**/*.java"/>
+  <classpathentry kind="output" path="target/classes"/>
+  <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+</classpath>

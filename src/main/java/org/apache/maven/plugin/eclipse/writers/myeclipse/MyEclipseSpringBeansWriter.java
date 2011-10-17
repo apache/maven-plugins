@@ -13,9 +13,9 @@ import java.util.Map;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.eclipse.Messages;
 import org.apache.maven.plugin.eclipse.writers.AbstractEclipseWriter;
+import org.apache.maven.plugin.ide.IdeUtils;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
-import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.PrettyPrintXMLWriter;
 import org.codehaus.plexus.util.xml.XMLWriter;
 
@@ -92,21 +92,19 @@ public class MyEclipseSpringBeansWriter
 
         // maven's cwd stays at the top of hierarchical projects so we
         // do this with full path so it works as we descend through various modules (projects)
-        String absolutePrefix = config.getEclipseProjectDirectory() + "/";
-        // convert hem all to forward slashes
-        absolutePrefix = StringUtils.replace( absolutePrefix, "\\", "/" );
-        int absolutePrefixLength = absolutePrefix.length();
+        File basedir = config.getEclipseProjectDirectory();
         Iterator onConfigFiles =
-            getConfigurationFilesList( absolutePrefix + (String) springConfig.get( "basedir" ),
+            getConfigurationFilesList( new File( basedir, (String) springConfig.get( "basedir" ) ),
                                        (String) springConfig.get( "file-pattern" ) ).iterator();
 
         while ( onConfigFiles.hasNext() )
         {
+            String onConfigFileName = (String) onConfigFiles.next();
+            File onConfigFile = new File( onConfigFileName );
+            String relativeFileName = IdeUtils.toRelativeAndFixSeparator( basedir, onConfigFile, false );
+
             writer.startElement( MYECLIPSE_SPRING_CONFIG );
-            // convert out any back slashes
-            String processedFileName = StringUtils.replace( (String) onConfigFiles.next(), "\\", "/" );
-            // write out the file name minus the absolute path to get to the top of the project
-            writer.writeText( processedFileName.substring( absolutePrefixLength ) );
+            writer.writeText( relativeFileName );
             writer.endElement();
         }
         writer.endElement();
@@ -133,17 +131,16 @@ public class MyEclipseSpringBeansWriter
      * @param pattern file include pattern
      * @return the list of filenames matching the given pattern
      */
-    private Collection getConfigurationFilesList( String basedir, String pattern )
+    private Collection getConfigurationFilesList( File basedir, String pattern )
     {
         ArrayList configFiles = new ArrayList();
 
         try
         {
-            File directory = new File( basedir );
-            if ( directory.exists() )
+            if ( basedir.exists() )
             {
                 log.debug( "Scanning " + basedir + " for spring definition files" );
-                File[] subdirs = directory.listFiles( new FileFilter()
+                File[] subdirs = basedir.listFiles( new FileFilter()
                 {
                     public boolean accept( File pathname )
                     {
@@ -155,11 +152,11 @@ public class MyEclipseSpringBeansWriter
                 {
                     for ( int i = 0; i < subdirs.length; i++ )
                     {
-                        configFiles.addAll( getConfigurationFilesList( subdirs[i].getPath(), pattern ) );
+                        configFiles.addAll( getConfigurationFilesList( subdirs[i], pattern ) );
                     }
                 }
 
-                configFiles.addAll( FileUtils.getFileNames( directory, pattern, null, true ) );
+                configFiles.addAll( FileUtils.getFileNames( basedir, pattern, null, true ) );
             }
             else
             {

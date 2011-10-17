@@ -760,6 +760,17 @@ public class EclipsePluginIT
     {
         testProject( "project-64-MECLIPSE-388" );
     }
+
+    /**
+     * [MECLIPSE-642] Releative resource directories cause StringIndexOutOfBoundsException
+     * 
+     * @throws Exception
+     */
+    public void testProject65()
+        throws Exception
+    {
+        testProject( "project-65-MECLIPSE-642" );
+    }
     
 
     public void testGroovy()

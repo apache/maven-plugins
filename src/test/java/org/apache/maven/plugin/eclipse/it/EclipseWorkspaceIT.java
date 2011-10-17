@@ -19,6 +19,7 @@ import java.io.FileInputStream;
 import java.util.Properties;
 
 import org.apache.maven.plugin.eclipse.writers.workspace.EclipseWorkspaceWriter;
+import org.apache.maven.plugin.ide.IdeUtils;
 import org.codehaus.plexus.PlexusTestCase;
 import org.codehaus.plexus.util.FileUtils;
 
@@ -92,12 +93,13 @@ public class EclipseWorkspaceIT
 
         assertNotNull( "Test M2_REPO has a value", M2_REPO );
 
-        String localRepo = new File( PlexusTestCase.getBasedir(), "target/test-classes/m2repo" ).getCanonicalPath();
-
+        String expectectLocalRepo =
+            new File( PlexusTestCase.getBasedir(), "target/test-classes/m2repo" ).getCanonicalPath();
         // comparing repo's all in lower case because windows is case insensitive and settings.xml may have
         // a repository specified with different case
-        assertEquals( "Test M2_REPO value", localRepo.replace( '\\', '/' ).toLowerCase(),
-                      M2_REPO.replace( '\\', '/' ).toLowerCase() );
+        expectectLocalRepo = IdeUtils.fixSeparator( expectectLocalRepo ).toLowerCase();
+        String actualLocalRepo = IdeUtils.fixSeparator( M2_REPO ).toLowerCase();
+        assertEquals( "Test M2_REPO value", expectectLocalRepo, actualLocalRepo );
 
     }
 

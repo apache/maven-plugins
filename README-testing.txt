@@ -11,6 +11,23 @@ Testing maven-eclipse-plugin
   
   One day these tests will be unified into whatever "sanctioned" way of doing integration tests becomes.
   
+Running a single test
+* Comment out the TestCase file
+  For the test case you want to run, you need to manually comment out *ALL* the other tests.
+  e.g. 
+    in EclipsePluginIT if you want to run just "testProject65" you need to comment out 
+    everything but that one method.
+    
+* Run mvn and tell surefire to only run your TestCase file 
+
+  (See http://maven.apache.org/plugins/maven-surefire-plugin/examples/single-test.html for more details)
+  
+  mvn -Prun-its -Dtest=EclipsePluginIT verify
+  
+* Dont forget to undo this prior to committing
+
+  You probably wont, since the file will have a massive change set, but you have been warned.
+  
 PluginTestTool
   The bulk of the integration tests are using the old (and obsoleted) method of PluginTestTool.
   These IT tests are invoked via maven-failsafe-plugin:integration-test which looks for JUnit test cases 
