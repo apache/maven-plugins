@@ -1,0 +1,47 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>eclipse.project65</groupId>
+    <artifactId>parent</artifactId>
+    <version>1.0</version>
+  </parent>
+  <groupId>eclipse.project65</groupId>
+  <artifactId>module-1</artifactId>
+  <version>1</version>
+  <packaging>war</packaging>
+  <name>War Project</name>
+  <build>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+      </resource>
+      <resource>
+        <directory>../shared-resources</directory>
+      </resource>
+      <!-- The original bug is because resource.getDirectory().substring( basedir.length() ) So we need a resource directory that is shorter than basedir. It's been re-implemented to use IdeUtils anyway, but include the check -->
+      <resource>
+        <directory>../s</directory>
+      </resource>
+    </resources>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-eclipse-plugin</artifactId>
+        <version>test</version>
+        <configuration>
+          <workspace>${basedir}/../../eclipse/workspaceDoesNotExist</workspace>
+          <wtpversion>1.5</wtpversion>
+          <wtpContextName>contextName</wtpContextName>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <configuration>
+          <!-- make sure this plugin can handle explicitly set warSoruceDirectory in reactor mode -->
+          <warSourceDirectory>src/main/webapp</warSourceDirectory>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

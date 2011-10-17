@@ -296,8 +296,8 @@ public class EclipseProjectWriter
                         && !dep.isTestDependency() && !dep.isOsgiBundle() )
                     {
                         String name = dep.getFile().getName();
-                        addLink( writer, name, StringUtils.replace( IdeUtils.getCanonicalPath( dep.getFile() ), "\\",
-                                                                    "/" ), LINK_TYPE_FILE );
+                        addLink( writer, name, IdeUtils.fixSeparator( IdeUtils.getCanonicalPath( dep.getFile() ) ),
+                                 LINK_TYPE_FILE );
                     }
                 }
             }
@@ -316,7 +316,7 @@ public class EclipseProjectWriter
         if ( file.isFile() )
         {
             String name = IdeUtils.toRelativeAndFixSeparator( projectBaseDir, file, true );
-            String location = IdeUtils.getCanonicalPath( file ).replaceAll( "\\\\", "/" ); //$NON-NLS-1$ //$NON-NLS-2$
+            String location = IdeUtils.fixSeparator( IdeUtils.getCanonicalPath( file ) );
 
             addLink( writer, name, location, LINK_TYPE_FILE );
         }
@@ -337,7 +337,7 @@ public class EclipseProjectWriter
             if ( sourceRoot.isDirectory() )
             {
                 String name = IdeUtils.toRelativeAndFixSeparator( projectBaseDir, sourceRoot, true );
-                String location = IdeUtils.getCanonicalPath( sourceRoot ).replaceAll( "\\\\", "/" ); //$NON-NLS-1$ //$NON-NLS-2$
+                String location = IdeUtils.fixSeparator( IdeUtils.getCanonicalPath( sourceRoot ) );
 
                 addLink( writer, name, location, LINK_TYPE_DIRECTORY );
             }
@@ -355,7 +355,7 @@ public class EclipseProjectWriter
             if ( resourceDir.isDirectory() )
             {
                 String name = IdeUtils.toRelativeAndFixSeparator( projectBaseDir, resourceDir, true );
-                String location = IdeUtils.getCanonicalPath( resourceDir ).replaceAll( "\\\\", "/" ); //$NON-NLS-1$ //$NON-NLS-2$
+                String location = IdeUtils.fixSeparator( IdeUtils.getCanonicalPath( resourceDir ) );
 
                 addLink( writer, name, location, LINK_TYPE_DIRECTORY );
             }

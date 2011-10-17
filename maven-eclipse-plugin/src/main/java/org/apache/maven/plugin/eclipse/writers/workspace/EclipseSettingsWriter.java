@@ -75,7 +75,7 @@ public class EclipseSettingsWriter
         
         if ( encoding != null )
         {
-            String basedir = config.getProject().getBasedir().getAbsolutePath();
+            File basedir = config.getProject().getBasedir();
 			List compileSourceRoots = config.getProject().getCompileSourceRoots();
 			if ( compileSourceRoots != null )
 			{
@@ -83,7 +83,7 @@ public class EclipseSettingsWriter
 				while ( it.hasNext() )
 				{
 					String sourcePath = (String) it.next();
-					String relativePath = sourcePath.substring( basedir.length() ).replace( '\\', '/' );
+                    String relativePath = IdeUtils.toRelativeAndFixSeparator( basedir, new File( sourcePath ), false );
 					coreSettings.put( PROP_JDT_CORE_COMPILER_ENCODING + relativePath, encoding );
 				}
 			}
@@ -94,7 +94,7 @@ public class EclipseSettingsWriter
 				while ( it.hasNext() )
 				{
 					String sourcePath = (String) it.next();
-					String relativePath = sourcePath.substring( basedir.length() ).replace( '\\', '/' );
+                    String relativePath = IdeUtils.toRelativeAndFixSeparator( basedir, new File( sourcePath ), false );
 					coreSettings.put( PROP_JDT_CORE_COMPILER_ENCODING + relativePath, encoding );
 				}
 			}
@@ -105,7 +105,8 @@ public class EclipseSettingsWriter
 				while ( it.hasNext() )
 				{
 					Resource resource = (Resource) it.next();
-					String relativePath = resource.getDirectory().substring( basedir.length() ).replace( '\\', '/' );
+                    String relativePath =
+                        IdeUtils.toRelativeAndFixSeparator( basedir, new File( resource.getDirectory() ), false );
 					coreSettings.put( PROP_JDT_CORE_COMPILER_ENCODING + relativePath, encoding );
 				}
 			}
@@ -116,7 +117,8 @@ public class EclipseSettingsWriter
 				while ( it.hasNext() )
 				{
 					Resource resource = (Resource) it.next();
-					String relativePath = resource.getDirectory().substring( basedir.length() ).replace( '\\', '/' );
+                    String relativePath =
+                        IdeUtils.toRelativeAndFixSeparator( basedir, new File( resource.getDirectory() ), false );
 					coreSettings.put( PROP_JDT_CORE_COMPILER_ENCODING + relativePath, encoding );
 				}
 			}
