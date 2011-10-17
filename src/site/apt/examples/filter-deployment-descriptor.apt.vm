@@ -3,7 +3,7 @@
  ------
  Dennis Lundberg
  ------
- 2010-05-26
+ 2011-10-17
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -55,3 +55,6 @@ Filter the deployment descriptor
   ...
 </project>
 +-------+
+
+  You can read more about filtering in the
+  {{{http://maven.apache.org/guides/getting-started/index.html#How_do_I_filter_resource_files}Getting Started Guide}}.
