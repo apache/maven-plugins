@@ -31,7 +31,7 @@ under the License.
         <p>
           You just have to configure it:
           <source>
-<project>
+<![CDATA[<project>
   ...
   <build>
     <plugins>
@@ -52,7 +52,7 @@ under the License.
     </plugins>
   </build>
   ...
-</project>
+</project>]]>
           </source>
 Please see the <a href="http://maven.apache.org/shared/maven-archiver/examples/classpath.html">Maven Archiver Reference</a>
 for more information about controlling the exact format of the generated class path entries.
