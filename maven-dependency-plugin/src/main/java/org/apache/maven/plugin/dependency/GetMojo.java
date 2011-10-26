@@ -169,7 +169,7 @@ public class GetMojo
 
     /**
      * Download transitively, retrieving the specified artifact and all of its dependencies.
-     * @parameter expression="{$transitive}" default-value=true
+     * @parameter expression="${transitive}" default-value=true
      */
     private boolean transitive = true;
 
