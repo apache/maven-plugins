@@ -19,12 +19,15 @@ package org.apache.maven.plugin.dependency;
  * under the License.
  */
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
@@ -150,6 +153,13 @@ public class GetMojo
     private String artifact;
 
     /**
+     * The destination file to copy the artifact to, if other than the local repository
+     * @parameter expression="${dest}"
+     * @since 2.4
+     */
+    private String destination;
+
+    /**
      *
      * @parameter expression="${project.remoteArtifactRepositories}"
      * @required
@@ -270,6 +280,25 @@ public class GetMojo
         catch ( AbstractArtifactResolutionException e )
         {
             throw new MojoExecutionException( "Couldn't download artifact: " + e.getMessage(), e );
+        }
+
+        if ( destination != null )
+        {
+            File src = toDownload.getFile();
+            File dest = new File( destination );
+            if ( getLog().isInfoEnabled() )
+            {
+                getLog().info( "Copying " + src.getAbsolutePath() + " to " + dest.getAbsolutePath() );
+            }
+            try
+            {
+                FileUtils.copyFile( toDownload.getFile(), new File( destination ) );
+            }
+            catch ( IOException e )
+            {
+                throw new MojoExecutionException( "Couldn't copy downloaded artifact from " + src.getAbsolutePath()
+                    + " to " + dest.getAbsolutePath() + " : " + e.getMessage(), e );
+            }
         }
     }
 
