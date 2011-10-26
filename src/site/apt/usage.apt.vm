@@ -665,3 +665,14 @@ mvn dependency:tree -Doutput=/path/to/file.graphml -DoutputType=graphml
 
   This mojo is used to list all the repositories that this build depends upon. It will show repositories defined in your settings, 
   poms and declared in transitive dependency poms.
+
+* The <<<dependency:get>>> Mojo
+
+  This mojo is used to fetch an artifact and (optionally) its dependencies from remote repositories using its Maven coordinates.
+
++-----+
+mvn dependency:get -DgroupId=org.apache.maven -DartifactId=maven-core -Dversion=2.2.1 -Dpackaging=jar -Dclassifier=sources -DremoteRepositories=central::default::http://repo1.maven.apache.org/maven2,myrepo::::http://myrepo.com/maven2
+mvn dependency:get -DartifactId=org.apache.maven -DartifactId=maven-core -Dversion=2.2.1 -Dpackaging=jar -Dclassifier=sources -DremoteRepositories=http://repo1.maven.apache.org/maven2 
+mvn dependency:get -Dartifact=org.apache.maven:maven-core:2.2.1:jar:sources -DremoteRepositories=http://repo1.maven.apache.org/maven2 
++-----+
+
