@@ -26,6 +26,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.artifact.Artifact;
@@ -52,6 +54,7 @@ import org.codehaus.plexus.util.StringUtils;
 public class GetMojo
     extends AbstractMojo
 {
+    private static final Pattern ALT_REPO_SYNTAX_PATTERN = Pattern.compile( "(.+)::(.*)::(.+)" );
 
     /**
      * @component
@@ -231,28 +234,7 @@ public class GetMojo
             List<String> repos = Arrays.asList( StringUtils.split( remoteRepositories, "," ) );
             for ( String repo : repos )
             {
-                String[] split = StringUtils.split( repo, "::" );
-                if ( split.length > 1 && split.length != 3 )
-                {
-                    throw new MojoExecutionException(
-                                                      "remoteRepositories parameter must be a list of URLs or Strings like id::layout::url" );
-                }
-
-                String id = repositoryId;
-                ArtifactRepositoryLayout layout = getLayout( "default" );
-                String url = repo;
-                if ( split.length > 1 )
-                {
-                    id = split[0];
-                    if ( !StringUtils.isEmpty( split[1] ) )
-                    {
-                        layout = getLayout( split[1] );
-                    }
-                    url = split[2];
-                }
-                ArtifactRepository remoteRepo =
-                    artifactRepositoryFactory.createArtifactRepository( id, url, layout, always, always );
-                repoList.add( remoteRepo );
+                repoList.add( parseRepository( repo, always ) );
             }
         }
 
@@ -302,14 +284,42 @@ public class GetMojo
         }
     }
 
+    ArtifactRepository parseRepository( String repo, ArtifactRepositoryPolicy policy )
+        throws MojoFailureException
+    {
+        // if it's a simple url
+        String id = repositoryId;
+        ArtifactRepositoryLayout layout = getLayout( "default" );
+        String url = repo;
+
+        // if it's an extended repo URL of the form id::layout::url
+        if ( repo.indexOf( "::" ) >= 0 )
+        {
+            Matcher matcher = ALT_REPO_SYNTAX_PATTERN.matcher( repo );
+            if ( !matcher.matches() )
+            {
+                throw new MojoFailureException( repo, "Invalid syntax for repository: " + repo,
+                                                "Invalid syntax for repository. Use \"id::layout::url\" or \"URL\"." );
+            }
+
+            id = matcher.group( 1 ).trim();
+            if ( !StringUtils.isEmpty( matcher.group( 2 ) ) )
+            {
+                layout = getLayout( matcher.group( 2 ).trim() );
+            }
+            url = matcher.group( 3 ).trim();
+        }
+        return artifactRepositoryFactory.createArtifactRepository( id, url, layout, policy, policy );
+    }
+
     private ArtifactRepositoryLayout getLayout( String id )
-        throws MojoExecutionException
+        throws MojoFailureException
     {
         ArtifactRepositoryLayout layout = (ArtifactRepositoryLayout) repositoryLayouts.get( id );
 
         if ( layout == null )
         {
-            throw new MojoExecutionException( "Invalid repository layout: " + id );
+            throw new MojoFailureException( id, "Invalid repository layout", "Invalid repository layout: " + id );
         }
 
         return layout;

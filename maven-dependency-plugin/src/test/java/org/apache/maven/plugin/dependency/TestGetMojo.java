@@ -21,38 +21,43 @@ package org.apache.maven.plugin.dependency;
 
 import java.io.File;
 
+import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.artifact.repository.ArtifactRepositoryPolicy;
+import org.apache.maven.artifact.repository.layout.DefaultRepositoryLayout;
+import org.apache.maven.artifact.repository.layout.LegacyRepositoryLayout;
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.testing.stubs.StubArtifactRepository;
 
 public class TestGetMojo
     extends AbstractDependencyMojoTestCase
 {
+    GetMojo mojo;
 
     protected void setUp()
         throws Exception
     {
         // required for mojo lookups to work
         super.setUp( "markers", false );
+
+        File testPom = new File( getBasedir(), "target/test-classes/unit/get-test/plugin-config.xml" );
+        assert testPom.exists();
+        mojo = (GetMojo) lookupMojo( "get", testPom );
+
+        assertNotNull( mojo );
+        setVariableValueToObject( mojo, "localRepository", new StubArtifactRepository( testDir.getAbsolutePath() ) );
     }
 
     /**
-     * tests the proper discovery and configuration of the mojo
+     * Test transitive parameter
      * 
      * @throws Exception
      */
-    public void testgetTestEnvironment()
+    public void testTransitive()
         throws Exception
     {
-        File testPom = new File( getBasedir(), "target/test-classes/unit/get-test/plugin-config.xml" );
-        assert testPom.exists();
-        GetMojo mojo = (GetMojo) lookupMojo( "get", testPom );
-
-        assertNotNull( mojo );
-
-        setVariableValueToObject( mojo, "localRepository", new StubArtifactRepository( testDir.getAbsolutePath() ) );
-
         // Set properties, transitive = default value = true
         setVariableValueToObject( mojo, "transitive", Boolean.FALSE );
-        setVariableValueToObject( mojo, "repositoryUrl", "http://repo1.maven.org/maven2" );
+        setVariableValueToObject( mojo, "repositoryUrl", "http://repo1.maven.apache.org/maven2" );
         setVariableValueToObject( mojo, "groupId", "org.apache.maven" );
         setVariableValueToObject( mojo, "artifactId", "maven-model" );
         setVariableValueToObject( mojo, "version", "2.0.9" );
@@ -62,5 +67,73 @@ public class TestGetMojo
         // Set properties, transitive = false
         setVariableValueToObject( mojo, "transitive", Boolean.FALSE );
         mojo.execute();
+    }
+
+    /**
+     * Test remote repositories parameter
+     * 
+     * @throws Exception
+     */
+    public void testRemoteRepositories()
+        throws Exception
+    {
+        setVariableValueToObject( mojo, "remoteRepositories", "central::default::http://repo1.maven.apache.org/maven2,"
+            + "central::::http://repo1.maven.apache.org/maven2," + "http://repo1.maven.apache.org/maven2" );
+        setVariableValueToObject( mojo, "groupId", "org.apache.maven" );
+        setVariableValueToObject( mojo, "artifactId", "maven-model" );
+        setVariableValueToObject( mojo, "version", "2.0.9" );
+
+        mojo.execute();
+    }
+
+    /**
+     * Test parsing of the remote repositories parameter
+     * 
+     * @throws Exception
+     */
+    public void testParseRepository()
+        throws Exception
+    {
+        ArtifactRepository repo;
+        ArtifactRepositoryPolicy policy = null;
+        repo = mojo.parseRepository( "central::default::http://repo1.maven.apache.org/maven2", policy );
+        assertEquals( "central", repo.getId() );
+        assertEquals( DefaultRepositoryLayout.class, repo.getLayout().getClass() );
+        assertEquals( "http://repo1.maven.apache.org/maven2", repo.getUrl() );
+
+        repo = mojo.parseRepository( "central::legacy::http://repo1.maven.apache.org/maven2", policy );
+        assertEquals( "central", repo.getId() );
+        assertEquals( LegacyRepositoryLayout.class, repo.getLayout().getClass() );
+        assertEquals( "http://repo1.maven.apache.org/maven2", repo.getUrl() );
+
+        repo = mojo.parseRepository( "central::::http://repo1.maven.apache.org/maven2", policy );
+        assertEquals( "central", repo.getId() );
+        assertEquals( DefaultRepositoryLayout.class, repo.getLayout().getClass() );
+        assertEquals( "http://repo1.maven.apache.org/maven2", repo.getUrl() );
+
+        repo = mojo.parseRepository( "http://repo1.maven.apache.org/maven2", policy );
+        assertEquals( "temp", repo.getId() );
+        assertEquals( DefaultRepositoryLayout.class, repo.getLayout().getClass() );
+        assertEquals( "http://repo1.maven.apache.org/maven2", repo.getUrl() );
+
+        try
+        {
+            repo = mojo.parseRepository( "::::http://repo1.maven.apache.org/maven2", policy );
+            fail( "Exception expected" );
+        }
+        catch ( MojoFailureException e )
+        {
+            // expected
+        }
+
+        try
+        {
+            repo = mojo.parseRepository( "central::http://repo1.maven.apache.org/maven2", policy );
+            fail( "Exception expected" );
+        }
+        catch ( MojoFailureException e )
+        {
+            // expected
+        }
     }
 }
