@@ -75,4 +75,15 @@ public class DependencyPluginTest
     {
         // testProject( "resolve", "dependency:resolve" );
     }
+    
+    /**
+     * Test Resolve Mojo. Simple Harness test essentially
+     * 
+     * @throws Exception any exception thrown during test
+     */
+    public void testGet()
+        throws Exception
+    {
+        // testProject( "resolve", "dependency:get" );
+    }
 }
