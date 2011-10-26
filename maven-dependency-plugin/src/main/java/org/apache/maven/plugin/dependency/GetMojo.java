@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
@@ -68,9 +69,11 @@ public class GetMojo
     private ArtifactRepositoryFactory artifactRepositoryFactory;
 
     /**
-     * @component roleHint="default"
+     * Map that contains the layouts.
+     *
+     * @component role="org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout"
      */
-    private ArtifactRepositoryLayout repositoryLayout;
+    private Map repositoryLayouts;
 
     /**
      * @component
@@ -86,19 +89,19 @@ public class GetMojo
     private ArtifactRepository localRepository;
 
     /**
-     * The groupId of the artifact to download
+     * The groupId of the artifact to download. Ignored if {@link #artifact} is used.
      * @parameter expression="${groupId}"
      */
     private String groupId;
 
     /**
-     * The artifactId of the artifact to download
+     * The artifactId of the artifact to download. Ignored if {@link #artifact} is used.
      * @parameter expression="${artifactId}"
      */
     private String artifactId;
 
     /**
-     * The version of the artifact to download
+     * The version of the artifact to download. Ignored if {@link #artifact} is used.
      * @parameter expression="${version}"
      */
     private String version;
@@ -111,7 +114,7 @@ public class GetMojo
     private String classifier;
 
     /**
-     * The packaging of the artifact to download
+     * The packaging of the artifact to download. Ignored if {@link #artifact} is used.
      * @parameter expression="${packaging}" default-value="jar"
      */
     private String packaging = "jar";
@@ -119,24 +122,29 @@ public class GetMojo
     /**
      * The id of the repository from which we'll download the artifact
      * @parameter expression="${repoId}" default-value="temp"
+     * @deprecated Use remoteRepositories
      */
     private String repositoryId = "temp";
 
     /**
-     * The url of the repository from which we'll download the artifact
+     * The url of the repository from which we'll download the artifact. DEPRECATED Use remoteRepositories
+     * 
+     * @deprecated Use remoteRepositories
      * @parameter expression="${repoUrl}"
-     * @required
      */
     private String repositoryUrl;
 
     /**
+     * Repositories in the format id::[layout]::url or just url, separated by comma.
+     * ie. central::default::http://repo1.maven.apache.org/maven2,myrepo::::http://repo.acme.com,http://repo.acme2.com
+     * 
      * @parameter expression="${remoteRepositories}"
-     * @readonly
      */
     private String remoteRepositories;
 
     /**
      * A string of the form groupId:artifactId:version[:packaging][:classifier].
+     * 
      * @parameter expression="${artifact}"
      */
     private String artifact;
@@ -164,7 +172,7 @@ public class GetMojo
             throw new MojoFailureException( "You must specify an artifact, "
                 + "e.g. -Dartifact=org.apache.maven.plugins:maven-downloader-plugin:1.0" );
         }
-        if ( artifactId == null )
+        if ( artifact != null )
         {
             String[] tokens = StringUtils.split( artifact, ":" );
             if ( tokens.length < 3 || tokens.length > 5 )
@@ -199,23 +207,53 @@ public class GetMojo
         ArtifactRepositoryPolicy always =
             new ArtifactRepositoryPolicy( true, ArtifactRepositoryPolicy.UPDATE_POLICY_ALWAYS,
                                           ArtifactRepositoryPolicy.CHECKSUM_POLICY_WARN );
-        ArtifactRepository remoteRepo =
-            artifactRepositoryFactory.createArtifactRepository( repositoryId, repositoryUrl, repositoryLayout, always,
-                                                                always );
 
-        if ( pomRemoteRepositories == null )
+        List<ArtifactRepository> repoList = new ArrayList<ArtifactRepository>();
+
+        if ( pomRemoteRepositories != null )
         {
-            pomRemoteRepositories = new ArrayList();
+            repoList.addAll( pomRemoteRepositories );
         }
 
-        List repoList = new ArrayList( pomRemoteRepositories );
         if ( remoteRepositories != null )
         {
-            // TODO: remote repositories as Strings?
-            repoList.addAll( Arrays.asList( StringUtils.split( remoteRepositories, "," ) ) );
+            // Use the same format as in the deploy plugin id::layout::url
+            List<String> repos = Arrays.asList( StringUtils.split( remoteRepositories, "," ) );
+            for ( String repo : repos )
+            {
+                String[] split = StringUtils.split( repo, "::" );
+                if ( split.length > 1 && split.length != 3 )
+                {
+                    throw new MojoExecutionException(
+                                                      "remoteRepositories parameter must be a list of URLs or Strings like id::layout::url" );
+                }
+
+                String id = repositoryId;
+                ArtifactRepositoryLayout layout = getLayout( "default" );
+                String url = repo;
+                if ( split.length > 1 )
+                {
+                    id = split[0];
+                    if ( !StringUtils.isEmpty( split[1] ) )
+                    {
+                        layout = getLayout( split[1] );
+                    }
+                    url = split[2];
+                }
+                ArtifactRepository remoteRepo =
+                    artifactRepositoryFactory.createArtifactRepository( id, url, layout, always, always );
+                repoList.add( remoteRepo );
+            }
         }
 
-        repoList.add( remoteRepo );
+        if ( repositoryUrl != null )
+        {
+            getLog().warn( "repositoryUrl parameter is deprecated. Use remoteRepositories instead" );
+            ArtifactRepository remoteRepo =
+                artifactRepositoryFactory.createArtifactRepository( repositoryId, repositoryUrl,
+                                                                    getLayout( "default" ), always, always );
+            repoList.add( remoteRepo );
+        }
 
         try
         {
@@ -228,11 +266,23 @@ public class GetMojo
             {
                 artifactResolver.resolve( toDownload, repoList, localRepository );
             }
-
         }
         catch ( AbstractArtifactResolutionException e )
         {
             throw new MojoExecutionException( "Couldn't download artifact: " + e.getMessage(), e );
         }
+    }
+
+    private ArtifactRepositoryLayout getLayout( String id )
+        throws MojoExecutionException
+    {
+        ArtifactRepositoryLayout layout = (ArtifactRepositoryLayout) repositoryLayouts.get( id );
+
+        if ( layout == null )
+        {
+            throw new MojoExecutionException( "Invalid repository layout: " + id );
+        }
+
+        return layout;
     }
 }
