@@ -167,7 +167,7 @@ public class GetMojo
         if ( artifactId == null )
         {
             String[] tokens = StringUtils.split( artifact, ":" );
-            if ( tokens.length < 3 && tokens.length > 5 )
+            if ( tokens.length < 3 || tokens.length > 5 )
             {
                 throw new MojoFailureException(
                     "Invalid artifact, you must specify groupId:artifactId:version[:packaging][:classifier] "
