@@ -37,7 +37,7 @@ under the License.
         <artifactId>maven-antrun-plugin</artifactId>
         <version>@pom.version@</version>
         <configuration>
-	  <neverFail>true</neverFail>
+	  <failOnError>false</failOnError>
           <tasks>
 	    <fail>This is a failure</fail>
           </tasks>
