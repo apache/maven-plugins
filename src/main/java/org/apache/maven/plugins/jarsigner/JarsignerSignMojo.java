@@ -19,21 +19,15 @@ package org.apache.maven.plugins.jarsigner;
  * under the License.
  */
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
-import java.util.zip.ZipOutputStream;
-
 import org.apache.maven.plugin.MojoExecutionException;
-import org.codehaus.plexus.util.FileUtils;
-import org.codehaus.plexus.util.IOUtil;
+import org.apache.maven.shared.jarsigner.JarSignerRequest;
+import org.apache.maven.shared.jarsigner.JarSignerSignRequest;
+import org.apache.maven.shared.jarsigner.JarSignerUtil;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.cli.Commandline;
+
+import java.io.File;
+import java.io.IOException;
 
 /**
  * Signs a project artifact and attachments using jarsigner.
@@ -85,21 +79,21 @@ public class JarsignerSignMojo
 
     /**
      * See <a href="http://java.sun.com/javase/6/docs/technotes/tools/windows/jarsigner.html#Options">options</a>.
-     * 
+     *
      * @parameter expression="${jarsigner.providerName}"
      */
     private String providerName;
 
     /**
      * See <a href="http://java.sun.com/javase/6/docs/technotes/tools/windows/jarsigner.html#Options">options</a>.
-     * 
+     *
      * @parameter expression="${jarsigner.providerClass}"
      */
     private String providerClass;
 
     /**
      * See <a href="http://java.sun.com/javase/6/docs/technotes/tools/windows/jarsigner.html#Options">options</a>.
-     * 
+     *
      * @parameter expression="${jarsigner.providerArg}"
      */
     private String providerArg;
@@ -115,73 +109,11 @@ public class JarsignerSignMojo
     /**
      * Indicates whether existing signatures should be removed from the processed JAR files prior to signing them. If
      * enabled, the resulting JAR will appear as being signed only once.
-     * 
+     *
      * @parameter expression="${jarsigner.removeExistingSignatures}" default-value="false"
      * @since 1.1
      */
     private boolean removeExistingSignatures;
-
-    protected Commandline getCommandline( final File archive, final Commandline commandLine )
-    {
-        if ( archive == null )
-        {
-            throw new NullPointerException( "archive" );
-        }
-        if ( commandLine == null )
-        {
-            throw new NullPointerException( "commandLine" );
-        }
-
-        if ( !StringUtils.isEmpty( this.keystore ) )
-        {
-            commandLine.createArg().setValue( "-keystore" );
-            commandLine.createArg().setValue( this.keystore );
-        }
-        if ( !StringUtils.isEmpty( this.storepass ) )
-        {
-            commandLine.createArg().setValue( "-storepass" );
-            commandLine.createArg().setValue( this.storepass );
-        }
-        if ( !StringUtils.isEmpty( this.keypass ) )
-        {
-            commandLine.createArg().setValue( "-keypass" );
-            commandLine.createArg().setValue( this.keypass );
-        }
-        if ( !StringUtils.isEmpty( this.storetype ) )
-        {
-            commandLine.createArg().setValue( "-storetype" );
-            commandLine.createArg().setValue( this.storetype );
-        }
-        if ( !StringUtils.isEmpty( this.providerName ) )
-        {
-            commandLine.createArg().setValue( "-providerName" );
-            commandLine.createArg().setValue( this.providerName );
-        }
-        if ( !StringUtils.isEmpty( this.providerClass ) )
-        {
-            commandLine.createArg().setValue( "-providerClass" );
-            commandLine.createArg().setValue( this.providerClass );
-        }
-        if ( !StringUtils.isEmpty( this.providerArg ) )
-        {
-            commandLine.createArg().setValue( "-providerArg" );
-            commandLine.createArg().setValue( this.providerArg );
-        }
-        if ( !StringUtils.isEmpty( this.sigfile ) )
-        {
-            commandLine.createArg().setValue( "-sigfile" );
-            commandLine.createArg().setValue( this.sigfile );
-        }
-
-        commandLine.createArg().setFile( archive );
-
-        if ( !StringUtils.isEmpty( this.alias ) )
-        {
-            commandLine.createArg().setValue( this.alias );
-        }
-
-        return commandLine;
-    }
 
     protected String getCommandlineInfo( final Commandline commandLine )
     {
@@ -201,103 +133,30 @@ public class JarsignerSignMojo
     {
         if ( removeExistingSignatures )
         {
-            unsignArchive( archive );
+            try
+            {
+                JarSignerUtil.unsignArchive( archive );
+            }
+            catch ( IOException e )
+            {
+                throw new MojoExecutionException( "Failed to unsign archive " + archive + ": " + e.getMessage(), e );
+            }
         }
     }
 
-    /**
-     * Removes any existing signatures from the specified JAR file. We will stream from the input JAR directly to the
-     * output JAR to retain as much metadata from the original JAR as possible.
-     * 
-     * @param jarFile The JAR file to unsign, must not be <code>null</code>.
-     * @throws MojoExecutionException If the unsigning failed.
-     */
-    private void unsignArchive( final File jarFile )
-        throws MojoExecutionException
+    protected JarSignerRequest createRequest( File archive )
     {
-        if ( getLog().isDebugEnabled() )
-        {
-            getLog().debug( "Unsigning " + jarFile );
-        }
-
-        File unsignedFile = new File( jarFile.getAbsolutePath() + ".unsigned" );
-
-        ZipInputStream zis = null;
-        ZipOutputStream zos = null;
-        try
-        {
-            zis = new ZipInputStream( new BufferedInputStream( new FileInputStream( jarFile ) ) );
-            zos = new ZipOutputStream( new BufferedOutputStream( new FileOutputStream( unsignedFile ) ) );
-
-            for ( ZipEntry ze = zis.getNextEntry(); ze != null; ze = zis.getNextEntry() )
-            {
-                if ( isSignatureFile( ze.getName() ) )
-                {
-                    if ( getLog().isDebugEnabled() )
-                    {
-                        getLog().debug( "  Removing " + ze.getName() );
-                    }
-
-                    continue;
-                }
-
-                zos.putNextEntry( ze );
-
-                IOUtil.copy( zis, zos );
-            }
-
-        }
-        catch ( IOException e )
-        {
-            throw new MojoExecutionException( "Failed to unsign archive " + jarFile + ": " + e.getMessage(), e );
-        }
-        finally
-        {
-            IOUtil.close( zis );
-            IOUtil.close( zos );
-        }
-
-        try
-        {
-            FileUtils.rename( unsignedFile, jarFile );
-        }
-        catch ( IOException e )
-        {
-            throw new MojoExecutionException( "Failed to unsign archive " + jarFile + ": " + e.getMessage(), e );
-        }
-    }
-
-    /**
-     * Checks whether the specified JAR file entry denotes a signature-related file, i.e. matches
-     * <code>META-INF/*.SF</code>, <code>META-INF/*.DSA</code> or <code>META-INF/*.RSA</code>.
-     * 
-     * @param entryName The name of the JAR file entry to check, must not be <code>null</code>.
-     * @return <code>true</code> if the entry is related to a signature, <code>false</code> otherwise.
-     */
-    private boolean isSignatureFile( String entryName )
-    {
-        if ( entryName.regionMatches( true, 0, "META-INF", 0, 8 ) )
-        {
-            entryName = entryName.replace( '\\', '/' );
-
-            if ( entryName.indexOf( '/' ) == 8 && entryName.lastIndexOf( '/' ) == 8 )
-            {
-                if ( entryName.regionMatches( true, entryName.length() - 3, ".SF", 0, 3 ) )
-                {
-                    return true;
-                }
-                if ( entryName.regionMatches( true, entryName.length() - 4, ".DSA", 0, 4 ) )
-                {
-                    return true;
-                }
-                if ( entryName.regionMatches( true, entryName.length() - 4, ".RSA", 0, 4 ) )
-                {
-                    return true;
-                }
-            }
-        }
-
-        return false;
+        JarSignerSignRequest request = new JarSignerSignRequest();
+        request.setAlias( alias );
+        request.setKeypass( keypass );
+        request.setKeystore( keystore );
+        request.setProviderArg( providerArg );
+        request.setProviderClass( providerClass );
+        request.setProviderName( providerName );
+        request.setSigfile( sigfile );
+        request.setStorepass( storepass );
+        request.setStoretype( storetype );
+        return request;
     }
 
 }

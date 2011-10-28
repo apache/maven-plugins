@@ -19,32 +19,19 @@ package org.apache.maven.plugins.jarsigner;
  * under the License.
  */
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.text.MessageFormat;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Properties;
-import java.util.ResourceBundle;
-import java.util.zip.ZipInputStream;
-
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
-
+import org.apache.maven.shared.jarsigner.*;
 import org.codehaus.plexus.util.FileUtils;
-import org.codehaus.plexus.util.Os;
 import org.codehaus.plexus.util.StringUtils;
-import org.codehaus.plexus.util.cli.CommandLineException;
-import org.codehaus.plexus.util.cli.CommandLineUtils;
 import org.codehaus.plexus.util.cli.Commandline;
-import org.codehaus.plexus.util.cli.StreamConsumer;
+
+import java.io.File;
+import java.io.IOException;
+import java.text.MessageFormat;
+import java.util.*;
 
 /**
  * Maven Jarsigner Plugin base class.
@@ -66,7 +53,7 @@ public abstract class AbstractJarsignerMojo
     /**
      * The maximum memory available to the JAR signer, e.g. <code>256M</code>. See <a
      * href="http://java.sun.com/javase/6/docs/technotes/tools/windows/java.html#Xms">-Xmx</a> for more details.
-     * 
+     *
      * @parameter expression="${jarsigner.maxMemory}"
      */
     private String maxMemory;
@@ -80,7 +67,7 @@ public abstract class AbstractJarsignerMojo
 
     /**
      * The base directory to scan for JAR files using Ant-like inclusion/exclusion patterns.
-     * 
+     *
      * @parameter expression="${jarsigner.archiveDirectory}"
      * @since 1.1
      */
@@ -90,7 +77,7 @@ public abstract class AbstractJarsignerMojo
      * The Ant-like inclusion patterns used to select JAR files to process. The patterns must be relative to the
      * directory given by the parameter {@link #archiveDirectory}. By default, the pattern
      * <code>&#42;&#42;/&#42;.?ar</code> is used.
-     * 
+     *
      * @parameter
      * @since 1.1
      */
@@ -99,11 +86,11 @@ public abstract class AbstractJarsignerMojo
     /**
      * The Ant-like exclusion patterns used to exclude JAR files from processing. The patterns must be relative to the
      * directory given by the parameter {@link #archiveDirectory}.
-     * 
+     *
      * @parameter
      * @since 1.1
      */
-    private String[] excludes = {};
+    private String[] excludes = { };
 
     /**
      * List of additional arguments to append to the jarsigner command line.
@@ -121,7 +108,7 @@ public abstract class AbstractJarsignerMojo
 
     /**
      * Controls processing of the main artifact produced by the project.
-     * 
+     *
      * @parameter expression="${jarsigner.processMainArtifact}" default-value="true"
      * @since 1.1
      */
@@ -130,7 +117,7 @@ public abstract class AbstractJarsignerMojo
     /**
      * Controls processing of project attachments. If enabled, attached artifacts that are no JAR/ZIP files will be
      * automatically excluded from processing.
-     * 
+     *
      * @parameter expression="${jarsigner.processAttachedArtifacts}" default-value="true"
      * @since 1.1
      */
@@ -138,7 +125,7 @@ public abstract class AbstractJarsignerMojo
 
     /**
      * Controls processing of project attachments.
-     * 
+     *
      * @parameter expression="${jarsigner.attachments}"
      * @deprecated As of version 1.1 in favor of the new parameter <code>processAttachedArtifacts</code>.
      */
@@ -147,7 +134,7 @@ public abstract class AbstractJarsignerMojo
     /**
      * A set of artifact classifiers describing the project attachments that should be processed. This parameter is only
      * relevant if {@link #processAttachedArtifacts} is <code>true</code>. If empty, all attachments are included.
-     * 
+     *
      * @parameter
      * @since 1.2
      */
@@ -156,7 +143,7 @@ public abstract class AbstractJarsignerMojo
     /**
      * A set of artifact classifiers describing the project attachments that should not be processed. This parameter is
      * only relevant if {@link #processAttachedArtifacts} is <code>true</code>. If empty, no attachments are excluded.
-     * 
+     *
      * @parameter
      * @since 1.2
      */
@@ -172,17 +159,23 @@ public abstract class AbstractJarsignerMojo
     private MavenProject project;
 
     /**
-     * The path to the jarsigner we are going to use.
+     * Location of the working directory.
+     *
+     * @parameter default-value="${project.basedir}"
+     * @since 1.3
      */
-    private String executable;
+    private File workingDirectory;
+
+    /**
+     * @component
+     */
+    private JarSigner jarSigner;
 
     public final void execute()
         throws MojoExecutionException
     {
         if ( !this.skip )
         {
-            this.executable = getExecutable();
-
             int processed = 0;
 
             if ( this.archive != null )
@@ -252,8 +245,8 @@ public abstract class AbstractJarsignerMojo
                     }
                     catch ( IOException e )
                     {
-                        throw new MojoExecutionException( "Failed to scan archive directory for JARs: "
-                            + e.getMessage(), e );
+                        throw new MojoExecutionException(
+                            "Failed to scan archive directory for JARs: " + e.getMessage(), e );
                     }
 
                     for ( Iterator it = jarFiles.iterator(); it.hasNext(); )
@@ -275,26 +268,20 @@ public abstract class AbstractJarsignerMojo
     }
 
     /**
-     * Gets the {@code Commandline} to execute for a given Java archive taking a command line prepared for executing
-     * jarsigner.
+     * Creates the jar signer request to be executed.
      *
-     * @param archive The Java archive to get a {@code Commandline} to execute for.
-     * @param commandLine A {@code Commandline} prepared for executing jarsigner without any arguments.
-     *
-     * @return A {@code Commandline} for executing jarsigner with {@code archive}.
-     *
-     * @throws NullPointerException if {@code archive} or {@code commandLine} is {@code null}.
+     * @param archive the archive file to treat by jarsigner
+     * @return the request
+     * @since 1.3
      */
-    protected abstract Commandline getCommandline( final File archive, final Commandline commandLine );
+    protected abstract JarSignerRequest createRequest( File archive );
 
     /**
      * Gets a string representation of a {@code Commandline}.
      * <p>This method creates the string representation by calling {@code commandLine.toString()} by default.</p>
      *
      * @param commandLine The {@code Commandline} to get a string representation of.
-     *
      * @return The string representation of {@code commandLine}.
-     *
      * @throws NullPointerException if {@code commandLine} is {@code null}.
      */
     protected String getCommandlineInfo( final Commandline commandLine )
@@ -311,41 +298,11 @@ public abstract class AbstractJarsignerMojo
      * Checks whether the specified artifact is a ZIP file.
      *
      * @param artifact The artifact to check, may be <code>null</code>.
-     *
      * @return <code>true</code> if the artifact looks like a ZIP file, <code>false</code> otherwise.
      */
     private boolean isZipFile( final Artifact artifact )
     {
-        return artifact != null && artifact.getFile() != null && isZipFile( artifact.getFile() );
-    }
-
-    /**
-     * Checks whether the specified file is a JAR file. For our purposes, a ZIP file is a ZIP stream with at least one
-     * entry.
-     * 
-     * @param file The file to check, must not be <code>null</code>.
-     * @return <code>true</code> if the file looks like a ZIP file, <code>false</code> otherwise.
-     */
-    private boolean isZipFile( final File file )
-    {
-        try
-        {
-            ZipInputStream zis = new ZipInputStream( new FileInputStream( file ) );
-            try
-            {
-                return zis.getNextEntry() != null;
-            }
-            finally
-            {
-                zis.close();
-            }
-        }
-        catch ( Exception e )
-        {
-            // ignore, will fail below
-        }
-
-        return false;
+        return artifact != null && artifact.getFile() != null && JarSignerUtil.isZipFile( artifact.getFile() );
     }
 
     /**
@@ -353,8 +310,7 @@ public abstract class AbstractJarsignerMojo
      *
      * @param artifact The artifact to process.
      * @return <code>true</code> if the artifact is a JAR and was processed, <code>false</code> otherwise.
-     *
-     * @throws NullPointerException if {@code artifact} is {@code null}.
+     * @throws NullPointerException   if {@code artifact} is {@code null}.
      * @throws MojoExecutionException if processing {@code artifact} fails.
      */
     private boolean processArtifact( final Artifact artifact )
@@ -390,7 +346,7 @@ public abstract class AbstractJarsignerMojo
 
     /**
      * Pre-processes a given archive.
-     * 
+     *
      * @param archive The archive to process, must not be <code>null</code>.
      * @throws MojoExecutionException If pre-processing failed.
      */
@@ -402,9 +358,9 @@ public abstract class AbstractJarsignerMojo
 
     /**
      * Processes a given archive.
-     * 
+     *
      * @param archive The archive to process.
-     * @throws NullPointerException if {@code archive} is {@code null}.
+     * @throws NullPointerException   if {@code archive} is {@code null}.
      * @throws MojoExecutionException if processing {@code archive} fails.
      */
     private void processArchive( final File archive )
@@ -426,167 +382,43 @@ public abstract class AbstractJarsignerMojo
             getLog().debug( getMessage( "processing", archive ) );
         }
 
-        Commandline commandLine = new Commandline();
-
-        commandLine.setExecutable( this.executable );
-
-        commandLine.setWorkingDirectory( this.project.getBasedir() );
-
-        if ( this.verbose )
-        {
-            commandLine.createArg().setValue( "-verbose" );
-        }
-
-        if ( StringUtils.isNotEmpty( maxMemory ) )
-        {
-            commandLine.createArg().setValue( "-J-Xmx" + maxMemory );
-        }
-
-        if ( this.arguments != null )
-        {
-            commandLine.addArguments( this.arguments );
-        }
-
-        commandLine = getCommandline( archive, commandLine );
+        JarSignerRequest request = createRequest( archive );
+        request.setArchive( archive );
+        request.setWorkingDirectory( workingDirectory );
+        request.setMaxMemory( maxMemory );
+        request.setArguments( arguments );
 
         try
         {
-            if ( getLog().isDebugEnabled() )
+            JarSignerResult result = jarSigner.execute( request );
+
+            Commandline commandLine = result.getCommandline();
+
+            int resultCode = result.getExitCode();
+
+            if ( resultCode != 0 )
             {
-                getLog().debug( getMessage( "command", getCommandlineInfo( commandLine ) ) );
+                throw new MojoExecutionException(
+                    getMessage( "failure", getCommandlineInfo( commandLine ), new Integer( resultCode ) ) );
             }
 
-            final int result = CommandLineUtils.executeCommandLine( commandLine,
-                new InputStream()
-            {
-
-                public int read()
-                {
-                    return -1;
-                }
-
-            }, new StreamConsumer()
-            {
-
-                public void consumeLine( final String line )
-                {
-                    if ( verbose )
-                    {
-                        getLog().info( line );
-                    }
-                    else
-                    {
-                        getLog().debug( line );
-                    }
-                }
-
-            }, new StreamConsumer()
-            {
-
-                public void consumeLine( final String line )
-                {
-                    getLog().warn( line );
-                }
-
-            } );
-
-            if ( result != 0 )
-            {
-                throw new MojoExecutionException( getMessage( "failure", getCommandlineInfo( commandLine ),
-                                                              new Integer( result ) ) );
-            }
         }
-        catch ( CommandLineException e )
+        catch ( JarSignerException e )
         {
-            throw new MojoExecutionException( getMessage( "commandLineException", getCommandlineInfo( commandLine ) ),
-                                              e );
+            throw new MojoExecutionException( getMessage( "commandLineException", e.getMessage() ), e );
         }
-    }
-
-    /**
-     * Locates the executable for the jarsigner tool.
-     * 
-     * @return The executable of the jarsigner tool, never <code>null<code>.
-     */
-    private String getExecutable()
-    {
-        String command = "jarsigner" + ( Os.isFamily( Os.FAMILY_WINDOWS ) ? ".exe" : "" );
-
-        String executable =
-            findExecutable( command, System.getProperty( "java.home" ), new String[] { "../bin", "bin", "../sh" } );
-
-        if ( executable == null )
-        {
-            try
-            {
-                Properties env = CommandLineUtils.getSystemEnvVars();
-
-                String[] variables = { "JDK_HOME", "JAVA_HOME" };
-
-                for ( int i = 0; i < variables.length && executable == null; i++ )
-                {
-                    executable =
-                        findExecutable( command, env.getProperty( variables[i] ), new String[] { "bin", "sh" } );
-                }
-            }
-            catch ( IOException e )
-            {
-                if ( getLog().isDebugEnabled() )
-                {
-                    getLog().warn( "Failed to retrieve environment variables, cannot search for " + command, e );
-                }
-                else
-                {
-                    getLog().warn( "Failed to retrieve environment variables, cannot search for " + command );
-                }
-            }
-        }
-
-        if ( executable == null )
-        {
-            executable = command;
-        }
-
-        return executable;
-    }
-
-    /**
-     * Finds the specified command in any of the given sub directories of the specified JDK/JRE home directory.
-     * 
-     * @param command The command to find, must not be <code>null</code>.
-     * @param homeDir The home directory to search in, may be <code>null</code>.
-     * @param subDirs The sub directories of the home directory to search in, must not be <code>null</code>.
-     * @return The (absolute) path to the command if found, <code>null</code> otherwise.
-     */
-    private String findExecutable( String command, String homeDir, String[] subDirs )
-    {
-        if ( StringUtils.isNotEmpty( homeDir ) )
-        {
-            for ( int i = 0; i < subDirs.length; i++ )
-            {
-                File file = new File( new File( homeDir, subDirs[i] ), command );
-
-                if ( file.isFile() )
-                {
-                    return file.getAbsolutePath();
-                }
-            }
-        }
-
-        return null;
     }
 
     /**
      * Gets a message for a given key from the resource bundle backing the implementation.
      *
-     * @param key The key of the message to return.
+     * @param key  The key of the message to return.
      * @param args Arguments to format the message with or {@code null}.
-     *
      * @return The message with key {@code key} from the resource bundle backing the implementation.
-     *
      * @throws NullPointerException if {@code key} is {@code null}.
-     * @throws java.util.MissingResourceException if there is no message available matching {@code key} or accessing
-     * the resource bundle fails.
+     * @throws java.util.MissingResourceException
+     *                              if there is no message available matching {@code key} or accessing
+     *                              the resource bundle fails.
      */
     private String getMessage( final String key, final Object[] args )
     {
@@ -605,12 +437,12 @@ public abstract class AbstractJarsignerMojo
 
     private String getMessage( final String key, final Object arg )
     {
-        return getMessage( key, new Object[] { arg } );
+        return getMessage( key, new Object[]{ arg } );
     }
 
     private String getMessage( final String key, final Object arg1, final Object arg2 )
     {
-        return getMessage( key, new Object[] { arg1, arg2 } );
+        return getMessage( key, new Object[]{ arg1, arg2 } );
     }
 
 }
