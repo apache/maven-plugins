@@ -19,18 +19,6 @@ package org.apache.maven.plugin.dependency;
  * under the License.    
  */
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.artifact.factory.ArtifactFactory;
@@ -48,16 +36,27 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.FileUtils;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 /**
  * Remove the project dependencies from the local repository, and optionally
  * re-resolve them.
- * 
+ *
  * @author jdcasey
- * @since 2.0
+ * @version $Id$
  * @goal purge-local-repository
  * @aggregator
- * @version $Id$
- * 
+ * @since 2.0
  */
 public class PurgeLocalRepositoryMojo
     extends AbstractMojo
@@ -74,7 +73,7 @@ public class PurgeLocalRepositoryMojo
     /**
      * The projects in the current build. Each of these is subject to
      * refreshing.
-     * 
+     *
      * @parameter default-value="${reactorProjects}"
      * @required
      * @readonly
@@ -84,7 +83,7 @@ public class PurgeLocalRepositoryMojo
     /**
      * The list of dependencies in the form of groupId:artifactId which should
      * NOT be deleted/refreshed. This is useful for third-party artifacts.
-     * 
+     *
      * @parameter
      */
     private List<String> excludes;
@@ -94,7 +93,7 @@ public class PurgeLocalRepositoryMojo
      * to exclude artifacts from deletion/refresh. This is a command-line
      * alternative to the <code>excludes</code> parameter, since List
      * parameters are not currently compatible with CLI specification.
-     * 
+     *
      * @parameter expression="${exclude}"
      */
     private String exclude;
@@ -103,14 +102,14 @@ public class PurgeLocalRepositoryMojo
      * Whether to re-resolve the artifacts once they have been deleted from the
      * local repository. If you are running this mojo from the command-line, you
      * may want to disable this. By default, artifacts will be re-resolved.
-     * 
+     *
      * @parameter expression="${reResolve}" default-value="true"
      */
     private boolean reResolve;
 
     /**
      * The local repository, from which to delete artifacts.
-     * 
+     *
      * @parameter default-value="${localRepository}"
      * @required
      * @readonly
@@ -120,14 +119,14 @@ public class PurgeLocalRepositoryMojo
     /**
      * The artifact resolver used to re-resolve dependencies, if that option is
      * enabled.
-     * 
+     *
      * @component
      */
     private ArtifactResolver resolver;
 
     /**
      * The artifact metadata source used to resolve dependencies
-     * 
+     *
      * @component
      */
     private ArtifactMetadataSource source;
@@ -144,7 +143,7 @@ public class PurgeLocalRepositoryMojo
      * <li><b>groupId</b> - Eliminate all files associated with the artifact's
      * groupId.</li>
      * </ul>
-     * 
+     *
      * @parameter expression="${resolutionFuzziness}" default-value="file"
      */
     private String resolutionFuzziness;
@@ -152,21 +151,21 @@ public class PurgeLocalRepositoryMojo
     /**
      * Whether this mojo should act on all transitive dependencies. Default
      * value is true.
-     * 
+     *
      * @parameter expression="${actTransitively}" default-value="true"
      */
     private boolean actTransitively;
 
     /**
      * Used to construct artifacts for deletion/resolution...
-     * 
+     *
      * @component
      */
     private ArtifactFactory factory;
 
     /**
      * Whether this plugin should output verbose messages. Default is false.
-     * 
+     *
      * @parameter expression="${verbose}" default-value="false"
      */
     private boolean verbose;
@@ -184,11 +183,9 @@ public class PurgeLocalRepositoryMojo
             }
             catch ( ArtifactResolutionException e )
             {
-                MojoFailureException failure = new MojoFailureException( this,
-                                                                         "Failed to refresh project dependencies for: "
-                                                                             + project.getId(),
-                                                                         "Artifact resolution failed for project: "
-                                                                             + project.getId() );
+                MojoFailureException failure =
+                    new MojoFailureException( this, "Failed to refresh project dependencies for: " + project.getId(),
+                                              "Artifact resolution failed for project: " + project.getId() );
                 failure.initCause( e );
 
                 throw failure;
@@ -228,9 +225,10 @@ public class PurgeLocalRepositoryMojo
         {
             VersionRange vr = VersionRange.createFromVersion( dependency.getVersion() );
 
-            Artifact artifact = factory.createDependencyArtifact( dependency.getGroupId(), dependency.getArtifactId(),
-                                                                  vr, dependency.getType(), dependency.getClassifier(),
-                                                                  dependency.getScope() );
+            Artifact artifact =
+                factory.createDependencyArtifact( dependency.getGroupId(), dependency.getArtifactId(), vr,
+                                                  dependency.getType(), dependency.getClassifier(),
+                                                  dependency.getScope() );
             dependencyArtifacts.add( artifact );
         }
 
@@ -238,8 +236,9 @@ public class PurgeLocalRepositoryMojo
         {
             try
             {
-                ArtifactResolutionResult result = resolver.resolveTransitively( dependencyArtifacts, project
-                    .getArtifact(), remoteRepositories, localRepository, source );
+                ArtifactResolutionResult result =
+                    resolver.resolveTransitively( dependencyArtifacts, project.getArtifact(), remoteRepositories,
+                                                  localRepository, source );
 
                 artifactMap = ArtifactUtils.artifactMapByVersionlessId( result.getArtifacts() );
             }
@@ -303,26 +302,27 @@ public class PurgeLocalRepositoryMojo
                 if ( GROUP_ID_FUZZINESS.equals( resolutionFuzziness ) )
                 {
                     verbose( "Excluding groupId: " + excludedKey + " from refresh operation for project: "
-                        + project.getId() );
+                                 + project.getId() );
 
-                    for ( Iterator<Map.Entry<String, Artifact>> deps_it = deps.entrySet().iterator(); deps_it.hasNext(); )
+                    for ( Iterator<Map.Entry<String, Artifact>> deps_it = deps.entrySet().iterator();
+                          deps_it.hasNext(); )
                     {
                         Map.Entry<String, Artifact> dependency = deps_it.next();
-            			
-            			Artifact artifact = dependency.getValue();
-            			
+
+                        Artifact artifact = dependency.getValue();
+
                         if ( artifact.getGroupId().equals( excludedKey ) )
-            			{
-            				deps_it.remove();
-            			}
-            		}
-            	}
-            	else
-            	{
-	                verbose( "Excluding: " + excludedKey + " from refresh operation for project: " + project.getId() );
-	
-	                deps.remove( excludedKey );
-            	}
+                        {
+                            deps_it.remove();
+                        }
+                    }
+                }
+                else
+                {
+                    verbose( "Excluding: " + excludedKey + " from refresh operation for project: " + project.getId() );
+
+                    deps.remove( excludedKey );
+                }
             }
         }
 
@@ -388,8 +388,8 @@ public class PurgeLocalRepositoryMojo
             }
             message += "\nfor the artifact:";
 
-            throw new ArtifactResolutionException( message, project.getArtifact(), project
-                .getRemoteArtifactRepositories() );
+            throw new ArtifactResolutionException( message, project.getArtifact(),
+                                                   project.getRemoteArtifactRepositories() );
         }
 
     }
