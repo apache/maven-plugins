@@ -19,9 +19,10 @@ package org.apache.maven.plugins.jarsigner;
  * under the License.
  */
 
-import java.io.File;
+import org.apache.maven.shared.jarsigner.JarSignerRequest;
+import org.apache.maven.shared.jarsigner.JarSignerVerifyRequest;
 
-import org.codehaus.plexus.util.cli.Commandline;
+import java.io.File;
 
 /**
  * Checks the signatures of a project artifact and attachments using jarsigner.
@@ -43,27 +44,11 @@ public class JarsignerVerifyMojo
      */
     private boolean certs;
 
-    protected Commandline getCommandline( final File archive, final Commandline commandLine )
+    protected JarSignerRequest createRequest( File archive )
     {
-        if ( archive == null )
-        {
-            throw new NullPointerException( "archive" );
-        }
-        if ( commandLine == null )
-        {
-            throw new NullPointerException( "commandLine" );
-        }
-
-        commandLine.createArg( true ).setValue( "-verify" );
-
-        if ( this.certs )
-        {
-            commandLine.createArg().setValue( "-certs" );
-        }
-
-        commandLine.createArg().setFile( archive );
-
-        return commandLine;
+        JarSignerVerifyRequest request = new JarSignerVerifyRequest();
+        request.setCerts( certs );
+        return request;
     }
 
 }
