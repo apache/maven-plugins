@@ -28,6 +28,7 @@ import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
+import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
 import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.AbstractMojo;
@@ -170,6 +171,15 @@ public class PurgeLocalRepositoryMojo
      */
     private boolean verbose;
 
+    /**
+     * Whether to purge only snapshot artifacts.
+     *
+     * @parameter expression="${snapshotsOnly}" default-value="false"
+     * @since 2.4
+     */
+    private boolean snapshotsOnly;
+
+
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
@@ -229,6 +239,10 @@ public class PurgeLocalRepositoryMojo
                 factory.createDependencyArtifact( dependency.getGroupId(), dependency.getArtifactId(), vr,
                                                   dependency.getType(), dependency.getClassifier(),
                                                   dependency.getScope() );
+            if ( snapshotsOnly && !artifact.isSnapshot() )
+            {
+                continue;
+            }
             dependencyArtifacts.add( artifact );
         }
 
@@ -236,9 +250,25 @@ public class PurgeLocalRepositoryMojo
         {
             try
             {
-                ArtifactResolutionResult result =
-                    resolver.resolveTransitively( dependencyArtifacts, project.getArtifact(), remoteRepositories,
-                                                  localRepository, source );
+                ArtifactResolutionResult result;
+
+                if ( snapshotsOnly )
+                {
+                    result = resolver.resolveTransitively( dependencyArtifacts, project.getArtifact(), localRepository,
+                                                           remoteRepositories, source, new ArtifactFilter()
+                    {
+                        public boolean include( Artifact artifact )
+                        {
+                            return artifact.isSnapshot();
+                        }
+                    } );
+                }
+                else
+                {
+                    result =
+                        resolver.resolveTransitively( dependencyArtifacts, project.getArtifact(), remoteRepositories,
+                                                      localRepository, source );
+                }
 
                 artifactMap = ArtifactUtils.artifactMapByVersionlessId( result.getArtifacts() );
             }
