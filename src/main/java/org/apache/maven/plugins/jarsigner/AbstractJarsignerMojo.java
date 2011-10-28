@@ -23,7 +23,11 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.shared.jarsigner.*;
+import org.apache.maven.shared.jarsigner.JarSigner;
+import org.apache.maven.shared.jarsigner.JarSignerException;
+import org.apache.maven.shared.jarsigner.JarSignerRequest;
+import org.apache.maven.shared.jarsigner.JarSignerResult;
+import org.apache.maven.shared.jarsigner.JarSignerUtil;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.cli.Commandline;
@@ -31,7 +35,12 @@ import org.codehaus.plexus.util.cli.Commandline;
 import java.io.File;
 import java.io.IOException;
 import java.text.MessageFormat;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ResourceBundle;
 
 /**
  * Maven Jarsigner Plugin base class.
