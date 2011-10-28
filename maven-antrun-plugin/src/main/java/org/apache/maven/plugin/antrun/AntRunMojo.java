@@ -214,6 +214,17 @@ public class AntRunMojo
      * @since 1.7
      */
     private boolean exportAntProperties;
+    
+    /**
+     * Specifies whether a failure in the ant build leads to a failure of the Maven build.
+     * 
+     * If this value is 'true', the Maven build will proceed even if the ant build fails.
+     * If it is 'false', then the Maven build fails if the ant build fails.
+     * 
+     * @parameter default-value="false"
+     * @since 1.7
+     */
+    private boolean neverFail;
 
     /**
      * @see org.apache.maven.plugin.Mojo#execute()
@@ -335,7 +346,14 @@ public class AntRunMojo
             {
                 sb.append( "\n" ).append( fragment );
             }
-            throw new MojoExecutionException( sb.toString(), e );
+            if ( neverFail) 
+            {
+                getLog().info( sb.toString(), e );
+                return; // do not register roots.
+            } else 
+            {
+                throw new MojoExecutionException( sb.toString(), e );
+            }
         }
         catch ( Throwable e )
         {
