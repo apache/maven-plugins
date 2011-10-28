@@ -429,7 +429,10 @@ public class AntRunMojo
         antProject.setProperty( ( propertyPrefix + "project.groupId" ), mavenProject.getGroupId() );
         antProject.setProperty( ( propertyPrefix + "project.artifactId" ), mavenProject.getArtifactId() );
         antProject.setProperty( ( propertyPrefix + "project.name" ), mavenProject.getName() );
-        antProject.setProperty( ( propertyPrefix + "project.description" ), mavenProject.getDescription() );
+        if ( mavenProject.getDescription() != null)
+        {
+            antProject.setProperty( ( propertyPrefix + "project.description" ), mavenProject.getDescription() );            
+        }
         antProject.setProperty( ( propertyPrefix + "project.version" ), mavenProject.getVersion() );
         antProject.setProperty( ( propertyPrefix + "project.packaging" ), mavenProject.getPackaging() );
         antProject.setProperty( ( propertyPrefix + "project.build.directory" ), mavenProject.getBuild().getDirectory() );
