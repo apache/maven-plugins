@@ -221,10 +221,10 @@ public class AntRunMojo
      * If this value is 'true', the Maven build will proceed even if the ant build fails.
      * If it is 'false', then the Maven build fails if the ant build fails.
      * 
-     * @parameter default-value="false"
+     * @parameter default-value="true"
      * @since 1.7
      */
-    private boolean neverFail;
+    private boolean failOnError;
 
     /**
      * @see org.apache.maven.plugin.Mojo#execute()
@@ -346,7 +346,7 @@ public class AntRunMojo
             {
                 sb.append( "\n" ).append( fragment );
             }
-            if ( neverFail) 
+            if ( !failOnError ) 
             {
                 getLog().info( sb.toString(), e );
                 return; // do not register roots.
