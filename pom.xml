@@ -77,8 +77,8 @@ under the License.
     </dependency>
     <dependency>
       <groupId>org.apache.ant</groupId>
-      <artifactId>ant-nodeps</artifactId>
-      <version>1.8.1</version>
+      <artifactId>ant</artifactId>
+      <version>1.8.2</version>
     </dependency>
   </dependencies>
 
