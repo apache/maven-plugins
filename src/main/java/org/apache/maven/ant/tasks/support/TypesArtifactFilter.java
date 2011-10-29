@@ -32,7 +32,7 @@ import java.util.List;
 public class TypesArtifactFilter
     implements ArtifactFilter
 {
-    private List types = new ArrayList();
+    private List<String> types = new ArrayList<String>();
 
     /** 
      * Accepts a comma separated list of types
@@ -43,10 +43,9 @@ public class TypesArtifactFilter
     {
         if ( !types.trim().equals( "" ) )
         {
-            String[] typesArray = types.split( "," );
-            for ( int i = 0; i < typesArray.length; ++i )
+            for ( String type : types.split( "," ) )
             {
-                this.types.add( typesArray[i].trim() );
+                this.types.add( type.trim() );
             }
         }
     }
