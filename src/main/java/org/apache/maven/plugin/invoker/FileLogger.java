@@ -21,6 +21,7 @@ package org.apache.maven.plugin.invoker;
 
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.shared.invoker.InvocationOutputHandler;
+import org.apache.maven.shared.scriptinterpreter.ExecutionLogger;
 import org.codehaus.plexus.util.IOUtil;
 
 import java.io.File;
@@ -32,7 +33,7 @@ import java.io.PrintStream;
  * @version $Id$
  */
 class FileLogger
-    implements InvocationOutputHandler
+    implements InvocationOutputHandler, ExecutionLogger
 {
 
     /**
