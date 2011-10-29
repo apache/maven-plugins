@@ -33,28 +33,10 @@ import java.io.PrintStream;
  * @version $Id$
  */
 class FileLogger
+    extends org.apache.maven.shared.scriptinterpreter.FileLogger
     implements InvocationOutputHandler, ExecutionLogger
 {
 
-    /**
-     * The path to the log file.
-     */
-    private File file;
-
-    /**
-     * The underlying file stream this logger writes to.
-     */
-    private PrintStream stream;
-
-    /**
-     * A flag whether the output stream should be closed during finalization of this logger.
-     */
-    private boolean shouldFinalize = true;
-
-    /**
-     * The optional mojo logger to additionally write messages to, can be <code>nulll</code>.
-     */
-    private final Log log;
 
     /**
      * Creates a new logger that writes to the specified file.
@@ -65,7 +47,7 @@ class FileLogger
     public FileLogger( File outputFile )
         throws IOException
     {
-        this( outputFile, null );
+        super( outputFile, null );
     }
 
     /**
@@ -78,87 +60,7 @@ class FileLogger
     public FileLogger( File outputFile, Log log )
         throws IOException
     {
-        this.file = outputFile;
-        this.log = log;
-
-        outputFile.getParentFile().mkdirs();
-        stream = new PrintStream( new FileOutputStream( outputFile ) );
-
-        Runnable finalizer = new Runnable()
-        {
-            public void run()
-            {
-                try
-                {
-                    finalize();
-                }
-                catch ( Throwable e )
-                {
-                    // ignore
-                }
-            }
-        };
-
-        Runtime.getRuntime().addShutdownHook( new Thread( finalizer ) );
+        super( outputFile, log );
     }
 
-    /**
-     * Gets the path to the output file.
-     * 
-     * @return The path to the output file, never <code>null</code>.
-     */
-    public File getOutputFile()
-    {
-        return file;
-    }
-
-    /**
-     * Gets the underlying stream used to write message to the log file.
-     * 
-     * @return The underlying stream used to write message to the log file, never <code>null</code>.
-     */
-    public PrintStream getPrintStream()
-    {
-        return stream;
-    }
-
-    /**
-     * Writes the specified line to the log file and optionally to the mojo logger.
-     * 
-     * @param line The message to log.
-     */
-    public void consumeLine( String line )
-    {
-        stream.println( line );
-        stream.flush();
-
-        if ( log != null )
-        {
-            log.info( line );
-        }
-    }
-
-    /**
-     * Closes the underlying file stream.
-     */
-    public void close()
-    {
-        if ( stream != null )
-        {
-            stream.flush();
-        }
-
-        IOUtil.close( stream );
-    }
-
-    /**
-     * Closes the underlying file stream.
-     */
-    protected void finalize()
-    {
-        if ( shouldFinalize )
-        {
-            close();
-        }
-    }
 }
