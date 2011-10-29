@@ -31,6 +31,10 @@ import java.util.Map;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.shared.scriptinterpreter.BeanShellScriptInterpreter;
+import org.apache.maven.shared.scriptinterpreter.GroovyScriptInterpreter;
+import org.apache.maven.shared.scriptinterpreter.ScriptEvaluationException;
+import org.apache.maven.shared.scriptinterpreter.ScriptInterpreter;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.StringUtils;
 
