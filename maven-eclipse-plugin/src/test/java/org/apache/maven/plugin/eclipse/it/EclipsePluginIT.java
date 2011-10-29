@@ -774,8 +774,9 @@ public class EclipsePluginIT
     
 
     public void testGroovy()
-        throws Exception {
-        testProject("groovy");
+        throws Exception
+    {
+        testProject( "groovy" );
     }
     
     public void testJeeSimple()
