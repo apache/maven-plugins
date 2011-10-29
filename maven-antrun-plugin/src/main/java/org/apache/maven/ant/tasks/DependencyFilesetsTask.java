@@ -21,7 +21,6 @@ package org.apache.maven.ant.tasks;
 
 import java.io.File;
 import java.util.LinkedHashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 import org.apache.maven.ant.tasks.support.SpecificScopesArtifactFilter;
@@ -97,17 +96,16 @@ public class DependencyFilesetsTask
         MavenProject mavenProject = (MavenProject) this.getProject().getReference( "maven.project" );
 
         // Add filesets for depenedency artifacts
-        Set depArtifacts = filterArtifacts( mavenProject.getArtifacts() );
+        @SuppressWarnings( "unchecked" )
+        Set<Artifact> depArtifacts = filterArtifacts( mavenProject.getArtifacts() );
 
         FileSet dependenciesFileSet = new FileSet();
         dependenciesFileSet.setProject( getProject() );
         ArtifactRepository localRepository = (ArtifactRepository) getProject().getReference( "maven.local.repository" );
         dependenciesFileSet.setDir( new File( localRepository.getBasedir() ) );
 
-        for ( Iterator it = depArtifacts.iterator(); it.hasNext(); )
+        for ( Artifact artifact : depArtifacts )
         {
-            Artifact artifact = (Artifact) it.next();
-
             String relativeArtifactPath = localRepository.pathOf( artifact );
             dependenciesFileSet.createInclude().setName( relativeArtifactPath );
 
@@ -175,7 +173,7 @@ public class DependencyFilesetsTask
      * @param artifacts
      * @return
      */
-    public Set filterArtifacts( Set artifacts )
+    public Set<Artifact> filterArtifacts( Set<Artifact> artifacts )
     {
         if ( scopes == null )
         {
@@ -201,10 +199,9 @@ public class DependencyFilesetsTask
             filter.add( new TypesArtifactFilter( getTypes() ) );
         }
 
-        Set artifactsResult = new LinkedHashSet();
-        for ( Iterator iter = artifacts.iterator(); iter.hasNext(); )
+        Set<Artifact> artifactsResult = new LinkedHashSet<Artifact>();
+        for ( Artifact artifact : artifacts )
         {
-            Artifact artifact = (Artifact) iter.next();
             if ( filter.include( artifact ) )
             {
                 artifactsResult.add( artifact );
