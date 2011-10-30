@@ -66,17 +66,15 @@ under the License.
          <p>
            Yes, you can skip deployment of individual modules by configuring the Deploy Plugin as follows:
          </p>
-         <p>
-           <source>
-             <plugin>
-               <artifactId>maven-deploy-plugin</artifactId>
-               <version>X.Y</version>
-               <configuration>
-                 <skip>true</skip>
-               </configuration>
-             </plugin>
-           </source>
-         </p>
+         <source>
+<![CDATA[<plugin>
+  <groupId>org.apache.maven.plugins</groupId>
+  <artifactId>maven-deploy-plugin</artifactId>
+  <version>X.Y</version>
+  <configuration>
+    <skip>true</skip>
+  </configuration>
+</plugin>]]></source>
        </answer>
      </faq>
  </part>
