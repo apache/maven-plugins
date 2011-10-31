@@ -129,7 +129,8 @@ public abstract class AbstractSiteRenderingMojo
     private File templateFile;
 
     /**
-     * The template properties for rendering the site.
+     * Additional template properties for rendering the site. See
+     * <a href="/doxia/doxia-sitetools/doxia-site-renderer/">Doxia Site Renderer</a>.
      *
      * @parameter
      */
