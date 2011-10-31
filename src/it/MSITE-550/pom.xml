@@ -28,6 +28,13 @@ under the License.
   <version>1.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
+  <name>MSITE-550 Velocity attributes</name>
+  <description>Test Velocity attributes, ie attributes parameter of site:site</description>
+
+  <properties>
+    <dummy>value</dummy>
+  </properties>
+
   <build>
     <plugins>
       <plugin>
@@ -37,15 +44,11 @@ under the License.
           <templateFile>${basedir}/src/site/site.vm</templateFile>
           <generateReports>false</generateReports>
           <attributes>
-             <att1>val1</att1>
+            <att1>val1</att1>
           </attributes>
         </configuration>
       </plugin>
     </plugins>
   </build>
-
-  <properties>
-    <dummy>value</dummy>
-  </properties>
 
 </project>
