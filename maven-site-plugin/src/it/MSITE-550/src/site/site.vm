@@ -1,2 +1,31 @@
-dummy=$dummy
-att1=$att1
+======================================================================
+====== default variables defined by doxia-siterenderer
+======================================================================
+relativePath=$relativePath
+authors=$authors
+title=$title
+dateCreation=$dateCreation
+dateRevision=$dateRevision
+currentDate=$currentDate
+dateFormat=$dateFormat
+currentFileName=$currentFileName
+alignedFileName=$alignedFileName
+locale=$locale
+supportedLocales=$supportedLocales
+PathTool=$PathTool
+FileUtils=$FileUtils
+StringUtils=$StringUtils
+i18n=$i18n
+headContent=$headContent
+bodyContent=$bodyContent
+decoration=$decoration
+
+
+======================================================================
+====== default properties defined by maven-site-plugin
+======================================================================
+project=$project
+inputEncoding=$inputEncoding
+outputEncoding=$outputEncoding
+(project property) dummy=$dummy
+(attribute defined in attributes parameter of site plugin) att1=$att1
