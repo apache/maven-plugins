@@ -19,6 +19,31 @@ package org.apache.maven.plugin.pmd;
  * under the License.
  */
 
+import net.sourceforge.pmd.IRuleViolation;
+import net.sourceforge.pmd.PMD;
+import net.sourceforge.pmd.PMDException;
+import net.sourceforge.pmd.Report;
+import net.sourceforge.pmd.Rule;
+import net.sourceforge.pmd.RuleContext;
+import net.sourceforge.pmd.RuleSet;
+import net.sourceforge.pmd.RuleSetFactory;
+import net.sourceforge.pmd.SourceType;
+import net.sourceforge.pmd.renderers.CSVRenderer;
+import net.sourceforge.pmd.renderers.HTMLRenderer;
+import net.sourceforge.pmd.renderers.Renderer;
+import net.sourceforge.pmd.renderers.TextRenderer;
+import net.sourceforge.pmd.renderers.XMLRenderer;
+import org.apache.maven.doxia.sink.Sink;
+import org.apache.maven.reporting.MavenReportException;
+import org.codehaus.plexus.resource.ResourceManager;
+import org.codehaus.plexus.resource.loader.FileResourceCreationException;
+import org.codehaus.plexus.resource.loader.FileResourceLoader;
+import org.codehaus.plexus.resource.loader.ResourceNotFoundException;
+import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.ReaderFactory;
+import org.codehaus.plexus.util.StringUtils;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -34,40 +59,14 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import net.sourceforge.pmd.IRuleViolation;
-import net.sourceforge.pmd.PMD;
-import net.sourceforge.pmd.PMDException;
-import net.sourceforge.pmd.Report;
-import net.sourceforge.pmd.Rule;
-import net.sourceforge.pmd.RuleContext;
-import net.sourceforge.pmd.RuleSet;
-import net.sourceforge.pmd.RuleSetFactory;
-import net.sourceforge.pmd.SourceType;
-import net.sourceforge.pmd.renderers.CSVRenderer;
-import net.sourceforge.pmd.renderers.HTMLRenderer;
-import net.sourceforge.pmd.renderers.Renderer;
-import net.sourceforge.pmd.renderers.TextRenderer;
-import net.sourceforge.pmd.renderers.XMLRenderer;
-
-import org.apache.maven.doxia.sink.Sink;
-import org.apache.maven.reporting.MavenReportException;
-import org.codehaus.plexus.resource.ResourceManager;
-import org.codehaus.plexus.resource.loader.FileResourceCreationException;
-import org.codehaus.plexus.resource.loader.FileResourceLoader;
-import org.codehaus.plexus.resource.loader.ResourceNotFoundException;
-import org.codehaus.plexus.util.FileUtils;
-import org.codehaus.plexus.util.IOUtil;
-import org.codehaus.plexus.util.ReaderFactory;
-import org.codehaus.plexus.util.StringUtils;
-
 /**
  * Creates a PMD report.
  *
  * @author Brett Porter
  * @version $Id$
- * @since 2.0
  * @goal pmd
  * @threadSafe
+ * @since 2.0
  */
 public class PmdReport
     extends AbstractPmdReport
@@ -108,7 +107,8 @@ public class PmdReport
      *
      * @parameter
      */
-    private String[] rulesets = new String[]{"rulesets/basic.xml", "rulesets/unusedcode.xml", "rulesets/imports.xml", };
+    private String[] rulesets =
+        new String[]{ "rulesets/basic.xml", "rulesets/unusedcode.xml", "rulesets/imports.xml", };
 
     /**
      * @component
@@ -117,13 +117,17 @@ public class PmdReport
      */
     private ResourceManager locator;
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public String getName( Locale locale )
     {
         return getBundle( locale ).getString( "report.pmd.name" );
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public String getDescription( Locale locale )
     {
         return getBundle( locale ).getString( "report.pmd.description" );
@@ -134,7 +138,9 @@ public class PmdReport
         rulesets = rules;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public void executeReport( Locale locale )
         throws MavenReportException
     {
@@ -240,7 +246,7 @@ public class PmdReport
         Map files;
         try
         {
-            files = getFilesToProcess( );
+            files = getFilesToProcess();
         }
         catch ( IOException e )
         {
@@ -249,8 +255,8 @@ public class PmdReport
 
         if ( StringUtils.isEmpty( getSourceEncoding() ) && !files.isEmpty() )
         {
-            getLog().warn( "File encoding has not been set, using platform encoding "
-                               + ReaderFactory.FILE_ENCODING + ", i.e. build is platform dependent!" );
+            getLog().warn( "File encoding has not been set, using platform encoding " + ReaderFactory.FILE_ENCODING
+                               + ", i.e. build is platform dependent!" );
         }
 
         for ( Iterator i = files.entrySet().iterator(); i.hasNext(); )
@@ -261,7 +267,7 @@ public class PmdReport
 
             // TODO: lazily call beginFile in case there are no rules
 
-            reportSink.beginFile( file , fileInfo );
+            reportSink.beginFile( file, fileInfo );
             ruleContext.setSourceCodeFilename( file.getAbsolutePath() );
             for ( int idx = 0; idx < rulesets.length; idx++ )
             {
@@ -306,14 +312,12 @@ public class PmdReport
                 catch ( FileNotFoundException e2 )
                 {
                     getLog().warn( "Error opening source file: " + file );
-                    reportSink.ruleViolationAdded(
-                        new ProcessingErrorRuleViolation( file, e2.getLocalizedMessage() ) );
+                    reportSink.ruleViolationAdded( new ProcessingErrorRuleViolation( file, e2.getLocalizedMessage() ) );
                 }
                 catch ( Exception e3 )
                 {
                     getLog().warn( "Failure executing PMD for: " + file, e3 );
-                    reportSink.ruleViolationAdded(
-                        new ProcessingErrorRuleViolation( file, e3.getLocalizedMessage() ) );
+                    reportSink.ruleViolationAdded( new ProcessingErrorRuleViolation( file, e3.getLocalizedMessage() ) );
                 }
             }
             reportSink.endFile( file );
@@ -391,13 +395,13 @@ public class PmdReport
         {
             loc = loc.substring( loc.lastIndexOf( '\\' ) + 1 );
         }
-        
+
         // MPMD-127 in the case that the rules are defined externally on a url
         // we need to replace some special url characters that cannot be
         // used in filenames on disk or produce ackward filenames.
         // replace all occurrences of the following characters:  ? : & = %
-        loc = loc.replaceAll("[\\?\\:\\&\\=\\%]", "_");
-        
+        loc = loc.replaceAll( "[\\?\\:\\&\\=\\%]", "_" );
+
         getLog().debug( "Before: " + name + " After: " + loc );
         return loc;
     }
@@ -428,7 +432,9 @@ public class PmdReport
         return pmd;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public String getOutputName()
     {
         return "pmd";
@@ -482,7 +488,8 @@ public class PmdReport
         return renderer;
     }
 
-    private static class PmdXMLRenderer extends XMLRenderer
+    private static class PmdXMLRenderer
+        extends XMLRenderer
     {
         public PmdXMLRenderer( String encoding )
         {
@@ -491,7 +498,9 @@ public class PmdReport
         }
     }
 
-    /** @author <a href="mailto:douglass.doug@gmail.com">Doug Douglass</a> */
+    /**
+     * @author <a href="mailto:douglass.doug@gmail.com">Doug Douglass</a>
+     */
     private static class ProcessingErrorRuleViolation
         implements IRuleViolation
     {
@@ -500,80 +509,103 @@ public class PmdReport
 
         private String description;
 
-        public ProcessingErrorRuleViolation( File file,
-                                             String description )
+        public ProcessingErrorRuleViolation( File file, String description )
         {
             filename = file.getPath();
             this.description = description;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * {@inheritDoc}
+         */
         public String getFilename()
         {
             return this.filename;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * {@inheritDoc}
+         */
         public int getBeginLine()
         {
             return 0;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * {@inheritDoc}
+         */
         public int getBeginColumn()
         {
             return 0;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * {@inheritDoc}
+         */
         public int getEndLine()
         {
             return 0;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * {@inheritDoc}
+         */
         public int getEndColumn()
         {
             return 0;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * {@inheritDoc}
+         */
         public Rule getRule()
         {
             return null;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * {@inheritDoc}
+         */
         public String getDescription()
         {
             return this.description;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * {@inheritDoc}
+         */
         public String getPackageName()
         {
             return null;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * {@inheritDoc}
+         */
         public String getMethodName()
         {
             return null;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * {@inheritDoc}
+         */
         public String getClassName()
         {
             return null;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * {@inheritDoc}
+         */
         public boolean isSuppressed()
         {
             return false;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * {@inheritDoc}
+         */
         public String getVariableName()
         {
             return null;
