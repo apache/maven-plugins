@@ -276,7 +276,7 @@ public class CpdReport
             catch ( Exception e )
             {
                 throw new MavenReportException(
-                    "Can't find CPD custom format " + format + ": " + e.getClass().getName() );
+                    "Can't find CPD custom format " + format + ": " + e.getClass().getName(), e );
             }
         }
 
