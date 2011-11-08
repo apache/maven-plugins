@@ -36,8 +36,8 @@ import org.apache.maven.shared.invoker.MavenInvocationException;
 import org.apache.maven.shared.invoker.Invoker;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Settings;
-import org.apache.maven.shared.scriptinterpreter.BuildErrorException;
-import org.apache.maven.shared.scriptinterpreter.BuildFailureException;
+import org.apache.maven.shared.scriptinterpreter.RunErrorException;
+import org.apache.maven.shared.scriptinterpreter.RunFailureException;
 import org.apache.maven.shared.scriptinterpreter.ScriptRunner;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.ReaderFactory;
@@ -1155,7 +1155,7 @@ public abstract class AbstractInvokerMojo
                 }
             }
         }
-        catch ( BuildErrorException e )
+        catch ( RunErrorException e )
         {
             buildJob.setResult( BuildJob.Result.ERROR );
             buildJob.setFailureMessage( e.getMessage() );
@@ -1166,7 +1166,7 @@ public abstract class AbstractInvokerMojo
                 getLog().info( "  " + e.getMessage() );
             }
         }
-        catch ( BuildFailureException e )
+        catch ( RunFailureException e )
         {
             buildJob.setResult( e.getType() );
             buildJob.setFailureMessage( e.getMessage() );
@@ -1277,10 +1277,10 @@ public abstract class AbstractInvokerMojo
      * @return <code>true</code> if the project was launched or <code>false</code> if the selector script indicated that
      *            the project should be skipped.
      * @throws org.apache.maven.plugin.MojoExecutionException If the project could not be launched.
-     * @throws org.apache.maven.shared.scriptinterpreter.BuildFailureException If either a hook script or the build itself failed.
+     * @throws org.apache.maven.shared.scriptinterpreter.RunFailureException If either a hook script or the build itself failed.
      */
     private boolean runBuild( File basedir, File pomFile, File settingsFile, InvokerProperties invokerProperties )
-        throws MojoExecutionException, BuildFailureException
+        throws MojoExecutionException, RunFailureException
     {
         if ( getLog().isDebugEnabled() && !invokerProperties.getProperties().isEmpty() )
         {
@@ -1307,11 +1307,11 @@ public abstract class AbstractInvokerMojo
                 scriptRunner.run( "selector script", basedir, selectorScript, context, logger,
                                   BuildJob.Result.SKIPPED, false );
             }
-            catch ( BuildErrorException e )
+            catch ( RunErrorException e )
             {
                 throw e;
             }
-            catch ( BuildFailureException e )
+            catch ( RunFailureException e )
             {
                 return false;
             }
@@ -1398,7 +1398,7 @@ public abstract class AbstractInvokerMojo
                 catch ( final MavenInvocationException e )
                 {
                     getLog().debug( "Error invoking Maven: " + e.getMessage(), e );
-                    throw new BuildFailureException( "Maven invocation failed. " + e.getMessage(),
+                    throw new RunFailureException( "Maven invocation failed. " + e.getMessage(),
                                                      BuildJob.Result.FAILURE_BUILD );
                 }
 
@@ -1520,15 +1520,15 @@ public abstract class AbstractInvokerMojo
      * @param invocationIndex The index of the invocation for which to check the exit code, must not be negative.
      * @param invokerProperties The invoker properties used to check the exit code, must not be <code>null</code>.
      * @param logger The build logger, may be <code>null</code> if logging is disabled.
-     * @throws org.apache.maven.shared.scriptinterpreter.BuildFailureException If the invocation result indicates a build failure.
+     * @throws org.apache.maven.shared.scriptinterpreter.RunFailureException If the invocation result indicates a build failure.
      */
     private void verify( InvocationResult result, int invocationIndex, InvokerProperties invokerProperties,
                          FileLogger logger )
-        throws BuildFailureException
+        throws RunFailureException
     {
         if ( result.getExecutionException() != null )
         {
-            throw new BuildFailureException( "The Maven invocation failed. "
+            throw new RunFailureException( "The Maven invocation failed. "
                 + result.getExecutionException().getMessage(), BuildJob.Result.ERROR );
         }
         else if ( !invokerProperties.isExpectedResult( result.getExitCode(), invocationIndex ) )
@@ -1545,7 +1545,7 @@ public abstract class AbstractInvokerMojo
             {
                 buffer.append( "See console output for details." );
             }
-            throw new BuildFailureException( buffer.toString(), BuildJob.Result.FAILURE_BUILD );
+            throw new RunFailureException( buffer.toString(), BuildJob.Result.FAILURE_BUILD );
         }
     }
 
