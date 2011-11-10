@@ -241,7 +241,8 @@ public final class DependencyUtil
         String ret = "";
         if ( !StringUtils.isEmpty( str ) )
         {
-            ret = StringUtils.join( StringUtils.split( str ), "," );
+            // remove initial and ending spaces, plus all spaces next to commas 
+            ret = str.trim().replaceAll( "[\\s]*,[\\s]*", "," );
         }
 
         return ret;
