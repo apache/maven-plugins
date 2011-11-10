@@ -34,6 +34,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugin.testing.SilentLog;
 import org.apache.maven.plugin.testing.stubs.DefaultArtifactHandlerStub;
+import org.codehaus.plexus.util.StringUtils;
 
 /**
  * @author brianf
@@ -269,17 +270,21 @@ public class TestDependencyUtil
     
     public void testTokenizer()
     {
+        String [] tokens = DependencyUtil.tokenizer( " alpha,bravo, charlie , delta kappa, theta" );
+        String[] expected = new String[] { "alpha", "bravo", "charlie", "delta kappa", "theta" };
+        // easier to see in the JUnit reports
+        assertEquals( StringUtils.join( expected, ", " ), StringUtils.join( tokens, ", " ) );
+        assertEquals( expected.length, tokens.length );
         
-        String [] tokens = DependencyUtil.tokenizer( " \r\n a, \t \n \r b \t \n \r" );
+        tokens = DependencyUtil.tokenizer( " \r\n a, \t \n \r b \t \n \r" );
         assertEquals( 2, tokens.length );
         assertEquals( "a", tokens[0] );
         assertEquals( "b", tokens[1] );
         
         tokens = DependencyUtil.tokenizer( null );
         assertEquals( 0, tokens.length );
-        
+
         tokens = DependencyUtil.tokenizer( "  " );
         assertEquals( 0, tokens.length );
-        
     }
 }
