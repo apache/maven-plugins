@@ -45,11 +45,11 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
- * Downloads a single artifact transitively from a specified remote repository.
- *
+ * Downloads a single artifact transitively from the specified remote repositories. Caveat: will always check the
+ * central repository defined in the super pom. You could use a mirror entry in your settings.xml
+ * 
  * @goal get
  * @requiresProject false
- *
  */
 public class GetMojo
     extends AbstractMojo
