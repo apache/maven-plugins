@@ -42,7 +42,7 @@ under the License.
       <name>Brian Fox</name>
       <email>brianf@apache.org</email>
       <roles>
-        <role>Lead Developer</role>
+        <role>Developer</role>
       </roles>
       <timezone>5</timezone>
     </developer>
@@ -50,8 +50,6 @@ under the License.
       <id>dtran</id>
       <name>Dan T. Tran</name>
       <email>dantran@gmail.com</email>
-      <organization>
-      </organization>
       <roles>
         <role>Developer</role>
       </roles>
@@ -60,8 +58,6 @@ under the License.
       <id>jdcasey</id>
       <name>John Casey</name>
       <email>casey.john.d@gmail.com</email>
-      <organization>
-      </organization>
       <roles>
         <role>Developer</role>
       </roles>
