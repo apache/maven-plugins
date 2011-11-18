@@ -93,6 +93,38 @@ public class WarMojoTest
                                            new String[]{null, mojo.getWebXml().toString(), null, null, null, null} );
     }
 
+    public void testSimpleWarPackagingExcludeWithIncludesRegEx()
+        throws Exception
+    {
+        String testId = "SimpleWarPackagingExcludeWithIncludesRegEx";
+        MavenProject4CopyConstructor project = new MavenProject4CopyConstructor();
+        String outputDir = getTestDirectory().getAbsolutePath() + "/" + testId + "-output";
+        File webAppDirectory = new File( getTestDirectory(), testId );
+        WarArtifact4CCStub warArtifact = new WarArtifact4CCStub( getBasedir() );
+        String warName = "simple";
+        File webAppSource = createWebAppSource( testId );
+        File classesDir = createClassesDir( testId, true );
+        File xmlSource = createXMLConfigDir( testId, new String[]{"web.xml"} );
+
+        project.setArtifact( warArtifact );
+        this.configureMojo( mojo, new LinkedList(), classesDir, webAppSource, webAppDirectory, project );
+        setVariableValueToObject( mojo, "outputDirectory", outputDir );
+        setVariableValueToObject( mojo, "warName", warName );
+        mojo.setWebXml( new File( xmlSource, "web.xml" ) );
+        setVariableValueToObject( mojo,"packagingIncludes","%regex[(.(?!exile))+]" );
+       
+       
+        mojo.execute();
+
+        //validate jar file
+        File expectedJarFile = new File( outputDir, "simple.war" );
+        assertJarContent( expectedJarFile, new String[]{"META-INF/MANIFEST.MF", "WEB-INF/web.xml", "pansit.jsp",
+            "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.xml",
+            "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.properties"},
+                                           new String[]{null, mojo.getWebXml().toString(), null, null, null, },
+                                           new String[]{"org/web/app/last-exile.jsp"} );
+    }
+
     public void testClassifier()
         throws Exception
     {
@@ -384,6 +416,12 @@ public class WarMojoTest
     protected Map assertJarContent( final File expectedJarFile, final String[] files, final String[] filesContent )
         throws IOException
     {
+        return assertJarContent( expectedJarFile, files, filesContent, null );
+    }
+
+    protected Map assertJarContent( final File expectedJarFile, final String[] files, final String[] filesContent, final String[] mustNotBeInJar )
+        throws IOException
+    {
         // Sanity check
         assertEquals( "Could not test, files and filesContent lenght does not match", files.length,
                       filesContent.length );
@@ -404,11 +442,22 @@ public class WarMojoTest
         for ( int i = 0; i < files.length; i++ )
         {
             String file = files[i];
+
             assertTrue( "File[" + file + "] not found in archive", jarContent.containsKey( file ) );
             if ( filesContent[i] != null )
             {
                 assertEquals( "Content of file[" + file + "] does not match", filesContent[i],
                               IOUtil.toString( jarFile.getInputStream( (ZipEntry) jarContent.get( file ) ) ) );
+            }
+        }
+        if( mustNotBeInJar!=null )
+        {         
+            for ( int i = 0; i < mustNotBeInJar.length; i++ )
+            {
+                String file = mustNotBeInJar[i];
+
+                assertFalse( "File[" + file + "]  found in archive", jarContent.containsKey( file ) );
+
             }
         }
         return jarContent;

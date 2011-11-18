@@ -38,6 +38,7 @@ under the License.
       <item name="WAR Manifest Customization" href="examples/war-manifest-guide.html"/>
       <item name="Rapid Testing Using the Jetty Plugin" href="examples/rapid-testing-jetty6-plugin.html"/>
       <item name="Creating Skinny WARs" href="examples/skinny-wars.html"/>
+      <item name="Including and Excluding Files From the WAR" href="examples/including-excluding-files-from-war.html"/>
       <item name="Using File Name Mapping" href="examples/file-name-mapping.html"/>
     </menu>
   </body>
