@@ -81,6 +81,8 @@ Maven WAR Plugin
 
  * {{{./examples/skinny-wars.html}Creating Skinny WARs}}
 
+ * {{{./examples/including-excluding-files-from-war.html}Including and Excluding Files From the WAR}}
+
  * {{{./examples/file-name-mapping.html}Using File Name Mapping}}
 
  []
