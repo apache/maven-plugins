@@ -71,6 +71,17 @@ public class SimpleRelocatorTest
         assertEquals( false, relocator.canRelocateClass( "org.foo.PublicStuff" ) );
         assertEquals( false, relocator.canRelocateClass( "org.foo.PublicUtilStuff" ) );
     }
+    
+    public void testCanRelocateRawString()
+    {
+        SimpleRelocator relocator;
+
+        relocator = new SimpleRelocator( "org/foo", null, null, null, true );
+        assertEquals( true, relocator.canRelocatePath( "(I)org/foo/bar/Class;" ) );
+
+        relocator = new SimpleRelocator( "^META-INF/org.foo.xml$", null, null, null, true );
+        assertEquals( true, relocator.canRelocatePath( "META-INF/org.foo.xml" ) );
+    }
 
     public void testRelocatePath()
     {
@@ -94,4 +105,14 @@ public class SimpleRelocatorTest
         assertEquals( "private.stuff.bar.Class", relocator.relocateClass( "org.foo.bar.Class" ) );
     }
 
+    public void testRelocateRawString()
+    {
+        SimpleRelocator relocator;
+
+        relocator = new SimpleRelocator( "Lorg/foo", "Lhidden/org/foo", null, null, true );
+        assertEquals( "(I)Lhidden/org/foo/bar/Class;", relocator.relocatePath( "(I)Lorg/foo/bar/Class;" ) );
+
+        relocator = new SimpleRelocator( "^META-INF/org.foo.xml$", "META-INF/hidden.org.foo.xml", null, null, true );
+        assertEquals( "META-INF/hidden.org.foo.xml", relocator.relocatePath( "META-INF/org.foo.xml" ) );
+    }
 }

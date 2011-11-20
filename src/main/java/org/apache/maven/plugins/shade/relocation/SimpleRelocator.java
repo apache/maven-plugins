@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import org.codehaus.plexus.util.SelectorUtils;
 
@@ -46,21 +47,41 @@ public class SimpleRelocator
     private final Set includes;
 
     private final Set excludes;
+    
+    private final boolean rawString;
 
     public SimpleRelocator( String patt, String shadedPattern, List includes, List excludes )
     {
-        this.pattern = patt.replace( '/', '.' );
-        this.pathPattern = patt.replace( '.', '/' );
-
-        if ( shadedPattern != null )
+        this( patt, shadedPattern, includes, excludes, false );
+    }
+    
+    public SimpleRelocator( String patt, String shadedPattern, List includes, List excludes, boolean rawString )
+    {
+        this.rawString = rawString;
+        
+        if ( rawString )
         {
-            this.shadedPattern = shadedPattern.replace( '/', '.' );
-            this.shadedPathPattern = shadedPattern.replace( '.', '/' );
+            this.pathPattern = patt;
+            this.shadedPathPattern = shadedPattern;
+
+            this.pattern = null; // not used for raw string relocator
+            this.shadedPattern = null; // not used for raw string relocator
         }
         else
         {
-            this.shadedPattern = "hidden." + this.pattern;
-            this.shadedPathPattern = "hidden/" + this.pathPattern;
+            this.pattern = patt.replace( '/', '.' );
+            this.pathPattern = patt.replace( '.', '/' );
+
+            if ( shadedPattern != null )
+            {
+                this.shadedPattern = shadedPattern.replace( '/', '.' );
+                this.shadedPathPattern = shadedPattern.replace( '.', '/' );
+            }
+            else
+            {
+                this.shadedPattern = "hidden." + this.pattern;
+                this.shadedPathPattern = "hidden/" + this.pathPattern;
+            }
         }
 
         this.includes = normalizePatterns( includes );
@@ -131,6 +152,11 @@ public class SimpleRelocator
 
     public boolean canRelocatePath( String path )
     {
+        if ( rawString )
+        {
+            return Pattern.compile( pathPattern ).matcher( path ).find();
+        }
+        
         if ( path.endsWith( ".class" ) )
         {
             path = path.substring( 0, path.length() - 6 );
@@ -146,12 +172,19 @@ public class SimpleRelocator
 
     public boolean canRelocateClass( String clazz )
     {
-        return clazz.indexOf( '/' ) < 0 && canRelocatePath( clazz.replace( '.', '/' ) );
+        return !rawString && clazz.indexOf( '/' ) < 0 && canRelocatePath( clazz.replace( '.', '/' ) );
     }
 
     public String relocatePath( String path )
     {
-        return path.replaceFirst( pathPattern, shadedPathPattern );
+        if ( rawString )
+        {
+            return path.replaceAll( pathPattern, shadedPathPattern );
+        }
+        else
+        {
+            return path.replaceFirst( pathPattern, shadedPathPattern );
+        }
     }
 
     public String relocateClass( String clazz )
