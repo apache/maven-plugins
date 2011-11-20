@@ -34,6 +34,8 @@ public class PackageRelocation
     private List includes;
 
     private List excludes;
+    
+    private boolean rawString;
 
     public String getPattern()
     {
@@ -53,5 +55,10 @@ public class PackageRelocation
     public List getExcludes()
     {
         return excludes;
+    }
+    
+    public boolean isRawString()
+    {
+        return rawString;
     }
 }
