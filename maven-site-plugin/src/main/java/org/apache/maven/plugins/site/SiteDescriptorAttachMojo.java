@@ -31,9 +31,11 @@ import org.apache.maven.project.MavenProjectHelper;
 import org.codehaus.plexus.util.FileUtils;
 
 /**
- * Adds the site descriptor (<code>site.xml</code>) to the list of files to be installed/deployed.
- * By default, this is enabled only when the project has pom packaging since it will be used by modules inheriting,
- * but this can be enabled for other projects packaging if needed.
+ * Adds the site descriptor (<code>site.xml</code>) to the list of files to be installed/deployed.<br/>
+ * For Maven-2.x this is enabled by default only when the project has <code>pom</code> packaging since it will be used by modules inheriting,
+ * but this can be enabled for other projects packaging if needed.<br/>
+ * This default execution has been removed from the built-in lifecycle of Maven 3.x for <code>pom</code>-projects.
+ * Users that actually use those projects to provide a common site descriptor for sub modules will need to explicitly define this goal execution to restore the intended behavior.  
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  * @version $Id$
