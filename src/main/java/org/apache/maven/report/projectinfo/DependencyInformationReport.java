@@ -19,7 +19,7 @@ public final class DependencyInformationReport
     extends AbstractProjectInfoReport
 {
 
-    private static final String DEPENDNECY_INFO = "dependency-info";
+    private static final String DEPENDENCY_INFO = "dependency-info";
 
     /**
      * @parameter default-value="${project.groupId}"
@@ -54,7 +54,7 @@ public final class DependencyInformationReport
      */
     public String getOutputName()
     {
-        return DEPENDNECY_INFO;
+        return DEPENDENCY_INFO;
     }
 
     /**
@@ -63,7 +63,7 @@ public final class DependencyInformationReport
     @Override
     protected String getI18Nsection()
     {
-        return DEPENDNECY_INFO;
+        return DEPENDENCY_INFO;
     }
 
     /**
@@ -110,7 +110,7 @@ public final class DependencyInformationReport
         @Override
         protected String getI18Nsection()
         {
-            return DEPENDNECY_INFO;
+            return DEPENDENCY_INFO;
         }
 
         /**
