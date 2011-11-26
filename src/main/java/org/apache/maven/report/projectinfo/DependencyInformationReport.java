@@ -21,6 +21,8 @@ public final class DependencyInformationReport
 
     private static final String DEPENDENCY_INFO = "dependency-info";
 
+    private static final String JAR_PACKAGING = "jar";
+
     /**
      * @parameter default-value="${project.groupId}"
      * @required
@@ -121,13 +123,18 @@ public final class DependencyInformationReport
         {
             startSection( getTitle() );
 
-            renderDependencyInfo( "Apache Maven", new Formatter()
-                                                        .format( "<dependency>%n" )
-                                                        .format( "  <groupId>%s</groupId>%n", groupId )
-                                                        .format( "  <artifactId>%s</artifactId>%n", artifactId )
-                                                        .format( "  <version>%s</version>%n", version )
-                                                        .format( "  <packaging>%s</packaging>%n", packaging )
-                                                        .format( "</dependency>" ) );
+            Formatter mavenDependency = new Formatter()
+                                                .format( "<dependency>%n" )
+                                                .format( "  <groupId>%s</groupId>%n", groupId )
+                                                .format( "  <artifactId>%s</artifactId>%n", artifactId )
+                                                .format( "  <version>%s</version>%n", version );
+
+            if ( !JAR_PACKAGING.equals( packaging ) )
+            {
+                mavenDependency = mavenDependency.format( "  <packaging>%s</packaging>%n", packaging );
+            }
+
+            renderDependencyInfo( "Apache Maven", mavenDependency.format( "</dependency>" ) );
 
             renderDependencyInfo( "Apache Buildr", new Formatter().format( "'%s:%s:%s:%s'",
                                                                            groupId, artifactId, packaging, version ) );
