@@ -131,7 +131,7 @@ public final class DependencyInformationReport
 
             if ( !JAR_PACKAGING.equals( packaging ) )
             {
-                mavenDependency = mavenDependency.format( "  <packaging>%s</packaging>%n", packaging );
+                mavenDependency = mavenDependency.format( "  <type>%s</type>%n", packaging );
             }
 
             renderDependencyInfo( "Apache Maven", mavenDependency.format( "</dependency>" ) );
