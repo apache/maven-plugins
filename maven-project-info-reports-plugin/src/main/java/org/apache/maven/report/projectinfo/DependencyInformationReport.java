@@ -166,7 +166,7 @@ public final class DependencyInformationReport
                 leiningenDependency.format( "/%s", artifactId );
             }
 
-            leiningenDependency.format( "\"%s\"]", version );
+            leiningenDependency.format( " \"%s\"]", version );
 
             renderDependencyInfo( "Leiningen", leiningenDependency );
 
