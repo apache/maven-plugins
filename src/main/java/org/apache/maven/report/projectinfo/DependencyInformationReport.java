@@ -170,6 +170,11 @@ public final class DependencyInformationReport
 
             renderDependencyInfo( "Leiningen", leiningenDependency );
 
+            // sbt
+
+            renderDependencyInfo( "SBT", new Formatter().format( "libraryDependencies += \"%s\" %%%% \"%s\" %% \"%s\"",
+                                                                 groupId, artifactId, version ) );
+
             endSection();
         }
 
