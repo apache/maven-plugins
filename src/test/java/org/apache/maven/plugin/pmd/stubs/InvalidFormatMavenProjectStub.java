@@ -26,8 +26,6 @@ import org.apache.maven.model.Scm;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
 
-import edu.emory.mathcs.backport.java.util.Collections;
-
 import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
