@@ -157,6 +157,19 @@ public final class DependencyInformationReport
             renderDependencyInfo( "Grails", new Formatter().format( "compile '%s:%s:%s'",
                                                                     groupId, artifactId, version ) );
 
+            // Leiningen
+
+            Formatter leiningenDependency = new Formatter().format( "[%s", groupId );
+
+            if ( !groupId.equals( artifactId ) )
+            {
+                leiningenDependency.format( "/%s", artifactId );
+            }
+
+            leiningenDependency.format( "\"%s\"]", version );
+
+            renderDependencyInfo( "Leiningen", leiningenDependency );
+
             endSection();
         }
 
