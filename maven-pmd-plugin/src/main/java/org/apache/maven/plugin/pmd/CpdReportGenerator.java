@@ -107,7 +107,7 @@ public class CpdReportGenerator
      *
      * @param matches
      */
-    public void generate( Iterator matches )
+    public void generate( Iterator<Match> matches )
     {
         beginDocument();
 
@@ -120,7 +120,7 @@ public class CpdReportGenerator
 
         while ( matches.hasNext() )
         {
-            Match match = (Match) matches.next();
+            Match match = matches.next();
             String filename1 = match.getFirstMark().getTokenSrcID();
 
             File file = new File( filename1 );
