@@ -278,7 +278,7 @@ public abstract class AbstractPmdReport
         {
             excludeRoots = new File[0];
         }
-        Collection excludeRootFiles = new HashSet( excludeRoots.length );
+        Collection<File> excludeRootFiles = new HashSet<File>( excludeRoots.length );
 
         for ( int i = 0; i < excludeRoots.length; i++ )
         {
@@ -289,7 +289,7 @@ public abstract class AbstractPmdReport
             }
         }
 
-        List directories = new ArrayList();
+        List<PmdFileInfo> directories = new ArrayList<PmdFileInfo>();
 
         if ( compileSourceRoots != null )
         {
@@ -345,9 +345,8 @@ public abstract class AbstractPmdReport
 
         Map files = new TreeMap();
 
-        for ( Iterator it = directories.iterator(); it.hasNext(); )
+        for ( PmdFileInfo finfo : directories )
         {
-            PmdFileInfo finfo = (PmdFileInfo) it.next();
             File sourceDirectory = finfo.getSourceDirectory();
             if ( sourceDirectory.isDirectory() && !excludeRootFiles.contains( sourceDirectory ) )
             {
@@ -369,7 +368,7 @@ public abstract class AbstractPmdReport
      */
     private String getIncludes()
     {
-        Collection patterns = new LinkedHashSet();
+        Collection<String> patterns = new LinkedHashSet<String>();
         if ( includes != null )
         {
             patterns.addAll( Arrays.asList( includes ) );
