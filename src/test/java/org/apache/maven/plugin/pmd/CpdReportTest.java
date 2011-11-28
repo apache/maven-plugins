@@ -196,7 +196,7 @@ public class CpdReportTest
 
         TokenEntry tFirstEntry = new TokenEntry( "public java", "MyClass.java", 34 );
         TokenEntry tSecondEntry = new TokenEntry( "public java", "MyClass3.java", 55 );
-        List tList = new ArrayList();
+        List<Match> tList = new ArrayList<Match>();
         Match tMatch = new Match( 2, tFirstEntry, tSecondEntry );
         tMatch.setSourceCodeSlice( "// ----- ACCESSEURS  avec �l�ments -----" );
         tList.add( tMatch );
@@ -218,15 +218,15 @@ public class CpdReportTest
         extends CPD
     {
 
-        private Iterator matches;
+        private Iterator<Match> matches;
 
-        public MockCpd( int minimumTileSize, Language language, Iterator tMatch )
+        public MockCpd( int minimumTileSize, Language language, Iterator<Match> tMatch )
         {
             super( minimumTileSize, language );
             matches = tMatch;
         }
 
-        public Iterator getMatches()
+        public Iterator<Match> getMatches()
         {
             return matches;
         }
