@@ -85,14 +85,20 @@
         <field>
           <name>formats</name>
           <version>1.0.0+</version>
-          <required>true</required>
+          <required>false</required>
           <association>
             <type>String</type>
             <multiplicity>*</multiplicity>
           </association>
           <description>
             <![CDATA[
-            Specifies the formats of the assembly. Multiple formats can be
+            Specifies the formats of the assembly. 
+            
+            It is often better to specify the formats via the goal parameter rather
+            than here. For example, that allows different profiles to generate
+            different types of archives.
+            
+            Multiple formats can be
             supplied and the Assembly Plugin will generate an archive for each
             desired formats. When deploying your project, all file formats
             specified will also be deployed. A format is specified by supplying

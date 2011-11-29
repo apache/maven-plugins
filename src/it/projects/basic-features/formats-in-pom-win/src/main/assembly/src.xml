@@ -1,0 +1,15 @@
+<assembly>
+  <id>src</id>
+  <formats>
+    <format>dir</format>
+  </formats>
+  <includeBaseDirectory>false</includeBaseDirectory>
+  <fileSets>
+    <fileSet>
+      <directory>${project.basedir}</directory>
+      <excludes>
+        <exclude>target/**</exclude>
+      </excludes>
+    </fileSet>
+  </fileSets>
+</assembly>
