@@ -134,6 +134,22 @@ public abstract class AbstractAssemblyMojo
      * @required
      */
     private File workDirectory;
+    
+    /**
+     * @parameter
+     * 
+     * Specifies the formats of the assembly. 
+     * Multiple formats can be supplied and the Assembly Plugin will generate an archive for each desired formats. 
+     * When deploying your project, all file formats specified will also be deployed. A format is specified by supplying one of the following 
+     * values in a &lt;format&gt subelement:
+     * <ul>
+     * <li><em>zip</em> - Creates a ZIP file format</li>
+     * <li><em>tar</em> - Creates a TAR format</li>
+     * <li><em>tar.gz</em> - Creates a gzip'd TAR format</li>
+     * <li><em>tar.bz2</em> - Creates a bzip'd TAR format</li>
+     * </ul>
+     */
+    private List<String> formats;
 
     /**
      * This is the artifact classifier to be used for the resultant assembly artifact. Normally, you would use the
@@ -413,8 +429,18 @@ public abstract class AbstractAssemblyMojo
             try
             {
                 final String fullName = AssemblyFormatUtils.getDistributionName( assembly, this );
+                
+                List<String> effectiveFormats = formats;
+                if ( effectiveFormats == null || effectiveFormats.size() == 0 )
+                {
+                    effectiveFormats = assembly.getFormats();
+                }
+                if ( effectiveFormats == null || effectiveFormats.size() == 0 ) 
+                {
+                    throw new MojoFailureException( "No formats specified in the execution parameters or the assembly descriptor.");
+                }
 
-                for ( final String format : assembly.getFormats() )
+                for ( final String format : effectiveFormats )
                 {
                     final File destFile = assemblyArchiver.createArchive( assembly, fullName, format, this );
 
