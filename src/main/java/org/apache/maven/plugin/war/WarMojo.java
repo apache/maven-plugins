@@ -29,6 +29,7 @@ import org.apache.maven.project.MavenProjectHelper;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.jar.ManifestException;
 import org.codehaus.plexus.archiver.war.WarArchiver;
+import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.StringUtils;
 
 import java.io.File;
@@ -231,14 +232,24 @@ public class WarMojo
         // create the classes to be attached if necessary
         if ( isAttachClasses() )
         {
-            ClassesPackager packager = new ClassesPackager();
-            final File classesDirectory = packager.getClassesDirectory( getWebappDirectory() );
-            if ( classesDirectory.exists() )
+            if ( isArchiveClasses() && getJarArchiver().getDestFile() != null )
             {
-                getLog().info( "Packaging classes" );
-                packager.packageClasses( classesDirectory, getTargetClassesFile(), getJarArchiver(), getProject(),
-                                         getArchive() );
-                projectHelper.attachArtifact( getProject(), "jar", getClassesClassifier(), getTargetClassesFile() );
+                // special handling in case of archived classes: MWAR-240
+                File targetClassesFile = getTargetClassesFile();
+                FileUtils.copyFile(getJarArchiver().getDestFile(), targetClassesFile);
+                projectHelper.attachArtifact( getProject(), "jar", getClassesClassifier(), targetClassesFile );
+            }
+            else
+            {
+                ClassesPackager packager = new ClassesPackager();
+                final File classesDirectory = packager.getClassesDirectory( getWebappDirectory() );
+                if ( classesDirectory.exists() )
+                {
+                    getLog().info( "Packaging classes" );
+                    packager.packageClasses( classesDirectory, getTargetClassesFile(), getJarArchiver(), getProject(),
+                                             getArchive() );
+                    projectHelper.attachArtifact( getProject(), "jar", getClassesClassifier(), getTargetClassesFile() );
+                }
             }
         }
 
