@@ -124,10 +124,14 @@ public class CheckstyleReportListener
     {
         for ( File sourceDirectory : sourceDirectories )
         {
-            currentFile = StringUtils.substring( event.getFileName(), sourceDirectory.getPath().length() + 1 );
-            currentFile = StringUtils.replace( currentFile, "\\", "/" );
+            String sourceDirectoryPath = sourceDirectory.getPath();
+            String fileName = StringUtils.replace( event.getFileName(), "\\", "/" );
+            if ( fileName.startsWith( sourceDirectoryPath + "/" ) )
+            {
+                currentFile = StringUtils.substring( fileName, sourceDirectoryPath.length() + 1 );
 
-            events = getResults().getFileViolations( currentFile );
+                events = getResults().getFileViolations( currentFile );
+            }
         }
 
         if ( events == null )
