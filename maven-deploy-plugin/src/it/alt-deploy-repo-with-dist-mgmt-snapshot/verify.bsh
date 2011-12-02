@@ -1,0 +1,34 @@
+import java.io.*;
+import java.util.*;
+
+String[] paths =
+{
+    "org/apache/maven/its/deploy/adrwdms/test/maven-metadata.xml",
+};
+String[] paths_absent =
+{
+    "org/apache/maven/its/deploy/adrwdms/test/1.0/test-1.0-SNAPSHOT.pom",
+    "org/apache/maven/its/deploy/adrwdms/test/1.0/test-1.0-SNAPSHOT.jar",
+};
+
+for ( String path : paths )
+{
+    File file = new File( new File( basedir, "target/repo" ), path );
+    System.out.println( "Checking for existence of " + file );
+    if ( !file.isFile() )
+    {
+        throw new FileNotFoundException( "Missing: " + file.getAbsolutePath() );
+    }
+}
+
+for ( String path : paths_absent )
+{
+    File file = new File( new File( basedir, "target/repo" ), path );
+    System.out.println( "Checking for non existence of " + file );
+    if ( file.exists() )
+    {
+        throw new AssertionError( "File exists and shouldn't: " + file.getAbsolutePath() );
+    }
+}
+
+return true;
