@@ -365,4 +365,13 @@ public abstract class AbstractEarModule
         this.uri = uri;
 
     }
+
+    public boolean changeManifestClasspath()
+    {
+        return true;
+    }
+
+    public String getLibDir() {
+        return null;
+    }
 }

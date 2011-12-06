@@ -34,18 +34,26 @@ import org.apache.maven.shared.filtering.MavenResourcesFiltering;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.UnArchiver;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
+import org.codehaus.plexus.archiver.jar.Manifest;
+import org.codehaus.plexus.archiver.jar.Manifest.Attribute;
+import org.codehaus.plexus.archiver.jar.ManifestException;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
+import org.codehaus.plexus.archiver.zip.ZipArchiver;
+import org.codehaus.plexus.archiver.zip.ZipUnArchiver;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.StringUtils;
 
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.zip.ZipException;
 
 /**
  * Builds J2EE Enterprise Archive (EAR) files.
@@ -194,6 +202,20 @@ public class EarMojo
     private JarArchiver jarArchiver;
 
     /**
+     * The Zip archiver.
+     *
+     * @component role="org.codehaus.plexus.archiver.Archiver" role-hint="zip"
+     */
+    private ZipArchiver zipArchiver;
+
+    /**
+     * The Zip Un archiver.
+     *
+     * @component role="org.codehaus.plexus.archiver.UnArchiver" role-hint="zip"
+     */
+    private ZipUnArchiver zipUnArchiver;
+
+    /**
      * The archive configuration to use.
      * See <a href="http://maven.apache.org/shared/maven-archiver/index.html">Maven Archiver Reference</a>.
      *
@@ -257,7 +279,7 @@ public class EarMojo
                 if ( !EarModuleFactory.standardArtifactTypes.contains( type ) )
                 {
                     throw new MojoExecutionException(
-                        "Invalid type[" + type + "] supported types are " + EarModuleFactory.standardArtifactTypes );
+                        "Invalid type [" + type + "] supported types are " + EarModuleFactory.standardArtifactTypes );
                 }
             }
             getLog().debug( "Initialized unpack types " + unpackTypesList );
@@ -289,7 +311,7 @@ public class EarMojo
                 if ( destinationFile.getCanonicalPath().equals( sourceFile.getCanonicalPath() ) )
                 {
                     getLog().info(
-                        "Skipping artifact[" + module + "], as it already exists at[" + module.getUri() + "]" );
+                        "Skipping artifact [" + module + "], as it already exists at [" + module.getUri() + "]" );
                     continue;
                 }
 
@@ -299,22 +321,32 @@ public class EarMojo
                     ( module.shouldUnpack() == null || module.shouldUnpack().booleanValue() ) ) ||
                     ( module.shouldUnpack() != null && module.shouldUnpack().booleanValue() ) )
                 {
-                    getLog().info( "Copying artifact[" + module + "] to[" + module.getUri() + "] (unpacked)" );
+                    getLog().info( "Copying artifact [" + module + "] to [" + module.getUri() + "] (unpacked)" );
                     // Make sure that the destination is a directory to avoid plexus nasty stuff :)
                     destinationFile.mkdirs();
                     unpack( sourceFile, destinationFile );
+
+                    if ( module.changeManifestClasspath() )
+                    {
+                        changeManifestClasspath( module, destinationFile );
+                    }
                 }
                 else
                 {
                     if ( sourceFile.lastModified() > destinationFile.lastModified() )
                     {
-                        getLog().info( "Copying artifact[" + module + "] to[" + module.getUri() + "]" );
+                        getLog().info( "Copying artifact [" + module + "] to [" + module.getUri() + "]" );
                         FileUtils.copyFile( sourceFile, destinationFile );
+
+                        if ( module.changeManifestClasspath() )
+                        {
+                            changeManifestClasspath( module, destinationFile );
+                        }
                     }
                     else
                     {
                         getLog().debug(
-                            "Skipping artifact[" + module + "], as it is already up to date at[" + module.getUri() +
+                            "Skipping artifact [" + module + "], as it is already up to date at [" + module.getUri() +
                                 "]" );
                     }
                 }
@@ -398,7 +430,7 @@ public class EarMojo
             File earFile = getEarFile( outputDirectory, finalName, classifier );
             final MavenArchiver archiver = new EarMavenArchiver( getModules() );
             final JarArchiver jarArchiver = getJarArchiver();
-            getLog().debug( "Jar archiver implementation[" + jarArchiver.getClass().getName() + "]" );
+            getLog().debug( "Jar archiver implementation [" + jarArchiver.getClass().getName() + "]" );
             archiver.setArchiver( jarArchiver );
             archiver.setOutputFile( earFile );
 
@@ -485,7 +517,7 @@ public class EarMojo
         }
         else
         {
-            getLog().info( "Including custom manifest file[" + manifestFile + "]" );
+            getLog().info( "Including custom manifest file [" + manifestFile + "]" );
             archive.setManifestFile( manifestFile );
         }
     }
@@ -601,10 +633,142 @@ public class EarMojo
             }
             catch ( MavenFilteringException e )
             {
-                getLog().error( "fail to build filering wrappers " + e.getMessage() );
+                getLog().error( "Fail to build filtering wrappers " + e.getMessage() );
                 throw new MojoExecutionException( e.getMessage(), e );
             }
         }
         return filterWrappers;
+    }
+
+    private void changeManifestClasspath( EarModule module, File original )
+            throws MojoFailureException
+    {
+        try
+        {
+            File workDirectory;
+
+            // Handle the case that the destination might be a directory (project-038)
+            if( original.isFile() )
+            {
+                // Create a temporary work directory
+                workDirectory = new File( new File(
+                        generatedDescriptorLocation, "temp" ), module.getArtifact()
+                        .getArtifactId() );
+                workDirectory.mkdirs();
+                getLog().debug( "Created a temporary work directory: " + workDirectory.getAbsolutePath() );
+
+                // Unpack the archive to a temporary work directory
+                zipUnArchiver.setSourceFile( original );
+                zipUnArchiver.setDestDirectory( workDirectory );
+                zipUnArchiver.extract();
+            }
+            else
+            {
+                workDirectory = original;
+            }
+
+            // Create a META-INF/MANIFEST.MF file if it doesn't exist (project-038)
+            File metaInfDirectory = new File( workDirectory, "META-INF" );
+            boolean newMetaInfCreated = metaInfDirectory.mkdirs();
+            if( newMetaInfCreated )
+            {
+                getLog().debug( "This project did not have a META-INF directory before, so a new directory was created." );
+            }
+            File manifestFile = new File( metaInfDirectory, "MANIFEST.MF" );
+            boolean newManifestCreated = manifestFile.createNewFile();
+            if( newManifestCreated )
+            {
+                getLog().debug( "This project did not have a META-INF/MANIFEST.MF file before, so a new file was created." );
+            }
+
+            // Read the manifest from disk
+            Manifest mf = new Manifest( new FileReader( manifestFile ) );
+            Attribute classPath = mf.getMainSection()
+                    .getAttribute( "Class-Path" );
+            List classPathElements = new ArrayList();
+
+            if ( classPath != null )
+            {
+                classPathElements.addAll( Arrays.asList( classPath.getValue()
+                        .split( " " ) ) );
+            } else
+            {
+                classPath = new Attribute( "Class-Path", "" );
+                mf.getMainSection().addConfiguredAttribute( classPath );
+            }
+
+            // Modify the classpath entries in the manifest
+            for ( Iterator iter = getModules().iterator(); iter.hasNext(); )
+            {
+                Object o = iter.next();
+
+                if ( o instanceof JarModule )
+                {
+                    JarModule jm = ( JarModule ) o;
+
+                    if ( module.getLibDir() != null )
+                    {
+                        File artifact = new File( new File(
+                                workDirectory, module.getLibDir() ),
+                                jm.getBundleFileName() );
+
+                        if ( artifact.exists() )
+                        {
+                            if ( !artifact.delete() )
+                            {
+                                getLog().error(
+                                        "Could not delete '" + artifact + "'" );
+                            }
+                        }
+                    }
+
+                    if ( classPathElements.contains( jm.getBundleFileName() ) )
+                    {
+                        classPathElements.set( classPathElements.indexOf( jm
+                                .getBundleFileName() ), jm.getUri() );
+                    }
+                    else
+                    {
+                        classPathElements.add( jm.getUri() );
+                    }
+                }
+            }
+            classPath.setValue( StringUtils.join( classPathElements.iterator(), " " ) );
+
+            // Write the manifest to disk
+            PrintWriter pw = new PrintWriter( manifestFile );
+            mf.write( pw );
+            pw.close();
+
+            if( original.isFile() )
+            {
+                // Pack up the archive again from the work directory
+                if ( !original.delete() )
+                {
+                    getLog().error( "Could not delete original artifact file " + original );
+                }
+
+                getLog().debug( "Zipping module" );
+                zipArchiver.setDestFile( original );
+                zipArchiver.addDirectory( workDirectory );
+                zipArchiver.createArchive();
+            }
+        }
+        catch ( ManifestException e )
+        {
+            throw new MojoFailureException( e.getMessage() );
+        }
+        catch ( ZipException e )
+        {
+            throw new MojoFailureException( e.getMessage() );
+        }
+        catch ( IOException e )
+        {
+            throw new MojoFailureException( e.getMessage() );
+        }
+        catch ( ArchiverException e )
+        {
+            throw new MojoFailureException( e.getMessage() );
+        }
     }
 }

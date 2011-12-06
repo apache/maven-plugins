@@ -117,4 +117,8 @@ public class WebModule
         }
         return "/" + a.getArtifactId();
     }
+
+    public String getLibDir() {
+        return "WEB-INF/lib";
+    }
 }
