@@ -97,4 +97,8 @@ public class JarModule
             this.bundleDir = defaultLibBundleDir;
         }
     }
+
+    public boolean changeManifestClasspath() {
+        return false;
+    }
 }

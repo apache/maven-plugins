@@ -111,4 +111,8 @@ public interface EarModule
 
     public void setEarExecutionContext( EarExecutionContext earExecutionContext );
 
+    public boolean changeManifestClasspath();
+
+    public String getLibDir();
+
 }
