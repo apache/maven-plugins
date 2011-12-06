@@ -22,7 +22,7 @@ under the License.
 <project>
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>org.apache.maven.its.ear.skinnywars</groupId>
+  <groupId>org.apache.maven.its.ear.nonskinnywars</groupId>
   <artifactId>ear-module</artifactId>
   <version>1.0</version>
   <packaging>ear</packaging>
@@ -34,7 +34,7 @@ under the License.
       <version>2.5</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.maven.its.ear.skinnywars</groupId>
+      <groupId>org.apache.maven.its.ear.nonskinnywars</groupId>
       <artifactId>war-module</artifactId>
       <version>1.0</version>
       <type>war</type>
@@ -47,9 +47,6 @@ under the License.
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-ear-plugin</artifactId>
         <version>@project.version@</version>
-        <configuration>
-          <skinnyWars>true</skinnyWars>
-        </configuration>
       </plugin>
     </plugins>
   </build>

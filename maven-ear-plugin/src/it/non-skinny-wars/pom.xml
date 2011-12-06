@@ -22,35 +22,15 @@ under the License.
 <project>
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>org.apache.maven.its.ear.skinnywars</groupId>
-  <artifactId>ear-module</artifactId>
+  <groupId>org.apache.maven.its.ear.nonskinnywars</groupId>
+  <artifactId>pom</artifactId>
   <version>1.0</version>
-  <packaging>ear</packaging>
+  <packaging>pom</packaging>
 
-  <dependencies>
-    <dependency>
-      <groupId>commons-lang</groupId>
-      <artifactId>commons-lang</artifactId>
-      <version>2.5</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven.its.ear.skinnywars</groupId>
-      <artifactId>war-module</artifactId>
-      <version>1.0</version>
-      <type>war</type>
-    </dependency>
-  </dependencies>
+  <description>Test non Skinny WAR generation</description>
 
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-ear-plugin</artifactId>
-        <version>@project.version@</version>
-        <configuration>
-          <skinnyWars>true</skinnyWars>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
+  <modules>
+      <module>ear-module</module>
+      <module>war-module</module>
+  </modules>
 </project>

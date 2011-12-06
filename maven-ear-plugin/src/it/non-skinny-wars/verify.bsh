@@ -1,0 +1,57 @@
+import java.io.*;
+import java.util.*;
+import java.util.jar.*;
+import java.util.regex.*;
+
+File jarFile = new File( basedir, "ear-module/target/ear-module-1.0/war-module-1.0.war" );
+System.out.println( "Checking for existence of " + jarFile );
+if ( !jarFile.isFile() )
+{
+    throw new IllegalStateException( "Missing file: " + jarFile );
+}
+
+JarFile jar = new JarFile( jarFile );
+
+String[] includedEntries = {
+    "WEB-INF/web.xml",
+    "META-INF/MANIFEST.MF",
+    "WEB-INF/lib/commons-lang-2.5.jar"
+};
+for ( String included : includedEntries )
+{
+    System.out.println( "Checking for included archive entry " + included );
+    if ( jar.getEntry( included ) == null )
+    {
+        throw new IllegalStateException( "Missing archive entry: " + included );
+    }
+}
+
+jar.close();
+
+
+File jarFile = new File( basedir, "war-module/target/war-module-1.0.war" );
+System.out.println( "Checking for existence of " + jarFile );
+if ( !jarFile.isFile() )
+{
+    throw new IllegalStateException( "Missing file: " + jarFile );
+}
+
+JarFile jar = new JarFile( jarFile );
+
+String[] includedEntries = {
+    "WEB-INF/web.xml",
+    "META-INF/MANIFEST.MF",
+    "WEB-INF/lib/commons-lang-2.5.jar"
+};
+for ( String included : includedEntries )
+{
+    System.out.println( "Checking for included archive entry " + included );
+    if ( jar.getEntry( included ) == null )
+    {
+        throw new IllegalStateException( "Missing archive entry: " + included );
+    }
+}
+
+jar.close();
+
+return true;
