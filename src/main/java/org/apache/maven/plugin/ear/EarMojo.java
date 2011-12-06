@@ -195,6 +195,16 @@ public class EarMojo
     private File resourcesDir;
 
     /**
+     * Whether to create skinny WARs or not. A skinny WAR is a WAR that does not
+     * have all of its dependencies in WEB-INF/lib. Instead those dependencies
+     * are shared between the WARs through the EAR.
+     *
+     * @parameter expression="${maven.ear.skinnyWars}" default-value="false"
+     * @since 2.7
+     */
+    private boolean skinnyWars;
+
+    /**
      * The Jar archiver.
      *
      * @component role="org.codehaus.plexus.archiver.Archiver" role-hint="jar"
@@ -326,7 +336,7 @@ public class EarMojo
                     destinationFile.mkdirs();
                     unpack( sourceFile, destinationFile );
 
-                    if ( module.changeManifestClasspath() )
+                    if ( skinnyWars && module.changeManifestClasspath() )
                     {
                         changeManifestClasspath( module, destinationFile );
                     }
@@ -338,7 +348,7 @@ public class EarMojo
                         getLog().info( "Copying artifact [" + module + "] to [" + module.getUri() + "]" );
                         FileUtils.copyFile( sourceFile, destinationFile );
 
-                        if ( module.changeManifestClasspath() )
+                        if ( skinnyWars && module.changeManifestClasspath() )
                         {
                             changeManifestClasspath( module, destinationFile );
                         }
