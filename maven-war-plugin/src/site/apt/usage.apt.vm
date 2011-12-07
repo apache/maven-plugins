@@ -46,6 +46,9 @@ Usage
  To handle archiving this version of Maven WAR Plugin uses
  {{{http://maven.apache.org/shared/maven-archiver/index.html}Maven Archiver}} ${mavenArchiverVersion}.
 
+  To handle filtering this version of Maven WAR Plugin uses
+  {{{http://maven.apache.org/shared/maven-filtering/index.html}Maven Filtering}} ${mavenFilteringVersion}.
+
 
 *Using the <<<package>>> phase with the project package type as war / invocation of the <<<war:war>>> goal
 
