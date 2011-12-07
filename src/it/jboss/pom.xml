@@ -22,12 +22,12 @@ under the License.
 <project>
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>org.apache.maven.its.ear.basic</groupId>
+  <groupId>org.apache.maven.its.ear.jboss</groupId>
   <artifactId>test</artifactId>
   <version>1.0</version>
   <packaging>ear</packaging>
 
-  <name>Maven Integration Test :: it0033</name> 
+  <name>Maven EAR Plugin Integration Test :: JBoss</name> 
   <description>Test an EAR generation</description>
 
   <build>
