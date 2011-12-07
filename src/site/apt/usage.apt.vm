@@ -26,6 +26,9 @@
 
 Usage
 
+  To handle archiving this version of Maven EAR Plugin uses
+  {{{http://maven.apache.org/shared/maven-archiver/index.html}Maven Archiver}} ${mavenArchiverVersion}.
+
 * Introduction
 
   The EAR Plugin allows to generate automatically the deployment descriptor, e.g.
