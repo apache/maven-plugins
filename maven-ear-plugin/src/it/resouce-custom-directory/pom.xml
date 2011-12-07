@@ -22,12 +22,12 @@ under the License.
 <project>
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>org.apache.maven.its.ear.basic</groupId>
+  <groupId>org.apache.maven.its.ear.resourcecustomdirectory</groupId>
   <artifactId>test</artifactId>
   <version>1.0</version>
   <packaging>ear</packaging>
 
-  <name>Maven EAR Plugin ntegration Test :: resource custom directory</name> 
+  <name>Maven EAR Plugin Integration Test :: resource custom directory</name>
   <description>Test filtering of a custom directory</description>
 
   <properties>
