@@ -96,7 +96,7 @@ Using it with Maven 3
 +-----+
   <reporting>
     <excludeDefaults>true</excludeDefaults>
-    <outputDirectory></outputDirectory>
+    <outputDirectory>\${project.build.directory}/site</outputDirectory>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
