@@ -1,0 +1,43 @@
+import java.io.*;
+import java.util.*;
+import java.util.jar.*;
+import java.util.regex.*;
+
+File jarFile = new File( basedir, "target/test-1.0.ear" );
+System.out.println( "Checking for existence of " + jarFile );
+if ( !jarFile.isFile() )
+{
+    throw new IllegalStateException( "Missing file: " + jarFile );
+}
+
+JarFile jar = new JarFile( jarFile );
+
+String[] includedEntries = {
+    "commons-lang-2.5.jar",
+    "META-INF/application.xml",
+    "META-INF/MANIFEST.MF"
+};
+for ( String included : includedEntries )
+{
+    System.out.println( "Checking for included archive entry " + included );
+    if ( jar.getEntry( included ) == null )
+    {
+        throw new IllegalStateException( "Missing archive entry: " + included );
+    }
+}
+
+String[] excludedEntries = {
+    "commons-io-1.4.jar"
+};
+for ( String excluded : excludedEntries )
+{
+    System.out.println( "Checking for excluded artifact " + excluded );
+    if ( jar.getEntry( excluded ) != null )
+    {
+        throw new IllegalStateException( "Archive entry should be excluded: " + excluded );
+    }
+}
+
+jar.close();
+
+return true;
