@@ -187,6 +187,29 @@ public class EarMojo
     private String classifier;
 
     /**
+     * A comma separated list of tokens to exclude when packaging the EAR.
+     * By default nothing is excluded. Note that you can use the Java Regular
+     * Expressions engine to include and exclude specific pattern using the
+     * expression %regex[].
+     * Hint: read the about (?!Pattern).
+     *
+     * @parameter
+     * @since 2.7
+     */
+    private String packagingExcludes;
+
+    /**
+     * A comma separated list of tokens to include when packaging the EAR.
+     * By default everything is included. Note that you can use the Java Regular
+     * Expressions engine to include and exclude specific pattern using the
+     * expression %regex[].
+     *
+     * @parameter
+     * @since 2.7
+     */
+    private String packagingIncludes;
+
+    /**
      * The directory to get the resources from.
      *
      * @parameter
@@ -447,7 +470,12 @@ public class EarMojo
             // Include custom manifest if necessary
             includeCustomManifestFile();
 
-            archiver.getArchiver().addDirectory( getWorkDirectory() );
+            getLog().debug(
+                "Excluding " + Arrays.asList( getPackagingExcludes() ) + " from the generated EAR." );
+            getLog().debug(
+                "Including " + Arrays.asList( getPackagingIncludes() ) + " in the generated EAR." );
+
+            archiver.getArchiver().addDirectory( getWorkDirectory(), getPackagingIncludes(), getPackagingExcludes() );
             archiver.createArchive( getProject(), archive );
 
             if ( classifier != null )
@@ -507,6 +535,40 @@ public class EarMojo
     protected String[] getIncludes()
     {
         return StringUtils.split( StringUtils.defaultString( earSourceIncludes ), "," );
+    }
+
+    public String[] getPackagingExcludes()
+    {
+        if ( StringUtils.isEmpty( packagingExcludes ) )
+        {
+            return new String[0];
+        }
+        else
+        {
+            return StringUtils.split( packagingExcludes, "," );
+        }
+    }
+
+    public void setPackagingExcludes( String packagingExcludes )
+    {
+        this.packagingExcludes = packagingExcludes;
+    }
+
+    public String[] getPackagingIncludes()
+    {
+        if ( StringUtils.isEmpty( packagingIncludes ) )
+        {
+            return new String[]{"**"};
+        }
+        else
+        {
+            return StringUtils.split( packagingIncludes, "," );
+        }
+    }
+
+    public void setPackagingIncludes( String packagingIncludes )
+    {
+        this.packagingIncludes = packagingIncludes;
     }
 
     private static File buildDestinationFile( File buildDir, String uri )
