@@ -29,7 +29,11 @@
 Including and Excluding Files From the WAR
 
 
-  It is possible to include or exclude certain files from the WAR file, by using the <<<\<packagingIncludes\>>>> and <<<\<packagingExcludes\>>>> configuration parameters. They each take a comma-separated list of Ant file set patterns. You can use wildcards such as <<<**>>> to indicate multiple directories and <<<*>>> to indicate an optional part of a file or directory name.
+  It is possible to include or exclude certain files from the WAR file, by using
+  the <<<\<packagingIncludes\>>>> and <<<\<packagingExcludes\>>>> configuration
+  parameters. They each take a comma-separated list of Ant file set patterns.
+  You can use wildcards such as <<<**>>> to indicate multiple directories and
+  <<<*>>> to indicate an optional part of a file or directory name.
   
   Here is an example where we exclude all JAR files from <<<WEB-INF/lib>>>:
 
@@ -51,7 +55,12 @@ Including and Excluding Files From the WAR
 </project>
 +-----------------+
 
-  Sometimes even such wildcards are not enough. In these cases you can use regular expressions with the <<<%regex[]>>> syntax. Here is a real life use case in which this is used. In this example we want to exclude any commons-logging and log4j JARs, but we do not want to exclude the log4j-over-slf4j JAR. So we want to exclude <<<log4j-\<version\>.jar>>> but keep the <<<log4j-over-slf4j-\<version\>.jar>>>.
+  Sometimes even such wildcards are not enough. In these cases you can use
+  regular expressions with the <<<%regex[]>>> syntax. Here is a real life use
+  case in which this is used. In this example we want to exclude any
+  commons-logging and log4j JARs, but we do not want to exclude the
+  log4j-over-slf4j JAR. So we want to exclude <<<log4j-\<version\>.jar>>> but
+  keep the <<<log4j-over-slf4j-\<version\>.jar>>>.
 
 +-----------------+
 <project>
@@ -79,4 +88,7 @@ Including and Excluding Files From the WAR
 </project>
 +-----------------+
 
-  If you have more real life examples of using regular expressions, we'd like to know about them. Please file an issue in {{{../issue-tracking.html}our issue tracker}} with your configuration, so we can expand this page.
+  If you have more real life examples of using regular expressions, we'd like to
+  know about them. Please file an issue in
+  {{{../issue-tracking.html}our issue tracker}} with your configuration, so we
+  can expand this page.
