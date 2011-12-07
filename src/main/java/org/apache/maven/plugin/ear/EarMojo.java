@@ -94,7 +94,7 @@ public class EarMojo
     private String earSourceExcludes;
 
     /**
-     * Specify that the ear sources should be filtered.
+     * Specify that the EAR sources should be filtered.
      *
      * @parameter default-value="false"
      * @since 2.3.2
@@ -119,8 +119,8 @@ public class EarMojo
     private List nonFilteredFileExtensions;
 
     /**
-     * To escape interpolated value with windows path
-     * c:\foo\bar will be replaced with c:\\foo\\bar
+     * To escape interpolated value with Windows path
+     * c:\foo\bar will be replaced with c:\\foo\\bar.
      *
      * @parameter expression="${maven.ear.escapedBackslashesInFilePath}" default-value="false"
      * @since 2.3.2
@@ -128,8 +128,8 @@ public class EarMojo
     private boolean escapedBackslashesInFilePath;
 
     /**
-     * Expression preceded with the String won't be interpolated
-     * \${foo} will be replaced with ${foo}
+     * Expression preceded with this String won't be interpolated
+     * \${foo} will be replaced with ${foo}.
      *
      * @parameter expression="${maven.ear.escapeString}"
      * @since 2.3.2
@@ -137,8 +137,8 @@ public class EarMojo
     protected String escapeString;
 
     /**
-     * The location of the manifest file to be used within the ear file. If
-     * not value if specified, the default location in the workDirectory is
+     * The location of the manifest file to be used within the EAR file. If
+     * no value if specified, the default location in the workDirectory is
      * taken. If the file does not exist, a manifest will be generated
      * automatically.
      *
@@ -148,7 +148,7 @@ public class EarMojo
 
     /**
      * The location of a custom application.xml file to be used
-     * within the ear file.
+     * within the EAR file.
      *
      * @parameter
      */
@@ -213,7 +213,7 @@ public class EarMojo
      * The directory to get the resources from.
      *
      * @parameter
-     * @deprecated please use earSourceDirectory instead
+     * @deprecated Please use earSourceDirectory instead.
      */
     private File resourcesDir;
 
