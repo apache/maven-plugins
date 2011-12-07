@@ -54,6 +54,7 @@ under the License.
 
   <properties>
     <mavenArchiverVersion>2.4.1</mavenArchiverVersion>
+    <mavenFilteringVersion>1.0-beta-2</mavenFilteringVersion>
     <mavenVersion>2.0.6</mavenVersion>
   </properties>
 
@@ -101,7 +102,7 @@ under the License.
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
       <artifactId>maven-filtering</artifactId>
-      <version>1.0-beta-2</version>
+      <version>${mavenFilteringVersion}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
