@@ -76,7 +76,7 @@ public class WarMojo
     /**
      * The comma separated list of tokens to exclude from the WAR before
      * packaging. This option may be used to implement the skinny WAR use
-     * case. Note the you can use the Java Regular Expressions engine to 
+     * case. Note that you can use the Java Regular Expressions engine to
      * include and exclude specific pattern using the expression %regex[].
      * Hint: read the about (?!Pattern).
      *
@@ -88,7 +88,7 @@ public class WarMojo
     /**
      * The comma separated list of tokens to include in the WAR before
      * packaging. By default everything is included. This option may be used
-     * to implement the skinny WAR use case. Note the you can use the
+     * to implement the skinny WAR use case. Note that you can use the
      * Java Regular Expressions engine to include and exclude specific pattern
      * using the expression %regex[].
      *
