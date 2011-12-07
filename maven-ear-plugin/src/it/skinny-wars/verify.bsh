@@ -33,7 +33,7 @@ for ( String excluded : excludedEntries )
     System.out.println( "Checking for excluded artifact " + excluded );
     if ( jar.getEntry( excluded ) != null )
     {
-        throw new IllegalStateException( "Archive entry should be excluded: " + included );
+        throw new IllegalStateException( "Archive entry should be excluded: " + excluded );
     }
 }
 
