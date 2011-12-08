@@ -129,8 +129,21 @@ public class WarMojo
 
     /**
      * Whether classes (that is the content of the WEB-INF/classes directory) should be attached to the
-     * project.
-     *
+     * project as an additional artifact.
+     * <p>By default the
+     * classifier for the additional artifact is 'classes'. 
+     * You can change it with the
+     * <code><![CDATA[<classesClassifier>someclassifier</classesClassifier>]]></code>
+     * parameter.
+     * </p><p>
+     * If this parameter true, another project can depend on the classes
+     * by writing something like:
+     * <pre><![CDATA[<dependency>
+     *   <groupId>myGroup</groupId>
+     *   <artifactId>myArtifact</artifactId>
+     *   <version>myVersion</myVersion>
+     *   <classifier>classes</classifier>
+     * </dependency>]]></pre></p>
      * @parameter default-value="false"
      * @since 2.1-alpha-2
      */
