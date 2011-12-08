@@ -210,14 +210,6 @@ public class EarMojo
     private String packagingIncludes;
 
     /**
-     * The directory to get the resources from.
-     *
-     * @parameter
-     * @deprecated Please use earSourceDirectory instead.
-     */
-    private File resourcesDir;
-
-    /**
      * Whether to create skinny WARs or not. A skinny WAR is a WAR that does not
      * have all of its dependencies in WEB-INF/lib. Instead those dependencies
      * are shared between the WARs through the EAR.
@@ -428,26 +420,6 @@ public class EarMojo
         catch ( MavenFilteringException e )
         {
             throw new MojoExecutionException( "Error filtering EAR sources", e );
-        }
-
-        // Copy resources files
-        try
-        {
-            if ( resourcesDir != null && resourcesDir.exists() )
-            {
-                getLog().warn( "resourcesDir is deprecated. Please use the earSourceDirectory property instead." );
-                getLog().info( "Copy ear resources to " + getWorkDirectory().getAbsolutePath() );
-                String[] fileNames = getEarFiles( resourcesDir );
-                for ( int i = 0; i < fileNames.length; i++ )
-                {
-                    FileUtils.copyFile( new File( resourcesDir, fileNames[i] ),
-                                        new File( getWorkDirectory(), fileNames[i] ) );
-                }
-            }
-        }
-        catch ( IOException e )
-        {
-            throw new MojoExecutionException( "Error copying EAR resources", e );
         }
 
         // Check if deployment descriptor is there
