@@ -36,6 +36,7 @@ under the License.
     <menu name="Examples">
       <item name="Filtering EAR Resources" href="examples/filtering-sources.html"/>
       <item name="Advanced Filtering Techniques" href="examples/filtering-advanced.html"/>
+      <item name="Creating Skinny WARs" href="examples/skinny-wars.html"/>
       <item name="Customizing A Module Filename" href="examples/customizing-a-module-filename.html"/>
       <item name="Customizing The Context Root" href="examples/customizing-context-root.html"/>
       <item name="Customizing A Module Location" href="examples/customizing-module-location.html"/>
