@@ -42,6 +42,7 @@ under the License.
       <item name="Customizing A Module Location" href="examples/customizing-module-location.html"/>
       <item name="Customizing A Module URI" href="examples/customizing-module-uri.html"/>
       <item name="Excluding A Module" href="examples/excluding-a-module.html"/>
+      <item name="Excluding Files From the EAR" href="examples/excluding-files-from-ear.html"/>
       <item name="Unpacking A Module" href="examples/unpacking-a-module.html"/>
       <item name="Including A Third Party Library In application.xml" href="examples/including-a-third-party-library-in-application-xml.html"/>
       <item name="Specifying Security Roles For The Generated application.xml" href="examples/specifying-security-roles-for-the-generated-application-xml.html"/>

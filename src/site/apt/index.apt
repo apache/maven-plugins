@@ -114,6 +114,8 @@ Maven EAR Plugin
 
   * {{{./examples/excluding-a-module.html}Excluding A Module}}
 
+  * {{{./examples/excluding-files-from-ear.html}Excluding Files From the EAR}}
+
   * {{{./examples/unpacking-a-module.html}Unpacking A Module}}
 
   * {{{./examples/including-a-third-party-library-in-application-xml.html}
