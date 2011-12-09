@@ -3,8 +3,9 @@
  ------
  Edwin Punzalan
  Stephane Nicoll
+ Dennis Lundberg
  ------
- 27 July 2006
+ 2011-12-09
  ------
 
 ~~ Copyright 2006 The Apache Software Foundation.
@@ -99,6 +100,8 @@ Maven EAR Plugin
   * {{{./examples/filtering-sources.html}Filtering EAR Resources}}
 
   * {{{./examples/filtering-advanced.html}Advanced Filtering Techniques}}
+
+  * {{{./examples/skinny-wars.html}Creating Skinny WARs}}
 
   * {{{./examples/customizing-a-module-filename.html}Customizing A Module
   Filename}}
