@@ -141,8 +141,8 @@ public class ArtifactRepository
 
             // If the groupId, the artifactId and if the
             // artifact's type is known, then we have found a candidate.
-            if ( a.getGroupId().equals( groupId ) && a.getArtifactId().equals( artifactId ) &&
-                artifactTypeMappingService.isMappedToType( type, a.getType() ) )
+            if ( a.getGroupId().equals( groupId ) && a.getArtifactId().equals( artifactId )
+                && artifactTypeMappingService.isMappedToType( type, a.getType() ) )
             {
                 result.add( a );
 

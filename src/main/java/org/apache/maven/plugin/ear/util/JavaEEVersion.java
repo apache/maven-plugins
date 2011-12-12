@@ -162,8 +162,8 @@ public class JavaEEVersion
         {
             throw new IllegalArgumentException( "version could not be null." );
         }
-        return VERSION_1_3.equals( version ) || VERSION_1_4.equals( version ) || VERSION_5.equals( version ) ||
-            VERSION_6.equals( version );
+        return VERSION_1_3.equals( version ) || VERSION_1_4.equals( version ) || VERSION_5.equals( version )
+            || VERSION_6.equals( version );
     }
 
     public int compareTo( Object other )

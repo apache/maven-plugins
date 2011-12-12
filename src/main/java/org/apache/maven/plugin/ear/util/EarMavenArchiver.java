@@ -1,17 +1,5 @@
 package org.apache.maven.plugin.ear.util;
 
-import org.apache.maven.archiver.MavenArchiveConfiguration;
-import org.apache.maven.archiver.MavenArchiver;
-import org.apache.maven.artifact.DependencyResolutionRequiredException;
-import org.apache.maven.plugin.ear.EarModule;
-import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.archiver.jar.Manifest;
-import org.codehaus.plexus.archiver.jar.ManifestException;
-
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -30,6 +18,18 @@ import java.util.Set;
  * specific language governing permissions and limitations
  * under the License.
  */
+
+import org.apache.maven.archiver.MavenArchiveConfiguration;
+import org.apache.maven.archiver.MavenArchiver;
+import org.apache.maven.artifact.DependencyResolutionRequiredException;
+import org.apache.maven.plugin.ear.EarModule;
+import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.archiver.jar.Manifest;
+import org.codehaus.plexus.archiver.jar.ManifestException;
+
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 /**
  * A custom {@link MavenArchiver} implementation that takes care

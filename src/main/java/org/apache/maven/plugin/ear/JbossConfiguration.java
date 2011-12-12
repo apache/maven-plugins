@@ -1,7 +1,5 @@
 package org.apache.maven.plugin.ear;
 
-import java.util.List;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -21,6 +19,7 @@ import java.util.List;
  * under the License.
  */
 
+import java.util.List;
 
 /**
  * The JBoss specific configuration, used to generate the jboss-app.xml

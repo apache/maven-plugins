@@ -24,7 +24,8 @@ import org.apache.maven.plugin.MojoExecutionException;
 /**
  * @author Stephane Nicoll
  */
-public class InvalidJavaEEVersion extends MojoExecutionException {
+public class InvalidJavaEEVersion extends MojoExecutionException
+{
 
     private final String invalidVersion;
 

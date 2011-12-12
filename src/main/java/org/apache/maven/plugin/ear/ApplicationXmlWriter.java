@@ -36,8 +36,8 @@ final class ApplicationXmlWriter
     extends AbstractXmlWriter
 {
     public static final String DOCTYPE_1_3 =
-        "application PUBLIC\n" + "\t\"-//Sun Microsystems, Inc.//DTD J2EE Application 1.3//EN\"\n" +
-            "\t\"http://java.sun.com/dtd/application_1_3.dtd\"";
+        "application PUBLIC\n" + "\t\"-//Sun Microsystems, Inc.//DTD J2EE Application 1.3//EN\"\n"
+            + "\t\"http://java.sun.com/dtd/application_1_3.dtd\"";
 
     private static final String APPLICATION_ELEMENT = "application";
 

@@ -329,8 +329,8 @@ public class EarMojo
                 if ( !sourceFile.isFile() )
                 {
                     throw new MojoExecutionException(
-                        "Cannot copy a directory: " + sourceFile.getAbsolutePath() + "; Did you package/install " +
-                            module.getArtifact() + "?" );
+                        "Cannot copy a directory: " + sourceFile.getAbsolutePath() + "; Did you package/install "
+                            + module.getArtifact() + "?" );
                 }
 
                 if ( destinationFile.getCanonicalPath().equals( sourceFile.getCanonicalPath() ) )
@@ -342,9 +342,9 @@ public class EarMojo
 
                 // If the module is within the unpack list, make sure that no unpack wasn't forced (null or true)
                 // If the module is not in the unpack list, it should be true
-                if ( ( unpackTypesList.contains( module.getType() ) &&
-                    ( module.shouldUnpack() == null || module.shouldUnpack().booleanValue() ) ) ||
-                    ( module.shouldUnpack() != null && module.shouldUnpack().booleanValue() ) )
+                if ( ( unpackTypesList.contains( module.getType() )
+                    && ( module.shouldUnpack() == null || module.shouldUnpack().booleanValue() ) )
+                    || ( module.shouldUnpack() != null && module.shouldUnpack().booleanValue() ) )
                 {
                     getLog().info( "Copying artifact [" + module + "] to [" + module.getUri() + "] (unpacked)" );
                     // Make sure that the destination is a directory to avoid plexus nasty stuff :)
@@ -371,8 +371,8 @@ public class EarMojo
                     else
                     {
                         getLog().debug(
-                            "Skipping artifact [" + module + "], as it is already up to date at [" + module.getUri() +
-                                "]" );
+                            "Skipping artifact [" + module + "], as it is already up to date at [" + module.getUri()
+                                + "]" );
                     }
                 }
             }
@@ -692,7 +692,7 @@ public class EarMojo
             File workDirectory;
 
             // Handle the case that the destination might be a directory (project-038)
-            if( original.isFile() )
+            if ( original.isFile() )
             {
                 // Create a temporary work directory
                 workDirectory = new File( new File(
@@ -714,15 +714,17 @@ public class EarMojo
             // Create a META-INF/MANIFEST.MF file if it doesn't exist (project-038)
             File metaInfDirectory = new File( workDirectory, "META-INF" );
             boolean newMetaInfCreated = metaInfDirectory.mkdirs();
-            if( newMetaInfCreated )
+            if ( newMetaInfCreated )
             {
-                getLog().debug( "This project did not have a META-INF directory before, so a new directory was created." );
+                getLog().debug(
+                        "This project did not have a META-INF directory before, so a new directory was created." );
             }
             File manifestFile = new File( metaInfDirectory, "MANIFEST.MF" );
             boolean newManifestCreated = manifestFile.createNewFile();
-            if( newManifestCreated )
+            if ( newManifestCreated )
             {
-                getLog().debug( "This project did not have a META-INF/MANIFEST.MF file before, so a new file was created." );
+                getLog().debug(
+                        "This project did not have a META-INF/MANIFEST.MF file before, so a new file was created." );
             }
 
             // Read the manifest from disk
@@ -735,7 +737,8 @@ public class EarMojo
             {
                 classPathElements.addAll( Arrays.asList( classPath.getValue()
                         .split( " " ) ) );
-            } else
+            }
+            else
             {
                 classPath = new Attribute( "Class-Path", "" );
                 mf.getMainSection().addConfiguredAttribute( classPath );
@@ -784,7 +787,7 @@ public class EarMojo
             mf.write( pw );
             pw.close();
 
-            if( original.isFile() )
+            if ( original.isFile() )
             {
                 // Pack up the archive again from the work directory
                 if ( !original.delete() )

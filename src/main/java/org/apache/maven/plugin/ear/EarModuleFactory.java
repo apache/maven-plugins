@@ -35,7 +35,7 @@ import java.util.List;
  */
 public final class EarModuleFactory
 {
-    public final static List standardArtifactTypes;
+    public static final List standardArtifactTypes;
 
     static
     {
