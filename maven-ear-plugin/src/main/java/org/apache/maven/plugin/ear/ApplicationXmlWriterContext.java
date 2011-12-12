@@ -1,8 +1,5 @@
 package org.apache.maven.plugin.ear;
 
-import java.io.File;
-import java.util.List;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -21,6 +18,9 @@ import java.util.List;
  * specific language governing permissions and limitations
  * under the License.
  */
+
+import java.io.File;
+import java.util.List;
 
 /**
  * A context for the {@link ApplicationXmlWriter}.

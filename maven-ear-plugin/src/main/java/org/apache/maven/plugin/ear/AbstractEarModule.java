@@ -117,8 +117,8 @@ public abstract class AbstractEarModule
                 Set candidates = ar.getArtifacts( groupId, artifactId, getType() );
                 if ( candidates.size() > 1 )
                 {
-                    throw new MojoFailureException( "Artifact[" + this + "] has " + candidates.size() +
-                                                        " candidates, please provide a classifier." );
+                    throw new MojoFailureException( "Artifact[" + this + "] has " + candidates.size()
+                                                        + " candidates, please provide a classifier." );
                 }
                 else
                 {
@@ -371,7 +371,8 @@ public abstract class AbstractEarModule
         return true;
     }
 
-    public String getLibDir() {
+    public String getLibDir()
+    {
         return null;
     }
 }

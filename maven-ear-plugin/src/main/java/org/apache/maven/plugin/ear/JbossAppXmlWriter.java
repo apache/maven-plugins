@@ -37,17 +37,17 @@ final class JbossAppXmlWriter
     extends AbstractXmlWriter
 {
 
-    public static final String DOCTYPE_3_2 = "jboss-app PUBLIC\n" + "\t\"-//JBoss//DTD J2EE Application 1.3//EN\"\n" +
-        "\t\"http://www.jboss.org/j2ee/dtd/jboss-app_3_2.dtd\"";
+    public static final String DOCTYPE_3_2 = "jboss-app PUBLIC\n" + "\t\"-//JBoss//DTD J2EE Application 1.3//EN\"\n"
+        + "\t\"http://www.jboss.org/j2ee/dtd/jboss-app_3_2.dtd\"";
 
-    public static final String DOCTYPE_4 = "jboss-app PUBLIC\n" + "\t\"-//JBoss//DTD J2EE Application 1.4//EN\"\n" +
-        "\t\"http://www.jboss.org/j2ee/dtd/jboss-app_4_0.dtd\"";
+    public static final String DOCTYPE_4 = "jboss-app PUBLIC\n" + "\t\"-//JBoss//DTD J2EE Application 1.4//EN\"\n"
+        + "\t\"http://www.jboss.org/j2ee/dtd/jboss-app_4_0.dtd\"";
 
-    public static final String DOCTYPE_4_2 = "jboss-app PUBLIC\n" + "\t\"-//JBoss//DTD J2EE Application 1.4//EN\"\n" +
-        "\t\"http://www.jboss.org/j2ee/dtd/jboss-app_4_2.dtd\"";
+    public static final String DOCTYPE_4_2 = "jboss-app PUBLIC\n" + "\t\"-//JBoss//DTD J2EE Application 1.4//EN\"\n"
+        + "\t\"http://www.jboss.org/j2ee/dtd/jboss-app_4_2.dtd\"";
 
-    public static final String DOCTYPE_5 = "jboss-app PUBLIC\n" + "\t\"-//JBoss//DTD Java EE Application 5.0//EN\"\n" +
-        "\t\"http://www.jboss.org/j2ee/dtd/jboss-app_5_0.dtd\"";
+    public static final String DOCTYPE_5 = "jboss-app PUBLIC\n" + "\t\"-//JBoss//DTD Java EE Application 5.0//EN\"\n"
+        + "\t\"http://www.jboss.org/j2ee/dtd/jboss-app_5_0.dtd\"";
 
     private static final String JBOSS_APP_ELEMENT = "jboss-app";
 
@@ -108,8 +108,8 @@ final class JbossAppXmlWriter
         }
 
         // classloader repository
-        if ( jbossConfiguration.getLoaderRepository() != null ||
-            jbossConfiguration.getLoaderRepositoryConfig() != null )
+        if ( jbossConfiguration.getLoaderRepository() != null
+            || jbossConfiguration.getLoaderRepositoryConfig() != null )
         {
             writer.startElement( JbossConfiguration.LOADER_REPOSITORY );
 

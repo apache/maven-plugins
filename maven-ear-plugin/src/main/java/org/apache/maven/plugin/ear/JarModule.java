@@ -98,7 +98,8 @@ public class JarModule
         }
     }
 
-    public boolean changeManifestClasspath() {
+    public boolean changeManifestClasspath()
+    {
         return false;
     }
 }

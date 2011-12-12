@@ -217,8 +217,8 @@ public abstract class AbstractEarMojo
                 // Artifact is not yet registered and it has neither test, nor a
                 // provided scope, not is it optional
                 ScopeArtifactFilter filter = new ScopeArtifactFilter( Artifact.SCOPE_RUNTIME );
-                if ( !isArtifactRegistered( artifact, allModules ) && !artifact.isOptional() &&
-                    filter.include( artifact ) )
+                if ( !isArtifactRegistered( artifact, allModules ) && !artifact.isOptional()
+                    && filter.include( artifact ) )
                 {
                     EarModule module = EarModuleFactory.newEarModule( artifact, javaEEVersion, defaultLibBundleDir,
                                                                       includeLibInApplicationXml, typeMappingService );
