@@ -509,9 +509,7 @@ public class EclipsePluginIT
     }
 
     /**
-     * [MECLIPSE-219]
-     * Note: This fails behind a firewall, See [MECLIPSE-696]
-     * See EclipsePlugin.writeAdditionalConfig() - inStream = file.getURL().openConnection().getInputStream()
+     * [MECLIPSE-219] Allow file contents to be obtained from url or location
      * 
      * @since 2.5
      * @throws Exception

@@ -589,7 +589,7 @@ public abstract class AbstractEclipsePluginIT
         {
             String message =
                 "Comparing '" + IdeUtils.getCanonicalPath(actualFile) + "' against '"
-                    + IdeUtils.getCanonicalPath(expectedFile);
+                    + IdeUtils.getCanonicalPath(expectedFile) + "'";
             if (CLASSPATH_FILENAME.equals(actualFile.getName())) {                
                 Diff diff = new Diff(expectedFileContents, actualFileContents);
                 XMLAssert.assertXMLIdentical( message, diff, true );

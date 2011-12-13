@@ -92,8 +92,9 @@ PluginTestTool
 Invoker
   Some tests are done via invoker. 
   
-  (TODO: Confirm this is invoker that requires this file) 
-  If you are behind a firewall then you must configure src/it/settings.xml
+  If you are behind a firewall then you must configure src/it/settings.xml.
+  Do this by copying src/it/settings-default to settings-${user.name}.xml.
+  The pom's process-resources configuration will copy this to src/it/settings.xml for you. 
   
   (TODO: Someone who understands how invoker works - can you complete this section)    
   
