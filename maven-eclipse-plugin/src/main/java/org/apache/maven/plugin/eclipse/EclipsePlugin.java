@@ -23,7 +23,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.SocketException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -36,6 +36,7 @@ import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.handler.ArtifactHandler;
+import org.apache.maven.artifact.manager.WagonManager;
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.model.Resource;
@@ -58,6 +59,14 @@ import org.apache.maven.plugin.ide.IdeDependency;
 import org.apache.maven.plugin.ide.IdeUtils;
 import org.apache.maven.plugin.ide.JeeUtils;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.settings.MavenSettingsBuilder;
+import org.apache.maven.settings.Proxy;
+import org.apache.maven.settings.Settings;
+import org.apache.maven.wagon.Wagon;
+import org.apache.maven.wagon.WagonException;
+import org.apache.maven.wagon.observers.Debug;
+import org.apache.maven.wagon.proxy.ProxyInfo;
+import org.apache.maven.wagon.repository.Repository;
 import org.codehaus.plexus.resource.ResourceManager;
 import org.codehaus.plexus.resource.loader.FileResourceLoader;
 import org.codehaus.plexus.resource.loader.ResourceNotFoundException;
@@ -65,6 +74,7 @@ import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 /**
  * Generates the following eclipse configuration files:
@@ -484,6 +494,24 @@ public class EclipsePlugin
      * @readonly
      */
     private ResourceManager locator;
+
+    /**
+     * WagonManager for accessing internet resources.
+     *  
+     * @component
+     * @required
+     * @readonly
+     */
+    private WagonManager wagonManager;
+    
+    /**
+     * MavenSettingsBuilder for accessing settings.xml.
+     *  
+     * @component
+     * @required
+     * @readonly
+     */
+    private MavenSettingsBuilder mavenSettingsBuilder;
 
     /**
      * This eclipse workspace is read and all artifacts detected there will be connected as eclipse projects and will
@@ -1230,25 +1258,59 @@ public class EclipsePlugin
                     projectRelativeFile.getParentFile().mkdirs();
                     if ( file.getContent() == null )
                     {
-                        InputStream inStream;
                         if ( file.getLocation() != null )
                         {
-                            inStream = locator.getResourceAsInputStream( file.getLocation() );
+                            InputStream inStream = locator.getResourceAsInputStream( file.getLocation() );
+                            OutputStream outStream = new FileOutputStream( projectRelativeFile );
+                            try
+                            {
+                                IOUtil.copy( inStream, outStream );
+                            }
+                            finally
+                            {
+                                IOUtil.close(inStream);
+                                IOUtil.close(outStream);
+                            }                            
                         }
                         else
                         {
-                            // TODO: [MECLIPSE-696] Note: This fails behind a firewall for testProject44
-                            inStream = file.getURL().openConnection().getInputStream();
-                        }
-                        OutputStream outStream = new FileOutputStream( projectRelativeFile );
-                        try
-                        {
-                            IOUtil.copy( inStream, outStream );
-                        }
-                        finally
-                        {
-                            IOUtil.close(inStream);
-                            IOUtil.close(outStream);
+                            URL url = file.getURL();
+                            String endPointUrl = url.getProtocol() + "://" + url.getAuthority();
+                            // Repository Id should be ignored by Wagon ...
+                            Repository repository = new Repository( "additonal-configs", endPointUrl );
+                            Wagon wagon = wagonManager.getWagon( repository );;
+                            if ( logger.isDebugEnabled() )
+                            {
+                                Debug debug = new Debug();
+                                wagon.addSessionListener( debug );
+                                wagon.addTransferListener( debug );
+                            }
+                            wagon.setTimeout( 1000 );
+                            Settings settings = mavenSettingsBuilder.buildSettings();
+                            ProxyInfo proxyInfo = null; 
+                            if ( settings != null && settings.getActiveProxy() != null )
+                            {
+                                Proxy settingsProxy = settings.getActiveProxy();
+
+                                proxyInfo = new ProxyInfo();
+                                proxyInfo.setHost( settingsProxy.getHost() );
+                                proxyInfo.setType( settingsProxy.getProtocol() );
+                                proxyInfo.setPort( settingsProxy.getPort() );
+                                proxyInfo.setNonProxyHosts( settingsProxy.getNonProxyHosts() );
+                                proxyInfo.setUserName( settingsProxy.getUsername() );
+                                proxyInfo.setPassword( settingsProxy.getPassword() );                                
+                            }
+                                
+                            if ( proxyInfo != null )
+                            {
+                                wagon.connect( repository, wagonManager.getAuthenticationInfo( repository.getId() ), proxyInfo );
+                            }
+                            else
+                            {
+                                wagon.connect( repository, wagonManager.getAuthenticationInfo( repository.getId() ) );
+                            }
+                            
+                            wagon.get( url.getPath(), projectRelativeFile );
                         }
                     }
                     else
@@ -1256,8 +1318,8 @@ public class EclipsePlugin
                         FileUtils.fileWrite( projectRelativeFile.getAbsolutePath(), file.getContent() );
                     }
                 }
-                catch ( SocketException e ) {
-                    throw new MojoExecutionException(Messages.getString("EclipsePlugin.socketexception", //$NON-NLS-1$
+                catch ( WagonException e ) {
+                    throw new MojoExecutionException(Messages.getString("EclipsePlugin.remoteexception", //$NON-NLS-1$
                                                                         new Object[] { file.getURL(),
                                                                             e.getMessage() }));                    
                 }
@@ -1271,7 +1333,11 @@ public class EclipsePlugin
                     throw new MojoExecutionException( Messages.getString( "EclipsePlugin.cantfindresource", //$NON-NLS-1$
                                                                           file.getLocation() ) );
                 }
-
+                catch ( XmlPullParserException e )
+                {
+                    throw new MojoExecutionException( Messages.getString( "EclipsePlugin.settingsxmlfailure", //$NON-NLS-1$
+                                                                          e.getMessage() ) );
+                }
             }
         }
     }
