@@ -302,6 +302,13 @@ public abstract class AbstractAssemblyMojo
     private MavenArchiveConfiguration archive;
 
     /**
+     * The list of extra filter properties files to be used along with System properties, project
+     * properties, and filter properties files specified in the POM build/filters section, which
+     * should be used for the filtering during the current mojo execution.
+     * <br/>
+     * Normally, these will be configured from a plugin's execution section, to provide a different
+     * set of filters for a particular execution.
+     * 
      * @parameter
      */
     protected List<String> filters;
