@@ -22,12 +22,16 @@ package org.apache.maven.plugins.site;
 import java.io.File;
 import java.io.IOException;
 
+import org.apache.maven.archiver.MavenArchiveConfiguration;
+import org.apache.maven.archiver.MavenArchiver;
+import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProjectHelper;
 
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
+import org.codehaus.plexus.archiver.jar.ManifestException;
 
 /**
  * Bundles the site output into a JAR so that it can be deployed to a repository.
@@ -41,6 +45,10 @@ import org.codehaus.plexus.archiver.jar.JarArchiver;
 public class SiteJarMojo
     extends SiteMojo
 {
+    private static final String[] DEFAULT_ARCHIVE_EXCLUDES = new String[]{};
+
+    private static final String[] DEFAULT_ARCHIVE_INCLUDES = new String[]{"**/**"};
+
     /**
      * Specifies the directory where the generated jar file will be put.
      *
@@ -71,6 +79,41 @@ public class SiteJarMojo
      * @parameter expression="${site.attach}" default-value="true"
      */
     private boolean attach;
+
+    /**
+     * The Jar archiver.
+     *
+     * @component role="org.codehaus.plexus.archiver.Archiver" roleHint="jar"
+     * @since 3.1
+     */
+    private JarArchiver jarArchiver;
+
+    /**
+     * The archive configuration to use.
+     * See <a href="http://maven.apache.org/shared/maven-archiver/index.html">Maven Archiver Reference</a>.
+     *
+     * @parameter
+     * @since 3.1
+     */
+    private MavenArchiveConfiguration archive = new MavenArchiveConfiguration();
+
+    /**
+     * List of files to include. Specified as file set patterns which are relative to the input directory whose contents
+     * is being packaged into the JAR.
+     *
+     * @parameter
+     * @since 3.1
+     */
+    private String[] archiveIncludes;
+
+    /**
+     * List of files to exclude. Specified as file set patterns which are relative to the input directory whose contents
+     * is being packaged into the JAR.
+     *
+     * @parameter
+     * @since 3.1
+     */
+    private String[] archiveExcludes;
 
     /**
      * @see org.apache.maven.plugin.Mojo#execute()
@@ -105,6 +148,14 @@ public class SiteJarMojo
         {
             throw new MojoExecutionException( "Error while creating archive.", e );
         }
+        catch ( ManifestException e )
+        {
+            throw new MojoExecutionException( "Error while creating archive.", e );
+        }
+        catch ( DependencyResolutionRequiredException e )
+        {
+            throw new MojoExecutionException( "Error while creating archive.", e );
+        }
     }
 
     protected String getArtifactType()
@@ -125,22 +176,50 @@ public class SiteJarMojo
      * @return a File object that contains the created jar file
      * @throws ArchiverException
      * @throws IOException
+     * @throws ManifestException
+     * @throws DependencyResolutionRequiredException
      */
     private File createArchive( File siteDirectory, String jarFilename )
-        throws ArchiverException, IOException
+        throws ArchiverException, IOException, ManifestException, DependencyResolutionRequiredException
     {
         File siteJar = new File( jarOutputDirectory, jarFilename );
 
-        if ( siteJar.exists() )
+        MavenArchiver archiver = new MavenArchiver();
+
+        archiver.setArchiver( this.jarArchiver );
+
+        archiver.setOutputFile( siteJar );
+
+        if ( !siteDirectory.isDirectory() )
         {
-            siteJar.delete();
+            getLog().warn( "JAR will be empty - no content was marked for inclusion !" );
+        }
+        else
+        {
+            archiver.getArchiver().addDirectory( siteDirectory, getArchiveIncludes(), getArchiveExcludes() );
         }
 
-        JarArchiver archiver = new JarArchiver();
-        archiver.addDirectory( siteDirectory );
-        archiver.setDestFile( siteJar );
-        archiver.createArchive();
+        archiver.createArchive( project, archive );
 
         return siteJar;
+    }
+
+    private String[] getArchiveIncludes()
+    {
+        if ( this.archiveIncludes != null && this.archiveIncludes.length > 0 )
+        {
+            return this.archiveIncludes;
+        }
+
+        return DEFAULT_ARCHIVE_INCLUDES;
+    }
+
+    private String[] getArchiveExcludes()
+    {
+        if ( this.archiveExcludes != null && this.archiveExcludes.length > 0 )
+        {
+            return this.archiveExcludes;
+        }
+        return DEFAULT_ARCHIVE_EXCLUDES;
     }
 }
