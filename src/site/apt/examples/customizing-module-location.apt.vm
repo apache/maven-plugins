@@ -4,7 +4,7 @@
   Stephane Nicoll
   <snicoll@apache.org>
   ------
-  September 23, 2005
+  2011-12-23
 
 ~~ Copyright 2006 The Apache Software Foundation.
 ~~
@@ -52,7 +52,7 @@ Customizing A Module Location
 +---------
 
   Note that it is possible to specify a default bundle directory for all libraries.
-  If a Jar module has not the bundleDir property above, the default one is used.
+  If a jarModule does not have the bundleDir property above, the default one is used.
   Below is an example of such configuration:
 
 +--------
@@ -78,5 +78,5 @@ Customizing A Module Location
   </build>
 +---------
 
-  In the above case, jar modules (i.e. libraries) will be placed in the APP-INF/lib directory
+  In the above case, jarModules (i.e. libraries) will be placed in the APP-INF/lib directory
   except the specified artifact which will be placed at the root of the EAR structure.
