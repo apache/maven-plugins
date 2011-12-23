@@ -3,7 +3,7 @@
  ------
  Dennis Lundberg
  ------
- 2011-02-05
+ 2011-12-23
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -162,7 +162,7 @@ shared-resources
 
   This will retrieve the bundled resources of the <<<shared-resources>>>
   module, process each resource in the bundle and put them in the
-  <<<\${project.build.directory}/shared-resources>>> directory of the
+  <<<\${project.build.directory}/maven-shared-archive-resources>>> directory of the
   <<<resource-consumer>>> module.
 
   That means we can use those files in the SQL Maven Plugin to set up the
