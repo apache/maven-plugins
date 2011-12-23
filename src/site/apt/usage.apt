@@ -137,11 +137,15 @@ mvn site:stage -DstagingDirectory=C:\fullsite
 
   <<Note:>> <<<stagingDirectory>>> cannot be dynamic, i.e. <<<stagingDirectory=$\{basedir\}\fullsite>>>
 
-  To stage a site and to deploy it, just execute the <<<{{{./stage-deploy-mojo.html}site:stage-deploy}}>>> goal from your project
-  with the required parameters. The <<<site:stage-deploy>>> goal will use the
-  id <<<stagingSite>>> for deployment. So if you need to add your username or
-  password in <<<settings.xml>>>, you should use <<<\<id\>stagingSite\</id\>>>>
-  for that <<<\<server\>>>> section. See the
+  To stage a site and to deploy it, just execute the
+  <<<{{{./stage-deploy-mojo.html}site:stage-deploy}}>>> goal from your project
+  with the required parameters.
+  The <<<site:stage-deploy>>> goal will use the value of <<<distributionManagement.site.id>>> as default id
+  to lookup the server section in your <<<settings.xml>>>;
+  unless this is not defined, then the String <<<stagingSite>>> will be used as id.
+  So if you need to add your username or password separately for stage-deploy in <<<settings.xml>>>,
+  you should use <<<\<id\>stagingSite\</id\>>>> for that <<<\<server\>>>> section.
+  See the
   {{{http://maven.apache.org/guides/mini/guide-deployment-security-settings.html}Guide to Deployment and Security Settings}}
   for more information on this.
 
