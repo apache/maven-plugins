@@ -154,7 +154,7 @@ public class TreeMojo extends AbstractMojo
      * pygraphviz can be found <a href="http://networkx.lanl.gov/pygraphviz/tutorial.html#layout-and-drawing">here</a>
      *
      * @parameter expression="${outputType}" default-value="text"
-     * @since 2.1
+     * @since 2.2
      */
     private String outputType;
 
