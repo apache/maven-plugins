@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 import net.sourceforge.pmd.cpd.Match;
+import net.sourceforge.pmd.cpd.TokenEntry;
 
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.project.MavenProject;
@@ -103,6 +104,48 @@ public class CpdReportGenerator
     }
 
     /**
+     * Method that generates a line of CPD report according to a TokenEntry.
+     */
+    private void generateFileLine( TokenEntry tokenEntry )
+    {
+        // Get information for report generation
+        String filename = tokenEntry.getTokenSrcID();
+        File file = new File( filename );
+        PmdFileInfo fileInfo = (PmdFileInfo) fileMap.get( file );
+        File sourceDirectory = fileInfo.getSourceDirectory();
+        filename = StringUtils.substring( filename, sourceDirectory.getAbsolutePath().length() + 1 );
+        String xrefLocation = fileInfo.getXrefLocation();
+        MavenProject projectFile = fileInfo.getProject();
+        int line = tokenEntry.getBeginLine();
+
+        sink.tableRow();
+        sink.tableCell();
+        sink.text( filename );
+        sink.tableCell_();
+        if ( aggregate )
+        {
+            sink.tableCell();
+            sink.text( projectFile.getName() );
+            sink.tableCell_();
+        }
+        sink.tableCell();
+
+        if ( xrefLocation != null )
+        {
+            sink.link( xrefLocation + "/" + filename.replaceAll( "\\.java$", ".html" ).replace( '\\', '/' )
+                    + "#" + line );
+        }
+        sink.text( String.valueOf(line) );
+        if ( xrefLocation != null )
+        {
+            sink.link_();
+        }
+
+        sink.tableCell_();
+        sink.tableRow_();
+    }
+
+    /**
      * Method that generates the contents of the CPD report
      *
      * @param matches
@@ -121,28 +164,9 @@ public class CpdReportGenerator
         while ( matches.hasNext() )
         {
             Match match = matches.next();
-            String filename1 = match.getFirstMark().getTokenSrcID();
-
-            File file = new File( filename1 );
-            PmdFileInfo fileInfo = (PmdFileInfo) fileMap.get( file );
-            File sourceDirectory = fileInfo.getSourceDirectory();
-            String xrefLocation = fileInfo.getXrefLocation();
-            MavenProject projectFile1 = fileInfo.getProject();
-
-            filename1 = StringUtils.substring( filename1, sourceDirectory.getAbsolutePath().length() + 1 );
-
-            String filename2 = match.getSecondMark().getTokenSrcID();
-            file = new File( filename2 );
-            fileInfo = (PmdFileInfo) fileMap.get( file );
-            sourceDirectory = fileInfo.getSourceDirectory();
-            String xrefLocation2 = fileInfo.getXrefLocation();
-            filename2 = StringUtils.substring( filename2, sourceDirectory.getAbsolutePath().length() + 1 );
-            MavenProject projectFile2 = fileInfo.getProject();
-
+            
             String code = match.getSourceCodeSlice();
-            int line1 = match.getFirstMark().getBeginLine();
-            int line2 = match.getSecondMark().getBeginLine();
-
+            
             sink.table();
             sink.tableRow();
             sink.tableHeaderCell();
@@ -159,59 +183,14 @@ public class CpdReportGenerator
             sink.tableHeaderCell_();
             sink.tableRow_();
 
-            // File 1
-            sink.tableRow();
-            sink.tableCell();
-            sink.text( filename1 );
-            sink.tableCell_();
-            if ( aggregate )
+            // Iterating on every token entry
+            for ( Iterator<TokenEntry> occurrences = match.iterator(); occurrences.hasNext(); )
             {
-                sink.tableCell();
-                sink.text( projectFile1.getName() );
-                sink.tableCell_();
-            }
-            sink.tableCell();
 
-            if ( xrefLocation != null )
-            {
-                sink.link( xrefLocation + "/" + filename1.replaceAll( "\\.java$", ".html" ).replace( '\\', '/' )
-                           + "#" + line1 );
+                TokenEntry mark = occurrences.next();
+                generateFileLine( mark );
             }
-            sink.text( String.valueOf( line1 ) );
-            if ( xrefLocation != null )
-            {
-                sink.link_();
-            }
-
-            sink.tableCell_();
-            sink.tableRow_();
-
-            // File 2
-            sink.tableRow();
-            sink.tableCell();
-            sink.text( filename2 );
-            sink.tableCell_();
-            if ( aggregate )
-            {
-                sink.tableCell();
-                sink.text( projectFile2.getName() );
-                sink.tableCell_();
-            }
-            sink.tableCell();
-
-            if ( xrefLocation != null )
-            {
-                sink.link( xrefLocation2 + "/" + filename2.replaceAll( "\\.java$", ".html" ).replace( '\\', '/' )
-                           + "#" + line2 );
-            }
-            sink.text( String.valueOf( line2 ) );
-            if ( xrefLocation != null )
-            {
-                sink.link_();
-            }
-            sink.tableCell_();
-            sink.tableRow_();
-
+           
             // Source snippet
             sink.tableRow();
 
