@@ -147,7 +147,7 @@ under the License.
     <dependency>
       <groupId>pmd</groupId>
       <artifactId>pmd</artifactId>
-      <version>4.2.5</version>
+      <version>4.2.6</version>
     </dependency>
 
     <!-- misc -->

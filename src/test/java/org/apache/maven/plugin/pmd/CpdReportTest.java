@@ -130,7 +130,7 @@ public class CpdReportTest
         assertTrue( str.toLowerCase().indexOf( "public static void main( String[] args )".toLowerCase() ) != -1 );
 
         str = readFile( new File( getBasedir(), "target/test/unit/custom-configuration/target/site/cpd.html" ) );
-        assertTrue( str.toLowerCase().indexOf( "private String unusedMethod( String unusedParam )".toLowerCase() ) != -1 );
+        assertTrue( str.toLowerCase().indexOf( "private String unusedMethod(".toLowerCase() ) != -1 );
 
     }
 
