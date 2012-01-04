@@ -1,7 +1,9 @@
  ------
  Introduction
  ------
- 06 January 2006
+ Dennis Lundberg
+ ------
+ 2012-01-04
  ------
 
  ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -23,9 +25,11 @@
 
 Maven PMD Plugin
 
-  The {{{http://pmd.sourceforge.net/}PMD}} plugin allows you to automatically run the PMD code analysis tool
+  The PMD Plugin allows you to automatically run the {{{http://pmd.sourceforge.net/}PMD}} code analysis tool
   on your project's source code and generate a site report with its results. It also supports the separate
   Copy/Paste Detector tool (or CPD) distributed with PMD.
+
+  This version of Maven PMD Plugin uses PMD ${pmdVersion}.
 
   The plugin accepts configuration parameters that can be used to customize the execution of the PMD tool.
 
