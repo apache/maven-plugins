@@ -223,7 +223,8 @@ public abstract class AbstractPmdReport
         {
             File xrefLoc = test ? xrefTestLocation : xrefLocation;
 
-            String relativePath = PathTool.getRelativePath( outputDirectory.getAbsolutePath(), xrefLoc.getAbsolutePath() );
+            String relativePath = PathTool.getRelativePath( outputDirectory.getAbsolutePath(),
+                                                            xrefLoc.getAbsolutePath() );
             if ( StringUtils.isEmpty( relativePath ) )
             {
                 relativePath = ".";
