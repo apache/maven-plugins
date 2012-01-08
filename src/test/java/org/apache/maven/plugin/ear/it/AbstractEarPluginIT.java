@@ -76,6 +76,7 @@ public abstract class AbstractEarPluginIT
      * @return the base directory of the project
      * @throws Exception if an error occurred
      */
+    @SuppressWarnings( "unchecked" )
     protected File executeMojo( final String projectName, final Properties properties, boolean expectNoError )
         throws Exception
     {
@@ -245,7 +246,7 @@ public abstract class AbstractEarPluginIT
         File dir = getEarDirectory( baseDir, projectName );
 
         // Let's build the expected directories sort list
-        final List expectedDirectories = new ArrayList();
+        final List<File> expectedDirectories = new ArrayList<File>();
         for ( int i = 0; i < artifactsDirectory.length; i++ )
         {
             if ( artifactsDirectory[i] )
@@ -254,7 +255,7 @@ public abstract class AbstractEarPluginIT
             }
         }
 
-        final List actualFiles = buildArchiveContentFiles( dir, expectedDirectories );
+        final List<File> actualFiles = buildArchiveContentFiles( dir, expectedDirectories );
         assertEquals( "Artifacts mismatch " + actualFiles, artifactNames.length, actualFiles.size() );
         for ( int i = 0; i < artifactNames.length; i++ )
         {
@@ -270,15 +271,15 @@ public abstract class AbstractEarPluginIT
         }
     }
 
-    protected List buildArchiveContentFiles( final File baseDir, final List expectedDirectories )
+    protected List<File> buildArchiveContentFiles( final File baseDir, final List<File> expectedDirectories )
     {
-        final List result = new ArrayList();
+        final List<File> result = new ArrayList<File>();
         addFiles( baseDir, result, expectedDirectories );
 
         return result;
     }
 
-    private void addFiles( final File directory, final List files, final List expectedDirectories )
+    private void addFiles( final File directory, final List<File> files, final List<File> expectedDirectories )
     {
         File[] result = directory.listFiles( new FilenameFilter()
         {

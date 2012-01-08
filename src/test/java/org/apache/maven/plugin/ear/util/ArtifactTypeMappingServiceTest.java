@@ -26,8 +26,6 @@ import org.apache.maven.plugin.ear.UnknownArtifactTypeException;
 import org.codehaus.plexus.configuration.PlexusConfigurationException;
 import org.codehaus.plexus.configuration.xml.XmlPlexusConfiguration;
 
-import java.util.Iterator;
-
 /**
  * Tests for the {@link ArtifactTypeMappingService}
  *
@@ -41,10 +39,8 @@ public class ArtifactTypeMappingServiceTest
     public void testDefaultConfiguration()
     {
         ArtifactTypeMappingService service = getDefaultService();
-        final Iterator it = EarModuleFactory.getStandardArtifactTypes().iterator();
-        while ( it.hasNext() )
+        for ( String type : EarModuleFactory.getStandardArtifactTypes() )
         {
-            String type = (String) it.next();
             assertTrue( "Standard type could not be found", service.isMappedToType( type, type ) );
         }
     }
