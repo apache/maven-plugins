@@ -19,17 +19,16 @@ package org.apache.maven.plugin.ear.util;
  * under the License.
  */
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.maven.plugin.ear.EarModuleFactory;
 import org.apache.maven.plugin.ear.EarPluginException;
 import org.apache.maven.plugin.ear.UnknownArtifactTypeException;
 import org.codehaus.plexus.configuration.PlexusConfiguration;
 import org.codehaus.plexus.configuration.PlexusConfigurationException;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Allows to map custom artifact type to standard type.
@@ -46,15 +45,15 @@ public class ArtifactTypeMappingService
     static final String MAPPING_ATTRIBUTE = "mapping";
 
     // A standard type to a list of customType
-    private final Map typeMappings;
+    private final Map<String, List<String>> typeMappings;
 
     // The user-defined mapping for direct access
-    private final Map customMappings;
+    private final Map<String, String> customMappings;
 
     public ArtifactTypeMappingService()
     {
-        this.typeMappings = new HashMap();
-        this.customMappings = new HashMap();
+        this.typeMappings = new HashMap<String, List<String>>();
+        this.customMappings = new HashMap<String, String>();
         init();
     }
 
@@ -102,7 +101,7 @@ public class ArtifactTypeMappingService
                 customMappings.put( customType, mapping );
 
                 // Register the custom mapping to its standard type
-                List typeMapping = (List) typeMappings.get( mapping );
+                List<String> typeMapping = typeMappings.get( mapping );
                 typeMapping.add( customType );
             }
         }
@@ -124,7 +123,7 @@ public class ArtifactTypeMappingService
                 "Artifact type[" + standardType + "] is not a standard Ear artifact type["
                     + EarModuleFactory.getStandardArtifactTypes() + "]" );
         }
-        final List typeMappings = (List) this.typeMappings.get( standardType );
+        final List<String> typeMappings = this.typeMappings.get( standardType );
         return typeMappings.contains( customType );
 
     }
@@ -167,14 +166,11 @@ public class ArtifactTypeMappingService
         customMappings.clear();
 
         // Initialize the mapping with the standard artifact types
-        final Iterator it = EarModuleFactory.getStandardArtifactTypes().iterator();
-        while ( it.hasNext() )
+        for ( String type : EarModuleFactory.getStandardArtifactTypes() )
         {
-            String type = (String) it.next();
-            List typeMapping = new ArrayList();
+            List<String> typeMapping = new ArrayList<String>();
             typeMapping.add( type );
             this.typeMappings.put( type, typeMapping );
         }
-
     }
 }

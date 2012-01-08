@@ -28,7 +28,7 @@ import java.util.Map;
  * @author Stephane Nicoll
  */
 public class JavaEEVersion
-    implements Comparable
+    implements Comparable<JavaEEVersion>
 {
 
     private static final String VERSION_1_3 = "1.3";
@@ -39,7 +39,7 @@ public class JavaEEVersion
 
     private static final String VERSION_6 = "6";
 
-    private static final Map versionsMap = new HashMap();
+    private static final Map<String, JavaEEVersion> versionsMap = new HashMap<String, JavaEEVersion>();
 
 
     /**
@@ -166,18 +166,12 @@ public class JavaEEVersion
             || VERSION_6.equals( version );
     }
 
-    public int compareTo( Object other )
+    public int compareTo( JavaEEVersion otherVersion )
     {
-        if ( other == null )
+        if ( otherVersion == null )
         {
             throw new IllegalArgumentException( "other object to compare to could not be null." );
         }
-        if ( !( other instanceof JavaEEVersion ) )
-        {
-            throw new IllegalArgumentException(
-                "other object to compare must be a JavaEEVersion but was [" + other.getClass().getName() + "]" );
-        }
-        final JavaEEVersion otherVersion = (JavaEEVersion) other;
         return index.compareTo( otherVersion.index );
     }
 }

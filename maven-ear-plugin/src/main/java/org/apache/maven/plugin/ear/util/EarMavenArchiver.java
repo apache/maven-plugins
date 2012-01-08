@@ -19,6 +19,9 @@ package org.apache.maven.plugin.ear.util;
  * under the License.
  */
 
+import java.util.List;
+import java.util.Set;
+
 import org.apache.maven.archiver.MavenArchiveConfiguration;
 import org.apache.maven.archiver.MavenArchiver;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
@@ -26,10 +29,6 @@ import org.apache.maven.plugin.ear.EarModule;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.archiver.jar.Manifest;
 import org.codehaus.plexus.archiver.jar.ManifestException;
-
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
 
 /**
  * A custom {@link MavenArchiver} implementation that takes care
@@ -43,7 +42,7 @@ public class EarMavenArchiver
 {
     public static final String CLASS_PATH_KEY = "Class-Path";
 
-    private final List earModules;
+    private final List<EarModule> earModules;
 
 
     /**
@@ -52,7 +51,7 @@ public class EarMavenArchiver
      *
      * @param earModules the intitialized list of ear modules
      */
-    public EarMavenArchiver( List earModules )
+    public EarMavenArchiver( List<EarModule> earModules )
     {
         this.earModules = earModules;
     }
@@ -97,10 +96,8 @@ public class EarMavenArchiver
     protected String generateClassPathEntry( String classPathPrefix )
     {
         final StringBuffer classpath = new StringBuffer();
-        final Iterator it = earModules.iterator();
-        while ( it.hasNext() )
+        for ( final EarModule earModule : earModules )
         {
-            final EarModule earModule = (EarModule) it.next();
             if ( !earModule.isExcluded() )
             {
                 classpath.append( classPathPrefix ).append( earModule.getUri() ).append( " " );
@@ -113,10 +110,10 @@ public class EarMavenArchiver
     {
         if ( config.getManifestEntries() != null )
         {
-            final Set keys = config.getManifestEntries().keySet();
-            for ( Iterator iter = keys.iterator(); iter.hasNext(); )
+            @SuppressWarnings( "unchecked" )
+            final Set<String> keys = config.getManifestEntries().keySet();
+            for ( String key : keys )
             {
-                String key = (String) iter.next();
                 String value = (String) config.getManifestEntries().get( key );
                 if ( "Class-Path".equals( key ) && value != null )
                 {

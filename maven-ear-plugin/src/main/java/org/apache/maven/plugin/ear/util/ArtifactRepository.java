@@ -19,11 +19,10 @@ package org.apache.maven.plugin.ear.util;
  * under the License.
  */
 
-import org.apache.maven.artifact.Artifact;
-
-import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
+
+import org.apache.maven.artifact.Artifact;
 
 /**
  * An artifact repository used to resolve {@link org.apache.maven.plugin.ear.EarModule}.
@@ -33,7 +32,7 @@ import java.util.TreeSet;
  */
 public class ArtifactRepository
 {
-    private final Set artifacts;
+    private final Set<Artifact> artifacts;
 
     private final String mainArtifactId;
 
@@ -46,7 +45,7 @@ public class ArtifactRepository
      * @param mainArtifactId             the id to use for the main artifact (no classifier)
      * @param artifactTypeMappingService
      */
-    public ArtifactRepository( Set artifacts, String mainArtifactId,
+    public ArtifactRepository( Set<Artifact> artifacts, String mainArtifactId,
                                ArtifactTypeMappingService artifactTypeMappingService )
     {
         this.artifacts = artifacts;
@@ -73,21 +72,19 @@ public class ArtifactRepository
      */
     public Artifact getUniqueArtifact( String groupId, String artifactId, String type, String classifier )
     {
-        final Set candidates = getArtifacts( groupId, artifactId, type );
+        final Set<Artifact> candidates = getArtifacts( groupId, artifactId, type );
         if ( candidates.size() == 0 )
         {
             return null;
         }
         else if ( candidates.size() == 1 && classifier == null )
         {
-            return (Artifact) candidates.iterator().next();
+            return candidates.iterator().next();
         }
         else if ( classifier != null )
         {
-            final Iterator it = candidates.iterator();
-            while ( it.hasNext() )
+            for ( Artifact a : candidates )
             {
-                Artifact a = (Artifact) it.next();
                 if ( a.getClassifier() == null && classifier.equals( mainArtifactId ) )
                 {
                     return a;
@@ -131,14 +128,11 @@ public class ArtifactRepository
      * @param type       the type
      * @return the artifacts or an empty set if no artifact were found
      */
-    public Set getArtifacts( String groupId, String artifactId, String type )
+    public Set<Artifact> getArtifacts( String groupId, String artifactId, String type )
     {
-        final Set result = new TreeSet();
-        final Iterator it = artifacts.iterator();
-        while ( it.hasNext() )
+        final Set<Artifact> result = new TreeSet<Artifact>();
+        for ( Artifact a : artifacts )
         {
-            Artifact a = (Artifact) it.next();
-
             // If the groupId, the artifactId and if the
             // artifact's type is known, then we have found a candidate.
             if ( a.getGroupId().equals( groupId ) && a.getArtifactId().equals( artifactId )
