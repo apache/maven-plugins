@@ -35,11 +35,11 @@ import java.util.List;
  */
 public final class EarModuleFactory
 {
-    public static final List standardArtifactTypes;
+    public static final List<String> standardArtifactTypes;
 
     static
     {
-        List temp = new ArrayList();
+        List<String> temp = new ArrayList<String>();
         temp.add( "jar" );
         temp.add( "ejb" );
         temp.add( "ejb3" );
@@ -138,7 +138,7 @@ public final class EarModuleFactory
      *
      * @return the standard artifact types
      */
-    public static List getStandardArtifactTypes()
+    public static List<String> getStandardArtifactTypes()
     {
         return standardArtifactTypes;
     }

@@ -97,7 +97,8 @@ public abstract class AbstractEarModule
         this.earExecutionContext = earExecutionContext;
     }
 
-    public void resolveArtifact( Set artifacts )
+    /** {@inheritDoc} */
+    public void resolveArtifact( Set<Artifact> artifacts )
         throws EarPluginException, MojoFailureException
     {
         // If the artifact is already set no need to resolve it
@@ -114,7 +115,8 @@ public abstract class AbstractEarModule
             // Artifact has not been found
             if ( artifact == null )
             {
-                Set candidates = ar.getArtifacts( groupId, artifactId, getType() );
+                @SuppressWarnings( "unchecked" )
+                Set<Artifact> candidates = ar.getArtifacts( groupId, artifactId, getType() );
                 if ( candidates.size() > 1 )
                 {
                     throw new MojoFailureException( "Artifact[" + this + "] has " + candidates.size()

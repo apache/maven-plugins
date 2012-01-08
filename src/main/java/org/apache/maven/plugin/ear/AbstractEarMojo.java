@@ -19,6 +19,11 @@ package org.apache.maven.plugin.ear;
  * under the License.
  */
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
 import org.apache.maven.plugin.AbstractMojo;
@@ -29,12 +34,6 @@ import org.apache.maven.plugin.ear.util.JavaEEVersion;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.configuration.PlexusConfiguration;
 import org.codehaus.plexus.configuration.PlexusConfigurationException;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
 
 /**
  * A base class for EAR-processing related tasks.
@@ -141,12 +140,13 @@ public abstract class AbstractEarMojo
      */
     private String mainArtifactId = "none";
 
-    private List earModules;
+    private List<EarModule> earModules;
 
-    private List allModules;
+    private List<EarModule> allModules;
 
     private JbossConfiguration jbossConfiguration;
 
+    @SuppressWarnings( "unchecked" )
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
@@ -183,7 +183,7 @@ public abstract class AbstractEarMojo
                                      typeMappingService );
 
         getLog().debug( "Resolving ear modules ..." );
-        allModules = new ArrayList();
+        allModules = new ArrayList<EarModule>();
         try
         {
             if ( modules != null && modules.length > 0 )
@@ -202,11 +202,9 @@ public abstract class AbstractEarMojo
             }
 
             // Let's add other modules
-            Set artifacts = project.getArtifacts();
-            for ( Iterator iter = artifacts.iterator(); iter.hasNext(); )
+            Set<Artifact> artifacts = project.getArtifacts();
+            for ( Artifact artifact : artifacts )
             {
-                Artifact artifact = (Artifact) iter.next();
-
                 // If the artifact's type is POM, ignore and continue
                 // since it's used for transitive deps only.
                 if ( "pom".equals( artifact.getType() ) )
@@ -233,10 +231,9 @@ public abstract class AbstractEarMojo
         }
 
         // Now we have everything let's built modules which have not been excluded
-        earModules = new ArrayList();
-        for ( Iterator iter = allModules.iterator(); iter.hasNext(); )
+        earModules = new ArrayList<EarModule>();
+        for ( EarModule earModule :  allModules )
         {
-            EarModule earModule = (EarModule) iter.next();
             if ( earModule.isExcluded() )
             {
                 getLog().debug( "Skipping ear module[" + earModule + "]" );
@@ -249,7 +246,7 @@ public abstract class AbstractEarMojo
 
     }
 
-    protected List getModules()
+    protected List<EarModule> getModules()
     {
         if ( earModules == null )
         {
@@ -273,12 +270,10 @@ public abstract class AbstractEarMojo
         return jbossConfiguration;
     }
 
-    private static boolean isArtifactRegistered( Artifact a, List currentList )
+    private static boolean isArtifactRegistered( Artifact a, List<EarModule> currentList )
     {
-        Iterator i = currentList.iterator();
-        while ( i.hasNext() )
+        for( EarModule em : currentList )
         {
-            EarModule em = (EarModule) i.next();
             if ( em.getArtifact().equals( a ) )
             {
                 return true;
@@ -326,7 +321,7 @@ public abstract class AbstractEarMojo
                 final String jmxName = jboss.getChild( JbossConfiguration.JMX_NAME ).getValue();
                 final String moduleOrder = jboss.getChild( JbossConfiguration.MODULE_ORDER ).getValue();
 
-                final List dataSources = new ArrayList();
+                final List<String> dataSources = new ArrayList<String>();
                 final PlexusConfiguration dataSourcesEl = jboss.getChild( JbossConfiguration.DATASOURCES );
                 if ( dataSourcesEl != null )
                 {
