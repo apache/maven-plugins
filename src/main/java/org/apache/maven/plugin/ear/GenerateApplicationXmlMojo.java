@@ -219,10 +219,10 @@ public class GenerateApplicationXmlMojo
      * @return a list of SecurityRole object(s)
      * @throws EarPluginException if the configuration is invalid
      */
-    private List buildSecurityRoles()
+    private List<SecurityRole> buildSecurityRoles()
         throws EarPluginException
     {
-        final List result = new ArrayList();
+        final List<SecurityRole> result = new ArrayList<SecurityRole>();
         if ( security == null )
         {
             return result;

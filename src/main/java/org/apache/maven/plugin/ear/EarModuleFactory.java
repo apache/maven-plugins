@@ -67,6 +67,7 @@ public final class EarModuleFactory
      * @return an ear module for this artifact
      * @throws UnknownArtifactTypeException if the artifact is not handled
      */
+    @SuppressWarnings( "deprecation" )
     public static EarModule newEarModule( Artifact artifact, JavaEEVersion javaEEVersion, String defaultLibBundleDir,
                                           Boolean includeInApplicationXml,
                                           ArtifactTypeMappingService typeMappingService )

@@ -51,7 +51,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 import java.util.zip.ZipException;
 
@@ -293,14 +292,12 @@ public class EarMojo
         final JavaEEVersion javaEEVersion = JavaEEVersion.getJavaEEVersion( version );
 
         // Initializes unpack types
-        List unpackTypesList = new ArrayList();
+        List<String> unpackTypesList = new ArrayList<String>();
         if ( unpackTypes != null )
         {
             unpackTypesList = Arrays.asList( unpackTypes.split( "," ) );
-            final Iterator it = unpackTypesList.iterator();
-            while ( it.hasNext() )
+            for ( String type : unpackTypesList )
             {
-                String type = (String) it.next();
                 if ( !EarModuleFactory.standardArtifactTypes.contains( type ) )
                 {
                     throw new MojoExecutionException(
@@ -313,9 +310,8 @@ public class EarMojo
         // Copy modules
         try
         {
-            for ( Iterator iter = getModules().iterator(); iter.hasNext(); )
+            for ( EarModule module: getModules() )
             {
-                EarModule module = (EarModule) iter.next();
                 if ( module instanceof JavaModule )
                 {
                     getLog().warn( "JavaModule is deprecated (" + module + "), please use JarModule instead." );
@@ -483,7 +479,8 @@ public class EarMojo
      */
     protected String[] getExcludes()
     {
-        List excludeList = new ArrayList( FileUtils.getDefaultExcludesAsList() );
+        @SuppressWarnings( "unchecked" )
+        List<String> excludeList = new ArrayList<String>( FileUtils.getDefaultExcludesAsList() );
         if ( earSourceExcludes != null && !"".equals( earSourceExcludes ) )
         {
             excludeList.addAll( Arrays.asList( StringUtils.split( earSourceExcludes, "," ) ) );
@@ -731,7 +728,7 @@ public class EarMojo
             Manifest mf = new Manifest( new FileReader( manifestFile ) );
             Attribute classPath = mf.getMainSection()
                     .getAttribute( "Class-Path" );
-            List classPathElements = new ArrayList();
+            List<String> classPathElements = new ArrayList<String>();
 
             if ( classPath != null )
             {
@@ -745,10 +742,8 @@ public class EarMojo
             }
 
             // Modify the classpath entries in the manifest
-            for ( Iterator iter = getModules().iterator(); iter.hasNext(); )
+            for ( EarModule o : getModules() )
             {
-                Object o = iter.next();
-
                 if ( o instanceof JarModule )
                 {
                     JarModule jm = ( JarModule ) o;

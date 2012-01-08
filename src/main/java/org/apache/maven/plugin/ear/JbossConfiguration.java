@@ -88,12 +88,12 @@ class JbossConfiguration
 
     private final String moduleOrder;
 
-    private final List dataSources;
+    private final List<String> dataSources;
 
     private final String libraryDirectory;
 
     public JbossConfiguration( String version, String securityDomain, String unauthenticatedPrincipal, String jmxName,
-                               String loaderRepository, String moduleOrder, List dataSources, String libraryDirectory,
+                               String loaderRepository, String moduleOrder, List<String> dataSources, String libraryDirectory,
                                String loaderRepositoryConfig, String loaderRepositoryClass, String configParserClass )
         throws EarPluginException
     {
@@ -305,7 +305,7 @@ class JbossConfiguration
      *
      * @return the list of datasources paths
      */
-    public List getDataSources()
+    public List<String> getDataSources()
     {
         return dataSources;
     }
