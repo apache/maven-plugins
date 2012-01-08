@@ -36,7 +36,7 @@ public class EarMavenArchiverTest
 
     public void testSimpleEjbModule()
     {
-        final List modules = new ArrayList();
+        final List<EarModule> modules = new ArrayList<EarModule>();
         final EarModule module = new EjbModule( createArtifact( "foo", "ejb" ) );
         setUri( module, "foo-1.0.jar" );
         modules.add( module );
@@ -48,7 +48,7 @@ public class EarMavenArchiverTest
 
     public void testSimpleJarModuleWithCustomBundleDir()
     {
-        final List modules = new ArrayList();
+        final List<EarModule> modules = new ArrayList<EarModule>();
         final EarModule module = new EjbModule( createArtifact( "foo", "jar" ) );
         setUri( module, "libs/foo-1.0.jar" );
         modules.add( module );
@@ -60,7 +60,7 @@ public class EarMavenArchiverTest
 
     public void testTwoModules()
     {
-        final List modules = new ArrayList();
+        final List<EarModule> modules = new ArrayList<EarModule>();
         final EarModule module = new EjbModule( createArtifact( "foo", "ejb" ) );
         setUri( module, "foo-1.0.jar" );
         modules.add( module );

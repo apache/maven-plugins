@@ -43,24 +43,24 @@ public abstract class AbstractEarTest
     }
 
 
-    protected Set createArtifacts( String[] artifactsId )
+    protected Set<Artifact> createArtifacts( String[] artifactsId )
     {
         return createArtifacts( artifactsId, null );
     }
 
-    protected Set createArtifacts( String[] artifactsId, String[] types )
+    protected Set<Artifact> createArtifacts( String[] artifactsId, String[] types )
     {
         return createArtifacts( artifactsId, types, null );
     }
 
-    protected Set createArtifacts( String[] artifactsId, String[] types, String[] groupsId )
+    protected Set<Artifact> createArtifacts( String[] artifactsId, String[] types, String[] groupsId )
     {
         return createArtifacts( artifactsId, types, groupsId, null );
     }
 
-    protected Set createArtifacts( String[] artifactsId, String[] types, String[] groupsId, String[] classifiers )
+    protected Set<Artifact> createArtifacts( String[] artifactsId, String[] types, String[] groupsId, String[] classifiers )
     {
-        Set result = new TreeSet();
+        Set<Artifact> result = new TreeSet<Artifact>();
         if ( artifactsId == null || artifactsId.length == 0 )
         {
             return result;
