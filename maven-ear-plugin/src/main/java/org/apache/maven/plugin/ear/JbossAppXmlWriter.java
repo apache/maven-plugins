@@ -19,12 +19,11 @@ package org.apache.maven.plugin.ear;
  * under the License.
  */
 
-import org.codehaus.plexus.util.xml.XMLWriter;
-
 import java.io.File;
 import java.io.Writer;
-import java.util.Iterator;
 import java.util.List;
+
+import org.codehaus.plexus.util.xml.XMLWriter;
 
 /**
  * An <tt>XmlWriter</tt> based implementation used to generate a
@@ -56,7 +55,7 @@ final class JbossAppXmlWriter
         super( encoding );
     }
 
-    public void write( File destinationFile, JbossConfiguration jbossConfiguration, List earModules )
+    public void write( File destinationFile, JbossConfiguration jbossConfiguration, List<EarModule> earModules )
         throws EarPluginException
     {
         final Writer w = initializeWriter( destinationFile );
@@ -162,14 +161,12 @@ final class JbossAppXmlWriter
 
         // Modules
 
-        List dataSources = jbossConfiguration.getDataSources();
+        List<String> dataSources = jbossConfiguration.getDataSources();
         // Write out data source modules first
         if ( dataSources != null )
         {
-            final Iterator it = dataSources.iterator();
-            while ( it.hasNext() )
+            for ( String dsPath : dataSources )
             {
-                String dsPath = (String) it.next();
                 writer.startElement( MODULE_ELEMENT );
                 writer.startElement( SERVICE_ELEMENT );
                 writer.writeText( dsPath );
@@ -179,10 +176,8 @@ final class JbossAppXmlWriter
         }
 
         // Write the JBoss specific modules
-        final Iterator it = earModules.iterator();
-        while ( it.hasNext() )
+        for ( EarModule earModule : earModules )
         {
-            EarModule earModule = (EarModule) it.next();
             if ( JbossEarModule.class.isInstance( earModule ) )
             {
                 JbossEarModule jbossEarModule = (JbossEarModule) earModule;

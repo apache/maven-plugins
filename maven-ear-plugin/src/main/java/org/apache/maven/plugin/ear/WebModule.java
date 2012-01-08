@@ -71,7 +71,7 @@ public class WebModule
         writer.endElement(); // module
     }
 
-    public void resolveArtifact( Set artifacts )
+    public void resolveArtifact( Set<Artifact> artifacts )
         throws EarPluginException, MojoFailureException
     {
         // Let's resolve the artifact

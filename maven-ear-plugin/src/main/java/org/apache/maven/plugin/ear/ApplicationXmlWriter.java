@@ -19,11 +19,10 @@ package org.apache.maven.plugin.ear;
  * under the License.
  */
 
+import java.io.Writer;
+
 import org.apache.maven.plugin.ear.util.JavaEEVersion;
 import org.codehaus.plexus.util.xml.XMLWriter;
-
-import java.io.Writer;
-import java.util.Iterator;
 
 /**
  * An <tt>XmlWriter</tt> based implementation used to generate an
@@ -102,18 +101,13 @@ final class ApplicationXmlWriter
         }
 
         // Do not change this unless you really know what you're doing :)
-
-        final Iterator moduleIt = context.getEarModules().iterator();
-        while ( moduleIt.hasNext() )
+        for ( EarModule module : context.getEarModules() )
         {
-            EarModule module = (EarModule) moduleIt.next();
             module.appendModule( writer, version.getVersion(), generateModuleId );
         }
 
-        final Iterator securityRoleIt = context.getSecurityRoles().iterator();
-        while ( securityRoleIt.hasNext() )
+        for ( SecurityRole securityRole : context.getSecurityRoles() )
         {
-            SecurityRole securityRole = (SecurityRole) securityRoleIt.next();
             securityRole.appendSecurityRole( writer );
         }
 
