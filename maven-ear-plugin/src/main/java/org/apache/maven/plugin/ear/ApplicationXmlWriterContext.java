@@ -33,9 +33,9 @@ class ApplicationXmlWriterContext
 
     private final File destinationFile;
 
-    private final List earModules;
+    private final List<EarModule> earModules;
 
-    private final List securityRoles;
+    private final List<SecurityRole> securityRoles;
 
     private final String displayName;
 
@@ -47,7 +47,7 @@ class ApplicationXmlWriterContext
 
     private final Boolean initializeInOrder;
 
-    public ApplicationXmlWriterContext( File destinationFile, List earModules, List securityRoles, String displayName,
+    public ApplicationXmlWriterContext( File destinationFile, List<EarModule> earModules, List<SecurityRole> securityRoles, String displayName,
                                         String description, String libraryDirectory, String applicationName,
                                         Boolean initializeInOrder )
     {
@@ -76,7 +76,7 @@ class ApplicationXmlWriterContext
      *
      * @return the ear modules
      */
-    public List getEarModules()
+    public List<EarModule> getEarModules()
     {
         return earModules;
     }
@@ -86,7 +86,7 @@ class ApplicationXmlWriterContext
      *
      * @return the security roles
      */
-    public List getSecurityRoles()
+    public List<SecurityRole> getSecurityRoles()
     {
         return securityRoles;
     }

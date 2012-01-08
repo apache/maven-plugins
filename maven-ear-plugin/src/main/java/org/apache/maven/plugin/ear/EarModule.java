@@ -106,7 +106,7 @@ public interface EarModule
      * @throws EarPluginException   if the artifact could not be resolved
      * @throws MojoFailureException if an unexpected error occurred
      */
-    public void resolveArtifact( Set artifacts )
+    public void resolveArtifact( Set<Artifact> artifacts )
         throws EarPluginException, MojoFailureException;
 
     public void setEarExecutionContext( EarExecutionContext earExecutionContext );
