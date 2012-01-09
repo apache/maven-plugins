@@ -134,6 +134,76 @@ public class RemoteResourcesMojoTest
         assertTrue( file.exists() );
     }
 
+    public void testSimpleBundlesWithType()
+        throws Exception
+    {
+        final MavenProjectResourcesStub project = createTestProject( "default-simplebundles" );
+        final ProcessRemoteResourcesMojo mojo = lookupProcessMojoWithSettings( project ,
+                                                                        new String[] {
+                                                                            "test:test:1.0:war"
+                                                                        } );
+    
+        setupDefaultProject( project );
+    
+        ArtifactRepository repo = (ArtifactRepository) getVariableValueFromObject( mojo, "localRepository" );
+        String path = repo.pathOf( new DefaultArtifact( "test",
+                                                        "test",
+                                                        VersionRange.createFromVersion( "1.0" ),
+                                                        null,
+                                                        "war",
+                                                        "",
+                                                        new DefaultArtifactHandler() ) );
+    
+        File file = new File( repo.getBasedir() + "/" + path + ".war" );
+        file.getParentFile().mkdirs();
+        buildResourceBundle( "default-simplebundles-create",
+                             null,
+                             new String[] { "SIMPLE.txt" },
+                             file );
+    
+    
+        mojo.execute();
+    
+        file = (File) getVariableValueFromObject( mojo, "outputDirectory" );
+        file = new File( file, "SIMPLE.txt" );
+        assertTrue( file.exists() );
+    }
+    
+    public void testSimpleBundlesWithClassifier()
+        throws Exception
+    {
+        final MavenProjectResourcesStub project = createTestProject( "default-simplebundles" );
+        final ProcessRemoteResourcesMojo mojo = lookupProcessMojoWithSettings( project ,
+                                                                        new String[] {
+                                                                            "test:test:1.0:jar:test"
+                                                                        } );
+    
+        setupDefaultProject( project );
+    
+        ArtifactRepository repo = (ArtifactRepository) getVariableValueFromObject( mojo, "localRepository" );
+        String path = repo.pathOf( new DefaultArtifact( "test",
+                                                        "test",
+                                                        VersionRange.createFromVersion( "1.0" ),
+                                                        null,
+                                                        "jar",
+                                                        "test",
+                                                        new DefaultArtifactHandler() ) );
+    
+        File file = new File( repo.getBasedir() + "/" + path + ".jar" );
+        file.getParentFile().mkdirs();
+        buildResourceBundle( "default-simplebundles-create",
+                             null,
+                             new String[] { "SIMPLE.txt" },
+                             file );
+    
+    
+        mojo.execute();
+    
+        file = (File) getVariableValueFromObject( mojo, "outputDirectory" );
+        file = new File( file, "SIMPLE.txt" );
+        assertTrue( file.exists() );
+    }
+    
     public void testVelocityUTF8()
         throws Exception
     {

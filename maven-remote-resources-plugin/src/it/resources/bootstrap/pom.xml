@@ -48,6 +48,7 @@
   <modules>
     <module>resource-bundle-with-template</module>
     <module>resource-bundle-with-org-processing</module>
+    <module>resource-bundle-with-type-and-classifier</module>
   </modules>
   
 </project>
