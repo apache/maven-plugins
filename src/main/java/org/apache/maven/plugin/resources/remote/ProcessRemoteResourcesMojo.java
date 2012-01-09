@@ -19,57 +19,6 @@ package org.apache.maven.plugin.resources.remote;
  * under the License.
  */
 
-import org.apache.maven.ProjectDependenciesResolver;
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.factory.ArtifactFactory;
-import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
-import org.apache.maven.artifact.resolver.ArtifactResolutionException;
-import org.apache.maven.artifact.versioning.VersionRange;
-import org.apache.maven.execution.MavenSession;
-import org.apache.maven.model.Model;
-import org.apache.maven.model.Organization;
-import org.apache.maven.model.Resource;
-import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
-import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.plugin.resources.remote.io.xpp3.RemoteResourcesBundleXpp3Reader;
-import org.apache.maven.plugin.resources.remote.io.xpp3.SupplementalDataModelXpp3Reader;
-import org.apache.maven.project.InvalidProjectModelException;
-import org.apache.maven.project.MavenProject;
-import org.apache.maven.project.MavenProjectBuilder;
-import org.apache.maven.project.ProjectBuildingException;
-import org.apache.maven.project.artifact.InvalidDependencyVersionException;
-import org.apache.maven.project.inheritance.ModelInheritanceAssembler;
-import org.apache.maven.shared.artifact.filter.collection.ArtifactFilterException;
-import org.apache.maven.shared.artifact.filter.collection.ArtifactIdFilter;
-import org.apache.maven.shared.artifact.filter.collection.FilterArtifacts;
-import org.apache.maven.shared.artifact.filter.collection.GroupIdFilter;
-import org.apache.maven.shared.artifact.filter.collection.ScopeFilter;
-import org.apache.maven.shared.artifact.filter.collection.TransitivityFilter;
-import org.apache.maven.shared.downloader.DownloadException;
-import org.apache.maven.shared.downloader.DownloadNotFoundException;
-import org.apache.maven.shared.downloader.Downloader;
-import org.apache.maven.shared.filtering.MavenFileFilter;
-import org.apache.maven.shared.filtering.MavenFileFilterRequest;
-import org.apache.maven.shared.filtering.MavenFilteringException;
-import org.apache.velocity.VelocityContext;
-import org.apache.velocity.app.Velocity;
-import org.apache.velocity.exception.MethodInvocationException;
-import org.apache.velocity.exception.ParseErrorException;
-import org.apache.velocity.exception.ResourceNotFoundException;
-import org.codehaus.plexus.resource.ResourceManager;
-import org.codehaus.plexus.resource.loader.FileResourceLoader;
-import org.codehaus.plexus.util.FileUtils;
-import org.codehaus.plexus.util.IOUtil;
-import org.codehaus.plexus.util.ReaderFactory;
-import org.codehaus.plexus.util.StringUtils;
-import org.codehaus.plexus.util.WriterFactory;
-import org.codehaus.plexus.util.xml.Xpp3Dom;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
-import org.codehaus.plexus.velocity.VelocityComponent;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -99,6 +48,55 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
+
+import org.apache.maven.ProjectDependenciesResolver;
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.factory.ArtifactFactory;
+import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
+import org.apache.maven.artifact.resolver.ArtifactResolutionException;
+import org.apache.maven.artifact.resolver.ArtifactResolver;
+import org.apache.maven.artifact.versioning.VersionRange;
+import org.apache.maven.execution.MavenSession;
+import org.apache.maven.model.Model;
+import org.apache.maven.model.Organization;
+import org.apache.maven.model.Resource;
+import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
+import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugin.resources.remote.io.xpp3.RemoteResourcesBundleXpp3Reader;
+import org.apache.maven.plugin.resources.remote.io.xpp3.SupplementalDataModelXpp3Reader;
+import org.apache.maven.project.InvalidProjectModelException;
+import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.MavenProjectBuilder;
+import org.apache.maven.project.ProjectBuildingException;
+import org.apache.maven.project.artifact.InvalidDependencyVersionException;
+import org.apache.maven.project.inheritance.ModelInheritanceAssembler;
+import org.apache.maven.shared.artifact.filter.collection.ArtifactFilterException;
+import org.apache.maven.shared.artifact.filter.collection.ArtifactIdFilter;
+import org.apache.maven.shared.artifact.filter.collection.FilterArtifacts;
+import org.apache.maven.shared.artifact.filter.collection.GroupIdFilter;
+import org.apache.maven.shared.artifact.filter.collection.ScopeFilter;
+import org.apache.maven.shared.artifact.filter.collection.TransitivityFilter;
+import org.apache.maven.shared.filtering.MavenFileFilter;
+import org.apache.maven.shared.filtering.MavenFileFilterRequest;
+import org.apache.maven.shared.filtering.MavenFilteringException;
+import org.apache.velocity.VelocityContext;
+import org.apache.velocity.app.Velocity;
+import org.apache.velocity.exception.MethodInvocationException;
+import org.apache.velocity.exception.ParseErrorException;
+import org.apache.velocity.exception.ResourceNotFoundException;
+import org.codehaus.plexus.resource.ResourceManager;
+import org.codehaus.plexus.resource.loader.FileResourceLoader;
+import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.ReaderFactory;
+import org.codehaus.plexus.util.StringUtils;
+import org.codehaus.plexus.util.WriterFactory;
+import org.codehaus.plexus.util.xml.Xpp3Dom;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
+import org.codehaus.plexus.velocity.VelocityComponent;
 
 /**
  * <p>
@@ -320,13 +318,13 @@ public class ProcessRemoteResourcesMojo
     private List<Resource> resources;
 
     /**
-     * Artifact downloader.
-     *
+     * Artifact Resolver, needed to resolve and download the {@code resourceBundles}.
+     * 
      * @component
      * @readonly
      * @required
      */
-    private Downloader downloader;
+    private ArtifactResolver artifactResolver;
 
     /**
      * Velocity component.
@@ -932,12 +930,13 @@ public class ProcessRemoteResourcesMojo
     {
         int bundleCount = 1;
 
-        for ( String artifactDescriptor : resourceBundles )
+        for ( String artifactDescriptor : resourceBundles ) 
         {
-            // groupId:artifactId:version
+            // groupId:artifactId:version, groupId:artifactId:version:type
+            // or groupId:artifactId:version:type:classifier
             String[] s = StringUtils.split( artifactDescriptor, ":" );
 
-            if ( s.length != 3 )
+            if ( s.length < 3 || s.length > 5 )
             {
                 String position;
 
@@ -959,9 +958,11 @@ public class ProcessRemoteResourcesMojo
                 }
 
                 throw new MojoExecutionException( "The " + position +
-                    " resource bundle configured must specify a groupId, artifactId, and" +
-                    " version for a remote resource bundle. " +
-                    "Must be of the form <resourceBundle>groupId:artifactId:version</resourceBundle>" );
+                    " resource bundle configured must specify a groupId, artifactId, " +
+                    " version and, optionally, type and classifier for a remote resource bundle. " +
+                    "Must be of the form <resourceBundle>groupId:artifactId:version</resourceBundle>, " +
+                    "<resourceBundle>groupId:artifactId:version:type</resourceBundle> or " +
+                    "<resourceBundle>groupId:artifactId:version:type:classifier</resourceBundle>" );
             }
 
             bundleCount++;
@@ -1011,9 +1012,10 @@ public class ProcessRemoteResourcesMojo
         {
             for ( String artifactDescriptor : bundles )
             {
-                // groupId:artifactId:version
+                // groupId:artifactId:version[:type[:classifier]]
                 String[] s = artifactDescriptor.split( ":" );
-                File artifact = null;
+                
+                File artifactFile = null;
                 //check if the artifact is part of the reactor
                 if ( mavenSession != null ) 
                 {
@@ -1024,25 +1026,32 @@ public class ProcessRemoteResourcesMojo
                             && s[1].equals( p.getArtifactId() ) 
                             && s[2].equals( p.getVersion() ) ) 
                         {
-                            artifact = new File( p.getBuild().getOutputDirectory() );
+                            artifactFile = new File( p.getBuild().getOutputDirectory() );
                         }
                     }
                 }
-                if ( artifact == null || !artifact.exists() )
+                if ( artifactFile == null || !artifactFile.exists() )
                 {
-                    artifact = downloader.download( s[0], s[1], s[2], localRepository, remoteArtifactRepositories );
-                }
+                    String type = ( s.length >= 4 ? s[3] : "jar" );
+                    String classifier = ( s.length == 5 ? s[4] : null );
+                    Artifact artifact =
+                        artifactFactory.createDependencyArtifact( s[0], s[1], VersionRange.createFromVersion( s[2] ),
+                                                                  type, classifier, Artifact.SCOPE_RUNTIME );
 
-                bundleArtifacts.add( artifact );
+                    artifactResolver.resolve( artifact, remoteArtifactRepositories, localRepository );
+
+                    artifactFile = artifact.getFile();
+                }
+                bundleArtifacts.add( artifactFile );
             }
         }
-        catch ( DownloadException e )
+        catch ( ArtifactResolutionException e )
         {
-            throw new MojoExecutionException( "Error downloading resources JAR.", e );
+            throw new MojoExecutionException( "Error downloading resources archive.", e );
         }
-        catch ( DownloadNotFoundException e )
+        catch ( ArtifactNotFoundException e )
         {
-            throw new MojoExecutionException( "Resources JAR cannot be found.", e );
+            throw new MojoExecutionException( "Resources archive cannot be found.", e );
         }
 
         return bundleArtifacts;
