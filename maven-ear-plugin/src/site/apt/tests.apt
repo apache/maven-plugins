@@ -26,7 +26,7 @@
 
 EAR Plugin Tests
 
-  This page lists the ear plugin integration tests. Each tests is built on top of a sample project available in
+  This page lists the EAR Plugin integration tests. Each tests is built on top of a sample project available in
   the {{{http://svn.apache.org/viewvc/maven/plugins/trunk/maven-ear-plugin/src/test/resources/projects/}svn repository}}.
   This structure provides lots of concrete use cases for beginners.
 
@@ -104,7 +104,7 @@ EAR Plugin Tests
 
   * project-037: builds an EAR and make sure that ejb-client dependencies are detected and added in the generated application.xml if includeInApplicationXml is set
 
-  * project-038: builds an EAR and make sure that a non-classified dependency with mutiple candidates is detected when specifying the mainArtifactId as classifier
+  * project-038: builds an EAR and make sure that a non-classified dependency with multiple candidates is detected when specifying the mainArtifactId as classifier
   
   * project-039: builds an EAR with a Jboss 4 configuration specifying the loader repository to use
 

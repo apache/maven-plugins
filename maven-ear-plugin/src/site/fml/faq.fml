@@ -62,12 +62,12 @@ under the License.
      <question>When should one use the modules configuration?</question>
      <answer>
        <p>
-         By default, the EAR plugin generates sensitive defaults for all the JavaEE dependencies it found in the
+         By default, the EAR plugin generates sensible defaults for all the JavaEE dependencies it finds in the
          current project. The <em>modules</em> configuration is useful if you need to customize something such as the
          bundle location, context root, etc.
        </p>
        <p>
-         Adding a module entry with only the groupId and artifactIf of a dependency is therefore useless.
+         Adding a module entry with only the groupId and artifactId of a dependency is therefore useless.
        </p>
      </answer>
    </faq>

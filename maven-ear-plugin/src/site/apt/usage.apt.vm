@@ -34,14 +34,14 @@ Usage
 
 * Introduction
 
-  The EAR Plugin allows to generate automatically the deployment descriptor, e.g.
-  <<<application.xml>>>. This generation is already customized by the goal's
+  The EAR Plugin allows you to automatically generate the deployment descriptor, e.g.
+  <<<application.xml>>>. This generation is customizable by the goal's
   parameters, see {{{./plugin-info.html}the goals description}}.
 
 * Configuring the EAR Plugin
 
-  The configuration of the EAR Plugin is not any different to the configuration
-  of the other plugins. The configuration should be similar to:
+  The configuration of the EAR Plugin is not any different from the configuration
+  of any other plugin. The configuration should be similar to:
 
 +-----
 <project>
@@ -61,15 +61,15 @@ Usage
 </project>
 +-----
 
-  When configuring the EAR Plugin in your <<<pom.xml>>>, you do not declare any
-  <<<\<executions\>>>> elements in it because it is always invoked at least once
+  When configuring the EAR Plugin in your <<<pom.xml>>>, you do not declare an
+  <<<\<executions\>>>> element in it because it is always invoked at least once
   during the <<<package>>> phase of an <<<ear>>> project.
 
 * Executing and Generating your EAR Package
 
   The EAR Plugin replaces the JAR Plugin when your project <<<\<packaging\>>>> is
   <<<ear>>>. So to generate your EAR package, you need only call the <<<package>>>
-  phase like so:
+  phase like this:
 
 +-----
 mvn package
@@ -111,7 +111,7 @@ mvn package
 
   The security settings might be specified under the <<<security>>> parameter.
 
-  The artifact's types that should be unpacked by default can be specified
+  The artifact types that should be unpacked by default can be specified
   using the <<<unpackTypes>>> parameter.
 
   The file name mapping to use for artifacts stored in the EAR can be specified
