@@ -101,11 +101,6 @@ under the License.
     <!-- doxia -->
     <dependency>
       <groupId>org.apache.maven.doxia</groupId>
-      <artifactId>doxia-core</artifactId>
-      <version>${doxiaVersion}</version>
-    </dependency>    
-    <dependency>
-      <groupId>org.apache.maven.doxia</groupId>
       <artifactId>doxia-sink-api</artifactId>
       <version>${doxiaVersion}</version>
     </dependency>
@@ -120,13 +115,6 @@ under the License.
       <version>${doxiaVersion}</version>
     </dependency>
 
-    <!-- shared -->
-    <dependency>
-      <groupId>org.apache.maven.shared</groupId>
-      <artifactId>maven-doxia-tools</artifactId>
-      <version>1.2.1</version>
-    </dependency>
-
     <!-- plexus -->
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
@@ -138,24 +126,12 @@ under the License.
       <artifactId>plexus-utils</artifactId>
       <version>2.0.5</version>
     </dependency>
-    <dependency>
-      <groupId>org.codehaus.plexus</groupId>
-      <artifactId>plexus-interpolation</artifactId>
-      <version>1.13</version>
-    </dependency>
 
     <!-- pmd -->
     <dependency>
       <groupId>pmd</groupId>
       <artifactId>pmd</artifactId>
       <version>${pmdVersion}</version>
-    </dependency>
-
-    <!-- misc -->
-    <dependency>
-      <groupId>xerces</groupId>
-      <artifactId>xmlParserAPIs</artifactId>
-      <version>2.6.2</version>
     </dependency>
 
     <!-- test -->
