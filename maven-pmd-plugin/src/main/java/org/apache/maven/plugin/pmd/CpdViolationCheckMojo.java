@@ -117,20 +117,18 @@ public class CpdViolationCheckMojo
                 msgs.put( "text", xpp.getText().trim() );
                 break;
             case XmlPullParser.START_TAG:
+                String nm = xpp.getName();
+                if ( msgs.containsKey( nm ) )
                 {
-                    String nm = xpp.getName();
-                    if ( msgs.containsKey( nm ) )
+                    int cnt = 1;
+                    while ( msgs.containsKey( nm + cnt ) )
                     {
-                        int cnt = 1;
-                        while ( msgs.containsKey( nm + cnt ) )
-                        {
-                            ++cnt;
-                        }
-                        nm = nm + cnt;
+                        ++cnt;
                     }
-                    msgs.put( nm, getErrorDetails( xpp ) );
-                    break;
+                    nm = nm + cnt;
                 }
+                msgs.put( nm, getErrorDetails( xpp ) );
+                break;
             default:
             }
             tp = xpp.next();
