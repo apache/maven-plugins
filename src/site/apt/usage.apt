@@ -5,7 +5,7 @@
  <vincent.siveton@gmail.com>
  Maria Odea Ching
  ------
- 17 July 2006
+ 2012-01-12
  ------
 
  ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -89,9 +89,11 @@ mvn site
   {{{http://maven.apache.org/settings.html#Servers}<<<\<servers\>>>> element}}
   as you would for any other repository.
 
-  The <<<\<url\>>>> gives the location to deploy to. Currently, the <<<scp>>>
-  and <<<file>>> protocols are supported. In the example above we copy to the
-  host <<<www.mycompany.com>>> using the path <<</www/docs/project/>>>. If
+  The <<<\<url\>>>> gives the location to deploy to. In the example above we
+  copy to the host <<<www.mycompany.com>>> using the path
+  <<</www/docs/project/>>> over the <<<scp>>> protocol. You can read more about
+  which protocols are supported on
+  {{{./examples/adding-deploy-protocol.html}this page}}. If
   subprojects inherit the site URL from a parent POM, they will automatically
   append their <<<\<artifactId\>>>> to form their effective deployment location.
 
