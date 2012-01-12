@@ -10,7 +10,7 @@
     <relativePath>../maven-plugins/pom.xml</relativePath>
   </parent>
   <artifactId>maven-eclipse-plugin</artifactId>
-  <version>2.9</version>
+  <version>2.10-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
   <name>Maven Eclipse Plugin</name>
   <description>The Eclipse Plugin is used to generate Eclipse IDE files (.project, .classpath and the .settings folder) from a POM.</description>
@@ -18,9 +18,9 @@
     <maven>${mavenVersion}</maven>
   </prerequisites>
   <scm>
-    <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/tags/maven-eclipse-plugin-2.9</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/tags/maven-eclipse-plugin-2.9</developerConnection>
-    <url>http://svn.apache.org/viewvc/maven/plugins/tags/maven-eclipse-plugin-2.9</url>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-eclipse-plugin/</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/trunk/maven-eclipse-plugin/</developerConnection>
+    <url>http://svn.apache.org/viewvc/maven/plugins/trunk/maven-eclipse-plugin/</url>
   </scm>
   <issueManagement>
     <system>JIRA</system>
