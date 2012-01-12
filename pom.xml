@@ -6,7 +6,7 @@
   <parent>
     <artifactId>maven-plugins</artifactId>
     <groupId>org.apache.maven.plugins</groupId>
-    <version>21</version>
+    <version>22</version>
     <relativePath>../maven-plugins/pom.xml</relativePath>
   </parent>
   <artifactId>maven-eclipse-plugin</artifactId>
@@ -413,3 +413,4 @@
     </plugins>
   </reporting>
 </project>
+
