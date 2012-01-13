@@ -339,8 +339,8 @@ under the License.
 
       <properties>
         <invokerPluginVersion>1.5</invokerPluginVersion>
-        <itParent>${java.io.tmpdir}/assembly-ITs/it-project-parent</itParent>
-        <itProjects>${java.io.tmpdir}/assembly-ITs/projects</itProjects>
+        <itParent>${project.build.directory}/it/it-project-parent</itParent>
+        <itProjects>${project.build.directory}/it/projects</itProjects>
         <localRepositoryPath>${project.build.directory}/local-repository</localRepositoryPath>
         <test.remote.repo.url>file://${project.build.testOutputDirectory}/remote-repository</test.remote.repo.url>
         <it.pomIncludes>**/pom.xml</it.pomIncludes>
