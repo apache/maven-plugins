@@ -379,9 +379,6 @@ under the License.
               <execution>
                 <id>integration-test</id>
                 <phase>integration-test</phase>
-                <goals>
-                  <goal>run</goal>
-                </goals>
                 <configuration>
                   <projectsDirectory>src/it/projects</projectsDirectory>
                   <cloneProjectsTo>${itProjects}</cloneProjectsTo>
