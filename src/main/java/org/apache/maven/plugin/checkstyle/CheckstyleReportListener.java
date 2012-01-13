@@ -24,6 +24,7 @@ import com.puppycrawl.tools.checkstyle.api.AuditListener;
 import com.puppycrawl.tools.checkstyle.api.AutomaticBean;
 import com.puppycrawl.tools.checkstyle.api.Configuration;
 import com.puppycrawl.tools.checkstyle.api.SeverityLevel;
+
 import org.codehaus.plexus.util.StringUtils;
 
 import java.io.File;
@@ -122,10 +123,12 @@ public class CheckstyleReportListener
     /** {@inheritDoc} */
     public void fileStarted( AuditEvent event )
     {
+        final String fileName = StringUtils.replace( event.getFileName(), "\\", "/" );
+
         for ( File sourceDirectory : sourceDirectories )
         {
-            String sourceDirectoryPath = sourceDirectory.getPath();
-            String fileName = StringUtils.replace( event.getFileName(), "\\", "/" );
+            String sourceDirectoryPath = StringUtils.replace( sourceDirectory.getPath(), "\\", "/" );
+            
             if ( fileName.startsWith( sourceDirectoryPath + "/" ) )
             {
                 currentFile = StringUtils.substring( fileName, sourceDirectoryPath.length() + 1 );
