@@ -19,6 +19,20 @@ package org.apache.maven.plugin.pmd;
  * under the License.
  */
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStreamWriter;
+import java.io.Reader;
+import java.io.UnsupportedEncodingException;
+import java.io.Writer;
+import java.util.Locale;
+import java.util.Map;
+import java.util.ResourceBundle;
+
 import net.sourceforge.pmd.IRuleViolation;
 import net.sourceforge.pmd.PMD;
 import net.sourceforge.pmd.PMDException;
@@ -33,6 +47,7 @@ import net.sourceforge.pmd.renderers.HTMLRenderer;
 import net.sourceforge.pmd.renderers.Renderer;
 import net.sourceforge.pmd.renderers.TextRenderer;
 import net.sourceforge.pmd.renderers.XMLRenderer;
+
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.reporting.MavenReportException;
 import org.codehaus.plexus.resource.ResourceManager;
@@ -43,21 +58,6 @@ import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStreamWriter;
-import java.io.Reader;
-import java.io.UnsupportedEncodingException;
-import java.io.Writer;
-import java.util.Iterator;
-import java.util.Locale;
-import java.util.Map;
-import java.util.ResourceBundle;
 
 /**
  * Creates a PMD report.
@@ -243,7 +243,7 @@ public class PmdReport
             throw new MavenReportException( e.getMessage(), e );
         }
 
-        Map files;
+        Map<File, PmdFileInfo> files;
         try
         {
             files = getFilesToProcess();
@@ -259,11 +259,10 @@ public class PmdReport
                                + ", i.e. build is platform dependent!" );
         }
 
-        for ( Iterator i = files.entrySet().iterator(); i.hasNext(); )
+        for ( Map.Entry<File, PmdFileInfo> entry : files.entrySet() )
         {
-            Map.Entry entry = (Map.Entry) i.next();
-            File file = (File) entry.getKey();
-            PmdFileInfo fileInfo = (PmdFileInfo) entry.getValue();
+            File file = entry.getKey();
+            PmdFileInfo fileInfo = entry.getValue();
 
             // TODO: lazily call beginFile in case there are no rules
 

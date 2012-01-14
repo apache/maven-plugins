@@ -71,7 +71,7 @@ public class PmdViolationCheckMojo
     }
 
     /** {@inheritDoc} */
-    protected void printError( Map item, String severity )
+    protected void printError( Map<String, String> item, String severity )
     {
 
         StringBuffer buff = new StringBuffer( 100 );
@@ -99,12 +99,12 @@ public class PmdViolationCheckMojo
     }
 
     /** {@inheritDoc} */
-    protected Map getErrorDetails( XmlPullParser xpp )
+    protected Map<String, String> getErrorDetails( XmlPullParser xpp )
         throws XmlPullParserException, IOException
     {
         int index = 0;
         int attributeCount = 0;
-        HashMap msgs = new HashMap();
+        Map<String, String> msgs = new HashMap<String, String>();
 
         attributeCount = xpp.getAttributeCount();
         while ( index < attributeCount )
