@@ -109,8 +109,9 @@ public abstract class AbstractResolveMojo
         throws ArtifactResolutionException, ArtifactNotFoundException, ProjectBuildingException,
         InvalidDependencyVersionException
     {
-        Artifact pomArtifact = this.factory.createArtifact( artifact.getGroupId(), artifact.getArtifactId(), artifact
-            .getVersion(), "", "pom" );
+        Artifact pomArtifact =
+            this.factory.createArtifact( artifact.getGroupId(), artifact.getArtifactId(), artifact.getVersion(), "",
+                                         "pom" );
 
         MavenProject pomProject = mavenProjectBuilder.buildFromRepository( pomArtifact, this.remoteRepos, this.getLocal() );
 
