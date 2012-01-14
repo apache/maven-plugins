@@ -1,0 +1,13 @@
+import java.io.*;
+
+File srcSvnDir = new File( basedir, "src/main/assembly/.svn" );
+srcSvnDir.mkdirs();
+
+File srcSvnFile = new File( srcSvnDir, "entries" );
+
+FileWriter writer = new FileWriter( srcSvnFile );
+writer.write( "Test, Test" );
+writer.flush();
+writer.close();
+
+return true;
