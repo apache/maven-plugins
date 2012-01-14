@@ -97,7 +97,8 @@ public class AnalyzeReportMojo
     /*
      * @see org.apache.maven.plugin.Mojo#execute()
      */
-    public void executeReport( Locale locale ) throws MavenReportException
+    public void executeReport( Locale locale )
+        throws MavenReportException
     {
         // Step 0: Checking pom availability
         if ( "pom".equals( project.getPackaging() ) )
@@ -138,7 +139,9 @@ public class AnalyzeReportMojo
                 }
             }
             
-            ProjectDependencyAnalysis analysisTemp = new ProjectDependencyAnalysis(analysis.getUsedDeclaredArtifacts(),analysis.getUsedUndeclaredArtifacts(),filteredUnusedDeclared);
+            ProjectDependencyAnalysis analysisTemp =
+                new ProjectDependencyAnalysis( analysis.getUsedDeclaredArtifacts(),
+                                               analysis.getUsedUndeclaredArtifacts(), filteredUnusedDeclared );
             analysis = analysisTemp;
         }
         

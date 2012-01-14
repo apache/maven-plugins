@@ -72,7 +72,8 @@ import org.apache.maven.shared.dependency.tree.traversal.SerializingDependencyNo
  * @goal tree
  * @requiresDependencyResolution test
  */
-public class TreeMojo extends AbstractMojo
+public class TreeMojo
+    extends AbstractMojo
 {
     // fields -----------------------------------------------------------------
 

@@ -292,7 +292,7 @@ public class AnalyzeDepMgt
                 + dependencyFromDepMgt );
         }
 
-        getLog().info( "\tDependency: " + StringUtils.stripEnd(dependencyFromDepMgt.getManagementKey(),":") );
+        getLog().info( "\tDependency: " + StringUtils.stripEnd( dependencyFromDepMgt.getManagementKey(), ":" ) );
         getLog().info( "\t\tDepMgt  : " + dependencyFromDepMgt.getVersion() );
         getLog().info( "\t\tResolved: " + dependencyArtifact.getBaseVersion() );
     }
