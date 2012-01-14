@@ -23,7 +23,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -53,7 +52,7 @@ public class PmdReportListener
 
     private PmdFileInfo fileInfo;
 
-    private List violations = new ArrayList();
+    private List<IRuleViolation> violations = new ArrayList<IRuleViolation>();
 
     private boolean aggregate;
 
@@ -109,20 +108,17 @@ public class PmdReportListener
     private void processViolations()
     {
         fileCount++;
-        Collections.sort( violations, new Comparator()
+        Collections.sort( violations, new Comparator<IRuleViolation>()
         {
             /** {@inheritDoc} */
-            public int compare( Object o1, Object o2 )
+            public int compare( IRuleViolation o1, IRuleViolation o2 )
             {
-                return ( (IRuleViolation) o1 ).getBeginLine()
-                    - ( (IRuleViolation) o2 ).getBeginLine();
+                return o1.getBeginLine() - o2.getBeginLine();
             }
         } );
 
-        for ( Iterator it = violations.iterator(); it.hasNext(); )
+        for ( IRuleViolation ruleViolation : violations )
         {
-            IRuleViolation ruleViolation = (IRuleViolation) it.next();
-
             sink.tableRow();
             sink.tableCell();
             sink.text( ruleViolation.getDescription() );
