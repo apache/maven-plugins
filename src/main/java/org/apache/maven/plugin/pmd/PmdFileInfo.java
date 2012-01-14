@@ -33,7 +33,6 @@ public class PmdFileInfo
     private File sourceDir;
     private String xref;
 
-
     public PmdFileInfo( MavenProject project,
                        File dir,
                        String x )
@@ -50,7 +49,6 @@ public class PmdFileInfo
         this.xref = x;
     }
 
-
     public String getXrefLocation()
     {
         return xref;
@@ -65,6 +63,5 @@ public class PmdFileInfo
     {
         return project;
     }
-
 
 }
