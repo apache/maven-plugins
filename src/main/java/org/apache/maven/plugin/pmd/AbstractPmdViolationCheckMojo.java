@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -122,10 +121,10 @@ public abstract class AbstractPmdViolationCheckMojo
                     reader = ReaderFactory.newXmlReader( outputFile );
                     xpp.setInput( reader );
 
-                    Map violations = getViolations( xpp, tagName, failurePriority );
+                    Map<Boolean, List<Map<String, String>>> violations = getViolations( xpp, tagName, failurePriority );
 
-                    List failures = (List) violations.get( FAILURES_KEY );
-                    List warnings = (List) violations.get( WARNINGS_KEY );
+                    List<Map<String, String>> failures = violations.get( FAILURES_KEY );
+                    List<Map<String, String>> warnings = violations.get( WARNINGS_KEY );
 
                     if ( verbose )
                     {
@@ -179,13 +178,13 @@ public abstract class AbstractPmdViolationCheckMojo
      * @throws XmlPullParserException
      * @throws IOException
      */
-    private Map getViolations( XmlPullParser xpp, String tagName, int failurePriority )
+    private Map<Boolean, List<Map<String, String>>> getViolations( XmlPullParser xpp, String tagName, int failurePriority )
         throws XmlPullParserException, IOException
     {
         int eventType = xpp.getEventType();
 
-        List failures = new ArrayList();
-        List warnings = new ArrayList();
+        List<Map<String, String>> failures = new ArrayList<Map<String, String>>();
+        List<Map<String, String>> warnings = new ArrayList<Map<String, String>>();
 
         String fullpath = null;
 
@@ -197,16 +196,16 @@ public abstract class AbstractPmdViolationCheckMojo
             }
             if ( eventType == XmlPullParser.START_TAG && tagName.equals( xpp.getName() ) )
             {
-                Map details = getErrorDetails( xpp );
+                Map<String, String> details = getErrorDetails( xpp );
 
                 if ( fullpath != null )
                 {
-                    details.put( "filename", getFilename( fullpath, (String) details.get( "package" ) ) );
+                    details.put( "filename", getFilename( fullpath, details.get( "package" ) ) );
                 }
 
                 try
                 {
-                    int priority = Integer.parseInt( (String) details.get( "priority" ) );
+                    int priority = Integer.parseInt( details.get( "priority" ) );
                     if ( priority <= failurePriority )
                     {
                         failures.add( details );
@@ -234,7 +233,7 @@ public abstract class AbstractPmdViolationCheckMojo
             eventType = xpp.next();
         }
 
-        HashMap map = new HashMap( 2 );
+        Map<Boolean, List<Map<String, String>>> map = new HashMap<Boolean, List<Map<String, String>>>( 2 );
         map.put( FAILURES_KEY, failures );
         map.put( WARNINGS_KEY, warnings );
         return map;
@@ -268,18 +267,16 @@ public abstract class AbstractPmdViolationCheckMojo
      * @param warnings
      *            list of warnings
      */
-    protected void printErrors( List failures, List warnings )
+    protected void printErrors( List<Map<String, String>> failures, List<Map<String, String>> warnings )
     {
-        Iterator iter = warnings.iterator();
-        while ( iter.hasNext() )
+        for ( Map<String, String> warning :  warnings )
         {
-            printError( (Map) iter.next(), "Warning" );
+            printError( warning, "Warning" );
         }
 
-        iter = failures.iterator();
-        while ( iter.hasNext() )
+        for ( Map<String, String> failure : failures )
         {
-            printError( (Map) iter.next(), "Failure" );
+            printError( failure, "Failure" );
         }
     }
 
@@ -325,7 +322,7 @@ public abstract class AbstractPmdViolationCheckMojo
      *
      * @param item
      */
-    protected abstract void printError( Map item, String severity );
+    protected abstract void printError( Map<String, String> item, String severity );
 
     /**
      * Gets the attributes and text for the violation tag and puts them in a
@@ -335,6 +332,6 @@ public abstract class AbstractPmdViolationCheckMojo
      * @throws XmlPullParserException
      * @throws IOException
      */
-    protected abstract Map getErrorDetails( XmlPullParser xpp )
+    protected abstract Map<String, String> getErrorDetails( XmlPullParser xpp )
         throws XmlPullParserException, IOException;
 }

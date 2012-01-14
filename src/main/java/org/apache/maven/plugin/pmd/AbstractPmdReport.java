@@ -22,7 +22,6 @@ package org.apache.maven.plugin.pmd;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -127,7 +126,7 @@ public abstract class AbstractPmdReport
      * @parameter
      * @since 2.2
      */
-    private String[] excludes;
+    private List<String> excludes;
 
     /**
      * A list of files to include from checking. Can contain Ant-style wildcards and double wildcards.
@@ -136,7 +135,7 @@ public abstract class AbstractPmdReport
      * @parameter
      * @since 2.2
      */
-    private String[] includes;
+    private List<String> includes;
 
     /**
      * The directories containing the sources to be compiled.
@@ -145,7 +144,7 @@ public abstract class AbstractPmdReport
      * @required
      * @readonly
      */
-    private List compileSourceRoots;
+    private List<String> compileSourceRoots;
 
     /**
      * The directories containing the test-sources to be compiled.
@@ -154,7 +153,7 @@ public abstract class AbstractPmdReport
      * @required
      * @readonly
      */
-    private List testSourceRoots;
+    private List<String> testSourceRoots;
 
     /**
      * The project source directories that should be excluded.
@@ -162,7 +161,7 @@ public abstract class AbstractPmdReport
      * @parameter
      * @since 2.2
      */
-    private File[] excludeRoots;
+    private List<File> excludeRoots;
 
     /**
      * Run PMD on the tests.
@@ -202,7 +201,7 @@ public abstract class AbstractPmdReport
      * @parameter expression="${reactorProjects}"
      * @readonly
      */
-    protected List reactorProjects;
+    protected List<MavenProject> reactorProjects;
 
     /** {@inheritDoc} */
     protected MavenProject getProject()
@@ -238,10 +237,10 @@ public abstract class AbstractPmdReport
             else
             {
                 // Not yet generated - check if the report is on its way
-                for ( Iterator reports = project.getReportPlugins().iterator(); reports.hasNext(); )
+                @SuppressWarnings( "unchecked" )
+                List<ReportPlugin> reportPlugins = project.getReportPlugins();
+                for ( ReportPlugin plugin  : reportPlugins )
                 {
-                    ReportPlugin plugin = (ReportPlugin) reports.next();
-
                     String artifactId = plugin.getArtifactId();
                     if ( "maven-jxr-plugin".equals( artifactId ) || "jxr-maven-plugin".equals( artifactId ) )
                     {
@@ -264,7 +263,7 @@ public abstract class AbstractPmdReport
      * @return a List of the files where the PMD tool will be executed
      * @throws java.io.IOException
      */
-    protected Map getFilesToProcess()
+    protected Map<File, PmdFileInfo> getFilesToProcess()
         throws IOException
     {
         String sourceXref = constructXRefLocation( false );
@@ -272,18 +271,18 @@ public abstract class AbstractPmdReport
 
         if ( aggregate && !project.isExecutionRoot() )
         {
-            return Collections.EMPTY_MAP;
+            return Collections.emptyMap();
         }
 
         if ( excludeRoots == null )
         {
-            excludeRoots = new File[0];
+            excludeRoots = Collections.emptyList();
         }
-        Collection<File> excludeRootFiles = new HashSet<File>( excludeRoots.length );
+        
+        Collection<File> excludeRootFiles = new HashSet<File>( excludeRoots.size() );
 
-        for ( int i = 0; i < excludeRoots.length; i++ )
+        for ( File file : excludeRoots )
         {
-            File file = excludeRoots[i];
             if ( file.isDirectory() )
             {
                 excludeRootFiles.add( file );
@@ -295,9 +294,8 @@ public abstract class AbstractPmdReport
         if ( compileSourceRoots != null )
         {
 
-            for ( Iterator i = compileSourceRoots.iterator(); i.hasNext(); )
+            for ( String root : compileSourceRoots )
             {
-                String root = (String) i.next();
                 File sroot = new File( root );
                 directories.add( new PmdFileInfo( project, sroot, sourceXref ) );
             }
@@ -307,9 +305,8 @@ public abstract class AbstractPmdReport
         {
             if ( testSourceRoots != null )
             {
-                for ( Iterator i = testSourceRoots.iterator(); i.hasNext(); )
+                for ( String root : testSourceRoots )
                 {
-                    String root = (String) i.next();
                     File sroot = new File( root );
                     directories.add( new PmdFileInfo( project, sroot, testXref ) );
                 }
@@ -317,20 +314,21 @@ public abstract class AbstractPmdReport
         }
         if ( aggregate )
         {
-            for ( Iterator i = reactorProjects.iterator(); i.hasNext(); )
+            for ( MavenProject localProject : reactorProjects )
             {
-                MavenProject localProject = (MavenProject) i.next();
-                for ( Iterator i2 = localProject.getCompileSourceRoots().iterator(); i2.hasNext(); )
+                @SuppressWarnings( "unchecked" )
+                List<String> localCompileSourceRoots = localProject.getCompileSourceRoots(); 
+                for ( String root : localCompileSourceRoots )
                 {
-                    String root = (String) i2.next();
                     File sroot = new File( root );
                     directories.add( new PmdFileInfo( localProject, sroot, sourceXref ) );
                 }
                 if ( includeTests )
                 {
-                    for ( Iterator i2 = localProject.getTestCompileSourceRoots().iterator(); i2.hasNext(); )
+                    @SuppressWarnings( "unchecked" )
+                    List<String> localTestCompileSourceRoots = localProject.getTestCompileSourceRoots(); 
+                    for ( String root : localTestCompileSourceRoots )
                     {
-                        String root = (String) i2.next();
                         File sroot = new File( root );
                         directories.add( new PmdFileInfo( localProject, sroot, testXref ) );
                     }
@@ -344,15 +342,16 @@ public abstract class AbstractPmdReport
         String including = getIncludes();
         getLog().debug( "Inclusions: " + including );
 
-        Map files = new TreeMap();
+        Map<File, PmdFileInfo> files = new TreeMap<File, PmdFileInfo>();
 
         for ( PmdFileInfo finfo : directories )
         {
             File sourceDirectory = finfo.getSourceDirectory();
             if ( sourceDirectory.isDirectory() && !excludeRootFiles.contains( sourceDirectory ) )
             {
-                List newfiles = FileUtils.getFiles( sourceDirectory, including, excluding );
-                for ( Iterator it2 = newfiles.iterator(); it2.hasNext(); )
+                @SuppressWarnings( "unchecked" )
+                List<File> newfiles = FileUtils.getFiles( sourceDirectory, including, excluding );
+                for ( Iterator<File> it2 = newfiles.iterator(); it2.hasNext(); )
                 {
                     files.put( it2.next(), finfo );
                 }
@@ -372,7 +371,7 @@ public abstract class AbstractPmdReport
         Collection<String> patterns = new LinkedHashSet<String>();
         if ( includes != null )
         {
-            patterns.addAll( Arrays.asList( includes ) );
+            patterns.addAll( includes );
         }
         if ( patterns.isEmpty() )
         {
@@ -388,10 +387,11 @@ public abstract class AbstractPmdReport
      */
     private String getExcludes()
     {
-        Collection patterns = new LinkedHashSet( FileUtils.getDefaultExcludesAsList() );
+        @SuppressWarnings( "unchecked" )
+        Collection<String> patterns = new LinkedHashSet<String>( FileUtils.getDefaultExcludesAsList() );
         if ( excludes != null )
         {
-            patterns.addAll( Arrays.asList( excludes ) );
+            patterns.addAll( excludes );
         }
         return StringUtils.join( patterns.iterator(), "," );
     }
@@ -422,7 +422,7 @@ public abstract class AbstractPmdReport
         }
         try
         {
-            Map filesToProcess = getFilesToProcess();
+            Map<File, PmdFileInfo> filesToProcess = getFilesToProcess();
             if ( filesToProcess.isEmpty() )
             {
                 return false;
