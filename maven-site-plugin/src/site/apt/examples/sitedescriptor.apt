@@ -232,7 +232,7 @@ Configuring the Site Descriptor
 
 * Inject xhtml into \<head\>
 
-  You can inject some xhtml into the generated \<head\> element of each page by adding a head element
+  You can inject some xhtml into the generated <<<\<head\>>>> element of each page by adding a head element
   to the body element of your project's site descriptor. The following example adds some javascript:
 
 +-----+
@@ -241,7 +241,7 @@ Configuring the Site Descriptor
   <body>
     ...
     <head>
-      <script src="http://www.google-analytics.com/urchin.js" type="text/javascript">
+      <script src="http://www.google-analytics.com/urchin.js" type="text/javascript" />
     </head>
     ...
   </body>
@@ -251,7 +251,7 @@ Configuring the Site Descriptor
 
 * Links
 
-  To add links below your site logo, just add a links element to the body element of the site descriptor.
+  To add links below your site logo, just add a links element to the <<<\<body\>>>> element of the site descriptor.
   Each item in the links element will be rendered as a link in a bar directly below your project's logo.
 
 +-----+
@@ -273,8 +273,9 @@ Configuring the Site Descriptor
 
   If there exists a logical hierarchy within your site modules, you may want to generate a series of
   breadcrumbs to give a way to easily navigate the project tree.
-  To configure breadcrumbs, add a breadcrumbs element to the body element in the site descriptor.
-  Each item element will render a link, and the items in the breadcrumbs element will be rendered in order.
+
+  To configure breadcrumbs, add a <<<\<breadcrumbs\>>>> element to the <<<\<body\>>>> element in the site descriptor.
+  Each item element will render a link, and the items in the <<<\<breadcrumbs\>>>> element will be rendered in order.
   The breadcrumb items should be listed from highest level to lowest level.
 
 +-----+
@@ -298,7 +299,7 @@ Configuring the Site Descriptor
 
 * Custom footer
 
-  You can replace the auto-generated footer content by specifying a custom \<footer\> element:
+  You can replace the auto-generated footer content by specifying a custom <<<\<footer\>>>> element:
 
 +-----+
 <project>
@@ -314,14 +315,14 @@ Configuring the Site Descriptor
 
 * Custom content
 
-  There is also a dummy \<custom\> element then can be used to specify some arbitrary content.
+  There is also a dummy <<<\<custom\>>>> element then can be used to specify some arbitrary content.
   Note that you need to write your own velocity template to make use of this element,
   it is ignored by the default Velocity template used by the Site Plugin.
 
 +-----+
 <project>
   ...
-  <custom>Custom content</footer>
+  <custom>Custom content</custom>
   ...
 </project>
 +-----+
@@ -329,7 +330,7 @@ Configuring the Site Descriptor
 * Skinning
 
   Skins can be created to customize the look and feel of a site in a consistent way. For more information on creating a
-  skin, see {{{./creatingskins.html}Creating a Skin}}. To use a specific skin in your project, you use the <<<skin>>>
+  skin, see {{{./creatingskins.html}Creating a Skin}}. To use a specific skin in your project, you use the <<<\<skin\>>>>
   element of the site descriptor. This is a regular artifact or dependency-like element. For example, to use the
   {{{http://maven.apache.org/skins/maven-classic-skin/}Maven Classic Skin}}, you would include:
 
@@ -373,4 +374,3 @@ Configuring the Site Descriptor
   <<Note:>> Support for some expressions, like <<<$\{project.name\}>>> is present in
   version 2.0-beta-5 of this plugin. Full support is available since version
   2.0-beta-6.
-
