@@ -19,13 +19,17 @@ package org.apache.maven.plugin.pmd;
  * under the License.
  */
 
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.codehaus.plexus.util.xml.pull.XmlPullParser;
+import org.apache.maven.plugin.pmd.model.CpdErrorDetail;
+import org.apache.maven.plugin.pmd.model.CpdFile;
+import org.apache.maven.plugin.pmd.model.Duplication;
+import org.apache.maven.plugin.pmd.model.io.xpp3.CpdXpp3Reader;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 /**
@@ -39,7 +43,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
  * @threadSafe
  */
 public class CpdViolationCheckMojo
-    extends AbstractPmdViolationCheckMojo
+    extends AbstractPmdViolationCheckMojo<Duplication>
 {
 
     /**
@@ -61,9 +65,9 @@ public class CpdViolationCheckMojo
     }
 
     /** {@inheritDoc} */
-    protected void printError( Map item, String severity )
+    protected void printError( Duplication item, String severity )
     {
-        String lines = (String) item.get( "lines" );
+        int lines = item.getLines();
 
 
         StringBuffer buff = new StringBuffer( 100 );
@@ -71,68 +75,38 @@ public class CpdViolationCheckMojo
         buff.append( lines ).append( " lines of duplicated code at locations:" );
         this.getLog().info( buff.toString() );
 
-        buff.setLength( 0 );
-        buff.append( "    " );
-        Map file = (Map) item.get( "file" );
-        buff.append( file.get( "path" ) );
-        buff.append( " line " ).append( file.get( "line" ) );
-        this.getLog().info( buff.toString() );
+        
+        for( CpdFile file : item.getFiles() )
+        {
+            buff.setLength( 0 );
+            buff.append( "    " );
+            buff.append( file.getPath() );
+            buff.append( " line " ).append( file.getLine() );
+            this.getLog().info( buff.toString() );
+        }
 
-        buff.setLength( 0 );
-        buff.append( "    " );
-        file = (Map) item.get( "file1" );
-        buff.append( file.get( "path" ) );
-        buff.append( " line " ).append( file.get( "line" ) );
-        this.getLog().info( buff.toString() );
-
-        Map codefrag = (Map) item.get( "codefragment" );
-        String codefragstr = (String) codefrag.get( "text" );
         this.getLog().debug( "CPD " + severity + ": Code Fragment " );
-        this.getLog().debug( codefragstr );
+        this.getLog().debug( item.getCodefragment() );
     }
 
     /** {@inheritDoc} */
-    protected Map getErrorDetails( XmlPullParser xpp )
+    protected List<Duplication> getErrorDetails( File cpdFile )
         throws XmlPullParserException, IOException
     {
-        int index = 0;
-        int attributeCount = 0;
-        HashMap msgs = new HashMap();
-
-        attributeCount = xpp.getAttributeCount();
-        while ( index < attributeCount )
-        {
-            msgs.put( xpp.getAttributeName( index ), xpp.getAttributeValue( index ) );
-
-            index++;
-        }
-
-        int tp = xpp.next();
-        while ( tp != XmlPullParser.END_TAG )
-        {
-            // get the tag's text
-            switch ( tp )
-            {
-            case XmlPullParser.TEXT:
-                msgs.put( "text", xpp.getText().trim() );
-                break;
-            case XmlPullParser.START_TAG:
-                String nm = xpp.getName();
-                if ( msgs.containsKey( nm ) )
-                {
-                    int cnt = 1;
-                    while ( msgs.containsKey( nm + cnt ) )
-                    {
-                        ++cnt;
-                    }
-                    nm = nm + cnt;
-                }
-                msgs.put( nm, getErrorDetails( xpp ) );
-                break;
-            default:
-            }
-            tp = xpp.next();
-        }
-        return msgs;
+        CpdXpp3Reader reader = new CpdXpp3Reader();
+        CpdErrorDetail details = reader.read( new FileReader( cpdFile ), false );
+        return details.getDuplications();
+    }
+    
+    @Override
+    protected int getPriority( Duplication errorDetail )
+    {
+        return 0;
+    }
+    
+    @Override
+    protected ViolationDetails<Duplication> newViolationDetailsInstance()
+    {
+        return new ViolationDetails<Duplication>();
     }
 }

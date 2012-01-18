@@ -68,6 +68,33 @@ under the License.
     <sitePluginVersion>3.0</sitePluginVersion>
   </properties>
 
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.modello</groupId>
+        <artifactId>modello-maven-plugin</artifactId>
+        <version>1.4.1</version>
+        <configuration>
+          <useJava5>true</useJava5>
+          <models>
+            <model>src/main/mdo/pmd.mdo</model>
+            <model>src/main/mdo/cpd.mdo</model>
+          </models>
+          <version>1.0</version>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>java</goal>
+              <goal>xpp3-reader</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
   <dependencies>
     <!-- maven -->
     <dependency>
@@ -124,7 +151,7 @@ under the License.
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-utils</artifactId>
-      <version>2.0.5</version>
+      <version>2.1</version>
     </dependency>
 
     <!-- pmd -->
