@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<ruleset name="Custom ruleset"
+    xmlns="http://pmd.sf.net/ruleset/1.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://pmd.sf.net/ruleset/1.0.0 http://pmd.sf.net/ruleset_xml_schema.xsd"
+    xsi:noNamespaceSchemaLocation="http://pmd.sf.net/ruleset_xml_schema.xsd">
+  <description>
+    This ruleset is encoded with ISO-8859-1 to check proper encoding handling.
+  </description>
+  <rule ref="rulesets/basic.xml/UnnecessaryReturn" message="LATIN-1-CHARS: ÄÖÜäöüß¼½¾¤"/>
+  <!-- note: ¼½¾¤ = 0xBC 0xBD 0xBE 0xA4 don't exist any more in Latin 15, replaced by OE oe Y" and euro -->
+</ruleset>

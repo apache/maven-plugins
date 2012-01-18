@@ -1,0 +1,70 @@
+<model xmlns="http://modello.codehaus.org/MODELLO/1.4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://modello.codehaus.org/MODELLO/1.4.0 http://modello.codehaus.org/xsd/modello-1.4.0.xsd">
+  
+  <!-- Source: http://www.jcoderz.org/fawkez/browser/trunk/src/xml/schema/cpd.xsd -->
+  
+  <name>Cpd</name>
+  
+  <defaults>
+    <default>
+      <key>package</key>
+      <value>org.apache.maven.plugin.pmd.model</value>
+    </default>
+  </defaults>
+  <versionDefinition>
+    <type>namespace</type>
+    <value>1.0+</value>
+  </versionDefinition>
+  
+  <classes>
+    <class xml.tagName="pmd-cpd" rootElement="true">
+      <name>CpdErrorDetail</name>
+      <fields>
+        <field>
+          <name>duplications</name>
+          <association xml.tagName="duplication" xml.itemsStyle="flat">
+            <type>Duplication</type>
+            <multiplicity>*</multiplicity>
+          </association>
+        </field>
+      </fields>
+    </class>
+    <class>
+      <name>Duplication</name>
+      <fields>
+        <field xml.attribute="true">
+          <name>lines</name>
+          <type>int</type>
+        </field>
+        <field xml.attribute="true">
+          <name>tokens</name>
+          <type>int</type>
+        </field>
+        <field xml.tagName="file">
+          <name>files</name>
+          <association xml.tagName="file" xml.itemsStyle="flat">
+            <type>CpdFile</type>
+            <multiplicity>*</multiplicity>
+          </association>
+        </field>
+        <field>
+          <name>codefragment</name>
+          <type>String</type>
+        </field>
+      </fields>
+    </class>
+    <class xml.tagName="file">
+      <name>CpdFile</name>
+      <fields>
+        <field xml.attribute="true">
+          <name>line</name>
+          <type>int</type>
+        </field>
+        <field xml.attribute="true">
+          <name>path</name>
+          <type>String</type>
+        </field>
+      </fields>
+    </class>
+  </classes>
+</model>
