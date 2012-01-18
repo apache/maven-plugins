@@ -19,12 +19,19 @@ package org.apache.maven.plugin.pmd;
  * under the License.
  */
 
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugin.pmd.model.PmdErrorDetail;
+import org.apache.maven.plugin.pmd.model.PmdFile;
+import org.apache.maven.plugin.pmd.model.Violation;
+import org.apache.maven.plugin.pmd.model.io.xpp3.PmdXpp3Reader;
+import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.pull.XmlPullParser;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
@@ -39,7 +46,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
  * @threadSafe
  */
 public class PmdViolationCheckMojo
-    extends AbstractPmdViolationCheckMojo
+    extends AbstractPmdViolationCheckMojo<Violation>
 {
     /**
      * What priority level to fail the build on. Failures at or above this level
@@ -71,55 +78,83 @@ public class PmdViolationCheckMojo
     }
 
     /** {@inheritDoc} */
-    protected void printError( Map<String, String> item, String severity )
+    protected void printError( Violation item, String severity )
     {
 
         StringBuffer buff = new StringBuffer( 100 );
         buff.append( "PMD " + severity + ": " );
-        if ( item.containsKey( "class" ) )
+        if ( item.getViolationClass() != null )
         {
-            if ( item.containsKey( "package" ) )
+            if ( item.getViolationPackage() != null )
             {
-                buff.append( item.get( "package" ) );
+                buff.append( item.getViolationPackage() );
                 buff.append( "." );
             }
-            buff.append( item.get( "class" ) );
+            buff.append( item.getViolationClass() );
         }
         else
         {
-            buff.append( item.get( "filename" ) );
+            buff.append( item.getFileName() );
         }
         buff.append( ":" );
-        buff.append( item.get( "beginline" ) );
-        buff.append( " Rule:" ).append( item.get( "rule" ) );
-        buff.append( " Priority:" ).append( item.get( "priority" ) );
-        buff.append( " " ).append( item.get( "text" ) ).append( "." );
+        buff.append( item.getBeginline() );
+        buff.append( " Rule:" ).append( item.getRule() );
+        buff.append( " Priority:" ).append( item.getPriority() );
+        buff.append( " " ).append( item.getText() ).append( "." );
 
         this.getLog().info( buff.toString() );
     }
-
-    /** {@inheritDoc} */
-    protected Map<String, String> getErrorDetails( XmlPullParser xpp )
+    
+    @Override
+    protected List<Violation> getErrorDetails( File pmdFile )
         throws XmlPullParserException, IOException
     {
-        int index = 0;
-        int attributeCount = 0;
-        Map<String, String> msgs = new HashMap<String, String>();
+        PmdXpp3Reader reader = new PmdXpp3Reader();
+        PmdErrorDetail details = reader.read( new FileReader( pmdFile ), false );
 
-        attributeCount = xpp.getAttributeCount();
-        while ( index < attributeCount )
+        List<Violation> violations = new ArrayList<Violation>();
+        for( PmdFile file : details.getFiles() )
         {
+            String fullPath = file.getName();
+            
+            for ( Violation violation : file.getViolations() )
+            {
+                violation.setFileName( getFilename( fullPath, violation.getViolationPackage() ) );
+                violations.add( violation );
+            }
+        }
+        return violations;
+    }
+    
+    @Override
+    protected int getPriority( Violation errorDetail )
+    {
+        return errorDetail.getPriority();
+    }
+    
+    @Override
+    protected ViolationDetails<Violation> newViolationDetailsInstance()
+    {
+        return new ViolationDetails<Violation>();
+    }
+    
+    private String getFilename( String fullpath, String pkg )
+    {
+        int index = fullpath.lastIndexOf( File.separatorChar );
 
-            msgs.put( xpp.getAttributeName( index ), xpp.getAttributeValue( index ) );
+        while ( StringUtils.isNotEmpty( pkg ) )
+        {
+            index = fullpath.substring( 0, index ).lastIndexOf( File.separatorChar );
 
-            index++;
+            int dot = pkg.indexOf( '.' );
+
+            if ( dot < 0 )
+            {
+                break;
+            }
+            pkg = pkg.substring( dot + 1 );
         }
 
-        // get the tag's text
-        if ( xpp.next() == XmlPullParser.TEXT )
-        {
-            msgs.put( "text", xpp.getText().trim() );
-        }
-        return msgs;
+        return fullpath.substring( index + 1 );
     }
 }

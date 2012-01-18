@@ -1,0 +1,109 @@
+<model xmlns="http://modello.codehaus.org/MODELLO/1.4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://modello.codehaus.org/MODELLO/1.4.0 http://modello.codehaus.org/xsd/modello-1.4.0.xsd">
+
+  <!-- Source: http://www.jcoderz.org/fawkez/browser/trunk/src/xml/schema/pmd.xsd  -->
+
+  <name>Pmd</name>
+  
+  <defaults>
+    <default>
+      <key>package</key>
+      <value>org.apache.maven.plugin.pmd.model</value>
+    </default>
+  </defaults>
+  <versionDefinition>
+    <type>namespace</type>
+    <value>1.0+</value>
+  </versionDefinition>
+ 
+  <classes>
+    <class rootElement="true" xml.tagName="pmd">
+      <name>PmdErrorDetail</name>
+      <fields>
+        <field>
+          <name>files</name>
+          <association xml.tagName="file" xml.itemsStyle="flat">
+            <type>PmdFile</type>
+            <multiplicity>*</multiplicity>
+          </association>
+        </field>
+        <!-- 
+        <field>
+          <name>errors</name>
+          <association xml.tagName="error" xml.itemsStyle="flat">
+            <type>PmdError</type>
+            <multiplicity>*</multiplicity>
+          </association>
+        </field>
+         -->
+      </fields>
+    </class>
+    <class>
+      <name>PmdFile</name>
+      <fields>
+        <field xml.attribute="true">
+          <name>name</name>
+          <type>String</type>
+        </field>
+        <field>
+          <name>violations</name>
+          <association xml.tagName="violation" xml.itemsStyle="flat">
+            <type>Violation</type>
+            <multiplicity>*</multiplicity>
+          </association>
+        </field>
+      </fields>
+    </class>
+    <class>
+      <name>Violation</name>
+      <fields>
+        <field xml.attribute="true">
+          <name>beginline</name>
+          <type>int</type>
+        </field>
+        <field xml.tagName="class" xml.attribute="true">
+          <name>violationClass</name>
+          <type>String</type>
+        </field>
+        <field xml.tagName="package" xml.attribute="true">
+          <name>violationPackage</name>
+          <type>String</type>
+        </field>
+        <field xml.attribute="true">
+          <name>rule</name>
+          <type>String</type>
+        </field>
+        <field  xml.attribute="true">
+          <name>priority</name>
+          <type>int</type>
+        </field>
+        <field xml.content="true">
+          <name>text</name>
+          <type>String</type>
+        </field>
+      </fields>
+      <codeSegments>
+        <codeSegment>
+          <code>
+          <![CDATA[
+            private String fileName;
+            
+            public void setFileName( String fileName )
+            {
+              this.fileName = fileName;
+            }
+          
+            public String getFileName()
+            {
+              return fileName;
+            }
+          ]]>
+          </code>
+        </codeSegment>
+      </codeSegments>
+    </class>
+  </classes>   
+    
+ 
+    
+</model>
