@@ -21,6 +21,7 @@ package org.apache.maven.plugin.jar;
 
 import org.apache.maven.archiver.MavenArchiveConfiguration;
 import org.apache.maven.archiver.MavenArchiver;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
@@ -90,6 +91,13 @@ public abstract class AbstractJarMojo
      * @readonly
      */
     private MavenProject project;
+
+    /**
+     * @parameter default-value="${session}"
+     * @readonly
+     * @required
+     */
+    private MavenSession session;
 
     /**
      * The archive configuration to use.
@@ -213,7 +221,7 @@ public abstract class AbstractJarMojo
                 archive.setManifestFile( existingManifest );
             }
 
-            archiver.createArchive( project, archive );
+            archiver.createArchive( session, project, archive );
 
             return jarFile;
         }
