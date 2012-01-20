@@ -45,7 +45,7 @@ try
 
     Attributes manifest = jar.getManifest().getMainAttributes();
 
-    if ( !"Apache Maven".equals( manifest.get( new Attributes.Name( "Created-By" ) ) ) )
+    if ( !manifest.getValue( new Attributes.Name( "Created-By" ) ).startsWith( "Apache Maven" ) )
     {
         System.err.println( "Created-By not equals Apache Maven" );
         return false;
