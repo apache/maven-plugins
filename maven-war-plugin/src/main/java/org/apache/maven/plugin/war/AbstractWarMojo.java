@@ -687,6 +687,10 @@ public abstract class AbstractWarMojo
             return this.artifactFactory;
         }
 
+        public MavenSession getSession()
+        {
+            return session;
+        }
     }
 
     public MavenProject getProject()
@@ -888,5 +892,10 @@ public abstract class AbstractWarMojo
     public void setArtifactFactory( ArtifactFactory artifactFactory )
     {
         this.artifactFactory = artifactFactory;
+    }
+    
+    protected MavenSession getSession()
+    {
+        return this.session;
     }
 }

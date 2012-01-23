@@ -51,7 +51,7 @@ under the License.
   </issueManagement>
 
   <properties>
-    <mavenArchiverVersion>2.4.2</mavenArchiverVersion>
+    <mavenArchiverVersion>2.5-SNAPSHOT</mavenArchiverVersion>
     <mavenFilteringVersion>1.0-beta-2</mavenFilteringVersion>
     <mavenVersion>2.0.6</mavenVersion>
   </properties>

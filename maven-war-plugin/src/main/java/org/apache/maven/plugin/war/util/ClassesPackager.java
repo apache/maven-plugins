@@ -22,6 +22,7 @@ package org.apache.maven.plugin.war.util;
 import org.apache.maven.archiver.MavenArchiveConfiguration;
 import org.apache.maven.archiver.MavenArchiver;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.war.packaging.AbstractWarPackagingTask;
 import org.apache.maven.project.MavenProject;
@@ -55,12 +56,13 @@ public class ClassesPackager
      * @param classesDirectory     the classes directory
      * @param targetFile           the target file
      * @param jarArchiver          the jar archiver to use
+     * @param session              the current session
      * @param project              the related project
      * @param archiveConfiguration the archive configuration to use
      * @throws MojoExecutionException if an error occurred while creating the archive
      */
-    public void packageClasses( File classesDirectory, File targetFile, JarArchiver jarArchiver, MavenProject project,
-                                MavenArchiveConfiguration archiveConfiguration )
+    public void packageClasses( File classesDirectory, File targetFile, JarArchiver jarArchiver, MavenSession session,
+                                MavenProject project, MavenArchiveConfiguration archiveConfiguration )
         throws MojoExecutionException
     {
 
@@ -70,7 +72,7 @@ public class ClassesPackager
             archiver.setArchiver( jarArchiver );
             archiver.setOutputFile( targetFile );
             archiver.getArchiver().addDirectory( classesDirectory );
-            archiver.createArchive( project, archiveConfiguration );
+            archiver.createArchive( session, project, archiveConfiguration );
         }
         catch ( ArchiverException e )
         {

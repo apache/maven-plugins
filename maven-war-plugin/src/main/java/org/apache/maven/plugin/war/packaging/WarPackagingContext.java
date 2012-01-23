@@ -24,6 +24,7 @@ import java.util.List;
 
 import org.apache.maven.archiver.MavenArchiveConfiguration;
 import org.apache.maven.artifact.factory.ArtifactFactory;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugin.war.util.WebappStructure;
 import org.apache.maven.project.MavenProject;
@@ -186,4 +187,12 @@ public interface WarPackagingContext
     boolean isFilteringDeploymentDescriptors();
     
     ArtifactFactory getArtifactFactory();
+
+    /**
+     * Returns the Maven session.
+     *
+     * @return the Maven session
+     * @since 2.2
+     */
+    MavenSession getSession();
 }

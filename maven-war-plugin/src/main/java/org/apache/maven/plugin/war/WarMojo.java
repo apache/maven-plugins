@@ -240,7 +240,7 @@ public class WarMojo
         }
 
         // create archive
-        archiver.createArchive( getProject(), getArchive() );
+        archiver.createArchive( getSession(), getProject(), getArchive() );
 
         // create the classes to be attached if necessary
         if ( isAttachClasses() )
@@ -259,8 +259,8 @@ public class WarMojo
                 if ( classesDirectory.exists() )
                 {
                     getLog().info( "Packaging classes" );
-                    packager.packageClasses( classesDirectory, getTargetClassesFile(), getJarArchiver(), getProject(),
-                                             getArchive() );
+                    packager.packageClasses( classesDirectory, getTargetClassesFile(), getJarArchiver(), getSession(),
+                                             getProject(), getArchive() );
                     projectHelper.attachArtifact( getProject(), "jar", getClassesClassifier(), getTargetClassesFile() );
                 }
             }
