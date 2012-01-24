@@ -52,7 +52,7 @@ under the License.
 
   <properties>
     <mdoVersion>1.1.2</mdoVersion>
-    <mavenArchiverVersion>2.4.1</mavenArchiverVersion>
+    <mavenArchiverVersion>2.5</mavenArchiverVersion>
     <mavenFilteringVersion>1.0</mavenFilteringVersion>
     <mavenVersion>2.2.1</mavenVersion>
     <testOutputToFile>true</testOutputToFile>
@@ -92,12 +92,12 @@ under the License.
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-interpolation</artifactId>
-      <version>1.13</version>
+      <version>1.15</version>
     </dependency>
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-archiver</artifactId>
-      <version>1.1</version>
+      <version>2.1</version>
       <exclusions>
         <exclusion>
           <groupId>org.codehaus.plexus</groupId>
@@ -123,7 +123,7 @@ under the License.
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-io</artifactId>
-      <version>1.0.1</version>
+      <version>2.0.2</version>
       <exclusions>
         <exclusion>
           <groupId>org.codehaus.plexus</groupId>
@@ -148,7 +148,7 @@ under the License.
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-utils</artifactId>
-      <version>2.0.5</version>
+      <version>3.0</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
