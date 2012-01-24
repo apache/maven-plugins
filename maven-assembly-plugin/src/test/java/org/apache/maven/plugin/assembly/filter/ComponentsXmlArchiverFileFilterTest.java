@@ -19,8 +19,23 @@ package org.apache.maven.plugin.assembly.filter;
  * under the License.
  */
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 import org.apache.maven.plugin.assembly.testutils.TestFileManager;
 import org.codehaus.plexus.archiver.ArchiveEntry;
+import org.codehaus.plexus.archiver.ArchiveFinalizer;
 import org.codehaus.plexus.archiver.ArchivedFileSet;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
@@ -33,29 +48,13 @@ import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.xml.PrettyPrintXMLWriter;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
+
+import junit.framework.TestCase;
 import org.jdom.Document;
 import org.jdom.JDOMException;
 import org.jdom.Text;
 import org.jdom.input.SAXBuilder;
 import org.jdom.xpath.XPath;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.Reader;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-
-import junit.framework.TestCase;
 
 public class ComponentsXmlArchiverFileFilterTest
     extends TestCase
@@ -265,7 +264,7 @@ public class ComponentsXmlArchiverFileFilterTest
 
         final File descriptorFile = fileManager.createTempFile();
 
-        archiver.setArchiveFinalizers( Collections.singletonList( filter ) );
+        archiver.setArchiveFinalizers( Collections.<ArchiveFinalizer>singletonList( filter ) );
 
         archiver.createArchive();
 
@@ -335,10 +334,8 @@ public class ComponentsXmlArchiverFileFilterTest
         xmlWriter.startElement( "component-set" );
         xmlWriter.startElement( "components" );
 
-        for ( final Iterator<ComponentDef> it = componentDefs.iterator(); it.hasNext(); )
+        for ( final ComponentDef def : componentDefs )
         {
-            final ComponentDef def = it.next();
-
             xmlWriter.startElement( "component" );
 
             xmlWriter.startElement( "role" );
@@ -581,6 +578,10 @@ public class ComponentsXmlArchiverFileFilterTest
                     throw new NoSuchElementException();
                 }
 
+                public void remove()
+                {
+                    throw new NoSuchElementException();
+                }
             };
         }
 
