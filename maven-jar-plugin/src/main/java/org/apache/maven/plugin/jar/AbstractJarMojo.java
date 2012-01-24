@@ -19,6 +19,7 @@ package org.apache.maven.plugin.jar;
  * under the License.
  */
 
+import java.io.File;
 import org.apache.maven.archiver.MavenArchiveConfiguration;
 import org.apache.maven.archiver.MavenArchiver;
 import org.apache.maven.execution.MavenSession;
@@ -27,8 +28,6 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
-
-import java.io.File;
 
 /**
  * Base class for creating a jar from project classes.
@@ -138,6 +137,13 @@ public abstract class AbstractJarMojo
      * @parameter expression="${jar.forceCreation}" default-value="false"
      */
     private boolean forceCreation;
+	
+    /**
+     * Skip creating empty archives
+     * 
+     * @parameter expression="${jar.skipIfEmpty}" default-value="false"
+     */
+    private boolean skipIfEmpty;
 
     /**
      * Return the specific output directory to serve as the root for the archive.
@@ -240,16 +246,23 @@ public abstract class AbstractJarMojo
     public void execute()
         throws MojoExecutionException
     {
-        File jarFile = createArchive();
-
-        String classifier = getClassifier();
-        if ( classifier != null )
+        if ( skipIfEmpty && !getClassesDirectory().exists() )
         {
-            projectHelper.attachArtifact( getProject(), getType(), classifier, jarFile );
+            getLog().info( "Skipping packaging of the test-jar" );
         }
         else
         {
-            getProject().getArtifact().setFile( jarFile );
+            File jarFile = createArchive();
+
+            String classifier = getClassifier();
+            if ( classifier != null )
+            {
+                projectHelper.attachArtifact( getProject(), getType(), classifier, jarFile );
+            }
+            else
+            {
+                getProject().getArtifact().setFile( jarFile );
+            }
         }
     }
 
