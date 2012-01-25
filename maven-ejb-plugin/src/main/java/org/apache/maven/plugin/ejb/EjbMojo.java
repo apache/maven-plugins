@@ -324,7 +324,7 @@ public class EjbMojo
             }
 
             // create archive
-            archiver.createArchive( project, archive );
+            archiver.createArchive( session, project, archive );
         }
         catch ( ArchiverException e )
         {
@@ -393,7 +393,7 @@ public class EjbMojo
                 clientArchiver.getArchiver().addDirectory( outputDirectory, includes, excludes );
 
                 // create archive
-                clientArchiver.createArchive( project, archive );
+                clientArchiver.createArchive( session, project, archive );
 
             }
             catch ( ArchiverException e )
