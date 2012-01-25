@@ -111,6 +111,14 @@ final class ApplicationXmlWriter
             securityRole.appendSecurityRole( writer );
         }
 
+        if ( version.ge( JavaEEVersion.Six ) )
+        {
+            for ( EnvEntry envEntry : context.getEnvEntries() )
+            {
+                envEntry.appendEnvEntry( writer );
+            }
+        }
+        
         if ( version.ge( JavaEEVersion.Five ) )
         {
             writeLibraryDirectory( context.getLibraryDirectory(), writer );

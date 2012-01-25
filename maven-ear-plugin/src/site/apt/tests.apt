@@ -175,3 +175,11 @@ EAR Plugin Tests
   * project-072: builds an EAR with an application client module (app-client)
 
   * project-073: builds an EAR with an application client module (app-client) and a default bundle directory for _java_ modules
+
+  * project-074: builds an EAR with custom env entries settings and J2EE 1.3 (Not supported by the specification)
+
+  * project-075: builds an EAR with custom env entries settings and J2EE 1.4 (Not supported by the specification)
+
+  * project-076: builds an EAR with custom env entries settings and JavaEE 5 (Not supported by the specification)
+
+  * project-077: builds an EAR with custom env entries settings and JavaEE 6
