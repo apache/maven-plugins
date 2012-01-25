@@ -12,8 +12,14 @@ if ( !jarFile.isFile() )
 
 JarFile jar = new JarFile( jarFile );
 
-Manifest mf = jar.getManifest();
-String classpath = mf.getMainAttributes().getValue( Attributes.Name.CLASS_PATH );
+Attributes manifest = jar.getManifest().getMainAttributes();
+
+if ( !manifest.getValue( new Attributes.Name( "Created-By" ) ).startsWith( "Apache Maven" ) )
+{
+    throw new IllegalStateException( "Created-By not equals Apache Maven" );
+}
+
+String classpath = manifest.getValue( Attributes.Name.CLASS_PATH );
 if ( classpath == null || classpath.indexOf( "junit-3.8.2.jar" ) < 0 )
 {
     throw new IllegalStateException( "Bad Class-Path " + classpath );
