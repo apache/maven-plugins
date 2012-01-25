@@ -19,6 +19,7 @@ package org.apache.maven.plugin.ear;
  * under the License.
  */
 
+import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.XMLWriter;
 
 /**
@@ -51,11 +52,11 @@ class EnvEntry
 
     public EnvEntry( String description, String name, String type, String value )
     {
-        if ( isNullOrEmpty( name ) )
+        if ( StringUtils.isEmpty( name ) )
         {
             throw new IllegalArgumentException( ENV_ENTRY_NAME + " in " + ENV_ENTRY + " element cannot be null." );
         }
-        else if ( isNullOrEmpty( type ) && isNullOrEmpty( value ) )
+        else if ( StringUtils.isEmpty( type ) && StringUtils.isEmpty( value ) )
         {
             throw new IllegalArgumentException(
                 ENV_ENTRY_TYPE + " in " + ENV_ENTRY + " element cannot be null if no " + ENV_ENTRY_VALUE +
@@ -129,11 +130,6 @@ class EnvEntry
         writer.startElement( element );
         writer.writeText( text );
         writer.endElement();
-    }
-
-    private boolean isNullOrEmpty( String s )
-    {
-        return s == null || s.trim().isEmpty();
     }
 
     public String toString()
