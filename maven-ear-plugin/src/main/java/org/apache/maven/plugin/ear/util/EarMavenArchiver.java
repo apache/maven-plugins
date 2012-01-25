@@ -25,6 +25,7 @@ import java.util.Set;
 import org.apache.maven.archiver.MavenArchiveConfiguration;
 import org.apache.maven.archiver.MavenArchiver;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.ear.EarModule;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.archiver.jar.Manifest;
@@ -56,10 +57,17 @@ public class EarMavenArchiver
         this.earModules = earModules;
     }
 
+    /** @deprecated */
     public Manifest getManifest( MavenProject project, MavenArchiveConfiguration config )
+                    throws ManifestException, DependencyResolutionRequiredException
+    {
+        return this.getManifest( null, project, config );
+    }
+
+    public Manifest getManifest( MavenSession session, MavenProject project, MavenArchiveConfiguration config )
         throws ManifestException, DependencyResolutionRequiredException
     {
-        final Manifest manifest = super.getManifest( project, config );
+        final Manifest manifest = super.getManifest( session, project, config );
         if ( config.getManifest().isAddClasspath() )
         {
             String earManifestClassPathEntry = generateClassPathEntry( config.getManifest().getClasspathPrefix() );
