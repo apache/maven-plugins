@@ -444,7 +444,7 @@ public class EarMojo
                 "Including " + Arrays.asList( getPackagingIncludes() ) + " in the generated EAR." );
 
             archiver.getArchiver().addDirectory( getWorkDirectory(), getPackagingIncludes(), getPackagingExcludes() );
-            archiver.createArchive( getProject(), archive );
+            archiver.createArchive( session, getProject(), archive );
 
             if ( classifier != null )
             {
