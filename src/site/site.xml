@@ -34,18 +34,19 @@ under the License.
     </menu>
 
     <menu name="Examples">
-      <item name="Filtering EAR Resources" href="examples/filtering-sources.html"/>
-      <item name="Advanced Filtering Techniques" href="examples/filtering-advanced.html"/>
-      <item name="Creating Skinny WARs" href="examples/skinny-wars.html"/>
-      <item name="Customizing A Module Filename" href="examples/customizing-a-module-filename.html"/>
-      <item name="Customizing The Context Root" href="examples/customizing-context-root.html"/>
-      <item name="Customizing A Module Location" href="examples/customizing-module-location.html"/>
-      <item name="Customizing A Module URI" href="examples/customizing-module-uri.html"/>
-      <item name="Excluding A Module" href="examples/excluding-a-module.html"/>
-      <item name="Excluding Files From the EAR" href="examples/excluding-files-from-ear.html"/>
-      <item name="Unpacking A Module" href="examples/unpacking-a-module.html"/>
-      <item name="Including A Third Party Library In application.xml" href="examples/including-a-third-party-library-in-application-xml.html"/>
-      <item name="Specifying Security Roles For The Generated application.xml" href="examples/specifying-security-roles-for-the-generated-application-xml.html"/>
+      <item name="Filtering EAR resources" href="examples/filtering-sources.html"/>
+      <item name="Advanced filtering techniques" href="examples/filtering-advanced.html"/>
+      <item name="Creating skinny WARs" href="examples/skinny-wars.html"/>
+      <item name="Customizing a module filename" href="examples/customizing-a-module-filename.html"/>
+      <item name="Customizing the context root" href="examples/customizing-context-root.html"/>
+      <item name="Customizing a module location" href="examples/customizing-module-location.html"/>
+      <item name="Customizing a module URI" href="examples/customizing-module-uri.html"/>
+      <item name="Excluding a module" href="examples/excluding-a-module.html"/>
+      <item name="Excluding files from the EAR" href="examples/excluding-files-from-ear.html"/>
+      <item name="Unpacking a module" href="examples/unpacking-a-module.html"/>
+      <item name="Including a third party library in application.xml" href="examples/including-a-third-party-library-in-application-xml.html"/>
+      <item name="Specifying Security Roles in application.xml" href="examples/specifying-security-roles-for-the-generated-application-xml.html"/>
+      <item name="Specifying Environment Entries in application.xml" href="examples/specifying-env-entries-for-the-generated-application-xml.html"/>
       <item name="Generating jboss-app.xml" href="examples/generating-jboss-app.html"/>
       <item name="Customize file name mapping" href="examples/customize-file-name-mapping.html"/>
       <item name="Generating modules ID" href="examples/generating-modules-id.html"/>
