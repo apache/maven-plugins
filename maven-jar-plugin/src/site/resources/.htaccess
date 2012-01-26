@@ -1,2 +1,0 @@
-RedirectMatch permanent (.*)/examples/executable-jar.html http://maven.apache.org/shared/maven-archiver/examples/classpath.html
-RedirectMatch permanent (.*)/examples/manifest-file.html http://maven.apache.org/shared/maven-archiver/examples/manifestFile.html

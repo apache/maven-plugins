@@ -44,7 +44,9 @@ public class JarMojo
     private File classesDirectory;
 
     /**
-     * Classifier to add to the artifact generated. If given, the artifact will be an attachment instead.
+     * Classifier to add to the artifact generated. If given, the artifact will be attached.
+     * If this is not given,it will merely be written to the output directory
+     * according to the finalName.
      *
      * @parameter
      */
