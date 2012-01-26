@@ -22,12 +22,12 @@ File buildLog = new File( basedir, 'build.log' )
 assert buildLog.exists()
 
 // Module 1
-assert 1 == buildLog.getText().count('[INFO] PMD Failure: test.MyClass:8 Rule:EmptyStatementNotInLoop Priority:3 An empty statement (semicolon) not part of a loop.')
-assert 1 == buildLog.getText().count('[INFO] PMD Failure: test.MyClass:9 Rule:UnnecessaryReturn Priority:3 Avoid unnecessary return statements.')
+assert 1 == buildLog.getText().count('[INFO] PMD Failure: test.MyClass:8 Rule:EmptyStatementNotInLoop Priority:3 An empty statement (semicolon) not part of a loop')
+assert 1 == buildLog.getText().count('[INFO] PMD Failure: test.MyClass:9 Rule:UnnecessaryReturn Priority:3 Avoid unnecessary return statements')
 assert 1 == buildLog.getText().count('[INFO] You have 2 PMD violations. For more details see:')
 
 // Module 2
-assert 1 == buildLog.getText().count('[INFO] PMD Failure: test.MyClass:8 Rule:EmptyStatementNotInLoop Priority:3 TEST: LOCAL-FILE-RULESET.')
+assert 1 == buildLog.getText().count('[INFO] PMD Failure: test.MyClass:5 Rule:UnusedPrivateField Priority:3 Avoid unused private fields such as \'x\'')
 assert 1 == buildLog.getText().count('[INFO] You have 1 PMD violation. For more details see:')
 
 // Module 3
