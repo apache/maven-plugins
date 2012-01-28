@@ -41,13 +41,13 @@ public class CpdReportGenerator
 {
     private Sink sink;
 
-    private Map fileMap;
+    private Map<File, PmdFileInfo> fileMap;
 
     private ResourceBundle bundle;
 
     private boolean aggregate;
 
-    public CpdReportGenerator( Sink sink, Map fileMap, ResourceBundle bundle, boolean aggregate )
+    public CpdReportGenerator( Sink sink, Map<File, PmdFileInfo> fileMap, ResourceBundle bundle, boolean aggregate )
     {
         this.sink = sink;
         this.fileMap = fileMap;
@@ -111,7 +111,7 @@ public class CpdReportGenerator
         // Get information for report generation
         String filename = tokenEntry.getTokenSrcID();
         File file = new File( filename );
-        PmdFileInfo fileInfo = (PmdFileInfo) fileMap.get( file );
+        PmdFileInfo fileInfo = fileMap.get( file );
         File sourceDirectory = fileInfo.getSourceDirectory();
         filename = StringUtils.substring( filename, sourceDirectory.getAbsolutePath().length() + 1 );
         String xrefLocation = fileInfo.getXrefLocation();
@@ -150,6 +150,7 @@ public class CpdReportGenerator
      *
      * @param matches
      */
+    @SuppressWarnings( "deprecation" )
     public void generate( Iterator<Match> matches )
     {
         beginDocument();

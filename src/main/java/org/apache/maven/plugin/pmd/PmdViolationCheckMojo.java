@@ -32,7 +32,6 @@ import org.apache.maven.plugin.pmd.model.PmdFile;
 import org.apache.maven.plugin.pmd.model.Violation;
 import org.apache.maven.plugin.pmd.model.io.xpp3.PmdXpp3Reader;
 import org.codehaus.plexus.util.StringUtils;
-import org.codehaus.plexus.util.xml.pull.XmlPullParser;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 /**
