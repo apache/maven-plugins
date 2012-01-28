@@ -26,7 +26,6 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
-import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
@@ -42,8 +41,8 @@ import net.sourceforge.pmd.cpd.XMLRenderer;
 import org.apache.maven.reporting.MavenReportException;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
-import org.codehaus.plexus.util.WriterFactory;
 import org.codehaus.plexus.util.StringUtils;
+import org.codehaus.plexus.util.WriterFactory;
 
 /**
  * Creates a report for PMD's CPD tool.  See
@@ -161,7 +160,7 @@ public class CpdReport
         }
         CPD cpd = new CPD( minimumTokens, new JavaLanguage( p ) );
 
-        Map files = null;
+        Map<File, PmdFileInfo> files = null;
         try
         {
             files = getFilesToProcess();
@@ -180,9 +179,9 @@ public class CpdReport
                                    + WriterFactory.FILE_ENCODING + ", i.e. build is platform dependent!" );
             }
 
-            for ( Iterator it = files.keySet().iterator(); it.hasNext(); )
+            for ( File file : files.keySet() )
             {
-                cpd.add( (File) it.next() );
+                cpd.add( file );
             }
         }
         catch ( UnsupportedEncodingException e )
