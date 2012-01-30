@@ -62,7 +62,7 @@ under the License.
   </issueManagement>
 
   <properties>
-    <mavenVersion>2.0.6</mavenVersion>
+    <mavenVersion>2.2.1</mavenVersion>
     <doxiaVersion>1.1.3</doxiaVersion>
     <pmdVersion>4.3</pmdVersion>
     <sitePluginVersion>3.0</sitePluginVersion>
