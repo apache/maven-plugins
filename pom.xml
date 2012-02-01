@@ -51,6 +51,8 @@ under the License.
   </issueManagement>
 
   <properties>
+    <mavenArchiverVersion>2.5</mavenArchiverVersion>
+    <mavenFilteringVersion>1.0-beta-2</mavenFilteringVersion>
     <mavenVersion>2.0.6</mavenVersion>
   </properties>
 
@@ -73,7 +75,7 @@ under the License.
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-archiver</artifactId>
-      <version>2.5</version>
+      <version>${mavenArchiverVersion}</version>
       <exclusions>
         <exclusion>
           <groupId>org.codehaus.plexus</groupId>
@@ -84,7 +86,7 @@ under the License.
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
       <artifactId>maven-filtering</artifactId>
-      <version>1.0-beta-2</version>
+      <version>${mavenFilteringVersion}</version>
     </dependency>
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
