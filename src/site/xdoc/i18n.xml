@@ -166,6 +166,18 @@ under the License.
             </td>
           </tr>
           <tr>
+            <td>Gallegan</td>
+            <td>
+              <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-site-plugin/src/main/resources/site-plugin_gl.properties">See</a>
+            </td>
+            <td>
+              <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-project-info-reports-plugin/src/main/resources/project-info-report_gl.properties">See</a>
+            </td>
+            <td>
+              <a href="http://svn.apache.org/repos/asf/maven/shared/trunk/maven-doxia-tools/src/main/resources/site-tool_gl.properties">See</a>
+            </td>
+          </tr>
+          <tr>
             <td>German</td>
             <td>
               <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-site-plugin/src/main/resources/site-plugin_de.properties">See</a>
@@ -223,6 +235,18 @@ under the License.
             </td>
             <td>
               <a href="http://svn.apache.org/repos/asf/maven/shared/trunk/maven-doxia-tools/src/main/resources/site-tool_ko.properties">See</a>
+            </td>
+          </tr>
+          <tr>
+            <td>Lithuanian</td>
+            <td>
+              <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-site-plugin/src/main/resources/site-plugin_lt.properties">See</a>
+            </td>
+            <td>
+              <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-project-info-reports-plugin/src/main/resources/project-info-report_lt.properties">See</a>
+            </td>
+            <td>
+              <a href="http://svn.apache.org/repos/asf/maven/shared/trunk/maven-doxia-tools/src/main/resources/site-tool_lt.properties">See</a>
             </td>
           </tr>
           <tr>
