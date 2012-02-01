@@ -52,12 +52,14 @@ under the License.
       <subsection name="Supported Languages">
         <table>
           <tr>
-            <th>Languages available</th>
+            <th>Locale</th>
+            <th>Language</th>
             <th>Site Plugin</th>
             <th>Project Info Reports Plugin</th>
             <th>Maven Doxia Tools</th>
           </tr>
           <tr>
+            <td>pt_BR</td>
             <td>Brazilian Portuguese</td>
             <td>
               <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-site-plugin/src/main/resources/site-plugin_pt_BR.properties">See</a>
@@ -70,6 +72,7 @@ under the License.
             </td>
           </tr>
           <tr>
+            <td>ca</td>
             <td>Catalan</td>
             <td>
               <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-site-plugin/src/main/resources/site-plugin_ca.properties">See</a>
@@ -82,6 +85,7 @@ under the License.
             </td>
           </tr>
           <tr>
+            <td>zh_CN</td>
             <td>Chinese (China)</td>
             <td>
               <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-site-plugin/src/main/resources/site-plugin_zh_CN.properties">See</a>
@@ -94,6 +98,7 @@ under the License.
             </td>
           </tr>
           <tr>
+            <td>zn_TW</td>
             <td>Chinese (Taiwan)</td>
             <td>
               <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-site-plugin/src/main/resources/site-plugin_zh_TW.properties">See</a>
@@ -106,6 +111,7 @@ under the License.
             </td>
           </tr>
           <tr>
+            <td>cs</td>
             <td>Czech</td>
             <td>
               <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-site-plugin/src/main/resources/site-plugin_cs.properties">See</a>
@@ -118,6 +124,7 @@ under the License.
             </td>
           </tr>
           <tr>
+            <td>da</td>
             <td>Danish</td>
             <td>
               <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-site-plugin/src/main/resources/site-plugin_da.properties">See</a>
@@ -130,6 +137,7 @@ under the License.
             </td>
           </tr>
           <tr>
+            <td>nl</td>
             <td>Dutch</td>
             <td>
               <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-site-plugin/src/main/resources/site-plugin_nl.properties">See</a>
@@ -142,6 +150,7 @@ under the License.
             </td>
           </tr>
           <tr>
+            <td>en</td>
             <td>English (Default)</td>
             <td>
               <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-site-plugin/src/main/resources/site-plugin.properties">See</a>
@@ -154,6 +163,7 @@ under the License.
             </td>
           </tr>
           <tr>
+            <td>fr</td>
             <td>French</td>
             <td>
               <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-site-plugin/src/main/resources/site-plugin_fr.properties">See</a>
@@ -166,6 +176,7 @@ under the License.
             </td>
           </tr>
           <tr>
+            <td>gl</td>
             <td>Gallegan</td>
             <td>
               <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-site-plugin/src/main/resources/site-plugin_gl.properties">See</a>
@@ -178,6 +189,7 @@ under the License.
             </td>
           </tr>
           <tr>
+            <td>de</td>
             <td>German</td>
             <td>
               <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-site-plugin/src/main/resources/site-plugin_de.properties">See</a>
@@ -190,6 +202,7 @@ under the License.
             </td>
           </tr>
           <tr>
+            <td>hu</td>
             <td>Hungarian</td>
             <td>
               <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-site-plugin/src/main/resources/site-plugin_hu.properties">See</a>
@@ -202,6 +215,7 @@ under the License.
             </td>
           </tr>
           <tr>
+            <td>it</td>
             <td>Italian</td>
             <td>
               <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-site-plugin/src/main/resources/site-plugin_it.properties">See</a>
@@ -214,6 +228,7 @@ under the License.
             </td>
           </tr>
           <tr>
+            <td>ja</td>
             <td>Japanese</td>
             <td>
               <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-site-plugin/src/main/resources/site-plugin_ja.properties">See</a>
@@ -226,6 +241,7 @@ under the License.
             </td>
           </tr>
           <tr>
+            <td>ko</td>
             <td>Korean</td>
             <td>
               <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-site-plugin/src/main/resources/site-plugin_ko.properties">See</a>
@@ -238,6 +254,7 @@ under the License.
             </td>
           </tr>
           <tr>
+            <td>lt</td>
             <td>Lithuanian</td>
             <td>
               <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-site-plugin/src/main/resources/site-plugin_lt.properties">See</a>
@@ -250,6 +267,7 @@ under the License.
             </td>
           </tr>
           <tr>
+            <td>no</td>
             <td>Norwegian</td>
             <td>
               <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-site-plugin/src/main/resources/site-plugin_no.properties">See</a>
@@ -262,6 +280,7 @@ under the License.
             </td>
           </tr>
           <tr>
+            <td>pl</td>
             <td>Polish</td>
             <td>
               <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-site-plugin/src/main/resources/site-plugin_pl.properties">See</a>
@@ -274,6 +293,7 @@ under the License.
             </td>
           </tr>
           <tr>
+            <td>pt</td>
             <td>Portuguese</td>
             <td>
               <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-site-plugin/src/main/resources/site-plugin_pt.properties">See</a>
@@ -286,6 +306,7 @@ under the License.
             </td>
           </tr>
           <tr>
+            <td>sk</td>
             <td>Slovak</td>
             <td>
               <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-site-plugin/src/main/resources/site-plugin_sk.properties">See</a>
@@ -298,6 +319,7 @@ under the License.
             </td>
           </tr>
           <tr>
+            <td>es</td>
             <td>Spanish</td>
             <td>
               <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-site-plugin/src/main/resources/site-plugin_es.properties">See</a>
@@ -310,6 +332,7 @@ under the License.
             </td>
           </tr>
           <tr>
+            <td>sv</td>
             <td>Swedish</td>
             <td>
               <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-site-plugin/src/main/resources/site-plugin_sv.properties">See</a>
@@ -322,6 +345,7 @@ under the License.
             </td>
           </tr>
           <tr>
+            <td>tr</td>
             <td>Turkish</td>
             <td>
               <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-site-plugin/src/main/resources/site-plugin_tr.properties">See</a>
