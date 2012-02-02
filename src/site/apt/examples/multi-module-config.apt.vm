@@ -73,6 +73,18 @@ whizbang
   <<Tip:>> put the resources into a subdirectory that you can ensure will be
   unique and not conflict with anyone else.
 
+  The <<<pom.xml>>> file for <build-tools> should look like this:
+
++-----+
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.example.whizbang</groupId>
+  <artifactId>build-tools</artifactId>
+  <version>1.0</version>
+  <name>Build Tools</name>
+</project>
++-----+
+  
 * Configure the other projects to use it
 
   Now we can include the Checkstyle configuration in the top level
