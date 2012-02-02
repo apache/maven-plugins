@@ -154,14 +154,14 @@ under the License.
                   <goal>run</goal>
                 </goals>
                 <configuration>
-                  <tasks>
+                  <target>
                     <copy overwrite="true" todir="${project.build.testOutputDirectory}/projects">
                       <fileset dir="src/test/resources/projects" includes="**/pom.xml" />
                       <filterset>
                         <filter token="project.version" value="${project.version}" />
                       </filterset>
                     </copy>
-                  </tasks>
+                  </target>
                 </configuration>
               </execution>
             </executions>
@@ -190,12 +190,9 @@ under the License.
                   <includes>
                     <include>**/*IT.java</include>
                   </includes>
-                  <systemProperties combine.children="append">
-                    <property>
-                      <name>maven.home</name>
-                      <value>${maven.home}</value>
-                    </property>
-                  </systemProperties>
+                  <systemPropertyVariables combine.children="append">
+                    <maven.home>${maven.home}</maven.home>
+                  </systemPropertyVariables>
                 </configuration>
               </execution>
             </executions>
