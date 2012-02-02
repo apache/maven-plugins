@@ -255,22 +255,23 @@ public class DefaultCheckstyleExecutor
                                        "File encoding has not been set, using platform encoding " + effectiveEncoding
                                            + ", i.e. build is platform dependent!" );
             }
+
+            if ( "Checker".equals( config.getName() )
+                    || "com.puppycrawl.tools.checkstyle.Checker".equals( config.getName() ) )
+            {
+                if ( config instanceof DefaultConfiguration )
+                {
+                    ( (DefaultConfiguration) config ).addAttribute( "charset", effectiveEncoding );
+                }
+                else
+                {
+                    request.getLog().warn( "Failed to configure file encoding on module " + config );
+                }
+            }
             Configuration[] modules = config.getChildren();
             for ( int i = 0; i < modules.length; i++ )
             {
                 Configuration module = modules[i];
-                if ( "Checker".equals( module.getName() )
-                    || "com.puppycrawl.tools.checkstyle.Checker".equals( module.getName() ) )
-                {
-                    if ( module instanceof DefaultConfiguration )
-                    {
-                        ( (DefaultConfiguration) module ).addAttribute( "charset", effectiveEncoding );
-                    }
-                    else
-                    {
-                        request.getLog().warn( "Failed to configure file encoding on module " + module );
-                    }
-                }
                 if ( "TreeWalker".equals( module.getName() )
                     || "com.puppycrawl.tools.checkstyle.TreeWalker".equals( module.getName() ) )
                 {
