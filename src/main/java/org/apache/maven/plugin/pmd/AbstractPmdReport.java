@@ -161,7 +161,7 @@ public abstract class AbstractPmdReport
      * @parameter
      * @since 2.2
      */
-    private List<File> excludeRoots;
+    private File[] excludeRoots;
 
     /**
      * Run PMD on the tests.
@@ -276,13 +276,14 @@ public abstract class AbstractPmdReport
 
         if ( excludeRoots == null )
         {
-            excludeRoots = Collections.emptyList();
+            excludeRoots = new File[0];
         }
         
-        Collection<File> excludeRootFiles = new HashSet<File>( excludeRoots.size() );
+        Collection<File> excludeRootFiles = new HashSet<File>( excludeRoots.length );
 
-        for ( File file : excludeRoots )
+        for ( int i = 0; i < excludeRoots.length; i++ )
         {
+            File file = excludeRoots[i];
             if ( file.isDirectory() )
             {
                 excludeRootFiles.add( file );
