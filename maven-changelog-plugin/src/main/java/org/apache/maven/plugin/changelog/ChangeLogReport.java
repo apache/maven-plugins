@@ -237,6 +237,15 @@ public class ChangeLogReport
     protected String scmUrl;
 
     /**
+     * Skip the Changelog report generation.  Most useful on the command line
+     * via "-Dchangelog.skip=true".
+     *
+     * @parameter expression="${changelog.skip}" default-value="false"
+     * @since 2.3
+     */
+    protected boolean skip;
+
+    /**
      * The Maven Project Object
      *
      * @parameter expression="${project}"
@@ -1742,6 +1751,11 @@ public class ChangeLogReport
     public boolean canGenerateReport()
     {
         if ( offline && !outputXML.exists() )
+        {
+            return false;
+        }
+
+        if ( skip )
         {
             return false;
         }
