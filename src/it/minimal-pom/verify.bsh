@@ -1,9 +1,18 @@
 import java.io.*;
 import java.util.*;
 import java.util.regex.*;
+import org.codehaus.plexus.util.FileUtils;
 
 try
 {
+    File outputXML = new File( basedir, "target/changelog.xml" );
+    System.out.println( "Checking for existence of xml file: " + outputXML );
+    String content = FileUtils.fileRead( outputXML, "ISO-8859-1" );
+    if ( content.indexOf( "encoding=\"ISO-8859-1\"" ) < 0 )
+    {
+        throw new IOException( "Wrong encoding attribute in content." );
+    }
+
     File siteDir = new File( basedir, "target/site" );
     System.out.println( "Checking for existence of site directory: " + siteDir );
     if ( !siteDir.isDirectory() )
