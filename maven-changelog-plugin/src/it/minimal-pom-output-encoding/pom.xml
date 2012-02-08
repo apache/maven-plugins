@@ -57,9 +57,9 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-changelog-plugin</artifactId>
         <version>@pom.version@</version>
-		<configuration>
+        <configuration>
           <outputEncoding>UTF-8</outputEncoding>
-		</configuration>        
+        </configuration>
       </plugin>
     </plugins>
   </reporting>
