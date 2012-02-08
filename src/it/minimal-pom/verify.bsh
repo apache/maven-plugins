@@ -7,8 +7,8 @@ try
 {
     File outputXML = new File( basedir, "target/changelog.xml" );
     System.out.println( "Checking for existence of xml file: " + outputXML );
-    String content = FileUtils.fileRead( outputXML, "ISO-8859-1" );
-    if ( content.indexOf( "encoding=\"ISO-8859-1\"" ) < 0 )
+    String content = FileUtils.fileRead( outputXML, "UTF-8" );
+    if ( content.indexOf( "encoding=\"UTF-8\"" ) < 0 )
     {
         throw new IOException( "Wrong encoding attribute in content." );
     }

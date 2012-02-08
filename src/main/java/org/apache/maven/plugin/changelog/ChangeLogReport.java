@@ -188,10 +188,9 @@ public class ChangeLogReport
     private String commentFormat;
 
     /**
-     * Output encoding for the xml document
+     * The file encoding when writing non-HTML reports.
      *
-     * @parameter expression="${changelog.outputEncoding}" default-value="ISO-8859-1"
-     * @required
+     * @parameter expression="${changelog.outputEncoding}" default-value="${project.reporting.outputEncoding}"
      */
     private String outputEncoding;
 
@@ -524,12 +523,12 @@ public class ChangeLogReport
             {
                 try
                 {
-                    //ReaderFactory.newReader( outputXML, outputEncoding );
+                    //ReaderFactory.newReader( outputXML, getOutputEncoding() );
                     //FileInputStream fIn = new FileInputStream( outputXML );
 
                     getLog().info( "Using existing changelog.xml..." );
 
-                    changelogList = ChangeLog.loadChangedSets( ReaderFactory.newReader( outputXML, outputEncoding ) );
+                    changelogList = ChangeLog.loadChangedSets( ReaderFactory.newReader( outputXML, getOutputEncoding() ) );
                 }
                 catch ( FileNotFoundException e )
                 {
@@ -580,7 +579,7 @@ public class ChangeLogReport
     {
         StringBuffer changelogXml = new StringBuffer();
 
-        changelogXml.append( "<?xml version=\"1.0\" encoding=\"" ).append( outputEncoding ).append( "\"?>\n" );
+        changelogXml.append( "<?xml version=\"1.0\" encoding=\"" ).append( getOutputEncoding() ).append( "\"?>\n" );
         changelogXml.append( "<changelog>" );
 
         for ( Iterator sets = changelogList.iterator(); sets.hasNext(); )
@@ -588,7 +587,7 @@ public class ChangeLogReport
             changelogXml.append( "\n  " );
 
             ChangeLogSet changelogSet = (ChangeLogSet) sets.next();
-            String changeset = changelogSet.toXML( outputEncoding );
+            String changeset = changelogSet.toXML( getOutputEncoding() );
 
             //remove xml header
             if ( changeset.startsWith( "<?xml" ) )
@@ -609,7 +608,7 @@ public class ChangeLogReport
         //pw.flush();
         //pw.close();
         // MCHANGELOG-86
-        Writer writer = WriterFactory.newWriter( new BufferedOutputStream( new FileOutputStream( outputXML ) ), outputEncoding );
+        Writer writer = WriterFactory.newWriter( new BufferedOutputStream( new FileOutputStream( outputXML ) ), getOutputEncoding() );
         writer.write( changelogXml.toString() );
         writer.flush();
         writer.close();
@@ -1694,6 +1693,16 @@ public class ChangeLogReport
         }
 
         return outputDirectory.getAbsolutePath();
+    }
+
+    /**
+     * Gets the effective reporting output files encoding.
+     *
+     * @return The effective reporting output file encoding, never <code>null</code>.
+     */
+    protected String getOutputEncoding()
+    {
+        return ( outputEncoding != null ) ? outputEncoding : ReaderFactory.UTF_8;
     }
 
     /** {@inheritDoc} */

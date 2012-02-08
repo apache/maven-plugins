@@ -24,7 +24,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.apache.maven.plugins.changelog</groupId>
-  <artifactId>minimal-pom-output-encoding</artifactId>
+  <artifactId>project-reporting-output-encoding</artifactId>
   <version>1.0-SNAPSHOT</version>
   <packaging>jar</packaging>
 
@@ -38,6 +38,7 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>ISO-8859-1</project.reporting.outputEncoding>
   </properties>
 
   <build>
@@ -57,9 +58,6 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-changelog-plugin</artifactId>
         <version>@pom.version@</version>
-        <configuration>
-          <outputEncoding>ISO-8859-1</outputEncoding>
-        </configuration>
       </plugin>
     </plugins>
   </reporting>
