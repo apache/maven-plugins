@@ -222,7 +222,7 @@ public class DefaultCheckstyleExecutor
     protected void addSourceDirectory( CheckstyleReportListener sinkListener, File sourceDirectory,
                                        File testSourceDirectory, CheckstyleExecutorRequest request )
     {
-        if (sourceDirectory != null)
+        if ( sourceDirectory != null )
         {
             sinkListener.addSourceDirectory( sourceDirectory );
         }
