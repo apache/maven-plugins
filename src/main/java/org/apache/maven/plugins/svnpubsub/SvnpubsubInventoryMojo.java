@@ -108,7 +108,7 @@ public class SvnpubsubInventoryMojo
     /**
      * Tool that gets a configured SCM repository from release configuration.
      * 
-     * @plexus.requirement
+     * @component
      */
     private ScmRepositoryConfigurator scmRepositoryConfigurator;
 
@@ -219,6 +219,7 @@ public class SvnpubsubInventoryMojo
 
         releaseDescriptor.setWorkingDirectory( basedir.getAbsolutePath() );
         releaseDescriptor.setLocalCheckout( localCheckout );
+        releaseDescriptor.setScmSourceUrl( pubScmUrl );
 
         try
         {
