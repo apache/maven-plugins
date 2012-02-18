@@ -23,15 +23,13 @@ import org.apache.maven.model.Site;
 import org.apache.maven.plugin.MojoExecutionException;
 
 /**
- * Deploys the generated site using <code>scp</code> or <code>file</code>
- * protocol to the site URL specified in the
+ * Deploys the generated site using <a href="/wagon/">wagon supported
+ * protocols</a> to the site URL specified in the
  * <code>&lt;distributionManagement&gt;</code> section of the POM.
  * <p>
- * For <code>scp</code> protocol, the website files are packaged into zip archive,
- * then the archive is transfered to the remote host, next it is un-archived.
- * This method of deployment should normally be much faster
- * than making a file by file copy.  For <code>file</code> protocol, the files are copied
- * directly to the destination directory.
+ * For <code>scp</code> protocol, the website files are packaged by wagon into zip archive,
+ * then the archive is transfered to the remote host, next it is un-archived which is much faster
+ * than making a file by file copy.
  * </p>
  *
  * @author <a href="mailto:michal@org.codehaus.org">Michal Maczka</a>
