@@ -261,7 +261,19 @@ public class DefaultCheckstyleExecutor
             {
                 if ( config instanceof DefaultConfiguration )
                 {
-                    ( (DefaultConfiguration) config ).addAttribute( "charset", effectiveEncoding );
+                    // MCHECKSTYLE-173 Only add the "charset" attribute if it has not been set
+                    try
+                    {
+                        if ( ( (DefaultConfiguration) config ).getAttribute( "charset" ) == null )
+                        {
+                            ( (DefaultConfiguration) config ).addAttribute( "charset", effectiveEncoding );
+                        }
+                    }
+                    catch ( CheckstyleException ex )
+                    {
+                        // Checkstyle 5.4+ throws an exception when trying to access an attribute that doesn't exist
+                        ( (DefaultConfiguration) config ).addAttribute( "charset", effectiveEncoding );
+                    }
                 }
                 else
                 {
