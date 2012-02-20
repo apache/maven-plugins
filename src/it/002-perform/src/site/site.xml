@@ -1,0 +1,10 @@
+<project name="perform-002">
+  <publishDate position="right"/>
+  <version position="left"/>
+    <body>
+        <menu name="perform-002">
+            <item name="Home" href="index.html" />
+        </menu>
+        <menu ref="reports"/>
+    </body>
+</project>
