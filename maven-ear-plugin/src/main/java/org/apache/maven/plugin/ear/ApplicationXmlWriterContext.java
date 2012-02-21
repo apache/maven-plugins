@@ -36,8 +36,6 @@ class ApplicationXmlWriterContext
     private final List<EarModule> earModules;
 
     private final List<SecurityRole> securityRoles;
-    
-    private final List<EnvEntry> envEntries;
 
     private final String displayName;
 
@@ -49,15 +47,13 @@ class ApplicationXmlWriterContext
 
     private final Boolean initializeInOrder;
 
-    public ApplicationXmlWriterContext( File destinationFile, List<EarModule> earModules, List<SecurityRole> securityRoles, 
-                                        List<EnvEntry> envEntries, String displayName,
+    public ApplicationXmlWriterContext( File destinationFile, List<EarModule> earModules, List<SecurityRole> securityRoles, String displayName,
                                         String description, String libraryDirectory, String applicationName,
                                         Boolean initializeInOrder )
     {
         this.destinationFile = destinationFile;
         this.earModules = earModules;
         this.securityRoles = securityRoles;
-        this.envEntries = envEntries;
         this.displayName = displayName;
         this.description = description;
         this.libraryDirectory = libraryDirectory;
@@ -95,16 +91,6 @@ class ApplicationXmlWriterContext
         return securityRoles;
     }
 
-    /**
-     * Returns the list of {@link EnvEntry} instances (as per JavaEE 6).
-     *
-     * @return the env-entry elements
-     */
-    public List<EnvEntry> getEnvEntries()
-    {
-        return envEntries;
-    }
-    
     /**
      * Returns the display name.
      *

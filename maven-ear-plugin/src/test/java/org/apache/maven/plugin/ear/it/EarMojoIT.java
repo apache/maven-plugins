@@ -773,43 +773,4 @@ public class EarMojoIT
             "APP-INF/lib/jar-sample-one-1.0.jar", "APP-INF/lib/jar-sample-two-1.0.jar" } );
     }
 
-    /**
-     * Builds an EAR with custom env entries settings and J2EE 1.3. Not supported by the specification
-     * so this should be ignored.
-     */
-    public void testProject074()
-        throws Exception
-    {
-        doTestProject( "project-074", new String[]{ "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar" } );
-    }
-
-    /**
-     * Builds an EAR with custom env entries settings and J2EE 1.4. Not supported by the specification
-     * so this should be ignored.
-     */
-    public void testProject075()
-        throws Exception
-    {
-        doTestProject( "project-075", new String[]{ "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar" } );
-    }
-
-    /**
-     * Builds an EAR with custom env entries settings and JavaEE 5. Not supported by the specification
-     * so this should be ignored.
-     */
-    public void testProject076()
-        throws Exception
-    {
-        doTestProject( "project-076", new String[]{ "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar" } );
-    }
-
-    /**
-     * Builds an EAR with custom env entries settings and JavaEE 6.
-     */
-    public void testProject077()
-        throws Exception
-    {
-        doTestProject( "project-077", new String[]{ "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar" } );
-    }
-
 }
