@@ -124,9 +124,6 @@ Maven EAR Plugin
   * {{{./examples/specifying-security-roles-for-the-generated-application-xml.html}
   Specifying Security Roles For The Generated application.xml}}
 
-  * {{{./examples/specifying-env-entries-for-the-generated-application-xml.html}
-    Specifying Environment Entries For The Generated application.xml}}
-
   * {{{./examples/generating-jboss-app.html} Generating the jboss-app.xml file}}
 
   * {{{./examples/generating-modules-id.html} Generating modules id}}
