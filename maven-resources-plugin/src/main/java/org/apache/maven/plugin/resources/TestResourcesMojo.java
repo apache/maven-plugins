@@ -19,6 +19,8 @@ package org.apache.maven.plugin.resources;
  * under the License.
  */
 
+import org.apache.maven.plugin.MojoExecutionException;
+
 import java.io.File;
 import java.util.List;
 
@@ -53,6 +55,30 @@ public class TestResourcesMojo
      * @readonly
      */
     private List resources;
+
+    /**
+     * Set this to 'true' to bypass copying of test resources.
+     * Its use is NOT RECOMMENDED, but quite convenient on occasion.
+     *
+     * @parameter expression="${maven.test.skip}"
+     */
+    private boolean skip;
+
+    /**
+     * {@inheritDoc}
+     */
+    public void execute()
+        throws MojoExecutionException
+    {
+        if ( skip )
+        {
+            getLog().info( "Not copying test resources" );
+        }
+        else
+        {
+            super.execute();
+        }
+    }
 
     public File getOutputDirectory()
     {
