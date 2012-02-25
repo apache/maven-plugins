@@ -91,6 +91,7 @@
                     <dependencyLocationsEnabled>false</dependencyLocationsEnabled>
                 </configuration>
             </plugin>
+	   
         </plugins>
     </reporting>
 </project>
