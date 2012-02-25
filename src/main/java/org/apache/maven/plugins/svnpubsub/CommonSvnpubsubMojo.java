@@ -163,6 +163,15 @@ public abstract class CommonSvnpubsubMojo
      * @required
      */
     protected MavenSession session;
+    
+    /**
+     * The outputEncoding parameter of the site plugin. This plugin will corrupt your site
+     * if this does not match the value used by the site plugin.
+     * 
+     * @parameter expression="${outputEncoding}" 
+     */
+    protected String siteOutputEncoding;
+    
     protected ScmProvider scmProvider;
     protected ScmRepository scmRepository;
     // a list (ordered) to maintain sort for ease of comparison.
@@ -212,6 +221,7 @@ public abstract class CommonSvnpubsubMojo
         Collections.sort(inventory);
         SvnpubsubInventory initialInventory = new SvnpubsubInventory();
         Set<String> paths = new HashSet<String>();
+        
         /*
          * It might be cleverer to store paths relative to the checkoutDirectory, but this really should work.
          */

@@ -20,6 +20,11 @@ package org.apache.maven.plugins.svnpubsub;
  */
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -32,6 +37,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.scm.ScmException;
 import org.apache.maven.scm.ScmFileSet;
 import org.apache.maven.scm.command.add.AddScmResult;
+import org.apache.maven.scm.command.remove.RemoveScmResult;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
 
@@ -64,6 +70,39 @@ public class SvnpubsubPublishMojo
     {
         return new File(base.toURI().relativize(file.toURI()).getPath());
     }
+    
+    private void normalizeNewlines(File f) throws IOException {
+        File tmpFile = null;
+        InputStreamReader isr = null;
+        OutputStreamWriter osw = null;
+        try {
+            tmpFile = File.createTempFile( "asf-svnpubsub-", ".tmp" );
+            FileUtils.copyFile( f, tmpFile );
+            isr = new InputStreamReader ( new FileInputStream ( tmpFile ), siteOutputEncoding );
+            osw = new OutputStreamWriter ( new FileOutputStream ( f ), siteOutputEncoding );
+            char buffer[] = new char[4096];
+            int nRead;
+            while ( ( nRead = isr.read( buffer ) ) > 0 ) 
+            {
+                String content = new String( buffer, 0, nRead );
+                content = content.replaceAll( "\r", "" );
+                osw.write( content );
+            }
+        } finally {
+            if ( osw != null )
+            {
+                osw.close();
+            }
+            if ( isr != null )
+            {
+                isr.close();
+            }
+            if ( tmpFile != null )
+            {
+                tmpFile.delete();
+            }
+        }
+    }
 
     /*
      * (non-Javadoc)
@@ -72,6 +111,12 @@ public class SvnpubsubPublishMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
+        if ( siteOutputEncoding == null )
+        {
+            getLog().warn( "No output encoding, defaulting to UTF-8." );
+            siteOutputEncoding = "utf-8";
+        }
+
         // read in the list left behind by prepare; fail if it's not there.
         readInventory();
         // setup the scm plugin with help from release plugin utilities
@@ -128,6 +173,14 @@ public class SvnpubsubPublishMojo
             List<File> addedList = new ArrayList<File>();
             for ( File f : added )
             {
+                try
+                {
+                    normalizeNewlines( f );
+                }
+                catch ( IOException e )
+                {
+                    throw new MojoFailureException( "Failed to normalize newlines in " + f.getAbsolutePath() );
+                }
                 addedList.add(relativize( checkoutDirectory, f ));
             }
             ScmFileSet addedFileSet = new ScmFileSet( checkoutDirectory, addedList );
@@ -155,14 +208,30 @@ public class SvnpubsubPublishMojo
             ScmFileSet deletedFileSet = new ScmFileSet( checkoutDirectory, deletedList );
             try
             {
-                scmProvider.remove( scmRepository, deletedFileSet, "Deleting obsolete site files." );
+                RemoveScmResult deleteResult = scmProvider.remove( scmRepository, deletedFileSet, "Deleting obsolete site files." );
+                if (!deleteResult.isSuccess()) {
+                    logError("delete operation failed: %s", deleteResult.getProviderMessage());
+                    throw new MojoExecutionException( "Failed to delete files: " + deleteResult.getProviderMessage());
+                }
             }
             catch ( ScmException e )
             {
                 throw new MojoExecutionException( "Failed to delete removed files to SCM", e );
             }
         }
-
+        
+        for ( File f : updated )
+        {
+            try
+            {
+                normalizeNewlines( f );
+            }
+            catch ( IOException e )
+            {
+                throw new MojoFailureException( "Failed to normalize newlines in " + f.getAbsolutePath() );
+            }
+        }
+        
         if ( !skipCheckin )
         {
             ScmFileSet updatedFileSet = new ScmFileSet( checkoutDirectory );
