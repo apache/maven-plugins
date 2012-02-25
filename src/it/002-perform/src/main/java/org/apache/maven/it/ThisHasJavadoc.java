@@ -22,7 +22,7 @@ package org.apache.maven.it;
 /**
  * This is a class with some javadoc.
  **/
-class ThisHasJavadoc.java
+public class ThisHasJavadoc
 {
     /**
      * This is the constructor.
