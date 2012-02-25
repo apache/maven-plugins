@@ -18,7 +18,7 @@
 
  <properties>
   <scmVersion>1.6</scmVersion>
-  <mavenVersion>2.0.9</mavenVersion>
+  <mavenVersion>2.2.1</mavenVersion>
  </properties>
 
  <build>

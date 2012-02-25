@@ -51,7 +51,17 @@
         <version>@pom.version@</version>
 	<configuration>
 	  <pubScmUrl>scm:svn:https://svn.apache.org/repos/asf/maven/sandbox/bimargulies/site-test</pubScmUrl>
+	  <providerImplementations>
+            <svn>javasvn</svn>
+          </providerImplementations>
 	</configuration>
+	<dependencies>
+	  <dependency>
+	    <groupId>com.google.code.maven-scm-provider-svnjava</groupId>
+	    <artifactId>maven-scm-provider-svnjava</artifactId>
+	    <version>1.15</version>
+	  </dependency>
+	</dependencies>
 	<executions>
 	  <execution>
 	    <id>prepare</id>

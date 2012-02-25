@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
@@ -34,6 +35,7 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.scm.manager.NoSuchScmProviderException;
+import org.apache.maven.scm.manager.ScmManager;
 import org.apache.maven.scm.provider.ScmProvider;
 import org.apache.maven.scm.repository.ScmRepository;
 import org.apache.maven.scm.repository.ScmRepositoryException;
@@ -88,6 +90,22 @@ public abstract class CommonSvnpubsubMojo
      * @parameter
      */
     protected String includes;
+    
+    /**
+     * List of provider implementations.
+     *
+     * @parameter
+     */
+    private Map<String, String> providerImplementations;
+    
+    /**
+     * The SCM manager.
+     *
+     * @component
+     */
+    private ScmManager scmManager;
+    
+    
     /**
      * Tool that gets a configured SCM repository from release configuration.
      * 
@@ -275,6 +293,16 @@ public abstract class CommonSvnpubsubMojo
         releaseDescriptor.setWorkingDirectory( basedir.getAbsolutePath() );
         releaseDescriptor.setLocalCheckout( localCheckout );
         releaseDescriptor.setScmSourceUrl( pubScmUrl );
+        
+        if ( providerImplementations != null )
+        {
+            for ( Map.Entry<String, String> providerEntry : providerImplementations.entrySet() )
+            {
+                getLog().info( "Change the default '" + providerEntry.getKey() + "' provider implementation to '"
+                    + providerEntry.getValue() + "'." );
+                scmManager.setScmProviderImplementation( providerEntry.getKey(), providerEntry.getValue() );
+            }
+        }
     
         try
         {
