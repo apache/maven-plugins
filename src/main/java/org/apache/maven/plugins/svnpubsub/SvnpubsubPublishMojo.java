@@ -31,6 +31,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.scm.ScmException;
 import org.apache.maven.scm.ScmFileSet;
+import org.apache.maven.scm.command.add.AddScmResult;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
 
@@ -58,6 +59,11 @@ public class SvnpubsubPublishMojo
      * @parameter expression="${svnpubsub.skipCheckin}"
      */
     private boolean skipCheckin;
+    
+    private File relativize(File base, File file)
+    {
+        return new File(base.toURI().relativize(file.toURI()).getPath());
+    }
 
     /*
      * (non-Javadoc)
@@ -120,11 +126,18 @@ public class SvnpubsubPublishMojo
         if ( !added.isEmpty() )
         {
             List<File> addedList = new ArrayList<File>();
-            addedList.addAll( added );
+            for ( File f : added )
+            {
+                addedList.add(relativize( checkoutDirectory, f ));
+            }
             ScmFileSet addedFileSet = new ScmFileSet( checkoutDirectory, addedList );
             try
             {
-                scmProvider.add( scmRepository, addedFileSet, "Adding new site files." );
+                AddScmResult addResult = scmProvider.add( scmRepository, addedFileSet, "Adding new site files." );
+                if (!addResult.isSuccess()) {
+                    logError("add operation failed: %s", addResult.getProviderMessage());
+                    throw new MojoExecutionException( "Failed to add new files: " + addResult.getProviderMessage());
+                }
             }
             catch ( ScmException e )
             {
@@ -135,7 +148,10 @@ public class SvnpubsubPublishMojo
         if ( !deleted.isEmpty() )
         {
             List<File> deletedList = new ArrayList<File>();
-            deletedList.addAll( deleted );
+            for ( File f : deleted )
+            {
+                deletedList.add(relativize( checkoutDirectory, f ));
+            }
             ScmFileSet deletedFileSet = new ScmFileSet( checkoutDirectory, deletedList );
             try
             {
