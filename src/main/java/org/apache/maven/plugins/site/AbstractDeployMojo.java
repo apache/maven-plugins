@@ -466,10 +466,8 @@ public abstract class AbstractDeployMojo
 
         String host = repository.getHost();
         String nonProxyHostsAsString = proxyInfo.getNonProxyHosts();
-        String[] nonProxyHosts = StringUtils.split( nonProxyHostsAsString, ",;|" );
-        for ( int i = 0; i < nonProxyHosts.length; i++ )
+        for ( String nonProxyHost : StringUtils.split( nonProxyHostsAsString, ",;|" ) )
         {
-            String nonProxyHost = nonProxyHosts[i];
             if ( StringUtils.contains( nonProxyHost, "*" ) )
             {
                 // Handle wildcard at the end, beginning or middle of the nonProxyHost
@@ -521,48 +519,43 @@ public abstract class AbstractDeployMojo
         log.debug( " configureWagon " );
 
         // MSITE-25: Make sure that the server settings are inserted
-        for ( int i = 0; i < settings.getServers().size(); i++ )
+        for ( Server server : settings.getServers() )
         {
-            Server server = settings.getServers().get( i );
             String id = server.getId();
 
             log.debug( "configureWagon server " + id );
 
-            if ( id != null && id.equals( repositoryId ) )
+            if ( id != null && id.equals( repositoryId ) && ( server.getConfiguration() != null ) )
             {
-                if ( server.getConfiguration() != null )
-                {
-                    final PlexusConfiguration plexusConf =
-                        new XmlPlexusConfiguration( (Xpp3Dom) server.getConfiguration() );
+                final PlexusConfiguration plexusConf =
+                    new XmlPlexusConfiguration( (Xpp3Dom) server.getConfiguration() );
 
-                    ComponentConfigurator componentConfigurator = null;
-                    try
+                ComponentConfigurator componentConfigurator = null;
+                try
+                {
+                    componentConfigurator = (ComponentConfigurator) container.lookup( ComponentConfigurator.ROLE );
+                    componentConfigurator.configureComponent( wagon, plexusConf, container.getContainerRealm() );
+                }
+                catch ( final ComponentLookupException e )
+                {
+                    throw new WagonConfigurationException( repositoryId, "Unable to lookup wagon configurator."
+                        + " Wagon configuration cannot be applied.", e );
+                }
+                catch ( ComponentConfigurationException e )
+                {
+                    throw new WagonConfigurationException( repositoryId, "Unable to apply wagon configuration.", e );
+                }
+                finally
+                {
+                    if ( componentConfigurator != null )
                     {
-                        componentConfigurator = (ComponentConfigurator) container.lookup( ComponentConfigurator.ROLE );
-                        componentConfigurator.configureComponent( wagon, plexusConf, container.getContainerRealm() );
-                    }
-                    catch ( final ComponentLookupException e )
-                    {
-                        throw new WagonConfigurationException( repositoryId, "Unable to lookup wagon configurator."
-                            + " Wagon configuration cannot be applied.", e );
-                    }
-                    catch ( ComponentConfigurationException e )
-                    {
-                        throw new WagonConfigurationException( repositoryId, "Unable to apply wagon configuration.",
-                            e );
-                    }
-                    finally
-                    {
-                        if ( componentConfigurator != null )
+                        try
                         {
-                            try
-                            {
-                                container.release( componentConfigurator );
-                            }
-                            catch ( ComponentLifecycleException e )
-                            {
-                                log.error( "Problem releasing configurator - ignoring: " + e.getMessage() );
-                            }
+                            container.release( componentConfigurator );
+                        }
+                        catch ( ComponentLifecycleException e )
+                        {
+                            log.error( "Problem releasing configurator - ignoring: " + e.getMessage() );
                         }
                     }
                 }
