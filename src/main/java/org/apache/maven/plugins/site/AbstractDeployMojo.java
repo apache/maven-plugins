@@ -654,58 +654,54 @@ public abstract class AbstractDeployMojo
         log.debug( " configureWagon " );
 
         // MSITE-25: Make sure that the server settings are inserted
-        for ( int i = 0; i < settings.getServers().size(); i++ )
+        for ( Server server : settings.getServers() )
         {
-            Server server = settings.getServers().get( i );
             String id = server.getId();
 
             log.debug( "configureWagon server " + id );
 
-            if ( id != null && id.equals( repositoryId ) )
+            if ( id != null && id.equals( repositoryId ) && ( server.getConfiguration() != null ) )
             {
-                if ( server.getConfiguration() != null )
-                {
-                    final PlexusConfiguration plexusConf =
-                        new XmlPlexusConfiguration( (Xpp3Dom) server.getConfiguration() );
+                final PlexusConfiguration plexusConf =
+                    new XmlPlexusConfiguration( (Xpp3Dom) server.getConfiguration() );
 
-                    ComponentConfigurator componentConfigurator = null;
-                    try
+                ComponentConfigurator componentConfigurator = null;
+                try
+                {
+                    componentConfigurator =
+                        (ComponentConfigurator) container.lookup( ComponentConfigurator.ROLE, "basic" );
+                    if ( isMaven3OrMore() )
                     {
-                        componentConfigurator =
-                            (ComponentConfigurator) container.lookup( ComponentConfigurator.ROLE, "basic" );
-                        if ( isMaven3OrMore() )
+                        componentConfigurator.configureComponent( wagon, plexusConf,
+                                                                  container.getContainerRealm() );
+                    }
+                    else
+                    {
+                        configureWagonWithMaven2( componentConfigurator, wagon, plexusConf, container );
+                    }
+                }
+                catch ( final ComponentLookupException e )
+                {
+                    throw new TransferFailedException(
+                        "While configuring wagon for \'" + repositoryId + "\': Unable to lookup wagon configurator."
+                            + " Wagon configuration cannot be applied.", e );
+                }
+                catch ( ComponentConfigurationException e )
+                {
+                    throw new TransferFailedException( "While configuring wagon for \'" + repositoryId
+                                                           + "\': Unable to apply wagon configuration.", e );
+                }
+                finally
+                {
+                    if ( componentConfigurator != null )
+                    {
+                        try
                         {
-                            componentConfigurator.configureComponent( wagon, plexusConf,
-                                                                      container.getContainerRealm() );
+                            container.release( componentConfigurator );
                         }
-                        else
+                        catch ( ComponentLifecycleException e )
                         {
-                            configureWagonWithMaven2( componentConfigurator, wagon, plexusConf, container );
-                        }
-                    }
-                    catch ( final ComponentLookupException e )
-                    {
-                        throw new TransferFailedException(
-                            "While configuring wagon for \'" + repositoryId + "\': Unable to lookup wagon configurator."
-                                + " Wagon configuration cannot be applied.", e );
-                    }
-                    catch ( ComponentConfigurationException e )
-                    {
-                        throw new TransferFailedException( "While configuring wagon for \'" + repositoryId
-                                                               + "\': Unable to apply wagon configuration.", e );
-                    }
-                    finally
-                    {
-                        if ( componentConfigurator != null )
-                        {
-                            try
-                            {
-                                container.release( componentConfigurator );
-                            }
-                            catch ( ComponentLifecycleException e )
-                            {
-                                log.error( "Problem releasing configurator - ignoring: " + e.getMessage() );
-                            }
+                            log.error( "Problem releasing configurator - ignoring: " + e.getMessage() );
                         }
                     }
                 }
