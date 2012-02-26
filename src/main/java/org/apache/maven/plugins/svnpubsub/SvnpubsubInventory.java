@@ -1,8 +1,5 @@
 package org.apache.maven.plugins.svnpubsub;
 
-import java.util.HashSet;
-import java.util.Set;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -21,6 +18,9 @@ import java.util.Set;
  * specific language governing permissions and limitations
  * under the License.
  */
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * A class designed for json serialization to store the existing inventory, if any. In this version, there's no attempt

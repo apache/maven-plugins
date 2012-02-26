@@ -177,19 +177,21 @@ public abstract class CommonSvnpubsubMojo
     // a list (ordered) to maintain sort for ease of comparison.
     protected List<File> inventory;
 
-    protected static class DotFilter implements IOFileFilter {
-    
-            public boolean accept( File file )
-            {
-                return !file.getName().startsWith( "." );        
-                }
-    
-            public boolean accept( File dir, String name )
-            {                
-                return !name.startsWith( "." );
-            }
-            
+    protected static class DotFilter
+        implements IOFileFilter
+    {
+
+        public boolean accept( File file )
+        {
+            return !file.getName().startsWith( "." );
         }
+
+        public boolean accept( File dir, String name )
+        {
+            return !name.startsWith( "." );
+        }
+
+    }
 
     protected CommonSvnpubsubMojo()
     {
@@ -217,8 +219,8 @@ public abstract class CommonSvnpubsubMojo
         throws MojoFailureException
     {
         inventory = new ArrayList<File>();
-        inventory.addAll(FileUtils.listFiles( checkoutDirectory, new DotFilter(), new DotFilter()));
-        Collections.sort(inventory);
+        inventory.addAll( FileUtils.listFiles( checkoutDirectory, new DotFilter(), new DotFilter() ) );
+        Collections.sort( inventory );
         SvnpubsubInventory initialInventory = new SvnpubsubInventory();
         Set<String> paths = new HashSet<String>();
         
@@ -251,7 +253,8 @@ public abstract class CommonSvnpubsubMojo
         }
     }
     
-    protected void readInventory() throws MojoFailureException 
+    protected void readInventory()
+        throws MojoFailureException
     {
         try
         {
@@ -259,7 +262,8 @@ public abstract class CommonSvnpubsubMojo
             JsonParser parser = factory.createJsonParser( inventoryFile );
             SvnpubsubInventory storedInventory = parser.readValueAs( SvnpubsubInventory.class );
             inventory = new ArrayList<File>();
-            for (String p : storedInventory.getPaths()) {
+            for ( String p : storedInventory.getPaths() )
+            {
                 inventory.add( new File( p ) );
             }
             parser.close();
@@ -335,6 +339,4 @@ public abstract class CommonSvnpubsubMojo
         }
         return releaseDescriptor;
     }
-
-
 }

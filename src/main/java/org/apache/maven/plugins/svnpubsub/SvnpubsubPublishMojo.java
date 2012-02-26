@@ -74,20 +74,23 @@ public class SvnpubsubPublishMojo
      */
     private String checkinComment;
     
-    private File relativize(File base, File file)
+    private File relativize( File base, File file )
     {
-        return new File(base.toURI().relativize(file.toURI()).getPath());
+        return new File( base.toURI().relativize( file.toURI() ).getPath() );
     }
-    
-    private void normalizeNewlines(File f) throws IOException {
+
+    private void normalizeNewlines( File f )
+        throws IOException
+    {
         File tmpFile = null;
         InputStreamReader isr = null;
         OutputStreamWriter osw = null;
-        try {
+        try
+        {
             tmpFile = File.createTempFile( "asf-svnpubsub-", ".tmp" );
             FileUtils.copyFile( f, tmpFile );
-            isr = new InputStreamReader ( new FileInputStream ( tmpFile ), siteOutputEncoding );
-            osw = new OutputStreamWriter ( new FileOutputStream ( f ), siteOutputEncoding );
+            isr = new InputStreamReader( new FileInputStream( tmpFile ), siteOutputEncoding );
+            osw = new OutputStreamWriter( new FileOutputStream( f ), siteOutputEncoding );
             char buffer[] = new char[4096];
             int nRead;
             while ( ( nRead = isr.read( buffer ) ) > 0 ) 
@@ -96,7 +99,9 @@ public class SvnpubsubPublishMojo
                 content = content.replaceAll( "\r", "" );
                 osw.write( content );
             }
-        } finally {
+        }
+        finally
+        {
             if ( osw != null )
             {
                 osw.close();
@@ -208,7 +213,7 @@ public class SvnpubsubPublishMojo
             
             Collections.sort( dirsToAdd );
                 
-            for (File relativized : dirsToAdd )
+            for ( File relativized : dirsToAdd )
             {
                 try 
                 {
@@ -229,9 +234,12 @@ public class SvnpubsubPublishMojo
             try
             {
                 AddScmResult addResult = scmProvider.add( scmRepository, addedFileSet, "Adding new site files." );
-                if (!addResult.isSuccess()) {
-                    logError("add operation failed: %s", addResult.getProviderMessage() + " " + addResult.getCommandOutput());
-                    throw new MojoExecutionException( "Failed to add new files: " + addResult.getProviderMessage() + " " + addResult.getCommandOutput() );
+                if ( !addResult.isSuccess() )
+                {
+                    logError( "add operation failed: %s",
+                              addResult.getProviderMessage() + " " + addResult.getCommandOutput() );
+                    throw new MojoExecutionException( "Failed to add new files: " + addResult.getProviderMessage()
+                        + " " + addResult.getCommandOutput() );
                 }
             }
             catch ( ScmException e )
@@ -245,15 +253,19 @@ public class SvnpubsubPublishMojo
             List<File> deletedList = new ArrayList<File>();
             for ( File f : deleted )
             {
-                deletedList.add(relativize( checkoutDirectory, f ));
+                deletedList.add( relativize( checkoutDirectory, f ) );
             }
             ScmFileSet deletedFileSet = new ScmFileSet( checkoutDirectory, deletedList );
             try
             {
-                RemoveScmResult deleteResult = scmProvider.remove( scmRepository, deletedFileSet, "Deleting obsolete site files." );
-                if (!deleteResult.isSuccess()) {
-                    logError("delete operation failed: %s", deleteResult.getProviderMessage() + " " + deleteResult.getCommandOutput() );
-                    throw new MojoExecutionException( "Failed to delete files: " + deleteResult.getProviderMessage() + " " + deleteResult.getCommandOutput() );
+                RemoveScmResult deleteResult =
+                    scmProvider.remove( scmRepository, deletedFileSet, "Deleting obsolete site files." );
+                if ( !deleteResult.isSuccess() )
+                {
+                    logError( "delete operation failed: %s",
+                              deleteResult.getProviderMessage() + " " + deleteResult.getCommandOutput() );
+                    throw new MojoExecutionException( "Failed to delete files: " + deleteResult.getProviderMessage()
+                        + " " + deleteResult.getCommandOutput() );
                 }
             }
             catch ( ScmException e )
@@ -284,9 +296,12 @@ public class SvnpubsubPublishMojo
             try
             {
                 CheckInScmResult checkinResult = scmProvider.checkIn( scmRepository, updatedFileSet, checkinComment );
-                if (!checkinResult.isSuccess()) {
-                    logError("delete operation failed: %s", checkinResult.getProviderMessage() + " " + checkinResult.getCommandOutput() );
-                    throw new MojoExecutionException( "Failed to delete files: " + checkinResult.getProviderMessage() + " " + checkinResult.getCommandOutput() );
+                if ( !checkinResult.isSuccess() )
+                {
+                    logError( "delete operation failed: %s",
+                              checkinResult.getProviderMessage() + " " + checkinResult.getCommandOutput() );
+                    throw new MojoExecutionException( "Failed to delete files: " + checkinResult.getProviderMessage()
+                        + " " + checkinResult.getCommandOutput() );
                 }
             }
             catch ( ScmException e )
@@ -295,5 +310,4 @@ public class SvnpubsubPublishMojo
             }
         }
     }
-
 }

@@ -1,8 +1,5 @@
 package org.apache.maven.plugins.svnpubsub;
 
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -22,13 +19,17 @@ import org.apache.maven.plugin.MojoFailureException;
  * under the License.
  */
 
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
+
 /**
  * 
  * @goal svnpubsub
  * @execute lifecycle="svnpubsub" phase="svnpubsub-publish"
  * @aggregate
  */
-public class SvnpubsubLifecycleMojo extends CommonSvnpubsubMojo
+public class SvnpubsubLifecycleMojo
+    extends CommonSvnpubsubMojo
 {
 
     public void execute()
