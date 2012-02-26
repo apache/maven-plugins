@@ -116,7 +116,7 @@ public class SiteStageDeployMojo
     protected String getDeployRepositoryID()
         throws MojoExecutionException
     {
-        stagingRepositoryId =  stagingRepoId ( stagingRepositoryId );
+        stagingRepositoryId = stagingRepoId( stagingRepositoryId );
 
         getLog().info( "Using this server ID for stage deploy: " + stagingRepositoryId );
 
@@ -191,7 +191,8 @@ public class SiteStageDeployMojo
         Map<String, Plugin> plugins = build.getPluginsAsMap();
 
         Plugin sitePlugin = plugins.get( sitePluginKey );
-        if ( sitePlugin == null ) {
+        if ( sitePlugin == null )
+        {
             final PluginManagement buildPluginManagement = build.getPluginManagement();
             if ( buildPluginManagement == null )
             {
@@ -202,7 +203,7 @@ public class SiteStageDeployMojo
             sitePlugin = plugins.get( sitePluginKey );
         }
 
-        if( sitePlugin == null )
+        if ( sitePlugin == null )
         {
             return null;
         }
