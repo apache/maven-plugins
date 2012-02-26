@@ -517,10 +517,8 @@ public abstract class AbstractDeployMojo
 
         String host = repository.getHost();
         String nonProxyHostsAsString = proxyInfo.getNonProxyHosts();
-        String[] nonProxyHosts = StringUtils.split( nonProxyHostsAsString, ",;|" );
-        for ( int i = 0; i < nonProxyHosts.length; i++ )
+        for ( String nonProxyHost : StringUtils.split( nonProxyHostsAsString, ",;|" ) )
         {
-            String nonProxyHost = nonProxyHosts[i];
             if ( StringUtils.contains( nonProxyHost, "*" ) )
             {
                 // Handle wildcard at the end, beginning or middle of the nonProxyHost
@@ -869,9 +867,8 @@ public abstract class AbstractDeployMojo
             final char[] chars = uriString.toCharArray();
             final StringBuilder uri = new StringBuilder( chars.length );
 
-            for ( int i = 0; i < chars.length; i++ )
+            for ( char c : chars )
             {
-                final char c = chars[i];
                 if ( ( c >= '0' && c <= '9' ) || ( c >= 'a' && c <= 'z' ) || ( c >= 'A' && c <= 'Z' )
                         || mark.indexOf( c ) != -1  || reserved.indexOf( c ) != -1 )
                 {
