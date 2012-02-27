@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.scm.ScmException;
@@ -102,18 +103,9 @@ public class SvnpubsubPublishMojo
         }
         finally
         {
-            if ( osw != null )
-            {
-                osw.close();
-            }
-            if ( isr != null )
-            {
-                isr.close();
-            }
-            if ( tmpFile != null )
-            {
-                tmpFile.delete();
-            }
+            IOUtils.closeQuietly( osw );
+            IOUtils.closeQuietly( isr );
+            FileUtils.deleteQuietly( tmpFile );
         }
     }
 
