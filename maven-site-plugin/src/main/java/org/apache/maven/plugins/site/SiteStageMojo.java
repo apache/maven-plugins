@@ -24,11 +24,11 @@ import java.io.File;
 import org.apache.maven.plugin.MojoExecutionException;
 
 /**
- * Generates a site in a local staging or mock directory based on the site URL
+ * Deploys the generated site to a local staging or mock directory based on the site URL
  * specified in the <code>&lt;distributionManagement&gt;</code> section of the
  * POM.
  * <p>
- * It can be used to test that links between module sites in a multi module
+ * It can be used to test that links between module sites in a multi-module
  * build works.
  * </p>
  *
