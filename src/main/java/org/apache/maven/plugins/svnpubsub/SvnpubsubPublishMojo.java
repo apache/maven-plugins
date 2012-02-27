@@ -190,9 +190,9 @@ public class SvnpubsubPublishMojo
                     throw new MojoFailureException( "Failed to normalize newlines in " + f.getAbsolutePath() );
                 }
 
-                for ( File dir = f.getParentFile() ; !dir.equals(checkoutDirectory) ; dir = dir.getParentFile() ) 
+                for ( File dir = f.getParentFile(); !dir.equals( checkoutDirectory ); dir = dir.getParentFile() )
                 {
-                    File relativized = relativize( checkoutDirectory, dir);
+                    File relativized = relativize( checkoutDirectory, dir );
                 //  we do the best we can with the directories
                     if ( !createdDirs.contains( relativized ) )
                     {
@@ -200,7 +200,7 @@ public class SvnpubsubPublishMojo
                         dirsToAdd.add ( relativized );
                     }
                 }
-                addedList.add( relativize( checkoutDirectory, f) );
+                addedList.add( relativize( checkoutDirectory, f ) );
             }
 
             Collections.sort( dirsToAdd );
