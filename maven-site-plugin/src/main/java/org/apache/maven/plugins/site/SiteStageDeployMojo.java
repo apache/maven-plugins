@@ -19,7 +19,6 @@ package org.apache.maven.plugins.site;
  * under the License.
  */
 
-
 import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.maven.model.Build;
@@ -33,8 +32,7 @@ import org.codehaus.plexus.util.xml.Xpp3Dom;
 /**
  * Deploys the generated site to a staging or mock directory to the site URL
  * specified in the <code>&lt;distributionManagement&gt;</code> section of the
- * POM. It supports <code>scp</code> and <code>file</code> protocols for
- * deployment.
+ * POM, using <a href="/wagon/">wagon supported protocols</a>
  *
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
@@ -52,7 +50,7 @@ public class SiteStageDeployMojo
      * either the current project or, in a reactor build, the top level project
      * in the reactor.
      * <p>
-     * Note that even if you specify this plugin parameter you still need to indicate
+     * Note that even if you specify this plugin parameter, you still need to indicate
      * ${project.distributionManagement.site.url} at least in your top level project
      * in order for relative links between modules to be resolved correctly.
      * </p>
