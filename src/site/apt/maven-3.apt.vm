@@ -29,7 +29,7 @@
 
 Using it with Maven 3
 
-  A major aim of the refactoring in Maven 3 was to decouple the Maven core from Doxia
+  A major aim of the refactoring in Maven 3 was to decouple the Maven core from {{{/doxia/}Doxia}}
   and to allow arbitrary reporting systems to be developed. For this reason, all reporting
   related code has been removed from the core of Maven 3
   ({{{http://jira.codehaus.org/browse/MNG-4162}MNG-4162}}).
@@ -85,11 +85,11 @@ Using it with Maven 3
 
 * Configuration formats
 
-  The <<<\<reporting\>>>> section of the POM has been moved to the Site Plugin's configuration in Maven 3.
+  The <<<\<reporting\>>>> section of the POM has been added to the Site Plugin's configuration in Maven 3.
   The content of the configuration has been kept as similar as possible to Maven 2.
   The <<<{{{/shared/maven-reporting-exec/}maven-reporting-exec}}>>> component transforms the configuration on the fly.
 
-** Old configuration (Maven 2 & 3)
+** Classic configuration (Maven 2 & 3)
 
   Reports are configured in the <<<\<reporting\>>>> section of the POM.
 
@@ -167,7 +167,7 @@ Using it with Maven 3
   <<Note:>> In Maven 3, the new format does not support report plugins configuration inheritance: see
   {{{http://jira.codehaus.org/browse/MSITE-484}MSITE-484}}. This format was technically necessary to remove reporting logic
   from Maven 3, but a new inheritance mechanism still needs to be added to Maven 3 to make it as flexible as the old format.
-  So the new format is not ready for direct use for now.
+  So this new format is not ready for direct use for now: classic configuration is still the recommended format.
 
 * Version Resolution
 
@@ -243,12 +243,13 @@ Using it with Maven 3
   </profiles>
 +-----+
 
-  <<Note:>> The profile is needed to avoid duplicate install and deploy of the site descriptor when running with Maven 2.2.x due to POM default lifecycle mappings.
+  <<Note:>> The profile is needed to avoid duplicate install and deploy of the site descriptor when running with Maven 2.2.x
+  due to POM default lifecycle mappings.
 
 * Using maven-site-plugin 2.x with Maven 2 and maven-site-plugin 3.x with Maven 3
 
   Before maven-site-plugin 3.0, maven-site-plugin 2.x was compatible only with Maven 2 and maven-site-plugin
-  3.0-betas were compatible only with Maven 3. A trick is needed to let Maven 2 use one version of the plugin and Maven 3
+  3.0-betas were compatible only with Maven 3. A trick was needed to let Maven 2 use one version of the plugin and Maven 3
   another version in the same <<<pom.xml>>>.
 
   The following snippet automatically activates maven-site-plugin 3.x when run with Maven 3:
