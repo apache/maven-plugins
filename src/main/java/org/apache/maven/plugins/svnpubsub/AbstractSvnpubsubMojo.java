@@ -53,7 +53,7 @@ import org.codehaus.jackson.map.MappingJsonFactory;
 /**
  * Base class for the svnpubsub mojos.
  */
-public abstract class CommonSvnpubsubMojo
+public abstract class AbstractSvnpubsubMojo
     extends AbstractMojo
 {
 
@@ -193,7 +193,7 @@ public abstract class CommonSvnpubsubMojo
 
     }
 
-    protected CommonSvnpubsubMojo()
+    protected AbstractSvnpubsubMojo()
     {
         super();
     }

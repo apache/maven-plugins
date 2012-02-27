@@ -51,7 +51,7 @@ import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
  * @aggregate
  */
 public class SvnpubsubPublishMojo
-    extends CommonSvnpubsubMojo
+    extends AbstractSvnpubsubMojo
 {
 
     /**

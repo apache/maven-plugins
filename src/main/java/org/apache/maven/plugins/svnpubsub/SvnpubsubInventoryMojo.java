@@ -55,7 +55,7 @@ import org.codehaus.plexus.util.StringUtils;
  * @aggregate
  */
 public class SvnpubsubInventoryMojo
-    extends CommonSvnpubsubMojo
+    extends AbstractSvnpubsubMojo
 {
     private void checkoutExisting()
         throws ReleaseExecutionException, ReleaseFailureException

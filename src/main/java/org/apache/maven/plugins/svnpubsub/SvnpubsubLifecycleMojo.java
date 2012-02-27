@@ -29,7 +29,7 @@ import org.apache.maven.plugin.MojoFailureException;
  * @aggregate
  */
 public class SvnpubsubLifecycleMojo
-    extends CommonSvnpubsubMojo
+    extends AbstractSvnpubsubMojo
 {
 
     public void execute()
