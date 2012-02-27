@@ -133,7 +133,7 @@ public class SvnpubsubInventoryMojo
                 scmRelativePathProjectDirectory = rootProjectBasedir.substring( basedir.length() + 1 );
             }
         }
-        
+
         // I don't seem to be using this. 
         releaseDescriptor.setScmRelativePathProjectDirectory( scmRelativePathProjectDirectory );
 
@@ -177,7 +177,6 @@ public class SvnpubsubInventoryMojo
         catch ( ReleaseFailureException e )
         {
             throw new MojoFailureException( e.getMessage() );
-
         }
     }
 }

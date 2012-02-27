@@ -36,7 +36,6 @@ public class SvnpubsubLifecycleMojo
         throws MojoExecutionException, MojoFailureException
     {
         // nothing to do. This only purpose here is to set loose the lifecycle.
-        
     }
 
 }

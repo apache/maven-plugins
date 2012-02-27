@@ -29,7 +29,7 @@ import java.util.Set;
 public class SvnpubsubInventory
 {
     private Set<String> paths;
-    
+
     public SvnpubsubInventory() 
     {
         paths = new HashSet<String>(); 

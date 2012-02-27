@@ -67,13 +67,13 @@ public class SvnpubsubPublishMojo
      * @parameter expression="${svnpubsub.skipCheckin}"
      */
     private boolean skipCheckin;
-    
+
     /**
      * SCM log/checkin comment for this publication.
      * @parameter expression="${svnpubsub.checkinComment}"
      */
     private String checkinComment;
-    
+
     private File relativize( File base, File file )
     {
         return new File( base.toURI().relativize( file.toURI() ).getPath() );
@@ -197,7 +197,7 @@ public class SvnpubsubPublishMojo
                 {
                     throw new MojoFailureException( "Failed to normalize newlines in " + f.getAbsolutePath() );
                 }
-                
+
                 for ( File dir = f.getParentFile() ; !dir.equals(checkoutDirectory) ; dir = dir.getParentFile() ) 
                 {
                     File relativized = relativize( checkoutDirectory, dir);
@@ -210,9 +210,9 @@ public class SvnpubsubPublishMojo
                 }
                 addedList.add( relativize( checkoutDirectory, f) );
             }
-            
+
             Collections.sort( dirsToAdd );
-                
+
             for ( File relativized : dirsToAdd )
             {
                 try 
@@ -229,7 +229,7 @@ public class SvnpubsubPublishMojo
                     //
                 }
             }
-            
+
             ScmFileSet addedFileSet = new ScmFileSet( checkoutDirectory, addedList );
             try
             {
@@ -273,7 +273,7 @@ public class SvnpubsubPublishMojo
                 throw new MojoExecutionException( "Failed to delete removed files to SCM", e );
             }
         }
-        
+
         for ( File f : updated )
         {
             try
@@ -285,7 +285,7 @@ public class SvnpubsubPublishMojo
                 throw new MojoFailureException( "Failed to normalize newlines in " + f.getAbsolutePath() );
             }
         }
-        
+
         if ( !skipCheckin )
         {
             if ( checkinComment == null )
