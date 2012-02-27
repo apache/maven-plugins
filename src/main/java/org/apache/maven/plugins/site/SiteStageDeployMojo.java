@@ -72,7 +72,7 @@ public class SiteStageDeployMojo
     protected String getDeployRepositoryID()
         throws MojoExecutionException
     {
-        stagingRepositoryId =  stagingRepoId ( stagingRepositoryId );
+        stagingRepositoryId = stagingRepoId( stagingRepositoryId );
 
         getLog().info( "Using this server ID for stage deploy: " + stagingRepositoryId );
 
