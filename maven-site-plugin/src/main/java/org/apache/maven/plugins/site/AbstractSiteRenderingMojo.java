@@ -180,13 +180,13 @@ public abstract class AbstractSiteRenderingMojo
     protected MavenSession mavenSession;
 
     /**
-     * <p>Configuration section used for Maven 3.</p>
+     * <p>Configuration section used internally by Maven 3.</p>
      * <p>More details available here:
      * <a href="http://maven.apache.org/plugins/maven-site-plugin/maven-3.html#Configuration_formats" target="_blank">
      *     http://maven.apache.org/plugins/maven-site-plugin/maven-3.html#Configuration_formats</a>
      * </p>
-     * <p><b>Note:</b>&nbsp;using this field is not mandatory with Maven 3 as Maven core transform usual reporting
-     * section to this field.</p>
+     * <p><b>Note:</b> using this field is not mandatory with Maven 3 as Maven core injects usual
+     * <code>&lt;reporting&gt;</code> section into this field.</p>
      *
      * @parameter
      * @since 3.0-beta-1
