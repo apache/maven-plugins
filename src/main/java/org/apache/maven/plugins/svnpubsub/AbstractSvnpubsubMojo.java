@@ -179,7 +179,7 @@ public abstract class AbstractSvnpubsubMojo
      * The outputEncoding parameter of the site plugin. This plugin will corrupt your site
      * if this does not match the value used by the site plugin.
      * 
-     * @parameter expression="${outputEncoding}" 
+     * @parameter expression="${outputEncoding}" default-value="${project.reporting.outputEncoding}"
      */
     protected String siteOutputEncoding;
 
