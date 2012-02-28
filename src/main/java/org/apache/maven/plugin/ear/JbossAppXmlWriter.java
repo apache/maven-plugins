@@ -42,7 +42,7 @@ final class JbossAppXmlWriter
     public static final String DOCTYPE_4 = "jboss-app PUBLIC\n" + "\t\"-//JBoss//DTD J2EE Application 1.4//EN\"\n"
         + "\t\"http://www.jboss.org/j2ee/dtd/jboss-app_4_0.dtd\"";
 
-    public static final String DOCTYPE_4_2 = "jboss-app PUBLIC\n" + "\t\"-//JBoss//DTD J2EE Application 1.4//EN\"\n"
+    public static final String DOCTYPE_4_2 = "jboss-app PUBLIC\n" + "\t\"-//JBoss//DTD J2EE Application 4.2//EN\"\n"
         + "\t\"http://www.jboss.org/j2ee/dtd/jboss-app_4_2.dtd\"";
 
     public static final String DOCTYPE_5 = "jboss-app PUBLIC\n" + "\t\"-//JBoss//DTD Java EE Application 5.0//EN\"\n"
