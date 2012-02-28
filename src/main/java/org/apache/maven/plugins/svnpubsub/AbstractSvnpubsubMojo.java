@@ -223,7 +223,7 @@ public abstract class AbstractSvnpubsubMojo
      * Create a list of all the files in the checkout (which we will presently remove). For now, duck anything that
      * starts with a ., since the site plugin won't make any and it will dodge metadata I'm familiar with. None if this
      * is really good enough for safe usage with exotics like clearcase. Perhaps protest if anything other than svn or
-     * git?
+     * git? Or use http://plexus.codehaus.org/plexus-utils/apidocs/org/codehaus/plexus/util/AbstractScanner.html#DEFAULTEXCLUDES?
      * @throws MojoFailureException 
      */
     protected void writeInventory()
