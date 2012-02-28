@@ -83,6 +83,7 @@ public class SvnpubsubPublishMojo
     private void normalizeNewlines( File f )
         throws IOException
     {
+        // FIXME: only text files should be normalized, not binary
         File tmpFile = null;
         InputStreamReader isr = null;
         OutputStreamWriter osw = null;
@@ -97,7 +98,7 @@ public class SvnpubsubPublishMojo
             while ( ( nRead = isr.read( buffer ) ) > 0 ) 
             {
                 String content = new String( buffer, 0, nRead );
-                content = content.replaceAll( "\r", "" );
+                content = content.replaceAll( "\r", "" ); // FIXME: normalize to Unix EOL? not to system EOL?
                 osw.write( content );
             }
         }
