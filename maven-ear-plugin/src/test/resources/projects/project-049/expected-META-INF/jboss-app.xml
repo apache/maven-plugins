@@ -19,7 +19,7 @@ under the License.
 -->
 
 <!DOCTYPE jboss-app PUBLIC
-	"-//JBoss//DTD J2EE Application 1.4//EN"
+	"-//JBoss//DTD J2EE Application 4.2//EN"
 	"http://www.jboss.org/j2ee/dtd/jboss-app_4_2.dtd">
 <jboss-app>
   <library-directory>/APP-INF/lib</library-directory>
