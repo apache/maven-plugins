@@ -50,6 +50,8 @@ Usage
 
   * svnpubsub-publish
 
+  []
+
   (Again unfortunately, Maven does not allow a custom lifecycle to share
   phases with some other lifecycle.)
 
@@ -62,30 +64,30 @@ Usage
   will do all the work.   
 
 +------+
- <build>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-site-plugin</artifactId>
-                    <version>3.0</version>
-                    <configuration>
-                        <stagingDirectory>target/svnpubsub-checkout</stagingDirectory>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>asf-svnpubsub-plugin</artifactId>
-                    <version>@pom.version@</version>
-                    <extensions>true</extensions>
-                    <configuration>
-		        <!-- svn location for publication -->                  
-                        <pubScmUrl>scm:svn:https://svn.apache.org/repos/asf/maven/sandbox/bimargulies/site-test-003</pubScmUrl>
-                    </configuration>
-                </plugin>
-            </plugins>
-        </pluginManagement>
-    </build>
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-site-plugin</artifactId>
+          <version>3.0</version>
+          <configuration>
+            <stagingDirectory>target/svnpubsub-checkout</stagingDirectory>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>asf-svnpubsub-plugin</artifactId>
+          <version>@pom.version@</version>
+          <extensions>true</extensions>
+          <configuration>
+            <!-- svn location for publication -->                  
+            <pubScmUrl>scm:svn:https://svn.apache.org/repos/asf/maven/sandbox/bimargulies/site-test-003</pubScmUrl>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
 +------+
 
 * Using the Site Lifecycle
@@ -94,57 +96,58 @@ Usage
    XML in the POM, but it may be easier to use if you already customize the site lifecycle
    for other reasons.
 +-----+
- <build>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-site-plugin</artifactId>
-                    <version>3.0</version>
-                    <configuration>
-                        <stagingDirectory>target/svnpubsub-checkout</stagingDirectory>
-                    </configuration>
-                </plugin>
-            </plugins>
-        </pluginManagement>
-        <plugins>
-	  <plugin>
-	    <groupId>org.apache.maven.plugins</groupId>
-	    <artifactId>maven-site-plugin</artifactId>
-	    <executions>
-	      <execution>
-		<id>stage-for-pub</id>
-		<phase>post-site</phase>
-		<goals>
-		  <goal>stage</goal>
-		</goals>
-	      </execution>
-	    </executions>
-	  </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>asf-svnpubsub-plugin</artifactId>
-                <version>@pom.version@</version>
-                <configuration>
-                    <pubScmUrl>scm:svn:https://svn.apache.org/repos/asf/maven/sandbox/bimargulies/site-test</pubScmUrl>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>prepare</id>
-                        <phase>pre-site</phase>
-                        <goals>
-                            <goal>prepare</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>perform</id>
-                        <phase>site-deploy</phase>
-                        <goals>
-                            <goal>publish</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-site-plugin</artifactId>
+          <version>3.0</version>
+          <configuration>
+            <stagingDirectory>target/svnpubsub-checkout</stagingDirectory>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-site-plugin</artifactId>
+        <executions>
+          <execution>
+        <id>stage-for-pub</id>
+        <phase>post-site</phase>
+        <goals>
+          <goal>stage</goal>
+        </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>asf-svnpubsub-plugin</artifactId>
+        <version>@pom.version@</version>
+        <configuration>
+          <pubScmUrl>scm:svn:https://svn.apache.org/repos/asf/maven/sandbox/bimargulies/site-test</pubScmUrl>
+        </configuration>
+        <executions>
+          <execution>
+            <id>prepare</id>
+            <phase>pre-site</phase>
+            <goals>
+              <goal>prepare</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>perform</id>
+            <phase>site-deploy</phase>
+            <goals>
+              <goal>publish</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 +-----+
