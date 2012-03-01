@@ -30,113 +30,121 @@
 Usage
 
  The asf-svnpubsub-plugin submits modified sites to subversion for
- publication with svnpubsub. Here's how to set this up in your POM:
- 
+ publication with svnpubsub. There are two ways you can set this
+ up in your POM.
+
+* Use the Custom Lifecycle
+
+  Unfortunately, a Maven plugin can't define a top-level lifecycle
+  like 'site'. However, it can come close. The plugin includes the 
+  <svnpubsub> goal. This goal does nothing except fork a custom
+  <svnpubsub> lifecycle, consisting of the following phases:
+
+  * svnpubsub-prepare
+
+  * svnpubsub-pre-site
+
+  * svnpubsub-site
+
+  * svnpubsub-post-site
+
+  * svnpubsub-publish
+
+  (Again unfortunately, Maven does not allow a custom lifecycle to share
+  phases with some other lifecycle.)
+
+  With a little configuration in your POM, 
+
++---------+
+  mvn asf-mvnpubsub-plugin:svnpubsub
++---------+
+
+  will do all the work.   
+
++------+
+ <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-site-plugin</artifactId>
+                    <version>3.0</version>
+                    <configuration>
+                        <stagingDirectory>target/svnpubsub-checkout</stagingDirectory>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>asf-svnpubsub-plugin</artifactId>
+                    <version>@pom.version@</version>
+                    <extensions>true</extensions>
+                    <configuration>
+		        <!-- svn location for publication -->                  
+                        <pubScmUrl>scm:svn:https://svn.apache.org/repos/asf/maven/sandbox/bimargulies/site-test-003</pubScmUrl>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
++------+
+
+* Using the Site Lifecycle
+
+   The alternative is to attach the necessary activities to the site lifecycle. This requires more
+   XML in the POM, but it may be easier to use if you already customize the site lifecycle
+   for other reasons.
 +-----+
-<project>
-  ...
-  <reporting>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <version>${project.version}</version>
-        <configuration>
-          ...
-        </configuration>
-      </plugin>
-    </plugins>
-    ...
-  </reporting>
-  ...
-</project>
-+-----+
-
- When you execute <<<mvn site>>>, the javadocs will be generated and included in the generated site. A link to the javadocs
- will be added in the Project Reports menu.
-
-* Generate Standalone Javadocs
-
- To generate standalone javadocs for the project, you could add the Javadoc Plugin in the \<build\> section of your pom
- (if no configuration defined, the plugin uses default values):
-
-+-----+
-<project>
-  ...
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <version>${project.version}</version>
-        <configuration>
-          ...
-        </configuration>
-      </plugin>
-    </plugins>
-    ...
-  </build>
-  ...
-</project>
-+-----+
-
- And execute any of the following commands:
-
-+-----+
-mvn javadoc:javadoc
-mvn javadoc:jar
-mvn javadoc:aggregate
-mvn javadoc:aggregate-jar
-mvn javadoc:test-javadoc
-mvn javadoc:test-jar
-mvn javadoc:test-aggregate
-mvn javadoc:test-aggregate-jar
-+-----+
-
- For all <<<jar>>> goals, the javadocs are first generated and then packaged into a jar file.
-
-* Javadoc Configuration
-
- The Javadoc Plugin supports a large number of configuration parameters. Each configuration parameter turns into
- a tag name.
-
- Please refer to the {{{./javadoc-mojo.html}Javadoc Plugin Documentation}} for a listing of these parameters. Most
- of these parameters are passed directly to the Javadoc tool itself.
-
- <<IMPORTANT NOTE>>: configuring the Javadoc plugin in the \<reporting/\> or \<build/\> elements in the pom have
- <<NOT>> the same behavior as described in the
- {{{http://maven.apache.org/guides/mini/guide-configuring-plugins.html#Using_the_reporting_Tag_VS_build_Tag}Guide to Configuring Plug-ins}}.
-
- For instance, if you have the following snippet:
-
-+-----+
-<project>
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <version>${project.version}</version>
-        <configuration>
-          <show>private</show>
-          <nohelp>true</nohelp>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
-
-  <reporting>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <version>${project.version}</version>
-        <configuration>
-          <stylesheetfile>${basedir}/src/main/javadoc/stylesheet.css</stylesheetfile>
-          <show>public</show>
-        </configuration>
-      </plugin>
-    </plugins>
-  </reporting>
-  </build>
+ <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-site-plugin</artifactId>
+                    <version>3.0</version>
+                    <configuration>
+                        <stagingDirectory>target/svnpubsub-checkout</stagingDirectory>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+        <plugins>
+	  <plugin>
+	    <groupId>org.apache.maven.plugins</groupId>
+	    <artifactId>maven-site-plugin</artifactId>
+	    <executions>
+	      <execution>
+		<id>stage-for-pub</id>
+		<phase>post-site</phase>
+		<goals>
+		  <goal>stage</goal>
+		</goals>
+	      </execution>
+	    </executions>
+	  </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>asf-svnpubsub-plugin</artifactId>
+                <version>@pom.version@</version>
+                <configuration>
+                    <pubScmUrl>scm:svn:https://svn.apache.org/repos/asf/maven/sandbox/bimargulies/site-test</pubScmUrl>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>prepare</id>
+                        <phase>pre-site</phase>
+                        <goals>
+                            <goal>prepare</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>perform</id>
+                        <phase>site-deploy</phase>
+                        <goals>
+                            <goal>publish</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 +-----+
