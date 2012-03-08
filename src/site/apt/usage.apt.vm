@@ -95,6 +95,7 @@ Usage
    The alternative is to attach the necessary activities to the site lifecycle. This requires more
    XML in the POM, but it may be easier to use if you already customize the site lifecycle
    for other reasons.
+
 +-----+
   <build>
     <pluginManagement>
