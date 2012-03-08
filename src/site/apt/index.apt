@@ -46,7 +46,7 @@ ASF svnpubsub Plugin
 
     Finally, the <<publish>> goal compares the output of site:stage
     with the inventory from the <<prepare>> goal, and issues
-    appropriate SCM commands to add and deleted, followed by a
+    appropriate SCM commands to add and delete, followed by a
     checkin.
 
     The <svnpubsub.dryRun> parameter to the <<publish>> goal avoids all 
@@ -56,8 +56,4 @@ ASF svnpubsub Plugin
     The <<svnpubsub.skipCheckin>> parameter omits the final checkin.
     This allows you to visit target/svnpubsub-checkout, and validate
     its contents before submitting to Subversion.
-
   
-
-
-    

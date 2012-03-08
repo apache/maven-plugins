@@ -116,11 +116,11 @@ Usage
         <artifactId>maven-site-plugin</artifactId>
         <executions>
           <execution>
-        <id>stage-for-pub</id>
-        <phase>post-site</phase>
-        <goals>
-          <goal>stage</goal>
-        </goals>
+            <id>stage-for-pub</id>
+            <phase>post-site</phase>
+            <goals>
+              <goal>stage</goal>
+            </goals>
           </execution>
         </executions>
       </plugin>
