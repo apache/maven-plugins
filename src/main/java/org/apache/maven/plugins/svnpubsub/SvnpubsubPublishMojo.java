@@ -33,6 +33,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -195,6 +196,8 @@ public class SvnpubsubPublishMojo
 
         if ( !added.isEmpty() )
         {
+            normalizeNewLines( added );
+
             addFiles( added );
         }
 
@@ -268,33 +271,23 @@ public class SvnpubsubPublishMojo
     {
         List<File> addedList = new ArrayList<File>();
         Set<File> createdDirs = new HashSet<File>();
-        List<File> dirsToAdd = new ArrayList<File>();
+        Set<File> dirsToAdd = new TreeSet<File>();
+
         createdDirs.add( relativize( checkoutDirectory, checkoutDirectory ) );
+
         for ( File f : added )
         {
-            try
-            {
-                normalizeNewlines( f );
-            }
-            catch ( IOException e )
-            {
-                throw new MojoFailureException( "Failed to normalize newlines in " + f.getAbsolutePath() );
-            }
-
             for ( File dir = f.getParentFile(); !dir.equals( checkoutDirectory ); dir = dir.getParentFile() )
             {
                 File relativized = relativize( checkoutDirectory, dir );
                 //  we do the best we can with the directories
-                if ( !createdDirs.contains( relativized ) )
+                if ( !createdDirs.add( relativized ) )
                 {
-                    createdDirs.add( relativized );
-                    dirsToAdd.add ( relativized );
+                    dirsToAdd.add( relativized );
                 }
             }
             addedList.add( relativize( checkoutDirectory, f ) );
         }
-
-        Collections.sort( dirsToAdd );
 
         for ( File relativized : dirsToAdd )
         {
