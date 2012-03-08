@@ -20,7 +20,6 @@ package org.apache.maven.plugins.svnpubsub;
  */
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -48,7 +47,7 @@ import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
 
 /**
- * Compare the list of files now on disk to the original inventory. Fire off scm adds and deletes as needed.
+ * Compare the list of files now on disk to the original inventory, then fire off scm adds and deletes as needed.
  * 
  * @goal publish
  * @phase post-site
@@ -132,6 +131,7 @@ public class SvnpubsubPublishMojo
 
         // read in the list left behind by prepare; fail if it's not there.
         readInventory();
+
         // setup the scm plugin with help from release plugin utilities
         try
         {
@@ -139,11 +139,11 @@ public class SvnpubsubPublishMojo
         }
         catch ( ReleaseScmRepositoryException e )
         {
-            throw new MojoExecutionException( e.getMessage() );
+            throw new MojoExecutionException( e.getMessage(), e );
         }
         catch ( ReleaseExecutionException e )
         {
-            throw new MojoExecutionException( e.getMessage() );
+            throw new MojoExecutionException( e.getMessage(), e );
         }
 
         // what files are in stock now?
@@ -282,7 +282,7 @@ public class SvnpubsubPublishMojo
             }
             catch ( IOException e )
             {
-                throw new MojoFailureException( "Failed to normalize newlines in " + f.getAbsolutePath() );
+                throw new MojoFailureException( "Failed to normalize newlines in " + f.getAbsolutePath(), e );
             }
         }
 
