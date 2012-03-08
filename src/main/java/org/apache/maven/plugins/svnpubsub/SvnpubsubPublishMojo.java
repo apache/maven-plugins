@@ -116,6 +116,22 @@ public class SvnpubsubPublishMojo
         }
     }
 
+    private void normalizeNewLines( Set<File> files )
+        throws MojoFailureException
+    {
+        for ( File f : files )
+        {
+            try
+            {
+                normalizeNewlines( f );
+            }
+            catch ( IOException e )
+            {
+                throw new MojoFailureException( "Failed to normalize newlines in " + f.getAbsolutePath(), e );
+            }
+        }
+    }
+
     /*
      * (non-Javadoc)
      * @see org.apache.maven.plugin.Mojo#execute()
@@ -151,10 +167,6 @@ public class SvnpubsubPublishMojo
         Collection<File> newInventory = FileUtils.listFiles( checkoutDirectory, new DotFilter(), new DotFilter() );
         added.addAll( newInventory );
 
-        /*
-         * I originally thought that this was a 'Diff' problem, but I don't think so now. I think this is most easily
-         * managed with set membership.
-         */
         Set<File> deleted = new HashSet<File>();
         deleted.addAll( inventory );
         deleted.removeAll( added ); // old - new = deleted. (Added is the complete new inventory at this point.)
@@ -183,98 +195,82 @@ public class SvnpubsubPublishMojo
 
         if ( !added.isEmpty() )
         {
-            List<File> addedList = new ArrayList<File>();
-            Set<File> createdDirs = new HashSet<File>();
-            List<File> dirsToAdd = new ArrayList<File>();
-            createdDirs.add( relativize( checkoutDirectory, checkoutDirectory ) );
-            for ( File f : added )
-            {
-                try
-                {
-                    normalizeNewlines( f );
-                }
-                catch ( IOException e )
-                {
-                    throw new MojoFailureException( "Failed to normalize newlines in " + f.getAbsolutePath() );
-                }
-
-                for ( File dir = f.getParentFile(); !dir.equals( checkoutDirectory ); dir = dir.getParentFile() )
-                {
-                    File relativized = relativize( checkoutDirectory, dir );
-                //  we do the best we can with the directories
-                    if ( !createdDirs.contains( relativized ) )
-                    {
-                        createdDirs.add( relativized );
-                        dirsToAdd.add ( relativized );
-                    }
-                }
-                addedList.add( relativize( checkoutDirectory, f ) );
-            }
-
-            Collections.sort( dirsToAdd );
-
-            for ( File relativized : dirsToAdd )
-            {
-                try 
-                {
-                    ScmFileSet fileSet = new ScmFileSet( checkoutDirectory , relativized );
-                    AddScmResult addDirResult = scmProvider.add( scmRepository, fileSet, "Adding directory" );
-                    if ( !addDirResult.isSuccess() )
-                    {
-                        getLog().debug( " Error adding directory " + relativized + " " + addDirResult.getCommandOutput() );
-                    }
-                }
-                catch ( ScmException e )
-                {
-                    //
-                }
-            }
-
-            ScmFileSet addedFileSet = new ScmFileSet( checkoutDirectory, addedList );
-            try
-            {
-                AddScmResult addResult = scmProvider.add( scmRepository, addedFileSet, "Adding new site files." );
-                if ( !addResult.isSuccess() )
-                {
-                    logError( "add operation failed: %s",
-                              addResult.getProviderMessage() + " " + addResult.getCommandOutput() );
-                    throw new MojoExecutionException( "Failed to add new files: " + addResult.getProviderMessage()
-                        + " " + addResult.getCommandOutput() );
-                }
-            }
-            catch ( ScmException e )
-            {
-                throw new MojoExecutionException( "Failed to add new files to SCM", e );
-            }
+            addFiles( added );
         }
 
         if ( !deleted.isEmpty() )
         {
-            List<File> deletedList = new ArrayList<File>();
-            for ( File f : deleted )
-            {
-                deletedList.add( relativize( checkoutDirectory, f ) );
-            }
-            ScmFileSet deletedFileSet = new ScmFileSet( checkoutDirectory, deletedList );
-            try
-            {
-                RemoveScmResult deleteResult =
-                    scmProvider.remove( scmRepository, deletedFileSet, "Deleting obsolete site files." );
-                if ( !deleteResult.isSuccess() )
-                {
-                    logError( "delete operation failed: %s",
-                              deleteResult.getProviderMessage() + " " + deleteResult.getCommandOutput() );
-                    throw new MojoExecutionException( "Failed to delete files: " + deleteResult.getProviderMessage()
-                        + " " + deleteResult.getCommandOutput() );
-                }
-            }
-            catch ( ScmException e )
-            {
-                throw new MojoExecutionException( "Failed to delete removed files to SCM", e );
-            }
+            deleteFiles( deleted );
         }
 
-        for ( File f : updated )
+        normalizeNewLines( updated );
+
+        if ( !skipCheckin )
+        {
+            checkinFiles();
+        }
+    }
+
+    private void checkinFiles()
+        throws MojoExecutionException
+    {
+        if ( checkinComment == null )
+        {
+            checkinComment = "Site checkin for project " + project.getName();
+        }
+        ScmFileSet updatedFileSet = new ScmFileSet( checkoutDirectory );
+        try
+        {
+            CheckInScmResult checkinResult = scmProvider.checkIn( scmRepository, updatedFileSet, checkinComment );
+            if ( !checkinResult.isSuccess() )
+            {
+                logError( "delete operation failed: %s",
+                          checkinResult.getProviderMessage() + " " + checkinResult.getCommandOutput() );
+                throw new MojoExecutionException( "Failed to delete files: " + checkinResult.getProviderMessage()
+                    + " " + checkinResult.getCommandOutput() );
+            }
+        }
+        catch ( ScmException e )
+        {
+            throw new MojoExecutionException( "Failed to perform checkin SCM", e );
+        }
+    }
+
+    private void deleteFiles( Set<File> deleted )
+        throws MojoExecutionException
+    {
+        List<File> deletedList = new ArrayList<File>();
+        for ( File f : deleted )
+        {
+            deletedList.add( relativize( checkoutDirectory, f ) );
+        }
+        ScmFileSet deletedFileSet = new ScmFileSet( checkoutDirectory, deletedList );
+        try
+        {
+            RemoveScmResult deleteResult =
+                scmProvider.remove( scmRepository, deletedFileSet, "Deleting obsolete site files." );
+            if ( !deleteResult.isSuccess() )
+            {
+                logError( "delete operation failed: %s",
+                          deleteResult.getProviderMessage() + " " + deleteResult.getCommandOutput() );
+                throw new MojoExecutionException( "Failed to delete files: " + deleteResult.getProviderMessage()
+                    + " " + deleteResult.getCommandOutput() );
+            }
+        }
+        catch ( ScmException e )
+        {
+            throw new MojoExecutionException( "Failed to delete removed files to SCM", e );
+        }
+    }
+
+    private void addFiles( Set<File> added )
+        throws MojoFailureException, MojoExecutionException
+    {
+        List<File> addedList = new ArrayList<File>();
+        Set<File> createdDirs = new HashSet<File>();
+        List<File> dirsToAdd = new ArrayList<File>();
+        createdDirs.add( relativize( checkoutDirectory, checkoutDirectory ) );
+        for ( File f : added )
         {
             try
             {
@@ -282,32 +278,56 @@ public class SvnpubsubPublishMojo
             }
             catch ( IOException e )
             {
-                throw new MojoFailureException( "Failed to normalize newlines in " + f.getAbsolutePath(), e );
+                throw new MojoFailureException( "Failed to normalize newlines in " + f.getAbsolutePath() );
             }
+
+            for ( File dir = f.getParentFile(); !dir.equals( checkoutDirectory ); dir = dir.getParentFile() )
+            {
+                File relativized = relativize( checkoutDirectory, dir );
+                //  we do the best we can with the directories
+                if ( !createdDirs.contains( relativized ) )
+                {
+                    createdDirs.add( relativized );
+                    dirsToAdd.add ( relativized );
+                }
+            }
+            addedList.add( relativize( checkoutDirectory, f ) );
         }
 
-        if ( !skipCheckin )
+        Collections.sort( dirsToAdd );
+
+        for ( File relativized : dirsToAdd )
         {
-            if ( checkinComment == null )
+            try 
             {
-                checkinComment = "Site checkin for project " + project.getName();
-            }
-            ScmFileSet updatedFileSet = new ScmFileSet( checkoutDirectory );
-            try
-            {
-                CheckInScmResult checkinResult = scmProvider.checkIn( scmRepository, updatedFileSet, checkinComment );
-                if ( !checkinResult.isSuccess() )
+                ScmFileSet fileSet = new ScmFileSet( checkoutDirectory , relativized );
+                AddScmResult addDirResult = scmProvider.add( scmRepository, fileSet, "Adding directory" );
+                if ( !addDirResult.isSuccess() )
                 {
-                    logError( "delete operation failed: %s",
-                              checkinResult.getProviderMessage() + " " + checkinResult.getCommandOutput() );
-                    throw new MojoExecutionException( "Failed to delete files: " + checkinResult.getProviderMessage()
-                        + " " + checkinResult.getCommandOutput() );
+                    getLog().debug( " Error adding directory " + relativized + " " + addDirResult.getCommandOutput() );
                 }
             }
             catch ( ScmException e )
             {
-                throw new MojoExecutionException( "Failed to perform checkin SCM", e );
+                //
             }
+        }
+
+        ScmFileSet addedFileSet = new ScmFileSet( checkoutDirectory, addedList );
+        try
+        {
+            AddScmResult addResult = scmProvider.add( scmRepository, addedFileSet, "Adding new site files." );
+            if ( !addResult.isSuccess() )
+            {
+                logError( "add operation failed: %s",
+                          addResult.getProviderMessage() + " " + addResult.getCommandOutput() );
+                throw new MojoExecutionException( "Failed to add new files: " + addResult.getProviderMessage()
+                    + " " + addResult.getCommandOutput() );
+            }
+        }
+        catch ( ScmException e )
+        {
+            throw new MojoExecutionException( "Failed to add new files to SCM", e );
         }
     }
 }
