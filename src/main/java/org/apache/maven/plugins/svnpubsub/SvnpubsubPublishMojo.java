@@ -19,12 +19,15 @@ package org.apache.maven.plugins.svnpubsub;
  * under the License.
  */
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -85,27 +88,31 @@ public class SvnpubsubPublishMojo
     {
         // FIXME: only text files should be normalized, not binary
         File tmpFile = null;
-        InputStreamReader isr = null;
-        OutputStreamWriter osw = null;
+        BufferedReader in = null;
+        PrintWriter out = null;
         try
         {
             tmpFile = File.createTempFile( "asf-svnpubsub-", ".tmp" );
             FileUtils.copyFile( f, tmpFile );
-            isr = new InputStreamReader( new FileInputStream( tmpFile ), siteOutputEncoding );
-            osw = new OutputStreamWriter( new FileOutputStream( f ), siteOutputEncoding );
-            char buffer[] = new char[4096];
-            int nRead;
-            while ( ( nRead = isr.read( buffer ) ) > 0 ) 
+            in = new BufferedReader( new InputStreamReader( new FileInputStream( tmpFile ), siteOutputEncoding ) );
+            out = new PrintWriter( new OutputStreamWriter( new FileOutputStream( f ), siteOutputEncoding ) );
+            String line;
+            while ( ( line = in.readLine() ) != null ) 
             {
-                String content = new String( buffer, 0, nRead );
-                content = content.replaceAll( "\r", "" ); // FIXME: normalize to Unix EOL? not to system EOL?
-                osw.write( content );
+                if ( in.ready() )
+                {
+                    out.println( line );
+                }
+                else
+                {
+                    out.print( line );
+                }
             }
         }
         finally
         {
-            IOUtils.closeQuietly( osw );
-            IOUtils.closeQuietly( isr );
+            IOUtils.closeQuietly( out );
+            IOUtils.closeQuietly( in );
             FileUtils.deleteQuietly( tmpFile );
         }
     }
