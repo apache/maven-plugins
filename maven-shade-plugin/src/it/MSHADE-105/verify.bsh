@@ -1,0 +1,19 @@
+import java.io.*;
+import java.util.jar.*;
+import java.util.*;
+
+JarFile jarFile = new JarFile( new File( basedir, "bundle/target/MSHADE-105-BUNDLE-1.0-SNAPSHOT.jar" ) );
+
+Manifest mf = jarFile.getManifest();
+jarFile.close();
+
+String importPackage = mf.getMainAttributes().getValue( "Import-Package" );
+System.out.println("importPackage:"+importPackage);
+
+if ( importPackage.indexOf("org.apache.commons.io" ) >=0 )
+{
+    throw new IllegalStateException( "MANIFEST.MF has Import-Package entry with org.apache.commons.io" );
+}
+
+
+return true;
