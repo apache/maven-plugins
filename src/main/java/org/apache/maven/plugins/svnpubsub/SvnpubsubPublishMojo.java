@@ -91,7 +91,7 @@ public class SvnpubsubPublishMojo
         PrintWriter out = null;
         try
         {
-            tmpFile = File.createTempFile( "asf-svnpubsub-", ".tmp" );
+            tmpFile = File.createTempFile( "maven-site-scm-plugin-", ".tmp" );
             FileUtils.copyFile( f, tmpFile );
             in = new BufferedReader( new InputStreamReader( new FileInputStream( tmpFile ), siteOutputEncoding ) );
             out = new PrintWriter( new OutputStreamWriter( new FileOutputStream( f ), siteOutputEncoding ) );

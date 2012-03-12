@@ -31,17 +31,17 @@ under the License.
     <!-- <relativePath>../maven-plugins/pom.xml</relativePath> -->
   </parent>
 
-  <artifactId>asf-svnpubsub-plugin</artifactId>
+  <artifactId>maven-site-scm-publish-plugin</artifactId>
   <version>1.0-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
-  <name>asf-svnpubsub-plugin Maven Plugin</name>
-  <url>http://maven.apache.org/sandbox/plugins/asf-svnpubsub-plugin</url>
+  <name>SCM Site Publish Maven Plugin</name>
+  <url>http://maven.apache.org/sandbox/plugins/maven-site-scm-publish-plugin</url>
 
   <distributionManagement>
     <site>
       <id>apache.website</id>
-      <url>scp://people.apache.org/www/maven.apache.org/sandbox/plugins/asf-svnpubsub-plugin</url>
+      <url>scp://people.apache.org/www/maven.apache.org/sandbox/plugins/maven-site-scm-publish-plugin</url>
     </site>
   </distributionManagement>
 
@@ -116,9 +116,6 @@ under the License.
             </goals>
           </execution>
         </executions>
-        <configuration>
-          <goalPrefix>asf-svnpubsub-plugin</goalPrefix>
-        </configuration>
       </plugin>
     </plugins>
   </build>

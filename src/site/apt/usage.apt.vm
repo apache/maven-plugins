@@ -29,7 +29,7 @@
 
 Usage
 
- The asf-svnpubsub-plugin submits modified sites to subversion for
+ The  maven-site-scm-publish-plugin submits modified sites to subversion for
  publication with svnpubsub. There are two ways you can set this
  up in your POM.
 

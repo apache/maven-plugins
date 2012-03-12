@@ -21,10 +21,10 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.apache.maven.plugins</groupId>
-  <artifactId>asf-svnpubsub-plugin-002-perform</artifactId>
+  <artifactId> maven-site-scm-publish-plugin-002-perform</artifactId>
   <version>1.0-SNAPSHOT</version>
 
-  <name>asf-svnpubsub-plugin-002-perform</name>
+  <name> maven-site-scm-publish-plugin-002-perform</name>
   <url>http://people.apache.org/~bimargulies/site-test</url>
 
   <distributionManagement>
@@ -50,7 +50,7 @@
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>asf-svnpubsub-plugin</artifactId>
+        <artifactId> maven-site-scm-publish-plugin</artifactId>
         <version>@pom.version@</version>
         <configuration>
           <pubScmUrl>scm:svn:https://svn.apache.org/repos/asf/maven/sandbox/bimargulies/site-test</pubScmUrl>

@@ -28,7 +28,7 @@
 
 ASF svnpubsub Plugin
 
-    The asf-svnpubsub-plugin is a utility plugin to allow Apache
+    The  maven-site-scm-publish-plugin is a utility plugin to allow Apache
     projects to publish Maven websites via the ASF svnpubsub 
     system. 
 
