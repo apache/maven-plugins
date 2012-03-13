@@ -27,7 +27,7 @@ under the License.
 
   <groupId>org.apache.maven.its.shade.eant</groupId>
   <artifactId>empty-relocation-pattern</artifactId>
-  <version>0.1</version>
+  <version>0.1-SNAPSHOT</version>
   <packaging>jar</packaging>
   
   <name>MSHADE-94</name>
@@ -48,7 +48,6 @@ under the License.
             <goals>
               <goal>shade</goal>
             </goals>
-  
             <configuration>
               <relocations>
                 <relocation>
