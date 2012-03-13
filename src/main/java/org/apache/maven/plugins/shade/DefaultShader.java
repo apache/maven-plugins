@@ -19,34 +19,34 @@ package org.apache.maven.plugins.shade;
  * under the License.
  */
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-import java.util.ArrayList;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
-import java.util.jar.JarOutputStream;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.zip.ZipException;
-
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.shade.filter.Filter;
 import org.apache.maven.plugins.shade.relocation.Relocator;
 import org.apache.maven.plugins.shade.resource.ManifestResourceTransformer;
 import org.apache.maven.plugins.shade.resource.ResourceTransformer;
-import org.apache.maven.plugins.shade.filter.Filter;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 import org.codehaus.plexus.util.IOUtil;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.commons.Remapper;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+import java.util.jar.JarOutputStream;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.zip.ZipException;
 
 /**
  * @author Jason van Zyl
@@ -270,11 +270,13 @@ public class DefaultShader
 
         ClassVisitor cv = new TempRemappingClassAdapter( cw, remapper );
 
-        try {
-        	cr.accept( cv, ClassReader.EXPAND_FRAMES );
-        } catch ( Throwable ise ) {
-        	throw new MojoExecutionException ("Error in ASM processing class "
-        			+ name, ise );
+        try
+        {
+            cr.accept( cv, ClassReader.EXPAND_FRAMES );
+        }
+        catch ( Throwable ise )
+        {
+            throw new MojoExecutionException( "Error in ASM processing class " + name, ise );
         }
 
         byte[] renamedClass = cw.toByteArray();
