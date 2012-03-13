@@ -19,16 +19,17 @@ package org.apache.maven.plugins.shade;
  * under the License.
  */
 
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.shade.relocation.Relocator;
+import org.apache.maven.plugins.shade.resource.ResourceTransformer;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.maven.plugin.MojoExecutionException;
-
 /**
- * Interface that defines the process of shading. 
- *
+ * Interface that defines the process of shading.
  */
 public interface Shader
 {
@@ -36,14 +37,16 @@ public interface Shader
 
     /**
      * Perform a shading operation.
-     * @param jars which jars
-     * @param uberJar output jar
-     * @param filters the filters
-     * @param relocators the relocators
+     *
+     * @param jars                 which jars
+     * @param uberJar              output jar
+     * @param filters              the filters
+     * @param relocators           the relocators
      * @param resourceTransformers the transformers
-     * @throws IOException for IO errors reading the thing
+     * @throws IOException            for IO errors reading the thing
      * @throws MojoExecutionException for anything else that goes wrong.
      */
-    void shade( Set jars, File uberJar, List filters, List relocators, List resourceTransformers )
+    void shade( Set jars, File uberJar, List filters, List<Relocator> relocators,
+                List<ResourceTransformer> resourceTransformers )
         throws IOException, MojoExecutionException;
 }

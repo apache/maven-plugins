@@ -57,16 +57,17 @@ public class DefaultShader
     implements Shader
 {
 
-    public void shade( Set jars, File uberJar, List filters, List relocators, List resourceTransformers )
+    public void shade( Set jars, File uberJar, List filters, List<Relocator> relocators,
+                       List<ResourceTransformer> resourceTransformers )
         throws IOException, MojoExecutionException
     {
         Set resources = new HashSet();
 
         ResourceTransformer manifestTransformer = null;
         List transformers = new ArrayList( resourceTransformers );
-        for ( Iterator it = transformers.iterator(); it.hasNext(); )
+        for ( Iterator<ResourceTransformer> it = transformers.iterator(); it.hasNext(); )
         {
-            ResourceTransformer transformer = (ResourceTransformer) it.next();
+            ResourceTransformer transformer = it.next();
             if ( transformer instanceof ManifestResourceTransformer )
             {
                 manifestTransformer = transformer;
@@ -312,14 +313,15 @@ public class DefaultShader
         return false;
     }
 
-    private boolean resourceTransformed( List resourceTransformers, String name, InputStream is, List relocators )
+    private boolean resourceTransformed( List<ResourceTransformer> resourceTransformers, String name, InputStream is,
+                                         List relocators )
         throws IOException
     {
         boolean resourceTransformed = false;
 
-        for ( Iterator k = resourceTransformers.iterator(); k.hasNext(); )
+        for ( Iterator<ResourceTransformer> k = resourceTransformers.iterator(); k.hasNext(); )
         {
-            ResourceTransformer transformer = (ResourceTransformer) k.next();
+            ResourceTransformer transformer = k.next();
 
             if ( transformer.canTransformResource( name ) )
             {
@@ -351,9 +353,9 @@ public class DefaultShader
 
         private final Pattern classPattern = Pattern.compile( "(\\[*)?L(.+);" );
 
-        List relocators;
+        List<Relocator> relocators;
 
-        public RelocatorRemapper( List relocators )
+        public RelocatorRemapper( List<Relocator> relocators )
         {
             this.relocators = relocators;
         }

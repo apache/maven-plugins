@@ -19,14 +19,7 @@ package org.apache.maven.plugins.shade.resource;
  * under the License.
  */
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringReader;
-import java.util.Iterator;
-import java.util.List;
-import java.util.jar.JarEntry;
-import java.util.jar.JarOutputStream;
-
+import org.apache.maven.plugins.shade.relocation.Relocator;
 import org.jdom.Attribute;
 import org.jdom.Content;
 import org.jdom.Document;
@@ -38,6 +31,14 @@ import org.jdom.output.XMLOutputter;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringReader;
+import java.util.Iterator;
+import java.util.List;
+import java.util.jar.JarEntry;
+import java.util.jar.JarOutputStream;
 
 /**
  * Appends multiple occurrences of some XML file.
@@ -63,7 +64,7 @@ public class XmlAppendingTransformer
         return false;
     }
 
-    public void processResource( String resource, InputStream is, List relocators )
+    public void processResource( String resource, InputStream is, List<Relocator> relocators )
         throws IOException
     {
         Document r;

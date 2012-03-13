@@ -19,6 +19,9 @@ package org.apache.maven.plugins.shade.resource;
  * under the License.
  */
 
+import org.apache.maven.plugins.shade.relocation.Relocator;
+import org.codehaus.plexus.util.StringUtils;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,22 +41,21 @@ import java.util.TreeSet;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
 
-import org.codehaus.plexus.util.StringUtils;
-
 /**
  * Merges <code>META-INF/NOTICE.TXT</code> files.
  */
 public class ApacheNoticeResourceTransformer
     implements ResourceTransformer
 {
-    Set entries = new LinkedHashSet();
+    Set<String> entries = new LinkedHashSet<String>();
+
     Map organizationEntries = new LinkedHashMap();
 
     String projectName = ""; // MSHADE-101 :: NullPointerException when projectName is missing
+
     boolean addHeader = true;
 
-    String preamble1 =
-          "// ------------------------------------------------------------------\n"
+    String preamble1 = "// ------------------------------------------------------------------\n"
         + "// NOTICE file corresponding to the section 4d of The Apache License,\n"
         + "// Version 2.0, in this case for ";
 
@@ -63,7 +65,9 @@ public class ApacheNoticeResourceTransformer
 
     //defaults overridable via config in pom
     String organizationName = "The Apache Software Foundation";
+
     String organizationURL = "http://www.apache.org/";
+
     String inceptionYear = "2006";
 
     String copyright;
@@ -87,7 +91,7 @@ public class ApacheNoticeResourceTransformer
         return false;
     }
 
-    public void processResource( String resource, InputStream is, List relocators )
+    public void processResource( String resource, InputStream is, List<Relocator> relocators )
         throws IOException
     {
         if ( entries.isEmpty() )
@@ -98,9 +102,8 @@ public class ApacheNoticeResourceTransformer
                 year = inceptionYear + "-" + year;
             }
 
-
             //add headers
-            if ( addHeader ) 
+            if ( addHeader )
             {
                 entries.add( preamble1 + projectName + preamble2 );
             }
@@ -112,7 +115,6 @@ public class ApacheNoticeResourceTransformer
             entries.add( projectName + "\nCopyright " + year + " " + organizationName + "\n" );
             entries.add( preamble3 + organizationName + " (" + organizationURL + ").\n" );
         }
-
 
         BufferedReader reader;
         if ( StringUtils.isNotEmpty( encoding ) )
@@ -163,8 +165,7 @@ public class ApacheNoticeResourceTransformer
                 else
                 {
                     String ent = sb.toString();
-                    if ( ent.startsWith( projectName )
-                        && ent.indexOf( "Copyright " ) != -1 )
+                    if ( ent.startsWith( projectName ) && ent.indexOf( "Copyright " ) != -1 )
                     {
                         copyright = ent;
                     }
@@ -184,7 +185,7 @@ public class ApacheNoticeResourceTransformer
 
             line = reader.readLine();
         }
-        if ( sb.length() > 0 ) 
+        if ( sb.length() > 0 )
         {
             if ( currentOrg == null )
             {
@@ -219,7 +220,7 @@ public class ApacheNoticeResourceTransformer
         PrintWriter writer = new PrintWriter( pow );
 
         int count = 0;
-        for ( Iterator itr = entries.iterator() ; itr.hasNext() ; )
+        for ( Iterator itr = entries.iterator(); itr.hasNext(); )
         {
             ++count;
             String line = (String) itr.next();

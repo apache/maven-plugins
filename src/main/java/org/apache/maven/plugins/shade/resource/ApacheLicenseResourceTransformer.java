@@ -37,8 +37,6 @@ public class ApacheLicenseResourceTransformer
 
     private static final String LICENSE_TXT_PATH = "META-INF/LICENSE.txt";
 
-    Set entries = new HashSet();
-
     public boolean canTransformResource( String resource )
     {
         if ( LICENSE_PATH.equalsIgnoreCase( resource )

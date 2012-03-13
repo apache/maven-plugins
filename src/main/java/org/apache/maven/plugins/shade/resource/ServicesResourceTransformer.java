@@ -19,18 +19,18 @@ package org.apache.maven.plugins.shade.resource;
  * under the License.
  */
 
+import org.apache.maven.plugins.shade.relocation.Relocator;
+import org.codehaus.plexus.util.IOUtil;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
-
-import org.codehaus.plexus.util.IOUtil;
 
 /**
  * Resources transformer that appends entries in META-INF/services resources into
@@ -47,7 +47,7 @@ public class ServicesResourceTransformer
 
     private static final String SERVICES_PATH = "META-INF/services";
 
-    private Map serviceEntries = new HashMap();
+    private Map<String, ServiceStream> serviceEntries = new HashMap<String, ServiceStream>();
 
     public boolean canTransformResource( String resource )
     {
@@ -59,10 +59,10 @@ public class ServicesResourceTransformer
         return false;
     }
 
-    public void processResource( String resource, InputStream is, List relocators )
+    public void processResource( String resource, InputStream is, List<Relocator> relocators )
         throws IOException
     {
-        ServiceStream out = (ServiceStream) serviceEntries.get( resource );
+        ServiceStream out = serviceEntries.get( resource );
         if ( out == null )
         {
             out = new ServiceStream();
@@ -81,10 +81,11 @@ public class ServicesResourceTransformer
     public void modifyOutputStream( JarOutputStream jos )
         throws IOException
     {
-        for ( Iterator i = serviceEntries.keySet().iterator(); i.hasNext(); )
+        for ( Map.Entry<String, ServiceStream> entry : serviceEntries.entrySet() )
         {
-            String key = (String) i.next();
-            ServiceStream data = (ServiceStream) serviceEntries.get( key );
+            String key = entry.getKey();
+            ServiceStream data = entry.getValue();
+
             jos.putNextEntry( new JarEntry( key ) );
             IOUtil.copy( data.toInputStream(), jos );
             data.reset();
