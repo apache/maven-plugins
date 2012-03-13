@@ -36,6 +36,7 @@ under the License.
       <item name="Attaching the Shaded Artifact" href="examples/attached-artifact.html"/>
       <item name="Executable JAR" href="examples/executable-jar.html"/>
       <item name="Resource Transformers" href="examples/resource-transformers.html"/>
+      <item name="Using an other Shader implementation" href="examples/use-shader-other-impl.html"/>
     </menu>
   </body>
 </project>
