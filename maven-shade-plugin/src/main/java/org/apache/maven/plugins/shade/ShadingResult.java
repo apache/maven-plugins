@@ -19,7 +19,11 @@ package org.apache.maven.plugins.shade;
  * under the License.
  */
 
-/** @author Jason van Zyl */
+/**
+ * @author Jason van Zyl
+ */
 public class ShadingResult
 {
+    // no op
+    // olamy: what this class ??
 }

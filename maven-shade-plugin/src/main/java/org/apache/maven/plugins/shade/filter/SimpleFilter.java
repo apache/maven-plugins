@@ -23,7 +23,6 @@ import org.codehaus.plexus.util.SelectorUtils;
 
 import java.io.File;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 /**
@@ -33,13 +32,13 @@ public class SimpleFilter
     implements Filter
 {
 
-    private Set jars;
+    private Set<File> jars;
 
-    private Set includes;
+    private Set<String> includes;
 
-    private Set excludes;
+    private Set<String> excludes;
 
-    public SimpleFilter( Set jars, Set includes, Set excludes )
+    public SimpleFilter( Set<File> jars, Set<String> includes, Set<String> excludes )
     {
         this.jars = ( jars != null ) ? new HashSet( jars ) : new HashSet();
         this.includes = normalizePatterns( includes );
@@ -90,11 +89,10 @@ public class SimpleFilter
         return matchPaths( excludes, classFile );
     }
 
-    private boolean matchPaths( Set patterns, String classFile )
+    private boolean matchPaths( Set<String> patterns, String classFile )
     {
-        for ( Iterator iterator = patterns.iterator(); iterator.hasNext(); )
+        for ( String pattern : patterns )
         {
-            String pattern = (String) iterator.next();
 
             if ( SelectorUtils.matchPath( pattern, classFile ) )
             {
@@ -110,16 +108,14 @@ public class SimpleFilter
         return ( path != null ) ? path.replace( File.separatorChar == '/' ? '\\' : '/', File.separatorChar ) : null;
     }
 
-    private Set normalizePatterns( Set patterns )
+    private Set normalizePatterns( Set<String> patterns )
     {
-        Set result = new HashSet();
+        Set<String> result = new HashSet<String>();
 
         if ( patterns != null )
         {
-            for ( Iterator it = patterns.iterator(); it.hasNext(); )
+            for ( String pattern : patterns )
             {
-                String pattern = (String) it.next();
-
                 pattern = normalizePath( pattern );
 
                 if ( pattern.endsWith( File.separator ) )

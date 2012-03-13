@@ -19,28 +19,27 @@ package org.apache.maven.plugins.shade.pom;
  * under the License.
  */
 
-import java.io.IOException;
-import java.io.Writer;
-
 import org.apache.maven.model.Model;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.Namespace;
 import org.jdom.output.Format;
 
-/** @author Jason van Zyl */
+import java.io.IOException;
+import java.io.Writer;
+
+/**
+ * @author Jason van Zyl
+ */
 public class PomWriter
 {
-    public static void write( Writer w,
-                              Model newModel )
+    public static void write( Writer w, Model newModel )
         throws IOException
-        {
+    {
         write( w, newModel, false );
     }
 
-    public static void write( Writer w,
-                              Model newModel,
-                              boolean namespaceDeclaration )
+    public static void write( Writer w, Model newModel, boolean namespaceDeclaration )
         throws IOException
     {
         Element root = new Element( "project" );
@@ -59,8 +58,9 @@ public class PomWriter
 
             if ( root.getAttribute( "schemaLocation", xsiNamespace ) == null )
             {
-                root.setAttribute( "schemaLocation", "http://maven.apache.org/POM/" + modelVersion
-                    + " http://maven.apache.org/maven-v" + modelVersion.replace( '.', '_' ) + ".xsd", xsiNamespace );
+                root.setAttribute( "schemaLocation",
+                                   "http://maven.apache.org/POM/" + modelVersion + " http://maven.apache.org/maven-v"
+                                       + modelVersion.replace( '.', '_' ) + ".xsd", xsiNamespace );
             }
         }
 

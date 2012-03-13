@@ -28,21 +28,21 @@ public class ArchiveFilter
 {
     private String artifact;
 
-    private Set includes;
+    private Set<String> includes;
 
-    private Set excludes;
+    private Set<String> excludes;
 
     public String getArtifact()
     {
         return artifact;
     }
 
-    public Set getIncludes()
+    public Set<String> getIncludes()
     {
         return includes;
     }
 
-    public Set getExcludes()
+    public Set<String> getExcludes()
     {
         return excludes;
     }

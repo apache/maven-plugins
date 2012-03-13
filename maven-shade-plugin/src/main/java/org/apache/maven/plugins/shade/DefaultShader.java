@@ -57,7 +57,7 @@ public class DefaultShader
     implements Shader
 {
 
-    public void shade( Set jars, File uberJar, List filters, List<Relocator> relocators,
+    public void shade( Set<File> jars, File uberJar, List<Filter> filters, List<Relocator> relocators,
                        List<ResourceTransformer> resourceTransformers )
         throws IOException, MojoExecutionException
     {
@@ -82,9 +82,8 @@ public class DefaultShader
 
         if ( manifestTransformer != null )
         {
-            for ( Iterator it = jars.iterator(); it.hasNext(); )
+            for ( File jar : jars )
             {
-                File jar = (File) it.next();
                 JarFile jarFile = newJarFile( jar );
                 for ( Enumeration en = jarFile.entries(); en.hasMoreElements(); )
                 {
@@ -104,9 +103,8 @@ public class DefaultShader
             }
         }
 
-        for ( Iterator i = jars.iterator(); i.hasNext(); )
+        for ( File jar : jars )
         {
-            File jar = (File) i.next();
 
             getLogger().debug( "Processing JAR " + jar );
 
@@ -114,9 +112,9 @@ public class DefaultShader
 
             JarFile jarFile = newJarFile( jar );
 
-            for ( Enumeration j = jarFile.entries(); j.hasMoreElements(); )
+            for ( Enumeration<JarEntry> j = jarFile.entries(); j.hasMoreElements(); )
             {
-                JarEntry entry = (JarEntry) j.nextElement();
+                JarEntry entry = j.nextElement();
 
                 String name = entry.getName();
 
@@ -182,9 +180,8 @@ public class DefaultShader
 
         IOUtil.close( jos );
 
-        for ( Iterator it = filters.iterator(); it.hasNext(); )
+        for ( Filter filter : filters )
         {
-            Filter filter = (Filter) it.next();
             filter.finished();
         }
     }
@@ -204,14 +201,12 @@ public class DefaultShader
         }
     }
 
-    private List getFilters( File jar, List filters )
+    private List<Filter> getFilters( File jar, List<Filter> filters )
     {
-        List list = new ArrayList();
+        List<Filter> list = new ArrayList<Filter>();
 
-        for ( int i = 0; i < filters.size(); i++ )
+        for ( Filter filter : filters )
         {
-            Filter filter = (Filter) filters.get( i );
-
             if ( filter.canFilter( jar ) )
             {
                 list.add( filter );
@@ -298,12 +293,10 @@ public class DefaultShader
         }
     }
 
-    private boolean isFiltered( List filters, String name )
+    private boolean isFiltered( List<Filter> filters, String name )
     {
-        for ( int i = 0; i < filters.size(); i++ )
+        for ( Filter filter : filters )
         {
-            Filter filter = (Filter) filters.get( i );
-
             if ( filter.isFiltered( name ) )
             {
                 return true;
@@ -314,15 +307,13 @@ public class DefaultShader
     }
 
     private boolean resourceTransformed( List<ResourceTransformer> resourceTransformers, String name, InputStream is,
-                                         List relocators )
+                                         List<Relocator> relocators )
         throws IOException
     {
         boolean resourceTransformed = false;
 
-        for ( Iterator<ResourceTransformer> k = resourceTransformers.iterator(); k.hasNext(); )
+        for ( ResourceTransformer transformer : resourceTransformers )
         {
-            ResourceTransformer transformer = k.next();
-
             if ( transformer.canTransformResource( name ) )
             {
                 getLogger().debug( "Transforming " + name + " using " + transformer.getClass().getName() );
@@ -383,10 +374,8 @@ public class DefaultShader
                     name = m.group( 2 );
                 }
 
-                for ( Iterator i = relocators.iterator(); i.hasNext(); )
+                for ( Relocator r : relocators )
                 {
-                    Relocator r = (Relocator) i.next();
-
                     if ( r.canRelocateClass( name ) )
                     {
                         value = prefix + r.relocateClass( name ) + suffix;
@@ -420,10 +409,8 @@ public class DefaultShader
                 name = m.group( 2 );
             }
 
-            for ( Iterator i = relocators.iterator(); i.hasNext(); )
+            for ( Relocator r : relocators )
             {
-                Relocator r = (Relocator) i.next();
-
                 if ( r.canRelocatePath( name ) )
                 {
                     value = prefix + r.relocatePath( name ) + suffix;
