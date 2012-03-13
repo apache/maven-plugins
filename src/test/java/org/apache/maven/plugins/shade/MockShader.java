@@ -22,6 +22,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.shade.filter.Filter;
 import org.apache.maven.plugins.shade.relocation.Relocator;
 import org.apache.maven.plugins.shade.resource.ResourceTransformer;
+import org.codehaus.plexus.component.annotations.Component;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,8 +31,8 @@ import java.util.Set;
 
 /**
  * @author Olivier Lamy
- * @plexus.component instantiation-strategy="per-lookup" role-hint="mock"
  */
+@Component( role = Shader.class, hint = "mock" )
 public class MockShader
     implements Shader
 {
@@ -39,7 +40,6 @@ public class MockShader
                        List<ResourceTransformer> resourceTransformers )
         throws IOException, MojoExecutionException
     {
-
         System.out.println( "Executing MockShader#shade" );
     }
 }
