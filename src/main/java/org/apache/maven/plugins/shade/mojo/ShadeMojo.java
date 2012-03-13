@@ -19,22 +19,6 @@ package org.apache.maven.plugins.shade.mojo;
  * under the License.
  */
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
@@ -49,6 +33,7 @@ import org.apache.maven.model.Model;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.shade.Shader;
+import org.apache.maven.plugins.shade.filter.Filter;
 import org.apache.maven.plugins.shade.filter.MinijarFilter;
 import org.apache.maven.plugins.shade.filter.SimpleFilter;
 import org.apache.maven.plugins.shade.pom.PomWriter;
@@ -64,6 +49,22 @@ import org.apache.maven.shared.dependency.tree.DependencyTreeBuilderException;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.WriterFactory;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Mojo that performs shading delegating to the Shader component.
@@ -190,7 +191,7 @@ public class ShadeMojo
      *   &lt;/excludes&gt;
      * &lt;/artifactSet&gt;
      * </pre>
-     * 
+     *
      * @parameter
      */
     private ArtifactSet artifactSet;
@@ -212,7 +213,7 @@ public class ShadeMojo
      * &lt;/relocations&gt;
      * </pre>
      * <em>Note:</em> Support for includes exists only since version 1.4.
-     * 
+     *
      * @parameter
      */
     private PackageRelocation[] relocations;
@@ -220,7 +221,7 @@ public class ShadeMojo
     /**
      * Resource transformers to be used. Please see the "Examples" section for more information on available
      * transformers and their configuration.
-     * 
+     *
      * @parameter
      */
     private ResourceTransformer[] transformers;
@@ -245,7 +246,7 @@ public class ShadeMojo
      *   &lt;/filter&gt;
      * &lt;/filters&gt;
      * </pre>
-     * 
+     *
      * @parameter
      */
     private ArchiveFilter[] filters;
@@ -259,7 +260,7 @@ public class ShadeMojo
 
     /**
      * The name of the shaded artifactId.
-     * 
+     * <p/>
      * If you like to change the name of the native artifact, you may use the &lt;build>&lt;finalName> setting.
      * If this is set to something different than &lt;build>&lt;finalName>, no file replacement
      * will be performed, even if shadedArtifactAttached is being used.
@@ -339,7 +340,7 @@ public class ShadeMojo
     /**
      * When true, dependencies will be stripped down on the class level to only the transitive hull required for the
      * artifact. <em>Note:</em> Usage of this feature requires Java 1.5 or higher.
-     * 
+     *
      * @parameter default-value="false"
      * @since 1.4
      */
@@ -350,13 +351,15 @@ public class ShadeMojo
      * replace the project's main artifact nor will it be attached. Hence, this parameter causes the parameters
      * {@link #finalName}, {@link #shadedArtifactAttached}, {@link #shadedClassifierName} and
      * {@link #createDependencyReducedPom} to be ignored when used.
-     * 
+     *
      * @parameter
      * @since 1.3
      */
     private File outputFile;
 
-    /** @throws MojoExecutionException  */
+    /**
+     * @throws MojoExecutionException
+     */
     public void execute()
         throws MojoExecutionException
     {
@@ -379,8 +382,8 @@ public class ShadeMojo
                 getLog().error( "- You have bound the goal to a lifecycle phase before \"package\". Please" );
                 getLog().error( "  remove this binding from your POM such that the goal will be run in" );
                 getLog().error( "  the proper phase." );
-                throw new MojoExecutionException( "Failed to create shaded artifact, "
-                    + "project main artifact does not exist." );
+                throw new MojoExecutionException(
+                    "Failed to create shaded artifact, " + "project main artifact does not exist." );
             }
 
             artifacts.add( project.getArtifact().getFile() );
@@ -428,7 +431,6 @@ public class ShadeMojo
             }
         }
 
-
         File outputJar = ( outputFile != null ) ? outputFile : shadedArtifactFileWithClassifier();
         File sourcesJar = shadedSourceArtifactFileWithClassifier();
 
@@ -455,8 +457,8 @@ public class ShadeMojo
                 // rename the output file if a specific finalName is set
                 // but don't rename if the finalName is the <build><finalName>
                 // because this will be handled implicitely later
-                if ( finalName != null && finalName.length() > 0
-                    && !finalName.equals( project.getBuild().getFinalName() ) )
+                if ( finalName != null && finalName.length() > 0 && !finalName.equals(
+                    project.getBuild().getFinalName() ) )
                 {
                     String finalFileName = finalName + "." + project.getArtifact().getArtifactHandler().getExtension();
                     File finalFile = new File( outputDirectory, finalFileName );
@@ -504,7 +506,8 @@ public class ShadeMojo
         }
     }
 
-    private void replaceFile( File oldFile, File newFile ) throws MojoExecutionException
+    private void replaceFile( File oldFile, File newFile )
+        throws MojoExecutionException
     {
         getLog().info( "Replacing " + oldFile + " with " + newFile );
 
@@ -574,11 +577,8 @@ public class ShadeMojo
     {
 
         Artifact resolvedArtifact =
-            artifactFactory.createArtifactWithClassifier( artifact.getGroupId(),
-                                                          artifact.getArtifactId(),
-                                                          artifact.getVersion(),
-                                                          "java-source",
-                                                          "sources" );
+            artifactFactory.createArtifactWithClassifier( artifact.getGroupId(), artifact.getArtifactId(),
+                                                          artifact.getVersion(), "java-source", "sources" );
 
         try
         {
@@ -613,7 +613,8 @@ public class ShadeMojo
         {
             PackageRelocation r = relocations[i];
 
-            relocators.add( new SimpleRelocator( r.getPattern(), r.getShadedPattern(), r.getIncludes(), r.getExcludes(), r.isRawString() ) );
+            relocators.add( new SimpleRelocator( r.getPattern(), r.getShadedPattern(), r.getIncludes(), r.getExcludes(),
+                                                 r.isRawString() ) );
         }
 
         return relocators;
@@ -632,7 +633,8 @@ public class ShadeMojo
     private List getFilters()
         throws MojoExecutionException
     {
-        List filters = new ArrayList();
+        List<Filter> filters = new ArrayList<Filter>();
+        List<SimpleFilter> simpleFilters = new ArrayList<SimpleFilter>();
 
         if ( this.filters != null && this.filters.length > 0 )
         {
@@ -683,9 +685,11 @@ public class ShadeMojo
                     continue;
                 }
 
-                filters.add( new SimpleFilter( jars, filter.getIncludes(), filter.getExcludes() ) );
+                simpleFilters.add( new SimpleFilter( jars, filter.getIncludes(), filter.getExcludes() ) );
             }
         }
+
+        filters.addAll( simpleFilters );
 
         if ( minimizeJar )
         {
@@ -693,7 +697,7 @@ public class ShadeMojo
 
             try
             {
-                filters.add( new MinijarFilter( project, getLog() ) );
+                filters.add( new MinijarFilter( project, getLog(), simpleFilters ) );
             }
             catch ( IOException e )
             {
@@ -707,9 +711,8 @@ public class ShadeMojo
     private File shadedArtifactFileWithClassifier()
     {
         Artifact artifact = project.getArtifact();
-        final String shadedName =
-            shadedArtifactId + "-" + artifact.getVersion() + "-" + shadedClassifierName + "."
-                + artifact.getArtifactHandler().getExtension();
+        final String shadedName = shadedArtifactId + "-" + artifact.getVersion() + "-" + shadedClassifierName + "."
+            + artifact.getArtifactHandler().getExtension();
         return new File( outputDirectory, shadedName );
     }
 
@@ -757,12 +760,12 @@ public class ShadeMojo
         {
             Artifact artifact = (Artifact) it.next();
 
-          if ( "pom".equals( artifact.getType() ) )
-          {
-              // don't include pom type dependencies in dependency reduced pom
-              continue;
-          }
-            
+            if ( "pom".equals( artifact.getType() ) )
+            {
+                // don't include pom type dependencies in dependency reduced pom
+                continue;
+            }
+
             //promote
             Dependency dep = new Dependency();
             dep.setArtifactId( artifact.getArtifactId() );
@@ -874,18 +877,12 @@ public class ShadeMojo
         return groupId + ":" + artifactId + ":" + type + ":" + ( ( classifier != null ) ? classifier : "" );
     }
 
-    public boolean updateExcludesInDeps( MavenProject project,
-                                         List dependencies,
-                                         List transitiveDeps )
+    public boolean updateExcludesInDeps( MavenProject project, List dependencies, List transitiveDeps )
         throws DependencyTreeBuilderException
     {
-        DependencyNode node = dependencyTreeBuilder.buildDependencyTree(
-                                                  project,
-                                                  localRepository,
-                                                  artifactFactory,
-                                                  artifactMetadataSource,
-                                                  null,
-                                                  artifactCollector );
+        DependencyNode node = dependencyTreeBuilder.buildDependencyTree( project, localRepository, artifactFactory,
+                                                                         artifactMetadataSource, null,
+                                                                         artifactCollector );
         boolean modified = false;
         Iterator it = node.getChildren().listIterator();
         while ( it.hasNext() )
@@ -910,8 +907,8 @@ public class ShadeMojo
                     for ( int x = 0; x < transitiveDeps.size(); x++ )
                     {
                         Dependency dep = (Dependency) transitiveDeps.get( x );
-                        if ( dep.getArtifactId().equals( n3.getArtifact().getArtifactId() )
-                            && dep.getGroupId().equals( n3.getArtifact().getGroupId() ) )
+                        if ( dep.getArtifactId().equals( n3.getArtifact().getArtifactId() ) && dep.getGroupId().equals(
+                            n3.getArtifact().getGroupId() ) )
                         {
                             found = true;
                         }
