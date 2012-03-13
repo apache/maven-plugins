@@ -51,7 +51,7 @@ import java.util.zip.ZipException;
 
 /**
  * @author Jason van Zyl
- * @plexus.component instantiation-strategy="per-lookup"
+ * @plexus.component instantiation-strategy="per-lookup" role-hint="default"
  */
 public class DefaultShader
     extends AbstractLogEnabled
