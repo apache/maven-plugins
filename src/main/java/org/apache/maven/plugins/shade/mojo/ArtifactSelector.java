@@ -19,11 +19,10 @@ package org.apache.maven.plugins.shade.mojo;
  * under the License.
  */
 
+import org.apache.maven.artifact.Artifact;
+
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
-
-import org.apache.maven.artifact.Artifact;
 
 /**
  * @author Benjamin Bentmann
@@ -31,9 +30,9 @@ import org.apache.maven.artifact.Artifact;
 class ArtifactSelector
 {
 
-    private Collection includes;
+    private Collection<ArtifactId> includes;
 
-    private Collection excludes;
+    private Collection<ArtifactId> excludes;
 
     public ArtifactSelector( Artifact projectArtifact, ArtifactSet artifactSet, String groupPrefix )
     {
@@ -46,7 +45,7 @@ class ArtifactSelector
         }
     }
 
-    public ArtifactSelector( Collection includes, Collection excludes, String groupPrefix )
+    public ArtifactSelector( Collection<String> includes, Collection<String> excludes, String groupPrefix )
     {
         this.includes = toIds( includes );
         this.excludes = toIds( excludes );
@@ -57,15 +56,14 @@ class ArtifactSelector
         }
     }
 
-    private static Collection toIds( Collection patterns )
+    private static Collection<ArtifactId> toIds( Collection<String> patterns )
     {
-        Collection result = new HashSet();
+        Collection<ArtifactId> result = new HashSet<ArtifactId>();
 
         if ( patterns != null )
         {
-            for ( Iterator it = patterns.iterator(); it.hasNext(); )
+            for ( String pattern : patterns )
             {
-                String pattern = (String) it.next();
                 result.add( new ArtifactId( pattern ) );
             }
         }
@@ -83,11 +81,10 @@ class ArtifactSelector
         return ( includes.isEmpty() || matches( includes, id ) ) && !matches( excludes, id );
     }
 
-    private boolean matches( Collection patterns, ArtifactId id )
+    private boolean matches( Collection<ArtifactId> patterns, ArtifactId id )
     {
-        for ( Iterator it = patterns.iterator(); it.hasNext(); )
+        for ( ArtifactId pattern : patterns )
         {
-            ArtifactId pattern = (ArtifactId) it.next();
             if ( id.matches( pattern ) )
             {
                 return true;

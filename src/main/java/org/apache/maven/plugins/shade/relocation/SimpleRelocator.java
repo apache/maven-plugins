@@ -22,7 +22,6 @@ package org.apache.maven.plugins.shade.relocation;
 import org.codehaus.plexus.util.SelectorUtils;
 
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -44,18 +43,19 @@ public class SimpleRelocator
 
     private final String shadedPathPattern;
 
-    private final Set includes;
+    private final Set<String> includes;
 
-    private final Set excludes;
+    private final Set<String> excludes;
 
     private final boolean rawString;
 
-    public SimpleRelocator( String patt, String shadedPattern, List includes, List excludes )
+    public SimpleRelocator( String patt, String shadedPattern, List<String> includes, List<String> excludes )
     {
         this( patt, shadedPattern, includes, excludes, false );
     }
 
-    public SimpleRelocator( String patt, String shadedPattern, List includes, List excludes, boolean rawString )
+    public SimpleRelocator( String patt, String shadedPattern, List<String> includes, List<String> excludes,
+                            boolean rawString )
     {
         this.rawString = rawString;
 
@@ -96,17 +96,16 @@ public class SimpleRelocator
         this.excludes = normalizePatterns( excludes );
     }
 
-    private static Set normalizePatterns( Collection patterns )
+    private static Set<String> normalizePatterns( Collection<String> patterns )
     {
-        Set normalized = null;
+        Set<String> normalized = null;
 
         if ( patterns != null && !patterns.isEmpty() )
         {
-            normalized = new LinkedHashSet();
+            normalized = new LinkedHashSet<String>();
 
-            for ( Iterator i = patterns.iterator(); i.hasNext(); )
+            for ( String pattern : patterns )
             {
-                String pattern = (String) i.next();
 
                 String classPattern = pattern.replace( '.', '/' );
 
@@ -127,10 +126,8 @@ public class SimpleRelocator
     {
         if ( includes != null && !includes.isEmpty() )
         {
-            for ( Iterator i = includes.iterator(); i.hasNext(); )
+            for ( String include : includes )
             {
-                String include = (String) i.next();
-
                 if ( SelectorUtils.matchPath( include, path, true ) )
                 {
                     return true;
@@ -145,10 +142,8 @@ public class SimpleRelocator
     {
         if ( excludes != null && !excludes.isEmpty() )
         {
-            for ( Iterator i = excludes.iterator(); i.hasNext(); )
+            for ( String exclude : excludes )
             {
-                String exclude = (String) i.next();
-
                 if ( SelectorUtils.matchPath( exclude, path, true ) )
                 {
                     return true;

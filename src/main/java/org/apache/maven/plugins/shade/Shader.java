@@ -20,6 +20,7 @@ package org.apache.maven.plugins.shade;
  */
 
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.shade.filter.Filter;
 import org.apache.maven.plugins.shade.relocation.Relocator;
 import org.apache.maven.plugins.shade.resource.ResourceTransformer;
 
@@ -46,7 +47,7 @@ public interface Shader
      * @throws IOException            for IO errors reading the thing
      * @throws MojoExecutionException for anything else that goes wrong.
      */
-    void shade( Set jars, File uberJar, List filters, List<Relocator> relocators,
+    void shade( Set<File> jars, File uberJar, List<Filter> filters, List<Relocator> relocators,
                 List<ResourceTransformer> resourceTransformers )
         throws IOException, MojoExecutionException;
 }
