@@ -47,6 +47,12 @@ import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.shared.dependency.tree.DependencyNode;
 import org.apache.maven.shared.dependency.tree.DependencyTreeBuilder;
 import org.apache.maven.shared.dependency.tree.DependencyTreeBuilderException;
+import org.codehaus.plexus.PlexusConstants;
+import org.codehaus.plexus.PlexusContainer;
+import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
+import org.codehaus.plexus.context.Context;
+import org.codehaus.plexus.context.ContextException;
+import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.WriterFactory;
@@ -81,6 +87,7 @@ import java.util.Set;
  */
 public class ShadeMojo
     extends AbstractMojo
+    implements Contextualizable
 {
     /**
      * @parameter default-value="${project}"
@@ -97,7 +104,7 @@ public class ShadeMojo
     private MavenProjectHelper projectHelper;
 
     /**
-     * @component
+     * @component role="org.apache.maven.plugins.shade.Shader" roleHint="default"
      * @required
      * @readonly
      */
@@ -359,11 +366,44 @@ public class ShadeMojo
     private File outputFile;
 
     /**
+     * You can pass here the roleHint about your own Shader implementation plexus component.
+     *
+     * @parameter
+     * @since 1.6
+     */
+    private String shaderHint;
+
+    /**
+     * @since 1.6
+     */
+    private PlexusContainer plexusContainer;
+
+    public void contextualize( Context context )
+        throws ContextException
+    {
+        plexusContainer = (PlexusContainer) context.get( PlexusConstants.PLEXUS_KEY );
+    }
+
+    /**
      * @throws MojoExecutionException
      */
     public void execute()
         throws MojoExecutionException
     {
+
+        if ( shaderHint != null )
+        {
+            try
+            {
+                shader = (Shader) plexusContainer.lookup( Shader.ROLE, shaderHint );
+            }
+            catch ( ComponentLookupException e )
+            {
+                throw new MojoExecutionException(
+                    "unable to lookup own Shader implementation with hint:'" + shaderHint + "'", e );
+            }
+        }
+
         Set artifacts = new LinkedHashSet();
         Set artifactIds = new LinkedHashSet();
         Set sourceArtifacts = new LinkedHashSet();
