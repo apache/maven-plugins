@@ -19,16 +19,17 @@ package org.apache.maven.plugins.shade.resource;
  * under the License.
  */
 
-import java.io.IOException;
-import java.util.Collections;
-
 import junit.framework.TestCase;
-
 import org.codehaus.plexus.util.IOUtil;
+import org.custommonkey.xmlunit.Diff;
+import org.custommonkey.xmlunit.XMLAssert;
+import org.custommonkey.xmlunit.XMLUnit;
+
+import java.util.Collections;
 
 /**
  * Test for {@link ComponentsXmlResourceTransformer}.
- * 
+ *
  * @author Brett Porter
  * @version $Id$
  */
@@ -42,14 +43,21 @@ public class ComponentsXmlResourceTransformerTest
         this.transformer = new ComponentsXmlResourceTransformer();
     }
 
-    public void testConfigurationMerging() throws IOException
+    public void testConfigurationMerging()
+        throws Exception
     {
+
+        XMLUnit.setNormalizeWhitespace( true );
+
         transformer.processResource( "components-1.xml", getClass().getResourceAsStream( "/components-1.xml" ),
                                      Collections.EMPTY_LIST );
         transformer.processResource( "components-1.xml", getClass().getResourceAsStream( "/components-2.xml" ),
                                      Collections.EMPTY_LIST );
-        
-        assertEquals( IOUtil.toString( getClass().getResourceAsStream( "/components-expected.xml" ), "UTF-8" ),
-                      IOUtil.toString( transformer.getTransformedResource(), "UTF-8" ).replaceAll("\r\n", "\n") );
+        Diff diff = XMLUnit.compareXML(
+            IOUtil.toString( getClass().getResourceAsStream( "/components-expected.xml" ), "UTF-8" ),
+            IOUtil.toString( transformer.getTransformedResource(), "UTF-8" ) );
+        //assertEquals( IOUtil.toString( getClass().getResourceAsStream( "/components-expected.xml" ), "UTF-8" ),
+        //              IOUtil.toString( transformer.getTransformedResource(), "UTF-8" ).replaceAll("\r\n", "\n") );
+        XMLAssert.assertXMLIdentical( diff, true );
     }
 }
