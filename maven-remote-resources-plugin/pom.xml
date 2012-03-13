@@ -178,6 +178,13 @@ under the License.
   </dependencies>
 
   <build>
+
+    <testResources>
+      <testResource>
+        <directory>src/test/resources</directory>
+      </testResource>
+    </testResources>
+
     <pluginManagement>
       <plugins>
         <plugin>
