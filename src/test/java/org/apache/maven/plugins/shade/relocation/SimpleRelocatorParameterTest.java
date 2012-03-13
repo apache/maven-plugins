@@ -19,31 +19,40 @@ package org.apache.maven.plugins.shade.relocation;
  * under the License.
  */
 
-import java.util.Collections;
-
 import junit.framework.TestCase;
 
-public class SimpleRelocatorParameterTest extends TestCase {
+import java.util.Collections;
 
-	
-	protected void setUp() throws Exception {
-		super.setUp();
-	}
+public class SimpleRelocatorParameterTest
+    extends TestCase
+{
 
-	public void testThatNullPatternInConstructorShouldNotThrowNullPointerException() {
-		constructThenFailOnNullPointerException(null, "");
-	}
 
-	public void testThatNullShadedPatternInConstructorShouldNotThrowNullPointerException() {
-		constructThenFailOnNullPointerException("", null);
-	}
-	
-	private void constructThenFailOnNullPointerException(
-			String pattern, String shadedPattern) {
-		try {
-			new SimpleRelocator(pattern, shadedPattern, Collections.EMPTY_LIST, Collections.EMPTY_LIST);
-		} catch (NullPointerException e) {
-			fail("Constructor should not throw null pointer exceptions");
-		}
-	}
+    protected void setUp()
+        throws Exception
+    {
+        super.setUp();
+    }
+
+    public void testThatNullPatternInConstructorShouldNotThrowNullPointerException()
+    {
+        constructThenFailOnNullPointerException( null, "" );
+    }
+
+    public void testThatNullShadedPatternInConstructorShouldNotThrowNullPointerException()
+    {
+        constructThenFailOnNullPointerException( "", null );
+    }
+
+    private void constructThenFailOnNullPointerException( String pattern, String shadedPattern )
+    {
+        try
+        {
+            new SimpleRelocator( pattern, shadedPattern, Collections.EMPTY_LIST, Collections.EMPTY_LIST );
+        }
+        catch ( NullPointerException e )
+        {
+            fail( "Constructor should not throw null pointer exceptions" );
+        }
+    }
 }
