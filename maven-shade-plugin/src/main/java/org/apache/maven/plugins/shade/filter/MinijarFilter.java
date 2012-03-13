@@ -49,9 +49,9 @@ public class MinijarFilter
 
     private Set removable;
 
-    private int classes_kept;
+    private int classesKept;
 
-    private int classes_removed;
+    private int classesRemoved;
 
     public MinijarFilter( MavenProject project, Log log, List<SimpleFilter> simpleFilters )
         throws IOException
@@ -172,19 +172,19 @@ public class MinijarFilter
         if ( removable.contains( clazz ) )
         {
             log.debug( "Removing " + className );
-            classes_removed += 1;
+            classesRemoved += 1;
             return true;
         }
 
-        classes_kept += 1;
+        classesKept += 1;
         return false;
     }
 
     public void finished()
     {
-        int classes_total = classes_removed + classes_kept;
+        int classes_total = classesRemoved + classesKept;
         log.info(
-            "Minimized " + classes_total + " -> " + classes_kept + " (" + (int) ( 100 * classes_kept / classes_total )
+            "Minimized " + classes_total + " -> " + classesKept + " (" + (int) ( 100 * classesKept / classes_total )
                 + "%)" );
     }
 }
