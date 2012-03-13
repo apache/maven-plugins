@@ -19,14 +19,6 @@ package org.apache.maven.plugins.shade.filter;
  * under the License.
  */
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
-
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
@@ -35,9 +27,18 @@ import org.vafer.jdependency.Clazz;
 import org.vafer.jdependency.Clazzpath;
 import org.vafer.jdependency.ClazzpathUnit;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
 /**
  * A filter that prevents the inclusion of classes not required in the final jar.
- * 
+ *
  * @author Torsten Curdt
  */
 public class MinijarFilter
@@ -52,7 +53,7 @@ public class MinijarFilter
 
     private int classes_removed;
 
-    public MinijarFilter( MavenProject project, Log log )
+    public MinijarFilter( MavenProject project, Log log, List<SimpleFilter> simpleFilters )
         throws IOException
     {
 
@@ -80,31 +81,79 @@ public class MinijarFilter
         }
 
         removable = cp.getClazzes();
-        removePackages(artifactUnit);
+        removePackages( artifactUnit );
         removable.removeAll( artifactUnit.getClazzes() );
         removable.removeAll( artifactUnit.getTransitiveDependencies() );
+        removeSpecificallyIncludedClasses( project, simpleFilters );
     }
 
-    private void removePackages(ClazzpathUnit artifactUnit)
+    private void removePackages( ClazzpathUnit artifactUnit )
     {
         Set packageNames = new HashSet();
-        removePackages(artifactUnit.getClazzes(), packageNames);
-        removePackages(artifactUnit.getTransitiveDependencies(), packageNames);
+        removePackages( artifactUnit.getClazzes(), packageNames );
+        removePackages( artifactUnit.getTransitiveDependencies(), packageNames );
     }
 
-    private void removePackages(Set clazzes, Set packageNames)
+    private void removePackages( Set clazzes, Set packageNames )
     {
         Iterator it = clazzes.iterator();
-        while(it.hasNext())
+        while ( it.hasNext() )
         {
             Clazz clazz = (Clazz) it.next();
             String name = clazz.getName();
-            while(name.contains("."))
+            while ( name.contains( "." ) )
             {
-                name = name.substring(0, name.lastIndexOf('.'));
-                if(packageNames.add(name))
+                name = name.substring( 0, name.lastIndexOf( '.' ) );
+                if ( packageNames.add( name ) )
                 {
-                    removable.remove(new Clazz(name + ".package-info"));
+                    removable.remove( new Clazz( name + ".package-info" ) );
+                }
+            }
+        }
+    }
+
+    private void removeSpecificallyIncludedClasses( MavenProject project, List<SimpleFilter> simpleFilters )
+        throws IOException
+    {
+        //remove classes specifically included in filters
+        Clazzpath checkCp = new Clazzpath();
+        for ( Iterator it = project.getArtifacts().iterator(); it.hasNext(); )
+        {
+            Artifact dependency = (Artifact) it.next();
+            File jar = dependency.getFile();
+
+            for ( Iterator<SimpleFilter> i = simpleFilters.iterator(); i.hasNext(); )
+            {
+                SimpleFilter simpleFilter = i.next();
+                if ( simpleFilter.canFilter( jar ) )
+                {
+                    InputStream is = null;
+                    ClazzpathUnit depClazzpathUnit = null;
+                    try
+                    {
+                        is = new FileInputStream( dependency.getFile() );
+                        depClazzpathUnit = checkCp.addClazzpathUnit( is, dependency.toString() );
+                    }
+                    finally
+                    {
+                        IOUtil.close( is );
+                    }
+
+                    if ( depClazzpathUnit != null )
+                    {
+                        Iterator<Clazz> j = removable.iterator();
+                        while ( j.hasNext() )
+                        {
+                            Clazz clazz = j.next();
+
+                            if ( depClazzpathUnit.getClazzes().contains( clazz ) && simpleFilter.isSpecificallyIncluded(
+                                clazz.getName().replace( '.', '/' ) ) )
+                            {
+                                log.info( clazz.getName() + " not removed because it was specifically included" );
+                                j.remove();
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -134,7 +183,8 @@ public class MinijarFilter
     public void finished()
     {
         int classes_total = classes_removed + classes_kept;
-        log.info( "Minimized " + classes_total + " -> " + classes_kept + " ("
-            + (int) ( 100 * classes_kept / classes_total ) + "%)" );
+        log.info(
+            "Minimized " + classes_total + " -> " + classes_kept + " (" + (int) ( 100 * classes_kept / classes_total )
+                + "%)" );
     }
 }

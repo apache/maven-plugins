@@ -48,9 +48,8 @@ public class ComponentsXmlResourceTransformerTest
                                      Collections.EMPTY_LIST );
         transformer.processResource( "components-1.xml", getClass().getResourceAsStream( "/components-2.xml" ),
                                      Collections.EMPTY_LIST );
-
+        
         assertEquals( IOUtil.toString( getClass().getResourceAsStream( "/components-expected.xml" ), "UTF-8" ),
-                      IOUtil.toString( transformer.getTransformedResource(), "UTF-8" ) );
+                      IOUtil.toString( transformer.getTransformedResource(), "UTF-8" ).replaceAll("\r\n", "\n") );
     }
-
 }

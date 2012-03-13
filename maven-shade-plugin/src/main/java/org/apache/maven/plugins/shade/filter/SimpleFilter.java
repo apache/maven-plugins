@@ -58,6 +58,18 @@ public class SimpleFilter
         return !( isIncluded( path ) && !isExcluded( path ) );
     }
 
+    public boolean isSpecificallyIncluded( String classFile )
+    {
+        if ( includes == null || includes.isEmpty() )
+        {
+            return false;
+        }
+
+        String path = normalizePath( classFile );
+
+        return isIncluded( path );
+    }
+
     private boolean isIncluded( String classFile )
     {
         if ( includes == null || includes.isEmpty() )
