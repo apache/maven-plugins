@@ -19,17 +19,6 @@ package org.apache.maven.plugins.shade.mojo;
  * under the License.
  */
 
-import java.io.File;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
-
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DefaultArtifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
@@ -42,10 +31,22 @@ import org.apache.maven.artifact.resolver.DefaultArtifactResolver;
 import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.plugins.shade.Shader;
 import org.apache.maven.plugins.shade.filter.Filter;
+import org.apache.maven.plugins.shade.relocation.Relocator;
 import org.apache.maven.plugins.shade.relocation.SimpleRelocator;
 import org.apache.maven.plugins.shade.resource.ComponentsXmlResourceTransformer;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.PlexusTestCase;
+
+import java.io.File;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @author Jason van Zyl
@@ -57,13 +58,13 @@ public class ShadeMojoTest
     public void testShaderWithDefaultShadedPattern()
         throws Exception
     {
-        shaderWithPattern(null, new File( "target/foo-default.jar" ));
+        shaderWithPattern( null, new File( "target/foo-default.jar" ) );
     }
 
     public void testShaderWithCustomShadedPattern()
         throws Exception
     {
-        shaderWithPattern("org/shaded/plexus/util", new File( "target/foo-custom.jar" ));
+        shaderWithPattern( "org/shaded/plexus/util", new File( "target/foo-custom.jar" ) );
     }
 
     public void testShaderWithExclusions()
@@ -71,14 +72,14 @@ public class ShadeMojoTest
     {
         File jarFile = new File( getBasedir(), "target/unit/foo-bar.jar" );
 
-        Shader s = (Shader) lookup( Shader.ROLE );
+        Shader s = (Shader) lookup( Shader.ROLE, "default" );
 
         Set set = new LinkedHashSet();
         set.add( new File( getBasedir(), "src/test/jars/test-artifact-1.0-SNAPSHOT.jar" ) );
 
-        List relocators = new ArrayList();
-        relocators.add( new SimpleRelocator( "org.codehaus.plexus.util", "hidden", null, Arrays.asList( new String[] {
-            "org.codehaus.plexus.util.xml.Xpp3Dom", "org.codehaus.plexus.util.xml.pull.*" } ) ) );
+        List<Relocator> relocators = new ArrayList<Relocator>();
+        relocators.add( new SimpleRelocator( "org.codehaus.plexus.util", "hidden", null, Arrays.asList(
+            new String[]{ "org.codehaus.plexus.util.xml.Xpp3Dom", "org.codehaus.plexus.util.xml.pull.*" } ) ) );
 
         List resourceTransformers = new ArrayList();
 
@@ -86,7 +87,7 @@ public class ShadeMojoTest
 
         s.shade( set, jarFile, filters, relocators, resourceTransformers );
 
-        ClassLoader cl = new URLClassLoader( new URL[] { jarFile.toURI().toURL() } );
+        ClassLoader cl = new URLClassLoader( new URL[]{ jarFile.toURI().toURL() } );
         Class c = cl.loadClass( "org.apache.maven.plugins.shade.Lib" );
 
         Field field = c.getDeclaredField( "CLASS_REALM_PACKAGE_IMPORT" );
@@ -95,88 +96,87 @@ public class ShadeMojoTest
         Method method = c.getDeclaredMethod( "getClassRealmPackageImport", new Class[0] );
         assertEquals( "org.codehaus.plexus.util.xml.pull", method.invoke( null, new Object[0] ) );
     }
-    
+
     /**
      * Tests if a Filter is installed correctly, also if createSourcesJar is set to true.
+     *
      * @throws Exception
      */
-    public void testShadeWithFilter() throws Exception
+    public void testShadeWithFilter()
+        throws Exception
     {
         ShadeMojo mojo = new ShadeMojo();
-        
+
         // set createSourcesJar = true
-        Field createSourcesJar = ShadeMojo.class.getDeclaredField("createSourcesJar");
-        createSourcesJar.setAccessible(true);
-        createSourcesJar.set(mojo, Boolean.TRUE);
-        
+        Field createSourcesJar = ShadeMojo.class.getDeclaredField( "createSourcesJar" );
+        createSourcesJar.setAccessible( true );
+        createSourcesJar.set( mojo, Boolean.TRUE );
+
         // configure artifactFactory for mojo
         ArtifactFactory artifactFactory = (ArtifactFactory) lookup( ArtifactFactory.ROLE );
-        Field artifactFactoryField = ShadeMojo.class.getDeclaredField("artifactFactory");
-        artifactFactoryField.setAccessible(true);
-        artifactFactoryField.set(mojo, artifactFactory);
-        
+        Field artifactFactoryField = ShadeMojo.class.getDeclaredField( "artifactFactory" );
+        artifactFactoryField.setAccessible( true );
+        artifactFactoryField.set( mojo, artifactFactory );
+
         // configure artifactResolver (mocked) for mojo
         ArtifactResolver mockArtifactResolver = new DefaultArtifactResolver()
         {
 
-            public void resolve(Artifact artifact, List remoteRepos,
-                    ArtifactRepository repo)
-                    throws ArtifactResolutionException,
-                    ArtifactNotFoundException
+            public void resolve( Artifact artifact, List remoteRepos, ArtifactRepository repo )
+                throws ArtifactResolutionException, ArtifactNotFoundException
             {
                 // artifact is resolved
-                artifact.setResolved(true);
-                
+                artifact.setResolved( true );
+
                 // set file
-                artifact.setFile(new File(artifact.getArtifactId() + "-"
-                        + artifact.getVersion()
-                        + (artifact.getClassifier() != null ? "-" + artifact.getClassifier() : "") 
-                        + ".jar"));
+                artifact.setFile( new File(
+                    artifact.getArtifactId() + "-" + artifact.getVersion() + ( artifact.getClassifier() != null ? "-"
+                        + artifact.getClassifier() : "" ) + ".jar" ) );
             }
 
         };
-        Field artifactResolverField = ShadeMojo.class.getDeclaredField("artifactResolver");
-        artifactResolverField.setAccessible(true);
-        artifactResolverField.set(mojo, mockArtifactResolver);
-        
+        Field artifactResolverField = ShadeMojo.class.getDeclaredField( "artifactResolver" );
+        artifactResolverField.setAccessible( true );
+        artifactResolverField.set( mojo, mockArtifactResolver );
+
         // create and configure MavenProject
         MavenProject project = new MavenProject();
         ArtifactHandler artifactHandler = (ArtifactHandler) lookup( ArtifactHandler.ROLE );
-        Artifact artifact = new DefaultArtifact("org.apache.myfaces.core", "myfaces-impl",
-                VersionRange.createFromVersion("2.0.1-SNAPSHOT"), "compile", "jar", null, 
-                artifactHandler);
-        mockArtifactResolver.resolve(artifact, null, null); // setFile and setResolved
-        project.setArtifact(artifact);
-        Field projectField = ShadeMojo.class.getDeclaredField("project");
-        projectField.setAccessible(true);
-        projectField.set(mojo, project);
-        
+        Artifact artifact = new DefaultArtifact( "org.apache.myfaces.core", "myfaces-impl",
+                                                 VersionRange.createFromVersion( "2.0.1-SNAPSHOT" ), "compile", "jar",
+                                                 null, artifactHandler );
+        mockArtifactResolver.resolve( artifact, null, null ); // setFile and setResolved
+        project.setArtifact( artifact );
+        Field projectField = ShadeMojo.class.getDeclaredField( "project" );
+        projectField.setAccessible( true );
+        projectField.set( mojo, project );
+
         // create and configure the ArchiveFilter
         ArchiveFilter archiveFilter = new ArchiveFilter();
-        Field archiveFilterArtifact = ArchiveFilter.class.getDeclaredField("artifact");
-        archiveFilterArtifact.setAccessible(true);
-        archiveFilterArtifact.set(archiveFilter, "org.apache.myfaces.core:myfaces-impl");
-        
+        Field archiveFilterArtifact = ArchiveFilter.class.getDeclaredField( "artifact" );
+        archiveFilterArtifact.setAccessible( true );
+        archiveFilterArtifact.set( archiveFilter, "org.apache.myfaces.core:myfaces-impl" );
+
         // add ArchiveFilter to mojo
-        Field filtersField = ShadeMojo.class.getDeclaredField("filters");
-        filtersField.setAccessible(true);
-        filtersField.set(mojo, new ArchiveFilter[] { archiveFilter });
-        
+        Field filtersField = ShadeMojo.class.getDeclaredField( "filters" );
+        filtersField.setAccessible( true );
+        filtersField.set( mojo, new ArchiveFilter[]{ archiveFilter } );
+
         // invoke getFilters()
-        Method getFilters = ShadeMojo.class.getDeclaredMethod("getFilters", new Class[0]);
-        getFilters.setAccessible(true);
-        List filters = (List) getFilters.invoke(mojo, new Object[0]);
-        
+        Method getFilters = ShadeMojo.class.getDeclaredMethod( "getFilters", new Class[0] );
+        getFilters.setAccessible( true );
+        List filters = (List) getFilters.invoke( mojo, new Object[0] );
+
         // assertions - there must be one filter
-        assertEquals(1, filters.size());
-        
+        assertEquals( 1, filters.size() );
+
         // the filter must be able to filter the binary and the sources jar
-        Filter filter = (Filter) filters.get(0);
-        assertTrue(filter.canFilter(new File("myfaces-impl-2.0.1-SNAPSHOT.jar"))); // binary jar
-        assertTrue(filter.canFilter(new File("myfaces-impl-2.0.1-SNAPSHOT-sources.jar"))); // sources jar
+        Filter filter = (Filter) filters.get( 0 );
+        assertTrue( filter.canFilter( new File( "myfaces-impl-2.0.1-SNAPSHOT.jar" ) ) ); // binary jar
+        assertTrue( filter.canFilter( new File( "myfaces-impl-2.0.1-SNAPSHOT-sources.jar" ) ) ); // sources jar
     }
 
-    public void shaderWithPattern(String shadedPattern, File jar)
+    public void shaderWithPattern( String shadedPattern, File jar )
         throws Exception
     {
         Shader s = (Shader) lookup( Shader.ROLE );
@@ -190,7 +190,7 @@ public class ShadeMojoTest
         List relocators = new ArrayList();
 
         relocators.add( new SimpleRelocator( "org/codehaus/plexus/util", shadedPattern, null, Arrays.asList(
-            new String[]{"org/codehaus/plexus/util/xml/Xpp3Dom", "org/codehaus/plexus/util/xml/pull.*"} ) ) );
+            new String[]{ "org/codehaus/plexus/util/xml/Xpp3Dom", "org/codehaus/plexus/util/xml/pull.*" } ) ) );
 
         List resourceTransformers = new ArrayList();
 
@@ -200,5 +200,5 @@ public class ShadeMojoTest
 
         s.shade( set, jar, filters, relocators, resourceTransformers );
     }
-    
+
 }
