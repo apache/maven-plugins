@@ -19,6 +19,8 @@ package org.apache.maven.plugins.shade.resource;
  * under the License.
  */
 
+import org.apache.maven.plugins.shade.relocation.Relocator;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -29,7 +31,7 @@ public interface ResourceTransformer
 {
     boolean canTransformResource( String resource );
 
-    void processResource( String resource, InputStream is, List relocators )
+    void processResource( String resource, InputStream is, List<Relocator> relocators )
         throws IOException;
 
     boolean hasTransformedResource();

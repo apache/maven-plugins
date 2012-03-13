@@ -19,6 +19,9 @@ package org.apache.maven.plugins.shade.resource;
  * under the License.
  */
 
+import org.apache.maven.plugins.shade.relocation.Relocator;
+import org.codehaus.plexus.util.IOUtil;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -27,16 +30,14 @@ import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
 
-import org.codehaus.plexus.util.IOUtil;
-
 /**
  * A resource processor that appends content for a resource, separated by a newline.
- * 
  */
 public class AppendingTransformer
     implements ResourceTransformer
 {
     String resource;
+
     ByteArrayOutputStream data = new ByteArrayOutputStream();
 
     public boolean canTransformResource( String r )
@@ -49,7 +50,7 @@ public class AppendingTransformer
         return false;
     }
 
-    public void processResource( String resource, InputStream is, List relocators )
+    public void processResource( String resource, InputStream is, List<Relocator> relocators )
         throws IOException
     {
         IOUtil.copy( is, data );

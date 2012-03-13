@@ -19,6 +19,14 @@ package org.apache.maven.plugins.shade.resource;
  * under the License.
  */
 
+import org.apache.maven.plugins.shade.relocation.Relocator;
+import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.ReaderFactory;
+import org.codehaus.plexus.util.WriterFactory;
+import org.codehaus.plexus.util.xml.Xpp3Dom;
+import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
+import org.codehaus.plexus.util.xml.Xpp3DomWriter;
+
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -32,22 +40,13 @@ import java.util.Map;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
 
-import org.apache.maven.plugins.shade.relocation.Relocator;
-import org.codehaus.plexus.util.IOUtil;
-import org.codehaus.plexus.util.ReaderFactory;
-import org.codehaus.plexus.util.WriterFactory;
-import org.codehaus.plexus.util.xml.Xpp3Dom;
-import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
-import org.codehaus.plexus.util.xml.Xpp3DomWriter;
-
 /**
  * A resource processor that aggregates plexus <code>components.xml</code> files.
- * 
  */
 public class ComponentsXmlResourceTransformer
     implements ResourceTransformer
 {
-    private Map components = new LinkedHashMap();
+    private Map<String, Xpp3Dom> components = new LinkedHashMap<String, Xpp3Dom>();
 
     public static final String COMPONENTS_XML_PATH = "META-INF/plexus/components.xml";
 
@@ -56,7 +55,7 @@ public class ComponentsXmlResourceTransformer
         return COMPONENTS_XML_PATH.equals( resource );
     }
 
-    public void processResource( String resource, InputStream is, List relocators )
+    public void processResource( String resource, InputStream is, List<Relocator> relocators )
         throws IOException
     {
         Xpp3Dom newDom;
@@ -109,7 +108,7 @@ public class ComponentsXmlResourceTransformer
                 // TODO: use the tools in Plexus to merge these properly. For now, I just need an all-or-nothing
                 // configuration carry over
 
-                Xpp3Dom dom = (Xpp3Dom) components.get( key );
+                Xpp3Dom dom = components.get( key );
                 if ( dom.getChild( "configuration" ) != null )
                 {
                     component.addChild( dom.getChild( "configuration" ) );
@@ -180,14 +179,12 @@ public class ComponentsXmlResourceTransformer
         return baos.toByteArray();
     }
 
-    private String getRelocatedClass( String className, List relocators )
+    private String getRelocatedClass( String className, List<Relocator> relocators )
     {
         if ( className != null && className.length() > 0 && relocators != null )
         {
-            for ( Iterator it = relocators.iterator(); it.hasNext(); )
+            for ( Relocator relocator : relocators )
             {
-                Relocator relocator = (Relocator) it.next();
-
                 if ( relocator.canRelocateClass( className ) )
                 {
                     return relocator.relocateClass( className );
