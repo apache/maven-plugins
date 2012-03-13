@@ -24,6 +24,7 @@ import org.apache.maven.plugins.shade.filter.Filter;
 import org.apache.maven.plugins.shade.relocation.Relocator;
 import org.apache.maven.plugins.shade.resource.ManifestResourceTransformer;
 import org.apache.maven.plugins.shade.resource.ResourceTransformer;
+import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 import org.codehaus.plexus.util.IOUtil;
 import org.objectweb.asm.ClassReader;
@@ -51,8 +52,8 @@ import java.util.zip.ZipException;
 
 /**
  * @author Jason van Zyl
- * @plexus.component instantiation-strategy="per-lookup" role-hint="default"
  */
+@Component( role = Shader.class, hint = "default" )
 public class DefaultShader
     extends AbstractLogEnabled
     implements Shader

@@ -119,6 +119,11 @@ under the License.
       <artifactId>jdependency</artifactId>
       <version>0.7</version>
     </dependency>
+    <dependency>
+      <groupId>org.codehaus.plexus</groupId>
+      <artifactId>plexus-component-annotations</artifactId>
+      <version>1.5.5</version>
+    </dependency>
 
     <dependency>
       <groupId>junit</groupId>
@@ -140,17 +145,18 @@ under the License.
     <plugins>
       <plugin>
         <groupId>org.codehaus.plexus</groupId>
-        <artifactId>plexus-maven-plugin</artifactId>
-        <version>1.3.8</version>
+        <artifactId>plexus-component-metadata</artifactId>
+        <version>1.5.5</version>
         <executions>
           <execution>
             <goals>
-              <goal>descriptor</goal>
-              <goal>test-descriptor</goal>
+              <goal>generate-metadata</goal>
+              <goal>generate-test-metadata</goal>
             </goals>
           </execution>
         </executions>
       </plugin>
+
     </plugins>
   </build>
 
