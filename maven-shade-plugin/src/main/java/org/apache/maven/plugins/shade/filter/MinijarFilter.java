@@ -31,6 +31,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -53,6 +54,16 @@ public class MinijarFilter
 
     private int classesRemoved;
 
+    public MinijarFilter( MavenProject project, Log log )
+        throws IOException
+    {
+        this( project, log, Collections.<SimpleFilter>emptyList() );
+    }
+
+    /**
+     *
+     * @since 1.6
+     */
     public MinijarFilter( MavenProject project, Log log, List<SimpleFilter> simpleFilters )
         throws IOException
     {
@@ -84,7 +95,9 @@ public class MinijarFilter
         removePackages( artifactUnit );
         removable.removeAll( artifactUnit.getClazzes() );
         removable.removeAll( artifactUnit.getTransitiveDependencies() );
-        removeSpecificallyIncludedClasses( project, simpleFilters );
+        removeSpecificallyIncludedClasses( project, simpleFilters == null
+            ? Collections.<SimpleFilter>emptyList()
+            : simpleFilters );
     }
 
     private void removePackages( ClazzpathUnit artifactUnit )
