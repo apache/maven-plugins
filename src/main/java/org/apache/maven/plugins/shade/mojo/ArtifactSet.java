@@ -21,19 +21,21 @@ package org.apache.maven.plugins.shade.mojo;
 
 import java.util.Set;
 
-/** @author Jason van Zyl */
+/**
+ * @author Jason van Zyl
+ */
 public class ArtifactSet
 {
-    private Set includes;
+    private Set<String> includes;
 
-    private Set excludes;
+    private Set<String> excludes;
 
-    public Set getIncludes()
+    public Set<String> getIncludes()
     {
         return includes;
     }
 
-    public Set getExcludes()
+    public Set<String> getExcludes()
     {
         return excludes;
     }

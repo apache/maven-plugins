@@ -31,10 +31,10 @@ public class PackageRelocation
 
     private String shadedPattern;
 
-    private List includes;
+    private List<String> includes;
 
-    private List excludes;
-    
+    private List<String> excludes;
+
     private boolean rawString;
 
     public String getPattern()
@@ -47,16 +47,16 @@ public class PackageRelocation
         return shadedPattern;
     }
 
-    public List getIncludes()
+    public List<String> getIncludes()
     {
         return includes;
     }
 
-    public List getExcludes()
+    public List<String> getExcludes()
     {
         return excludes;
     }
-    
+
     public boolean isRawString()
     {
         return rawString;

@@ -31,7 +31,7 @@ import org.objectweb.asm.commons.RemappingMethodAdapter;
 
 /**
  * A temporary class to fix a bug in objectweb asm.
- * 
+ *
  * @see <a href="http://forge.ow2.org/tracker/index.php?func=detail&aid=314982&group_id=23&atid=100023">bug #314982</a>
  */
 class TempRemappingClassAdapter

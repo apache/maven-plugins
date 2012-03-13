@@ -37,6 +37,7 @@ import org.apache.maven.plugins.shade.filter.Filter;
 import org.apache.maven.plugins.shade.filter.MinijarFilter;
 import org.apache.maven.plugins.shade.filter.SimpleFilter;
 import org.apache.maven.plugins.shade.pom.PomWriter;
+import org.apache.maven.plugins.shade.relocation.Relocator;
 import org.apache.maven.plugins.shade.relocation.SimpleRelocator;
 import org.apache.maven.plugins.shade.resource.ResourceTransformer;
 import org.apache.maven.project.MavenProject;
@@ -437,11 +438,11 @@ public class ShadeMojo
         // Now add our extra resources
         try
         {
-            List filters = getFilters();
+            List<Filter> filters = getFilters();
 
-            List relocators = getRelocators();
+            List<Relocator> relocators = getRelocators();
 
-            List resourceTransformers = getResourceTransformers();
+            List<ResourceTransformer> resourceTransformers = getResourceTransformers();
 
             shader.shade( artifacts, outputJar, filters, relocators, resourceTransformers );
 
@@ -600,9 +601,9 @@ public class ShadeMojo
         return null;
     }
 
-    private List getRelocators()
+    private List<Relocator> getRelocators()
     {
-        List relocators = new ArrayList();
+        List<Relocator> relocators = new ArrayList<Relocator>();
 
         if ( relocations == null )
         {
@@ -620,17 +621,17 @@ public class ShadeMojo
         return relocators;
     }
 
-    private List getResourceTransformers()
+    private List<ResourceTransformer> getResourceTransformers()
     {
         if ( transformers == null )
         {
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
 
         return Arrays.asList( transformers );
     }
 
-    private List getFilters()
+    private List<Filter> getFilters()
         throws MojoExecutionException
     {
         List<Filter> filters = new ArrayList<Filter>();
@@ -655,7 +656,7 @@ public class ShadeMojo
 
                 ArtifactId pattern = new ArtifactId( filter.getArtifact() );
 
-                Set jars = new HashSet();
+                Set<File> jars = new HashSet<File>();
 
                 for ( Iterator it = artifacts.entrySet().iterator(); it.hasNext(); )
                 {
@@ -750,11 +751,11 @@ public class ShadeMojo
         throws IOException, DependencyTreeBuilderException, ProjectBuildingException
     {
         Model model = project.getOriginalModel();
-        List dependencies = new ArrayList();
+        List<Dependency> dependencies = new ArrayList<Dependency>();
 
         boolean modified = false;
 
-        List transitiveDeps = new ArrayList();
+        List<Dependency> transitiveDeps = new ArrayList<Dependency>();
 
         for ( Iterator it = project.getArtifacts().iterator(); it.hasNext(); )
         {
