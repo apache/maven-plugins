@@ -19,14 +19,14 @@ package org.apache.maven.plugins.shade.relocation;
  * under the License.
  */
 
+import org.codehaus.plexus.util.SelectorUtils;
+
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
-
-import org.codehaus.plexus.util.SelectorUtils;
 
 /**
  * @author Jason van Zyl
@@ -47,18 +47,18 @@ public class SimpleRelocator
     private final Set includes;
 
     private final Set excludes;
-    
+
     private final boolean rawString;
 
     public SimpleRelocator( String patt, String shadedPattern, List includes, List excludes )
     {
         this( patt, shadedPattern, includes, excludes, false );
     }
-    
+
     public SimpleRelocator( String patt, String shadedPattern, List includes, List excludes, boolean rawString )
     {
         this.rawString = rawString;
-        
+
         if ( rawString )
         {
             this.pathPattern = patt;
@@ -69,8 +69,16 @@ public class SimpleRelocator
         }
         else
         {
-            this.pattern = patt.replace( '/', '.' );
-            this.pathPattern = patt.replace( '.', '/' );
+            if ( patt == null )
+            {
+                this.pattern = "";
+                this.pathPattern = "";
+            }
+            else
+            {
+                this.pattern = patt.replace( '/', '.' );
+                this.pathPattern = patt.replace( '.', '/' );
+            }
 
             if ( shadedPattern != null )
             {
@@ -156,7 +164,7 @@ public class SimpleRelocator
         {
             return Pattern.compile( pathPattern ).matcher( path ).find();
         }
-        
+
         if ( path.endsWith( ".class" ) )
         {
             path = path.substring( 0, path.length() - 6 );

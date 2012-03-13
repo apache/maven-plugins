@@ -1,12 +1,12 @@
 package org.apache.maven.plugins.shade.relocation;
 
-import java.util.Arrays;
-
 import junit.framework.TestCase;
+
+import java.util.Arrays;
 
 /**
  * Test for {@link SimpleRelocator}.
- * 
+ *
  * @author Benjamin Bentmann
  * @version $Id$
  */
@@ -28,9 +28,8 @@ public class SimpleRelocatorTest
         assertEquals( false, relocator.canRelocatePath( "org/Foo/Class" ) );
         assertEquals( false, relocator.canRelocatePath( "org/Foo/Class.class" ) );
 
-        relocator =
-            new SimpleRelocator( "org.foo", null, null, Arrays.asList( new String[] { "org.foo.Excluded", "org.foo.public.*",
-                "org.foo.Public*Stuff" } ) );
+        relocator = new SimpleRelocator( "org.foo", null, null, Arrays.asList(
+            new String[]{ "org.foo.Excluded", "org.foo.public.*", "org.foo.Public*Stuff" } ) );
         assertEquals( true, relocator.canRelocatePath( "org/foo/Class" ) );
         assertEquals( true, relocator.canRelocatePath( "org/foo/Class.class" ) );
         assertEquals( true, relocator.canRelocatePath( "org/foo/excluded" ) );
@@ -58,9 +57,8 @@ public class SimpleRelocatorTest
         assertEquals( false, relocator.canRelocateClass( "com.foo.bar.Class" ) );
         assertEquals( false, relocator.canRelocateClass( "org.Foo.Class" ) );
 
-        relocator =
-            new SimpleRelocator( "org.foo", null, null, Arrays.asList( new String[] { "org.foo.Excluded", "org.foo.public.*",
-                "org.foo.Public*Stuff" } ) );
+        relocator = new SimpleRelocator( "org.foo", null, null, Arrays.asList(
+            new String[]{ "org.foo.Excluded", "org.foo.public.*", "org.foo.Public*Stuff" } ) );
         assertEquals( true, relocator.canRelocateClass( "org.foo.Class" ) );
         assertEquals( true, relocator.canRelocateClass( "org.foo.excluded" ) );
         assertEquals( false, relocator.canRelocateClass( "org.foo.Excluded" ) );
@@ -71,7 +69,7 @@ public class SimpleRelocatorTest
         assertEquals( false, relocator.canRelocateClass( "org.foo.PublicStuff" ) );
         assertEquals( false, relocator.canRelocateClass( "org.foo.PublicUtilStuff" ) );
     }
-    
+
     public void testCanRelocateRawString()
     {
         SimpleRelocator relocator;
