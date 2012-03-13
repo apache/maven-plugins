@@ -19,6 +19,8 @@ package org.apache.maven.plugins.shade.resource;
  * under the License.
  */
 
+import org.apache.maven.plugins.shade.relocation.Relocator;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -27,7 +29,6 @@ import java.util.jar.JarOutputStream;
 /**
  * A resource processor that prevents the inclusion of an arbitrary
  * resource into the shaded JAR.
- *
  */
 public class DontIncludeResourceTransformer
     implements ResourceTransformer
@@ -44,10 +45,10 @@ public class DontIncludeResourceTransformer
         return false;
     }
 
-    public void processResource( String resource, InputStream is, List relocators )
+    public void processResource( String resource, InputStream is, List<Relocator> relocators )
         throws IOException
     {
-
+        // no op
     }
 
     public boolean hasTransformedResource()
@@ -58,5 +59,6 @@ public class DontIncludeResourceTransformer
     public void modifyOutputStream( JarOutputStream os )
         throws IOException
     {
+        // no op
     }
 }

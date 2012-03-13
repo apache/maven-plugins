@@ -19,6 +19,9 @@ package org.apache.maven.plugins.shade.resource;
  * under the License.
  */
 
+import org.apache.maven.plugins.shade.relocation.Relocator;
+import org.codehaus.plexus.util.IOUtil;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -26,8 +29,6 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
-
-import org.codehaus.plexus.util.IOUtil;
 
 /**
  * A resource processor that allows the addition of an arbitrary file
@@ -37,6 +38,7 @@ public class IncludeResourceTransformer
     implements ResourceTransformer
 {
     File file;
+
     String resource;
 
     public boolean canTransformResource( String r )
@@ -44,10 +46,10 @@ public class IncludeResourceTransformer
         return false;
     }
 
-    public void processResource( String resource, InputStream is, List relocators )
+    public void processResource( String resource, InputStream is, List<Relocator> relocators )
         throws IOException
     {
-
+        // no op
     }
 
     public boolean hasTransformedResource()

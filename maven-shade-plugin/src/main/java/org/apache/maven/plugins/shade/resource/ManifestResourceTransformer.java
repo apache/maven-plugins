@@ -19,6 +19,9 @@ package org.apache.maven.plugins.shade.resource;
  * under the License.
  */
 
+import org.apache.maven.plugins.shade.relocation.Relocator;
+import org.codehaus.plexus.util.IOUtil;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
@@ -29,8 +32,6 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
-
-import org.codehaus.plexus.util.IOUtil;
 
 /**
  * A resource processor that allows the arbitrary addition of attributes to
@@ -46,10 +47,12 @@ public class ManifestResourceTransformer
 
     // Configuration
     private String mainClass;
+
     private Map manifestEntries;
 
     // Fields
     private boolean manifestDiscovered;
+
     private Manifest manifest;
 
     public boolean canTransformResource( String resource )
@@ -62,7 +65,7 @@ public class ManifestResourceTransformer
         return false;
     }
 
-    public void processResource( String resource, InputStream is, List relocators )
+    public void processResource( String resource, InputStream is, List<Relocator> relocators )
         throws IOException
     {
         // We just want to take the first manifest we come across as that's our project's manifest. This is the behavior
