@@ -1,4 +1,4 @@
-package org.apache.maven.plugins.svnpubsub;
+package org.apache.maven.plugins.scmpublish;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
