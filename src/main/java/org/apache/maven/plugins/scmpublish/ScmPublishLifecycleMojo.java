@@ -28,8 +28,8 @@ import org.apache.maven.plugin.MojoFailureException;
  * @execute lifecycle="svnpubsub" phase="svnpubsub-publish"
  * @aggregate
  */
-public class SvnpubsubLifecycleMojo
-    extends AbstractSvnpubsubMojo
+public class ScmPublishLifecycleMojo
+    extends AbstractScmPublishMojo
 {
 
     public void execute()

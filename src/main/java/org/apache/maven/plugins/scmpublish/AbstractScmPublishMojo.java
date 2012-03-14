@@ -51,24 +51,24 @@ import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.map.MappingJsonFactory;
 
 /**
- * Base class for the svnpubsub mojos.
+ * Base class for the site-scm-publish mojos.
  */
-public abstract class AbstractSvnpubsubMojo
+public abstract class AbstractScmPublishMojo
     extends AbstractMojo
 {
 
     /**
      * Location of the inventory file.
      * 
-     * @parameter expression="${svnpubsub.inventoryFile}"
-     *            default-value="${project.build.directory}/svnpubsub-inventory.js"
+     * @parameter expression="${scmpublish.inventoryFile}"
+     *            default-value="${project.build.directory}/scmpublish-inventory.js"
      */
     protected File inventoryFile;
 
     /**
      * Location of the svn publication tree.
      * 
-     * @parameter expression="${svnpubsub.pubScmUrl}"
+     * @parameter expression="${scmpublish.pubScmUrl}"
      * @required
      */
     protected String pubScmUrl;
@@ -76,8 +76,8 @@ public abstract class AbstractSvnpubsubMojo
     /**
      * Location of the svn publication tree.
      * 
-     * @parameter expression="${svnpubsub.checkoutDirectory}"
-     *            default-value="${project.build.directory}/svnpubsub-checkout"
+     * @parameter expression="${scmpublish.checkoutDirectory}"
+     *            default-value="${project.build.directory}/scmpublish-checkout"
      */
     protected File checkoutDirectory;
 
@@ -204,7 +204,7 @@ public abstract class AbstractSvnpubsubMojo
 
     }
 
-    protected AbstractSvnpubsubMojo()
+    protected AbstractScmPublishMojo()
     {
         super();
     }
@@ -232,7 +232,7 @@ public abstract class AbstractSvnpubsubMojo
         inventory = new ArrayList<File>();
         inventory.addAll( FileUtils.listFiles( checkoutDirectory, new DotFilter(), new DotFilter() ) );
         Collections.sort( inventory );
-        SvnpubsubInventory initialInventory = new SvnpubsubInventory();
+        ScmPublishInventory initialInventory = new ScmPublishInventory();
         Set<String> paths = new HashSet<String>();
 
         /*
@@ -271,7 +271,7 @@ public abstract class AbstractSvnpubsubMojo
         {
             MappingJsonFactory factory = new MappingJsonFactory();
             JsonParser parser = factory.createJsonParser( inventoryFile );
-            SvnpubsubInventory storedInventory = parser.readValueAs( SvnpubsubInventory.class );
+            ScmPublishInventory storedInventory = parser.readValueAs( ScmPublishInventory.class );
             inventory = new ArrayList<File>();
             for ( String p : storedInventory.getPaths() )
             {

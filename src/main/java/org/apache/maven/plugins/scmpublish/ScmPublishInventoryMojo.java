@@ -39,7 +39,7 @@ import org.codehaus.plexus.util.StringUtils;
 /**
  * Prepare a directory for version-managed site generation. This checks out the specified directory from the SCM and
  * then takes inventory of all the resulting files. This inventory then allows the 'checkin' target to tee up deletions
- * as well as modifications and additions. There's an assumption here that an entire directory in svn is dedicated to
+ * as well as modifications and additions. There's an assumption here that an entire directory in SCM is dedicated to
  * the publication process for this project. In the aggregate case, this is going to take some doing. 
  * 
  * If we allow this to be non-aggregate, then each module has to configure pathnames, which would be a pain. So
@@ -54,8 +54,8 @@ import org.codehaus.plexus.util.StringUtils;
  * @phase pre-site
  * @aggregate
  */
-public class SvnpubsubInventoryMojo
-    extends AbstractSvnpubsubMojo
+public class ScmPublishInventoryMojo
+    extends AbstractScmPublishMojo
 {
     private void checkoutExisting()
         throws ReleaseExecutionException, ReleaseFailureException

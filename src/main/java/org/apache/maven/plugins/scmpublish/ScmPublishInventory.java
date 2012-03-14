@@ -26,11 +26,11 @@ import java.util.Set;
  * A class designed for json serialization to store the existing inventory, if any. In this version, there's no attempt
  * to account for directories as managed items.
  */
-public class SvnpubsubInventory
+public class ScmPublishInventory
 {
     private Set<String> paths;
 
-    public SvnpubsubInventory() 
+    public ScmPublishInventory() 
     {
         paths = new HashSet<String>(); 
     }

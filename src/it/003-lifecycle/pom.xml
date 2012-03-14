@@ -42,7 +42,7 @@
           <artifactId>maven-site-plugin</artifactId>
           <version>3.0</version>
           <configuration>
-            <stagingDirectory>target/svnpubsub-checkout</stagingDirectory>
+            <stagingDirectory>target/scmpublish-checkout</stagingDirectory>
           </configuration>
         </plugin>
       </plugins>

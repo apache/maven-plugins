@@ -53,27 +53,27 @@ import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
  * @phase post-site
  * @aggregate
  */
-public class SvnpubsubPublishMojo
-    extends AbstractSvnpubsubMojo
+public class ScmPublishPublishMojo
+    extends AbstractScmPublishMojo
 {
 
     /**
      * Display list of added, deleted, and changed files, but do not do any actual SCM operations.
      * 
-     * @parameter expression="${svnpubsub.dryRun}"
+     * @parameter expression="${scmpublish.dryRun}"
      */
     private boolean dryRun;
 
     /**
      * Run add and delete commands, but leave the actually checkin for the user to run manually.
      * 
-     * @parameter expression="${svnpubsub.skipCheckin}"
+     * @parameter expression="${scmpublish.skipCheckin}"
      */
     private boolean skipCheckin;
 
     /**
      * SCM log/checkin comment for this publication.
-     * @parameter expression="${svnpubsub.checkinComment}"
+     * @parameter expression="${scmpublish.checkinComment}"
      */
     private String checkinComment;
 
