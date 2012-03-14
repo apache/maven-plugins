@@ -24,8 +24,8 @@ import org.apache.maven.plugin.MojoFailureException;
 
 /**
  * 
- * @goal svnpubsub
- * @execute lifecycle="svnpubsub" phase="svnpubsub-publish"
+ * @goal scmpublish
+ * @execute lifecycle="scmpublish" phase="scmpublish-publish"
  * @aggregate
  */
 public class ScmPublishLifecycleMojo

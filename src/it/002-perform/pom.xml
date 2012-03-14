@@ -74,7 +74,9 @@
           <execution>
             <id>perform</id>
             <phase>post-site</phase>
-            <goals><goal>publish</goal></goals>
+            <goals>
+              <goal>publish</goal>
+            </goals>
             <configuration>
               <dryRun>true</dryRun>
             </configuration>
