@@ -152,7 +152,7 @@ Creating Content
 
   For example, the module for the Maven website contains a
   {{{http://svn.apache.org/repos/asf/maven/site/trunk/src/site/apt/download.apt.vm}<<<src/site/apt/download.apt.vm>>>}}
-  file, which uses the expression <<<$\{currentVersion}>>> to filter in a
+  file, which uses the expression <<<$\{currentStableVersion}>>> to filter in a
   property set in the
   {{{http://svn.apache.org/repos/asf/maven/site/trunk/pom.xml}POM}}.
 
