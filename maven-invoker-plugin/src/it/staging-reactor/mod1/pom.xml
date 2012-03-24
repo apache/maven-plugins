@@ -55,8 +55,7 @@ under the License.
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-invoker-plugin</artifactId>
-        <!-- TODO: Use @pom.version@ once MINVOKER-50 is fixed -->
-        <version>${invoker.version}</version>
+        <version>@project.version@</version>
         <configuration>
           <localRepositoryPath>${project.build.directory}/it-repo</localRepositoryPath>
         </configuration>
