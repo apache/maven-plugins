@@ -294,10 +294,6 @@ under the License.
                 <goal>clean</goal>
                 <goal>initialize</goal>
               </goals>
-              <properties>
-                <!-- TODO: Workaround for MINVOKER-50, remove once fixed -->
-                <invoker.version>${project.version}</invoker.version>
-              </properties>
             </configuration>
             <executions>
               <execution>
