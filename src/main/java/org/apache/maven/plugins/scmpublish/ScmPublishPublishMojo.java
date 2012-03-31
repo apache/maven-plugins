@@ -35,6 +35,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -77,15 +78,25 @@ public class ScmPublishPublishMojo
      */
     private String checkinComment;
 
+    /**
+     * Filename extensions of files which need new line normalization.
+     */
+    private final static String[] NORMALIZE_EXTENSIONS = { "html", "css", "js" };
+
     private File relativize( File base, File file )
     {
         return new File( base.toURI().relativize( file.toURI() ).getPath() );
     }
 
+    private boolean requireNormalizeNewlines( File f )
+        throws IOException
+    {
+        return FilenameUtils.isExtension( f.getName(), NORMALIZE_EXTENSIONS );
+    }
+
     private void normalizeNewlines( File f )
         throws IOException
     {
-        // FIXME: only text files should be normalized, not binary
         File tmpFile = null;
         BufferedReader in = null;
         PrintWriter out = null;
@@ -123,7 +134,10 @@ public class ScmPublishPublishMojo
         {
             try
             {
-                normalizeNewlines( f );
+                if ( requireNormalizeNewlines( f ) )
+                {
+                    normalizeNewlines( f );
+                }
             }
             catch ( IOException e )
             {
