@@ -356,6 +356,29 @@ Configuring the Site Descriptor
   If you don't specify a skin, the Site Plugin will use
   {{{http://maven.apache.org/skins/maven-default-skin/}Maven Default Skin}}.
 
+* Custom Properties
+
+  The authors of skins have the option to use custom properties that are unique
+  to their skin. The users of the skin can then specify their own values for
+  these properties in their <<<site.xml>>> using the <<<\<custom\>>>> element.
+
+  One skin that uses this is the Maven Fluido Skin. There are many examples on
+  {{{http://maven.apache.org/skins/maven-fluido-skin/}their site}} showing what
+  is possible to do with custom properties. Here is one example:
+
++-----+
+<project>
+  ...
+  <custom>
+    <fluidoSkin>
+      <topBarEnabled>true</topBarEnabled>
+      <sideBarEnabled>false</sideBarEnabled>
+    </fluidoSkin>
+  </custom>
+  ...
+</project>
++-----+
+
 * Expressions
 
   The <<<site.xml>>> can contain some expressions, like <<<$\{project.name\}>>>.
