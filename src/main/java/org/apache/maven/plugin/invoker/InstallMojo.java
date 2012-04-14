@@ -369,7 +369,7 @@ public class InstallMojo
             }
 
             // Install any attached project artifacts
-            Collection<Artifact> attachedArtifacts = mvnProject.getAttachedArtifacts();
+            Collection<Artifact> attachedArtifacts = (Collection<Artifact>) mvnProject.getAttachedArtifacts();
             for ( Artifact attachedArtifact : attachedArtifacts )
             {
                 installArtifact( attachedArtifact.getFile(), attachedArtifact, testRepository );
@@ -465,7 +465,7 @@ public class InstallMojo
         }
 
         // group transitive dependencies (even those that don't contribute to the class path like POMs) ...
-        Collection<Artifact> artifacts = mvnProject.getArtifacts();
+        Collection<Artifact> artifacts = (Collection<Artifact>) mvnProject.getArtifacts();
         // ... into dependencies that were resolved from reactor projects ...
         Collection<String> dependencyProjects = new LinkedHashSet<String>();
         // ... and those that were resolved from the (local) repo

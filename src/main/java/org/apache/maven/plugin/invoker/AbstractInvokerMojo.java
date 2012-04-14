@@ -771,11 +771,11 @@ public abstract class AbstractInvokerMojo
 
             Collection<String> modulePaths = new LinkedHashSet<String>();
 
-            modulePaths.addAll( model.getModules() );
+            modulePaths.addAll( (List<String>) model.getModules() );
 
             for ( Profile profile : (List<Profile>) model.getProfiles() )
             {
-                modulePaths.addAll( profile.getModules() );
+                modulePaths.addAll( (List<String>) profile.getModules() );
             }
 
             for ( String modulePath : modulePaths )

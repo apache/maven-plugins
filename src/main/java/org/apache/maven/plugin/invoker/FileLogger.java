@@ -19,15 +19,12 @@ package org.apache.maven.plugin.invoker;
  * under the License.
  */
 
+import java.io.File;
+import java.io.IOException;
+
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.shared.invoker.InvocationOutputHandler;
 import org.apache.maven.shared.scriptinterpreter.ExecutionLogger;
-import org.codehaus.plexus.util.IOUtil;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.PrintStream;
 
 /**
  * @version $Id$
@@ -36,7 +33,6 @@ class FileLogger
     extends org.apache.maven.shared.scriptinterpreter.FileLogger
     implements InvocationOutputHandler, ExecutionLogger
 {
-
 
     /**
      * Creates a new logger that writes to the specified file.
