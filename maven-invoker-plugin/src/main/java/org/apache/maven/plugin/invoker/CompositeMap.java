@@ -20,8 +20,8 @@ package org.apache.maven.plugin.invoker;
  */
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 
 import org.apache.maven.project.MavenProject;
@@ -62,7 +62,7 @@ class CompositeMap
             throw new IllegalArgumentException( "no project specified" );
         }
         this.mavenProject = mavenProject;
-        this.properties = properties == null ? (Map) new Properties() : properties;
+        this.properties = properties == null ? new HashMap<String, Object>() : properties;
     }
 
     /**
