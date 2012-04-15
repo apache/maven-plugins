@@ -185,8 +185,6 @@ public abstract class AbstractScmPublishMojo
 
     protected ScmProvider scmProvider;
     protected ScmRepository scmRepository;
-    // a list (ordered) to maintain sort for ease of comparison.
-    protected List<File> inventory;
 
     protected static class DotFilter
         implements IOFileFilter
@@ -226,12 +224,13 @@ public abstract class AbstractScmPublishMojo
      * git? Or use http://plexus.codehaus.org/plexus-utils/apidocs/org/codehaus/plexus/util/AbstractScanner.html#DEFAULTEXCLUDES?
      * @throws MojoFailureException 
      */
-    protected void writeInventory()
+    protected List<File> writeInventory()
         throws MojoFailureException
     {
-        inventory = new ArrayList<File>();
+        List<File> inventory = new ArrayList<File>();
         inventory.addAll( FileUtils.listFiles( checkoutDirectory, new DotFilter(), new DotFilter() ) );
         Collections.sort( inventory );
+
         ScmPublishInventory initialInventory = new ScmPublishInventory();
         Set<String> paths = new HashSet<String>();
 
@@ -253,6 +252,7 @@ public abstract class AbstractScmPublishMojo
             JsonGenerator gen = factory.createJsonGenerator( inventoryFile, JsonEncoding.UTF8 );
             gen.writeObject( initialInventory );
             gen.close();
+            return inventory;
         }
         catch ( JsonProcessingException e )
         {
@@ -264,7 +264,7 @@ public abstract class AbstractScmPublishMojo
         }
     }
 
-    protected void readInventory()
+    protected List<File> readInventory()
         throws MojoFailureException
     {
         try
@@ -272,12 +272,13 @@ public abstract class AbstractScmPublishMojo
             MappingJsonFactory factory = new MappingJsonFactory();
             JsonParser parser = factory.createJsonParser( inventoryFile );
             ScmPublishInventory storedInventory = parser.readValueAs( ScmPublishInventory.class );
-            inventory = new ArrayList<File>();
+            List<File> inventory = new ArrayList<File>();
             for ( String p : storedInventory.getPaths() )
             {
                 inventory.add( new File( p ) );
             }
             parser.close();
+            return inventory;
         }
         catch ( JsonProcessingException e )
         {

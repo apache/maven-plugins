@@ -160,7 +160,7 @@ public class ScmPublishPublishMojo
         }
 
         // read in the list left behind by prepare; fail if it's not there.
-        readInventory();
+        List<File> inventory = readInventory();
 
         // setup the scm plugin with help from release plugin utilities
         try

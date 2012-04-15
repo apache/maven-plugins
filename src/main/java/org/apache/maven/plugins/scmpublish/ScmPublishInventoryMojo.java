@@ -21,6 +21,7 @@ package org.apache.maven.plugins.scmpublish;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -37,9 +38,12 @@ import org.apache.maven.shared.release.util.ReleaseUtil;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
- * Prepare a directory for version-managed site generation. This checks out the specified directory from the SCM and
- * then takes inventory of all the resulting files. This inventory then allows the 'checkin' target to tee up deletions
- * as well as modifications and additions. There's an assumption here that an entire directory in SCM is dedicated to
+ * Prepare a directory for version-managed site generation. This checks out the specified directory from the SCM,
+ * then takes inventory of all the resulting files then deletes every files.
+ * This inventory then allows the 'publish' target to tee up deletions
+ * as well as modifications and additions.
+ * 
+ * There's an assumption here that an entire directory in SCM is dedicated to
  * the publication process for this project. In the aggregate case, this is going to take some doing. 
  * 
  * If we allow this to be non-aggregate, then each module has to configure pathnames, which would be a pain. So
@@ -150,7 +154,7 @@ public class ScmPublishInventoryMojo
      * For now, don't bother with deleting empty directories. They are fairly harmless,
      * and leaving them around allows this to work with pre-1.7 svn.
      */
-    private void deleteInventory() 
+    private void deleteInventory( List<File> inventory ) 
     {
         for ( File f : inventory )
         {
@@ -167,16 +171,18 @@ public class ScmPublishInventoryMojo
         try
         {
             checkoutExisting();
-            writeInventory();
-            deleteInventory();
+
+            List<File> inventory = writeInventory();
+
+            deleteInventory( inventory );
         }
         catch ( ReleaseExecutionException e )
         {
-            throw new MojoExecutionException( e.getMessage() );
+            throw new MojoExecutionException( e.getMessage(), e );
         }
         catch ( ReleaseFailureException e )
         {
-            throw new MojoFailureException( e.getMessage() );
+            throw new MojoFailureException( e.getMessage(), e );
         }
     }
 }
