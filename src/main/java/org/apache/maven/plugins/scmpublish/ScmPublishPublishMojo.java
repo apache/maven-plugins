@@ -190,8 +190,8 @@ public class ScmPublishPublishMojo
         updated.addAll( newInventory );
         updated.retainAll( inventory ); // set intersection
 
-        logInfo( "Publish files: %d addition(s), %d update(s), %d delete(s)", added.size(), deleted.size(),
-                 updated.size() );
+        logInfo( "Publish files: %d addition(s), %d update(s), %d delete(s)", added.size(), updated.size(),
+                 deleted.size() );
 
         if ( dryRun )
         {
