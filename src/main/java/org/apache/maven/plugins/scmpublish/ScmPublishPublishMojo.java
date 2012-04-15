@@ -301,6 +301,10 @@ public class ScmPublishPublishMojo
                 {
                     dirsToAdd.add( relativized );
                 }
+                else
+                {
+                    break;
+                }
             }
             addedList.add( relativize( checkoutDirectory, f ) );
         }
