@@ -54,7 +54,7 @@
         <version>@pom.version@</version>
         <extensions>true</extensions>
         <configuration>
-          <pubScmUrl>scm:svn:https://svn.apache.org/repos/asf/maven/sandbox/bimargulies/site-test-003</pubScmUrl>
+          <pubScmUrl>scm:svn:file://${basedir}/target/svn-root</pubScmUrl>
           <providerImplementations>
             <svn>javasvn</svn>
           </providerImplementations>

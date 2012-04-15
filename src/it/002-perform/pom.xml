@@ -47,29 +47,45 @@
         </plugin>
       </plugins>
     </pluginManagement>
+
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId> maven-site-scm-publish-plugin</artifactId>
+        <artifactId>maven-site-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>stage-for-pub</id>
+            <phase>post-site</phase>
+            <goals>
+              <goal>stage</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-site-scm-publish-plugin</artifactId>
         <version>@pom.version@</version>
         <configuration>
-          <pubScmUrl>scm:svn:https://svn.apache.org/repos/asf/maven/sandbox/bimargulies/site-test</pubScmUrl>
-          <providerImplementations>
-            <svn>javasvn</svn>
-          </providerImplementations>
+          <pubScmUrl>scm:svn:file://${basedir}/target/svn-root</pubScmUrl>
+          <!--providerImplementations>
+            <svn>javasvn</svn> TODO: fix this provider because delete doesn't work
+          </providerImplementations-->
         </configuration>
-        <dependencies>
+        <!--dependencies>
           <dependency>
             <groupId>com.google.code.maven-scm-provider-svnjava</groupId>
             <artifactId>maven-scm-provider-svnjava</artifactId>
             <version>1.15</version>
           </dependency>
-        </dependencies>
+        </dependencies-->
         <executions>
           <execution>
             <id>prepare</id>
             <phase>pre-site</phase>
-            <goals><goal>prepare</goal></goals>
+            <goals>
+              <goal>prepare</goal>
+            </goals>
           </execution>
           <execution>
             <id>perform</id>
@@ -77,9 +93,6 @@
             <goals>
               <goal>publish</goal>
             </goals>
-            <configuration>
-              <dryRun>true</dryRun>
-            </configuration>
           </execution>
         </executions>
       </plugin>

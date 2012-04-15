@@ -38,7 +38,7 @@
             <phase>pre-site</phase>
             <goals><goal>prepare</goal></goals>
             <configuration>
-              <pubScmUrl>scm:svn:https://svn.apache.org/repos/asf/maven/sandbox/bimargulies/site-test</pubScmUrl>
+              <pubScmUrl>scm:svn:file://${basedir}/target/svn-root</pubScmUrl>
             </configuration>
           </execution>
         </executions>

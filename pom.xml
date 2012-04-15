@@ -82,6 +82,12 @@ under the License.
       <version>${scmVersion}</version>
     </dependency>
     <dependency>
+      <groupId>org.apache.maven.scm</groupId>
+      <artifactId>maven-scm-provider-svntest</artifactId>
+      <version>${scmVersion}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>org.codehaus.jackson</groupId>
       <artifactId>jackson-core-asl</artifactId>
       <version>1.9.4</version>
@@ -142,6 +148,7 @@ under the License.
               </goals>
               <settingsFile>src/it/settings.xml</settingsFile>
               <debug>true</debug>
+              <addTestClassPath>true</addTestClassPath>
             </configuration>
             <executions>
               <execution>
