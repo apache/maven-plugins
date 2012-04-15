@@ -297,7 +297,7 @@ public class ScmPublishPublishMojo
             {
                 File relativized = relativize( checkoutDirectory, dir );
                 //  we do the best we can with the directories
-                if ( !createdDirs.add( relativized ) )
+                if ( createdDirs.add( relativized ) )
                 {
                     dirsToAdd.add( relativized );
                 }
