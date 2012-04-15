@@ -240,9 +240,9 @@ public class ScmPublishPublishMojo
             CheckInScmResult checkinResult = scmProvider.checkIn( scmRepository, updatedFileSet, checkinComment );
             if ( !checkinResult.isSuccess() )
             {
-                logError( "delete operation failed: %s",
+                logError( "checkin operation failed: %s",
                           checkinResult.getProviderMessage() + " " + checkinResult.getCommandOutput() );
-                throw new MojoExecutionException( "Failed to delete files: " + checkinResult.getProviderMessage()
+                throw new MojoExecutionException( "Failed to checkin files: " + checkinResult.getProviderMessage()
                     + " " + checkinResult.getCommandOutput() );
             }
         }
