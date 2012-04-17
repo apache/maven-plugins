@@ -27,8 +27,12 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.invoker.model.BuildJob;
 import org.apache.maven.plugin.invoker.model.io.xpp3.BuildJobXpp3Writer;
+import org.apache.maven.plugin.registry.TrackableBase;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Settings;
+import org.apache.maven.settings.SettingsUtils;
+import org.apache.maven.settings.io.xpp3.SettingsXpp3Reader;
+import org.apache.maven.settings.io.xpp3.SettingsXpp3Writer;
 import org.apache.maven.shared.invoker.CommandLineConfigurationException;
 import org.apache.maven.shared.invoker.DefaultInvocationRequest;
 import org.apache.maven.shared.invoker.InvocationRequest;
@@ -50,11 +54,14 @@ import org.codehaus.plexus.util.InterpolationFilterReader;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.WriterFactory;
+import org.codehaus.plexus.util.xml.XmlStreamReader;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
@@ -1283,8 +1290,8 @@ public abstract class AbstractInvokerMojo
      *
      * @param basedir           The base directory of the project, must not be <code>null</code>.
      * @param pomFile           The (already interpolated) POM file, may be <code>null</code> for a POM-less Maven invocation.
-     * @param settingsFile      The (already interpolated) user settings file for the build, may be <code>null</code> to use
-     *                          the current user settings.
+     * @param settingsFile      The (already interpolated) user settings file for the build, may be <code>null</code>. Will be
+     *                          merged with the settings file of the invoking Maven process.
      * @param invokerProperties The properties to use.
      * @return <code>true</code> if the project was launched or <code>false</code> if the selector script indicated that
      *         the project should be skipped.
@@ -1337,7 +1344,66 @@ public abstract class AbstractInvokerMojo
 
             request.setLocalRepositoryDirectory( localRepositoryPath );
 
-            request.setUserSettingsFile( settingsFile );
+            Settings mergedSettings = null;
+            if ( settingsFile != null )
+            {
+                // Have to merge the specified settings file (dominant) and the one of the invoking Maven process
+                Reader reader = null;
+                try
+                {
+                    reader = new XmlStreamReader(settingsFile);
+                    SettingsXpp3Reader settingsReader = new SettingsXpp3Reader();
+                    Settings dominantSettings = settingsReader.read(reader);
+                    Settings recessiveSettings = this.settings;
+                    
+                    SettingsUtils.merge( dominantSettings, recessiveSettings, TrackableBase.USER_LEVEL );
+                    
+                    mergedSettings = dominantSettings;
+                    getLog().debug( "Merged specified settings file with settings of invoking process" );
+                }
+                catch ( XmlPullParserException e )
+                {
+                    throw new MojoExecutionException( "Could not read specified settings file", e );
+                }
+                catch ( IOException e )
+                {
+                    throw new MojoExecutionException( "Could not read specified settings file", e );
+                }
+                finally
+                {
+                    IOUtil.close( reader );
+                }
+            }
+            else
+            {
+                mergedSettings = this.settings;
+            }
+
+            try {
+                File mergedSettingsFile = File.createTempFile( "invoker-settings", ".xml" );
+                SettingsXpp3Writer settingsWriter = new SettingsXpp3Writer();
+                FileWriter fileWriter = null;
+                try
+                {
+                    fileWriter = new FileWriter( mergedSettingsFile );
+                    settingsWriter.write( fileWriter, mergedSettings );
+                }
+                finally
+                {
+                    IOUtil.close( fileWriter );
+                }
+
+                if ( getLog().isDebugEnabled() )
+                {
+                    getLog().debug( "Created temporary file for invoker settings.xml: "
+                                    + mergedSettingsFile.getAbsolutePath() );
+                }
+                request.setUserSettingsFile( mergedSettingsFile );
+            }
+            catch ( IOException e )
+            {
+                throw new MojoExecutionException( "Could not create temporary file for invoker settings.xml", e );
+            }
 
             request.setInteractive( false );
 

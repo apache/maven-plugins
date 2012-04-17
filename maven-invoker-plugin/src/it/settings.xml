@@ -20,6 +20,15 @@ under the License.
 -->
 
 <settings>
+  <servers>
+    <!-- server definition used in verification of settings-merge IT -->
+    <server>
+      <id>dummy-it-settings-merge</id>
+      <username>user</username>
+      <password>password</password>
+    </server>
+  </servers>
+
   <profiles>
     <profile>
       <id>it-repo</id>
@@ -29,6 +38,10 @@ under the License.
       <properties>
         <!-- This property allows the ITs to access the real local repository instead of the isolated one -->
         <invoker.repo.local>@localRepository@</invoker.repo.local>
+        <!-- Property used in verification of settings-inherit IT -->
+        <it.settings-inherit>exists</it.settings-inherit>
+        <!-- Property used in verification of settings-merge IT -->
+        <it.settings-merge.1>exists</it.settings-merge.1>
       </properties>
       <repositories>
         <repository>
