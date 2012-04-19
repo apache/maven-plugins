@@ -69,9 +69,13 @@ mvn site
 mvn checkstyle:checkstyle
 +-----+
 
- To specifically configure the Checkstyle Plugin, you need to the add it in the
- <<<\<build\>>>> section of your <<<pom.xml>>> as
- shown in the sample below.
+* Configure the Checkstyle Plugin
+
+** Maven 3
+
+  As per {{{https://cwiki.apache.org/MAVEN/maven-3x-compatibility-notes.html}Maven 3 Compatibility Notes}}
+  to configure the Checkstyle Plugin, you need to the add it in the <<<\<build\>>>> section of your <<<pom.xml>>> as
+  shown in the sample below.
 
 +-----+
 <project>
@@ -92,3 +96,8 @@ mvn checkstyle:checkstyle
   ...
 </project>
 +-----+
+
+** Maven 2
+
+  You may need to duplicate some configuration details between the <<<\<build\>>>> section and the <<<\<reporting\>>>>
+  section, depending on whether you use checkstyle as part of the build, part of site, or both.
