@@ -66,12 +66,12 @@ public abstract class AbstractIssueManagementSystem
     {
         for ( Map.Entry<String, String> me : issueTypes.entrySet() )
         {
-            IssueType type = IssueType.lookupByKey( me.getValue() );
+            IssueType type = IssueType.lookupByKey( me.getKey() );
             if ( type == null )
             {
-                throw new MojoExecutionException( "Invalid issue action " + me.getValue() );
+                throw new MojoExecutionException( "Invalid issue action " + me.getKey() );
             }
-            String imsTypes = me.getKey();
+            String imsTypes = me.getValue();
             String[] imsTypeArray = imsTypes.split( "," );
             for ( String imsType : imsTypeArray ) 
             {

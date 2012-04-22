@@ -45,6 +45,15 @@ public enum IssueType
 
     public static IssueType lookupByKey( String key )
     {
-        return IssueType.valueOf( key.toUpperCase() );
+        IssueType type;
+        try
+        {
+            type = IssueType.valueOf( key.toUpperCase() );
+        }
+        catch ( IllegalArgumentException e )
+        {
+            type = null;
+        }
+        return type;
     }
 }
