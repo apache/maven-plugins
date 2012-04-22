@@ -19,6 +19,7 @@ package org.apache.maven.plugin.jira;
  * under the License.
  */
 
+import org.apache.commons.httpclient.cookie.CookiePolicy;
 import org.apache.commons.httpclient.Credentials;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HostConfiguration;
@@ -353,6 +354,7 @@ public abstract class AbstractJiraDownloader
             // MCHANGES-89 Allow circular redirects
             HttpClientParams clientParams = client.getParams();
             clientParams.setBooleanParameter( HttpClientParams.ALLOW_CIRCULAR_REDIRECTS, true );
+            clientParams.setCookiePolicy( CookiePolicy.BROWSER_COMPATIBILITY ); //MCHANGES-237
 
             HttpState state = new HttpState();
 
