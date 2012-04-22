@@ -355,7 +355,7 @@ public class AnnouncementMojo
     /**
      * Defines the http user for basic authentication into the JIRA webserver.
      *
-     * @parameter default-value=""
+     * @parameter default-value="" expression="${changes.webUser}"
      * @since 2.4
      */
     private String webUser;
@@ -363,7 +363,7 @@ public class AnnouncementMojo
     /**
      * Defines the http password for basic authentication into the JIRA webserver.
      *
-     * @parameter default-value=""
+     * @parameter default-value="" expression="${changes.webPassword}"
      * @since 2.4
      */
     private String webPassword;
@@ -378,7 +378,7 @@ public class AnnouncementMojo
      * to set this parameter to "maven-filtering-".
      * </p>
      *
-     * @parameter default-value=""
+     * @parameter default-value="" expression="${changes.versionPrefix}"
      * @since 2.5
      */
     private String versionPrefix;
