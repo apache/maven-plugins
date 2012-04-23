@@ -29,11 +29,14 @@
 
 Maven Site Plugin 2
 
+ <<Important note:>> This is the last version of Maven Site Plugin 2.x. Please
+ upgrade your project to use Maven Site Plugin 3.x. You can find the
+ documentation {{{/plugins/maven-site-plugin/index.html}here}}.
+
  The Site Plugin is used to generate a site for the project. The generated site also includes the project's reports
  that were configured in the <<<\<reporting\>>>> section of the POM.
 
- This is the site for <<version 2>> of the maven-site-plugin. It requires at least Maven 2.2.0 to run. If you
- are looking for <<version 3>> you can find it {{{/plugins/maven-site-plugin/index.html}here}}.
+ This is the site for <<version 2>> of the maven-site-plugin. It requires at least Maven 2.2.0 to run.
 
  Please read the {{{./migrate.html}migration guide}} if you want to upgrade from a previous version.
 
