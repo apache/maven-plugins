@@ -1000,6 +1000,10 @@ public abstract class AbstractInvokerMojo
             localRepositoryPath.mkdirs();
         }
 
+        //-----------------------------------------------
+        // interpolate settings file
+        //-----------------------------------------------
+
         File interpolatedSettingsFile = null;
         if ( settingsFile != null )
         {
@@ -1015,12 +1019,85 @@ public abstract class AbstractInvokerMojo
             buildInterpolatedFile( settingsFile, interpolatedSettingsFile );
         }
 
+        //-----------------------------------------------
+        // merge settings file
+        //-----------------------------------------------
+
+        SettingsXpp3Writer settingsWriter = new SettingsXpp3Writer();
+
+        File mergedSettingsFile;
+        Settings mergedSettings = null;
+        if ( interpolatedSettingsFile != null )
+        {
+            // Have to merge the specified settings file (dominant) and the one of the invoking Maven process
+            Reader reader = null;
+            try
+            {
+                reader = new XmlStreamReader( interpolatedSettingsFile );
+                SettingsXpp3Reader settingsReader = new SettingsXpp3Reader();
+                Settings dominantSettings = settingsReader.read( reader );
+                Settings recessiveSettings = this.settings;
+
+                SettingsUtils.merge( dominantSettings, recessiveSettings, TrackableBase.USER_LEVEL );
+
+                mergedSettings = dominantSettings;
+                getLog().debug( "Merged specified settings file with settings of invoking process" );
+            }
+            catch ( XmlPullParserException e )
+            {
+                throw new MojoExecutionException( "Could not read specified settings file", e );
+            }
+            catch ( IOException e )
+            {
+                throw new MojoExecutionException( "Could not read specified settings file", e );
+            }
+            finally
+            {
+                IOUtil.close( reader );
+            }
+        }
+        else
+        {
+            mergedSettings = this.settings;
+        }
+
+        try
+        {
+            mergedSettingsFile = File.createTempFile( "invoker-settings", ".xml" );
+
+            FileWriter fileWriter = null;
+            try
+            {
+                fileWriter = new FileWriter( mergedSettingsFile );
+                settingsWriter.write( fileWriter, mergedSettings );
+                //FIXME olamy debug stuff to remove
+                FileUtils.copyFile( mergedSettingsFile, new File( mergedSettingsFile.getParent(), "copy.xml" ) );
+            }
+            finally
+            {
+                IOUtil.close( fileWriter );
+            }
+
+            if ( getLog().isDebugEnabled() )
+            {
+                getLog().debug(
+                    "Created temporary file for invoker settings.xml: " + mergedSettingsFile.getAbsolutePath() );
+            }
+
+        }
+        catch ( IOException e )
+        {
+            throw new MojoExecutionException( "Could not create temporary file for invoker settings.xml", e );
+        }
+
+        final File finalSettingsFile = mergedSettingsFile;
+
         try
         {
             if ( isParallelRun() )
             {
                 getLog().info( "use parallelThreads " + parallelThreads );
-                final File finalInterpolatedSettingsFile = interpolatedSettingsFile;
+
                 ExecutorService executorService = Executors.newFixedThreadPool( parallelThreads );
                 for ( int i = 0; i < buildJobs.length; i++ )
                 {
@@ -1032,7 +1109,7 @@ public abstract class AbstractInvokerMojo
                         {
                             try
                             {
-                                runBuild( projectsDir, project, finalInterpolatedSettingsFile );
+                                runBuild( projectsDir, project, finalSettingsFile );
                             }
                             catch ( MojoExecutionException e )
                             {
@@ -1059,7 +1136,7 @@ public abstract class AbstractInvokerMojo
                 for ( int i = 0; i < buildJobs.length; i++ )
                 {
                     BuildJob project = buildJobs[i];
-                    runBuild( projectsDir, project, interpolatedSettingsFile );
+                    runBuild( projectsDir, project, finalSettingsFile );
                 }
             }
         }
@@ -1069,6 +1146,11 @@ public abstract class AbstractInvokerMojo
             {
                 interpolatedSettingsFile.delete();
             }
+            if ( mergedSettingsFile != null && mergedSettingsFile.exists() )
+            {
+                mergedSettingsFile.delete();
+            }
+
         }
     }
 
@@ -1344,67 +1426,6 @@ public abstract class AbstractInvokerMojo
 
             request.setLocalRepositoryDirectory( localRepositoryPath );
 
-            Settings mergedSettings = null;
-            if ( settingsFile != null )
-            {
-                // Have to merge the specified settings file (dominant) and the one of the invoking Maven process
-                Reader reader = null;
-                try
-                {
-                    reader = new XmlStreamReader(settingsFile);
-                    SettingsXpp3Reader settingsReader = new SettingsXpp3Reader();
-                    Settings dominantSettings = settingsReader.read(reader);
-                    Settings recessiveSettings = this.settings;
-                    
-                    SettingsUtils.merge( dominantSettings, recessiveSettings, TrackableBase.USER_LEVEL );
-                    
-                    mergedSettings = dominantSettings;
-                    getLog().debug( "Merged specified settings file with settings of invoking process" );
-                }
-                catch ( XmlPullParserException e )
-                {
-                    throw new MojoExecutionException( "Could not read specified settings file", e );
-                }
-                catch ( IOException e )
-                {
-                    throw new MojoExecutionException( "Could not read specified settings file", e );
-                }
-                finally
-                {
-                    IOUtil.close( reader );
-                }
-            }
-            else
-            {
-                mergedSettings = this.settings;
-            }
-
-            try {
-                File mergedSettingsFile = File.createTempFile( "invoker-settings", ".xml" );
-                SettingsXpp3Writer settingsWriter = new SettingsXpp3Writer();
-                FileWriter fileWriter = null;
-                try
-                {
-                    fileWriter = new FileWriter( mergedSettingsFile );
-                    settingsWriter.write( fileWriter, mergedSettings );
-                }
-                finally
-                {
-                    IOUtil.close( fileWriter );
-                }
-
-                if ( getLog().isDebugEnabled() )
-                {
-                    getLog().debug( "Created temporary file for invoker settings.xml: "
-                                    + mergedSettingsFile.getAbsolutePath() );
-                }
-                request.setUserSettingsFile( mergedSettingsFile );
-            }
-            catch ( IOException e )
-            {
-                throw new MojoExecutionException( "Could not create temporary file for invoker settings.xml", e );
-            }
-
             request.setInteractive( false );
 
             request.setShowErrors( showErrors );
@@ -1412,6 +1433,7 @@ public abstract class AbstractInvokerMojo
             request.setDebug( debug );
 
             request.setShowVersion( showVersion );
+
 
             if ( logger != null )
             {
@@ -1449,6 +1471,8 @@ public abstract class AbstractInvokerMojo
                 request.setMavenOpts( mavenOpts );
 
                 request.setOffline( false );
+
+                request.setUserSettingsFile( settingsFile );
 
                 Properties systemProperties =
                     getSystemProperties( basedir, invokerProperties.getSystemPropertiesFile( invocationIndex ) );
