@@ -544,10 +544,10 @@ public abstract class AbstractInvokerMojo
      * number of threads for running tests in parallel.
      * This will be the number of maven forked process in parallel.
      *
-     * @parameter expression="${invoker.parrallelThreads}" default-value="1"
+     * @parameter expression="${invoker.parallelThreads}" default-value="1"
      * @since 1.6
      */
-    private int parrallelThreads;
+    private int parallelThreads;
 
     /**
      * @parameter expression="${plugin.artifacts}"
@@ -1017,11 +1017,11 @@ public abstract class AbstractInvokerMojo
 
         try
         {
-            if ( isParrallelRun() )
+            if ( isParallelRun() )
             {
-                getLog().info( "use parrallelThreads " + parrallelThreads );
+                getLog().info( "use parallelThreads " + parallelThreads );
                 final File finalInterpolatedSettingsFile = interpolatedSettingsFile;
-                ExecutorService executorService = Executors.newFixedThreadPool( parrallelThreads );
+                ExecutorService executorService = Executors.newFixedThreadPool( parallelThreads );
                 for ( int i = 0; i < buildJobs.length; i++ )
                 {
                     final BuildJob project = buildJobs[i];
@@ -2112,9 +2112,9 @@ public abstract class AbstractInvokerMojo
         return new InvokerProperties( props );
     }
 
-    protected boolean isParrallelRun()
+    protected boolean isParallelRun()
     {
-        return parrallelThreads > 1;
+        return parallelThreads > 1;
     }
 
 }
