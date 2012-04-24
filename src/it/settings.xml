@@ -60,5 +60,12 @@ under the License.
         </pluginRepository>
       </pluginRepositories>
     </profile>
+    <profile>
+      <id>msite604</id>
+      <properties>
+        <msite604.siteRepositoryId>settingsId</msite604.siteRepositoryId>
+        <msite604.siteRepositoryUrl>settingsRepositoryUrl</msite604.siteRepositoryUrl>
+      </properties>
+    </profile>
   </profiles>
 </settings>
