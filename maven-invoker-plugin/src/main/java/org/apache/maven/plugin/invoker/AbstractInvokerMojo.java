@@ -1070,8 +1070,6 @@ public abstract class AbstractInvokerMojo
             {
                 fileWriter = new FileWriter( mergedSettingsFile );
                 settingsWriter.write( fileWriter, mergedSettings );
-                //FIXME olamy debug stuff to remove
-                FileUtils.copyFile( mergedSettingsFile, new File( mergedSettingsFile.getParent(), "copy.xml" ) );
             }
             finally
             {
