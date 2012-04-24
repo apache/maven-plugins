@@ -32,7 +32,7 @@ import org.apache.maven.plugins.changes.model.Release;
 /**
  * Goal which checks that the changes.xml file has the necessary data to
  * generate an announcement or a report for the current release.
- * 
+ *
  * @goal changes-check
  * @author Justin Edelson
  * @author Dennis Lundberg
@@ -64,6 +64,14 @@ public class ChangesCheckMojo extends AbstractMojo
      */
     private File xmlPath;
 
+    /**
+     * Flag controlling snapshot processing. If set, versions ending with <code>-SNAPSHOT</code> won't be checked.
+     *
+     * @parameter expression="${changes.skipSnapshots}" default-value="false"
+     * @since 2.7
+     */
+    private boolean skipSnapshots;
+
     private ReleaseUtils releaseUtils = new ReleaseUtils( getLog() );
 
     /**
@@ -74,16 +82,22 @@ public class ChangesCheckMojo extends AbstractMojo
     public void execute()
         throws MojoExecutionException
     {
-        if ( xmlPath.exists() )
+        if ( this.version.endsWith( "-SNAPSHOT" ) && this.skipSnapshots )
+        {
+            getLog().info( "Skipping snapshot version '" + this.version + "'." );
+        }
+        else if ( xmlPath.exists() )
         {
             ChangesXML xml = new ChangesXML( xmlPath, getLog() );
             ReleaseUtils releaseUtils = new ReleaseUtils( getLog() );
-            Release release = releaseUtils.getLatestRelease( releaseUtils.convertReleaseList( xml.getReleaseList() ),
-                                                             version );
+            Release release =
+                releaseUtils.getLatestRelease( releaseUtils.convertReleaseList( xml.getReleaseList() ), version );
+
             if ( !isValidDate( release.getDateRelease(), releaseDateFormat ) )
             {
                 throw new MojoExecutionException(
                     "The file " + xmlPath.getAbsolutePath() + " has an invalid release date." );
+
             }
         }
         else
