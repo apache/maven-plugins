@@ -34,7 +34,7 @@ Invoker Properties
   control the build settings on a per project basis. The exact name of this properties file is configurable but it needs
   to reside in the base directory of the respective project as shown below:
 
--------------------
++------------------
 ./
 +- src/
    +- it/
@@ -42,7 +42,7 @@ Invoker Properties
          +- pom.xml
          +- invoker.properties
          +- src/
--------------------
++------------------
 
   There are only a few keys supported in this file and their names typically match the corresponding parameters in the
   plugin configuration. For a complete overview of supported properties, see the example given in the documentation of

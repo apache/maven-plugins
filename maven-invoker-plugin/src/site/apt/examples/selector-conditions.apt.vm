@@ -31,21 +31,21 @@ Selector Conditions
   Starting with plugin version 1.4, some keys of the {{{./invoker-properties.html}Invoker Properties}} can be used to
   skip individual projects based on the current JRE version or OS family as illustrated in the example below:
 
--------------------
++------------------
 # build project if JRE version is 1.4 or higher, but exclude version 1.4.1
 invoker.java.version = 1.4+, !1.4.1
 
 # build project if OS family is not Windows
 invoker.os.family = !windows
--------------------
++------------------
 
   In addition, with plugin version 1.5, there is the ability to skip individual projects based on the current Maven 
   version as illustrated in the example below:
   
--------------------
++------------------
 # build project if Maven version is 2.0.10 or higher, but exclude versions 2.1.0 and 2.2.0
 invoker.maven.version = 2.0.10+, !2.1.0, !2.2.0
--------------------
++------------------
 
   The values of these keys are comma separated tokens. A token prefixed with "!" denotes an exclusion, otherwise it
   denotes an inclusion. A project is build if no exclusion matches and if no inclusions are given or at least one of
