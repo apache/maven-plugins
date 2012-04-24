@@ -54,11 +54,11 @@ import org.slf4j.LoggerFactory;
 public abstract class AbstractSiteDeployWebDavTest
     extends AbstractMojoTestCase
 {
-    
+
     File siteTargetPath = new File( getBasedir() + File.separator + "target" + File.separator + "siteTargetDeploy" );
-    
+
     private Logger log = LoggerFactory.getLogger( getClass() );
-    
+
     @Before
     public void setUp()
         throws Exception
@@ -70,18 +70,19 @@ public abstract class AbstractSiteDeployWebDavTest
             FileUtils.cleanDirectory( siteTargetPath );
         }
     }
-    
+
     abstract String getMojoName();
-    
+
     abstract AbstractMojo getMojo( File pluginXmlFile )
         throws Exception;
-    
+
     @Test
     public void noAuthzDavDeploy()
         throws Exception
     {
         FileUtils.cleanDirectory( siteTargetPath );
         SimpleDavServerHandler simpleDavServerHandler = new SimpleDavServerHandler( siteTargetPath );
+
         try
         {
             File pluginXmlFile = getTestFile( "src/test/resources/unit/deploy-dav/pom.xml" );
@@ -89,18 +90,21 @@ public abstract class AbstractSiteDeployWebDavTest
             assertNotNull( mojo );
             SiteMavenProjectStub siteMavenProjectStub =
                 new SiteMavenProjectStub( "src/test/resources/unit/deploy-dav/pom.xml" );
-            
+
+            assertTrue( "dav server port not available: " + simpleDavServerHandler.getPort(),
+                        simpleDavServerHandler.getPort() > 0 );
+
             siteMavenProjectStub.getDistributionManagement().getSite()
                 .setUrl( "dav:http://localhost:" + simpleDavServerHandler.getPort() + "/site/" );
-            
+
             setVariableValueToObject( mojo, "project", siteMavenProjectStub );
             Settings settings = new Settings();
             setVariableValueToObject( mojo, "settings", settings );
             File inputDirectory = new File( "src/test/resources/unit/deploy-dav/target/site" );
-            
+
             setVariableValueToObject( mojo, "inputDirectory", inputDirectory );
             mojo.execute();
-            
+
             assertContentInFiles();
             assertFalse( requestsContainsProxyUse( simpleDavServerHandler.httpRequests ) );
         }
@@ -109,12 +113,12 @@ public abstract class AbstractSiteDeployWebDavTest
             simpleDavServerHandler.stop();
         }
     }
-    
+
     @Test
     public void davDeployThruProxyWithoutAuthzInProxy()
         throws Exception
     {
-        
+
         FileUtils.cleanDirectory( siteTargetPath );
         SimpleDavServerHandler simpleDavServerHandler = new SimpleDavServerHandler( siteTargetPath );
         try
@@ -127,7 +131,7 @@ public abstract class AbstractSiteDeployWebDavTest
             // olamy, Note : toto is something like foo or bar for french folks :-)
             String siteUrl = "dav:http://toto.com/site/";
             siteMavenProjectStub.getDistributionManagement().getSite().setUrl( siteUrl );
-            
+
             setVariableValueToObject( mojo, "project", siteMavenProjectStub );
             Settings settings = new Settings();
             Proxy proxy = new Proxy();
@@ -139,29 +143,29 @@ public abstract class AbstractSiteDeployWebDavTest
             proxy.setProtocol( "http" );
             proxy.setNonProxyHosts( "www.google.com|*.somewhere.com" );
             settings.addProxy( proxy );
-            
+
             setVariableValueToObject( mojo, "settings", settings );
-            
+
             MavenExecutionRequest request = new DefaultMavenExecutionRequest();
             request.setProxies( Arrays.asList( proxy ) );
             MavenSession mavenSession = new MavenSession( getContainer(), null, request, null );
-            
+
             setVariableValueToObject( mojo, "mavenSession", mavenSession );
-            
+
             File inputDirectory = new File( "src/test/resources/unit/deploy-dav/target/site" );
-            
+
             setVariableValueToObject( mojo, "inputDirectory", inputDirectory );
             mojo.execute();
-            
+
             assertContentInFiles();
-            
+
             assertTrue( requestsContainsProxyUse( simpleDavServerHandler.httpRequests ) );
-            
+
             for ( HttpRequest rq : simpleDavServerHandler.httpRequests )
             {
                 log.info( rq.toString() );
             }
-            
+
         }
         finally
         {
@@ -169,17 +173,17 @@ public abstract class AbstractSiteDeployWebDavTest
         }        
         
     }
-    
+
     @Test
     public void davDeployThruProxyWitAuthzInProxy() throws Exception
     {
 
         FileUtils.cleanDirectory( siteTargetPath );
         //SimpleDavServerHandler simpleDavServerHandler = new SimpleDavServerHandler( siteTargetPath );
-        
+
         Map<String, String> authentications = new HashMap<String, String>();
         authentications.put( "foo", "titi" );
-        
+
         AuthAsyncProxyServlet servlet = new AuthAsyncProxyServlet( authentications, siteTargetPath );
 
         SimpleDavServerHandler simpleDavServerHandler = new SimpleDavServerHandler( servlet );        
@@ -190,10 +194,10 @@ public abstract class AbstractSiteDeployWebDavTest
             assertNotNull( mojo );
             SiteMavenProjectStub siteMavenProjectStub =
                 new SiteMavenProjectStub( "src/test/resources/unit/deploy-dav/pom.xml" );
-            
+
             siteMavenProjectStub.getDistributionManagement().getSite()
                 .setUrl( "dav:http://toto.com/site/" );
-            
+
             setVariableValueToObject( mojo, "project", siteMavenProjectStub );
             Settings settings = new Settings();
             Proxy proxy = new Proxy();
@@ -207,17 +211,17 @@ public abstract class AbstractSiteDeployWebDavTest
             proxy.setPassword( "titi" );
             proxy.setNonProxyHosts( "www.google.com|*.somewhere.com" );
             settings.addProxy( proxy );
-            
+
             setVariableValueToObject( mojo, "settings", settings );
-            
+
             MavenExecutionRequest request = new DefaultMavenExecutionRequest();
             request.setProxies( Arrays.asList( proxy ) );
             MavenSession mavenSession = new MavenSession( getContainer(), null, request, null );
-            
+
             setVariableValueToObject( mojo, "mavenSession", mavenSession );
-            
+
             File inputDirectory = new File( "src/test/resources/unit/deploy-dav/target/site" );
-            
+
             // test which mojo we are using
             if ( ReflectionUtils.getFieldByNameIncludingSuperclasses( "inputDirectory", mojo.getClass() ) != null )
             {
@@ -226,7 +230,7 @@ public abstract class AbstractSiteDeployWebDavTest
             else
             {
                 ArtifactRepositoryFactory artifactRepositoryFactory = getContainer().lookup( ArtifactRepositoryFactory.class );
-                
+
                 setVariableValueToObject( mojo, "stagingDirectory", inputDirectory );
                 setVariableValueToObject( mojo, "reactorProjects", Collections.emptyList() );
                 setVariableValueToObject( mojo, "localRepository",
@@ -237,7 +241,7 @@ public abstract class AbstractSiteDeployWebDavTest
                 setVariableValueToObject( mojo, "repositories", Collections.emptyList() );
             }
             mojo.execute();
-            
+
             assertContentInFiles();
             assertTrue( requestsContainsProxyUse( servlet.httpRequests ) );
             assertAtLeastOneRequestContainsHeader( servlet.httpRequests, "Proxy-Authorization" );
@@ -251,7 +255,7 @@ public abstract class AbstractSiteDeployWebDavTest
             simpleDavServerHandler.stop();
         }  
     }        
-    
+
     private void assertContentInFiles()
         throws Exception
     {
@@ -265,17 +269,17 @@ public abstract class AbstractSiteDeployWebDavTest
         fileContent = FileUtils.readFileToString( fileToTest );
         assertTrue( fileContent.contains( "background-image: url(../images/collapsed.gif);" ) );
     }
-    
+
     /**
      * @param requests
      * @return true if at least on request use proxy http header Proxy-Connection : Keep-Alive
      */
     private boolean requestsContainsProxyUse( List<HttpRequest> requests )
     {
-        return assertAtLeastOneRequestContainsHeader(requests, "Proxy-Connection");
+        return assertAtLeastOneRequestContainsHeader( requests, "Proxy-Connection" );
     }
-    
-    private boolean assertAtLeastOneRequestContainsHeader(List<HttpRequest> requests , String headerName)
+
+    private boolean assertAtLeastOneRequestContainsHeader( List<HttpRequest> requests, String headerName )
     {
         for ( HttpRequest rq : requests )
         {
