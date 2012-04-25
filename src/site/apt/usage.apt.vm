@@ -39,7 +39,7 @@ Usage
   The following example demonstrates a basic plugin configuration for running integration tests. Let's assume the following
   directory structure of your project:
 
--------------------
++------------------
 ./
 +- pom.xml
 +- src/
@@ -54,13 +54,13 @@ Usage
          +- test.properties
          +- verify.bsh
          +- src/
--------------------
++------------------
 
   In this example, the directory <<<src/it>>> is the location where all the IT projects reside. You simply put each
   integration test into a distinct sub directory, like shown by <<<first-it>>> and <<<second-it>>>. The plugin
   configuration for this example would look like this:
 
--------------------
++------------------
 <project>
   ...
   <build>
@@ -92,13 +92,13 @@ Usage
   </build>
   ...
 </project>
--------------------
++------------------
 
   Now, to get things going, just tell Maven to execute the lifecycle phase <<<integration-test>>>:
 
--------------------
++------------------
   mvn integration-test
--------------------
++------------------
 
   First, the <<<invoker:install>>> goal will be executed during the phase <<<pre-integration-test>>> and will copy the
   main artifact of the project along with any attached artifacts over to <<<target/local-repo>>>. Furthermore, any

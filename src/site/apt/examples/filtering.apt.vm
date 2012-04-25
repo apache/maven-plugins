@@ -45,7 +45,7 @@ Filtering Files
 
   The following example directory structure highlights the files which are filtered by the Invoker Plugin:
 
--------------------
++------------------
 ./
 +- pom.xml
 +- src/
@@ -60,11 +60,11 @@ Filtering Files
          +- invoker.properties         <- Filtered
          +- goals.txt                  <- Filtered
          +- profiles.txt               <- Filtered
--------------------
++------------------
 
   Below is the corresponding POM snippet for the plugin configuration:
 
--------------------
++------------------
 <project>
   <properties>
     <projectPropertyUsedForFiltering>another-value</projectPropertyUsedForFiltering>
@@ -98,7 +98,7 @@ Filtering Files
     </plugins>
   </build>
 </project>
--------------------
++------------------
 
   When filtering the files, the plugin searches various data sources for a token's replacement value in the order
   indicated below. The search terminates as soon as an existing replacement value has been found, i.e. the value

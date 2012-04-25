@@ -32,7 +32,7 @@ Selector Scripts
   whatever critria are expressed in the script as illustrated in the following example. Assume the 
   following directory structure:
 
--------------------
++------------------
 ./
 +- pom.xml
 +- src/
@@ -42,11 +42,11 @@ Selector Scripts
          +- pom.xml
          +- check-assumptions.bsh
          +- src/
--------------------
++------------------
 
   The plugin configuration for this example would look like this:
 
--------------------
++------------------
 <project>
   ...
   <build>
@@ -78,7 +78,7 @@ Selector Scripts
   </build>
   ...
 </project>
--------------------
++------------------
 
   If the check-assumptions.bsh script returns <<<true>>> or does not return a value, then the project will be executed.
 

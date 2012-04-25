@@ -34,7 +34,7 @@ Installing Artifacts
   want to build your project and test the new artifacts artifact in a single step instead of 
   installing first and then running tests.
   
--------------------
++------------------
 <project>
   ...
   <build>
@@ -60,7 +60,7 @@ Installing Artifacts
   </build>
   ...
 </project>
--------------------
++------------------
 
 
           

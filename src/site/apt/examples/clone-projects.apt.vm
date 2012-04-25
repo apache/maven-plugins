@@ -34,7 +34,7 @@ Cloning Projects
   <<<target/it>>>.  This will allow <<<mvn clean>>> to remove the output generated
   by all of the test projects.
   
--------------------
++------------------
 <project>
   ...
   <build>
@@ -59,7 +59,7 @@ Cloning Projects
   </build>
   ...
 </project>
--------------------
++------------------
 
   There is another benefit of cloning the projects to a temporary location besides keeping the source tree free of build
   output. When the projects are not cloned, the plugin must use temporary POMs to perform their filtering. In contrast,

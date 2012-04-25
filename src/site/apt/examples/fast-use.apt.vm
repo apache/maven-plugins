@@ -40,7 +40,7 @@ Fast Build Configuration
   To enable this feature, you have to add a <<<settings.xml>>> file in your project (for example in <<<src/it/settings.xml>>>)
   and modify the plugin configuration as this:  
   
--------------------
++------------------
 <project>
   ...
   <build>
@@ -59,12 +59,12 @@ Fast Build Configuration
   </build>
   ...
 </project>
--------------------
++------------------
 
   The settings must contain the following content which effectively tells Maven to use the local repository as a remote
   repository:
   
--------------------
++------------------
 <?xml version="1.0"?>
 <settings>
   <profiles>
@@ -100,7 +100,7 @@ Fast Build Configuration
     </profile>
   </profiles>
 </settings>
--------------------  
++------------------
 
   The token <<<@localRepositoryUrl@>>> will be automatically replaced by the Invoker Plugin with the URL to the local
   repository used for the Maven invocation.
