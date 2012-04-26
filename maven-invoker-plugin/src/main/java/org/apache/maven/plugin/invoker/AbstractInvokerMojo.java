@@ -557,6 +557,13 @@ public abstract class AbstractInvokerMojo
      */
     private List<Artifact> pluginArtifacts;
 
+
+    /**
+     * @parameter expression="${invoker.mergeUserSettings}" default-value="false"
+     * @since 1.6
+     */
+    private boolean mergeUserSettings;
+
     /**
      * The scripter runner that is responsible to execute hook scripts.
      */
@@ -1026,39 +1033,38 @@ public abstract class AbstractInvokerMojo
         SettingsXpp3Writer settingsWriter = new SettingsXpp3Writer();
 
         File mergedSettingsFile;
-        Settings mergedSettings = null;
-        if ( interpolatedSettingsFile != null )
+        Settings mergedSettings = this.settings;
+        if ( mergeUserSettings )
         {
-            // Have to merge the specified settings file (dominant) and the one of the invoking Maven process
-            Reader reader = null;
-            try
+            if ( interpolatedSettingsFile != null )
             {
-                reader = new XmlStreamReader( interpolatedSettingsFile );
-                SettingsXpp3Reader settingsReader = new SettingsXpp3Reader();
-                Settings dominantSettings = settingsReader.read( reader );
-                Settings recessiveSettings = this.settings;
+                // Have to merge the specified settings file (dominant) and the one of the invoking Maven process
+                Reader reader = null;
+                try
+                {
+                    reader = new XmlStreamReader( interpolatedSettingsFile );
+                    SettingsXpp3Reader settingsReader = new SettingsXpp3Reader();
+                    Settings dominantSettings = settingsReader.read( reader );
+                    Settings recessiveSettings = this.settings;
 
-                SettingsUtils.merge( dominantSettings, recessiveSettings, TrackableBase.USER_LEVEL );
+                    SettingsUtils.merge( dominantSettings, recessiveSettings, TrackableBase.USER_LEVEL );
 
-                mergedSettings = dominantSettings;
-                getLog().debug( "Merged specified settings file with settings of invoking process" );
+                    mergedSettings = dominantSettings;
+                    getLog().debug( "Merged specified settings file with settings of invoking process" );
+                }
+                catch ( XmlPullParserException e )
+                {
+                    throw new MojoExecutionException( "Could not read specified settings file", e );
+                }
+                catch ( IOException e )
+                {
+                    throw new MojoExecutionException( "Could not read specified settings file", e );
+                }
+                finally
+                {
+                    IOUtil.close( reader );
+                }
             }
-            catch ( XmlPullParserException e )
-            {
-                throw new MojoExecutionException( "Could not read specified settings file", e );
-            }
-            catch ( IOException e )
-            {
-                throw new MojoExecutionException( "Could not read specified settings file", e );
-            }
-            finally
-            {
-                IOUtil.close( reader );
-            }
-        }
-        else
-        {
-            mergedSettings = this.settings;
         }
 
         try
@@ -1431,7 +1437,6 @@ public abstract class AbstractInvokerMojo
             request.setDebug( debug );
 
             request.setShowVersion( showVersion );
-
 
             if ( logger != null )
             {
