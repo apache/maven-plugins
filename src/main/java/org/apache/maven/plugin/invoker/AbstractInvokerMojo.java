@@ -559,6 +559,7 @@ public abstract class AbstractInvokerMojo
 
 
     /**
+     * If enable and if you have a settings file configured for the execution, it will be merged with your user settings.
      * @parameter expression="${invoker.mergeUserSettings}" default-value="false"
      * @since 1.6
      */
