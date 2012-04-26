@@ -30,9 +30,9 @@ Usage
 
   This page provides general usage information along with a basic example.  The plugin
   is commonly used to run and verify integration tests for a project, say a Maven plugin.  This is done using
-  the <<<{{{run-mojo.html} invoker:run }}>>> goal. And as a preparation for the integration tests, one usually wants to
+  the <<<{{{./run-mojo.html} invoker:run }}>>> goal. And as a preparation for the integration tests, one usually wants to
   stage the artifacts under tests into a testing repository. For this job, the
-  <<<{{{install-mojo.html} invoker:install }}>>> goal can be used.
+  <<<{{{./install-mojo.html} invoker:install }}>>> goal can be used.
 
 * Basic Example
 
@@ -119,14 +119,14 @@ Usage
   And the file <<<src/it/settings.xml>>> can be used to specify custom user settings for the tests. Among others, this
   allows you to make the integration tests use your local repository as a remote repository, avoiding time-consuming
   downloads from <<<central>>> in order to fill up the initially empty staging repository. Please see the example
-  {{{examples/fast-use.html}Fast Invoker Plugin Configuration}} for more details on this technique. The output of the
+  {{{./examples/fast-use.html}Fast Invoker Plugin Configuration}} for more details on this technique. The output of the
   IT builds is written to a log file named <<<build.log>>> (e.g. <<<target/it/first-it/build.log>>>) and allows
   diagnostics in case an integration test fails.
 
   When an integration test has finished, the plugin will invoke an optional post build hook script. In the example,
   this is the case for <<<second-it>>> where <<<verify.bsh>>> will be run. The purpose of this script is usally to
   check that the build of the integration test did not only succeed but also produced the intended output. Have a look
-  at the example {{{examples/post-build-script.html}Using a Post Build Script}} for a code snippet.
+  at the example {{{./examples/post-build-script.html}Using a Post Build Script}} for a code snippet.
 
 * Running Only Some Tests
 
