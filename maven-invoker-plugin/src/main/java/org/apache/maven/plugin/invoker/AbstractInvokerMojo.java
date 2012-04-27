@@ -140,6 +140,9 @@ public abstract class AbstractInvokerMojo
 
     /**
      * Base directory where all build reports are written to.
+     * Every execution of an integration test will produce an XML file which contains the information
+     * about success or failure of that particular build job. The format of the resulting XML
+     * file is documented in the given <a href="./build-job.html">build-job</a> reference.
      *
      * @parameter expression="${invoker.reportsDirectory}" default-value="${project.build.directory}/invoker-reports"
      * @since 1.4
