@@ -170,7 +170,7 @@ under the License.
   </contributors>
 
   <prerequisites>
-    <maven>2.2.0</maven>
+    <maven>2.2.1</maven>
   </prerequisites>
 
   <scm>
