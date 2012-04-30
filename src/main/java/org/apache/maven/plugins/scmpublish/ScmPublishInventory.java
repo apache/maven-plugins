@@ -19,8 +19,22 @@ package org.apache.maven.plugins.scmpublish;
  * under the License.
  */
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.filefilter.IOFileFilter;
+import org.apache.maven.plugin.MojoFailureException;
+import org.codehaus.jackson.JsonEncoding;
+import org.codehaus.jackson.JsonGenerator;
+import org.codehaus.jackson.JsonParser;
+import org.codehaus.jackson.JsonProcessingException;
+import org.codehaus.jackson.map.MappingJsonFactory;
 
 /**
  * A class designed for json serialization to store the existing inventory, if any. In this version, there's no attempt
@@ -28,20 +42,94 @@ import java.util.Set;
  */
 public class ScmPublishInventory
 {
-    private Set<String> paths;
-
-    public ScmPublishInventory() 
+    private static class DotFilter
+        implements IOFileFilter
     {
-        paths = new HashSet<String>(); 
+
+        public boolean accept( File file )
+        {
+            return !file.getName().startsWith( "." );
+        }
+
+        public boolean accept( File dir, String name )
+        {
+            return !name.startsWith( "." );
+        }
+
     }
 
-    public Set<String> getPaths()
+    public static List<File> listInventoryFiles( File basedir )
     {
-        return paths;
+        List<File> inventory = new ArrayList<File>();
+        inventory.addAll( FileUtils.listFiles( basedir, new DotFilter(), new DotFilter() ) );
+        Collections.sort( inventory );
+        return inventory;
     }
 
-    public void setPaths( Set<String> paths )
+    /**
+     * Create a list of all the files in the checkout (which we will presently remove). For now, duck anything that
+     * starts with a ., since the site plugin won't make any and it will dodge metadata I'm familiar with. None if this
+     * is really good enough for safe usage with exotics like clearcase. Perhaps protest if anything other than svn or
+     * git? Or use http://plexus.codehaus.org/plexus-utils/apidocs/org/codehaus/plexus/util/AbstractScanner.html#DEFAULTEXCLUDES?
+     * @throws MojoFailureException 
+     */
+    public static List<File> writeInventory( List<File> inventory, File inventoryFile )
+        throws MojoFailureException
     {
-        this.paths = paths;
+        Set<String> paths = new HashSet<String>();
+
+        /*
+         * It might be cleverer to store paths relative to the checkoutDirectory, but this really should work.
+         */
+        for ( File f : inventory )
+        {
+            // See below. We only bother about files.
+            if ( f.isFile() )
+            {
+                paths.add( f.getAbsolutePath() );
+            }
+        }
+        try
+        {
+            MappingJsonFactory factory = new MappingJsonFactory();
+            JsonGenerator gen = factory.createJsonGenerator( inventoryFile, JsonEncoding.UTF8 );
+            gen.writeObject( paths );
+            gen.close();
+            return inventory;
+        }
+        catch ( JsonProcessingException e )
+        {
+            throw new MojoFailureException( "Failed to write inventory to " + inventoryFile.getAbsolutePath(), e );
+        }
+        catch ( IOException e )
+        {
+            throw new MojoFailureException( "Failed to write inventory to " + inventoryFile.getAbsolutePath(), e );
+        }
+    }
+
+    public static List<File> readInventory( File inventoryFile )
+        throws MojoFailureException
+    {
+        try
+        {
+            MappingJsonFactory factory = new MappingJsonFactory();
+            JsonParser parser = factory.createJsonParser( inventoryFile );
+            Set<String> storedInventory = parser.readValueAs( HashSet.class );
+            List<File> inventory = new ArrayList<File>();
+            for ( String p : storedInventory )
+            {
+                inventory.add( new File( p ) );
+            }
+            parser.close();
+            return inventory;
+        }
+        catch ( JsonProcessingException e )
+        {
+            throw new MojoFailureException( "Failed to write inventory to " + inventoryFile.getAbsolutePath(), e );
+        }
+        catch ( IOException e )
+        {
+            throw new MojoFailureException( "Failed to write inventory to " + inventoryFile.getAbsolutePath(), e );
+        }  
     }
 }

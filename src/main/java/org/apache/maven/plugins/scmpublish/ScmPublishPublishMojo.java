@@ -160,7 +160,7 @@ public class ScmPublishPublishMojo
         }
 
         // read in the list left behind by prepare; fail if it's not there.
-        List<File> inventory = readInventory();
+        List<File> inventory = ScmPublishInventory.readInventory( inventoryFile );
 
         // setup the scm plugin with help from release plugin utilities
         try
@@ -177,17 +177,15 @@ public class ScmPublishPublishMojo
         }
 
         // what files are in stock now?
-        Set<File> added = new HashSet<File>();
-        Collection<File> newInventory = FileUtils.listFiles( checkoutDirectory, new DotFilter(), new DotFilter() );
-        added.addAll( newInventory );
+        Collection<File> newInventory = ScmPublishInventory.listInventoryFiles( checkoutDirectory );
 
-        Set<File> deleted = new HashSet<File>();
-        deleted.addAll( inventory );
-        deleted.removeAll( added ); // old - new = deleted. (Added is the complete new inventory at this point.)
+        Set<File> deleted = new HashSet<File>( inventory );
+        deleted.removeAll( newInventory ); // old - new = deleted. (Added is the complete new inventory at this point.)
+
+        Set<File> added = new HashSet<File>( newInventory );
         added.removeAll( inventory ); // new - old = added.
 
-        Set<File> updated = new HashSet<File>();
-        updated.addAll( newInventory );
+        Set<File> updated = new HashSet<File>( newInventory );
         updated.retainAll( inventory ); // set intersection
 
         logInfo( "Publish files: %d addition(s), %d update(s), %d delete(s)", added.size(), updated.size(),

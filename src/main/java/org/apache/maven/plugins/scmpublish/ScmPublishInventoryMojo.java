@@ -172,7 +172,9 @@ public class ScmPublishInventoryMojo
         {
             checkoutExisting();
 
-            List<File> inventory = writeInventory();
+            List<File> inventory = ScmPublishInventory.listInventoryFiles( checkoutDirectory );
+
+            ScmPublishInventory.writeInventory( inventory, inventoryFile );
 
             deleteInventory( inventory );
         }

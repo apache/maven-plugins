@@ -20,19 +20,11 @@ package org.apache.maven.plugins.scmpublish;
  */
 
 import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.scm.manager.NoSuchScmProviderException;
 import org.apache.maven.scm.manager.ScmManager;
@@ -44,11 +36,6 @@ import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
 import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
-import org.codehaus.jackson.JsonEncoding;
-import org.codehaus.jackson.JsonGenerator;
-import org.codehaus.jackson.JsonParser;
-import org.codehaus.jackson.JsonProcessingException;
-import org.codehaus.jackson.map.MappingJsonFactory;
 
 /**
  * Base class for the site-scm-publish mojos.
@@ -186,22 +173,6 @@ public abstract class AbstractScmPublishMojo
     protected ScmProvider scmProvider;
     protected ScmRepository scmRepository;
 
-    protected static class DotFilter
-        implements IOFileFilter
-    {
-
-        public boolean accept( File file )
-        {
-            return !file.getName().startsWith( "." );
-        }
-
-        public boolean accept( File dir, String name )
-        {
-            return !name.startsWith( "." );
-        }
-
-    }
-
     protected AbstractScmPublishMojo()
     {
         super();
@@ -215,79 +186,6 @@ public abstract class AbstractScmPublishMojo
     protected void logError( String format, Object... params )
     {
         getLog().error( String.format( format, params ) );
-    }
-
-    /**
-     * Create a list of all the files in the checkout (which we will presently remove). For now, duck anything that
-     * starts with a ., since the site plugin won't make any and it will dodge metadata I'm familiar with. None if this
-     * is really good enough for safe usage with exotics like clearcase. Perhaps protest if anything other than svn or
-     * git? Or use http://plexus.codehaus.org/plexus-utils/apidocs/org/codehaus/plexus/util/AbstractScanner.html#DEFAULTEXCLUDES?
-     * @throws MojoFailureException 
-     */
-    protected List<File> writeInventory()
-        throws MojoFailureException
-    {
-        List<File> inventory = new ArrayList<File>();
-        inventory.addAll( FileUtils.listFiles( checkoutDirectory, new DotFilter(), new DotFilter() ) );
-        Collections.sort( inventory );
-
-        ScmPublishInventory initialInventory = new ScmPublishInventory();
-        Set<String> paths = new HashSet<String>();
-
-        /*
-         * It might be cleverer to store paths relative to the checkoutDirectory, but this really should work.
-         */
-        for ( File f : inventory )
-        {
-            // See below. We only bother about files.
-            if ( f.isFile() )
-            {
-                paths.add( f.getAbsolutePath() );
-            }
-        }
-        initialInventory.setPaths( paths );
-        try
-        {
-            MappingJsonFactory factory = new MappingJsonFactory();
-            JsonGenerator gen = factory.createJsonGenerator( inventoryFile, JsonEncoding.UTF8 );
-            gen.writeObject( initialInventory );
-            gen.close();
-            return inventory;
-        }
-        catch ( JsonProcessingException e )
-        {
-            throw new MojoFailureException( "Failed to write inventory to " + inventoryFile.getAbsolutePath(), e );
-        }
-        catch ( IOException e )
-        {
-            throw new MojoFailureException( "Failed to write inventory to " + inventoryFile.getAbsolutePath(), e );
-        }
-    }
-
-    protected List<File> readInventory()
-        throws MojoFailureException
-    {
-        try
-        {
-            MappingJsonFactory factory = new MappingJsonFactory();
-            JsonParser parser = factory.createJsonParser( inventoryFile );
-            ScmPublishInventory storedInventory = parser.readValueAs( ScmPublishInventory.class );
-            List<File> inventory = new ArrayList<File>();
-            for ( String p : storedInventory.getPaths() )
-            {
-                inventory.add( new File( p ) );
-            }
-            parser.close();
-            return inventory;
-        }
-        catch ( JsonProcessingException e )
-        {
-            throw new MojoFailureException( "Failed to write inventory to " + inventoryFile.getAbsolutePath(), e );
-        }
-        catch ( IOException e )
-        {
-            throw new MojoFailureException( "Failed to write inventory to " + inventoryFile.getAbsolutePath(), e );
-        }  
     }
 
     protected ReleaseDescriptor setupScm()
