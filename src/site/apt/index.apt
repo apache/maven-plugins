@@ -57,3 +57,15 @@ Maven SCM Publish Plugin
     The <<scmpublish.skipCheckin>> parameter omits the final checkin.
     This allows you to visit <<<target/scmpublish-checkout>>>, and validate
     its contents before submitting to the SCM.
+
+Publishing any content to SCM
+
+    Even without any pom.xml/Maven project, you can update SCM content with
+    a local content:
+
++-------+
+mvn scm-publish:publish-scm -Dscmpublish.pubScmUrl=scm:... -Dscmpublish.content=...
++-------+
+
+    SCM content will be checked-out to a temporary directory, then local content will
+    be applied to the check-out, before it is checked-in back.
