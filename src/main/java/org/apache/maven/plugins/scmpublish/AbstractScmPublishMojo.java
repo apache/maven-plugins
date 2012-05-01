@@ -132,13 +132,6 @@ public abstract class AbstractScmPublishMojo
     protected Settings settings;
 
     /**
-     * @parameter expression="${project}"
-     * @required
-     * @readonly
-     */
-    protected MavenProject project;
-
-    /**
      * @parameter expression="${reactorProjects}"
      * @required
      * @readonly

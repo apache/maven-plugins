@@ -72,7 +72,7 @@ public class ScmPublishPublishMojo
 
     /**
      * SCM log/checkin comment for this publication.
-     * @parameter expression="${scmpublish.checkinComment}"
+     * @parameter expression="${scmpublish.checkinComment}" default-value="Site checkin for project ${project.name}"
      */
     private String checkinComment;
 
@@ -213,10 +213,6 @@ public class ScmPublishPublishMojo
             return;
         }
 
-        if ( checkinComment == null )
-        {
-            checkinComment = "Site checkin for project " + project.getName();
-        }
         ScmFileSet updatedFileSet = new ScmFileSet( checkoutDirectory );
         try
         {
