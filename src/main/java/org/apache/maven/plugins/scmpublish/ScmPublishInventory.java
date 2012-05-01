@@ -114,6 +114,7 @@ public class ScmPublishInventory
         {
             MappingJsonFactory factory = new MappingJsonFactory();
             JsonParser parser = factory.createJsonParser( inventoryFile );
+            @SuppressWarnings( "unchecked" )
             Set<String> storedInventory = parser.readValueAs( HashSet.class );
             List<File> inventory = new ArrayList<File>();
             for ( String p : storedInventory )
