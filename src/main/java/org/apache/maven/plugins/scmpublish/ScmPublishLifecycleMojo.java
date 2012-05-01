@@ -19,23 +19,25 @@ package org.apache.maven.plugins.scmpublish;
  * under the License.
  */
 
+import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 
 /**
+ * Empty goal, provided only to set loose the lifecycle.
  * 
  * @goal scmpublish
  * @execute lifecycle="scmpublish" phase="scmpublish-publish"
  * @aggregate
  */
 public class ScmPublishLifecycleMojo
-    extends AbstractScmPublishMojo
+    extends AbstractMojo
 {
 
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        // nothing to do. This only purpose here is to set loose the lifecycle.
+        // nothing to do.
     }
 
 }
