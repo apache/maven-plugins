@@ -20,18 +20,11 @@ package org.apache.maven.plugins.scmpublish;
  */
 
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.project.MavenProject;
-import org.apache.maven.scm.ScmException;
-import org.apache.maven.scm.ScmFileSet;
-import org.apache.maven.scm.command.checkout.CheckOutScmResult;
-import org.apache.maven.shared.release.util.ReleaseUtil;
-import org.codehaus.plexus.util.StringUtils;
 
 /**
  * Prepare a directory for version-managed site generation. This checks out the specified directory from the SCM,
@@ -57,89 +50,6 @@ import org.codehaus.plexus.util.StringUtils;
 public class ScmPublishInventoryMojo
     extends AbstractScmPublishMojo
 {
-    private void checkoutExisting()
-        throws MojoExecutionException
-    {
-        logInfo( "Checking out the pub tree ..." );
-
-        MavenProject rootProject = ReleaseUtil.getRootProject( reactorProjects );
-        if ( checkoutDirectory.exists() )
-        {
-            try
-            {
-                FileUtils.deleteDirectory( checkoutDirectory );
-            }
-            catch ( IOException e )
-            {
-                logError( e.getMessage() );
-
-                throw new MojoExecutionException( "Unable to remove old checkout directory: " + e.getMessage(), e );
-            }
-        }
-
-        checkoutDirectory.mkdirs();
-
-        CheckOutScmResult scmResult;
-
-        try
-        {
-            ScmFileSet fileSet = new ScmFileSet( checkoutDirectory, includes, excludes );
-            scmResult = scmProvider.checkOut( scmRepository, fileSet );
-        }
-        catch ( ScmException e )
-        {
-            logError( e.getMessage() );
-
-            throw new MojoExecutionException( "An error is occurred in the checkout process: " + e.getMessage(), e );
-        }
-        catch ( IOException e )
-        {
-            logError( e.getMessage() );
-
-            throw new MojoExecutionException( "An error is occurred in the checkout process: " + e.getMessage(), e );
-        }
-
-        String scmRelativePathProjectDirectory = scmResult.getRelativePathProjectDirectory();
-        if ( StringUtils.isEmpty( scmRelativePathProjectDirectory ) )
-        {
-            String basedir;
-            try
-            {
-                basedir = ReleaseUtil.getCommonBasedir( reactorProjects );
-            }
-            catch ( IOException e )
-            {
-                throw new MojoExecutionException( "Exception occurred while calculating common basedir: "
-                    + e.getMessage(), e );
-            }
-
-            String rootProjectBasedir = rootProject.getBasedir().getAbsolutePath();
-            try
-            {
-                if ( ReleaseUtil.isSymlink( rootProject.getBasedir() ) )
-                {
-                    rootProjectBasedir = rootProject.getBasedir().getCanonicalPath();
-                }
-            }
-            catch ( IOException e )
-            {
-                throw new MojoExecutionException( e.getMessage(), e );
-            }
-            if ( rootProjectBasedir.length() > basedir.length() )
-            {
-                scmRelativePathProjectDirectory = rootProjectBasedir.substring( basedir.length() + 1 );
-            }
-        }
-
-        if ( !scmResult.isSuccess() )
-        {
-            logError( scmResult.getProviderMessage() );
-
-            throw new MojoExecutionException( "Unable to checkout from SCM" + "\nProvider message:\n"
-                + scmResult.getProviderMessage() + "\nCommand output:\n" + scmResult.getCommandOutput() );
-        }
-    }
-
     /**
      * Clear out the data, so we can tell what's left after the run of the site plugin.
      * For now, don't bother with deleting empty directories. They are fairly harmless,

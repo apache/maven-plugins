@@ -22,6 +22,7 @@ package org.apache.maven.plugins.scmpublish;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -56,6 +57,11 @@ public class ScmPublishInventory
             return !name.startsWith( "." );
         }
 
+    }
+
+    public static List<String> listInventory( File basedir )
+    {
+        return Arrays.asList( basedir.list( new DotFilter() ) );
     }
 
     public static List<File> listInventoryFiles( File basedir )

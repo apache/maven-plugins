@@ -86,7 +86,7 @@ public class ScmPublishPublishMojo
         return new File( base.toURI().relativize( file.toURI() ).getPath() );
     }
 
-    private boolean requireNormalizeNewlines( File f )
+    protected boolean requireNormalizeNewlines( File f )
         throws IOException
     {
         return FilenameUtils.isExtension( f.getName(), NORMALIZE_EXTENSIONS );
@@ -171,7 +171,7 @@ public class ScmPublishPublishMojo
         logInfo( "Publish files: %d addition(s), %d update(s), %d delete(s)", added.size(), updated.size(),
                  deleted.size() );
 
-        if ( dryRun )
+        if ( isDryRun() )
         {
             for ( File addedFile : added )
             {
@@ -202,15 +202,17 @@ public class ScmPublishPublishMojo
 
         normalizeNewLines( updated );
 
-        if ( !skipCheckin )
-        {
-            checkinFiles();
-        }
+        checkinFiles();
     }
 
-    private void checkinFiles()
+    protected void checkinFiles()
         throws MojoExecutionException
     {
+        if ( skipCheckin )
+        {
+            return;
+        }
+
         if ( checkinComment == null )
         {
             checkinComment = "Site checkin for project " + project.getName();
@@ -233,7 +235,7 @@ public class ScmPublishPublishMojo
         }
     }
 
-    private void deleteFiles( Set<File> deleted )
+    protected void deleteFiles( Collection<File> deleted )
         throws MojoExecutionException
     {
         List<File> deletedList = new ArrayList<File>();
@@ -260,7 +262,7 @@ public class ScmPublishPublishMojo
         }
     }
 
-    private void addFiles( Set<File> added )
+    protected void addFiles( Collection<File> added )
         throws MojoFailureException, MojoExecutionException
     {
         List<File> addedList = new ArrayList<File>();
@@ -320,5 +322,10 @@ public class ScmPublishPublishMojo
         {
             throw new MojoExecutionException( "Failed to add new files to SCM", e );
         }
+    }
+
+    public boolean isDryRun()
+    {
+        return dryRun;
     }
 }
