@@ -21,7 +21,6 @@ package org.apache.maven.plugins.scmpublish;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
@@ -29,7 +28,6 @@ import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.project.MavenProject;
 import org.apache.maven.scm.ScmException;
 import org.apache.maven.scm.ScmFileSet;
 import org.apache.maven.scm.command.checkout.CheckOutScmResult;
@@ -41,8 +39,6 @@ import org.apache.maven.scm.repository.ScmRepositoryException;
 import org.apache.maven.settings.Settings;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
-import org.apache.maven.shared.release.util.ReleaseUtil;
-import org.codehaus.plexus.util.StringUtils;
 
 /**
  * Base class for the site-scm-publish mojos.
@@ -130,13 +126,6 @@ public abstract class AbstractScmPublishMojo
      * @readonly
      */
     protected Settings settings;
-
-    /**
-     * @parameter expression="${reactorProjects}"
-     * @required
-     * @readonly
-     */
-    protected List<MavenProject> reactorProjects;
 
     /**
      * Use a local checkout instead of doing a checkout from the upstream repository. ATTENTION: This will only work
@@ -240,7 +229,6 @@ public abstract class AbstractScmPublishMojo
     {
         logInfo( "Checking out the pub tree ..." );
 
-        MavenProject rootProject = ReleaseUtil.getRootProject( reactorProjects );
         if ( checkoutDirectory.exists() )
         {
             try
@@ -275,38 +263,6 @@ public abstract class AbstractScmPublishMojo
             logError( e.getMessage() );
 
             throw new MojoExecutionException( "An error is occurred in the checkout process: " + e.getMessage(), e );
-        }
-
-        String scmRelativePathProjectDirectory = scmResult.getRelativePathProjectDirectory();
-        if ( StringUtils.isEmpty( scmRelativePathProjectDirectory ) )
-        {
-            String basedir;
-            try
-            {
-                basedir = ReleaseUtil.getCommonBasedir( reactorProjects );
-            }
-            catch ( IOException e )
-            {
-                throw new MojoExecutionException( "Exception occurred while calculating common basedir: "
-                    + e.getMessage(), e );
-            }
-
-            String rootProjectBasedir = rootProject.getBasedir().getAbsolutePath();
-            try
-            {
-                if ( ReleaseUtil.isSymlink( rootProject.getBasedir() ) )
-                {
-                    rootProjectBasedir = rootProject.getBasedir().getCanonicalPath();
-                }
-            }
-            catch ( IOException e )
-            {
-                throw new MojoExecutionException( e.getMessage(), e );
-            }
-            if ( rootProjectBasedir.length() > basedir.length() )
-            {
-                scmRelativePathProjectDirectory = rootProjectBasedir.substring( basedir.length() + 1 );
-            }
         }
 
         if ( !scmResult.isSuccess() )
