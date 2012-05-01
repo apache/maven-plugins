@@ -21,10 +21,10 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.apache.maven.plugins</groupId>
-  <artifactId> maven-site-scm-publish-pluginn-003-lifecycle</artifactId>
+  <artifactId> maven-scm-publish-pluginn-003-lifecycle</artifactId>
   <version>1.0-SNAPSHOT</version>
 
-  <name> maven-site-scm-publish-plugin-003-lifecycle</name>
+  <name> maven-scm-publish-plugin-003-lifecycle</name>
   <url>http://people.apache.org/~bimargulies/site-test</url>
 
   <distributionManagement>
@@ -50,7 +50,7 @@
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId> maven-site-scm-publish-plugin</artifactId>
+        <artifactId> maven-scm-publish-plugin</artifactId>
         <version>@pom.version@</version>
         <extensions>true</extensions>
         <configuration>
