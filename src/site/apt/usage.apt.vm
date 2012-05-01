@@ -29,8 +29,8 @@
 
 Usage
 
- The  maven-site-scm-publish-plugin submits modified sites to SCM.
- There are two ways you can set this up in your POM.
+ The maven-scm-publish-plugin submits modified content to SCM, sites being a classical case.
+ There are two ways you can set this up for site in your POM.
 
 * Use the Custom Lifecycle
 
@@ -57,7 +57,7 @@ Usage
   With a little configuration in your POM, 
 
 +---------+
-  mvn maven-site-scm-publish-plugin:publish
+  mvn maven-scm-publish:publish
 +---------+
 
   will do all the work.   
@@ -76,7 +76,7 @@ Usage
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-site-scm-publish-plugin</artifactId>
+          <artifactId>maven-scm-publish-plugin</artifactId>
           <version>@pom.version@</version>
           <extensions>true</extensions>
           <configuration>
@@ -126,7 +126,7 @@ Usage
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-site-scm-publish-plugin</artifactId>
+        <artifactId>maven-scm-publish-plugin</artifactId>
         <version>@pom.version@</version>
         <configuration>
           <pubScmUrl>scm:svn:https://svn.apache.org/repos/asf/maven/sandbox/bimargulies/site-test</pubScmUrl>
