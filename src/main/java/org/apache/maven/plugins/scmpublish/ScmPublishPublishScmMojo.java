@@ -166,6 +166,7 @@ public class ScmPublishPublishScmMojo
 
         try
         {
+            logInfo( "Updating content..." );
             update( checkoutDirectory, content );
         }
         catch ( IOException ioe )
@@ -203,6 +204,7 @@ public class ScmPublishPublishScmMojo
             deleteFiles( deleted );
         }
 
+        logInfo( "Checking in SCM..." );
         checkinFiles();
     }
 }
