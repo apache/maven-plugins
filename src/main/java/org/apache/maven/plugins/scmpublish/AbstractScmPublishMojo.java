@@ -291,9 +291,37 @@ public abstract class AbstractScmPublishMojo
             throw new MojoExecutionException( e.getMessage(), e );
         }
 
-        scmPublishExecute();
+        boolean tmpCheckout = false;
+
+        if ( checkoutDirectory.getPath().contains( "${project." ) )
+        {
+            try
+            {
+                tmpCheckout = true;
+                checkoutDirectory = File.createTempFile( "maven-scm-publish", ".checkout" );
+                checkoutDirectory.delete();
+                checkoutDirectory.mkdir();
+            }
+            catch ( IOException ioe )
+            {
+                throw new MojoExecutionException( ioe.getMessage(), ioe );
+            }
+        }
+
+        try
+        {
+            scmPublishExecute();
+        }
+        finally
+        {
+            if ( tmpCheckout )
+            {
+                FileUtils.deleteQuietly( checkoutDirectory );
+            }
+        }
     }
 
+    
     public abstract void scmPublishExecute()
         throws MojoExecutionException, MojoFailureException;
 }

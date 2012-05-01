@@ -45,6 +45,7 @@ import org.apache.maven.plugin.MojoFailureException;
  * 
  * @goal publish-scm
  * @aggregate
+ * @requiresProject false
  */
 public class ScmPublishPublishScmMojo
     extends ScmPublishPublishMojo
