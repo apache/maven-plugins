@@ -44,8 +44,6 @@ import org.apache.maven.scm.ScmFileSet;
 import org.apache.maven.scm.command.add.AddScmResult;
 import org.apache.maven.scm.command.checkin.CheckInScmResult;
 import org.apache.maven.scm.command.remove.RemoveScmResult;
-import org.apache.maven.shared.release.ReleaseExecutionException;
-import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
 
 /**
  * Compare the list of files now on disk to the original inventory, then fire off scm adds and deletes as needed.
@@ -146,11 +144,7 @@ public class ScmPublishPublishMojo
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.apache.maven.plugin.Mojo#execute()
-     */
-    public void execute()
+    public void scmPublishExecute()
         throws MojoExecutionException, MojoFailureException
     {
         if ( siteOutputEncoding == null )
@@ -161,20 +155,6 @@ public class ScmPublishPublishMojo
 
         // read in the list left behind by prepare; fail if it's not there.
         List<File> inventory = ScmPublishInventory.readInventory( inventoryFile );
-
-        // setup the scm plugin with help from release plugin utilities
-        try
-        {
-            setupScm();
-        }
-        catch ( ReleaseScmRepositoryException e )
-        {
-            throw new MojoExecutionException( e.getMessage(), e );
-        }
-        catch ( ReleaseExecutionException e )
-        {
-            throw new MojoExecutionException( e.getMessage(), e );
-        }
 
         // what files are in stock now?
         Collection<File> newInventory = ScmPublishInventory.listInventoryFiles( checkoutDirectory );

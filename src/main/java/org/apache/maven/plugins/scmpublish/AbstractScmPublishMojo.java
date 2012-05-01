@@ -25,6 +25,8 @@ import java.util.Map;
 
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.scm.manager.NoSuchScmProviderException;
 import org.apache.maven.scm.manager.ScmManager;
@@ -32,9 +34,7 @@ import org.apache.maven.scm.provider.ScmProvider;
 import org.apache.maven.scm.repository.ScmRepository;
 import org.apache.maven.scm.repository.ScmRepositoryException;
 import org.apache.maven.settings.Settings;
-import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
-import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
 import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
 
 /**
@@ -189,7 +189,7 @@ public abstract class AbstractScmPublishMojo
     }
 
     protected ReleaseDescriptor setupScm()
-        throws ReleaseScmRepositoryException, ReleaseExecutionException
+        throws ScmRepositoryException, NoSuchScmProviderException
     {
         String scmUrl;
         if ( localCheckout )
@@ -228,25 +228,33 @@ public abstract class AbstractScmPublishMojo
             }
         }
 
+        scmRepository = scmRepositoryConfigurator.getConfiguredRepository( releaseDescriptor, settings );
+
+        scmProvider = scmRepositoryConfigurator.getRepositoryProvider( scmRepository );
+
+        return releaseDescriptor;
+    }
+
+    public void execute()
+        throws MojoExecutionException, MojoFailureException
+    {
+        // setup the scm plugin with help from release plugin utilities
         try
         {
-            scmRepository = scmRepositoryConfigurator.getConfiguredRepository( releaseDescriptor, settings );
-
-            scmProvider = scmRepositoryConfigurator.getRepositoryProvider( scmRepository );
+            setupScm();
         }
         catch ( ScmRepositoryException e )
         {
-            // TODO: rethink this error pattern.
-            logError( e.getMessage() );
-
-            throw new ReleaseScmRepositoryException( e.getMessage(), e.getValidationMessages() );
+            throw new MojoExecutionException( e.getMessage(), e );
         }
         catch ( NoSuchScmProviderException e )
         {
-            logError( e.getMessage() );
-
-            throw new ReleaseExecutionException( "Unable to configure SCM repository: " + e.getMessage(), e );
+            throw new MojoExecutionException( e.getMessage(), e );
         }
-        return releaseDescriptor;
+
+        scmPublishExecute();
     }
+
+    public abstract void scmPublishExecute()
+        throws MojoExecutionException, MojoFailureException;
 }

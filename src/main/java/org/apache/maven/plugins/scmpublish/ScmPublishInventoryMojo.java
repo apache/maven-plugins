@@ -30,10 +30,6 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.scm.ScmException;
 import org.apache.maven.scm.ScmFileSet;
 import org.apache.maven.scm.command.checkout.CheckOutScmResult;
-import org.apache.maven.shared.release.ReleaseExecutionException;
-import org.apache.maven.shared.release.ReleaseFailureException;
-import org.apache.maven.shared.release.config.ReleaseDescriptor;
-import org.apache.maven.shared.release.scm.ReleaseScmCommandException;
 import org.apache.maven.shared.release.util.ReleaseUtil;
 import org.codehaus.plexus.util.StringUtils;
 
@@ -62,12 +58,9 @@ public class ScmPublishInventoryMojo
     extends AbstractScmPublishMojo
 {
     private void checkoutExisting()
-        throws ReleaseExecutionException, ReleaseFailureException
+        throws MojoExecutionException
     {
-
         logInfo( "Checking out the pub tree ..." );
-
-        ReleaseDescriptor releaseDescriptor = setupScm();
 
         MavenProject rootProject = ReleaseUtil.getRootProject( reactorProjects );
         if ( checkoutDirectory.exists() )
@@ -80,7 +73,7 @@ public class ScmPublishInventoryMojo
             {
                 logError( e.getMessage() );
 
-                throw new ReleaseExecutionException( "Unable to remove old checkout directory: " + e.getMessage(), e );
+                throw new MojoExecutionException( "Unable to remove old checkout directory: " + e.getMessage(), e );
             }
         }
 
@@ -97,13 +90,13 @@ public class ScmPublishInventoryMojo
         {
             logError( e.getMessage() );
 
-            throw new ReleaseExecutionException( "An error is occurred in the checkout process: " + e.getMessage(), e );
+            throw new MojoExecutionException( "An error is occurred in the checkout process: " + e.getMessage(), e );
         }
         catch ( IOException e )
         {
             logError( e.getMessage() );
 
-            throw new ReleaseExecutionException( "An error is occurred in the checkout process: " + e.getMessage(), e );
+            throw new MojoExecutionException( "An error is occurred in the checkout process: " + e.getMessage(), e );
         }
 
         String scmRelativePathProjectDirectory = scmResult.getRelativePathProjectDirectory();
@@ -116,7 +109,7 @@ public class ScmPublishInventoryMojo
             }
             catch ( IOException e )
             {
-                throw new ReleaseExecutionException( "Exception occurred while calculating common basedir: "
+                throw new MojoExecutionException( "Exception occurred while calculating common basedir: "
                     + e.getMessage(), e );
             }
 
@@ -130,7 +123,7 @@ public class ScmPublishInventoryMojo
             }
             catch ( IOException e )
             {
-                throw new ReleaseExecutionException( e.getMessage(), e );
+                throw new MojoExecutionException( e.getMessage(), e );
             }
             if ( rootProjectBasedir.length() > basedir.length() )
             {
@@ -138,14 +131,12 @@ public class ScmPublishInventoryMojo
             }
         }
 
-        // I don't seem to be using this. 
-        releaseDescriptor.setScmRelativePathProjectDirectory( scmRelativePathProjectDirectory );
-
         if ( !scmResult.isSuccess() )
         {
             logError( scmResult.getProviderMessage() );
 
-            throw new ReleaseScmCommandException( "Unable to checkout from SCM", scmResult );
+            throw new MojoExecutionException( "Unable to checkout from SCM" + "\nProvider message:\n"
+                + scmResult.getProviderMessage() + "\nCommand output:\n" + scmResult.getCommandOutput() );
         }
     }
 
@@ -165,26 +156,15 @@ public class ScmPublishInventoryMojo
         }
     }
 
-    public void execute()
+    public void scmPublishExecute()
         throws MojoExecutionException, MojoFailureException
     {
-        try
-        {
-            checkoutExisting();
+        checkoutExisting();
 
-            List<File> inventory = ScmPublishInventory.listInventoryFiles( checkoutDirectory );
+        List<File> inventory = ScmPublishInventory.listInventoryFiles( checkoutDirectory );
 
-            ScmPublishInventory.writeInventory( inventory, inventoryFile );
+        ScmPublishInventory.writeInventory( inventory, inventoryFile );
 
-            deleteInventory( inventory );
-        }
-        catch ( ReleaseExecutionException e )
-        {
-            throw new MojoExecutionException( e.getMessage(), e );
-        }
-        catch ( ReleaseFailureException e )
-        {
-            throw new MojoFailureException( e.getMessage(), e );
-        }
+        deleteInventory( inventory );
     }
 }
