@@ -38,7 +38,7 @@ import org.apache.maven.wagon.proxy.ProxyInfo;
  */
 public class JiraHelper
 {
-    private static final String PID = "pid=";
+    private static final String PID = "?pid="; //MCHANGES-281 addd ?
 
     /**
      * Parse out the base URL for JIRA and the JIRA project id from the issue
