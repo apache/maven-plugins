@@ -71,7 +71,8 @@ public class ScmPublishInventoryMojo
     {
         checkoutExisting();
 
-        List<File> inventory = ScmPublishInventory.listInventoryFiles( checkoutDirectory );
+        List<File> inventory =
+            ScmPublishInventory.listInventoryFiles( checkoutDirectory, scmProvider.getScmSpecificFilename() );
 
         ScmPublishInventory.writeInventory( inventory, inventoryFile );
 

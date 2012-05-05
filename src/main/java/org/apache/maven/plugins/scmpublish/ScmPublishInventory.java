@@ -43,31 +43,37 @@ import org.codehaus.jackson.map.MappingJsonFactory;
  */
 public class ScmPublishInventory
 {
-    private static class DotFilter
+    private static class IgnoreFilter
         implements IOFileFilter
     {
+        private final String ignoreFile;
+
+        public IgnoreFilter( String ignoreFile )
+        {
+            this.ignoreFile = ignoreFile;
+        }
 
         public boolean accept( File file )
         {
-            return !file.getName().startsWith( "." );
+            return !file.getName().equals( ignoreFile );
         }
 
         public boolean accept( File dir, String name )
         {
-            return !name.startsWith( "." );
+            return !name.equals( ignoreFile );
         }
 
     }
 
-    public static List<String> listInventory( File basedir )
+    public static List<String> listInventory( File basedir, String ignoreFile )
     {
-        return Arrays.asList( basedir.list( new DotFilter() ) );
+        return Arrays.asList( basedir.list( new IgnoreFilter( ignoreFile ) ) );
     }
 
-    public static List<File> listInventoryFiles( File basedir )
+    public static List<File> listInventoryFiles( File basedir, String ignoreFile )
     {
         List<File> inventory = new ArrayList<File>();
-        inventory.addAll( FileUtils.listFiles( basedir, new DotFilter(), new DotFilter() ) );
+        inventory.addAll( FileUtils.listFiles( basedir, new IgnoreFilter( ignoreFile ), new IgnoreFilter( ignoreFile ) ) );
         Collections.sort( inventory );
         return inventory;
     }

@@ -157,7 +157,8 @@ public class ScmPublishPublishMojo
         List<File> inventory = ScmPublishInventory.readInventory( inventoryFile );
 
         // what files are in stock now?
-        Collection<File> newInventory = ScmPublishInventory.listInventoryFiles( checkoutDirectory );
+        Collection<File> newInventory =
+            ScmPublishInventory.listInventoryFiles( checkoutDirectory, scmProvider.getScmSpecificFilename() );
 
         Set<File> deleted = new HashSet<File>( inventory );
         deleted.removeAll( newInventory ); // old - new = deleted. (Added is the complete new inventory at this point.)

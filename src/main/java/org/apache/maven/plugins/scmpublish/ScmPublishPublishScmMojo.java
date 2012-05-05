@@ -64,7 +64,8 @@ public class ScmPublishPublishScmMojo
     private void update( File checkout, File dir )
         throws IOException
     {
-        Set<String> checkoutContent = new HashSet<String>( ScmPublishInventory.listInventory( checkout ) );
+        Set<String> checkoutContent =
+            new HashSet<String>( ScmPublishInventory.listInventory( checkout, scmProvider.getScmSpecificFilename() ) );
         List<String> dirContent = ( dir != null ) ? Arrays.asList( dir.list() ) : Collections.<String>emptyList();
 
         Set<String> deleted = new HashSet<String>( checkoutContent );
