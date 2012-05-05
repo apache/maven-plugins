@@ -37,6 +37,7 @@ import org.apache.maven.scm.command.edit.EditScmResult;
 import org.apache.maven.scm.command.info.InfoScmResult;
 import org.apache.maven.scm.command.list.ListScmResult;
 import org.apache.maven.scm.command.mkdir.MkdirScmResult;
+import org.apache.maven.scm.command.remoteinfo.RemoteInfoScmResult;
 import org.apache.maven.scm.command.remove.RemoveScmResult;
 import org.apache.maven.scm.command.status.StatusScmResult;
 import org.apache.maven.scm.command.tag.TagScmResult;
@@ -502,6 +503,19 @@ public class ScmProviderStub
 
     public InfoScmResult info( ScmProviderRepository scmProviderRepository, ScmFileSet scmFileSet,
                                CommandParameters commandParameters )
+        throws ScmException
+    {
+        return null;
+    }
+
+    public AddScmResult add( ScmRepository scmRepository, ScmFileSet scmFileSet, CommandParameters commandParameters )
+        throws ScmException
+    {
+        return null;
+    }
+
+    public RemoteInfoScmResult remoteInfo( ScmProviderRepository scmProviderRepository, ScmFileSet scmFileSet,
+                                           CommandParameters commandParameters )
         throws ScmException
     {
         return null;
