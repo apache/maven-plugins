@@ -44,7 +44,7 @@ Maven Site Plugin 3
    * {{{./site-mojo.html}site:site}} is used generate a site for a single project.
      Note that links between module sites in a multi module build will <<not>> work.
 
-   * {{{./deploy-mojo.html}site:deploy}} is used to deploy the generated site using <<<scp>>> or <<<file>>> protocol to
+   * {{{./deploy-mojo.html}site:deploy}} is used to deploy the generated site using Wagon supported protocol to
      the site URL specified in the <<<\<distributionManagement\>>>> section of the POM.
 
    * {{{./run-mojo.html}site:run}} starts the site up, rendering documents as requested for faster editing. It uses Jetty
@@ -55,8 +55,7 @@ Maven Site Plugin 3
      to test that links between module sites in a multi module build works.
 
    * {{{./stage-deploy-mojo.html}site:stage-deploy}} deploys the generated site to a staging or mock directory to the site
-     URL specified in the <<<\<distributionManagement\>>>> section of the POM. It supports <<<scp>>> and <<<file>>>
-     protocols for deployment.
+     URL specified in the <<<\<distributionManagement\>>>> section of the POM.
 
    * {{{./attach-descriptor-mojo.html}site:attach-descriptor}} adds the site descriptor (<<<site.xml>>>) to the list of
      files to be installed/deployed. For more references of the site descriptor,
