@@ -19,6 +19,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.project.MavenProject;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -58,6 +59,12 @@ public class ScmPublishPublishScmMojo
      */
     private File content;
 
+    /**
+     * @parameter default-value="${project}"
+     * @readonly
+     */
+    protected MavenProject project;
+
     private List<File> deleted = new ArrayList<File>();
     private List<File> added = new ArrayList<File>();
     private List<File> updated = new ArrayList<File>();
@@ -67,9 +74,11 @@ public class ScmPublishPublishScmMojo
      *
      * @param checkout the scm checkout directory
      * @param dir the content to put in scm (can be <code>null</code>)
+     * @param doNotDeleteDirs directory names that should not be deleted from scm even if not in new content:
+     *   used for modules, which content is available only when staging
      * @throws IOException
      */
-    private void update( File checkout, File dir )
+    private void update( File checkout, File dir, List<String> doNotDeleteDirs )
         throws IOException
     {
         Set<String> checkoutContent =
@@ -82,9 +91,16 @@ public class ScmPublishPublishScmMojo
         for ( String name : deleted )
         {
             File file = new File( checkout, name );
+
+            if ( ( doNotDeleteDirs != null ) && file.isDirectory() && ( doNotDeleteDirs.contains( name ) ) )
+            {
+                // ignore directory not available
+                continue;
+            }
+
             if ( file.isDirectory() )
             {
-                update( file, null );
+                update( file, null, null );
             }
             this.deleted.add( file );
         }
@@ -102,7 +118,7 @@ public class ScmPublishPublishScmMojo
                     file.mkdir();
                 }
 
-                update( file, source );
+                update( file, source, null );
             }
             else
             {
@@ -191,7 +207,7 @@ public class ScmPublishPublishScmMojo
         try
         {
             logInfo( "Updating content..." );
-            update( checkoutDirectory, content );
+            update( checkoutDirectory, content, ( project == null ) ? null : project.getModel().getModules() );
         }
         catch ( IOException ioe )
         {
