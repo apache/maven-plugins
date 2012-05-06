@@ -41,7 +41,7 @@ import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
 
 /**
- * Base class for the site-scm-publish mojos.
+ * Base class for the scm-publish mojos.
  */
 public abstract class AbstractScmPublishMojo
     extends AbstractMojo

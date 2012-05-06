@@ -206,6 +206,11 @@ public class ScmPublishPublishMojo
         checkinFiles();
     }
 
+    /**
+     * Check-in content from scm checkout.
+     * 
+     * @throws MojoExecutionException
+     */
     protected void checkinFiles()
         throws MojoExecutionException
     {
@@ -259,6 +264,13 @@ public class ScmPublishPublishMojo
         }
     }
 
+    /**
+     * Add files to scm.
+     * 
+     * @param added files to be added
+     * @throws MojoFailureException
+     * @throws MojoExecutionException
+     */
     protected void addFiles( Collection<File> added )
         throws MojoFailureException, MojoExecutionException
     {

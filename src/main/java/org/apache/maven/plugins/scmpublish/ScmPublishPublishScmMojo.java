@@ -40,7 +40,8 @@ import org.apache.maven.plugin.MojoFailureException;
  */
 
 /**
- * Publish a content to scm in one step. By default, site staging content is published.
+ * Publish a content to scm in one step. By default, content is taken from default site staging directory
+ * <code>${project.build.directory}/staging</code>.
  * Could be extended to work without project, so usable to update any SCM with any content.
  * 
  * @goal publish-scm
@@ -61,6 +62,13 @@ public class ScmPublishPublishScmMojo
     private List<File> added = new ArrayList<File>();
     private List<File> updated = new ArrayList<File>();
 
+    /**
+     * Update scm checkout directory with content.
+     *
+     * @param checkout the scm checkout directory
+     * @param dir the content to put in scm (can be <code>null</code>)
+     * @throws IOException
+     */
     private void update( File checkout, File dir )
         throws IOException
     {
@@ -112,6 +120,14 @@ public class ScmPublishPublishScmMojo
         }
     }
 
+    /**
+     * Copy a file content, normalizing newlines when necessary.
+     *
+     * @param srcFile the source file
+     * @param destFile the destination file
+     * @throws IOException
+     * @see #requireNormalizeNewlines(File)
+     */
     private void copyFile( File srcFile, File destFile )
         throws IOException
     {
@@ -125,6 +141,13 @@ public class ScmPublishPublishScmMojo
         }
     }
 
+    /**
+     * Copy and normalize newlines.
+     *
+     * @param srcFile the source file
+     * @param destFile the destination file
+     * @throws IOException
+     */
     private void normalizeNewlines( File srcFile, File destFile )
         throws IOException
     {
