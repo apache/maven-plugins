@@ -563,6 +563,7 @@ public abstract class AbstractInvokerMojo
 
     /**
      * If enable and if you have a settings file configured for the execution, it will be merged with your user settings.
+     *
      * @parameter expression="${invoker.mergeUserSettings}" default-value="false"
      * @since 1.6
      */
@@ -1070,34 +1071,39 @@ public abstract class AbstractInvokerMojo
                 }
             }
         }
-
-        try
+        if ( this.settingsFile != null && !mergeUserSettings )
         {
-            mergedSettingsFile = File.createTempFile( "invoker-settings", ".xml" );
-
-            FileWriter fileWriter = null;
+            mergedSettingsFile = interpolatedSettingsFile;
+        }
+        else
+        {
             try
             {
-                fileWriter = new FileWriter( mergedSettingsFile );
-                settingsWriter.write( fileWriter, mergedSettings );
+                mergedSettingsFile = File.createTempFile( "invoker-settings", ".xml" );
+
+                FileWriter fileWriter = null;
+                try
+                {
+                    fileWriter = new FileWriter( mergedSettingsFile );
+                    settingsWriter.write( fileWriter, mergedSettings );
+                }
+                finally
+                {
+                    IOUtil.close( fileWriter );
+                }
+
+                if ( getLog().isDebugEnabled() )
+                {
+                    getLog().debug(
+                        "Created temporary file for invoker settings.xml: " + mergedSettingsFile.getAbsolutePath() );
+                }
+
             }
-            finally
+            catch ( IOException e )
             {
-                IOUtil.close( fileWriter );
+                throw new MojoExecutionException( "Could not create temporary file for invoker settings.xml", e );
             }
-
-            if ( getLog().isDebugEnabled() )
-            {
-                getLog().debug(
-                    "Created temporary file for invoker settings.xml: " + mergedSettingsFile.getAbsolutePath() );
-            }
-
         }
-        catch ( IOException e )
-        {
-            throw new MojoExecutionException( "Could not create temporary file for invoker settings.xml", e );
-        }
-
         final File finalSettingsFile = mergedSettingsFile;
 
         try
