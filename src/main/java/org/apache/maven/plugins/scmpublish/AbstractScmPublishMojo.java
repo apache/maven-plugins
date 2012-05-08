@@ -121,7 +121,7 @@ public abstract class AbstractScmPublishMojo
     protected String password;
 
     /**
-     * @parameter expression="${settings}"
+     * @parameter default-value="${settings}"
      * @required
      * @readonly
      */
@@ -138,14 +138,14 @@ public abstract class AbstractScmPublishMojo
     protected boolean localCheckout;
 
     /**
-     * @parameter expression="${basedir}"
+     * @parameter default-value="${basedir}"
      * @required
      * @readonly
      */
     protected File basedir;
 
     /**
-     * @parameter expression="${session}"
+     * @parameter default-value="${session}"
      * @readonly
      * @required
      */
