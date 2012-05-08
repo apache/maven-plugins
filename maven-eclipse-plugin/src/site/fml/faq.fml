@@ -37,6 +37,18 @@ under the License.
        <p>You may also need to import the project created by Maven Eclipse Plugin. More information can be found <a href="usage.html#Simple Project">here</a>.</p>
      </answer>
    </faq>
+   <faq id="import-project-incorrect-project-name">
+     <question>Eclipse is not using the correct project name and is using the directory name instead</question>
+     <answer>
+       <p>See the Eclipse bug <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=225754#c38">225754</a>.</p>
+       <p>Essentially if the folder:</p>
+          <ul>
+            <li>is directly below the default workspace then it IGNORES the .project/name element on the import and uses the directory name instead</li>
+            <li>is NOT directly below the default workspace then it correctly uses .project/name</li>
+          </ul>
+       <p>This may be why the current Eclipse recommendation is to create a workspace that has NO projects kept underneath it, which will mean correctly named projects.</p>
+     </answer>
+   </faq>
    <faq id="use-add-maven-repo">
      <question>After running <i>mvn eclipse:eclipse</i>, the generated dependencies are pointing to a non-existing file. What needs to be done?</question>
      <answer>

@@ -36,3 +36,6 @@ Trouble Shooting
 
   See {{{./jdk-being-used-is-different-than-expected.html}jdk being used is different than expected}}.
 
+* The Eclipse project is not named correctly
+
+  Please see the FAQ {{{../faq.html#import-project-incorrect-project-name}Eclipse is not using the correct project name and is using the directory name instead}}.
