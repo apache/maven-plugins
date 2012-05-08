@@ -174,7 +174,7 @@ public class RepositoryUtils
         {
             if ( log.isDebugEnabled() )
             {
-                log.debug( "The repo url '" + repo.getUrl() + "' is unknowned - Ignored it" );
+                log.debug( "The repo url '" + repo.getUrl() + "' is unknown - Ignored it" );
             }
             return false;
         }
