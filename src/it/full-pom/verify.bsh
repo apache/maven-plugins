@@ -95,6 +95,19 @@ try
         System.err.println( "dependencies.html doesn't contain doxia-core-1.2.jar" );
         return false;
     }
+    if ( !content.contains( "<td>central</td>" ) )
+    {
+        if ( content.contains( "<td>mirror-test</td><td><a class=\"externalLink\" href=\"http://mirrors.ibiblio.org/pub/mirrors/maven2/\">http://mirrors.ibiblio.org/pub/mirrors/maven2/</a></td>" ) )
+        {
+            System.err.println( "[WARN] MPIR-244: 'Dependency Repository Locations' in dependencies.html doesn't refer to central repository but mirror-test which is its corresponding mirror." );
+            // MPIR-244: need more research to determine if its a bug or a difference that should be documented
+        }
+        else
+        {
+            System.err.println( "[ERROR] 'Dependency Repository Locations' in dependencies.html doesn't refer to central repository nor mirror-test." );
+            return false;
+        }
+    }
 
     File dependencyMgmt = new File( siteDir, "dependency-management.html");
     content = FileUtils.fileRead( dependencyMgmt, "UTF-8" );

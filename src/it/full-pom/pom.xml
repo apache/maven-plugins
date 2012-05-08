@@ -183,7 +183,6 @@
         <version>@pom.version@</version>
         <configuration>
           <introduction>mail list intro text foo</introduction>
-          <dependencyLocationsEnabled>false</dependencyLocationsEnabled>
         </configuration>
         <reportSets>
           <reportSet>
