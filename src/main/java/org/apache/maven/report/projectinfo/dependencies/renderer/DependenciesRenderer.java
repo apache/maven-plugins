@@ -1138,7 +1138,7 @@ public class DependenciesRenderer
 
         for ( ArtifactRepository repo : repoMap.values() )
         {
-            List<ArtifactRepository> mirroredRepos = getMirroredReporitories( repo );
+            List<ArtifactRepository> mirroredRepos = getMirroredRepositories( repo );
 
             sink.tableRow();
             sink.tableCell();
@@ -1196,7 +1196,7 @@ public class DependenciesRenderer
      * @param repo the repo used to download artifacts
      * @return the mirrored repositories or a singleton with actual repo if it is not a mirror
      */
-    private List<ArtifactRepository> getMirroredReporitories( ArtifactRepository repo )
+    private List<ArtifactRepository> getMirroredRepositories( ArtifactRepository repo )
     {
         try
         {
