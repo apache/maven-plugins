@@ -21,6 +21,7 @@ package org.apache.maven.report.projectinfo.dependencies.renderer;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -67,7 +68,7 @@ import org.codehaus.plexus.util.StringUtils;
 
 /**
  * Renderer the dependencies report.
- *
+ * 
  * @version $Id$
  * @since 2.1
  */
@@ -187,7 +188,7 @@ public class DependenciesRenderer
 
     /**
      * Default constructor.
-     *
+     * 
      * @param sink
      * @param locale
      * @param i18n
@@ -294,7 +295,7 @@ public class DependenciesRenderer
 
     /**
      * Start section with a name and a specific anchor.
-     *
+     * 
      * @param anchor not null
      * @param name not null
      */
@@ -617,11 +618,12 @@ public class DependenciesRenderer
                         fileLength = "-";
                     }
 
-                    tableRow( hasSealed, new String[] { name, fileLength,
-                        DEFAULT_DECIMAL_FORMAT.format( jarDetails.getNumEntries() ),
-                        DEFAULT_DECIMAL_FORMAT.format( jarDetails.getNumClasses() ),
-                        DEFAULT_DECIMAL_FORMAT.format( jarDetails.getNumPackages() ), jarDetails.getJdkRevision(),
-                        debugstr, sealedstr } );
+                    tableRow( hasSealed,
+                              new String[] { name, fileLength,
+                                  DEFAULT_DECIMAL_FORMAT.format( jarDetails.getNumEntries() ),
+                                  DEFAULT_DECIMAL_FORMAT.format( jarDetails.getNumClasses() ),
+                                  DEFAULT_DECIMAL_FORMAT.format( jarDetails.getNumPackages() ),
+                                  jarDetails.getJdkRevision(), debugstr, sealedstr } );
                 }
                 catch ( IOException e )
                 {
@@ -630,8 +632,9 @@ public class DependenciesRenderer
             }
             else
             {
-                tableRow( hasSealed, new String[] { artifactFile.getName(),
-                    fileLengthDecimalFormat.format( artifactFile.length() ), "", "", "", "", "", "" } );
+                tableRow( hasSealed,
+                          new String[] { artifactFile.getName(),
+                              fileLengthDecimalFormat.format( artifactFile.length() ), "", "", "", "", "", "" } );
             }
         }
 
@@ -646,10 +649,11 @@ public class DependenciesRenderer
         {
             if ( totaldeps.getTotal( i ) > 0 )
             {
-                tableRow( hasSealed, new String[] { totaldeps.getTotalString( i ), totaldepsize.getTotalString( i ),
-                    totalentries.getTotalString( i ), totalclasses.getTotalString( i ),
-                    totalpackages.getTotalString( i ), ( i < 0 ) ? String.valueOf( highestjdk ) : "",
-                    totaldebug.getTotalString( i ), totalsealed.getTotalString( i ) } );
+                tableRow( hasSealed,
+                          new String[] { totaldeps.getTotalString( i ), totaldepsize.getTotalString( i ),
+                              totalentries.getTotalString( i ), totalclasses.getTotalString( i ),
+                              totalpackages.getTotalString( i ), ( i < 0 ) ? String.valueOf( highestjdk ) : "",
+                              totaldebug.getTotalString( i ), totalsealed.getTotalString( i ) } );
             }
         }
 
@@ -685,8 +689,7 @@ public class DependenciesRenderer
         }
     }
 
-    private void blacklistRepositoryMap( Map<String, ArtifactRepository> repos,
-                                         List<String> repoUrlBlackListed )
+    private void blacklistRepositoryMap( Map<String, ArtifactRepository> repos, List<String> repoUrlBlackListed )
     {
         for ( ArtifactRepository repo : repos.values() )
         {
@@ -785,8 +788,8 @@ public class DependenciesRenderer
             Collections.sort( artifacts, getArtifactComparator() );
 
             String anchorByScope =
-                ( isTransitive ? getI18nString( "transitive.title" ) + "_" + scope
-                                : getI18nString( "title" ) + "_" + scope );
+                ( isTransitive ? getI18nString( "transitive.title" ) + "_" + scope : getI18nString( "title" ) + "_"
+                    + scope );
             startSection( anchorByScope, scope );
 
             paragraph( getI18nString( "intro." + scope ) );
@@ -835,8 +838,7 @@ public class DependenciesRenderer
     private void renderArtifactRow( Artifact artifact, boolean withClassifier, boolean withOptional )
     {
         String isOptional =
-            artifact.isOptional() ? getI18nString( "column.isOptional" )
-                            : getI18nString( "column.isNotOptional" );
+            artifact.isOptional() ? getI18nString( "column.isOptional" ) : getI18nString( "column.isNotOptional" );
 
         String url =
             ProjectInfoReportUtils.getArtifactUrl( artifactFactory, artifact, mavenProjectBuilder, remoteRepositories,
@@ -1136,19 +1138,41 @@ public class DependenciesRenderer
 
         for ( ArtifactRepository repo : repoMap.values() )
         {
+            List<ArtifactRepository> mirroredRepos = getMirroredReporitories( repo );
+
             sink.tableRow();
-            tableCell( repo.getId() );
+            sink.tableCell();
+            boolean addLineBreak = false;
+            for ( ArtifactRepository r : mirroredRepos )
+            {
+                if ( addLineBreak )
+                {
+                    sink.lineBreak();
+                }
+                addLineBreak = true;
+                sink.text( r.getId() );
+            }
+            sink.tableCell_();
 
             sink.tableCell();
-            if ( repo.isBlacklisted() )
+            addLineBreak = false;
+            for ( ArtifactRepository r : mirroredRepos )
             {
-                sink.text( repo.getUrl() );
-            }
-            else
-            {
-                sink.link( repo.getUrl() );
-                sink.text( repo.getUrl() );
-                sink.link_();
+                if ( addLineBreak )
+                {
+                    sink.lineBreak();
+                }
+                addLineBreak = true;
+                if ( repo.isBlacklisted() )
+                {
+                    sink.text( r.getUrl() );
+                }
+                else
+                {
+                    sink.link( r.getUrl() );
+                    sink.text( r.getUrl() );
+                    sink.link_();
+                }
             }
             sink.tableCell_();
 
@@ -1164,6 +1188,47 @@ public class DependenciesRenderer
         }
 
         endTable();
+    }
+
+    /**
+     * Get the repos that can be hidden behind a mirror.
+     * 
+     * @param repo the repo used to download artifacts
+     * @return the mirrored repositories or a singleton with actual repo if it is not a mirror
+     */
+    private List<ArtifactRepository> getMirroredReporitories( ArtifactRepository repo )
+    {
+        try
+        {
+            @SuppressWarnings( "unchecked" )
+            List<ArtifactRepository> mirroredRepos = (List<ArtifactRepository>) ArtifactRepository.class.getMethod( "getMirroredRepositories" ).invoke( repo );
+            if ( ( mirroredRepos != null ) && ( !mirroredRepos.isEmpty() ) )
+            {
+                return mirroredRepos;
+            }
+        }
+        catch ( IllegalArgumentException e )
+        {
+            // ignore: API not available before Maven 3.0.3
+        }
+        catch ( SecurityException e )
+        {
+            // ignore: API not available before Maven 3.0.3
+        }
+        catch ( IllegalAccessException e )
+        {
+            // ignore: API not available before Maven 3.0.3
+        }
+        catch ( InvocationTargetException e )
+        {
+            // ignore: API not available before Maven 3.0.3
+        }
+        catch ( NoSuchMethodException e )
+        {
+            // ignore: API not available before Maven 3.0.3
+        }
+        // before Maven 3.0.3, we can't do anything: Maven 3.0-alpha to 3.0.2 will show the mirror
+        return Collections.singletonList( repo );
     }
 
     private void printArtifactsLocations( Map<String, ArtifactRepository> repoMap, List<String> repoUrlBlackListed,
@@ -1219,7 +1284,8 @@ public class DependenciesRenderer
 
             if ( Artifact.SCOPE_SYSTEM.equals( dependency.getScope() ) )
             {
-                for ( @SuppressWarnings( "unused" ) String repoId : repoIdList )
+                for ( @SuppressWarnings( "unused" )
+                String repoId : repoIdList )
                 {
                     tableCell( "-" );
                 }
@@ -1391,8 +1457,8 @@ public class DependenciesRenderer
     }
 
     /**
-     * @return a valid HTML ID respecting
-     * <a href="http://www.w3.org/TR/xhtml1/#C_8">XHTML 1.0 section C.8. Fragment Identifiers</a>
+     * @return a valid HTML ID respecting <a href="http://www.w3.org/TR/xhtml1/#C_8">XHTML 1.0 section C.8. Fragment
+     *         Identifiers</a>
      */
     private static String getUUID()
     {
@@ -1400,15 +1466,13 @@ public class DependenciesRenderer
     }
 
     /**
-     * Formats file length with the associated <a href="http://en.wikipedia.org/wiki/SI_prefix#Computing">SI</a>
-     * unit (GB, MB, kB) and using the pattern <code>########.00</code> by default.
-     *
+     * Formats file length with the associated <a href="http://en.wikipedia.org/wiki/SI_prefix#Computing">SI</a> unit
+     * (GB, MB, kB) and using the pattern <code>########.00</code> by default.
+     * 
      * @see <a href="http://en.wikipedia.org/wiki/SI_prefix#Computing>
-     * http://en.wikipedia.org/wiki/SI_prefix#Computing</a>
-     * @see <a href="http://en.wikipedia.org/wiki/Binary_prefix">
-     * http://en.wikipedia.org/wiki/Binary_prefix</a>
-     * @see <a href="http://en.wikipedia.org/wiki/Octet_(computing)">
-     * http://en.wikipedia.org/wiki/Octet_(computing)</a>
+     *      http://en.wikipedia.org/wiki/SI_prefix#Computing</a>
+     * @see <a href="http://en.wikipedia.org/wiki/Binary_prefix"> http://en.wikipedia.org/wiki/Binary_prefix</a>
+     * @see <a href="http://en.wikipedia.org/wiki/Octet_(computing)"> http://en.wikipedia.org/wiki/Octet_(computing)</a>
      */
     static class FileDecimalFormat
         extends DecimalFormat
@@ -1421,7 +1485,7 @@ public class DependenciesRenderer
 
         /**
          * Default constructor
-         *
+         * 
          * @param i18n
          * @param locale
          */
