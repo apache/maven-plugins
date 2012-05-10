@@ -620,11 +620,6 @@ public class EvaluateMojo
             JarEntry jarEntry = jarStream.getNextJarEntry();
             while ( jarEntry != null )
             {
-                if ( jarEntry == null )
-                {
-                    break;
-                }
-
                 if ( jarEntry.getName().toLowerCase( Locale.ENGLISH ).endsWith( ".class" ) )
                 {
                     String name = jarEntry.getName().substring( 0, jarEntry.getName().indexOf( "." ) );
