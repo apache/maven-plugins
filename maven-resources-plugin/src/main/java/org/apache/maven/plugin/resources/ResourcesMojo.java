@@ -162,7 +162,7 @@ public class ResourcesMojo
     private boolean overwrite;
     
     /**
-     * Copy any empty directories included in the Ressources.
+     * Copy any empty directories included in the Resources.
      * @parameter expression="${maven.resources.includeEmptyDirs}" default-value="false"
      * @since 2.3
      */    
