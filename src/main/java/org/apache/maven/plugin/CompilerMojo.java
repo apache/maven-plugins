@@ -20,6 +20,7 @@ package org.apache.maven.plugin;
  */
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.plugins.annotations.DependencyScope;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.codehaus.plexus.compiler.util.scan.SimpleSourceInclusionScanner;
@@ -41,7 +42,7 @@ import java.util.Set;
  * @since 2.0
  */
 @org.apache.maven.plugins.annotations.Mojo( name = "compile", defaultPhase = LifecyclePhase.COMPILE, threadSafe = true,
-                                            requiresDependencyResolution = "compile" )
+                                            requiresDependencyResolution = DependencyScope.COMPILE )
 public class CompilerMojo
     extends AbstractCompilerMojo
 {

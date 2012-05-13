@@ -19,6 +19,7 @@ package org.apache.maven.plugin;
  * under the License.
  */
 
+import org.apache.maven.plugins.annotations.DependencyScope;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.codehaus.plexus.compiler.util.scan.SimpleSourceInclusionScanner;
@@ -40,7 +41,7 @@ import java.util.Set;
  * @since 2.0
  */
 @org.apache.maven.plugins.annotations.Mojo( name = "testCompile", defaultPhase = LifecyclePhase.TEST_COMPILE,
-                                            threadSafe = true, requiresDependencyResolution = "test" )
+                                            threadSafe = true, requiresDependencyResolution = DependencyScope.TEST )
 public class TestCompilerMojo
     extends AbstractCompilerMojo
 {
