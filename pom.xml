@@ -36,23 +36,6 @@ under the License.
   <name>Maven Changes Report Plugin</name>
   <description>Creates a release history for inclusion into the site and assists in generating an announcement mail.</description>
 
-  <developers>
-    <developer>
-      <id>jruiz</id>
-      <name>Johnny Ruiz III</name>
-      <email>jruiz@apache.org</email>
-    </developer>
-    <developer>
-      <id>aramirez</id>
-      <name>Allan Ramirez</name>
-      <email>aramirez@exist.com</email>
-    </developer>
-    <developer>
-      <id>dennisl</id>
-      <name>Dennis Lundberg</name>
-      <email>dennisl@apache.org</email>
-    </developer>
-  </developers>
   <contributors>
     <contributor>
       <name>Justin Edelson</name>
