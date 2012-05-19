@@ -20,6 +20,7 @@ package org.apache.maven.plugin.pmd;
  */
 
 import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.IOUtil;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -35,7 +36,9 @@ import java.util.Locale;
 public class PmdReportTest
     extends AbstractPmdReportTest
 {
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     protected void setUp()
         throws Exception
     {
@@ -76,7 +79,6 @@ public class PmdReportTest
         String str =
             readFile( new File( getBasedir(), "target/test/unit/default-configuration/target/site/pmd.html" ) );
 
-
         assertTrue( str.indexOf( "/xref/def/configuration/App.html#31" ) != -1 );
 
         assertTrue( str.indexOf( "/xref/def/configuration/AppSample.html#45" ) != -1 );
@@ -97,7 +99,7 @@ public class PmdReportTest
         URL url = getClass().getClassLoader().getResource( "rulesets/basic.xml" );
         URL url2 = getClass().getClassLoader().getResource( "rulesets/unusedcode.xml" );
         URL url3 = getClass().getClassLoader().getResource( "rulesets/imports.xml" );
-        mojo.setRulesets( new String[] { url.toString(), url2.toString() , url3.toString() } );
+        mojo.setRulesets( new String[]{ url.toString(), url2.toString(), url3.toString() } );
 
         mojo.execute();
 
@@ -121,7 +123,6 @@ public class PmdReportTest
         //check if there's a link to the JXR files
         String str =
             readFile( new File( getBasedir(), "target/test/unit/default-configuration/target/site/pmd.html" ) );
-
 
         assertTrue( str.indexOf( "/xref/def/configuration/App.html#31" ) != -1 );
 
@@ -161,8 +162,10 @@ public class PmdReportTest
         assertTrue(
             str.toLowerCase().indexOf( "Avoid using if...else statements without curly braces".toLowerCase() ) != -1 );
 
-        assertTrue("unnecessary constructor should not be triggered because of low priority",
-            str.toLowerCase().indexOf( "Avoid unnecessary constructors - the compiler will generate these for you".toLowerCase() ) == -1 );
+        assertTrue( "unnecessary constructor should not be triggered because of low priority",
+                    str.toLowerCase().indexOf(
+                        "Avoid unnecessary constructors - the compiler will generate these for you".toLowerCase() )
+                        == -1 );
 
     }
 
@@ -174,8 +177,7 @@ public class PmdReportTest
     public void testSkipConfiguration()
         throws Exception
     {
-        File testPom = new File( getBasedir(),
-                                 "src/test/resources/unit/custom-configuration/skip-plugin-config.xml" );
+        File testPom = new File( getBasedir(), "src/test/resources/unit/custom-configuration/skip-plugin-config.xml" );
         PmdReport mojo = (PmdReport) lookupMojo( "pmd", testPom );
         mojo.execute();
 
@@ -230,7 +232,6 @@ public class PmdReportTest
     }
 
 
-
     /**
      * Read the contents of the specified file object into a string
      *
@@ -243,21 +244,32 @@ public class PmdReportTest
     {
         String strTmp;
         StringBuffer str = new StringBuffer( (int) file.length() );
-        BufferedReader in = new BufferedReader( new FileReader( file ) );
-
-        while ( ( strTmp = in.readLine() ) != null )
+        FileReader reader = null;
+        BufferedReader in = null;
+        try
         {
-            str.append( ' ' );
-            str.append( strTmp );
+            reader = new FileReader( file );
+            in = new BufferedReader( reader );
+
+            while ( ( strTmp = in.readLine() ) != null )
+            {
+                str.append( ' ' );
+                str.append( strTmp );
+            }
+            in.close();
         }
-        in.close();
+        finally
+        {
+            IOUtil.close( in );
+            IOUtil.close( reader );
+        }
 
         return str.toString();
     }
 
     /**
      * Verify the correct working of the localtionTemp method
-     * 
+     *
      * @throws Exception
      */
     public void testLocationTemp()
