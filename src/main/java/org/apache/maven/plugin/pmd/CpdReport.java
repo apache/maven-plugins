@@ -212,12 +212,13 @@ public class CpdReport
         }
 
         String buffer = r.render( cpd.getMatches() );
+        FileOutputStream tStream = null;
         Writer writer = null;
         try
         {
             targetDirectory.mkdirs();
             File targetFile = new File( targetDirectory, "cpd." + format );
-            FileOutputStream tStream = new FileOutputStream( targetFile );
+            tStream = new FileOutputStream( targetFile );
             writer = new OutputStreamWriter( tStream, getOutputEncoding() );
             writer.write( buffer );
             writer.close();
@@ -233,6 +234,7 @@ public class CpdReport
         finally
         {
             IOUtil.close( writer );
+            IOUtil.close( tStream );
         }
     }
 
