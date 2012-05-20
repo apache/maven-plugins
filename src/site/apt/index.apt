@@ -76,7 +76,7 @@ Known Limitations
 
     There are 2 known limitations:
     
-    * the plugin doesn't create the initial SCM directory, it just import content into an
+    * <<the plugin doesn't create the initial SCM directory>>, it just import content into an
     existing SCM directory,
 
     * the plugin works well for multi-module websites publishing to a complete directory:
@@ -99,3 +99,7 @@ Future Dreams
 
     * improve {{{/wagon/wagon-providers/wagon-scm/}<<<wagon-scm>>>}} to put a whole directory content
       in one commit, and not with one commit per file.
+
+    []
+
+    Then this plugin will be outdated, replaced by natural <<<maven-site-plugin>>>.
