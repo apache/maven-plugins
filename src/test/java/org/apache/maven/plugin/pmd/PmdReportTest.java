@@ -86,6 +86,37 @@ public class PmdReportTest
     }
 
 
+    public void testJavascriptConfiguration()
+        throws Exception
+    {
+        File testPom = new File( getBasedir(),
+                                 "src/test/resources/unit/default-configuration/javascript-configuration-plugin-config.xml" );
+        PmdReport mojo = (PmdReport) lookupMojo( "pmd", testPom );
+        mojo.execute();
+
+        // check if the PMD files were generated
+        File generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/pmd.xml" );
+        assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+
+        // these are the rulesets, that have been applied...
+        generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/ecmascript-basic.xml" );
+        assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+
+        generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/ecmascript-braces.xml" );
+        assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+
+        generatedFile =
+            new File( getBasedir(), "target/test/unit/default-configuration/target/ecmascript-unnecessary.xml" );
+        assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+
+        generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/site/pmd.html" );
+        renderer( mojo, generatedFile );
+        assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+
+        String str = readFile( generatedFile );
+        assertTrue( str.indexOf( "Avoid using global variables" ) != -1 );
+    }
+
     public void testFileURL()
         throws Exception
     {

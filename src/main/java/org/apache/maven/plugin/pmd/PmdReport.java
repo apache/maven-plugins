@@ -84,6 +84,17 @@ public class PmdReport
     private String targetJdk;
 
     /**
+     * The programming language to be analyzed by PMD. Valid values are currently <code>java</code>
+     * and <code>ecmascript</code> or <code>javascript</code>.
+     * <p>
+     * <b>Note:</b> if the parameter targetJdk is given, then this language parameter will be ignored.
+     * </p>
+     *
+     * @parameter default-value="java"
+     */
+    private String language;
+
+    /**
      * The rule priority threshold; rules with lower priority
      * than this will not be evaluated.
      *
@@ -237,6 +248,11 @@ public class PmdReport
         try
         {
             files = getFilesToProcess();
+            if ( files.isEmpty() && !"java".equals( language ) )
+            {
+                getLog().warn(
+                    "No files found to process. Did you add your additional source folders like javascript? (see also build-helper-maven-plugin)" );
+            }
         }
         catch ( IOException e )
         {
@@ -378,14 +394,23 @@ public class PmdReport
         throws MavenReportException
     {
         PMDConfiguration configuration = new PMDConfiguration();
+        LanguageVersion languageVersion = null;
 
         if ( null != targetJdk )
         {
-            LanguageVersion languageVersion = LanguageVersion.findByTerseName( "java " + targetJdk );
+            languageVersion = LanguageVersion.findByTerseName( "java " + targetJdk );
             if ( languageVersion == null )
             {
                 throw new MavenReportException( "Unsupported targetJdk value '" + targetJdk + "'." );
             }
+        }
+        else if ( "javascript".equals( language ) || "ecmascript".equals( language ) )
+        {
+            languageVersion = LanguageVersion.ECMASCRIPT;
+        }
+        if ( languageVersion != null )
+        {
+            getLog().debug( "Using language " + languageVersion );
             configuration.setDefaultLanguageVersion( languageVersion );
         }
 

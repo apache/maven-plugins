@@ -1,0 +1,5 @@
+(function() {
+
+    globalVariable = 1;
+
+})();

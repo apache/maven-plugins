@@ -19,6 +19,16 @@ package org.apache.maven.plugin.pmd;
  * under the License.
  */
 
+import net.sourceforge.pmd.PMD;
+import org.apache.maven.doxia.siterenderer.Renderer;
+import org.apache.maven.model.ReportPlugin;
+import org.apache.maven.project.MavenProject;
+import org.apache.maven.reporting.AbstractMavenReport;
+import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.PathTool;
+import org.codehaus.plexus.util.ReaderFactory;
+import org.codehaus.plexus.util.StringUtils;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -30,17 +40,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-
-import net.sourceforge.pmd.PMD;
-
-import org.apache.maven.doxia.siterenderer.Renderer;
-import org.apache.maven.model.ReportPlugin;
-import org.apache.maven.project.MavenProject;
-import org.apache.maven.reporting.AbstractMavenReport;
-import org.codehaus.plexus.util.FileUtils;
-import org.codehaus.plexus.util.PathTool;
-import org.codehaus.plexus.util.ReaderFactory;
-import org.codehaus.plexus.util.StringUtils;
 
 /**
  * Base class for the PMD reports.
@@ -203,13 +202,17 @@ public abstract class AbstractPmdReport
      */
     protected List<MavenProject> reactorProjects;
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     protected MavenProject getProject()
     {
         return project;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     protected Renderer getSiteRenderer()
     {
         return siteRenderer;
@@ -222,8 +225,8 @@ public abstract class AbstractPmdReport
         {
             File xrefLoc = test ? xrefTestLocation : xrefLocation;
 
-            String relativePath = PathTool.getRelativePath( outputDirectory.getAbsolutePath(),
-                                                            xrefLoc.getAbsolutePath() );
+            String relativePath =
+                PathTool.getRelativePath( outputDirectory.getAbsolutePath(), xrefLoc.getAbsolutePath() );
             if ( StringUtils.isEmpty( relativePath ) )
             {
                 relativePath = ".";
@@ -237,9 +240,8 @@ public abstract class AbstractPmdReport
             else
             {
                 // Not yet generated - check if the report is on its way
-                @SuppressWarnings( "unchecked" )
-                List<ReportPlugin> reportPlugins = project.getReportPlugins();
-                for ( ReportPlugin plugin  : reportPlugins )
+                @SuppressWarnings( "unchecked" ) List<ReportPlugin> reportPlugins = project.getReportPlugins();
+                for ( ReportPlugin plugin : reportPlugins )
                 {
                     String artifactId = plugin.getArtifactId();
                     if ( "maven-jxr-plugin".equals( artifactId ) || "jxr-maven-plugin".equals( artifactId ) )
@@ -278,7 +280,7 @@ public abstract class AbstractPmdReport
         {
             excludeRoots = new File[0];
         }
-        
+
         Collection<File> excludeRootFiles = new HashSet<File>( excludeRoots.length );
 
         for ( int i = 0; i < excludeRoots.length; i++ )
@@ -317,8 +319,8 @@ public abstract class AbstractPmdReport
         {
             for ( MavenProject localProject : reactorProjects )
             {
-                @SuppressWarnings( "unchecked" )
-                List<String> localCompileSourceRoots = localProject.getCompileSourceRoots(); 
+                @SuppressWarnings( "unchecked" ) List<String> localCompileSourceRoots =
+                    localProject.getCompileSourceRoots();
                 for ( String root : localCompileSourceRoots )
                 {
                     File sroot = new File( root );
@@ -326,8 +328,8 @@ public abstract class AbstractPmdReport
                 }
                 if ( includeTests )
                 {
-                    @SuppressWarnings( "unchecked" )
-                    List<String> localTestCompileSourceRoots = localProject.getTestCompileSourceRoots(); 
+                    @SuppressWarnings( "unchecked" ) List<String> localTestCompileSourceRoots =
+                        localProject.getTestCompileSourceRoots();
                     for ( String root : localTestCompileSourceRoots )
                     {
                         File sroot = new File( root );
@@ -347,11 +349,12 @@ public abstract class AbstractPmdReport
 
         for ( PmdFileInfo finfo : directories )
         {
+            getLog().debug( "Searching for files in directory " + finfo.getSourceDirectory().toString() );
             File sourceDirectory = finfo.getSourceDirectory();
             if ( sourceDirectory.isDirectory() && !excludeRootFiles.contains( sourceDirectory ) )
             {
-                @SuppressWarnings( "unchecked" )
-                List<File> newfiles = FileUtils.getFiles( sourceDirectory, including, excluding );
+                @SuppressWarnings( "unchecked" ) List<File> newfiles =
+                    FileUtils.getFiles( sourceDirectory, including, excluding );
                 for ( Iterator<File> it2 = newfiles.iterator(); it2.hasNext(); )
                 {
                     files.put( it2.next(), finfo );
@@ -388,8 +391,8 @@ public abstract class AbstractPmdReport
      */
     private String getExcludes()
     {
-        @SuppressWarnings( "unchecked" )
-        Collection<String> patterns = new LinkedHashSet<String>( FileUtils.getDefaultExcludesAsList() );
+        @SuppressWarnings( "unchecked" ) Collection<String> patterns =
+            new LinkedHashSet<String>( FileUtils.getDefaultExcludesAsList() );
         if ( excludes != null )
         {
             patterns.addAll( excludes );
@@ -402,7 +405,9 @@ public abstract class AbstractPmdReport
         return "html".equals( format );
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public boolean canGenerateReport()
     {
         if ( aggregate && !project.isExecutionRoot() )
@@ -436,7 +441,9 @@ public abstract class AbstractPmdReport
         return true;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     protected String getOutputDirectory()
     {
         return outputDirectory.getAbsolutePath();
