@@ -19,6 +19,19 @@ package org.apache.maven.plugin.pmd;
  * under the License.
  */
 
+import net.sourceforge.pmd.cpd.CPD;
+import net.sourceforge.pmd.cpd.CPDConfiguration;
+import net.sourceforge.pmd.cpd.CSVRenderer;
+import net.sourceforge.pmd.cpd.JavaLanguage;
+import net.sourceforge.pmd.cpd.JavaTokenizer;
+import net.sourceforge.pmd.cpd.Renderer;
+import net.sourceforge.pmd.cpd.XMLRenderer;
+import org.apache.maven.reporting.MavenReportException;
+import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.StringUtils;
+import org.codehaus.plexus.util.WriterFactory;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -31,20 +44,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
-import net.sourceforge.pmd.cpd.CPD;
-import net.sourceforge.pmd.cpd.CPDConfiguration;
-import net.sourceforge.pmd.cpd.CSVRenderer;
-import net.sourceforge.pmd.cpd.JavaLanguage;
-import net.sourceforge.pmd.cpd.JavaTokenizer;
-import net.sourceforge.pmd.cpd.Renderer;
-import net.sourceforge.pmd.cpd.XMLRenderer;
-
-import org.apache.maven.reporting.MavenReportException;
-import org.codehaus.plexus.util.FileUtils;
-import org.codehaus.plexus.util.IOUtil;
-import org.codehaus.plexus.util.StringUtils;
-import org.codehaus.plexus.util.WriterFactory;
-
 /**
  * Creates a report for PMD's CPD tool.  See
  * <a href="http://pmd.sourceforge.net/cpd.html">http://pmd.sourceforge.net/cpd.html</a>
@@ -52,9 +51,9 @@ import org.codehaus.plexus.util.WriterFactory;
  *
  * @author Mike Perham
  * @version $Id$
- * @since 2.0
  * @goal cpd
  * @threadSafe
+ * @since 2.0
  */
 public class CpdReport
     extends AbstractPmdReport
@@ -93,19 +92,25 @@ public class CpdReport
      */
     private boolean ignoreIdentifiers;
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public String getName( Locale locale )
     {
         return getBundle( locale ).getString( "report.cpd.name" );
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public String getDescription( Locale locale )
     {
         return getBundle( locale ).getString( "report.cpd.description" );
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public void executeReport( Locale locale )
         throws MavenReportException
     {
@@ -186,25 +191,28 @@ public class CpdReport
         }
         cpd.go();
 
-        CpdReportGenerator gen =
-            new CpdReportGenerator( getSink(), files, getBundle( locale ), aggregate );
+        CpdReportGenerator gen = new CpdReportGenerator( getSink(), files, getBundle( locale ), aggregate );
         gen.generate( cpd.getMatches() );
 
         return cpd;
     }
 
-    private String determineEncoding(boolean showWarn) throws UnsupportedEncodingException {
+    private String determineEncoding( boolean showWarn )
+        throws UnsupportedEncodingException
+    {
         String encoding = WriterFactory.FILE_ENCODING;
-        if ( StringUtils.isNotEmpty( getSourceEncoding() ) ) {
+        if ( StringUtils.isNotEmpty( getSourceEncoding() ) )
+        {
 
             encoding = getSourceEncoding();
             // test encoding as CPD will convert exception into a RuntimeException
             WriterFactory.newWriter( new ByteArrayOutputStream(), encoding );
 
-        } else if ( showWarn ) {
-            getLog().warn(
-                    "File encoding has not been set, using platform encoding "
-                        + WriterFactory.FILE_ENCODING + ", i.e. build is platform dependent!" );
+        }
+        else if ( showWarn )
+        {
+            getLog().warn( "File encoding has not been set, using platform encoding " + WriterFactory.FILE_ENCODING
+                               + ", i.e. build is platform dependent!" );
             encoding = WriterFactory.FILE_ENCODING;
         }
         return encoding;
@@ -247,7 +255,9 @@ public class CpdReport
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public String getOutputName()
     {
         return "cpd";
@@ -272,7 +282,7 @@ public class CpdReport
         if ( "xml".equals( format ) )
         {
             //TODO: pmd should provide a better way to specify the output encoding (getOutputEncoding());
-            System.setProperty("file.encoding", getOutputEncoding());
+            System.setProperty( "file.encoding", getOutputEncoding() );
             renderer = new XMLRenderer();
         }
         else if ( "csv".equals( format ) )

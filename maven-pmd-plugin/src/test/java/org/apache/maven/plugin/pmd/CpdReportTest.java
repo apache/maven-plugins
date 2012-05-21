@@ -19,6 +19,16 @@ package org.apache.maven.plugin.pmd;
  * under the License.
  */
 
+import net.sourceforge.pmd.cpd.CPD;
+import net.sourceforge.pmd.cpd.CPDConfiguration;
+import net.sourceforge.pmd.cpd.JavaLanguage;
+import net.sourceforge.pmd.cpd.Match;
+import net.sourceforge.pmd.cpd.TokenEntry;
+import org.codehaus.plexus.util.FileUtils;
+import org.w3c.dom.Document;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -27,18 +37,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
-import net.sourceforge.pmd.cpd.CPD;
-import net.sourceforge.pmd.cpd.CPDConfiguration;
-import net.sourceforge.pmd.cpd.JavaLanguage;
-import net.sourceforge.pmd.cpd.Match;
-import net.sourceforge.pmd.cpd.TokenEntry;
-
-import org.codehaus.plexus.util.FileUtils;
-import org.w3c.dom.Document;
-
 /**
  * @author <a href="mailto:oching@apache.org">Maria Odea Ching</a>
  * @version $Id$
@@ -46,7 +44,9 @@ import org.w3c.dom.Document;
 public class CpdReportTest
     extends AbstractPmdReportTest
 {
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     protected void setUp()
         throws Exception
     {
@@ -62,9 +62,8 @@ public class CpdReportTest
     public void testDefaultConfiguration()
         throws Exception
     {
-        File testPom =
-            new File( getBasedir(),
-                      "src/test/resources/unit/default-configuration/cpd-default-configuration-plugin-config.xml" );
+        File testPom = new File( getBasedir(),
+                                 "src/test/resources/unit/default-configuration/cpd-default-configuration-plugin-config.xml" );
         CpdReport mojo = (CpdReport) lookupMojo( "cpd", testPom );
         mojo.execute();
 
@@ -100,9 +99,8 @@ public class CpdReportTest
     public void testCustomConfiguration()
         throws Exception
     {
-        File testPom =
-            new File( getBasedir(),
-                      "src/test/resources/unit/custom-configuration/cpd-custom-configuration-plugin-config.xml" );
+        File testPom = new File( getBasedir(),
+                                 "src/test/resources/unit/custom-configuration/cpd-custom-configuration-plugin-config.xml" );
         CpdReport mojo = (CpdReport) lookupMojo( "cpd", testPom );
         mojo.execute();
 
@@ -115,8 +113,7 @@ public class CpdReportTest
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
 
         // Contents that should NOT be in the report
-        String str =
-            readFile( new File( getBasedir(), "target/test/unit/custom-configuration/target/site/cpd.html" ) );
+        String str = readFile( new File( getBasedir(), "target/test/unit/custom-configuration/target/site/cpd.html" ) );
         assertTrue( str.toLowerCase().indexOf( "/Sample.java".toLowerCase() ) == -1 );
 
         str = readFile( new File( getBasedir(), "target/test/unit/custom-configuration/target/site/cpd.html" ) );
@@ -145,8 +142,7 @@ public class CpdReportTest
         try
         {
             File testPom =
-                new File( getBasedir(),
-                          "src/test/resources/unit/invalid-format/cpd-invalid-format-plugin-config.xml" );
+                new File( getBasedir(), "src/test/resources/unit/invalid-format/cpd-invalid-format-plugin-config.xml" );
             CpdReport mojo = (CpdReport) lookupMojo( "cpd", testPom );
             setVariableValueToObject( mojo, "compileSourceRoots", mojo.project.getCompileSourceRoots() );
             mojo.execute();
@@ -163,8 +159,7 @@ public class CpdReportTest
     /**
      * Read the contents of the specified file object into a string
      *
-     * @param file
-     *            the file to be read
+     * @param file the file to be read
      * @return a String object that contains the contents of the file
      * @throws java.io.IOException
      */
@@ -188,9 +183,8 @@ public class CpdReportTest
     public void testWriteNonHtml()
         throws Exception
     {
-        File testPom =
-            new File( getBasedir(),
-                      "src/test/resources/unit/default-configuration/cpd-default-configuration-plugin-config.xml" );
+        File testPom = new File( getBasedir(),
+                                 "src/test/resources/unit/default-configuration/cpd-default-configuration-plugin-config.xml" );
         CpdReport mojo = (CpdReport) lookupMojo( "cpd", testPom );
         assertNotNull( mojo );
 
