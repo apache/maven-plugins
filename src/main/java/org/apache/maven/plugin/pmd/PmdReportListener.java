@@ -19,6 +19,12 @@ package org.apache.maven.plugin.pmd;
  * under the License.
  */
 
+import net.sourceforge.pmd.ReportListener;
+import net.sourceforge.pmd.RuleViolation;
+import net.sourceforge.pmd.stat.Metric;
+import org.apache.maven.doxia.sink.Sink;
+import org.codehaus.plexus.util.StringUtils;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,13 +33,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
-
-import net.sourceforge.pmd.ReportListener;
-import net.sourceforge.pmd.RuleViolation;
-import net.sourceforge.pmd.stat.Metric;
-
-import org.apache.maven.doxia.sink.Sink;
-import org.codehaus.plexus.util.StringUtils;
 
 /**
  * Handle events from PMD, converting them into Doxia events.
@@ -75,27 +74,31 @@ public class PmdReportListener
         return bundle.getString( "report.pmd.title" );
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public void ruleViolationAdded( RuleViolation ruleViolation )
     {
         violations.add( ruleViolation );
     }
 
-    public List<RuleViolation> getViolations() {
+    public List<RuleViolation> getViolations()
+    {
         return violations;
     }
 
-    private void startFileSection(String currentFilename, PmdFileInfo fileInfo) {
+    private void startFileSection( String currentFilename, PmdFileInfo fileInfo )
+    {
         sink.section2();
         sink.sectionTitle2();
 
         // prepare the filename
-        this.currentFilename = StringUtils.substring( currentFilename,
-                                          fileInfo.getSourceDirectory().getAbsolutePath().length() + 1 );
+        this.currentFilename =
+            StringUtils.substring( currentFilename, fileInfo.getSourceDirectory().getAbsolutePath().length() + 1 );
         this.currentFilename = StringUtils.replace( this.currentFilename, "\\", "/" );
 
         String title = this.currentFilename;
-        if (aggregate)
+        if ( aggregate )
         {
             title = fileInfo.getProject().getName() + " - " + currentFilename;
         }
@@ -113,12 +116,14 @@ public class PmdReportListener
         sink.tableRow_();
     }
 
-    private void endFileSection() {
+    private void endFileSection()
+    {
         sink.table_();
         sink.section2_();
     }
 
-    private void processSingleRuleViolation(RuleViolation ruleViolation) {
+    private void processSingleRuleViolation( RuleViolation ruleViolation )
+    {
         sink.tableRow();
         sink.tableCell();
         sink.text( ruleViolation.getDescription() );
@@ -128,7 +133,8 @@ public class PmdReportListener
         int beginLine = ruleViolation.getBeginLine();
         outputLineLink( beginLine );
         int endLine = ruleViolation.getEndLine();
-        if (endLine != beginLine) {
+        if ( endLine != beginLine )
+        {
             sink.text( " - " );
             outputLineLink( endLine );
         }
@@ -143,14 +149,18 @@ public class PmdReportListener
     private void processViolations()
     {
         fileCount = files.size();
-        Collections.sort( violations, new Comparator<RuleViolation>() {
+        Collections.sort( violations, new Comparator<RuleViolation>()
+        {
             /** {@inheritDoc} */
-            public int compare(RuleViolation o1, RuleViolation o2) {
+            public int compare( RuleViolation o1, RuleViolation o2 )
+            {
                 int filenames = o1.getFilename().compareTo( o2.getFilename() );
-                if (filenames == 0) {
+                if ( filenames == 0 )
+                {
                     return o1.getBeginLine() - o2.getBeginLine();
                 }
-                else {
+                else
+                {
                     return filenames;
                 }
             }
@@ -204,7 +214,9 @@ public class PmdReportListener
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public void metricAdded( Metric metric )
     {
 //        if ( metric.getCount() != 0 )
@@ -333,7 +345,8 @@ public class PmdReportListener
         sink.close();
     }
 
-    public void setFiles(Map<File, PmdFileInfo> files) {
+    public void setFiles( Map<File, PmdFileInfo> files )
+    {
         this.files = files;
     }
 }

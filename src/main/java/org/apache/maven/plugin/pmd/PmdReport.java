@@ -19,19 +19,6 @@ package org.apache.maven.plugin.pmd;
  * under the License.
  */
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Properties;
-import java.util.ResourceBundle;
-
 import net.sourceforge.pmd.PMD;
 import net.sourceforge.pmd.PMDConfiguration;
 import net.sourceforge.pmd.Report;
@@ -48,7 +35,6 @@ import net.sourceforge.pmd.renderers.TextRenderer;
 import net.sourceforge.pmd.renderers.XMLRenderer;
 import net.sourceforge.pmd.util.datasource.DataSource;
 import net.sourceforge.pmd.util.datasource.FileDataSource;
-
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.reporting.MavenReportException;
 import org.codehaus.plexus.resource.ResourceManager;
@@ -59,6 +45,19 @@ import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Properties;
+import java.util.ResourceBundle;
 
 /**
  * Creates a PMD report.
@@ -194,9 +193,11 @@ public class PmdReport
 
         PMDConfiguration pmdConfiguration = getPMDConfiguration();
         final PmdReportListener reportSink = new PmdReportListener( sink, getBundle( locale ), aggregate );
-        RuleContext ruleContext = new RuleContext() {
+        RuleContext ruleContext = new RuleContext()
+        {
             @Override
-            public void setReport(Report report) {
+            public void setReport( Report report )
+            {
                 super.setReport( report );
                 // make sure our listener is added - the Report is created by PMD internally now
                 report.addListener( reportSink );
@@ -230,7 +231,7 @@ public class PmdReport
         {
             throw new MavenReportException( e.getMessage(), e );
         }
-        pmdConfiguration.setRuleSets( StringUtils.join( sets, "," ));
+        pmdConfiguration.setRuleSets( StringUtils.join( sets, "," ) );
 
         Map<File, PmdFileInfo> files;
         try
@@ -251,7 +252,7 @@ public class PmdReport
         }
         pmdConfiguration.setSourceEncoding( encoding );
 
-        reportSink.setFiles(files);
+        reportSink.setFiles( files );
         List<DataSource> dataSources = new ArrayList<DataSource>( files.size() );
         for ( File f : files.keySet() )
         {
@@ -268,7 +269,7 @@ public class PmdReport
             // all the violations.
             pmdConfiguration.setThreads( 0 );
 
-            PMD.processFiles(pmdConfiguration, ruleSetFactory, dataSources, ruleContext, renderers );
+            PMD.processFiles( pmdConfiguration, ruleSetFactory, dataSources, ruleContext, renderers );
         }
         catch ( Exception e )
         {
@@ -310,7 +311,7 @@ public class PmdReport
         // replace all occurrences of the following characters:  ? : & = %
         loc = loc.replaceAll( "[\\?\\:\\&\\=\\%]", "_" );
 
-        if (!loc.endsWith( ".xml" ))
+        if ( !loc.endsWith( ".xml" ) )
         {
             loc = loc + ".xml";
         }
@@ -435,9 +436,8 @@ public class PmdReport
         {
             try
             {
-                renderer = (Renderer) Class.forName( format )
-                        .getConstructor( Properties.class )
-                            .newInstance( new Properties() );
+                renderer = (Renderer) Class.forName( format ).getConstructor( Properties.class ).newInstance(
+                    new Properties() );
             }
             catch ( Exception e )
             {

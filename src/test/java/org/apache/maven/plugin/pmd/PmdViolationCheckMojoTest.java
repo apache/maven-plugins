@@ -31,7 +31,9 @@ import java.io.File;
 public class PmdViolationCheckMojoTest
     extends AbstractMojoTestCase
 {
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     protected void setUp()
         throws Exception
     {
@@ -76,12 +78,12 @@ public class PmdViolationCheckMojoTest
         throws Exception
     {
         File testPom = new File( getBasedir(),
-                "src/test/resources/unit/default-configuration/default-configuration-plugin-config.xml" );
+                                 "src/test/resources/unit/default-configuration/default-configuration-plugin-config.xml" );
         PmdReport mojo = (PmdReport) lookupMojo( "pmd", testPom );
         mojo.execute();
 
         testPom = new File( getBasedir(),
-                                 "src/test/resources/unit/default-configuration/pmd-check-failonpriority-plugin-config.xml" );
+                            "src/test/resources/unit/default-configuration/pmd-check-failonpriority-plugin-config.xml" );
         PmdViolationCheckMojo pmdViolationMojo = (PmdViolationCheckMojo) lookupMojo( "check", testPom );
         pmdViolationMojo.execute();
 
