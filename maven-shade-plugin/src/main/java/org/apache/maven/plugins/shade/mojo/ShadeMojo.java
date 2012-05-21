@@ -62,6 +62,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.Writer;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -308,11 +309,18 @@ public class ShadeMojo
      * Flag whether to generate a simplified POM for the shaded artifact. If set to <code>true</code>, dependencies that
      * have been included into the uber JAR will be removed from the <code>&lt;dependencies&gt;</code> section of the
      * generated POM. The reduced POM will be named <code>dependency-reduced-pom.xml</code> and is stored into the same
-     * directory as the shaded artifact.
+     * directory as the shaded artifact. Unless you also specify dependencyReducedPomLocation, the plugin will
+     * create a temporary file named <code>dependency-reduced-pom.xml</code> in the project basedir. 
      *
      * @parameter expression="${createDependencyReducedPom}" default-value="true"
      */
     private boolean createDependencyReducedPom;
+    
+    
+    /**
+     *  @parameter expression="${dependencyReducedPomLocation}" defaultValue="${basedir}/dependency-reduced-pom.xml"
+     */
+    private File dependencyReducedPomLocation;
 
     /**
      * When true, dependencies are kept in the pom but with scope 'provided'; when false,
@@ -862,11 +870,12 @@ public class ShadeMojo
 
                 model.setDependencies( dependencies );
 
-                /*
-                 * NOTE: Be sure to create the POM in the original base directory to be able to resolve the relativePath
-                 * to local parent POMs when invoking the project builder below.
-                 */
-                File f = new File( project.getBasedir(), "dependency-reduced-pom.xml" );
+                if ( dependencyReducedPomLocation == null )
+                {
+                    dependencyReducedPomLocation = new File ( outputDirectory, "dependency-reduced-pom.xml" );
+                }
+                
+                File f = dependencyReducedPomLocation;
                 if ( f.exists() )
                 {
                     f.delete();
@@ -874,12 +883,44 @@ public class ShadeMojo
 
                 Writer w = WriterFactory.newXmlWriter( f );
 
+                String origRelativePath = null;
+                String replaceRelativePath = null;
+                if ( model.getParent() != null)
+                {
+                    origRelativePath = model.getParent().getRelativePath();
+                    
+                }
+                replaceRelativePath = origRelativePath;
+
+                if ( origRelativePath == null )
+                {
+                    origRelativePath = "../pom.xml";
+                }
+
+                if ( model.getParent() != null ) 
+                {
+                    File parentFile = new File( project.getBasedir(), model.getParent().getRelativePath() ).getCanonicalFile();
+                    if ( !parentFile.isFile() )
+                    {
+                        parentFile = new File( parentFile, "pom.xml");
+                    }
+                    
+                    parentFile = parentFile.getCanonicalFile();
+                    
+                    String relPath = RelativizePath.convertToRelativePath( parentFile, f );
+                    model.getParent().setRelativePath( relPath );
+                }
+                
                 try
                 {
                     PomWriter.write( w, model, true );
                 }
                 finally
                 {
+                    if ( model.getParent() != null )
+                    {
+                        model.getParent().setRelativePath( replaceRelativePath );
+                    }
                     w.close();
                 }
 
@@ -888,20 +929,10 @@ public class ShadeMojo
 
             }
 
-            /*
-             * NOTE: Although the dependency reduced POM in the project directory is temporary build output, we have to
-             * use that for the file of the project instead of something in target to avoid messing up the base
-             * directory of the project. We'll delete this file on exit to make sure it gets cleaned up but keep a copy
-             * for inspection in the target directory as well.
-             */
-            File f = new File( project.getBasedir(), "dependency-reduced-pom.xml" );
-            File f2 = new File( outputDirectory, "dependency-reduced-pom.xml" );
-            FileUtils.copyFile( f, f2 );
-            FileUtils.forceDeleteOnExit( f );
-            project.setFile( f );
+            project.setFile( dependencyReducedPomLocation );
         }
     }
-
+    
     private String getId( Artifact artifact )
     {
         return getId( artifact.getGroupId(), artifact.getArtifactId(), artifact.getType(), artifact.getClassifier() );
