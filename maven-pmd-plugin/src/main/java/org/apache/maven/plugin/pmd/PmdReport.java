@@ -349,12 +349,12 @@ public class PmdReport
         }
 
         Writer writer = null;
-
+        FileOutputStream tStream = null;
         try
         {
             targetDirectory.mkdirs();
             File targetFile = new File( targetDirectory, "pmd." + format );
-            FileOutputStream tStream = new FileOutputStream( targetFile );
+            tStream = new FileOutputStream( targetFile );
             writer = new OutputStreamWriter( tStream, getOutputEncoding() );
 
             r.setWriter( writer );
@@ -374,6 +374,7 @@ public class PmdReport
         finally
         {
             IOUtil.close( writer );
+            IOUtil.close( tStream );
         }
     }
 
