@@ -25,8 +25,9 @@ under the License.
        xsd.targetNamespace="http://maven.apache.org/plugins/maven-invoker-plugin/build-job/1.0.0">
   <id>build-job</id>
   <name>BuildJob</name>
-  <description>
-    A build job processed by the Maven Invoker Plugin.
+  <description><![CDATA[
+    A build job processed by the Maven Invoker Plugin, generated in
+    <code><a href="./run-mojo.html#reportsDirectory">reportsDirectory</a></code>.]]>
   </description>
   <defaults>
     <default>

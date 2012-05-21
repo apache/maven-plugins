@@ -42,6 +42,7 @@ under the License.
         <configuration>
           <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
           <cloneClean>true</cloneClean>
+          <mergeUserSettings>true</mergeUserSettings>
         </configuration>
         <executions>
           <execution>

@@ -140,6 +140,9 @@ public abstract class AbstractInvokerMojo
 
     /**
      * Base directory where all build reports are written to.
+     * Every execution of an integration test will produce an XML file which contains the information
+     * about success or failure of that particular build job. The format of the resulting XML
+     * file is documented in the given <a href="./build-job.html">build-job</a> reference.
      *
      * @parameter expression="${invoker.reportsDirectory}" default-value="${project.build.directory}/invoker-reports"
      * @since 1.4
@@ -556,6 +559,15 @@ public abstract class AbstractInvokerMojo
      * @since 1.6
      */
     private List<Artifact> pluginArtifacts;
+
+
+    /**
+     * If enable and if you have a settings file configured for the execution, it will be merged with your user settings.
+     *
+     * @parameter expression="${invoker.mergeUserSettings}" default-value="false"
+     * @since 1.6
+     */
+    private boolean mergeUserSettings;
 
     /**
      * The scripter runner that is responsible to execute hook scripts.
@@ -1026,68 +1038,72 @@ public abstract class AbstractInvokerMojo
         SettingsXpp3Writer settingsWriter = new SettingsXpp3Writer();
 
         File mergedSettingsFile;
-        Settings mergedSettings = null;
-        if ( interpolatedSettingsFile != null )
+        Settings mergedSettings = this.settings;
+        if ( mergeUserSettings )
         {
-            // Have to merge the specified settings file (dominant) and the one of the invoking Maven process
-            Reader reader = null;
-            try
+            if ( interpolatedSettingsFile != null )
             {
-                reader = new XmlStreamReader( interpolatedSettingsFile );
-                SettingsXpp3Reader settingsReader = new SettingsXpp3Reader();
-                Settings dominantSettings = settingsReader.read( reader );
-                Settings recessiveSettings = this.settings;
+                // Have to merge the specified settings file (dominant) and the one of the invoking Maven process
+                Reader reader = null;
+                try
+                {
+                    reader = new XmlStreamReader( interpolatedSettingsFile );
+                    SettingsXpp3Reader settingsReader = new SettingsXpp3Reader();
+                    Settings dominantSettings = settingsReader.read( reader );
+                    Settings recessiveSettings = this.settings;
 
-                SettingsUtils.merge( dominantSettings, recessiveSettings, TrackableBase.USER_LEVEL );
+                    SettingsUtils.merge( dominantSettings, recessiveSettings, TrackableBase.USER_LEVEL );
 
-                mergedSettings = dominantSettings;
-                getLog().debug( "Merged specified settings file with settings of invoking process" );
+                    mergedSettings = dominantSettings;
+                    getLog().debug( "Merged specified settings file with settings of invoking process" );
+                }
+                catch ( XmlPullParserException e )
+                {
+                    throw new MojoExecutionException( "Could not read specified settings file", e );
+                }
+                catch ( IOException e )
+                {
+                    throw new MojoExecutionException( "Could not read specified settings file", e );
+                }
+                finally
+                {
+                    IOUtil.close( reader );
+                }
             }
-            catch ( XmlPullParserException e )
-            {
-                throw new MojoExecutionException( "Could not read specified settings file", e );
-            }
-            catch ( IOException e )
-            {
-                throw new MojoExecutionException( "Could not read specified settings file", e );
-            }
-            finally
-            {
-                IOUtil.close( reader );
-            }
+        }
+        if ( this.settingsFile != null && !mergeUserSettings )
+        {
+            mergedSettingsFile = interpolatedSettingsFile;
         }
         else
         {
-            mergedSettings = this.settings;
-        }
-
-        try
-        {
-            mergedSettingsFile = File.createTempFile( "invoker-settings", ".xml" );
-
-            FileWriter fileWriter = null;
             try
             {
-                fileWriter = new FileWriter( mergedSettingsFile );
-                settingsWriter.write( fileWriter, mergedSettings );
+                mergedSettingsFile = File.createTempFile( "invoker-settings", ".xml" );
+
+                FileWriter fileWriter = null;
+                try
+                {
+                    fileWriter = new FileWriter( mergedSettingsFile );
+                    settingsWriter.write( fileWriter, mergedSettings );
+                }
+                finally
+                {
+                    IOUtil.close( fileWriter );
+                }
+
+                if ( getLog().isDebugEnabled() )
+                {
+                    getLog().debug(
+                        "Created temporary file for invoker settings.xml: " + mergedSettingsFile.getAbsolutePath() );
+                }
+
             }
-            finally
+            catch ( IOException e )
             {
-                IOUtil.close( fileWriter );
+                throw new MojoExecutionException( "Could not create temporary file for invoker settings.xml", e );
             }
-
-            if ( getLog().isDebugEnabled() )
-            {
-                getLog().debug(
-                    "Created temporary file for invoker settings.xml: " + mergedSettingsFile.getAbsolutePath() );
-            }
-
         }
-        catch ( IOException e )
-        {
-            throw new MojoExecutionException( "Could not create temporary file for invoker settings.xml", e );
-        }
-
         final File finalSettingsFile = mergedSettingsFile;
 
         try
@@ -1431,7 +1447,6 @@ public abstract class AbstractInvokerMojo
             request.setDebug( debug );
 
             request.setShowVersion( showVersion );
-
 
             if ( logger != null )
             {
