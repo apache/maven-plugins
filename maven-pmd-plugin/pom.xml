@@ -64,7 +64,7 @@ under the License.
   <properties>
     <mavenVersion>2.2.1</mavenVersion>
     <doxiaVersion>1.1.3</doxiaVersion>
-    <pmdVersion>4.3</pmdVersion>
+    <pmdVersion>5.0.0</pmdVersion>
     <sitePluginVersion>3.0</sitePluginVersion>
   </properties>
 
@@ -156,7 +156,7 @@ under the License.
 
     <!-- pmd -->
     <dependency>
-      <groupId>pmd</groupId>
+      <groupId>net.sourceforge.pmd</groupId>
       <artifactId>pmd</artifactId>
       <version>${pmdVersion}</version>
     </dependency>

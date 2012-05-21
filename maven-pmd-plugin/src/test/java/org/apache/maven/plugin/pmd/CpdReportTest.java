@@ -31,8 +31,8 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import net.sourceforge.pmd.cpd.CPD;
+import net.sourceforge.pmd.cpd.CPDConfiguration;
 import net.sourceforge.pmd.cpd.JavaLanguage;
-import net.sourceforge.pmd.cpd.Language;
 import net.sourceforge.pmd.cpd.Match;
 import net.sourceforge.pmd.cpd.TokenEntry;
 
@@ -201,7 +201,8 @@ public class CpdReportTest
         tMatch.setSourceCodeSlice( "// ----- ACCESSEURS  avec �l�ments -----" );
         tList.add( tMatch );
 
-        CPD tCpd = new MockCpd( 100, new JavaLanguage(), tList.iterator() );
+        CPDConfiguration cpdConfiguration = new CPDConfiguration( 100, new JavaLanguage(), "UTF-8" );
+        CPD tCpd = new MockCpd( cpdConfiguration, tList.iterator() );
 
         tCpd.go();
         mojo.writeNonHtml( tCpd );
@@ -220,9 +221,9 @@ public class CpdReportTest
 
         private Iterator<Match> matches;
 
-        public MockCpd( int minimumTileSize, Language language, Iterator<Match> tMatch )
+        public MockCpd( CPDConfiguration configuration, Iterator<Match> tMatch )
         {
-            super( minimumTileSize, language );
+            super( configuration );
             matches = tMatch;
         }
 

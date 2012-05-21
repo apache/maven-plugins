@@ -42,9 +42,9 @@ under the License.
           <sourceEncoding>ISO-8859-1</sourceEncoding>
           <rulesets>
             <ruleset>${basedir}/src/test/resources/unit/custom-configuration/resources/rulesets/custom.xml</ruleset>
-            <ruleset>rulesets/basic.xml</ruleset>
-            <ruleset>rulesets/unusedcode.xml</ruleset>
-            <ruleset>rulesets/imports.xml</ruleset>
+            <ruleset>java-basic</ruleset>
+            <ruleset>rulesets/java/unusedcode.xml</ruleset>
+            <ruleset>java-imports</ruleset>
           </rulesets>
           <targetJdk>1.4</targetJdk>
           <minimumPriority>4</minimumPriority>          
