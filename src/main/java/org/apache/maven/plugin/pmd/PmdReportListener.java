@@ -23,11 +23,13 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 
-import net.sourceforge.pmd.IRuleViolation;
 import net.sourceforge.pmd.ReportListener;
+import net.sourceforge.pmd.RuleViolation;
 import net.sourceforge.pmd.stat.Metric;
 
 import org.apache.maven.doxia.sink.Sink;
@@ -46,20 +48,20 @@ public class PmdReportListener
 
     private String currentFilename;
 
-    private boolean fileInitialized;
-
     private ResourceBundle bundle;
 
     private PmdFileInfo fileInfo;
 
-    private List<IRuleViolation> violations = new ArrayList<IRuleViolation>();
+    private List<RuleViolation> violations = new ArrayList<RuleViolation>();
 
     private boolean aggregate;
 
     // The number of erroneous files
     private int fileCount = 0;
 
-    //private List metrics = new ArrayList();
+    private Map<File, PmdFileInfo> files;
+
+//    private List<Metric> metrics = new ArrayList<Metric>();
 
     public PmdReportListener( Sink sink, ResourceBundle bundle, boolean aggregate )
     {
@@ -74,70 +76,118 @@ public class PmdReportListener
     }
 
     /** {@inheritDoc} */
-    public void ruleViolationAdded( IRuleViolation ruleViolation )
+    public void ruleViolationAdded( RuleViolation ruleViolation )
     {
-        if ( !fileInitialized )
-        {
-            sink.section2();
-            sink.sectionTitle2();
-            String title = currentFilename;
-            if ( aggregate )
-            {
-                title = fileInfo.getProject().getName() + " - " + currentFilename;
-            }
-            sink.text( title );
-            sink.sectionTitle2_();
-
-            sink.table();
-            sink.tableRow();
-            sink.tableHeaderCell();
-            sink.text( bundle.getString( "report.pmd.column.violation" ) );
-            sink.tableHeaderCell_();
-            sink.tableHeaderCell();
-            sink.text( bundle.getString( "report.pmd.column.line" ) );
-            sink.tableHeaderCell_();
-            sink.tableRow_();
-
-            fileInitialized = true;
-        }
         violations.add( ruleViolation );
     }
 
-    // When dealing with multiple rulesets, the violations will get out of order
-    // wrt their source line number.  We re-sort them before writing them to the report.
+    public List<RuleViolation> getViolations() {
+        return violations;
+    }
+
+    private void startFileSection(String currentFilename, PmdFileInfo fileInfo) {
+        sink.section2();
+        sink.sectionTitle2();
+
+        // prepare the filename
+        this.currentFilename = StringUtils.substring( currentFilename,
+                                          fileInfo.getSourceDirectory().getAbsolutePath().length() + 1 );
+        this.currentFilename = StringUtils.replace( this.currentFilename, "\\", "/" );
+
+        String title = this.currentFilename;
+        if (aggregate)
+        {
+            title = fileInfo.getProject().getName() + " - " + currentFilename;
+        }
+        sink.text( title );
+        sink.sectionTitle2_();
+
+        sink.table();
+        sink.tableRow();
+        sink.tableHeaderCell();
+        sink.text( bundle.getString( "report.pmd.column.violation" ) );
+        sink.tableHeaderCell_();
+        sink.tableHeaderCell();
+        sink.text( bundle.getString( "report.pmd.column.line" ) );
+        sink.tableHeaderCell_();
+        sink.tableRow_();
+    }
+
+    private void endFileSection() {
+        sink.table_();
+        sink.section2_();
+    }
+
+    private void processSingleRuleViolation(RuleViolation ruleViolation) {
+        sink.tableRow();
+        sink.tableCell();
+        sink.text( ruleViolation.getDescription() );
+        sink.tableCell_();
+        sink.tableCell();
+
+        int beginLine = ruleViolation.getBeginLine();
+        outputLineLink( beginLine );
+        int endLine = ruleViolation.getEndLine();
+        if (endLine != beginLine) {
+            sink.text( " - " );
+            outputLineLink( endLine );
+        }
+
+        sink.tableCell_();
+        sink.tableRow_();
+    }
+
+    // PMD might run the analysis multi-threaded, so the violations might be reported
+    // out of order. We sort them here by filename and line number before writing them to
+    // the report.
     private void processViolations()
     {
-        fileCount++;
-        Collections.sort( violations, new Comparator<IRuleViolation>()
-        {
+        fileCount = files.size();
+        Collections.sort( violations, new Comparator<RuleViolation>() {
             /** {@inheritDoc} */
-            public int compare( IRuleViolation o1, IRuleViolation o2 )
-            {
-                return o1.getBeginLine() - o2.getBeginLine();
+            public int compare(RuleViolation o1, RuleViolation o2) {
+                int filenames = o1.getFilename().compareTo( o2.getFilename() );
+                if (filenames == 0) {
+                    return o1.getBeginLine() - o2.getBeginLine();
+                }
+                else {
+                    return filenames;
+                }
             }
         } );
 
-        for ( IRuleViolation ruleViolation : violations )
+        Map<String, PmdFileInfo> fileLookup = new HashMap<String, PmdFileInfo>( fileCount );
+        for ( Map.Entry<File, PmdFileInfo> entry : files.entrySet() )
         {
-            sink.tableRow();
-            sink.tableCell();
-            sink.text( ruleViolation.getDescription() );
-            sink.tableCell_();
-            sink.tableCell();
+            fileLookup.put( entry.getKey().getAbsolutePath(), entry.getValue() );
+        }
 
-            int beginLine = ruleViolation.getBeginLine();
-            outputLineLink( beginLine );
-            int endLine = ruleViolation.getEndLine();
-            if ( endLine != beginLine )
+        boolean fileSectionStarted = false;
+        String previousFilename = null;
+        for ( RuleViolation ruleViolation : violations )
+        {
+            String currentFn = ruleViolation.getFilename();
+            if ( !currentFn.equalsIgnoreCase( previousFilename ) && fileSectionStarted )
             {
-                sink.text( " - " );
-                outputLineLink( endLine );
+                endFileSection();
+                fileSectionStarted = false;
+            }
+            if ( !fileSectionStarted )
+            {
+                fileInfo = fileLookup.get( currentFn );
+                startFileSection( currentFn, fileInfo );
+                fileSectionStarted = true;
             }
 
-            sink.tableCell_();
-            sink.tableRow_();
+            processSingleRuleViolation( ruleViolation );
+
+            previousFilename = currentFn;
         }
-        violations.clear();
+
+        if ( fileSectionStarted )
+        {
+            endFileSection();
+        }
     }
 
     private void outputLineLink( int line )
@@ -199,26 +249,7 @@ public class PmdReportListener
         // TODO files summary
     }
 
-    public void beginFile( File file, PmdFileInfo finfo )
-    {
-        fileInfo = finfo;
-        currentFilename = StringUtils.substring( file.getAbsolutePath(),
-                                                 finfo.getSourceDirectory().getAbsolutePath().length() + 1 );
-        currentFilename = StringUtils.replace( currentFilename, "\\", "/" );
-        fileInitialized = false;
-    }
-
-    public void endFile( File file )
-    {
-        if ( fileInitialized )
-        {
-            processViolations();
-            sink.table_();
-            sink.section2_();
-        }
-    }
-
-    /*
+/*
     private void processMetrics()
     {
         if ( metrics.size() == 0 )
@@ -250,9 +281,8 @@ public class PmdReportListener
         sink.tableHeaderCell_();
         sink.tableRow_();
 
-        for ( Iterator iter = metrics.iterator(); iter.hasNext(); )
+        for ( Metric met : metrics )
         {
-            Metric met = (Metric) iter.next();
             sink.tableRow();
             sink.tableCell();
             sink.text( met.getMetricName() );
@@ -274,10 +304,12 @@ public class PmdReportListener
         sink.table_();
         sink.section1_();
     }
-    */
+*/
 
     public void endDocument()
     {
+        processViolations();
+
         if ( fileCount == 0 )
         {
             sink.paragraph();
@@ -292,12 +324,16 @@ public class PmdReportListener
         // of excessive imports metrics, none of which is really any use.
         // TODO Determine if we are going to just ignore metrics.
 
-        // processMetrics();
+//        processMetrics();
 
         sink.body_();
 
         sink.flush();
 
         sink.close();
+    }
+
+    public void setFiles(Map<File, PmdFileInfo> files) {
+        this.files = files;
     }
 }

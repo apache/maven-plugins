@@ -32,6 +32,7 @@ import java.util.Properties;
 import java.util.ResourceBundle;
 
 import net.sourceforge.pmd.cpd.CPD;
+import net.sourceforge.pmd.cpd.CPDConfiguration;
 import net.sourceforge.pmd.cpd.CSVRenderer;
 import net.sourceforge.pmd.cpd.JavaLanguage;
 import net.sourceforge.pmd.cpd.JavaTokenizer;
@@ -158,26 +159,17 @@ public class CpdReport
         {
             p.setProperty( JavaTokenizer.IGNORE_IDENTIFIERS, "true" );
         }
-        CPD cpd = new CPD( minimumTokens, new JavaLanguage( p ) );
 
+        CPD cpd;
         Map<File, PmdFileInfo> files = null;
+
         try
         {
             files = getFilesToProcess();
+            String encoding = determineEncoding( !files.isEmpty() );
 
-            if ( StringUtils.isNotEmpty( getSourceEncoding() ) )
-            {
-                cpd.setEncoding( getSourceEncoding() );
-
-                // test encoding as CPD will convert exception into a RuntimeException
-                WriterFactory.newWriter( new ByteArrayOutputStream(), getSourceEncoding() );
-            }
-            else if ( !files.isEmpty() )
-            {
-                getLog().warn(
-                               "File encoding has not been set, using platform encoding "
-                                   + WriterFactory.FILE_ENCODING + ", i.e. build is platform dependent!" );
-            }
+            CPDConfiguration cpdConfiguration = new CPDConfiguration( minimumTokens, new JavaLanguage( p ), encoding );
+            cpd = new CPD( cpdConfiguration );
 
             for ( File file : files.keySet() )
             {
@@ -199,6 +191,23 @@ public class CpdReport
         gen.generate( cpd.getMatches() );
 
         return cpd;
+    }
+
+    private String determineEncoding(boolean showWarn) throws UnsupportedEncodingException {
+        String encoding = WriterFactory.FILE_ENCODING;
+        if ( StringUtils.isNotEmpty( getSourceEncoding() ) ) {
+
+            encoding = getSourceEncoding();
+            // test encoding as CPD will convert exception into a RuntimeException
+            WriterFactory.newWriter( new ByteArrayOutputStream(), encoding );
+
+        } else if ( showWarn ) {
+            getLog().warn(
+                    "File encoding has not been set, using platform encoding "
+                        + WriterFactory.FILE_ENCODING + ", i.e. build is platform dependent!" );
+            encoding = WriterFactory.FILE_ENCODING;
+        }
+        return encoding;
     }
 
     void writeNonHtml( CPD cpd )
@@ -262,7 +271,9 @@ public class CpdReport
         Renderer renderer = null;
         if ( "xml".equals( format ) )
         {
-            renderer = new XMLRenderer( getOutputEncoding() );
+            //TODO: pmd should provide a better way to specify the output encoding (getOutputEncoding());
+            System.setProperty("file.encoding", getOutputEncoding());
+            renderer = new XMLRenderer();
         }
         else if ( "csv".equals( format ) )
         {

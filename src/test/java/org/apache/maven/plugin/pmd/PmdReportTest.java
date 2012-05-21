@@ -62,13 +62,14 @@ public class PmdReportTest
         File generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/pmd.xml" );
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
 
-        generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/basic.xml" );
+        // check if the rulesets, that have been applied, have been copied
+        generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/java-basic.xml" );
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
 
-        generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/imports.xml" );
+        generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/java-imports.xml" );
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
 
-        generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/unusedcode.xml" );
+        generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/java-unusedcode.xml" );
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
 
         generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/site/pmd.html" );
@@ -96,9 +97,9 @@ public class PmdReportTest
                                  "src/test/resources/unit/default-configuration/default-configuration-plugin-config.xml" );
         PmdReport mojo = (PmdReport) lookupMojo( "pmd", testPom );
 
-        URL url = getClass().getClassLoader().getResource( "rulesets/basic.xml" );
-        URL url2 = getClass().getClassLoader().getResource( "rulesets/unusedcode.xml" );
-        URL url3 = getClass().getClassLoader().getResource( "rulesets/imports.xml" );
+        URL url = getClass().getClassLoader().getResource( "rulesets/java/basic.xml" );
+        URL url2 = getClass().getClassLoader().getResource( "rulesets/java/unusedcode.xml" );
+        URL url3 = getClass().getClassLoader().getResource( "rulesets/java/imports.xml" );
         mojo.setRulesets( new String[]{ url.toString(), url2.toString(), url3.toString() } );
 
         mojo.execute();
@@ -180,8 +181,6 @@ public class PmdReportTest
         File testPom = new File( getBasedir(), "src/test/resources/unit/custom-configuration/skip-plugin-config.xml" );
         PmdReport mojo = (PmdReport) lookupMojo( "pmd", testPom );
         mojo.execute();
-
-        File basedir = new File( getBasedir(), "target/test/unit/skip-configuration" );
 
         // verify the generated files do not exist because PMD was skipped
         File generatedFile = new File( getBasedir(), "target/test/unit/skip-configuration/target/pmd.csv" );
@@ -281,7 +280,7 @@ public class PmdReportTest
         PmdReport mojo = (PmdReport) lookupMojo( "pmd", testPom );
 
         assertEquals( "locationTemp is not correctly encoding filename",
-                      "export_format_pmd_language_java_name_some_2520name", mojo.getLocationTemp(
+                      "export_format_pmd_language_java_name_some_2520name.xml", mojo.getLocationTemp(
             "http://nemo.sonarsource.org/sonar/profiles/export?format=pmd&language=java&name=some%2520name" ) );
 
     }

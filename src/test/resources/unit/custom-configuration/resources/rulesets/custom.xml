@@ -22,13 +22,13 @@ under the License.
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:noNamespaceSchemaLocation="http://pmd.sf.net/ruleset_xml_schema.xsd">
   <description>Just the braces rules I like</description>
-  <rule ref="rulesets/braces.xml">
+  <rule ref="rulesets/java/braces.xml">
     <exclude name="WhileLoopsMustUseBracesRule"/>
     <exclude name="IfElseStmtsMustUseBracesRule"/>
   </rule>   
   
   <description>Lowest priority for unnecessary constructor</description>
-  <rule ref="rulesets/controversial.xml/UnnecessaryConstructor" >
+  <rule ref="rulesets/java/controversial.xml/UnnecessaryConstructor" >
 	<priority>5</priority>
   </rule>
   

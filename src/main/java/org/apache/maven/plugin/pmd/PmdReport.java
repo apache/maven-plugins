@@ -20,33 +20,34 @@ package org.apache.maven.plugin.pmd;
  */
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStreamWriter;
-import java.io.Reader;
-import java.io.UnsupportedEncodingException;
 import java.io.Writer;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Properties;
 import java.util.ResourceBundle;
 
-import net.sourceforge.pmd.IRuleViolation;
 import net.sourceforge.pmd.PMD;
-import net.sourceforge.pmd.PMDException;
+import net.sourceforge.pmd.PMDConfiguration;
 import net.sourceforge.pmd.Report;
-import net.sourceforge.pmd.Rule;
 import net.sourceforge.pmd.RuleContext;
-import net.sourceforge.pmd.RuleSet;
+import net.sourceforge.pmd.RulePriority;
 import net.sourceforge.pmd.RuleSetFactory;
-import net.sourceforge.pmd.SourceType;
+import net.sourceforge.pmd.RuleSetReferenceId;
+import net.sourceforge.pmd.RuleViolation;
+import net.sourceforge.pmd.lang.LanguageVersion;
 import net.sourceforge.pmd.renderers.CSVRenderer;
 import net.sourceforge.pmd.renderers.HTMLRenderer;
 import net.sourceforge.pmd.renderers.Renderer;
 import net.sourceforge.pmd.renderers.TextRenderer;
 import net.sourceforge.pmd.renderers.XMLRenderer;
+import net.sourceforge.pmd.util.datasource.DataSource;
+import net.sourceforge.pmd.util.datasource.FileDataSource;
 
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.reporting.MavenReportException;
@@ -73,9 +74,10 @@ public class PmdReport
 {
     /**
      * The target JDK to analyze based on. Should match the target used in the compiler plugin. Valid values are
-     * currently <code>1.3</code>, <code>1.4</code>, <code>1.5</code> and <code>1.6</code>.
+     * currently <code>1.3</code>, <code>1.4</code>, <code>1.5</code>, <code>1.6</code> and <code>1.7</code>.
      * <p>
-     * <b>Note:</b> support for <code>1.6</code> was added in version 2.3 of this plugin.
+     * <b>Note:</b> support for <code>1.6</code> was added in version 2.3 of this plugin,
+     * support for <code>1.7</code> was added in version 2.7 of this plugin.
      * </p>
      *
      * @parameter expression="${targetJdk}"
@@ -103,12 +105,11 @@ public class PmdReport
     /**
      * The PMD rulesets to use. See the <a href="http://pmd.sourceforge.net/rules/index.html">Stock Rulesets</a> for a
      * list of some included. Since version 2.5, the ruleset "rulesets/maven.xml" is also available. Defaults to the
-     * basic, imports and unusedcode rulesets.
+     * java-basic, java-imports and java-unusedcode rulesets.
      *
      * @parameter
      */
-    private String[] rulesets =
-        new String[]{ "rulesets/basic.xml", "rulesets/unusedcode.xml", "rulesets/imports.xml", };
+    private String[] rulesets = new String[]{ "java-basic", "java-unusedcode", "java-imports" };
 
     /**
      * @component
@@ -191,48 +192,35 @@ public class PmdReport
     {
         Sink sink = getSink();
 
-        PMD pmd = getPMD();
-        RuleContext ruleContext = new RuleContext();
-        Report report = new Report();
-        PmdReportListener reportSink = new PmdReportListener( sink, getBundle( locale ), aggregate );
-
-        report.addListener( reportSink );
-        ruleContext.setReport( report );
+        PMDConfiguration pmdConfiguration = getPMDConfiguration();
+        final PmdReportListener reportSink = new PmdReportListener( sink, getBundle( locale ), aggregate );
+        RuleContext ruleContext = new RuleContext() {
+            @Override
+            public void setReport(Report report) {
+                super.setReport( report );
+                // make sure our listener is added - the Report is created by PMD internally now
+                report.addListener( reportSink );
+            }
+        };
         reportSink.beginDocument();
 
         RuleSetFactory ruleSetFactory = new RuleSetFactory();
-        ruleSetFactory.setMinimumPriority( this.minimumPriority );
-        RuleSet[] sets = new RuleSet[rulesets.length];
+        ruleSetFactory.setMinimumPriority( RulePriority.valueOf( this.minimumPriority ) );
+        String[] sets = new String[rulesets.length];
         try
         {
             for ( int idx = 0; idx < rulesets.length; idx++ )
             {
                 String set = rulesets[idx];
                 getLog().debug( "Preparing ruleset: " + set );
-                File ruleset = locator.getResourceAsFile( set, getLocationTemp( set ) );
-
+                RuleSetReferenceId id = new RuleSetReferenceId( set );
+                File ruleset = locator.getResourceAsFile( id.getRuleSetFileName(), getLocationTemp( set ) );
                 if ( null == ruleset )
                 {
                     throw new MavenReportException( "Could not resolve " + set );
                 }
-
-                InputStream rulesInput = new FileInputStream( ruleset );
-                try
-                {
-                    RuleSet ruleSet = ruleSetFactory.createRuleSet( rulesInput );
-                    sets[idx] = ruleSet;
-
-                    ruleSet.start( ruleContext );
-                }
-                finally
-                {
-                    rulesInput.close();
-                }
+                sets[idx] = ruleset.getAbsolutePath();
             }
-        }
-        catch ( IOException e )
-        {
-            throw new MavenReportException( e.getMessage(), e );
         }
         catch ( ResourceNotFoundException e )
         {
@@ -242,6 +230,7 @@ public class PmdReport
         {
             throw new MavenReportException( e.getMessage(), e );
         }
+        pmdConfiguration.setRuleSets( StringUtils.join( sets, "," ));
 
         Map<File, PmdFileInfo> files;
         try
@@ -253,83 +242,81 @@ public class PmdReport
             throw new MavenReportException( "Can't get file list", e );
         }
 
-        if ( StringUtils.isEmpty( getSourceEncoding() ) && !files.isEmpty() )
+        String encoding = getSourceEncoding();
+        if ( StringUtils.isEmpty( encoding ) && !files.isEmpty() )
         {
             getLog().warn( "File encoding has not been set, using platform encoding " + ReaderFactory.FILE_ENCODING
                                + ", i.e. build is platform dependent!" );
+            encoding = ReaderFactory.FILE_ENCODING;
+        }
+        pmdConfiguration.setSourceEncoding( encoding );
+
+        reportSink.setFiles(files);
+        List<DataSource> dataSources = new ArrayList<DataSource>( files.size() );
+        for ( File f : files.keySet() )
+        {
+            dataSources.add( new FileDataSource( f ) );
         }
 
-        for ( Map.Entry<File, PmdFileInfo> entry : files.entrySet() )
+        try
         {
-            File file = entry.getKey();
-            PmdFileInfo fileInfo = entry.getValue();
+            List<Renderer> renderers = Collections.emptyList();
 
-            // TODO: lazily call beginFile in case there are no rules
+            // Unfortunately we need to disable multi-threading for now - as otherwise our PmdReportListener
+            // will be ignored.
+            // Longer term solution could be to use a custom renderer instead. And collect with this renderer
+            // all the violations.
+            pmdConfiguration.setThreads( 0 );
 
-            reportSink.beginFile( file, fileInfo );
-            ruleContext.setSourceCodeFilename( file.getAbsolutePath() );
-            for ( int idx = 0; idx < rulesets.length; idx++ )
-            {
-                try
-                {
-                    // PMD closes this Reader even though it did not open it so we have
-                    // to open a new one with every call to processFile().
-                    Reader reader;
-                    if ( StringUtils.isNotEmpty( getSourceEncoding() ) )
-                    {
-                        reader = ReaderFactory.newReader( file, getSourceEncoding() );
-                    }
-                    else
-                    {
-                        reader = ReaderFactory.newPlatformReader( file );
-                    }
-
-                    try
-                    {
-                        pmd.processFile( reader, sets[idx], ruleContext );
-                    }
-                    finally
-                    {
-                        reader.close();
-                    }
-                }
-                catch ( UnsupportedEncodingException e1 )
-                {
-                    throw new MavenReportException( "Encoding '" + getSourceEncoding() + "' is not supported.", e1 );
-                }
-                catch ( PMDException pe )
-                {
-                    String msg = pe.getLocalizedMessage();
-                    Throwable r = pe.getCause();
-                    if ( r != null )
-                    {
-                        msg = msg + ": " + r.getLocalizedMessage();
-                    }
-                    getLog().warn( msg );
-                    reportSink.ruleViolationAdded( new ProcessingErrorRuleViolation( file, msg ) );
-                }
-                catch ( FileNotFoundException e2 )
-                {
-                    getLog().warn( "Error opening source file: " + file );
-                    reportSink.ruleViolationAdded( new ProcessingErrorRuleViolation( file, e2.getLocalizedMessage() ) );
-                }
-                catch ( Exception e3 )
-                {
-                    getLog().warn( "Failure executing PMD for: " + file, e3 );
-                    reportSink.ruleViolationAdded( new ProcessingErrorRuleViolation( file, e3.getLocalizedMessage() ) );
-                }
-            }
-            reportSink.endFile( file );
+            PMD.processFiles(pmdConfiguration, ruleSetFactory, dataSources, ruleContext, renderers );
         }
-
-        for ( int idx = 0; idx < rulesets.length; idx++ )
+        catch ( Exception e )
         {
-            sets[idx].end( ruleContext );
+            getLog().warn( "Failure executing PMD: " + e.getLocalizedMessage(), e );
         }
 
         reportSink.endDocument();
 
+        // copy over the violations into a single report - PMD now creates one report per file
+        Report report = new Report();
+        for ( RuleViolation v : reportSink.getViolations() )
+        {
+            report.addRuleViolation( v );
+        }
         return report;
+    }
+
+    /**
+     * Convenience method to get the location of the specified file name.
+     *
+     * @param name the name of the file whose location is to be resolved
+     * @return a String that contains the absolute file name of the file
+     */
+    protected String getLocationTemp( String name )
+    {
+        String loc = name;
+        if ( loc.indexOf( '/' ) != -1 )
+        {
+            loc = loc.substring( loc.lastIndexOf( '/' ) + 1 );
+        }
+        if ( loc.indexOf( '\\' ) != -1 )
+        {
+            loc = loc.substring( loc.lastIndexOf( '\\' ) + 1 );
+        }
+
+        // MPMD-127 in the case that the rules are defined externally on a url
+        // we need to replace some special url characters that cannot be
+        // used in filenames on disk or produce ackward filenames.
+        // replace all occurrences of the following characters:  ? : & = %
+        loc = loc.replaceAll( "[\\?\\:\\&\\=\\%]", "_" );
+
+        if (!loc.endsWith( ".xml" ))
+        {
+            loc = loc + ".xml";
+        }
+
+        getLog().debug( "Before: " + name + " After: " + loc );
+        return loc;
     }
 
     /**
@@ -379,57 +366,29 @@ public class PmdReport
     }
 
     /**
-     * Convenience method to get the location of the specified file name.
-     *
-     * @param name the name of the file whose location is to be resolved
-     * @return a String that contains the absolute file name of the file
-     */
-    protected String getLocationTemp( String name )
-    {
-        String loc = name;
-        if ( loc.indexOf( '/' ) != -1 )
-        {
-            loc = loc.substring( loc.lastIndexOf( '/' ) + 1 );
-        }
-        if ( loc.indexOf( '\\' ) != -1 )
-        {
-            loc = loc.substring( loc.lastIndexOf( '\\' ) + 1 );
-        }
-
-        // MPMD-127 in the case that the rules are defined externally on a url
-        // we need to replace some special url characters that cannot be
-        // used in filenames on disk or produce ackward filenames.
-        // replace all occurrences of the following characters:  ? : & = %
-        loc = loc.replaceAll( "[\\?\\:\\&\\=\\%]", "_" );
-
-        getLog().debug( "Before: " + name + " After: " + loc );
-        return loc;
-    }
-
-    /**
-     * Constructs the PMD class, passing it an argument
+     * Constructs the PMD configuration class, passing it an argument
      * that configures the target JDK.
      *
      * @return the resulting PMD
      * @throws org.apache.maven.reporting.MavenReportException
      *          if targetJdk is not supported
      */
-    public PMD getPMD()
+    public PMDConfiguration getPMDConfiguration()
         throws MavenReportException
     {
-        PMD pmd = new PMD();
+        PMDConfiguration configuration = new PMDConfiguration();
 
         if ( null != targetJdk )
         {
-            SourceType sourceType = SourceType.getSourceTypeForId( "java " + targetJdk );
-            if ( sourceType == null )
+            LanguageVersion languageVersion = LanguageVersion.findByTerseName( "java " + targetJdk );
+            if ( languageVersion == null )
             {
                 throw new MavenReportException( "Unsupported targetJdk value '" + targetJdk + "'." );
             }
-            pmd.setJavaVersion( sourceType );
+            configuration.setDefaultLanguageVersion( languageVersion );
         }
 
-        return pmd;
+        return configuration;
     }
 
     /**
@@ -462,21 +421,23 @@ public class PmdReport
         }
         else if ( "txt".equals( format ) )
         {
-            renderer = new TextRenderer();
+            renderer = new TextRenderer( new Properties() );
         }
         else if ( "csv".equals( format ) )
         {
-            renderer = new CSVRenderer();
+            renderer = new CSVRenderer( new Properties() );
         }
         else if ( "html".equals( format ) )
         {
-            renderer = new HTMLRenderer();
+            renderer = new HTMLRenderer( new Properties() );
         }
         else if ( !"".equals( format ) && !"none".equals( format ) )
         {
             try
             {
-                renderer = (Renderer) Class.forName( format ).newInstance();
+                renderer = (Renderer) Class.forName( format )
+                        .getConstructor( Properties.class )
+                            .newInstance( new Properties() );
             }
             catch ( Exception e )
             {
@@ -493,122 +454,8 @@ public class PmdReport
     {
         public PmdXMLRenderer( String encoding )
         {
-            super();
+            super( new Properties() );
             this.encoding = encoding;
-        }
-    }
-
-    /**
-     * @author <a href="mailto:douglass.doug@gmail.com">Doug Douglass</a>
-     */
-    private static class ProcessingErrorRuleViolation
-        implements IRuleViolation
-    {
-
-        private String filename;
-
-        private String description;
-
-        public ProcessingErrorRuleViolation( File file, String description )
-        {
-            filename = file.getPath();
-            this.description = description;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        public String getFilename()
-        {
-            return this.filename;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        public int getBeginLine()
-        {
-            return 0;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        public int getBeginColumn()
-        {
-            return 0;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        public int getEndLine()
-        {
-            return 0;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        public int getEndColumn()
-        {
-            return 0;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        public Rule getRule()
-        {
-            return null;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        public String getDescription()
-        {
-            return this.description;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        public String getPackageName()
-        {
-            return null;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        public String getMethodName()
-        {
-            return null;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        public String getClassName()
-        {
-            return null;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        public boolean isSuppressed()
-        {
-            return false;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        public String getVariableName()
-        {
-            return null;
         }
     }
 }
