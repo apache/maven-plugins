@@ -39,12 +39,6 @@ under the License.
   </description>
   <inceptionYear>2001</inceptionYear>
 
-  <contributors>
-    <contributor>
-      <name>Jesse McConnell</name>
-    </contributor>
-  </contributors>
-
   <prerequisites>
     <maven>${mavenVersion}</maven>
   </prerequisites>
