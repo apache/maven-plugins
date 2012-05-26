@@ -91,6 +91,7 @@ public class PmdReport
      * </p>
      *
      * @parameter default-value="java"
+     * @since 2.8
      */
     private String language;
 
