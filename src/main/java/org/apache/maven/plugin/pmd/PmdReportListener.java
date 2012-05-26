@@ -19,20 +19,21 @@ package org.apache.maven.plugin.pmd;
  * under the License.
  */
 
-import net.sourceforge.pmd.ReportListener;
-import net.sourceforge.pmd.RuleViolation;
-import net.sourceforge.pmd.stat.Metric;
-import org.apache.maven.doxia.sink.Sink;
-import org.codehaus.plexus.util.StringUtils;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
+
+import net.sourceforge.pmd.ReportListener;
+import net.sourceforge.pmd.RuleViolation;
+import net.sourceforge.pmd.stat.Metric;
+
+import org.apache.maven.doxia.sink.Sink;
+import org.apache.maven.plugin.logging.Log;
+import org.codehaus.plexus.util.StringUtils;
 
 /**
  * Handle events from PMD, converting them into Doxia events.
@@ -43,13 +44,13 @@ import java.util.ResourceBundle;
 public class PmdReportListener
     implements ReportListener
 {
+    private Log log;
+
     private Sink sink;
 
     private String currentFilename;
 
     private ResourceBundle bundle;
-
-    private PmdFileInfo fileInfo;
 
     private List<RuleViolation> violations = new ArrayList<RuleViolation>();
 
@@ -62,8 +63,9 @@ public class PmdReportListener
 
 //    private List<Metric> metrics = new ArrayList<Metric>();
 
-    public PmdReportListener( Sink sink, ResourceBundle bundle, boolean aggregate )
+    public PmdReportListener(Log log, Sink sink, ResourceBundle bundle, boolean aggregate )
     {
+        this.log = log;
         this.sink = sink;
         this.bundle = bundle;
         this.aggregate = aggregate;
@@ -93,14 +95,20 @@ public class PmdReportListener
         sink.sectionTitle2();
 
         // prepare the filename
-        this.currentFilename =
-            StringUtils.substring( currentFilename, fileInfo.getSourceDirectory().getAbsolutePath().length() + 1 );
+        this.currentFilename = currentFilename;
+        if ( fileInfo != null && fileInfo.getSourceDirectory() != null ) {
+            this.currentFilename =
+                    StringUtils.substring( currentFilename, fileInfo.getSourceDirectory().getAbsolutePath().length() + 1 );
+        } else {
+            log.warn( "Unfortunately there was no PmdFileInfo available or the SourceDirectory is not known for "
+                    + " file " + currentFilename );
+        }
         this.currentFilename = StringUtils.replace( this.currentFilename, "\\", "/" );
 
         String title = this.currentFilename;
         if ( aggregate )
         {
-            title = fileInfo.getProject().getName() + " - " + currentFilename;
+            title = fileInfo.getProject().getName() + " - " + this.currentFilename;
         }
         sink.text( title );
         sink.sectionTitle2_();
@@ -122,7 +130,7 @@ public class PmdReportListener
         sink.section2_();
     }
 
-    private void processSingleRuleViolation( RuleViolation ruleViolation )
+    private void processSingleRuleViolation( RuleViolation ruleViolation, PmdFileInfo fileInfo )
     {
         sink.tableRow();
         sink.tableCell();
@@ -131,12 +139,12 @@ public class PmdReportListener
         sink.tableCell();
 
         int beginLine = ruleViolation.getBeginLine();
-        outputLineLink( beginLine );
+        outputLineLink( beginLine, fileInfo );
         int endLine = ruleViolation.getEndLine();
         if ( endLine != beginLine )
         {
             sink.text( " - " );
-            outputLineLink( endLine );
+            outputLineLink( endLine, fileInfo );
         }
 
         sink.tableCell_();
@@ -166,17 +174,12 @@ public class PmdReportListener
             }
         } );
 
-        Map<String, PmdFileInfo> fileLookup = new HashMap<String, PmdFileInfo>( fileCount );
-        for ( Map.Entry<File, PmdFileInfo> entry : files.entrySet() )
-        {
-            fileLookup.put( entry.getKey().getAbsolutePath(), entry.getValue() );
-        }
-
         boolean fileSectionStarted = false;
         String previousFilename = null;
         for ( RuleViolation ruleViolation : violations )
         {
             String currentFn = ruleViolation.getFilename();
+            PmdFileInfo fileInfo = files.get( new File ( currentFn ) );
             if ( !currentFn.equalsIgnoreCase( previousFilename ) && fileSectionStarted )
             {
                 endFileSection();
@@ -184,12 +187,11 @@ public class PmdReportListener
             }
             if ( !fileSectionStarted )
             {
-                fileInfo = fileLookup.get( currentFn );
                 startFileSection( currentFn, fileInfo );
                 fileSectionStarted = true;
             }
 
-            processSingleRuleViolation( ruleViolation );
+            processSingleRuleViolation( ruleViolation, fileInfo );
 
             previousFilename = currentFn;
         }
@@ -200,9 +202,13 @@ public class PmdReportListener
         }
     }
 
-    private void outputLineLink( int line )
+    private void outputLineLink( int line, PmdFileInfo fileInfo )
     {
-        String xrefLocation = fileInfo.getXrefLocation();
+        String xrefLocation = null;
+        if ( fileInfo != null ) {
+            xrefLocation = fileInfo.getXrefLocation();
+        }
+
         if ( xrefLocation != null )
         {
             sink.link( xrefLocation + "/" + currentFilename.replaceAll( "\\.java$", ".html" ) + "#" + line );

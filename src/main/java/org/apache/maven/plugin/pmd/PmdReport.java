@@ -203,7 +203,7 @@ public class PmdReport
         Sink sink = getSink();
 
         PMDConfiguration pmdConfiguration = getPMDConfiguration();
-        final PmdReportListener reportSink = new PmdReportListener( sink, getBundle( locale ), aggregate );
+        final PmdReportListener reportSink = new PmdReportListener( getLog(), sink, getBundle( locale ), aggregate );
         RuleContext ruleContext = new RuleContext()
         {
             @Override
@@ -272,7 +272,7 @@ public class PmdReport
         List<DataSource> dataSources = new ArrayList<DataSource>( files.size() );
         for ( File f : files.keySet() )
         {
-            dataSources.add( new FileDataSource( f ) );
+            dataSources.add( new FileDataSource( f.getAbsoluteFile() ) );
         }
 
         try
