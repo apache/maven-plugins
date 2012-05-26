@@ -55,7 +55,7 @@ public abstract class AbstractPmdViolationCheckMojo<D>
      * @parameter expression="${pmd.failOnViolation}" default-value="true"
      * @required
      */
-    private boolean failOnViolation;
+    protected boolean failOnViolation;
 
     /**
      * The project language, for determining whether to run the report.
@@ -122,7 +122,7 @@ public abstract class AbstractPmdViolationCheckMojo<D>
 
                     String message = getMessage( failureCount, warningCount, key, outputFile );
 
-                    if ( failureCount > 0 && failOnViolation )
+                    if ( failureCount > 0 && isFailOnViolation() )
                     {
                         throw new MojoFailureException( message );
                     }
@@ -264,4 +264,9 @@ public abstract class AbstractPmdViolationCheckMojo<D>
      */
     protected abstract List<D> getErrorDetails( File analisysFile )
         throws XmlPullParserException, IOException;
+
+    public boolean isFailOnViolation()
+    {
+        return failOnViolation;
+    }
 }
