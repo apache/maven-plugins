@@ -35,6 +35,7 @@ under the License.
       <item name="Target JDK" href="examples/targetJdk.html"/>
       <item name="Using Rule Sets" href="examples/usingRuleSets.html"/>
       <item name="Violation Checking" href="examples/violationChecking.html"/>
+      <item name="Analyzing JavaScript" href="examples/javascriptReport.html"/>
     </menu>
   </body>
 </project>

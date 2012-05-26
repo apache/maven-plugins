@@ -83,4 +83,6 @@ Maven PMD Plugin
 
   * {{{./examples/violationChecking.html}Violation Checking}}
 
+  * {{{./examples/javascriptReport.html}Analyzing JavaScript Code}}
+
   []
