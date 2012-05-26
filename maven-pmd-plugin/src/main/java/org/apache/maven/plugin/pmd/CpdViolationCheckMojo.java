@@ -55,6 +55,15 @@ public class CpdViolationCheckMojo
     private boolean skip;
 
     /**
+     * Whether to fail the build if the validation check fails.
+     *
+     * @parameter expression="${cpd.failOnViolation}" default-value="true"
+     * @required
+     */
+    protected boolean failOnViolation;
+
+
+    /**
      * {@inheritDoc}
      */
     public void execute()
@@ -112,5 +121,11 @@ public class CpdViolationCheckMojo
     protected ViolationDetails<Duplication> newViolationDetailsInstance()
     {
         return new ViolationDetails<Duplication>();
+    }
+
+    @Override
+    public boolean isFailOnViolation()
+    {
+        return failOnViolation;
     }
 }
