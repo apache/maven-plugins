@@ -76,9 +76,17 @@ public class SimpleRelocatorTest
 
         relocator = new SimpleRelocator( "org/foo", null, null, null, true );
         assertEquals( true, relocator.canRelocatePath( "(I)org/foo/bar/Class;" ) );
-
+        
         relocator = new SimpleRelocator( "^META-INF/org.foo.xml$", null, null, null, true );
         assertEquals( true, relocator.canRelocatePath( "META-INF/org.foo.xml" ) );
+    }
+    
+    //MSHADE-119, make sure that the easy part of this works.
+    public void testCanRelocateAbsClassPath() 
+    {
+        SimpleRelocator relocator = new SimpleRelocator( "org.apache.velocity", "org.apache.momentum", null, null );
+        assertEquals("/org/apache/momentum/mass.properties", relocator.relocatePath( "/org/apache/velocity/mass.properties" ) );
+        
     }
 
     public void testRelocatePath()

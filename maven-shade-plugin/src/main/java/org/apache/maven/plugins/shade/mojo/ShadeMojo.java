@@ -505,7 +505,7 @@ public class ShadeMojo
 
                 // rename the output file if a specific finalName is set
                 // but don't rename if the finalName is the <build><finalName>
-                // because this will be handled implicitely later
+                // because this will be handled implicitly later
                 if ( finalName != null && finalName.length() > 0 && !finalName.equals(
                     project.getBuild().getFinalName() ) )
                 {
