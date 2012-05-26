@@ -170,7 +170,8 @@ public class SimpleRelocator
             return false;
         }
 
-        return path.startsWith( pathPattern );
+        // Allow for annoying option of an extra / on the front of a path. See MSHADE-119; comes from getClass().getResource("/a/b/c.properties").
+        return path.startsWith( pathPattern ) || path.startsWith ( "/" + pathPattern );
     }
 
     public boolean canRelocateClass( String clazz )
