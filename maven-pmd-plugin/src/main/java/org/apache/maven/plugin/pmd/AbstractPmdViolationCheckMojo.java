@@ -19,18 +19,18 @@ package org.apache.maven.plugin.pmd;
  * under the License.
  */
 
-import java.io.File;
-import java.io.IOException;
-import java.io.Reader;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.Reader;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Base class for mojos that check if there were any PMD violations.
@@ -131,14 +131,12 @@ public abstract class AbstractPmdViolationCheckMojo<D>
                 }
                 catch ( IOException e )
                 {
-                    throw new MojoExecutionException(
-                                                      "Unable to read PMD results xml: " + outputFile.getAbsolutePath(),
+                    throw new MojoExecutionException( "Unable to read PMD results xml: " + outputFile.getAbsolutePath(),
                                                       e );
                 }
                 catch ( XmlPullParserException e )
                 {
-                    throw new MojoExecutionException(
-                                                      "Unable to read PMD results xml: " + outputFile.getAbsolutePath(),
+                    throw new MojoExecutionException( "Unable to read PMD results xml: " + outputFile.getAbsolutePath(),
                                                       e );
                 }
                 finally
@@ -156,10 +154,8 @@ public abstract class AbstractPmdViolationCheckMojo<D>
     /**
      * Method for collecting the violations found by the PMD tool
      *
-     * @param xpp
-     *            the xml parser object
-     * @param tagName
-     *            the element that will be checked
+     * @param xpp     the xml parser object
+     * @param tagName the element that will be checked
      * @return an int that specifies the number of violations found
      * @throws XmlPullParserException
      * @throws IOException
@@ -171,8 +167,8 @@ public abstract class AbstractPmdViolationCheckMojo<D>
         List<D> warnings = new ArrayList<D>();
 
         List<D> violations = getErrorDetails( analysisFile );
-        
-        for( D violation : violations )
+
+        for ( D violation : violations )
         {
             int priority = getPriority( violation );
             if ( priority <= failurePriority )
@@ -184,28 +180,26 @@ public abstract class AbstractPmdViolationCheckMojo<D>
                 warnings.add( violation );
             }
         }
-        
+
         ViolationDetails<D> details = newViolationDetailsInstance();
         details.setFailureDetails( failures );
         details.setWarningDetails( warnings );
         return details;
     }
-    
+
     protected abstract int getPriority( D errorDetail );
-    
+
     protected abstract ViolationDetails<D> newViolationDetailsInstance();
 
     /**
      * Prints the warnings and failures
      *
-     * @param failures
-     *            list of failures
-     * @param warnings
-     *            list of warnings
+     * @param failures list of failures
+     * @param warnings list of warnings
      */
     protected void printErrors( List<D> failures, List<D> warnings )
     {
-        for ( D warning :  warnings )
+        for ( D warning : warnings )
         {
             printError( warning, "Warning" );
         }

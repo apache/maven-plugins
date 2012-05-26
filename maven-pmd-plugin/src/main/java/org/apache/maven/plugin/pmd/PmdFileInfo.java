@@ -19,9 +19,9 @@ package org.apache.maven.plugin.pmd;
  * under the License.
  */
 
-import java.io.File;
-
 import org.apache.maven.project.MavenProject;
+
+import java.io.File;
 
 /**
  * @version $Id$
@@ -30,12 +30,12 @@ public class PmdFileInfo
 {
 
     private MavenProject project;
+
     private File sourceDir;
+
     private String xref;
 
-    public PmdFileInfo( MavenProject project,
-                       File dir,
-                       String x )
+    public PmdFileInfo( MavenProject project, File dir, String x )
     {
         this.project = project;
         if ( dir.isAbsolute() )
