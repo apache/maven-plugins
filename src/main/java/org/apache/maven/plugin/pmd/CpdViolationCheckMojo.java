@@ -19,11 +19,6 @@ package org.apache.maven.plugin.pmd;
  * under the License.
  */
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.List;
-
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.pmd.model.CpdErrorDetail;
@@ -32,15 +27,20 @@ import org.apache.maven.plugin.pmd.model.Duplication;
 import org.apache.maven.plugin.pmd.model.io.xpp3.CpdXpp3Reader;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.List;
+
 /**
  * Fail the build if there were any CPD violations in the source code.
  *
- * @since 2.0
  * @version $Id$
  * @goal cpd-check
  * @phase verify
  * @execute goal="cpd"
  * @threadSafe
+ * @since 2.0
  */
 public class CpdViolationCheckMojo
     extends AbstractPmdViolationCheckMojo<Duplication>
@@ -54,7 +54,9 @@ public class CpdViolationCheckMojo
      */
     private boolean skip;
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
@@ -64,19 +66,19 @@ public class CpdViolationCheckMojo
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     protected void printError( Duplication item, String severity )
     {
         int lines = item.getLines();
-
 
         StringBuffer buff = new StringBuffer( 100 );
         buff.append( "CPD " + severity + ": Found " );
         buff.append( lines ).append( " lines of duplicated code at locations:" );
         this.getLog().info( buff.toString() );
 
-        
-        for( CpdFile file : item.getFiles() )
+        for ( CpdFile file : item.getFiles() )
         {
             buff.setLength( 0 );
             buff.append( "    " );
@@ -89,7 +91,9 @@ public class CpdViolationCheckMojo
         this.getLog().debug( item.getCodefragment() );
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     protected List<Duplication> getErrorDetails( File cpdFile )
         throws XmlPullParserException, IOException
     {
@@ -97,13 +101,13 @@ public class CpdViolationCheckMojo
         CpdErrorDetail details = reader.read( new FileReader( cpdFile ), false );
         return details.getDuplications();
     }
-    
+
     @Override
     protected int getPriority( Duplication errorDetail )
     {
         return 0;
     }
-    
+
     @Override
     protected ViolationDetails<Duplication> newViolationDetailsInstance()
     {

@@ -19,12 +19,6 @@ package org.apache.maven.plugin.pmd;
  * under the License.
  */
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.pmd.model.PmdErrorDetail;
@@ -34,15 +28,21 @@ import org.apache.maven.plugin.pmd.model.io.xpp3.PmdXpp3Reader;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Fail the build if there were any PMD violations in the source code.
  *
- * @since 2.0
  * @version $Id$
  * @goal check
  * @phase verify
  * @execute goal="pmd"
  * @threadSafe
+ * @since 2.0
  */
 public class PmdViolationCheckMojo
     extends AbstractPmdViolationCheckMojo<Violation>
@@ -66,7 +66,9 @@ public class PmdViolationCheckMojo
      */
     private boolean skip;
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
@@ -76,7 +78,9 @@ public class PmdViolationCheckMojo
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     protected void printError( Violation item, String severity )
     {
 
@@ -103,7 +107,7 @@ public class PmdViolationCheckMojo
 
         this.getLog().info( buff.toString() );
     }
-    
+
     @Override
     protected List<Violation> getErrorDetails( File pmdFile )
         throws XmlPullParserException, IOException
@@ -112,10 +116,10 @@ public class PmdViolationCheckMojo
         PmdErrorDetail details = reader.read( new FileReader( pmdFile ), false );
 
         List<Violation> violations = new ArrayList<Violation>();
-        for( PmdFile file : details.getFiles() )
+        for ( PmdFile file : details.getFiles() )
         {
             String fullPath = file.getName();
-            
+
             for ( Violation violation : file.getViolations() )
             {
                 violation.setFileName( getFilename( fullPath, violation.getViolationPackage() ) );
@@ -124,19 +128,19 @@ public class PmdViolationCheckMojo
         }
         return violations;
     }
-    
+
     @Override
     protected int getPriority( Violation errorDetail )
     {
         return errorDetail.getPriority();
     }
-    
+
     @Override
     protected ViolationDetails<Violation> newViolationDetailsInstance()
     {
         return new ViolationDetails<Violation>();
     }
-    
+
     private String getFilename( String fullpath, String pkg )
     {
         int index = fullpath.lastIndexOf( File.separatorChar );

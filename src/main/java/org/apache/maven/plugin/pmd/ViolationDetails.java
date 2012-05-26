@@ -24,15 +24,15 @@ import java.util.List;
 
 /**
  * Collector of warnings and failures.
- * 
+ *
+ * @param <D>
  * @author Robert Scholte
- * @param <D> 
  * @since 2.7
  */
 public class ViolationDetails<D>
 {
     private List<D> warningDetails = new ArrayList<D>();
-    
+
     private List<D> failureDetails = new ArrayList<D>();
 
     /**

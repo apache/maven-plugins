@@ -19,6 +19,13 @@ package org.apache.maven.plugin.pmd;
  * under the License.
  */
 
+import net.sourceforge.pmd.ReportListener;
+import net.sourceforge.pmd.RuleViolation;
+import net.sourceforge.pmd.stat.Metric;
+import org.apache.maven.doxia.sink.Sink;
+import org.apache.maven.plugin.logging.Log;
+import org.codehaus.plexus.util.StringUtils;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,14 +33,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
-
-import net.sourceforge.pmd.ReportListener;
-import net.sourceforge.pmd.RuleViolation;
-import net.sourceforge.pmd.stat.Metric;
-
-import org.apache.maven.doxia.sink.Sink;
-import org.apache.maven.plugin.logging.Log;
-import org.codehaus.plexus.util.StringUtils;
 
 /**
  * Handle events from PMD, converting them into Doxia events.
@@ -63,7 +62,7 @@ public class PmdReportListener
 
 //    private List<Metric> metrics = new ArrayList<Metric>();
 
-    public PmdReportListener(Log log, Sink sink, ResourceBundle bundle, boolean aggregate )
+    public PmdReportListener( Log log, Sink sink, ResourceBundle bundle, boolean aggregate )
     {
         this.log = log;
         this.sink = sink;
@@ -96,12 +95,16 @@ public class PmdReportListener
 
         // prepare the filename
         this.currentFilename = currentFilename;
-        if ( fileInfo != null && fileInfo.getSourceDirectory() != null ) {
+        if ( fileInfo != null && fileInfo.getSourceDirectory() != null )
+        {
             this.currentFilename =
-                    StringUtils.substring( currentFilename, fileInfo.getSourceDirectory().getAbsolutePath().length() + 1 );
-        } else {
-            log.warn( "Unfortunately there was no PmdFileInfo available or the SourceDirectory is not known for "
-                    + " file " + currentFilename );
+                StringUtils.substring( currentFilename, fileInfo.getSourceDirectory().getAbsolutePath().length() + 1 );
+        }
+        else
+        {
+            log.warn(
+                "Unfortunately there was no PmdFileInfo available or the SourceDirectory is not known for " + " file "
+                    + currentFilename );
         }
         this.currentFilename = StringUtils.replace( this.currentFilename, "\\", "/" );
 
@@ -179,7 +182,7 @@ public class PmdReportListener
         for ( RuleViolation ruleViolation : violations )
         {
             String currentFn = ruleViolation.getFilename();
-            PmdFileInfo fileInfo = files.get( new File ( currentFn ) );
+            PmdFileInfo fileInfo = files.get( new File( currentFn ) );
             if ( !currentFn.equalsIgnoreCase( previousFilename ) && fileSectionStarted )
             {
                 endFileSection();
@@ -205,7 +208,8 @@ public class PmdReportListener
     private void outputLineLink( int line, PmdFileInfo fileInfo )
     {
         String xrefLocation = null;
-        if ( fileInfo != null ) {
+        if ( fileInfo != null )
+        {
             xrefLocation = fileInfo.getXrefLocation();
         }
 
