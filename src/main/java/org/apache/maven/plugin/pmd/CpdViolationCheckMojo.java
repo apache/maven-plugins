@@ -59,6 +59,7 @@ public class CpdViolationCheckMojo
      *
      * @parameter expression="${cpd.failOnViolation}" default-value="true"
      * @required
+     * @since 2.8
      */
     protected boolean failOnViolation;
 
