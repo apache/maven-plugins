@@ -19,7 +19,7 @@ package org.apache.maven.plugin;
  * under the License.
  */
 
-import org.apache.maven.plugins.annotations.DependencyScope;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.codehaus.plexus.compiler.util.scan.SimpleSourceInclusionScanner;
@@ -41,7 +41,7 @@ import java.util.Set;
  * @since 2.0
  */
 @org.apache.maven.plugins.annotations.Mojo( name = "testCompile", defaultPhase = LifecyclePhase.TEST_COMPILE,
-                                            threadSafe = true, requiresDependencyResolution = DependencyScope.TEST )
+                                            threadSafe = true, requiresDependencyResolution = ResolutionScope.TEST )
 public class TestCompilerMojo
     extends AbstractCompilerMojo
 {
@@ -49,7 +49,7 @@ public class TestCompilerMojo
      * Set this to 'true' to bypass compilation of test sources.
      * Its use is NOT RECOMMENDED, but quite convenient on occasion.
      */
-    @Parameter( expression = "${maven.test.skip}" )
+    @Parameter( property = "maven.test.skip" )
     private boolean skip;
 
     /**
@@ -87,7 +87,7 @@ public class TestCompilerMojo
      *
      * @since 2.1
      */
-    @Parameter( expression = "${maven.compiler.testSource}" )
+    @Parameter( property = "maven.compiler.testSource" )
     private String testSource;
 
     /**
@@ -95,7 +95,7 @@ public class TestCompilerMojo
      *
      * @since 2.1
      */
-    @Parameter( expression = "${maven.compiler.testTarget}" )
+    @Parameter( property = "maven.compiler.testTarget" )
     private String testTarget;
 
 
