@@ -19,6 +19,22 @@ package org.apache.maven.plugins.shade.mojo;
  * under the License.
  */
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
@@ -53,26 +69,8 @@ import org.codehaus.plexus.component.repository.exception.ComponentLookupExcepti
 import org.codehaus.plexus.context.Context;
 import org.codehaus.plexus.context.ContextException;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
-import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.WriterFactory;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.Writer;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Mojo that performs shading delegating to the Shader component.
@@ -412,16 +410,17 @@ public class ShadeMojo
             }
         }
 
-        Set artifacts = new LinkedHashSet();
-        Set artifactIds = new LinkedHashSet();
-        Set sourceArtifacts = new LinkedHashSet();
+        Set<File> artifacts = new LinkedHashSet<File>();
+        Set<String> artifactIds = new LinkedHashSet<String>();
+        Set<File> sourceArtifacts = new LinkedHashSet<File>();
 
         ArtifactSelector artifactSelector =
             new ArtifactSelector( project.getArtifact(), artifactSet, shadedGroupFilter );
 
-        if ( artifactSelector.isSelected( project.getArtifact() ) && !"pom".equals( project.getArtifact().getType() ) )
+        if ( artifactSelector.isSelected( project.getArtifact() ) && 
+                        !"pom".equals( project.getArtifact().getType() ) )
         {
-            if ( project.getArtifact().getFile() == null )
+            if ( invalidMainArtifact() )
             {
                 getLog().error( "The project main artifact does not exist. This could have the following" );
                 getLog().error( "reasons:" );
@@ -431,6 +430,7 @@ public class ShadeMojo
                 getLog().error( "- You have bound the goal to a lifecycle phase before \"package\". Please" );
                 getLog().error( "  remove this binding from your POM such that the goal will be run in" );
                 getLog().error( "  the proper phase." );
+                getLog().error( "- You removed the configuration of the maven-jar-plugin that produces the main artifact." );
                 throw new MojoExecutionException(
                     "Failed to create shaded artifact, " + "project main artifact does not exist." );
             }
@@ -467,8 +467,6 @@ public class ShadeMojo
             getLog().info( "Including " + artifact.getId() + " in the shaded jar." );
 
             artifacts.add( artifact.getFile() );
-
-            artifactIds.add( getId( artifact ) );
 
             if ( createSourcesJar )
             {
@@ -553,6 +551,11 @@ public class ShadeMojo
         {
             throw new MojoExecutionException( "Error creating shaded jar: " + e.getMessage(), e );
         }
+    }
+
+    private boolean invalidMainArtifact( )
+    {
+        return project.getArtifact().getFile() == null || ! project.getArtifact().getFile().isFile();                                       
     }
 
     private void replaceFile( File oldFile, File newFile )
@@ -687,7 +690,7 @@ public class ShadeMojo
 
         if ( this.filters != null && this.filters.length > 0 )
         {
-            Map artifacts = new HashMap();
+            Map<Artifact, ArtifactId> artifacts = new HashMap<Artifact, ArtifactId>();
 
             artifacts.put( project.getArtifact(), new ArtifactId( project.getArtifact() ) );
 
@@ -795,7 +798,7 @@ public class ShadeMojo
 
     // We need to find the direct dependencies that have been included in the uber JAR so that we can modify the
     // POM accordingly.
-    private void createDependencyReducedPom( Set artifactsToRemove )
+    private void createDependencyReducedPom( Set<String> artifactsToRemove )
         throws IOException, DependencyTreeBuilderException, ProjectBuildingException
     {
         Model model = project.getOriginalModel();
@@ -832,16 +835,16 @@ public class ShadeMojo
 
             transitiveDeps.add( dep );
         }
-        List origDeps = project.getDependencies();
+        List<Dependency> origDeps = project.getDependencies();
 
         if ( promoteTransitiveDependencies )
         {
             origDeps = transitiveDeps;
         }
 
-        for ( Iterator i = origDeps.iterator(); i.hasNext(); )
+        for ( Iterator<Dependency> i = origDeps.iterator(); i.hasNext(); )
         {
-            Dependency d = (Dependency) i.next();
+            Dependency d = i.next();
 
             dependencies.add( d );
 
@@ -949,7 +952,7 @@ public class ShadeMojo
         return groupId + ":" + artifactId + ":" + type + ":" + ( ( classifier != null ) ? classifier : "" );
     }
 
-    public boolean updateExcludesInDeps( MavenProject project, List dependencies, List transitiveDeps )
+    public boolean updateExcludesInDeps( MavenProject project, List<Dependency> dependencies, List<Dependency> transitiveDeps )
         throws DependencyTreeBuilderException
     {
         DependencyNode node = dependencyTreeBuilder.buildDependencyTree( project, localRepository, artifactFactory,
@@ -978,7 +981,7 @@ public class ShadeMojo
                     boolean found = false;
                     for ( int x = 0; x < transitiveDeps.size(); x++ )
                     {
-                        Dependency dep = (Dependency) transitiveDeps.get( x );
+                        Dependency dep = transitiveDeps.get( x );
                         if ( dep.getArtifactId().equals( n3.getArtifact().getArtifactId() ) && dep.getGroupId().equals(
                             n3.getArtifact().getGroupId() ) )
                         {
@@ -991,7 +994,7 @@ public class ShadeMojo
                     {
                         for ( int x = 0; x < dependencies.size(); x++ )
                         {
-                            Dependency dep = (Dependency) dependencies.get( x );
+                            Dependency dep = dependencies.get( x );
                             if ( dep.getArtifactId().equals( n2.getArtifact().getArtifactId() )
                                 && dep.getGroupId().equals( n2.getArtifact().getGroupId() ) )
                             {
