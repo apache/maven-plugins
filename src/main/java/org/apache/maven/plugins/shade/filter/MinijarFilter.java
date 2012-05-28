@@ -19,14 +19,6 @@ package org.apache.maven.plugins.shade.filter;
  * under the License.
  */
 
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.util.IOUtil;
-import org.vafer.jdependency.Clazz;
-import org.vafer.jdependency.Clazzpath;
-import org.vafer.jdependency.ClazzpathUnit;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -36,6 +28,14 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.util.IOUtil;
+import org.vafer.jdependency.Clazz;
+import org.vafer.jdependency.Clazzpath;
+import org.vafer.jdependency.ClazzpathUnit;
 
 /**
  * A filter that prevents the inclusion of classes not required in the final jar.
@@ -48,7 +48,7 @@ public class MinijarFilter
 
     private Log log;
 
-    private Set removable;
+    private Set<Clazz> removable;
 
     private int classesKept;
 
@@ -64,6 +64,7 @@ public class MinijarFilter
      *
      * @since 1.6
      */
+    @SuppressWarnings( { "unchecked", "rawtypes" } )
     public MinijarFilter( MavenProject project, Log log, List<SimpleFilter> simpleFilters )
         throws IOException
     {
@@ -78,17 +79,7 @@ public class MinijarFilter
         for ( Iterator it = project.getArtifacts().iterator(); it.hasNext(); )
         {
             Artifact dependency = (Artifact) it.next();
-
-            InputStream is = null;
-            try
-            {
-                is = new FileInputStream( dependency.getFile() );
-                cp.addClazzpathUnit( is, dependency.toString() );
-            }
-            finally
-            {
-                IOUtil.close( is );
-            }
+            addDependencyToClasspath( cp, dependency );
         }
 
         removable = cp.getClazzes();
@@ -100,14 +91,37 @@ public class MinijarFilter
             : simpleFilters );
     }
 
+    private ClazzpathUnit addDependencyToClasspath( Clazzpath cp, Artifact dependency ) throws IOException
+    {
+        InputStream is = null;
+        ClazzpathUnit clazzpathUnit = null;
+        try
+        {
+            is = new FileInputStream( dependency.getFile() );
+            clazzpathUnit = cp.addClazzpathUnit( is, dependency.toString() );
+        }
+        catch( ArrayIndexOutOfBoundsException e )
+        {
+            //trap ArrayIndexOutOfBoundsExceptions caused by malformed dependency classes (MSHADE-107)
+            log.warn( dependency.toString() + " could not be analyzed for minimization; dependency is probably malformed." );
+        }
+        finally
+        {
+            IOUtil.close( is );
+        }
+        
+        return clazzpathUnit;
+    }
+    
     private void removePackages( ClazzpathUnit artifactUnit )
     {
-        Set packageNames = new HashSet();
+        Set<String> packageNames = new HashSet<String>();
         removePackages( artifactUnit.getClazzes(), packageNames );
         removePackages( artifactUnit.getTransitiveDependencies(), packageNames );
     }
 
-    private void removePackages( Set clazzes, Set packageNames )
+    @SuppressWarnings( "rawtypes" )
+    private void removePackages( Set clazzes, Set<String> packageNames )
     {
         Iterator it = clazzes.iterator();
         while ( it.hasNext() )
@@ -125,6 +139,7 @@ public class MinijarFilter
         }
     }
 
+    @SuppressWarnings( "rawtypes" )
     private void removeSpecificallyIncludedClasses( MavenProject project, List<SimpleFilter> simpleFilters )
         throws IOException
     {
@@ -140,18 +155,7 @@ public class MinijarFilter
                 SimpleFilter simpleFilter = i.next();
                 if ( simpleFilter.canFilter( jar ) )
                 {
-                    InputStream is = null;
-                    ClazzpathUnit depClazzpathUnit = null;
-                    try
-                    {
-                        is = new FileInputStream( dependency.getFile() );
-                        depClazzpathUnit = checkCp.addClazzpathUnit( is, dependency.toString() );
-                    }
-                    finally
-                    {
-                        IOUtil.close( is );
-                    }
-
+                    ClazzpathUnit depClazzpathUnit = addDependencyToClasspath( checkCp, dependency );
                     if ( depClazzpathUnit != null )
                     {
                         Iterator<Clazz> j = removable.iterator();
