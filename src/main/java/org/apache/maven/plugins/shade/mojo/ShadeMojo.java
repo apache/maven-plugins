@@ -467,6 +467,7 @@ public class ShadeMojo
             getLog().info( "Including " + artifact.getId() + " in the shaded jar." );
 
             artifacts.add( artifact.getFile() );
+            artifactIds.add( getId( artifact ) );
 
             if ( createSourcesJar )
             {
