@@ -28,7 +28,7 @@
 
 Maven Plugins Parent POM
 
-    This POM is the common parent of all of the Maven plugins
+    This POM is the common parent of all of the {{{/plugins/}Maven plugins}}
     in the Apache Maven project.
 
 The <<<run-its>>> Profile
