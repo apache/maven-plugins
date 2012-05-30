@@ -592,7 +592,11 @@ public class PdfMojo
         tmpSiteDir.mkdirs();
 
         // copy site
-        FileUtils.copyDirectoryStructure( siteDirectory, tmpSiteDir );
+        if ( siteDirectory.exists() )
+        {
+            FileUtils.copyDirectoryStructure( siteDirectory, tmpSiteDir );
+        }
+
         // Remove SCM files
         List files =
             FileUtils.getFileAndDirectoryNames( tmpSiteDir, FileUtils.getDefaultExcludesAsString(), null, true,
