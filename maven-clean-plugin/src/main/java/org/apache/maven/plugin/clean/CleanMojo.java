@@ -21,78 +21,68 @@ package org.apache.maven.plugin.clean;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 
 import java.io.File;
 import java.io.IOException;
 
 /**
  * Goal which cleans the build.
- *
+ * <p/>
  * <P>This attempts to clean a project's working directory of the files that
  * were generated at build-time. By default, it discovers and deletes the
  * directories configured in <code>project.build.directory</code>,
  * <code>project.build.outputDirectory</code>,
  * <code>project.build.testOutputDirectory</code>, and
  * <code>project.reporting.outputDirectory</code>. </P>
- *
+ * <p/>
  * <P>Files outside the default may also be included in the deletion by
  * configuring the <code>filesets</code> tag.</P>
  *
  * @author <a href="mailto:evenisse@maven.org">Emmanuel Venisse</a>
  * @version $Id$
- * @goal clean
- * @threadSafe
- * @since 2.0
  * @see org.apache.maven.plugin.clean.Fileset
+ * @since 2.0
  */
+@Mojo( name = "clean", threadSafe = true )
 public class CleanMojo
     extends AbstractMojo
 {
 
     /**
      * This is where build results go.
-     *
-     * @parameter default-value="${project.build.directory}"
-     * @required
-     * @readonly
      */
+    @Parameter( defaultValue = "${project.build.directory}", readonly = true, required = true )
     private File directory;
 
     /**
      * This is where compiled classes go.
-     *
-     * @parameter default-value="${project.build.outputDirectory}"
-     * @required
-     * @readonly
      */
+    @Parameter( defaultValue = "${project.build.outputDirectory}", readonly = true, required = true )
     private File outputDirectory;
 
     /**
      * This is where compiled test classes go.
-     *
-     * @parameter default-value="${project.build.testOutputDirectory}"
-     * @required
-     * @readonly
      */
+    @Parameter( defaultValue = "${project.build.testOutputDirectory}", readonly = true, required = true )
     private File testOutputDirectory;
 
     /**
      * This is where the site plugin generates its pages.
      *
-     * @parameter default-value="${project.reporting.outputDirectory}"
-     * @required
-     * @readonly
      * @since 2.1.1
      */
+    @Parameter( defaultValue = "${project.build.outputDirectory}", readonly = true, required = true )
     private File reportDirectory;
 
     /**
      * Sets whether the plugin runs in verbose mode. As of plugin version 2.3, the default value is derived from Maven's
      * global debug flag (compare command line switch <code>-X</code>).
-     * 
-     * @parameter expression="${clean.verbose}"
+     *
      * @since 2.1
      */
+    @Parameter( property = "clean.verbose" )
     private Boolean verbose;
 
     /**
@@ -113,9 +103,9 @@ public class CleanMojo
      * &lt;/filesets&gt;
      * </pre>
      *
-     * @parameter
      * @since 2.1
      */
+    @Parameter
     private Fileset[] filesets;
 
     /**
@@ -123,53 +113,53 @@ public class CleanMojo
      * the project. Not following symlinks requires more IO operations and heap memory, regardless whether symlinks are
      * actually present. So projects with a huge output directory that knowingly does not contain symlinks can improve
      * performance by setting this parameter to <code>true</code>.
-     * 
-     * @parameter expression="${clean.followSymLinks}" default-value="false"
+     *
      * @since 2.1
      */
+    @Parameter( property = "clean.followSymLinks", defaultValue = "false" )
     private boolean followSymLinks;
 
     /**
      * Disables the plugin execution.
      *
-     * @parameter expression="${clean.skip}" default-value="false"
      * @since 2.2
      */
+    @Parameter( property = "clean.skip", defaultValue = "false" )
     private boolean skip;
 
     /**
      * Indicates whether the build will continue even if there are clean errors.
      *
-     * @parameter expression="${maven.clean.failOnError}" default-value="true"
      * @since 2.2
      */
+    @Parameter( property = "maven.clean.failOnError", defaultValue = "true" )
     private boolean failOnError;
 
     /**
      * Indicates whether the plugin should undertake additional attempts (after a short delay) to delete a file if the
      * first attempt failed. This is meant to help deleting files that are temporarily locked by third-party tools like
      * virus scanners or search indexing.
-     * 
-     * @parameter expression="${maven.clean.retryOnError}" default-value="true"
+     *
      * @since 2.4.2
      */
+    @Parameter( property = "maven.clean.retryOnError", defaultValue = "true" )
     private boolean retryOnError;
 
     /**
      * Disables the deletion of the default output directories configured for a project. If set to <code>true</code>,
      * only the files/directories selected via the parameter {@link #filesets} will be deleted.
-     * 
-     * @parameter expression="${clean.excludeDefaultDirectories}" default-value="false"
+     *
      * @since 2.3
      */
+    @Parameter( property = "clean.excludeDefaultDirectories", defaultValue = "false" )
     private boolean excludeDefaultDirectories;
 
     /**
      * Deletes file-sets in the following project build directory order: (source) directory, output directory, test
      * directory, report directory, and then the additional file-sets.
-     * 
-     * @see org.apache.maven.plugin.Mojo#execute()
+     *
      * @throws MojoExecutionException When a directory failed to get deleted.
+     * @see org.apache.maven.plugin.Mojo#execute()
      */
     public void execute()
         throws MojoExecutionException
@@ -203,8 +193,8 @@ public class CleanMojo
                     {
                         throw new MojoExecutionException( "Missing base directory for " + fileset );
                     }
-                    GlobSelector selector =
-                        new GlobSelector( fileset.getIncludes(), fileset.getExcludes(), fileset.isUseDefaultExcludes() );
+                    GlobSelector selector = new GlobSelector( fileset.getIncludes(), fileset.getExcludes(),
+                                                              fileset.isUseDefaultExcludes() );
                     cleaner.delete( fileset.getDirectory(), selector, fileset.isFollowSymlinks(), failOnError,
                                     retryOnError );
                 }
@@ -218,7 +208,7 @@ public class CleanMojo
 
     /**
      * Indicates whether verbose output is enabled.
-     * 
+     *
      * @return <code>true</code> if verbose output is enabled, <code>false</code> otherwise.
      */
     private boolean isVerbose()
@@ -228,7 +218,7 @@ public class CleanMojo
 
     /**
      * Gets the directories to clean (if any). The returned array may contain null entries.
-     * 
+     *
      * @return The directories to clean or an empty array if none, never <code>null</code>.
      */
     private File[] getDirectories()
@@ -240,7 +230,7 @@ public class CleanMojo
         }
         else
         {
-            directories = new File[] { directory, outputDirectory, testOutputDirectory, reportDirectory };
+            directories = new File[]{ directory, outputDirectory, testOutputDirectory, reportDirectory };
         }
         return directories;
     }
