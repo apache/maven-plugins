@@ -69,6 +69,14 @@ under the License.
       <version>3.0</version>
     </dependency>
 
+    <!-- dependencies to annotations -->
+    <dependency>
+      <groupId>org.apache.maven.plugin-tools</groupId>
+      <artifactId>maven-plugin-annotations</artifactId>
+      <version>3.0</version>
+      <scope>compile</scope>
+    </dependency>
+
     <!-- Test -->
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
