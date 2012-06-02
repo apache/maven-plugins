@@ -115,7 +115,6 @@ public abstract class AbstractEarModule
             // Artifact has not been found
             if ( artifact == null )
             {
-                @SuppressWarnings( "unchecked" )
                 Set<Artifact> candidates = ar.getArtifacts( groupId, artifactId, getType() );
                 if ( candidates.size() > 1 )
                 {
