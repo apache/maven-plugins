@@ -122,9 +122,8 @@ class GlobSelector
 
     private static boolean isMatched( String pathname, String[] patterns )
     {
-        for ( int i = patterns.length - 1; i >= 0; i-- )
+        for ( String pattern : patterns )
         {
-            String pattern = patterns[i];
             if ( SelectorUtils.matchPath( pattern, pathname ) )
             {
                 return true;
@@ -135,9 +134,8 @@ class GlobSelector
 
     public boolean couldHoldSelected( String pathname )
     {
-        for ( int i = includes.length - 1; i >= 0; i-- )
+        for ( String include : includes )
         {
-            String include = includes[i];
             if ( SelectorUtils.matchPatternStart( include, pathname ) )
             {
                 return true;
