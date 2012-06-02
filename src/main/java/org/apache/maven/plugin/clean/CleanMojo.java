@@ -174,10 +174,8 @@ public class CleanMojo
 
         try
         {
-            File[] directories = getDirectories();
-            for ( int i = 0; i < directories.length; i++ )
+            for ( File directory : getDirectories() )
             {
-                File directory = directories[i];
                 if ( directory != null )
                 {
                     cleaner.delete( directory, null, followSymLinks, failOnError, retryOnError );
@@ -186,9 +184,8 @@ public class CleanMojo
 
             if ( filesets != null )
             {
-                for ( int i = 0; i < filesets.length; i++ )
+                for ( Fileset fileset : filesets )
                 {
-                    Fileset fileset = filesets[i];
                     if ( fileset.getDirectory() == null )
                     {
                         throw new MojoExecutionException( "Missing base directory for " + fileset );
