@@ -50,6 +50,19 @@ under the License.
         <p>Please see the <a href="http://maven.apache.org/plugins/maven-javadoc-plugin/">Javadoc Plugin Documentation</a>.</p>
       </answer>
     </faq>
+    <faq id="inherit">
+      <question>Starting with version 2.2 configuration/executions defined in a parent POM are no longer inherited, why?</question>
+      <answer>
+        <p>As part of the deprecation of all goals except for the <code>single</code> goal, the goals of the Assembly Plugin and their configuration/executions are no longer inherited by default.</p>
+        <p>If you need the configuration/executions to be inherited you need to explicitly say so by adding a line to the plugin declaration in the parent POM:</p>
+        <pre>
+          &lt;plugin&gt;
+            &lt;artifactId&gt;maven-assembly-plugin&lt;/artifactId&gt;
+            &lt;inherited&gt;true&lt;/inherited&gt;
+            ...
+        </pre>
+      </answer>
+    </faq>
   </part>
   <part id="Assembly Descriptors">
     <faq id="shared-descriptor-bug">
