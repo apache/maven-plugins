@@ -357,7 +357,7 @@ public abstract class AbstractPmdReport
                     FileUtils.getFiles( sourceDirectory, including, excluding );
                 for ( Iterator<File> it2 = newfiles.iterator(); it2.hasNext(); )
                 {
-                    files.put( it2.next(), finfo );
+                    files.put( it2.next().getCanonicalFile(), finfo );
                 }
             }
         }

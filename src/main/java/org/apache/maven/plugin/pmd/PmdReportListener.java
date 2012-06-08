@@ -27,6 +27,7 @@ import org.apache.maven.plugin.logging.Log;
 import org.codehaus.plexus.util.StringUtils;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -100,12 +101,6 @@ public class PmdReportListener
             this.currentFilename =
                 StringUtils.substring( currentFilename, fileInfo.getSourceDirectory().getAbsolutePath().length() + 1 );
         }
-        else
-        {
-            log.warn(
-                "Unfortunately there was no PmdFileInfo available or the SourceDirectory is not known for " + " file "
-                    + currentFilename );
-        }
         this.currentFilename = StringUtils.replace( this.currentFilename, "\\", "/" );
 
         String title = this.currentFilename;
@@ -158,6 +153,7 @@ public class PmdReportListener
     // out of order. We sort them here by filename and line number before writing them to
     // the report.
     private void processViolations()
+        throws IOException
     {
         fileCount = files.size();
         Collections.sort( violations, new Comparator<RuleViolation>()
@@ -182,7 +178,14 @@ public class PmdReportListener
         for ( RuleViolation ruleViolation : violations )
         {
             String currentFn = ruleViolation.getFilename();
-            PmdFileInfo fileInfo = files.get( new File( currentFn ) );
+            File canonicalFilename = new File( currentFn ).getCanonicalFile();
+            PmdFileInfo fileInfo = files.get( canonicalFilename );
+            if ( fileInfo == null )
+            {
+                log.warn( "Couldn't determine PmdFileInfo for file " + currentFn + " (canonical: " + canonicalFilename
+                              + "). XRef links won't be available." );
+            }
+
             if ( !currentFn.equalsIgnoreCase( previousFilename ) && fileSectionStarted )
             {
                 endFileSection();
@@ -329,6 +332,7 @@ public class PmdReportListener
 */
 
     public void endDocument()
+        throws IOException
     {
         processViolations();
 
