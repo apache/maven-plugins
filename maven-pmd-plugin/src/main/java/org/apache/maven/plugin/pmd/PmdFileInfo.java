@@ -22,6 +22,7 @@ package org.apache.maven.plugin.pmd;
 import org.apache.maven.project.MavenProject;
 
 import java.io.File;
+import java.io.IOException;
 
 /**
  * @version $Id$
@@ -36,15 +37,16 @@ public class PmdFileInfo
     private String xref;
 
     public PmdFileInfo( MavenProject project, File dir, String x )
+        throws IOException
     {
         this.project = project;
         if ( dir.isAbsolute() )
         {
-            this.sourceDir = dir;
+            this.sourceDir = dir.getCanonicalFile();
         }
         else
         {
-            this.sourceDir = new File( project.getBasedir(), dir.getPath() );
+            this.sourceDir = new File( project.getBasedir(), dir.getPath() ).getCanonicalFile();
         }
         this.xref = x;
     }

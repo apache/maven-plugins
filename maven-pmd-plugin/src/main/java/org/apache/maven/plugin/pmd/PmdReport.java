@@ -273,7 +273,7 @@ public class PmdReport
         List<DataSource> dataSources = new ArrayList<DataSource>( files.size() );
         for ( File f : files.keySet() )
         {
-            dataSources.add( new FileDataSource( f.getAbsoluteFile() ) );
+            dataSources.add( new FileDataSource( f ) );
         }
 
         try
@@ -293,7 +293,14 @@ public class PmdReport
             getLog().warn( "Failure executing PMD: " + e.getLocalizedMessage(), e );
         }
 
-        reportSink.endDocument();
+        try
+        {
+            reportSink.endDocument();
+        }
+        catch ( IOException e )
+        {
+            getLog().warn( "Failure creating the report: " + e.getLocalizedMessage(), e );
+        }
 
         // copy over the violations into a single report - PMD now creates one report per file
         Report report = new Report();
