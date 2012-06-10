@@ -27,6 +27,7 @@ import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.util.Locale;
 
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.manager.WagonManager;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
@@ -208,8 +209,8 @@ public class DependenciesReport
     {
         try
         {
-            //ArtifactFilter artifactFilter = new ScopeArtifactFilter( Artifact.SCOPE_TEST );
-            return dependencyGraphBuilder.buildDependencyGraph( project );
+            ArtifactFilter artifactFilter = new ScopeArtifactFilter( Artifact.SCOPE_TEST );
+            return dependencyGraphBuilder.buildDependencyGraph( project, artifactFilter );
         }
         catch ( DependencyGraphBuilderException e )
         {
