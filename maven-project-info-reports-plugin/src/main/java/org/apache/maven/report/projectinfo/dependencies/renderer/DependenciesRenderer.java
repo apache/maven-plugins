@@ -61,7 +61,7 @@ import org.apache.maven.report.projectinfo.dependencies.Dependencies;
 import org.apache.maven.report.projectinfo.dependencies.DependenciesReportConfiguration;
 import org.apache.maven.report.projectinfo.dependencies.RepositoryUtils;
 import org.apache.maven.settings.Settings;
-import org.apache.maven.shared.dependency.tree.DependencyNode;
+import org.apache.maven.shared.dependency.graph.DependencyNode;
 import org.apache.maven.shared.jar.JarData;
 import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.util.StringUtils;
@@ -94,7 +94,7 @@ public class DependenciesRenderer
      */
     private static final String JAVASCRIPT;
 
-    private final DependencyNode dependencyTreeNode;
+    private final DependencyNode dependencyNode;
 
     private final Dependencies dependencies;
 
@@ -214,7 +214,7 @@ public class DependenciesRenderer
         this.log = log;
         this.settings = settings;
         this.dependencies = dependencies;
-        this.dependencyTreeNode = dependencyTreeNode;
+        this.dependencyNode = dependencyTreeNode;
         this.repoUtils = repoUtils;
         this.configuration = config;
         this.artifactFactory = artifactFactory;
@@ -506,7 +506,7 @@ public class DependenciesRenderer
         startSection( getI18nString( "graph.tree.title" ) );
 
         sink.list();
-        printDependencyListing( dependencyTreeNode );
+        printDependencyListing( dependencyNode );
         sink.list_();
 
         endSection();
@@ -899,9 +899,7 @@ public class DependenciesRenderer
         {
             boolean toBeIncluded = false;
             List<DependencyNode> subList = new ArrayList<DependencyNode>();
-            @SuppressWarnings( "unchecked" )
-            List<DependencyNode> deps = node.getChildren();
-            for ( DependencyNode dep : deps )
+            for ( DependencyNode dep : node.getChildren() )
             {
                 if ( dependencies.getAllDependencies().contains( dep.getArtifact() ) )
                 {
