@@ -28,7 +28,7 @@ import java.util.jar.JarEntry;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.shared.dependency.tree.DependencyNode;
+import org.apache.maven.shared.dependency.graph.DependencyNode;
 import org.apache.maven.shared.jar.JarAnalyzer;
 import org.apache.maven.shared.jar.JarData;
 import org.apache.maven.shared.jar.classes.JarClasses;
@@ -42,7 +42,7 @@ public class Dependencies
 {
     private final MavenProject project;
 
-    private final DependencyNode dependencyTreeNode;
+    private final DependencyNode dependencyNode;
 
     private final JarClassesAnalysis classesAnalyzer;
 
@@ -86,7 +86,7 @@ public class Dependencies
     public Dependencies( MavenProject project, DependencyNode dependencyTreeNode, JarClassesAnalysis classesAnalyzer )
     {
         this.project = project;
-        this.dependencyTreeNode = dependencyTreeNode;
+        this.dependencyNode = dependencyTreeNode;
         this.classesAnalyzer = classesAnalyzer;
     }
 
@@ -119,9 +119,7 @@ public class Dependencies
         }
 
         projectDependencies = new ArrayList<Artifact>();
-        @SuppressWarnings( "unchecked" )
-        List<DependencyNode> deps = dependencyTreeNode.getChildren();
-        for ( DependencyNode dep : deps )
+        for ( DependencyNode dep : dependencyNode.getChildren() )
         {
             projectDependencies.add( dep.getArtifact() );
         }
@@ -157,7 +155,7 @@ public class Dependencies
 
         allDependencies = new ArrayList<Artifact>();
 
-        addAllChildrenDependencies( dependencyTreeNode );
+        addAllChildrenDependencies( dependencyNode );
 
         return allDependencies;
     }
@@ -280,15 +278,8 @@ public class Dependencies
      */
     private void addAllChildrenDependencies( DependencyNode dependencyNode )
     {
-        @SuppressWarnings( "unchecked" )
-        List<DependencyNode> deps = dependencyNode.getChildren();
-        for ( DependencyNode subdependencyNode : deps )
+        for ( DependencyNode subdependencyNode : dependencyNode.getChildren() )
         {
-            if ( subdependencyNode.getState() != DependencyNode.INCLUDED )
-            {
-                continue;
-            }
-
             Artifact artifact = subdependencyNode.getArtifact();
 
             if ( artifact.getGroupId().equals( project.getGroupId() )

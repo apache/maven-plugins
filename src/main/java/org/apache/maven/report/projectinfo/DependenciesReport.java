@@ -27,12 +27,10 @@ import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.util.Locale;
 
-import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.manager.WagonManager;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.metadata.RepositoryMetadataManager;
-import org.apache.maven.artifact.resolver.ArtifactCollector;
 import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
 import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
 import org.apache.maven.project.MavenProjectBuilder;
@@ -40,9 +38,9 @@ import org.apache.maven.report.projectinfo.dependencies.Dependencies;
 import org.apache.maven.report.projectinfo.dependencies.DependenciesReportConfiguration;
 import org.apache.maven.report.projectinfo.dependencies.RepositoryUtils;
 import org.apache.maven.report.projectinfo.dependencies.renderer.DependenciesRenderer;
-import org.apache.maven.shared.dependency.tree.DependencyNode;
-import org.apache.maven.shared.dependency.tree.DependencyTreeBuilder;
-import org.apache.maven.shared.dependency.tree.DependencyTreeBuilderException;
+import org.apache.maven.shared.dependency.graph.DependencyNode;
+import org.apache.maven.shared.dependency.graph.DependencyGraphBuilder;
+import org.apache.maven.shared.dependency.graph.DependencyGraphBuilderException;
 import org.apache.maven.shared.jar.classes.JarClassesAnalysis;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
@@ -82,13 +80,6 @@ public class DependenciesReport
     protected ArtifactMetadataSource artifactMetadataSource;
 
     /**
-     * Artifact collector component.
-     *
-     * @component
-     */
-    private ArtifactCollector collector;
-
-    /**
      * Wagon manager component.
      *
      * @since 2.1
@@ -97,12 +88,12 @@ public class DependenciesReport
     private WagonManager wagonManager;
 
     /**
-     * Dependency tree builder component.
+     * Dependency graph builder component.
      *
-     * @since 2.1
-     * @component
+     * @since 2.5
+     * @component role-hint="default"
      */
-    private DependencyTreeBuilder dependencyTreeBuilder;
+    private DependencyGraphBuilder dependencyGraphBuilder;
 
     /**
      * Jar classes analyzer component.
@@ -180,16 +171,16 @@ public class DependenciesReport
                                  project.getPluginArtifactRepositories(), localRepository,
                                  repositoryMetadataManager );
 
-        DependencyNode dependencyTreeNode = resolveProject();
+        DependencyNode dependencyNode = resolveProject();
 
-        Dependencies dependencies = new Dependencies( project, dependencyTreeNode, classesAnalyzer );
+        Dependencies dependencies = new Dependencies( project, dependencyNode, classesAnalyzer );
 
         DependenciesReportConfiguration config =
             new DependenciesReportConfiguration( dependencyDetailsEnabled, dependencyLocationsEnabled );
 
         DependenciesRenderer r =
             new DependenciesRenderer( getSink(), locale, getI18N( locale ), getLog(), settings, dependencies,
-                                      dependencyTreeNode, config, repoUtils, artifactFactory, mavenProjectBuilder,
+                                      dependencyNode, config, repoUtils, artifactFactory, mavenProjectBuilder,
                                       remoteRepositories, localRepository );
         r.render();
     }
@@ -217,11 +208,10 @@ public class DependenciesReport
     {
         try
         {
-            ArtifactFilter artifactFilter = new ScopeArtifactFilter( Artifact.SCOPE_TEST );
-            return dependencyTreeBuilder.buildDependencyTree( project, localRepository, factory,
-                                                              artifactMetadataSource, artifactFilter, collector );
+            //ArtifactFilter artifactFilter = new ScopeArtifactFilter( Artifact.SCOPE_TEST );
+            return dependencyGraphBuilder.buildDependencyGraph( project );
         }
-        catch ( DependencyTreeBuilderException e )
+        catch ( DependencyGraphBuilderException e )
         {
             getLog().error( "Unable to build dependency tree.", e );
             return null;
