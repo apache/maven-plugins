@@ -58,6 +58,7 @@ public class PropertiesMojo
     public void execute()
         throws MojoExecutionException
     {
+        @SuppressWarnings( "unchecked" )
         Set<Artifact> artifacts = getProject().getArtifacts();
         
         for ( Artifact artifact : artifacts )

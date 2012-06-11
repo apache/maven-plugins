@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.ArtifactRepositoryFactory;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
@@ -39,7 +38,6 @@ import org.apache.maven.plugin.dependency.utils.DependencyUtil;
 import org.apache.maven.plugin.dependency.utils.filters.ArtifactItemFilter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.artifact.filter.collection.ArtifactFilterException;
-import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
@@ -360,7 +358,9 @@ public abstract class AbstractFromConfigurationMojo
     private void fillMissingArtifactVersion( ArtifactItem artifact )
         throws MojoExecutionException
     {
+        @SuppressWarnings( "unchecked" )
         List<Dependency> deps = project.getDependencies();
+        @SuppressWarnings( "unchecked" )
         List<Dependency> depMngt = project.getDependencyManagement() == null
             ? Collections.<Dependency>emptyList()
             : project.getDependencyManagement().getDependencies();

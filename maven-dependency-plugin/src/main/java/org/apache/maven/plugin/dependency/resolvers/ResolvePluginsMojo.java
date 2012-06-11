@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -53,7 +54,7 @@ public class ResolvePluginsMojo
      * @required
      * @readonly
      */
-    private List remotePluginRepositories;
+    private List<ArtifactRepository> remotePluginRepositories;
 
     /**
      * If we should exclude transitive dependencies
@@ -170,7 +171,9 @@ public class ResolvePluginsMojo
     protected Set<Artifact> resolvePluginArtifacts()
         throws ArtifactResolutionException, ArtifactNotFoundException
     {
+        @SuppressWarnings( "unchecked" )
         Set<Artifact> plugins = project.getPluginArtifacts();
+        @SuppressWarnings( "unchecked" )
         Set<Artifact> reports = project.getReportArtifacts();
 
         Set<Artifact> artifacts = new HashSet<Artifact>();

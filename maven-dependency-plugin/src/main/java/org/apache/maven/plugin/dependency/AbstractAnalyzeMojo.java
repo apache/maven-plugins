@@ -210,8 +210,11 @@ public abstract class AbstractAnalyzeMojo
             throw new MojoExecutionException( "Cannot analyze dependencies", exception );
         }
 
+        @SuppressWarnings( "unchecked" )
         Set<Artifact> usedDeclared = analysis.getUsedDeclaredArtifacts();
+        @SuppressWarnings( "unchecked" )
         Set<Artifact> usedUndeclared = analysis.getUsedUndeclaredArtifacts();
+        @SuppressWarnings( "unchecked" )
         Set<Artifact> unusedDeclared = analysis.getUnusedDeclaredArtifacts();
 
         if ( ignoreNonCompile )
