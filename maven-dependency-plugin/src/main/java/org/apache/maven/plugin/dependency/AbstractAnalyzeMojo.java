@@ -64,7 +64,7 @@ public abstract class AbstractAnalyzeMojo
     /**
      * The Maven project to analyze.
      *
-     * @parameter expression="${project}"
+     * @parameter default-value="${project}"
      * @required
      * @readonly
      */
@@ -126,7 +126,7 @@ public abstract class AbstractAnalyzeMojo
     /**
      * Flag to use for scriptable output
      *
-     * @parameter expression="${basedir}"
+     * @parameter default-value="${basedir}"
      * @readonly
      * @since 2.0-alpha-5
      */
@@ -135,7 +135,7 @@ public abstract class AbstractAnalyzeMojo
     /**
      * Target folder
      *
-     * @parameter expression="${project.build.directory}"
+     * @parameter default-value="${project.build.directory}"
      * @readonly
      * @since 2.0-alpha-5
      */

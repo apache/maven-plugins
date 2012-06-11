@@ -76,6 +76,7 @@ public class BuildClasspathMojo
     /**
      * The file to write the classpath string. If undefined, it just prints the classpath as [INFO].
      * This parameter is deprecated. Use outputFile instead.
+     *
      * @parameter expression="${mdep.cpFile}"
      * @deprecated use outputFile instead
      * @since 2.0

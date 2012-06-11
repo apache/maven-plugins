@@ -54,7 +54,7 @@ public class AnalyzeReportMojo
     /**
      * The Maven project to analyze.
      * 
-     * @parameter expression="${project}"
+     * @parameter default-value="${project}"
      * @required
      * @readonly
      */
@@ -79,7 +79,7 @@ public class AnalyzeReportMojo
     /**
      * Target folder
      * 
-     * @parameter expression="${project.build.directory}"
+     * @parameter default-value="${project.build.directory}"
      * @readonly
      * @since 2.0-alpha-5
      */

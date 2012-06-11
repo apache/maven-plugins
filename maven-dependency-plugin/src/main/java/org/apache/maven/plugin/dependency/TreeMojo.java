@@ -80,7 +80,7 @@ public class TreeMojo
     /**
      * The Maven project.
      *
-     * @parameter expression="${project}"
+     * @parameter default-value="${project}"
      * @required
      * @readonly
      */
@@ -89,7 +89,7 @@ public class TreeMojo
     /**
      * The artifact repository to use.
      *
-     * @parameter expression="${localRepository}"
+     * @parameter default-value="${localRepository}"
      * @required
      * @readonly
      */
@@ -225,13 +225,13 @@ public class TreeMojo
      */
     private DependencyNode rootNode;
     
-       /**
-        * Whether to append outputs into the output file or overwrite it.
-        * 
-        * @parameter expression="${appendOutput}" default-value="false"
-        * @since 2.2
-        */
-       private boolean appendOutput;
+    /**
+     * Whether to append outputs into the output file or overwrite it.
+     * 
+     * @parameter expression="${appendOutput}" default-value="false"
+     * @since 2.2
+     */
+    private boolean appendOutput;
     
     // Mojo methods -----------------------------------------------------------
 
