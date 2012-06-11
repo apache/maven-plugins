@@ -45,7 +45,7 @@ public class PropertiesMojo
     /**
      * The current Maven project
      *
-     * @parameter expression="${project}"
+     * @parameter default-value="${project}"
      * @readonly
      */
     protected MavenProject project;

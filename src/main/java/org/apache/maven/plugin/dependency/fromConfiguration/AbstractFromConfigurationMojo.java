@@ -101,7 +101,7 @@ public abstract class AbstractFromConfigurationMojo
     /**
      * To search for artifacts within the reactor and ensure consistent behaviour between Maven 2 and Maven 3.
      *
-     * @parameter expression="${reactorProjects}"
+     * @parameter default-value="${reactorProjects}"
      * @required
      * @readonly
      */

@@ -52,7 +52,7 @@ public class AnalyzeDuplicateMojo
     /**
      * The Maven project to analyze.
      *
-     * @parameter expression="${project}"
+     * @parameter default-value="${project}"
      * @required
      * @readonly
      */

@@ -49,7 +49,7 @@ public class ResolvePluginsMojo
     /**
      * Remote repositories which will be searched for plugins.
      * 
-     * @parameter expression="${project.pluginArtifactRepositories}"
+     * @parameter default-value="${project.pluginArtifactRepositories}"
      * @required
      * @readonly
      */

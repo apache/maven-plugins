@@ -84,7 +84,7 @@ public abstract class AbstractDependencyMojo
     /**
      * Location of the local repository.
      *
-     * @parameter expression="${localRepository}"
+     * @parameter default-value="${localRepository}"
      * @readonly
      * @required
      */
@@ -93,7 +93,7 @@ public abstract class AbstractDependencyMojo
     /**
      * List of Remote Repositories used by the resolver
      *
-     * @parameter expression="${project.remoteArtifactRepositories}"
+     * @parameter default-value="${project.remoteArtifactRepositories}"
      * @readonly
      * @required
      */
@@ -109,7 +109,7 @@ public abstract class AbstractDependencyMojo
     /**
      * POM
      *
-     * @parameter expression="${project}"
+     * @parameter default-value="${project}"
      * @readonly
      * @required
      */
@@ -118,7 +118,7 @@ public abstract class AbstractDependencyMojo
     /**
      * Contains the full list of projects in the reactor.
      *
-     * @parameter expression="${reactorProjects}"
+     * @parameter default-value="${reactorProjects}"
      * @required
      * @readonly
      */

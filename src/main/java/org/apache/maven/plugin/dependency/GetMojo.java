@@ -89,7 +89,7 @@ public class GetMojo
 
     /**
      *
-     * @parameter expression="${localRepository}"
+     * @parameter default-value="${localRepository}"
      * @readonly
      */
     private ArtifactRepository localRepository;
@@ -164,7 +164,7 @@ public class GetMojo
 
     /**
      *
-     * @parameter expression="${project.remoteArtifactRepositories}"
+     * @parameter default-value="${project.remoteArtifactRepositories}"
      * @required
      * @readonly
      */

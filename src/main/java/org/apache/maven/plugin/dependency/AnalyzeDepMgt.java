@@ -60,7 +60,7 @@ public class AnalyzeDepMgt
     /**
      *
      *
-     * @parameter expression="${project}"
+     * @parameter default-value="${project}"
      * @required
      * @readonly
      */
