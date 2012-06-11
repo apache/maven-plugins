@@ -79,7 +79,7 @@ public class GetMojo
      *
      * @component role="org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout"
      */
-    private Map repositoryLayouts;
+    private Map<String, ArtifactRepositoryLayout> repositoryLayouts;
 
     /**
      * @component
@@ -168,7 +168,7 @@ public class GetMojo
      * @required
      * @readonly
      */
-    private List pomRemoteRepositories;
+    private List<ArtifactRepository> pomRemoteRepositories;
 
     /**
      * Download transitively, retrieving the specified artifact and all of its dependencies.
@@ -315,7 +315,7 @@ public class GetMojo
     private ArtifactRepositoryLayout getLayout( String id )
         throws MojoFailureException
     {
-        ArtifactRepositoryLayout layout = (ArtifactRepositoryLayout) repositoryLayouts.get( id );
+        ArtifactRepositoryLayout layout = repositoryLayouts.get( id );
 
         if ( layout == null )
         {

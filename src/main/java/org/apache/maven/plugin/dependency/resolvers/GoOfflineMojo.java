@@ -53,6 +53,7 @@ public class GoOfflineMojo
     public void execute()
         throws MojoExecutionException
     {
+        @SuppressWarnings( "unchecked" )
         Set<Artifact> artifacts = project.getArtifacts();
 
         if ( !silent )

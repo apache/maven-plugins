@@ -225,6 +225,7 @@ public class PurgeLocalRepositoryMojo
     {
         Map<String, Artifact> artifactMap = Collections.emptyMap();
 
+        @SuppressWarnings( "unchecked" )
         List<Dependency> dependencies = project.getDependencies();
 
         List<ArtifactRepository> remoteRepositories = Collections.emptyList();

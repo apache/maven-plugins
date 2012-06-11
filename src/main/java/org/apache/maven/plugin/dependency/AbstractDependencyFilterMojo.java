@@ -270,6 +270,7 @@ public abstract class AbstractDependencyFilterMojo
                                                 DependencyUtil.cleanToBeTokenizedString( this.excludeArtifactIds ) ) );
 
         // start with all artifacts.
+        @SuppressWarnings( "unchecked" )
         Set<Artifact> artifacts = project.getArtifacts();
 
         // perform filtering
