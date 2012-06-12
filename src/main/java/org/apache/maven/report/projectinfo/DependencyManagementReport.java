@@ -19,13 +19,11 @@ package org.apache.maven.report.projectinfo;
  * under the License.
  */
 
-import java.util.List;
 import java.util.Locale;
 
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.manager.WagonManager;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
-import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.metadata.RepositoryMetadataManager;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.report.projectinfo.dependencies.ManagementDependencies;
