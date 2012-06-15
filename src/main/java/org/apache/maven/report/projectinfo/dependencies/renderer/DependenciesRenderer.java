@@ -1191,6 +1191,12 @@ public class DependenciesRenderer
         endTable();
     }
 
+    private Object invoke( Object object, String method )
+        throws IllegalAccessException, InvocationTargetException, NoSuchMethodException
+    {
+        return object.getClass().getMethod( method ).invoke( object );
+    }
+
     /**
      * Get the repos that can be hidden behind a mirror.
      * 
@@ -1202,7 +1208,9 @@ public class DependenciesRenderer
         try
         {
             @SuppressWarnings( "unchecked" )
-            List<ArtifactRepository> mirroredRepos = (List<ArtifactRepository>) ArtifactRepository.class.getMethod( "getMirroredRepositories" ).invoke( repo );
+            List<ArtifactRepository> mirroredRepos =
+                (List<ArtifactRepository>) invoke( repo, "getMirroredRepositories" );
+
             if ( ( mirroredRepos != null ) && ( !mirroredRepos.isEmpty() ) )
             {
                 return mirroredRepos;
