@@ -312,9 +312,9 @@ under the License.
     </dependency>
 
     <dependency>
-      <groupId>org.apache.maven.shared</groupId>
-      <artifactId>maven-doxia-tools</artifactId>
-      <version>1.4</version>
+      <groupId>org.apache.maven.doxia</groupId>
+      <artifactId>doxia-integration-tools</artifactId>
+      <version>1.5-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <groupId>org.apache.maven</groupId>
