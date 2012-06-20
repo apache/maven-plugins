@@ -1,0 +1,4 @@
+fileValue=${foo.file}
+export SERVER_ENV=\${SERVER_ENV:${httpd.server.env}}
+envserver=${httpd.server.env}
+bar=foo
