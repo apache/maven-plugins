@@ -59,7 +59,7 @@ under the License.
   </issueManagement>
 
   <properties>
-    <mavenFilteringVersion>1.0</mavenFilteringVersion>
+    <mavenFilteringVersion>1.1-SNAPSHOT</mavenFilteringVersion>
     <mavenVersion>2.0.6</mavenVersion>
   </properties>
     
