@@ -19,6 +19,9 @@ package org.apache.maven.plugin.resources;
  * under the License.
  */
 
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+
 import java.io.File;
 import java.util.List;
 
@@ -28,10 +31,8 @@ import java.util.List;
  * @author <a href="mailto:olamy@apache.org">olamy</a>
  * @since 2.3
  * @version $Id$
- * @goal copy-resources
- * @phase
- * @threadSafe
  */
+@Mojo( name = "copy-resources", threadSafe = true)
 public class CopyResourcesMojo
     extends ResourcesMojo
 {
@@ -39,18 +40,16 @@ public class CopyResourcesMojo
     /**
      * The output directory into which to copy the resources.
      *
-     * @parameter 
-     * @required
      */
+    @Parameter(required = true)
     private File outputDirectory;
 
     /**
      * The list of resources we want to transfer. See the Maven Model for a
      * description of how to code the resources element.
      *
-     * @parameter 
-     * @required
      */
+    @Parameter(required = true)
     private List resources;
 
 
