@@ -20,6 +20,9 @@ package org.apache.maven.plugin.resources;
  */
 
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 
 import java.io.File;
 import java.util.List;
@@ -31,37 +34,28 @@ import java.util.List;
  * @author <a href="michal.maczka@dimatics.com">Michal Maczka</a>
  * @author <a href="mailto:jason@maven.org">Jason van Zyl</a>
  * @version $Id$
- * @goal testResources
- * @phase process-test-resources
- * @threadSafe
- * 
  */
+@Mojo( name = "testResources", defaultPhase = LifecyclePhase.PROCESS_TEST_RESOURCES, threadSafe = true )
 public class TestResourcesMojo
     extends ResourcesMojo
 {
     /**
      * The output directory into which to copy the resources.
-     *
-     * @parameter expression="${project.build.testOutputDirectory}"
-     * @required
      */
+    @Parameter( defaultValue = "${project.build.testOutputDirectory}", required = true )
     private File outputDirectory;
 
     /**
      * The list of resources we want to transfer.
-     *
-     * @parameter expression="${project.testResources}"
-     * @required
-     * @readonly
      */
+    @Parameter( defaultValue = "${project.testResources}", required = true, readonly = false )
     private List resources;
 
     /**
      * Set this to 'true' to bypass copying of test resources.
      * Its use is NOT RECOMMENDED, but quite convenient on occasion.
-     *
-     * @parameter expression="${maven.test.skip}"
      */
+    @Parameter( property = "maven.test.skip" )
     private boolean skip;
 
     /**
