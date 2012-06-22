@@ -302,6 +302,23 @@ under the License.
       <artifactId>xmlrpc-client</artifactId>
       <version>3.0</version>
     </dependency>
+    
+    <!-- github dependencies -->
+    <dependency>
+      <groupId>org.eclipse.mylyn.github</groupId>
+      <artifactId>org.eclipse.egit.github.core</artifactId>
+      <version>1.2.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpcore</artifactId>
+      <version>4.1.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpclient</artifactId>
+      <version>4.1.2</version>
+    </dependency>
 
     <!-- test dependencies -->
     <dependency>
