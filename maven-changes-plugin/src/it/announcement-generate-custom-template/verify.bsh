@@ -48,6 +48,14 @@ try
       System.err.println( "Test Announcement Custom template" );
       return false;
     }
+    
+    indexOf = reportContent.indexOf( "$date.systemDate" );
+    if ( indexOf >= 0 )
+    {
+      System.err.println( "$date.systemDate not resolved" );
+      return false;
+    }
+    
 
 }
 catch( Throwable e )

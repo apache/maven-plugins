@@ -143,6 +143,9 @@ Using a Custom Announcement Template
 *-----------------+----------+-----------+-----------------+
 <Variables marked with * are read-only.>
 
+ Since 2.8 the Velocity Context contains all default tools as provided by the {{{http://velocity.apache.org/tools/devel/standalone.html}ToolManager}}.
+ See the {{{http://velocity.apache.org/tools/devel/summary.html}Tools Usage Summary}} for further details. 
+
  For information on how to access variables in your template and more,
  please see the
  {{{http://velocity.apache.org/engine/releases/velocity-1.4/user-guide.html}Velocity user guide}}.
