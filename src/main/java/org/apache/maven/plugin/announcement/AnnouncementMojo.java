@@ -36,19 +36,19 @@ import org.apache.maven.plugin.changes.ReleaseUtils;
 import org.apache.maven.plugin.issues.Issue;
 import org.apache.maven.plugin.issues.IssueManagementSystem;
 import org.apache.maven.plugin.issues.IssueUtils;
-import org.apache.maven.plugin.jira.JiraDownloader;
 import org.apache.maven.plugin.jira.JIRAIssueManagmentSystem;
+import org.apache.maven.plugin.jira.JiraDownloader;
 import org.apache.maven.plugin.trac.TracDownloader;
 import org.apache.maven.plugin.trac.TracIssueManagmentSystem;
 import org.apache.maven.plugins.changes.model.Release;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Settings;
 import org.apache.velocity.Template;
-import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.context.Context;
 import org.apache.velocity.exception.ResourceNotFoundException;
 import org.apache.velocity.exception.VelocityException;
+import org.apache.velocity.tools.ToolManager;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.velocity.VelocityComponent;
@@ -547,7 +547,8 @@ public class AnnouncementMojo
     {
         try
         {
-            Context context = new VelocityContext();
+            ToolManager toolManager = new ToolManager( true );
+            Context context = toolManager.createContext();
 
             if ( getIntroduction() == null || getIntroduction().equals( "" ) )
             {
