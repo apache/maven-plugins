@@ -1,0 +1,177 @@
+ ------
+ Configuring the GitHub Report
+ ------
+ Bryan Baugher
+ ------
+ 2012-06-21
+ ------
+
+ ~~ Licensed to the Apache Software Foundation (ASF) under one
+ ~~ or more contributor license agreements.  See the NOTICE file
+ ~~ distributed with this work for additional information
+ ~~ regarding copyright ownership.  The ASF licenses this file
+ ~~ to you under the Apache License, Version 2.0 (the
+ ~~ "License"); you may not use this file except in compliance
+ ~~ with the License.  You may obtain a copy of the License at
+ ~~
+ ~~   http://www.apache.org/licenses/LICENSE-2.0
+ ~~
+ ~~ Unless required by applicable law or agreed to in writing,
+ ~~ software distributed under the License is distributed on an
+ ~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ ~~ KIND, either express or implied.  See the License for the
+ ~~ specific language governing permissions and limitations
+ ~~ under the License.
+
+ ~~ NOTE: For help with the syntax of this file, see:
+ ~~ http://maven.apache.org/doxia/references/apt-format.html
+
+
+Configuring the GitHub Report
+
+ <<Note:>> See the {{{../github-report-mojo.html}goal documentation}} for 
+ detailed info on which feature was added in which version.
+
+* Using GitHub Enterprise
+
+  If you are using GitHub Enterprise you will want to make sure that the
+  githubAPIScheme and githubAPIPort are correct (they default to "http" and 80
+  by default). If either of these are incorrect make sure to include them in
+  your configuration.
+
++-----------------+
+<project>
+  ...
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-changes-plugin</artifactId>
+        <version>${project.version}</version>
+        <configuration>
+          <githubAPIScheme>https</githubAPIScheme>
+          <githubAPIPort>443</githubAPIPort>
+        </configuration>
+        ...
+      </plugin>
+    </plugins>
+  </reporting>
+  ...
+</project>
++-----------------+
+
+* Filtering Issues
+
+ We'll start off by creating a GitHub Report for one or more versions of your
+ project. There are two ways to do this.
+
+** Only include closed issues
+
+ If you only want to include closed issues in your report make sure to configure
+ the includeOpenIssues to false in your configuration, which is true by default.
+
++-----------------+
+<project>
+  ...
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-changes-plugin</artifactId>
+        <version>${project.version}</version>
+        <configuration>
+          <includeOpenIssues>false</includeOpenIssues>
+        </configuration>
+        ...
+      </plugin>
+    </plugins>
+  </reporting>
+  ...
+</project>
++-----------------+
+
+** Include issues without milestones
+
+ If you only want to include issues that do not have a milestone attached to them
+ in your report make sure to configure the onlyMilestoneIssues to false in your 
+ configuration, which is true by default.
+
++-----------------+
+<project>
+  ...
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-changes-plugin</artifactId>
+        <version>${project.version}</version>
+        <configuration>
+          <onlyMilestoneIssues>false</onlyMilestoneIssues>
+        </configuration>
+        ...
+      </plugin>
+    </plugins>
+  </reporting>
+  ...
+</project>
++-----------------+
+
+** Using the current version
+
+ If you are lazy and only ever want the latest release in you GitHub Report, you
+ can use the <<<\<onlyCurrentVersion\>>>> configuration parameter. It will take
+ the version from your project's POM and try to match it against the milestone
+ title of the GitHub issues.
+
+ Once you have configured this, you can forget about it, as it updates itself
+ when you change the version number in your POM.
+
+ <<Note:>> The names of your milestones in GitHub must match the ones you use in
+ your POM. The <-SNAPSHOT> part of the version in your POM is handled
+ automatically by the plugin, so you don't need to include <-SNAPSHOT> in the
+ names of your milestones in GitHub.
+
++-----------------+
+<project>
+  ...
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-changes-plugin</artifactId>
+        <version>${project.version}</version>
+        <configuration>
+          <onlyCurrentVersion>true</onlyCurrentVersion>
+        </configuration>
+        ...
+      </plugin>
+    </plugins>
+  </reporting>
+  ...
+</project>
++-----------------+
+
+
+* Selecting columns
+
+ You can select which columns to include in the report.
+
++-----------------+
+<project>
+  ...
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-changes-plugin</artifactId>
+        <version>${project.version}</version>
+        <configuration>
+          <columnNames>Type,Key,Summary,Assignee,Status,Fix Version</columnNames>
+        </configuration>
+        ...
+      </plugin>
+    </plugins>
+  </reporting>
+  ...
+</project>
++-----------------+

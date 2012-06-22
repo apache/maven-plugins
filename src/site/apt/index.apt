@@ -51,6 +51,8 @@ Maven Changes Plugin
   * {{{./jira-report-mojo.html}changes:jira-report}} create a report from issues downloaded from {{{http://www.atlassian.com/software/jira/}JIRA}}.
 
   * {{{./trac-report-mojo.html}changes:trac-report}} create a report from issues downloaded from {{{http://trac.edgewall.org/}Trac}}.
+  
+  * {{{./github-report-mojo.html}changes:github-report}} create a report from issues downloaded from {{{http://github.com/}GitHub}}.
 
   []
 
@@ -86,6 +88,8 @@ Maven Changes Plugin
   * {{{./examples/configuring-trac-report.html}Configuring the Trac Report}}
 
   * {{{./examples/customizing-jira-report.html}Customizing the JIRA Report}}
+  
+  * {{{./examples/configuring-github-report.html}Configuring the GitHub Report}}
 
   * {{{./examples/include-announcement-file.html}Include an Announcement File in Your Packaging}}
 

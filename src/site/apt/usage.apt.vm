@@ -233,7 +233,59 @@ mvn site
   For info on how to modify the JIRA Report see the
   {{{./examples/customizing-jira-report.html}Customizing the JIRA Report}}
   example.
+  
+*How to Generate the GitHub Report
 
+  <<Note:>> To use the GitHub Report, the <<<\<issueManagement\>>>> section in
+  the <<<pom.xml>>> of your project must be configured. It might look something
+  like this:
+
+-------------------
+<project>
+  ...
+  <issueManagement>
+    <system>GitHub</system>
+    <url>https://github.com/rails/rails/issues</url>
+  </issueManagement>
+  ...
+</project>
+-------------------
+
+  To generate the GitHub Report, insert the Changes Plugin in the
+  <<<\<reporting\>>>> section of your project's <<<pom.xml>>>
+
+-------------------
+<project>
+  ...
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-changes-plugin</artifactId>
+        <version>${project.version}</version>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>github-report</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
+    </plugins>
+  </reporting>
+  ...
+</project>
+-------------------
+
+  and execute the site goal to generate the report.
+
+-------------------
+mvn site
+-------------------
+
+  For info on how to modify the JIRA Report see the
+  {{{./examples/configuring-github-report.html}Configuring the GitHub Report}}
+  example.
 
 *How to generate and send the Announcement via Email
 
