@@ -63,7 +63,7 @@ under the License.
     <doxiaVersion>1.2</doxiaVersion>
     <doxiaSitetoolsVersion>1.2</doxiaSitetoolsVersion>
     <mavenVersion>2.2.1</mavenVersion>
-    <sitePluginVersion>2.3</sitePluginVersion>
+    <sitePluginVersion>3.1</sitePluginVersion>
   </properties>
 
   <dependencies>
@@ -344,6 +344,14 @@ under the License.
   </dependencies>
 
   <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <artifactId>maven-site-plugin</artifactId>
+          <version>3.1</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
