@@ -348,8 +348,6 @@ under the License.
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
-          <source>1.5</source>
-          <target>1.5</target>
           <compilerArgument>-Xlint:all</compilerArgument>
         </configuration>
       </plugin>
@@ -425,7 +423,6 @@ under the License.
             <plugin>
               <groupId>org.apache.maven.plugins</groupId>
               <artifactId>maven-invoker-plugin</artifactId>
-              <version>1.5</version>
               <configuration>
                 <pomIncludes>
                   <pomInclude>*/pom.xml</pomInclude>
@@ -448,17 +445,6 @@ under the License.
       <id>reporting</id>
       <reporting>
         <plugins>
-          <plugin>
-            <artifactId>maven-pmd-plugin</artifactId>
-            <configuration>
-              <targetJdk>1.5</targetJdk>
-            </configuration>
-          </plugin>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-checkstyle-plugin</artifactId>
-            <version>2.6</version>
-          </plugin>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-changes-plugin</artifactId>
@@ -512,19 +498,5 @@ under the License.
         </plugins>
       </reporting>
     </profile>
-
-    <profile>
-      <id>maven-3</id>
-      <activation>
-        <file>
-          <!-- This employs that the basedir expression is only recognized by Maven 3.x (see MNG-2363) -->
-          <exists>${basedir}</exists>
-        </file>
-      </activation>
-      <properties>
-        <sitePluginVersion>3.0-beta-2</sitePluginVersion>
-      </properties>
-    </profile>
-
   </profiles>
 </project>
