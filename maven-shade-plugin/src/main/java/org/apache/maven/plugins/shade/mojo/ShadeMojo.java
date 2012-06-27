@@ -317,6 +317,9 @@ public class ShadeMojo
     
     /**
      *  @parameter expression="${dependencyReducedPomLocation}" defaultValue="${basedir}/dependency-reduced-pom.xml"
+     *  Note: setting a value for this parameter with a directory other than ${basedir} will change the value of ${basedir}
+     *  for all executions that come after the shade execution. This is often not what you want. This is considered
+     *  an open issue with this plugin.
      */
     private File dependencyReducedPomLocation;
 
