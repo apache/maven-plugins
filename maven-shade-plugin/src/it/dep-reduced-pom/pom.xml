@@ -83,6 +83,7 @@ under the License.
 	      <promoteTransitiveDependencies>true</promoteTransitiveDependencies>
               <shadedArtifactAttached>false</shadedArtifactAttached>
               <createDependencyReducedPom>true</createDependencyReducedPom>
+              <dependencyReducedPomLocation>target/dependency-reduced-pom.xml</dependencyReducedPomLocation>
             </configuration>
           </execution>
         </executions>
