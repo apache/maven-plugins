@@ -30,7 +30,7 @@ under the License.
   </parent>
 
   <artifactId>maven-shade-plugin</artifactId>
-  <version>1.8-SNAPSHOT</version>
+  <version>1.7.1-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
   <name>Maven Shade Plugin</name>

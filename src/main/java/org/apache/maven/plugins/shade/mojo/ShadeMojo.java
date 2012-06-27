@@ -19,22 +19,6 @@ package org.apache.maven.plugins.shade.mojo;
  * under the License.
  */
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
@@ -71,6 +55,22 @@ import org.codehaus.plexus.context.ContextException;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.WriterFactory;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Mojo that performs shading delegating to the Shader component.
@@ -876,7 +876,8 @@ public class ShadeMojo
 
                 if ( dependencyReducedPomLocation == null )
                 {
-                    dependencyReducedPomLocation = new File ( outputDirectory, "dependency-reduced-pom.xml" );
+                    // MSHADE-123: We can't default to 'target' because it messes up uses of ${project.basedir}
+                    dependencyReducedPomLocation = new File ( project.getBasedir(), "dependency-reduced-pom.xml" );
                 }
                 
                 File f = dependencyReducedPomLocation;
