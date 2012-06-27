@@ -27,6 +27,7 @@ import org.apache.maven.artifact.resolver.ArtifactCollector;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Exclusion;
 import org.apache.maven.model.Model;
@@ -40,10 +41,13 @@ import org.apache.maven.plugins.shade.pom.PomWriter;
 import org.apache.maven.plugins.shade.relocation.Relocator;
 import org.apache.maven.plugins.shade.relocation.SimpleRelocator;
 import org.apache.maven.plugins.shade.resource.ResourceTransformer;
+import org.apache.maven.project.DefaultProjectBuildingRequest;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.MavenProjectHelper;
+import org.apache.maven.project.ProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
+import org.apache.maven.project.ProjectBuildingRequest;
+import org.apache.maven.project.ProjectBuildingResult;
 import org.apache.maven.shared.dependency.tree.DependencyNode;
 import org.apache.maven.shared.dependency.tree.DependencyTreeBuilder;
 import org.apache.maven.shared.dependency.tree.DependencyTreeBuilderException;
@@ -125,7 +129,15 @@ public class ShadeMojo
      * @required
      * @readonly
      */
-    private MavenProjectBuilder mavenProjectBuilder;
+    private ProjectBuilder projectBuilder;
+
+    /**
+     * The current Maven session.
+     *
+     * @parameter default-value="${session}"
+     * @readonly
+     */
+    private MavenSession session;
 
     /**
      * The artifact metadata source to use.
@@ -932,15 +944,19 @@ public class ShadeMojo
                     w.close();
                 }
 
-                MavenProject p2 = mavenProjectBuilder.build( f, localRepository, null );
-                modified = updateExcludesInDeps( p2, dependencies, transitiveDeps );
+                ProjectBuildingRequest projectBuildingRequest = new DefaultProjectBuildingRequest(session.getProjectBuildingRequest());
+                projectBuildingRequest.setLocalRepository(localRepository);
+                projectBuildingRequest.setRemoteRepositories(remoteArtifactRepositories);
 
+                ProjectBuildingResult result = projectBuilder.build(f, projectBuildingRequest);
+
+                modified = updateExcludesInDeps( result.getProject(), dependencies, transitiveDeps );
             }
 
             project.setFile( dependencyReducedPomLocation );
         }
     }
-    
+
     private String getId( Artifact artifact )
     {
         return getId( artifact.getGroupId(), artifact.getArtifactId(), artifact.getType(), artifact.getClassifier() );
