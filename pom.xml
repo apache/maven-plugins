@@ -78,7 +78,6 @@ under the License.
     <module>maven-remote-resources-plugin</module-->
     <module>maven-repository-plugin</module>
     <module>maven-resources-plugin</module>
-    <module>maven-shade-plugin</module>
     <module>maven-site-plugin</module>
     <module>maven-source-plugin</module>
     <module>maven-stage-plugin</module>
@@ -100,6 +99,7 @@ under the License.
         <module>maven-invoker-plugin</module>
         <module>maven-project-info-reports-plugin</module>
         <module>maven-remote-resources-plugin</module>
+        <module>maven-shade-plugin</module>
       </modules>
     </profile>
   </profiles>
