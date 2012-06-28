@@ -32,6 +32,8 @@ import org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Parameter;
 
 /**
  * @version $Id$
@@ -40,8 +42,8 @@ public abstract class AbstractDeployMojo
     extends AbstractMojo
 {
     /**
-     * @component
      */
+    @Component
     private ArtifactDeployer deployer;
 
     /**
@@ -49,6 +51,7 @@ public abstract class AbstractDeployMojo
      *
      * @component
      */
+    @Component
     protected ArtifactFactory artifactFactory;
 
     /**
@@ -56,44 +59,39 @@ public abstract class AbstractDeployMojo
      *
      * @component
      */
+    @Component
     ArtifactRepositoryFactory repositoryFactory;
 
     /**
      * Map that contains the layouts.
-     *
-     * @component role="org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout"
      */
+    @Component( role = ArtifactRepositoryLayout.class )
     private Map repositoryLayouts;
 
     /**
-     * @parameter default-value="${localRepository}"
-     * @required
-     * @readonly
      */
+    @Parameter( defaultValue = "${localRepository}", required = true, readonly = true )
     private ArtifactRepository localRepository;
 
     /**
      * Flag whether Maven is currently in online/offline mode.
-     * 
-     * @parameter default-value="${settings.offline}"
-     * @readonly
      */
+    @Parameter( defaultValue = "${settings.offline}", readonly = true )
     private boolean offline;
 
     /**
      * Parameter used to update the metadata to make the artifact as release.
-     * 
-     * @parameter expression="${updateReleaseInfo}" default-value="false"
      */
+    @Parameter( property = "updateReleaseInfo", defaultValue = "false" )
     protected boolean updateReleaseInfo;
 
     /**
      * Parameter used to control how many times a failed deployment will be retried before giving up and failing.
      * If a value outside the range 1-10 is specified it will be pulled to the nearest value within the range 1-10.
      *
-     * @parameter expression="${retryFailedDeploymentCount}" default-value="1"
      * @since 2.7
      */
+    @Parameter( property = "retryFailedDeploymentCount", defaultValue = "1" )
     private int retryFailedDeploymentCount;
 
     /* Setters and Getters */
