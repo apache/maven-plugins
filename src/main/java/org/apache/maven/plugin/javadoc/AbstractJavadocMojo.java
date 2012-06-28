@@ -1745,8 +1745,8 @@ public abstract class AbstractJavadocMojo
             return Collections.emptyList();
         }
 
-        return ( p.getCompileSourceRoots() == null ? Collections.EMPTY_LIST
-                        : new LinkedList( p.getCompileSourceRoots() ) );
+        return ( p.getCompileSourceRoots() == null ? Collections.<String>emptyList()
+                        : new LinkedList<String>( p.getCompileSourceRoots() ) );
     }
 
     /**
