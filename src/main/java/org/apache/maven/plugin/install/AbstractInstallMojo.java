@@ -26,6 +26,8 @@ import org.apache.maven.artifact.metadata.ArtifactMetadata;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.codehaus.plexus.digest.Digester;
 import org.codehaus.plexus.digest.DigesterException;
 import org.codehaus.plexus.util.FileUtils;
@@ -46,49 +48,44 @@ public abstract class AbstractInstallMojo
 {
 
     /**
-     * @component
      */
+    @Component
     protected ArtifactFactory artifactFactory;
 
     /**
-     * @component
      */
+    @Component
     protected ArtifactInstaller installer;
 
     /**
-     * @parameter expression="${localRepository}"
-     * @required
-     * @readonly
      */
+    @Parameter( property = "localRepository", required = true, readonly = true )
     protected ArtifactRepository localRepository;
 
     /**
      * Flag whether to create checksums (MD5, SHA-1) or not.
      *
-     * @parameter expression="${createChecksum}" default-value="false"
      * @since 2.2
      */
+    @Parameter( property = "createChecksum", defaultValue = "false" )
     protected boolean createChecksum;
 
     /**
      * Whether to update the metadata to make the artifact a release version.
-     *
-     * @parameter expression="${updateReleaseInfo}" default-value="false"
      */
+    @Parameter( property = "updateReleaseInfo", defaultValue = "false" )
     protected boolean updateReleaseInfo;
 
     /**
      * Digester for MD5.
-     *
-     * @component role-hint="md5"
      */
+    @Component( hint = "md5" )
     protected Digester md5Digester;
 
     /**
      * Digester for SHA-1.
-     *
-     * @component role-hint="sha1"
      */
+    @Component( hint = "sha1" )
     protected Digester sha1Digester;
 
     /**

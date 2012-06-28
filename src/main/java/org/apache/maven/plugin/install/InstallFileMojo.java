@@ -30,6 +30,9 @@ import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.artifact.ProjectArtifactMetadata;
 import org.apache.maven.project.validation.ModelValidationResult;
 import org.apache.maven.project.validation.ModelValidator;
@@ -53,125 +56,113 @@ import java.util.Map;
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  * @version $Id$
- * @goal install-file
- * @requiresProject false
- * @aggregator
- * @threadSafe
  */
+@Mojo( name = "install-file", requiresProject = false, aggregator = true, threadSafe = true )
 public class InstallFileMojo
     extends AbstractInstallMojo
 {
 
     /**
      * GroupId of the artifact to be installed. Retrieved from POM file if one is specified.
-     *
-     * @parameter expression="${groupId}"
      */
+    @Parameter( property = "groupId" )
     protected String groupId;
 
     /**
      * ArtifactId of the artifact to be installed. Retrieved from POM file if one is specified.
-     *
-     * @parameter expression="${artifactId}"
      */
+    @Parameter( property = "artifactId" )
     protected String artifactId;
 
     /**
      * Version of the artifact to be installed. Retrieved from POM file if one is specified.
-     *
-     * @parameter expression="${version}"
      */
+    @Parameter( property = "version" )
     protected String version;
 
     /**
      * Packaging type of the artifact to be installed. Retrieved from POM file if one is specified.
-     *
-     * @parameter expression="${packaging}"
      */
+    @Parameter( property = "packaging" )
     protected String packaging;
 
     /**
      * Classifier type of the artifact to be installed. For example, "sources" or "javadoc". Defaults to none which
      * means this is the project's main artifact.
      *
-     * @parameter expression="${classifier}"
      * @since 2.2
      */
+    @Parameter( property = "classifier" )
     protected String classifier;
 
     /**
      * The file to be installed in the local repository.
-     *
-     * @parameter expression="${file}"
-     * @required
      */
+    @Parameter( property = "file", required = true )
     private File file;
 
     /**
      * The bundled API docs for the artifact.
      *
-     * @parameter expression="${javadoc}"
      * @since 2.3
      */
+    @Parameter( property = "javadoc" )
     private File javadoc;
 
     /**
      * The bundled sources for the artifact.
      *
-     * @parameter expression="${sources}"
      * @since 2.3
      */
+    @Parameter( property = "sources" )
     private File sources;
 
     /**
      * Location of an existing POM file to be installed alongside the main artifact, given by the {@link #file}
      * parameter.
      *
-     * @parameter expression="${pomFile}"
      * @since 2.1
      */
+    @Parameter( property = "pomFile" )
     private File pomFile;
 
     /**
      * Generate a minimal POM for the artifact if none is supplied via the parameter {@link #pomFile}. Defaults to
      * <code>true</code> if there is no existing POM in the local repository yet.
      *
-     * @parameter expression="${generatePom}"
      * @since 2.1
      */
+    @Parameter( property = "generatePom" )
     private Boolean generatePom;
 
     /**
      * The type of remote repository layout to install to. Try <code>legacy</code> for a Maven 1.x-style repository
      * layout.
      *
-     * @parameter expression="${repositoryLayout}" default-value="default"
-     * @required
      * @since 2.2
      */
+    @Parameter( property = "repositoryLayout", defaultValue = "default", required = true )
     private String repositoryLayout;
 
     /**
      * Map that contains the repository layouts.
-     *
-     * @component role="org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout"
      */
+    @Component( role = ArtifactRepositoryLayout.class )
     private Map repositoryLayouts;
 
     /**
      * The path for a specific local repository directory. If not specified the local repository path configured in the
      * Maven settings will be used.
      *
-     * @parameter expression="${localRepositoryPath}"
      * @since 2.2
      */
+    @Parameter( property = "localRepositoryPath" )
     private File localRepositoryPath;
 
     /**
      * The component used to validate the user-supplied artifact coordinates.
-     *
-     * @component
      */
+    @Component
     private ModelValidator modelValidator;
 
     /**
