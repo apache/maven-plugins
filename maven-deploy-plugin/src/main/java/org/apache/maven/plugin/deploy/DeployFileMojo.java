@@ -30,6 +30,9 @@ import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.apache.maven.project.artifact.ProjectArtifactMetadata;
@@ -47,7 +50,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
-import java.lang.reflect.Type;
 import java.util.Iterator;
 import java.util.List;
 
@@ -55,178 +57,147 @@ import java.util.List;
  * Installs the artifact in the remote repository.
  *
  * @author <a href="mailto:aramirez@apache.org">Allan Ramirez</a>
- * @goal deploy-file
- * @requiresProject false
- * @threadSafe
  */
+@Mojo( name = "deploy-file", requiresProject = false, threadSafe = true )
 public class DeployFileMojo
     extends AbstractDeployMojo
 {
     /**
      * The default Maven project created when building the plugin
-     * 
-     * @parameter default-value="${project}"
-     * @required
-     * @readonly
      */
+    @Parameter( defaultValue = "${project}", required = true, readonly = true )
     private MavenProject project;
 
     /**
      * Used for attaching the source and javadoc jars to the project.
-     *
-     * @component
      */
+    @Component
     private MavenProjectHelper projectHelper;
 
     /**
      * GroupId of the artifact to be deployed.  Retrieved from POM file if specified.
-     *
-     * @parameter expression="${groupId}"
      */
+    @Parameter( property = "groupId" )
     private String groupId;
 
     /**
      * ArtifactId of the artifact to be deployed.  Retrieved from POM file if specified.
-     *
-     * @parameter expression="${artifactId}"
      */
+    @Parameter( property = "artifactId" )
     private String artifactId;
 
     /**
      * Version of the artifact to be deployed.  Retrieved from POM file if specified.
-     *
-     * @parameter expression="${version}"
      */
+    @Parameter( property = "version" )
     private String version;
 
     /**
-     * Type of the artifact to be deployed. 
+     * Type of the artifact to be deployed.
      * Retrieved from the &lt;packaging&gt element of the POM file if a POM file specified.
      * Defaults to the file extension if it is not specified via command line or POM.<br/>
-     * Maven uses two terms to refer to this datum: the &lt;packaging&gt; element 
+     * Maven uses two terms to refer to this datum: the &lt;packaging&gt; element
      * for the entire POM, and the &lt;type&gt; element in a dependency specification.
-     * 
-     *
-     * @parameter expression="${packaging}"
      */
+    @Parameter( property = "packaging" )
     private String packaging;
 
     /**
      * Description passed to a generated POM file (in case of generatePom=true)
-     *
-     * @parameter expression="${generatePom.description}"
      */
+    @Parameter( property = "generatePom.description" )
     private String description;
 
     /**
      * File to be deployed.
-     *
-     * @parameter expression="${file}"
-     * @required
      */
+    @Parameter( property = "file", required = true )
     private File file;
 
     /**
      * The bundled API docs for the artifact.
-     *
-     * @parameter expression="${javadoc}"
-     * @since 2.6
      */
+    @Parameter( property = "javadoc" )
     private File javadoc;
 
     /**
      * The bundled sources for the artifact.
-     *
-     * @parameter expression="${sources}"
-     * @since 2.6
      */
+    @Parameter( property = "sources" )
     private File sources;
 
     /**
      * Server Id to map on the &lt;id&gt; under &lt;server&gt; section of settings.xml
      * In most cases, this parameter will be required for authentication.
-     *
-     * @parameter expression="${repositoryId}" default-value="remote-repository"
-     * @required
      */
+    @Parameter( property = "repositoryId", defaultValue = "remote-repository", required = true )
     private String repositoryId;
 
     /**
-     * The type of remote repository layout to deploy to. Try <i>legacy</i> for 
+     * The type of remote repository layout to deploy to. Try <i>legacy</i> for
      * a Maven 1.x-style repository layout.
-     * 
-     * @parameter expression="${repositoryLayout}" default-value="default"
      */
+    @Parameter( property = "repositoryLayout", defaultValue = "default" )
     private String repositoryLayout;
 
     /**
      * URL where the artifact will be deployed. <br/>
      * ie ( file:///C:/m2-repo or scp://host.com/path/to/repo )
-     *
-     * @parameter expression="${url}"
-     * @required
      */
+    @Parameter( property = "url" )
     private String url;
 
     /**
      * Location of an existing POM file to be deployed alongside the main
      * artifact, given by the ${file} parameter.
-     * 
-     * @parameter expression="${pomFile}"
      */
+    @Parameter( property = "pomFile" )
     private File pomFile;
 
     /**
      * Upload a POM for this artifact.  Will generate a default POM if none is
      * supplied with the pomFile argument.
-     *
-     * @parameter expression="${generatePom}" default-value="true"
      */
+    @Parameter( property = "generatePom", defaultValue = "true" )
     private boolean generatePom;
 
     /**
      * Add classifier to the artifact
-     *
-     * @parameter expression="${classifier}";
      */
+    @Parameter( property = "classifier" )
     private String classifier;
 
     /**
      * Whether to deploy snapshots with a unique version or not.
-     *
-     * @parameter expression="${uniqueVersion}" default-value="true"
      */
+    @Parameter( property = "uniqueVersion", defaultValue = "true" )
     private boolean uniqueVersion;
 
     /**
      * The component used to validate the user-supplied artifact coordinates.
-     * 
-     * @component
      */
+    @Component
     private ModelValidator modelValidator;
 
     /**
      * A comma separated list of types for each of the extra side artifacts to deploy. If there is a mis-match in
      * the number of entries in {@link #files} or {@link #classifiers}, then an error will be raised.
-     *
-     * @parameter expression="${types}";
      */
+    @Parameter( property = "types" )
     private String types;
 
     /**
      * A comma separated list of classifiers for each of the extra side artifacts to deploy. If there is a mis-match in
      * the number of entries in {@link #files} or {@link #types}, then an error will be raised.
-     *
-     * @parameter expression="${classifiers}";
      */
+    @Parameter( property = "classifiers" )
     private String classifiers;
 
     /**
      * A comma separated list of files for each of the extra side artifacts to deploy. If there is a mis-match in
      * the number of entries in {@link #types} or {@link #classifiers}, then an error will be raised.
-     *
-     * @parameter expression="${files}"
      */
+    @Parameter( property = "files" )
     private String files;
 
     void initProperties()

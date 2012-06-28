@@ -26,6 +26,9 @@ import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.artifact.ProjectArtifactMetadata;
 
@@ -37,14 +40,12 @@ import java.util.regex.Pattern;
 
 /**
  * Deploys an artifact to remote repository.
- * 
+ *
  * @author <a href="mailto:evenisse@apache.org">Emmanuel Venisse</a>
  * @author <a href="mailto:jdcasey@apache.org">John Casey (refactoring only)</a>
  * @version $Id$
- * @goal deploy
- * @phase deploy
- * @threadSafe
  */
+@Mojo( name = "deploy", defaultPhase = LifecyclePhase.DEPLOY, threadSafe = true )
 public class DeployMojo
     extends AbstractDeployMojo
 {
@@ -52,31 +53,23 @@ public class DeployMojo
     private static final Pattern ALT_REPO_SYNTAX_PATTERN = Pattern.compile( "(.+)::(.+)::(.+)" );
 
     /**
-     * @parameter default-value="${project}"
-     * @required
-     * @readonly
      */
+    @Parameter( defaultValue = "${project}", required = true, readonly = true )
     private MavenProject project;
 
     /**
-     * @parameter default-value="${project.artifact}"
-     * @required
-     * @readonly
      */
+    @Parameter( defaultValue = "${project.artifact}", required = true, readonly = true )
     private Artifact artifact;
 
     /**
-     * @parameter default-value="${project.packaging}"
-     * @required
-     * @readonly
      */
+    @Parameter( defaultValue = "${project.packaging}", required = true, readonly = true )
     private String packaging;
 
     /**
-     * @parameter default-value="${project.file}"
-     * @required
-     * @readonly
      */
+    @Parameter( defaultValue = "${project.file}", required = true, readonly = true )
     private File pomFile;
 
     /**
@@ -84,25 +77,22 @@ public class DeployMojo
      * than those specified in &lt;distributionManagement&gt; ).
      * <br/>
      * Format: id::layout::url
-     * 
-     * @parameter expression="${altDeploymentRepository}"
      */
+    @Parameter( property = "altDeploymentRepository" )
     private String altDeploymentRepository;
-    
+
     /**
-     * @parameter default-value="${project.attachedArtifacts}
-     * @required
-     * @readonly
      */
+    @Parameter( defaultValue = "${project.attachedArtifacts}", required = true, readonly = true )
     private List attachedArtifacts;
-    
+
     /**
      * Set this to 'true' to bypass artifact deploy
-     *       
-     * @parameter expression="${maven.deploy.skip}" default-value="false"
+     *
      * @since 2.4
      */
-    private boolean skip;     
+    @Parameter( property = "maven.deploy.skip", defaultValue = "false" )
+    private boolean skip;
 
     public void execute()
         throws MojoExecutionException, MojoFailureException
@@ -221,7 +211,7 @@ public class DeployMojo
                 repo = repositoryFactory.createDeploymentArtifactRepository( id, url, repoLayout, true );
             }
         }
-        
+
         if ( repo == null )
         {
             repo = project.getDistributionManagementArtifactRepository();
