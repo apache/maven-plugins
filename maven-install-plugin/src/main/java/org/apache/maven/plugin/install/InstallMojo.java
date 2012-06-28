@@ -23,6 +23,9 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.installer.ArtifactInstallationException;
 import org.apache.maven.artifact.metadata.ArtifactMetadata;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.artifact.ProjectArtifactMetadata;
 
 import java.io.File;
@@ -36,39 +39,29 @@ import java.util.List;
  *
  * @author <a href="mailto:evenisse@apache.org">Emmanuel Venisse</a>
  * @version $Id$
- * @goal install
- * @phase install
- * @threadSafe
  */
+@Mojo( name = "install", defaultPhase = LifecyclePhase.INSTALL, threadSafe = true )
 public class InstallMojo
     extends AbstractInstallMojo
 {
     /**
-     * @parameter default-value="${project.packaging}"
-     * @required
-     * @readonly
      */
+    @Parameter( defaultValue = "${project.packaging}", required = true, readonly = true )
     protected String packaging;
 
     /**
-     * @parameter default-value="${project.file}"
-     * @required
-     * @readonly
      */
+    @Parameter( defaultValue = "${project.file}", required = true, readonly = true )
     private File pomFile;
 
     /**
-     * @parameter default-value="${project.artifact}"
-     * @required
-     * @readonly
      */
+    @Parameter( defaultValue = "${project.artifact}", required = true, readonly = true )
     private Artifact artifact;
 
     /**
-     * @parameter default-value="${project.attachedArtifacts}
-     * @required
-     * @readonly
      */
+    @Parameter( defaultValue = "${project.attachedArtifacts}", required = true, readonly = true )
     private List attachedArtifacts;
 
     public void execute()
