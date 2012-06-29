@@ -1,0 +1,55 @@
+import java.io.*;
+import java.util.*;
+import java.util.jar.*;
+import java.util.regex.*;
+
+try
+{
+    File jarFile = new File( basedir, "target/test-jar-1.0-SNAPSHOT-test-sources.jar" );
+    System.out.println( "Checking for existence of " + jarFile );
+    if ( !jarFile.isFile() )
+    {
+        System.out.println( "FAILURE!" );
+        return false;
+    }
+
+    JarFile jar = new JarFile( jarFile );
+
+    String[] includedEntries = {
+        "META-INF/MANIFEST.MF",
+        "MyTest.java",
+        "test.properties",
+        "generated.properties",
+        "generate-test-sources.properties"
+    };
+    for ( String included : includedEntries )
+    {
+        System.out.println( "Checking for existence of " + included );
+        if ( jar.getEntry( included ) == null )
+        {
+            System.out.println( "FAILURE!" );
+            return false;
+        }
+    }
+
+    String[] excludedEntries = {
+        "MyClass.java",
+        "main.properties",
+    };
+    for ( String excluded : excludedEntries )
+    {
+        System.out.println( "Checking for absence of " + excluded );
+        if ( jar.getEntry( excluded ) != null )
+        {
+            System.out.println( "FAILURE!" );
+            return false;
+        }
+    }
+}
+catch( Throwable t )
+{
+    t.printStackTrace();
+    return false;
+}
+
+return true;
