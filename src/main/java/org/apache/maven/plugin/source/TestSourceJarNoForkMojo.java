@@ -26,25 +26,34 @@ import java.util.List;
 
 /**
  * This goal bundles all the test sources into a jar archive.  This goal functions the same
- * as the test-jar goal but does not fork the build, and is suitable for attaching 
+ * as the test-jar goal but does not fork the build, and is suitable for attaching
  * to the build lifecycle.
  *
  * @goal test-jar-no-fork
  * @phase package
- * @since 2.1
  * @threadSafe
- *
+ * @since 2.1
  */
 public class TestSourceJarNoForkMojo
     extends AbstractSourceJarMojo
 {
-    /** {@inheritDoc} */
+    /**
+     * @parameter expression="${maven.source.test.classifier}" default-value="test-sources"
+     * @since 2.2
+     */
+    protected String classifier;
+
+    /**
+     * {@inheritDoc}
+     */
     protected List getSources( MavenProject p )
     {
         return p.getTestCompileSourceRoots();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     protected List getResources( MavenProject p )
     {
         if ( excludeResources )
@@ -55,9 +64,11 @@ public class TestSourceJarNoForkMojo
         return p.getTestResources();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     protected String getClassifier()
     {
-        return "test-sources";
+        return classifier;
     }
 }

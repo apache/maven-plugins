@@ -26,27 +26,36 @@ import java.util.List;
 
 /**
  * This goal bundles all the sources into a jar archive.  This goal functions the same
- * as the jar goal but does not fork the build and is suitable for attaching 
+ * as the jar goal but does not fork the build and is suitable for attaching
  * to the build lifecycle.
  *
  * @author pgier
  * @version $Id$
  * @goal jar-no-fork
  * @phase package
- * @since 2.1
  * @threadSafe
- * 
+ * @since 2.1
  */
 public class SourceJarNoForkMojo
     extends AbstractSourceJarMojo
 {
-    /** {@inheritDoc} */
+    /**
+     * @parameter expression="${maven.source.classifier}" default-value="sources"
+     * @since 2.2
+     */
+    protected String classifier;
+
+    /**
+     * {@inheritDoc}
+     */
     protected List getSources( MavenProject p )
     {
         return p.getCompileSourceRoots();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     protected List getResources( MavenProject p )
     {
         if ( excludeResources )
@@ -57,9 +66,11 @@ public class SourceJarNoForkMojo
         return p.getResources();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     protected String getClassifier()
     {
-        return "sources";
+        return classifier;
     }
 }

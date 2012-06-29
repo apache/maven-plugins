@@ -37,27 +37,25 @@ public class TestSourceJarMojoTest
     public void testDefaultConfiguration()
         throws Exception
     {
-        doTestProjectWithTestSourceArchive( "project-001", new String[]{"test-default-configuration.properties",
-            "foo/project001/AppTest.java", "foo/project001/", "foo/", "META-INF/MANIFEST.MF", "META-INF/"
-
-        } );
+        doTestProjectWithTestSourceArchive( "project-001", new String[]{ "test-default-configuration.properties",
+            "foo/project001/AppTest.java", "foo/project001/", "foo/", "META-INF/MANIFEST.MF", "META-INF/" },
+                                            "test-sources" );
     }
 
 
     public void testExcludes()
         throws Exception
     {
-        doTestProjectWithTestSourceArchive( "project-003", new String[]{"test-default-configuration.properties",
-            "foo/project003/AppTest.java", "foo/project003/", "foo/", "META-INF/MANIFEST.MF", "META-INF/"
-
-        } );
+        doTestProjectWithTestSourceArchive( "project-003", new String[]{ "test-default-configuration.properties",
+            "foo/project003/AppTest.java", "foo/project003/", "foo/", "META-INF/MANIFEST.MF", "META-INF/" },
+                                            "test-sources" );
     }
 
 
     public void testNoSources()
         throws Exception
     {
-        executeMojo( "project-005" );
+        executeMojo( "project-005", "test-sources" );
 
         // Now make sure that no archive got created
         final File expectedFile = getTestTargetDir( "project-005" );

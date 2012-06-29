@@ -33,5 +33,5 @@ package org.apache.maven.plugin.source;
 public class SourceJarMojo
     extends SourceJarNoForkMojo
 {
-
+    // no op
 }

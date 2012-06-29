@@ -19,6 +19,9 @@ package org.apache.maven.plugin.source;
 * under the License.
 */
 
+import org.apache.maven.plugin.testing.AbstractMojoTestCase;
+import org.codehaus.plexus.archiver.zip.ZipFile;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
@@ -26,9 +29,6 @@ import java.util.Enumeration;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.zip.ZipEntry;
-
-import org.apache.maven.plugin.testing.AbstractMojoTestCase;
-import org.codehaus.plexus.archiver.zip.ZipFile;
 
 /**
  * @author Stephane Nicoll
@@ -50,11 +50,13 @@ public abstract class AbstractSourcePluginTestCase
      * @return the base directory of the project
      * @throws Exception if an error occurred
      */
-    protected void executeMojo( final String projectName )
+    protected void executeMojo( final String projectName, String classifier )
         throws Exception
     {
         File testPom = new File( getBasedir(), getTestDir( projectName ) + "/pom.xml" );
         AbstractSourceJarMojo mojo = (AbstractSourceJarMojo) lookupMojo( getGoal(), testPom );
+
+        setVariableValueToObject( mojo, "classifier", classifier );
 
         mojo.execute();
     }
@@ -72,10 +74,10 @@ public abstract class AbstractSourcePluginTestCase
      */
     protected File doTestProject( final String projectName, boolean expectSourceArchive,
                                   boolean expectTestSourceArchive, final String[] expectedSourceFiles,
-                                  final String[] expectedTestSourceFiles )
+                                  final String[] expectedTestSourceFiles, String classifier )
         throws Exception
     {
-        executeMojo( projectName );
+        executeMojo( projectName, classifier );
         final File testTargetDir = getTestTargetDir( projectName );
 
         if ( expectSourceArchive )
@@ -101,10 +103,11 @@ public abstract class AbstractSourcePluginTestCase
      * @return the base directory of the project
      * @throws Exception if any error occurs
      */
-    protected File doTestProjectWithSourceArchive( final String projectName, final String[] expectedSourceFiles )
+    protected File doTestProjectWithSourceArchive( final String projectName, final String[] expectedSourceFiles,
+                                                   String classifier )
         throws Exception
     {
-        return doTestProject( projectName, true, false, expectedSourceFiles, null );
+        return doTestProject( projectName, true, false, expectedSourceFiles, null, classifier );
     }
 
     /**
@@ -115,11 +118,11 @@ public abstract class AbstractSourcePluginTestCase
      * @return the base directory of the project
      * @throws Exception if any error occurs
      */
-    protected File doTestProjectWithTestSourceArchive( final String projectName,
-                                                       final String[] expectedTestSourceFiles )
+    protected File doTestProjectWithTestSourceArchive( final String projectName, final String[] expectedTestSourceFiles,
+                                                       String classifier )
         throws Exception
     {
-        return doTestProject( projectName, false, true, null, expectedTestSourceFiles );
+        return doTestProject( projectName, false, true, null, expectedTestSourceFiles, classifier );
     }
 
 
