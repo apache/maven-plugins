@@ -32,5 +32,5 @@ package org.apache.maven.plugin.source;
 public class TestSourceJarMojo
     extends TestSourceJarNoForkMojo
 {
-
+    // no op
 }
