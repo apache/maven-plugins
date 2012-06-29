@@ -19,6 +19,7 @@ package org.apache.maven.plugin.source;
  * under the License.
  */
 
+import org.apache.maven.model.Resource;
 import org.apache.maven.project.MavenProject;
 
 import java.util.Collections;
@@ -46,7 +47,7 @@ public class TestSourceJarNoForkMojo
     /**
      * {@inheritDoc}
      */
-    protected List getSources( MavenProject p )
+    protected List<String> getSources( MavenProject p )
     {
         return p.getTestCompileSourceRoots();
     }
@@ -54,11 +55,11 @@ public class TestSourceJarNoForkMojo
     /**
      * {@inheritDoc}
      */
-    protected List getResources( MavenProject p )
+    protected List<Resource> getResources( MavenProject p )
     {
         if ( excludeResources )
         {
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
 
         return p.getTestResources();

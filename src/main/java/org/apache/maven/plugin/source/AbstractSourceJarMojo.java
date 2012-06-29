@@ -42,21 +42,21 @@ import java.util.List;
 
 /**
  * Base class for bundling sources into a jar archive.
- * 
+ *
  * @version $Id$
  * @since 2.0.3
  */
 public abstract class AbstractSourceJarMojo
     extends AbstractMojo
 {
-    private static final String[] DEFAULT_INCLUDES = new String[] { "**/*" };
+    private static final String[] DEFAULT_INCLUDES = new String[]{ "**/*" };
 
-    private static final String[] DEFAULT_EXCLUDES = new String[] {};
+    private static final String[] DEFAULT_EXCLUDES = new String[]{ };
 
     /**
      * List of files to include. Specified as fileset patterns which are relative to the input directory whose contents
      * is being packaged into the JAR.
-     * 
+     *
      * @parameter
      * @since 2.1
      */
@@ -65,7 +65,7 @@ public abstract class AbstractSourceJarMojo
     /**
      * List of files to exclude. Specified as fileset patterns which are relative to the input directory whose contents
      * is being packaged into the JAR.
-     * 
+     *
      * @parameter
      * @since 2.1
      */
@@ -74,7 +74,7 @@ public abstract class AbstractSourceJarMojo
     /**
      * Exclude commonly excluded files such as SCM configuration. These are defined in the plexus
      * FileUtils.getDefaultExcludes()
-     * 
+     *
      * @parameter default-value="true"
      * @since 2.1
      */
@@ -82,7 +82,7 @@ public abstract class AbstractSourceJarMojo
 
     /**
      * The Maven Project Object
-     * 
+     *
      * @parameter expression="${project}"
      * @readonly
      * @required
@@ -99,7 +99,7 @@ public abstract class AbstractSourceJarMojo
     /**
      * The archive configuration to use. See <a href="http://maven.apache.org/shared/maven-archiver/index.html">Maven
      * Archiver Reference</a>.
-     * 
+     *
      * @parameter
      * @since 2.1
      */
@@ -193,7 +193,7 @@ public abstract class AbstractSourceJarMojo
     /**
      * A flag used to disable the source procedure. This is primarily intended for usage from the command line to
      * occasionally adjust the build.
-     * 
+     *
      * @parameter expression="${source.skip}" default-value="false"
      * @since 2.2
      */
@@ -203,7 +203,9 @@ public abstract class AbstractSourceJarMojo
     // Public methods
     // ----------------------------------------------------------------------
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public void execute()
         throws MojoExecutionException
     {
@@ -229,14 +231,14 @@ public abstract class AbstractSourceJarMojo
      * @param p not null
      * @return the compile or test sources
      */
-    protected abstract List getSources( MavenProject p )
+    protected abstract List<String> getSources( MavenProject p )
         throws MojoExecutionException;
 
     /**
      * @param p not null
      * @return the compile or test resources
      */
-    protected abstract List getResources( MavenProject p )
+    protected abstract List<Resource> getResources( MavenProject p )
         throws MojoExecutionException;
 
     protected void packageSources( MavenProject p )
@@ -244,27 +246,27 @@ public abstract class AbstractSourceJarMojo
     {
         if ( !"pom".equals( p.getPackaging() ) )
         {
-            packageSources( Arrays.asList( new Object[] { p } ) );
+            packageSources( Arrays.asList( p ) );
         }
     }
 
-    protected void packageSources( List projects )
+    protected void packageSources( List<MavenProject> projects )
         throws MojoExecutionException
     {
         if ( project.getArtifact().getClassifier() != null )
         {
             getLog().warn( "NOT adding sources to artifacts with classifier as Maven only supports one classifier "
-                + "per artifact. Current artifact [" + project.getArtifact().getId() + "] has a ["
-                + project.getArtifact().getClassifier() + "] classifier." );
+                               + "per artifact. Current artifact [" + project.getArtifact().getId() + "] has a ["
+                               + project.getArtifact().getClassifier() + "] classifier." );
 
             return;
         }
 
         MavenArchiver archiver = createArchiver();
 
-        for ( Iterator i = projects.iterator(); i.hasNext(); )
+        for ( MavenProject project : projects )
         {
-            MavenProject subProject = getProject( (MavenProject) i.next() );
+            MavenProject subProject = getProject( project );
 
             if ( "pom".equals( subProject.getPackaging() ) )
             {
@@ -274,23 +276,24 @@ public abstract class AbstractSourceJarMojo
             archiveProjectContent( subProject, archiver.getArchiver() );
         }
 
-        if(!archiver.getArchiver().getFiles().isEmpty()){
-        
+        if ( !archiver.getArchiver().getFiles().isEmpty() )
+        {
+
             if ( useDefaultManifestFile && defaultManifestFile.exists() && archive.getManifestFile() == null )
             {
                 getLog().info( "Adding existing MANIFEST to archive. Found under: " + defaultManifestFile.getPath() );
                 archive.setManifestFile( defaultManifestFile );
             }
-    
+
             File outputFile = new File( outputDirectory, finalName + "-" + getClassifier() + getExtension() );
-            
+
             try
             {
                 archiver.setOutputFile( outputFile );
-    
+
                 archive.setAddMavenDescriptor( false );
                 archive.setForced( forceCreation );
-    
+
                 archiver.createArchive( project, archive );
             }
             catch ( IOException e )
@@ -309,7 +312,7 @@ public abstract class AbstractSourceJarMojo
             {
                 throw new MojoExecutionException( "Error creating source archive: " + e.getMessage(), e );
             }
-    
+
             if ( attach )
             {
                 projectHelper.attachArtifact( project, getType(), getClassifier(), outputFile );
@@ -340,9 +343,8 @@ public abstract class AbstractSourceJarMojo
             }
         }
 
-        for ( Iterator i = getSources( p ).iterator(); i.hasNext(); )
+        for ( String s : getSources( p ))
         {
-            String s = (String) i.next();
 
             File sourceDirectory = new File( s );
 
@@ -353,9 +355,8 @@ public abstract class AbstractSourceJarMojo
         }
 
         //MAPI: this should be taken from the resources plugin
-        for ( Iterator i = getResources( p ).iterator(); i.hasNext(); )
+        for ( Resource resource : getResources( p ) )
         {
-            Resource resource = (Resource) i.next();
 
             File sourceDirectory = new File( resource.getDirectory() );
 
@@ -396,11 +397,10 @@ public abstract class AbstractSourceJarMojo
 
         if ( project.getBuild() != null )
         {
-            List resources = project.getBuild().getResources();
+            List<Resource> resources = project.getBuild().getResources();
 
-            for ( Iterator i = resources.iterator(); i.hasNext(); )
+            for ( Resource r : resources )
             {
-                Resource r = (Resource) i.next();
 
                 if ( r.getDirectory().endsWith( "maven-shared-archive-resources" ) )
                 {
@@ -463,13 +463,13 @@ public abstract class AbstractSourceJarMojo
     /**
      * Combines the includes parameter and additional includes. Defaults to {@link #DEFAULT_INCLUDES} If the
      * additionalIncludes parameter is null, it is not added to the combined includes.
-     * 
+     *
      * @param additionalIncludes The includes specified in the pom resources section
      * @return The combined array of includes.
      */
     private String[] getCombinedIncludes( List additionalIncludes )
     {
-        ArrayList combinedIncludes = new ArrayList();
+        List<String> combinedIncludes = new ArrayList<String>();
 
         if ( includes != null && includes.length > 0 )
         {
@@ -487,20 +487,20 @@ public abstract class AbstractSourceJarMojo
             combinedIncludes.addAll( Arrays.asList( DEFAULT_INCLUDES ) );
         }
 
-        return (String[]) combinedIncludes.toArray( new String[combinedIncludes.size()] );
+        return combinedIncludes.toArray( new String[combinedIncludes.size()] );
     }
 
     /**
      * Combines the user parameter {@link #excludes}, the default excludes from plexus FileUtils,
      * and the contents of the parameter addionalExcludes.
-     * 
+     *
      * @param additionalExcludes Additional excludes to add to the array
      * @return The combined list of excludes.
      */
 
     private String[] getCombinedExcludes( List additionalExcludes )
     {
-        ArrayList combinedExcludes = new ArrayList();
+        List<String> combinedExcludes = new ArrayList<String>();
 
         if ( useDefaultExcludes )
         {
@@ -522,6 +522,6 @@ public abstract class AbstractSourceJarMojo
             combinedExcludes.addAll( Arrays.asList( DEFAULT_EXCLUDES ) );
         }
 
-        return (String[]) combinedExcludes.toArray( new String[combinedExcludes.size()] );
+        return combinedExcludes.toArray( new String[combinedExcludes.size()] );
     }
 }
