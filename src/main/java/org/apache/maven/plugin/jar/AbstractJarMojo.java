@@ -19,7 +19,6 @@ package org.apache.maven.plugin.jar;
  * under the License.
  */
 
-import java.io.File;
 import org.apache.maven.archiver.MavenArchiveConfiguration;
 import org.apache.maven.archiver.MavenArchiver;
 import org.apache.maven.execution.MavenSession;
@@ -28,6 +27,8 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
+
+import java.io.File;
 
 /**
  * Base class for creating a jar from project classes.
@@ -132,7 +133,14 @@ public abstract class AbstractJarMojo
     private MavenProjectHelper projectHelper;
 
     /**
-     * Whether creating the archive should be forced.
+     * Require the jar plugin to build a new JAR even if none of the contents appear to have changed.
+     * By default, this plugin looks to see if the output jar exists and inputs have not changed.
+     * If these conditions are true, the plugin skips creation of the jar. This does not work when
+     * other plugins, like the maven-shade-plugin, are configured to post-process the jar.
+     * This plugin can not detect the post-processing, and so leaves the post-processed jar in place.
+     * This can lead to failures when those plugins do not expect to find their own output
+     * as an input. Set this parameter to <tt>true</tt> to avoid these problems by forcing
+     * this plugin to recreate the jar every time.
      *
      * @parameter expression="${jar.forceCreation}" default-value="false"
      */
