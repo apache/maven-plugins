@@ -21,15 +21,15 @@ package org.apache.maven.plugin.war;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 
 /**
  * Generate the webapp in the WAR source directory.
  *
- * @goal inplace
- * @requiresDependencyResolution runtime
- * @threadSafe
  * @version $Id$
  */
+@Mojo( name = "inplace", requiresDependencyResolution = ResolutionScope.RUNTIME , threadSafe = true )
 public class WarInPlaceMojo
     extends AbstractWarMojo
 {

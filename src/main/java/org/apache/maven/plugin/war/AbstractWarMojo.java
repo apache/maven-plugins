@@ -45,11 +45,14 @@ import org.apache.maven.plugin.war.packaging.WarPostPackagingTask;
 import org.apache.maven.plugin.war.packaging.WarProjectPackagingTask;
 import org.apache.maven.plugin.war.util.WebappStructure;
 import org.apache.maven.plugin.war.util.WebappStructureSerializer;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.filtering.MavenFileFilter;
 import org.apache.maven.shared.filtering.MavenFilteringException;
 import org.apache.maven.shared.filtering.MavenResourcesExecution;
 import org.apache.maven.shared.filtering.MavenResourcesFiltering;
+import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.codehaus.plexus.util.StringUtils;
@@ -75,20 +78,14 @@ public abstract class AbstractWarMojo
 
     /**
      * The Maven project.
-     *
-     * @parameter default-value="${project}"
-     * @required
-     * @readonly
      */
+    @Component
     private MavenProject project;
 
     /**
      * The directory containing compiled classes.
-     *
-     * @parameter default-value="${project.build.outputDirectory}"
-     * @required
-     * @readonly
      */
+    @Parameter( defaultValue = "${project.build.outputDirectory}", required = true, readonly = true )
     private File classesDirectory;
 
     /**
@@ -96,55 +93,46 @@ public abstract class AbstractWarMojo
      * parameter will make the compiled classes to be archived into a JAR file
      * and the classes directory will then be excluded from the webapp.
      *
-     * @parameter expression="${archiveClasses}" default-value="false"
      * @since 2.0.1
      */
+    @Parameter( property = "archiveClasses", defaultValue = "false" )
     private boolean archiveClasses;
 
     /**
      * The JAR archiver needed for archiving the classes directory into a JAR file under WEB-INF/lib.
-     *
-     * @component role="org.codehaus.plexus.archiver.Archiver" role-hint="jar"
-     * @required
      */
+    @Component( role = Archiver.class, hint = "jar" )
     private JarArchiver jarArchiver;
 
     /**
      * The directory where the webapp is built.
-     *
-     * @parameter default-value="${project.build.directory}/${project.build.finalName}"
-     * @required
      */
+    @Parameter( defaultValue = "${project.build.directory}/${project.build.finalName}", required = true )
     private File webappDirectory;
 
     /**
      * Single directory for extra files to include in the WAR. This is where
      * you place your JSP files.
-     *
-     * @parameter default-value="${basedir}/src/main/webapp"
-     * @required
      */
+    @Parameter( defaultValue = "${basedir}/src/main/webapp", required = true )
     private File warSourceDirectory;
 
     /**
      * The list of webResources we want to transfer.
-     *
-     * @parameter
      */
+    @Parameter
     private Resource[] webResources;
 
     /**
      * Filters (property files) to include during the interpolation of the pom.xml.
-
-     * @parameter
      */
+    @Parameter
     private List filters;
 
     /**
      * The path to the web.xml file to use.
-     *
-     * @parameter expression="${maven.war.webxml}"
      */
+    @Parameter( property = "maven.war.webxml" )
     private File webXml;
 
     /**
@@ -152,87 +140,75 @@ public abstract class AbstractWarMojo
      * the file name may be different for different servlet containers.
      * Apache Tomcat uses a configuration file named context.xml. The file will
      * be copied to the META-INF directory.
-     *
-     * @parameter expression="${maven.war.containerConfigXML}"
      */
+    @Parameter( property = "maven.war.containerConfigXML" )
     private File containerConfigXML;
 
     /**
      * Directory to unpack dependent WARs into if needed.
-     *
-     * @parameter default-value="${project.build.directory}/war/work"
-     * @required
      */
+    @Parameter( defaultValue = "${project.build.directory}/war/work", required = true )
     private File workDirectory;
 
     /**
      * The file name mapping to use when copying libraries and TLDs. If no file mapping is
      * set (default) the files are copied with their standard names.
      *
-     * @parameter
      * @since 2.1-alpha-1
      */
+    @Parameter
     private String outputFileNameMapping;
 
     /**
      * The file containing the webapp structure cache.
      *
-     * @parameter default-value="${project.build.directory}/war/work/webapp-cache.xml"
-     * @required
      * @since 2.1-alpha-1
      */
+    @Parameter( defaultValue = "${project.build.directory}/war/work/webapp-cache.xml", required = true )
     private File cacheFile;
 
     /**
      * Whether the cache should be used to save the status of the webapp
      * across multiple runs. Experimental feature so disabled by default.
      *
-     * @parameter expression="${useCache}" default-value="false"
      * @since 2.1-alpha-1
      */
+    @Parameter( property = "useCache", defaultValue = "false" )
     private boolean useCache = false;
 
     /**
-     * @component role="org.apache.maven.artifact.factory.ArtifactFactory"
-     * @required
-     * @readonly
      */
+    @Component( role = ArtifactFactory.class )
     private ArtifactFactory artifactFactory;
 
     /**
      * To look up Archiver/UnArchiver implementations.
-     *
-     * @component role="org.codehaus.plexus.archiver.manager.ArchiverManager"
-     * @required
      */
+    @Component( role = ArchiverManager.class )
     private ArchiverManager archiverManager;
 
     /**
-     * @component role="org.apache.maven.shared.filtering.MavenFileFilter" role-hint="default"
-     * @required
      */
+    @Component( role = MavenFileFilter.class, hint = "default" )
     private MavenFileFilter mavenFileFilter;
 
     /**
-     * @component role="org.apache.maven.shared.filtering.MavenResourcesFiltering" role-hint="default"
-     * @required
      */
+    @Component( role = MavenResourcesFiltering.class, hint = "default" )
     private MavenResourcesFiltering mavenResourcesFiltering;
 
     /**
      * The comma separated list of tokens to include when copying the content
      * of the warSourceDirectory.
-     *
-     * @parameter alias="includes" default-value="**"
      */
+    @Parameter( alias = "includes", defaultValue = "**" )
     private String warSourceIncludes;
 
     /**
      * The comma separated list of tokens to exclude when copying the content
      * of the warSourceDirectory.
-     *
-     * @parameter alias="excludes"
      */
+    @Parameter( alias = "excludes" )
     private String warSourceExcludes;
 
     /**
@@ -240,77 +216,74 @@ public abstract class AbstractWarMojo
      * a WAR overlay.
      * Default is '**'
      *
-     * @parameter
      * @deprecated Use &lt;overlay&gt;/&lt;includes&gt; instead
      */
+    @Parameter
     private String dependentWarIncludes = "**/**";
 
     /**
      * The comma separated list of tokens to exclude when doing
      * a WAR overlay.
      *
-     * @parameter
      * @deprecated Use &lt;overlay&gt;/&lt;excludes&gt; instead
      */
+    @Parameter
     private String dependentWarExcludes = "META-INF/**";
 
     /**
      * The overlays to apply.
      *
-     * @parameter
      * @since 2.1-alpha-1
      */
+    @Parameter
     private List overlays = new ArrayList();
 
     /**
      * A list of file extensions that should not be filtered.
      * <b>Will be used when filtering webResources and overlays.</b>
      *
-     * @parameter
      * @since 2.1-alpha-2
      */
+    @Parameter
     private List nonFilteredFileExtensions;
 
     /**
-     * @parameter default-value="${session}"
-     * @readonly
-     * @required
      * @since 2.1-alpha-2
      */
+    @Component
     private MavenSession session;
 
     /**
      * To filter deployment descriptors. <b>Disabled by default.</b>
      *
-     * @parameter expression="${maven.war.filteringDeploymentDescriptors}" default-value="false"
      * @since 2.1-alpha-2
      */
+    @Parameter( property = "maven.war.filteringDeploymentDescriptors", defaultValue = "false" )
     private boolean filteringDeploymentDescriptors = false;
 
     /**
      * To escape interpolated values with Windows path
      * <code>c:\foo\bar</code> will be replaced with <code>c:\\foo\\bar</code>.
      *
-     * @parameter expression="${maven.war.escapedBackslashesInFilePath}" default-value="false"
      * @since 2.1-alpha-2
      */
+    @Parameter( property = "maven.war.escapedBackslashesInFilePath", defaultValue = "false" )
     private boolean escapedBackslashesInFilePath = false;
 
     /**
      * Expression preceded with this String won't be interpolated.
      * <code>\${foo}</code> will be replaced with <code>${foo}</code>.
      *
-     * @parameter expression="${maven.war.escapeString}"
      * @since 2.1-beta-1
      */
+    @Parameter( property = "maven.war.escapeString" )
     protected String escapeString;
 
     /**
      * The archive configuration to use.
      * See <a href="http://maven.apache.org/shared/maven-archiver/index.html">Maven Archiver Reference</a>.
-     *
-     * @parameter
      */
+    @Parameter
     private MavenArchiveConfiguration archive = new MavenArchiveConfiguration();
 
     private final WebappStructureSerializer webappStructureSerialier = new WebappStructureSerializer();
