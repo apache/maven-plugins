@@ -22,6 +22,11 @@ package org.apache.maven.plugin.war;
 import org.apache.maven.archiver.MavenArchiver;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.jar.Manifest;
 import org.codehaus.plexus.archiver.jar.ManifestException;
 import org.codehaus.plexus.archiver.war.WarArchiver;
@@ -38,19 +43,16 @@ import java.io.PrintWriter;
  *
  * @author Mike Perham
  * @version $Id$
- * @goal manifest
- * @phase process-resources
- * @threadSafe
- * @requiresDependencyResolution runtime
  */
+@Mojo( name = "manifest", defaultPhase = LifecyclePhase.PROCESS_RESOURCES, threadSafe = true,
+       requiresDependencyResolution = ResolutionScope.RUNTIME )
 public class WarManifestMojo
     extends AbstractWarMojo
 {
     /**
      * The WAR archiver.
-     *
-     * @component role="org.codehaus.plexus.archiver.Archiver" roleHint="war"
      */
+    @Component( role = Archiver.class, hint = "war" )
     private WarArchiver warArchiver;
 
 

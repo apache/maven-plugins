@@ -36,6 +36,12 @@ under the License.
   <name>Maven WAR Plugin</name>
   <description>Builds a Web Application Archive (WAR) file from the project output and its dependencies.</description>
 
+  <contributors>
+    <contributor>
+      <name>Tony Chemit</name>
+    </contributor>
+  </contributors>
+  
   <prerequisites>
     <maven>${mavenVersion}</maven>
   </prerequisites>
@@ -98,6 +104,12 @@ under the License.
       <version>${mavenArchiverVersion}</version>
     </dependency>
     <dependency>
+      <groupId>org.apache.maven.plugin-tools</groupId>
+      <artifactId>maven-plugin-annotations</artifactId>
+      <version>3.1-SNAPSHOT</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-io</artifactId>
       <version>2.0.2</version>
@@ -138,7 +150,7 @@ under the License.
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-utils</artifactId>
-      <version>3.0</version>
+      <version>3.0.1</version>
     </dependency>
 
     <dependency>
@@ -160,6 +172,34 @@ under the License.
       <scope>test</scope>
     </dependency>
   </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-plugin-plugin</artifactId>
+        <version>3.1-SNAPSHOT</version>
+        <executions>
+          <execution>
+            <id>generate-descriptor</id>
+            <goals>
+              <goal>descriptor</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-plugin-plugin</artifactId>
+        <version>3.1-SNAPSHOT</version>
+      </plugin>
+    </plugins>
+  </reporting>
 
   <profiles>
     <profile>

@@ -25,7 +25,13 @@ import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.war.util.ClassesPackager;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProjectHelper;
+import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.jar.ManifestException;
 import org.codehaus.plexus.archiver.war.WarArchiver;
@@ -41,36 +47,29 @@ import java.util.Arrays;
  *
  * @author <a href="evenisse@apache.org">Emmanuel Venisse</a>
  * @version $Id$
- * @goal war
- * @phase package
- * @threadSafe
- * @requiresDependencyResolution runtime
  */
+@Mojo( name = "war", defaultPhase = LifecyclePhase.PACKAGE, threadSafe = true,
+       requiresDependencyResolution = ResolutionScope.RUNTIME )
 public class WarMojo
     extends AbstractWarMojo
 {
     /**
      * The directory for the generated WAR.
-     *
-     * @parameter default-value="${project.build.directory}"
-     * @required
      */
+    @Parameter( defaultValue = "${project.build.directory}", required = true )
     private String outputDirectory;
 
     /**
      * The name of the generated WAR.
-     *
-     * @parameter default-value="${project.build.finalName}"
-     * @required
      */
+    @Parameter( defaultValue = "${project.build.finalName}", required = true )
     private String warName;
 
     /**
      * Classifier to add to the generated WAR. If given, the artifact will be an attachment instead.
      * The classifier will not be applied to the JAR file of the project - only to the WAR file.
-     *
-     * @parameter
      */
+    @Parameter
     private String classifier;
 
     /**
@@ -80,9 +79,9 @@ public class WarMojo
      * include and exclude specific pattern using the expression %regex[].
      * Hint: read the about (?!Pattern).
      *
-     * @parameter
      * @since 2.1-alpha-2
      */
+    @Parameter
     private String packagingExcludes;
 
     /**
@@ -92,29 +91,27 @@ public class WarMojo
      * Java Regular Expressions engine to include and exclude specific pattern
      * using the expression %regex[].
      *
-     * @parameter
      * @since 2.1-beta-1
      */
+    @Parameter
     private String packagingIncludes;
 
     /**
      * The WAR archiver.
-     *
-     * @component role="org.codehaus.plexus.archiver.Archiver" roleHint="war"
      */
+    @Component( role = Archiver.class, hint = "war" )
     private WarArchiver warArchiver;
 
     /**
-     * @component
      */
+    @Component
     private MavenProjectHelper projectHelper;
 
     /**
      * Whether this is the main artifact being built. Set to <code>false</code> if you don't want to install or
      * deploy it to the local repository instead of the default one in an execution.
-     *
-     * @parameter expression="${primaryArtifact}" default-value="true"
      */
+    @Parameter( property = "primaryArtifact", defaultValue = "true" )
     private boolean primaryArtifact = true;
 
     /**
@@ -122,16 +119,16 @@ public class WarMojo
      * if you want you WAR built without a <code>web.xml</code> file.
      * This may be useful if you are building an overlay that has no web.xml file.
      *
-     * @parameter expression="${failOnMissingWebXml}" default-value="true"
      * @since 2.1-alpha-2
      */
+    @Parameter( property = "failOnMissingWebXml", defaultValue = "true" )
     private boolean failOnMissingWebXml = true;
 
     /**
      * Whether classes (that is the content of the WEB-INF/classes directory) should be attached to the
      * project as an additional artifact.
      * <p>By default the
-     * classifier for the additional artifact is 'classes'. 
+     * classifier for the additional artifact is 'classes'.
      * You can change it with the
      * <code><![CDATA[<classesClassifier>someclassifier</classesClassifier>]]></code>
      * parameter.
@@ -144,17 +141,18 @@ public class WarMojo
      *   <version>myVersion</myVersion>
      *   <classifier>classes</classifier>
      * </dependency>]]></pre></p>
-     * @parameter default-value="false"
+     *
      * @since 2.1-alpha-2
      */
+    @Parameter( defaultValue = "false" )
     private boolean attachClasses = false;
 
     /**
      * The classifier to use for the attached classes artifact.
      *
-     * @parameter default-value="classes"
      * @since 2.1-alpha-2
      */
+    @Parameter( defaultValue = "classes" )
     private String classesClassifier = "classes";
 
     // ----------------------------------------------------------------------
