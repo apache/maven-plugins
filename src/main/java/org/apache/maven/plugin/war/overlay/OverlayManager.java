@@ -19,18 +19,17 @@ package org.apache.maven.plugin.war.overlay;
  * under the License.
  */
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Set;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
 import org.apache.maven.plugin.war.Overlay;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.StringUtils;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Set;
 
 /**
  * Manages the overlays.
@@ -41,11 +40,11 @@ import java.util.Set;
  */
 public class OverlayManager
 {
-    private final List overlays;
+    private final List<Overlay> overlays;
 
     private final MavenProject project;
 
-    private final List artifactsOverlays;
+    private final List<Artifact> artifactsOverlays;
 
     /**
      * Creates a manager with the specified overlays.
@@ -61,11 +60,11 @@ public class OverlayManager
      * @throws InvalidOverlayConfigurationException
      *          if the config is invalid
      */
-    public OverlayManager( List overlays, MavenProject project, String defaultIncludes, String defaultExcludes,
+    public OverlayManager( List<Overlay> overlays, MavenProject project, String defaultIncludes, String defaultExcludes,
                            Overlay currentProjectOverlay )
         throws InvalidOverlayConfigurationException
     {
-        this.overlays = new ArrayList();
+        this.overlays = new ArrayList<Overlay>();
         if ( overlays != null )
         {
             this.overlays.addAll( overlays );
@@ -85,7 +84,7 @@ public class OverlayManager
      *
      * @return the overlays
      */
-    public List getOverlays()
+    public List<Overlay> getOverlays()
     {
         return overlays;
     }
@@ -95,13 +94,11 @@ public class OverlayManager
      *
      * @return the overlay ids
      */
-    public List getOverlayIds()
+    public List<String> getOverlayIds()
     {
-        final Iterator it = overlays.iterator();
-        final List result = new ArrayList();
-        while ( it.hasNext() )
+        final List<String> result = new ArrayList<String>();
+        for ( Overlay overlay : overlays )
         {
-            Overlay overlay = (Overlay) it.next();
             result.add( overlay.getId() );
         }
         return result;
@@ -109,7 +106,7 @@ public class OverlayManager
     }
 
     /**
-     * Intializes the manager and validates the overlays configuration.
+     * Initializes the manager and validates the overlays configuration.
      *
      * @param defaultIncludes the default includes to use
      * @param defaultExcludes the default excludes to use
@@ -123,8 +120,8 @@ public class OverlayManager
 
         // Build the list of configured artifacts and makes sure that each overlay
         // refer to a valid artifact
-        final List configuredWarArtifacts = new ArrayList();
-        final ListIterator it = overlays.listIterator();
+        final List<Artifact> configuredWarArtifacts = new ArrayList<Artifact>();
+        final ListIterator<Overlay> it = overlays.listIterator();
         while ( it.hasNext() )
         {
             Overlay overlay = (Overlay) it.next();
@@ -155,10 +152,8 @@ public class OverlayManager
         }
 
         // Build the list of missing overlays
-        final Iterator it2 = artifactsOverlays.iterator();
-        while ( it2.hasNext() )
+        for ( Artifact artifact : artifactsOverlays )
         {
-            Artifact artifact = (Artifact) it2.next();
             if ( !configuredWarArtifacts.contains( artifact ) )
             {
                 // Add a default overlay for the given artifact which will be applied after
@@ -168,10 +163,8 @@ public class OverlayManager
         }
 
         // Final validation, make sure that the current project is in there. Otherwise add it first
-        final Iterator it3 = overlays.iterator();
-        while ( it3.hasNext() )
+        for ( Overlay overlay : overlays )
         {
-            Overlay overlay = (Overlay) it3.next();
             if ( overlay.equals( currentProjectOverlay ) )
             {
                 return;
@@ -200,10 +193,9 @@ public class OverlayManager
             return null;
         }
 
-        for ( Iterator iterator = artifactsOverlays.iterator(); iterator.hasNext(); )
+        for ( Artifact artifact : artifactsOverlays )
         {
             // Handle classifier dependencies properly (clash management)
-            Artifact artifact = (Artifact) iterator.next();
             if ( compareOverlayWithArtifact( overlay, artifact ) )
             {
                 return artifact;
@@ -211,12 +203,12 @@ public class OverlayManager
         }
 
         // maybe its a project dependencies zip or an other type
-        Set projectArtifacts = this.project.getDependencyArtifacts();
+        @SuppressWarnings( "unchecked" )
+        Set<Artifact> projectArtifacts = this.project.getDependencyArtifacts();
         if ( projectArtifacts != null )
         {
-            for ( Iterator iterator = projectArtifacts.iterator(); iterator.hasNext(); )
+            for ( Artifact artifact : projectArtifacts )
             {
-                Artifact artifact = (Artifact) iterator.next();
                 if ( compareOverlayWithArtifact( overlay, artifact ) )
                 {
                     return artifact;
@@ -248,16 +240,15 @@ public class OverlayManager
      *
      * @return the overlays as artifacts objects
      */
-    private List getOverlaysAsArtifacts()
+    private List<Artifact> getOverlaysAsArtifacts()
     {
         ScopeArtifactFilter filter = new ScopeArtifactFilter( Artifact.SCOPE_RUNTIME );
-        final Set artifacts = project.getArtifacts();
-        final Iterator it = artifacts.iterator();
+        @SuppressWarnings( "unchecked" )
+        final Set<Artifact> artifacts = project.getArtifacts();
 
-        final List result = new ArrayList();
-        while ( it.hasNext() )
+        final List<Artifact> result = new ArrayList<Artifact>();
+        for ( Artifact artifact : artifacts )
         {
-            Artifact artifact = (Artifact) it.next();
             if ( !artifact.isOptional() && filter.include( artifact ) && ( "war".equals( artifact.getType() ) ) )
             {
                 result.add( artifact );

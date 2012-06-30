@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.maven.archiver.MavenArchiveConfiguration;
@@ -55,6 +54,7 @@ import org.apache.maven.shared.filtering.MavenResourcesFiltering;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
+import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
@@ -127,7 +127,7 @@ public abstract class AbstractWarMojo
      * Filters (property files) to include during the interpolation of the pom.xml.
      */
     @Parameter
-    private List filters;
+    private List<String> filters;
 
     /**
      * The path to the web.xml file to use.
@@ -236,7 +236,7 @@ public abstract class AbstractWarMojo
      * @since 2.1-alpha-1
      */
     @Parameter
-    private List overlays = new ArrayList();
+    private List<Overlay> overlays = new ArrayList<Overlay>();
 
     /**
      * A list of file extensions that should not be filtered.
@@ -245,7 +245,7 @@ public abstract class AbstractWarMojo
      * @since 2.1-alpha-2
      */
     @Parameter
-    private List nonFilteredFileExtensions;
+    private List<String> nonFilteredFileExtensions;
 
     /**
      * @since 2.1-alpha-2
@@ -304,7 +304,7 @@ public abstract class AbstractWarMojo
      */
     protected String[] getExcludes()
     {
-        List excludeList = new ArrayList();
+        List<String> excludeList = new ArrayList<String>();
         if ( StringUtils.isNotEmpty( warSourceExcludes ) )
         {
             excludeList.addAll( Arrays.asList( StringUtils.split( warSourceExcludes, "," ) ) );
@@ -396,6 +396,7 @@ public abstract class AbstractWarMojo
      * @throws MojoFailureException   if an unexpected error occurred while packaging the webapp
      * @throws IOException            if an error occurred while copying the files
      */
+    @SuppressWarnings( "unchecked" )
     public void buildWebapp( MavenProject project, File webappDirectory )
         throws MojoExecutionException, MojoFailureException, IOException
     {
@@ -415,8 +416,8 @@ public abstract class AbstractWarMojo
 
         final OverlayManager overlayManager =
             new OverlayManager( overlays, project, dependentWarIncludes, dependentWarExcludes, currentProjectOverlay );
-        final List packagingTasks = getPackagingTasks( overlayManager );
-        List defaultFilterWrappers = null;
+        final List<WarPackagingTask> packagingTasks = getPackagingTasks( overlayManager );
+        List<FileUtils.FilterWrapper> defaultFilterWrappers = null;
         try
         {
             MavenResourcesExecution mavenResourcesExecution = new MavenResourcesExecution();
@@ -438,21 +439,16 @@ public abstract class AbstractWarMojo
                                                                             getNonFilteredFileExtensions(),
                                                                             filteringDeploymentDescriptors,
                                                                             this.artifactFactory );
-        final Iterator it = packagingTasks.iterator();
-        while ( it.hasNext() )
+        for ( WarPackagingTask warPackagingTask : packagingTasks )
         {
-            WarPackagingTask warPackagingTask = (WarPackagingTask) it.next();
             warPackagingTask.performPackaging( context );
         }
 
         // Post packaging
-        final List postPackagingTasks = getPostPackagingTasks();
-        final Iterator it2 = postPackagingTasks.iterator();
-        while ( it2.hasNext() )
+        final List<WarPostPackagingTask> postPackagingTasks = getPostPackagingTasks();
+        for( WarPostPackagingTask task  : postPackagingTasks )
         {
-            WarPostPackagingTask task = (WarPostPackagingTask) it2.next();
             task.performPostPackaging( context );
-
         }
         getLog().info( "Webapp assembled in [" + ( System.currentTimeMillis() - startTime ) + " msecs]" );
 
@@ -466,20 +462,18 @@ public abstract class AbstractWarMojo
      * @return the list of packaging tasks
      * @throws MojoExecutionException if the packaging tasks could not be built
      */
-    private List getPackagingTasks( OverlayManager overlayManager )
+    private List<WarPackagingTask> getPackagingTasks( OverlayManager overlayManager )
         throws MojoExecutionException
     {
-        final List packagingTasks = new ArrayList();
+        final List<WarPackagingTask> packagingTasks = new ArrayList<WarPackagingTask>();
         if ( useCache )
         {
             packagingTasks.add( new DependenciesAnalysisPackagingTask() );
         }
 
-        final List resolvedOverlays = overlayManager.getOverlays();
-        final Iterator it = resolvedOverlays.iterator();
-        while ( it.hasNext() )
+        final List<Overlay> resolvedOverlays = overlayManager.getOverlays();
+        for ( Overlay overlay : resolvedOverlays )
         {
-            Overlay overlay = (Overlay) it.next();
             if ( overlay.isCurrentProject() )
             {
                 packagingTasks.add( new WarProjectPackagingTask( webResources, webXml, containerConfigXML,
@@ -500,9 +494,9 @@ public abstract class AbstractWarMojo
      *
      * @return the list of post packaging tasks
      */
-    private List getPostPackagingTasks()
+    private List<WarPostPackagingTask> getPostPackagingTasks()
     {
-        final List postPackagingTasks = new ArrayList();
+        final List<WarPostPackagingTask> postPackagingTasks = new ArrayList<WarPostPackagingTask>();
         if ( useCache )
         {
             postPackagingTasks.add( new SaveWebappStructurePostPackagingTask( cacheFile ) );
@@ -526,15 +520,15 @@ public abstract class AbstractWarMojo
 
         private final OverlayManager overlayManager;
 
-        private final List filterWrappers;
+        private final List<FileUtils.FilterWrapper> filterWrappers;
 
-        private List nonFilteredFileExtensions;
+        private List<String> nonFilteredFileExtensions;
 
         private boolean filteringDeploymentDescriptors;
 
         public DefaultWarPackagingContext( File webappDirectory, final WebappStructure webappStructure,
-                                           final OverlayManager overlayManager, List filterWrappers,
-                                           List nonFilteredFileExtensions, boolean filteringDeploymentDescriptors,
+                                           final OverlayManager overlayManager, List<FileUtils.FilterWrapper> filterWrappers,
+                                           List<String>  nonFilteredFileExtensions, boolean filteringDeploymentDescriptors,
                                            ArtifactFactory artifactFactory )
         {
             this.webappDirectory = webappDirectory;
@@ -543,14 +537,12 @@ public abstract class AbstractWarMojo
             this.filterWrappers = filterWrappers;
             this.artifactFactory = artifactFactory;
             this.filteringDeploymentDescriptors = filteringDeploymentDescriptors;
-            this.nonFilteredFileExtensions = nonFilteredFileExtensions == null ? Collections.EMPTY_LIST
+            this.nonFilteredFileExtensions = nonFilteredFileExtensions == null ? Collections.<String>emptyList()
                                                                               : nonFilteredFileExtensions;
             // This is kinda stupid but if we loop over the current overlays and we request the path structure
             // it will register it. This will avoid wrong warning messages in a later phase
-            final Iterator it = overlayManager.getOverlayIds().iterator();
-            while ( it.hasNext() )
+            for ( String overlayId : overlayManager.getOverlayIds() )
             {
-                String overlayId = (String) it.next();
                 webappStructure.getStructure( overlayId );
             }
         }
@@ -620,7 +612,7 @@ public abstract class AbstractWarMojo
             return jarArchiver;
         }
 
-        public List getFilters()
+        public List<String> getFilters()
         {
             return filters;
         }
@@ -630,7 +622,7 @@ public abstract class AbstractWarMojo
             return webappStructure;
         }
 
-        public List getOwnerIds()
+        public List<String> getOwnerIds()
         {
             return overlayManager.getOverlayIds();
         }
@@ -640,7 +632,7 @@ public abstract class AbstractWarMojo
             return mavenFileFilter;
         }
 
-        public List getFilterWrappers()
+        public List<FileUtils.FilterWrapper> getFilterWrappers()
         {
             return filterWrappers;
         }
@@ -736,12 +728,12 @@ public abstract class AbstractWarMojo
         this.outputFileNameMapping = outputFileNameMapping;
     }
 
-    public List getOverlays()
+    public List<Overlay> getOverlays()
     {
         return overlays;
     }
 
-    public void setOverlays( List overlays )
+    public void setOverlays( List<Overlay> overlays )
     {
         this.overlays = overlays;
     }
@@ -781,12 +773,12 @@ public abstract class AbstractWarMojo
         this.webResources = webResources;
     }
 
-    public List getFilters()
+    public List<String> getFilters()
     {
         return filters;
     }
 
-    public void setFilters( List filters )
+    public void setFilters( List<String> filters )
     {
         this.filters = filters;
     }
@@ -847,12 +839,12 @@ public abstract class AbstractWarMojo
         return archive;
     }
 
-    public List getNonFilteredFileExtensions()
+    public List<String> getNonFilteredFileExtensions()
     {
         return nonFilteredFileExtensions;
     }
 
-    public void setNonFilteredFileExtensions( List nonFilteredFileExtensions )
+    public void setNonFilteredFileExtensions( List<String> nonFilteredFileExtensions )
     {
         this.nonFilteredFileExtensions = nonFilteredFileExtensions;
     }
