@@ -187,6 +187,9 @@ under the License.
             </goals>
           </execution>
         </executions>
+        <configuration>
+          <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
+        </configuration>
       </plugin>
     </plugins>
   </build>
