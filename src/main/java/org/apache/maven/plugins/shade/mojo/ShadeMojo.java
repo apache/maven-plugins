@@ -33,6 +33,11 @@ import org.apache.maven.model.Exclusion;
 import org.apache.maven.model.Model;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.plugins.shade.Shader;
 import org.apache.maven.plugins.shade.filter.Filter;
 import org.apache.maven.plugins.shade.filter.MinijarFilter;
@@ -83,114 +88,73 @@ import java.util.Set;
  * @author Mauro Talevi
  * @author David Blevins
  * @author Hiram Chirino
- * @goal shade
- * @phase package
- * @requiresDependencyResolution runtime
- * @threadSafe
  */
+@Mojo(name = "shade", defaultPhase = LifecyclePhase.PACKAGE, threadSafe = false, requiresDependencyResolution = ResolutionScope.RUNTIME)
 public class ShadeMojo
     extends AbstractMojo
     implements Contextualizable
 {
-    /**
-     * @parameter default-value="${project}"
-     * @readonly
-     * @required
-     */
+    @Parameter(readonly = true, defaultValue = "${project}")
     private MavenProject project;
 
-    /**
-     * @component
-     * @required
-     * @readonly
-     */
+    @Component
     private MavenProjectHelper projectHelper;
 
-    /**
-     * @component role="org.apache.maven.plugins.shade.Shader" roleHint="default"
-     * @required
-     * @readonly
-     */
+    @Component(hint = "default", role = org.apache.maven.plugins.shade.Shader.class)
     private Shader shader;
 
     /**
      * The dependency tree builder to use.
-     *
-     * @component
-     * @required
-     * @readonly
      */
+    @Component
     private DependencyTreeBuilder dependencyTreeBuilder;
 
     /**
      * ProjectBuilder, needed to create projects from the artifacts.
-     *
-     * @component
-     * @required
-     * @readonly
      */
+    @Component
     private ProjectBuilder projectBuilder;
 
     /**
      * The current Maven session.
-     *
-     * @parameter default-value="${session}"
-     * @readonly
      */
+    @Parameter(readonly = true, defaultValue = "${session}")
     private MavenSession session;
 
     /**
      * The artifact metadata source to use.
-     *
-     * @component
-     * @required
-     * @readonly
      */
+    @Component
     private ArtifactMetadataSource artifactMetadataSource;
 
     /**
      * The artifact collector to use.
-     *
-     * @component
-     * @required
-     * @readonly
      */
+    @Component
     private ArtifactCollector artifactCollector;
 
     /**
      * Remote repositories which will be searched for source attachments.
-     *
-     * @parameter default-value="${project.remoteArtifactRepositories}"
-     * @required
-     * @readonly
      */
+    @Parameter(readonly = true, required = true, defaultValue = "${project.remoteArtifactRepositories}")
     protected List remoteArtifactRepositories;
 
     /**
      * Local maven repository.
-     *
-     * @parameter default-value="${localRepository}"
-     * @required
-     * @readonly
      */
+    @Parameter(readonly = true, required = true, defaultValue = "${localRepository}")
     protected ArtifactRepository localRepository;
 
     /**
      * Artifact factory, needed to download source jars for inclusion in classpath.
-     *
-     * @component
-     * @required
-     * @readonly
      */
+    @Component
     protected ArtifactFactory artifactFactory;
 
     /**
      * Artifact resolver, needed to download source jars for inclusion in classpath.
-     *
-     * @component
-     * @required
-     * @readonly
      */
+    @Component
     protected ArtifactResolver artifactResolver;
 
     /**
@@ -211,8 +175,8 @@ public class ShadeMojo
      * &lt;/artifactSet&gt;
      * </pre>
      *
-     * @parameter
      */
+    @Parameter
     private ArtifactSet artifactSet;
 
     /**
@@ -233,16 +197,15 @@ public class ShadeMojo
      * </pre>
      * <em>Note:</em> Support for includes exists only since version 1.4.
      *
-     * @parameter
      */
+    @Parameter
     private PackageRelocation[] relocations;
 
     /**
      * Resource transformers to be used. Please see the "Examples" section for more information on available
      * transformers and their configuration.
-     *
-     * @parameter
      */
+    @Parameter
     private ResourceTransformer[] transformers;
 
     /**
@@ -265,16 +228,14 @@ public class ShadeMojo
      *   &lt;/filter&gt;
      * &lt;/filters&gt;
      * </pre>
-     *
-     * @parameter
      */
+    @Parameter
     private ArchiveFilter[] filters;
 
     /**
      * The destination directory for the shaded artifact.
-     *
-     * @parameter default-value="${project.build.directory}"
      */
+    @Parameter(defaultValue = "${project.build.directory}")
     private File outputDirectory;
 
     /**
@@ -283,9 +244,8 @@ public class ShadeMojo
      * If you like to change the name of the native artifact, you may use the &lt;build>&lt;finalName> setting.
      * If this is set to something different than &lt;build>&lt;finalName>, no file replacement
      * will be performed, even if shadedArtifactAttached is being used.
-     *
-     * @parameter expression="${finalName}"
      */
+    @Parameter
     private String finalName;
 
     /**
@@ -294,16 +254,15 @@ public class ShadeMojo
      * be something like foo-1.0.jar. So if you change the artifactId you might have something
      * like foo-special-1.0.jar.
      *
-     * @parameter expression="${shadedArtifactId}" default-value="${project.artifactId}"
      */
+    @Parameter(defaultValue = "${project.artifactId}")
     private String shadedArtifactId;
 
     /**
      * If specified, this will include only artifacts which have groupIds which
      * start with this.
-     *
-     * @parameter expression="${shadedGroupFilter}"
      */
+    @Parameter
     private String shadedGroupFilter;
 
     /**
@@ -311,8 +270,8 @@ public class ShadeMojo
      * the original artifact.  If false, the shaded jar will be the main artifact
      * of the project
      *
-     * @parameter expression="${shadedArtifactAttached}" default-value="false"
      */
+    @Parameter
     private boolean shadedArtifactAttached;
 
     /**
@@ -321,58 +280,55 @@ public class ShadeMojo
      * generated POM. The reduced POM will be named <code>dependency-reduced-pom.xml</code> and is stored into the same
      * directory as the shaded artifact. Unless you also specify dependencyReducedPomLocation, the plugin will
      * create a temporary file named <code>dependency-reduced-pom.xml</code> in the project basedir. 
-     *
-     * @parameter expression="${createDependencyReducedPom}" default-value="true"
      */
+    @Parameter(defaultValue = "true")
     private boolean createDependencyReducedPom;
     
     
     /**
-     *  @parameter expression="${dependencyReducedPomLocation}" defaultValue="${basedir}/dependency-reduced-pom.xml"
+     * Where to put the dependency reduced pom.
      *  Note: setting a value for this parameter with a directory other than ${basedir} will change the value of ${basedir}
      *  for all executions that come after the shade execution. This is often not what you want. This is considered
      *  an open issue with this plugin.
+     *  @since 1.7
      */
+    @Parameter(defaultValue = "${basedir}/dependency-reduced-pom.xml")
     private File dependencyReducedPomLocation;
 
     /**
      * When true, dependencies are kept in the pom but with scope 'provided'; when false,
      * the dependency is removed.
-     *
-     * @parameter expression="${keepDependenciesWithProvidedScope}" default-value="false"
      */
+    @Parameter
     private boolean keepDependenciesWithProvidedScope;
 
     /**
      * When true, transitive deps of removed dependencies are promoted to direct dependencies.
      * This should allow the drop in replacement of the removed deps with the new shaded
      * jar and everything should still work.
-     *
-     * @parameter expression="${promoteTransitiveDependencies}" default-value="false"
      */
+    @Parameter
     private boolean promoteTransitiveDependencies;
 
     /**
      * The name of the classifier used in case the shaded artifact is attached.
-     *
-     * @parameter expression="${shadedClassifierName}" default-value="shaded"
      */
+    @Parameter(defaultValue = "shaded")
     private String shadedClassifierName;
 
     /**
      * When true, it will attempt to create a sources jar as well
-     *
-     * @parameter expression="${createSourcesJar}" default-value="false"
      */
+    @Parameter
     private boolean createSourcesJar;
 
     /**
      * When true, dependencies will be stripped down on the class level to only the transitive hull required for the
      * artifact. <em>Note:</em> Usage of this feature requires Java 1.5 or higher.
      *
-     * @parameter default-value="false"
      * @since 1.4
      */
+    @Parameter
     private boolean minimizeJar;
 
     /**
@@ -381,17 +337,17 @@ public class ShadeMojo
      * {@link #finalName}, {@link #shadedArtifactAttached}, {@link #shadedClassifierName} and
      * {@link #createDependencyReducedPom} to be ignored when used.
      *
-     * @parameter
      * @since 1.3
      */
+    @Parameter
     private File outputFile;
 
     /**
      * You can pass here the roleHint about your own Shader implementation plexus component.
      *
-     * @parameter
      * @since 1.6
      */
+    @Parameter
     private String shaderHint;
 
     /**
