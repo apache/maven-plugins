@@ -280,7 +280,7 @@ public class Overlay
 
     private String[] parse( String s )
     {
-        final List result = new ArrayList();
+        final List<String> result = new ArrayList<String>();
         if ( s == null )
         {
             return (String[]) result.toArray( new String[result.size()] );
