@@ -39,7 +39,6 @@ import java.util.Locale;
  * @version $Id$
  * @since 2.0
  * @goal summary
- * @plexus.component
  */
 public class ProjectSummaryReport
     extends AbstractProjectInfoReport
