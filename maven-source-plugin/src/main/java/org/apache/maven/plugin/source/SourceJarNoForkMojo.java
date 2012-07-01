@@ -20,6 +20,9 @@ package org.apache.maven.plugin.source;
  */
 
 import org.apache.maven.model.Resource;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
 import java.util.Collections;
@@ -32,18 +35,16 @@ import java.util.List;
  *
  * @author pgier
  * @version $Id$
- * @goal jar-no-fork
- * @phase package
- * @threadSafe
  * @since 2.1
  */
+@Mojo( name = "jar-no-fork", defaultPhase = LifecyclePhase.PACKAGE, threadSafe = true )
 public class SourceJarNoForkMojo
     extends AbstractSourceJarMojo
 {
     /**
-     * @parameter expression="${maven.source.classifier}" default-value="sources"
      * @since 2.2
      */
+    @Parameter( property = "maven.source.classifier", defaultValue = "sources" )
     protected String classifier;
 
     /**
