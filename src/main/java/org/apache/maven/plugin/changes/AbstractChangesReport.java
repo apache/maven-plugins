@@ -37,6 +37,8 @@ import org.apache.maven.doxia.siterenderer.RendererException;
 import org.apache.maven.doxia.siterenderer.SiteRenderingContext;
 import org.apache.maven.doxia.siterenderer.sink.SiteRendererSink;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.MavenReportException;
@@ -68,9 +70,8 @@ public abstract class AbstractChangesReport
      * Report output directory. Note that this parameter is only relevant if the goal is run from the command line or
      * from the default build lifecycle. If the goal is run indirectly as part of a site generation, the output
      * directory configured in the Maven Site Plugin is used instead.
-     * 
-     * @parameter default-value="${project.reporting.outputDirectory}"
      */
+    @Parameter( defaultValue = "${project.reporting.outputDirectory}" )
     private File outputDirectory;
 
     /**
@@ -78,51 +79,43 @@ public abstract class AbstractChangesReport
      * from the default build lifecycle. If the goal is run indirectly as part of a site generation, the output
      * encoding configured in the Maven Site Plugin is used instead.
      *
-     * @parameter expression="${outputEncoding}" default-value="${project.reporting.outputEncoding}"
      * @since 2.4
      */
+    @Parameter( property = "outputEncoding", defaultValue = "${project.reporting.outputEncoding}" )
     private String outputEncoding;
 
     /**
      * Doxia Site Renderer.
-     *
-     * @component
      */
+    @Component
     protected Renderer siteRenderer;
 
     /**
      * The Maven Project.
-     *
-     * @parameter expression="${project}"
-     * @required
-     * @readonly
      */
+    @Component
     protected MavenProject project;
 
     /**
      * Local Repository.
-     *
-     * @parameter expression="${localRepository}"
-     * @required
-     * @readonly
      */
+    @Parameter( property = "localRepository", required = true, readonly = true )
     protected ArtifactRepository localRepository;
 
     /**
-     * @component
      */
+    @Component
     protected ArtifactResolver resolver;
 
     /**
-     * @component
      */
+    @Component
     protected ArtifactFactory factory;
 
     /**
      * Internationalization.
-     *
-     * @component
      */
+    @Component
     protected I18N i18n;
 
     private File getSkinArtifactFile()

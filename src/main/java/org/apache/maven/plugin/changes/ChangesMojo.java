@@ -34,6 +34,9 @@ import java.util.ResourceBundle;
 
 import org.apache.commons.collections.map.CaseInsensitiveMap;
 import org.apache.maven.execution.MavenSession;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.MavenReportException;
 import org.apache.maven.shared.filtering.MavenFileFilter;
@@ -48,11 +51,10 @@ import org.codehaus.plexus.util.xml.XmlStreamReader;
 /**
  * Goal which creates a nicely formatted Changes Report in html format from a changes.xml file.
  *
- * @goal changes-report
  * @author <a href="mailto:jruiz@exist.com">Johnny R. Ruiz III</a>
  * @version $Id$
- * @threadSafe
  */
+@Mojo( name = "changes-report", threadSafe = true )
 public class ChangesMojo
     extends AbstractChangesReport
 {
@@ -60,18 +62,18 @@ public class ChangesMojo
      * A flag whether the report should also include changes from child modules. If set to <code>false</code>, only
      * the changes from current project will be written to the report.
      *
-     * @parameter default-value="false"
      * @since 2.5
      */
+    @Parameter( defaultValue = "false" )
     private boolean aggregated;
 
     /**
      * A flag whether the report should also include the dates of individual actions. If set to <code>false</code>, only
      * the dates of releases will be written to the report.
      *
-     * @parameter expression="${changes.addActionDate}" default-value="false"
      * @since 2.1
      */
+    @Parameter( property = "changes.addActionDate", defaultValue = "false" )
     private boolean addActionDate;
 
     /**
@@ -88,28 +90,26 @@ public class ChangesMojo
      * PDFs, that are based on your <code>changes.xml</code> file if you are not
      * careful.
      *
-     * @parameter default-value="true"
      * @since 2.4
      * @deprecated using markup inside CDATA sections does not work for all output formats!
      */
+    @Parameter( defaultValue = "true" )
     private boolean escapeHTML;
 
     /**
      * The directory for interpolated changes.xml.
      *
-     * @parameter expression="${project.build.directory}/changes"
-     * @required
-     * @readonly
      * @since 2.2
      */
+    @Parameter( defaultValue = "${project.build.directory}/changes", required = true, readonly = true )
     private File filteredOutputDirectory;
 
     /**
      * applying filtering filtering "a la" resources plugin
      *
-     * @parameter default-value="false"
      * @since 2.2
      */
+    @Parameter( defaultValue = "false" )
     private boolean filteringChanges;
 
     /**
@@ -122,10 +122,10 @@ public class ChangesMojo
      * <code>link_template</code>.
      * </p>
      *
-     * @parameter expression="${changes.issueLinkTemplate}" default-value="%URL%/ViewIssue.jspa?key=%ISSUE%"
      * @since 2.0-beta-2
      * @deprecated As of 2.1 use issueLinkTemplatePerSystem : this one will be with system default
      */
+    @Parameter( property = "changes.issueLinkTemplate", defaultValue = "%URL%/ViewIssue.jspa?key=%ISSUE%" )
     private String issueLinkTemplate;
 
     /**
@@ -147,70 +147,65 @@ public class ChangesMojo
      * information.
      * </p>
      *
-     * @parameter
      * @since 2.1
      */
+    @Parameter
     private Map issueLinkTemplatePerSystem;
 
     /**
-     * @component
      * @since 2.2
      */
+    @Component
     private MavenFileFilter mavenFileFilter;
 
     /**
      * Format to use for publishDate. The value will be available with the following expression ${publishDate}
      *
      * @see java.text.SimpleDateFormat
-     * @parameter default-value="yyyy-MM-dd"
      * @since 2.2
      */
+    @Parameter( defaultValue = "yyyy-MM-dd" )
     private String publishDateFormat;
 
-   /**
-    * Locale to use for publishDate when formatting
-    *
-    * @see java.util.Locale
-    * @parameter default-value="en"
-    * @since 2.2
-    */
+    /**
+     * Locale to use for publishDate when formatting
+     *
+     * @see java.util.Locale
+     * @since 2.2
+     */
+    @Parameter( defaultValue = "en" )
     private String publishDateLocale;
 
     /**
-     * @parameter expression="${session}"
-     * @readonly
-     * @required
      * @since 2.2
      */
+    @Component
     protected MavenSession session;
 
     /**
-     * @parameter default-value="${project.issueManagement.system}"
-     * @readonly
      * @since 2.4
      */
+    @Parameter( defaultValue = "${project.issueManagement.system}", readonly = true )
     private String system;
 
     /**
      * The URI of a file containing all the team members. If this is set to the
      * special value "none", no links will be generated for the team members.
      *
-     * @parameter default-value="team-list.html"
      * @since 2.4
      */
+    @Parameter( defaultValue = "team-list.html" )
     private String teamlist;
 
     /**
-     * @parameter default-value="${project.issueManagement.url}"
-     * @readonly
      */
+    @Parameter( defaultValue = "${project.issueManagement.url}", readonly = true )
     private String url;
 
     /**
      * The path of the <code>changes.xml</code> file that will be converted into an HTML report.
-     *
-     * @parameter expression="${changes.xmlPath}" default-value="src/changes/changes.xml"
      */
+    @Parameter( property = "changes.xmlPath", defaultValue = "src/changes/changes.xml" )
     private File xmlPath;
 
     private ReleaseUtils releaseUtils = new ReleaseUtils( getLog() );

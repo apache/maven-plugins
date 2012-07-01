@@ -40,6 +40,10 @@ import org.apache.maven.plugin.jira.JIRAIssueManagmentSystem;
 import org.apache.maven.plugin.jira.JiraDownloader;
 import org.apache.maven.plugin.trac.TracDownloader;
 import org.apache.maven.plugin.trac.TracIssueManagmentSystem;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.plugins.changes.model.Release;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Settings;
@@ -56,13 +60,11 @@ import org.codehaus.plexus.velocity.VelocityComponent;
 /**
  * Goal which generate the template for an announcement.
  *
- * @goal announcement-generate
- * @requiresDependencyResolution test
  * @author aramirez@exist.com
  * @version $Id$
  * @since 2.0-beta-2
- * @threadSafe
  */
+@Mojo( name = "announcement-generate", requiresDependencyResolution = ResolutionScope.TEST, threadSafe = true )
 public class AnnouncementMojo
     extends AbstractAnnouncementMojo
 {
@@ -76,55 +78,48 @@ public class AnnouncementMojo
      * The name of the file which will contain the generated announcement. If
      * no value is specified the plugin will use the name of the template.
      *
-     * @parameter expression="${changes.announcementFile}"
      * @since 2.4
      */
+    @Parameter( property = "changes.announcementFile" )
     private String announcementFile;
 
     /**
      * Map of custom parameters for the announcement.
      * This Map will be passed to the template.
      *
-     * @parameter
      * @since 2.1
      */
+    @Parameter
     private Map announceParameters;
 
     /**
-     * @parameter expression="${project.artifactId}"
-     * @readonly
      */
+    @Parameter( property = "project.artifactId", readonly = true )
     private String artifactId;
 
     /**
      * Name of the team that develops the artifact.
      * This parameter will be passed to the template.
-     *
-     * @parameter default-value="${project.name} team" expression="${changes.developmentTeam}"
-     * @required
      */
+    @Parameter( property = "changes.developmentTeam", defaultValue = "${project.name} team", required = true )
     private String developmentTeam;
 
     /**
      * The name of the artifact to be used in the announcement.
-     *
-     * @parameter expression="${changes.finalName}" default-value="${project.build.finalName}"
-     * @required
      */
+    @Parameter( property = "changes.finalName", defaultValue = "${project.build.finalName}", required = true )
     private String finalName;
 
     /**
-     * @parameter expression="${project.groupId}"
-     * @readonly
      */
+    @Parameter( property = "project.groupId", readonly = true )
     private String groupId;
 
     /**
      * Short description or introduction of the released artifact.
      * This parameter will be passed to the template.
-     *
-     * @parameter default-value="${project.description}"
      */
+    @Parameter( defaultValue = "${project.description}" )
     private String introduction;
 
     /**
@@ -139,55 +134,46 @@ public class AnnouncementMojo
      * currently means that you can combine a changes.xml file with one other
      * issue management system.
      *
-     * @parameter
      * @since 2.4
      */
+    @Parameter
     private List<String> issueManagementSystems;
- 
+
     /**
      * Maps issues types to action types for grouping issues in announcements.
      * If issue types are not defined for a action type then the default issue type
-     * will be applied. 
+     * will be applied.
      * <p>
      * Valid action types: <code>add</code>, <code>fix</code> and <code>update</code>.
-     * </p> 
-     * 
-     * @parameter
+     * </p>
+     *
      * @since 2.6
      */
+    @Parameter
     private Map<String, String> issueTypes;
-    
+
     /**
      * Directory where the template file will be generated.
-     *
-     * @parameter expression="${project.build.directory}/announcement"
-     * @required
      */
+    @Parameter( defaultValue = "${project.build.directory}/announcement", required = true )
     private File outputDirectory;
 
     /**
      * Packaging structure for the artifact.
-     *
-     * @parameter expression="${project.packaging}"
-     * @readonly
      */
+    @Parameter( property = "project.packaging", readonly = true )
     private String packaging;
 
     /**
      * The Maven Project.
-     *
-     * @parameter expression="${project}"
-     * @required
-     * @readonly
      */
+    @Component
     private MavenProject project;
 
     /**
      * The Velocity template used to format the announcement.
-     *
-     * @parameter default-value="announcement.vm" expression="${changes.template}"
-     * @required
      */
+    @Parameter( property = "changes.template", defaultValue = "announcement.vm", required = true )
     private String template;
 
     /**
@@ -196,57 +182,53 @@ public class AnnouncementMojo
      * <b>Note:</b> This directory must be a subdirectory of
      * <code>/src/main/resources/ or current project base directory</code>.
      * </p>
-     *
-     * @parameter default-value="org/apache/maven/plugin/announcement" expression="${changes.templateDirectory}"
-     * @required
      */
+    @Parameter( property = "changes.templateDirectory", defaultValue = "org/apache/maven/plugin/announcement",
+                required = true )
     private String templateDirectory;
 
     /**
      * The template encoding.
      *
-     * @parameter expression="${changes.templateEncoding}" default-value="${project.build.sourceEncoding}"
      * @since 2.1
      */
+    @Parameter( property = "changes.templateEncoding", defaultValue = "${project.build.sourceEncoding}" )
     private String templateEncoding;
 
     /**
      * Distribution URL of the artifact.
      * This parameter will be passed to the template.
-     *
-     * @parameter expression="${project.url}"
      */
+    @Parameter( property = "project.url" )
     private String url;
 
     /**
      * URL where the artifact can be downloaded. If not specified,
      * no URL is used.
      * This parameter will be passed to the template.
-     *
-     * @parameter
      */
+    @Parameter
     private String urlDownload;
 
     /**
      * Velocity Component.
-     *
-     * @component role="org.codehaus.plexus.velocity.VelocityComponent" roleHint="maven-changes-plugin"
-     * @readonly
      */
+    @Component( role = VelocityComponent.class, hint = "maven-changes-plugin" )
     private VelocityComponent velocity;
+
     /**
      * Version of the artifact.
-     *
-     * @parameter expression="${changes.version}" default-value="${project.version}"
-     * @required
      */
+    @Parameter( property = "changes.version", defaultValue = "${project.version}", required = true )
     private String version;
+
     /**
      * The path of the changes.xml file.
      *
      * @parameter expression="${basedir}/src/changes/changes.xml"
      * @required
      */
+    @Parameter( defaultValue = "${basedir}/src/changes/changes.xml" )
     private File xmlPath;
 
     //=======================================//
@@ -258,53 +240,49 @@ public class AnnouncementMojo
      * from JIRA. The filter parameter uses the same format of url
      * parameters that is used in a JIRA search.
      *
-     * @parameter default-value=""
      * @since 2.4
      */
+    @Parameter( defaultValue = "" )
     private String filter;
 
     /**
      * Flag to determine if the plugin will generate a JIRA announcement.
      *
-     * @parameter expression="${generateJiraAnnouncement}" default-value="false"
-     * @required
      * @deprecated Since version 2.4 this parameter has been deprecated. Please use the issueManagementSystems parameter instead.
      */
+    @Parameter( property = "generateJiraAnnouncement", defaultValue = "false", required = true )
     private boolean generateJiraAnnouncement;
 
     /**
      * If releases from JIRA should be merged with the releases from a
      * changes.xml file.
      *
-     * @parameter expression="${changes.jiraMerge}" default-value="false"
      * @since 2.1
      * @deprecated Since version 2.4 this parameter has been deprecated. Please use the issueManagementSystems parameter instead.
      */
+    @Parameter( property = "changes.jiraMerge", defaultValue = "false" )
     private boolean jiraMerge;
 
     /**
      * Defines the JIRA password for authentication into a private JIRA installation.
      *
-     * @parameter default-value="" expression="${changes.jiraPassword}"
      * @since 2.1
      */
+    @Parameter( property = "changes.jiraPassword", defaultValue = "" )
     private String jiraPassword;
 
     /**
      * Defines the JIRA username for authentication into a private JIRA installation.
      *
-     * @parameter default-value="" expression="${changes.jiraUser}"
      * @since 2.1
      */
+    @Parameter( property = "changes.jiraUser", defaultValue = "" )
     private String jiraUser;
 
     /**
      * Path to the JIRA XML file, which will be parsed.
-     *
-     * @parameter expression="${project.build.directory}/jira-announcement.xml"
-     * @required
-     * @readonly
      */
+    @Parameter( defaultValue = "${project.build.directory}/jira-announcement.xml", required = true, readonly = true )
     private File jiraXML;
 
     /**
@@ -313,10 +291,8 @@ public class AnnouncementMojo
      * <b>Note:</b> In versions 2.0-beta-3 and earlier this parameter was
      * called "nbEntries".
      * </p>
-     *
-     * @parameter default-value="25"  expression="${changes.maxEntries}"
-     * @required
      */
+    @Parameter( property = "changes.maxEntries", defaultValue = "25", required = true )
     private int maxEntries;
 
     /**
@@ -326,18 +302,14 @@ public class AnnouncementMojo
      * <b>Note:</b> In versions 2.0-beta-3 and earlier this parameter was
      * called "resolutionId".
      * </p>
-     *
-     * @parameter default-value="Fixed" expression="${changes.resolutionIds}"
      */
+    @Parameter( property = "changes.resolutionIds", defaultValue = "Fixed" )
     private String resolutionIds;
 
     /**
      * Settings XML configuration.
-     *
-     * @parameter expression="${settings}"
-     * @required
-     * @readonly
      */
+    @Component
     private Settings settings;
 
     /**
@@ -347,25 +319,24 @@ public class AnnouncementMojo
      * <b>Note:</b> In versions 2.0-beta-3 and earlier this parameter was
      * called "statusId".
      * </p>
-     *
-     * @parameter default-value="Closed" expression="${changes.statusIds}"
      */
+    @Parameter( property = "changes.statusIds", defaultValue = "Closed" )
     private String statusIds;
 
     /**
      * Defines the http user for basic authentication into the JIRA webserver.
      *
-     * @parameter default-value="" expression="${changes.webUser}"
      * @since 2.4
      */
+    @Parameter( property = "changes.webUser", defaultValue = "" )
     private String webUser;
 
     /**
      * Defines the http password for basic authentication into the JIRA webserver.
      *
-     * @parameter default-value="" expression="${changes.webPassword}"
      * @since 2.4
      */
+    @Parameter( property = "changes.webPassword", defaultValue = "" )
     private String webPassword;
 
     /**
@@ -378,9 +349,9 @@ public class AnnouncementMojo
      * to set this parameter to "maven-filtering-".
      * </p>
      *
-     * @parameter default-value="" expression="${changes.versionPrefix}"
      * @since 2.5
      */
+    @Parameter( property = "changes.versionPrefix", defaultValue = "" )
     private String versionPrefix;
 
     //=======================================//
@@ -391,26 +362,26 @@ public class AnnouncementMojo
      * Defines the Trac password for authentication into a private Trac
      * installation.
      *
-     * @parameter default-value="" expression="${changes.tracPassword}"
      * @since 2.4
      */
+    @Parameter( property = "changes.tracPassword", defaultValue = "" )
     private String tracPassword;
 
     /**
      * Defines the Trac query for searching for tickets.
      *
-     * @parameter default-value="order=id"
      * @since 2.4
      */
+    @Parameter( defaultValue = "order=id" )
     private String tracQuery;
 
     /**
      * Defines the Trac username for authentication into a private Trac
      * installation.
      *
-     * @parameter default-value="" expression="${changes.tracUser}"
      * @since 2.4
      */
+    @Parameter( property = "changes.tracUser", defaultValue = "" )
     private String tracUser;
 
     private ReleaseUtils releaseUtils = new ReleaseUtils( getLog() );

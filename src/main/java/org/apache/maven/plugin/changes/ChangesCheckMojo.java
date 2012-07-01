@@ -27,49 +27,47 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.changes.model.Release;
 
 /**
  * Goal which checks that the changes.xml file has the necessary data to
  * generate an announcement or a report for the current release.
  *
- * @goal changes-check
  * @author Justin Edelson
  * @author Dennis Lundberg
  * @since 2.4
- * @threadSafe
  */
-public class ChangesCheckMojo extends AbstractMojo
+@Mojo( name = "changes-check", threadSafe = true )
+public class ChangesCheckMojo
+    extends AbstractMojo
 {
     /**
      * The format that a correct release date should have. This value will be
      * used as a pattern to try to create a date.
-     *
-     * @parameter expression="${changes.releaseDateFormat}" default-value="yyyy-MM-dd"
      */
+    @Parameter( property = "changes.releaseDateFormat", defaultValue = "yyyy-MM-dd" )
     private String releaseDateFormat;
 
     /**
      * Version of the artifact.
-     *
-     * @parameter expression="${changes.version}" default-value="${project.version}"
-     * @required
      */
+    @Parameter( property = "changes.version", defaultValue = "${project.version}", required = true )
     private String version;
 
     /**
      * The path of the <code>changes.xml</code> file that will be checked.
-     *
-     * @parameter expression="${changes.xmlPath}" default-value="src/changes/changes.xml"
      */
+    @Parameter( property = "changes.xmlPath", defaultValue = "src/changes/changes.xml" )
     private File xmlPath;
 
     /**
      * Flag controlling snapshot processing. If set, versions ending with <code>-SNAPSHOT</code> won't be checked.
      *
-     * @parameter expression="${changes.skipSnapshots}" default-value="false"
      * @since 2.7
      */
+    @Parameter( property = "changes.skipSnapshots", defaultValue = "false" )
     private boolean skipSnapshots;
 
     private ReleaseUtils releaseUtils = new ReleaseUtils( getLog() );

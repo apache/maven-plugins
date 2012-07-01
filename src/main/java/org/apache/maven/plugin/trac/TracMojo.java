@@ -30,6 +30,8 @@ import org.apache.maven.plugin.changes.AbstractChangesReport;
 import org.apache.maven.plugin.changes.ProjectUtils;
 import org.apache.maven.plugin.issues.IssuesReportGenerator;
 import org.apache.maven.plugin.issues.IssuesReportHelper;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.reporting.MavenReportException;
 import org.apache.xmlrpc.XmlRpcException;
 
@@ -37,12 +39,11 @@ import org.apache.xmlrpc.XmlRpcException;
  * Goal which downloads issues from the Issue Tracking System and generates a
  * report.
  *
- * @goal trac-report
  * @author Noriko Kinugasa
  * @version $Id$
  * @since 2.1
- * @threadSafe
  */
+@Mojo( name = "trac-report", threadSafe = true )
 public class TracMojo
     extends AbstractChangesReport
 {
@@ -97,32 +98,29 @@ public class TracMojo
      * <code>Updated</code>.
      * </p>
      *
-     * @parameter default-value="Id,Type,Summary,Assignee,Reporter,Priority,Status,Resolution,Created,Updated"
      * @since 2.2
      */
+    @Parameter( defaultValue = "Id,Type,Summary,Assignee,Reporter,Priority,Status,Resolution,Created,Updated" )
     private String columnNames;
 
     /**
      * Defines the Trac query for searching ticket.
-     *
-     * @parameter default-value="order=id"
      */
+    @Parameter( defaultValue = "order=id" )
     private String query;
 
     /**
      * Defines the Trac password for authentication into a private Trac
      * installation.
-     *
-     * @parameter default-value=""
      */
+    @Parameter( defaultValue = "" )
     private String tracPassword;
 
     /**
      * Defines the Trac username for authentication into a private Trac
      * installation.
-     *
-     * @parameter default-value=""
      */
+    @Parameter( defaultValue = "" )
     private String tracUser;
 
     /* --------------------------------------------------------------------- */
