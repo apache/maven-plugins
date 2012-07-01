@@ -21,6 +21,8 @@ package org.apache.maven.plugin.announcement;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.execution.MavenSession;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Parameter;
 
 /**
  * Abstract superclass for announcement mojos.
@@ -34,20 +36,17 @@ public abstract class AbstractAnnouncementMojo
     /**
      * The current project base directory.
      *
-     * @parameter expression="${basedir}"
-     * @required
      * @since 2.1
      */
+    @Parameter( property = "basedir", required = true )
     protected String basedir;
 
     /**
      * The Maven Session.
      *
-     * @parameter expression="${session}"
-     * @readonly
-     * @required
      * @since 2.3
      */
+    @Component
     protected MavenSession mavenSession;
 
     /**
@@ -55,9 +54,9 @@ public abstract class AbstractAnnouncementMojo
      * tree. That is, run in the project contained in the same folder where the
      * mvn execution was launched.
      *
-     * @parameter expression="${announcement.runOnlyAtExecutionRoot}" default-value="false"
      * @since 2.3
      */
+    @Parameter( property = "announcement.runOnlyAtExecutionRoot", defaultValue = "false" )
     protected boolean runOnlyAtExecutionRoot;
 
     /**

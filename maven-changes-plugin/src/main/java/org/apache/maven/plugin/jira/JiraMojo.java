@@ -33,17 +33,19 @@ import org.apache.maven.plugin.issues.Issue;
 import org.apache.maven.plugin.issues.IssueUtils;
 import org.apache.maven.plugin.issues.IssuesReportGenerator;
 import org.apache.maven.plugin.issues.IssuesReportHelper;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.reporting.MavenReportException;
 import org.apache.maven.settings.Settings;
 
 /**
  * Goal which downloads issues from the Issue Tracking System and generates a report.
  *
- * @goal jira-report
  * @author <a href="mailto:jruiz@exist.com">Johnny R. Ruiz III</a>
  * @version $Id$
- * @threadSafe
  */
+@Mojo( name = "jira-report", threadSafe = true )
 public class JiraMojo
     extends AbstractChangesReport
 {
@@ -82,27 +84,25 @@ public class JiraMojo
      * <code>Type</code>, <code>Updated</code> and <code>Version</code>.
      * </p>
      *
-     * @parameter default-value="Key,Summary,Status,Resolution,Assignee"
      * @since 2.0
      */
+    @Parameter( defaultValue = "Key,Summary,Status,Resolution,Assignee" )
     private String columnNames;
 
     /**
      * Sets the component(s) that you want to limit your report to include.
      * Multiple values can be separated by commas (such as 10011,10012).
      * If this is set to empty - that means all components will be included.
-     *
-     * @parameter default-value=""
      */
+    @Parameter( defaultValue = "" )
     private String component;
 
     /**
      * Defines the filter parameters to restrict which issues are retrieved
      * from JIRA. The filter parameter uses the same format of url
      * parameters that is used in a JIRA search.
-     *
-     * @parameter default-value=""
      */
+    @Parameter( defaultValue = "" )
     private String filter;
 
     /**
@@ -111,49 +111,42 @@ public class JiraMojo
      * Multiple fix versions can be separated by commas.
      * If this is set to empty - that means all fix versions will be included.
      *
-     * @parameter default-value=""
      * @since 2.0
      */
+    @Parameter( defaultValue = "" )
     private String fixVersionIds;
 
     /**
      * The pattern used by dates in the JIRA XML-file. This is used to parse
      * the Created and Updated fields.
      *
-     * @parameter default-value="EEE, d MMM yyyy HH:mm:ss Z"
      * @since 2.4
      */
+    @Parameter( defaultValue = "EEE, d MMM yyyy HH:mm:ss Z" )
     private String jiraDatePattern;
 
     /**
      * Defines the JIRA password for authentication into a private JIRA installation.
-     *
-     * @parameter default-value=""
      */
+    @Parameter( defaultValue = "" )
     private String jiraPassword;
 
     /**
      * Defines the JIRA username for authentication into a private JIRA installation.
-     *
-     * @parameter default-value=""
      */
+    @Parameter( defaultValue = "" )
     private String jiraUser;
 
     /**
      * Path to the JIRA XML file, which will be parsed.
-     *
-     * @parameter expression="${project.build.directory}/jira-results.xml"
-     * @required
-     * @readonly
      */
+    @Parameter( defaultValue = "${project.build.directory}/jira-results.xml", required = true, readonly = true )
     private File jiraXmlPath;
 
     /**
      * Maximum number of entries to be fetched from JIRA.
-     *
-     * @parameter default-value=100
-     *
      */
+    @Parameter( defaultValue = "100" )
     private int maxEntries;
 
     /**
@@ -161,9 +154,9 @@ public class JiraMojo
      * The current version being used is <code>${project.version}</code> minus
      * any "-SNAPSHOT" suffix.
      *
-     * @parameter default-value="false"
      * @since 2.0
      */
+    @Parameter( defaultValue = "false" )
     private boolean onlyCurrentVersion;
 
     /**
@@ -172,9 +165,8 @@ public class JiraMojo
      * <code>Major</code>, <code>Minor</code> and <code>Trivial</code>.
      * Multiple values can be separated by commas.
      * If this is set to empty - that means all priorities will be included.
-     *
-     * @parameter default-value=""
      */
+    @Parameter( defaultValue = "" )
     private String priorityIds;
 
     /**
@@ -187,18 +179,14 @@ public class JiraMojo
      * <b>Note:</b> In versions 2.0-beta-3 and earlier this parameter had no
      * default value.
      * </p>
-     *
-     * @parameter default-value="Fixed"
      */
+    @Parameter( defaultValue = "Fixed" )
     private String resolutionIds;
 
     /**
      * Settings XML configuration.
-     *
-     * @parameter expression="${settings}"
-     * @required
-     * @readonly
      */
+    @Component
     private Settings settings;
 
     /**
@@ -222,12 +210,12 @@ public class JiraMojo
      * sort column names in the reverse order. The handling of this changed
      * between JIRA 3 and JIRA 4. The current default value is suitable for
      * JIRA 3. This may change in the future, so please configure your sort
-     * column names in an order that works for your own JIRA version. 
+     * column names in an order that works for your own JIRA version.
      * </p>
      *
-     * @parameter default-value="Priority DESC, Created DESC"
      * @since 2.0
      */
+    @Parameter( defaultValue = "Priority DESC, Created DESC" )
     private String sortColumnNames;
 
     /**
@@ -238,10 +226,10 @@ public class JiraMojo
      * <p>
      * If your installation of JIRA uses custom status IDs, you can reference
      * them here by their numeric values.
-     * You can obtain them on the Statuses page 
-     * (in 4.0.2 it's under Administration > Issue Settings > Statuses) 
-     * - just hover over the Edit link for the status you want and 
-     * you'll see something like 
+     * You can obtain them on the Statuses page
+     * (in 4.0.2 it's under Administration > Issue Settings > Statuses)
+     * - just hover over the Edit link for the status you want and
+     * you'll see something like
      * &lt;your JIRA URL&gt;/secure/admin/EditStatus!default.jspa?id=12345;
      * in this case the value is 12345.
      * </p>
@@ -249,9 +237,8 @@ public class JiraMojo
      * <b>Note:</b> In versions 2.0-beta-3 and earlier this parameter had no
      * default value.
      * </p>
-     *
-     * @parameter default-value="Closed"
      */
+    @Parameter( defaultValue = "Closed" )
     private String statusIds;
 
     /**
@@ -262,9 +249,9 @@ public class JiraMojo
      * Multiple values can be separated by commas.
      * If this is set to empty - that means all types will be included.
      *
-     * @parameter default-value=""
      * @since 2.0
      */
+    @Parameter( defaultValue = "" )
     private String typeIds;
 
     /**
@@ -277,23 +264,21 @@ public class JiraMojo
      * to set this parameter to "maven-filtering-".
      * </p>
      *
-     * @parameter default-value=""
      * @since 2.4
      */
+    @Parameter( defaultValue = "" )
     private String versionPrefix;
 
     /**
      * Defines the http password for basic authentication into the JIRA webserver.
-     *
-     * @parameter default-value=""
      */
+    @Parameter( defaultValue = "" )
     private String webPassword;
 
     /**
      * Defines the http user for basic authentication into the JIRA webserver.
-     *
-     * @parameter default-value=""
      */
+    @Parameter( defaultValue = "" )
     private String webUser;
     
     /*

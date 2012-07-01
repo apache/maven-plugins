@@ -32,6 +32,10 @@ import javax.mail.internet.InternetAddress;
 import org.apache.maven.model.Developer;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.announcement.mailsender.ProjectJavamailMailSender;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Execute;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.logging.console.ConsoleLogger;
@@ -44,11 +48,10 @@ import org.codehaus.plexus.util.IOUtil;
  *
  * @author aramirez@exist.com
  * @version $Id$
- * @goal announcement-mail
- * @execute goal="announcement-generate"
  * @since 2.0-beta-2
- * @threadSafe
  */
+@Mojo( name = "announcement-mail", threadSafe = true )
+@Execute( goal = "announcement-generate" )
 public class AnnouncementMailMojo
     extends AbstractAnnouncementMojo
 {
@@ -58,11 +61,8 @@ public class AnnouncementMailMojo
 
     /**
      * Possible senders.
-     *
-     * @parameter expression="${project.developers}"
-     * @required
-     * @readonly
      */
+    @Parameter( property = "project.developers", required = true, readonly = true )
     private List from;
 
     /**
@@ -70,132 +70,115 @@ public class AnnouncementMailMojo
      * attribute is not set. In this case, this should match the id of one of the developers in
      * the pom. If a matching developer is not found, then the first developer in the pom will be
      * used.
-     *
-     * @parameter expression="${changes.fromDeveloperId}"
      */
+    @Parameter( property = "changes.fromDeveloperId" )
     private String fromDeveloperId;
 
     /**
      * Mail content type to use.
-     * @parameter default-value="text/plain"
-     * @required
+     *
      * @since 2.1
      */
+    @Parameter( defaultValue = "text/plain", required = true )
     private String mailContentType;
 
     /**
      * Defines the sender of the announcement email. This takes precedence over the list
      * of developers specified in the POM.
      * if the sender is not a member of the development team. Note that since this is a bean type,
-     * you cannot specify it from command level with <pre>-D</pre>. Use 
+     * you cannot specify it from command level with <pre>-D</pre>. Use
      * <pre>-Dchanges.sender='Your Name &lt;you@domain>'</pre> instead.
-     *
-     * @parameter expression="${changes.mailSender}"
      */
+    @Parameter( property = "changes.mailSender" )
     private MailSender mailSender;
-    
+
     /**
      * Defines the sender of the announcement. This takes precedence over both ${changes.mailSender}
-     * and the list of developers in the POM. 
-     * 
+     * and the list of developers in the POM.
+     * <p/>
      * This parameter parses an email address in standard RFC822 format, e.g.
      * <pre>-Dchanges.sender='Your Name &lt;you@domain>'</pre>.
      *
-     * @parameter expression="${changes.sender}"
      * @since 2.7
      */
+    @Parameter( property = "changes.sender" )
     private String senderString;
 
     /**
      * The password used to send the email.
-     *
-     * @parameter expression="${changes.password}"
      */
+    @Parameter( property = "changes.password" )
     private String password;
 
     /**
-     * @parameter expression="${project}"
-     * @readonly
      */
+    @Component
     private MavenProject project;
 
     /**
      * Smtp Server.
-     *
-     * @parameter expression="${changes.smtpHost}"
-     * @required
      */
+    @Parameter( property = "changes.smtpHost", required = true )
     private String smtpHost;
 
     /**
      * Port.
-     *
-     * @parameter default-value="25" expression="${changes.smtpPort}"
-     * @required
      */
+    @Parameter( property = "changes.smtpPort", defaultValue = "25", required = true )
     private int smtpPort;
 
     /**
      * If the email should be sent in SSL mode.
-     *
-     * @parameter default-value="false" expression="${changes.sslMode}"
      */
+    @Parameter( property = "changes.sslMode", defaultValue = "false" )
     private boolean sslMode;
 
 
     /**
      * Subject for the email.
-     *
-     * @parameter default-value="[ANNOUNCEMENT] - ${project.name} ${project.version} released" expression="${changes.subject}"
-     * @required
      */
+    @Parameter( property = "changes.subject",
+                defaultValue = "[ANNOUNCEMENT] - ${project.name} ${project.version} released", required = true )
     private String subject;
 
     /**
      * The Velocity template used to format the announcement.
-     *
-     * @parameter default-value="announcement.vm" expression="${changes.template}"
-     * @required
      */
+    @Parameter( property = "changes.template", defaultValue = "announcement.vm", required = true )
     private String template;
 
     /**
      * Directory which contains the template for announcement email.
-     *
-     * @parameter expression="${project.build.directory}/announcement"
-     * @required
      */
+    @Parameter( defaultValue = "${project.build.directory}/announcement", required = true )
     private File templateOutputDirectory;
 
     /**
      * Recipient email address.
-     *
-     * @parameter
-     * @required
      */
+    @Parameter( required = true )
     private List toAddresses;
 
     /**
      * Recipient cc email address.
      *
-     * @parameter
      * @since 2.5
      */
+    @Parameter
     private List ccAddresses;
 
     /**
      * Recipient bcc email address.
      *
-     * @parameter
      * @since 2.5
      */
+    @Parameter
     private List bccAddresses;
 
     /**
      * The username used to send the email.
-     *
-     * @parameter expression="${changes.username}"
      */
+    @Parameter( property = "changes.username" )
     private String username;
 
     private ProjectJavamailMailSender mailer = new ProjectJavamailMailSender();

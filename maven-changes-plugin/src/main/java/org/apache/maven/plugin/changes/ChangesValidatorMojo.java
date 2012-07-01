@@ -28,47 +28,45 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.changes.schema.ChangesSchemaValidator;
 import org.apache.maven.plugin.changes.schema.SchemaValidatorException;
 import org.apache.maven.plugin.changes.schema.XmlValidationHandler;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.xml.sax.SAXParseException;
 
 /**
  * 
  * Goal which validate the <code>changes.xml</code> file.
  * 
- * @goal changes-validate
- * 
  * @author <a href="mailto:olamy@apache.org">olamy</a>
  * @version $Id$
  * @since 2.1
- * @threadSafe
  */
+@Mojo( name = "changes-validate", threadSafe = true )
 public class ChangesValidatorMojo
     extends AbstractMojo
 {
 
     /**
-     * @component role="org.apache.maven.plugin.changes.schema.ChangesSchemaValidator" roleHint="default"
      */
+    @Component( role = ChangesSchemaValidator.class, hint = "default" )
     private ChangesSchemaValidator changesSchemaValidator;
 
     /**
      * The changes xsd version.
-     *
-     * @parameter expression="${changes.xsdVersion}" default-value="1.0.0"
      */
+    @Parameter( property = "changes.xsdVersion", defaultValue = "1.0.0" )
     private String changesXsdVersion;
 
     /**
      * Mojo failure if validation failed. If not and validation failed only a warning will be logged.
-     *
-     * @parameter expression="${changes.validate.failed}" default-value="false"
      */
+    @Parameter( property = "changes.validate.failed", defaultValue = "false" )
     private boolean failOnError;
 
     /**
      * The path of the <code>changes.xml</code> file that will be converted into an HTML report.
-     *
-     * @parameter expression="${changes.xmlPath}" default-value="src/changes/changes.xml"
      */
+    @Parameter( property = "changes.xmlPath", defaultValue = "src/changes/changes.xml" )
     private File xmlPath;
 
     /** 
