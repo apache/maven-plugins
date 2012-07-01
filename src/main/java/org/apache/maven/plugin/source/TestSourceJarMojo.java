@@ -19,16 +19,17 @@ package org.apache.maven.plugin.source;
  * under the License.
  */
 
+import org.apache.maven.plugins.annotations.Execute;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+
 /**
  * This plugin bundles all the test sources into a jar archive.
  *
- * @goal test-jar
- * @phase package
- * @execute phase="generate-sources"
  * @since 2.0.3
- * @threadSafe
- * 
  */
+@Mojo( name = "test-jar", defaultPhase = LifecyclePhase.PACKAGE, threadSafe = true )
+@Execute( phase = LifecyclePhase.GENERATE_SOURCES )
 public class TestSourceJarMojo
     extends TestSourceJarNoForkMojo
 {

@@ -25,6 +25,8 @@ import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.codehaus.plexus.archiver.Archiver;
@@ -37,7 +39,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -57,78 +58,73 @@ public abstract class AbstractSourceJarMojo
      * List of files to include. Specified as fileset patterns which are relative to the input directory whose contents
      * is being packaged into the JAR.
      *
-     * @parameter
      * @since 2.1
      */
+    @Parameter
     private String[] includes;
 
     /**
      * List of files to exclude. Specified as fileset patterns which are relative to the input directory whose contents
      * is being packaged into the JAR.
      *
-     * @parameter
      * @since 2.1
      */
+    @Parameter
     private String[] excludes;
 
     /**
      * Exclude commonly excluded files such as SCM configuration. These are defined in the plexus
      * FileUtils.getDefaultExcludes()
      *
-     * @parameter default-value="true"
      * @since 2.1
      */
+    @Parameter( defaultValue = "true" )
     private boolean useDefaultExcludes;
 
     /**
      * The Maven Project Object
      *
-     * @parameter expression="${project}"
-     * @readonly
-     * @required
      */
+    @Parameter(defaultValue = "${project}", readonly = true, required = true)
     protected MavenProject project;
 
     /**
      * The Jar archiver.
-     *
-     * @component role="org.codehaus.plexus.archiver.Archiver" roleHint="jar"
      */
+    @Component( role = Archiver.class, hint = "jar" )
     private JarArchiver jarArchiver;
 
     /**
      * The archive configuration to use. See <a href="http://maven.apache.org/shared/maven-archiver/index.html">Maven
      * Archiver Reference</a>.
      *
-     * @parameter
      * @since 2.1
      */
+    @Parameter
     private MavenArchiveConfiguration archive = new MavenArchiveConfiguration();
 
     /**
      * Path to the default MANIFEST file to use. It will be used if <code>useDefaultManifestFile</code> is set to
      * <code>true</code>.
      *
-     * @parameter default-value="${project.build.outputDirectory}/META-INF/MANIFEST.MF"
-     * @required
-     * @readonly
      * @since 2.1
      */
+    @Parameter( defaultValue = "${project.build.outputDirectory}/META-INF/MANIFEST.MF", readonly = true,
+                required = true )
     private File defaultManifestFile;
 
     /**
      * Set this to <code>true</code> to enable the use of the <code>defaultManifestFile</code>. <br/>
      *
-     * @parameter default-value="false"
      * @since 2.1
      */
+    @Parameter( defaultValue = "false" )
     private boolean useDefaultManifestFile;
 
     /**
      * Specifies whether or not to attach the artifact to the project
-     *
-     * @parameter expression="${attach}" default-value="true"
      */
+    @Parameter( property = "attach", defaultValue = "true" )
     private boolean attach;
 
     /**
@@ -136,48 +132,43 @@ public abstract class AbstractSourceJarMojo
      * can be convenient if your project includes large resources, such as
      * images, and you don't want to include them in the sources-jar.
      *
-     * @parameter expression="${source.excludeResources}" default-value="false"
      * @since 2.0.4
      */
+    @Parameter( property = "source.excludeResources", defaultValue = "false" )
     protected boolean excludeResources;
 
     /**
      * Specifies whether or not to include the POM file in the sources-jar.
      *
-     * @parameter expression="${source.includePom}" default-value="false"
      * @since 2.1
      */
+    @Parameter( property = "source.includePom", defaultValue = "false" )
     protected boolean includePom;
 
     /**
      * Used for attaching the source jar to the project.
-     *
-     * @component
      */
+    @Component
     private MavenProjectHelper projectHelper;
 
     /**
      * The directory where the generated archive file will be put.
-     *
-     * @parameter default-value="${project.build.directory}"
      */
+    @Parameter( defaultValue = "${project.build.directory}" )
     protected File outputDirectory;
 
     /**
      * The filename to be used for the generated archive file.
      * For the source:jar goal, "-sources" is appended to this filename.
      * For the source:test-jar goal, "-test-sources" is appended.
-     *
-     * @parameter default-value="${project.build.finalName}"
      */
+    @Parameter( defaultValue = "${project.build.finalName}" )
     protected String finalName;
 
     /**
      * Contains the full list of projects in the reactor.
-     *
-     * @parameter expression="${reactorProjects}"
-     * @readonly
      */
+    @Parameter( defaultValue = "${reactorProjects}", readonly = true )
     protected List reactorProjects;
 
     /**
@@ -185,18 +176,18 @@ public abstract class AbstractSourceJarMojo
      * always be created.  If set to false, the jar will only be created when the
      * sources are newer than the jar.
      *
-     * @parameter expression="${source.forceCreation}" default-value="false"
      * @since 2.1
      */
+    @Parameter( property = "source.forceCreation", defaultValue = "false" )
     private boolean forceCreation;
 
     /**
      * A flag used to disable the source procedure. This is primarily intended for usage from the command line to
      * occasionally adjust the build.
      *
-     * @parameter expression="${source.skip}" default-value="false"
      * @since 2.2
      */
+    @Parameter( property = "source.skip", defaultValue = "false" )
     private boolean skipSource;
 
     // ----------------------------------------------------------------------
@@ -343,7 +334,7 @@ public abstract class AbstractSourceJarMojo
             }
         }
 
-        for ( String s : getSources( p ))
+        for ( String s : getSources( p ) )
         {
 
             File sourceDirectory = new File( s );

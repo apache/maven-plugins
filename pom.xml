@@ -36,6 +36,11 @@ under the License.
   <name>Maven Source Plugin</name>
   <description>The Maven 2 Source Plugin creates a JAR archive of the source files of the current project.</description>
 
+  <properties>
+    <mavenVersion>2.0.9</mavenVersion>
+    <mavenPluginPluginVersion>3.0</mavenPluginPluginVersion>
+  </properties>
+
   <prerequisites>
     <maven>${mavenVersion}</maven>
   </prerequisites>
@@ -60,10 +65,6 @@ under the License.
     <url>http://jira.codehaus.org/browse/MSOURCES</url>
   </issueManagement>
 
-  <properties>
-    <mavenVersion>2.0.9</mavenVersion>
-  </properties>
-
   <dependencies>
     <dependency>
       <groupId>org.apache.maven</groupId>
@@ -85,6 +86,15 @@ under the License.
       <artifactId>maven-project</artifactId>
       <version>${mavenVersion}</version>
     </dependency>
+
+    <!-- dependencies to annotations -->
+    <dependency>
+      <groupId>org.apache.maven.plugin-tools</groupId>
+      <artifactId>maven-plugin-annotations</artifactId>
+      <version>${mavenPluginPluginVersion}</version>
+      <scope>compile</scope>
+    </dependency>
+
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-archiver</artifactId>
@@ -124,6 +134,46 @@ under the License.
       <scope>test</scope>
     </dependency>
   </dependencies>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-plugin-plugin</artifactId>
+          <version>${mavenPluginPluginVersion}</version>
+          <configuration>
+            <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
+          </configuration>
+          <executions>
+            <execution>
+              <id>mojo-descriptor</id>
+              <phase>process-classes</phase>
+              <goals>
+                <goal>descriptor</goal>
+              </goals>
+            </execution>
+            <execution>
+              <id>help-goal</id>
+              <goals>
+                <goal>helpmojo</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-plugin-plugin</artifactId>
+        <version>${mavenPluginPluginVersion}</version>
+      </plugin>
+    </plugins>
+  </reporting>
 
   <profiles>
     <profile>
