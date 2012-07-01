@@ -30,6 +30,10 @@ import org.apache.commons.lang.SystemUtils;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.cli.CommandLineException;
 import org.codehaus.plexus.util.cli.CommandLineUtils;
@@ -41,71 +45,59 @@ import org.codehaus.plexus.util.cli.StreamConsumer;
  *
  * @author <a href="jerome@coffeebreaks.org">Jerome Lacoste</a>
  * @version $Id$
- * @goal sign-verify
- * @phase package
- * @requiresProject
  * @todo refactor the common code with javadoc plugin
- * @requiresDependencyResolution runtime
  * @deprecated As of version 2.3, this goal is no longer supported in favor of the dedicated maven-jarsigner-plugin.
  */
+@Mojo( name = "sign-verify", defaultPhase = LifecyclePhase.PACKAGE, requiresProject = true,
+       requiresDependencyResolution = ResolutionScope.RUNTIME )
 public class JarSignVerifyMojo
     extends AbstractMojo
 {
     /**
      * The working directory in which the jarsigner executable will be run.
-     *
-     * @parameter expression="${workingdir}" default-value="${basedir}"
-     * @required
      */
+    @Parameter( property = "workingdir", defaultValue = "${basedir}", required = true )
     private File workingDirectory;
 
     /**
      * Directory containing the generated JAR.
-     *
-     * @parameter expression="${project.build.directory}"
-     * @required
-     * @readonly
      */
+    @Parameter( property = "project.build.directory", required = true, readonly = true )
     private File basedir;
 
     /**
      * Name of the generated JAR (without classifier and extension).
-     *
-     * @parameter alias="jarname" expression="${project.build.finalName}"
-     * @required
      */
+    @Parameter( alias = "jarname", property = "project.build.finalName", required = true )
     private String finalName;
 
     /**
      * Path of the signed jar. When specified, the finalName is ignored.
-     *
-     * @parameter expression="${jarpath}"
      */
+    @Parameter( property = "jarpath" )
     private File jarPath;
 
     /**
      * Check certificates. Requires {@link #setVerbose(boolean)}.
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/jarsigner.html#Options">options</a>.
-     *
-     * @parameter expression="${checkcerts}" default-value="false"
      */
+    @Parameter( property = "checkcerts", defaultValue = "false" )
     private boolean checkCerts;
 
     /**
      * Enable verbose
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/jarsigner.html#Options">options</a>.
-     *
-     * @parameter expression="${verbose}" default-value="false"
      */
+    @Parameter( property = "verbose", defaultValue = "false" )
     private boolean verbose;
 
-    /** When <code>true</code> this will make the execute() operation fail,
+    /**
+     * When <code>true</code> this will make the execute() operation fail,
      * throwing an exception, when verifying a non signed jar.
      * Primarily to keep backwards compatibility with existing code, and allow reusing the
      * bean in unattended operations when set to <code>false</code>.
-     *
-     * @parameter expression="${errorWhenNotSigned}" default-value="true"
-     **/
+     */
+    @Parameter( property = "errorWhenNotSigned", defaultValue = "true" )
     private boolean errorWhenNotSigned = true;
 
     /**

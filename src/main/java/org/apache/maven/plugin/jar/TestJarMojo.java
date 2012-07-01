@@ -21,18 +21,19 @@ package org.apache.maven.plugin.jar;
 
 import java.io.File;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 
 /**
  * Build a JAR of the test classes for the current project.
  *
  * @author <a href="evenisse@apache.org">Emmanuel Venisse</a>
  * @version $Id$
- * @goal test-jar
- * @phase package
- * @requiresProject
- * @threadSafe
- * @requiresDependencyResolution test
  */
+@Mojo( name = "test-jar", defaultPhase = LifecyclePhase.PACKAGE, requiresProject = true, threadSafe = true,
+       requiresDependencyResolution = ResolutionScope.TEST )
 public class TestJarMojo
     extends AbstractJarMojo
 {
@@ -40,17 +41,14 @@ public class TestJarMojo
     /**
      * Set this to <code>true</code> to bypass unit tests entirely.
      * Its use is <b>NOT RECOMMENDED</b>, but quite convenient on occasion.
-     *
-     * @parameter expression="${maven.test.skip}"
      */
+    @Parameter( property = "maven.test.skip" )
     private boolean skip;
 
     /**
      * Directory containing the test classes and resource files that should be packaged into the JAR.
-     *
-     * @parameter default-value="${project.build.testOutputDirectory}"
-     * @required
      */
+    @Parameter( defaultValue = "${project.build.testOutputDirectory}", required = true )
     private File testClassesDirectory;
 
     protected String getClassifier()
