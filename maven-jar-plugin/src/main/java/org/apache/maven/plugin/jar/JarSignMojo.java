@@ -23,6 +23,11 @@ import org.apache.commons.lang.SystemUtils;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.apache.maven.artifact.handler.ArtifactHandler;
@@ -44,117 +49,99 @@ import java.util.StringTokenizer;
  *
  * @author <a href="jerome@coffeebreaks.org">Jerome Lacoste</a>
  * @version $Id$
- * @goal sign
- * @phase package
- * @requiresProject
  * @todo refactor the common code with javadoc plugin
- * @requiresDependencyResolution runtime
  * @deprecated As of version 2.3, this goal is no longer supported in favor of the dedicated maven-jarsigner-plugin.
  */
+@Mojo( name = "sign", defaultPhase = LifecyclePhase.PACKAGE, requiresProject = true,
+       requiresDependencyResolution = ResolutionScope.RUNTIME )
 public class JarSignMojo
     extends AbstractMojo
 {
     /**
      * Set this to <code>true</code> to disable signing.
      * Useful to speed up build process in development environment.
-     *
-     * @parameter expression="${maven.jar.sign.skip}" default-value="false"
      */
+    @Parameter( property = "maven.jar.sign.skip", defaultValue = "false" )
     private boolean skip;
 
     /**
      * The working directory in which the jarsigner executable will be run.
-     *
-     * @parameter expression="${workingdir}" default-value="${basedir}"
-     * @required
      */
+    @Parameter( property = "workingdir", defaultValue = "${basedir}", required = true )
     private File workingDirectory;
 
     /**
      * Directory containing the generated JAR.
-     *
-     * @parameter expression="${project.build.directory}"
-     * @required
-     * @readonly
      */
+    @Parameter( property = "project.build.directory", required = true, readonly = true )
     private File basedir;
 
     /**
      * Name of the generated JAR (without classifier and extension).
-     *
-     * @parameter alias="jarname" expression="${project.build.finalName}"
-     * @required
      */
+    @Parameter( alias = "jarname", property = "project.build.finalName", required = true )
     private String finalName;
 
     /**
      * Path of the jar to sign. When specified, the finalName is ignored.
-     *
-     * @parameter alias="jarpath" default-value="${project.build.directory}/${project.build.finalName}.${project.packaging}"
      */
+    @Parameter( alias = "jarpath",
+                defaultValue = "${project.build.directory}/${project.build.finalName}.${project.packaging}" )
     private File jarPath;
 
     /**
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/jarsigner.html#Options">options</a>.
-     *
-     * @parameter expression="${keystore}"
      */
+    @Parameter( property = "keystore" )
     private String keystore;
 
     /**
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/jarsigner.html#Options">options</a>.
-     *
-     * @parameter expression="${storepass}"
      */
+    @Parameter( property = "storepass" )
     private String storepass;
 
     /**
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/jarsigner.html#Options">options</a>.
-     *
-     * @parameter expression="${keypass}"
      */
+    @Parameter( property = "keypass" )
     private String keypass;
 
     /**
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/jarsigner.html#Options">options</a>.
      *
-     * @parameter expression="${sigfile}"
      * @todo make a File?
      */
+    @Parameter( property = "sigfile" )
     private String sigfile;
 
     /**
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/jarsigner.html#Options">options</a>.
      * <p/>
      * Not specifying this argument will sign the jar in-place (your original jar is going to be overwritten).
-     *
-     * @parameter expression="${signedjar}"
      */
+    @Parameter( property = "signedjar" )
     private File signedjar;
 
     /**
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/jarsigner.html#Options">options</a>.
      * The corresponding option in the command line is -storetype.
-     *
-     * @parameter expression="${type}"
      */
+    @Parameter( property = "type" )
     private String type;
 
     /**
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/jarsigner.html#Options">options</a>.
-     *
-     * @parameter expression="${alias}"
-     * @required
      */
+    @Parameter( property = "alias", required = true )
     private String alias;
 
     /**
      * Automatically verify a jar after signing it.
      * <p/>
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/jarsigner.html#Options">options</a>.
-     *
-     * @parameter expression="${verify}" default-value="false"
      */
+    @Parameter( property = "verify", defaultValue = "false" )
     private boolean verify;
 
     /**
@@ -167,31 +154,26 @@ public class JarSignMojo
     /**
      * Enable verbose.
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/jarsigner.html#Options">options</a>.
-     *
-     * @parameter expression="${verbose}" default-value="false"
      */
+    @Parameter( property = "verbose", defaultValue = "false" )
     private boolean verbose;
 
     /**
-     * @component
      */
+    @Component
     private MavenProjectHelper projectHelper;
 
     /**
      * The Maven project.
-     *
-     * @parameter expression="${project}"
-     * @required
-     * @readonly
      */
+    @Component
     private MavenProject project;
 
     /**
      * Classifier to use for the generated artifact.
      * If not specified, the generated artifact becomes the primary artifact.
-     *
-     * @parameter expression="${classifier}"
      */
+    @Parameter( property = "classifier" )
     private String classifier;
 
     public void execute()

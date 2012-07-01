@@ -19,6 +19,11 @@ package org.apache.maven.plugin.jar;
  * under the License.
  */
 
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
+
 import java.io.File;
 
 /**
@@ -26,30 +31,24 @@ import java.io.File;
  *
  * @author <a href="evenisse@apache.org">Emmanuel Venisse</a>
  * @version $Id$
- * @goal jar
- * @phase package
- * @requiresProject
- * @threadSafe
- * @requiresDependencyResolution runtime
  */
+@Mojo( name = "jar", defaultPhase = LifecyclePhase.PACKAGE, requiresProject = true, threadSafe = true,
+       requiresDependencyResolution = ResolutionScope.RUNTIME )
 public class JarMojo
     extends AbstractJarMojo
 {
     /**
      * Directory containing the classes and resource files that should be packaged into the JAR.
-     *
-     * @parameter default-value="${project.build.outputDirectory}"
-     * @required
      */
+    @Parameter( defaultValue = "${project.build.outputDirectory}", required = true )
     private File classesDirectory;
 
     /**
      * Classifier to add to the artifact generated. If given, the artifact will be attached.
      * If this is not given,it will merely be written to the output directory
      * according to the finalName.
-     *
-     * @parameter
      */
+    @Parameter
     private String classifier;
 
     protected String getClassifier()
