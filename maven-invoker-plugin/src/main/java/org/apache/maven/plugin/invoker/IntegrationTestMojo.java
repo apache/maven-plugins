@@ -20,22 +20,23 @@ package org.apache.maven.plugin.invoker;
  */
 
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 
 /**
  * Searches for integration test Maven projects, and executes each, collecting a log in the project directory, will
  * never fail the build, designed to be used in conjunction with the verify mojo.
  *
- * @goal integration-test
- * @phase integration-test
- * @requiresDependencyResolution test
- * @threadSafe
  * @since 1.4
  *
  * @author <a href="mailto:stephenconnolly at codehaus">Stephen Connolly</a>
  * @version $Id$
  */
+@Mojo( name = "integration-test", defaultPhase = LifecyclePhase.INTEGRATION_TEST,
+       requiresDependencyResolution = ResolutionScope.TEST, threadSafe = true )
 public class IntegrationTestMojo
-    extends AbstractInvokerMojo
+extends AbstractInvokerMojo
 {
 
     void processResults( InvokerSession invokerSession )

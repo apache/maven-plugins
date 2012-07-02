@@ -23,6 +23,9 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.invoker.model.io.xpp3.BuildJobXpp3Reader;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
@@ -32,47 +35,45 @@ import java.io.IOException;
 /**
  * Checks the results of maven-invoker-plugin based integration tests and fails the build if any tests failed.
  *
- * @goal verify
- * @phase verify
- * @threadSafe
  * @author <a href="mailto:olamy@apache.org">olamy</a>
  * @since 1.4
  */
-public class VerifyMojo extends AbstractMojo
+@Mojo( name = "verify", defaultPhase = LifecyclePhase.VERIFY, threadSafe = true )
+public class VerifyMojo
+    extends AbstractMojo
 {
 
     /**
      * Flag used to suppress certain invocations. This is useful in tailoring the build using profiles.
      *
-     * @parameter expression="${invoker.skip}" default-value="false"
      * @since 1.1
      */
+    @Parameter( property = "invoker.skip", defaultValue = "false" )
     private boolean skipInvocation;
 
     /**
      * Base directory where all build reports are read from.
      *
-     * @parameter expression="${invoker.reportsDirectory}" default-value="${project.build.directory}/invoker-reports"
      * @since 1.4
      */
+    @Parameter( property = "invoker.reportsDirectory", defaultValue = "${project.build.directory}/invoker-reports" )
     private File reportsDirectory;
 
     /**
      * A flag controlling whether failures of the sub builds should fail the main build, too. If set to
      * <code>true</code>, the main build will proceed even if one or more sub builds failed.
      *
-     * @parameter expression="${maven.test.failure.ignore}" default-value="false"
      * @since 1.3
      */
+    @Parameter( property = "maven.test.failure.ignore", defaultValue = "false" )
     private boolean ignoreFailures;
 
     /**
      * Flag used to suppress the summary output notifying of successes and failures. If set to <code>true</code>, the
      * only indication of the build's success or failure will be the effect it has on the main build (if it fails, the
      * main build should fail as well).
-     *
-     * @parameter default-value="false"
      */
+    @Parameter( defaultValue = "false" )
     private boolean suppressSummaries;
 
     /**
