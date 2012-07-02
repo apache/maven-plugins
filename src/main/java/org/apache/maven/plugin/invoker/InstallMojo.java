@@ -42,6 +42,11 @@ import org.apache.maven.model.Model;
 import org.apache.maven.model.Parent;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.FileUtils;
 
@@ -50,45 +55,38 @@ import org.codehaus.plexus.util.FileUtils;
  * More precisely, all artifacts of the project itself, all its locally reachable parent POMs and all its dependencies
  * from the reactor will be installed to the local repository.
  * 
- * @goal install
- * @phase pre-integration-test
- * @requiresDependencyResolution runtime
- * @threadSafe
  * @since 1.2
  * @author Paul Gier
  * @author Benjamin Bentmann
  * @version $Id$
  */
+@Mojo( name = "install", defaultPhase = LifecyclePhase.PRE_INTEGRATION_TEST,
+       requiresDependencyResolution = ResolutionScope.RUNTIME, threadSafe = true )
 public class InstallMojo
     extends AbstractMojo
 {
 
     /**
      * Maven artifact install component to copy artifacts to the local repository.
-     * 
-     * @component
      */
+    @Component
     private ArtifactInstaller installer;
 
     /**
      * The component used to create artifacts.
-     * 
-     * @component
      */
+    @Component
     private ArtifactFactory artifactFactory;
 
     /**
      * The component used to create artifacts.
-     * 
-     * @component
      */
+    @Component
     private ArtifactRepositoryFactory repositoryFactory;
 
     /**
-     * @parameter expression="${localRepository}"
-     * @required
-     * @readonly
      */
+    @Parameter( property = "localRepository", required = true, readonly = true )
     private ArtifactRepository localRepository;
 
     /**
@@ -96,35 +94,29 @@ public class InstallMojo
      * If not set, the regular local repository will be used. To prevent soiling of your regular local repository with
      * possibly broken artifacts, it is strongly recommended to use an isolated repository for the integration tests
      * (e.g. <code>${project.build.directory}/it-repo</code>).
-     * 
-     * @parameter expression="${invoker.localRepositoryPath}"
      */
+    @Parameter( property = "invoker.localRepositoryPath" )
     private File localRepositoryPath;
 
     /**
      * The current Maven project.
-     * 
-     * @parameter expression="${project}"
-     * @required
-     * @readonly
      */
+    @Component
     private MavenProject project;
 
     /**
      * The set of Maven projects in the reactor build.
-     * 
-     * @parameter default-value="${reactorProjects}"
-     * @readonly
      */
+    @Parameter( defaultValue = "${reactorProjects}", readonly = true )
     private Collection<MavenProject> reactorProjects;
 
     /**
      * A flag used to disable the installation procedure. This is primarily intended for usage from the command line to
      * occasionally adjust the build.
-     * 
-     * @parameter expression="${invoker.skip}" default-value="false"
+     *
      * @since 1.4
      */
+    @Parameter( property = "invoker.skip", defaultValue = "false" )
     private boolean skipInstallation;
 
     /**
@@ -140,46 +132,44 @@ public class InstallMojo
     /**
      * Extra dependencies that need to be installed on the local repository.<BR>
      * Format:
-     * 
+     *
      * <pre>
      * groupId:artifactId:version:type:classifier
      * </pre>
-     * 
+     *
      * Examples:
-     * 
+     *
      * <pre>
      * org.apache.maven.plugins:maven-clean-plugin:2.4:maven-plugin
      * org.apache.maven.plugins:maven-clean-plugin:2.4:jar:javadoc
      * </pre>
-     * 
+     *
      * If the type is 'maven-plugin' the plugin will try to resolve the artifact using plugin remote repositories,
      * instead of using artifact remote repositories.
-     * 
-     * @parameter
+     *
      * @since 1.6
      */
+    @Parameter
     private String[] extraArtifacts;
 
     /**
-     * @component
      */
+    @Component
     private ArtifactResolver resolver;
 
     /**
-     * @parameter default-value="${project.remoteArtifactRepositories}"
-     * @readonly
      */
+    @Parameter( defaultValue = "${project.remoteArtifactRepositories}", readonly = true )
     private List<ArtifactRepository> remoteArtifactRepositories;
 
     /**
-     * @parameter default-value="${project.pluginArtifactRepositories}"
-     * @readonly
      */
+    @Parameter( defaultValue = "${project.pluginArtifactRepositories}", readonly = true )
     private List<ArtifactRepository> remotePluginRepositories;
 
     /**
-     * @component
      */
+    @Component
     private ArtifactMetadataSource artifactMetadataSource;
 
     /**
