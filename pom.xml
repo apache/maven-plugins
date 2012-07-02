@@ -60,6 +60,7 @@ under the License.
     <mavenArchiverVersion>2.5</mavenArchiverVersion>
     <mavenFilteringVersion>1.0-beta-2</mavenFilteringVersion>
     <mavenVersion>2.0.6</mavenVersion>
+    <mavenPluginPluginVersion>3.0</mavenPluginPluginVersion>
   </properties>
 
   <dependencies>
@@ -106,7 +107,7 @@ under the License.
     <dependency>
       <groupId>org.apache.maven.plugin-tools</groupId>
       <artifactId>maven-plugin-annotations</artifactId>
-      <version>3.1-SNAPSHOT</version>
+      <version>${mavenPluginPluginVersion}</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -178,7 +179,7 @@ under the License.
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-plugin-plugin</artifactId>
-        <version>3.1-SNAPSHOT</version>
+        <version>${mavenPluginPluginVersion}</version>
         <executions>
           <execution>
             <id>generate-descriptor</id>
@@ -199,7 +200,7 @@ under the License.
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-plugin-plugin</artifactId>
-        <version>3.1-SNAPSHOT</version>
+        <version>${mavenPluginPluginVersion}</version>
       </plugin>
     </plugins>
   </reporting>
