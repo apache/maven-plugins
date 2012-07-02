@@ -63,6 +63,7 @@ under the License.
     <groovy-groupId>org.codehaus.groovy</groovy-groupId>
     <groovy-artifactId>groovy</groovy-artifactId>
     <groovy-version>1.8.6</groovy-version>
+    <mavenPluginPluginVersion>3.0</mavenPluginPluginVersion>
   </properties>
 
   <dependencies>
@@ -110,7 +111,7 @@ under the License.
     <dependency>
       <groupId>org.apache.maven.plugin-tools</groupId>
       <artifactId>maven-plugin-annotations</artifactId>
-      <version>3.1-SNAPSHOT</version>
+      <version>${mavenPluginPluginVersion}</version>
       <scope>compile</scope>
     </dependency>
 
@@ -217,7 +218,7 @@ under the License.
       <plugins>
         <plugin>
           <artifactId>maven-plugin-plugin</artifactId>
-          <version>3.1-SNAPSHOT</version>
+          <version>${mavenPluginPluginVersion}</version>
           <configuration>
             <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
           </configuration>
@@ -313,7 +314,7 @@ under the License.
 
           <plugin>
             <artifactId>maven-plugin-plugin</artifactId>
-            <version>3.1-SNAPSHOT</version>
+            <version>${mavenPluginPluginVersion}</version>
           </plugin>
 
         </plugins>
