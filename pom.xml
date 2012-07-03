@@ -190,6 +190,7 @@ under the License.
     <wagonVersion>1.0</wagonVersion>
     <plexusVersion>1.5.4</plexusVersion>
     <scmVersion>1.4</scmVersion>
+    <mavenPluginPluginVersion>3.0</mavenPluginPluginVersion>
     <!-- for ITs -->
     <javadocPluginVersion>2.8.1</javadocPluginVersion>
     <projectInfoReportsPluginVersion>2.4</projectInfoReportsPluginVersion>
@@ -257,7 +258,7 @@ under the License.
     <dependency>
       <groupId>org.apache.maven.plugin-tools</groupId>
       <artifactId>maven-plugin-annotations</artifactId>
-      <version>3.1-SNAPSHOT</version>
+      <version>${mavenPluginPluginVersion}</version>
       <scope>compile</scope>
     </dependency>
 
@@ -470,7 +471,7 @@ under the License.
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-plugin-plugin</artifactId>
-          <version>3.1-SNAPSHOT</version>
+          <version>${mavenPluginPluginVersion}</version>
           <configuration>
             <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
           </configuration>
@@ -542,6 +543,16 @@ under the License.
       </plugin>
     </plugins>
   </build>
+
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-plugin-plugin</artifactId>
+        <version>${mavenPluginPluginVersion}</version>
+      </plugin>
+    </plugins>
+  </reporting>
 
   <profiles>
     <profile>
