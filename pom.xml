@@ -191,9 +191,10 @@ under the License.
     <plexusVersion>1.5.4</plexusVersion>
     <scmVersion>1.4</scmVersion>
     <!-- for ITs -->
-    <javadocPluginVersion>2.6.1</javadocPluginVersion>
-    <projectInfoReportsPluginVersion>2.2</projectInfoReportsPluginVersion>
+    <javadocPluginVersion>2.8.1</javadocPluginVersion>
+    <projectInfoReportsPluginVersion>2.4</projectInfoReportsPluginVersion>
     <checkstylePluginVersion>2.5</checkstylePluginVersion>
+    <pmdPluginVersion>2.7.1</pmdPluginVersion>
   </properties>
 
   <dependencies>
