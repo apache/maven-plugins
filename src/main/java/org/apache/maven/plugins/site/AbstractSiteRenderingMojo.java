@@ -46,6 +46,8 @@ import org.apache.maven.doxia.tools.SiteToolException;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.reporting.MavenReport;
 import org.apache.maven.reporting.exec.MavenReportExecution;
 import org.apache.maven.reporting.exec.MavenReportExecutor;
@@ -82,115 +84,103 @@ public abstract class AbstractSiteRenderingMojo
      *     &lt;xdoc&gt;changes.xml,navigation.xml&lt;/xdoc&gt;
      *   &lt;/moduleExcludes&gt;
      * </pre>
-     *
-     * @parameter
      */
+    @Parameter
     private Map<String, String> moduleExcludes;
 
     /**
      * The component for assembling inheritance.
-     *
-     * @component
      */
+    @Component
     private DecorationModelInheritanceAssembler assembler;
 
     /**
      * Remote repositories used for the project.
      *
      * @todo this is used for site descriptor resolution - it should relate to the actual project but for some reason they are not always filled in
-     * @parameter default-value="${project.remoteArtifactRepositories}"
-     * @readonly
      */
+    @Parameter( defaultValue = "${project.remoteArtifactRepositories}", readonly = true )
     private List<ArtifactRepository> repositories;
 
     /**
      * Directory containing the template page.
      *
-     * @parameter expression="${templateDirectory}" default-value="src/site"
      * @deprecated use templateFile or skinning instead
      */
+    @Parameter( property = "templateDirectory", defaultValue = "src/site" )
     private File templateDirectory;
 
     /**
      * Default template page.
      *
-     * @parameter expression="${template}"
      * @deprecated use templateFile or skinning instead
      */
+    @Parameter( property = "template" )
     private String template;
 
     /**
      * The location of a Velocity template file to use. When used, skins and the default templates, CSS and images
      * are disabled. It is highly recommended that you package this as a skin instead.
      *
-     * @parameter expression="${templateFile}"
      * @since 2.0-beta-5
      */
+    @Parameter( property = "templateFile" )
     private File templateFile;
 
     /**
      * Additional template properties for rendering the site. See
      * <a href="/doxia/doxia-sitetools/doxia-site-renderer/">Doxia Site Renderer</a>.
-     *
-     * @parameter
      */
+    @Parameter
     private Map<String, Object> attributes;
 
     /**
      * Site renderer.
-     *
-     * @component
      */
+    @Component
     protected Renderer siteRenderer;
 
     /**
      * Reports (Maven 2).
-     * 
-     * @parameter expression="${reports}"
-     * @required
-     * @readonly
      */
+    @Parameter( property = "reports", required = true, readonly = true )
     protected List<MavenReport> reports;
 
     /**
      * Alternative directory for xdoc source, useful for m1 to m2 migration
      *
-     * @parameter default-value="${basedir}/xdocs"
      * @deprecated use the standard m2 directory layout
      */
+    @Parameter( defaultValue = "${basedir}/xdocs" )
     private File xdocDirectory;
 
     /**
      * Directory containing generated documentation.
      * This is used to pick up other source docs that might have been generated at build time.
      *
-     * @parameter alias="workingDirectory" default-value="${project.build.directory}/generated-site"
-     *
      * @todo should we deprecate in favour of reports?
      */
+    @Parameter( alias = "workingDirectory", defaultValue = "${project.build.directory}/generated-site" )
     protected File generatedSiteDirectory;
 
     /**
      * The current Maven session.
-     * 
-     * @parameter expression="${session}"
-     * @required
-     * @readonly
      */
+    @Component
     protected MavenSession mavenSession;
 
     /**
      * <p>Configuration section used internally by Maven 3.</p>
      * <p>More details available here:
      * <a href="http://maven.apache.org/plugins/maven-site-plugin/maven-3.html#Configuration_formats" target="_blank">
-     *     http://maven.apache.org/plugins/maven-site-plugin/maven-3.html#Configuration_formats</a>
+     * http://maven.apache.org/plugins/maven-site-plugin/maven-3.html#Configuration_formats</a>
      * </p>
      * <p><b>Note:</b> using this field is not mandatory with Maven 3 as Maven core injects usual
      * <code>&lt;reporting&gt;</code> section into this field.</p>
      *
-     * @parameter
      * @since 3.0-beta-1
      */
+    @Parameter
     private ReportPlugin[] reportPlugins;
 
     private PlexusContainer container;
@@ -199,22 +189,20 @@ public abstract class AbstractSiteRenderingMojo
      * Make links in the site descriptor relative to the project URL.
      * By default, any absolute links that appear in the site descriptor,
      * e.g. banner hrefs, breadcrumbs, menu links, etc., will be made relative to project.url.
-     *
+     * <p/>
      * Links will not be changed if this is set to false, or if the project has no URL defined.
-     *
-     * @parameter expression="${relativizeDecorationLinks}" default-value="true"
      *
      * @since 2.3
      */
+    @Parameter( property = "relativizeDecorationLinks", defaultValue = "true" )
     private boolean relativizeDecorationLinks;
 
     /**
      * Whether to generate the summary page for project reports: project-info.html.
      *
-     * @parameter expression="${generateProjectInfo}" default-value="true"
-     *
      * @since 2.3
      */
+    @Parameter( property = "generateProjectInfo", defaultValue = "true" )
     private boolean generateProjectInfo;
 
     /** {@inheritDoc} */

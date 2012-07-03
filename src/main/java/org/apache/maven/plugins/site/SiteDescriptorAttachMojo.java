@@ -26,6 +26,10 @@ import java.util.List;
 import java.util.Locale;
 
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProjectHelper;
 
 import org.codehaus.plexus.util.FileUtils;
@@ -39,31 +43,29 @@ import org.codehaus.plexus.util.FileUtils;
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  * @version $Id$
- * @goal attach-descriptor
- * @phase package
  */
+@Mojo( name = "attach-descriptor", defaultPhase = LifecyclePhase.PACKAGE )
 public class SiteDescriptorAttachMojo
     extends AbstractSiteMojo
 {
     /**
-     * @parameter expression="${basedir}"
-     * @required
-     * @readonly
      */
+    @Parameter( property = "basedir", required = true, readonly = true )
     private File basedir;
 
     /**
      * Maven ProjectHelper.
      *
-     * @component
      * @readonly
      * @since 2.1.1
      */
+    @Component
     private MavenProjectHelper projectHelper;
 
     /**
      * @parameter default-value="true"
      */
+    @Parameter( defaultValue = "true" )
     private boolean pomPackagingOnly;
 
     public void execute()

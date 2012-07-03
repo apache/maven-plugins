@@ -26,6 +26,9 @@ import org.apache.maven.model.Plugin;
 import org.apache.maven.model.PluginManagement;
 import org.apache.maven.model.Site;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 
@@ -36,15 +39,14 @@ import org.codehaus.plexus.util.xml.Xpp3Dom;
  *
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
- * @goal stage-deploy
- * @requiresDependencyResolution test
  */
+@Mojo( name = "stage-deploy", requiresDependencyResolution = ResolutionScope.TEST )
 public class SiteStageDeployMojo
     extends AbstractDeployMojo
 {
     /**
      * The staged site will be deployed to this URL.
-     *
+     * <p/>
      * If you don't specify this, the default-value will be
      * "${project.distributionManagement.site.url}/staging", where "project" is
      * either the current project or, in a reactor build, the top level project
@@ -55,25 +57,24 @@ public class SiteStageDeployMojo
      * in order for relative links between modules to be resolved correctly.
      * </p>
      *
-     * @parameter expression="${stagingSiteURL}"
      * @see <a href="http://maven.apache.org/maven-model/maven.html#class_site">MavenModel#class_site</a>
      */
+    @Parameter( property = "stagingSiteURL" )
     private String stagingSiteURL;
 
     /**
      * The identifier of the repository where the staging site will be deployed. This id will be used to lookup a
      * corresponding <code>&lt;server&gt;</code> entry from the <code>settings.xml</code>. If a matching
      * <code>&lt;server&gt;</code> entry is found, its configured credentials will be used for authentication.
-     *
+     * <p/>
      * If this is not specified, then the corresponding value of <code>distributionManagement.site.id</code>
      * will be taken as default, unless this is not defined either then the String
      * <code>"stagingSite"</code> is used. (<strong>Note</strong>:
      * until v. 2.3 and 3.0-beta-3 the String <code>"stagingSite"</code> is always used.)
      *
-     * @parameter expression="${stagingRepositoryId}"
-     *
      * @since 2.0.1
      */
+    @Parameter( property = "stagingRepositoryId" )
     private String stagingRepositoryId;
 
     @Override

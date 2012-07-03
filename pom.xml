@@ -253,6 +253,14 @@ under the License.
       <version>2.4.2</version>
     </dependency>
 
+    <!-- dependencies to annotations -->
+    <dependency>
+      <groupId>org.apache.maven.plugin-tools</groupId>
+      <artifactId>maven-plugin-annotations</artifactId>
+      <version>3.1-SNAPSHOT</version>
+      <scope>compile</scope>
+    </dependency>
+
     <!-- Doxia -->
     <dependency>
       <groupId>org.apache.maven.doxia</groupId>
@@ -456,6 +464,20 @@ under the License.
   </dependencies>
 
   <build>
+
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-plugin-plugin</artifactId>
+          <version>3.1-SNAPSHOT</version>
+          <configuration>
+            <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+
     <plugins>
       <plugin>
         <groupId>org.codehaus.plexus</groupId>
@@ -466,6 +488,18 @@ under the License.
             <goals>
               <goal>generate-metadata</goal>
               <!--goal>generate-test-metadata</goal-->
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-plugin-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>mojo-descriptor</id>
+            <goals>
+              <goal>descriptor</goal>
             </goals>
           </execution>
         </executions>

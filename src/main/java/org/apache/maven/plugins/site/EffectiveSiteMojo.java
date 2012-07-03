@@ -37,6 +37,8 @@ import org.apache.maven.doxia.siterenderer.SiteRenderingContext;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.WriterFactory;
@@ -50,9 +52,9 @@ import org.codehaus.plexus.util.xml.XmlWriterUtil;
  *
  * @author <a href="mailto:hboutemy@apache.org">Hervé Boutemy</a>
  * @version $Id$
- * @goal effective-site
  * @since 2.2
  */
+@Mojo( name = "effective-site" )
 public class EffectiveSiteMojo
     extends AbstractSiteRenderingMojo
 {
@@ -60,9 +62,8 @@ public class EffectiveSiteMojo
      * Optional parameter to write the output of this help in a given file, instead of writing to the console.
      * <br/>
      * <b>Note</b>: Could be a relative path.
-     *
-     * @parameter expression="${output}"
      */
+    @Parameter( property = "output" )
     protected File output;
 
     /**
