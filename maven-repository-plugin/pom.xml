@@ -25,7 +25,7 @@ under the License.
   <parent>
     <artifactId>maven-plugins</artifactId>
     <groupId>org.apache.maven.plugins</groupId>
-    <version>21</version>
+    <version>22</version>
     <relativePath>../maven-plugins/pom.xml</relativePath>
   </parent>
 
@@ -158,17 +158,8 @@ under the License.
       <plugins>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-compiler-plugin</artifactId>
-          <version>2.3.2</version>
-          <configuration>
-            <source>1.5</source>
-            <target>1.5</target>
-          </configuration>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
-          <version>2.9</version>
+          <version>2.12</version>
           <configuration>
             <includes>
               <include>**/*Test.java</include>
@@ -184,26 +175,7 @@ under the License.
 
   <profiles>
     <profile>
-      <id>reporting</id>
-      <reporting>
-        <plugins>
-          <plugin>
-            <artifactId>maven-pmd-plugin</artifactId>
-            <configuration>
-              <targetJdk>1.5</targetJdk>
-            </configuration>
-          </plugin>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-checkstyle-plugin</artifactId>
-            <version>2.6</version>
-          </plugin>
-        </plugins>
-      </reporting>
-    </profile>
-    <profile>
       <id>run-its</id>
-      
       <properties>
         <localRepositoryUrl>${project.build.directory}/it-repo</localRepositoryUrl>
       </properties>
@@ -219,6 +191,7 @@ under the License.
         <pluginManagement>
           <plugins>
             <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
               <artifactId>maven-surefire-plugin</artifactId>
               <executions>
                 <execution>
@@ -246,8 +219,8 @@ under the License.
         
         <plugins>
           <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-invoker-plugin</artifactId>
-            <version>1.5</version>
             <executions>
               <execution>
                 <id>install-descriptor</id>
