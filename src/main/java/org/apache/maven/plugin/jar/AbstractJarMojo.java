@@ -43,96 +43,83 @@ public abstract class AbstractJarMojo
     extends AbstractMojo
 {
 
-    private static final String[] DEFAULT_EXCLUDES = new String[] { "**/package.html" };
+    private static final String[] DEFAULT_EXCLUDES = new String[]{ "**/package.html" };
 
-    private static final String[] DEFAULT_INCLUDES = new String[] { "**/**" };
+    private static final String[] DEFAULT_INCLUDES = new String[]{ "**/**" };
 
     /**
      * List of files to include. Specified as fileset patterns which are relative to the input directory whose contents
      * is being packaged into the JAR.
-     *
-     * @parameter
      */
+    @Parameter
     private String[] includes;
 
     /**
      * List of files to exclude. Specified as fileset patterns which are relative to the input directory whose contents
      * is being packaged into the JAR.
-     *
-     * @parameter
      */
+    @Parameter
     private String[] excludes;
 
     /**
      * Directory containing the generated JAR.
-     *
-     * @parameter default-value="${project.build.directory}"
-     * @required
      */
+    @Parameter( defaultValue = "${project.build.directory}", required = true )
     private File outputDirectory;
 
     /**
      * Name of the generated JAR.
-     *
-     * @parameter alias="jarName" expression="${jar.finalName}" default-value="${project.build.finalName}"
-     * @required
      */
+    @Parameter( alias = "jarName", property = "jar.finalName", defaultValue = "${project.build.finalName}" )
     private String finalName;
 
     /**
      * The Jar archiver.
-     *
-     * @component role="org.codehaus.plexus.archiver.Archiver" roleHint="jar"
      */
+    @Component( role = Archiver.class, hint = "jar" )
     private JarArchiver jarArchiver;
 
     /**
      * The Maven project.
-     *
-     * @parameter default-value="${project}"
-     * @required
-     * @readonly
      */
+    @Component
     private MavenProject project;
 
     /**
-     * @parameter default-value="${session}"
-     * @readonly
-     * @required
+     *
      */
+    @Component
     private MavenSession session;
 
     /**
      * The archive configuration to use.
      * See <a href="http://maven.apache.org/shared/maven-archiver/index.html">Maven Archiver Reference</a>.
-     *
-     * @parameter
      */
+    @Parameter
     private MavenArchiveConfiguration archive = new MavenArchiveConfiguration();
 
     /**
      * Path to the default MANIFEST file to use. It will be used if
      * <code>useDefaultManifestFile</code> is set to <code>true</code>.
      *
-     * @parameter default-value="${project.build.outputDirectory}/META-INF/MANIFEST.MF"
-     * @required
-     * @readonly
      * @since 2.2
      */
+    @Parameter( defaultValue = "${project.build.outputDirectory}/META-INF/MANIFEST.MF", required = true,
+                readonly = true )
     private File defaultManifestFile;
 
     /**
      * Set this to <code>true</code> to enable the use of the <code>defaultManifestFile</code>.
      *
-     * @parameter expression="${jar.useDefaultManifestFile}" default-value="false"
-     *
      * @since 2.2
      */
+    @Parameter( property = "jar.useDefaultManifestFile", defaultValue = "false" )
     private boolean useDefaultManifestFile;
 
     /**
-     * @component
+     *
      */
+    @Component
     private MavenProjectHelper projectHelper;
 
     /**
@@ -144,16 +131,14 @@ public abstract class AbstractJarMojo
      * This can lead to failures when those plugins do not expect to find their own output
      * as an input. Set this parameter to <tt>true</tt> to avoid these problems by forcing
      * this plugin to recreate the jar every time.
-     *
-     * @parameter expression="${jar.forceCreation}" default-value="false"
      */
+    @Parameter( property = "jar.forceCreation", defaultValue = "false" )
     private boolean forceCreation;
-	
+
     /**
      * Skip creating empty archives
-     * 
-     * @parameter expression="${jar.skipIfEmpty}" default-value="false"
      */
+    @Parameter( property = "jar.skipIfEmpty", defaultValue = "false" )
     private boolean skipIfEmpty;
 
     /**
