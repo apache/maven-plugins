@@ -109,7 +109,7 @@ public abstract class AbstractSourceJarMojo
      *
      * @since 2.1
      */
-    @Parameter( defaultValue = "${project.build.outputDirectory}/META-INF/MANIFEST.MF", readonly = true,
+    @Parameter( defaultValue = "${project.build.outputDirectory}/META-INF/MANIFEST.MF", readonly = false,
                 required = true )
     private File defaultManifestFile;
 
