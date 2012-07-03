@@ -25,7 +25,7 @@ under the License.
   <parent>
     <groupId>org.apache.maven</groupId>
     <artifactId>maven-parent</artifactId>
-    <version>15</version>
+    <version>21</version>
   </parent>
 
   <groupId>org.apache.maven.plugins.site.its</groupId>
@@ -40,6 +40,7 @@ under the License.
     <javadocPluginVersion>@javadocPluginVersion@</javadocPluginVersion>
     <checkstylePluginVersion>@checkstylePluginVersion@</checkstylePluginVersion>
     <projectInfoReportsPluginVersion>@projectInfoReportsPluginVersion@</projectInfoReportsPluginVersion>
+    <pmdPluginVersion>@pmdPluginVersion@</pmdPluginVersion>
   </properties>
 
   <dependencies>
@@ -73,6 +74,11 @@ under the License.
         <artifactId>maven-project-info-reports-plugin</artifactId>
         <version>@projectInfoReportsPluginVersion@</version>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-pmd-plugin</artifactId>
+        <version>${pmdPluginVersion}</version>
+      </plugin>
     </plugins>
   </build>
 
@@ -103,6 +109,11 @@ under the License.
             </reports>
           </reportSet>
         </reportSets>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-pmd-plugin</artifactId>
+        <version>${pmdPluginVersion}</version>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
