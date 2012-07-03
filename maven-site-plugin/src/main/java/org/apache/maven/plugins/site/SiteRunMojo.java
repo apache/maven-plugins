@@ -34,6 +34,8 @@ import org.apache.maven.doxia.siterenderer.DocumentRenderer;
 import org.apache.maven.doxia.siterenderer.SiteRenderingContext;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.site.webapp.DoxiaBean;
 import org.apache.maven.plugins.site.webapp.DoxiaFilter;
 import org.apache.maven.reporting.exec.MavenReportExecution;
@@ -53,17 +55,15 @@ import org.mortbay.jetty.webapp.WebAppContext;
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  * @version $Id$
- * @goal run
- * @aggregator
  */
+@Mojo( name = "run", aggregator = true )
 public class SiteRunMojo
     extends AbstractSiteRenderingMojo
 {
     /**
      * Where to create the dummy web application.
-     *
-     * @parameter expression="${project.build.directory}/site-webapp"
      */
+    @Parameter( defaultValue = "${project.build.directory}/site-webapp" )
     private File tempWebappDirectory;
 
     /**

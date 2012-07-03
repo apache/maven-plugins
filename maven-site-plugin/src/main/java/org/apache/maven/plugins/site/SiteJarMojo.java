@@ -27,8 +27,13 @@ import org.apache.maven.archiver.MavenArchiver;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProjectHelper;
 
+import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
 import org.codehaus.plexus.archiver.jar.ManifestException;
@@ -38,81 +43,74 @@ import org.codehaus.plexus.archiver.jar.ManifestException;
  *
  * @author <a href="mailto:mbeerman@yahoo.com">Matthew Beermann</a>
  * @version $Id$
- * @goal jar
- * @phase package
  * @since 2.0-beta-6
  */
+@Mojo( name = "jar", defaultPhase = LifecyclePhase.PACKAGE )
 public class SiteJarMojo
     extends SiteMojo
 {
-    private static final String[] DEFAULT_ARCHIVE_EXCLUDES = new String[]{};
+    private static final String[] DEFAULT_ARCHIVE_EXCLUDES = new String[]{ };
 
-    private static final String[] DEFAULT_ARCHIVE_INCLUDES = new String[]{"**/**"};
+    private static final String[] DEFAULT_ARCHIVE_INCLUDES = new String[]{ "**/**" };
 
     /**
      * Specifies the directory where the generated jar file will be put.
-     *
-     * @parameter expression="${project.build.directory}"
-     * @required
      */
+    @Parameter( property = "project.build.directory", required = true )
     private String jarOutputDirectory;
 
     /**
      * Specifies the filename that will be used for the generated jar file.
      * Please note that "-site" will be appended to the file name.
-     *
-     * @parameter expression="${project.build.finalName}"
-     * @required
      */
+    @Parameter( property = "project.build.finalName", required = true )
     private String finalName;
 
     /**
      * Used for attaching the artifact in the project.
-     *
-     * @component
      */
+    @Component
     private MavenProjectHelper projectHelper;
 
     /**
      * Specifies whether to attach the generated artifact to the project.
-     *
-     * @parameter expression="${site.attach}" default-value="true"
      */
+    @Parameter( property = "site.attach", defaultValue = "true" )
     private boolean attach;
 
     /**
      * The Jar archiver.
      *
-     * @component role="org.codehaus.plexus.archiver.Archiver" roleHint="jar"
      * @since 3.1
      */
+    @Component( role = Archiver.class, hint = "jar" )
     private JarArchiver jarArchiver;
 
     /**
      * The archive configuration to use.
      * See <a href="http://maven.apache.org/shared/maven-archiver/index.html">Maven Archiver Reference</a>.
      *
-     * @parameter
      * @since 3.1
      */
+    @Parameter
     private MavenArchiveConfiguration archive = new MavenArchiveConfiguration();
 
     /**
      * List of files to include. Specified as file set patterns which are relative to the input directory whose contents
      * is being packaged into the JAR.
      *
-     * @parameter
      * @since 3.1
      */
+    @Parameter
     private String[] archiveIncludes;
 
     /**
      * List of files to exclude. Specified as file set patterns which are relative to the input directory whose contents
      * is being packaged into the JAR.
      *
-     * @parameter
      * @since 3.1
      */
+    @Parameter
     private String[] archiveExcludes;
 
     /**

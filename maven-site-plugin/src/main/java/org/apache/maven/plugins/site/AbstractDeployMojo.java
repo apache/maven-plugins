@@ -27,6 +27,8 @@ import org.apache.maven.model.DistributionManagement;
 import org.apache.maven.model.Site;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Server;
@@ -83,67 +85,61 @@ public abstract class AbstractDeployMojo
 {
     /**
      * Directory containing the generated project sites and report distributions.
-     *
-     * @parameter alias="outputDirectory" expression="${project.reporting.outputDirectory}"
-     * @required
      */
+    @Parameter( alias = "outputDirectory", property = "project.reporting.outputDirectory", required = true )
     private File inputDirectory;
 
     /**
      * Whether to run the "chmod" command on the remote site after the deploy.
      * Defaults to "true".
      *
-     * @parameter expression="${maven.site.chmod}" default-value="true"
      * @since 2.1
      */
+    @Parameter( property = "maven.site.chmod", defaultValue = "true" )
     private boolean chmod;
 
     /**
      * The mode used by the "chmod" command. Only used if chmod = true.
      * Defaults to "g+w,a+rX".
      *
-     * @parameter expression="${maven.site.chmod.mode}" default-value="g+w,a+rX"
      * @since 2.1
      */
+    @Parameter( property = "maven.site.chmod.mode", defaultValue = "g+w,a+rX" )
     private String chmodMode;
 
     /**
      * The options used by the "chmod" command. Only used if chmod = true.
      * Defaults to "-Rf".
      *
-     * @parameter expression="${maven.site.chmod.options}" default-value="-Rf"
      * @since 2.1
      */
+    @Parameter( property = "maven.site.chmod.options", defaultValue = "-Rf" )
     private String chmodOptions;
 
     /**
      * Set this to 'true' to skip site deployment.
      *
-     * @parameter expression="${maven.site.deploy.skip}" default-value="false"
      * @since 3.0
      */
+    @Parameter( property = "maven.site.deploy.skip", defaultValue = "false" )
+
     private boolean skipDeploy;
 
     /**
-     * @component
      */
+    @Component
     private WagonManager wagonManager;
 
     /**
      * The current user system settings for use in Maven.
-     *
-     * @parameter expression="${settings}"
-     * @required
-     * @readonly
      */
+    @Component
     private Settings settings;
 
     /**
-     * @parameter expression="${session}"
-     * @required
-     * @readonly
      * @since 3.0-beta-2
      */
+    @Component
     protected MavenSession mavenSession;
 
     private PlexusContainer container;

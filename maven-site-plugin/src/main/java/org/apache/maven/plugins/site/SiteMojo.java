@@ -32,6 +32,9 @@ import org.apache.maven.doxia.siterenderer.RendererException;
 import org.apache.maven.doxia.siterenderer.SiteRenderingContext;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.reporting.MavenReport;
 import org.apache.maven.reporting.exec.MavenReportExecution;
 
@@ -45,32 +48,29 @@ import org.apache.maven.reporting.exec.MavenReportExecution;
  * @author <a href="mailto:evenisse@apache.org">Emmanuel Venisse</a>
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
- * @goal site
- * @requiresDependencyResolution test
  */
+@Mojo( name = "site", requiresDependencyResolution = ResolutionScope.TEST )
 public class SiteMojo
     extends AbstractSiteRenderingMojo
 {
     /**
      * Directory where the project sites and report distributions will be generated.
-     *
-     * @parameter expression="${siteOutputDirectory}" default-value="${project.reporting.outputDirectory}"
      */
+    @Parameter( property = "siteOutputDirectory", defaultValue = "${project.reporting.outputDirectory}" )
     protected File outputDirectory;
 
     /**
      * Convenience parameter that allows you to disable report generation.
-     *
-     * @parameter expression="${generateReports}" default-value="true"
      */
+    @Parameter( property = "generateReports", defaultValue = "true" )
     private boolean generateReports;
 
     /**
      * Generate a sitemap. The result will be a "sitemap.html" file at the site root.
      *
-     * @parameter expression="${generateSitemap}" default-value="false"
      * @since 2.1
      */
+    @Parameter( property = "generateSitemap", defaultValue = "false" )
     private boolean generateSitemap;
 
     /**
@@ -79,17 +79,17 @@ public class SiteMojo
      * (in particular xdoc and fml) will be validated and any error will
      * lead to a build failure.
      *
-     * @parameter expression="${validate}" default-value="false"
      * @since 2.1.1
      */
+    @Parameter( property = "validate", defaultValue = "false" )
     private boolean validate;
 
     /**
      * Set this to 'true' to skip site generation.
      *
-     * @parameter expression="${maven.site.skip}" default-value="false"
      * @since 3.0
      */
+    @Parameter( property = "maven.site.skip", defaultValue = "false" )
     private boolean skip;
 
     /**

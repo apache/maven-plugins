@@ -21,6 +21,7 @@ package org.apache.maven.plugins.site;
 
 import org.apache.maven.model.Site;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.Mojo;
 
 /**
  * Deploys the generated site using <a href="/wagon/">wagon supported
@@ -34,8 +35,8 @@ import org.apache.maven.plugin.MojoExecutionException;
  *
  * @author <a href="mailto:michal@org.codehaus.org">Michal Maczka</a>
  * @version $Id$
- * @goal deploy
  */
+@Mojo( name = "deploy" )
 public class SiteDeployMojo
     extends AbstractDeployMojo
 {

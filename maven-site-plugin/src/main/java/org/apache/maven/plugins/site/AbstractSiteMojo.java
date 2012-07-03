@@ -30,6 +30,8 @@ import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.versioning.ComparableVersion;
 import org.apache.maven.doxia.tools.SiteTool;
 import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
 import org.codehaus.plexus.i18n.I18N;
@@ -47,70 +49,56 @@ public abstract class AbstractSiteMojo
     /**
      * A comma separated list of locales supported by Maven. The first valid token will be the default Locale
      * for this instance of the Java Virtual Machine.
-     *
-     * @parameter expression="${locales}"
      */
+    @Parameter( property = "locales" )
     protected String locales;
 
     /**
      * SiteTool.
-     *
-     * @component
      */
+    @Component
     protected SiteTool siteTool;
 
     /**
      * Internationalization.
-     *
-     * @component
      */
+    @Component
     protected I18N i18n;
 
     /**
      * Directory containing the site.xml file and the source for apt, fml and xdoc docs.
-     *
-     * @parameter default-value="${basedir}/src/site"
      */
+    @Parameter( defaultValue = "${basedir}/src/site" )
     protected File siteDirectory;
 
     /**
      * The maven project.
-     *
-     * @parameter default-value="${project}"
-     * @required
-     * @readonly
      */
+    @Component
     protected MavenProject project;
 
     /**
      * The local repository.
-     *
-     * @parameter default-value="${localRepository}"
-     * @readonly
      */
+    @Parameter( defaultValue = "${localRepository}", readonly = true )
     protected ArtifactRepository localRepository;
 
     /**
      * The reactor projects.
-     *
-     * @parameter default-value="${reactorProjects}"
-     * @required
-     * @readonly
      */
+    @Parameter( defaultValue = "${reactorProjects}", required = true, readonly = true )
     protected List<MavenProject> reactorProjects;
 
     /**
      * Specifies the input encoding.
-     *
-     * @parameter expression="${encoding}" default-value="${project.build.sourceEncoding}"
      */
+    @Parameter( property = "encoding", defaultValue = "${project.build.sourceEncoding}" )
     private String inputEncoding;
 
     /**
      * Specifies the output encoding.
-     *
-     * @parameter expression="${outputEncoding}" default-value="${project.reporting.outputEncoding}"
      */
+    @Parameter( property = "outputEncoding", defaultValue = "${project.reporting.outputEncoding}" )
     private String outputEncoding;
 
     /**

@@ -22,6 +22,9 @@ package org.apache.maven.plugins.site;
 import java.io.File;
 
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 
 /**
  * Deploys the generated site to a local staging or mock directory based on the site URL
@@ -34,9 +37,8 @@ import org.apache.maven.plugin.MojoExecutionException;
  *
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
- * @goal stage
- * @requiresDependencyResolution test
  */
+@Mojo( name = "stage", requiresDependencyResolution = ResolutionScope.TEST )
 public class SiteStageMojo
     extends AbstractDeployMojo
 {
@@ -45,9 +47,8 @@ public class SiteStageMojo
      * <code>C:\stagingArea\myProject\</code> on Windows or
      * <code>/stagingArea/myProject/</code> on Unix.
      * If this is not specified, the site will be staged in ${project.build.directory}/staging.
-     *
-     * @parameter expression="${stagingDirectory}"
      */
+    @Parameter( property = "stagingDirectory" )
     private File stagingDirectory;
 
     @Override
