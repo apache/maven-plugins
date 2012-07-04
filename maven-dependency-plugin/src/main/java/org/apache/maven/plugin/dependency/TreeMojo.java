@@ -19,14 +19,6 @@ package org.apache.maven.plugin.dependency;
  * under the License.
  */
 
-import java.io.File;
-import java.io.IOException;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
@@ -41,10 +33,14 @@ import org.apache.maven.execution.RuntimeInformation;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugin.dependency.utils.DependencyUtil;
+import org.apache.maven.plugin.dependency.treeSerializers.DOTDependencyNodeVisitor;
 import org.apache.maven.plugin.dependency.treeSerializers.GraphmlDependencyNodeVisitor;
 import org.apache.maven.plugin.dependency.treeSerializers.TGFDependencyNodeVisitor;
-import org.apache.maven.plugin.dependency.treeSerializers.DOTDependencyNodeVisitor;
+import org.apache.maven.plugin.dependency.utils.DependencyUtil;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.artifact.filter.StrictPatternExcludesArtifactFilter;
 import org.apache.maven.shared.artifact.filter.StrictPatternIncludesArtifactFilter;
@@ -63,15 +59,22 @@ import org.apache.maven.shared.dependency.tree.traversal.FilteringDependencyNode
 import org.apache.maven.shared.dependency.tree.traversal.SerializingDependencyNodeVisitor;
 import org.apache.maven.shared.dependency.tree.traversal.SerializingDependencyNodeVisitor.TreeTokens;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Displays the dependency tree for this project.
  *
  * @author <a href="mailto:markhobson@gmail.com">Mark Hobson</a>
  * @version $Id$
  * @since 2.0-alpha-5
- * @goal tree
- * @requiresDependencyResolution test
  */
+@Mojo( name = "tree", requiresDependencyResolution = ResolutionScope.TEST )
 public class TreeMojo
     extends AbstractMojo
 {
@@ -79,104 +82,86 @@ public class TreeMojo
 
     /**
      * The Maven project.
-     *
-     * @parameter default-value="${project}"
-     * @required
-     * @readonly
      */
+    @Component
     private MavenProject project;
 
     /**
      * The artifact repository to use.
-     *
-     * @parameter default-value="${localRepository}"
-     * @required
-     * @readonly
      */
+    @Parameter( defaultValue = "${localRepository}", readonly = true, required = true )
     private ArtifactRepository localRepository;
 
     /**
      * The artifact factory to use.
-     *
-     * @component
-     * @required
-     * @readonly
      */
+    @Component
     private ArtifactFactory artifactFactory;
 
     /**
      * The artifact metadata source to use.
-     *
-     * @component
-     * @required
-     * @readonly
      */
+    @Component
     private ArtifactMetadataSource artifactMetadataSource;
 
     /**
      * The artifact collector to use.
-     *
-     * @component
-     * @required
-     * @readonly
      */
+    @Component
     private ArtifactCollector artifactCollector;
 
     /**
      * The dependency tree builder to use.
-     *
-     * @component
-     * @required
-     * @readonly
      */
+    @Component
     private DependencyTreeBuilder dependencyTreeBuilder;
 
     /**
      * If specified, this parameter will cause the dependency tree to be written to the path specified, instead of
      * writing to the console.
+     *
      * @deprecated use outputFile instead.
-     * @parameter expression="${output}"
      */
+    @Parameter( property = "output" )
     private File output;
 
     /**
      * If specified, this parameter will cause the dependency tree to be written to the path specified, instead of
      * writing to the console.
-     * @parameter expression="${outputFile}"
+     *
      * @since 2.0-alpha-5
      */
+    @Parameter( property = "outputFile" )
     private File outputFile;
 
     /**
      * If specified, this parameter will cause the dependency tree to be written using the specified format. Currently
      * supported format are text, dot, graphml and tgf.
-     *
+     * <p/>
      * These formats can be plotted to image files. An example of how to plot a dot file using
      * pygraphviz can be found <a href="http://networkx.lanl.gov/pygraphviz/tutorial.html#layout-and-drawing">here</a>
      *
-     * @parameter expression="${outputType}" default-value="text"
      * @since 2.2
      */
+    @Parameter( property = "outputType", defaultValue = "text" )
     private String outputType;
 
     /**
      * The scope to filter by when resolving the dependency tree, or <code>null</code> to include dependencies from
      * all scopes. Note that this feature does not currently work due to MNG-3236.
      *
-     * @since 2.0-alpha-5
      * @see <a href="http://jira.codehaus.org/browse/MNG-3236">MNG-3236</a>
-     *
-     * @parameter expression="${scope}"
+     * @since 2.0-alpha-5
      */
+    @Parameter( property = "scope" )
     private String scope;
 
     /**
      * Whether to include omitted nodes in the serialized dependency tree.
      *
      * @since 2.0-alpha-6
-     *
-     * @parameter expression="${verbose}" default-value="false"
      */
+    @Parameter( property = "verbose", defaultValue = "false" )
     private boolean verbose;
 
     /**
@@ -185,19 +170,17 @@ public class TreeMojo
      * respectively.
      *
      * @since 2.0-alpha-6
-     *
-     * @parameter expression="${tokens}" default-value="standard"
      */
+    @Parameter( property = "tokens", defaultValue = "standard" )
     private String tokens;
 
     /**
      * A comma-separated list of artifacts to filter the serialized dependency tree by, or <code>null</code> not to
      * filter the dependency tree. The artifact syntax is defined by <code>StrictPatternIncludesArtifactFilter</code>.
      *
+     * @parameter expression="${includes}"
      * @see StrictPatternIncludesArtifactFilter
      * @since 2.0-alpha-6
-     *
-     * @parameter expression="${includes}"
      */
     private String includes;
 
@@ -208,31 +191,31 @@ public class TreeMojo
      *
      * @see StrictPatternExcludesArtifactFilter
      * @since 2.0-alpha-6
-     *
-     * @parameter expression="${excludes}"
      */
+    @Parameter( property = "excludes" )
     private String excludes;
 
     /**
      * Runtime Information used to check the Maven version
+     *
      * @since 2.0
-     * @component role="org.apache.maven.execution.RuntimeInformation"
      */
+    @Component
     private RuntimeInformation rti;
 
     /**
      * The computed dependency tree root node of the Maven project.
      */
     private DependencyNode rootNode;
-    
+
     /**
      * Whether to append outputs into the output file or overwrite it.
-     * 
-     * @parameter expression="${appendOutput}" default-value="false"
+     *
      * @since 2.2
      */
+    @Parameter( property = "appendOutput", defaultValue = "false" )
     private boolean appendOutput;
-    
+
     // Mojo methods -----------------------------------------------------------
 
     /*
@@ -250,14 +233,13 @@ public class TreeMojo
             if ( !containsVersion( vr, detectedMavenVersion ) )
             {
                 getLog().warn(
-                               "The tree mojo requires at least Maven 2.0.8 to function properly. You may get erroneous results on earlier versions" );
+                    "The tree mojo requires at least Maven 2.0.8 to function properly. You may get erroneous results on earlier versions" );
             }
         }
         catch ( InvalidVersionSpecificationException e )
         {
             throw new MojoExecutionException( e.getLocalizedMessage(), e );
         }
-
 
         if ( output != null )
         {
@@ -271,15 +253,15 @@ public class TreeMojo
         {
             // TODO: note that filter does not get applied due to MNG-3236
 
-            rootNode =
-                dependencyTreeBuilder.buildDependencyTree( project, localRepository, artifactFactory,
-                                                           artifactMetadataSource, artifactFilter, artifactCollector );
+            rootNode = dependencyTreeBuilder.buildDependencyTree( project, localRepository, artifactFactory,
+                                                                  artifactMetadataSource, artifactFilter,
+                                                                  artifactCollector );
 
             String dependencyTreeString = serializeDependencyTree( rootNode );
 
             if ( outputFile != null )
             {
-                DependencyUtil.write( dependencyTreeString, outputFile, this.appendOutput ,getLog() );
+                DependencyUtil.write( dependencyTreeString, outputFile, this.appendOutput, getLog() );
 
                 getLog().info( "Wrote dependency tree to: " + outputFile );
             }
@@ -349,8 +331,7 @@ public class TreeMojo
     /**
      * Serializes the specified dependency tree to a string.
      *
-     * @param rootNode
-     *            the dependency tree root node to serialize
+     * @param rootNode the dependency tree root node to serialize
      * @return the serialized dependency tree
      */
     private String serializeDependencyTree( DependencyNode rootNode )
@@ -370,7 +351,8 @@ public class TreeMojo
             DependencyNodeVisitor firstPassVisitor = new FilteringDependencyNodeVisitor( collectingVisitor, filter );
             rootNode.accept( firstPassVisitor );
 
-            DependencyNodeFilter secondPassFilter = new AncestorOrSelfDependencyNodeFilter( collectingVisitor.getNodes() );
+            DependencyNodeFilter secondPassFilter =
+                new AncestorOrSelfDependencyNodeFilter( collectingVisitor.getNodes() );
             visitor = new FilteringDependencyNodeVisitor( visitor, secondPassFilter );
         }
 
@@ -391,7 +373,7 @@ public class TreeMojo
         }
         else if ( "dot".equals( outputType ) )
         {
-            return new DOTDependencyNodeVisitor( writer ) ;
+            return new DOTDependencyNodeVisitor( writer );
         }
         else
         {
@@ -402,8 +384,7 @@ public class TreeMojo
     /**
      * Gets the tree tokens instance for the specified name.
      *
-     * @param tokens
-     *            the tree tokens name
+     * @param tokens the tree tokens name
      * @return the <code>TreeTokens</code> instance
      */
     private TreeTokens toTreeTokens( String tokens )
@@ -476,14 +457,13 @@ public class TreeMojo
     //doesn't work properly. I ripped it out of the enforcer rules.
 
 
-
     /**
      * Copied from Artifact.VersionRange. This is tweaked to handle singular ranges properly. Currently the default
      * containsVersion method assumes a singular version means allow everything. This method assumes that "2.0.4" ==
      * "[2.0.4,)"
      *
      * @param allowedRange range of allowed versions.
-     * @param theVersion the version to be checked.
+     * @param theVersion   the version to be checked.
      * @return true if the version is contained by the range.
      */
     public static boolean containsVersion( VersionRange allowedRange, ArtifactVersion theVersion )
@@ -491,8 +471,7 @@ public class TreeMojo
         ArtifactVersion recommendedVersion = allowedRange.getRecommendedVersion();
         if ( recommendedVersion == null )
         {
-            @SuppressWarnings( "unchecked" )
-            List<Restriction> restrictions = allowedRange.getRestrictions();
+            @SuppressWarnings( "unchecked" ) List<Restriction> restrictions = allowedRange.getRestrictions();
             for ( Restriction restriction : restrictions )
             {
                 if ( restriction.containsVersion( theVersion ) )

@@ -19,10 +19,6 @@ package org.apache.maven.plugin.dependency;
  * under the License.
  */
 
-import java.io.File;
-import java.lang.reflect.Field;
-import java.util.List;
-
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
@@ -32,6 +28,8 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.dependency.utils.DependencySilentLog;
 import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.UnArchiver;
@@ -41,6 +39,10 @@ import org.codehaus.plexus.components.io.fileselectors.IncludeExcludeFileSelecto
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.ReflectionUtils;
 import org.codehaus.plexus.util.StringUtils;
+
+import java.io.File;
+import java.lang.reflect.Field;
+import java.util.List;
 
 /**
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
@@ -52,96 +54,72 @@ public abstract class AbstractDependencyMojo
 {
     /**
      * Used to look up Artifacts in the remote repository.
-     *
-     * @component
      */
+    @Component
     protected ArtifactFactory factory;
 
     /**
      * Used to look up Artifacts in the remote repository.
-     *
-     * @component
      */
+    @Component
     protected ArtifactResolver resolver;
 
     /**
      * Artifact collector, needed to resolve dependencies.
-     *
-     * @component role="org.apache.maven.artifact.resolver.ArtifactCollector"
-     * @required
-     * @readonly
      */
+    @Component( role = ArtifactCollector.class )
     protected ArtifactCollector artifactCollector;
 
     /**
-     * @component role="org.apache.maven.artifact.metadata.ArtifactMetadataSource"
-     *            hint="maven"
-     * @required
-     * @readonly
+     *
      */
+    @Component( role = ArtifactMetadataSource.class, hint = "maven" )
     protected ArtifactMetadataSource artifactMetadataSource;
 
     /**
      * Location of the local repository.
-     *
-     * @parameter default-value="${localRepository}"
-     * @readonly
-     * @required
      */
+    @Parameter( defaultValue = "${localRepository}", readonly = true, required = true )
     private ArtifactRepository local;
 
     /**
      * List of Remote Repositories used by the resolver
-     *
-     * @parameter default-value="${project.remoteArtifactRepositories}"
-     * @readonly
-     * @required
      */
+    @Parameter( defaultValue = "${project.remoteArtifactRepositories}", readonly = true, required = true )
     protected List<ArtifactRepository> remoteRepos;
 
     /**
      * To look up Archiver/UnArchiver implementations
-     *
-     * @component
      */
+    @Component
     protected ArchiverManager archiverManager;
 
     /**
      * POM
-     *
-     * @parameter default-value="${project}"
-     * @readonly
-     * @required
      */
+    @Component
     protected MavenProject project;
 
     /**
      * Contains the full list of projects in the reactor.
-     *
-     * @parameter default-value="${reactorProjects}"
-     * @required
-     * @readonly
      */
+    @Parameter( defaultValue = "${reactorProjects}" )
     protected List<MavenProject> reactorProjects;
 
     /**
      * If the plugin should be silent.
      *
-     * @optional
      * @since 2.0
-     * @parameter expression="${silent}"
-     *            default-value="false"
      */
+    @Parameter( property = "silent", defaultValue = "false" )
     public boolean silent;
 
     /**
      * Output absolute filename for resolved artifacts
      *
-     * @optional
      * @since 2.0
-     * @parameter expression="${outputAbsoluteArtifactFilename}"
-     *            default-value="false"
      */
+    @Parameter( property = "outputAbsoluteArtifactFilename", defaultValue = "false" )
     protected boolean outputAbsoluteArtifactFilename;
 
     private Log log;
@@ -176,9 +154,8 @@ public abstract class AbstractDependencyMojo
      *
      * @param artifact represents the file to copy.
      * @param destFile file name of destination file.
-     *
      * @throws MojoExecutionException with a message if an
-     *             error occurs.
+     *                                error occurs.
      */
     protected void copyFile( File artifact, File destFile )
         throws MojoExecutionException
@@ -186,9 +163,9 @@ public abstract class AbstractDependencyMojo
         Log theLog = this.getLog();
         try
         {
-            theLog.info( "Copying "
-                + ( this.outputAbsoluteArtifactFilename ? artifact.getAbsolutePath() : artifact.getName() ) + " to "
-                + destFile );
+            theLog.info(
+                "Copying " + ( this.outputAbsoluteArtifactFilename ? artifact.getAbsolutePath() : artifact.getName() )
+                    + " to " + destFile );
             FileUtils.copyFile( artifact, destFile );
 
         }
@@ -207,12 +184,12 @@ public abstract class AbstractDependencyMojo
     /**
      * Unpacks the archive file.
      *
-     * @param file File to be unpacked.
+     * @param file     File to be unpacked.
      * @param location Location where to put the unpacked files.
      * @param includes Comma separated list of file patterns to include i.e. <code>**&#47;.xml,
-     *            **&#47;*.properties</code>
+     *                 **&#47;*.properties</code>
      * @param excludes Comma separated list of file patterns to exclude i.e. <code>**&#47;*.xml,
-     *            **&#47;*.properties</code>
+     *                 **&#47;*.properties</code>
      */
     protected void unpack( File file, File location, String includes, String excludes )
         throws MojoExecutionException
@@ -236,7 +213,8 @@ public abstract class AbstractDependencyMojo
                 // Create the selectors that will filter
                 // based on include/exclude parameters
                 // MDEP-47
-                IncludeExcludeFileSelector[] selectors = new IncludeExcludeFileSelector[] { new IncludeExcludeFileSelector() };
+                IncludeExcludeFileSelector[] selectors =
+                    new IncludeExcludeFileSelector[]{ new IncludeExcludeFileSelector() };
 
                 if ( StringUtils.isNotEmpty( excludes ) )
                 {
@@ -264,8 +242,8 @@ public abstract class AbstractDependencyMojo
         catch ( ArchiverException e )
         {
             e.printStackTrace();
-            throw new MojoExecutionException( "Error unpacking file: " + file + " to: " + location + "\r\n"
-                + e.toString(), e );
+            throw new MojoExecutionException(
+                "Error unpacking file: " + file + " to: " + location + "\r\n" + e.toString(), e );
         }
     }
 

@@ -15,13 +15,6 @@ package org.apache.maven.plugin.dependency.resolvers;
  * the License.
  */
 
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Writer;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
@@ -29,47 +22,50 @@ import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.dependency.AbstractResolveMojo;
 import org.apache.maven.plugin.dependency.utils.DependencyUtil;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.project.artifact.InvalidDependencyVersionException;
 import org.apache.maven.shared.artifact.filter.collection.ArtifactsFilter;
 import org.codehaus.plexus.util.IOUtil;
 
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 /**
  * Goal that resolves all project plugins and reports and their dependencies.
- * 
- * @goal resolve-plugins
- * @phase generate-sources
+ *
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  * @version $Id$
  * @since 2.0
  */
+@Mojo( name = "resolve-plugins", defaultPhase = LifecyclePhase.GENERATE_SOURCES )
 public class ResolvePluginsMojo
     extends AbstractResolveMojo
 {
 
     /**
      * Remote repositories which will be searched for plugins.
-     * 
-     * @parameter default-value="${project.pluginArtifactRepositories}"
-     * @required
-     * @readonly
      */
+    @Parameter( defaultValue = "${project.pluginArtifactRepositories}", readonly = true, required = true )
     private List<ArtifactRepository> remotePluginRepositories;
 
     /**
      * If we should exclude transitive dependencies
-     * 
-     * @parameter expression="${excludeTransitive}" default-value="false"
      */
+    @Parameter( property = "excludeTransitive", defaultValue = "false" )
     private boolean excludeTransitive;
 
     /**
      * Main entry into mojo. Gets the list of dependencies and iterates through
      * displaying the resolved version.
-     * 
-     * @throws MojoExecutionException
-     *             with a message if an error occurs.
-     * 
+     *
+     * @throws MojoExecutionException with a message if an error occurs.
      */
     public void execute()
         throws MojoExecutionException
@@ -112,7 +108,7 @@ public class ResolvePluginsMojo
                         {
                             this.getLog().info( logStr );
                         }
-                        
+
                         if ( outputWriter != null )
                         {
                             outputWriter.write( logStr );
@@ -151,30 +147,21 @@ public class ResolvePluginsMojo
 
     /**
      * This method resolves the plugin artifacts from the project.
-     * 
-     * @param project
-     *            The POM.
-     * @param artifactFactory
-     *            component to build artifact objects.
-     * @param localRepository
-     *            where to resolve artifacts.
-     * @param remotePluginRepositories
-     *            list of remote repositories used to resolve plugins.
-     * @param artifactResolver
-     *            component used to resolve artifacts.
-     * 
+     *
+     * @param project                  The POM.
+     * @param artifactFactory          component to build artifact objects.
+     * @param localRepository          where to resolve artifacts.
+     * @param remotePluginRepositories list of remote repositories used to resolve plugins.
+     * @param artifactResolver         component used to resolve artifacts.
      * @return set of resolved plugin artifacts.
-     * 
      * @throws ArtifactResolutionException
      * @throws ArtifactNotFoundException
      */
     protected Set<Artifact> resolvePluginArtifacts()
         throws ArtifactResolutionException, ArtifactNotFoundException
     {
-        @SuppressWarnings( "unchecked" )
-        Set<Artifact> plugins = project.getPluginArtifacts();
-        @SuppressWarnings( "unchecked" )
-        Set<Artifact> reports = project.getReportArtifacts();
+        @SuppressWarnings( "unchecked" ) Set<Artifact> plugins = project.getPluginArtifacts();
+        @SuppressWarnings( "unchecked" ) Set<Artifact> reports = project.getReportArtifacts();
 
         Set<Artifact> artifacts = new HashSet<Artifact>();
         artifacts.addAll( reports );

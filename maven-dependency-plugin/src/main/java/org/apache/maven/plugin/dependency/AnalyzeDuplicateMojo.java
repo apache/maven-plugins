@@ -19,13 +19,6 @@ package org.apache.maven.plugin.dependency;
  * under the License.
  */
 
-import java.io.Reader;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
@@ -33,9 +26,18 @@ import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
+
+import java.io.Reader;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Analyzes the <code>&lt;dependencies/&gt;</code> and <code>&lt;dependencyManagement/&gt;</code> tags in the
@@ -43,22 +45,20 @@ import org.codehaus.plexus.util.ReaderFactory;
  *
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
- * @goal analyze-duplicate
- * @aggregator false
  */
+@Mojo( name = "analyze-duplicate", aggregator = false )
 public class AnalyzeDuplicateMojo
     extends AbstractMojo
 {
     /**
      * The Maven project to analyze.
-     *
-     * @parameter default-value="${project}"
-     * @required
-     * @readonly
      */
+    @Component
     private MavenProject project;
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
@@ -117,8 +117,8 @@ public class AnalyzeDuplicateMojo
                 {
                     sb.append( "\n" );
                 }
-                sb.append( "List of duplicate dependencies defined in <dependencyManagement/> in "
-                    + "your pom.xml:\n" );
+                sb.append(
+                    "List of duplicate dependencies defined in <dependencyManagement/> in " + "your pom.xml:\n" );
                 for ( Iterator<String> it = duplicateDependenciesManagement.iterator(); it.hasNext(); )
                 {
                     String dup = it.next();
@@ -150,7 +150,7 @@ public class AnalyzeDuplicateMojo
             modelDependencies2.add( dep.getManagementKey() );
         }
 
-        return new HashSet<String>( CollectionUtils.disjunction( modelDependencies2,
-                                                                 new HashSet<String>( modelDependencies2 ) ) );
+        return new HashSet<String>(
+            CollectionUtils.disjunction( modelDependencies2, new HashSet<String>( modelDependencies2 ) ) );
     }
 }

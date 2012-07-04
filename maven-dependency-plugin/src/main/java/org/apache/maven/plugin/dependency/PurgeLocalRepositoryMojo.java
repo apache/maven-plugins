@@ -34,6 +34,9 @@ import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.FileUtils;
 
@@ -55,10 +58,9 @@ import java.util.Set;
  *
  * @author jdcasey
  * @version $Id$
- * @goal purge-local-repository
- * @aggregator
  * @since 2.0
  */
+@Mojo( name = "purge-local-repository", aggregator = true )
 public class PurgeLocalRepositoryMojo
     extends AbstractMojo
 {
@@ -74,19 +76,15 @@ public class PurgeLocalRepositoryMojo
     /**
      * The projects in the current build. Each of these is subject to
      * refreshing.
-     *
-     * @parameter default-value="${reactorProjects}"
-     * @required
-     * @readonly
      */
+    @Parameter( defaultValue = "${reactorProjects}", readonly = true, required = true )
     private List<MavenProject> projects;
 
     /**
      * The list of dependencies in the form of groupId:artifactId which should
      * NOT be deleted/refreshed. This is useful for third-party artifacts.
-     *
-     * @parameter
      */
+    @Parameter
     private List<String> excludes;
 
     /**
@@ -94,42 +92,35 @@ public class PurgeLocalRepositoryMojo
      * to exclude artifacts from deletion/refresh. This is a command-line
      * alternative to the <code>excludes</code> parameter, since List
      * parameters are not currently compatible with CLI specification.
-     *
-     * @parameter expression="${exclude}"
      */
+    @Parameter( property = "exclude" )
     private String exclude;
 
     /**
      * Whether to re-resolve the artifacts once they have been deleted from the
      * local repository. If you are running this mojo from the command-line, you
      * may want to disable this. By default, artifacts will be re-resolved.
-     *
-     * @parameter expression="${reResolve}" default-value="true"
      */
+    @Parameter( property = "reResolve", defaultValue = "true" )
     private boolean reResolve;
 
     /**
      * The local repository, from which to delete artifacts.
-     *
-     * @parameter default-value="${localRepository}"
-     * @required
-     * @readonly
      */
+    @Parameter( defaultValue = "${localRepository}", readonly = true, required = true )
     private ArtifactRepository localRepository;
 
     /**
      * The artifact resolver used to re-resolve dependencies, if that option is
      * enabled.
-     *
-     * @component
      */
+    @Component
     private ArtifactResolver resolver;
 
     /**
      * The artifact metadata source used to resolve dependencies
-     *
-     * @component
      */
+    @Component
     private ArtifactMetadataSource source;
 
     /**
@@ -144,39 +135,35 @@ public class PurgeLocalRepositoryMojo
      * <li><b>groupId</b> - Eliminate all files associated with the artifact's
      * groupId.</li>
      * </ul>
-     *
-     * @parameter expression="${resolutionFuzziness}" default-value="file"
      */
+    @Parameter( property = "resolutionFuzziness", defaultValue = "file" )
     private String resolutionFuzziness;
 
     /**
      * Whether this mojo should act on all transitive dependencies. Default
      * value is true.
-     *
-     * @parameter expression="${actTransitively}" default-value="true"
      */
+    @Parameter( property = "actTransitively", defaultValue = "true" )
     private boolean actTransitively;
 
     /**
      * Used to construct artifacts for deletion/resolution...
-     *
-     * @component
      */
+    @Component
     private ArtifactFactory factory;
 
     /**
      * Whether this plugin should output verbose messages. Default is false.
-     *
-     * @parameter expression="${verbose}" default-value="false"
      */
+    @Parameter( property = "verbose", defaultValue = "false" )
     private boolean verbose;
 
     /**
      * Whether to purge only snapshot artifacts.
      *
-     * @parameter expression="${snapshotsOnly}" default-value="false"
      * @since 2.4
      */
+    @Parameter( property = "snapshotsOnly", defaultValue = "false" )
     private boolean snapshotsOnly;
 
 
@@ -225,8 +212,7 @@ public class PurgeLocalRepositoryMojo
     {
         Map<String, Artifact> artifactMap = Collections.emptyMap();
 
-        @SuppressWarnings( "unchecked" )
-        List<Dependency> dependencies = project.getDependencies();
+        @SuppressWarnings( "unchecked" ) List<Dependency> dependencies = project.getDependencies();
 
         List<ArtifactRepository> remoteRepositories = Collections.emptyList();
 

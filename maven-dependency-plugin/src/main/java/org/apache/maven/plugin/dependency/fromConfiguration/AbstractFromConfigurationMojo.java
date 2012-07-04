@@ -19,11 +19,6 @@ package org.apache.maven.plugin.dependency.fromConfiguration;
  * under the License.
  */
 
-import java.io.File;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.ArtifactRepositoryFactory;
@@ -36,100 +31,96 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.dependency.AbstractDependencyMojo;
 import org.apache.maven.plugin.dependency.utils.DependencyUtil;
 import org.apache.maven.plugin.dependency.utils.filters.ArtifactItemFilter;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.artifact.filter.collection.ArtifactFilterException;
 import org.codehaus.plexus.util.StringUtils;
 
+import java.io.File;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+
 /**
  * Abstract Parent class used by mojos that get Artifact information from the plugin configuration as an ArrayList of
  * ArtifactItems
- * 
- * @see ArtifactItem
+ *
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  * @version $Id$
+ * @see ArtifactItem
  */
 public abstract class AbstractFromConfigurationMojo
     extends AbstractDependencyMojo
 {
     /**
      * Skip the execution
-     * 
-     * @optional
+     *
      * @since 2.2
-     * @parameter expression="${mdep.skip}" default-value="false"
      */
+    @Parameter( property = "mdep.skip", defaultValue = "false" )
     private boolean skip;
 
     /**
      * Default location used for mojo unless overridden in ArtifactItem
-     * 
-     * @parameter expression="${outputDirectory}" default-value="${project.build.directory}/dependency"
-     * @optional
+     *
      * @since 1.0
      */
+    @Parameter( property = "outputDirectory", defaultValue = "${project.build.directory}/dependency" )
     private File outputDirectory;
 
     /**
      * Overwrite release artifacts
-     * 
-     * @optional
+     *
      * @since 1.0
-     * @parameter expression="${mdep.overWriteReleases}" default-value="false"
      */
+    @Parameter( property = "mdep.overWriteReleases", defaultValue = "false" )
     private boolean overWriteReleases;
 
     /**
      * Overwrite snapshot artifacts
-     * 
-     * @optional
+     *
      * @since 1.0
-     * @parameter expression="${mdep.overWriteSnapshots}" default-value="false"
      */
+    @Parameter( property = "mdep.overWriteSnapshots", defaultValue = "false" )
     private boolean overWriteSnapshots;
 
     /**
      * Overwrite if newer
-     * 
-     * @optional
+     *
      * @since 2.0
-     * @parameter expression="${mdep.overIfNewer}" default-value="true"
      */
+    @Parameter( property = "mdep.overIfNewer", defaultValue = "true" )
     private boolean overWriteIfNewer;
 
     /**
      * To search for artifacts within the reactor and ensure consistent behaviour between Maven 2 and Maven 3.
-     *
-     * @parameter default-value="${reactorProjects}"
-     * @required
-     * @readonly
      */
+    @Parameter( defaultValue = "${reactorProjects}", readonly = true, required = true )
     protected List<MavenProject> reactorProjects;
 
     /**
      * Collection of ArtifactItems to work on. (ArtifactItem contains groupId, artifactId, version, type, classifier,
      * location, destFileName, markerFile and overwrite.) See <a href="./usage.html">Usage</a> for details.
-     * 
-     * @parameter
-     * @required
+     *
      * @since 1.0
      */
+    @Parameter( required = true )
     private List<ArtifactItem> artifactItems;
 
     /**
      * To look up ArtifactRepository implementation
-     * 
-     * @component
-     * @readonly
      */
+    @Component
     private ArtifactRepositoryFactory artifactRepositoryManager;
 
     /**
      * Path to override default local repository during plugin's execution. To remove all downloaded artifacts as part
      * of the build, set this value to a location under your project's target directory
-     * 
-     * @parameter
+     *
      * @since 2.2
      */
+    @Parameter
     private File localRepositoryDirectory;
 
     /**
@@ -142,7 +133,7 @@ public abstract class AbstractFromConfigurationMojo
     /**
      * Preprocesses the list of ArtifactItems. This method defaults the outputDirectory if not set and creates the
      * output Directory if it doesn't exist.
-     * 
+     *
      * @param removeVersion remove the version from the filename.
      * @return An ArrayList of preprocessed ArtifactItems
      * @throws MojoExecutionException with a message if an error occurs.
@@ -176,8 +167,8 @@ public abstract class AbstractFromConfigurationMojo
 
             if ( StringUtils.isEmpty( artifactItem.getDestFileName() ) )
             {
-                artifactItem.setDestFileName( DependencyUtil.getFormattedFileName( artifactItem.getArtifact(),
-                                                                                   removeVersion ) );
+                artifactItem.setDestFileName(
+                    DependencyUtil.getFormattedFileName( artifactItem.getArtifact(), removeVersion ) );
             }
 
             try
@@ -211,7 +202,7 @@ public abstract class AbstractFromConfigurationMojo
     /**
      * Resolves the Artifact from the remote repository if necessary. If no version is specified, it will be retrieved
      * from the dependency list or from the DependencyManagement section of the pom.
-     * 
+     *
      * @param artifactItem containing information about artifact from plugin configuration.
      * @return Artifact object representing the specified file.
      * @throws MojoExecutionException with a message if the version can't be found in DependencyManagement.
@@ -237,16 +228,14 @@ public abstract class AbstractFromConfigurationMojo
 
         if ( StringUtils.isEmpty( artifactItem.getClassifier() ) )
         {
-            artifact =
-                factory.createDependencyArtifact( artifactItem.getGroupId(), artifactItem.getArtifactId(), vr,
-                                                  artifactItem.getType(), null, Artifact.SCOPE_COMPILE );
+            artifact = factory.createDependencyArtifact( artifactItem.getGroupId(), artifactItem.getArtifactId(), vr,
+                                                         artifactItem.getType(), null, Artifact.SCOPE_COMPILE );
         }
         else
         {
-            artifact =
-                factory.createDependencyArtifact( artifactItem.getGroupId(), artifactItem.getArtifactId(), vr,
-                                                  artifactItem.getType(), artifactItem.getClassifier(),
-                                                  Artifact.SCOPE_COMPILE );
+            artifact = factory.createDependencyArtifact( artifactItem.getGroupId(), artifactItem.getArtifactId(), vr,
+                                                         artifactItem.getType(), artifactItem.getClassifier(),
+                                                         Artifact.SCOPE_COMPILE );
         }
 
         // Maven 3 will search the reactor for the artifact but Maven 2 does not
@@ -284,9 +273,10 @@ public abstract class AbstractFromConfigurationMojo
 
     /**
      * Checks to see if the specified artifact is available from the reactor.
+     *
      * @param artifact The artifact we are looking for.
      * @return The resolved artifact that is the same as the one we were looking for or <code>null</code> if one could
-     * not be found.
+     *         not be found.
      */
     private Artifact getArtifactFomReactor( Artifact artifact )
     {
@@ -321,6 +311,7 @@ public abstract class AbstractFromConfigurationMojo
 
     /**
      * Returns <code>true</code> if the artifact has a file.
+     *
      * @param artifact the artifact (may be null)
      * @return <code>true</code> if and only if the artifact is non-null and has a file.
      */
@@ -331,67 +322,64 @@ public abstract class AbstractFromConfigurationMojo
 
     /**
      * Null-safe compare of two artifacts based on groupId, artifactId, version, type and classifier.
+     *
      * @param a the first artifact.
      * @param b the second artifact.
      * @return <code>true</code> if and only if the two artifacts have the same groupId, artifactId, version,
-     * type and classifier.
+     *         type and classifier.
      */
     private static boolean equals( Artifact a, Artifact b )
     {
-        return a == b
-            || !( a == null || b == null )
-            && StringUtils.equals( a.getGroupId(), b.getGroupId() )
-            && StringUtils.equals( a.getArtifactId(), b.getArtifactId() )
-            && StringUtils.equals( a.getVersion(), b.getVersion() )
-            && StringUtils.equals( a.getType(), b.getType() )
-            && StringUtils.equals( a.getClassifier(), b.getClassifier() );
+        return a == b || !( a == null || b == null ) && StringUtils.equals( a.getGroupId(), b.getGroupId() )
+            && StringUtils.equals( a.getArtifactId(), b.getArtifactId() ) && StringUtils.equals( a.getVersion(),
+                                                                                                 b.getVersion() )
+            && StringUtils.equals( a.getType(), b.getType() ) && StringUtils.equals( a.getClassifier(),
+                                                                                     b.getClassifier() );
     }
 
     /**
      * Tries to find missing version from dependency list and dependency management. If found, the artifact is updated
      * with the correct version. It will first look for an exact match on artifactId/groupId/classifier/type and if it
      * doesn't find a match, it will try again looking for artifactId and groupId only.
-     * 
+     *
      * @param artifact representing configured file.
      * @throws MojoExecutionException
      */
     private void fillMissingArtifactVersion( ArtifactItem artifact )
         throws MojoExecutionException
     {
-        @SuppressWarnings( "unchecked" )
-        List<Dependency> deps = project.getDependencies();
-        @SuppressWarnings( "unchecked" )
-        List<Dependency> depMngt = project.getDependencyManagement() == null
+        @SuppressWarnings( "unchecked" ) List<Dependency> deps = project.getDependencies();
+        @SuppressWarnings( "unchecked" ) List<Dependency> depMngt = project.getDependencyManagement() == null
             ? Collections.<Dependency>emptyList()
             : project.getDependencyManagement().getDependencies();
 
-        if ( !findDependencyVersion( artifact, deps, false )
-            && ( project.getDependencyManagement() == null || !findDependencyVersion( artifact, depMngt, false ) )
-            && !findDependencyVersion( artifact, deps, true )
+        if ( !findDependencyVersion( artifact, deps, false ) && ( project.getDependencyManagement() == null
+            || !findDependencyVersion( artifact, depMngt, false ) ) && !findDependencyVersion( artifact, deps, true )
             && ( project.getDependencyManagement() == null || !findDependencyVersion( artifact, depMngt, true ) ) )
         {
-            throw new MojoExecutionException( "Unable to find artifact version of " + artifact.getGroupId() + ":"
-                + artifact.getArtifactId() + " in either dependency list or in project's dependency management." );
+            throw new MojoExecutionException(
+                "Unable to find artifact version of " + artifact.getGroupId() + ":" + artifact.getArtifactId()
+                    + " in either dependency list or in project's dependency management." );
         }
     }
 
     /**
      * Tries to find missing version from a list of dependencies. If found, the artifact is updated with the correct
      * version.
-     * 
-     * @param artifact representing configured file.
+     *
+     * @param artifact     representing configured file.
      * @param dependencies list of dependencies to search.
-     * @param looseMatch only look at artifactId and groupId
+     * @param looseMatch   only look at artifactId and groupId
      * @return the found dependency
      */
     private boolean findDependencyVersion( ArtifactItem artifact, List<Dependency> dependencies, boolean looseMatch )
     {
         for ( Dependency dependency : dependencies )
         {
-            if ( StringUtils.equals( dependency.getArtifactId(), artifact.getArtifactId() )
-                && StringUtils.equals( dependency.getGroupId(), artifact.getGroupId() )
-                && ( looseMatch || StringUtils.equals( dependency.getClassifier(), artifact.getClassifier() ) )
-                && ( looseMatch || StringUtils.equals( dependency.getType(), artifact.getType() ) ) )
+            if ( StringUtils.equals( dependency.getArtifactId(), artifact.getArtifactId() ) && StringUtils.equals(
+                dependency.getGroupId(), artifact.getGroupId() ) && ( looseMatch || StringUtils.equals(
+                dependency.getClassifier(), artifact.getClassifier() ) ) && ( looseMatch || StringUtils.equals(
+                dependency.getType(), artifact.getType() ) ) )
             {
                 artifact.setVersion( dependency.getVersion() );
 
@@ -416,7 +404,7 @@ public abstract class AbstractFromConfigurationMojo
 
     /**
      * Override the base to
-     * 
+     *
      * @return Returns the local.
      */
     protected ArtifactRepository getLocal()

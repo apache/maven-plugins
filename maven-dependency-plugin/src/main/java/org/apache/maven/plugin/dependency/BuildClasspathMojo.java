@@ -19,6 +19,19 @@ package org.apache.maven.plugin.dependency;
  * under the License.
  */
 
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.dependency.utils.DependencyUtil;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.apache.maven.project.MavenProjectHelper;
+import org.apache.maven.shared.artifact.filter.collection.ArtifactsFilter;
+import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.StringUtils;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -34,24 +47,15 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.dependency.utils.DependencyUtil;
-import org.apache.maven.project.MavenProjectHelper;
-import org.apache.maven.shared.artifact.filter.collection.ArtifactsFilter;
-import org.codehaus.plexus.util.IOUtil;
-import org.codehaus.plexus.util.StringUtils;
-
 /**
  * This goal will output a classpath string of dependencies from the local repository to a file or log.
  *
- * @goal build-classpath
- * @requiresDependencyResolution test
- * @phase generate-sources
  * @author ankostis
  * @version $Id$
  * @since 2.0-alpha-2
  */
+@Mojo( name = "build-classpath", requiresDependencyResolution = ResolutionScope.TEST,
+       defaultPhase = LifecyclePhase.GENERATE_SOURCES )
 public class BuildClasspathMojo
     extends AbstractDependencyFilterMojo
     implements Comparator<Artifact>
@@ -59,41 +63,37 @@ public class BuildClasspathMojo
 
     /**
      * Strip artifact version during copy (only works if prefix is set)
-     *
-     * @parameter expression="${mdep.stripVersion}" default-value="false"
-     * @parameter
      */
+    @Parameter( property = "mdep.stripVersion", defaultValue = "false" )
     private boolean stripVersion = false;
 
     /**
      * The prefix to prepend on each dependent artifact. If undefined, the paths refer to the actual files store in the
      * local repository (the stipVersion parameter does nothing then).
-     *
-     * @parameter expression="${mdep.prefix}"
      */
+    @Parameter( property = "mdep.prefix" )
     private String prefix;
 
     /**
      * The file to write the classpath string. If undefined, it just prints the classpath as [INFO].
      * This parameter is deprecated. Use outputFile instead.
      *
-     * @parameter expression="${mdep.cpFile}"
-     * @deprecated use outputFile instead
      * @since 2.0
+     * @deprecated use outputFile instead
      */
+    @Parameter( property = "mdep.cpFile" )
     private File cpFile;
 
     /**
      * The file to write the classpath string. If undefined, it just prints the classpath as [INFO].
-     * @parameter expression="${mdep.outputFile}"
      */
+    @Parameter( property = "mdep.outputFile" )
     private File outputFile;
 
     /**
      * If 'true', it skips the up-to-date-check, and always regenerates the classpath file.
-     *
-     * @parameter default-value="false" expression="${mdep.regenerateFile}"
      */
+    @Parameter( property = "mdep.regenerateFile", defaultValue = "false" )
     private boolean regenerateFile;
 
     /**
@@ -102,8 +102,8 @@ public class BuildClasspathMojo
      * systems it is '\'. The default is File.separator
      *
      * @since 2.0
-     * @parameter default-value="" expression="${mdep.fileSeparator}"
      */
+    @Parameter( property = "mdep.fileSeparator", defaultValue = "" )
     private String fileSeparator;
 
     /**
@@ -113,8 +113,8 @@ public class BuildClasspathMojo
      * on Microsoft Windows systems it is ';'.
      *
      * @since 2.0
-     * @parameter default-value="" expression="${mdep.pathSeparator}"
      */
+    @Parameter( property = "mdep.pathSeparator", defaultValue = "" )
     private String pathSeparator;
 
     /**
@@ -122,32 +122,30 @@ public class BuildClasspathMojo
      * value will be forced to "${M2_REPO}" if no value is provided AND the attach flag is true.
      *
      * @since 2.0
-     * @parameter default-value="" expression="${mdep.localRepoProperty}"
      */
+    @Parameter( property = "mdep.localRepoProperty", defaultValue = "" )
     private String localRepoProperty;
 
     /**
      * Attach the classpath file to the main artifact so it can be installed and deployed.
      *
      * @since 2.0
-     * @parameter default-value=false
      */
+    @Parameter( defaultValue = "false" )
     boolean attach;
 
     /**
      * Write out the classpath in a format compatible with filtering (classpath=xxxxx)
      *
      * @since 2.0
-     * @parameter default-value=false expression="${mdep.outputFilterFile}"
      */
+    @Parameter( property = "mdep.outputFilterFile", defaultValue = "false" )
     boolean outputFilterFile;
 
     /**
      * Maven ProjectHelper
-     *
-     * @component
-     * @readonly
      */
+    @Component
     private MavenProjectHelper projectHelper;
 
     boolean isFileSepSet = true;
@@ -295,7 +293,8 @@ public class BuildClasspathMojo
         }
         catch ( Exception ex )
         {
-            this.getLog().warn( "Error while reading old classpath file '" + outputFile + "' for up-to-date check: " + ex );
+            this.getLog().warn(
+                "Error while reading old classpath file '" + outputFile + "' for up-to-date check: " + ex );
 
             return false;
         }
@@ -322,8 +321,8 @@ public class BuildClasspathMojo
         }
         catch ( IOException ex )
         {
-            throw new MojoExecutionException( "Error while writting to classpath file '" + out + "': "
-                + ex.toString(), ex );
+            throw new MojoExecutionException( "Error while writting to classpath file '" + out + "': " + ex.toString(),
+                                              ex );
         }
         finally
         {
@@ -344,7 +343,7 @@ public class BuildClasspathMojo
         if ( outputFile == null )
         {
             throw new IllegalArgumentException(
-                                                "The outputFile parameter cannot be null if the file is intended to be read." );
+                "The outputFile parameter cannot be null if the file is intended to be read." );
         }
 
         if ( !outputFile.isFile() )

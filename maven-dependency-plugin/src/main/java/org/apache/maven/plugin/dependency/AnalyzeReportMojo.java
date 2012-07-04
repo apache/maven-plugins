@@ -19,16 +19,15 @@ package org.apache.maven.plugin.dependency;
  * under the License.
  */
 
-import java.io.File;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Locale;
-import java.util.ResourceBundle;
-import java.util.Set;
-
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.doxia.siterenderer.Renderer;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Execute;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.MavenReportException;
@@ -36,16 +35,22 @@ import org.apache.maven.shared.dependency.analyzer.ProjectDependencyAnalysis;
 import org.apache.maven.shared.dependency.analyzer.ProjectDependencyAnalyzer;
 import org.apache.maven.shared.dependency.analyzer.ProjectDependencyAnalyzerException;
 
+import java.io.File;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Locale;
+import java.util.ResourceBundle;
+import java.util.Set;
+
 /**
  * Analyzes the dependencies of this project and produces a report that summarizes which are: used and declared; used
  * and undeclared; unused and declared.
- * 
+ *
  * @version $Id$
  * @since 2.0-alpha-5
- * @goal analyze-report
- * @requiresDependencyResolution test
- * @execute phase="test-compile"
  */
+@Mojo( name = "analyze-report", requiresDependencyResolution = ResolutionScope.TEST )
+@Execute( phase = LifecyclePhase.TEST_COMPILE )
 public class AnalyzeReportMojo
     extends AbstractMavenReport
 {
@@ -53,43 +58,34 @@ public class AnalyzeReportMojo
 
     /**
      * The Maven project to analyze.
-     * 
-     * @parameter default-value="${project}"
-     * @required
-     * @readonly
      */
+    @Parameter
     private MavenProject project;
 
     /**
      * The Maven project dependency analyzer to use.
-     * 
-     * @component
-     * @required
-     * @readonly
      */
+    @Component
     private ProjectDependencyAnalyzer analyzer;
 
     /**
-     * @component
-     * @required
-     * @readonly
+     *
      */
+    @Component
     private Renderer siteRenderer;
 
     /**
      * Target folder
-     * 
-     * @parameter default-value="${project.build.directory}"
-     * @readonly
+     *
      * @since 2.0-alpha-5
      */
+    @Parameter( defaultValue = "${project.build.directory}", readonly = true )
     private File outputDirectory;
 
     /**
      * Ignore Runtime,Provide,Test,System scopes for unused dependency analysis
-     * 
-     * @parameter expression="${ignoreNonCompile}" default-value="false"
      */
+    @Parameter( property = "ignoreNonCompile", defaultValue = "false" )
     private boolean ignoreNonCompile;
 
     // Mojo methods -----------------------------------------------------------
@@ -124,12 +120,11 @@ public class AnalyzeReportMojo
             throw new MavenReportException( "Cannot analyze dependencies", exception );
         }
 
-
         //remove everything that's not in the compile scope
         if ( ignoreNonCompile )
         {
-            @SuppressWarnings( "unchecked" )
-            Set<Artifact> filteredUnusedDeclared = new HashSet<Artifact>( analysis.getUnusedDeclaredArtifacts() );
+            @SuppressWarnings( "unchecked" ) Set<Artifact> filteredUnusedDeclared =
+                new HashSet<Artifact>( analysis.getUnusedDeclaredArtifacts() );
             Iterator<Artifact> iter = filteredUnusedDeclared.iterator();
             while ( iter.hasNext() )
             {
@@ -139,14 +134,13 @@ public class AnalyzeReportMojo
                     iter.remove();
                 }
             }
-            
-            ProjectDependencyAnalysis analysisTemp =
-                new ProjectDependencyAnalysis( analysis.getUsedDeclaredArtifacts(),
-                                               analysis.getUsedUndeclaredArtifacts(), filteredUnusedDeclared );
+
+            ProjectDependencyAnalysis analysisTemp = new ProjectDependencyAnalysis( analysis.getUsedDeclaredArtifacts(),
+                                                                                    analysis.getUsedUndeclaredArtifacts(),
+                                                                                    filteredUnusedDeclared );
             analysis = analysisTemp;
         }
-        
-        
+
         // Step 2: Create sink and bundle
         Sink sink = getSink();
         ResourceBundle bundle = getBundle( locale );

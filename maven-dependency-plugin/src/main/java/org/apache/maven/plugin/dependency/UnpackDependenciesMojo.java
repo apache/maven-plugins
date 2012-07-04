@@ -19,27 +19,29 @@ package org.apache.maven.plugin.dependency;
  * under the License.
  */
 
-import java.io.File;
-
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.dependency.utils.DependencyStatusSets;
 import org.apache.maven.plugin.dependency.utils.DependencyUtil;
 import org.apache.maven.plugin.dependency.utils.filters.MarkerFileFilter;
 import org.apache.maven.plugin.dependency.utils.markers.DefaultFileMarkerHandler;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.shared.artifact.filter.collection.ArtifactsFilter;
+
+import java.io.File;
 
 /**
  * Goal that unpacks the project dependencies from the repository to a defined
  * location.
  *
- * @goal unpack-dependencies
- * @requiresDependencyResolution test
- * @phase process-sources
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  * @version $Id$
  * @since 1.0
  */
+@Mojo( name = "unpack-dependencies", requiresDependencyResolution = ResolutionScope.TEST,
+       defaultPhase = LifecyclePhase.PROCESS_SOURCES )
 public class UnpackDependenciesMojo
     extends AbstractFromDependenciesMojo
 {
@@ -48,8 +50,9 @@ public class UnpackDependenciesMojo
      * artifact.  i.e. <code>**\/*.xml,**\/*.properties</code>
      * NOTE: Excludes patterns override the includes.
      * (component code = <code>return isIncluded( name ) AND !isExcluded( name );</code>)
-     * @since 2.0
+     *
      * @parameter expression="${mdep.unpack.includes}"
+     * @since 2.0
      */
     private String includes;
 
@@ -58,8 +61,9 @@ public class UnpackDependenciesMojo
      * artifact.  i.e. <code>**\/*.xml,**\/*.properties</code>
      * NOTE: Excludes patterns override the includes.
      * (component code = <code>return isIncluded( name ) AND !isExcluded( name );</code>)
-     * @since 2.0
+     *
      * @parameter expression="${mdep.unpack.excludes}"
+     * @since 2.0
      */
     private String excludes;
 
@@ -67,9 +71,7 @@ public class UnpackDependenciesMojo
      * Main entry into mojo. This method gets the dependencies and iterates
      * through each one passing it to DependencyUtil.unpackFile().
      *
-     * @throws MojoExecutionException
-     *             with a message if an error occurs.
-     *
+     * @throws MojoExecutionException with a message if an error occurs.
      * @see #getDependencies
      * @see DependencyUtil#unpackFile(Artifact, File, File, ArchiverManager,
      *      Log)
@@ -82,9 +84,9 @@ public class UnpackDependenciesMojo
         for ( Artifact artifact : dss.getResolvedDependencies() )
         {
             File destDir;
-            destDir = DependencyUtil.getFormattedOutputDirectory( useSubDirectoryPerScope, useSubDirectoryPerType, useSubDirectoryPerArtifact,
-                                                                  useRepositoryLayout, stripVersion, outputDirectory,
-                                                                  artifact );
+            destDir = DependencyUtil.getFormattedOutputDirectory( useSubDirectoryPerScope, useSubDirectoryPerType,
+                                                                  useSubDirectoryPerArtifact, useRepositoryLayout,
+                                                                  stripVersion, outputDirectory, artifact );
             unpack( artifact.getFile(), destDir, getIncludes(), getExcludes() );
             DefaultFileMarkerHandler handler = new DefaultFileMarkerHandler( artifact, this.markersDirectory );
             handler.setMarker();
@@ -111,9 +113,8 @@ public class UnpackDependenciesMojo
     }
 
     /**
-     * @param excludes
-     * 			A comma separated list of items to exclude
-     * 			i.e. <code>**\/*.xml, **\/*.properties</code>
+     * @param excludes A comma separated list of items to exclude
+     *                 i.e. <code>**\/*.xml, **\/*.properties</code>
      */
     public void setExcludes( String excludes )
     {
@@ -129,9 +130,8 @@ public class UnpackDependenciesMojo
     }
 
     /**
-     * @param includes
-     * 			A comma separated list of items to include
-     *          i.e. <code>**\/*.xml, **\/*.properties</code>
+     * @param includes A comma separated list of items to include
+     *                 i.e. <code>**\/*.xml, **\/*.properties</code>
      */
     public void setIncludes( String includes )
     {

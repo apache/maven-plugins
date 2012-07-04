@@ -19,60 +19,61 @@ package org.apache.maven.plugin.dependency.fromConfiguration;
  * under the License.
  */
 
-import java.io.File;
-import java.util.List;
-
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.dependency.utils.filters.ArtifactItemFilter;
 import org.apache.maven.plugin.dependency.utils.filters.MarkerFileFilter;
 import org.apache.maven.plugin.dependency.utils.markers.MarkerHandler;
 import org.apache.maven.plugin.dependency.utils.markers.UnpackFileMarkerHandler;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.codehaus.plexus.util.StringUtils;
+
+import java.io.File;
+import java.util.List;
 
 /**
  * Goal that retrieves a list of artifacts from the repository and unpacks them in a defined location.
- * 
- * @since 1.0
- * @goal unpack
- * @phase process-sources
+ *
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  * @version $Id$
+ * @since 1.0
  */
+@Mojo( name = "unpack", defaultPhase = LifecyclePhase.PROCESS_SOURCES )
 public final class UnpackMojo
     extends AbstractFromConfigurationMojo
 {
 
     /**
      * Directory to store flag files after unpack
-     * 
-     * @parameter expression="${project.build.directory}/dependency-maven-plugin-markers"
      */
+    @Parameter( defaultValue = "${project.build.directory}/dependency-maven-plugin-markers" )
     private File markersDirectory;
 
     /**
      * A comma separated list of file patterns to include when unpacking the artifact. i.e. **\/*.xml,**\/*.properties
      * NOTE: Excludes patterns override the includes. (component code = return isIncluded( name ) AND !isExcluded( name
      * );)
-     * 
+     *
      * @since 2.0-alpha-5
-     * @parameter expression="${mdep.unpack.includes}"
      */
+    @Parameter( property = "mdep.unpack.includes" )
     private String includes;
 
     /**
      * A comma separated list of file patterns to exclude when unpacking the artifact. i.e. **\/*.xml,**\/*.properties
      * NOTE: Excludes patterns override the includes. (component code = return isIncluded( name ) AND !isExcluded( name
      * );)
-     * 
+     *
      * @since 2.0-alpha-5
-     * @parameter expression="${mdep.unpack.excludes}"
      */
+    @Parameter( property = "mdep.unpack.excludes" )
     private String excludes;
 
     /**
      * Main entry into mojo. This method gets the ArtifactItems and iterates through each one passing it to
      * unpackArtifact.
-     * 
+     *
      * @throws MojoExecutionException with a message if an error occurs.
      * @see ArtifactItem
      * @see #getArtifactItems
@@ -102,7 +103,7 @@ public final class UnpackMojo
 
     /**
      * This method gets the Artifact object and calls DependencyUtil.unpackFile.
-     * 
+     *
      * @param artifactItem containing the information about the Artifact to unpack.
      * @throws MojoExecutionException with a message if an error occurs.
      * @see #getArtifact
@@ -122,8 +123,8 @@ public final class UnpackMojo
     {
         MarkerHandler handler = new UnpackFileMarkerHandler( item, this.markersDirectory );
 
-        return new MarkerFileFilter( this.isOverWriteReleases(), this.isOverWriteSnapshots(),
-                                     this.isOverWriteIfNewer(), handler );
+        return new MarkerFileFilter( this.isOverWriteReleases(), this.isOverWriteSnapshots(), this.isOverWriteIfNewer(),
+                                     handler );
     }
 
     protected List<ArtifactItem> getProcessedArtifactItems( boolean removeVersion )

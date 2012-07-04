@@ -19,11 +19,6 @@ package org.apache.maven.plugin.dependency;
  * under the License.    
  */
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.dependency.fromConfiguration.ArtifactItem;
@@ -32,23 +27,30 @@ import org.apache.maven.plugin.dependency.testUtils.DependencyTestUtils;
 import org.apache.maven.plugin.dependency.utils.markers.UnpackFileMarkerHandler;
 import org.apache.maven.plugin.testing.stubs.StubArtifactCollector;
 import org.apache.maven.plugin.testing.stubs.StubArtifactResolver;
+import org.codehaus.plexus.archiver.manager.ArchiverManager;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 public class TestIncludeExcludeUnpackMojo
-	extends AbstractDependencyMojoTestCase
+    extends AbstractDependencyMojoTestCase
 {
-	private final String PACKED_FILE = "test.zip";
+    private final String PACKED_FILE = "test.zip";
 
-	private final String UNPACKED_FILE_PREFIX = "test";
-	private final String UNPACKED_FILE_SUFFIX = ".txt";
+    private final String UNPACKED_FILE_PREFIX = "test";
 
-	private final String PACKED_FILE_PATH = "target/test-classes/unit/unpack-dependencies-test/" + PACKED_FILE;
+    private final String UNPACKED_FILE_SUFFIX = ".txt";
 
-	UnpackMojo mojo;
+    private final String PACKED_FILE_PATH = "target/test-classes/unit/unpack-dependencies-test/" + PACKED_FILE;
+
+    UnpackMojo mojo;
 
     protected void setUp()
         throws Exception
     {
-    	// required for mojo lookups to work
+        // required for mojo lookups to work
         super.setUp( "unpack", true );
 
         File testPom = new File( getBasedir(), "target/test-classes/unit/unpack-test/plugin-config.xml" );
@@ -67,6 +69,8 @@ public class TestIncludeExcludeUnpackMojo
         list.add( item );
         assertNotNull( mojo );
         assertNotNull( mojo.getProject() );
+
+        mojo.setArchiverManager( (ArchiverManager) lookup( ArchiverManager.ROLE ) );
 
         mojo.setFactory( DependencyTestUtils.getArtifactFactory() );
         mojo.setResolver( new StubArtifactResolver( stubFactory, false, false ) );
@@ -106,112 +110,118 @@ public class TestIncludeExcludeUnpackMojo
 
     private void assertUnpacked( boolean unpacked, String fileName )
     {
-    	File destFile = new File( mojo.getOutputDirectory().getAbsolutePath() , fileName );
-    	assertEquals(unpacked, destFile.exists());
+        File destFile = new File( mojo.getOutputDirectory().getAbsolutePath(), fileName );
+        assertEquals( unpacked, destFile.exists() );
     }
 
     /**
      * This test will validate that only the 1 and 11 files get unpacked
+     *
      * @throws Exception
      */
     public void testUnpackIncludesManyFiles()
-		throws Exception
-	{
+        throws Exception
+    {
         mojo.setIncludes( "**/*1" + UNPACKED_FILE_SUFFIX );
         mojo.execute();
         assertUnpacked( true, UNPACKED_FILE_PREFIX + 1 + UNPACKED_FILE_SUFFIX );
         assertUnpacked( true, UNPACKED_FILE_PREFIX + 11 + UNPACKED_FILE_SUFFIX );
         assertUnpacked( false, UNPACKED_FILE_PREFIX + 2 + UNPACKED_FILE_SUFFIX );
         assertUnpacked( false, UNPACKED_FILE_PREFIX + 3 + UNPACKED_FILE_SUFFIX );
-	}
+    }
 
     /**
      * This test will verify only the 2 file gets unpacked
+     *
      * @throws Exception
      */
     public void testUnpackIncludesSingleFile()
-    	throws Exception
-	{
+        throws Exception
+    {
         mojo.setIncludes( "**/test2" + UNPACKED_FILE_SUFFIX );
         mojo.execute();
         assertUnpacked( false, UNPACKED_FILE_PREFIX + 1 + UNPACKED_FILE_SUFFIX );
         assertUnpacked( false, UNPACKED_FILE_PREFIX + 11 + UNPACKED_FILE_SUFFIX );
         assertUnpacked( true, UNPACKED_FILE_PREFIX + 2 + UNPACKED_FILE_SUFFIX );
         assertUnpacked( false, UNPACKED_FILE_PREFIX + 3 + UNPACKED_FILE_SUFFIX );
-	}
+    }
 
     /**
      * This test will verify all files get unpacked
+     *
      * @throws Exception
      */
     public void testUnpackIncludesAllFiles()
-    	throws Exception
-	{
+        throws Exception
+    {
         mojo.setIncludes( "**/*" );
         mojo.execute();
         assertUnpacked( true, UNPACKED_FILE_PREFIX + 1 + UNPACKED_FILE_SUFFIX );
         assertUnpacked( true, UNPACKED_FILE_PREFIX + 11 + UNPACKED_FILE_SUFFIX );
         assertUnpacked( true, UNPACKED_FILE_PREFIX + 2 + UNPACKED_FILE_SUFFIX );
         assertUnpacked( true, UNPACKED_FILE_PREFIX + 3 + UNPACKED_FILE_SUFFIX );
-	}
+    }
 
     /**
      * This test will validate that only the 2 and 3 files get unpacked
+     *
      * @throws Exception
      */
     public void testUnpackExcludesManyFiles()
-		throws Exception
-	{
+        throws Exception
+    {
         mojo.setExcludes( "**/*1" + UNPACKED_FILE_SUFFIX );
         mojo.execute();
         assertUnpacked( false, UNPACKED_FILE_PREFIX + 1 + UNPACKED_FILE_SUFFIX );
         assertUnpacked( false, UNPACKED_FILE_PREFIX + 11 + UNPACKED_FILE_SUFFIX );
         assertUnpacked( true, UNPACKED_FILE_PREFIX + 2 + UNPACKED_FILE_SUFFIX );
         assertUnpacked( true, UNPACKED_FILE_PREFIX + 3 + UNPACKED_FILE_SUFFIX );
-	}
+    }
 
     /**
      * This test will verify only the 1, 11 & 3 files get unpacked
+     *
      * @throws Exception
      */
     public void testUnpackExcludesSingleFile()
-    	throws Exception
-	{
+        throws Exception
+    {
         mojo.setExcludes( "**/test2" + UNPACKED_FILE_SUFFIX );
         mojo.execute();
         assertUnpacked( true, UNPACKED_FILE_PREFIX + 1 + UNPACKED_FILE_SUFFIX );
         assertUnpacked( true, UNPACKED_FILE_PREFIX + 11 + UNPACKED_FILE_SUFFIX );
         assertUnpacked( false, UNPACKED_FILE_PREFIX + 2 + UNPACKED_FILE_SUFFIX );
         assertUnpacked( true, UNPACKED_FILE_PREFIX + 3 + UNPACKED_FILE_SUFFIX );
-	}
+    }
 
     /**
      * This test will verify no files get unpacked
+     *
      * @throws Exception
      */
     public void testUnpackExcludesAllFiles()
-    	throws Exception
-	{
+        throws Exception
+    {
         mojo.setExcludes( "**/*" );
         mojo.execute();
         assertUnpacked( false, UNPACKED_FILE_PREFIX + 1 + UNPACKED_FILE_SUFFIX );
         assertUnpacked( false, UNPACKED_FILE_PREFIX + 11 + UNPACKED_FILE_SUFFIX );
         assertUnpacked( false, UNPACKED_FILE_PREFIX + 2 + UNPACKED_FILE_SUFFIX );
         assertUnpacked( false, UNPACKED_FILE_PREFIX + 3 + UNPACKED_FILE_SUFFIX );
-	}
+    }
 
     public void testNoIncludeExcludes()
-    	throws Exception
-	{
+        throws Exception
+    {
         mojo.execute();
         assertUnpacked( true, UNPACKED_FILE_PREFIX + 1 + UNPACKED_FILE_SUFFIX );
         assertUnpacked( true, UNPACKED_FILE_PREFIX + 11 + UNPACKED_FILE_SUFFIX );
         assertUnpacked( true, UNPACKED_FILE_PREFIX + 2 + UNPACKED_FILE_SUFFIX );
         assertUnpacked( true, UNPACKED_FILE_PREFIX + 3 + UNPACKED_FILE_SUFFIX );
-	}
+    }
 
     public void testIncludeArtifactItemOverride()
-    	throws Exception
+        throws Exception
     {
         Artifact artifact = stubFactory.createArtifact( "test", "test", "1.0", Artifact.SCOPE_COMPILE, "jar", null );
         ArtifactItem item = stubFactory.getArtifactItem( artifact );
@@ -228,8 +238,8 @@ public class TestIncludeExcludeUnpackMojo
     }
 
     public void testExcludeArtifactItemOverride()
-	throws Exception
-	{
+        throws Exception
+    {
         Artifact artifact = stubFactory.createArtifact( "test", "test", "1.0", Artifact.SCOPE_COMPILE, "jar", null );
         ArtifactItem item = stubFactory.getArtifactItem( artifact );
         item.setExcludes( "**/*" );
@@ -242,11 +252,11 @@ public class TestIncludeExcludeUnpackMojo
         assertUnpacked( false, UNPACKED_FILE_PREFIX + 11 + UNPACKED_FILE_SUFFIX );
         assertUnpacked( false, UNPACKED_FILE_PREFIX + 2 + UNPACKED_FILE_SUFFIX );
         assertUnpacked( false, UNPACKED_FILE_PREFIX + 3 + UNPACKED_FILE_SUFFIX );
-	}
+    }
 
     public void testIncludeArtifactItemMultipleMarker()
-    	throws Exception
-	{
+        throws Exception
+    {
         List<ArtifactItem> list = new ArrayList<ArtifactItem>();
         Artifact artifact = stubFactory.createArtifact( "test", "test", "1.0", Artifact.SCOPE_COMPILE, "jar", null );
         ArtifactItem item = stubFactory.getArtifactItem( artifact );
@@ -264,11 +274,11 @@ public class TestIncludeExcludeUnpackMojo
         assertUnpacked( true, UNPACKED_FILE_PREFIX + 2 + UNPACKED_FILE_SUFFIX );
         assertUnpacked( true, UNPACKED_FILE_PREFIX + 3 + UNPACKED_FILE_SUFFIX );
         assertMarkerFiles( mojo.getArtifactItems(), true );
-	}
+    }
 
     public void testIncludeArtifactItemMultipleExecutions()
-    	throws Exception
-	{
+        throws Exception
+    {
         List<ArtifactItem> list = new ArrayList<ArtifactItem>();
         Artifact artifact = stubFactory.createArtifact( "test", "test", "1.0", Artifact.SCOPE_COMPILE, "jar", null );
         ArtifactItem item = stubFactory.getArtifactItem( artifact );
@@ -287,20 +297,20 @@ public class TestIncludeExcludeUnpackMojo
         assertUnpacked( true, UNPACKED_FILE_PREFIX + 3 + UNPACKED_FILE_SUFFIX );
         assertMarkerFiles( mojo.getArtifactItems(), true );
 
-    	// Now run again and make sure the extracted files haven't gotten overwritten
+        // Now run again and make sure the extracted files haven't gotten overwritten
         File destFile2 =
             new File( mojo.getOutputDirectory().getAbsolutePath(), UNPACKED_FILE_PREFIX + 2 + UNPACKED_FILE_SUFFIX );
         File destFile3 =
             new File( mojo.getOutputDirectory().getAbsolutePath(), UNPACKED_FILE_PREFIX + 3 + UNPACKED_FILE_SUFFIX );
-    	long time = System.currentTimeMillis();
+        long time = System.currentTimeMillis();
         time = time - ( time % 1000 );
         destFile2.setLastModified( time );
         destFile3.setLastModified( time );
         assertEquals( time, destFile2.lastModified() );
         assertEquals( time, destFile3.lastModified() );
         Thread.sleep( 100 );
-    	mojo.execute();
-    	assertEquals( time, destFile2.lastModified() );
+        mojo.execute();
+        assertEquals( time, destFile2.lastModified() );
         assertEquals( time, destFile3.lastModified() );
-	}
+    }
 }

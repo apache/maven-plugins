@@ -19,11 +19,6 @@ package org.apache.maven.plugin.dependency;
  * under the License.
  */
 
-import java.io.File;
-import java.net.MalformedURLException;
-import java.util.Map;
-import java.util.Set;
-
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.installer.ArtifactInstallationException;
 import org.apache.maven.artifact.installer.ArtifactInstaller;
@@ -34,45 +29,54 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.dependency.utils.DependencyStatusSets;
 import org.apache.maven.plugin.dependency.utils.DependencyUtil;
 import org.apache.maven.plugin.dependency.utils.filters.DestFileFilter;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.shared.artifact.filter.collection.ArtifactsFilter;
+
+import java.io.File;
+import java.net.MalformedURLException;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Goal that copies the project dependencies from the repository to a defined
  * location.
  *
- * @goal copy-dependencies
- * @requiresDependencyResolution test
- * @phase process-sources
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  * @version $Id$
  * @since 1.0
  */
+@Mojo( name = "copy-dependencies", requiresDependencyResolution = ResolutionScope.TEST,
+       defaultPhase = LifecyclePhase.PROCESS_SOURCES )
 public class CopyDependenciesMojo
     extends AbstractFromDependenciesMojo
 {
 
     /**
-     * @component
+     *
      */
+    @Component
     protected ArtifactInstaller installer;
 
     /**
-     * @component
+     *
      */
+    @Component
     protected ArtifactRepositoryFactory repositoryFactory;
 
     /**
-     * @component role="org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout"
+     *
      */
+    @Component( role = ArtifactRepositoryLayout.class )
     private Map<String, ArtifactRepositoryLayout> repositoryLayouts;
 
     /**
      * Main entry into mojo. Gets the list of dependencies and iterates through
      * calling copyArtifact.
      *
-     * @throws MojoExecutionException
-     *             with a message if an error occurs.
-     *
+     * @throws MojoExecutionException with a message if an error occurs.
      * @see #getDependencies
      * @see #copyArtifact(Artifact, boolean)
      */
@@ -86,18 +90,19 @@ public class CopyDependenciesMojo
         {
             for ( Artifact artifact : artifacts )
             {
-	    		copyArtifact( artifact, this.stripVersion, this.prependGroupId );
+                copyArtifact( artifact, this.stripVersion, this.prependGroupId );
             }
         }
         else
         {
             try
             {
-                ArtifactRepository targetRepository = repositoryFactory.createDeploymentArtifactRepository(
-                        "local",
-                        outputDirectory.toURL().toExternalForm(),
-                        (ArtifactRepositoryLayout) repositoryLayouts.get( "default" ),
-                        false /*uniqueVersion*/ );
+                ArtifactRepository targetRepository = repositoryFactory.createDeploymentArtifactRepository( "local",
+                                                                                                            outputDirectory.toURL().toExternalForm(),
+                                                                                                            (ArtifactRepositoryLayout) repositoryLayouts.get(
+                                                                                                                "default" ),
+                                                                                                            false
+                                                                                                            /*uniqueVersion*/ );
                 for ( Artifact artifact : artifacts )
                 {
                     installArtifact( artifact, targetRepository );
@@ -118,7 +123,8 @@ public class CopyDependenciesMojo
         if ( isCopyPom() )
         {
             copyPoms( getOutputDirectory(), artifacts, this.stripVersion );
-            copyPoms( getOutputDirectory(), skippedArtifacts, this.stripVersion );  // Artifacts that already exist may not already have poms.
+            copyPoms( getOutputDirectory(), skippedArtifacts,
+                      this.stripVersion );  // Artifacts that already exist may not already have poms.
         }
     }
 
@@ -154,12 +160,13 @@ public class CopyDependenciesMojo
     }
 
     private void installBaseSnapshot( Artifact artifact, ArtifactRepository targetRepository )
-            throws ArtifactInstallationException
+        throws ArtifactInstallationException
     {
         if ( artifact.isSnapshot() && !artifact.getBaseVersion().equals( artifact.getVersion() ) )
         {
-            Artifact baseArtifact = this.factory.createArtifact( artifact.getGroupId(), artifact.getArtifactId(),
-                    artifact.getBaseVersion(), artifact.getScope(), artifact.getType() );
+            Artifact baseArtifact =
+                this.factory.createArtifact( artifact.getGroupId(), artifact.getArtifactId(), artifact.getBaseVersion(),
+                                             artifact.getScope(), artifact.getType() );
             installer.install( artifact.getFile(), baseArtifact, targetRepository );
         }
     }
@@ -169,16 +176,11 @@ public class CopyDependenciesMojo
      * overridden. This method also checks if the classifier is set and adds it
      * to the destination file name if needed.
      *
-     * @param artifact
-     *            representing the object to be copied.
-     * @param removeVersion
-     *            specifies if the version should be removed from the file name
-     *            when copying.
-     * @param prependGroupId
-     *            specifies if the groupId should be prepend to the file while copying.
-     * @throws MojoExecutionException
-     *             with a message if an error occurs.
-     *
+     * @param artifact       representing the object to be copied.
+     * @param removeVersion  specifies if the version should be removed from the file name
+     *                       when copying.
+     * @param prependGroupId specifies if the groupId should be prepend to the file while copying.
+     * @throws MojoExecutionException with a message if an error occurs.
      * @see DependencyUtil#copyFile(File, File, Log)
      * @see DependencyUtil#getFormattedFileName(Artifact, boolean)
      */
@@ -186,12 +188,12 @@ public class CopyDependenciesMojo
         throws MojoExecutionException
     {
 
-        String destFileName = DependencyUtil.getFormattedFileName( artifact, removeVersion, prependGroupId);
+        String destFileName = DependencyUtil.getFormattedFileName( artifact, removeVersion, prependGroupId );
 
         File destDir;
-        destDir = DependencyUtil.getFormattedOutputDirectory( useSubDirectoryPerScope, useSubDirectoryPerType, useSubDirectoryPerArtifact,
-                                                              useRepositoryLayout, stripVersion, outputDirectory,
-                                                              artifact );
+        destDir = DependencyUtil.getFormattedOutputDirectory( useSubDirectoryPerScope, useSubDirectoryPerType,
+                                                              useSubDirectoryPerArtifact, useRepositoryLayout,
+                                                              stripVersion, outputDirectory, artifact );
         File destFile = new File( destDir, destFileName );
 
         copyFile( artifact.getFile(), destFile );
@@ -212,8 +214,8 @@ public class CopyDependenciesMojo
             if ( pomArtifact.getFile() != null && pomArtifact.getFile().exists() )
             {
                 File pomDestFile = new File( destDir, DependencyUtil.getFormattedFileName( pomArtifact, removeVersion,
-                                                                                           prependGroupId) );
-                if ( ! pomDestFile.exists() )
+                                                                                           prependGroupId ) );
+                if ( !pomDestFile.exists() )
                 {
                     copyFile( pomArtifact.getFile(), pomDestFile );
                 }
@@ -223,8 +225,9 @@ public class CopyDependenciesMojo
 
     protected Artifact getResolvedPomArtifact( Artifact artifact )
     {
-        Artifact pomArtifact = this.factory.createArtifact( artifact.getGroupId(), artifact.getArtifactId(),
-                                                            artifact.getVersion(), "", "pom" );
+        Artifact pomArtifact =
+            this.factory.createArtifact( artifact.getGroupId(), artifact.getArtifactId(), artifact.getVersion(), "",
+                                         "pom" );
         // Resolve the pom artifact using repos
         try
         {
@@ -240,7 +243,8 @@ public class CopyDependenciesMojo
     protected ArtifactsFilter getMarkedArtifactFilter()
     {
         return new DestFileFilter( this.overWriteReleases, this.overWriteSnapshots, this.overWriteIfNewer,
-                                   this.useSubDirectoryPerArtifact, this.useSubDirectoryPerType, this.useSubDirectoryPerScope,
-                                   this.useRepositoryLayout, this.stripVersion, this.outputDirectory );
+                                   this.useSubDirectoryPerArtifact, this.useSubDirectoryPerType,
+                                   this.useSubDirectoryPerScope, this.useRepositoryLayout, this.stripVersion,
+                                   this.outputDirectory );
     }
 }

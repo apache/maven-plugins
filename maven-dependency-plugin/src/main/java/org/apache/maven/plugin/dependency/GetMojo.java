@@ -19,16 +19,6 @@ package org.apache.maven.plugin.dependency;
  * under the License.
  */
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
@@ -42,138 +32,146 @@ import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.codehaus.plexus.util.StringUtils;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Downloads a single artifact transitively from the specified remote repositories. Caveat: will always check the
  * central repository defined in the super pom. You could use a mirror entry in your settings.xml
- * 
- * @goal get
- * @requiresProject false
  */
+@Mojo( name = "get", requiresProject = false )
 public class GetMojo
     extends AbstractMojo
 {
     private static final Pattern ALT_REPO_SYNTAX_PATTERN = Pattern.compile( "(.+)::(.*)::(.+)" );
 
     /**
-     * @component
-     * @readonly
+     *
      */
+    @Component
     private ArtifactFactory artifactFactory;
 
     /**
-     * @component
-     * @readonly
+     *
      */
+    @Component
     private ArtifactResolver artifactResolver;
 
     /**
-     * @component
-     * @readonly
+     *
      */
+    @Component
     private ArtifactRepositoryFactory artifactRepositoryFactory;
 
     /**
      * Map that contains the layouts.
-     *
-     * @component role="org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout"
      */
+    @Component( role = ArtifactRepositoryLayout.class )
     private Map<String, ArtifactRepositoryLayout> repositoryLayouts;
 
     /**
-     * @component
-     * @readonly
+     *
      */
+    @Component
     private ArtifactMetadataSource source;
 
     /**
      *
-     * @parameter default-value="${localRepository}"
-     * @readonly
      */
+    @Parameter( defaultValue = "${localRepository}", readonly = true )
     private ArtifactRepository localRepository;
 
     /**
      * The groupId of the artifact to download. Ignored if {@link #artifact} is used.
-     * @parameter expression="${groupId}"
      */
+    @Parameter( property = "groupId" )
     private String groupId;
 
     /**
      * The artifactId of the artifact to download. Ignored if {@link #artifact} is used.
-     * @parameter expression="${artifactId}"
      */
+    @Parameter( property = "artifactId" )
     private String artifactId;
 
     /**
      * The version of the artifact to download. Ignored if {@link #artifact} is used.
-     * @parameter expression="${version}"
      */
+    @Parameter( property = "version" )
     private String version;
 
     /**
      * The classifier of the artifact to download. Ignored if {@link #artifact} is used.
-     * @parameter expression="${classifier}"
+     *
      * @since 2.3
      */
+    @Parameter( property = "classifier" )
     private String classifier;
 
     /**
      * The packaging of the artifact to download. Ignored if {@link #artifact} is used.
-     * @parameter expression="${packaging}" default-value="jar"
      */
+    @Parameter( property = "packaging", defaultValue = "jar" )
     private String packaging = "jar";
 
     /**
      * The id of the repository from which we'll download the artifact
-     * @parameter expression="${repoId}" default-value="temp"
+     *
      * @deprecated Use remoteRepositories
      */
+    @Parameter( property = "repoId", defaultValue = "temp" )
     private String repositoryId = "temp";
 
     /**
      * The url of the repository from which we'll download the artifact. DEPRECATED Use remoteRepositories
-     * 
+     *
      * @deprecated Use remoteRepositories
-     * @parameter expression="${repoUrl}"
      */
+    @Parameter( property = "repoUrl" )
     private String repositoryUrl;
 
     /**
      * Repositories in the format id::[layout]::url or just url, separated by comma.
      * ie. central::default::http://repo1.maven.apache.org/maven2,myrepo::::http://repo.acme.com,http://repo.acme2.com
-     * 
-     * @parameter expression="${remoteRepositories}"
      */
+    @Parameter( property = "remoteRepositories" )
     private String remoteRepositories;
 
     /**
      * A string of the form groupId:artifactId:version[:packaging][:classifier].
-     * 
-     * @parameter expression="${artifact}"
      */
+    @Parameter( property = "artifact" )
     private String artifact;
 
     /**
      * The destination file to copy the artifact to, if other than the local repository
-     * @parameter expression="${dest}"
+     *
      * @since 2.4
      */
+    @Parameter( property = "dest" )
     private String destination;
 
     /**
      *
-     * @parameter default-value="${project.remoteArtifactRepositories}"
-     * @required
-     * @readonly
      */
+    @Parameter( defaultValue = "${project.remoteArtifactRepositories}", readonly = true, required = true )
     private List<ArtifactRepository> pomRemoteRepositories;
 
     /**
      * Download transitively, retrieving the specified artifact and all of its dependencies.
-     * @parameter expression="${transitive}" default-value=true
      */
+    @Parameter( property = "transitive", defaultValue = "true" )
     private boolean transitive = true;
 
     public void execute()
@@ -183,7 +181,7 @@ public class GetMojo
         if ( artifactId == null && artifact == null )
         {
             throw new MojoFailureException( "You must specify an artifact, "
-                + "e.g. -Dartifact=org.apache.maven.plugins:maven-downloader-plugin:1.0" );
+                                                + "e.g. -Dartifact=org.apache.maven.plugins:maven-downloader-plugin:1.0" );
         }
         if ( artifact != null )
         {
@@ -242,8 +240,8 @@ public class GetMojo
         {
             getLog().warn( "repositoryUrl parameter is deprecated. Use remoteRepositories instead" );
             ArtifactRepository remoteRepo =
-                artifactRepositoryFactory.createArtifactRepository( repositoryId, repositoryUrl,
-                                                                    getLayout( "default" ), always, always );
+                artifactRepositoryFactory.createArtifactRepository( repositoryId, repositoryUrl, getLayout( "default" ),
+                                                                    always, always );
             repoList.add( remoteRepo );
         }
 
@@ -278,8 +276,9 @@ public class GetMojo
             }
             catch ( IOException e )
             {
-                throw new MojoExecutionException( "Couldn't copy downloaded artifact from " + src.getAbsolutePath()
-                    + " to " + dest.getAbsolutePath() + " : " + e.getMessage(), e );
+                throw new MojoExecutionException(
+                    "Couldn't copy downloaded artifact from " + src.getAbsolutePath() + " to " + dest.getAbsolutePath()
+                        + " : " + e.getMessage(), e );
             }
         }
     }
