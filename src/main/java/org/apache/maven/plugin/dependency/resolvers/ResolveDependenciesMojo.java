@@ -19,26 +19,29 @@ package org.apache.maven.plugin.dependency.resolvers;
  * under the License.
  */
 
-import java.io.IOException;
-
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.dependency.AbstractResolveMojo;
 import org.apache.maven.plugin.dependency.utils.DependencyStatusSets;
 import org.apache.maven.plugin.dependency.utils.DependencyUtil;
 import org.apache.maven.plugin.dependency.utils.filters.ResolveFileFilter;
 import org.apache.maven.plugin.dependency.utils.markers.SourcesFileMarkerHandler;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.shared.artifact.filter.collection.ArtifactsFilter;
+
+import java.io.IOException;
 
 /**
  * Goal that resolves the project dependencies from the repository.
  *
- * @goal resolve
- * @requiresDependencyResolution test
- * @phase generate-sources
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  * @version $Id$
  * @since 2.0
  */
+@Mojo( name = "resolve", requiresDependencyResolution = ResolutionScope.TEST,
+       defaultPhase = LifecyclePhase.GENERATE_SOURCES )
 public class ResolveDependenciesMojo
     extends AbstractResolveMojo
 {
@@ -46,9 +49,9 @@ public class ResolveDependenciesMojo
     /**
      * If we should display the scope when resolving
      *
-     * @parameter expression="${mdep.outputScope}" default-value="true"
      * @since 2.0-alpha-2
      */
+    @Parameter( property = "mdep.outputScope", defaultValue = "true" )
     protected boolean outputScope;
 
     /**

@@ -20,16 +20,17 @@ package org.apache.maven.plugin.dependency;
  */
 
 import org.apache.maven.plugin.dependency.resolvers.ResolveDependenciesMojo;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 
 /**
  * Displays the list of dependencies for this project.
- * 
+ *
  * @author <a href="mailto:markhobson@gmail.com">Mark Hobson</a>
  * @version $Id$
  * @since 2.0-alpha-5
- * @goal list
- * @requiresDependencyResolution test
  */
+@Mojo( name = "list", requiresDependencyResolution = ResolutionScope.TEST )
 public class ListMojo
     extends ResolveDependenciesMojo
 {

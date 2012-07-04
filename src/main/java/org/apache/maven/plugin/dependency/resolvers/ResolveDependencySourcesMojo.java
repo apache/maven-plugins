@@ -19,8 +19,6 @@ package org.apache.maven.plugin.dependency.resolvers;
  * under the License.
  */
 
-import java.io.IOException;
-
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.dependency.AbstractResolveMojo;
@@ -28,18 +26,22 @@ import org.apache.maven.plugin.dependency.utils.DependencyStatusSets;
 import org.apache.maven.plugin.dependency.utils.DependencyUtil;
 import org.apache.maven.plugin.dependency.utils.filters.ResolveFileFilter;
 import org.apache.maven.plugin.dependency.utils.markers.SourcesFileMarkerHandler;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.shared.artifact.filter.collection.ArtifactsFilter;
+
+import java.io.IOException;
 
 /**
  * Goal that resolves the project source dependencies from the repository.
  *
- * @goal sources
- * @phase generate-sources
- * @requiresDependencyResolution test
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  * @version $Id$
  * @since 2.0-alpha2
  */
+@Mojo( name = "sources", defaultPhase = LifecyclePhase.GENERATE_SOURCES,
+       requiresDependencyResolution = ResolutionScope.TEST )
 public class ResolveDependencySourcesMojo
     extends AbstractResolveMojo
 {
@@ -57,9 +59,7 @@ public class ResolveDependencySourcesMojo
      * Main entry into mojo. Gets the list of dependencies and iterates through
      * resolving the source jars.
      *
-     * @throws MojoExecutionException
-     *             with a message if an error occurs.
-     *
+     * @throws MojoExecutionException with a message if an error occurs.
      */
     public void execute()
         throws MojoExecutionException

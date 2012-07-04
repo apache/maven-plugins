@@ -19,6 +19,8 @@ package org.apache.maven.plugin.dependency;
  * under the License.
  */
 
+import org.apache.maven.plugins.annotations.Parameter;
+
 import java.io.File;
 
 /**
@@ -34,50 +36,42 @@ public abstract class AbstractFromDependenciesMojo
 
     /**
      * Strip artifact version during copy
-     *
-     * @optional
-     * @parameter expression="${mdep.stripVersion}" default-value="false"
-     * @parameter
      */
+    @Parameter( property = "mdep.stripVersion", defaultValue = "false" )
     protected boolean stripVersion = false;
-    
+
     /**
      * Default location used for mojo unless overridden in ArtifactItem
      *
-     * @parameter expression="${outputDirectory}"
-     *            default-value="${project.build.directory}/dependency"
-     * @optional
      * @since 1.0
      */
+    @Parameter( property = "outputDirectory", defaultValue = "${project.build.directory}/dependency" )
     protected File outputDirectory;
 
     /**
      * Place each artifact in the same directory layout as a default repository.
      * <br/>example: /outputDirectory/junit/junit/3.8.1/junit-3.8.1.jar
+     *
      * @since 2.0-alpha-2
-     * @parameter expression="${mdep.useRepositoryLayout}" default-value="false"
-     * @optional
      */
+    @Parameter( property = "mdep.useRepositoryLayout", defaultValue = "false" )
     protected boolean useRepositoryLayout;
 
     /**
      * Also copy the pom of each artifact.
      *
      * @since 2.0
-     * @parameter expression="${mdep.copyPom}"
-     *            default-value="false"
-     * @optional
      */
+    @Parameter( property = "mdep.copyPom", defaultValue = "false" )
     protected boolean copyPom = true;
 
     /**
      * Place each type of file in a separate subdirectory. (example
      * /outputDirectory/runtime /outputDirectory/provided etc)
      *
-     * @parameter expression="${mdep.useSubDirectoryPerScope}" default-value="false"
-     * @optional
      * @since 2.2
      */
+    @Parameter( property = "mdep.useSubDirectoryPerScope", defaultValue = "false" )
     protected boolean useSubDirectoryPerScope;
 
     /**
@@ -85,9 +79,8 @@ public abstract class AbstractFromDependenciesMojo
      * /outputDirectory/jars /outputDirectory/wars etc)
      *
      * @since 2.0-alpha-1
-     * @parameter expression="${mdep.useSubDirectoryPerType}" default-value="false"
-     * @optional
      */
+    @Parameter( property = "mdep.useSubDirectoryPerType", defaultValue = "false" )
     protected boolean useSubDirectoryPerType;
 
     /**
@@ -95,20 +88,16 @@ public abstract class AbstractFromDependenciesMojo
      * <code>/outputDirectory/junit-3.8.1-jar</code>)
      *
      * @since 2.0-alpha-1
-     * @parameter expression="${mdep.useSubDirectoryPerArtifact}"
-     *            default-value="false"
-     * @optional
      */
+    @Parameter( property = "mdep.useSubDirectoryPerArtifact", defaultValue = "false" )
     protected boolean useSubDirectoryPerArtifact;
 
     /**
      * This only applies if the classifier parameter is used.
      *
      * @since 2.0-alpha-2
-     * @parameter expression="${mdep.failOnMissingClassifierArtifact}"
-     *            default-value="true"
-     * @optional
      */
+    @Parameter( property = "mdep.failOnMissingClassifierArtifact", defaultValue = "false" )
     protected boolean failOnMissingClassifierArtifact = true;
 
     /**
@@ -120,8 +109,7 @@ public abstract class AbstractFromDependenciesMojo
     }
 
     /**
-     * @param theOutputDirectory
-     *            The outputDirectory to set.
+     * @param theOutputDirectory The outputDirectory to set.
      */
     public void setOutputDirectory( File theOutputDirectory )
     {
@@ -137,8 +125,7 @@ public abstract class AbstractFromDependenciesMojo
     }
 
     /**
-     * @param theUseSubDirectoryPerArtifact
-     *            The useSubDirectoryPerArtifact to set.
+     * @param theUseSubDirectoryPerArtifact The useSubDirectoryPerArtifact to set.
      */
     public void setUseSubDirectoryPerArtifact( boolean theUseSubDirectoryPerArtifact )
     {
@@ -152,10 +139,9 @@ public abstract class AbstractFromDependenciesMojo
     {
         return this.useSubDirectoryPerScope;
     }
-    
+
     /**
-     * @param theUseSubDirectoryPerScope
-     *          The useSubDirectoryPerScope to set.
+     * @param theUseSubDirectoryPerScope The useSubDirectoryPerScope to set.
      */
     public void setUseSubDirectoryPerScope( boolean theUseSubDirectoryPerScope )
     {
@@ -171,8 +157,7 @@ public abstract class AbstractFromDependenciesMojo
     }
 
     /**
-     * @param theUseSubDirectoryPerType
-     *            The useSubDirectoryPerType to set.
+     * @param theUseSubDirectoryPerType The useSubDirectoryPerType to set.
      */
     public void setUseSubDirectoryPerType( boolean theUseSubDirectoryPerType )
     {
@@ -200,7 +185,6 @@ public abstract class AbstractFromDependenciesMojo
     }
 
     /**
-     *
      * @return true, if dependencies must be planted in a repository layout
      */
     public boolean isUseRepositoryLayout()
@@ -209,9 +193,8 @@ public abstract class AbstractFromDependenciesMojo
     }
 
     /**
-     *
      * @param useRepositoryLayout -
-     *            true if dependencies must be planted in a repository layout
+     *                            true if dependencies must be planted in a repository layout
      */
     public void setUseRepositoryLayout( boolean useRepositoryLayout )
     {

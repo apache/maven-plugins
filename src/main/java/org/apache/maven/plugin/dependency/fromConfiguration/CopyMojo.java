@@ -19,38 +19,38 @@ package org.apache.maven.plugin.dependency.fromConfiguration;
  * under the License.
  */
 
-import java.io.File;
-import java.util.List;
-
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.dependency.utils.filters.ArtifactItemFilter;
 import org.apache.maven.plugin.dependency.utils.filters.DestFileFilter;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+
+import java.io.File;
+import java.util.List;
 
 /**
  * Goal that copies a list of artifacts from the repository to defined locations.
- * 
- * @goal copy
- * @since 1.0
- * @phase process-sources
+ *
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  * @version $Id$
+ * @since 1.0
  */
+@Mojo( name = "copy", defaultPhase = LifecyclePhase.PROCESS_SOURCES )
 public class CopyMojo
     extends AbstractFromConfigurationMojo
 {
 
     /**
      * Strip artifact version during copy
-     * 
-     * @parameter expression="${mdep.stripVersion}" default-value="false"
-     * @parameter
      */
+    @Parameter( property = "mdep.stripVersion", defaultValue = "false" )
     private boolean stripVersion = false;
 
     /**
      * Main entry into mojo. This method gets the ArtifactItems and iterates through each one passing it to
      * copyArtifact.
-     * 
+     *
      * @throws MojoExecutionException with a message if an error occurs.
      * @see ArtifactItem
      * @see #getArtifactItems
@@ -80,7 +80,7 @@ public class CopyMojo
 
     /**
      * Resolves the artifact from the repository and copies it to the specified location.
-     * 
+     *
      * @param artifactItem containing the information about the Artifact to copy.
      * @throws MojoExecutionException with a message if an error occurs.
      * @see DependencyUtil#copyFile(File, File, Log)

@@ -19,55 +19,55 @@ package org.apache.maven.plugin.dependency;
  * under the License.
  */
 
-import java.util.Set;
-
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
+
+import java.util.Set;
 
 /**
  * Goal that sets a property pointing to the artifact file for each project dependency.
  * For each dependency (direct and transitive) a project property will be set which follows the
  * form groupId:artifactId:type:[classifier] and contains the path to the resolved artifact.
- * 
- * @goal properties
- * @requiresDependencyResolution test
- * @phase initialize
+ *
  * @author Paul Gier
  * @version $Id$
  * @since 2.2
  */
+@Mojo( name = "properties", requiresDependencyResolution = ResolutionScope.TEST,
+       defaultPhase = LifecyclePhase.INITIALIZE )
 public class PropertiesMojo
     extends AbstractMojo
 {
 
     /**
      * The current Maven project
-     *
-     * @parameter default-value="${project}"
-     * @readonly
      */
+    @Component
     protected MavenProject project;
 
     /**
      * Main entry into mojo. Gets the list of dependencies and iterates through setting a property for each artifact.
-     * 
+     *
      * @throws MojoExecutionException with a message if an error occurs.
      */
     public void execute()
         throws MojoExecutionException
     {
-        @SuppressWarnings( "unchecked" )
-        Set<Artifact> artifacts = getProject().getArtifacts();
-        
+        @SuppressWarnings( "unchecked" ) Set<Artifact> artifacts = getProject().getArtifacts();
+
         for ( Artifact artifact : artifacts )
         {
             project.getProperties().setProperty( artifact.getDependencyConflictId(),
                                                  artifact.getFile().getAbsolutePath() );
         }
     }
-    
+
     public MavenProject getProject()
     {
         return project;

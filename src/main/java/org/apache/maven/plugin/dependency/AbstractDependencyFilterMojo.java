@@ -15,10 +15,6 @@ package org.apache.maven.plugin.dependency;
  * the License.
  */
 
-import java.io.File;
-import java.util.HashSet;
-import java.util.Set;
-
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.dependency.utils.DependencyStatusSets;
@@ -27,6 +23,7 @@ import org.apache.maven.plugin.dependency.utils.resolvers.ArtifactsResolver;
 import org.apache.maven.plugin.dependency.utils.resolvers.DefaultArtifactsResolver;
 import org.apache.maven.plugin.dependency.utils.translators.ArtifactTranslator;
 import org.apache.maven.plugin.dependency.utils.translators.ClassifierTypeTranslator;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.shared.artifact.filter.collection.ArtifactFilterException;
 import org.apache.maven.shared.artifact.filter.collection.ArtifactIdFilter;
 import org.apache.maven.shared.artifact.filter.collection.ArtifactsFilter;
@@ -37,6 +34,10 @@ import org.apache.maven.shared.artifact.filter.collection.ProjectTransitivityFil
 import org.apache.maven.shared.artifact.filter.collection.ScopeFilter;
 import org.apache.maven.shared.artifact.filter.collection.TypeFilter;
 import org.codehaus.plexus.util.StringUtils;
+
+import java.io.File;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Class that encapsulates the plugin parameters, and contains methods that
@@ -53,9 +54,8 @@ public abstract class AbstractDependencyFilterMojo
      * If we should exclude transitive dependencies
      *
      * @since 2.0
-     * @optional
-     * @parameter expression="${excludeTransitive}" default-value="false"
      */
+    @Parameter( property = "excludeTransitive", defaultValue = "false" )
     protected boolean excludeTransitive;
 
     /**
@@ -63,9 +63,8 @@ public abstract class AbstractDependencyFilterMojo
      * everything (default).
      *
      * @since 2.0
-     * @parameter expression="${includeTypes}" default-value=""
-     * @optional
      */
+    @Parameter( property = "includeTypes", defaultValue = "" )
     protected String includeTypes;
 
     /**
@@ -73,27 +72,24 @@ public abstract class AbstractDependencyFilterMojo
      * exclude anything (default).
      *
      * @since 2.0
-     * @parameter expression="${excludeTypes}" default-value=""
-     * @optional
      */
+    @Parameter( property = "excludeTypes", defaultValue = "" )
     protected String excludeTypes;
 
     /**
      * Scope to include. An Empty string indicates all scopes (default).
      *
      * @since 2.0
-     * @parameter expression="${includeScope}" default-value=""
-     * @optional
      */
+    @Parameter( property = "includeScope", defaultValue = "" )
     protected String includeScope;
 
     /**
      * Scope to exclude. An Empty string indicates no scopes (default).
      *
      * @since 2.0
-     * @parameter expression="${excludeScope}" default-value=""
-     * @optional
      */
+    @Parameter( property = "excludeScope", defaultValue = "" )
     protected String excludeScope;
 
     /**
@@ -101,9 +97,8 @@ public abstract class AbstractDependencyFilterMojo
      * include everything (default).
      *
      * @since 2.0
-     * @parameter expression="${includeClassifiers}" default-value=""
-     * @optional
      */
+    @Parameter( property = "includeClassifiers", defaultValue = "" )
     protected String includeClassifiers;
 
     /**
@@ -111,111 +106,98 @@ public abstract class AbstractDependencyFilterMojo
      * don't exclude anything (default).
      *
      * @since 2.0
-     * @parameter expression="${excludeClassifiers}" default-value=""
-     * @optional
      */
+    @Parameter( property = "excludeClassifiers", defaultValue = "" )
     protected String excludeClassifiers;
 
     /**
      * Specify classifier to look for. Example: sources
      *
-     * @optional
      * @since 2.0
-     * @parameter expression="${classifier}" default-value=""
      */
+    @Parameter( property = "classifier", defaultValue = "" )
     protected String classifier;
 
     /**
      * Specify type to look for when constructing artifact based on classifier.
      * Example: java-source,jar,war
      *
-     * @optional
      * @since 2.0
-     * @parameter expression="${type}" default-value="java-source"
      */
+    @Parameter( property = "type", defaultValue = "java-source" )
     protected String type;
 
     /**
      * Comma separated list of Artifact names too exclude.
      *
      * @since 2.0
-     * @optional
-     * @parameter expression="${excludeArtifactIds}" default-value=""
      */
+    @Parameter( property = "excludeArtifactIds", defaultValue = "" )
     protected String excludeArtifactIds;
 
     /**
      * Comma separated list of Artifact names to include.
      *
      * @since 2.0
-     * @optional
-     * @parameter expression="${includeArtifactIds}" default-value=""
      */
+    @Parameter( property = "includeArtifactIds", defaultValue = "" )
     protected String includeArtifactIds;
 
     /**
      * Comma separated list of GroupId Names to exclude.
      *
      * @since 2.0
-     * @optional
-     * @parameter expression="${excludeGroupIds}" default-value=""
      */
+    @Parameter( property = "excludeGroupIds", defaultValue = "" )
     protected String excludeGroupIds;
 
     /**
      * Comma separated list of GroupIds to include.
      *
      * @since 2.0
-     * @optional
-     * @parameter expression="${includeGroupIds}" default-value=""
      */
+    @Parameter( property = "includeGroupIds", defaultValue = "" )
     protected String includeGroupIds;
 
     /**
      * Directory to store flag files
      *
-     * @parameter expression="${markersDirectory}"
-     *            default-value="${project.build.directory}/dependency-maven-plugin-markers"
-     * @optional
      * @since 2.0
      */
+    @Parameter( property = "markersDirectory",
+                defaultValue = "${project.build.directory}/dependency-maven-plugin-markers" )
     protected File markersDirectory;
 
     /**
      * Overwrite release artifacts
      *
-     * @optional
      * @since 1.0
-     * @parameter expression="${overWriteReleases}" default-value="false"
      */
+    @Parameter( property = "overWriteReleases", defaultValue = "false" )
     protected boolean overWriteReleases;
 
     /**
      * Overwrite snapshot artifacts
      *
-     * @optional
      * @since 1.0
-     * @parameter expression="${overWriteSnapshots}" default-value="false"
      */
+    @Parameter( property = "overWriteSnapshots", defaultValue = "false" )
     protected boolean overWriteSnapshots;
 
     /**
      * Overwrite artifacts that don't exist or are older than the source.
      *
-     * @optional
      * @since 2.0
-     * @parameter expression="${overWriteIfNewer}" default-value="true"
      */
+    @Parameter( property = "overWriteIfNewer", defaultValue = "true" )
     protected boolean overWriteIfNewer;
-    
+
     /**
      * Prepend the groupId during copy.
-     * 
-     * @optional
+     *
      * @since 2.2
-     * @parameter expression="${mdep.prependGroupId}" default-value="false"
-     * @parameter
      */
+    @Parameter( property = "mdep.prependGroupId", defaultValue = "false" )
     protected boolean prependGroupId = false;
 
     protected abstract ArtifactsFilter getMarkedArtifactFilter();
@@ -236,7 +218,6 @@ public abstract class AbstractDependencyFilterMojo
     }
 
     /**
-     *
      * Method creates filters and filters the projects dependencies. This method
      * also transforms the dependencies if classifier is set. The dependencies
      * are filtered in least specific to most specific order
@@ -270,8 +251,7 @@ public abstract class AbstractDependencyFilterMojo
                                                 DependencyUtil.cleanToBeTokenizedString( this.excludeArtifactIds ) ) );
 
         // start with all artifacts.
-        @SuppressWarnings( "unchecked" )
-        Set<Artifact> artifacts = project.getArtifacts();
+        @SuppressWarnings( "unchecked" ) Set<Artifact> artifacts = project.getArtifacts();
 
         // perform filtering
         try
@@ -298,7 +278,6 @@ public abstract class AbstractDependencyFilterMojo
     }
 
     /**
-     *
      * Transform artifacts
      *
      * @param artifacts
@@ -328,8 +307,8 @@ public abstract class AbstractDependencyFilterMojo
             artifacts = status.getResolvedDependencies();
 
             // resolve the rest of the artifacts
-            ArtifactsResolver artifactsResolver = new DefaultArtifactsResolver( this.resolver, this.getLocal(),
-                                                                                this.remoteRepos, stopOnFailure );
+            ArtifactsResolver artifactsResolver =
+                new DefaultArtifactsResolver( this.resolver, this.getLocal(), this.remoteRepos, stopOnFailure );
             resolvedArtifacts = artifactsResolver.resolve( artifacts, getLog() );
 
             // calculate the artifacts not resolved.
@@ -386,8 +365,7 @@ public abstract class AbstractDependencyFilterMojo
     }
 
     /**
-     * @param theMarkersDirectory
-     *            The markersDirectory to set.
+     * @param theMarkersDirectory The markersDirectory to set.
      */
     public void setMarkersDirectory( File theMarkersDirectory )
     {
@@ -397,7 +375,7 @@ public abstract class AbstractDependencyFilterMojo
     // TODO: Set marker files.
 
     /**
-     * @return true, if the groupId should be prepended to the filename. 
+     * @return true, if the groupId should be prepended to the filename.
      */
     public boolean isPrependGroupId()
     {
@@ -405,8 +383,8 @@ public abstract class AbstractDependencyFilterMojo
     }
 
     /**
-     * @param prependGroupId - 
-     *            true if the groupId must be prepended during the copy.
+     * @param prependGroupId -
+     *                       true if the groupId must be prepended during the copy.
      */
     public void setPrependGroupId( boolean prependGroupId )
     {

@@ -19,16 +19,17 @@ package org.apache.maven.plugin.dependency.utils.markers;
  * under the License.
  */
 
-import java.io.File;
-
 import org.apache.maven.plugin.dependency.fromConfiguration.ArtifactItem;
 import org.codehaus.plexus.util.StringUtils;
+
+import java.io.File;
 
 /**
  * @author <a href="mailto:dbradicich@comcast.net">Damian Bradicich</a>
  * @version $Id$
  */
-public class UnpackFileMarkerHandler extends DefaultFileMarkerHandler
+public class UnpackFileMarkerHandler
+    extends DefaultFileMarkerHandler
 {
     protected ArtifactItem artifactItem;
 
@@ -52,9 +53,8 @@ public class UnpackFileMarkerHandler extends DefaultFileMarkerHandler
          * times with different include/exclude parameters
          */
         File markerFile = null;
-        if ( this.artifactItem == null
-            || ( StringUtils.isEmpty( this.artifactItem.getIncludes() )
-            &&	StringUtils.isEmpty( this.artifactItem.getExcludes() ) ) )
+        if ( this.artifactItem == null || ( StringUtils.isEmpty( this.artifactItem.getIncludes() )
+            && StringUtils.isEmpty( this.artifactItem.getExcludes() ) ) )
         {
             markerFile = super.getMarkerFile();
         }
@@ -72,7 +72,8 @@ public class UnpackFileMarkerHandler extends DefaultFileMarkerHandler
                 includeExcludeHash += this.artifactItem.getExcludes().hashCode();
             }
 
-            markerFile = new File( this.markerFilesDirectory, this.artifact.getId().replace( ':', '-' ) + includeExcludeHash );
+            markerFile =
+                new File( this.markerFilesDirectory, this.artifact.getId().replace( ':', '-' ) + includeExcludeHash );
         }
 
         return markerFile;
@@ -88,7 +89,7 @@ public class UnpackFileMarkerHandler extends DefaultFileMarkerHandler
         }
     }
 
-    public ArtifactItem getArtifactItem( )
+    public ArtifactItem getArtifactItem()
     {
         return this.artifactItem;
     }

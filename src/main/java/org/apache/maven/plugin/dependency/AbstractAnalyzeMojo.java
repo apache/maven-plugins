@@ -19,17 +19,13 @@ package org.apache.maven.plugin.dependency;
  * under the License.
  */
 
-import java.io.File;
-import java.io.StringWriter;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.dependency.analyzer.ProjectDependencyAnalysis;
 import org.apache.maven.shared.dependency.analyzer.ProjectDependencyAnalyzer;
@@ -40,6 +36,12 @@ import org.codehaus.plexus.context.Context;
 import org.codehaus.plexus.context.ContextException;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
 import org.codehaus.plexus.util.xml.PrettyPrintXMLWriter;
+
+import java.io.File;
+import java.io.StringWriter;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 /**
  * Analyzes the dependencies of this project and determines which are: used and declared; used and undeclared; unused
@@ -63,82 +65,74 @@ public abstract class AbstractAnalyzeMojo
 
     /**
      * The Maven project to analyze.
-     *
-     * @parameter default-value="${project}"
-     * @required
-     * @readonly
      */
+    @Component
     private MavenProject project;
 
     /**
      * Project dependency analyzer to use (plexus component role-hint).
      *
-     * @parameter expression="${analyzer}" default-value="default"
      * @since 2.2
      */
+    @Parameter( property = "analyzer", defaultValue = "default" )
     private String analyzer;
 
     /**
      * Whether to fail the build if a dependency warning is found.
-     *
-     * @parameter expression="${failOnWarning}" default-value="false"
      */
+    @Parameter( property = "failOnWarning", defaultValue = "false" )
     private boolean failOnWarning;
 
     /**
      * Output used dependencies
-     *
-     * @parameter expression="${verbose}" default-value="false"
      */
+    @Parameter( property = "verbose", defaultValue = "false" )
     private boolean verbose;
 
     /**
      * Ignore Runtime,Provide,Test,System scopes for unused dependency analysis
-     *
-     * @parameter expression="${ignoreNonCompile}" default-value="false"
      */
+    @Parameter( property = "ignoreNonCompile", defaultValue = "false" )
     private boolean ignoreNonCompile;
 
     /**
      * Output the xml for the missing dependencies
      *
-     * @parameter expression="${outputXML}" default-value="false"
      * @since 2.0-alpha-5
      */
+    @Parameter( property = "outputXML", defaultValue = "false" )
     private boolean outputXML;
 
     /**
      * Output scriptable values
      *
-     * @parameter expression="${scriptableOutput}" default-value="false"
      * @since 2.0-alpha-5
      */
+    @Parameter( property = "scriptableOutput", defaultValue = "false" )
     private boolean scriptableOutput;
 
     /**
      * Flag to use for scriptable output
      *
-     * @parameter expression="${scriptableFlag}" default-value="$$$%%%"
      * @since 2.0-alpha-5
      */
+    @Parameter( property = "scriptableFlag", defaultValue = "$$$%%%" )
     private String scriptableFlag;
 
     /**
      * Flag to use for scriptable output
      *
-     * @parameter default-value="${basedir}"
-     * @readonly
      * @since 2.0-alpha-5
      */
+    @Parameter( defaultValue = "${basedir}", readonly = true )
     private File baseDir;
 
     /**
      * Target folder
      *
-     * @parameter default-value="${project.build.directory}"
-     * @readonly
      * @since 2.0-alpha-5
      */
+    @Parameter( defaultValue = "${project.build.directory}", readonly = true )
     private File outputDirectory;
 
     // Mojo methods -----------------------------------------------------------
@@ -184,8 +178,9 @@ public abstract class AbstractAnalyzeMojo
         }
         catch ( Exception exception )
         {
-            throw new MojoExecutionException( "Failed to instantiate ProjectDependencyAnalyser with role " + role
-                + " / role-hint " + roleHint,exception );
+            throw new MojoExecutionException(
+                "Failed to instantiate ProjectDependencyAnalyser with role " + role + " / role-hint " + roleHint,
+                exception );
         }
     }
 
@@ -210,12 +205,9 @@ public abstract class AbstractAnalyzeMojo
             throw new MojoExecutionException( "Cannot analyze dependencies", exception );
         }
 
-        @SuppressWarnings( "unchecked" )
-        Set<Artifact> usedDeclared = analysis.getUsedDeclaredArtifacts();
-        @SuppressWarnings( "unchecked" )
-        Set<Artifact> usedUndeclared = analysis.getUsedUndeclaredArtifacts();
-        @SuppressWarnings( "unchecked" )
-        Set<Artifact> unusedDeclared = analysis.getUnusedDeclaredArtifacts();
+        @SuppressWarnings( "unchecked" ) Set<Artifact> usedDeclared = analysis.getUsedDeclaredArtifacts();
+        @SuppressWarnings( "unchecked" ) Set<Artifact> usedUndeclared = analysis.getUsedUndeclaredArtifacts();
+        @SuppressWarnings( "unchecked" ) Set<Artifact> unusedDeclared = analysis.getUnusedDeclaredArtifacts();
 
         if ( ignoreNonCompile )
         {
@@ -356,8 +348,8 @@ public abstract class AbstractAnalyzeMojo
                 artifact.isSnapshot();
 
                 buf.append( scriptableFlag + ":" + pomFile + ":" + artifact.getDependencyConflictId() + ":"
-                                + artifact.getClassifier() + ":" + artifact.getBaseVersion() + ":"
-                                + artifact.getScope() + "\n" );
+                                + artifact.getClassifier() + ":" + artifact.getBaseVersion() + ":" + artifact.getScope()
+                                + "\n" );
             }
             getLog().info( "\n" + buf );
         }

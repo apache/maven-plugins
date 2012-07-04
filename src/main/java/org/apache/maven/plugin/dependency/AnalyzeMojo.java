@@ -19,22 +19,25 @@ package org.apache.maven.plugin.dependency;
  * under the License.
  */
 
+import org.apache.maven.plugins.annotations.Execute;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.ResolutionScope;
+
 /**
  * Analyzes the dependencies of this project and determines which are: used and declared; used and undeclared; unused
  * and declared. This goal is intended to be used standalone, thus it always executes the <code>test-compile</code>
  * phase - use the <code>dependency:analyze-only</code> goal instead when participating in the build lifecycle.
- * 
+ *
  * @author <a href="mailto:markhobson@gmail.com">Mark Hobson</a>
  * @version $Id$
- * @since 2.0-alpha-3
  * @see AnalyzeOnlyMojo
- * 
- * @goal analyze
- * @requiresDependencyResolution test
- * @execute phase="test-compile"
+ * @since 2.0-alpha-3
  */
+@Mojo( name = "analyze", requiresDependencyResolution = ResolutionScope.TEST )
+@Execute( phase = LifecyclePhase.TEST_COMPILE )
 public class AnalyzeMojo
     extends AbstractAnalyzeMojo
 {
-    // subclassed to provide plexus annotations
+    // subclassed to provide annotations
 }

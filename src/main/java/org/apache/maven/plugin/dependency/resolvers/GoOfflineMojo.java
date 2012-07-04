@@ -19,25 +19,27 @@ package org.apache.maven.plugin.dependency.resolvers;
  * under the License.    
  */
 
-import java.util.Set;
-
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.dependency.AbstractResolveMojo;
 import org.apache.maven.plugin.dependency.utils.DependencyUtil;
+import org.apache.maven.plugins.annotations.Execute;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.shared.artifact.filter.collection.ArtifactsFilter;
+
+import java.util.Set;
 
 /**
  * Goal that resolves all project dependencies, including plugins and reports
  * and their dependencies.
- * 
- * @goal go-offline
- * @execute goal=resolve-plugins
- * @requiresDependencyResolution test
+ *
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  * @version $Id$
  * @since 2.0
  */
+@Mojo( name = "go-offline", requiresDependencyResolution = ResolutionScope.TEST )
+@Execute( goal = "resolve-plugins" )
 public class GoOfflineMojo
     extends AbstractResolveMojo
 {
@@ -45,16 +47,13 @@ public class GoOfflineMojo
     /**
      * Main entry into mojo. Gets the list of dependencies and iterates through
      * displaying the resolved version.
-     * 
-     * @throws MojoExecutionException
-     *             with a message if an error occurs.
-     * 
+     *
+     * @throws MojoExecutionException with a message if an error occurs.
      */
     public void execute()
         throws MojoExecutionException
     {
-        @SuppressWarnings( "unchecked" )
-        Set<Artifact> artifacts = project.getArtifacts();
+        @SuppressWarnings( "unchecked" ) Set<Artifact> artifacts = project.getArtifacts();
 
         if ( !silent )
         {

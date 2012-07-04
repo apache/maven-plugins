@@ -19,42 +19,40 @@ package org.apache.maven.plugin.dependency;
  * under the License.
  */
 
-import java.io.File;
-import java.util.Set;
-
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.project.artifact.InvalidDependencyVersionException;
 
+import java.io.File;
+import java.util.Set;
+
 /**
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  * @version $Id$
- *
  */
 public abstract class AbstractResolveMojo
     extends AbstractDependencyFilterMojo
 {
     /**
      * Project builder -- builds a model from a pom.xml
-     *
-     * @component role="org.apache.maven.project.MavenProjectBuilder"
-     * @required
-     * @readonly
      */
+    @Component
     protected MavenProjectBuilder mavenProjectBuilder;
 
     /**
      * If specified, this parameter will cause the dependencies to be written to the path specified, instead of writing
      * to the console.
      *
-     * @parameter expression="${outputFile}"
      * @since 2.0
      */
+    @Parameter( property = "outputFile" )
     protected File outputFile;
 
     /**
@@ -68,21 +66,20 @@ public abstract class AbstractResolveMojo
      * @throws ArtifactNotFoundException
      * @throws InvalidDependencyVersionException
      */
-    
-	/**
-	 * Whether to append outputs into the output file or overwrite it.
-	 * 
-	 * @parameter expression="${appendOutput}" default-value="false"
-	 * @since 2.2
-	 */
-	protected boolean appendOutput;
-    
+
+    /**
+     * Whether to append outputs into the output file or overwrite it.
+     *
+     * @since 2.2
+     */
+    @Parameter( property = "appendOutput", defaultValue = "false" )
+    protected boolean appendOutput;
+
     protected Set<Artifact> resolveDependencyArtifacts( MavenProject theProject )
         throws ArtifactResolutionException, ArtifactNotFoundException, InvalidDependencyVersionException
     {
-        Set<Artifact> artifacts =
-            theProject.createArtifacts( this.factory, Artifact.SCOPE_TEST,
-                                        new ScopeArtifactFilter( Artifact.SCOPE_TEST ) );
+        Set<Artifact> artifacts = theProject.createArtifacts( this.factory, Artifact.SCOPE_TEST,
+                                                              new ScopeArtifactFilter( Artifact.SCOPE_TEST ) );
 
         for ( Artifact artifact : artifacts )
         {
@@ -95,15 +92,13 @@ public abstract class AbstractResolveMojo
     /**
      * This method resolves all transitive dependencies of an artifact.
      *
-     * @param artifact
-     *            the artifact used to retrieve dependencies
-     *
+     * @param artifact the artifact used to retrieve dependencies
      * @return resolved set of dependencies
-     *
      * @throws ArtifactResolutionException
      * @throws ArtifactNotFoundException
      * @throws ProjectBuildingException
      * @throws InvalidDependencyVersionException
+     *
      */
     protected Set<Artifact> resolveArtifactDependencies( Artifact artifact )
         throws ArtifactResolutionException, ArtifactNotFoundException, ProjectBuildingException,
@@ -113,7 +108,8 @@ public abstract class AbstractResolveMojo
             this.factory.createArtifact( artifact.getGroupId(), artifact.getArtifactId(), artifact.getVersion(), "",
                                          "pom" );
 
-        MavenProject pomProject = mavenProjectBuilder.buildFromRepository( pomArtifact, this.remoteRepos, this.getLocal() );
+        MavenProject pomProject =
+            mavenProjectBuilder.buildFromRepository( pomArtifact, this.remoteRepos, this.getLocal() );
 
         return resolveDependencyArtifacts( pomProject );
     }
