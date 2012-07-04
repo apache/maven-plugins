@@ -61,7 +61,7 @@ under the License.
   <properties>
     <mavenFilteringVersion>1.1-SNAPSHOT</mavenFilteringVersion>
     <mavenVersion>2.0.6</mavenVersion>
-    <mavenPluginPluginVersion>3.0</mavenPluginPluginVersion>
+    <mavenPluginPluginVersion>3.1</mavenPluginPluginVersion>
   </properties>
 
   <contributors>
