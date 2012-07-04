@@ -63,7 +63,7 @@ under the License.
     <groovy-groupId>org.codehaus.groovy</groovy-groupId>
     <groovy-artifactId>groovy</groovy-artifactId>
     <groovy-version>1.8.6</groovy-version>
-    <mavenPluginPluginVersion>3.0</mavenPluginPluginVersion>
+    <mavenPluginPluginVersion>3.1</mavenPluginPluginVersion>
   </properties>
 
   <dependencies>
