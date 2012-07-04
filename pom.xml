@@ -66,7 +66,7 @@ under the License.
   <properties>
     <mavenArchiverVersion>2.5</mavenArchiverVersion>
     <mavenVersion>2.0.6</mavenVersion>
-    <mavenPluginPluginVersion>3.0</mavenPluginPluginVersion>
+    <mavenPluginPluginVersion>3.1</mavenPluginPluginVersion>
   </properties>
 
   <dependencies>
