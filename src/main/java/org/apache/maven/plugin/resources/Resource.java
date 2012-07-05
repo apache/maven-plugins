@@ -20,7 +20,7 @@ package org.apache.maven.plugin.resources;
  */
 
 /**
- * @author <a href="mailto:olamy@apache.org">olamy</a>
+ * @author Olivier Lamy
  * @since 2.3
  *
  */
