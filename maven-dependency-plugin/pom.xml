@@ -36,34 +36,6 @@ under the License.
   <name>Maven Dependency Plugin</name>
   <description>Provides utility goals to work with dependencies like copying, unpacking, analyzing, resolving and many more.</description>
 
-  <developers>
-    <developer>
-      <id>brianf</id>
-      <name>Brian Fox</name>
-      <email>brianf@apache.org</email>
-      <roles>
-        <role>Developer</role>
-      </roles>
-      <timezone>5</timezone>
-    </developer>
-    <developer>
-      <id>dtran</id>
-      <name>Dan T. Tran</name>
-      <email>dantran@gmail.com</email>
-      <roles>
-        <role>Developer</role>
-      </roles>
-    </developer>
-    <developer>
-      <id>jdcasey</id>
-      <name>John Casey</name>
-      <email>casey.john.d@gmail.com</email>
-      <roles>
-        <role>Developer</role>
-      </roles>
-    </developer>
-  </developers>
-
   <prerequisites>
     <maven>${mavenVersion}</maven>
   </prerequisites>
