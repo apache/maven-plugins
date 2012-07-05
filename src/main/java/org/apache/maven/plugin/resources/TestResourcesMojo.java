@@ -19,6 +19,7 @@ package org.apache.maven.plugin.resources;
  * under the License.
  */
 
+import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -33,7 +34,6 @@ import java.util.List;
  *
  * @author <a href="michal.maczka@dimatics.com">Michal Maczka</a>
  * @author <a href="mailto:jason@maven.org">Jason van Zyl</a>
- *
  */
 @Mojo( name = "testResources", defaultPhase = LifecyclePhase.PROCESS_TEST_RESOURCES, threadSafe = true )
 public class TestResourcesMojo
@@ -49,7 +49,7 @@ public class TestResourcesMojo
      * The list of resources we want to transfer.
      */
     @Parameter( defaultValue = "${project.testResources}", required = true, readonly = false )
-    private List resources;
+    private List<Resource> resources;
 
     /**
      * Set this to 'true' to bypass copying of test resources.
@@ -84,12 +84,12 @@ public class TestResourcesMojo
         this.outputDirectory = outputDirectory;
     }
 
-    public List getResources()
+    public List<Resource> getResources()
     {
         return resources;
     }
 
-    public void setResources( List resources )
+    public void setResources( List<Resource> resources )
     {
         this.resources = resources;
     }

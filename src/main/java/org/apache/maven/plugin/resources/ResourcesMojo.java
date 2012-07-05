@@ -56,7 +56,6 @@ import java.util.List;
  * @author <a href="mailto:jason@maven.org">Jason van Zyl</a>
  * @author Andreas Hoheneder
  * @author William Ferguson
- *
  */
 @Mojo( name = "resources", defaultPhase = LifecyclePhase.PROCESS_RESOURCES, threadSafe = true )
 public class ResourcesMojo
@@ -80,7 +79,7 @@ public class ResourcesMojo
      * The list of resources we want to transfer.
      */
     @Parameter( defaultValue = "${project.resources}", required = true, readonly = true )
-    private List resources;
+    private List<Resource> resources;
 
     /**
      *
@@ -97,7 +96,7 @@ public class ResourcesMojo
      * @since 2.4
      */
     @Parameter( defaultValue = "${project.build.filters}", readonly = true )
-    protected List buildFilters;
+    protected List<String> buildFilters;
 
     /**
      * The list of extra filter properties files to be used along with System properties,
@@ -112,7 +111,7 @@ public class ResourcesMojo
      * can separate which filters are used for which type of resource.
      */
     @Parameter
-    protected List filters;
+    protected List<String> filters;
 
     /**
      * If false, don't use the filters specified in the build/filters section of the POM when
@@ -168,7 +167,7 @@ public class ResourcesMojo
      * @since 2.3
      */
     @Parameter
-    protected List nonFilteredFileExtensions;
+    protected List<String> nonFilteredFileExtensions;
 
     /**
      * Whether to escape backslashes and colons in windows-style paths.
@@ -198,7 +197,7 @@ public class ResourcesMojo
      * @since 2.4
      */
     @Parameter
-    protected List delimiters;
+    protected List<String> delimiters;
 
     /**
      * @since 2.4
@@ -215,7 +214,7 @@ public class ResourcesMojo
      * @since 2.4
      */
     @Parameter
-    private List mavenFilteringHints;
+    private List<String> mavenFilteringHints;
 
     /**
      * @since 2.4
@@ -225,7 +224,7 @@ public class ResourcesMojo
     /**
      * @since 2.4
      */
-    private List mavenFilteringComponents = new ArrayList();
+    private List<MavenResourcesFiltering> mavenFilteringComponents = new ArrayList<MavenResourcesFiltering>();
 
     /**
      * stop searching endToken at the end of line
@@ -257,7 +256,7 @@ public class ResourcesMojo
 
             MavenResourcesExecution mavenResourcesExecution =
                 new MavenResourcesExecution( getResources(), getOutputDirectory(), project, encoding, filters,
-                                             Collections.EMPTY_LIST, session );
+                                             Collections.<String>emptyList(), session );
 
             mavenResourcesExecution.setEscapeWindowsPaths( escapeWindowsPaths );
 
@@ -273,15 +272,14 @@ public class ResourcesMojo
             // if these are NOT set, just use the defaults, which are '${*}' and '@'.
             if ( delimiters != null && !delimiters.isEmpty() )
             {
-                LinkedHashSet delims = new LinkedHashSet();
+                LinkedHashSet<String> delims = new LinkedHashSet<String>();
                 if ( useDefaultDelimiters )
                 {
                     delims.addAll( mavenResourcesExecution.getDelimiters() );
                 }
 
-                for ( Iterator dIt = delimiters.iterator(); dIt.hasNext(); )
+                for ( String delim : delimiters )
                 {
-                    String delim = (String) dIt.next();
                     if ( delim == null )
                     {
                         // FIXME: ${filter:*} could also trigger this condition. Need a better long-term solution.
@@ -325,7 +323,8 @@ public class ResourcesMojo
                 try
                 {
                     mavenFilteringComponents.add(
-                        plexusContainer.lookup( MavenResourcesFiltering.class.getName(), hint ) );
+                        (MavenResourcesFiltering) plexusContainer.lookup( MavenResourcesFiltering.class.getName(),
+                                                                          hint ) );
                 }
                 catch ( ComponentLookupException e )
                 {
@@ -341,15 +340,14 @@ public class ResourcesMojo
         if ( mavenFilteringComponents != null && !mavenFilteringComponents.isEmpty() )
         {
             getLog().debug( "execute user filters" );
-            for ( Iterator ite = mavenFilteringComponents.iterator(); ite.hasNext(); )
+            for ( MavenResourcesFiltering filter : mavenFilteringComponents )
             {
-                MavenResourcesFiltering filter = (MavenResourcesFiltering) ite.next();
                 filter.filterResources( mavenResourcesExecution );
             }
         }
     }
 
-    protected List getCombinedFiltersList()
+    protected List<String> getCombinedFiltersList()
     {
         if ( filters == null || filters.isEmpty() )
         {
@@ -357,7 +355,7 @@ public class ResourcesMojo
         }
         else
         {
-            List result = new ArrayList();
+            List<String> result = new ArrayList<String>();
 
             if ( useBuildFilters && buildFilters != null && !buildFilters.isEmpty() )
             {
@@ -376,13 +374,12 @@ public class ResourcesMojo
      * @param resources The set of resources to check for filtering, may be <code>null</code>.
      * @return <code>true</code> if at least one resource uses filtering, <code>false</code> otherwise.
      */
-    private boolean isFilteringEnabled( Collection resources )
+    private boolean isFilteringEnabled( Collection<Resource> resources )
     {
         if ( resources != null )
         {
-            for ( Iterator i = resources.iterator(); i.hasNext(); )
+            for ( Resource resource : resources )
             {
-                Resource resource = (Resource) i.next();
                 if ( resource.isFiltering() )
                 {
                     return true;
@@ -392,12 +389,12 @@ public class ResourcesMojo
         return false;
     }
 
-    public List getResources()
+    public List<Resource> getResources()
     {
         return resources;
     }
 
-    public void setResources( List resources )
+    public void setResources( List<Resource> resources )
     {
         this.resources = resources;
     }
@@ -432,22 +429,22 @@ public class ResourcesMojo
         this.includeEmptyDirs = includeEmptyDirs;
     }
 
-    public List getFilters()
+    public List<String> getFilters()
     {
         return filters;
     }
 
-    public void setFilters( List filters )
+    public void setFilters( List<String> filters )
     {
         this.filters = filters;
     }
 
-    public List getDelimiters()
+    public List<String> getDelimiters()
     {
         return delimiters;
     }
 
-    public void setDelimiters( List delimiters )
+    public void setDelimiters( List<String> delimiters )
     {
         this.delimiters = delimiters;
     }
