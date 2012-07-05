@@ -29,7 +29,7 @@ import java.util.Properties;
  * @deprecated use classes in the component maven-filtering
  * TODO remove the class ?
  * @author Andreas Hoheneder (ahoh_at_inode.at)
- * @version $Id$
+ *
  */
 public class ReflectionProperties
     extends Properties

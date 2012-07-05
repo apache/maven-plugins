@@ -56,7 +56,7 @@ import java.util.List;
  * @author <a href="mailto:jason@maven.org">Jason van Zyl</a>
  * @author Andreas Hoheneder
  * @author William Ferguson
- * @version $Id$
+ *
  */
 @Mojo( name = "resources", defaultPhase = LifecyclePhase.PROCESS_RESOURCES, threadSafe = true )
 public class ResourcesMojo
