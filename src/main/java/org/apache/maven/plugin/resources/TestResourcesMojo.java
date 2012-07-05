@@ -33,7 +33,7 @@ import java.util.List;
  *
  * @author <a href="michal.maczka@dimatics.com">Michal Maczka</a>
  * @author <a href="mailto:jason@maven.org">Jason van Zyl</a>
- * @version $Id$
+ *
  */
 @Mojo( name = "testResources", defaultPhase = LifecyclePhase.PROCESS_TEST_RESOURCES, threadSafe = true )
 public class TestResourcesMojo
