@@ -28,7 +28,7 @@ import java.util.List;
 /**
  * Copy resources of the configured plugin attribute resources
  * 
- * @author <a href="mailto:olamy@apache.org">olamy</a>
+ * @author Olivier Lamy
  * @since 2.3
  *
  */
