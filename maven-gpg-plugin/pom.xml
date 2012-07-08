@@ -52,6 +52,7 @@ under the License.
 
   <properties>
     <mavenVersion>2.0.6</mavenVersion>
+    <mavenPluginPluginVersion>3.1</mavenPluginPluginVersion>
   </properties>
 
   <dependencies>
@@ -84,7 +85,7 @@ under the License.
     <dependency>
       <groupId>org.apache.maven.plugin-tools</groupId>
       <artifactId>maven-plugin-annotations</artifactId>
-      <version>3.1-SNAPSHOT</version>
+      <version>${mavenPluginPluginVersion}</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -100,7 +101,7 @@ under the License.
       <plugins>
         <plugin>
           <artifactId>maven-plugin-plugin</artifactId>
-          <version>3.1-SNAPSHOT</version>
+          <version>${mavenPluginPluginVersion}</version>
           <configuration>
             <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
           </configuration>
@@ -110,6 +111,7 @@ under the License.
 
     <plugins>
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-plugin-plugin</artifactId>
         <configuration>
           <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
@@ -132,6 +134,7 @@ under the License.
         <pluginManagement>
           <plugins>
             <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
               <artifactId>maven-invoker-plugin</artifactId>
               <configuration>
                 <debug>true</debug>
@@ -171,13 +174,15 @@ under the License.
       <reporting>
         <plugins>
           <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-invoker-plugin</artifactId>
             <version>1.5</version>
           </plugin>
 
           <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-plugin-plugin</artifactId>
-            <version>3.1-SNAPSHOT</version>
+            <version>${mavenPluginPluginVersion}</version>
           </plugin>
 
         </plugins>
