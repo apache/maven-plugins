@@ -28,6 +28,10 @@ import java.util.List;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.codehaus.plexus.util.FileUtils;
@@ -39,56 +43,47 @@ import org.codehaus.plexus.util.SelectorUtils;
  * @author Jason van Zyl
  * @author Jason Dillon
  * @author Daniel Kulp
- * @goal sign
- * @phase verify
- * @threadSafe
  */
+@Mojo( name = "sign", defaultPhase = LifecyclePhase.VERIFY, threadSafe = true )
 public class GpgSignAttachedMojo
     extends AbstractGpgMojo
 {
 
-    private static final String DEFAULT_EXCLUDES[] = new String[] { "**/*.md5", "**/*.sha1", "**/*.asc" };
+    private static final String DEFAULT_EXCLUDES[] = new String[]{ "**/*.md5", "**/*.sha1", "**/*.asc" };
 
     /**
      * Skip doing the gpg signing.
-     * 
-     * @parameter expression="${gpg.skip}" default-value="false"
      */
+    @Parameter( property = "gpg.skip", defaultValue = "false" )
     private boolean skip;
 
     /**
      * A list of files to exclude from being signed. Can contain Ant-style wildcards and double wildcards. The default
      * excludes are <code>**&#47;*.md5   **&#47;*.sha1    **&#47;*.asc</code>.
-     * 
-     * @parameter
+     *
      * @since 1.0-alpha-4
      */
+    @Parameter
     private String[] excludes;
 
     /**
      * The directory where to store signature files.
-     * 
-     * @parameter default-value="${project.build.directory}/gpg" alias="outputDirectory"
+     *
      * @since 1.0-alpha-4
      */
+    @Parameter( defaultValue = "${project.build.directory}/gpg", alias = "outputDirectory" )
     private File ascDirectory;
 
     /**
      * The maven project.
-     * 
-     * @parameter default-value="${project}"
-     * @required
-     * @readonly
      */
+    @Component
     protected MavenProject project;
 
     /**
      * Maven ProjectHelper
-     * 
-     * @component
-     * @required
-     * @readonly
      */
+    @Component
     private MavenProjectHelper projectHelper;
 
     public void execute()
