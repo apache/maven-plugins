@@ -55,6 +55,12 @@ public class InstallMojo
     private File pomFile;
 
     /**
+     * Set this to <code>true</code> to bypass artifact installation. Use this for artifacts that does not need to be installed in the local repository.
+     */
+    @Parameter( property = "maven.install.skip", defaultValue = "false", required = true )
+    private boolean skip;
+
+    /**
      */
     @Parameter( defaultValue = "${project.artifact}", required = true, readonly = true )
     private Artifact artifact;
@@ -67,6 +73,12 @@ public class InstallMojo
     public void execute()
         throws MojoExecutionException
     {
+        if ( skip )
+        {
+            getLog().info( "Skipping artifact installation" );
+            return;
+        }
+
         // TODO: push into transformation
         boolean isPomArtifact = "pom".equals( packaging );
 
@@ -137,5 +149,10 @@ public class InstallMojo
         {
             throw new MojoExecutionException( e.getMessage(), e );
         }
+    }
+
+    public void setSkip( boolean skip )
+    {
+        this.skip = skip;
     }
 }
