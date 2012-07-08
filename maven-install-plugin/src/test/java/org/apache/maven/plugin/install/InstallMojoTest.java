@@ -275,6 +275,37 @@ public class InstallMojoTest
 
         assertTrue( installedArtifact.exists() );
     }
+    
+    public void testSkip()
+    throws Exception
+    {	
+        File testPom = new File( getBasedir(), "target/test-classes/unit/basic-install-test/plugin-config.xml" );
+
+        InstallMojo mojo = (InstallMojo) lookupMojo( "install", testPom );
+
+        assertNotNull( mojo );
+
+        File file = new File( getBasedir(), "target/test-classes/unit/basic-install-test/target/" +
+            "maven-install-test-1.0-SNAPSHOT.jar" );
+
+        artifact = (InstallArtifactStub) getVariableValueFromObject( mojo, "artifact" );
+
+        artifact.setFile( file );
+
+        mojo.setSkip(true);
+            
+        mojo.execute();
+
+        String groupId = dotToSlashReplacer( artifact.getGroupId() );
+
+        String packaging = getVariableValueFromObject( mojo, "packaging" ).toString();
+
+        File installedArtifact = new File( getBasedir(), LOCAL_REPO + groupId + "/" + artifact.getArtifactId() + "/" +
+           artifact.getVersion() + "/" + artifact.getArtifactId() + "-" + artifact.getVersion() + "." + packaging );
+
+        assertFalse( installedArtifact.exists() );
+    }
+    
 
     private String dotToSlashReplacer( String parameter )
     {
