@@ -19,6 +19,29 @@ package org.apache.maven.report.projectinfo;
  * under the License.
  */
 
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.factory.ArtifactFactory;
+import org.apache.maven.artifact.manager.WagonManager;
+import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
+import org.apache.maven.artifact.repository.metadata.RepositoryMetadataManager;
+import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
+import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.apache.maven.project.MavenProjectBuilder;
+import org.apache.maven.report.projectinfo.dependencies.Dependencies;
+import org.apache.maven.report.projectinfo.dependencies.DependenciesReportConfiguration;
+import org.apache.maven.report.projectinfo.dependencies.RepositoryUtils;
+import org.apache.maven.report.projectinfo.dependencies.renderer.DependenciesRenderer;
+import org.apache.maven.shared.dependency.graph.DependencyGraphBuilder;
+import org.apache.maven.shared.dependency.graph.DependencyGraphBuilderException;
+import org.apache.maven.shared.dependency.graph.DependencyNode;
+import org.apache.maven.shared.jar.classes.JarClassesAnalysis;
+import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.ReaderFactory;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -27,25 +50,6 @@ import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.util.Locale;
 
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.factory.ArtifactFactory;
-import org.apache.maven.artifact.manager.WagonManager;
-import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
-import org.apache.maven.artifact.repository.metadata.RepositoryMetadataManager;
-import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
-import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
-import org.apache.maven.project.MavenProjectBuilder;
-import org.apache.maven.report.projectinfo.dependencies.Dependencies;
-import org.apache.maven.report.projectinfo.dependencies.DependenciesReportConfiguration;
-import org.apache.maven.report.projectinfo.dependencies.RepositoryUtils;
-import org.apache.maven.report.projectinfo.dependencies.renderer.DependenciesRenderer;
-import org.apache.maven.shared.dependency.graph.DependencyNode;
-import org.apache.maven.shared.dependency.graph.DependencyGraphBuilder;
-import org.apache.maven.shared.dependency.graph.DependencyGraphBuilderException;
-import org.apache.maven.shared.jar.classes.JarClassesAnalysis;
-import org.codehaus.plexus.util.IOUtil;
-import org.codehaus.plexus.util.ReaderFactory;
-
 /**
  * Generates the Project Dependencies report.
  *
@@ -53,13 +57,14 @@ import org.codehaus.plexus.util.ReaderFactory;
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton </a>
  * @version $Id$
  * @since 2.0
- * @goal dependencies
- * @requiresDependencyResolution test
  */
+@Mojo( name = "dependencies", requiresDependencyResolution = ResolutionScope.TEST )
 public class DependenciesReport
     extends AbstractProjectInfoReport
 {
-    /** Images resources dir */
+    /**
+     * Images resources dir
+     */
     private static final String RESOURCES_DIR = "org/apache/maven/report/projectinfo/resources";
 
     // ----------------------------------------------------------------------
@@ -68,56 +73,54 @@ public class DependenciesReport
 
     /**
      * Maven Project Builder component.
-     *
-     * @component
      */
+    @Component
     private MavenProjectBuilder mavenProjectBuilder;
 
     /**
      * Artifact metadata source component.
-     *
-     * @component
      */
+    @Component
     protected ArtifactMetadataSource artifactMetadataSource;
 
     /**
      * Wagon manager component.
      *
      * @since 2.1
-     * @component
      */
+    @Component
     private WagonManager wagonManager;
 
     /**
      * Dependency graph builder component.
      *
      * @since 2.5
-     * @component role-hint="default"
      */
+    @Component( hint = "default" )
     private DependencyGraphBuilder dependencyGraphBuilder;
 
     /**
      * Jar classes analyzer component.
      *
      * @since 2.1
-     * @component
      */
+    @Component
     private JarClassesAnalysis classesAnalyzer;
 
     /**
      * Repository metadata component.
      *
      * @since 2.1
-     * @component
      */
+    @Component
     private RepositoryMetadataManager repositoryMetadataManager;
 
     /**
      * Maven Artifact Factory component.
      *
-     * @component
      * @since 2.1
      */
+    @Component
     private ArtifactFactory artifactFactory;
 
     // ----------------------------------------------------------------------
@@ -129,8 +132,8 @@ public class DependenciesReport
      * classes, number of packages etc.
      *
      * @since 2.1
-     * @parameter expression="${dependency.details.enabled}" default-value="true"
      */
+    @Parameter( property = "dependency.details.enabled", defaultValue = "true" )
     private boolean dependencyDetailsEnabled;
 
     /**
@@ -138,10 +141,9 @@ public class DependenciesReport
      * will be ignored.
      *
      * @since 2.1
-     * @parameter expression="${dependency.locations.enabled}" default-value="true"
      */
+    @Parameter( property = "dependency.locations.enabled", defaultValue = "true" )
     private boolean dependencyLocationsEnabled;
-
 
     // ----------------------------------------------------------------------
     // Public methods
@@ -165,12 +167,10 @@ public class DependenciesReport
             getLog().error( "Cannot copy ressources", e );
         }
 
-        @SuppressWarnings( "unchecked" )
-        RepositoryUtils repoUtils =
-            new RepositoryUtils( getLog(), wagonManager, settings,
-                                 mavenProjectBuilder, factory, resolver, project.getRemoteArtifactRepositories(),
-                                 project.getPluginArtifactRepositories(), localRepository,
-                                 repositoryMetadataManager );
+        @SuppressWarnings( "unchecked" ) RepositoryUtils repoUtils =
+            new RepositoryUtils( getLog(), wagonManager, settings, mavenProjectBuilder, factory, resolver,
+                                 project.getRemoteArtifactRepositories(), project.getPluginArtifactRepositories(),
+                                 localRepository, repositoryMetadataManager );
 
         DependencyNode dependencyNode = resolveProject();
 
@@ -186,7 +186,9 @@ public class DependenciesReport
         r.render();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public String getOutputName()
     {
         return "dependencies";

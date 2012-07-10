@@ -23,6 +23,9 @@ import org.apache.commons.validator.UrlValidator;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.doxia.util.HtmlTools;
 import org.apache.maven.model.License;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Settings;
 import org.codehaus.plexus.i18n.I18N;
@@ -43,8 +46,8 @@ import java.util.regex.Pattern;
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton </a>
  * @version $Id$
  * @since 2.0
- * @goal license
  */
+@Mojo( name = "license" )
 public class LicenseReport
     extends AbstractProjectInfoReport
 {
@@ -54,18 +57,14 @@ public class LicenseReport
 
     /**
      * The Maven Settings.
-     *
-     * @parameter default-value="${settings}"
-     * @required
-     * @readonly
      */
+    @Component
     private Settings settings;
 
     /**
      * Whether the system is currently offline.
-     *
-     * @parameter expression="${settings.offline}"
      */
+    @Parameter( property = "settings.offline" )
     private boolean offline;
 
     /**
@@ -73,9 +72,9 @@ public class LicenseReport
      * <br/>
      * If the system is in {@link #offline} mode, the linkOnly parameter will be always <code>true</code>.
      *
-     * @parameter default-value="false"
      * @since 2.3
      */
+    @Parameter( defaultValue = "false" )
     private boolean linkOnly;
 
     // ----------------------------------------------------------------------
@@ -85,7 +84,8 @@ public class LicenseReport
     @Override
     public void executeReport( Locale locale )
     {
-        LicenseRenderer r = new LicenseRenderer( getSink(), getProject(), getI18N( locale ), locale, settings, linkOnly );
+        LicenseRenderer r =
+            new LicenseRenderer( getSink(), getProject(), getI18N( locale ), locale, settings, linkOnly );
 
         r.render();
     }
@@ -121,8 +121,8 @@ public class LicenseReport
                 return true;
             }
 
-            if ( licenseUrl != null
-                && ( licenseUrl.getProtocol().equals( "http" ) || licenseUrl.getProtocol().equals( "https" ) ) )
+            if ( licenseUrl != null &&
+                ( licenseUrl.getProtocol().equals( "http" ) || licenseUrl.getProtocol().equals( "https" ) ) )
             {
                 linkOnly = true;
                 return true;
@@ -132,7 +132,9 @@ public class LicenseReport
         return false;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public String getOutputName()
     {
         return "license";
@@ -146,7 +148,7 @@ public class LicenseReport
 
     /**
      * @param project not null
-     * @param url not null
+     * @param url     not null
      * @return a valid URL object from the url string
      * @throws IOException if any
      */
@@ -167,8 +169,8 @@ public class LicenseReport
             }
             catch ( MalformedURLException e )
             {
-                throw new MalformedURLException( "The license url '" + url + "' seems to be invalid: "
-                    + e.getMessage() );
+                throw new MalformedURLException(
+                    "The license url '" + url + "' seems to be invalid: " + e.getMessage() );
             }
         }
         else
@@ -190,8 +192,8 @@ public class LicenseReport
             }
             catch ( MalformedURLException e )
             {
-                throw new MalformedURLException( "The license url '" + url + "' seems to be invalid: "
-                    + e.getMessage() );
+                throw new MalformedURLException(
+                    "The license url '" + url + "' seems to be invalid: " + e.getMessage() );
             }
         }
 
@@ -214,7 +216,8 @@ public class LicenseReport
 
         private final boolean linkOnly;
 
-        LicenseRenderer( Sink sink, MavenProject project, I18N i18n, Locale locale, Settings settings, boolean linkOnly )
+        LicenseRenderer( Sink sink, MavenProject project, I18N i18n, Locale locale, Settings settings,
+                         boolean linkOnly )
         {
             super( sink, i18n, locale );
 
@@ -269,7 +272,7 @@ public class LicenseReport
                     for ( License license : licenses )
                     {
                         String name = license.getName();
-    
+
                         sink.listItem();
                         link( "#" + HtmlTools.encodeId( name ), name );
                         sink.listItem_();
@@ -341,8 +344,8 @@ public class LicenseReport
                 int bodyStart = licenseContentLC.indexOf( "<body" );
                 int bodyEnd = licenseContentLC.indexOf( "</body>" );
 
-                if ( ( licenseContentLC.contains( "<!doctype html" ) || licenseContentLC.contains( "<html>" ) ) 
-                    && ( ( bodyStart >= 0 ) && ( bodyEnd > bodyStart ) ) )
+                if ( ( licenseContentLC.contains( "<!doctype html" ) || licenseContentLC.contains( "<html>" ) ) &&
+                    ( ( bodyStart >= 0 ) && ( bodyEnd > bodyStart ) ) )
                 {
                     bodyStart = licenseContentLC.indexOf( ">", bodyStart ) + 1;
                     String body = licenseContent.substring( bodyStart, bodyEnd );

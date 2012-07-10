@@ -33,6 +33,8 @@ import org.apache.maven.doxia.siterenderer.sink.SiteRendererSink;
 import org.apache.maven.doxia.tools.SiteTool;
 import org.apache.maven.doxia.tools.SiteToolException;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.MavenReportException;
@@ -80,36 +82,32 @@ public abstract class AbstractProjectInfoReport
      * SiteTool component.
      *
      * @since 2.1
-     * @component
      */
+    @Component
     protected SiteTool siteTool;
 
     /**
      * Doxia Site Renderer component.
-     *
-     * @component
      */
+    @Component
     protected Renderer siteRenderer;
 
     /**
      * Artifact Resolver component.
-     *
-     * @component
      */
+    @Component
     protected ArtifactResolver resolver;
 
     /**
      * Artifact Factory component.
-     *
-     * @component
      */
+    @Component
     protected ArtifactFactory factory;
 
     /**
      * Internationalization component, could support also custom bundle using {@link #customBundle}.
-     *
-     * @component
      */
+    @Component
     private I18N i18n;
 
     // ----------------------------------------------------------------------
@@ -120,55 +118,45 @@ public abstract class AbstractProjectInfoReport
      * The output directory for the report. Note that this parameter is only evaluated if the goal is run directly from
      * the command line. If the goal is run indirectly as part of a site generation, the output directory configured in
      * the Maven Site Plugin is used instead.
-     *
-     * @parameter expression="${project.reporting.outputDirectory}"
-     * @required
      */
+    @Parameter( property = "project.reporting.outputDirectory", required = true )
     protected File outputDirectory;
 
     /**
      * The Maven Project.
-     *
-     * @parameter expression="${project}"
-     * @required
-     * @readonly
      */
+    @Component
     protected MavenProject project;
 
     /**
      * Local Repository.
-     *
-     * @parameter expression="${localRepository}"
-     * @required
-     * @readonly
      */
+    @Parameter( property = "localRepository", required = true, readonly = true )
     protected ArtifactRepository localRepository;
 
     /**
      * Remote repositories used for the project.
      *
      * @since 2.1
-     * @parameter expression="${project.remoteArtifactRepositories}"
      */
+    @Parameter( property = "project.remoteArtifactRepositories" )
     protected List<ArtifactRepository> remoteRepositories;
 
     /**
      * The current user system settings for use in Maven.
      *
-     * @parameter expression="${settings}"
-     * @required
-     * @readonly
      * @since 2.3
      */
+    @Component
     protected Settings settings;
 
     /**
      * Path for a custom bundle instead of using the default one. <br/>
      * Using this field, you could change the texts in the generated reports.
      *
-     * @parameter expression="${project.basedir}/src/site/custom/project-info-report.properties"
      * @since 2.3
      */
+    @Parameter( defaultValue = "${project.basedir}/src/site/custom/project-info-report.properties" )
     protected String customBundle;
 
     // ----------------------------------------------------------------------

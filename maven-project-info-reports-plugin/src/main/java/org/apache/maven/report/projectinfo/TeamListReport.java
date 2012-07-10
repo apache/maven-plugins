@@ -25,6 +25,7 @@ import org.apache.maven.model.Contributor;
 import org.apache.maven.model.Developer;
 import org.apache.maven.model.Model;
 import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugins.annotations.Mojo;
 import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.util.StringUtils;
 import org.joda.time.DateTimeZone;
@@ -43,8 +44,8 @@ import java.util.TimeZone;
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton </a>
  * @version $Id$
  * @since 2.0
- * @goal project-team
  */
+@Mojo( name = "project-team" )
 public class TeamListReport
     extends AbstractProjectInfoReport
 {

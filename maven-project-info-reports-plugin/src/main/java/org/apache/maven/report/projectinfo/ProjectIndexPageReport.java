@@ -20,6 +20,7 @@ package org.apache.maven.report.projectinfo;
  */
 
 import org.apache.maven.doxia.sink.Sink;
+import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.reporting.AbstractMavenReportRenderer;
 
 import java.util.Locale;
@@ -31,8 +32,8 @@ import java.util.Locale;
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton </a>
  * @version $Id$
  * @since 2.0
- * @goal index
  */
+@Mojo( name = "index" )
 public class ProjectIndexPageReport
     extends AbstractProjectInfoReport
 {

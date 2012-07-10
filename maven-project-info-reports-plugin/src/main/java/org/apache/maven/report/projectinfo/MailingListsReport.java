@@ -19,17 +19,19 @@ package org.apache.maven.report.projectinfo;
  * under the License.
  */
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.model.MailingList;
 import org.apache.maven.model.Model;
 import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.util.StringUtils;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * Generates the Mailing List report.
@@ -38,8 +40,8 @@ import org.codehaus.plexus.util.StringUtils;
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton </a>
  * @version $Id$
  * @since 2.0
- * @goal mailing-list
  */
+@Mojo( name = "mailing-list" )
 public class MailingListsReport
     extends AbstractProjectInfoReport
 {
@@ -47,10 +49,10 @@ public class MailingListsReport
     /**
      * This can override the header text of the mailing list(s) report
      *
-     * @parameter
      * @since 2.2
      * @deprecated since 2.3, you should use a custom bundle.
      */
+    @Parameter
     protected String introduction;
 
     // ----------------------------------------------------------------------
@@ -67,7 +69,9 @@ public class MailingListsReport
         r.render();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public String getOutputName()
     {
         return "mail-lists";
@@ -135,8 +139,8 @@ public class MailingListsReport
 
             if ( StringUtils.isNotBlank( introduction ) )
             {
-                log.warn( "Since 2.3, the <introduction/> parameter is deprecated. Please use a <customBundle/>"
-                    + " parameter to configure a custom bundle." );
+                log.warn( "Since 2.3, the <introduction/> parameter is deprecated. Please use a <customBundle/>" +
+                              " parameter to configure a custom bundle." );
                 paragraph( introduction );
             }
             else
@@ -165,11 +169,11 @@ public class MailingListsReport
 
             if ( otherArchives )
             {
-                tableHeader( new String[]{name, subscribe, unsubscribe, post, archive, archivesOther} );
+                tableHeader( new String[]{ name, subscribe, unsubscribe, post, archive, archivesOther } );
             }
             else
             {
-                tableHeader( new String[]{name, subscribe, unsubscribe, post, archive} );
+                tableHeader( new String[]{ name, subscribe, unsubscribe, post, archive } );
             }
 
             for ( MailingList mailingList : model.getMailingLists() )

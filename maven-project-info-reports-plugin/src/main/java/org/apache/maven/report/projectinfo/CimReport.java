@@ -23,6 +23,7 @@ import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.model.CiManagement;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Notifier;
+import org.apache.maven.plugins.annotations.Mojo;
 import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.util.StringUtils;
 
@@ -35,8 +36,8 @@ import java.util.Locale;
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton </a>
  * @version $Id$
  * @since 2.0
- * @goal cim
  */
+@Mojo( name = "cim" )
 public class CimReport
     extends AbstractProjectInfoReport
 {

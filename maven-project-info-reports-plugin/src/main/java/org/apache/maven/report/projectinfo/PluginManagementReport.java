@@ -19,12 +19,6 @@ package org.apache.maven.report.projectinfo;
  * under the License.
  */
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Locale;
-
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
@@ -32,11 +26,20 @@ import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
 import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.util.StringUtils;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * Generates the Project Plugin Management report.
@@ -44,9 +47,8 @@ import org.codehaus.plexus.util.StringUtils;
  * @author Nick Stolwijk
  * @version $Id$
  * @since 2.1
- * @goal plugin-management
- * @requiresDependencyResolution test
  */
+@Mojo( name = "plugin-management", requiresDependencyResolution = ResolutionScope.TEST )
 public class PluginManagementReport
     extends AbstractProjectInfoReport
 {
@@ -56,16 +58,14 @@ public class PluginManagementReport
 
     /**
      * Maven Project Builder component.
-     *
-     * @component
      */
+    @Component
     private MavenProjectBuilder mavenProjectBuilder;
 
     /**
      * Maven Artifact Factory component.
-     *
-     * @component
      */
+    @Component
     private ArtifactFactory artifactFactory;
 
     // ----------------------------------------------------------------------

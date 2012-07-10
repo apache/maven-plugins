@@ -19,6 +19,21 @@ package org.apache.maven.report.projectinfo;
  * under the License.
  */
 
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.factory.ArtifactFactory;
+import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.artifact.versioning.VersionRange;
+import org.apache.maven.doxia.sink.Sink;
+import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.MavenProjectBuilder;
+import org.apache.maven.project.ProjectBuildingException;
+import org.codehaus.plexus.i18n.I18N;
+import org.codehaus.plexus.util.StringUtils;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -26,27 +41,14 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.factory.ArtifactFactory;
-import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.versioning.VersionRange;
-import org.apache.maven.doxia.sink.Sink;
-import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.project.MavenProject;
-import org.apache.maven.project.MavenProjectBuilder;
-import org.apache.maven.project.ProjectBuildingException;
-import org.codehaus.plexus.i18n.I18N;
-import org.codehaus.plexus.util.StringUtils;
-
 /**
  * Generates the Project Plugins report.
  *
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
  * @since 2.1
- * @goal plugins
- * @requiresDependencyResolution test
  */
+@Mojo( name = "plugins", requiresDependencyResolution = ResolutionScope.TEST )
 public class PluginsReport
     extends AbstractProjectInfoReport
 {
@@ -56,16 +58,14 @@ public class PluginsReport
 
     /**
      * Maven Project Builder component.
-     *
-     * @component
      */
+    @Component
     private MavenProjectBuilder mavenProjectBuilder;
 
     /**
      * Maven Artifact Factory component.
-     *
-     * @component
      */
+    @Component
     private ArtifactFactory artifactFactory;
 
     // ----------------------------------------------------------------------
