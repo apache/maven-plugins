@@ -25,6 +25,10 @@ import org.apache.maven.plugin.pmd.model.PmdErrorDetail;
 import org.apache.maven.plugin.pmd.model.PmdFile;
 import org.apache.maven.plugin.pmd.model.Violation;
 import org.apache.maven.plugin.pmd.model.io.xpp3.PmdXpp3Reader;
+import org.apache.maven.plugins.annotations.Execute;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
@@ -38,12 +42,10 @@ import java.util.List;
  * Fail the build if there were any PMD violations in the source code.
  *
  * @version $Id$
- * @goal check
- * @phase verify
- * @execute goal="pmd"
- * @threadSafe
  * @since 2.0
  */
+@Mojo( name = "check", defaultPhase = LifecyclePhase.VERIFY, threadSafe = true )
+@Execute( goal = "pmd" )
 public class PmdViolationCheckMojo
     extends AbstractPmdViolationCheckMojo<Violation>
 {
@@ -52,18 +54,15 @@ public class PmdViolationCheckMojo
      * will stop the build. Anything below will be warnings and will be
      * displayed in the build output if verbose=true. Note: Minimum Priority = 5
      * Maximum Priority = 0
-     *
-     * @parameter expression="${pmd.failurePriority}" default-value="5"
-     * @required
      */
+    @Parameter( property = "pmd.failurePriority", defaultValue = "5", required = true )
     private int failurePriority;
 
     /**
      * Skip the PMD checks.  Most useful on the command line
      * via "-Dpmd.skip=true".
-     *
-     * @parameter expression="${pmd.skip}" default-value="false"
      */
+    @Parameter( property = "pmd.skip", defaultValue = "false" )
     private boolean skip;
 
     /**

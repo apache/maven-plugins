@@ -36,6 +36,9 @@ import net.sourceforge.pmd.renderers.XMLRenderer;
 import net.sourceforge.pmd.util.datasource.DataSource;
 import net.sourceforge.pmd.util.datasource.FileDataSource;
 import org.apache.maven.doxia.sink.Sink;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.reporting.MavenReportException;
 import org.codehaus.plexus.resource.ResourceManager;
 import org.codehaus.plexus.resource.loader.FileResourceCreationException;
@@ -64,23 +67,20 @@ import java.util.ResourceBundle;
  *
  * @author Brett Porter
  * @version $Id$
- * @goal pmd
- * @threadSafe
  * @since 2.0
  */
+@Mojo( name = "pmd", threadSafe = true )
 public class PmdReport
     extends AbstractPmdReport
 {
     /**
      * The target JDK to analyze based on. Should match the target used in the compiler plugin. Valid values are
      * currently <code>1.3</code>, <code>1.4</code>, <code>1.5</code>, <code>1.6</code> and <code>1.7</code>.
-     * <p>
+     * <p/>
      * <b>Note:</b> support for <code>1.6</code> was added in version 2.3 of this plugin,
      * support for <code>1.7</code> was added in version 2.7 of this plugin.
-     * </p>
-     *
-     * @parameter expression="${targetJdk}"
      */
+    @Parameter( property = "targetJdk" )
     private String targetJdk;
 
     /**
@@ -90,43 +90,40 @@ public class PmdReport
      * <b>Note:</b> if the parameter targetJdk is given, then this language parameter will be ignored.
      * </p>
      *
-     * @parameter default-value="java"
      * @since 2.8
      */
+    @Parameter( defaultValue = "java" )
     private String language;
 
     /**
      * The rule priority threshold; rules with lower priority
      * than this will not be evaluated.
      *
-     * @parameter expression="${minimumPriority}" default-value="5"
      * @since 2.1
      */
+    @Parameter( property = "minimumPriority", defaultValue = "5" )
     private int minimumPriority = 5;
 
     /**
      * Skip the PMD report generation.  Most useful on the command line
      * via "-Dpmd.skip=true".
      *
-     * @parameter expression="${pmd.skip}" default-value="false"
      * @since 2.1
      */
+    @Parameter( property = "pmd.skip", defaultValue = "false" )
     private boolean skip;
 
     /**
      * The PMD rulesets to use. See the <a href="http://pmd.sourceforge.net/rules/index.html">Stock Rulesets</a> for a
      * list of some included. Since version 2.5, the ruleset "rulesets/maven.xml" is also available. Defaults to the
      * java-basic, java-imports and java-unusedcode rulesets.
-     *
-     * @parameter
      */
+    @Parameter
     private String[] rulesets = new String[]{ "java-basic", "java-unusedcode", "java-imports" };
 
     /**
-     * @component
-     * @required
-     * @readonly
      */
+    @Component
     private ResourceManager locator;
 
     /**

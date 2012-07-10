@@ -26,6 +26,8 @@ import net.sourceforge.pmd.cpd.JavaLanguage;
 import net.sourceforge.pmd.cpd.JavaTokenizer;
 import net.sourceforge.pmd.cpd.Renderer;
 import net.sourceforge.pmd.cpd.XMLRenderer;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.reporting.MavenReportException;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
@@ -51,27 +53,25 @@ import java.util.ResourceBundle;
  *
  * @author Mike Perham
  * @version $Id$
- * @goal cpd
- * @threadSafe
  * @since 2.0
  */
+@Mojo( name = "cpd", threadSafe = true )
 public class CpdReport
     extends AbstractPmdReport
 {
     /**
      * The minimum number of tokens that need to be duplicated before it causes a violation.
-     *
-     * @parameter expression="${minimumTokens}" default-value="100"
      */
+    @Parameter( property = "minimumTokens", defaultValue = "100" )
     private int minimumTokens;
 
     /**
      * Skip the CPD report generation.  Most useful on the command line
      * via "-Dcpd.skip=true".
      *
-     * @parameter expression="${cpd.skip}" default-value="false"
      * @since 2.1
      */
+    @Parameter( property = "cpd.skip", defaultValue = "false" )
     private boolean skip;
 
     /**
@@ -79,17 +79,17 @@ public class CpdReport
      * This means that <code>foo=42;</code> and <code>foo=43;</code> will be seen as equivalent.
      * You may want to run PMD with this option off to start with and then switch it on to see what it turns up.
      *
-     * @parameter expression="${cpd.ignoreLiterals}" default-value="false"
      * @since 2.5
      */
+    @Parameter( property = "cpd.ignoreLiterals", defaultValue = "false" )
     private boolean ignoreLiterals;
 
     /**
      * Similar to <code>ignoreLiterals</code> but for identifiers; i.e., variable names, methods names, and so forth.
      *
-     * @parameter expression="${cpd.ignoreIdentifiers}" default-value="false"
      * @since 2.5
      */
+    @Parameter( property = "cpd.ignoreIdentifiers", defaultValue = "false" )
     private boolean ignoreIdentifiers;
 
     /**
