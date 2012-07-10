@@ -35,6 +35,8 @@ import org.apache.maven.plugin.assembly.io.AssemblyReader;
 import org.apache.maven.plugin.assembly.model.Assembly;
 import org.apache.maven.plugin.assembly.utils.AssemblyFormatUtils;
 import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.apache.maven.shared.filtering.MavenFileFilter;
@@ -55,92 +57,72 @@ public abstract class AbstractAssemblyMojo
     extends AbstractMojo
     implements AssemblerConfigurationSource
 {
-	/**
+    /**
      * The character encoding scheme to be applied when filtering resources.
-     *
-     * @parameter expression="${encoding}" default-value="${project.build.sourceEncoding}"
      */
+    @Parameter( property = "encoding", defaultValue = "${project.build.sourceEncoding}" )
     protected String encoding;
 
     /**
      * Flag allowing one or more executions of the assembly plugin to be configured as skipped for a particular build.
      * This makes the assembly plugin more controllable from profiles.
-     * 
-     * @parameter expression="${assembly.skipAssembly}" default-value="false"
      */
+    @Parameter( property = "assembly.skipAssembly", defaultValue = "false" )
     private boolean skipAssembly;
 
     /**
      * If this flag is set, everything up to the call to Archiver.createArchive() will be executed.
-     * 
-     * @parameter expression="${assembly.dryRun}" default-value="false"
      */
+    @Parameter( property = "assembly.dryRun", defaultValue = "false" )
     private boolean dryRun;
 
     /**
      * If this flag is set, the ".dir" suffix will be suppressed in the output directory name when using assembly/format
      * == 'dir' and other formats that begin with 'dir'. <br/>
      * <b>NOTE:</b> Since 2.2-beta-3, the default-value for this is true, NOT false as it used to be.
-     * 
-     * @parameter default-value="true"
      */
+    @Parameter( defaultValue = "true" )
     private boolean ignoreDirFormatExtensions;
 
     /**
      * Local Maven repository where artifacts are cached during the build process.
-     * 
-     * @parameter default-value="${localRepository}"
-     * @required
-     * @readonly
      */
+    @Parameter( defaultValue = "${localRepository}", required = true, readonly = true )
     private ArtifactRepository localRepository;
 
     /**
-     * @parameter default-value="${project.remoteArtifactRepositories}"
-     * @required
-     * @readonly
      */
+    @Parameter( defaultValue = "${project.remoteArtifactRepositories}", required = true, readonly = true )
     private List<ArtifactRepository> remoteRepositories;
 
     /**
      * Contains the full list of projects in the reactor.
-     * 
-     * @parameter default-value="${reactorProjects}"
-     * @required
-     * @readonly
      */
+    @Parameter( defaultValue = "${reactorProjects}", required = true, readonly = true )
     private List<MavenProject> reactorProjects;
 
     /**
      * The output directory of the assembled distribution file.
-     * 
-     * @parameter default-value="${project.build.directory}"
-     * @required
      */
+    @Parameter( defaultValue = "${project.build.directory}", required = true )
     private File outputDirectory;
 
     /**
      * The filename of the assembled distribution file.
-     * 
-     * @parameter default-value="${project.build.finalName}"
-     * @required
      */
+    @Parameter( defaultValue = "${project.build.finalName}", required = true )
     private String finalName;
 
     /**
      * Directory to unpack JARs into if needed
-     * 
-     * @parameter default-value="${project.build.directory}/assembly/work"
-     * @required
      */
+    @Parameter( defaultValue = "${project.build.directory}/assembly/work", required = true )
     private File workDirectory;
-    
+
     /**
-     * @parameter
-     * 
-     * Specifies the formats of the assembly. 
-     * Multiple formats can be supplied and the Assembly Plugin will generate an archive for each desired formats. 
-     * When deploying your project, all file formats specified will also be deployed. A format is specified by supplying one of the following 
+     * Specifies the formats of the assembly.
+     * Multiple formats can be supplied and the Assembly Plugin will generate an archive for each desired formats.
+     * When deploying your project, all file formats specified will also be deployed. A format is specified by supplying one of the following
      * values in a &lt;format&gt subelement:
      * <ul>
      * <li><em>zip</em> - Creates a ZIP file format</li>
@@ -149,156 +131,136 @@ public abstract class AbstractAssemblyMojo
      * <li><em>tar.bz2</em> - Creates a bzip'd TAR format</li>
      * </ul>
      */
+    @Parameter
     private List<String> formats;
 
     /**
      * This is the artifact classifier to be used for the resultant assembly artifact. Normally, you would use the
      * assembly-id instead of specifying this here.
-     * 
-     * @parameter expression="${classifier}"
+     *
      * @deprecated Please use the Assembly's id for classifier instead
      */
     @Deprecated
     @SuppressWarnings( "unused" )
+    @Parameter( property = "classifier" )
     private String classifier;
 
     /**
      * A list of descriptor files to generate from.
-     * 
-     * @parameter
      */
+    @Parameter
     private String[] descriptors;
 
     /**
      * A list of references to assembly descriptors available on the plugin's classpath. The default classpath
      * includes these built-in descriptors: <code>bin</code>,
-     * <code>jar-with-dependencies</code>, <code>src</code>, and 
+     * <code>jar-with-dependencies</code>, <code>src</code>, and
      * <code>project</code>. You can add others by adding dependencies
      * to the plugin.
-     * 
-     * @parameter
      */
+    @Parameter
     private String[] descriptorRefs;
 
     /**
      * Directory to scan for descriptor files in. <b>NOTE:</b> This may not work correctly with assembly components.
-     * 
-     * @parameter
      */
+    @Parameter
     private File descriptorSourceDirectory;
 
     /**
      * This is the base directory from which archive files are created. This base directory pre-pended to any
      * <code>&lt;directory&gt;</code> specifications in the assembly descriptor. This is an optional parameter.
-     * 
-     * @parameter
      */
+    @Parameter
     private File archiveBaseDirectory;
 
     /**
      * Predefined Assembly Descriptor Id's. You can select bin, jar-with-dependencies, or src.
-     * 
-     * @parameter expression="${descriptorId}"
+     *
      * @deprecated Please use descriptorRefs instead
      */
     @Deprecated
+    @Parameter( property = "descriptorId" )
     protected String descriptorId;
 
     /**
      * Assembly XML Descriptor file. This must be the path to your customized descriptor file.
-     * 
-     * @parameter expression="${descriptor}"
+     *
      * @deprecated Please use descriptors instead
      */
     @Deprecated
+    @Parameter( property = "descriptor" )
     protected String descriptor;
 
     /**
      * Sets the TarArchiver behavior on file paths with more than 100 characters length. Valid values are: "warn"
      * (default), "fail", "truncate", "gnu", or "omit".
-     * 
-     * @parameter expression="${assembly.tarLongFileMode}" default-value="warn"
      */
+    @Parameter( property = "assembly.tarLongFileMode", defaultValue = "warn" )
     private String tarLongFileMode;
 
     /**
      * Base directory of the project.
-     * 
-     * @parameter default-value="${project.basedir}"
-     * @required
-     * @readonly
      */
+    @Parameter( defaultValue = "${project.basedir}", required = true, readonly = true )
     private File basedir;
 
     /**
      * Maven ProjectHelper.
-     * 
-     * @component
      */
+    @Component
     private MavenProjectHelper projectHelper;
 
     /**
      * Maven shared filtering utility.
-     * 
-     * @component
      */
+    @Component
     private MavenFileFilter mavenFileFilter;
 
     /**
      * The Maven Session Object
-     * 
-     * @parameter default-value="${session}"
-     * @required
-     * @readonly
      */
+    @Component
     private MavenSession mavenSession;
 
     /**
      * Temporary directory that contain the files to be assembled.
-     * 
-     * @parameter default-value="${project.build.directory}/archive-tmp"
-     * @required
-     * @readonly
      */
+    @Parameter( defaultValue = "${project.build.directory}/archive-tmp", required = true, readonly = true )
     private File tempRoot;
 
     /**
      * Directory for site generated.
-     * 
-     * @parameter default-value="${project.reporting.outputDirectory}"
-     * @readonly
      */
+    @Parameter( defaultValue = "${project.reporting.outputDirectory}", readonly = true )
     private File siteDirectory;
 
     /**
      * Set to true to include the site generated by site:site goal.
-     * 
-     * @parameter expression="${includeSite}" default-value="false"
+     *
      * @deprecated Please set this variable in the assembly descriptor instead
      */
     @Deprecated
+    @Parameter( property = "includeSite", defaultValue = "false" )
     private boolean includeSite;
 
     /**
      * Set to false to exclude the assembly id from the assembly final name.
-     * 
-     * @parameter expression="${assembly.appendAssemblyId}" default-value="true"
      */
+    @Parameter( property = "assembly.appendAssemblyId", defaultValue = "true" )
     protected boolean appendAssemblyId;
 
     /**
      * Set to true in order to not fail when a descriptor is missing.
-     * 
-     * @parameter expression="${assembly.ignoreMissingDescriptor}" default-value="false"
      */
+    @Parameter( property = "assembly.ignoreMissingDescriptor", defaultValue = "false" )
     protected boolean ignoreMissingDescriptor;
 
     /**
      * This is a set of instructions to the archive builder, especially for building .jar files. It enables you to
      * specify a Manifest file for the jar, in addition to other options.
-     * 
-     * @parameter
      */
+    @Parameter
     private MavenArchiveConfiguration archive;
 
     /**
@@ -308,27 +270,26 @@ public abstract class AbstractAssemblyMojo
      * <br/>
      * Normally, these will be configured from a plugin's execution section, to provide a different
      * set of filters for a particular execution.
-     * 
-     * @parameter
      */
+    @Parameter
     protected List<String> filters;
 
     /**
      * Controls whether the assembly plugin tries to attach the resulting assembly to the project.
-     * 
-     * @parameter expression="${assembly.attach}" default-value="true"
+     *
      * @since 2.2-beta-1
      */
+    @Parameter( property = "assembly.attach", defaultValue = "true" )
     private boolean attach;
 
     /**
-     * @component
      */
+    @Component
     private AssemblyArchiver assemblyArchiver;
 
     /**
-     * @component
      */
+    @Component
     private AssemblyReader assemblyReader;
 
     /**
@@ -337,56 +298,56 @@ public abstract class AbstractAssemblyMojo
      * instance. <br/>
      * For instance, to direct an assembly with the "ear" format to use a particular deployment descriptor, you should
      * specify the following for the archiverConfig value in your plugin configuration: <br/>
-     * 
+     * <p/>
      * <pre>
      * &lt;appxml&gt;${project.basedir}/somepath/app.xml&lt;/appxml&gt;
      * </pre>
-     * 
-     * @parameter
+     *
      * @since 2.2-beta-3
      */
+    @Parameter
     private PlexusConfiguration archiverConfig;
 
     /**
      * This will cause the assembly to run only at the top of a given module tree. That is, run in the project contained
      * in the same folder where the mvn execution was launched.
-     * 
-     * @parameter expression="${assembly.runOnlyAtExecutionRoot}" default-value="false"
+     *
      * @since 2.2-beta-4
      */
+    @Parameter( property = "assembly.runOnlyAtExecutionRoot", defaultValue = "false" )
     private boolean runOnlyAtExecutionRoot;
 
     /**
      * This will cause the assembly to only update an existing archive, if it exists.
-     * 
-     * @parameter expression="${assembly.updatOnly}" default-value="false"
+     *
      * @since 2.2
      */
+    @Parameter( property = "assembly.updatOnly", defaultValue = "false" )
     private boolean updateOnly;
 
     /**
      * <p>
      * will use the jvm chmod, this is available for user and all level group level will be ignored
      * </p>
-     * 
-     * @parameter expression="${assembly.useJvmChmod}" default-value="false"
+     *
      * @since 2.2
      */
+    @Parameter( property = "assembly.useJvmChmod", defaultValue = "false" )
     private boolean useJvmChmod;
 
     /**
      * <p>
      * Set to <code>true</code> in order to avoid all chmod calls.
      * </p>
-     * 
+     * <p/>
      * <p>
      * <b>NOTE:</b> This will cause the assembly plugin to <b>DISREGARD</b> all fileMode/directoryMode settings in the
      * assembly descriptor, and all file permissions in unpacked dependencies!
      * </p>
-     * 
-     * @parameter expression="${assembly.ignorePermissions}" default-value="false"
+     *
      * @since 2.2
      */
+    @Parameter( property = "assembly.ignorePermissions", defaultValue = "false" )
     private boolean ignorePermissions;
 
     /**

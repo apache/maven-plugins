@@ -19,6 +19,8 @@ package org.apache.maven.plugin.assembly.mojos;
  * under the License.
  */
 
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.project.MavenProject;
 
 /**
@@ -32,20 +34,16 @@ import org.apache.maven.project.MavenProject;
  * @author <a href="mailto:jerome@coffeebreaks.org">Jerome Lacoste</a>
  * @version $Id$
  * 
- * @goal attached
- * @aggregator
- * @inheritByDefault false
  * @deprecated Use assembly:single instead! The assembly:attached mojo leads to non-standard builds.
  */
+@Mojo( name = "attached", aggregator = true, inheritByDefault = false )
 @Deprecated
 public class AttachedAssemblyMojo
     extends AbstractAssemblyMojo
 {
     /**
-     * @parameter default-value="${project}"
-     * @required
-     * @readonly
      */
+    @Component
     private MavenProject project;
 
     @Override

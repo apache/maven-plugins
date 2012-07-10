@@ -19,6 +19,10 @@ package org.apache.maven.plugin.assembly.mojos;
  * under the License.
  */
 
+import org.apache.maven.plugins.annotations.Execute;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
 /**
@@ -33,21 +37,18 @@ import org.apache.maven.project.MavenProject;
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
  * 
- * @goal assembly
- * @execute phase="package"
- * @aggregator
- * @inheritByDefault false
  * @deprecated Use assembly:single instead! The assembly:assembly mojo leads to non-standard builds.
  */
 @Deprecated
+@Mojo( name = "assembly", aggregator = true, inheritByDefault = false )
+@Execute( phase = LifecyclePhase.PACKAGE )
 public class AssemblyMojo
     extends AbstractAssemblyMojo
 {
     /**
      * Get the executed project from the forked lifecycle.
-     * 
-     * @parameter expression="${executedProject}"
      */
+    @Parameter( property = "executedProject" )
     private MavenProject executedProject;
 
     @Override
