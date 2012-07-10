@@ -19,115 +19,103 @@ package org.apache.maven.plugin.rar;
  * under the License.
  */
 
+import org.apache.maven.archiver.MavenArchiveConfiguration;
+import org.apache.maven.archiver.MavenArchiver;
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.archiver.MavenArchiver;
-import org.apache.maven.archiver.MavenArchiveConfiguration;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.artifact.Artifact;
+import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
-import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.DirectoryScanner;
+import org.codehaus.plexus.util.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.Set;
-import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
 
 /**
  * Builds J2EE Resource Adapter Archive (RAR) files.
  *
  * @author <a href="stephane.nicoll@gmail.com">Stephane Nicoll</a>
  * @version $Id$
- * @goal rar
- * @threadSafe
- * @phase package
- * @requiresDependencyResolution test
  */
+@Mojo( name = "rar", threadSafe = true, defaultPhase = LifecyclePhase.PACKAGE,
+       requiresDependencyResolution = ResolutionScope.TEST )
 public class RarMojo
     extends AbstractMojo
 {
     public static final String RA_XML_URI = "META-INF/ra.xml";
 
-    private static final String[] DEFAULT_INCLUDES = {"**/**"};
+    private static final String[] DEFAULT_INCLUDES = { "**/**" };
 
     /**
      * Single directory for extra files to include in the RAR.
-     *
-     * @parameter default-value="${basedir}/src/main/rar"
-     * @required
      */
+    @Parameter( defaultValue = "${basedir}/src/main/rar", required = true )
     private File rarSourceDirectory;
 
     /**
      * The location of the ra.xml file to be used within the rar file.
-     *
-     * @parameter default-value="${basedir}/src/main/rar/META-INF/ra.xml"
      */
+    @Parameter( defaultValue = "${basedir}/src/main/rar/META-INF/ra.xml" )
     private File raXmlFile;
 
     /**
      * Specify if the generated jar file of this project should be
      * included in the rar file ; default is true.
-     *
-     * @parameter
      */
+    @Parameter
     private Boolean includeJar = Boolean.TRUE;
 
     /**
      * The location of the manifest file to be used within the rar file.
-     *
-     * @parameter default-value="${basedir}/src/main/rar/META-INF/MANIFEST.MF"
      */
+    @Parameter( defaultValue = "${basedir}/src/main/rar/META-INF/MANIFEST.MF" )
     private File manifestFile;
 
     /**
      * Directory that resources are copied to during the build.
-     *
-     * @parameter default-value="${project.build.directory}/${project.build.finalName}"
-     * @required
      */
+    @Parameter( defaultValue = "${project.build.directory}/${project.build.finalName}", required = true )
     private String workDirectory;
 
     /**
      * The directory for the generated RAR.
-     *
-     * @parameter default-value="${project.build.directory}"
-     * @required
      */
+    @Parameter( defaultValue = "${project.build.directory}", required = true )
     private String outputDirectory;
 
     /**
      * The name of the RAR file to generate.
-     *
-     * @parameter alias="rarName" default-value="${project.build.finalName}"
-     * @required
      */
+    @Parameter( alias = "rarName", defaultValue = "${project.build.finalName}", required = true )
     private String finalName;
 
     /**
      * The maven project.
-     *
-     * @parameter default-value="${project}"
-     * @required
-     * @readonly
      */
+    @Component
     private MavenProject project;
 
     /**
      * The Jar archiver.
-     *
-     * @component role="org.codehaus.plexus.archiver.Archiver" roleHint="jar"
      */
+    @Component( role = Archiver.class, hint = "jar" )
     private JarArchiver jarArchiver;
 
     /**
      * The archive configuration to use.
      * See <a href="http://maven.apache.org/shared/maven-archiver/index.html">Maven Archiver Reference</a>.
-     *
-     * @parameter
      */
+    @Parameter
     private MavenArchiveConfiguration archive = new MavenArchiveConfiguration();
 
 
@@ -148,11 +136,13 @@ public class RarMojo
         // Check if jar file is there and if requested, copy it
         try
         {
-            if (includeJar.booleanValue()) {
+            if ( includeJar.booleanValue() )
+            {
                 File generatedJarFile = new File( outputDirectory, finalName + ".jar" );
-                if (generatedJarFile.exists()) {
-                    getLog().info( "Including generated jar file["+generatedJarFile.getName()+"]");
-                    FileUtils.copyFileToDirectory( generatedJarFile, getBuildDir());
+                if ( generatedJarFile.exists() )
+                {
+                    getLog().info( "Including generated jar file[" + generatedJarFile.getName() + "]" );
+                    FileUtils.copyFileToDirectory( generatedJarFile, getBuildDir() );
                 }
             }
         }
@@ -172,8 +162,8 @@ public class RarMojo
                 ScopeArtifactFilter filter = new ScopeArtifactFilter( Artifact.SCOPE_RUNTIME );
                 if ( !artifact.isOptional() && filter.include( artifact ) )
                 {
-                    getLog().info("Copying artifact[" + artifact.getGroupId() + ", " + artifact.getId() + ", " +
-                        artifact.getScope() + "]");
+                    getLog().info( "Copying artifact[" + artifact.getGroupId() + ", " + artifact.getId() + ", " +
+                                       artifact.getScope() + "]" );
                     FileUtils.copyFileToDirectory( artifact.getFile(), getBuildDir() );
                 }
             }
@@ -186,7 +176,7 @@ public class RarMojo
         // Copy source files
         try
         {
-            File rarSourceDir =  rarSourceDirectory;
+            File rarSourceDir = rarSourceDirectory;
             if ( rarSourceDir.exists() )
             {
                 getLog().info( "Copy rar resources to " + getBuildDir().getAbsolutePath() );
@@ -236,8 +226,7 @@ public class RarMojo
         File ddFile = new File( getBuildDir(), RA_XML_URI );
         if ( !ddFile.exists() )
         {
-            getLog().warn(
-                "Connector deployment descriptor: " + ddFile.getAbsolutePath() + " does not exist." );
+            getLog().warn( "Connector deployment descriptor: " + ddFile.getAbsolutePath() + " does not exist." );
         }
 
         try
@@ -276,13 +265,13 @@ public class RarMojo
         File customManifestFile = manifestFile;
         if ( !customManifestFile.exists() )
         {
-            getLog().info( "Could not find manifest file: " + manifestFile +" - Generating one");
+            getLog().info( "Could not find manifest file: " + manifestFile + " - Generating one" );
         }
         else
         {
             getLog().info( "Including custom manifest file[" + customManifestFile + "]" );
             archive.setManifestFile( customManifestFile );
-            File metaInfDir = new File(getBuildDir(), "META-INF");
+            File metaInfDir = new File( getBuildDir(), "META-INF" );
             FileUtils.copyFileToDirectory( customManifestFile, metaInfDir );
         }
     }
@@ -290,14 +279,16 @@ public class RarMojo
     private void includeCustomRaXmlFile()
         throws IOException
     {
-        if (raXmlFile == null) {
+        if ( raXmlFile == null )
+        {
 
         }
         File raXml = raXmlFile;
-        if (raXml.exists()) {
-            getLog().info( "Using ra.xml "+ raXmlFile);
-            File metaInfDir = new File(getBuildDir(), "META-INF");
-            FileUtils.copyFileToDirectory( raXml, metaInfDir);
+        if ( raXml.exists() )
+        {
+            getLog().info( "Using ra.xml " + raXmlFile );
+            File metaInfDir = new File( getBuildDir(), "META-INF" );
+            FileUtils.copyFileToDirectory( raXml, metaInfDir );
         }
     }
 }
