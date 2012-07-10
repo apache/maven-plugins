@@ -19,20 +19,20 @@ package org.apache.maven.report.projectinfo;
  * under the License.
  */
 
+import org.apache.maven.doxia.sink.Sink;
+import org.apache.maven.model.Model;
+import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.codehaus.plexus.i18n.I18N;
+import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.ReaderFactory;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.List;
 import java.util.Locale;
-
-import org.apache.maven.doxia.sink.Sink;
-import org.apache.maven.model.Model;
-import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
-
-import org.codehaus.plexus.i18n.I18N;
-import org.codehaus.plexus.util.IOUtil;
-import org.codehaus.plexus.util.ReaderFactory;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 /**
  * Generates the Project Modules report.
@@ -40,8 +40,8 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
  * @author ltheussl
  * @version $Id$
  * @since 2.2
- * @goal modules
  */
+@Mojo( name = "modules" )
 public class ModulesReport
     extends AbstractProjectInfoReport
 {

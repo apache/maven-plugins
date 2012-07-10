@@ -23,6 +23,8 @@ import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.doxia.sink.SinkEventAttributeSet;
 import org.apache.maven.doxia.sink.SinkEventAttributes;
 import org.apache.maven.model.Dependency;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.MavenReportException;
 import org.codehaus.plexus.util.StringUtils;
@@ -43,9 +45,8 @@ import java.util.TreeMap;
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton </a>
  * @version $Id$
  * @since 2.0
- * @goal dependency-convergence
- * @aggregator
  */
+@Mojo( name = "dependency-convergence", aggregator = true )
 public class DependencyConvergenceReport
     extends AbstractProjectInfoReport
 {
@@ -58,11 +59,8 @@ public class DependencyConvergenceReport
     /**
      * The projects in the current build. The effective-POM for
      * each of these projects will written.
-     *
-     * @parameter expression="${reactorProjects}"
-     * @required
-     * @readonly
      */
+    @Parameter( property = "reactorProjects", required = true, readonly = true )
     private List<MavenProject> reactorProjects;
 
     // ----------------------------------------------------------------------

@@ -19,16 +19,19 @@ package org.apache.maven.report.projectinfo;
  * under the License.
  */
 
-import java.util.Locale;
-
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.manager.WagonManager;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.metadata.RepositoryMetadataManager;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.report.projectinfo.dependencies.ManagementDependencies;
 import org.apache.maven.report.projectinfo.dependencies.RepositoryUtils;
 import org.apache.maven.report.projectinfo.dependencies.renderer.DependencyManagementRenderer;
+
+import java.util.Locale;
 
 /**
  * Generates the Project Dependency Management report.
@@ -36,9 +39,8 @@ import org.apache.maven.report.projectinfo.dependencies.renderer.DependencyManag
  * @author Nick Stolwijk
  * @version $Id$
  * @since 2.1
- * @goal dependency-management
- * @requiresDependencyResolution test
  */
+@Mojo( name = "dependency-management", requiresDependencyResolution = ResolutionScope.TEST )
 public class DependencyManagementReport
     extends AbstractProjectInfoReport
 {
@@ -48,40 +50,38 @@ public class DependencyManagementReport
 
     /**
      * Maven Project Builder component.
-     *
-     * @component
      */
+    @Component
     private MavenProjectBuilder mavenProjectBuilder;
 
     /**
      * Artifact metadata source component.
      *
-     * @component
      * @since 2.4
      */
+    @Component
     protected ArtifactMetadataSource artifactMetadataSource;
 
     /**
      * Maven Artifact Factory component.
-     *
-     * @component
      */
+    @Component
     private ArtifactFactory artifactFactory;
 
     /**
      * Wagon manager component.
      *
      * @since 2.3
-     * @component
      */
+    @Component
     private WagonManager wagonManager;
 
     /**
      * Repository metadata component.
      *
      * @since 2.3
-     * @component
      */
+    @Component
     private RepositoryMetadataManager repositoryMetadataManager;
 
     // ----------------------------------------------------------------------
@@ -100,21 +100,21 @@ public class DependencyManagementReport
     @Override
     public void executeReport( Locale locale )
     {
-        @SuppressWarnings( "unchecked" )
-        RepositoryUtils repoUtils =
-            new RepositoryUtils( getLog(), wagonManager, settings,
-                                 mavenProjectBuilder, factory, resolver, project.getRemoteArtifactRepositories(),
-                                 project.getPluginArtifactRepositories(), localRepository,
-                                 repositoryMetadataManager );
+        @SuppressWarnings( "unchecked" ) RepositoryUtils repoUtils =
+            new RepositoryUtils( getLog(), wagonManager, settings, mavenProjectBuilder, factory, resolver,
+                                 project.getRemoteArtifactRepositories(), project.getPluginArtifactRepositories(),
+                                 localRepository, repositoryMetadataManager );
 
         DependencyManagementRenderer r =
-            new DependencyManagementRenderer( getSink(), locale, getI18N( locale ), getLog(), getManagementDependencies(),
-                                              artifactMetadataSource, artifactFactory, mavenProjectBuilder, remoteRepositories,
-                                              localRepository, repoUtils );
+            new DependencyManagementRenderer( getSink(), locale, getI18N( locale ), getLog(),
+                                              getManagementDependencies(), artifactMetadataSource, artifactFactory,
+                                              mavenProjectBuilder, remoteRepositories, localRepository, repoUtils );
         r.render();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public String getOutputName()
     {
         return "dependency-management";

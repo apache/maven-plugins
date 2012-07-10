@@ -24,6 +24,9 @@ import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Scm;
 import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.scm.manager.NoSuchScmProviderException;
 import org.apache.maven.scm.manager.ScmManager;
 import org.apache.maven.scm.provider.cvslib.repository.CvsScmProviderRepository;
@@ -46,8 +49,8 @@ import java.util.Locale;
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton </a>
  * @version $Id$
  * @since 2.0
- * @goal scm
  */
+@Mojo( name = "scm" )
 public class ScmReport
     extends AbstractProjectInfoReport
 {
@@ -57,43 +60,40 @@ public class ScmReport
 
     /**
      * Maven SCM Manager.
-     *
-     * @component
      */
+    @Component
     protected ScmManager scmManager;
 
     /**
      * The directory name to checkout right after the SCM URL.
-     *
-     * @parameter default-value="${project.artifactId}"
-     * @required
      */
+    @Parameter( defaultValue = "${project.artifactId}", required = true )
     private String checkoutDirectoryName;
 
     /**
      * The SCM anonymous connection url respecting the SCM URL Format.
      *
-     * @parameter default-value="${project.scm.connection}"
-     * @since 2.1
      * @see <a href="http://maven.apache.org/scm/scm-url-format.html">SCM URL Format< /a>
+     * @since 2.1
      */
+    @Parameter( defaultValue = "${project.scm.connection}" )
     private String anonymousConnection;
 
     /**
      * The SCM developer connection url respecting the SCM URL Format.
      *
-     * @parameter default-value="${project.scm.developerConnection}"
-     * @since 2.1
      * @see <a href="http://maven.apache.org/scm/scm-url-format.html">SCM URL Format< /a>
+     * @since 2.1
      */
+    @Parameter( defaultValue = "${project.scm.developerConnection}" )
     private String developerConnection;
 
     /**
      * The SCM web access url.
      *
-     * @parameter default-value="${project.scm.url}"
      * @since 2.1
      */
+    @Parameter( defaultValue = "${project.scm.url}" )
     private String webAccessUrl;
 
     // ----------------------------------------------------------------------

@@ -19,13 +19,14 @@ package org.apache.maven.report.projectinfo;
  * under the License.
  */
 
-import java.util.Locale;
-
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.model.DistributionManagement;
+import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.util.StringUtils;
+
+import java.util.Locale;
 
 /**
  * Generates the Project Distribution Management report.
@@ -33,8 +34,8 @@ import org.codehaus.plexus.util.StringUtils;
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton </a>
  * @version $Id$
  * @since 2.3
- * @goal distribution-management
  */
+@Mojo( name = "distribution-management" )
 public class DistributionManagementReport
     extends AbstractProjectInfoReport
 {

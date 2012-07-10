@@ -22,6 +22,7 @@ package org.apache.maven.report.projectinfo;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.model.DistributionManagement;
 import org.apache.maven.model.Organization;
+import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.MavenReportException;
 import org.codehaus.plexus.util.FileUtils;
@@ -38,8 +39,8 @@ import java.util.Locale;
  * @author Edwin Punzalan
  * @version $Id$
  * @since 2.0
- * @goal summary
  */
+@Mojo( name = "summary" )
 public class ProjectSummaryReport
     extends AbstractProjectInfoReport
 {

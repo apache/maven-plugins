@@ -22,6 +22,7 @@ package org.apache.maven.report.projectinfo;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.model.IssueManagement;
 import org.apache.maven.model.Model;
+import org.apache.maven.plugins.annotations.Mojo;
 import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.util.StringUtils;
 
@@ -33,8 +34,8 @@ import java.util.Locale;
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton </a>
  * @version $Id$
  * @since 2.0
- * @goal issue-tracking
  */
+@Mojo( name = "issue-tracking" )
 public class IssueTrackingReport
     extends AbstractProjectInfoReport
 {
