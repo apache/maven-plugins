@@ -23,6 +23,9 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.verifier.model.Verifications;
 import org.apache.maven.plugin.verifier.model.io.xpp3.VerificationsXpp3Reader;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 
@@ -37,37 +40,30 @@ import java.util.regex.Pattern;
 /**
  * Verifies the existence or non-existence of files/directories and optionally checks file content against a regular expression.
  *
- * @goal verify
- * @phase integration-test
- *
  * @author <a href="vmassol@apache.org">Vincent Massol</a>
  * @version $Id$
  */
+@Mojo( name = "verify", defaultPhase = LifecyclePhase.INTEGRATION_TEST )
 public class VerifierMojo
     extends AbstractMojo
 {
     /**
      * Project base directory (prepended to relative file paths).
-     *
-     * @parameter expression="${basedir}"
-     * @required
      */
+    @Parameter( property = "basedir", required = true )
     private File basedir;
 
     /**
      * The file containing the verifications to perform.
-     *
-     * @parameter default-value="${basedir}/src/test/verifier/verifications.xml" expression="${verifier.verificationFile}"
-     * @required
      */
+    @Parameter( property = "verifier.verificationFile", defaultValue = "${basedir}/src/test/verifier/verifications.xml",
+                required = true )
     private File verificationFile;
 
     /**
      * Whether the build will fail on verification errors.
-     *
-     * @parameter default-value="true" expression="${verifier.failOnError}"
-     * @required
      */
+    @Parameter( property = "verifier.failOnError", defaultValue = "true", required = true )
     private boolean failOnError;
 
     private VerificationResultPrinter resultPrinter = new ConsoleVerificationResultPrinter( getLog() );
@@ -95,7 +91,7 @@ public class VerifierMojo
         File result = file;
         if ( !file.isAbsolute() )
         {
-            result = new File(  basedir , file.getPath() );
+            result = new File( basedir, file.getPath() );
         }
         return result;
     }
