@@ -37,6 +37,10 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugin.resources.remote.io.xpp3.RemoteResourcesBundleXpp3Reader;
 import org.apache.maven.plugin.resources.remote.io.xpp3.SupplementalDataModelXpp3Reader;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.InvalidProjectModelException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
@@ -110,19 +114,15 @@ import java.util.TreeMap;
  * stripped off for the final artifact name and it's  fed through velocity to have properties
  * expanded, conditions processed, etc...
  * </p>
- * <p>
+ * <p/>
  * Resources that don't end in ".vm" are copied "as is".
- * </p>
- *
- * @goal process
- * @phase generate-resources
- * @threadSafe
  */
 // NOTE: Removed the following in favor of maven-artifact-resolver library, for MRRESOURCES-41
 // If I leave this intact, interdependent projects within the reactor that haven't been built
 // (remember, this runs in the generate-resources phase) will cause the build to fail.
 //
 // @requiresDependencyResolution test
+@Mojo( name = "process", defaultPhase = LifecyclePhase.GENERATE_RESOURCES, threadSafe = true )
 public class ProcessRemoteResourcesMojo
     extends AbstractMojo
 {
@@ -145,85 +145,69 @@ public class ProcessRemoteResourcesMojo
      *   &lt;delimiter&gt;@&lt/delimiter&gt;
      * &lt;/delimiters&gt;
      * </pre>
-     * <p>
+     * <p/>
      * Since the '@' delimiter is the same on both ends, we don't need to specify '@*@' (though we can).
-     * </p>
      *
-     * @parameter
      * @since 1.1
      */
+    @Parameter
     protected List<String> filterDelimiters;
 
     /**
-     * @parameter default-value="true"
      * @since 1.1
      */
+    @Parameter( defaultValue = "true" )
     protected boolean useDefaultFilterDelimiters;
 
     /**
      * If true, only generate resources in the directory of the root project in a multimodule build.
      * Dependencies from all modules will be aggregated before resource-generation takes place.
      *
-     * @parameter default-value="false"
      * @since 1.1
      */
+    @Parameter( defaultValue = "false" )
     protected boolean runOnlyAtExecutionRoot;
 
     /**
      * Used for calculation of execution-root for {@link ProcessRemoteResourcesMojo#runOnlyAtExecutionRoot}.
-     *
-     * @parameter default-value="${basedir}"
-     * @readonly
-     * @required
      */
+    @Parameter( defaultValue = "${basedir}", readonly = true, required = true )
     protected File basedir;
 
     /**
      * The character encoding scheme to be applied when filtering resources.
-     *
-     * @parameter expression="${encoding}" default-value="${project.build.sourceEncoding}"
      */
+    @Parameter( property = "encoding", defaultValue = "${project.build.sourceEncoding}" )
     protected String encoding;
 
     /**
      * The local repository taken from Maven's runtime. Typically $HOME/.m2/repository.
-     *
-     * @parameter default-value="${localRepository}"
-     * @readonly
-     * @required
      */
+    @Parameter( defaultValue = "${localRepository}", readonly = true, required = true )
     private ArtifactRepository localRepository;
 
     /**
-     * List of Remote Repositories used by the resolver
-     *
-     * @parameter default-value="${project.remoteArtifactRepositories}"
-     * @readonly
-     * @required
+     * List of Remote Repositories used by the resolver.
      */
+    @Parameter( defaultValue = "${project.remoteArtifactRepositories}", readonly = true, required = true )
     private List<ArtifactRepository> remoteArtifactRepositories;
 
     /**
      * The current Maven project.
-     *
-     * @parameter default-value="${project}"
-     * @readonly
-     * @required
      */
+    @Component
     private MavenProject project;
 
     /**
      * The directory where processed resources will be placed for packaging.
-     *
-     * @parameter default-value="${project.build.directory}/maven-shared-archive-resources"
      */
+    @Parameter( defaultValue = "${project.build.directory}/maven-shared-archive-resources" )
     private File outputDirectory;
 
     /**
      * The directory containing extra information appended to the generated resources.
-     *
-     * @parameter default-value="${basedir}/src/main/appended-resources"
      */
+    @Parameter( defaultValue = "${basedir}/src/main/appended-resources" )
     private File appendedResourcesDirectory;
 
     /**
@@ -233,18 +217,18 @@ public class ProcessRemoteResourcesMojo
      * By default, this Mojo looks for supplemental model
      * data in the file "${appendedResourcesDirectory}/supplemental-models.xml".
      *
-     * @parameter
      * @since 1.0-alpha-5
      */
+    @Parameter
     private String[] supplementalModels;
 
     /**
      * List of artifacts that are added to the search path when looking
      * for supplementalModels
      *
-     * @parameter
      * @since 1.1
      */
+    @Parameter
     private List<String> supplementalModelArtifacts;
 
     /**
@@ -256,35 +240,30 @@ public class ProcessRemoteResourcesMojo
      * Merges supplemental data model with artifact
      * metadata.  Useful when processing artifacts with
      * incomplete POM metadata.
-     *
-     * @component
-     * @readonly
-     * @required
      */
+    @Component
     private ModelInheritanceAssembler inheritanceAssembler;
 
     /**
      * The resource bundles that will be retrieved and processed.
-     *
-     * @parameter
-     * @required
      */
+    @Parameter( required = true )
     private List<String> resourceBundles;
 
     /**
      * Skip remote-resource processing
      *
-     * @parameter expression="${remoteresources.skip}" default-value="false"
      * @since 1.0-alpha-5
      */
+    @Parameter( property = "remoteresources.skip", defaultValue = "false" )
     private boolean skip;
 
     /**
      * Attaches the resource to the project as a resource directory
      *
-     * @parameter default-value="true"
      * @since 1.0-beta-1
      */
+    @Parameter( defaultValue = "true" )
     private boolean attached = true;
 
     /**
@@ -297,154 +276,125 @@ public class ProcessRemoteResourcesMojo
      * <p/>
      * See <a href="http://maven.apache.org/ref/current/maven-project/apidocs/org/apache/maven/project/MavenProject.html">
      * the javadoc for MavenProject</a> for information about the properties on the MavenProject.
-     *
-     * @parameter
      */
+    @Parameter
     private Map<String, String> properties = new HashMap<String, String>();
 
     /**
      * Whether to include properties defined in the project when filtering resources.
      *
-     * @parameter default-value="false"
      * @since 1.2
      */
+    @Parameter( defaultValue = "false" )
     protected boolean includeProjectProperties = false;
 
     /**
      * The list of resources defined for the project.
-     *
-     * @parameter default-value="${project.build.resources}"
-     * @readonly
-     * @required
      */
+    @Parameter( defaultValue = "${project.build.resources}", readonly = true, required = true )
     private List<Resource> resources;
 
     /**
      * Artifact Resolver, needed to resolve and download the {@code resourceBundles}.
-     *
-     * @component
-     * @readonly
-     * @required
      */
+    @Component
     private ArtifactResolver artifactResolver;
 
     /**
      * Velocity component.
-     *
-     * @component
-     * @readonly
-     * @required
      */
+    @Component
     private VelocityComponent velocity;
 
     /**
      * Filtering support, for local resources that override those in the remote bundle.
-     *
-     * @component
      */
+    @Component
     private MavenFileFilter fileFilter;
 
     /**
      * Artifact factory, needed to create artifacts.
-     *
-     * @component
-     * @readonly
-     * @required
      */
+    @Component
     private ArtifactFactory artifactFactory;
 
     /**
      * The Maven session.
-     *
-     * @parameter default-value="${session}"
-     * @readonly
-     * @required
      */
+    @Component
     private MavenSession mavenSession;
 
     /**
      * ProjectBuilder, needed to create projects from the artifacts.
-     *
-     * @component role="org.apache.maven.project.MavenProjectBuilder"
-     * @required
-     * @readonly
      */
+    @Component( role = MavenProjectBuilder.class )
     private MavenProjectBuilder mavenProjectBuilder;
 
     /**
-     * @component
-     * @required
-     * @readonly
      */
+    @Component
     private ResourceManager locator;
 
 
     /**
      * Scope to include. An Empty string indicates all scopes (default).
      *
-     * @parameter expression="${includeScope}" default-value="runtime"
-     * @optional
      * @since 1.0
      */
+    @Parameter( property = "includeScope", defaultValue = "runtime" )
     protected String includeScope;
 
     /**
      * Scope to exclude. An Empty string indicates no scopes (default).
      *
-     * @parameter expression="${excludeScope}" default-value=""
-     * @optional
      * @since 1.0
      */
+    @Parameter( property = "excludeScope", defaultValue = "" )
     protected String excludeScope;
 
     /**
      * Comma separated list of Artifact names too exclude.
      *
-     * @optional
-     * @parameter expression="${excludeArtifactIds}" default-value=""
      * @since 1.0
      */
+    @Parameter( property = "excludeArtifactIds", defaultValue = "" )
     protected String excludeArtifactIds;
 
     /**
      * Comma separated list of Artifact names to include.
      *
-     * @optional
-     * @parameter expression="${includeArtifactIds}" default-value=""
      * @since 1.0
      */
+    @Parameter( property = "includeArtifactIds", defaultValue = "" )
     protected String includeArtifactIds;
 
     /**
      * Comma separated list of GroupId Names to exclude.
      *
-     * @optional
-     * @parameter expression="${excludeGroupIds}" default-value=""
      * @since 1.0
      */
+    @Parameter( property = "excludeGroupIds", defaultValue = "" )
     protected String excludeGroupIds;
 
     /**
      * Comma separated list of GroupIds to include.
      *
-     * @optional
-     * @parameter expression="${includeGroupIds}" default-value=""
      * @since 1.0
      */
+    @Parameter( property = "includeGroupIds", defaultValue = "" )
     protected String includeGroupIds;
 
     /**
      * If we should exclude transitive dependencies
      *
-     * @optional
-     * @parameter expression="${excludeTransitive}" default-value="false"
      * @since 1.0
      */
+    @Parameter( property = "excludeTransitive", defaultValue = "false" )
     protected boolean excludeTransitive;
 
     /**
-     * @component role-hint="default"
      */
+    @Component( hint = "default" )
     protected ProjectDependenciesResolver dependencyResolver;
 
     @SuppressWarnings( "unchecked" )
@@ -962,14 +912,10 @@ public class ProcessRemoteResourcesMojo
                 }
 
                 throw new MojoExecutionException( "The " + position +
-                                                      " resource bundle configured must specify a groupId, artifactId, "
-                                                      +
-                                                      " version and, optionally, type and classifier for a remote resource bundle. "
-                                                      +
-                                                      "Must be of the form <resourceBundle>groupId:artifactId:version</resourceBundle>, "
-                                                      +
-                                                      "<resourceBundle>groupId:artifactId:version:type</resourceBundle> or "
-                                                      +
+                                                      " resource bundle configured must specify a groupId, artifactId, " +
+                                                      " version and, optionally, type and classifier for a remote resource bundle. " +
+                                                      "Must be of the form <resourceBundle>groupId:artifactId:version</resourceBundle>, " +
+                                                      "<resourceBundle>groupId:artifactId:version:type</resourceBundle> or " +
                                                       "<resourceBundle>groupId:artifactId:version:type:classifier</resourceBundle>" );
             }
 
@@ -1030,8 +976,8 @@ public class ProcessRemoteResourcesMojo
                     List<MavenProject> list = mavenSession.getSortedProjects();
                     for ( MavenProject p : list )
                     {
-                        if ( s[0].equals( p.getGroupId() ) && s[1].equals( p.getArtifactId() ) && s[2].equals(
-                            p.getVersion() ) )
+                        if ( s[0].equals( p.getGroupId() ) && s[1].equals( p.getArtifactId() ) &&
+                            s[2].equals( p.getVersion() ) )
                         {
                             artifactFile = new File( p.getBuild().getOutputDirectory() );
                         }
@@ -1301,8 +1247,8 @@ public class ProcessRemoteResourcesMojo
                 if ( !f.canRead() )
                 {
                     throw new MojoExecutionException( "Supplemental data models won't be loaded. " + "File " +
-                                                          f.getAbsolutePath()
-                                                          + " cannot be read, check permissions on the file." );
+                                                          f.getAbsolutePath() +
+                                                          " cannot be read, check permissions on the file." );
                 }
 
                 getLog().debug( "Loading supplemental models from " + f.getAbsolutePath() );
