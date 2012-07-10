@@ -22,6 +22,8 @@ package org.apache.maven.plugins.jarsigner;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.jarsigner.JarSigner;
 import org.apache.maven.shared.jarsigner.JarSignerException;
@@ -54,32 +56,29 @@ public abstract class AbstractJarsignerMojo
 
     /**
      * See <a href="http://java.sun.com/javase/6/docs/technotes/tools/windows/jarsigner.html#Options">options</a>.
-     *
-     * @parameter expression="${jarsigner.verbose}" default-value="false"
      */
+    @Parameter( property = "jarsigner.verbose", defaultValue = "false" )
     private boolean verbose;
 
     /**
      * The maximum memory available to the JAR signer, e.g. <code>256M</code>. See <a
      * href="http://java.sun.com/javase/6/docs/technotes/tools/windows/java.html#Xms">-Xmx</a> for more details.
-     *
-     * @parameter expression="${jarsigner.maxMemory}"
      */
+    @Parameter( property = "jarsigner.maxMemory" )
     private String maxMemory;
 
     /**
      * Archive to process. If set, neither the project artifact nor any attachments or archive sets are processed.
-     *
-     * @parameter expression="${jarsigner.archive}"
      */
+    @Parameter( property = "jarsigner.archive" )
     private File archive;
 
     /**
      * The base directory to scan for JAR files using Ant-like inclusion/exclusion patterns.
      *
-     * @parameter expression="${jarsigner.archiveDirectory}"
      * @since 1.1
      */
+    @Parameter( property = "jarsigner.archiveDirectory" )
     private File archiveDirectory;
 
     /**
@@ -87,97 +86,92 @@ public abstract class AbstractJarsignerMojo
      * directory given by the parameter {@link #archiveDirectory}. By default, the pattern
      * <code>&#42;&#42;/&#42;.?ar</code> is used.
      *
-     * @parameter
      * @since 1.1
      */
+    @Parameter
     private String[] includes = { "**/*.?ar" };
 
     /**
      * The Ant-like exclusion patterns used to exclude JAR files from processing. The patterns must be relative to the
      * directory given by the parameter {@link #archiveDirectory}.
      *
-     * @parameter
      * @since 1.1
      */
+    @Parameter
     private String[] excludes = { };
 
     /**
      * List of additional arguments to append to the jarsigner command line.
-     *
-     * @parameter expression="${jarsigner.arguments}"
      */
+    @Parameter( property = "jarsigner.arguments" )
     private String[] arguments;
 
     /**
      * Set to {@code true} to disable the plugin.
-     *
-     * @parameter expression="${jarsigner.skip}" default-value="false"
      */
+    @Parameter( property = "jarsigner.skip", defaultValue = "false" )
     private boolean skip;
 
     /**
      * Controls processing of the main artifact produced by the project.
      *
-     * @parameter expression="${jarsigner.processMainArtifact}" default-value="true"
      * @since 1.1
      */
+    @Parameter( property = "jarsigner.processMainArtifact", defaultValue = "true" )
     private boolean processMainArtifact;
 
     /**
      * Controls processing of project attachments. If enabled, attached artifacts that are no JAR/ZIP files will be
      * automatically excluded from processing.
      *
-     * @parameter expression="${jarsigner.processAttachedArtifacts}" default-value="true"
      * @since 1.1
      */
+    @Parameter( property = "jarsigner.processAttachedArtifacts", defaultValue = "true" )
     private boolean processAttachedArtifacts;
 
     /**
      * Controls processing of project attachments.
      *
-     * @parameter expression="${jarsigner.attachments}"
      * @deprecated As of version 1.1 in favor of the new parameter <code>processAttachedArtifacts</code>.
      */
+    @Parameter( property = "jarsigner.attachments" )
     private Boolean attachments;
 
     /**
      * A set of artifact classifiers describing the project attachments that should be processed. This parameter is only
      * relevant if {@link #processAttachedArtifacts} is <code>true</code>. If empty, all attachments are included.
      *
-     * @parameter
      * @since 1.2
      */
+    @Parameter
     private String[] includeClassifiers;
 
     /**
      * A set of artifact classifiers describing the project attachments that should not be processed. This parameter is
      * only relevant if {@link #processAttachedArtifacts} is <code>true</code>. If empty, no attachments are excluded.
      *
-     * @parameter
      * @since 1.2
      */
+    @Parameter
     private String[] excludeClassifiers;
 
     /**
      * The Maven project.
-     *
-     * @parameter default-value="${project}"
-     * @required
-     * @readonly
      */
+    @Component
     private MavenProject project;
 
     /**
      * Location of the working directory.
      *
-     * @parameter default-value="${project.basedir}"
      * @since 1.3
      */
+    @Parameter( defaultValue = "${project.basedir}" )
     private File workingDirectory;
 
     /**
-     * @component
      */
+    @Component
     private JarSigner jarSigner;
 
     public final void execute()

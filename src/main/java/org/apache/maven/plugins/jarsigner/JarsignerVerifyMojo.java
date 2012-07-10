@@ -19,6 +19,9 @@ package org.apache.maven.plugins.jarsigner;
  * under the License.
  */
 
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.shared.jarsigner.JarSignerRequest;
 import org.apache.maven.shared.jarsigner.JarSignerVerifyRequest;
 
@@ -29,19 +32,17 @@ import java.io.File;
  *
  * @author <a href="cs@schulte.it">Christian Schulte</a>
  * @version $Id$
- * @goal verify
- * @phase verify
  * @since 1.0
  */
+@Mojo( name = "verify", defaultPhase = LifecyclePhase.VERIFY )
 public class JarsignerVerifyMojo
     extends AbstractJarsignerMojo
 {
 
     /**
      * See <a href="http://java.sun.com/javase/6/docs/technotes/tools/windows/jarsigner.html#Options">options</a>.
-     *
-     * @parameter expression="${jarsigner.certs}" default-value="false"
      */
+    @Parameter( property = "jarsigner.certs", defaultValue = "false" )
     private boolean certs;
 
     protected JarSignerRequest createRequest( File archive )
