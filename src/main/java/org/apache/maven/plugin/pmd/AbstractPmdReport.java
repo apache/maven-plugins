@@ -22,6 +22,8 @@ package org.apache.maven.plugin.pmd;
 import net.sourceforge.pmd.PMD;
 import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.model.ReportPlugin;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.AbstractMavenReport;
 import org.codehaus.plexus.util.FileUtils;
@@ -52,36 +54,28 @@ public abstract class AbstractPmdReport
 {
     /**
      * The output directory for the intermediate XML report.
-     *
-     * @parameter expression="${project.build.directory}"
-     * @required
      */
+    @Parameter( property = "project.build.directory", required = true )
     protected File targetDirectory;
 
     /**
      * The output directory for the final HTML report. Note that this parameter is only evaluated if the goal is run
      * directly from the command line or during the default lifecycle. If the goal is run indirectly as part of a site
      * generation, the output directory configured in the Maven Site Plugin is used instead.
-     *
-     * @parameter expression="${project.reporting.outputDirectory}"
-     * @required
      */
+    @Parameter( property = "project.reporting.outputDirectory", required = true )
     protected File outputDirectory;
 
     /**
      * Site rendering component for generating the HTML report.
-     *
-     * @component
      */
+    @Component
     private Renderer siteRenderer;
 
     /**
      * The project to analyse.
-     *
-     * @parameter expression="${project}"
-     * @required
-     * @readonly
      */
+    @Component
     protected MavenProject project;
 
     /**
@@ -89,31 +83,27 @@ public abstract class AbstractPmdReport
      * "csv", "xml", "txt" or the full class name of the PMD renderer to use.
      * See the net.sourceforge.pmd.renderers package javadoc for available renderers.
      * XML is required if the pmd:check goal is being used.
-     *
-     * @parameter expression="${format}" default-value="xml"
      */
+    @Parameter( property = "format", defaultValue = "xml" )
     protected String format = "xml";
 
     /**
      * Link the violation line numbers to the source xref. Links will be created
      * automatically if the jxr plugin is being used.
-     *
-     * @parameter expression="${linkXRef}" default-value="true"
      */
+    @Parameter( property = "linkXRef", defaultValue = "true" )
     private boolean linkXRef;
 
     /**
      * Location of the Xrefs to link to.
-     *
-     * @parameter default-value="${project.reporting.outputDirectory}/xref"
      */
+    @Parameter( defaultValue = "${project.reporting.outputDirectory}/xref" )
     private File xrefLocation;
 
     /**
      * Location of the Test Xrefs to link to.
-     *
-     * @parameter default-value="${project.reporting.outputDirectory}/xref-test"
      */
+    @Parameter( defaultValue = "${project.reporting.outputDirectory}/xref-test" )
     private File xrefTestLocation;
 
     /**
@@ -122,84 +112,76 @@ public abstract class AbstractPmdReport
      * words, files are excluded based on their package and/or class name. If you want to exclude entire source root
      * directories, use the parameter <code>excludeRoots</code> instead.
      *
-     * @parameter
      * @since 2.2
      */
+    @Parameter
     private List<String> excludes;
 
     /**
      * A list of files to include from checking. Can contain Ant-style wildcards and double wildcards.
      * Defaults to **\/*.java.
      *
-     * @parameter
      * @since 2.2
      */
+    @Parameter
     private List<String> includes;
 
     /**
      * The directories containing the sources to be compiled.
-     *
-     * @parameter expression="${project.compileSourceRoots}"
-     * @required
-     * @readonly
      */
+    @Parameter( property = "project.compileSourceRoots", required = true, readonly = true )
     private List<String> compileSourceRoots;
 
     /**
      * The directories containing the test-sources to be compiled.
-     *
-     * @parameter expression="${project.testCompileSourceRoots}"
-     * @required
-     * @readonly
      */
+    @Parameter( property = "project.testCompileSourceRoots", required = true, readonly = true )
     private List<String> testSourceRoots;
 
     /**
      * The project source directories that should be excluded.
      *
-     * @parameter
      * @since 2.2
      */
+    @Parameter
     private File[] excludeRoots;
 
     /**
      * Run PMD on the tests.
      *
-     * @parameter default-value="false"
      * @since 2.2
      */
+    @Parameter( defaultValue = "false" )
     protected boolean includeTests;
 
     /**
      * Whether to build an aggregated report at the root, or build individual reports.
      *
-     * @parameter expression="${aggregate}" default-value="false"
      * @since 2.2
      */
+    @Parameter( property = "aggregate", defaultValue = "false" )
     protected boolean aggregate;
 
     /**
      * The file encoding to use when reading the Java sources.
      *
-     * @parameter expression="${encoding}" default-value="${project.build.sourceEncoding}"
      * @since 2.3
      */
+    @Parameter( property = "encoding", defaultValue = "${project.build.sourceEncoding}" )
     private String sourceEncoding;
 
     /**
      * The file encoding when writing non-HTML reports.
      *
-     * @parameter expression="${outputEncoding}" default-value="${project.reporting.outputEncoding}"
      * @since 2.5
      */
+    @Parameter( property = "outputEncoding", defaultValue = "${project.reporting.outputEncoding}" )
     private String outputEncoding;
 
     /**
      * The projects in the reactor for aggregation report.
-     *
-     * @parameter expression="${reactorProjects}"
-     * @readonly
      */
+    @Parameter( property = "reactorProjects", readonly = true )
     protected List<MavenProject> reactorProjects;
 
     /**

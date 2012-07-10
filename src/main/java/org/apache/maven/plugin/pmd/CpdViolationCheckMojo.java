@@ -25,6 +25,10 @@ import org.apache.maven.plugin.pmd.model.CpdErrorDetail;
 import org.apache.maven.plugin.pmd.model.CpdFile;
 import org.apache.maven.plugin.pmd.model.Duplication;
 import org.apache.maven.plugin.pmd.model.io.xpp3.CpdXpp3Reader;
+import org.apache.maven.plugins.annotations.Execute;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import java.io.File;
@@ -36,12 +40,10 @@ import java.util.List;
  * Fail the build if there were any CPD violations in the source code.
  *
  * @version $Id$
- * @goal cpd-check
- * @phase verify
- * @execute goal="cpd"
- * @threadSafe
  * @since 2.0
  */
+@Mojo( name = "cpd-check", defaultPhase = LifecyclePhase.VERIFY, threadSafe = true )
+@Execute( goal = "cpd" )
 public class CpdViolationCheckMojo
     extends AbstractPmdViolationCheckMojo<Duplication>
 {
@@ -49,18 +51,16 @@ public class CpdViolationCheckMojo
     /**
      * Skip the CPD violation checks.  Most useful on the command line
      * via "-Dcpd.skip=true".
-     *
-     * @parameter expression="${cpd.skip}" default-value="false"
      */
+    @Parameter( property = "cpd.skip", defaultValue = "false" )
     private boolean skip;
 
     /**
      * Whether to fail the build if the validation check fails.
      *
-     * @parameter expression="${cpd.failOnViolation}" default-value="true"
-     * @required
      * @since 2.8
      */
+    @Parameter( property = "cpd.failOnViolation", defaultValue = "true", required = true )
     protected boolean failOnViolation;
 
 
