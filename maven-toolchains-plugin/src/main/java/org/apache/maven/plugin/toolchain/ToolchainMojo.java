@@ -19,51 +19,48 @@ package org.apache.maven.plugin.toolchain;
  * under the License.
  */
 
+import org.apache.maven.execution.MavenSession;
+import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.toolchain.MisconfiguredToolchainException;
+import org.apache.maven.toolchain.ToolchainManagerPrivate;
+import org.apache.maven.toolchain.ToolchainPrivate;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import org.apache.maven.execution.MavenSession;
-import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.toolchain.MisconfiguredToolchainException;
-import org.apache.maven.toolchain.ToolchainManagerPrivate;
-import org.apache.maven.toolchain.ToolchainPrivate;
 
 /**
- * @goal toolchain
- * @phase validate
- * @configurator override
- *
  * @author mkleint
  */
+@Mojo( name = "toolchain", defaultPhase = LifecyclePhase.VALIDATE )
 public class ToolchainMojo
     extends AbstractMojo
 {
 
     /**
-     *
-     * @component
      */
+    @Component
     private ToolchainManagerPrivate toolchainManager;
 
     /**
      * The current build session instance. This is used for
      * toolchain manager API calls.
-     *
-     * @parameter expression="${session}"
-     * @required
-     * @readonly
      */
+    @Component
     private MavenSession session;
 
     /**
-     * @parameter
-     * @required
      */
+    @Parameter( required = true )
     private Toolchains toolchains;
 
     public ToolchainMojo()
