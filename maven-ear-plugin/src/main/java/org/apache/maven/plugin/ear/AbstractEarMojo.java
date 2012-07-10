@@ -31,6 +31,8 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.ear.util.ArtifactTypeMappingService;
 import org.apache.maven.plugin.ear.util.JavaEEVersion;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.configuration.PlexusConfiguration;
 import org.codehaus.plexus.configuration.PlexusConfigurationException;
@@ -53,76 +55,63 @@ public abstract class AbstractEarMojo
     /**
      * The version of the application.xml to generate. Valid values
      * are 1.3, 1.4, 5 and 6.
-     *
-     * @parameter default-value="1.3"
      */
+    @Parameter( defaultValue = "1.3" )
     protected String version;
 
     /**
      * Character encoding for the auto-generated deployment file(s).
-     *
-     * @parameter default-value="UTF-8"
      */
+    @Parameter( defaultValue = "UTF-8" )
     protected String encoding;
 
     /**
      * Directory where the deployment descriptor file(s) will be auto-generated.
-     *
-     * @parameter default-value="${project.build.directory}"
      */
+    @Parameter( defaultValue = "${project.build.directory}" )
     protected String generatedDescriptorLocation;
 
     /**
      * The maven project.
-     *
-     * @parameter default-value="${project}"
-     * @required
-     * @readonly
      */
+    @Component
     protected MavenProject project;
 
     /**
      * The ear modules configuration.
-     *
-     * @parameter
      */
+    @Parameter
     private EarModule[] modules;
 
     /**
      * The artifact type mappings.
-     *
-     * @parameter
      */
+    @Parameter
     protected PlexusConfiguration artifactTypeMappings;
 
     /**
      * The default bundle dir for libraries.
-     *
-     * @parameter alias="defaultJavaBundleDir"
      */
+    @Parameter( alias = "defaultJavaBundleDir" )
     protected String defaultLibBundleDir;
 
     /**
      * Should libraries be added in application.xml
-     *
-     * @parameter default-value="false"
      */
+    @Parameter( defaultValue = "false" )
     private Boolean includeLibInApplicationXml = Boolean.FALSE;
 
     /**
      * The file name mapping to use for all dependencies included
      * in the EAR file.
-     *
-     * @parameter
      */
+    @Parameter
     private String fileNameMapping;
 
     /**
      * Directory that resources are copied to during the build.
-     *
-     * @parameter default-value="${project.build.directory}/${project.build.finalName}"
-     * @required
      */
+    @Parameter( defaultValue = "${project.build.directory}/${project.build.finalName}", required = true )
     private File workDirectory;
 
     /**
@@ -130,6 +119,7 @@ public abstract class AbstractEarMojo
      *
      * @parameter
      */
+    @Parameter
     private PlexusConfiguration jboss;
 
     /**
@@ -138,6 +128,7 @@ public abstract class AbstractEarMojo
      *
      * @parameter
      */
+    @Parameter
     private String mainArtifactId = "none";
 
     private List<EarModule> earModules;

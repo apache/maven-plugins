@@ -26,11 +26,17 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.ear.util.EarMavenArchiver;
 import org.apache.maven.plugin.ear.util.JavaEEVersion;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProjectHelper;
 import org.apache.maven.shared.filtering.MavenFileFilter;
 import org.apache.maven.shared.filtering.MavenFilteringException;
 import org.apache.maven.shared.filtering.MavenResourcesExecution;
 import org.apache.maven.shared.filtering.MavenResourcesFiltering;
+import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.UnArchiver;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
@@ -59,11 +65,9 @@ import java.util.zip.ZipException;
  *
  * @author <a href="snicoll@apache.org">Stephane Nicoll</a>
  * @version $Id$
- * @goal ear
- * @phase package
- * @threadSafe
- * @requiresDependencyResolution test
  */
+@Mojo( name = "ear", defaultPhase = LifecyclePhase.PACKAGE, threadSafe = true,
+       requiresDependencyResolution = ResolutionScope.TEST )
 public class EarMojo
     extends AbstractEarMojo
 {
@@ -72,67 +76,63 @@ public class EarMojo
 
     /**
      * Single directory for extra files to include in the EAR.
-     *
-     * @parameter default-value="${basedir}/src/main/application"
-     * @required
      */
+    @Parameter( defaultValue = "${basedir}/src/main/application", required = true )
     private File earSourceDirectory;
 
     /**
      * The comma separated list of tokens to include in the EAR.
-     *
-     * @parameter alias="includes" default-value="**"
      */
+    @Parameter( alias = "includes", defaultValue = "**" )
     private String earSourceIncludes;
 
     /**
      * The comma separated list of tokens to exclude from the EAR.
-     *
-     * @parameter alias="excludes"
      */
+    @Parameter( alias = "excludes" )
     private String earSourceExcludes;
 
     /**
      * Specify that the EAR sources should be filtered.
      *
-     * @parameter default-value="false"
      * @since 2.3.2
      */
+    @Parameter( defaultValue = "false" )
     private boolean filtering;
 
     /**
      * Filters (property files) to include during the interpolation of the pom.xml.
      *
-     * @parameter
      * @since 2.3.2
      */
+    @Parameter
     private List filters;
 
     /**
      * A list of file extensions that should not be filtered if
      * filtering is enabled.
      *
-     * @parameter
      * @since 2.3.2
      */
+    @Parameter
     private List nonFilteredFileExtensions;
 
     /**
      * To escape interpolated value with Windows path
      * c:\foo\bar will be replaced with c:\\foo\\bar.
      *
-     * @parameter expression="${maven.ear.escapedBackslashesInFilePath}" default-value="false"
      * @since 2.3.2
      */
+    @Parameter( property = "maven.ear.escapedBackslashesInFilePath", defaultValue = "false" )
     private boolean escapedBackslashesInFilePath;
 
     /**
      * Expression preceded with this String won't be interpolated
      * \${foo} will be replaced with ${foo}.
      *
-     * @parameter expression="${maven.ear.escapeString}"
      * @since 2.3.2
      */
+    @Parameter( property = "maven.ear.escapeString" )
     protected String escapeString;
 
     /**
@@ -140,49 +140,41 @@ public class EarMojo
      * no value if specified, the default location in the workDirectory is
      * taken. If the file does not exist, a manifest will be generated
      * automatically.
-     *
-     * @parameter
      */
+    @Parameter
     private File manifestFile;
 
     /**
      * The location of a custom application.xml file to be used
      * within the EAR file.
-     *
-     * @parameter
      */
+    @Parameter
     private String applicationXml;
 
     /**
      * The directory for the generated EAR.
-     *
-     * @parameter default-value="${project.build.directory}"
-     * @required
      */
+    @Parameter( defaultValue = "${project.build.directory}", required = true )
     private String outputDirectory;
 
     /**
      * The name of the EAR file to generate.
-     *
-     * @parameter alias="earName" default-value="${project.build.finalName}"
-     * @required
      */
+    @Parameter( alias = "earName", defaultValue = "${project.build.finalName}", required = true )
     private String finalName;
 
     /**
      * The comma separated list of artifact's type(s) to unpack
      * by default.
-     *
-     * @parameter
      */
+    @Parameter
     private String unpackTypes;
 
     /**
      * Classifier to add to the artifact generated. If given, the artifact will
      * be an attachment instead.
-     *
-     * @parameter
      */
+    @Parameter
     private String classifier;
 
     /**
@@ -192,9 +184,9 @@ public class EarMojo
      * expression %regex[].
      * Hint: read the about (?!Pattern).
      *
-     * @parameter
      * @since 2.7
      */
+    @Parameter
     private String packagingExcludes;
 
     /**
@@ -203,9 +195,9 @@ public class EarMojo
      * Expressions engine to include and exclude specific pattern using the
      * expression %regex[].
      *
-     * @parameter
      * @since 2.7
      */
+    @Parameter
     private String packagingIncludes;
 
     /**
@@ -213,70 +205,61 @@ public class EarMojo
      * have all of its dependencies in WEB-INF/lib. Instead those dependencies
      * are shared between the WARs through the EAR.
      *
-     * @parameter expression="${maven.ear.skinnyWars}" default-value="false"
      * @since 2.7
      */
+    @Parameter( property = "maven.ear.skinnyWars", defaultValue = "false" )
     private boolean skinnyWars;
 
     /**
      * The Jar archiver.
-     *
-     * @component role="org.codehaus.plexus.archiver.Archiver" role-hint="jar"
      */
+    @Component( role = Archiver.class, hint = "jar" )
     private JarArchiver jarArchiver;
 
     /**
      * The Zip archiver.
-     *
-     * @component role="org.codehaus.plexus.archiver.Archiver" role-hint="zip"
      */
+    @Component( role = Archiver.class, hint = "zip" )
     private ZipArchiver zipArchiver;
 
     /**
      * The Zip Un archiver.
-     *
-     * @component role="org.codehaus.plexus.archiver.UnArchiver" role-hint="zip"
      */
+    @Component( role = UnArchiver.class, hint = "zip" )
     private ZipUnArchiver zipUnArchiver;
 
     /**
      * The archive configuration to use.
      * See <a href="http://maven.apache.org/shared/maven-archiver/index.html">Maven Archiver Reference</a>.
-     *
-     * @parameter
      */
+    @Parameter
     private MavenArchiveConfiguration archive = new MavenArchiveConfiguration();
 
     /**
-     * @component
      */
+    @Component
     private MavenProjectHelper projectHelper;
 
     /**
      * The archive manager.
-     *
-     * @component
      */
+    @Component
     private ArchiverManager archiverManager;
 
     /**
-     * @component role="org.apache.maven.shared.filtering.MavenFileFilter" role-hint="default"
-     * @required
      */
+    @Component( role = MavenFileFilter.class, hint = "default" )
     private MavenFileFilter mavenFileFilter;
 
     /**
-     * @component role="org.apache.maven.shared.filtering.MavenResourcesFiltering" role-hint="default"
-     * @required
      */
+    @Component( role = MavenResourcesFiltering.class, hint = "default" )
     private MavenResourcesFiltering mavenResourcesFiltering;
 
     /**
-     * @parameter expression="${session}"
-     * @readonly
-     * @required
      * @since 2.3.2
      */
+    @Component
     private MavenSession session;
 
 
@@ -310,7 +293,7 @@ public class EarMojo
         // Copy modules
         try
         {
-            for ( EarModule module: getModules() )
+            for ( EarModule module : getModules() )
             {
                 if ( module instanceof JavaModule )
                 {
@@ -325,8 +308,8 @@ public class EarMojo
                 if ( !sourceFile.isFile() )
                 {
                     throw new MojoExecutionException(
-                        "Cannot copy a directory: " + sourceFile.getAbsolutePath() + "; Did you package/install "
-                            + module.getArtifact() + "?" );
+                        "Cannot copy a directory: " + sourceFile.getAbsolutePath() + "; Did you package/install " +
+                            module.getArtifact() + "?" );
                 }
 
                 if ( destinationFile.getCanonicalPath().equals( sourceFile.getCanonicalPath() ) )
@@ -338,9 +321,9 @@ public class EarMojo
 
                 // If the module is within the unpack list, make sure that no unpack wasn't forced (null or true)
                 // If the module is not in the unpack list, it should be true
-                if ( ( unpackTypesList.contains( module.getType() )
-                    && ( module.shouldUnpack() == null || module.shouldUnpack().booleanValue() ) )
-                    || ( module.shouldUnpack() != null && module.shouldUnpack().booleanValue() ) )
+                if ( ( unpackTypesList.contains( module.getType() ) &&
+                    ( module.shouldUnpack() == null || module.shouldUnpack().booleanValue() ) ) ||
+                    ( module.shouldUnpack() != null && module.shouldUnpack().booleanValue() ) )
                 {
                     getLog().info( "Copying artifact [" + module + "] to [" + module.getUri() + "] (unpacked)" );
                     // Make sure that the destination is a directory to avoid plexus nasty stuff :)
@@ -367,8 +350,8 @@ public class EarMojo
                     else
                     {
                         getLog().debug(
-                            "Skipping artifact [" + module + "], as it is already up to date at [" + module.getUri()
-                                + "]" );
+                            "Skipping artifact [" + module + "], as it is already up to date at [" + module.getUri() +
+                                "]" );
                     }
                 }
             }
@@ -438,10 +421,8 @@ public class EarMojo
             // Include custom manifest if necessary
             includeCustomManifestFile();
 
-            getLog().debug(
-                "Excluding " + Arrays.asList( getPackagingExcludes() ) + " from the generated EAR." );
-            getLog().debug(
-                "Including " + Arrays.asList( getPackagingIncludes() ) + " in the generated EAR." );
+            getLog().debug( "Excluding " + Arrays.asList( getPackagingExcludes() ) + " from the generated EAR." );
+            getLog().debug( "Including " + Arrays.asList( getPackagingIncludes() ) + " in the generated EAR." );
 
             archiver.getArchiver().addDirectory( getWorkDirectory(), getPackagingIncludes(), getPackagingExcludes() );
             archiver.createArchive( session, getProject(), archive );
@@ -479,8 +460,8 @@ public class EarMojo
      */
     protected String[] getExcludes()
     {
-        @SuppressWarnings( "unchecked" )
-        List<String> excludeList = new ArrayList<String>( FileUtils.getDefaultExcludesAsList() );
+        @SuppressWarnings( "unchecked" ) List<String> excludeList =
+            new ArrayList<String>( FileUtils.getDefaultExcludesAsList() );
         if ( earSourceExcludes != null && !"".equals( earSourceExcludes ) )
         {
             excludeList.addAll( Arrays.asList( StringUtils.split( earSourceExcludes, "," ) ) );
@@ -527,7 +508,7 @@ public class EarMojo
     {
         if ( StringUtils.isEmpty( packagingIncludes ) )
         {
-            return new String[]{"**"};
+            return new String[]{ "**" };
         }
         else
         {
@@ -682,7 +663,7 @@ public class EarMojo
     }
 
     private void changeManifestClasspath( EarModule module, File original )
-            throws MojoFailureException
+        throws MojoFailureException
     {
         try
         {
@@ -692,9 +673,8 @@ public class EarMojo
             if ( original.isFile() )
             {
                 // Create a temporary work directory
-                workDirectory = new File( new File(
-                        generatedDescriptorLocation, "temp" ), module.getArtifact()
-                        .getArtifactId() );
+                workDirectory =
+                    new File( new File( generatedDescriptorLocation, "temp" ), module.getArtifact().getArtifactId() );
                 workDirectory.mkdirs();
                 getLog().debug( "Created a temporary work directory: " + workDirectory.getAbsolutePath() );
 
@@ -714,26 +694,24 @@ public class EarMojo
             if ( newMetaInfCreated )
             {
                 getLog().debug(
-                        "This project did not have a META-INF directory before, so a new directory was created." );
+                    "This project did not have a META-INF directory before, so a new directory was created." );
             }
             File manifestFile = new File( metaInfDirectory, "MANIFEST.MF" );
             boolean newManifestCreated = manifestFile.createNewFile();
             if ( newManifestCreated )
             {
                 getLog().debug(
-                        "This project did not have a META-INF/MANIFEST.MF file before, so a new file was created." );
+                    "This project did not have a META-INF/MANIFEST.MF file before, so a new file was created." );
             }
 
             // Read the manifest from disk
             Manifest mf = new Manifest( new FileReader( manifestFile ) );
-            Attribute classPath = mf.getMainSection()
-                    .getAttribute( "Class-Path" );
+            Attribute classPath = mf.getMainSection().getAttribute( "Class-Path" );
             List<String> classPathElements = new ArrayList<String>();
 
             if ( classPath != null )
             {
-                classPathElements.addAll( Arrays.asList( classPath.getValue()
-                        .split( " " ) ) );
+                classPathElements.addAll( Arrays.asList( classPath.getValue().split( " " ) ) );
             }
             else
             {
@@ -746,28 +724,25 @@ public class EarMojo
             {
                 if ( o instanceof JarModule )
                 {
-                    JarModule jm = ( JarModule ) o;
+                    JarModule jm = (JarModule) o;
 
                     if ( module.getLibDir() != null )
                     {
-                        File artifact = new File( new File(
-                                workDirectory, module.getLibDir() ),
-                                jm.getBundleFileName() );
+                        File artifact =
+                            new File( new File( workDirectory, module.getLibDir() ), jm.getBundleFileName() );
 
                         if ( artifact.exists() )
                         {
                             if ( !artifact.delete() )
                             {
-                                getLog().error(
-                                        "Could not delete '" + artifact + "'" );
+                                getLog().error( "Could not delete '" + artifact + "'" );
                             }
                         }
                     }
 
                     if ( classPathElements.contains( jm.getBundleFileName() ) )
                     {
-                        classPathElements.set( classPathElements.indexOf( jm
-                                .getBundleFileName() ), jm.getUri() );
+                        classPathElements.set( classPathElements.indexOf( jm.getBundleFileName() ), jm.getUri() );
                     }
                     else
                     {

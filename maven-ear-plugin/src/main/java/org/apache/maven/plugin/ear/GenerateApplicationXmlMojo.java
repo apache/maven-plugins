@@ -22,6 +22,10 @@ package org.apache.maven.plugin.ear;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.ear.util.JavaEEVersion;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.codehaus.plexus.configuration.PlexusConfiguration;
 import org.codehaus.plexus.configuration.PlexusConfigurationException;
 import org.codehaus.plexus.util.FileUtils;
@@ -36,11 +40,9 @@ import java.util.List;
  *
  * @author <a href="snicoll@apache.org">Stephane Nicoll</a>
  * @version $Id$
- * @goal generate-application-xml
- * @phase generate-resources
- * @threadSafe
- * @requiresDependencyResolution test
  */
+@Mojo( name = "generate-application-xml", defaultPhase = LifecyclePhase.GENERATE_RESOURCES, threadSafe = true,
+       requiresDependencyResolution = ResolutionScope.TEST )
 public class GenerateApplicationXmlMojo
     extends AbstractEarMojo
 {
@@ -48,40 +50,35 @@ public class GenerateApplicationXmlMojo
 
     /**
      * Whether the application.xml should be generated or not.
-     *
-     * @parameter default-value="true"
      */
+    @Parameter( defaultValue = "true" )
     private Boolean generateApplicationXml = Boolean.TRUE;
 
     /**
      * Whether a module ID should be generated if none is specified.
-     *
-     * @parameter default-value="false"
      */
+    @Parameter( defaultValue = "false" )
     private Boolean generateModuleId = Boolean.FALSE;
 
     /**
      * Application name of the application to be used when the application.xml
      * file is auto-generated. Since JavaEE6.
-     *
-     * @parameter
      */
+    @Parameter
     private String applicationName;
 
     /**
      * Display name of the application to be used when the application.xml
      * file is auto-generated.
-     *
-     * @parameter default-value="${project.artifactId}"
      */
+    @Parameter( defaultValue = "${project.artifactId}" )
     private String displayName;
 
     /**
      * Description of the application to be used when the application.xml
      * file is auto-generated.
-     *
-     * @parameter default-value="${project.description}"
      */
+    @Parameter( defaultValue = "${project.description}" )
     private String description;
 
     /**
@@ -92,17 +89,15 @@ public class GenerateApplicationXmlMojo
      * initialized in any order. If initialize-in-order is not set or set to
      * false, the order of initialization is unspecified and may be
      * product-dependent. Since JavaEE6.
-     *
-     * @parameter
      */
+    @Parameter
     private Boolean initializeInOrder;
 
     /**
      * The security-roles to be added to the auto-generated
      * application.xml file.
-     *
-     * @parameter
      */
+    @Parameter
     private PlexusConfiguration security;
 
 
