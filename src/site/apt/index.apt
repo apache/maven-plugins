@@ -76,12 +76,13 @@ Known Limitations
 
     There are 2 known limitations:
     
-    * <<the plugin doesn't create the initial SCM directory>>, it just import content into an
-    existing SCM directory,
+    * <<the plugin doesn't create the initial SCM directory>>, it just updates content from an
+    existing SCM directory. Then you need to manually create the empty directory first
+    (with <<<svn mkdir URL>>> for example),
 
     * the plugin works well for multi-module websites publishing to a complete directory:
     you just need to publish <<<mvn site-stage>>> content. But if one module does not publish
-    its ocntent to the same directory (like Surefire or Maven Plugin Tools, which have a
+    its content to the same directory (like Surefire or Enforcer, which have a
     base directory and one plugin in <<</plugins/>>>), this staging area can't be simply imported.
 
     []
