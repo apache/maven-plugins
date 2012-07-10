@@ -25,6 +25,10 @@ import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Settings;
 
@@ -37,10 +41,9 @@ import java.util.Properties;
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  * @version $Id$
- * @goal ant
- * @requiresDependencyResolution test
  * @todo change this to use the artifact ant tasks instead of :get
  */
+@Mojo( name = "ant", requiresDependencyResolution = ResolutionScope.TEST )
 public class AntMojo
     extends AbstractMojo
 {
@@ -50,16 +53,14 @@ public class AntMojo
 
     /**
      * Used for resolving artifacts.
-     *
-     * @component
      */
+    @Component
     private ArtifactResolver resolver;
 
     /**
      * Factory for creating artifact objects.
-     *
-     * @component
      */
+    @Component
     private ArtifactFactory factory;
 
     // ----------------------------------------------------------------------
@@ -68,52 +69,38 @@ public class AntMojo
 
     /**
      * The project to create a build for.
-     *
-     * @parameter default-value="${project}"
-     * @required
-     * @readonly
      */
+    @Component
     private MavenProject project;
 
     /**
      * The local repository where the artifacts are located.
-     *
-     * @parameter default-value="${localRepository}"
-     * @required
-     * @readonly
      */
+    @Parameter( defaultValue = "${localRepository}", required = true, readonly = true )
     private ArtifactRepository localRepository;
 
     /**
      * The remote repositories where artifacts are located.
-     *
-     * @parameter default-value="${project.remoteArtifactRepositories}"
-     * @readonly
      */
+    @Parameter( defaultValue = "${project.remoteArtifactRepositories}", readonly = true )
     private List remoteRepositories;
 
     /**
      * The current user system settings for use in Maven.
-     *
-     * @parameter default-value="${settings}"
-     * @required
-     * @readonly
      */
+    @Component
     private Settings settings;
 
     /**
      * Whether or not to overwrite the <code>build.xml</code> file.
-     *
-     * @parameter expression="${overwrite}" default-value="false"
      */
+    @Parameter( property = "overwrite", defaultValue = "false" )
     private boolean overwrite;
 
     /**
      * The current Maven session.
-     * 
-     * @parameter default-value="${session}"
-     * @readonly
      */
+    @Component
     private MavenSession session;
 
     /** {@inheritDoc} */
