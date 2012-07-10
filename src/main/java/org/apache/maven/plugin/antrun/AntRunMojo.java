@@ -19,22 +19,15 @@ package org.apache.maven.plugin.antrun;
  * under the License.
  */
 
-import java.io.File;
-import java.io.IOException;
-import java.io.LineNumberReader;
-import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.apache.tools.ant.BuildException;
@@ -50,6 +43,17 @@ import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.LineNumberReader;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+
 /**
  * Maven AntRun Mojo. <br/>
  * This plugin provides the capability of calling Ant tasks from a POM by running the nested ant tasks inside the
@@ -59,10 +63,8 @@ import org.codehaus.plexus.util.StringUtils;
  * @author <a href="mailto:kenney@apache.org">Kenney Westerhof</a>
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
- * @goal run
- * @threadSafe
- * @requiresDependencyResolution test
  */
+@Mojo( name = "run", threadSafe = true, requiresDependencyResolution = ResolutionScope.TEST )
 public class AntRunMojo
     extends AbstractMojo
 {
@@ -103,122 +105,113 @@ public class AntRunMojo
 
     /**
      * The Maven project object
-     * 
-     * @parameter expression="${project}"
-     * @readonly
      */
+    @Component
     private MavenProject project;
 
     /**
      * The Maven project helper object
-     * 
-     * @component
      */
+    @Component
     private MavenProjectHelper projectHelper;
 
     /**
      * The plugin dependencies.
-     * 
-     * @parameter expression="${plugin.artifacts}"
-     * @required
-     * @readonly
      */
+    @Parameter( property = "plugin.artifacts", required = true, readonly = true )
     private List<Artifact> pluginArtifacts;
 
     /**
      * The local Maven repository
-     * 
-     * @parameter expression="${localRepository}"
-     * @readonly
      */
+    @Parameter( property = "localRepository", readonly = true )
     protected ArtifactRepository localRepository;
 
     /**
      * String to prepend to project and dependency property names.
-     * 
-     * @parameter default-value=""
+     *
      * @since 1.4
      */
+    @Parameter( defaultValue = "" )
     private String propertyPrefix;
 
     /**
      * The xml tag prefix to use for the built in Ant tasks. This prefix needs to be prepended to each task referenced
      * in the antrun target config. For example, a prefix of "mvn" means that the attachartifact task is referenced by
      * "&lt;mvn:attachartifact&gt;" The default value of an empty string means that no prefix is used for the tasks.
-     * 
-     * @parameter default-value=""
+     *
      * @since 1.5
      */
+    @Parameter( defaultValue = "" )
     private String customTaskPrefix = "";
 
     /**
      * The name of a property containing the list of all dependency versions. This is used for the removing the versions
      * from the filenames.
-     * 
-     * @parameter default-value="maven.project.dependencies.versions"
      */
+    @Parameter( defaultValue = "maven.project.dependencies.versions" )
     private String versionsPropertyName;
 
     /**
      * The XML for the Ant task. You can add anything you can add between &lt;target&gt; and &lt;/target&gt; in a
      * build.xml.
-     * 
+     *
      * @deprecated Use target instead
-     * @parameter
      */
+    @Parameter
     private PlexusConfiguration tasks;
 
     /**
      * The XML for the Ant target. You can add anything you can add between &lt;target&gt; and &lt;/target&gt; in a
      * build.xml.
-     * 
-     * @parameter
+     *
      * @since 1.5
      */
+    @Parameter
     private PlexusConfiguration target;
 
     /**
      * This folder is added to the list of those folders containing source to be compiled. Use this if your ant script
      * generates source code.
-     * 
-     * @parameter expression="${sourceRoot}"
+     *
      * @deprecated Use the build-helper-maven-plugin to bind source directories
      */
+    @Parameter( property = "sourceRoot" )
     private File sourceRoot;
 
     /**
      * This folder is added to the list of those folders containing source to be compiled for testing. Use this if your
      * ant script generates test source code.
-     * 
-     * @parameter expression="${testSourceRoot}"
+     *
      * @deprecated Use the build-helper-maven-plugin to bind test source directories
      */
+    @Parameter( property = "testSourceRoot" )
     private File testSourceRoot;
 
     /**
      * Specifies whether the Antrun execution should be skipped.
-     * 
-     * @parameter expression="${maven.antrun.skip}" default-value="false"
+     *
      * @since 1.7
      */
+    @Parameter( property = "maven.antrun.skip", defaultValue = "false" )
     private boolean skip;
 
     /**
      * Specifies whether the Ant properties should be propagated to the Maven properties.
-     * 
-     * @parameter default-value="false"
+     *
      * @since 1.7
      */
+    @Parameter( defaultValue = "false" )
     private boolean exportAntProperties;
 
     /**
      * Specifies whether a failure in the ant build leads to a failure of the Maven build. If this value is 'true', the
      * Maven build will proceed even if the ant build fails. If it is 'false', then the Maven build fails if the ant
      * build fails.
-     * 
-     * @parameter default-value="true"
+     *
      * @since 1.7
      */
+    @Parameter( defaultValue = "true" )
     private boolean failOnError;
 
     /**
