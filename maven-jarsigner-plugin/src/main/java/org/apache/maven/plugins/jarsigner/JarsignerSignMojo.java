@@ -20,6 +20,9 @@ package org.apache.maven.plugins.jarsigner;
  */
 
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.shared.jarsigner.JarSignerRequest;
 import org.apache.maven.shared.jarsigner.JarSignerSignRequest;
 import org.apache.maven.shared.jarsigner.JarSignerUtil;
@@ -34,85 +37,74 @@ import java.io.IOException;
  *
  * @author <a href="cs@schulte.it">Christian Schulte</a>
  * @version $Id$
- * @goal sign
- * @phase package
  * @since 1.0
  */
+@Mojo( name = "sign", defaultPhase = LifecyclePhase.PACKAGE )
 public class JarsignerSignMojo
     extends AbstractJarsignerMojo
 {
 
     /**
      * See <a href="http://java.sun.com/javase/6/docs/technotes/tools/windows/jarsigner.html#Options">options</a>.
-     *
-     * @parameter expression="${jarsigner.keystore}"
      */
+    @Parameter( property = "jarsigner.keystore" )
     private String keystore;
 
     /**
      * See <a href="http://java.sun.com/javase/6/docs/technotes/tools/windows/jarsigner.html#Options">options</a>.
-     *
-     * @parameter expression="${jarsigner.storepass}"
      */
+    @Parameter( property = "jarsigner.storepass" )
     private String storepass;
 
     /**
      * See <a href="http://java.sun.com/javase/6/docs/technotes/tools/windows/jarsigner.html#Options">options</a>.
-     *
-     * @parameter expression="${jarsigner.keypass}"
      */
+    @Parameter( property = "jarsigner.keypass" )
     private String keypass;
 
     /**
      * See <a href="http://java.sun.com/javase/6/docs/technotes/tools/windows/jarsigner.html#Options">options</a>.
-     *
-     * @parameter expression="${jarsigner.sigfile}"
      */
+    @Parameter( property = "jarsigner.sigfile" )
     private String sigfile;
 
     /**
      * See <a href="http://java.sun.com/javase/6/docs/technotes/tools/windows/jarsigner.html#Options">options</a>.
-     *
-     * @parameter expression="${jarsigner.storetype}"
      */
+    @Parameter( property = "jarsigner.storetype" )
     private String storetype;
 
     /**
      * See <a href="http://java.sun.com/javase/6/docs/technotes/tools/windows/jarsigner.html#Options">options</a>.
-     *
-     * @parameter expression="${jarsigner.providerName}"
      */
+    @Parameter( property = "jarsigner.providerName" )
     private String providerName;
 
     /**
      * See <a href="http://java.sun.com/javase/6/docs/technotes/tools/windows/jarsigner.html#Options">options</a>.
-     *
-     * @parameter expression="${jarsigner.providerClass}"
      */
+    @Parameter( property = "jarsigner.providerClass" )
     private String providerClass;
 
     /**
      * See <a href="http://java.sun.com/javase/6/docs/technotes/tools/windows/jarsigner.html#Options">options</a>.
-     *
-     * @parameter expression="${jarsigner.providerArg}"
      */
+    @Parameter( property = "jarsigner.providerArg" )
     private String providerArg;
 
     /**
      * See <a href="http://java.sun.com/javase/6/docs/technotes/tools/windows/jarsigner.html#Options">options</a>.
-     *
-     * @parameter expression="${jarsigner.alias}"
-     * @required
      */
+    @Parameter( property = "jarsigner.alias", required = true )
     private String alias;
 
     /**
      * Indicates whether existing signatures should be removed from the processed JAR files prior to signing them. If
      * enabled, the resulting JAR will appear as being signed only once.
      *
-     * @parameter expression="${jarsigner.removeExistingSignatures}" default-value="false"
      * @since 1.1
      */
+    @Parameter( property = "jarsigner.removeExistingSignatures", defaultValue = "false" )
     private boolean removeExistingSignatures;
 
     protected String getCommandlineInfo( final Commandline commandLine )
