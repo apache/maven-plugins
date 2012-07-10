@@ -19,19 +19,22 @@ package org.apache.maven.plugin.ant;
  * under the License.
  */
 
-import java.io.File;
-
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
+
+import java.io.File;
 
 /**
  * Clean all Ant build files.
  *
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
- * @goal clean
  */
+@Mojo( name = "clean" )
 public class AntCleanMojo
     extends AbstractMojo
 {
@@ -45,22 +48,21 @@ public class AntCleanMojo
 
     /**
      * The working project.
-     *
-     * @parameter default-value="${project}"
-     * @required
-     * @readonly
      */
+    @Component
     private MavenProject project;
 
     /**
      * Forcing the deletion of the custom <code>build.xml</code>.
      *
-     * @parameter expression="${deleteCustomFiles}" default-value="false"
      * @since 2.2
      */
+    @Parameter( property = "deleteCustomFiles", defaultValue = "false" )
     private boolean deleteCustomFiles;
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public void execute()
         throws MojoExecutionException
     {
@@ -76,9 +78,8 @@ public class AntCleanMojo
             }
             else if ( getLog().isInfoEnabled() )
             {
-                getLog().info(
-                               "Not deleting custom " + buildXml.getName()
-                                   + ", use -DdeleteCustomFiles=true to force its deletion" );
+                getLog().info( "Not deleting custom " + buildXml.getName() +
+                                   ", use -DdeleteCustomFiles=true to force its deletion" );
             }
         }
 
@@ -88,16 +89,14 @@ public class AntCleanMojo
             throw new MojoExecutionException( "Cannot delete " + mavenBuildXml.getAbsolutePath() );
         }
 
-        File mavenBuildProperties =
-            new File( project.getBasedir(), AntBuildWriter.DEFAULT_MAVEN_PROPERTIES_FILENAME );
+        File mavenBuildProperties = new File( project.getBasedir(), AntBuildWriter.DEFAULT_MAVEN_PROPERTIES_FILENAME );
         if ( mavenBuildProperties.exists() && !mavenBuildProperties.delete() )
         {
             throw new MojoExecutionException( "Cannot delete " + mavenBuildProperties.getAbsolutePath() );
         }
 
-        getLog().info(
-                       "Deleted Ant build files for project " + project.getArtifactId() + " in "
-                           + project.getBasedir().getAbsolutePath() );
+        getLog().info( "Deleted Ant build files for project " + project.getArtifactId() + " in " +
+                           project.getBasedir().getAbsolutePath() );
     }
 
 }
