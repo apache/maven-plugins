@@ -19,28 +19,26 @@ package org.apache.maven.plugin.assembly.mojos;
  * under the License.
  */
 
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.project.MavenProject;
 
 /**
  * Assemble an application bundle or distribution from an assembly descriptor. This goal is suitable either for binding
  * to the lifecycle or calling directly from the command line (provided all required files are available before the
  * build starts, or are produced by another goal specified before this one on the command line).
- * 
+ *
  * @author <a href="mailto:jdcasey@apache.org">John Casey</a>
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  * @version $Id$
- * @goal single
- * @inheritByDefault false
- * @threadSafe
  */
+@Mojo( name = "single", inheritByDefault = false, threadSafe = true )
 public class SingleAssemblyMojo
     extends AbstractAssemblyMojo
 {
     /**
-     * @parameter default-value="${project}"
-     * @required
-     * @readonly
      */
+    @Component
     private MavenProject project;
 
     @Override

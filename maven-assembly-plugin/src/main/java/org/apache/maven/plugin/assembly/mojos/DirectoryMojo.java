@@ -19,6 +19,10 @@ package org.apache.maven.plugin.assembly.mojos;
  * under the License.
  */
 
+import org.apache.maven.plugins.annotations.Execute;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
 /**
@@ -27,31 +31,28 @@ import org.apache.maven.project.MavenProject;
  * <code>package</code> phase BEFORE the assembly is processed. This goal differs from <code>assembly:assembly</code> in
  * that it ignores the &lt;formats/&gt; section of the assembly descriptor, and forces the assembly to be created as a
  * directory in the project's build-output directory (usually <code>./target</code>). <br/>
- * 
+ * <p/>
  * This goal is also functionally equivalent to using the <code>assembly:assembly</code> goal in conjunction with the
  * <code>dir</code> assembly format. <br/>
- * 
+ * <p/>
  * <b>NOTE:</b> This goal should ONLY be run from the command line, and if building a multimodule project it should be
  * used from the root POM. Use the <code>assembly:directory-single</code> goal for binding your assembly to the
  * lifecycle.
- * 
+ *
  * @author <a href="mailto:jdcasey@apache.org">John Casey</a>
  * @version $Id$
- * @goal directory
- * @execute phase="package"
- * @aggregator
- * @inheritByDefault false
  * @deprecated Use assembly:single and an assembly with format == dir instead! This mojo is redundant.
  */
+@Mojo( name = "directory", aggregator = true, inheritByDefault = false )
+@Execute( phase = LifecyclePhase.PACKAGE )
 @Deprecated
 public class DirectoryMojo
     extends AbstractDirectoryMojo
 {
     /**
      * Get the executed project from the forked lifecycle.
-     * 
-     * @parameter expression="${executedProject}"
      */
+    @Parameter( property = "executedProject" )
     private MavenProject executedProject;
 
     @Override

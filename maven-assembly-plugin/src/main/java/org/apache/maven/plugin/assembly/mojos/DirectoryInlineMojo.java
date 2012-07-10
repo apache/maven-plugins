@@ -19,6 +19,8 @@ package org.apache.maven.plugin.assembly.mojos;
  * under the License.
  */
 
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.project.MavenProject;
 
 /**
@@ -39,21 +41,17 @@ import org.apache.maven.project.MavenProject;
  * @author <a href="mailto:gscokart@users.sourceforge.net">Gilles Scokart</a>
  * @version $Id$
  * 
- * @goal directory-inline
- * @aggregator
- * @inheritByDefault false
  * @deprecated Use assembly:single and an assembly with format == dir instead! This mojo is redundant, and leads to
  *             non-standard builds.
  */
+@Mojo( name = "directory-inline", aggregator = true, inheritByDefault = false )
 @Deprecated
 public class DirectoryInlineMojo
     extends AbstractDirectoryMojo
 {
     /**
-     * @parameter default-value="${project}"
-     * @required
-     * @readonly
      */
+    @Component
     private MavenProject project;
 
     @Override
