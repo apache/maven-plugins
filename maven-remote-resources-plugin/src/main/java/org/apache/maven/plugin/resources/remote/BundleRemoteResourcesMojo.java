@@ -22,6 +22,9 @@ package org.apache.maven.plugin.resources.remote;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.resources.remote.io.xpp3.RemoteResourcesBundleXpp3Writer;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.StringUtils;
@@ -35,34 +38,26 @@ import java.util.List;
 
 /**
  * Bundle up resources that should be considered as a remote-resource.
- *
- * @goal bundle
- * @phase generate-resources
- * @threadSafe
  */
+@Mojo( name = "bundle", defaultPhase = LifecyclePhase.GENERATE_RESOURCES, threadSafe = true )
 public class BundleRemoteResourcesMojo
     extends AbstractMojo
 {
     public static final String RESOURCES_MANIFEST = "META-INF/maven/remote-resources.xml";
 
-    private static final String[] DEFAULT_INCLUDES = new String [] {
-                                                              "**/*.txt",
-                                                              "**/*.vm",
-                                                   };
+    private static final String[] DEFAULT_INCLUDES = new String[]{ "**/*.txt", "**/*.vm", };
 
 
     /**
      * The directory which contains the resources you want packaged up in this resource bundle.
-     *
-     * @parameter default-value="${basedir}/src/main/resources"
      */
+    @Parameter( defaultValue = "${basedir}/src/main/resources" )
     private File resourcesDirectory;
 
     /**
      * The directory where you want the resource bundle manifest written to.
-     *
-     * @parameter default-value="${project.build.outputDirectory}"
      */
+    @Parameter( defaultValue = "${project.build.outputDirectory}" )
     private File outputDirectory;
 
     /**
@@ -70,26 +65,25 @@ public class BundleRemoteResourcesMojo
      * The default includes are
      * <code>**&#47;*.txt   **&#47;*.vm</code>
      *
-     * @parameter
      * @since 1.0-alpha-5
      */
+    @Parameter
     private String[] includes;
 
     /**
      * A list of files to exclude. Can contain ant-style wildcards and double wildcards.
      *
-     * @parameter
      * @since 1.0-alpha-5
      */
+    @Parameter
     private String[] excludes;
 
     /**
      * Encoding of the bundle.
      *
      * @since 1.1
-     * @optional
-     * @parameter default-value="${project.build.sourceEncoding}"
      */
+    @Parameter( defaultValue = "${project.build.sourceEncoding}" )
     private String sourceEncoding;
 
     public void execute()
@@ -132,7 +126,6 @@ public class BundleRemoteResourcesMojo
         {
             remoteResourcesBundle.addRemoteResource( StringUtils.replace( resource, '\\', '/' ) );
         }
-
 
         RemoteResourcesBundleXpp3Writer w = new RemoteResourcesBundleXpp3Writer();
 
