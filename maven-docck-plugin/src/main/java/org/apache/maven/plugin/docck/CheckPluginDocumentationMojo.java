@@ -25,6 +25,9 @@ import org.apache.maven.plugin.descriptor.MojoDescriptor;
 import org.apache.maven.plugin.descriptor.Parameter;
 import org.apache.maven.plugin.descriptor.PluginDescriptor;
 import org.apache.maven.plugin.docck.reports.DocumentationReporter;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.tools.plugin.extractor.ExtractionException;
 import org.apache.maven.tools.plugin.scanner.MojoScanner;
@@ -42,20 +45,16 @@ import java.util.List;
  * Checks a plugin's documentation for the standard minimums.
  *
  * @author jdcasey
- * @goal check
- * @aggregator
- * @phase validate
- * @threadSafe
  */
+@Mojo( name = "check", aggregator = true, defaultPhase = LifecyclePhase.VALIDATE, threadSafe = true )
 public class CheckPluginDocumentationMojo
     extends AbstractCheckDocumentationMojo
 {
 
     /**
      * Plexus component that searches for Mojos.
-     *
-     * @component
      */
+    @Component
     protected MojoScanner mojoScanner;
 
     // TODO: really a description of length 1 isn't all that helpful...

@@ -36,6 +36,8 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.docck.reports.DocumentationReport;
 import org.apache.maven.plugin.docck.reports.DocumentationReporter;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Settings;
@@ -60,7 +62,6 @@ import java.util.Map;
  * reused for other types of projects, too.
  *
  * @author jdcasey
- * @threadSafe
  */
 public abstract class AbstractCheckDocumentationMojo
     extends AbstractMojo
@@ -68,43 +69,36 @@ public abstract class AbstractCheckDocumentationMojo
     private static final int HTTP_STATUS_200 = 200;
 
     /**
-     * @parameter default-value="${reactorProjects}"
-     * @readonly
-     * @required
      */
+    @Parameter( property = "reactorProjects", readonly = true, required = true )
     private List reactorProjects;
 
     /**
      * An optional location where the results will be written to. If this is
      * not specified the results will be written to the console.
-     *
-     * @parameter expression="${output}"
      */
+    @Parameter( property = "output" )
     private File output;
 
     /**
      * Directory where the site source for the project is located.
      *
-     * @parameter expression="${siteDirectory}" default-value="src/site"
      * @todo should be determined programmatically
      */
+    @Parameter( property = "siteDirectory", defaultValue = "src/site" )
     protected String siteDirectory;
 
     /**
      * Sets whether this plugin is running in offline or online mode. Also
      * useful when you don't want to verify http URLs.
-     *
-     * @parameter expression="${settings.offline}"
      */
+    @Parameter( property = "settings.offline" )
     private boolean offline;
 
     /**
      * The current user system settings for use in Maven.
-     *
-     * @parameter expression="${settings}"
-     * @required
-     * @readonly
      */
+    @Component
     private Settings settings;
 
     private HttpClient httpClient;
