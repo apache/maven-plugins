@@ -26,6 +26,10 @@ import java.util.List;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.ProjectSorter;
 import org.apache.maven.shared.invoker.Invoker;
@@ -34,64 +38,60 @@ import org.apache.maven.shared.invoker.Invoker;
  * Goal to resume building a reactor at a certain point 
  *
  * @author <a href="mailto:dfabulich@apache.org">Dan Fabulich</a>
- * @goal resume
- * @aggregator
- * @phase process-sources
  */
+@Mojo( name = "resume", aggregator = true, defaultPhase = LifecyclePhase.PROCESS_SOURCES )
 public class ResumeMojo
     extends AbstractMojo
 {
-    
+
     /**
-     * @parameter expression="${project.collectedProjects}"
      */
+    @Parameter( property = "project.collectedProjects" )
     List collectedProjects;
-    
+
     /**
      * Location of the file.
-     * @parameter expression="${basedir}"
      */
+    @Parameter( property = "basedir" )
     File baseDir;
-    
+
     /**
-     * @parameter expression="${make.group}" default-value="${project.groupId}"
      */
+    @Parameter( property = "make.group", defaultValue = "${project.groupId}" )
     String continueFromGroup;
-    
+
     /**
      * The artifact from which we'll resume, e.g. "com.mycompany:foo" or just "foo"
-     * @parameter expression="${fromArtifact}" default-value="null"
-     * @required
      */
+    @Parameter( property = "fromArtifact", defaultValue = "null", required = true )
     String continueFromProject;
-    
+
     /**
      * The project folder from which we'll resume
-     * @parameter expression="${from}" default-value="null"
-     * @required
      */
+    @Parameter( property = "from", defaultValue = "null", required = true )
     File continueFromFolder;
-    
+
     /**
      * Goals to run on subproject
-     * @parameter expression="${make.goals}" default-value="install"
      */
+    @Parameter( property = "make.goals", defaultValue = "install" )
     String goals;
-    
+
     /**
-     * @component
      */
+    @Component
     Invoker invoker;
-    
+
     /**
      * Don't really do anything; just print a message that describes what the command would have done
-     * @parameter expression="${make.printOnly}"
      */
+    @Parameter( property = "make.printOnly" )
     boolean printOnly = false;
-    
+
     /**
-     * @component
      */
+    @Component
     SimpleInvoker simpleInvoker;
     
     public void execute()
