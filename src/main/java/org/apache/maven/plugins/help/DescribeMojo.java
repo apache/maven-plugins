@@ -54,6 +54,8 @@ import org.apache.maven.plugin.descriptor.Parameter;
 import org.apache.maven.plugin.descriptor.PluginDescriptor;
 import org.apache.maven.plugin.version.PluginVersionNotFoundException;
 import org.apache.maven.plugin.version.PluginVersionResolutionException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
@@ -67,24 +69,30 @@ import org.codehaus.plexus.util.StringUtils;
  *
  * @version $Id$
  * @since 2.0
- * @goal describe
- * @requiresProject false
- * @aggregator
  * @see <a href="http://maven.apache.org/general.html#What_is_a_Mojo">What is a Mojo?</a>
  */
+@Mojo( name = "describe", requiresProject = false, aggregator = true )
 public class DescribeMojo
     extends AbstractHelpMojo
 {
-    /** The default indent size when writing description's Mojo. */
+    /**
+     * The default indent size when writing description's Mojo.
+     */
     private static final int INDENT_SIZE = 2;
 
-    /** For unknown values */
+    /**
+     * For unknown values
+     */
     private static final String UNKNOWN = "Unknown";
 
-    /** For not defined values */
+    /**
+     * For not defined values
+     */
     private static final String NOT_DEFINED = "Not defined";
 
-    /** For deprecated values */
+    /**
+     * For deprecated values
+     */
     private static final String NO_REASON = "No reason given";
 
     // ----------------------------------------------------------------------
@@ -94,25 +102,23 @@ public class DescribeMojo
     /**
      * Maven Artifact Factory component.
      *
-     * @component
      * @since 2.1
      */
+    @Component
     private ArtifactFactory artifactFactory;
 
     /**
      * The Plugin manager instance used to resolve Plugin descriptors.
-     *
-     * @component role="org.apache.maven.plugin.PluginManager"
      */
+    @Component( role = PluginManager.class )
     private PluginManager pluginManager;
 
     /**
      * The project builder instance used to retrieve the super-project instance
      * in the event there is no current MavenProject instance. Some MavenProject
      * instance has to be present to use in the plugin manager APIs.
-     *
-     * @component role="org.apache.maven.project.MavenProjectBuilder"
      */
+    @Component( role = MavenProjectBuilder.class )
     private MavenProjectBuilder projectBuilder;
 
     // ----------------------------------------------------------------------
@@ -124,50 +130,38 @@ public class DescribeMojo
      * the help plugin should be able to function on its own. If this
      * parameter is empty at execution time, this Mojo will instead use the
      * super-project.
-     *
-     * @parameter expression="${project}"
-     * @readonly
      */
+    @Component
     private MavenProject project;
 
     /**
      * The current user system settings for use in Maven. This is used for
      * plugin manager API calls.
-     *
-     * @parameter expression="${settings}"
-     * @required
-     * @readonly
      */
+    @Component
     private Settings settings;
 
     /**
      * The current build session instance. This is used for
      * plugin manager API calls.
-     *
-     * @parameter expression="${session}"
-     * @required
-     * @readonly
      */
+    @Component
     private MavenSession session;
 
     /**
      * The local repository ArtifactRepository instance. This is used
      * for plugin manager API calls.
-     *
-     * @parameter expression="${localRepository}"
-     * @required
-     * @readonly
      */
+    @org.apache.maven.plugins.annotations.Parameter( property = "localRepository", required = true, readonly = true )
     private ArtifactRepository localRepository;
 
     /**
      * Remote repositories used for the project.
      *
      * @since 2.1
-     * @parameter expression="${project.remoteArtifactRepositories}"
-     * @required
-     * @readonly
      */
+    @org.apache.maven.plugins.annotations.Parameter( property = "project.remoteArtifactRepositories", required = true,
+                                                     readonly = true )
     private List remoteRepositories;
 
     /**
@@ -178,36 +172,32 @@ public class DescribeMojo
      * <li>groupId:artifactId, i.e. 'org.apache.maven.plugins:maven-help-plugin'</li>
      * <li>groupId:artifactId:version, i.e. 'org.apache.maven.plugins:maven-help-plugin:2.0'</li>
      * </ol>
-     *
-     * @parameter expression="${plugin}" alias="prefix"
      */
+    @org.apache.maven.plugins.annotations.Parameter( property = "plugin", alias = "prefix" )
     private String plugin;
 
     /**
      * The Maven Plugin <code>groupId</code> to describe.
      * <br/>
      * <b>Note</b>: Should be used with <code>artifactId</code> parameter.
-     *
-     * @parameter expression="${groupId}"
      */
+    @org.apache.maven.plugins.annotations.Parameter( property = "groupId" )
     private String groupId;
 
     /**
      * The Maven Plugin <code>artifactId</code> to describe.
      * <br/>
      * <b>Note</b>: Should be used with <code>groupId</code> parameter.
-     *
-     * @parameter expression="${artifactId}"
      */
+    @org.apache.maven.plugins.annotations.Parameter( property = "artifactId" )
     private String artifactId;
 
     /**
      * The Maven Plugin <code>version</code> to describe.
      * <br/>
      * <b>Note</b>: Should be used with <code>groupId/artifactId</code> parameters.
-     *
-     * @parameter expression="${version}"
      */
+    @org.apache.maven.plugins.annotations.Parameter( property = "version" )
     private String version;
 
     /**
@@ -215,33 +205,33 @@ public class DescribeMojo
      * If this parameter is specified, only the corresponding goal (Mojo) will be described,
      * rather than the whole Plugin.
      *
-     * @parameter expression="${goal}" alias="mojo"
      * @since 2.1, was <code>mojo</code> in 2.0.x
      */
+    @org.apache.maven.plugins.annotations.Parameter( property = "goal", alias = "mojo" )
     private String goal;
 
     /**
      * This flag specifies that a detailed (verbose) list of goal (Mojo) information should be given.
      *
-     * @parameter expression="${detail}" default-value="false" alias="full"
      * @since 2.1, was <code>full</code> in 2.0.x
      */
+    @org.apache.maven.plugins.annotations.Parameter( property = "detail", defaultValue = "false", alias = "full" )
     private boolean detail;
 
     /**
      * This flag specifies that a medium list of goal (Mojo) information should be given.
      *
-     * @parameter expression="${medium}" default-value="true"
      * @since 2.0.2
      */
+    @org.apache.maven.plugins.annotations.Parameter( property = "medium", defaultValue = "true" )
     private boolean medium;
 
     /**
      * This flag specifies that a minimal list of goal (Mojo) information should be given.
      *
-     * @parameter expression="${minimal}" default-value="false"
      * @since 2.1
      */
+    @org.apache.maven.plugins.annotations.Parameter( property = "minimal", defaultValue = "false" )
     private boolean minimal;
 
     /**
@@ -249,9 +239,9 @@ public class DescribeMojo
      * <br/>
      * <code>mvn [options] [&lt;goal(s)&gt;] [&lt;phase(s)&gt;]</code>
      *
-     * @parameter expression="${cmd}"
      * @since 2.1
      */
+    @org.apache.maven.plugins.annotations.Parameter( property = "cmd" )
     private String cmd;
 
     // ----------------------------------------------------------------------

@@ -19,20 +19,10 @@ package org.apache.maven.plugins.help;
  * under the License.
  */
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringWriter;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Properties;
-import java.util.TreeMap;
-import java.util.jar.JarEntry;
-import java.util.jar.JarInputStream;
-
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.converters.MarshallingContext;
+import com.thoughtworks.xstream.converters.collections.PropertiesConverter;
+import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import org.apache.commons.lang.ClassUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.ArtifactUtils;
@@ -51,6 +41,9 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.PluginParameterExpressionEvaluator;
 import org.apache.maven.plugin.descriptor.MojoDescriptor;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
@@ -62,10 +55,19 @@ import org.codehaus.plexus.components.interactivity.InputHandler;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
 
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.converters.MarshallingContext;
-import com.thoughtworks.xstream.converters.collections.PropertiesConverter;
-import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringWriter;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Properties;
+import java.util.TreeMap;
+import java.util.jar.JarEntry;
+import java.util.jar.JarInputStream;
 
 /**
  * Evaluates Maven expressions given by the user in an interactive mode.
@@ -73,9 +75,8 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
  * @since 2.1
- * @goal evaluate
- * @requiresProject false
  */
+@Mojo( name = "evaluate", requiresProject = false )
 public class EvaluateMojo
     extends AbstractMojo
 {
@@ -85,40 +86,36 @@ public class EvaluateMojo
 
     /**
      * Maven Artifact Factory component.
-     *
-     * @component
      */
+    @Component
     private ArtifactFactory artifactFactory;
 
     /**
      * Input handler, needed for command line handling.
-     *
-     * @component
      */
+    @Component
     private InputHandler inputHandler;
 
     /**
      * Maven Project Builder component.
-     *
-     * @component
      */
+    @Component
     private MavenProjectBuilder mavenProjectBuilder;
 
     /**
-     * @component
      */
+    @Component
     private PathTranslator pathTranslator;
 
     /**
      * Artifact Resolver component.
-     *
-     * @component
      */
+    @Component
     private ArtifactResolver resolver;
 
     /**
-     * @component
      */
+    @Component
     private LoggerRetriever loggerRetriever;
 
     // ----------------------------------------------------------------------
@@ -129,61 +126,44 @@ public class EvaluateMojo
      * An artifact for evaluating Maven expressions.
      * <br/>
      * <b>Note</b>: Should respect the Maven format, i.e. <code>groupId:artifactId[:version][:classifier]</code>.
-     *
-     * @parameter expression="${artifact}"
      */
+    @Parameter( property = "artifact" )
     private String artifact;
 
     /**
      * An expression to evaluate instead of prompting. Note that this <i>must not</i> include the surrounding ${...}.
-     *
-     * @parameter expression="${expression}"
      */
+    @Parameter( property = "expression" )
     private String expression;
 
     /**
      * Local Repository.
-     *
-     * @parameter expression="${localRepository}"
-     * @required
-     * @readonly
      */
+    @Parameter( property = "localRepository", required = true, readonly = true )
     protected ArtifactRepository localRepository;
 
     /**
      * The current Maven project or the super pom.
-     *
-     * @parameter expression="${project}"
-     * @readonly
-     * @required
      */
+    @Component
     protected MavenProject project;
 
     /**
      * Remote repositories used for the project.
-     *
-     * @parameter expression="${project.remoteArtifactRepositories}"
-     * @readonly
-     * @required
      */
+    @Parameter( property = "project.remoteArtifactRepositories", required = true, readonly = true )
     private List remoteRepositories;
 
     /**
      * The system settings for Maven.
-     *
-     * @parameter expression="${settings}"
-     * @readonly
-     * @required
      */
+    @Component
     protected Settings settings;
 
     /**
      * The current Maven session.
-     *
-     * @parameter expression="${session}"
-     * @required
-     * @readonly
      */
+    @Component
     private MavenSession session;
 
     // ----------------------------------------------------------------------
