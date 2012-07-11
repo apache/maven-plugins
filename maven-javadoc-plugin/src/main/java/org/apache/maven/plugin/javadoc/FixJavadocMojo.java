@@ -19,6 +19,11 @@ package org.apache.maven.plugin.javadoc;
  * under the License.
  */
 
+import org.apache.maven.plugins.annotations.Execute;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.ResolutionScope;
+
 /**
  * Fix Javadoc documentation and tags for the <code>Java code</code> for the project.
  * See <a href="http://download.oracle.com/javase/1.5.0/docs/tooldocs/windows/javadoc.html#wheretags">Where Tags Can Be Used</a>.
@@ -26,10 +31,9 @@ package org.apache.maven.plugin.javadoc;
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
  * @since 2.6
- * @goal fix
- * @requiresDependencyResolution compile
- * @execute phase="compile"
  */
+@Mojo( name = "fix", requiresDependencyResolution = ResolutionScope.COMPILE )
+@Execute( phase = LifecyclePhase.COMPILE )
 public class FixJavadocMojo
     extends AbstractFixJavadocMojo
 {

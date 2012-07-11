@@ -23,10 +23,16 @@ import org.apache.maven.archiver.MavenArchiveConfiguration;
 import org.apache.maven.archiver.MavenArchiver;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.artifact.handler.ArtifactHandler;
+import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProjectHelper;
 import org.apache.maven.reporting.MavenReportException;
-import org.apache.maven.model.Resource;
+import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
 import org.codehaus.plexus.archiver.jar.ManifestException;
@@ -42,14 +48,15 @@ import java.util.Locale;
  *
  * @version $Id$
  * @since 2.0
- * @goal jar
- * @phase package
  */
+@Mojo( name = "jar", defaultPhase = LifecyclePhase.PACKAGE, requiresDependencyResolution = ResolutionScope.COMPILE)
 public class JavadocJar
     extends AbstractJavadocMojo
 {
-    /** Includes all generated Javadoc files */
-    private static final String[] DEFAULT_INCLUDES = new String[] { "**/**" };
+    /**
+     * Includes all generated Javadoc files
+     */
+    private static final String[] DEFAULT_INCLUDES = new String[]{ "**/**" };
 
     /**
      * Excludes all processing files.
@@ -61,7 +68,7 @@ public class JavadocJar
      * @see AbstractJavadocMojo#FILES_FILE_NAME
      */
     private static final String[] DEFAULT_EXCLUDES =
-        new String[] { DEBUG_JAVADOC_SCRIPT_NAME, OPTIONS_FILE_NAME, PACKAGES_FILE_NAME, ARGFILE_FILE_NAME,
+        new String[]{ DEBUG_JAVADOC_SCRIPT_NAME, OPTIONS_FILE_NAME, PACKAGES_FILE_NAME, ARGFILE_FILE_NAME,
             FILES_FILE_NAME };
 
     // ----------------------------------------------------------------------
@@ -70,17 +77,16 @@ public class JavadocJar
 
     /**
      * Used for attaching the artifact in the project.
-     *
-     * @component
      */
+    @Component
     private MavenProjectHelper projectHelper;
 
     /**
      * The Jar archiver.
      *
-     * @component role="org.codehaus.plexus.archiver.Archiver" roleHint="jar"
      * @since 2.5
      */
+    @Component( role = Archiver.class, hint = "jar" )
     private JarArchiver jarArchiver;
 
     // ----------------------------------------------------------------------
@@ -91,61 +97,57 @@ public class JavadocJar
      * Specifies the destination directory where javadoc saves the generated HTML files.
      * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#d">d</a>.
      *
-     * @parameter expression="${destDir}"
      * @deprecated
      */
+    @Parameter( property = "destDir" )
     private File destDir;
 
     /**
      * Specifies the directory where the generated jar file will be put.
-     *
-     * @parameter expression="${project.build.directory}"
      */
+    @Parameter( property = "project.build.directory" )
     private String jarOutputDirectory;
 
     /**
      * Specifies the filename that will be used for the generated jar file. Please note that <code>-javadoc</code>
      * or <code>-test-javadoc</code> will be appended to the file name.
-     *
-     * @parameter expression="${project.build.finalName}"
      */
+    @Parameter( property = "project.build.finalName" )
     private String finalName;
 
     /**
      * Specifies whether to attach the generated artifact to the project helper.
      * <br/>
-     *
-     * @parameter expression="${attach}" default-value="true"
      */
+    @Parameter( property = "attach", defaultValue = "true" )
     private boolean attach;
 
     /**
      * The archive configuration to use.
      * See <a href="http://maven.apache.org/shared/maven-archiver/index.html">Maven Archiver Reference</a>.
      *
-     * @parameter
      * @since 2.5
      */
+    @Parameter
     private MavenArchiveConfiguration archive = new MavenArchiveConfiguration();
 
     /**
      * Path to the default MANIFEST file to use. It will be used if
      * <code>useDefaultManifestFile</code> is set to <code>true</code>.
      *
-     * @parameter expression="${project.build.outputDirectory}/META-INF/MANIFEST.MF"
-     * @required
-     * @readonly
      * @since 2.5
      */
+    @Parameter( defaultValue = "${project.build.outputDirectory}/META-INF/MANIFEST.MF", required = true,
+                readonly = true )
     private File defaultManifestFile;
 
     /**
      * Set this to <code>true</code> to enable the use of the <code>defaultManifestFile</code>.
      * <br/>
      *
-     * @parameter default-value="false"
      * @since 2.5
      */
+    @Parameter( defaultValue = "false" )
     private boolean useDefaultManifestFile;
 
     /** {@inheritDoc} */

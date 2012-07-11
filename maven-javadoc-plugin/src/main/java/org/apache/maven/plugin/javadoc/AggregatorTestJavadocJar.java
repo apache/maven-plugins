@@ -19,16 +19,19 @@ package org.apache.maven.plugin.javadoc;
  * under the License.
  */
 
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.ResolutionScope;
+
 /**
  * Bundles the Javadoc documentation for <code>Java Test code</code> in an <b>aggregator</b> project into a jar
  * using the standard <a href="http://java.sun.com/j2se/javadoc/">Javadoc Tool</a>.
  *
  * @version $Id$
  * @since 2.6
- * @goal test-aggregate-jar
- * @phase package
- * @aggregator
  */
+@Mojo( name = "test-aggregate-jar", defaultPhase = LifecyclePhase.PACKAGE, aggregator = true,
+       requiresDependencyResolution = ResolutionScope.TEST )
 public class AggregatorTestJavadocJar
     extends TestJavadocJar
 {

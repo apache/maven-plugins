@@ -19,16 +19,20 @@ package org.apache.maven.plugin.javadoc;
  * under the License.
  */
 
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
+import org.apache.maven.plugin.javadoc.resolver.SourceResolverConfig;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.util.StringUtils;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
-import org.apache.maven.plugin.javadoc.resolver.SourceResolverConfig;
-import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.util.StringUtils;
 
 /**
  * Bundles the Javadoc documentation for <code>test Java code</code> in an <b>NON aggregator</b> project into
@@ -37,10 +41,8 @@ import org.codehaus.plexus.util.StringUtils;
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
  * @since 2.5
- * @goal test-jar
- * @phase package
- * @requiresDependencyResolution test
  */
+@Mojo( name = "test-jar", defaultPhase = LifecyclePhase.PACKAGE, requiresDependencyResolution = ResolutionScope.TEST )
 public class TestJavadocJar
     extends JavadocJar
 {
@@ -53,10 +55,8 @@ public class TestJavadocJar
      * <br/>
      * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#d">d</a>.
      * <br/>
-     *
-     * @parameter default-value="${project.build.directory}/testapidocs"
-     * @required
      */
+    @Parameter( defaultValue = "${project.build.directory}/testapidocs", required = true )
     private File outputDirectory;
 
     /**
@@ -65,10 +65,10 @@ public class TestJavadocJar
      * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#doctitle">doctitle</a>.
      * <br/>
      *
-     * @parameter expression="${testDoctitle}" alias="doctitle"
-     * default-value="${project.name} ${project.version} Test API"
      * @since 2.5
      */
+    @Parameter( property = "testDoctitle", alias = "doctitle",
+                defaultValue = "${project.name} ${project.version} Test API" )
     private String testDoctitle;
 
     /**
@@ -78,10 +78,10 @@ public class TestJavadocJar
      * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#overview">overview</a>.
      * <br/>
      *
-     * @parameter expression="${testOverview}" alias="overview"
-     * default-value="${basedir}/src/test/javadoc/overview.html"
      * @since 2.5
      */
+    @Parameter( property = "testOverview", alias = "overview",
+                defaultValue = "${basedir}/src/test/javadoc/overview.html" )
     private File testOverview;
 
     /**
@@ -90,10 +90,10 @@ public class TestJavadocJar
      * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#windowtitle">windowtitle</a>.
      * <br/>
      *
-     * @parameter expression="${testWindowtitle}" alias="windowtitle"
-     * default-value="${project.name} ${project.version} Test API"
      * @since 2.5
      */
+    @Parameter( property = "testWindowtitle", alias = "windowtitle",
+                defaultValue = "${project.name} ${project.version} Test API" )
     private String testWindowtitle;
 
     // ----------------------------------------------------------------------
@@ -103,9 +103,9 @@ public class TestJavadocJar
     /**
      * Specifies the Test Javadoc resources directory to be included in the Javadoc (i.e. package.html, images...).
      *
-     * @parameter expression="${basedir}/src/test/javadoc" alias="javadocDirectory"
      * @since 2.5
      */
+    @Parameter( alias = "javadocDirectory", defaultValue = "${basedir}/src/test/javadoc" )
     private File testJavadocDirectory;
 
     // ----------------------------------------------------------------------

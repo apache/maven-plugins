@@ -89,6 +89,8 @@ import org.apache.maven.plugin.javadoc.options.io.xpp3.JavadocOptionsXpp3Writer;
 import org.apache.maven.plugin.javadoc.resolver.JavadocBundle;
 import org.apache.maven.plugin.javadoc.resolver.ResourceResolver;
 import org.apache.maven.plugin.javadoc.resolver.SourceResolverConfig;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
@@ -123,7 +125,6 @@ import org.codehaus.plexus.util.xml.Xpp3Dom;
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
  * @since 2.0
- * @requiresDependencyResolution compile
  * @see <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html">
  * The Java API Documentation Generator, 1.4.2</a>
  */
@@ -249,41 +250,40 @@ public abstract class AbstractJavadocMojo
      * Archiver manager
      *
      * @since 2.5
-     * @component
      */
+    @Component
     private ArchiverManager archiverManager;
 
     /**
      * Factory for creating artifact objects
-     *
-     * @component
      */
+    @Component
     private ArtifactFactory factory;
 
     /**
      * Used to resolve artifacts of aggregated modules
      *
      * @since 2.1
-     * @component
      */
+    @Component
     private ArtifactMetadataSource artifactMetadataSource;
 
     /**
      * Used for resolving artifacts
-     *
-     * @component
      */
+    @Component
     private ArtifactResolver resolver;
 
     /**
      * Project builder
      *
      * @since 2.5
-     * @component
      */
+    @Component
     private MavenProjectBuilder mavenProjectBuilder;
 
-    /** @component */
+    /** */
+    @Component
     private ToolchainManager toolchainManager;
 
     // ----------------------------------------------------------------------
@@ -293,39 +293,28 @@ public abstract class AbstractJavadocMojo
     /**
      * The current build session instance. This is used for
      * toolchain manager API calls.
-     *
-     * @parameter expression="${session}"
-     * @required
-     * @readonly
      */
+    @Component
     private MavenSession session;
 
     /**
      * The Maven Settings.
      *
      * @since 2.3
-     * @parameter default-value="${settings}"
-     * @required
-     * @readonly
      */
+    @Component
     private Settings settings;
 
     /**
      * The Maven Project Object
-     *
-     * @parameter expression="${project}"
-     * @required
-     * @readonly
      */
+    @Component
     protected MavenProject project;
 
     /**
      * Specify if the Javadoc should operate in offline mode.
-     *
-     * @parameter default-value="${settings.offline}"
-     * @required
-     * @readonly
      */
+    @Parameter( defaultValue = "${settings.offline}", required = true, readonly = true )
     private boolean isOffline;
 
     /**
@@ -335,18 +324,17 @@ public abstract class AbstractJavadocMojo
      * <br/>
      * See <a href="#docfilessubdirs">docfilessubdirs</a>.
      *
-     * @since 2.1
-     * @parameter expression="${basedir}/src/main/javadoc"
      * @see #docfilessubdirs
+     * @since 2.1
      */
+    @Parameter( defaultValue = "${basedir}/src/main/javadoc" )
     private File javadocDirectory;
 
     /**
      * Set an additional parameter(s) on the command line. This value should include quotes as necessary for
      * parameters that include spaces. Useful for a custom doclet.
-     *
-     * @parameter expression="${additionalparam}"
      */
+    @Parameter( property = "additionalparam" )
     private String additionalparam;
 
     /**
@@ -362,8 +350,8 @@ public abstract class AbstractJavadocMojo
      * See <a href="http://download.oracle.com/javase/1.4.2/docs/guide/net/properties.html">Networking Properties</a>.
      *
      * @since 2.3
-     * @parameter expression="${additionalJOption}"
      */
+    @Parameter( property = "additionalJOption" )
     private String additionalJOption;
 
     /**
@@ -385,38 +373,34 @@ public abstract class AbstractJavadocMojo
      * <br/>
      *
      * @since 2.5
-     * @parameter expression="${resourcesArtifacts}"
      */
+    @Parameter( property = "resourcesArtifacts" )
     private ResourcesArtifact[] resourcesArtifacts;
 
     /**
      * The local repository where the artifacts are located.
-     *
-     * @parameter expression="${localRepository}"
      */
+    @Parameter( property = "localRepository" )
     private ArtifactRepository localRepository;
 
     /**
      * The remote repositories where artifacts are located.
-     *
-     * @parameter expression="${project.remoteArtifactRepositories}"
      */
+    @Parameter( property = "project.remoteArtifactRepositories" )
     private List<ArtifactRepository> remoteRepositories;
 
     /**
      * The projects in the reactor for aggregation report.
-     *
-     * @parameter expression="${reactorProjects}"
-     * @readonly
      */
+    @Parameter( property = "reactorProjects", readonly = true )
     private List<MavenProject> reactorProjects;
 
     /**
      * Whether to build an aggregated report at the root, or build individual reports.
      *
-     * @parameter expression="${aggregate}" default-value="false"
      * @deprecated since 2.5. Use the goals <code>javadoc:aggregate</code> and <code>javadoc:test-aggregate</code> instead.
      */
+    @Parameter( property = "aggregate", defaultValue = "false" )
     protected boolean aggregate;
 
     /**
@@ -425,8 +409,8 @@ public abstract class AbstractJavadocMojo
      * <br/>
      *
      * @since 2.1
-     * @parameter expression="${debug}" default-value="false"
      */
+    @Parameter( property = "debug", defaultValue = "false" )
     private boolean debug;
 
     /**
@@ -434,16 +418,16 @@ public abstract class AbstractJavadocMojo
      * is sufficient to have the plugin use "javadoc" or "javadoc.exe" respectively from this directory.
      *
      * @since 2.3
-     * @parameter expression="${javadocExecutable}"
      */
+    @Parameter( property = "javadocExecutable" )
     private String javadocExecutable;
 
     /**
      * Version of the Javadoc Tool executable to use, ex. "1.3", "1.5".
      *
      * @since 2.3
-     * @parameter expression="${javadocVersion}"
      */
+    @Parameter( property = "javadocVersion" )
     private String javadocVersion;
 
     /**
@@ -455,16 +439,16 @@ public abstract class AbstractJavadocMojo
      * Specifies whether the Javadoc generation should be skipped.
      *
      * @since 2.5
-     * @parameter expression="${maven.javadoc.skip}" default-value="false"
      */
+    @Parameter( property = "maven.javadoc.skip", defaultValue = "false" )
     protected boolean skip;
 
     /**
      * Specifies if the build will fail if there are errors during javadoc execution or not.
      *
-     * @parameter expression="${maven.javadoc.failOnError}" default-value="true"
      * @since 2.5
      */
+    @Parameter( property = "maven.javadoc.failOnError", defaultValue = "true" )
     protected boolean failOnError;
 
     /**
@@ -483,9 +467,9 @@ public abstract class AbstractJavadocMojo
      * &lt;useStandardDocletOptions&gt;true&lt;/useStandardDocletOptions&gt;
      * </pre>
      *
-     * @parameter expression="${useStandardDocletOptions}" default-value="true"
      * @since 2.5
      */
+    @Parameter( property = "useStandardDocletOptions", defaultValue = "true" )
     protected boolean useStandardDocletOptions;
 
     /**
@@ -502,10 +486,10 @@ public abstract class AbstractJavadocMojo
      * </pre>
      * The added Javadoc <code>-link</code> parameter will be <code>http://commons.apache.org/lang/apidocs</code>.
      *
-     * @parameter expression="${detectLinks}" default-value="false"
      * @see #links
      * @since 2.6
      */
+    @Parameter( property = "detectLinks", defaultValue = "false" )
     private boolean detectLinks;
 
     /**
@@ -521,10 +505,10 @@ public abstract class AbstractJavadocMojo
      * The added Javadoc <code>-linkoffline</code> parameter for <b>module2</b> will be
      * <code>/absolute/path/to/</code><b>module1</b><code>/target/site/apidocs</code>
      *
-     * @parameter expression="${detectOfflineLinks}" default-value="true"
      * @see #offlineLinks
      * @since 2.6
      */
+    @Parameter( property = "detectOfflineLinks", defaultValue = "true" )
     private boolean detectOfflineLinks;
 
     /**
@@ -539,12 +523,12 @@ public abstract class AbstractJavadocMojo
      * See <a href="./apidocs/org/apache/maven/plugin/javadoc/AbstractJavadocMojo.html#DEFAULT_JAVA_API_LINKS">Javadoc</a> for the default values.
      * <br/>
      *
-     * @parameter expression="${detectJavaApiLink}" default-value="true"
      * @see #links
      * @see #javaApiLinks
      * @see #DEFAULT_JAVA_API_LINKS
      * @since 2.6
      */
+    @Parameter( property = "detectJavaApiLink", defaultValue = "true" )
     private boolean detectJavaApiLink;
 
     /**
@@ -555,19 +539,19 @@ public abstract class AbstractJavadocMojo
      * for the default values.
      * <br/>
      *
-     * @parameter expression="${javaApiLinks}"
      * @see #DEFAULT_JAVA_API_LINKS
      * @since 2.6
      */
+    @Parameter( property = "javaApiLinks" )
     private Properties javaApiLinks;
 
     /**
      * Flag controlling content validation of <code>package-list</code> resources. If set, the content of
      * <code>package-list</code> resources will be validated.
      *
-     * @parameter expression="${validateLinks}" default-value="false"
      * @since 2.8
      */
+    @Parameter( property = "validateLinks", defaultValue = "false" )
     private boolean validateLinks;
 
     // ----------------------------------------------------------------------
@@ -581,9 +565,9 @@ public abstract class AbstractJavadocMojo
      * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#bootclasspath">bootclasspath</a>.
      * <br/>
      *
-     * @parameter expression="${bootclasspath}"
      * @since 2.5
      */
+    @Parameter( property = "bootclasspath" )
     private String bootclasspath;
 
     /**
@@ -605,9 +589,9 @@ public abstract class AbstractJavadocMojo
      * See <a href="./apidocs/org/apache/maven/plugin/javadoc/options/BootclasspathArtifact.html">Javadoc</a>.
      * <br/>
      *
-     * @parameter expression="${bootclasspathArtifacts}"
      * @since 2.5
      */
+    @Parameter( property = "bootclasspathArtifacts" )
     private BootclasspathArtifact[] bootclasspathArtifacts;
 
     /**
@@ -617,18 +601,16 @@ public abstract class AbstractJavadocMojo
      * <br/>
      * Since <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/javadoc/whatsnew-1.4.html#summary">Java 1.4</a>.
      * <br/>
-     *
-     * @parameter expression="${breakiterator}" default-value="false"
      */
+    @Parameter( property = "breakiterator", defaultValue = "false" )
     private boolean breakiterator;
 
     /**
      * Specifies the class file that starts the doclet used in generating the documentation.
      * <br/>
      * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#doclet">doclet</a>.
-     *
-     * @parameter expression="${doclet}"
      */
+    @Parameter( property = "doclet" )
     private String doclet;
 
     /**
@@ -648,9 +630,8 @@ public abstract class AbstractJavadocMojo
      * <br/>
      * See <a href="./apidocs/org/apache/maven/plugin/javadoc/options/DocletArtifact.html">Javadoc</a>.
      * <br/>
-     *
-     * @parameter expression="${docletArtifact}"
      */
+    @Parameter( property = "docletArtifact" )
     private DocletArtifact docletArtifact;
 
     /**
@@ -674,8 +655,8 @@ public abstract class AbstractJavadocMojo
      * <br/>
      *
      * @since 2.1
-     * @parameter expression="${docletArtifacts}"
      */
+    @Parameter( property = "docletArtifacts" )
     private DocletArtifact[] docletArtifacts;
 
     /**
@@ -684,9 +665,8 @@ public abstract class AbstractJavadocMojo
      * a colon (<code>:</code>) or a semi-colon (<code>;</code>).
      * <br/>
      * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#docletpath">docletpath</a>.
-     *
-     * @parameter expression="${docletPath}"
      */
+    @Parameter( property = "docletPath" )
     private String docletPath;
 
     /**
@@ -698,9 +678,8 @@ public abstract class AbstractJavadocMojo
      * <b>Note</b>: In 2.4, the default value was locked to <code>ISO-8859-1</code> to ensure reproducing build, but
      * this was reverted in 2.5.
      * <br/>
-     *
-     * @parameter expression="${encoding}" default-value="${project.build.sourceEncoding}"
      */
+    @Parameter( property = "encoding", defaultValue = "${project.build.sourceEncoding}" )
     private String encoding;
 
     /**
@@ -716,9 +695,8 @@ public abstract class AbstractJavadocMojo
      * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#exclude">exclude</a>.
      * <br/>
      * Since <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/javadoc/whatsnew-1.4.html#summary">Java 1.4</a>.
-     *
-     * @parameter expression="${excludePackageNames}"
      */
+    @Parameter( property = "excludePackageNames" )
     private String excludePackageNames;
 
     /**
@@ -726,18 +704,16 @@ public abstract class AbstractJavadocMojo
      * colon (<code>:</code>) or a semi-colon (<code>;</code>).
      * <br/>
      * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#extdirs">extdirs</a>.
-     *
-     * @parameter expression="${extdirs}"
      */
+    @Parameter( property = "extdirs" )
     private String extdirs;
 
     /**
      * Specifies the locale that javadoc uses when generating documentation.
      * <br/>
      * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#locale">locale</a>.
-     *
-     * @parameter expression="${locale}"
      */
+    @Parameter( property = "locale" )
     private String locale;
 
     /**
@@ -745,10 +721,9 @@ public abstract class AbstractJavadocMojo
      * JVMs refer to this property as the <code>-Xmx</code> parameter. Example: '512' or '512m'.
      * The memory unit depends on the JVM used. The units supported could be: <code>k</code>, <code>kb</code>,
      * <code>m</code>, <code>mb</code>, <code>g</code>, <code>gb</code>, <code>t</code>, <code>tb</code>.
-     *  If no unit specified, the default unit is <code>m</code>.
-     *
-     * @parameter expression="${maxmemory}"
+     * If no unit specified, the default unit is <code>m</code>.
      */
+    @Parameter( property = "maxmemory" )
     private String maxmemory;
 
     /**
@@ -756,10 +731,9 @@ public abstract class AbstractJavadocMojo
      * JVMs refer to this property as the <code>-Xms</code> parameter. Example: '512' or '512m'.
      * The memory unit depends on the JVM used. The units supported could be: <code>k</code>, <code>kb</code>,
      * <code>m</code>, <code>mb</code>, <code>g</code>, <code>gb</code>, <code>t</code>, <code>tb</code>.
-     *  If no unit specified, the default unit is <code>m</code>.
-     *
-     * @parameter expression="${minmemory}"
+     * If no unit specified, the default unit is <code>m</code>.
      */
+    @Parameter( property = "minmemory" )
     private String minmemory;
 
     /**
@@ -768,9 +742,8 @@ public abstract class AbstractJavadocMojo
      * <br/>
      * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#1.1">1.1</a>.
      * <br/>
-     *
-     * @parameter expression="${old}" default-value="false"
      */
+    @Parameter( property = "old", defaultValue = "false" )
     private boolean old;
 
     /**
@@ -781,9 +754,8 @@ public abstract class AbstractJavadocMojo
      * <br/>
      * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#overview">overview</a>.
      * <br/>
-     *
-     * @parameter expression="${overview}" default-value="${basedir}/src/main/javadoc/overview.html"
      */
+    @Parameter( property = "overview", defaultValue = "${basedir}/src/main/javadoc/overview.html" )
     private File overview;
 
     /**
@@ -792,9 +764,9 @@ public abstract class AbstractJavadocMojo
      * proxy configuration set in the pom.
      * <br/>
      *
-     * @parameter expression="${proxyHost}"
      * @deprecated since 2.4. Instead of, configure an active proxy host in <code>settings.xml</code>.
      */
+    @Parameter( property = "proxyHost" )
     private String proxyHost;
 
     /**
@@ -803,9 +775,9 @@ public abstract class AbstractJavadocMojo
      * proxy configuration set in the pom.
      * <br/>
      *
-     * @parameter expression="${proxyPort}"
      * @deprecated since 2.4. Instead of, configure an active proxy port in <code>settings.xml</code>.
      */
+    @Parameter( property = "proxyPort" )
     private int proxyPort;
 
     /**
@@ -819,9 +791,8 @@ public abstract class AbstractJavadocMojo
      * <br/>
      * Since Java 5.0.
      * <br/>
-     *
-     * @parameter expression="${quiet}" default-value="false"
      */
+    @Parameter( property = "quiet", defaultValue = "false" )
     private boolean quiet;
 
     /**
@@ -838,9 +809,8 @@ public abstract class AbstractJavadocMojo
      * (shows all classes and members)</li>
      * </ul>
      * <br/>
-     *
-     * @parameter expression="${show}" default-value="protected"
      */
+    @Parameter( property = "show", defaultValue = "protected" )
     private String show;
 
     /**
@@ -849,9 +819,8 @@ public abstract class AbstractJavadocMojo
      * See <a href="http://download.oracle.com/javase/6/docs/technotes/tools/windows/javadoc.html#source">source</a>.
      * <br/>
      * Since <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/javadoc/whatsnew-1.4.html#summary">Java 1.4</a>.
-     *
-     * @parameter expression="${source}"
      */
+    @Parameter( property = "source" )
     private String source;
 
     /**
@@ -859,9 +828,8 @@ public abstract class AbstractJavadocMojo
      * multiple paths by separating them with a colon (<code>:</code>) or a semi-colon (<code>;</code>).
      * <br/>
      * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#sourcepath">sourcepath</a>.
-     *
-     * @parameter expression="${sourcepath}"
      */
+    @Parameter( property = "sourcepath" )
     private String sourcepath;
 
     /**
@@ -871,9 +839,8 @@ public abstract class AbstractJavadocMojo
      * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#subpackages">subpackages</a>.
      * <br/>
      * Since <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/javadoc/whatsnew-1.4.html#summary">Java 1.4</a>.
-     *
-     * @parameter expression="${subpackages}"
      */
+    @Parameter( property = "subpackages" )
     private String subpackages;
 
     /**
@@ -881,9 +848,8 @@ public abstract class AbstractJavadocMojo
      * <br/>
      * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#verbose">verbose</a>.
      * <br/>
-     *
-     * @parameter expression="${verbose}" default-value="false"
      */
+    @Parameter( property = "verbose", defaultValue = "false" )
     private boolean verbose;
 
     // ----------------------------------------------------------------------
@@ -895,9 +861,8 @@ public abstract class AbstractJavadocMojo
      * <br/>
      * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#author">author</a>.
      * <br/>
-     *
-     * @parameter expression="${author}" default-value="true"
      */
+    @Parameter( property = "author", defaultValue = "true" )
     private boolean author;
 
     /**
@@ -907,10 +872,9 @@ public abstract class AbstractJavadocMojo
      * <br/>
      * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#bottom">bottom</a>.
      * <br/>
-     *
-     * @parameter expression="${bottom}"
-     * default-value="Copyright &#169; {inceptionYear}-{currentYear} {organizationName}. All Rights Reserved."
      */
+    @Parameter( property = "bottom",
+                defaultValue = "Copyright &#169; {inceptionYear}-{currentYear} {organizationName}. All Rights Reserved." )
     private String bottom;
 
     /**
@@ -919,9 +883,8 @@ public abstract class AbstractJavadocMojo
      * <br/>
      * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#charset">charset</a>.
      * <br/>
-     *
-     * @parameter expression="${charset}"
      */
+    @Parameter( property = "charset" )
     private String charset;
 
     /**
@@ -929,9 +892,8 @@ public abstract class AbstractJavadocMojo
      * <code>UTF-8</code>.
      * <br/>
      * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#docencoding">docencoding</a>.
-     *
-     * @parameter expression="${docencoding}" default-value="${project.reporting.outputEncoding}"
      */
+    @Parameter( property = "docencoding", defaultValue = "${project.reporting.outputEncoding}" )
     private String docencoding;
 
     /**
@@ -947,10 +909,10 @@ public abstract class AbstractJavadocMojo
      * See <a href="#javadocDirectory">javadocDirectory</a>.
      * <br/>
      *
-     * @parameter expression="${docfilessubdirs}" default-value="false"
      * @see #excludedocfilessubdir
      * @see #javadocDirectory
      */
+    @Parameter( property = "docfilessubdirs", defaultValue = "false" )
     private boolean docfilessubdirs;
 
     /**
@@ -958,9 +920,8 @@ public abstract class AbstractJavadocMojo
      * <br/>
      * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#doctitle">doctitle</a>.
      * <br/>
-     *
-     * @parameter expression="${doctitle}" default-value="${project.name} ${project.version} API"
      */
+    @Parameter( property = "doctitle", defaultValue = "${project.name} ${project.version} API" )
     private String doctitle;
 
     /**
@@ -972,18 +933,17 @@ public abstract class AbstractJavadocMojo
      * <br/>
      * Since <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/javadoc/whatsnew-1.4.html#summary">Java 1.4</a>.
      *
-     * @parameter expression="${excludedocfilessubdir}"
      * @see #docfilessubdirs
      */
+    @Parameter( property = "excludedocfilessubdir" )
     private String excludedocfilessubdir;
 
     /**
      * Specifies the footer text to be placed at the bottom of each output file.
      * <br/>
      * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#footer">footer</a>.
-     *
-     * @parameter expression="${footer}"
      */
+    @Parameter( property = "footer" )
     private String footer;
 
     /**
@@ -1017,18 +977,16 @@ public abstract class AbstractJavadocMojo
      * <br/>
      * See <a href="./apidocs/org/apache/maven/plugin/javadoc/options/Group.html">Javadoc</a>.
      * <br/>
-     *
-     * @parameter expression="${groups}"
      */
+    @Parameter( property = "groups" )
     private Group[] groups;
 
     /**
      * Specifies the header text to be placed at the top of each output file.
      * <br/>
      * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#header">header</a>.
-     *
-     * @parameter expression="${header}"
      */
+    @Parameter( property = "header" )
     private String header;
 
     /**
@@ -1041,7 +999,7 @@ public abstract class AbstractJavadocMojo
      * <br/>
      * Since 2.6, it could be also be a path from a resource in the current project source directories
      * (i.e. <code>src/main/java</code>, <code>src/main/resources</code> or <code>src/main/javadoc</code>)
-     *  or from a resource in the Javadoc plugin dependencies, for instance:
+     * or from a resource in the Javadoc plugin dependencies, for instance:
      * <pre>
      * &lt;helpfile&gt;path/to/your/resource/yourhelp-doc.html&lt;/helpfile&gt;
      * </pre>
@@ -1072,9 +1030,8 @@ public abstract class AbstractJavadocMojo
      * <code>groupId:artifactId:version</code> javadoc plugin dependency.
      * <br/>
      * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#helpfile">helpfile</a>.
-     *
-     * @parameter expression="${helpfile}"
      */
+    @Parameter( property = "helpfile" )
     private String helpfile;
 
     /**
@@ -1090,8 +1047,8 @@ public abstract class AbstractJavadocMojo
      * <br/>
      *
      * @since 2.1
-     * @parameter expression="${keywords}" default-value="false"
      */
+    @Parameter( property = "keywords", defaultValue = "false" )
     private boolean keywords;
 
     /**
@@ -1114,10 +1071,10 @@ public abstract class AbstractJavadocMojo
      * </ol>
      * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#link">link</a>.
      *
-     * @parameter expression="${links}"
      * @see #detectLinks
      * @see #detectJavaApiLink
      */
+    @Parameter( property = "links" )
     protected ArrayList<String> links;
 
     /**
@@ -1128,9 +1085,8 @@ public abstract class AbstractJavadocMojo
      * <br/>
      * Since <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/javadoc/whatsnew-1.4.html#summary">Java 1.4</a>.
      * <br/>
-     *
-     * @parameter expression="${linksource}" default-value="false"
      */
+    @Parameter( property = "linksource", defaultValue = "false" )
     private boolean linksource;
 
     /**
@@ -1140,9 +1096,8 @@ public abstract class AbstractJavadocMojo
      * <br/>
      * Since <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/javadoc/whatsnew-1.4.html#summary">Java 1.4</a>.
      * <br/>
-     *
-     * @parameter expression="${nocomment}" default-value="false"
      */
+    @Parameter( property = "nocomment", defaultValue = "false" )
     private boolean nocomment;
 
     /**
@@ -1150,9 +1105,8 @@ public abstract class AbstractJavadocMojo
      * <br/>
      * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#nodeprecated">nodeprecated</a>.
      * <br/>
-     *
-     * @parameter expression="${nodeprecated}" default-value="false"
      */
+    @Parameter( property = "nodeprecated", defaultValue = "false" )
     private boolean nodeprecated;
 
     /**
@@ -1162,9 +1116,8 @@ public abstract class AbstractJavadocMojo
      * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#nodeprecatedlist">
      * nodeprecatedlist</a>.
      * <br/>
-     *
-     * @parameter expression="${nodeprecatedlist}" default-value="false"
      */
+    @Parameter( property = "nodeprecatedlist", defaultValue = "false" )
     private boolean nodeprecatedlist;
 
     /**
@@ -1174,9 +1127,8 @@ public abstract class AbstractJavadocMojo
      * <br/>
      * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#nohelp">nohelp</a>.
      * <br/>
-     *
-     * @parameter expression="${nohelp}" default-value="false"
      */
+    @Parameter( property = "nohelp", defaultValue = "false" )
     private boolean nohelp;
 
     /**
@@ -1186,9 +1138,8 @@ public abstract class AbstractJavadocMojo
      * <br/>
      * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#noindex">noindex</a>.
      * <br/>
-     *
-     * @parameter expression="${noindex}" default-value="false"
      */
+    @Parameter( property = "noindex", defaultValue = "false" )
     private boolean noindex;
 
     /**
@@ -1196,9 +1147,8 @@ public abstract class AbstractJavadocMojo
      * <br/>
      * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#nonavbar">nonavbar</a>.
      * <br/>
-     *
-     * @parameter expression="${nonavbar}" default-value="false"
      */
+    @Parameter( property = "nonavbar", defaultValue = "false" )
     private boolean nonavbar;
 
     /**
@@ -1210,8 +1160,8 @@ public abstract class AbstractJavadocMojo
      * <br/>
      *
      * @since 2.4
-     * @parameter expression="${nooverview}" default-value="false"
      */
+    @Parameter( property = "nooverview", defaultValue = "false" )
     private boolean nooverview;
 
     /**
@@ -1225,9 +1175,8 @@ public abstract class AbstractJavadocMojo
      * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#noqualifier">noqualifier</a>.
      * <br/>
      * Since <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/javadoc/whatsnew-1.4.html#summary">Java 1.4</a>.
-     *
-     * @parameter expression="${noqualifier}"
      */
+    @Parameter( property = "noqualifier" )
     private String noqualifier;
 
     /**
@@ -1235,9 +1184,8 @@ public abstract class AbstractJavadocMojo
      * <br/>
      * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#nosince">nosince</a>.
      * <br/>
-     *
-     * @parameter expression="${nosince}" default-value="false"
      */
+    @Parameter( property = "nosince", defaultValue = "false" )
     private boolean nosince;
 
     /**
@@ -1250,8 +1198,8 @@ public abstract class AbstractJavadocMojo
      * <br/>
      *
      * @since 2.1
-     * @parameter expression="${notimestamp}" default-value="false"
      */
+    @Parameter( property = "notimestamp", defaultValue = "false" )
     private boolean notimestamp;
 
     /**
@@ -1259,9 +1207,8 @@ public abstract class AbstractJavadocMojo
      * <br/>
      * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#notree">notree</a>.
      * <br/>
-     *
-     * @parameter expression="${notree}" default-value="false"
      */
+    @Parameter( property = "notree", defaultValue = "false" )
     private boolean notree;
 
     /**
@@ -1285,9 +1232,8 @@ public abstract class AbstractJavadocMojo
      * <br/>
      * See <a href="./apidocs/org/apache/maven/plugin/javadoc/options/OfflineLink.html">Javadoc</a>.
      * <br/>
-     *
-     * @parameter expression="${offlineLinks}"
      */
+    @Parameter( property = "offlineLinks" )
     private OfflineLink[] offlineLinks;
 
     /**
@@ -1295,10 +1241,9 @@ public abstract class AbstractJavadocMojo
      * <br/>
      * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#d">d</a>.
      * <br/>
-     *
-     * @parameter expression="${destDir}" alias="destDir" default-value="${project.build.directory}/apidocs"
-     * @required
      */
+    @Parameter( property = "destDir", alias = "destDir", defaultValue = "${project.build.directory}/apidocs",
+                required = true )
     protected File outputDirectory;
 
     /**
@@ -1308,8 +1253,8 @@ public abstract class AbstractJavadocMojo
      * Java 1.4.2</a>.
      *
      * @since 2.1
-     * @parameter expression="${packagesheader}"
      */
+    @Parameter( property = "packagesheader" )
     private String packagesheader;
 
     /**
@@ -1317,9 +1262,8 @@ public abstract class AbstractJavadocMojo
      * <br/>
      * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#serialwarn">serialwarn</a>
      * <br/>
-     *
-     * @parameter expression="${serialwarn}" default-value="false"
      */
+    @Parameter( property = "serialwarn", defaultValue = "false" )
     private boolean serialwarn;
 
     /**
@@ -1335,8 +1279,8 @@ public abstract class AbstractJavadocMojo
      * Since Java 5.0.
      *
      * @since 2.1
-     * @parameter expression="${sourcetab}" alias="linksourcetab"
      */
+    @Parameter( property = "sourcetab", alias = "linksourcetab" )
     private int sourcetab;
 
     /**
@@ -1347,9 +1291,8 @@ public abstract class AbstractJavadocMojo
      * <br/>
      * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#splitindex">splitindex</a>.
      * <br/>
-     *
-     * @parameter expression="${splitindex}" default-value="false"
      */
+    @Parameter( property = "splitindex", defaultValue = "false" )
     private boolean splitindex;
 
     /**
@@ -1358,9 +1301,8 @@ public abstract class AbstractJavadocMojo
      * <br/>
      * Possible values: <code>maven<code> or <code>java</code>.
      * <br/>
-     *
-     * @parameter expression="${stylesheet}" default-value="java"
      */
+    @Parameter( property = "stylesheet", defaultValue = "java" )
     private String stylesheet;
 
     /**
@@ -1370,7 +1312,7 @@ public abstract class AbstractJavadocMojo
      * <br/>
      * Since 2.6, it could be also be a path from a resource in the current project source directories
      * (i.e. <code>src/main/java</code>, <code>src/main/resources</code> or <code>src/main/javadoc</code>)
-     *  or from a resource in the Javadoc plugin dependencies, for instance:
+     * or from a resource in the Javadoc plugin dependencies, for instance:
      * <pre>
      * &lt;stylesheetfile&gt;path/to/your/resource/yourstylesheet.css&lt;/stylesheetfile&gt;
      * </pre>
@@ -1402,9 +1344,8 @@ public abstract class AbstractJavadocMojo
      * <br/>
      * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#stylesheetfile">
      * stylesheetfile</a>.
-     *
-     * @parameter expression="${stylesheetfile}"
      */
+    @Parameter( property = "stylesheetfile" )
     private String stylesheetfile;
 
     /**
@@ -1413,9 +1354,8 @@ public abstract class AbstractJavadocMojo
      * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#taglet">taglet</a>.
      * <br/>
      * Since <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/javadoc/whatsnew-1.4.html#summary">Java 1.4</a>.
-     *
-     * @parameter expression="${taglet}"
      */
+    @Parameter( property = "taglet" )
     private String taglet;
 
     /**
@@ -1445,8 +1385,8 @@ public abstract class AbstractJavadocMojo
      * <br/>
      *
      * @since 2.1
-     * @parameter expression="${tagletArtifact}"
      */
+    @Parameter( property = "tagletArtifact" )
     private TagletArtifact tagletArtifact;
 
     /**
@@ -1473,8 +1413,8 @@ public abstract class AbstractJavadocMojo
      * <br/>
      *
      * @since 2.5
-     * @parameter expression="${tagletArtifacts}"
      */
+    @Parameter( property = "tagletArtifacts" )
     private TagletArtifact[] tagletArtifacts;
 
     /**
@@ -1484,9 +1424,8 @@ public abstract class AbstractJavadocMojo
      * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#tagletpath">tagletpath</a>.
      * <br/>
      * Since <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/javadoc/whatsnew-1.4.html#summary">Java 1.4</a>.
-     *
-     * @parameter expression="${tagletpath}"
      */
+    @Parameter( property = "tagletpath" )
     private String tagletpath;
 
     /**
@@ -1515,8 +1454,8 @@ public abstract class AbstractJavadocMojo
      * <br/>
      *
      * @since 2.1
-     * @parameter expression="${taglets}"
      */
+    @Parameter( property = "taglets" )
     private Taglet[] taglets;
 
     /**
@@ -1538,20 +1477,19 @@ public abstract class AbstractJavadocMojo
      * </pre>
      * <b>Note</b>: the placement should be a combinaison of Xaoptcmf letters:
      * <ul>
-     *   <li><b><code>X</code></b> (disable tag)</li>
-     *   <li><b><code>a</code></b> (all)</li>
-     *   <li><b><code>o</code></b> (overview)</li>
-     *   <li><b><code>p</code></b> (packages)</li>
-     *   <li><b><code>t</code></b> (types, that is classes and interfaces)</li>
-     *   <li><b><code>c</code></b> (constructors)</li>
-     *   <li><b><code>m</code></b> (methods)</li>
-     *   <li><b><code>f</code></b> (fields)</li>
+     * <li><b><code>X</code></b> (disable tag)</li>
+     * <li><b><code>a</code></b> (all)</li>
+     * <li><b><code>o</code></b> (overview)</li>
+     * <li><b><code>p</code></b> (packages)</li>
+     * <li><b><code>t</code></b> (types, that is classes and interfaces)</li>
+     * <li><b><code>c</code></b> (constructors)</li>
+     * <li><b><code>m</code></b> (methods)</li>
+     * <li><b><code>f</code></b> (fields)</li>
      * </ul>
      * See <a href="./apidocs/org/apache/maven/plugin/javadoc/options/Tag.html">Javadoc</a>.
      * <br/>
-     *
-     * @parameter expression="${tags}"
      */
+    @Parameter( property = "tags" )
     private Tag[] tags;
 
     /**
@@ -1562,8 +1500,8 @@ public abstract class AbstractJavadocMojo
      * Since Java 6.0
      *
      * @since 2.4
-     * @parameter expression="${top}"
      */
+    @Parameter( property = "top" )
     private String top;
 
     /**
@@ -1571,9 +1509,8 @@ public abstract class AbstractJavadocMojo
      * <br/>
      * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#use">use</a>.
      * <br/>
-     *
-     * @parameter expression="${use}" default-value="true"
      */
+    @Parameter( property = "use", defaultValue = "true" )
     private boolean use;
 
     /**
@@ -1581,9 +1518,8 @@ public abstract class AbstractJavadocMojo
      * <br/>
      * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#version">version</a>.
      * <br/>
-     *
-     * @parameter expression="${version}" default-value="true"
      */
+    @Parameter( property = "version", defaultValue = "true" )
     private boolean version;
 
     /**
@@ -1591,71 +1527,69 @@ public abstract class AbstractJavadocMojo
      * <br/>
      * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#windowtitle">windowtitle</a>.
      * <br/>
-     *
-     * @parameter expression="${windowtitle}" default-value="${project.name} ${project.version} API"
      */
+    @Parameter( property = "windowtitle", defaultValue = "${project.name} ${project.version} API" )
     private String windowtitle;
 
     /**
      * Whether dependency -sources jars should be resolved and included as source paths for javadoc generation.
      * This is useful when creating javadocs for a distribution project.
-     * 
-     * @parameter default-value="false"
+     *
      * @since 2.7
      */
+    @Parameter( defaultValue = "false" )
     private boolean includeDependencySources;
 
     /**
      * Directory where unpacked project sources / test-sources should be cached.
      *
-     * @parameter default-value="${project.build.directory}/distro-javadoc-sources"
-     * @since 2.7
      * @see #includeDependencySources
+     * @since 2.7
      */
+    @Parameter( defaultValue = "${project.build.directory}/distro-javadoc-sources" )
     private File sourceDependencyCacheDir;
 
     /**
      * Whether to include transitive dependencies in the list of dependency -sources jars to include
      * in this javadoc run.
-     * 
-     * @parameter default-value="false"
-     * @since 2.7
+     *
      * @see #includeDependencySources
+     * @since 2.7
      */
+    @Parameter( defaultValue = "false" )
     private boolean includeTransitiveDependencySources;
-    
+
     /**
      * List of included dependency-source patterns. Example: <code>org.apache.maven:*</code>
-     * 
-     * @parameter
-     * @since 2.7
+     *
      * @see #includeDependencySources
+     * @since 2.7
      */
+    @Parameter
     private List<String> dependencySourceIncludes;
 
     /**
      * List of excluded dependency-source patterns. Example: <code>org.apache.maven.shared:*</code>
-     * 
-     * @parameter
-     * @since 2.7
+     *
      * @see #includeDependencySources
+     * @since 2.7
      */
+    @Parameter
     private List<String> dependencySourceExcludes;
-    
+
     /**
      * Directory into which assembled {@link JavadocOptions} instances will be written before they
      * are added to javadoc resources bundles.
-     * 
-     * @parameter default-value="${project.build.directory}/javadoc-bundle-options"
-     * @readonly
+     *
      * @since 2.7
      */
+    @Parameter( defaultValue = "${project.build.directory}/javadoc-bundle-options", readonly = true )
     private File javadocOptionsDir;
 
     /**
      * Transient variable to allow lazy-resolution of javadoc bundles from dependencies, so they can
      * be used at various points in the javadoc generation process.
-     * 
+     *
      * @since 2.7
      */
     private transient List<JavadocBundle> dependencyJavadocBundles;
@@ -1672,9 +1606,10 @@ public abstract class AbstractJavadocMojo
      * &nbsp;&nbsp;&lt;/additionnalDependency&gt;
      * &lt;/additionnalDependencies&gt;
      * </pre>
-     * @parameter
+     *
      * @since 2.8.1
      */
+    @Parameter
     private List<Dependency> additionnalDependencies;
     
     // ----------------------------------------------------------------------
