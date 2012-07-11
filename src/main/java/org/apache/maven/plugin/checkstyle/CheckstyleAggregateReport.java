@@ -19,23 +19,24 @@ package org.apache.maven.plugin.checkstyle;
  * under the License.
  */
 
-import java.io.File;
-import java.util.List;
-
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.MavenReportException;
+
+import java.io.File;
+import java.util.List;
 
 /**
  * Perform a Checkstyle analysis, and generate a report on violations,
  * aggregating the result in the project which started this mojo.
  *
- * @version $Id: CheckstyleReport.java 1155028 2011-08-08 17:53:46Z olamy $
- * @goal checkstyle-aggregate
- * @aggregator
- * @requiresDependencyResolution compile
- * @threadSafe
+ * @version $Id$
  * @since 2.8
  */
+@Mojo( name = "checkstyle-aggregate", aggregator = true, requiresDependencyResolution = ResolutionScope.COMPILE,
+       threadSafe = true )
 public class CheckstyleAggregateReport
     extends AbstractCheckstyleReport
 {
@@ -43,24 +44,23 @@ public class CheckstyleAggregateReport
     /**
      * Specifies the names filter of the source files to be used for Checkstyle.
      *
-     * @parameter expression="${checkstyle.includes}" default-value="**\/*.java"
-     * @required
+     * <strong>Note:</strong> default value is {@code **\/*.java}.
      */
+    @Parameter( property = "checkstyle.includes", defaultValue = JAVA_FILES, required = true )
     private String includes;
 
     /**
      * Specifies the names filter of the source files to be excluded for
      * Checkstyle.
-     *
-     * @parameter expression="${checkstyle.excludes}"
      */
+    @Parameter( property = "checkstyle.excludes" )
     private String excludes;
 
     /**
      * <p>
      * Specifies the location of the XML configuration to use.
      * </p>
-     *
+     * <p/>
      * <p>
      * Potential values are a filesystem path, a URL, or a classpath resource.
      * This parameter expects that the contents of the location conform to the
@@ -68,42 +68,40 @@ public class CheckstyleAggregateReport
      * href="http://checkstyle.sourceforge.net/config.html#Modules">Checker
      * module</a>) configuration of rulesets.
      * </p>
-     *
+     * <p/>
      * <p>
      * This parameter is resolved as resource, URL, then file. If successfully
      * resolved, the contents of the configuration is copied into the
      * <code>${project.build.directory}/checkstyle-configuration.xml</code>
      * file before being passed to Checkstyle as a configuration.
      * </p>
-     *
+     * <p/>
      * <p>
      * There are 4 predefined rulesets.
      * </p>
-     *
+     * <p/>
      * <ul>
      * <li><code>config/sun_checks.xml</code>: Sun Checks.</li>
      * <li><code>config/turbine_checks.xml</code>: Turbine Checks.</li>
      * <li><code>config/avalon_checks.xml</code>: Avalon Checks.</li>
      * <li><code>config/maven_checks.xml</code>: Maven Source Checks.</li>
      * </ul>
-     *
-     * @parameter expression="${checkstyle.config.location}"
-     *            default-value="config/sun_checks.xml"
      */
+    @Parameter( property = "checkstyle.config.location", defaultValue = "config/sun_checks.xml" )
     private String configLocation;
 
     /**
      * <p>
      * Specifies the location of the properties file.
      * </p>
-     *
+     * <p/>
      * <p>
      * This parameter is resolved as URL, File then resource. If successfully
      * resolved, the contents of the properties location is copied into the
      * <code>${project.build.directory}/checkstyle-checker.properties</code>
      * file before being passed to Checkstyle for loading.
      * </p>
-     *
+     * <p/>
      * <p>
      * The contents of the <code>propertiesLocation</code> will be made
      * available to Checkstyle for specifying values for parameters within the
@@ -111,16 +109,15 @@ public class CheckstyleAggregateReport
      * parameter).
      * </p>
      *
-     * @parameter expression="${checkstyle.properties.location}"
      * @since 2.0-beta-2
      */
+    @Parameter( property = "checkstyle.properties.location" )
     private String propertiesLocation;
 
     /**
      * Allows for specifying raw property expansion information.
-     *
-     * @parameter
      */
+    @Parameter
     private String propertyExpansion;
 
     /**
@@ -139,91 +136,85 @@ public class CheckstyleAggregateReport
      * <p>
      * <code>
      * &lt;module name="RegexpHeader">
-     *   &lt;property name="headerFile" value="${checkstyle.header.file}"/>
+     * &lt;property name="headerFile" value="${checkstyle.header.file}"/>
      * &lt;/module>
      * </code>
      * </p>
      *
-     * @parameter expression="${checkstyle.header.file}" default-value="LICENSE.txt"
      * @since 2.0-beta-2
      */
+    @Parameter( property = "checkstyle.header.file", defaultValue = "LICENSE.txt" )
     private String headerLocation;
 
     /**
      * Specifies the cache file used to speed up Checkstyle on successive runs.
-     *
-     * @parameter default-value="${project.build.directory}/checkstyle-cachefile"
      */
+    @Parameter( defaultValue = "${project.build.directory}/checkstyle-cachefile" )
     private String cacheFile;
 
     /**
      * <p>
      * Specifies the location of the suppressions XML file to use.
      * </p>
-     *
+     * <p/>
      * <p>
      * This parameter is resolved as resource, URL, then file. If successfully
      * resolved, the contents of the suppressions XML is copied into the
      * <code>${project.build.directory}/checkstyle-supressions.xml</code> file
      * before being passed to Checkstyle for loading.
      * </p>
-     *
+     * <p/>
      * <p>
      * See <code>suppressionsFileExpression</code> for the property that will
      * be made available to your checkstyle configuration.
      * </p>
      *
-     * @parameter expression="${checkstyle.suppressions.location}"
      * @since 2.0-beta-2
      */
+    @Parameter( property = "checkstyle.suppressions.location" )
     private String suppressionsLocation;
 
     /**
      * The key to be used in the properties for the suppressions file.
      *
-     * @parameter expression="${checkstyle.suppression.expression}"
-     *            default-value="checkstyle.suppressions.file"
      * @since 2.1
      */
+    @Parameter( property = "checkstyle.suppression.expression", defaultValue = "checkstyle.suppressions.file" )
     private String suppressionsFileExpression;
 
     /**
      * Specifies if the build should fail upon a violation.
-     *
-     * @parameter default-value="false"
      */
+    @Parameter( defaultValue = "false" )
     private boolean failsOnError;
 
     /**
      * Specifies the location of the source directory to be used for Checkstyle.
-     *
-     * @parameter default-value="${project.build.sourceDirectory}"
-     * @required
      */
+    @Parameter( defaultValue = "${project.build.sourceDirectory}", required = true )
     private File sourceDirectory;
 
     /**
      * Specifies the location of the test source directory to be used for
      * Checkstyle.
      *
-     * @parameter default-value="${project.build.testSourceDirectory}"
      * @since 2.2
      */
+    @Parameter( defaultValue = "${project.build.testSourceDirectory}" )
     private File testSourceDirectory;
 
     /**
      * Include or not the test source directory to be used for Checkstyle.
      *
-     * @parameter default-value="${false}"
      * @since 2.2
      */
+    @Parameter( defaultValue = "false" )
     private boolean includeTestSourceDirectory;
 
     /**
      * Output errors to console.
-     *
-     * @parameter default-value="false"
      */
+    @Parameter( defaultValue = "false" )
     private boolean consoleOutput;
 
     /**
@@ -231,18 +222,17 @@ public class CheckstyleAggregateReport
      * is not set, the platform default encoding is used. <strong>Note:</strong> This parameter always overrides the
      * property <code>charset</code> from Checkstyle's <code>TreeWalker</code> module.
      *
-     * @parameter expression="${encoding}" default-value="${project.build.sourceEncoding}"
      * @since 2.2
      */
+    @Parameter( property = "encoding", defaultValue = "${project.build.sourceEncoding}" )
     private String encoding;
 
     /**
      * The projects in the reactor for aggregation report.
      *
-     * @parameter expression="${reactorProjects}"
-     * @readonly
      * @since 2.8
      */
+    @Parameter( property = "reactorProjects", readonly = true )
     private List<MavenProject> reactorProjects;
 
     /** {@inheritDoc} */

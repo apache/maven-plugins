@@ -19,16 +19,19 @@ package org.apache.maven.plugin.checkstyle;
  * under the License.
  */
 
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.apache.maven.project.MavenProject;
+import org.apache.maven.reporting.MavenReportException;
+import org.codehaus.plexus.util.StringUtils;
+
 import java.io.File;
 import java.net.URL;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-
-import org.apache.maven.project.MavenProject;
-import org.apache.maven.reporting.MavenReportException;
-import org.codehaus.plexus.util.StringUtils;
 
 /**
  * Perform a Checkstyle analysis, and generate a report on violations.
@@ -37,10 +40,8 @@ import org.codehaus.plexus.util.StringUtils;
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @author <a href="mailto:joakim@erdfelt.com">Joakim Erdfelt</a>
  * @version $Id$
- * @goal checkstyle
- * @requiresDependencyResolution compile
- * @threadSafe
  */
+@Mojo( name = "checkstyle", requiresDependencyResolution = ResolutionScope.COMPILE, threadSafe = true )
 public class CheckstyleReport
     extends AbstractCheckstyleReport
 {
@@ -64,24 +65,23 @@ public class CheckstyleReport
     /**
      * Specifies the names filter of the source files to be used for Checkstyle.
      *
-     * @parameter expression="${checkstyle.includes}" default-value="**\/*.java"
-     * @required
+     * <strong>Note:</strong> default value is {@code **\/*.java}.
      */
+    @Parameter( property = "checkstyle.includes", defaultValue = JAVA_FILES, required = true )
     private String includes;
 
     /**
      * Specifies the names filter of the source files to be excluded for
      * Checkstyle.
-     *
-     * @parameter expression="${checkstyle.excludes}"
      */
+    @Parameter( property = "checkstyle.excludes" )
     private String excludes;
 
     /**
      * <p>
      * Specifies the location of the XML configuration to use.
      * </p>
-     *
+     * <p/>
      * <p>
      * Potential values are a filesystem path, a URL, or a classpath resource.
      * This parameter expects that the contents of the location conform to the
@@ -89,51 +89,49 @@ public class CheckstyleReport
      * href="http://checkstyle.sourceforge.net/config.html#Modules">Checker
      * module</a>) configuration of rulesets.
      * </p>
-     *
+     * <p/>
      * <p>
      * This parameter is resolved as resource, URL, then file. If successfully
      * resolved, the contents of the configuration is copied into the
      * <code>${project.build.directory}/checkstyle-configuration.xml</code>
      * file before being passed to Checkstyle as a configuration.
      * </p>
-     *
+     * <p/>
      * <p>
      * There are 4 predefined rulesets.
      * </p>
-     *
+     * <p/>
      * <ul>
      * <li><code>config/sun_checks.xml</code>: Sun Checks.</li>
      * <li><code>config/turbine_checks.xml</code>: Turbine Checks.</li>
      * <li><code>config/avalon_checks.xml</code>: Avalon Checks.</li>
      * <li><code>config/maven_checks.xml</code>: Maven Source Checks.</li>
      * </ul>
-     *
-     * @parameter expression="${checkstyle.config.location}"
-     *            default-value="config/sun_checks.xml"
      */
+    @Parameter( property = "checkstyle.config.location", defaultValue = "config/sun_checks.xml" )
     private String configLocation;
 
     /**
      * Specifies what predefined check set to use. Available sets are "sun" (for
      * the Sun coding conventions), "turbine", and "avalon".
      *
-     * @parameter default-value="sun"
      * @deprecated Use configLocation instead.
      */
+    @Parameter( defaultValue = "sun" )
     private String format;
 
     /**
      * <p>
      * Specifies the location of the properties file.
      * </p>
-     *
+     * <p/>
      * <p>
      * This parameter is resolved as URL, File then resource. If successfully
      * resolved, the contents of the properties location is copied into the
      * <code>${project.build.directory}/checkstyle-checker.properties</code>
      * file before being passed to Checkstyle for loading.
      * </p>
-     *
+     * <p/>
      * <p>
      * The contents of the <code>propertiesLocation</code> will be made
      * available to Checkstyle for specifying values for parameters within the
@@ -141,34 +139,33 @@ public class CheckstyleReport
      * parameter).
      * </p>
      *
-     * @parameter expression="${checkstyle.properties.location}"
      * @since 2.0-beta-2
      */
+    @Parameter( property = "checkstyle.properties.location" )
     private String propertiesLocation;
 
     /**
      * Specifies the location of the Checkstyle properties file that will be used to
      * check the source.
      *
-     * @parameter
      * @deprecated Use propertiesLocation instead.
      */
+    @Parameter
     private File propertiesFile;
 
     /**
      * Specifies the URL of the Checkstyle properties that will be used to check
      * the source.
      *
-     * @parameter
      * @deprecated Use propertiesLocation instead.
      */
+    @Parameter
     private URL propertiesURL;
 
     /**
      * Allows for specifying raw property expansion information.
-     *
-     * @parameter
      */
+    @Parameter
     private String propertyExpansion;
 
     /**
@@ -187,14 +184,14 @@ public class CheckstyleReport
      * <p>
      * <code>
      * &lt;module name="RegexpHeader">
-     *   &lt;property name="headerFile" value="${checkstyle.header.file}"/>
+     * &lt;property name="headerFile" value="${checkstyle.header.file}"/>
      * &lt;/module>
      * </code>
      * </p>
      *
-     * @parameter expression="${checkstyle.header.file}" default-value="LICENSE.txt"
      * @since 2.0-beta-2
      */
+    @Parameter( property = "checkstyle.header.file", defaultValue = "LICENSE.txt" )
     private String headerLocation;
 
     /**
@@ -202,47 +199,45 @@ public class CheckstyleReport
      * is used by Checkstyle to verify that source code has the correct
      * license header.
      *
-     * @parameter expression="${basedir}/LICENSE.txt"
      * @deprecated Use headerLocation instead.
      */
+    @Parameter( defaultValue = "${basedir}/LICENSE.txt" )
     private File headerFile;
 
     /**
      * Specifies the cache file used to speed up Checkstyle on successive runs.
-     *
-     * @parameter default-value="${project.build.directory}/checkstyle-cachefile"
      */
+    @Parameter( defaultValue = "${project.build.directory}/checkstyle-cachefile" )
     private String cacheFile;
 
     /**
      * <p>
      * Specifies the location of the suppressions XML file to use.
      * </p>
-     *
+     * <p/>
      * <p>
      * This parameter is resolved as resource, URL, then file. If successfully
      * resolved, the contents of the suppressions XML is copied into the
      * <code>${project.build.directory}/checkstyle-supressions.xml</code> file
      * before being passed to Checkstyle for loading.
      * </p>
-     *
+     * <p/>
      * <p>
      * See <code>suppressionsFileExpression</code> for the property that will
      * be made available to your checkstyle configuration.
      * </p>
      *
-     * @parameter expression="${checkstyle.suppressions.location}"
      * @since 2.0-beta-2
      */
+    @Parameter( property = "checkstyle.suppressions.location" )
     private String suppressionsLocation;
 
     /**
      * The key to be used in the properties for the suppressions file.
      *
-     * @parameter expression="${checkstyle.suppression.expression}"
-     *            default-value="checkstyle.suppressions.file"
      * @since 2.1
      */
+    @Parameter( property = "checkstyle.suppression.expression", defaultValue = "checkstyle.suppressions.file" )
     private String suppressionsFileExpression;
 
     /**
@@ -252,9 +247,9 @@ public class CheckstyleReport
      * property. This allows using the Checkstyle property in your own custom
      * checkstyle configuration file when specifying a suppressions file.
      *
-     * @parameter
      * @deprecated Use suppressionsLocation instead.
      */
+    @Parameter
     private String suppressionsFile;
 
     /**
@@ -263,7 +258,7 @@ public class CheckstyleReport
      * the Checkstyle <a
      * href="http://checkstyle.sourceforge.net/config.html#Packages">Packages</a>.
      * </p>
-     *
+     * <p/>
      * <p>
      * This parameter is resolved as resource, URL, then file. If resolved to a
      * resource, or a URL, the contents of the package names XML is copied into
@@ -271,57 +266,53 @@ public class CheckstyleReport
      * file before being passed to Checkstyle for loading.
      * </p>
      *
-     * @parameter
      * @since 2.0-beta-2
      */
+    @Parameter
     private String packageNamesLocation;
 
     /**
      * Specifies the location of the package names XML to be used to configure
      * Checkstyle.
      *
-     * @parameter
      * @deprecated Use packageNamesLocation instead.
      */
+    @Parameter
     private String packageNamesFile;
 
     /**
      * Specifies if the build should fail upon a violation.
-     *
-     * @parameter default-value="false"
      */
+    @Parameter( defaultValue = "false" )
     private boolean failsOnError;
 
     /**
      * Specifies the location of the source directory to be used for Checkstyle.
-     *
-     * @parameter default-value="${project.build.sourceDirectory}"
-     * @required
      */
+    @Parameter( defaultValue = "${project.build.sourceDirectory}", required = true )
     private File sourceDirectory;
 
     /**
      * Specifies the location of the test source directory to be used for
      * Checkstyle.
      *
-     * @parameter default-value="${project.build.testSourceDirectory}"
      * @since 2.2
      */
+    @Parameter( defaultValue = "${project.build.testSourceDirectory}" )
     private File testSourceDirectory;
 
     /**
      * Include or not the test source directory to be used for Checkstyle.
      *
-     * @parameter default-value="${false}"
      * @since 2.2
      */
+    @Parameter( defaultValue = "false" )
     private boolean includeTestSourceDirectory;
 
     /**
      * Output errors to console.
-     *
-     * @parameter default-value="false"
      */
+    @Parameter( defaultValue = "false" )
     private boolean consoleOutput;
 
     /**
@@ -329,9 +320,9 @@ public class CheckstyleReport
      * is not set, the platform default encoding is used. <strong>Note:</strong> This parameter always overrides the
      * property <code>charset</code> from Checkstyle's <code>TreeWalker</code> module.
      *
-     * @parameter expression="${encoding}" default-value="${project.build.sourceEncoding}"
      * @since 2.2
      */
+    @Parameter( property = "encoding", defaultValue = "${project.build.sourceEncoding}" )
     private String encoding;
 
     /** {@inheritDoc} */

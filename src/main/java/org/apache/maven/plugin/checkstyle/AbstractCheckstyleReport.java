@@ -19,6 +19,25 @@ package org.apache.maven.plugin.checkstyle;
  * under the License.
  */
 
+import com.puppycrawl.tools.checkstyle.DefaultLogger;
+import com.puppycrawl.tools.checkstyle.XMLLogger;
+import com.puppycrawl.tools.checkstyle.api.AuditListener;
+import com.puppycrawl.tools.checkstyle.api.CheckstyleException;
+import org.apache.maven.doxia.siterenderer.Renderer;
+import org.apache.maven.doxia.tools.SiteTool;
+import org.apache.maven.model.ReportPlugin;
+import org.apache.maven.plugin.checkstyle.rss.CheckstyleRssGenerator;
+import org.apache.maven.plugin.checkstyle.rss.CheckstyleRssGeneratorRequest;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.MavenProject;
+import org.apache.maven.reporting.AbstractMavenReport;
+import org.apache.maven.reporting.MavenReportException;
+import org.codehaus.plexus.resource.ResourceManager;
+import org.codehaus.plexus.resource.loader.FileResourceLoader;
+import org.codehaus.plexus.util.PathTool;
+import org.codehaus.plexus.util.StringUtils;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -30,28 +49,10 @@ import java.util.Iterator;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
-import org.apache.maven.doxia.siterenderer.Renderer;
-import org.apache.maven.doxia.tools.SiteTool;
-import org.apache.maven.model.ReportPlugin;
-import org.apache.maven.plugin.checkstyle.rss.CheckstyleRssGenerator;
-import org.apache.maven.plugin.checkstyle.rss.CheckstyleRssGeneratorRequest;
-import org.apache.maven.project.MavenProject;
-import org.apache.maven.reporting.AbstractMavenReport;
-import org.apache.maven.reporting.MavenReportException;
-import org.codehaus.plexus.resource.ResourceManager;
-import org.codehaus.plexus.resource.loader.FileResourceLoader;
-import org.codehaus.plexus.util.PathTool;
-import org.codehaus.plexus.util.StringUtils;
-
-import com.puppycrawl.tools.checkstyle.DefaultLogger;
-import com.puppycrawl.tools.checkstyle.XMLLogger;
-import com.puppycrawl.tools.checkstyle.api.AuditListener;
-import com.puppycrawl.tools.checkstyle.api.CheckstyleException;
-
 /**
  * Base abstract class for Checkstyle reports.
  *
- * @version $Id: CheckstyleReport.java 1155028 2011-08-08 17:53:46Z olamy $
+ * @version $Id$
  * @since 2.8
  */
 public abstract class AbstractCheckstyleReport
@@ -59,12 +60,14 @@ public abstract class AbstractCheckstyleReport
 {
     public static final String PLUGIN_RESOURCES = "org/apache/maven/plugin/checkstyle";
 
+    protected static final String JAVA_FILES = "**\\/*.java";
+
     /**
      * Skip entire check.
      *
-     * @parameter expression="${checkstyle.skip}" default-value="false"
      * @since 2.2
      */
+    @Parameter( property = "checkstyle.skip", defaultValue = "false" )
     protected boolean skip;
 
     /**
@@ -72,134 +75,107 @@ public abstract class AbstractCheckstyleReport
      * evaluated if the goal is run directly from the command line. If the goal
      * is run indirectly as part of a site generation, the output directory
      * configured in Maven Site Plugin is used instead.
-     *
-     * @parameter default-value="${project.reporting.outputDirectory}"
-     * @required
      */
+    @Parameter( defaultValue = "${project.reporting.outputDirectory}", required = true )
     private File outputDirectory;
 
     /**
      * Specifies the path and filename to save the checkstyle output. The format
      * of the output file is determined by the <code>outputFileFormat</code>
      * parameter.
-     *
-     * @parameter expression="${checkstyle.output.file}"
-     *            default-value="${project.build.directory}/checkstyle-result.xml"
      */
+    @Parameter( property = "checkstyle.output.file", defaultValue = "${project.build.directory}/checkstyle-result.xml" )
     private File outputFile;
 
     /**
      * If <code>null</code>, the Checkstyle plugin will display violations on stdout.
      * Otherwise, a text file will be created with the violations.
-     *
-     * @parameter
      */
+    @Parameter
     private File useFile;
 
     /**
      * Specifies the format of the output to be used when writing to the output
      * file. Valid values are "plain" and "xml".
-     *
-     * @parameter expression="${checkstyle.output.format}" default-value="xml"
      */
+    @Parameter( property = "checkstyle.output.format", defaultValue = "xml" )
     private String outputFileFormat;
 
     /**
      * Specifies if the Rules summary should be enabled or not.
-     *
-     * @parameter expression="${checkstyle.enable.rules.summary}"
-     *            default-value="true"
      */
+    @Parameter( property = "checkstyle.enable.rules.summary", defaultValue = "true" )
     private boolean enableRulesSummary;
 
     /**
      * Specifies if the Severity summary should be enabled or not.
-     *
-     * @parameter expression="${checkstyle.enable.severity.summary}"
-     *            default-value="true"
      */
+    @Parameter( property = "checkstyle.enable.severity.summary", defaultValue = "true" )
     private boolean enableSeveritySummary;
 
     /**
      * Specifies if the Files summary should be enabled or not.
-     *
-     * @parameter expression="${checkstyle.enable.files.summary}"
-     *            default-value="true"
      */
+    @Parameter( property = "checkstyle.enable.files.summary", defaultValue = "true" )
     private boolean enableFilesSummary;
 
     /**
      * Specifies if the RSS should be enabled or not.
-     *
-     * @parameter expression="${checkstyle.enable.rss}" default-value="true"
      */
+    @Parameter( property = "checkstyle.enable.rss", defaultValue = "true" )
     private boolean enableRSS;
 
     /**
      * SiteTool.
      *
      * @since 2.2
-     * @component role="org.apache.maven.doxia.tools.SiteTool"
-     * @required
-     * @readonly
      */
+    @Component( role = SiteTool.class )
     protected SiteTool siteTool;
 
     /**
      * The Maven Project Object.
-     *
-     * @parameter default-value="${project}"
-     * @required
-     * @readonly
      */
+    @Component
     protected MavenProject project;
 
     /**
      * Link the violation line numbers to the source xref. Will link
      * automatically if Maven JXR plugin is being used.
      *
-     * @parameter expression="${linkXRef}" default-value="true"
      * @since 2.1
      */
+    @Parameter( property = "linkXRef", defaultValue = "true" )
     private boolean linkXRef;
 
     /**
      * Location of the Xrefs to link to.
-     *
-     * @parameter default-value="${project.reporting.outputDirectory}/xref"
      */
+    @Parameter( defaultValue = "${project.reporting.outputDirectory}/xref" )
     private File xrefLocation;
 
     /**
-     * @component
-     * @required
-     * @readonly
      */
+    @Component
     private Renderer siteRenderer;
 
     /**
-     * @component
-     * @required
-     * @readonly
      */
+    @Component
     protected ResourceManager locator;
 
     /**
      * CheckstyleRssGenerator.
      *
      * @since 2.4
-     * @component role="org.apache.maven.plugin.checkstyle.rss.CheckstyleRssGenerator" role-hint="default"
-     * @required
-     * @readonly
      */
+    @Component( role = CheckstyleRssGenerator.class, hint = "default" )
     protected CheckstyleRssGenerator checkstyleRssGenerator;
 
     /**
      * @since 2.5
-     * @component role="org.apache.maven.plugin.checkstyle.CheckstyleExecutor" role-hint="default"
-     * @required
-     * @readonly
      */
+    @Component( role = CheckstyleExecutor.class, hint = "default" )
     protected CheckstyleExecutor checkstyleExecutor;
 
     protected ByteArrayOutputStream stringOutputStream;
