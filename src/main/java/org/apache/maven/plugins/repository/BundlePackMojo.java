@@ -32,7 +32,11 @@ import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.settings.Settings;
+import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
 import org.codehaus.plexus.components.interactivity.InputHandler;
@@ -53,10 +57,9 @@ import java.util.List;
  * missing values. Can be used to generate bundles for third parties artifacts
  * that have been manually added to the local repository.
  *
- * @goal bundle-pack
- * @requiresProject false
  * @since 2.1
  */
+@Mojo( name = "bundle-pack", requiresProject = false )
 public class BundlePackMojo
     extends AbstractMojo
 {
@@ -64,97 +67,84 @@ public class BundlePackMojo
 
     /**
      * Jar archiver.
-     * 
-     * @component role="org.codehaus.plexus.archiver.Archiver" roleHint="jar"
      */
+    @Component( role = Archiver.class, hint = "jar" )
     protected JarArchiver jarArchiver;
 
     /**
      * Artifact resolver.
-     * 
-     * @component
      */
+    @Component
     protected ArtifactResolver artifactResolver;
 
     /**
      * Artifact factory.
-     * 
-     * @component
      */
+    @Component
     protected ArtifactFactory artifactFactory;
 
     /**
      * Local maven repository.
-     * 
-     * @parameter default-value="${localRepository}"
-     * @required
-     * @readonly
      */
+    @Parameter( defaultValue = "${localRepository}", required = true, readonly = true )
     protected ArtifactRepository localRepository;
 
     /**
-     * @component
      */
+    @Component
     protected InputHandler inputHandler;
 
     /**
      * Directory where the upload-bundle will be created.
-     *
-     * @parameter default-value="${basedir}"
-     * @readonly
      */
+    @Parameter( defaultValue = "${basedir}", readonly = true )
     protected String basedir;
 
     /**
      * GroupId for the artifact to create an upload bundle for.
-     *
-     * @parameter expression="${groupId}"
      */
+    @Parameter( property = "groupId" )
     protected String groupId;
 
     /**
      * ArtifactId for the artifact to create an upload bundle for.
-     *
-     * @parameter expression="${artifactId}"
      */
+    @Parameter( property = "artifactId" )
     protected String artifactId;
 
     /**
      * Version for the artifact to create an upload bundle for.
-     * 
-     * @parameter expression="${version}"
      */
+    @Parameter( property = "version" )
     protected String version;
-    
+
     /**
      * Viewable URL for SCM connections, in cases where this isn't provided by the POM.
-     * @parameter expression="${scmUrl}"
      */
+    @Parameter( property = "scmUrl" )
     protected String scmUrl;
-    
+
     /**
      * Read-only URL for SCM tool connections, in cases where this isn't provided by the POM.
      * <br/>
-     * <b>NOTE:</b> This should be a standard maven-scm URL. See the 
-     * <a href="http://maven.apache.org/scm/scm-url-format.html">format guidelines</a> for more 
+     * <b>NOTE:</b> This should be a standard maven-scm URL. See the
+     * <a href="http://maven.apache.org/scm/scm-url-format.html">format guidelines</a> for more
      * information.
-     * 
-     * @parameter expression="${scmConnection}"
      */
+    @Parameter( property = "scmConnection" )
     protected String scmConnection;
-    
+
     /**
-     * @parameter default-value="${settings}"
-     * @readonly
      */
+    @Component
     protected Settings settings;
 
     /**
      * Disable validations to make sure bundle supports project materialization.
      * <br/>
      * <b>WARNING: This means your project will be MUCH harder to use.</b>
-     * @parameter expression="${bundle.disableMaterialization}" default-value="false"
      */
+    @Parameter( property = "bundle.disableMaterialization", defaultValue = "false" )
     private boolean disableMaterialization;
 
     @SuppressWarnings( "unchecked" )

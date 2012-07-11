@@ -21,8 +21,14 @@ package org.apache.maven.plugins.repository;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Execute;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Settings;
+import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
 import org.codehaus.plexus.components.interactivity.InputHandler;
 import org.codehaus.plexus.util.StringUtils;
@@ -34,10 +40,10 @@ import java.util.List;
 /**
  * Goal which creates an upload bundle for a project built with Maven.
  *
- * @goal bundle-create
- * @execute phase="package"
  * @since 2.0
  */
+@Mojo( name = "bundle-create" )
+@Execute( phase = LifecyclePhase.PACKAGE )
 public class BundleCreateMojo
     extends AbstractMojo
 {
@@ -45,44 +51,38 @@ public class BundleCreateMojo
 
     /**
      * Output directory.
-     *
-     * @parameter default-value="${project.build.directory}"
-     * @readonly
      */
+    @Parameter( defaultValue = "${project.build.directory}", readonly = true )
     private File outputDirectory;
 
     /**
      * The current Maven project.
-     *
-     * @parameter default-value="${project}"
-     * @readonly
      */
+    @Component
     private MavenProject project;
-    
+
     /**
      * Disable validations to make sure bundle supports project materialization.
      * <br/>
      * <b>WARNING: This means your project will be MUCH harder to use.</b>
-     * @parameter expression="${bundle.disableMaterialization}" default-value="false"
      */
+    @Parameter( property = "bundle.disableMaterialization", defaultValue = "false" )
     private boolean disableMaterialization;
 
     /**
      * Jar archiver.
-     *
-     * @component role="org.codehaus.plexus.archiver.Archiver" roleHint="jar"
      */
+    @Component( role = Archiver.class, hint = "jar" )
     private JarArchiver jarArchiver;
 
     /**
-     * @component
      */
+    @Component
     protected InputHandler inputHandler;
-    
+
     /**
-     * @parameter default-value="${settings}"
-     * @readonly
      */
+    @Component
     protected Settings settings;
 
     public void execute()
