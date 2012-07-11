@@ -19,14 +19,15 @@ package org.apache.maven.plugins.help;
  * under the License.
  */
 
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.codehaus.plexus.util.StringUtils;
+import org.codehaus.plexus.util.cli.CommandLineUtils;
+
 import java.io.IOException;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Properties;
-
-import org.apache.maven.plugin.MojoExecutionException;
-import org.codehaus.plexus.util.StringUtils;
-import org.codehaus.plexus.util.cli.CommandLineUtils;
 
 /**
  * Displays a list of the platform details like system properties and environment variables.
@@ -34,9 +35,8 @@ import org.codehaus.plexus.util.cli.CommandLineUtils;
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
  * @since 2.1
- * @goal system
- * @requiresProject false
  */
+@Mojo( name = "system", requiresProject = false )
 public class SystemMojo
     extends AbstractHelpMojo
 {

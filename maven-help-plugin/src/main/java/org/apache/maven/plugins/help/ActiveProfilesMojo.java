@@ -19,24 +19,25 @@ package org.apache.maven.plugins.help;
  * under the License.
  */
 
+import org.apache.maven.model.Profile;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.MavenProject;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.maven.model.Profile;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.project.MavenProject;
-
 /**
  * Displays a list of the profiles which are currently active for this build.
  *
  * @version $Id$
  * @since 2.0
- * @goal active-profiles
- * @aggregator
  */
+@Mojo( name = "active-profiles", aggregator = true )
 public class ActiveProfilesMojo
     extends AbstractHelpMojo
 {
@@ -46,11 +47,8 @@ public class ActiveProfilesMojo
 
     /**
      * This is the list of projects currently slated to be built by Maven.
-     *
-     * @parameter expression="${reactorProjects}"
-     * @required
-     * @readonly
      */
+    @Parameter( property = "reactorProjects", required = true, readonly = true )
     private List projects;
 
     // ----------------------------------------------------------------------

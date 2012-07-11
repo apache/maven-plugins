@@ -19,14 +19,10 @@ package org.apache.maven.plugins.help;
  * under the License.
  */
 
-import java.io.IOException;
-import java.io.StringWriter;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.Iterator;
-import java.util.Properties;
-
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.settings.Profile;
 import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Server;
@@ -37,15 +33,21 @@ import org.codehaus.plexus.util.xml.PrettyPrintXMLWriter;
 import org.codehaus.plexus.util.xml.XMLWriter;
 import org.codehaus.plexus.util.xml.XmlWriterUtil;
 
+import java.io.IOException;
+import java.io.StringWriter;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.Iterator;
+import java.util.Properties;
+
 /**
  * Displays the calculated settings as XML for this project, given any profile enhancement and the inheritance
  * of the global settings into the user-level settings.
  *
  * @version $Id$
  * @since 2.0
- * @goal effective-settings
- * @requiresProject false
  */
+@Mojo( name = "effective-settings", requiresProject = false )
 public class EffectiveSettingsMojo
     extends AbstractEffectiveMojo
 {
@@ -56,19 +58,16 @@ public class EffectiveSettingsMojo
     /**
      * The system settings for Maven. This is the instance resulting from
      * merging global and user-level settings files.
-     *
-     * @parameter expression="${settings}"
-     * @readonly
-     * @required
      */
+    @Component
     private Settings settings;
 
     /**
      * For security reasons, all passwords are hidden by default. Set this to <code>true</code> to show all passwords.
      *
      * @since 2.1
-     * @parameter expression="${showPasswords}" default-value="false"
      */
+    @Parameter(property = "showPasswords", defaultValue = "false")
     private boolean showPasswords;
 
     // ----------------------------------------------------------------------

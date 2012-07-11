@@ -19,13 +19,14 @@ package org.apache.maven.plugins.help;
  * under the License.
  */
 
+import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.WriterFactory;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
-
-import org.apache.maven.plugin.AbstractMojo;
-import org.codehaus.plexus.util.IOUtil;
-import org.codehaus.plexus.util.WriterFactory;
 
 /**
  * Base class with some Help Mojo functionalities.
@@ -44,9 +45,8 @@ public abstract class AbstractHelpMojo
      * Optional parameter to write the output of this help in a given file, instead of writing to the console.
      * <br/>
      * <b>Note</b>: Could be a relative path.
-     *
-     * @parameter expression="${output}"
      */
+    @Parameter( property = "output" )
     protected File output;
 
     /**

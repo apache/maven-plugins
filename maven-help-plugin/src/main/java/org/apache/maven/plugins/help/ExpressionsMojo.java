@@ -19,6 +19,14 @@ package org.apache.maven.plugins.help;
  * under the License.
  */
 
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.usability.plugin.Expression;
+import org.apache.maven.usability.plugin.ExpressionDocumentationException;
+import org.apache.maven.usability.plugin.ExpressionDocumenter;
+import org.codehaus.plexus.util.StringUtils;
+
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -26,22 +34,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.usability.plugin.Expression;
-import org.apache.maven.usability.plugin.ExpressionDocumentationException;
-import org.apache.maven.usability.plugin.ExpressionDocumenter;
-import org.codehaus.plexus.util.StringUtils;
-
 /**
  * Displays the supported Plugin expressions used by Maven.
  *
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
  * @since 2.1
- * @goal expressions
- * @requiresProject false
  */
+@Mojo( name = "expressions", requiresProject = false )
 public class ExpressionsMojo
     extends AbstractHelpMojo
 {

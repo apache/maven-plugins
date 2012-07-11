@@ -19,16 +19,13 @@ package org.apache.maven.plugins.help;
  * under the License.
  */
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Profile;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.profiles.DefaultMavenProfilesBuilder;
 import org.apache.maven.profiles.DefaultProfileManager;
 import org.apache.maven.profiles.ProfileManager;
@@ -40,6 +37,12 @@ import org.apache.maven.settings.Settings;
 import org.apache.maven.settings.SettingsUtils;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 /**
  * Displays a list of available profiles under the current project.
  * <br/>
@@ -50,9 +53,8 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
  * @author <a href="mailto:rahul.thakur.xdev@gmail.com">Rahul Thakur</a>
  * @version $Id$
  * @since 2.1
- * @goal all-profiles
- * @requiresProject false
  */
+@Mojo( name = "all-profiles", requiresProject = false )
 public class AllProfilesMojo
     extends AbstractHelpMojo
 {
@@ -62,20 +64,14 @@ public class AllProfilesMojo
 
     /**
      * This is the list of projects currently slated to be built by Maven.
-     *
-     * @parameter expression="${reactorProjects}"
-     * @required
-     * @readonly
      */
+    @Parameter( property = "reactorProjects", required = true, readonly = true )
     private List projects;
 
     /**
      * The current build session instance. This is used for plugin manager API calls.
-     *
-     * @parameter expression="${session}"
-     * @required
-     * @readonly
      */
+    @Component
     private MavenSession session;
 
     // ----------------------------------------------------------------------

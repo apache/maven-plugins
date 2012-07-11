@@ -19,16 +19,12 @@ package org.apache.maven.plugins.help;
  * under the License.
  */
 
-import java.io.IOException;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Properties;
-
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.PrettyPrintXMLWriter;
@@ -40,14 +36,20 @@ import org.jdom.input.SAXBuilder;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Properties;
+
 /**
  * Displays the effective POM as an XML for this build, with the active profiles factored in.
  *
  * @version $Id$
  * @since 2.0
- * @goal effective-pom
- * @aggregator
  */
+@Mojo( name = "effective-pom", aggregator = true )
 public class EffectivePomMojo
     extends AbstractEffectiveMojo
 {
@@ -59,20 +61,15 @@ public class EffectivePomMojo
      * The Maven project.
      *
      * @since 2.0.2
-     * @parameter expression="${project}"
-     * @required
-     * @readonly
      */
+    @Component
     private MavenProject project;
 
     /**
      * The projects in the current build. The effective-POM for
      * each of these projects will written.
-     *
-     * @parameter expression="${reactorProjects}"
-     * @required
-     * @readonly
      */
+    @Parameter( property = "reactorProjects", required = true, readonly = true )
     private List projects;
 
     // ----------------------------------------------------------------------
