@@ -19,6 +19,18 @@ package org.apache.maven.plugin.javadoc;
  * under the License.
  */
 
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
+import org.apache.maven.plugin.javadoc.resolver.SourceResolverConfig;
+import org.apache.maven.plugins.annotations.Execute;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.apache.maven.project.MavenProject;
+import org.apache.maven.reporting.MavenReportException;
+import org.codehaus.plexus.util.StringUtils;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,13 +39,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
-import org.apache.maven.plugin.javadoc.resolver.SourceResolverConfig;
-import org.apache.maven.project.MavenProject;
-import org.apache.maven.reporting.MavenReportException;
-import org.codehaus.plexus.util.StringUtils;
-
 /**
  * Generates documentation for the <code>Java Test code</code> in an <b>NON aggregator</b> project using the standard
  * <a href="http://java.sun.com/j2se/javadoc/">Javadoc Tool</a>.
@@ -41,12 +46,11 @@ import org.codehaus.plexus.util.StringUtils;
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
  * @since 2.3
- * @goal test-javadoc
- * @execute phase=generate-test-sources
- * @requiresDependencyResolution test
  * @see <a href="http://java.sun.com/j2se/javadoc/">Javadoc Tool</a>
  * @see <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#options">Javadoc Options </a>
  */
+@Mojo( name = "test-javadoc", requiresDependencyResolution = ResolutionScope.TEST )
+@Execute( phase = LifecyclePhase.GENERATE_TEST_SOURCES )
 public class TestJavadocReport
     extends JavadocReport
 {
@@ -60,10 +64,10 @@ public class TestJavadocReport
      * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#doctitle">doctitle</a>.
      * <br/>
      *
-     * @parameter expression="${testDoctitle}" alias="doctitle"
-     * default-value="${project.name} ${project.version} Test API"
      * @since 2.5
      */
+    @Parameter( property = "testDoctitle", alias = "doctitle",
+                defaultValue = "${project.name} ${project.version} Test API" )
     private String testDoctitle;
 
     /**
@@ -75,10 +79,10 @@ public class TestJavadocReport
      * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#overview">overview</a>.
      * <br/>
      *
-     * @parameter expression="${testOverview}" alias="overview"
-     * default-value="${basedir}/src/test/javadoc/overview.html"
      * @since 2.5
      */
+    @Parameter( property = "testOverview", alias = "overview",
+                defaultValue = "${basedir}/src/test/javadoc/overview.html" )
     private File testOverview;
 
     /**
@@ -87,10 +91,10 @@ public class TestJavadocReport
      * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#windowtitle">windowtitle</a>.
      * <br/>
      *
-     * @parameter expression="${testWindowtitle}" alias="windowtitle"
-     * default-value="${project.name} ${project.version} Test API"
      * @since 2.5
      */
+    @Parameter( property = "testWindowtitle", alias = "windowtitle",
+                defaultValue = "${project.name} ${project.version} Test API" )
     private String testWindowtitle;
 
     // ----------------------------------------------------------------------
@@ -99,18 +103,16 @@ public class TestJavadocReport
 
     /**
      * Specifies the destination directory where test Javadoc saves the generated HTML files.
-     *
-     * @parameter expression="${reportTestOutputDirectory}" default-value="${project.reporting.outputDirectory}/testapidocs"
-     * @required
      */
+    @Parameter( property = "reportTestOutputDirectory",
+                defaultValue = "${project.reporting.outputDirectory}/testapidocs", required = true )
     private File reportOutputDirectory;
 
     /**
      * The name of the destination directory.
      * <br/>
-     *
-     * @parameter expression="${destDir}" default-value="testapidocs"
      */
+    @Parameter( property = "destDir", defaultValue = "testapidocs" )
     private String destDir;
 
     /**
@@ -120,9 +122,9 @@ public class TestJavadocReport
      * <br/>
      * See <a href="#docfilessubdirs">docfilessubdirs</a>.
      *
-     * @parameter expression="${basedir}/src/test/javadoc" alias="javadocDirectory"
      * @since 2.5
      */
+    @Parameter( alias = "javadocDirectory", defaultValue = "${basedir}/src/test/javadoc" )
     private File testJavadocDirectory;
 
     // ----------------------------------------------------------------------
@@ -133,18 +135,18 @@ public class TestJavadocReport
      * The name of the Test Javadoc report to be displayed in the Maven Generated Reports page
      * (i.e. <code>project-reports.html</code>).
      *
-     * @parameter expression="${testName}" alias="name"
      * @since 2.5
      */
+    @Parameter( property = "testName", alias = "name" )
     private String testName;
 
     /**
      * The description of the Test Javadoc report to be displayed in the Maven Generated Reports page
      * (i.e. <code>project-reports.html</code>).
      *
-     * @parameter expression="${testDescription}" alias="description"
      * @since 2.5
      */
+    @Parameter( property = "testDescription", alias = "description" )
     private String testDescription;
 
     // ----------------------------------------------------------------------

@@ -19,14 +19,18 @@ package org.apache.maven.plugin.javadoc;
  * under the License.
  */
 
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Execute;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
+
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Fix Javadoc documentation and tags for the <code>Test Java code</code> for the project.
@@ -35,10 +39,9 @@ import org.apache.maven.project.MavenProject;
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
  * @since 2.6
- * @goal test-fix
- * @requiresDependencyResolution test
- * @execute phase="test-compile"
  */
+@Mojo( name = "test-fix", requiresDependencyResolution = ResolutionScope.TEST )
+@Execute( phase = LifecyclePhase.TEST_COMPILE )
 public class TestFixJavadocMojo
     extends AbstractFixJavadocMojo
 {

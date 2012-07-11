@@ -19,16 +19,18 @@ package org.apache.maven.plugin.javadoc;
  * under the License.
  */
 
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.ResolutionScope;
+
 /**
  * Generates documentation for the <code>Java Test code</code> in an <b>aggregator</b> project using the standard
  * <a href="http://java.sun.com/j2se/javadoc/">Javadoc Tool</a>.
  *
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
- * @goal test-aggregate
- * @aggregator
  * @since 2.5
  */
+@Mojo( name = "test-aggregate", aggregator = true, requiresDependencyResolution = ResolutionScope.TEST )
 public class AggregatorTestJavadocReport
     extends TestJavadocReport
 {

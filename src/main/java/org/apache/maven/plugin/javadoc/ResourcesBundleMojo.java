@@ -22,6 +22,11 @@ package org.apache.maven.plugin.javadoc;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.javadoc.options.JavadocOptions;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProjectHelper;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
@@ -37,41 +42,37 @@ import java.io.IOException;
  * by the javadoc plugin mojos when used by the <code>includeDependencySources</code> option, to generate
  * javadocs that are somewhat consistent with those generated in the original project itself.
  *  
- * @goal resource-bundle
- * @phase package
  * @since 2.7
  */
+@Mojo( name = "resource-bundle", defaultPhase = LifecyclePhase.PACKAGE,
+       requiresDependencyResolution = ResolutionScope.COMPILE )
 public class ResourcesBundleMojo
-    extends AbstractJavadocMojo
+extends AbstractJavadocMojo
 {
-    
+
     public static final String BUNDLE_OPTIONS_PATH = "META-INF/maven/javadoc-options.xml";
 
     public static final String RESOURCES_DIR_PATH = "resources";
 
     /**
-     * Base name of artifacts produced by this project. This will be combined with 
-     * {@link ResourcesBundleMojo#getAttachmentClassifier()} to produce the name for this bundle 
+     * Base name of artifacts produced by this project. This will be combined with
+     * {@link ResourcesBundleMojo#getAttachmentClassifier()} to produce the name for this bundle
      * jar.
-     * 
-     * @parameter default-value="${project.build.finalName}"
-     * @readonly
      */
+    @Parameter( defaultValue = "${project.build.finalName}", readonly = true )
     private String finalName;
-    
+
     /**
-     * Helper component to provide an easy mechanism for attaching an artifact to the project for 
+     * Helper component to provide an easy mechanism for attaching an artifact to the project for
      * installation/deployment.
-     * 
-     * @component
      */
+    @Component
     private MavenProjectHelper projectHelper;
-    
+
     /**
      * Archiver manager, used to manage jar builder.
-     *
-     * @component
      */
+    @Component
     private ArchiverManager archiverManager;
 
     /**

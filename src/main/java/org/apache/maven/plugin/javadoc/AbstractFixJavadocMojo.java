@@ -19,6 +19,37 @@ package org.apache.maven.plugin.javadoc;
  * under the License.
  */
 
+import com.thoughtworks.qdox.JavaDocBuilder;
+import com.thoughtworks.qdox.model.AbstractInheritableJavaEntity;
+import com.thoughtworks.qdox.model.AbstractJavaEntity;
+import com.thoughtworks.qdox.model.Annotation;
+import com.thoughtworks.qdox.model.DocletTag;
+import com.thoughtworks.qdox.model.JavaClass;
+import com.thoughtworks.qdox.model.JavaField;
+import com.thoughtworks.qdox.model.JavaMethod;
+import com.thoughtworks.qdox.model.JavaParameter;
+import com.thoughtworks.qdox.model.Type;
+import com.thoughtworks.qdox.model.TypeVariable;
+import com.thoughtworks.qdox.parser.ParseException;
+import org.apache.commons.lang.ClassUtils;
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.DependencyResolutionRequiredException;
+import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.MavenProject;
+import org.apache.maven.settings.Settings;
+import org.apache.maven.shared.invoker.MavenInvocationException;
+import org.codehaus.plexus.components.interactivity.InputHandler;
+import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.ReaderFactory;
+import org.codehaus.plexus.util.StringUtils;
+import org.codehaus.plexus.util.WriterFactory;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -43,36 +74,6 @@ import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.apache.commons.lang.ClassUtils;
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.DependencyResolutionRequiredException;
-import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.project.MavenProject;
-import org.apache.maven.settings.Settings;
-import org.apache.maven.shared.invoker.MavenInvocationException;
-import org.codehaus.plexus.components.interactivity.InputHandler;
-import org.codehaus.plexus.util.FileUtils;
-import org.codehaus.plexus.util.IOUtil;
-import org.codehaus.plexus.util.ReaderFactory;
-import org.codehaus.plexus.util.StringUtils;
-import org.codehaus.plexus.util.WriterFactory;
-
-import com.thoughtworks.qdox.JavaDocBuilder;
-import com.thoughtworks.qdox.model.AbstractInheritableJavaEntity;
-import com.thoughtworks.qdox.model.AbstractJavaEntity;
-import com.thoughtworks.qdox.model.Annotation;
-import com.thoughtworks.qdox.model.DocletTag;
-import com.thoughtworks.qdox.model.JavaClass;
-import com.thoughtworks.qdox.model.JavaField;
-import com.thoughtworks.qdox.model.JavaMethod;
-import com.thoughtworks.qdox.model.JavaParameter;
-import com.thoughtworks.qdox.model.Type;
-import com.thoughtworks.qdox.model.TypeVariable;
-import com.thoughtworks.qdox.parser.ParseException;
 
 /**
  * Abstract class to fix Javadoc documentation and tags in source files.
@@ -152,15 +153,18 @@ public abstract class AbstractFixJavadocMojo
     /** The Clirr Maven plugin goal <code>check</code> **/
     private static final String CLIRR_MAVEN_PLUGIN_GOAL = "check";
 
+    public static final String JAVA_FILES = "**\\/*.java";
+
+    public static final String DEFAULT_VERSION_VALUE = "\u0024Id: \u0024Id";
+
     // ----------------------------------------------------------------------
     // Mojo components
     // ----------------------------------------------------------------------
 
     /**
      * Input handler, needed for command line handling.
-     *
-     * @component
      */
+    @Component
     private InputHandler inputHandler;
 
     // ----------------------------------------------------------------------
@@ -172,26 +176,22 @@ public abstract class AbstractFixJavadocMojo
      * <a href="http://mojo.codehaus.org/clirr-maven-plugin/">Clirr Maven Plugin</a>.
      * <br/>
      * See <a href="#defaultSince">defaultSince</a>.
-     *
-     * @parameter expression="${comparisonVersion}" default-value="(,${project.version})"
      */
+    @Parameter( property = "comparisonVersion", defaultValue = "(,${project.version})" )
     private String comparisonVersion;
 
     /**
      * Default value for the Javadoc tag <code>&#64;author</code>.
      * <br/>
      * If not specified, the <code>user.name</code> defined in the System properties will be used.
-     *
-     * @parameter expression="${defaultAuthor}"
      */
+    @Parameter( property = "defaultAuthor" )
     private String defaultAuthor;
 
     /**
      * Default value for the Javadoc tag <code>&#64;since</code>.
-     * <br/>
-     *
-     * @parameter expression="${defaultSince}" default-value="${project.version}"
      */
+    @Parameter( property = "defaultSince", defaultValue = "${project.version}" )
     private String defaultSince;
 
     /**
@@ -200,24 +200,21 @@ public abstract class AbstractFixJavadocMojo
      * By default, it is <code>&#36;Id:&#36;</code>, corresponding to a
      * <a href="http://svnbook.red-bean.com/en/1.1/ch07s02.html#svn-ch-7-sect-2.3.4">SVN keyword</a>.
      * Refer to your SCM to use an other SCM keyword.
-     *
-     * @parameter expression="${defaultVersion}"
      */
+    @Parameter( property = "defaultVersion", defaultValue = DEFAULT_VERSION_VALUE )
     private String defaultVersion = "\u0024Id: \u0024"; // can't use default-value="\u0024Id: \u0024"
 
     /**
      * The file encoding to use when reading the source files. If the property
      * <code>project.build.sourceEncoding</code> is not set, the platform default encoding is used.
-     *
-     * @parameter expression="${encoding}" default-value="${project.build.sourceEncoding}"
      */
+    @Parameter( property = "encoding", defaultValue = "${project.build.sourceEncoding}" )
     private String encoding;
 
     /**
      * Comma separated excludes Java files, i.e. <code>&#42;&#42;/&#42;Test.java</code>.
-     *
-     * @parameter expression="${excludes}"
      */
+    @Parameter( property = "excludes" )
     private String excludes;
 
     /**
@@ -233,51 +230,46 @@ public abstract class AbstractFixJavadocMojo
      * <li>throws (fix only &#64;throws tag)</li>
      * <li>link (fix only &#64;link tag)</li>
      * </ul>
-     *
-     * @parameter expression="${fixTags}" default-value="all"
      */
+    @Parameter( property = "fixTags", defaultValue = "all" )
     private String fixTags;
 
     /**
      * Flag to fix the classes or interfaces Javadoc comments according the <code>level</code>.
-     *
-     * @parameter expression="${fixClassComment}" default-value="true"
      */
+    @Parameter( property = "fixClassComment", defaultValue = "true" )
     private boolean fixClassComment;
 
     /**
      * Flag to fix the fields Javadoc comments according the <code>level</code>.
-     *
-     * @parameter expression="${fixFieldComment}" default-value="true"
      */
+    @Parameter( property = "fixFieldComment", defaultValue = "true" )
     private boolean fixFieldComment;
 
     /**
      * Flag to fix the methods Javadoc comments according the <code>level</code>.
-     *
-     * @parameter expression="${fixMethodComment}" default-value="true"
      */
+    @Parameter( property = "fixMethodComment", defaultValue = "true" )
     private boolean fixMethodComment;
 
     /**
      * Forcing the goal execution i.e. skip warranty messages (not recommended).
-     *
-     * @parameter expression="${force}"
      */
+    @Parameter( property = "force" )
     private boolean force;
 
     /**
      * Flag to ignore or not Clirr.
-     *
-     * @parameter expression="${ignoreClirr}" default-value="false"
      */
+    @Parameter( property = "ignoreClirr", defaultValue = "false" )
     protected boolean ignoreClirr;
 
     /**
      * Comma separated includes Java files, i.e. <code>&#42;&#42;/&#42;Test.java</code>.
-     *
-     * @parameter expression="${includes}" default-value="**\/*.java"
+     * <p/>
+     * <strong>Note:</strong> default value is {@code **\/*.java}.
      */
+    @Parameter( property = "includes", defaultValue = JAVA_FILES )
     private String includes;
 
     /**
@@ -293,42 +285,32 @@ public abstract class AbstractFixJavadocMojo
      * <li><a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#private">private</a>
      * (shows all classes and members)</li>
      * </ul>
-     * <br/>
-     *
-     * @parameter expression="${level}" default-value="protected"
      */
+    @Parameter( property = "level", defaultValue = "protected" )
     private String level;
 
     /**
      * The local repository where the artifacts are located, used by the tests.
-     *
-     * @parameter expression="${localRepository}"
      */
+    @Parameter( property = "localRepository" )
     private ArtifactRepository localRepository;
 
     /**
      * Output directory where Java classes will be rewritten.
-     *
-     * @parameter expression="${outputDirectory}" default-value="${project.build.sourceDirectory}"
      */
+    @Parameter( property = "outputDirectory", defaultValue = "${project.build.sourceDirectory}" )
     private File outputDirectory;
 
     /**
      * The Maven Project Object.
-     *
-     * @parameter expression="${project}"
-     * @required
-     * @readonly
      */
+    @Component
     private MavenProject project;
 
     /**
      * The current user system settings for use in Maven.
-     *
-     * @parameter expression="${settings}"
-     * @required
-     * @readonly
      */
+    @Component
     private Settings settings;
 
     // ----------------------------------------------------------------------

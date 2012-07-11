@@ -19,19 +19,24 @@ package org.apache.maven.plugin.javadoc;
  * under the License.
  */
 
-import java.io.File;
-import java.util.List;
-import java.util.Locale;
-import java.util.ResourceBundle;
-
 import org.apache.maven.doxia.module.xhtml.decoration.render.RenderingContext;
 import org.apache.maven.doxia.siterenderer.sink.SiteRendererSink;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Execute;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.reporting.MavenReport;
 import org.apache.maven.reporting.MavenReportException;
 import org.codehaus.doxia.sink.Sink;
 import org.codehaus.plexus.util.StringUtils;
+
+import java.io.File;
+import java.util.List;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 /**
  * Generates documentation for the <code>Java code</code> in an <b>NON aggregator</b> project using the standard
@@ -41,11 +46,11 @@ import org.codehaus.plexus.util.StringUtils;
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
  * @since 2.0
- * @goal javadoc
- * @execute phase="generate-sources"
  * @see <a href="http://java.sun.com/j2se/javadoc/">Javadoc Tool</a>
  * @see <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#options">Javadoc Options</a>
  */
+@Mojo( name = "javadoc", requiresDependencyResolution = ResolutionScope.COMPILE )
+@Execute( phase = LifecyclePhase.GENERATE_SOURCES )
 public class JavadocReport
     extends AbstractJavadocMojo
     implements MavenReport
@@ -56,10 +61,9 @@ public class JavadocReport
 
     /**
      * Specifies the destination directory where javadoc saves the generated HTML files.
-     *
-     * @parameter expression="${reportOutputDirectory}" default-value="${project.reporting.outputDirectory}/apidocs"
-     * @required
      */
+    @Parameter( property = "reportOutputDirectory", defaultValue = "${project.reporting.outputDirectory}/apidocs",
+                required = true )
     private File reportOutputDirectory;
 
     /**
@@ -67,8 +71,8 @@ public class JavadocReport
      * <br/>
      *
      * @since 2.1
-     * @parameter expression="${destDir}" default-value="apidocs"
      */
+    @Parameter( property = "destDir", defaultValue = "apidocs" )
     private String destDir;
 
     /**
@@ -76,8 +80,8 @@ public class JavadocReport
      * (i.e. <code>project-reports.html</code>).
      *
      * @since 2.1
-     * @parameter expression="${name}"
      */
+    @Parameter( property = "name" )
     private String name;
 
     /**
@@ -85,8 +89,8 @@ public class JavadocReport
      * (i.e. <code>project-reports.html</code>).
      *
      * @since 2.1
-     * @parameter expression="${description}"
      */
+    @Parameter( property = "description" )
     private String description;
 
     // ----------------------------------------------------------------------

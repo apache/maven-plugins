@@ -19,28 +19,32 @@ package org.apache.maven.plugin.javadoc;
  * under the License.
  */
 
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
+
 import java.io.File;
 
 /**
- * Bundle {@link TestJavadocJar#testJavadocDirectory}, along with javadoc configuration options from 
- * {@link AbstractJavadocMojo} such as taglet, doclet, and link information into a deployable 
- * artifact. This artifact can then be consumed by the javadoc plugin mojos when used by the 
- * <code>includeDependencySources</code> option, to generate javadocs that are somewhat consistent 
+ * Bundle {@link TestJavadocJar#testJavadocDirectory}, along with javadoc configuration options from
+ * {@link AbstractJavadocMojo} such as taglet, doclet, and link information into a deployable
+ * artifact. This artifact can then be consumed by the javadoc plugin mojos when used by the
+ * <code>includeDependencySources</code> option, to generate javadocs that are somewhat consistent
  * with those generated in the original project itself.
- *  
- * @goal test-resource-bundle
- * @phase package
+ *
  * @since 2.7
  */
+@Mojo( name = "test-resource-bundle", defaultPhase = LifecyclePhase.PACKAGE,
+       requiresDependencyResolution = ResolutionScope.TEST )
 public class TestResourcesBundleMojo
     extends ResourcesBundleMojo
 {
-    
+
     /**
      * Specifies the Test Javadoc resources directory to be included in the Javadoc (i.e. package.html, images...).
-     *
-     * @parameter default-value="${basedir}/src/test/javadoc" alias="javadocDirectory"
      */
+    @Parameter( alias = "javadocDirectory", defaultValue = "${basedir}/src/test/javadoc" )
     private File testJavadocDirectory;
 
     @Override
@@ -54,5 +58,5 @@ public class TestResourcesBundleMojo
     {
         return testJavadocDirectory;
     }
-    
+
 }
