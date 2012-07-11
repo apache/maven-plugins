@@ -20,6 +20,7 @@ package org.apache.maven.plugin.changelog;
  */
 
 import org.apache.maven.doxia.sink.Sink;
+import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.scm.ChangeFile;
 import org.apache.maven.scm.ChangeSet;
 import org.apache.maven.scm.command.changelog.ChangeLogSet;
@@ -38,8 +39,8 @@ import java.util.ResourceBundle;
  * Generate a file activity report.
  *
  * @version $Id$
- * @goal file-activity
  */
+@Mojo( name = "file-activity" )
 public class FileActivityReport
     extends ChangeLogReport
 {
