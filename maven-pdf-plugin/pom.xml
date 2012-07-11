@@ -130,6 +130,11 @@ under the License.
       <version>${mavenVersion}</version>
     </dependency>
     <dependency>
+      <groupId>org.apache.maven.plugin-tools</groupId>
+      <artifactId>maven-plugin-annotations</artifactId>
+      <version>3.1</version>
+    </dependency>
+    <dependency>
       <groupId>org.apache.maven.reporting</groupId>
       <artifactId>maven-reporting-api</artifactId>
       <version>${mavenVersion}</version>
@@ -305,6 +310,13 @@ under the License.
           <artifactId>maven-pdf-plugin</artifactId>
           <version>1.1</version>
         </plugin>
+        <plugin>
+          <artifactId>maven-plugin-plugin</artifactId>
+          <version>3.1</version>
+          <configuration>
+            <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
+          </configuration>
+        </plugin>
       </plugins>
     </pluginManagement>
 
@@ -328,6 +340,17 @@ under the License.
         </executions>
       </plugin>
 <!-- END SNIPPET: configuration -->
+      <plugin>
+        <artifactId>maven-plugin-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>generate-descriptor</id>
+            <goals>
+              <goal>descriptor</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
       <!-- Backward compatibility with Maven 2.0.x, see MNG-3402 -->
       <plugin>
         <artifactId>maven-shade-plugin</artifactId>

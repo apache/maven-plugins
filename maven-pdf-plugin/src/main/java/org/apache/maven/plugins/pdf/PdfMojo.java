@@ -19,24 +19,6 @@ package org.apache.maven.plugins.pdf;
  * under the License.
  */
 
-import java.io.File;
-import java.io.IOException;
-import java.io.Reader;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.swing.text.AttributeSet;
-
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
@@ -86,6 +68,9 @@ import org.apache.maven.plugin.descriptor.MojoDescriptor;
 import org.apache.maven.plugin.descriptor.PluginDescriptor;
 import org.apache.maven.plugin.version.PluginVersionNotFoundException;
 import org.apache.maven.plugin.version.PluginVersionResolutionException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
@@ -104,18 +89,36 @@ import org.codehaus.plexus.util.WriterFactory;
 import org.codehaus.plexus.util.xml.XmlStreamReader;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
+import javax.swing.text.AttributeSet;
+import java.io.File;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
 /**
  * Generates a PDF document for a project.
  *
  * @author ltheussl
  * @version $Id$
- * @goal pdf
- * @threadSafe
  */
+@Mojo( name = "pdf", threadSafe = true )
 public class PdfMojo
     extends AbstractMojo
 {
-    /** The vm line separator */
+    /**
+     * The vm line separator
+     */
     private static final String EOL = System.getProperty( "line.separator" );
 
     // ----------------------------------------------------------------------
@@ -124,77 +127,71 @@ public class PdfMojo
 
     /**
      * FO Document Renderer.
-     *
-     * @component role-hint="fo"
      */
+    @Component( hint = "fo" )
     private PdfRenderer foRenderer;
 
     /**
      * Internationalization.
-     *
-     * @component
      */
+    @Component
     private I18N i18n;
 
     /**
      * IText Document Renderer.
-     *
-     * @component role-hint="itext"
      */
+    @Component( hint = "itext" )
     private PdfRenderer itextRenderer;
 
     /**
      * A comma separated list of locales supported by Maven.
      * The first valid token will be the default Locale for this instance of the Java Virtual Machine.
-     *
-     * @parameter expression="${locales}"
      */
+    @Parameter( property = "locales" )
     private String locales;
 
     /**
      * Site renderer.
-     *
-     * @component
      */
+    @Component
     private Renderer siteRenderer;
 
     /**
      * SiteTool.
-     *
-     * @component
      */
+    @Component
     private SiteTool siteTool;
 
     /**
      * The Plugin manager instance used to resolve Plugin descriptors.
      *
-     * @component role="org.apache.maven.plugin.PluginManager"
      * @since 1.1
      */
+    @Component( role = PluginManager.class )
     private PluginManager pluginManager;
 
     /**
      * Doxia.
      *
-     * @component
      * @since 1.1
      */
+    @Component
     private Doxia doxia;
 
     /**
      * Factory for creating artifact objects.
      *
-     * @component
      * @since 1.1
      */
+    @Component
     private ArtifactFactory artifactFactory;
 
     /**
      * Project builder.
      *
-     * @component
      * @since 1.1
      */
+    @Component
     private MavenProjectBuilder mavenProjectBuilder;
 
     // ----------------------------------------------------------------------
@@ -203,112 +200,89 @@ public class PdfMojo
 
     /**
      * The Maven Project Object.
-     *
-     * @parameter default-value="${project}"
-     * @required
-     * @readonly
      */
+    @Component
     private MavenProject project;
 
     /**
      * The Maven Settings.
      *
-     * @parameter default-value="${settings}"
-     * @required
-     * @readonly
      * @since 1.1
      */
+    @Component
     private Settings settings;
 
     /**
      * The current build session instance.
      *
-     * @parameter expression="${session}"
-     * @required
-     * @readonly
      * @since 1.1
      */
+    @Component
     private MavenSession session;
 
     /**
      * Directory containing source for apt, fml and xdoc docs.
-     *
-     * @parameter default-value="${basedir}/src/site"
-     * @required
      */
+    @Parameter( defaultValue = "${basedir}/src/site", required = true )
     private File siteDirectory;
 
     /**
      * Directory containing generated sources for apt, fml and xdoc docs.
      *
-     * @parameter default-value="${project.build.directory}/generated-site"
-     * @required
      * @since 1.1
      */
+    @Parameter( defaultValue = "${project.build.directory}/generated-site", required = true )
     private File generatedSiteDirectory;
 
     /**
      * Output directory where PDF files should be created.
-     *
-     * @parameter default-value="${project.build.directory}/pdf"
-     * @required
      */
+    @Parameter( defaultValue = "${project.build.directory}/pdf", required = true )
     private File outputDirectory;
 
     /**
      * Working directory for working files like temp files/resources.
-     *
-     * @parameter default-value="${project.build.directory}/pdf"
-     * @required
      */
+    @Parameter( defaultValue = "${project.build.directory}/pdf", required = true )
     private File workingDirectory;
 
     /**
      * File that contains the DocumentModel of the PDF to generate.
-     *
-     * @parameter default-value="src/site/pdf.xml"
      */
+    @Parameter( defaultValue = "src/site/pdf.xml" )
     private File docDescriptor;
 
     /**
      * Identifies the framework to use for pdf generation: either "fo" (default) or "itext".
-     *
-     * @parameter expression="${implementation}" default-value="fo"
-     * @required
      */
+    @Parameter( property = "implementation", defaultValue = "fo", required = true )
     private String implementation;
 
     /**
      * The local repository.
-     *
-     * @parameter default-value="${localRepository}"
-     * @required
-     * @readonly
      */
+    @Parameter( defaultValue = "${localRepository}", required = true, readonly = true )
     private ArtifactRepository localRepository;
 
     /**
      * The remote repositories where artifacts are located.
      *
-     * @parameter expression="${project.remoteArtifactRepositories}"
      * @since 1.1
      */
+    @Parameter( property = "project.remoteArtifactRepositories" )
     private List remoteRepositories;
 
     /**
      * If <code>true</false>, aggregate all source documents in one pdf, otherwise generate one pdf for each
      * source document.
-     *
-     * @parameter expression="${aggregate}" default-value="true"
      */
+    @Parameter( property = "aggregate", defaultValue = "true" )
     private boolean aggregate;
 
     /**
      * The current version of this plugin.
-     *
-     * @parameter default-value="${plugin.version}"
-     * @readonly
      */
+    @Parameter( defaultValue = "${plugin.version}", readonly = true )
     private String pluginVersion;
 
     /**
@@ -316,9 +290,9 @@ public class PdfMojo
      * them as a new entry in the TOC (Table Of Contents).
      * <b>Note</b>: Including the report generation could fail the PDF generation or increase the build time.
      *
-     * @parameter expression="${includeReports}" default-value="true"
      * @since 1.1
      */
+    @Parameter( property = "includeReports", defaultValue = "true" )
     private boolean includeReports;
 
     /**
@@ -326,9 +300,9 @@ public class PdfMojo
      * <br/>
      * Possible values are: 'none', 'start' and 'end'.
      *
-     * @parameter expression="${generateTOC}" default-value="start"
      * @since 1.1
      */
+    @Parameter( property = "generateTOC", defaultValue = "start" )
     private String generateTOC;
 
     /**
@@ -337,9 +311,9 @@ public class PdfMojo
      * (in particular xdoc and fml) will be validated and any error will
      * lead to a build failure.
      *
-     * @parameter expression="${validate}" default-value="false"
      * @since 1.2
      */
+    @Parameter( property = "validate", defaultValue = "false" )
     private boolean validate;
 
     // ----------------------------------------------------------------------
