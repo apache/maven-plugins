@@ -20,6 +20,7 @@ package org.apache.maven.plugin.changelog;
  */
 
 import org.apache.maven.doxia.sink.Sink;
+import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.scm.ChangeFile;
 import org.apache.maven.scm.ChangeSet;
 import org.apache.maven.scm.command.changelog.ChangeLogSet;
@@ -36,8 +37,8 @@ import java.util.ResourceBundle;
  * Generate a developer activity report.
  *
  * @version $Id$
- * @goal dev-activity
  */
+@Mojo( name = "dev-activity" )
 public class DeveloperActivityReport
     extends ChangeLogReport
 {

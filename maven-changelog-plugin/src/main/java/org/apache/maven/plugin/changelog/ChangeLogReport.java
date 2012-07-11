@@ -19,6 +19,37 @@ package org.apache.maven.plugin.changelog;
  * under the License.
  */
 
+import org.apache.maven.doxia.sink.Sink;
+import org.apache.maven.doxia.siterenderer.Renderer;
+import org.apache.maven.model.Developer;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.MavenProject;
+import org.apache.maven.reporting.AbstractMavenReport;
+import org.apache.maven.reporting.MavenReportException;
+import org.apache.maven.scm.ChangeFile;
+import org.apache.maven.scm.ChangeSet;
+import org.apache.maven.scm.ScmBranch;
+import org.apache.maven.scm.ScmException;
+import org.apache.maven.scm.ScmFileSet;
+import org.apache.maven.scm.ScmResult;
+import org.apache.maven.scm.ScmRevision;
+import org.apache.maven.scm.command.changelog.ChangeLogScmResult;
+import org.apache.maven.scm.command.changelog.ChangeLogSet;
+import org.apache.maven.scm.manager.ScmManager;
+import org.apache.maven.scm.provider.ScmProvider;
+import org.apache.maven.scm.provider.ScmProviderRepository;
+import org.apache.maven.scm.provider.ScmProviderRepositoryWithHost;
+import org.apache.maven.scm.provider.svn.repository.SvnScmProviderRepository;
+import org.apache.maven.scm.repository.ScmRepository;
+import org.apache.maven.settings.Server;
+import org.apache.maven.settings.Settings;
+import org.codehaus.plexus.util.ReaderFactory;
+import org.codehaus.plexus.util.StringUtils;
+import org.codehaus.plexus.util.WriterFactory;
+
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
@@ -47,40 +78,12 @@ import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.maven.doxia.sink.Sink;
-import org.apache.maven.doxia.siterenderer.Renderer;
-import org.apache.maven.model.Developer;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.project.MavenProject;
-import org.apache.maven.reporting.AbstractMavenReport;
-import org.apache.maven.reporting.MavenReportException;
-import org.apache.maven.scm.ChangeFile;
-import org.apache.maven.scm.ChangeSet;
-import org.apache.maven.scm.ScmBranch;
-import org.apache.maven.scm.ScmException;
-import org.apache.maven.scm.ScmFileSet;
-import org.apache.maven.scm.ScmResult;
-import org.apache.maven.scm.ScmRevision;
-import org.apache.maven.scm.command.changelog.ChangeLogScmResult;
-import org.apache.maven.scm.command.changelog.ChangeLogSet;
-import org.apache.maven.scm.manager.ScmManager;
-import org.apache.maven.scm.provider.ScmProvider;
-import org.apache.maven.scm.provider.ScmProviderRepository;
-import org.apache.maven.scm.provider.ScmProviderRepositoryWithHost;
-import org.apache.maven.scm.provider.svn.repository.SvnScmProviderRepository;
-import org.apache.maven.scm.repository.ScmRepository;
-import org.apache.maven.settings.Server;
-import org.apache.maven.settings.Settings;
-import org.codehaus.plexus.util.ReaderFactory;
-import org.codehaus.plexus.util.StringUtils;
-import org.codehaus.plexus.util.WriterFactory;
-
 /**
  * Generate a changelog report.
  *
  * @version $Id$
- * @goal changelog
  */
+@Mojo( name = "changelog" )
 public class ChangeLogReport
     extends AbstractMavenReport
 {
@@ -97,10 +100,10 @@ public class ChangeLogReport
     private static final String ISSUE_TOKEN = "%ISSUE%";
 
     /**
-    * A special token that represents the SCM revision number.
-    * It can be used in <code>displayChangeSetDetailUrl</code>
-    * and <code>displayFileRevDetailUrl</code>.
-    */
+     * A special token that represents the SCM revision number.
+     * It can be used in <code>displayChangeSetDetailUrl</code>
+     * and <code>displayFileRevDetailUrl</code>.
+     */
     private static final String REV_TOKEN = "%REV%";
 
     /**
@@ -108,192 +111,161 @@ public class ChangeLogReport
      */
     private static final int DEFAULT_RANGE = 30;
 
+    public static final String DEFAULT_ISSUE_ID_REGEX_PATTERN = "[a-zA-Z]{2,}-\\d+";
+
     /**
      * Used to specify the format to use for the dates in the headings of the
      * report.
      *
-     * @parameter expression="${changelog.headingDateFormat}" default-value="yyyy-MM-dd"
      * @since 2.1
      */
+    @Parameter( property = "changelog.headingDateFormat", defaultValue = "yyyy-MM-dd" )
     private String headingDateFormat = "yyyy-MM-dd";
 
     /**
      * Used to specify whether to build the log using range, tag or date.
-     *
-     * @parameter expression="${changelog.type}" default-value="range"
-     * @required
      */
+    @Parameter( property = "changelog.type", defaultValue = "range", required = true )
     private String type;
 
     /**
      * Used to specify the number of days of log entries to retrieve.
-     *
-     * @parameter expression="${changelog.range}" default-value="-1"
      */
+    @Parameter( property = "changelog.range", defaultValue = "-1" )
     private int range;
 
     /**
      * Used to specify the absolute date (or list of dates) to start log entries from.
-     *
-     * @parameter
      */
+    @Parameter
     private List dates;
 
     /**
      * Used to specify the tag (or list of tags) to start log entries from.
-     *
-     * @parameter
      */
+    @Parameter
     private List tags;
 
     /**
      * Used to specify the date format of the log entries that are retrieved from your SCM system.
-     *
-     * @parameter expression="${changelog.dateFormat}" default-value="yyyy-MM-dd HH:mm:ss"
-     * @required
      */
+    @Parameter( property = "changelog.dateFormat", defaultValue = "yyyy-MM-dd HH:mm:ss", required = true )
     private String dateFormat;
 
     /**
      * Input dir. Directory where the files under SCM control are located.
-     *
-     * @parameter expression="${basedir}"
-     * @required
      */
+    @Parameter( property = "basedir", required = true )
     private File basedir;
 
     /**
      * Output file for xml document
-     *
-     * @parameter expression="${project.build.directory}/changelog.xml"
-     * @required
      */
+    @Parameter( defaultValue = "${project.build.directory}/changelog.xml", required = true )
     private File outputXML;
 
     /**
      * Allows the user to make changelog regenerate the changelog.xml file for the specified time in minutes.
-     *
-     * @parameter expression="${outputXMLExpiration}" default-value="60"
-     * @required
      */
+    @Parameter( property = "outputXMLExpiration", defaultValue = "60", required = true )
     private int outputXMLExpiration;
 
     /**
      * Comment format string used for interrogating
      * the revision control system.
      * Currently only used by the ClearcaseChangeLogGenerator.
-     *
-     * @parameter expression="${changelog.commentFormat}"
      */
+    @Parameter( property = "changelog.commentFormat" )
     private String commentFormat;
 
     /**
      * The file encoding when writing non-HTML reports.
-     *
-     * @parameter expression="${changelog.outputEncoding}" default-value="${project.reporting.outputEncoding}"
      */
+    @Parameter( property = "changelog.outputEncoding", defaultValue = "${project.reporting.outputEncoding}" )
     private String outputEncoding;
 
     /**
      * The user name (used by svn and starteam protocol).
-     *
-     * @parameter expression="${username}"
      */
+    @Parameter( property = "username" )
     private String username;
 
     /**
      * The user password (used by svn and starteam protocol).
-     *
-     * @parameter expression="${password}"
      */
+    @Parameter( property = "password" )
     private String password;
 
     /**
      * The private key (used by java svn).
-     *
-     * @parameter expression="${privateKey}"
      */
+    @Parameter( property = "privateKey" )
     private String privateKey;
 
     /**
      * The passphrase (used by java svn).
-     *
-     * @parameter expression="${passphrase}"
      */
+    @Parameter( property = "passphrase" )
     private String passphrase;
 
     /**
      * The url of tags base directory (used by svn protocol).
-     *
-     * @parameter expression="${tagBase}"
      */
+    @Parameter( property = "tagBase" )
     private String tagBase;
 
     /**
      * The URL to view the scm. Basis for external links from the generated report.
-     *
-     * @parameter expression="${project.scm.url}"
      */
+    @Parameter( property = "project.scm.url" )
     protected String scmUrl;
 
     /**
      * Skip the Changelog report generation.  Most useful on the command line
      * via "-Dchangelog.skip=true".
      *
-     * @parameter expression="${changelog.skip}" default-value="false"
      * @since 2.3
      */
+    @Parameter( property = "changelog.skip", defaultValue = "false" )
     protected boolean skip;
 
     /**
      * The Maven Project Object
-     *
-     * @parameter expression="${project}"
-     * @required
-     * @readonly
      */
+    @Component
     private MavenProject project;
 
     /**
      * The directory where the report will be generated
-     *
-     * @parameter expression="${project.reporting.outputDirectory}"
-     * @required
-     * @readonly
      */
+    @Parameter( property = "project.reporting.outputDirectory", required = true, readonly = true )
     private File outputDirectory;
 
     /**
-     * @component
      */
+    @Component
     private Renderer siteRenderer;
 
     /**
-     * @parameter expression="${settings.offline}"
-     * @required
-     * @readonly
      */
+    @Parameter( property = "settings.offline", required = true, readonly = true )
     private boolean offline;
 
     /**
-     * @component
      */
+    @Component
     private ScmManager manager;
 
     /**
-     * @parameter expression="${settings}"
-     * @required
-     * @readonly
      */
+    @Component
     private Settings settings;
 
     /**
      * Allows the user to choose which scm connection to use when connecting to the scm.
      * Can either be "connection" or "developerConnection".
-     *
-     * @parameter default-value="connection"
-     * @required
      */
+    @Parameter( defaultValue = "connection", required = true )
     private String connectionType;
 
     /**
@@ -310,9 +282,8 @@ public class ChangeLogReport
      * <strong>Note:</strong> If you don't supply the token in your template,
      * the path of the file will simply be appended to your template URL.
      * </p>
-     *
-     * @parameter expression="${displayFileDetailUrl}" default-value="${project.scm.url}"
      */
+    @Parameter( property = "displayFileDetailUrl", defaultValue = "${project.scm.url}" )
     protected String displayFileDetailUrl;
 
     /**
@@ -320,11 +291,11 @@ public class ChangeLogReport
      * Bugzilla and alike in the SCM commit messages. Any matched patterns
      * are replaced with <code>issueLinkUrl<code> URL. The default
      * value is a JIRA-style issue identification pattern.
-     *
-     * @parameter expression="${issueIDRegexPattern}" default-value="[a-zA-Z]{2,}-\\d+"
-     * @required
+     * <p/>
+     * <strong>Note:</strong> Default value is [a-zA-Z]{2,}-\d+
      * @since 2.2
      */
+    @Parameter( property = "issueIDRegexPattern", defaultValue = DEFAULT_ISSUE_ID_REGEX_PATTERN, required = true )
     private String issueIDRegexPattern;
 
     /**
@@ -333,17 +304,16 @@ public class ChangeLogReport
      * URL. If %ISSUE% is found in the URL it is replaced with the matched issue ID,
      * otherwise the matched issue ID is appended to the URL.
      *
-     * @parameter expression="${issueLinkUrl}" default-value="http://jira.codehaus.org/browse/%ISSUE%"
-     * @required
      * @since 2.2
      */
+    @Parameter( property = "issueLinkUrl", defaultValue = "http://jira.codehaus.org/browse/%ISSUE%", required = true )
     private String issueLinkUrl;
 
     /**
      * A template string that is used to create the changeset URL.
-     *
+     * <p/>
      * If not defined no change set link will be created.
-     *
+     * <p/>
      * There is one special token that you can use in your template:
      * <ul>
      * <li><code>%REV%</code> - this is the changeset revision</li>
@@ -357,9 +327,9 @@ public class ChangeLogReport
      * the revision will simply be appended to your template URL.
      * </p>
      *
-     * @parameter expression="${displayChangeSetDetailUrl}"
      * @since 2.2
      */
+    @Parameter( property = "displayChangeSetDetailUrl" )
     protected String displayChangeSetDetailUrl;
 
     /**
@@ -368,11 +338,11 @@ public class ChangeLogReport
      * When a report contains both file and file revision information, as in the
      * Change Log report, this template string can be used to create a revision
      * aware URL to the file details.
-     *
+     * <p/>
      * If not defined this template string defaults to the same value as the
      * <code>displayFileDetailUrl</code> and thus revision number aware links will
      * not be used.
-     *
+     * <p/>
      * There are two special tokens that you can use in your template:
      * <ul>
      * <li><code>%FILE%</code> - this is the path to a file</li>
@@ -387,26 +357,25 @@ public class ChangeLogReport
      * the path of the file will simply be appended to your template URL.
      * </p>
      *
-     * @parameter expression="${displayFileRevDetailUrl}"
      * @since 2.2
      */
+    @Parameter( property = "displayFileRevDetailUrl" )
     protected String displayFileRevDetailUrl;
 
     /**
      * List of developers to be shown on the report.
      *
-     * @parameter expression="${project.developers}"
      * @since 2.2
      */
+    @Parameter( property = "project.developers" )
     protected List developers;
 
     /**
      * List of provider implementations.
-     *
-     * @parameter
      */
+    @Parameter
     private Map providerImplementations;
-    
+
     // temporary field holder while generating the report
     private String rptRepository, rptOneRepoParam, rptMultiRepoParam;
 
@@ -421,9 +390,8 @@ public class ChangeLogReport
 
     /**
      * The system properties to use (needed by the perforce scm provider).
-     *
-     * @parameter
      */
+    @Parameter
     private Properties systemProperties;
 
     /** {@inheritDoc} */
