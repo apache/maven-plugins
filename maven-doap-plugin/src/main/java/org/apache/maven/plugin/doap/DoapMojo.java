@@ -19,26 +19,6 @@ package org.apache.maven.plugin.doap;
  * under the License.
  */
 
-import java.io.File;
-import java.io.IOException;
-import java.io.Writer;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.TimeZone;
-
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
@@ -60,6 +40,9 @@ import org.apache.maven.plugin.doap.options.DoapArtifact;
 import org.apache.maven.plugin.doap.options.DoapOptions;
 import org.apache.maven.plugin.doap.options.ExtOptions;
 import org.apache.maven.plugin.doap.options.Standard;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
@@ -77,6 +60,26 @@ import org.codehaus.plexus.util.WriterFactory;
 import org.codehaus.plexus.util.xml.PrettyPrintXMLWriter;
 import org.codehaus.plexus.util.xml.XMLWriter;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.Writer;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.TimeZone;
+
 /**
  * Generate a <a href="http://usefulinc.com/ns/doap">Description of a Project (DOAP)</a> file from the main information
  * found in a POM. <br/>
@@ -87,18 +90,24 @@ import org.codehaus.plexus.util.xml.XMLWriter;
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
  * @since 1.0-beta-1
- * @goal generate
  */
+@Mojo( name = "generate" )
 public class DoapMojo
     extends AbstractMojo
 {
-    /** UTC Time Zone */
+    /**
+     * UTC Time Zone
+     */
     private static final TimeZone UTC_TIME_ZONE = TimeZone.getTimeZone( "UTC" );
 
-    /** Date format for <lastUpdated/> tag in the repository metadata, i.e.: yyyyMMddHHmmss */
+    /**
+     * Date format for <lastUpdated/> tag in the repository metadata, i.e.: yyyyMMddHHmmss
+     */
     private static final DateFormat REPOSITORY_DATE_FORMAT;
 
-    /** Date format for DOAP file, i.e. ISO-8601 YYYY-MM-DD */
+    /**
+     * Date format for DOAP file, i.e. ISO-8601 YYYY-MM-DD
+     */
     private static final DateFormat DOAP_DATE_FORMAT;
 
     static
@@ -117,33 +126,33 @@ public class DoapMojo
     /**
      * Maven SCM Manager.
      *
-     * @component
      * @since 1.0
      */
+    @Component
     private ScmManager scmManager;
 
     /**
      * Artifact factory.
      *
-     * @component
      * @since 1.0
      */
+    @Component
     private ArtifactFactory artifactFactory;
 
     /**
      * Used to resolve artifacts.
      *
-     * @component
      * @since 1.0
      */
+    @Component
     private RepositoryMetadataManager repositoryMetadataManager;
 
     /**
      * Internationalization component.
      *
-     * @component
      * @since 1.0
      */
+    @Component
     private I18N i18n;
 
     // ----------------------------------------------------------------------
@@ -152,82 +161,70 @@ public class DoapMojo
 
     /**
      * The POM from which information will be extracted to create a DOAP file.
-     *
-     * @parameter default-value="${project}"
-     * @readonly
-     * @required
      */
+    @Component
     private MavenProject project;
 
     /**
      * The name of the DOAP file that will be generated.
-     *
-     * @parameter expression="${doapFile}" default-value="doap_${project.artifactId}.rdf"
-     * @required
      */
+    @Parameter( property = "doapFile", defaultValue = "doap_${project.artifactId}.rdf", required = true )
     private String doapFile;
 
     /**
      * The output directory of the DOAP file that will be generated.
      *
-     * @parameter default-value="${project.reporting.outputDirectory}"
-     * @required
      * @since 1.1
      */
+    @Parameter( defaultValue = "${project.reporting.outputDirectory}", required = true )
     private String outputDirectory;
 
     /**
      * The local repository where the artifacts are located.
      *
-     * @parameter default-value="${localRepository}"
-     * @required
-     * @readonly
      * @since 1.0
      */
+    @Parameter( defaultValue = "${localRepository}", required = true, readonly = true )
     private ArtifactRepository localRepository;
 
     /**
      * The remote repositories where the artifacts are located.
      *
-     * @parameter default-value="${project.remoteArtifactRepositories}"
-     * @required
-     * @readonly
      * @since 1.0
      */
+    @Parameter( defaultValue = "${project.remoteArtifactRepositories}", required = true, readonly = true )
     private List<ArtifactRepository> remoteRepositories;
 
     /**
      * Factory for creating artifact objects
      *
-     * @component
      * @since 1.1
      */
+    @Component
     private ArtifactFactory factory;
 
     /**
      * Project builder
      *
-     * @component
      * @since 1.1
      */
+    @Component
     private MavenProjectBuilder mavenProjectBuilder;
 
     /**
      * Used for resolving artifacts
      *
-     * @component
      * @since 1.1
      */
+    @Component
     private ArtifactResolver resolver;
 
     /**
      * The current user system settings for use in Maven.
      *
-     * @parameter expression="${settings}"
-     * @required
-     * @readonly
      * @since 1.1
      */
+    @Component
     protected Settings settings;
 
     // ----------------------------------------------------------------------
@@ -237,45 +234,45 @@ public class DoapMojo
     /**
      * The category which should be displayed in the DOAP file.
      *
-     * @parameter expression="${category}"
      * @deprecated Since 1.0. Instead of, configure
      *             <code>&lt;doapOptions&gt;&lt;category/&gt;&lt;/doapOptions&gt;</code> parameter.
      */
+    @Parameter( property = "category" )
     private String category;
 
     /**
      * The programming language which should be displayed in the DOAP file.
      *
-     * @parameter expression="${language}"
      * @deprecated Since 1.0. Instead of, configure
      *             <code>&lt;doapOptions&gt;&lt;programmingLanguage/&gt;&lt;/doapOptions&gt;</code> parameter.
      */
+    @Parameter( property = "language" )
     private String language;
 
     /**
      * Specific DOAP parameters, i.e. options that POM doesn't have any notions. <br/>
      * Example:
-     *
+     * <p/>
      * <pre>
      * &lt;doapOptions&gt;
      * &nbsp;&nbsp;&lt;programmingLanguage&gt;java&lt;/programmingLanguage&gt;
      * &lt;/doapOptions&gt;
      * </pre>
-     *
+     * <p/>
      * <br/>
      * See <a href="./apidocs/org/apache/maven/plugin/doap/options/DoapOptions.html">Javadoc</a> <br/>
      *
-     * @parameter expression="${doapOptions}"
-     * @since 1.0
      * @see <a href="http://usefulinc.com/ns/doap#">http://usefulinc.com/ns/doap#</a>
+     * @since 1.0
      */
+    @Parameter( property = "doapOptions" )
     private DoapOptions doapOptions;
 
     /**
      * Specific ASF extensions parameters, i.e. options that POM doesn't have any notions but required by ASF DOAP
      * requirements. <br/>
      * Example:
-     *
+     * <p/>
      * <pre>
      * &lt;asfExtOptions&gt;
      * &nbsp;&nbsp;&lt;included&gt;true&lt;/included&gt;
@@ -284,19 +281,19 @@ public class DoapMojo
      * &nbsp;&nbsp;...
      * &lt;/asfExtOptions&gt;
      * </pre>
-     *
+     * <p/>
      * <b>Note</b>: By default, <code>&lt;asfExtOptions&gt;&lt;included/&gt;&lt;/asfExtOptions&gt;</code> will be
      * automatically set to <code>true</code> if the project is hosted at ASF. <br/>
      * See <a href="./apidocs/org/apache/maven/plugin/doap/options/ASFExtOptions.html">Javadoc</a> <br/>
      *
-     * @parameter expression="${asfExtOptions}"
-     * @since 1.0
      * @see <a href="http://svn.apache.org/repos/asf/infrastructure/site-tools/trunk/projects/asfext">
      *      http://svn.apache.org/repos/asf/infrastructure/site-tools/trunk/projects/asfext</a>
      * @see <a href="http://projects.apache.org/docs/pmc.html">http://projects.apache.org/docs/pmc.html</a>
      * @see <a href="http://projects.apache.org/docs/standards.html">http://projects.apache.org/docs/standards.html</a>
      * @see ASFExtOptionsUtil#isASFProject(MavenProject)
+     * @since 1.0
      */
+    @Parameter( property = "asfExtOptions" )
     private ASFExtOptions asfExtOptions;
 
     /**
@@ -305,15 +302,14 @@ public class DoapMojo
      * POM doesn't have any notions about language. <br/>
      * See <a href="http://www.w3.org/TR/REC-xml/#sec-lang-tag">http://www.w3.org/TR/REC-xml/#sec-lang-tag</a> <br/>
      *
-     * @parameter expression="${lang}" default-value="en"
-     * @required
      * @since 1.0
      */
+    @Parameter( property = "lang", defaultValue = "en", required = true )
     private String lang;
 
     /**
      * The <code>about</code> URI-reference which should be displayed in the DOAP file. Example:
-     *
+     * <p/>
      * <pre>
      * &lt;rdf:RDF&gt;
      * &nbsp;&nbsp;&lt;Project rdf:about="http://maven.apache.org/"&gt;
@@ -321,27 +317,27 @@ public class DoapMojo
      * &nbsp;&nbsp;&lt;/Project&gt;
      * &lt;/rdf:RDF&gt;
      * </pre>
-     *
+     * <p/>
      * See <a href="http://www.w3.org/TR/1999/REC-rdf-syntax-19990222/#aboutAttr">
      * http://www.w3.org/TR/1999/REC-rdf-syntax-19990222/#aboutAttr</a> <br/>
      *
-     * @parameter expression="${about}" default-value="${project.url}"
      * @since 1.0
      */
+    @Parameter( property = "about", defaultValue = "${project.url}" )
     private String about;
 
     /**
      * Flag to validate the generated DOAP.
      *
-     * @parameter default-value="true"
      * @since 1.1
      */
+    @Parameter( defaultValue = "true" )
     private boolean validate;
 
     /**
      * An artifact to generate the DOAP file against. <br/>
      * Example:
-     *
+     * <p/>
      * <pre>
      * &lt;artifact&gt;
      * &nbsp;&nbsp;&lt;groupId&gt;given-artifact-groupId&lt;/groupId&gt;
@@ -349,27 +345,27 @@ public class DoapMojo
      * &nbsp;&nbsp;&lt;version&gt;given-artifact-version&lt;/version&gt;
      * &lt;/artifact&gt;
      * </pre>
-     *
+     * <p/>
      * <br/>
      * See <a href="./apidocs/org/apache/maven/plugin/doap/options/DaopArtifact.html">Javadoc</a> <br/>
      *
-     * @parameter
      * @since 1.1
      */
+    @Parameter
     private DoapArtifact artifact;
 
     /**
      * Specifies whether the DOAP generation should be skipped.
      *
-     * @parameter expression="${maven.doap.skip}" default-value="false"
      * @since 1.1
      */
+    @Parameter( property = "maven.doap.skip", defaultValue = "false" )
     private boolean skip;
 
     /**
      * Extensions parameters. <br/>
      * Example:
-     *
+     * <p/>
      * <pre>
      * &lt;extOptions&gt;
      * &nbsp;&lt;extOption&gt;
@@ -381,12 +377,12 @@ public class DoapMojo
      * &nbsp;&lt;/extOption&gt;
      * &lt;/extOptions&gt;
      * </pre>
-     *
+     * <p/>
      * See <a href="./apidocs/org/apache/maven/plugin/doap/options/ExtOptions.html">Javadoc</a> <br/>
      *
-     * @parameter expression="${extOptions}"
      * @since 1.1
      */
+    @Parameter( property = "extOptions" )
     private ExtOptions[] extOptions;
 
     /**
