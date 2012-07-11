@@ -25,10 +25,16 @@ import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.filtering.MavenFileFilter;
 import org.apache.maven.shared.filtering.MavenFilteringException;
 import org.apache.maven.shared.filtering.MavenResourcesExecution;
+import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
 import org.codehaus.plexus.archiver.jar.ManifestException;
@@ -45,11 +51,9 @@ import java.util.List;
  * @author <a href="pablo@anahata-it.com">Pablo Rodriguez</a>
  * @author <a href="snicoll@apache.org">Stephane Nicoll</a>
  * @version $Id:
- * @goal acr
- * @requiresDependencyResolution runtime
- * @threadSafe
- * @phase package
  */
+@Mojo( name = "acr", requiresDependencyResolution = ResolutionScope.RUNTIME, threadSafe = true,
+       defaultPhase = LifecyclePhase.PACKAGE )
 public class AcrMojo
     extends AbstractMojo
 {
@@ -65,25 +69,20 @@ public class AcrMojo
 
     /**
      * The directory for the generated jar.
-     *
-     * @parameter default-value="${project.build.directory}"
-     * @required
-     * @readonly
      */
+    @Parameter( defaultValue = "${project.build.directory}", required = true, readonly = true )
     private File basedir;
 
     /**
      * Directory that resources are copied to during the build.
-     *
-     * @parameter default-value="${project.build.outputDirectory}" expression="${outputDirectory}"
      */
+    @Parameter( property = "outputDirectory", defaultValue = "${project.build.outputDirectory}" )
     private File outputDirectory;
 
     /**
      * The name of the Application client JAR file to generate.
-     *
-     * @parameter default-value="${project.build.finalName}" expression="${jarName}"
      */
+    @Parameter( property = "jarName", defaultValue = "${project.build.finalName}" )
     private String jarName;
 
     /**
@@ -95,76 +94,63 @@ public class AcrMojo
      * &lt;&#47;excludes&gt;
      * </pre>
      * <br/>Default exclusions: META-INF&#47;application-client.xml,
-     *
-     * @parameter
      */
+    @Parameter
     private List excludes;
 
     /**
      * The Maven project.
-     *
-     * @parameter default-value="${project}"
-     * @required
-     * @readonly
      */
+    @Component
     private MavenProject project;
 
     /**
      * The Jar archiver.
-     *
-     * @component role="org.codehaus.plexus.archiver.Archiver" roleHint="jar"
      */
+    @Component( role = Archiver.class, hint = "jar" )
     private JarArchiver jarArchiver;
 
     /**
      * The archive configuration to use.
      * See <a href="http://maven.apache.org/shared/maven-archiver/index.html">Maven Archiver Reference</a>.
-     *
-     * @parameter
      */
+    @Parameter
     private MavenArchiveConfiguration archive = new MavenArchiveConfiguration();
 
     /**
      * To escape interpolated value with windows path.
      * c:\foo\bar will be replaced with c:\\foo\\bar.
-     *
-     * @parameter default-value="false" expression="${acr.escapeBackslashesInFilePath}"
      */
+    @Parameter( property = "acr.escapeBackslashesInFilePath", defaultValue = "false" )
     private boolean escapeBackslashesInFilePath;
 
     /**
      * An expression preceded with this String won't be interpolated.
      * \${foo} will be replaced with ${foo}.
-     *
-     * @parameter expression="${acr.escapeString}"
      */
+    @Parameter( property = "acr.escapeString" )
     protected String escapeString;
 
     /**
      * To filter the deployment descriptor.
-     *
-     * @parameter default-value="false" expression="${acr.filterDeploymentDescriptor}"
      */
+    @Parameter( property = "acr.filterDeploymentDescriptor", defaultValue = "false" )
     private boolean filterDeploymentDescriptor;
 
     /**
      * Filters (properties files) to include during the interpolation of the deployment descriptor.
-     *
-     * @parameter
      */
+    @Parameter
     private List filters;
 
     /**
-     * @component role="org.apache.maven.shared.filtering.MavenFileFilter" role-hint="default"
-     * @required
      */
+    @Component( role = MavenFileFilter.class, hint = "default" )
     private MavenFileFilter mavenFileFilter;
 
     /**
-     * @parameter expression="${session}"
-     * @readonly
-     * @required
      */
+    @Component
     private MavenSession session;
 
     /**
