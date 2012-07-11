@@ -21,6 +21,9 @@ package org.apache.maven.plugins.stage;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.wagon.WagonException;
 import org.apache.maven.wagon.repository.Repository;
 
@@ -30,43 +33,38 @@ import java.io.IOException;
  * Copies artifacts from one repository to another repository.
  * 
  * @author Jason van Zyl
- * @requiresProject false
- * @goal copy
  */
+@Mojo( name = "copy", requiresProject = false )
 public class CopyRepositoryMojo
     extends AbstractMojo
 {
     /**
      * The URL to the source repository.
-     *
-     * @parameter expression="${source}"
      */
+    @Parameter( property = "source" )
     private String source;
 
     /**
      * The URL to the target repository.
-     * 
+     * <p/>
      * <p>
      * <strong>Note:</strong> currently only <code>scp:</code> URLs are allowed
      * as a target URL.
      * </p>
-     * 
-     * @parameter expression="${target}"
      */
+    @Parameter( property = "target" )
     private String target;
 
     /**
      * The id of the source repository, required if you need the configuration from the user settings.
-     * 
-     * @parameter expression="${sourceRepositoryId}" default-value="source"
      */
+    @Parameter( property = "sourceRepositoryId", defaultValue = "source" )
     private String sourceRepositoryId;
 
     /**
      * The id of the target repository, required if you need the configuration from the user settings.
-     * 
-     * @parameter expression="${targetRepositoryId}" default-value="target"
      */
+    @Parameter( property = "targetRepositoryId", defaultValue = "target" )
     private String targetRepositoryId;
 
     /**
@@ -75,17 +73,14 @@ public class CopyRepositoryMojo
      * <b>Note:</b> This is currently only used for naming temporary files.
      * <i>All</i> versions of the artifacts will be copied.
      * </p>
-     *
-     * @parameter expression="${version}"
-     * @required
      */
+    @Parameter( property = "version", required = true )
     private String version;
 
     /**
      * The repository copier to use.
-     *
-     * @component
      */
+    @Component
     private RepositoryCopier copier;
 
     public void execute()
