@@ -19,19 +19,19 @@ package org.apache.maven.plugin.reactor;
  * under the License.
  */
 
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.codehaus.plexus.util.dag.Vertex;
+
 import java.util.List;
 import java.util.Set;
-
-import org.codehaus.plexus.util.dag.Vertex;
 
 /**
  * Goal to build a project X and all of the reactor projects that depend on X 
  *
  * @author <a href="mailto:dfabulich@apache.org">Dan Fabulich</a>
- * @goal make-dependents
- * @aggregator
- * @phase process-sources
  */
+@Mojo( name = "make-dependents", aggregator = true, defaultPhase = LifecyclePhase.PROCESS_SOURCES )
 public class MakeDependentsMojo
     extends MakeMojo
 {

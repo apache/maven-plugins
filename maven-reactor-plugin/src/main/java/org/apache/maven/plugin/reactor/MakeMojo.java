@@ -19,6 +19,20 @@ package org.apache.maven.plugin.reactor;
  * under the License.
  */
 
+import org.apache.maven.artifact.ArtifactUtils;
+import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.MavenProject;
+import org.apache.maven.shared.invoker.Invoker;
+import org.codehaus.plexus.util.StringUtils;
+import org.codehaus.plexus.util.dag.DAG;
+import org.codehaus.plexus.util.dag.Vertex;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,94 +40,78 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.maven.artifact.ArtifactUtils;
-import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.project.MavenProject;
-import org.apache.maven.shared.invoker.Invoker;
-import org.codehaus.plexus.util.StringUtils;
-import org.codehaus.plexus.util.dag.DAG;
-import org.codehaus.plexus.util.dag.Vertex;
-
 /**
  * Goal to build a project X and all of the reactor projects on which X depends 
  *
  * @author <a href="mailto:dfabulich@apache.org">Dan Fabulich</a>
- * @goal make
- * @aggregator
- * @phase process-sources
  */
+@Mojo( name = "make", aggregator = true, defaultPhase = LifecyclePhase.PROCESS_SOURCES )
 public class MakeMojo
     extends AbstractMojo
 {
     /**
      * Location of the POM file; provided by Maven
-     * @parameter expression="${basedir}"
-     * 
      */
+    @Parameter( property = "basedir" )
     File baseDir;
-    
+
     /**
      * A list of every project in this reactor; provided by Maven
-     * @parameter expression="${project.collectedProjects}"
      */
+    @Parameter( property = "project.collectedProjects" )
     List collectedProjects;
-    
+
     /**
      * If you don't specify a groupId in your artifactList, we'll use this as the default groupId.
-     * @parameter expression="${make.group}" default-value="${project.groupId}"
-     * 
      */
+    @Parameter( property = "make.group", defaultValue = "${project.groupId}" )
     String defaultGroup;
-    
+
     /**
-     * A list of artifacts to build, e.g. "com.mycompany:bar,com.mycompany:foo" or just "foo,bar", or just "foo" 
-     * @parameter expression="${make.artifacts}" default-value=""
-     * @required
+     * A list of artifacts to build, e.g. "com.mycompany:bar,com.mycompany:foo" or just "foo,bar", or just "foo"
      */
+    @Parameter( property = "make.artifacts", defaultValue = "", required = true )
     String artifactList;
-    
+
     /**
      * A list of relative paths to build, e.g. "foo,baz/bar"
-     * @parameter expression="${make.folders}" default-value=""
-     * @required
      */
+    @Parameter( property = "make.folders", defaultValue = "", required = true )
     String folderList;
-    
+
     /**
      * Goals to run on subproject.
-     * @parameter expression="${make.goals}" default-value="install"
      */
+    @Parameter( property = "make.goals", defaultValue = "install" )
     String goals;
-    
+
     /**
      * Provided by Maven
-     * @component
      */
+    @Component
     Invoker invoker;
-    
+
     /**
      * Don't really do anything; just print a command that describes what the command would have done
-     * @parameter expression="${make.printOnly}"
      */
+    @Parameter( property = "make.printOnly" )
     private boolean printOnly = false;
-    
+
     /**
-     * @component
      */
+    @Component
     SimpleInvoker simpleInvoker;
-    
+
     /**
      * The artifact from which we'll resume, e.g. "com.mycompany:foo" or just "foo"
-     * @parameter expression="${fromArtifact}"
      */
+    @Parameter( property = "fromArtifact" )
     String continueFromProject;
-    
+
     /**
      * The project folder from which we'll resume
-     * @parameter expression="${from}"
      */
+    @Parameter( property = "from" )
     File continueFromFolder;
     
     public void execute()

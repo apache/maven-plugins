@@ -19,14 +19,12 @@ package org.apache.maven.plugin.reactor;
  * under the License.
  */
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.scm.ScmFile;
 import org.apache.maven.scm.ScmFileSet;
@@ -36,34 +34,36 @@ import org.apache.maven.scm.manager.ScmManager;
 import org.apache.maven.scm.repository.ScmRepository;
 import org.codehaus.plexus.util.StringUtils;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 /**
  * Goal to build all projects that you personally have changed (according to SCM)
  * 
  * @author <a href="mailto:dfabulich@apache.org">Dan Fabulich</a>
- * @goal make-scm-changes
- * @aggregator
- * @phase process-sources
  */
+@Mojo( name = "make-scm-changes", aggregator = true, defaultPhase = LifecyclePhase.PROCESS_SOURCES )
 public class MakeScmChanges
     extends MakeDependentsMojo
 {
     /**
      * The SCM connection/provider info.  Should be specified in your POM.
-     * @parameter expression="${make.scmConnection}" default-value="${project.scm.connection}"
-     * @required
      */
+    @Parameter( property = "make.scmConnection", defaultValue = "${project.scm.connection}", required = true )
     String scmConnection;
 
     /**
      * Ignore files in the "unknown" status (created but not added to source control)
-     * 
-     * @parameter expression="${make.ignoreUnknown}" default-value=true
      */
+    @Parameter( property = "make.ignoreUnknown", defaultValue = "true" )
     private boolean ignoreUnknown = true;
 
     /**
-     * @component
      */
+    @Component
     ScmManager scmManager;
 
     public void execute()
