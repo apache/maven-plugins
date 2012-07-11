@@ -19,15 +19,6 @@ package org.apache.maven.plugins.linkcheck;
  * under the License.
  */
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
-import java.util.Properties;
-
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.doxia.linkcheck.HttpBean;
 import org.apache.maven.doxia.linkcheck.LinkCheck;
@@ -35,6 +26,9 @@ import org.apache.maven.doxia.linkcheck.LinkCheckException;
 import org.apache.maven.doxia.linkcheck.model.LinkcheckModel;
 import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.MavenReportException;
@@ -45,14 +39,23 @@ import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
+import java.util.Properties;
+
 /**
  * Generates a <code>Linkcheck</code> report.
  *
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
  * @since 1.0
- * @goal linkcheck
  */
+@Mojo( name = "linkcheck" )
 public class LinkcheckReport
     extends AbstractMavenReport
 {
@@ -62,23 +65,20 @@ public class LinkcheckReport
 
     /**
      * Internationalization.
-     *
-     * @component
      */
+    @Component
     private I18N i18n;
 
     /**
      * Doxia Site Renderer.
-     *
-     * @component
      */
+    @Component
     private Renderer siteRenderer;
 
     /**
      * LinkCheck component.
-     *
-     * @component
      */
+    @Component
     private LinkCheck linkCheck;
 
     // ----------------------------------------------------------------------
@@ -87,37 +87,26 @@ public class LinkcheckReport
 
     /**
      * The Maven Project.
-     *
-     * @parameter expression="${project}"
-     * @required
-     * @readonly
      */
+    @Component
     private MavenProject project;
 
     /**
      * Local Repository.
-     *
-     * @parameter expression="${localRepository}"
-     * @required
-     * @readonly
      */
+    @Parameter( property = "localRepository", required = true, readonly = true )
     private ArtifactRepository localRepository;
 
     /**
      * Report output directory.
-     *
-     * @parameter expression="${project.reporting.outputDirectory}"
-     * @required
      */
+    @Parameter( property = "project.reporting.outputDirectory", required = true )
     private File outputDirectory;
 
     /**
      * The Maven Settings.
-     *
-     * @parameter default-value="${settings}"
-     * @required
-     * @readonly
      */
+    @Component
     private Settings settings;
 
     // ----------------------------------------------------------------------
@@ -126,10 +115,8 @@ public class LinkcheckReport
 
     /**
      * Whether we are offline or not.
-     *
-     * @parameter default-value="${settings.offline}" expression="${linkcheck.offline}"
-     * @required
      */
+    @Parameter( property = "linkcheck.offline", defaultValue = "${settings.offline}", required = true )
     private boolean offline;
 
     /**
@@ -138,22 +125,19 @@ public class LinkcheckReport
      *
      * @parameter default-value="true"
      */
+    @Parameter( defaultValue = "true" )
     private boolean httpFollowRedirect;
 
     /**
      * The location of the Linkcheck cache file.
-     *
-     * @parameter default-value="${project.build.directory}/linkcheck/linkcheck.cache"
-     * @required
      */
+    @Parameter( defaultValue = "${project.build.directory}/linkcheck/linkcheck.cache", required = true )
     protected File linkcheckCache;
 
     /**
      * The location of the Linkcheck report file.
-     *
-     * @parameter default-value="${project.build.directory}/linkcheck/linkcheck.xml"
-     * @required
      */
+    @Parameter( defaultValue = "${project.build.directory}/linkcheck/linkcheck.xml", required = true )
     protected File linkcheckOutput;
 
     /**
@@ -174,26 +158,24 @@ public class LinkcheckReport
      * return a message-body in the response.
      * </dd>
      * </dl>
-     *
-     * @parameter default-value="head"
-     * @required
      */
+    @Parameter( defaultValue = "head", required = true )
     private String httpMethod;
 
     /**
      * The list of HTTP errors to ignored, like <code>404</code>.
      *
-     * @parameter
      * @see {@link org.apache.commons.httpclient.HttpStatus} for all defined values.
      */
+    @Parameter
     private Integer[] excludedHttpStatusErrors;
 
     /**
      * The list of HTTP warnings to ignored, like <code>301</code>.
      *
-     * @parameter
      * @see {@link org.apache.commons.httpclient.HttpStatus} for all defined values.
      */
+    @Parameter
     private Integer[] excludedHttpStatusWarnings;
 
     /**
@@ -205,26 +187,23 @@ public class LinkcheckReport
      * <li>This report, i.e. <code>linkcheck.html</code>, is always excluded.</li>
      * <li>May contain Ant-style wildcards and double wildcards, e.g. <code>apidocs/**</code>, etc.</li>
      * </ul>
-     *
-     * @parameter
      */
+    @Parameter
     private String[] excludedPages;
 
     /**
      * The list of links to exclude.
      * <br/>
      * <b>Note</b>: Patterns like <code>&#42;&#42;/dummy/&#42;</code> are allowed for excludedLink.
-     *
-     * @parameter
      */
+    @Parameter
     private String[] excludedLinks;
 
     /**
      * The file encoding to use when Linkcheck reads the source files. If the property
      * <code>project.build.sourceEncoding</code> is not set, the platform default encoding is used.
-     *
-     * @parameter expression="${encoding}" default-value="${project.build.sourceEncoding}"
      */
+    @Parameter( property = "encoding", defaultValue = "project.build.sourceEncoding" )
     private String encoding;
 
     /**
@@ -238,39 +217,34 @@ public class LinkcheckReport
      * &lt;/httpClientParameters&gt;
      * </pre>
      * See <a href="http://hc.apache.org/httpclient-3.x/preference-api.html">HttpClient preference page</a>
-     *
-     * @parameter expression="${httpClientParameters}"
      */
+    @Parameter( property = "httpClientParameters" )
     private Properties httpClientParameters;
 
     /**
      * Set the timeout to be used when fetching links. A value of zero means the timeout is not used.
-     *
-     * @parameter expression="${timeout}" default-value="2000"
      */
+    @Parameter( property = "timeout", defaultValue = "2000" )
     private int timeout;
 
     /**
      * <code>true</code> to skip the report execution, <code>false</code> otherwise.
      * The purpose is to prevent infinite call when {@link #forceSite} is enable.
-     *
-     * @parameter expression="${linkcheck.skip}" default-value="false"
      */
+    @Parameter( property = "linkcheck.skip", defaultValue = "false" )
     private boolean skip;
 
     /**
      * <code>true</code> to force the site generation, <code>false</code> otherwise.
      * Using this parameter ensures that all documents have been correctly generated.
-     *
-     * @parameter expression="${linkcheck.forceSite}" default-value="true"
      */
+    @Parameter( property = "linkcheck.forceSite", defaultValue = "true" )
     private boolean forceSite;
 
     /**
      * The base URL to use for absolute links (eg <code>/index.html</code>) in the site.
-     *
-     * @parameter expression="${linkcheck.baseURL}" default-value="${project.url}"
      */
+    @Parameter( property = "linkcheck.baseURL", defaultValue = "${project.url}" )
     private String baseURL;
 
     // ----------------------------------------------------------------------
