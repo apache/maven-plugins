@@ -259,17 +259,13 @@ under the License.
     <pluginRepository>
       <id>apache.snapshots</id>
       <name>snapshot plugins</name>
-      <url>http://people.apache.org/repo/m2-snapshot-repository</url>
+      <url>http://repository.apache.org/snapshots</url>
       <releases>
         <enabled>false</enabled>
       </releases>
       <snapshots>
         <enabled>true</enabled>
       </snapshots>
-    </pluginRepository>
-    <pluginRepository>
-      <id>brianf.apache.org</id>
-      <url>http://people.apache.org/~brianf/staging-repository</url>
     </pluginRepository>
   </pluginRepositories>
 
