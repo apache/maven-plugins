@@ -179,37 +179,30 @@ under the License.
     <profile>
       <id>run-its</id>
       <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-invoker-plugin</artifactId>
-            <configuration>
-              <debug>true</debug>
-              <projectsDirectory>src/it</projectsDirectory>
-              <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
-              <pomIncludes>
-                <pomInclude>*/pom.xml</pomInclude>
-              </pomIncludes>
-              <postBuildHookScript>verify</postBuildHookScript>
-              <settingsFile>src/it/settings.xml</settingsFile>
-              <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
-              <goals>
-                <goal>clean</goal>
-                <goal>ant:ant</goal>
-                <goal>antrun:run</goal>
-              </goals>
-            </configuration>
-            <executions>
-              <execution>
-                <id>integration-test</id>
+        <pluginManagement>
+          <plugins>
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-invoker-plugin</artifactId>
+              <configuration>
+                <debug>true</debug>
+                <projectsDirectory>src/it</projectsDirectory>
+                <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
+                <pomIncludes>
+                  <pomInclude>*/pom.xml</pomInclude>
+                </pomIncludes>
+                <postBuildHookScript>verify</postBuildHookScript>
+                <settingsFile>src/it/settings.xml</settingsFile>
+                <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
                 <goals>
-                  <goal>install</goal>
-                  <goal>run</goal>
+                  <goal>clean</goal>
+                  <goal>ant:ant</goal>
+                  <goal>antrun:run</goal>
                 </goals>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
+              </configuration>
+            </plugin>
+          </plugins>
+        </pluginManagement>
       </build>
     </profile>
   </profiles>
