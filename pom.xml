@@ -133,6 +133,7 @@ under the License.
     <doxiaVersion>1.0</doxiaVersion>
     <mavenVersion>2.0.6</mavenVersion>
     <sitePluginVersion>3.0</sitePluginVersion>
+    <mavenPluginVersion>3.1</mavenPluginVersion>
   </properties>
 
   <dependencies>
@@ -160,7 +161,8 @@ under the License.
     <dependency>
       <groupId>org.apache.maven.plugin-tools</groupId>
       <artifactId>maven-plugin-annotations</artifactId>
-      <version>3.1</version>
+      <version>${mavenPluginVersion}</version>
+      <scope>compile</scope>
     </dependency>
 
     <!-- shared -->
@@ -320,7 +322,7 @@ under the License.
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-plugin-plugin</artifactId>
-          <version>3.1</version>
+          <version>${mavenPluginVersion}</version>
           <configuration>
             <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
           </configuration>
@@ -351,6 +353,11 @@ under the License.
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-changelog-plugin</artifactId>
         <version>2.2</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-plugin-plugin</artifactId>
+        <version>${mavenPluginVersion}</version>
       </plugin>
     </plugins>
   </reporting>
