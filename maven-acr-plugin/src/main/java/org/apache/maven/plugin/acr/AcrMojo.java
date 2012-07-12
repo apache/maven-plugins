@@ -96,7 +96,7 @@ public class AcrMojo
      * <br/>Default exclusions: META-INF&#47;application-client.xml,
      */
     @Parameter
-    private List excludes;
+    private List<String> excludes;
 
     /**
      * The Maven project.
@@ -141,7 +141,7 @@ public class AcrMojo
      * Filters (properties files) to include during the interpolation of the deployment descriptor.
      */
     @Parameter
-    private List filters;
+    private List<String> filters;
 
     /**
      */
@@ -183,7 +183,7 @@ public class AcrMojo
             if ( excludes != null && !excludes.isEmpty() )
             {
                 excludes.add( APP_CLIENT_XML );
-                mainJarExcludes = (String[]) excludes.toArray( EMPTY_STRING_ARRAY );
+                mainJarExcludes = excludes.toArray( EMPTY_STRING_ARRAY );
             }
 
             if ( !outputDirectory.exists() )
