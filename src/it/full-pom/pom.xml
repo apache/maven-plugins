@@ -111,8 +111,8 @@
     <url>http://jira.codehaus.org/browse/MPIR</url>
   </issueManagement>
   <ciManagement>
-    <system>Hudson</system>
-    <url>http://grid.sonatype.org/ci</url>
+    <system>Jenkins</system>
+    <url>https://builds.apache.org/</url>
     <notifiers>
       <notifier>
         <type>mail</type>

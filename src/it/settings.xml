@@ -57,7 +57,7 @@ under the License.
     <mirror>
       <id>mirror-test</id>
       <mirrorOf>central</mirrorOf>
-      <url>http://mirrors.ibiblio.org/pub/mirrors/maven2/</url>
+      <url>http://repo.maven.apache.org/maven2/</url>
     </mirror>
   </mirrors>
 </settings>
