@@ -53,6 +53,7 @@ under the License.
   <properties>
     <mavenVersion>2.2.0</mavenVersion>
     <scmVersion>1.4</scmVersion>
+    <mavenPluginVersion>3.1</mavenPluginVersion>
   </properties>
 
   <dependencies>
@@ -70,7 +71,7 @@ under the License.
     <dependency>
       <groupId>org.apache.maven.plugin-tools</groupId>
       <artifactId>maven-plugin-annotations</artifactId>
-      <version>3.1</version>
+      <version>${mavenPluginVersion}</version>
     </dependency>
 
     <!-- scm -->
@@ -164,8 +165,9 @@ under the License.
           </configuration>
         </plugin>
         <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-plugin-plugin</artifactId>
-          <version>3.1</version>
+          <version>${mavenPluginVersion}</version>
           <configuration>
             <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
           </configuration>
@@ -213,6 +215,16 @@ under the License.
       </plugin>
     </plugins>
   </build>
+
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-plugin-plugin</artifactId>
+        <version>${mavenPluginVersion}</version>
+      </plugin>
+    </plugins>
+  </reporting>
 
   <profiles>
     <profile>
