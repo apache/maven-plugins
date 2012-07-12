@@ -38,6 +38,7 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <scmSvnJavaVersion>2.0.3</scmSvnJavaVersion>
   </properties>
 
   <build>
@@ -45,7 +46,7 @@
       <extension>
         <groupId>com.google.code.maven-scm-provider-svnjava</groupId>
         <artifactId>maven-scm-provider-svnjava</artifactId>
-        <version>1.13</version>
+        <version>${scmSvnJavaVersion}</version>
       </extension>
     </extensions>
 
@@ -62,7 +63,7 @@
           <dependency>
             <groupId>com.google.code.maven-scm-provider-svnjava</groupId>
             <artifactId>maven-scm-provider-svnjava</artifactId>
-            <version>1.13</version>
+            <version>${scmSvnJavaVersion}</version>
           </dependency>
         </dependencies>
       </plugin>
