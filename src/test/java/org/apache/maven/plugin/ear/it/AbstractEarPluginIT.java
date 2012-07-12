@@ -20,7 +20,6 @@ package org.apache.maven.plugin.ear.it;
  */
 
 import junit.framework.TestCase;
-
 import org.apache.maven.it.VerificationException;
 import org.apache.maven.it.Verifier;
 import org.apache.maven.it.util.ResourceExtractor;
@@ -30,16 +29,17 @@ import org.custommonkey.xmlunit.XMLAssert;
 import org.custommonkey.xmlunit.examples.RecursiveElementNameAndTextQualifier;
 import org.xml.sax.helpers.DefaultHandler;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 
 /**
  * Base class for ear test cases.
@@ -85,9 +85,12 @@ public abstract class AbstractEarPluginIT
         File testDir = getTestDir( projectName );
         Verifier verifier = new Verifier( testDir.getAbsolutePath() );
         // Let's add alternate settings.xml setting so that the latest dependencies are used
-        verifier.getCliOptions().add( "-s \"" + settingsFile.getAbsolutePath() + "\"" );
+        String localRepo = System.getProperty( "localRepositoryPath" );
+        verifier.setLocalRepo( localRepo );
+
+        verifier.getCliOptions().add( "-s \"" + settingsFile.getAbsolutePath() + "\"" );//
         verifier.getCliOptions().add( "-X" );
-        verifier.localRepo = localRepositoryDir.getAbsolutePath();
+        verifier.localRepo = localRepo;
 
         // On linux and macOSX, an exception is thrown if a build failure occurs underneath
         try
@@ -393,9 +396,8 @@ public abstract class AbstractEarPluginIT
 
                     // Make sure that it matches even if the elements are not in
                     // the exact same order
-                    final Diff myDiff =
-                        new Diff( docBuilder.parse( expectedDeploymentDescriptor ),
-                                  docBuilder.parse( actualDeploymentDescriptor ) );
+                    final Diff myDiff = new Diff( docBuilder.parse( expectedDeploymentDescriptor ),
+                                                  docBuilder.parse( actualDeploymentDescriptor ) );
                     myDiff.overrideElementQualifier( new RecursiveElementNameAndTextQualifier() );
                     XMLAssert.assertXMLEqual(
                         "Wrong deployment descriptor generated for[" + expectedDeploymentDescriptor.getName() + "]",
