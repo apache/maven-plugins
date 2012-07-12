@@ -323,7 +323,7 @@ under the License.
     <profile>
       <id>run-its</id>
       <properties>
-        <sitePluginVersion>2.1.1</sitePluginVersion>
+        <sitePluginVersion>3.1</sitePluginVersion>
         <invokerPluginVersion>1.5</invokerPluginVersion>
       </properties>
       <build>
@@ -364,7 +364,7 @@ under the License.
         </file>
       </activation>
       <properties>
-        <sitePluginVersion>3.0-beta-3</sitePluginVersion>
+        <sitePluginVersion>3.1</sitePluginVersion>
       </properties>
     </profile>
   </profiles>
