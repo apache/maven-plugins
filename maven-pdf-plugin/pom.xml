@@ -36,29 +36,6 @@ under the License.
   <name>Maven PDF Plugin</name>
   <description>Generates a PDF document from the project site.</description>
 
-  <developers>
-    <developer>
-      <id>vsiveton</id>
-      <name>Vincent Siveton</name>
-      <email>vsiveton@apache.org</email>
-      <organization>Apache Software Foundation</organization>
-      <roles>
-        <role>Java Developer</role>
-      </roles>
-      <timezone>-5</timezone>
-    </developer>
-    <developer>
-      <id>ltheussl</id>
-      <name>Lukas Theussl</name>
-      <email>ltheussl@apache.org</email>
-      <organization>Apache Software Foundation</organization>
-      <roles>
-        <role>Java Developer</role>
-      </roles>
-      <timezone>+1</timezone>
-    </developer>
-  </developers>
-
   <contributors>
     <contributor>
       <name>Taciano Tres</name>
