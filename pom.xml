@@ -89,6 +89,7 @@ under the License.
     <wagonVersion>1.0</wagonVersion>
     <scmVersion>1.7</scmVersion>
     <sitePluginVersion>3.1</sitePluginVersion>
+    <mavenPluginVersion>3.1</mavenPluginVersion>
   </properties>
 
   <dependencies>
@@ -158,7 +159,7 @@ under the License.
     <dependency>
       <groupId>org.apache.maven.plugin-tools</groupId>
       <artifactId>maven-plugin-annotations</artifactId>
-      <version>3.1</version>
+      <version>${mavenPluginVersion}</version>
       <scope>compile</scope>
     </dependency>
 
@@ -373,7 +374,7 @@ under the License.
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-plugin-plugin</artifactId>
-          <version>3.1</version>
+          <version>${mavenPluginVersion}</version>
           <configuration>
             <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
           </configuration>
@@ -456,6 +457,7 @@ under the License.
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-plugin-plugin</artifactId>
+        <version>${mavenPluginVersion}</version>
         <configuration>
           <requirements>
             <jdk>1.5</jdk>
@@ -534,6 +536,7 @@ under the License.
       <build>
         <plugins>
           <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-invoker-plugin</artifactId>
             <configuration>
               <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
