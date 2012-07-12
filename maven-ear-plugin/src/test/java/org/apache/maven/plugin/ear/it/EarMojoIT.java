@@ -519,7 +519,7 @@ public class EarMojoIT
         final String content = IOUtil.toString( ReaderFactory.newReader( actualReadme, "UTF-8" ) );
         assertTrue( "application name and version should not have been filtered",
                     content.indexOf( "my-app 99.0" ) == -1 );
-        assertTrue( "orignial properties not found",
+        assertTrue( "original properties not found",
                     content.indexOf( "${application.name} ${project.version}" ) != -1 );
     }
 

@@ -41,9 +41,7 @@ under the License.
         <artifactId>maven-ear-plugin</artifactId>
         <version>@project.version@</version>
         <configuration>
-          <generatedDescriptorLocation>
-              ${project.build.directory}/custom-descriptor-dir
-          </generatedDescriptorLocation>
+          <generatedDescriptorLocation>\${project.build.directory}/custom-descriptor-dir</generatedDescriptorLocation>
         </configuration>
       </plugin>
     </plugins>
