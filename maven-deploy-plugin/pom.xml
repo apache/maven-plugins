@@ -103,12 +103,6 @@ under the License.
     </dependency>
   </dependencies>
 
-  <contributors>
-    <contributor>
-      <name>Tony Chemit</name>
-    </contributor>
-  </contributors>
-
   <build>
 
     <pluginManagement>

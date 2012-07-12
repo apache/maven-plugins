@@ -36,12 +36,6 @@ under the License.
   <name>Maven WAR Plugin</name>
   <description>Builds a Web Application Archive (WAR) file from the project output and its dependencies.</description>
 
-  <contributors>
-    <contributor>
-      <name>Tony Chemit</name>
-    </contributor>
-  </contributors>
-  
   <prerequisites>
     <maven>${mavenVersion}</maven>
   </prerequisites>
