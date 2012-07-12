@@ -59,8 +59,9 @@ under the License.
     <doxiaVersion>1.0</doxiaVersion>
     <doxia-sitetoolsVersion>1.0</doxia-sitetoolsVersion>
     <wagonVersion>1.0-beta-6</wagonVersion>
-    <sitePluginVersion>3.0</sitePluginVersion>
-    <projectInfoReportsPluginVersion>2.3.1</projectInfoReportsPluginVersion>
+    <sitePluginVersion>3.1</sitePluginVersion>
+    <projectInfoReportsPluginVersion>2.4</projectInfoReportsPluginVersion>
+    <mavenPluginPluginVersion>3.1</mavenPluginPluginVersion>
   </properties>
 
   <dependencies>
@@ -103,7 +104,8 @@ under the License.
     <dependency>
       <groupId>org.apache.maven.plugin-tools</groupId>
       <artifactId>maven-plugin-annotations</artifactId>
-      <version>3.1</version>
+      <version>${mavenPluginPluginVersion}</version>
+      <scope>compile</scope>
     </dependency>
 
     <!-- shared -->
@@ -259,8 +261,9 @@ under the License.
     <pluginManagement>
       <plugins>
         <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-plugin-plugin</artifactId>
-          <version>3.1</version>
+          <version>${mavenPluginPluginVersion}</version>
           <configuration>
             <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
           </configuration>
@@ -372,6 +375,16 @@ under the License.
       </plugin>
     </plugins>
   </build>
+
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-plugin-plugin</artifactId>
+        <version>${mavenPluginPluginVersion}</version>
+      </plugin>
+    </plugins>
+  </reporting>
 
   <profiles>
     <profile>
