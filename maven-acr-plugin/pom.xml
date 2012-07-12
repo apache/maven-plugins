@@ -158,7 +158,6 @@ under the License.
             <plugin>
               <groupId>org.apache.maven.plugins</groupId>
               <artifactId>maven-invoker-plugin</artifactId>
-              <version>1.5</version>
               <configuration>
                 <debug>true</debug>
                 <projectsDirectory>src/it</projectsDirectory>
