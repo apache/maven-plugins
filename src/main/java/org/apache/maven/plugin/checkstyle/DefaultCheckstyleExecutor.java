@@ -108,8 +108,6 @@ public class DefaultCheckstyleExecutor
         List<String> outputDirectories = new ArrayList<String>();
         File sourceDirectory = request.getSourceDirectory();
         File testSourceDirectory = request.getTestSourceDirectory();
-        prepareCheckstylePaths( request, project, classPathStrings, outputDirectories, sourceDirectory,
-                                testSourceDirectory );
         if ( request.isAggregate() )
         {
             for ( MavenProject childProject : request.getReactorProjects() )
@@ -118,6 +116,11 @@ public class DefaultCheckstyleExecutor
                                         new File( childProject.getBuild().getSourceDirectory() ),
                                         new File( childProject.getBuild().getTestSourceDirectory() ) );
             }
+        }
+        else
+        {
+            prepareCheckstylePaths( request, project, classPathStrings, outputDirectories, sourceDirectory,
+                                    testSourceDirectory );
         }
 
         List<URL> urls = new ArrayList<URL>( classPathStrings.size() );
@@ -182,7 +185,6 @@ public class DefaultCheckstyleExecutor
         }
 
         CheckstyleReportListener sinkListener = new CheckstyleReportListener( configuration );
-        addSourceDirectory( sinkListener, sourceDirectory, testSourceDirectory, request );
         if ( request.isAggregate() )
         {
             for ( MavenProject childProject : request.getReactorProjects() )
@@ -190,6 +192,10 @@ public class DefaultCheckstyleExecutor
                 addSourceDirectory( sinkListener, new File( childProject.getBuild().getSourceDirectory() ),
                                     new File( childProject.getBuild().getSourceDirectory() ), request );
             }
+        }
+        else
+        {
+            addSourceDirectory( sinkListener, sourceDirectory, testSourceDirectory, request );
         }
 
         checker.addListener( sinkListener );
@@ -475,13 +481,16 @@ public class DefaultCheckstyleExecutor
         File sourceDirectory = request.getSourceDirectory();
 
         List<File> files = new ArrayList<File>();
-        addFilesToProcess( request, excludesStr, sourceDirectory, files );
         if ( request.isAggregate() )
         {
             for ( MavenProject project : request.getReactorProjects() )
             {
                 addFilesToProcess( request, excludesStr, new File( project.getBuild().getSourceDirectory() ), files );
             }
+        }
+        else
+        {
+            addFilesToProcess( request, excludesStr, sourceDirectory, files );
         }
 
         return (File[]) files.toArray( EMPTY_FILE_ARRAY );
