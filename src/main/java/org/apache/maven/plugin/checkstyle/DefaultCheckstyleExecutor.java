@@ -34,6 +34,8 @@ import java.util.Properties;
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.component.annotations.Component;
+import org.codehaus.plexus.component.annotations.Requirement;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 import org.codehaus.plexus.resource.ResourceManager;
 import org.codehaus.plexus.resource.loader.FileResourceCreationException;
@@ -55,19 +57,15 @@ import com.puppycrawl.tools.checkstyle.filters.SuppressionsLoader;
 
 /**
  * @author <a href="mailto:olamy@apache.org">olamy</a>
- * @plexus.component role="org.apache.maven.plugin.checkstyle.CheckstyleExecutor" role-hint="default"
- *                   instantiation-strategy="per-lookup"
  * @since 2.5
  * @version $Id$
  */
+@Component( role = CheckstyleExecutor.class, hint = "default", instantiationStrategy = "per-lookup" )
 public class DefaultCheckstyleExecutor
     extends AbstractLogEnabled
     implements CheckstyleExecutor
 {
-
-    /**
-     * @plexus.requirement role="org.codehaus.plexus.resource.ResourceManager" role-hint="default"
-     */
+    @Requirement
     private ResourceManager locator;
 
     private static final File[] EMPTY_FILE_ARRAY = new File[0];
