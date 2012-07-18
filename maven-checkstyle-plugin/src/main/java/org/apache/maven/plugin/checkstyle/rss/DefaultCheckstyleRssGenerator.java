@@ -30,6 +30,8 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.context.Context;
 import org.apache.velocity.exception.ResourceNotFoundException;
 import org.apache.velocity.exception.VelocityException;
+import org.codehaus.plexus.component.annotations.Component;
+import org.codehaus.plexus.component.annotations.Requirement;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.velocity.VelocityComponent;
 
@@ -38,19 +40,14 @@ import com.puppycrawl.tools.checkstyle.api.SeverityLevel;
 /**
  * @author Olivier Lamy
  * @since 2.4
- * @plexus.component role="org.apache.maven.plugin.checkstyle.rss.CheckstyleRssGenerator"
- *                   role-hint="default"
  */
+@Component( role = CheckstyleRssGenerator.class, hint = "default" )
 public class DefaultCheckstyleRssGenerator
     implements CheckstyleRssGenerator
 {
-   
-    /**
-     * @plexus.requirement
-     */
+    @Requirement
     private VelocityComponent velocityComponent;
 
-    
     /**
      * @see org.apache.maven.plugin.checkstyle.rss.CheckstyleRssGenerator#generateRSS(org.apache.maven.plugin.checkstyle.CheckstyleResults)
      */

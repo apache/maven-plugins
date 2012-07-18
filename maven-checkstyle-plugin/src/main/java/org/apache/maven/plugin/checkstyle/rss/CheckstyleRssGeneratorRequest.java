@@ -24,11 +24,9 @@ import java.io.File;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 
-
 /**
  * @author Olivier Lamy
  * @since 2.4
- *
  */
 public class CheckstyleRssGeneratorRequest
 {

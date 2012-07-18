@@ -22,12 +22,9 @@ package org.apache.maven.plugin.checkstyle.rss;
 import org.apache.maven.plugin.checkstyle.CheckstyleResults;
 import org.apache.maven.reporting.MavenReportException;
 
-
-
 /**
  * @author Olivier Lamy
  * @since 2.4
- *
  */
 public interface CheckstyleRssGenerator
 {
