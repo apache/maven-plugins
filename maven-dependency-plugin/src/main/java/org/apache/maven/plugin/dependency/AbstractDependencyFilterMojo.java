@@ -128,7 +128,7 @@ public abstract class AbstractDependencyFilterMojo
     protected String type;
 
     /**
-     * Comma separated list of Artifact names too exclude.
+     * Comma separated list of Artifact names to exclude.
      *
      * @since 2.0
      */
