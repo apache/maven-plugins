@@ -23,8 +23,8 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.maven.shared.dependency.tree.DependencyNode;
-import org.apache.maven.shared.dependency.tree.traversal.DependencyNodeVisitor;
+import org.apache.maven.shared.dependency.graph.DependencyNode;
+import org.apache.maven.shared.dependency.graph.traversal.DependencyNodeVisitor;
 
 /**
  * A dependency node visitor that serializes visited nodes to a writer using the TGF format.
@@ -34,8 +34,9 @@ import org.apache.maven.shared.dependency.tree.traversal.DependencyNodeVisitor;
  * @author <a href="mailto:jerome.creignou@gmail.com">Jerome Creignou</a>
  * @since 2.1
  */
-public class TGFDependencyNodeVisitor extends AbstractSerializingVisitor
-                                      implements DependencyNodeVisitor
+public class TGFDependencyNodeVisitor
+    extends AbstractSerializingVisitor
+    implements DependencyNodeVisitor
 {
 
     /**
