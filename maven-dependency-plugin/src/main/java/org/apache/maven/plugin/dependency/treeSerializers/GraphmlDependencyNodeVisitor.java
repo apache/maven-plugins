@@ -21,8 +21,8 @@ package org.apache.maven.plugin.dependency.treeSerializers ;
 
 import java.io.Writer;
 
-import org.apache.maven.shared.dependency.tree.DependencyNode;
-import org.apache.maven.shared.dependency.tree.traversal.DependencyNodeVisitor;
+import org.apache.maven.shared.dependency.graph.DependencyNode;
+import org.apache.maven.shared.dependency.graph.traversal.DependencyNodeVisitor;
 
 /**
  * A dependency node visitor that serializes visited nodes to a writer using the graphml format.
@@ -31,8 +31,9 @@ import org.apache.maven.shared.dependency.tree.traversal.DependencyNodeVisitor;
  * @author <a href="mailto:jerome.creignou@gmail.com">Jerome Creignou</a>
  * @since 2.1
  */
-public class GraphmlDependencyNodeVisitor extends AbstractSerializingVisitor
-                                          implements DependencyNodeVisitor
+public class GraphmlDependencyNodeVisitor
+    extends AbstractSerializingVisitor
+    implements DependencyNodeVisitor
 {
 
     /**

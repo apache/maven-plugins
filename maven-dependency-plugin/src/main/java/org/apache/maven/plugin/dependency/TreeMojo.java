@@ -19,17 +19,11 @@ package org.apache.maven.plugin.dependency;
  * under the License.
  */
 
-import org.apache.maven.artifact.factory.ArtifactFactory;
-import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
-import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.resolver.ArtifactCollector;
 import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
 import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
-import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
 import org.apache.maven.artifact.versioning.Restriction;
 import org.apache.maven.artifact.versioning.VersionRange;
-import org.apache.maven.execution.RuntimeInformation;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -44,20 +38,19 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.artifact.filter.StrictPatternExcludesArtifactFilter;
 import org.apache.maven.shared.artifact.filter.StrictPatternIncludesArtifactFilter;
-import org.apache.maven.shared.dependency.tree.DependencyNode;
-import org.apache.maven.shared.dependency.tree.DependencyTreeBuilder;
-import org.apache.maven.shared.dependency.tree.DependencyTreeBuilderException;
-import org.apache.maven.shared.dependency.tree.filter.AncestorOrSelfDependencyNodeFilter;
-import org.apache.maven.shared.dependency.tree.filter.AndDependencyNodeFilter;
-import org.apache.maven.shared.dependency.tree.filter.ArtifactDependencyNodeFilter;
-import org.apache.maven.shared.dependency.tree.filter.DependencyNodeFilter;
-import org.apache.maven.shared.dependency.tree.filter.StateDependencyNodeFilter;
-import org.apache.maven.shared.dependency.tree.traversal.BuildingDependencyNodeVisitor;
-import org.apache.maven.shared.dependency.tree.traversal.CollectingDependencyNodeVisitor;
-import org.apache.maven.shared.dependency.tree.traversal.DependencyNodeVisitor;
-import org.apache.maven.shared.dependency.tree.traversal.FilteringDependencyNodeVisitor;
-import org.apache.maven.shared.dependency.tree.traversal.SerializingDependencyNodeVisitor;
-import org.apache.maven.shared.dependency.tree.traversal.SerializingDependencyNodeVisitor.TreeTokens;
+import org.apache.maven.shared.dependency.graph.DependencyNode;
+import org.apache.maven.shared.dependency.graph.DependencyGraphBuilder;
+import org.apache.maven.shared.dependency.graph.DependencyGraphBuilderException;
+import org.apache.maven.shared.dependency.graph.filter.AncestorOrSelfDependencyNodeFilter;
+import org.apache.maven.shared.dependency.graph.filter.AndDependencyNodeFilter;
+import org.apache.maven.shared.dependency.graph.filter.ArtifactDependencyNodeFilter;
+import org.apache.maven.shared.dependency.graph.filter.DependencyNodeFilter;
+import org.apache.maven.shared.dependency.graph.traversal.BuildingDependencyNodeVisitor;
+import org.apache.maven.shared.dependency.graph.traversal.CollectingDependencyNodeVisitor;
+import org.apache.maven.shared.dependency.graph.traversal.DependencyNodeVisitor;
+import org.apache.maven.shared.dependency.graph.traversal.FilteringDependencyNodeVisitor;
+import org.apache.maven.shared.dependency.graph.traversal.SerializingDependencyNodeVisitor;
+import org.apache.maven.shared.dependency.graph.traversal.SerializingDependencyNodeVisitor.TreeTokens;
 
 import java.io.File;
 import java.io.IOException;
@@ -87,34 +80,10 @@ public class TreeMojo
     private MavenProject project;
 
     /**
-     * The artifact repository to use.
-     */
-    @Parameter( defaultValue = "${localRepository}", readonly = true, required = true )
-    private ArtifactRepository localRepository;
-
-    /**
-     * The artifact factory to use.
-     */
-    @Component
-    private ArtifactFactory artifactFactory;
-
-    /**
-     * The artifact metadata source to use.
-     */
-    @Component
-    private ArtifactMetadataSource artifactMetadataSource;
-
-    /**
-     * The artifact collector to use.
-     */
-    @Component
-    private ArtifactCollector artifactCollector;
-
-    /**
      * The dependency tree builder to use.
      */
-    @Component
-    private DependencyTreeBuilder dependencyTreeBuilder;
+    @Component( hint = "default" )
+    private DependencyGraphBuilder dependencyGraphBuilder;
 
     /**
      * If specified, this parameter will cause the dependency tree to be written to the path specified, instead of
@@ -160,6 +129,7 @@ public class TreeMojo
      * Whether to include omitted nodes in the serialized dependency tree.
      *
      * @since 2.0-alpha-6
+     * @deprecated in 2.5
      */
     @Parameter( property = "verbose", defaultValue = "false" )
     private boolean verbose;
@@ -196,14 +166,6 @@ public class TreeMojo
     private String excludes;
 
     /**
-     * Runtime Information used to check the Maven version
-     *
-     * @since 2.0
-     */
-    @Component
-    private RuntimeInformation rti;
-
-    /**
      * The computed dependency tree root node of the Maven project.
      */
     private DependencyNode rootNode;
@@ -225,22 +187,6 @@ public class TreeMojo
         throws MojoExecutionException, MojoFailureException
     {
 
-        ArtifactVersion detectedMavenVersion = rti.getApplicationVersion();
-        VersionRange vr;
-        try
-        {
-            vr = VersionRange.createFromVersionSpec( "[2.0.8,)" );
-            if ( !containsVersion( vr, detectedMavenVersion ) )
-            {
-                getLog().warn(
-                    "The tree mojo requires at least Maven 2.0.8 to function properly. You may get erroneous results on earlier versions" );
-            }
-        }
-        catch ( InvalidVersionSpecificationException e )
-        {
-            throw new MojoExecutionException( e.getLocalizedMessage(), e );
-        }
-
         if ( output != null )
         {
             getLog().warn( "The parameter output is deprecated. Use outputFile instead." );
@@ -253,9 +199,7 @@ public class TreeMojo
         {
             // TODO: note that filter does not get applied due to MNG-3236
 
-            rootNode = dependencyTreeBuilder.buildDependencyTree( project, localRepository, artifactFactory,
-                                                                  artifactMetadataSource, artifactFilter,
-                                                                  artifactCollector );
+            rootNode = dependencyGraphBuilder.buildDependencyGraph( project, artifactFilter );
 
             String dependencyTreeString = serializeDependencyTree( rootNode );
 
@@ -270,13 +214,13 @@ public class TreeMojo
                 DependencyUtil.log( dependencyTreeString, getLog() );
             }
         }
-        catch ( DependencyTreeBuilderException exception )
+        catch ( DependencyGraphBuilderException exception )
         {
-            throw new MojoExecutionException( "Cannot build project dependency tree", exception );
+            throw new MojoExecutionException( "Cannot build project dependency graph", exception );
         }
         catch ( IOException exception )
         {
-            throw new MojoExecutionException( "Cannot serialise project dependency tree", exception );
+            throw new MojoExecutionException( "Cannot serialise project dependency graph", exception );
         }
     }
 
@@ -293,11 +237,11 @@ public class TreeMojo
     }
 
     /**
-     * Gets the computed dependency tree root node for the Maven project.
+     * Gets the computed dependency graph root node for the Maven project.
      *
      * @return the dependency tree root node
      */
-    public DependencyNode getDependencyTree()
+    public DependencyNode getDependencyGraph()
     {
         return rootNode;
     }
@@ -421,12 +365,12 @@ public class TreeMojo
         List<DependencyNodeFilter> filters = new ArrayList<DependencyNodeFilter>();
 
         // filter node states
-        if ( !verbose )
+        /*if ( !verbose )
         {
             getLog().debug( "+ Filtering omitted nodes from dependency tree" );
 
             filters.add( StateDependencyNodeFilter.INCLUDED );
-        }
+        }*/
 
         // filter includes
         if ( includes != null )

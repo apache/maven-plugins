@@ -19,8 +19,8 @@ package org.apache.maven.plugin.dependency.treeSerializers;
  * under the License.
  */
 
-import org.apache.maven.shared.dependency.tree.traversal.DependencyNodeVisitor;
-import org.apache.maven.shared.dependency.tree.DependencyNode;
+import org.apache.maven.shared.dependency.graph.DependencyNode;
+import org.apache.maven.shared.dependency.graph.traversal.DependencyNodeVisitor;
 
 import java.io.Writer;
 import java.util.List;
@@ -32,8 +32,10 @@ import java.util.List;
  * @author <a href="mailto:pi.songs@gmail.com">Pi Song</a>
  * @since 2.1
  */
-public class DOTDependencyNodeVisitor extends AbstractSerializingVisitor
-                                      implements DependencyNodeVisitor {
+public class DOTDependencyNodeVisitor
+    extends AbstractSerializingVisitor
+    implements DependencyNodeVisitor
+{
 
     /**
      * Constructor.
