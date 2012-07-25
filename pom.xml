@@ -223,21 +223,21 @@ under the License.
                 <escapeString>\</escapeString>
               </configuration>
             </plugin>
-            <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-invoker-plugin</artifactId>
-              <configuration>
-                <!-- NOTE: Must be synced with the repo path used by AbstractEarPluginIT -->
-                <localRepositoryPath>${localRepositoryPath}</localRepositoryPath>
-                <goals>
-                  <goal>clean</goal>
-                  <goal>package</goal>
-                </goals>
-              </configuration>
-            </plugin>
           </plugins>
         </pluginManagement>
         <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-invoker-plugin</artifactId>
+            <configuration>
+              <!-- NOTE: Must be synced with the repo path used by AbstractEarPluginIT -->
+              <localRepositoryPath>${localRepositoryPath}</localRepositoryPath>
+              <goals>
+                <goal>clean</goal>
+                <goal>package</goal>
+              </goals>
+            </configuration>
+          </plugin>
           <plugin>
             <artifactId>maven-surefire-plugin</artifactId>
             <executions>
