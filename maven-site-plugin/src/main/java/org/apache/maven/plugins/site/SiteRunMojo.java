@@ -56,7 +56,7 @@ import org.mortbay.jetty.webapp.WebAppContext;
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  * @version $Id$
  */
-@Mojo( name = "run", aggregator = true )
+@Mojo( name = "run", aggregator = true, requiresReports = true )
 public class SiteRunMojo
     extends AbstractSiteRenderingMojo
 {

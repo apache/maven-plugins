@@ -45,7 +45,7 @@ import org.codehaus.plexus.archiver.jar.ManifestException;
  * @version $Id$
  * @since 2.0-beta-6
  */
-@Mojo( name = "jar", defaultPhase = LifecyclePhase.PACKAGE )
+@Mojo( name = "jar", defaultPhase = LifecyclePhase.PACKAGE, requiresReports = true )
 public class SiteJarMojo
     extends SiteMojo
 {

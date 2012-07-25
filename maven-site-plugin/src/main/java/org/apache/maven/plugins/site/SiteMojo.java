@@ -49,7 +49,7 @@ import org.apache.maven.reporting.exec.MavenReportExecution;
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
  */
-@Mojo( name = "site", requiresDependencyResolution = ResolutionScope.TEST )
+@Mojo( name = "site", requiresDependencyResolution = ResolutionScope.TEST, requiresReports = true )
 public class SiteMojo
     extends AbstractSiteRenderingMojo
 {
