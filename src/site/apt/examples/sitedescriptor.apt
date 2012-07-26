@@ -45,7 +45,7 @@ Configuring the Site Descriptor
   {{{http://maven.apache.org/doxia/doxia-sitetools/doxia-decoration-model/decoration.html}reference documentation for the site descriptor}}
   available.
 
-  The XML Schema for the site descriptor is published at {{http://maven.apache.org/xsd/decoration-1.1.0.xsd}}.
+  The XML Schema for the site descriptor is published at {{http://maven.apache.org/xsd/decoration-1.3.0.xsd}}.
 
   Have a look at the
   {{{http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-site-plugin/src/site/site.xml}site descriptor for Maven Site Plugin}}
