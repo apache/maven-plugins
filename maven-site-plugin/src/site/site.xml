@@ -33,6 +33,7 @@ under the License.
     </menu>
     <menu name="Configuration">
       <item name="Internationalization" href="i18n.html"/>
+      <item name="Site Descriptor" href="../../doxia/doxia-sitetools/doxia-decoration-model/decoration.html"/>
     </menu>
 
     <menu name="Examples">
