@@ -82,96 +82,10 @@ Using it with Maven 3
 | emma-maven-plugin                | 1.0-alpha-2 |
 *----------------------------------+-------------+
 
-
-* Configuration formats
-
-  The <<<\<reporting\>>>> section of the POM has been added to the Site Plugin's configuration in Maven 3.
-  The content of the configuration has been kept as similar as possible to Maven 2.
-  The <<<{{{/shared/maven-reporting-exec/}maven-reporting-exec}}>>> component transforms the configuration on the fly.
-
-** Classic configuration (Maven 2 & 3)
-
-  Reports are configured in the <<<\<reporting\>>>> section of the POM.
-
-+-----+
-  <reporting>
-    <excludeDefaults>true</excludeDefaults>
-    <outputDirectory>\${project.build.directory}/site</outputDirectory>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-project-info-reports-plugin</artifactId>
-        <version>2.4</version>
-        <configuration>
-          <dependencyDetailsEnabled>false</dependencyDetailsEnabled>
-          <dependencyLocationsEnabled>false</dependencyLocationsEnabled>
-        </configuration>
-        <reportSets>
-          <reportSet>
-            <reports>
-              <report>dependencies</report>
-              <report>scm</report>
-            </reports>
-          </reportSet>
-        </reportSets>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <version>2.8</version>
-      </plugin>
-    </plugins>
-  </reporting>
-+-----+
-
-** New Configuration (Maven 3 only, no reports configuration inheritance)
-
-  Reports are configured in the configuration for <<<maven-site-plugin>>> as <<<\<reportPlugins\>>>> elements.
-
-+-----+
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-site-plugin</artifactId>
-        <version>${project.version}</version>
-        <configuration>
-          ...
-          <reportPlugins>
-            <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-project-info-reports-plugin</artifactId>
-              <version>2.4</version>
-              <configuration>
-                <dependencyDetailsEnabled>false</dependencyDetailsEnabled>
-                <dependencyLocationsEnabled>false</dependencyLocationsEnabled>
-              </configuration>
-              <!-- simpler configuration without reportSets available for usual cases -->
-              <reports>
-                <report>dependencies</report>
-                <report>scm</report>
-              </reports>
-            </plugin>
-            <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-javadoc-plugin</artifactId>
-              <version>2.8</version>
-            </plugin>
-          </reportPlugins>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
-+-----+
-
-  <<Note:>> In Maven 3, the new format does not support report plugins configuration inheritance: see
-  {{{http://jira.codehaus.org/browse/MSITE-484}MSITE-484}}. This format was technically necessary to remove reporting logic
-  from Maven 3, but a new inheritance mechanism still needs to be added to Maven 3 to make it as flexible as the old format.
-  So this new format is not ready for direct use for now: classic configuration is still the recommended format.
-
 * Version Resolution
 
-  When used with Maven 3, a report plugin version can be empty.
+  When used with Maven 3, a report plugin version can be empty (like build plugins).
+
   The following order/strategy will be used to find/resolve a version:
 
   * search the same groupId/artifactId in the build.plugins section
@@ -180,10 +94,29 @@ Using it with Maven 3
 
   * resolve with current repositories (can include automatic SNAPSHOT resolution)
 
+  []
+
+* Inheritance of reports
+
+  Maven 2 and Maven 3 work differently when dealing with inheritance of reports
+  that are configured in the classical configuration format. In Maven 2 inherited
+  reports are added, whereas in Maven 3 they are replaced.
+
+  For example, given a multi module build where the parent POM has the <<<index>>> report
+  configured and the child POM has the <<<summary>>> report configured:
+
+  * with Maven 2, the child site will have both the <<<index>>> and <<<summary>>> reports,
+
+  * with Maven 3, the child site will have only the <<<summary>>> report.
+
+  []
+
+  For more info see {{{http://jira.codehaus.org/browse/MSITE-596}MSITE-596}}.
+
 * Site descriptor attachment
 
   In Maven 3, the default execution of <<<site:attach-descriptor>>> has been removed from the
-  built-in lifecycle bindings for projects with packaging "pom". Users that actually use those
+  built-in lifecycle bindings for projects with <<<pom>>> packaging. Users that actually use those
   projects to provide a common site descriptor for sub modules will need to explicitly define
   the following goal execution to restore the intended behavior:
 
@@ -208,9 +141,9 @@ Using it with Maven 3
 * Using the same version of maven-site-plugin for both Maven 2 and Maven 3
 
   Starting with version 3.0, maven-site-plugin can run with both Maven 2.2.x and 3.x. The
-  results should be exactly the same if reports are configured in the old Maven 2 way, in the <<<\<reporting\>>>>
-  section. If you use the new Maven 3 way of configuring reports, in the <<<\<reportPlugins\>>>> section, it will only
-  work with Maven 3.
+  results should be exactly the same if reports are configured in the classical Maven 2 way, in the <<<\<reporting\>>>>
+  section. If you use the new Maven 3 way of configuring reports (not recommended), in the <<<\<reportPlugins\>>>> section,
+  it will only work with Maven 3.
 
   The following snippet automatically activates <<<site:attach-descriptor>>> when run with Maven 3:
 
@@ -310,18 +243,90 @@ Using it with Maven 3
   </build>
 +-----+
 
-* Inheritance of reports
+* Configuration formats
 
-  Maven 2 and Maven 3 works differently when dealing with inheritance of reports
-  that are configured in the old configuration format. In Maven 2 inherited
-  reports are added, whereas in Maven 3 they are replaced.
+  The <<<\<reporting\>>>> section of the POM has been added to the Site Plugin's configuration in Maven 3.
+  The content of the configuration has been kept as similar as possible to Maven 2 and 
+  the <<<{{{/shared/maven-reporting-exec/}maven-reporting-exec}}>>> component transforms the configuration on the fly.
 
-  Given a multi module build where the parent POM has the <<<index>>> report
-  configured and the child POM has the <<<summary>>> report configured.
+** Classic configuration (Maven 2 & 3)
 
-  In Maven 2 the child site will have both the <<<index>>> and <<<summary>>>
-  reports.
+  Reports are configured in the <<<\<reporting\>>>> section of the POM.
+  <<This stays the recommended configuration format.>>
 
-  In Maven 3 the child site will have only the <<<summary>>> report.
++-----+
+  <reporting>
+    <excludeDefaults>true</excludeDefaults>
+    <outputDirectory>\${project.build.directory}/site</outputDirectory>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-project-info-reports-plugin</artifactId>
+        <version>2.4</version>
+        <configuration>
+          <dependencyDetailsEnabled>false</dependencyDetailsEnabled>
+          <dependencyLocationsEnabled>false</dependencyLocationsEnabled>
+        </configuration>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>dependencies</report>
+              <report>scm</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>2.8</version>
+      </plugin>
+    </plugins>
+  </reporting>
++-----+
 
-  For more info see {{{http://jira.codehaus.org/browse/MSITE-596}MSITE-596}}.
+** New Configuration (Maven 3 only, no reports configuration inheritance)
+
+  Reports can be configured in the configuration of <<<maven-site-plugin>>> as <<<\<reportPlugins\>>>> elements.
+  
+  <<This new configuration format is not actually ready for end-users: please don't use it for the moment.>>
+
+  <Explanation:> The new format does not actually support report plugins configuration inheritance, which is crucial for
+  usability: see {{{http://jira.codehaus.org/browse/MSITE-484}MSITE-484}}. This format was technically necessary to remove
+  most reporting logic from Maven 3, but a new inheritance mechanism still needs to be added to make it as flexible as the old format.
+
++-----+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-site-plugin</artifactId>
+        <version>${project.version}</version>
+        <configuration>
+          ...
+          <reportPlugins>
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-project-info-reports-plugin</artifactId>
+              <version>2.4</version>
+              <configuration>
+                <dependencyDetailsEnabled>false</dependencyDetailsEnabled>
+                <dependencyLocationsEnabled>false</dependencyLocationsEnabled>
+              </configuration>
+              <!-- simpler configuration without reportSets available for usual cases -->
+              <reports>
+                <report>dependencies</report>
+                <report>scm</report>
+              </reports>
+            </plugin>
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-javadoc-plugin</artifactId>
+              <version>2.8</version>
+            </plugin>
+          </reportPlugins>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
++-----+
