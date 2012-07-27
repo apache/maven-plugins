@@ -98,12 +98,14 @@ Using it with Maven 3
 
 * Inheritance of reports
 
-  Maven 2 and Maven 3 work differently when dealing with inheritance of reports
-  that are configured in the classical configuration format. In Maven 2 inherited
-  reports are added, whereas in Maven 3 they are replaced.
+  Maven 2 and Maven 3 work differently when dealing with inheritance of reports: given
+  a plugin providing multiple report goals, in Maven 2,
+  reports configured in child pom are added to reports from parent, whereas in Maven 3
+  reports from child replace reports from parent.
 
   For example, given a multi module build where the parent POM has the <<<index>>> report
-  configured and the child POM has the <<<summary>>> report configured:
+  configured and the child POM has the <<<summary>>> report configured for
+  <<<maven-project-info-reports-plugin>>> plugin:
 
   * with Maven 2, the child site will have both the <<<index>>> and <<<summary>>> reports,
 
