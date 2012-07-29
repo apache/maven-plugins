@@ -43,11 +43,11 @@ Maven SCM Publish Plugin
     in (by default) <<<target/scmpublish-inventory.js>>>. This provides
     the point of reference for an eventual SCM checkin.
 
-    After running the prepare goal, the POM must run site:site and
-    site:stage, with the <stagingDirectory> set to
+    After running the prepare goal, the POM must run <<<site>>> phase then
+    <<<site:stage>>> goal, with the <stagingDirectory> set to
     <<<target/scmpublish-checkout>>>.
 
-    Finally, the <<publish>> goal compares the output of site:stage
+    Finally, the <<publish>> goal compares the output of <<<site:stage>>>
     with the inventory from the <<prepare>> goal, and issues
     appropriate SCM commands to add and delete, followed by a
     checkin.
@@ -81,7 +81,7 @@ Known Limitations
     (with <<<svn mkdir URL>>> for example),
 
     * the plugin works well for multi-module websites publishing to a complete directory:
-    you just need to publish <<<mvn site-stage>>> content. But if one module does not publish
+    you just need to publish <<<mvn site:stage>>> content. But if one module does not publish
     its content to the same directory (like Surefire or Enforcer, which have a
     base directory and one plugin in <<</plugins/>>>), this staging area can't be simply imported.
 
