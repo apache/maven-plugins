@@ -195,4 +195,16 @@ public class SimpleRelocator
     {
         return clazz.replaceFirst( pattern, shadedPattern );
     }
+
+	public String applyToSourceContent(String sourceContent)
+	{
+        if ( rawString )
+        {
+        	return sourceContent;
+        }
+        else
+        {
+            return sourceContent.replaceAll( "\\b" + pattern, shadedPattern );
+        }
+	}
 }

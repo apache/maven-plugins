@@ -29,6 +29,7 @@ import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.artifact.resolver.DefaultArtifactResolver;
 import org.apache.maven.artifact.versioning.VersionRange;
+import org.apache.maven.plugins.shade.ShadeRequest;
 import org.apache.maven.plugins.shade.Shader;
 import org.apache.maven.plugins.shade.filter.Filter;
 import org.apache.maven.plugins.shade.relocation.Relocator;
@@ -85,7 +86,14 @@ public class ShadeMojoTest
 
         List filters = new ArrayList();
 
-        s.shade( set, jarFile, filters, relocators, resourceTransformers );
+        ShadeRequest shadeRequest = new ShadeRequest();
+        shadeRequest.setJars(set);
+        shadeRequest.setUberJar(jarFile);
+        shadeRequest.setFilters(filters);
+        shadeRequest.setRelocators(relocators);
+        shadeRequest.setResourceTransformers(resourceTransformers);
+
+        s.shade( shadeRequest );
 
         ClassLoader cl = new URLClassLoader( new URL[]{ jarFile.toURI().toURL() } );
         Class c = cl.loadClass( "org.apache.maven.plugins.shade.Lib" );
@@ -198,7 +206,14 @@ public class ShadeMojoTest
 
         List filters = new ArrayList();
 
-        s.shade( set, jar, filters, relocators, resourceTransformers );
+        ShadeRequest shadeRequest = new ShadeRequest();
+        shadeRequest.setJars(set);
+        shadeRequest.setUberJar(jar);
+        shadeRequest.setFilters(filters);
+        shadeRequest.setRelocators(relocators);
+        shadeRequest.setResourceTransformers(resourceTransformers);
+
+        s.shade( shadeRequest );
     }
 
 }

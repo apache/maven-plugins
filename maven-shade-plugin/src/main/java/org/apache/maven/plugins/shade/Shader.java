@@ -19,15 +19,9 @@ package org.apache.maven.plugins.shade;
  * under the License.
  */
 
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugins.shade.filter.Filter;
-import org.apache.maven.plugins.shade.relocation.Relocator;
-import org.apache.maven.plugins.shade.resource.ResourceTransformer;
-
-import java.io.File;
 import java.io.IOException;
-import java.util.List;
-import java.util.Set;
+
+import org.apache.maven.plugin.MojoExecutionException;
 
 /**
  * Interface that defines the process of shading.
@@ -39,15 +33,10 @@ public interface Shader
     /**
      * Perform a shading operation.
      *
-     * @param jars                 which jars
-     * @param uberJar              output jar
-     * @param filters              the filters
-     * @param relocators           the relocators
-     * @param resourceTransformers the transformers
+     * @param shadeRequest            holds the many parameters to this method
      * @throws IOException            for IO errors reading the thing
      * @throws MojoExecutionException for anything else that goes wrong.
      */
-    void shade( Set<File> jars, File uberJar, List<Filter> filters, List<Relocator> relocators,
-                List<ResourceTransformer> resourceTransformers )
+    void shade( ShadeRequest shadeRequest )
         throws IOException, MojoExecutionException;
 }
