@@ -60,6 +60,7 @@ public class DependenciesAnalysisPackagingTask
             context.getLog().warn( warOrZipMessage );
         }
         else if ( "tld".equals( dependency.getType() ) || "aar".equals( dependency.getType() )
+            || "mar".equals( dependency.getType() ) || "xar".equals( dependency.getType() )
             || "jar".equals( dependency.getType() ) || "ejb".equals( dependency.getType() )
             || "ejb-client".equals( dependency.getType() ) || "test-jar".equals( dependency.getType() )
             || "par".equals( dependency.getType() ) )
@@ -80,6 +81,7 @@ public class DependenciesAnalysisPackagingTask
             context.getLog().warn( warOrZipMessage );
         }
         else if ( "tld".equals( dependency.getType() ) || "aar".equals( dependency.getType() )
+            || "mar".equals( dependency.getType() ) || "xar".equals( dependency.getType() )
             || "jar".equals( dependency.getType() ) || "ejb".equals( dependency.getType() )
             || "ejb-client".equals( dependency.getType() ) || "test-jar".equals( dependency.getType() )
             || "par".equals( dependency.getType() ) )
@@ -107,6 +109,16 @@ public class DependenciesAnalysisPackagingTask
             {
                 targetFile =
                     new File( context.getWebappDirectory(), ArtifactsPackagingTask.SERVICES_PATH + targetFileName );
+            }
+            else if ( "mar".equals( type ) )
+            {
+                targetFile =
+                    new File( context.getWebappDirectory(), ArtifactsPackagingTask.MODULES_PATH + targetFileName );
+            }
+            else if ( "xar".equals( type ) )
+            {
+                targetFile =
+                    new File( context.getWebappDirectory(), ArtifactsPackagingTask.EXTENSIONS_PATH + targetFileName );
             }
             else if ( "jar".equals( type ) || "ejb".equals( type ) || "ejb-client".equals( type )
                 || "test-jar".equals( type ) )

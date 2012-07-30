@@ -34,6 +34,7 @@ import org.apache.maven.plugin.war.stub.PARArtifactStub;
 import org.apache.maven.plugin.war.stub.ResourceStub;
 import org.apache.maven.plugin.war.stub.TLDArtifactStub;
 import org.apache.maven.plugin.war.stub.WarArtifactStub;
+import org.apache.maven.plugin.war.stub.XarArtifactStub;
 import org.codehaus.plexus.util.FileUtils;
 
 import java.io.File;
@@ -623,6 +624,43 @@ public class WarExplodedMojoTest
         File expectedWebSource2File = new File( webAppDirectory, "org/web/app/last-exile.jsp" );
         // final name form is <artifactId>-<version>.<type>
         File expectedJarArtifact = new File( webAppDirectory, "WEB-INF/modules/marartifact-0.0-Test.jar" );
+
+        assertTrue( "source files not found: " + expectedWebSourceFile.toString(), expectedWebSourceFile.exists() );
+        assertTrue( "source files not found: " + expectedWebSource2File.toString(), expectedWebSource2File.exists() );
+        assertTrue( "jar artifact not found: " + expectedJarArtifact.toString(), expectedJarArtifact.exists() );
+
+        // house keeping
+        expectedWebSourceFile.delete();
+        expectedWebSource2File.delete();
+        expectedJarArtifact.delete();
+    }
+
+    public void testExplodedWarWithXar()
+        throws Exception
+    {
+        // setup test data
+        String testId = "ExplodedWarWithXar";
+        MavenProjectArtifactsStub project = new MavenProjectArtifactsStub();
+        File webAppDirectory = new File( getTestDirectory(), testId );
+        File webAppSource = createWebAppSource( testId );
+        File classesDir = createClassesDir( testId, true );
+        // Fake here since the xar artifact handler does not exist: no biggie
+        ArtifactHandler artifactHandler = (ArtifactHandler) lookup( ArtifactHandler.ROLE, "jar" );
+        ArtifactStub xarArtifact = new XarArtifactStub( getBasedir(), artifactHandler );
+        File xarFile = xarArtifact.getFile();
+
+        assertTrue( "jar not found: " + xarFile.toString(), xarFile.exists() );
+
+        // configure mojo
+        project.addArtifact( xarArtifact );
+        this.configureMojo( mojo, new LinkedList(), classesDir, webAppSource, webAppDirectory, project );
+        mojo.execute();
+
+        // validate operation
+        File expectedWebSourceFile = new File( webAppDirectory, "pansit.jsp" );
+        File expectedWebSource2File = new File( webAppDirectory, "org/web/app/last-exile.jsp" );
+        // final name form is <artifactId>-<version>.<type>
+        File expectedJarArtifact = new File( webAppDirectory, "WEB-INF/extensions/xarartifact-0.0-Test.jar" );
 
         assertTrue( "source files not found: " + expectedWebSourceFile.toString(), expectedWebSourceFile.exists() );
         assertTrue( "source files not found: " + expectedWebSource2File.toString(), expectedWebSource2File.exists() );
