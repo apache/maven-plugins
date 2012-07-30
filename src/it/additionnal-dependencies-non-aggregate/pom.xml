@@ -114,13 +114,13 @@
             | Apple's JVM sometimes requires more memory
           -->
           <additionalJOption>-J-Xmx1024m</additionalJOption>
-          <additionnalDependencies>
-            <additionnalDependency>
+          <additionalDependencies>
+            <additionalDependency>
               <groupId>geronimo-spec</groupId>
               <artifactId>geronimo-spec-jta</artifactId>
               <version>1.0.1B-rc4</version>
-            </additionnalDependency>
-          </additionnalDependencies>
+            </additionalDependency>
+          </additionalDependencies>
         </configuration>
       </plugin>
     </plugins>
