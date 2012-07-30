@@ -64,6 +64,12 @@ under the License.
     <mavenPluginPluginVersion>3.1</mavenPluginPluginVersion>
   </properties>
 
+  <contributors>
+    <contributor>
+      <name>Ben Speakmon</name>
+    </contributor>
+  </contributors>
+
   <dependencies>
     <!-- maven -->
     <dependency>
