@@ -75,8 +75,10 @@ public class PluginManagementReport
     @Override
     public void executeReport( Locale locale )
     {
-        PluginManagementRenderer r = new PluginManagementRenderer( getLog(), getSink(), locale, getI18N( locale ), project
-            .getPluginManagement().getPlugins(), project, mavenProjectBuilder, artifactFactory, localRepository );
+        PluginManagementRenderer r =
+            new PluginManagementRenderer( getLog(), getSink(), locale, getI18N( locale ),
+                                          project.getPluginManagement().getPlugins(), project, mavenProjectBuilder,
+                                          artifactFactory, localRepository );
         r.render();
     }
 

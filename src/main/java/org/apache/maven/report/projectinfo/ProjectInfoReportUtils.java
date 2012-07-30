@@ -203,7 +203,8 @@ public class ProjectInfoReportUtils
      */
     public static String getArtifactUrl( ArtifactFactory factory, Artifact artifact,
                                          MavenProjectBuilder mavenProjectBuilder,
-                                         List<ArtifactRepository> remoteRepositories, ArtifactRepository localRepository )
+                                         List<ArtifactRepository> remoteRepositories,
+                                         ArtifactRepository localRepository )
     {
         if ( Artifact.SCOPE_SYSTEM.equals( artifact.getScope() ) )
         {

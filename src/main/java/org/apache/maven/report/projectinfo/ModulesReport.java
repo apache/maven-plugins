@@ -151,7 +151,7 @@ public class ModulesReport
                     baseURL = parentModel.getUrl();
                 }
 
-                final String moduleHref = getRelativeLink( baseURL,  moduleModel.getUrl(), moduleModel.getArtifactId() );
+                final String moduleHref = getRelativeLink( baseURL, moduleModel.getUrl(), moduleModel.getArtifactId() );
 
                 tableRow( new String[] {linkedName( moduleName, moduleHref ), moduleModel.getDescription()} );
             }
