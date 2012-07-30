@@ -217,7 +217,8 @@ public class DependencyConvergenceReport
         sink.table_();
     }
 
-    private void generateVersionDetails( Sink sink, Map<String, List<ReverseDependencyLink>> artifactMap, String version )
+    private void generateVersionDetails( Sink sink, Map<String, List<ReverseDependencyLink>> artifactMap,
+                                         String version )
     {
         sink.numberedList( 1 ); // Use lower alpha numbering
         List<ReverseDependencyLink> depList = artifactMap.get( version );

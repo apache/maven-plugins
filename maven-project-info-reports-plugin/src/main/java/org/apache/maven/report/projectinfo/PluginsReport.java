@@ -76,9 +76,10 @@ public class PluginsReport
     public void executeReport( Locale locale )
     {
         @SuppressWarnings( "unchecked" )
-        PluginsRenderer r = new PluginsRenderer( getLog(), getSink(), locale, getI18N( locale ), project.getPluginArtifacts(),
-                                                 project.getReportArtifacts(), project, mavenProjectBuilder,
-                                                 artifactFactory, localRepository );
+        PluginsRenderer r =
+            new PluginsRenderer( getLog(), getSink(), locale, getI18N( locale ), project.getPluginArtifacts(),
+                                 project.getReportArtifacts(), project, mavenProjectBuilder, artifactFactory,
+                                 localRepository );
         r.render();
     }
 

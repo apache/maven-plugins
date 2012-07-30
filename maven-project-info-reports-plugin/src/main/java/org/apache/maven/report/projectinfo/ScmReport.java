@@ -103,9 +103,9 @@ public class ScmReport
     @Override
     public void executeReport( Locale locale )
     {
-        ScmRenderer r = new ScmRenderer( getLog(), scmManager, getSink(), getProject().getModel(), getI18N( locale ), locale,
-                                         checkoutDirectoryName, webAccessUrl, anonymousConnection,
-                                         developerConnection );
+        ScmRenderer r =
+            new ScmRenderer( getLog(), scmManager, getSink(), getProject().getModel(), getI18N( locale ), locale,
+                             checkoutDirectoryName, webAccessUrl, anonymousConnection, developerConnection );
 
         r.render();
     }
@@ -562,7 +562,7 @@ public class ScmReport
          *
          * @param hgRepo
          */
-        private void developerAccessMercurial(HgScmProviderRepository hgRepo)
+        private void developerAccessMercurial( HgScmProviderRepository hgRepo )
         {
             sink.paragraph();
             linkPatternedText( getI18nString( "devaccess.hg.intro" ) );
@@ -570,7 +570,7 @@ public class ScmReport
 
             StringBuffer command = new StringBuffer();
             command.append( "$ hg clone " );
-            command.append(hgRepo.getURI());
+            command.append( hgRepo.getURI() );
 
             verbatimText( command.toString() );
         }

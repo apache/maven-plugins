@@ -329,7 +329,7 @@ public abstract class AbstractProjectInfoReport
 
         private ResourceBundle bundle;
 
-        private final Object[] NO_ARGS = new Object[0];
+        private final static Object[] NO_ARGS = new Object[0];
 
         public CustomI18N( MavenProject project, Settings settings, File customBundleFile, Locale locale,
                            I18N i18nOriginal )
@@ -519,7 +519,7 @@ public abstract class AbstractProjectInfoReport
             return messageFormat.format( args );
         }
 
-        private final String getStringOrNull( ResourceBundle rb, String key )
+        private String getStringOrNull( ResourceBundle rb, String key )
         {
             if ( rb != null )
             {

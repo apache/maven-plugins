@@ -127,17 +127,18 @@ public class TeamListReport
             startSection( getI18nString( "intro.title" ) );
 
             // To handle JS
-            StringBuffer javascript = new StringBuffer( "function offsetDate(id, offset) {" ).append( SystemUtils.LINE_SEPARATOR );
+            StringBuffer javascript =
+                new StringBuffer( "function offsetDate(id, offset) {" ).append( SystemUtils.LINE_SEPARATOR );
             javascript.append( "    var now = new Date();" ).append( SystemUtils.LINE_SEPARATOR );
             javascript.append( "    var nowTime = now.getTime();" ).append( SystemUtils.LINE_SEPARATOR );
             javascript.append( "    var localOffset = now.getTimezoneOffset();" ).append( SystemUtils.LINE_SEPARATOR );
             javascript.append( "    var developerTime = nowTime + ( offset * 60 * 60 * 1000 )"
-                               + "+ ( localOffset * 60 * 1000 );" ).append( SystemUtils.LINE_SEPARATOR );
+                                   + "+ ( localOffset * 60 * 1000 );" ).append( SystemUtils.LINE_SEPARATOR );
             javascript.append( "    var developerDate = new Date(developerTime);" ).append( SystemUtils.LINE_SEPARATOR );
             javascript.append( SystemUtils.LINE_SEPARATOR );
             javascript.append( "    document.getElementById(id).innerHTML = developerDate;" ).append( SystemUtils.LINE_SEPARATOR );
             javascript.append( "}" ).append( SystemUtils.LINE_SEPARATOR );
-            javascript.append( SystemUtils.LINE_SEPARATOR);
+            javascript.append( SystemUtils.LINE_SEPARATOR );
             javascript.append( "function init(){" ).append( SystemUtils.LINE_SEPARATOR );
 
             // Introduction
