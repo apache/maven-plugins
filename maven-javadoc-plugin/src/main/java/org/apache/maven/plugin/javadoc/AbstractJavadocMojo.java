@@ -1598,19 +1598,19 @@ public abstract class AbstractJavadocMojo
      * capability to add optionnal dependencies to the javadoc classpath.
      * Exemple:
      * <pre>
-     * &lt;additionnalDependencies&gt;
-     * &nbsp;&nbsp;&lt;additionnalDependency&gt;
+     * &lt;additionalDependencies&gt;
+     * &nbsp;&nbsp;&lt;additionalDependency&gt;
      * &nbsp;&nbsp;&nbsp;&nbsp;&lt;groupId&gt;geronimo-spec&lt;/groupId&gt;
      * &nbsp;&nbsp;&nbsp;&nbsp;&lt;artifactId&gt;geronimo-spec-jta&lt;/artifactId&gt;
      * &nbsp;&nbsp;&nbsp;&nbsp;&lt;version&gt;1.0.1B-rc4:&lt;/version&gt;
-     * &nbsp;&nbsp;&lt;/additionnalDependency&gt;
-     * &lt;/additionnalDependencies&gt;
+     * &nbsp;&nbsp;&lt;/additionalDependency&gt;
+     * &lt;/additionalDependencies&gt;
      * </pre>
      *
      * @since 2.8.1
      */
     @Parameter
-    private List<Dependency> additionnalDependencies;
+    private List<AdditionalDependency> additionalDependencies;
     
     // ----------------------------------------------------------------------
     // static
@@ -2427,13 +2427,13 @@ public abstract class AbstractJavadocMojo
             classpathElements.add( a.getFile().toString() );
         }
 
-        if ( additionnalDependencies != null )
+        if ( additionalDependencies != null )
          {
-             for ( Dependency dependency : additionnalDependencies )
+             for ( Dependency dependency : additionalDependencies )
              {
                  Artifact artifact = resolveDependency( dependency );
                  String path = artifact.getFile().toString();
-                 getLog().debug( "add additionnal artifact with path " + path );
+                 getLog().debug( "add additional artifact with path " + path );
                  classpathElements.add( path );
              }
          }
