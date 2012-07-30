@@ -171,6 +171,14 @@ public class InstallFileMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
+
+        if ( !file.exists() )
+        {
+            String message = "The specified file '" + file.getPath() + "' not exists";
+            getLog().error( message );
+            throw new MojoFailureException( message );
+        }
+
         // ----------------------------------------------------------------------
         // Override the default localRepository variable
         // ----------------------------------------------------------------------
@@ -203,8 +211,9 @@ public class InstallFileMojo
 
         if ( file.equals( getLocalRepoFile( artifact ) ) )
         {
-            throw new MojoFailureException( "Cannot install artifact. "
-                + "Artifact is already in the local repository.\n\nFile in question is: " + file + "\n" );
+            throw new MojoFailureException(
+                "Cannot install artifact. " + "Artifact is already in the local repository.\n\nFile in question is: "
+                    + file + "\n" );
         }
 
         File generatedPomFile = null;
@@ -220,8 +229,8 @@ public class InstallFileMojo
             {
                 generatedPomFile = generatePomFile();
                 ArtifactMetadata pomMetadata = new ProjectArtifactMetadata( artifact, generatedPomFile );
-                if ( Boolean.TRUE.equals( generatePom )
-                    || ( generatePom == null && !getLocalRepoFile( pomMetadata ).exists() ) )
+                if ( Boolean.TRUE.equals( generatePom ) || ( generatePom == null && !getLocalRepoFile(
+                    pomMetadata ).exists() ) )
                 {
                     getLog().debug( "Installing generated POM" );
                     artifact.addMetadata( pomMetadata );
@@ -249,8 +258,8 @@ public class InstallFileMojo
         }
         catch ( ArtifactInstallationException e )
         {
-            throw new MojoExecutionException( "Error installing artifact '" + artifact.getDependencyConflictId()
-                + "': " + e.getMessage(), e );
+            throw new MojoExecutionException(
+                "Error installing artifact '" + artifact.getDependencyConflictId() + "': " + e.getMessage(), e );
         }
         finally
         {
@@ -374,8 +383,8 @@ public class InstallFileMojo
 
         if ( result.getMessageCount() > 0 )
         {
-            throw new MojoExecutionException( "The artifact information is incomplete or not valid:\n"
-                + result.render( "  " ) );
+            throw new MojoExecutionException(
+                "The artifact information is incomplete or not valid:\n" + result.render( "  " ) );
         }
     }
 
