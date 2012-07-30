@@ -59,6 +59,12 @@ under the License.
     <mavenPluginVersion>3.1</mavenPluginVersion>
   </properties>
 
+  <contributors>
+    <contributor>
+      <name>Trask Stalnaker</name>
+    </contributor>
+  </contributors>
+
   <dependencies>
     <!-- Maven -->
     <dependency>
