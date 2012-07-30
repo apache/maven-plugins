@@ -57,6 +57,12 @@ under the License.
     <mavenPluginPluginVersion>3.1</mavenPluginPluginVersion>
   </properties>
 
+  <contributors>
+    <contributor>
+      <name>Auke Schrijnen</name>
+    </contributor>
+  </contributors>
+
   <dependencies>
     <dependency>
       <groupId>org.apache.maven</groupId>
