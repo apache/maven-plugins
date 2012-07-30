@@ -181,7 +181,7 @@ public class GetMojo
         if ( artifactId == null && artifact == null )
         {
             throw new MojoFailureException( "You must specify an artifact, "
-                                                + "e.g. -Dartifact=org.apache.maven.plugins:maven-downloader-plugin:1.0" );
+                + "e.g. -Dartifact=org.apache.maven.plugins:maven-downloader-plugin:1.0" );
         }
         if ( artifact != null )
         {

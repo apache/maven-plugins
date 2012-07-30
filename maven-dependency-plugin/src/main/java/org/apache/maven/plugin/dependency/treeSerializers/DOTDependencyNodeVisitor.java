@@ -42,7 +42,7 @@ public class DOTDependencyNodeVisitor
      *
      * @param writer the writer to write to.
      */
-    public DOTDependencyNodeVisitor( Writer writer)
+    public DOTDependencyNodeVisitor( Writer writer )
     {
         super( writer );
     }

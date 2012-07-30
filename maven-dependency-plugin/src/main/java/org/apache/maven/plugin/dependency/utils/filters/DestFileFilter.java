@@ -69,8 +69,9 @@ public class DestFileFilter
     }
 
     public DestFileFilter( boolean overWriteReleases, boolean overWriteSnapshots, boolean overWriteIfNewer,
-                          boolean useSubDirectoryPerArtifact, boolean useSubDirectoryPerType, boolean useSubDirectoryPerScope,
-                          boolean useRepositoryLayout, boolean removeVersion, File outputFileDirectory )
+                           boolean useSubDirectoryPerArtifact, boolean useSubDirectoryPerType,
+                           boolean useSubDirectoryPerScope, boolean useRepositoryLayout, boolean removeVersion,
+                           File outputFileDirectory )
     {
         this.overWriteReleases = overWriteReleases;
         this.overWriteSnapshots = overWriteSnapshots;
@@ -95,7 +96,7 @@ public class DestFileFilter
         Set<Artifact> artifacts_ = artifacts;
         Set<Artifact> result = new HashSet<Artifact>();
         
-        for( Artifact artifact : artifacts_ )
+        for ( Artifact artifact : artifacts_ )
         {
             if ( isArtifactIncluded( new ArtifactItem( artifact ) ) )
             {
@@ -254,9 +255,10 @@ public class DestFileFilter
         File destFolder = item.getOutputDirectory();
         if ( destFolder == null )
         {
-            destFolder = DependencyUtil.getFormattedOutputDirectory( useSubDirectoryPerScope, useSubDirectoryPerType,
-                                                                     useSubDirectoryPerArtifact, useRepositoryLayout,
-                                                                     removeVersion, this.outputFileDirectory, artifact );
+            destFolder =
+                DependencyUtil.getFormattedOutputDirectory( useSubDirectoryPerScope, useSubDirectoryPerType,
+                                                            useSubDirectoryPerArtifact, useRepositoryLayout,
+                                                            removeVersion, this.outputFileDirectory, artifact );
         }
 
         File destFile = null;

@@ -135,9 +135,9 @@ public class AnalyzeReportMojo
                 }
             }
 
-            ProjectDependencyAnalysis analysisTemp = new ProjectDependencyAnalysis( analysis.getUsedDeclaredArtifacts(),
-                                                                                    analysis.getUsedUndeclaredArtifacts(),
-                                                                                    filteredUnusedDeclared );
+            ProjectDependencyAnalysis analysisTemp =
+                new ProjectDependencyAnalysis( analysis.getUsedDeclaredArtifacts(),
+                                               analysis.getUsedUndeclaredArtifacts(), filteredUnusedDeclared );
             analysis = analysisTemp;
         }
 

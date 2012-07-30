@@ -97,12 +97,11 @@ public class CopyDependenciesMojo
         {
             try
             {
-                ArtifactRepository targetRepository = repositoryFactory.createDeploymentArtifactRepository( "local",
-                                                                                                            outputDirectory.toURL().toExternalForm(),
-                                                                                                            (ArtifactRepositoryLayout) repositoryLayouts.get(
-                                                                                                                "default" ),
-                                                                                                            false
-                                                                                                            /*uniqueVersion*/ );
+                ArtifactRepository targetRepository =
+                    repositoryFactory.createDeploymentArtifactRepository( "local",
+                                                                          outputDirectory.toURL().toExternalForm(),
+                                                                          (ArtifactRepositoryLayout) repositoryLayouts.get( "default" ),
+                                                                          false /* uniqueVersion */);
                 for ( Artifact artifact : artifacts )
                 {
                     installArtifact( artifact, targetRepository );

@@ -67,7 +67,7 @@ public class MarkerFileFilter
         Set<Artifact> artifacts_ = artifacts;
         Set<Artifact> result = new HashSet<Artifact>();
         
-        for( Artifact artifact : artifacts_ )
+        for ( Artifact artifact : artifacts_ )
         {
             if ( isArtifactIncluded( new ArtifactItem( artifact ) ) )
             {

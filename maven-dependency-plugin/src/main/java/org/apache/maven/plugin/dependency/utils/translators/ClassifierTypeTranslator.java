@@ -109,7 +109,7 @@ public class ClassifierTypeTranslator
     }
 
     /**
-     * @param type
+     * @param theType
      *            The type to set.
      */
     public void setType( String theType )
