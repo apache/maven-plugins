@@ -59,7 +59,7 @@ public class SourcesFileMarkerHandler
     /**
      * Get MarkerFile, exposed for unit testing purposes
      * 
-     * @param is
+     * @param res
      *            resolved or not.
      * @return marker file for this artifact.
      */
@@ -85,7 +85,7 @@ public class SourcesFileMarkerHandler
      * @return <code>true</code> if and only if the file or directory denoted
      *         by this abstract pathname exists; <code>false</code> otherwise
      * 
-     * @throws SecurityException
+     * @throws MojoExecutionException
      *             If a security manager exists and its <code>{@link
      *          java.lang.SecurityManager#checkRead(java.lang.String)}</code>
      *             method denies read access to the file or directory
@@ -188,7 +188,7 @@ public class SourcesFileMarkerHandler
     }
 
     /**
-     * @param resolved
+     * @param isResolved
      *            The resolved to set.
      */
     public void setResolved( boolean isResolved )

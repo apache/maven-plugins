@@ -331,9 +331,9 @@ public class BuildClasspathMojo
     }
 
     /**
-     * Reads into a string the file specified by the mojo param 'outputFile'. Assumes, the instance variable 'outputFile' is not
-     * null.
-     *
+     * Reads into a string the file specified by the mojo param 'outputFile'. Assumes, the instance variable
+     * 'outputFile' is not null.
+     * 
      * @return the string contained in the classpathFile, if exists, or null otherwise.
      * @throws MojoExecutionException
      */

@@ -330,11 +330,9 @@ public class ArtifactItem
     }
 
     /**
-     * @param excludes
-     * 			A comma separated list of items to exclude
-     * 			i.e.  <code>**\/*.xml, **\/*.properties</code>
+     * @param excludes A comma separated list of items to exclude i.e. <code>**\/*.xml, **\/*.properties</code>
      */
-    public void setExcludes ( String excludes )
+    public void setExcludes( String excludes )
     {
         this.excludes = excludes;
     }
@@ -348,9 +346,7 @@ public class ArtifactItem
     }
 
     /**
-     * @param includes
-     * 			A comma separated list of items to include
-     * 			i.e.  <code>**\/*.xml, **\/*.properties</code>
+     * @param includes A comma separated list of items to include i.e. <code>**\/*.xml, **\/*.properties</code>
      */
     public void setIncludes ( String includes )
     {

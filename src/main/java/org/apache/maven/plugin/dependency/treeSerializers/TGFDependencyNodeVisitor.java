@@ -44,7 +44,7 @@ public class TGFDependencyNodeVisitor
      *
      * @author <a href="mailto:jerome.creignou@gmail.com">Jerome Creignou</a>
      */
-    final static class EdgeAppender
+    static final class EdgeAppender
     {
         /**
          * Edge start.
