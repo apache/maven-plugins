@@ -62,7 +62,7 @@ under the License.
     <beanshell-version>2.0b4</beanshell-version>
     <groovy-groupId>org.codehaus.groovy</groovy-groupId>
     <groovy-artifactId>groovy</groovy-artifactId>
-    <groovy-version>1.8.6</groovy-version>
+    <groovy-version>2.0.1</groovy-version>
     <mavenPluginPluginVersion>3.1</mavenPluginPluginVersion>
   </properties>
 
