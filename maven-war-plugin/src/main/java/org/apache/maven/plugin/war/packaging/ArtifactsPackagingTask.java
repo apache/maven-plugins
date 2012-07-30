@@ -48,6 +48,8 @@ public class ArtifactsPackagingTask
 
     public static final String MODULES_PATH = "WEB-INF/modules/";
 
+    public static final String EXTENSIONS_PATH = "WEB-INF/extensions/";
+
     private final Set artifacts;
 
     private final String id;
@@ -99,6 +101,10 @@ public class ArtifactsPackagingTask
                     else if ( "mar".equals( type ) )
                     {
                         copyFile( id, context, artifact.getFile(), MODULES_PATH + targetFileName );
+                    }
+                    else if ( "xar".equals( type ) )
+                    {
+                        copyFile( id, context, artifact.getFile(), EXTENSIONS_PATH + targetFileName );
                     }
                     else if ( "jar".equals( type ) || "ejb".equals( type ) || "ejb-client".equals( type )
                         || "test-jar".equals( type ) )
