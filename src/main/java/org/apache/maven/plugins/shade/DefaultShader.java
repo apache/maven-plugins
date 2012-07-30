@@ -21,6 +21,7 @@ package org.apache.maven.plugins.shade;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.shade.filter.Filter;
+import org.apache.maven.plugins.shade.mojo.PackageRelocation;
 import org.apache.maven.plugins.shade.relocation.Relocator;
 import org.apache.maven.plugins.shade.resource.ManifestResourceTransformer;
 import org.apache.maven.plugins.shade.resource.ResourceTransformer;
@@ -33,10 +34,13 @@ import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.commons.Remapper;
 import org.objectweb.asm.commons.RemappingClassAdapter;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashSet;
@@ -59,14 +63,13 @@ public class DefaultShader
     implements Shader
 {
 
-    public void shade( Set<File> jars, File uberJar, List<Filter> filters, List<Relocator> relocators,
-                       List<ResourceTransformer> resourceTransformers )
+    public void shade( ShadeRequest shadeRequest )
         throws IOException, MojoExecutionException
     {
         Set resources = new HashSet();
 
         ResourceTransformer manifestTransformer = null;
-        List transformers = new ArrayList( resourceTransformers );
+        List transformers = new ArrayList( shadeRequest.getResourceTransformers() );
         for ( Iterator<ResourceTransformer> it = transformers.iterator(); it.hasNext(); )
         {
             ResourceTransformer transformer = it.next();
@@ -77,14 +80,14 @@ public class DefaultShader
             }
         }
 
-        RelocatorRemapper remapper = new RelocatorRemapper( relocators );
+        RelocatorRemapper remapper = new RelocatorRemapper( shadeRequest.getRelocators() );
 
-        uberJar.getParentFile().mkdirs();
-        JarOutputStream jos = new JarOutputStream( new FileOutputStream( uberJar ) );
+        shadeRequest.getUberJar().getParentFile().mkdirs();
+        JarOutputStream jos = new JarOutputStream( new FileOutputStream( shadeRequest.getUberJar() ) );
 
         if ( manifestTransformer != null )
         {
-            for ( File jar : jars )
+            for ( File jar : shadeRequest.getJars() )
             {
                 JarFile jarFile = newJarFile( jar );
                 for ( Enumeration en = jarFile.entries(); en.hasMoreElements(); )
@@ -94,7 +97,7 @@ public class DefaultShader
                     if ( manifestTransformer.canTransformResource( resource ) )
                     {
                         resources.add( resource );
-                        manifestTransformer.processResource( resource, jarFile.getInputStream( entry ), relocators );
+                        manifestTransformer.processResource( resource, jarFile.getInputStream( entry ), shadeRequest.getRelocators() );
                         break;
                     }
                 }
@@ -105,12 +108,12 @@ public class DefaultShader
             }
         }
 
-        for ( File jar : jars )
+        for ( File jar : shadeRequest.getJars() )
         {
 
             getLogger().debug( "Processing JAR " + jar );
 
-            List jarFilters = getFilters( jar, filters );
+            List jarFilters = getFilters( jar, shadeRequest.getFilters() );
 
             JarFile jarFile = newJarFile( jar );
 
@@ -149,9 +152,19 @@ public class DefaultShader
                     {
                         addRemappedClass( remapper, jos, jar, name, is );
                     }
+                    else if ( shadeRequest.isShadeSourcesContent() && name.endsWith( ".java" ) )
+                    {
+                        // Avoid duplicates
+                        if ( resources.contains( mappedName ) )
+                        {
+                            continue;
+                        }
+                        
+                        addJavaSource( resources, jos, mappedName, is, shadeRequest.getRelocators() );
+                    }
                     else
                     {
-                        if ( !resourceTransformed( transformers, mappedName, is, relocators ) )
+                        if ( !resourceTransformed( transformers, mappedName, is, shadeRequest.getRelocators() ) )
                         {
                             // Avoid duplicates that aren't accounted for by the resource transformers
                             if ( resources.contains( mappedName ) )
@@ -182,7 +195,7 @@ public class DefaultShader
 
         IOUtil.close( jos );
 
-        for ( Filter filter : filters )
+        for ( Filter filter : shadeRequest.getFilters() )
         {
             filter.finished();
         }
@@ -328,6 +341,25 @@ public class DefaultShader
             }
         }
         return resourceTransformed;
+    }
+
+    private void addJavaSource( Set resources, JarOutputStream jos, String name, InputStream is,
+                                    List<Relocator> relocators )
+            throws IOException
+    {
+        jos.putNextEntry( new JarEntry( name ) );
+
+        String sourceContent = IOUtil.toString( new InputStreamReader( is, "UTF-8" ) );
+        
+        for ( Relocator relocator : relocators ) {
+        	sourceContent = relocator.applyToSourceContent(sourceContent);
+        }
+        
+        OutputStreamWriter writer = new OutputStreamWriter( jos, "UTF-8" );
+        IOUtil.copy( sourceContent, writer );
+        writer.flush();
+
+        resources.add( name );
     }
 
     private void addResource( Set resources, JarOutputStream jos, String name, InputStream is )

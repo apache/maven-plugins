@@ -38,6 +38,7 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.apache.maven.plugins.shade.ShadeRequest;
 import org.apache.maven.plugins.shade.Shader;
 import org.apache.maven.plugins.shade.filter.Filter;
 import org.apache.maven.plugins.shade.filter.MinijarFilter;
@@ -89,18 +90,19 @@ import java.util.Set;
  * @author David Blevins
  * @author Hiram Chirino
  */
-@Mojo(name = "shade", defaultPhase = LifecyclePhase.PACKAGE, threadSafe = false, requiresDependencyResolution = ResolutionScope.RUNTIME)
+@Mojo( name = "shade", defaultPhase = LifecyclePhase.PACKAGE, threadSafe = false,
+       requiresDependencyResolution = ResolutionScope.RUNTIME )
 public class ShadeMojo
     extends AbstractMojo
     implements Contextualizable
 {
-    @Parameter(readonly = true, defaultValue = "${project}")
+    @Parameter( readonly = true, defaultValue = "${project}" )
     private MavenProject project;
 
     @Component
     private MavenProjectHelper projectHelper;
 
-    @Component(hint = "default", role = org.apache.maven.plugins.shade.Shader.class)
+    @Component( hint = "default", role = org.apache.maven.plugins.shade.Shader.class )
     private Shader shader;
 
     /**
@@ -118,7 +120,7 @@ public class ShadeMojo
     /**
      * The current Maven session.
      */
-    @Parameter(readonly = true, defaultValue = "${session}")
+    @Parameter( readonly = true, defaultValue = "${session}" )
     private MavenSession session;
 
     /**
@@ -136,13 +138,13 @@ public class ShadeMojo
     /**
      * Remote repositories which will be searched for source attachments.
      */
-    @Parameter(readonly = true, required = true, defaultValue = "${project.remoteArtifactRepositories}")
+    @Parameter( readonly = true, required = true, defaultValue = "${project.remoteArtifactRepositories}" )
     protected List remoteArtifactRepositories;
 
     /**
      * Local maven repository.
      */
-    @Parameter(readonly = true, required = true, defaultValue = "${localRepository}")
+    @Parameter( readonly = true, required = true, defaultValue = "${localRepository}" )
     protected ArtifactRepository localRepository;
 
     /**
@@ -174,7 +176,6 @@ public class ShadeMojo
      *   &lt;/excludes&gt;
      * &lt;/artifactSet&gt;
      * </pre>
-     *
      */
     @Parameter
     private ArtifactSet artifactSet;
@@ -196,7 +197,6 @@ public class ShadeMojo
      * &lt;/relocations&gt;
      * </pre>
      * <em>Note:</em> Support for includes exists only since version 1.4.
-     *
      */
     @Parameter
     private PackageRelocation[] relocations;
@@ -235,7 +235,7 @@ public class ShadeMojo
     /**
      * The destination directory for the shaded artifact.
      */
-    @Parameter(defaultValue = "${project.build.directory}")
+    @Parameter( defaultValue = "${project.build.directory}" )
     private File outputDirectory;
 
     /**
@@ -253,9 +253,8 @@ public class ShadeMojo
      * the standard version. If the original artifactId was "foo" then the final artifact would
      * be something like foo-1.0.jar. So if you change the artifactId you might have something
      * like foo-special-1.0.jar.
-     *
      */
-    @Parameter(defaultValue = "${project.artifactId}")
+    @Parameter( defaultValue = "${project.artifactId}" )
     private String shadedArtifactId;
 
     /**
@@ -269,7 +268,6 @@ public class ShadeMojo
      * Defines whether the shaded artifact should be attached as classifier to
      * the original artifact.  If false, the shaded jar will be the main artifact
      * of the project
-     *
      */
     @Parameter
     private boolean shadedArtifactAttached;
@@ -279,20 +277,21 @@ public class ShadeMojo
      * have been included into the uber JAR will be removed from the <code>&lt;dependencies&gt;</code> section of the
      * generated POM. The reduced POM will be named <code>dependency-reduced-pom.xml</code> and is stored into the same
      * directory as the shaded artifact. Unless you also specify dependencyReducedPomLocation, the plugin will
-     * create a temporary file named <code>dependency-reduced-pom.xml</code> in the project basedir. 
+     * create a temporary file named <code>dependency-reduced-pom.xml</code> in the project basedir.
      */
-    @Parameter(defaultValue = "true")
+    @Parameter( defaultValue = "true" )
     private boolean createDependencyReducedPom;
-    
-    
+
+
     /**
      * Where to put the dependency reduced pom.
-     *  Note: setting a value for this parameter with a directory other than ${basedir} will change the value of ${basedir}
-     *  for all executions that come after the shade execution. This is often not what you want. This is considered
-     *  an open issue with this plugin.
-     *  @since 1.7
+     * Note: setting a value for this parameter with a directory other than ${basedir} will change the value of ${basedir}
+     * for all executions that come after the shade execution. This is often not what you want. This is considered
+     * an open issue with this plugin.
+     *
+     * @since 1.7
      */
-    @Parameter(defaultValue = "${basedir}/dependency-reduced-pom.xml")
+    @Parameter( defaultValue = "${basedir}/dependency-reduced-pom.xml" )
     private File dependencyReducedPomLocation;
 
     /**
@@ -313,7 +312,7 @@ public class ShadeMojo
     /**
      * The name of the classifier used in case the shaded artifact is attached.
      */
-    @Parameter(defaultValue = "shaded")
+    @Parameter( defaultValue = "shaded" )
     private String shadedClassifierName;
 
     /**
@@ -321,6 +320,15 @@ public class ShadeMojo
      */
     @Parameter
     private boolean createSourcesJar;
+
+    /**
+     * When true, it will attempt to shade the contents of the java source files when creating the sources jar.
+     * When false, it will just relocate the java source files to the shaded paths, but will not modify the
+     * actual contents of the java source files.
+     *
+     * @parameter expression="${shadeSourcesContent}" default-value="false"
+     */
+    private boolean shadeSourcesContent;
 
     /**
      * When true, dependencies will be stripped down on the class level to only the transitive hull required for the
@@ -388,8 +396,7 @@ public class ShadeMojo
         ArtifactSelector artifactSelector =
             new ArtifactSelector( project.getArtifact(), artifactSet, shadedGroupFilter );
 
-        if ( artifactSelector.isSelected( project.getArtifact() ) && 
-                        !"pom".equals( project.getArtifact().getType() ) )
+        if ( artifactSelector.isSelected( project.getArtifact() ) && !"pom".equals( project.getArtifact().getType() ) )
         {
             if ( invalidMainArtifact() )
             {
@@ -401,7 +408,8 @@ public class ShadeMojo
                 getLog().error( "- You have bound the goal to a lifecycle phase before \"package\". Please" );
                 getLog().error( "  remove this binding from your POM such that the goal will be run in" );
                 getLog().error( "  the proper phase." );
-                getLog().error( "- You removed the configuration of the maven-jar-plugin that produces the main artifact." );
+                getLog().error(
+                    "- You removed the configuration of the maven-jar-plugin that produces the main artifact." );
                 throw new MojoExecutionException(
                     "Failed to create shaded artifact, " + "project main artifact does not exist." );
             }
@@ -462,11 +470,26 @@ public class ShadeMojo
 
             List<ResourceTransformer> resourceTransformers = getResourceTransformers();
 
-            shader.shade( artifacts, outputJar, filters, relocators, resourceTransformers );
+            ShadeRequest shadeRequest = new ShadeRequest();
+            shadeRequest.setJars( artifacts );
+            shadeRequest.setUberJar( outputJar );
+            shadeRequest.setFilters( filters );
+            shadeRequest.setRelocators( relocators );
+            shadeRequest.setResourceTransformers( resourceTransformers );
+
+            shader.shade( shadeRequest );
 
             if ( createSourcesJar )
             {
-                shader.shade( sourceArtifacts, sourcesJar, filters, relocators, resourceTransformers );
+                ShadeRequest shadeSourcesRequest = new ShadeRequest();
+                shadeSourcesRequest.setJars( sourceArtifacts );
+                shadeSourcesRequest.setUberJar( sourcesJar );
+                shadeSourcesRequest.setFilters( filters );
+                shadeSourcesRequest.setRelocators( relocators );
+                shadeSourcesRequest.setResourceTransformers( resourceTransformers );
+                shadeSourcesRequest.setShadeSourcesContent( shadeSourcesContent );
+
+                shader.shade( shadeSourcesRequest );
             }
 
             if ( outputFile == null )
@@ -525,9 +548,9 @@ public class ShadeMojo
         }
     }
 
-    private boolean invalidMainArtifact( )
+    private boolean invalidMainArtifact()
     {
-        return project.getArtifact().getFile() == null || ! project.getArtifact().getFile().isFile();                                       
+        return project.getArtifact().getFile() == null || !project.getArtifact().getFile().isFile();
     }
 
     private void replaceFile( File oldFile, File newFile )
@@ -848,9 +871,9 @@ public class ShadeMojo
                 if ( dependencyReducedPomLocation == null )
                 {
                     // MSHADE-123: We can't default to 'target' because it messes up uses of ${project.basedir}
-                    dependencyReducedPomLocation = new File ( project.getBasedir(), "dependency-reduced-pom.xml" );
+                    dependencyReducedPomLocation = new File( project.getBasedir(), "dependency-reduced-pom.xml" );
                 }
-                
+
                 File f = dependencyReducedPomLocation;
                 if ( f.exists() )
                 {
@@ -861,10 +884,10 @@ public class ShadeMojo
 
                 String origRelativePath = null;
                 String replaceRelativePath = null;
-                if ( model.getParent() != null)
+                if ( model.getParent() != null )
                 {
                     origRelativePath = model.getParent().getRelativePath();
-                    
+
                 }
                 replaceRelativePath = origRelativePath;
 
@@ -873,20 +896,21 @@ public class ShadeMojo
                     origRelativePath = "../pom.xml";
                 }
 
-                if ( model.getParent() != null ) 
+                if ( model.getParent() != null )
                 {
-                    File parentFile = new File( project.getBasedir(), model.getParent().getRelativePath() ).getCanonicalFile();
+                    File parentFile =
+                        new File( project.getBasedir(), model.getParent().getRelativePath() ).getCanonicalFile();
                     if ( !parentFile.isFile() )
                     {
-                        parentFile = new File( parentFile, "pom.xml");
+                        parentFile = new File( parentFile, "pom.xml" );
                     }
-                    
+
                     parentFile = parentFile.getCanonicalFile();
-                    
+
                     String relPath = RelativizePath.convertToRelativePath( parentFile, f );
                     model.getParent().setRelativePath( relPath );
                 }
-                
+
                 try
                 {
                     PomWriter.write( w, model, true );
@@ -900,11 +924,12 @@ public class ShadeMojo
                     w.close();
                 }
 
-                ProjectBuildingRequest projectBuildingRequest = new DefaultProjectBuildingRequest(session.getProjectBuildingRequest());
-                projectBuildingRequest.setLocalRepository(localRepository);
-                projectBuildingRequest.setRemoteRepositories(remoteArtifactRepositories);
+                ProjectBuildingRequest projectBuildingRequest =
+                    new DefaultProjectBuildingRequest( session.getProjectBuildingRequest() );
+                projectBuildingRequest.setLocalRepository( localRepository );
+                projectBuildingRequest.setRemoteRepositories( remoteArtifactRepositories );
 
-                ProjectBuildingResult result = projectBuilder.build(f, projectBuildingRequest);
+                ProjectBuildingResult result = projectBuilder.build( f, projectBuildingRequest );
 
                 modified = updateExcludesInDeps( result.getProject(), dependencies, transitiveDeps );
             }
@@ -929,7 +954,8 @@ public class ShadeMojo
         return groupId + ":" + artifactId + ":" + type + ":" + ( ( classifier != null ) ? classifier : "" );
     }
 
-    public boolean updateExcludesInDeps( MavenProject project, List<Dependency> dependencies, List<Dependency> transitiveDeps )
+    public boolean updateExcludesInDeps( MavenProject project, List<Dependency> dependencies,
+                                         List<Dependency> transitiveDeps )
         throws DependencyTreeBuilderException
     {
         DependencyNode node = dependencyTreeBuilder.buildDependencyTree( project, localRepository, artifactFactory,

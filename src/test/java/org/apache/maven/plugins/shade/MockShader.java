@@ -20,6 +20,7 @@ package org.apache.maven.plugins.shade;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.shade.filter.Filter;
+import org.apache.maven.plugins.shade.mojo.PackageRelocation;
 import org.apache.maven.plugins.shade.relocation.Relocator;
 import org.apache.maven.plugins.shade.resource.ResourceTransformer;
 import org.codehaus.plexus.component.annotations.Component;
@@ -36,8 +37,7 @@ import java.util.Set;
 public class MockShader
     implements Shader
 {
-    public void shade( Set<File> jars, File uberJar, List<Filter> filters, List<Relocator> relocators,
-                       List<ResourceTransformer> resourceTransformers )
+    public void shade( ShadeRequest shadeRequest )
         throws IOException, MojoExecutionException
     {
         System.out.println( "Executing MockShader#shade" );

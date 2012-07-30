@@ -70,7 +70,15 @@ public class DefaultShaderTest
         List filters = new ArrayList();
 
         File file = new File( "target/testShaderWithStaticInitializedClass.jar" );
-        s.shade( set, file, filters, relocators, resourceTransformers );
+
+        ShadeRequest shadeRequest = new ShadeRequest();
+        shadeRequest.setJars(set);
+        shadeRequest.setUberJar(file);
+        shadeRequest.setFilters(filters);
+        shadeRequest.setRelocators(relocators);
+        shadeRequest.setResourceTransformers(resourceTransformers);
+
+        s.shade( shadeRequest );
 
         URLClassLoader cl = new URLClassLoader( new URL[]{file.toURI().toURL()} );
         Class c = cl.loadClass( "hidden.org.apache.maven.plugins.shade.Lib" );
@@ -112,7 +120,14 @@ public class DefaultShaderTest
 
         List filters = new ArrayList();
 
-        s.shade( set, jar, filters, relocators, resourceTransformers );
+        ShadeRequest shadeRequest = new ShadeRequest();
+        shadeRequest.setJars(set);
+        shadeRequest.setUberJar(jar);
+        shadeRequest.setFilters(filters);
+        shadeRequest.setRelocators(relocators);
+        shadeRequest.setResourceTransformers(resourceTransformers);
+
+        s.shade( shadeRequest );
     }
 
     private static DefaultShader newShader()

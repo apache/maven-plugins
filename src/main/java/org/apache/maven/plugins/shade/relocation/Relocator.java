@@ -31,4 +31,6 @@ public interface Relocator
     boolean canRelocateClass( String clazz );
 
     String relocateClass( String clazz );
+    
+    String applyToSourceContent(String sourceContent);
 }
