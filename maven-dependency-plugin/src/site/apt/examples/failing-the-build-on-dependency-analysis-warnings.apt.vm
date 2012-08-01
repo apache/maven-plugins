@@ -25,10 +25,10 @@
 
 Failing the build on dependency analysis warnings
 
-	A project's dependencies can be analyzed as part of the build process by binding the <<<dependency:analyze-only>>>
-	goal to the lifecycle.  By default, the analysis will be performed during the <<<verify>>> lifecycle phase.  The
-	plugin can then be configured to fail the build if any dependency analysis warnings are	encountered by setting the
-	<<<failOnWarning>>> parameter.  See the following POM configuration for an example:
+  A project's dependencies can be analyzed as part of the build process by binding the <<<dependency:analyze-only>>>
+  goal to the lifecycle.  By default, the analysis will be performed during the <<<verify>>> lifecycle phase.  The
+  plugin can then be configured to fail the build if any dependency analysis warnings are	encountered by setting the
+  <<<failOnWarning>>> parameter.  See the following POM configuration for an example:
 
 +---+
 <project>
@@ -57,12 +57,12 @@ Failing the build on dependency analysis warnings
 </project>
 +---+
 
-	Note that the <<<dependency:analyze-only>>> goal is used in preference to <<<dependency:analyze>>> since it doesn't
-	force a further compilation of the project, but uses the compiled classes produced from the earlier
-	<<<test-compile>>> phase in the lifecycle.
+  Note that the <<<dependency:analyze-only>>> goal is used in preference to <<<dependency:analyze>>> since it doesn't
+  force a further compilation of the project, but uses the compiled classes produced from the earlier
+  <<<test-compile>>> phase in the lifecycle.
 
-	The project's dependencies will then be automatically analyzed during the <<<verify>>> lifecycle phase, which can be
-	executed explicitly as follows:
+  The project's dependencies will then be automatically analyzed during the <<<verify>>> lifecycle phase, which can be
+  executed explicitly as follows:
 	
 +---+
 mvn verify

@@ -23,11 +23,14 @@
   Mar 2007
   ------
 
-How to prepare your dependencies before updating to Maven 2.0.6:
+How to prepare your dependencies before updating to Maven 2.0.6
 
-  If you have dependencies in dependencyManagement that conflict with transitive dependencies, the fix for MNG-1577 may alter the version you get when running a build with 2.0.6. To ensure a smooth transition, there is a tool to detect these conditions.
+  If you have dependencies in dependencyManagement that conflict with transitive dependencies,
+  the fix for MNG-1577 may alter the version you get when running a build with 2.0.6.
+  To ensure a smooth transition, there is a tool to detect these conditions.
 
-  In your project, run "mvn dependency:analyze" (be sure to use 2.0.5 or the plugin won't detect mismatches) This will display output similar to below:
+  In your project, run <<<mvn dependency:analyze>>> (be sure to use 2.0.5 or the plugin won't detect mismatches).
+  This will display output similar to below:
 
 +---+
 [INFO] [dependency:analyze]
