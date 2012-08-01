@@ -37,13 +37,6 @@ under the License.
   <description>Generates a report on violations of code style and optionally fails the build if violations are detected.</description>
   <inceptionYear>2005</inceptionYear>
 
-  <contributors>
-    <contributor>
-      <name>Joakim Erdfelt</name>
-      <email>joakim@erdfelt.com</email>
-    </contributor>
-  </contributors>
-
   <prerequisites>
     <maven>${mavenVersion}</maven>
   </prerequisites>
