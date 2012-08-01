@@ -72,6 +72,7 @@ under the License.
       <groupId>org.apache.maven.plugin-tools</groupId>
       <artifactId>maven-plugin-annotations</artifactId>
       <version>${mavenPluginVersion}</version>
+      <scope>provided</scope>
     </dependency>
 
     <!-- scm -->
