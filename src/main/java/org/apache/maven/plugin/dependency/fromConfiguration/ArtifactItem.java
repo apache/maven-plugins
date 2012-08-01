@@ -93,7 +93,7 @@ public class ArtifactItem
     private String overWrite;
 
     /**
-     * Force Overwrite
+     *
      */
     private boolean needsProcessing;
 
