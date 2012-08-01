@@ -129,13 +129,16 @@ public abstract class AbstractDependencyMojo
      */
     public Log getLog()
     {
-        if ( silent )
+        if ( log == null )
         {
-            log = new DependencySilentLog();
-        }
-        else
-        {
-            log = super.getLog();
+            if ( silent )
+            {
+                log = new DependencySilentLog();
+            }
+            else
+            {
+                log = super.getLog();
+            }
         }
 
         return this.log;
