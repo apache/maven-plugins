@@ -25,8 +25,8 @@
 
 Using project dependencies' sources
 
-  This is pretty similar to the {{{copying-project-dependencies.html}Copying project dependencies}}
-  or {{{unpacking-project-dependencies.html}Unpacking project dependencies}} 
+  This is pretty similar to the {{{./copying-project-dependencies.html}Copying project dependencies}}
+  or {{{./unpacking-project-dependencies.html}Unpacking project dependencies}} 
   examples.
 
   Instead of using the project dependencies it uses their sources. Use the goal 
@@ -64,7 +64,3 @@ Using project dependencies' sources
   [...]
 </project>
 +---+
-
-
-
-

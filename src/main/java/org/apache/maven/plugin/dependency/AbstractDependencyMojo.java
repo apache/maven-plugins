@@ -41,6 +41,7 @@ import org.codehaus.plexus.util.ReflectionUtils;
 import org.codehaus.plexus.util.StringUtils;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.List;
 
@@ -129,13 +130,16 @@ public abstract class AbstractDependencyMojo
      */
     public Log getLog()
     {
-        if ( silent )
+        if ( log == null )
         {
-            log = new DependencySilentLog();
-        }
-        else
-        {
-            log = super.getLog();
+            if ( silent )
+            {
+                log = new DependencySilentLog();
+            }
+            else
+            {
+                log = super.getLog();
+            }
         }
 
         return this.log;
@@ -166,10 +170,17 @@ public abstract class AbstractDependencyMojo
             theLog.info(
                 "Copying " + ( this.outputAbsoluteArtifactFilename ? artifact.getAbsolutePath() : artifact.getName() )
                     + " to " + destFile );
-            FileUtils.copyFile( artifact, destFile );
 
+            if ( artifact.isDirectory() )
+            {
+                // usual case is a future jar packaging, but there are special cases: classifier and other packaging
+                throw new MojoExecutionException( "Artifact has not been packaged yet. When used on reactor artifact, "
+                    + "copy should be executed after packaging: see MDEP-187." );
+            }
+
+            FileUtils.copyFile( artifact, destFile );
         }
-        catch ( Exception e )
+        catch ( IOException e )
         {
             throw new MojoExecutionException( "Error copying artifact from " + artifact + " to " + destFile, e );
         }
@@ -199,6 +210,13 @@ public abstract class AbstractDependencyMojo
             logUnpack( file, location, includes, excludes );
 
             location.mkdirs();
+
+            if ( file.isDirectory() )
+            {
+                // usual case is a future jar packaging, but there are special cases: classifier and other packaging
+                throw new MojoExecutionException( "Artifact has not been packaged yet. When used on reactor artifact, "
+                    + "unpack should be executed after packaging: see MDEP-98." );
+            }
 
             UnArchiver unArchiver;
 
@@ -241,7 +259,6 @@ public abstract class AbstractDependencyMojo
         }
         catch ( ArchiverException e )
         {
-            e.printStackTrace();
             throw new MojoExecutionException(
                 "Error unpacking file: " + file + " to: " + location + "\r\n" + e.toString(), e );
         }

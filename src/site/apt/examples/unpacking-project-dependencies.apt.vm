@@ -26,7 +26,7 @@
 
 Unpacking project dependencies
 
-  This is pretty similar to the {{{copying-project-dependencies.html}Copying direct dependencies}}
+  This is pretty similar to the {{{./copying-project-dependencies.html}Copying direct dependencies}}
   example. The difference is that the direct dependencies are unpacked,
   including the transitive dependencies. To unpack the artifacts, use the
   <<<dependency:unpack-dependencies>>> mojo and configure the dependency plugin
@@ -63,7 +63,3 @@ Unpacking project dependencies
   [...]
 </project>
 +---+
-
-
-
-

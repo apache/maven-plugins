@@ -43,7 +43,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Abstract Parent class used by mojos that get Artifact information from the plugin configuration as an ArrayList of
+ * Abstract parent class used by mojos that get Artifact information from the plugin configuration as an ArrayList of
  * ArtifactItems
  *
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
@@ -101,7 +101,7 @@ public abstract class AbstractFromConfigurationMojo
 
     /**
      * Collection of ArtifactItems to work on. (ArtifactItem contains groupId, artifactId, version, type, classifier,
-     * location, destFileName, markerFile and overwrite.) See <a href="./usage.html">Usage</a> for details.
+     * outputDirectory, destFileName and overWrite.) See <a href="./usage.html">Usage</a> for details.
      *
      * @since 1.0
      */
@@ -186,17 +186,8 @@ public abstract class AbstractFromConfigurationMojo
     private boolean checkIfProcessingNeeded( ArtifactItem item )
         throws MojoExecutionException, ArtifactFilterException
     {
-        boolean result = false;
-        if ( StringUtils.equalsIgnoreCase( item.getOverWrite(), "true" ) )
-        {
-            result = true;
-        }
-        else
-        {
-            ArtifactItemFilter filter = getMarkedArtifactFilter( item );
-            result = filter.isArtifactIncluded( item );
-        }
-        return result;
+        return StringUtils.equalsIgnoreCase( item.getOverWrite(), "true" )
+            || getMarkedArtifactFilter( item ).isArtifactIncluded( item );
     }
 
     /**
@@ -212,8 +203,7 @@ public abstract class AbstractFromConfigurationMojo
     {
         Artifact artifact;
 
-        // Map managedVersions = createManagedVersionMap( factory,
-        // project.getId(), project.getDependencyManagement() );
+        // Map managedVersions = createManagedVersionMap( factory, project.getId(), project.getDependencyManagement() );
         VersionRange vr;
         try
         {
@@ -245,6 +235,7 @@ public abstract class AbstractFromConfigurationMojo
         {
             return result;
         }
+
         try
         {
             // mdep-50 - rolledback for now because it's breaking some functionality.
@@ -288,6 +279,7 @@ public abstract class AbstractFromConfigurationMojo
                 return a;
             }
         }
+
         // check reactor projects
         for ( MavenProject p : reactorProjects == null ? Collections.<MavenProject>emptyList() : reactorProjects )
         {
@@ -296,6 +288,7 @@ public abstract class AbstractFromConfigurationMojo
             {
                 return p.getArtifact();
             }
+
             // check any side artifacts
             for ( Artifact a : (List<Artifact>) p.getAttachedArtifacts() )
             {
@@ -305,6 +298,7 @@ public abstract class AbstractFromConfigurationMojo
                 }
             }
         }
+
         // not available
         return null;
     }
@@ -330,11 +324,12 @@ public abstract class AbstractFromConfigurationMojo
      */
     private static boolean equals( Artifact a, Artifact b )
     {
-        return a == b || !( a == null || b == null ) && StringUtils.equals( a.getGroupId(), b.getGroupId() )
-            && StringUtils.equals( a.getArtifactId(), b.getArtifactId() ) && StringUtils.equals( a.getVersion(),
-                                                                                                 b.getVersion() )
-            && StringUtils.equals( a.getType(), b.getType() ) && StringUtils.equals( a.getClassifier(),
-                                                                                     b.getClassifier() );
+        return a == b || !( a == null || b == null )
+            && StringUtils.equals( a.getGroupId(), b.getGroupId() )
+            && StringUtils.equals( a.getArtifactId(), b.getArtifactId() )
+            && StringUtils.equals( a.getVersion(), b.getVersion() )
+            && StringUtils.equals( a.getType(), b.getType() )
+            && StringUtils.equals( a.getClassifier(), b.getClassifier() );
     }
 
     /**
@@ -353,8 +348,9 @@ public abstract class AbstractFromConfigurationMojo
             ? Collections.<Dependency>emptyList()
             : project.getDependencyManagement().getDependencies();
 
-        if ( !findDependencyVersion( artifact, deps, false ) && ( project.getDependencyManagement() == null
-            || !findDependencyVersion( artifact, depMngt, false ) ) && !findDependencyVersion( artifact, deps, true )
+        if ( !findDependencyVersion( artifact, deps, false )
+            && ( project.getDependencyManagement() == null || !findDependencyVersion( artifact, depMngt, false ) )
+            && !findDependencyVersion( artifact, deps, true )
             && ( project.getDependencyManagement() == null || !findDependencyVersion( artifact, depMngt, true ) ) )
         {
             throw new MojoExecutionException(
@@ -376,10 +372,10 @@ public abstract class AbstractFromConfigurationMojo
     {
         for ( Dependency dependency : dependencies )
         {
-            if ( StringUtils.equals( dependency.getArtifactId(), artifact.getArtifactId() ) && StringUtils.equals(
-                dependency.getGroupId(), artifact.getGroupId() ) && ( looseMatch || StringUtils.equals(
-                dependency.getClassifier(), artifact.getClassifier() ) ) && ( looseMatch || StringUtils.equals(
-                dependency.getType(), artifact.getType() ) ) )
+            if ( StringUtils.equals( dependency.getArtifactId(), artifact.getArtifactId() )
+                && StringUtils.equals( dependency.getGroupId(), artifact.getGroupId() )
+                && ( looseMatch || StringUtils.equals( dependency.getClassifier(), artifact.getClassifier() ) )
+                && ( looseMatch || StringUtils.equals( dependency.getType(), artifact.getType() ) ) )
             {
                 artifact.setVersion( dependency.getVersion() );
 
