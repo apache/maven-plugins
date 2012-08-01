@@ -173,6 +173,7 @@ public abstract class AbstractDependencyMojo
 
             if ( artifact.isDirectory() )
             {
+                // usual case is a future jar packaging, but there are special cases: classifier and other packaging
                 throw new MojoExecutionException( "Artifact has not been packaged yet. When used on reactor artifact, "
                     + "copy should be executed after packaging: see MDEP-187." );
             }
@@ -209,6 +210,13 @@ public abstract class AbstractDependencyMojo
             logUnpack( file, location, includes, excludes );
 
             location.mkdirs();
+
+            if ( file.isDirectory() )
+            {
+                // usual case is a future jar packaging, but there are special cases: classifier and other packaging
+                throw new MojoExecutionException( "Artifact has not been packaged yet. When used on reactor artifact, "
+                    + "unpack should be executed after packaging: see MDEP-98." );
+            }
 
             UnArchiver unArchiver;
 
@@ -251,7 +259,6 @@ public abstract class AbstractDependencyMojo
         }
         catch ( ArchiverException e )
         {
-            e.printStackTrace();
             throw new MojoExecutionException(
                 "Error unpacking file: " + file + " to: " + location + "\r\n" + e.toString(), e );
         }
