@@ -25,16 +25,16 @@
 
 Resolving conflicts using the dependency tree
 
-	A project's dependency tree can be expanded to display dependency conflicts.  For example, to find out why Commons
-	Collections 2.0 is being used by the Maven Dependency Plugin, we can execute the following in the project's
-	directory:
+  A project's dependency tree can be expanded to display dependency conflicts.  For example, to find out why Commons
+  Collections 2.0 is being used by the Maven Dependency Plugin, we can execute the following in the project's
+  directory:
 
 +---+
 mvn dependency:tree -Dverbose -Dincludes=commons-collections
 +---+
 
-	The <<<verbose>>> flag instructs the dependency tree to display conflicting dependencies that were omitted from the
-	resolved dependency tree.  In this case, the goal outputs:
+  The <<<verbose>>> flag instructs the dependency tree to display conflicting dependencies that were omitted from the
+  resolved dependency tree.  In this case, the goal outputs:
 	
 +---+
 [INFO] [dependency:tree]
@@ -48,8 +48,8 @@ mvn dependency:tree -Dverbose -Dincludes=commons-collections
 [INFO]       \- commons-collections:commons-collections:jar:2.0:compile
 +---+
 
-	Thus we can see that Commons Collections 2.0 was chosen over 2.1 since it is nearer, and by default Maven resolves
-	version conflicts with a nearest-wins strategy.
+  Thus we can see that Commons Collections 2.0 was chosen over 2.1 since it is nearer, and by default Maven resolves
+  version conflicts with a nearest-wins strategy.
 
-	More specifically, in verbose mode the dependency tree shows dependencies that were omitted for: being a duplicate
-	of another; conflicting with another's version and/or scope; and introducing a cycle into the dependency tree. 
+  More specifically, in verbose mode the dependency tree shows dependencies that were omitted for: being a duplicate
+  of another; conflicting with another's version and/or scope; and introducing a cycle into the dependency tree.

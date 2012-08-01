@@ -26,7 +26,7 @@
 
 Unpacking specific artifacts
 
-  This is pretty similar to the {{{copying-artifacts.html}Copying Specific Artifacts}}
+  This is pretty similar to the {{{./copying-artifacts.html}Copying Specific Artifacts}}
   example. The difference is that instead of copying the artifacts, they are unpacked.
   To unpack the copied artifacts, use the <<<dependency:unpack>>> mojo and
   configure the plugin into something like the sample below:
@@ -121,9 +121,3 @@ mvn dependency:unpack
   [...]
 </project>
 +---+	
-
-
-
-
-
-
