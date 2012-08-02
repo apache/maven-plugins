@@ -125,12 +125,21 @@ public class RarMojo
     @Parameter
     private MavenArchiveConfiguration archive = new MavenArchiveConfiguration();
 
+    /**
+     * @since 2.3
+     */
     @Component( role = MavenResourcesFiltering.class, hint = "default" )
     protected MavenResourcesFiltering mavenResourcesFiltering;
 
+    /**
+     * @since 2.3
+     */
     @Parameter( defaultValue = "${session}", required = true, readonly = true )
     protected MavenSession session;
 
+    /**
+     * @since 2.3
+     */
     @Parameter( property = "encoding", defaultValue = "${project.build.sourceEncoding}" )
     protected String encoding;
 
@@ -214,6 +223,7 @@ public class RarMojo
      * <code>default-testResources</code> to supply different configurations for the two
      * different types of resources. By supplying <code>extraFilters</code> configurations, you
      * can separate which filters are used for which type of resource.
+     * @since 2.3
      */
     @Parameter
     protected List<String> filters;
