@@ -60,6 +60,14 @@ public class FileNameMappingFactoryTest
         assertEquals( NoVersionFileNameMapping.class, actual.getClass() );
     }
 
+    public void testGetFileNameMappingByName4()
+    {
+        final FileNameMapping actual =
+            FileNameMappingFactory.getFileNameMapping( FileNameMappingFactory.NO_VERSION_FOR_EJB_FILE_NAME_MAPPING );
+        assertNotNull( actual );
+        assertEquals( NoVersionForEjbFileNameMapping.class, actual.getClass() );
+    }
+
     public void testGetFileNameMappingByClass()
     {
         final FileNameMapping actual =

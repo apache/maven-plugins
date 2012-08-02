@@ -374,7 +374,7 @@ public class EarMojoIT
     }
 
     /**
-     * Builds an EAR with a full filename mapping and make sure that custom locations are not overriden.
+     * Builds an EAR with a full filename mapping and make sure that custom locations are not overridden.
      */
     public void testProject035()
         throws Exception
@@ -771,6 +771,16 @@ public class EarMojoIT
     {
         doTestProject( "project-073", new String[]{ "ejb-sample-one-1.0.jar", "app-client-sample-one-1.0.jar",
             "APP-INF/lib/jar-sample-one-1.0.jar", "APP-INF/lib/jar-sample-two-1.0.jar" } );
+    }
+
+    /**
+     * Builds an EAR with the no version for ejb file name mapping.
+     */
+    public void testProject078()
+        throws Exception
+    {
+        doTestProject( "project-078",
+                       new String[]{ "ejb-sample-one.jar", "war-sample-one-1.0.war", "jar-sample-two-1.0.jar" } );
     }
 
 }
