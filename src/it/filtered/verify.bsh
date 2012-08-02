@@ -6,7 +6,7 @@ import org.codehaus.plexus.util.*;
 
 try
 {
-    File jarFile = new File( basedir, "target/maven-it-it0070-1.0-SNAPSHOT.rar" );
+    File jarFile = new File( basedir, "target/maven-it-non-filtered-1.0-SNAPSHOT.rar" );
     System.out.println( "Checking for existence of " + jarFile );
     if ( !jarFile.isFile() )
     {
@@ -34,7 +34,7 @@ try
 
     String content = new String(IOUtil.toByteArray( stream ));
 
-    int idx = content.indexOf("${project.version}");
+    int idx = content.indexOf("1.0-SNAPSHOT");
 
     if (idx<1) {
       System.out.println("SomeResource.txt not filtered");

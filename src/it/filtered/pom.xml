@@ -23,7 +23,7 @@ under the License.
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.apache.maven.its.it0070</groupId>
-  <artifactId>maven-it-it0070</artifactId>
+  <artifactId>maven-it-non-filtered</artifactId>
   <version>1.0-SNAPSHOT</version>
   <packaging>rar</packaging>
 
@@ -39,6 +39,7 @@ under the License.
         <configuration>
           <includeJar>false</includeJar>
           <raXmlFile>src/main/custom/ra.xml</raXmlFile>
+          <filterRarSourceDirectory>true</filterRarSourceDirectory>
         </configuration>
       </plugin>
     </plugins>
