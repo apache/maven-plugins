@@ -30,6 +30,10 @@ under the License.
   <name>Maven Integration Test :: it0070</name> 
   <description>Test a RAR generation.</description>
 
+  <properties>
+    <bestwine>bordeaux</bestwine>
+  </properties>
+
   <build>
     <plugins>
       <plugin>
@@ -40,6 +44,17 @@ under the License.
           <includeJar>false</includeJar>
           <raXmlFile>src/main/custom/ra.xml</raXmlFile>
           <filterRarSourceDirectory>true</filterRarSourceDirectory>
+          <rarResources>
+            <rarResource>
+              <directory>${basedir}/src/main/ext</directory>
+              <targetPath>ext</targetPath>
+            </rarResource>
+            <rarResource>
+              <directory>${basedir}/src/main/ext-filtered</directory>
+              <targetPath>ext-filtered</targetPath>
+              <filtering>true</filtering>
+            </rarResource>
+          </rarResources>
         </configuration>
       </plugin>
     </plugins>
