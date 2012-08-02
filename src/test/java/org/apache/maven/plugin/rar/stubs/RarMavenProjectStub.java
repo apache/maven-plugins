@@ -146,6 +146,7 @@ public class RarMavenProjectStub
                           "/" + artifact.getArtifactId() + "/" + artifact.getVersion() + 
                           "/" + artifact.getArtifactId() + "-" + artifact.getVersion() + ".jar" ) ) ;
         
+        artifact.setArtifactHandler(new ArtifactHandlerStub());
         return artifact;
     }
     

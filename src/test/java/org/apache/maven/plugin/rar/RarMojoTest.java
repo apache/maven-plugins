@@ -19,16 +19,16 @@ package org.apache.maven.plugin.rar;
  * under the License.
  */
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Iterator;
-
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.codehaus.plexus.archiver.zip.ZipEntry;
 import org.codehaus.plexus.archiver.zip.ZipFile;
 import org.codehaus.plexus.util.FileUtils;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * @author <a href="mailto:aramirez@apache.org">Allan Ramirez</a>
@@ -39,10 +39,9 @@ public class RarMojoTest
     public void testRarTestEnvironment()
         throws Exception
     {
-        File testPom = new File( getBasedir(),
-                                 "target/test-classes/unit/basic-rar-test/plugin-config.xml" );
+        File testPom = new File( getBasedir(), "target/test-classes/unit/basic-rar-test/plugin-config.xml" );
 
-        RarMojo mojo = ( RarMojo ) lookupMojo( "rar", testPom );
+        RarMojo mojo = (RarMojo) lookupMojo( "rar", testPom );
 
         assertNotNull( mojo );
     }
@@ -50,20 +49,19 @@ public class RarMojoTest
     public void testBasicRar()
         throws Exception
     {
-        File testPom = new File( getBasedir(),
-                                 "target/test-classes/unit/basic-rar-test/plugin-config.xml" );
+        File testPom = new File( getBasedir(), "target/test-classes/unit/basic-rar-test/plugin-config.xml" );
 
-        RarMojo mojo = ( RarMojo ) lookupMojo( "rar", testPom );
+        RarMojo mojo = (RarMojo) lookupMojo( "rar", testPom );
 
         assertNotNull( mojo );
 
-        String finalName = ( String ) getVariableValueFromObject( mojo, "finalName" );
+        String finalName = (String) getVariableValueFromObject( mojo, "finalName" );
 
-        String workDir = ( String ) getVariableValueFromObject( mojo, "workDirectory" );
+        String workDir = (String) getVariableValueFromObject( mojo, "workDirectory" );
 
-        String outputDir = ( String ) getVariableValueFromObject( mojo, "outputDirectory" );
+        String outputDir = (String) getVariableValueFromObject( mojo, "outputDirectory" );
 
-        Boolean includeJar = ( Boolean ) getVariableValueFromObject(  mojo, "includeJar" );
+        Boolean includeJar = (Boolean) getVariableValueFromObject( mojo, "includeJar" );
 
         assertTrue( includeJar.booleanValue() );
 
@@ -84,21 +82,20 @@ public class RarMojoTest
         File[] fileNames = workDirectory.listFiles();
 
         List expectedFiles = new ArrayList();
-        
+
         expectedFiles.add( "maven-artifact01-1.0-SNAPSHOT.jar" );
         expectedFiles.add( "maven-artifact02-1.0-SNAPSHOT.jar" );
         expectedFiles.add( "test-rar.jar" );
-        
+
         assertEquals( "Files in working directory", expectedFiles.size(), fileNames.length );
 
-        
-        for( int i=0; i<fileNames.length; i++ )
+        for ( int i = 0; i < fileNames.length; i++ )
         {
             String fileName = fileNames[i].getName();
-            
+
             assertTrue( expectedFiles.contains( fileName ) );
-            
-            if( expectedFiles.contains( fileName ) )
+
+            if ( expectedFiles.contains( fileName ) )
             {
                 expectedFiles.remove( fileName );
                 assertFalse( expectedFiles.contains( fileName ) );
@@ -142,18 +139,17 @@ public class RarMojoTest
     public void testBasicRarWithDescriptor()
         throws Exception
     {
-        File testPom = new File( getBasedir(),
-                                 "target/test-classes/unit/basic-rar-with-descriptor/plugin-config.xml" );
+        File testPom = new File( getBasedir(), "target/test-classes/unit/basic-rar-with-descriptor/plugin-config.xml" );
 
-        RarMojo mojo = ( RarMojo ) lookupMojo( "rar", testPom );
+        RarMojo mojo = (RarMojo) lookupMojo( "rar", testPom );
 
         assertNotNull( mojo );
 
-        String finalName = ( String ) getVariableValueFromObject( mojo, "finalName" );
+        String finalName = (String) getVariableValueFromObject( mojo, "finalName" );
 
-        String workDir = ( String ) getVariableValueFromObject( mojo, "workDirectory" );
+        String workDir = (String) getVariableValueFromObject( mojo, "workDirectory" );
 
-        String outputDir = ( String ) getVariableValueFromObject( mojo, "outputDirectory" );
+        String outputDir = (String) getVariableValueFromObject( mojo, "outputDirectory" );
 
         mojo.execute();
 
@@ -169,7 +165,7 @@ public class RarMojoTest
         List expectedFiles = new ArrayList();
         List fileList = new ArrayList();
 
-        for( int i=0; i<fileNames.length; i++ )
+        for ( int i = 0; i < fileNames.length; i++ )
         {
             addFileToList( fileNames[i], fileList );
         }
@@ -214,18 +210,17 @@ public class RarMojoTest
     public void testBasicRarWithManifest()
         throws Exception
     {
-        File testPom = new File( getBasedir(),
-                                 "target/test-classes/unit/basic-rar-with-manifest/plugin-config.xml" );
+        File testPom = new File( getBasedir(), "target/test-classes/unit/basic-rar-with-manifest/plugin-config.xml" );
 
-        RarMojo mojo = ( RarMojo ) lookupMojo( "rar", testPom );
+        RarMojo mojo = (RarMojo) lookupMojo( "rar", testPom );
 
         assertNotNull( mojo );
 
-        String finalName = ( String ) getVariableValueFromObject( mojo, "finalName" );
+        String finalName = (String) getVariableValueFromObject( mojo, "finalName" );
 
-        String workDir = ( String ) getVariableValueFromObject( mojo, "workDirectory" );
+        String workDir = (String) getVariableValueFromObject( mojo, "workDirectory" );
 
-        String outputDir = ( String ) getVariableValueFromObject( mojo, "outputDirectory" );
+        String outputDir = (String) getVariableValueFromObject( mojo, "outputDirectory" );
 
         mojo.execute();
 
@@ -238,12 +233,12 @@ public class RarMojoTest
 
         File[] fileNames = workDirectory.listFiles();
 
-        List expectedFiles = new ArrayList();
-        List fileList = new ArrayList();
+        List<String> expectedFiles = new ArrayList<String>();
+        List<String> fileList = new ArrayList<String>();
 
-        for( int i=0; i<fileNames.length; i++ )
+        for ( File file : fileNames )
         {
-            addFileToList( fileNames[i], fileList );
+            addFileToList( file, fileList );
         }
 
         expectedFiles.add( "ra.xml" );
@@ -262,7 +257,7 @@ public class RarMojoTest
         assertTrue( rarFile.exists() );
 
         //expected files/directories inside the rar file
-        expectedFiles = new ArrayList();
+        expectedFiles = new ArrayList<String>();
 
         expectedFiles.add( "META-INF/maven/org.apache.maven.test/maven-rar-test/pom.properties" );
         expectedFiles.add( "META-INF/maven/org.apache.maven.test/maven-rar-test/pom.xml" );
@@ -286,11 +281,11 @@ public class RarMojoTest
 
     private int getSizeOfExpectedFiles( Enumeration entries, List expectedFiles )
     {
-        while( entries.hasMoreElements() )
+        while ( entries.hasMoreElements() )
         {
-            ZipEntry entry = ( ZipEntry ) entries.nextElement();
+            ZipEntry entry = (ZipEntry) entries.nextElement();
 
-            if( expectedFiles.contains( entry.getName() ) )
+            if ( expectedFiles.contains( entry.getName() ) )
             {
                 expectedFiles.remove( entry.getName() );
                 assertFalse( expectedFiles.contains( entry.getName() ) );
@@ -305,11 +300,11 @@ public class RarMojoTest
 
     private int getSizeOfExpectedFiles( List fileList, List expectedFiles )
     {
-        for( Iterator iter=fileList.iterator(); iter.hasNext(); )
+        for ( Iterator iter = fileList.iterator(); iter.hasNext(); )
         {
-            String fileName = ( String ) iter.next();
+            String fileName = (String) iter.next();
 
-            if( expectedFiles.contains(  fileName ) )
+            if ( expectedFiles.contains( fileName ) )
             {
                 expectedFiles.remove( fileName );
                 assertFalse( expectedFiles.contains( fileName ) );
@@ -324,7 +319,7 @@ public class RarMojoTest
 
     private void addFileToList( File file, List fileList )
     {
-        if( !file.isDirectory() )
+        if ( !file.isDirectory() )
         {
             fileList.add( file.getName() );
         }
@@ -334,7 +329,7 @@ public class RarMojoTest
 
             File[] files = file.listFiles();
 
-            for( int i=0; i<files.length; i++ )
+            for ( int i = 0; i < files.length; i++ )
             {
                 addFileToList( files[i], fileList );
             }

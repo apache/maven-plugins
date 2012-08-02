@@ -43,6 +43,8 @@ public class RarArtifactStub
     
     private File file;
 
+    private ArtifactHandler artifactHandler;
+
     public String getArtifactId()
     {
         return artifactId;
@@ -130,7 +132,7 @@ public class RarArtifactStub
             
             public boolean isAddedToClasspath()
             {
-                return false;
+                return true;
             }
             
             public String getPackaging()
