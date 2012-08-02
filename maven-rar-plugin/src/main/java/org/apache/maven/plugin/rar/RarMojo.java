@@ -126,6 +126,14 @@ public class RarMojo
     private MavenArchiveConfiguration archive = new MavenArchiveConfiguration();
 
     /**
+     * allow filtering of link{rarSourceDirectory}
+     * @since 2.3
+     */
+    @Parameter(property = "rar.filterRarSourceDirectory", defaultValue = "false")
+    private boolean filterRarSourceDirectory;
+
+
+    /**
      * @since 2.3
      */
     @Component( role = MavenResourcesFiltering.class, hint = "default" )
@@ -294,7 +302,7 @@ public class RarMojo
         Resource resource = new Resource();
         resource.setDirectory( rarSourceDirectory.getAbsolutePath() );
         resource.setTargetPath( getBuildDir().getAbsolutePath() );
-        resource.setFiltering( true );
+        resource.setFiltering( filterRarSourceDirectory );
 
         MavenResourcesExecution mavenResourcesExecution =
             new MavenResourcesExecution( Collections.singletonList( resource ), getBuildDir(), project, encoding,
@@ -348,46 +356,6 @@ public class RarMojo
         {
             throw new MojoExecutionException( "Error copying RAR resources", e );
         }
-
-        // Copy source files
-        /*try
-        {
-            File rarSourceDir = rarSourceDirectory;
-            if ( rarSourceDir.exists() )
-            {
-                getLog().info( "Copy rar resources to " + getBuildDir().getAbsolutePath() );
-
-                DirectoryScanner scanner = new DirectoryScanner();
-                scanner.setBasedir( rarSourceDir.getAbsolutePath() );
-                scanner.setIncludes( DEFAULT_INCLUDES );
-                scanner.addDefaultExcludes();
-                scanner.scan();
-
-                String[] dirs = scanner.getIncludedDirectories();
-
-                for ( int j = 0; j < dirs.length; j++ )
-                {
-                    new File( getBuildDir(), dirs[j] ).mkdirs();
-                }
-
-                String[] files = scanner.getIncludedFiles();
-
-                for ( int j = 0; j < files.length; j++ )
-                {
-                    File targetFile = new File( getBuildDir(), files[j] );
-
-                    targetFile.getParentFile().mkdirs();
-
-                    File file = new File( rarSourceDir, files[j] );
-                    FileUtils.copyFileToDirectory( file, targetFile.getParentFile() );
-                }
-            }
-        }
-        catch ( Exception e )
-        {
-            throw new MojoExecutionException( "Error copying RAR resources", e );
-        }
-        */
 
         // Include custom manifest if necessary
         try
