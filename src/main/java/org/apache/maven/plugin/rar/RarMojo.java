@@ -23,6 +23,8 @@ import org.apache.maven.archiver.MavenArchiveConfiguration;
 import org.apache.maven.archiver.MavenArchiver;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
+import org.apache.maven.execution.MavenSession;
+import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Component;
@@ -31,14 +33,19 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.shared.filtering.MavenFilteringException;
+import org.apache.maven.shared.filtering.MavenResourcesExecution;
+import org.apache.maven.shared.filtering.MavenResourcesFiltering;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
-import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -118,6 +125,106 @@ public class RarMojo
     @Parameter
     private MavenArchiveConfiguration archive = new MavenArchiveConfiguration();
 
+    @Component( role = MavenResourcesFiltering.class, hint = "default" )
+    protected MavenResourcesFiltering mavenResourcesFiltering;
+
+    @Parameter( defaultValue = "${session}", required = true, readonly = true )
+    protected MavenSession session;
+
+    @Parameter( property = "encoding", defaultValue = "${project.build.sourceEncoding}" )
+    protected String encoding;
+
+    /**
+     * Whether to escape backslashes and colons in windows-style paths.
+     *
+     * @since 2.3
+     */
+    @Parameter( property = "maven.resources.escapeWindowsPaths", defaultValue = "true" )
+    protected boolean escapeWindowsPaths;
+
+    /**
+     * Expression preceded with the String won't be interpolated
+     * \${foo} will be replaced with ${foo}
+     *
+     * @since 2.3
+     */
+    @Parameter( property = "maven.resources.escapeString" )
+    protected String escapeString;
+
+    /**
+     * Overwrite existing files even if the destination files are newer.
+     *
+     * @since 2.3
+     */
+    @Parameter( property = "maven.resources.overwrite", defaultValue = "false" )
+    private boolean overwrite;
+
+    /**
+     * Copy any empty directories included in the Resources.
+     *
+     * @since 2.3
+     */
+    @Parameter( property = "maven.resources.includeEmptyDirs", defaultValue = "false" )
+    protected boolean includeEmptyDirs;
+
+    /**
+     * stop searching endToken at the end of line
+     *
+     * @since 2.3
+     */
+    @Parameter( property = "maven.resources.supportMultiLineFiltering", defaultValue = "false" )
+    private boolean supportMultiLineFiltering;
+
+    /**
+     * @since 2.3
+     */
+    @Parameter( defaultValue = "true" )
+    protected boolean useDefaultDelimiters;
+
+    /**
+     * <p>
+     * Set of delimiters for expressions to filter within the resources. These delimiters are specified in the
+     * form 'beginToken*endToken'. If no '*' is given, the delimiter is assumed to be the same for start and end.
+     * </p><p>
+     * So, the default filtering delimiters might be specified as:
+     * </p>
+     * <pre>
+     * &lt;delimiters&gt;
+     *   &lt;delimiter&gt;${*}&lt/delimiter&gt;
+     *   &lt;delimiter&gt;@&lt/delimiter&gt;
+     * &lt;/delimiters&gt;
+     * </pre>
+     * <p>
+     * Since the '@' delimiter is the same on both ends, we don't need to specify '@*@' (though we can).
+     * </p>
+     *
+     * @since 2.3
+     */
+    @Parameter
+    protected List<String> delimiters;
+
+    /**
+     * The list of extra filter properties files to be used along with System properties,
+     * project properties, and filter properties files specified in the POM build/filters section,
+     * which should be used for the filtering during the current mojo execution.
+     * <br/>
+     * Normally, these will be configured from a plugin's execution section, to provide a different
+     * set of filters for a particular execution. For instance, starting in Maven 2.2.0, you have the
+     * option of configuring executions with the id's <code>default-resources</code> and
+     * <code>default-testResources</code> to supply different configurations for the two
+     * different types of resources. By supplying <code>extraFilters</code> configurations, you
+     * can separate which filters are used for which type of resource.
+     */
+    @Parameter
+    protected List<String> filters;
+
+    /**
+     * Additional file extensions to not apply filtering (already defined are : jpg, jpeg, gif, bmp, png)
+     *
+     * @since 2.3
+     */
+    @Parameter
+    protected List<String> nonFilteredFileExtensions;
 
     private File buildDir;
 
@@ -174,8 +281,66 @@ public class RarMojo
             throw new MojoExecutionException( "Error copying RAR dependencies", e );
         }
 
-        // Copy source files
+        Resource resource = new Resource();
+        resource.setDirectory( rarSourceDirectory.getAbsolutePath() );
+        resource.setTargetPath( getBuildDir().getAbsolutePath() );
+        resource.setFiltering( true );
+
+        MavenResourcesExecution mavenResourcesExecution =
+            new MavenResourcesExecution( Collections.singletonList( resource ), getBuildDir(), project, encoding,
+                                         filters, Collections.<String>emptyList(), session );
+
+        mavenResourcesExecution.setEscapeWindowsPaths( escapeWindowsPaths );
+
+        // never include project build filters in this call, since we've already accounted for the POM build filters
+        // above, in getCombinedFiltersList().
+        mavenResourcesExecution.setInjectProjectBuildFilters( false );
+
+        mavenResourcesExecution.setEscapeString( escapeString );
+        mavenResourcesExecution.setOverwrite( overwrite );
+        mavenResourcesExecution.setIncludeEmptyDirs( includeEmptyDirs );
+        mavenResourcesExecution.setSupportMultiLineFiltering( supportMultiLineFiltering );
+
+        // if these are NOT set, just use the defaults, which are '${*}' and '@'.
+        if ( delimiters != null && !delimiters.isEmpty() )
+        {
+            LinkedHashSet<String> delims = new LinkedHashSet<String>();
+            if ( useDefaultDelimiters )
+            {
+                delims.addAll( mavenResourcesExecution.getDelimiters() );
+            }
+
+            for ( String delim : delimiters )
+            {
+                if ( delim == null )
+                {
+                    // FIXME: ${filter:*} could also trigger this condition. Need a better long-term solution.
+                    delims.add( "${*}" );
+                }
+                else
+                {
+                    delims.add( delim );
+                }
+            }
+
+            mavenResourcesExecution.setDelimiters( delims );
+        }
+
+        if ( nonFilteredFileExtensions != null )
+        {
+            mavenResourcesExecution.setNonFilteredFileExtensions( nonFilteredFileExtensions );
+        }
         try
+        {
+            mavenResourcesFiltering.filterResources( mavenResourcesExecution );
+        }
+        catch ( MavenFilteringException e )
+        {
+            throw new MojoExecutionException( "Error copying RAR resources", e );
+        }
+
+        // Copy source files
+        /*try
         {
             File rarSourceDir = rarSourceDirectory;
             if ( rarSourceDir.exists() )
@@ -212,6 +377,7 @@ public class RarMojo
         {
             throw new MojoExecutionException( "Error copying RAR resources", e );
         }
+        */
 
         // Include custom manifest if necessary
         try

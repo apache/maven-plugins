@@ -2,14 +2,15 @@ import java.io.*;
 import java.util.*;
 import java.util.jar.*;
 import java.util.regex.*;
+import org.codehaus.plexus.util.*;
 
 try
 {
-    File jarFile = new File( basedir, "target/maven-it-it0070-1.0.rar" );
+    File jarFile = new File( basedir, "target/maven-it-it0070-1.0-SNAPSHOT.rar" );
     System.out.println( "Checking for existence of " + jarFile );
     if ( !jarFile.isFile() )
     {
-        System.out.println( "FAILURE!" );
+        System.out.println( "FAILURE! rar file not found" );
         return false;
     }
 
@@ -24,9 +25,20 @@ try
         System.out.println( "Checking for existence of " + included );
         if ( jar.getEntry( included ) == null )
         {
-            System.out.println( "FAILURE!" );
+            System.out.println( "FAILURE! entry not in rar file" + included );
             return false;
         }
+    }
+
+    InputStream stream = jar.getInputStream( jar.getEntry("SomeResource.txt") );
+
+    String content = new String(IOUtil.toByteArray( stream ));
+
+    int idx = content.indexOf("1.0-SNAPSHOT");
+
+    if (idx<1) {
+      System.out.println("SomeResource.txt not filtered");
+      return false;
     }
 
     jar.close();
