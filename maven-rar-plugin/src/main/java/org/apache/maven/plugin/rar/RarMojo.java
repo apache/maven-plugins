@@ -42,6 +42,7 @@ import org.codehaus.plexus.util.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -127,9 +128,10 @@ public class RarMojo
 
     /**
      * allow filtering of link{rarSourceDirectory}
+     *
      * @since 2.3
      */
-    @Parameter(property = "rar.filterRarSourceDirectory", defaultValue = "false")
+    @Parameter( property = "rar.filterRarSourceDirectory", defaultValue = "false" )
     private boolean filterRarSourceDirectory;
 
 
@@ -231,6 +233,7 @@ public class RarMojo
      * <code>default-testResources</code> to supply different configurations for the two
      * different types of resources. By supplying <code>extraFilters</code> configurations, you
      * can separate which filters are used for which type of resource.
+     *
      * @since 2.3
      */
     @Parameter
@@ -243,6 +246,14 @@ public class RarMojo
      */
     @Parameter
     protected List<String> nonFilteredFileExtensions;
+
+    /**
+     * extra resource to include in rar archive
+     *
+     * @since 2.3
+     */
+    @Parameter
+    protected List<RarResource> rarResources;
 
     private File buildDir;
 
@@ -304,9 +315,17 @@ public class RarMojo
         resource.setTargetPath( getBuildDir().getAbsolutePath() );
         resource.setFiltering( filterRarSourceDirectory );
 
+        List<Resource> resources = new ArrayList<Resource>();
+        resources.add( resource );
+
+        if ( rarResources != null && !rarResources.isEmpty() )
+        {
+            resources.addAll( rarResources );
+        }
+
         MavenResourcesExecution mavenResourcesExecution =
-            new MavenResourcesExecution( Collections.singletonList( resource ), getBuildDir(), project, encoding,
-                                         filters, Collections.<String>emptyList(), session );
+            new MavenResourcesExecution( resources, getBuildDir(), project, encoding, filters,
+                                         Collections.<String>emptyList(), session );
 
         mavenResourcesExecution.setEscapeWindowsPaths( escapeWindowsPaths );
 

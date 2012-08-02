@@ -19,6 +19,8 @@ try
     String[] includedEntries = {
         "META-INF/ra.xml",
         "SomeResource.txt",
+        "ext/wine.txt",
+        "ext-filtered/wine.txt"
     };
     for ( String included : includedEntries )
     {
@@ -38,6 +40,28 @@ try
 
     if (idx<1) {
       System.out.println("SomeResource.txt not filtered");
+      return false;
+    }
+
+    stream = jar.getInputStream( jar.getEntry("ext/wine.txt") );
+
+    content = new String(IOUtil.toByteArray( stream ));
+
+    idx = content.indexOf("${bestwine}");
+
+    if (idx<1) {
+      System.out.println("ext/wine.txt filtered:"+content);
+      return false;
+    }
+
+    stream = jar.getInputStream( jar.getEntry("ext-filtered/wine.txt") );
+
+    content = new String(IOUtil.toByteArray( stream ));
+
+    idx = content.indexOf("bordeaux");
+
+    if (idx<1) {
+      System.out.println("ext-filtered/wine.txt filtered:"+content);
       return false;
     }
 
