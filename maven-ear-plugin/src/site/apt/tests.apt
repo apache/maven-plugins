@@ -175,3 +175,5 @@ EAR Plugin Tests
   * project-072: builds an EAR with an application client module (app-client)
 
   * project-073: builds an EAR with an application client module (app-client) and a default bundle directory for _java_ modules
+
+  * project-078: builds an EAR with the no version for ejb file name mapping
