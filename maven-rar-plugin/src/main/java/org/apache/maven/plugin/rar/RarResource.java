@@ -22,6 +22,7 @@ import org.apache.maven.model.Resource;
 
 /**
  * @author Olivier Lamy
+ * @since 2.3
  */
 public class RarResource
     extends Resource
