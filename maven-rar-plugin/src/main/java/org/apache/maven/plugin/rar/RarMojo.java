@@ -160,8 +160,8 @@ public class RarMojo
                 Artifact artifact = (Artifact) iter.next();
 
                 ScopeArtifactFilter filter = new ScopeArtifactFilter( Artifact.SCOPE_RUNTIME );
-                if ( !artifact.isOptional() && filter.include( artifact ) && artifact.getArtifactHandler()
-						.isAddedToClasspath() )
+                if ( !artifact.isOptional() && filter.include( artifact )
+                    && artifact.getArtifactHandler().isAddedToClasspath() )
                 {
                     getLog().info( "Copying artifact[" + artifact.getGroupId() + ", " + artifact.getId() + ", " +
                                        artifact.getScope() + "]" );

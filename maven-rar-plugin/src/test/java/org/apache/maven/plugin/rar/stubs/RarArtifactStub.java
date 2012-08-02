@@ -19,11 +19,11 @@ package org.apache.maven.plugin.rar.stubs;
  * under the License.
  */
 
-import java.io.File;
-
 import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.plugin.testing.stubs.ArtifactStub;
+
+import java.io.File;
 
 /**
  * @author <a href="mailto:aramirez@apache.org">Allan Ramirez</a>
@@ -32,15 +32,15 @@ public class RarArtifactStub
     extends ArtifactStub
 {
     private String groupId;
-    
+
     private String artifactId;
-    
+
     private String version;
-    
+
     private String scope;
-    
+
     private boolean optional;
-    
+
     private File file;
 
     private ArtifactHandler artifactHandler;
@@ -109,7 +109,7 @@ public class RarArtifactStub
     {
         return getGroupId() + ":" + getArtifactId() + ":" + getVersion();
     }
-    
+
     public String getBaseVersion()
     {
         return getVersion();
@@ -124,37 +124,37 @@ public class RarArtifactStub
     {
         return new ArtifactHandler()
         {
-            
+
             public boolean isIncludesDependencies()
             {
                 return false;
             }
-            
+
             public boolean isAddedToClasspath()
             {
                 return true;
             }
-            
+
             public String getPackaging()
             {
                 return null;
             }
-            
+
             public String getLanguage()
             {
                 return null;
             }
-            
+
             public String getExtension()
             {
                 return null;
             }
-            
+
             public String getDirectory()
             {
                 return null;
             }
-            
+
             public String getClassifier()
             {
                 return null;
@@ -166,6 +166,6 @@ public class RarArtifactStub
     {
         return "rar";
     }
-    
-    
+
+
 }
