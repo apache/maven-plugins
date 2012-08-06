@@ -223,7 +223,7 @@ under the License.
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-report-plugin</artifactId>
-          <version>2.9</version>
+          <version>2.12</version>
           <configuration>
             <reportsDirectories>
               <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
@@ -272,6 +272,7 @@ under the License.
           </excludes>
           <systemPropertyVariables>
             <maven.home>${maven.home}</maven.home>
+            <java.io.tmpdir>${project.build.directory}</java.io.tmpdir>
           </systemPropertyVariables>
           <argLine>${maven.test.jvmargs}</argLine>
         </configuration>
@@ -384,7 +385,7 @@ under the License.
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-failsafe-plugin</artifactId>
-            <version>2.9</version>
+            <version>2.12</version>
             <executions>
               <execution>
                 <goals>
