@@ -27,6 +27,7 @@ import org.apache.maven.plugin.dependency.utils.filters.MarkerFileFilter;
 import org.apache.maven.plugin.dependency.utils.markers.DefaultFileMarkerHandler;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.shared.artifact.filter.collection.ArtifactsFilter;
 
@@ -51,9 +52,9 @@ public class UnpackDependenciesMojo
      * NOTE: Excludes patterns override the includes.
      * (component code = <code>return isIncluded( name ) AND !isExcluded( name );</code>)
      *
-     * @parameter expression="${mdep.unpack.includes}"
      * @since 2.0
      */
+    @Parameter(property = "mdep.unpack.includes")
     private String includes;
 
     /**
@@ -62,9 +63,9 @@ public class UnpackDependenciesMojo
      * NOTE: Excludes patterns override the includes.
      * (component code = <code>return isIncluded( name ) AND !isExcluded( name );</code>)
      *
-     * @parameter expression="${mdep.unpack.excludes}"
      * @since 2.0
      */
+    @Parameter(property = "mdep.unpack.excludes")
     private String excludes;
 
     /**
