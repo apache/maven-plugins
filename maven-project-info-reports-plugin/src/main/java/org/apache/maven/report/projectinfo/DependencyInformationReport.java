@@ -61,7 +61,7 @@ public final class DependencyInformationReport
 
     /**
      */
-    @Parameter( defaultValue = "${project.packaging", required = true )
+    @Parameter( defaultValue = "${project.packaging}", required = true )
     protected String packaging;
 
     // ----------------------------------------------------------------------
