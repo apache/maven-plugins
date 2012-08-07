@@ -54,7 +54,7 @@ public class UnpackDependenciesMojo
      *
      * @since 2.0
      */
-    @Parameter(property = "mdep.unpack.includes")
+    @Parameter( property = "mdep.unpack.includes" )
     private String includes;
 
     /**
@@ -65,7 +65,7 @@ public class UnpackDependenciesMojo
      *
      * @since 2.0
      */
-    @Parameter(property = "mdep.unpack.excludes")
+    @Parameter( property = "mdep.unpack.excludes" )
     private String excludes;
 
     /**
