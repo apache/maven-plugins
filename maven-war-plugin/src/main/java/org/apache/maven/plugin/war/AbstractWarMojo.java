@@ -19,13 +19,6 @@ package org.apache.maven.plugin.war;
  * under the License.
  */
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 import org.apache.maven.archiver.MavenArchiveConfiguration;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.execution.MavenSession;
@@ -56,6 +49,13 @@ import org.codehaus.plexus.archiver.jar.JarArchiver;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.StringUtils;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Contains common jobs for WAR mojos.
@@ -232,6 +232,23 @@ public abstract class AbstractWarMojo
 
     /**
      * The overlays to apply.
+     *
+     * Each &lt;overlay&gt; element may contain:
+     * <ul>
+     *     <li>id (defaults to <tt>currentBuild</tt>)</li>
+     *     <li>groupId (if this and artifactId are null, then the current project is treated as its own overlay)</li>
+     *     <li>artifactId (see above)</li>
+     *     <li>classifier</li>
+     *     <li>type</li>
+     *     <li>includes (a list of string patterns)</li>
+     *     <li>excludes (a list of string patterns)</li>
+     *     <li>filtered (defaults to false)</li>
+     *     <li>skip (defaults to false)</li>
+     *     <li>targetPath (defaults to root of webapp structure)</li>
+     *
+     * </ul>
+     *
+     *
      *
      * @since 2.1-alpha-1
      */
