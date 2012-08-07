@@ -43,7 +43,7 @@ import org.apache.maven.project.MavenProject;
 /**
  * Publish a content to scm in one step. By default, content is taken from default site staging directory
  * <code>${project.build.directory}/staging</code>.
- * Could be extended to work without project, so usable to update any SCM with any content.
+ * Can be used without project, so usable to update any SCM with any content.
  * 
  * @goal publish-scm
  * @aggregate
