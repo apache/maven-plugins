@@ -1420,8 +1420,8 @@ public class DependenciesRenderer
             // TODO site:run Why do we need to resolve this...
             if ( artifact.getFile() == null )
             {
-                if ( Artifact.SCOPE_SYSTEM.equals( artifact.getScope() ) ) {
-
+                if ( Artifact.SCOPE_SYSTEM.equals( artifact.getScope() ) )
+                {
                     // can not resolve system scope artifact file
                     continue;
                 }
