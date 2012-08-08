@@ -1418,8 +1418,14 @@ public class DependenciesRenderer
         for ( Artifact artifact : artifacts )
         {
             // TODO site:run Why do we need to resolve this...
-            if ( artifact.getFile() == null && !Artifact.SCOPE_SYSTEM.equals( artifact.getScope() ) )
+            if ( artifact.getFile() == null )
             {
+                if ( Artifact.SCOPE_SYSTEM.equals( artifact.getScope() ) ) {
+
+                    // can not resolve system scope artifact file
+                    continue;
+                }
+
                 try
                 {
                     repoUtils.resolve( artifact );
