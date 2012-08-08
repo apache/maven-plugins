@@ -186,8 +186,8 @@ public class ResourcesMojo
      * </p>
      * <pre>
      * &lt;delimiters&gt;
-     *   &lt;delimiter&gt;${*}&lt/delimiter&gt;
-     *   &lt;delimiter&gt;@&lt/delimiter&gt;
+     *   &lt;delimiter&gt;${*}&lt;/delimiter&gt;
+     *   &lt;delimiter&gt;@&lt;/delimiter&gt;
      * &lt;/delimiters&gt;
      * </pre>
      * <p>
