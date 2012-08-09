@@ -38,6 +38,7 @@ try
                          "source-repository",      // <report>scm</report>
                          "issue-tracking",         // <report>issue-tracking</report>
                          "mail-lists",             // <report>mailing-list</report>
+                         "dependency-info",        // <report>dependency-info</report>
                          "dependency-management",  // <report>dependency-management</report>
                          "dependencies",           // <report>dependencies</report>
                          "integration",            // <report>cim</report>
