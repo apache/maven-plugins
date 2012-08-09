@@ -56,15 +56,15 @@ public abstract class AbstractScmPublishMojo
     protected File inventoryFile;
 
     /**
-     * Location of the svn publication tree.
+     * Location of the scm publication tree.
      * 
-     * @parameter expression="${scmpublish.pubScmUrl}"
+     * @parameter expression="${scmpublish.pubScmUrl}" default-value="${project.distributionManagement.site.url}"
      * @required
      */
     protected String pubScmUrl;
 
     /**
-     * Location of the svn publication tree.
+     * Location where the scm check-out is done.
      * 
      * @parameter expression="${scmpublish.checkoutDirectory}"
      *            default-value="${project.build.directory}/scmpublish-checkout"
