@@ -33,7 +33,7 @@ import java.util.Locale;
  *
  * @author <a href="mailto:simonetripodi@apache.org">Simone Tripodi</a>
  * @version $Id$
- * @since 2.4.1
+ * @since 2.5
  */
 @Mojo( name = "dependency-info" )
 public final class DependencyInformationReport
