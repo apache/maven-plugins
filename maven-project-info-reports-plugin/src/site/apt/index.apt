@@ -46,6 +46,9 @@ Maven Project Info Reports Plugin
    * {{{./dependency-convergence-mojo.html}project-info-reports:dependency-convergence}} is used to generate the
    Project Dependency Convergence report for reactor builds.
 
+   * {{{./dependency-info-mojo.html}project-info-reports:dependency-info}} (<<new in 2.5>>>) is used to generate code snippets to
+   be added to build tools.
+
    * {{{./dependency-management-mojo.html}project-info-reports:dependency-management}} is used to generate the
    Project DependencyManagement report.
 
