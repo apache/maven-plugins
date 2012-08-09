@@ -29,7 +29,7 @@ import java.util.Formatter;
 import java.util.Locale;
 
 /**
- * Generates the Dependency code snippets to be added to build tools.
+ * Generates code snippets to be added to build tools.
  *
  * @author <a href="mailto:simonetripodi@apache.org">Simone Tripodi</a>
  * @version $Id$
