@@ -36,6 +36,7 @@ Maven SCM Publish Plugin
     simple content import to SCM.
 
     The plugin provides two goals: <<prepare>> and <<publish>>.
+    (TODO: deprecated by publish-scm goal, which does everything in one step?) 
 
     The prepare goal checks out the contents of a directory from 
     the SCM into (by default) <<<target/scmpublish-checkout>>>. It 
