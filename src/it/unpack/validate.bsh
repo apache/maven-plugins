@@ -27,7 +27,6 @@ file = new File( file.getParent(), "src" );
 System.out.println( "Checking for existence of " + file );
 if ( !file.isDirectory() )
 {
-  
    throw new Exception( "Missing " + file );
 }
 return true;
