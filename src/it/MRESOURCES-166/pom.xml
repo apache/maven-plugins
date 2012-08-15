@@ -42,7 +42,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-resources-plugin</artifactId>
-          <version>2.6-SNAPSHOT</version>
+          <version>@pom.version@</version>
           <configuration>
             <supportMultiLineFiltering>true</supportMultiLineFiltering>
             <escapeString>\</escapeString>
