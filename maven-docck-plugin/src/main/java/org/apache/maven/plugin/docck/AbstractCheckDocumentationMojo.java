@@ -52,7 +52,6 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -71,7 +70,7 @@ public abstract class AbstractCheckDocumentationMojo
     /**
      */
     @Parameter( property = "reactorProjects", readonly = true, required = true )
-    private List reactorProjects;
+    private List<MavenProject> reactorProjects;
 
     /**
      * An optional location where the results will be written to. If this is
@@ -105,7 +104,7 @@ public abstract class AbstractCheckDocumentationMojo
 
     private FileSetManager fileSetManager = new FileSetManager();
 
-    private List validUrls = new ArrayList();
+    private List<String> validUrls = new ArrayList<String>();
 
     protected AbstractCheckDocumentationMojo()
     {
@@ -119,7 +118,7 @@ public abstract class AbstractCheckDocumentationMojo
         httpClient.getParams().setParameter( HttpMethodParams.USER_AGENT, httpUserAgent );
     }
 
-    protected List getReactorProjects()
+    protected List<MavenProject> getReactorProjects()
     {
         return reactorProjects;
     }
@@ -134,13 +133,11 @@ public abstract class AbstractCheckDocumentationMojo
             getLog().info( "Writing documentation check results to: " + output );
         }
 
-        Map reporters = new LinkedHashMap();
+        Map<MavenProject, DocumentationReporter> reporters = new LinkedHashMap<MavenProject, DocumentationReporter>();
         boolean hasErrors = false;
 
-        for ( Iterator it = reactorProjects.iterator(); it.hasNext(); )
+        for ( MavenProject project : reactorProjects )
         {
-            MavenProject project = (MavenProject) it.next();
-
             if ( approveProjectPackaging( project.getPackaging() ) )
             {
                 getLog().info( "Checking project: " + project.getName() );
@@ -232,17 +229,15 @@ public abstract class AbstractCheckDocumentationMojo
         }
     }
 
-    private String buildErrorMessages( Map reporters )
+    private String buildErrorMessages( Map<MavenProject, DocumentationReporter> reporters )
     {
         String messages = "";
         StringBuffer buffer = new StringBuffer();
 
-        for ( Iterator it = reporters.entrySet().iterator(); it.hasNext(); )
+        for ( Map.Entry<MavenProject, DocumentationReporter> entry : reporters.entrySet() )
         {
-            Map.Entry entry = (Map.Entry) it.next();
-
-            MavenProject project = (MavenProject) entry.getKey();
-            DocumentationReporter reporter = (DocumentationReporter) entry.getValue();
+            MavenProject project = entry.getKey();
+            DocumentationReporter reporter = entry.getValue();
 
             if ( !reporter.getMessages().isEmpty() )
             {
@@ -256,10 +251,8 @@ public abstract class AbstractCheckDocumentationMojo
                 buffer.append( ")" );
                 buffer.append( "\n" );
 
-                for ( Iterator errorIterator = reporter.getMessages().iterator(); errorIterator.hasNext(); )
+                for ( String error : reporter.getMessages() )
                 {
-                    String error = (String) errorIterator.next();
-
                     buffer.append( "  " ).append( error ).append( "\n" );
                 }
             }
@@ -421,7 +414,8 @@ public abstract class AbstractCheckDocumentationMojo
 
     private void checkProjectLicenses( MavenProject project, DocumentationReporter reporter )
     {
-        List licenses = project.getLicenses();
+        @SuppressWarnings( "unchecked" )
+        List<License> licenses = project.getLicenses();
 
         if ( licenses == null || licenses.isEmpty() )
         {
@@ -429,10 +423,8 @@ public abstract class AbstractCheckDocumentationMojo
         }
         else
         {
-            for ( Iterator it = licenses.iterator(); it.hasNext(); )
+            for ( License license : licenses )
             {
-                License license = (License) it.next();
-
                 if ( StringUtils.isEmpty( license.getName() ) )
                 {
                     reporter.error( "pom.xml is missing the <licenses>/<license>/<name> tag." );
@@ -457,10 +449,8 @@ public abstract class AbstractCheckDocumentationMojo
     private String getURLProtocol( String url )
         throws MalformedURLException
     {
-        String protocol;
-
         URL licenseUrl = new URL( url );
-        protocol = licenseUrl.getProtocol();
+        String protocol = licenseUrl.getProtocol();
 
         if ( protocol != null )
         {
