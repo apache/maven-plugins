@@ -38,7 +38,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -81,15 +80,14 @@ public class CheckPluginDocumentationMojo
 
         if ( descriptor != null )
         {
-            List mojos = descriptor.getMojos();
+            @SuppressWarnings( "unchecked" )
+            List<MojoDescriptor> mojos = descriptor.getMojos();
 
             // ensure that all mojo classes are documented
             if ( mojos != null && !mojos.isEmpty() )
             {
-                for ( Iterator it = mojos.iterator(); it.hasNext(); )
+                for ( MojoDescriptor mojo : mojos )
                 {
-                    MojoDescriptor mojo = (MojoDescriptor) it.next();
-
                     String mojoDescription = mojo.getDescription();
 
                     if ( mojoDescription == null || mojoDescription.trim().length() < MIN_DESCRIPTION_LENGTH )
@@ -97,15 +95,14 @@ public class CheckPluginDocumentationMojo
                         reporter.error( "Mojo: \'" + mojo.getGoal() + "\' is missing a description." );
                     }
 
-                    List params = mojo.getParameters();
+                    @SuppressWarnings( "unchecked" )
+                    List<Parameter> params = mojo.getParameters();
 
                     // ensure that all parameters are documented
                     if ( params != null && !params.isEmpty() )
                     {
-                        for ( Iterator paramIterator = params.iterator(); paramIterator.hasNext(); )
+                        for ( Parameter param : params )
                         {
-                            Parameter param = (Parameter) paramIterator.next();
-
                             if ( param.getRequirement() == null && param.isEditable() )
                             {
                                 String paramDescription = param.getDescription();
@@ -220,15 +217,14 @@ public class CheckPluginDocumentationMojo
      */
     private void checkConfiguredReportPlugins( MavenProject project, DocumentationReporter reporter )
     {
-        List expectedPlugins = getRequiredPlugins();
+        List<String> expectedPlugins = getRequiredPlugins();
 
-        List reportPlugins = project.getReportPlugins();
+        @SuppressWarnings( "unchecked" )
+        List<ReportPlugin> reportPlugins = project.getReportPlugins();
         if ( reportPlugins != null && reportPlugins.size() > 0 )
         {
-            for ( Iterator plugins = reportPlugins.iterator(); plugins.hasNext(); )
+            for ( ReportPlugin plugin : reportPlugins )
             {
-                ReportPlugin plugin = (ReportPlugin) plugins.next();
-
                 expectedPlugins.remove( plugin.getArtifactId() );
             }
         }
@@ -237,9 +233,9 @@ public class CheckPluginDocumentationMojo
             reporter.error( "pom.xml has no report plugins configured." );
         }
 
-        for ( Iterator plugins = expectedPlugins.iterator(); plugins.hasNext(); )
+        for ( String expectedPlugin : expectedPlugins )
         {
-            reporter.error( "pom.xml is missing the report plugin: " + plugins.next().toString() + "." );
+            reporter.error( "pom.xml is missing the report plugin: " + expectedPlugin + "." );
         }
     }
 
@@ -248,9 +244,9 @@ public class CheckPluginDocumentationMojo
      *
      * @return List of report plugin artifactIds
      */
-    private List getRequiredPlugins()
+    private List<String> getRequiredPlugins()
     {
-        List list = new ArrayList();
+        List<String> list = new ArrayList<String>();
 
         list.add( "maven-javadoc-plugin" );
         list.add( "maven-jxr-plugin" );

@@ -21,14 +21,13 @@ package org.apache.maven.plugin.docck.reports;
 
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 /**
  * @author Edwin Punzalan
  */
 public class DocumentationReporter
 {
-    private List reports = new ArrayList();
+    private List<DocumentationReport> reports = new ArrayList<DocumentationReport>();
 
     public void info( String message )
     {
@@ -45,14 +44,12 @@ public class DocumentationReporter
         reports.add( new ErrorDocumentationReport( "[ERROR] " + message ) );
     }
 
-    public List getMessagesByType( int type )
+    public List<String> getMessagesByType( int type )
     {
-        List list = new ArrayList();
+        List<String> list = new ArrayList<String>();
 
-        for ( Iterator iter = reports.iterator(); iter.hasNext(); )
+        for ( DocumentationReport report : reports )
         {
-            DocumentationReport report = (DocumentationReport) iter.next();
-
             if ( report.getType() == type )
             {
                 list.add( report.getMessage() );
@@ -62,14 +59,12 @@ public class DocumentationReporter
         return list;
     }
 
-    public List getMessages()
+    public List<String> getMessages()
     {
-        List list = new ArrayList();
+        List<String> list = new ArrayList<String>();
 
-        for ( Iterator iter = reports.iterator(); iter.hasNext(); )
+        for ( DocumentationReport report : reports )
         {
-            DocumentationReport report = (DocumentationReport) iter.next();
-
             list.add( report.getMessage() );
         }
 
@@ -78,13 +73,11 @@ public class DocumentationReporter
 
     public boolean hasErrors()
     {
-        for ( Iterator iter = reports.iterator(); iter.hasNext(); )
+        for ( DocumentationReport report : reports )
         {
-            DocumentationReport report = (DocumentationReport) iter.next();
-
             if ( report.getType() == DocumentationReport.TYPE_ERROR )
             {
-                //first occurrence will do
+                // first occurrence will do
                 return true;
             }
         }
