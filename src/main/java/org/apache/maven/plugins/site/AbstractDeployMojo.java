@@ -224,7 +224,7 @@ public abstract class AbstractDeployMojo
     /**
      * Use wagon to deploy the generated site to a given repository.
      *
-     * @param repository the repository to deply to.
+     * @param repository the repository to deploy to.
      *                   This needs to contain a valid, non-null {@link Repository#getId() id}
      *                   to look up credentials for the deploy, and a valid, non-null
      *                   {@link Repository#getUrl() scm url} to deploy to.
@@ -391,9 +391,8 @@ public abstract class AbstractDeployMojo
         throws MojoExecutionException
     {
         AuthenticationInfo authenticationInfo = wagonManager.getAuthenticationInfo( repository.getId() );
-        getLog().debug( "authenticationInfo with id '" + repository.getId() + "': " + ( ( authenticationInfo == null )
-            ? "-"
-            : authenticationInfo.getUserName() ) );
+        getLog().debug( "authenticationInfo with id '" + repository.getId() + "': "
+                            + ( ( authenticationInfo == null ) ? "-" : authenticationInfo.getUserName() ) );
 
         try
         {
@@ -611,7 +610,7 @@ public abstract class AbstractDeployMojo
                             ProxyInfo proxyInfo = new ProxyInfo();
                             proxyInfo.setHost( proxy.getHost() );
                             // so hackish for wagon the protocol is https for site dav : dav:https://dav.codehaus.org/mojo/
-                            proxyInfo.setType( protocol );//proxy.getProtocol() );
+                            proxyInfo.setType( protocol ); //proxy.getProtocol() );
                             proxyInfo.setPort( proxy.getPort() );
                             proxyInfo.setNonProxyHosts( proxy.getNonProxyHosts() );
                             proxyInfo.setUserName( proxy.getUsername() );
@@ -851,8 +850,8 @@ public abstract class AbstractDeployMojo
 
     private static class URIEncoder
     {
-        private static final String mark = "-_.!~*'()";
-        private static final String reserved = ";/?:@&=+$,";
+        private static final String MARK = "-_.!~*'()";
+        private static final String RESERVED = ";/?:@&=+$,";
 
         public static String encodeURI( final String uriString )
         {
@@ -862,7 +861,7 @@ public abstract class AbstractDeployMojo
             for ( char c : chars )
             {
                 if ( ( c >= '0' && c <= '9' ) || ( c >= 'a' && c <= 'z' ) || ( c >= 'A' && c <= 'Z' )
-                        || mark.indexOf( c ) != -1  || reserved.indexOf( c ) != -1 )
+                        || MARK.indexOf( c ) != -1  || RESERVED.indexOf( c ) != -1 )
                 {
                     uri.append( c );
                 }
