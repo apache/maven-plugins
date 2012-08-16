@@ -90,7 +90,7 @@ public class SiteStageDeployMojo
         throws MojoExecutionException
     {
         // MSITE-602: If the user specified an explicit stagingSiteURL, use a special relative path
-        if( StringUtils.isNotEmpty( stagingSiteURL ) )
+        if ( StringUtils.isNotEmpty( stagingSiteURL ) )
         {
             // We need to calculate the relative path between this project and
             // the first one that supplied a stagingSiteURL
