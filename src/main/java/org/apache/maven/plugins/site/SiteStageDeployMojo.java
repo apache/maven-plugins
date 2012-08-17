@@ -95,7 +95,7 @@ public class SiteStageDeployMojo
             // We need to calculate the relative path between this project and
             // the first one that supplied a stagingSiteURL
             String relative = siteTool.getRelativePath( getSite( project ).getUrl(),
-                getSiteForTopMostParentWithStagingSiteURL( project ).getUrl() );
+                getSiteForTopMostParentWithSameStagingSiteURL( project ).getUrl() );
 
             // SiteTool.getRelativePath() uses File.separatorChar,
             // so we need to convert '\' to '/' in order for the URL to be valid for Windows users
@@ -146,15 +146,16 @@ public class SiteStageDeployMojo
      * @param project the MavenProject. Not null.
      * @return the site for the top most project that has a stagingSiteURL. Not null.
      */
-    private Site getSiteForTopMostParentWithStagingSiteURL( MavenProject project )
+    private Site getSiteForTopMostParentWithSameStagingSiteURL( MavenProject project )
     {
-        Site site = project.getDistributionManagement().getSite();
+        String actualStagingSiteURL = getStagingSiteURL( project );
 
         MavenProject parent = project;
+        Site site = null;
 
         // @todo Should we check that the stagingSiteURL equals the one in this project instead of being non-empty?
         while ( parent != null
-                && StringUtils.isNotEmpty( getStagingSiteURL( parent ) ) )
+                && actualStagingSiteURL.equals( getStagingSiteURL( parent ) ) )
         {
             site = parent.getDistributionManagement().getSite();
 
