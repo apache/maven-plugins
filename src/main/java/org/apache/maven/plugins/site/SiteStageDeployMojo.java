@@ -153,7 +153,6 @@ public class SiteStageDeployMojo
         MavenProject parent = project;
         Site site = null;
 
-        // @todo Should we check that the stagingSiteURL equals the one in this project instead of being non-empty?
         while ( parent != null
                 && actualStagingSiteURL.equals( getStagingSiteURL( parent ) ) )
         {
