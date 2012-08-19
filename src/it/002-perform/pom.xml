@@ -54,7 +54,7 @@
         <artifactId>maven-site-plugin</artifactId>
         <executions>
           <execution>
-            <id>stage-for-pub</id>
+            <id>stage-for-scm-publish</id>
             <phase>post-site</phase>
             <goals>
               <goal>stage</goal>
@@ -89,7 +89,7 @@
           </execution>
           <execution>
             <id>perform</id>
-            <phase>post-site</phase>
+            <phase>site-deploy</phase>
             <goals>
               <goal>publish</goal>
             </goals>
