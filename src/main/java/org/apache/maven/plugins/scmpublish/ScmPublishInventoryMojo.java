@@ -46,6 +46,7 @@ import org.apache.maven.plugin.MojoFailureException;
  * @goal prepare
  * @phase pre-site
  * @aggregate
+ * @deprecated superseded by publish-scm which does the same in on step only and has more features
  */
 public class ScmPublishInventoryMojo
     extends AbstractScmPublishMojo
@@ -55,7 +56,7 @@ public class ScmPublishInventoryMojo
      * For now, don't bother with deleting empty directories. They are fairly harmless,
      * and leaving them around allows this to work with pre-1.7 svn.
      */
-    private void deleteInventory( List<File> inventory ) 
+    private void deleteContent( List<File> inventory ) 
     {
         for ( File f : inventory )
         {
@@ -76,6 +77,6 @@ public class ScmPublishInventoryMojo
 
         ScmPublishInventory.writeInventory( inventory, inventoryFile );
 
-        deleteInventory( inventory );
+        deleteContent( inventory );
     }
 }
