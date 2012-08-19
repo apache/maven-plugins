@@ -74,6 +74,9 @@ mvn scm-publish:publish-scm -Dscmpublish.pubScmUrl=scm:... -Dscmpublish.content=
     SCM content will be checked-out to a temporary directory, then local content will
     be applied to the check-out, before it is checked-in back.
 
+    See {{{./examples/importing-maven-site.html}maven.apache.org content import script}} for an
+    example.
+
 Known Limitations
 
     There are 3 known limitations:
