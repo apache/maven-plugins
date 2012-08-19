@@ -36,13 +36,14 @@ Maven SCM Publish Plugin
     simple content import to SCM.
 
     The plugin provides two goals: <<prepare>> and <<publish>>.
-    (TODO: deprecated by publish-scm goal, which does everything in one step?) 
+    (TODO: deprecated by new <<publish-scm>> goal, which does everything in one step) 
 
     The prepare goal checks out the contents of a directory from 
     the SCM into (by default) <<<target/scmpublish-checkout>>>. It 
     then lists the files known to the SCM and stores them
     in (by default) <<<target/scmpublish-inventory.js>>>. This provides
-    the point of reference for an eventual SCM checkin.
+    the point of reference for an eventual SCM checkin. Then it deletes every
+    files to let a clean place for site generation.
 
     After running the prepare goal, the POM must run <<<site>>> phase then
     <<<site:stage>>> goal, with the <stagingDirectory> set to
@@ -67,7 +68,7 @@ Publishing any content to SCM
     a local content:
 
 +-------+
-mvn scm-publish:publish-scm -Dscmpublish.pubScmUrl=scm:... -Dscmpublish.content=...
+mvn scm-publish:publish-scm -Dscmpublish.pubScmUrl=scm:... -Dscmpublish.content=...path-to-content...
 +-------+
 
     SCM content will be checked-out to a temporary directory, then local content will
