@@ -88,6 +88,8 @@ Usage
   </build>
 +------+
 
+  <Notice>: this is actually not working, the 003-lifecycle IT has been disabled.
+
 * Using the Site Lifecycle
 
    The alternative is to attach the necessary activities to the site lifecycle. This requires more

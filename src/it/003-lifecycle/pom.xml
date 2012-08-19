@@ -25,6 +25,7 @@
   <version>1.0-SNAPSHOT</version>
 
   <name> maven-scm-publish-plugin-003-lifecycle</name>
+  <description>Test scm-publish using custom lifecycle (as introduced by scmpublish goal)</description>
   <url>http://people.apache.org/~bimargulies/site-test</url>
 
   <distributionManagement>
@@ -45,27 +46,31 @@
             <stagingDirectory>target/scmpublish-checkout</stagingDirectory>
           </configuration>
         </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-scm-publish-plugin</artifactId>
+          <version>@pom.version@</version>
+          <extensions>true</extensions>
+          <configuration>
+            <pubScmUrl>scm:svn:file://${basedir}/target/svn-root</pubScmUrl>
+            <providerImplementations>
+              <svn>javasvn</svn>
+            </providerImplementations>
+          </configuration>
+          <dependencies>
+            <dependency>
+              <groupId>com.google.code.maven-scm-provider-svnjava</groupId>
+              <artifactId>maven-scm-provider-svnjava</artifactId>
+              <version>1.15</version>
+            </dependency>
+          </dependencies>
+        </plugin>
       </plugins>
     </pluginManagement>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId> maven-scm-publish-plugin</artifactId>
-        <version>@pom.version@</version>
-        <extensions>true</extensions>
-        <configuration>
-          <pubScmUrl>scm:svn:file://${basedir}/target/svn-root</pubScmUrl>
-          <providerImplementations>
-            <svn>javasvn</svn>
-          </providerImplementations>
-        </configuration>
-        <dependencies>
-          <dependency>
-            <groupId>com.google.code.maven-scm-provider-svnjava</groupId>
-            <artifactId>maven-scm-provider-svnjava</artifactId>
-            <version>1.15</version>
-          </dependency>
-        </dependencies>
+        <artifactId>maven-scm-publish-plugin</artifactId>
       </plugin>
     </plugins>
   </build>
