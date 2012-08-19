@@ -57,7 +57,7 @@ Usage
   With a little configuration in your POM, 
 
 +---------+
-  mvn maven-scm-publish:publish
+  mvn maven-scm-publish:scmpublish
 +---------+
 
   will do all the work.   
