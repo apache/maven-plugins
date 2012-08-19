@@ -28,7 +28,6 @@
       <configuration>
         <phases>
           <scmpublish-prepare>
-            org.apache.maven.plugins:maven-site-scm-publish-plugin:${project.version}:prepare
           </scmpublish-prepare>
           <scmpublish-site>
             org.apache.maven.plugins:maven-site-plugin:3.1:site
@@ -37,7 +36,7 @@
             org.apache.maven.plugins:maven-site-plugin:3.1:stage
           </scmpublish-post-site>
           <scmpublish-publish>
-            org.apache.maven.plugins:maven-site-scm-publish-plugin:${project.version}:publish
+            org.apache.maven.plugins:maven-site-scm-publish-plugin:${project.version}:publish-scm
           </scmpublish-publish>
         </phases>
       </configuration>
@@ -56,7 +55,6 @@
         </phases>
         <default-phases>
           <scmpublish-prepare>
-            org.apache.maven.plugins:maven-site-scm-publish-plugin:${project.version}:prepare
           </scmpublish-prepare>
           <scmpublish-site>
             org.apache.maven.plugins:maven-site-plugin:3.1:site
@@ -65,7 +63,7 @@
             org.apache.maven.plugins:maven-site-plugin:3.1:stage
           </scmpublish-post-site>
           <scmpublish-publish>
-            org.apache.maven.plugins:maven-site-scm-publish-plugin:${project.version}:publish
+            org.apache.maven.plugins:maven-site-scm-publish-plugin:${project.version}:publish-scm
           </scmpublish-publish>
         </default-phases>
       </configuration>

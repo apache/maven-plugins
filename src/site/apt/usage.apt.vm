@@ -57,7 +57,7 @@ Usage
   With a little configuration in your POM, 
 
 +---------+
-  mvn maven-scm-publish:scmpublish
+  mvn scm-publish:scmpublish
 +---------+
 
   will do all the work.   
@@ -66,13 +66,6 @@ Usage
   <build>
     <pluginManagement>
       <plugins>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-site-plugin</artifactId>
-          <configuration>
-            <stagingDirectory>target/scmpublish-checkout</stagingDirectory>
-          </configuration>
-        </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-scm-publish-plugin</artifactId>
@@ -98,18 +91,6 @@ Usage
 
 +-----+
   <build>
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-site-plugin</artifactId>
-          <configuration>
-            <stagingDirectory>target/scmpublish-checkout</stagingDirectory>
-          </configuration>
-        </plugin>
-      </plugins>
-    </pluginManagement>
-
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -133,17 +114,10 @@ Usage
         </configuration>
         <executions>
           <execution>
-            <id>prepare</id>
-            <phase>pre-site</phase>
-            <goals>
-              <goal>prepare</goal>
-            </goals>
-          </execution>
-          <execution>
-            <id>perform</id>
+            <id>scm-publish</id>
             <phase>site-deploy</phase>
             <goals>
-              <goal>publish</goal>
+              <goal>publish-scm</goal>
             </goals>
           </execution>
         </executions>

@@ -51,6 +51,7 @@ import org.apache.maven.scm.command.remove.RemoveScmResult;
  * @goal publish
  * @phase post-site
  * @aggregate
+ * @deprecated superseded by publish-scm which does the same in on step only and has more features
  */
 public class ScmPublishPublishMojo
     extends AbstractScmPublishMojo

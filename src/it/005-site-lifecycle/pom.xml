@@ -21,11 +21,10 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.apache.maven.plugins</groupId>
-  <artifactId> maven-scm-publish-plugin-003-lifecycle</artifactId>
+  <artifactId>maven-scm-publish-plugin-005-site-lifecycle</artifactId>
   <version>1.0-SNAPSHOT</version>
 
-  <name> maven-scm-publish-plugin-003-lifecycle</name>
-  <description>Test scm-publish using custom lifecycle (as introduced by scmpublish goal)</description>
+  <name>maven-scm-publish-plugin-004-005-site-lifecycle</name>
   <url>http://people.apache.org/~bimargulies/site-test</url>
 
   <distributionManagement>
@@ -47,27 +46,39 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-scm-publish-plugin</artifactId>
           <version>@pom.version@</version>
-          <extensions>true</extensions>
-          <configuration>
-            <pubScmUrl>scm:svn:file://${basedir}/target/svn-root</pubScmUrl>
-            <providerImplementations>
-              <svn>javasvn</svn>
-            </providerImplementations>
-          </configuration>
-          <dependencies>
-            <dependency>
-              <groupId>com.google.code.maven-scm-provider-svnjava</groupId>
-              <artifactId>maven-scm-provider-svnjava</artifactId>
-              <version>1.15</version>
-            </dependency>
-          </dependencies>
         </plugin>
       </plugins>
     </pluginManagement>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-site-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>stage-for-scm-publish</id>
+            <phase>post-site</phase>
+            <goals>
+              <goal>stage</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-scm-publish-plugin</artifactId>
+        <version>@pom.version@</version>
+        <configuration>
+          <pubScmUrl>scm:svn:file://${basedir}/target/svn-root</pubScmUrl>
+        </configuration>
+        <executions>
+          <execution>
+            <id>scm-publish</id>
+            <phase>site-deploy</phase>
+            <goals>
+              <goal>scm-publish</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
@@ -90,6 +101,6 @@
         <configuration>
         </configuration>
       </plugin>
-    </plugins>
+      </plugins>
   </reporting>
 </project>
