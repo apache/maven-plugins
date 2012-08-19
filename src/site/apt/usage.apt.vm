@@ -29,7 +29,7 @@
 
 Usage
 
- The maven-scm-publish-plugin submits modified content to SCM, sites being a classical case.
+ The maven-scm-publish-plugin submits modified content to SCM, sites being the most classical case.
  There are two ways you can set this up for site in your POM.
 
 * Use the Custom Lifecycle
@@ -39,15 +39,15 @@ Usage
   <scmpublish> goal. This goal does nothing except fork a custom
   <scmpublish> lifecycle, consisting of the following phases:
 
-  * scmpublish-prepare
+  * <<<scmpublish-prepare>>>
 
-  * scmpublish-pre-site
+  * <<<scmpublish-pre-site>>>
 
-  * scmpublish-site
+  * <<<scmpublish-site>>>
 
-  * scmpublish-post-site
+  * <<<scmpublish-post-site>>>
 
-  * scmpublish-publish
+  * <<<scmpublish-publish>>>
 
   []
 
@@ -69,7 +69,6 @@ Usage
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-site-plugin</artifactId>
-          <version>3.0</version>
           <configuration>
             <stagingDirectory>target/scmpublish-checkout</stagingDirectory>
           </configuration>
@@ -102,7 +101,6 @@ Usage
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-site-plugin</artifactId>
-          <version>3.0</version>
           <configuration>
             <stagingDirectory>target/scmpublish-checkout</stagingDirectory>
           </configuration>
