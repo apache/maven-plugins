@@ -202,6 +202,11 @@ public class ScmPublishPublishScmMojo
             siteOutputEncoding = "utf-8";
         }
 
+        if ( !content.canRead() )
+        {
+            throw new MojoExecutionException( "can't read content directory: " + content );
+        }
+
         checkoutExisting();
 
         try
