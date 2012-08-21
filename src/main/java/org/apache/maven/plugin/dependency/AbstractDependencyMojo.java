@@ -100,7 +100,7 @@ public abstract class AbstractDependencyMojo
      * will use the jvm chmod, this is available for user and all level group level will be ignored
      * </p>
      *
-     *
+     * @since 2.6
      */
     @Parameter( property = "dependency.useJvmChmod", defaultValue = "false" )
     private boolean useJvmChmod;
