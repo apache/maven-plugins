@@ -96,6 +96,16 @@ public abstract class AbstractDependencyMojo
     protected ArchiverManager archiverManager;
 
     /**
+     * <p>
+     * will use the jvm chmod, this is available for user and all level group level will be ignored
+     * </p>
+     *
+     *
+     */
+    @Parameter( property = "dependency.useJvmChmod", defaultValue = "false" )
+    private boolean useJvmChmod;
+
+    /**
      * POM
      */
     @Component
@@ -221,6 +231,8 @@ public abstract class AbstractDependencyMojo
             UnArchiver unArchiver;
 
             unArchiver = archiverManager.getUnArchiver( file );
+
+            unArchiver.setUseJvmChmod( useJvmChmod );
 
             unArchiver.setSourceFile( file );
 
