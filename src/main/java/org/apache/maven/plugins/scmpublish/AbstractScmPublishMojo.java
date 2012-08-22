@@ -252,14 +252,21 @@ public abstract class AbstractScmPublishMojo
             }
         }
 
-        checkoutDirectory.mkdirs();
+        boolean forceCheckout = false;
+
+        if ( !checkoutDirectory.exists() )
+        {
+            logInfo( "tryUpdate is configured but no local copy currently available so forcing checkout" );
+            checkoutDirectory.mkdirs();
+            forceCheckout = true;
+        }
 
         ScmResult scmResult;
 
         try
         {
             ScmFileSet fileSet = new ScmFileSet( checkoutDirectory, includes, excludes );
-            if ( tryUpdate )
+            if ( tryUpdate && !forceCheckout )
             {
                 scmResult = scmProvider.update( scmRepository, fileSet );
             }
