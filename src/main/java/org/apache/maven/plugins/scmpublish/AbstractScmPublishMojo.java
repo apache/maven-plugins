@@ -19,10 +19,6 @@ package org.apache.maven.plugins.scmpublish;
  * under the License.
  */
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Map;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
@@ -30,7 +26,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.scm.ScmException;
 import org.apache.maven.scm.ScmFileSet;
-import org.apache.maven.scm.command.checkout.CheckOutScmResult;
+import org.apache.maven.scm.ScmResult;
 import org.apache.maven.scm.manager.NoSuchScmProviderException;
 import org.apache.maven.scm.manager.ScmManager;
 import org.apache.maven.scm.provider.ScmProvider;
@@ -39,6 +35,10 @@ import org.apache.maven.scm.repository.ScmRepositoryException;
 import org.apache.maven.settings.Settings;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Map;
 
 /**
  * Base class for the scm-publish mojos.
@@ -49,15 +49,15 @@ public abstract class AbstractScmPublishMojo
 
     /**
      * Location of the inventory file.
-     * 
+     *
      * @parameter expression="${scmpublish.inventoryFile}"
-     *            default-value="${project.build.directory}/scmpublish-inventory.js"
+     * default-value="${project.build.directory}/scmpublish-inventory.js"
      */
     protected File inventoryFile;
 
     /**
      * Location of the scm publication tree.
-     * 
+     *
      * @parameter expression="${scmpublish.pubScmUrl}" default-value="${project.distributionManagement.site.url}"
      * @required
      */
@@ -65,33 +65,33 @@ public abstract class AbstractScmPublishMojo
 
     /**
      * Location where the scm check-out is done.
-     * 
+     *
      * @parameter expression="${scmpublish.checkoutDirectory}"
-     *            default-value="${project.build.directory}/scmpublish-checkout"
+     * default-value="${project.build.directory}/scmpublish-checkout"
      */
     protected File checkoutDirectory;
 
     /**
      * Patterns to exclude from the scm tree.
-     * 
+     *
      * @parameter
      */
     protected String excludes;
 
     /**
      * Patterns to include in the scm tree.
-     * 
+     *
      * @parameter
      */
     protected String includes;
-    
+
     /**
      * List of provider implementations.
      *
      * @parameter
      */
     private Map<String, String> providerImplementations;
-    
+
     /**
      * The SCM manager.
      *
@@ -101,21 +101,21 @@ public abstract class AbstractScmPublishMojo
 
     /**
      * Tool that gets a configured SCM repository from release configuration.
-     * 
+     *
      * @component
      */
     protected ScmRepositoryConfigurator scmRepositoryConfigurator;
 
     /**
      * The SCM username to use.
-     * 
+     *
      * @parameter expression="${username}"
      */
     protected String username;
 
     /**
      * The SCM password to use.
-     * 
+     *
      * @parameter expression="${password}"
      */
     protected String password;
@@ -131,7 +131,7 @@ public abstract class AbstractScmPublishMojo
      * Use a local checkout instead of doing a checkout from the upstream repository. ATTENTION: This will only work
      * with distributed SCMs which support the file:// protocol TODO: we should think about having the defaults for the
      * various SCM providers provided via modello!
-     * 
+     *
      * @parameter expression="${localCheckout}" default-value="false"
      * @since 2.0
      */
@@ -154,12 +154,21 @@ public abstract class AbstractScmPublishMojo
     /**
      * The outputEncoding parameter of the site plugin. This plugin will corrupt your site
      * if this does not match the value used by the site plugin.
-     * 
+     *
      * @parameter expression="${outputEncoding}" default-value="${project.reporting.outputEncoding}"
      */
     protected String siteOutputEncoding;
 
+    /**
+     * if the checkout directory exists and this flag is activated the plugin will try an update rather
+     * than delete then checkout
+     *
+     * @parameter expression="${scmpublish.tryUpdate}" default-value="false"
+     */
+    protected boolean tryUpdate;
+
     protected ScmProvider scmProvider;
+
     protected ScmRepository scmRepository;
 
     protected AbstractScmPublishMojo()
@@ -212,7 +221,7 @@ public abstract class AbstractScmPublishMojo
             for ( Map.Entry<String, String> providerEntry : providerImplementations.entrySet() )
             {
                 getLog().info( "Change the default '" + providerEntry.getKey() + "' provider implementation to '"
-                    + providerEntry.getValue() + "'." );
+                                   + providerEntry.getValue() + "'." );
                 scmManager.setScmProviderImplementation( providerEntry.getKey(), providerEntry.getValue() );
             }
         }
@@ -227,9 +236,9 @@ public abstract class AbstractScmPublishMojo
     protected void checkoutExisting()
         throws MojoExecutionException
     {
-        logInfo( "Checking out the pub tree ..." );
+        logInfo( ( tryUpdate ? "Updating" : "Checking" ) + " out the pub tree ..." );
 
-        if ( checkoutDirectory.exists() )
+        if ( checkoutDirectory.exists() && !tryUpdate )
         {
             try
             {
@@ -245,12 +254,19 @@ public abstract class AbstractScmPublishMojo
 
         checkoutDirectory.mkdirs();
 
-        CheckOutScmResult scmResult;
+        ScmResult scmResult;
 
         try
         {
             ScmFileSet fileSet = new ScmFileSet( checkoutDirectory, includes, excludes );
-            scmResult = scmProvider.checkOut( scmRepository, fileSet );
+            if ( tryUpdate )
+            {
+                scmResult = scmProvider.update( scmRepository, fileSet );
+            }
+            else
+            {
+                scmResult = scmProvider.checkOut( scmRepository, fileSet );
+            }
         }
         catch ( ScmException e )
         {
@@ -269,8 +285,9 @@ public abstract class AbstractScmPublishMojo
         {
             logError( scmResult.getProviderMessage() );
 
-            throw new MojoExecutionException( "Unable to checkout from SCM" + "\nProvider message:\n"
-                + scmResult.getProviderMessage() + "\nCommand output:\n" + scmResult.getCommandOutput() );
+            throw new MojoExecutionException(
+                "Unable to checkout from SCM" + "\nProvider message:\n" + scmResult.getProviderMessage()
+                    + "\nCommand output:\n" + scmResult.getCommandOutput() );
         }
     }
 
@@ -321,7 +338,7 @@ public abstract class AbstractScmPublishMojo
         }
     }
 
-    
+
     public abstract void scmPublishExecute()
         throws MojoExecutionException, MojoFailureException;
 }
