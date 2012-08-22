@@ -167,6 +167,13 @@ public abstract class AbstractScmPublishMojo
      */
     protected boolean tryUpdate;
 
+    /**
+     * Do not delete files to the scm
+     *
+     * @parameter expression="${scmpublish.skipDeletedFiles}" default-value="false"
+     */
+    protected boolean skipDeletedFiles;
+
     protected ScmProvider scmProvider;
 
     protected ScmRepository scmRepository;

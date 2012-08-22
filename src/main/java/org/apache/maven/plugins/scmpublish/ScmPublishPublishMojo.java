@@ -19,6 +19,17 @@ package org.apache.maven.plugins.scmpublish;
  * under the License.
  */
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.scm.ScmException;
+import org.apache.maven.scm.ScmFileSet;
+import org.apache.maven.scm.command.add.AddScmResult;
+import org.apache.maven.scm.command.checkin.CheckInScmResult;
+import org.apache.maven.scm.command.remove.RemoveScmResult;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -34,20 +45,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.scm.ScmException;
-import org.apache.maven.scm.ScmFileSet;
-import org.apache.maven.scm.command.add.AddScmResult;
-import org.apache.maven.scm.command.checkin.CheckInScmResult;
-import org.apache.maven.scm.command.remove.RemoveScmResult;
-
 /**
  * Compare the list of files now on disk to the original inventory, then fire off scm adds and deletes as needed.
- * 
+ *
  * @goal publish
  * @phase post-site
  * @aggregate
@@ -59,20 +59,21 @@ public class ScmPublishPublishMojo
 
     /**
      * Display list of added, deleted, and changed files, but do not do any actual SCM operations.
-     * 
+     *
      * @parameter expression="${scmpublish.dryRun}"
      */
     private boolean dryRun;
 
     /**
      * Run add and delete commands, but leave the actually checkin for the user to run manually.
-     * 
+     *
      * @parameter expression="${scmpublish.skipCheckin}"
      */
     private boolean skipCheckin;
 
     /**
      * SCM log/checkin comment for this publication.
+     *
      * @parameter expression="${scmpublish.checkinComment}" default-value="Site checkin for project ${project.name}"
      */
     private String checkinComment;
@@ -106,7 +107,7 @@ public class ScmPublishPublishMojo
             in = new BufferedReader( new InputStreamReader( new FileInputStream( tmpFile ), siteOutputEncoding ) );
             out = new PrintWriter( new OutputStreamWriter( new FileOutputStream( f ), siteOutputEncoding ) );
             String line;
-            while ( ( line = in.readLine() ) != null ) 
+            while ( ( line = in.readLine() ) != null )
             {
                 if ( in.ready() )
                 {
@@ -209,7 +210,7 @@ public class ScmPublishPublishMojo
 
     /**
      * Check-in content from scm checkout.
-     * 
+     *
      * @throws MojoExecutionException
      */
     protected void checkinFiles()
@@ -228,8 +229,8 @@ public class ScmPublishPublishMojo
             {
                 logError( "checkin operation failed: %s",
                           checkinResult.getProviderMessage() + " " + checkinResult.getCommandOutput() );
-                throw new MojoExecutionException( "Failed to checkin files: " + checkinResult.getProviderMessage()
-                    + " " + checkinResult.getCommandOutput() );
+                throw new MojoExecutionException( "Failed to checkin files: " + checkinResult.getProviderMessage() + " "
+                                                      + checkinResult.getCommandOutput() );
             }
         }
         catch ( ScmException e )
@@ -241,6 +242,11 @@ public class ScmPublishPublishMojo
     protected void deleteFiles( Collection<File> deleted )
         throws MojoExecutionException
     {
+        if ( skipDeletedFiles )
+        {
+            logInfo( "deleting files is skipped" );
+            return;
+        }
         List<File> deletedList = new ArrayList<File>();
         for ( File f : deleted )
         {
@@ -255,8 +261,8 @@ public class ScmPublishPublishMojo
             {
                 logError( "delete operation failed: %s",
                           deleteResult.getProviderMessage() + " " + deleteResult.getCommandOutput() );
-                throw new MojoExecutionException( "Failed to delete files: " + deleteResult.getProviderMessage()
-                    + " " + deleteResult.getCommandOutput() );
+                throw new MojoExecutionException( "Failed to delete files: " + deleteResult.getProviderMessage() + " "
+                                                      + deleteResult.getCommandOutput() );
             }
         }
         catch ( ScmException e )
@@ -267,7 +273,7 @@ public class ScmPublishPublishMojo
 
     /**
      * Add files to scm.
-     * 
+     *
      * @param added files to be added
      * @throws MojoFailureException
      * @throws MojoExecutionException
@@ -301,9 +307,9 @@ public class ScmPublishPublishMojo
 
         for ( File relativized : dirsToAdd )
         {
-            try 
+            try
             {
-                ScmFileSet fileSet = new ScmFileSet( checkoutDirectory , relativized );
+                ScmFileSet fileSet = new ScmFileSet( checkoutDirectory, relativized );
                 AddScmResult addDirResult = scmProvider.add( scmRepository, fileSet, "Adding directory" );
                 if ( !addDirResult.isSuccess() )
                 {
@@ -324,8 +330,8 @@ public class ScmPublishPublishMojo
             {
                 logError( "add operation failed: %s",
                           addResult.getProviderMessage() + " " + addResult.getCommandOutput() );
-                throw new MojoExecutionException( "Failed to add new files: " + addResult.getProviderMessage()
-                    + " " + addResult.getCommandOutput() );
+                throw new MojoExecutionException(
+                    "Failed to add new files: " + addResult.getProviderMessage() + " " + addResult.getCommandOutput() );
             }
         }
         catch ( ScmException e )
