@@ -224,6 +224,7 @@ public class ScmPublishPublishMojo
         ScmFileSet updatedFileSet = new ScmFileSet( checkoutDirectory );
         try
         {
+            logInfo( "Checkin to the scm" );
             CheckInScmResult checkinResult = scmProvider.checkIn( scmRepository, updatedFileSet, checkinComment );
             if ( !checkinResult.isSuccess() )
             {
