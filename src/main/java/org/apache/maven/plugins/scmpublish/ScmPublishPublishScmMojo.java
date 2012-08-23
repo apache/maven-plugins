@@ -149,7 +149,7 @@ public class ScmPublishPublishScmMojo
     {
         if ( requireNormalizeNewlines( srcFile ) )
         {
-            normalizeNewlines( srcFile, destFile );
+            copyAndNormalizeNewlines( srcFile, destFile );
         }
         else
         {
@@ -164,7 +164,7 @@ public class ScmPublishPublishScmMojo
      * @param destFile the destination file
      * @throws IOException
      */
-    private void normalizeNewlines( File srcFile, File destFile )
+    private void copyAndNormalizeNewlines( File srcFile, File destFile )
         throws IOException
     {
         BufferedReader in = null;
