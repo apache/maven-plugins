@@ -326,8 +326,8 @@ public class ShadeMojo
      * When false, it will just relocate the java source files to the shaded paths, but will not modify the
      * actual contents of the java source files.
      *
-     * @parameter expression="${shadeSourcesContent}" default-value="false"
      */
+    @Parameter(property = "shadeSourcesContent", defaultValue = "false")
     private boolean shadeSourcesContent;
 
     /**
