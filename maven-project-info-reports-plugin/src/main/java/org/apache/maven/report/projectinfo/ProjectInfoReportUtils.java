@@ -42,7 +42,8 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
 import org.apache.commons.lang.math.NumberUtils;
-import org.apache.commons.validator.UrlValidator;
+import org.apache.commons.validator.routines.RegexValidator;
+import org.apache.commons.validator.routines.UrlValidator;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.artifact.factory.ArtifactFactory;
@@ -67,7 +68,9 @@ import org.codehaus.plexus.util.StringUtils;
  */
 public class ProjectInfoReportUtils
 {
-    private static final UrlValidator URL_VALIDATOR = new UrlValidator( new String[] { "http", "https" } );
+    private static final UrlValidator URL_VALIDATOR = new UrlValidator( new String[] { "http", "https" },
+                                                                        new RegexValidator( "^([" + "\\p{Alnum}\\-\\."
+                                                                            + "]*)(:\\d*)?(.*)?" ), 0 );
 
     /** The timeout when getting the url input stream */
     private static final int TIMEOUT = 1000 * 5;
