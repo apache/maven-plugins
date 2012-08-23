@@ -247,7 +247,8 @@ public class ScmPublishPublishMojo
                 throw new MojoExecutionException( "Failed to checkin files: " + checkinResult.getProviderMessage() + " "
                                                       + checkinResult.getCommandOutput() );
             }
-            logInfo( "Checked file to revision:" + checkinResult.getScmRevision() );
+            logInfo( "Checkin %d file(s) to revision: %s", checkinResult.getCheckedInFiles().size(),
+                     checkinResult.getScmRevision() );
         }
         catch ( ScmException e )
         {
