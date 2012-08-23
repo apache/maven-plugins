@@ -39,6 +39,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -83,6 +84,13 @@ public class ScmPublishPublishMojo
      */
     private final static String[] NORMALIZE_EXTENSIONS = { "html", "css", "js" };
 
+    /**
+     * extra file extensions to normalize line ending (will be added to list html,css,js)
+     *
+     * @parameter
+     */
+    protected String[] extraNormalizeExtensions;
+
     private File relativize( File base, File file )
     {
         return new File( base.toURI().relativize( file.toURI() ).getPath() );
@@ -91,7 +99,13 @@ public class ScmPublishPublishMojo
     protected boolean requireNormalizeNewlines( File f )
         throws IOException
     {
-        return FilenameUtils.isExtension( f.getName(), NORMALIZE_EXTENSIONS );
+        List<String> extensions = Arrays.asList( NORMALIZE_EXTENSIONS );
+        if ( extraNormalizeExtensions != null )
+        {
+            extensions.addAll( Arrays.asList( extraNormalizeExtensions ) );
+        }
+
+        return FilenameUtils.isExtension( f.getName(), extensions );
     }
 
     private void normalizeNewlines( File f )
