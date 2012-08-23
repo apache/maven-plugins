@@ -151,10 +151,10 @@ public class ScmPublishPublishScmMojo
         {
             normalizeNewlines( srcFile, destFile );
         }
-        else
-        {
-            FileUtils.copyFile( srcFile, destFile );
-        }
+        //else
+        //{
+        FileUtils.copyFile( srcFile, destFile );
+        //}
     }
 
     /**
