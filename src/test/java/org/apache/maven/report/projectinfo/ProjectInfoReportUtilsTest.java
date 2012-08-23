@@ -124,6 +124,8 @@ public class ProjectInfoReportUtilsTest
     public void testGetInputStreamURL()
         throws Exception
     {
+        assertTrue( ProjectInfoReportUtils.isArtifactUrlValid( "http://my.intern.domain:8080/test" ) );
+
         // file
         URL url = new File( getBasedir(), "/target/classes/project-info-report.properties" ).toURI().toURL();
 
