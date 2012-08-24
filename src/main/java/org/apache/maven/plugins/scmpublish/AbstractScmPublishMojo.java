@@ -216,6 +216,8 @@ public abstract class AbstractScmPublishMojo
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         releaseDescriptor.setInteractive( settings.isInteractiveMode() );
 
+        //TODO use from settings with decrypt stuff
+
         releaseDescriptor.setScmPassword( password );
         releaseDescriptor.setScmUsername( username );
 
