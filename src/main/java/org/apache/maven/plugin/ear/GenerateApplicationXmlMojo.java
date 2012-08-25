@@ -100,6 +100,12 @@ public class GenerateApplicationXmlMojo
     @Parameter
     private PlexusConfiguration security;
 
+    /**
+     * The env-entries to be added to the auto-generated
+     * application.xml file. Since JavaEE6.
+     */
+    @Parameter( alias = "env-entries" )
+    private PlexusConfiguration envEntries;
 
     public void execute()
         throws MojoExecutionException, MojoFailureException
@@ -185,8 +191,9 @@ public class GenerateApplicationXmlMojo
 
         final ApplicationXmlWriter writer = new ApplicationXmlWriter( javaEEVersion, encoding, generateModuleId );
         final ApplicationXmlWriterContext context =
-            new ApplicationXmlWriterContext( descriptor, getModules(), buildSecurityRoles(), displayName, description,
-                                             defaultLibBundleDir, applicationName, initializeInOrder );
+            new ApplicationXmlWriterContext( descriptor, getModules(), buildSecurityRoles(), buildEnvEntries(),
+                                             displayName, description, defaultLibBundleDir, applicationName,
+                                             initializeInOrder );
         writer.write( context );
     }
 
@@ -251,6 +258,49 @@ public class GenerateApplicationXmlMojo
         catch ( PlexusConfigurationException e )
         {
             throw new EarPluginException( "Invalid security-role configuration", e );
+        }
+
+    }
+
+    /**
+     * Builds the env-entries based on the configuration.
+     *
+     * @return a list of EnvEntry object(s)
+     * @throws EarPluginException if the configuration is invalid
+     */
+    private List<EnvEntry> buildEnvEntries()
+        throws EarPluginException
+    {
+        final List<EnvEntry> result = new ArrayList<EnvEntry>();
+        if ( envEntries == null )
+        {
+            return result;
+        }
+        try
+        {
+            final PlexusConfiguration[] allEnvEntries = envEntries.getChildren( EnvEntry.ENV_ENTRY );
+
+            for ( PlexusConfiguration envEntry : allEnvEntries )
+            {
+                final String description = envEntry.getChild( EnvEntry.DESCRIPTION ).getValue();
+                final String envEntryName = envEntry.getChild( EnvEntry.ENV_ENTRY_NAME ).getValue();
+                final String envEntryType = envEntry.getChild( EnvEntry.ENV_ENTRY_TYPE ).getValue();
+                final String envEntryValue = envEntry.getChild( EnvEntry.ENV_ENTRY_VALUE ).getValue();
+
+                try
+                {
+                    result.add( new EnvEntry( description, envEntryName, envEntryType, envEntryValue ) );
+                }
+                catch ( IllegalArgumentException e )
+                {
+                    throw new EarPluginException( "Invalid env-entry [" + envEntry + "]", e );
+                }
+            }
+            return result;
+        }
+        catch ( PlexusConfigurationException e )
+        {
+            throw new EarPluginException( "Invalid env-entry configuration", e );
         }
 
     }
