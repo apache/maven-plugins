@@ -208,7 +208,6 @@ under the License.
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-component-annotations</artifactId>
-      <version>1.5.5</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>
