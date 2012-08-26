@@ -43,6 +43,7 @@
           <version>3.0</version>
           <configuration>
             <stagingDirectory>target/scmpublish-checkout</stagingDirectory>
+            <skipDeploy>true</skipDeploy>
           </configuration>
         </plugin>
       </plugins>

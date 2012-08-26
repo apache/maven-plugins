@@ -85,12 +85,29 @@ Usage
 
 * Using the Site Lifecycle
 
-   The alternative is to attach the necessary activities to the site lifecycle. This requires more
-   XML in the POM, but it may be easier to use if you already customize the site lifecycle
-   for other reasons.
+   The alternative is to attach the necessary activities to the site lifecycle and deactivate
+   maven-site-plugin's site deploy goal. This requires more XML in the POM, but it may be easier
+   to use if you already customize the site lifecycle for other reasons.
 
 +-----+
+  <distributionManagement>
+    <site>
+      <id>site</id>
+      <url>scm:svn:https://svn.apache.org/repos/asf/maven/sandbox/bimargulies/site-test</url>
+    </site>
+  </distributionManagement>
   <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-site-plugin</artifactId>
+          <configuration>
+            <skipDeploy>true</skipDeploy>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -109,9 +126,6 @@ Usage
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-scm-publish-plugin</artifactId>
         <version>@pom.version@</version>
-        <configuration>
-          <pubScmUrl>scm:svn:https://svn.apache.org/repos/asf/maven/sandbox/bimargulies/site-test</pubScmUrl>
-        </configuration>
         <executions>
           <execution>
             <id>scm-publish</id>
