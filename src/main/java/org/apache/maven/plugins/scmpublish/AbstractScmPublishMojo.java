@@ -86,7 +86,7 @@ public abstract class AbstractScmPublishMojo
     protected String includes;
 
     /**
-     * List of provider implementations.
+     * List of SCM provider implementations.
      *
      * @parameter
      */
