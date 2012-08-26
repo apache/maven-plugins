@@ -24,6 +24,9 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.scm.ScmException;
 import org.apache.maven.scm.ScmFileSet;
 import org.apache.maven.scm.command.add.AddScmResult;
@@ -49,34 +52,29 @@ import java.util.TreeSet;
 /**
  * Compare the list of files now on disk to the original inventory, then fire off scm adds and deletes as needed.
  *
- * @goal publish
- * @phase post-site
- * @aggregate
  * @deprecated superseded by publish-scm which does the same in on step only and has more features
  */
+@Mojo( name = "publish", defaultPhase = LifecyclePhase.POST_SITE, aggregator = true )
 public class ScmPublishPublishMojo
     extends AbstractScmPublishMojo
 {
 
     /**
      * Display list of added, deleted, and changed files, but do not do any actual SCM operations.
-     *
-     * @parameter expression="${scmpublish.dryRun}"
      */
+    @Parameter( property = "scmpublish.dryRun" )
     private boolean dryRun;
 
     /**
      * Run add and delete commands, but leave the actually checkin for the user to run manually.
-     *
-     * @parameter expression="${scmpublish.skipCheckin}"
      */
+    @Parameter( property = "scmpublish.skipCheckin" )
     private boolean skipCheckin;
 
     /**
      * SCM log/checkin comment for this publication.
-     *
-     * @parameter expression="${scmpublish.checkinComment}" default-value="Site checkin for project ${project.name}"
      */
+    @Parameter( property = "scmpublish.checkinComment", defaultValue="Site checkin for project ${project.name}" )
     private String checkinComment;
 
     /**
@@ -86,9 +84,8 @@ public class ScmPublishPublishMojo
 
     /**
      * extra file extensions to normalize line ending (will be added to list html,css,js)
-     *
-     * @parameter
      */
+    @Parameter
     protected String[] extraNormalizeExtensions;
 
     private File relativize( File base, File file )

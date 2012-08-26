@@ -49,6 +49,7 @@ under the License.
   <properties>
     <scmVersion>1.7</scmVersion>
     <mavenVersion>2.2.1</mavenVersion>
+    <pluginTools>3.1</pluginTools>
   </properties>
 
   <dependencies>
@@ -76,6 +77,11 @@ under the License.
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-settings</artifactId>
       <version>${mavenVersion}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.plugin-tools</groupId>
+      <artifactId>maven-plugin-annotations</artifactId>
+      <version>${pluginTools}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.scm</groupId>
@@ -123,10 +129,27 @@ under the License.
         <filtering>true</filtering>
       </resource>
     </resources>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <artifactId>maven-plugin-plugin</artifactId>
+          <version>${pluginTools}</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
     <plugins>
       <plugin>
         <artifactId>maven-plugin-plugin</artifactId>
+        <configuration>
+          <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
+        </configuration>
         <executions>
+          <execution>
+            <id>mojo-descriptor</id>
+            <goals>
+              <goal>descriptor</goal>
+            </goals>
+          </execution>
           <execution>
             <id>generated-helpmojo</id>
             <goals>

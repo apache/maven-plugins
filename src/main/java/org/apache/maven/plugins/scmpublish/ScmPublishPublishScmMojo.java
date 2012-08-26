@@ -21,6 +21,9 @@ import org.apache.commons.io.filefilter.NameFileFilter;
 import org.apache.commons.io.filefilter.NotFileFilter;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
 /*
@@ -46,25 +49,20 @@ import org.apache.maven.project.MavenProject;
  * Publish a content to scm in one step. By default, content is taken from default site staging directory
  * <code>${project.build.directory}/staging</code>.
  * Can be used without project, so usable to update any SCM with any content.
- * 
- * @goal publish-scm
- * @aggregate
- * @requiresProject false
  */
+@Mojo( name = "publish-scm", aggregator = true, requiresProject = false )
 public class ScmPublishPublishScmMojo
     extends ScmPublishPublishMojo
 {
     /**
      * The content to be published.
-     * 
-     * @parameter expression="${scmpublish.content}" default-value="${project.build.directory}/staging"
      */
+    @Parameter( property = "scmpublish.content", defaultValue="${project.build.directory}/staging" )
     private File content;
 
     /**
-     * @parameter default-value="${project}"
-     * @readonly
      */
+    @Component
     protected MavenProject project;
 
     private List<File> deleted = new ArrayList<File>();

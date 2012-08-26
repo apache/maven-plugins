@@ -25,6 +25,8 @@ import java.util.List;
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
 
 /**
  * Prepare a directory for version-managed site generation. This checks out the specified directory from the SCM,
@@ -42,12 +44,9 @@ import org.apache.maven.plugin.MojoFailureException;
  * 
  * TODO: we want
  * multiple includes/excludes, but the scm API doesn't go there.
- * 
- * @goal prepare
- * @phase pre-site
- * @aggregate
  * @deprecated superseded by publish-scm which does the same in on step only and has more features
  */
+@Mojo( name = "prepare", defaultPhase = LifecyclePhase.PRE_SITE, aggregator = true )
 public class ScmPublishInventoryMojo
     extends AbstractScmPublishMojo
 {

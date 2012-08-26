@@ -24,6 +24,8 @@ import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.scm.ScmException;
 import org.apache.maven.scm.ScmFileSet;
 import org.apache.maven.scm.ScmResult;
@@ -49,130 +51,106 @@ public abstract class AbstractScmPublishMojo
 
     /**
      * Location of the inventory file.
-     *
-     * @parameter expression="${scmpublish.inventoryFile}"
-     * default-value="${project.build.directory}/scmpublish-inventory.js"
      */
+    @Parameter( property = "scmpublish.inventoryFile", defaultValue="${project.build.directory}/scmpublish-inventory.js" )
     protected File inventoryFile;
 
     /**
      * Location of the scm publication tree.
-     *
-     * @parameter expression="${scmpublish.pubScmUrl}" default-value="${project.distributionManagement.site.url}"
-     * @required
      */
+    @Parameter( property = "scmpublish.pubScmUrl", defaultValue = "${project.distributionManagement.site.url}", required = true )
     protected String pubScmUrl;
 
     /**
      * Location where the scm check-out is done.
-     *
-     * @parameter expression="${scmpublish.checkoutDirectory}"
-     * default-value="${project.build.directory}/scmpublish-checkout"
      */
+    @Parameter( property = "scmpublish.checkoutDirectory", defaultValue="${project.build.directory}/scmpublish-checkout" )
     protected File checkoutDirectory;
 
     /**
      * Patterns to exclude from the scm tree.
-     *
-     * @parameter
      */
+    @Parameter
     protected String excludes;
 
     /**
      * Patterns to include in the scm tree.
-     *
-     * @parameter
      */
+    @Parameter
     protected String includes;
 
     /**
      * List of SCM provider implementations.
-     *
-     * @parameter
      */
+    @Parameter
     private Map<String, String> providerImplementations;
 
     /**
      * The SCM manager.
-     *
-     * @component
      */
+    @Component
     private ScmManager scmManager;
 
     /**
      * Tool that gets a configured SCM repository from release configuration.
-     *
-     * @component
      */
+    @Component
     protected ScmRepositoryConfigurator scmRepositoryConfigurator;
 
     /**
      * The SCM username to use.
-     *
-     * @parameter expression="${username}"
      */
+    @Parameter( property = "username" )
     protected String username;
 
     /**
      * The SCM password to use.
-     *
-     * @parameter expression="${password}"
      */
+    @Parameter( property = "password" )
     protected String password;
-
-    /**
-     * @parameter default-value="${settings}"
-     * @required
-     * @readonly
-     */
-    protected Settings settings;
 
     /**
      * Use a local checkout instead of doing a checkout from the upstream repository. ATTENTION: This will only work
      * with distributed SCMs which support the file:// protocol TODO: we should think about having the defaults for the
      * various SCM providers provided via modello!
-     *
-     * @parameter expression="${localCheckout}" default-value="false"
-     * @since 2.0
      */
+    @Parameter( property = "localCheckout", defaultValue = "false" )
     protected boolean localCheckout;
-
-    /**
-     * @parameter default-value="${basedir}"
-     * @required
-     * @readonly
-     */
-    protected File basedir;
-
-    /**
-     * @parameter default-value="${session}"
-     * @readonly
-     * @required
-     */
-    protected MavenSession session;
 
     /**
      * The outputEncoding parameter of the site plugin. This plugin will corrupt your site
      * if this does not match the value used by the site plugin.
-     *
-     * @parameter expression="${outputEncoding}" default-value="${project.reporting.outputEncoding}"
      */
+    @Parameter( property = "outputEncoding", defaultValue = "${project.reporting.outputEncoding}" )
     protected String siteOutputEncoding;
 
     /**
      * if the checkout directory exists and this flag is activated the plugin will try an update rather
      * than delete then checkout
-     *
-     * @parameter expression="${scmpublish.tryUpdate}" default-value="false"
      */
+    @Parameter( property = "scmpublish.tryUpdate", defaultValue = "false" )
     protected boolean tryUpdate;
 
     /**
      * Do not delete files to the scm
-     *
-     * @parameter expression="${scmpublish.skipDeletedFiles}" default-value="false"
      */
+    @Parameter( property = "scmpublish.skipDeletedFiles", defaultValue = "false" )
     protected boolean skipDeletedFiles;
+
+    /**
+     */
+    @Parameter( defaultValue = "${basedir}", readonly = true )
+    protected File basedir;
+
+    /**
+     */
+    @Component
+    protected Settings settings;
+
+    /**
+     */
+    @Component
+    protected MavenSession session;
 
     protected ScmProvider scmProvider;
 
