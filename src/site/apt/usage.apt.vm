@@ -119,6 +119,9 @@ Usage
             <goals>
               <goal>stage</goal>
             </goals>
+            <configuration>
+              <skipDeploy>false</skipDeploy>
+            </configuration>
           </execution>
         </executions>
       </plugin>
