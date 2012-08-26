@@ -17,6 +17,8 @@ import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.filefilter.NameFileFilter;
+import org.apache.commons.io.filefilter.NotFileFilter;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
@@ -81,8 +83,9 @@ public class ScmPublishPublishScmMojo
     private void update( File checkout, File dir, List<String> doNotDeleteDirs )
         throws IOException
     {
-        Set<String> checkoutContent =
-            new HashSet<String>( ScmPublishInventory.listInventory( checkout, scmProvider.getScmSpecificFilename() ) );
+        String[] files = checkout.list( new NotFileFilter( new NameFileFilter( scmProvider.getScmSpecificFilename() ) ) );
+
+        Set<String> checkoutContent = new HashSet<String>( Arrays.asList( files ) );
         List<String> dirContent = ( dir != null ) ? Arrays.asList( dir.list() ) : Collections.<String>emptyList();
 
         Set<String> deleted = new HashSet<String>( checkoutContent );
