@@ -84,7 +84,7 @@ public class ResourcesMojo
     /**
      *
      */
-    @Parameter( defaultValue = "${project}", required = true, readonly = true )
+    @Component
     protected MavenProject project;
 
     /**
@@ -133,7 +133,7 @@ public class ResourcesMojo
     /**
      *
      */
-    @Parameter( defaultValue = "${session}", required = true, readonly = true )
+    @Component
     protected MavenSession session;
 
     /**
