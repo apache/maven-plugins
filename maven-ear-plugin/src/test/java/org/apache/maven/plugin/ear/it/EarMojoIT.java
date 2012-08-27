@@ -822,4 +822,31 @@ public class EarMojoIT
                        new String[]{ "ejb-sample-one.jar", "war-sample-one-1.0.war", "jar-sample-two-1.0.jar" } );
     }
 
+    /**
+     * Builds an EAR with the 'default' library directory mode. Uses the value of the defaultLibBundleDir.
+     */
+    public void testProject079()
+        throws Exception
+    {
+        doTestProject( "project-079", new String[]{ "ejb-sample-one-1.0.jar", "myLibs/jar-sample-one-1.0.jar" } );
+    }
+
+    /**
+     * Builds an EAR with the 'empty' library directory mode. Generate an empty library-directory element.
+     */
+    public void testProject080()
+        throws Exception
+    {
+        doTestProject( "project-080", new String[]{ "ejb-sample-one-1.0.jar", "myLibs/jar-sample-one-1.0.jar" } );
+    }
+
+    /**
+     * Builds an EAR with the 'none' library directory mode. Does not generate an library-directory element.
+     */
+    public void testProject081()
+        throws Exception
+    {
+        doTestProject( "project-081", new String[]{ "ejb-sample-one-1.0.jar", "myLibs/jar-sample-one-1.0.jar" } );
+    }
+
 }

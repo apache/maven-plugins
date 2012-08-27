@@ -33,6 +33,7 @@ import org.codehaus.plexus.util.FileUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -47,6 +48,11 @@ public class GenerateApplicationXmlMojo
     extends AbstractEarMojo
 {
 
+    public static final String DEFAULT = "DEFAULT";
+
+    public static final String EMPTY = "EMPTY";
+
+    public static final String NONE = "NONE";
 
     /**
      * Whether the application.xml should be generated or not.
@@ -80,6 +86,24 @@ public class GenerateApplicationXmlMojo
      */
     @Parameter( defaultValue = "${project.description}" )
     private String description;
+
+    /**
+     * Defines how the <tt>library-directory</tt> element should be written in the application.xml file.
+     * <p/>
+     * Three special values can be set:
+     * <ul>
+     * <li><code>DEFAULT</code> (default) generates a <tt>library-directory</tt> element with
+     * the value of the <tt>defaultLibBundleDir</tt>  parameter</li>
+     * <li><code>EMPTY</code> generates an empty <tt>library-directory</tt> element. Per spec, this disables
+     * the scanning of jar files in the <tt>lib</tt> directory of the ear file</li>
+     * <li><code>NONE</code> does not write the library-directory element at all. A corner case that can
+     * be used in Oracle Weblogic to delegate the classloading to the container</li>
+     * </ul>
+     * <p/>
+     * Since JavaEE5.
+     */
+    @Parameter( defaultValue = DEFAULT )
+    private String libraryDirectoryMode;
 
     /**
      * Defines the value of the initialize in order element to be used when
@@ -192,7 +216,7 @@ public class GenerateApplicationXmlMojo
         final ApplicationXmlWriter writer = new ApplicationXmlWriter( javaEEVersion, encoding, generateModuleId );
         final ApplicationXmlWriterContext context =
             new ApplicationXmlWriterContext( descriptor, getModules(), buildSecurityRoles(), buildEnvEntries(),
-                                             displayName, description, defaultLibBundleDir, applicationName,
+                                             displayName, description, getActualLibraryDirectory(), applicationName,
                                              initializeInOrder );
         writer.write( context );
     }
@@ -303,5 +327,33 @@ public class GenerateApplicationXmlMojo
             throw new EarPluginException( "Invalid env-entry configuration", e );
         }
 
+    }
+
+    /**
+     * Returns the value to use for the <tt>library-directory</tt> element, based on the library directory mode.
+     */
+    private String getActualLibraryDirectory()
+        throws EarPluginException
+    {
+        final String mode = libraryDirectoryMode == null ? DEFAULT : libraryDirectoryMode.toUpperCase();
+
+        if ( DEFAULT.equals( mode ) )
+        {
+            return defaultLibBundleDir;
+        }
+        else if ( EMPTY.equals( mode ) )
+        {
+            return "";
+        }
+        else if ( NONE.equals( mode ) )
+        {
+            return null;
+        }
+        else
+        {
+            throw new EarPluginException(
+                "Unsupported library directory mode [" + libraryDirectoryMode + "] Supported modes " +
+                    ( Arrays.asList( DEFAULT, EMPTY, NONE ) ) );
+        }
     }
 }
