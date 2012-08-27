@@ -185,3 +185,9 @@ EAR Plugin Tests
   * project-077: builds an EAR with custom env entries settings and JavaEE 6
 
   * project-078: builds an EAR with the no version for ejb file name mapping
+
+  * project-079: builds an EAR with the 'default' library directory mode. Uses the value of the defaultLibBundleDir
+
+  * project-080: builds an EAR with the 'empty' library directory mode. Generate an empty library-directory element
+
+  * project-081: builds an EAR with the 'none' library directory mode. Does not generate an library-directory element
