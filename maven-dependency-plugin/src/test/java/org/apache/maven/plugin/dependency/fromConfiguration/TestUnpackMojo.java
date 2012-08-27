@@ -76,6 +76,7 @@ public class TestUnpackMojo
         mojo.setResolver( new StubArtifactResolver( stubFactory, false, false ) );
         mojo.setLocal( new StubArtifactRepository( this.testDir.getAbsolutePath() ) );
         mojo.setArtifactCollector( new StubArtifactCollector() );
+        mojo.setUseJvmChmod( true );
     }
 
     public ArtifactItem getSingleArtifactItem( boolean removeVersion )

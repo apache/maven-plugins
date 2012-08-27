@@ -19,16 +19,16 @@ package org.apache.maven.plugin.dependency;
  * under the License.    
  */
 
-import java.io.File;
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
-
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.dependency.testUtils.DependencyArtifactStubFactory;
 import org.apache.maven.plugin.dependency.utils.DependencyUtil;
 import org.apache.maven.project.MavenProject;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
 public class TestUnpackDependenciesMojo2
     extends AbstractDependencyMojoTestCase
@@ -49,6 +49,7 @@ public class TestUnpackDependenciesMojo2
         File testPom = new File( getBasedir(), "target/test-classes/unit/unpack-dependencies-test/plugin-config.xml" );
         mojo = (UnpackDependenciesMojo) lookupMojo( "unpack-dependencies", testPom );
         mojo.outputDirectory = new File( this.testDir, "outputDirectory" );
+        mojo.useJvmChmod = true;
         // mojo.silent = true;
 
         // it needs to get the archivermanager
@@ -70,20 +71,22 @@ public class TestUnpackDependenciesMojo2
         mojo.markersDirectory = new File( this.testDir, "markers" );
 
     }
-    
+
     protected void tearDown()
     {
         super.tearDown();
-        
+
         mojo = null;
         System.gc();
     }
 
     public File getUnpackedFile( Artifact artifact )
     {
-        File destDir = DependencyUtil.getFormattedOutputDirectory( mojo.isUseSubDirectoryPerScope(), mojo.isUseSubDirectoryPerType(), mojo
-            .isUseSubDirectoryPerArtifact(), mojo.useRepositoryLayout, mojo.stripVersion, mojo.getOutputDirectory(),
-                                                                   artifact );
+        File destDir = DependencyUtil.getFormattedOutputDirectory( mojo.isUseSubDirectoryPerScope(),
+                                                                   mojo.isUseSubDirectoryPerType(),
+                                                                   mojo.isUseSubDirectoryPerArtifact(),
+                                                                   mojo.useRepositoryLayout, mojo.stripVersion,
+                                                                   mojo.getOutputDirectory(), artifact );
         File unpacked = new File( destDir, DependencyArtifactStubFactory.getUnpackableFileName( artifact ) );
         assertTrue( unpacked.exists() );
         return unpacked;
@@ -217,7 +220,7 @@ public class TestUnpackDependenciesMojo2
         mojo.execute();
 
         assertTrue( time != unpackedFile.lastModified() );
-        
+
         System.gc();
     }
 

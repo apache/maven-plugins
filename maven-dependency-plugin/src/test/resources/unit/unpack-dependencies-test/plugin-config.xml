@@ -23,8 +23,9 @@
       <plugin>
         <artifactId>maven-dependency-plugin</artifactId>
           <configuration>
-              <project implementation="org.apache.maven.plugin.dependency.testUtils.stubs.DependencyProjectStub"/>
-              <silent>true</silent>
+            <project implementation="org.apache.maven.plugin.dependency.testUtils.stubs.DependencyProjectStub"/>
+            <silent>true</silent>
+            <useJvmChmod>true</useJvmChmod>
           </configuration>
       </plugin>
     </plugins>

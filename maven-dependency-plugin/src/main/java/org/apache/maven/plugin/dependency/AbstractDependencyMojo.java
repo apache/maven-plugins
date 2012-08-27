@@ -102,8 +102,8 @@ public abstract class AbstractDependencyMojo
      *
      * @since 2.5.1
      */
-    @Parameter( property = "dependency.useJvmChmod", defaultValue = "false" )
-    private boolean useJvmChmod;
+    @Parameter( property = "dependency.useJvmChmod", defaultValue = "true" )
+    protected boolean useJvmChmod;
 
     /**
      * POM
@@ -403,6 +403,16 @@ public abstract class AbstractDependencyMojo
     public void setArtifactMetadataSource( ArtifactMetadataSource theArtifactMetadataSource )
     {
         this.artifactMetadataSource = theArtifactMetadataSource;
+    }
+
+    public boolean isUseJvmChmod()
+    {
+        return useJvmChmod;
+    }
+
+    public void setUseJvmChmod( boolean useJvmChmod )
+    {
+        this.useJvmChmod = useJvmChmod;
     }
 
     private void logUnpack( File file, File location, String includes, String excludes )
