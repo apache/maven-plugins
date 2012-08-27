@@ -19,12 +19,6 @@ package org.apache.maven.plugin.dependency;
  * under the License.    
  */
 
-import java.io.File;
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
-
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -36,6 +30,12 @@ import org.apache.maven.plugin.testing.stubs.StubArtifactRepository;
 import org.apache.maven.plugin.testing.stubs.StubArtifactResolver;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.StringUtils;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 public class TestUnpackDependenciesMojo
     extends AbstractDependencyMojoTestCase
@@ -56,6 +56,7 @@ public class TestUnpackDependenciesMojo
         File testPom = new File( getBasedir(), "target/test-classes/unit/unpack-dependencies-test/plugin-config.xml" );
         mojo = (UnpackDependenciesMojo) lookupMojo( "unpack-dependencies", testPom );
         mojo.outputDirectory = new File( this.testDir, "outputDirectory" );
+        mojo.useJvmChmod = true;
         // mojo.silent = true;
 
         // it needs to get the archivermanager
@@ -77,27 +78,26 @@ public class TestUnpackDependenciesMojo
         mojo.markersDirectory = new File( this.testDir, "markers" );
 
     }
-    
+
     protected void tearDown()
     {
         super.tearDown();
-        
+
         mojo = null;
         System.gc();
     }
 
     public void assertUnpacked( Artifact artifact )
-    {                
+    {
         assertUnpacked( true, artifact );
     }
 
     public void assertUnpacked( boolean val, Artifact artifact )
     {
-        File folder = DependencyUtil.getFormattedOutputDirectory( mojo.useSubDirectoryPerScope,
-                                                                  mojo.useSubDirectoryPerType,
-                                                                  mojo.useSubDirectoryPerArtifact,
-                                                                  mojo.useRepositoryLayout, mojo.stripVersion,
-                                                                  mojo.outputDirectory, artifact );
+        File folder =
+            DependencyUtil.getFormattedOutputDirectory( mojo.useSubDirectoryPerScope, mojo.useSubDirectoryPerType,
+                                                        mojo.useSubDirectoryPerArtifact, mojo.useRepositoryLayout,
+                                                        mojo.stripVersion, mojo.outputDirectory, artifact );
 
         File destFile = new File( folder, DependencyArtifactStubFactory.getUnpackableFileName( artifact ) );
 
@@ -270,7 +270,7 @@ public class TestUnpackDependenciesMojo
 
             assertUnpacked( false, artifact );
         }
-        
+
         mojo.excludeTypes = "";
         mojo.execute();
 
@@ -465,7 +465,7 @@ public class TestUnpackDependenciesMojo
             Artifact artifact = iter.next();
             assertUnpacked( false, artifact );
         }
-        mojo.excludeArtifactIds ="";
+        mojo.excludeArtifactIds = "";
         mojo.execute();
 
         iter = mojo.project.getArtifacts().iterator();
@@ -520,7 +520,7 @@ public class TestUnpackDependenciesMojo
         mojo.includeGroupIds = "one";
         mojo.excludeGroupIds = "one";
         //shouldn't get anything
-        
+
         mojo.execute();
 
         Iterator<Artifact> iter = mojo.project.getArtifacts().iterator();
@@ -530,7 +530,7 @@ public class TestUnpackDependenciesMojo
             // Testing with artifact id because group id is not in filename
             assertUnpacked( false, artifact );
         }
-        
+
         mojo.excludeGroupIds = "";
         mojo.execute();
 
@@ -541,7 +541,7 @@ public class TestUnpackDependenciesMojo
             // Testing with artifact id because group id is not in filename
             assertUnpacked( artifact.getGroupId().equals( "one" ), artifact );
         }
-        
+
     }
 
     public void testCDMClassifier()
@@ -590,8 +590,9 @@ public class TestUnpackDependenciesMojo
                     useType = testType;
                 }
             }
-            Artifact unpacked = stubFactory.createArtifact( artifact.getGroupId(), artifact.getArtifactId(), artifact
-                .getVersion(), Artifact.SCOPE_COMPILE, useType, useClassifier );
+            Artifact unpacked =
+                stubFactory.createArtifact( artifact.getGroupId(), artifact.getArtifactId(), artifact.getVersion(),
+                                            Artifact.SCOPE_COMPILE, useType, useClassifier );
             assertUnpacked( unpacked );
         }
     }
@@ -630,9 +631,11 @@ public class TestUnpackDependenciesMojo
 
     public File getUnpackedFile( Artifact artifact )
     {
-        File destDir = DependencyUtil.getFormattedOutputDirectory( mojo.isUseSubDirectoryPerScope(), mojo.isUseSubDirectoryPerType(), mojo
-            .isUseSubDirectoryPerArtifact(), mojo.useRepositoryLayout, mojo.stripVersion, mojo.getOutputDirectory(),
-                                                                   artifact );
+        File destDir = DependencyUtil.getFormattedOutputDirectory( mojo.isUseSubDirectoryPerScope(),
+                                                                   mojo.isUseSubDirectoryPerType(),
+                                                                   mojo.isUseSubDirectoryPerArtifact(),
+                                                                   mojo.useRepositoryLayout, mojo.stripVersion,
+                                                                   mojo.getOutputDirectory(), artifact );
         File unpacked = new File( destDir, DependencyArtifactStubFactory.getUnpackableFileName( artifact ) );
         assertTrue( unpacked.exists() );
         return unpacked;
@@ -643,7 +646,7 @@ public class TestUnpackDependenciesMojo
         return new DefaultFileMarkerHandler( artifact, mojo.getMarkersDirectory() );
     }
 
-   
+
     public void assertUnpacked( Artifact artifact, boolean overWrite )
         throws InterruptedException, MojoExecutionException
     {
