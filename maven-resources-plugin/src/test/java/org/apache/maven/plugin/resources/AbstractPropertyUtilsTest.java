@@ -22,15 +22,16 @@ package org.apache.maven.plugin.resources;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.Properties;
 
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
+import org.codehaus.plexus.util.IOUtil;
 
 /**
  * Base class for propertyutils test case
  */
-
 public abstract class AbstractPropertyUtilsTest
     extends AbstractMojoTestCase
 {
@@ -68,7 +69,7 @@ public abstract class AbstractPropertyUtilsTest
     {
         boolean bRetVal = false;
 
-        Enumeration propKeys = prop.keys();
+        Enumeration<?> propKeys = prop.keys();
         String key;
 
         while ( propKeys.hasMoreElements() )
@@ -93,14 +94,20 @@ public abstract class AbstractPropertyUtilsTest
     private void loadValidationProperties( File validationPropFile )
     {
         validationProp = new Properties();
+        InputStream in = null;
 
         try
         {
-            validationProp.load( new FileInputStream( validationPropFile ) );
+            in = new FileInputStream( validationPropFile );
+            validationProp.load( in );
         }
         catch ( IOException ex )
         {
             // TODO: do error handling
+        }
+        finally
+        {
+            IOUtil.close( in );
         }
     }
 }

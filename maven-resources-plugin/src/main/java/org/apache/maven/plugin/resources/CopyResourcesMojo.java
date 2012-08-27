@@ -19,6 +19,7 @@ package org.apache.maven.plugin.resources;
  * under the License.
  */
 
+import org.apache.maven.model.Resource;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
@@ -30,27 +31,24 @@ import java.util.List;
  * 
  * @author Olivier Lamy
  * @since 2.3
- *
  */
-@Mojo( name = "copy-resources", threadSafe = true)
+@Mojo( name = "copy-resources", threadSafe = true )
 public class CopyResourcesMojo
     extends ResourcesMojo
 {
     
     /**
      * The output directory into which to copy the resources.
-     *
      */
-    @Parameter(required = true)
+    @Parameter( required = true )
     private File outputDirectory;
 
     /**
      * The list of resources we want to transfer. See the Maven Model for a
      * description of how to code the resources element.
-     *
      */
-    @Parameter(required = true)
-    private List resources;
+    @Parameter( required = true )
+    private List<Resource> resources;
 
 
     public File getOutputDirectory()
@@ -63,22 +61,22 @@ public class CopyResourcesMojo
         this.outputDirectory = outputDirectory;
     }
 
-    public List getResources()
+    public List<Resource> getResources()
     {
         return resources;
     }
 
-    public void setResources( List resources )
+    public void setResources( List<Resource> resources )
     {
         this.resources = resources;
     }
 
-    public List getFilters()
+    public List<String> getFilters()
     {
         return filters;
     }
 
-    public void setFilters( List filters )
+    public void setFilters( List<String> filters )
     {
         this.filters = filters;
     }    

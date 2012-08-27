@@ -89,7 +89,7 @@ public class ItFilter
         try
         {
             File f = new File( mavenResourcesExecution.getOutputDirectory(), "foo.txt" );
-            List lines = new ArrayList();
+            List<String> lines = new ArrayList<String>();
             
             lines.add( "foo" );
             lines.add( "version="+mavenResourcesExecution.getMavenProject().getVersion() );
