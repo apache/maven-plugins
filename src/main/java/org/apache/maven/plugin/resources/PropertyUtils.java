@@ -86,7 +86,7 @@ public final class PropertyUtils
         // as can be verified by replacing the implementation of #loadPropertyFile(File, boolean, boolean)
         // with the commented variant I have provided that reuses this method.
 
-        for ( Iterator iter = fileProps.keySet().iterator(); iter.hasNext(); )
+        for ( Iterator<?> iter = fileProps.keySet().iterator(); iter.hasNext(); )
         {
             final String k = (String) iter.next();
             final String propValue = getPropertyValue( k, combinedProps );

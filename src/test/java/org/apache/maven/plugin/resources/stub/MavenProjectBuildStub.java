@@ -51,11 +51,11 @@ public class MavenProjectBuildStub
 
     protected String targetTestResourcesDirectory;
 
-    protected ArrayList fileList;
+    protected ArrayList<String> fileList;
 
-    protected ArrayList directoryList;
+    protected ArrayList<String> directoryList;
 
-    protected HashMap dataMap;
+    protected HashMap<String, String> dataMap;
 
     public MavenProjectBuildStub( String key )
         throws Exception
@@ -63,9 +63,9 @@ public class MavenProjectBuildStub
         super( key );
 
         build = new Build();
-        fileList = new ArrayList();
-        directoryList = new ArrayList();
-        dataMap = new HashMap();
+        fileList = new ArrayList<String>();
+        directoryList = new ArrayList<String>();
+        dataMap = new HashMap<String, String>();
         setupBuild();
     }
 
@@ -161,7 +161,7 @@ public class MavenProjectBuildStub
         build.setOutputDirectory( outputDirectory );
         build.setTestOutputDirectory( testOutputDirectory );
     }
-    
+
     public void cleanBuildEnvironment()
         throws Exception
     {
@@ -169,17 +169,17 @@ public class MavenProjectBuildStub
         {
             FileUtils.deleteDirectory( resourcesDirectory );
         }
-        
+
         if ( FileUtils.fileExists( testResourcesDirectory ) )
         {
             FileUtils.deleteDirectory( testResourcesDirectory );
         }
-        
+
         if ( FileUtils.fileExists( outputDirectory ) )
         {
             FileUtils.deleteDirectory( outputDirectory );
         }
-        
+
         if ( FileUtils.fileExists( testOutputDirectory ) )
         {
             FileUtils.deleteDirectory( testOutputDirectory );
@@ -221,9 +221,9 @@ public class MavenProjectBuildStub
     {
         File currentDirectory;
 
-        for ( int nIndex = 0; nIndex < directoryList.size(); nIndex++ )
+        for ( String directory : directoryList )
         {
-            currentDirectory = new File( parent, "/" + (String) directoryList.get( nIndex ) );
+            currentDirectory = new File( parent, "/" + directory );
 
             if ( !currentDirectory.exists() )
             {
@@ -231,7 +231,7 @@ public class MavenProjectBuildStub
             }
 
             // duplicate dir structure in test resources
-            currentDirectory = new File( testparent, "/" + (String) directoryList.get( nIndex ) );
+            currentDirectory = new File( testparent, "/" + directory );
 
             if ( !currentDirectory.exists() )
             {
@@ -244,9 +244,9 @@ public class MavenProjectBuildStub
     {
         File currentFile;
 
-        for ( int nIndex = 0; nIndex < fileList.size(); nIndex++ )
+        for ( String file : fileList )
         {
-            currentFile = new File( parent, (String) fileList.get( nIndex ) );
+            currentFile = new File( parent, file );
 
             // create the necessary parent directories
             // before we create the files
@@ -269,7 +269,7 @@ public class MavenProjectBuildStub
             }
 
             // duplicate file in test resources
-            currentFile = new File( testparent, (String) fileList.get( nIndex ) );
+            currentFile = new File( testparent, file );
 
             if ( !currentFile.getParentFile().exists() )
             {

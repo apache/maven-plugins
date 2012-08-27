@@ -44,7 +44,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 
@@ -252,7 +251,7 @@ public class ResourcesMojo
                                    + ", i.e. build is platform dependent!" );
             }
 
-            List filters = getCombinedFiltersList();
+            List<String> filters = getCombinedFiltersList();
 
             MavenResourcesExecution mavenResourcesExecution =
                 new MavenResourcesExecution( getResources(), getOutputDirectory(), project, encoding, filters,
@@ -317,9 +316,8 @@ public class ResourcesMojo
 
         if ( mavenFilteringHints != null )
         {
-            for ( Iterator ite = mavenFilteringHints.iterator(); ite.hasNext(); )
+            for ( String hint : mavenFilteringHints )
             {
-                String hint = (String) ite.next();
                 try
                 {
                     mavenFilteringComponents.add(

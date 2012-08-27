@@ -23,12 +23,14 @@ import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.resources.stub.MavenProjectResourcesStub;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.IOUtil;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.Reader;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
@@ -639,7 +641,16 @@ public class ResourcesMojoTest
     {
         assertTrue( FileUtils.fileExists( fileName ) );
 
-        assertEquals( data, new BufferedReader( new FileReader( fileName ) ).readLine() );
+        Reader reader = null;
+        try
+        {
+            reader = new FileReader( fileName );
+            assertEquals( data, new BufferedReader( reader ).readLine() );
+        }
+        finally
+        {
+            IOUtil.close( reader );
+        }
     }
 
 }
