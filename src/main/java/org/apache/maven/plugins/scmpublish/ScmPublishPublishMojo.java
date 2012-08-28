@@ -325,6 +325,7 @@ public class ScmPublishPublishMojo
             try
             {
                 ScmFileSet fileSet = new ScmFileSet( checkoutDirectory, relativized );
+                getLog().debug( "scm add directory:" + relativized );
                 AddScmResult addDirResult = scmProvider.add( scmRepository, fileSet, "Adding directory" );
                 if ( !addDirResult.isSuccess() )
                 {
