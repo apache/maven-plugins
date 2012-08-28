@@ -105,7 +105,7 @@ public class ScmPublishPublishScmMojo
         {
             if ( ignoreDeleteMatchPatterns != null && ignoreDeleteMatchPatterns.matches( name, true ) )
             {
-                getLog().debug( name + " match one of the patterns '" + pathsAsList + "' do add to deteled files" );
+                getLog().debug( name + " match one of the patterns '" + pathsAsList + "' do not add to deleted files" );
                 continue;
             }
             File file = new File( checkout, name );
