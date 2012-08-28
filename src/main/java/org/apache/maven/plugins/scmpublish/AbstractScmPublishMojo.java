@@ -152,6 +152,13 @@ public abstract class AbstractScmPublishMojo
     @Component
     protected MavenSession session;
 
+    /**
+     * Collections of paths to not delete when checking content to delete.
+     * If your site has subdirectories published by an other mechanism/build
+     */
+    @Parameter
+    protected String[] ignorePathsToDelete;
+
     protected ScmProvider scmProvider;
 
     protected ScmRepository scmRepository;

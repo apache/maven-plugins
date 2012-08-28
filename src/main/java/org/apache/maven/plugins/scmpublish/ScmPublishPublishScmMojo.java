@@ -1,5 +1,17 @@
 package org.apache.maven.plugins.scmpublish;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.filefilter.NameFileFilter;
+import org.apache.commons.io.filefilter.NotFileFilter;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.util.MatchPatterns;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -14,17 +26,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.io.filefilter.NameFileFilter;
-import org.apache.commons.io.filefilter.NotFileFilter;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.Component;
-import org.apache.maven.plugins.annotations.Mojo;
-import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.project.MavenProject;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -50,14 +51,14 @@ import org.apache.maven.project.MavenProject;
  * <code>${project.build.directory}/staging</code>.
  * Can be used without project, so usable to update any SCM with any content.
  */
-@Mojo( name = "publish-scm", aggregator = true, requiresProject = false )
+@Mojo(name = "publish-scm", aggregator = true, requiresProject = false)
 public class ScmPublishPublishScmMojo
     extends ScmPublishPublishMojo
 {
     /**
      * The content to be published.
      */
-    @Parameter( property = "scmpublish.content", defaultValue="${project.build.directory}/staging" )
+    @Parameter(property = "scmpublish.content", defaultValue = "${project.build.directory}/staging")
     private File content;
 
     /**
@@ -66,22 +67,25 @@ public class ScmPublishPublishScmMojo
     protected MavenProject project;
 
     private List<File> deleted = new ArrayList<File>();
+
     private List<File> added = new ArrayList<File>();
+
     private List<File> updated = new ArrayList<File>();
 
     /**
      * Update scm checkout directory with content.
      *
-     * @param checkout the scm checkout directory
-     * @param dir the content to put in scm (can be <code>null</code>)
+     * @param checkout        the scm checkout directory
+     * @param dir             the content to put in scm (can be <code>null</code>)
      * @param doNotDeleteDirs directory names that should not be deleted from scm even if not in new content:
-     *   used for modules, which content is available only when staging
+     *                        used for modules, which content is available only when staging
      * @throws IOException
      */
     private void update( File checkout, File dir, List<String> doNotDeleteDirs )
         throws IOException
     {
-        String[] files = checkout.list( new NotFileFilter( new NameFileFilter( scmProvider.getScmSpecificFilename() ) ) );
+        String[] files =
+            checkout.list( new NotFileFilter( new NameFileFilter( scmProvider.getScmSpecificFilename() ) ) );
 
         Set<String> checkoutContent = new HashSet<String>( Arrays.asList( files ) );
         List<String> dirContent = ( dir != null ) ? Arrays.asList( dir.list() ) : Collections.<String>emptyList();
@@ -89,8 +93,21 @@ public class ScmPublishPublishScmMojo
         Set<String> deleted = new HashSet<String>( checkoutContent );
         deleted.removeAll( dirContent );
 
+        MatchPatterns ignoreDeleteMatchPatterns = null;
+        List<String> pathsAsList = new ArrayList<String>( 0 );
+        if ( ignorePathsToDelete != null && ignorePathsToDelete.length > 0 )
+        {
+            ignoreDeleteMatchPatterns = MatchPatterns.from( ignorePathsToDelete );
+            pathsAsList = Arrays.asList( ignorePathsToDelete );
+        }
+
         for ( String name : deleted )
         {
+            if ( ignoreDeleteMatchPatterns != null && ignoreDeleteMatchPatterns.matches( name, true ) )
+            {
+                getLog().debug( name + " match one of the patterns '" + pathsAsList + "' do add to deteled files" );
+                continue;
+            }
             File file = new File( checkout, name );
 
             if ( ( doNotDeleteDirs != null ) && file.isDirectory() && ( doNotDeleteDirs.contains( name ) ) )
@@ -132,7 +149,7 @@ public class ScmPublishPublishScmMojo
                     this.added.add( file );
                 }
 
-                copyFile( source, file ); 
+                copyFile( source, file );
             }
         }
     }
@@ -140,7 +157,7 @@ public class ScmPublishPublishScmMojo
     /**
      * Copy a file content, normalizing newlines when necessary.
      *
-     * @param srcFile the source file
+     * @param srcFile  the source file
      * @param destFile the destination file
      * @throws IOException
      * @see #requireNormalizeNewlines(File)
@@ -161,7 +178,7 @@ public class ScmPublishPublishScmMojo
     /**
      * Copy and normalize newlines.
      *
-     * @param srcFile the source file
+     * @param srcFile  the source file
      * @param destFile the destination file
      * @throws IOException
      */
