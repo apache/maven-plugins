@@ -54,7 +54,7 @@ import java.util.TreeSet;
  *
  * @deprecated superseded by publish-scm which does the same in on step only and has more features
  */
-@Mojo( name = "publish", defaultPhase = LifecyclePhase.POST_SITE, aggregator = true )
+@Mojo(name = "publish", defaultPhase = LifecyclePhase.POST_SITE, aggregator = true)
 public class ScmPublishPublishMojo
     extends AbstractScmPublishMojo
 {
@@ -62,19 +62,19 @@ public class ScmPublishPublishMojo
     /**
      * Display list of added, deleted, and changed files, but do not do any actual SCM operations.
      */
-    @Parameter( property = "scmpublish.dryRun" )
+    @Parameter(property = "scmpublish.dryRun")
     private boolean dryRun;
 
     /**
      * Run add and delete commands, but leave the actually checkin for the user to run manually.
      */
-    @Parameter( property = "scmpublish.skipCheckin" )
+    @Parameter(property = "scmpublish.skipCheckin")
     private boolean skipCheckin;
 
     /**
      * SCM log/checkin comment for this publication.
      */
-    @Parameter( property = "scmpublish.checkinComment", defaultValue="Site checkin for project ${project.name}" )
+    @Parameter(property = "scmpublish.checkinComment", defaultValue = "Site checkin for project ${project.name}")
     private String checkinComment;
 
     /**
@@ -338,6 +338,7 @@ public class ScmPublishPublishMojo
         }
 
         ScmFileSet addedFileSet = new ScmFileSet( checkoutDirectory, addedList );
+        getLog().debug( "scm add files:" + addedList );
         try
         {
             AddScmResult addResult = scmProvider.add( scmRepository, addedFileSet, "Adding new site files." );
