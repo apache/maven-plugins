@@ -27,6 +27,8 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.scm.CommandParameter;
+import org.apache.maven.scm.CommandParameters;
 import org.apache.maven.scm.ScmException;
 import org.apache.maven.scm.ScmFileSet;
 import org.apache.maven.scm.command.add.AddScmResult;
@@ -338,11 +340,17 @@ public class ScmPublishPublishMojo
             }
         }
 
+        // remove directories already added !
+        addedList.removeAll( dirsToAdd );
+
         ScmFileSet addedFileSet = new ScmFileSet( checkoutDirectory, addedList );
         getLog().debug( "scm add files:" + addedList );
         try
         {
-            AddScmResult addResult = scmProvider.add( scmRepository, addedFileSet, "Adding new site files." );
+            CommandParameters commandParameters = new CommandParameters();
+            commandParameters.setString( CommandParameter.MESSAGE , "Adding new site files." );
+            commandParameters.setString( CommandParameter.FORCE_ADD, Boolean.TRUE.toString() );
+            AddScmResult addResult = scmProvider.add( scmRepository, addedFileSet, commandParameters );
             if ( !addResult.isSuccess() )
             {
                 logError( "add operation failed: %s",
