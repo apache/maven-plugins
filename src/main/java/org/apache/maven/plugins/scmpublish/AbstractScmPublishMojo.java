@@ -233,7 +233,7 @@ public abstract class AbstractScmPublishMojo
     protected void checkoutExisting()
         throws MojoExecutionException
     {
-        logInfo( "%s out the pub tree from  %s ...", ( tryUpdate ? "Updating" : "Checking" ), pubScmUrl );
+        logInfo( "%s the pub tree from  %s ...", ( tryUpdate ? "Updating" : "Checking out" ), pubScmUrl );
 
         if ( checkoutDirectory.exists() && !tryUpdate )
         {
