@@ -52,19 +52,22 @@ public abstract class AbstractScmPublishMojo
     /**
      * Location of the inventory file.
      */
-    @Parameter( property = "scmpublish.inventoryFile", defaultValue="${project.build.directory}/scmpublish-inventory.js" )
+    @Parameter( property = "scmpublish.inventoryFile",
+               defaultValue = "${project.build.directory}/scmpublish-inventory.js" )
     protected File inventoryFile;
 
     /**
      * Location of the scm publication tree.
      */
-    @Parameter( property = "scmpublish.pubScmUrl", defaultValue = "${project.distributionManagement.site.url}", required = true )
+    @Parameter( property = "scmpublish.pubScmUrl", defaultValue = "${project.distributionManagement.site.url}",
+               required = true )
     protected String pubScmUrl;
 
     /**
      * Location where the scm check-out is done.
      */
-    @Parameter( property = "scmpublish.checkoutDirectory", defaultValue="${project.build.directory}/scmpublish-checkout" )
+    @Parameter( property = "scmpublish.checkoutDirectory",
+               defaultValue = "${project.build.directory}/scmpublish-checkout" )
     protected File checkoutDirectory;
 
     /**
@@ -230,7 +233,7 @@ public abstract class AbstractScmPublishMojo
     protected void checkoutExisting()
         throws MojoExecutionException
     {
-        logInfo( ( tryUpdate ? "Updating" : "Checking" ) + " out the pub tree ..." );
+        logInfo( "%s out the pub tree from  %s ...", ( tryUpdate ? "Updating" : "Checking" ), pubScmUrl );
 
         if ( checkoutDirectory.exists() && !tryUpdate )
         {
