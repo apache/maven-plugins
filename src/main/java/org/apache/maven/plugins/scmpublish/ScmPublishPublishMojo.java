@@ -327,11 +327,11 @@ public class ScmPublishPublishMojo
             try
             {
                 ScmFileSet fileSet = new ScmFileSet( checkoutDirectory, relativized );
-                getLog().debug( "scm add directory:" + relativized );
+                getLog().debug( "scm add directory: " + relativized );
                 AddScmResult addDirResult = scmProvider.add( scmRepository, fileSet, "Adding directory" );
                 if ( !addDirResult.isSuccess() )
                 {
-                    getLog().debug( " Error adding directory " + relativized + " " + addDirResult.getCommandOutput() );
+                    getLog().debug( " Error adding directory " + relativized + ": " + addDirResult.getCommandOutput() );
                 }
             }
             catch ( ScmException e )
@@ -344,7 +344,7 @@ public class ScmPublishPublishMojo
         addedList.removeAll( dirsToAdd );
 
         ScmFileSet addedFileSet = new ScmFileSet( checkoutDirectory, addedList );
-        getLog().debug( "scm add files:" + addedList );
+        getLog().debug( "scm add files: " + addedList );
         try
         {
             CommandParameters commandParameters = new CommandParameters();

@@ -105,7 +105,7 @@ public class ScmPublishPublishScmMojo
         {
             if ( ignoreDeleteMatchPatterns != null && ignoreDeleteMatchPatterns.matches( name, true ) )
             {
-                getLog().debug( name + " match one of the patterns '" + pathsAsList + "' do not add to deleted files" );
+                getLog().debug( name + " match one of the patterns '" + pathsAsList + "': do not add to deleted files" );
                 continue;
             }
             File file = new File( checkout, name );
@@ -220,9 +220,14 @@ public class ScmPublishPublishScmMojo
             siteOutputEncoding = "utf-8";
         }
 
+        if ( !content.exists() )
+        {
+            throw new MojoExecutionException( "Configured content directory does not exist: " + content );
+        }
+
         if ( !content.canRead() )
         {
-            throw new MojoExecutionException( "can't read content directory: " + content );
+            throw new MojoExecutionException( "Can't read content directory: " + content );
         }
 
         checkoutExisting();
@@ -234,7 +239,7 @@ public class ScmPublishPublishScmMojo
         }
         catch ( IOException ioe )
         {
-            throw new MojoExecutionException( "could not copy content to scm checkout", ioe );
+            throw new MojoExecutionException( "Could not copy content to scm checkout", ioe );
         }
 
         logInfo( "Publish files: %d addition(s), %d update(s), %d delete(s)", added.size(), updated.size(),
