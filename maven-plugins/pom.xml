@@ -79,6 +79,7 @@ under the License.
             <runOnlyAtExecutionRoot>true</runOnlyAtExecutionRoot>
             <!-- Used by announcement-generate goal -->
             <templateDirectory>org/apache/maven/plugins</templateDirectory>
+            <announcementFile>annoucement.txt</announcementFile>
             <!-- Used by announcement-mail goal -->
             <subject>[ANN] ${project.name} ${project.version} Released</subject>
             <toAddresses>
