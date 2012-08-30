@@ -58,7 +58,7 @@ import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.velocity.VelocityComponent;
 
 /**
- * Goal which generate the template for an announcement.
+ * Goal which generate an announcement from the announcement template.
  *
  * @author aramirez@exist.com
  * @version $Id$
@@ -153,7 +153,7 @@ public class AnnouncementMojo
     private Map<String, String> issueTypes;
 
     /**
-     * Directory where the template file will be generated.
+     * Directory where the announcement file will be generated.
      */
     @Parameter( defaultValue = "${project.build.directory}/announcement", required = true )
     private File outputDirectory;
