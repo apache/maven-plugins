@@ -301,7 +301,7 @@ public class ShadeMojo
      *
      * @since 1.7.2
      */
-    @Parameter
+    @Parameter( defaultValue = "false" )
     private boolean generateUniqueDependencyReducedPom;
 
     /**
@@ -880,7 +880,7 @@ public class ShadeMojo
 
                 if ( generateUniqueDependencyReducedPom )
                 {
-                    dependencyReducedPomLocation = File.createTempFile( "dependency-reduced-pom", "xml", project.getBasedir() );
+                    dependencyReducedPomLocation = File.createTempFile( "dependency-reduced-pom-", ".xml", project.getBasedir() );
                     project.getProperties().setProperty( "maven.shade.dependency-reduced-pom", dependencyReducedPomLocation.getAbsolutePath() );
                 }
                 else
@@ -893,6 +893,8 @@ public class ShadeMojo
                 }
 
                 File f = dependencyReducedPomLocation;
+                getLog().info( "Dependency-reduced POM written at: " + f.getAbsolutePath() );
+
                 if ( f.exists() )
                 {
                     f.delete();
