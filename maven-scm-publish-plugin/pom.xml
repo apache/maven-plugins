@@ -39,6 +39,12 @@ under the License.
   <name>SCM Publish Maven Plugin</name>
   <url>http://maven.apache.org/plugins/maven-scm-publish-plugin</url>
 
+  <scm>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-scm-publish-plugin/</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/trunk/maven-scm-publish-plugin/</developerConnection>
+    <url>http://svn.apache.org/viewvc/maven/plugins/trunk/maven-scm-publish-plugin/</url>
+  </scm>
+
   <distributionManagement>
     <site>
       <id>apache.website</id>
