@@ -272,6 +272,7 @@ public class ScmPublishPublishMojo
         try
         {
             getLog().debug( "deleting files: " + deletedList );
+
             RemoveScmResult deleteResult =
                 scmProvider.remove( scmRepository, deletedFileSet, "Deleting obsolete site files." );
             if ( !deleteResult.isSuccess() )
