@@ -37,12 +37,12 @@ under the License.
   <packaging>maven-plugin</packaging>
 
   <name>SCM Publish Maven Plugin</name>
-  <url>http://maven.apache.org/sandbox/plugins/maven-scm-publish-plugin</url>
+  <url>http://maven.apache.org/plugins/maven-scm-publish-plugin</url>
 
   <distributionManagement>
     <site>
       <id>apache.website</id>
-      <url>scp://people.apache.org/www/maven.apache.org/sandbox/plugins/maven-scm-publish-plugin</url>
+      <url>scp://people.apache.org/www/maven.apache.org/plugins/maven-scm-publish-plugin</url>
     </site>
   </distributionManagement>
 
