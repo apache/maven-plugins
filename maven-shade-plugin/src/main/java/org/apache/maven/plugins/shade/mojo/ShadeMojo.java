@@ -90,7 +90,7 @@ import java.util.Set;
  * @author David Blevins
  * @author Hiram Chirino
  */
-@Mojo( name = "shade", defaultPhase = LifecyclePhase.PACKAGE, threadSafe = false,
+@Mojo( name = "shade", defaultPhase = LifecyclePhase.PACKAGE, threadSafe = true,
        requiresDependencyResolution = ResolutionScope.RUNTIME )
 public class ShadeMojo
     extends AbstractMojo
@@ -293,6 +293,16 @@ public class ShadeMojo
      */
     @Parameter( defaultValue = "${basedir}/dependency-reduced-pom.xml" )
     private File dependencyReducedPomLocation;
+
+    /**
+     * Create a dependency-reduced POM in ${basedir}/drp-UNIQUE.pom. This avoids build collisions
+     * of parallel builds without moving the dependency-reduced POM to a different directory.
+     * The property maven.shade.dependency-reduced-pom is set to the generated filename.
+     *
+     * @since 1.7.2
+     */
+    @Parameter
+    private boolean generateUniqueDependencyReducedPom;
 
     /**
      * When true, dependencies are kept in the pom but with scope 'provided'; when false,
@@ -868,10 +878,18 @@ public class ShadeMojo
 
                 model.setDependencies( dependencies );
 
-                if ( dependencyReducedPomLocation == null )
+                if ( generateUniqueDependencyReducedPom )
                 {
-                    // MSHADE-123: We can't default to 'target' because it messes up uses of ${project.basedir}
-                    dependencyReducedPomLocation = new File( project.getBasedir(), "dependency-reduced-pom.xml" );
+                    dependencyReducedPomLocation = File.createTempFile( "dependency-reduced-pom", "xml", project.getBasedir() );
+                    project.getProperties().setProperty( "maven.shade.dependency-reduced-pom", dependencyReducedPomLocation.getAbsolutePath() );
+                }
+                else
+                {
+                    if ( dependencyReducedPomLocation == null )
+                    {
+                        // MSHADE-123: We can't default to 'target' because it messes up uses of ${project.basedir}
+                        dependencyReducedPomLocation = new File( project.getBasedir(), "dependency-reduced-pom.xml" );
+                    }
                 }
 
                 File f = dependencyReducedPomLocation;
