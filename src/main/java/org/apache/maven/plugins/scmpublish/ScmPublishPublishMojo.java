@@ -29,6 +29,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.scm.CommandParameter;
 import org.apache.maven.scm.CommandParameters;
+import org.apache.maven.scm.ScmBranch;
 import org.apache.maven.scm.ScmException;
 import org.apache.maven.scm.ScmFileSet;
 import org.apache.maven.scm.command.add.AddScmResult;
@@ -56,7 +57,7 @@ import java.util.TreeSet;
  *
  * @deprecated superseded by publish-scm which does the same in on step only and has more features
  */
-@Mojo(name = "publish", defaultPhase = LifecyclePhase.POST_SITE, aggregator = true)
+@Mojo ( name = "publish", defaultPhase = LifecyclePhase.POST_SITE, aggregator = true )
 public class ScmPublishPublishMojo
     extends AbstractScmPublishMojo
 {
@@ -64,19 +65,19 @@ public class ScmPublishPublishMojo
     /**
      * Display list of added, deleted, and changed files, but do not do any actual SCM operations.
      */
-    @Parameter(property = "scmpublish.dryRun")
+    @Parameter ( property = "scmpublish.dryRun" )
     private boolean dryRun;
 
     /**
      * Run add and delete commands, but leave the actually checkin for the user to run manually.
      */
-    @Parameter(property = "scmpublish.skipCheckin")
+    @Parameter ( property = "scmpublish.skipCheckin" )
     private boolean skipCheckin;
 
     /**
      * SCM log/checkin comment for this publication.
      */
-    @Parameter(property = "scmpublish.checkinComment", defaultValue = "Site checkin for project ${project.name}")
+    @Parameter ( property = "scmpublish.checkinComment", defaultValue = "Site checkin for project ${project.name}" )
     private String checkinComment;
 
     /**
@@ -238,7 +239,9 @@ public class ScmPublishPublishMojo
         try
         {
             logInfo( "Checkin to the scm" );
-            CheckInScmResult checkinResult = scmProvider.checkIn( scmRepository, updatedFileSet, checkinComment );
+
+            CheckInScmResult checkinResult =
+                scmProvider.checkIn( scmRepository, updatedFileSet, new ScmBranch( scmBranch ), checkinComment );
             if ( !checkinResult.isSuccess() )
             {
                 logError( "checkin operation failed: %s",
@@ -349,7 +352,7 @@ public class ScmPublishPublishMojo
         try
         {
             CommandParameters commandParameters = new CommandParameters();
-            commandParameters.setString( CommandParameter.MESSAGE , "Adding new site files." );
+            commandParameters.setString( CommandParameter.MESSAGE, "Adding new site files." );
             commandParameters.setString( CommandParameter.FORCE_ADD, Boolean.TRUE.toString() );
             AddScmResult addResult = scmProvider.add( scmRepository, addedFileSet, commandParameters );
             if ( !addResult.isSuccess() )
