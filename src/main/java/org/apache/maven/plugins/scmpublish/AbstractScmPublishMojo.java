@@ -26,6 +26,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.scm.ScmBranch;
 import org.apache.maven.scm.ScmException;
 import org.apache.maven.scm.ScmFileSet;
 import org.apache.maven.scm.ScmResult;
@@ -52,22 +53,22 @@ public abstract class AbstractScmPublishMojo
     /**
      * Location of the inventory file.
      */
-    @Parameter( property = "scmpublish.inventoryFile",
-               defaultValue = "${project.build.directory}/scmpublish-inventory.js" )
+    @Parameter ( property = "scmpublish.inventoryFile",
+                 defaultValue = "${project.build.directory}/scmpublish-inventory.js" )
     protected File inventoryFile;
 
     /**
      * Location of the scm publication tree.
      */
-    @Parameter( property = "scmpublish.pubScmUrl", defaultValue = "${project.distributionManagement.site.url}",
-               required = true )
+    @Parameter ( property = "scmpublish.pubScmUrl", defaultValue = "${project.distributionManagement.site.url}",
+                 required = true )
     protected String pubScmUrl;
 
     /**
      * Location where the scm check-out is done.
      */
-    @Parameter( property = "scmpublish.checkoutDirectory",
-               defaultValue = "${project.build.directory}/scmpublish-checkout" )
+    @Parameter ( property = "scmpublish.checkoutDirectory",
+                 defaultValue = "${project.build.directory}/scmpublish-checkout" )
     protected File checkoutDirectory;
 
     /**
@@ -103,13 +104,13 @@ public abstract class AbstractScmPublishMojo
     /**
      * The SCM username to use.
      */
-    @Parameter( property = "username" )
+    @Parameter ( property = "username" )
     protected String username;
 
     /**
      * The SCM password to use.
      */
-    @Parameter( property = "password" )
+    @Parameter ( property = "password" )
     protected String password;
 
     /**
@@ -117,32 +118,32 @@ public abstract class AbstractScmPublishMojo
      * with distributed SCMs which support the file:// protocol TODO: we should think about having the defaults for the
      * various SCM providers provided via modello!
      */
-    @Parameter( property = "localCheckout", defaultValue = "false" )
+    @Parameter ( property = "localCheckout", defaultValue = "false" )
     protected boolean localCheckout;
 
     /**
      * The outputEncoding parameter of the site plugin. This plugin will corrupt your site
      * if this does not match the value used by the site plugin.
      */
-    @Parameter( property = "outputEncoding", defaultValue = "${project.reporting.outputEncoding}" )
+    @Parameter ( property = "outputEncoding", defaultValue = "${project.reporting.outputEncoding}" )
     protected String siteOutputEncoding;
 
     /**
      * if the checkout directory exists and this flag is activated the plugin will try an update rather
      * than delete then checkout
      */
-    @Parameter( property = "scmpublish.tryUpdate", defaultValue = "false" )
+    @Parameter ( property = "scmpublish.tryUpdate", defaultValue = "false" )
     protected boolean tryUpdate;
 
     /**
      * Do not delete files to the scm
      */
-    @Parameter( property = "scmpublish.skipDeletedFiles", defaultValue = "false" )
+    @Parameter ( property = "scmpublish.skipDeletedFiles", defaultValue = "false" )
     protected boolean skipDeletedFiles;
 
     /**
      */
-    @Parameter( defaultValue = "${basedir}", readonly = true )
+    @Parameter ( defaultValue = "${basedir}", readonly = true )
     protected File basedir;
 
     /**
@@ -161,6 +162,12 @@ public abstract class AbstractScmPublishMojo
      */
     @Parameter
     protected String[] ignorePathsToDelete;
+
+    /**
+     * for github you must configure with gh-pages
+     */
+    @Parameter ( property = "scmpublish.scm.version" )
+    protected String scmVersion;
 
     protected ScmProvider scmProvider;
 
@@ -253,7 +260,10 @@ public abstract class AbstractScmPublishMojo
 
         if ( !checkoutDirectory.exists() )
         {
-            logInfo( "tryUpdate is configured but no local copy currently available so forcing checkout" );
+            if ( tryUpdate )
+            {
+                logInfo( "tryUpdate is configured but no local copy currently available so forcing checkout" );
+            }
             checkoutDirectory.mkdirs();
             forceCheckout = true;
         }
@@ -269,7 +279,16 @@ public abstract class AbstractScmPublishMojo
             }
             else
             {
-                scmResult = scmProvider.checkOut( scmRepository, fileSet );
+                if ( scmVersion == null )
+                {
+                    scmResult = scmProvider.checkOut( scmRepository, fileSet );
+                }
+                else
+                {
+
+                    ScmBranch scmBranch = new ScmBranch( scmVersion );
+                    scmResult = scmProvider.checkOut( scmRepository, fileSet, scmBranch );
+                }
             }
         }
         catch ( ScmException e )
