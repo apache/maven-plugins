@@ -166,8 +166,8 @@ public abstract class AbstractScmPublishMojo
     /**
      * for github you must configure with gh-pages
      */
-    @Parameter ( property = "scmpublish.scm.version" )
-    protected String scmVersion;
+    @Parameter ( property = "scmpublish.scm.branch" )
+    protected String scmBranch;
 
     protected ScmProvider scmProvider;
 
@@ -279,14 +279,14 @@ public abstract class AbstractScmPublishMojo
             }
             else
             {
-                if ( scmVersion == null )
+                if ( scmBranch == null )
                 {
                     scmResult = scmProvider.checkOut( scmRepository, fileSet );
                 }
                 else
                 {
 
-                    ScmBranch scmBranch = new ScmBranch( scmVersion );
+                    ScmBranch scmBranch = new ScmBranch( this.scmBranch );
                     scmResult = scmProvider.checkOut( scmRepository, fileSet, scmBranch );
                 }
             }
