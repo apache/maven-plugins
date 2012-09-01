@@ -51,6 +51,18 @@ public class JiraHelperTestCase
         assertEquals( "http://jira.codehaus.org", map.get( "url" ) );
     }
 
+    public void testGetJiraUrlAndProjectName()
+    {
+        Map<String, String> map;
+        map = JiraHelper.getJiraUrlAndProjectName( "http://jira.codehaus.org/browse/DOXIA/" );
+        assertEquals( "http://jira.codehaus.org", map.get( "url" ) );
+        assertEquals( "DOXIA", map.get( "project" ) );
+
+        map = JiraHelper.getJiraUrlAndProjectName( "http://jira.codehaus.org/browse/DOXIA" );
+        assertEquals( "http://jira.codehaus.org", map.get( "url" ) );
+        assertEquals( "DOXIA", map.get( "project" ) );
+    }
+
     public void testGetBaseUrl()
     {
         String expected = "http://www.jira.com";

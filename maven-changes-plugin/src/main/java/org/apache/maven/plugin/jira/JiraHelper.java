@@ -192,6 +192,53 @@ public class JiraHelper
     }
 
     /**
+     * Parse out the base URL for JIRA and the JIRA project name from the issue
+     * management URL.
+     * The issue management URL is assumed to be of the format http(s)://host:port/browse/{projectname}
+     *
+     * @param issueManagementUrl The URL to the issue management system
+     * @return A <code>Map</code> containing the URL and project name
+     * @since 2.8
+     */
+    public static Map<String, String> getJiraUrlAndProjectName( String issueManagementUrl )
+    {
+        final int indexBrowse = issueManagementUrl.indexOf( "/browse/" );
+
+        String jiraUrl = "";
+        String project = "";
+
+        if ( indexBrowse != -1 )
+        {
+            jiraUrl = issueManagementUrl.substring( 0, indexBrowse );
+
+            final int indexBrowseEnd = indexBrowse + "/browse/".length();
+
+            final int indexProject = issueManagementUrl.indexOf( "/", indexBrowseEnd );
+
+            if ( indexProject != -1 )
+            {
+                //Project name has trailing '/'
+                project = issueManagementUrl.substring( indexBrowseEnd, indexProject );
+            }
+            else
+            {
+                //Project name without trailing '/'
+                project = issueManagementUrl.substring( indexBrowseEnd );
+            }
+        }
+        else
+        {
+            throw new IllegalArgumentException( "Invalid browse URL" );
+        }
+
+        HashMap<String, String> urlMap = new HashMap<String, String>( 4 );
+        urlMap.put( "url", jiraUrl );
+        urlMap.put( "project", project );
+
+        return urlMap;
+    }
+
+    /**
      * @since 2.8
      */
     public static String getBaseUrl( String url )
