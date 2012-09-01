@@ -29,9 +29,12 @@ import org.apache.maven.plugin.logging.Log;
  * JIRA 3.x way of constructing a search query based on URL parameters.
  * 
  * @author ton.swieb@finalist.com
+ * @version $Id$
  * @since 2.8
  */
-public class ParameterQueryBuilder {
+public class ParameterQueryBuilder
+    implements JiraQueryBuilder
+{
     /** Log for debug output. */
     protected Log log;
     private String filter = "";
@@ -78,7 +81,15 @@ public class ParameterQueryBuilder {
         typeMap.put( "Sub-task", "7" );
     }
 
-    public ParameterQueryBuilder fixVersionIds( String fixVersionIds )
+    /**
+     * This method has no effect in this implementation.
+     */
+    public JiraQueryBuilder fixVersion( String fixVersion )
+    {
+        return this;
+    }
+
+    public JiraQueryBuilder fixVersionIds( String fixVersionIds )
     {
         // add fix versions
         if ( fixVersionIds != null )
@@ -96,7 +107,7 @@ public class ParameterQueryBuilder {
         return this;
     }
 
-    public ParameterQueryBuilder statusIds( String statusIds )
+    public JiraQueryBuilder statusIds( String statusIds )
     {
         // get the Status Ids
         if ( statusIds != null )
@@ -129,7 +140,7 @@ public class ParameterQueryBuilder {
         return this;
     }
 
-    public ParameterQueryBuilder priorityIds( String priorityIds )
+    public JiraQueryBuilder priorityIds( String priorityIds )
     {
         // get the Priority Ids
         if ( priorityIds != null )
@@ -150,7 +161,15 @@ public class ParameterQueryBuilder {
         return this;
     }
 
-    public ParameterQueryBuilder resolutionIds( String resolutionIds )
+    /**
+     * This method has no effect in this implementation.
+     */
+    public JiraQueryBuilder project( String project )
+    {
+        return this;
+    }
+
+    public JiraQueryBuilder resolutionIds( String resolutionIds )
     {
         // get the Resolution Ids
         if ( resolutionIds != null )
@@ -171,7 +190,7 @@ public class ParameterQueryBuilder {
         return this;
     }
 
-    public ParameterQueryBuilder components( String components )
+    public JiraQueryBuilder components( String components )
     {
         // add components
         if ( components != null )
@@ -190,7 +209,7 @@ public class ParameterQueryBuilder {
         return this;
     }
 
-    public ParameterQueryBuilder typeIds( String typeIds )
+    public JiraQueryBuilder typeIds( String typeIds )
     {
         // get the Type Ids
         if ( typeIds != null )
@@ -210,7 +229,7 @@ public class ParameterQueryBuilder {
         return this;
     }
 
-    public ParameterQueryBuilder sortColumnNames( String sortColumnNames )
+    public JiraQueryBuilder sortColumnNames( String sortColumnNames )
     {
         // get the Sort order
         int validSortColumnNames = 0;
@@ -312,7 +331,7 @@ public class ParameterQueryBuilder {
         return this;
     }
 
-    public ParameterQueryBuilder filter( String filter )
+    public JiraQueryBuilder filter( String filter )
     {
         this.filter = filter;
         return this;
