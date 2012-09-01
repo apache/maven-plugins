@@ -37,7 +37,7 @@ public class JqlQueryBuilder
     /**
      * Log for debug output.
      */
-    protected Log log;
+    private Log log;
 
     private StringBuilder query = new StringBuilder();
 
