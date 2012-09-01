@@ -208,7 +208,7 @@ public class JqlQueryBuilderTest
         assertEquals( expected, actual );
     }
 
-    private JqlQueryBuilder createBuilder()
+    private JiraQueryBuilder createBuilder()
     {
         return new JqlQueryBuilder( new SystemStreamLog() );
     }
