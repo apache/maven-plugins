@@ -35,17 +35,17 @@ import org.apache.maven.plugin.logging.Log;
 public class ParameterQueryBuilder
     implements JiraQueryBuilder
 {
+    private String filter = "";
     /** Log for debug output. */
     protected Log log;
-    private String filter = "";
     private StringBuilder query = new StringBuilder();
 
-    /** Mapping containing all allowed JIRA status values. */
-    protected final Map<String,String> statusMap = new HashMap<String,String>( 8 );
-    /** Mapping containing all allowed JIRA resolution values. */
-    protected final Map<String,String> resolutionMap = new HashMap<String,String>( 8 );
     /** Mapping containing all allowed JIRA priority values. */
     protected final Map<String,String> priorityMap = new HashMap<String,String>( 8 );
+    /** Mapping containing all allowed JIRA resolution values. */
+    protected final Map<String,String> resolutionMap = new HashMap<String,String>( 8 );
+    /** Mapping containing all allowed JIRA status values. */
+    protected final Map<String,String> statusMap = new HashMap<String,String>( 8 );
     /** Mapping containing all allowed JIRA type values. */
     protected final Map<String,String> typeMap = new HashMap<String,String>( 8 );
 
@@ -53,11 +53,11 @@ public class ParameterQueryBuilder
     {
         this.log = log;
 
-        statusMap.put( "Open", "1" );
-        statusMap.put( "In Progress", "3" );
-        statusMap.put( "Reopened", "4" );
-        statusMap.put( "Resolved", "5" );
-        statusMap.put( "Closed", "6" );
+        priorityMap.put( "Blocker", "1" );
+        priorityMap.put( "Critical", "2" );
+        priorityMap.put( "Major", "3" );
+        priorityMap.put( "Minor", "4" );
+        priorityMap.put( "Trivial", "5" );
 
         resolutionMap.put( "Unresolved", "-1" );
         resolutionMap.put( "Fixed", "1" );
@@ -66,11 +66,11 @@ public class ParameterQueryBuilder
         resolutionMap.put( "Incomplete", "4" );
         resolutionMap.put( "Cannot Reproduce", "5" );
 
-        priorityMap.put( "Blocker", "1" );
-        priorityMap.put( "Critical", "2" );
-        priorityMap.put( "Major", "3" );
-        priorityMap.put( "Minor", "4" );
-        priorityMap.put( "Trivial", "5" );
+        statusMap.put( "Open", "1" );
+        statusMap.put( "In Progress", "3" );
+        statusMap.put( "Reopened", "4" );
+        statusMap.put( "Resolved", "5" );
+        statusMap.put( "Closed", "6" );
 
         typeMap.put( "Bug", "1" );
         typeMap.put( "New Feature", "2" );
@@ -79,6 +79,44 @@ public class ParameterQueryBuilder
         typeMap.put( "Wish", "5" );
         typeMap.put( "Test", "6" );
         typeMap.put( "Sub-task", "7" );
+    }
+
+    public String build()
+    {
+        // If the user has defined a filter - use that
+        if ( ( this.filter != null ) && ( this.filter.length() > 0 ) )
+        {
+            return this.filter;
+        }
+        else
+        {
+            return query.toString();
+        }
+    }
+
+    public JiraQueryBuilder components( String components )
+    {
+        // add components
+        if ( components != null )
+        {
+            String[] componentsArr = components.split( "," );
+
+            for ( String component : componentsArr )
+            {
+                component = component.trim();
+                if ( component.length() > 0 )
+                {
+                    query.append( "&component=" ).append( component );
+                }
+            }
+        }
+        return this;
+    }
+
+    public JiraQueryBuilder filter( String filter )
+    {
+        this.filter = filter;
+        return this;
     }
 
     /**
@@ -107,37 +145,9 @@ public class ParameterQueryBuilder
         return this;
     }
 
-    public JiraQueryBuilder statusIds( String statusIds )
+    public Log getLog()
     {
-        // get the Status Ids
-        if ( statusIds != null )
-        {
-            String[] stats = statusIds.split( "," );
-            for ( String stat : stats )
-            {
-                stat = stat.trim();
-                String statusParam = statusMap.get( stat );
-
-                if ( statusParam != null )
-                {
-                    query.append( "&statusIds=" ).append( statusParam );
-                }
-                else
-                {
-                    // if it's numeric we can handle it too.
-                    try
-                    {
-                        Integer.parseInt( stat );
-                        query.append( "&statusIds=" ).append( stat );
-                    }
-                    catch ( NumberFormatException nfe )
-                    {
-                        getLog().error( "maven-changes-plugin: invalid statusId " + stat );
-                    }
-                }
-            }
-        }
-        return this;
+        return log;
     }
 
     public JiraQueryBuilder priorityIds( String priorityIds )
@@ -184,45 +194,6 @@ public class ParameterQueryBuilder
                 if ( resoParam != null )
                 {
                     query.append( "&resolutionIds=" ).append( resoParam );
-                }
-            }
-        }
-        return this;
-    }
-
-    public JiraQueryBuilder components( String components )
-    {
-        // add components
-        if ( components != null )
-        {
-            String[] componentsArr = components.split( "," );
-
-            for ( String component : componentsArr )
-            {
-                component = component.trim();
-                if ( component.length() > 0 )
-                {
-                    query.append( "&component=" ).append( component );
-                }
-            }
-        }
-        return this;
-    }
-
-    public JiraQueryBuilder typeIds( String typeIds )
-    {
-        // get the Type Ids
-        if ( typeIds != null )
-        {
-            String[] types = typeIds.split( "," );
-
-            for ( String type : types )
-            {
-                String typeParam = typeMap.get( type.trim() );
-
-                if ( typeParam != null )
-                {
-                    query.append( "&type=" ).append( typeParam );
                 }
             }
         }
@@ -331,27 +302,56 @@ public class ParameterQueryBuilder
         return this;
     }
 
-    public JiraQueryBuilder filter( String filter )
+    public JiraQueryBuilder statusIds( String statusIds )
     {
-        this.filter = filter;
+        // get the Status Ids
+        if ( statusIds != null )
+        {
+            String[] stats = statusIds.split( "," );
+            for ( String stat : stats )
+            {
+                stat = stat.trim();
+                String statusParam = statusMap.get( stat );
+
+                if ( statusParam != null )
+                {
+                    query.append( "&statusIds=" ).append( statusParam );
+                }
+                else
+                {
+                    // if it's numeric we can handle it too.
+                    try
+                    {
+                        Integer.parseInt( stat );
+                        query.append( "&statusIds=" ).append( stat );
+                    }
+                    catch ( NumberFormatException nfe )
+                    {
+                        getLog().error( "maven-changes-plugin: invalid statusId " + stat );
+                    }
+                }
+            }
+        }
         return this;
     }
 
-    public String build()
+    public JiraQueryBuilder typeIds( String typeIds )
     {
-        // If the user has defined a filter - use that
-        if ( ( this.filter != null ) && ( this.filter.length() > 0 ) )
+        // get the Type Ids
+        if ( typeIds != null )
         {
-            return this.filter;
-        }
-        else
-        {
-            return query.toString();
-        }
-    }
+            String[] types = typeIds.split( "," );
 
-    public Log getLog()
-    {
-        return log;
+            for ( String type : types )
+            {
+                String typeParam = typeMap.get( type.trim() );
+
+                if ( typeParam != null )
+                {
+                    query.append( "&type=" ).append( typeParam );
+                }
+            }
+        }
+        return this;
     }
 }

@@ -36,174 +36,20 @@ import org.apache.maven.plugin.logging.Log;
 public class JqlQueryBuilder
     implements JiraQueryBuilder
 {
+    private String filter = "";
+
     /**
      * Log for debug output.
      */
     private Log log;
 
-    private StringBuilder query = new StringBuilder();
-
     private StringBuilder orderBy = new StringBuilder();
 
-    private String filter = "";
+    private StringBuilder query = new StringBuilder();
 
     public JqlQueryBuilder( Log log )
     {
         this.log = log;
-    }
-
-    public JiraQueryBuilder project( String project )
-    {
-        addSingleValue( "project", project );
-        return this;
-    }
-
-    /**
-     * When both {@link #fixVersion(String)} and {@link #fixVersionIds(String)} are used then you will probably
-     * end up with a JQL query that is valid, but returns nothing. Unless they both only reference the same fixVersion
-     *
-     * @param fixVersionIds
-     * @return
-     */
-    public JiraQueryBuilder fixVersionIds( String fixVersionIds )
-    {
-        addCommaSeparatedValues( "fixVersion", fixVersionIds );
-        return this;
-    }
-
-    public JiraQueryBuilder statusIds( String statusIds )
-    {
-        addCommaSeparatedValues( "status", statusIds );
-        return this;
-    }
-
-    public JiraQueryBuilder priorityIds( String priorityIds )
-    {
-        addCommaSeparatedValues( "priority", priorityIds );
-        return this;
-    }
-
-    public JiraQueryBuilder resolutionIds( String resolutionIds )
-    {
-        addCommaSeparatedValues( "resolution", resolutionIds );
-        return this;
-    }
-
-    public JiraQueryBuilder components( String components )
-    {
-        addCommaSeparatedValues( "component", components );
-        return this;
-    }
-
-    public JiraQueryBuilder typeIds( String typeIds )
-    {
-        addCommaSeparatedValues( "type", typeIds );
-        return this;
-    }
-
-    public JiraQueryBuilder filter( String filter )
-    {
-        this.filter = filter;
-        return this;
-    }
-
-    /**
-     * When both {@link #fixVersion(String)} and {@link #fixVersionIds(String)} are used then you will probably
-     * end up with a JQL query that is valid, but returns nothing. Unless they both only reference the same fixVersion
-     *
-     * @param fixVersion
-     * @return
-     */
-    public JiraQueryBuilder fixVersion( String fixVersion )
-    {
-        addSingleValue( "fixVersion", fixVersion );
-        return this;
-    }
-
-    public JiraQueryBuilder sortColumnNames( String sortColumnNames )
-    {
-        if ( sortColumnNames != null )
-        {
-            orderBy.append( " ORDER BY " );
-
-            String[] sortColumnNamesArray = sortColumnNames.split( "," );
-
-            for ( int i = 0; i < sortColumnNamesArray.length - 1; i++ )
-            {
-                addSingleSortColumn( sortColumnNamesArray[i] );
-                orderBy.append( ", " );
-            }
-            addSingleSortColumn( sortColumnNamesArray[sortColumnNamesArray.length - 1] );
-        }
-        return this;
-    }
-
-    private void addSingleSortColumn( String name )
-    {
-        boolean descending = false;
-        name = name.trim().toLowerCase( Locale.ENGLISH );
-        if ( name.endsWith( "desc" ) )
-        {
-            descending = true;
-            name = name.substring( 0, name.length() - 4 ).trim();
-        }
-        else if ( name.endsWith( "asc" ) )
-        {
-            descending = false;
-            name = name.substring( 0, name.length() - 3 ).trim();
-        }
-        orderBy.append( name );
-        orderBy.append( descending ? " DESC" : " ASC" );
-    }
-
-
-    private void addSingleValue( String key, String value )
-    {
-        if ( value != null )
-        {
-            if ( query.length() > 0 )
-            {
-                query.append( " AND " );
-            }
-            query.append( key ).append( " = " );
-            trimAndQuoteValue( value );
-        }
-    }
-
-    private void addCommaSeparatedValues( String key, String values )
-    {
-        if ( values != null )
-        {
-            if ( query.length() > 0 )
-            {
-                query.append( " AND " );
-            }
-
-            query.append( key + " in (" );
-
-            String[] valuesArr = values.split( "," );
-
-            for ( int i = 0; i < ( valuesArr.length - 1 ); i++ )
-            {
-                trimAndQuoteValue( valuesArr[i] );
-                query.append( ", " );
-            }
-            trimAndQuoteValue( valuesArr[valuesArr.length - 1] );
-            query.append( ")" );
-        }
-    }
-
-    private void trimAndQuoteValue( String value )
-    {
-        String trimmedValue = value.trim();
-        if ( trimmedValue.contains( " " ) || trimmedValue.contains( "." ) )
-        {
-            query.append( "\"" ).append( trimmedValue ).append( "\"" );
-        }
-        else
-        {
-            query.append( trimmedValue );
-        }
     }
 
     public String build()
@@ -232,8 +78,166 @@ public class JqlQueryBuilder
         }
     }
 
+    public JiraQueryBuilder components( String components )
+    {
+        addCommaSeparatedValues( "component", components );
+        return this;
+    }
+
+    public JiraQueryBuilder filter( String filter )
+    {
+        this.filter = filter;
+        return this;
+    }
+
+    /**
+     * When both {@link #fixVersion(String)} and {@link #fixVersionIds(String)} are used then you will probably
+     * end up with a JQL query that is valid, but returns nothing. Unless they both only reference the same fixVersion
+     *
+     * @param fixVersion
+     * @return
+     */
+    public JiraQueryBuilder fixVersion( String fixVersion )
+    {
+        addSingleValue( "fixVersion", fixVersion );
+        return this;
+    }
+
+    /**
+     * When both {@link #fixVersion(String)} and {@link #fixVersionIds(String)} are used then you will probably
+     * end up with a JQL query that is valid, but returns nothing. Unless they both only reference the same fixVersion
+     *
+     * @param fixVersionIds
+     * @return
+     */
+    public JiraQueryBuilder fixVersionIds( String fixVersionIds )
+    {
+        addCommaSeparatedValues( "fixVersion", fixVersionIds );
+        return this;
+    }
+
     public Log getLog()
     {
         return log;
+    }
+
+    public JiraQueryBuilder priorityIds( String priorityIds )
+    {
+        addCommaSeparatedValues( "priority", priorityIds );
+        return this;
+    }
+
+    public JiraQueryBuilder project( String project )
+    {
+        addSingleValue( "project", project );
+        return this;
+    }
+
+    public JiraQueryBuilder resolutionIds( String resolutionIds )
+    {
+        addCommaSeparatedValues( "resolution", resolutionIds );
+        return this;
+    }
+
+    public JiraQueryBuilder sortColumnNames( String sortColumnNames )
+    {
+        if ( sortColumnNames != null )
+        {
+            orderBy.append( " ORDER BY " );
+
+            String[] sortColumnNamesArray = sortColumnNames.split( "," );
+
+            for ( int i = 0; i < sortColumnNamesArray.length - 1; i++ )
+            {
+                addSingleSortColumn( sortColumnNamesArray[i] );
+                orderBy.append( ", " );
+            }
+            addSingleSortColumn( sortColumnNamesArray[sortColumnNamesArray.length - 1] );
+        }
+        return this;
+    }
+
+    public JiraQueryBuilder statusIds( String statusIds )
+    {
+        addCommaSeparatedValues( "status", statusIds );
+        return this;
+    }
+
+
+    public JiraQueryBuilder typeIds( String typeIds )
+    {
+        addCommaSeparatedValues( "type", typeIds );
+        return this;
+    }
+
+    /* --------------------------------------------------------------------- */
+    /* Private methods                                                       */
+    /* --------------------------------------------------------------------- */
+
+    private void addCommaSeparatedValues( String key, String values )
+    {
+        if ( values != null )
+        {
+            if ( query.length() > 0 )
+            {
+                query.append( " AND " );
+            }
+
+            query.append( key + " in (" );
+
+            String[] valuesArr = values.split( "," );
+
+            for ( int i = 0; i < ( valuesArr.length - 1 ); i++ )
+            {
+                trimAndQuoteValue( valuesArr[i] );
+                query.append( ", " );
+            }
+            trimAndQuoteValue( valuesArr[valuesArr.length - 1] );
+            query.append( ")" );
+        }
+    }
+
+    private void addSingleSortColumn( String name )
+    {
+        boolean descending = false;
+        name = name.trim().toLowerCase( Locale.ENGLISH );
+        if ( name.endsWith( "desc" ) )
+        {
+            descending = true;
+            name = name.substring( 0, name.length() - 4 ).trim();
+        }
+        else if ( name.endsWith( "asc" ) )
+        {
+            descending = false;
+            name = name.substring( 0, name.length() - 3 ).trim();
+        }
+        orderBy.append( name );
+        orderBy.append( descending ? " DESC" : " ASC" );
+    }
+
+    private void addSingleValue( String key, String value )
+    {
+        if ( value != null )
+        {
+            if ( query.length() > 0 )
+            {
+                query.append( " AND " );
+            }
+            query.append( key ).append( " = " );
+            trimAndQuoteValue( value );
+        }
+    }
+
+    private void trimAndQuoteValue( String value )
+    {
+        String trimmedValue = value.trim();
+        if ( trimmedValue.contains( " " ) || trimmedValue.contains( "." ) )
+        {
+            query.append( "\"" ).append( trimmedValue ).append( "\"" );
+        }
+        else
+        {
+            query.append( trimmedValue );
+        }
     }
 }
