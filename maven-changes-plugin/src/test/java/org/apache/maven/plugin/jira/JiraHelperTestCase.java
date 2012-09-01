@@ -50,4 +50,15 @@ public class JiraHelperTestCase
         map = JiraHelper.getJiraUrlAndProjectId( "http://jira.codehaus.org/browse/MSHARED/component/13380" );
         assertEquals( "http://jira.codehaus.org", map.get( "url" ) );
     }
+
+    public void testGetBaseUrl()
+    {
+        String expected = "http://www.jira.com";
+        String actual = JiraHelper.getBaseUrl( "http://www.jira.com/context/test?werewrew" );
+        assertEquals( expected, actual );
+
+        expected = "https://www.jira.com";
+        actual = JiraHelper.getBaseUrl( "https://www.jira.com/context/test?werewrew" );
+        assertEquals( expected, actual );
+    }
 }

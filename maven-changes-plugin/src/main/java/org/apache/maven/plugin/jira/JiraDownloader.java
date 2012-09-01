@@ -31,31 +31,5 @@ public final class JiraDownloader
 {
     public JiraDownloader()
     {
-        statusMap.put( "Open", "1" );
-        statusMap.put( "In Progress", "3" );
-        statusMap.put( "Reopened", "4" );
-        statusMap.put( "Resolved", "5" );
-        statusMap.put( "Closed", "6" );
-
-        resolutionMap.put( "Unresolved", "-1" );
-        resolutionMap.put( "Fixed", "1" );
-        resolutionMap.put( "Won't Fix", "2" );
-        resolutionMap.put( "Duplicate", "3" );
-        resolutionMap.put( "Incomplete", "4" );
-        resolutionMap.put( "Cannot Reproduce", "5" );
-
-        priorityMap.put( "Blocker", "1" );
-        priorityMap.put( "Critical", "2" );
-        priorityMap.put( "Major", "3" );
-        priorityMap.put( "Minor", "4" );
-        priorityMap.put( "Trivial", "5" );
-
-        typeMap.put( "Bug", "1" );
-        typeMap.put( "New Feature", "2" );
-        typeMap.put( "Task", "3" );
-        typeMap.put( "Improvement", "4" );
-        typeMap.put( "Wish", "5" );
-        typeMap.put( "Test", "6" );
-        typeMap.put( "Sub-task", "7" );
     }
 }
