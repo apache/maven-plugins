@@ -192,7 +192,6 @@ public class ParameterQueryBuilder {
 
     public ParameterQueryBuilder typeIds( String typeIds )
     {
-
         // get the Type Ids
         if ( typeIds != null )
         {
