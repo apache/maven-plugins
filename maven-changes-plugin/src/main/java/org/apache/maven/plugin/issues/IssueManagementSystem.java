@@ -29,6 +29,8 @@ import org.apache.maven.plugin.changes.IssueType;
  * <p/>
  * The plan is to enhance this interface to allow communication with different issue management systems in a consistent
  * way.
+ *
+ * @version $Id$
  */
 public interface IssueManagementSystem
 {

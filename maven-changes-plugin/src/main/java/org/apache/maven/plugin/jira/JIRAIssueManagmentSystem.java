@@ -24,6 +24,8 @@ import org.apache.maven.plugin.issues.AbstractIssueManagementSystem;
 
 /**
  * The JIRA issue management system.
+ *
+ * @version $Id$
  */
 public class JIRAIssueManagmentSystem
     extends AbstractIssueManagementSystem

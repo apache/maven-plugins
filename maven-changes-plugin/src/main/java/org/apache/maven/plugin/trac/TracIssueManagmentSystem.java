@@ -24,6 +24,8 @@ import org.apache.maven.plugin.issues.AbstractIssueManagementSystem;
 
 /**
  * The Trac issue management system.
+ *
+ * @version $Id$
  */
 public class TracIssueManagmentSystem
     extends AbstractIssueManagementSystem
