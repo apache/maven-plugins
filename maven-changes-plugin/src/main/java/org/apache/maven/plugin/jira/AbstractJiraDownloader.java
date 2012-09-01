@@ -791,33 +791,33 @@ public abstract class AbstractJiraDownloader
         this.settings = settings;
     }
 
-	public boolean isUseJql()
-	{
-		return useJql;
-	}
+    public boolean isUseJql()
+    {
+        return useJql;
+    }
 
-	public void setUseJql(boolean useJql)
-	{
-		this.useJql = useJql;
-	}
+    public void setUseJql( boolean useJql )
+    {
+        this.useJql = useJql;
+    }
 
-	public boolean isOnlyCurrentVersion()
-	{
-		return onlyCurrentVersion;
-	}
+    public boolean isOnlyCurrentVersion()
+    {
+        return onlyCurrentVersion;
+    }
 
-	public void setOnlyCurrentVersion(boolean onlyCurrentVersion)
-	{
-		this.onlyCurrentVersion = onlyCurrentVersion;
-	}
+    public void setOnlyCurrentVersion( boolean onlyCurrentVersion )
+    {
+        this.onlyCurrentVersion = onlyCurrentVersion;
+    }
 
-	public String getVersionPrefix()
-	{
-		return versionPrefix;
-	}
+    public String getVersionPrefix()
+    {
+        return versionPrefix;
+    }
 
-	public void setVersionPrefix(String versionPrefix)
-	{
-		this.versionPrefix = versionPrefix;
-	}
+    public void setVersionPrefix( String versionPrefix )
+    {
+        this.versionPrefix = versionPrefix;
+    }
 }
