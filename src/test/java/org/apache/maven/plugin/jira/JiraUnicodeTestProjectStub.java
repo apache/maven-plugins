@@ -28,6 +28,7 @@ import org.apache.maven.artifact.repository.layout.DefaultRepositoryLayout;
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
 
 /**
+ * @version $Id$
  */
 public class JiraUnicodeTestProjectStub
     extends MavenProjectStub

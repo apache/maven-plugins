@@ -28,6 +28,7 @@ import junit.framework.TestCase;
 
 /**
  * @author Alan Parkinson
+ * @version $Id$
  * @since 2.6
  */
 public class IssueAdapterTest
