@@ -66,14 +66,14 @@ public class JqlQueryBuilder
             {
                 jqlQuery = query.toString() + orderBy.toString();
             }
-            getLog().debug( "Encoding JBL query " + jqlQuery );
+            getLog().debug( "Encoding JQL query " + jqlQuery );
             String encodedQuery = URLEncoder.encode( jqlQuery, "UTF-8" );
-            getLog().debug( "Encoded JBL query " + encodedQuery );
+            getLog().debug( "Encoded JQL query " + encodedQuery );
             return encodedQuery;
         }
         catch ( UnsupportedEncodingException e )
         {
-            getLog().error( "Unable to encode JBL query with UTF-8", e );
+            getLog().error( "Unable to encode JQL query with UTF-8", e );
             throw new RuntimeException( e );
         }
     }
