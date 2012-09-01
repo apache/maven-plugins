@@ -34,6 +34,8 @@ import org.apache.maven.plugin.changes.IssueType;
  * Note that the map in here is <strong>not</strong> immutable. It contains the default
  * configuration for an IMS. Users are expected to add entries to the map via configuration
  * to reflect their customizations.
+ *
+ * @version $Id$
  */
 public abstract class AbstractIssueManagementSystem
     implements IssueManagementSystem

@@ -21,6 +21,8 @@ package org.apache.maven.plugin.changes;
 
 /**
  * The types of issues that can be used in a <code>changes.xml</code> file.
+ *
+ * @version $Id$
  */
 public enum IssueType
 {

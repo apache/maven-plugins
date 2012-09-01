@@ -23,6 +23,7 @@ package org.apache.maven.plugin.jira;
  * Builder for a URL which build up of host part, a context part and 0 or more parameters.
  *
  * @author ton.swieb@finalist.com
+ * @version $Id$
  * @since 2.8
  */
 public class UrlBuilder
