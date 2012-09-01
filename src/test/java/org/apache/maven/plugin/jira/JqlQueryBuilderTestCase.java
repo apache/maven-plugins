@@ -29,9 +29,10 @@ import java.net.URLEncoder;
  * Test class for {@link JqlQueryBuilder}
  *
  * @author ton.swieb@finalist.com
+ * @version $Id$
  * @since 2.8
  */
-public class JqlQueryBuilderTest
+public class JqlQueryBuilderTestCase
     extends TestCase
 {
     private static final String ENCODING = "UTF-8";
