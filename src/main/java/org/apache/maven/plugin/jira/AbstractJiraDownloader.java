@@ -19,7 +19,6 @@ package org.apache.maven.plugin.jira;
  * under the License.
  */
 
-import org.apache.commons.httpclient.cookie.CookiePolicy;
 import org.apache.commons.httpclient.Credentials;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HostConfiguration;
@@ -29,9 +28,10 @@ import org.apache.commons.httpclient.HttpState;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.StatusLine;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
-import org.apache.commons.httpclient.params.HttpClientParams;
 import org.apache.commons.httpclient.auth.AuthScope;
+import org.apache.commons.httpclient.cookie.CookiePolicy;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.httpclient.params.HttpClientParams;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.issues.Issue;
 import org.apache.maven.plugin.logging.Log;
@@ -51,9 +51,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -103,6 +101,8 @@ public abstract class AbstractJiraDownloader
     private MavenProject project;
     /** The maven settings. */
     private Settings settings;
+    /** Use JQL, JIRA query language, instead of URL parameter based queries */
+    private boolean useJql;
     /** The pattern used to parse dates from the JIRA xml file. */
     protected String jiraDatePattern;
 
@@ -132,7 +132,15 @@ public abstract class AbstractJiraDownloader
             client.setState( state );
 
             String fullUrl = null;
-            fullUrl = getParameterBasedQueryURL( client );
+
+            if ( useJql )
+            {
+                fullUrl = getJqlQueryURL();
+            }
+            else
+            {
+                fullUrl = getParameterBasedQueryURL( client );
+            }
             String baseUrl = JiraHelper.getBaseUrl( fullUrl );
 
             getLog().debug( "JIRA lives at: " + baseUrl );
@@ -168,6 +176,42 @@ public abstract class AbstractJiraDownloader
             {
                 getLog().error( "Error accessing mock project issues", e );
             }
+        }
+    }
+
+    private String getJqlQueryURL()
+    {
+        // JQL is based on project names instead of project ID's
+        Map<String, String> urlMap = JiraHelper.getJiraUrlAndProjectName( project.getIssueManagement().getUrl() );
+        String jiraUrl = urlMap.get( "url" );
+        String jiraProject = urlMap.get( "project" );
+
+        if ( jiraProject == null )
+        {
+            throw new RuntimeException( "The issue management URL in the POM does not include a JIRA project name" );
+        }
+        else
+        {
+            // create the URL for getting the proper issues from JIRA
+            String jqlQuery = new JqlQueryBuilder( log )
+                    .project( jiraProject )
+                    .fixVersion( getFixFor() )
+                    .fixVersionIds( fixVersionIds )
+                    .statusIds( statusIds )
+                    .priorityIds( priorityIds )
+                    .resolutionIds( resolutionIds )
+                    .components( component )
+                    .typeIds( typeIds )
+                    .sortColumnNames( sortColumnNames )
+                    .build();
+
+            String url = new UrlBuilder( jiraUrl, "sr/jira.issueviews:searchrequest-xml/temp/SearchRequest.xml" )
+                    .addParameter( "tempMax", nbEntriesMax )
+                    .addParameter( "reset", "true" )
+                    .addParameter( "jqlQuery", jqlQuery )
+                    .build();
+
+            return url;
         }
     }
 
@@ -715,4 +759,14 @@ public abstract class AbstractJiraDownloader
     {
         this.settings = settings;
     }
+
+	public boolean isUseJql()
+	{
+		return useJql;
+	}
+
+	public void setUseJql(boolean useJql)
+	{
+		this.useJql = useJql;
+	}
 }

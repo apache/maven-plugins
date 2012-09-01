@@ -90,6 +90,14 @@ public class JiraMojo
     private String columnNames;
 
     /**
+     * Use the JIRA query language instead of the JIRA query based on HTTP parameters. 
+     * From JIRA 5.1 and up only JQL is supported. JIRA 4.4 supports both JQL and URL parameter based queries.
+     * @since 2.8
+     */
+    @Parameter( defaultValue = "false" )
+    private boolean useJql;
+    
+    /**
      * Sets the component(s) that you want to limit your report to include.
      * Multiple values can be separated by commas (such as 10011,10012).
      * If this is set to empty - that means all components will be included.
@@ -425,6 +433,8 @@ public class JiraMojo
         issueDownloader.setWebPassword( webPassword );
 
         issueDownloader.setSettings( settings );
+
+        issueDownloader.setUseJql( useJql );
     }
 
     public void setMockDownloader( AbstractJiraDownloader mockDownloader )
