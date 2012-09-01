@@ -34,6 +34,7 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.params.HttpClientParams;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.issues.Issue;
+import org.apache.maven.plugin.issues.IssueUtils;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Proxy;
@@ -103,6 +104,10 @@ public abstract class AbstractJiraDownloader
     private Settings settings;
     /** Use JQL, JIRA query language, instead of URL parameter based queries */
     private boolean useJql;
+    /** Filter the JIRA query based on the current version */
+    private boolean onlyCurrentVersion;
+    /** The versionPrefix to apply to the POM version */
+    private String versionPrefix;
     /** The pattern used to parse dates from the JIRA xml file. */
     protected String jiraDatePattern;
 
@@ -267,7 +272,27 @@ public abstract class AbstractJiraDownloader
      */
     protected String getFixFor()
     {
-        return null;
+        if ( onlyCurrentVersion && useJql )
+        {
+            // Let JIRA do the filtering of the current version instead of the JIRA mojo.
+            // This way JIRA returns less issues and we do not run into the "nbEntriesMax" limit that easily.
+
+            String version = ( versionPrefix == null ? "" : versionPrefix ) + project.getVersion();
+
+            // Remove "-SNAPSHOT" from the end of the version, if it's there
+            if ( version != null && version.endsWith( IssueUtils.SNAPSHOT_SUFFIX ) )
+            {
+                return version.substring( 0, version.length() - IssueUtils.SNAPSHOT_SUFFIX.length() );
+            }
+            else
+            {
+                return version;
+            }
+        }
+        else
+        {
+            return null;
+        }
     }
 
     /**
@@ -768,5 +793,25 @@ public abstract class AbstractJiraDownloader
 	public void setUseJql(boolean useJql)
 	{
 		this.useJql = useJql;
+	}
+
+	public boolean isOnlyCurrentVersion()
+	{
+		return onlyCurrentVersion;
+	}
+
+	public void setOnlyCurrentVersion(boolean onlyCurrentVersion)
+	{
+		this.onlyCurrentVersion = onlyCurrentVersion;
+	}
+
+	public String getVersionPrefix()
+	{
+		return versionPrefix;
+	}
+
+	public void setVersionPrefix(String versionPrefix)
+	{
+		this.versionPrefix = versionPrefix;
 	}
 }

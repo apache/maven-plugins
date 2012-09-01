@@ -435,6 +435,10 @@ public class JiraMojo
         issueDownloader.setSettings( settings );
 
         issueDownloader.setUseJql( useJql );
+        
+        issueDownloader.setOnlyCurrentVersion( onlyCurrentVersion );
+        
+        issueDownloader.setVersionPrefix( versionPrefix );
     }
 
     public void setMockDownloader( AbstractJiraDownloader mockDownloader )
