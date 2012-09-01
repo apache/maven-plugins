@@ -30,9 +30,11 @@ import org.apache.maven.plugin.logging.Log;
  * Only a limited set of JQL is supported.
  *
  * @author ton.swieb@finalist.com
+ * @version $Id$
  * @since 2.8
  */
 public class JqlQueryBuilder
+    implements JiraQueryBuilder
 {
     /**
      * Log for debug output.
@@ -50,7 +52,7 @@ public class JqlQueryBuilder
         this.log = log;
     }
 
-    public JqlQueryBuilder project( String project )
+    public JiraQueryBuilder project( String project )
     {
         addSingleValue( "project", project );
         return this;
@@ -63,43 +65,43 @@ public class JqlQueryBuilder
      * @param fixVersionIds
      * @return
      */
-    public JqlQueryBuilder fixVersionIds( String fixVersionIds )
+    public JiraQueryBuilder fixVersionIds( String fixVersionIds )
     {
         addCommaSeparatedValues( "fixVersion", fixVersionIds );
         return this;
     }
 
-    public JqlQueryBuilder statusIds( String statusIds )
+    public JiraQueryBuilder statusIds( String statusIds )
     {
         addCommaSeparatedValues( "status", statusIds );
         return this;
     }
 
-    public JqlQueryBuilder priorityIds( String priorityIds )
+    public JiraQueryBuilder priorityIds( String priorityIds )
     {
         addCommaSeparatedValues( "priority", priorityIds );
         return this;
     }
 
-    public JqlQueryBuilder resolutionIds( String resolutionIds )
+    public JiraQueryBuilder resolutionIds( String resolutionIds )
     {
         addCommaSeparatedValues( "resolution", resolutionIds );
         return this;
     }
 
-    public JqlQueryBuilder components( String components )
+    public JiraQueryBuilder components( String components )
     {
         addCommaSeparatedValues( "component", components );
         return this;
     }
 
-    public JqlQueryBuilder typeIds( String typeIds )
+    public JiraQueryBuilder typeIds( String typeIds )
     {
         addCommaSeparatedValues( "type", typeIds );
         return this;
     }
 
-    public JqlQueryBuilder filter( String filter )
+    public JiraQueryBuilder filter( String filter )
     {
         this.filter = filter;
         return this;
@@ -112,13 +114,13 @@ public class JqlQueryBuilder
      * @param fixVersion
      * @return
      */
-    public JqlQueryBuilder fixVersion( String fixVersion )
+    public JiraQueryBuilder fixVersion( String fixVersion )
     {
         addSingleValue( "fixVersion", fixVersion );
         return this;
     }
 
-    public JqlQueryBuilder sortColumnNames( String sortColumnNames )
+    public JiraQueryBuilder sortColumnNames( String sortColumnNames )
     {
         if ( sortColumnNames != null )
         {
