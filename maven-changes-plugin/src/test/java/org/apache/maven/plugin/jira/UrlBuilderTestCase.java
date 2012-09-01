@@ -25,9 +25,10 @@ import junit.framework.TestCase;
  * Test class for {@link UrlBuilder}
  *
  * @author ton.swieb@finalist.com
+ * @version $Id$
  * @since 2.8
  */
-public class UrlBuilderTest
+public class UrlBuilderTestCase
     extends TestCase
 {
     public void testUrlWithoutParameters()
