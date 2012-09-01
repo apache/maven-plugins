@@ -30,7 +30,7 @@ public class UrlBuilder
     private static final String AMPERSAND = "&";
     private static final String QUESTION_MARK = "?";
 
-    StringBuilder query = new StringBuilder();
+    private StringBuilder query = new StringBuilder();
 
     public UrlBuilder( String url, String context )
     {

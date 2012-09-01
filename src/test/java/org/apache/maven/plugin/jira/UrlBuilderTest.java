@@ -30,35 +30,39 @@ import junit.framework.TestCase;
 public class UrlBuilderTest
     extends TestCase
 {
-
     public void testUrlWithoutParameters()
     {
         String expected = "http://www.jira.com/context";
-        String actual = new UrlBuilder( "http://www.jira.com", "context" ).build();
+        String actual = new UrlBuilder( "http://www.jira.com", "context" )
+                .build();
         assertEquals( expected, actual );
     }
 
     public void testUrlWithSingleParameter()
     {
         String expected = "http://www.jira.com/context?key1=value1";
-        String actual = new UrlBuilder( "http://www.jira.com", "context" ).addParameter( "key1", "value1" ).build();
+        String actual = new UrlBuilder( "http://www.jira.com", "context" )
+                .addParameter( "key1", "value1" )
+                .build();
         assertEquals( expected, actual );
     }
 
     public void testUrlWithMultipleParameters()
     {
         String expected = "http://www.jira.com/context?key1=value1&key2=value2";
-        String actual =
-            new UrlBuilder( "http://www.jira.com", "context" ).addParameter( "key1", "value1" ).addParameter( "key2",
-                                                                                                              "value2" ).build();
+        String actual = new UrlBuilder( "http://www.jira.com", "context" )
+                .addParameter( "key1", "value1" )
+                .addParameter( "key2", "value2" )
+                .build();
         assertEquals( expected, actual );
     }
 
     public void testUrlWithIntParameter()
     {
         String expected = "http://www.jira.com/context?key1=1";
-        String actual = new UrlBuilder( "http://www.jira.com", "context" ).addParameter( "key1", 1 ).build();
+        String actual = new UrlBuilder( "http://www.jira.com", "context" )
+                .addParameter( "key1", 1 )
+                .build();
         assertEquals( expected, actual );
     }
-
 }
