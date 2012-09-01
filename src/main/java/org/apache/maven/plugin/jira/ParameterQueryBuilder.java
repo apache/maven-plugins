@@ -37,17 +37,17 @@ public class ParameterQueryBuilder
 {
     private String filter = "";
     /** Log for debug output. */
-    protected Log log;
+    private Log log;
     private StringBuilder query = new StringBuilder();
 
     /** Mapping containing all allowed JIRA priority values. */
-    protected final Map<String,String> priorityMap = new HashMap<String,String>( 8 );
+    private final Map<String,String> priorityMap = new HashMap<String,String>( 8 );
     /** Mapping containing all allowed JIRA resolution values. */
-    protected final Map<String,String> resolutionMap = new HashMap<String,String>( 8 );
+    private final Map<String,String> resolutionMap = new HashMap<String,String>( 8 );
     /** Mapping containing all allowed JIRA status values. */
-    protected final Map<String,String> statusMap = new HashMap<String,String>( 8 );
+    private final Map<String,String> statusMap = new HashMap<String,String>( 8 );
     /** Mapping containing all allowed JIRA type values. */
-    protected final Map<String,String> typeMap = new HashMap<String,String>( 8 );
+    private final Map<String,String> typeMap = new HashMap<String,String>( 8 );
 
     public ParameterQueryBuilder( Log log )
     {
