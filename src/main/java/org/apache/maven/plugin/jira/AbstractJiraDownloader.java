@@ -248,10 +248,16 @@ public abstract class AbstractJiraDownloader
                 fullURL += "&fixfor=" + getFixFor();
             }
 
-            String createdFilter =
-                new ParameterQueryBuilder( log ).fixVersionIds( fixVersionIds ).statusIds( statusIds )
-                        .priorityIds( priorityIds ).resolutionIds( resolutionIds ).components( component )
-                        .typeIds( typeIds ).sortColumnNames( sortColumnNames ).filter( filter ).build();
+            String createdFilter = new ParameterQueryBuilder( log )
+                    .fixVersionIds( fixVersionIds )
+                    .statusIds( statusIds )
+                    .priorityIds( priorityIds )
+                    .resolutionIds( resolutionIds )
+                    .components( component )
+                    .typeIds( typeIds )
+                    .sortColumnNames( sortColumnNames )
+                    .filter( filter )
+                    .build();
 
             if ( createdFilter.charAt( 0 ) != '&' )
             {

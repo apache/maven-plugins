@@ -52,7 +52,7 @@ public class JqlQueryBuilder
 
     public JqlQueryBuilder project( String project )
     {
-        AddSingleValue( "project", project );
+        addSingleValue( "project", project );
         return this;
     }
 
@@ -65,37 +65,37 @@ public class JqlQueryBuilder
      */
     public JqlQueryBuilder fixVersionIds( String fixVersionIds )
     {
-        AddCommaSeparatedValues( "fixVersion", fixVersionIds );
+        addCommaSeparatedValues( "fixVersion", fixVersionIds );
         return this;
     }
 
     public JqlQueryBuilder statusIds( String statusIds )
     {
-        AddCommaSeparatedValues( "status", statusIds );
+        addCommaSeparatedValues( "status", statusIds );
         return this;
     }
 
     public JqlQueryBuilder priorityIds( String priorityIds )
     {
-        AddCommaSeparatedValues( "priority", priorityIds );
+        addCommaSeparatedValues( "priority", priorityIds );
         return this;
     }
 
     public JqlQueryBuilder resolutionIds( String resolutionIds )
     {
-        AddCommaSeparatedValues( "resolution", resolutionIds );
+        addCommaSeparatedValues( "resolution", resolutionIds );
         return this;
     }
 
     public JqlQueryBuilder components( String components )
     {
-        AddCommaSeparatedValues( "component", components );
+        addCommaSeparatedValues( "component", components );
         return this;
     }
 
     public JqlQueryBuilder typeIds( String typeIds )
     {
-        AddCommaSeparatedValues( "type", typeIds );
+        addCommaSeparatedValues( "type", typeIds );
         return this;
     }
 
@@ -114,7 +114,7 @@ public class JqlQueryBuilder
      */
     public JqlQueryBuilder fixVersion( String fixVersion )
     {
-        AddSingleValue( "fixVersion", fixVersion );
+        addSingleValue( "fixVersion", fixVersion );
         return this;
     }
 
@@ -122,7 +122,6 @@ public class JqlQueryBuilder
     {
         if ( sortColumnNames != null )
         {
-
             orderBy.append( " ORDER BY " );
 
             String[] sortColumnNamesArray = sortColumnNames.split( "," );
@@ -139,7 +138,6 @@ public class JqlQueryBuilder
 
     private void addSingleSortColumn( String name )
     {
-
         boolean descending = false;
         name = name.trim().toLowerCase( Locale.ENGLISH );
         if ( name.endsWith( "desc" ) )
@@ -157,7 +155,7 @@ public class JqlQueryBuilder
     }
 
 
-    private void AddSingleValue( String key, String value )
+    private void addSingleValue( String key, String value )
     {
         if ( value != null )
         {
@@ -166,11 +164,11 @@ public class JqlQueryBuilder
                 query.append( " AND " );
             }
             query.append( key ).append( " = " );
-            TrimAndQuoteValue( value );
+            trimAndQuoteValue( value );
         }
     }
 
-    private void AddCommaSeparatedValues( String key, String values )
+    private void addCommaSeparatedValues( String key, String values )
     {
         if ( values != null )
         {
@@ -185,17 +183,16 @@ public class JqlQueryBuilder
 
             for ( int i = 0; i < ( valuesArr.length - 1 ); i++ )
             {
-                TrimAndQuoteValue( valuesArr[i] );
+                trimAndQuoteValue( valuesArr[i] );
                 query.append( ", " );
             }
-            TrimAndQuoteValue( valuesArr[valuesArr.length - 1] );
+            trimAndQuoteValue( valuesArr[valuesArr.length - 1] );
             query.append( ")" );
         }
     }
 
-    private void TrimAndQuoteValue( String value )
+    private void trimAndQuoteValue( String value )
     {
-
         String trimmedValue = value.trim();
         if ( trimmedValue.contains( " " ) || trimmedValue.contains( "." ) )
         {
@@ -209,7 +206,6 @@ public class JqlQueryBuilder
 
     public String build()
     {
-
         try
         {
             String jqlQuery;
