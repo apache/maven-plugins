@@ -190,4 +190,13 @@ public class JiraHelper
     {
         // utility class
     }
+
+    /**
+     * @since 2.8
+     */
+    public static String getBaseUrl( String url )
+    {
+        int index = url.indexOf( "/", 8 ); //Ignore http:// or https://
+        return url.substring( 0, index );
+    }
 }

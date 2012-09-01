@@ -103,241 +103,8 @@ public abstract class AbstractJiraDownloader
     private MavenProject project;
     /** The maven settings. */
     private Settings settings;
-    /** Mapping containing all allowed JIRA status values. */
-    protected final Map<String,String> statusMap = new HashMap<String,String>( 8 );
-    /** Mapping containing all allowed JIRA resolution values. */
-    protected final Map<String,String> resolutionMap = new HashMap<String,String>( 8 );
-    /** Mapping containing all allowed JIRA priority values. */
-    protected final Map<String,String> priorityMap = new HashMap<String,String>( 8 );
-    /** Mapping containing all allowed JIRA type values. */
-    protected final Map<String,String> typeMap = new HashMap<String,String>( 8 );
     /** The pattern used to parse dates from the JIRA xml file. */
     protected String jiraDatePattern;
-
-    /**
-     * Creates a filter given the parameters and some defaults.
-     *
-     * @return request parameters to be added to URL used for downloading the JIRA issues
-     */
-    private String createFilter()
-    {
-        // If the user has defined a filter - use that
-        if ( ( this.filter != null ) && ( this.filter.length() > 0 ) )
-        {
-            return this.filter;
-        }
-
-        StringBuffer localFilter = new StringBuffer( 16 );
-
-        // add fix versions
-        if ( fixVersionIds != null )
-        {
-            String[] fixVersions = fixVersionIds.split( "," );
-
-            for ( int i = 0; i < fixVersions.length; i++ )
-            {
-                if ( fixVersions[i].length() > 0 )
-                {
-                    localFilter.append( "&fixfor=" ).append( fixVersions[i].trim() );
-                }
-            }
-        }
-
-        // get the Status Ids
-        if ( statusIds != null )
-        {
-            String[] stats = statusIds.split( "," );
-            for ( String stat : stats )
-            {
-                stat = stat.trim();
-                String statusParam = statusMap.get( stat );
-
-                if ( statusParam != null )
-                {
-                    localFilter.append( "&statusIds=" ).append( statusParam );
-                }
-                else
-                {
-                    // if it's numeric we can handle it too.
-                    try
-                    {
-                        Integer.parseInt( stat );
-                        localFilter.append( "&statusIds=" ).append( stat );
-                    }
-                    catch ( NumberFormatException nfe )
-                    {
-                        getLog().error( "maven-changes-plugin: invalid statusId " + stat );
-                    }
-                }
-            }
-        }
-
-        // get the Priority Ids
-        if ( priorityIds != null )
-        {
-            String[] prios = priorityIds.split( "," );
-
-            for ( String prio : prios ) 
-            {
-                prio = prio.trim();
-                String priorityParam = priorityMap.get( prio );
-
-                if ( priorityParam != null )
-                {
-                    localFilter.append( "&priorityIds=" ).append( priorityParam );
-                }
-            }
-        }
-
-        // get the Resolution Ids
-        if ( resolutionIds != null )
-        {
-            String[] resos = resolutionIds.split( "," );
-
-            for ( String reso : resos ) 
-            {
-                reso = reso.trim();
-                String resoParam = resolutionMap.get( reso );
-
-                if ( resoParam != null )
-                {
-                    localFilter.append( "&resolutionIds=" ).append( resoParam );
-                }
-            }
-        }
-
-        // add components
-        if ( component != null )
-        {
-            String[] components = component.split( "," );
-
-            for ( String component : components ) 
-            {
-                component = component.trim();
-                if ( component.length() > 0 )
-                {
-                    localFilter.append( "&component=" ).append( component );
-                }
-            }
-        }
-
-        // get the Type Ids
-        if ( typeIds != null )
-        {
-            String[] types = typeIds.split( "," );
-
-            for ( String type : types )
-            {
-                String typeParam = typeMap.get( type.trim() );
-
-                if ( typeParam != null )
-                {
-                    localFilter.append( "&type=" ).append( typeParam );
-                }
-            }
-        }
-
-        // get the Sort order
-        int validSortColumnNames = 0;
-        if ( sortColumnNames != null )
-        {
-            String[] sortColumnNamesArray = sortColumnNames.split( "," );
-            // N.B. Add in reverse order (it's the way JIRA 3 likes it!!)
-            for ( int i = sortColumnNamesArray.length - 1; i >= 0; i-- )
-            {
-                String lowerColumnName = sortColumnNamesArray[i].trim().toLowerCase( Locale.ENGLISH );
-                boolean descending = false;
-                String fieldName = null;
-                if ( lowerColumnName.endsWith( "desc" ) )
-                {
-                    descending = true;
-                    lowerColumnName = lowerColumnName.substring( 0, lowerColumnName.length() - 4 ).trim();
-                }
-                else if ( lowerColumnName.endsWith( "asc" ) )
-                {
-                    descending = false;
-                    lowerColumnName = lowerColumnName.substring( 0, lowerColumnName.length() - 3 ).trim();
-                }
-
-                if ( "key".equals( lowerColumnName ) )
-                {
-                    fieldName = "issuekey";
-                }
-                else if ( "summary".equals( lowerColumnName ) )
-                {
-                    fieldName = lowerColumnName;
-                }
-                else if ( "status".equals( lowerColumnName ) )
-                {
-                    fieldName = lowerColumnName;
-                }
-                else if ( "resolution".equals( lowerColumnName ) )
-                {
-                    fieldName = lowerColumnName;
-                }
-                else if ( "assignee".equals( lowerColumnName ) )
-                {
-                    fieldName = lowerColumnName;
-                }
-                else if ( "reporter".equals( lowerColumnName ) )
-                {
-                    fieldName = lowerColumnName;
-                }
-                else if ( "type".equals( lowerColumnName ) )
-                {
-                    fieldName = "issuetype";
-                }
-                else if ( "priority".equals( lowerColumnName ) )
-                {
-                    fieldName = lowerColumnName;
-                }
-                else if ( "version".equals( lowerColumnName ) )
-                {
-                    fieldName = "versions";
-                }
-                else if ( "fix version".equals( lowerColumnName ) )
-                {
-                    fieldName = "fixVersions";
-                }
-                else if ( "component".equals( lowerColumnName ) )
-                {
-                    fieldName = "components";
-                }
-                else if ( "created".equals( lowerColumnName ) )
-                {
-                    fieldName = lowerColumnName;
-                }
-                else if ( "updated".equals( lowerColumnName ) )
-                {
-                    fieldName = lowerColumnName;
-                }
-                if ( fieldName != null )
-                {
-                    localFilter.append( "&sorter/field=" );
-                    localFilter.append( fieldName );
-                    localFilter.append( "&sorter/order=" );
-                    localFilter.append( descending ? "DESC" : "ASC" );
-                    validSortColumnNames++;
-                }
-                else
-                {
-                    // Error in the configuration
-                    getLog().error(
-                        "maven-changes-plugin: The configured value '" + lowerColumnName
-                            + "' for sortColumnNames is not correct." );
-                }
-            }
-        }
-        if ( validSortColumnNames == 0 )
-        {
-            // Error in the configuration
-            getLog().error(
-                "maven-changes-plugin: None of the configured sortColumnNames '" + sortColumnNames + "' are correct." );
-        }
-
-
-        return localFilter.toString();
-    }
 
     /**
      * Execute the query on the JIRA server.
@@ -364,65 +131,31 @@ public abstract class AbstractJiraDownloader
 
             client.setState( state );
 
-            Map<String,String> urlMap = JiraHelper.getJiraUrlAndProjectId( project.getIssueManagement().getUrl() );
+            String fullUrl = null;
+            fullUrl = getParameterBasedQueryURL( client );
+            String baseUrl = JiraHelper.getBaseUrl( fullUrl );
 
-            String jiraUrl = urlMap.get( "url" );
-            getLog().debug( "JIRA lives at: " + jiraUrl );
-
-            String jiraId = urlMap.get( "id" );
-
-            determineProxy( jiraUrl, client );
+            getLog().debug( "JIRA lives at: " + baseUrl );
+            determineProxy( baseUrl, client );
 
             prepareBasicAuthentication( client );
 
             boolean jiraAuthenticationSuccessful = false;
             if ( isJiraAuthenticationConfigured() )
             {
-                jiraAuthenticationSuccessful = doJiraAuthentication( client, jiraUrl );
+                jiraAuthenticationSuccessful = doJiraAuthentication( client, baseUrl );
             }
 
             if ( ( isJiraAuthenticationConfigured() && jiraAuthenticationSuccessful )
                 || !isJiraAuthenticationConfigured() )
             {
-                if ( jiraId == null || jiraId.length() == 0 )
+                if ( log.isDebugEnabled() )
                 {
-                    log.debug( "The JIRA URL " + project.getIssueManagement().getUrl()
-                        + " doesn't include a pid, trying to extract it from JIRA." );
-                    jiraId = JiraHelper.getPidFromJira( log, project.getIssueManagement().getUrl(), client );
+                    log.debug( "download jira issues from url " + fullUrl );
                 }
 
-                if ( jiraId == null )
-                {
-                    getLog().error( "The issue management URL in the POM does not include a pid,"
-                        + " and it was not possible to extract it from the page at that URL." );
-                }
-                else
-                {
-                    // create the URL for getting the proper issues from JIRA
-                    String fullURL = jiraUrl + "/secure/IssueNavigator.jspa?view=rss&pid=" + jiraId;
-
-                    if ( getFixFor() != null )
-                    {
-                        fullURL += "&fixfor=" + getFixFor();
-                    }
-
-                    String createdFilter = createFilter();
-                    if ( createdFilter.charAt( 0 ) != '&' )
-                    {
-                        fullURL += "&";
-                    }
-                    fullURL += createdFilter;
-
-                    fullURL += ( "&tempMax=" + nbEntriesMax + "&reset=true&decorator=none" );
-
-                    if ( log.isDebugEnabled() )
-                    {
-                        log.debug( "download jira issues from url " + fullURL );
-                    }
-
-                    // execute the GET
-                    download( client, fullURL );
-                }
+                // execute the GET
+                download( client, fullUrl );
             }
         }
         catch ( Exception e )
@@ -435,6 +168,51 @@ public abstract class AbstractJiraDownloader
             {
                 getLog().error( "Error accessing mock project issues", e );
             }
+        }
+    }
+
+    private String getParameterBasedQueryURL( HttpClient client )
+    {
+        Map<String, String> urlMap = JiraHelper.getJiraUrlAndProjectId( project.getIssueManagement().getUrl() );
+        String jiraUrl = urlMap.get( "url" );
+        String jiraId = urlMap.get( "id" );
+
+        if ( jiraId == null || jiraId.length() == 0 )
+        {
+            log.debug( "The JIRA URL " + project.getIssueManagement().getUrl()
+                           + " doesn't include a pid, trying to extract it from JIRA." );
+            jiraId = JiraHelper.getPidFromJira( log, project.getIssueManagement().getUrl(), client );
+        }
+
+        if ( jiraId == null )
+        {
+            throw new RuntimeException( "The issue management URL in the POM does not include a pid,"
+                                            + " and it was not possible to extract it from the page at that URL." );
+        }
+        else
+        {
+            // create the URL for getting the proper issues from JIRA
+            String fullURL = jiraUrl + "/secure/IssueNavigator.jspa?view=rss&pid=" + jiraId;
+
+            if ( getFixFor() != null )
+            {
+                fullURL += "&fixfor=" + getFixFor();
+            }
+
+            String createdFilter =
+                new ParameterQueryBuilder( log ).fixVersionIds( fixVersionIds ).statusIds( statusIds )
+                        .priorityIds( priorityIds ).resolutionIds( resolutionIds ).components( component )
+                        .typeIds( typeIds ).sortColumnNames( sortColumnNames ).filter( filter ).build();
+
+            if ( createdFilter.charAt( 0 ) != '&' )
+            {
+                fullURL += "&";
+            }
+            fullURL += createdFilter;
+
+            fullURL += ( "&tempMax=" + nbEntriesMax + "&reset=true&decorator=none" );
+
+            return fullURL;
         }
     }
 
