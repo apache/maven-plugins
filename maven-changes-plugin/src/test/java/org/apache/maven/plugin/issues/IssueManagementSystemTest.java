@@ -28,6 +28,7 @@ import junit.framework.TestCase;
 
 /**
  * @author Alan Parkinson
+ * @version $Id$
  * @since 2.7
  */
 public class IssueManagementSystemTest

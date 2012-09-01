@@ -27,7 +27,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 
 /**
- *
+ * @version $Id$
  */
 public class JiraUnicodeTestCase
     extends AbstractMojoTestCase

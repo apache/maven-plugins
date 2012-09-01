@@ -29,6 +29,7 @@ import org.xml.sax.InputSource;
 /**
  * Allow test cases in the jira mojo without actually talking to jira.
  *
+ * @version $Id$
  */
 public class MockJiraDownloader
     extends AbstractJiraDownloader
