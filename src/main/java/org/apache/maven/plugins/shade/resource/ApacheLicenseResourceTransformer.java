@@ -24,6 +24,8 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.jar.JarOutputStream;
 
+import org.apache.maven.plugins.shade.relocation.Relocator;
+
 /**
  * Prevents duplicate copies of the license
  */
@@ -37,16 +39,11 @@ public class ApacheLicenseResourceTransformer
 
     public boolean canTransformResource( String resource )
     {
-        if ( LICENSE_PATH.equalsIgnoreCase( resource )
-            || LICENSE_TXT_PATH.regionMatches( true, 0, resource, 0, LICENSE_TXT_PATH.length() ) )
-        {
-            return true;
-        }
-
-        return false;
+        return LICENSE_PATH.equalsIgnoreCase( resource )
+            || LICENSE_TXT_PATH.regionMatches( true, 0, resource, 0, LICENSE_TXT_PATH.length() );
     }
 
-    public void processResource( String resource, InputStream is, List relocators )
+    public void processResource( String resource, InputStream is, List<Relocator> relocators )
         throws IOException
     {
 
