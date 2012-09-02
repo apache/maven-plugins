@@ -29,7 +29,7 @@ under the License.
     <version>1.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>site-skip</artifactId>
+  <artifactId>skip-site</artifactId>
   <packaging>pom</packaging>
   <name>Skip Site</name>
 

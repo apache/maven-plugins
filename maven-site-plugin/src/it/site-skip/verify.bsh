@@ -129,9 +129,9 @@ try
     }
 
     stageDir = new File( stageDirectory, "skip-site-deploy" );
-    if ( stageDir.exists() )
+    if ( !stageDir.exists() )
     {
-        System.err.println( "skip-site-deploy stage site exists." );
+        System.err.println( "skip-site-deploy stage site should still exist." );
         result = false;
     }
 

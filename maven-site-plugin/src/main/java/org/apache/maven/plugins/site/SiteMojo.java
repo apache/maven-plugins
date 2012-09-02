@@ -85,7 +85,7 @@ public class SiteMojo
     private boolean validate;
 
     /**
-     * Set this to 'true' to skip site generation.
+     * Set this to 'true' to skip site generation and staging.
      *
      * @since 3.0
      */

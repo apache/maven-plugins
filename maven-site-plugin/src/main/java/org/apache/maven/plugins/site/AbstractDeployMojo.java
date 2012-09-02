@@ -155,7 +155,7 @@ public abstract class AbstractDeployMojo
     public void execute()
         throws MojoExecutionException
     {
-        if ( skipDeploy )
+        if ( skipDeploy && isDeploy() )
         {
             getLog().info( "maven.site.deploy.skip = true: Skipping site deployment" );
             return;
@@ -846,6 +846,16 @@ public abstract class AbstractDeployMojo
         }
 
         return site;
+    }
+
+    /**
+     * Detect if the mojo is staging or deploying.
+     *
+     * @return rue if the mojo is for deploy and not staging
+     */
+    protected boolean isDeploy()
+    {
+        return true;
     }
 
     private static class URIEncoder
