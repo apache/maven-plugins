@@ -211,6 +211,8 @@ public class JqlQueryBuilder
             descending = false;
             name = name.substring( 0, name.length() - 3 ).trim();
         }
+        // Strip any spaces from the column name, or it will trip up JIRA's JQL parser
+        name = name.replaceAll( " ", "" );
         orderBy.append( name );
         orderBy.append( descending ? " DESC" : " ASC" );
     }
