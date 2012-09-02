@@ -69,7 +69,7 @@
               <goal>stage</goal>
             </goals>
             <configuration>
-              <skipDeploy>false</skipDeploy>
+              <skipDeploy>false</skipDeploy><!-- MSITE-652: configuration won't be necessary with m-site-p 3.2 -->
             </configuration>
           </execution>
         </executions>
