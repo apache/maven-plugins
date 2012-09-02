@@ -93,13 +93,13 @@ public class GitHubMojo
     private int githubAPIPort;
 
     /**
-     * Boolean which says if we should include open issues in the report
+     * Boolean which says if we should include open issues in the report.
      */
     @Parameter( defaultValue = "true" )
     private boolean includeOpenIssues;
 
     /**
-     * Boolean which says if we should include only issues with milestones
+     * Boolean which says if we should include only issues with milestones.
      */
     @Parameter( defaultValue = "true" )
     private boolean onlyMilestoneIssues;
