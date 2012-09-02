@@ -54,9 +54,9 @@ import org.apache.maven.project.ProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.project.ProjectBuildingRequest;
 import org.apache.maven.project.ProjectBuildingResult;
-import org.apache.maven.shared.dependency.tree.DependencyNode;
-import org.apache.maven.shared.dependency.tree.DependencyTreeBuilder;
-import org.apache.maven.shared.dependency.tree.DependencyTreeBuilderException;
+import org.apache.maven.shared.dependency.graph.DependencyNode;
+import org.apache.maven.shared.dependency.graph.DependencyGraphBuilder;
+import org.apache.maven.shared.dependency.graph.DependencyGraphBuilderException;
 import org.codehaus.plexus.PlexusConstants;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
@@ -76,7 +76,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -106,10 +105,10 @@ public class ShadeMojo
     private Shader shader;
 
     /**
-     * The dependency tree builder to use.
+     * The dependency graph builder to use.
      */
     @Component
-    private DependencyTreeBuilder dependencyTreeBuilder;
+    private DependencyGraphBuilder dependencyTreeBuilder;
 
     /**
      * ProjectBuilder, needed to create projects from the artifacts.
@@ -128,12 +127,6 @@ public class ShadeMojo
      */
     @Component
     private ArtifactMetadataSource artifactMetadataSource;
-
-    /**
-     * The artifact collector to use.
-     */
-    @Component
-    private ArtifactCollector artifactCollector;
 
     /**
      * Remote repositories which will be searched for source attachments.
@@ -796,7 +789,7 @@ public class ShadeMojo
     // We need to find the direct dependencies that have been included in the uber JAR so that we can modify the
     // POM accordingly.
     private void createDependencyReducedPom( Set<String> artifactsToRemove )
-        throws IOException, DependencyTreeBuilderException, ProjectBuildingException
+        throws IOException, DependencyGraphBuilderException, ProjectBuildingException
     {
         Model model = project.getOriginalModel();
         List<Dependency> dependencies = new ArrayList<Dependency>();
@@ -964,58 +957,44 @@ public class ShadeMojo
 
     public boolean updateExcludesInDeps( MavenProject project, List<Dependency> dependencies,
                                          List<Dependency> transitiveDeps )
-        throws DependencyTreeBuilderException
+        throws DependencyGraphBuilderException
     {
-        DependencyNode node = dependencyTreeBuilder.buildDependencyTree( project, localRepository, artifactFactory,
-                                                                         artifactMetadataSource, null,
-                                                                         artifactCollector );
+        DependencyNode node = dependencyTreeBuilder.buildDependencyGraph( project, null );
         boolean modified = false;
-        Iterator it = node.getChildren().listIterator();
-        while ( it.hasNext() )
+        for ( DependencyNode n2 : node.getChildren() )
         {
-            DependencyNode n2 = (DependencyNode) it.next();
-            Iterator it2 = n2.getChildren().listIterator();
-            while ( it2.hasNext() )
+            for ( DependencyNode n3 : n2.getChildren() )
             {
-                DependencyNode n3 = (DependencyNode) it2.next();
-                //anything two levels deep that is marked "included"
-                //is stuff that was excluded by the original poms, make sure it
-                //remains excluded IF promoting transitives.
-                if ( n3.getState() == DependencyNode.INCLUDED )
+                //check if it really isn't in the list of original dependencies.  Maven
+                //prior to 2.0.8 may grab versions from transients instead of
+                //from the direct deps in which case they would be marked included
+                //instead of OMITTED_FOR_DUPLICATE
+
+                //also, if not promoting the transitives, level 2's would be included
+                boolean found = false;
+                for ( Dependency dep : transitiveDeps )
                 {
-                    //check if it really isn't in the list of original dependencies.  Maven
-                    //prior to 2.0.8 may grab versions from transients instead of
-                    //from the direct deps in which case they would be marked included
-                    //instead of OMITTED_FOR_DUPLICATE
-
-                    //also, if not promoting the transitives, level 2's would be included
-                    boolean found = false;
-                    for ( int x = 0; x < transitiveDeps.size(); x++ )
+                    if ( dep.getArtifactId().equals( n3.getArtifact().getArtifactId() )
+                        && dep.getGroupId().equals( n3.getArtifact().getGroupId() ) )
                     {
-                        Dependency dep = transitiveDeps.get( x );
-                        if ( dep.getArtifactId().equals( n3.getArtifact().getArtifactId() ) && dep.getGroupId().equals(
-                            n3.getArtifact().getGroupId() ) )
-                        {
-                            found = true;
-                        }
-
+                        found = true;
+                        break;
                     }
+                }
 
-                    if ( !found )
+                if ( !found )
+                {
+                    for ( Dependency dep : dependencies )
                     {
-                        for ( int x = 0; x < dependencies.size(); x++ )
+                        if ( dep.getArtifactId().equals( n2.getArtifact().getArtifactId() )
+                            && dep.getGroupId().equals( n2.getArtifact().getGroupId() ) )
                         {
-                            Dependency dep = dependencies.get( x );
-                            if ( dep.getArtifactId().equals( n2.getArtifact().getArtifactId() )
-                                && dep.getGroupId().equals( n2.getArtifact().getGroupId() ) )
-                            {
-                                Exclusion exclusion = new Exclusion();
-                                exclusion.setArtifactId( n3.getArtifact().getArtifactId() );
-                                exclusion.setGroupId( n3.getArtifact().getGroupId() );
-                                dep.addExclusion( exclusion );
-                                modified = true;
-                                break;
-                            }
+                            Exclusion exclusion = new Exclusion();
+                            exclusion.setArtifactId( n3.getArtifact().getArtifactId() );
+                            exclusion.setGroupId( n3.getArtifact().getGroupId() );
+                            dep.addExclusion( exclusion );
+                            modified = true;
+                            break;
                         }
                     }
                 }
