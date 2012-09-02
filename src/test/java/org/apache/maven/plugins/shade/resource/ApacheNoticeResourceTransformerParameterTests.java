@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.maven.plugins.shade.relocation.Relocator;
+
 import junit.framework.TestCase;
 
 
@@ -30,53 +32,74 @@ import junit.framework.TestCase;
 /**
  * Tests {@link ApacheLicenseResourceTransformer} parameters.
  */
-public class ApacheNoticeResourceTransformerParameterTests extends TestCase {
+public class ApacheNoticeResourceTransformerParameterTests
+    extends TestCase
+{
 	
 	private static final String NOTICE_RESOURCE = "META-INF/NOTICE";
 	private ApacheNoticeResourceTransformer subject;
 
-	protected void setUp() throws Exception {
-		super.setUp();
-		subject = new ApacheNoticeResourceTransformer();
-	}
-
+    protected void setUp()
+        throws Exception
+    {
+        super.setUp();
+        subject = new ApacheNoticeResourceTransformer();
+    }
 	
-	public void testNoParametersShouldNotThrowNullPointerWhenNoInput() throws IOException {
-		processAndFailOnNullPointer("");
-	}
-	
-	public void testNoParametersShouldNotThrowNullPointerWhenNoLinesOfInput() throws IOException {
-		processAndFailOnNullPointer("Some notice text");
-	}
+    public void testNoParametersShouldNotThrowNullPointerWhenNoInput()
+        throws IOException
+    {
+        processAndFailOnNullPointer( "" );
+    }
 
-	public void testNoParametersShouldNotThrowNullPointerWhenOneLineOfInput() throws IOException {
-		processAndFailOnNullPointer("Some notice text\n");
-	}
+    public void testNoParametersShouldNotThrowNullPointerWhenNoLinesOfInput()
+        throws IOException
+    {
+        processAndFailOnNullPointer( "Some notice text" );
+    }
 
-	public void testNoParametersShouldNotThrowNullPointerWhenTwoLinesOfInput() throws IOException {
-		processAndFailOnNullPointer("Some notice text\nSome notice text\n");
-	}
+    public void testNoParametersShouldNotThrowNullPointerWhenOneLineOfInput()
+        throws IOException
+    {
+        processAndFailOnNullPointer( "Some notice text\n" );
+    }
 
-	public void testNoParametersShouldNotThrowNullPointerWhenLineStartsWithSlashSlash() throws IOException {
-		processAndFailOnNullPointer("Some notice text\n//Some notice text\n");
-	}
+    public void testNoParametersShouldNotThrowNullPointerWhenTwoLinesOfInput()
+        throws IOException
+    {
+        processAndFailOnNullPointer( "Some notice text\nSome notice text\n" );
+    }
 
-	public void testNoParametersShouldNotThrowNullPointerWhenLineIsSlashSlash() throws IOException {
-		processAndFailOnNullPointer("//\n");
-	}
+    public void testNoParametersShouldNotThrowNullPointerWhenLineStartsWithSlashSlash()
+        throws IOException
+    {
+        processAndFailOnNullPointer( "Some notice text\n//Some notice text\n" );
+    }
 
-	public void testNoParametersShouldNotThrowNullPointerWhenLineIsEmpty() throws IOException {
-		processAndFailOnNullPointer("\n");
-	}
-	
-	private void processAndFailOnNullPointer(final String noticeText)
-			throws IOException {
-		try {
-			final ByteArrayInputStream noticeInputStream = new ByteArrayInputStream(noticeText.getBytes());
-			final List emptyList = Collections.EMPTY_LIST;
-			subject.processResource(NOTICE_RESOURCE, noticeInputStream, emptyList);
-		} catch (NullPointerException e) {
-			fail("Null pointer should not be thrown when no parameters are set.");
-		}
-	}
+    public void testNoParametersShouldNotThrowNullPointerWhenLineIsSlashSlash()
+        throws IOException
+    {
+        processAndFailOnNullPointer( "//\n" );
+    }
+
+    public void testNoParametersShouldNotThrowNullPointerWhenLineIsEmpty()
+        throws IOException
+    {
+        processAndFailOnNullPointer( "\n" );
+    }
+
+    private void processAndFailOnNullPointer( final String noticeText )
+        throws IOException
+    {
+        try
+        {
+            final ByteArrayInputStream noticeInputStream = new ByteArrayInputStream( noticeText.getBytes() );
+            final List<Relocator> emptyList = Collections.emptyList();
+            subject.processResource( NOTICE_RESOURCE, noticeInputStream, emptyList );
+        }
+        catch ( NullPointerException e )
+        {
+            fail( "Null pointer should not be thrown when no parameters are set." );
+        }
+    }
 }

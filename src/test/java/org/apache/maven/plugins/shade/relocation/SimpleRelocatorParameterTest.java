@@ -48,7 +48,7 @@ public class SimpleRelocatorParameterTest
     {
         try
         {
-            new SimpleRelocator( pattern, shadedPattern, Collections.EMPTY_LIST, Collections.EMPTY_LIST );
+            new SimpleRelocator( pattern, shadedPattern, Collections.<String> emptyList(), Collections.<String> emptyList() );
         }
         catch ( NullPointerException e )
         {

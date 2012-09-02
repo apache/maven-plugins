@@ -24,7 +24,6 @@ import org.codehaus.plexus.util.IOUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.jar.Attributes;
@@ -48,7 +47,7 @@ public class ManifestResourceTransformer
     // Configuration
     private String mainClass;
 
-    private Map manifestEntries;
+    private Map<String, Attributes> manifestEntries;
 
     // Fields
     private boolean manifestDiscovered;
@@ -102,10 +101,9 @@ public class ManifestResourceTransformer
 
         if ( manifestEntries != null )
         {
-            for ( Iterator i = manifestEntries.keySet().iterator(); i.hasNext(); )
+            for ( Map.Entry<String,Attributes> entry : manifestEntries.entrySet() )
             {
-                String key = (String) i.next();
-                attributes.put( new Attributes.Name( key ), manifestEntries.get( key ) );
+                attributes.put( new Attributes.Name( entry.getKey() ), entry.getValue() );
             }
         }
 
