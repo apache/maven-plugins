@@ -19,16 +19,9 @@ package org.apache.maven.plugins.shade;
  */
 
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugins.shade.filter.Filter;
-import org.apache.maven.plugins.shade.mojo.PackageRelocation;
-import org.apache.maven.plugins.shade.relocation.Relocator;
-import org.apache.maven.plugins.shade.resource.ResourceTransformer;
 import org.codehaus.plexus.component.annotations.Component;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.List;
-import java.util.Set;
 
 /**
  * @author Olivier Lamy
