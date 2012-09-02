@@ -108,7 +108,7 @@ public class ShadeMojo
      * The dependency graph builder to use.
      */
     @Component
-    private DependencyGraphBuilder dependencyTreeBuilder;
+    private DependencyGraphBuilder dependencyGraphBuilder;
 
     /**
      * ProjectBuilder, needed to create projects from the artifacts.
@@ -959,7 +959,7 @@ public class ShadeMojo
                                          List<Dependency> transitiveDeps )
         throws DependencyGraphBuilderException
     {
-        DependencyNode node = dependencyTreeBuilder.buildDependencyGraph( project, null );
+        DependencyNode node = dependencyGraphBuilder.buildDependencyGraph( project, null );
         boolean modified = false;
         for ( DependencyNode n2 : node.getChildren() )
         {
