@@ -289,6 +289,7 @@ public class ChangesMojo
         addIssueLinkTemplate( "Redmine", "%URL%/issues/show/%ISSUE%" );
         addIssueLinkTemplate( "Scarab", "%URL%/issues/id/%ISSUE%" );
         addIssueLinkTemplate( "SourceForge", "http://sourceforge.net/support/tracker.php?aid=%ISSUE%" );
+        addIssueLinkTemplate( "SourceForge2", "%URL%/%ISSUE%" );
         addIssueLinkTemplate( "Trac", "%URL%/ticket/%ISSUE%" );
         addIssueLinkTemplate( "Trackplus", "%URL%/printItem.action?key=%ISSUE%" );
         addIssueLinkTemplate( "YouTrack", "%URL%/issue/%ISSUE%" );
