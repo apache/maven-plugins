@@ -31,7 +31,6 @@ import java.io.PrintWriter;
 import java.io.Writer;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -49,7 +48,7 @@ public class ApacheNoticeResourceTransformer
 {
     Set<String> entries = new LinkedHashSet<String>();
 
-    Map organizationEntries = new LinkedHashMap();
+    Map<String, Set<String>> organizationEntries = new LinkedHashMap<String, Set<String>>();
 
     String projectName = ""; // MSHADE-101 :: NullPointerException when projectName is missing
 
@@ -128,7 +127,7 @@ public class ApacheNoticeResourceTransformer
 
         String line = reader.readLine();
         StringBuffer sb = new StringBuffer();
-        Set currentOrg = null;
+        Set<String> currentOrg = null;
         int lineCount = 0;
         while ( line != null )
         {
@@ -144,10 +143,10 @@ public class ApacheNoticeResourceTransformer
                         if ( lineCount == 1
                             && sb.toString().indexOf( "This product includes/uses software(s) developed by" ) != -1 )
                         {
-                            currentOrg = (Set) organizationEntries.get( sb.toString().trim() );
+                            currentOrg = organizationEntries.get( sb.toString().trim() );
                             if ( currentOrg == null )
                             {
-                                currentOrg = new TreeSet();
+                                currentOrg = new TreeSet<String>();
                                 organizationEntries.put( sb.toString().trim(), currentOrg );
                             }
                             sb = new StringBuffer();
@@ -220,10 +219,9 @@ public class ApacheNoticeResourceTransformer
         PrintWriter writer = new PrintWriter( pow );
 
         int count = 0;
-        for ( Iterator itr = entries.iterator(); itr.hasNext(); )
+        for ( String line : entries )
         {
             ++count;
-            String line = (String) itr.next();
             if ( line.equals( copyright ) && count != 2 )
             {
                 continue;
@@ -242,15 +240,13 @@ public class ApacheNoticeResourceTransformer
             if ( count == 3 )
             {
                 //do org stuff
-                for ( Iterator oit = organizationEntries.entrySet().iterator(); oit.hasNext(); )
+                for ( Map.Entry<String, Set<String>> entry : organizationEntries.entrySet() )
                 {
-                    Map.Entry entry = (Map.Entry) oit.next();
-                    writer.print( entry.getKey().toString() );
+                    writer.print( entry.getKey() );
                     writer.print( '\n' );
-                    Set entrySet = (Set) entry.getValue();
-                    for ( Iterator eit = entrySet.iterator(); eit.hasNext(); )
+                    for ( String l : entry.getValue() )
                     {
-                        writer.print( eit.next().toString() );
+                        writer.print( l );
                     }
                     writer.print( '\n' );
                 }

@@ -20,6 +20,8 @@ package org.apache.maven.plugins.shade.resource;
  */
 
 import junit.framework.TestCase;
+
+import org.apache.maven.plugins.shade.relocation.Relocator;
 import org.codehaus.plexus.util.IOUtil;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLAssert;
@@ -50,9 +52,9 @@ public class ComponentsXmlResourceTransformerTest
         XMLUnit.setNormalizeWhitespace( true );
 
         transformer.processResource( "components-1.xml", getClass().getResourceAsStream( "/components-1.xml" ),
-                                     Collections.EMPTY_LIST );
+                                     Collections.<Relocator> emptyList() );
         transformer.processResource( "components-1.xml", getClass().getResourceAsStream( "/components-2.xml" ),
-                                     Collections.EMPTY_LIST );
+                                     Collections.<Relocator> emptyList() );
         Diff diff = XMLUnit.compareXML(
             IOUtil.toString( getClass().getResourceAsStream( "/components-expected.xml" ), "UTF-8" ),
             IOUtil.toString( transformer.getTransformedResource(), "UTF-8" ) );

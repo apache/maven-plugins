@@ -139,7 +139,7 @@ public class ShadeMojo
      * Remote repositories which will be searched for source attachments.
      */
     @Parameter( readonly = true, required = true, defaultValue = "${project.remoteArtifactRepositories}" )
-    protected List remoteArtifactRepositories;
+    protected List<ArtifactRepository> remoteArtifactRepositories;
 
     /**
      * Local maven repository.
@@ -436,10 +436,8 @@ public class ShadeMojo
             }
         }
 
-        for ( Iterator it = project.getArtifacts().iterator(); it.hasNext(); )
+        for ( Artifact artifact : project.getArtifacts() )
         {
-            Artifact artifact = (Artifact) it.next();
-
             if ( !artifactSelector.isSelected( artifact ) )
             {
                 getLog().info( "Excluding " + artifact.getId() + " from the shaded jar." );
@@ -699,28 +697,22 @@ public class ShadeMojo
 
             artifacts.put( project.getArtifact(), new ArtifactId( project.getArtifact() ) );
 
-            for ( Iterator it = project.getArtifacts().iterator(); it.hasNext(); )
+            for ( Artifact artifact : project.getArtifacts() )
             {
-                Artifact artifact = (Artifact) it.next();
-
                 artifacts.put( artifact, new ArtifactId( artifact ) );
             }
 
-            for ( int i = 0; i < this.filters.length; i++ )
+            for ( ArchiveFilter filter : this.filters )
             {
-                ArchiveFilter filter = this.filters[i];
-
                 ArtifactId pattern = new ArtifactId( filter.getArtifact() );
 
                 Set<File> jars = new HashSet<File>();
 
-                for ( Iterator it = artifacts.entrySet().iterator(); it.hasNext(); )
+                for ( Map.Entry<Artifact, ArtifactId> entry : artifacts.entrySet() )
                 {
-                    Map.Entry entry = (Map.Entry) it.next();
-
-                    if ( ( (ArtifactId) entry.getValue() ).matches( pattern ) )
+                    if ( entry.getValue().matches( pattern ) )
                     {
-                        Artifact artifact = (Artifact) entry.getKey();
+                        Artifact artifact = entry.getKey();
 
                         jars.add( artifact.getFile() );
 
@@ -813,10 +805,8 @@ public class ShadeMojo
 
         List<Dependency> transitiveDeps = new ArrayList<Dependency>();
 
-        for ( Iterator it = project.getArtifacts().iterator(); it.hasNext(); )
+        for ( Artifact artifact : project.getArtifacts() )
         {
-            Artifact artifact = (Artifact) it.next();
-
             if ( "pom".equals( artifact.getType() ) )
             {
                 // don't include pom type dependencies in dependency reduced pom
@@ -847,10 +837,8 @@ public class ShadeMojo
             origDeps = transitiveDeps;
         }
 
-        for ( Iterator<Dependency> i = origDeps.iterator(); i.hasNext(); )
+        for ( Dependency d : origDeps )
         {
-            Dependency d = i.next();
-
             dependencies.add( d );
 
             String id = getId( d );

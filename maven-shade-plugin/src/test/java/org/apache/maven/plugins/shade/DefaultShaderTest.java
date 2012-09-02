@@ -30,8 +30,11 @@ import java.net.URL;
 
 import junit.framework.TestCase;
 
+import org.apache.maven.plugins.shade.filter.Filter;
+import org.apache.maven.plugins.shade.relocation.Relocator;
 import org.apache.maven.plugins.shade.relocation.SimpleRelocator;
 import org.apache.maven.plugins.shade.resource.ComponentsXmlResourceTransformer;
+import org.apache.maven.plugins.shade.resource.ResourceTransformer;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.logging.console.ConsoleLogger;
 
@@ -57,31 +60,31 @@ public class DefaultShaderTest
     {
         Shader s = newShader();
 
-        Set set = new LinkedHashSet();
+        Set<File> set = new LinkedHashSet<File>();
 
         set.add( new File( "src/test/jars/test-artifact-1.0-SNAPSHOT.jar" ) );
 
-        List relocators = new ArrayList();
+        List<Relocator> relocators = new ArrayList<Relocator>();
 
         relocators.add( new SimpleRelocator( "org.apache.maven.plugins.shade", null, null, null ) );
 
-        List resourceTransformers = new ArrayList();
+        List<ResourceTransformer> resourceTransformers = new ArrayList<ResourceTransformer>();
 
-        List filters = new ArrayList();
+        List<Filter> filters = new ArrayList<Filter>();
 
         File file = new File( "target/testShaderWithStaticInitializedClass.jar" );
 
         ShadeRequest shadeRequest = new ShadeRequest();
-        shadeRequest.setJars(set);
-        shadeRequest.setUberJar(file);
-        shadeRequest.setFilters(filters);
-        shadeRequest.setRelocators(relocators);
-        shadeRequest.setResourceTransformers(resourceTransformers);
+        shadeRequest.setJars( set );
+        shadeRequest.setUberJar( file );
+        shadeRequest.setFilters( filters );
+        shadeRequest.setRelocators( relocators );
+        shadeRequest.setResourceTransformers( resourceTransformers );
 
         s.shade( shadeRequest );
 
         URLClassLoader cl = new URLClassLoader( new URL[]{file.toURI().toURL()} );
-        Class c = cl.loadClass( "hidden.org.apache.maven.plugins.shade.Lib" );
+        Class<?> c = cl.loadClass( "hidden.org.apache.maven.plugins.shade.Lib" );
         Object o = c.newInstance();
         assertEquals( "foo.bar/baz", c.getDeclaredField( "CONSTANT" ).get( o ) );
     }
@@ -104,28 +107,28 @@ public class DefaultShaderTest
     {
         DefaultShader s = newShader();
 
-        Set set = new LinkedHashSet();
+        Set<File> set = new LinkedHashSet<File>();
 
         set.add( new File( "src/test/jars/test-project-1.0-SNAPSHOT.jar" ) );
 
         set.add( new File( "src/test/jars/plexus-utils-1.4.1.jar" ) );
 
-        List relocators = new ArrayList();
+        List<Relocator> relocators = new ArrayList<Relocator>();
 
         relocators.add( new SimpleRelocator( "org/codehaus/plexus/util", shadedPattern, null, Arrays.asList( excludes ) ) );
 
-        List resourceTransformers = new ArrayList();
+        List<ResourceTransformer> resourceTransformers = new ArrayList<ResourceTransformer>();
 
         resourceTransformers.add( new ComponentsXmlResourceTransformer() );
 
-        List filters = new ArrayList();
+        List<Filter> filters = new ArrayList<Filter>();
 
         ShadeRequest shadeRequest = new ShadeRequest();
-        shadeRequest.setJars(set);
-        shadeRequest.setUberJar(jar);
-        shadeRequest.setFilters(filters);
-        shadeRequest.setRelocators(relocators);
-        shadeRequest.setResourceTransformers(resourceTransformers);
+        shadeRequest.setJars( set );
+        shadeRequest.setUberJar( jar );
+        shadeRequest.setFilters( filters );
+        shadeRequest.setRelocators( relocators );
+        shadeRequest.setResourceTransformers( resourceTransformers );
 
         s.shade( shadeRequest );
     }

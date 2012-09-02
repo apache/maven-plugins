@@ -33,7 +33,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.Writer;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -163,9 +162,8 @@ public class ComponentsXmlResourceTransformer
 
             dom.addChild( componentDom );
 
-            for ( Iterator i = components.values().iterator(); i.hasNext(); )
+            for ( Xpp3Dom component : components.values() )
             {
-                Xpp3Dom component = (Xpp3Dom) i.next();
                 componentDom.addChild( component );
             }
 

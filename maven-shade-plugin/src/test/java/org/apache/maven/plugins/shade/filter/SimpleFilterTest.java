@@ -38,37 +38,37 @@ public class SimpleFilterTest
         assertFalse( filter.isFiltered( "a.properties" ) );
         assertFalse( filter.isFiltered( "org/Test.class" ) );
 
-        filter = new SimpleFilter( null, Collections.EMPTY_SET, Collections.EMPTY_SET );
+        filter = new SimpleFilter( null, Collections.<String> emptySet(), Collections.<String> emptySet() );
         assertFalse( filter.isFiltered( "a.properties" ) );
         assertFalse( filter.isFiltered( "org/Test.class" ) );
 
-        filter = new SimpleFilter( null, Collections.singleton( "org/Test.class" ), Collections.EMPTY_SET );
+        filter = new SimpleFilter( null, Collections.singleton( "org/Test.class" ), Collections.<String> emptySet() );
         assertTrue( filter.isFiltered( "a.properties" ) );
         assertFalse( filter.isFiltered( "org/Test.class" ) );
         assertTrue( filter.isFiltered( "org/Test.properties" ) );
 
-        filter = new SimpleFilter( null, Collections.EMPTY_SET, Collections.singleton( "org/Test.class" ) );
+        filter = new SimpleFilter( null, Collections.<String> emptySet(), Collections.singleton( "org/Test.class" ) );
         assertFalse( filter.isFiltered( "a.properties" ) );
         assertTrue( filter.isFiltered( "org/Test.class" ) );
         assertFalse( filter.isFiltered( "org/Test.properties" ) );
 
-        filter = new SimpleFilter( null, Collections.singleton( "**/a.properties" ), Collections.EMPTY_SET );
+        filter = new SimpleFilter( null, Collections.singleton( "**/a.properties" ), Collections.<String> emptySet() );
         assertFalse( filter.isFiltered( "a.properties" ) );
         assertFalse( filter.isFiltered( "org/a.properties" ) );
         assertFalse( filter.isFiltered( "org/maven/a.properties" ) );
         assertTrue( filter.isFiltered( "org/maven/a.class" ) );
 
-        filter = new SimpleFilter( null, Collections.EMPTY_SET, Collections.singleton( "org/*" ) );
+        filter = new SimpleFilter( null, Collections.<String> emptySet(), Collections.singleton( "org/*" ) );
         assertFalse( filter.isFiltered( "Test.class" ) );
         assertTrue( filter.isFiltered( "org/Test.class" ) );
         assertFalse( filter.isFiltered( "org/apache/Test.class" ) );
 
-        filter = new SimpleFilter( null, Collections.EMPTY_SET, Collections.singleton( "org/**" ) );
+        filter = new SimpleFilter( null, Collections.<String> emptySet(), Collections.singleton( "org/**" ) );
         assertFalse( filter.isFiltered( "Test.class" ) );
         assertTrue( filter.isFiltered( "org/Test.class" ) );
         assertTrue( filter.isFiltered( "org/apache/Test.class" ) );
 
-        filter = new SimpleFilter( null, Collections.EMPTY_SET, Collections.singleton( "org/" ) );
+        filter = new SimpleFilter( null, Collections.<String> emptySet(), Collections.singleton( "org/" ) );
         assertFalse( filter.isFiltered( "Test.class" ) );
         assertTrue( filter.isFiltered( "org/Test.class" ) );
         assertTrue( filter.isFiltered( "org/apache/Test.class" ) );

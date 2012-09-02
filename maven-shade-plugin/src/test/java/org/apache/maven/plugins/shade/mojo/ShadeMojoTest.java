@@ -35,6 +35,7 @@ import org.apache.maven.plugins.shade.filter.Filter;
 import org.apache.maven.plugins.shade.relocation.Relocator;
 import org.apache.maven.plugins.shade.relocation.SimpleRelocator;
 import org.apache.maven.plugins.shade.resource.ComponentsXmlResourceTransformer;
+import org.apache.maven.plugins.shade.resource.ResourceTransformer;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.PlexusTestCase;
 
@@ -75,28 +76,28 @@ public class ShadeMojoTest
 
         Shader s = (Shader) lookup( Shader.ROLE, "default" );
 
-        Set set = new LinkedHashSet();
+        Set<File> set = new LinkedHashSet<File>();
         set.add( new File( getBasedir(), "src/test/jars/test-artifact-1.0-SNAPSHOT.jar" ) );
 
         List<Relocator> relocators = new ArrayList<Relocator>();
         relocators.add( new SimpleRelocator( "org.codehaus.plexus.util", "hidden", null, Arrays.asList(
             new String[]{ "org.codehaus.plexus.util.xml.Xpp3Dom", "org.codehaus.plexus.util.xml.pull.*" } ) ) );
 
-        List resourceTransformers = new ArrayList();
+        List<ResourceTransformer> resourceTransformers = new ArrayList<ResourceTransformer>();
 
-        List filters = new ArrayList();
+        List<Filter> filters = new ArrayList<Filter>();
 
         ShadeRequest shadeRequest = new ShadeRequest();
-        shadeRequest.setJars(set);
-        shadeRequest.setUberJar(jarFile);
-        shadeRequest.setFilters(filters);
-        shadeRequest.setRelocators(relocators);
-        shadeRequest.setResourceTransformers(resourceTransformers);
+        shadeRequest.setJars( set );
+        shadeRequest.setUberJar( jarFile );
+        shadeRequest.setFilters( filters );
+        shadeRequest.setRelocators( relocators );
+        shadeRequest.setResourceTransformers( resourceTransformers );
 
         s.shade( shadeRequest );
 
         ClassLoader cl = new URLClassLoader( new URL[]{ jarFile.toURI().toURL() } );
-        Class c = cl.loadClass( "org.apache.maven.plugins.shade.Lib" );
+        Class<?> c = cl.loadClass( "org.apache.maven.plugins.shade.Lib" );
 
         Field field = c.getDeclaredField( "CLASS_REALM_PACKAGE_IMPORT" );
         assertEquals( "org.codehaus.plexus.util.xml.pull", field.get( null ) );
@@ -130,7 +131,7 @@ public class ShadeMojoTest
         ArtifactResolver mockArtifactResolver = new DefaultArtifactResolver()
         {
 
-            public void resolve( Artifact artifact, List remoteRepos, ArtifactRepository repo )
+            public void resolve( Artifact artifact, List<ArtifactRepository> remoteRepos, ArtifactRepository repo )
                 throws ArtifactResolutionException, ArtifactNotFoundException
             {
                 // artifact is resolved
@@ -173,7 +174,7 @@ public class ShadeMojoTest
         // invoke getFilters()
         Method getFilters = ShadeMojo.class.getDeclaredMethod( "getFilters", new Class[0] );
         getFilters.setAccessible( true );
-        List filters = (List) getFilters.invoke( mojo, new Object[0] );
+        List<Filter> filters = (List<Filter>) getFilters.invoke( mojo, new Object[0] );
 
         // assertions - there must be one filter
         assertEquals( 1, filters.size() );
@@ -189,29 +190,29 @@ public class ShadeMojoTest
     {
         Shader s = (Shader) lookup( Shader.ROLE );
 
-        Set set = new LinkedHashSet();
+        Set<File> set = new LinkedHashSet<File>();
 
         set.add( new File( getBasedir(), "src/test/jars/test-project-1.0-SNAPSHOT.jar" ) );
 
         set.add( new File( getBasedir(), "src/test/jars/plexus-utils-1.4.1.jar" ) );
 
-        List relocators = new ArrayList();
+        List<Relocator> relocators = new ArrayList<Relocator>();
 
         relocators.add( new SimpleRelocator( "org/codehaus/plexus/util", shadedPattern, null, Arrays.asList(
             new String[]{ "org/codehaus/plexus/util/xml/Xpp3Dom", "org/codehaus/plexus/util/xml/pull.*" } ) ) );
 
-        List resourceTransformers = new ArrayList();
+        List<ResourceTransformer> resourceTransformers = new ArrayList<ResourceTransformer>();
 
         resourceTransformers.add( new ComponentsXmlResourceTransformer() );
 
-        List filters = new ArrayList();
+        List<Filter> filters = new ArrayList<Filter>();
 
         ShadeRequest shadeRequest = new ShadeRequest();
-        shadeRequest.setJars(set);
-        shadeRequest.setUberJar(jar);
-        shadeRequest.setFilters(filters);
-        shadeRequest.setRelocators(relocators);
-        shadeRequest.setResourceTransformers(resourceTransformers);
+        shadeRequest.setJars( set );
+        shadeRequest.setUberJar( jar );
+        shadeRequest.setFilters( filters );
+        shadeRequest.setRelocators( relocators );
+        shadeRequest.setResourceTransformers( resourceTransformers );
 
         s.shade( shadeRequest );
     }

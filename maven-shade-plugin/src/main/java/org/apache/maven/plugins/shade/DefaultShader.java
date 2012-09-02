@@ -64,10 +64,10 @@ public class DefaultShader
     public void shade( ShadeRequest shadeRequest )
         throws IOException, MojoExecutionException
     {
-        Set resources = new HashSet();
+        Set<String> resources = new HashSet<String>();
 
         ResourceTransformer manifestTransformer = null;
-        List transformers = new ArrayList( shadeRequest.getResourceTransformers() );
+        List<ResourceTransformer> transformers = new ArrayList<ResourceTransformer>( shadeRequest.getResourceTransformers() );
         for ( Iterator<ResourceTransformer> it = transformers.iterator(); it.hasNext(); )
         {
             ResourceTransformer transformer = it.next();
@@ -88,9 +88,9 @@ public class DefaultShader
             for ( File jar : shadeRequest.getJars() )
             {
                 JarFile jarFile = newJarFile( jar );
-                for ( Enumeration en = jarFile.entries(); en.hasMoreElements(); )
+                for ( Enumeration<JarEntry> en = jarFile.entries(); en.hasMoreElements(); )
                 {
-                    JarEntry entry = (JarEntry) en.nextElement();
+                    JarEntry entry = en.nextElement();
                     String resource = entry.getName();
                     if ( manifestTransformer.canTransformResource( resource ) )
                     {
@@ -111,7 +111,7 @@ public class DefaultShader
 
             getLogger().debug( "Processing JAR " + jar );
 
-            List jarFilters = getFilters( jar, shadeRequest.getFilters() );
+            List<Filter> jarFilters = getFilters( jar, shadeRequest.getFilters() );
 
             JarFile jarFile = newJarFile( jar );
 
@@ -181,10 +181,8 @@ public class DefaultShader
             jarFile.close();
         }
 
-        for ( Iterator i = transformers.iterator(); i.hasNext(); )
+        for ( ResourceTransformer transformer : transformers )
         {
-            ResourceTransformer transformer = (ResourceTransformer) i.next();
-
             if ( transformer.hasTransformedResource() )
             {
                 transformer.modifyOutputStream( jos );
@@ -230,7 +228,7 @@ public class DefaultShader
         return list;
     }
 
-    private void addDirectory( Set resources, JarOutputStream jos, String name )
+    private void addDirectory( Set<String> resources, JarOutputStream jos, String name )
         throws IOException
     {
         if ( name.lastIndexOf( '/' ) > 0 )
@@ -341,7 +339,7 @@ public class DefaultShader
         return resourceTransformed;
     }
 
-    private void addJavaSource( Set resources, JarOutputStream jos, String name, InputStream is,
+    private void addJavaSource( Set<String> resources, JarOutputStream jos, String name, InputStream is,
                                     List<Relocator> relocators )
             throws IOException
     {
@@ -360,7 +358,7 @@ public class DefaultShader
         resources.add( name );
     }
 
-    private void addResource( Set resources, JarOutputStream jos, String name, InputStream is )
+    private void addResource( Set<String> resources, JarOutputStream jos, String name, InputStream is )
         throws IOException
     {
         jos.putNextEntry( new JarEntry( name ) );

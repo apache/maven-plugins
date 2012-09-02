@@ -98,9 +98,10 @@ public class XmlAppendingTransformer
         {
             Element root = r.getRootElement();
 
-            for ( Iterator itr = root.getAttributes().iterator(); itr.hasNext(); )
+            for ( @SuppressWarnings( "unchecked" )
+            Iterator<Attribute> itr = root.getAttributes().iterator(); itr.hasNext(); )
             {
-                Attribute a = (Attribute) itr.next();
+                Attribute a = itr.next();
                 itr.remove();
 
                 Element mergedEl = doc.getRootElement();
@@ -111,9 +112,10 @@ public class XmlAppendingTransformer
                 }
             }
 
-            for ( Iterator itr = root.getChildren().iterator(); itr.hasNext(); )
+            for ( @SuppressWarnings( "unchecked" )
+            Iterator<Content> itr = root.getChildren().iterator(); itr.hasNext(); )
             {
-                Content n = (Content) itr.next();
+                Content n = itr.next();
                 itr.remove();
 
                 doc.getRootElement().addContent( n );
