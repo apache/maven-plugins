@@ -95,7 +95,16 @@ public class ShadeMojo
     extends AbstractMojo
     implements Contextualizable
 {
-    @Parameter( readonly = true, defaultValue = "${project}" )
+    /**
+     * The current Maven session.
+     */
+    @Component
+    private MavenSession session;
+
+    /**
+     * The current Maven project.
+     */
+    @Component
     private MavenProject project;
 
     @Component
@@ -115,12 +124,6 @@ public class ShadeMojo
      */
     @Component
     private ProjectBuilder projectBuilder;
-
-    /**
-     * The current Maven session.
-     */
-    @Parameter( readonly = true, defaultValue = "${session}" )
-    private MavenSession session;
 
     /**
      * The artifact metadata source to use.
