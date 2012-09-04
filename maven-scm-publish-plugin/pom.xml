@@ -55,6 +55,10 @@ under the License.
     <scmVersion>1.8-SNAPSHOT</scmVersion>
     <mavenVersion>2.2.1</mavenVersion>
     <pluginTools>3.1</pluginTools>
+
+    <!-- for documentation purpose -->
+    <maven-scm-provider-svnjava-version>2.0.5-SNAPSHOT</maven-scm-provider-svnjava-version>
+    <svnkit-version>1.7.5-v1</svnkit-version>
   </properties>
 
   <dependencies>
