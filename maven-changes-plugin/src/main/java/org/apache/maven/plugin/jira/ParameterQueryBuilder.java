@@ -292,12 +292,12 @@ public class ParameterQueryBuilder
                             + "' for sortColumnNames is not correct." );
                 }
             }
-        }
-        if ( validSortColumnNames == 0 )
-        {
-            // Error in the configuration
-            getLog().error(
-                "maven-changes-plugin: None of the configured sortColumnNames '" + sortColumnNames + "' are correct." );
+            if ( validSortColumnNames == 0 )
+            {
+                // Error in the configuration
+                getLog().error(
+                    "maven-changes-plugin: None of the configured sortColumnNames '" + sortColumnNames + "' are correct." );
+            }
         }
         return this;
     }
