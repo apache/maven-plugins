@@ -262,32 +262,38 @@ public abstract class AbstractScmPublishMojo
                 String remoteUrl = ( (SvnScmProviderRepository) scmRepository.getProviderRepository() ).getUrl();
                 boolean remoteExists = svnScmProvider.remoteUrlExist( scmRepository.getProviderRepository(), null );
 
-                if ( !remoteExists && automaticRemotePatCreation )
+                if ( !remoteExists )
                 {
-                    logInfo( "remote url %s not exists so create it", remoteUrl );
-                    // create a temporary directory for svnexec
-                    baseDir = File.createTempFile( "scm", "tmp" );
-                    baseDir.delete();
-                    baseDir.mkdirs();
-                    // to prevent fileSet cannot be empty
-                    ScmFileSet scmFileSet = new ScmFileSet( baseDir, new File( "" ) );
-
-                    CommandParameters commandParameters = new CommandParameters();
-                    commandParameters.setString( CommandParameter.SCM_MKDIR_CREATE_IN_LOCAL, Boolean.FALSE.toString() );
-                    commandParameters.setString( CommandParameter.MESSAGE, "automatic path creation: " + remoteUrl );
-                    svnScmProvider.mkdir( scmRepository.getProviderRepository(), scmFileSet, commandParameters );
-
-                    // new remote url so force checkout !
-                    if ( checkoutDirectory.exists() )
+                    if ( automaticRemotePatCreation )
                     {
-                        FileUtils.deleteDirectory( checkoutDirectory );
+                        logInfo( "remote url %s not exists so create it", remoteUrl );
+
+                        // create a temporary directory for svnexec
+                        baseDir = File.createTempFile( "scm", "tmp" );
+                        baseDir.delete();
+                        baseDir.mkdirs();
+                        // to prevent fileSet cannot be empty
+                        ScmFileSet scmFileSet = new ScmFileSet( baseDir, new File( "" ) );
+
+                        CommandParameters commandParameters = new CommandParameters();
+                        commandParameters.setString( CommandParameter.SCM_MKDIR_CREATE_IN_LOCAL,
+                                                     Boolean.FALSE.toString() );
+                        commandParameters.setString( CommandParameter.MESSAGE,
+                                                     "automatic path creation: " + remoteUrl );
+                        svnScmProvider.mkdir( scmRepository.getProviderRepository(), scmFileSet, commandParameters );
+
+                        // new remote url so force checkout !
+                        if ( checkoutDirectory.exists() )
+                        {
+                            FileUtils.deleteDirectory( checkoutDirectory );
+                        }
                     }
-                }
-                else
-                {
-                    //olamy: return ?? that will fail during checkout IMHO :-)
-                    logInfo( "remote url %s not exists and not create it as field %s configured to false", remoteUrl,
-                             Boolean.toString( automaticRemotePatCreation ) );
+                    else
+                    {
+                        //olamy: return ?? that will fail during checkout IMHO :-)
+                        logInfo( "remote url %s not exists and not create it as field %s configured to false",
+                                 remoteUrl, Boolean.toString( automaticRemotePatCreation ) );
+                    }
                 }
             }
             catch ( IOException e )
@@ -298,7 +304,9 @@ public abstract class AbstractScmPublishMojo
             {
                 throw new MojoExecutionException( e.getMessage(), e );
             }
+
             finally
+
             {
                 if ( baseDir != null )
                 {
@@ -317,6 +325,7 @@ public abstract class AbstractScmPublishMojo
         logInfo( "%s the pub tree from  %s ...", ( tryUpdate ? "Updating" : "Checking out" ), pubScmUrl );
 
         if ( checkoutDirectory.exists() && !tryUpdate )
+
         {
             try
             {
@@ -333,6 +342,7 @@ public abstract class AbstractScmPublishMojo
         boolean forceCheckout = false;
 
         if ( !checkoutDirectory.exists() )
+
         {
             if ( tryUpdate )
             {
@@ -345,6 +355,7 @@ public abstract class AbstractScmPublishMojo
         ScmResult scmResult;
 
         try
+
         {
             ScmFileSet fileSet = new ScmFileSet( checkoutDirectory, includes, excludes );
             if ( tryUpdate && !forceCheckout )
@@ -365,12 +376,14 @@ public abstract class AbstractScmPublishMojo
                 }
             }
         }
+
         catch ( ScmException e )
         {
             logError( e.getMessage() );
 
             throw new MojoExecutionException( "An error is occurred in the checkout process: " + e.getMessage(), e );
         }
+
         catch ( IOException e )
         {
             logError( e.getMessage() );
@@ -379,6 +392,7 @@ public abstract class AbstractScmPublishMojo
         }
 
         if ( !scmResult.isSuccess() )
+
         {
             logError( scmResult.getProviderMessage() );
 
@@ -386,6 +400,7 @@ public abstract class AbstractScmPublishMojo
                 "Unable to checkout from SCM" + "\nProvider message:\n" + scmResult.getProviderMessage()
                     + "\nCommand output:\n" + scmResult.getCommandOutput() );
         }
+
     }
 
     public void execute()
@@ -434,7 +449,6 @@ public abstract class AbstractScmPublishMojo
             }
         }
     }
-
 
     public abstract void scmPublishExecute()
         throws MojoExecutionException, MojoFailureException;
