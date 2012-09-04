@@ -31,6 +31,7 @@ Various tips for using this plugin
 * URLS format
 
   You must a scm url format:
+
 +----------------
   scm:<scm_provider><delimiter><provider_specific_part>
 +----------------
@@ -52,7 +53,9 @@ Various tips for using this plugin
 
 +----------------
 
-  <<<NOTE>>>: with the svn if the remote url doesn't exist it will be created.
+  <<NOTE>>: with the svn if the remote url doesn't exist it will be created.
+
+* Git branch
 
   To use git branch (by example: github gh-pages)
 
