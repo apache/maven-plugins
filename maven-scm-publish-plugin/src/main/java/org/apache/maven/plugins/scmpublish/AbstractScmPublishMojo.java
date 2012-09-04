@@ -176,8 +176,8 @@ public abstract class AbstractScmPublishMojo
     /**
      * for svn avoid automatic remote url create
      */
-    @Parameter ( property = "scmpublish.automaticRemotePatCreation", defaultValue = "true" )
-    protected boolean automaticRemotePatCreation;
+    @Parameter ( property = "scmpublish.automaticRemotePathCreation", defaultValue = "true" )
+    protected boolean automaticRemotePathCreation;
 
     protected ScmProvider scmProvider;
 
@@ -264,7 +264,7 @@ public abstract class AbstractScmPublishMojo
 
                 if ( !remoteExists )
                 {
-                    if ( automaticRemotePatCreation )
+                    if ( automaticRemotePathCreation )
                     {
                         logInfo( "remote url %s not exists so create it", remoteUrl );
 
@@ -292,7 +292,7 @@ public abstract class AbstractScmPublishMojo
                     {
                         //olamy: return ?? that will fail during checkout IMHO :-)
                         logInfo( "remote url %s not exists and not create it as field %s configured to false",
-                                 remoteUrl, Boolean.toString( automaticRemotePatCreation ) );
+                                 remoteUrl, Boolean.toString( automaticRemotePathCreation ) );
                     }
                 }
             }
