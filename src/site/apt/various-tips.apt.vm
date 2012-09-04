@@ -1,0 +1,116 @@
+ ------
+ Various Tips
+ ------
+ Olivier Lamy
+ ------
+ 2012-09-04
+ ------
+
+~~ Licensed to the Apache Software Foundation (ASF) under one
+~~ or more contributor license agreements.  See the NOTICE file
+~~ distributed with this work for additional information
+~~ regarding copyright ownership.  The ASF licenses this file
+~~ to you under the Apache License, Version 2.0 (the
+~~ "License"); you may not use this file except in compliance
+~~ with the License.  You may obtain a copy of the License at
+~~
+~~   http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~ Unless required by applicable law or agreed to in writing,
+~~ software distributed under the License is distributed on an
+~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+~~ KIND, either express or implied.  See the License for the
+~~ specific language governing permissions and limitations
+~~ under the License.
+
+~~ NOTE: For help with the syntax of this file, see:
+~~ http://maven.apache.org/doxia/references/apt-format.html
+
+Various tips for using this plugin
+
+* Some Tips to improve performance
+
+  By default, a complete checkout is done, you can configure the plugin to try update rather than a full checkout/clone
+
++----------------
+
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-scm-publish-plugin</artifactId>
+      <version>${project.version}</version>
+      <configuration>
+        <tryUpdate>true</tryUpdate>
+      </configuration>
+    </plugin>
+
++----------------
+
+  By defaut, the scm content is checkout/clone to $\{project.build.directory}/scmpublish-checkout, so when running mvn clean
+  all the content is deleted. You can configure a path to your machine.
+  A recommended way is to use a property with a default as it your colleague will be able to override in their settings.
+
++----------------
+    <properties>
+      ...
+      <scmPubCheckoutDirectory>$\{user.home}/my-site-content-scm</scmPubCheckoutDirectory>
+      ...
+    </properties>
+
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-scm-publish-plugin</artifactId>
+      <version>${project.version}</version>
+      <configuration>
+        <checkoutDirectory>${scmPubCheckoutDirectory}</checkoutDirectory>
+        <tryUpdate>true</tryUpdate>
+        <providerImplementations>
+          <svn>javasvn</svn>
+        </providerImplementations>
+
+      </configuration>
+      <dependencies>
+        <dependency>
+          <groupId>com.google.code.maven-scm-provider-svnjava</groupId>
+          <artifactId>maven-scm-provider-svnjava</artifactId>
+          <version>${maven-scm-provider-svnjava.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>org.tmatesoft.svnkit</groupId>
+          <artifactId>svnkit</artifactId>
+          <version>${svnkit.version}</version>
+        </dependency>
+      </dependencies>
+    </plugin>
++----------------
+
+  You can use svnjava rather than svn cli if you use a machine without svn cli.
+
++----------------
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-scm-publish-plugin</artifactId>
+      <version>${project.version}</version>
+      <configuration>
+        <providerImplementations>
+          <svn>javasvn</svn>
+        </providerImplementations>
+      </configuration>
+      <dependencies>
+        <dependency>
+          <groupId>com.google.code.maven-scm-provider-svnjava</groupId>
+          <artifactId>maven-scm-provider-svnjava</artifactId>
+          <version>${maven-scm-provider-svnjava.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>org.tmatesoft.svnkit</groupId>
+          <artifactId>svnkit</artifactId>
+          <version>${svnkit.version}</version>
+        </dependency>
+      </dependencies>
+    </plugin>
++----------------
+
+
+
+
+
