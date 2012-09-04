@@ -36,7 +36,7 @@ Maven Multi Module Configuration
 
   <properties>
     <siteContent.path>${project.build.directory}/my-site-deploy</siteContent.path>
-    <scmCheckout.path>${user.home}/my-site-content</scmCheckout.path>
+    <scmCheckout.path>${project.build.directory}/my-site-content</scmCheckout.path>
     <siteDeploy.url>file://${siteContent.path}</siteDeploy.url>
   </properties>
 
