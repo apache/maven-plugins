@@ -26,6 +26,8 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.scm.CommandParameter;
+import org.apache.maven.scm.CommandParameters;
 import org.apache.maven.scm.ScmBranch;
 import org.apache.maven.scm.ScmException;
 import org.apache.maven.scm.ScmFileSet;
@@ -33,6 +35,8 @@ import org.apache.maven.scm.ScmResult;
 import org.apache.maven.scm.manager.NoSuchScmProviderException;
 import org.apache.maven.scm.manager.ScmManager;
 import org.apache.maven.scm.provider.ScmProvider;
+import org.apache.maven.scm.provider.svn.AbstractSvnScmProvider;
+import org.apache.maven.scm.provider.svn.repository.SvnScmProviderRepository;
 import org.apache.maven.scm.repository.ScmRepository;
 import org.apache.maven.scm.repository.ScmRepositoryException;
 import org.apache.maven.settings.Settings;
@@ -240,6 +244,57 @@ public abstract class AbstractScmPublishMojo
     protected void checkoutExisting()
         throws MojoExecutionException
     {
+
+        if ( scmProvider instanceof AbstractSvnScmProvider )
+        {
+            File baseDir = null;
+            try
+            {
+
+                getLog().debug( "use AbstractSvnScmProvider so we can check if remote url exists and create it" );
+                AbstractSvnScmProvider svnScmProvider = (AbstractSvnScmProvider) scmProvider;
+
+                boolean remoteExists = svnScmProvider.remoteUrlExist( scmRepository.getProviderRepository(), null );
+                if ( !remoteExists )
+                {
+                    // create a temporary directory for svnexec
+                    baseDir = File.createTempFile( "scm", "tmp" );
+                    baseDir.delete();
+                    baseDir.mkdirs();
+                    // to prevent fileSet cannot be empty
+                    ScmFileSet scmFileSet = new ScmFileSet( baseDir, new File( "" ) );
+
+                    CommandParameters commandParameters = new CommandParameters();
+                    commandParameters.setString( CommandParameter.SCM_MKDIR_CREATE_IN_LOCAL, Boolean.FALSE.toString() );
+                    commandParameters.setString( CommandParameter.MESSAGE, "automatic path creation:"
+                        + ( (SvnScmProviderRepository) scmRepository.getProviderRepository() ).getUrl() );
+                    svnScmProvider.mkdir( scmRepository.getProviderRepository(), scmFileSet, commandParameters );
+                }
+            }
+            catch ( IOException e )
+            {
+                throw new MojoExecutionException( e.getMessage(), e );
+            }
+            catch ( ScmException e )
+            {
+                throw new MojoExecutionException( e.getMessage(), e );
+            }
+            finally
+            {
+                if ( baseDir != null )
+                {
+                    try
+                    {
+                        FileUtils.forceDeleteOnExit( baseDir );
+                    }
+                    catch ( IOException e )
+                    {
+                        throw new MojoExecutionException( e.getMessage(), e );
+                    }
+                }
+            }
+        }
+
         logInfo( "%s the pub tree from  %s ...", ( tryUpdate ? "Updating" : "Checking out" ), pubScmUrl );
 
         if ( checkoutDirectory.exists() && !tryUpdate )

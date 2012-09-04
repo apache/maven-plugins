@@ -52,7 +52,7 @@ under the License.
   </distributionManagement>
 
   <properties>
-    <scmVersion>1.7</scmVersion>
+    <scmVersion>1.8-SNAPSHOT</scmVersion>
     <mavenVersion>2.2.1</mavenVersion>
     <pluginTools>3.1</pluginTools>
   </properties>
@@ -62,6 +62,26 @@ under the License.
       <groupId>org.apache.maven.release</groupId>
       <artifactId>maven-release-manager</artifactId>
       <version>2.3.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.scm</groupId>
+      <artifactId>maven-scm-api</artifactId>
+      <version>${scmVersion}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.scm</groupId>
+      <artifactId>maven-scm-provider-gitexe</artifactId>
+      <version>${scmVersion}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.scm</groupId>
+      <artifactId>maven-scm-provider-svnexe</artifactId>
+      <version>${scmVersion}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.scm</groupId>
+      <artifactId>maven-scm-provider-svn-commons</artifactId>
+      <version>${scmVersion}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
