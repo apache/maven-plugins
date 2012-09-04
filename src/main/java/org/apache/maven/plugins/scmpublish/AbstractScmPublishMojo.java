@@ -173,6 +173,12 @@ public abstract class AbstractScmPublishMojo
     @Parameter ( property = "scmpublish.scm.branch" )
     protected String scmBranch;
 
+    /**
+     * for svn avoid automatic remote url create
+     */
+    @Parameter ( property = "scmpublish.automaticRemotePatCreation", defaultValue = "true" )
+    protected boolean automaticRemotePatCreation;
+
     protected ScmProvider scmProvider;
 
     protected ScmRepository scmRepository;
@@ -253,10 +259,12 @@ public abstract class AbstractScmPublishMojo
 
                 getLog().debug( "use AbstractSvnScmProvider so we can check if remote url exists and create it" );
                 AbstractSvnScmProvider svnScmProvider = (AbstractSvnScmProvider) scmProvider;
-
+                String remoteUrl = ( (SvnScmProviderRepository) scmRepository.getProviderRepository() ).getUrl();
                 boolean remoteExists = svnScmProvider.remoteUrlExist( scmRepository.getProviderRepository(), null );
-                if ( !remoteExists )
+
+                if ( !remoteExists && automaticRemotePatCreation )
                 {
+                    logInfo( "remote url %s not exists so create it", remoteUrl );
                     // create a temporary directory for svnexec
                     baseDir = File.createTempFile( "scm", "tmp" );
                     baseDir.delete();
@@ -266,9 +274,20 @@ public abstract class AbstractScmPublishMojo
 
                     CommandParameters commandParameters = new CommandParameters();
                     commandParameters.setString( CommandParameter.SCM_MKDIR_CREATE_IN_LOCAL, Boolean.FALSE.toString() );
-                    commandParameters.setString( CommandParameter.MESSAGE, "automatic path creation:"
-                        + ( (SvnScmProviderRepository) scmRepository.getProviderRepository() ).getUrl() );
+                    commandParameters.setString( CommandParameter.MESSAGE, "automatic path creation: " + remoteUrl );
                     svnScmProvider.mkdir( scmRepository.getProviderRepository(), scmFileSet, commandParameters );
+
+                    // new remote url so force checkout !
+                    if ( checkoutDirectory.exists() )
+                    {
+                        FileUtils.deleteDirectory( checkoutDirectory );
+                    }
+                }
+                else
+                {
+                    //olamy: return ?? that will fail during checkout IMHO :-)
+                    logInfo( "remote url %s not exists and not create it as field %s configured to false", remoteUrl,
+                             Boolean.toString( automaticRemotePatCreation ) );
                 }
             }
             catch ( IOException e )
