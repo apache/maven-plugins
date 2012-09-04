@@ -35,9 +35,9 @@ Maven Multi Module Configuration
 +-----------------------
 
   <properties>
-    <siteContentPath>${user.home}/my-site-deploy</siteContentPath>
-    <scmCheckoutPath>${user.home}/my-site-content</scmCheckoutPath>
-    <siteDeployUrl>file://${siteContentPath}</siteDeployUrl>
+    <siteContent.path>${user.home}/my-site-deploy</siteContent.path>
+    <scmCheckout.path>${user.home}/my-site-content</scmCheckout.path>
+    <siteDeploy.url>file://${siteContent.path}</siteDeploy.url>
   </properties>
 
   <plugin>
@@ -45,8 +45,8 @@ Maven Multi Module Configuration
     <artifactId>maven-scm-publish-plugin</artifactId>
     <version>${project.version}</version>
     <configuration>
-      <checkoutDirectory>$\{scmCheckoutPath}</checkoutDirectory>
-      <content>$\{siteContentPath}</content>
+      <checkoutDirectory>${scmCheckout.path}</checkoutDirectory>
+      <content>${siteContent.path}</content>
     </configuration>
   </plugin>
   <plugin>
@@ -54,7 +54,7 @@ Maven Multi Module Configuration
     <artifactId>maven-site-plugin</artifactId>
     <version>3.1</version>
     <configuration>
-      <stagingSiteURL>$\{siteDeployUrl}</stagingSiteURL>
+      <stagingSiteURL>${siteDeploy.url}</stagingSiteURL>
     </configuration>
   </plugin>
 

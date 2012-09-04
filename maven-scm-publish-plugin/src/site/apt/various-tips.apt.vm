@@ -28,6 +28,49 @@
 
 Various tips for using this plugin
 
+* URLS format
+
+  You must a scm url format:
++----------------
+  scm:<scm_provider><delimiter><provider_specific_part>
++----------------
+
+  Svn example: scm:svn:https://svn.apache.org/repos/infra/websites/production/maventest/content/plugins/maven-scm-publish-plugin/
+
+  And configure is as it:
+
++----------------
+
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-scm-publish-plugin</artifactId>
+      <version>${project.version}</version>
+      <configuration>
+        <pubScmUrl>scmUrl</pubScmUrl>
+      </configuration>
+    </plugin>
+
++----------------
+
+  <<<NOTE>>>: with the svn if the remote url doesn't exist it will be created.
+
+  To use git branch (by example: github gh-pages)
+
++----------------
+
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-scm-publish-plugin</artifactId>
+      <version>${project.version}</version>
+      <configuration>
+        <scmBranch>gh-pages</scmBranch>
+        <pubScmUrl>scm:git:git@github.com:olamy/tomcat-foo-artifact.git</pubScmUrl>
+      </configuration>
+    </plugin>
+
++----------------
+
+
 * Some Tips to improve performance
 
   By default, a complete checkout is done, you can configure the plugin to try update rather than a full checkout/clone
