@@ -26,9 +26,10 @@ under the License.
       <item name="Introduction" href="index.html"/>
       <item name="Goals" href="plugin-info.html"/>
       <item name="Usage" href="usage.html"/>
-      <item name="Release Notes" href="jira-report.html"/>
+      <item name="Some Tips" href="various-tips.html"/>
     </menu>
     <menu name="Example">
+      <item name="Maven Mono Module Configuration" href="examples/one-module-configuration.html"/>
       <item name="Importing Maven sites" href="examples/importing-maven-site.html"/>
     </menu>
   </body>
