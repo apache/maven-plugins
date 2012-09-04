@@ -28,5 +28,8 @@ under the License.
       <item name="Usage" href="usage.html"/>
       <item name="Release Notes" href="jira-report.html"/>
     </menu>
+    <menu name="Example">
+      <item name="Importing Maven sites" href="examples/importing-maven-site.html"/>
+    </menu>
   </body>
 </project>
