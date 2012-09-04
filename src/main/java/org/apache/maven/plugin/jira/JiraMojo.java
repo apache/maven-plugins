@@ -218,7 +218,10 @@ public class JiraMojo
      * sort column names in the reverse order. The handling of this changed
      * between JIRA 3 and JIRA 4. The current default value is suitable for
      * JIRA 3. This may change in the future, so please configure your sort
-     * column names in an order that works for your own JIRA version.
+     * column names in an order that works for your own JIRA version. If you
+     * use JQL, by setting the <code>useJql</code> parameter to
+     * <code>true</code>, then the order of the fields are in normal order
+     * again. Starting with JIRA 5.1 you have to use JQL.
      * </p>
      *
      * @since 2.0
