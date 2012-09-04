@@ -19,8 +19,10 @@
 package org.apache.maven.plugins.repository.stubs;
 
 import java.io.File;
+import java.util.Collections;
 
 import org.apache.maven.model.Build;
+import org.apache.maven.model.License;
 import org.apache.maven.model.Scm;
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
 
@@ -55,6 +57,7 @@ public class NoJavadocSourcesMavenProjectStub
         build.setDirectory( getBasedir() + "/target/test/unit/no-javadoc-sources/target" );
         setBuild( build );
 
+        setLicenses( Collections.<License> singletonList( new License() ) );
     }
 
     public File getFile()

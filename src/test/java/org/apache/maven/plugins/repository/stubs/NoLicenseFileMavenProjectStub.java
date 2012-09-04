@@ -21,6 +21,7 @@ package org.apache.maven.plugins.repository.stubs;
 import java.io.File;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.maven.model.Build;
@@ -58,6 +59,7 @@ public class NoLicenseFileMavenProjectStub
         build.setDirectory( getBasedir() + "/target/test/unit/no-license-file/target" );
         setBuild( build );
 
+        setLicenses( Collections.<License> emptyList() );
     }
 
     public File getFile()
@@ -84,10 +86,4 @@ public class NoLicenseFileMavenProjectStub
     {
         this.build = build;
     }
-
-    public List<License> getLicenses()
-    {
-        return new ArrayList<License>();
-    }
-
 }
