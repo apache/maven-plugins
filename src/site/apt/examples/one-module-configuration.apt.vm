@@ -71,7 +71,6 @@ Maven Mono Module Configuration
         </execution>
       </executions>
     </plugin>
-    </plugins>
 
 +-----------------------
 
