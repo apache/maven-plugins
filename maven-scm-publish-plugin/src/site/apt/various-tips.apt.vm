@@ -92,13 +92,13 @@ Various tips for using this plugin
 +----------------
 
   By defaut, the scm content is checkout/clone to $\{project.build.directory}/scmpublish-checkout, so when running mvn clean
-  all the content is deleted. You can configure a path to your machine.
+  all the content is deleted. You can configure a path to your machine to avoid full checkout. 
   A recommended way is to use a property with a default as it your colleague will be able to override in their settings.
 
 +----------------
     <properties>
       ...
-      <scmPubCheckoutDirectory>$\{user.home}/my-site-content-scm</scmPubCheckoutDirectory>
+      <scmPubCheckoutDirectory>$\{project.build.directory}/my-site-content-scm</scmPubCheckoutDirectory>
       ...
     </properties>
 
