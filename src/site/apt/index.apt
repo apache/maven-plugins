@@ -41,27 +41,21 @@ Maven SCM Publish Plugin
 
 Implementation
 
+    The plugin proceed to publish your website using the following steps.
 
-    The plugin provides two goals: <<prepare>> and <<publish>>.
-    (TODO: deprecated by new <<publish-scm>> goal, which does everything in one step) 
-
-    The prepare goal checks out the contents of a directory from 
+    The prepare phase checks out the contents of a directory from
     the SCM into (by default) <<<target/scmpublish-checkout>>>. It 
     then lists the files known to the SCM and stores them
     in (by default) <<<target/scmpublish-inventory.js>>>. This provides
     the point of reference for an eventual SCM checkin. Then it deletes every
     files to let a clean place for site generation.
 
-    After running the prepare goal, the POM must run <<<site>>> phase then
-    <<<site:stage>>> goal, with the <stagingDirectory> set to
-    <<<target/scmpublish-checkout>>>.
-
-    Finally, the <<publish>> goal compares the output of <<<site:stage>>>
-    with the inventory from the <<prepare>> goal, and issues
+    Finally, the publish phase compares the output of the generated site
+    with the inventory from the prepare phase, and issues
     appropriate SCM commands to add and delete, followed by a
     checkin.
 
-    The <scmpublish.dryRun> parameter to the <<publish>> goal avoids all 
+    The <scmpublish.dryRun> parameter to the plugin avoids all 
     SCM operations, and simply logs out the added, deleted,
     and changed files.
 
@@ -83,6 +77,8 @@ mvn scm-publish:publish-scm -Dscmpublish.pubScmUrl=scm:... -Dscmpublish.content=
 
     See {{{./examples/importing-maven-site.html}maven.apache.org content import script}} for an
     example.
+
+    <<See {{{./various-tips.html}Some Tips}}.>>
 
 Known Limitations
 
