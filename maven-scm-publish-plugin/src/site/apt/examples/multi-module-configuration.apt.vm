@@ -28,9 +28,9 @@
 
 Maven Multi Module Configuration
 
-  With a multi modules build you can not use: <<mvn site-deploy>>. You must stage your site first.
+  With a multi modules build you can not use: mvn site-deploy. You must stage your site first.
 
-  Cli to use: mvn clean site site:stage-deploy scm-publish:publish-scm
+  Cli to use: <<mvn clean site site:stage-deploy scm-publish:publish-scm>>
 
 +-----------------------
 
