@@ -35,8 +35,10 @@ Maven Multi Module Configuration
 +-----------------------
 
   <properties>
-    <siteContent.path>${project.build.directory}/my-site-deploy</siteContent.path>
-    <scmCheckout.path>${project.build.directory}/my-site-content</scmCheckout.path>
+    <siteContent.path>\${project.build.directory}/my-site-deploy</siteContent.path>
+    // it's a default location for performance reason (not checkout the content all the time)
+    // you can override this value in your settings.
+    <scmCheckout.path>\${project.build.directory}/my-site-content</scmCheckout.path>
     <siteDeploy.url>file://${siteContent.path}</siteDeploy.url>
   </properties>
 
