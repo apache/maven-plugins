@@ -98,7 +98,7 @@ Various tips for using this plugin
 +----------------
     <properties>
       ...
-      <scmPubCheckoutDirectory>$\{project.build.directory}/my-site-content-scm</scmPubCheckoutDirectory>
+      <scmPubCheckoutDirectory>\${project.build.directory}/my-site-content-scm</scmPubCheckoutDirectory>
       ...
     </properties>
 
