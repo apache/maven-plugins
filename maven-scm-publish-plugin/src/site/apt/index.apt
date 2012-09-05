@@ -55,7 +55,7 @@ Implementation
     appropriate SCM commands to add and delete, followed by a
     checkin.
 
-    The <scmpublish.dryRun> parameter to the plugin avoids all 
+    The <<scmpublish.dryRun>> parameter to the plugin avoids all
     SCM operations, and simply logs out the added, deleted,
     and changed files.
 
