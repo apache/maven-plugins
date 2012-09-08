@@ -263,6 +263,7 @@ under the License.
                 </goals>
                 <configuration>
                   <localRepositoryPath>${project.build.directory}/it-repo</localRepositoryPath>
+                  <settingsFile>src/it/settings.xml</settingsFile>
                 </configuration>
               </execution>
             </executions>
