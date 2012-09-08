@@ -237,12 +237,9 @@ under the License.
                     <includes>
                       <include>**/*IT.java</include>
                     </includes>
-                    <systemProperties>
-                      <property>
-                        <name>maven.repo.local</name>
-                        <value>${project.build.directory}/it-repo</value>
-                      </property>
-                    </systemProperties>
+                    <systemPropertyVariables>
+                      <maven.repo.local>${project.build.directory}/it-repo</maven.repo.local>
+                    </systemPropertyVariables>
                   </configuration>
                 </execution>
               </executions>
@@ -263,7 +260,6 @@ under the License.
                 </goals>
                 <configuration>
                   <localRepositoryPath>${project.build.directory}/it-repo</localRepositoryPath>
-                  <settingsFile>src/it/settings.xml</settingsFile>
                 </configuration>
               </execution>
             </executions>
