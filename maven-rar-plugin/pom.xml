@@ -50,6 +50,12 @@ under the License.
     <system>JIRA</system>
     <url>http://jira.codehaus.org/browse/MRAR</url>
   </issueManagement>
+
+  <contributors>
+    <contributor>
+      <name>Kresimir Kovac</name>
+    </contributor>
+  </contributors>
   
   <properties>
     <mavenVersion>2.0.6</mavenVersion>
