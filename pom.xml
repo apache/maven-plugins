@@ -61,7 +61,7 @@ under the License.
     <beanshell-artifactId>bsh</beanshell-artifactId>
     <beanshell-version>2.0b4</beanshell-version>
     <groovy-groupId>org.codehaus.groovy</groovy-groupId>
-    <groovy-artifactId>groovy</groovy-artifactId>
+    <groovy-artifactId>groovy-all</groovy-artifactId>
     <groovy-version>2.0.1</groovy-version>
     <mavenPluginPluginVersion>3.1</mavenPluginPluginVersion>
   </properties>
