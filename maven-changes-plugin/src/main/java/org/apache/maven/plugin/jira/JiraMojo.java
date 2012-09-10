@@ -92,6 +92,7 @@ public class JiraMojo
     /**
      * Use the JIRA query language instead of the JIRA query based on HTTP parameters. 
      * From JIRA 5.1 and up only JQL is supported. JIRA 4.4 supports both JQL and URL parameter based queries.
+     *
      * @since 2.8
      */
     @Parameter( defaultValue = "false" )
@@ -196,6 +197,14 @@ public class JiraMojo
      */
     @Component
     private Settings settings;
+
+    /**
+     * If set to <code>true</code>, then the JIRA report will not be generated.
+     * 
+     * @since 2.8
+     */
+    @Parameter( property = "changes.jira.skip", defaultValue = "false" )
+    private boolean skip;
 
     /**
      * Sets the column names that you want to sort the report by. Add
@@ -306,6 +315,10 @@ public class JiraMojo
      */
     public boolean canGenerateReport()
     {
+        if ( skip )
+        {
+            return false;
+        }
         if ( mockDownloader != null ) 
         {
             return true;
