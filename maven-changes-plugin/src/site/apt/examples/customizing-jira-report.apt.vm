@@ -35,6 +35,35 @@ Customizing the JIRA Report
  feature was added in which version.
 
 
+* What version of JIRA are you using?
+
+ Depending on which version of JIRA you use, you might need to add bits of
+ configuration to make the JIRA Report work properly. Starting with JIRA 5.1 it
+ is no longer possible to ask JIRA questions using query parameters. If you use
+ JIRA 5.1 or newer you must add this configuration, or else you will see a
+ stack trace saying something like "Caused by: org.xml.sax.SAXParseException".
+
++-----------------+
+<project>
+  ...
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-changes-plugin</artifactId>
+        <version>${project.version}</version>
+        <configuration>
+          <useJql>true</useJql>
+        </configuration>
+        ...
+      </plugin>
+    </plugins>
+  </reporting>
+  ...
+</project>
++-----------------+
+
+
 * Selecting version(s)
 
  We'll start off by creating a JIRA Report for one or more versions of your
