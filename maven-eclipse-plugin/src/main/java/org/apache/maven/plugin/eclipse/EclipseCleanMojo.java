@@ -18,16 +18,16 @@
  */
 package org.apache.maven.plugin.eclipse;
 
-import java.io.File;
-
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.eclipse.writers.workspace.EclipseWorkspaceWriter;
 import org.apache.maven.plugin.ide.IdeUtils;
 
+import java.io.File;
+
 /**
  * Deletes the .project, .classpath, .wtpmodules files and .settings folder used by Eclipse.
- * 
+ *
  * @goal clean
  */
 public class EclipseCleanMojo
@@ -51,28 +51,28 @@ public class EclipseCleanMojo
 
     /**
      * Packaging for the current project.
-     * 
+     *
      * @parameter expression="${project.packaging}"
      */
     private String packaging;
 
     /**
      * The root directory of the project
-     * 
+     *
      * @parameter expression="${basedir}"
      */
     private File basedir;
 
     /**
      * Skip the operation when true.
-     * 
+     *
      * @parameter expression="${eclipse.skip}" default-value="false"
      */
     private boolean skip;
 
     /**
      * additional generic configuration files for eclipse
-     * 
+     *
      * @parameter
      */
     private EclipseConfigFile[] additionalConfig;
@@ -97,11 +97,7 @@ public class EclipseCleanMojo
         delete( new File( basedir, FILE_DOT_CLASSPATH ) );
         delete( new File( basedir, FILE_DOT_WTPMODULES ) );
 
-        File settingsDir = new File( basedir, EclipseWorkspaceWriter.DIR_DOT_SETTINGS );
-        if ( settingsDir.exists() && settingsDir.isDirectory() && settingsDir.list().length == 0 )
-        {
-            delete( settingsDir );
-        }
+        delete( new File( basedir, EclipseWorkspaceWriter.DIR_DOT_SETTINGS ) );
 
         if ( additionalConfig != null )
         {
@@ -122,7 +118,7 @@ public class EclipseCleanMojo
 
     /**
      * Delete a file, handling log messages and exceptions
-     * 
+     *
      * @param f File to be deleted
      * @throws MojoExecutionException only if a file exists and can't be deleted
      */
@@ -134,7 +130,7 @@ public class EclipseCleanMojo
 
     /**
      * Getter for <code>basedir</code>.
-     * 
+     *
      * @return Returns the basedir.
      */
     public File getBasedir()
@@ -144,7 +140,7 @@ public class EclipseCleanMojo
 
     /**
      * Setter for <code>basedir</code>.
-     * 
+     *
      * @param basedir The basedir to set.
      */
     public void setBasedir( File basedir )
