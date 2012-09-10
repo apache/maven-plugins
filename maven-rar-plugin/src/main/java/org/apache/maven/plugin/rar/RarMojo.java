@@ -415,7 +415,7 @@ public class RarMojo
             includeCustomManifestFile();
 
             archiver.getArchiver().addDirectory( getBuildDir() );
-            archiver.createArchive( project, archive );
+            archiver.createArchive( session, project, archive );
 
             project.getArtifact().setFile( rarFile );
         }
