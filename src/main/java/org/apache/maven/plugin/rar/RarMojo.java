@@ -255,6 +255,17 @@ public class RarMojo
     @Parameter
     protected List<RarResource> rarResources;
 
+
+    /**
+     * Whether or not warn if the <code>ra.xml</code> file is missing. Set to <code>false</code>
+     * if you want you RAR built without a <code>ra.xml</code> file.
+     * This may be useful if you are building against JCA 1.6 or later.
+     *
+     * @since 2.3
+     */
+    @Parameter( property = "warnOnMissingRaXml", defaultValue = "true" )
+    protected boolean warnOnMissingRaXml = true;
+
     private File buildDir;
 
 
@@ -388,7 +399,7 @@ public class RarMojo
 
         // Check if connector deployment descriptor is there
         File ddFile = new File( getBuildDir(), RA_XML_URI );
-        if ( !ddFile.exists() )
+        if ( !ddFile.exists() && warnOnMissingRaXml )
         {
             getLog().warn( "Connector deployment descriptor: " + ddFile.getAbsolutePath() + " does not exist." );
         }
