@@ -30,7 +30,7 @@ Various tips for using this plugin
 
 * URLS format
 
-  You must a scm url format:
+  You must use a scm url format:
 
 +----------------
   scm:<scm_provider><delimiter><provider_specific_part>
@@ -111,23 +111,7 @@ Various tips for using this plugin
       <configuration>
         <checkoutDirectory>${scmPubCheckoutDirectory}</checkoutDirectory>
         <tryUpdate>true</tryUpdate>
-        <providerImplementations>
-          <svn>javasvn</svn>
-        </providerImplementations>
-
       </configuration>
-      <dependencies>
-        <dependency>
-          <groupId>com.google.code.maven-scm-provider-svnjava</groupId>
-          <artifactId>maven-scm-provider-svnjava</artifactId>
-          <version>${maven-scm-provider-svnjava-version}</version>
-        </dependency>
-        <dependency>
-          <groupId>org.tmatesoft.svnkit</groupId>
-          <artifactId>svnkit</artifactId>
-          <version>${svnkit-version}</version>
-        </dependency>
-      </dependencies>
     </plugin>
 +----------------
 
