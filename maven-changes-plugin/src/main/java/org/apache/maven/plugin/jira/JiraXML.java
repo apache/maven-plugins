@@ -53,7 +53,7 @@ public class JiraXML
 {
     private final List<Issue> issueList;
 
-    private final StringBuffer currentElement = new StringBuffer( 1024 );
+    private final StringBuilder currentElement = new StringBuilder( 1024 );
 
     private String currentParent = "";
 

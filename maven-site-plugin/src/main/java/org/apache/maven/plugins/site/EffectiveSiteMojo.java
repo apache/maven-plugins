@@ -116,7 +116,7 @@ public class EffectiveSiteMojo
         }
         else
         {
-            StringBuffer message = new StringBuffer();
+            StringBuilder message = new StringBuilder();
 
             message.append( "\nEffective site descriptor, after inheritance and interpolation:\n\n" );
             message.append( effectiveSite );

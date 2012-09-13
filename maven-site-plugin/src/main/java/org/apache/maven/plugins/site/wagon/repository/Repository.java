@@ -179,7 +179,7 @@ public class Repository
             return url;
         }
 
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 
         sb.append( protocol );
 
@@ -219,7 +219,7 @@ public class Repository
 
     public String toString()
     {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 
         sb.append( "Repository[" );
 

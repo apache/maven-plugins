@@ -431,7 +431,7 @@ public abstract class AbstractAssemblyMojo
                         {
                             if ( !warnedAboutMainProjectArtifact )
                             {
-                                final StringBuffer message = new StringBuffer();
+                                final StringBuilder message = new StringBuilder();
 
                                 message.append( "Configuration options: 'appendAssemblyId' is set to false, and 'classifier' is missing." );
                                 message.append( "\nInstead of attaching the assembly file: " )

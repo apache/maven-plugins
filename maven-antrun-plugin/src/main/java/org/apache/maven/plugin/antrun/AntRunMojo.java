@@ -59,12 +59,12 @@ import java.util.Set;
  * This plugin provides the capability of calling Ant tasks from a POM by running the nested ant tasks inside the
  * &lt;tasks/&gt; parameter. It is encouraged to move the actual tasks to a separate build.xml file and call that file
  * with an &lt;ant/&gt; task.
- * 
+ *
  * @author <a href="mailto:kenney@apache.org">Kenney Westerhof</a>
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
  */
-@Mojo( name = "run", threadSafe = true, requiresDependencyResolution = ResolutionScope.TEST )
+@Mojo ( name = "run", threadSafe = true, requiresDependencyResolution = ResolutionScope.TEST )
 public class AntRunMojo
     extends AbstractMojo
 {
@@ -118,13 +118,13 @@ public class AntRunMojo
     /**
      * The plugin dependencies.
      */
-    @Parameter( property = "plugin.artifacts", required = true, readonly = true )
+    @Parameter ( property = "plugin.artifacts", required = true, readonly = true )
     private List<Artifact> pluginArtifacts;
 
     /**
      * The local Maven repository
      */
-    @Parameter( property = "localRepository", readonly = true )
+    @Parameter ( property = "localRepository", readonly = true )
     protected ArtifactRepository localRepository;
 
     /**
@@ -132,7 +132,7 @@ public class AntRunMojo
      *
      * @since 1.4
      */
-    @Parameter( defaultValue = "" )
+    @Parameter ( defaultValue = "" )
     private String propertyPrefix;
 
     /**
@@ -142,14 +142,14 @@ public class AntRunMojo
      *
      * @since 1.5
      */
-    @Parameter( defaultValue = "" )
+    @Parameter ( defaultValue = "" )
     private String customTaskPrefix = "";
 
     /**
      * The name of a property containing the list of all dependency versions. This is used for the removing the versions
      * from the filenames.
      */
-    @Parameter( defaultValue = "maven.project.dependencies.versions" )
+    @Parameter ( defaultValue = "maven.project.dependencies.versions" )
     private String versionsPropertyName;
 
     /**
@@ -176,7 +176,7 @@ public class AntRunMojo
      *
      * @deprecated Use the build-helper-maven-plugin to bind source directories
      */
-    @Parameter( property = "sourceRoot" )
+    @Parameter ( property = "sourceRoot" )
     private File sourceRoot;
 
     /**
@@ -185,7 +185,7 @@ public class AntRunMojo
      *
      * @deprecated Use the build-helper-maven-plugin to bind test source directories
      */
-    @Parameter( property = "testSourceRoot" )
+    @Parameter ( property = "testSourceRoot" )
     private File testSourceRoot;
 
     /**
@@ -193,7 +193,7 @@ public class AntRunMojo
      *
      * @since 1.7
      */
-    @Parameter( property = "maven.antrun.skip", defaultValue = "false" )
+    @Parameter ( property = "maven.antrun.skip", defaultValue = "false" )
     private boolean skip;
 
     /**
@@ -201,7 +201,7 @@ public class AntRunMojo
      *
      * @since 1.7
      */
-    @Parameter( defaultValue = "false" )
+    @Parameter ( defaultValue = "false" )
     private boolean exportAntProperties;
 
     /**
@@ -211,7 +211,7 @@ public class AntRunMojo
      *
      * @since 1.7
      */
-    @Parameter( defaultValue = "true" )
+    @Parameter ( defaultValue = "true" )
     private boolean failOnError;
 
     /**
@@ -327,7 +327,7 @@ public class AntRunMojo
         }
         catch ( BuildException e )
         {
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
             sb.append( "An Ant BuildException has occured: " + e.getMessage() );
             String fragment = findFragment( e );
             if ( fragment != null )
@@ -367,6 +367,7 @@ public class AntRunMojo
      * @param antProject
      * @return a path
      * @throws DependencyResolutionRequiredException
+     *
      */
     public Path getPathFromArtifacts( Collection<Artifact> artifacts, Project antProject )
         throws DependencyResolutionRequiredException
@@ -395,7 +396,7 @@ public class AntRunMojo
 
     /**
      * Copy properties from the maven project to the ant project.
-     * 
+     *
      * @param mavenProject
      * @param antProject
      */
@@ -421,7 +422,8 @@ public class AntRunMojo
         }
         antProject.setProperty( ( propertyPrefix + "project.version" ), mavenProject.getVersion() );
         antProject.setProperty( ( propertyPrefix + "project.packaging" ), mavenProject.getPackaging() );
-        antProject.setProperty( ( propertyPrefix + "project.build.directory" ), mavenProject.getBuild().getDirectory() );
+        antProject.setProperty( ( propertyPrefix + "project.build.directory" ),
+                                mavenProject.getBuild().getDirectory() );
         antProject.setProperty( ( propertyPrefix + "project.build.outputDirectory" ),
                                 mavenProject.getBuild().getOutputDirectory() );
         antProject.setProperty( ( propertyPrefix + "project.build.testOutputDirectory" ),
@@ -434,8 +436,7 @@ public class AntRunMojo
         antProject.setProperty( ( propertyPrefix + "settings.localRepository" ), localRepository.getBasedir() );
 
         // Add properties for depenedency artifacts
-        @SuppressWarnings( "unchecked" )
-        Set<Artifact> depArtifacts = mavenProject.getArtifacts();
+        @SuppressWarnings ( "unchecked" ) Set<Artifact> depArtifacts = mavenProject.getArtifacts();
         for ( Artifact artifact : depArtifacts )
         {
             String propName = artifact.getDependencyConflictId();
@@ -444,7 +445,7 @@ public class AntRunMojo
         }
 
         // Add a property containing the list of versions for the mapper
-        StringBuffer versionsBuffer = new StringBuffer();
+        StringBuilder versionsBuffer = new StringBuilder();
         for ( Artifact artifact : depArtifacts )
         {
             versionsBuffer.append( artifact.getVersion() + File.pathSeparator );
@@ -463,8 +464,8 @@ public class AntRunMojo
 
     /**
      * Copy properties from the ant project to the maven project.
-     * 
-     * @param antProject not null
+     *
+     * @param antProject   not null
      * @param mavenProject not null
      * @since 1.7
      */
@@ -484,10 +485,7 @@ public class AntRunMojo
             String key = (String) entry.getKey();
             if ( mavenProperties.getProperty( key ) != null )
             {
-                getLog().debug( "Ant property '"
-                                    + key
-                                    + "="
-                                    + mavenProperties.getProperty( key )
+                getLog().debug( "Ant property '" + key + "=" + mavenProperties.getProperty( key )
                                     + "' clashs with an existing Maven property, SKIPPING this Ant property propagation." );
                 continue;
             }
@@ -497,7 +495,7 @@ public class AntRunMojo
 
     /**
      * Prefix for legacy property format.
-     * 
+     *
      * @deprecated This should only be used for generating the old property format.
      */
     public static final String DEPENDENCY_PREFIX = "maven.dependency.";
@@ -505,23 +503,22 @@ public class AntRunMojo
     /**
      * Returns a property name for a dependency artifact. The name is in the format
      * maven.dependency.groupId.artifactId[.classifier].type.path
-     * 
+     *
      * @param artifact
      * @return property name
      * @deprecated The dependency conflict ID should be used as the property name.
      */
     public static String getDependencyArtifactPropertyName( Artifact artifact )
     {
-        String key =
-            DEPENDENCY_PREFIX + artifact.getGroupId() + "." + artifact.getArtifactId()
-                + ( artifact.getClassifier() != null ? "." + artifact.getClassifier() : "" )
-                + ( artifact.getType() != null ? "." + artifact.getType() : "" ) + ".path";
+        String key = DEPENDENCY_PREFIX + artifact.getGroupId() + "." + artifact.getArtifactId() + (
+            artifact.getClassifier() != null ? "." + artifact.getClassifier() : "" ) + ( artifact.getType() != null ?
+            "." + artifact.getType() : "" ) + ".path";
         return key;
     }
 
     /**
      * Get the current Maven project
-     * 
+     *
      * @return current Maven project
      */
     public MavenProject getMavenProject()
@@ -544,7 +541,7 @@ public class AntRunMojo
 
     /**
      * Write the ant target and surrounding tags to a temporary file
-     * 
+     *
      * @throws PlexusConfigurationException
      */
     private File writeTargetToProjectFile()
@@ -555,7 +552,7 @@ public class AntRunMojo
         AntrunXmlPlexusConfigurationWriter xmlWriter = new AntrunXmlPlexusConfigurationWriter();
         xmlWriter.write( target, writer );
 
-        StringBuffer antProjectConfig = writer.getBuffer();
+        StringBuilder antProjectConfig = new StringBuilder( writer.getBuffer() );
 
         // replace deprecated tasks tag with standard Ant target
         stringReplace( antProjectConfig, "<tasks", "<target" );
@@ -595,13 +592,13 @@ public class AntRunMojo
     }
 
     /**
-     * Replace text in a StringBuffer. If the match text is not found, the StringBuffer is returned unchanged.
-     * 
-     * @param text The string buffer containing the text
+     * Replace text in a StringBuilder. If the match text is not found, the StringBuilder is returned unchanged.
+     *
+     * @param text  The string buffer containing the text
      * @param match The string to match and remove
-     * @param with The string to insert
+     * @param with  The string to insert
      */
-    public void stringReplace( StringBuffer text, String match, String with )
+    public void stringReplace( StringBuilder text, String match, String with )
     {
         int index = text.indexOf( match );
         if ( index != -1 )
@@ -649,9 +646,8 @@ public class AntRunMojo
             {
                 if ( reader.getLineNumber() == buildException.getLocation().getLineNumber() )
                 {
-                    return "around Ant part ..." + line.trim() + "... @ "
-                        + buildException.getLocation().getLineNumber() + ":"
-                        + buildException.getLocation().getColumnNumber() + " in " + antFile.getAbsolutePath();
+                    return "around Ant part ..." + line.trim() + "... @ " + buildException.getLocation().getLineNumber()
+                        + ":" + buildException.getLocation().getColumnNumber() + " in " + antFile.getAbsolutePath();
                 }
             }
         }

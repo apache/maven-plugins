@@ -335,7 +335,7 @@ public abstract class AbstractJiraDownloader
         // log into JIRA if we have to
         String loginUrl = null;
 
-        StringBuffer loginLink = new StringBuffer( jiraUrl );
+        StringBuilder loginLink = new StringBuilder( jiraUrl );
 
         loginLink.append( "/login.jsp?os_destination=/secure/" );
 

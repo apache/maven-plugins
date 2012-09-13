@@ -423,7 +423,7 @@ public class ScmReport
 
                 paragraph( getI18nString( "accessbehindfirewall.svn.intro" ) );
 
-                StringBuffer sb = new StringBuffer();
+                StringBuilder sb = new StringBuilder();
                 sb.append( "$ svn checkout " ).append( svnRepo.getUrl() );
                 sb.append( " " ).append( checkoutDirectoryName );
                 verbatimText( sb.toString() );
@@ -456,7 +456,7 @@ public class ScmReport
                 paragraph( getI18nString( "accessthroughtproxy.svn.intro2" ) );
                 paragraph( getI18nString( "accessthroughtproxy.svn.intro3" ) );
 
-                StringBuffer sb = new StringBuffer();
+                StringBuilder sb = new StringBuilder();
                 sb.append( "[global]" );
                 sb.append( SystemUtils.LINE_SEPARATOR );
                 sb.append( "http-proxy-host = your.proxy.name" ).append( SystemUtils.LINE_SEPARATOR );
@@ -478,7 +478,7 @@ public class ScmReport
         {
             paragraph( getI18nString( "devaccess.clearcase.intro" ) );
 
-            StringBuffer command = new StringBuffer();
+            StringBuilder command = new StringBuilder();
             command.append( "$ cleartool checkout " );
 
             verbatimText( command.toString() );
@@ -499,7 +499,7 @@ public class ScmReport
         {
             paragraph( getI18nString( "anonymousaccess.cvs.intro" ) );
 
-            StringBuffer command = new StringBuffer();
+            StringBuilder command = new StringBuilder();
             command.append( "$ cvs -d " ).append( cvsRepo.getCvsRoot() ).append( " login" );
             command.append( SystemUtils.LINE_SEPARATOR );
             command.append( "$ cvs -z3 -d " ).append( cvsRepo.getCvsRoot() );
@@ -523,7 +523,7 @@ public class ScmReport
             linkPatternedText( getI18nString( "anonymousaccess.hg.intro" ) );
             sink.paragraph_();
 
-            StringBuffer command = new StringBuffer();
+            StringBuilder command = new StringBuilder();
             command.append( "$ hg clone " ).append( hgRepo.getURI() );
 
             verbatimText( command.toString() );
@@ -545,7 +545,7 @@ public class ScmReport
             // Safety: remove the username if present
             String cvsRoot = StringUtils.replace( cvsRepo.getCvsRoot(), cvsRepo.getUser(), "username" );
 
-            StringBuffer command = new StringBuffer();
+            StringBuilder command = new StringBuilder();
             command.append( "$ cvs -d " ).append( cvsRoot ).append( " login" );
             command.append( SystemUtils.LINE_SEPARATOR );
             command.append( "$ cvs -z3 -d " ).append( cvsRoot ).append( " co " ).append( cvsRepo.getModule() );
@@ -568,7 +568,7 @@ public class ScmReport
             linkPatternedText( getI18nString( "devaccess.hg.intro" ) );
             sink.paragraph_();
 
-            StringBuffer command = new StringBuffer();
+            StringBuilder command = new StringBuilder();
             command.append( "$ hg clone " );
             command.append( hgRepo.getURI() );
 
@@ -590,7 +590,7 @@ public class ScmReport
         {
             paragraph( getI18nString( "devaccess.perforce.intro" ) );
 
-            StringBuffer command = new StringBuffer();
+            StringBuilder command = new StringBuilder();
             command.append( "$ p4" );
             if ( !StringUtils.isEmpty( perforceRepo.getHost() ) )
             {
@@ -624,7 +624,7 @@ public class ScmReport
         {
             paragraph( getI18nString( "devaccess.starteam.intro" ) );
 
-            StringBuffer command = new StringBuffer();
+            StringBuilder command = new StringBuilder();
 
             // Safety: remove the username/password if present
             String fullUrl = StringUtils.replace( starteamRepo.getFullUrl(), starteamRepo.getUser(), "username" );
@@ -655,7 +655,7 @@ public class ScmReport
         {
             paragraph( getI18nString( "anonymousaccess.svn.intro" ) );
 
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
             sb.append( "$ svn checkout " ).append( svnRepo.getUrl() ).append( " " ).append( checkoutDirectoryName );
 
             verbatimText( sb.toString() );
@@ -692,7 +692,7 @@ public class ScmReport
                 }
             }
 
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
 
             sb.append( "$ svn checkout " ).append( svnRepo.getUrl() ).append( " " ).append( checkoutDirectoryName );
 
@@ -700,7 +700,7 @@ public class ScmReport
 
             paragraph( getI18nString( "devaccess.svn.intro2" ) );
 
-            sb = new StringBuffer();
+            sb = new StringBuilder();
             sb.append( "$ svn commit --username your-username -m \"A message\"" );
 
             verbatimText( sb.toString() );
@@ -733,7 +733,7 @@ public class ScmReport
 
             if ( messages.size() > 0 )
             {
-                StringBuffer sb = new StringBuffer();
+                StringBuilder sb = new StringBuilder();
                 boolean isIntroAdded = false;
                 for ( String msg : messages )
                 {

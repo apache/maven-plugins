@@ -237,7 +237,7 @@ public class DocumentModelBuilder
             author.setName( developer.getName() );
             author.setEmail( developer.getEmail() );
             author.setCompanyName( developer.getOrganization() );
-            StringBuffer roles = null;
+            StringBuilder roles = null;
 
             for ( final Iterator it2 = developer.getRoles().iterator(); it2.hasNext(); )
             {
@@ -245,7 +245,7 @@ public class DocumentModelBuilder
 
                 if ( roles == null )
                 {
-                    roles = new StringBuffer( 32 );
+                    roles = new StringBuilder( 32 );
                 }
 
                 roles.append( role );

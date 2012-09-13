@@ -232,7 +232,7 @@ public abstract class AbstractCheckDocumentationMojo
     private String buildErrorMessages( Map<MavenProject, DocumentationReporter> reporters )
     {
         String messages = "";
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
 
         for ( Map.Entry<MavenProject, DocumentationReporter> entry : reporters.entrySet() )
         {

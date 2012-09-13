@@ -500,7 +500,7 @@ public abstract class AbstractFixJavadocMojo
      */
     protected static String getJavaMethodAsString( JavaMethod javaMethod )
     {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 
         sb.append( javaMethod.getParentClass().getFullyQualifiedName() );
         sb.append( "#" ).append( javaMethod.getCallSignature() );
@@ -1213,14 +1213,14 @@ public abstract class AbstractFixJavadocMojo
      * @param javaClass not null
      * @param indent    not null
      * @see #getDefaultClassJavadocComment(JavaClass)
-     * @see #appendDefaultAuthorTag(StringBuffer, String)
-     * @see #appendDefaultSinceTag(StringBuffer, String)
-     * @see #appendDefaultVersionTag(StringBuffer, String)
+     * @see #appendDefaultAuthorTag(StringBuilder, String)
+     * @see #appendDefaultSinceTag(StringBuilder, String)
+     * @see #appendDefaultVersionTag(StringBuilder, String)
      */
     private void addDefaultClassComment( final StringWriter stringWriter, final JavaClass javaClass,
                                          final String indent )
     {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 
         sb.append( indent ).append( START_JAVADOC );
         sb.append( EOL );
@@ -1311,7 +1311,7 @@ public abstract class AbstractFixJavadocMojo
     private void addDefaultFieldComment( final StringWriter stringWriter, final JavaField field, final String indent )
         throws IOException
     {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 
         sb.append( indent ).append( START_JAVADOC ).append( " " );
         sb.append( "Constant <code>" ).append( field.getName() );
@@ -1332,7 +1332,7 @@ public abstract class AbstractFixJavadocMojo
 
             if ( qualifiedName.equals( String.class.getName() ) )
             {
-                StringBuffer value = new StringBuffer();
+                StringBuilder value = new StringBuilder();
                 String[] lines = getLines( field.getInitializationExpression() );
                 for ( int i = 0; i < lines.length; i++ )
                 {
@@ -1445,13 +1445,13 @@ public abstract class AbstractFixJavadocMojo
      * @param indent     not null
      * @throws MojoExecutionException if any
      * @see #getDefaultMethodJavadocComment(JavaMethod)
-     * @see #appendDefaultSinceTag(StringBuffer, String)
+     * @see #appendDefaultSinceTag(StringBuilder, String)
      */
     private void addDefaultMethodComment( final StringWriter stringWriter, final JavaMethod javaMethod,
                                           final String indent )
         throws MojoExecutionException
     {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 
         // special case
         if ( isInherited( javaMethod ) )
@@ -1568,7 +1568,7 @@ public abstract class AbstractFixJavadocMojo
             isJavaMethod = true;
         }
 
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 
         // special case for inherited method
         if ( isJavaMethod )
@@ -1643,7 +1643,7 @@ public abstract class AbstractFixJavadocMojo
 
                 if ( hasInheritedTag( sb.toString().trim() ) )
                 {
-                    sb = new StringBuffer();
+                    sb = new StringBuilder();
                     sb.append( indent ).append( INHERITED_JAVADOC );
                     sb.append( EOL );
                     stringWriter.write( sb.toString() );
@@ -1678,7 +1678,7 @@ public abstract class AbstractFixJavadocMojo
             addDefaultJavadocTags( sb, entity, indent, isJavaMethod );
         }
 
-        sb = new StringBuffer( removeLastEmptyJavadocLines( sb.toString() ) ).append( EOL );
+        sb = new StringBuilder( removeLastEmptyJavadocLines( sb.toString() ) ).append( EOL );
 
         sb.append( indent ).append( " " ).append( END_JAVADOC );
         sb.append( EOL );
@@ -1693,7 +1693,7 @@ public abstract class AbstractFixJavadocMojo
      * @param indent          not null
      * @throws IOException if any
      */
-    private void updateJavadocComment( final StringBuffer sb, final String originalContent,
+    private void updateJavadocComment( final StringBuilder sb, final String originalContent,
                                        final AbstractInheritableJavaEntity entity, final String indent )
         throws IOException
     {
@@ -1728,7 +1728,7 @@ public abstract class AbstractFixJavadocMojo
 
     private static final String replaceLinkTags( String comment, AbstractInheritableJavaEntity entity )
     {
-        StringBuffer resolvedComment = new StringBuffer();
+        StringBuilder resolvedComment = new StringBuilder();
         // scan comment for {@link someClassName} and try to resolve this
         Matcher linktagMatcher = Pattern.compile( "\\{@link\\s" ).matcher( comment );
         int startIndex = 0;
@@ -1796,7 +1796,7 @@ public abstract class AbstractFixJavadocMojo
      * @param indent       not null
      * @param isJavaMethod
      */
-    private void addDefaultJavadocComment( final StringBuffer sb, final AbstractInheritableJavaEntity entity,
+    private void addDefaultJavadocComment( final StringBuilder sb, final AbstractInheritableJavaEntity entity,
                                            final String indent, final boolean isJavaMethod )
     {
         sb.append( indent ).append( SEPARATOR_JAVADOC );
@@ -1820,7 +1820,7 @@ public abstract class AbstractFixJavadocMojo
      * @throws IOException            if any
      * @throws MojoExecutionException if any
      */
-    private void updateJavadocTags( final StringBuffer sb, final String originalContent,
+    private void updateJavadocTags( final StringBuilder sb, final String originalContent,
                                     final AbstractInheritableJavaEntity entity, final String indent,
                                     final boolean isJavaMethod )
         throws IOException, MojoExecutionException
@@ -1906,7 +1906,7 @@ public abstract class AbstractFixJavadocMojo
      * @param isJavaMethod
      * @param javaEntityTags not null
      */
-    private void updateJavadocTags( final StringBuffer sb, final AbstractInheritableJavaEntity entity,
+    private void updateJavadocTags( final StringBuilder sb, final AbstractInheritableJavaEntity entity,
                                     final boolean isJavaMethod, final JavaEntityTags javaEntityTags )
     {
         for ( int i = 0; i < entity.getTags().length; i++ )
@@ -1977,7 +1977,7 @@ public abstract class AbstractFixJavadocMojo
         }
     }
 
-    private void writeParamTag( final StringBuffer sb, final JavaMethod javaMethod, final JavaEntityTags javaEntityTags,
+    private void writeParamTag( final StringBuilder sb, final JavaMethod javaMethod, final JavaEntityTags javaEntityTags,
                                 String[] params )
     {
         params = fixQdox173( params );
@@ -2043,7 +2043,7 @@ public abstract class AbstractFixJavadocMojo
         }
     }
 
-    private void writeReturnTag( final StringBuffer sb, final JavaMethod javaMethod,
+    private void writeReturnTag( final StringBuilder sb, final JavaMethod javaMethod,
                                  final JavaEntityTags javaEntityTags )
     {
         String originalJavadocTag = javaEntityTags.getJavadocReturnTag();
@@ -2071,7 +2071,7 @@ public abstract class AbstractFixJavadocMojo
         }
     }
 
-    private void writeThrowsTag( final StringBuffer sb, final JavaMethod javaMethod,
+    private void writeThrowsTag( final StringBuilder sb, final JavaMethod javaMethod,
                                  final JavaEntityTags javaEntityTags, final String[] params )
     {
         String exceptionClassName = params[0];
@@ -2150,7 +2150,7 @@ public abstract class AbstractFixJavadocMojo
      * @param javaEntityTags not null
      * @throws MojoExecutionException if any
      */
-    private void addMissingJavadocTags( final StringBuffer sb, final AbstractInheritableJavaEntity entity,
+    private void addMissingJavadocTags( final StringBuilder sb, final AbstractInheritableJavaEntity entity,
                                         final String indent, final boolean isJavaMethod,
                                         final JavaEntityTags javaEntityTags )
         throws MojoExecutionException
@@ -2262,7 +2262,7 @@ public abstract class AbstractFixJavadocMojo
      * @param isJavaMethod
      * @throws MojoExecutionException if any
      */
-    private void addDefaultJavadocTags( final StringBuffer sb, final AbstractInheritableJavaEntity entity,
+    private void addDefaultJavadocTags( final StringBuilder sb, final AbstractInheritableJavaEntity entity,
                                         final String indent, final boolean isJavaMethod )
         throws MojoExecutionException
     {
@@ -2354,7 +2354,7 @@ public abstract class AbstractFixJavadocMojo
      * @param separatorAdded
      * @return true if separator has been added.
      */
-    private boolean appendDefaultAuthorTag( final StringBuffer sb, final String indent, boolean separatorAdded )
+    private boolean appendDefaultAuthorTag( final StringBuilder sb, final String indent, boolean separatorAdded )
     {
         if ( !fixTag( AUTHOR_TAG ) )
         {
@@ -2375,7 +2375,7 @@ public abstract class AbstractFixJavadocMojo
      * @param sb     not null
      * @param indent not null
      */
-    private void appendDefaultAuthorTag( final StringBuffer sb, final String indent )
+    private void appendDefaultAuthorTag( final StringBuilder sb, final String indent )
     {
         if ( !fixTag( AUTHOR_TAG ) )
         {
@@ -2393,7 +2393,7 @@ public abstract class AbstractFixJavadocMojo
      * @param separatorAdded
      * @return true if separator has been added.
      */
-    private boolean appendDefaultSinceTag( final StringBuffer sb, final String indent, boolean separatorAdded )
+    private boolean appendDefaultSinceTag( final StringBuilder sb, final String indent, boolean separatorAdded )
     {
         if ( !fixTag( SINCE_TAG ) )
         {
@@ -2414,7 +2414,7 @@ public abstract class AbstractFixJavadocMojo
      * @param sb     not null
      * @param indent not null
      */
-    private void appendDefaultSinceTag( final StringBuffer sb, final String indent )
+    private void appendDefaultSinceTag( final StringBuilder sb, final String indent )
     {
         if ( !fixTag( SINCE_TAG ) )
         {
@@ -2432,7 +2432,7 @@ public abstract class AbstractFixJavadocMojo
      * @param separatorAdded
      * @return true if separator has been added.
      */
-    private boolean appendDefaultVersionTag( final StringBuffer sb, final String indent, boolean separatorAdded )
+    private boolean appendDefaultVersionTag( final StringBuilder sb, final String indent, boolean separatorAdded )
     {
         if ( !fixTag( VERSION_TAG ) )
         {
@@ -2453,7 +2453,7 @@ public abstract class AbstractFixJavadocMojo
      * @param sb     not null
      * @param indent not null
      */
-    private void appendDefaultVersionTag( final StringBuffer sb, final String indent )
+    private void appendDefaultVersionTag( final StringBuilder sb, final String indent )
     {
         if ( !fixTag( VERSION_TAG ) )
         {
@@ -2472,7 +2472,7 @@ public abstract class AbstractFixJavadocMojo
      * @param javaParameter  not null
      * @return true if separator has been added.
      */
-    private boolean appendDefaultParamTag( final StringBuffer sb, final String indent, boolean separatorAdded,
+    private boolean appendDefaultParamTag( final StringBuilder sb, final String indent, boolean separatorAdded,
                                            final JavaParameter javaParameter )
     {
         if ( !fixTag( PARAM_TAG ) )
@@ -2497,7 +2497,7 @@ public abstract class AbstractFixJavadocMojo
      * @param typeParameter  not null
      * @return true if separator has been added.
      */
-    private boolean appendDefaultParamTag( final StringBuffer sb, final String indent, boolean separatorAdded,
+    private boolean appendDefaultParamTag( final StringBuilder sb, final String indent, boolean separatorAdded,
                                            final TypeVariable typeParameter )
     {
         if ( !fixTag( PARAM_TAG ) )
@@ -2520,7 +2520,7 @@ public abstract class AbstractFixJavadocMojo
      * @param indent        not null
      * @param javaParameter not null
      */
-    private void appendDefaultParamTag( final StringBuffer sb, final String indent, final JavaParameter javaParameter )
+    private void appendDefaultParamTag( final StringBuilder sb, final String indent, final JavaParameter javaParameter )
     {
         if ( !fixTag( PARAM_TAG ) )
         {
@@ -2539,7 +2539,7 @@ public abstract class AbstractFixJavadocMojo
      * @param indent        not null
      * @param typeParameter not null
      */
-    private void appendDefaultParamTag( final StringBuffer sb, final String indent, final TypeVariable typeParameter )
+    private void appendDefaultParamTag( final StringBuilder sb, final String indent, final TypeVariable typeParameter )
     {
         if ( !fixTag( PARAM_TAG ) )
         {
@@ -2560,7 +2560,7 @@ public abstract class AbstractFixJavadocMojo
      * @param javaMethod     not null
      * @return true if separator has been added.
      */
-    private boolean appendDefaultReturnTag( final StringBuffer sb, final String indent, boolean separatorAdded,
+    private boolean appendDefaultReturnTag( final StringBuilder sb, final String indent, boolean separatorAdded,
                                             final JavaMethod javaMethod )
     {
         if ( !fixTag( RETURN_TAG ) )
@@ -2583,7 +2583,7 @@ public abstract class AbstractFixJavadocMojo
      * @param indent     not null
      * @param javaMethod not null
      */
-    private void appendDefaultReturnTag( final StringBuffer sb, final String indent, final JavaMethod javaMethod )
+    private void appendDefaultReturnTag( final StringBuilder sb, final String indent, final JavaMethod javaMethod )
     {
         if ( !fixTag( RETURN_TAG ) )
         {
@@ -2602,7 +2602,7 @@ public abstract class AbstractFixJavadocMojo
      * @param exception      not null
      * @return true if separator has been added.
      */
-    private boolean appendDefaultThrowsTag( final StringBuffer sb, final String indent, boolean separatorAdded,
+    private boolean appendDefaultThrowsTag( final StringBuilder sb, final String indent, boolean separatorAdded,
                                             final Type exception )
     {
         if ( !fixTag( THROWS_TAG ) )
@@ -2625,7 +2625,7 @@ public abstract class AbstractFixJavadocMojo
      * @param indent    not null
      * @param exception not null
      */
-    private void appendDefaultThrowsTag( final StringBuffer sb, final String indent, final Type exception )
+    private void appendDefaultThrowsTag( final StringBuilder sb, final String indent, final Type exception )
     {
         if ( !fixTag( THROWS_TAG ) )
         {
@@ -2642,7 +2642,7 @@ public abstract class AbstractFixJavadocMojo
      * @param sb     not null
      * @param indent not null
      */
-    private void appendSeparator( final StringBuffer sb, final String indent )
+    private void appendSeparator( final StringBuilder sb, final String indent )
     {
         sb.append( indent ).append( " *" );
         sb.append( EOL );
@@ -2744,7 +2744,7 @@ public abstract class AbstractFixJavadocMojo
      */
     private String getDefaultJavadocForType( Type type )
     {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 
         if ( !TypeVariable.class.isAssignableFrom( type.getClass() ) && type.isPrimitive() )
         {
@@ -2759,7 +2759,7 @@ public abstract class AbstractFixJavadocMojo
             return sb.append( type.getJavaClass().getFullyQualifiedName() ).append( "." ).toString();
         }
 
-        StringBuffer javadocLink = new StringBuffer();
+        StringBuilder javadocLink = new StringBuilder();
         try
         {
             getClass( type.getJavaClass().getFullyQualifiedName() );
@@ -2828,7 +2828,7 @@ public abstract class AbstractFixJavadocMojo
             {
                 retrn = javaMethod.getReturns().getFullQualifiedName();
             }
-            StringBuffer params = new StringBuffer();
+            StringBuilder params = new StringBuilder();
             for ( JavaParameter parameter : javaMethod.getParameters() )
             {
                 if ( params.length() > 0 )
@@ -2960,7 +2960,7 @@ public abstract class AbstractFixJavadocMojo
      */
     private static String getFullClirrGoal()
     {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 
         sb.append( CLIRR_MAVEN_PLUGIN_GROUPID ).append( ":" ).append( CLIRR_MAVEN_PLUGIN_ARTIFACTID ).append( ":" );
 
@@ -3005,7 +3005,7 @@ public abstract class AbstractFixJavadocMojo
      */
     private static String getDefaultClassJavadocComment( final JavaClass javaClass )
     {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 
         sb.append( "<p>" );
         if ( Arrays.asList( javaClass.getModifiers() ).contains( "abstract" ) )
@@ -3054,7 +3054,7 @@ public abstract class AbstractFixJavadocMojo
                 return "<p>" + javaMethod.getName() + ".</p>";
             }
 
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
 
             sb.append( "<p>" );
             if ( javaMethod.getName().startsWith( "get" ) )
@@ -3143,7 +3143,7 @@ public abstract class AbstractFixJavadocMojo
 
         String originalJavadoc = extractOriginalJavadocContent( javaClassContent, entity );
 
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         BufferedReader lr = new BufferedReader( new StringReader( originalJavadoc ) );
         String line;
         while ( ( line = lr.readLine() ) != null )
@@ -3213,7 +3213,7 @@ public abstract class AbstractFixJavadocMojo
         String[] params = fixQdox173( docletTag.getParameters() );
         String paramValue = params[0];
 
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         BufferedReader lr = new BufferedReader( new StringReader( originalJavadoc ) );
         String line;
         boolean found = false;
@@ -3445,7 +3445,7 @@ public abstract class AbstractFixJavadocMojo
     private static String alignIndentationJavadocLines( final String content, final String indent )
         throws IOException
     {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for ( String line : getLines( content ) )
         {
             if ( sb.length() > 0 )
@@ -3689,7 +3689,7 @@ public abstract class AbstractFixJavadocMojo
 
         private String getMessage( String paramName, String mapName )
         {
-            StringBuffer msg = new StringBuffer();
+            StringBuilder msg = new StringBuilder();
             msg.append( "No param '" ).append( paramName ).append( "' key found in " + mapName + " for the entity: " );
             if ( isJavaMethod )
             {
@@ -3710,7 +3710,7 @@ public abstract class AbstractFixJavadocMojo
          */
         public String toString()
         {
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
 
             sb.append( "namesTags=" ).append( namesTags ).append( "\n" );
             sb.append( "tagParams=" ).append( tagParams ).append( "\n" );

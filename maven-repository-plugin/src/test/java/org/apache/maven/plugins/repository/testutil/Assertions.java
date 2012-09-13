@@ -59,7 +59,7 @@ public final class Assertions
 
         if ( !missing.isEmpty() || !banned.isEmpty() )
         {
-            StringBuffer msg = new StringBuffer();
+            StringBuilder msg = new StringBuilder();
             msg.append( "The following REQUIRED entries were missing from the bundle archive:\n" );
 
             if ( missing.isEmpty() )

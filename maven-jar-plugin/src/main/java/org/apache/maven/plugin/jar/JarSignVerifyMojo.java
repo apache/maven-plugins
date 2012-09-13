@@ -145,7 +145,7 @@ public class JarSignVerifyMojo
 
         LineMatcherStreamConsumer outConsumer = new LineMatcherStreamConsumer( "jar verified." );
 
-        final StringBuffer errBuffer = new StringBuffer();
+        final StringBuilder errBuffer = new StringBuilder();
         StreamConsumer errConsumer = new StreamConsumer()
         {
             public void consumeLine(String line)

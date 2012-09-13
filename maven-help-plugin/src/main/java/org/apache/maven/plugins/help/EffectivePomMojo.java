@@ -128,7 +128,7 @@ public class EffectivePomMojo
         }
         else
         {
-            StringBuffer message = new StringBuffer();
+            StringBuilder message = new StringBuilder();
 
             message.append( "\nEffective POMs, after inheritance, interpolation, and profiles are applied:\n\n" );
             message.append( effectivePom );

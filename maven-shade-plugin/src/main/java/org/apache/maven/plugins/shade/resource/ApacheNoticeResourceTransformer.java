@@ -126,7 +126,7 @@ public class ApacheNoticeResourceTransformer
         }
 
         String line = reader.readLine();
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         Set<String> currentOrg = null;
         int lineCount = 0;
         while ( line != null )
@@ -149,12 +149,12 @@ public class ApacheNoticeResourceTransformer
                                 currentOrg = new TreeSet<String>();
                                 organizationEntries.put( sb.toString().trim(), currentOrg );
                             }
-                            sb = new StringBuffer();
+                            sb = new StringBuilder();
                         }
                         else if ( sb.length() > 0 && currentOrg != null )
                         {
                             currentOrg.add( sb.toString() );
-                            sb = new StringBuffer();
+                            sb = new StringBuilder();
                         }
 
                     }
@@ -176,7 +176,7 @@ public class ApacheNoticeResourceTransformer
                     {
                         currentOrg.add( ent );
                     }
-                    sb = new StringBuffer();
+                    sb = new StringBuilder();
                     lineCount = 0;
                     currentOrg = null;
                 }

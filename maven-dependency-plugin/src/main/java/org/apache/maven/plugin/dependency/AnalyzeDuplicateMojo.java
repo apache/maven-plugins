@@ -94,7 +94,7 @@ public class AnalyzeDuplicateMojo
 
         if ( getLog().isInfoEnabled() )
         {
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
 
             if ( !duplicateDependencies.isEmpty() )
             {

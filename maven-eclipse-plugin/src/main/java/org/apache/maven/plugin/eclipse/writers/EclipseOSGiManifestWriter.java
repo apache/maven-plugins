@@ -91,7 +91,7 @@ public class EclipseOSGiManifestWriter
             return;
         }
 
-        StringBuffer manifestSb = rewriteManifest( config.getOSGIManifestFile() );
+        StringBuilder manifestSb = rewriteManifest( config.getOSGIManifestFile() );
         Writer out = null;
         try
         {
@@ -114,13 +114,13 @@ public class EclipseOSGiManifestWriter
         }
     }
 
-    protected StringBuffer rewriteManifest( File manifestFile )
+    protected StringBuilder rewriteManifest( File manifestFile )
         throws MojoExecutionException
     {
 
         // warning: we read and rewrite the file line by line in order to preserve formatting
         boolean inBundleClasspathEntry = false;
-        StringBuffer manifestSb = new StringBuffer();
+        StringBuilder manifestSb = new StringBuilder();
         try
         {
             BufferedReader in =
@@ -210,7 +210,7 @@ public class EclipseOSGiManifestWriter
             String[] versionTokens = StringUtils.split( StringUtils.stripEnd( version, "-SNAPSHOT" ), "." );
 
             int j = 0;
-            StringBuffer newVersion = new StringBuffer( 20 );
+            StringBuilder newVersion = new StringBuilder( 20 );
             for ( ; j < versionTokens.length; j++ )
             {
                 newVersion.append( versionTokens[j] );
@@ -235,7 +235,7 @@ public class EclipseOSGiManifestWriter
      */
     protected String addBundleClasspathEntries()
     {
-        StringBuffer bundleClasspathSb = new StringBuffer( ENTRY_BUNDLE_CLASSPATH );
+        StringBuilder bundleClasspathSb = new StringBuilder( ENTRY_BUNDLE_CLASSPATH );
 
         // local classes, if the plugin is jarred
         // @todo handle expanded plugins

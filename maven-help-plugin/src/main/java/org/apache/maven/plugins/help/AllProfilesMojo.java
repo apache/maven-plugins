@@ -82,7 +82,7 @@ public class AllProfilesMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        StringBuffer descriptionBuffer = new StringBuffer();
+        StringBuilder descriptionBuffer = new StringBuilder();
 
         for ( Iterator iter = projects.iterator(); iter.hasNext(); )
         {

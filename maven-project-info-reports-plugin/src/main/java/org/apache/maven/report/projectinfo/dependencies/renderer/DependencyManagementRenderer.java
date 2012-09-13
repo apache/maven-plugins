@@ -216,7 +216,7 @@ public class DependencyManagementRenderer
             artifactFactory.createProjectArtifact( dependency.getGroupId(), dependency.getArtifactId(),
                                                    dependency.getVersion() );
 
-        StringBuffer licensesBuffer = new StringBuffer();
+        StringBuilder licensesBuffer = new StringBuilder();
         String url = null;
         try
         {

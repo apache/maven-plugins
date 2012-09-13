@@ -554,7 +554,7 @@ public class ChangeLogReport
     private void writeChangelogXml( List changelogList )
         throws FileNotFoundException, UnsupportedEncodingException, IOException
     {
-        StringBuffer changelogXml = new StringBuffer();
+        StringBuilder changelogXml = new StringBuilder();
 
         changelogXml.append( "<?xml version=\"1.0\" encoding=\"" ).append( getOutputEncoding() ).append( "\"?>\n" );
         changelogXml.append( "<changelog>" );

@@ -106,7 +106,7 @@ public class Overlay
     {
         if ( id == null )
         {
-            final StringBuffer sb = new StringBuffer();
+            final StringBuilder sb = new StringBuilder();
             sb.append( getGroupId() ).append( ":" ).append( getArtifactId() );
             if ( getClassifier() != null )
             {

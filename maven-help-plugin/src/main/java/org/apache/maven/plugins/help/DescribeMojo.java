@@ -268,7 +268,7 @@ public class DescribeMojo
             }
         }
 
-        StringBuffer descriptionBuffer = new StringBuffer();
+        StringBuilder descriptionBuffer = new StringBuilder();
 
         boolean describePlugin = true;
         if ( StringUtils.isNotEmpty( cmd ) )
@@ -337,7 +337,7 @@ public class DescribeMojo
      * @param descriptionBuffer contains the description to be written to the file
      * @throws MojoExecutionException if any
      */
-    private void writeDescription( StringBuffer descriptionBuffer )
+    private void writeDescription( StringBuilder descriptionBuffer )
         throws MojoExecutionException
     {
         if ( output != null )
@@ -402,7 +402,7 @@ public class DescribeMojo
         }
         else
         {
-            StringBuffer msg = new StringBuffer();
+            StringBuilder msg = new StringBuilder();
             msg.append( "You must specify either: both 'groupId' and 'artifactId' parameters OR a 'plugin' parameter"
                             + " OR a 'cmd' parameter. For instance:\n" );
             msg.append( "  # mvn help:describe -Dcmd=install\n" );
@@ -540,7 +540,7 @@ public class DescribeMojo
      * @throws MojoFailureException   if any reflection exceptions occur.
      * @throws MojoExecutionException if any
      */
-    private void describePlugin( PluginDescriptor pd, StringBuffer buffer )
+    private void describePlugin( PluginDescriptor pd, StringBuilder buffer )
         throws MojoFailureException, MojoExecutionException
     {
         append( buffer, pd.getId(), 0 );
@@ -623,7 +623,7 @@ public class DescribeMojo
      * @throws MojoFailureException   if any reflection exceptions occur.
      * @throws MojoExecutionException if any
      */
-    private void describeMojo( MojoDescriptor md, StringBuffer buffer )
+    private void describeMojo( MojoDescriptor md, StringBuilder buffer )
         throws MojoFailureException, MojoExecutionException
     {
         buffer.append( "Mojo: '" ).append( md.getFullGoalName() ).append( "'" );
@@ -648,7 +648,7 @@ public class DescribeMojo
      * @throws MojoFailureException   if any reflection exceptions occur.
      * @throws MojoExecutionException if any
      */
-    private void describeMojoGuts( MojoDescriptor md, StringBuffer buffer, boolean fullDescription )
+    private void describeMojoGuts( MojoDescriptor md, StringBuilder buffer, boolean fullDescription )
         throws MojoFailureException, MojoExecutionException
     {
         append( buffer, md.getFullGoalName(), 0 );
@@ -720,7 +720,7 @@ public class DescribeMojo
      * @throws MojoFailureException   if any reflection exceptions occur.
      * @throws MojoExecutionException if any
      */
-    private void describeMojoParameters( MojoDescriptor md, StringBuffer buffer )
+    private void describeMojoParameters( MojoDescriptor md, StringBuilder buffer )
         throws MojoFailureException, MojoExecutionException
     {
         List params = md.getParameters();
@@ -816,7 +816,7 @@ public class DescribeMojo
      * @throws MojoFailureException   if any reflection exceptions occur or missing components.
      * @throws MojoExecutionException if any
      */
-    private boolean describeCommand( StringBuffer descriptionBuffer )
+    private boolean describeCommand( StringBuilder descriptionBuffer )
         throws MojoFailureException, MojoExecutionException
     {
         if ( cmd.indexOf( ":" ) == -1 )
@@ -1003,7 +1003,7 @@ public class DescribeMojo
      * @throws MojoExecutionException if any
      * @see #toLines(String, int, int, int)
      */
-    private static void append( StringBuffer sb, String description, int indent )
+    private static void append( StringBuilder sb, String description, int indent )
         throws MojoFailureException, MojoExecutionException
     {
         if ( StringUtils.isEmpty( description ) )
@@ -1030,7 +1030,7 @@ public class DescribeMojo
      * @throws MojoExecutionException if any
      * @see #toLines(String, int, int, int)
      */
-    private static void append( StringBuffer sb, String key, String value, int indent )
+    private static void append( StringBuilder sb, String key, String value, int indent )
         throws MojoFailureException, MojoExecutionException
     {
         if ( StringUtils.isEmpty( key ) )
@@ -1063,7 +1063,7 @@ public class DescribeMojo
      * @throws MojoExecutionException if any
      * @see #toLines(String, int, int, int)
      */
-    private static void appendAsParagraph( StringBuffer sb, String key, String value, int indent )
+    private static void appendAsParagraph( StringBuilder sb, String key, String value, int indent )
         throws MojoFailureException, MojoExecutionException
     {
         if ( StringUtils.isEmpty( value ) )

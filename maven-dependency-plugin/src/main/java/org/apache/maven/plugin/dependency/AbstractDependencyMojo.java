@@ -422,7 +422,7 @@ public abstract class AbstractDependencyMojo
             return;
         }
 
-        StringBuffer msg = new StringBuffer();
+        StringBuilder msg = new StringBuilder();
         msg.append( "Unpacking " );
         msg.append( file );
         msg.append( " to " );

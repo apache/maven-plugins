@@ -340,7 +340,7 @@ public abstract class AbstractAnalyzeMojo
         {
             getLog().info( "Missing dependencies: " );
             String pomFile = baseDir.getAbsolutePath() + File.separatorChar + "pom.xml";
-            StringBuffer buf = new StringBuffer();
+            StringBuilder buf = new StringBuilder();
 
             for ( Artifact artifact : artifacts )
             {

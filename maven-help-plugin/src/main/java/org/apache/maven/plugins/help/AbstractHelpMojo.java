@@ -57,7 +57,7 @@ public abstract class AbstractHelpMojo
      * @throws IOException if any
      * @see #writeFile(File, String)
      */
-    protected static void writeFile( File output, StringBuffer content )
+    protected static void writeFile( File output, StringBuilder content )
         throws IOException
     {
         writeFile( output, content.toString() );

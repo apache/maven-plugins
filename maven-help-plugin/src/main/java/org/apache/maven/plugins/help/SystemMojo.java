@@ -51,7 +51,7 @@ public class SystemMojo
     public void execute()
         throws MojoExecutionException
     {
-        StringBuffer message = new StringBuffer();
+        StringBuilder message = new StringBuilder();
 
         message.append( '\n' );
         message.append( StringUtils.repeat( "=", LINE_LENGTH ) ).append( '\n' );
@@ -99,7 +99,7 @@ public class SystemMojo
 
         if ( output != null )
         {
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
             sb.append( "Created by: " + getClass().getName() ).append( "\n" );
             sb.append( "Created on: " + new Date() ).append( "\n" ).append( "\n" );
             sb.append( message.toString() );

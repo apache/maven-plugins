@@ -201,7 +201,7 @@ public class MakeMojo
             pathSet.add( path );
         }
         if (artifactList == null) artifactList = "";
-        StringBuffer artifactBuffer = new StringBuffer(artifactList);
+        StringBuilder artifactBuffer = new StringBuilder(artifactList);
         for ( int i = 0; i < collectedProjects.size(); i++ )
         {
             MavenProject mp = (MavenProject) collectedProjects.get( i );

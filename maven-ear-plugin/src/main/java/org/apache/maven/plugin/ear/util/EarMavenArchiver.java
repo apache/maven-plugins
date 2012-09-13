@@ -103,7 +103,7 @@ public class EarMavenArchiver
      */
     protected String generateClassPathEntry( String classPathPrefix )
     {
-        final StringBuffer classpath = new StringBuffer();
+        final StringBuilder classpath = new StringBuilder();
         for ( final EarModule earModule : earModules )
         {
             if ( !earModule.isExcluded() )

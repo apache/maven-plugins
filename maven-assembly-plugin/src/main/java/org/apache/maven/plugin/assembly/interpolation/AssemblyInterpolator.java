@@ -125,7 +125,7 @@ public class AssemblyInterpolator
 
         if ( objectInterpolator.hasWarnings() && getLogger().isDebugEnabled() )
         {
-            final StringBuffer sb = new StringBuffer();
+            final StringBuilder sb = new StringBuilder();
 
             sb.append( "One or more minor errors occurred while interpolating the assembly with ID: "
                             + assembly.getId() + ":\n" );

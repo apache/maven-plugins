@@ -273,7 +273,7 @@ public class PmdReportTest
         throws IOException
     {
         String strTmp;
-        StringBuffer str = new StringBuffer( (int) file.length() );
+        StringBuilder str = new StringBuilder( (int) file.length() );
         FileReader reader = null;
         BufferedReader in = null;
         try

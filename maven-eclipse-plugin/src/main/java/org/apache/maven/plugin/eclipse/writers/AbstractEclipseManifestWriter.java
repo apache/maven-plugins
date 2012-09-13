@@ -70,7 +70,7 @@ public abstract class AbstractEclipseManifestWriter
         }
         String[] entries = newValue.split( " " );
         Arrays.sort( entries );
-        StringBuffer buffer = new StringBuffer( newValue.length() );
+        StringBuilder buffer = new StringBuilder( newValue.length() );
         for ( int index = 0; index < entries.length; index++ )
         {
             buffer.append( entries[index] );
@@ -108,14 +108,14 @@ public abstract class AbstractEclipseManifestWriter
     }
 
     /**
-     * Add one dependency to the blank separated classpath stringbuffer. When the project is available in the reactor
+     * Add one dependency to the blank separated classpath StringBuilder. When the project is available in the reactor
      * (current build) then the project is used else the jar representing the artifact. System dependencies will only be
      * included if they are in this project.
      * 
      * @param classpath existing classpath to append
      * @param dependency dependency to append as jar or as project
      */
-    protected void addDependencyToClassPath( StringBuffer classpath, IdeDependency dependency )
+    protected void addDependencyToClassPath( StringBuilder classpath, IdeDependency dependency )
     {
         if ( !dependency.isTestDependency() && !dependency.isProvided()
             && !dependency.isSystemScopedOutsideProject( this.config.getProject() ) )
@@ -193,15 +193,15 @@ public abstract class AbstractEclipseManifestWriter
      */
     protected String constructManifestClasspath()
     {
-        StringBuffer stringBuffer = new StringBuffer();
+        StringBuilder StringBuilder = new StringBuilder();
         IdeDependency[] deps = this.config.getDeps();
 
         for ( int index = 0; index < deps.length; index++ )
         {
-            addDependencyToClassPath( stringBuffer, deps[index] );
+            addDependencyToClassPath( StringBuilder, deps[index] );
         }
 
-        return stringBuffer.toString();
+        return StringBuilder.toString();
     }
 
     /**

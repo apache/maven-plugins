@@ -289,7 +289,7 @@ public abstract class AbstractIdeaMojo
             }
             else
             {
-                StringBuffer result = new StringBuffer();
+                StringBuilder result = new StringBuilder();
                 int parentCount = baseTokenList.size() - differIndex;
                 if ( getLog().isDebugEnabled() )
                 {
@@ -394,7 +394,7 @@ public abstract class AbstractIdeaMojo
         {
             getLog().debug( e.getMessage(), e );
 
-            StringBuffer msg = new StringBuffer();
+            StringBuilder msg = new StringBuilder();
             msg.append( "An error occurred during dependency resolution.\n\n" );
             msg.append( "    Failed to retrieve " + e.getDownloadUrl() + "\n" );
             msg.append( "from the following repositories:" );
@@ -411,7 +411,7 @@ public abstract class AbstractIdeaMojo
         {
             getLog().debug( e.getMessage(), e );
 
-            StringBuffer msg = new StringBuffer();
+            StringBuilder msg = new StringBuilder();
             msg.append( "An error occurred during dependency resolution of the following artifact:\n\n" );
             msg.append( "    " + e.getGroupId() + ":" + e.getArtifactId() + e.getVersion() + "\n\n" );
             msg.append( "Caused by: " + e.getMessage() );

@@ -116,7 +116,7 @@ public class TestBuildClasspathMojo
         Artifact artifact = stubFactory.getReleaseArtifact();
 
 
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         mojo.setPrefix( null );
         mojo.setStripVersion( false );
         mojo.appendArtifactPath( artifact, sb );

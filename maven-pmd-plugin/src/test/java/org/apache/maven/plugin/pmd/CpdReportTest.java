@@ -167,7 +167,7 @@ public class CpdReportTest
         throws IOException
     {
         String strTmp;
-        StringBuffer str = new StringBuffer( (int) file.length() );
+        StringBuilder str = new StringBuilder( (int) file.length() );
         BufferedReader in = new BufferedReader( new FileReader( file ) );
 
         while ( ( strTmp = in.readLine() ) != null )

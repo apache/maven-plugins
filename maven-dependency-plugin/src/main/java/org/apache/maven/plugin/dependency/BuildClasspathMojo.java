@@ -188,7 +188,7 @@ public class BuildClasspathMojo
 
         List<Artifact> artList = new ArrayList<Artifact>( artifacts );
 
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         Iterator<Artifact> i = artList.iterator();
 
         if ( i.hasNext() )
@@ -251,12 +251,12 @@ public class BuildClasspathMojo
     }
 
     /**
-     * Appends the artifact path into the specified stringBuffer.
+     * Appends the artifact path into the specified StringBuilder.
      *
      * @param art
      * @param sb
      */
-    protected void appendArtifactPath( Artifact art, StringBuffer sb )
+    protected void appendArtifactPath( Artifact art, StringBuilder sb )
     {
         if ( prefix == null )
         {
@@ -350,7 +350,7 @@ public class BuildClasspathMojo
         {
             return null;
         }
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         BufferedReader r = null;
 
         try
