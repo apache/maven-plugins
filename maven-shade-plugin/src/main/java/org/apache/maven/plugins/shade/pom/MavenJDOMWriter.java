@@ -135,15 +135,16 @@ public class MavenJDOMWriter
         Element element = updateElement( counter, parent, name, shouldExist );
         if ( shouldExist )
         {
-            Iterator it = props.keySet().iterator();
+
             Counter innerCounter = new Counter( counter.getDepth() + 1 );
-            while ( it.hasNext() )
+            //while ( it.hasNext() )
+            for ( Map.Entry<String, String> entry : ( (Map<String, String>) props ).entrySet() )
             {
-                String key = (String) it.next();
-                findAndReplaceSimpleElement( innerCounter, element, key, (String) props.get( key ), null );
+                String key = entry.getKey();
+                findAndReplaceSimpleElement( innerCounter, element, key, entry.getValue(), null );
             }
             ArrayList lst = new ArrayList( props.keySet() );
-            it = element.getChildren().iterator();
+            Iterator it = element.getChildren().iterator();
             while ( it.hasNext() )
             {
                 Element elem = (Element) it.next();

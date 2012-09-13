@@ -56,7 +56,7 @@ public class ExpressionsMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        Map m;
+        Map<String,Expression> m;
         try
         {
             m = ExpressionDocumenter.load();
@@ -77,10 +77,10 @@ public class ExpressionsMojo
             sb.append( "\n\n" );
         }
 
-        for ( Iterator it = m.keySet().iterator(); it.hasNext(); )
+        for ( Map.Entry<String,Expression> entry : m.entrySet() )
         {
-            String key = (String) it.next();
-            Expression expression = (Expression) m.get( key );
+            String key = entry.getKey();
+            Expression expression = entry.getValue();
 
             sb.append( "${" ).append( key ).append( "}: " );
             sb.append( trimCDATA( expression.getDescription() ) );
