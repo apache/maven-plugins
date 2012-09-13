@@ -187,7 +187,7 @@ public class GitHubMojo
         }
         catch ( Exception e )
         {
-            e.printStackTrace();
+            throw new MavenReportException( e.getMessage(), e );
         }
     }
 
