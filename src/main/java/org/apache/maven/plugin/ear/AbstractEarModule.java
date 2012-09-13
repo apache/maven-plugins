@@ -292,7 +292,7 @@ public abstract class AbstractEarModule
 
     public String toString()
     {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append( getType() ).append( ":" ).append( groupId ).append( ":" ).append( artifactId );
         if ( classifier != null )
         {
