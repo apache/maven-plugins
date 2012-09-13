@@ -2654,7 +2654,7 @@ public class DoapMojo
                 throw new IllegalArgumentException( "tags is required" );
             }
 
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
             for ( int i = 0; i < tags.length; i++ )
             {
                 if ( i == tags.length - 1 && StringUtils.isEmpty( value ) )
