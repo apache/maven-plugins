@@ -2414,7 +2414,7 @@ public abstract class AbstractJavadocMojo
 
                             if ( getLog().isDebugEnabled() )
                             {
-                                StringBuffer sb = new StringBuffer();
+                                StringBuilder sb = new StringBuilder();
 
                                 sb.append( "Compiled artifacts for " );
                                 sb.append( subProject.getGroupId() ).append( ":" );
@@ -2718,7 +2718,7 @@ public abstract class AbstractJavadocMojo
 
         bootclassPath = JavadocUtil.pruneFiles( bootclassPath );
 
-        StringBuffer path = new StringBuffer();
+        StringBuilder path = new StringBuilder();
         path.append( StringUtils.join( bootclassPath.iterator(), File.pathSeparator ) );
 
         if ( StringUtils.isNotEmpty( bootclasspath ) )
@@ -2838,7 +2838,7 @@ public abstract class AbstractJavadocMojo
             }
         }
 
-        StringBuffer path = new StringBuffer();
+        StringBuilder path = new StringBuilder();
         path.append( StringUtils.join( pathParts.iterator(), File.pathSeparator ) );
 
         if ( StringUtils.isNotEmpty( tagletpath ) )
@@ -4184,7 +4184,7 @@ public abstract class AbstractJavadocMojo
     {
         File optionsFile = new File( javadocOutputDirectory, OPTIONS_FILE_NAME );
 
-        StringBuffer options = new StringBuffer();
+        StringBuilder options = new StringBuilder();
         options.append( StringUtils.join( arguments.toArray( new String[0] ), SystemUtils.LINE_SEPARATOR ) );
 
         try
@@ -4348,7 +4348,7 @@ public abstract class AbstractJavadocMojo
             final List<Locale> availableLocalesList = Arrays.asList( Locale.getAvailableLocales() );
             if ( StringUtils.isNotEmpty( localeObject.getVariant() ) && !availableLocalesList.contains( localeObject ) )
             {
-                StringBuffer sb = new StringBuffer();
+                StringBuilder sb = new StringBuilder();
                 sb.append( "Unsupported option <locale/> with variant '" ).append( this.locale );
                 sb.append( "'" );
 
@@ -4976,7 +4976,7 @@ public abstract class AbstractJavadocMojo
                 if ( StringUtils.isNotEmpty( output ) && StringUtils.isEmpty( err.getOutput() ) && isJavadocVMInitError(
                     output ) )
                 {
-                    StringBuffer msg = new StringBuffer();
+                    StringBuilder msg = new StringBuilder();
                     msg.append( output );
                     msg.append( '\n' ).append( '\n' );
                     msg.append( JavadocUtil.ERROR_INIT_VM ).append( '\n' );
@@ -4995,7 +4995,7 @@ public abstract class AbstractJavadocMojo
                     getLog().info( output );
                 }
 
-                StringBuffer msg = new StringBuffer( "\nExit code: " );
+                StringBuilder msg = new StringBuilder( "\nExit code: " );
                 msg.append( exitCode );
                 if ( StringUtils.isNotEmpty( err.getOutput() ) )
                 {
@@ -5197,7 +5197,7 @@ public abstract class AbstractJavadocMojo
             IOUtil.close( resourceAsStream );
         }
 
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 
         sb.append( "org.apache.maven.plugins:maven-javadoc-plugin:" );
         if ( StringUtils.isNotEmpty( javadocPluginVersion ) )

@@ -396,7 +396,7 @@ public class JavadocUtil
      * @param sourceDirectory the directory where the source files are located
      * @param fileList        the list of all files found in the sourceDirectory
      * @param excludePackages package names to be excluded in the javadoc
-     * @return a StringBuffer that contains the appended file names of the files to be included in the javadoc
+     * @return a StringBuilder that contains the appended file names of the files to be included in the javadoc
      */
     protected static List<String> getIncludedFiles( File sourceDirectory, String[] fileList, String[] excludePackages )
     {
@@ -563,7 +563,7 @@ public class JavadocUtil
 
         if ( exitCode != 0 )
         {
-            StringBuffer msg = new StringBuffer( "Exit code: " + exitCode + " - " + err.getOutput() );
+            StringBuilder msg = new StringBuilder( "Exit code: " + exitCode + " - " + err.getOutput() );
             msg.append( '\n' );
             msg.append( "Command line was:" + CommandLineUtils.toString( cmd.getCommandline() ) );
             throw new CommandLineException( msg.toString() );
