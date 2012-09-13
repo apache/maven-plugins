@@ -1442,7 +1442,7 @@ public class AntBuildWriter
             return null;
         }
 
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for ( int i = 0; i < includes.length; i++ )
         {
             String s = (String) includes[i].get( key );

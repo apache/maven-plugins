@@ -193,7 +193,7 @@ public class AntBuildWriterUtil
         String sourcepath = getMavenJavadocPluginBasicOption( project, "sourcepath", null );
         if ( sourcepath == null )
         {
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
             String[] compileSourceRoots = (String[]) sources.toArray( new String[0] );
             for ( int i = 0; i < compileSourceRoots.length; i++ )
             {
@@ -1263,7 +1263,7 @@ public class AntBuildWriterUtil
      */
     private static String getTextContent( Node node )
     {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         if ( node != null )
         {
             NodeList children = node.getChildNodes();
