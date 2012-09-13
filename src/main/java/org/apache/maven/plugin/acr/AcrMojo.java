@@ -19,6 +19,7 @@ package org.apache.maven.plugin.acr;
  * under the License.
  */
 
+import org.apache.commons.io.IOUtils;
 import org.apache.maven.archiver.MavenArchiveConfiguration;
 import org.apache.maven.archiver.MavenArchiver;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
@@ -52,8 +53,8 @@ import java.util.List;
  * @author <a href="snicoll@apache.org">Stephane Nicoll</a>
  * @version $Id:
  */
-@Mojo( name = "acr", requiresDependencyResolution = ResolutionScope.RUNTIME, threadSafe = true,
-       defaultPhase = LifecyclePhase.PACKAGE )
+@Mojo (name = "acr", requiresDependencyResolution = ResolutionScope.RUNTIME, threadSafe = true,
+       defaultPhase = LifecyclePhase.PACKAGE)
 public class AcrMojo
     extends AbstractMojo
 {
@@ -70,19 +71,19 @@ public class AcrMojo
     /**
      * The directory for the generated jar.
      */
-    @Parameter( defaultValue = "${project.build.directory}", required = true, readonly = true )
+    @Parameter (defaultValue = "${project.build.directory}", required = true, readonly = true)
     private File basedir;
 
     /**
      * Directory that resources are copied to during the build.
      */
-    @Parameter( property = "outputDirectory", defaultValue = "${project.build.outputDirectory}" )
+    @Parameter (property = "outputDirectory", defaultValue = "${project.build.outputDirectory}")
     private File outputDirectory;
 
     /**
      * The name of the Application client JAR file to generate.
      */
-    @Parameter( property = "jarName", defaultValue = "${project.build.finalName}" )
+    @Parameter (property = "jarName", defaultValue = "${project.build.finalName}")
     private String jarName;
 
     /**
@@ -107,7 +108,7 @@ public class AcrMojo
     /**
      * The Jar archiver.
      */
-    @Component( role = Archiver.class, hint = "jar" )
+    @Component (role = Archiver.class, hint = "jar")
     private JarArchiver jarArchiver;
 
     /**
@@ -121,20 +122,20 @@ public class AcrMojo
      * To escape interpolated value with windows path.
      * c:\foo\bar will be replaced with c:\\foo\\bar.
      */
-    @Parameter( property = "acr.escapeBackslashesInFilePath", defaultValue = "false" )
+    @Parameter (property = "acr.escapeBackslashesInFilePath", defaultValue = "false")
     private boolean escapeBackslashesInFilePath;
 
     /**
      * An expression preceded with this String won't be interpolated.
      * \${foo} will be replaced with ${foo}.
      */
-    @Parameter( property = "acr.escapeString" )
+    @Parameter (property = "acr.escapeString")
     protected String escapeString;
 
     /**
      * To filter the deployment descriptor.
      */
-    @Parameter( property = "acr.filterDeploymentDescriptor", defaultValue = "false" )
+    @Parameter (property = "acr.filterDeploymentDescriptor", defaultValue = "false")
     private boolean filterDeploymentDescriptor;
 
     /**
@@ -145,7 +146,7 @@ public class AcrMojo
 
     /**
      */
-    @Component( role = MavenFileFilter.class, hint = "default" )
+    @Component (role = MavenFileFilter.class, hint = "default")
     private MavenFileFilter mavenFileFilter;
 
     /**
@@ -155,7 +156,6 @@ public class AcrMojo
 
     /**
      * Generates the application client jar file.
-     *
      */
     public void execute()
         throws MojoExecutionException
@@ -229,8 +229,8 @@ public class AcrMojo
         catch ( ManifestException e )
         {
             throw new MojoExecutionException(
-                "There was a problem reading / creating the manifest for the JavaEE Application Client  archive: " +
-                    e.getMessage(), e );
+                "There was a problem reading / creating the manifest for the JavaEE Application Client  archive: "
+                    + e.getMessage(), e );
         }
         catch ( IOException e )
         {
@@ -240,8 +240,8 @@ public class AcrMojo
         catch ( DependencyResolutionRequiredException e )
         {
             throw new MojoExecutionException(
-                "There was a problem resolving dependencies while creating the JavaEE Application Client archive: " +
-                    e.getMessage(), e );
+                "There was a problem resolving dependencies while creating the JavaEE Application Client archive: "
+                    + e.getMessage(), e );
         }
         catch ( MavenFilteringException e )
         {
@@ -276,7 +276,15 @@ public class AcrMojo
     private String getEncoding( File xmlFile )
         throws IOException
     {
-        XmlStreamReader xmlReader = new XmlStreamReader( xmlFile );
-        return xmlReader.getEncoding();
+        XmlStreamReader xmlReader = null;
+        try
+        {
+            xmlReader = new XmlStreamReader( xmlFile );
+            return xmlReader.getEncoding();
+        }
+        finally
+        {
+            IOUtils.closeQuietly( xmlReader );
+        }
     }
 }
