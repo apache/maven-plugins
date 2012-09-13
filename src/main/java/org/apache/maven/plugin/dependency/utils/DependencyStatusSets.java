@@ -141,7 +141,7 @@ public class DependencyStatusSets
 
     public String getOutput( boolean outputAbsoluteArtifactFilename, boolean outputScope )
     {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append( "\n" );
         sb.append( "The following files have been resolved:\n" );
         if ( this.resolvedDependencies == null || this.resolvedDependencies.isEmpty() )

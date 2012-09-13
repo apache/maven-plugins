@@ -69,7 +69,7 @@ public class TestAnalyzeDuplicateMojo
     class DuplicateLog
         implements Log
     {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 
         /** {@inheritDoc} */
         public void debug( CharSequence content )

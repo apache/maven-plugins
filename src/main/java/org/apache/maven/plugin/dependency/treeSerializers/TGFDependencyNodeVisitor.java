@@ -81,7 +81,7 @@ public class TGFDependencyNodeVisitor
          */
         public String toString()
         {
-            StringBuffer result = new StringBuffer( generateId( from ) );
+            StringBuilder result = new StringBuilder( generateId( from ) );
             result.append( ' ' ).append( generateId( to ) );
             if ( label != null )
             {

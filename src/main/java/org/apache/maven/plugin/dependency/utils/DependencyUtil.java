@@ -70,7 +70,7 @@ public final class DependencyUtil
      */
     public static String getFormattedFileName( Artifact artifact, boolean removeVersion, boolean prependGroupId )
     {
-        StringBuffer destFileName = new StringBuffer();
+        StringBuilder destFileName = new StringBuilder();
         
         if ( prependGroupId )
         {
@@ -116,7 +116,7 @@ public final class DependencyUtil
                                                     boolean useSubdirPerArtifact, boolean useRepositoryLayout,
                                                     boolean removeVersion, File outputDirectory, Artifact artifact )
     {
-        StringBuffer sb = new StringBuffer( 128 );
+        StringBuilder sb = new StringBuilder( 128 );
         if ( useRepositoryLayout )
         {
             // group id
@@ -147,7 +147,7 @@ public final class DependencyUtil
 
     private static String getDependencyId( Artifact artifact, boolean removeVersion )
     {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 
         sb.append( artifact.getArtifactId() );
 
