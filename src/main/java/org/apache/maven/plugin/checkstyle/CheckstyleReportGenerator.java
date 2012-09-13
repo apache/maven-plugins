@@ -342,7 +342,7 @@ public class CheckstyleReportGenerator
         if ( getLog().isDebugEnabled() )
         {
             // Log the parent configuration path
-            StringBuffer parentPath = new StringBuffer();
+            StringBuilder parentPath = new StringBuilder();
             for ( Iterator<Configuration> iterator = parentConfigurations.iterator(); iterator.hasNext(); )
             {
                 Configuration parentConfiguration = iterator.next();

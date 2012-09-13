@@ -451,7 +451,7 @@ public class CheckstyleViolationCheckMojo
             {
                 if ( logViolationsToConsole )
                 {
-                    StringBuffer stb = new StringBuffer();
+                    StringBuilder stb = new StringBuilder();
                     stb.append( file );
                     stb.append( '[' );
                     stb.append( xpp.getAttributeValue( "", "line" ) );
