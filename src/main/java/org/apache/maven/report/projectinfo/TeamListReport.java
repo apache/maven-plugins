@@ -127,8 +127,8 @@ public class TeamListReport
             startSection( getI18nString( "intro.title" ) );
 
             // To handle JS
-            StringBuffer javascript =
-                new StringBuffer( "function offsetDate(id, offset) {" ).append( SystemUtils.LINE_SEPARATOR );
+            StringBuilder javascript =
+                new StringBuilder( "function offsetDate(id, offset) {" ).append( SystemUtils.LINE_SEPARATOR );
             javascript.append( "    var now = new Date();" ).append( SystemUtils.LINE_SEPARATOR );
             javascript.append( "    var nowTime = now.getTime();" ).append( SystemUtils.LINE_SEPARATOR );
             javascript.append( "    var localOffset = now.getTimezoneOffset();" ).append( SystemUtils.LINE_SEPARATOR );
@@ -223,7 +223,7 @@ public class TeamListReport
         }
 
         private void renderTeamMember( Contributor member, int rowId, Map<String, Boolean> headersMap,
-                                       StringBuffer javascript )
+                                       StringBuilder javascript )
         {
             sink.tableRow();
 

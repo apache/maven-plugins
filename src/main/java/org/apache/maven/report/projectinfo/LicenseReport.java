@@ -406,7 +406,7 @@ public class LicenseReport
         {
             Pattern anchor = Pattern.compile(
                 "(<\\s*" + tagPattern + "\\s+[^>]*" + attributePattern + "\\s*=\\s*\")([^\"]*)\"([^>]*>)" );
-            StringBuffer sb = new StringBuffer( html );
+            StringBuilder sb = new StringBuilder( html );
 
             int indx = 0;
             boolean done = false;

@@ -165,7 +165,7 @@ public class DependenciesRenderer
             throw new RuntimeException( e );
         }
 
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append( "<script language=\"javascript\" type=\"text/javascript\">" ).append( SystemUtils.LINE_SEPARATOR );
         sb.append( "      function toggleDependencyDetail( divId, imgId )" ).append( SystemUtils.LINE_SEPARATOR );
         sb.append( "      {" ).append( SystemUtils.LINE_SEPARATOR );
@@ -846,7 +846,7 @@ public class DependenciesRenderer
         String artifactIdCell = ProjectInfoReportUtils.getArtifactIdCell( artifact.getArtifactId(), url );
 
         MavenProject artifactProject;
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         try
         {
             artifactProject = repoUtils.getMavenProjectFromRepository( artifact );
@@ -1618,7 +1618,7 @@ public class DependenciesRenderer
                 return "";
             }
 
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
             if ( index >= 0 )
             {
                 sb.append( getScope( index ) ).append( ": " );
@@ -1656,7 +1656,7 @@ public class DependenciesRenderer
         /** {@inheritDoc} */
         public String toString()
         {
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
             sb.append( decimalFormat.format( total ) );
             sb.append( " (" );
 
