@@ -83,7 +83,7 @@ public class CpdViolationCheckMojo
     {
         int lines = item.getLines();
 
-        StringBuffer buff = new StringBuffer( 100 );
+        StringBuilder buff = new StringBuilder( 100 );
         buff.append( "CPD " + severity + ": Found " );
         buff.append( lines ).append( " lines of duplicated code at locations:" );
         this.getLog().info( buff.toString() );

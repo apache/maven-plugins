@@ -83,7 +83,7 @@ public class PmdViolationCheckMojo
     protected void printError( Violation item, String severity )
     {
 
-        StringBuffer buff = new StringBuffer( 100 );
+        StringBuilder buff = new StringBuilder( 100 );
         buff.append( "PMD " + severity + ": " );
         if ( item.getViolationClass() != null )
         {

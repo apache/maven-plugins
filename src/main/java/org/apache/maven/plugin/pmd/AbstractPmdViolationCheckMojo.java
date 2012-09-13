@@ -212,7 +212,7 @@ public abstract class AbstractPmdViolationCheckMojo<D>
      */
     private String getMessage( int failureCount, int warningCount, String key, File outputFile )
     {
-        StringBuffer message = new StringBuffer();
+        StringBuilder message = new StringBuilder();
         if ( failureCount > 0 || warningCount > 0 )
         {
             if ( failureCount > 0 )
