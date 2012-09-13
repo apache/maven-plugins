@@ -130,7 +130,7 @@ public class IssuesReportHelper
      */
     public static String printValues( List<String> values )
     {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         if ( values != null )
         {
             Iterator<String> iterator = values.iterator();
