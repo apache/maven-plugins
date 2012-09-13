@@ -610,7 +610,7 @@ public class LinkcheckReportGenerator
             return "";
         }
 
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         buf.append( a[0] );
 
         for ( int i = 1; i < a.length; i++ )
