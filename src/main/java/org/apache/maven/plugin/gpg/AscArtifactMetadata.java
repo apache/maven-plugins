@@ -57,7 +57,7 @@ public class AscArtifactMetadata
 
     private String getFilename()
     {
-        StringBuffer buf = new StringBuffer( 128 );
+        StringBuilder buf = new StringBuilder( 128 );
         buf.append( getArtifactId() );
         buf.append( "-" ).append( artifact.getVersion() );
         if ( isPom )
