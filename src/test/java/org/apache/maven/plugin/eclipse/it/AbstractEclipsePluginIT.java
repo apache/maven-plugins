@@ -726,7 +726,7 @@ public abstract class AbstractEclipsePluginIT
     {
         if ( full == null || full.indexOf( substring ) == -1 )
         {
-            StringBuffer buf = new StringBuffer();
+            StringBuilder buf = new StringBuilder();
             if ( message != null )
             {
                 buf.append( message );
@@ -743,7 +743,7 @@ public abstract class AbstractEclipsePluginIT
     {
         if ( full == null || full.indexOf( substring ) != -1 )
         {
-            StringBuffer buf = new StringBuffer();
+            StringBuilder buf = new StringBuilder();
             if ( message != null )
             {
                 buf.append( message );

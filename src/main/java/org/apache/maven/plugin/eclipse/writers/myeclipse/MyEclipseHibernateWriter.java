@@ -137,7 +137,7 @@ public class MyEclipseHibernateWriter
      */
     private void addProperty( PrintWriter pw, String propName, String propValue )
     {
-        StringBuffer sb = new StringBuffer( 64 );
+        StringBuilder sb = new StringBuilder( 64 );
 
         sb.append( propName ).append( "=" );
 
@@ -169,7 +169,7 @@ public class MyEclipseHibernateWriter
      */
     private String makePathToHibernateConfigFile( String configFile )
     {
-        StringBuffer sb = new StringBuffer( 64 );
+        StringBuilder sb = new StringBuilder( 64 );
 
         sb.append( "/" ).append( config.getProject().getArtifactId() ).append( "/" ).append( configFile );
 

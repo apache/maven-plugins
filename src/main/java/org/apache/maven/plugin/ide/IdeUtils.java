@@ -254,7 +254,7 @@ public class IdeUtils
         ArtifactVersion artifactVersion = getArtifactVersion( artifactIds, dependencies );
         if ( artifactVersion != null )
         {
-            StringBuffer versionBuffer = new StringBuffer();
+            StringBuilder versionBuffer = new StringBuilder();
             if( len >= 1 )
             {
                 versionBuffer.append( artifactVersion.getMajorVersion() );

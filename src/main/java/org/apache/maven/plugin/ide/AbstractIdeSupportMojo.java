@@ -1038,7 +1038,7 @@ public abstract class AbstractIdeSupportMojo
      */
     private void reportMissingArtifacts()
     {
-        StringBuffer msg = new StringBuffer();
+        StringBuilder msg = new StringBuilder();
 
         if ( getDownloadSources() && !missingSourceDependencies.isEmpty() )
         {
