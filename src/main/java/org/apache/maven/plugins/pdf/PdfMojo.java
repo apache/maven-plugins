@@ -1236,7 +1236,7 @@ public class PdfMojo
             if ( getLog().isErrorEnabled() )
             {
                 ClassRealm reportPluginRealm = mojoDescriptor.getPluginDescriptor().getClassRealm();
-                StringBuffer sb = new StringBuffer( 1024 );
+                StringBuilder sb = new StringBuilder( 1024 );
                 sb.append( report.getClass().getName() ).append( "#generate(...) caused a linkage error (" );
                 sb.append( e.getClass().getName() )
                         .append( ") and may be out-of-date. Check the realms:" ).append( EOL );
@@ -1460,7 +1460,7 @@ public class PdfMojo
         }
         catch ( ParseException e )
         {
-            StringBuffer sb = new StringBuffer( 1024 );
+            StringBuilder sb = new StringBuilder( 1024 );
 
             sb.append( EOL ).append( EOL );
             sb.append( "Error when parsing the generated report: " ).append( generatedReport.getAbsolutePath() );
