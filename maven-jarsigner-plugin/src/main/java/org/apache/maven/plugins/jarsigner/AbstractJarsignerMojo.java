@@ -262,7 +262,7 @@ public abstract class AbstractJarsignerMojo
                 }
             }
 
-            getLog().info( getMessage( "processed", new Integer( processed ) ) );
+            getLog().info( getMessage( "processed", Integer.valueOf( processed ) ) );
         }
         else
         {

@@ -19,16 +19,6 @@ package org.apache.maven.plugins.help;
  * under the License.
  */
 
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.StringTokenizer;
-
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
@@ -64,14 +54,24 @@ import org.apache.maven.tools.plugin.util.PluginUtils;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.codehaus.plexus.util.StringUtils;
 
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
+import java.util.StringTokenizer;
+
 /**
  * Displays a list of the attributes for a Maven Plugin and/or goals (aka Mojo - Maven plain Old Java Object).
  *
  * @version $Id$
- * @since 2.0
  * @see <a href="http://maven.apache.org/general.html#What_is_a_Mojo">What is a Mojo?</a>
+ * @since 2.0
  */
-@Mojo( name = "describe", requiresProject = false, aggregator = true )
+@Mojo (name = "describe", requiresProject = false, aggregator = true)
 public class DescribeMojo
     extends AbstractHelpMojo
 {
@@ -110,7 +110,7 @@ public class DescribeMojo
     /**
      * The Plugin manager instance used to resolve Plugin descriptors.
      */
-    @Component( role = PluginManager.class )
+    @Component (role = PluginManager.class)
     private PluginManager pluginManager;
 
     /**
@@ -118,7 +118,7 @@ public class DescribeMojo
      * in the event there is no current MavenProject instance. Some MavenProject
      * instance has to be present to use in the plugin manager APIs.
      */
-    @Component( role = MavenProjectBuilder.class )
+    @Component (role = MavenProjectBuilder.class)
     private MavenProjectBuilder projectBuilder;
 
     // ----------------------------------------------------------------------
@@ -152,7 +152,7 @@ public class DescribeMojo
      * The local repository ArtifactRepository instance. This is used
      * for plugin manager API calls.
      */
-    @org.apache.maven.plugins.annotations.Parameter( property = "localRepository", required = true, readonly = true )
+    @org.apache.maven.plugins.annotations.Parameter (property = "localRepository", required = true, readonly = true)
     private ArtifactRepository localRepository;
 
     /**
@@ -160,8 +160,8 @@ public class DescribeMojo
      *
      * @since 2.1
      */
-    @org.apache.maven.plugins.annotations.Parameter( property = "project.remoteArtifactRepositories", required = true,
-                                                     readonly = true )
+    @org.apache.maven.plugins.annotations.Parameter (property = "project.remoteArtifactRepositories", required = true,
+                                                     readonly = true)
     private List remoteRepositories;
 
     /**
@@ -173,7 +173,7 @@ public class DescribeMojo
      * <li>groupId:artifactId:version, i.e. 'org.apache.maven.plugins:maven-help-plugin:2.0'</li>
      * </ol>
      */
-    @org.apache.maven.plugins.annotations.Parameter( property = "plugin", alias = "prefix" )
+    @org.apache.maven.plugins.annotations.Parameter (property = "plugin", alias = "prefix")
     private String plugin;
 
     /**
@@ -181,7 +181,7 @@ public class DescribeMojo
      * <br/>
      * <b>Note</b>: Should be used with <code>artifactId</code> parameter.
      */
-    @org.apache.maven.plugins.annotations.Parameter( property = "groupId" )
+    @org.apache.maven.plugins.annotations.Parameter (property = "groupId")
     private String groupId;
 
     /**
@@ -189,7 +189,7 @@ public class DescribeMojo
      * <br/>
      * <b>Note</b>: Should be used with <code>groupId</code> parameter.
      */
-    @org.apache.maven.plugins.annotations.Parameter( property = "artifactId" )
+    @org.apache.maven.plugins.annotations.Parameter (property = "artifactId")
     private String artifactId;
 
     /**
@@ -197,7 +197,7 @@ public class DescribeMojo
      * <br/>
      * <b>Note</b>: Should be used with <code>groupId/artifactId</code> parameters.
      */
-    @org.apache.maven.plugins.annotations.Parameter( property = "version" )
+    @org.apache.maven.plugins.annotations.Parameter (property = "version")
     private String version;
 
     /**
@@ -207,7 +207,7 @@ public class DescribeMojo
      *
      * @since 2.1, was <code>mojo</code> in 2.0.x
      */
-    @org.apache.maven.plugins.annotations.Parameter( property = "goal", alias = "mojo" )
+    @org.apache.maven.plugins.annotations.Parameter (property = "goal", alias = "mojo")
     private String goal;
 
     /**
@@ -215,7 +215,7 @@ public class DescribeMojo
      *
      * @since 2.1, was <code>full</code> in 2.0.x
      */
-    @org.apache.maven.plugins.annotations.Parameter( property = "detail", defaultValue = "false", alias = "full" )
+    @org.apache.maven.plugins.annotations.Parameter (property = "detail", defaultValue = "false", alias = "full")
     private boolean detail;
 
     /**
@@ -223,7 +223,7 @@ public class DescribeMojo
      *
      * @since 2.0.2
      */
-    @org.apache.maven.plugins.annotations.Parameter( property = "medium", defaultValue = "true" )
+    @org.apache.maven.plugins.annotations.Parameter (property = "medium", defaultValue = "true")
     private boolean medium;
 
     /**
@@ -231,7 +231,7 @@ public class DescribeMojo
      *
      * @since 2.1
      */
-    @org.apache.maven.plugins.annotations.Parameter( property = "minimal", defaultValue = "false" )
+    @org.apache.maven.plugins.annotations.Parameter (property = "minimal", defaultValue = "false")
     private boolean minimal;
 
     /**
@@ -241,14 +241,16 @@ public class DescribeMojo
      *
      * @since 2.1
      */
-    @org.apache.maven.plugins.annotations.Parameter( property = "cmd" )
+    @org.apache.maven.plugins.annotations.Parameter (property = "cmd")
     private String cmd;
 
     // ----------------------------------------------------------------------
     // Public methods
     // ----------------------------------------------------------------------
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
@@ -367,9 +369,9 @@ public class DescribeMojo
      * Method for retrieving the description of the plugin
      *
      * @param pi holds information of the plugin whose description is to be retrieved
-     * @return  a PluginDescriptor where the plugin description is to be retrieved
+     * @return a PluginDescriptor where the plugin description is to be retrieved
      * @throws MojoExecutionException if the plugin could not be verify
-     * @throws MojoFailureException if groupId or artifactId is empty
+     * @throws MojoFailureException   if groupId or artifactId is empty
      */
     private PluginDescriptor lookupPluginDescriptor( PluginInfo pi )
         throws MojoExecutionException, MojoFailureException
@@ -402,7 +404,7 @@ public class DescribeMojo
         {
             StringBuffer msg = new StringBuffer();
             msg.append( "You must specify either: both 'groupId' and 'artifactId' parameters OR a 'plugin' parameter"
-                + " OR a 'cmd' parameter. For instance:\n" );
+                            + " OR a 'cmd' parameter. For instance:\n" );
             msg.append( "  # mvn help:describe -Dcmd=install\n" );
             msg.append( "or\n" );
             msg.append( "  # mvn help:describe -Dcmd=help:describe\n" );
@@ -423,18 +425,21 @@ public class DescribeMojo
             }
             catch ( ArtifactResolutionException e )
             {
-                throw new MojoExecutionException( "Error retrieving plugin descriptor for:\n\ngroupId: '"
-                    + groupId + "'\nartifactId: '" + artifactId + "'\nversion: '" + version + "'\n\n", e );
+                throw new MojoExecutionException(
+                    "Error retrieving plugin descriptor for:\n\ngroupId: '" + groupId + "'\nartifactId: '" + artifactId
+                        + "'\nversion: '" + version + "'\n\n", e );
             }
             catch ( PluginManagerException e )
             {
-                throw new MojoExecutionException( "Error retrieving plugin descriptor for:\n\ngroupId: '"
-                    + groupId + "'\nartifactId: '" + artifactId + "'\nversion: '" + version + "'\n\n", e );
+                throw new MojoExecutionException(
+                    "Error retrieving plugin descriptor for:\n\ngroupId: '" + groupId + "'\nartifactId: '" + artifactId
+                        + "'\nversion: '" + version + "'\n\n", e );
             }
             catch ( PluginVersionResolutionException e )
             {
-                throw new MojoExecutionException( "Error retrieving plugin descriptor for:\n\ngroupId: '"
-                    + groupId + "'\nartifactId: '" + artifactId + "'\nversion: '" + version + "'\n\n", e );
+                throw new MojoExecutionException(
+                    "Error retrieving plugin descriptor for:\n\ngroupId: '" + groupId + "'\nartifactId: '" + artifactId
+                        + "'\nversion: '" + version + "'\n\n", e );
             }
             catch ( ArtifactNotFoundException e )
             {
@@ -442,13 +447,15 @@ public class DescribeMojo
             }
             catch ( InvalidVersionSpecificationException e )
             {
-                throw new MojoExecutionException( "Error retrieving plugin descriptor for:\n\ngroupId: '"
-                    + groupId + "'\nartifactId: '" + artifactId + "'\nversion: '" + version + "'\n\n", e );
+                throw new MojoExecutionException(
+                    "Error retrieving plugin descriptor for:\n\ngroupId: '" + groupId + "'\nartifactId: '" + artifactId
+                        + "'\nversion: '" + version + "'\n\n", e );
             }
             catch ( InvalidPluginException e )
             {
-                throw new MojoExecutionException( "Error retrieving plugin descriptor for:\n\ngroupId: '"
-                    + groupId + "'\nartifactId: '" + artifactId + "'\nversion: '" + version + "'\n\n", e );
+                throw new MojoExecutionException(
+                    "Error retrieving plugin descriptor for:\n\ngroupId: '" + groupId + "'\nartifactId: '" + artifactId
+                        + "'\nversion: '" + version + "'\n\n", e );
             }
             catch ( PluginNotFoundException e )
             {
@@ -471,7 +478,7 @@ public class DescribeMojo
         if ( descriptor == null )
         {
             throw new MojoFailureException( "Plugin could not be found. If you believe it is correct,"
-                + " check your pluginGroups setting, and run with -U to update the remote configuration" );
+                                                + " check your pluginGroups setting, and run with -U to update the remote configuration" );
         }
 
         return descriptor;
@@ -482,7 +489,7 @@ public class DescribeMojo
      *
      * @param pi contains information about the plugin whose description is to be retrieved
      * @throws MojoFailureException if <code>plugin<*code> parameter is not conform to
-     * <code>groupId:artifactId[:version]</code>
+     *                              <code>groupId:artifactId[:version]</code>
      */
     private void parsePluginLookupInfo( PluginInfo pi )
         throws MojoFailureException
@@ -509,7 +516,7 @@ public class DescribeMojo
                         break;
                     default:
                         throw new MojoFailureException( "plugin parameter must be a plugin prefix,"
-                            + " or conform to: 'groupId:artifactId[:version]'." );
+                                                            + " or conform to: 'groupId:artifactId[:version]'." );
                 }
             }
             else
@@ -528,9 +535,9 @@ public class DescribeMojo
     /**
      * Method for retrieving the plugin description
      *
-     * @param pd contains the plugin description
+     * @param pd     contains the plugin description
      * @param buffer contains the information to be displayed or printed
-     * @throws MojoFailureException if any reflection exceptions occur.
+     * @throws MojoFailureException   if any reflection exceptions occur.
      * @throws MojoExecutionException if any
      */
     private void describePlugin( PluginDescriptor pd, StringBuffer buffer )
@@ -546,9 +553,9 @@ public class DescribeMojo
             // TODO remove when maven-plugin-tools-api:2.4.4
             try
             {
-                Artifact artifact =
-                    artifactFactory.createPluginArtifact( pd.getGroupId(), pd.getArtifactId(),
-                                                          VersionRange.createFromVersion( pd.getVersion() ) );
+                Artifact artifact = artifactFactory.createPluginArtifact( pd.getGroupId(), pd.getArtifactId(),
+                                                                          VersionRange.createFromVersion(
+                                                                              pd.getVersion() ) );
                 MavenProject pluginProject =
                     projectBuilder.buildFromRepository( artifact, remoteRepositories, localRepository );
 
@@ -611,9 +618,9 @@ public class DescribeMojo
     /**
      * Displays information about the Plugin Mojo
      *
-     * @param md contains the description of the Plugin Mojo
+     * @param md     contains the description of the Plugin Mojo
      * @param buffer the displayed output
-     * @throws MojoFailureException if any reflection exceptions occur.
+     * @throws MojoFailureException   if any reflection exceptions occur.
      * @throws MojoExecutionException if any
      */
     private void describeMojo( MojoDescriptor md, StringBuffer buffer )
@@ -635,10 +642,10 @@ public class DescribeMojo
     /**
      * Displays detailed information about the Plugin Mojo
      *
-     * @param md contains the description of the Plugin Mojo
-     * @param buffer contains information to be printed or displayed
+     * @param md              contains the description of the Plugin Mojo
+     * @param buffer          contains information to be printed or displayed
      * @param fullDescription specifies whether all the details about the Plugin Mojo is to  be displayed
-     * @throws MojoFailureException if any reflection exceptions occur.
+     * @throws MojoFailureException   if any reflection exceptions occur.
      * @throws MojoExecutionException if any
      */
     private void describeMojoGuts( MojoDescriptor md, StringBuffer buffer, boolean fullDescription )
@@ -708,9 +715,9 @@ public class DescribeMojo
     /**
      * Displays parameter information of the Plugin Mojo
      *
-     * @param md contains the description of the Plugin Mojo
+     * @param md     contains the description of the Plugin Mojo
      * @param buffer contains information to be printed or displayed
-     * @throws MojoFailureException if any reflection exceptions occur.
+     * @throws MojoFailureException   if any reflection exceptions occur.
      * @throws MojoExecutionException if any
      */
     private void describeMojoParameters( MojoDescriptor md, StringBuffer buffer )
@@ -806,7 +813,7 @@ public class DescribeMojo
      *
      * @param descriptionBuffer not null
      * @return <code>true</code> if it implies to describe a plugin, <code>false</code> otherwise.
-     * @throws MojoFailureException if any reflection exceptions occur or missing components.
+     * @throws MojoFailureException   if any reflection exceptions occur or missing components.
      * @throws MojoExecutionException if any
      */
     private boolean describeCommand( StringBuffer descriptionBuffer )
@@ -848,8 +855,9 @@ public class DescribeMojo
                     }
 
                     descriptionBuffer.append( "\n" );
-                    descriptionBuffer.append( "It is a part of the lifecycle for the POM packaging '"
-                        + project.getPackaging() + "'. This lifecycle includes the following phases:" );
+                    descriptionBuffer.append(
+                        "It is a part of the lifecycle for the POM packaging '" + project.getPackaging()
+                            + "'. This lifecycle includes the following phases:" );
                     descriptionBuffer.append( "\n" );
                     for ( Iterator it = lifecycle.getPhases().iterator(); it.hasNext(); )
                     {
@@ -926,12 +934,12 @@ public class DescribeMojo
      * Invoke the following private method
      * <code>HelpMojo#toLines(String, int, int, int)</code>
      *
-     * @param text The text to split into lines, must not be <code>null</code>.
-     * @param indent The base indentation level of each line, must not be negative.
+     * @param text       The text to split into lines, must not be <code>null</code>.
+     * @param indent     The base indentation level of each line, must not be negative.
      * @param indentSize The size of each indentation, must not be negative.
      * @param lineLength The length of the line, must not be negative.
      * @return The sequence of display lines, never <code>null</code>.
-     * @throws MojoFailureException if any can not invoke the method
+     * @throws MojoFailureException   if any can not invoke the method
      * @throws MojoExecutionException if no line was found for <code>text</code>
      * @see HelpMojo#toLines(String, int, int, int)
      */
@@ -940,13 +948,13 @@ public class DescribeMojo
     {
         try
         {
-            Method m =
-                HelpMojo.class.getDeclaredMethod( "toLines", new Class[] { String.class, Integer.TYPE,
-                    Integer.TYPE, Integer.TYPE } );
+            Method m = HelpMojo.class.getDeclaredMethod( "toLines",
+                                                         new Class[]{ String.class, Integer.TYPE, Integer.TYPE,
+                                                             Integer.TYPE } );
             m.setAccessible( true );
-            List output =
-                (List) m.invoke( HelpMojo.class, new Object[] { text, new Integer( indent ),
-                    new Integer( indentSize ), new Integer( lineLength ) } );
+            List output = (List) m.invoke( HelpMojo.class,
+                                           new Object[]{ text, Integer.valueOf( indent ), Integer.valueOf( indentSize ),
+                                               Integer.valueOf( lineLength ) } );
 
             if ( output == null )
             {
@@ -988,10 +996,10 @@ public class DescribeMojo
      * Append a description to the buffer by respecting the indentSize and lineLength parameters.
      * <b>Note</b>: The last character is always a new line.
      *
-     * @param sb The buffer to append the description, not <code>null</code>.
+     * @param sb          The buffer to append the description, not <code>null</code>.
      * @param description The description, not <code>null</code>.
-     * @param indent The base indentation level of each line, must not be negative.
-     * @throws MojoFailureException if any reflection exceptions occur.
+     * @param indent      The base indentation level of each line, must not be negative.
+     * @throws MojoFailureException   if any reflection exceptions occur.
      * @throws MojoExecutionException if any
      * @see #toLines(String, int, int, int)
      */
@@ -1014,11 +1022,11 @@ public class DescribeMojo
      * Append a description to the buffer by respecting the indentSize and lineLength parameters.
      * <b>Note</b>: The last character is always a new line.
      *
-     * @param sb The buffer to append the description, not <code>null</code>.
-     * @param key The key, not <code>null</code>.
-     * @param value The value associated to the key, could be <code>null</code>.
+     * @param sb     The buffer to append the description, not <code>null</code>.
+     * @param key    The key, not <code>null</code>.
+     * @param value  The value associated to the key, could be <code>null</code>.
      * @param indent The base indentation level of each line, must not be negative.
-     * @throws MojoFailureException if any reflection exceptions occur.
+     * @throws MojoFailureException   if any reflection exceptions occur.
      * @throws MojoExecutionException if any
      * @see #toLines(String, int, int, int)
      */
@@ -1047,11 +1055,11 @@ public class DescribeMojo
      * and append the next lines with <code>indent + 1</code> like a paragraph.
      * <b>Note</b>: The last character is always a new line.
      *
-     * @param sb The buffer to append the description, not <code>null</code>.
-     * @param key The key, not <code>null</code>.
-     * @param value The value, could be <code>null</code>.
+     * @param sb     The buffer to append the description, not <code>null</code>.
+     * @param key    The key, not <code>null</code>.
+     * @param value  The value, could be <code>null</code>.
      * @param indent The base indentation level of each line, must not be negative.
-     * @throws MojoFailureException if any reflection exceptions occur.
+     * @throws MojoFailureException   if any reflection exceptions occur.
      * @throws MojoExecutionException if any
      * @see #toLines(String, int, int, int)
      */

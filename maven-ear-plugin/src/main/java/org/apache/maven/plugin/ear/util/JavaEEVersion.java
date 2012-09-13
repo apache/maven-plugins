@@ -45,22 +45,22 @@ public class JavaEEVersion
     /**
      * Represents the J2EE 1.3 version.
      */
-    public static final JavaEEVersion OneDotThree = new JavaEEVersion( new Integer( 0 ), VERSION_1_3 );
+    public static final JavaEEVersion OneDotThree = new JavaEEVersion( Integer.valueOf( 0 ), VERSION_1_3 );
 
     /**
      * Represents the J2EE 1.4 version.
      */
-    public static final JavaEEVersion OneDotFour = new JavaEEVersion( new Integer( 1 ), VERSION_1_4 );
+    public static final JavaEEVersion OneDotFour = new JavaEEVersion( Integer.valueOf( 1 ), VERSION_1_4 );
 
     /**
      * Represents the JavaEE 5 version.
      */
-    public static final JavaEEVersion Five = new JavaEEVersion( new Integer( 2 ), VERSION_5 );
+    public static final JavaEEVersion Five = new JavaEEVersion( Integer.valueOf( 2 ), VERSION_5 );
 
     /**
      * Represents the JavaEE 7 version.
      */
-    public static final JavaEEVersion Six = new JavaEEVersion( new Integer( 3 ), VERSION_6 );
+    public static final JavaEEVersion Six = new JavaEEVersion( Integer.valueOf( 3 ), VERSION_6 );
 
 
     private final Integer index;
@@ -81,7 +81,7 @@ public class JavaEEVersion
         {
             throw new InvalidJavaEEVersion( "Invalid version [" + version + "]", version );
         }
-        return (JavaEEVersion) versionsMap.get( version );
+        return versionsMap.get( version );
     }
 
     /**
