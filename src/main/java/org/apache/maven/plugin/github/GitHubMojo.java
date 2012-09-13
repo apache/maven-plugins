@@ -43,7 +43,7 @@ import java.util.ResourceBundle;
  * @author Bryan Baugher
  * @since 2.8
  */
-@Mojo( name = "github-report", threadSafe = true )
+@Mojo (name = "github-report", threadSafe = true)
 public class GitHubMojo
     extends AbstractChangesReport
 {
@@ -55,15 +55,15 @@ public class GitHubMojo
 
     static
     {
-        GITHUB_COLUMNS.put( "Assignee", new Integer( IssuesReportHelper.COLUMN_ASSIGNEE ) );
-        GITHUB_COLUMNS.put( "Created", new Integer( IssuesReportHelper.COLUMN_CREATED ) );
-        GITHUB_COLUMNS.put( "Fix Version", new Integer( IssuesReportHelper.COLUMN_FIX_VERSION ) );
-        GITHUB_COLUMNS.put( "Id", new Integer( IssuesReportHelper.COLUMN_ID ) );
-        GITHUB_COLUMNS.put( "Reporter", new Integer( IssuesReportHelper.COLUMN_REPORTER ) );
-        GITHUB_COLUMNS.put( "Status", new Integer( IssuesReportHelper.COLUMN_STATUS ) );
-        GITHUB_COLUMNS.put( "Summary", new Integer( IssuesReportHelper.COLUMN_SUMMARY ) );
-        GITHUB_COLUMNS.put( "Type", new Integer( IssuesReportHelper.COLUMN_TYPE ) );
-        GITHUB_COLUMNS.put( "Updated", new Integer( IssuesReportHelper.COLUMN_UPDATED ) );
+        GITHUB_COLUMNS.put( "Assignee", Integer.valueOf( IssuesReportHelper.COLUMN_ASSIGNEE ) );
+        GITHUB_COLUMNS.put( "Created", Integer.valueOf( IssuesReportHelper.COLUMN_CREATED ) );
+        GITHUB_COLUMNS.put( "Fix Version", Integer.valueOf( IssuesReportHelper.COLUMN_FIX_VERSION ) );
+        GITHUB_COLUMNS.put( "Id", Integer.valueOf( IssuesReportHelper.COLUMN_ID ) );
+        GITHUB_COLUMNS.put( "Reporter", Integer.valueOf( IssuesReportHelper.COLUMN_REPORTER ) );
+        GITHUB_COLUMNS.put( "Status", Integer.valueOf( IssuesReportHelper.COLUMN_STATUS ) );
+        GITHUB_COLUMNS.put( "Summary", Integer.valueOf( IssuesReportHelper.COLUMN_SUMMARY ) );
+        GITHUB_COLUMNS.put( "Type", Integer.valueOf( IssuesReportHelper.COLUMN_TYPE ) );
+        GITHUB_COLUMNS.put( "Updated", Integer.valueOf( IssuesReportHelper.COLUMN_UPDATED ) );
     }
 
     /**
@@ -77,31 +77,31 @@ public class GitHubMojo
      * <code>Updated</code>.
      * </p>
      */
-    @Parameter( defaultValue = "Id,Type,Summary,Assignee,Reporter,Status,Created,Updated,Fix Version" )
+    @Parameter (defaultValue = "Id,Type,Summary,Assignee,Reporter,Status,Created,Updated,Fix Version")
     private String columnNames;
 
     /**
      * The scheme of your github api domain. Only use if using github enterprise.
      */
-    @Parameter( defaultValue = "http" )
+    @Parameter (defaultValue = "http")
     private String githubAPIScheme;
 
     /**
      * The port of your github api domain. Only use if using github enterprise.
      */
-    @Parameter( defaultValue = "80" )
+    @Parameter (defaultValue = "80")
     private int githubAPIPort;
 
     /**
      * Boolean which says if we should include open issues in the report.
      */
-    @Parameter( defaultValue = "true" )
+    @Parameter (defaultValue = "true")
     private boolean includeOpenIssues;
 
     /**
      * Boolean which says if we should include only issues with milestones.
      */
-    @Parameter( defaultValue = "true" )
+    @Parameter (defaultValue = "true")
     private boolean onlyMilestoneIssues;
 
     /**
@@ -109,7 +109,7 @@ public class GitHubMojo
      * The current version being used is <code>${project.version}</code> minus
      * any "-SNAPSHOT" suffix.
      */
-    @Parameter( defaultValue = "false" )
+    @Parameter (defaultValue = "false")
     private boolean onlyCurrentVersion;
 
     public String getOutputName()
