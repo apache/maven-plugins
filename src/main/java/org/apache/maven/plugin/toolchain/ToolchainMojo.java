@@ -106,7 +106,7 @@ public class ToolchainMojo
             if ( !nonMatchedTypes.isEmpty() )
             {
                 //TODO add the default toolchain instance if defined??
-                StringBuffer buff = new StringBuffer();
+                StringBuilder buff = new StringBuilder();
                 buff.append( "Cannot find matching toolchain definitions for the following toolchain types:" );
                 Iterator it = nonMatchedTypes.iterator();
                 while ( it.hasNext() )
