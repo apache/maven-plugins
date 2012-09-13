@@ -458,7 +458,7 @@ public class DefaultCheckstyleExecutor
     private File[] getFilesToProcess( CheckstyleExecutorRequest request )
         throws IOException
     {
-        StringBuffer excludesStr = new StringBuffer();
+        StringBuilder excludesStr = new StringBuilder();
 
         if ( StringUtils.isNotEmpty( request.getExcludes() ) )
         {
@@ -494,7 +494,7 @@ public class DefaultCheckstyleExecutor
         return (File[]) files.toArray( EMPTY_FILE_ARRAY );
     }
 
-    private void addFilesToProcess( CheckstyleExecutorRequest request, StringBuffer excludesStr, File sourceDirectory,
+    private void addFilesToProcess( CheckstyleExecutorRequest request, StringBuilder excludesStr, File sourceDirectory,
                                     List<File> files )
         throws IOException
     {
