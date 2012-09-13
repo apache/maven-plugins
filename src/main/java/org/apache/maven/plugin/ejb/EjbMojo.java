@@ -19,6 +19,7 @@ package org.apache.maven.plugin.ejb;
  * under the License.
  */
 
+import org.apache.commons.io.IOUtils;
 import org.apache.maven.archiver.MavenArchiveConfiguration;
 import org.apache.maven.archiver.MavenArchiver;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
@@ -446,8 +447,16 @@ public class EjbMojo
     private String getEncoding( File xmlFile )
         throws IOException
     {
-        XmlStreamReader xmlReader = new XmlStreamReader( xmlFile );
-        return xmlReader.getEncoding();
+        XmlStreamReader xmlReader = null;
+        try
+        {
+            xmlReader = new XmlStreamReader( xmlFile );
+            return xmlReader.getEncoding();
+        }
+        finally
+        {
+            IOUtils.closeQuietly( xmlReader );
+        }
     }
 
 }
