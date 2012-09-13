@@ -91,7 +91,7 @@ public final class TypeConversionUtils
     // assessment.
     public static boolean verifyModeSanity( final int mode, final Logger logger )
     {
-        final StringBuffer messages = new StringBuffer();
+        final StringBuilder messages = new StringBuilder();
 
         messages.append( "The mode: " + Integer.toString( mode, 8 ) + " contains nonsensical permissions:" );
 
