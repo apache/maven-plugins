@@ -59,7 +59,7 @@ class RelativePather {
         
         // the paths agree for the first N chunks
         
-        StringBuffer relativePath = new StringBuffer();
+        StringBuilder relativePath = new StringBuilder();
         
         if (count < contextChunks.size()) {
             int dotDotCount = contextChunks.size() - count;
