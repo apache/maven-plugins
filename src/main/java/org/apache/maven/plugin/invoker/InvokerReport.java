@@ -281,7 +281,7 @@ public class InvokerReport
     {
         Sink sink = getSink();
         sink.tableRow();
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         if ( !StringUtils.isEmpty( buildJob.getName() ) && !StringUtils.isEmpty( buildJob.getDescription() ) )
         {
             buffer.append( buildJob.getName() );

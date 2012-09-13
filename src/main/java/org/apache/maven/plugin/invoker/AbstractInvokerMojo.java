@@ -1637,7 +1637,7 @@ public abstract class AbstractInvokerMojo
         }
         else if ( !invokerProperties.isExpectedResult( result.getExitCode(), invocationIndex ) )
         {
-            StringBuffer buffer = new StringBuffer( 256 );
+            StringBuilder buffer = new StringBuilder( 256 );
             buffer.append( "The build exited with code " ).append( result.getExitCode() ).append( ". " );
             if ( logger != null )
             {
