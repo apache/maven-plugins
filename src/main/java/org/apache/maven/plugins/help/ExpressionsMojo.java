@@ -66,7 +66,7 @@ public class ExpressionsMojo
             throw new MojoExecutionException( "ExpressionDocumentationException: " + e.getMessage(), e );
         }
 
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append( "Maven supports the following Plugin expressions:\n\n" );
         for ( Iterator it = getExpressionsRoot().iterator(); it.hasNext(); )
         {
@@ -169,7 +169,7 @@ public class ExpressionsMojo
             return NO_DESCRIPTION_AVAILABLE;
         }
 
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         String[] lines = StringUtils.split( description, "\r\n" );
         for ( int i = 0; i < lines.length; i++ )
         {

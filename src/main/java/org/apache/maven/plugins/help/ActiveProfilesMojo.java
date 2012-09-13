@@ -59,7 +59,7 @@ public class ActiveProfilesMojo
     public void execute()
         throws MojoExecutionException
     {
-        StringBuffer message = new StringBuffer();
+        StringBuilder message = new StringBuilder();
 
         for ( Iterator it = projects.iterator(); it.hasNext(); )
         {
@@ -72,7 +72,7 @@ public class ActiveProfilesMojo
 
         if ( output != null )
         {
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
             sb.append( "Created by: " + getClass().getName() ).append( "\n" );
             sb.append( "Created on: " + new Date() ).append( "\n" ).append( "\n" );
             sb.append( message.toString() );
@@ -110,7 +110,7 @@ public class ActiveProfilesMojo
      * @param project   the current project
      * @param message   the object where the information will be appended to
      */
-    private void getActiveProfileStatement( MavenProject project, StringBuffer message )
+    private void getActiveProfileStatement( MavenProject project, StringBuilder message )
     {
         // Get active profiles into our own list,
         // since we'll be modifying it, further below

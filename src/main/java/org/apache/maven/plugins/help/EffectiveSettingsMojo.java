@@ -118,7 +118,7 @@ public class EffectiveSettingsMojo
         }
         else
         {
-            StringBuffer message = new StringBuffer();
+            StringBuilder message = new StringBuilder();
 
             message.append( "\nEffective user-specific configuration settings:\n\n" );
             message.append( effectiveSettings );

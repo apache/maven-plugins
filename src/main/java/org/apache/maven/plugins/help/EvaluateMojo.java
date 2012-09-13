@@ -186,7 +186,7 @@ public class EvaluateMojo
     {
         if ( expression == null && !settings.isInteractiveMode() )
         {
-            StringBuffer msg = new StringBuffer();
+            StringBuilder msg = new StringBuilder();
             msg.append( "Maven is configured to NOT interact with the user for input. " );
             msg.append( "This Mojo requires that 'interactiveMode' in your settings file is flag to 'true'." );
 
@@ -362,7 +362,7 @@ public class EvaluateMojo
     private void handleResponse( String expression )
         throws MojoExecutionException, MojoFailureException
     {
-        StringBuffer response = new StringBuffer();
+        StringBuilder response = new StringBuilder();
 
         Object obj;
         try
