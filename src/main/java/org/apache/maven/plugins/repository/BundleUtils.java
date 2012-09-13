@@ -116,7 +116,7 @@ final class BundleUtils
         
         while( true )
         {
-            StringBuffer message = new StringBuffer();
+            StringBuilder message = new StringBuilder();
             message.append( "The following files are marked for inclusion in the repository bundle:\n" );
             message.append( "\n0.) Done" );
             
