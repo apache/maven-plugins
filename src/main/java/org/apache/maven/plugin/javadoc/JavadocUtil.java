@@ -19,43 +19,7 @@ package org.apache.maven.plugin.javadoc;
  * under the License.
  */
 
-import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintStream;
-import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Modifier;
-import java.net.SocketTimeoutException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Locale;
-import java.util.NoSuchElementException;
-import java.util.Properties;
-import java.util.Set;
-import java.util.StringTokenizer;
-import java.util.jar.JarEntry;
-import java.util.jar.JarInputStream;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
-
-import org.apache.commons.httpclient.Credentials;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpStatus;
-import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
-import org.apache.commons.httpclient.UsernamePasswordCredentials;
+import org.apache.commons.httpclient.*;
 import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.params.HttpClientParams;
@@ -66,23 +30,25 @@ import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Settings;
-import org.apache.maven.shared.invoker.DefaultInvocationRequest;
-import org.apache.maven.shared.invoker.DefaultInvoker;
-import org.apache.maven.shared.invoker.InvocationOutputHandler;
-import org.apache.maven.shared.invoker.InvocationRequest;
-import org.apache.maven.shared.invoker.InvocationResult;
-import org.apache.maven.shared.invoker.Invoker;
-import org.apache.maven.shared.invoker.MavenInvocationException;
-import org.apache.maven.shared.invoker.PrintStreamHandler;
+import org.apache.maven.shared.invoker.*;
 import org.apache.maven.wagon.proxy.ProxyInfo;
 import org.apache.maven.wagon.proxy.ProxyUtils;
-import org.codehaus.plexus.util.FileUtils;
-import org.codehaus.plexus.util.IOUtil;
-import org.codehaus.plexus.util.Os;
-import org.codehaus.plexus.util.StringUtils;
+import org.codehaus.plexus.util.*;
 import org.codehaus.plexus.util.cli.CommandLineException;
 import org.codehaus.plexus.util.cli.CommandLineUtils;
 import org.codehaus.plexus.util.cli.Commandline;
+
+import java.io.*;
+import java.lang.reflect.Modifier;
+import java.net.SocketTimeoutException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.*;
+import java.util.jar.JarEntry;
+import java.util.jar.JarInputStream;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 /**
  * Set of utilities methods for Javadoc.
@@ -519,12 +485,35 @@ public class JavadocUtil
      * @param files the variable that contains the appended filenames of the files to be included in the javadoc
      * @param excludePackages the packages to be excluded in the javadocs
      */
-    protected static void addFilesFromSource( List<String> files, File sourceDirectory, String[] excludePackages )
+    protected static void addFilesFromSource( List<String> files, File sourceDirectory,
+                                              List<String> sourceFileIncludes,
+                                              List<String> sourceFileExcludes,
+                                              String[] excludePackages )
     {
-        String[] fileList = FileUtils.getFilesFromExtension( sourceDirectory.getPath(), new String[] { "java" } );
-        if ( fileList != null && fileList.length != 0 )
+        DirectoryScanner ds = new DirectoryScanner();
+        if ( sourceFileIncludes == null )
         {
-            List<String> tmpFiles = getIncludedFiles( sourceDirectory, fileList, excludePackages );
+            sourceFileIncludes = Collections.singletonList( "**/*.java" );
+        }
+        ds.setIncludes( sourceFileIncludes.toArray( new String[sourceFileIncludes.size()] ) );
+        if (sourceFileExcludes != null && sourceFileExcludes.size() > 0 )
+        {
+            ds.setExcludes( sourceFileExcludes.toArray( new String[sourceFileExcludes.size()] ) );
+        }
+        ds.setBasedir( sourceDirectory );
+        ds.scan();
+
+        String[] fileList = ds.getIncludedFiles();
+        String[] pathList = new String[fileList.length];
+        for ( int x = 0; x < fileList.length; x++ )
+        {
+            pathList[x] = new File( sourceDirectory, fileList[x] ).getAbsolutePath( );
+        }
+
+
+        if (  pathList.length != 0 )
+        {
+            List<String> tmpFiles = getIncludedFiles( sourceDirectory, pathList, excludePackages );
             files.addAll( tmpFiles );
         }
     }

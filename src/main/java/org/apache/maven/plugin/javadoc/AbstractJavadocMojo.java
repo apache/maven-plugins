@@ -26,11 +26,7 @@ import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
-import org.apache.maven.artifact.resolver.ArtifactResolutionException;
-import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
-import org.apache.maven.artifact.resolver.ArtifactResolver;
-import org.apache.maven.artifact.resolver.MultipleArtifactsNotFoundException;
+import org.apache.maven.artifact.resolver.*;
 import org.apache.maven.artifact.resolver.filter.AndArtifactFilter;
 import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
 import org.apache.maven.artifact.resolver.filter.IncludesArtifactFilter;
@@ -42,16 +38,7 @@ import org.apache.maven.model.Plugin;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.javadoc.options.BootclasspathArtifact;
-import org.apache.maven.plugin.javadoc.options.DocletArtifact;
-import org.apache.maven.plugin.javadoc.options.Group;
-import org.apache.maven.plugin.javadoc.options.JavadocOptions;
-import org.apache.maven.plugin.javadoc.options.JavadocPathArtifact;
-import org.apache.maven.plugin.javadoc.options.OfflineLink;
-import org.apache.maven.plugin.javadoc.options.ResourcesArtifact;
-import org.apache.maven.plugin.javadoc.options.Tag;
-import org.apache.maven.plugin.javadoc.options.Taglet;
-import org.apache.maven.plugin.javadoc.options.TagletArtifact;
+import org.apache.maven.plugin.javadoc.options.*;
 import org.apache.maven.plugin.javadoc.options.io.xpp3.JavadocOptionsXpp3Writer;
 import org.apache.maven.plugin.javadoc.resolver.JavadocBundle;
 import org.apache.maven.plugin.javadoc.resolver.ResourceResolver;
@@ -1628,6 +1615,20 @@ public abstract class AbstractJavadocMojo
     @Parameter
     private List<AdditionalDependency> additionalDependencies;
 
+    /**
+     * Include filters on the source files. Default is **\/\*.java.
+     * These are ignored if you specify subpackages or subpackage excludes.
+     */
+    @Parameter
+    private List<String> sourceFileIncludes;
+
+    /**
+     * exclude filters on the source files.
+     * These are ignored if you specify subpackages or subpackage excludes.
+     */
+    @Parameter
+    private List<String> sourceFileExcludes;
+    
     // ----------------------------------------------------------------------
     // static
     // ----------------------------------------------------------------------
@@ -1997,7 +1998,7 @@ public abstract class AbstractJavadocMojo
             for ( String sourcePath : sourcePaths )
             {
                 File sourceDirectory = new File( sourcePath );
-                JavadocUtil.addFilesFromSource( files, sourceDirectory, excludedPackages );
+                JavadocUtil.addFilesFromSource( files, sourceDirectory, sourceFileIncludes, sourceFileExcludes, excludedPackages );
             }
         }
 
@@ -3923,7 +3924,7 @@ public abstract class AbstractJavadocMojo
      * @param anOutputDirectory the output directory
      * @throws java.io.IOException if any
      * @see #DEFAULT_CSS_NAME
-     * @see JavadocUtil#copyResource(File, URL)
+     * @see JavadocUtil#copyResource(java.net.URL, java.io.File)
      */
     private void copyDefaultStylesheet( File anOutputDirectory )
         throws IOException
@@ -4431,7 +4432,6 @@ public abstract class AbstractJavadocMojo
      * @param dependencyArtifacts the sibling projects in the reactor
      * @param missing             the artifacts that can't be found
      * @return true if ALL missing artifacts are found in the reactor.
-     * @see DefaultPluginManager#checkRequiredMavenVersion(plugin, localRepository, remoteRepositories)
      */
     private boolean checkMissingArtifactsInReactor( Collection<Artifact> dependencyArtifacts,
                                                     Collection<Artifact> missing )

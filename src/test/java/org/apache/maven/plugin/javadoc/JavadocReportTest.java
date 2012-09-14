@@ -19,15 +19,6 @@ package org.apache.maven.plugin.javadoc;
  * under the License.
  */
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.Reader;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.commons.lang.SystemUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.javadoc.ProxyServer.AuthAsyncProxyServlet;
@@ -38,6 +29,11 @@ import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
+
+import java.io.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Test {@link org.apache.maven.plugin.javadoc.JavadocReport} class.
@@ -241,6 +237,23 @@ public class JavadocReportTest
         assertTrue( new File( apidocs, "subpackages/test/AppSample.html" ).exists() );
         assertTrue( new File( apidocs, "subpackages/test/included/IncludedApp.html" ).exists() );
         assertTrue( new File( apidocs, "subpackages/test/included/IncludedAppSample.html" ).exists() );
+    }
+
+    public void testIncludesExcludes()
+            throws Exception
+    {
+        File testPom = new File( unit, "file-include-exclude-test/file-include-exclude-plugin-config.xml" );
+        JavadocReport mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
+        mojo.execute();
+
+        File apidocs = new File( getBasedir(), "target/test/unit/file-include-exclude-test/target/site/apidocs" );
+
+        // check if the classes in the specified subpackages were included
+        assertTrue( new File( apidocs, "subpackages/test/App.html" ).exists() );
+        assertTrue( new File( apidocs, "subpackages/test/AppSample.html" ).exists() );
+        assertTrue( new File( apidocs, "subpackages/test/included/IncludedApp.html" ).exists() );
+        assertTrue( new File( apidocs, "subpackages/test/included/IncludedAppSample.html" ).exists() );
+        assertFalse( new File( apidocs, "subpackages/test/PariahApp.html" ).exists() );
     }
 
     /**
