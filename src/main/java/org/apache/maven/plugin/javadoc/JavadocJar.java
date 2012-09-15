@@ -44,7 +44,7 @@ import java.util.Locale;
 
 /**
  * Bundles the Javadoc documentation for <code>main Java code</code> in an <b>NON aggregator</b> project into
- * a jar using the standard <a href="http://java.sun.com/j2se/javadoc/">Javadoc Tool</a>.
+ * a jar using the standard <a href="http://docs.oracle.com/javase/7/docs/technotes/guides/javadoc/">Javadoc Tool</a>.
  *
  * @version $Id$
  * @since 2.0

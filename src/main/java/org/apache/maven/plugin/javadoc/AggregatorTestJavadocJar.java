@@ -25,7 +25,7 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 
 /**
  * Bundles the Javadoc documentation for <code>Java Test code</code> in an <b>aggregator</b> project into a jar
- * using the standard <a href="http://java.sun.com/j2se/javadoc/">Javadoc Tool</a>.
+ * using the standard <a href="http://docs.oracle.com/javase/7/docs/technotes/guides/javadoc/">Javadoc Tool</a>.
  *
  * @version $Id$
  * @since 2.6

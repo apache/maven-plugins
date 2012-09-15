@@ -110,7 +110,7 @@ yourproject
 
  For more information, see {{{http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#packagecomment}
  javadoc - The Java API Documentation Generator, Package Comment Files}} and
- {{{http://java.sun.com/j2se/javadoc/writingdoccomments/index.html#packagecomments}
+ {{{http://docs.oracle.com/javase/7/docs/technotes/guides/javadoc/writingdoccomments/index.html#packagecomments}
  How to Write Doc Comments for the Javadoc Tool, Package-Level Comments}}.
 
  Here is an example of a <package.html> file, located in <$\{basedir\}/src/main/javadoc/org/apache/myapp/package.html>:
@@ -150,7 +150,7 @@ package org.apache.myapp;
 
  For more information, see {{{http://java.sun.com/j2se/1.4.2/docs/tooldocs/solaris/javadoc.html#unprocessed}
  javadoc - The Java API Documentation Generator, Miscellaneous Unprocessed Files}} and
- {{{http://java.sun.com/j2se/javadoc/writingdoccomments/index.html#images}How to Write Doc Comments for the Javadoc Tool, Including Images }}.
+ {{{http://docs.oracle.com/javase/7/docs/technotes/guides/javadoc/writingdoccomments/index.html#images}How to Write Doc Comments for the Javadoc Tool, Including Images }}.
 
  In addition to <doc-files> directories, since 2.6.1, the specific <src/main/javadoc/resources> directory will be
  copied to the generated Javadoc resources directory (i.e. <apidocs/resources>). This is usefull when you want to

@@ -40,13 +40,13 @@ import java.util.ResourceBundle;
 
 /**
  * Generates documentation for the <code>Java code</code> in an <b>NON aggregator</b> project using the standard
- * <a href="http://java.sun.com/j2se/javadoc/">Javadoc Tool</a>.
+ * <a href="http://docs.oracle.com/javase/7/docs/technotes/guides/javadoc/">Javadoc Tool</a>.
  *
  * @author <a href="mailto:evenisse@apache.org">Emmanuel Venisse</a>
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
  * @since 2.0
- * @see <a href="http://java.sun.com/j2se/javadoc/">Javadoc Tool</a>
+ * @see <a href="http://docs.oracle.com/javase/7/docs/technotes/guides/javadoc/">Javadoc Tool</a>
  * @see <a href="http://docs.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#options">Javadoc Options</a>
  */
 @Mojo( name = "javadoc", requiresDependencyResolution = ResolutionScope.COMPILE, threadSafe = true )

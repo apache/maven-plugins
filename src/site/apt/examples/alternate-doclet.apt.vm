@@ -88,7 +88,7 @@ Using Alternate Doclet In Addition To The Javadoc Doclet
  To generate output from an alternate doclet in addition to the normal HTML Javadoc doclet, add configuration
  similar to the following to your POM.
 
- In this example, the doclet is Sun DocCheck ({{http://java.sun.com/j2se/javadoc/doccheck/}}). The Sun Doc Check Doclet
+ In this example, the doclet is Sun DocCheck ({{http://docs.oracle.com/javase/7/docs/technotes/guides/javadoc/doccheck/}}). The Sun Doc Check Doclet
  is an extension to the Javadoc tool. It runs on source code and reviews documentation comments, generating an HTML
  report that identifies empty comments and other ommissions and irregularities in the documentation comments.
 
