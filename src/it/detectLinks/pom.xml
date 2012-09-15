@@ -25,6 +25,8 @@
   <version>1.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
+  <name>MJAVADOC-97</name>
+  <description>detectLinks=true</description>
   <url>http://myhost/parent</url>
 
   <modules>
