@@ -358,6 +358,19 @@ public abstract class AbstractJavadocMojo
     private String additionalJOption;
 
     /**
+     * Set additional JVM options for the execution of the javadoc command via the '-J' option to javadoc.
+     * Example:
+     * <pre>
+     *     &lt;additionalJOptions&gt;
+     *         &lt;additionalJOption&gt;-J-Xmx1g &lt;/additionalJOption&gt;
+     *     &lt;/additionalJOptions&gt;
+     * </pre>
+     * @since 2.9
+     */
+    @Parameter
+    private String[] additionalJOptions;
+
+    /**
      * A list of artifacts containing resources which should be copied into the
      * Javadoc output directory (like stylesheets, icons, etc.).
      * <br/>
@@ -1888,6 +1901,14 @@ public abstract class AbstractJavadocMojo
         if ( StringUtils.isNotEmpty( additionalJOption ) )
         {
             cmd.createArg().setValue( additionalJOption );
+        }
+
+        if ( additionalJOptions != null && additionalJOptions.length != 0 )
+        {
+            for ( String jo : additionalJOptions )
+            {
+                cmd.createArg().setValue( jo );
+            }
         }
 
         List<String> arguments = new ArrayList<String>();
