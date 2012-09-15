@@ -466,7 +466,7 @@ public class JavadocUtil
             int idx = file.lastIndexOf( File.separatorChar );
             String tmpStr = file.substring( 0, idx );
             tmpStr = tmpStr.replace( '\\', '/' );
-            String[] srcSplit = tmpStr.split( sourceDirectory.replace( '\\', '/' ) + '/' );
+            String[] srcSplit = tmpStr.split( Pattern.quote( sourceDirectory.replace( '\\', '/' ) + '/'  ));
             String excludedPackage = srcSplit[1].replace( '/', '.' );
 
             if ( !excluded.contains( excludedPackage ) )
