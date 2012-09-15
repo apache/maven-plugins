@@ -3946,7 +3946,7 @@ public abstract class AbstractJavadocMojo
 
     /**
      * Method that copy all <code>doc-files</code> directories from <code>javadocDirectory</code> of
-     * the current projet or of the projects in the reactor to the <code>outputDirectory</code>.
+     * the current project or of the projects in the reactor to the <code>outputDirectory</code>.
      *
      * @param anOutputDirectory the output directory
      * @throws java.io.IOException if any

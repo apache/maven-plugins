@@ -1,0 +1,89 @@
+/* I don't know why these two class declarations are needed but they are */
+body {
+    background: #f8f4e8 url( resources/bg.jpg );
+    color: #4b2500;
+    font-family: serif;
+}
+
+.TableRowColor,
+.NavBarCell1 {
+    background: inherit
+}
+
+h1, h2, h3 {	
+    background: rgba(255,239,0,0.41) url( resources/bg-dark.jpg );
+    padding: 2px;
+}
+
+.NavBarCell1Rev,
+.TableHeadingColor {
+    background: rgba(255,0,0,0.16) url( resources/bg-dark.jpg );
+    padding: 2px;
+}
+
+
+h4, h5,
+h3 + pre,
+.copyright,
+.NavBarCell2,
+.NavBarCell3,
+.TableSubHeadingColor {
+    background: rgba(247,248,255,0.89) url( resources/bg-light.jpg );
+    font-variant: normal;
+}
+
+.note {
+    background: #d1dcf2 url( resources/bg-beta.jpg );
+    font: italic 100% sans-serif;
+}
+
+.note {
+    margin-top: 10px;
+}
+
+table {
+	border-style: none;
+}
+
+tr.TableRowColor,
+tr.TableRowColor td,
+tr.TableRowColor th {
+    border-left-style: none;
+    vertical-align: baseline;
+    border-right-style: none;
+    border-color: #ba6009;
+	border-width: thin;
+	border-style: none;
+	border-bottom-style: solid;
+}
+
+tr.TableRowColor td:first-child {
+	border-right-style: solid;
+}
+
+hr {
+    border-color: transparent;
+    background-color: transparent;
+	border-style: solid;
+}
+
+.new {
+    background: #ffff88 url( resources/bg-highlight.jpg );
+}
+
+h3 {
+    padding: 5px;
+}
+h3 + pre {
+    border: 1px #439417;
+    padding: 5px;
+}
+
+.example {
+    padding-left: 4em;
+}
+
+p.copyright {
+    font-style: italic;
+    text-align: right;
+}
