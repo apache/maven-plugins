@@ -26,11 +26,7 @@ import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
-import org.apache.maven.artifact.resolver.ArtifactResolutionException;
-import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
-import org.apache.maven.artifact.resolver.ArtifactResolver;
-import org.apache.maven.artifact.resolver.MultipleArtifactsNotFoundException;
+import org.apache.maven.artifact.resolver.*;
 import org.apache.maven.artifact.resolver.filter.AndArtifactFilter;
 import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
 import org.apache.maven.artifact.resolver.filter.IncludesArtifactFilter;
@@ -42,16 +38,7 @@ import org.apache.maven.model.Plugin;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.javadoc.options.BootclasspathArtifact;
-import org.apache.maven.plugin.javadoc.options.DocletArtifact;
-import org.apache.maven.plugin.javadoc.options.Group;
-import org.apache.maven.plugin.javadoc.options.JavadocOptions;
-import org.apache.maven.plugin.javadoc.options.JavadocPathArtifact;
-import org.apache.maven.plugin.javadoc.options.OfflineLink;
-import org.apache.maven.plugin.javadoc.options.ResourcesArtifact;
-import org.apache.maven.plugin.javadoc.options.Tag;
-import org.apache.maven.plugin.javadoc.options.Taglet;
-import org.apache.maven.plugin.javadoc.options.TagletArtifact;
+import org.apache.maven.plugin.javadoc.options.*;
 import org.apache.maven.plugin.javadoc.options.io.xpp3.JavadocOptionsXpp3Writer;
 import org.apache.maven.plugin.javadoc.resolver.JavadocBundle;
 import org.apache.maven.plugin.javadoc.resolver.ResourceResolver;
@@ -76,43 +63,15 @@ import org.codehaus.plexus.archiver.UnArchiver;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
 import org.codehaus.plexus.components.io.fileselectors.IncludeExcludeFileSelector;
-import org.codehaus.plexus.util.FileUtils;
-import org.codehaus.plexus.util.IOUtil;
-import org.codehaus.plexus.util.ReaderFactory;
-import org.codehaus.plexus.util.StringUtils;
-import org.codehaus.plexus.util.WriterFactory;
+import org.codehaus.plexus.util.*;
 import org.codehaus.plexus.util.cli.CommandLineException;
 import org.codehaus.plexus.util.cli.CommandLineUtils;
 import org.codehaus.plexus.util.cli.Commandline;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.Writer;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import java.util.StringTokenizer;
+import java.io.*;
+import java.net.*;
+import java.util.*;
 
 import static org.apache.maven.plugin.javadoc.JavadocUtil.*;
 import static org.codehaus.plexus.util.IOUtil.close;
@@ -2102,14 +2061,17 @@ public abstract class AbstractJavadocMojo
                             sourcePaths.addAll( JavadocUtil.pruneDirs( subProject, sourceRoots ) );
                         }
 
-                        String javadocDirRelative =
-                            PathUtils.toRelative( project.getBasedir(), getJavadocDirectory().getAbsolutePath() );
-                        File javadocDir = new File( subProject.getBasedir(), javadocDirRelative );
-                        if ( javadocDir.exists() && javadocDir.isDirectory() )
+                        if ( getJavadocDirectory() != null )
                         {
-                            List<String> l = JavadocUtil.pruneDirs( subProject, Collections.singletonList(
-                                javadocDir.getAbsolutePath() ) );
-                            sourcePaths.addAll( l );
+                            String javadocDirRelative =
+                                    PathUtils.toRelative( project.getBasedir(), getJavadocDirectory().getAbsolutePath() );
+                            File javadocDir = new File( subProject.getBasedir(), javadocDirRelative );
+                            if ( javadocDir.exists() && javadocDir.isDirectory() )
+                            {
+                                List<String> l = JavadocUtil.pruneDirs( subProject, Collections.singletonList(
+                                        javadocDir.getAbsolutePath() ) );
+                                sourcePaths.addAll( l );
+                            }
                         }
                     }
                 }
@@ -4026,7 +3988,7 @@ public abstract class AbstractJavadocMojo
         {
             for ( MavenProject subProject : reactorProjects )
             {
-                if ( subProject != project )
+                if ( subProject != project && getJavadocDirectory() != null )
                 {
                     String javadocDirRelative =
                         PathUtils.toRelative( project.getBasedir(), getJavadocDirectory().getAbsolutePath() );
