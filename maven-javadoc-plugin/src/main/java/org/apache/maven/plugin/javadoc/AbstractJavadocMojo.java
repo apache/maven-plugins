@@ -1648,11 +1648,11 @@ public abstract class AbstractJavadocMojo
 
     static
     {
-        DEFAULT_JAVA_API_LINKS.put( "api_1.3", "http://download.oracle.com/javase/1.3/docs/api/" );
-        DEFAULT_JAVA_API_LINKS.put( "api_1.4", "http://download.oracle.com/javase/1.4.2/docs/api/" );
-        DEFAULT_JAVA_API_LINKS.put( "api_1.5", "http://download.oracle.com/javase/1.5.0/docs/api/" );
-        DEFAULT_JAVA_API_LINKS.put( "api_1.6", "http://download.oracle.com/javase/6/docs/api/" );
-        DEFAULT_JAVA_API_LINKS.put( "api_1.7", "http://download.oracle.com/javase/7/docs/api/" );
+        DEFAULT_JAVA_API_LINKS.put( "api_1.3", "http://docs.oracle.com/javase/1.3/docs/api/" );
+        DEFAULT_JAVA_API_LINKS.put( "api_1.4", "http://docs.oracle.com/javase/1.4.2/docs/api/" );
+        DEFAULT_JAVA_API_LINKS.put( "api_1.5", "http://docs.oracle.com/javase/1.5.0/docs/api/" );
+        DEFAULT_JAVA_API_LINKS.put( "api_1.6", "http://docs.oracle.com/javase/6/docs/api/" );
+        DEFAULT_JAVA_API_LINKS.put( "api_1.7", "http://docs.oracle.com/javase/7/docs/api/" );
     }
 
     // ----------------------------------------------------------------------
