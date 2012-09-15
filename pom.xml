@@ -151,7 +151,7 @@ under the License.
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-utils</artifactId>
-      <version>3.0.6</version>
+      <version>3.0.7-SNAPSHOT</version>
     </dependency>
 
     <dependency>
@@ -234,5 +234,7 @@ under the License.
       </build>
     </profile>
   </profiles>
+
+
 
 </project>
