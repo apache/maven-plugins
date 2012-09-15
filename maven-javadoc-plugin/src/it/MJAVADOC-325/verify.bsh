@@ -30,7 +30,7 @@ if ( !optionsFile.exists() )
 }
 
 String optionsContent = FileUtils.fileRead( optionsFile );
-String javaApiLink = "'http://download.oracle.com/javase/1,5,0/docs/api'";
+String javaApiLink = "'http://docs.oracle.com/javase/1,5,0/docs/api'";
 
 if ( !optionsContent.contains( javaApiLink ) )
 {
