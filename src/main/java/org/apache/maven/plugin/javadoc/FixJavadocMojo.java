@@ -32,7 +32,7 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
  * @version $Id$
  * @since 2.6
  */
-@Mojo( name = "fix", requiresDependencyResolution = ResolutionScope.COMPILE )
+@Mojo( name = "fix", requiresDependencyResolution = ResolutionScope.COMPILE, threadSafe = true )
 @Execute( phase = LifecyclePhase.COMPILE )
 public class FixJavadocMojo
     extends AbstractFixJavadocMojo

@@ -49,7 +49,7 @@ import java.util.ResourceBundle;
  * @see <a href="http://java.sun.com/j2se/javadoc/">Javadoc Tool</a>
  * @see <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#options">Javadoc Options</a>
  */
-@Mojo( name = "javadoc", requiresDependencyResolution = ResolutionScope.COMPILE )
+@Mojo( name = "javadoc", requiresDependencyResolution = ResolutionScope.COMPILE, threadSafe = true )
 @Execute( phase = LifecyclePhase.GENERATE_SOURCES )
 public class JavadocReport
     extends AbstractJavadocMojo
