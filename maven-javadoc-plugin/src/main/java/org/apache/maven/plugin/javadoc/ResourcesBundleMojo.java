@@ -45,7 +45,7 @@ import java.io.IOException;
  * @since 2.7
  */
 @Mojo( name = "resource-bundle", defaultPhase = LifecyclePhase.PACKAGE,
-       requiresDependencyResolution = ResolutionScope.COMPILE )
+       requiresDependencyResolution = ResolutionScope.COMPILE, threadSafe = true )
 public class ResourcesBundleMojo
 extends AbstractJavadocMojo
 {
