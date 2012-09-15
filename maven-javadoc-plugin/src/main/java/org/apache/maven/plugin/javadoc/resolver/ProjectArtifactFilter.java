@@ -27,27 +27,29 @@ import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
  * and offers the opportunity to delegate to another filter, if the given
  * artifact is not the pomArtifact.
  */
-public class ProjectArtifactFilter implements ArtifactFilter
+public class ProjectArtifactFilter
+    implements ArtifactFilter
 {
 
     private Artifact pomArtifact;
+
     private ArtifactFilter childFilter;
 
-    public ProjectArtifactFilter(Artifact pomArtifact)
+    public ProjectArtifactFilter( Artifact pomArtifact )
     {
-        this(pomArtifact, null);
+        this( pomArtifact, null );
     }
 
-    public ProjectArtifactFilter(Artifact pomArtifact, ArtifactFilter childFilter)
+    public ProjectArtifactFilter( Artifact pomArtifact, ArtifactFilter childFilter )
     {
         this.pomArtifact = pomArtifact;
         this.childFilter = childFilter;
     }
 
-    public boolean include(Artifact artifact)
+    public boolean include( Artifact artifact )
     {
         // always include the pom artifact
-        if ( pomArtifact.equals(artifact) )
+        if ( pomArtifact.equals( artifact ) )
         {
             return true;
         }
@@ -55,7 +57,7 @@ public class ProjectArtifactFilter implements ArtifactFilter
         // delegate to given filter, if available
         if ( childFilter != null )
         {
-            return childFilter.include(artifact);
+            return childFilter.include( artifact );
         }
 
         // given artifact does not match any rule

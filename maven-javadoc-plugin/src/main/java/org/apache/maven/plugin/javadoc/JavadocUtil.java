@@ -19,7 +19,11 @@ package org.apache.maven.plugin.javadoc;
  * under the License.
  */
 
-import org.apache.commons.httpclient.*;
+import org.apache.commons.httpclient.Credentials;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpStatus;
+import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
+import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.params.HttpClientParams;
@@ -30,20 +34,52 @@ import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Settings;
-import org.apache.maven.shared.invoker.*;
+import org.apache.maven.shared.invoker.DefaultInvocationRequest;
+import org.apache.maven.shared.invoker.DefaultInvoker;
+import org.apache.maven.shared.invoker.InvocationOutputHandler;
+import org.apache.maven.shared.invoker.InvocationRequest;
+import org.apache.maven.shared.invoker.InvocationResult;
+import org.apache.maven.shared.invoker.Invoker;
+import org.apache.maven.shared.invoker.MavenInvocationException;
+import org.apache.maven.shared.invoker.PrintStreamHandler;
 import org.apache.maven.wagon.proxy.ProxyInfo;
 import org.apache.maven.wagon.proxy.ProxyUtils;
-import org.codehaus.plexus.util.*;
+import org.codehaus.plexus.util.DirectoryScanner;
+import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.Os;
+import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.cli.CommandLineException;
 import org.codehaus.plexus.util.cli.CommandLineUtils;
 import org.codehaus.plexus.util.cli.Commandline;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintStream;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Modifier;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+import java.util.NoSuchElementException;
+import java.util.Properties;
+import java.util.Set;
+import java.util.StringTokenizer;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 import java.util.regex.Matcher;
@@ -466,7 +502,7 @@ public class JavadocUtil
             int idx = file.lastIndexOf( File.separatorChar );
             String tmpStr = file.substring( 0, idx );
             tmpStr = tmpStr.replace( '\\', '/' );
-            String[] srcSplit = tmpStr.split( Pattern.quote( sourceDirectory.replace( '\\', '/' ) + '/'  ));
+            String[] srcSplit = tmpStr.split( Pattern.quote( sourceDirectory.replace( '\\', '/' ) + '/' ) );
             String excludedPackage = srcSplit[1].replace( '/', '.' );
 
             if ( !excluded.contains( excludedPackage ) )
@@ -496,7 +532,7 @@ public class JavadocUtil
             sourceFileIncludes = Collections.singletonList( "**/*.java" );
         }
         ds.setIncludes( sourceFileIncludes.toArray( new String[sourceFileIncludes.size()] ) );
-        if (sourceFileExcludes != null && sourceFileExcludes.size() > 0 )
+        if ( sourceFileExcludes != null && sourceFileExcludes.size() > 0 )
         {
             ds.setExcludes( sourceFileExcludes.toArray( new String[sourceFileExcludes.size()] ) );
         }
@@ -860,7 +896,7 @@ public class JavadocUtil
             file.getParentFile().mkdirs();
         }
 
-        FileOutputStream os = null;
+        OutputStream os = null;
         try
         {
             os = new FileOutputStream( file );

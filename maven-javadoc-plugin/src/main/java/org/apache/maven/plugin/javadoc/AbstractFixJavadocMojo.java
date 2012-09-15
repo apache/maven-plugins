@@ -1722,11 +1722,9 @@ public abstract class AbstractFixJavadocMojo
             sb.append( indent ).append( " " ).append( lines[i].trim() );
             sb.append( EOL );
         }
-
-
     }
 
-    private static final String replaceLinkTags( String comment, AbstractInheritableJavaEntity entity )
+    private static String replaceLinkTags( String comment, AbstractInheritableJavaEntity entity )
     {
         StringBuilder resolvedComment = new StringBuilder();
         // scan comment for {@link someClassName} and try to resolve this
@@ -2722,14 +2720,7 @@ public abstract class AbstractFixJavadocMojo
             {
                 String name1 = paramType.getName();
                 String name2 = javaMethod.getParameters()[j++].getType().getFullQualifiedName();
-                if ( name1.equals( name2 ) )
-                {
-                    found = true;
-                }
-                else
-                {
-                    found = found && false;
-                }
+                found = name1.equals( name2 ); // TODO check algo, seems broken (only takes in account the last param)
             }
 
             return found;
