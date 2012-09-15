@@ -26,7 +26,7 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 
 /**
  * Fix Javadoc documentation and tags for the <code>Java code</code> for the project.
- * See <a href="http://download.oracle.com/javase/1.5.0/docs/tooldocs/windows/javadoc.html#wheretags">Where Tags Can Be Used</a>.
+ * See <a href="http://docs.oracle.com/javase/1.5.0/docs/tooldocs/windows/javadoc.html#wheretags">Where Tags Can Be Used</a>.
  *
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$

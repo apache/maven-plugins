@@ -104,7 +104,7 @@
           <bootclasspath>${sun.boot.class.path}</bootclasspath>
           <additionalparam>
             <!-- comment as produce an NPE
-             -federate JDK http://download.oracle.com/javase/6/docs/api/index.html?
+             -federate JDK http://docs.oracle.com/javase/6/docs/api/index.html?
               -federationxml JDK http://doclava.googlecode.com/svn/static/api/openjdk-6.xml -->
              -hdf project.name "${project.name}"
              -d ${project.build.directory}/site/apidocs

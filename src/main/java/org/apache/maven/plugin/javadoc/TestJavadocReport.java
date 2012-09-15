@@ -47,7 +47,7 @@ import java.util.ResourceBundle;
  * @version $Id$
  * @since 2.3
  * @see <a href="http://java.sun.com/j2se/javadoc/">Javadoc Tool</a>
- * @see <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#options">Javadoc Options </a>
+ * @see <a href="http://docs.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#options">Javadoc Options </a>
  */
 @Mojo( name = "test-javadoc", requiresDependencyResolution = ResolutionScope.TEST )
 @Execute( phase = LifecyclePhase.GENERATE_TEST_SOURCES )
@@ -61,7 +61,7 @@ public class TestJavadocReport
     /**
      * Specifies the Test title to be placed near the top of the overview summary file.
      * <br/>
-     * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#doctitle">doctitle</a>.
+     * See <a href="http://docs.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#doctitle">doctitle</a>.
      * <br/>
      *
      * @since 2.5
@@ -76,7 +76,7 @@ public class TestJavadocReport
      * <br/>
      * <b>Note</b>: could be in conflict with &lt;nooverview/&gt;.
      * <br/>
-     * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#overview">overview</a>.
+     * See <a href="http://docs.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#overview">overview</a>.
      * <br/>
      *
      * @since 2.5
@@ -88,7 +88,7 @@ public class TestJavadocReport
     /**
      * Specifies the Test title to be placed in the HTML title tag.
      * <br/>
-     * See <a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#windowtitle">windowtitle</a>.
+     * See <a href="http://docs.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#windowtitle">windowtitle</a>.
      * <br/>
      *
      * @since 2.5

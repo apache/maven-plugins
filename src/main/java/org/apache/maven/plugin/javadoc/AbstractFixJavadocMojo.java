@@ -80,7 +80,7 @@ import java.util.regex.Pattern;
 /**
  * Abstract class to fix Javadoc documentation and tags in source files.
  * <br/>
- * See <a href="http://download.oracle.com/javase/1.5.0/docs/tooldocs/windows/javadoc.html#wheretags">Where Tags Can Be Used</a>.
+ * See <a href="http://docs.oracle.com/javase/1.5.0/docs/tooldocs/windows/javadoc.html#wheretags">Where Tags Can Be Used</a>.
  *
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
@@ -322,13 +322,13 @@ public abstract class AbstractFixJavadocMojo
      * Specifies the access level for classes and members to show in the Javadocs.
      * Possible values are:
      * <ul>
-     * <li><a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#public">public</a>
+     * <li><a href="http://docs.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#public">public</a>
      * (shows only public classes and members)</li>
-     * <li><a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#protected">protected</a>
+     * <li><a href="http://docs.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#protected">protected</a>
      * (shows only public and protected classes and members)</li>
-     * <li><a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#package">package</a>
+     * <li><a href="http://docs.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#package">package</a>
      * (shows all classes and members not marked private)</li>
-     * <li><a href="http://download.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#private">private</a>
+     * <li><a href="http://docs.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#private">private</a>
      * (shows all classes and members)</li>
      * </ul>
      */
