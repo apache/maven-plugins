@@ -28,8 +28,10 @@
 
 Using Javadoc Resources
 
- The {{{../javadoc-mojo.html#javadocDirectory}\<javadocDirectory/\>}} parameter can be used to include Javadoc
- resources like HTML or images. By default, all javadoc resources are in <$\{basedir\}/src/main/javadoc> directory.
+ The {{{../javadoc-mojo.html#javadocDirectory}\<javadocDirectory/\>}} parameter can be used to include additional
+ resources, like HTML or images, in the generated javadoc. You can then link to these resources in your javadoc comments.
+ By default, all javadoc resources are in <$\{basedir\}/src/main/javadoc> directory. Note that you need to set the
+ docfilessubdirs parameter to copy these.
 
  Here is a typical set of resources files used by the Maven Javadoc plugin:
 
