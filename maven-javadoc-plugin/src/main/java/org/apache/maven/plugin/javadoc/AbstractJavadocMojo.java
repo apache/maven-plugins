@@ -80,6 +80,7 @@ import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
+import org.codehaus.plexus.util.WriterFactory;
 import org.codehaus.plexus.util.cli.CommandLineException;
 import org.codehaus.plexus.util.cli.CommandLineUtils;
 import org.codehaus.plexus.util.cli.Commandline;
@@ -91,6 +92,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Writer;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -4260,30 +4262,23 @@ public abstract class AbstractJavadocMojo
         if ( isJavaDocVersionAtLeast( SINCE_JAVADOC_1_4 ) )
         {
             argfileFile = new File( javadocOutputDirectory, ARGFILE_FILE_NAME );
+            cmd.createArg().setValue( "@" + ARGFILE_FILE_NAME );
         }
         else
         {
             argfileFile = new File( javadocOutputDirectory, FILES_FILE_NAME );
+            cmd.createArg().setValue( "@" + FILES_FILE_NAME );
         }
 
         try
         {
-            FileUtils.fileWrite( argfileFile.getAbsolutePath(),
+            FileUtils.fileWrite( argfileFile.getAbsolutePath(), null /* platform encoding */,
                                  StringUtils.join( files.iterator(), SystemUtils.LINE_SEPARATOR ) );
         }
         catch ( IOException e )
         {
             throw new MavenReportException(
                 "Unable to write '" + argfileFile.getName() + "' temporary file for command execution", e );
-        }
-
-        if ( isJavaDocVersionAtLeast( SINCE_JAVADOC_1_4 ) )
-        {
-            cmd.createArg().setValue( "@" + ARGFILE_FILE_NAME );
-        }
-        else
-        {
-            cmd.createArg().setValue( "@" + FILES_FILE_NAME );
         }
     }
 
@@ -4306,9 +4301,8 @@ public abstract class AbstractJavadocMojo
 
         try
         {
-            FileUtils.fileWrite( packagesFile.getAbsolutePath(),
-                                 StringUtils.join( packageNames.toArray( new String[0] ),
-                                                   SystemUtils.LINE_SEPARATOR ) );
+            FileUtils.fileWrite( packagesFile.getAbsolutePath(), null /* platform encoding */,
+                                 StringUtils.join( packageNames.iterator(), SystemUtils.LINE_SEPARATOR ) );
         }
         catch ( IOException e )
         {
@@ -5313,7 +5307,7 @@ public abstract class AbstractJavadocMojo
                 {
                     logError( "MavenInvocationException: " + e.getMessage(), e );
 
-                    String invokerLogContent = JavadocUtil.readFile( invokerLogFile, "UTF-8" );
+                    String invokerLogContent = JavadocUtil.readFile( invokerLogFile, null /* platform encoding */ );
 
                     // TODO: Why are we only interested in cases where the JVM won't start?
                     // [MJAVADOC-275][jdcasey] I changed the logic here to only throw an error WHEN 
@@ -5594,7 +5588,7 @@ public abstract class AbstractJavadocMojo
 
         try
         {
-            FileUtils.fileWrite( commandLineFile.getAbsolutePath(), "UTF-8", cmdLine );
+            FileUtils.fileWrite( commandLineFile.getAbsolutePath(), null /* platform encoding */, cmdLine );
 
             if ( !SystemUtils.IS_OS_WINDOWS )
             {
@@ -5716,8 +5710,8 @@ public abstract class AbstractJavadocMojo
         if ( plugin != null )
         {
             Xpp3Dom xpp3Dom = (Xpp3Dom) plugin.getConfiguration();
-            if ( xpp3Dom != null && xpp3Dom.getChild( param ) != null && StringUtils.isNotEmpty(
-                xpp3Dom.getChild( param ).getValue() ) )
+            if ( xpp3Dom != null && xpp3Dom.getChild( param ) != null
+                && StringUtils.isNotEmpty( xpp3Dom.getChild( param ).getValue() ) )
             {
                 return xpp3Dom.getChild( param ).getValue();
             }
@@ -5774,10 +5768,10 @@ public abstract class AbstractJavadocMojo
         }
 
         File optionsFile = getJavadocOptionsFile();
-        FileWriter writer = null;
+        Writer writer = null;
         try
         {
-            writer = new FileWriter( optionsFile );
+            writer = WriterFactory.newXmlWriter( optionsFile );
             new JavadocOptionsXpp3Writer().write( writer, options );
         }
         finally
