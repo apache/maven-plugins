@@ -60,7 +60,7 @@ under the License.
     <doxia-sitetoolsVersion>1.0</doxia-sitetoolsVersion>
     <wagonVersion>1.0-beta-6</wagonVersion>
     <sitePluginVersion>3.1</sitePluginVersion>
-    <projectInfoReportsPluginVersion>2.4</projectInfoReportsPluginVersion>
+    <projectInfoReportsPluginVersion>2.5.1</projectInfoReportsPluginVersion>
     <mavenPluginPluginVersion>3.1</mavenPluginPluginVersion>
   </properties>
 
@@ -105,6 +105,11 @@ under the License.
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-artifact-manager</artifactId>
+      <version>${mavenVersion}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-toolchain</artifactId>
       <version>${mavenVersion}</version>
     </dependency>
     <dependency>
@@ -209,18 +214,6 @@ under the License.
         <exclusion>
           <groupId>org.codehaus.plexus</groupId>
           <artifactId>plexus-component-api</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven</groupId>
-      <artifactId>maven-toolchain</artifactId>
-      <version>2.2.1</version>
-      <exclusions>
-        <!-- Using org.codehaus.plexus:plexus-utils instead of -->
-        <exclusion>
-          <groupId>plexus</groupId>
-          <artifactId>plexus-utils</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
