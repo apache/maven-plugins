@@ -338,7 +338,7 @@ public final class ResourceResolver
             // NOTE that this is necessary, b/c the -sources artifacts are added dynamically to the pomArtifact
             // and the resolver also checks the dependency trail with the given filter, thus the pomArtifact has
             // to be explicitly included by the filter, otherwise the -sources artifacts won't be resolved.
-            resolutionFilter = new ProjectArtifactFilter(pomArtifact, filter);
+            resolutionFilter = new ProjectArtifactFilter( pomArtifact, filter );
         }
 
         final ArtifactResolver resolver = config.artifactResolver();
