@@ -24,7 +24,7 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 
 /**
  * Generates documentation for the <code>Java Test code</code> in an <b>aggregator</b> project using the standard
- * <a href="http://java.sun.com/j2se/javadoc/">Javadoc Tool</a>.
+ * <a href="http://docs.oracle.com/javase/7/docs/technotes/guides/javadoc/">Javadoc Tool</a>.
  *
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$

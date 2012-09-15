@@ -36,7 +36,7 @@ import java.util.List;
 
 /**
  * Bundles the Javadoc documentation for <code>test Java code</code> in an <b>NON aggregator</b> project into
- * a jar using the standard <a href="http://java.sun.com/j2se/javadoc/">Javadoc Tool</a>.
+ * a jar using the standard <a href="http://docs.oracle.com/javase/7/docs/technotes/guides/javadoc/">Javadoc Tool</a>.
  *
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$

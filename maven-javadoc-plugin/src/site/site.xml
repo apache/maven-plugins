@@ -23,7 +23,7 @@ under the License.
   xsi:schemaLocation="http://maven.apache.org/DECORATION/1.0.0 http://maven.apache.org/xsd/decoration-1.0.0.xsd">
   <body>
     <links>
-      <item name="Javadoc Tool" href="http://java.sun.com/j2se/javadoc/"/>
+      <item name="Javadoc Tool" href="http://docs.oracle.com/javase/7/docs/technotes/guides/javadoc/"/>
     </links>
 
     <menu name="Overview">
