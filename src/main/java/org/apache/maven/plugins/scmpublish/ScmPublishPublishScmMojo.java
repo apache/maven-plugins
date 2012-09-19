@@ -51,14 +51,14 @@ import java.util.Set;
  * <code>${project.build.directory}/staging</code>.
  * Can be used without project, so usable to update any SCM with any content.
  */
-@Mojo( name = "publish-scm", aggregator = true, requiresProject = false )
+@Mojo ( name = "publish-scm", aggregator = true, requiresProject = false )
 public class ScmPublishPublishScmMojo
     extends ScmPublishPublishMojo
 {
     /**
      * The content to be published.
      */
-    @Parameter( property = "scmpublish.content", defaultValue = "${project.build.directory}/staging" )
+    @Parameter ( property = "scmpublish.content", defaultValue = "${project.build.directory}/staging" )
     private File content;
 
     /**
@@ -105,9 +105,11 @@ public class ScmPublishPublishScmMojo
         {
             if ( ignoreDeleteMatchPatterns != null && ignoreDeleteMatchPatterns.matches( name, true ) )
             {
-                getLog().debug( name + " match one of the patterns '" + pathsAsList + "': do not add to deleted files" );
+                getLog().debug(
+                    name + " match one of the patterns '" + pathsAsList + "': do not add to deleted files" );
                 continue;
             }
+            getLog().debug( "file marked for deletion:" + name );
             File file = new File( checkout, name );
 
             if ( ( doNotDeleteDirs != null ) && file.isDirectory() && ( doNotDeleteDirs.contains( name ) ) )
