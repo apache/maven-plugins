@@ -60,7 +60,7 @@ public class InstallMojo
      *
      * @since 2.4
      */
-    @Parameter( property = "maven.install.skip", defaultValue = "false", required = true )
+    @Parameter( property = "maven.install.skip", defaultValue = "false" )
     private boolean skip;
 
     /**
