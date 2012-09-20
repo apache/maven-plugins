@@ -24,7 +24,7 @@ import java.io.File;
 import org.apache.maven.artifact.handler.ArtifactHandler;
 
 /**
- * @author <a href="mailto:olamy@codehaus.org">olamy</a>
+ * @author Olivier Lamy
  * @since 8 juin 07
  * @version $Id$
  */
