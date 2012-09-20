@@ -32,7 +32,7 @@ import org.apache.maven.shared.filtering.MavenResourcesExecution;
 import org.apache.maven.shared.filtering.MavenResourcesFiltering;
 
 /**
- * @author <a href="mailto:olamy@apache.org">olamy</a>
+ * @author Olivier Lamy
  * @since 2.5
  * @version $Id$
  * @plexus.component role="org.apache.maven.shared.filtering.MavenResourcesFiltering" 

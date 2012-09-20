@@ -28,7 +28,7 @@ import org.codehaus.plexus.util.FileUtils;
  */
 
 /**
- * @author <a href="mailto:olamy@apache.org">olamy</a>
+ * @author Olivier Lamy
  * @version $Id$
  */
 public class CopyResourcesMojoTest
