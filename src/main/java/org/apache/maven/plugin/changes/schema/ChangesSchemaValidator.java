@@ -22,7 +22,7 @@ package org.apache.maven.plugin.changes.schema;
 import java.io.File;
 
 /**
- * @author <a href="mailto:olamy@apache.org">olamy</a>
+ * @author Olivier Lamy
  * @since 28 juil. 2008
  * @version $Id$
  */
