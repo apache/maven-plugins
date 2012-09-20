@@ -46,7 +46,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
  * <code>mvn clean integration-test site</code> to ensure the build results are present when this goal is invoked.
  * 
  * @goal report
- * @author <a href="mailto:olamy@apache.org">olamy</a>
+ * @author Olivier Lamy
  * @threadSafe
  * @since 1.4
  */

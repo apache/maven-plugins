@@ -35,7 +35,7 @@ import java.io.IOException;
 /**
  * Checks the results of maven-invoker-plugin based integration tests and fails the build if any tests failed.
  *
- * @author <a href="mailto:olamy@apache.org">olamy</a>
+ * @author Olivier Lamy
  * @since 1.4
  */
 @Mojo( name = "verify", defaultPhase = LifecyclePhase.VERIFY, threadSafe = true )

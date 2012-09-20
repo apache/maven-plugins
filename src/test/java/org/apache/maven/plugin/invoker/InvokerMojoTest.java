@@ -30,7 +30,7 @@ import org.apache.maven.plugin.invoker.model.BuildJob;
 import org.apache.maven.settings.Settings;
 
 /**
- * @author <a href="mailto:olamy@apache.org">olamy</a>
+ * @author Olivier Lamy
  * @since 18 nov. 07
  * @version $Id$
  */
