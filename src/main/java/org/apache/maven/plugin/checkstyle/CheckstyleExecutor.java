@@ -22,7 +22,7 @@ package org.apache.maven.plugin.checkstyle;
 import com.puppycrawl.tools.checkstyle.api.CheckstyleException;
 
 /**
- * @author <a href="mailto:olamy@apache.org">olamy</a>
+ * @author Olivier Lamy
  * @since 2.5
  * @version $Id$
  */

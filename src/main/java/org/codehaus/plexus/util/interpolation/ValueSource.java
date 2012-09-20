@@ -20,7 +20,7 @@ package org.codehaus.plexus.util.interpolation;
  */
 
 /**
- * @author <a href="mailto:olamy@apache.org">olamy</a>
+ * @author Olivier Lamy
  * @since
  * @version $Id$
  * @deprecated must be removed when doxia has upgraded to plexus-utils 2.x and plexux-interpolation
