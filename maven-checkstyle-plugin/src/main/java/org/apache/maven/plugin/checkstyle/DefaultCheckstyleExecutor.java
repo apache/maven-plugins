@@ -56,7 +56,7 @@ import com.puppycrawl.tools.checkstyle.api.FilterSet;
 import com.puppycrawl.tools.checkstyle.filters.SuppressionsLoader;
 
 /**
- * @author <a href="mailto:olamy@apache.org">olamy</a>
+ * @author Olivier Lamy
  * @since 2.5
  * @version $Id$
  */

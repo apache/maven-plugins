@@ -24,7 +24,7 @@ import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
 import java.util.Properties;
 
 /**
- * @author <a href="mailto:olamy@apache.org">olamy</a>
+ * @author Olivier Lamy
  * @since 22 nov. 07
  * @version $Id$
  */

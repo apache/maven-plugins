@@ -25,7 +25,7 @@ import java.util.Set;
 import org.apache.maven.artifact.Artifact;
 
 /**
- * @author <a href="mailto:olamy@apache.org">olamy</a>
+ * @author Olivier Lamy
  * @since 9 juin 07
  * @version $Id$
  */

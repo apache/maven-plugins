@@ -37,7 +37,7 @@ import org.xml.sax.SAXParseException;
  * 
  * Goal which validate the <code>changes.xml</code> file.
  * 
- * @author <a href="mailto:olamy@apache.org">olamy</a>
+ * @author Olivier Lamy
  * @version $Id$
  * @since 2.1
  */

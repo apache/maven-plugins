@@ -37,7 +37,7 @@ import org.xml.sax.SAXException;
 
 /**
  *
- * @author <a href="mailto:olamy@apache.org">olamy</a>
+ * @author Olivier Lamy
  * @since 28 juil. 2008
  * @version $Id$
  *

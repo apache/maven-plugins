@@ -27,7 +27,7 @@ import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 
 
 /**
- * @author <a href="mailto:olamy@apache.org">olamy</a>
+ * @author Olivier Lamy
  * @since 29 juil. 2008
  * @version $Id$
  */
