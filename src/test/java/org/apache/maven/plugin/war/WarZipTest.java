@@ -31,7 +31,7 @@ import java.io.File;
 import java.util.LinkedList;
 
 /**
- * @author <a href="mailto:olamy@apache.org">olamy</a>
+ * @author Olivier Lamy
  * @version $Id$
  * @since 7 Oct 07
  */
