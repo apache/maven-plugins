@@ -24,7 +24,7 @@ import java.io.File;
 import org.apache.maven.plugin.AbstractMojo;
 
 /**
- * @author <a href="mailto:olamy@apache.org">olamy</a>
+ * @author Olivier Lamy
  * @since 3.0-beta-2
  * @version $Id$
  */
