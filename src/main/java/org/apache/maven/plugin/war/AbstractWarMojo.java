@@ -99,6 +99,14 @@ public abstract class AbstractWarMojo
     private boolean archiveClasses;
 
     /**
+     * The encoding to use when copying filtered web resources.
+     *
+     * @since 2.3
+     */
+    @Parameter( property = "resourceEncoding", defaultValue = "${project.build.sourceEncoding}" )
+    private String resourceEncoding;
+
+    /**
      * The JAR archiver needed for archiving the classes directory into a JAR file under WEB-INF/lib.
      */
     @Component( role = Archiver.class, hint = "jar" )
@@ -455,7 +463,7 @@ public abstract class AbstractWarMojo
                                                                             defaultFilterWrappers,
                                                                             getNonFilteredFileExtensions(),
                                                                             filteringDeploymentDescriptors,
-                                                                            this.artifactFactory );
+                                                                            this.artifactFactory, resourceEncoding);
         for ( WarPackagingTask warPackagingTask : packagingTasks )
         {
             warPackagingTask.performPackaging( context );
@@ -531,6 +539,8 @@ public abstract class AbstractWarMojo
 
         private final ArtifactFactory artifactFactory;
 
+        private final String resourceEncoding;
+
         private final WebappStructure webappStructure;
 
         private final File webappDirectory;
@@ -545,8 +555,8 @@ public abstract class AbstractWarMojo
 
         public DefaultWarPackagingContext( File webappDirectory, final WebappStructure webappStructure,
                                            final OverlayManager overlayManager, List<FileUtils.FilterWrapper> filterWrappers,
-                                           List<String>  nonFilteredFileExtensions, boolean filteringDeploymentDescriptors,
-                                           ArtifactFactory artifactFactory )
+                                           List<String> nonFilteredFileExtensions, boolean filteringDeploymentDescriptors,
+                                           ArtifactFactory artifactFactory, String resourceEncoding )
         {
             this.webappDirectory = webappDirectory;
             this.webappStructure = webappStructure;
@@ -556,6 +566,7 @@ public abstract class AbstractWarMojo
             this.filteringDeploymentDescriptors = filteringDeploymentDescriptors;
             this.nonFilteredFileExtensions = nonFilteredFileExtensions == null ? Collections.<String>emptyList()
                                                                               : nonFilteredFileExtensions;
+            this.resourceEncoding = resourceEncoding;
             // This is kinda stupid but if we loop over the current overlays and we request the path structure
             // it will register it. This will avoid wrong warning messages in a later phase
             for ( String overlayId : overlayManager.getOverlayIds() )
@@ -672,6 +683,11 @@ public abstract class AbstractWarMojo
         public MavenSession getSession()
         {
             return session;
+        }
+
+        public String getResourceEncoding()
+        {
+            return resourceEncoding;
         }
     }
 

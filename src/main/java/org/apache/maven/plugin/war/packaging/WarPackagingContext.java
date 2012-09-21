@@ -195,4 +195,12 @@ public interface WarPackagingContext
      * @since 2.2
      */
     MavenSession getSession();
+
+    /**
+     * Returns the encoding to use for resources.
+     *
+     * @return the resource encoding
+     * @since 2.3
+     */
+    String getResourceEncoding();
 }

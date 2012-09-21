@@ -26,9 +26,7 @@ import org.apache.maven.plugin.war.Overlay;
 import org.apache.maven.plugin.war.util.PathSet;
 import org.apache.maven.shared.filtering.MavenFilteringException;
 import org.codehaus.plexus.util.DirectoryScanner;
-import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
-import org.codehaus.plexus.util.xml.XmlStreamReader;
 
 import java.io.File;
 import java.io.IOException;
@@ -278,27 +276,6 @@ public class WarProjectPackagingTask
         catch ( MavenFilteringException e )
         {
             throw new MojoExecutionException( "Failed to copy deployment descriptor", e );
-        }
-    }
-
-    /**
-     * Get the encoding from an XML-file.
-     *
-     * @param webXml the XML-file
-     * @return The encoding of the XML-file, or UTF-8 if it's not specified in the file
-     * @throws IOException if an error occurred while reading the file
-     */
-    private String getEncoding( File webXml )
-        throws IOException
-    {
-        XmlStreamReader xmlReader = new XmlStreamReader( webXml );
-        try
-        {
-            return xmlReader.getEncoding();
-        }
-        finally
-        {
-            IOUtil.close( xmlReader );
         }
     }
 

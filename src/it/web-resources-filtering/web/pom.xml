@@ -59,6 +59,7 @@ under the License.
               <filtering>true</filtering>
             </resource>
           </webResources>
+          <resourceEncoding>ISO-8859-1</resourceEncoding>
         </configuration>
       </plugin>
     </plugins>
