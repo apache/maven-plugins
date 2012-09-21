@@ -27,8 +27,10 @@ import org.apache.maven.scm.ScmFileSet;
 import org.apache.maven.scm.ScmTagParameters;
 import org.apache.maven.scm.ScmVersion;
 import org.apache.maven.scm.command.add.AddScmResult;
+import org.apache.maven.scm.command.blame.BlameScmRequest;
 import org.apache.maven.scm.command.blame.BlameScmResult;
 import org.apache.maven.scm.command.branch.BranchScmResult;
+import org.apache.maven.scm.command.changelog.ChangeLogScmRequest;
 import org.apache.maven.scm.command.changelog.ChangeLogScmResult;
 import org.apache.maven.scm.command.checkin.CheckInScmResult;
 import org.apache.maven.scm.command.checkout.CheckOutScmResult;
@@ -516,6 +518,18 @@ public class ScmProviderStub
 
     public RemoteInfoScmResult remoteInfo( ScmProviderRepository scmProviderRepository, ScmFileSet scmFileSet,
                                            CommandParameters commandParameters )
+        throws ScmException
+    {
+        return null;
+    }
+
+    public ChangeLogScmResult changeLog( ChangeLogScmRequest scmRequest )
+        throws ScmException
+    {
+        return null;
+    }
+
+    public BlameScmResult blame( BlameScmRequest blameScmRequest )
         throws ScmException
     {
         return null;

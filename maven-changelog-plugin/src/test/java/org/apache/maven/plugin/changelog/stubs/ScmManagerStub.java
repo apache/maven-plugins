@@ -24,8 +24,10 @@ import org.apache.maven.scm.ScmException;
 import org.apache.maven.scm.ScmFileSet;
 import org.apache.maven.scm.ScmVersion;
 import org.apache.maven.scm.command.add.AddScmResult;
+import org.apache.maven.scm.command.blame.BlameScmRequest;
 import org.apache.maven.scm.command.blame.BlameScmResult;
 import org.apache.maven.scm.command.branch.BranchScmResult;
+import org.apache.maven.scm.command.changelog.ChangeLogScmRequest;
 import org.apache.maven.scm.command.changelog.ChangeLogScmResult;
 import org.apache.maven.scm.command.checkin.CheckInScmResult;
 import org.apache.maven.scm.command.checkout.CheckOutScmResult;
@@ -402,4 +404,16 @@ public class ScmManagerStub
 
 		return this.getProviderByRepository(arg0).mkdir(arg0, arg1, arg2, arg3);
 	}
+
+    public ChangeLogScmResult changeLog( ChangeLogScmRequest scmRequest )
+        throws ScmException
+    {
+        return null;
+    }
+
+    public BlameScmResult blame( BlameScmRequest blameScmRequest )
+        throws ScmException
+    {
+        return null;
+    }
 }
