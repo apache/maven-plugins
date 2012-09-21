@@ -38,9 +38,9 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.artifact.filter.StrictPatternExcludesArtifactFilter;
 import org.apache.maven.shared.artifact.filter.StrictPatternIncludesArtifactFilter;
-import org.apache.maven.shared.dependency.graph.DependencyNode;
 import org.apache.maven.shared.dependency.graph.DependencyGraphBuilder;
 import org.apache.maven.shared.dependency.graph.DependencyGraphBuilderException;
+import org.apache.maven.shared.dependency.graph.DependencyNode;
 import org.apache.maven.shared.dependency.graph.filter.AncestorOrSelfDependencyNodeFilter;
 import org.apache.maven.shared.dependency.graph.filter.AndDependencyNodeFilter;
 import org.apache.maven.shared.dependency.graph.filter.ArtifactDependencyNodeFilter;
@@ -67,7 +67,7 @@ import java.util.List;
  * @version $Id$
  * @since 2.0-alpha-5
  */
-@Mojo( name = "tree", requiresDependencyResolution = ResolutionScope.TEST )
+@Mojo (name = "tree", requiresDependencyResolution = ResolutionScope.TEST)
 public class TreeMojo
     extends AbstractMojo
 {
@@ -82,7 +82,7 @@ public class TreeMojo
     /**
      * The dependency tree builder to use.
      */
-    @Component( hint = "default" )
+    @Component (hint = "default")
     private DependencyGraphBuilder dependencyGraphBuilder;
 
     /**
@@ -91,7 +91,7 @@ public class TreeMojo
      *
      * @deprecated use outputFile instead.
      */
-    @Parameter( property = "output" )
+    @Parameter (property = "output")
     private File output;
 
     /**
@@ -100,7 +100,7 @@ public class TreeMojo
      *
      * @since 2.0-alpha-5
      */
-    @Parameter( property = "outputFile" )
+    @Parameter (property = "outputFile")
     private File outputFile;
 
     /**
@@ -112,7 +112,7 @@ public class TreeMojo
      *
      * @since 2.2
      */
-    @Parameter( property = "outputType", defaultValue = "text" )
+    @Parameter (property = "outputType", defaultValue = "text")
     private String outputType;
 
     /**
@@ -122,7 +122,7 @@ public class TreeMojo
      * @see <a href="http://jira.codehaus.org/browse/MNG-3236">MNG-3236</a>
      * @since 2.0-alpha-5
      */
-    @Parameter( property = "scope" )
+    @Parameter (property = "scope")
     private String scope;
 
     /**
@@ -131,7 +131,7 @@ public class TreeMojo
      * @since 2.0-alpha-6
      * @deprecated in 2.5
      */
-    @Parameter( property = "verbose", defaultValue = "false" )
+    @Parameter (property = "verbose", defaultValue = "false")
     private boolean verbose;
 
     /**
@@ -141,17 +141,17 @@ public class TreeMojo
      *
      * @since 2.0-alpha-6
      */
-    @Parameter( property = "tokens", defaultValue = "standard" )
+    @Parameter (property = "tokens", defaultValue = "standard")
     private String tokens;
 
     /**
      * A comma-separated list of artifacts to filter the serialized dependency tree by, or <code>null</code> not to
      * filter the dependency tree. The artifact syntax is defined by <code>StrictPatternIncludesArtifactFilter</code>.
      *
-     * @parameter expression="${includes}"
      * @see StrictPatternIncludesArtifactFilter
      * @since 2.0-alpha-6
      */
+    @Parameter ( property = "includes" )
     private String includes;
 
     /**
@@ -162,7 +162,7 @@ public class TreeMojo
      * @see StrictPatternExcludesArtifactFilter
      * @since 2.0-alpha-6
      */
-    @Parameter( property = "excludes" )
+    @Parameter (property = "excludes")
     private String excludes;
 
     /**
@@ -175,7 +175,7 @@ public class TreeMojo
      *
      * @since 2.2
      */
-    @Parameter( property = "appendOutput", defaultValue = "false" )
+    @Parameter (property = "appendOutput", defaultValue = "false")
     private boolean appendOutput;
 
     // Mojo methods -----------------------------------------------------------
@@ -415,7 +415,7 @@ public class TreeMojo
         ArtifactVersion recommendedVersion = allowedRange.getRecommendedVersion();
         if ( recommendedVersion == null )
         {
-            @SuppressWarnings( "unchecked" ) List<Restriction> restrictions = allowedRange.getRestrictions();
+            @SuppressWarnings ("unchecked") List<Restriction> restrictions = allowedRange.getRestrictions();
             for ( Restriction restriction : restrictions )
             {
                 if ( restriction.containsVersion( theVersion ) )
