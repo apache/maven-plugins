@@ -1488,7 +1488,7 @@ public class ChangeLogReport
 
         if ( linkFile != null )
         {
-            if ( !scmUrl.equals( linkFile ) )
+            if ( !linkFile.equals( scmUrl) )
             {
                 // Use the given URL to create links to the files
 
