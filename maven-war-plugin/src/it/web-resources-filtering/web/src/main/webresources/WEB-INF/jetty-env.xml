@@ -1,7 +1,14 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE Configure PUBLIC "-//Mort Bay Consulting//DTD Configure//EN"
         "http://jetty.mortbay.org/configure.dtd">
 <Configure class="org.mortbay.jetty.webapp.WebAppContext">
+  <!--
+    This file is encoded in UTF-8 and should be so after filtering, since it
+    specifies an encoding in the xml header. So the following characters should
+    remain unaltered after filtering even though the encoding for filtering is
+    set to ISO-8859-1:
+    Characters that should be encoded in UTF-8: åäö
+  -->
   <New id="MyDS" class="org.mortbay.jetty.plus.naming.Resource">
     <Arg>jdbc/EventdialogDS</Arg>
     <Arg>

@@ -36,6 +36,8 @@ import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
 import org.codehaus.plexus.interpolation.InterpolationException;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.xml.XmlStreamReader;
 
 /**
  * @author Stephane Nicoll
@@ -206,19 +208,29 @@ public abstract class AbstractWarPackagingTask
         if ( context.getWebappStructure().registerFile( sourceId, targetFilename ) )
         {
             final File targetFile = new File( context.getWebappDirectory(), targetFilename );
+            final String encoding;
             try
             {
+                if ( isXmlFile( file ) )
+                {
+                    // For xml-files we extract the encoding from the files
+                    encoding = getEncoding( file );
+                }
+                else
+                {
+                    // For all others we use the configured encoding
+                    encoding = context.getResourceEncoding();
+                }
                 // fix for MWAR-36, ensures that the parent dir are created first
                 targetFile.getParentFile().mkdirs();
-                // TODO: add encoding support (null mean platform encoding)
-                context.getMavenFileFilter().copyFile( file, targetFile, true, context.getFilterWrappers(), null );
+                context.getMavenFileFilter().copyFile( file, targetFile, true, context.getFilterWrappers(), encoding );
             }
             catch ( MavenFilteringException e )
             {
                 throw new MojoExecutionException( e.getMessage(), e );
             }
             // Add the file to the protected list
-            context.getLog().debug( " + " + targetFilename + " has been copied (filtered)." );
+            context.getLog().debug( " + " + targetFilename + " has been copied (filtered encoding='" + encoding + "')." );
             return true;
         }
         else
@@ -228,7 +240,6 @@ public abstract class AbstractWarPackagingTask
             return false;
         }
     }
-
 
     /**
      * Unpacks the specified file to the specified directory.
@@ -299,6 +310,27 @@ public abstract class AbstractWarPackagingTask
     }
 
     /**
+     * Get the encoding from an XML-file.
+     *
+     * @param webXml the XML-file
+     * @return The encoding of the XML-file, or UTF-8 if it's not specified in the file
+     * @throws java.io.IOException if an error occurred while reading the file
+     */
+    protected String getEncoding( File webXml )
+        throws IOException
+    {
+        XmlStreamReader xmlReader = new XmlStreamReader( webXml );
+        try
+        {
+            return xmlReader.getEncoding();
+        }
+        finally
+        {
+            IOUtil.close( xmlReader );
+        }
+    }
+
+    /**
      * Returns the file to copy. If the includes are <tt>null</tt> or empty, the
      * default includes are used.
      *
@@ -362,5 +394,19 @@ public abstract class AbstractWarPackagingTask
             return MappingUtils.evaluateFileNameMapping( AbstractWarMojo.DEFAULT_FILE_NAME_MAPPING, artifact );
         }
 
+    }
+
+    /**
+     * Returns <code>true</code> if the <code>File</code>-object is a file (not
+     * a directory) that is not <code>null</code> and has a file name that ends
+     * in ".xml".
+     *
+     * @param file The file to check
+     * @return <code>true</code> if the file is an xml-file, otherwise <code>false</code>
+     * @since 2.3
+     */
+    private boolean isXmlFile( File file )
+    {
+        return file != null && file.isFile() && file.getName().endsWith( ".xml" );
     }
 }
