@@ -23,9 +23,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.maven.scm.ChangeFile;
 
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
-
 
 /**
  * Object used to sort the file-activity report into descending order.
@@ -33,21 +31,15 @@ import java.util.List;
  * @version $Id$
  */
 public class FileActivityComparator
-    implements Comparator
+    implements Comparator<List<ChangeFile>>
 {
     /**
      * {@inheritDoc}
      */
-    public int compare( Object o1, Object o2 )
+    public int compare( List<ChangeFile> list1, List<ChangeFile> list2 )
         throws ClassCastException
     {
-        int returnValue;
-
-        List list1 = (List) o1;
-
-        List list2 = (List) o2;
-
-        returnValue = sortByCommits( list1, list2 );
+        int returnValue = sortByCommits( list1, list2 );
 
         if ( returnValue != 0 )
         {
@@ -61,9 +53,7 @@ public class FileActivityComparator
             return returnValue;
         }
 
-        returnValue = sortByName( list1, list2 );
-
-        return returnValue;
+        return sortByName( list1, list2 );
     }
 
     /**
@@ -73,7 +63,7 @@ public class FileActivityComparator
      * @param list2 the object to compare list1 against
      * @return an integer describing the order comparison of list1 and list2
      */
-    private int sortByCommits( List list1, List list2 )
+    private int sortByCommits( List<ChangeFile> list1, List<ChangeFile> list2 )
     {
         if ( list1.size() > list2.size() )
         {
@@ -95,7 +85,7 @@ public class FileActivityComparator
      * @param list2 the object to compare list1 against
      * @return an integer describing the order comparison of list1 and list2
      */
-    private int sortByRevision( List list1, List list2 )
+    private int sortByRevision( List<ChangeFile> list1, List<ChangeFile> list2 )
     {
         String revision1 = getLatestRevision( list1 );
 
@@ -120,14 +110,12 @@ public class FileActivityComparator
      * @param list The list of revisions from the file
      * @return the latest revision code
      */
-    private String getLatestRevision( List list )
+    private String getLatestRevision( List<ChangeFile> list )
     {
         String latest = "";
 
-        for ( Iterator i = list.iterator(); i.hasNext(); )
+        for ( ChangeFile file : list )
         {
-            ChangeFile file = (ChangeFile) i.next();
-
             if ( StringUtils.isNotBlank( latest) )
             {
                 latest = file.getRevision();
@@ -149,11 +137,11 @@ public class FileActivityComparator
      * @param list2 the object to compare list1 against
      * @return an integer describing the order comparison of list1 and list2
      */
-    private int sortByName( List list1, List list2 )
+    private int sortByName( List<ChangeFile> list1, List<ChangeFile> list2 )
     {
-        ChangeFile file1 = (ChangeFile) list1.get( 0 );
+        ChangeFile file1 = list1.get( 0 );
 
-        ChangeFile file2 = (ChangeFile) list2.get( 0 );
+        ChangeFile file2 = list2.get( 0 );
 
         return file1.getName().compareTo( file2.getName() );
     }
