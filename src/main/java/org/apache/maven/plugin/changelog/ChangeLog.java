@@ -29,6 +29,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.apache.maven.scm.command.changelog.ChangeLogSet;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
@@ -56,24 +57,24 @@ public class ChangeLog
      * @throws SAXException                 when an error occurred while parsing the xml document
      * @throws IOException                  when an error occurred while accessing the xml document
      */
-    public static List loadChangedSets( InputStream stream )
+    public static List<ChangeLogSet> loadChangedSets( InputStream stream )
         throws ParserConfigurationException, SAXException, IOException
     {
         SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
 
-        List changeLogSets = new ArrayList();
+        List<ChangeLogSet> changeLogSets = new ArrayList<ChangeLogSet>();
 
         parser.parse( stream, new ChangeLogHandler( changeLogSets ) );
 
         return changeLogSets;
     }
 
-    public static List loadChangedSets( Reader reader )
+    public static List<ChangeLogSet> loadChangedSets( Reader reader )
         throws ParserConfigurationException, SAXException, IOException
     {
         SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
 
-        List changeLogSets = new ArrayList();
+        List<ChangeLogSet> changeLogSets = new ArrayList<ChangeLogSet>();
 
         parser.parse( new InputSource( reader ), new ChangeLogHandler( changeLogSets ) );
 

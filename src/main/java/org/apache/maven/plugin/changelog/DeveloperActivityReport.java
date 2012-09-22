@@ -27,10 +27,10 @@ import org.apache.maven.scm.command.changelog.ChangeLogSet;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 /**
@@ -45,9 +45,9 @@ public class DeveloperActivityReport
     /**
      * Used to hold data while creating the report
      */
-    private HashMap commits;
+    private Map<String, List<ChangeSet>> commits;
 
-    private HashMap files;
+    private Map<String, Map<String, ChangeFile>> files;
 
     /** {@inheritDoc} */
     public String getDescription( Locale locale )
@@ -95,7 +95,7 @@ public class DeveloperActivityReport
     }
 
     /** {@inheritDoc} */
-    protected void doGenerateReport( List changeLogSets, ResourceBundle bundle, Sink sink )
+    protected void doGenerateReport( List<ChangeLogSet> changeLogSets, ResourceBundle bundle, Sink sink )
     {
         sink.head();
         sink.title();
@@ -117,9 +117,8 @@ public class DeveloperActivityReport
         }
         else
         {
-            for ( Iterator sets = changeLogSets.iterator(); sets.hasNext(); )
+            for ( ChangeLogSet set : changeLogSets )
             {
-                ChangeLogSet set = (ChangeLogSet) sets.next();
                 doChangedSets( set, bundle, sink );
             }
         }
@@ -176,12 +175,12 @@ public class DeveloperActivityReport
     {
         initDeveloperDetails( set );
 
-        for( Iterator i = commits.keySet().iterator(); i.hasNext(); )
+        for( Map.Entry<String, List<ChangeSet>> commit : commits.entrySet() )
         {
-            String author = (String) i.next();
+            String author = commit.getKey();
 
-            LinkedList devCommits = (LinkedList) commits.get( author );
-            HashMap devFiles = (HashMap) files.get( author );
+            List<ChangeSet> devCommits = commit.getValue();
+            Map<String, ChangeFile> devFiles = files.get( author );
 
             sink.tableRow();
             sink.tableCell();
@@ -191,11 +190,11 @@ public class DeveloperActivityReport
             sink.tableCell_();
 
             sink.tableCell();
-            sink.text( "" + devCommits.size() );
+            sink.text( String.valueOf( devCommits.size() ) );
             sink.tableCell_();
 
             sink.tableCell();
-            sink.text( "" + devFiles.size() );
+            sink.text( String.valueOf( devFiles.size() ) );
             sink.tableCell_();
 
             sink.tableRow_();
@@ -209,9 +208,9 @@ public class DeveloperActivityReport
      */
     private void initDeveloperDetails( ChangeLogSet set )
     {
-        commits = new HashMap();
+        commits = new HashMap<String, List<ChangeSet>>();
 
-        files = new HashMap();
+        files = new HashMap<String, Map<String, ChangeFile>>();
 
         countDevCommits( set.getChangeSets() );
 
@@ -223,28 +222,21 @@ public class DeveloperActivityReport
      *
      * @param entries the change log entries used to search and count developer commits
      */
-    private void countDevCommits( Collection entries )
+    private void countDevCommits( Collection<ChangeSet> entries )
     {
-        for ( Iterator i = entries.iterator(); i.hasNext(); )
+        for ( ChangeSet entry : entries )
         {
-            ChangeSet entry = (ChangeSet) i.next();
-
             String developer = entry.getAuthor();
 
-            LinkedList list;
+            List<ChangeSet> list = commits.get( developer );
 
-            if ( commits.containsKey( developer ) )
+            if ( list == null )
             {
-                list = (LinkedList) commits.get( developer );
-            }
-            else
-            {
-                list = new LinkedList();
+                list = new LinkedList<ChangeSet>();
+                commits.put( developer, list );
             }
 
             list.add( entry );
-
-            commits.put( developer, list );
         }
     }
 
@@ -253,33 +245,27 @@ public class DeveloperActivityReport
      *
      * @param entries the change log entries used to search and count file changes
      */
-    private void countDevFiles( Collection entries )
+    private void countDevFiles( Collection<ChangeSet> entries )
     {
-        for ( Iterator i2 = entries.iterator(); i2.hasNext(); )
+        for ( ChangeSet entry : entries )
         {
-            ChangeSet entry = (ChangeSet) i2.next();
-
             String developer = entry.getAuthor();
 
-            HashMap filesMap;
+            Map<String, ChangeFile> filesMap;
 
-            if ( files.containsKey( developer ) )
+            filesMap = files.get( developer );
+
+            if ( files == null )
             {
-                filesMap = (HashMap) files.get( developer );
+                filesMap = new HashMap<String, ChangeFile>();
+                files.put( developer, filesMap );
             }
-            else
-            {
-                filesMap = new HashMap();
-            }
 
-            for ( Iterator i3 = entry.getFiles().iterator(); i3.hasNext(); )
+            for ( ChangeFile file : entry.getFiles() )
             {
-                ChangeFile file = (ChangeFile) i3.next();
-
                 filesMap.put( file.getName(), file );
             }
 
-            files.put( developer, filesMap );
         }
     }
 }
