@@ -417,6 +417,7 @@ under the License.
                 <locale>de</locale>
                 <locale>pt_BR</locale>
                 <locale>sv</locale>
+                <locale>es_AR</locale>
               </locales>
             </configuration>
           </plugin>
