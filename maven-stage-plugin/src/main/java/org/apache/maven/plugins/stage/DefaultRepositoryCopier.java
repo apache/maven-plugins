@@ -114,15 +114,14 @@ public class DefaultRepositoryCopier
 
         logger.info( "Looking for files in the source repository." );
 
-        List files = new ArrayList();
+        List<String> files = new ArrayList<String>();
 
         scan( sourceWagon, "", files );
 
         logger.info( "Downloading files from the source repository to: " + basedir );
 
-        for ( Iterator i = files.iterator(); i.hasNext(); )
+        for ( String s : files )
         {
-            String s = (String) i.next();
 
             if ( s.indexOf( ".svn" ) >= 0 )
             {
@@ -459,11 +458,11 @@ public class DefaultRepositoryCopier
 
     private void scan( Wagon wagon,
                        String basePath,
-                       List collected )
+                       List<String> collected )
     {
         try
         {
-            List files = wagon.getFileList( basePath );
+            List<String> files = wagon.getFileList( basePath );
 
             if ( files.isEmpty() )
             {
@@ -472,9 +471,8 @@ public class DefaultRepositoryCopier
             else
             {
                 basePath = basePath + "/";
-                for ( Iterator iterator = files.iterator(); iterator.hasNext(); )
+                for ( String file : files )
                 {
-                    String file = (String) iterator.next();
                     logger.info( "Found file in the source repository: " + file );
                     scan( wagon, basePath + file, collected );
                 }
@@ -496,15 +494,15 @@ public class DefaultRepositoryCopier
 
     }
 
-    protected List scanForArtifactPaths( ArtifactRepository repository )
+    protected List<String> scanForArtifactPaths( ArtifactRepository repository )
     {
-        List collected;
+        List<String> collected;
         try
         {
             Wagon wagon = wagonManager.getWagon( repository.getProtocol() );
             Repository artifactRepository = new Repository( repository.getId(), repository.getUrl() );
             wagon.connect( artifactRepository );
-            collected = new ArrayList();
+            collected = new ArrayList<String>();
             scan( wagon, "/", collected );
             wagon.disconnect();
 
