@@ -3,7 +3,7 @@
  ------
  Pete Marvin King
  ------
- 2010-12-17
+ 2012-09-25
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -204,6 +204,8 @@ documentedproject-1.0-SNAPSHOT.war
         <configuration>
           <webResources>
             <resource>
+              <!-- this is relative to the pom.xml directory -->
+              <directory>resource2</directory>
               <!-- the default value is ** -->
               <includes>
                 <include>**/pattern1</include>
