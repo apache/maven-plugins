@@ -386,13 +386,16 @@ public class WebappStructure
      */
     public void registerTargetFileName( Artifact artifact, String targetFileName )
     {
-        final Iterator it = dependenciesInfo.iterator();
-        while ( it.hasNext() )
+        if ( dependenciesInfo != null )
         {
-            DependencyInfo dependencyInfo = (DependencyInfo) it.next();
-            if ( WarUtils.isRelated( artifact, dependencyInfo.getDependency() ) )
+            final Iterator it = dependenciesInfo.iterator();
+            while ( it.hasNext() )
             {
-                dependencyInfo.setTargetFileName( targetFileName );
+                DependencyInfo dependencyInfo = (DependencyInfo) it.next();
+                if ( WarUtils.isRelated( artifact, dependencyInfo.getDependency() ) )
+                {
+                    dependencyInfo.setTargetFileName( targetFileName );
+                }
             }
         }
     }
