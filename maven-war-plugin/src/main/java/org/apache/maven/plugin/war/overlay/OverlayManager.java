@@ -221,7 +221,8 @@ public class OverlayManager
     }
 
     /**
-     * compare groupId && artifactId && Type && classifier
+     * Compare groupId && artifactId && type && classifier.
+     *
      * @param overlay the overlay
      * @param artifact the artifact
      * @return boolean true if equals
@@ -231,7 +232,8 @@ public class OverlayManager
         return ( StringUtils.equals( overlay.getGroupId(), artifact.getGroupId() )
             && StringUtils.equals( overlay.getArtifactId(), artifact.getArtifactId() )
             && StringUtils.equals( overlay.getType(), artifact.getType() )
-            && StringUtils.equals( overlay.getClassifier(), artifact.getClassifier() ) );
+            // MWAR-241 Make sure to treat null and "" as equal when comparing the classifier
+            && StringUtils.equals( StringUtils.defaultString( overlay.getClassifier() ), StringUtils.defaultString( artifact.getClassifier() ) ) );
     }
 
     /**
