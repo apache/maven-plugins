@@ -161,9 +161,8 @@ public class DefaultRepositoryCopier
 
         File archive = new File( tempdir, fileName );
 
-        for ( Iterator i = files.iterator(); i.hasNext(); )
+        for ( String s : files )
         {
-            String s = (String) i.next();
 
             if ( s.startsWith( "/" ) )
             {

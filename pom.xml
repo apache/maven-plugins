@@ -89,13 +89,11 @@ under the License.
       <groupId>org.apache.maven.wagon</groupId>
       <artifactId>wagon-file</artifactId>
       <version>${wagonVersion}</version>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.wagon</groupId>
       <artifactId>wagon-http-lightweight</artifactId>
       <version>${wagonVersion}</version>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.wagon</groupId>
@@ -116,6 +114,11 @@ under the License.
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-utils</artifactId>
       <version>3.0.8</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+      <version>2.2</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
