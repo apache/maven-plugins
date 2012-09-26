@@ -309,7 +309,7 @@ under the License.
       <version>2.5</version>
     </dependency>
 
-    <!-- Doxia-sitetools -->
+    <!-- Doxia Sitetools -->
     <dependency>
       <groupId>org.apache.maven.doxia</groupId>
       <artifactId>doxia-decoration-model</artifactId>
@@ -321,10 +321,11 @@ under the License.
       <version>${doxiaSitetoolsVersion}</version>
     </dependency>
 
+    <!-- Doxia Tools -->
     <dependency>
       <groupId>org.apache.maven.doxia</groupId>
       <artifactId>doxia-integration-tools</artifactId>
-      <version>1.5-SNAPSHOT</version>
+      <version>1.5</version>
       <exclusions>
         <exclusion>
           <groupId>org.apache.maven</groupId>
