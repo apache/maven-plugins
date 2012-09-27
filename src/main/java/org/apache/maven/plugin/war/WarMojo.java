@@ -230,6 +230,9 @@ public class WarMojo
         {
             warArchiver.setWebxml( webXmlFile );
         }
+
+        warArchiver.setRecompressAddedZips( isRecompressZippedFiles()  );
+
         if ( !failOnMissingWebXml )
         {
             getLog().debug( "Build won't fail if web.xml file is missing." );
