@@ -59,6 +59,12 @@ under the License.
     <mavenPluginVersion>3.1</mavenPluginVersion>
   </properties>
 
+  <contributors>
+    <contributor>
+      <name>Baron Roberts</name>
+    </contributor>
+  </contributors>
+
   <dependencies>
     <!-- maven -->
     <dependency>
