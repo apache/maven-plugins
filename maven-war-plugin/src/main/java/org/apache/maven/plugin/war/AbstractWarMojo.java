@@ -305,6 +305,16 @@ public abstract class AbstractWarMojo
     protected String escapeString;
 
     /**
+     * Indicates if zip archives (jar,zip etc) being added to the war should be
+     * compressed again. Compressing again can result in smaller archive size, but
+     * gives noticeably longer execution time.
+     *
+     * @since 2.3
+     */
+    @Parameter( defaultValue = "false" )
+    private boolean recompressZippedFiles;
+
+    /**
      * The archive configuration to use.
      * See <a href="http://maven.apache.org/shared/maven-archiver/index.html">Maven Archiver Reference</a>.
      */
@@ -895,5 +905,10 @@ public abstract class AbstractWarMojo
     protected MavenSession getSession()
     {
         return this.session;
+    }
+
+    protected boolean isRecompressZippedFiles()
+    {
+        return recompressZippedFiles;
     }
 }
