@@ -122,7 +122,7 @@
             includeBaseDirectory to true will create an archive that
             includes this base directory. If this option is set to false
             the archive created will unzip its content to the current
-            directory. Default value is true.
+            directory.
           </description>
         </field>
         <field>
@@ -142,7 +142,7 @@
           <description>
             Includes a site directory in the final archive. The site directory
             location of a project is determined by the siteDirectory parameter
-            of the Assembly Plugin. Default value is false.
+            of the Assembly Plugin.
           </description>
         </field>
         <field>
@@ -599,8 +599,8 @@
           <defaultValue>${artifact.artifactId}-${artifact.version}${dashClassifier?}.${artifact.extension}</defaultValue>
           <description>
             Sets the mapping pattern for all dependencies included in this
-            assembly. Default is ${artifact.artifactId}-${artifact.version}${dashClassifier?}.${artifact.extension}.
-            (Since 2.2-beta-2; 2.2-beta-1 uses ${artifactId}-${version}${dashClassifier?}.${extension})
+            assembly. (Since 2.2-beta-2; 2.2-beta-1 uses ${artifactId}-${version}${dashClassifier?}.${extension}
+            as default value)
           </description>
         </field>
         <field>
@@ -612,7 +612,7 @@
             If set to true, this property will unpack all dependencies
             into the specified output directory. When set to false
             dependencies will be includes as archives (jars). Can only unpack
-            jar, zip, tar.gz, and tar.bz archives. Default value is false.
+            jar, zip, tar.gz, and tar.bz archives.
           </description>
         </field>
         <field>
@@ -634,7 +634,6 @@
           <required>true</required>
           <description>
             Sets the dependency scope for this dependencySet.
-            Default scope value is "runtime".
           </description>
         </field>
         <field>
@@ -644,8 +643,7 @@
           <defaultValue>true</defaultValue>
           <description><![CDATA[
           Determines whether the artifact produced during the current project's
-          build should be included in this dependency set. Default value is true,
-          for backward compatibility. (Since 2.2-beta-1)
+          build should be included in this dependency set. (Since 2.2-beta-1)
           ]]></description>
         </field>
         <field>
@@ -655,7 +653,7 @@
           <defaultValue>false</defaultValue>
           <description><![CDATA[
           Determines whether the attached artifacts produced during the current project's
-          build should be included in this dependency set. Default value is false. (Since 2.2-beta-1)
+          build should be included in this dependency set. (Since 2.2-beta-1)
           ]]></description>
         </field>
         <field>
@@ -712,8 +710,7 @@
           <defaultValue>false</defaultValue>
           <description>
           If set to true, the plugin will include all projects in the current reactor for processing 
-          in this ModuleSet. These will be subject to include/exclude rules.
-          Default value is true. (Since 2.2)
+          in this ModuleSet. These will be subject to include/exclude rules. (Since 2.2)
           </description>
         </field>
         <field>
@@ -723,8 +720,7 @@
           <defaultValue>true</defaultValue>
           <description>
           If set to false, the plugin will exclude sub-modules from processing in this ModuleSet.
-          Otherwise, it will process all sub-modules, each subject to include/exclude rules.
-          Default value is true. (Since 2.2-beta-1)
+          Otherwise, it will process all sub-modules, each subject to include/exclude rules. (Since 2.2-beta-1)
           </description>
         </field>
         <field>
@@ -908,7 +904,7 @@
           <description>
             <![CDATA[
             Specifies whether the module's finalName should be prepended to the outputDirectory 
-            values of any fileSets applied to it. Default value is true. (Since 2.2-beta-1)
+            values of any fileSets applied to it. (Since 2.2-beta-1)
             ]]>
           </description>
         </field>
@@ -922,8 +918,7 @@
             Specifies whether sub-module directories below the current module should be excluded
             from fileSets applied to that module. This might be useful if you only mean to copy
             the sources for the exact module list matched by this ModuleSet, ignoring (or processing
-            separately) the modules which exist in directories below the current one. 
-            Default value is true. (Since 2.2-beta-1)
+            separately) the modules which exist in directories below the current one. (Since 2.2-beta-1)
             ]]>
           </description>
         </field>
@@ -1054,7 +1049,7 @@
           <description>
           If set to true, the plugin will include the direct and transitive dependencies of
           of the project modules included here.  Otherwise, it will only include the module
-          packages only. Default value is true.
+          packages only.
           </description>
         </field>
         <field>
@@ -1081,7 +1076,6 @@
             If set to true, this property will unpack all module packages
             into the specified output directory. When set to false
             module packages will be included as archives (jars).
-            Default value is true.
           </description>
         </field>
         <field>
@@ -1103,9 +1097,9 @@
           <description>
             Sets the mapping pattern for all NON-UNPACKED dependencies included
             in this assembly.
-            Default is ${module.artifactId}-${module.version}${dashClassifier?}.${module.extension}.
-            (Since 2.2-beta-2; 2.2-beta-1 uses ${artifactId}-${version}${dashClassifier?}.${extension}) NOTE: If the 
-            dependencySet specifies unpack == true, outputFileNameMapping WILL NOT BE USED; in these cases, use outputDirectory.
+            (Since 2.2-beta-2; 2.2-beta-1 uses ${artifactId}-${version}${dashClassifier?}.${extension} as default value)
+            NOTE: If the dependencySet specifies unpack == true, outputFileNameMapping WILL NOT BE USED; in these cases,
+            use outputDirectory.
           </description>
         </field>
       </fields>
@@ -1221,7 +1215,7 @@
           <description>
             If set to true, this property will trigger the creation of repository
             metadata which will allow the repository to be used as a functional remote
-            repository. Default value is false.
+            repository.
           </description>
         </field>
         <field>
@@ -1246,8 +1240,7 @@
           <defaultValue>runtime</defaultValue>
           <required>true</required>
           <description>
-            Specifies the scope for artifacts included in this repository.
-            Default scope value is "runtime". (Since 2.2-beta-1)
+            Specifies the scope for artifacts included in this repository. (Since 2.2-beta-1)
           </description>
         </field>
       </fields>
