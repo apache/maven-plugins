@@ -2,8 +2,9 @@
  Adding and Filtering External Web Resources
  ------
  Pete Marvin King
+ Dennis Lundberg
  ------
- 2012-09-25
+ 2012-09-28
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -340,6 +341,14 @@ documentedproject-1.0-SNAPSHOT.war
    <configuration>some_config_value</configuration>
 </another_ioc_container>
 +----------+
+
+  <<Note:>> In versions 2.2 and earlier of this plugin the platform encoding was
+  used when filtering resources. Depending on what that encoding was you could
+  end up with scrambled characters after filtering. Starting with version 2.3
+  this plugin respects the property <<<project.build.sourceEncoding>>> when
+  filtering resources. One notable exception to this is that <<<.xml>>> files
+  are filtered using the encoding specified inside the xml-file itself.
+
 
 **Overriding the default destination directory
 
