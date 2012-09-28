@@ -32,7 +32,6 @@ import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.TimeZone;
 
 /**
@@ -44,7 +43,7 @@ import java.util.TimeZone;
 public class ChangeLogHandler
     extends DefaultHandler
 {
-    private Collection<ChangeLogSet> changeSets;
+    private Collection changeSets;
 
     private String bufData = "";
 
@@ -52,7 +51,7 @@ public class ChangeLogHandler
 
     private ChangeSet bufEntry;
 
-    private List<ChangeSet> bufEntries;
+    private LinkedList bufEntries;
 
     private ChangeLogSet bufSet;
 
@@ -63,7 +62,7 @@ public class ChangeLogHandler
      *
      * @param changeSets collection object to store all change sets found within the xml document
      */
-    public ChangeLogHandler( Collection<ChangeLogSet> changeSets )
+    public ChangeLogHandler( Collection changeSets )
     {
         this.changeSets = changeSets;
     }
@@ -177,7 +176,7 @@ public class ChangeLogHandler
         }
         else if ( "changeset".equals( qName ) )
         {
-            bufEntries = new LinkedList<ChangeSet>();
+            bufEntries = new LinkedList();
 
             currentPattern = attributes.getValue( "datePattern" );
             if ( currentPattern == null )

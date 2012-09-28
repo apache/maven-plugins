@@ -19,7 +19,6 @@ package org.apache.maven.plugin.changelog.stubs;
  * under the License.
  */
 
-import org.apache.maven.scm.ChangeSet;
 import org.apache.maven.scm.command.changelog.ChangeLogSet;
 
 import java.util.Collections;
@@ -45,6 +44,6 @@ public class ChangeLogScmResultStub
     /** {@inheritDoc} */
     public ChangeLogSet getChangeLog()
     {
-        return new ChangeLogSet( Collections.<ChangeSet> emptyList(), new Date( 360 ), new Date( 720 ) );
+        return new ChangeLogSet( Collections.EMPTY_LIST, new Date( 360 ), new Date( 720 ) );
     }
 }

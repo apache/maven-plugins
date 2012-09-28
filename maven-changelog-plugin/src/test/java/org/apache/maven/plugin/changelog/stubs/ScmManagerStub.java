@@ -90,7 +90,7 @@ public class ScmManagerStub
     }
 
     /** {@inheritDoc} */
-    public List<String> validateScmRepository( String string )
+    public List validateScmRepository( String string )
     {
         return null;
     }

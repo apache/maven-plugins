@@ -28,6 +28,7 @@ import org.apache.maven.scm.command.changelog.ChangeLogSet;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -89,7 +90,7 @@ public class FileActivityReport
     }
 
     /** {@inheritDoc} */
-    protected void doGenerateReport( List<ChangeLogSet> changeLogSets, ResourceBundle bundle, Sink sink )
+    protected void doGenerateReport( List changeLogSets, ResourceBundle bundle, Sink sink )
     {
         sink.head();
         sink.title();
@@ -103,8 +104,9 @@ public class FileActivityReport
         sink.text( bundle.getString( "report.file-activity.mainTitle" ) );
         sink.sectionTitle1_();
 
-        for ( ChangeLogSet set : changeLogSets )
+        for ( Iterator sets = changeLogSets.iterator(); sets.hasNext(); )
         {
+            ChangeLogSet set = (ChangeLogSet) sets.next();
             doChangedSets( set, bundle, sink );
         }
 
@@ -156,13 +158,14 @@ public class FileActivityReport
      */
     private void doRows( ChangeLogSet set, Sink sink )
     {
-        List<List<ChangeFile>> list = getOrderedFileList( set.getChangeSets() );
+        List list = getOrderedFileList( set.getChangeSets() );
 
         initReportUrls();
 
-        for ( List<ChangeFile> revision : list )
+        for ( Iterator i = list.iterator(); i.hasNext(); )
         {
-            ChangeFile file = revision.get( 0 );
+            List revision = (List) i.next();
+            ChangeFile file = (ChangeFile) revision.get( 0 );
 
             sink.tableRow();
             sink.tableCell();
@@ -201,25 +204,34 @@ public class FileActivityReport
      * @param entries the changelog entries to generate the report
      * @return list of changed files within the SCM with the number of times changed in descending order
      */
-    private List<List<ChangeFile>> getOrderedFileList( Collection<ChangeSet> entries )
+    private List getOrderedFileList( Collection entries )
     {
-        List<List<ChangeFile>> list = new LinkedList<List<ChangeFile>>();
+        List list = new LinkedList();
 
-        Map<String, List<ChangeFile>> map = new HashMap<String, List<ChangeFile>>();
+        Map map = new HashMap();
 
-        for ( ChangeSet entry : entries )
+        for ( Iterator i = entries.iterator(); i.hasNext(); )
         {
-            for ( ChangeFile file : entry.getFiles() )
-            {
-                List<ChangeFile> revisions = map.get( file.getName() );
+            ChangeSet entry = (ChangeSet) i.next();
 
-                if ( revisions == null )
+            for ( Iterator j = entry.getFiles().iterator(); j.hasNext(); )
+            {
+                ChangeFile file = (ChangeFile) j.next();
+
+                List revisions;
+
+                if ( map.containsKey( file.getName() ) )
                 {
-                    revisions = new LinkedList<ChangeFile>();
-                    map.put( file.getName(), revisions );
+                    revisions = (List) map.get( file.getName() );
+                }
+                else
+                {
+                    revisions = new LinkedList();
                 }
 
                 revisions.add( file );
+
+                map.put( file.getName(), revisions );
             }
         }
 
