@@ -461,7 +461,7 @@ public class ScmProviderStub
     }
 
     /** {@inheritDoc} */
-    public List<String> validateScmUrl( String string, char c )
+    public List validateScmUrl( String string, char c )
     {
         return null;
     }

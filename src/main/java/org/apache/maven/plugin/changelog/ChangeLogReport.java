@@ -138,13 +138,13 @@ public class ChangeLogReport
      * Used to specify the absolute date (or list of dates) to start log entries from.
      */
     @Parameter
-    private List<String> dates;
+    private List dates;
 
     /**
      * Used to specify the tag (or list of tags) to start log entries from.
      */
     @Parameter
-    private List<String> tags;
+    private List tags;
 
     /**
      * Used to specify the date format of the log entries that are retrieved from your SCM system.
@@ -368,13 +368,13 @@ public class ChangeLogReport
      * @since 2.2
      */
     @Parameter( property = "project.developers" )
-    protected List<Developer> developers;
+    protected List developers;
 
     /**
      * List of provider implementations.
      */
     @Parameter
-    private Map<String, String> providerImplementations;
+    private Map providerImplementations;
 
     // temporary field holder while generating the report
     private String rptRepository, rptOneRepoParam, rptMultiRepoParam;
@@ -383,10 +383,10 @@ public class ChangeLogReport
     private String connection;
 
     // field used to hold a map of the developers by Id
-    private HashMap<String, Developer> developersById;
+    private HashMap developersById;
 
     // field used to hold a map of the developers by Name
-    private HashMap<String, Developer> developersByName;
+    private HashMap developersByName;
 
     /**
      * The system properties to use (needed by the perforce scm provider).
@@ -408,12 +408,12 @@ public class ChangeLogReport
 
         if ( providerImplementations != null )
         {
-            for ( Map.Entry<String, String> entry : providerImplementations.entrySet() )
+            for ( Iterator i = providerImplementations.keySet().iterator(); i.hasNext(); )
             {
-                String providerType = entry.getKey();
-                String providerImplementation = entry.getValue();
+                String providerType = (String) i.next();
+                String providerImplementation = (String) providerImplementations.get( providerType );
                 getLog().info( "Change the default '" + providerType + "' provider implementation to '"
-                                   + providerImplementation + "'." );
+                    + providerImplementation + "'." );
                 manager.setScmProviderImplementation( providerType, providerImplementation );
             }
         }
@@ -427,7 +427,7 @@ public class ChangeLogReport
         if ( systemProperties != null )
         {
             // Add all system properties configured by the user
-            Iterator<?> iter = systemProperties.keySet().iterator();
+            Iterator iter = systemProperties.keySet().iterator();
 
             while ( iter.hasNext() )
             {
@@ -462,13 +462,15 @@ public class ChangeLogReport
      */
     private void initializeDeveloperMaps()
     {
-        developersById = new HashMap<String, Developer>();
-        developersByName = new HashMap<String, Developer>();
+        developersById = new HashMap();
+        developersByName = new HashMap();
 
         if ( developers != null )
         {
-            for ( Developer developer : developers )
+            for ( Iterator i = developers.iterator(); i.hasNext(); )
             {
+                Developer developer = (Developer) i.next();
+
                 developersById.put( developer.getId(), developer );
                 developersByName.put( developer.getName(), developer );
             }
@@ -481,10 +483,10 @@ public class ChangeLogReport
      *
      * @throws MavenReportException
      */
-    protected List<ChangeLogSet> getChangedSets()
+    protected List getChangedSets()
         throws MavenReportException
     {
-        List<ChangeLogSet> changelogList = null;
+        List changelogList = null;
 
         if ( !outputXML.isAbsolute() )
         {
@@ -549,7 +551,7 @@ public class ChangeLogReport
         return changelogList;
     }
 
-    private void writeChangelogXml( List<ChangeLogSet> changelogList )
+    private void writeChangelogXml( List changelogList )
         throws FileNotFoundException, UnsupportedEncodingException, IOException
     {
         StringBuilder changelogXml = new StringBuilder();
@@ -557,10 +559,11 @@ public class ChangeLogReport
         changelogXml.append( "<?xml version=\"1.0\" encoding=\"" ).append( getOutputEncoding() ).append( "\"?>\n" );
         changelogXml.append( "<changelog>" );
 
-        for ( ChangeLogSet changelogSet : changelogList )
+        for ( Iterator sets = changelogList.iterator(); sets.hasNext(); )
         {
             changelogXml.append( "\n  " );
 
+            ChangeLogSet changelogSet = (ChangeLogSet) sets.next();
             String changeset = changelogSet.toXML( getOutputEncoding() );
 
             //remove xml header
@@ -594,12 +597,12 @@ public class ChangeLogReport
      * @return changedlogsets generated from the SCM
      * @throws MavenReportException
      */
-    protected List<ChangeLogSet> generateChangeSetsFromSCM()
+    protected List generateChangeSetsFromSCM()
         throws MavenReportException
     {
         try
         {
-            List<ChangeLogSet> changeSets = new ArrayList<ChangeLogSet>();
+            List changeSets = new ArrayList();
 
             ScmRepository repository = getScmRepository();
 
@@ -623,16 +626,16 @@ public class ChangeLogReport
                     throw new MavenReportException( "The type '" + type + "' isn't supported for svn." );
                 }
 
-                Iterator<String> tagsIter = tags.iterator();
+                Iterator tagsIter = tags.iterator();
 
-                String startTag = tagsIter.next();
+                String startTag = (String) tagsIter.next();
                 String endTag = null;
 
                 if ( tagsIter.hasNext() )
                 {
                     while ( tagsIter.hasNext() )
                     {
-                        endTag = tagsIter.next();
+                        endTag = (String) tagsIter.next();
 
                         result = provider.changeLog( repository, new ScmFileSet( basedir ), new ScmRevision( startTag ),
                                                      new ScmRevision( endTag ) );
@@ -656,16 +659,16 @@ public class ChangeLogReport
             }
             else if ( "date".equals( type ) )
             {
-                Iterator<String> dateIter = dates.iterator();
+                Iterator dateIter = dates.iterator();
 
-                String startDate = dateIter.next();
+                String startDate = (String) dateIter.next();
                 String endDate = null;
 
                 if ( dateIter.hasNext() )
                 {
                     while ( dateIter.hasNext() )
                     {
-                        endDate = dateIter.next();
+                        endDate = (String) dateIter.next();
 
                         result = provider.changeLog( repository, new ScmFileSet( basedir ), parseDate( startDate ),
                                                      parseDate( endDate ), 0, (ScmBranch) null );
@@ -970,7 +973,7 @@ public class ChangeLogReport
      * @param bundle        the resource bundle to retrieve report phrases from
      * @param sink          the report formatting tool
      */
-    protected void doGenerateReport( List<ChangeLogSet> changeLogSets, ResourceBundle bundle, Sink sink )
+    protected void doGenerateReport( List changeLogSets, ResourceBundle bundle, Sink sink )
     {
         sink.head();
         sink.title();
@@ -988,8 +991,10 @@ public class ChangeLogReport
         // Summary section
         doSummarySection( changeLogSets, bundle, sink );
 
-        for ( ChangeLogSet changeLogSet : changeLogSets )
+        for ( Iterator sets = changeLogSets.iterator(); sets.hasNext(); )
         {
+            ChangeLogSet changeLogSet = (ChangeLogSet) sets.next();
+
             doChangedSet( changeLogSet, bundle, sink );
         }
 
@@ -1007,7 +1012,7 @@ public class ChangeLogReport
      * @param bundle        the resource bundle to retrieve report phrases from
      * @param sink          the report formatting tool
      */
-    private void doSummarySection( List<ChangeLogSet> changeLogSets, ResourceBundle bundle, Sink sink )
+    private void doSummarySection( List changeLogSets, ResourceBundle bundle, Sink sink )
     {
         sink.paragraph();
 
@@ -1115,7 +1120,7 @@ public class ChangeLogReport
      * @param entries a collection of SCM changes
      * @return number of files changed for the changedsets
      */
-    protected long countFilesChanged( Collection<ChangeSet> entries )
+    protected long countFilesChanged( Collection entries )
     {
         if ( entries == null )
         {
@@ -1127,22 +1132,29 @@ public class ChangeLogReport
             return 0;
         }
 
-        HashMap<String, List<ChangeFile>> fileList = new HashMap<String, List<ChangeFile>>();
+        HashMap fileList = new HashMap();
 
-        for ( ChangeSet entry : entries )
+        for ( Iterator i = entries.iterator(); i.hasNext(); )
         {
-            for ( ChangeFile file : entry.getFiles() )
-            {
-                String name = file.getName();
-                List<ChangeFile> list = fileList.get( name );
+            ChangeSet entry = (ChangeSet) i.next();
 
-                if ( list != null )
+            List files = entry.getFiles();
+
+            for ( Iterator fileIterator = files.iterator(); fileIterator.hasNext(); )
+            {
+                ChangeFile file = (ChangeFile) fileIterator.next();
+
+                String name = file.getName();
+
+                if ( fileList.containsKey( name ) )
                 {
+                    LinkedList list = (LinkedList) fileList.get( name );
+
                     list.add( file );
                 }
                 else
                 {
-                    list = new LinkedList<ChangeFile>();
+                    LinkedList list = new LinkedList();
 
                     list.add( file );
 
@@ -1161,7 +1173,7 @@ public class ChangeLogReport
      * @param bundle  the resource bundle to retrieve report phrases from
      * @param sink    the report formatting tool
      */
-    private void doChangedSetTable( Collection<ChangeSet> entries, ResourceBundle bundle, Sink sink )
+    private void doChangedSetTable( Collection entries, ResourceBundle bundle, Sink sink )
     {
         sink.table();
 
@@ -1179,17 +1191,21 @@ public class ChangeLogReport
 
         initReportUrls();
 
-        List<ChangeSet> sortedEntries = new ArrayList<ChangeSet>( entries );
-        Collections.sort( sortedEntries, new Comparator<ChangeSet>()
+        List sortedEntries = new ArrayList( entries );
+        Collections.sort( sortedEntries, new Comparator()
         {
-            public int compare( ChangeSet changeSet0, ChangeSet changeSet1 )
+            public int compare( Object arg0, Object arg1 )
             {
+                ChangeSet changeSet0 = (ChangeSet) arg0;
+                ChangeSet changeSet1 = (ChangeSet) arg1;
                 return changeSet1.getDate().compareTo( changeSet0.getDate() );
             }
         } );
 
-        for ( ChangeSet entry : sortedEntries )
+        for ( Iterator i = sortedEntries.iterator(); i.hasNext(); )
         {
+            ChangeSet entry = (ChangeSet) i.next();
+
             doChangedSetDetail( entry, bundle, sink );
         }
 
@@ -1402,10 +1418,11 @@ public class ChangeLogReport
      * @param files list of files to generate the reports from
      * @param sink  the report formatting tool
      */
-    private void doChangedFiles( List<ChangeFile> files, Sink sink )
+    private void doChangedFiles( List files, Sink sink )
     {
-        for ( ChangeFile file : files )
+        for ( Iterator i = files.iterator(); i.hasNext(); )
         {
+            ChangeFile file = (ChangeFile) i.next();
             sinkLogFile( sink, file.getName(), file.getRevision() );
         }
     }

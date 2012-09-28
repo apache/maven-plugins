@@ -40,17 +40,17 @@ public class ChangeLogTest
     public void testReadFile()
         throws Exception
     {
-        List<ChangeLogSet> changedLogs = readChangeLogXml( "min-changelog.xml" );
+        List changedLogs = readChangeLogXml( "min-changelog.xml" );
 
         assertNotNull( "Test changedSets were parsed", changedLogs );
 
         assertEquals( "Test number of changelog entries", 2, changedLogs.size() );
 
-        ChangeLogSet changelogSets = changedLogs.get( 0 );
+        ChangeLogSet changelogSets = (ChangeLogSet) changedLogs.get( 0 );
 
         assertEquals( "Test number of revisions on changelog 1", 2, changelogSets.getChangeSets().size() );
 
-        ChangeSet changeSet = changelogSets.getChangeSets().get( 0 );
+        ChangeSet changeSet = (ChangeSet) changelogSets.getChangeSets().get( 0 );
 
 
         Calendar cal = Calendar.getInstance(); // new cal with default TZ
@@ -68,14 +68,14 @@ public class ChangeLogTest
 
         assertEquals( "Test changelog 1 set 1 files", 1, changeSet.getFiles().size() );
 
-        ChangeFile changeFile = changeSet.getFiles().get( 0 );
+        ChangeFile changeFile = (ChangeFile) changeSet.getFiles().get( 0 );
 
         assertEquals( "Test changelog 1 set 1 file 1 filename", "/path/to/file.extension", changeFile.getName() );
 
         assertEquals( "Test changelog 1 set 1 file 1 revision", "1", changeFile.getRevision() );
 
 
-        changeSet = changelogSets.getChangeSets().get( 1 );
+        changeSet = (ChangeSet) changelogSets.getChangeSets().get( 1 );
 
         cal.set( 2005, 1, 24, 21, 30, 0 );
 
@@ -87,13 +87,13 @@ public class ChangeLogTest
 
         assertEquals( "Test changelog 1 set 2 files", 2, changeSet.getFiles().size() );
 
-        changeFile = changeSet.getFiles().get( 0 );
+        changeFile = (ChangeFile) changeSet.getFiles().get( 0 );
 
         assertEquals( "Test changelog 1 set 2 file 1 filename", "/path/to/file.extension", changeFile.getName() );
 
         assertEquals( "Test changelog 1 set 2 file 1 revision", "2", changeFile.getRevision() );
 
-        changeFile = changeSet.getFiles().get( 1 );
+        changeFile = (ChangeFile) changeSet.getFiles().get( 1 );
 
         assertEquals( "Test changelog 1 set 2 file 2 filename", "/path/to/file2.extension", changeFile.getName() );
 
@@ -101,11 +101,11 @@ public class ChangeLogTest
 
 
 
-        changelogSets = changedLogs.get( 1 );
+        changelogSets = (ChangeLogSet) changedLogs.get( 1 );
 
         assertEquals( "Test number of revisions on changelog 2", 2, changelogSets.getChangeSets().size() );
 
-        changeSet = changelogSets.getChangeSets().get( 0 );
+        changeSet = (ChangeSet) changelogSets.getChangeSets().get( 0 );
 
         cal.set( 2005, 1, 25, 22, 45, 0 );
 
@@ -117,14 +117,14 @@ public class ChangeLogTest
 
         assertEquals( "Test changelog 2 set 1 files", 1, changeSet.getFiles().size() );
 
-        changeFile = changeSet.getFiles().get( 0 );
+        changeFile = (ChangeFile) changeSet.getFiles().get( 0 );
 
         assertEquals( "Test changelog 2 set 1 file 1 filename", "/path/to/file.extension", changeFile.getName() );
 
         assertEquals( "Test changelog 2 set 1 file 1 revision", "3", changeFile.getRevision() );
 
 
-        changeSet = changelogSets.getChangeSets().get( 1 );
+        changeSet = (ChangeSet) changelogSets.getChangeSets().get( 1 );
 
         cal.set( 2100, 1, 25, 5, 30, 0 );
 
@@ -136,20 +136,20 @@ public class ChangeLogTest
 
         assertEquals( "Test changelog 2 set 2 files", 2, changeSet.getFiles().size() );
 
-        changeFile = changeSet.getFiles().get( 0 );
+        changeFile = (ChangeFile) changeSet.getFiles().get( 0 );
 
         assertEquals( "Test changelog 2 set 2 file 1 filename", "/path/to/file.extension", changeFile.getName() );
 
         assertEquals( "Test changelog 2 set 2 file 1 revision", "4", changeFile.getRevision() );
 
-        changeFile = changeSet.getFiles().get( 1 );
+        changeFile = (ChangeFile) changeSet.getFiles().get( 1 );
 
         assertEquals( "Test changelog 2 set 2 file 2 filename", "/path/to/file2.extension", changeFile.getName() );
 
         assertEquals( "Test changelog 2 set 2 file 2 revision", "4", changeFile.getRevision() );
     }
 
-    private List<ChangeLogSet> readChangeLogXml( String filename )
+    private List readChangeLogXml( String filename )
         throws Exception
     {
         File inputFile = new File( getBasedir(), "src/test/changelog-xml/" + filename );

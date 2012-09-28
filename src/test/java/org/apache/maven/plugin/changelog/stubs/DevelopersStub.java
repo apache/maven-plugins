@@ -29,13 +29,13 @@ import java.util.List;
  * @version $Id$
  */
 public class DevelopersStub
-    extends ArrayList<Developer>
+    extends ArrayList
 {
     public DevelopersStub()
     {
         super();
 
-        List<Developer> developers = new ArrayList<Developer>();
+        List developers = new ArrayList();
 
         Developer developer = new Developer();
         developer.setName( "Edwin Punzalan" );
