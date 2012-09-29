@@ -1749,7 +1749,8 @@ public class JavadocUtil
     {
         if ( StringUtils.isEmpty( str ) )
         {
-            return false;
+            // unnamed package is valid (even if bad practice :) )
+            return true;
         }
 
         int idx;

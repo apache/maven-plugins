@@ -4231,7 +4231,7 @@ public abstract class AbstractJavadocMojo
 
         try
         {
-            FileUtils.fileWrite( optionsFile.getAbsolutePath(), options.toString() );
+            FileUtils.fileWrite( optionsFile.getAbsolutePath(), null /* platform encoding */, options.toString() );
         }
         catch ( IOException e )
         {
