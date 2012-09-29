@@ -298,6 +298,9 @@ public class JavadocUtilTest
             assertTrue( true );
         }
 
+        url = this.getClass().getResource( "/JavadocUtilTest-package-list.txt" ).toURI().toURL();
+        assertTrue( JavadocUtil.isValidPackageList( url, settings, true ) );
+
         url = new URL( "http://maven.apache.org/plugins/maven-javadoc-plugin/apidocs/package-list" );
         assertTrue( JavadocUtil.isValidPackageList( url, settings, true ) );
 
