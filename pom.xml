@@ -41,6 +41,10 @@ under the License.
     <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/trunk/maven-scm-publish-plugin/</developerConnection>
     <url>http://svn.apache.org/viewvc/maven/plugins/trunk/maven-scm-publish-plugin/</url>
   </scm>
+  <issueManagement>
+    <system>JIRA</system>
+    <url>http://jira.codehaus.org/browse/MSCMPUB</url>
+  </issueManagement>
 
   <distributionManagement>
     <site>
