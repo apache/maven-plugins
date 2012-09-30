@@ -33,6 +33,8 @@ import org.apache.maven.plugin.changes.ChangesXML;
 import org.apache.maven.plugin.changes.IssueAdapter;
 import org.apache.maven.plugin.changes.ProjectUtils;
 import org.apache.maven.plugin.changes.ReleaseUtils;
+import org.apache.maven.plugin.github.GitHubDownloader;
+import org.apache.maven.plugin.github.GitHubIssueManagementSystem;
 import org.apache.maven.plugin.issues.Issue;
 import org.apache.maven.plugin.issues.IssueManagementSystem;
 import org.apache.maven.plugin.issues.IssueUtils;
@@ -73,6 +75,8 @@ public class AnnouncementMojo
     private static final String JIRA = "JIRA";
 
     private static final String TRAC = "Trac";
+
+    private static final String GIT_HUB = "GitHub";
 
     /**
      * The name of the file which will contain the generated announcement. If
@@ -384,6 +388,26 @@ public class AnnouncementMojo
     @Parameter( property = "changes.tracUser", defaultValue = "" )
     private String tracUser;
 
+    //=======================================//
+    //  Github Parameters                    //
+    //=======================================//
+
+    /**
+     * The scheme of your github api domain. Only use if using github enterprise.
+     * 
+     * @since 2.9
+     */
+    @Parameter( defaultValue = "http", property = "changes.githubAPIScheme")
+    private String githubAPIScheme;
+
+    /**
+     * The port of your github api domain. Only use if using github enterprise.
+     * 
+     * @since 2.9
+     */
+    @Parameter( defaultValue = "80", property = "changes.githubAPIPort")
+    private int githubAPIPort;
+
     private ReleaseUtils releaseUtils = new ReleaseUtils( getLog() );
 
     private ChangesXML xml;
@@ -474,6 +498,21 @@ public class AnnouncementMojo
                 {
                     throw new MojoExecutionException(
                         "Something is wrong with the Issue Management section. See previous error messages." );
+                }
+            }
+
+            if ( issueManagementSystems.contains( GIT_HUB ) )
+            {
+                if ( ProjectUtils.validateIfIssueManagementComplete( project, GIT_HUB, "GitHub announcement", getLog() ) )
+                {
+                    List<Release> gitHubReleases = getGitHubReleases();
+                    releases = releaseUtils.mergeReleases( releases, gitHubReleases );
+                    getLog().info( "Including issues from GitHub in announcement..." );
+                }
+                else
+                {
+                    throw new MojoExecutionException(
+                                                      "Something is wrong with the Issue Management section. See previous error messages." );
                 }
             }
 
@@ -737,6 +776,21 @@ public class AnnouncementMojo
         catch ( Exception e )
         {
             throw new MojoExecutionException( "Failed to extract issues from Trac.", e );
+        }
+    }
+
+    protected List<Release> getGitHubReleases()
+        throws MojoExecutionException
+    {
+        try
+        {
+            GitHubDownloader issueDownloader =
+                new GitHubDownloader( project, githubAPIScheme, githubAPIPort, false, true );
+            return getReleases( issueDownloader.getIssueList(), new GitHubIssueManagementSystem() );
+        }
+        catch ( Exception e )
+        {
+            throw new MojoExecutionException( "Failed to extract issues from GitHub.", e );
         }
     }
 
