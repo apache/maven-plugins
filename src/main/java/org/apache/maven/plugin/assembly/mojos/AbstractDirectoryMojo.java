@@ -84,7 +84,7 @@ public abstract class AbstractDirectoryMojo
 
         try
         {
-            archiver.createArchive( assembly, fullName, "dir", this );
+            archiver.createArchive( assembly, fullName, "dir", this, isRecompressZippedFiles());
         }
         catch ( final ArchiveCreationException e )
         {

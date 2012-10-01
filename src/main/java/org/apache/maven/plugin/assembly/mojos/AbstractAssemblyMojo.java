@@ -283,6 +283,15 @@ public abstract class AbstractAssemblyMojo
     private boolean attach;
 
     /**
+     * Indicates if zip archives (jar,zip etc) being added to the assembly should be compressed again.
+     * Compressing again can result in smaller archive size, but gives noticeably longer execution time.
+     *
+     * @since 2.4
+     */
+    @Parameter( defaultValue = "false" )
+    private boolean recompressZippedFiles;
+
+    /**
      */
     @Component
     private AssemblyArchiver assemblyArchiver;
@@ -410,7 +419,7 @@ public abstract class AbstractAssemblyMojo
 
                 for ( final String format : effectiveFormats )
                 {
-                    final File destFile = assemblyArchiver.createArchive( assembly, fullName, format, this );
+                    final File destFile = assemblyArchiver.createArchive( assembly, fullName, format, this, isRecompressZippedFiles());
 
                     final MavenProject project = getProject();
                     final String classifier = getClassifier();
@@ -831,5 +840,9 @@ public abstract class AbstractAssemblyMojo
     
     public String getEncoding() {
     	return encoding;
+    }
+
+    protected boolean isRecompressZippedFiles() {
+        return recompressZippedFiles;
     }
 }
