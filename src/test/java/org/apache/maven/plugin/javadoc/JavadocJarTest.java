@@ -63,7 +63,7 @@ public class JavadocJarTest
         }
 
         assertTrue( set.contains( "stylesheet.css" ) );
-        assertTrue( set.contains( "resources/inherit.gif" ) );
+        assertTrue( set.contains( "resources/inherit.gif" ) || set.contains( "resources/background.gif" ) /* JDK7 */ );
         assertTrue( set.contains( "javadocjar/def/package-use.html" ) );
         assertTrue( set.contains( "javadocjar/def/package-tree.html" ) );
         assertTrue( set.contains( "javadocjar/def/package-summary.html" ) );

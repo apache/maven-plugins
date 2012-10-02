@@ -625,25 +625,18 @@ public class JavadocReportTest
         // Test overview
         File overviewSummary = new File( apidocs, "overview-summary.html" );
         assertTrue( overviewSummary.exists() );
-        String readed = readFile( overviewSummary );
-        assertTrue( readed.contains( "<TR BGCOLOR=\"white\" CLASS=\"TableRowColor\">" + LINE_SEPARATOR
-            + "<TD WIDTH=\"20%\"><B><A HREF=\"resources/test/package-summary.html\">resources.test</A></B></TD>"
-            + LINE_SEPARATOR + "<TD>blabla</TD>" + LINE_SEPARATOR + "</TR>" ) );
-        assertTrue( readed.contains( "<TR BGCOLOR=\"white\" CLASS=\"TableRowColor\">" + LINE_SEPARATOR
-            + "<TD WIDTH=\"20%\"><B><A HREF=\"resources/test2/package-summary.html\">resources.test2</A></B></TD>"
-            + LINE_SEPARATOR + "<TD>&nbsp;</TD>" + LINE_SEPARATOR + "</TR>" ) );
-        assertTrue( readed.contains( "<TR BGCOLOR=\"white\" CLASS=\"TableRowColor\">" + LINE_SEPARATOR
-            + "<TD WIDTH=\"20%\"><B><A HREF=\"resources2/test/package-summary.html\">resources2.test</A></B></TD>"
-            + LINE_SEPARATOR + "<TD>blabla</TD>" + LINE_SEPARATOR + "</TR>" ) );
-        assertTrue( readed.contains( "<TR BGCOLOR=\"white\" CLASS=\"TableRowColor\">" + LINE_SEPARATOR
-            + "<TD WIDTH=\"20%\"><B><A HREF=\"resources2/test2/package-summary.html\">resources2.test2</A></B></TD>"
-            + LINE_SEPARATOR + "<TD>&nbsp;</TD>" + LINE_SEPARATOR + "</TR>" ) );
+        String overview = readFile( overviewSummary ).toLowerCase();
+        assertTrue( overview.contains( "<a href=\"resources/test/package-summary.html\">resources.test</a>" ) );
+        assertTrue( overview.contains( ">blabla</" ) );
+        assertTrue( overview.contains( "<a href=\"resources/test2/package-summary.html\">resources.test2</a>" ) );
+        assertTrue( overview.contains( "<a href=\"resources2/test/package-summary.html\">resources2.test</a>" ) );
+        assertTrue( overview.contains( "<a href=\"resources2/test2/package-summary.html\">resources2.test2</a>" ) );
 
         // Test doc-files
         File app = new File( apidocs, "resources/test/App.html" );
         assertTrue( app.exists() );
-        readed = readFile( app );
-        assertTrue( readed.contains( "<img src=\"doc-files/maven-feather.png\" alt=\"Maven\"/>" ) );
+        overview = readFile( app );
+        assertTrue( overview.contains( "<img src=\"doc-files/maven-feather.png\" alt=\"Maven\"/>" ) );
         assertTrue( new File( apidocs, "resources/test/doc-files/maven-feather.png" ).exists() );
     }
 
@@ -677,11 +670,10 @@ public class JavadocReportTest
         File app = new File( getBasedir(), "target/test/unit/tag-test/target/site/apidocs/tag/test/App.html" );
         assertTrue( FileUtils.fileExists( app.getAbsolutePath() ) );
         String readed = readFile( app );
-        assertTrue( readed.contains( "<B>To do something:</B>" ) );
-        assertTrue( readed.contains( "<B>Generator Class:</B>" ) );
-        assertTrue( readed.contains( "<B>Version:</B>" ) );
-        assertTrue( readed.contains( "<DT><B>Version:</B></DT>" + LINE_SEPARATOR + "  <DD>1.0</DD>" + LINE_SEPARATOR
-            + "</DL>" ) );
+        assertTrue( readed.contains( ">To do something:</" ) );
+        assertTrue( readed.contains( ">Generator Class:</" ) );
+        assertTrue( readed.contains( ">Version:</" ) );
+        assertTrue( readed.toLowerCase().contains( "</dt>" + LINE_SEPARATOR + "  <dd>1.0</dd>" ) );
     }
 
     /**
