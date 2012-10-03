@@ -191,9 +191,9 @@ Using Component Descriptors
 * Creating The Distributions
 
   Since we didn't configure the assembly plugin to always generate the
-  configured assemblies during the project's normal build lifecycles, we create
+  configured assemblies during the project's normal build lifecycle, we create
   the distributions by:
 
 +-----
-  mvn assembly:assembly
+  mvn assembly:single
 +-----
