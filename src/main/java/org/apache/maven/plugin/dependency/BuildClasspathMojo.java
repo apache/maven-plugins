@@ -69,7 +69,7 @@ public class BuildClasspathMojo
 
     /**
      * The prefix to prepend on each dependent artifact. If undefined, the paths refer to the actual files store in the
-     * local repository (the stipVersion parameter does nothing then).
+     * local repository (the stripVersion parameter does nothing then).
      */
     @Parameter( property = "mdep.prefix" )
     private String prefix;
