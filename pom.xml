@@ -35,6 +35,12 @@ under the License.
   <name>Maven Plugins Aggregator</name>
   <description>Maven Plugins Aggregator</description>
 
+  <scm>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/trunk/</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/trunk/</developerConnection>
+    <url>http://svn.apache.org/viewvc/maven/plugins/trunk/</url>
+  </scm>
+
   <modules>
     <module>maven-plugins</module>
     <module>maven-acr-plugin</module>
