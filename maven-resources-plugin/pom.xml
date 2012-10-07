@@ -232,11 +232,11 @@ under the License.
           </plugin>
           <plugin>
             <groupId>org.codehaus.plexus</groupId>
-            <artifactId>plexus-maven-plugin</artifactId>
+            <artifactId>plexus-component-metadata</artifactId>
             <executions>
               <execution>
                 <goals>
-                  <goal>test-descriptor</goal>
+                  <goal>generate-test-metadata</goal>
                 </goals>
               </execution>
             </executions>
