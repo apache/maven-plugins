@@ -25,6 +25,8 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.util.Map;
 
+import org.apache.commons.io.input.XmlStreamReader;
+
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
@@ -32,7 +34,7 @@ import javax.xml.validation.Validator;
 
 import org.codehaus.plexus.util.FastMap;
 import org.codehaus.plexus.util.IOUtil;
-import org.codehaus.plexus.util.xml.XmlStreamReader;
+
 import org.xml.sax.SAXException;
 
 /**
@@ -135,9 +137,6 @@ public class DefaultChangesSchemaValidator
         }
     }
 
-    /**
-     * @see com.accor.commons.xmlschemas.SchemaValidator#loadSchema(java.lang.String)
-     */
     public void loadSchema( String uriSchema )
         throws SchemaValidatorException
     {
