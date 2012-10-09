@@ -40,7 +40,7 @@ import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
-import org.codehaus.plexus.util.xml.XmlStreamReader;
+import org.apache.commons.io.input.XmlStreamReader;
 
 /**
  * Construct a DocumentModel from a MavenProject and related information.
@@ -321,7 +321,7 @@ public class DocumentModelBuilder
         XmlStreamReader reader = null;
         try
         {
-            reader = ReaderFactory.newXmlReader( project.getFile() );
+            reader = new XmlStreamReader( project.getFile() );
             encoding = reader.getEncoding();
         }
         catch ( IOException e )
