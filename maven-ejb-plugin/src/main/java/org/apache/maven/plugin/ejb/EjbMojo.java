@@ -41,7 +41,7 @@ import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
 import org.codehaus.plexus.archiver.jar.ManifestException;
 import org.codehaus.plexus.util.FileUtils;
-import org.codehaus.plexus.util.xml.XmlStreamReader;
+import org.apache.commons.io.input.XmlStreamReader;
 
 import java.io.File;
 import java.io.IOException;

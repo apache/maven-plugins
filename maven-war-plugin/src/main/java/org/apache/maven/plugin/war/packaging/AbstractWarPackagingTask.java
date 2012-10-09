@@ -37,7 +37,7 @@ import org.codehaus.plexus.interpolation.InterpolationException;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
-import org.codehaus.plexus.util.xml.XmlStreamReader;
+import org.apache.commons.io.input.XmlStreamReader;
 
 /**
  * @author Stephane Nicoll

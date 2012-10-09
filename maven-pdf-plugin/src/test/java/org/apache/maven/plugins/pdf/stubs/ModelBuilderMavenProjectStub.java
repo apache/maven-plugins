@@ -29,7 +29,7 @@ import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
-import org.codehaus.plexus.util.xml.XmlStreamReader;
+import org.apache.commons.io.input.XmlStreamReader;
 
 /**
  * @author ltheussl
@@ -46,7 +46,7 @@ public class ModelBuilderMavenProjectStub
         XmlStreamReader reader = null;
         try
         {
-            reader = ReaderFactory.newXmlReader( getFile() );
+            reader = new XmlStreamReader( getFile() );
 
             Model model = new MavenXpp3Reader().read( reader );
             setModel( model );

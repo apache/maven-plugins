@@ -46,7 +46,7 @@ import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
-import org.codehaus.plexus.util.xml.XmlStreamReader;
+import org.apache.commons.io.input.XmlStreamReader;
 
 /**
  * Goal which creates a nicely formatted Changes Report in html format from a changes.xml file.
@@ -368,7 +368,7 @@ public class ChangesMojo
             try
             {
                 // so we get encoding from the file itself
-                xmlStreamReader = ReaderFactory.newXmlReader( changesXml );
+                xmlStreamReader = new XmlStreamReader( changesXml );
                 String encoding = xmlStreamReader.getEncoding();
                 File resultFile = new File( filteredOutputDirectory, project.getGroupId() + "." + project.getArtifactId() + "-changes.xml" );
 

@@ -86,7 +86,7 @@ import org.codehaus.plexus.util.PathTool;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.WriterFactory;
-import org.codehaus.plexus.util.xml.XmlStreamReader;
+import org.apache.commons.io.input.XmlStreamReader;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import javax.swing.text.AttributeSet;
@@ -808,7 +808,7 @@ public class PdfMojo
                 XmlStreamReader reader = null;
                 try
                 {
-                    reader = ReaderFactory.newXmlReader( descriptorFile );
+                    reader = new XmlStreamReader( descriptorFile );
                     String enc = reader.getEncoding();
 
                     String siteDescriptorContent = IOUtil.toString( reader );
