@@ -21,6 +21,7 @@ package org.apache.maven.plugin.dependency;
 
 import java.io.File;
 
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.ArtifactRepositoryPolicy;
 import org.apache.maven.artifact.repository.layout.DefaultRepositoryLayout;
@@ -44,7 +45,13 @@ public class TestGetMojo
         mojo = (GetMojo) lookupMojo( "get", testPom );
 
         assertNotNull( mojo );
-        setVariableValueToObject( mojo, "localRepository", new StubArtifactRepository( testDir.getAbsolutePath() ) );
+        setVariableValueToObject( mojo, "localRepository", new StubArtifactRepository( testDir.getAbsolutePath() ){
+            @Override
+            public String pathOf( Artifact artifact )
+            {
+                return super.pathOf( artifact ).replace( ':', '_' );
+            }
+        } );
     }
 
     /**
