@@ -34,7 +34,6 @@ import org.apache.maven.scm.ScmFileSet;
 import org.apache.maven.scm.ScmResult;
 import org.apache.maven.scm.command.add.AddScmResult;
 import org.apache.maven.scm.command.checkin.CheckInScmResult;
-import org.apache.maven.scm.command.remove.RemoveScmResult;
 import org.apache.maven.scm.manager.NoSuchScmProviderException;
 import org.apache.maven.scm.manager.ScmManager;
 import org.apache.maven.scm.provider.ScmProvider;
@@ -223,6 +222,11 @@ public abstract class AbstractScmPublishMojo
         getLog().info( String.format( format, params ) );
     }
 
+    protected void logWarn( String format, Object... params )
+    {
+        getLog().warn( String.format( format, params ) );
+    }
+
     protected void logError( String format, Object... params )
     {
         getLog().error( String.format( format, params ) );
@@ -281,8 +285,8 @@ public abstract class AbstractScmPublishMojo
         {
             for ( Map.Entry<String, String> providerEntry : providerImplementations.entrySet() )
             {
-                getLog().info( "Change the default '" + providerEntry.getKey() + "' provider implementation to '"
-                                   + providerEntry.getValue() + "'." );
+                logInfo( "Changing the default '%s' provider implementation to '%s'.", providerEntry.getKey(),
+                         providerEntry.getValue() );
                 scmManager.setScmProviderImplementation( providerEntry.getKey(), providerEntry.getValue() );
             }
         }
@@ -303,8 +307,7 @@ public abstract class AbstractScmPublishMojo
             File baseDir = null;
             try
             {
-
-                getLog().debug( "use AbstractSvnScmProvider so we can check if remote url exists and create it" );
+                getLog().debug( "AbstractSvnScmProvider used, so we can check if remote url exists and eventually create it." );
                 AbstractSvnScmProvider svnScmProvider = (AbstractSvnScmProvider) scmProvider;
                 String remoteUrl = ( (SvnScmProviderRepository) scmRepository.getProviderRepository() ).getUrl();
                 boolean remoteExists = svnScmProvider.remoteUrlExist( scmRepository.getProviderRepository(), null );
@@ -313,7 +316,7 @@ public abstract class AbstractScmPublishMojo
                 {
                     if ( automaticRemotePathCreation )
                     {
-                        logInfo( "remote url %s not exists so create it", remoteUrl );
+                        logInfo( "Remote svn url %s does not exist: creating.", remoteUrl );
 
                         // create a temporary directory for svnexec
                         baseDir = File.createTempFile( "scm", "tmp" );
@@ -326,10 +329,10 @@ public abstract class AbstractScmPublishMojo
                         commandParameters.setString( CommandParameter.SCM_MKDIR_CREATE_IN_LOCAL,
                                                      Boolean.FALSE.toString() );
                         commandParameters.setString( CommandParameter.MESSAGE,
-                                                     "automatic path creation: " + remoteUrl );
+                                                     "Automatic svn path creation: " + remoteUrl );
                         svnScmProvider.mkdir( scmRepository.getProviderRepository(), scmFileSet, commandParameters );
 
-                        // new remote url so force checkout !
+                        // new remote url so force checkout!
                         if ( checkoutDirectory.exists() )
                         {
                             FileUtils.deleteDirectory( checkoutDirectory );
@@ -337,9 +340,9 @@ public abstract class AbstractScmPublishMojo
                     }
                     else
                     {
-                        //olamy: return ?? that will fail during checkout IMHO :-)
-                        logInfo( "remote url %s not exists and not create it as field %s configured to false",
-                                 remoteUrl, Boolean.toString( automaticRemotePathCreation ) );
+                        // olamy: return ?? that will fail during checkout IMHO :-)
+                        logWarn( "Remote svn url %s does not exist and automatic remote path creation disabled.",
+                                 remoteUrl );
                     }
                 }
             }
@@ -393,60 +396,45 @@ public abstract class AbstractScmPublishMojo
         {
             if ( tryUpdate )
             {
-                logInfo( "tryUpdate is configured but no local copy currently available so forcing checkout" );
+                logInfo( "TryUpdate is configured but no local copy currently available: forcing checkout." );
             }
             checkoutDirectory.mkdirs();
             forceCheckout = true;
         }
 
-        ScmResult scmResult;
-
         try
-
         {
             ScmFileSet fileSet = new ScmFileSet( checkoutDirectory, includes, excludes );
+
+            ScmResult scmResult;
             if ( tryUpdate && !forceCheckout )
             {
                 scmResult = scmProvider.update( scmRepository, fileSet );
             }
+            else if ( scmBranch == null )
+            {
+                scmResult = scmProvider.checkOut( scmRepository, fileSet );
+            }
             else
             {
-                if ( scmBranch == null )
-                {
-                    scmResult = scmProvider.checkOut( scmRepository, fileSet );
-                }
-                else
-                {
-
-                    ScmBranch scmBranch = new ScmBranch( this.scmBranch );
-                    scmResult = scmProvider.checkOut( scmRepository, fileSet, scmBranch );
-                }
+                ScmBranch scmBranch = new ScmBranch( this.scmBranch );
+                scmResult = scmProvider.checkOut( scmRepository, fileSet, scmBranch );
             }
-        }
 
+            checkScmResult( scmResult, "check out from SCM" );
+        }
         catch ( ScmException e )
         {
             logError( e.getMessage() );
 
-            throw new MojoExecutionException( "An error is occurred in the checkout process: " + e.getMessage(), e );
+            throw new MojoExecutionException( "An error occurred during the checkout process: " + e.getMessage(), e );
         }
-
         catch ( IOException e )
         {
             logError( e.getMessage() );
 
-            throw new MojoExecutionException( "An error is occurred in the checkout process: " + e.getMessage(), e );
+            throw new MojoExecutionException( "An error occurred during the checkout process: " + e.getMessage(), e );
         }
-
-        if ( !scmResult.isSuccess() )
-        {
-            logError( scmResult.getProviderMessage() );
-
-            throw new MojoExecutionException(
-                "Unable to checkout from SCM" + "\nProvider message:\n" + scmResult.getProviderMessage()
-                    + "\nCommand output:\n" + scmResult.getCommandOutput() );
-        }
-
     }
 
     public void execute()
@@ -512,23 +500,18 @@ public abstract class AbstractScmPublishMojo
         ScmFileSet updatedFileSet = new ScmFileSet( checkoutDirectory );
         try
         {
-            logInfo( "Checkin to the scm" );
+            logInfo( "Checking in to the scm" );
 
             CheckInScmResult checkinResult =
-                scmProvider.checkIn( scmRepository, updatedFileSet, new ScmBranch( scmBranch ), checkinComment );
-            if ( !checkinResult.isSuccess() )
-            {
-                logError( "checkin operation failed: %s",
-                          checkinResult.getProviderMessage() + " " + checkinResult.getCommandOutput() );
-                throw new MojoExecutionException( "Failed to checkin files: " + checkinResult.getProviderMessage() + " "
-                                                      + checkinResult.getCommandOutput() );
-            }
-            logInfo( "Checkin %d file(s) to revision: %s", checkinResult.getCheckedInFiles().size(),
+                checkScmResult( scmProvider.checkIn( scmRepository, updatedFileSet, new ScmBranch( scmBranch ),
+                                                     checkinComment ), "check-in files to SCM" );
+
+            logInfo( "Checked in %d file(s) to revision: %s", checkinResult.getCheckedInFiles().size(),
                      checkinResult.getScmRevision() );
         }
         catch ( ScmException e )
         {
-            throw new MojoExecutionException( "Failed to perform checkin SCM", e );
+            throw new MojoExecutionException( "Failed to perform SCM checkin", e );
         }
     }
 
@@ -537,7 +520,7 @@ public abstract class AbstractScmPublishMojo
     {
         if ( skipDeletedFiles )
         {
-            logInfo( "deleting files is skipped" );
+            logInfo( "Deleting files is skipped." );
             return;
         }
         List<File> deletedList = new ArrayList<File>();
@@ -548,17 +531,10 @@ public abstract class AbstractScmPublishMojo
         ScmFileSet deletedFileSet = new ScmFileSet( checkoutDirectory, deletedList );
         try
         {
-            getLog().debug( "deleting files: " + deletedList );
+            getLog().debug( "Deleting files: " + deletedList );
 
-            RemoveScmResult deleteResult =
-                scmProvider.remove( scmRepository, deletedFileSet, "Deleting obsolete site files." );
-            if ( !deleteResult.isSuccess() )
-            {
-                logError( "delete operation failed: %s",
-                          deleteResult.getProviderMessage() + " " + deleteResult.getCommandOutput() );
-                throw new MojoExecutionException( "Failed to delete files: " + deleteResult.getProviderMessage() + " "
-                                                      + deleteResult.getCommandOutput() );
-            }
+            checkScmResult( scmProvider.remove( scmRepository, deletedFileSet, "Deleting obsolete site files." ),
+                            "delete files from SCM" );
         }
         catch ( ScmException e )
         {
@@ -628,19 +604,25 @@ public abstract class AbstractScmPublishMojo
             CommandParameters commandParameters = new CommandParameters();
             commandParameters.setString( CommandParameter.MESSAGE, "Adding new site files." );
             commandParameters.setString( CommandParameter.FORCE_ADD, Boolean.TRUE.toString() );
-            AddScmResult addResult = scmProvider.add( scmRepository, addedFileSet, commandParameters );
-            if ( !addResult.isSuccess() )
-            {
-                logError( "add operation failed: %s",
-                          addResult.getProviderMessage() + " " + addResult.getCommandOutput() );
-                throw new MojoExecutionException(
-                    "Failed to add new files: " + addResult.getProviderMessage() + " " + addResult.getCommandOutput() );
-            }
+
+            checkScmResult( scmProvider.add( scmRepository, addedFileSet, commandParameters ), "add new files to SCM" );
         }
         catch ( ScmException e )
         {
             throw new MojoExecutionException( "Failed to add new files to SCM", e );
         }
+    }
+
+    private<T extends ScmResult> T checkScmResult( T result, String failure )
+        throws MojoExecutionException
+    {
+        if ( !result.isSuccess() )
+        {
+            String msg = "Failed to " + failure + ": " + result.getProviderMessage() + " " + result.getCommandOutput();
+            logError( msg );
+            throw new MojoExecutionException( msg );
+        }
+        return result;
     }
 
     public boolean isDryRun()
