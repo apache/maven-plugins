@@ -610,15 +610,16 @@ public abstract class AbstractScmPublishMojo
         getLog().debug( "scm add files: " + addedList );
         try
         {
-            CommandParameters commandParameters = new CommandParameters();
-            commandParameters.setString( CommandParameter.MESSAGE, "Adding new site files." );
-            commandParameters.setString( CommandParameter.FORCE_ADD, Boolean.TRUE.toString() );
+
 
             // MSCMPUB-2: so add files one by one operation is local no remote access so not so slow
             if ( Os.isFamily( Os.FAMILY_WINDOWS ) )
             {
                 for (File file : addedList)
                 {
+                    CommandParameters commandParameters = new CommandParameters();
+                    commandParameters.setString( CommandParameter.MESSAGE, "Adding new site files." );
+                    commandParameters.setString( CommandParameter.FORCE_ADD, Boolean.TRUE.toString() );
                     ScmFileSet addedFile = new ScmFileSet( checkoutDirectory, file );
                     checkScmResult( scmProvider.add( scmRepository, addedFile, commandParameters ),
                                     "add new files to SCM" );
@@ -626,6 +627,9 @@ public abstract class AbstractScmPublishMojo
             }
             else
             {
+                CommandParameters commandParameters = new CommandParameters();
+                commandParameters.setString( CommandParameter.MESSAGE, "Adding new site files." );
+                commandParameters.setString( CommandParameter.FORCE_ADD, Boolean.TRUE.toString() );
                 checkScmResult( scmProvider.add( scmRepository, addedFileSet, commandParameters ),
                                 "add new files to SCM" );
             }
