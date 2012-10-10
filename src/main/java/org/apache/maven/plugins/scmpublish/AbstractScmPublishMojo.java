@@ -21,7 +21,6 @@ package org.apache.maven.plugins.scmpublish;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -139,9 +138,9 @@ public abstract class AbstractScmPublishMojo
     protected String password;
 
     /**
-     * Use a local checkout instead of doing a checkout from the upstream repository. ATTENTION: This will only work
-     * with distributed SCMs which support the file:// protocol TODO: we should think about having the defaults for the
-     * various SCM providers provided via Modello!
+     * Use a local checkout instead of doing a checkout from the upstream repository. <b>WARNING</b>: This will only work
+     * with distributed SCMs which support the file:// protocol
+     * TODO: we should think about having the defaults for the various SCM providers provided via Modello!
      */
     @Parameter ( property = "localCheckout", defaultValue = "false" )
     protected boolean localCheckout;
@@ -154,8 +153,8 @@ public abstract class AbstractScmPublishMojo
     protected String siteOutputEncoding;
 
     /**
-     * if the checkout directory exists and this flag is activated the plugin will try an update rather
-     * than delete then checkout
+     * If the checkout directory exists and this flag is activated, the plugin will try an SCM-update rather
+     * than delete then checkout.
      */
     @Parameter ( property = "scmpublish.tryUpdate", defaultValue = "false" )
     protected boolean tryUpdate;
@@ -177,25 +176,20 @@ public abstract class AbstractScmPublishMojo
     protected Settings settings;
 
     /**
-     */
-    @Component
-    protected MavenSession session;
-
-    /**
-     * Collections of paths to not delete when checking content to delete.
+     * Collections of paths not to delete when checking content to delete.
      * If your site has subdirectories published by an other mechanism/build
      */
     @Parameter
     protected String[] ignorePathsToDelete;
 
     /**
-     * for github you must configure with gh-pages
+     * SCM branch to use. For github, you must configure with <code>gh-pages</code>.
      */
     @Parameter ( property = "scmpublish.scm.branch" )
     protected String scmBranch;
 
     /**
-     * for svn avoid automatic remote url create
+     * Configure svn automatic remote url creation.
      */
     @Parameter ( property = "scmpublish.automaticRemotePathCreation", defaultValue = "true" )
     protected boolean automaticRemotePathCreation;
@@ -206,7 +200,8 @@ public abstract class AbstractScmPublishMojo
     private final static String[] NORMALIZE_EXTENSIONS = { "html", "css", "js" };
 
     /**
-     * extra file extensions to normalize line ending (will be added to list html,css,js)
+     * Extra file extensions to normalize line ending (will be added to default
+     * <code>html</code>,<code>css</code>,<code>js</code> list)
      */
     @Parameter
     protected String[] extraNormalizeExtensions;
@@ -247,7 +242,7 @@ public abstract class AbstractScmPublishMojo
         return FilenameUtils.isExtension( f.getName(), extensions );
     }
 
-    protected ReleaseDescriptor setupScm()
+    private ReleaseDescriptor setupScm()
         throws ScmRepositoryException, NoSuchScmProviderException
     {
         String scmUrl;
@@ -441,7 +436,6 @@ public abstract class AbstractScmPublishMojo
         }
 
         if ( !scmResult.isSuccess() )
-
         {
             logError( scmResult.getProviderMessage() );
 
