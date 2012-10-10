@@ -24,8 +24,8 @@ mvn source:test-jar
 *Installing the sources along with your artifact
 
   There are two ways to do this. You can either bind this plugin to a phase or
-  you can add it to a profile.  The goals {{{jar-no-fork-mojo.html}source:jar-no-fork}} and 
-  {{{test-jar-no-fork-mojo.html}source:test-jar-no-fork}} are preferred for binding 
+  you can add it to a profile.  The goals {{{./jar-no-fork-mojo.html}source:jar-no-fork}} and 
+  {{{./test-jar-no-fork-mojo.html}source:test-jar-no-fork}} are preferred for binding 
   the goal to the build lifecycle.
 
 **Installing the sources using a phase binding
