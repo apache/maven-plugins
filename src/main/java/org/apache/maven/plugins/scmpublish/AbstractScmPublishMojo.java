@@ -109,6 +109,9 @@ public abstract class AbstractScmPublishMojo
 
     /**
      * List of SCM provider implementations.
+     * Key is the provider type, eg. <code>cvs</code>.
+     * Value is the provider implementation (the role-hint of the provider), eg. <code>cvs</code> or <code>cvs_native</code>.
+     * @see ScmManager.setScmProviderImplementation
      */
     @Parameter
     private Map<String, String> providerImplementations;
