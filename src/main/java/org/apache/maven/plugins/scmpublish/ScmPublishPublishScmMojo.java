@@ -47,13 +47,13 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Publish a content to scm in one step. By default, content is taken from default site staging directory
+ * Publish a content to scm. By default, content is taken from default site staging directory
  * <code>${project.build.directory}/staging</code>.
  * Can be used without project, so usable to update any SCM with any content.
  */
 @Mojo ( name = "publish-scm", aggregator = true, requiresProject = false )
 public class ScmPublishPublishScmMojo
-    extends ScmPublishPublishMojo
+    extends AbstractScmPublishMojo
 {
     /**
      * The content to be published.

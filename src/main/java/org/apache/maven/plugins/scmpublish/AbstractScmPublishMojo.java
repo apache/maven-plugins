@@ -20,6 +20,7 @@ package org.apache.maven.plugins.scmpublish;
  */
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -32,6 +33,9 @@ import org.apache.maven.scm.ScmBranch;
 import org.apache.maven.scm.ScmException;
 import org.apache.maven.scm.ScmFileSet;
 import org.apache.maven.scm.ScmResult;
+import org.apache.maven.scm.command.add.AddScmResult;
+import org.apache.maven.scm.command.checkin.CheckInScmResult;
+import org.apache.maven.scm.command.remove.RemoveScmResult;
 import org.apache.maven.scm.manager.NoSuchScmProviderException;
 import org.apache.maven.scm.manager.ScmManager;
 import org.apache.maven.scm.provider.ScmProvider;
@@ -45,7 +49,14 @@ import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * Base class for the scm-publish mojos.
@@ -53,14 +64,6 @@ import java.util.Map;
 public abstract class AbstractScmPublishMojo
     extends AbstractMojo
 {
-
-    /**
-     * Location of the inventory file.
-     */
-    @Parameter ( property = "scmpublish.inventoryFile",
-                 defaultValue = "${project.build.directory}/scmpublish-inventory.js" )
-    protected File inventoryFile;
-
     /**
      * Location of the scm publication tree.
      */
@@ -74,6 +77,24 @@ public abstract class AbstractScmPublishMojo
     @Parameter ( property = "scmpublish.checkoutDirectory",
                  defaultValue = "${project.build.directory}/scmpublish-checkout" )
     protected File checkoutDirectory;
+
+    /**
+     * Display list of added, deleted, and changed files, but do not do any actual SCM operations.
+     */
+    @Parameter ( property = "scmpublish.dryRun" )
+    private boolean dryRun;
+
+    /**
+     * Run add and delete commands, but leave the actually checkin for the user to run manually.
+     */
+    @Parameter ( property = "scmpublish.skipCheckin" )
+    private boolean skipCheckin;
+
+    /**
+     * SCM log/checkin comment for this publication.
+     */
+    @Parameter ( property = "scmpublish.checkinComment", defaultValue = "Site checkin for project ${project.name}" )
+    private String checkinComment;
 
     /**
      * Patterns to exclude from the scm tree.
@@ -120,7 +141,7 @@ public abstract class AbstractScmPublishMojo
     /**
      * Use a local checkout instead of doing a checkout from the upstream repository. ATTENTION: This will only work
      * with distributed SCMs which support the file:// protocol TODO: we should think about having the defaults for the
-     * various SCM providers provided via modello!
+     * various SCM providers provided via Modello!
      */
     @Parameter ( property = "localCheckout", defaultValue = "false" )
     protected boolean localCheckout;
@@ -179,6 +200,17 @@ public abstract class AbstractScmPublishMojo
     @Parameter ( property = "scmpublish.automaticRemotePathCreation", defaultValue = "true" )
     protected boolean automaticRemotePathCreation;
 
+    /**
+     * Filename extensions of files which need new line normalization.
+     */
+    private final static String[] NORMALIZE_EXTENSIONS = { "html", "css", "js" };
+
+    /**
+     * extra file extensions to normalize line ending (will be added to list html,css,js)
+     */
+    @Parameter
+    protected String[] extraNormalizeExtensions;
+
     protected ScmProvider scmProvider;
 
     protected ScmRepository scmRepository;
@@ -196,6 +228,23 @@ public abstract class AbstractScmPublishMojo
     protected void logError( String format, Object... params )
     {
         getLog().error( String.format( format, params ) );
+    }
+
+    private File relativize( File base, File file )
+    {
+        return new File( base.toURI().relativize( file.toURI() ).getPath() );
+    }
+
+    protected boolean requireNormalizeNewlines( File f )
+        throws IOException
+    {
+        List<String> extensions = Arrays.asList( NORMALIZE_EXTENSIONS );
+        if ( extraNormalizeExtensions != null )
+        {
+            extensions.addAll( Arrays.asList( extraNormalizeExtensions ) );
+        }
+
+        return FilenameUtils.isExtension( f.getName(), extensions );
     }
 
     protected ReleaseDescriptor setupScm()
@@ -448,6 +497,158 @@ public abstract class AbstractScmPublishMojo
                 FileUtils.deleteQuietly( checkoutDirectory );
             }
         }
+    }
+
+    /**
+     * Check-in content from scm checkout.
+     *
+     * @throws MojoExecutionException
+     */
+    protected void checkinFiles()
+        throws MojoExecutionException
+    {
+        if ( skipCheckin )
+        {
+            return;
+        }
+
+        ScmFileSet updatedFileSet = new ScmFileSet( checkoutDirectory );
+        try
+        {
+            logInfo( "Checkin to the scm" );
+
+            CheckInScmResult checkinResult =
+                scmProvider.checkIn( scmRepository, updatedFileSet, new ScmBranch( scmBranch ), checkinComment );
+            if ( !checkinResult.isSuccess() )
+            {
+                logError( "checkin operation failed: %s",
+                          checkinResult.getProviderMessage() + " " + checkinResult.getCommandOutput() );
+                throw new MojoExecutionException( "Failed to checkin files: " + checkinResult.getProviderMessage() + " "
+                                                      + checkinResult.getCommandOutput() );
+            }
+            logInfo( "Checkin %d file(s) to revision: %s", checkinResult.getCheckedInFiles().size(),
+                     checkinResult.getScmRevision() );
+        }
+        catch ( ScmException e )
+        {
+            throw new MojoExecutionException( "Failed to perform checkin SCM", e );
+        }
+    }
+
+    protected void deleteFiles( Collection<File> deleted )
+        throws MojoExecutionException
+    {
+        if ( skipDeletedFiles )
+        {
+            logInfo( "deleting files is skipped" );
+            return;
+        }
+        List<File> deletedList = new ArrayList<File>();
+        for ( File f : deleted )
+        {
+            deletedList.add( relativize( checkoutDirectory, f ) );
+        }
+        ScmFileSet deletedFileSet = new ScmFileSet( checkoutDirectory, deletedList );
+        try
+        {
+            getLog().debug( "deleting files: " + deletedList );
+
+            RemoveScmResult deleteResult =
+                scmProvider.remove( scmRepository, deletedFileSet, "Deleting obsolete site files." );
+            if ( !deleteResult.isSuccess() )
+            {
+                logError( "delete operation failed: %s",
+                          deleteResult.getProviderMessage() + " " + deleteResult.getCommandOutput() );
+                throw new MojoExecutionException( "Failed to delete files: " + deleteResult.getProviderMessage() + " "
+                                                      + deleteResult.getCommandOutput() );
+            }
+        }
+        catch ( ScmException e )
+        {
+            throw new MojoExecutionException( "Failed to delete removed files to SCM", e );
+        }
+    }
+
+    /**
+     * Add files to scm.
+     *
+     * @param added files to be added
+     * @throws MojoFailureException
+     * @throws MojoExecutionException
+     */
+    protected void addFiles( Collection<File> added )
+        throws MojoFailureException, MojoExecutionException
+    {
+        List<File> addedList = new ArrayList<File>();
+        Set<File> createdDirs = new HashSet<File>();
+        Set<File> dirsToAdd = new TreeSet<File>();
+
+        createdDirs.add( relativize( checkoutDirectory, checkoutDirectory ) );
+
+        for ( File f : added )
+        {
+            for ( File dir = f.getParentFile(); !dir.equals( checkoutDirectory ); dir = dir.getParentFile() )
+            {
+                File relativized = relativize( checkoutDirectory, dir );
+                //  we do the best we can with the directories
+                if ( createdDirs.add( relativized ) )
+                {
+                    dirsToAdd.add( relativized );
+                }
+                else
+                {
+                    break;
+                }
+            }
+            addedList.add( relativize( checkoutDirectory, f ) );
+        }
+
+        for ( File relativized : dirsToAdd )
+        {
+            try
+            {
+                ScmFileSet fileSet = new ScmFileSet( checkoutDirectory, relativized );
+                getLog().debug( "scm add directory: " + relativized );
+                AddScmResult addDirResult = scmProvider.add( scmRepository, fileSet, "Adding directory" );
+                if ( !addDirResult.isSuccess() )
+                {
+                    getLog().debug( " Error adding directory " + relativized + ": " + addDirResult.getCommandOutput() );
+                }
+            }
+            catch ( ScmException e )
+            {
+                //
+            }
+        }
+
+        // remove directories already added !
+        addedList.removeAll( dirsToAdd );
+
+        ScmFileSet addedFileSet = new ScmFileSet( checkoutDirectory, addedList );
+        getLog().debug( "scm add files: " + addedList );
+        try
+        {
+            CommandParameters commandParameters = new CommandParameters();
+            commandParameters.setString( CommandParameter.MESSAGE, "Adding new site files." );
+            commandParameters.setString( CommandParameter.FORCE_ADD, Boolean.TRUE.toString() );
+            AddScmResult addResult = scmProvider.add( scmRepository, addedFileSet, commandParameters );
+            if ( !addResult.isSuccess() )
+            {
+                logError( "add operation failed: %s",
+                          addResult.getProviderMessage() + " " + addResult.getCommandOutput() );
+                throw new MojoExecutionException(
+                    "Failed to add new files: " + addResult.getProviderMessage() + " " + addResult.getCommandOutput() );
+            }
+        }
+        catch ( ScmException e )
+        {
+            throw new MojoExecutionException( "Failed to add new files to SCM", e );
+        }
+    }
+
+    public boolean isDryRun()
+    {
+        return dryRun;
     }
 
     public abstract void scmPublishExecute()
