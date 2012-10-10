@@ -44,6 +44,7 @@ import org.apache.maven.scm.repository.ScmRepositoryException;
 import org.apache.maven.settings.Settings;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
+import org.codehaus.plexus.util.Os;
 
 import java.io.File;
 import java.io.IOException;
@@ -613,7 +614,23 @@ public abstract class AbstractScmPublishMojo
             commandParameters.setString( CommandParameter.MESSAGE, "Adding new site files." );
             commandParameters.setString( CommandParameter.FORCE_ADD, Boolean.TRUE.toString() );
 
-            checkScmResult( scmProvider.add( scmRepository, addedFileSet, commandParameters ), "add new files to SCM" );
+            // MSCMPUB-2: so add files one by one operation is local no remote access so not so slow
+            if ( Os.isFamily( Os.FAMILY_WINDOWS ) )
+            {
+                for (File file : addedList)
+                {
+                    ScmFileSet addedFile = new ScmFileSet( checkoutDirectory, file );
+                    checkScmResult( scmProvider.add( scmRepository, addedFile, commandParameters ),
+                                    "add new files to SCM" );
+                }
+            }
+            else
+            {
+                checkScmResult( scmProvider.add( scmRepository, addedFileSet, commandParameters ),
+                                "add new files to SCM" );
+            }
+
+
         }
         catch ( ScmException e )
         {
