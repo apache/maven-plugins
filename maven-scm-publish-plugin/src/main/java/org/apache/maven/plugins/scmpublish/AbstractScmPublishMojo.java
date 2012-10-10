@@ -212,11 +212,6 @@ public abstract class AbstractScmPublishMojo
 
     protected ScmRepository scmRepository;
 
-    protected AbstractScmPublishMojo()
-    {
-        super();
-    }
-
     protected void logInfo( String format, Object... params )
     {
         getLog().info( String.format( format, params ) );
@@ -304,72 +299,7 @@ public abstract class AbstractScmPublishMojo
 
         if ( scmProvider instanceof AbstractSvnScmProvider )
         {
-            File baseDir = null;
-            try
-            {
-                getLog().debug( "AbstractSvnScmProvider used, so we can check if remote url exists and eventually create it." );
-                AbstractSvnScmProvider svnScmProvider = (AbstractSvnScmProvider) scmProvider;
-                String remoteUrl = ( (SvnScmProviderRepository) scmRepository.getProviderRepository() ).getUrl();
-                boolean remoteExists = svnScmProvider.remoteUrlExist( scmRepository.getProviderRepository(), null );
-
-                if ( !remoteExists )
-                {
-                    if ( automaticRemotePathCreation )
-                    {
-                        logInfo( "Remote svn url %s does not exist: creating.", remoteUrl );
-
-                        // create a temporary directory for svnexec
-                        baseDir = File.createTempFile( "scm", "tmp" );
-                        baseDir.delete();
-                        baseDir.mkdirs();
-                        // to prevent fileSet cannot be empty
-                        ScmFileSet scmFileSet = new ScmFileSet( baseDir, new File( "" ) );
-
-                        CommandParameters commandParameters = new CommandParameters();
-                        commandParameters.setString( CommandParameter.SCM_MKDIR_CREATE_IN_LOCAL,
-                                                     Boolean.FALSE.toString() );
-                        commandParameters.setString( CommandParameter.MESSAGE,
-                                                     "Automatic svn path creation: " + remoteUrl );
-                        svnScmProvider.mkdir( scmRepository.getProviderRepository(), scmFileSet, commandParameters );
-
-                        // new remote url so force checkout!
-                        if ( checkoutDirectory.exists() )
-                        {
-                            FileUtils.deleteDirectory( checkoutDirectory );
-                        }
-                    }
-                    else
-                    {
-                        // olamy: return ?? that will fail during checkout IMHO :-)
-                        logWarn( "Remote svn url %s does not exist and automatic remote path creation disabled.",
-                                 remoteUrl );
-                    }
-                }
-            }
-            catch ( IOException e )
-            {
-                throw new MojoExecutionException( e.getMessage(), e );
-            }
-            catch ( ScmException e )
-            {
-                throw new MojoExecutionException( e.getMessage(), e );
-            }
-
-            finally
-
-            {
-                if ( baseDir != null )
-                {
-                    try
-                    {
-                        FileUtils.forceDeleteOnExit( baseDir );
-                    }
-                    catch ( IOException e )
-                    {
-                        throw new MojoExecutionException( e.getMessage(), e );
-                    }
-                }
-            }
+            checkCreateRemoteSvnPath();
         }
 
         logInfo( "%s the pub tree from  %s ...", ( tryUpdate ? "Updating" : "Checking out" ), pubScmUrl );
@@ -434,6 +364,84 @@ public abstract class AbstractScmPublishMojo
             logError( e.getMessage() );
 
             throw new MojoExecutionException( "An error occurred during the checkout process: " + e.getMessage(), e );
+        }
+    }
+
+    private void checkCreateRemoteSvnPath()
+        throws MojoExecutionException
+    {
+        getLog().debug( "AbstractSvnScmProvider used, so we can check if remote url exists and eventually create it." );
+        AbstractSvnScmProvider svnScmProvider = (AbstractSvnScmProvider) scmProvider;
+
+        try
+        {
+            boolean remoteExists = svnScmProvider.remoteUrlExist( scmRepository.getProviderRepository(), null );
+
+            if ( remoteExists )
+            {
+                return;
+            }
+        }
+        catch ( ScmException e )
+        {
+            throw new MojoExecutionException( e.getMessage(), e );
+        }
+
+        String remoteUrl = ( (SvnScmProviderRepository) scmRepository.getProviderRepository() ).getUrl();
+
+        if ( !automaticRemotePathCreation )
+        {
+            // olamy: return ?? that will fail during checkout IMHO :-)
+            logWarn( "Remote svn url %s does not exist and automatic remote path creation disabled.",
+                     remoteUrl );
+            return;
+        }
+
+        logInfo( "Remote svn url %s does not exist: creating.", remoteUrl );
+
+        File baseDir = null;
+        try
+        {
+
+            // create a temporary directory for svnexec
+            baseDir = File.createTempFile( "scm", "tmp" );
+            baseDir.delete();
+            baseDir.mkdirs();
+            // to prevent fileSet cannot be empty
+            ScmFileSet scmFileSet = new ScmFileSet( baseDir, new File( "" ) );
+
+            CommandParameters commandParameters = new CommandParameters();
+            commandParameters.setString( CommandParameter.SCM_MKDIR_CREATE_IN_LOCAL, Boolean.FALSE.toString() );
+            commandParameters.setString( CommandParameter.MESSAGE, "Automatic svn path creation: " + remoteUrl );
+            svnScmProvider.mkdir( scmRepository.getProviderRepository(), scmFileSet, commandParameters );
+
+            // new remote url so force checkout!
+            if ( checkoutDirectory.exists() )
+            {
+                FileUtils.deleteDirectory( checkoutDirectory );
+            }
+        }
+        catch ( IOException e )
+        {
+            throw new MojoExecutionException( e.getMessage(), e );
+        }
+        catch ( ScmException e )
+        {
+            throw new MojoExecutionException( e.getMessage(), e );
+        }
+        finally
+        {
+            if ( baseDir != null )
+            {
+                try
+                {
+                    FileUtils.forceDeleteOnExit( baseDir );
+                }
+                catch ( IOException e )
+                {
+                    throw new MojoExecutionException( e.getMessage(), e );
+                }
+            }
         }
     }
 
