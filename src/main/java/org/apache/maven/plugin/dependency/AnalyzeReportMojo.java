@@ -59,7 +59,7 @@ public class AnalyzeReportMojo
     /**
      * The Maven project to analyze.
      */
-    @Parameter
+    @Component
     private MavenProject project;
 
     /**

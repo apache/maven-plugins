@@ -1,0 +1,14 @@
+import java.io.*;
+
+File htmlFile = new File( basedir, "target/dependency-analysis.html" );
+
+if ( !htmlFile.isFile() )
+{
+    throw new Exception( "Dependency analysis file missing " + htmlFile );
+}
+if ( htmlFile.length() == 0 )
+{
+    throw new Exception( "Dependency analysis file empty " + htmlFile );
+}
+
+return true;
