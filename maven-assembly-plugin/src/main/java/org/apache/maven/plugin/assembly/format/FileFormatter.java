@@ -21,6 +21,7 @@ package org.apache.maven.plugin.assembly.format;
 
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.utils.AssemblyFileUtils;
+import org.apache.maven.shared.filtering.MavenFileFilterRequest;
 import org.apache.maven.shared.filtering.MavenFilteringException;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.util.FileUtils;
@@ -93,8 +94,10 @@ public class FileFormatter
             //@todo this test can be improved
             boolean isPropertiesFile = source.getName().toLowerCase( Locale.ENGLISH ).endsWith( ".properties" );
 
-            configSource.getMavenFileFilter().copyFile( source, target, true, configSource.getProject(),
-                    configSource.getFilters(), isPropertiesFile, encoding, configSource.getMavenSession() );
+            MavenFileFilterRequest filterRequest = new MavenFileFilterRequest( source, target, true, configSource.getProject(),
+                    configSource.getFilters(), isPropertiesFile, encoding, configSource.getMavenSession(), null );
+            filterRequest.setInjectProjectBuildFilters( true );
+            configSource.getMavenFileFilter().copyFile( filterRequest );
 
             return target;
         }
