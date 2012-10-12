@@ -1,0 +1,33 @@
+import java.io.*;
+
+
+File file = new File( basedir, "target/output spaces directory" );
+System.out.println( "Checking for existence of " + file );
+if ( !file.isDirectory() )
+{
+   throw new Exception( "Missing " + file );
+}
+
+file = new File( file, "qdox-1.5" );
+System.out.println( "Checking for existence of " + file );
+if ( !file.isDirectory() )
+{
+   throw new Exception( "Missing " + file );
+}
+
+file = new File( file, "build.xml" );
+System.out.println( "Checking for existence of " + file );
+if ( !file.isFile() )
+{
+   throw new Exception( "Missing " + file );
+}
+
+//until MDEP-242 is fixed, the next test will passed
+file = new File( file.getParent(), "src" );
+System.out.println( "Checking for existence of " + file );
+if ( !file.isDirectory() )
+{
+   throw new Exception( "Missing " + file );
+}
+
+return true;

@@ -20,7 +20,6 @@ package org.apache.maven.plugin.dependency.fromConfiguration;
  */
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -122,7 +121,7 @@ public class TestCopyMojo
     }
 
     public void testCopyFile()
-        throws IOException, MojoExecutionException
+        throws Exception
     {
         List<ArtifactItem> list = stubFactory.getArtifactItems( stubFactory.getClassifiedArtifacts() );
 
@@ -134,7 +133,7 @@ public class TestCopyMojo
     }
     
     public void testSkip()
-        throws IOException, MojoExecutionException
+        throws Exception
     {
         List<ArtifactItem> list = stubFactory.getArtifactItems( stubFactory.getClassifiedArtifacts() );
 
@@ -152,7 +151,7 @@ public class TestCopyMojo
     }
 
     public void testCopyFileNoOverwrite()
-        throws IOException, MojoExecutionException
+        throws Exception
     {
         List<ArtifactItem> list = stubFactory.getArtifactItems( stubFactory.getClassifiedArtifacts() );
 
@@ -169,7 +168,7 @@ public class TestCopyMojo
     }
 
     public void testCopyToLocation()
-        throws IOException, MojoExecutionException
+        throws Exception
     {
         List<ArtifactItem> list = stubFactory.getArtifactItems( stubFactory.getClassifiedArtifacts() );
         ArtifactItem item = (ArtifactItem) list.get( 0 );
@@ -183,7 +182,7 @@ public class TestCopyMojo
     }
 
     public void testCopyStripVersionSetInMojo()
-        throws IOException, MojoExecutionException
+        throws Exception
     {
         List<ArtifactItem> list = stubFactory.getArtifactItems( stubFactory.getClassifiedArtifacts() );
         ArtifactItem item = (ArtifactItem) list.get( 0 );
@@ -199,7 +198,7 @@ public class TestCopyMojo
     }
 
     public void testNonClassifierStrip()
-        throws IOException, MojoExecutionException
+        throws Exception
     {
         List<ArtifactItem> list = stubFactory.getArtifactItems( stubFactory.getReleaseAndSnapshotArtifacts() );
         mojo.setStripVersion( true );
@@ -211,7 +210,7 @@ public class TestCopyMojo
     }
 
     public void testNonClassifierNoStrip()
-        throws IOException, MojoExecutionException
+        throws Exception
     {
         List<ArtifactItem> list = stubFactory.getArtifactItems( stubFactory.getReleaseAndSnapshotArtifacts() );
 
@@ -223,7 +222,7 @@ public class TestCopyMojo
     }
 
     public void testMissingVersionNotFound()
-        throws MojoExecutionException
+        throws Exception
     {
         ArtifactItem item = new ArtifactItem();
 
@@ -271,7 +270,7 @@ public class TestCopyMojo
     }
 
     public void testMissingVersionFromDependencies()
-        throws MojoExecutionException
+        throws Exception
     {
         ArtifactItem item = new ArtifactItem();
 
@@ -293,7 +292,7 @@ public class TestCopyMojo
     }
 
     public void testMissingVersionFromDependenciesLooseMatch()
-        throws MojoExecutionException
+        throws Exception
     {
         ArtifactItem item = new ArtifactItem();
 
@@ -318,7 +317,7 @@ public class TestCopyMojo
     }
 
     public void testMissingVersionFromDependenciesWithClassifier()
-        throws MojoExecutionException
+        throws Exception
     {
         ArtifactItem item = new ArtifactItem();
 
@@ -363,7 +362,7 @@ public class TestCopyMojo
     }
 
     public void testMissingVersionFromDependencyMgt()
-        throws MojoExecutionException
+        throws Exception
     {
         ArtifactItem item = new ArtifactItem();
 
@@ -396,7 +395,7 @@ public class TestCopyMojo
     }
 
     public void testMissingVersionFromDependencyMgtLooseMatch()
-        throws MojoExecutionException
+        throws Exception
     {
         ArtifactItem item = new ArtifactItem();
 
@@ -430,7 +429,7 @@ public class TestCopyMojo
     }
 
     public void testMissingVersionFromDependencyMgtWithClassifier()
-        throws MojoExecutionException
+        throws Exception
     {
         ArtifactItem item = new ArtifactItem();
 
@@ -527,7 +526,7 @@ public class TestCopyMojo
     }
 
     public void testCopyDontOverWriteReleases()
-        throws IOException, MojoExecutionException, InterruptedException
+        throws Exception
     {
         stubFactory.setCreateFiles( true );
         Artifact release = stubFactory.getReleaseArtifact();
@@ -558,7 +557,7 @@ public class TestCopyMojo
     }
 
     public void testCopyDontOverWriteSnapshots()
-        throws IOException, MojoExecutionException, InterruptedException
+        throws Exception
     {
         stubFactory.setCreateFiles( true );
         Artifact artifact = stubFactory.getSnapshotArtifact();
@@ -589,7 +588,7 @@ public class TestCopyMojo
     }
 
     public void testCopyOverWriteReleases()
-        throws IOException, MojoExecutionException, InterruptedException
+        throws Exception
     {
         stubFactory.setCreateFiles( true );
         Artifact release = stubFactory.getReleaseArtifact();
@@ -617,7 +616,7 @@ public class TestCopyMojo
     }
 
     public void testCopyOverWriteSnapshot()
-        throws IOException, MojoExecutionException, InterruptedException
+        throws Exception
     {
         stubFactory.setCreateFiles( true );
         Artifact artifact = stubFactory.getSnapshotArtifact();
@@ -646,7 +645,7 @@ public class TestCopyMojo
     }
 
     public void testCopyOverWriteIfNewer()
-        throws IOException, MojoExecutionException, InterruptedException
+        throws Exception
     {
         stubFactory.setCreateFiles( true );
         Artifact artifact = stubFactory.getSnapshotArtifact();
@@ -675,7 +674,7 @@ public class TestCopyMojo
     }
     
     public void testCopyFileWithOverideLocalRepo()
-        throws IOException, MojoExecutionException
+        throws Exception
     {
         List<ArtifactItem> list = stubFactory.getArtifactItems( stubFactory.getClassifiedArtifacts() );
 

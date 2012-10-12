@@ -132,7 +132,7 @@ public class TestUnpackMojo
     }
 
     public void testUnpackFile()
-        throws IOException, MojoExecutionException
+        throws Exception
     {
         List<ArtifactItem> list = stubFactory.getArtifactItems( stubFactory.getClassifiedArtifacts() );
 
@@ -144,7 +144,7 @@ public class TestUnpackMojo
     }
     
     public void testSkip()
-        throws IOException, MojoExecutionException
+        throws Exception
     {
         List<ArtifactItem> list = stubFactory.getArtifactItems( stubFactory.getClassifiedArtifacts() );
 
@@ -157,7 +157,7 @@ public class TestUnpackMojo
     }
 
     public void testUnpackToLocation()
-        throws IOException, MojoExecutionException
+        throws Exception
     {
         List<ArtifactItem> list = stubFactory.getArtifactItems( stubFactory.getClassifiedArtifacts() );
         ArtifactItem item = (ArtifactItem) list.get( 0 );
@@ -171,7 +171,7 @@ public class TestUnpackMojo
     }
 
     public void testMissingVersionNotFound()
-        throws MojoExecutionException
+        throws Exception
     {
         ArtifactItem item = new ArtifactItem();
 
@@ -219,7 +219,7 @@ public class TestUnpackMojo
     }
 
     public void testMissingVersionFromDependencies()
-        throws MojoExecutionException
+        throws Exception
     {
         ArtifactItem item = new ArtifactItem();
 
@@ -241,7 +241,7 @@ public class TestUnpackMojo
     }
 
     public void testMissingVersionFromDependenciesWithClassifier()
-        throws MojoExecutionException
+        throws Exception
     {
         ArtifactItem item = new ArtifactItem();
 
@@ -286,7 +286,7 @@ public class TestUnpackMojo
     }
 
     public void testMissingVersionFromDependencyMgt()
-        throws MojoExecutionException
+        throws Exception
     {
         ArtifactItem item = new ArtifactItem();
 
@@ -318,7 +318,7 @@ public class TestUnpackMojo
     }
 
     public void testMissingVersionFromDependencyMgtWithClassifier()
-        throws MojoExecutionException
+        throws Exception
     {
         ArtifactItem item = new ArtifactItem();
 
@@ -415,7 +415,7 @@ public class TestUnpackMojo
     }
 
     public void testUnpackDontOverWriteReleases()
-        throws IOException, MojoExecutionException, InterruptedException
+        throws Exception
     {
         stubFactory.setCreateFiles( true );
         Artifact release = stubFactory.getReleaseArtifact();
@@ -435,7 +435,7 @@ public class TestUnpackMojo
     }
 
     public void testUnpackDontOverWriteSnapshots()
-        throws IOException, MojoExecutionException, InterruptedException
+        throws Exception
     {
         stubFactory.setCreateFiles( true );
         Artifact artifact = stubFactory.getSnapshotArtifact();
@@ -455,7 +455,7 @@ public class TestUnpackMojo
     }
 
     public void testUnpackOverWriteReleases()
-        throws IOException, MojoExecutionException, InterruptedException
+        throws Exception
     {
         stubFactory.setCreateFiles( true );
         Artifact release = stubFactory.getReleaseArtifact();
@@ -475,7 +475,7 @@ public class TestUnpackMojo
     }
 
     public void testUnpackOverWriteSnapshot()
-        throws IOException, MojoExecutionException, InterruptedException
+        throws Exception
     {
         stubFactory.setCreateFiles( true );
         Artifact artifact = stubFactory.getSnapshotArtifact();
@@ -496,7 +496,7 @@ public class TestUnpackMojo
     }
 
     public void testUnpackOverWriteIfNewer()
-        throws IOException, MojoExecutionException, InterruptedException
+        throws Exception
     {
         final long now = System.currentTimeMillis();
         
@@ -548,7 +548,7 @@ public class TestUnpackMojo
     }
     
     public void assertUnpacked( ArtifactItem item, boolean overWrite )
-        throws InterruptedException, MojoExecutionException
+        throws Exception
     {
 
         File unpackedFile = getUnpackedFile( item );

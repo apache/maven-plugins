@@ -20,6 +20,7 @@ package org.apache.maven.plugin.dependency.fromConfiguration;
  */
 
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.dependency.utils.filters.ArtifactItemFilter;
 import org.apache.maven.plugin.dependency.utils.filters.MarkerFileFilter;
 import org.apache.maven.plugin.dependency.utils.markers.MarkerHandler;
@@ -39,7 +40,7 @@ import java.util.List;
  * @version $Id$
  * @since 1.0
  */
-@Mojo( name = "unpack", defaultPhase = LifecyclePhase.PROCESS_SOURCES )
+@Mojo( name = "unpack", defaultPhase = LifecyclePhase.PROCESS_SOURCES, requiresProject = false )
 public final class UnpackMojo
     extends AbstractFromConfigurationMojo
 {
@@ -71,6 +72,14 @@ public final class UnpackMojo
     private String excludes;
 
     /**
+     * The artifact to unpack from commandLine.
+     * Use {@link #artifactItems} within the pom-configuration.
+     */
+    @SuppressWarnings( "unused" ) //marker-field, setArtifact(String) does the magic
+    @Parameter( property = "artifact" )
+    private String artifact;
+
+    /**
      * Main entry into mojo. This method gets the ArtifactItems and iterates through each one passing it to
      * unpackArtifact.
      *
@@ -80,12 +89,14 @@ public final class UnpackMojo
      * @see #unpackArtifact(ArtifactItem)
      */
     public void execute()
-        throws MojoExecutionException
+        throws MojoExecutionException, MojoFailureException
     {
         if ( isSkip() )
         {
             return;
         }
+        
+        verifyRequirements();
 
         List<ArtifactItem> processedItems = getProcessedArtifactItems( false );
         for ( ArtifactItem artifactItem : processedItems )
