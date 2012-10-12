@@ -20,6 +20,7 @@ package org.apache.maven.plugin.dependency.fromConfiguration;
  */
 
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.dependency.utils.filters.ArtifactItemFilter;
 import org.apache.maven.plugin.dependency.utils.filters.DestFileFilter;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -36,7 +37,7 @@ import java.util.List;
  * @version $Id$
  * @since 1.0
  */
-@Mojo( name = "copy", defaultPhase = LifecyclePhase.PROCESS_SOURCES )
+@Mojo( name = "copy", defaultPhase = LifecyclePhase.PROCESS_SOURCES, requiresProject = false  )
 public class CopyMojo
     extends AbstractFromConfigurationMojo
 {
@@ -48,6 +49,14 @@ public class CopyMojo
     private boolean stripVersion = false;
 
     /**
+     * The artifact to copy from commandLine.
+     * Use {@link #artifactItems} within the pom-configuration.
+     */
+    @SuppressWarnings( "unused" ) //marker-field, setArtifact(String) does the magic
+    @Parameter( property = "artifact" )
+    private String artifact;
+
+    /**
      * Main entry into mojo. This method gets the ArtifactItems and iterates through each one passing it to
      * copyArtifact.
      *
@@ -57,12 +66,14 @@ public class CopyMojo
      * @see #copyArtifact(ArtifactItem)
      */
     public void execute()
-        throws MojoExecutionException
+        throws MojoExecutionException, MojoFailureException
     {
         if ( isSkip() )
         {
             return;
         }
+        
+        verifyRequirements();
 
         List<ArtifactItem> theArtifactItems = getProcessedArtifactItems( this.stripVersion );
         for ( ArtifactItem artifactItem : theArtifactItems )

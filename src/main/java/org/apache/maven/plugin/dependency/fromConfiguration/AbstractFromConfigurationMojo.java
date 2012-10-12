@@ -20,6 +20,7 @@ package org.apache.maven.plugin.dependency.fromConfiguration;
  */
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.ArtifactRepositoryFactory;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
@@ -28,6 +29,7 @@ import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException
 import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.dependency.AbstractDependencyMojo;
 import org.apache.maven.plugin.dependency.utils.DependencyUtil;
 import org.apache.maven.plugin.dependency.utils.filters.ArtifactItemFilter;
@@ -105,7 +107,7 @@ public abstract class AbstractFromConfigurationMojo
      *
      * @since 1.0
      */
-    @Parameter( required = true )
+    @Parameter
     private List<ArtifactItem> artifactItems;
 
     /**
@@ -128,7 +130,19 @@ public abstract class AbstractFromConfigurationMojo
      */
     private ArtifactRepository overrideLocalRepository;
 
+    @Component
+    private ArtifactFactory artifactFactory;
+
     abstract ArtifactItemFilter getMarkedArtifactFilter( ArtifactItem item );
+    
+    // artifactItems is filled by either field injection or by setArtifact()
+    protected void verifyRequirements() throws MojoFailureException
+    {
+        if ( artifactItems == null || artifactItems.isEmpty() )
+        {
+            throw new MojoFailureException( "Either artifact or artifactItems is required " );
+        }
+    }
 
     /**
      * Preprocesses the list of ArtifactItems. This method defaults the outputDirectory if not set and creates the
@@ -523,5 +537,43 @@ public abstract class AbstractFromConfigurationMojo
     public void setSkip( boolean skip )
     {
         this.skip = skip;
+    }
+
+    public void setArtifact( String artifact )
+        throws MojoFailureException
+    {
+        if ( artifact != null )
+        {
+            String packaging = "jar";
+            String classifier;
+            String[] tokens = StringUtils.split( artifact, ":" );
+            if ( tokens.length < 3 || tokens.length > 5 )
+            {
+                throw new MojoFailureException(
+                    "Invalid artifact, you must specify groupId:artifactId:version[:packaging][:classifier] "
+                        + artifact );
+            }
+            String groupId = tokens[0];
+            String artifactId = tokens[1];
+            String version = tokens[2];
+            if ( tokens.length >= 4 )
+            {
+                packaging = tokens[3];
+            }
+            if ( tokens.length == 5 )
+            {
+                classifier = tokens[4];
+            }
+            else
+            {
+                classifier = null;
+            }
+    
+            Artifact toUnpack = classifier == null
+            ? artifactFactory.createBuildArtifact( groupId, artifactId, version, packaging )
+            : artifactFactory.createArtifactWithClassifier( groupId, artifactId, version, packaging, classifier );
+            
+            setArtifactItems( Collections.singletonList( new ArtifactItem( toUnpack ) ) );
+        }
     }
 }
