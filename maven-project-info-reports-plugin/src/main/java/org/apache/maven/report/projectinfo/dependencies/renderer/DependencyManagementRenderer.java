@@ -21,6 +21,7 @@ package org.apache.maven.report.projectinfo.dependencies.renderer;
 
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -31,6 +32,8 @@ import org.apache.maven.artifact.metadata.ArtifactMetadataRetrievalException;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
+import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
+import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.License;
@@ -220,14 +223,33 @@ public class DependencyManagementRenderer
         String url = null;
         try
         {
-            List<ArtifactVersion> versions =
-                artifactMetadataSource.retrieveAvailableVersions( artifact, localRepository, remoteRepositories );
+            VersionRange range = VersionRange.createFromVersionSpec( dependency.getVersion() );
 
-            if ( versions.size() > 0 )
+            if ( range.getRecommendedVersion() == null )
             {
-                Collections.sort( versions );
-                
-                artifact.setVersion( versions.get( versions.size() - 1 ).toString() );
+                // MPIR-216: no direct version but version range: need to choose one precise version
+                log.debug( "Resolving range for DependencyManagement on " + artifact.getId() );
+
+                List<ArtifactVersion> versions =
+                    artifactMetadataSource.retrieveAvailableVersions( artifact, localRepository, remoteRepositories );
+    
+                // only use versions from range
+                for ( Iterator<ArtifactVersion> iter = versions.iterator(); iter.hasNext(); )
+                {
+                    if ( ! range.containsVersion( iter.next() ) )
+                    {
+                        iter.remove();
+                    }
+                }
+
+                // select latest, assuming pom information will be the most accurate
+                if ( versions.size() > 0 )
+                {
+                    Collections.sort( versions );
+                    
+                    artifact.setVersion( versions.get( versions.size() - 1 ).toString() );
+                    log.debug( "DependencyManagement resolved: " + artifact.getId() );
+                }
             }
 
             url =
@@ -246,6 +268,10 @@ public class DependencyManagementRenderer
                 }
                 licensesBuffer.append( licenseCell );
             }
+        }
+        catch ( InvalidVersionSpecificationException e )
+        {
+            log.warn( "Unable to parse version for " + artifact.getId(), e );
         }
         catch ( ArtifactMetadataRetrievalException e )
         {
