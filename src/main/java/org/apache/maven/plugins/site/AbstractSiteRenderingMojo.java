@@ -298,8 +298,11 @@ public abstract class AbstractSiteRenderingMojo
             }
             else
             {
-                getLog().info( "Relativizing decoration links with respect to project URL: " + url );
-                assembler.resolvePaths( decorationModel, url );
+                // MSITE-658
+                final String localeUrl =
+                    locale.equals( Locale.getDefault() ) ? url : url + "/" + locale.getLanguage();
+                getLog().info( "Relativizing decoration links with respect to project URL: " + localeUrl );
+                assembler.resolvePaths( decorationModel, localeUrl );
             }
         }
 
