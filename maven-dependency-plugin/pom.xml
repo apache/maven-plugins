@@ -53,7 +53,7 @@ under the License.
   <properties>
     <mavenVersion>2.0.9</mavenVersion>
     <doxiaVersion>1.0</doxiaVersion>
-    <pluginTestingVersion>1.2</pluginTestingVersion>
+    <pluginTestingVersion>2.1</pluginTestingVersion>
     <mavenPluginPluginVersion>3.1</mavenPluginPluginVersion>
   </properties>
 
@@ -160,7 +160,7 @@ under the License.
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
       <artifactId>maven-common-artifact-filters</artifactId>
-      <version>1.2</version>
+      <version>1.4</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
@@ -199,6 +199,13 @@ under the License.
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>3.8.2</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency> <!-- this seems to be a critical dependency, 
+      must be declared before org.apache.maven.plugin-testing so it's first on the classpath -->
+      <groupId>org.apache.maven.shared</groupId>
+      <artifactId>maven-plugin-testing-harness</artifactId>
+      <version>1.1</version>
       <scope>test</scope>
     </dependency>
     <dependency>
