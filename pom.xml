@@ -170,7 +170,7 @@ under the License.
   </contributors>
 
   <prerequisites>
-    <maven>2.2.1</maven>
+    <maven>${prerequisiteMavenVersion}</maven>
   </prerequisites>
 
   <scm>
@@ -187,6 +187,7 @@ under the License.
     <doxiaVersion>1.3</doxiaVersion>
     <doxiaSitetoolsVersion>1.3</doxiaSitetoolsVersion>
     <mavenVersion>3.0</mavenVersion>
+    <prerequisiteMavenVersion>2.2.1</prerequisiteMavenVersion>
     <wagonVersion>1.0</wagonVersion>
     <plexusVersion>1.5.4</plexusVersion>
     <scmVersion>1.4</scmVersion>
