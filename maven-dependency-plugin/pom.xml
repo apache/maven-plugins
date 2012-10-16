@@ -50,6 +50,12 @@ under the License.
     <url>http://jira.codehaus.org/browse/MDEP</url>
   </issueManagement>
 
+  <contributors>
+    <contributor>
+      <name>Bakito</name>
+    </contributor>
+  </contributors>
+
   <properties>
     <mavenVersion>2.0.9</mavenVersion>
     <doxiaVersion>1.0</doxiaVersion>
