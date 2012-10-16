@@ -75,7 +75,7 @@ public class TestDependencyUtil
         ah = new DefaultArtifactHandlerStub( "war", null );
         vr = VersionRange.createFromVersion( "1.1-SNAPSHOT" );
         snapResolvedVersion = new DefaultArtifact( "test", "three", vr, Artifact.SCOPE_PROVIDED, "war", null, ah, false );
-        snapResolvedVersion.setResolvedVersion("1.1-20121003.035531-117");
+        snapResolvedVersion.setResolvedVersion( "1.1-20121003.035531-117" );
         artifacts.add( snapResolvedVersion );
 
         ah = new DefaultArtifactHandlerStub( "war", null );
