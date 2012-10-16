@@ -70,8 +70,7 @@ public final class DependencyUtil
      */
     public static String getFormattedFileName( Artifact artifact, boolean removeVersion, boolean prependGroupId )
     {   
-    	return getFormattedFileName(artifact, removeVersion, prependGroupId, false);
-    	
+        return getFormattedFileName( artifact, removeVersion, prependGroupId, false );
     }
 
     /**
@@ -104,14 +103,14 @@ public final class DependencyUtil
         String versionString = null;
         if ( !removeVersion )
         {
-        	if ( useBaseVersion )
+            if ( useBaseVersion )
             {
-        		versionString = "-" + artifact.getBaseVersion();
+                versionString = "-" + artifact.getBaseVersion();
             }
-        	else
-        	{
-        		versionString = "-" + artifact.getVersion();
-        	}
+            else
+            {
+                versionString = "-" + artifact.getVersion();
+            }
         }
         else
         {
