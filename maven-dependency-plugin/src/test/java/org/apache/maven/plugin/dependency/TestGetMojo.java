@@ -56,7 +56,7 @@ public class TestGetMojo
                     .append( artifact.getArtifactId() )
                     .append( '-' )
                     .append( artifact.getVersion() );
-                if( artifact.getClassifier() != null )
+                if ( artifact.getClassifier() != null )
                 {
                     pathOf.append( '-' )
                     .append( artifact.getClassifier() );
