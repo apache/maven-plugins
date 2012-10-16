@@ -155,7 +155,7 @@ public class GetMojo
     private String artifact;
 
     /**
-     * The destination file to copy the artifact to, if other than the local repository
+     * The destination file or directory to copy the artifact to, if other than the local repository
      *
      * @since 2.4
      */
@@ -272,7 +272,14 @@ public class GetMojo
             }
             try
             {
-                FileUtils.copyFile( toDownload.getFile(), new File( destination ) );
+                if ( dest.isDirectory() )
+                {
+                    FileUtils.copyFileToDirectory( src, dest );
+                }
+                else
+                {
+                    FileUtils.copyFile( src, dest );
+                } 
             }
             catch ( IOException e )
             {

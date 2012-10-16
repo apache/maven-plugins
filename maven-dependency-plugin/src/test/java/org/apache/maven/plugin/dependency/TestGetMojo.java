@@ -28,6 +28,7 @@ import org.apache.maven.artifact.repository.layout.DefaultRepositoryLayout;
 import org.apache.maven.artifact.repository.layout.LegacyRepositoryLayout;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.testing.stubs.StubArtifactRepository;
+import org.codehaus.plexus.util.FileUtils;
 
 public class TestGetMojo
     extends AbstractDependencyMojoTestCase
@@ -49,7 +50,19 @@ public class TestGetMojo
             @Override
             public String pathOf( Artifact artifact )
             {
-                return super.pathOf( artifact ).replace( ':', '_' );
+                StringBuilder pathOf = new StringBuilder();
+                pathOf.append( artifact.getGroupId() )
+                    .append( '_' )
+                    .append( artifact.getArtifactId() )
+                    .append( '-' )
+                    .append( artifact.getVersion() );
+                if( artifact.getClassifier() != null )
+                {
+                    pathOf.append( '-' )
+                    .append( artifact.getClassifier() );
+                }
+                pathOf.append( '.' ).append( artifact.getArtifactHandler().getExtension() );
+                return pathOf.toString();
             }
         } );
     }
@@ -75,6 +88,39 @@ public class TestGetMojo
         setVariableValueToObject( mojo, "transitive", Boolean.FALSE );
         mojo.execute();
     }
+    
+    /**
+     * Test destination parameter
+     * 
+     * @throws Exception
+     */
+    public void testDestination()
+        throws Exception
+    {
+        // Set properties, transitive = default value = true
+        setVariableValueToObject( mojo, "transitive", Boolean.FALSE );
+        setVariableValueToObject( mojo, "repositoryUrl", "http://repo1.maven.apache.org/maven2" );
+        setVariableValueToObject( mojo, "groupId", "org.apache.maven" );
+        setVariableValueToObject( mojo, "artifactId", "maven-model" );
+        setVariableValueToObject( mojo, "version", "2.0.9" );
+        File output = new File( getBasedir(), "target/unit-tests/get-test/destination-file/maven-model-2.0.9.jar" );
+        output.delete();
+        setVariableValueToObject( mojo, "destination", output.getAbsolutePath() );
+
+        mojo.execute();
+        assertTrue( output.exists() );
+
+        // Test directory
+        output = new File( getBasedir(), "target/unit-tests/get-test/destination-dir" );
+        output.mkdirs();
+        FileUtils.cleanDirectory( output );
+        setVariableValueToObject( mojo, "destination", output.getAbsolutePath() );
+
+        mojo.execute();
+        assertTrue( new File( output, "org.apache.maven_maven-model-2.0.9.jar" ).exists() );
+    }
+    
+    
 
     /**
      * Test remote repositories parameter
