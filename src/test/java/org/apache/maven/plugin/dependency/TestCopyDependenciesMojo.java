@@ -22,7 +22,6 @@ package org.apache.maven.plugin.dependency;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
@@ -103,10 +102,9 @@ public class TestCopyDependenciesMojo
         throws Exception
     {
         mojo.execute();
-        Iterator<Artifact> iter = mojo.project.getArtifacts().iterator();
-        while ( iter.hasNext() )
+        Set<Artifact> artifacts = mojo.project.getArtifacts();
+        for ( Artifact artifact : artifacts )
         {
-            Artifact artifact = iter.next();
             String fileName = DependencyUtil.getFormattedFileName( artifact, false );
             File file = new File( mojo.outputDirectory, fileName );
             assertTrue( file.exists() );
@@ -122,11 +120,25 @@ public class TestCopyDependenciesMojo
         mojo.stripVersion = true;
         mojo.execute();
 
-        Iterator<Artifact> iter = mojo.project.getArtifacts().iterator();
-        while ( iter.hasNext() )
+        Set<Artifact> artifacts = mojo.project.getArtifacts();
+        for ( Artifact artifact : artifacts )
         {
-            Artifact artifact = iter.next();
             String fileName = DependencyUtil.getFormattedFileName( artifact, true );
+            File file = new File( mojo.outputDirectory, fileName );
+            assertTrue( file.exists() );
+        }
+    }
+
+    public void testUseBaseVersion()
+        throws Exception
+    {
+        mojo.useBaseVersion = true;
+        mojo.execute();
+
+        Set<Artifact> artifacts = mojo.project.getArtifacts();
+        for ( Artifact artifact : artifacts )
+        {
+            String fileName = DependencyUtil.getFormattedFileName( artifact, false, false, true );
             File file = new File( mojo.outputDirectory, fileName );
             assertTrue( file.exists() );
         }
@@ -137,11 +149,10 @@ public class TestCopyDependenciesMojo
     {
         mojo.excludeTransitive = true;
         mojo.execute();
-        Iterator<Artifact> iter = mojo.project.getDependencyArtifacts().iterator();
 
-        while ( iter.hasNext() )
+        Set<Artifact> artifacts = mojo.project.getDependencyArtifacts();
+        for ( Artifact artifact : artifacts )
         {
-            Artifact artifact = iter.next();
             String fileName = DependencyUtil.getFormattedFileName( artifact, false );
             File file = new File( mojo.outputDirectory, fileName );
             assertTrue( file.exists() );
@@ -156,10 +167,9 @@ public class TestCopyDependenciesMojo
         mojo.excludeTypes = "jar";
         mojo.execute();
 
-        Iterator<Artifact> iter = mojo.project.getArtifacts().iterator();
-        while ( iter.hasNext() )
+        Set<Artifact> artifacts = mojo.project.getArtifacts();
+        for ( Artifact artifact : artifacts )
         {
-            Artifact artifact = iter.next();
             String fileName = DependencyUtil.getFormattedFileName( artifact, false );
             File file = new File( mojo.outputDirectory, fileName );
             assertEquals( artifact.getType().equalsIgnoreCase( "jar" ), !file.exists() );
@@ -178,10 +188,9 @@ public class TestCopyDependenciesMojo
 
         mojo.execute();
 
-        Iterator<Artifact> iter = mojo.project.getArtifacts().iterator();
-        while ( iter.hasNext() )
+        Set<Artifact> artifacts = mojo.project.getArtifacts();
+        for ( Artifact artifact : artifacts )
         {
-            Artifact artifact = iter.next();
             String fileName = DependencyUtil.getFormattedFileName( artifact, false );
             File file = new File( mojo.outputDirectory, fileName );
             assertFalse( file.exists() );
@@ -190,10 +199,9 @@ public class TestCopyDependenciesMojo
         mojo.excludeTypes = "";
         mojo.execute();
 
-        iter = mojo.project.getArtifacts().iterator();
-        while ( iter.hasNext() )
+        artifacts = mojo.project.getArtifacts();
+        for ( Artifact artifact : artifacts )
         {
-            Artifact artifact = iter.next();
             String fileName = DependencyUtil.getFormattedFileName( artifact, false );
             File file = new File( mojo.outputDirectory, fileName );
             assertEquals( artifact.getType().equalsIgnoreCase( "jar" ), file.exists() );
@@ -209,10 +217,9 @@ public class TestCopyDependenciesMojo
         mojo.excludeArtifactIds = "one";
         mojo.execute();
 
-        Iterator<Artifact> iter = mojo.project.getArtifacts().iterator();
-        while ( iter.hasNext() )
+        Set<Artifact> artifacts = mojo.project.getArtifacts();
+        for ( Artifact artifact : artifacts )
         {
-            Artifact artifact = iter.next();
             String fileName = DependencyUtil.getFormattedFileName( artifact, false );
             File file = new File( mojo.outputDirectory, fileName );
             assertEquals( artifact.getArtifactId().equals( "one" ), !file.exists() );
@@ -231,10 +238,9 @@ public class TestCopyDependenciesMojo
 
         mojo.execute();
 
-        Iterator<Artifact> iter = mojo.project.getArtifacts().iterator();
-        while ( iter.hasNext() )
+        Set<Artifact> artifacts = mojo.project.getArtifacts();
+        for ( Artifact artifact : artifacts )
         {
-            Artifact artifact = iter.next();
             String fileName = DependencyUtil.getFormattedFileName( artifact, false );
             File file = new File( mojo.outputDirectory, fileName );
             assertFalse( file.exists() );
@@ -243,10 +249,9 @@ public class TestCopyDependenciesMojo
         mojo.excludeArtifactIds = "";
         mojo.execute();
 
-        iter = mojo.project.getArtifacts().iterator();
-        while ( iter.hasNext() )
+        artifacts = mojo.project.getArtifacts();
+        for ( Artifact artifact : artifacts )
         {
-            Artifact artifact = iter.next();
             String fileName = DependencyUtil.getFormattedFileName( artifact, false );
             File file = new File( mojo.outputDirectory, fileName );
             assertEquals( artifact.getArtifactId().equals( "one" ), file.exists() );
@@ -264,10 +269,9 @@ public class TestCopyDependenciesMojo
 
         mojo.execute();
 
-        Iterator<Artifact> iter = mojo.project.getArtifacts().iterator();
-        while ( iter.hasNext() )
+        Set<Artifact> artifacts = mojo.project.getArtifacts();
+        for ( Artifact artifact : artifacts )
         {
-            Artifact artifact = iter.next();
             String fileName = DependencyUtil.getFormattedFileName( artifact, false );
             File file = new File( mojo.outputDirectory, fileName );
             assertFalse( file.exists() );
@@ -276,10 +280,9 @@ public class TestCopyDependenciesMojo
         mojo.excludeGroupIds = "";
         mojo.execute();
 
-        iter = mojo.project.getArtifacts().iterator();
-        while ( iter.hasNext() )
+        artifacts = mojo.project.getArtifacts();
+        for ( Artifact artifact : artifacts )
         {
-            Artifact artifact = iter.next();
             String fileName = DependencyUtil.getFormattedFileName( artifact, false );
             File file = new File( mojo.outputDirectory, fileName );
             assertEquals( artifact.getGroupId().equals( "one" ), file.exists() );
@@ -295,10 +298,9 @@ public class TestCopyDependenciesMojo
         mojo.excludeGroupIds = "one";
         mojo.execute();
 
-        Iterator<Artifact> iter = mojo.project.getArtifacts().iterator();
-        while ( iter.hasNext() )
+        Set<Artifact> artifacts = mojo.project.getArtifacts();
+        for ( Artifact artifact : artifacts )
         {
-            Artifact artifact = iter.next();
             String fileName = DependencyUtil.getFormattedFileName( artifact, false );
             File file = new File( mojo.outputDirectory, fileName );
 
@@ -313,10 +315,9 @@ public class TestCopyDependenciesMojo
         mojo.excludeGroupIds = "one,two";
         mojo.execute();
 
-        Iterator<Artifact> iter = mojo.project.getArtifacts().iterator();
-        while ( iter.hasNext() )
+        Set<Artifact> artifacts = mojo.project.getArtifacts();
+        for ( Artifact artifact : artifacts )
         {
-            Artifact artifact = iter.next();
             String fileName = DependencyUtil.getFormattedFileName( artifact, false );
             File file = new File( mojo.outputDirectory, fileName );
 
@@ -332,10 +333,9 @@ public class TestCopyDependenciesMojo
         mojo.excludeClassifiers = "one";
         mojo.execute();
 
-        Iterator<Artifact> iter = mojo.project.getArtifacts().iterator();
-        while ( iter.hasNext() )
+        Set<Artifact> artifacts = mojo.project.getArtifacts();
+        for ( Artifact artifact : artifacts )
         {
-            Artifact artifact = iter.next();
             String fileName = DependencyUtil.getFormattedFileName( artifact, false );
             File file = new File( mojo.outputDirectory, fileName );
             assertEquals( artifact.getClassifier().equals( "one" ), !file.exists() );
@@ -354,10 +354,9 @@ public class TestCopyDependenciesMojo
 
         mojo.execute();
 
-        Iterator<Artifact> iter = mojo.project.getArtifacts().iterator();
-        while ( iter.hasNext() )
+        Set<Artifact> artifacts = mojo.project.getArtifacts();
+        for ( Artifact artifact : artifacts )
         {
-            Artifact artifact = iter.next();
             String fileName = DependencyUtil.getFormattedFileName( artifact, false );
             File file = new File( mojo.outputDirectory, fileName );
             assertFalse( file.exists() );
@@ -366,10 +365,9 @@ public class TestCopyDependenciesMojo
         mojo.excludeClassifiers = "";
         mojo.execute();
 
-        iter = mojo.project.getArtifacts().iterator();
-        while ( iter.hasNext() )
+        artifacts = mojo.project.getArtifacts();
+        for ( Artifact artifact : artifacts )
         {
-            Artifact artifact = iter.next();
             String fileName = DependencyUtil.getFormattedFileName( artifact, false );
             File file = new File( mojo.outputDirectory, fileName );
             assertEquals( artifact.getClassifier().equals( "one" ), file.exists() );
@@ -385,10 +383,9 @@ public class TestCopyDependenciesMojo
         mojo.useSubDirectoryPerType = true;
         mojo.execute();
 
-        Iterator<Artifact> iter = mojo.project.getArtifacts().iterator();
-        while ( iter.hasNext() )
+        Set<Artifact> artifacts = mojo.project.getArtifacts();
+        for ( Artifact artifact : artifacts )
         {
-            Artifact artifact = iter.next();
             String fileName = DependencyUtil.getFormattedFileName( artifact, false );
             File folder = DependencyUtil.getFormattedOutputDirectory( false, true, false, false, false, mojo.outputDirectory,
                                                                       artifact );
@@ -428,11 +425,9 @@ public class TestCopyDependenciesMojo
 
         mojo.execute();
 
-        Iterator<Artifact> iter = mojo.project.getArtifacts().iterator();
-        while ( iter.hasNext() )
+        Set<Artifact> artifacts = mojo.project.getArtifacts();
+        for ( Artifact artifact : artifacts )
         {
-            Artifact artifact = iter.next();
-
             String useClassifier = artifact.getClassifier();
             String useType = artifact.getType();
 
@@ -650,10 +645,9 @@ public class TestCopyDependenciesMojo
 
         mojo.execute();
 
-        Iterator<Artifact> iter = mojo.project.getArtifacts().iterator();
-        while ( iter.hasNext() )
+        Set<Artifact> artifacts = mojo.project.getArtifacts();
+        for ( Artifact artifact : artifacts )
         {
-            Artifact artifact = iter.next();
             String fileName = DependencyUtil.getFormattedFileName( artifact, false );
             File file = new File( mojo.outputDirectory, fileName );
             assertEquals( artifact.getScope().equals( "provided" ), !file.exists() );
@@ -673,10 +667,9 @@ public class TestCopyDependenciesMojo
 
         mojo.execute();
 
-        Iterator<Artifact> iter = mojo.project.getArtifacts().iterator();
-        while ( iter.hasNext() )
+        Set<Artifact> artifacts = mojo.project.getArtifacts();
+        for ( Artifact artifact : artifacts )
         {
-            Artifact artifact = iter.next();
             String fileName = DependencyUtil.getFormattedFileName( artifact, false );
             File file = new File( mojo.outputDirectory, fileName );
             assertEquals( artifact.getScope().equals( "system" ), !file.exists() );
@@ -695,10 +688,9 @@ public class TestCopyDependenciesMojo
         mojo.execute();
         ScopeArtifactFilter saf = new ScopeArtifactFilter( mojo.excludeScope );
 
-        Iterator<Artifact> iter = mojo.project.getArtifacts().iterator();
-        while ( iter.hasNext() )
+        Set<Artifact> artifacts = mojo.project.getArtifacts();
+        for ( Artifact artifact : artifacts )
         {
-            Artifact artifact = iter.next();
             String fileName = DependencyUtil.getFormattedFileName( artifact, false );
             File file = new File( mojo.outputDirectory, fileName );
 
@@ -734,10 +726,9 @@ public class TestCopyDependenciesMojo
         mojo.execute();
         ScopeArtifactFilter saf = new ScopeArtifactFilter( mojo.excludeScope );
 
-        Iterator<Artifact> iter = mojo.project.getArtifacts().iterator();
-        while ( iter.hasNext() )
+        Set<Artifact> artifacts = mojo.project.getArtifacts();
+        for ( Artifact artifact : artifacts )
         {
-            Artifact artifact = iter.next();
             String fileName = DependencyUtil.getFormattedFileName( artifact, false );
             File file = new File( mojo.outputDirectory, fileName );
 
@@ -757,10 +748,9 @@ public class TestCopyDependenciesMojo
         mojo.project.setArtifacts( set );
         mojo.execute();
 
-        Iterator<Artifact> iter = mojo.project.getArtifacts().iterator();
-        while ( iter.hasNext() )
+        Set<Artifact> artifacts = mojo.project.getArtifacts();
+        for ( Artifact artifact : artifacts )
         {
-            Artifact artifact = iter.next();
             String fileName = DependencyUtil.getFormattedFileName( artifact, false );
             File file = new File( mojo.outputDirectory, fileName.substring( 0, fileName.length() - 4 ) + ".pom" );
             assertTrue( file.exists() );
@@ -773,10 +763,9 @@ public class TestCopyDependenciesMojo
         mojo.prependGroupId = true;
         mojo.execute();
     
-        Iterator<Artifact> iter = mojo.project.getArtifacts().iterator();
-        while ( iter.hasNext() )
+        Set<Artifact> artifacts = mojo.project.getArtifacts();
+        for ( Artifact artifact : artifacts )
         {
-            Artifact artifact = iter.next();
             String fileName = DependencyUtil.getFormattedFileName( artifact, false, true );
             File file = new File( mojo.outputDirectory, fileName );
             assertTrue( file.exists() );

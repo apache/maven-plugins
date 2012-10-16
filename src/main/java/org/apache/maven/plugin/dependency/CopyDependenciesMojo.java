@@ -32,6 +32,7 @@ import org.apache.maven.plugin.dependency.utils.filters.DestFileFilter;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.shared.artifact.filter.collection.ArtifactsFilter;
 
@@ -72,6 +73,14 @@ public class CopyDependenciesMojo
     @Component( role = ArtifactRepositoryLayout.class )
     private Map<String, ArtifactRepositoryLayout> repositoryLayouts;
 
+
+    /**
+     * Either append the artifact's baseVersion or uniqueVersion to the filename.
+     * Will only be used if {@link #isStripVersion()} is {@code false}.
+     */
+    @Parameter( property = "mdep.useBaseVersion", defaultValue = "true" )
+    protected boolean useBaseVersion = false;
+    
     /**
      * Main entry into mojo. Gets the list of dependencies and iterates through
      * calling copyArtifact.
@@ -90,7 +99,7 @@ public class CopyDependenciesMojo
         {
             for ( Artifact artifact : artifacts )
             {
-                copyArtifact( artifact, this.stripVersion, this.prependGroupId );
+                copyArtifact( artifact, isStripVersion(), this.prependGroupId, this.useBaseVersion );
             }
         }
         else
@@ -179,15 +188,17 @@ public class CopyDependenciesMojo
      * @param removeVersion  specifies if the version should be removed from the file name
      *                       when copying.
      * @param prependGroupId specifies if the groupId should be prepend to the file while copying.
+     * @param useBaseVersion specifies if the baseVersion of the artifact should be used instead of the version.
      * @throws MojoExecutionException with a message if an error occurs.
      * @see DependencyUtil#copyFile(File, File, Log)
      * @see DependencyUtil#getFormattedFileName(Artifact, boolean)
      */
-    protected void copyArtifact( Artifact artifact, boolean removeVersion, boolean prependGroupId )
-        throws MojoExecutionException
+    protected void copyArtifact( Artifact artifact, boolean removeVersion, boolean prependGroupId, 
+    		boolean useBaseVersion ) throws MojoExecutionException
     {
 
-        String destFileName = DependencyUtil.getFormattedFileName( artifact, removeVersion, prependGroupId );
+        String destFileName = DependencyUtil.getFormattedFileName( artifact, removeVersion, prependGroupId, 
+        		useBaseVersion );
 
         File destDir;
         destDir = DependencyUtil.getFormattedOutputDirectory( useSubDirectoryPerScope, useSubDirectoryPerType,

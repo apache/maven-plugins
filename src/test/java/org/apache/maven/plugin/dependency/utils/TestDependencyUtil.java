@@ -51,6 +51,8 @@ public class TestDependencyUtil
 
     Artifact snap;
 
+    Artifact snapResolvedVersion;
+
     Artifact release;
 
     Artifact sources;
@@ -69,6 +71,12 @@ public class TestDependencyUtil
         vr = VersionRange.createFromVersion( "1.1-SNAPSHOT" );
         snap = new DefaultArtifact( "test", "two", vr, Artifact.SCOPE_PROVIDED, "war", null, ah, false );
         artifacts.add( snap );
+
+        ah = new DefaultArtifactHandlerStub( "war", null );
+        vr = VersionRange.createFromVersion( "1.1-SNAPSHOT" );
+        snapResolvedVersion = new DefaultArtifact( "test", "three", vr, Artifact.SCOPE_PROVIDED, "war", null, ah, false );
+        snapResolvedVersion.setResolvedVersion("1.1-20121003.035531-117");
+        artifacts.add( snapResolvedVersion );
 
         ah = new DefaultArtifactHandlerStub( "war", null );
         vr = VersionRange.createFromVersion( "1.1-SNAPSHOT" );
@@ -192,6 +200,19 @@ public class TestDependencyUtil
         assertEquals( expectedResult, name );
         name = DependencyUtil.getFormattedFileName( artifact, true );
         expectedResult = "one-sources.jar";
+        assertEquals( expectedResult, name );
+    }
+
+    public void testFileNameUseBaseVersion()
+        throws MojoExecutionException
+    {
+        Artifact artifact = snapResolvedVersion;
+
+        String name = DependencyUtil.getFormattedFileName( artifact, false, false, true );
+        String expectedResult = "three-1.1-SNAPSHOT.war";
+        assertEquals( expectedResult, name );
+        name = DependencyUtil.getFormattedFileName( artifact, false, false, false );
+        expectedResult = "three-1.1-20121003.035531-117.war";
         assertEquals( expectedResult, name );
     }
 

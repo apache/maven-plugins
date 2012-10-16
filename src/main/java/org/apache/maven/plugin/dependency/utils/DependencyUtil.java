@@ -52,7 +52,7 @@ public final class DependencyUtil
     {
         return getFormattedFileName( artifact, removeVersion, false );
     }
-  
+
     /**
      * Builds the file name. If removeVersion is set, then the file name must be
      * reconstructed from the groupId (if <b>prependGroupId</b> is true) artifactId,
@@ -69,6 +69,30 @@ public final class DependencyUtil
      *         [groupId].artifactId-[version]-[classifier].[type]
      */
     public static String getFormattedFileName( Artifact artifact, boolean removeVersion, boolean prependGroupId )
+    {   
+    	return getFormattedFileName(artifact, removeVersion, prependGroupId, false);
+    	
+    }
+
+    /**
+     * Builds the file name. If removeVersion is set, then the file name must be
+     * reconstructed from the groupId (if <b>prependGroupId</b> is true) artifactId,
+     * Classifier (if used) and Type.
+     * Otherwise, this method returns the artifact file name.
+     * 
+     * @param artifact
+     *            File to be formatted.
+     * @param removeVersion
+     *            Specifies if the version should be removed from the file name.
+     * @param prependGroupId
+     *            Specifies if the groupId should be prepended to the file name.
+     * @param useBaseVersion
+     *            Specifies if the baseVersion of the artifact should be used instead of the version.
+     * @return Formatted file name in the format
+     *         [groupId].artifactId-[version]-[classifier].[type]
+     */
+    public static String getFormattedFileName( Artifact artifact, boolean removeVersion, boolean prependGroupId, 
+    		boolean useBaseVersion )
     {
         StringBuilder destFileName = new StringBuilder();
         
@@ -80,7 +104,14 @@ public final class DependencyUtil
         String versionString = null;
         if ( !removeVersion )
         {
-            versionString = "-" + artifact.getVersion();
+        	if ( useBaseVersion )
+            {
+        		versionString = "-" + artifact.getBaseVersion();
+            }
+        	else
+        	{
+        		versionString = "-" + artifact.getVersion();
+        	}
         }
         else
         {
