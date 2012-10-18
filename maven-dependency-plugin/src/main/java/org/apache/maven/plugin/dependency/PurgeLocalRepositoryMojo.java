@@ -111,6 +111,12 @@ public class PurgeLocalRepositoryMojo
     private ArtifactRepository localRepository;
 
     /**
+     * List of Remote Repositories used by the resolver
+     */
+    @Parameter( defaultValue = "${project.remoteArtifactRepositories}", readonly = true, required = true )
+    protected List<ArtifactRepository> remoteRepos;
+
+    /**
      * The artifact resolver used to re-resolve dependencies, if that option is
      * enabled.
      */
@@ -208,13 +214,16 @@ public class PurgeLocalRepositoryMojo
         return patterns;
     }
 
+    /**
+     * Map the groupId:artifactId to the artifact object
+     * @param project The current Maven project
+     * @return
+     */
     private Map<String, Artifact> createArtifactMap( MavenProject project )
     {
         Map<String, Artifact> artifactMap = Collections.emptyMap();
 
         @SuppressWarnings( "unchecked" ) List<Dependency> dependencies = project.getDependencies();
-
-        List<ArtifactRepository> remoteRepositories = Collections.emptyList();
 
         Set<Artifact> dependencyArtifacts = new HashSet<Artifact>();
 
@@ -233,6 +242,9 @@ public class PurgeLocalRepositoryMojo
             dependencyArtifacts.add( artifact );
         }
 
+        // If the transitive dependencies are included, it's necessary to resolve the
+        // dependencies, even if that means going to the remote repository, to make
+        // sure we get the full tree.
         if ( actTransitively )
         {
             try
@@ -242,7 +254,7 @@ public class PurgeLocalRepositoryMojo
                 if ( snapshotsOnly )
                 {
                     result = resolver.resolveTransitively( dependencyArtifacts, project.getArtifact(), localRepository,
-                                                           remoteRepositories, source, new ArtifactFilter()
+                                                           remoteRepos, source, new ArtifactFilter()
                     {
                         public boolean include( Artifact artifact )
                         {
@@ -253,7 +265,7 @@ public class PurgeLocalRepositoryMojo
                 else
                 {
                     result =
-                        resolver.resolveTransitively( dependencyArtifacts, project.getArtifact(), remoteRepositories,
+                        resolver.resolveTransitively( dependencyArtifacts, project.getArtifact(), remoteRepos,
                                                       localRepository, source );
                 }
 
@@ -268,25 +280,16 @@ public class PurgeLocalRepositoryMojo
                 verbose( "Skipping: " + e.getArtifactId() + ". It cannot be resolved." );
             }
         }
+        // If we don't care about transitive dependencies, there is no need to resolve
+        // from the remote repositories, we can just use the local path
         else
         {
             artifactMap = new HashMap<String, Artifact>();
             for ( Artifact artifact : dependencyArtifacts )
             {
-                try
-                {
-                    resolver.resolve( artifact, remoteRepositories, localRepository );
-
-                    artifactMap.put( ArtifactUtils.versionlessKey( artifact ), artifact );
-                }
-                catch ( ArtifactResolutionException e )
-                {
-                    verbose( "Skipping: " + e.getArtifactId() + ". It cannot be resolved." );
-                }
-                catch ( ArtifactNotFoundException e )
-                {
-                    verbose( "Skipping: " + e.getArtifactId() + ". It cannot be resolved." );
-                }
+                String localPath = localRepository.pathOf( artifact ); 
+                artifact.setFile( new File( localRepository.getBasedir(), localPath ) );
+                artifactMap.put( ArtifactUtils.versionlessKey( artifact ), artifact );
             }
         }
 
