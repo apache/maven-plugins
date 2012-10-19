@@ -40,6 +40,7 @@ under the License.
        <item name="Failing the build on dependency analysis warnings" href="examples/failing-the-build-on-dependency-analysis-warnings.html"/>
        <item name="Filtering the dependency tree" href="examples/filtering-the-dependency-tree.html"/>
        <item name="Resolving conflicts using the dependency tree" href="examples/resolving-conflicts-using-the-dependency-tree.html"/>
+       <item name="Purging local repository dependencies" href="examples/purging-local-repository.html"/>
     </menu>
     <menu name="Resources">
       <item name="Dependency Mechanism" href="http://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html" />

@@ -82,7 +82,53 @@ public class PurgeLocalRepositoryMojo
 
     /**
      * The list of dependencies in the form of groupId:artifactId which should
-     * NOT be deleted/refreshed. This is useful for third-party artifacts.
+     * BE deleted/purged from the local repository.  Note that using this
+     * parameter will deactivate the normal process for purging the current project
+     * dependency tree.  If this parameter is used, only the included artifacts will
+     * be purged.
+     * 
+     * The includes parameter should not be used in combination with the
+     * includes/excludes parameters.
+     * 
+     * @since 2.6
+     */
+    @Parameter
+    private List<String> manualIncludes;
+
+    /**
+     * Comma-separated list of groupId:artifactId entries, which should be used
+     * to manually include artifacts for deletion. This is a command-line
+     * alternative to the <code>manualIncludes</code> parameter, since List
+     * parameters are not currently compatible with CLI specification.
+     * 
+     * @since 2.6
+     */
+    @Parameter( property = "manualInclude" )
+    private String manualInclude;
+
+    /**
+     * The list of dependencies in the form of groupId:artifactId which should
+     * BE deleted/refreshed. 
+     * 
+     * @since 2.6
+     */
+    @Parameter
+    private List<String> includes;
+
+    /**
+     * Comma-separated list of groupId:artifactId entries, which should be used
+     * to include artifacts for deletion/refresh. This is a command-line
+     * alternative to the <code>includes</code> parameter, since List
+     * parameters are not currently compatible with CLI specification.
+     * 
+     * @since 2.6
+     */
+    @Parameter( property = "include" )
+    private String include;
+
+    /**
+     * The list of dependencies in the form of groupId:artifactId which should
+     * NOT be deleted/refreshed.
      */
     @Parameter
     private List<String> excludes;
@@ -176,13 +222,24 @@ public class PurgeLocalRepositoryMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        List<String> exclusionPatterns = buildExclusionPatternsList();
+
+        List<String> manualInclusionPatterns = buildInclusionPatternsList( manualIncludes, manualInclude );
+
+        if ( manualInclusionPatterns.size() > 0 )
+        {
+            manualPurge( manualInclusionPatterns );
+            return;
+        }
+
+        List<String> inclusionPatterns = buildInclusionPatternsList(includes, include);
+
+        List<String> exclusionPatterns = buildInclusionPatternsList(excludes, exclude);
 
         for ( MavenProject project : projects )
         {
             try
             {
-                refreshDependenciesForProject( project, exclusionPatterns );
+                refreshDependenciesForProject( project, inclusionPatterns, exclusionPatterns );
             }
             catch ( ArtifactResolutionException e )
             {
@@ -196,30 +253,80 @@ public class PurgeLocalRepositoryMojo
         }
     }
 
-    private List<String> buildExclusionPatternsList()
+    /**
+     * Purge artifacts from the local repository according to the given patterns.
+     * 
+     * @param inclusionPatterns
+     * @throws MojoExecutionException
+     */
+    private void manualPurge( List<String> inclusionPatterns )
+        throws MojoExecutionException
+    {
+        for ( String pattern : inclusionPatterns )
+        {
+            if ( pattern.isEmpty() )
+            {
+                throw new MojoExecutionException( "The groupId:artifactId for manualIncludes cannot be empty" );
+            }
+            String relativePath = gaStringtoPath( pattern );
+            File purgeDir = new File( localRepository.getBasedir() + "/" + relativePath );
+            if ( purgeDir.exists() )
+            {
+                try
+                {
+                    verbose( "Deleting directory: " + purgeDir );
+                    FileUtils.deleteDirectory( purgeDir );
+                }
+                catch ( IOException e )
+                {
+                    throw new MojoExecutionException( "Unable to purge directory: " + purgeDir );
+                }
+            }
+        }
+    }
+
+    /**
+     * Convert a groupId:artifactId to a file system path
+     * 
+     * @param ga
+     * @return
+     */
+    private String gaStringtoPath( String ga )
+    {
+        if ( ga == null || ga.equals( "" ) )
+        {
+            return null;
+        }
+        // Replace wildcard with empty path
+        String path = ga.replace( ":*", "" );
+        path = path.replace( '.', '/' ).replace( ':', '/' );
+        return path;
+    }
+
+    private List<String> buildInclusionPatternsList(List<String> includes, String include)
     {
         List<String> patterns = new ArrayList<String>();
 
-        if ( exclude != null )
+        if ( include != null )
         {
-            String[] elements = exclude.split( " ?, ?" );
+            String[] elements = include.split( " ?, ?" );
 
             patterns.addAll( Arrays.asList( elements ) );
         }
-        else if ( excludes != null && !excludes.isEmpty() )
+        else if ( includes != null && !includes.isEmpty() )
         {
-            patterns.addAll( excludes );
+            patterns.addAll( includes );
         }
 
         return patterns;
     }
 
     /**
-     * Map the groupId:artifactId to the artifact object
+     * Map the groupId:artifactId identifiers to the artifact objects for the current project
      * @param project The current Maven project
      * @return
      */
-    private Map<String, Artifact> createArtifactMap( MavenProject project )
+    private Map<String, Artifact> createProjectArtifactMap( MavenProject project )
     {
         Map<String, Artifact> artifactMap = Collections.emptyMap();
 
@@ -304,36 +411,77 @@ public class PurgeLocalRepositoryMojo
         }
     }
 
-    private void refreshDependenciesForProject( MavenProject project, List<String> exclusionPatterns )
+    private void refreshDependenciesForProject( MavenProject project, List<String> inclusionPatterns, List<String> exclusionPatterns )
         throws ArtifactResolutionException, MojoFailureException
     {
-        Map<String, Artifact> deps = createArtifactMap( project );
+        Map<String, Artifact> artifactMap = createProjectArtifactMap( project );
 
-        if ( deps.isEmpty() )
+        if ( artifactMap.isEmpty() )
         {
             getLog().info( "Nothing to do for project: " + project.getId() );
             return;
+        }
+
+        Map<String, Artifact> depsAfterInclusion = new HashMap<String, Artifact>();
+
+        if ( !inclusionPatterns.isEmpty() )
+        {
+            for ( Iterator<Map.Entry<String, Artifact>> artifactIter = artifactMap.entrySet().iterator(); artifactIter.hasNext(); )
+            {
+                Map.Entry<String, Artifact> artifactEntry = artifactIter.next();
+
+                Artifact artifact = artifactEntry.getValue();
+
+                if ( resolutionFuzziness.equals( GROUP_ID_FUZZINESS ) )
+                {
+                    if ( inclusionPatterns.contains( artifact.getGroupId() ) )
+                    {
+                        verbose( "Including groupId: " + artifact.getGroupId() + " for refresh operation for project: "
+                            + project.getId() );
+                        depsAfterInclusion.put( artifactEntry.getKey(), artifactEntry.getValue() );
+                    }
+                }
+                else
+                {
+                    String artifactKey = ArtifactUtils.versionlessKey( artifact );
+                    if ( inclusionPatterns.contains( artifactKey ) )
+                    {
+                        verbose( "Including artifact: " + artifactKey + " for refresh operation for project: "
+                            + project.getId() );
+                        depsAfterInclusion.put( artifactEntry.getKey(), artifactEntry.getValue() );
+                    }
+                }
+            }
+
+            if ( depsAfterInclusion.isEmpty() )
+            {
+                getLog().info( "Nothing to include for project: " + project.getId() + ". Ending purge." );
+                return;
+            }
+
+            // replacing deps by the one included in order to apply the exclusion pattern.
+            artifactMap = depsAfterInclusion;
         }
 
         if ( !exclusionPatterns.isEmpty() )
         {
             for ( String excludedKey : exclusionPatterns )
             {
-                if ( GROUP_ID_FUZZINESS.equals( resolutionFuzziness ) )
+                if ( resolutionFuzziness.equals( GROUP_ID_FUZZINESS ) )
                 {
                     verbose( "Excluding groupId: " + excludedKey + " from refresh operation for project: "
                                  + project.getId() );
 
-                    for ( Iterator<Map.Entry<String, Artifact>> deps_it = deps.entrySet().iterator();
-                          deps_it.hasNext(); )
+                    for ( Iterator<Map.Entry<String, Artifact>> artifactIter = artifactMap.entrySet().iterator();
+                                    artifactIter.hasNext(); )
                     {
-                        Map.Entry<String, Artifact> dependency = deps_it.next();
+                        Map.Entry<String, Artifact> artifactEntry = artifactIter.next();
 
-                        Artifact artifact = dependency.getValue();
+                        Artifact artifact = artifactEntry.getValue();
 
                         if ( artifact.getGroupId().equals( excludedKey ) )
                         {
-                            deps_it.remove();
+                            artifactIter.remove();
                         }
                     }
                 }
@@ -341,7 +489,7 @@ public class PurgeLocalRepositoryMojo
                 {
                     verbose( "Excluding: " + excludedKey + " from refresh operation for project: " + project.getId() );
 
-                    deps.remove( excludedKey );
+                    artifactMap.remove( excludedKey );
                 }
             }
         }
@@ -349,7 +497,7 @@ public class PurgeLocalRepositoryMojo
         verbose( "Processing dependencies for project: " + project.getId() );
 
         List<Artifact> missingArtifacts = new ArrayList<Artifact>();
-        for ( Map.Entry<String, Artifact> entry : deps.entrySet() )
+        for ( Map.Entry<String, Artifact> entry : artifactMap.entrySet() )
         {
             Artifact artifact = entry.getValue();
 
@@ -420,43 +568,8 @@ public class PurgeLocalRepositoryMojo
 
         if ( GROUP_ID_FUZZINESS.equals( resolutionFuzziness ) )
         {
-            // get the artifactId dir.
-            deleteTarget = deleteTarget.getParentFile().getParentFile();
-
-            // get the first groupId dir.
-            deleteTarget = deleteTarget.getParentFile();
-
-            String[] path = localRepository.pathOf( artifact ).split( "\\/" );
-
-            // subtract the artifact filename, version dir, artifactId dir, and
-            // the first groupId
-            // dir, since we've accounted for those above.
-            int groupParts = path.length - 4;
-
-            File parent = deleteTarget.getParentFile();
-            int count = 0;
-            while ( count++ < groupParts )
-            {
-                // prune empty dirs back to the beginning of the groupId, if
-                // possible.
-
-                // if the parent dir only has the one child file, then it's okay
-                // to prune.
-                if ( parent.list().length < 2 )
-                {
-                    deleteTarget = parent;
-
-                    // check the parent of this newly checked dir
-                    parent = deleteTarget.getParentFile();
-                }
-                else
-                {
-                    // if there are more files than the one that we're
-                    // interested in killing, stop.
-                    break;
-                }
-            }
-
+            // get the groupId dir.
+            deleteTarget = deleteTarget.getParentFile().getParentFile().getParentFile();
         }
         else if ( ARTIFACT_ID_FUZZINESS.equals( resolutionFuzziness ) )
         {
