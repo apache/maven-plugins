@@ -1,0 +1,134 @@
+~~ Licensed to the Apache Software Foundation (ASF) under one
+~~ or more contributor license agreements.  See the NOTICE file
+~~ distributed with this work for additional information
+~~ regarding copyright ownership.  The ASF licenses this file
+~~ to you under the Apache License, Version 2.0 (the
+~~ "License"); you may not use this file except in compliance
+~~ with the License.  You may obtain a copy of the License at
+~~
+~~ http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~ Unless required by applicable law or agreed to in writing,
+~~ software distributed under the License is distributed on an
+~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+~~ KIND, either express or implied.  See the License for the
+~~ specific language governing permissions and limitations
+~~ under the License.    
+ 
+  ------
+  Purging project dependencies
+  ------
+  Nicolas Cazottes
+  Paul Gier
+  ------
+  Oct 2012
+  ------
+
+Purging local repository dependencies
+
+  The purpose of the <<<dependency:purge-local-repository>>> goal is to purge 
+  (delete and optionally re-resolve) artifacts from the local maven repository.
+  This page describes some of the configuration options available to the plugin.
+
+* Basic usage
+
+  The default behaviour of the plugin is to first resolve the entire dependency
+  tree, then delete the contents from the local repository, and then re-resolve
+  the dependencies from the remote repository.
+
++---+
+mvn dependency:purge-local-repository
++---+
+
+* Transitive dependency resolution
+
+  By default, the plugin operates on all transitive dependencies.  This means that
+  the plugin may download certain missing dependencies to gather the full 
+  dependency tree information before beginning the purge process.
+
+  To avoid this pre-download step, the plugin can be configured to operate only
+  on the direct dependencies of the project using the "actTranstively" parameter.
+
++---+
+mvn dependency:purge-local-repository -DactTransitively=false
++---+
+
+* Dependency includes/excludes
+
+  Specific dependencies from the current project dependency tree
+  can be included or excluded from the purging and re-resolution
+  process using the "includes" or "excludes" parameters.  By default,
+  all project dependencies are purged.  The "includes" option changes
+  this behaviour to only purge the included artifacts.  The "excludes" 
+  option can be used to prevent purging/refreshing of certain dependencies.
+
++---+
+<project>
+  [...]
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>${project.version}</version>
+        <executions>
+          <execution>
+            <id>purge-local-dependencies</id>
+            <phase>process-sources</phase>
+            <goals>
+              <goal>purge-local-repository</goal>
+            </goals>
+            <configuration>
+              <excludes>
+                <exclude>[groupId1]:[artifactId1]</exclude>
+                <exclude>[groupId2]:[artifactId2]</exclude>
+              </excludes>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  [...]
+</project>
++---+
+
+  The includes/excludes configuration can also be passed from the CLI using the "include"
+  or "exclude" parameter.
+    
++---+
+mvn dependency:purge-local-repository -Dinclude=org.slf4j:slf4j-api,org.slf4j:log4j-over-slf4j
++---+
+
++---+
+mvn dependency:purge-local-repository -Dinclude=org.slf4j -DresolutionFuzziness=groupId -Dverbose=true
++---+
+
+
+* Manual includes
+
+  Specific dependencies which are not part of the current project dependency tree 
+  can be purged by using the "manualIncludes" or "manualInclude" parameters.  Using 
+  this parameter will de-activate the normal purging process and only the included
+  groupIds/artifactIds will be purged.  Any manually included purge artifacts will
+  be removed from the local repository and will not be re-resolved until they are
+  needed.  This can be useful for example to refresh the parent pom, an imported 
+  pom, or a maven plugin.
+
++---+
+mvn dependency:purge-local-repository -DmanualInclude=org.apache:apache
++---+
+
+
+* Other purge configuration
+   
+  To purge all the dependencies of a given groupId, use the <<<resolutionFuzziness>>> 
+  configuration parameter.
+
+  If neither <<<includes>>> nor <<<excludes>>> are specified, all the dependencies 
+  of the current project are purged.
+   
+  You can see the complete mojo documentation in 
+  {{{../purge-local-repository-mojo.html}dependency:purge-local-repository}}.
+   
+   
