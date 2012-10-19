@@ -264,7 +264,7 @@ public class PurgeLocalRepositoryMojo
     {
         for ( String pattern : inclusionPatterns )
         {
-            if ( pattern.isEmpty() )
+            if ( pattern.equals( "" ) )
             {
                 throw new MojoExecutionException( "The groupId:artifactId for manualIncludes cannot be empty" );
             }
