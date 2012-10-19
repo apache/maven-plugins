@@ -143,6 +143,14 @@ public class BuildClasspathMojo
     boolean outputFilterFile;
 
     /**
+     * Either append the artifact's baseVersion or uniqueVersion to the filename.
+     * Will only be used if {@link #isStripVersion()} is {@code false}.
+     * @since 2.6
+     */
+    @Parameter( property = "mdep.useBaseVersion", defaultValue = "true" )
+    protected boolean useBaseVersion = true;
+
+    /**
      * Maven ProjectHelper
      */
     @Component
@@ -273,7 +281,7 @@ public class BuildClasspathMojo
             // TODO: add param for prepending groupId and version.
             sb.append( prefix );
             sb.append( File.separator );
-            sb.append( DependencyUtil.getFormattedFileName( art, this.stripVersion, this.prependGroupId ) );
+            sb.append( DependencyUtil.getFormattedFileName( art, this.stripVersion, this.prependGroupId, this.useBaseVersion ) );
         }
     }
 
