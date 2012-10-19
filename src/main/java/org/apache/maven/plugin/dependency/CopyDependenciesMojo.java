@@ -56,6 +56,14 @@ public class CopyDependenciesMojo
 {
 
     /**
+     * Skip the execution
+     *
+     * @since 2.6
+     */
+    @Parameter( property = "mdep.skip", defaultValue = "false" )
+    private boolean skip;
+
+    /**
      *
      */
     @Component
@@ -92,6 +100,11 @@ public class CopyDependenciesMojo
     public void execute()
         throws MojoExecutionException
     {
+        if ( skip )
+        {
+            return;
+        }
+        
         DependencyStatusSets dss = getDependencySets( this.failOnMissingClassifierArtifact );
         Set<Artifact> artifacts = dss.getResolvedDependencies();
 
