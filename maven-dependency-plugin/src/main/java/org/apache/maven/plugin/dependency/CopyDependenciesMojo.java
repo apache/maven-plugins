@@ -88,8 +88,8 @@ public class CopyDependenciesMojo
      * @since 2.6
      */
     @Parameter( property = "mdep.useBaseVersion", defaultValue = "true" )
-    protected boolean useBaseVersion = false;
-    
+    protected boolean useBaseVersion = true;
+
     /**
      * Main entry into mojo. Gets the list of dependencies and iterates through
      * calling copyArtifact.
