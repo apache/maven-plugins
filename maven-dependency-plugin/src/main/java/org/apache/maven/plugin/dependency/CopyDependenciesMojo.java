@@ -85,6 +85,7 @@ public class CopyDependenciesMojo
     /**
      * Either append the artifact's baseVersion or uniqueVersion to the filename.
      * Will only be used if {@link #isStripVersion()} is {@code false}.
+     * @since 2.6
      */
     @Parameter( property = "mdep.useBaseVersion", defaultValue = "true" )
     protected boolean useBaseVersion = false;
