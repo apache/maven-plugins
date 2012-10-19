@@ -39,6 +39,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -264,12 +265,12 @@ public class PurgeLocalRepositoryMojo
     {
         for ( String pattern : inclusionPatterns )
         {
-            if ( pattern.equals( "" ) )
+            if ( StringUtils.isEmpty( pattern ) )
             {
                 throw new MojoExecutionException( "The groupId:artifactId for manualIncludes cannot be empty" );
             }
             String relativePath = gaStringtoPath( pattern );
-            File purgeDir = new File( localRepository.getBasedir() + "/" + relativePath );
+            File purgeDir = new File( localRepository.getBasedir(), relativePath );
             if ( purgeDir.exists() )
             {
                 try
@@ -336,7 +337,7 @@ public class PurgeLocalRepositoryMojo
 
         for ( Dependency dependency : dependencies )
         {
-            if ( dependency.getScope() != null && dependency.getScope().equals( Artifact.SCOPE_SYSTEM ) )
+            if ( Artifact.SCOPE_SYSTEM.equals( dependency.getScope() ))
             {
                 // Don't try to purge system dependencies
                 continue;
