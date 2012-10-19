@@ -336,6 +336,12 @@ public class PurgeLocalRepositoryMojo
 
         for ( Dependency dependency : dependencies )
         {
+            if ( dependency.getScope().equals( Artifact.SCOPE_SYSTEM ) )
+            {
+                // Don't try to purge system dependencies
+                continue;
+            }
+
             VersionRange vr = VersionRange.createFromVersion( dependency.getVersion() );
 
             Artifact artifact =
