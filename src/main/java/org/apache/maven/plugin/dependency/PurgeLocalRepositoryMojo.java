@@ -88,7 +88,7 @@ public class PurgeLocalRepositoryMojo
      * dependency tree.  If this parameter is used, only the included artifacts will
      * be purged.
      * 
-     * The includes parameter should not be used in combination with the
+     * The manualIncludes parameter should not be used in combination with the
      * includes/excludes parameters.
      * 
      * @since 2.6
