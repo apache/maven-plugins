@@ -128,7 +128,7 @@ public abstract class AbstractDependencyFilterMojo
      *
      * @since 2.0
      */
-    @Parameter( property = "type", defaultValue = "java-source" )
+    @Parameter( property = "type", defaultValue = "" )
     protected String type;
 
     /**

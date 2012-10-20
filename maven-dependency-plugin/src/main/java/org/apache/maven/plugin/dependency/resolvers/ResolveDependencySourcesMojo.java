@@ -19,19 +19,11 @@ package org.apache.maven.plugin.dependency.resolvers;
  * under the License.
  */
 
-import org.apache.maven.artifact.Artifact;
+import org.apache.commons.lang.StringUtils;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.dependency.AbstractResolveMojo;
-import org.apache.maven.plugin.dependency.utils.DependencyStatusSets;
-import org.apache.maven.plugin.dependency.utils.DependencyUtil;
-import org.apache.maven.plugin.dependency.utils.filters.ResolveFileFilter;
-import org.apache.maven.plugin.dependency.utils.markers.SourcesFileMarkerHandler;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.ResolutionScope;
-import org.apache.maven.shared.artifact.filter.collection.ArtifactsFilter;
-
-import java.io.IOException;
 
 /**
  * Goal that resolves the project source dependencies from the repository.
@@ -43,17 +35,10 @@ import java.io.IOException;
 @Mojo( name = "sources", defaultPhase = LifecyclePhase.GENERATE_SOURCES,
        requiresDependencyResolution = ResolutionScope.TEST )
 public class ResolveDependencySourcesMojo
-    extends AbstractResolveMojo
+    extends ResolveDependenciesMojo
 {
 
-    private static final String SOURCE_TYPE = "java-source";
-
     private static final String SOURCE_CLASSIFIER = "sources";
-
-    /**
-     * Only used to store results for integration test validation
-     */
-    DependencyStatusSets results;
 
     /**
      * Main entry into mojo. Gets the list of dependencies and iterates through
@@ -64,47 +49,11 @@ public class ResolveDependencySourcesMojo
     public void execute()
         throws MojoExecutionException
     {
-        this.classifier = SOURCE_CLASSIFIER;
-        this.type = SOURCE_TYPE;
-        // get sets of dependencies
-        results = this.getDependencySets( false );
-
-        SourcesFileMarkerHandler handler = new SourcesFileMarkerHandler( this.markersDirectory );
-        handler.setResolved( true );
-
-        for ( Artifact artifact : results.getResolvedDependencies() )
+        if ( StringUtils.isEmpty( this.classifier ) )
         {
-            handler.setArtifact( artifact );
-            handler.setMarker();
+            this.classifier = SOURCE_CLASSIFIER;
         }
 
-        handler.setResolved( false );
-        for ( Artifact artifact : results.getUnResolvedDependencies() )
-        {
-            handler.setArtifact( artifact );
-            handler.setMarker();
-        }
-
-        String output = results.getOutput( outputAbsoluteArtifactFilename, false );
-        try
-        {
-            if ( outputFile == null )
-            {
-                DependencyUtil.log( output, getLog() );
-            }
-            else
-            {
-                DependencyUtil.write( output, outputFile, appendOutput, getLog() );
-            }
-        }
-        catch ( IOException e )
-        {
-            throw new MojoExecutionException( e.getMessage(), e );
-        }
-    }
-
-    protected ArtifactsFilter getMarkedArtifactFilter()
-    {
-        return new ResolveFileFilter( new SourcesFileMarkerHandler( this.markersDirectory ) );
+        super.execute();
     }
 }
