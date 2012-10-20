@@ -90,7 +90,7 @@ public abstract class AbstractAnalyzeMojo
     private boolean verbose;
 
     /**
-     * Ignore Runtime,Provide,Test,System scopes for unused dependency analysis
+     * Ignore Runtime/Provided/Test/System scopes for unused dependency analysis
      */
     @Parameter( property = "ignoreNonCompile", defaultValue = "false" )
     private boolean ignoreNonCompile;
