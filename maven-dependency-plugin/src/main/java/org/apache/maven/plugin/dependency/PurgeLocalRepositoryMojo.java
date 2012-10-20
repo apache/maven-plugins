@@ -180,16 +180,16 @@ public class PurgeLocalRepositoryMojo
      * Determines how liberally the plugin will delete an artifact from the
      * local repository. Values are: <br/>
      * <ul>
-     * <li><b>file</b> <i>(default)</i> - Eliminate only the artifact's file.</li>
-     * <li><b>version</b> - Eliminate all files associated with the artifact's
-     * version.</li>
+     * <li><b>file</b> - Eliminate only the artifact's file.</li>
+     * <li><b>version</b> <i>(default)</i> - Eliminate all files associated 
+     * with the version of the artifact.</li>
      * <li><b>artifactId</b> - Eliminate all files associated with the
      * artifact's artifactId.</li>
      * <li><b>groupId</b> - Eliminate all files associated with the artifact's
      * groupId.</li>
      * </ul>
      */
-    @Parameter( property = "resolutionFuzziness", defaultValue = "file" )
+    @Parameter( property = "resolutionFuzziness", defaultValue = "version" )
     private String resolutionFuzziness;
 
     /**
