@@ -42,10 +42,10 @@ under the License.
        the command line, you must put the configuration tag outside of the executions.
 
        If you haven't done this correctly, the error will look like this:
-       <pre>
-[0] inside the definition for plugin: 'maven-dependency-plugin'specify the following:
-       </pre>
      </p>
+     <pre>
+[0] inside the definition for plugin: 'maven-dependency-plugin'specify the following:
+     </pre>
    </answer>
   </faq>
   <faq id="missing">
