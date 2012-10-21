@@ -78,5 +78,14 @@ under the License.
         </p>
       </answer>
     </faq>
+    <faq id="unused">
+      <question>Why does my dependency analysis report <code>Unused declared dependencies</code>?</question>
+      <answer><p>
+        By default, dependency analysis is done at bytecode level: anything that doesn't get into bytecode isn't detected.
+        This is the case, for example, of constants, annotations with source retention policy, or javadoc links.</p>
+        <p>If the only use of a dependency consists of such undetected constructs, the dependency is analyzed
+        as unused. Since 2.6, you can force use report with <code>usedDependencies</code> parameter.</p>
+      </answer>
+    </faq>
   </part>
 </faqs>
