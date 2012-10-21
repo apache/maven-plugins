@@ -204,6 +204,11 @@ public abstract class AbstractDependencyFilterMojo
     @Parameter( property = "mdep.prependGroupId", defaultValue = "false" )
     protected boolean prependGroupId = false;
 
+    /**
+     * Return an {@link ArtifactsFilter} indicating which artifacts must be filtered out.
+     * 
+     * @return an {@link ArtifactsFilter} indicating which artifacts must be filtered out.
+     */
     protected abstract ArtifactsFilter getMarkedArtifactFilter();
 
     /**
