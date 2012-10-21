@@ -123,8 +123,7 @@ public class AnalyzeReportMojo
         //remove everything that's not in the compile scope
         if ( ignoreNonCompile )
         {
-            @SuppressWarnings( "unchecked" ) Set<Artifact> filteredUnusedDeclared =
-                new HashSet<Artifact>( analysis.getUnusedDeclaredArtifacts() );
+            Set<Artifact> filteredUnusedDeclared = new HashSet<Artifact>( analysis.getUnusedDeclaredArtifacts() );
             Iterator<Artifact> iter = filteredUnusedDeclared.iterator();
             while ( iter.hasNext() )
             {
