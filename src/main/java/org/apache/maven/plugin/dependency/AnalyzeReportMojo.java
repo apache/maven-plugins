@@ -84,6 +84,7 @@ public class AnalyzeReportMojo
 
     /**
      * Ignore Runtime/Provided/Test/System scopes for unused dependency analysis
+     * @since 2.2
      */
     @Parameter( property = "ignoreNonCompile", defaultValue = "false" )
     private boolean ignoreNonCompile;
