@@ -123,7 +123,7 @@ public class CopyDependenciesMojo
                 ArtifactRepository targetRepository =
                     repositoryFactory.createDeploymentArtifactRepository( "local",
                                                                           outputDirectory.toURL().toExternalForm(),
-                                                                          (ArtifactRepositoryLayout) repositoryLayouts.get( "default" ),
+                                                                          repositoryLayouts.get( "default" ),
                                                                           false /* uniqueVersion */);
                 for ( Artifact artifact : artifacts )
                 {
