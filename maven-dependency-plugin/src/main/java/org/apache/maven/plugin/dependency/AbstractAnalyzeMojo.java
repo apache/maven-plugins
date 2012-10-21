@@ -83,19 +83,19 @@ public abstract class AbstractAnalyzeMojo
     private boolean failOnWarning;
 
     /**
-     * Output used dependencies
+     * Output used dependencies.
      */
     @Parameter( property = "verbose", defaultValue = "false" )
     private boolean verbose;
 
     /**
-     * Ignore Runtime/Provided/Test/System scopes for unused dependency analysis
+     * Ignore Runtime/Provided/Test/System scopes for unused dependency analysis.
      */
     @Parameter( property = "ignoreNonCompile", defaultValue = "false" )
     private boolean ignoreNonCompile;
 
     /**
-     * Output the xml for the missing dependencies
+     * Output the xml for the missing dependencies (used but not declared).
      *
      * @since 2.0-alpha-5
      */
@@ -103,7 +103,7 @@ public abstract class AbstractAnalyzeMojo
     private boolean outputXML;
 
     /**
-     * Output scriptable values
+     * Output scriptable values for the missing dependencies (used but not declared).
      *
      * @since 2.0-alpha-5
      */
@@ -111,7 +111,7 @@ public abstract class AbstractAnalyzeMojo
     private boolean scriptableOutput;
 
     /**
-     * Flag to use for scriptable output
+     * Flag to use for scriptable output.
      *
      * @since 2.0-alpha-5
      */
