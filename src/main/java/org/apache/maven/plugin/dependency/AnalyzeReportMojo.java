@@ -85,6 +85,15 @@ public class AnalyzeReportMojo
     @Parameter( property = "ignoreNonCompile", defaultValue = "false" )
     private boolean ignoreNonCompile;
 
+    /**
+     * Force dependencies as used, to override incomplete result caused by bytecode-level analysis.
+     * Dependency format is <code>groupId:artifactId</code>.
+     * 
+     * @since 2.6
+     */
+    @Parameter
+    private String[] usedDependencies;
+
     // Mojo methods -----------------------------------------------------------
 
     /*
@@ -111,6 +120,11 @@ public class AnalyzeReportMojo
         try
         {
             analysis = analyzer.analyze( project );
+
+            if ( usedDependencies != null )
+            {
+                analysis = analysis.forceDeclaredDependenciesUsage( usedDependencies );
+            }
         }
         catch ( ProjectDependencyAnalyzerException exception )
         {
