@@ -35,11 +35,14 @@ under the License.
      </answer>
    </faq>
    <faq id="cli">
-     <question>When executing mvn dependency:unpack or dependency:copy from the command line, I get "One or more required plugin parameters are invalid/missing for 'dependency:unpack'"</question>
+     <question>
+       When executing <code>mvn dependency:unpack</code> or <code>dependency:copy</code> from the command line,
+       I get "One or more required plugin parameters are invalid/missing for 'dependency:unpack'"
+     </question>
      <answer>
        <p>
-        In order for this to work, you must configure the ArtifactItems as shown <a href="examples/copying-artifacts.html#Copying From the Command Line">here</a>. Note that when executing a plugin from
-        the command line, you must put the configuration tag outside of the executions.
+        In order for this to work, you must configure the ArtifactItems as shown <a href="examples/copying-artifacts.html#Copying From the Command Line">here</a>.
+        Note that when executing a plugin from the command line, you must put the configuration tag outside of the executions.
        </p><p>
         If you haven't done this correctly, the error will look like this:
        </p>
@@ -58,18 +61,20 @@ under the License.
     <faq id="question">
       <question>Why is Maven resolving "dependency:xxx" to the older org.codehaus.mojo:dependency-maven-plugin?</question>
       <answer><p>
-        Due to a bug in Maven in versions prior to 2.0.7 (<a href="http://jira.codehaus.org/browse/MNG-2926">MNG-2926</a>) the search order was reversed and caused Mojo plugins to supercede ones with the same prefix at Apache.
-        The metadata at mojo was cleaned up when the maven-dependency-plugin was released at Apache. If you are still experiencing this error, chances are you have
-        old metadata in your local repository or in a proxy / internal repository. Removing /org/codehaus/mojo/maven-metadata.* from your repo/proxy will cause it to
-        be refreshed. Alternatively, you can specify the groupId explicitely in your pom (if you are using a bound goal), or on the command line, use groupId:artifactId:version:mojo, ie mvn
-        org.apache.maven.plugins:maven-dependency-plugin:2.0-alpha-4:unpack
+        Due to a bug in Maven in versions prior to 2.0.7 (<a href="http://jira.codehaus.org/browse/MNG-2926">MNG-2926</a>), the search order was reversed and caused Mojo plugins to supercede ones with the same prefix at Apache.
+        The metadata at Mojo was cleaned up when the maven-dependency-plugin was released at Apache. If you are still experiencing this error, chances are you have
+        old metadata in your local repository or in a proxy / internal repository. Removing <code>/org/codehaus/mojo/maven-metadata.*</code> from your repo/proxy will cause it to
+        be refreshed. Alternatively, you can specify the groupId explicitely in your pom (if you are using a bound goal), or on the command line, use groupId:artifactId:version:mojo, ie
+        <code>mvn org.apache.maven.plugins:maven-dependency-plugin:2.5:unpack</code>
       </p>
       </answer>
     </faq>
     <faq id="includes">
       <question>Why am I having trouble unpacking only a specific file?</question>
       <answer><p>
-        The excludes will override the includes declaration. That means if you specify excludes=**/* ,includes=**/foo, you will exclude everything. If you only want foo, then just specify the includes. The plexus component used to unpack uses the following code to determing which files to unpack: return isIncluded( name ) AND !isExcluded( name );
+        The excludes will override the includes declaration. That means if you specify excludes=**/* ,includes=**/foo,
+        you will exclude everything. If you only want foo, then just specify the includes. The plexus component used to
+        unpack uses the following code to determine which files to unpack: <code>return isIncluded( name ) AND !isExcluded( name );</code>
         </p>
       </answer>
     </faq>
