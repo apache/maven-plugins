@@ -19,6 +19,7 @@ package org.apache.maven.plugin.dependency;
  * under the License.
  */
 
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
@@ -196,10 +197,10 @@ public abstract class AbstractDependencyMojo
         }
     }
 
-    protected void unpack( File file, File location )
+    protected void unpack( Artifact artifact, File location )
         throws MojoExecutionException
     {
-        unpack( file, location, null, null );
+        unpack( artifact, location, null, null );
     }
 
     /**
@@ -212,9 +213,10 @@ public abstract class AbstractDependencyMojo
      * @param excludes Comma separated list of file patterns to exclude i.e. <code>**&#47;*.xml,
      *                 **&#47;*.properties</code>
      */
-    protected void unpack( File file, File location, String includes, String excludes )
+    protected void unpack( Artifact artifact, File location, String includes, String excludes )
         throws MojoExecutionException
     {
+        File file = artifact.getFile(); 
         try
         {
             logUnpack( file, location, includes, excludes );
@@ -230,7 +232,16 @@ public abstract class AbstractDependencyMojo
 
             UnArchiver unArchiver;
 
-            unArchiver = archiverManager.getUnArchiver( file );
+            try
+            {
+                unArchiver = archiverManager.getUnArchiver( artifact.getType() );
+                getLog().debug( "Found unArchiver by type: " + unArchiver );
+            }
+            catch ( NoSuchArchiverException e )
+            {
+                unArchiver = archiverManager.getUnArchiver( file );
+                getLog().debug( "Found unArchiver by extension: " + unArchiver );
+            }
 
             unArchiver.setUseJvmChmod( useJvmChmod );
 
