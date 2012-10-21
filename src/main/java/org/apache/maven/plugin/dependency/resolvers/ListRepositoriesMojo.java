@@ -20,8 +20,10 @@ package org.apache.maven.plugin.dependency.resolvers;
  */
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
+import org.apache.maven.artifact.resolver.ResolutionListener;
 import org.apache.maven.artifact.resolver.ResolutionNode;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.dependency.AbstractDependencyMojo;
@@ -31,7 +33,6 @@ import org.apache.maven.shared.artifact.filter.ScopeArtifactFilter;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 /**
@@ -59,8 +60,9 @@ public class ListRepositoriesMojo
             ArtifactResolutionResult result =
                 this.artifactCollector.collect( project.getArtifacts(), project.getArtifact(), this.getLocal(),
                                                 this.remoteRepos, this.artifactMetadataSource,
-                                                new ScopeArtifactFilter( Artifact.SCOPE_TEST ), new ArrayList() );
-            Set repos = new HashSet();
+                                                new ScopeArtifactFilter( Artifact.SCOPE_TEST ),
+                                                new ArrayList<ResolutionListener>() );
+            Set<ArtifactRepository> repos = new HashSet<ArtifactRepository>();
             Set<ResolutionNode> nodes = result.getArtifactResolutionNodes();
             for ( ResolutionNode node : nodes )
             {
@@ -68,9 +70,9 @@ public class ListRepositoriesMojo
             }
 
             this.getLog().info( "Repositories Used by this build:" );
-            for ( Iterator i = repos.iterator(); i.hasNext(); )
+            for ( ArtifactRepository repo : repos )
             {
-                this.getLog().info( i.next().toString() );
+                this.getLog().info( repo.toString() );
             }
         }
         catch ( ArtifactResolutionException e )
