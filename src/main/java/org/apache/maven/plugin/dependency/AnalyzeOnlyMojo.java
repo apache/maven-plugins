@@ -28,6 +28,10 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
  * and declared. This goal is intended to be used in the build lifecycle, thus it assumes that the
  * <code>test-compile</code> phase has been executed - use the <code>dependency:analyze</code> goal instead when
  * running standalone.
+ * 
+ * <p>By default, <a href="http://maven.apache.org/shared/maven-dependency-analyzer/">maven-dependency-analyzer</a> is
+ * used to perform the analysis, with limitations due to the fact that it works at bytecode level, but any
+ * analyzer can be plugged in through <code>analyzer</code> parameter.</p>
  *
  * @author <a href="mailto:markhobson@gmail.com">Mark Hobson</a>
  * @version $Id$

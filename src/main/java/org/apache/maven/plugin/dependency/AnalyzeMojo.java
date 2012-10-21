@@ -28,6 +28,10 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
  * Analyzes the dependencies of this project and determines which are: used and declared; used and undeclared; unused
  * and declared. This goal is intended to be used standalone, thus it always executes the <code>test-compile</code>
  * phase - use the <code>dependency:analyze-only</code> goal instead when participating in the build lifecycle.
+ * 
+ * <p>By default, <a href="http://maven.apache.org/shared/maven-dependency-analyzer/">maven-dependency-analyzer</a> is
+ * used to perform the analysis, with limitations due to the fact that it works at bytecode level, but any
+ * analyzer can be plugged in through <code>analyzer</code> parameter.</p>
  *
  * @author <a href="mailto:markhobson@gmail.com">Mark Hobson</a>
  * @version $Id$
