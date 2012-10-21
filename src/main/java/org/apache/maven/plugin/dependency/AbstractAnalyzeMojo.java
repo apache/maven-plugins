@@ -205,24 +205,14 @@ public abstract class AbstractAnalyzeMojo
             throw new MojoExecutionException( "Cannot analyze dependencies", exception );
         }
 
+        if ( ignoreNonCompile )
+        {
+            analysis = analysis.ignoreNonCompile();
+        }
+
         Set<Artifact> usedDeclared = analysis.getUsedDeclaredArtifacts();
         Set<Artifact> usedUndeclared = analysis.getUsedUndeclaredArtifacts();
         Set<Artifact> unusedDeclared = analysis.getUnusedDeclaredArtifacts();
-
-        if ( ignoreNonCompile )
-        {
-            Set<Artifact> filteredUnusedDeclared = new HashSet<Artifact>( unusedDeclared );
-            Iterator<Artifact> iter = filteredUnusedDeclared.iterator();
-            while ( iter.hasNext() )
-            {
-                Artifact artifact = iter.next();
-                if ( !artifact.getScope().equals( Artifact.SCOPE_COMPILE ) )
-                {
-                    iter.remove();
-                }
-            }
-            unusedDeclared = filteredUnusedDeclared;
-        }
 
         if ( ( !verbose || usedDeclared.isEmpty() ) && usedUndeclared.isEmpty() && unusedDeclared.isEmpty() )
         {

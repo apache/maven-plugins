@@ -124,21 +124,7 @@ public class AnalyzeReportMojo
         //remove everything that's not in the compile scope
         if ( ignoreNonCompile )
         {
-            Set<Artifact> filteredUnusedDeclared = new HashSet<Artifact>( analysis.getUnusedDeclaredArtifacts() );
-            Iterator<Artifact> iter = filteredUnusedDeclared.iterator();
-            while ( iter.hasNext() )
-            {
-                Artifact artifact = iter.next();
-                if ( !artifact.getScope().equals( Artifact.SCOPE_COMPILE ) )
-                {
-                    iter.remove();
-                }
-            }
-
-            ProjectDependencyAnalysis analysisTemp =
-                new ProjectDependencyAnalysis( analysis.getUsedDeclaredArtifacts(),
-                                               analysis.getUsedUndeclaredArtifacts(), filteredUnusedDeclared );
-            analysis = analysisTemp;
+            analysis = analysis.ignoreNonCompile();
         }
 
         // Step 2: Create sink and bundle
