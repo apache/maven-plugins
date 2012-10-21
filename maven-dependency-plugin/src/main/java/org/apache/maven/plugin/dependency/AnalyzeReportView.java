@@ -64,9 +64,7 @@ public class AnalyzeReportView
         }
         else
         {
-            @SuppressWarnings( "unchecked" )
-            Iterator<Artifact> iter = analysis.getUsedDeclaredArtifacts().iterator();
-            generateDependenciesTable( sink, iter );
+            generateDependenciesTable( sink, analysis.getUsedDeclaredArtifacts().iterator() );
         }
         sink.section2_();
 
@@ -84,9 +82,7 @@ public class AnalyzeReportView
         }
         else
         {
-            @SuppressWarnings( "unchecked" )
-            Iterator<Artifact> iter = analysis.getUsedUndeclaredArtifacts().iterator();
-            generateDependenciesTable( sink, iter );
+            generateDependenciesTable( sink, analysis.getUsedUndeclaredArtifacts().iterator() );
         }
         sink.section2_();
 
@@ -104,9 +100,7 @@ public class AnalyzeReportView
         }
         else
         {
-            @SuppressWarnings( "unchecked" )
-            Iterator<Artifact> iter = analysis.getUnusedDeclaredArtifacts().iterator();
-            generateDependenciesTable( sink, iter );
+            generateDependenciesTable( sink, analysis.getUnusedDeclaredArtifacts().iterator() );
         }
         sink.section2_();
 
