@@ -55,7 +55,7 @@ import java.util.regex.Pattern;
  * @since 2.0-alpha-2
  */
 @Mojo( name = "build-classpath", requiresDependencyResolution = ResolutionScope.TEST,
-       defaultPhase = LifecyclePhase.GENERATE_SOURCES )
+       defaultPhase = LifecyclePhase.GENERATE_SOURCES, threadSafe = true )
 public class BuildClasspathMojo
     extends AbstractDependencyFilterMojo
     implements Comparator<Artifact>

@@ -51,7 +51,7 @@ import java.util.regex.Pattern;
  * Downloads a single artifact transitively from the specified remote repositories. Caveat: will always check the
  * central repository defined in the super pom. You could use a mirror entry in your settings.xml
  */
-@Mojo( name = "get", requiresProject = false )
+@Mojo( name = "get", requiresProject = false, threadSafe = true )
 public class GetMojo
     extends AbstractMojo
 {

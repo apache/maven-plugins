@@ -45,7 +45,7 @@ import java.util.ResourceBundle;
  * @version $Id$
  * @since 2.0-alpha-5
  */
-@Mojo( name = "analyze-report", requiresDependencyResolution = ResolutionScope.TEST )
+@Mojo( name = "analyze-report", requiresDependencyResolution = ResolutionScope.TEST, threadSafe = true )
 @Execute( phase = LifecyclePhase.TEST_COMPILE )
 public class AnalyzeReportMojo
     extends AbstractMavenReport

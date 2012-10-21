@@ -41,7 +41,7 @@ import java.io.IOException;
  * @since 2.0
  */
 @Mojo( name = "resolve", requiresDependencyResolution = ResolutionScope.TEST,
-       defaultPhase = LifecyclePhase.GENERATE_SOURCES )
+       defaultPhase = LifecyclePhase.GENERATE_SOURCES, threadSafe = true )
 public class ResolveDependenciesMojo
     extends AbstractResolveMojo
 {

@@ -50,7 +50,7 @@ import java.util.Set;
  * @since 1.0
  */
 @Mojo( name = "copy-dependencies", requiresDependencyResolution = ResolutionScope.TEST,
-       defaultPhase = LifecyclePhase.PROCESS_SOURCES )
+       defaultPhase = LifecyclePhase.PROCESS_SOURCES, threadSafe = true )
 public class CopyDependenciesMojo
     extends AbstractFromDependenciesMojo
 {

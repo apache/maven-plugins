@@ -38,7 +38,7 @@ import java.util.Set;
  * @version $Id$
  * @since 2.0
  */
-@Mojo( name = "go-offline", requiresDependencyResolution = ResolutionScope.TEST )
+@Mojo( name = "go-offline", requiresDependencyResolution = ResolutionScope.TEST, threadSafe = true )
 @Execute( goal = "resolve-plugins" )
 public class GoOfflineMojo
     extends AbstractResolveMojo

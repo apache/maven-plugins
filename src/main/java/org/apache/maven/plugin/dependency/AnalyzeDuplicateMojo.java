@@ -46,7 +46,7 @@ import java.util.Set;
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
  */
-@Mojo( name = "analyze-duplicate", aggregator = false )
+@Mojo( name = "analyze-duplicate", aggregator = false, threadSafe = true )
 public class AnalyzeDuplicateMojo
     extends AbstractMojo
 {

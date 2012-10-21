@@ -54,7 +54,7 @@ import java.util.Set;
  * @version $Id$
  * @since 2.0-alpha-3
  */
-@Mojo( name = "analyze-dep-mgt", requiresDependencyResolution = ResolutionScope.TEST )
+@Mojo( name = "analyze-dep-mgt", requiresDependencyResolution = ResolutionScope.TEST, threadSafe = true )
 public class AnalyzeDepMgt
     extends AbstractMojo
 {
