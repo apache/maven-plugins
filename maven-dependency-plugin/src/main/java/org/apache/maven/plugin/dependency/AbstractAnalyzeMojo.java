@@ -134,6 +134,15 @@ public abstract class AbstractAnalyzeMojo
     @Parameter( defaultValue = "${project.build.directory}", readonly = true )
     private File outputDirectory;
 
+    /**
+     * Force dependencies as used, to override incomplete result caused by bytecode-level analysis.
+     * Dependency format is <code>groupId:artifactId</code>.
+     * 
+     * @since 2.6
+     */
+    @Parameter
+    private String[] usedDependencies;
+
     // Mojo methods -----------------------------------------------------------
 
     /*
@@ -198,6 +207,11 @@ public abstract class AbstractAnalyzeMojo
         try
         {
             analysis = createProjectDependencyAnalyzer().analyze( project );
+
+            if ( usedDependencies != null )
+            {
+                analysis = analysis.forceDeclaredDependenciesUsage( usedDependencies );
+            }
         }
         catch ( ProjectDependencyAnalyzerException exception )
         {
