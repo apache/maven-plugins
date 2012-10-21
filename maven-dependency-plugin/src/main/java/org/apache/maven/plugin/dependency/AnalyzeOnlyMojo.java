@@ -39,7 +39,7 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
  * @since 2.0
  */
 @Mojo( name = "analyze-only", requiresDependencyResolution = ResolutionScope.TEST,
-       defaultPhase = LifecyclePhase.VERIFY )
+       defaultPhase = LifecyclePhase.VERIFY, threadSafe = true )
 public class AnalyzeOnlyMojo
     extends AbstractAnalyzeMojo
 {

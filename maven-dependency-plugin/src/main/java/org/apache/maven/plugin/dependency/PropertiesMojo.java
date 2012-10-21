@@ -33,14 +33,14 @@ import java.util.Set;
 /**
  * Goal that sets a property pointing to the artifact file for each project dependency.
  * For each dependency (direct and transitive) a project property will be set which follows the
- * form groupId:artifactId:type:[classifier] and contains the path to the resolved artifact.
+ * <code>groupId:artifactId:type:[classifier]</code> form and contains the path to the resolved artifact.
  *
  * @author Paul Gier
  * @version $Id$
  * @since 2.2
  */
 @Mojo( name = "properties", requiresDependencyResolution = ResolutionScope.TEST,
-       defaultPhase = LifecyclePhase.INITIALIZE )
+       defaultPhase = LifecyclePhase.INITIALIZE, threadSafe = true )
 public class PropertiesMojo
     extends AbstractMojo
 {

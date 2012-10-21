@@ -42,7 +42,7 @@ import java.util.Set;
  * @version $Id: GoOfflineMojo.java 728546 2008-12-21 22:56:51Z bentmann $
  * @since 2.2
  */
-@Mojo( name = "list-repositories", requiresDependencyResolution = ResolutionScope.TEST )
+@Mojo( name = "list-repositories", requiresDependencyResolution = ResolutionScope.TEST, threadSafe = true )
 public class ListRepositoriesMojo
     extends AbstractDependencyMojo
 {

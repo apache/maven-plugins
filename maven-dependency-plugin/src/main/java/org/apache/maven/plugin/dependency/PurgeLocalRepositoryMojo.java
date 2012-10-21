@@ -61,7 +61,7 @@ import java.util.Set;
  * @version $Id$
  * @since 2.0
  */
-@Mojo( name = "purge-local-repository", aggregator = true )
+@Mojo( name = "purge-local-repository", aggregator = true, threadSafe = true )
 public class PurgeLocalRepositoryMojo
     extends AbstractMojo
 {

@@ -37,7 +37,7 @@ import java.util.List;
  * @version $Id$
  * @since 1.0
  */
-@Mojo( name = "copy", defaultPhase = LifecyclePhase.PROCESS_SOURCES, requiresProject = false  )
+@Mojo( name = "copy", defaultPhase = LifecyclePhase.PROCESS_SOURCES, requiresProject = false, threadSafe = true  )
 public class CopyMojo
     extends AbstractFromConfigurationMojo
 {

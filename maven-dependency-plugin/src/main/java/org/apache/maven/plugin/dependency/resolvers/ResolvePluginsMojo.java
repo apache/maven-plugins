@@ -48,7 +48,7 @@ import java.util.Set;
  * @version $Id$
  * @since 2.0
  */
-@Mojo( name = "resolve-plugins", defaultPhase = LifecyclePhase.GENERATE_SOURCES )
+@Mojo( name = "resolve-plugins", defaultPhase = LifecyclePhase.GENERATE_SOURCES, threadSafe = true )
 public class ResolvePluginsMojo
     extends AbstractResolveMojo
 {

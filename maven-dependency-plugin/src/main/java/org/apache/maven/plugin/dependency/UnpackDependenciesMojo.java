@@ -42,7 +42,7 @@ import java.io.File;
  * @since 1.0
  */
 @Mojo( name = "unpack-dependencies", requiresDependencyResolution = ResolutionScope.TEST,
-       defaultPhase = LifecyclePhase.PROCESS_SOURCES )
+       defaultPhase = LifecyclePhase.PROCESS_SOURCES, threadSafe = true )
 public class UnpackDependenciesMojo
     extends AbstractFromDependenciesMojo
 {
