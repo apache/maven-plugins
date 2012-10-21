@@ -19,7 +19,6 @@ package org.apache.maven.plugin.dependency;
  * under the License.
  */
 
-import org.apache.maven.artifact.Artifact;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.plugins.annotations.Component;
@@ -36,11 +35,8 @@ import org.apache.maven.shared.dependency.analyzer.ProjectDependencyAnalyzer;
 import org.apache.maven.shared.dependency.analyzer.ProjectDependencyAnalyzerException;
 
 import java.io.File;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Locale;
 import java.util.ResourceBundle;
-import java.util.Set;
 
 /**
  * Analyzes the dependencies of this project and produces a report that summarizes which are: used and declared; used
