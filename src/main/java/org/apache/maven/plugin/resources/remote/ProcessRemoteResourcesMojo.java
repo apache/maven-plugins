@@ -224,7 +224,8 @@ public class ProcessRemoteResourcesMojo
 
     /**
      * List of artifacts that are added to the search path when looking
-     * for supplementalModels
+     * for supplementalModels, expressed with
+     * <code>groupId:artifactId:version[:type[:classifier]]</code> format.
      *
      * @since 1.1
      */
@@ -245,7 +246,8 @@ public class ProcessRemoteResourcesMojo
     private ModelInheritanceAssembler inheritanceAssembler;
 
     /**
-     * The resource bundles that will be retrieved and processed.
+     * The resource bundles that will be retrieved and processed,
+     * expressed with <code>groupId:artifactId:version[:type[:classifier]]</code> format.
      */
     @Parameter( required = true )
     private List<String> resourceBundles;
