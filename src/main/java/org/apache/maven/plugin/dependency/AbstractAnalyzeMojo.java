@@ -71,6 +71,7 @@ public abstract class AbstractAnalyzeMojo
 
     /**
      * Project dependency analyzer to use (plexus component role-hint).
+     * By default, <a href="/shared/maven-dependency-analyzer/">maven-dependency-analyzer</a> is used.
      *
      * @since 2.2
      */
