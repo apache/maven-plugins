@@ -105,18 +105,22 @@ mvn dependency:purge-local-repository -Dinclude=org.slf4j -DresolutionFuzziness=
 +---+
 
 
-* Manual includes
+* Manual purge
 
   Specific dependencies which are not part of the current project dependency tree 
-  can be purged by using the "manualIncludes" or "manualInclude" parameters.  Using 
-  this parameter will de-activate the normal purging process and only the included
-  groupIds/artifactIds will be purged.  Any manually included purge artifacts will
-  be removed from the local repository and will not be re-resolved until they are
-  needed.  This can be useful for example to refresh the parent pom, an imported 
-  pom, or a maven plugin.
+  can be purged by using the "manual-purge-local-repository" goal and
+  setting the "manualIncludes" or "manualInclude" parameters.  Any manually 
+  included purge artifacts will be removed from the local repository and will 
+  not be re-resolved until they are needed.  This can be useful for 
+  example to refresh the parent pom, an imported pom, or a maven plugin.
+  
+  Warning, using this goal during the normal build process can be risky
+  if dependencies are removed from the local repo, but are needed later in
+  the build.  This goal is normally safe at the end of the build, or as
+  part of the build clean process.
 
 +---+
-mvn dependency:purge-local-repository -DmanualInclude=org.apache:apache
+mvn dependency:manual-purge-local-repository -Dinclude=org.apache:apache
 +---+
 
 

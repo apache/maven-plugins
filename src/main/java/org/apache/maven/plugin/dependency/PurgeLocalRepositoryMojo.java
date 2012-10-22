@@ -21,24 +21,18 @@ package org.apache.maven.plugin.dependency;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
-import org.apache.maven.artifact.metadata.ArtifactMetadataRetrievalException;
-import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
-import org.apache.maven.artifact.resolver.ArtifactResolutionException;
-import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.artifact.resolver.filter.AndArtifactFilter;
 import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
-import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
-import org.apache.maven.artifact.versioning.VersionRange;
-import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugin.dependency.utils.resolvers.DefaultArtifactsResolver;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.artifact.filter.PatternExcludesArtifactFilter;
 import org.apache.maven.shared.artifact.filter.PatternIncludesArtifactFilter;
@@ -49,20 +43,19 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 /**
  * Remove the project dependencies from the local repository, and optionally re-resolve them.
+ * Note: since 2.6 this mojo acts only on the current project, and not on all projects in the reactor.
  * 
  * @author jdcasey
  * @version $Id$
  * @since 2.0
  */
-@Mojo( name = "purge-local-repository", aggregator = true, threadSafe = true )
+@Mojo( name = "purge-local-repository", requiresDependencyResolution = ResolutionScope.TEST, threadSafe = true )
 public class PurgeLocalRepositoryMojo
     extends AbstractMojo
 {
@@ -76,31 +69,11 @@ public class PurgeLocalRepositoryMojo
     public static final String GROUP_ID_FUZZINESS = "groupId";
 
     /**
-     * The projects in the current build. Each of these is subject to refreshing.
+     * The current project
      */
-    @Parameter( defaultValue = "${reactorProjects}", readonly = true, required = true )
-    private List<MavenProject> projects;
+    @Component
+    protected MavenProject project;
 
-    /**
-     * The list of dependencies in the form of groupId:artifactId which should BE deleted/purged from the local
-     * repository. Note that using this parameter will deactivate the normal process for purging the current project
-     * dependency tree. If this parameter is used, only the included artifacts will be purged. The manualIncludes
-     * parameter should not be used in combination with the includes/excludes parameters.
-     * 
-     * @since 2.6
-     */
-    @Parameter
-    private List<String> manualIncludes;
-
-    /**
-     * Comma-separated list of groupId:artifactId entries, which should be used to manually include artifacts for
-     * deletion. This is a command-line alternative to the <code>manualIncludes</code> parameter, since List parameters
-     * are not currently compatible with CLI specification.
-     * 
-     * @since 2.6
-     */
-    @Parameter( property = "manualInclude" )
-    private String manualInclude;
 
     /**
      * The list of dependencies in the form of groupId:artifactId which should BE deleted/refreshed.
@@ -160,18 +133,6 @@ public class PurgeLocalRepositoryMojo
     private ArtifactResolver resolver;
 
     /**
-     * The artifact metadata source used to resolve dependencies
-     */
-    @Component
-    private ArtifactMetadataSource metadataSource;
-
-    /**
-     * The artifact resolution listener used to resolve ranges
-     */
-    // @Component
-    // private ResolutionListener listener;
-
-    /**
      * Determines how liberally the plugin will delete an artifact from the local repository. Values are: <br/>
      * <ul>
      * <li><b>file</b> - Eliminate only the artifact's file.</li>
@@ -212,58 +173,46 @@ public class PurgeLocalRepositoryMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        if ( !StringUtils.isEmpty( manualInclude ) )
-        {
-            manualIncludes = this.parseIncludes( manualInclude );
-        }
+        @SuppressWarnings( "unchecked" )
+        Set<Artifact> projectArtifacts = project.getDependencyArtifacts();
 
-        // If it's a manual purge, the only step is to delete from the local repo
-        if ( manualIncludes != null && manualIncludes.size() > 0 )
+        if ( actTransitively )
         {
-            manualPurge( manualIncludes );
-            return;
+            projectArtifacts = project.getArtifacts();
         }
 
         ArtifactFilter artifactFilter = createPurgeArtifactsFilter();
 
-        for ( MavenProject project : projects )
+        Set<Artifact> artifactsToPurge = filterArtifacts( project, projectArtifacts, artifactFilter );
+
+        if ( artifactsToPurge.isEmpty() )
         {
-            Set<Artifact> unresolvedArtifacts = getProjectArtifacts( project );
-            Set<Artifact> resolvedArtifactsToPurge =
-                getFilteredResolvedArtifacts( project, unresolvedArtifacts, artifactFilter );
+            getLog().info( "No artifacts included for purge for project: " + project.getId() );
+            return;
+        }
 
-            if ( resolvedArtifactsToPurge.isEmpty() )
+        verbose( "Purging dependencies for project: " + project.getId() );
+        purgeArtifacts( artifactsToPurge );
+
+        if ( this.reResolve )
+        {
+            final boolean STOP_ON_FAILURE = false;
+            DefaultArtifactsResolver artifactsResolver =
+                            new DefaultArtifactsResolver( resolver, this.localRepository, this.remoteRepos, STOP_ON_FAILURE );
+            
+            // First re-resolve all the poms
+            Set<Artifact> pomArtifacts = new HashSet<Artifact>();
+            for ( Artifact artifact : artifactsToPurge )
             {
-                getLog().info( "No artifacts included for purge for project: " + project.getId() );
-                continue;
+                Artifact pomArtifact =
+                                factory.createArtifact( artifact.getGroupId(), artifact.getArtifactId(), artifact.getVersion(),
+                                                        null, "pom" );
+                pomArtifacts.add( pomArtifact );
             }
+            artifactsResolver.resolve( pomArtifacts, getLog() );
 
-            verbose( "Purging dependencies for project: " + project.getId() );
-            purgeArtifacts( resolvedArtifactsToPurge );
-
-            if ( this.reResolve )
-            {
-                try
-                {
-                    this.reResolveArtifacts( project, resolvedArtifactsToPurge, artifactFilter );
-                }
-                catch ( ArtifactResolutionException e )
-                {
-                    String failureMessage = "Failed to refresh project dependencies for: " + project.getId();
-                    MojoFailureException failure = new MojoFailureException( failureMessage );
-                    failure.initCause( e );
-
-                    throw failure;
-                }
-                catch ( ArtifactNotFoundException e )
-                {
-                    String failureMessage = "Failed to refresh project dependencies for: " + project.getId();
-                    MojoFailureException failure = new MojoFailureException( failureMessage );
-                    failure.initCause( e );
-
-                    throw failure;
-                }
-            }
+            // Then re-resolve the artifacts
+            artifactsResolver.resolve( artifactsToPurge, getLog() );
         }
     }
 
@@ -331,68 +280,6 @@ public class PurgeLocalRepositoryMojo
     }
 
     /**
-     * Purge/Delete artifacts from the local repository according to the given patterns.
-     * 
-     * @param inclusionPatterns
-     * @throws MojoExecutionException
-     */
-    private void manualPurge( List<String> includes )
-        throws MojoExecutionException
-    {
-        for ( String pattern : includes )
-        {
-            if ( StringUtils.isEmpty( pattern ) )
-            {
-                throw new MojoExecutionException( "The groupId:artifactId for manualIncludes cannot be empty" );
-            }
-            String relativePath = groupIdArtifactIdtoPath( pattern );
-            File purgeDir = new File( localRepository.getBasedir(), relativePath );
-            if ( purgeDir.exists() )
-            {
-                try
-                {
-                    verbose( "Deleting directory: " + purgeDir );
-                    FileUtils.deleteDirectory( purgeDir );
-                }
-                catch ( IOException e )
-                {
-                    throw new MojoExecutionException( "Unable to purge directory: " + purgeDir );
-                }
-            }
-        }
-    }
-
-    /**
-     * Convert a groupId:artifactId to a file system path
-     * 
-     * @param ga
-     * @return
-     */
-    private String groupIdArtifactIdtoPath( String groupIdArtifactId )
-    {
-        if ( StringUtils.isEmpty( groupIdArtifactId ) )
-        {
-            return null;
-        }
-        String[] pathComponents = groupIdArtifactId.split( ":" );
-        String groupIdPath = groupIdToPath( pathComponents[0] );
-
-        if ( pathComponents.length == 1 || pathComponents[1] == "*" )
-        {
-            return groupIdPath;
-        }
-        else
-        {
-            return groupIdPath + "/" + pathComponents[1];
-        }
-    }
-
-    private String groupIdToPath( String groupId )
-    {
-        return groupId.replace( '.', '/' );
-    }
-
-    /**
      * Convert comma separated list of includes to List object
      * 
      * @param include
@@ -412,86 +299,33 @@ public class PurgeLocalRepositoryMojo
     }
 
     /**
-     * Get the unresolved project artifacts using the list of dependencies of a project
+     * Filter and resolve the set of artifacts. If we're not doing transitive dependency resolution, we just resolve the
+     * artifact file in the local repo.
      * 
-     * @throws ArtifactMetadataRetrievalException
+     * @param project
+     * @param artifacts
+     * @param artifactFilter
+     * @return
      */
-    private Set<Artifact> getProjectArtifacts( MavenProject project )
+    private Set<Artifact> filterArtifacts( MavenProject project, Set<Artifact> artifacts, ArtifactFilter artifactFilter )
     {
-        @SuppressWarnings( "unchecked" )
-        List<Dependency> dependencies = project.getDependencies();
-
-        Set<Artifact> artifacts = new HashSet<Artifact>();
-
-        for ( Dependency dependency : dependencies )
-        {
-            try
-            {
-                VersionRange vr = VersionRange.createFromVersionSpec( dependency.getVersion() );
-                Artifact artifact =
-                    factory.createDependencyArtifact( dependency.getGroupId(), dependency.getArtifactId(), vr,
-                                                      dependency.getType(), dependency.getClassifier(),
-                                                      dependency.getScope(), dependency.isOptional() );
-
-                artifacts.add( artifact );
-            }
-            catch ( InvalidVersionSpecificationException e )
-            {
-                getLog().warn( "Invalid version in pom: " + e );
-                continue;
-            }
-
-        }
-
-        return artifacts;
-    }
-
-    private Set<Artifact> getFilteredResolvedArtifacts( MavenProject project, Set<Artifact> artifacts,
-                                                        ArtifactFilter artifactFilter )
-    {
-        // If the transitive dependencies are included, it's necessary to resolve the
-        // dependencies, even if that means going to the remote repository, to make
-        // sure we get the full tree.
-        if ( actTransitively )
-        {
-            try
-            {
-                ArtifactResolutionResult result =
-                    resolver.resolveTransitively( artifacts, project.getArtifact(), localRepository, remoteRepos,
-                                                  metadataSource, artifactFilter );
-
-                @SuppressWarnings( "unchecked" )
-                Set<Artifact> resolvedArtifacts = result.getArtifacts();
-
-                return resolvedArtifacts;
-            }
-            catch ( ArtifactResolutionException e )
-            {
-                getLog().warn( "Unable to resolve dependencies for : " + e.getGroupId() + ":" + e.getArtifactId() + ":"
-                                   + e.getVersion() + ". Falling back to non-transitive mode for artifact purge." );
-            }
-            catch ( ArtifactNotFoundException e )
-            {
-                getLog().warn( "Unable to resolve dependencies for: " + e.getGroupId() + ":" + e.getArtifactId() + ":"
-                                   + e.getVersion() + ". Falling back to non-transitive mode for artifact purge." );
-            }
-        }
-
-        // If we don't care about transitive dependencies, there is no need to resolve
-        // from the remote repositories, we can just set the local path
-        Set<Artifact> artifactSet = new HashSet<Artifact>();
+        Set<Artifact> filteredArtifacts = new HashSet<Artifact>();
         for ( Artifact artifact : artifacts )
         {
             if ( artifactFilter.include( artifact ) )
             {
-                String localPath = localRepository.pathOf( artifact );
-                artifact.setFile( new File( localRepository.getBasedir(), localPath ) );
-                artifactSet.add( artifact );
+                filteredArtifacts.add( artifact );
             }
         }
-        return artifactSet;
+        return filteredArtifacts;
     }
 
+    /**
+     * Delete the artifacts from the local repo
+     * 
+     * @param artifacts
+     * @throws MojoFailureException
+     */
     private void purgeArtifacts( Set<Artifact> artifacts )
         throws MojoFailureException
     {
@@ -520,77 +354,6 @@ public class PurgeLocalRepositoryMojo
                 deleteTarget.delete();
             }
             artifact.setResolved( false );
-        }
-    }
-
-    private void reResolveArtifacts( MavenProject project, Set<Artifact> artifacts, ArtifactFilter filter )
-        throws ArtifactResolutionException, ArtifactNotFoundException
-    {
-
-        // Always need to re-resolve the poms in case they were purged along with the artifact
-        // Maven 2 will not automatically resolve them when resolving the artifact
-        for ( Artifact artifact : artifacts )
-        {
-            try
-            {
-                Artifact pomArtifact =
-                    factory.createArtifact( artifact.getGroupId(), artifact.getArtifactId(), artifact.getVersion(),
-                                            null, "pom" );
-                resolver.resolveAlways( pomArtifact, project.getRemoteArtifactRepositories(), localRepository );
-            }
-            catch ( ArtifactResolutionException e )
-            {
-                verbose( e.getMessage() );
-            }
-            catch ( ArtifactNotFoundException e )
-            {
-                verbose( e.getMessage() );
-            }
-        }
-
-        // If transitive we can just re-resolve the whole tree
-        if ( actTransitively )
-        {
-            resolver.resolveTransitively( artifacts, project.getArtifact(),
-                                          localRepository, remoteRepos, metadataSource, filter );
-        }
-        // If not doing transitive dependency resolution, then we need to resolve one by one.
-        else
-        {
-            List<Artifact> missingArtifacts = new ArrayList<Artifact>();
-
-            for ( Artifact artifact : artifacts )
-            {
-                verbose( "Resolving artifact: " + artifact.getId() );
-
-                try
-                {
-                    resolver.resolveAlways( artifact, project.getRemoteArtifactRepositories(), localRepository );
-                }
-                catch ( ArtifactResolutionException e )
-                {
-                    verbose( e.getMessage() );
-                    missingArtifacts.add( artifact );
-                }
-                catch ( ArtifactNotFoundException e )
-                {
-                    verbose( e.getMessage() );
-                    missingArtifacts.add( artifact );
-                }
-            }
-
-            if ( missingArtifacts.size() > 0 )
-            {
-                String message = "required artifacts missing:\n";
-                for ( Artifact missingArtifact : missingArtifacts )
-                {
-                    message += "  " + missingArtifact.getId() + "\n";
-                }
-                message += "\nfor the artifact:";
-
-                throw new ArtifactResolutionException( message, project.getArtifact(),
-                                                       project.getRemoteArtifactRepositories() );
-            }
         }
     }
 

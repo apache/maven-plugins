@@ -315,6 +315,9 @@ under the License.
                   <goal>clean</goal>
                   <goal>process-sources</goal>
                 </goals>
+                <pomExcludes>
+                  <pomExclude>purge-local-repository-bad-pom/pom.xml</pomExclude>
+                </pomExcludes>
               </configuration>
             </plugin>
           </plugins>
