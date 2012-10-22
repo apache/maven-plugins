@@ -344,7 +344,11 @@ public class PurgeLocalRepositoryMojo
             }
             else
             {
-                deleteTarget.delete();
+                if ( !deleteTarget.delete() )
+                {
+                    throw new MojoFailureException( this, "Cannot delete dependency from the local repository: "
+                                                    + artifact.getId(), "Failed to delete: " + deleteTarget );
+                }
             }
             artifact.setResolved( false );
         }
