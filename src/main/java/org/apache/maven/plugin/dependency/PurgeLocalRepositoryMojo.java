@@ -457,9 +457,8 @@ public class PurgeLocalRepositoryMojo
             try
             {
                 ArtifactResolutionResult result =
-                    resolver.resolveTransitively( artifacts, project.getArtifact(), project.getManagedVersionMap(),
-                                                  localRepository, remoteRepos, metadataSource, artifactFilter,
-                                                  Collections.emptyList() );
+                    resolver.resolveTransitively( artifacts, project.getArtifact(), localRepository, remoteRepos,
+                                                  metadataSource, artifactFilter );
 
                 @SuppressWarnings( "unchecked" )
                 Set<Artifact> resolvedArtifacts = result.getArtifacts();
@@ -552,9 +551,8 @@ public class PurgeLocalRepositoryMojo
         // If transitive we can just re-resolve the whole tree
         if ( actTransitively )
         {
-            resolver.resolveTransitively( artifacts, project.getArtifact(), project.getManagedVersionMap(),
-                                          localRepository, remoteRepos, metadataSource, filter,
-                                          Collections.emptyList() );
+            resolver.resolveTransitively( artifacts, project.getArtifact(),
+                                          localRepository, remoteRepos, metadataSource, filter );
         }
         // If not doing transitive dependency resolution, then we need to resolve one by one.
         else
