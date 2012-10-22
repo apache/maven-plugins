@@ -238,7 +238,7 @@ public class CopyDependenciesMojo
             if ( pomArtifact.getFile() != null && pomArtifact.getFile().exists() )
             {
                 File pomDestFile = new File( destDir, DependencyUtil.getFormattedFileName( pomArtifact, removeVersion,
-                                                                                           prependGroupId ) );
+                                                                                           prependGroupId, useBaseVersion ) );
                 if ( !pomDestFile.exists() )
                 {
                     copyFile( pomArtifact.getFile(), pomDestFile );
