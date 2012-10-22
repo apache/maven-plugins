@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>org.apache.maven.its.dependency</groupId>
+  <artifactId>purge-local-repository</artifactId>
+  <versioning>
+    <latest>1.0</latest>
+    <release>1.0</release>
+    <versions>
+      <version>1.0</version>
+    </versions>
+  </versioning>
+</metadata>

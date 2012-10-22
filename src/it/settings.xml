@@ -51,5 +51,23 @@ under the License.
         </pluginRepository>
       </pluginRepositories>
     </profile>
+    <profile>
+      <id>file-system-test-repo</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <repositories>
+        <repository>
+          <id>file-system-test-repo</id>
+          <url>@baseurl@/src/test/resources/m2repo</url>
+          <releases>
+            <enabled>true</enabled>
+          </releases>
+          <snapshots>
+            <enabled>false</enabled>
+          </snapshots>
+        </repository>
+      </repositories>
+    </profile>
   </profiles>
 </settings>

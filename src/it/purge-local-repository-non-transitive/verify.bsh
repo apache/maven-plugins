@@ -1,0 +1,19 @@
+import java.io.*;
+
+File depDir = new File( localRepositoryPath, "org/apache/maven/its/dependency/purge-local-repository/1.0" );
+
+System.out.println( "Checking for absence of purged dependency directory " + depDir );
+
+if ( depDir.exists() )
+{
+    throw new Exception( "Directory was not deleted: " + purgedDir );
+}
+
+File transitiveDepDir = new File( localRepositoryPath, "org/apache/maven/its/dependency/purge-local-repository-2/1.0" );
+
+if ( !transitiveDepDir.exists() )
+{
+    throw new Exception( "Transitive dep was purged: " + transitiveDepDir );
+}
+
+return true;

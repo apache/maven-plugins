@@ -4,9 +4,10 @@ File purgedJar = new File( localRepositoryPath, "org/apache/maven/its/dependency
 
 System.out.println( "Checking for absence of dummy JAR " + purgedJar );
 
-if ( purgedJar.exists() )
+if ( purgedJar.getParentFile().exists() )
 {
-    throw new Exception( "JAR was not purged: " + purgedJar );
+    throw new Exception( "Directory was not purged: " + purgedJar.getParentFile() );
 }
 
 return true;
+
