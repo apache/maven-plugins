@@ -221,14 +221,7 @@ public class PurgeLocalRepositoryMojo
     {
         public boolean include( Artifact artifact )
         {
-            if ( Artifact.SCOPE_SYSTEM.equals( artifact.getScope() ) )
-            {
-                return false;
-            }
-            else
-            {
-                return true;
-            }
+            return !Artifact.SCOPE_SYSTEM.equals( artifact.getScope() );
         }
     }
 
