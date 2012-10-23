@@ -293,7 +293,7 @@ public class ProcessRemoteResourcesMojo
     /**
      * The list of resources defined for the project.
      */
-    @Parameter( defaultValue = "${project.build.resources}", readonly = true, required = true )
+    @Parameter( defaultValue = "${project.resources}", readonly = true, required = true )
     private List<Resource> resources;
 
     /**
