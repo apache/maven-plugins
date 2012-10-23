@@ -174,12 +174,7 @@ public class PurgeLocalRepositoryMojo
         throws MojoExecutionException, MojoFailureException
     {
         @SuppressWarnings( "unchecked" )
-        Set<Artifact> projectArtifacts = project.getDependencyArtifacts();
-
-        if ( actTransitively )
-        {
-            projectArtifacts = project.getArtifacts();
-        }
+        Set<Artifact> projectArtifacts = actTransitively ? project.getArtifacts() : project.getDependencyArtifacts();
 
         ArtifactFilter artifactFilter = createPurgeArtifactsFilter();
 
