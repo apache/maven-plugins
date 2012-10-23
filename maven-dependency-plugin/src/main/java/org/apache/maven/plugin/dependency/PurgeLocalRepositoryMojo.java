@@ -317,9 +317,11 @@ public class PurgeLocalRepositoryMojo
     private void purgeArtifacts( Set<Artifact> artifacts )
         throws MojoFailureException
     {
+        int i = 0;
         for ( Artifact artifact : artifacts )
         {
-            verbose( "Purging artifact: " + artifact.getId() );
+            i++;
+            verbose( "Purging artifact " + i + '/' + artifacts.size() + ": " + artifact.getId() );
 
             File deleteTarget = findDeleteTarget( artifact );
 
