@@ -57,7 +57,7 @@ public class BundleRemoteResourcesMojo
     /**
      * The directory where you want the resource bundle manifest written to.
      */
-    @Parameter( defaultValue = "${project.build.outputDirectory}" )
+    @Parameter( defaultValue = "${project.build.outputDirectory}", readonly = true, required = true )
     private File outputDirectory;
 
     /**
