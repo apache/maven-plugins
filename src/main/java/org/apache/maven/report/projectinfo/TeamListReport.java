@@ -418,7 +418,8 @@ public class TeamListReport
             {
                 return null;
             }
-            StringUtils.trim( email );
+            email = StringUtils.trim( email );
+            email = email.toLowerCase();
             MessageDigest md;
             try
             {
@@ -454,6 +455,7 @@ public class TeamListReport
         private String[] getRequiredContrHeaderArray( Map<String, Boolean> requiredHeaders )
         {
             List<String> requiredArray = new ArrayList<String>();
+            String image = getI18nString( "contributors.image" );
             String name = getI18nString( "contributors.name" );
             String email = getI18nString( "contributors.email" );
             String url = getI18nString( "contributors.url" );
@@ -463,8 +465,11 @@ public class TeamListReport
             String timeZone = getI18nString( "contributors.timezone" );
             String actualTime = getI18nString( "contributors.actualtime" );
             String properties = getI18nString( "contributors.properties" );
-
-            setRequiredArray( requiredHeaders, requiredArray, name, email, url, organization, organizationUrl, roles,
+            if ( requiredHeaders.get( IMAGE ) == Boolean.TRUE )
+            {
+                requiredArray.add( image );
+            }
+            setRequiredArray( requiredHeaders, requiredArray, image, name, email, url, organization, organizationUrl, roles,
                               timeZone, actualTime, properties );
 
             return requiredArray.toArray( new String[requiredArray.size()] );
@@ -478,6 +483,7 @@ public class TeamListReport
         {
             List<String> requiredArray = new ArrayList<String>();
 
+            String image = getI18nString( "developers.image" );
             String id = getI18nString( "developers.id" );
             String name = getI18nString( "developers.name" );
             String email = getI18nString( "developers.email" );
@@ -489,12 +495,16 @@ public class TeamListReport
             String actualTime = getI18nString( "developers.actualtime" );
             String properties = getI18nString( "developers.properties" );
 
+            if ( requiredHeaders.get( IMAGE ) == Boolean.TRUE )
+            {
+                requiredArray.add( image );
+            }
             if ( requiredHeaders.get( ID ) == Boolean.TRUE )
             {
                 requiredArray.add( id );
             }
 
-            setRequiredArray( requiredHeaders, requiredArray, name, email, url, organization, organizationUrl, roles,
+            setRequiredArray( requiredHeaders, requiredArray, image, name, email, url, organization, organizationUrl, roles,
                               timeZone, actualTime, properties );
 
             return requiredArray.toArray( new String[requiredArray.size()] );
@@ -503,6 +513,7 @@ public class TeamListReport
         /**
          * @param requiredHeaders
          * @param requiredArray
+         * @param image
          * @param name
          * @param email
          * @param url
@@ -513,14 +524,10 @@ public class TeamListReport
          * @param actualTime
          * @param properties
          */
-        private void setRequiredArray( Map<String, Boolean> requiredHeaders, List<String> requiredArray, String name,
-                                       String email, String url, String organization, String organizationUrl,
+        private void setRequiredArray( Map<String, Boolean> requiredHeaders, List<String> requiredArray, String image,
+                                       String name, String email, String url, String organization, String organizationUrl,
                                        String roles, String timeZone, String actualTime, String properties )
         {
-            if ( requiredHeaders.get( IMAGE ) == Boolean.TRUE )
-            {
-                requiredArray.add( name );
-            }
             if ( requiredHeaders.get( NAME ) == Boolean.TRUE )
             {
                 requiredArray.add( name );
