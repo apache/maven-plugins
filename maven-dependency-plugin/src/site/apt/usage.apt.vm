@@ -676,3 +676,25 @@ mvn dependency:get -DgroupId=org.apache.maven -DartifactId=maven-core -Dversion=
 mvn dependency:get -Dartifact=org.apache.maven:maven-core:2.2.1:jar:sources -DremoteRepositories=http://repo1.maven.apache.org/maven2 -Ddest=/tmp/myfile.jar
 +-----+
 
+* The <<<dependency:analyze-report>>> Reporting Plugin
+
+  This mojo is used to include a report of the dependencies in the output of the <<<maven-site-plugin>>>.
+
++-------+
+ <reporting>
+   <plugins>
+    ...
+    <plugin>
+      <artifactId>maven-dependency-plugin</artifactId>
+      <version>2.5.1</version>
+      <reportSets>
+        <reportSet>
+          <reports>
+            <report>analyze-report</report>
+          </reports>
+        </reportSet>
+      </reportSets>
+    </plugin>
+   </plugins>
+  </reporting>
++-------+
