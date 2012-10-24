@@ -261,6 +261,10 @@ public class TeamListReport
                 {
                     picUrl = getGravatarUrl( member.getEmail() );
                 }
+                if (StringUtils.isEmpty( picUrl ))
+                {
+                    picUrl = getSpacerGravatarUrl();
+                }
                 sink.tableCell();
                 sink.figure();
                 sink.figureGraphics( picUrl );
@@ -401,6 +405,13 @@ public class TeamListReport
             sink.tableRow_();
         }
 
+        private static final String avatar_size = "s=60";
+
+        private String getSpacerGravatarUrl()
+        {
+            return "http://www.gravatar.com/avatar/00000000000000000000000000000000?d=blank&f=y&" + avatar_size;
+        }
+
         private String getGravatarUrl( String email )
         {
             if ( email == null )
@@ -419,7 +430,7 @@ public class TeamListReport
                 {
                     sb.append( Integer.toString( ( aByteData & 0xff ) + 0x100, 16 ).substring( 1 ) );
                 }
-                return "http://www.gravatar.com/avatar/" + sb.toString() + "?d=mm";
+                return "http://www.gravatar.com/avatar/" + sb.toString() + "?d=mm&" + avatar_size;
             }
             catch ( NoSuchAlgorithmException e )
             {
