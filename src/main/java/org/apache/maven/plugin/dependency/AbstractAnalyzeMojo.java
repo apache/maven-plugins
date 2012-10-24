@@ -73,7 +73,7 @@ public abstract class AbstractAnalyzeMojo
      *
      * @since 2.2
      */
-    @Parameter( property = "analyzer", defaultValue = "default", readonly = true)
+    @Parameter( property = "analyzer", defaultValue = "default" )
     private String analyzer;
 
     /**
