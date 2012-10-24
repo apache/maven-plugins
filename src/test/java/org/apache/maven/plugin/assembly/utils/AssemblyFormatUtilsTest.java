@@ -458,6 +458,12 @@ public class AssemblyFormatUtilsTest
         verifyEvalFileNameMapping( "filename${dashClassifier?}", null, null, "filename", null );
     }
 
+    public void testEvalFileNameMapping_ShouldNotAppendDashClassifierWhenClassifierEmpty()
+        throws AssemblyFormattingException
+    {
+        verifyEvalFileNameMapping( "filename${dashClassifier?}", "", null, "filename", null );
+    }
+
     public void testEvalFileNameMapping_ShouldResolveGroupId()
         throws AssemblyFormattingException
     {

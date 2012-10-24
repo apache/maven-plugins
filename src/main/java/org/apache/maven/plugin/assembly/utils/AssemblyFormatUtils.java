@@ -391,7 +391,7 @@ public final class AssemblyFormatUtils
 
         final Properties specialRules = new Properties();
 
-        final String classifier = artifact.getClassifier();
+        final String classifier = ProjectUtils.getClassifier( artifact );
         if ( classifier != null )
         {
             specialRules.setProperty( "dashClassifier?", "-" + classifier );
