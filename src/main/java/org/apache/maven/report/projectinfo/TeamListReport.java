@@ -19,17 +19,8 @@ package org.apache.maven.report.projectinfo;
  * under the License.
  */
 
-import org.apache.commons.lang.SystemUtils;
-import org.apache.maven.doxia.sink.Sink;
-import org.apache.maven.model.Contributor;
-import org.apache.maven.model.Developer;
-import org.apache.maven.model.Model;
-import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.plugins.annotations.Mojo;
-import org.codehaus.plexus.i18n.I18N;
-import org.codehaus.plexus.util.StringUtils;
-import org.joda.time.DateTimeZone;
-
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -37,6 +28,18 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.TimeZone;
+import org.apache.commons.lang.SystemUtils;
+import org.apache.maven.doxia.sink.Sink;
+import org.apache.maven.model.Contributor;
+import org.apache.maven.model.Developer;
+import org.apache.maven.model.Model;
+import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.codehaus.plexus.i18n.I18N;
+import org.codehaus.plexus.util.StringUtils;
+
+import org.joda.time.DateTimeZone;
 
 /**
  * Generates the Project Team report.
@@ -49,6 +52,19 @@ import java.util.TimeZone;
 public class TeamListReport
     extends AbstractProjectInfoReport
 {
+    /**
+     * Shows avatar images for team members that have
+     * a) properties/picUrl set
+     * b) An avatar at gravatar.com for their email address
+     * <p/>
+     * Future versions of this plugin may choose to implement different strategies for resolving
+     * avatar images, possibly using different providers.
+     *
+     * @since 2.6
+     */
+    @Parameter( property = "teamlist.showAvatarImages", defaultValue = "true" )
+    private boolean showAvatarImages;
+
     // ----------------------------------------------------------------------
     // Public methods
     // ----------------------------------------------------------------------
@@ -56,12 +72,15 @@ public class TeamListReport
     @Override
     public void executeReport( Locale locale )
     {
-        TeamListRenderer r = new TeamListRenderer( getSink(), project.getModel(), getI18N( locale ), locale, getLog() );
+        TeamListRenderer r = new TeamListRenderer( getSink(), project.getModel(), getI18N( locale ), locale, getLog(),
+                                                   showAvatarImages );
 
         r.render();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public String getOutputName()
     {
         return "team-list";
@@ -99,20 +118,25 @@ public class TeamListReport
 
         private static final String NAME = "name";
 
+        private static final String IMAGE = "image";
+
         private static final String ID = "id";
 
         private final Model model;
 
         private final Log log;
 
+        private final boolean showAvatarImages;
+
         private static final String[] EMPTY_STRING_ARRAY = new String[0];
 
-        TeamListRenderer( Sink sink, Model model, I18N i18n, Locale locale, Log log )
+        TeamListRenderer( Sink sink, Model model, I18N i18n, Locale locale, Log log, boolean showAvatarImages )
         {
             super( sink, i18n, locale );
 
             this.model = model;
             this.log = log;
+            this.showAvatarImages = showAvatarImages;
         }
 
         @Override
@@ -134,9 +158,11 @@ public class TeamListReport
             javascript.append( "    var localOffset = now.getTimezoneOffset();" ).append( SystemUtils.LINE_SEPARATOR );
             javascript.append( "    var developerTime = nowTime + ( offset * 60 * 60 * 1000 )"
                                    + "+ ( localOffset * 60 * 1000 );" ).append( SystemUtils.LINE_SEPARATOR );
-            javascript.append( "    var developerDate = new Date(developerTime);" ).append( SystemUtils.LINE_SEPARATOR );
+            javascript.append( "    var developerDate = new Date(developerTime);" ).append(
+                SystemUtils.LINE_SEPARATOR );
             javascript.append( SystemUtils.LINE_SEPARATOR );
-            javascript.append( "    document.getElementById(id).innerHTML = developerDate;" ).append( SystemUtils.LINE_SEPARATOR );
+            javascript.append( "    document.getElementById(id).innerHTML = developerDate;" ).append(
+                SystemUtils.LINE_SEPARATOR );
             javascript.append( "}" ).append( SystemUtils.LINE_SEPARATOR );
             javascript.append( SystemUtils.LINE_SEPARATOR );
             javascript.append( "function init(){" ).append( SystemUtils.LINE_SEPARATOR );
@@ -213,8 +239,8 @@ public class TeamListReport
             }
 
             // To handle JS
-            javascript.append( "}" ).append( SystemUtils.LINE_SEPARATOR ).append( SystemUtils.LINE_SEPARATOR )
-                .append( "window.onLoad = init();" ).append( SystemUtils.LINE_SEPARATOR );
+            javascript.append( "}" ).append( SystemUtils.LINE_SEPARATOR ).append( SystemUtils.LINE_SEPARATOR ).append(
+                "window.onLoad = init();" ).append( SystemUtils.LINE_SEPARATOR );
             javaScript( javascript.toString() );
 
             endSection();
@@ -227,6 +253,20 @@ public class TeamListReport
         {
             sink.tableRow();
 
+            if ( headersMap.get( IMAGE ) == Boolean.TRUE && showAvatarImages )
+            {
+                Properties properties = member.getProperties();
+                String picUrl = properties.getProperty( "picUrl" );
+                if ( StringUtils.isEmpty( picUrl ) )
+                {
+                    picUrl = getGravatarUrl( member.getEmail() );
+                }
+                sink.tableCell();
+                sink.figure();
+                sink.figureGraphics( picUrl );
+                sink.figure_();
+                sink.tableCell_();
+            }
             String type = "contributor";
             if ( member instanceof Developer )
             {
@@ -280,8 +320,8 @@ public class TeamListReport
             {
                 tableCell( member.getTimezone() );
 
-                if ( StringUtils.isNotEmpty( member.getTimezone() )
-                    && ( !ProjectInfoReportUtils.isNumber( member.getTimezone().trim() ) ) )
+                if ( StringUtils.isNotEmpty( member.getTimezone() ) && ( !ProjectInfoReportUtils.isNumber(
+                    member.getTimezone().trim() ) ) )
                 {
                     String tz = member.getTimezone().trim();
                     try
@@ -293,7 +333,8 @@ public class TeamListReport
                         sink.rawText( "<span id=\"" + type + "-" + rowId + "\">" );
                         text( tz );
                         String offSet = String.valueOf( TimeZone.getTimeZone( tz ).getRawOffset() / 3600000 );
-                        javascript.append( "    offsetDate('" ).append( type ).append( "-" ).append( rowId ).append( "', '" );
+                        javascript.append( "    offsetDate('" ).append( type ).append( "-" ).append( rowId ).append(
+                            "', '" );
                         javascript.append( offSet ).append( "');" ).append( SystemUtils.LINE_SEPARATOR );
                         sink.rawText( "</span>" );
                         sink.tableCell_();
@@ -301,7 +342,7 @@ public class TeamListReport
                     catch ( IllegalArgumentException e )
                     {
                         log.warn( "The time zone '" + tz + "' for the " + type + " '" + member.getName()
-                            + "' is not a recognised time zone, use a number in the range -12 and +14 instead of." );
+                                      + "' is not a recognised time zone, use a number in the range -12 and +14 instead of." );
 
                         sink.tableCell();
                         sink.rawText( "<span id=\"" + type + "-" + rowId + "\">" );
@@ -327,14 +368,16 @@ public class TeamListReport
                         {
                             text( null );
                             log.warn( "The time zone '" + member.getTimezone().trim() + "' for the " + type + " '"
-                                + member.getName()
-                                + "' is not a recognised time zone, use a number in the range -12 to +14 instead of." );
+                                          + member.getName()
+                                          + "' is not a recognised time zone, use a number in the range -12 to +14 instead of." );
                         }
                         else
                         {
                             text( member.getTimezone().trim() );
-                            javascript.append( "    offsetDate('" ).append( type ).append( "-" ).append( rowId ).append( "', '" );
-                            javascript.append( member.getTimezone() ).append( "');" ).append( SystemUtils.LINE_SEPARATOR );
+                            javascript.append( "    offsetDate('" ).append( type ).append( "-" ).append( rowId ).append(
+                                "', '" );
+                            javascript.append( member.getTimezone() ).append( "');" ).append(
+                                SystemUtils.LINE_SEPARATOR );
                         }
                     }
                     sink.rawText( "</span>" );
@@ -356,6 +399,41 @@ public class TeamListReport
             }
 
             sink.tableRow_();
+        }
+
+        private String getGravatarUrl( String email )
+        {
+            if ( email == null )
+            {
+                return null;
+            }
+            StringUtils.trim( email );
+            MessageDigest md;
+            try
+            {
+                md = MessageDigest.getInstance( "MD5" );
+                md.update( email.getBytes() );
+                byte byteData[] = md.digest();
+                StringBuilder sb = new StringBuilder();
+                for ( byte aByteData : byteData )
+                {
+                    sb.append( Integer.toString( ( aByteData & 0xff ) + 0x100, 16 ).substring( 1 ) );
+                }
+                return "http://www.gravatar.com/avatar/" + sb.toString() + "?d=mm";
+            }
+            catch ( NoSuchAlgorithmException e )
+            {
+                return null;
+            }
+        }
+
+        private String img( String src )
+        {
+            if ( src == null )
+            {
+                return "";
+            }
+            return "<img src='" + src + "'/>";
         }
 
         /**
@@ -428,6 +506,10 @@ public class TeamListReport
                                        String email, String url, String organization, String organizationUrl,
                                        String roles, String timeZone, String actualTime, String properties )
         {
+            if ( requiredHeaders.get( IMAGE ) == Boolean.TRUE )
+            {
+                requiredArray.add( name );
+            }
             if ( requiredHeaders.get( NAME ) == Boolean.TRUE )
             {
                 requiredArray.add( name );
@@ -472,6 +554,7 @@ public class TeamListReport
         {
             Map<String, Boolean> requiredHeaders = new HashMap<String, Boolean>();
 
+            requiredHeaders.put( IMAGE, Boolean.FALSE );
             requiredHeaders.put( ID, Boolean.FALSE );
             requiredHeaders.put( NAME, Boolean.FALSE );
             requiredHeaders.put( EMAIL, Boolean.FALSE );
@@ -499,6 +582,7 @@ public class TeamListReport
                 if ( StringUtils.isNotEmpty( unit.getEmail() ) )
                 {
                     requiredHeaders.put( EMAIL, Boolean.TRUE );
+                    requiredHeaders.put( IMAGE, Boolean.TRUE );
                 }
                 if ( StringUtils.isNotEmpty( unit.getUrl() ) )
                 {
@@ -521,7 +605,13 @@ public class TeamListReport
                     requiredHeaders.put( TIME_ZONE, Boolean.TRUE );
                 }
                 Properties properties = unit.getProperties();
-                if ( null != properties && !properties.isEmpty() )
+                boolean hasPicUrl = properties.contains( "picUrl" );
+                if ( hasPicUrl )
+                {
+                    requiredHeaders.put( IMAGE, Boolean.TRUE );
+                }
+                boolean isJustAnImageProperty = properties.size() == 1 && hasPicUrl;
+                if ( !isJustAnImageProperty && !properties.isEmpty() )
                 {
                     requiredHeaders.put( PROPERTIES, Boolean.TRUE );
                 }
