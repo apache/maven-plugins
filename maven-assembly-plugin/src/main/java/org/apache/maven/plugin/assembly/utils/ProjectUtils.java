@@ -19,6 +19,7 @@ package org.apache.maven.plugin.assembly.utils;
  * under the License.
  */
 
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.logging.Logger;
 
@@ -38,6 +39,16 @@ public final class ProjectUtils
 
     private ProjectUtils()
     {
+    }
+
+    public static String getClassifier( Artifact artifact )
+    {
+        String classifier = artifact.getClassifier();
+        if ( classifier != null && classifier.length() == 0 )
+        {
+            classifier = null;
+        }
+        return classifier;
     }
 
     public static Set<MavenProject> getProjectModules( final MavenProject project,
