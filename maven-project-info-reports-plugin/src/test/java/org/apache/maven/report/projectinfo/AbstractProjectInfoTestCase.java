@@ -24,7 +24,6 @@ import org.apache.maven.profiles.DefaultProfileManager;
 import org.apache.maven.profiles.ProfileManager;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
-import org.apache.maven.reporting.MavenReport;
 import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.util.StringUtils;
 
@@ -157,11 +156,23 @@ public abstract class AbstractProjectInfoTestCase
         throws Exception
     {
         File pluginXmlFile = new File( getBasedir(), "src/test/resources/plugin-configs/" + pluginXml );
+        AbstractProjectInfoReport mojo  = createReportMojo( goal, pluginXmlFile );
+        return generateReport( mojo, pluginXmlFile);
+    }
+
+    protected AbstractProjectInfoReport createReportMojo( String goal, File pluginXmlFile )
+        throws Exception
+    {
         AbstractProjectInfoReport mojo = (AbstractProjectInfoReport) lookupMojo( goal, pluginXmlFile );
         assertNotNull( "Mojo found.", mojo );
 
         setVariableValueToObject( mojo, "remoteRepositories", mojo.project.getRemoteArtifactRepositories() );
+        return mojo;
+    }
 
+    protected File generateReport( AbstractProjectInfoReport mojo, File pluginXmlFile )
+        throws Exception
+    {
         mojo.execute();
 
         MavenProjectBuilder builder = (MavenProjectBuilder) lookup( MavenProjectBuilder.ROLE );
@@ -169,10 +180,11 @@ public abstract class AbstractProjectInfoTestCase
 
         testMavenProject = builder.buildWithDependencies( pluginXmlFile, mojo.localRepository, profileManager );
 
-        MavenReport reportMojo = (MavenReport) mojo;
-        File outputDir = reportMojo.getReportOutputDirectory();
-        String filename = reportMojo.getOutputName() + ".html";
+        File outputDir = mojo.getReportOutputDirectory();
+        String filename = mojo.getOutputName() + ".html";
 
         return new File( outputDir, filename );
     }
+
+
 }

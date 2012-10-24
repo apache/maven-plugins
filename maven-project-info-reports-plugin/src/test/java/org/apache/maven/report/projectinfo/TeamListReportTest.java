@@ -19,6 +19,7 @@ package org.apache.maven.report.projectinfo;
  * under the License.
  */
 
+import java.io.File;
 import java.net.URL;
 
 import com.meterware.httpunit.GetMethodWebRequest;
@@ -48,7 +49,10 @@ public class TeamListReportTest
     public void testReport()
         throws Exception
     {
-        generateReport( "project-team", "project-team-plugin-config.xml" );
+        File pluginXmlFile = new File( getBasedir(), "src/test/resources/plugin-configs/" + "project-team-plugin-config.xml" );
+        AbstractProjectInfoReport mojo  = createReportMojo( "project-team", pluginXmlFile );
+        setVariableValueToObject( mojo, "showAvatarImages", Boolean.TRUE );
+       generateReport( mojo, pluginXmlFile);
         assertTrue( "Test html generated", getGeneratedReport( "team-list.html" ).exists() );
 
         URL reportURL = getGeneratedReport( "team-list.html" ).toURI().toURL();
@@ -64,6 +68,8 @@ public class TeamListReportTest
 
         // Test the Page title
         assertEquals( getString( "report.team-list.title" ), response.getTitle() );
+
+        assertTrue( response.getText().contains( "gravatar" ));
 
         // Test the texts
         TextBlock[] textBlocks = response.getTextBlocks();
