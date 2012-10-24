@@ -19,6 +19,10 @@ package org.apache.maven.plugin.dependency;
  * under the License.
  */
 
+import java.io.File;
+import java.io.StringWriter;
+import java.util.Set;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
@@ -36,10 +40,6 @@ import org.codehaus.plexus.context.Context;
 import org.codehaus.plexus.context.ContextException;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
 import org.codehaus.plexus.util.xml.PrettyPrintXMLWriter;
-
-import java.io.File;
-import java.io.StringWriter;
-import java.util.Set;
 
 /**
  * Analyzes the dependencies of this project and determines which are: used and declared; used and undeclared; unused
@@ -73,7 +73,7 @@ public abstract class AbstractAnalyzeMojo
      *
      * @since 2.2
      */
-    @Parameter( property = "analyzer", defaultValue = "default" )
+    @Parameter( property = "analyzer", defaultValue = "default", readonly = true)
     private String analyzer;
 
     /**
