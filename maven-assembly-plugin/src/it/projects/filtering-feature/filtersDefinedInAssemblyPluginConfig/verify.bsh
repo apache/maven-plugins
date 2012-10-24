@@ -11,6 +11,14 @@ try
         BufferedReader r = new BufferedReader(new FileReader(file));
         String s = r.readLine();
         result = s.equals("foo");
+        if(result) {
+            s = r.readLine();
+            if(!s.contains("\\"))
+            {
+                System.out.println("file.txt escaped filtering");
+                return false;
+            }
+        }
     }
 }
 catch( IOException e )

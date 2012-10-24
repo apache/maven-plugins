@@ -356,6 +356,9 @@ public class FileSetFormatterTest
 
         configSource.getEncoding();
         configSourceControl.setReturnValue( "UTF-8", MockControl.ONE_OR_MORE );
+
+        configSource.getEscapeString();
+        configSourceControl.setReturnValue( null, MockControl.ONE_OR_MORE );
     }
 
 }

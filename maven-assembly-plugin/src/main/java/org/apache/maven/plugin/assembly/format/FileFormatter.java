@@ -73,7 +73,7 @@ public class FileFormatter
         }
 
         if ( filter )
-            result = doFileFilter( source, tempRoot, encoding );
+            result = doFileFilter( source, tempRoot, encoding, configSource.getEscapeString() );
 
         String lineEndingChars = AssemblyFileUtils.getLineEndingCharacters( lineEnding );
         if ( lineEndingChars != null )
@@ -84,7 +84,7 @@ public class FileFormatter
         return result;
     }
 
-    private File doFileFilter( File source, File tempRoot, String encoding )
+    private File doFileFilter( File source, File tempRoot, String encoding, String escapeString )
         throws AssemblyFormattingException
     {
         try
@@ -96,6 +96,7 @@ public class FileFormatter
 
             MavenFileFilterRequest filterRequest = new MavenFileFilterRequest( source, target, true, configSource.getProject(),
                     configSource.getFilters(), isPropertiesFile, encoding, configSource.getMavenSession(), null );
+            filterRequest.setEscapeString( escapeString );
             filterRequest.setInjectProjectBuildFilters( true );
             configSource.getMavenFileFilter().copyFile( filterRequest );
 
