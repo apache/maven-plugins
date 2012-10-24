@@ -68,8 +68,12 @@ public abstract class AbstractAnalyzeMojo
     private MavenProject project;
 
     /**
-     * Project dependency analyzer to use (plexus component role-hint).
+     * Specify the project dependency analyzer to use (plexus component role-hint).
      * By default, <a href="/shared/maven-dependency-analyzer/">maven-dependency-analyzer</a> is used.
+     *
+     * To use this, you must declare a dependency for this plugin that contains the code for the
+     * analyzer. The analyzer must have a declared Plexus role name, and you specify the role name
+     * here.
      *
      * @since 2.2
      */
