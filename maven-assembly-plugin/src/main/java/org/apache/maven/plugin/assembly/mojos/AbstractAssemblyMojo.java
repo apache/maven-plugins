@@ -338,10 +338,14 @@ public abstract class AbstractAssemblyMojo
 
     /**
      * This will cause the assembly to only update an existing archive, if it exists.
+     * <p>
+     * <strong>Note:</strong> The property that can be used on the command line
+     * was misspelled as "assembly.updatOnly" in versions prior to version 2.4.
+     * </p>
      *
      * @since 2.2
      */
-    @Parameter( property = "assembly.updatOnly", defaultValue = "false" )
+    @Parameter( property = "assembly.updateOnly", defaultValue = "false" )
     private boolean updateOnly;
 
     /**
