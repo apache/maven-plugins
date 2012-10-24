@@ -64,6 +64,15 @@ public abstract class AbstractAssemblyMojo
     protected String encoding;
 
     /**
+     * Expressions preceded with this String won't be interpolated.
+     * If you use "\" as the escape string then \${foo} will be replaced with ${foo}.
+     *
+     * @since 2.4
+     */
+    @Parameter( property = "assembly.escapeString" )
+    protected String escapeString;
+
+    /**
      * Flag allowing one or more executions of the assembly plugin to be configured as skipped for a particular build.
      * This makes the assembly plugin more controllable from profiles.
      */
@@ -840,10 +849,14 @@ public abstract class AbstractAssemblyMojo
     }
     
     public String getEncoding() {
-    	return encoding;
+        return encoding;
     }
 
     protected boolean isRecompressZippedFiles() {
         return recompressZippedFiles;
+    }
+
+    public String getEscapeString() {
+      return escapeString;
     }
 }

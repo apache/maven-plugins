@@ -97,4 +97,6 @@ public interface AssemblerConfigurationSource
     boolean isIgnorePermissions();
     
     String getEncoding();
+
+    String getEscapeString();
 }

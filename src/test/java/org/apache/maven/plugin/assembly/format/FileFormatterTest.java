@@ -382,6 +382,9 @@ public class FileFormatterTest
         configSource.getTemporaryRootDirectory();
         configSourceControl.setReturnValue( basedir );
 
+        configSource.getEscapeString();
+        configSourceControl.setReturnValue( null, MockControl.ONE_OR_MORE );
+
         configSource.getProject();
         configSourceControl.setReturnValue( project, MockControl.ONE_OR_MORE );
 
