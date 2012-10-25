@@ -358,6 +358,9 @@ public class DefaultAssemblyArchiverTest
         configSource.getArchiverConfig();
         configCtl.setReturnValue( null, MockControl.ZERO_OR_MORE );
 
+        configSource.getMavenSession();
+        configCtl.setReturnValue( null, MockControl.ZERO_OR_MORE );
+
         configSource.getProject();
         configCtl.setReturnValue( new MavenProject( new Model() ), MockControl.ZERO_OR_MORE );
 

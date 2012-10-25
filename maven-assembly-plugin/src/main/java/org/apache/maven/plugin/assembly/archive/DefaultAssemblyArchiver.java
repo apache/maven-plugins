@@ -316,7 +316,8 @@ public class DefaultAssemblyArchiver
         {
             extraSelectors.add( new JarSecurityFileSelector() );
 
-            extraFinalizers.add( new ManifestCreationFinalizer( configSource.getProject(),
+            extraFinalizers.add( new ManifestCreationFinalizer( configSource.getMavenSession(),
+                                                                configSource.getProject(),
                                                                 configSource.getJarArchiveConfiguration() ) );
 
         }

@@ -56,7 +56,7 @@ public class ManifestCreationFinalizerTest
     public void testShouldDoNothingWhenArchiveConfigIsNull()
         throws ArchiverException
     {
-        new ManifestCreationFinalizer( null, null ).finalizeArchiveCreation( null );
+        new ManifestCreationFinalizer( null, null, null ).finalizeArchiveCreation( null );
     }
 
     public void testShouldDoNothingWhenArchiverIsNotJarArchiver()
@@ -71,7 +71,7 @@ public class ManifestCreationFinalizerTest
 
         mm.replayAll();
 
-        new ManifestCreationFinalizer( project, config ).finalizeArchiveCreation( macArchiver.archiver );
+        new ManifestCreationFinalizer( null, project, config ).finalizeArchiveCreation( macArchiver.archiver );
 
         mm.verifyAll();
     }
@@ -91,6 +91,7 @@ public class ManifestCreationFinalizerTest
         JarArchiver archiver = new JarArchiver();
 
         archiver.setArchiveFinalizers( Collections.<ArchiveFinalizer>singletonList( new ManifestCreationFinalizer(
+                                                                                                 null,
                                                                                                  project,
                                                                                                  config ) ) );
 
@@ -128,6 +129,7 @@ public class ManifestCreationFinalizerTest
         JarArchiver archiver = new JarArchiver();
 
         archiver.setArchiveFinalizers( Collections.<ArchiveFinalizer>singletonList( new ManifestCreationFinalizer(
+                                                                                                 null,
                                                                                                  project,
                                                                                                  config ) ) );
 
