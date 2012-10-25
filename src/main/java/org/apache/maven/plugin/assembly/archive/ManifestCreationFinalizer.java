@@ -22,6 +22,7 @@ package org.apache.maven.plugin.assembly.archive;
 import org.apache.maven.archiver.MavenArchiveConfiguration;
 import org.apache.maven.archiver.MavenArchiver;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.archiver.AbstractArchiveFinalizer;
 import org.codehaus.plexus.archiver.Archiver;
@@ -49,6 +50,8 @@ public class ManifestCreationFinalizer
 
     private final MavenProject project;
 
+    private final MavenSession session;
+
     private final MavenArchiveConfiguration archiveConfiguration;
 
     // TODO: I'd really prefer to rewrite MavenArchiver as either a
@@ -58,8 +61,10 @@ public class ManifestCreationFinalizer
     // (the first is preferable).
     private final MavenArchiver mavenArchiver = new MavenArchiver();
 
-    public ManifestCreationFinalizer( final MavenProject project, final MavenArchiveConfiguration archiveConfiguration )
+    public ManifestCreationFinalizer( final MavenSession session, final MavenProject project,
+                                      final MavenArchiveConfiguration archiveConfiguration )
     {
+        this.session = session;
         this.project = project;
         this.archiveConfiguration = archiveConfiguration;
     }
@@ -97,7 +102,7 @@ public class ManifestCreationFinalizer
                 }
                 else
                 {
-                    manifest = mavenArchiver.getManifest( project, archiveConfiguration );
+                    manifest = mavenArchiver.getManifest( session, project, archiveConfiguration );
                 }
 
                 if ( ( manifest != null ) && ( archiver instanceof JarArchiver ) )
