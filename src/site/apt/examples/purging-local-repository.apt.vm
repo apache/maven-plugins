@@ -120,6 +120,11 @@ mvn dependency:purge-local-repository -Dinclude=org.slf4j -DresolutionFuzziness=
   the build.  This goal is normally safe at the end of the build, or as
   part of the build clean process.
 
+  WARNING, using this goal during a build can cause build failures if 
+  dependencies are removed from the local repo, but are needed at a later point
+  in the build.  It is recommended that this goal only be used outside of a build
+  or during the clean process.
+
 +---+
 mvn dependency:manual-purge-local-repository -Dinclude=org.apache:apache
 +---+
