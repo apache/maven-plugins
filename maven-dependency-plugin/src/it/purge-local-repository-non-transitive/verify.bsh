@@ -6,7 +6,7 @@ System.out.println( "Checking for absence of purged dependency directory " + dep
 
 if ( depDir.exists() )
 {
-    throw new Exception( "Directory was not deleted: " + purgedDir );
+    throw new Exception( "Directory was not deleted: " + depDir );
 }
 
 File transitiveDepDir = new File( localRepositoryPath, "org/apache/maven/its/dependency/purge-local-repository-2/1.0" );

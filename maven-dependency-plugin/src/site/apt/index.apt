@@ -68,13 +68,10 @@ Maven Dependency Plugin
 
   *{{{./list-mojo.html}dependency:list}} alias for resolve that lists the dependencies for this project.
 
-  *{{{./manual-purge-local-repository-mojo.html}dependency:manual-purge-local-repository}} tells Maven to clear 
-  specific dependencies/directories from the local repository.
-
   *{{{./properties-mojo.html}dependency:properties}} set a property for each project dependency containing the
   to the artifact on the file system.
 
-  *{{{./purge-local-repository-mojo.html}dependency:purge-local-repository}} tells Maven to clear all dependency-artifact
+  *{{{./purge-local-repository-mojo.html}dependency:purge-local-repository}} tells Maven to clear dependency artifact
   files out of the local repository, and optionally re-resolve them.
 
   *{{{./resolve-mojo.html}dependency:resolve}} tells Maven to resolve all dependencies and displays the version.
