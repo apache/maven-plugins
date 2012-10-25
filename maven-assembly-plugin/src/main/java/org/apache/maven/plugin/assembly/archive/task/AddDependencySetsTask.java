@@ -217,7 +217,7 @@ public class AddDependencySetsTask
                                               final AssemblerConfigurationSource configSource )
         throws ArchiveCreationException, AssemblyFormattingException
     {
-        logger.debug( "Adding dependency artifact" + depArtifact.getId() + " after filtering the unpacked contents." );
+        logger.debug( "Adding dependency artifact " + depArtifact.getId() + " after filtering the unpacked contents." );
 
         final StringBuilder sb =
             new StringBuilder().append( depArtifact.getGroupId() )
@@ -317,7 +317,7 @@ public class AddDependencySetsTask
                                     final AssemblerConfigurationSource configSource )
         throws AssemblyFormattingException, ArchiveCreationException
     {
-        logger.debug( "Adding dependency artifact" + depArtifact.getId() + "." );
+        logger.debug( "Adding dependency artifact " + depArtifact.getId() + "." );
 
         final AddArtifactTask task = new AddArtifactTask( depArtifact, logger );
 
