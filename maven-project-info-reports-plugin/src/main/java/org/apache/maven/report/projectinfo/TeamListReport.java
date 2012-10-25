@@ -465,7 +465,7 @@ public class TeamListReport
             String timeZone = getI18nString( "contributors.timezone" );
             String actualTime = getI18nString( "contributors.actualtime" );
             String properties = getI18nString( "contributors.properties" );
-            if ( requiredHeaders.get( IMAGE ) == Boolean.TRUE )
+            if ( requiredHeaders.get( IMAGE ) == Boolean.TRUE && showAvatarImages)
             {
                 requiredArray.add( image );
             }
@@ -495,7 +495,7 @@ public class TeamListReport
             String actualTime = getI18nString( "developers.actualtime" );
             String properties = getI18nString( "developers.properties" );
 
-            if ( requiredHeaders.get( IMAGE ) == Boolean.TRUE )
+            if ( requiredHeaders.get( IMAGE ) == Boolean.TRUE && showAvatarImages)
             {
                 requiredArray.add( image );
             }
