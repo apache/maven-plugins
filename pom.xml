@@ -94,7 +94,7 @@ under the License.
     <doxia-sitetoolsVersion>1.2</doxia-sitetoolsVersion>
     <mavenVersion>2.2.0</mavenVersion>
     <wagonVersion>1.0</wagonVersion>
-    <scmVersion>1.7</scmVersion>
+    <scmVersion>1.8</scmVersion>
     <sitePluginVersion>3.1</sitePluginVersion>
     <mavenPluginVersion>3.1</mavenPluginVersion>
   </properties>
