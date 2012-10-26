@@ -49,10 +49,13 @@ Usage
 
 * Configuration
 
-  Getting started with the Assembly Plugin is pretty simple. If you're using one
-  of the prefabricated assembly descriptors, you just tell it which one; if
-  you're using a custom assembly descriptor, you give it the path to the
-  descriptor. Note that a single invocation of the Assembly Plugin can actually
+  Getting started with the Assembly Plugin is pretty simple. If you want to use
+  one of the prefabricated assembly descriptors, you configure which descriptor
+  to use with the \<<<<descriptorRefs\>>>>/\<<<<descriptorRef\>>>> parameter.
+  If you want to use a custom assembly descriptor, you configure the path to your
+  descriptor using the \<<<<descriptors\>>>>/\<<<<descriptor\>>>> parameter.
+
+  Note that a single invocation of the Assembly Plugin can actually
   produce assemblies from multiple descriptors, allowing you maximum flexibility
   to customize the suite of binaries your project produces. When the assembly is
   created it will use the assemblyId as the artifact's classifier and will attach
