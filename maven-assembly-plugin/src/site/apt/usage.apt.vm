@@ -64,8 +64,8 @@ Usage
 
   For example, imagine that our project produces a JAR. If we want to create an
   assembly binary that includes our project's dependencies, we can take
-  advantage of one of the Assembly Plugin's prefabricated descriptors, as
-  follows:
+  advantage of one of the Assembly Plugin's prefabricated descriptors. You
+  configure it as follows in your project's <<<pom.xml>>>:
   
 +---+
 <project>
