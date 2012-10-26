@@ -100,7 +100,7 @@
             
             Multiple formats can be
             supplied and the Assembly Plugin will generate an archive for each
-            desired formats. When deploying your project, all file formats
+            of the desired formats. When deploying your project, all file formats
             specified will also be deployed. A format is specified by supplying
             one of the following values in a &lt;format&gt; subelement:
             <ul>
@@ -108,6 +108,9 @@
               <li><b>"tar"</b> - Creates a TAR format</li>
               <li><b>"tar.gz"</b> - Creates a gzip'd TAR format</li>
               <li><b>"tar.bz2"</b> - Creates a bzip'd TAR format</li>
+              <li><b>"jar"</b> - Creates a JAR format</li>
+              <li><b>"dir"</b> - Creates an exploded directory format</li>
+              <li><b>"war"</b> - Creates a WAR format</li>
             </ul>
             ]]>
           </description>
