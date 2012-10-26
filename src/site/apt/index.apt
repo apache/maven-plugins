@@ -4,7 +4,7 @@
   John Casey
   Edwin Punzalan
   ---
-  2011-02-07
+  2012-10-27
   ---
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -47,6 +47,8 @@ Maven Assembly Plugin
   Currently it can create distributions in the following formats:
 
     * zip
+
+    * tar
 
     * tar.gz
 
