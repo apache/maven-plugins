@@ -31,6 +31,7 @@ import org.apache.maven.plugin.registry.TrackableBase;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.settings.RuntimeInfo;
 import org.apache.maven.settings.Settings;
 import org.apache.maven.settings.SettingsUtils;
 import org.apache.maven.settings.io.xpp3.SettingsXpp3Reader;
@@ -1036,6 +1037,16 @@ public abstract class AbstractInvokerMojo
                     reader = new XmlStreamReader( interpolatedSettingsFile );
                     SettingsXpp3Reader settingsReader = new SettingsXpp3Reader();
                     Settings dominantSettings = settingsReader.read( reader );
+
+                    // MINVOKER-137: NPE on dominantSettings.getRuntimeInfo()
+                    // DefaultMavenSettingsBuilder does the same trick
+                    if( dominantSettings.getRuntimeInfo() == null )
+                    {
+                        RuntimeInfo rtInfo = new RuntimeInfo( dominantSettings );
+                        rtInfo.setFile( interpolatedSettingsFile );
+                        dominantSettings.setRuntimeInfo( rtInfo );
+                    }
+                    
                     Settings recessiveSettings = this.settings;
 
                     SettingsUtils.merge( dominantSettings, recessiveSettings, TrackableBase.USER_LEVEL );
