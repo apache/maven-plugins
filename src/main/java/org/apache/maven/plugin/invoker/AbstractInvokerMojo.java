@@ -1102,6 +1102,9 @@ public abstract class AbstractInvokerMojo
             }
         }
         final File finalSettingsFile = mergedSettingsFile;
+        
+        // @todo calculate MavenVersion, JavaVersion and OS here only once...
+        // isSelected() retrieves these values for every BuildJob, but they are read over and over again inside SelectorUtils 
 
         try
         {
