@@ -512,6 +512,10 @@ public abstract class AbstractInvokerMojo
      * # A comma separated list of Maven versions on which this build should be run.
      * # Since plugin version 1.5
      * invoker.maven.version = 2.0.10+, !2.1.0, !2.2.0
+     * 
+     * # A boolean value controlling the debug logging level of Maven, , defaults to &quot;false&quot;
+     * # Since plugin version 1.8
+     * invoker.debug = true
      * </pre>
      *
      * @since 1.2
