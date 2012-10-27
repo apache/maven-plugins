@@ -81,6 +81,12 @@ class InvokerProperties
      */
     private static final String SYSTEM_PROPERTIES_FILE = "invoker.systemPropertiesFile";
 
+    
+    /**
+     * The constant for the invoker property.
+     */
+    private static final String DEBUG = "invoker.debug";
+    
     /**
      * Creates a new facade for the specified invoker properties. The properties will not be copied, so any changes to
      * them will be reflected by the facade.
@@ -162,7 +168,7 @@ class InvokerProperties
     public boolean isInvocationDefined( int index )
     {
         String[] keys =
-            { PROJECT, GOALS, PROFILES, MAVEN_OPTS, FAILURE_BEHAVIOR, NON_RECURSIVE, OFFLINE, SYSTEM_PROPERTIES_FILE };
+            { PROJECT, GOALS, PROFILES, MAVEN_OPTS, FAILURE_BEHAVIOR, NON_RECURSIVE, OFFLINE, SYSTEM_PROPERTIES_FILE, DEBUG };
         for ( int i = 0; i < keys.length; i++ )
         {
             if ( properties.getProperty( keys[i] + '.' + index ) != null )
@@ -232,6 +238,12 @@ class InvokerProperties
         if ( offline != null )
         {
             request.setOffline( Boolean.valueOf( offline ).booleanValue() );
+        }
+        
+        String debug = get( DEBUG, index );
+        if( debug != null )
+        {
+            request.setDebug( Boolean.valueOf( debug ).booleanValue() );    
         }
     }
 
