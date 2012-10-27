@@ -339,7 +339,7 @@
             Write = 2, and Execute = 1.  For example, the value 0644
             translates to User read-write, Group and Other read-only.
             <a href="http://www.onlamp.com/pub/a/bsd/2000/09/06/FreeBSD_Basics.html">(more on unix-style permissions)</a>
-          	]]>
+            ]]>
           </description>
         </field>
         <field>
@@ -358,7 +358,7 @@
             Read = 4, Write = 2, and Execute = 1.  For example, the value
             0755 translates to User read-write, Group and Other read-only.
             <a href="http://www.onlamp.com/pub/a/bsd/2000/09/06/FreeBSD_Basics.html">(more on unix-style permissions)</a>
-          	]]>
+            ]]>
           </description>
         </field>
         <field>
@@ -456,7 +456,7 @@
             Write = 2, and Execute = 1.  For example, the value 0644
             translates to User read-write, Group and Other read-only.
             <a href="http://www.onlamp.com/pub/a/bsd/2000/09/06/FreeBSD_Basics.html">(more on unix-style permissions)</a>
-          	]]>
+            ]]>
           </description>
         </field>
         <field>
@@ -521,8 +521,8 @@
             artifact coordinates to include. If none is present, then
             &lt;includes&gt; represents all valid values.
             
-            Artifact coordinatess may be given in simple groupId:artifactId form,
-            or they may be fully qualified in the form groupId:artifactId:type:version[:classifier].
+            Artifact coordinates may be given in simple groupId:artifactId form,
+            or they may be fully qualified in the form groupId:artifactId:type[:classifier]:version.
             Additionally, wildcards can be used, as in *:maven-*
             ]]>
           </description>
@@ -540,8 +540,8 @@
             dependency artifact coordinates to exclude. If none is present, then
             &lt;excludes&gt; represents no exclusions.
             
-            Artifact coordinatess may be given in simple groupId:artifactId form,
-            or they may be fully qualified in the form groupId:artifactId:type:version[:classifier].
+            Artifact coordinates may be given in simple groupId:artifactId form,
+            or they may be fully qualified in the form groupId:artifactId:type[:classifier]:version.
             Additionally, wildcards can be used, as in *:maven-*
             ]]>
           </description>
@@ -561,7 +561,7 @@
             Write = 2, and Execute = 1.  For example, the value 0644
             translates to User read-write, Group and Other read-only.
             <a href="http://www.onlamp.com/pub/a/bsd/2000/09/06/FreeBSD_Basics.html">(more on unix-style permissions)</a>
-          	]]>
+            ]]>
           </description>
         </field>
         <field>
@@ -580,7 +580,7 @@
             Read = 4, Write = 2, and Execute = 1.  For example, the value
             0755 translates to User read-write, Group and Other read-only.
             <a href="http://www.onlamp.com/pub/a/bsd/2000/09/06/FreeBSD_Basics.html">(more on unix-style permissions)</a>
-          	]]>
+            ]]>
           </description>
         </field>
         <field>
@@ -739,8 +739,8 @@
             project coordinates to include. If none is present, then
             &lt;includes&gt; represents all valid values.
           
-            Artifact coordinatess may be given in simple groupId:artifactId form,
-            or they may be fully qualified in the form groupId:artifactId:type:version[:classifier].
+            Artifact coordinates may be given in simple groupId:artifactId form,
+            or they may be fully qualified in the form groupId:artifactId:type[:classifier]:version.
             Additionally, wildcards can be used, as in *:maven-*
             ]]>
           </description>
@@ -758,8 +758,8 @@
             project artifact coordinates to exclude. If none is present, then
             &lt;excludes&gt; represents no exclusions.
           
-            Artifact coordinatess may be given in simple groupId:artifactId form,
-            or they may be fully qualified in the form groupId:artifactId:type:version[:classifier].
+            Artifact coordinates may be given in simple groupId:artifactId form,
+            or they may be fully qualified in the form groupId:artifactId:type[:classifier]:version.
             Additionally, wildcards can be used, as in *:maven-*
             ]]>
           </description>
@@ -863,7 +863,7 @@
             Write = 2, and Execute = 1.  For example, the value 0644
             translates to User read-write, Group and Other read-only.
             <a href="http://www.onlamp.com/pub/a/bsd/2000/09/06/FreeBSD_Basics.html">(more on unix-style permissions)</a>
-          	]]>
+            ]]>
           </description>
         </field>
         <field>
@@ -882,7 +882,7 @@
             Read = 4, Write = 2, and Execute = 1.  For example, the value
             0755 translates to User read-write, Group and Other read-only.
             <a href="http://www.onlamp.com/pub/a/bsd/2000/09/06/FreeBSD_Basics.html">(more on unix-style permissions)</a>
-          	]]>
+            ]]>
           </description>
         </field>
         <field>
@@ -971,8 +971,8 @@
             artifact coordinates to include. If none is present, then
             &lt;includes&gt; represents all valid values.
             
-            Artifact coordinatess may be given in simple groupId:artifactId form,
-            or they may be fully qualified in the form groupId:artifactId:type:version[:classifier].
+            Artifact coordinates may be given in simple groupId:artifactId form,
+            or they may be fully qualified in the form groupId:artifactId:type[:classifier]:version.
             Additionally, wildcards can be used, as in *:maven-*
             ]]>
           </description>
@@ -990,8 +990,8 @@
             dependency artifact coordinates to exclude. If none is present, then
             &lt;excludes&gt; represents no exclusions.
             
-            Artifact coordinatess may be given in simple groupId:artifactId form,
-            or they may be fully qualified in the form groupId:artifactId:type:version[:classifier].
+            Artifact coordinates may be given in simple groupId:artifactId form,
+            or they may be fully qualified in the form groupId:artifactId:type[:classifier]:version.
             Additionally, wildcards can be used, as in *:maven-*
             ]]>
           </description>
@@ -1011,7 +1011,7 @@
             Write = 2, and Execute = 1.  For example, the value 0644
             translates to User read-write, Group and Other read-only.
             <a href="http://www.onlamp.com/pub/a/bsd/2000/09/06/FreeBSD_Basics.html">(more on unix-style permissions)</a>
-          	]]>
+            ]]>
           </description>
         </field>
         <field>
@@ -1030,7 +1030,7 @@
             Read = 4, Write = 2, and Execute = 1.  For example, the value
             0755 translates to User read-write, Group and Other read-only.
             <a href="http://www.onlamp.com/pub/a/bsd/2000/09/06/FreeBSD_Basics.html">(more on unix-style permissions)</a>
-          	]]>
+            ]]>
           </description>
         </field>
         <field>
@@ -1148,8 +1148,8 @@
             artifact coordinates to include. If none is present, then
             &lt;includes&gt; represents all valid values.
             
-            Artifact coordinatess may be given in simple groupId:artifactId form,
-            or they may be fully qualified in the form groupId:artifactId:type:version[:classifier].
+            Artifact coordinates may be given in simple groupId:artifactId form,
+            or they may be fully qualified in the form groupId:artifactId:type[:classifier]:version.
             Additionally, wildcards can be used, as in *:maven-*
             ]]>
           </description>
@@ -1167,8 +1167,8 @@
             dependency artifact coordinates to exclude. If none is present, then
             &lt;excludes&gt; represents no exclusions.
             
-            Artifact coordinatess may be given in simple groupId:artifactId form,
-            or they may be fully qualified in the form groupId:artifactId:type:version[:classifier].
+            Artifact coordinates may be given in simple groupId:artifactId form,
+            or they may be fully qualified in the form groupId:artifactId:type[:classifier]:version.
             Additionally, wildcards can be used, as in *:maven-*
             ]]>
           </description>
@@ -1188,7 +1188,7 @@
             Write = 2, and Execute = 1.  For example, the value 0644
             translates to User read-write, Group and Other read-only.
             <a href="http://www.onlamp.com/pub/a/bsd/2000/09/06/FreeBSD_Basics.html">(more on unix-style permissions)</a>
-          	]]>
+            ]]>
           </description>
         </field>
         <field>
@@ -1207,7 +1207,7 @@
             Read = 4, Write = 2, and Execute = 1.  For example, the value
             0755 translates to User read-write, Group and Other read-only.
             <a href="http://www.onlamp.com/pub/a/bsd/2000/09/06/FreeBSD_Basics.html">(more on unix-style permissions)</a>
-          	]]>
+            ]]>
           </description>
         </field>
         <field>
