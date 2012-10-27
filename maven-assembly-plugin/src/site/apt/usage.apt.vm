@@ -94,7 +94,7 @@ Usage
   
   Alternatively, we've created a custom assembly descriptor called
   <<<src.xml>>> in the <<<src/main/assembly>>> directory (see the
-  {{{#Resources}Resources}} section for more information). We can tell the
+  {{{Resources}Resources}} section for more information). We can tell the
   Assembly Plugin to use that instead:
   
 +---+
@@ -206,7 +206,7 @@ target/sample-1.0-SNAPSHOT-jar-with-dependencies.jar
   
   To accommodate this, the Assembly Plugin supports configuration of an
   <<<\<archive\>>>> element which is handled by <<<maven-archiver>>>
-  (see {{{#Resources}Resources}}). Using this
+  (see {{{Resources}Resources}}). Using this
   configuration, it's easy to configure the <<<Main-Class>>> attribute of the
   JAR manifest:
   
@@ -243,7 +243,7 @@ Main-Class: org.sample.App
 +---+
 
   For more information on advanced configuration for the Assembly Plugin, see
-  the {{{#Resources}Resources}} section.
+  the {{{Resources}Resources}} section.
   
 ** GOTCHA!
 
