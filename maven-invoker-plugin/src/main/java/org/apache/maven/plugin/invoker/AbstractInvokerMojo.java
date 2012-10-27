@@ -657,9 +657,9 @@ public abstract class AbstractInvokerMojo
         scriptRunner.setClassPath( scriptClassPath );
 
         Collection<String> collectedProjects = new LinkedHashSet<String>();
-        for ( int i = 0; i < buildJobs.length; i++ )
+        for ( BuildJob buildJob : buildJobs )
         {
-            collectProjects( projectsDirectory, buildJobs[i].getProject(), collectedProjects, true );
+            collectProjects( projectsDirectory, buildJob.getProject(), collectedProjects, true );
         }
 
         File projectsDir = projectsDirectory;
@@ -945,18 +945,16 @@ public abstract class AbstractInvokerMojo
          * NOTE: Make sure the destination directory is always there (even if empty) to support POM-less ITs.
          */
         destDir.mkdirs();
-        String[] includedDirs = scanner.getIncludedDirectories();
-        for ( int i = 0; i < includedDirs.length; ++i )
+        for ( String includedDir : scanner.getIncludedDirectories() )
         {
-            File clonedDir = new File( destDir, includedDirs[i] );
+            File clonedDir = new File( destDir, includedDir );
             clonedDir.mkdirs();
         }
 
-        String[] includedFiles = scanner.getIncludedFiles();
-        for ( int i = 0; i < includedFiles.length; ++i )
+        for ( String includedFile : scanner.getIncludedFiles() )
         {
-            File sourceFile = new File( sourceDir, includedFiles[i] );
-            File destFile = new File( destDir, includedFiles[i] );
+            File sourceFile = new File( sourceDir, includedFile );
+            File destFile = new File( destDir, includedFile );
             FileUtils.copyFile( sourceFile, destFile );
         }
     }
@@ -1040,7 +1038,7 @@ public abstract class AbstractInvokerMojo
 
                     // MINVOKER-137: NPE on dominantSettings.getRuntimeInfo()
                     // DefaultMavenSettingsBuilder does the same trick
-                    if( dominantSettings.getRuntimeInfo() == null )
+                    if ( dominantSettings.getRuntimeInfo() == null )
                     {
                         RuntimeInfo rtInfo = new RuntimeInfo( dominantSettings );
                         rtInfo.setFile( interpolatedSettingsFile );
@@ -1113,9 +1111,8 @@ public abstract class AbstractInvokerMojo
                 getLog().info( "use parallelThreads " + parallelThreads );
 
                 ExecutorService executorService = Executors.newFixedThreadPool( parallelThreads );
-                for ( int i = 0; i < buildJobs.length; i++ )
+                for ( final BuildJob project : buildJobs )
                 {
-                    final BuildJob project = buildJobs[i];
                     executorService.execute( new Runnable()
                     {
 
@@ -1147,9 +1144,8 @@ public abstract class AbstractInvokerMojo
             }
             else
             {
-                for ( int i = 0; i < buildJobs.length; i++ )
+                for ( BuildJob project : buildJobs )
                 {
-                    BuildJob project = buildJobs[i];
                     runBuild( projectsDir, project, finalSettingsFile );
                 }
             }
@@ -1773,15 +1769,15 @@ public abstract class AbstractInvokerMojo
             BuildJob[] normalPoms = scanProjectsDirectory( pomIncludes, excludes, BuildJob.Type.NORMAL );
 
             Map<String, BuildJob> uniquePoms = new LinkedHashMap<String, BuildJob>();
-            for ( int i = 0; i < setupPoms.length; i++ )
+            for ( BuildJob setupPom : setupPoms )
             {
-                uniquePoms.put( setupPoms[i].getProject(), setupPoms[i] );
+                uniquePoms.put( setupPom.getProject(), setupPom );
             }
-            for ( int i = 0; i < normalPoms.length; i++ )
+            for ( BuildJob normalPom : normalPoms )
             {
-                if ( !uniquePoms.containsKey( normalPoms[i].getProject() ) )
+                if ( !uniquePoms.containsKey( normalPom.getProject() ) )
                 {
-                    uniquePoms.put( normalPoms[i].getProject(), normalPoms[i] );
+                    uniquePoms.put( normalPom.getProject(), normalPom );
                 }
             }
 
@@ -1829,23 +1825,21 @@ public abstract class AbstractInvokerMojo
 
         Map<String, BuildJob> matches = new LinkedHashMap<String, BuildJob>();
 
-        String[] includedFiles = scanner.getIncludedFiles();
-        for ( int i = 0; i < includedFiles.length; i++ )
+        for ( String includedFile : scanner.getIncludedFiles() )
         {
-            matches.put( includedFiles[i], new BuildJob( includedFiles[i], type ) );
+            matches.put( includedFile, new BuildJob( includedFile, type ) );
         }
 
-        String[] includedDirs = scanner.getIncludedDirectories();
-        for ( int i = 0; i < includedDirs.length; i++ )
+        for ( String includedDir : scanner.getIncludedDirectories() )
         {
-            String includedFile = includedDirs[i] + File.separatorChar + "pom.xml";
+            String includedFile = includedDir + File.separatorChar + "pom.xml";
             if ( new File( scanner.getBasedir(), includedFile ).isFile() )
             {
                 matches.put( includedFile, new BuildJob( includedFile, type ) );
             }
             else
             {
-                matches.put( includedDirs[i], new BuildJob( includedDirs[i], type ) );
+                matches.put( includedDir, new BuildJob( includedDir, type ) );
             }
         }
 
@@ -1866,9 +1860,9 @@ public abstract class AbstractInvokerMojo
     {
         String projectsDirPath = projectsDirectory.getCanonicalPath();
 
-        for ( int i = 0; i < buildJobs.length; i++ )
+        for ( BuildJob buildJob : buildJobs )
         {
-            String projectPath = buildJobs[i].getProject();
+            String projectPath = buildJob.getProject();
 
             File file = new File( projectPath );
 
@@ -1884,7 +1878,7 @@ public abstract class AbstractInvokerMojo
                 relativizedPath = projectPath;
             }
 
-            buildJobs[i].setProject( relativizedPath );
+            buildJob.setProject( relativizedPath );
         }
     }
 
