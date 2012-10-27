@@ -353,14 +353,16 @@ public abstract class AbstractInvokerMojo
     private MavenProject project;
 
     /**
-     * A comma separated list of project names to run. Specify this parameter to run individual tests by file name,
+     * A comma separated list of projectname patterns to run. Specify this parameter to run individual tests by file name,
      * overriding the {@link #setupIncludes}, {@link #pomIncludes} and {@link #pomExcludes} parameters. Each pattern you
-     * specify here will be used to create an include pattern formatted like
-     * <code>${projectsDirectory}/<i>pattern</i></code>, so you can just type
-     * <code>-Dinvoker.test=FirstTest,SecondTest</code> to run builds in <code>${projectsDirectory}/FirstTest</code> and
-     * <code>${projectsDirectory}/SecondTest</code>.
+     * specify here will be used to create an include/exclude pattern formatted like
+     * <code>${projectsDirectory}/<i>pattern</i></code>. To exclude a test, prefix the pattern with a '<code>!</code>'. 
+     * So you can just type
+     * <nobr><code>-Dinvoker.test=SimpleTest,Comp*Test,!Compare*</code></nobr> to run builds in 
+     * <code>${projectsDirectory}/SimpleTest</code> and
+     * <code>${projectsDirectory}/ComplexTest</code>, but not <code>${projectsDirectory}/CompareTest</code> 
      *
-     * @since 1.1
+     * @since 1.1 (exclusion since 1.8)
      */
     @Parameter( property = "invoker.test" )
     private String invokerTest;
@@ -1714,16 +1716,24 @@ public abstract class AbstractInvokerMojo
         {
             String[] testRegexes = StringUtils.split( invokerTest, "," );
             List<String> includes = new ArrayList<String>( testRegexes.length );
+            List<String> excludes = new ArrayList<String>();
 
-            for ( int i = 0, size = testRegexes.length; i < size; i++ )
+            for ( String regex : testRegexes )
             {
                 // user just use -Dinvoker.test=MWAR191,MNG111 to use a directory thats the end is not pom.xml
-                includes.add( testRegexes[i] );
+                if ( regex.startsWith( "!" ) )
+                {
+                    excludes.add( regex.substring( 1 ) );
+                }
+                else
+                {
+                    includes.add( regex );
+                }
             }
 
             // it would be nice if we could figure out what types these are... but perhaps
             // not necessary for the -Dinvoker.test=xxx t
-            buildJobs = scanProjectsDirectory( includes, null, BuildJob.Type.DIRECT );
+            buildJobs = scanProjectsDirectory( includes, excludes, BuildJob.Type.DIRECT );
         }
         else
         {
