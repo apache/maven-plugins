@@ -155,11 +155,16 @@ class SelectorUtils
 
     static boolean isMavenVersion( String mavenSpec )
     {
+        return isMavenVersion( mavenSpec, getMavenVersion() );
+    }
+    
+    static boolean isMavenVersion( String mavenSpec, String actualVersion )
+    {
         List<String> includes = new ArrayList<String>();
         List<String> excludes = new ArrayList<String>();
         parseList( mavenSpec, includes, excludes );
 
-        List<Integer> mavenVersionList = parseVersion( getMavenVersion() );
+        List<Integer> mavenVersionList = parseVersion( actualVersion );
 
         return isJreVersion( mavenVersionList, includes, true ) && !isJreVersion( mavenVersionList, excludes, false );
     }

@@ -572,6 +572,11 @@ public abstract class AbstractInvokerMojo
      * The format for elapsed build time.
      */
     private final DecimalFormat secFormat = new DecimalFormat( "(0.0 s)", new DecimalFormatSymbols( Locale.ENGLISH ) );
+    
+    /**
+     * The version of Maven which is used to run the builds
+     */
+    private String actualMavenVersion;
 
     /**
      * Invokes Maven on the configured test projects.
@@ -1101,8 +1106,16 @@ public abstract class AbstractInvokerMojo
         }
         final File finalSettingsFile = mergedSettingsFile;
         
-        // @todo calculate MavenVersion, JavaVersion and OS here only once...
-        // isSelected() retrieves these values for every BuildJob, but they are read over and over again inside SelectorUtils 
+        // @todo calculate JavaVersion and OS here only once...
+        // isSelected() retrieves these values for every BuildJob, but they are read over and over again inside SelectorUtils
+        if ( mavenHome != null )
+        {
+            actualMavenVersion = SelectorUtils.getMavenVersion( mavenHome );
+        }
+        else
+        {
+            actualMavenVersion = SelectorUtils.getMavenVersion();
+        }
 
         try
         {
@@ -1305,7 +1318,7 @@ public abstract class AbstractInvokerMojo
      */
     private boolean isSelected( InvokerProperties invokerProperties )
     {
-        if ( !SelectorUtils.isMavenVersion( invokerProperties.getMavenVersion() ) )
+        if ( !SelectorUtils.isMavenVersion( invokerProperties.getMavenVersion(), actualMavenVersion ) )
         {
             return false;
         }
