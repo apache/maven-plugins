@@ -169,16 +169,33 @@ class SelectorUtils
         return isJreVersion( mavenVersionList, includes, true ) && !isJreVersion( mavenVersionList, excludes, false );
     }
 
+    static String getJreVersion()
+    {
+        return System.getProperty( "java.version", "" );
+    }
+    
+    static String getJreVersion( File javaHome )
+    {
+        //@todo detect actual version
+        return null;
+    }
+
     static boolean isJreVersion( String jreSpec )
+    {
+        return isJreVersion( jreSpec, getJreVersion() );
+    }
+    
+    static boolean isJreVersion( String jreSpec, String actualJreVersion )
     {
         List<String> includes = new ArrayList<String>();
         List<String> excludes = new ArrayList<String>();
         parseList( jreSpec, includes, excludes );
 
-        List<Integer> jreVersion = parseVersion( System.getProperty( "java.version", "" ) );
+        List<Integer> jreVersion = parseVersion( actualJreVersion );
 
         return isJreVersion( jreVersion, includes, true ) && !isJreVersion( jreVersion, excludes, false );
     }
+
 
     static boolean isJreVersion( List<Integer> jreVersion, List<String> versionPatterns, boolean defaultMatch )
     {
