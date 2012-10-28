@@ -34,18 +34,6 @@ public class SelectorUtilsTest
     extends TestCase
 {
 
-    private List<Integer> list( int[] numbers )
-    {
-        List<Integer> result = new ArrayList<Integer>();
-
-        for ( int i = 0; i < numbers.length; i++ )
-        {
-            result.add( new Integer( numbers[i] ) );
-        }
-
-        return result;
-    }
-
     public void testParseList()
     {
         List<String> includes = new ArrayList<String>();
@@ -54,48 +42,49 @@ public class SelectorUtilsTest
         SelectorUtils.parseList( null, includes, excludes );
 
         SelectorUtils.parseList( " 1.5, !1.4, 1.6+ ", includes, excludes );
-        assertEquals( Arrays.asList( new String[] { "1.5", "1.6+" } ), includes );
-        assertEquals( Arrays.asList( new String[] { "1.4" } ), excludes );
+        assertEquals( Arrays.asList( "1.5", "1.6+" ), includes );
+        assertEquals( Arrays.asList( "1.4" ), excludes );
     }
 
     public void testParseVersion()
     {
-        assertEquals( list( new int[] { 1, 6, 0, 12 } ), SelectorUtils.parseVersion( "1.6.0_12" ) );
+        assertEquals( Arrays.asList( 1, 6, 0, 12 ), SelectorUtils.parseVersion( "1.6.0_12" ) );
 
-        assertEquals( list( new int[] { 1, 6, 0, 12 } ), SelectorUtils.parseVersion( "1.6.0_12+" ) );
-        assertEquals( list( new int[] { 1, 6, 0, 12 } ), SelectorUtils.parseVersion( "1.6.0_12-" ) );
+        assertEquals( Arrays.asList( 1, 6, 0, 12 ), SelectorUtils.parseVersion( "1.6.0_12+" ) );
+        assertEquals( Arrays.asList( 1, 6, 0, 12 ), SelectorUtils.parseVersion( "1.6.0_12-" ) );
     }
 
     public void testCompareVersions()
     {
-        assertTrue( SelectorUtils.compareVersions( list( new int[] { 1, 6 } ), list( new int[] { 1, 6 } ) ) == 0 );
+        assertTrue( SelectorUtils.compareVersions( Arrays.asList( 1, 6 ), Arrays.asList( 1, 6 ) ) == 0 );
 
-        assertTrue( SelectorUtils.compareVersions( list( new int[] { 1, 5 } ), list( new int[] { 1, 6 } ) ) < 0 );
-        assertTrue( SelectorUtils.compareVersions( list( new int[] { 1, 6 } ), list( new int[] { 1, 5 } ) ) > 0 );
+        assertTrue( SelectorUtils.compareVersions( Arrays.asList( 1, 5 ), Arrays.asList( 1, 6 ) ) < 0 );
+        assertTrue( SelectorUtils.compareVersions( Arrays.asList( 1, 6 ), Arrays.asList( 1, 5 ) ) > 0 );
 
-        assertTrue( SelectorUtils.compareVersions( list( new int[] { 1 } ), list( new int[] { 1, 6 } ) ) < 0 );
-        assertTrue( SelectorUtils.compareVersions( list( new int[] { 1, 6 } ), list( new int[] { 1 } ) ) > 0 );
+        assertTrue( SelectorUtils.compareVersions( Arrays.asList( 1 ), Arrays.asList( 1, 6 ) ) < 0 );
+        assertTrue( SelectorUtils.compareVersions( Arrays.asList( 1, 6 ), Arrays.asList( 1 ) ) > 0 );
     }
 
     public void testIsMatchingJre()
     {
-        assertFalse( SelectorUtils.isJreVersion( list( new int[] { 1, 4, 2, 8 } ), "1.5" ) );
-        assertTrue( SelectorUtils.isJreVersion( list( new int[] { 1, 5 } ), "1.5" ) );
-        assertTrue( SelectorUtils.isJreVersion( list( new int[] { 1, 5, 9 } ), "1.5" ) );
-        assertFalse( SelectorUtils.isJreVersion( list( new int[] { 1, 6 } ), "1.5" ) );
 
-        assertFalse( SelectorUtils.isJreVersion( list( new int[] { 1, 4, 2, 8 } ), "1.5+" ) );
-        assertTrue( SelectorUtils.isJreVersion( list( new int[] { 1, 5 } ), "1.5+" ) );
-        assertTrue( SelectorUtils.isJreVersion( list( new int[] { 1, 5, 9 } ), "1.5+" ) );
-        assertTrue( SelectorUtils.isJreVersion( list( new int[] { 1, 6 } ), "1.5+" ) );
+        assertFalse( SelectorUtils.isJreVersion( Arrays.asList( 1, 4, 2, 8 ), "1.5" ) );
+        assertTrue( SelectorUtils.isJreVersion( Arrays.asList( 1, 5 ), "1.5" ) );
+        assertTrue( SelectorUtils.isJreVersion( Arrays.asList( 1, 5, 9 ), "1.5" ) );
+        assertFalse( SelectorUtils.isJreVersion( Arrays.asList( 1, 6 ), "1.5" ) );
 
-        assertTrue( SelectorUtils.isJreVersion( list( new int[] { 1, 4, 2, 8 } ), "1.5-" ) );
-        assertFalse( SelectorUtils.isJreVersion( list( new int[] { 1, 5 } ), "1.5-" ) );
-        assertFalse( SelectorUtils.isJreVersion( list( new int[] { 1, 5, 9 } ), "1.5-" ) );
-        assertFalse( SelectorUtils.isJreVersion( list( new int[] { 1, 6 } ), "1.5-" ) );
+        assertFalse( SelectorUtils.isJreVersion( Arrays.asList( 1, 4, 2, 8 ), "1.5+" ) );
+        assertTrue( SelectorUtils.isJreVersion( Arrays.asList( 1, 5 ), "1.5+" ) );
+        assertTrue( SelectorUtils.isJreVersion( Arrays.asList( 1, 5, 9 ), "1.5+" ) );
+        assertTrue( SelectorUtils.isJreVersion( Arrays.asList( 1, 6 ), "1.5+" ) );
 
-        assertTrue( SelectorUtils.isJreVersion( (String) null , "1.5" ) );
-        assertTrue( SelectorUtils.isJreVersion( "" , "1.5" ) );
+        assertTrue( SelectorUtils.isJreVersion( Arrays.asList( 1, 4, 2, 8 ), "1.5-" ) );
+        assertFalse( SelectorUtils.isJreVersion( Arrays.asList( 1, 5 ), "1.5-" ) );
+        assertFalse( SelectorUtils.isJreVersion( Arrays.asList( 1, 5, 9 ), "1.5-" ) );
+        assertFalse( SelectorUtils.isJreVersion( Arrays.asList( 1, 6 ), "1.5-" ) );
+
+        assertTrue( SelectorUtils.isJreVersion( (String) null, "1.5" ) );
+        assertTrue( SelectorUtils.isJreVersion( "", "1.5" ) );
     }
 
 }
