@@ -155,15 +155,16 @@ public final class AssemblyFileUtils
 
             String line;
 
-            do
+            line = bufferedSource.readLine();
+            while ( line != null )
             {
+                out.write( line );
                 line = bufferedSource.readLine();
                 if ( line != null )
                 {
-                    out.write( line );
                     out.write( lineEndings );
                 }
-            } while ( line != null );
+            }
 
             out.flush();
         }

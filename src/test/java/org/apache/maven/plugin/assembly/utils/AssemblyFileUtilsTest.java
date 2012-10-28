@@ -130,42 +130,38 @@ public class AssemblyFileUtilsTest
         }
     }
 
-    // TODO: Fix the end-of-document problem with line-ending conversions.
     public void testConvertLineEndings_ShouldReplaceLFWithCRLF()
         throws IOException
     {
         String test = "This is a \ntest.";
-        String check = "This is a \r\ntest.\r\n";
+        String check = "This is a \r\ntest.";
 
         testConversion( test, check, "\r\n" );
     }
 
-    // TODO: Fix the end-of-document problem with line-ending conversions.
     public void testConvertLineEndings_ShouldReplaceCRLFWithLF()
         throws IOException
     {
         String test = "This is a \r\ntest.";
-        String check = "This is a \ntest.\n";
+        String check = "This is a \ntest.";
 
         testConversion( test, check, "\n" );
     }
 
-    // TODO: Fix the end-of-document problem with line-ending conversions.
     public void testConvertLineEndings_ShouldReplaceLFWithLF()
         throws IOException
     {
         String test = "This is a \ntest.";
-        String check = "This is a \ntest.\n";
+        String check = "This is a \ntest.";
 
         testConversion( test, check, "\n" );
     }
 
-    // TODO: Fix the end-of-document problem with line-ending conversions.
     public void testConvertLineEndings_ShouldReplaceCRLFWithCRLF()
         throws IOException
     {
         String test = "This is a \r\ntest.";
-        String check = "This is a \r\ntest.\r\n";
+        String check = "This is a \r\ntest.";
 
         testConversion( test, check, "\r\n" );
     }
