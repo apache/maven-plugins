@@ -19,15 +19,20 @@ package org.apache.maven.plugin.invoker;
  * under the License.
  */
 
-import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.util.Os;
-import org.codehaus.plexus.util.StringUtils;
-
+import java.io.File;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
+
+import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.util.Os;
+import org.codehaus.plexus.util.StringUtils;
 
 /**
  * Provides utility methods for selecting build jobs based on environmental conditions.
@@ -106,6 +111,46 @@ class SelectorUtils
         {
             return null;
         }
+    }
+    
+    static String getMavenVersion( File mavenHome )
+    {
+        File mavenLib = new File( mavenHome, "lib" );
+        File[] jarFiles = mavenLib.listFiles( new FilenameFilter()
+        {
+            public boolean accept( File dir, String name )
+            {
+                return name.endsWith( ".jar" );
+            }
+        } );
+
+        for ( File file : jarFiles )
+        {
+            try
+            {
+                @SuppressWarnings( "deprecation" )
+                URL url =
+                    new URL( "jar:" + file.toURL().toExternalForm()
+                        + "!/META-INF/maven/org.apache.maven/maven-core/pom.properties" );
+
+                Properties properties = new Properties();
+                properties.load( url.openStream() );
+                String version = StringUtils.trim( properties.getProperty( "version" ) );
+                if ( version != null )
+                {
+                    return version;
+                }
+            }
+            catch ( MalformedURLException e )
+            {
+                // ignore
+            }
+            catch ( IOException e )
+            {
+                // ignore
+            }
+        }
+        return null;
     }
 
     static boolean isMavenVersion( String mavenSpec )
