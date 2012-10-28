@@ -18,6 +18,12 @@ try
         System.out.println("file-1.properties did not escape filtering");
         return false;
     }
+    s = r.readLine();
+    if(!s.contains("åäö"))
+    {
+        System.out.println("file-1.properties has corrupted non ascii characters");
+        return false;
+    }
 
     file = new File( basedir, "target/filters-defined-in-build-1/file-2.properties");
     r = new BufferedReader(new FileReader(file));
