@@ -579,6 +579,11 @@ public abstract class AbstractInvokerMojo
     private String actualMavenVersion;
 
     /**
+     * The version of the JRE which is used to run the builds
+     */
+    private String actualJreVersion;
+    
+    /**
      * Invokes Maven on the configured test projects.
      *
      * @throws org.apache.maven.plugin.MojoExecutionException
@@ -1106,8 +1111,6 @@ public abstract class AbstractInvokerMojo
         }
         final File finalSettingsFile = mergedSettingsFile;
         
-        // @todo calculate JavaVersion and OS here only once...
-        // isSelected() retrieves these values for every BuildJob, but they are read over and over again inside SelectorUtils
         if ( mavenHome != null )
         {
             actualMavenVersion = SelectorUtils.getMavenVersion( mavenHome );
@@ -1116,7 +1119,16 @@ public abstract class AbstractInvokerMojo
         {
             actualMavenVersion = SelectorUtils.getMavenVersion();
         }
-
+        
+        if ( javaHome != null )
+        {
+            actualJreVersion = SelectorUtils.getJreVersion( javaHome );
+        }
+        else
+        {
+            actualJreVersion = SelectorUtils.getJreVersion();
+        }
+        
         try
         {
             if ( isParallelRun() )
@@ -1323,7 +1335,7 @@ public abstract class AbstractInvokerMojo
             return false;
         }
 
-        if ( !SelectorUtils.isJreVersion( invokerProperties.getJreVersion() ) )
+        if ( !SelectorUtils.isJreVersion( invokerProperties.getJreVersion(), actualJreVersion ) )
         {
             return false;
         }
