@@ -19,15 +19,15 @@
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
         <configuration>
-		  <descriptor>${basedir}/src/test/resources/assemblies/dependencySet-default.xml</descriptor>
-		  <basedir>${basedir}</basedir>
+          <descriptor>${basedir}/src/test/resources/assemblies/dependencySet-default.xml</descriptor>
+          <basedir>${basedir}</basedir>
           <project implementation="org.apache.maven.plugin.assembly.stubs.AssemblyMavenProjectStub" />
-		  <executedProject implementation="org.apache.maven.plugin.assembly.stubs.MavenProjectWithArtifactsStub" />
+          <executedProject implementation="org.apache.maven.plugin.assembly.stubs.MavenProjectWithArtifactsStub" />
           <outputDirectory>${basedir}/target/test-harness/directory/appendAssemblyId-false/target</outputDirectory>
           <finalName>directory-appendAssemblyId-false</finalName>
-		  <archiverManager implementation="org.apache.maven.plugin.assembly.stubs.ArchiverManagerStub" />
-		  <appendAssemblyId>false</appendAssemblyId>
-		  <classifier>classifier</classifier>
+          <archiverManager implementation="org.apache.maven.plugin.assembly.stubs.ArchiverManagerStub" />
+          <appendAssemblyId>false</appendAssemblyId>
+          <classifier>classifier</classifier>
         </configuration>
       </plugin>
     </plugins>

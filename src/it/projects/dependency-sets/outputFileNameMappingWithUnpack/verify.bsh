@@ -5,16 +5,16 @@ File dirWithMapping = new File( basedir, "target/project-1-bin/some_directory/ju
 
 if ( dirWithMapping.exists() )
 {
-	System.out.println( "<outputFileNameMapping> should NOT be used when unpack == true." );
-	return false;
+    System.out.println( "<outputFileNameMapping> should NOT be used when unpack == true." );
+    return false;
 }
 
 File dir = new File( basedir, "target/project-1-bin/some_directory/junit/framework/TestCase.class" );
 
 if ( !dir.exists() )
 {
-	System.out.println( "Expected unpacked class does not exist in the appropriate outputDirectory within the assembly." );
-	return false;
+    System.out.println( "Expected unpacked class does not exist in the appropriate outputDirectory within the assembly." );
+    return false;
 }
 
 return true;

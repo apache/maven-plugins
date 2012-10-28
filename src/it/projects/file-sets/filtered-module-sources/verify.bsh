@@ -4,8 +4,8 @@ File f = new File( basedir, "target/parent-1-src/child/test.txt" );
 
 if ( !f.exists() )
 {
-	System.out.println( "Filtered file from file-set: " + f + " is missing." );
-	return false;
+    System.out.println( "Filtered file from file-set: " + f + " is missing." );
+    return false;
 }
 
 String line = null;

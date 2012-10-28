@@ -6,17 +6,17 @@ File javadocs = new File( basedir, "target/massembly-201-1-bin/maven-model-2.0.9
 
 if ( !main.exists() )
 {
-	System.out.println( "Main (unclassified) dependency jar is missing: " + main );
+    System.out.println( "Main (unclassified) dependency jar is missing: " + main );
 }
 
 if ( !sources.exists() )
 {
-	System.out.println( "Sources dependency jar is missing: " + sources );
+    System.out.println( "Sources dependency jar is missing: " + sources );
 }
 
 if ( !javadocs.exists() )
 {
-	System.out.println( "JavaDocs dependency jar is missing: " + javadocs );
+    System.out.println( "JavaDocs dependency jar is missing: " + javadocs );
 }
 
 return main.exists() && sources.exists() && javadocs.exists();

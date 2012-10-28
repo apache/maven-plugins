@@ -3,43 +3,43 @@ import java.util.jar.*;
 
 try
 {
-	File f = new File( basedir, "target/massembly-375-1-test.jar" );
-	
-	System.out.println( "Examining assembly file: " + f );
-	System.out.flush();
+    File f = new File( basedir, "target/massembly-375-1-test.jar" );
 
-	if ( !f.isFile() )
-	{
-		System.out.println( "Target file: " + f + " doesn't exist!" );
-		System.out.flush();
-		return false;
-	}
+    System.out.println( "Examining assembly file: " + f );
+    System.out.flush();
 
-	JarFile jf = new JarFile( f );
+    if ( !f.isFile() )
+    {
+        System.out.println( "Target file: " + f + " doesn't exist!" );
+        System.out.flush();
+        return false;
+    }
 
-	JarEntry je = jf.getEntry( "/test.txt" );
-	if ( je != null )
-	{
-		System.out.println( "Entry: /test.txt should NOT exist." );
-		System.out.flush();
-		return false;
-	}
+    JarFile jf = new JarFile( f );
 
-	je = jf.getEntry( "test.txt" );
-	if ( je == null )
-	{
-		System.out.println( "Entry: test.txt SHOULD exist." );
-		System.out.flush();
-		return false;
-	}
+    JarEntry je = jf.getEntry( "/test.txt" );
+    if ( je != null )
+    {
+        System.out.println( "Entry: /test.txt should NOT exist." );
+        System.out.flush();
+        return false;
+    }
 
-	System.out.println( "VERIFICATION PASSED." );
-	System.out.flush();
-	return true;
+    je = jf.getEntry( "test.txt" );
+    if ( je == null )
+    {
+        System.out.println( "Entry: test.txt SHOULD exist." );
+        System.out.flush();
+        return false;
+    }
+
+    System.out.println( "VERIFICATION PASSED." );
+    System.out.flush();
+    return true;
 }
 catch ( Throwable t )
 {
-	t.printStackTrace( System.out );
-	System.out.flush();
-	return false;
+    t.printStackTrace( System.out );
+    System.out.flush();
+    return false;
 }

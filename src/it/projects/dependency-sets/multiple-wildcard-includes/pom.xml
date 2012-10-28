@@ -17,24 +17,24 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-    	<groupId>org.apache.maven.wagon</groupId>
-    	<artifactId>wagon-provider-api</artifactId>
-    	<version> 1.0-beta-4</version>
+      <groupId>org.apache.maven.wagon</groupId>
+      <artifactId>wagon-provider-api</artifactId>
+      <version> 1.0-beta-4</version>
     </dependency>
     <dependency>
-    	<groupId>org.apache.maven.wagon</groupId>
-    	<artifactId>wagon-webdav-jackrabbit</artifactId>
-    	<version>1.0-beta-4</version>
+      <groupId>org.apache.maven.wagon</groupId>
+      <artifactId>wagon-webdav-jackrabbit</artifactId>
+      <version>1.0-beta-4</version>
     </dependency>
     <dependency>
-    	<groupId>org.apache.maven.reporting</groupId>
-    	<artifactId>maven-reporting-impl</artifactId>
-    	<version>2.0.4.1</version>
+      <groupId>org.apache.maven.reporting</groupId>
+      <artifactId>maven-reporting-impl</artifactId>
+      <version>2.0.4.1</version>
     </dependency>
     <dependency>
-    	<groupId>commons-vfs</groupId>
-    	<artifactId>commons-vfs</artifactId>
-    	<version> 1.0</version>
+      <groupId>commons-vfs</groupId>
+      <artifactId>commons-vfs</artifactId>
+      <version> 1.0</version>
     </dependency>
   </dependencies>
   

@@ -13,15 +13,15 @@ int jarCount = 0;
 Enumeration e = jf.entries();
 while( e.hasMoreElements() )
 {
-	if ( testPath.equals( String.valueOf( e.nextElement() ) ) )
-	{
-		jarCount++;
-	}
+    if ( testPath.equals( String.valueOf( e.nextElement() ) ) )
+    {
+        jarCount++;
+    }
 }
 
 if ( jarCount != 1 )
 {
-	System.out.println( "ERROR! Test path: " + testPath + " was found " + jarCount + " times (should have been 1).\nArchive: " + f );
+    System.out.println( "ERROR! Test path: " + testPath + " was found " + jarCount + " times (should have been 1).\nArchive: " + f );
 }
 
 f = new File( basedir, "massembly-285-assembly/target/massembly-285-assembly-1-bin.zip" );
@@ -34,15 +34,15 @@ int zipCount = 0;
 e = zf.entries();
 while( e.hasMoreElements() )
 {
-	if ( testPath.equals( String.valueOf( e.nextElement() ) ) )
-	{
-		zipCount++;
-	}
+    if ( testPath.equals( String.valueOf( e.nextElement() ) ) )
+    {
+        zipCount++;
+    }
 }
 
 if ( zipCount != 1 )
 {
-	System.out.println( "ERROR! Test path: " + testPath + " was found " + zipCount + " times (should have been 1).\nArchive: " + f );
+    System.out.println( "ERROR! Test path: " + testPath + " was found " + zipCount + " times (should have been 1).\nArchive: " + f );
 }
 
 return jarCount == 1;

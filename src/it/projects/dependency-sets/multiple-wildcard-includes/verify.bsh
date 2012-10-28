@@ -5,12 +5,12 @@ File reportingImplJar = new File( basedir, "target/massembly-241-1-bin/maven-lib
 
 if ( !wagonProviderJar.exists() )
 {
-	System.out.println( "Wagon provider jar is missing (should be included via include wildcard pattern)." );
+    System.out.println( "Wagon provider jar is missing (should be included via include wildcard pattern)." );
 }
 
 if ( !reportingImplJar.exists() )
 {
-	System.out.println( "Reporting implementation jar is missing (should be included via include wildcard pattern)." );
+    System.out.println( "Reporting implementation jar is missing (should be included via include wildcard pattern)." );
 }
 
 return wagonProviderJar.exists() && reportingImplJar.exists();

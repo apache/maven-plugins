@@ -5,14 +5,14 @@ File f2 = new File( basedir, "target/test-1-bin/prefixed/maven-assembly-plugin.j
 
 if ( !f.exists() || !f.isFile() )
 {
-	System.out.println( "File: " + f + " doesn't exist, or isn't a file." );
-	return false;
+    System.out.println( "File: " + f + " doesn't exist, or isn't a file." );
+    return false;
 }
 
 if ( !f2.exists() || !f2.isFile() )
 {
-	System.out.println( "File: " + f2 + " doesn't exist, or isn't a file." );
-	return false;
+    System.out.println( "File: " + f2 + " doesn't exist, or isn't a file." );
+    return false;
 }
 
 return true;
