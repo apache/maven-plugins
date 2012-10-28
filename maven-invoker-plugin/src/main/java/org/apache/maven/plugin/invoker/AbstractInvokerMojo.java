@@ -19,6 +19,37 @@ package org.apache.maven.plugin.invoker;
  * under the License.
  */
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStreamWriter;
+import java.io.Reader;
+import java.io.Writer;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.StringTokenizer;
+import java.util.TreeSet;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+
+import org.apache.commons.io.input.XmlStreamReader;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Profile;
@@ -57,38 +88,7 @@ import org.codehaus.plexus.util.InterpolationFilterReader;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.WriterFactory;
-import org.apache.commons.io.input.XmlStreamReader;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStreamWriter;
-import java.io.Reader;
-import java.io.Writer;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import java.util.StringTokenizer;
-import java.util.TreeSet;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Provides common code for mojos invoking sub builds.
@@ -1612,7 +1612,7 @@ public abstract class AbstractInvokerMojo
         throws MojoExecutionException
     {
         Properties collectedTestProperties = new Properties();
-
+        
         if ( testProperties != null )
         {
             collectedTestProperties.putAll( testProperties );
@@ -1620,7 +1620,14 @@ public abstract class AbstractInvokerMojo
 
         if ( properties != null )
         {
-            collectedTestProperties.putAll( properties );
+            // MINVOKER-118: property can have empty value, which is not accepted by collectedTestProperties
+            for ( Map.Entry<String, String> entry : properties.entrySet() )
+            {
+                if ( entry.getValue() != null )
+                {
+                    collectedTestProperties.put( entry.getKey(), entry.getValue() );
+                }
+            }
         }
 
         File propertiesFile = null;
