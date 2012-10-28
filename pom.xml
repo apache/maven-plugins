@@ -420,9 +420,9 @@ under the License.
                   <projectsDirectory>src/it/projects</projectsDirectory>
                   <cloneProjectsTo>${itProjects}</cloneProjectsTo>
                   <testPropertiesFile>test.properties</testPropertiesFile>
-                  <testProperties>
+                  <properties>
                     <useJvmChmod>${useJvmChmod}</useJvmChmod>
-                  </testProperties>
+                  </properties>
                   <debug>${it.debug}</debug>
                   <settingsFile>src/it/settings.xml</settingsFile> 
                   <pomIncludes>
