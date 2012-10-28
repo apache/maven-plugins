@@ -20,6 +20,6 @@ while( ( read = reader.read( cbuf ) ) > -1 )
 
 reader.close();
 
-System.out.println( "Contents of test.txt: '" + sb.toString() + "' should contain the windows newline: '\\n'." );
+System.out.println( "Contents of test.txt: '" + sb.toString() + "' should contain the unix newline: '\\n'." );
 
 return sb.toString().indexOf( "1\nchild" ) > -1;
