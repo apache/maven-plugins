@@ -93,6 +93,9 @@ public class SelectorUtilsTest
         assertFalse( SelectorUtils.isJreVersion( list( new int[] { 1, 5 } ), "1.5-" ) );
         assertFalse( SelectorUtils.isJreVersion( list( new int[] { 1, 5, 9 } ), "1.5-" ) );
         assertFalse( SelectorUtils.isJreVersion( list( new int[] { 1, 6 } ), "1.5-" ) );
+
+        assertTrue( SelectorUtils.isJreVersion( (String) null , "1.5" ) );
+        assertTrue( SelectorUtils.isJreVersion( "" , "1.5" ) );
     }
 
 }
