@@ -30,9 +30,10 @@ import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.Locale;
 
@@ -78,7 +79,7 @@ public class FileFormatter
         String lineEndingChars = AssemblyFileUtils.getLineEndingCharacters( lineEnding );
         if ( lineEndingChars != null )
         {
-            result = formatLineEndings( lineEndingChars, result, tempRoot );
+            result = formatLineEndings( lineEndingChars, result, tempRoot, encoding );
         }
 
         return result;
@@ -108,13 +109,22 @@ public class FileFormatter
         }
     }
 
-    private File formatLineEndings( String lineEndingChars, File source, File tempRoot )
+    private File formatLineEndings( String lineEndingChars, File source, File tempRoot, String encoding )
         throws AssemblyFormattingException
     {
         Reader contentReader = null;
         try
         {
-            contentReader = new FileReader( source );
+            if ( encoding == null )
+            {
+                // Use default encoding
+                contentReader = new InputStreamReader( new FileInputStream( source ) );
+            }
+            else
+            {
+                //  MASSEMBLY-371
+                contentReader = new InputStreamReader( new FileInputStream( source ), encoding );
+            }
 
             File target = FileUtils.createTempFile( source.getName() + ".", ".formatted", tempRoot );
 
