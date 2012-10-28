@@ -5,12 +5,12 @@ File child2Codec = new File( basedir, "target/project-1-bin/child-2/commons-code
 
 if ( !child1Codec.exists() )
 {
-	System.out.println( "commons-codec dependency in child-1 module is either missing or is the wrong version. File missing: " + child1Codec );
+    System.out.println( "commons-codec dependency in child-1 module is either missing or is the wrong version. File missing: " + child1Codec );
 }
 
 if ( !child2Codec.exists() )
 {
-	System.out.println( "commons-codec dependency in child-2 module is either missing or is the wrong version. File missing: " + child2Codec );
+    System.out.println( "commons-codec dependency in child-2 module is either missing or is the wrong version. File missing: " + child2Codec );
 }
 
 return child1Codec.exists() && child2Codec.exists();

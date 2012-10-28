@@ -7,32 +7,32 @@ ZipEntry child1InclEntry = zf.getEntry( "child1/org/test/child1/App2.class" );
 
 if ( child1InclEntry == null )
 {
-	System.out.println( "Included file from child1 not found." );
-	return false;
+    System.out.println( "Included file from child1 not found." );
+    return false;
 }
 
 ZipEntry child1ExclEntry = zf.getEntry( "child1/org/test/child1/App.class" );
 
 if ( child1ExclEntry != null )
 {
-	System.out.println( "Non-included file from child1 should not be present, but was found." );
-	return false;
+    System.out.println( "Non-included file from child1 should not be present, but was found." );
+    return false;
 }
 
 ZipEntry child2InclEntry = zf.getEntry( "child2/org/test/child2/App.class" );
 
 if ( child2InclEntry == null )
 {
-	System.out.println( "Included file from child2 not found." );
-	return false;
+    System.out.println( "Included file from child2 not found." );
+    return false;
 }
 
 ZipEntry child2ExclEntry = zf.getEntry( "child2/org/test/other/App.class" );
 
 if ( child2ExclEntry != null )
 {
-	System.out.println( "Non-included file from child2 should not be present, but was found." );
-	return false;
+    System.out.println( "Non-included file from child2 should not be present, but was found." );
+    return false;
 }
 
 return true;

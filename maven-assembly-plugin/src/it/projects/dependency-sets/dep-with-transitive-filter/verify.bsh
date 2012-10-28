@@ -5,12 +5,12 @@ File xercesMinimalJar = new File( basedir, "target/project-1-bin/maven-libs/xerc
 
 if ( !wagonJackrabbitJar.exists() )
 {
-	System.out.println( "Wagon provider jar is missing (should be included via include wildcard pattern)." );
+    System.out.println( "Wagon provider jar is missing (should be included via include wildcard pattern)." );
 }
 
 if ( !xercesMinimalJar.exists() )
 {
-	System.out.println( "Xerces minimal jar (from nekohtml, brought in by wagon jackrabbit provider) is missing (should be included via include wildcard pattern)." );
+    System.out.println( "Xerces minimal jar (from nekohtml, brought in by wagon jackrabbit provider) is missing (should be included via include wildcard pattern)." );
 }
 
 return wagonJackrabbitJar.exists() && xercesMinimalJar.exists();

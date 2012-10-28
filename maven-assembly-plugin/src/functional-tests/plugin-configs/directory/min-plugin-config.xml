@@ -19,14 +19,14 @@
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
         <configuration>
-		  <descriptor>${basedir}/src/test/resources/assemblies/fileSet.xml</descriptor>
-		  <basedir>${basedir}</basedir>
+          <descriptor>${basedir}/src/test/resources/assemblies/fileSet.xml</descriptor>
+          <basedir>${basedir}</basedir>
           <project implementation="org.apache.maven.plugin.assembly.stubs.AssemblyMavenProjectStub" />
-		  <executedProject implementation="org.apache.maven.plugin.assembly.stubs.AssemblyMavenProjectStub" />
+          <executedProject implementation="org.apache.maven.plugin.assembly.stubs.AssemblyMavenProjectStub" />
           <outputDirectory>${basedir}/target/test-harness/directory/min/target</outputDirectory>
           <finalName>directory-min</finalName>
-		  <archiverManager implementation="org.apache.maven.plugin.assembly.stubs.ArchiverManagerStub" />
-		  <appendAssemblyId>true</appendAssemblyId>
+          <archiverManager implementation="org.apache.maven.plugin.assembly.stubs.ArchiverManagerStub" />
+          <appendAssemblyId>true</appendAssemblyId>
         </configuration>
       </plugin>
     </plugins>

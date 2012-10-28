@@ -6,33 +6,33 @@ File zip = new File( basedir, base + ".zip" );
 File tgz = new File( basedir, base + ".tar.gz" );
 
 {
-	File f = pom;
-	String type = "POM";
-	
-	if ( !f.exists() )
-	{
-		System.out.println( "Project " + type + " is missing in deployment repository. File was: " + f );
-	}
+    File f = pom;
+    String type = "POM";
+
+    if ( !f.exists() )
+    {
+        System.out.println( "Project " + type + " is missing in deployment repository. File was: " + f );
+    }
 }
 
 {
-	File f = zip;
-	String type = "sources zip";
-	
-	if ( !f.exists() )
-	{
-		System.out.println( "Project " + type + " is missing in deployment repository. File was: " + f );
-	}
+    File f = zip;
+    String type = "sources zip";
+
+    if ( !f.exists() )
+    {
+        System.out.println( "Project " + type + " is missing in deployment repository. File was: " + f );
+    }
 }
 
 {
-	File f = tgz;
-	String type = "sources tar.gz";
-	
-	if ( !f.exists() )
-	{
-		System.out.println( "Project " + type + " is missing in deployment repository. File was: " + f );
-	}
+    File f = tgz;
+    String type = "sources tar.gz";
+
+    if ( !f.exists() )
+    {
+        System.out.println( "Project " + type + " is missing in deployment repository. File was: " + f );
+    }
 }
 
 return pom.exists() && zip.exists() && tgz.exists();
