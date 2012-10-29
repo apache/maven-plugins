@@ -69,8 +69,8 @@ public class SiteRunMojo
     /**
      * The port to execute the HTTP server on.
      *
-     * @parameter expression="${port}" default-value="8080"
      */
+    @Parameter(property = "port", defaultValue = "8080")
     private int port;
 
     private static final int MAX_IDLE_TIME = 30000;
