@@ -128,7 +128,7 @@ public class FileFormatter
 
             File target = FileUtils.createTempFile( source.getName() + ".", ".formatted", tempRoot );
 
-            AssemblyFileUtils.convertLineEndings( contentReader, target, lineEndingChars );
+            AssemblyFileUtils.convertLineEndings( contentReader, target, lineEndingChars, encoding );
 
             return target;
         }

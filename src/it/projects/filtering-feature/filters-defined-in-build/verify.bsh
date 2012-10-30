@@ -5,7 +5,8 @@ import java.util.jar.*;
 try
 {
     File file = new File( basedir, "target/filters-defined-in-build-1/file-1.properties");
-    BufferedReader r = new BufferedReader(new FileReader(file));
+    // This is a properties file encoded using ISO-8859-1
+    BufferedReader r = new BufferedReader( new InputStreamReader( new FileInputStream( file ), "ISO-8859-1" ) );
     String s = r.readLine();
     if(s.contains("filter.build"))
     {
