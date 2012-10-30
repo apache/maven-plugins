@@ -172,7 +172,8 @@ public class AssemblyFileUtilsTest
         File dest = File.createTempFile( "line-conversion-test.", "" );
         dest.deleteOnExit();
 
-        AssemblyFileUtils.convertLineEndings( new StringReader( test ), dest, lineEndingChars );
+        // Using platform encoding for the conversion tests in this class is OK
+        AssemblyFileUtils.convertLineEndings( new StringReader( test ), dest, lineEndingChars, null );
 
         FileReader reader = null;
         StringWriter writer = new StringWriter();

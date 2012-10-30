@@ -22,8 +22,9 @@ package org.apache.maven.plugin.assembly.utils;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.RandomAccessFile;
 import java.io.Reader;
 import java.nio.channels.FileChannel;
@@ -135,7 +136,7 @@ public final class AssemblyFileUtils
      * @param lineEndings This is the result of the getLineEndingChars(..) method in this utility class; the actual
      *   line-ending characters.
      */
-    public static void convertLineEndings( Reader source, File dest, String lineEndings )
+    public static void convertLineEndings( Reader source, File dest, String lineEndings, String encoding )
         throws IOException
     {
         BufferedWriter out = null;
@@ -151,7 +152,14 @@ public final class AssemblyFileUtils
                 bufferedSource = new BufferedReader( source );
             }
 
-            out = new BufferedWriter( new FileWriter( dest ) ); // platform encoding
+            if ( encoding == null )
+            {
+                out = new BufferedWriter( new OutputStreamWriter( new FileOutputStream( dest ) ) ); // platform encoding
+            }
+            else
+            {
+                out = new BufferedWriter( new OutputStreamWriter( new FileOutputStream( dest ), encoding ) );
+            }
 
             String line;
 
