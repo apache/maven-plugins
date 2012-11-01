@@ -54,7 +54,7 @@ under the License.
   </distributionManagement>
 
   <properties>
-    <scmVersion>1.9-SNAPSHOT</scmVersion>
+    <scmVersion>1.8.1</scmVersion>
     <mavenVersion>2.2.1</mavenVersion>
     <pluginTools>3.1</pluginTools>
 
