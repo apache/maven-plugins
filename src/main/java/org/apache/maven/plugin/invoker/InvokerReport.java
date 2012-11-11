@@ -32,6 +32,9 @@ import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.plugin.invoker.model.BuildJob;
 import org.apache.maven.plugin.invoker.model.io.xpp3.BuildJobXpp3Reader;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.MavenReportException;
@@ -45,53 +48,44 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
  * lifecycle, if you have a clean working copy, you have to use a command like
  * <code>mvn clean integration-test site</code> to ensure the build results are present when this goal is invoked.
  * 
- * @goal report
  * @author Olivier Lamy
- * @threadSafe
  * @since 1.4
  */
+@Mojo( name = "report", threadSafe = true )
 public class InvokerReport
     extends AbstractMavenReport
 {
     
     /**
      * The Maven Project.
-     *
-     * @parameter default-value="${project}"
-     * @required
-     * @readonly
      */
+    @Component
     protected MavenProject project;
     
     /**
      * Doxia Site Renderer component.
-     *
-     * @component
      */
+    @Component
     protected Renderer siteRenderer;    
     
     /**
      * Internationalization component.
-     *
-     * @component
      */
+    @Component
     protected I18N i18n;    
     
     /**
      * The output directory for the report. Note that this parameter is only evaluated if the goal is run directly from
      * the command line. If the goal is run indirectly as part of a site generation, the output directory configured in
      * the Maven Site Plugin is used instead.
-     *
-     * @parameter default-value="${project.reporting.outputDirectory}"
-     * @required
      */
+    @Parameter( defaultValue = "${project.reporting.outputDirectory}", required = true )
     protected File outputDirectory;    
     
     /**
      * Base directory where all build reports have been written to.
-     *
-     * @parameter expression="${invoker.reportsDirectory}" default-value="${project.build.directory}/invoker-reports"
      */
+    @Parameter( defaultValue = "${project.build.directory}/invoker-reports", property = "invoker.reportsDirectory" )
     private File reportsDirectory; 
 
     /**
@@ -143,9 +137,8 @@ public class InvokerReport
         }
 
         List<BuildJob> buildJobs = new ArrayList<BuildJob>( reportFiles.length );
-        for ( int i = 0, size = reportFiles.length; i < size; i++ )
+        for ( File reportFile : reportFiles )
         {
-            File reportFile = reportFiles[i];
             try
             {
                 BuildJobXpp3Reader reader = new BuildJobXpp3Reader();
