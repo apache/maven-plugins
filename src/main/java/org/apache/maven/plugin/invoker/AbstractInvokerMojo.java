@@ -54,6 +54,7 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Profile;
 import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.invoker.model.BuildJob;
@@ -88,6 +89,10 @@ import org.codehaus.plexus.util.InterpolationFilterReader;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.WriterFactory;
+import org.codehaus.plexus.util.cli.CommandLineException;
+import org.codehaus.plexus.util.cli.CommandLineUtils;
+import org.codehaus.plexus.util.cli.Commandline;
+import org.codehaus.plexus.util.cli.StreamConsumer;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 /**
@@ -352,6 +357,9 @@ public abstract class AbstractInvokerMojo
      */
     @Component
     private MavenProject project;
+    
+    @Component
+    private MojoExecution mojoExecution;
 
     /**
      * A comma separated list of projectname patterns to run. Specify this parameter to run individual tests by file name,
@@ -582,6 +590,12 @@ public abstract class AbstractInvokerMojo
      * The version of the JRE which is used to run the builds
      */
     private String actualJreVersion;
+    
+    
+    private final void setActualJreVersion( String actualJreVersion )
+    {
+        this.actualJreVersion = actualJreVersion;
+    }
     
     /**
      * Invokes Maven on the configured test projects.
@@ -1122,7 +1136,7 @@ public abstract class AbstractInvokerMojo
         
         if ( javaHome != null )
         {
-            actualJreVersion = SelectorUtils.getJreVersion( javaHome );
+            resolveExternalJreVersion();
         }
         else
         {
@@ -1186,6 +1200,35 @@ public abstract class AbstractInvokerMojo
                 mergedSettingsFile.delete();
             }
 
+        }
+    }
+
+    private void resolveExternalJreVersion()
+    {
+        Artifact pluginArtifact = mojoExecution.getMojoDescriptor().getPluginDescriptor().getPluginArtifact();
+        pluginArtifact.getFile();
+        
+        Commandline commandLine = new Commandline();
+        commandLine.setExecutable( new File( javaHome, "bin/java").getAbsolutePath() );
+        commandLine.createArg().setValue( "-cp" );
+        commandLine.createArg().setFile( pluginArtifact.getFile() );
+        commandLine.createArg().setValue( SystemPropertyPrinter.class.getName() );
+        commandLine.createArg().setValue( "java.version" );
+        
+        StreamConsumer consumer = new StreamConsumer()
+        {
+            public void consumeLine( String line )
+            {
+                setActualJreVersion( line );
+            }
+        };
+        try
+        {
+            CommandLineUtils.executeCommandLine( commandLine, consumer, null );
+        }
+        catch ( CommandLineException e )
+        {
+            getLog().warn( e.getMessage() );
         }
     }
 
