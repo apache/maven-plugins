@@ -55,7 +55,7 @@ under the License.
   <properties>
     <wagonVersion>2.2</wagonVersion>
     <mavenVersion>2.0.10</mavenVersion>
-    <mavenPluginVersion>3.1</mavenPluginVersion>
+    <mavenPluginVersion>3.2</mavenPluginVersion>
   </properties>
 
   <dependencies>
