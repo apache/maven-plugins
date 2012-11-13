@@ -565,6 +565,12 @@ public abstract class AbstractInvokerMojo
     private boolean mergeUserSettings;
 
     /**
+     * Additional environment variables to set on the command line.
+     * @since 1.8
+     */
+    @Parameter
+    private Map<String, String> environmentVariables;  
+    /**
      * The scripter runner that is responsible to execute hook scripts.
      */
     private ScriptRunner scriptRunner;
@@ -1511,7 +1517,7 @@ public abstract class AbstractInvokerMojo
             request.setDebug( debug );
 
             request.setShowVersion( showVersion );
-
+            
             if ( logger != null )
             {
                 request.setErrorHandler( logger );
@@ -1528,6 +1534,14 @@ public abstract class AbstractInvokerMojo
             if ( javaHome != null )
             {
                 request.setJavaHome( javaHome );
+            }
+            
+            if ( environmentVariables != null )
+            {
+                for( Map.Entry<String, String> variable : environmentVariables.entrySet() )
+                {
+                    request.addShellEnvironment( variable.getKey(), variable.getValue() );
+                }
             }
 
             for ( int invocationIndex = 1; ; invocationIndex++ )
