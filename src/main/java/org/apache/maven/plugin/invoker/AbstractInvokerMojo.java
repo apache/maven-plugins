@@ -105,6 +105,12 @@ public abstract class AbstractInvokerMojo
     extends AbstractMojo
 {
 
+    private static final int SELECTOR_MAVENVERSION = 1;
+
+    private static final int SELECTOR_JREVERSION = 2;
+
+    private static final int SELECTOR_OSFAMILY = 4;
+
     /**
      * Flag used to suppress certain invocations. This is useful in tailoring the build using profiles.
      *
@@ -1295,7 +1301,8 @@ public abstract class AbstractInvokerMojo
 
         try
         {
-            if ( isSelected( invokerProperties ) )
+            int selection = getSelection( invokerProperties ); 
+            if ( selection == 0 )
             {
                 long milliseconds = System.currentTimeMillis();
                 boolean executed;
@@ -1335,7 +1342,28 @@ public abstract class AbstractInvokerMojo
 
                 if ( !suppressSummaries )
                 {
-                    getLog().info( "..SKIPPED " );
+                    StringBuilder message = new StringBuilder();
+                    if ( ( selection & SELECTOR_MAVENVERSION ) != 0 )
+                    {
+                        message.append( "Maven version" );
+                    }
+                    if ( ( selection & SELECTOR_JREVERSION ) != 0 )
+                    {
+                        if( message.length() > 0 )
+                        {
+                            message.append( ", " );
+                        }
+                        message.append( "JRE version" );
+                    }
+                    if ( ( selection & SELECTOR_OSFAMILY ) != 0 )
+                    {
+                        if( message.length() > 0 )
+                        {
+                            message.append( ", " );
+                        }
+                        message.append( "OS" );
+                    }
+                    getLog().info( "..SKIPPED due to " + message.toString() );
                 }
             }
         }
@@ -1375,26 +1403,28 @@ public abstract class AbstractInvokerMojo
      * Determines whether selector conditions of the specified invoker properties match the current environment.
      *
      * @param invokerProperties The invoker properties to check, must not be <code>null</code>.
-     * @return <code>true</code> if the job corresponding to the properties should be run, <code>false</code> otherwise.
+     * @return <code>0</code> if the job corresponding to the properties should be run, 
+     *   otherwise a bitwise value representing the reason why it should be skipped.
      */
-    private boolean isSelected( InvokerProperties invokerProperties )
+    private int getSelection( InvokerProperties invokerProperties )
     {
+        int selection = 0;
         if ( !SelectorUtils.isMavenVersion( invokerProperties.getMavenVersion(), actualMavenVersion ) )
         {
-            return false;
+            selection |= SELECTOR_MAVENVERSION;
         }
 
         if ( !SelectorUtils.isJreVersion( invokerProperties.getJreVersion(), actualJreVersion ) )
         {
-            return false;
+            selection |= SELECTOR_JREVERSION;
         }
 
         if ( !SelectorUtils.isOsFamily( invokerProperties.getOsFamily() ) )
         {
-            return false;
+            selection |= SELECTOR_OSFAMILY;
         }
 
-        return true;
+        return selection;
     }
 
     /**
