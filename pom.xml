@@ -136,7 +136,7 @@ under the License.
     <doxiaVersion>1.0</doxiaVersion>
     <mavenVersion>2.0.6</mavenVersion>
     <sitePluginVersion>3.0</sitePluginVersion>
-    <mavenPluginVersion>3.1</mavenPluginVersion>
+    <mavenPluginVersion>3.2</mavenPluginVersion>
   </properties>
 
   <dependencies>
