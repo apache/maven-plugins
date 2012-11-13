@@ -38,7 +38,7 @@ under the License.
 
   <properties>
     <mavenVersion>2.0.9</mavenVersion>
-    <mavenPluginPluginVersion>3.1</mavenPluginPluginVersion>
+    <mavenPluginPluginVersion>3.2</mavenPluginPluginVersion>
   </properties>
 
   <prerequisites>

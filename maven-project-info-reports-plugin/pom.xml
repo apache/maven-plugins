@@ -96,7 +96,7 @@ under the License.
     <wagonVersion>1.0</wagonVersion>
     <scmVersion>1.8</scmVersion>
     <sitePluginVersion>3.1</sitePluginVersion>
-    <mavenPluginVersion>3.1</mavenPluginVersion>
+    <mavenPluginVersion>3.2</mavenPluginVersion>
   </properties>
 
   <dependencies>
