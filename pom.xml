@@ -56,7 +56,7 @@ under the License.
   <properties>
     <scmVersion>1.8.1</scmVersion>
     <mavenVersion>2.2.1</mavenVersion>
-    <pluginTools>3.1</pluginTools>
+    <pluginTools>3.2</pluginTools>
 
     <!-- for documentation purpose -->
     <maven-scm-provider-svnjava-version>2.0.5</maven-scm-provider-svnjava-version>
