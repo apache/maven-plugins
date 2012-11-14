@@ -223,6 +223,7 @@ public class InvokerReport
         sinkTableHeader( sink, getText( locale, "report.invoker.summary.number" ) );
         sinkTableHeader( sink, getText( locale, "report.invoker.summary.success" ) );
         sinkTableHeader( sink, getText( locale, "report.invoker.summary.failed" ) );
+        sinkTableHeader( sink, getText( locale, "report.invoker.summary.skipped" ) );
         sinkTableHeader( sink, getText( locale, "report.invoker.summary.success.rate" ) );
         sinkTableHeader( sink, getText( locale, "report.invoker.summary.time.total" ) );
         sinkTableHeader( sink, getText( locale, "report.invoker.summary.time.avg" ) );
@@ -230,6 +231,7 @@ public class InvokerReport
         int number = buildJobs.size();
         int success = 0;
         int failed = 0;
+        int skipped = 0;
         double totalTime = 0;
 
         for ( BuildJob buildJob : buildJobs )
@@ -238,7 +240,11 @@ public class InvokerReport
             {
                 success++;
             }
-            else if ( !BuildJob.Result.SKIPPED.equals( buildJob.getResult() ) )
+            else if ( BuildJob.Result.SKIPPED.equals( buildJob.getResult() ) )
+            {
+                skipped++;
+            }
+            else
             {
                 failed++;
             }
@@ -251,6 +257,7 @@ public class InvokerReport
         sinkCell( sink, Integer.toString( number ) );
         sinkCell( sink, Integer.toString( success ) );
         sinkCell( sink, Integer.toString( failed ) );
+        sinkCell( sink, Integer.toString( skipped ) );
 
         if ( success + failed > 0 )
         {
