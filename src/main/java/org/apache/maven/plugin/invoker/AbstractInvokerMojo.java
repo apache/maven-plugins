@@ -1340,31 +1340,36 @@ public abstract class AbstractInvokerMojo
             {
                 buildJob.setResult( BuildJob.Result.SKIPPED );
 
+                StringBuilder message = new StringBuilder();
+                if ( ( selection & SELECTOR_MAVENVERSION ) != 0 )
+                {
+                    message.append( "Maven version" );
+                }
+                if ( ( selection & SELECTOR_JREVERSION ) != 0 )
+                {
+                    if( message.length() > 0 )
+                    {
+                        message.append( ", " );
+                    }
+                    message.append( "JRE version" );
+                }
+                if ( ( selection & SELECTOR_OSFAMILY ) != 0 )
+                {
+                    if( message.length() > 0 )
+                    {
+                        message.append( ", " );
+                    }
+                    message.append( "OS" );
+                }
+
                 if ( !suppressSummaries )
                 {
-                    StringBuilder message = new StringBuilder();
-                    if ( ( selection & SELECTOR_MAVENVERSION ) != 0 )
-                    {
-                        message.append( "Maven version" );
-                    }
-                    if ( ( selection & SELECTOR_JREVERSION ) != 0 )
-                    {
-                        if( message.length() > 0 )
-                        {
-                            message.append( ", " );
-                        }
-                        message.append( "JRE version" );
-                    }
-                    if ( ( selection & SELECTOR_OSFAMILY ) != 0 )
-                    {
-                        if( message.length() > 0 )
-                        {
-                            message.append( ", " );
-                        }
-                        message.append( "OS" );
-                    }
                     getLog().info( "..SKIPPED due to " + message.toString() );
                 }
+                
+                // Abuse failureMessage, the field in the report which should contain the reason for skipping
+                // Consider skipCode + I18N
+                buildJob.setFailureMessage( "Skipped due to " + message.toString() );
             }
         }
         catch ( RunErrorException e )
