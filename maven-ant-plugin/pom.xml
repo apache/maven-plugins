@@ -56,6 +56,13 @@ under the License.
     <mavenPluginVersion>3.2</mavenPluginVersion>
   </properties>
 
+  <contributors>
+    <contributor>
+      <name>Martin O'Connor</name>
+    </contributor>
+  </contributors>
+
+
   <dependencies>
     <dependency>
       <groupId>org.apache.maven</groupId>
