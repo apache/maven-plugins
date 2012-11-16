@@ -910,6 +910,7 @@ public class AntBuildWriter
             writer.startElement( "available" );
             writer.addAttribute( "classname", "junit.framework.Test" );
             writer.addAttribute( "property", "junit.present" );
+            writer.addAttribute( "classpathref", "build.test.classpath" );
             writer.endElement(); // available
 
             writer.endElement(); // target
@@ -955,7 +956,7 @@ public class AntBuildWriter
             writer.endElement(); // echo
 
             writer.startElement( "echo" );
-            writer.writeText( " JUnit is not present in your $ANT_HOME/lib directory. Tests not executed." );
+            writer.writeText( " JUnit is not present in the test classpath or your $ANT_HOME/lib directory. Tests not executed." );
             writer.endElement(); // echo
 
             writer.startElement( "echo" );
