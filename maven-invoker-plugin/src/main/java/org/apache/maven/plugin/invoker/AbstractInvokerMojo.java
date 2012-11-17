@@ -87,6 +87,7 @@ import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.InterpolationFilterReader;
 import org.codehaus.plexus.util.ReaderFactory;
+import org.codehaus.plexus.util.ReflectionUtils;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.WriterFactory;
 import org.codehaus.plexus.util.cli.CommandLineException;
@@ -1080,8 +1081,8 @@ public abstract class AbstractInvokerMojo
                         rtInfo.setFile( interpolatedSettingsFile );
                         dominantSettings.setRuntimeInfo( rtInfo );
                     }
-                    
-                    Settings recessiveSettings = this.settings;
+
+                    Settings recessiveSettings = cloneSettings();
 
                     SettingsUtils.merge( dominantSettings, recessiveSettings, TrackableBase.USER_LEVEL );
 
@@ -1212,6 +1213,45 @@ public abstract class AbstractInvokerMojo
                 mergedSettingsFile.delete();
             }
 
+        }
+    }
+
+    private Settings cloneSettings()
+    {
+        Settings recessiveSettings = SettingsUtils.copySettings( this.settings );
+
+        // MINVOKER-133: reset sourceLevelSet
+        resetSourceLevelSet( recessiveSettings );
+        for( org.apache.maven.settings.Mirror mirror : recessiveSettings.getMirrors() )
+        {
+            resetSourceLevelSet( mirror );
+        }
+        for( org.apache.maven.settings.Server server : recessiveSettings.getServers())
+        {
+            resetSourceLevelSet( server );
+        }
+        for( org.apache.maven.settings.Proxy proxy : recessiveSettings.getProxies() )
+        {
+            resetSourceLevelSet( proxy );
+        }
+        for ( org.apache.maven.settings.Profile profile : recessiveSettings.getProfiles() )
+        {
+            resetSourceLevelSet( profile );
+        }
+
+        return recessiveSettings;
+    }
+
+    private void resetSourceLevelSet( org.apache.maven.settings.TrackableBase trackable )
+    {
+        try
+        {
+            ReflectionUtils.setVariableValueInObject( trackable, "sourceLevelSet", Boolean.FALSE );
+            getLog().debug( "sourceLevelSet: " + ReflectionUtils.getValueIncludingSuperclasses( "sourceLevelSet", trackable ) );
+        }
+        catch ( IllegalAccessException e )
+        {
+            //noop
         }
     }
 
