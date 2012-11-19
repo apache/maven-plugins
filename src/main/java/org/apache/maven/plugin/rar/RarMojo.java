@@ -310,8 +310,8 @@ public class RarMojo
                 if ( !artifact.isOptional() && filter.include( artifact )
                     && artifact.getArtifactHandler().isAddedToClasspath() )
                 {
-                    getLog().info( "Copying artifact[" + artifact.getGroupId() + ", " + artifact.getId() + ", " +
-                                       artifact.getScope() + "]" );
+                    getLog().info( "Copying artifact[" + artifact.getGroupId() + ", " + artifact.getId() + ", "
+                                       + artifact.getScope() + "]" );
                     FileUtils.copyFileToDirectory( artifact.getFile(), getBuildDir() );
                 }
             }
@@ -456,7 +456,7 @@ public class RarMojo
     {
         if ( raXmlFile == null )
         {
-
+            return;
         }
         File raXml = raXmlFile;
         if ( raXml.exists() )
