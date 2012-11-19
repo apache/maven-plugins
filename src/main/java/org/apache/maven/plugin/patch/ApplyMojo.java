@@ -232,7 +232,7 @@ public class ApplyMojo
 
     /**
      * apply --binary option to patch command line
-     * @since 1.1.2
+     * @since 1.2
      */
     @Parameter( defaultValue = "false" )
     private boolean binary;
