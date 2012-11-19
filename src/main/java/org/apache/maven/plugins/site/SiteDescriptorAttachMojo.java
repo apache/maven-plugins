@@ -44,7 +44,7 @@ import org.codehaus.plexus.util.FileUtils;
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  * @version $Id$
  */
-@Mojo( name = "attach-descriptor", defaultPhase = LifecyclePhase.PACKAGE )
+@Mojo( name = "attach-descriptor", defaultPhase = LifecyclePhase.PACKAGE, threadSafe = true)
 public class SiteDescriptorAttachMojo
     extends AbstractSiteMojo
 {
