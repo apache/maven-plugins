@@ -231,6 +231,13 @@ public class ApplyMojo
     private boolean removeEmptyFiles;
 
     /**
+     * apply --binary option to patch command line
+     * @since 1.1.2
+     */
+    @Parameter( defaultValue = "false" )
+    private boolean binary;
+
+    /**
      * Apply the patches. Give preference to patchFile over patchSourceDir/patches, and preference to originalFile over
      * workDir.
      */
@@ -552,6 +559,11 @@ public class ApplyMojo
         cli.setWorkingDirectory( targetDirectory.getAbsolutePath() );
 
         cli.createArg().setValue( "-p" + strip );
+
+        if ( binary )
+        {
+            cli.createArg().setValue( "--binary" );
+        }
 
         if ( ignoreWhitespace )
         {
