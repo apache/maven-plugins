@@ -40,6 +40,12 @@ under the License.
     <maven>${mavenVersion}</maven>
   </prerequisites>
 
+  <contributors>
+    <contributor>
+      <name>Heath Nielson</name>
+    </contributor>
+  </contributors>
+
   <scm>
     <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-patch-plugin/</connection>
     <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/trunk/maven-patch-plugin/</developerConnection>
