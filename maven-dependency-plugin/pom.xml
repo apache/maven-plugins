@@ -140,7 +140,7 @@ under the License.
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-utils</artifactId>
-      <version>3.0.8</version>
+      <version>3.0.9</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
@@ -155,7 +155,7 @@ under the License.
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-io</artifactId>
-      <version>2.0.5</version>
+      <version>2.0.6</version>
     </dependency>
 
     <!-- shared -->
