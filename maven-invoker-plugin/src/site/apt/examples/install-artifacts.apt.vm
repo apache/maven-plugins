@@ -31,7 +31,7 @@ Installing Artifacts
   The following example shows a plugin configuration using the <<<{{{../install-mojo.html}invoker:install}}>>> 
   goal.  This will cause the project artifact(s) to be installed to a dedicated local 
   repository before executing the projects.  This can be helpful if you 
-  want to build your project and test the new artifacts artifact in a single step instead of 
+  want to build your project and test the new artifact(s) in a single step instead of 
   installing first and then running tests.
   
 +------------------
