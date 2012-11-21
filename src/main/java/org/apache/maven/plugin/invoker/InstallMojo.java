@@ -444,6 +444,12 @@ public class InstallMojo
                                              ArtifactRepository testRepository )
         throws MojoExecutionException
     {
+        // keep track if we have passed mvnProject in reactorProjects 
+        boolean foundCurrent = false;
+
+        // ... into dependencies that were resolved from reactor projects ...
+        Collection<String> dependencyProjects = new LinkedHashSet<String>();
+        
         // index available reactor projects
         Map<String, MavenProject> projects = new HashMap<String, MavenProject>();
         for ( MavenProject reactorProject : reactorProjects )
@@ -452,14 +458,19 @@ public class InstallMojo
                 reactorProject.getGroupId() + ':' + reactorProject.getArtifactId() + ':' + reactorProject.getVersion();
 
             projects.put( projectId, reactorProject );
+            
+            // only add projects of reactor build previous to this mvnProject
+            if ( !( foundCurrent |= ( mvnProject.equals( reactorProject ) ) ) )
+            {
+                dependencyProjects.add( projectId );
+            }
         }
 
         // group transitive dependencies (even those that don't contribute to the class path like POMs) ...
         Collection<Artifact> artifacts = (Collection<Artifact>) mvnProject.getArtifacts();
-        // ... into dependencies that were resolved from reactor projects ...
-        Collection<String> dependencyProjects = new LinkedHashSet<String>();
         // ... and those that were resolved from the (local) repo
         Collection<Artifact> dependencyArtifacts = new LinkedHashSet<Artifact>();
+        
         for ( Artifact artifact : artifacts )
         {
             // workaround for MNG-2961 to ensure the base version does not contain a timestamp
@@ -467,11 +478,7 @@ public class InstallMojo
 
             String projectId = artifact.getGroupId() + ':' + artifact.getArtifactId() + ':' + artifact.getBaseVersion();
 
-            if ( projects.containsKey( projectId ) )
-            {
-                dependencyProjects.add( projectId );
-            }
-            else
+            if ( !projects.containsKey( projectId ) )
             {
                 dependencyArtifacts.add( artifact );
             }
