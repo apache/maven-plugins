@@ -34,9 +34,7 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.params.HttpClientParams;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.issues.Issue;
-import org.apache.maven.plugin.issues.IssueUtils;
 import org.apache.maven.settings.Proxy;
-import org.apache.maven.wagon.proxy.ProxyInfo;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
 
@@ -44,8 +42,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.net.URLEncoder;
 import java.util.Collections;
 import java.util.List;
@@ -226,36 +222,6 @@ public final class ClassicJiraDownloader
     }
 
     /**
-     * Override this method if you need to get issues for a specific Fix For.
-     *
-     * @return A Fix For id or <code>null</code> if you don't have that need
-     */
-    protected String getFixFor()
-    {
-        if ( onlyCurrentVersion && useJql )
-        {
-            // Let JIRA do the filtering of the current version instead of the JIRA mojo.
-            // This way JIRA returns less issues and we do not run into the "nbEntriesMax" limit that easily.
-
-            String version = ( versionPrefix == null ? "" : versionPrefix ) + project.getVersion();
-
-            // Remove "-SNAPSHOT" from the end of the version, if it's there
-            if ( version != null && version.endsWith( IssueUtils.SNAPSHOT_SUFFIX ) )
-            {
-                return version.substring( 0, version.length() - IssueUtils.SNAPSHOT_SUFFIX.length() );
-            }
-            else
-            {
-                return version;
-            }
-        }
-        else
-        {
-            return null;
-        }
-    }
-
-    /**
      * Check and prepare for basic authentication.
      *
      * @param client The client to prepare
@@ -363,67 +329,7 @@ public final class ClassicJiraDownloader
         // see whether there is any proxy defined in maven
         Proxy proxy = null;
 
-        String proxyHost = null;
-
-        int proxyPort = 0;
-
-        String proxyUser = null;
-
-        String proxyPass = null;
-
-        if ( project == null )
-        {
-            getLog().error( "No project set. No proxy info available." );
-
-            return;
-        }
-
-        if ( settings != null )
-        {
-            proxy = settings.getActiveProxy();
-        }
-
-        if ( proxy != null )
-        {
-
-            ProxyInfo proxyInfo = new ProxyInfo();
-            proxyInfo.setNonProxyHosts( proxy.getNonProxyHosts() );
-
-            // Get the host out of the JIRA URL
-            URL url = null;
-            try
-            {
-                url = new URL( jiraUrl );
-            }
-            catch( MalformedURLException e )
-            {
-                getLog().error( "Invalid JIRA URL: " + jiraUrl + ". " + e.getMessage() );
-            }
-            String jiraHost = null;
-            if ( url != null )
-            {
-                jiraHost = url.getHost();
-            }
-
-            // Validation of proxy method copied from org.apache.maven.wagon.proxy.ProxyUtils.
-            // @todo Can use original when maven-changes-plugin requires a more recent version of Maven
-
-            //if ( ProxyUtils.validateNonProxyHosts( proxyInfo, jiraHost ) )
-            if ( JiraHelper.validateNonProxyHosts( proxyInfo, jiraHost ) )
-            {
-                return;
-            }
-
-            proxyHost = settings.getActiveProxy().getHost();
-
-            proxyPort = settings.getActiveProxy().getPort();
-
-            proxyUser = settings.getActiveProxy().getUsername();
-
-            proxyPass = settings.getActiveProxy().getPassword();
-
-            getLog().debug( proxyPass );
-        }
+        getProxyInfo( jiraUrl );
 
         if ( proxyHost != null )
         {

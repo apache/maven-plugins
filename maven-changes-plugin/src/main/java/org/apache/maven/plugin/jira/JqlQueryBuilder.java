@@ -19,11 +19,11 @@ package org.apache.maven.plugin.jira;
  * under the License.
  */
 
+import org.apache.maven.plugin.logging.Log;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Locale;
-
-import org.apache.maven.plugin.logging.Log;
 
 /**
  * Builder for a JIRA query using the JIRA query language.
@@ -37,6 +37,7 @@ public class JqlQueryBuilder
     implements JiraQueryBuilder
 {
     private String filter = "";
+    private boolean urlEncode = true;
 
     /**
      * Log for debug output.
@@ -66,10 +67,18 @@ public class JqlQueryBuilder
             {
                 jqlQuery = query.toString() + orderBy.toString();
             }
-            getLog().debug( "Encoding JQL query " + jqlQuery );
-            String encodedQuery = URLEncoder.encode( jqlQuery, "UTF-8" );
-            getLog().debug( "Encoded JQL query " + encodedQuery );
-            return encodedQuery;
+
+            if ( urlEncode )
+            {
+                getLog().debug( "Encoding JQL query " + jqlQuery );
+                String encodedQuery = URLEncoder.encode( jqlQuery, "UTF-8" );
+                getLog().debug( "Encoded JQL query " + encodedQuery );
+                return encodedQuery;
+            }
+            else
+            {
+                return jqlQuery;
+            }
         }
         catch ( UnsupportedEncodingException e )
         {
@@ -168,6 +177,17 @@ public class JqlQueryBuilder
     {
         addCommaSeparatedValues( "type", typeIds );
         return this;
+    }
+
+    public JiraQueryBuilder urlEncode( boolean doEncoding )
+    {
+        urlEncode = doEncoding;
+        return this;
+    }
+
+    public boolean urlEncode()
+    {
+        return urlEncode;
     }
 
     /* --------------------------------------------------------------------- */

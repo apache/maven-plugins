@@ -19,13 +19,6 @@ package org.apache.maven.plugin.jira;
  * under the License.
  */
 
-import java.io.File;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.ResourceBundle;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.maven.plugin.changes.AbstractChangesReport;
 import org.apache.maven.plugin.changes.ProjectUtils;
@@ -38,6 +31,13 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.reporting.MavenReportException;
 import org.apache.maven.settings.Settings;
+
+import java.io.File;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.ResourceBundle;
 
 /**
  * Goal which downloads issues from the Issue Tracking System and generates a report.
@@ -92,11 +92,22 @@ public class JiraMojo
     /**
      * Use the JIRA query language instead of the JIRA query based on HTTP parameters. 
      * From JIRA 5.1 and up only JQL is supported. JIRA 4.4 supports both JQL and URL parameter based queries.
+     * From 5.1.1 this is obsolete, since REST queries only use JQL.
      *
      * @since 2.8
      */
     @Parameter( defaultValue = "false" )
     private boolean useJql;
+
+    /**
+     * Since JIRA 5.1.1, it is no longer possible to construct a URL that downloads RSS. Meanwhile
+     * JIRA added a REST API in 4.2. By default, this plugin uses the REST API if available.
+     * Setting this parameter to true forces it to attempt to use RSS.
+     *
+     * @since 2.9
+     */
+    @Parameter( defaultValue = "false")
+    private boolean forceRss;
     
     /**
      * Sets the component(s) that you want to limit your report to include.
@@ -348,7 +359,9 @@ public class JiraMojo
             }
             else
             {
-                issueDownloader = new ClassicJiraDownloader();
+                AdaptiveJiraDownloader downloader = new AdaptiveJiraDownloader();
+                downloader.setForceClassic( forceRss );
+                issueDownloader = downloader;
             }
             configureIssueDownloader( issueDownloader );
             issueDownloader.doExecute();
