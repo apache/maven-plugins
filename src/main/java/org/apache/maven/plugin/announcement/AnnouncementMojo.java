@@ -38,8 +38,8 @@ import org.apache.maven.plugin.github.GitHubIssueManagementSystem;
 import org.apache.maven.plugin.issues.Issue;
 import org.apache.maven.plugin.issues.IssueManagementSystem;
 import org.apache.maven.plugin.issues.IssueUtils;
+import org.apache.maven.plugin.jira.ClassicJiraDownloader;
 import org.apache.maven.plugin.jira.JIRAIssueManagmentSystem;
-import org.apache.maven.plugin.jira.JiraDownloader;
 import org.apache.maven.plugin.trac.TracDownloader;
 import org.apache.maven.plugin.trac.TracIssueManagmentSystem;
 import org.apache.maven.plugins.annotations.Component;
@@ -688,7 +688,7 @@ public class AnnouncementMojo
     protected List<Release> getJiraReleases()
         throws MojoExecutionException
     {
-        JiraDownloader jiraDownloader = new JiraDownloader();
+        ClassicJiraDownloader jiraDownloader = new ClassicJiraDownloader();
 
         File jiraXMLFile = jiraXML;
 

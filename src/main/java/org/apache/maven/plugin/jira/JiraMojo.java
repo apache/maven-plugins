@@ -348,7 +348,7 @@ public class JiraMojo
             }
             else
             {
-                issueDownloader = new JiraDownloader();
+                issueDownloader = new ClassicJiraDownloader();
             }
             configureIssueDownloader( issueDownloader );
             issueDownloader.doExecute();
