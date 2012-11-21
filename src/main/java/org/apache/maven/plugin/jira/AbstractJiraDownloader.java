@@ -21,11 +21,16 @@ package org.apache.maven.plugin.jira;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.issues.Issue;
+import org.apache.maven.plugin.issues.IssueUtils;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Settings;
+import org.apache.maven.wagon.proxy.ProxyInfo;
 
 import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 
 /**
@@ -84,6 +89,10 @@ public abstract class AbstractJiraDownloader
     protected String versionPrefix;
     /** The pattern used to parse dates from the JIRA xml file. */
     protected String jiraDatePattern;
+    protected String proxyHost;
+    protected int proxyPort;
+    protected String proxyUser;
+    protected String proxyPass;
 
     /**
      * Execute the query on the JIRA server.
@@ -104,7 +113,90 @@ public abstract class AbstractJiraDownloader
     }
 
 
+    protected void getProxyInfo( String jiraUrl )
+    {
+        // see whether there is any proxy defined in maven
+        Proxy proxy = null;
 
+        if ( project == null )
+        {
+            getLog().error( "No project set. No proxy info available." );
+
+            return;
+        }
+
+        if ( settings != null )
+        {
+            proxy = settings.getActiveProxy();
+        }
+
+        if ( proxy != null )
+        {
+
+            ProxyInfo proxyInfo = new ProxyInfo();
+            proxyInfo.setNonProxyHosts( proxy.getNonProxyHosts() );
+
+            // Get the host out of the JIRA URL
+            URL url = null;
+            try
+            {
+                url = new URL( jiraUrl );
+            }
+            catch( MalformedURLException e )
+            {
+                getLog().error( "Invalid JIRA URL: " + jiraUrl + ". " + e.getMessage() );
+            }
+            String jiraHost = null;
+            if ( url != null )
+            {
+                jiraHost = url.getHost();
+            }
+
+            // Validation of proxy method copied from org.apache.maven.wagon.proxy.ProxyUtils.
+            // @todo Can use original when maven-changes-plugin requires a more recent version of Maven
+
+            //if ( ProxyUtils.validateNonProxyHosts( proxyInfo, jiraHost ) )
+            if ( JiraHelper.validateNonProxyHosts( proxyInfo, jiraHost ) )
+            {
+                return;
+            }
+
+            proxyHost = settings.getActiveProxy().getHost();
+            proxyPort = settings.getActiveProxy().getPort();
+            proxyUser = settings.getActiveProxy().getUsername();
+            proxyPass = settings.getActiveProxy().getPassword();
+        }
+    }
+
+    /**
+     * Override this method if you need to get issues for a specific Fix For.
+     *
+     * @return A Fix For id or <code>null</code> if you don't have that need
+     */
+    protected String getFixFor()
+    {
+        if ( onlyCurrentVersion && useJql )
+        {
+            // Let JIRA do the filtering of the current version instead of the JIRA mojo.
+            // This way JIRA returns less issues and we do not run into the "nbEntriesMax" limit that easily.
+
+            String version = ( versionPrefix == null ? "" : versionPrefix ) + project.getVersion();
+
+            // Remove "-SNAPSHOT" from the end of the version, if it's there
+            if ( version.endsWith( IssueUtils.SNAPSHOT_SUFFIX ) )
+            {
+                return version.substring( 0, version.length() - IssueUtils.SNAPSHOT_SUFFIX.length() );
+            }
+            else
+            {
+                return version;
+            }
+        }
+        else
+        {
+            return null;
+        }
+    }
 
 
     public abstract List<Issue> getIssueList() throws MojoExecutionException;
