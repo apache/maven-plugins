@@ -292,6 +292,13 @@ under the License.
       </exclusions>
     </dependency>
 
+      <!-- rest client for jira -->
+      <dependency>
+          <groupId>org.apache.cxf</groupId>
+          <artifactId>cxf-rt-frontend-jaxrs</artifactId>
+          <version>2.7.0</version>
+      </dependency>
+
     <dependency>
       <groupId>org.apache.velocity</groupId>
       <artifactId>velocity</artifactId>
