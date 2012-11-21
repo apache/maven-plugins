@@ -36,6 +36,7 @@ import org.apache.cxf.transports.http.configuration.ProxyServerType;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.issues.Issue;
 
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
@@ -126,7 +127,7 @@ public class RestJiraDownloader extends AbstractJiraDownloader
         Response searchResponse = client.post( searchParamStringWriter.toString() );
         if ( searchResponse.getStatus() != Response.Status.OK.getStatusCode() )
         {
-            if ( MediaType.APPLICATION_JSON_TYPE.getType().equals( searchResponse.getMediaType().getType() ) )
+            if ( MediaType.APPLICATION_JSON_TYPE.getType().equals( getResponseMediaType( searchResponse ).getType() ) )
             {
                 JsonParser jsonParser = jsonFactory.createJsonParser( ( InputStream ) searchResponse.getEntity() );
                 JsonNode errorTree = jsonParser.readValueAsTree();
@@ -157,6 +158,12 @@ public class RestJiraDownloader extends AbstractJiraDownloader
         JsonNode issuesNode = issueTree.get( "issues" );
         assert issuesNode.isArray();
         buildIssues( issuesNode, jiraUrl, jiraProject );
+    }
+
+    private MediaType getResponseMediaType( Response response )
+    {
+        String header = (String) response.getMetadata().getFirst( HttpHeaders.CONTENT_TYPE ) ;
+        return header == null ? null : MediaType.valueOf( header );
     }
 
     private void buildIssues( JsonNode issuesNode, String jiraUrl, String jiraProject )
