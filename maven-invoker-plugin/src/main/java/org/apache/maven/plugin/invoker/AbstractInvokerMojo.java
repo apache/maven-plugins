@@ -423,6 +423,15 @@ public abstract class AbstractInvokerMojo
     private File mavenHome;
 
     /**
+     * mavenExecutable can either be a file relative to <code>${maven.home}/bin/</code> or an absolute file.
+     * 
+     * @since 1.8
+     * @see Invoker#setMavenExecutable(File)
+     */
+    @Parameter( property = "invoker.mavenExecutable" )
+    private String mavenExecutable;
+    
+    /**
      * The <code>JAVA_HOME</code> environment variable to use for forked Maven invocations. Defaults to the current Java
      * home directory.
      *
@@ -1604,6 +1613,11 @@ public abstract class AbstractInvokerMojo
             {
                 invoker.setMavenHome( mavenHome );
                 request.addShellEnvironment( "M2_HOME", mavenHome.getAbsolutePath() );
+            }
+            
+            if ( mavenExecutable != null )
+            {
+                invoker.setMavenExecutable( new File( mavenExecutable ) );
             }
 
             if ( javaHome != null )
