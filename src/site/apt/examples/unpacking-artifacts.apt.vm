@@ -77,7 +77,7 @@ Unpacking specific artifacts
 +---+
 
   And after invoking <<<mvn package>>>, the artifacts are unpacked. Because checking the existence of an unpacked archive
-  is difficult to do reliably, marker files are used instead. The location of the marker files is controlled by the {{{unpack-dependencies-mojo.html#markersDirectory}markersDirectory}} parameter.
+  is difficult to do reliably, marker files are used instead. The location of the marker files is controlled by the {{{../unpack-dependencies-mojo.html#markersDirectory}markersDirectory}} parameter.
 
 {Unpacking from the command line}:
 

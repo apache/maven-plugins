@@ -50,7 +50,7 @@ Usage
    The artifact version is optional. If not set, the plugin will attempt to resolve it from the
    project dependencies and then the dependencyManagement section.
 
-   See the {{#Overwrite Rules}} section for rules about how overwriting is handled.
+   See the {{Overwrite Rules}} section for rules about how overwriting is handled.
 
      []
 
@@ -183,7 +183,7 @@ mvn dependency:copy
 
   <<Note:>> As of 2.0-alpha-5, you may mix includes and excludes of the same category (ie scope). Includes are processed before excludes.
 
-   See the {{#Overwrite Rules}} section for rules about how overwriting is handled.
+   See the {{Overwrite Rules}} section for rules about how overwriting is handled.
 
 
    The goal can also be launched from the command line like:
@@ -229,7 +229,7 @@ mvn dependency:copy
    A single artifact can be unpacked multiple times if different include/exclude parameters
    are defined for each artifactItem
 
-   See the {{#Overwrite Rules}} section for rules about how overwriting is handled.
+   See the {{Overwrite Rules}} section for rules about how overwriting is handled.
 
    The artifact version is optional. If not set, the plugin will attempt to resolve it from the
    project dependencies and then the dependencyManagement section.
@@ -343,7 +343,7 @@ mvn dependency:unpack
 
    <<Note:>> As of 2.0-alpha-5, you may mix includes and excludes of the same category (ie scope). Includes are processed before excludes.
 
-   See the {{#Overwrite Rules}} section for rules about how overwriting is handled.
+   See the {{Overwrite Rules}} section for rules about how overwriting is handled.
                                       
    The goal can also be launched from the command line like:
    <<<mvn dependency:unpack-dependencies [optional params]>>>
