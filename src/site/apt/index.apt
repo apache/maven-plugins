@@ -124,6 +124,14 @@ Maven Dependency Plugin
 
   * {{{./examples/unpacking-project-dependencies.html}Unpacking the Project Dependencies}}
 
+  * {{{./examples/using-dependencies-sources.html}Using Project Dependencies' Sources}}
+
+  * {{{./examples/failing-the-build-on-dependency-analysis-warnings.html}Failing the Build on Dependency Analysis Warnings}}
+
+  * {{{./examples/filtering-the-dependency-tree.html}Filtering the Dependency Tree}}
+
+  * {{{./examples/resolving-conflicts-using-the-dependency-tree.html}Resolving Conflicts Using the Dependency Tree}}
+
   * {{{./examples/purging-local-repository.html}Purging the local repository}}
 
   []
