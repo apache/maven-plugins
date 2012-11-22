@@ -63,7 +63,7 @@ Unpacking specific artifacts
                </artifactItems>
                <includes>**/*.java</includes>
                <excludes>**/*.properties</excludes>
-	             <outputDirectory>\${project.build.directory}/wars</outputDirectory>
+               <outputDirectory>\${project.build.directory}/wars</outputDirectory>
                <overWriteReleases>false</overWriteReleases>
                <overWriteSnapshots>true</overWriteSnapshots>
              </configuration>
