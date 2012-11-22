@@ -64,6 +64,8 @@ under the License.
     <groovy-artifactId>groovy-all</groovy-artifactId>
     <groovy-version>2.0.1</groovy-version>
     <mavenPluginPluginVersion>3.2</mavenPluginPluginVersion>
+    
+    <invokerPluginVersion>1.6</invokerPluginVersion><!-- workaround for MRELEASE-803 -->
   </properties>
 
   <dependencies>
@@ -325,7 +327,7 @@ under the License.
       <id>run-its</id>
       <properties>
         <sitePluginVersion>3.1</sitePluginVersion>
-        <invokerPluginVersion>1.6</invokerPluginVersion> <!-- 1.7 is missing the groovy XmlSlurper -->
+        <!--  <invokerPluginVersion>1.6</invokerPluginVersion>  --><!-- 1.7 is missing the groovy XmlSlurper -->
       </properties>
       <build>
         <pluginManagement>
