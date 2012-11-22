@@ -19,11 +19,12 @@ package org.apache.maven.plugin.jira;
  * under the License.
  */
 
+import org.apache.maven.plugin.logging.Log;
+
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-
-import org.apache.maven.plugin.logging.Log;
 
 /**
  * JIRA 3.x way of constructing a search query based on URL parameters.
@@ -113,6 +114,23 @@ public class ParameterQueryBuilder
         return this;
     }
 
+    public JiraQueryBuilder components( List<String> components )
+    {
+        // add components
+        if ( components != null )
+        {
+            for ( String component : components )
+            {
+                component = component.trim();
+                if ( component.length() > 0 )
+                {
+                    query.append( "&component=" ).append( component );
+                }
+            }
+        }
+        return this;
+    }
+
     public JiraQueryBuilder filter( String filter )
     {
         this.filter = filter;
@@ -145,6 +163,11 @@ public class ParameterQueryBuilder
         return this;
     }
 
+    public JiraQueryBuilder fixVersionIds( List<String> fixVersionIds )
+    {
+        throw new RuntimeException( "fixVersionIds(List) not supported for very old parameter queries." );
+    }
+
     public Log getLog()
     {
         return log;
@@ -169,6 +192,11 @@ public class ParameterQueryBuilder
             }
         }
         return this;
+    }
+
+    public JiraQueryBuilder priorityIds( List<String> priorityIds )
+    {
+        throw new RuntimeException( "priorityIds(List) not supported for old parameter queries." );
     }
 
     /**
@@ -198,6 +226,11 @@ public class ParameterQueryBuilder
             }
         }
         return this;
+    }
+
+    public JiraQueryBuilder resolutionIds( List<String> resolutionIds )
+    {
+        throw new RuntimeException( "resolutionIds(List) not supported for old ParameterQueryBuilder" );
     }
 
     public JiraQueryBuilder sortColumnNames( String sortColumnNames )
@@ -335,6 +368,11 @@ public class ParameterQueryBuilder
         return this;
     }
 
+    public JiraQueryBuilder statusIds( List<String> statusIds )
+    {
+        throw new RuntimeException( "statusIds(List) not supported for old parameter queries." );
+    }
+
     public JiraQueryBuilder typeIds( String typeIds )
     {
         // get the Type Ids
@@ -353,5 +391,10 @@ public class ParameterQueryBuilder
             }
         }
         return this;
+    }
+
+    public JiraQueryBuilder typeIds( List<String> typeIds )
+    {
+        throw new RuntimeException( "typeIds(List) not supported for old ParameterQueryBuilder" );
     }
 }
