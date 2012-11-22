@@ -241,7 +241,7 @@ class InvokerProperties
         }
         
         String debug = get( DEBUG, index );
-        if( debug != null )
+        if ( debug != null )
         {
             request.setDebug( Boolean.valueOf( debug ).booleanValue() );    
         }
