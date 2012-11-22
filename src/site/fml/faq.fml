@@ -181,5 +181,32 @@ under the License.
         </pre>
       </answer>
     </faq>
+    <faq id="outputFileNameMapping">
+      <question>
+        Which properties can be used in the outputFileNameMapping parameter.
+      </question>
+      <answer>
+        <p>
+          You can use :
+        </p>
+        <ul>
+          <li>all system or maven properties available in your build with the syntax <code>${myProperty}</code>.</li>
+          <li>all environment variables with <code>${env.XXX}</code> where <code>XXX</code> is the environment variable.</li>
+          <li>the special <code>${dashClassifier?}</code> property (see above).</li>
+          <li>all artifacts attributes (<a href="http://maven.apache.org/ref/3.0.4/maven-artifact/apidocs/org/apache/maven/artifact/Artifact.html"> from the Artifact class</a>) like :
+          <ul>
+              <li><code>${artifact.groupId}</code> : The artifact groupId.</li>
+              <li><code>${artifact.artifactId}</code> :  The artifact artifactId.</li>
+              <li><code>${artifact.version}</code> :  The artifact classifier.</li>
+              <li><code>${artifact.baseVersion}</code> :  The artifact base version (For a SNAPSHOT it will be always -SNAPSHOT and not its timestamp even if you didn't built it yourself).</li>
+              <li><code>${artifact.classifier}</code> :  The artifact classifier.</li>
+              <li><code>${artifact.scope}</code> :  The artifact scope.</li>
+              <li>...</li>
+            </ul>
+            You can use <code>${module.XXXXX}</code> when using it for your project modules artifacts.
+          </li>
+        </ul>
+      </answer>
+    </faq>
   </part>
 </faqs>

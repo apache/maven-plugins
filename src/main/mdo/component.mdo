@@ -484,7 +484,8 @@
           <description>
             Sets the mapping pattern for all dependencies included in this
             assembly. Default is ${artifact.artifactId}-${artifact.version}${dashClassifier?}.${artifact.extension}.
-            (Since 2.2-beta-2; 2.2-beta-1 uses ${artifactId}-${version}${dashClassifier?}.${extension})
+            (Since 2.2-beta-2; 2.2-beta-1 uses ${artifactId}-${version}${dashClassifier?}.${extension}).
+            See the plugin FAQ for more details about entries usable in the outputFileNameMapping parameter.
           </description>
         </field>
         <field>
@@ -990,6 +991,7 @@
             Default is ${module.artifactId}-${module.version}${dashClassifier?}.${module.extension}.
             (Since 2.2-beta-2; 2.2-beta-1 uses ${artifactId}-${version}${dashClassifier?}.${extension}) NOTE: If the 
             dependencySet specifies unpack == true, outputFileNameMapping WILL NOT BE USED; in these cases, use outputDirectory.
+            See the plugin FAQ for more details about entries usable in the outputFileNameMapping parameter.
           </description>
         </field>
       </fields>
