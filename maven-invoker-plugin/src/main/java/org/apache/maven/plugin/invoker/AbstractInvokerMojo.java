@@ -614,7 +614,7 @@ public abstract class AbstractInvokerMojo
     private String actualJreVersion;
     
     
-    private final void setActualJreVersion( String actualJreVersion )
+    private void setActualJreVersion( String actualJreVersion )
     {
         this.actualJreVersion = actualJreVersion;
     }
@@ -1172,7 +1172,7 @@ public abstract class AbstractInvokerMojo
                 getLog().info( "use parallelThreads " + parallelThreads );
 
                 ExecutorService executorService = Executors.newFixedThreadPool( parallelThreads );
-                for ( final BuildJob project : buildJobs )
+                for ( final BuildJob job : buildJobs )
                 {
                     executorService.execute( new Runnable()
                     {
@@ -1181,7 +1181,7 @@ public abstract class AbstractInvokerMojo
                         {
                             try
                             {
-                                runBuild( projectsDir, project, finalSettingsFile );
+                                runBuild( projectsDir, job, finalSettingsFile );
                             }
                             catch ( MojoExecutionException e )
                             {
@@ -1205,9 +1205,9 @@ public abstract class AbstractInvokerMojo
             }
             else
             {
-                for ( BuildJob project : buildJobs )
+                for ( BuildJob job : buildJobs )
                 {
-                    runBuild( projectsDir, project, finalSettingsFile );
+                    runBuild( projectsDir, job, finalSettingsFile );
                 }
             }
         }
@@ -1231,15 +1231,15 @@ public abstract class AbstractInvokerMojo
 
         // MINVOKER-133: reset sourceLevelSet
         resetSourceLevelSet( recessiveSettings );
-        for( org.apache.maven.settings.Mirror mirror : recessiveSettings.getMirrors() )
+        for ( org.apache.maven.settings.Mirror mirror : recessiveSettings.getMirrors() )
         {
             resetSourceLevelSet( mirror );
         }
-        for( org.apache.maven.settings.Server server : recessiveSettings.getServers())
+        for ( org.apache.maven.settings.Server server : recessiveSettings.getServers() )
         {
             resetSourceLevelSet( server );
         }
-        for( org.apache.maven.settings.Proxy proxy : recessiveSettings.getProxies() )
+        for ( org.apache.maven.settings.Proxy proxy : recessiveSettings.getProxies() )
         {
             resetSourceLevelSet( proxy );
         }
@@ -1270,7 +1270,7 @@ public abstract class AbstractInvokerMojo
         pluginArtifact.getFile();
         
         Commandline commandLine = new Commandline();
-        commandLine.setExecutable( new File( javaHome, "bin/java").getAbsolutePath() );
+        commandLine.setExecutable( new File( javaHome, "bin/java" ).getAbsolutePath() );
         commandLine.createArg().setValue( "-cp" );
         commandLine.createArg().setFile( pluginArtifact.getFile() );
         commandLine.createArg().setValue( SystemPropertyPrinter.class.getName() );
@@ -1396,7 +1396,7 @@ public abstract class AbstractInvokerMojo
                 }
                 if ( ( selection & SELECTOR_JREVERSION ) != 0 )
                 {
-                    if( message.length() > 0 )
+                    if ( message.length() > 0 )
                     {
                         message.append( ", " );
                     }
@@ -1404,7 +1404,7 @@ public abstract class AbstractInvokerMojo
                 }
                 if ( ( selection & SELECTOR_OSFAMILY ) != 0 )
                 {
-                    if( message.length() > 0 )
+                    if ( message.length() > 0 )
                     {
                         message.append( ", " );
                     }
@@ -1627,7 +1627,7 @@ public abstract class AbstractInvokerMojo
             
             if ( environmentVariables != null )
             {
-                for( Map.Entry<String, String> variable : environmentVariables.entrySet() )
+                for ( Map.Entry<String, String> variable : environmentVariables.entrySet() )
                 {
                     request.addShellEnvironment( variable.getKey(), variable.getValue() );
                 }

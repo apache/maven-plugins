@@ -30,7 +30,7 @@ package org.apache.maven.plugin.invoker;
 public class SystemPropertyPrinter
 {
     /**
-     * @param args
+     * @param args system properties to print
      */
     public static void main( String[] args )
     {
