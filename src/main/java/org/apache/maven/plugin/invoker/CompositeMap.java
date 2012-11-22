@@ -31,7 +31,7 @@ import org.codehaus.plexus.util.introspection.ReflectionValueExtractor;
  * A map-like source to interpolate expressions.
  * 
  * @author Olivier Lamy
- * @since 22 nov. 07
+ * @since 1.1
  * @version $Id$
  */
 class CompositeMap
