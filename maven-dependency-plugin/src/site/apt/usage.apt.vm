@@ -315,7 +315,7 @@ mvn dependency:unpack
    only direct dependencies, set the excludeTransitive parameter to true.
 
    Dependencies can be included or excluded by a list of types. See
-   {{{unpack-dependencies-mojo.html}unpack-dependencies}} for details.
+   {{{./unpack-dependencies-mojo.html}unpack-dependencies}} for details.
 
    The artifacts can be unpacked in subfolders based on type. For example:
 
