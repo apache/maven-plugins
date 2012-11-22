@@ -21,6 +21,8 @@ package org.apache.maven.plugin.jira;
 
 import org.apache.maven.plugin.logging.Log;
 
+import java.util.List;
+
 /**
  * An interface for building a search query for JIRA.
  *
@@ -34,23 +36,35 @@ public interface JiraQueryBuilder
 
     JiraQueryBuilder components( String components );
 
+    JiraQueryBuilder components( List<String> components );
+
     JiraQueryBuilder filter( String filter );
 
     JiraQueryBuilder fixVersion( String fixVersion );
 
     JiraQueryBuilder fixVersionIds( String fixVersionIds );
 
+    JiraQueryBuilder fixVersionIds( List<String> fixVersionIds );
+
     Log getLog();
 
     JiraQueryBuilder priorityIds( String priorityIds );
+
+    JiraQueryBuilder priorityIds( List<String> priorityIds );
 
     JiraQueryBuilder project( String project );
 
     JiraQueryBuilder resolutionIds( String resolutionIds );
 
+    JiraQueryBuilder resolutionIds( List<String> resolutionIds );
+
     JiraQueryBuilder sortColumnNames( String sortColumnNames );
 
     JiraQueryBuilder statusIds( String statusIds );
 
+    JiraQueryBuilder statusIds( List<String> statusIds );
+
     JiraQueryBuilder typeIds( String typeIds );
+
+    JiraQueryBuilder typeIds( List<String> typeIds );
 }

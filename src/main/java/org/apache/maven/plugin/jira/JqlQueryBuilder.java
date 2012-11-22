@@ -23,6 +23,7 @@ import org.apache.maven.plugin.logging.Log;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -93,6 +94,12 @@ public class JqlQueryBuilder
         return this;
     }
 
+    public JiraQueryBuilder components( List<String> components )
+    {
+        addValues( "component", components );
+        return this;
+    }
+
     public JiraQueryBuilder filter( String filter )
     {
         this.filter = filter;
@@ -103,7 +110,7 @@ public class JqlQueryBuilder
      * When both {@link #fixVersion(String)} and {@link #fixVersionIds(String)} are used then you will probably
      * end up with a JQL query that is valid, but returns nothing. Unless they both only reference the same fixVersion
      *
-     * @param fixVersion
+     * @param fixVersion a single fix version
      * @return
      */
     public JiraQueryBuilder fixVersion( String fixVersion )
@@ -116,12 +123,23 @@ public class JqlQueryBuilder
      * When both {@link #fixVersion(String)} and {@link #fixVersionIds(String)} are used then you will probably
      * end up with a JQL query that is valid, but returns nothing. Unless they both only reference the same fixVersion
      *
-     * @param fixVersionIds
+     * @param fixVersionIds a comma-separated list of version ids.
      * @return
      */
     public JiraQueryBuilder fixVersionIds( String fixVersionIds )
     {
         addCommaSeparatedValues( "fixVersion", fixVersionIds );
+        return this;
+    }
+
+    /**
+     * Add a sequence of version IDs already in a list.
+     * @param fixVersionIds the version ids.
+     * @return
+     */
+    public JiraQueryBuilder fixVersionIds( List<String> fixVersionIds )
+    {
+        addValues( "fixVersion", fixVersionIds );
         return this;
     }
 
@@ -136,6 +154,12 @@ public class JqlQueryBuilder
         return this;
     }
 
+    public JiraQueryBuilder priorityIds( List<String> priorityIds )
+    {
+        addValues( "priority", priorityIds );
+        return this;
+    }
+
     public JiraQueryBuilder project( String project )
     {
         addSingleValue( "project", project );
@@ -145,6 +169,12 @@ public class JqlQueryBuilder
     public JiraQueryBuilder resolutionIds( String resolutionIds )
     {
         addCommaSeparatedValues( "resolution", resolutionIds );
+        return this;
+    }
+
+    public JiraQueryBuilder resolutionIds( List<String> resolutionIds )
+    {
+        addValues( "resolution", resolutionIds );
         return this;
     }
 
@@ -172,10 +202,22 @@ public class JqlQueryBuilder
         return this;
     }
 
+    public JiraQueryBuilder statusIds( List<String> statusIds )
+    {
+        addValues( "status", statusIds );
+        return this;
+    }
+
 
     public JiraQueryBuilder typeIds( String typeIds )
     {
         addCommaSeparatedValues( "type", typeIds );
+        return this;
+    }
+
+    public JiraQueryBuilder typeIds( List<String> typeIds )
+    {
+        addValues( "type", typeIds );
         return this;
     }
 
@@ -213,6 +255,27 @@ public class JqlQueryBuilder
                 query.append( ", " );
             }
             trimAndQuoteValue( valuesArr[valuesArr.length - 1] );
+            query.append( ")" );
+        }
+    }
+
+    private void addValues( String key, List<String> values )
+    {
+        if ( values != null && values.size() > 0 )
+        {
+            if ( query.length() > 0 )
+            {
+                query.append( " AND " );
+            }
+
+            query.append( key ).append( " in (" );
+
+            for ( int i = 0; i < ( values.size() - 1 ); i++ )
+            {
+                trimAndQuoteValue( values.get( i ) );
+                query.append( ", " );
+            }
+            trimAndQuoteValue( values.get ( values.size() - 1 ) );
             query.append( ")" );
         }
     }

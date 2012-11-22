@@ -34,6 +34,7 @@ import org.apache.cxf.transport.http.HTTPConduit;
 import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
 import org.apache.cxf.transports.http.configuration.ProxyServerType;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.issues.Issue;
 
 import javax.ws.rs.core.HttpHeaders;
@@ -62,6 +63,15 @@ public class RestJiraDownloader extends AbstractJiraDownloader
     private JsonFactory jsonFactory;
     private SimpleDateFormat dateFormat;
 
+    private List<String> resolvedFixVersionIds;
+    private List<String> resolvedStatusIds;
+    private List<String> resolvedComponentIds;
+    private List<String> resolvedTypeIds;
+    private List<String> resolvedResolutionIds;
+    private List<String> resolvedPriorityIds;
+
+    private String jiraProject;
+
     public static class NoRest extends Exception {
         public NoRest( )
         {
@@ -73,6 +83,12 @@ public class RestJiraDownloader extends AbstractJiraDownloader
         jsonFactory = new MappingJsonFactory(  );
         //2012-07-17T06:26:47.723-0500
         dateFormat = new SimpleDateFormat( "yyyy-MM-dd'T'HH:mm:ss.SSSZ" );
+        resolvedFixVersionIds = new ArrayList<String>(  );
+        resolvedStatusIds = new ArrayList<String>(  );
+        resolvedComponentIds = new ArrayList<String>(  );
+        resolvedTypeIds = new ArrayList<String>(  );
+        resolvedResolutionIds = new ArrayList<String>(  );
+        resolvedPriorityIds = new ArrayList<String>(  );
     }
 
     public void doExecute() throws Exception
@@ -80,7 +96,7 @@ public class RestJiraDownloader extends AbstractJiraDownloader
 
         Map<String, String> urlMap = JiraHelper.getJiraUrlAndProjectName( project.getIssueManagement().getUrl() );
         String jiraUrl = urlMap.get( "url" );
-        String jiraProject = urlMap.get( "project" ); // assumed to be a 'project key'
+        jiraProject = urlMap.get( "project" );
         WebClient client = setupWebClient( jiraUrl );
         /*
          If there is no session auth, explicitly probe to see if there is any REST.
@@ -97,16 +113,18 @@ public class RestJiraDownloader extends AbstractJiraDownloader
         }
         doSessionAuth( client );
 
+        resolveIds( client, jiraProject );
+
         String jqlQuery = new JqlQueryBuilder( log )
             .urlEncode( false )
             .project( jiraProject )
             .fixVersion( getFixFor() )
-            .fixVersionIds( fixVersionIds )
-            .statusIds( statusIds )
-            .priorityIds( priorityIds )
-            .resolutionIds( resolutionIds )
-            .components( component )
-            .typeIds( typeIds )
+            .fixVersionIds( resolvedFixVersionIds )
+            .statusIds( resolvedStatusIds )
+            .priorityIds( resolvedPriorityIds )
+            .resolutionIds( resolvedResolutionIds )
+            .components( resolvedComponentIds )
+            .typeIds( resolvedTypeIds )
             .sortColumnNames( sortColumnNames )
             .build();
 
@@ -127,37 +145,109 @@ public class RestJiraDownloader extends AbstractJiraDownloader
         Response searchResponse = client.post( searchParamStringWriter.toString() );
         if ( searchResponse.getStatus() != Response.Status.OK.getStatusCode() )
         {
-            if ( MediaType.APPLICATION_JSON_TYPE.getType().equals( getResponseMediaType( searchResponse ).getType() ) )
-            {
-                JsonParser jsonParser = jsonFactory.createJsonParser( ( InputStream ) searchResponse.getEntity() );
-                JsonNode errorTree = jsonParser.readValueAsTree();
-                assert errorTree.isObject();
-                JsonNode messages = errorTree.get( "errorMessages" );
-                if ( messages != null )
-                {
-                    for ( int mx = 0; mx < messages.size(); mx ++ )
-                    {
-                        getLog().error( messages.get( mx ).asText() );
-                    }
-                }
-                else
-                {
-                    JsonNode message = errorTree.get( "message" );
-                    if ( message != null )
-                    {
-                        getLog().error( message.asText() );
-                    }
-                }
-            }
-            throw new MojoExecutionException( String.format( "Failed to query issues; response %d", searchResponse.getStatus() ) );
+            reportErrors( searchResponse );
         }
 
-        JsonParser jsonParser = jsonFactory.createJsonParser( ( InputStream ) searchResponse.getEntity() );
-        JsonNode issueTree = jsonParser.readValueAsTree();
+        JsonNode issueTree = getResponseTree( searchResponse );
         assert issueTree.isObject();
         JsonNode issuesNode = issueTree.get( "issues" );
         assert issuesNode.isArray();
         buildIssues( issuesNode, jiraUrl, jiraProject );
+    }
+
+    private JsonNode getResponseTree( Response response )
+        throws IOException
+    {
+        JsonParser jsonParser = jsonFactory.createJsonParser( (InputStream) response.getEntity() );
+        return (JsonNode) jsonParser.readValueAsTree();
+    }
+
+    private void reportErrors( Response resp )
+        throws IOException, MojoExecutionException
+    {
+        if ( MediaType.APPLICATION_JSON_TYPE.getType().equals( getResponseMediaType( resp ).getType() ) )
+        {
+            JsonNode errorTree = getResponseTree( resp );
+            assert errorTree.isObject();
+            JsonNode messages = errorTree.get( "errorMessages" );
+            if ( messages != null )
+            {
+                for ( int mx = 0; mx < messages.size(); mx ++ )
+                {
+                    getLog().error( messages.get( mx ).asText() );
+                }
+            }
+            else
+            {
+                JsonNode message = errorTree.get( "message" );
+                if ( message != null )
+                {
+                    getLog().error( message.asText() );
+                }
+            }
+        }
+        throw new MojoExecutionException( String.format( "Failed to query issues; response %d", resp.getStatus() ) );
+    }
+
+    private void resolveIds( WebClient client, String jiraProject )
+        throws IOException, MojoExecutionException, MojoFailureException
+    {
+        resolveList( resolvedComponentIds, client, "components",  component, "/rest/api/2/project/{key}/components", jiraProject );
+        resolveList( resolvedFixVersionIds, client, "fixVersions", fixVersionIds, "/rest/api/2/project/{key}/versions", jiraProject );
+        resolveList( resolvedStatusIds, client, "status", statusIds, "/rest/api/2/status" );
+        resolveList( resolvedResolutionIds, client, "resolution", resolutionIds, "/rest/api/2/resolution" );
+        resolveList( resolvedTypeIds, client, "type", typeIds, "/rest/api/2/issuetype" );
+        resolveList( resolvedPriorityIds, client, "priority", priorityIds, "/rest/api/2/priority" );
+    }
+
+    private void resolveList( List<String> targetList, WebClient client, String what, String input,
+                              String listRestUrlPattern, String... listUrlArgs )
+        throws IOException, MojoExecutionException, MojoFailureException
+    {
+        if ( input == null || input.length() == 0 )
+        {
+            return;
+        }
+        if ( listUrlArgs != null && listUrlArgs.length != 0)
+        {
+            client.replacePath( "/" );
+            client.path( listRestUrlPattern, listUrlArgs );
+        }
+        else
+        {
+            client.replacePath( listRestUrlPattern );
+        }
+        client.accept( MediaType.APPLICATION_JSON );
+        Response resp = client.get();
+        if ( resp.getStatus() != 200 )
+        {
+            getLog().error( String.format( "Could not get %s list from %s", what, listRestUrlPattern ) );
+            reportErrors( resp );
+        }
+
+        JsonNode items = getResponseTree( resp );
+        String[] pieces = input.split( "," );
+        for (String item : pieces ) {
+            targetList.add( resolveOneItem( items, what, item ) );
+        }
+    }
+
+    private String resolveOneItem( JsonNode items, String what, String nameOrId )
+        throws IOException, MojoExecutionException, MojoFailureException
+    {
+        for ( int cx = 0; cx < items.size(); cx ++ )
+        {
+            JsonNode item = items.get( cx );
+            if ( nameOrId.equals( item.get( "id" ).asText() ) )
+            {
+                return nameOrId;
+            }
+            else if ( nameOrId.equals( item.get( "name" ).asText() ) )
+            {
+                return item.get( "id" ).asText();
+            }
+        }
+        throw new MojoFailureException( String.format("Could not find %s %s.", what, nameOrId ) );
     }
 
     private MediaType getResponseMediaType( Response response )
@@ -369,9 +459,7 @@ public class RestJiraDownloader extends AbstractJiraDownloader
                 JsonNode fvNode = val.get( vx );
                 issue.addFixVersion( fvNode.get( "name" ).asText() );
             }
-
         }
-
     }
 
     private void processComments( Issue issue, JsonNode val )
