@@ -257,7 +257,7 @@ public class InstallMojo
         {
             if ( file == null )
             {
-                throw new IllegalStateException( "Artifact has no associated file: " + file );
+                throw new IllegalStateException( "Artifact has no associated file: " + artifact.getId() );
             }
             if ( !file.isFile() )
             {
@@ -298,7 +298,7 @@ public class InstallMojo
         {
             if ( file == null )
             {
-                throw new IllegalStateException( "Artifact has no associated file: " + file );
+                throw new IllegalStateException( "Artifact has no associated file: " + artifact.getId() );
             }
             if ( !file.isFile() )
             {
