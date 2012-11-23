@@ -43,7 +43,7 @@ under the License.
   </scm>
   <ciManagement>
     <system>Jenkins</system>
-    <url>https://builds.apache.org/hudson/job/maven-plugins/</url>
+    <url>https://builds.apache.org/job/maven-plugins/</url>
   </ciManagement>
 
   <distributionManagement>
