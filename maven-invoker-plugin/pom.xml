@@ -333,8 +333,13 @@ under the License.
         <pluginManagement>
           <plugins>
             <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
               <artifactId>maven-invoker-plugin</artifactId>
-              <version>${invokerPluginVersion}</version>
+              <!-- m-release-p-2.3.2 doesn't allow to specify a different version then the project.
+                 This would be true for jar projects, but not always for plugins.
+                 Inherited version is 1.6, so is already the preferred version.
+               -->
+              <!-- <version>${invokerPluginVersion}</version>  --> 
               <configuration>
                 <debug>true</debug>
                 <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
