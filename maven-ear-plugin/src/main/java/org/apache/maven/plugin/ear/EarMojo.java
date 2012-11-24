@@ -267,8 +267,8 @@ public class EarMojo
     /**
      * @since 2.9
      */
-    @Parameter( property = "maven.ear.useJvmChmod", defaultValue = "false" )
-    private boolean useJvmChmod;
+    @Parameter( property = "maven.ear.useJvmChmod", defaultValue = "true" )
+    private boolean useJvmChmod = true;
 
 
     public void execute()
@@ -276,9 +276,9 @@ public class EarMojo
     {
         // Initializes ear modules
         super.execute();
-        
-        zipArchiver.setUseJvmChmod(useJvmChmod);
-        zipUnArchiver.setUseJvmChmod(useJvmChmod);
+
+        zipArchiver.setUseJvmChmod( useJvmChmod );
+        zipUnArchiver.setUseJvmChmod( useJvmChmod );
 
         final JavaEEVersion javaEEVersion = JavaEEVersion.getJavaEEVersion( version );
 
