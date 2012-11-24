@@ -262,9 +262,11 @@ public class EarMojo
     @Component
     private MavenSession session;
 
-
     private List filterWrappers;
-    
+
+    /**
+     * @since 2.9
+     */
     @Parameter( property = "maven.ear.useJvmChmod", defaultValue = "false" )
     private boolean useJvmChmod;
 
