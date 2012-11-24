@@ -52,6 +52,12 @@ under the License.
     <url>http://jira.codehaus.org/browse/MEAR</url>
   </issueManagement>
 
+  <contributors>
+    <contributor>
+      <name>Seth Rife</name>
+    </contributor>
+  </contributors>
+
   <properties>
     <mavenArchiverVersion>2.5</mavenArchiverVersion>
     <mavenFilteringVersion>1.0-beta-2</mavenFilteringVersion>
