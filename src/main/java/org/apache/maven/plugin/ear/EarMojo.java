@@ -264,6 +264,9 @@ public class EarMojo
 
 
     private List filterWrappers;
+    
+    @Parameter( property = "maven.ear.useJvmChmod", defaultValue = "false" )
+    private boolean useJvmChmod;
 
 
     public void execute()
@@ -271,6 +274,9 @@ public class EarMojo
     {
         // Initializes ear modules
         super.execute();
+        
+        zipArchiver.setUseJvmChmod(useJvmChmod);
+        zipUnArchiver.setUseJvmChmod(useJvmChmod);
 
         final JavaEEVersion javaEEVersion = JavaEEVersion.getJavaEEVersion( version );
 
