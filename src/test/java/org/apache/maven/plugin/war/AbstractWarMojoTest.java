@@ -304,6 +304,8 @@ public abstract class AbstractWarMojoTest
 
             Archiver archiver = new JarArchiver();
 
+            archiver.setUseJvmChmod( true );
+
             archiver.setDestFile( destinationFile );
             archiver.addDirectory( directory );
 
