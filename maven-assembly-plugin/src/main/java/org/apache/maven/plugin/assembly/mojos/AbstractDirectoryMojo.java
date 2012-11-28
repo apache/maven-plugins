@@ -29,7 +29,6 @@ import org.apache.maven.plugin.assembly.io.AssemblyReadException;
 import org.apache.maven.plugin.assembly.io.AssemblyReader;
 import org.apache.maven.plugin.assembly.model.Assembly;
 
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -59,9 +58,8 @@ public abstract class AbstractDirectoryMojo
             throw new MojoFailureException( reader, e.getMessage(), "Mojo configuration is invalid: " + e.getMessage() );
         }
 
-        for ( final Iterator<Assembly> i = assemblies.iterator(); i.hasNext(); )
+        for ( Assembly assembly : assemblies )
         {
-            final Assembly assembly = i.next();
             createDirectory( assembly );
         }
     }
@@ -84,7 +82,7 @@ public abstract class AbstractDirectoryMojo
 
         try
         {
-            archiver.createArchive( assembly, fullName, "dir", this, isRecompressZippedFiles());
+            archiver.createArchive( assembly, fullName, "dir", this, isRecompressZippedFiles() );
         }
         catch ( final ArchiveCreationException e )
         {

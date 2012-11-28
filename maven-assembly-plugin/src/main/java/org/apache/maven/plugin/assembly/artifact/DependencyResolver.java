@@ -19,12 +19,9 @@ package org.apache.maven.plugin.assembly.artifact;
  * under the License.
  */
 
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.AssemblyContext;
 import org.apache.maven.plugin.assembly.model.Assembly;
-import org.apache.maven.project.MavenProject;
 
 /**
  * Convenience component that aids in the resolution of dependency artifacts, according to various configurations such
@@ -37,28 +34,7 @@ public interface DependencyResolver
 
     /**
      * Resolve the project dependencies, according to the supplied configuration.
-     * 
-     * @param project
-     *            The project whose dependencies should be resolved
-     * @param scope
-     *            The dependency scope to resolve
-     * @param managedVersions
-     *            The map of managed versions, which allows dependency version conflict resolution to happen once for
-     *            the entire assembly process.
-     * @param localRepository
-     *            The local repository which acts as a local cache for remote artifact repositories
-     * @param remoteRepositories
-     *            The list of remote {@link ArtifactRepository} instances to use during resolution, in addition to those
-     *            defined in the supplied {@link MavenProject} instance.
-     * @param resolveTransitively
-     *            If true, resolve project dependencies transitively; if false, only resolve the project's direct
-     *            dependencies.
-     * @return The set of resolved {@link Artifact} instances for the project
      */
-    // Set<Artifact> resolveDependencies( MavenProject project, String scope, ArtifactRepository localRepository,
-    // List<ArtifactRepository> remoteRepositories, boolean resolveTransitively )
-    // throws InvalidDependencyVersionException, ArtifactResolutionException, ArtifactNotFoundException;
-
     void resolve( Assembly assembly, AssemblerConfigurationSource configSource, AssemblyContext context )
         throws DependencyResolutionException;
 

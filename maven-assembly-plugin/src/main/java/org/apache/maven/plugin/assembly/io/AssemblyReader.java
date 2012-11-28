@@ -33,16 +33,16 @@ import java.util.List;
 public interface AssemblyReader
 {
 
-    public List<Assembly> readAssemblies( AssemblerConfigurationSource configSource )
+    List<Assembly> readAssemblies( AssemblerConfigurationSource configSource )
         throws AssemblyReadException, InvalidAssemblerConfigurationException;
 
-    public Assembly getAssemblyForDescriptorReference( String ref, AssemblerConfigurationSource configSource )
+    Assembly getAssemblyForDescriptorReference( String ref, AssemblerConfigurationSource configSource )
         throws AssemblyReadException, InvalidAssemblerConfigurationException;
 
-    public Assembly getAssemblyFromDescriptorFile( File file, AssemblerConfigurationSource configSource )
+    Assembly getAssemblyFromDescriptorFile( File file, AssemblerConfigurationSource configSource )
         throws AssemblyReadException, InvalidAssemblerConfigurationException;
 
-    public void includeSiteInAssembly( Assembly assembly, AssemblerConfigurationSource configSource )
+    void includeSiteInAssembly( Assembly assembly, AssemblerConfigurationSource configSource )
         throws MojoFailureException, InvalidAssemblerConfigurationException;
 
 }

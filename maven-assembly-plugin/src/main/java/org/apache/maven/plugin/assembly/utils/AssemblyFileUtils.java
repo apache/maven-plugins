@@ -97,7 +97,7 @@ public final class AssemblyFileUtils
 
     public static void verifyTempDirectoryAvailability( final File tempDir, final Logger logger )
     {
-        if (!tempDir.exists())
+        if ( !tempDir.exists() )
         {
             tempDir.mkdirs();
         }
@@ -209,7 +209,8 @@ public final class AssemblyFileUtils
         return value;
     }
 
-    public static void copyFile( File src, File dst ) throws IOException
+    public static void copyFile( File src, File dst )
+        throws IOException
     {
         FileChannel c1 = new RandomAccessFile( src, "r" ).getChannel();
         FileChannel c2 = new RandomAccessFile( dst, "rw" ).getChannel();

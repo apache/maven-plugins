@@ -58,7 +58,7 @@ public class FileSetFormatter
             FileSet fileSet = new FileSet();
             fileSet.setLineEnding( lineEnding );
             
-            fileSet.setDirectory(fileSetDir.getAbsolutePath());
+            fileSet.setDirectory( fileSetDir.getAbsolutePath() );
                         
             fileSet.setIncludes( set.getIncludes() );
 
@@ -97,7 +97,9 @@ public class FileSetFormatter
                     File sourceFile = new File( fileSetDir, file );
                     try
                     {
-                        sourceFile = fileFormatter.format( sourceFile, set.isFiltered(), lineEndingHint, formattedDir, configSource.getEncoding() );
+                        sourceFile =
+                            fileFormatter.format( sourceFile, set.isFiltered(), lineEndingHint, formattedDir,
+                                                  configSource.getEncoding() );
                         AssemblyFileUtils.copyFile( sourceFile, targetFile );
                     }
                     catch ( AssemblyFormattingException e )
