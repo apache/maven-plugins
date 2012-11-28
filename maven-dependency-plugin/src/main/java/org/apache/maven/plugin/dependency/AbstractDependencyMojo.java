@@ -104,7 +104,14 @@ public abstract class AbstractDependencyMojo
      * @since 2.5.1
      */
     @Parameter( property = "dependency.useJvmChmod", defaultValue = "true" )
-    protected boolean useJvmChmod;
+    protected boolean useJvmChmod = true;
+
+    /**
+     * ignore to set file permissions when unpacking a dependency
+     * @since 2.7
+     */
+    @Parameter( property = "dependency.ignorePermissions", defaultValue = "true" )
+    protected boolean ignorePermissions = true;
 
     /**
      * POM
@@ -206,7 +213,7 @@ public abstract class AbstractDependencyMojo
     /**
      * Unpacks the archive file.
      *
-     * @param file     File to be unpacked.
+     * @param artifact File to be unpacked.
      * @param location Location where to put the unpacked files.
      * @param includes Comma separated list of file patterns to include i.e. <code>**&#47;.xml,
      *                 **&#47;*.properties</code>
@@ -244,6 +251,8 @@ public abstract class AbstractDependencyMojo
             }
 
             unArchiver.setUseJvmChmod( useJvmChmod );
+
+            unArchiver.setIgnorePermissions( this.ignorePermissions );
 
             unArchiver.setSourceFile( file );
 
