@@ -428,12 +428,13 @@ public abstract class AbstractAssemblyMojo
                 }
                 if ( effectiveFormats == null || effectiveFormats.size() == 0 ) 
                 {
-                    throw new MojoFailureException( "No formats specified in the execution parameters or the assembly descriptor.");
+                    throw new MojoFailureException( "No formats specified in the execution parameters or the assembly descriptor." );
                 }
 
                 for ( final String format : effectiveFormats )
                 {
-                    final File destFile = assemblyArchiver.createArchive( assembly, fullName, format, this, isRecompressZippedFiles());
+                    final File destFile =
+                        assemblyArchiver.createArchive( assembly, fullName, format, this, isRecompressZippedFiles() );
 
                     final MavenProject project = getProject();
                     final String classifier = getClassifier();
@@ -852,15 +853,18 @@ public abstract class AbstractAssemblyMojo
         return ignorePermissions;
     }
     
-    public String getEncoding() {
+    public String getEncoding()
+    {
         return encoding;
     }
 
-    protected boolean isRecompressZippedFiles() {
+    protected boolean isRecompressZippedFiles()
+    {
         return recompressZippedFiles;
     }
 
-    public String getEscapeString() {
-      return escapeString;
+    public String getEscapeString()
+    {
+        return escapeString;
     }
 }

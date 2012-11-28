@@ -132,8 +132,8 @@ public class DefaultAssemblyArchiver
      * top-level section of the assembly descriptor, if that section is present.</li>
      * </ol>
      */
-    public File createArchive(final Assembly assembly, final String fullName, final String format,
-                              final AssemblerConfigurationSource configSource, boolean recompressZippedFiles)
+    public File createArchive( final Assembly assembly, final String fullName, final String format,
+                               final AssemblerConfigurationSource configSource, boolean recompressZippedFiles )
         throws ArchiveCreationException, AssemblyFormattingException, InvalidAssemblerConfigurationException
     {
         validate( assembly );
@@ -168,7 +168,8 @@ public class DefaultAssemblyArchiver
                 selectContainerDescriptorHandlers( assembly.getContainerDescriptorHandlers(), configSource );
 
             final Archiver archiver =
-                createArchiver( format, assembly.isIncludeBaseDirectory(), basedir, configSource, containerHandlers, recompressZippedFiles);
+                createArchiver( format, assembly.isIncludeBaseDirectory(), basedir, configSource, containerHandlers,
+                                recompressZippedFiles );
 
             archiver.setDestFile( destFile );
 
@@ -176,10 +177,8 @@ public class DefaultAssemblyArchiver
 
             dependencyResolver.resolve( assembly, configSource, context );
 
-            for ( final Iterator<AssemblyArchiverPhase> phaseIterator = assemblyPhases.iterator(); phaseIterator.hasNext(); )
+            for ( AssemblyArchiverPhase phase : assemblyPhases )
             {
-                final AssemblyArchiverPhase phase = phaseIterator.next();
-
                 phase.execute( assembly, archiver, configSource, context );
             }
 
@@ -286,9 +285,10 @@ public class DefaultAssemblyArchiver
      * @throws org.codehaus.plexus.archiver.ArchiverException
      * @throws org.codehaus.plexus.archiver.manager.NoSuchArchiverException
      */
-    protected Archiver createArchiver(final String format, final boolean includeBaseDir, final String finalName,
-                                      final AssemblerConfigurationSource configSource,
-                                      final List<ContainerDescriptorHandler> containerHandlers, boolean recompressZippedFiles)
+    protected Archiver createArchiver( final String format, final boolean includeBaseDir, final String finalName,
+                                       final AssemblerConfigurationSource configSource,
+                                       final List<ContainerDescriptorHandler> containerHandlers,
+                                       boolean recompressZippedFiles )
         throws ArchiverException, NoSuchArchiverException
     {
         Archiver archiver;
@@ -305,9 +305,9 @@ public class DefaultAssemblyArchiver
             archiver = archiverManager.getArchiver( format );
         }
 
-        if (archiver instanceof AbstractZipArchiver)
+        if ( archiver instanceof AbstractZipArchiver )
         {
-            ((AbstractZipArchiver)archiver).setRecompressAddedZips(recompressZippedFiles);
+            ( (AbstractZipArchiver) archiver ).setRecompressAddedZips( recompressZippedFiles );
         }
 
         final List<FileSelector> extraSelectors = new ArrayList<FileSelector>();

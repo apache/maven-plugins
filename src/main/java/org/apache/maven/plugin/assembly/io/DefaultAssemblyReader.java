@@ -39,8 +39,6 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.apache.maven.execution.MavenSession;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.InvalidAssemblerConfigurationException;
 import org.apache.maven.plugin.assembly.interpolation.AssemblyExpressionEvaluator;
@@ -448,8 +446,6 @@ public class DefaultAssemblyReader
      * @param assembly
      * @param assemblyDir
      * @throws AssemblyReadException
-     * @throws MojoFailureException
-     * @throws MojoExecutionException
      */
     protected void mergeComponentsWithMainAssembly( final Assembly assembly, final File assemblyDir,
                                                     final AssemblerConfigurationSource configSource )

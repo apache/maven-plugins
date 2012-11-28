@@ -74,7 +74,9 @@ public class FileFormatter
         }
 
         if ( filter )
+        {
             result = doFileFilter( source, tempRoot, encoding, configSource.getEscapeString() );
+        }
 
         String lineEndingChars = AssemblyFileUtils.getLineEndingCharacters( lineEnding );
         if ( lineEndingChars != null )
@@ -103,7 +105,7 @@ public class FileFormatter
 
             return target;
         }
-        catch (MavenFilteringException e)
+        catch ( MavenFilteringException e )
         {
             throw new AssemblyFormattingException( "Error filtering file '" + source + "': " + e.getMessage(), e );
         }
