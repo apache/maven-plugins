@@ -448,19 +448,19 @@ public class PmdReport
         Renderer renderer = null;
         if ( "xml".equals( format ) )
         {
-            renderer = new PmdXMLRenderer( getOutputEncoding() );
+            renderer = new XMLRenderer( getOutputEncoding() );
         }
         else if ( "txt".equals( format ) )
         {
-            renderer = new TextRenderer( new Properties() );
+            renderer = new TextRenderer( );
         }
         else if ( "csv".equals( format ) )
         {
-            renderer = new CSVRenderer( new Properties() );
+            renderer = new CSVRenderer( );
         }
         else if ( "html".equals( format ) )
         {
-            renderer = new HTMLRenderer( new Properties() );
+            renderer = new HTMLRenderer( );
         }
         else if ( !"".equals( format ) && !"none".equals( format ) )
         {
@@ -479,13 +479,4 @@ public class PmdReport
         return renderer;
     }
 
-    private static class PmdXMLRenderer
-        extends XMLRenderer
-    {
-        public PmdXMLRenderer( String encoding )
-        {
-            super( new Properties() );
-            this.encoding = encoding;
-        }
-    }
 }
