@@ -3530,7 +3530,7 @@ public abstract class AbstractJavadocMojo
             javadocExe = new File( env.getProperty( "JAVA_HOME" ) + File.separator + "bin", javadocCommand );
         }
 
-        if ( !javadocExe.exists() || !javadocExe.isFile() )
+        if ( !javadocExe.getCanonicalFile().exists() || !javadocExe.getCanonicalFile().isFile() )
         {
             throw new IOException( "The javadoc executable '" + javadocExe
                                        + "' doesn't exist or is not a file. Verify the JAVA_HOME environment variable." );
