@@ -30,11 +30,11 @@
 Configuring Reports
 
   Maven has several reports that you can add to your web site to display the
-  current state of the project. These reports take the form of plugins, just
+  current state of the project. These reports take the form of plugin goals, just
   like those used to build the project.
 
-  There are many standard reports that are available by extracting information
-  from the POM. Currently these are provided by default:
+  {{{http://maven.apache.org/plugins/maven-project-info-reports-plugin/}Maven Project Info Reports Plugin}}
+  provides many standard reports by extracting information from the POM, for example:
 
   * Continous Integration
 
@@ -60,7 +60,7 @@ Configuring Reports
   configure the standard Project Info Reports that display information from the
   POM in a friendly format:
 
--------------------
++-----------------+
 <project>
   ...
   <reporting>
@@ -68,13 +68,13 @@ Configuring Reports
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-project-info-reports-plugin</artifactId>
-        <version>2.1.1</version>
+        <version>2.6</version>
       </plugin>
     </plugins>
   </reporting>
   ...
 </project>
--------------------
++-----------------+
 
   If you have included the appropriate <<<\<menu ref="reports"/\>>>> tag in your
   {{{./sitedescriptor.html}site descriptor}}, then when you regenerate the site
@@ -83,12 +83,67 @@ Configuring Reports
   <<Note:>> Many report plugins provide a parameter called <<<outputDirectory>>>
   or similar to specify the destination for their report outputs. This parameter
   is only relevant if the report plugin is run standalone, i.e. by invocation
-  directly from the command line. In constrast, when reports are generated as
+  directly from the command line. In contrast, when reports are generated as
   part of the site, the configuration of the Maven Site Plugin will determine
   the effective output directory to ensure that all reports end up in a common
   location.
 
-  Check out the <reporting> section of the {{{http://maven.apache.org/plugins/}plugins page}},
-  for a list of available reporting plugins.
+  Check out reporting plugins ("R" value in the "Type" column) in the {{{http://maven.apache.org/plugins/}plugins page}},
+  for a list of available reporting plugins from Apache Maven Team.
 
-  ~~TODO: explain report sets
+Selecting Reports from a plugin: Report Sets
+
+  By default, when you add a plugin in reporting section, <every> reporting goal available in the
+  plugin is rendered once.
+
+  If you want to choose only some reports from a plugin, or if you want to run a report multiple times
+  with a different configuration, you need to configure report sets:
+
++-----------------+
+<project>
+  ...
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-project-info-reports-plugin</artifactId>
+        <version>2.6</version>
+        <reportSets><!-- only index -->
+          <reportSet>
+            <reports>
+              <report>index</report>
+            </reports>
+          <reportSet>
+        </reportSets>
+      </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <version>2.9</version>
+            <reportSets>
+              <reportSet><!-- by default, id = "default" -->
+                <reports>
+                  <report>javadoc</report>
+                  <report>test-javadoc</report>
+                </reports>
+              </reportSet>
+              <reportSet>
+                <id>aggregate</id><!-- aggregate reportSet, for pom with modules -->
+                <inherited>false</inherited><!-- don't run aggregate in child modules -->
+                <reports>
+                  <report>aggregate</report>
+                </reports>
+              </reportSet>
+            </reportSets>
+          </plugin>
+    </plugins>
+  </reporting>
+  ...
+</project>
++-----------------+
+
+  <Notice>: take care to define reportSets for plugins which provide aggregator reports, like maven-javadoc-plugin,
+  maven-jxr-plugin or maven-checkstyle-plugin or you'll have them run by default in addition to non-aggregate reports.
+
+  See the {{{/ref/current/maven-model/maven.html#class_reportSet}reportSet documentation in POM reference}} for complete
+  description of available configurations.
