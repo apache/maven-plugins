@@ -2,8 +2,9 @@
  Configuring Reports
  ------
  Dennis Lundberg
+ Hervé Boutemy
  ------
- 2009-03-08
+ 2012-12-02
  ------
 
  ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -91,7 +92,7 @@ Configuring Reports
   Check out reporting plugins ("R" value in the "Type" column) in the {{{http://maven.apache.org/plugins/}plugins page}},
   for a list of available reporting plugins from Apache Maven Team.
 
-Selecting Reports from a plugin: Report Sets
+Selecting Reports from a Plugin: Configuring Report Sets
 
   By default, when you add a plugin in reporting section, <every> reporting goal available in the
   plugin is rendered once.
@@ -122,7 +123,7 @@ Selecting Reports from a plugin: Report Sets
             <version>2.9</version>
             <reportSets>
               <reportSet><!-- by default, id = "default" -->
-                <reports>
+                <reports><!-- select non-aggregate reports -->
                   <report>javadoc</report>
                   <report>test-javadoc</report>
                 </reports>
@@ -142,8 +143,9 @@ Selecting Reports from a plugin: Report Sets
 </project>
 +-----------------+
 
-  <Notice>: take care to define reportSets for plugins which provide aggregator reports, like maven-javadoc-plugin,
-  maven-jxr-plugin or maven-checkstyle-plugin or you'll have them run by default in addition to non-aggregate reports.
+  <Notice>: don't forget to define reportSets for plugins which provide aggregator reports, like maven-javadoc-plugin,
+  maven-jxr-plugin or maven-checkstyle-plugin or you'll have these aggregate reports run by default in addition
+  to non-aggregate reports.
 
   See the {{{/ref/current/maven-model/maven.html#class_reportSet}reportSet documentation in POM reference}} for complete
   description of available configurations.
