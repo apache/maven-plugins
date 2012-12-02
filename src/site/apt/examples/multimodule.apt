@@ -94,3 +94,36 @@ Building multi-module sites
   ...
 </project>
 +-----+
+
+* Aggregate Reports
+
+  Some reports can be run against the sum of every modules: these are aggregate reports. This is the case of
+  maven-javadoc-plugin, maven-jxr-plugin or maven-checkstyle-plugin.
+
+  To benefit from aggregate reports, you must configure a reportSet in the parent pom, and turn inheritance off to avoid
+  the aggregate report to be run in modules. For example, with maven-jxr-report:
+
++--------------+
+<project>
+  ...
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jxr-plugin</artifactId>
+        <version>2.3</version>
+        <reportSets>
+          <reportSet>
+            <id>aggregate</id>
+            <inherited>false</inherited>
+            <reports>
+              <report>aggregate</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
+    </plugins>
+  </reporting>
+  ...
+</project>
++--------------+
