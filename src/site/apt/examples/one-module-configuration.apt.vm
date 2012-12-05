@@ -2,8 +2,9 @@
  Maven Mono Module Configuration
  ------
  Olivier Lamy
+ Hervé Boutemy
  ------
- 2012-09-04
+ 2012-12-05
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -33,45 +34,31 @@ Maven Mono Module Configuration
   With this configuration you can simply run: <<<mvn site-deploy>>>
 
 +-----------------------
-
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-site-plugin</artifactId>
+      <configuration>
+        <skipDeploy>true</skipDeploy><!-- don't deploy with maven-site-plugin -->
+      </configuration>
+    </plugin>
     <plugin>
       <groupId>org.apache.maven.plugins</groupId>
       <artifactId>maven-scm-publish-plugin</artifactId>
       <version>${project.version}</version>
       <configuration>
         <checkinComment>You can configure your checkin message</checkinComment>
+        <content>${project.build.directory}/site</content>
       </configuration>
       <executions>
         <execution>
           <id>scm-publish</id>
-          <phase>site-deploy</phase>
+          <phase>site-deploy</phase><!-- deploy with maven-scm-publish-plugin -->
           <goals>
             <goal>publish-scm</goal>
           </goals>
         </execution>
       </executions>
     </plugin>
-    <plugin>
-      <groupId>org.apache.maven.plugins</groupId>
-      <artifactId>maven-site-plugin</artifactId>
-      <version>3.1</version>
-      <configuration>
-        <skipDeploy>true</skipDeploy>
-      </configuration>
-      <executions>
-        <execution>
-          <id>stage-for-scm-publish</id>
-          <phase>post-site</phase>
-          <goals>
-            <goal>stage</goal>
-          </goals>
-          <configuration>
-            <skipDeploy>false</skipDeploy>
-          </configuration>
-        </execution>
-      </executions>
-    </plugin>
-
 +-----------------------
 
 
