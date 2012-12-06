@@ -2,8 +2,9 @@
  Maven Multi Module Configuration
  ------
  Olivier Lamy
+ Hervé Boutemy
  ------
- 2012-09-04
+ 2012-12-06
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -30,18 +31,16 @@ Maven Multi Module Configuration
 
   With a multi modules build you can not use: mvn site-deploy. You must stage your site first.
 
-  Cli to use: <<mvn clean site site:stage-deploy scm-publish:publish-scm>>
+  Cli command to use: <<mvn site site:stage scm-publish:publish-scm>>
 
 +-----------------------
 
   <properties>
     <!-- override the property in your settings -->
     <site.mainDirectory>${user.home}</site.mainDirectory>
-    <siteContent.path>\${site.mainDirectory}</siteContent.path>
     // it's a default location for performance reason (not checkout the content all the time)
     // you can override this value in your settings.
-    <scmCheckout.path>\${site.mainDirectory}</scmCheckout.path>
-    <siteDeploy.url>file://${siteContent.path}</siteDeploy.url>
+    <scmCheckout.path>${site.mainDirectory}</scmCheckout.path>
   </properties>
 
   <plugin>
@@ -50,16 +49,11 @@ Maven Multi Module Configuration
     <version>${project.version}</version>
     <configuration>
       <checkoutDirectory>${scmCheckout.path}</checkoutDirectory>
-      <content>${siteContent.path}</content>
     </configuration>
   </plugin>
   <plugin>
     <groupId>org.apache.maven.plugins</groupId>
     <artifactId>maven-site-plugin</artifactId>
-    <version>3.1</version>
-    <configuration>
-      <stagingSiteURL>${siteDeploy.url}</stagingSiteURL>
-    </configuration>
   </plugin>
 
 +-----------------------
