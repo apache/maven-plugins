@@ -117,6 +117,10 @@ public class CimReport
             {
                 linkPatternedText( getI18nString( "anthill.intro" ) );
             }
+            else if ( isCimSystem( system, "bamboo" ) )
+            {
+                linkPatternedText( getI18nString( "bamboo.intro" ) );
+            }
             else if ( isCimSystem( system, "buildforge" ) )
             {
                 linkPatternedText( getI18nString( "buildforge.intro" ) );
