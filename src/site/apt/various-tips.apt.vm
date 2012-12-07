@@ -28,7 +28,7 @@
 
 Various tips for using this plugin
 
-* URLS format
+* URL format
 
   You must use a scm url format:
 
@@ -36,50 +36,49 @@ Various tips for using this plugin
   scm:<scm_provider><delimiter><provider_specific_part>
 +----------------
 
-  Svn example: scm:svn:https://svn.apache.org/repos/infra/websites/production/maventest/content/plugins/maven-scm-publish-plugin/
+  Example for svn: <<<scm:svn:https://svn.apache.org/repos/infra/websites/production/maventest/content/plugins/maven-scm-publish-plugin/>>>
 
   And configure is as it:
 
 +----------------
-
-    <plugin>
-      <groupId>org.apache.maven.plugins</groupId>
-      <artifactId>maven-scm-publish-plugin</artifactId>
-      <version>${project.version}</version>
-      <configuration>
-        <pubScmUrl>scmUrl</pubScmUrl>
-      </configuration>
-    </plugin>
-
+  <distributionManagement>
+    <site>
+      <id>site_id</id>
+      <url>scm:svn:https://svn.apache.org/repos/infra/websites/production/maventest/content/plugins/maven-scm-publish-plugin/</url>
+    </site>
+  </distributionManagement>
 +----------------
 
-  <<NOTE>>: with the svn if the remote url doesn't exist it will be created.
+  <<NOTE>>: with svn, if the remote url doesn't exist, it will be created.
 
 * Git branch
 
   To use git branch (by example: github gh-pages)
 
 +----------------
-
+  <distributionManagement>
+    <site>
+      <id>site_id</id>
+      <url>scm:git:git@github.com:username/tomcat-foo-artifact.git</url>
+    </site>
+  </distributionManagement>
+...
     <plugin>
       <groupId>org.apache.maven.plugins</groupId>
       <artifactId>maven-scm-publish-plugin</artifactId>
       <version>${project.version}</version>
       <configuration>
         <scmBranch>gh-pages</scmBranch>
-        <pubScmUrl>scm:git:git@github.com:olamy/tomcat-foo-artifact.git</pubScmUrl>
       </configuration>
     </plugin>
-
 +----------------
 
 
 * Some Tips to improve performance
 
-  By default, a complete checkout is done, you can configure the plugin to try update rather than a full checkout/clone
+  By default, a complete checkout is done. You can configure the plugin to try update rather than a full checkout/clone
 
 +----------------
-
     <plugin>
       <groupId>org.apache.maven.plugins</groupId>
       <artifactId>maven-scm-publish-plugin</artifactId>
@@ -88,12 +87,11 @@ Various tips for using this plugin
         <tryUpdate>true</tryUpdate>
       </configuration>
     </plugin>
-
 +----------------
 
-  By defaut, the scm content is checkout/clone to $\{project.build.directory}/scmpublish-checkout, so when running mvn clean
-  all the content is deleted. You can configure a path to your machine to avoid full checkout. 
-  A recommended way is to use a property with a default as it your colleague will be able to override in their settings.
+  By defaut, the scm content is checked-out/cloned to <<<$\{project.build.directory}/scmpublish-checkout>>>, so when running <<<mvn clean>>>,
+  all the content is deleted. You can configure a path to your machine to avoid full checkout.
+  A recommended way is to use a property with a default value that your colleague will be able to override in their settings.
 
 +----------------
     <properties>
@@ -115,7 +113,10 @@ Various tips for using this plugin
     </plugin>
 +----------------
 
-  You can use svnjava rather than svn cli if you use a machine without svn cli.
+
+* Using alternate scm provider
+
+  You can use svnjava rather than default svn cli if you use a machine without svn cli.
 
 +----------------
     <plugin>
@@ -141,8 +142,3 @@ Various tips for using this plugin
       </dependencies>
     </plugin>
 +----------------
-
-
-
-
-
