@@ -33,7 +33,7 @@ under the License.
   <version>1.0-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
-  <name>SCM Publish Maven Plugin</name>
+  <name>Maven SCM Publish Plugin</name>
   <url>http://maven.apache.org/plugins/maven-scm-publish-plugin</url>
 
   <scm>
