@@ -44,7 +44,6 @@ import org.apache.maven.scm.repository.ScmRepositoryException;
 import org.apache.maven.settings.Settings;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
-import org.codehaus.plexus.util.Os;
 
 import java.io.File;
 import java.io.IOException;
