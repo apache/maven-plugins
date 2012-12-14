@@ -46,8 +46,7 @@ Maven Mono Module Configuration
       <artifactId>maven-scm-publish-plugin</artifactId>
       <version>${project.version}</version>
       <configuration>
-        <checkinComment>You can configure your checkin message</checkinComment>
-        <content>${project.build.directory}/site</content>
+        <content>${project.reporting.outputDirectory}</content>
       </configuration>
       <executions>
         <execution>
