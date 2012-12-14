@@ -67,27 +67,7 @@ under the License.
         <artifactId>maven-site-plugin</artifactId>
         <configuration>
           <siteDirectory>${basedir}/src/site-docs</siteDirectory>
-          <skipDeploy>true</skipDeploy><!-- don't deploy site with maven-site-plugin -->
         </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-scm-publish-plugin</artifactId>
-        <version>1.0-beta-2</version>
-        <configuration>
-          <content>${project.reporting.outputDirectory}</content>
-          <checkoutDirectory>${maven.site.cache}/${maven.site.path}</checkoutDirectory>
-          <tryUpdate>true</tryUpdate>
-        </configuration>
-        <executions>
-          <execution>
-            <id>scm-publish</id>
-            <phase>site-deploy</phase><!-- deploy site with maven-scm-publish-plugin -->
-            <goals>
-              <goal>publish-scm</goal>
-            </goals>
-          </execution>
-        </executions>
       </plugin>
     </plugins>
   </build>
