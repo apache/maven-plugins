@@ -54,7 +54,7 @@ under the License.
   </distributionManagement>
 
   <properties>
-    <maven.site.cache>${user.home}/maven-sites</maven.site.cache>
+    <maven.site.cache>${user.home}/maven-sites</maven.site.cache><!-- TODO remove when upgrading parent to 23 -->
     <maven.site.path>plugins-archives/${project.artifactId}-${project.version}</maven.site.path>
   </properties>
 
@@ -116,7 +116,7 @@ under the License.
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-site-plugin</artifactId>
-          <version>3.2</version>
+          <version>3.2</version><!-- TODO remove when upgrading parent to 23 -->
           <configuration>
             <skipDeploy>true</skipDeploy><!-- don't deploy site with maven-site-plugin -->
           </configuration>
@@ -127,9 +127,8 @@ under the License.
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-scm-publish-plugin</artifactId>
-        <version>1.0-beta-2</version>
         <configuration>
-          <content>${project.build.directory}/site</content>
+          <content>${project.reporting.outputDirectory}</content>
           <scmPubUrl>scm:svn:https://svn.apache.org/repos/infra/websites/production/maven/content/${maven.site.path}</scmPubUrl>
           <checkoutDirectory>${maven.site.cache}/${maven.site.path}</checkoutDirectory>
           <tryUpdate>true</tryUpdate>
