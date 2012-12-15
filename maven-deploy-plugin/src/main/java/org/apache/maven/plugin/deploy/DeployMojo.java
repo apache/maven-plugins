@@ -57,18 +57,33 @@ public class DeployMojo
      */
     @Component
     private MavenProject project;
+    
+    @Parameter( defaultValue = "${reactorProjects}", required = true, readonly = true )
+    private List<MavenProject> reactorProjects;
+    
+    /**
+     * Whether every project should be deployed during its own deploy-phase or at the end of the multimodule build.
+     * If set to {@code true} and the build fails, none of the reactor projects is deployed 
+     * 
+     * @since 2.8
+     */
+    @Parameter( defaultValue = "false", property = "deployAtEnd" )
+    private boolean deployAtEnd;
 
     /**
+     * @deprecated either use project.getArtifact() or reactorProjects.get(i).getArtifact()
      */
     @Parameter( defaultValue = "${project.artifact}", required = true, readonly = true )
     private Artifact artifact;
 
     /**
+     * @deprecated either use project.getPackaging() or reactorProjects.get(i).getPackaging()
      */
     @Parameter( defaultValue = "${project.packaging}", required = true, readonly = true )
     private String packaging;
 
     /**
+     * @deprecated either use project.getFile() or reactorProjects.get(i).getFile()
      */
     @Parameter( defaultValue = "${project.file}", required = true, readonly = true )
     private File pomFile;
@@ -83,6 +98,7 @@ public class DeployMojo
     private String altDeploymentRepository;
 
     /**
+     * @deprecated either use project.getAttachedArtifacts() or reactorProjects.get(i).getAttachedArtifacts()
      */
     @Parameter( defaultValue = "${project.attachedArtifacts}", required = true, readonly = true )
     private List attachedArtifacts;
@@ -105,8 +121,38 @@ public class DeployMojo
         }
 
         failIfOffline();
+        
+        if( !deployAtEnd )
+        {
+            deployProject( project );
+        }
+        else
+        {
+            MavenProject lastProject = reactorProjects.get( reactorProjects.size() - 1 );
+            if( lastProject.equals( project ) )
+            {
+                for( MavenProject reactorProject : reactorProjects )
+                {
+                    deployProject( reactorProject );
+                }
+            }
+            else
+            {
+                getLog().info( "Deploying " + project.getGroupId() + ":" + project.getArtifactId() + 
+                               ":" + project.getVersion() + " at end" );
+            }
+        }
+    }
 
-        ArtifactRepository repo = getDeploymentRepository();
+    private void deployProject( MavenProject project )
+        throws MojoExecutionException, MojoFailureException
+    {
+        Artifact artifact = project.getArtifact();
+        String packaging = project.getPackaging();
+        File pomFile = project.getFile();
+        List attachedArtifacts = project.getAttachedArtifacts();
+        
+        ArtifactRepository repo = getDeploymentRepository( project );
 
         String protocol = repo.getProtocol();
 
@@ -119,6 +165,7 @@ public class DeployMojo
                 sshFile.mkdirs();
             }
         }
+        
 
         // Deploy the POM
         boolean isPomArtifact = "pom".equals( packaging );
@@ -185,7 +232,7 @@ public class DeployMojo
         }
     }
 
-    private ArtifactRepository getDeploymentRepository()
+    private ArtifactRepository getDeploymentRepository( MavenProject project )
         throws MojoExecutionException, MojoFailureException
     {
         ArtifactRepository repo = null;
