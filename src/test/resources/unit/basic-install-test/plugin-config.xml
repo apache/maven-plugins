@@ -22,11 +22,19 @@ under the License.
       <plugin>
         <artifactId>maven-install-plugin</artifactId>
         <configuration>
+          <!-- @deprecated fields -->
           <pomFile>${basedir}/src/test/resources/unit/basic-install-test/plugin-config.xml</pomFile>
           <packaging>jar</packaging>
           <artifact implementation="org.apache.maven.plugin.install.stubs.InstallArtifactStub"/>
           <attachedArtifacts/>
+          
           <localRepository>${localRepository}</localRepository>
+          <project implementation="org.apache.maven.plugin.testing.stubs.MavenProjectStub">
+            <file>${basedir}/src/test/resources/unit/basic-install-test/plugin-config.xml</file>
+            <packaging>jar</packaging>
+            <artifact implementation="org.apache.maven.plugin.install.stubs.InstallArtifactStub"/>
+            <attachedArtifacts/>
+          </project>
         </configuration>
       </plugin>
     </plugins>

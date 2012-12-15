@@ -25,6 +25,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.install.stubs.AttachedArtifactStub0;
 import org.apache.maven.plugin.install.stubs.InstallArtifactStub;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
+import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.FileUtils;
 
 import java.io.File;
@@ -76,7 +77,9 @@ public class InstallMojoTest
         File file = new File( getBasedir(), "target/test-classes/unit/basic-install-test/target/" +
             "maven-install-test-1.0-SNAPSHOT.jar" );
 
-        artifact = (InstallArtifactStub) getVariableValueFromObject( mojo, "artifact" );
+        MavenProject project = (MavenProject) getVariableValueFromObject( mojo, "project" );
+
+        artifact = (InstallArtifactStub) project.getArtifact();
 
         artifact.setFile( file );
 
@@ -101,12 +104,14 @@ public class InstallMojoTest
         InstallMojo mojo = (InstallMojo) lookupMojo( "install", testPom );
 
         assertNotNull( mojo );
+        
+        MavenProject project = (MavenProject) getVariableValueFromObject( mojo, "project" );
 
-        List attachedArtifacts = (ArrayList) getVariableValueFromObject( mojo, "attachedArtifacts" );
+        List attachedArtifacts = project.getAttachedArtifacts();
 
         mojo.execute();
 
-        String packaging = getVariableValueFromObject( mojo, "packaging" ).toString();
+        String packaging = project.getPackaging();
 
         String groupId = "";
 
@@ -136,7 +141,9 @@ public class InstallMojoTest
         File file = new File( getBasedir(), "target/test-classes/unit/configured-install-test/target/" +
             "maven-install-test-1.0-SNAPSHOT.jar" );
 
-        artifact = (InstallArtifactStub) getVariableValueFromObject( mojo, "artifact" );
+        MavenProject project = (MavenProject) getVariableValueFromObject( mojo, "project" );
+
+        artifact = (InstallArtifactStub) project.getArtifact();
 
         artifact.setFile( file );
 
@@ -154,7 +161,9 @@ public class InstallMojoTest
 
         assertNotNull( mojo );
 
-        artifact = (InstallArtifactStub) getVariableValueFromObject( mojo, "artifact" );
+        MavenProject project = (MavenProject) getVariableValueFromObject( mojo, "project" );
+
+        artifact = (InstallArtifactStub) project.getArtifact();
 
         artifact.setFile( null );
 
@@ -182,11 +191,13 @@ public class InstallMojoTest
 
         assertNotNull( mojo );
 
-        String packaging = (String) getVariableValueFromObject( mojo, "packaging" );
+        MavenProject project = (MavenProject) getVariableValueFromObject( mojo, "project" );
+
+        String packaging = project.getPackaging();
 
         assertEquals( "pom", packaging );
 
-        artifact = (InstallArtifactStub) getVariableValueFromObject( mojo, "artifact" );
+        artifact = (InstallArtifactStub) project.getArtifact();
 
         mojo.execute();
 
@@ -209,8 +220,10 @@ public class InstallMojoTest
 
         File file = new File( getBasedir(), "target/test-classes/unit/basic-install-checksum/" + "maven-test-jar.jar" );
 
-        artifact = (InstallArtifactStub) getVariableValueFromObject( mojo, "artifact" );
+        MavenProject project = (MavenProject) getVariableValueFromObject( mojo, "project" );
 
+        artifact = (InstallArtifactStub) project.getArtifact();
+        
         boolean createChecksum = ( (Boolean) getVariableValueFromObject( mojo, "createChecksum" ) ).booleanValue();
 
         assertTrue( createChecksum );
@@ -245,7 +258,7 @@ public class InstallMojoTest
 
         String groupId = dotToSlashReplacer( artifact.getGroupId() );
 
-        String packaging = getVariableValueFromObject( mojo, "packaging" ).toString();
+        String packaging = project.getPackaging();
 
         String localPath = getBasedir() + "/" + LOCAL_REPO + groupId + "/" + artifact.getArtifactId() + "/" +
             artifact.getVersion() + "/" + artifact.getArtifactId() + "-" + artifact.getVersion();
@@ -288,8 +301,10 @@ public class InstallMojoTest
         File file = new File( getBasedir(), "target/test-classes/unit/basic-install-test/target/" +
             "maven-install-test-1.0-SNAPSHOT.jar" );
 
-        artifact = (InstallArtifactStub) getVariableValueFromObject( mojo, "artifact" );
+        MavenProject project = (MavenProject) getVariableValueFromObject( mojo, "project" );
 
+        artifact = (InstallArtifactStub) project.getArtifact();
+        
         artifact.setFile( file );
 
         mojo.setSkip(true);
@@ -298,7 +313,7 @@ public class InstallMojoTest
 
         String groupId = dotToSlashReplacer( artifact.getGroupId() );
 
-        String packaging = getVariableValueFromObject( mojo, "packaging" ).toString();
+        String packaging = project.getPackaging();
 
         File installedArtifact = new File( getBasedir(), LOCAL_REPO + groupId + "/" + artifact.getArtifactId() + "/" +
            artifact.getVersion() + "/" + artifact.getArtifactId() + "-" + artifact.getVersion() + "." + packaging );
