@@ -129,7 +129,7 @@ under the License.
         <artifactId>maven-scm-publish-plugin</artifactId>
         <configuration>
           <content>${project.reporting.outputDirectory}</content>
-          <scmPubUrl>scm:svn:https://svn.apache.org/repos/infra/websites/production/maven/content/${maven.site.path}</scmPubUrl>
+          <pubScmUrl>scm:svn:https://svn.apache.org/repos/infra/websites/production/maven/content/${maven.site.path}</pubScmUrl>
           <checkoutDirectory>${maven.site.cache}/${maven.site.path}</checkoutDirectory>
           <tryUpdate>true</tryUpdate>
         </configuration>
