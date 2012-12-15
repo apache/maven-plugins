@@ -48,16 +48,12 @@ public abstract class AbstractDeployMojo
 
     /**
      * Component used to create an artifact.
-     *
-     * @component
      */
     @Component
     protected ArtifactFactory artifactFactory;
 
     /**
      * Component used to create a repository.
-     *
-     * @component
      */
     @Component
     ArtifactRepositoryFactory repositoryFactory;

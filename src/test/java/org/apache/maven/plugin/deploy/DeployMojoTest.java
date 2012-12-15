@@ -114,7 +114,9 @@ public class DeployMojoTest
 
         assertTrue( file.exists() );
 
-        artifact = ( DeployArtifactStub ) getVariableValueFromObject( mojo, "artifact" );
+        MavenProject project = (MavenProject) getVariableValueFromObject( mojo, "project" );
+        
+        artifact = ( DeployArtifactStub ) project.getArtifact();
 
         String packaging = ( String ) getVariableValueFromObject( mojo, "packaging" );
         
@@ -216,7 +218,9 @@ public class DeployMojoTest
 
         assertTrue( file.exists() );
 
-        artifact = (DeployArtifactStub) getVariableValueFromObject( mojo, "artifact" );
+        MavenProject project = (MavenProject) getVariableValueFromObject( mojo, "project" );
+
+        artifact = (DeployArtifactStub) project.getArtifact();
 
         String packaging = (String) getVariableValueFromObject( mojo, "packaging" );
 
@@ -266,7 +270,9 @@ public class DeployMojoTest
         
         assertEquals( "pom", packaging );
         
-        artifact = ( DeployArtifactStub ) getVariableValueFromObject( mojo, "artifact" );
+        MavenProject project = (MavenProject) getVariableValueFromObject( mojo, "project" );
+
+        artifact = (DeployArtifactStub) project.getArtifact();
         
         artifact.setArtifactHandlerExtension( packaging );
         
@@ -323,7 +329,9 @@ public class DeployMojoTest
         
         assertTrue( updateReleaseInfo );
         
-        artifact = ( DeployArtifactStub ) getVariableValueFromObject( mojo, "artifact" );
+        MavenProject project = (MavenProject) getVariableValueFromObject( mojo, "project" );
+
+        artifact = (DeployArtifactStub) project.getArtifact();
         
         artifact.setFile( testPom );
         
@@ -346,7 +354,9 @@ public class DeployMojoTest
         
         assertNotNull( mojo );
         
-        artifact = ( DeployArtifactStub ) getVariableValueFromObject( mojo, "artifact" );
+        MavenProject project = (MavenProject) getVariableValueFromObject( mojo, "project" );
+
+        artifact = (DeployArtifactStub) project.getArtifact();
         
         artifact.setFile( null );
         
@@ -375,7 +385,9 @@ public class DeployMojoTest
 
         assertNotNull( mojo );
 
-        artifact = ( DeployArtifactStub ) getVariableValueFromObject( mojo, "artifact" );
+        MavenProject project = (MavenProject) getVariableValueFromObject( mojo, "project" );
+
+        artifact = (DeployArtifactStub) project.getArtifact();
         
         File file = new File( getBasedir(),
                               "target/test-classes/unit/basic-deploy-with-attached-artifacts/target/" +
@@ -489,7 +501,9 @@ public class DeployMojoTest
 
         assertTrue( file.exists() );
         
-        DeployArtifactStub artifact = ( DeployArtifactStub ) getVariableValueFromObject( mojo, "artifact" );        
+        MavenProject project = (MavenProject) getVariableValueFromObject( mojo, "project" );
+
+        artifact = (DeployArtifactStub) project.getArtifact();
         
         artifact.setFile( file );
         

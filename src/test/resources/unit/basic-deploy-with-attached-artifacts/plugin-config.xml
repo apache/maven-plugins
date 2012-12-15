@@ -23,14 +23,22 @@ under the License.
       <plugin>
         <artifactId>maven-deploy-plugin</artifactId>
         <configuration>
+          <!-- deprecated fields -->
           <pomFile>${basedir}/src/test/resources/unit/basic-deploy-with-attached-artifacts/plugin-config.xml</pomFile>
           <packaging>jar</packaging>
           <artifact implementation="org.apache.maven.plugin.deploy.stubs.DeployArtifactStub" />
           <attachedArtifacts>
             <attachedArtifact implementation="org.apache.maven.plugin.deploy.stubs.AttachedArtifactStub" />
           </attachedArtifacts>
+          
           <localRepository>${localRepository}</localRepository>
-          <project implementation="org.apache.maven.plugin.deploy.stubs.MavenProjectStub">
+            <project implementation="org.apache.maven.plugin.deploy.stubs.MavenProjectStub">
+            <file>${basedir}/src/test/resources/unit/basic-deploy-with-attached-artifacts/plugin-config.xml</file>
+            <packaging>jar</packaging>
+            <artifact implementation="org.apache.maven.plugin.deploy.stubs.DeployArtifactStub" />
+            <attachedArtifacts>
+              <attachedArtifact implementation="org.apache.maven.plugin.deploy.stubs.AttachedArtifactStub" />
+            </attachedArtifacts>
             <deploymentRepository implementation="org.apache.maven.plugin.deploy.stubs.ArtifactRepositoryStub" />
           </project>
           <updateReleaseInfo>true</updateReleaseInfo>

@@ -155,8 +155,8 @@ under the License.
               <artifactId>maven-invoker-plugin</artifactId>
               <configuration>
                 <debug>true</debug>
-                <projectsDirectory>src/it</projectsDirectory>
                 <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
+                <cloneClean>true</cloneClean>
                 <pomIncludes>
                   <pomInclude>*/pom.xml</pomInclude>
                   <pomInclude>*/non-default-pom.xml</pomInclude>
