@@ -34,7 +34,6 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.artifact.ProjectArtifactMetadata;
 
 import java.io.File;
-import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -150,7 +149,9 @@ public class DeployMojo
         Artifact artifact = project.getArtifact();
         String packaging = project.getPackaging();
         File pomFile = project.getFile();
-        List attachedArtifacts = project.getAttachedArtifacts();
+        
+        @SuppressWarnings( "unchecked" )
+        List<Artifact> attachedArtifacts = project.getAttachedArtifacts();
         
         ArtifactRepository repo = getDeploymentRepository( project );
 
@@ -219,10 +220,8 @@ public class DeployMojo
                 }
             }
 
-            for ( Iterator i = attachedArtifacts.iterator(); i.hasNext(); )
+            for ( Artifact attached : attachedArtifacts )
             {
-                Artifact attached = ( Artifact ) i.next();
-
                 deploy( attached.getFile(), attached, repo, getLocalRepository() );
             }
         }

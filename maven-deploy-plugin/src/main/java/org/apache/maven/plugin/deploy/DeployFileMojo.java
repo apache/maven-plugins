@@ -19,6 +19,13 @@ package org.apache.maven.plugin.deploy;
  * under the License.
  */
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.Writer;
+import java.util.List;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.deployer.ArtifactDeploymentException;
 import org.apache.maven.artifact.metadata.ArtifactMetadata;
@@ -44,14 +51,6 @@ import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.WriterFactory;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.Reader;
-import java.io.Writer;
-import java.util.Iterator;
-import java.util.List;
 
 /**
  * Installs the artifact in the remote repository.
@@ -377,12 +376,11 @@ public class DeployFileMojo
             }
         }
 
-        List attachedArtifacts = project.getAttachedArtifacts();
+        @SuppressWarnings( "unchecked" )
+        List<Artifact> attachedArtifacts = project.getAttachedArtifacts();
 
-        for ( Iterator i = attachedArtifacts.iterator(); i.hasNext(); )
+        for ( Artifact attached : attachedArtifacts)
         {
-            Artifact attached = ( Artifact ) i.next();
-
             try
             {
                 deploy( attached.getFile(), attached, deploymentRepository, getLocalRepository() );
