@@ -20,13 +20,13 @@ package org.apache.maven.plugin.deploy;
  */
 
 import java.io.File;
-import java.util.List;
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.List;
 
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.model.Model;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
-import org.apache.maven.model.Model;
 
 /**
  * @author <a href="mailto:aramirez@apache.org">Allan Ramirez</a>
@@ -34,9 +34,9 @@ import org.apache.maven.model.Model;
 public class DeployFileMojoTest
     extends AbstractMojoTestCase
 {
-    private List expectedFiles;
+    private List<String> expectedFiles;
 
-    private List fileList;
+    private List<String> fileList;
 
     private File remoteRepo;
 
@@ -54,7 +54,7 @@ public class DeployFileMojoTest
             remoteRepo.mkdirs();
         }
         
-        projectStub.setAttachedArtifacts( new ArrayList() );
+        projectStub.setAttachedArtifacts( new ArrayList<Artifact>() );
     }
 
     public void testDeployTestEnvironment()
@@ -130,8 +130,8 @@ public class DeployFileMojoTest
         assertEquals( "POM was created from deploy:deploy-file", model.getDescription() );
 
         //check the remote-repo
-        expectedFiles = new ArrayList();
-        fileList = new ArrayList();
+        expectedFiles = new ArrayList<String>();
+        fileList = new ArrayList<String>();
 
         File repo = new File( remoteRepo, "deploy-file-test" );
 
@@ -289,8 +289,8 @@ public class DeployFileMojoTest
         assertTrue( artifactFile.exists() );
 
         //check the remote-repo
-        expectedFiles = new ArrayList();
-        fileList = new ArrayList();
+        expectedFiles = new ArrayList<String>();
+        fileList = new ArrayList<String>();
 
         File repo = new File( remoteRepo, "deploy-file-legacy-repository-layout" );
 
@@ -319,7 +319,7 @@ public class DeployFileMojoTest
         assertEquals( 0, getSizeOfExpectedFiles( fileList, expectedFiles ) );
     }
 
-    private void addFileToList( File file, List fileList )
+    private void addFileToList( File file, List<String> fileList )
     {
         if ( !file.isDirectory() )
         {
@@ -338,12 +338,10 @@ public class DeployFileMojoTest
         }
     }
 
-    private int getSizeOfExpectedFiles( List fileList, List expectedFiles )
+    private int getSizeOfExpectedFiles( List<String> fileList, List<String> expectedFiles )
     {
-        for ( Iterator iter = fileList.iterator(); iter.hasNext(); )
+        for ( String fileName : fileList )
         {
-            String fileName = (String) iter.next();
-
             if ( expectedFiles.contains( fileName ) )
             {
                 expectedFiles.remove( fileName );

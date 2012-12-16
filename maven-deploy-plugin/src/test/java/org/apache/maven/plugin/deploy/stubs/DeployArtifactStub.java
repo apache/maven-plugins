@@ -33,7 +33,7 @@ import org.apache.maven.plugin.testing.stubs.ArtifactStub;
 public class DeployArtifactStub
     extends ArtifactStub
 {
-    private Map metadataMap;
+    private Map<Object, ArtifactMetadata> metadataMap;
     
     private File file;
     
@@ -95,7 +95,7 @@ public class DeployArtifactStub
     {
         if ( metadataMap == null )
         {
-            metadataMap = new HashMap();
+            metadataMap = new HashMap<Object, ArtifactMetadata>();
         }
 
         ArtifactMetadata m = (ArtifactMetadata) metadataMap.get( metadata.getKey() );
@@ -109,9 +109,9 @@ public class DeployArtifactStub
         }
     }
     
-    public Collection getMetadataList()
+    public Collection<ArtifactMetadata> getMetadataList()
     {
-        return metadataMap == null ? Collections.EMPTY_LIST : metadataMap.values();
+        return metadataMap == null ? Collections.<ArtifactMetadata>emptyList() : metadataMap.values();
     }
 
     public boolean isRelease()

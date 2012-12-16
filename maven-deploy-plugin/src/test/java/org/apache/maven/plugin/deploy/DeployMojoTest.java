@@ -21,16 +21,14 @@ package org.apache.maven.plugin.deploy;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.deploy.DeployMojo;
+import org.apache.maven.plugin.deploy.stubs.ArtifactDeployerStub;
 import org.apache.maven.plugin.deploy.stubs.ArtifactRepositoryStub;
 import org.apache.maven.plugin.deploy.stubs.AttachedArtifactStub;
 import org.apache.maven.plugin.deploy.stubs.DeployArtifactStub;
-import org.apache.maven.plugin.deploy.stubs.ArtifactDeployerStub;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
 import org.apache.maven.project.MavenProject;
@@ -118,7 +116,7 @@ public class DeployMojoTest
         
         artifact = ( DeployArtifactStub ) project.getArtifact();
 
-        String packaging = ( String ) getVariableValueFromObject( mojo, "packaging" );
+        String packaging = project.getPackaging();
         
         assertEquals( "jar", packaging );
         
@@ -138,8 +136,8 @@ public class DeployMojoTest
         mojo.execute();
 
         //check the artifact in local repository
-        List expectedFiles = new ArrayList();
-        List fileList = new ArrayList();
+        List<String> expectedFiles = new ArrayList<String>();
+        List<String> fileList = new ArrayList<String>();
         
         expectedFiles.add( "org" );
         expectedFiles.add( "apache" );
@@ -167,8 +165,8 @@ public class DeployMojoTest
         assertEquals( 0, getSizeOfExpectedFiles( fileList, expectedFiles ) );        
                   
         //check the artifact in remote repository
-        expectedFiles = new ArrayList();
-        fileList = new ArrayList();
+        expectedFiles = new ArrayList<String>();
+        fileList = new ArrayList<String>();
         
         expectedFiles.add( "org" );
         expectedFiles.add( "apache" );
@@ -222,7 +220,7 @@ public class DeployMojoTest
 
         artifact = (DeployArtifactStub) project.getArtifact();
 
-        String packaging = (String) getVariableValueFromObject( mojo, "packaging" );
+        String packaging = project.getPackaging();
 
         assertEquals( "jar", packaging );
 
@@ -282,8 +280,8 @@ public class DeployMojoTest
         
         mojo.execute();
         
-        List expectedFiles = new ArrayList();
-        List fileList = new ArrayList();
+        List<String> expectedFiles = new ArrayList<String>();
+        List<String> fileList = new ArrayList<String>();
         
         expectedFiles.add( "org" );
         expectedFiles.add( "apache" );
@@ -395,7 +393,9 @@ public class DeployMojoTest
         
         artifact.setFile( file );
         
-        List attachedArtifacts = ( ArrayList ) getVariableValueFromObject( mojo, "attachedArtifacts" );
+        
+        @SuppressWarnings( "unchecked" )
+        List<AttachedArtifactStub> attachedArtifacts = project.getAttachedArtifacts();
 
         ArtifactRepositoryStub repo = getRepoStub( mojo );
         
@@ -403,12 +403,10 @@ public class DeployMojoTest
         
         mojo.execute();
 
-        String packaging = getVariableValueFromObject( mojo, "packaging" ).toString();
+        String packaging = project.getPackaging();
 
-        for( Iterator iter=attachedArtifacts.iterator(); iter.hasNext(); )
+        for( AttachedArtifactStub attachedArtifact : attachedArtifacts )
         {
-            AttachedArtifactStub attachedArtifact = ( AttachedArtifactStub ) iter.next();
-
             File deployedArtifact = new File( remoteRepo, "basic-deploy-with-attached-artifacts" + "/" +
                                                attachedArtifact.getGroupId().replace( '.', '/' ) + "/" + 
                                                attachedArtifact.getArtifactId() + "/" +
@@ -418,8 +416,8 @@ public class DeployMojoTest
         }
         
         //check the artifacts in remote repository
-        List expectedFiles = new ArrayList();
-        List fileList = new ArrayList();
+        List<String> expectedFiles = new ArrayList<String>();
+        List<String> fileList = new ArrayList<String>();
         
         expectedFiles.add( "org" );
         expectedFiles.add( "apache" );
@@ -533,7 +531,7 @@ public class DeployMojoTest
     }
 
     
-    private void addFileToList( File file, List fileList )
+    private void addFileToList( File file, List<String> fileList )
     {
         if( !file.isDirectory() )
         {
@@ -552,17 +550,11 @@ public class DeployMojoTest
         }
     }    
     
-    private int getSizeOfExpectedFiles( List fileList, List expectedFiles )
+    private int getSizeOfExpectedFiles( List<String> fileList, List<String> expectedFiles )
     {
-        for( Iterator iter=fileList.iterator(); iter.hasNext(); )
+        for( String fileName : fileList )
         {
-            String fileName = ( String ) iter.next();
-
-            if( expectedFiles.contains(  fileName ) )
-            {
-                expectedFiles.remove( fileName );
-            }
-            else
+            if( !expectedFiles.remove( fileName ) )
             {
                 fail( fileName + " is not included in the expected files" );
             }
