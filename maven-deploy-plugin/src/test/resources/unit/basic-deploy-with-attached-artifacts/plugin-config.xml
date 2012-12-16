@@ -39,7 +39,9 @@ under the License.
             <attachedArtifacts>
               <attachedArtifact implementation="org.apache.maven.plugin.deploy.stubs.AttachedArtifactStub" />
             </attachedArtifacts>
-            <deploymentRepository implementation="org.apache.maven.plugin.deploy.stubs.ArtifactRepositoryStub" />
+            <deploymentRepository implementation="org.apache.maven.plugin.deploy.stubs.ArtifactRepositoryStub">
+              <basedir>${basedir}</basedir>
+            </deploymentRepository>
           </project>
           <updateReleaseInfo>true</updateReleaseInfo>
         </configuration>
