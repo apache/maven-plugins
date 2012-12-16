@@ -35,6 +35,8 @@ public class ArtifactRepositoryStub
     
     private String url;
     
+    private String basedir = System.getProperty( "basedir" );
+
     public String pathOf( Artifact artifact )
     {
         return getLayout().pathOf( artifact );
@@ -57,12 +59,12 @@ public class ArtifactRepositoryStub
     
     public void setAppendToUrl( String dir )
     {
-        this.url = "file://" + System.getProperty( "basedir" ) + "/target/remote-repo/" + dir;
+        this.url = "file://" + basedir + "/target/remote-repo/" + dir;
     }
     
     public String getBasedir()
     {
-        return System.getProperty( "basedir" );
+        return basedir;
     }
     
     public String getProtocol()

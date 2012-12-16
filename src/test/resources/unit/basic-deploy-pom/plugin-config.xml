@@ -35,7 +35,9 @@ under the License.
             <packaging>pom</packaging>
             <artifact implementation="org.apache.maven.plugin.deploy.stubs.DeployArtifactStub" />
             <attachedArtifacts />
-            <deploymentRepository implementation="org.apache.maven.plugin.deploy.stubs.ArtifactRepositoryStub" />
+            <deploymentRepository implementation="org.apache.maven.plugin.deploy.stubs.ArtifactRepositoryStub">
+              <basedir>${basedir}</basedir>
+            </deploymentRepository>
           </project>
           <updateReleaseInfo>true</updateReleaseInfo>
         </configuration>
