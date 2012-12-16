@@ -184,6 +184,7 @@ public class EffectiveSiteMojo
         }
 
         effectiveSite = sWriter.toString();
+        effectiveSite = effectiveSite.substring( effectiveSite.indexOf( "<project " ) ); // remove "<?xml" header
 
         writeComment( writer, "Effective site descriptor for project \'" + project.getId() + "\'" );
 
