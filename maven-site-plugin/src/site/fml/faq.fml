@@ -116,13 +116,17 @@ under the License.
       <question>How does the Site Plugin use the &lt;url&gt; element in the POM?</question>
       <answer>
         <p>
-          The Site Plugin uses the &lt;url&gt; element in the POM to create
-          relative links for the generated site. If your project has a URL
+          The Site Plugin does not use the &lt;url&gt; element in the POM.
+          The project URL is just a piece of information to let your users know
+          where the project lives. Some other plugins (e.g. the project-info-report-plugin)
+          may be used to present this information. If your project has a URL
           where the generated site is deployed, then put that URL into the
           &lt;url&gt; element. If the project's site is not deployed anywhere,
           then remove the &lt;url&gt; element from the POM.
         </p>
         <p>
+          On the other hand, the &lt;distributionManagement.url&gt; is used in a multi-module
+          build to construct relative links between the generated sub-module sites.
           In a multi module build it is important for the parent and child
           modules to have <strong>different</strong> URLs. If they have the
           same URL, then links within the combined site will not work.
