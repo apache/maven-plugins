@@ -39,7 +39,6 @@ import org.jdom.output.XMLOutputter;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
@@ -69,8 +68,8 @@ public class EffectivePomMojo
      * The projects in the current build. The effective-POM for
      * each of these projects will written.
      */
-    @Parameter( property = "reactorProjects", required = true, readonly = true )
-    private List projects;
+    @Parameter( defaultValue = "${reactorProjects}", required = true, readonly = true )
+    private List<MavenProject> projects;
 
     // ----------------------------------------------------------------------
     // Public methods
@@ -92,10 +91,8 @@ public class EffectivePomMojo
         {
             // outer root element
             writer.startElement( "projects" );
-            for ( Iterator it = projects.iterator(); it.hasNext(); )
+            for ( MavenProject subProject : projects )
             {
-                MavenProject subProject = (MavenProject) it.next();
-
                 writeEffectivePom( subProject, writer );
             }
             writer.endElement();
