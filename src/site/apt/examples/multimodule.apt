@@ -53,13 +53,29 @@ Building multi-module sites
   <<<site:deploy>>> but uses the <<<stagingDirectory>>> parameter as deployment location.
   This can be used to deploy the site to a remote staging area (<<<site:stage>>> is always local).
 
-  <<Note:>> If subprojects inherit the site URL from a parent POM, they will automatically
+  <<Notes:>>
+
+  * If subprojects inherit the (distribution) site URL from a parent POM, they will automatically
   append their <artifactId> to form their effective deployment location.
   This goes for both the project url and the url defined in the
-  <<<\<distributionManagement\>>>> element of the pom. If your multi-module tree does not
+  <<<\<distributionManagement\>>>> element of the pom.
+
+  * If your multi-module tree does not
   follow the maven conventions, or if module directories are named differently than
   module artifacts, you have to specify the url's for <<each>> child project.
   See also <<<{{{../faq.html#Use_of_url}How does the Site Plugin use the \<url\> element in the POM?}}>>>.
+
+  * The pom.xml of the topmost project in a multi-module build must define the distributionManagement URL
+  element (called "rootURL" hereafter). The rootURL must be the topmost distributionManagement URL
+  in the multi-module project, implying that any distributionManagement URL defined within another
+  project in a multimodule build must start with the rootURL and append unique paths
+  (to be situated "below" the rootURL).
+
+  * All projects in multi-module builds must define unique distributionManagement url elements,
+  below/under the root distributionManagement URL in terms of URL path.
+
+  * If the artifactId and module name (i.e. directory name) are not identical for any project within a
+  multi-module build, the distributionManagement URL element must be defined in the pom.xml file in the project.
 
 * Inheritance
 
