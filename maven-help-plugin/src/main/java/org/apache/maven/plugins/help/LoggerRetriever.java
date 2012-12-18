@@ -19,6 +19,7 @@ package org.apache.maven.plugins.help;
  * under the License.
  */
 
+import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 import org.codehaus.plexus.logging.Logger;
 
@@ -27,9 +28,8 @@ import org.codehaus.plexus.logging.Logger;
  * which is problematic with regard to future changes of the container as in Maven 3.
  * 
  * @author Benjamin Bentmann
- * @plexus.component role="org.apache.maven.plugins.help.LoggerRetriever" role-hint="default"
- *                   instantiation-strategy="per-lookup"
  */
+@Component( role = LoggerRetriever.class, hint = "default", instantiationStrategy = "per-lookup" )
 public class LoggerRetriever
     extends AbstractLogEnabled
 {
