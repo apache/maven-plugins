@@ -71,7 +71,7 @@ import java.util.StringTokenizer;
  * @see <a href="http://maven.apache.org/general.html#What_is_a_Mojo">What is a Mojo?</a>
  * @since 2.0
  */
-@Mojo (name = "describe", requiresProject = false, aggregator = true)
+@Mojo( name = "describe", requiresProject = false, aggregator = true )
 public class DescribeMojo
     extends AbstractHelpMojo
 {
@@ -110,7 +110,7 @@ public class DescribeMojo
     /**
      * The Plugin manager instance used to resolve Plugin descriptors.
      */
-    @Component (role = PluginManager.class)
+    @Component( role = PluginManager.class )
     private PluginManager pluginManager;
 
     /**
@@ -118,7 +118,7 @@ public class DescribeMojo
      * in the event there is no current MavenProject instance. Some MavenProject
      * instance has to be present to use in the plugin manager APIs.
      */
-    @Component (role = MavenProjectBuilder.class)
+    @Component( role = MavenProjectBuilder.class )
     private MavenProjectBuilder projectBuilder;
 
     // ----------------------------------------------------------------------
@@ -152,7 +152,7 @@ public class DescribeMojo
      * The local repository ArtifactRepository instance. This is used
      * for plugin manager API calls.
      */
-    @org.apache.maven.plugins.annotations.Parameter (property = "localRepository", required = true, readonly = true)
+    @org.apache.maven.plugins.annotations.Parameter( defaultValue = "${localRepository}", required = true, readonly = true )
     private ArtifactRepository localRepository;
 
     /**
@@ -160,9 +160,9 @@ public class DescribeMojo
      *
      * @since 2.1
      */
-    @org.apache.maven.plugins.annotations.Parameter (property = "project.remoteArtifactRepositories", required = true,
-                                                     readonly = true)
-    private List remoteRepositories;
+    @org.apache.maven.plugins.annotations.Parameter( defaultValue = "${project.remoteArtifactRepositories}",
+                    required = true, readonly = true )
+    private List<ArtifactRepository> remoteRepositories;
 
     /**
      * The Maven Plugin to describe. This must be specified in one of three ways:
@@ -173,7 +173,7 @@ public class DescribeMojo
      * <li>groupId:artifactId:version, i.e. 'org.apache.maven.plugins:maven-help-plugin:2.0'</li>
      * </ol>
      */
-    @org.apache.maven.plugins.annotations.Parameter (property = "plugin", alias = "prefix")
+    @org.apache.maven.plugins.annotations.Parameter( property = "plugin", alias = "prefix" )
     private String plugin;
 
     /**
@@ -181,7 +181,7 @@ public class DescribeMojo
      * <br/>
      * <b>Note</b>: Should be used with <code>artifactId</code> parameter.
      */
-    @org.apache.maven.plugins.annotations.Parameter (property = "groupId")
+    @org.apache.maven.plugins.annotations.Parameter( property = "groupId" )
     private String groupId;
 
     /**
@@ -189,7 +189,7 @@ public class DescribeMojo
      * <br/>
      * <b>Note</b>: Should be used with <code>groupId</code> parameter.
      */
-    @org.apache.maven.plugins.annotations.Parameter (property = "artifactId")
+    @org.apache.maven.plugins.annotations.Parameter( property = "artifactId" )
     private String artifactId;
 
     /**
@@ -197,7 +197,7 @@ public class DescribeMojo
      * <br/>
      * <b>Note</b>: Should be used with <code>groupId/artifactId</code> parameters.
      */
-    @org.apache.maven.plugins.annotations.Parameter (property = "version")
+    @org.apache.maven.plugins.annotations.Parameter( property = "version" )
     private String version;
 
     /**
@@ -207,7 +207,7 @@ public class DescribeMojo
      *
      * @since 2.1, was <code>mojo</code> in 2.0.x
      */
-    @org.apache.maven.plugins.annotations.Parameter (property = "goal", alias = "mojo")
+    @org.apache.maven.plugins.annotations.Parameter( property = "goal", alias = "mojo" )
     private String goal;
 
     /**
@@ -215,7 +215,7 @@ public class DescribeMojo
      *
      * @since 2.1, was <code>full</code> in 2.0.x
      */
-    @org.apache.maven.plugins.annotations.Parameter (property = "detail", defaultValue = "false", alias = "full")
+    @org.apache.maven.plugins.annotations.Parameter( property = "detail", defaultValue = "false", alias = "full" )
     private boolean detail;
 
     /**
@@ -223,7 +223,7 @@ public class DescribeMojo
      *
      * @since 2.0.2
      */
-    @org.apache.maven.plugins.annotations.Parameter (property = "medium", defaultValue = "true")
+    @org.apache.maven.plugins.annotations.Parameter( property = "medium", defaultValue = "true" )
     private boolean medium;
 
     /**
@@ -231,7 +231,7 @@ public class DescribeMojo
      *
      * @since 2.1
      */
-    @org.apache.maven.plugins.annotations.Parameter (property = "minimal", defaultValue = "false")
+    @org.apache.maven.plugins.annotations.Parameter( property = "minimal", defaultValue = "false" )
     private boolean minimal;
 
     /**
@@ -241,7 +241,7 @@ public class DescribeMojo
      *
      * @since 2.1
      */
-    @org.apache.maven.plugins.annotations.Parameter (property = "cmd")
+    @org.apache.maven.plugins.annotations.Parameter( property = "cmd" )
     private String cmd;
 
     // ----------------------------------------------------------------------
@@ -575,7 +575,8 @@ public class DescribeMojo
         append( buffer, "Goal Prefix", pd.getGoalPrefix(), 0 );
         buffer.append( "\n" );
 
-        List mojos = pd.getMojos();
+        @SuppressWarnings( "unchecked" )
+        List<MojoDescriptor> mojos = pd.getMojos();
 
         if ( mojos == null )
         {
@@ -588,13 +589,11 @@ public class DescribeMojo
             append( buffer, "This plugin has " + mojos.size() + " goal" + ( mojos.size() > 1 ? "s" : "" ) + ":", 0 );
             buffer.append( "\n" );
 
-            mojos = new ArrayList( mojos );
+            mojos = new ArrayList<MojoDescriptor>( mojos );
             PluginUtils.sortMojos( mojos );
 
-            for ( Iterator it = mojos.iterator(); it.hasNext(); )
+            for ( MojoDescriptor md : mojos )
             {
-                MojoDescriptor md = (MojoDescriptor) it.next();
-
                 if ( detail )
                 {
                     describeMojoGuts( md, buffer, true );
@@ -723,7 +722,8 @@ public class DescribeMojo
     private void describeMojoParameters( MojoDescriptor md, StringBuilder buffer )
         throws MojoFailureException, MojoExecutionException
     {
-        List params = md.getParameters();
+        @SuppressWarnings( "unchecked" )
+        List<Parameter> params = md.getParameters();
 
         if ( params == null || params.isEmpty() )
         {
@@ -731,16 +731,13 @@ public class DescribeMojo
             return;
         }
 
-        params = new ArrayList( params );
+        params = new ArrayList<Parameter>( params );
         // TODO remove when maven-plugin-tools-api:2.4.4 is out see PluginUtils.sortMojoParameters()
-        Collections.sort( params, new Comparator()
+        Collections.sort( params, new Comparator<Parameter>()
         {
             /** {@inheritDoc} */
-            public int compare( Object o1, Object o2 )
+            public int compare( Parameter parameter1, Parameter parameter2 )
             {
-                Parameter parameter1 = (Parameter) o1;
-                Parameter parameter2 = (Parameter) o2;
-
                 return parameter1.getName().compareToIgnoreCase( parameter2.getName() );
             }
         } );
@@ -748,9 +745,8 @@ public class DescribeMojo
         append( buffer, "Available parameters:", 1 );
 
         // indent 2
-        for ( Iterator it = params.iterator(); it.hasNext(); )
+        for ( Parameter parameter : params )
         {
-            Parameter parameter = (Parameter) it.next();
             if ( !parameter.isEditable() )
             {
                 continue;
@@ -835,13 +831,14 @@ public class DescribeMojo
 
                 LifecycleMapping lifecycleMapping =
                     (LifecycleMapping) session.lookup( LifecycleMapping.ROLE, project.getPackaging() );
+                @SuppressWarnings( "unchecked" )
+                List<String> phases = lifecycle.getPhases();
+
                 if ( lifecycle.getDefaultPhases() == null )
                 {
                     descriptionBuffer.append( "'" + cmd + "' is a phase corresponding to this plugin:\n" );
-                    for ( Iterator it = lifecycle.getPhases().iterator(); it.hasNext(); )
+                    for ( String key : phases )
                     {
-                        String key = (String) it.next();
-
                         if ( !key.equals( cmd ) )
                         {
                             continue;
@@ -859,10 +856,8 @@ public class DescribeMojo
                         "It is a part of the lifecycle for the POM packaging '" + project.getPackaging()
                             + "'. This lifecycle includes the following phases:" );
                     descriptionBuffer.append( "\n" );
-                    for ( Iterator it = lifecycle.getPhases().iterator(); it.hasNext(); )
+                    for ( String key : phases )
                     {
-                        String key = (String) it.next();
-
                         descriptionBuffer.append( "* " + key + ": " );
                         String value = (String) lifecycleMapping.getPhases( "default" ).get( key );
                         if ( StringUtils.isNotEmpty( value ) )
@@ -892,10 +887,8 @@ public class DescribeMojo
                     descriptionBuffer.append( "'" + cmd + "' is a lifecycle with the following phases: " );
                     descriptionBuffer.append( "\n" );
 
-                    for ( Iterator it = lifecycle.getPhases().iterator(); it.hasNext(); )
+                    for ( String key : phases )
                     {
-                        String key = (String) it.next();
-
                         descriptionBuffer.append( "* " + key + ": " );
                         if ( lifecycle.getDefaultPhases().get( key ) != null )
                         {
@@ -943,7 +936,7 @@ public class DescribeMojo
      * @throws MojoExecutionException if no line was found for <code>text</code>
      * @see HelpMojo#toLines(String, int, int, int)
      */
-    private static List toLines( String text, int indent, int indentSize, int lineLength )
+    private static List<String> toLines( String text, int indent, int indentSize, int lineLength )
         throws MojoFailureException, MojoExecutionException
     {
         try
@@ -952,7 +945,7 @@ public class DescribeMojo
                                                          new Class[]{ String.class, Integer.TYPE, Integer.TYPE,
                                                              Integer.TYPE } );
             m.setAccessible( true );
-            List output = (List) m.invoke( HelpMojo.class,
+            List<String> output = (List<String>) m.invoke( HelpMojo.class,
                                            new Object[]{ text, Integer.valueOf( indent ), Integer.valueOf( indentSize ),
                                                Integer.valueOf( lineLength ) } );
 
@@ -1012,9 +1005,9 @@ public class DescribeMojo
             return;
         }
 
-        for ( Iterator it = toLines( description, indent, INDENT_SIZE, LINE_LENGTH ).iterator(); it.hasNext(); )
+        for ( String line : toLines( description, indent, INDENT_SIZE, LINE_LENGTH ) )
         {
-            sb.append( it.next().toString() ).append( '\n' );
+            sb.append( line ).append( '\n' );
         }
     }
 
@@ -1044,9 +1037,9 @@ public class DescribeMojo
         }
 
         String description = key + ": " + value;
-        for ( Iterator it = toLines( description, indent, INDENT_SIZE, LINE_LENGTH ).iterator(); it.hasNext(); )
+        for ( String line : toLines( description, indent, INDENT_SIZE, LINE_LENGTH ) )
         {
-            sb.append( it.next().toString() ).append( '\n' );
+            sb.append( line ).append( '\n' );
         }
     }
 
@@ -1081,12 +1074,12 @@ public class DescribeMojo
             description = key + ": " + value;
         }
 
-        List l1 = toLines( description, indent, INDENT_SIZE, LINE_LENGTH - INDENT_SIZE );
-        List l2 = toLines( description, indent + 1, INDENT_SIZE, LINE_LENGTH );
+        List<String> l1 = toLines( description, indent, INDENT_SIZE, LINE_LENGTH - INDENT_SIZE );
+        List<String> l2 = toLines( description, indent + 1, INDENT_SIZE, LINE_LENGTH );
         l2.set( 0, l1.get( 0 ) );
-        for ( Iterator it = l2.iterator(); it.hasNext(); )
+        for ( String line : l2 )
         {
-            sb.append( it.next().toString() ).append( '\n' );
+            sb.append( line ).append( '\n' );
         }
     }
 

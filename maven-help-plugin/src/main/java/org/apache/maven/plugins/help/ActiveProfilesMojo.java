@@ -28,7 +28,6 @@ import org.apache.maven.project.MavenProject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -48,8 +47,8 @@ public class ActiveProfilesMojo
     /**
      * This is the list of projects currently slated to be built by Maven.
      */
-    @Parameter( property = "reactorProjects", required = true, readonly = true )
-    private List projects;
+    @Parameter( defaultValue = "${reactorProjects}", required = true, readonly = true )
+    private List<MavenProject> projects;
 
     // ----------------------------------------------------------------------
     // Public methods
@@ -61,10 +60,8 @@ public class ActiveProfilesMojo
     {
         StringBuilder message = new StringBuilder();
 
-        for ( Iterator it = projects.iterator(); it.hasNext(); )
+        for ( MavenProject project : projects )
         {
-            MavenProject project = (MavenProject) it.next();
-
             getActiveProfileStatement( project, message );
 
             message.append( "\n\n" );
@@ -114,7 +111,8 @@ public class ActiveProfilesMojo
     {
         // Get active profiles into our own list,
         // since we'll be modifying it, further below
-        List profiles = new ArrayList( project.getActiveProfiles() );
+        @SuppressWarnings( "unchecked" )
+        List<Profile> profiles = new ArrayList<Profile>( project.getActiveProfiles() );
 
         message.append( "\n" );
 
@@ -128,10 +126,8 @@ public class ActiveProfilesMojo
         {
             message.append( "The following profiles are active:\n" );
 
-            for ( Iterator it = profiles.iterator(); it.hasNext(); )
+            for ( Profile profile : profiles )
             {
-                Profile profile = (Profile) it.next();
-
                 message.append( "\n - " ).append( profile.getId() );
                 message.append( " (source: " ).append( profile.getSource() ).append( ")" );
             }
