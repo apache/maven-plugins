@@ -60,7 +60,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -139,7 +138,7 @@ public class EvaluateMojo
     /**
      * Local Repository.
      */
-    @Parameter( property = "localRepository", required = true, readonly = true )
+    @Parameter( defaultValue = "${localRepository}", required = true, readonly = true )
     protected ArtifactRepository localRepository;
 
     /**
@@ -151,8 +150,8 @@ public class EvaluateMojo
     /**
      * Remote repositories used for the project.
      */
-    @Parameter( property = "project.remoteArtifactRepositories", required = true, readonly = true )
-    private List remoteRepositories;
+    @Parameter( defaultValue = "${project.remoteArtifactRepositories}", required = true, readonly = true )
+    private List<ArtifactRepository> remoteRepositories;
 
     /**
      * The system settings for Maven.
@@ -483,7 +482,7 @@ public class EvaluateMojo
         // beautify list
         if ( obj instanceof List )
         {
-            List list = (List) obj;
+            List<?> list = (List<?>) obj;
             if ( list.size() > 0 )
             {
                 Object elt = list.iterator().next();
@@ -519,7 +518,7 @@ public class EvaluateMojo
             xstream.registerConverter( new PropertiesConverter()
             {
                 /** {@inheritDoc} */
-                public boolean canConvert( Class type )
+                public boolean canConvert( @SuppressWarnings( "rawtypes" ) Class type )
                 {
                     return Properties.class == type;
                 }
@@ -528,11 +527,9 @@ public class EvaluateMojo
                 public void marshal( Object source, HierarchicalStreamWriter writer, MarshallingContext context )
                 {
                     Properties properties = (Properties) source;
-                    Map map = new TreeMap( properties ); // sort
-                    for ( Iterator iterator = map.entrySet().iterator(); iterator.hasNext(); )
+                    Map<?, ?> map = new TreeMap<Object, Object>( properties ); // sort
+                    for ( Map.Entry<?, ?> entry : map.entrySet() )
                     {
-                        Map.Entry entry = (Map.Entry) iterator.next();
-
                         writer.startNode( entry.getKey().toString() );
                         writer.setValue( entry.getValue().toString() );
                         writer.endNode();
@@ -609,7 +606,7 @@ public class EvaluateMojo
                     {
                         try
                         {
-                            Class clazz = ClassUtils.getClass( name );
+                            Class<?> clazz = ClassUtils.getClass( name );
                             String alias = StringUtils.lowercaseFirstLetter( ClassUtils.getShortClassName( clazz ) );
                             xstreamObject.alias( alias, clazz );
                             if ( !clazz.equals( Model.class ) )
@@ -684,10 +681,10 @@ public class EvaluateMojo
         throws MojoExecutionException, ProjectBuildingException, ArtifactResolutionException,
         ArtifactNotFoundException
     {
-        for ( Iterator it = getHelpPluginPom().getDependencies().iterator(); it.hasNext(); )
+        @SuppressWarnings( "unchecked" )
+        List<Dependency> dependencies = getHelpPluginPom().getDependencies();
+        for ( Dependency depependency : dependencies )
         {
-            Dependency depependency = (Dependency) it.next();
-
             if ( !( depependency.getGroupId().equals( "org.apache.maven" ) ) )
             {
                 continue;

@@ -37,7 +37,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.Iterator;
+import java.util.List;
 import java.util.Properties;
 
 /**
@@ -67,7 +67,7 @@ public class EffectiveSettingsMojo
      *
      * @since 2.1
      */
-    @Parameter(property = "showPasswords", defaultValue = "false")
+    @Parameter( property = "showPasswords", defaultValue = "false" )
     private boolean showPasswords;
 
     // ----------------------------------------------------------------------
@@ -142,19 +142,20 @@ public class EffectiveSettingsMojo
      */
     private static void hidePasswords( Settings aSettings )
     {
-        for ( Iterator it = aSettings.getProxies().iterator(); it.hasNext(); )
+        @SuppressWarnings( "unchecked" )
+        List<Proxy> proxies = aSettings.getProxies();
+        for ( Proxy proxy : proxies )
         {
-            Proxy proxy = (Proxy) it.next();
-
             if ( StringUtils.isNotEmpty( proxy.getPassword() ) )
             {
                 proxy.setPassword( "***" );
             }
         }
 
-        for ( Iterator it = aSettings.getServers().iterator(); it.hasNext(); )
+        @SuppressWarnings( "unchecked" )
+        List<Server> servers = aSettings.getServers();
+        for ( Server server : servers )
         {
-            Server server = (Server) it.next();
             // Password
             if ( StringUtils.isNotEmpty( server.getPassword() ) )
             {
@@ -237,10 +238,10 @@ public class EffectiveSettingsMojo
      */
     private static void cleanSettings( Settings settings )
     {
-        for ( Iterator it = settings.getProfiles().iterator(); it.hasNext(); )
+        @SuppressWarnings( "unchecked" )
+        List<Profile> profiles = settings.getProfiles();
+        for ( Profile profile : profiles )
         {
-            Profile profile = (Profile) it.next();
-
             Properties properties = new SortedProperties();
             properties.putAll( profile.getProperties() );
             profile.setProperties( properties );

@@ -39,7 +39,6 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -65,8 +64,8 @@ public class AllProfilesMojo
     /**
      * This is the list of projects currently slated to be built by Maven.
      */
-    @Parameter( property = "reactorProjects", required = true, readonly = true )
-    private List projects;
+    @Parameter( defaultValue = "${reactorProjects}", required = true, readonly = true )
+    private List<MavenProject> projects;
 
     /**
      * The current build session instance. This is used for plugin manager API calls.
@@ -84,10 +83,8 @@ public class AllProfilesMojo
     {
         StringBuilder descriptionBuffer = new StringBuilder();
 
-        for ( Iterator iter = projects.iterator(); iter.hasNext(); )
+        for ( MavenProject project : projects )
         {
-            MavenProject project = (MavenProject) iter.next();
-
             descriptionBuffer.append( "Listing Profiles for Project: " ).append( project.getId() ).append( "\n" );
 
             DefaultProfileManager pm =
@@ -121,34 +118,29 @@ public class AllProfilesMojo
             {
                 // This feels more like a hack to filter out inactive profiles, there is no 'direct'
                 // way to query activation status on a Profile instance.
-                Map allProfilesByIds = pm.getProfilesById();
+                @SuppressWarnings( "unchecked" )
+                Map<String, Profile> allProfilesByIds = pm.getProfilesById();
 
                 // active Profiles will be a subset of *all* profiles
-                List activeProfiles = project.getActiveProfiles();
-                for ( Iterator itr = activeProfiles.iterator(); itr.hasNext(); )
+                @SuppressWarnings( "unchecked" )
+                List<Profile> activeProfiles = project.getActiveProfiles();
+                for ( Profile activeProfile : activeProfiles )
                 {
-                    Profile activeProfile = (Profile) itr.next();
-
                     // we already have the active profiles for the project, so remove them from the list of all
                     // profiles.
                     allProfilesByIds.remove( activeProfile.getId() );
                 }
 
                 // display active profiles
-                for ( Iterator it = activeProfiles.iterator(); it.hasNext(); )
+                for ( Profile p : activeProfiles )
                 {
-                    Profile p = (Profile) it.next();
-
                     descriptionBuffer.append( "  Profile Id: " ).append( p.getId() );
                     descriptionBuffer.append( " (Active: true , Source: " ).append( p.getSource() ).append( ")\n" );
                 }
 
                 // display inactive profiles
-                Iterator it = allProfilesByIds.keySet().iterator();
-                while ( it.hasNext() )
+                for ( Profile p : allProfilesByIds.values() )
                 {
-                    Profile p = (Profile) allProfilesByIds.get( (String) it.next() );
-
                     descriptionBuffer.append( "  Profile Id: " ).append( p.getId() );
                     descriptionBuffer.append( " (Active: false , Source: " ).append( p.getSource() ).append( ")\n" );
                 }
@@ -211,10 +203,10 @@ public class AllProfilesMojo
             ProfilesRoot root = profilesBuilder.buildProfiles( projectDir );
             if ( root != null )
             {
-                for ( Iterator it = root.getProfiles().iterator(); it.hasNext(); )
+                @SuppressWarnings( "unchecked" )
+                List<org.apache.maven.profiles.Profile> profiles = root.getProfiles(); 
+                for ( org.apache.maven.profiles.Profile rawProfile : profiles )
                 {
-                    org.apache.maven.profiles.Profile rawProfile = (org.apache.maven.profiles.Profile) it.next();
-
                     Profile converted = ProfilesConversionUtils.convertFromProfileXmlProfile( rawProfile );
                     profileManager.addProfile( converted );
                     profileManager.explicitlyActivate( converted.getId() );
@@ -262,11 +254,10 @@ public class AllProfilesMojo
         }
 
         // Attempt to obtain the list of profiles from pom.xml
-        Iterator it = project.getModel().getProfiles().iterator();
-        while ( it.hasNext() )
+        @SuppressWarnings( "unchecked" )
+        List<Profile> profiles = project.getModel().getProfiles();
+        for ( Profile profile : profiles )
         {
-            Profile profile = (Profile) it.next();
-
             profilesManager.addProfile( profile );
             profilesManager.explicitlyActivate( profile.getId() );
         }
@@ -274,11 +265,10 @@ public class AllProfilesMojo
         MavenProject parent = project.getParent();
         while( parent != null )
         {
-            Iterator it2 = parent.getModel().getProfiles().iterator();
-            while ( it2.hasNext() )
+            @SuppressWarnings( "unchecked" )
+            List<Profile> profiles2 = parent.getModel().getProfiles();
+            for ( Profile profile : profiles2 )
             {
-                Profile profile = (Profile) it2.next();
-
                 profilesManager.addProfile( profile );
                 profilesManager.explicitlyActivate( profile.getId() );
             }
@@ -310,11 +300,10 @@ public class AllProfilesMojo
             getLog().debug( "Attempting to read profiles from settings.xml..." );
         }
 
-        Iterator it = settings.getProfiles().iterator();
-        while ( it.hasNext() )
+        @SuppressWarnings( "unchecked" )
+        List<org.apache.maven.settings.Profile> profiles = settings.getProfiles();
+        for ( org.apache.maven.settings.Profile rawProfile : profiles )
         {
-            org.apache.maven.settings.Profile rawProfile = (org.apache.maven.settings.Profile) it.next();
-
             Profile profile = SettingsUtils.convertFromSettingsProfile( rawProfile );
             profileManager.addProfile( profile );
             profileManager.explicitlyActivate( profile.getId() );

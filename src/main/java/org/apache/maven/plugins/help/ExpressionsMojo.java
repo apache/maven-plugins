@@ -30,7 +30,6 @@ import org.codehaus.plexus.util.StringUtils;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -68,10 +67,8 @@ public class ExpressionsMojo
 
         StringBuilder sb = new StringBuilder();
         sb.append( "Maven supports the following Plugin expressions:\n\n" );
-        for ( Iterator it = getExpressionsRoot().iterator(); it.hasNext(); )
+        for ( String expression : getExpressionsRoot() )
         {
-            String expression = (String) it.next();
-
             sb.append( "${" ).append( expression ).append( "}: " );
             sb.append( NO_DESCRIPTION_AVAILABLE );
             sb.append( "\n\n" );
@@ -122,7 +119,7 @@ public class ExpressionsMojo
      * @throws MojoFailureException if any reflection exceptions occur
      * @throws MojoExecutionException if no value exists for <code>ExpressionDocumenter#EXPRESSION_ROOTS</code>
      */
-    private static List getExpressionsRoot()
+    private static List<String> getExpressionsRoot()
         throws MojoFailureException, MojoExecutionException
     {
         try

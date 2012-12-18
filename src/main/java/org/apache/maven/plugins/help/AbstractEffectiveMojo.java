@@ -173,7 +173,7 @@ public abstract class AbstractEffectiveMojo
             }
 
             ElementFilter elementFilter = new ElementFilter( Namespace.getNamespace( "" ) );
-            for ( Iterator i = rootElement.getDescendants( elementFilter ); i.hasNext(); )
+            for ( Iterator<?> i = rootElement.getDescendants( elementFilter ); i.hasNext(); )
             {
                 Element e = (Element) i.next();
                 e.setNamespace( pomNamespace );
@@ -206,13 +206,13 @@ public abstract class AbstractEffectiveMojo
         static final long serialVersionUID = -8985316072702233744L;
 
         /** {@inheritDoc} */
-        public Set keySet()
+        public Set<Object> keySet()
         {
-            Set keynames = super.keySet();
+            Set<Object>keynames = super.keySet();
             Vector list = new Vector( keynames );
             Collections.sort( list );
 
-            return new LinkedHashSet( list );
+            return new LinkedHashSet<Object>( list );
         }
     }
 }
