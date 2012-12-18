@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 import org.apache.commons.lang.StringUtils;
+
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.doxia.util.HtmlTools;
 import org.apache.maven.plugin.issues.AbstractIssuesReportGenerator;
@@ -73,6 +74,8 @@ public class ChangesReportGenerator extends AbstractIssuesReportGenerator
     private Map issueLinksPerSystem;
 
     private boolean addActionDate;
+
+    private boolean linkToFeed;
 
     /**
      * @since 2.4
@@ -169,6 +172,16 @@ public class ChangesReportGenerator extends AbstractIssuesReportGenerator
     public void setAddActionDate( boolean addActionDate )
     {
         this.addActionDate = addActionDate;
+    }
+
+    public boolean isLinkToFeed()
+    {
+        return linkToFeed;
+    }
+
+    public void setLinkToFeed( boolean generateLinkTofeed )
+    {
+        this.linkToFeed = generateLinkTofeed;
     }
 
     /**
@@ -468,14 +481,17 @@ public class ChangesReportGenerator extends AbstractIssuesReportGenerator
 
         sink.table_();
 
-        // @todo Temporarily commented out until MCHANGES-46 is completely solved
-        // sink.rawText( bundle.getString( "report.changes.text.rssfeed" ) );
-        // sink.text( " " );
-        // sink.link( "changes.rss" );
-        // sinkFigure( "images/rss.png", sink );
-        // sink.link_();
-        //
-        // sink.lineBreak();
+        // MCHANGES-46
+        if ( linkToFeed )
+        {
+            sink.paragraph();
+            sink.text( bundle.getString( "report.changes.text.rssfeed" ) );
+            sink.nonBreakingSpace();
+            sink.link( "changes.rss" );
+            sinkFigure( sink, "images/rss.png", "rss feed" );
+            sink.link_();
+            sink.paragraph_();
+        }
 
         sink.section2_();
     }

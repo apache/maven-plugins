@@ -20,9 +20,14 @@ package org.apache.maven.plugin.changes;
  */
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Writer;
+
 import java.net.URL;
+
 import java.text.SimpleDateFormat;
+
 import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
@@ -42,9 +47,9 @@ import org.apache.maven.reporting.MavenReportException;
 import org.apache.maven.shared.filtering.MavenFileFilter;
 import org.apache.maven.shared.filtering.MavenFileFilterRequest;
 import org.apache.maven.shared.filtering.MavenFilteringException;
+
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
-import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
 import org.apache.commons.io.input.XmlStreamReader;
 
@@ -203,6 +208,22 @@ public class ChangesMojo
     private String url;
 
     /**
+     * The type of the feed to generate.
+     *
+     * <p>
+     * Supported values are:
+     * <code>"rss_0.9", "rss_0.91N" (RSS 0.91 Netscape), "rss_0.91U" (RSS 0.91 Userland),
+     * "rss_0.92", "rss_0.93", "rss_0.94", "rss_1.0", "rss_2.0", "atom_0.3", "atom_1.0"</code>.
+     * </p>
+     *
+     * <p>If not specified, no feed is generated.</p>
+     *
+     * @since 2.9
+     */
+    @Parameter
+    private String feedType;
+
+    /**
      * The path of the <code>changes.xml</code> file that will be converted into an HTML report.
      */
     @Parameter( property = "changes.xmlPath", defaultValue = "src/changes/changes.xml" )
@@ -313,6 +334,15 @@ public class ChangesMojo
         {
             getLog().warn( "No issue management URL defined in POM. Links to your issues will not work correctly." );
         }
+
+        boolean feedGenerated = false;
+
+        if ( StringUtils.isNotEmpty( feedType ) )
+        {
+            feedGenerated = generateFeed( changesXml, locale );
+        }
+
+        report.setLinkToFeed( feedGenerated );
 
         report.doGenerateReport( getBundle( locale ), getSink() );
 
@@ -472,5 +502,49 @@ public class ChangesMojo
                 }
             }
         }
+    }
+
+    private boolean generateFeed( final ChangesXML changesXml, final Locale locale )
+    {
+        getLog().debug( "Generating " + feedType + " feed." );
+
+        boolean success = true;
+
+        final FeedGenerator feed = new FeedGenerator( locale );
+        feed.setLink( project.getUrl() + "/changes-report.html" ); // TODO: better way?
+        feed.setTitle( project.getName() + ": " + changesXml.getTitle() );
+        feed.setAuthor( changesXml.getAuthor() );
+        feed.setDateFormat( new SimpleDateFormat( publishDateFormat, new Locale( publishDateLocale ) ) );
+
+        Writer writer = null;
+
+        try
+        {
+            writer = new FileWriter( new File( getReportOutputDirectory(), "changes.rss" ) );
+            feed.export( changesXml.getReleaseList(), feedType, writer );
+        }
+        catch ( IOException ex )
+        {
+            success = false;
+            getLog().warn( "Failed to create rss feed: " + ex.getMessage() );
+            getLog().debug( ex );
+        }
+        finally
+        {
+            try
+            {
+                if ( writer != null )
+                {
+                    writer.close();
+                }
+            }
+            catch ( IOException ex )
+            {
+                getLog().warn( "Failed to close writer: " + ex.getMessage() );
+                getLog().debug( ex );
+            }
+        }
+
+        return success;
     }
 }
