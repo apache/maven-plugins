@@ -139,11 +139,7 @@ public abstract class AbstractIssuesReportGenerator
         attributes.addAttribute( "alt", altText );
         attributes.addAttribute( "title", altText );
 
-        sink.figure( null );
-
         sink.figureGraphics( image, attributes );
-
-        sink.figure_();
     }
 
     protected void sinkHeader( Sink sink, String header )

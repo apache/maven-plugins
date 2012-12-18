@@ -356,6 +356,13 @@ under the License.
       <version>4.1.2</version>
     </dependency>
 
+    <!-- for rss feed generation -->
+    <dependency>
+      <groupId>rome</groupId>   
+      <artifactId>rome</artifactId>
+      <version>1.0</version>
+    </dependency>
+
     <!-- test dependencies -->
     <dependency>
       <groupId>junit</groupId>
