@@ -127,6 +127,7 @@ under the License.
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-scm-publish-plugin</artifactId>
+        <version>1.0-beta-2</version>
         <configuration>
           <content>${project.reporting.outputDirectory}</content>
           <pubScmUrl>scm:svn:https://svn.apache.org/repos/infra/websites/production/maven/content/${maven.site.path}</pubScmUrl>
