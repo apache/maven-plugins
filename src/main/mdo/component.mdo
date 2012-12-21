@@ -495,8 +495,8 @@
           <defaultValue>false</defaultValue>
           <description>
             If set to true, this property will unpack all dependencies
-            into the specified output directory. When set to false
-            dependencies will be includes as archives (jars). Can only unpack
+            into the specified output directory. When set to false,
+            dependencies will be included as archives (jars). Can only unpack
             jar, zip, tar.gz, and tar.bz archives. Default value is false.
           </description>
         </field>
