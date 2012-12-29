@@ -209,7 +209,9 @@ public class FeedGenerator
         }
         catch ( FeedException ex )
         {
-            throw new IOException( ex );
+            IOException ioex = new IOException( ex.getMessage() );
+            ioex.initCause( ex );
+            throw ioex;
         }
     }
 
