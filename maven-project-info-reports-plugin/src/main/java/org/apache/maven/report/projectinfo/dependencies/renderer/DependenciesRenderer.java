@@ -81,9 +81,6 @@ public class DependenciesRenderer
     /** URL for the 'close.gif' image */
     private static final String IMG_CLOSE_URL = "./images/close.gif";
 
-    /** Random used to generate a UID */
-    private static final SecureRandom RANDOM;
-
     /** Used to format decimal values in the "Dependency File Details" table */
     protected static final DecimalFormat DEFAULT_DECIMAL_FORMAT = new DecimalFormat( "#,##0" );
 
@@ -113,6 +110,9 @@ public class DependenciesRenderer
      * @since 2.1.1
      */
     private int section;
+
+    /** Counter for unique IDs that is consistent across generations. */
+    private int idCounter = 0;
 
     /**
      * Will be filled with license name / set of projects.
@@ -155,15 +155,6 @@ public class DependenciesRenderer
         jarSubtype.add( "par" );
         jarSubtype.add( "ejb" );
         JAR_SUBTYPE = Collections.unmodifiableSet( jarSubtype );
-
-        try
-        {
-            RANDOM = SecureRandom.getInstance( "SHA1PRNG" );
-        }
-        catch ( NoSuchAlgorithmException e )
-        {
-            throw new RuntimeException( e );
-        }
 
         StringBuilder sb = new StringBuilder();
         sb.append( "<script language=\"javascript\" type=\"text/javascript\">" ).append( SystemUtils.LINE_SEPARATOR );
@@ -883,8 +874,8 @@ public class DependenciesRenderer
     {
         Artifact artifact = node.getArtifact();
         String id = artifact.getId();
-        String dependencyDetailId = getUUID();
-        String imgId = getUUID();
+        String dependencyDetailId = "_dep" + idCounter++;
+        String imgId = "_img" + idCounter++;
 
         sink.listItem();
 
@@ -1469,15 +1460,6 @@ public class DependenciesRenderer
             }
         }
         return false;
-    }
-
-    /**
-     * @return a valid HTML ID respecting <a href="http://www.w3.org/TR/xhtml1/#C_8">XHTML 1.0 section C.8. Fragment
-     *         Identifiers</a>
-     */
-    private static String getUUID()
-    {
-        return "_" + Math.abs( RANDOM.nextInt() );
     }
 
     /**
