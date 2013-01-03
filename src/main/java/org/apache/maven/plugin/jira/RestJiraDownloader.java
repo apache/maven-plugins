@@ -77,6 +77,10 @@ public class RestJiraDownloader extends AbstractJiraDownloader
         {
             // blank on purpose.
         }
+        public NoRest( String message )
+        {
+            super( message );
+        }
     }
 
     public RestJiraDownloader() {
@@ -98,19 +102,19 @@ public class RestJiraDownloader extends AbstractJiraDownloader
         String jiraUrl = urlMap.get( "url" );
         jiraProject = urlMap.get( "project" );
         WebClient client = setupWebClient( jiraUrl );
-        /*
-         If there is no session auth, explicitly probe to see if there is any REST.
-         */
-        if ( jiraUser == null)
+
+        // We use version 2 of the REST API, that first appeared in JIRA 5
+        // Check if version 2 of the REST API is supported
+        // http://docs.atlassian.com/jira/REST/5.0/
+        // Note that serverInfo can always be accessed without authentication
+        client.replacePath( "/rest/api/2/serverInfo" );
+        client.accept( MediaType.APPLICATION_JSON );
+        Response siResponse = client.get();
+        if ( siResponse.getStatus() != Response.Status.OK.getStatusCode() )
         {
-            client.replacePath( "/rest/api/2/serverInfo" );
-            client.accept( MediaType.APPLICATION_JSON );
-            Response siResponse = client.get();
-            if ( siResponse.getStatus() != Response.Status.OK.getStatusCode() )
-            {
-                throw new NoRest();
-            }
+            throw new NoRest( "This JIRA server does not support version 2 of the REST API, which maven-changes-plugin requires." );
         }
+
         doSessionAuth( client );
 
         resolveIds( client, jiraProject );
