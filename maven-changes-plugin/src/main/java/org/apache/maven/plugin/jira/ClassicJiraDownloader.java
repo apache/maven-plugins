@@ -86,19 +86,10 @@ public final class ClassicJiraDownloader
 
             client.setState( state );
 
-            String fullUrl = null;
-
-            if ( useJql )
-            {
-                fullUrl = getJqlQueryURL();
-            }
-            else
-            {
-                fullUrl = getParameterBasedQueryURL( client );
-            }
-            String baseUrl = JiraHelper.getBaseUrl( fullUrl );
+            String baseUrl = JiraHelper.getBaseUrl( project.getIssueManagement().getUrl() );
 
             getLog().debug( "JIRA lives at: " + baseUrl );
+            // Here we only need the host part of the URL
             determineProxy( baseUrl, client );
 
             prepareBasicAuthentication( client );
@@ -106,12 +97,23 @@ public final class ClassicJiraDownloader
             boolean jiraAuthenticationSuccessful = false;
             if ( isJiraAuthenticationConfigured() )
             {
+                // Here we only need the parts up to and including the host part of the URL
                 jiraAuthenticationSuccessful = doJiraAuthentication( client, baseUrl );
             }
 
             if ( ( isJiraAuthenticationConfigured() && jiraAuthenticationSuccessful )
                 || !isJiraAuthenticationConfigured() )
             {
+                String fullUrl = null;
+
+                if ( useJql )
+                {
+                    fullUrl = getJqlQueryURL();
+                }
+                else
+                {
+                    fullUrl = getParameterBasedQueryURL( client );
+                }
                 if ( log.isDebugEnabled() )
                 {
                     log.debug( "download jira issues from url " + fullUrl );
