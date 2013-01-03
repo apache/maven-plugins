@@ -550,6 +550,9 @@ public class AnnouncementMojo
     {
         String version = ( versionPrefix == null ? "" : versionPrefix ) + getVersion();
 
+        getLog().debug( "Generating announcement for version [" + version + "]. Found these releases: "
+                        + ReleaseUtils.toString( releases ) );
+
         doGenerate( releases, releaseUtils.getLatestRelease( releases, version ) );
     }
 
