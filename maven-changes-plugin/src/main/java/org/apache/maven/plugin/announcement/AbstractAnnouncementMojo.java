@@ -19,9 +19,7 @@ package org.apache.maven.plugin.announcement;
  * under the License.
  */
 
-import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.execution.MavenSession;
-import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugin.changes.AbstractChangesMojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
 /**
@@ -31,24 +29,8 @@ import org.apache.maven.plugins.annotations.Parameter;
  * @since 2.3
  */
 public abstract class AbstractAnnouncementMojo
-    extends AbstractMojo
+    extends AbstractChangesMojo
 {
-    /**
-     * The current project base directory.
-     *
-     * @since 2.1
-     */
-    @Parameter( property = "basedir", required = true )
-    protected String basedir;
-
-    /**
-     * The Maven Session.
-     *
-     * @since 2.3
-     */
-    @Component
-    protected MavenSession mavenSession;
-
     /**
      * This will cause the execution to be run only at the top of a given module
      * tree. That is, run in the project contained in the same folder where the
@@ -58,26 +40,4 @@ public abstract class AbstractAnnouncementMojo
      */
     @Parameter( property = "announcement.runOnlyAtExecutionRoot", defaultValue = "false" )
     protected boolean runOnlyAtExecutionRoot;
-
-    /**
-     * Returns <code>true</code> if the current project is located at the
-     * Execution Root Directory (where mvn was launched).
-     *
-     * @return <code>true</code> if the current project is at the Execution Root
-     */
-    protected boolean isThisTheExecutionRoot()
-    {
-        getLog().debug( "Root Folder:" + mavenSession.getExecutionRootDirectory() );
-        getLog().debug( "Current Folder:" + basedir );
-        boolean result = mavenSession.getExecutionRootDirectory().equalsIgnoreCase( basedir.toString() );
-        if ( result )
-        {
-            getLog().debug( "This is the execution root." );
-        }
-        else
-        {
-            getLog().debug( "This is NOT the execution root." );
-        }
-        return result;
-    }
 }
