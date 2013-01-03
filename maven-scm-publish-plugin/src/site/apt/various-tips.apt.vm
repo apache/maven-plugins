@@ -89,7 +89,7 @@ Various tips for using this plugin
     </plugin>
 +----------------
 
-  By defaut, the scm content is checked-out/cloned to <<<$\{project.build.directory}/scmpublish-checkout>>>, so when running <<<mvn clean>>>,
+  By default, the scm content is checked-out/cloned to <<<$\{project.build.directory}/scmpublish-checkout>>>, so when running <<<mvn clean>>>,
   all the content is deleted. You can configure a path to your machine to avoid full checkout.
   A recommended way is to use a property with a default value that your colleague will be able to override in their settings.
 
