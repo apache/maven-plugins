@@ -71,7 +71,7 @@ public class ReleaseUtils
         if ( release == null )
         {
             throw new MojoExecutionException( "Couldn't find the release '" + pomVersion
-                + "' among the supplied releases." );
+                + "' among the supplied releases: " + toString( releases ) );
         }
 
         return release;
@@ -251,5 +251,22 @@ public class ReleaseUtils
         }
 
         return mergedReleases;
+    }
+
+    private static String toString(Release release) {
+        return release.getClass().getSimpleName()
+                + "[version='" + release.getVersion() + "'"
+                + ", date='" + release.getDateRelease() + "'"
+                + ", description='" + release.getDescription() + "'"
+                + ", actionsSize=" + release.getActions().size()
+                + "]";
+    }
+
+    public static String toString( List<Release> releases ) {
+        List<String> releaseStrings = new ArrayList<String>( releases.size() );
+        for ( Release release : releases ) {
+            releaseStrings.add( toString( release ) );
+        }
+        return releaseStrings.toString();
     }
 }

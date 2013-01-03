@@ -72,7 +72,7 @@ public class IssueUtils
         if ( !isFound )
         {
             throw new MojoExecutionException(
-                "Couldn't find any issues with a Fix Version prefix of '" + prefix + "' among the supplied issues." );
+                "Couldn't find any issues with a Fix Version prefix of '" + prefix + "' among the supplied issues: "  + toString( issues ) );
         }
         return filteredIssues;
     }
@@ -117,8 +117,16 @@ public class IssueUtils
         if ( !isFound )
         {
             throw new MojoExecutionException(
-                "Couldn't find any issues for the version '" + releaseVersion + "' among the supplied issues." );
+                "Couldn't find any issues for the version '" + releaseVersion + "' among the supplied issues: " + toString( issues ) );
         }
         return issuesForVersion;
+    }
+
+    public static String toString( List<Issue> issues ) {
+        List<String> issueStrings = new ArrayList<String>( issues.size() );
+        for ( Issue issue : issues ) {
+            issueStrings.add( issue.toString() );
+        }
+        return issueStrings.toString();
     }
 }
