@@ -25,7 +25,6 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -41,7 +40,7 @@ import org.apache.maven.plugins.changes.model.Release;
  */
 @Mojo( name = "changes-check", threadSafe = true )
 public class ChangesCheckMojo
-    extends AbstractMojo
+    extends AbstractChangesMojo
 {
     /**
      * The format that a correct release date should have. This value will be
@@ -80,27 +79,35 @@ public class ChangesCheckMojo
     public void execute()
         throws MojoExecutionException
     {
-        if ( this.version.endsWith( "-SNAPSHOT" ) && this.skipSnapshots )
+        // Run only at the execution root
+        if ( runOnlyAtExecutionRoot && !isThisTheExecutionRoot() )
         {
-            getLog().info( "Skipping snapshot version '" + this.version + "'." );
-        }
-        else if ( xmlPath.exists() )
-        {
-            ChangesXML xml = new ChangesXML( xmlPath, getLog() );
-            ReleaseUtils releaseUtils = new ReleaseUtils( getLog() );
-            Release release =
-                releaseUtils.getLatestRelease( releaseUtils.convertReleaseList( xml.getReleaseList() ), version );
-
-            if ( !isValidDate( release.getDateRelease(), releaseDateFormat ) )
-            {
-                throw new MojoExecutionException(
-                    "The file " + xmlPath.getAbsolutePath() + " has an invalid release date." );
-
-            }
+            getLog().info( "Skipping the changes check in this project because it's not the Execution Root" );
         }
         else
         {
-            getLog().warn( "The file " + xmlPath.getAbsolutePath() + " does not exist." );
+            if ( this.version.endsWith( "-SNAPSHOT" ) && this.skipSnapshots )
+            {
+                getLog().info( "Skipping snapshot version '" + this.version + "'." );
+            }
+            else if ( xmlPath.exists() )
+            {
+                ChangesXML xml = new ChangesXML( xmlPath, getLog() );
+                ReleaseUtils releaseUtils = new ReleaseUtils( getLog() );
+                Release release =
+                    releaseUtils.getLatestRelease( releaseUtils.convertReleaseList( xml.getReleaseList() ), version );
+
+                if ( !isValidDate( release.getDateRelease(), releaseDateFormat ) )
+                {
+                    throw new MojoExecutionException(
+                        "The file " + xmlPath.getAbsolutePath() + " has an invalid release date." );
+
+                }
+            }
+            else
+            {
+                getLog().warn( "The file " + xmlPath.getAbsolutePath() + " does not exist." );
+            }
         }
     }
 

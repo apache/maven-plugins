@@ -22,7 +22,6 @@ package org.apache.maven.plugin.changes;
 import java.io.File;
 import java.util.List;
 
-import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.changes.schema.ChangesSchemaValidator;
@@ -43,7 +42,7 @@ import org.xml.sax.SAXParseException;
  */
 @Mojo( name = "changes-validate", threadSafe = true )
 public class ChangesValidatorMojo
-    extends AbstractMojo
+    extends AbstractChangesMojo
 {
 
     /**
@@ -75,38 +74,45 @@ public class ChangesValidatorMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-
-        if ( !xmlPath.exists() )
+        // Run only at the execution root
+        if ( runOnlyAtExecutionRoot && !isThisTheExecutionRoot() )
         {
-            getLog().warn( "changes.xml file " + xmlPath.getAbsolutePath() + " does not exist." );
-            return;
+            getLog().info( "Skipping the changes validate in this project because it's not the Execution Root" );
         }
-
-        try
+        else
         {
-            XmlValidationHandler xmlValidationHandler = changesSchemaValidator
-                .validateXmlWithSchema( xmlPath, changesXsdVersion, failOnError );
-            boolean hasErrors = !xmlValidationHandler.getErrors().isEmpty();
-            if ( hasErrors )
+            if ( !xmlPath.exists() )
             {
-                logSchemaValidation( xmlValidationHandler.getErrors() );
-                if ( failOnError )
+                getLog().warn( "changes.xml file " + xmlPath.getAbsolutePath() + " does not exist." );
+                return;
+            }
+
+            try
+            {
+                XmlValidationHandler xmlValidationHandler = changesSchemaValidator
+                    .validateXmlWithSchema( xmlPath, changesXsdVersion, failOnError );
+                boolean hasErrors = !xmlValidationHandler.getErrors().isEmpty();
+                if ( hasErrors )
                 {
-                    throw new MojoExecutionException( "changes.xml file " + xmlPath.getAbsolutePath()
-                        + " is not valid, see previous errors." );
-                }
-                else
-                {
-                    getLog().info( " skip previous validation errors due to failOnError=false." );
+                    logSchemaValidation( xmlValidationHandler.getErrors() );
+                    if ( failOnError )
+                    {
+                        throw new MojoExecutionException( "changes.xml file " + xmlPath.getAbsolutePath()
+                            + " is not valid, see previous errors." );
+                    }
+                    else
+                    {
+                        getLog().info( " skip previous validation errors due to failOnError=false." );
+                    }
                 }
             }
-        }
-        catch ( SchemaValidatorException e )
-        {
-            if ( failOnError )
+            catch ( SchemaValidatorException e )
             {
-                throw new MojoExecutionException( "failed to validate changes.xml file " + xmlPath.getAbsolutePath()
-                    + ": " + e.getMessage(), e );
+                if ( failOnError )
+                {
+                    throw new MojoExecutionException( "failed to validate changes.xml file " + xmlPath.getAbsolutePath()
+                        + ": " + e.getMessage(), e );
+                }
             }
         }
     }
