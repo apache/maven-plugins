@@ -61,6 +61,8 @@ public class TracDownloader
 
         issue.setId( String.valueOf( ticketObj[0] ) );
 
+        issue.setKey( String.valueOf( ticketObj[0] ) );
+
         issue.setLink( getUrl() + "/ticket/" + String.valueOf( ticketObj[0] ) );
 
         issue.setCreated( parseDate( String.valueOf( ticketObj[1] ) ) );
