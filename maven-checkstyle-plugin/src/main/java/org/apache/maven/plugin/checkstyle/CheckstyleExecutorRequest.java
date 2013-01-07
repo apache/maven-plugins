@@ -23,6 +23,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.List;
 
+import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 
@@ -58,6 +59,8 @@ public class CheckstyleExecutorRequest
     private File testSourceDirectory;
 
     private File sourceDirectory;
+
+    private List<Resource> resources;
 
     private boolean failsOnError;
 
@@ -193,6 +196,16 @@ public class CheckstyleExecutorRequest
     public CheckstyleExecutorRequest setSourceDirectory( File sourceDirectory )
     {
         this.sourceDirectory = sourceDirectory;
+        return this;
+    }
+
+    public List<Resource> getResources() {
+        return resources;
+    }
+
+    public CheckstyleExecutorRequest setResources( List<Resource> resources )
+    {
+        this.resources = resources;
         return this;
     }
 

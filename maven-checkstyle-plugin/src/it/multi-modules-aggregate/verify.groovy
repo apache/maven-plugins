@@ -28,6 +28,7 @@ assert new File(basedir, 'target/site/checkstyle-aggregate.html').exists();
 content = new File(basedir, 'target/site/checkstyle-aggregate.html').text;
 
 assert content.contains( 'org/apache/maven/plugins/checkstyle/its/App.java' );
+assert content.contains( 'org/apache/maven/plugins/checkstyle/its/App_en.properties' );
 assert content.contains( 'org/apache/maven/plugins/checkstyle/its/AppTest.java' );
 
 return true;
