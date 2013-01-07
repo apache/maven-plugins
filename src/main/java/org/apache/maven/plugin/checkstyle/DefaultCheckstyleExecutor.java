@@ -33,6 +33,7 @@ import java.util.Properties;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
+import org.apache.maven.model.Resource;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.component.annotations.Requirement;
@@ -188,12 +189,12 @@ public class DefaultCheckstyleExecutor
             for ( MavenProject childProject : request.getReactorProjects() )
             {
                 addSourceDirectory( sinkListener, new File( childProject.getBuild().getSourceDirectory() ),
-                                    new File( childProject.getBuild().getSourceDirectory() ), request );
+                                    new File( childProject.getBuild().getSourceDirectory() ), childProject.getResources(), request);
             }
         }
         else
         {
-            addSourceDirectory( sinkListener, sourceDirectory, testSourceDirectory, request );
+            addSourceDirectory( sinkListener, sourceDirectory, testSourceDirectory, request.getResources(), request);
         }
 
         checker.addListener( sinkListener );
@@ -224,16 +225,34 @@ public class DefaultCheckstyleExecutor
     }
 
     protected void addSourceDirectory( CheckstyleReportListener sinkListener, File sourceDirectory,
-                                       File testSourceDirectory, CheckstyleExecutorRequest request )
+                                       File testSourceDirectory, List<Resource> resources,
+                                       CheckstyleExecutorRequest request )
     {
         if ( sourceDirectory != null )
         {
             sinkListener.addSourceDirectory( sourceDirectory );
         }
+
         if ( request.isIncludeTestSourceDirectory() && ( testSourceDirectory != null )
             && ( testSourceDirectory.exists() ) && ( testSourceDirectory.isDirectory() ) )
         {
             sinkListener.addSourceDirectory( testSourceDirectory );
+        }
+
+        if ( resources != null )
+        {
+            for ( Resource resource : resources )
+            {
+                if ( resource.getDirectory() != null )
+                {
+                    File resourcesDirectory = new File( resource.getDirectory() );
+                    if ( resourcesDirectory.exists() && resourcesDirectory.isDirectory() )
+                    {
+                        sinkListener.addSourceDirectory( resourcesDirectory );
+                        getLogger().debug( "Added '" + resourcesDirectory.getAbsolutePath() + "' as a source directory." );
+                    }
+                }
+            }
         }
     }
 
@@ -483,19 +502,19 @@ public class DefaultCheckstyleExecutor
         {
             for ( MavenProject project : request.getReactorProjects() )
             {
-                addFilesToProcess( request, excludesStr, new File( project.getBuild().getSourceDirectory() ), files );
+                addFilesToProcess( request, excludesStr, new File( project.getBuild().getSourceDirectory() ), project.getResources(), files);
             }
         }
         else
         {
-            addFilesToProcess( request, excludesStr, sourceDirectory, files );
+            addFilesToProcess( request, excludesStr, sourceDirectory, request.getResources(), files);
         }
 
         return (File[]) files.toArray( EMPTY_FILE_ARRAY );
     }
 
     private void addFilesToProcess( CheckstyleExecutorRequest request, StringBuilder excludesStr, File sourceDirectory,
-                                    List<File> files )
+                                    List<Resource> resources, List<File> files)
         throws IOException
     {
         if ( sourceDirectory == null || !sourceDirectory.exists() )
@@ -504,12 +523,40 @@ public class DefaultCheckstyleExecutor
         }
         files.addAll(
             FileUtils.getFiles( sourceDirectory, request.getIncludes(), excludesStr.toString() ) );
+
         File testSourceDirectory = request.getTestSourceDirectory();
         if ( request.isIncludeTestSourceDirectory() && ( testSourceDirectory != null )
             && ( testSourceDirectory.exists() ) && ( testSourceDirectory.isDirectory() ) )
         {
             files.addAll( FileUtils.getFiles( testSourceDirectory, request.getIncludes(),
                                               excludesStr.toString() ) );
+        }
+
+        // @todo Should we add a check to see if resources should be included or not, similar to request.isIncludeTestSourceDirectory()?
+        if ( resources != null )
+        {
+            for ( Resource resource : resources)
+            {
+                if ( resource.getDirectory() != null )
+                {
+                    File resourcesDirectory = new File( resource.getDirectory() );
+                    if ( resourcesDirectory.exists() && resourcesDirectory.isDirectory() )
+                    {
+                        // @todo Perhaps extend the functionality in the future so that the included types of files can be configured. For now it is hard-coded to properties files.
+                        List resourceFiles = FileUtils.getFiles( resourcesDirectory, "**/*.properties", null );
+                        files.addAll( resourceFiles );
+                        getLogger().debug( "Added " + resourceFiles.size() + " resource files found in '" + resourcesDirectory.getAbsolutePath() + "'." );
+                    }
+                    else
+                    {
+                        getLogger().debug( "The resources directory '" + resourcesDirectory.getAbsolutePath() + "' does not exist or is not a directory." );
+                    }
+                }
+            }
+        }
+        else
+        {
+            getLogger().debug( "No resources found in this project." );
         }
     }
 
