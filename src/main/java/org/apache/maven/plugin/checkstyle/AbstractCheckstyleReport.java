@@ -26,6 +26,7 @@ import com.puppycrawl.tools.checkstyle.api.CheckstyleException;
 import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.doxia.tools.SiteTool;
 import org.apache.maven.model.ReportPlugin;
+import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.checkstyle.rss.CheckstyleRssGenerator;
 import org.apache.maven.plugin.checkstyle.rss.CheckstyleRssGeneratorRequest;
 import org.apache.maven.plugins.annotations.Component;
@@ -46,6 +47,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Calendar;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -86,6 +88,14 @@ public abstract class AbstractCheckstyleReport
      */
     @Parameter( property = "checkstyle.output.file", defaultValue = "${project.build.directory}/checkstyle-result.xml" )
     private File outputFile;
+
+    /**
+     * Specifies the location of the resources to be used for Checkstyle.
+     *
+     * @since 2.10
+     */
+    @Parameter( defaultValue = "${project.resources}" )
+    protected List<Resource> resources;
 
     /**
      * If <code>null</code>, the Checkstyle plugin will display violations on stdout.

@@ -349,7 +349,7 @@ public class CheckstyleReport
         request.setConsoleListener( getConsoleListener() ).setConsoleOutput( consoleOutput )
             .setExcludes( excludes ).setFailsOnError( failsOnError ).setIncludes( includes )
             .setIncludeTestSourceDirectory( includeTestSourceDirectory ).setListener( getListener() )
-            .setLog( getLog() ).setProject( project ).setSourceDirectory( sourceDirectory )
+            .setLog( getLog() ).setProject( project ).setSourceDirectory( sourceDirectory ).setResources( resources )
             .setStringOutputStream( stringOutputStream ).setSuppressionsLocation( suppressionsLocation )
             .setTestSourceDirectory( testSourceDirectory ).setConfigLocation( configLocation )
             .setPropertyExpansion( propertyExpansion ).setHeaderLocation( headerLocation )
