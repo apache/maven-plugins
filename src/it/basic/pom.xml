@@ -103,6 +103,7 @@ under the License.
             <programmingLanguage>java</programmingLanguage>
             <category>build-management</category>
             <downloadPage>${project.url}/downloads</downloadPage>
+            <shortdesc>${project.description}</shortdesc>
           </doapOptions>
           <asfExtOptions>
            <charter>World Domination</charter>
