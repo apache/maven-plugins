@@ -94,7 +94,7 @@ public abstract class AbstractCheckstyleReport
      *
      * @since 2.10
      */
-    @Parameter( defaultValue = "${project.resources}" )
+    @Parameter( defaultValue = "${project.resources}", readonly = true )
     protected List<Resource> resources;
 
     /**
