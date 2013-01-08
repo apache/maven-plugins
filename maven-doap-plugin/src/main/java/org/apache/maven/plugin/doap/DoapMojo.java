@@ -2641,7 +2641,8 @@ public class DoapMojo
                     break;
                 case SHORT_DESC_TOO_LONG:
                     errorMessages.add(
-                        "The " + toConfiguration( tags, value ) + " parameter is too long maximum length is 10." );
+                        "The " + toConfiguration( tags, value ) + " first is too long maximum words number is 10." );
+                    break;
                 default:
                     throw new IllegalArgumentException( "Unknown errorId=" + errorId );
             }
