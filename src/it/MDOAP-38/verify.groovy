@@ -21,4 +21,4 @@ def logFile = new File( basedir, 'build.log' )
 assert logFile.exists()
 content = logFile.text
 
-assert content.contains( 'The <doapOptions><shortdesc/></doapOptions> first is too long maximum words number is 10.' )
+assert content.contains( 'The <doapOptions><shortdesc/></doapOptions> first sentence is too long maximum words number is 10.' )
