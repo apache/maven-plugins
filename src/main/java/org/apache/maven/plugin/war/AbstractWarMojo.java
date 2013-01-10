@@ -311,7 +311,7 @@ public abstract class AbstractWarMojo
      *
      * @since 2.3
      */
-    @Parameter( defaultValue = "false" )
+    @Parameter( defaultValue = "true" )
     private boolean recompressZippedFiles;
 
     /**
