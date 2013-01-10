@@ -298,7 +298,7 @@ public abstract class AbstractAssemblyMojo
      *
      * @since 2.4
      */
-    @Parameter( defaultValue = "false" )
+    @Parameter( defaultValue = "true" )
     private boolean recompressZippedFiles;
 
     /**
