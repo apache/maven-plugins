@@ -23,8 +23,6 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.FieldPosition;
