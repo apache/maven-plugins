@@ -151,7 +151,7 @@ Creating Content
   extension to the filename.
 
   For example, the module for the Maven website contains a
-  {{{http://svn.apache.org/repos/asf/maven/site/trunk/src/site/apt/download.apt.vm}<<<src/site/apt/download.apt.vm>>>}}
+  {{{http://svn.apache.org/repos/asf/maven/site/trunk/content/xdoc/download.xml.vm}<<<content/xdoc/download.xml.vm>>>}}
   file, which uses the expression <<<$\{currentStableVersion}>>> to filter in a
   property set in the
   {{{http://svn.apache.org/repos/asf/maven/site/trunk/pom.xml}POM}}.
