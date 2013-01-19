@@ -109,7 +109,7 @@ public class ScmPublishPublishScmMojo
                     name + " match one of the patterns '" + pathsAsList + "': do not add to deleted files" );
                 continue;
             }
-            getLog().debug( "file marked for deletion:" + name );
+            getLog().debug( "file marked for deletion: " + name );
             File file = new File( checkout, name );
 
             if ( ( doNotDeleteDirs != null ) && file.isDirectory() && ( doNotDeleteDirs.contains( name ) ) )
@@ -236,30 +236,31 @@ public class ScmPublishPublishScmMojo
 
         try
         {
-            logInfo( "Updating content..." );
+            logInfo( "Updating checkout directory with actual content: %s", content );
             update( checkoutDirectory, content, ( project == null ) ? null : project.getModel().getModules() );
         }
         catch ( IOException ioe )
         {
-            throw new MojoExecutionException( "Could not copy content to scm checkout", ioe );
+            throw new MojoExecutionException( "Could not copy content to SCM checkout", ioe );
         }
 
-        logInfo( "Publish files: %d addition(s), %d update(s), %d delete(s)", added.size(), updated.size(),
-                 deleted.size() );
+        logInfo( "Publishing content into SCM will result in %d addition(s), %d update(s), %d delete(s)", added.size(),
+                 updated.size(), deleted.size() );
 
         if ( isDryRun() )
         {
+            int pos = checkoutDirectory.getAbsolutePath().length() + 1;
             for ( File addedFile : added )
             {
-                logInfo( "Added %s", addedFile.getAbsolutePath() );
+                logInfo( "- added   %s", addedFile.getAbsolutePath().substring( pos ) );
             }
             for ( File deletedFile : deleted )
             {
-                logInfo( "Deleted %s", deletedFile.getAbsolutePath() );
+                logInfo( "- deleted %s", deletedFile.getAbsolutePath().substring( pos ) );
             }
             for ( File updatedFile : updated )
             {
-                logInfo( "Updated %s", updatedFile.getAbsolutePath() );
+                logInfo( "- updated %s", updatedFile.getAbsolutePath().substring( pos ) );
             }
             return;
         }

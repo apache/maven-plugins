@@ -508,8 +508,6 @@ public abstract class AbstractScmPublishMojo
         ScmFileSet updatedFileSet = new ScmFileSet( checkoutDirectory );
         try
         {
-            logInfo( "Checking in to the scm" );
-
             CheckInScmResult checkinResult =
                 checkScmResult( scmProvider.checkIn( scmRepository, updatedFileSet, new ScmBranch( scmBranch ),
                                                      checkinComment ), "check-in files to SCM" );
