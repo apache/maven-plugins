@@ -302,7 +302,7 @@ public abstract class AbstractScmPublishMojo
             checkCreateRemoteSvnPath();
         }
 
-        logInfo( "%s the pub tree from  %s ...", ( tryUpdate ? "Updating" : "Checking out" ), pubScmUrl );
+        logInfo( "%s the pub tree from %s ...", ( tryUpdate ? "Updating" : "Checking out" ), pubScmUrl );
 
         if ( checkoutDirectory.exists() && !tryUpdate )
 
