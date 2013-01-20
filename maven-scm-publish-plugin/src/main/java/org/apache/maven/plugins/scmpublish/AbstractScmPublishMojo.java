@@ -648,7 +648,10 @@ public abstract class AbstractScmPublishMojo
     public void setPubScmUrl( String pubScmUrl )
     {
         // Fix required for Windows, which fit other OS as well
-        this.pubScmUrl = pubScmUrl.replaceFirst( "file:/[/]*", "file:///" );
+        if ( pubScmUrl.startsWith( "scm:svn:" ) )
+        {
+            this.pubScmUrl = pubScmUrl.replaceFirst( "file:/[/]*", "file:///" );
+        }
     }
 
 }
