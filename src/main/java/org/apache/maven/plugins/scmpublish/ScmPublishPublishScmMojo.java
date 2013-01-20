@@ -252,15 +252,15 @@ public class ScmPublishPublishScmMojo
             int pos = checkoutDirectory.getAbsolutePath().length() + 1;
             for ( File addedFile : added )
             {
-                logInfo( "- added   %s", addedFile.getAbsolutePath().substring( pos ) );
-            }
-            for ( File deletedFile : deleted )
-            {
-                logInfo( "- deleted %s", deletedFile.getAbsolutePath().substring( pos ) );
+                logInfo( "- addition %s", addedFile.getAbsolutePath().substring( pos ) );
             }
             for ( File updatedFile : updated )
             {
-                logInfo( "- updated %s", updatedFile.getAbsolutePath().substring( pos ) );
+                logInfo( "- update   %s", updatedFile.getAbsolutePath().substring( pos ) );
+            }
+            for ( File deletedFile : deleted )
+            {
+                logInfo( "- delete   %s", deletedFile.getAbsolutePath().substring( pos ) );
             }
             return;
         }
