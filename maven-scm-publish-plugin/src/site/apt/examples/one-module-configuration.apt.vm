@@ -38,7 +38,7 @@ Maven Mono Module Configuration
       <groupId>org.apache.maven.plugins</groupId>
       <artifactId>maven-site-plugin</artifactId>
       <configuration>
-        <skipDeploy>true</skipDeploy><!-- don't deploy with maven-site-plugin -->
+        <skipDeploy>true</skipDeploy><!-- don't deploy site with maven-site-plugin -->
       </configuration>
     </plugin>
     <plugin>
@@ -51,7 +51,7 @@ Maven Mono Module Configuration
       <executions>
         <execution>
           <id>scm-publish</id>
-          <phase>site-deploy</phase><!-- deploy with maven-scm-publish-plugin -->
+          <phase>site-deploy</phase><!-- deploy site with maven-scm-publish-plugin -->
           <goals>
             <goal>publish-scm</goal>
           </goals>
