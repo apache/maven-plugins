@@ -21,6 +21,7 @@ package org.apache.maven.plugins.scmpublish;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -302,7 +303,7 @@ public abstract class AbstractScmPublishMojo
             checkCreateRemoteSvnPath();
         }
 
-        logInfo( "%s the pub tree from %s ...", ( tryUpdate ? "Updating" : "Checking out" ), pubScmUrl );
+        logInfo( "%s the pub tree from %s into %s", ( tryUpdate ? "Updating" : "Checking out" ), pubScmUrl, checkoutDirectory );
 
         if ( checkoutDirectory.exists() && !tryUpdate )
 
@@ -508,12 +509,15 @@ public abstract class AbstractScmPublishMojo
         ScmFileSet updatedFileSet = new ScmFileSet( checkoutDirectory );
         try
         {
+            long start = System.currentTimeMillis();
+
             CheckInScmResult checkinResult =
                 checkScmResult( scmProvider.checkIn( scmRepository, updatedFileSet, new ScmBranch( scmBranch ),
                                                      checkinComment ), "check-in files to SCM" );
 
-            logInfo( "Checked in %d file(s) to revision: %s", checkinResult.getCheckedInFiles().size(),
-                     checkinResult.getScmRevision() );
+            logInfo( "Checked in %d file(s) to revision %s in %s", checkinResult.getCheckedInFiles().size(),
+                     checkinResult.getScmRevision(),
+                     DurationFormatUtils.formatPeriod( start, System.currentTimeMillis(), "H'h'm'm's's'" ) );
         }
         catch ( ScmException e )
         {
