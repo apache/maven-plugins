@@ -30,7 +30,7 @@
   <distributionManagement>
     <site>
       <id>publish-scm-004</id>
-      <url>scm:svn:file://${basedir}/target/svn-root</url>
+      <url>scm:svn:${project.baseUri}/target/svn-root</url>
     </site>
   </distributionManagement>
 
@@ -45,7 +45,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-scm-publish-plugin</artifactId>
-          <version>@pom.version@</version>
+          <version>@project.version@</version>
         </plugin>
       </plugins>
     </pluginManagement>
