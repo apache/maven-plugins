@@ -54,7 +54,7 @@ import org.codehaus.plexus.util.xml.XmlWriterUtil;
  * @version $Id$
  * @since 2.2
  */
-@Mojo( name = "effective-site" )
+@Mojo( name = "effective-site", requiresReports = true )
 public class EffectiveSiteMojo
     extends AbstractSiteRenderingMojo
 {
