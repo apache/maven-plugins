@@ -19,16 +19,17 @@ package org.apache.maven.plugin.changelog;
  * under the License.
  */
 
-import junit.framework.TestCase;
-import org.apache.maven.scm.command.changelog.ChangeLogSet;
-import org.apache.maven.scm.ChangeSet;
-import org.apache.maven.scm.ChangeFile;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.List;
-import java.util.Calendar;
+
+import junit.framework.TestCase;
+
+import org.apache.maven.scm.ChangeFile;
+import org.apache.maven.scm.ChangeSet;
+import org.apache.maven.scm.command.changelog.ChangeLogSet;
 
 /**
  * @author Edwin Punzalan
@@ -52,15 +53,7 @@ public class ChangeLogTest
 
         ChangeSet changeSet = changelogSets.getChangeSets().get( 0 );
 
-
-        Calendar cal = Calendar.getInstance(); // new cal with default TZ
-
-        cal.set( 1977, 7, 6, 5, 30, 0); // expected date from min-changelog.xml
-
-        cal.set( Calendar.MILLISECOND, 0);
-
-
-        assertEquals( "Test changelog 1 set 1 date/time", cal.getTime().getTime(), changeSet.getDate().getTime() );
+        assertEquals( "Test changelog 1 set 1 date/time", "1977-08-06 05:30:00", new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" ).format( changeSet.getDate() ) );
 
         assertEquals( "Test changelog 1 set 1 author", "Edwin Punzalan", changeSet.getAuthor() );
 
@@ -77,9 +70,7 @@ public class ChangeLogTest
 
         changeSet = changelogSets.getChangeSets().get( 1 );
 
-        cal.set( 2005, 1, 24, 21, 30, 0 );
-
-        assertEquals( "Test changelog 1 set 2 date/time", cal.getTime().getTime(), changeSet.getDate().getTime() );
+        assertEquals( "Test changelog 1 set 2 date/time", "2005-02-24 21:30:00", new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" ).format( changeSet.getDate() ) );
 
         assertEquals( "Test changelog 1 set 2 author", "Edwin Punzalan", changeSet.getAuthor() );
 
@@ -107,9 +98,7 @@ public class ChangeLogTest
 
         changeSet = changelogSets.getChangeSets().get( 0 );
 
-        cal.set( 2005, 1, 25, 22, 45, 0 );
-
-        assertEquals( "Test changelog 2 set 1 date/time", cal.getTime().getTime(), changeSet.getDate().getTime() );
+        assertEquals( "Test changelog 2 set 1 date/time", "2005-02-25 22:45:00", new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" ).format( changeSet.getDate() ) );
 
         assertEquals( "Test changelog 2 set 1 author", "Keogh Edrich Punzalan", changeSet.getAuthor() );
 
@@ -126,9 +115,7 @@ public class ChangeLogTest
 
         changeSet = changelogSets.getChangeSets().get( 1 );
 
-        cal.set( 2100, 1, 25, 5, 30, 0 );
-
-        assertEquals( "Test changelog 2 set 2 date/time", cal.getTime().getTime(), changeSet.getDate().getTime() );
+        assertEquals( "Test changelog 2 set 2 date/time", "2100-02-25 05:30:00", new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" ).format( changeSet.getDate() ) );
 
         assertEquals( "Test changelog 2 set 2 author", "Keogh Edrich Punzalan", changeSet.getAuthor() );
 
