@@ -3521,13 +3521,13 @@ public abstract class AbstractJavadocMojo
             {
                 throw new IOException( "The environment variable JAVA_HOME is not correctly set." );
             }
-            if ( ( !new File( javaHome ).exists() ) || ( new File( javaHome ).isFile() ) )
+            if ( ( !new File( javaHome ).getCanonicalFile().exists() ) || ( new File( javaHome ).getCanonicalFile().isFile() ) )
             {
                 throw new IOException(
                     "The environment variable JAVA_HOME=" + javaHome + " doesn't exist or is not a valid directory." );
             }
 
-            javadocExe = new File( env.getProperty( "JAVA_HOME" ) + File.separator + "bin", javadocCommand );
+            javadocExe = new File( javaHome + File.separator + "bin", javadocCommand );
         }
 
         if ( !javadocExe.getCanonicalFile().exists() || !javadocExe.getCanonicalFile().isFile() )
