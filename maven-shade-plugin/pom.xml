@@ -44,9 +44,9 @@ under the License.
   </prerequisites>
 
   <scm>
-    <connection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/branches/maven-shade-plugin-3</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/branches/maven-shade-plugin-3</developerConnection>
-    <url>https://svn.apache.org/repos/asf/maven/plugins/branches/maven-shade-plugin-3</url>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-shade-plugin</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/trunk/maven-shade-plugin</developerConnection>
+    <url>http://svn.apache.org/viewvc/maven/plugins/trunk/maven-shade-plugin</url>
   </scm>
   <issueManagement>
     <system>jira</system>
