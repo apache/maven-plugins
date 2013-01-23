@@ -23,7 +23,6 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.resolver.ArtifactCollector;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
@@ -33,6 +32,7 @@ import org.apache.maven.model.Exclusion;
 import org.apache.maven.model.Model;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -54,9 +54,9 @@ import org.apache.maven.project.ProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.project.ProjectBuildingRequest;
 import org.apache.maven.project.ProjectBuildingResult;
-import org.apache.maven.shared.dependency.graph.DependencyNode;
 import org.apache.maven.shared.dependency.graph.DependencyGraphBuilder;
 import org.apache.maven.shared.dependency.graph.DependencyGraphBuilderException;
+import org.apache.maven.shared.dependency.graph.DependencyNode;
 import org.codehaus.plexus.PlexusConstants;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
@@ -229,29 +229,19 @@ public class ShadeMojo
     private ArchiveFilter[] filters;
 
     /**
-     * The destination directory for the shaded artifact.
+     * The destination directory for the shaded artifact. This is just here to inject the project
+     * output directory.
      */
-    @Parameter( defaultValue = "${project.build.directory}" )
+    @Parameter( defaultValue = "${project.build.directory}", readonly = true)
     private File outputDirectory;
 
     /**
-     * The name of the shaded artifactId.
+     * The name of the shaded jar.
      * <p/>
-     * If you like to change the name of the native artifact, you may use the &lt;build>&lt;finalName> setting.
-     * If this is set to something different than &lt;build>&lt;finalName>, no file replacement
-     * will be performed, even if shadedArtifactAttached is being used.
+     * The name of the file written in the output directory.
      */
     @Parameter
     private String finalName;
-
-    /**
-     * The name of the shaded artifactId. So you may want to use a different artifactId and keep
-     * the standard version. If the original artifactId was "foo" then the final artifact would
-     * be something like foo-1.0.jar. So if you change the artifactId you might have something
-     * like foo-special-1.0.jar.
-     */
-    @Parameter( defaultValue = "${project.artifactId}" )
-    private String shadedArtifactId;
 
     /**
      * If specified, this will include only artifacts which have groupIds which
@@ -261,12 +251,12 @@ public class ShadeMojo
     private String shadedGroupFilter;
 
     /**
-     * Defines whether the shaded artifact should be attached as classifier to
-     * the original artifact.  If false, the shaded jar will be the main artifact
-     * of the project
+     * Defines whether the shaded JAR file should be an attached artifact. If this is false,
+     * the shaded JAR file will be a simple file in the output directory. See <code>classifier</code>
+     * for more information on <strong>how</strong> the jar is attached.
      */
     @Parameter
-    private boolean shadedArtifactAttached;
+    private boolean attach;
 
     /**
      * Flag whether to generate a simplified POM for the shaded artifact. If set to <code>true</code>, dependencies that
@@ -316,16 +306,34 @@ public class ShadeMojo
     private boolean promoteTransitiveDependencies;
 
     /**
-     * The name of the classifier used in case the shaded artifact is attached.
+     * If the {@link #attach} parameter is true, this parameter controls how the JAR is attached.
      */
     @Parameter( defaultValue = "shaded" )
-    private String shadedClassifierName;
+    private String classifier;
 
     /**
      * When true, it will attempt to create a sources jar as well
      */
     @Parameter
     private boolean createSourcesJar;
+
+    /**
+     * Whether to attach the combined source jar to the project.
+     *
+     * @since 3.0
+     */
+    @Parameter
+    private boolean attachSources;
+
+    /**
+     * Classifier for attaching the sources jar to the project. Default is "sources" when replacing
+     * the main artifact, "{classifier}-sources" when using a classifier. If {@link #attachSources}
+     * is not empty, this is ignored.
+     *
+     * @since 3.0
+     */
+    @Parameter
+    private String sourcesJarClassifier;
 
     /**
      * When true, it will attempt to shade the contents of the java source files when creating the sources jar.
@@ -346,15 +354,28 @@ public class ShadeMojo
     private boolean minimizeJar;
 
     /**
-     * The path to the output file for the shaded artifact. When this parameter is set, the created archive will neither
-     * replace the project's main artifact nor will it be attached. Hence, this parameter causes the parameters
-     * {@link #finalName}, {@link #shadedArtifactAttached}, {@link #shadedClassifierName} and
-     * {@link #createDependencyReducedPom} to be ignored when used.
+     * When true, the results of the plugin replace the project's primary artifact.
+     * @since 3.0
+     */
+    @Parameter
+    private boolean replacePrimaryArtifact;
+
+    /**
+     * The path to the output file for the shaded jar. When this parameter is set, the created archive will neither
+     * replace the project's main artifact nor will it be attached.
      *
      * @since 1.3
      */
     @Parameter
     private File outputFile;
+
+    /**
+     * The path to the output sources jar.
+     *
+     * @since 3.0
+     */
+    @Parameter
+    private File sourcesOutputFile;
 
     /**
      * You can pass here the roleHint about your own Shader implementation plexus component.
@@ -375,12 +396,35 @@ public class ShadeMojo
         plexusContainer = (PlexusContainer) context.get( PlexusConstants.PLEXUS_KEY );
     }
 
+    private void checkAndNormalizeParameters( )
+        throws MojoExecutionException
+    {
+        if ( attach && outputFile != null )
+        {
+            throw new MojoExecutionException( " It is not valid to specify outputFile and also to set 'attach' to true." );
+        }
+
+        if ( !attach && classifier == null )
+        {
+            getLog().warn( String.format( "Classifier is %s but attach is false.", classifier ) );
+        }
+
+        if ( attachSources && sourcesOutputFile != null )
+        {
+            throw new MojoExecutionException( " It is not valid to specify sourcesOutputFile and also to set 'attachSources' to true." );
+        }
+
+    }
+
+
     /**
      * @throws MojoExecutionException
      */
     public void execute()
         throws MojoExecutionException
     {
+
+        checkAndNormalizeParameters( );
 
         if ( shaderHint != null )
         {
@@ -422,9 +466,11 @@ public class ShadeMojo
 
             artifacts.add( project.getArtifact().getFile() );
 
+            //TODO: this seems sideways. Shouldn't this be looking for the sources corresponding to the primary artifact,
+            //TODO: and not the output of this plugin.
             if ( createSourcesJar )
             {
-                File file = shadedSourcesArtifactFile();
+                File file = null; //shadedSourcesArtifactFile();
                 if ( file.isFile() )
                 {
                     sourceArtifacts.add( file );
@@ -496,60 +542,45 @@ public class ShadeMojo
                 shader.shade( shadeSourcesRequest );
             }
 
-            if ( outputFile == null )
-            {
-                boolean renamed = false;
-
-                // rename the output file if a specific finalName is set
-                // but don't rename if the finalName is the <build><finalName>
-                // because this will be handled implicitly later
-                if ( finalName != null && finalName.length() > 0 && !finalName.equals(
-                    project.getBuild().getFinalName() ) )
-                {
-                    String finalFileName = finalName + "." + project.getArtifact().getArtifactHandler().getExtension();
-                    File finalFile = new File( outputDirectory, finalFileName );
-                    replaceFile( finalFile, outputJar );
-                    outputJar = finalFile;
-
-                    renamed = true;
-                }
-
-                if ( shadedArtifactAttached )
-                {
-                    getLog().info( "Attaching shaded artifact." );
-                    projectHelper.attachArtifact( project, project.getArtifact().getType(), shadedClassifierName,
-                                                  outputJar );
-                    if ( createSourcesJar )
-                    {
-                        projectHelper.attachArtifact( project, "jar", shadedClassifierName + "-sources", sourcesJar );
-                    }
-                }
-                else if ( !renamed )
-                {
-                    getLog().info( "Replacing original artifact with shaded artifact." );
-                    File originalArtifact = project.getArtifact().getFile();
-                    replaceFile( originalArtifact, outputJar );
-
-                    if ( createSourcesJar )
-                    {
-                        File shadedSources = shadedSourcesArtifactFile();
-
-                        replaceFile( shadedSources, sourcesJar );
-
-                        projectHelper.attachArtifact( project, "jar", "sources", shadedSources );
-                    }
-
-                    if ( createDependencyReducedPom )
-                    {
-                        createDependencyReducedPom( artifactIds );
-                    }
-                }
-            }
         }
         catch ( Exception e )
         {
             throw new MojoExecutionException( "Error creating shaded jar: " + e.getMessage(), e );
         }
+
+        if ( outputFile == null )
+        {
+            if ( replacePrimaryArtifact )
+            {
+                /* in Maven 3.1 there will be a better way to do this ... at least I think it will be better */
+                getLog().info( String.format( "Setting %s as primary project file.", outputJar.getAbsolutePath() ) );
+                project.getArtifact().setFile( outputJar );
+            }
+            else
+            {
+                getLog().info( "Attaching shaded artifact." );
+                projectHelper.attachArtifact( project, project.getArtifact().getType(), classifier,
+                                              outputJar );
+            }
+
+            if ( createSourcesJar && attachSources )
+            {
+                projectHelper.attachArtifact( project, "jar", sourcesJarClassifier, sourcesJar );
+            }
+
+            if ( createDependencyReducedPom )
+            {
+                try
+                {
+                    createDependencyReducedPom( artifactIds );
+                }
+                catch ( Exception e )
+                {
+                    throw new MojoExecutionException( "Failed to create dependency reduced pom", e );
+                }
+            }
+        }
+
     }
 
     private boolean invalidMainArtifact()
@@ -753,40 +784,50 @@ public class ShadeMojo
         return filters;
     }
 
-    private File shadedArtifactFileWithClassifier()
+    /**
+     * Generate name for binary or sources jar. This is only called if we are attaching.
+     * @param classifier classifier if attaching
+     * @param unattachedClassifier 'classifier' name component if not attaching.
+     * @param classified is this being attached with a classifier?
+     * @return the File object.
+     */
+    private File shadedArtifactFileWithClassifier( String classifier, String unattachedClassifier, boolean classified )
     {
         Artifact artifact = project.getArtifact();
-        final String shadedName = shadedArtifactId + "-" + artifact.getVersion() + "-" + shadedClassifierName + "."
-            + artifact.getArtifactHandler().getExtension();
-        return new File( outputDirectory, shadedName );
+        String filename;
+        if ( finalName != null )
+        {
+            filename = finalName;
+        } else if ( classified )
+        {
+            filename = String.format( "%s-%s-%s.%s",
+                                      artifact.getArtifactId(),
+                                      artifact.getVersion(),
+                                      classifier,
+                                      artifact.getArtifactHandler().getExtension()
+            );
+        }
+        else
+        {
+            /* If we are replacing the main artifact, we always use '-shaded'. Override via finalName only. */
+            filename = String.format( "%s-%s-%s.%s",
+                                      artifact.getArtifactId(),
+                                      artifact.getVersion(),
+                                      unattachedClassifier,
+                                      artifact.getArtifactHandler().getExtension()
+            );
+        }
+        return new File( outputDirectory, filename );
+    }
+
+    private File shadedArtifactFileWithClassifier()
+    {
+       return shadedArtifactFileWithClassifier( classifier, "shaded", !replacePrimaryArtifact );
     }
 
     private File shadedSourceArtifactFileWithClassifier()
     {
-        Artifact artifact = project.getArtifact();
-        final String shadedName =
-            shadedArtifactId + "-" + artifact.getVersion() + "-" + shadedClassifierName + "-sources."
-                + artifact.getArtifactHandler().getExtension();
-        return new File( outputDirectory, shadedName );
-    }
-
-    private File shadedSourcesArtifactFile()
-    {
-        Artifact artifact = project.getArtifact();
-
-        String shadedName;
-
-        if ( project.getBuild().getFinalName() != null )
-        {
-            shadedName = project.getBuild().getFinalName() + "-sources." + artifact.getArtifactHandler().getExtension();
-        }
-        else
-        {
-            shadedName = shadedArtifactId + "-" + artifact.getVersion() + "-sources."
-                + artifact.getArtifactHandler().getExtension();
-        }
-
-        return new File( outputDirectory, shadedName );
+        return shadedArtifactFileWithClassifier( sourcesJarClassifier, "shaded-sources", true );
     }
 
     // We need to find the direct dependencies that have been included in the uber JAR so that we can modify the

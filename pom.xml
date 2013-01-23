@@ -57,6 +57,7 @@ under the License.
     <mavenVersion>3.0</mavenVersion>
     <currentVersion>${project.version}</currentVersion>
     <mavenPluginVersion>3.2</mavenPluginVersion>
+    <mdoVersion>1.1.2</mdoVersion>
   </properties>
 
   <contributors>
@@ -162,6 +163,37 @@ under the License.
 
   <build>
     <plugins>
+      <plugin>
+        <groupId>org.codehaus.modello</groupId>
+        <artifactId>modello-maven-plugin</artifactId>
+        <configuration>
+          <version>${mdoVersion}</version>
+          <models>
+            <model>src/main/mdo/AttachArtifact.mdo</model>
+          </models>
+        </configuration>
+        <executions>
+          <execution>
+            <id>mdo</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>xpp3-reader</goal>
+              <goal>xpp3-writer</goal>
+              <goal>java</goal>
+              <goal>xsd</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>mdo-site</id>
+            <phase>pre-site</phase>
+            <goals>
+              <goal>xdoc</goal>
+              <goal>xsd</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-plugin-plugin</artifactId>
