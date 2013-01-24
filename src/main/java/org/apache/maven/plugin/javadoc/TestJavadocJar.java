@@ -42,7 +42,7 @@ import java.util.List;
  * @version $Id$
  * @since 2.5
  */
-@Mojo( name = "test-jar", defaultPhase = LifecyclePhase.PACKAGE, requiresDependencyResolution = ResolutionScope.TEST )
+@Mojo( name = "test-jar", defaultPhase = LifecyclePhase.PACKAGE, requiresDependencyResolution = ResolutionScope.TEST, threadSafe = true)
 public class TestJavadocJar
     extends JavadocJar
 {

@@ -36,7 +36,7 @@ import java.io.File;
  * @since 2.7
  */
 @Mojo( name = "test-resource-bundle", defaultPhase = LifecyclePhase.PACKAGE,
-       requiresDependencyResolution = ResolutionScope.TEST )
+       requiresDependencyResolution = ResolutionScope.TEST, threadSafe = true)
 public class TestResourcesBundleMojo
     extends ResourcesBundleMojo
 {
