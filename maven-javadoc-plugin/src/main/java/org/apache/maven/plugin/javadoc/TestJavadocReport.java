@@ -49,7 +49,7 @@ import java.util.ResourceBundle;
  * @see <a href="http://docs.oracle.com/javase/7/docs/technotes/guides/javadoc/">Javadoc Tool</a>
  * @see <a href="http://docs.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#options">Javadoc Options </a>
  */
-@Mojo( name = "test-javadoc", requiresDependencyResolution = ResolutionScope.TEST )
+@Mojo( name = "test-javadoc", requiresDependencyResolution = ResolutionScope.TEST, threadSafe = true)
 @Execute( phase = LifecyclePhase.GENERATE_TEST_SOURCES )
 public class TestJavadocReport
     extends JavadocReport

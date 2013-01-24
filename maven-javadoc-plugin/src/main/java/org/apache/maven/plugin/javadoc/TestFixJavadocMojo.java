@@ -40,7 +40,7 @@ import java.util.List;
  * @version $Id$
  * @since 2.6
  */
-@Mojo( name = "test-fix", requiresDependencyResolution = ResolutionScope.TEST )
+@Mojo( name = "test-fix", requiresDependencyResolution = ResolutionScope.TEST, threadSafe = true)
 @Execute( phase = LifecyclePhase.TEST_COMPILE )
 public class TestFixJavadocMojo
     extends AbstractFixJavadocMojo
