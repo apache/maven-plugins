@@ -32,6 +32,7 @@ import org.apache.maven.doxia.siterenderer.SiteRenderingContext;
 import org.apache.maven.doxia.siterenderer.sink.SiteRendererSink;
 import org.apache.maven.doxia.tools.SiteTool;
 import org.apache.maven.doxia.tools.SiteToolException;
+import org.apache.maven.model.Plugin;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -46,6 +47,8 @@ import org.codehaus.plexus.interpolation.PrefixedObjectValueSource;
 import org.codehaus.plexus.interpolation.PropertiesBasedValueSource;
 import org.codehaus.plexus.interpolation.RegexBasedInterpolator;
 import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.StringUtils;
+import org.codehaus.plexus.util.xml.Xpp3Dom;
 
 
 import java.io.File;
@@ -265,6 +268,40 @@ public abstract class AbstractProjectInfoReport
     protected MavenProject getProject()
     {
         return project;
+    }
+    
+    protected Plugin getPlugin( String pluginId )
+    {
+        if ( ( getProject().getBuild() == null ) || ( getProject().getBuild().getPluginsAsMap() == null ) )
+        {
+            return null;
+        }
+
+        Plugin plugin = (Plugin) getProject().getBuild().getPluginsAsMap().get( pluginId );
+
+        if ( ( plugin == null ) && ( getProject().getBuild().getPluginManagement() != null ) && (
+                getProject().getBuild().getPluginManagement().getPluginsAsMap() != null ) )
+        {
+            plugin = (Plugin) getProject().getBuild().getPluginManagement().getPluginsAsMap().get( pluginId );
+        }
+
+        return plugin;
+    }
+    
+    protected String getPluginParameter( String pluginId, String param )
+    {
+        Plugin plugin = getPlugin( pluginId );
+        if ( plugin != null )
+        {
+            Xpp3Dom xpp3Dom = (Xpp3Dom) plugin.getConfiguration();
+            if ( xpp3Dom != null && xpp3Dom.getChild( param ) != null
+                && StringUtils.isNotEmpty( xpp3Dom.getChild( param ).getValue() ) )
+            {
+                return xpp3Dom.getChild( param ).getValue();
+            }
+        }
+
+        return null;
     }
 
     @Override

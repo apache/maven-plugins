@@ -152,37 +152,26 @@ public class ProjectSummaryReport
 
         private String getMinimumJavaVersion()
         {
-            Xpp3Dom pluginConfig =
-                project.getGoalConfiguration( "org.apache.maven.plugins", "maven-compiler-plugin", null, null );
-
-            String source = null;
-            String target = null;
-            String compilerVersion = null;
-
-            if ( pluginConfig != null )
-            {
-                source = getChildValue( pluginConfig, "source" );
-                target = getChildValue( pluginConfig, "target" );
-
-                String fork = getChildValue( pluginConfig, "fork" );
-                if ( "true".equalsIgnoreCase( fork ) )
+            
+            final String pluginId = "org.apache.maven.plugins:maven-compiler-plugin";
+            String sourceConfigured = getPluginParameter( pluginId, "source" );
+            String targetConfigured = getPluginParameter( pluginId, "target" );
+            
+            String forkFlag = getPluginParameter( pluginId, "fork" );
+            String compilerVersionConfigured = null;
+                if ( "true".equalsIgnoreCase( forkFlag ) )
                 {
-                    compilerVersion = getChildValue( pluginConfig, "compilerVersion" );
+                    compilerVersionConfigured = getPluginParameter( pluginId, "compilerVersion" );
                 }
-            }
 
-            String minimumJavaVersion = compilerVersion;
-            if ( target != null )
+            String minimumJavaVersion = compilerVersionConfigured;
+            if ( targetConfigured != null )
             {
-                minimumJavaVersion = target;
+                minimumJavaVersion = targetConfigured;
             }
-            else if ( source != null )
+            else if ( sourceConfigured != null )
             {
-                minimumJavaVersion = source;
-            }
-            else if ( compilerVersion != null )
-            {
-                minimumJavaVersion = compilerVersion;
+                minimumJavaVersion = sourceConfigured;
             }
             else
             {
@@ -191,30 +180,6 @@ public class ProjectSummaryReport
             }
 
             return minimumJavaVersion;
-        }
-
-        private String getChildValue( Xpp3Dom parent, String childName )
-        {
-            if ( parent == null )
-            {
-                return null;
-            }
-
-            Xpp3Dom child = parent.getChild( childName );
-
-            if ( child == null )
-            {
-                return null;
-            }
-
-            String value = child.getValue();
-
-            if ( value == null || value.trim().length() == 0 )
-            {
-                return null;
-            }
-
-            return value.trim();
         }
 
         private void tableRowWithLink( String[] content )
