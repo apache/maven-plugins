@@ -51,7 +51,7 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
         <version>@pom.version@</version>
-      </plugin>      
+      </plugin>
     </plugins>
   </build>
 
@@ -64,6 +64,7 @@
         <version>@pom.version@</version>
         <configuration>
           <configLocation>config/maven_checks.xml</configLocation>
+          <includeTestSourceDirectory>true</includeTestSourceDirectory>
         </configuration>
         <inherited>false</inherited>
         <reportSets>
