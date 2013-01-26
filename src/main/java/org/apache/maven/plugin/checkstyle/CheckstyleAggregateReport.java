@@ -273,6 +273,6 @@ public class CheckstyleAggregateReport
     public boolean canGenerateReport()
     {
         // TODO: would be good to scan the files here
-        return !skip && project.isExecutionRoot();
+        return !skip && project.isExecutionRoot() && reactorProjects.size() > 1;
     }
 }
