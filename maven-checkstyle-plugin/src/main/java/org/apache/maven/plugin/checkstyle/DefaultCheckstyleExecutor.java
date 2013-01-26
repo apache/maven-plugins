@@ -189,7 +189,7 @@ public class DefaultCheckstyleExecutor
             for ( MavenProject childProject : request.getReactorProjects() )
             {
                 addSourceDirectory( sinkListener, new File( childProject.getBuild().getSourceDirectory() ),
-                                    new File( childProject.getBuild().getSourceDirectory() ), childProject.getResources(), request);
+                                    new File( childProject.getBuild().getTestSourceDirectory() ), childProject.getResources(), request);
             }
         }
         else
@@ -350,7 +350,7 @@ public class DefaultCheckstyleExecutor
         {
             outputDirectories.add( project.getBuild().getOutputDirectory() );
 
-            if ( request.isIncludeTestSourceDirectory() && ( sourceDirectory != null )
+            if ( request.isIncludeTestSourceDirectory() && ( testSourceDirectory != null )
                 && ( testSourceDirectory.exists() ) && ( testSourceDirectory.isDirectory() ) )
             {
                 classPathStrings.addAll( project.getTestClasspathElements() );
@@ -502,34 +502,39 @@ public class DefaultCheckstyleExecutor
         {
             for ( MavenProject project : request.getReactorProjects() )
             {
-                addFilesToProcess( request, excludesStr, new File( project.getBuild().getSourceDirectory() ), project.getResources(), files);
+                addFilesToProcess( request, excludesStr, new File( project.getBuild().getSourceDirectory() ), project.getResources(), new File( project.getBuild().getTestSourceDirectory() ), files);
             }
         }
         else
         {
-            addFilesToProcess( request, excludesStr, sourceDirectory, request.getResources(), files);
+            addFilesToProcess( request, excludesStr, sourceDirectory, request.getResources(), request.getTestSourceDirectory(), files);
         }
+
+        getLogger().debug( "Added " + files.size() + " files to process." );
 
         return (File[]) files.toArray( EMPTY_FILE_ARRAY );
     }
 
     private void addFilesToProcess( CheckstyleExecutorRequest request, StringBuilder excludesStr, File sourceDirectory,
-                                    List<Resource> resources, List<File> files)
+                                    List<Resource> resources, File testSourceDirectory, List<File> files )
         throws IOException
     {
-        if ( sourceDirectory == null || !sourceDirectory.exists() )
+        if ( sourceDirectory != null && sourceDirectory.exists() )
         {
-            return;
+            final List sourceFiles = FileUtils.getFiles( sourceDirectory,
+                                                         request.getIncludes(),
+                                                         excludesStr.toString() );
+            files.addAll( sourceFiles );
+            getLogger().debug( "Added " + sourceFiles.size() + " source files found in '" + sourceDirectory.getAbsolutePath() + "'." );
         }
-        files.addAll(
-            FileUtils.getFiles( sourceDirectory, request.getIncludes(), excludesStr.toString() ) );
 
-        File testSourceDirectory = request.getTestSourceDirectory();
         if ( request.isIncludeTestSourceDirectory() && ( testSourceDirectory != null )
             && ( testSourceDirectory.exists() ) && ( testSourceDirectory.isDirectory() ) )
         {
-            files.addAll( FileUtils.getFiles( testSourceDirectory, request.getIncludes(),
-                                              excludesStr.toString() ) );
+            final List testSourceFiles = FileUtils.getFiles( testSourceDirectory, request.getIncludes(),
+                                                             excludesStr.toString() );
+            files.addAll( testSourceFiles );
+            getLogger().debug( "Added " + testSourceFiles.size() + " test source files found in '" + testSourceDirectory.getAbsolutePath() + "'." );
         }
 
         // @todo Should we add a check to see if resources should be included or not, similar to request.isIncludeTestSourceDirectory()?
