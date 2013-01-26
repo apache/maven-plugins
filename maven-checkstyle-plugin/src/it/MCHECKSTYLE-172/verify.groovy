@@ -1,4 +1,3 @@
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -17,37 +16,9 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
-import java.io.*;
-import java.util.*;
-import java.util.regex.*;
-
-try
-{
-    File siteDir = new File( basedir, "target/site" );
-    System.out.println( "Checking for existence of site directory: " + siteDir );
-    if ( !siteDir.isDirectory() )
-    {
-        System.out.println( "FAILED" );
-        return false;
-    }
-
-    String[] reports = { "checkstyle" };
-    for ( String report : reports )
-    {
-        File reportFile = new File( siteDir, report + ".html" );
-        System.out.println( "Checking for existence of report: " + reportFile );
-        if ( !reportFile.isFile() )
-        {
-            System.out.println( "FAILED" );
-            return false;
-        }
-    }
-}
-catch( Throwable t )
-{
-    t.printStackTrace();
-    return false;
-}
+File standardReport = new File(basedir, 'target/site/checkstyle.html');
+assert standardReport.exists();
+File aggregateReportFile = new File(basedir, 'target/site/checkstyle-aggregate.html')
+assert !aggregateReportFile.exists();
 
 return true;
