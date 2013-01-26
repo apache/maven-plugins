@@ -240,9 +240,11 @@ public class CpdReport
             writer.write( buffer );
             writer.close();
 
-            File siteDir = getReportOutputDirectory();
-            siteDir.mkdirs();
-            FileUtils.copyFile( targetFile, new File( siteDir, "cpd." + format ) );
+            if ( includeXmlInSite ) {
+                File siteDir = getReportOutputDirectory();
+                siteDir.mkdirs();
+                FileUtils.copyFile( targetFile, new File( siteDir, "cpd." + format ) );
+            }
         }
         catch ( IOException ioe )
         {

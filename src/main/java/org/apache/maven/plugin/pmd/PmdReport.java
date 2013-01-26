@@ -372,9 +372,11 @@ public class PmdReport
             r.end();
             writer.close();
 
-            File siteDir = getReportOutputDirectory();
-            siteDir.mkdirs();
-            FileUtils.copyFile( targetFile, new File( siteDir, "pmd." + format ) );
+            if ( includeXmlInSite ) {
+                File siteDir = getReportOutputDirectory();
+                siteDir.mkdirs();
+                FileUtils.copyFile( targetFile, new File( siteDir, "pmd." + format ) );
+            }
         }
         catch ( IOException ioe )
         {
