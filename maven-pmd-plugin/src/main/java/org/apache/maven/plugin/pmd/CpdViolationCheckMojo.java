@@ -58,7 +58,7 @@ public class CpdViolationCheckMojo
     /**
      * Whether to fail the build if the validation check fails.
      *
-     * @since 2.8
+     * @since 3.0
      */
     @Parameter( property = "cpd.failOnViolation", defaultValue = "true", required = true )
     protected boolean failOnViolation;

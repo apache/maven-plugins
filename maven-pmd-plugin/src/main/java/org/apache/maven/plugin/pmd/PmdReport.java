@@ -90,7 +90,7 @@ public class PmdReport
      * <b>Note:</b> if the parameter targetJdk is given, then this language parameter will be ignored.
      * </p>
      *
-     * @since 2.8
+     * @since 3.0
      */
     @Parameter( defaultValue = "java" )
     private String language;
