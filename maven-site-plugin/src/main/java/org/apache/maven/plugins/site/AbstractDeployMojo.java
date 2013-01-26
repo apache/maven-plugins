@@ -86,7 +86,7 @@ public abstract class AbstractDeployMojo
     /**
      * Directory containing the generated project sites and report distributions.
      */
-    @Parameter( alias = "outputDirectory", property = "project.reporting.outputDirectory", required = true )
+    @Parameter( alias = "outputDirectory", defaultValue = "${project.reporting.outputDirectory}", required = true )
     private File inputDirectory;
 
     /**
