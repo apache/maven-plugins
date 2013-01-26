@@ -7,9 +7,7 @@ String[] modules = { "mod-1", "mod-2", "mod-3" };
 String[] paths =
 {
     "target/site/pmd.html",
-    "target/site/pmd.xml",
     "target/site/cpd.html",
-    "target/site/cpd.xml",
     "target/pmd.xml",
     "target/cpd.xml",
 };
