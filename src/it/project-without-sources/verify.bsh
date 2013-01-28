@@ -15,7 +15,7 @@ try
 
     File testJarFile = new File( basedir, "target/project-without-sources-1.0-SNAPSHOT-test-sources.jar" );
     System.out.println( "Checking for non-existence of " + testJarFile );
-    if ( testJarFile.isFile() )
+    if ( testJarFile.exists() )
     {
         System.out.println( "FAILURE!" );
         return false;
