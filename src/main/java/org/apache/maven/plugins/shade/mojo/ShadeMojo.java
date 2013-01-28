@@ -365,6 +365,18 @@ public class ShadeMojo
     private String shaderHint;
 
     /**
+     * When true, the version of each dependency of the reduced pom will be based on the baseVersion of the original
+     * dependency instead of its resolved version.
+     * For example, if the original pom (transitively) depends on a:a:2.7-SNAPSHOT, if useBaseVersion is set to false,
+     * the reduced pom will depend on a:a:2.7-20130312.222222-12 whereas if useBaseVersion is set to true, the reduced
+     * pom will depend on a:a:2.7-SNAPSHOT
+     *
+     * @since 3.0
+     */
+    @Parameter( defaultValue = "false" )
+    private boolean useBaseVersion;
+
+    /**
      * @since 1.6
      */
     private PlexusContainer plexusContainer;
@@ -820,7 +832,14 @@ public class ShadeMojo
             dep.setOptional( artifact.isOptional() );
             dep.setScope( artifact.getScope() );
             dep.setType( artifact.getType() );
-            dep.setVersion( artifact.getVersion() );
+            if ( useBaseVersion )
+            {
+                dep.setVersion( artifact.getBaseVersion() );
+            }
+            else
+            {
+                dep.setVersion( artifact.getVersion() );
+            }
 
             //we'll figure out the exclusions in a bit.
 
