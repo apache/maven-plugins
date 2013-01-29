@@ -39,6 +39,7 @@ import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.reporting.MavenReportException;
 import org.codehaus.plexus.resource.ResourceManager;
 import org.codehaus.plexus.resource.loader.FileResourceCreationException;
@@ -69,7 +70,7 @@ import java.util.ResourceBundle;
  * @version $Id$
  * @since 2.0
  */
-@Mojo( name = "pmd", threadSafe = true )
+@Mojo( name = "pmd", threadSafe = true, requiresDependencyResolution = ResolutionScope.TEST )
 public class PmdReport
     extends AbstractPmdReport
 {
@@ -120,6 +121,15 @@ public class PmdReport
      */
     @Parameter
     private String[] rulesets = new String[]{ "java-basic", "java-unusedcode", "java-imports" };
+
+    /**
+     * Controls whether the project's compile/test classpath should be passed to PMD to enable its type resolution
+     * feature.
+     * 
+     * @since 3.0
+     */
+    @Parameter( property = "pmd.typeResolution", defaultValue = "false" )
+    private boolean typeResolution;
 
     /**
      */
@@ -419,6 +429,22 @@ public class PmdReport
         {
             getLog().debug( "Using language " + languageVersion );
             configuration.setDefaultLanguageVersion( languageVersion );
+        }
+
+        if ( typeResolution )
+        {
+            try
+            {
+                @SuppressWarnings( "unchecked" )
+                List<String> classpath =
+                    includeTests ? project.getTestClasspathElements() : project.getCompileClasspathElements();
+                getLog().debug( "Using aux classpath: " + classpath );
+                configuration.prependClasspath( StringUtils.join( classpath.iterator(), File.pathSeparator ) );
+            }
+            catch ( Exception e )
+            {
+                throw new MavenReportException( e.getMessage(), e );
+            }
         }
 
         return configuration;
