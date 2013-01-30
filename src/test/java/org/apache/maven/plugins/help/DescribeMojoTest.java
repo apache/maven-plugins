@@ -19,6 +19,9 @@ package org.apache.maven.plugins.help;
  * under the License.
  */
 
+import org.apache.maven.plugin.descriptor.MojoDescriptor;
+import org.apache.maven.plugin.descriptor.Parameter;
+
 import junit.framework.Assert;
 import junit.framework.TestCase;
 import junitx.util.PrivateAccessor;
@@ -50,4 +53,56 @@ public class DescribeMojoTest
             Assert.fail( "The API changes" );
         }
     }
+    
+    public void testValidExpression() throws Exception
+    {
+        StringBuilder sb = new StringBuilder();
+        MojoDescriptor md = new MojoDescriptor();
+        Parameter parameter = new Parameter();
+        parameter.setName( "name" );
+        parameter.setExpression( "${valid.expression}" );
+        md.addParameter( parameter );
+        
+        try
+        {
+            PrivateAccessor.invoke( new DescribeMojo(), "describeMojoParameters", new Class[]{ MojoDescriptor.class, StringBuilder.class}, new Object[] {md, sb});
+            
+            assertEquals( "  Available parameters:\n" +
+            		      "\n" +
+            		      "    name\n" +
+            		      "      User property: valid.expression\n" +
+            		      "      (no description available)\n", sb.toString() );
+        }
+        catch ( Throwable e )
+        {
+            fail(e.getMessage());
+        }
+    }
+    
+    public void testInvalidExpression() throws Exception
+    {
+        StringBuilder sb = new StringBuilder();
+        MojoDescriptor md = new MojoDescriptor();
+        Parameter parameter = new Parameter();
+        parameter.setName( "name" );
+        parameter.setExpression( "${project.build.directory}/generated-sources/foobar" ); //this is a defaultValue
+        md.addParameter( parameter );
+        
+        try
+        {
+            PrivateAccessor.invoke( new DescribeMojo(), "describeMojoParameters", new Class[]{ MojoDescriptor.class, StringBuilder.class}, new Object[] {md, sb});
+            
+            assertEquals( "  Available parameters:\n" +
+                          "\n" +
+                          "    name\n" +
+                          "      Expression: ${project.build.directory}/generated-sources/foobar\n" +
+                          "      (no description available)\n", sb.toString() );
+        }
+        catch ( Throwable e )
+        {
+            fail(e.getMessage());
+        }
+        
+    }
+
 }
