@@ -19,6 +19,17 @@ package org.apache.maven.plugins.help;
  * under the License.
  */
 
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.StringTokenizer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
@@ -54,16 +65,6 @@ import org.apache.maven.tools.plugin.util.PluginUtils;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.codehaus.plexus.util.StringUtils;
 
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.StringTokenizer;
-
 /**
  * Displays a list of the attributes for a Maven Plugin and/or goals (aka Mojo - Maven plain Old Java Object).
  *
@@ -94,6 +95,8 @@ public class DescribeMojo
      * For deprecated values
      */
     private static final String NO_REASON = "No reason given";
+    
+    private static final Pattern EXPRESSION = Pattern.compile( "^\\$\\{([^}]+)\\}$" );
 
     // ----------------------------------------------------------------------
     // Mojo components
@@ -782,11 +785,20 @@ public class DescribeMojo
             if ( StringUtils.isEmpty( expression ) )
             {
                 // expression is ALWAYS null, this is a bug in PluginDescriptorBuilder (cf. MNG-4941).
+                // Fixed with Maven-3.0.1
                 expression = md.getMojoConfiguration().getChild( parameter.getName() ).getValue( null );
             }
             if ( StringUtils.isNotEmpty( expression ) )
             {
-                append( buffer, "Expression", expression, 3 );
+                Matcher matcher = EXPRESSION.matcher( expression );
+                if ( matcher.matches() )
+                {
+                    append( buffer, "User property", matcher.group( 1 ), 3 );
+                }
+                else
+                {
+                    append( buffer, "Expression", expression, 3 );
+                }
             }
 
             append( buffer, toDescription( parameter.getDescription() ), 3 );
