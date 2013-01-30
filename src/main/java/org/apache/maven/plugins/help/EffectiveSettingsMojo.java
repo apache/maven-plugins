@@ -27,6 +27,7 @@ import org.apache.maven.settings.Profile;
 import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Server;
 import org.apache.maven.settings.Settings;
+import org.apache.maven.settings.SettingsUtils;
 import org.apache.maven.settings.io.xpp3.SettingsXpp3Writer;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.PrettyPrintXMLWriter;
@@ -37,6 +38,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
@@ -142,7 +144,6 @@ public class EffectiveSettingsMojo
      */
     private static void hidePasswords( Settings aSettings )
     {
-        @SuppressWarnings( "unchecked" )
         List<Proxy> proxies = aSettings.getProxies();
         for ( Proxy proxy : proxies )
         {
@@ -152,7 +153,6 @@ public class EffectiveSettingsMojo
             }
         }
 
-        @SuppressWarnings( "unchecked" )
         List<Server> servers = aSettings.getServers();
         for ( Server server : servers )
         {
@@ -170,10 +170,8 @@ public class EffectiveSettingsMojo
     }
 
     /**
-     * TODO: should be replaced by SettingsUtils#copySettings() in 2.0.10+.
-     *
-     * @param settings could be null
-     * @return a new instance of settings or null if settings was null.
+     * @param settings could be {@code null}
+     * @return a new instance of settings or {@code null} if settings was {@code null}.
      */
     private static Settings copySettings( Settings settings )
     {
@@ -181,21 +179,46 @@ public class EffectiveSettingsMojo
         {
             return null;
         }
+        
+        // Not a deep copy in M2.2.1 !!!
+        Settings clone = SettingsUtils.copySettings( settings );
 
-        Settings clone = new Settings();
-        clone.setActiveProfiles( settings.getActiveProfiles() );
-        clone.setInteractiveMode( settings.isInteractiveMode() );
-        clone.setLocalRepository( settings.getLocalRepository() );
-        clone.setMirrors( settings.getMirrors() );
-        clone.setOffline( settings.isOffline() );
-        clone.setPluginGroups( settings.getPluginGroups() );
-        clone.setProfiles( settings.getProfiles() );
-        clone.setProxies( settings.getProxies() );
-        clone.setRuntimeInfo( settings.getRuntimeInfo() );
-        clone.setServers( settings.getServers() );
-        clone.setSourceLevel( settings.getSourceLevel() );
-        clone.setUsePluginRegistry( settings.isUsePluginRegistry() );
-
+        List<Server> clonedServers = new ArrayList<Server>( settings.getServers().size() );
+        for ( Server server : settings.getServers() )
+        {
+            Server clonedServer = new Server();
+            clonedServer.setConfiguration( server.getConfiguration() );
+            clonedServer.setDirectoryPermissions( server.getDirectoryPermissions() );
+            clonedServer.setFilePermissions( server.getFilePermissions() );
+            clonedServer.setId( server.getId() );
+            clonedServer.setPassphrase( server.getPassphrase() );
+            clonedServer.setPassword( server.getPassword() );
+            clonedServer.setPrivateKey( server.getPrivateKey() );
+            clonedServer.setSourceLevel( server.getSourceLevel() );
+            clonedServer.setUsername( server.getUsername() );
+            
+            clonedServers.add( clonedServer );
+        }
+        clone.setServers( clonedServers );
+        
+        List<Proxy> clonedProxies = new ArrayList<Proxy>( settings.getProxies().size() );
+        for( Proxy proxy : settings.getProxies() )
+        {
+            Proxy clonedProxy = new Proxy();
+            clonedProxy.setActive( proxy.isActive() );
+            clonedProxy.setHost( proxy.getHost() );
+            clonedProxy.setId( proxy.getId() );
+            clonedProxy.setNonProxyHosts( proxy.getNonProxyHosts() );
+            clonedProxy.setPassword( proxy.getPassword() );
+            clonedProxy.setPort( proxy.getPort() );
+            clonedProxy.setProtocol( proxy.getProtocol() );
+            clonedProxy.setSourceLevel( proxy.getSourceLevel() );
+            clonedProxy.setUsername( proxy.getUsername() );
+            
+            clonedProxies.add( clonedProxy );
+        }
+        clone.setProxies( clonedProxies );
+        
         return clone;
     }
 
@@ -238,7 +261,6 @@ public class EffectiveSettingsMojo
      */
     private static void cleanSettings( Settings settings )
     {
-        @SuppressWarnings( "unchecked" )
         List<Profile> profiles = settings.getProfiles();
         for ( Profile profile : profiles )
         {
