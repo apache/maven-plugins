@@ -20,6 +20,22 @@ under the License.
 -->
 
 <settings>
+  <proxies>
+    <proxy>
+      <id>deep-clone</id>
+      <active>false</active>
+      <password>proxy-password</password>
+    </proxy>
+  </proxies>
+
+  <servers>
+    <server>
+      <id>deep-clone</id>
+      <password>server-password</password>
+      <passphrase>server-passphrase</passphrase>
+    </server>
+  </servers>
+
   <profiles>
     <profile>
       <id>it-repo</id>
