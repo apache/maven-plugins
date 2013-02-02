@@ -276,17 +276,17 @@ public class EvaluateMojo
 
         switch ( artifactParts.length )
         {
-            case ( 2 ):
+            case 2:
                 groupId = artifactParts[0];
                 artifactId = artifactParts[1];
                 version = Artifact.LATEST_VERSION;
                 break;
-            case ( 3 ):
+            case 3:
                 groupId = artifactParts[0];
                 artifactId = artifactParts[1];
                 version = artifactParts[2];
                 break;
-            case ( 4 ):
+            case 4:
                 groupId = artifactParts[0];
                 artifactId = artifactParts[1];
                 version = artifactParts[2];

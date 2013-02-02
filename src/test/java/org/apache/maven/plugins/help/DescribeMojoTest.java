@@ -54,7 +54,8 @@ public class DescribeMojoTest
         }
     }
     
-    public void testValidExpression() throws Exception
+    public void testValidExpression()
+        throws Exception
     {
         StringBuilder sb = new StringBuilder();
         MojoDescriptor md = new MojoDescriptor();
@@ -65,7 +66,8 @@ public class DescribeMojoTest
         
         try
         {
-            PrivateAccessor.invoke( new DescribeMojo(), "describeMojoParameters", new Class[]{ MojoDescriptor.class, StringBuilder.class}, new Object[] {md, sb});
+            PrivateAccessor.invoke( new DescribeMojo(), "describeMojoParameters", new Class[] { MojoDescriptor.class,
+                StringBuilder.class }, new Object[] { md, sb } );
             
             assertEquals( "  Available parameters:\n" +
             		      "\n" +
@@ -75,11 +77,12 @@ public class DescribeMojoTest
         }
         catch ( Throwable e )
         {
-            fail(e.getMessage());
+            fail( e.getMessage() );
         }
     }
     
-    public void testInvalidExpression() throws Exception
+    public void testInvalidExpression()
+        throws Exception
     {
         StringBuilder sb = new StringBuilder();
         MojoDescriptor md = new MojoDescriptor();
@@ -90,7 +93,8 @@ public class DescribeMojoTest
         
         try
         {
-            PrivateAccessor.invoke( new DescribeMojo(), "describeMojoParameters", new Class[]{ MojoDescriptor.class, StringBuilder.class}, new Object[] {md, sb});
+            PrivateAccessor.invoke( new DescribeMojo(), "describeMojoParameters", new Class[] { MojoDescriptor.class,
+                StringBuilder.class }, new Object[] { md, sb } );
             
             assertEquals( "  Available parameters:\n" +
                           "\n" +
@@ -100,7 +104,7 @@ public class DescribeMojoTest
         }
         catch ( Throwable e )
         {
-            fail(e.getMessage());
+            fail( e.getMessage() );
         }
         
     }
