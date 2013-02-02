@@ -203,7 +203,6 @@ public class AllProfilesMojo
             ProfilesRoot root = profilesBuilder.buildProfiles( projectDir );
             if ( root != null )
             {
-                @SuppressWarnings( "unchecked" )
                 List<org.apache.maven.profiles.Profile> profiles = root.getProfiles(); 
                 for ( org.apache.maven.profiles.Profile rawProfile : profiles )
                 {
@@ -254,7 +253,6 @@ public class AllProfilesMojo
         }
 
         // Attempt to obtain the list of profiles from pom.xml
-        @SuppressWarnings( "unchecked" )
         List<Profile> profiles = project.getModel().getProfiles();
         for ( Profile profile : profiles )
         {
@@ -265,7 +263,6 @@ public class AllProfilesMojo
         MavenProject parent = project.getParent();
         while( parent != null )
         {
-            @SuppressWarnings( "unchecked" )
             List<Profile> profiles2 = parent.getModel().getProfiles();
             for ( Profile profile : profiles2 )
             {
@@ -300,7 +297,6 @@ public class AllProfilesMojo
             getLog().debug( "Attempting to read profiles from settings.xml..." );
         }
 
-        @SuppressWarnings( "unchecked" )
         List<org.apache.maven.settings.Profile> profiles = settings.getProfiles();
         for ( org.apache.maven.settings.Profile rawProfile : profiles )
         {
