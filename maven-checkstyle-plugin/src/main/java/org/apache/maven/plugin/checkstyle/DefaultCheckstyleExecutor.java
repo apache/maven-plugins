@@ -189,12 +189,13 @@ public class DefaultCheckstyleExecutor
             for ( MavenProject childProject : request.getReactorProjects() )
             {
                 addSourceDirectory( sinkListener, new File( childProject.getBuild().getSourceDirectory() ),
-                                    new File( childProject.getBuild().getTestSourceDirectory() ), childProject.getResources(), request);
+                                    new File( childProject.getBuild().getTestSourceDirectory() ),
+                                    childProject.getResources(), request );
             }
         }
         else
         {
-            addSourceDirectory( sinkListener, sourceDirectory, testSourceDirectory, request.getResources(), request);
+            addSourceDirectory( sinkListener, sourceDirectory, testSourceDirectory, request.getResources(), request );
         }
 
         checker.addListener( sinkListener );
@@ -249,7 +250,8 @@ public class DefaultCheckstyleExecutor
                     if ( resourcesDirectory.exists() && resourcesDirectory.isDirectory() )
                     {
                         sinkListener.addSourceDirectory( resourcesDirectory );
-                        getLogger().debug( "Added '" + resourcesDirectory.getAbsolutePath() + "' as a source directory." );
+                        getLogger().debug( "Added '" + resourcesDirectory.getAbsolutePath()
+                                + "' as a source directory." );
                     }
                 }
             }
@@ -502,12 +504,15 @@ public class DefaultCheckstyleExecutor
         {
             for ( MavenProject project : request.getReactorProjects() )
             {
-                addFilesToProcess( request, excludesStr, new File( project.getBuild().getSourceDirectory() ), project.getResources(), new File( project.getBuild().getTestSourceDirectory() ), files);
+                addFilesToProcess( request, excludesStr, new File( project.getBuild().getSourceDirectory() ),
+                                   project.getResources(), new File( project.getBuild().getTestSourceDirectory() ),
+                                   files );
             }
         }
         else
         {
-            addFilesToProcess( request, excludesStr, sourceDirectory, request.getResources(), request.getTestSourceDirectory(), files);
+            addFilesToProcess( request, excludesStr, sourceDirectory, request.getResources(),
+                               request.getTestSourceDirectory(), files );
         }
 
         getLogger().debug( "Added " + files.size() + " files to process." );
@@ -525,7 +530,8 @@ public class DefaultCheckstyleExecutor
                                                          request.getIncludes(),
                                                          excludesStr.toString() );
             files.addAll( sourceFiles );
-            getLogger().debug( "Added " + sourceFiles.size() + " source files found in '" + sourceDirectory.getAbsolutePath() + "'." );
+            getLogger().debug( "Added " + sourceFiles.size() + " source files found in '"
+                    + sourceDirectory.getAbsolutePath() + "'." );
         }
 
         if ( request.isIncludeTestSourceDirectory() && ( testSourceDirectory != null )
@@ -534,13 +540,14 @@ public class DefaultCheckstyleExecutor
             final List testSourceFiles = FileUtils.getFiles( testSourceDirectory, request.getIncludes(),
                                                              excludesStr.toString() );
             files.addAll( testSourceFiles );
-            getLogger().debug( "Added " + testSourceFiles.size() + " test source files found in '" + testSourceDirectory.getAbsolutePath() + "'." );
+            getLogger().debug( "Added " + testSourceFiles.size() + " test source files found in '"
+                    + testSourceDirectory.getAbsolutePath() + "'." );
         }
 
         // @todo Should we add a check to see if resources should be included or not, similar to request.isIncludeTestSourceDirectory()?
         if ( resources != null )
         {
-            for ( Resource resource : resources)
+            for ( Resource resource : resources )
             {
                 if ( resource.getDirectory() != null )
                 {
@@ -550,11 +557,13 @@ public class DefaultCheckstyleExecutor
                         // @todo Perhaps extend the functionality in the future so that the included types of files can be configured. For now it is hard-coded to properties files.
                         List resourceFiles = FileUtils.getFiles( resourcesDirectory, "**/*.properties", null );
                         files.addAll( resourceFiles );
-                        getLogger().debug( "Added " + resourceFiles.size() + " resource files found in '" + resourcesDirectory.getAbsolutePath() + "'." );
+                        getLogger().debug( "Added " + resourceFiles.size() + " resource files found in '"
+                                + resourcesDirectory.getAbsolutePath() + "'." );
                     }
                     else
                     {
-                        getLogger().debug( "The resources directory '" + resourcesDirectory.getAbsolutePath() + "' does not exist or is not a directory." );
+                        getLogger().debug( "The resources directory '" + resourcesDirectory.getAbsolutePath()
+                                + "' does not exist or is not a directory." );
                     }
                 }
             }
