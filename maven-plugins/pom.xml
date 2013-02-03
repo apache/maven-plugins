@@ -71,6 +71,11 @@ under the License.
   <build>
     <pluginManagement>
       <plugins>
+        <plugin><!-- TODO: remove when upgrading to asf parent 14 -->
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-invoker-plugin</artifactId>
+          <version>1.8</version>
+        </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-changes-plugin</artifactId>
@@ -125,7 +130,6 @@ under the License.
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-scm-publish-plugin</artifactId>
-        <version>1.0-beta-2</version>
         <configuration>
           <content>${project.reporting.outputDirectory}</content>
           <pubScmUrl>scm:svn:https://svn.apache.org/repos/infra/websites/production/maven/content/${maven.site.path}</pubScmUrl>
@@ -267,7 +271,7 @@ under the License.
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-invoker-plugin</artifactId>
-            <version>1.7</version>
+            <version>1.8</version>
           </plugin>
         </plugins>
       </reporting>
