@@ -20,6 +20,7 @@ package org.apache.maven.plugins.jarsigner;
  */
 
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -28,6 +29,8 @@ import org.apache.maven.shared.jarsigner.JarSignerSignRequest;
 import org.apache.maven.shared.jarsigner.JarSignerUtil;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.cli.Commandline;
+import org.sonatype.plexus.components.sec.dispatcher.SecDispatcher;
+import org.sonatype.plexus.components.sec.dispatcher.SecDispatcherException;
 
 import java.io.File;
 import java.io.IOException;
@@ -107,6 +110,12 @@ public class JarsignerSignMojo
     @Parameter( property = "jarsigner.removeExistingSignatures", defaultValue = "false" )
     private boolean removeExistingSignatures;
 
+    /**
+     * @since 1.3
+     */
+    @Component( hint = "mng-4384")
+    private SecDispatcher securityDispatcher;
+
     protected String getCommandlineInfo( final Commandline commandLine )
     {
         String commandLineInfo = commandLine != null ? commandLine.toString() : null;
@@ -137,17 +146,28 @@ public class JarsignerSignMojo
     }
 
     protected JarSignerRequest createRequest( File archive )
+        throws MojoExecutionException
     {
         JarSignerSignRequest request = new JarSignerSignRequest();
         request.setAlias( alias );
-        request.setKeypass( keypass );
         request.setKeystore( keystore );
         request.setProviderArg( providerArg );
         request.setProviderClass( providerClass );
         request.setProviderName( providerName );
         request.setSigfile( sigfile );
-        request.setStorepass( storepass );
         request.setStoretype( storetype );
+
+        // Special handling for passwords through the Maven Security Dispatcher
+        try
+        {
+            request.setKeypass( securityDispatcher.decrypt( keypass ) );
+            request.setStorepass( securityDispatcher.decrypt( storepass ) );
+        }
+        catch ( SecDispatcherException e )
+        {
+            getLog().error( "error using security dispatcher: " + e.getMessage(), e );
+            throw new MojoExecutionException( "error using security dispatcher: " + e.getMessage(), e );
+        }
         return request;
     }
 
