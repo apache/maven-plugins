@@ -25,7 +25,7 @@ under the License.
   <parent>
     <artifactId>maven-plugins</artifactId>
     <groupId>org.apache.maven.plugins</groupId>
-    <version>23</version>
+    <version>24</version>
     <relativePath>../maven-plugins/pom.xml</relativePath>
   </parent>
 
@@ -55,7 +55,9 @@ under the License.
     <mavenVersion>2.2.1</mavenVersion>
     <checkstyleVersion>5.6</checkstyleVersion>
     <doxiaVersion>1.1.3</doxiaVersion>
+    <!-- Used only by ITs -->
     <sitePluginVersion>3.0</sitePluginVersion>
+    <!-- Used only by dependency on maven-plugin-annotations -->
     <mavenPluginVersion>3.2</mavenPluginVersion>
   </properties>
 
@@ -232,7 +234,6 @@ under the License.
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-plugin-plugin</artifactId>
-          <version>${mavenPluginVersion}</version>
           <configuration>
             <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
           </configuration>
@@ -272,7 +273,8 @@ under the License.
         <plugins>
           <plugin>
             <artifactId>maven-invoker-plugin</artifactId>
-            <version>1.5</version>
+            <!-- Cannot remove this version yet. maven-plugins:24 uses 1.7, which breaks the ITs -->
+            <version>1.8</version>
             <configuration>
               <goals>
                 <goal>clean</goal>
@@ -299,7 +301,6 @@ under the License.
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-plugin-plugin</artifactId>
-            <version>${mavenPluginVersion}</version>
             <configuration>
               <requirements>
                 <jdk>1.5</jdk>
