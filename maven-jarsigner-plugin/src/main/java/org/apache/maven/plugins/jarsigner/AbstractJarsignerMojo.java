@@ -277,7 +277,8 @@ public abstract class AbstractJarsignerMojo
      * @return the request
      * @since 1.3
      */
-    protected abstract JarSignerRequest createRequest( File archive );
+    protected abstract JarSignerRequest createRequest( File archive )
+        throws MojoExecutionException;
 
     /**
      * Gets a string representation of a {@code Commandline}.
