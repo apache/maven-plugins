@@ -39,12 +39,12 @@ Maven Checkstyle Plugin
 
 * Goals Overview
 
-   The Checkstyle Plugin has two goals:
+   The Checkstyle Plugin has three goals:
 
    * {{{./checkstyle-mojo.html}checkstyle:checkstyle}} performs Checkstyle analysis and generates a report on violations.
 
    * {{{./checkstyle-aggregate-mojo.html}checkstyle:checkstyle-aggregate}} performs Checkstyle analysis and generates a
-     report on violations, aggregating the result in the project which started this mojo.
+     report on violations, aggregating the result in the project which started this goal.
 
    * {{{./check-mojo.html}checkstyle:check}} performs a violation check against the last Checkstyle run to see if there are
      any violations. It reads the Checkstyle output file, counts the number of violations found and displays it on the
