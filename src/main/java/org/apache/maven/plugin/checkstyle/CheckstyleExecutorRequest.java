@@ -199,7 +199,8 @@ public class CheckstyleExecutorRequest
         return this;
     }
 
-    public List<Resource> getResources() {
+    public List<Resource> getResources()
+    {
         return resources;
     }
 
