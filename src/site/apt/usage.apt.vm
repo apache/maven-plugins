@@ -100,4 +100,4 @@ mvn checkstyle:checkstyle
 ** Maven 2
 
   You may need to duplicate some configuration details between the <<<\<build\>>>> section and the <<<\<reporting\>>>>
-  section, depending on whether you use checkstyle as part of the build, part of site, or both.
+  section, depending on whether you use maven-checkstyle-plugin as part of the build, part of site, or both.
