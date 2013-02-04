@@ -1012,7 +1012,8 @@ public class DependencyProjectStub
 
     public Properties getProperties()
     {
-        if (properties == null) {
+        if ( properties == null )
+        {
             properties = new Properties();
         }
         return properties;
