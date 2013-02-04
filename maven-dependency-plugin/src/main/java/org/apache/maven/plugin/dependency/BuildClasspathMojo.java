@@ -85,6 +85,12 @@ public class BuildClasspathMojo
     private File cpFile;
 
     /**
+     * A property to set to the contents of the classpath string.
+     */
+    @Parameter( property = "mdep.outputProperty")
+    private String outputProperty;
+    
+    /**
      * The file to write the classpath string. If undefined, it just prints the classpath as [INFO].
      */
     @Parameter( property = "mdep.outputFile" )
@@ -228,7 +234,15 @@ public class BuildClasspathMojo
             cpString = "classpath=" + cpString;
         }
 
-        if ( outputFile == null )
+        if ( outputProperty != null )
+        {
+            project.getProperties().setProperty( outputProperty, cpString );
+            if (getLog().isDebugEnabled())
+            {
+                getLog().debug( outputProperty + " = " + cpString );
+            }
+        }
+        else if ( outputFile == null )
         {
             getLog().info( "Dependencies classpath:\n" + cpString );
         }
@@ -429,6 +443,22 @@ public class BuildClasspathMojo
         this.outputFile = theCpFile;
     }
 
+    /**
+     * @return the outputProperty
+     */
+    public String getOutputProperty()
+    {
+        return this.outputProperty;
+    }
+
+    /**
+     * @param theOutputProperty the outputProperty to set
+     */
+    public void setOutputProperty( String theOutputProperty )
+    {
+        this.outputProperty = theOutputProperty;
+    }
+	
     /**
      * @return the fileSeparator
      */

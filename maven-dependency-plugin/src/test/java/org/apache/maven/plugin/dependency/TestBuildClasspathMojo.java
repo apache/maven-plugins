@@ -100,6 +100,14 @@ public class TestBuildClasspathMojo
         assertFalse( file.indexOf( File.separator ) >= 0 );
         assertTrue( file.indexOf( fileSep ) >= 0 );
         assertTrue( file.indexOf( pathSep ) >= 0 );
+
+        String propertyValue = project.getProperties().getProperty( "outputProperty" );
+        assertNull( propertyValue );
+        mojo.setOutputProperty( "outputProperty" );
+        mojo.execute();
+        propertyValue = project.getProperties().getProperty( "outputProperty" );
+        assertNotNull( propertyValue );
+
     }
 
     public void testPath() throws Exception

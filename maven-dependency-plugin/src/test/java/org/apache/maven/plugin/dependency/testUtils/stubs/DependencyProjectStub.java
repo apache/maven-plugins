@@ -157,6 +157,8 @@ public class DependencyProjectStub
     private String defaultGoal;
 
     private Set artifacts;
+    
+    private Properties properties;
 
     public DependencyProjectStub()
     {
@@ -1010,7 +1012,10 @@ public class DependencyProjectStub
 
     public Properties getProperties()
     {
-        return new Properties();
+        if (properties == null) {
+            properties = new Properties();
+        }
+        return properties;
     }
 
     public List getFilters()
