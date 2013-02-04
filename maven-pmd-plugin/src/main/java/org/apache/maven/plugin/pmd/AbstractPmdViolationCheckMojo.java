@@ -26,6 +26,7 @@ import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import java.io.File;
@@ -74,14 +75,28 @@ public abstract class AbstractPmdViolationCheckMojo<D>
      */
     @Parameter( property = "pmd.verbose", defaultValue = "false" )
     private boolean verbose;
+	
+     /**
+     * Print details of errors that cause build failure
+     */
+    @Parameter( property = "pmd.printFailingErrors", defaultValue = "false" )
+    private boolean printFailingErrors;
 
+    /**
+     * File that lists classes and rules to be excluded from failures
+     * For PMD, this is a properties file
+     * For CPD, this is a text file that contains comma-separated lists of classes that are allowed to duplicate
+     */
+    @Parameter( property = "pmd.excludeFromFailureFile", defaultValue = "" )
+    private String excludeFromFailureFile;
+	
     /**
      * The project to analyze.
      */
     @Component
     protected MavenProject project;
 
-    protected void executeCheck( String filename, String tagName, String key, int failurePriority )
+    protected void executeCheck( final String filename, final String tagName, final String key, final int failurePriority )
         throws MojoFailureException, MojoExecutionException
     {
         if ( aggregate && !project.isExecutionRoot() )
@@ -91,27 +106,30 @@ public abstract class AbstractPmdViolationCheckMojo<D>
 
         if ( "java".equals( language ) || aggregate )
         {
-            File outputFile = new File( targetDirectory, filename );
+            if (!StringUtils.isEmpty(excludeFromFailureFile)) {
+                loadExcludeFromFailuresData(excludeFromFailureFile);
+            }
+            final File outputFile = new File( targetDirectory, filename );
 
             if ( outputFile.exists() )
             {
-                Reader reader = null;
+                final Reader reader = null;
                 try
                 {
-                    ViolationDetails<D> violations = getViolations( outputFile, failurePriority );
+                    final ViolationDetails<D> violations = getViolations( outputFile, failurePriority );
 
-                    List<D> failures = violations.getFailureDetails();
-                    List<D> warnings = violations.getWarningDetails();
+                    final List<D> failures = violations.getFailureDetails();
+                    final List<D> warnings = violations.getWarningDetails();
 
                     if ( verbose )
                     {
                         printErrors( failures, warnings );
                     }
 
-                    int failureCount = failures.size();
-                    int warningCount = warnings.size();
+                    final int failureCount = failures.size();
+                    final int warningCount = warnings.size();
 
-                    String message = getMessage( failureCount, warningCount, key, outputFile );
+                    final String message = getMessage( failureCount, warningCount, key, outputFile );
 
                     if ( failureCount > 0 && isFailOnViolation() )
                     {
@@ -120,12 +138,12 @@ public abstract class AbstractPmdViolationCheckMojo<D>
 
                     this.getLog().info( message );
                 }
-                catch ( IOException e )
+                catch ( final IOException e )
                 {
                     throw new MojoExecutionException( "Unable to read PMD results xml: " + outputFile.getAbsolutePath(),
                                                       e );
                 }
-                catch ( XmlPullParserException e )
+                catch ( final XmlPullParserException e )
                 {
                     throw new MojoExecutionException( "Unable to read PMD results xml: " + outputFile.getAbsolutePath(),
                                                       e );
@@ -142,6 +160,8 @@ public abstract class AbstractPmdViolationCheckMojo<D>
         }
     }
 
+	protected abstract void loadExcludeFromFailuresData(String excludeFromFailureFile) throws MojoExecutionException;
+	
     /**
      * Method for collecting the violations found by the PMD tool
      *
@@ -151,20 +171,23 @@ public abstract class AbstractPmdViolationCheckMojo<D>
      * @throws XmlPullParserException
      * @throws IOException
      */
-    private ViolationDetails<D> getViolations( File analysisFile, int failurePriority )
+    private ViolationDetails<D> getViolations( final File analysisFile, final int failurePriority )
         throws XmlPullParserException, IOException
     {
-        List<D> failures = new ArrayList<D>();
-        List<D> warnings = new ArrayList<D>();
+        final List<D> failures = new ArrayList<D>();
+        final List<D> warnings = new ArrayList<D>();
 
-        List<D> violations = getErrorDetails( analysisFile );
+        final List<D> violations = getErrorDetails( analysisFile );
 
-        for ( D violation : violations )
+        for ( final D violation : violations )
         {
-            int priority = getPriority( violation );
-            if ( priority <= failurePriority )
+            final int priority = getPriority( violation );
+            if ( priority <= failurePriority && !isExcludedFromFailure(violation))
             {
                 failures.add( violation );
+                if (printFailingErrors) {
+                    printError(violation, "Failure");
+                }
             }
             else
             {
@@ -172,7 +195,7 @@ public abstract class AbstractPmdViolationCheckMojo<D>
             }
         }
 
-        ViolationDetails<D> details = newViolationDetailsInstance();
+        final ViolationDetails<D> details = newViolationDetailsInstance();
         details.setFailureDetails( failures );
         details.setWarningDetails( warnings );
         return details;
@@ -180,6 +203,8 @@ public abstract class AbstractPmdViolationCheckMojo<D>
 
     protected abstract int getPriority( D errorDetail );
 
+	protected abstract boolean isExcludedFromFailure(D errorDetail);
+	
     protected abstract ViolationDetails<D> newViolationDetailsInstance();
 
     /**
@@ -188,14 +213,14 @@ public abstract class AbstractPmdViolationCheckMojo<D>
      * @param failures list of failures
      * @param warnings list of warnings
      */
-    protected void printErrors( List<D> failures, List<D> warnings )
+    protected void printErrors( final List<D> failures, final List<D> warnings )
     {
-        for ( D warning : warnings )
+        for ( final D warning : warnings )
         {
             printError( warning, "Warning" );
         }
 
-        for ( D failure : failures )
+        for ( final D failure : failures )
         {
             printError( failure, "Failure" );
         }
@@ -210,9 +235,9 @@ public abstract class AbstractPmdViolationCheckMojo<D>
      * @param outputFile
      * @return
      */
-    private String getMessage( int failureCount, int warningCount, String key, File outputFile )
+    private String getMessage( final int failureCount, final int warningCount, final String key, final File outputFile )
     {
-        StringBuilder message = new StringBuilder();
+        final StringBuilder message = new StringBuilder();
         if ( failureCount > 0 || warningCount > 0 )
         {
             if ( failureCount > 0 )
