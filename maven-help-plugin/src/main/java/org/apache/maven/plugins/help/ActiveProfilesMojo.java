@@ -19,16 +19,20 @@ package org.apache.maven.plugins.help;
  * under the License.
  */
 
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.maven.model.Profile;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 /**
  * Displays a list of the profiles which are currently active for this build.
@@ -109,16 +113,35 @@ public class ActiveProfilesMojo
      */
     private void getActiveProfileStatement( MavenProject project, StringBuilder message )
     {
-        // Get active profiles into our own list,
-        // since we'll be modifying it, further below
-        @SuppressWarnings( "unchecked" )
-        List<Profile> profiles = new ArrayList<Profile>( project.getActiveProfiles() );
+        Map<String, List<String>> activeProfileIds = new LinkedHashMap<String, List<String>>();
+        try 
+        {
+            activeProfileIds.putAll( getInjectedProfileIds( project ) );
+        }
+        catch ( UnsupportedOperationException uoe )
+        {
+            // Fall back to M2 approach
+            @SuppressWarnings( "unchecked" )
+            List<Profile> profiles = new ArrayList<Profile>( project.getActiveProfiles() );
+            
+            for( Profile profile : profiles )
+            {
+                List<String> profileIds = activeProfileIds.get( profile.getSource() );
+                if( profileIds == null )
+                {
+                    profileIds = new ArrayList<String>();
+                    activeProfileIds.put( profile.getSource(), profileIds );
+                }
+                profileIds.add( profile.getId() );
+            }
+        }
+        
 
         message.append( "\n" );
 
         message.append( "Active Profiles for Project \'" + project.getId() + "\': \n\n" );
 
-        if ( profiles == null || profiles.isEmpty() )
+        if ( activeProfileIds.isEmpty() )
         {
             message.append( "There are no active profiles." );
         }
@@ -126,14 +149,47 @@ public class ActiveProfilesMojo
         {
             message.append( "The following profiles are active:\n" );
 
-            for ( Profile profile : profiles )
+            for ( Map.Entry<String, List<String>> entry : activeProfileIds.entrySet() )
             {
-                message.append( "\n - " ).append( profile.getId() );
-                message.append( " (source: " ).append( profile.getSource() ).append( ")" );
+                for ( String profileId : entry.getValue() )
+                {
+                    message.append( "\n - " ).append( profileId );
+                    message.append( " (source: " ).append( entry.getKey() ).append( ")" );
+                }
             }
-
         }
 
         message.append( "\n" );
+    }
+
+    @SuppressWarnings( "unchecked" )
+    private Map<String, List<String>> getInjectedProfileIds( MavenProject project ) throws UnsupportedOperationException
+    {
+        try
+        {
+            // This method was introduced with M3
+            Method getInjectedProfileIdsMethod = MavenProject.class.getMethod( "getInjectedProfileIds" );
+            return (Map<String, List<String>>) getInjectedProfileIdsMethod.invoke( project );
+        }
+        catch ( SecurityException e )
+        {
+            throw new UnsupportedOperationException( e.getMessage(), e );
+        }
+        catch ( NoSuchMethodException e )
+        {
+            throw new UnsupportedOperationException( e.getMessage(), e );
+        }
+        catch ( IllegalArgumentException e )
+        {
+            throw new UnsupportedOperationException( e.getMessage(), e );
+        }
+        catch ( IllegalAccessException e )
+        {
+            throw new UnsupportedOperationException( e.getMessage(), e );
+        }
+        catch ( InvocationTargetException e )
+        {
+            throw new UnsupportedOperationException( e.getMessage(), e );
+        }
     }
 }
