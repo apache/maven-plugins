@@ -75,21 +75,25 @@ public abstract class AbstractPmdViolationCheckMojo<D>
      */
     @Parameter( property = "pmd.verbose", defaultValue = "false" )
     private boolean verbose;
-	
-     /**
+
+    /**
      * Print details of errors that cause build failure
+     *
+     * @since 3.0
      */
-    @Parameter( property = "pmd.printFailingErrors", defaultValue = "false" )
+    @Parameter(property = "pmd.printFailingErrors", defaultValue = "false")
     private boolean printFailingErrors;
 
     /**
      * File that lists classes and rules to be excluded from failures
      * For PMD, this is a properties file
      * For CPD, this is a text file that contains comma-separated lists of classes that are allowed to duplicate
+     *
+     * @since 3.0
      */
-    @Parameter( property = "pmd.excludeFromFailureFile", defaultValue = "" )
+    @Parameter(property = "pmd.excludeFromFailureFile", defaultValue = "")
     private String excludeFromFailureFile;
-	
+
     /**
      * The project to analyze.
      */
@@ -106,8 +110,9 @@ public abstract class AbstractPmdViolationCheckMojo<D>
 
         if ( "java".equals( language ) || aggregate )
         {
-            if (!StringUtils.isEmpty(excludeFromFailureFile)) {
-                loadExcludeFromFailuresData(excludeFromFailureFile);
+            if ( !StringUtils.isEmpty( excludeFromFailureFile ) )
+            {
+                loadExcludeFromFailuresData( excludeFromFailureFile );
             }
             final File outputFile = new File( targetDirectory, filename );
 
@@ -160,13 +165,14 @@ public abstract class AbstractPmdViolationCheckMojo<D>
         }
     }
 
-	protected abstract void loadExcludeFromFailuresData(String excludeFromFailureFile) throws MojoExecutionException;
-	
+    protected abstract void loadExcludeFromFailuresData( String excludeFromFailureFile )
+        throws MojoExecutionException;
+
     /**
      * Method for collecting the violations found by the PMD tool
      *
-     * @param xpp     the xml parser object
-     * @param tagName the element that will be checked
+     * @param analysisFile
+     * @param failurePriority
      * @return an int that specifies the number of violations found
      * @throws XmlPullParserException
      * @throws IOException
@@ -182,11 +188,12 @@ public abstract class AbstractPmdViolationCheckMojo<D>
         for ( final D violation : violations )
         {
             final int priority = getPriority( violation );
-            if ( priority <= failurePriority && !isExcludedFromFailure(violation))
+            if ( priority <= failurePriority && !isExcludedFromFailure( violation ) )
             {
                 failures.add( violation );
-                if (printFailingErrors) {
-                    printError(violation, "Failure");
+                if ( printFailingErrors )
+                {
+                    printError( violation, "Failure" );
                 }
             }
             else
@@ -203,8 +210,8 @@ public abstract class AbstractPmdViolationCheckMojo<D>
 
     protected abstract int getPriority( D errorDetail );
 
-	protected abstract boolean isExcludedFromFailure(D errorDetail);
-	
+    protected abstract boolean isExcludedFromFailure( D errorDetail );
+
     protected abstract ViolationDetails<D> newViolationDetailsInstance();
 
     /**
@@ -274,7 +281,7 @@ public abstract class AbstractPmdViolationCheckMojo<D>
      * Gets the attributes and text for the violation tag and puts them in a
      * HashMap
      *
-     * @param xpp
+     * @param analisysFile
      * @throws XmlPullParserException
      * @throws IOException
      */
