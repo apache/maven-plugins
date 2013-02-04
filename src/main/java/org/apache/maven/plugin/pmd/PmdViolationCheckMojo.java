@@ -36,7 +36,13 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Properties;
+import java.util.Set;
 
 /**
  * Fail the build if there were any PMD violations in the source code.
@@ -65,6 +71,8 @@ public class PmdViolationCheckMojo
     @Parameter( property = "pmd.skip", defaultValue = "false" )
     private boolean skip;
 
+	private final Map<String, Set<String>> excludeFromFailureClasses = new HashMap<String, Set<String>>();
+	
     /**
      * {@inheritDoc}
      */
@@ -77,6 +85,45 @@ public class PmdViolationCheckMojo
         }
     }
 
+	@Override
+    protected void loadExcludeFromFailuresData(final String excludeFromFailureFile) throws MojoExecutionException {
+        final Properties props = new Properties();
+        try {
+            props.load(new FileReader(excludeFromFailureFile));
+        }
+        catch (final IOException e) {
+            throw new MojoExecutionException("Cannot load properties file " + excludeFromFailureFile, e);
+        }
+        for (final Entry<Object, Object> propEntry : props.entrySet()) {
+            final Set<String> excludedRuleSet = new HashSet<String>();
+            final String className = propEntry.getKey().toString();
+            final String[] excludedRules = propEntry.getValue().toString().split(",");
+            for (final String excludedRule : excludedRules) {
+                excludedRuleSet.add(excludedRule.trim());
+            }
+            excludeFromFailureClasses.put(className, excludedRuleSet);
+        }
+    }
+	
+    @Override
+    protected boolean isExcludedFromFailure(final Violation errorDetail) {
+        final String className = extractClassName(errorDetail);
+        final Set<String> excludedRuleSet = excludeFromFailureClasses.get(className);
+        return excludedRuleSet != null && excludedRuleSet.contains(errorDetail.getRule());
+    }
+    
+    private String extractClassName(final Violation errorDetail) {
+		//for some reason, some violations don't contain the package name, so we have to guess the full class name
+        if (errorDetail.getViolationPackage() != null && errorDetail.getViolationClass() != null) {
+            return errorDetail.getViolationPackage() + "." + errorDetail.getViolationClass();
+        }
+        else {
+            final String fileName = errorDetail.getFileName();
+            final int javaIdx = fileName.indexOf("\\java\\"); 
+            return fileName.substring(javaIdx >= 0 ? javaIdx + 6 : 0, fileName.length() - 5).replace('\\', '.');
+        }
+    }
+	
     /**
      * {@inheritDoc}
      */
