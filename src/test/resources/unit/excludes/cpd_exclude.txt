@@ -1,0 +1,1 @@
+def.configuration.App,def.configuration.AppSample
