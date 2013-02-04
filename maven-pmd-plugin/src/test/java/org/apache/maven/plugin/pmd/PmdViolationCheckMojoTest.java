@@ -109,7 +109,7 @@ public class PmdViolationCheckMojoTest
         try
         {
             final File testPom = new File( getBasedir(),
-                                     "src/test/resources/unit/custom-configuration/pmd-check-exception-test-plugin-config.xml" );
+                                           "src/test/resources/unit/custom-configuration/pmd-check-exception-test-plugin-config.xml" );
             final PmdViolationCheckMojo mojo = (PmdViolationCheckMojo) lookupMojo( "check", testPom );
             mojo.execute();
 
@@ -121,20 +121,20 @@ public class PmdViolationCheckMojoTest
         }
 
     }
-    
+
     public void testViolationExclusion()
-            throws Exception
-        {
-            File testPom = new File( getBasedir(),
-                                     "src/test/resources/unit/default-configuration/default-configuration-plugin-config.xml" );
-            final PmdReport mojo = (PmdReport) lookupMojo( "pmd", testPom );
-            mojo.execute();
+        throws Exception
+    {
+        File testPom = new File( getBasedir(),
+                                 "src/test/resources/unit/default-configuration/default-configuration-plugin-config.xml" );
+        final PmdReport mojo = (PmdReport) lookupMojo( "pmd", testPom );
+        mojo.execute();
 
-            testPom = new File( getBasedir(),
-                                "src/test/resources/unit/default-configuration/pmd-check-pmd-exclusions-configuration-plugin-config.xml" );
-            final PmdViolationCheckMojo pmdViolationMojo = (PmdViolationCheckMojo) lookupMojo( "check", testPom );
-            pmdViolationMojo.execute();
+        testPom = new File( getBasedir(),
+                            "src/test/resources/unit/default-configuration/pmd-check-pmd-exclusions-configuration-plugin-config.xml" );
+        final PmdViolationCheckMojo pmdViolationMojo = (PmdViolationCheckMojo) lookupMojo( "check", testPom );
+        pmdViolationMojo.execute();
 
-            assertTrue( true );
-        }
+        assertTrue( true );
+    }
 }
