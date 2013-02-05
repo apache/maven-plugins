@@ -255,7 +255,7 @@ public class DescribeMojo
         {
             try
             {
-                project = projectBuilder.buildStandaloneSuperProject( localRepository );
+                project = projectBuilder.buildStandaloneSuperProject( session.getProjectBuilderConfiguration() );
             }
             catch ( ProjectBuildingException e )
             {
