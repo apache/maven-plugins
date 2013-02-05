@@ -85,9 +85,9 @@ public class BuildClasspathMojo
     private File cpFile;
 
     /**
-     * A property to set to the contents of the classpath string.
+     * A property to set to the content of the classpath string.
      */
-    @Parameter( property = "mdep.outputProperty")
+    @Parameter( property = "mdep.outputProperty" )
     private String outputProperty;
     
     /**
@@ -237,7 +237,7 @@ public class BuildClasspathMojo
         if ( outputProperty != null )
         {
             project.getProperties().setProperty( outputProperty, cpString );
-            if (getLog().isDebugEnabled())
+            if ( getLog().isDebugEnabled() )
             {
                 getLog().debug( outputProperty + " = " + cpString );
             }

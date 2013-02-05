@@ -230,14 +230,7 @@ public class DependencyProjectStub
 
     public boolean hasParent()
     {
-        if ( parent != null )
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        return ( parent != null );
     }
 
     public File getFile()
