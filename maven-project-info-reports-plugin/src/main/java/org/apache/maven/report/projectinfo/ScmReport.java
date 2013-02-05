@@ -30,6 +30,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.scm.manager.NoSuchScmProviderException;
 import org.apache.maven.scm.manager.ScmManager;
 import org.apache.maven.scm.provider.cvslib.repository.CvsScmProviderRepository;
+import org.apache.maven.scm.provider.git.repository.GitScmProviderRepository;
 import org.apache.maven.scm.provider.hg.repository.HgScmProviderRepository;
 import org.apache.maven.scm.provider.perforce.repository.PerforceScmProviderRepository;
 import org.apache.maven.scm.provider.starteam.repository.StarteamScmProviderRepository;
@@ -42,7 +43,6 @@ import org.codehaus.plexus.util.StringUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import org.apache.maven.scm.provider.git.repository.GitScmProviderRepository;
 
 /**
  * Generates the Project Source Code Management (SCM) report.
