@@ -60,7 +60,6 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
-import org.apache.maven.settings.Settings;
 import org.apache.maven.tools.plugin.util.PluginUtils;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.codehaus.plexus.util.StringUtils;
@@ -136,13 +135,6 @@ public class DescribeMojo
      */
     @Component
     private MavenProject project;
-
-    /**
-     * The current user system settings for use in Maven. This is used for
-     * plugin manager API calls.
-     */
-    @Component
-    private Settings settings;
 
     /**
      * The current build session instance. This is used for
@@ -424,7 +416,7 @@ public class DescribeMojo
         {
             try
             {
-                descriptor = pluginManager.verifyPlugin( forLookup, project, settings, localRepository );
+                descriptor = pluginManager.loadPluginDescriptor( forLookup, project, session );
             }
             catch ( ArtifactResolutionException e )
             {
