@@ -29,10 +29,12 @@ import org.apache.maven.plugins.annotations.Execute;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -89,14 +91,25 @@ public class PmdViolationCheckMojo
     protected void loadExcludeFromFailuresData( final String excludeFromFailureFile )
         throws MojoExecutionException
     {
+        File file = new File( excludeFromFailureFile );
+        if ( !file.exists() )
+        {
+            return;
+        }
         final Properties props = new Properties();
+        FileInputStream fileInputStream = null;
         try
         {
-            props.load( new FileReader( excludeFromFailureFile ) );
+            fileInputStream = new FileInputStream( new File( excludeFromFailureFile ) );
+            props.load( fileInputStream );
         }
         catch ( final IOException e )
         {
             throw new MojoExecutionException( "Cannot load properties file " + excludeFromFailureFile, e );
+        }
+        finally
+        {
+            IOUtil.close( fileInputStream );
         }
         for ( final Entry<Object, Object> propEntry : props.entrySet() )
         {
