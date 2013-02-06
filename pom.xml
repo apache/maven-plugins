@@ -76,7 +76,7 @@ under the License.
   <properties>
     <mavenVersion>2.2.1</mavenVersion>
     <doxiaVersion>1.3</doxiaVersion>
-    <pmdVersion>5.0.1</pmdVersion>
+    <pmdVersion>5.0.2</pmdVersion>
     <sitePluginVersion>3.2</sitePluginVersion>
     <mavenPluginVersion>3.2</mavenPluginVersion>
   </properties>
