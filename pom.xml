@@ -76,7 +76,7 @@ under the License.
   <properties>
     <mavenVersion>2.2.1</mavenVersion>
     <doxiaVersion>1.3</doxiaVersion>
-    <pmdVersion>5.0.1</pmdVersion>
+    <pmdVersion>5.0.2</pmdVersion>
     <sitePluginVersion>3.2</sitePluginVersion>
     <mavenPluginVersion>3.2</mavenPluginVersion>
   </properties>
@@ -228,6 +228,27 @@ under the License.
             <id>generate-descriptor</id>
             <goals>
               <goal>descriptor</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>animal-sniffer-maven-plugin</artifactId>
+        <version>1.6</version>
+        <configuration>
+          <signature>
+            <groupId>org.codehaus.mojo.signature</groupId>
+            <artifactId>java15</artifactId>
+            <version>1.0</version>
+          </signature>
+        </configuration>
+        <executions>
+          <execution>
+            <id>check-java-1.5-compat</id>
+            <phase>process-classes</phase>
+            <goals>
+              <goal>check</goal>
             </goals>
           </execution>
         </executions>
