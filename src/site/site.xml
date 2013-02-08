@@ -36,6 +36,7 @@ under the License.
       <item name="Using Rule Sets" href="examples/usingRuleSets.html"/>
       <item name="Violation Checking" href="examples/violationChecking.html"/>
       <item name="Analyzing JavaScript" href="examples/javascriptReport.html"/>
+      <item name="Violations Exclusions" href="examples/violation-exclusions.html"/>
     </menu>
   </body>
 </project>
