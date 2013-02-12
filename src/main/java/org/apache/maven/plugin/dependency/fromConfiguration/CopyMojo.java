@@ -50,12 +50,14 @@ public class CopyMojo
 
     /**
      * Prepend artifact groupId during copy
+     * @since 2.7
      */
     @Parameter( property = "mdep.prependGroupId", defaultValue = "false" )
     private boolean prependGroupId = false;
 
     /**
      * Use artifact baseVersion during copy
+     * @since 2.7
      */
     @Parameter( property = "mdep.useBaseVersion", defaultValue = "false" )
     private boolean useBaseVersion = false;
