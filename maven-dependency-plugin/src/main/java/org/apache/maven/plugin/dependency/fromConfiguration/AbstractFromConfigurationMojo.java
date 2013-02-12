@@ -149,11 +149,13 @@ public abstract class AbstractFromConfigurationMojo
      * output Directory if it doesn't exist.
      *
      * @param removeVersion remove the version from the filename.
+     * @param prependGroupId prepend the groupId to the filename.
+     * @param useBaseVersion use the baseVersion of the artifact instead of version for the filename.
      * @return An ArrayList of preprocessed ArtifactItems
      * @throws MojoExecutionException with a message if an error occurs.
      * @see ArtifactItem
      */
-    protected List<ArtifactItem> getProcessedArtifactItems( boolean removeVersion )
+    protected List<ArtifactItem> getProcessedArtifactItems( boolean removeVersion, boolean prependGroupId , boolean useBaseVersion )
         throws MojoExecutionException
     {
         if ( artifactItems == null || artifactItems.size() < 1 )
@@ -182,7 +184,7 @@ public abstract class AbstractFromConfigurationMojo
             if ( StringUtils.isEmpty( artifactItem.getDestFileName() ) )
             {
                 artifactItem.setDestFileName(
-                    DependencyUtil.getFormattedFileName( artifactItem.getArtifact(), removeVersion ) );
+                    DependencyUtil.getFormattedFileName( artifactItem.getArtifact(), removeVersion, prependGroupId, useBaseVersion ) );
             }
 
             try

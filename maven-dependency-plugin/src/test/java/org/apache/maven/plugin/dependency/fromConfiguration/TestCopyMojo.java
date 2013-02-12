@@ -67,10 +67,10 @@ public class TestCopyMojo
 
     }
 
-    public ArtifactItem getSingleArtifactItem( boolean removeVersion )
+    public ArtifactItem getSingleArtifactItem( boolean removeVersion, boolean useBaseVersion )
         throws MojoExecutionException
     {
-        List<ArtifactItem> list = mojo.getProcessedArtifactItems( removeVersion );
+        List<ArtifactItem> list = mojo.getProcessedArtifactItems( removeVersion, false, useBaseVersion );
         return list.get( 0 );
     }
 
@@ -89,12 +89,12 @@ public class TestCopyMojo
 
         mojo.setArtifactItems( list );
 
-        ArtifactItem result = getSingleArtifactItem( false );
+        ArtifactItem result = getSingleArtifactItem( false, false );
         assertEquals( mojo.getOutputDirectory(), result.getOutputDirectory() );
 
         File output = new File( mojo.getOutputDirectory(), "override" );
         item.setOutputDirectory( output );
-        result = getSingleArtifactItem( false );
+        result = getSingleArtifactItem( false, false );
         assertEquals( output, result.getOutputDirectory() );
     }
 
@@ -126,6 +126,26 @@ public class TestCopyMojo
         List<ArtifactItem> list = stubFactory.getArtifactItems( stubFactory.getClassifiedArtifacts() );
 
         mojo.setArtifactItems( list );
+
+        mojo.execute();
+
+        assertFilesExist( list, true );
+    }
+    
+    public void testCopyFileWithBaseVersion()
+        throws Exception
+    {
+        List<ArtifactItem> list = stubFactory.getArtifactItems( stubFactory.getClassifiedArtifacts() );
+        ArtifactItem item = new ArtifactItem();
+
+        item.setArtifactId( "artifact" );
+        item.setGroupId( "groupId" );
+        item.setVersion( "1.0-20130210.213424-191" );
+        item.setBaseVersion( "1.0-SNAPSHOT" );
+        list.add(item);
+
+        mojo.setArtifactItems( list );
+        mojo.setUseBaseVersion(true);
 
         mojo.execute();
 
@@ -515,7 +535,7 @@ public class TestCopyMojo
     {
         try
         {
-            mojo.getProcessedArtifactItems( false );
+            mojo.getProcessedArtifactItems( false, false, false );
             fail( "Expected Exception" );
         }
         catch ( MojoExecutionException e )

@@ -59,6 +59,13 @@ public class ArtifactItem
     private String version = null;
 
     /**
+     * BaseVersion of Artifact
+     *
+     * @parameter
+     */
+    private String baseVersion = null;
+
+    /**
      * Type of Artifact (War,Jar,etc)
      *
      * @parameter
@@ -127,6 +134,7 @@ public class ArtifactItem
         this.setGroupId( artifact.getGroupId() );
         this.setType( artifact.getType() );
         this.setVersion( artifact.getVersion() );
+        this.setBaseVersion( artifact.getBaseVersion() );
     }
 
     private String filterEmptyString( String in )
@@ -204,6 +212,23 @@ public class ArtifactItem
     public void setVersion( String version )
     {
         this.version = filterEmptyString( version );
+    }
+
+    /**
+     * @return Returns the base version.
+     */
+    public String getBaseVersion()
+    {
+        return baseVersion;
+    }
+
+    /**
+     * @param baseVersion
+     *            The base version to set.
+     */
+    public void setBaseVersion( String baseVersion )
+    {
+        this.baseVersion = filterEmptyString( baseVersion );
     }
 
     /**
