@@ -70,7 +70,7 @@ public class TestCopyMojo
     public ArtifactItem getSingleArtifactItem( boolean removeVersion, boolean useBaseVersion )
         throws MojoExecutionException
     {
-        List<ArtifactItem> list = mojo.getProcessedArtifactItems( removeVersion, false, useBaseVersion );
+        List<ArtifactItem> list = mojo.getProcessedArtifactItems(new ProcessArtifactItemsRequest( removeVersion, false, useBaseVersion ));
         return list.get( 0 );
     }
 
@@ -535,7 +535,7 @@ public class TestCopyMojo
     {
         try
         {
-            mojo.getProcessedArtifactItems( false, false, false );
+            mojo.getProcessedArtifactItems( new ProcessArtifactItemsRequest( false, false, false ) );
             fail( "Expected Exception" );
         }
         catch ( MojoExecutionException e )

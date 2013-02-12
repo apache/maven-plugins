@@ -155,9 +155,14 @@ public abstract class AbstractFromConfigurationMojo
      * @throws MojoExecutionException with a message if an error occurs.
      * @see ArtifactItem
      */
-    protected List<ArtifactItem> getProcessedArtifactItems( boolean removeVersion, boolean prependGroupId , boolean useBaseVersion )
+    protected List<ArtifactItem> getProcessedArtifactItems( ProcessArtifactItemsRequest processArtifactItemsRequest  )
         throws MojoExecutionException
     {
+
+        boolean removeVersion = processArtifactItemsRequest.isRemoveVersion(), prependGroupId =
+            processArtifactItemsRequest.isPrependGroupId(), useBaseVersion =
+            processArtifactItemsRequest.isUseBaseVersion();
+
         if ( artifactItems == null || artifactItems.size() < 1 )
         {
             throw new MojoExecutionException( "There are no artifactItems configured." );
