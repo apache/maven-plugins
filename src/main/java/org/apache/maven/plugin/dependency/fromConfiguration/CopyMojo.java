@@ -49,6 +49,18 @@ public class CopyMojo
     private boolean stripVersion = false;
 
     /**
+     * Prepend artifact groupId during copy
+     */
+    @Parameter( property = "mdep.prependGroupId", defaultValue = "false" )
+    private boolean prependGroupId = false;
+
+    /**
+     * Use artifact baseVersion during copy
+     */
+    @Parameter( property = "mdep.useBaseVersion", defaultValue = "false" )
+    private boolean useBaseVersion = false;
+
+    /**
      * The artifact to copy from commandLine.
      * Use {@link #artifactItems} within the pom-configuration.
      */
@@ -75,7 +87,7 @@ public class CopyMojo
         
         verifyRequirements();
 
-        List<ArtifactItem> theArtifactItems = getProcessedArtifactItems( this.stripVersion );
+        List<ArtifactItem> theArtifactItems = getProcessedArtifactItems( this.stripVersion, this.prependGroupId, this.useBaseVersion );
         for ( ArtifactItem artifactItem : theArtifactItems )
         {
             if ( artifactItem.isNeedsProcessing() )
@@ -129,4 +141,11 @@ public class CopyMojo
         this.stripVersion = stripVersion;
     }
 
+    /**
+     * @param useBaseVersion The useBaseVersion to set.
+     */
+    public void setUseBaseVersion( boolean useBaseVersion )
+    {
+        this.useBaseVersion = useBaseVersion;
+    }
 }
