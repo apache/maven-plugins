@@ -89,7 +89,8 @@ public class CopyMojo
         
         verifyRequirements();
 
-        List<ArtifactItem> theArtifactItems = getProcessedArtifactItems( this.stripVersion, this.prependGroupId, this.useBaseVersion );
+        List<ArtifactItem> theArtifactItems = getProcessedArtifactItems(
+            new ProcessArtifactItemsRequest( this.stripVersion, this.prependGroupId, this.useBaseVersion ) );
         for ( ArtifactItem artifactItem : theArtifactItems )
         {
             if ( artifactItem.isNeedsProcessing() )

@@ -141,7 +141,8 @@ public final class UnpackMojo
     protected List<ArtifactItem> getProcessedArtifactItems( boolean removeVersion )
         throws MojoExecutionException
     {
-        List<ArtifactItem> items = super.getProcessedArtifactItems( removeVersion, false, false );
+        List<ArtifactItem> items =
+            super.getProcessedArtifactItems( new ProcessArtifactItemsRequest( removeVersion, false, false ) );
         for ( ArtifactItem artifactItem : items )
         {
             if ( StringUtils.isEmpty( artifactItem.getIncludes() ) )
