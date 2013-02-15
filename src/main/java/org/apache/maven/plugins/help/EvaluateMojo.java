@@ -493,9 +493,9 @@ public class EvaluateMojo
             else
             {
                 // try to detect the alias from question
-                if ( expression.indexOf( "." ) != -1 )
+                if ( expression.indexOf( '.' ) != -1 )
                 {
-                    String name = expression.substring( expression.indexOf( "." ) + 1, expression.indexOf( "}" ) );
+                    String name = expression.substring( expression.indexOf( '.' ) + 1, expression.indexOf( '}' ) );
                     currentXStream.alias( name, List.class );
                 }
             }
@@ -616,7 +616,7 @@ public class EvaluateMojo
                         }
                         catch ( ClassNotFoundException e )
                         {
-                            e.printStackTrace();
+                            getLog().error( e );
                         }
                     }
                 }

@@ -317,7 +317,7 @@ public class DescribeMojo
         if ( !detail && session.getExecutionProperties().get( "full" ) != null )
         {
             String full = session.getExecutionProperties().getProperty( "full" );
-            detail = new Boolean( full ).booleanValue();
+            detail = Boolean.valueOf( full );
         }
 
         if ( detail || minimal )
@@ -491,7 +491,7 @@ public class DescribeMojo
     {
         if ( StringUtils.isNotEmpty( plugin ) )
         {
-            if ( plugin.indexOf( ":" ) > -1 )
+            if ( plugin.indexOf( ':' ) > -1 )
             {
                 String[] pluginParts = plugin.split( ":" );
 
@@ -819,7 +819,7 @@ public class DescribeMojo
     private boolean describeCommand( StringBuilder descriptionBuffer )
         throws MojoFailureException, MojoExecutionException
     {
-        if ( cmd.indexOf( ":" ) == -1 )
+        if ( cmd.indexOf( ':' ) == -1 )
         {
             // phase
             try
