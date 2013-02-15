@@ -261,7 +261,7 @@ public class AllProfilesMojo
         }
 
         MavenProject parent = project.getParent();
-        while( parent != null )
+        while ( parent != null )
         {
             List<Profile> profiles2 = parent.getModel().getProfiles();
             for ( Profile profile : profiles2 )

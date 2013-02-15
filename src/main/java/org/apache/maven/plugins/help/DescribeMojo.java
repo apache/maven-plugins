@@ -473,7 +473,7 @@ public class DescribeMojo
         if ( descriptor == null )
         {
             throw new MojoFailureException( "Plugin could not be found. If you believe it is correct,"
-                                                + " check your pluginGroups setting, and run with -U to update the remote configuration" );
+                + " check your pluginGroups setting, and run with -U to update the remote configuration" );
         }
 
         return descriptor;

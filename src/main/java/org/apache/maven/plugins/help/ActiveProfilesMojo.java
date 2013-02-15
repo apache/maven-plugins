@@ -124,10 +124,10 @@ public class ActiveProfilesMojo
             @SuppressWarnings( "unchecked" )
             List<Profile> profiles = new ArrayList<Profile>( project.getActiveProfiles() );
             
-            for( Profile profile : profiles )
+            for ( Profile profile : profiles )
             {
                 List<String> profileIds = activeProfileIds.get( profile.getSource() );
-                if( profileIds == null )
+                if ( profileIds == null )
                 {
                     profileIds = new ArrayList<String>();
                     activeProfileIds.put( profile.getSource(), profileIds );
