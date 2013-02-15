@@ -44,6 +44,12 @@ import org.codehaus.plexus.component.repository.exception.ComponentLookupExcepti
  */
 public class HelpUtil
 {
+    
+    private HelpUtil()
+    {
+        // Utility classes should not have a public or default constructor.
+    }
+    
     /**
      * Invoke the following private method <code>
      * DefaultLifecycleExecutor#getMojoDescriptor(String, MavenSession, MavenProject, String, boolean, boolean)</code>
