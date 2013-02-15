@@ -354,11 +354,11 @@ public class EvaluateMojo
     }
 
     /**
-     * @param expression the user expression asked.
+     * @param expr the user expression asked.
      * @throws MojoExecutionException if any
      * @throws MojoFailureException if any reflection exceptions occur or missing components.
      */
-    private void handleResponse( String expression )
+    private void handleResponse( String expr )
         throws MojoExecutionException, MojoFailureException
     {
         StringBuilder response = new StringBuilder();
@@ -366,14 +366,14 @@ public class EvaluateMojo
         Object obj;
         try
         {
-            obj = getEvaluator().evaluate( expression );
+            obj = getEvaluator().evaluate( expr );
         }
         catch ( ExpressionEvaluationException e )
         {
             throw new MojoExecutionException( "Error when evaluating the Maven expression", e );
         }
 
-        if ( obj != null && expression.equals( obj.toString() ) )
+        if ( obj != null && expr.equals( obj.toString() ) )
         {
             getLog().warn( "The Maven expression was invalid. Please use a valid expression." );
             return;
@@ -464,18 +464,18 @@ public class EvaluateMojo
         else
         {
             // others Maven objects
-            response.append( toXML( expression, obj ) );
+            response.append( toXML( expr, obj ) );
         }
 
         getLog().info( "\n" + response.toString() );
     }
 
     /**
-     * @param expression the user expression.
+     * @param expr the user expression.
      * @param obj a not null.
      * @return the XML for the given object.
      */
-    private String toXML( String expression, Object obj )
+    private String toXML( String expr, Object obj )
     {
         XStream currentXStream = getXStream();
 
@@ -493,9 +493,9 @@ public class EvaluateMojo
             else
             {
                 // try to detect the alias from question
-                if ( expression.indexOf( '.' ) != -1 )
+                if ( expr.indexOf( '.' ) != -1 )
                 {
-                    String name = expression.substring( expression.indexOf( '.' ) + 1, expression.indexOf( '}' ) );
+                    String name = expr.substring( expr.indexOf( '.' ) + 1, expr.indexOf( '}' ) );
                     currentXStream.alias( name, List.class );
                 }
             }

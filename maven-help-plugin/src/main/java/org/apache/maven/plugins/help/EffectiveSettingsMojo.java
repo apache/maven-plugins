@@ -202,7 +202,7 @@ public class EffectiveSettingsMojo
         clone.setServers( clonedServers );
         
         List<Proxy> clonedProxies = new ArrayList<Proxy>( settings.getProxies().size() );
-        for( Proxy proxy : settings.getProxies() )
+        for ( Proxy proxy : settings.getProxies() )
         {
             Proxy clonedProxy = new Proxy();
             clonedProxy.setActive( proxy.isActive() );
