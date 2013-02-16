@@ -53,7 +53,7 @@ under the License.
   </issueManagement>
 
   <properties>
-    <wagonVersion>2.2</wagonVersion>
+    <wagonVersion>2.4</wagonVersion>
     <mavenVersion>2.0.10</mavenVersion>
     <mavenPluginVersion>3.2</mavenPluginVersion>
   </properties>
@@ -92,7 +92,7 @@ under the License.
     </dependency>
     <dependency>
       <groupId>org.apache.maven.wagon</groupId>
-      <artifactId>wagon-http-lightweight</artifactId>
+      <artifactId>wagon-http</artifactId>
       <version>${wagonVersion}</version>
     </dependency>
     <dependency>
