@@ -28,7 +28,6 @@ under the License.
       <item name="Goals" href="plugin-info.html"/>
       <item name="Usage" href="usage.html"/>
       <item name="FAQ" href="faq.html"/>
-      <item name="Release Notes" href="jira-report.html"/>
     </menu>
     <menu name="Examples">
       <item name="Configuring Describe Goal" href="/examples/describe-configuration.html"/>
