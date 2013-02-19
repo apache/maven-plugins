@@ -136,6 +136,8 @@ public abstract class AbstractPmdViolationCheckMojo<D>
 
                     final String message = getMessage( failureCount, warningCount, key, outputFile );
 
+                    getLog().debug( "PMD failureCount: " + failureCount + ", warningCount: " + warningCount );
+
                     if ( failureCount > 0 && isFailOnViolation() )
                     {
                         throw new MojoFailureException( message );
@@ -244,7 +246,7 @@ public abstract class AbstractPmdViolationCheckMojo<D>
      */
     private String getMessage( final int failureCount, final int warningCount, final String key, final File outputFile )
     {
-        final StringBuilder message = new StringBuilder();
+        final StringBuilder message = new StringBuilder( 256 );
         if ( failureCount > 0 || warningCount > 0 )
         {
             if ( failureCount > 0 )
