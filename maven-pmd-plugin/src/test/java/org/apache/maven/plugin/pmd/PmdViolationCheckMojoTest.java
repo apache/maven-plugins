@@ -98,7 +98,14 @@ public class PmdViolationCheckMojoTest
         }
         catch ( final MojoFailureException e )
         {
-            System.out.println( "Caught Expected Message: " + e.getMessage() );// expected
+            String message = e.getMessage();
+            if ( message.contains( "You have 5 PMD violations and 3 warnings." ) ) {
+                System.out.println( "Caught Expected Message: " + e.getMessage() );// expected
+            } 
+            else
+            {
+                throw new AssertionError( "Expected: '" + message + "' to contain 'You have 5 PMD violations and 3 warnings.'" );
+            }                        
         }
 
     }

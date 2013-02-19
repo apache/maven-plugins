@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -52,7 +53,7 @@ public class PmdReportListener
 
     private ResourceBundle bundle;
 
-    private List<RuleViolation> violations = new ArrayList<RuleViolation>();
+    private HashSet<RuleViolation> violations = new HashSet<RuleViolation>();
 
     private boolean aggregate;
 
@@ -86,7 +87,7 @@ public class PmdReportListener
 
     public List<RuleViolation> getViolations()
     {
-        return violations;
+        return new ArrayList<RuleViolation>( violations );
     }
 
     private void startFileSection( String currentFilename, PmdFileInfo fileInfo )
@@ -156,7 +157,8 @@ public class PmdReportListener
         throws IOException
     {
         fileCount = files.size();
-        Collections.sort( violations, new Comparator<RuleViolation>()
+        ArrayList<RuleViolation> violations2 = new ArrayList<RuleViolation>( violations );
+        Collections.sort( violations2, new Comparator<RuleViolation>()
         {
             /** {@inheritDoc} */
             public int compare( RuleViolation o1, RuleViolation o2 )
@@ -175,7 +177,7 @@ public class PmdReportListener
 
         boolean fileSectionStarted = false;
         String previousFilename = null;
-        for ( RuleViolation ruleViolation : violations )
+        for ( RuleViolation ruleViolation : violations2 )
         {
             String currentFn = ruleViolation.getFilename();
             File canonicalFilename = new File( currentFn ).getCanonicalFile();
