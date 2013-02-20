@@ -141,7 +141,7 @@ under the License.
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-archiver</artifactId>
-      <version>2.3-SNAPSHOT</version>
+      <version>2.3</version>
     </dependency>
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
