@@ -19,19 +19,26 @@ package org.apache.maven.plugin.dependency;
  * under the License.
  */
 
+import java.io.File;
+import java.util.Set;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
+import org.apache.maven.plugin.dependency.utils.DependencyUtil;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.project.artifact.InvalidDependencyVersionException;
-
-import java.io.File;
-import java.util.Set;
+import org.apache.maven.shared.artifact.filter.collection.ArtifactIdFilter;
+import org.apache.maven.shared.artifact.filter.collection.ClassifierFilter;
+import org.apache.maven.shared.artifact.filter.collection.FilterArtifacts;
+import org.apache.maven.shared.artifact.filter.collection.GroupIdFilter;
+import org.apache.maven.shared.artifact.filter.collection.ScopeFilter;
+import org.apache.maven.shared.artifact.filter.collection.TypeFilter;
 
 /**
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
@@ -75,13 +82,71 @@ public abstract class AbstractResolveMojo
     @Parameter( property = "appendOutput", defaultValue = "false" )
     protected boolean appendOutput;
 
-    protected Set<Artifact> resolveDependencyArtifacts( MavenProject theProject )
+    /**
+     * Don't resolve plugins that are in the current reactor. 
+     * Only works for plugins at the moment.
+     * 
+     * @since 2.7
+     */
+    @Parameter( property = "excludeReactor", defaultValue = "true" )
+    protected boolean excludeReactor;
+
+    protected FilterArtifacts getPluginArtifactsFilter()
+    {
+        if ( excludeReactor )
+        {
+            final StringBuilder exAids = new StringBuilder();
+            if ( this.excludeArtifactIds != null )
+            {
+                exAids.append( this.excludeArtifactIds );
+            }
+
+            for ( final MavenProject rp : reactorProjects )
+            {
+                if ( !"maven-plugin".equals( rp.getPackaging() ) )
+                {
+                    continue;
+                }
+
+                if ( exAids.length() > 0 )
+                {
+                    exAids.append( "," );
+                }
+
+                exAids.append( rp.getArtifactId() );
+            }
+
+            this.excludeArtifactIds = exAids.toString();
+        }
+
+        final FilterArtifacts filter = new FilterArtifacts();
+
+        filter.addFilter( new ScopeFilter( DependencyUtil.cleanToBeTokenizedString( this.includeScope ),
+                                           DependencyUtil.cleanToBeTokenizedString( this.excludeScope ) ) );
+
+        filter.addFilter( new TypeFilter( DependencyUtil.cleanToBeTokenizedString( this.includeTypes ),
+                                          DependencyUtil.cleanToBeTokenizedString( this.excludeTypes ) ) );
+
+        filter.addFilter( new ClassifierFilter( DependencyUtil.cleanToBeTokenizedString( this.includeClassifiers ),
+                                                DependencyUtil.cleanToBeTokenizedString( this.excludeClassifiers ) ) );
+
+        filter.addFilter( new GroupIdFilter( DependencyUtil.cleanToBeTokenizedString( this.includeGroupIds ),
+                                             DependencyUtil.cleanToBeTokenizedString( this.excludeGroupIds ) ) );
+
+        filter.addFilter( new ArtifactIdFilter( DependencyUtil.cleanToBeTokenizedString( this.includeArtifactIds ),
+                                                DependencyUtil.cleanToBeTokenizedString( this.excludeArtifactIds ) ) );
+
+        return filter;
+    }
+
+    protected Set<Artifact> resolveDependencyArtifacts( final MavenProject theProject )
         throws ArtifactResolutionException, ArtifactNotFoundException, InvalidDependencyVersionException
     {
-        Set<Artifact> artifacts = theProject.createArtifacts( this.factory, Artifact.SCOPE_TEST,
-                                                              new ScopeArtifactFilter( Artifact.SCOPE_TEST ) );
+        final Set<Artifact> artifacts =
+            theProject.createArtifacts( this.factory, Artifact.SCOPE_TEST,
+                                        new ScopeArtifactFilter( Artifact.SCOPE_TEST ) );
 
-        for ( Artifact artifact : artifacts )
+        for ( final Artifact artifact : artifacts )
         {
             // resolve the new artifact
             this.resolver.resolve( artifact, this.remoteRepos, this.getLocal() );
@@ -100,15 +165,15 @@ public abstract class AbstractResolveMojo
      * @throws InvalidDependencyVersionException
      *
      */
-    protected Set<Artifact> resolveArtifactDependencies( Artifact artifact )
+    protected Set<Artifact> resolveArtifactDependencies( final Artifact artifact )
         throws ArtifactResolutionException, ArtifactNotFoundException, ProjectBuildingException,
         InvalidDependencyVersionException
     {
-        Artifact pomArtifact =
+        final Artifact pomArtifact =
             this.factory.createArtifact( artifact.getGroupId(), artifact.getArtifactId(), artifact.getVersion(), "",
                                          "pom" );
 
-        MavenProject pomProject =
+        final MavenProject pomProject =
             mavenProjectBuilder.buildFromRepository( pomArtifact, this.remoteRepos, this.getLocal() );
 
         return resolveDependencyArtifacts( pomProject );

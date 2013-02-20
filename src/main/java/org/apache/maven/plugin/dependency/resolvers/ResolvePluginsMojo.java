@@ -19,6 +19,13 @@ package org.apache.maven.plugin.dependency.resolvers;
  * under the License.
  */
 
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
@@ -31,15 +38,10 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.project.artifact.InvalidDependencyVersionException;
+import org.apache.maven.shared.artifact.filter.collection.ArtifactFilterException;
 import org.apache.maven.shared.artifact.filter.collection.ArtifactsFilter;
+import org.apache.maven.shared.artifact.filter.collection.FilterArtifacts;
 import org.codehaus.plexus.util.IOUtil;
-
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Writer;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 /**
  * Goal that resolves all project plugins and reports and their dependencies.
@@ -78,21 +80,23 @@ public class ResolvePluginsMojo
 
         try
         {
-            Set<Artifact> plugins = resolvePluginArtifacts();
+            final Set<Artifact> plugins = resolvePluginArtifacts();
 
             if ( this.outputFile != null )
             {
-                outputFile.getParentFile().mkdirs();
+                outputFile.getParentFile()
+                          .mkdirs();
 
                 outputWriter = new FileWriter( outputFile );
             }
 
-            for ( Artifact plugin : plugins )
+            for ( final Artifact plugin : plugins )
             {
                 String logStr = "Plugin Resolved: " + DependencyUtil.getFormattedFileName( plugin, false );
                 if ( !silent )
                 {
-                    this.getLog().info( logStr );
+                    this.getLog()
+                        .info( logStr );
                 }
 
                 if ( outputWriter != null )
@@ -103,14 +107,15 @@ public class ResolvePluginsMojo
 
                 if ( !excludeTransitive )
                 {
-                    for ( Artifact artifact : resolveArtifactDependencies( plugin ) )
+                    for ( final Artifact artifact : resolveArtifactDependencies( plugin ) )
                     {
                         logStr =
                             "    Plugin Dependency Resolved: " + DependencyUtil.getFormattedFileName( artifact, false );
 
                         if ( !silent )
                         {
-                            this.getLog().info( logStr );
+                            this.getLog()
+                                .info( logStr );
                         }
 
                         if ( outputWriter != null )
@@ -122,23 +127,27 @@ public class ResolvePluginsMojo
                 }
             }
         }
-        catch ( IOException e )
+        catch ( final IOException e )
         {
             throw new MojoExecutionException( "Nested:", e );
         }
-        catch ( ArtifactResolutionException e )
+        catch ( final ArtifactResolutionException e )
         {
             throw new MojoExecutionException( "Nested:", e );
         }
-        catch ( ArtifactNotFoundException e )
+        catch ( final ArtifactNotFoundException e )
         {
             throw new MojoExecutionException( "Nested:", e );
         }
-        catch ( ProjectBuildingException e )
+        catch ( final ProjectBuildingException e )
         {
             throw new MojoExecutionException( "Nested:", e );
         }
-        catch ( InvalidDependencyVersionException e )
+        catch ( final InvalidDependencyVersionException e )
+        {
+            throw new MojoExecutionException( "Nested:", e );
+        }
+        catch ( final ArtifactFilterException e )
         {
             throw new MojoExecutionException( "Nested:", e );
         }
@@ -155,25 +164,47 @@ public class ResolvePluginsMojo
      * @return set of resolved plugin artifacts.
      * @throws ArtifactResolutionException
      * @throws ArtifactNotFoundException
+     * @throws ArtifactFilterException 
      */
+    @SuppressWarnings( "unchecked" )
     protected Set<Artifact> resolvePluginArtifacts()
-        throws ArtifactResolutionException, ArtifactNotFoundException
+        throws ArtifactResolutionException, ArtifactNotFoundException, ArtifactFilterException
     {
-        @SuppressWarnings( "unchecked" ) Set<Artifact> plugins = project.getPluginArtifacts();
-        @SuppressWarnings( "unchecked" ) Set<Artifact> reports = project.getReportArtifacts();
+        final Set<Artifact> plugins = project.getPluginArtifacts();
+        final Set<Artifact> reports = project.getReportArtifacts();
 
         Set<Artifact> artifacts = new HashSet<Artifact>();
         artifacts.addAll( reports );
         artifacts.addAll( plugins );
 
-        for ( Artifact artifact : artifacts )
+        final FilterArtifacts filter = getPluginArtifactsFilter();
+        artifacts = filter.filter( artifacts );
+
+        //        final ArtifactFilter filter = getPluginFilter();
+        for ( final Artifact artifact : new HashSet<Artifact>( artifacts ) )
         {
+            //            if ( !filter.include( artifact ) )
+            //            {
+            //                final String logStr =
+            //                    String.format( "    Plugin SKIPPED: %s", DependencyUtil.getFormattedFileName( artifact, false ) );
+            //
+            //                if ( !silent )
+            //                {
+            //                    this.getLog()
+            //                        .info( logStr );
+            //                }
+            //
+            //                artifacts.remove( artifact );
+            //                continue;
+            //            }
+
             // resolve the new artifact
             this.resolver.resolve( artifact, this.remotePluginRepositories, this.getLocal() );
         }
         return artifacts;
     }
 
+    @Override
     protected ArtifactsFilter getMarkedArtifactFilter()
     {
         return null;
