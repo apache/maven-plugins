@@ -29,7 +29,7 @@
 Selector Scripts
  
   Starting with plugin version 1.5, a custom script can be used to skip individual projects based on 
-  whatever critria are expressed in the script as illustrated in the following example. Assume the 
+  whatever criteria expressed in the script as illustrated in the following example. Assume the 
   following directory structure:
 
 +------------------
@@ -82,7 +82,7 @@ Selector Scripts
 
   If the check-assumptions.bsh script returns <<<true>>> or does not return a value, then the project will be executed.
 
-  If the script returns any value other than <<<true>>>, then the project will be executed.
+  If the script returns any value other than <<<true>>>, then the project will not be executed.
 
   If the script throws an exception, then the project will be marked as being in ERROR.
  
