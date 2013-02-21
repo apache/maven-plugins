@@ -41,6 +41,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -571,7 +572,6 @@ public abstract class AbstractInvokerMojo
     @Parameter( property = "plugin.artifacts", required = true, readonly = true )
     private List<Artifact> pluginArtifacts;
 
-
     /**
      * If enable and if you have a settings file configured for the execution, it will be merged with your user settings.
      *
@@ -586,6 +586,14 @@ public abstract class AbstractInvokerMojo
      */
     @Parameter
     private Map<String, String> environmentVariables;  
+
+    /**
+     * Additional variables for use in the hook scripts.
+     * @since 1.9
+     */
+    @Parameter
+    private Map<String, String> scriptVariables;  
+
     /**
      * The scripter runner that is responsible to execute hook scripts.
      */
@@ -700,6 +708,13 @@ public abstract class AbstractInvokerMojo
         scriptRunner = new ScriptRunner( getLog() );
         scriptRunner.setScriptEncoding( encoding );
         scriptRunner.setGlobalVariable( "localRepositoryPath", localRepositoryPath );
+        if ( scriptVariables != null )
+        {
+            for ( Entry<String, String> entry : scriptVariables.entrySet() )
+            {
+                scriptRunner.setGlobalVariable( entry.getKey(), entry.getValue() );
+            }
+        }
         scriptRunner.setClassPath( scriptClassPath );
 
         Collection<String> collectedProjects = new LinkedHashSet<String>();
