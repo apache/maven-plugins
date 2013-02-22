@@ -36,57 +36,36 @@ import org.codehaus.plexus.util.StringUtils;
 class InvokerProperties
 {
 
+    private enum InvocationProperty
+    {
+        PROJECT( "invoker.project" ),
+        GOALS( "invoker.goals" ),
+        PROFILES( "invoker.profiles" ),
+        MAVEN_OPTS ( "invoker.mavenOpts" ),
+        FAILURE_BEHAVIOR( "invoker.failureBehavior" ),
+        NON_RECURSIVE( "invoker.nonRecursive" ),
+        OFFLINE( "invoker.offline" ),
+        SYSTEM_PROPERTIES_FILE( "invoker.systemPropertiesFile" ),
+        DEBUG( "invoker.debug" );
+        
+        private final String key;
+        
+        private InvocationProperty(final String s)
+        {
+            this.key = s;
+        }
+
+        @Override
+        public String toString() {
+            return key;
+        }
+    }
+    
     /**
-     * The invoker properties being wrapped, never <code>null</code>.
+     * The invoker properties being wrapped.
      */
     private final Properties properties;
 
-    /**
-     * The constant for the invoker property.
-     */
-    private static final String PROJECT = "invoker.project";
-
-    /**
-     * The constant for the invoker property.
-     */
-    private static final String GOALS = "invoker.goals";
-
-    /**
-     * The constant for the invoker property.
-     */
-    private static final String PROFILES = "invoker.profiles";
-
-    /**
-     * The constant for the invoker property.
-     */
-    private static final String MAVEN_OPTS = "invoker.mavenOpts";
-
-    /**
-     * The constant for the invoker property.
-     */
-    private static final String FAILURE_BEHAVIOR = "invoker.failureBehavior";
-
-    /**
-     * The constant for the invoker property.
-     */
-    private static final String NON_RECURSIVE = "invoker.nonRecursive";
-
-    /**
-     * The constant for the invoker property.
-     */
-    private static final String OFFLINE = "invoker.offline";
-
-    /**
-     * The constant for the invoker property.
-     */
-    private static final String SYSTEM_PROPERTIES_FILE = "invoker.systemPropertiesFile";
-
-    
-    /**
-     * The constant for the invoker property.
-     */
-    private static final String DEBUG = "invoker.debug";
-    
     /**
      * Creates a new facade for the specified invoker properties. The properties will not be copied, so any changes to
      * them will be reflected by the facade.
@@ -167,11 +146,9 @@ class InvokerProperties
      */
     public boolean isInvocationDefined( int index )
     {
-        String[] keys =
-            { PROJECT, GOALS, PROFILES, MAVEN_OPTS, FAILURE_BEHAVIOR, NON_RECURSIVE, OFFLINE, SYSTEM_PROPERTIES_FILE, DEBUG };
-        for ( int i = 0; i < keys.length; i++ )
+        for ( InvocationProperty prop : InvocationProperty.values() )
         {
-            if ( properties.getProperty( keys[i] + '.' + index ) != null )
+            if ( properties.getProperty( prop.toString() + '.' + index ) != null )
             {
                 return true;
             }
@@ -188,7 +165,7 @@ class InvokerProperties
      */
     public void configureInvocation( InvocationRequest request, int index )
     {
-        String project = get( PROJECT, index );
+        String project = get( InvocationProperty.PROJECT, index );
         if ( project != null )
         {
             File file = new File( request.getBaseDirectory(), project );
@@ -204,43 +181,43 @@ class InvokerProperties
             }
         }
 
-        String goals = get( GOALS, index );
+        String goals = get( InvocationProperty.GOALS, index );
         if ( goals != null )
         {
             request.setGoals( new ArrayList<String>( Arrays.asList( StringUtils.split( goals, ", \t\n\r\f" ) ) ) );
         }
 
-        String profiles = get( PROFILES, index );
+        String profiles = get( InvocationProperty.PROFILES, index );
         if ( profiles != null )
         {
             request.setProfiles( new ArrayList<String>( Arrays.asList( StringUtils.split( profiles, ", \t\n\r\f" ) ) ) );
         }
 
-        String mvnOpts = get( MAVEN_OPTS, index );
+        String mvnOpts = get( InvocationProperty.MAVEN_OPTS, index );
         if ( mvnOpts != null )
         {
             request.setMavenOpts( mvnOpts );
         }
 
-        String failureBehavior = get( FAILURE_BEHAVIOR, index );
+        String failureBehavior = get( InvocationProperty.FAILURE_BEHAVIOR, index );
         if ( failureBehavior != null )
         {
             request.setFailureBehavior( failureBehavior );
         }
 
-        String nonRecursive = get( NON_RECURSIVE, index );
+        String nonRecursive = get( InvocationProperty.NON_RECURSIVE, index );
         if ( nonRecursive != null )
         {
             request.setRecursive( !Boolean.valueOf( nonRecursive ).booleanValue() );
         }
 
-        String offline = get( OFFLINE, index );
+        String offline = get( InvocationProperty.OFFLINE, index );
         if ( offline != null )
         {
             request.setOffline( Boolean.valueOf( offline ).booleanValue() );
         }
         
-        String debug = get( DEBUG, index );
+        String debug = get( InvocationProperty.DEBUG, index );
         if ( debug != null )
         {
             request.setDebug( Boolean.valueOf( debug ).booleanValue() );    
@@ -262,14 +239,14 @@ class InvokerProperties
     }
 
     /**
-     * Gets the path to the properties file used to set the system properties for the specified execution.
+     * Gets the path to the properties file used to set the system properties for the specified invocation.
      * 
      * @param index The index of the invocation for which to check the exit code, must not be negative.
      * @return The path to the properties file or <code>null</code> if not set.
      */
     public String getSystemPropertiesFile( int index )
     {
-        return get( SYSTEM_PROPERTIES_FILE, index );
+        return get( InvocationProperty.SYSTEM_PROPERTIES_FILE, index );
     }
 
     /**
@@ -297,4 +274,8 @@ class InvokerProperties
         return value;
     }
 
+    private String get( InvocationProperty prop, int index )
+    {
+        return get( prop.toString(), index);
+    }
 }
