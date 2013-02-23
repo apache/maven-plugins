@@ -44,6 +44,11 @@ import java.util.TimeZone;
 public class ChangeLogHandler
     extends DefaultHandler
 {
+    // Use the same time zone offset when reading and adding times
+    // It doesn't matter which one we use, as long we always use the same one
+    private static final String TIMEZONE_STRING = "GMT-00:00";
+    private static final TimeZone TIMEZONE = TimeZone.getTimeZone( TIMEZONE_STRING );
+
     private Collection<ChangeLogSet> changeSets;
 
     private String bufData = "";
@@ -118,8 +123,12 @@ public class ChangeLogHandler
                 {
                     ms = bufEntry.getDate().getTime();
                 }
-                bufEntry.setDate( new Date( ms + new SimpleDateFormat( currentPattern ).parse( bufData ).getTime()
-                    + TimeZone.getDefault().getRawOffset() ) );
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat( currentPattern );
+                // MCHANGELOG-68 Adjust for time zone when parsing the time
+                simpleDateFormat.setTimeZone( TIMEZONE );
+                // Adjust for time zone when adding up the milliseconds
+                bufEntry.setDate( new Date( ms + simpleDateFormat.parse( bufData ).getTime()
+                    + TIMEZONE.getRawOffset() ) );
             }
             catch ( ParseException e )
             {
