@@ -229,8 +229,8 @@ public class ChangeLogHandler
             }
 
             bufSet = new ChangeLogSet( bufEntries, startDate, endDate );
-            bufSet.setStartVersion( new ScmTag( attributes.getValue( "startTag" ) ) );
-            bufSet.setEndVersion( new ScmTag( attributes.getValue( "endTag" ) ) );
+            bufSet.setStartVersion( new ScmTag( attributes.getValue( "startVersion" ) ) );
+            bufSet.setEndVersion( new ScmTag( attributes.getValue( "endVersion" ) ) );
         }
     }
 }
