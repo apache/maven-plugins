@@ -112,9 +112,8 @@ public class VerifyMojo
         }
 
         InvokerSession invokerSession = new InvokerSession();
-        for ( int i = 0, size = reportFiles.length; i < size; i++ )
+        for ( File reportFile : reportFiles )
         {
-            File reportFile = reportFiles[i];
             try
             {
                 BuildJobXpp3Reader reader = new BuildJobXpp3Reader();
