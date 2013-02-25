@@ -682,6 +682,8 @@ public abstract class AbstractInvokerMojo
 
         if ( ( buildJobs == null ) || ( buildJobs.length < 1 ) )
         {
+            doFailIfNoProjects();
+
             getLog().info( "No projects were selected for execution." );
             return;
         }
@@ -738,6 +740,12 @@ public abstract class AbstractInvokerMojo
         runBuilds( projectsDir, buildJobs );
 
         processResults( new InvokerSession( buildJobs ) );
+    }
+
+    
+    protected void doFailIfNoProjects() throws MojoFailureException
+    {
+        // should only be used during run and verify
     }
 
     /**
