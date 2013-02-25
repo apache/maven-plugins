@@ -50,6 +50,14 @@ public class InvokerMojo
     @Parameter( property = "maven.test.failure.ignore", defaultValue = "false" )
     private boolean ignoreFailures;
 
+    /**
+     * Set this to <code>true</code> to cause a failure if there are no projects to invoke.
+     *
+     * @since 1.9
+     */
+    @Parameter( property = "invoker.failIfNoProjects" )
+    private Boolean failIfNoProjects;
+    
     void processResults( InvokerSession invokerSession )
         throws MojoFailureException
     {
@@ -59,6 +67,16 @@ public class InvokerMojo
         }
 
         invokerSession.handleFailures( getLog(), ignoreFailures );
+    }
+    
+    @Override
+    protected void doFailIfNoProjects()
+        throws MojoFailureException
+    {
+        if( Boolean.TRUE.equals( failIfNoProjects ) )
+        {
+            throw new MojoFailureException( "No projects to invoke!" );
+        }
     }
 
 }

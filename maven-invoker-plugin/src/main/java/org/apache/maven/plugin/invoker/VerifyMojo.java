@@ -75,6 +75,14 @@ public class VerifyMojo
      */
     @Parameter( defaultValue = "false" )
     private boolean suppressSummaries;
+    
+    /**
+     * Set this to <code>true</code> to cause a failure if there are no projects to invoke.
+     *
+     * @since 1.9
+     */
+    @Parameter( property = "invoker.failIfNoProjects" )
+    private Boolean failIfNoProjects;
 
     /**
      * Invokes Maven on the configured test projects.
@@ -95,6 +103,10 @@ public class VerifyMojo
         File[] reportFiles = ReportUtils.getReportFiles( reportsDirectory );
         if ( reportFiles.length <= 0 )
         {
+            if ( Boolean.TRUE.equals( failIfNoProjects ) )
+            {
+                throw new MojoFailureException( "No projects to invoke!" );
+            }
             getLog().info( "No invoker report files found, nothing to check." );
             return;
         }
