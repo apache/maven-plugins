@@ -179,7 +179,7 @@ public class GetMojo
      *
      * @since 2.7
      */
-    @Parameter( property = "skip", defaultValue = "false" )
+    @Parameter( property = "mdep.skip", defaultValue = "false" )
     private boolean skip;
 
     public void execute()
