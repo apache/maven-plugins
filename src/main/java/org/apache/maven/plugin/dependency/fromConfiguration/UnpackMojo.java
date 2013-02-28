@@ -88,7 +88,7 @@ public final class UnpackMojo
      * @see #getArtifactItems
      * @see #unpackArtifact(ArtifactItem)
      */
-    public void execute()
+    protected void doExecute()
         throws MojoExecutionException, MojoFailureException
     {
         if ( isSkip() )

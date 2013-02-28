@@ -94,6 +94,14 @@ public class AnalyzeReportMojo
     @Parameter
     private String[] usedDependencies;
 
+    /**
+     * Skip plugin execution completely.
+     *
+     * @since 2.7
+     */
+    @Parameter( property = "mdep.analyze.skip", defaultValue = "false" )
+    private boolean skip;
+
     // Mojo methods -----------------------------------------------------------
 
     /*
@@ -102,6 +110,12 @@ public class AnalyzeReportMojo
     public void executeReport( Locale locale )
         throws MavenReportException
     {
+        if ( isSkip() )
+        {
+            getLog().info( "Skipping plugin execution" );
+            return;
+        }
+
         // Step 0: Checking pom availability
         if ( "pom".equals( project.getPackaging() ) )
         {
@@ -209,4 +223,15 @@ public class AnalyzeReportMojo
     {
         return ResourceBundle.getBundle( "analyze-report", locale, this.getClass().getClassLoader() );
     }
+
+    public boolean isSkip()
+    {
+        return skip;
+}
+
+    public void setSkip( boolean skip )
+    {
+        this.skip = skip;
+    }
+
 }

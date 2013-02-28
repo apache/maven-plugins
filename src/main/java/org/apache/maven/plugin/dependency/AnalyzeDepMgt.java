@@ -78,6 +78,14 @@ public class AnalyzeDepMgt
     @Parameter( property = "mdep.analyze.ignore.direct", defaultValue = "true" )
     private boolean ignoreDirect = true;
 
+    /**
+     * Skip plugin execution completely.
+     *
+     * @since 2.7
+     */
+    @Parameter( property = "mdep.analyze.skip", defaultValue = "false" )
+    private boolean skip;
+
     // Mojo methods -----------------------------------------------------------
 
     /*
@@ -86,6 +94,12 @@ public class AnalyzeDepMgt
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
+        if ( isSkip() )
+        {
+            getLog().info( "Skipping plugin execution" );
+            return;
+        }
+
         boolean result = checkDependencyManagement();
         if ( result )
         {
@@ -345,5 +359,15 @@ public class AnalyzeDepMgt
     public void setIgnoreDirect( boolean theIgnoreDirect )
     {
         this.ignoreDirect = theIgnoreDirect;
+    }
+
+    public boolean isSkip()
+    {
+        return skip;
+}
+
+    public void setSkip( boolean skip )
+    {
+        this.skip = skip;
     }
 }

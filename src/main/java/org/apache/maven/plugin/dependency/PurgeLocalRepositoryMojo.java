@@ -199,6 +199,14 @@ public class PurgeLocalRepositoryMojo
     private boolean snapshotsOnly;
 
     /**
+     * Skip plugin execution completely.
+     *
+     * @since 2.7
+     */
+    @Parameter( property = "skip", defaultValue = "false" )
+    private boolean skip;
+
+    /**
      * Includes only direct project dependencies.
      */
     private class DirectDependencyFilter
@@ -288,6 +296,12 @@ public class PurgeLocalRepositoryMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
+        if ( isSkip() )
+        {
+            getLog().info( "Skipping plugin execution" );
+            return;
+        }
+
         if ( !StringUtils.isEmpty( manualInclude ) )
         {
             manualIncludes = this.parseIncludes( manualInclude );
@@ -657,4 +671,13 @@ public class PurgeLocalRepositoryMojo
         }
     }
 
+    public boolean isSkip()
+    {
+        return skip;
+}
+
+    public void setSkip( boolean skip )
+    {
+        this.skip = skip;
+    }
 }

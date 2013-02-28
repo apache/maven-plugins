@@ -173,7 +173,7 @@ public class BuildClasspathMojo
      * @see #getDependencies
      * @see #copyArtifact(Artifact, boolean)
      */
-    public void execute()
+    protected void doExecute()
         throws MojoExecutionException
     {
 

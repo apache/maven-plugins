@@ -19,6 +19,8 @@ package org.apache.maven.plugin.dependency;
  * under the License.
  */
 
+import org.apache.maven.plugin.MojoFailureException;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
@@ -496,7 +498,7 @@ public class TestCopyDependenciesMojo
      */
 
     public void testDontOverWriteRelease()
-        throws MojoExecutionException, InterruptedException, IOException
+        throws MojoExecutionException, InterruptedException, IOException, MojoFailureException
     {
 
         Set<Artifact> artifacts = new HashSet<Artifact>();
@@ -527,7 +529,7 @@ public class TestCopyDependenciesMojo
     }
 
     public void testOverWriteRelease()
-        throws MojoExecutionException, InterruptedException, IOException
+        throws MojoExecutionException, InterruptedException, IOException, MojoFailureException
     {
 
         Set<Artifact> artifacts = new HashSet<Artifact>();
@@ -561,7 +563,7 @@ public class TestCopyDependenciesMojo
     }
 
     public void testDontOverWriteSnap()
-        throws MojoExecutionException, InterruptedException, IOException
+        throws MojoExecutionException, InterruptedException, IOException, MojoFailureException
     {
 
         Set<Artifact> artifacts = new HashSet<Artifact>();
@@ -594,7 +596,7 @@ public class TestCopyDependenciesMojo
     }
 
     public void testOverWriteSnap()
-        throws MojoExecutionException, InterruptedException, IOException
+        throws MojoExecutionException, InterruptedException, IOException, MojoFailureException
     {
 
         Set<Artifact> artifacts = new HashSet<Artifact>();
@@ -699,7 +701,7 @@ public class TestCopyDependenciesMojo
     }
 
     public void testExcludeTestScope()
-        throws IOException
+        throws IOException, MojoFailureException
     {
         mojo.project.setArtifacts( stubFactory.getScopedArtifacts() );
         mojo.project.setDependencyArtifacts( new HashSet<Artifact>() );

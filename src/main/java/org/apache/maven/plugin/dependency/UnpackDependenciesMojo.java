@@ -77,7 +77,7 @@ public class UnpackDependenciesMojo
      * @see DependencyUtil#unpackFile(Artifact, File, File, ArchiverManager,
      *      Log)
      */
-    public void execute()
+    protected void doExecute()
         throws MojoExecutionException
     {
         DependencyStatusSets dss = getDependencySets( this.failOnMissingClassifierArtifact );

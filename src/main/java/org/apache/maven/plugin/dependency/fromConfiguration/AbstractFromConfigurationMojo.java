@@ -56,14 +56,6 @@ public abstract class AbstractFromConfigurationMojo
     extends AbstractDependencyMojo
 {
     /**
-     * Skip the execution
-     *
-     * @since 2.2
-     */
-    @Parameter( property = "mdep.skip", defaultValue = "false" )
-    private boolean skip;
-
-    /**
      * Default location used for mojo unless overridden in ArtifactItem
      *
      * @since 1.0
@@ -534,16 +526,6 @@ public abstract class AbstractFromConfigurationMojo
     public void setLocalRepositoryDirectory( File localRepositoryDirectory )
     {
         this.localRepositoryDirectory = localRepositoryDirectory;
-    }
-
-    public boolean isSkip()
-    {
-        return skip;
-    }
-
-    public void setSkip( boolean skip )
-    {
-        this.skip = skip;
     }
 
     public void setArtifact( String artifact )

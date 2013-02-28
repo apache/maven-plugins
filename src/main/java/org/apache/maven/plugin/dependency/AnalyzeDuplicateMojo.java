@@ -28,6 +28,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
@@ -51,6 +52,14 @@ public class AnalyzeDuplicateMojo
     extends AbstractMojo
 {
     /**
+     * Skip plugin execution completely.
+     *
+     * @since 2.7
+     */
+    @Parameter( property = "skip", defaultValue = "false" )
+    private boolean skip;
+
+    /**
      * The Maven project to analyze.
      */
     @Component
@@ -62,6 +71,12 @@ public class AnalyzeDuplicateMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
+        if ( isSkip() )
+        {
+            getLog().info( "Skipping plugin execution" );
+            return;
+        }
+
         MavenXpp3Reader pomReader = new MavenXpp3Reader();
         Model model = null;
         Reader reader = null;
@@ -152,5 +167,15 @@ public class AnalyzeDuplicateMojo
 
         return new HashSet<String>(
             CollectionUtils.disjunction( modelDependencies2, new HashSet<String>( modelDependencies2 ) ) );
+    }
+
+    public boolean isSkip()
+    {
+        return skip;
+}
+
+    public void setSkip( boolean skip )
+    {
+        this.skip = skip;
     }
 }

@@ -27,6 +27,7 @@ import org.apache.maven.artifact.resolver.ArtifactCollector;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.dependency.utils.DependencySilentLog;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugins.annotations.Component;
@@ -140,6 +141,35 @@ public abstract class AbstractDependencyMojo
      */
     @Parameter( property = "outputAbsoluteArtifactFilename", defaultValue = "false" )
     protected boolean outputAbsoluteArtifactFilename;
+
+    /**
+     * Skip plugin execution completely.
+     *
+     * @since 2.7
+     */
+    @Parameter( property = "skip", defaultValue = "false" )
+    private boolean skip;
+
+    // Mojo methods -----------------------------------------------------------
+
+    /*
+     * @see org.apache.maven.plugin.Mojo#execute()
+     */
+    public final void execute()
+        throws MojoExecutionException, MojoFailureException
+    {
+        if ( isSkip() )
+        {
+            getLog().info( "Skipping plugin execution" );
+            return;
+        }
+
+        doExecute();
+    }
+
+    protected abstract void doExecute()
+            throws MojoExecutionException, MojoFailureException;
+
 
     private Log log;
 
@@ -434,6 +464,17 @@ public abstract class AbstractDependencyMojo
     {
         this.useJvmChmod = useJvmChmod;
     }
+
+    public boolean isSkip()
+    {
+        return skip;
+    }
+
+    public void setSkip( boolean skip )
+    {
+        this.skip = skip;
+    }
+
 
     private void logUnpack( File file, File location, String includes, String excludes )
     {

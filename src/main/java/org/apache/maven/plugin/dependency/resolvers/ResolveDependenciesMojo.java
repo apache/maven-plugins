@@ -64,7 +64,7 @@ public class ResolveDependenciesMojo
      *
      * @throws MojoExecutionException with a message if an error occurs.
      */
-    public void execute()
+    protected void doExecute()
         throws MojoExecutionException
     {
         // get sets of dependencies
