@@ -56,7 +56,7 @@ public class AnalyzeDuplicateMojo
      *
      * @since 2.7
      */
-    @Parameter( property = "skip", defaultValue = "false" )
+    @Parameter( property = "mdep.analyze.skip", defaultValue = "false" )
     private boolean skip;
 
     /**

@@ -57,7 +57,7 @@ public class PropertiesMojo
      *
      * @since 2.7
      */
-    @Parameter( property = "skip", defaultValue = "false" )
+    @Parameter( property = "mdep.skip", defaultValue = "false" )
     private boolean skip;
 
     /**
