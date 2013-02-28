@@ -95,68 +95,73 @@ public class RestJiraDownloader extends AbstractJiraDownloader
         resolvedPriorityIds = new ArrayList<String>(  );
     }
 
-    public void doExecute() throws Exception
+    public void doExecute()
+        throws Exception
     {
 
         Map<String, String> urlMap = JiraHelper.getJiraUrlAndProjectName( project.getIssueManagement().getUrl() );
         String jiraUrl = urlMap.get( "url" );
         jiraProject = urlMap.get( "project" );
-        WebClient client = setupWebClient( jiraUrl );
 
-        // We use version 2 of the REST API, that first appeared in JIRA 5
-        // Check if version 2 of the REST API is supported
-        // http://docs.atlassian.com/jira/REST/5.0/
-        // Note that serverInfo can always be accessed without authentication
-        client.replacePath( "/rest/api/2/serverInfo" );
-        client.accept( MediaType.APPLICATION_JSON );
-        Response siResponse = client.get();
-        if ( siResponse.getStatus() != Response.Status.OK.getStatusCode() )
+        // This classloader juggling is a workaround for a classic Maven 2 class loader management bug.
+        ClassLoader ccl = Thread.currentThread().getContextClassLoader();
+        try
         {
-            throw new NoRest( "This JIRA server does not support version 2 of the REST API, which maven-changes-plugin requires." );
+            Thread.currentThread().setContextClassLoader( WebClient.class.getClassLoader( ) );
+            WebClient client = setupWebClient( jiraUrl );
+
+            // We use version 2 of the REST API, that first appeared in JIRA 5
+            // Check if version 2 of the REST API is supported
+            // http://docs.atlassian.com/jira/REST/5.0/
+            // Note that serverInfo can always be accessed without authentication
+            client.replacePath( "/rest/api/2/serverInfo" );
+            client.accept( MediaType.APPLICATION_JSON );
+            Response siResponse = client.get();
+            if ( siResponse.getStatus() != Response.Status.OK.getStatusCode() )
+            {
+                throw new NoRest(
+                    "This JIRA server does not support version 2 of the REST API, which maven-changes-plugin requires." );
+            }
+
+            doSessionAuth( client );
+
+            resolveIds( client, jiraProject );
+
+            String jqlQuery = new JqlQueryBuilder( log ).urlEncode( false ).project( jiraProject ).fixVersion(
+                getFixFor() ).fixVersionIds( resolvedFixVersionIds ).statusIds( resolvedStatusIds ).priorityIds(
+                resolvedPriorityIds ).resolutionIds( resolvedResolutionIds ).components( resolvedComponentIds ).typeIds(
+                resolvedTypeIds ).sortColumnNames( sortColumnNames ).build();
+
+            StringWriter searchParamStringWriter = new StringWriter();
+            JsonGenerator gen = jsonFactory.createGenerator( searchParamStringWriter );
+            gen.writeStartObject();
+            gen.writeStringField( "jql", jqlQuery );
+            gen.writeNumberField( "maxResults", nbEntriesMax );
+            gen.writeArrayFieldStart( "fields" );
+            // Retrieve all fields. If that seems slow, we can reconsider.
+            gen.writeString( "*all" );
+            gen.writeEndArray();
+            gen.writeEndObject();
+            gen.close();
+            client.replacePath( "/rest/api/2/search" );
+            client.type( MediaType.APPLICATION_JSON_TYPE );
+            client.accept( MediaType.APPLICATION_JSON_TYPE );
+            Response searchResponse = client.post( searchParamStringWriter.toString() );
+            if ( searchResponse.getStatus() != Response.Status.OK.getStatusCode() )
+            {
+                reportErrors( searchResponse );
+            }
+
+            JsonNode issueTree = getResponseTree( searchResponse );
+            assert issueTree.isObject();
+            JsonNode issuesNode = issueTree.get( "issues" );
+            assert issuesNode.isArray();
+            buildIssues( issuesNode, jiraUrl, jiraProject );
         }
-
-        doSessionAuth( client );
-
-        resolveIds( client, jiraProject );
-
-        String jqlQuery = new JqlQueryBuilder( log )
-            .urlEncode( false )
-            .project( jiraProject )
-            .fixVersion( getFixFor() )
-            .fixVersionIds( resolvedFixVersionIds )
-            .statusIds( resolvedStatusIds )
-            .priorityIds( resolvedPriorityIds )
-            .resolutionIds( resolvedResolutionIds )
-            .components( resolvedComponentIds )
-            .typeIds( resolvedTypeIds )
-            .sortColumnNames( sortColumnNames )
-            .build();
-
-        StringWriter searchParamStringWriter = new StringWriter( );
-        JsonGenerator gen = jsonFactory.createGenerator( searchParamStringWriter );
-        gen.writeStartObject();
-        gen.writeStringField( "jql", jqlQuery );
-        gen.writeNumberField( "maxResults", nbEntriesMax );
-        gen.writeArrayFieldStart( "fields" );
-        // Retrieve all fields. If that seems slow, we can reconsider.
-        gen.writeString( "*all" );
-        gen.writeEndArray();
-        gen.writeEndObject();
-        gen.close();
-        client.replacePath( "/rest/api/2/search" );
-        client.type( MediaType.APPLICATION_JSON_TYPE );
-        client.accept( MediaType.APPLICATION_JSON_TYPE );
-        Response searchResponse = client.post( searchParamStringWriter.toString() );
-        if ( searchResponse.getStatus() != Response.Status.OK.getStatusCode() )
+        finally
         {
-            reportErrors( searchResponse );
+            Thread.currentThread().setContextClassLoader( ccl );
         }
-
-        JsonNode issueTree = getResponseTree( searchResponse );
-        assert issueTree.isObject();
-        JsonNode issuesNode = issueTree.get( "issues" );
-        assert issuesNode.isArray();
-        buildIssues( issuesNode, jiraUrl, jiraProject );
     }
 
     private JsonNode getResponseTree( Response response )
