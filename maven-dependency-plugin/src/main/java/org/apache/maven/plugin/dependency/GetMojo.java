@@ -174,9 +174,22 @@ public class GetMojo
     @Parameter( property = "transitive", defaultValue = "true" )
     private boolean transitive = true;
 
+    /**
+     * Skip plugin execution completely.
+     *
+     * @since 2.7
+     */
+    @Parameter( property = "skip", defaultValue = "false" )
+    private boolean skip;
+
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
+        if ( isSkip() )
+        {
+            getLog().info( "Skipping plugin execution" );
+            return;
+        }
 
         if ( artifactId == null && artifact == null )
         {
@@ -330,4 +343,15 @@ public class GetMojo
 
         return layout;
     }
+
+    public boolean isSkip()
+    {
+        return skip;
+}
+
+    public void setSkip( boolean skip )
+    {
+        this.skip = skip;
+    }
+
 }

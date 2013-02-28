@@ -178,6 +178,15 @@ public class TreeMojo
     @Parameter( property = "appendOutput", defaultValue = "false" )
     private boolean appendOutput;
 
+    /**
+     * Skip plugin execution completely.
+     *
+     * @since 2.7
+     */
+    @Parameter( property = "skip", defaultValue = "false" )
+    private boolean skip;
+
+
     // Mojo methods -----------------------------------------------------------
 
     /*
@@ -186,6 +195,11 @@ public class TreeMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
+        if ( isSkip() )
+        {
+            getLog().info( "Skipping plugin execution" );
+            return;
+        }
 
         if ( output != null )
         {
@@ -244,6 +258,16 @@ public class TreeMojo
     public DependencyNode getDependencyGraph()
     {
         return rootNode;
+    }
+
+    public boolean isSkip()
+    {
+        return skip;
+    }
+
+    public void setSkip( boolean skip )
+    {
+        this.skip = skip;
     }
 
     // private methods --------------------------------------------------------

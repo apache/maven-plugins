@@ -79,14 +79,9 @@ public class CopyMojo
      * @see #getArtifactItems
      * @see #copyArtifact(ArtifactItem)
      */
-    public void execute()
+    protected void doExecute()
         throws MojoExecutionException, MojoFailureException
     {
-        if ( isSkip() )
-        {
-            return;
-        }
-        
         verifyRequirements();
 
         List<ArtifactItem> theArtifactItems = getProcessedArtifactItems(

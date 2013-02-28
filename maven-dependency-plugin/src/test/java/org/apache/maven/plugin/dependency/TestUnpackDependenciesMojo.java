@@ -19,6 +19,8 @@ package org.apache.maven.plugin.dependency;
  * under the License.    
  */
 
+import org.apache.maven.plugin.MojoFailureException;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -216,7 +218,7 @@ public class TestUnpackDependenciesMojo
     }
 
     public void testExcludeTestScope()
-        throws IOException
+        throws IOException, MojoFailureException
     {
         mojo.project.setArtifacts( stubFactory.getScopedArtifacts() );
         mojo.project.setDependencyArtifacts( new HashSet<Artifact>() );
@@ -648,7 +650,7 @@ public class TestUnpackDependenciesMojo
 
 
     public void assertUnpacked( Artifact artifact, boolean overWrite )
-        throws InterruptedException, MojoExecutionException
+        throws InterruptedException, MojoExecutionException, MojoFailureException
     {
         File unpackedFile = getUnpackedFile( artifact );
 

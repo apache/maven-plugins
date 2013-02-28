@@ -46,7 +46,7 @@ public class ResolveDependencySourcesMojo
      *
      * @throws MojoExecutionException with a message if an error occurs.
      */
-    public void execute()
+    protected void doExecute()
         throws MojoExecutionException
     {
         if ( StringUtils.isEmpty( this.classifier ) )
@@ -54,6 +54,6 @@ public class ResolveDependencySourcesMojo
             this.classifier = SOURCE_CLASSIFIER;
         }
 
-        super.execute();
+        super.doExecute();
     }
 }

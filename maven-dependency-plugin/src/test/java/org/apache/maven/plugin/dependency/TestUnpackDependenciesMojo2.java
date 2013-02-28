@@ -19,6 +19,8 @@ package org.apache.maven.plugin.dependency;
  * under the License.    
  */
 
+import org.apache.maven.plugin.MojoFailureException;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.dependency.testUtils.DependencyArtifactStubFactory;
@@ -93,7 +95,7 @@ public class TestUnpackDependenciesMojo2
     }
 
     public void testDontOverWriteRelease()
-        throws MojoExecutionException, InterruptedException, IOException
+        throws MojoExecutionException, InterruptedException, IOException, MojoFailureException
     {
 
         Set<Artifact> artifacts = new HashSet<Artifact>();
@@ -113,7 +115,7 @@ public class TestUnpackDependenciesMojo2
     }
 
     public void testOverWriteRelease()
-        throws MojoExecutionException, InterruptedException, IOException
+        throws MojoExecutionException, InterruptedException, IOException, MojoFailureException
     {
 
         Set<Artifact> artifacts = new HashSet<Artifact>();
@@ -134,7 +136,7 @@ public class TestUnpackDependenciesMojo2
     }
 
     public void testDontOverWriteSnap()
-        throws MojoExecutionException, InterruptedException, IOException
+        throws MojoExecutionException, InterruptedException, IOException, MojoFailureException
     {
 
         Set<Artifact> artifacts = new HashSet<Artifact>();
@@ -156,7 +158,7 @@ public class TestUnpackDependenciesMojo2
     }
 
     public void testOverWriteSnap()
-        throws MojoExecutionException, InterruptedException, IOException
+        throws MojoExecutionException, InterruptedException, IOException, MojoFailureException
     {
 
         Set<Artifact> artifacts = new HashSet<Artifact>();
@@ -179,7 +181,7 @@ public class TestUnpackDependenciesMojo2
     }
 
     public void testOverWriteIfNewer()
-        throws MojoExecutionException, InterruptedException, IOException
+        throws MojoExecutionException, InterruptedException, IOException, MojoFailureException
     {
 
         Set<Artifact> artifacts = new HashSet<Artifact>();
@@ -225,7 +227,7 @@ public class TestUnpackDependenciesMojo2
     }
 
     public void assertUnpacked( Artifact artifact, boolean overWrite )
-        throws InterruptedException, MojoExecutionException
+        throws InterruptedException, MojoExecutionException, MojoFailureException
     {
         File unpackedFile = getUnpackedFile( artifact );
 

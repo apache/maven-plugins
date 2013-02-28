@@ -25,6 +25,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 
@@ -52,6 +53,14 @@ public class PropertiesMojo
     protected MavenProject project;
 
     /**
+     * Skip plugin execution completely.
+     *
+     * @since 2.7
+     */
+    @Parameter( property = "skip", defaultValue = "false" )
+    private boolean skip;
+
+    /**
      * Main entry into mojo. Gets the list of dependencies and iterates through setting a property for each artifact.
      *
      * @throws MojoExecutionException with a message if an error occurs.
@@ -59,6 +68,12 @@ public class PropertiesMojo
     public void execute()
         throws MojoExecutionException
     {
+        if ( isSkip() )
+        {
+            getLog().info( "Skipping plugin execution" );
+            return;
+        }
+
         @SuppressWarnings( "unchecked" ) Set<Artifact> artifacts = getProject().getArtifacts();
 
         for ( Artifact artifact : artifacts )
@@ -73,4 +88,13 @@ public class PropertiesMojo
         return project;
     }
 
+    public boolean isSkip()
+    {
+        return skip;
+}
+
+    public void setSkip( boolean skip )
+    {
+        this.skip = skip;
+    }
 }

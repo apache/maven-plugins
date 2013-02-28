@@ -147,6 +147,14 @@ public abstract class AbstractAnalyzeMojo
     @Parameter
     private String[] usedDependencies;
 
+    /**
+     * Skip plugin execution completely.
+     *
+     * @since 2.7
+     */
+    @Parameter( property = "skip", defaultValue = "false" )
+    private boolean skip;
+
     // Mojo methods -----------------------------------------------------------
 
     /*
@@ -155,6 +163,12 @@ public abstract class AbstractAnalyzeMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
+        if ( isSkip() )
+        {
+            getLog().info( "Skipping plugin execution" );
+            return;
+        }
+
         if ( "pom".equals( project.getPackaging() ) )
         {
             getLog().info( "Skipping pom project" );
@@ -200,6 +214,16 @@ public abstract class AbstractAnalyzeMojo
         throws ContextException
     {
         this.context = context;
+    }
+
+    public boolean isSkip()
+    {
+        return skip;
+    }
+
+    public void setSkip( boolean skip )
+    {
+        this.skip = skip;
     }
 
     // private methods --------------------------------------------------------
