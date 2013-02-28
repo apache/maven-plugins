@@ -24,6 +24,7 @@ import org.apache.maven.project.MavenProject;
 import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.client.XmlRpcClient;
 import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
+import org.apache.xmlrpc.client.XmlRpcCommonsTransportFactory;
 import org.codehaus.plexus.util.StringUtils;
 
 import java.net.MalformedURLException;
@@ -111,6 +112,8 @@ public class TracDownloader
         XmlRpcClient client = new XmlRpcClient();
 
         client.setConfig( config );
+
+        client.setTransportFactory( new XmlRpcCommonsTransportFactory( client ) );
 
         // Fetch issues
         String qstr = "";
