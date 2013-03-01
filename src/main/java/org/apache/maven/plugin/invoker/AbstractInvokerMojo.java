@@ -661,7 +661,7 @@ public abstract class AbstractInvokerMojo
             catch ( IOException e )
             {
                 throw new MojoExecutionException(
-                    "Failed to discover projectsDirectory from pom File parameter." + " Reason: " + e.getMessage(), e );
+                    "Failed to discover projectsDirectory from pom File parameter. Reason: " + e.getMessage(), e );
             }
 
             buildJobs = new BuildJob[]{ new BuildJob( pom.getName(), BuildJob.Type.NORMAL ) };
@@ -675,7 +675,7 @@ public abstract class AbstractInvokerMojo
             catch ( final IOException e )
             {
                 throw new MojoExecutionException(
-                    "Error retrieving POM list from includes, excludes, " + "and projects directory. Reason: "
+                    "Error retrieving POM list from includes, excludes, and projects directory. Reason: "
                         + e.getMessage(), e );
             }
         }
@@ -1161,7 +1161,6 @@ public abstract class AbstractInvokerMojo
                     getLog().debug(
                         "Created temporary file for invoker settings.xml: " + mergedSettingsFile.getAbsolutePath() );
                 }
-
             }
             catch ( IOException e )
             {
@@ -1199,7 +1198,6 @@ public abstract class AbstractInvokerMojo
                 {
                     executorService.execute( new Runnable()
                     {
-
                         public void run()
                         {
                             try
@@ -1224,7 +1222,6 @@ public abstract class AbstractInvokerMojo
                 {
                     throw new MojoExecutionException( e.getMessage(), e );
                 }
-
             }
             else
             {
@@ -1244,7 +1241,6 @@ public abstract class AbstractInvokerMojo
             {
                 mergedSettingsFile.delete();
             }
-
         }
     }
 
@@ -1390,7 +1386,6 @@ public abstract class AbstractInvokerMojo
 
                 if ( executed )
                 {
-
                     buildJob.setResult( BuildJob.Result.SUCCESS );
 
                     if ( !suppressSummaries )
@@ -1756,7 +1751,7 @@ public abstract class AbstractInvokerMojo
                     logger = new FileLogger( outputLog );
                 }
 
-                getLog().debug( "build log initialized in: " + outputLog );
+                getLog().debug( "Build log initialized in: " + outputLog );
             }
             catch ( IOException e )
             {
@@ -1965,7 +1960,10 @@ public abstract class AbstractInvokerMojo
             }
 
             BuildJob[] setupPoms = scanProjectsDirectory( setupIncludes, excludes, BuildJob.Type.SETUP );
-            getLog().debug( "Setup projects: " + Arrays.asList( setupPoms ) );
+            if ( getLog().isDebugEnabled() )
+            {
+                getLog().debug( "Setup projects: " + Arrays.asList( setupPoms ) );
+            }
 
             BuildJob[] normalPoms = scanProjectsDirectory( pomIncludes, excludes, BuildJob.Type.NORMAL );
 
