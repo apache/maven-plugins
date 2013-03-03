@@ -907,7 +907,7 @@ public abstract class AbstractJavadocMojo
      * <br/>
      */
     @Parameter( property = "bottom",
-                defaultValue = "Copyright &#169; {inceptionYear}-{currentYear} {organizationName}. All Rights Reserved." )
+                defaultValue = "Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All rights reserved." )
     private String bottom;
 
     /**
@@ -1658,7 +1658,7 @@ public abstract class AbstractJavadocMojo
      */
     @Parameter
     private List<String> sourceFileExcludes;
-    
+
     // ----------------------------------------------------------------------
     // static
     // ----------------------------------------------------------------------
@@ -2591,8 +2591,8 @@ public abstract class AbstractJavadocMojo
      */
     private String getBottomText()
     {
-        int actualYear = Calendar.getInstance().get( Calendar.YEAR );
-        String year = String.valueOf( actualYear );
+        int currentYear = Calendar.getInstance().get( Calendar.YEAR );
+        String year = String.valueOf( currentYear );
 
         String inceptionYear = project.getInceptionYear();
 
@@ -2602,7 +2602,7 @@ public abstract class AbstractJavadocMojo
         {
             if ( inceptionYear.equals( year ) )
             {
-                theBottom = StringUtils.replace( theBottom, "{inceptionYear}-", "" );
+                theBottom = StringUtils.replace( theBottom, "{inceptionYear}&#x2013;", "" );
             }
             else
             {
@@ -2611,7 +2611,7 @@ public abstract class AbstractJavadocMojo
         }
         else
         {
-            theBottom = StringUtils.replace( theBottom, "{inceptionYear}-", "" );
+            theBottom = StringUtils.replace( theBottom, "{inceptionYear}&#x2013;", "" );
         }
 
         if ( project.getOrganization() == null )
@@ -5315,7 +5315,7 @@ public abstract class AbstractJavadocMojo
                     String invokerLogContent = JavadocUtil.readFile( invokerLogFile, null /* platform encoding */ );
 
                     // TODO: Why are we only interested in cases where the JVM won't start?
-                    // [MJAVADOC-275][jdcasey] I changed the logic here to only throw an error WHEN 
+                    // [MJAVADOC-275][jdcasey] I changed the logic here to only throw an error WHEN
                     //   the JVM won't start (opposite of what it was).
                     if ( invokerLogContent != null && invokerLogContent.contains( JavadocUtil.ERROR_INIT_VM ) )
                     {
