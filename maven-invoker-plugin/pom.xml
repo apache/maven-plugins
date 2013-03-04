@@ -65,7 +65,7 @@ under the License.
     <groovy-version>2.0.1</groovy-version>
     <mavenPluginPluginVersion>3.2</mavenPluginPluginVersion>
     
-    <invokerPluginVersion>1.6</invokerPluginVersion><!-- workaround for MRELEASE-803 -->
+    <invokerPluginVersion>1.8</invokerPluginVersion><!-- workaround for MRELEASE-803 -->
   </properties>
 
   <dependencies>
@@ -327,7 +327,6 @@ under the License.
       <id>run-its</id>
       <properties>
         <sitePluginVersion>3.1</sitePluginVersion>
-        <!--  <invokerPluginVersion>1.6</invokerPluginVersion>  --><!-- 1.7 is missing the groovy XmlSlurper -->
       </properties>
       <build>
         <pluginManagement>
@@ -337,9 +336,8 @@ under the License.
               <artifactId>maven-invoker-plugin</artifactId>
               <!-- m-release-p-2.3.2 doesn't allow to specify a different version then the project.
                  This would be true for jar projects, but not always for plugins.
-                 Inherited version is 1.6, so is already the preferred version.
                -->
-              <!-- <version>${invokerPluginVersion}</version>  --> 
+              <version>${invokerPluginVersion}</version>
               <configuration>
                 <debug>true</debug>
                 <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
