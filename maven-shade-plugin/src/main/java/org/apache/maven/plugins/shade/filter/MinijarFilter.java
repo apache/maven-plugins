@@ -104,7 +104,7 @@ public class MinijarFilter
         {
             log.warn( dependency.getFile() + " could not be unpacked/read for minimization; dependency is probably malformed." );
             throw new IOException( "Dependency " + dependency.toString() + " in file " + dependency.getFile() +
-                                       " could not be read", e );
+                                       " could not be unpacked. File is probably corrupt" );
         }
         catch( ArrayIndexOutOfBoundsException e )
         {
