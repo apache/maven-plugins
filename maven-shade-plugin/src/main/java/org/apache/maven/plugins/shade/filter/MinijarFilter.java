@@ -28,6 +28,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.zip.ZipException;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.logging.Log;
@@ -76,9 +77,8 @@ public class MinijarFilter
         ClazzpathUnit artifactUnit =
             cp.addClazzpathUnit( new FileInputStream( project.getArtifact().getFile() ), project.toString() );
 
-        for ( Iterator it = project.getArtifacts().iterator(); it.hasNext(); )
+        for ( Artifact dependency : project.getArtifacts() )
         {
-            Artifact dependency = (Artifact) it.next();
             addDependencyToClasspath( cp, dependency );
         }
 
@@ -99,6 +99,12 @@ public class MinijarFilter
         {
             is = new FileInputStream( dependency.getFile() );
             clazzpathUnit = cp.addClazzpathUnit( is, dependency.toString() );
+        }
+        catch( ZipException e)
+        {
+            log.warn( dependency.getFile() + " could not be unpacked/read for minimization; dependency is probably malformed." );
+            throw new IOException( "Dependency " + dependency.toString() + " in file " + dependency.getFile() +
+                                       " could not be read", e );
         }
         catch( ArrayIndexOutOfBoundsException e )
         {
