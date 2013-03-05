@@ -65,7 +65,7 @@ public class MinijarFilter
      *
      * @since 1.6
      */
-    @SuppressWarnings( { "unchecked", "rawtypes" } )
+    @SuppressWarnings( { "unchecked" } )
     public MinijarFilter( MavenProject project, Log log, List<SimpleFilter> simpleFilters )
         throws IOException
     {
@@ -148,20 +148,17 @@ public class MinijarFilter
         }
     }
 
-    @SuppressWarnings( "rawtypes" )
     private void removeSpecificallyIncludedClasses( MavenProject project, List<SimpleFilter> simpleFilters )
         throws IOException
     {
         //remove classes specifically included in filters
         Clazzpath checkCp = new Clazzpath();
-        for ( Iterator it = project.getArtifacts().iterator(); it.hasNext(); )
+        for ( Artifact dependency : project.getArtifacts() )
         {
-            Artifact dependency = (Artifact) it.next();
             File jar = dependency.getFile();
 
-            for ( Iterator<SimpleFilter> i = simpleFilters.iterator(); i.hasNext(); )
+            for ( SimpleFilter simpleFilter : simpleFilters )
             {
-                SimpleFilter simpleFilter = i.next();
                 if ( simpleFilter.canFilter( jar ) )
                 {
                     ClazzpathUnit depClazzpathUnit = addDependencyToClasspath( checkCp, dependency );
@@ -172,8 +169,8 @@ public class MinijarFilter
                         {
                             Clazz clazz = j.next();
 
-                            if ( depClazzpathUnit.getClazzes().contains( clazz ) && simpleFilter.isSpecificallyIncluded(
-                                clazz.getName().replace( '.', '/' ) ) )
+                            if ( depClazzpathUnit.getClazzes().contains( clazz )
+                                && simpleFilter.isSpecificallyIncluded( clazz.getName().replace( '.', '/' ) ) )
                             {
                                 log.info( clazz.getName() + " not removed because it was specifically included" );
                                 j.remove();
