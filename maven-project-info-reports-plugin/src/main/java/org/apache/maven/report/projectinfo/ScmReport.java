@@ -30,6 +30,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.scm.manager.NoSuchScmProviderException;
 import org.apache.maven.scm.manager.ScmManager;
 import org.apache.maven.scm.provider.cvslib.repository.CvsScmProviderRepository;
+import org.apache.maven.scm.provider.git.repository.GitScmProviderRepository;
 import org.apache.maven.scm.provider.hg.repository.HgScmProviderRepository;
 import org.apache.maven.scm.provider.perforce.repository.PerforceScmProviderRepository;
 import org.apache.maven.scm.provider.starteam.repository.StarteamScmProviderRepository;
@@ -246,6 +247,12 @@ public class ScmReport
                 linkPatternedText( getI18nString( "cvs.intro" ) );
                 sink.paragraph_();
             }
+            else if ( isScmSystem( anonymousRepository, "git" ) )
+            {
+                sink.paragraph();
+                linkPatternedText( getI18nString( "git.intro" ) );
+                sink.paragraph_();
+            }
             else if ( isScmSystem( anonymousRepository, "hg" ) )
             {
                 sink.paragraph();
@@ -324,7 +331,14 @@ public class ScmReport
 
                 anonymousAccessCVS( cvsRepo );
             }
-            if ( anonymousRepository != null && isScmSystem( anonymousRepository, "hg" ) )
+            else if ( anonymousRepository != null && isScmSystem( anonymousRepository, "git" ) )
+            {
+                GitScmProviderRepository gitRepo = (GitScmProviderRepository) anonymousRepository
+                    .getProviderRepository();
+
+                anonymousAccessGit( gitRepo );
+            }
+            else if ( anonymousRepository != null && isScmSystem( anonymousRepository, "hg" ) )
             {
                 HgScmProviderRepository hgRepo = (HgScmProviderRepository) anonymousRepository
                     .getProviderRepository();
@@ -371,6 +385,12 @@ public class ScmReport
                 CvsScmProviderRepository cvsRepo = (CvsScmProviderRepository) devRepository.getProviderRepository();
 
                 developerAccessCVS( cvsRepo );
+            }
+            else if ( devRepository != null && isScmSystem( devRepository, "git" ) )
+            {
+                GitScmProviderRepository gitRepo = (GitScmProviderRepository) devRepository.getProviderRepository();
+
+                developerAccessGit( gitRepo );
             }
             else if ( devRepository != null && isScmSystem( devRepository, "hg" ) )
             {
@@ -508,6 +528,27 @@ public class ScmReport
             verbatimText( command.toString() );
         }
 
+        // Git
+
+        /**
+         * Create the documentation to provide an anonymous access with a <code>Git</code> SCM.
+         * For example, generate the following command line:
+         * <p>git clone uri</p>
+         *
+         * @param gitRepo
+         */
+        private void anonymousAccessGit( GitScmProviderRepository gitRepo )
+        {
+            sink.paragraph();
+            linkPatternedText( getI18nString( "anonymousaccess.git.intro" ) );
+            sink.paragraph_();
+
+            StringBuilder command = new StringBuilder();
+            command.append( "$ git clone " ).append( gitRepo.getFetchUrl() );
+
+            verbatimText( command.toString() );
+        }
+
         // Mercurial
 
         /**
@@ -549,6 +590,28 @@ public class ScmReport
             command.append( "$ cvs -d " ).append( cvsRoot ).append( " login" );
             command.append( SystemUtils.LINE_SEPARATOR );
             command.append( "$ cvs -z3 -d " ).append( cvsRoot ).append( " co " ).append( cvsRepo.getModule() );
+
+            verbatimText( command.toString() );
+        }
+
+        // Git
+
+        /**
+         * Create the documentation to provide an developer access with a <code>Git</code> SCM.
+         * For example, generate the following command line:
+         * <p>git clone repo </p>
+         *
+         * @param gitRepo
+         */
+        private void developerAccessGit( GitScmProviderRepository gitRepo )
+        {
+            sink.paragraph();
+            linkPatternedText( getI18nString( "devaccess.git.intro" ) );
+            sink.paragraph_();
+
+            StringBuilder command = new StringBuilder();
+            command.append( "$ git clone " );
+            command.append( gitRepo.getPushUrl() );
 
             verbatimText( command.toString() );
         }
