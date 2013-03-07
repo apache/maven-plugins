@@ -112,7 +112,7 @@ public abstract class AbstractDependencyMojo
      * @since 2.7
      */
     @Parameter( property = "dependency.ignorePermissions", defaultValue = "false" )
-    protected boolean ignorePermissions = true;
+    protected boolean ignorePermissions;
 
     /**
      * POM
