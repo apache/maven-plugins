@@ -111,8 +111,8 @@ public abstract class AbstractDependencyMojo
      * ignore to set file permissions when unpacking a dependency
      * @since 2.7
      */
-    @Parameter( property = "dependency.ignorePermissions", defaultValue = "true" )
-    protected boolean ignorePermissions = true;
+    @Parameter( property = "dependency.ignorePermissions", defaultValue = "false" )
+    protected boolean ignorePermissions;
 
     /**
      * POM
