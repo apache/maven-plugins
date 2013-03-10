@@ -77,5 +77,15 @@ under the License.
 </plugin>]]></source>
        </answer>
      </faq>
+     <faq id="deploy_deploy">
+       <question>What does the message "The packaging for this project did not assign a file to the build artifact" mean when I run <code>deploy:deploy</code>?</question>
+       <answer>
+         <p>
+         During the packaging-phase all gathered and placed in context. 
+         With this mechanism Maven can ensure that the <code>maven-install-plugin</code> and <code>maven-deploy-plugin</code> are copying/uploading the same set of files.
+         So when you only execute <code>deploy:deploy</code>, then there are no files put in the context and there is nothing to deploy.
+         </p> 
+       </answer>
+     </faq>
  </part>
 </faqs>
