@@ -47,6 +47,7 @@ import org.apache.maven.plugins.shade.pom.PomWriter;
 import org.apache.maven.plugins.shade.relocation.Relocator;
 import org.apache.maven.plugins.shade.relocation.SimpleRelocator;
 import org.apache.maven.plugins.shade.resource.ResourceTransformer;
+import org.apache.maven.project.DefaultMavenProjectHelper;
 import org.apache.maven.project.DefaultProjectBuildingRequest;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
@@ -526,14 +527,19 @@ public class ShadeMojo
                     renamed = true;
                 }
 
+                MavenProject usedProject = project;
+                if(shadedArtifactId!=null) {
+                	usedProject = new MavenProject(project.getModel());
+                	usedProject.setArtifactId(shadedArtifactId);
+                }
                 if ( shadedArtifactAttached )
                 {
                     getLog().info( "Attaching shaded artifact." );
-                    projectHelper.attachArtifact( project, project.getArtifact().getType(), shadedClassifierName,
+                    projectHelper.attachArtifact( usedProject, usedProject.getArtifact().getType(), shadedClassifierName,
                                                   outputJar );
                     if ( createSourcesJar )
                     {
-                        projectHelper.attachArtifact( project, "jar", shadedClassifierName + "-sources", sourcesJar );
+                    	projectHelper.attachArtifact( usedProject, "jar", shadedClassifierName + "-sources", sourcesJar );
                     }
                 }
                 else if ( !renamed )
