@@ -170,7 +170,8 @@ public class SimpleRelocator
             return false;
         }
 
-        // Allow for annoying option of an extra / on the front of a path. See MSHADE-119; comes from getClass().getResource("/a/b/c.properties").
+        // Allow for annoying option of an extra / on the front of a path. See MSHADE-119; comes from
+        // getClass().getResource("/a/b/c.properties").
         return path.startsWith( pathPattern ) || path.startsWith ( "/" + pathPattern );
     }
 
@@ -196,15 +197,15 @@ public class SimpleRelocator
         return clazz.replaceFirst( pattern, shadedPattern );
     }
 
-	public String applyToSourceContent(String sourceContent)
-	{
+    public String applyToSourceContent( String sourceContent )
+    {
         if ( rawString )
         {
-        	return sourceContent;
+            return sourceContent;
         }
         else
         {
             return sourceContent.replaceAll( "\\b" + pattern, shadedPattern );
         }
-	}
+    }
 }

@@ -103,16 +103,19 @@ public class MinijarFilter
         }
         catch ( ZipException e )
         {
-            log.warn( dependency.getFile() + " could not be unpacked/read for minimization; dependency is probably malformed." );
-            IOException ioe = new IOException( "Dependency " + dependency.toString() + " in file " + dependency.getFile() +
-                                               " could not be unpacked. File is probably corrupt" );
+            log.warn( dependency.getFile()
+                + " could not be unpacked/read for minimization; dependency is probably malformed." );
+            IOException ioe =
+                new IOException( "Dependency " + dependency.toString() + " in file " + dependency.getFile()
+                    + " could not be unpacked. File is probably corrupt" );
             ioe.initCause( e );
             throw ioe;
         }
         catch ( ArrayIndexOutOfBoundsException e )
         {
             //trap ArrayIndexOutOfBoundsExceptions caused by malformed dependency classes (MSHADE-107)
-            log.warn( dependency.toString() + " could not be analyzed for minimization; dependency is probably malformed." );
+            log.warn( dependency.toString()
+                + " could not be analyzed for minimization; dependency is probably malformed." );
         }
         finally
         {
@@ -205,9 +208,9 @@ public class MinijarFilter
 
     public void finished()
     {
-        int classes_total = classesRemoved + classesKept;
+        int classesTotal = classesRemoved + classesKept;
         log.info(
-            "Minimized " + classes_total + " -> " + classesKept + " (" + (int) ( 100 * classesKept / classes_total )
+            "Minimized " + classesTotal + " -> " + classesKept + " (" + (int) ( 100 * classesKept / classesTotal )
                 + "%)" );
     }
 }
