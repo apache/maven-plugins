@@ -33,12 +33,7 @@ import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.commons.Remapper;
 import org.objectweb.asm.commons.RemappingClassAdapter;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashSet;
@@ -81,7 +76,8 @@ public class DefaultShader
         RelocatorRemapper remapper = new RelocatorRemapper( shadeRequest.getRelocators() );
 
         shadeRequest.getUberJar().getParentFile().mkdirs();
-        JarOutputStream jos = new JarOutputStream( new FileOutputStream( shadeRequest.getUberJar() ) );
+        FileOutputStream fileOutputStream = new FileOutputStream(shadeRequest.getUberJar());
+        JarOutputStream jos = new JarOutputStream( new BufferedOutputStream(fileOutputStream) );
 
         if ( manifestTransformer != null )
         {
