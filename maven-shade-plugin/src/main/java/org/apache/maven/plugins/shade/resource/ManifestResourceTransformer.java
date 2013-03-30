@@ -101,7 +101,7 @@ public class ManifestResourceTransformer
 
         if ( manifestEntries != null )
         {
-            for ( Map.Entry<String,Attributes> entry : manifestEntries.entrySet() )
+            for ( Map.Entry<String, Attributes> entry : manifestEntries.entrySet() )
             {
                 attributes.put( new Attributes.Name( entry.getKey() ), entry.getValue() );
             }

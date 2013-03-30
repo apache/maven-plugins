@@ -33,7 +33,13 @@ import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.commons.Remapper;
 import org.objectweb.asm.commons.RemappingClassAdapter;
 
-import java.io.*;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashSet;
@@ -62,7 +68,8 @@ public class DefaultShader
         Set<String> resources = new HashSet<String>();
 
         ResourceTransformer manifestTransformer = null;
-        List<ResourceTransformer> transformers = new ArrayList<ResourceTransformer>( shadeRequest.getResourceTransformers() );
+        List<ResourceTransformer> transformers =
+            new ArrayList<ResourceTransformer>( shadeRequest.getResourceTransformers() );
         for ( Iterator<ResourceTransformer> it = transformers.iterator(); it.hasNext(); )
         {
             ResourceTransformer transformer = it.next();
@@ -76,8 +83,8 @@ public class DefaultShader
         RelocatorRemapper remapper = new RelocatorRemapper( shadeRequest.getRelocators() );
 
         shadeRequest.getUberJar().getParentFile().mkdirs();
-        FileOutputStream fileOutputStream = new FileOutputStream(shadeRequest.getUberJar());
-        JarOutputStream jos = new JarOutputStream( new BufferedOutputStream(fileOutputStream) );
+        FileOutputStream fileOutputStream = new FileOutputStream( shadeRequest.getUberJar() );
+        JarOutputStream jos = new JarOutputStream( new BufferedOutputStream( fileOutputStream ) );
 
         if ( manifestTransformer != null )
         {
@@ -91,7 +98,8 @@ public class DefaultShader
                     if ( manifestTransformer.canTransformResource( resource ) )
                     {
                         resources.add( resource );
-                        manifestTransformer.processResource( resource, jarFile.getInputStream( entry ), shadeRequest.getRelocators() );
+                        manifestTransformer.processResource( resource, jarFile.getInputStream( entry ),
+                                                             shadeRequest.getRelocators() );
                         break;
                     }
                 }
@@ -343,8 +351,9 @@ public class DefaultShader
 
         String sourceContent = IOUtil.toString( new InputStreamReader( is, "UTF-8" ) );
         
-        for ( Relocator relocator : relocators ) {
-        	sourceContent = relocator.applyToSourceContent(sourceContent);
+        for ( Relocator relocator : relocators )
+        {
+            sourceContent = relocator.applyToSourceContent( sourceContent );
         }
         
         OutputStreamWriter writer = new OutputStreamWriter( jos, "UTF-8" );

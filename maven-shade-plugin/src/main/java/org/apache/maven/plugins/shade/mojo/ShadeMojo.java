@@ -23,7 +23,6 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.resolver.ArtifactCollector;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
@@ -281,9 +280,9 @@ public class ShadeMojo
 
     /**
      * Where to put the dependency reduced pom.
-     * Note: setting a value for this parameter with a directory other than ${basedir} will change the value of ${basedir}
-     * for all executions that come after the shade execution. This is often not what you want. This is considered
-     * an open issue with this plugin.
+     * Note: setting a value for this parameter with a directory other than ${basedir} will change the value of
+     * ${basedir} for all executions that come after the shade execution. This is often not what you want.
+     * This is considered an open issue with this plugin.
      *
      * @since 1.7
      */
@@ -333,7 +332,7 @@ public class ShadeMojo
      * actual contents of the java source files.
      *
      */
-    @Parameter(property = "shadeSourcesContent", defaultValue = "false")
+    @Parameter( property = "shadeSourcesContent", defaultValue = "false" )
     private boolean shadeSourcesContent;
 
     /**
@@ -883,8 +882,10 @@ public class ShadeMojo
 
                 if ( generateUniqueDependencyReducedPom )
                 {
-                    dependencyReducedPomLocation = File.createTempFile( "dependency-reduced-pom-", ".xml", project.getBasedir() );
-                    project.getProperties().setProperty( "maven.shade.dependency-reduced-pom", dependencyReducedPomLocation.getAbsolutePath() );
+                    dependencyReducedPomLocation =
+                        File.createTempFile( "dependency-reduced-pom-", ".xml", project.getBasedir() );
+                    project.getProperties().setProperty( "maven.shade.dependency-reduced-pom",
+                                                         dependencyReducedPomLocation.getAbsolutePath() );
                 }
                 else
                 {

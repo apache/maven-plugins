@@ -32,5 +32,5 @@ public interface Relocator
 
     String relocateClass( String clazz );
     
-    String applyToSourceContent(String sourceContent);
+    String applyToSourceContent( String sourceContent );
 }
