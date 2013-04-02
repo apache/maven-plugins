@@ -49,6 +49,12 @@ public class CopyMojo
     private boolean stripVersion = false;
 
     /**
+     * Strip artifact classifier during copy
+     */
+    @Parameter( property = "mdep.stripClassifier", defaultValue = "false" )
+    private boolean stripClassifier = false;
+    
+    /**
      * Prepend artifact groupId during copy
      * @since 2.7
      */
@@ -85,7 +91,7 @@ public class CopyMojo
         verifyRequirements();
 
         List<ArtifactItem> theArtifactItems = getProcessedArtifactItems(
-            new ProcessArtifactItemsRequest( this.stripVersion, this.prependGroupId, this.useBaseVersion ) );
+            new ProcessArtifactItemsRequest( this.stripVersion, this.prependGroupId, this.useBaseVersion, this.stripClassifier ) );
         for ( ArtifactItem artifactItem : theArtifactItems )
         {
             if ( artifactItem.isNeedsProcessing() )
@@ -137,6 +143,22 @@ public class CopyMojo
     public void setStripVersion( boolean stripVersion )
     {
         this.stripVersion = stripVersion;
+    }
+    
+    /**
+     * @return Returns the stripClassifier.
+     */
+    public boolean isStripClassifier()
+    {
+        return this.stripClassifier;
+    }
+
+    /**
+     * @param stripClassifier The stripClassifier to set.
+     */
+    public void setStripClassifier( boolean stripClassifier )
+    {
+        this.stripClassifier = stripClassifier;
     }
 
     /**

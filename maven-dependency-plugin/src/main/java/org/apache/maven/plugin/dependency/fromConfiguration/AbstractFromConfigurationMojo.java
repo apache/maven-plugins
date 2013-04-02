@@ -154,6 +154,8 @@ public abstract class AbstractFromConfigurationMojo
         boolean removeVersion = processArtifactItemsRequest.isRemoveVersion(), prependGroupId =
             processArtifactItemsRequest.isPrependGroupId(), useBaseVersion =
             processArtifactItemsRequest.isUseBaseVersion();
+        
+        boolean removeClassifier = processArtifactItemsRequest.isRemoveClassifier();
 
         if ( artifactItems == null || artifactItems.size() < 1 )
         {
@@ -181,7 +183,7 @@ public abstract class AbstractFromConfigurationMojo
             if ( StringUtils.isEmpty( artifactItem.getDestFileName() ) )
             {
                 artifactItem.setDestFileName(
-                    DependencyUtil.getFormattedFileName( artifactItem.getArtifact(), removeVersion, prependGroupId, useBaseVersion ) );
+                    DependencyUtil.getFormattedFileName( artifactItem.getArtifact(), removeVersion, prependGroupId, useBaseVersion, removeClassifier) );
             }
 
             try

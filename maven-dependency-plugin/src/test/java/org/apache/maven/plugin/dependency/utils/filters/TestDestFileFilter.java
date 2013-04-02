@@ -76,16 +76,23 @@ public class TestDestFileFilter
     }
 
     public File createFile( Artifact artifact, boolean useSubDirectoryPerArtifact, boolean useSubDirectoryPerType,
-                           boolean removeVersion )
+                           boolean removeVersion)
         throws IOException
     {
+        return createFile(artifact, useSubDirectoryPerArtifact, useSubDirectoryPerType, removeVersion, false);
+    }
+    
+    public File createFile(Artifact artifact, boolean useSubDirectoryPerArtifact, boolean useSubDirectoryPerType,
+            boolean removeVersion, boolean removeClassifier)
+            throws IOException
+    {
         File destFolder =
-            DependencyUtil.getFormattedOutputDirectory( false, useSubDirectoryPerType, useSubDirectoryPerArtifact,
-                                                        false, false, outputFolder, artifact );
-        File destFile = new File( destFolder, DependencyUtil.getFormattedFileName( artifact, removeVersion ) );
+                DependencyUtil.getFormattedOutputDirectory(false, useSubDirectoryPerType, useSubDirectoryPerArtifact,
+                        false, false, outputFolder, artifact);
+        File destFile = new File(destFolder, DependencyUtil.getFormattedFileName(artifact, removeVersion, false, false, removeClassifier));
 
         destFile.getParentFile().mkdirs();
-        assertTrue( destFile.createNewFile() );
+        assertTrue(destFile.createNewFile());
         return destFile;
     }
 
@@ -132,6 +139,21 @@ public class TestDestFileFilter
         assertTrue( filter.isArtifactIncluded( artifact ) );
     }
 
+    public void testDestFileStripClassifier()
+            throws IOException, ArtifactFilterException
+    {
+        DestFileFilter filter = new DestFileFilter(outputFolder);
+        Artifact artifact = fact.getSnapshotArtifact();
+        filter.setRemoveClassifier(true);
+
+        assertTrue(filter.isArtifactIncluded(artifact));
+        createFile(artifact, false, false, false, true);
+        assertFalse(filter.isArtifactIncluded(artifact));
+
+        filter.setOverWriteSnapshots(true);
+        assertTrue(filter.isArtifactIncluded(artifact));
+    }
+    
     public void testDestFileSubPerArtifact()
         throws  IOException, ArtifactFilterException
     {

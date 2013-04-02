@@ -39,6 +39,12 @@ public abstract class AbstractFromDependenciesMojo
      */
     @Parameter( property = "mdep.stripVersion", defaultValue = "false" )
     protected boolean stripVersion = false;
+    
+    /**
+     * Strip artifact classifier during copy
+     */
+    @Parameter( property = "mdep.stripClassifier", defaultValue = "false" )
+    protected boolean stripClassifier = false;
 
     /**
      * Default location used for mojo unless overridden in ArtifactItem

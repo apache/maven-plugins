@@ -70,7 +70,7 @@ public class TestCopyMojo
     public ArtifactItem getSingleArtifactItem( boolean removeVersion, boolean useBaseVersion )
         throws MojoExecutionException
     {
-        List<ArtifactItem> list = mojo.getProcessedArtifactItems(new ProcessArtifactItemsRequest( removeVersion, false, useBaseVersion ));
+        List<ArtifactItem> list = mojo.getProcessedArtifactItems(new ProcessArtifactItemsRequest( removeVersion, false, useBaseVersion, false ));
         return list.get( 0 );
     }
 
@@ -118,6 +118,7 @@ public class TestCopyMojo
 
         assertFalse( themojo.isStripVersion() );
         assertFalse( themojo.isSkip() );
+        assertFalse( themojo.isStripClassifier() );
     }
 
     public void testCopyFile()
@@ -217,6 +218,22 @@ public class TestCopyMojo
         assertFilesExist( list, true );
     }
 
+    public void testCopyStripClassifierSetInMojo()
+            throws Exception
+        {
+            List<ArtifactItem> list = stubFactory.getArtifactItems( stubFactory.getClassifiedArtifacts() );
+            ArtifactItem item = (ArtifactItem) list.get( 0 );
+            item.setOutputDirectory( new File( mojo.getOutputDirectory(), "testOverride" ) );
+            mojo.setStripClassifier( true );
+
+            mojo.setArtifactItems( list );
+
+            mojo.execute();
+            assertEquals( DependencyUtil.getFormattedFileName( item.getArtifact(), false, false, false, true ), item.getDestFileName() );
+
+            assertFilesExist( list, true );
+        }
+    
     public void testNonClassifierStrip()
         throws Exception
     {
@@ -535,7 +552,7 @@ public class TestCopyMojo
     {
         try
         {
-            mojo.getProcessedArtifactItems( new ProcessArtifactItemsRequest( false, false, false ) );
+            mojo.getProcessedArtifactItems( new ProcessArtifactItemsRequest( false, false, false, false ) );
             fail( "Expected Exception" );
         }
         catch ( MojoExecutionException e )
