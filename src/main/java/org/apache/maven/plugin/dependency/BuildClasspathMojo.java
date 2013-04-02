@@ -68,6 +68,12 @@ public class BuildClasspathMojo
     private boolean stripVersion = false;
 
     /**
+     * Strip artifact classifier during copy (only works if prefix is set)
+     */
+    @Parameter( property = "mdep.stripClassifier", defaultValue = "false" )
+    private boolean stripClassifier = false;
+    
+    /**
      * The prefix to prepend on each dependent artifact. If undefined, the paths refer to the actual files store in the
      * local repository (the stripVersion parameter does nothing then).
      */
@@ -295,7 +301,7 @@ public class BuildClasspathMojo
             // TODO: add param for prepending groupId and version.
             sb.append( prefix );
             sb.append( File.separator );
-            sb.append( DependencyUtil.getFormattedFileName( art, this.stripVersion, this.prependGroupId, this.useBaseVersion ) );
+            sb.append( DependencyUtil.getFormattedFileName( art, this.stripVersion, this.prependGroupId, this.useBaseVersion, this.stripClassifier ) );
         }
     }
 

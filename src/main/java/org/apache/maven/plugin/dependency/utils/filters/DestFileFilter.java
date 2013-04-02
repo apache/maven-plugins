@@ -53,6 +53,8 @@ public class DestFileFilter
     private boolean useRepositoryLayout;
 
     private boolean removeVersion;
+    
+    private boolean removeClassifier;
 
     private File outputFileDirectory;
 
@@ -66,6 +68,7 @@ public class DestFileFilter
         useSubDirectoryPerType = false;
         useSubDirectoryPerScope = false;
         removeVersion = false;
+        removeClassifier = false;
     }
 
     public DestFileFilter( boolean overWriteReleases, boolean overWriteSnapshots, boolean overWriteIfNewer,
@@ -189,6 +192,23 @@ public class DestFileFilter
     public void setRemoveVersion( boolean removeVersion )
     {
         this.removeVersion = removeVersion;
+    }
+    
+    /**
+     * @return Returns the removeClassifier.
+     */
+    public boolean isRemoveClassifier()
+    {
+        return this.removeClassifier;
+    }
+
+    /**
+     * @param removeClassifier
+     *            The removeClassifier to set.
+     */
+    public void setRemoveClassifier( boolean removeClassifier )
+    {
+        this.removeClassifier = removeClassifier;
     }
 
     /**

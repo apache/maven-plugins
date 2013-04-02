@@ -244,13 +244,16 @@ public class TestDependencyUtil
         name = DependencyUtil.getFormattedFileName( artifact, true );
         expectedResult = "two-sources.jar";
         assertEquals( expectedResult, name );
-
+        
+        name = DependencyUtil.getFormattedFileName(artifact, false, false, false, true);
+        expectedResult = "two-1.1-SNAPSHOT.jar";
+        assertEquals( expectedResult, name );
+        
         ah = new DefaultArtifactHandlerStub( "war", null );
         artifact = new DefaultArtifact( "test", "two", vr, Artifact.SCOPE_PROVIDED, "war", "", ah, false );
         name = DependencyUtil.getFormattedFileName( artifact, true );
         expectedResult = "two.war";
         assertEquals( expectedResult, name );
-
     }
 
     public void testFileNameClassifierWithFile()
@@ -271,10 +274,14 @@ public class TestDependencyUtil
         String expectedResult = "two-1.1-SNAPSHOT-sources.war";
         assertEquals( expectedResult, name );
 
+        name = DependencyUtil.getFormattedFileName( artifact, false, false, false, true );
+        expectedResult = "two-1.1-SNAPSHOT.war";
+        assertEquals( expectedResult, name );
+        
         name = DependencyUtil.getFormattedFileName( artifact, true );
         expectedResult = "two-sources.war";
         assertEquals( expectedResult, name );
-
+        
         artifact = new DefaultArtifact( "test", "two", vr, Artifact.SCOPE_PROVIDED, "war", "", ah, false );
         name = DependencyUtil.getFormattedFileName( artifact, true );
         expectedResult = "two.war";

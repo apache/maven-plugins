@@ -99,7 +99,7 @@ public class CopyDependenciesMojo
         {
             for ( Artifact artifact : artifacts )
             {
-                copyArtifact( artifact, isStripVersion(), this.prependGroupId, this.useBaseVersion );
+                copyArtifact( artifact, isStripVersion(), this.prependGroupId, this.useBaseVersion, this.stripClassifier );
             }
         }
         else
@@ -132,7 +132,7 @@ public class CopyDependenciesMojo
         {
             copyPoms( getOutputDirectory(), artifacts, this.stripVersion );
             copyPoms( getOutputDirectory(), skippedArtifacts,
-                      this.stripVersion );  // Artifacts that already exist may not already have poms.
+                      this.stripVersion, this.stripClassifier );  // Artifacts that already exist may not already have poms.
         }
     }
 
@@ -196,9 +196,30 @@ public class CopyDependenciesMojo
     protected void copyArtifact( Artifact artifact, boolean removeVersion, boolean prependGroupId, 
     		boolean useBaseVersion ) throws MojoExecutionException
     {
+        copyArtifact(artifact, removeVersion, prependGroupId, useBaseVersion, false);
+    }
+
+    /**
+     * Copies the Artifact after building the destination file name if
+     * overridden. This method also checks if the classifier is set and adds it
+     * to the destination file name if needed.
+     *
+     * @param artifact       representing the object to be copied.
+     * @param removeVersion  specifies if the version should be removed from the file name
+     *                       when copying.
+     * @param prependGroupId specifies if the groupId should be prepend to the file while copying.
+     * @param useBaseVersion specifies if the baseVersion of the artifact should be used instead of the version.
+     * @param removeClassifier specifies if the classifier should be removed from the file name when copying.
+     * @throws MojoExecutionException with a message if an error occurs.
+     * @see DependencyUtil#copyFile(File, File, Log)
+     * @see DependencyUtil#getFormattedFileName(Artifact, boolean)
+     */
+    protected void copyArtifact( Artifact artifact, boolean removeVersion, boolean prependGroupId, 
+            boolean useBaseVersion, boolean removeClassifier ) throws MojoExecutionException
+    {
 
         String destFileName = DependencyUtil.getFormattedFileName( artifact, removeVersion, prependGroupId, 
-        		useBaseVersion );
+                useBaseVersion, removeClassifier );
 
         File destDir;
         destDir = DependencyUtil.getFormattedOutputDirectory( useSubDirectoryPerScope, useSubDirectoryPerType,
@@ -208,11 +229,21 @@ public class CopyDependenciesMojo
 
         copyFile( artifact.getFile(), destFile );
     }
-
+    
     /**
      * Copy the pom files associated with the artifacts.
      */
     public void copyPoms( File destDir, Set<Artifact> artifacts, boolean removeVersion )
+        throws MojoExecutionException
+
+    {
+        copyPoms(destDir, artifacts, removeVersion, false);
+    }
+    
+    /**
+     * Copy the pom files associated with the artifacts.
+     */
+    public void copyPoms( File destDir, Set<Artifact> artifacts, boolean removeVersion, boolean removeClassifier )
         throws MojoExecutionException
 
     {
@@ -224,7 +255,7 @@ public class CopyDependenciesMojo
             if ( pomArtifact.getFile() != null && pomArtifact.getFile().exists() )
             {
                 File pomDestFile = new File( destDir, DependencyUtil.getFormattedFileName( pomArtifact, removeVersion,
-                                                                                           prependGroupId, useBaseVersion ) );
+                                                                                           prependGroupId, useBaseVersion, removeClassifier ) );
                 if ( !pomDestFile.exists() )
                 {
                     copyFile( pomArtifact.getFile(), pomDestFile );

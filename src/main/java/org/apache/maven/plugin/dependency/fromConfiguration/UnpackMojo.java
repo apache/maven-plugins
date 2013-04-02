@@ -142,7 +142,7 @@ public final class UnpackMojo
         throws MojoExecutionException
     {
         List<ArtifactItem> items =
-            super.getProcessedArtifactItems( new ProcessArtifactItemsRequest( removeVersion, false, false ) );
+            super.getProcessedArtifactItems( new ProcessArtifactItemsRequest( removeVersion, false, false, false ) );
         for ( ArtifactItem artifactItem : items )
         {
             if ( StringUtils.isEmpty( artifactItem.getIncludes() ) )

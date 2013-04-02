@@ -29,6 +29,11 @@ public class ProcessArtifactItemsRequest
      */
     private boolean removeVersion;
 
+    /** 
+     * remove the classifier from the filename.
+     */
+    private boolean removeClassifier;
+    
     /**
      * prepend the groupId to the filename.
      */
@@ -44,11 +49,12 @@ public class ProcessArtifactItemsRequest
         // no op
     }
 
-    public ProcessArtifactItemsRequest( boolean removeVersion, boolean prependGroupId, boolean useBaseVersion )
+    public ProcessArtifactItemsRequest( boolean removeVersion, boolean prependGroupId, boolean useBaseVersion, boolean removeClassifier )
     {
         this.removeVersion = removeVersion;
         this.prependGroupId = prependGroupId;
         this.useBaseVersion = useBaseVersion;
+        this.removeClassifier = removeClassifier;
     }
 
     public boolean isRemoveVersion()
@@ -61,6 +67,17 @@ public class ProcessArtifactItemsRequest
         this.removeVersion = removeVersion;
     }
 
+    public boolean isRemoveClassifier()
+    {
+        return removeClassifier;
+    }
+
+    public void setRemoveClassifier( boolean removeClassifier )
+    {
+        this.removeClassifier = removeClassifier;
+    }
+
+    
     public ProcessArtifactItemsRequest removeVersion( boolean removeVersion )
     {
         this.removeVersion = removeVersion;
