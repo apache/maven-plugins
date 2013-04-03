@@ -182,7 +182,7 @@ under the License.
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>httpclient</artifactId>
-      <version>4.2</version>
+      <version>4.2.3</version>
     </dependency>
     <dependency>
       <!-- MJAVADOC-246 -->
