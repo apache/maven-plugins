@@ -19,16 +19,21 @@ package org.apache.maven.plugin.javadoc;
  * under the License.
  */
 
-import org.apache.commons.httpclient.Credentials;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpStatus;
-import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
-import org.apache.commons.httpclient.UsernamePasswordCredentials;
-import org.apache.commons.httpclient.auth.AuthScope;
-import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.httpclient.params.HttpClientParams;
-import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.apache.commons.lang.SystemUtils;
+import org.apache.http.HttpHost;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.Credentials;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.params.ClientPNames;
+import org.apache.http.conn.params.ConnRoutePNames;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.conn.PoolingClientConnectionManager;
+import org.apache.http.params.CoreConnectionPNames;
+import org.apache.http.params.CoreProtocolPNames;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
@@ -1683,7 +1688,8 @@ public class JavadocUtil
         }
 
         BufferedReader reader = null;
-        GetMethod httpMethod = null;
+        HttpGet httpMethod = null;
+        HttpClient httpClient = null;
 
         try
         {
@@ -1695,29 +1701,29 @@ public class JavadocUtil
             else
             {
                 // http, https...
-                HttpClient httpClient = createHttpClient( settings, url );
+                httpClient = createHttpClient( settings, url );
 
-                httpMethod = new GetMethod( url.toString() );
-                int status;
+                httpMethod = new HttpGet( url.toString() );
+                HttpResponse response;
                 try
                 {
-                    status = httpClient.executeMethod( httpMethod );
+                    response = httpClient.execute( httpMethod );
                 }
                 catch ( SocketTimeoutException e )
                 {
                     // could be a sporadic failure, one more retry before we give up
-                    status = httpClient.executeMethod( httpMethod );
+                    response = httpClient.execute( httpMethod );
                 }
 
+                int status = response.getStatusLine().getStatusCode();
                 if ( status != HttpStatus.SC_OK )
                 {
                     throw new FileNotFoundException(
                         "Unexpected HTTP status code " + status + " getting resource " + url.toExternalForm() + "." );
-
                 }
 
                 // Intentionally using the platform default encoding here since this is what Javadoc uses internally.
-                reader = new BufferedReader( new InputStreamReader( httpMethod.getResponseBodyAsStream() ) );
+                reader = new BufferedReader( new InputStreamReader( response.getEntity().getContent() ) );
             }
 
             if ( validateContent )
@@ -1741,6 +1747,10 @@ public class JavadocUtil
             if ( httpMethod != null )
             {
                 httpMethod.releaseConnection();
+            }
+            if ( httpClient != null )
+            {
+                httpClient.getConnectionManager().shutdown();
             }
         }
     }
@@ -1798,13 +1808,13 @@ public class JavadocUtil
      */
     private static HttpClient createHttpClient( Settings settings, URL url )
     {
-        HttpClient httpClient = new HttpClient( new MultiThreadedHttpConnectionManager() );
-        httpClient.getHttpConnectionManager().getParams().setConnectionTimeout( DEFAULT_TIMEOUT );
-        httpClient.getHttpConnectionManager().getParams().setSoTimeout( DEFAULT_TIMEOUT );
-        httpClient.getParams().setBooleanParameter( HttpClientParams.ALLOW_CIRCULAR_REDIRECTS, true );
+        DefaultHttpClient httpClient = new DefaultHttpClient( new PoolingClientConnectionManager() );
+        httpClient.getParams().setIntParameter( CoreConnectionPNames.SO_TIMEOUT, DEFAULT_TIMEOUT );
+        httpClient.getParams().setIntParameter( CoreConnectionPNames.CONNECTION_TIMEOUT, DEFAULT_TIMEOUT );
+        httpClient.getParams().setBooleanParameter( ClientPNames.ALLOW_CIRCULAR_REDIRECTS, true );
 
         // Some web servers don't allow the default user-agent sent by httpClient
-        httpClient.getParams().setParameter( HttpMethodParams.USER_AGENT,
+        httpClient.getParams().setParameter( CoreProtocolPNames.USER_AGENT,
                                              "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.0)" );
 
         if ( settings != null && settings.getActiveProxy() != null )
@@ -1817,14 +1827,15 @@ public class JavadocUtil
             if ( StringUtils.isNotEmpty( activeProxy.getHost() )
                  && ( url == null || !ProxyUtils.validateNonProxyHosts( proxyInfo, url.getHost() ) ) )
             {
-                httpClient.getHostConfiguration().setProxy( activeProxy.getHost(), activeProxy.getPort() );
+                HttpHost proxy = new HttpHost(activeProxy.getHost(), activeProxy.getPort());
+                httpClient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
 
                 if ( StringUtils.isNotEmpty( activeProxy.getUsername() ) && activeProxy.getPassword() != null )
                 {
                     Credentials credentials =
                         new UsernamePasswordCredentials( activeProxy.getUsername(), activeProxy.getPassword() );
 
-                    httpClient.getState().setProxyCredentials( AuthScope.ANY, credentials );
+                    httpClient.getCredentialsProvider().setCredentials(AuthScope.ANY, credentials);
                 }
             }
         }
