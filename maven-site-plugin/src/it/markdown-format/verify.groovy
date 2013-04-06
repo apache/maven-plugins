@@ -22,4 +22,6 @@ content = new File( basedir, 'target/site/index.html' ).text;
 
 assert content.contains( 'Markdown Format works' );
 
+assert !content.contains( ' quotes and double quotes were stripped' );
+
 return true;
