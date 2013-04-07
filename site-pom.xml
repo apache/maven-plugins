@@ -25,7 +25,7 @@ under the License.
   <parent>
     <groupId>org.apache.maven.plugins</groupId>
     <artifactId>maven-plugins</artifactId>
-    <version>24</version>
+    <version>25-SNAPSHOT</version>
     <relativePath>./pom.xml</relativePath>
   </parent>
 
@@ -54,7 +54,7 @@ under the License.
   </distributionManagement>
 
   <properties>
-    <maven.site.path>pom-archives/maven-plugins-${project.version}</maven.site.path>
+    <maven.site.path>pom-archives/maven-plugins-LATEST</maven.site.path>
   </properties>
 
   <build>
@@ -68,13 +68,4 @@ under the License.
       </plugin>
     </plugins>
   </build>
-
-  <profiles>
-    <profile>
-      <id>site-release</id>
-      <properties>
-        <maven.site.path>pom/maven-plugins</maven.site.path>
-      </properties>
-    </profile>
-  </profiles>
 </project>
