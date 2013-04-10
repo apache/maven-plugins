@@ -170,7 +170,7 @@ public abstract class AbstractSiteRenderingMojo
     protected MavenSession mavenSession;
 
     /**
-     * <p>Configuration section used internally by Maven 3.</p>
+     * <p>Configuration section <b>used internally</b> by Maven 3.</p>
      * <p>More details available here:
      * <a href="http://maven.apache.org/plugins/maven-site-plugin/maven-3.html#Configuration_formats" target="_blank">
      * http://maven.apache.org/plugins/maven-site-plugin/maven-3.html#Configuration_formats</a>
@@ -178,9 +178,9 @@ public abstract class AbstractSiteRenderingMojo
      * <p><b>Note:</b> using this field is not mandatory with Maven 3 as Maven core injects usual
      * <code>&lt;reporting&gt;</code> section into this field.</p>
      *
-     * @since 3.0-beta-1
+     * @since 3.0-beta-1 (and read-only since 3.3)
      */
-    @Parameter
+    @Parameter( readonly = true )
     private ReportPlugin[] reportPlugins;
 
     private PlexusContainer container;

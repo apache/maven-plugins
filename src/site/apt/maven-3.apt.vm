@@ -289,13 +289,22 @@ Using it with Maven 3
 
 ** New Configuration (Maven 3 only, no reports configuration inheritance)
 
-  Reports can be configured in the configuration of <<<maven-site-plugin>>> as <<<\<reportPlugins\>>>> elements.
+  Starting with <<<maven-site-plugin>>> 3.0, reports could be configured in the configuration of <<<maven-site-plugin>>>
+  as <<<\<reportPlugins\>>>> elements.
   
   <<This new configuration format is not actually ready for end-users: please don't use it for the moment.>>
 
-  <Explanation:> The new format does not actually support report plugins configuration inheritance, which is crucial for
-  usability: see {{{http://jira.codehaus.org/browse/MSITE-484}MSITE-484}}. This format was technically necessary to remove
-  most reporting logic from Maven 3, but a new inheritance mechanism still needs to be added to make it as flexible as the old format.
+  As a consequence, with <<<maven-site-plugin>>> 3.3, the <<<\<reportPlugins\>>>> configuration has simply been removed
+  (more precisely marked private/internal), since it should not be used directly. This documentation has been kept
+  public only to help people who used it in previous versions understand why they need to migrate back to classic configuration.
+
+  <Explanation:> The (former) new format did not support report plugins configuration inheritance, which is crucial for
+  usability: see {{{http://jira.codehaus.org/browse/MSITE-484}MSITE-484}}. This field is technically necessary to remove
+  most reporting logic from Maven 3, but a new inheritance mechanism still needs to be added to make it as flexible as the old format:
+  we made the field public before finding this crucial limitation and required to explain later why end-users must not use it, then
+  cannot use it since <<<maven-site-plugin>>> 3.3.
+
+  Here is how this feature looked like:
 
 +-----+
   <build>
@@ -303,10 +312,10 @@ Using it with Maven 3
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-site-plugin</artifactId>
-        <version>${project.version}</version>
+        <version>3.2</version><!-- last maven-site-plugin version supporting this reportPlugins configuration -->
         <configuration>
           ...
-          <reportPlugins>
+          <reportPlugins><!-- not supported any more... (now kept internal) -->
             <plugin>
               <groupId>org.apache.maven.plugins</groupId>
               <artifactId>maven-project-info-reports-plugin</artifactId>
