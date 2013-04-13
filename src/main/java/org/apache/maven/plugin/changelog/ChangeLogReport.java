@@ -59,6 +59,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
+import java.net.URLEncoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -228,6 +229,14 @@ public class ChangeLogReport
      */
     @Parameter( property = "changelog.skip", defaultValue = "false" )
     protected boolean skip;
+
+    /**
+     * Encodes slashes in file uri. Required for some repository browsers like gitblit
+     *
+     * @since 2.3
+     */
+    @Parameter( property = "encodeFileUri", defaultValue = "false")
+    protected boolean encodeFileUri;
 
     /**
      * The Maven Project Object
@@ -1473,18 +1482,31 @@ public class ChangeLogReport
         {
             if ( !linkFile.equals( scmUrl ) )
             {
+                String linkName = name;
+                if(encodeFileUri)
+                {
+                    try
+                    {
+                        linkName = URLEncoder.encode(linkName, "UTF-8");
+                    }
+                    catch (UnsupportedEncodingException e)
+                    {
+                        // UTF-8 is always supported
+                    }
+                }
+
                 // Use the given URL to create links to the files
 
                 if ( linkFile.indexOf( FILE_TOKEN ) > 0 )
                 {
-                    linkFile = linkFile.replaceAll( FILE_TOKEN, name );
+                    linkFile = linkFile.replaceAll( FILE_TOKEN, linkName );
                 }
                 else
                 {
                     // This is here so that we are backwards compatible with the
                     // format used before the special token was introduced
 
-                    linkFile = linkFile + name;
+                    linkFile = linkFile + linkName;
                 }
 
                 // Use the given URL to create links to the files
