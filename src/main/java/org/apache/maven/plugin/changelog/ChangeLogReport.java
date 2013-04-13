@@ -239,6 +239,21 @@ public class ChangeLogReport
     protected boolean encodeFileUri;
 
     /**
+     * List of files to include. Specified as fileset patterns of files to include in the report
+     * @since 2.3
+     */
+    @Parameter
+    private String[] includes;
+
+    /**
+     *  List of files to include. Specified as fileset patterns of files to omit in the report
+     *  @since 2.3
+     */
+    @Parameter
+    private String[] excludes;
+
+
+    /**
      * The Maven Project Object
      */
     @Component
@@ -700,8 +715,9 @@ public class ChangeLogReport
             {
                 throw new MavenReportException( "The type '" + type + "' isn't supported." );
             }
-
+            filter(changeSets);
             return changeSets;
+
         }
         catch ( ScmException e )
         {
@@ -711,6 +727,89 @@ public class ChangeLogReport
         {
             throw new MavenReportException( "An error has occurred during changelog command : ", e );
         }
+    }
+
+    /**
+     * filters out unwanted files from the changesets
+     */
+    private void filter(List<ChangeLogSet> changeSets)
+    {
+        List<Pattern> include = compilePatterns(includes);
+        List<Pattern> exclude = compilePatterns(excludes);
+        if(includes==null && excludes==null)
+            return;
+        for (ChangeLogSet changeLogSet : changeSets)
+        {
+            List<ChangeSet> set = changeLogSet.getChangeSets();
+            filter(set, include, exclude);
+        }
+
+    }
+
+    private List<Pattern> compilePatterns(String[] patternArray)
+    {
+        if(patternArray==null)
+            return new ArrayList<Pattern>();
+        List<Pattern> patterns = new ArrayList<Pattern>(patternArray.length);
+        for (String string : patternArray)
+        {
+            //replaces * with [/\]* (everything but file seperators)
+            //replaces ** with .*
+            //quotes the rest of the string
+            string = "\\Q" + string + "\\E";
+            string = string.replace("**", "\\E.?REPLACEMENT?\\Q");
+            string = string.replace("*", "\\E[^/\\\\]?REPLACEMENT?\\Q");
+            string = string.replace("?REPLACEMENT?", "*");
+            string = string.replace("\\Q\\E", "");
+            patterns.add(Pattern.compile(string));
+        }
+        return patterns;
+    }
+
+    private void filter(List<ChangeSet> sets, List<Pattern> includes, List<Pattern> excludes)
+    {
+        Iterator<ChangeSet> it = sets.iterator();
+        while (it.hasNext())
+        {
+            ChangeSet changeSet = it.next();
+            List<ChangeFile> files = changeSet.getFiles();
+            Iterator<ChangeFile> iterator = files.iterator();
+            while (iterator.hasNext())
+            {
+                ChangeFile changeFile = (ChangeFile)iterator.next();
+                String name = changeFile.getName();
+                if(!isIncluded(includes,name) || isExcluded(excludes, name))
+                {
+                    iterator.remove();
+                }
+            }
+            if(files.isEmpty())
+                it.remove();
+        }
+    }
+
+    private boolean isExcluded(List<Pattern> excludes, String name)
+    {
+        if(excludes==null || excludes.isEmpty())
+            return false;
+        for (Pattern pattern : excludes)
+        {
+            if(pattern.matcher(name).matches())
+                return true;
+        }
+        return false;
+    }
+
+    private boolean isIncluded(List<Pattern> includes, String name)
+    {
+        if(includes==null || includes.isEmpty())
+            return true;
+        for (Pattern pattern : includes)
+        {
+            if(pattern.matcher(name).matches())
+                return true;
+        }
+        return false;
     }
 
     /**
