@@ -43,6 +43,12 @@ under the License.
         <role>Translator: Portuguese (Brazil)</role>
       </roles>
     </contributor>
+    <contributor>
+      <name>Ramon Rial Quintela</name>
+      <roles>
+        <role>Translator: Spanish, Galician</role>
+      </roles>
+    </contributor>
   </contributors>
 
   <prerequisites>
@@ -418,6 +424,8 @@ under the License.
                 <locale>en</locale>
                 <locale>fr</locale>
                 <locale>pt_BR</locale>
+                <locale>es_ES</locale>
+                <locale>gl_ES</locale>
               </locales>
             </configuration>
           </plugin>
