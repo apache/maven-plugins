@@ -143,7 +143,7 @@ public abstract class AbstractSiteRenderingMojo
     /**
      * Reports (Maven 2).
      */
-    @Parameter( property = "reports", required = true, readonly = true )
+    @Parameter( defaultValue = "${reports}", required = true, readonly = true )
     protected List<MavenReport> reports;
 
     /**
