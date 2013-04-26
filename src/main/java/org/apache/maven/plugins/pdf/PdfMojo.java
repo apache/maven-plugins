@@ -269,8 +269,8 @@ public class PdfMojo
      *
      * @since 1.1
      */
-    @Parameter( property = "project.remoteArtifactRepositories" )
-    private List remoteRepositories;
+    @Parameter( defaultValue = "${project.remoteArtifactRepositories}"  )
+    private List<ArtifactRepository> remoteRepositories;
 
     /**
      * If <code>true</false>, aggregate all source documents in one pdf, otherwise generate one pdf for each
@@ -449,10 +449,8 @@ public class PdfMojo
             outputName = outputName.concat( ".pdf" );
         }
 
-        for ( final Iterator iterator = getAvailableLocales().iterator(); iterator.hasNext(); )
+        for ( final Locale locale : getAvailableLocales() )
         {
-            final Locale locale = (Locale) iterator.next();
-
             File generatedPdfSource = new File( getLocaleDirectory( workingDirectory, locale), outputName );
 
             if ( !generatedPdfSource.exists() )
@@ -480,10 +478,8 @@ public class PdfMojo
     {
         Locale.setDefault( getDefaultLocale() );
 
-        for ( final Iterator iterator = getAvailableLocales().iterator(); iterator.hasNext(); )
+        for ( final Locale locale : getAvailableLocales() )
         {
-            final Locale locale = (Locale) iterator.next();
-
             final File workingDir = getLocaleDirectory( workingDirectory, locale );
 
             File siteDirectoryFile = getLocaleDirectory( getSiteDirectoryTmp(), locale );
@@ -609,10 +605,8 @@ public class PdfMojo
         }
 
         // copy generated-site
-        for ( final Iterator iterator = getAvailableLocales().iterator(); iterator.hasNext(); )
+        for ( final Locale locale : getAvailableLocales() )
         {
-            final Locale locale = (Locale) iterator.next();
-
             String excludes = getDefaultExcludesWithLocales( getAvailableLocales(), getDefaultLocale() );
             List siteFiles = FileUtils.getFileNames( siteDirectory, "**/*", excludes, false );
             File siteDirectoryLocale = new File( siteDirectory, locale.getLanguage() );
@@ -887,10 +881,8 @@ public class PdfMojo
                                                    locale );
             context.addSiteDirectory( new File( siteDirectory, locale.getLanguage() ) );
 
-            for ( final Iterator i = context.getSiteDirectories().iterator(); i.hasNext(); )
+            for ( final File siteDirectoryFile : context.getSiteDirectories() )
             {
-                final File siteDirectoryFile = (File) i.next();
-
                 siteRenderer.copyResources( context, new File( siteDirectoryFile, "resources" ), workingDirectory );
             }
         }
