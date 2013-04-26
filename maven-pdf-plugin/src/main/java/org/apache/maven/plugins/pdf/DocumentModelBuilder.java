@@ -38,7 +38,6 @@ import org.apache.maven.doxia.site.decoration.MenuItem;
 import org.apache.maven.model.Developer;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.IOUtil;
-import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
 import org.apache.commons.io.input.XmlStreamReader;
 
@@ -141,14 +140,10 @@ public class DocumentModelBuilder
 
         if ( decorationModel != null && decorationModel.getMenus() != null )
         {
-            for ( final Iterator it = decorationModel.getMenus().iterator(); it.hasNext(); )
+            for ( final Menu menu  : decorationModel.getMenus() )
             {
-                final Menu menu = (Menu) it.next();
-
-                for ( final Iterator it2 = menu.getItems().iterator(); it2.hasNext(); )
+                for ( final MenuItem item : menu.getItems() )
                 {
-                    final MenuItem item = (MenuItem) it2.next();
-
                     final DocumentTOCItem documentTOCItem = new DocumentTOCItem();
                     documentTOCItem.setName( item.getName() );
                     documentTOCItem.setRef( item.getHref() );
@@ -220,14 +215,14 @@ public class DocumentModelBuilder
      * @return a list of DocumentAuthors from the project developers.
      * Returns null if project is null or contains no developers.
      */
-    private static List getAuthors( MavenProject project )
+    private static List<DocumentAuthor> getAuthors( MavenProject project )
     {
         if ( project == null || project.getDevelopers() == null )
         {
             return null;
         }
 
-        final List ret = new ArrayList( 4 );
+        final List<DocumentAuthor> ret = new ArrayList<DocumentAuthor>( 4 );
 
         for ( final Iterator it = project.getDevelopers().iterator(); it.hasNext(); )
         {
