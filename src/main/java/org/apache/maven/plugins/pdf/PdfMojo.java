@@ -334,7 +334,7 @@ public class PdfMojo
     /**
      * The available locales list.
      */
-    private List localesList;
+    private List<Locale> localesList;
 
     /**
      * The default decoration model.
@@ -360,7 +360,7 @@ public class PdfMojo
      *
      * @since 1.1
      */
-    private Map generatedMavenReports;
+    private Map<Locale, List<MavenReport>> generatedMavenReports;
 
     // ----------------------------------------------------------------------
     // Public methods
@@ -775,7 +775,7 @@ public class PdfMojo
      * @return the available locales from <code>siteTool</code>.
      * @see SiteTool#getAvailableLocales(String)
      */
-    private List getAvailableLocales()
+    private List<Locale> getAvailableLocales()
     {
         if ( this.localesList == null )
         {
@@ -1164,10 +1164,8 @@ public class PdfMojo
             return;
         }
 
-        for ( final Iterator it = getGeneratedMavenReports( locale ).iterator(); it.hasNext(); )
+        for ( final MavenReport generatedReport : getGeneratedMavenReports( locale ) )
         {
-            MavenReport generatedReport = (MavenReport) it.next();
-
             if ( report.getName( locale ).equals( generatedReport.getName( locale ) ) )
             {
                 if ( getLog().isDebugEnabled() )
@@ -1278,19 +1276,19 @@ public class PdfMojo
      * @see #isValidGeneratedReport(MojoDescriptor, File, String)
      * @since 1.1
      */
-    private List getGeneratedMavenReports( Locale locale )
+    private List<MavenReport> getGeneratedMavenReports( Locale locale )
     {
         if ( this.generatedMavenReports == null )
         {
-            this.generatedMavenReports = new HashMap( 2 );
+            this.generatedMavenReports = new HashMap<Locale, List<MavenReport>>( 2 );
         }
 
         if ( this.generatedMavenReports.get( locale ) == null )
         {
-            this.generatedMavenReports.put( locale, new ArrayList( 2 ) );
+            this.generatedMavenReports.put( locale, new ArrayList<MavenReport>( 2 ) );
         }
 
-        return ( (List) this.generatedMavenReports.get( locale ) );
+        return this.generatedMavenReports.get( locale );
     }
 
     /**
@@ -1324,15 +1322,13 @@ public class PdfMojo
         documentTOCItem.setName( i18n.getString( "pdf-plugin", locale, "toc.project-info.item" ) );
         documentTOCItem.setRef( "/project-info" ); // see #generateMavenReports(Locale)
 
-        List addedRef = new ArrayList( 4 );
+        List<String> addedRef = new ArrayList<String>( 4 );
 
-        List items = new ArrayList( 4 );
+        List<DocumentTOCItem> items = new ArrayList<DocumentTOCItem>( 4 );
 
         // append generated report defined as MavenReport
-        for ( final Iterator it = getGeneratedMavenReports( locale ).iterator(); it.hasNext(); )
+        for ( final MavenReport report : getGeneratedMavenReports( locale ) )
         {
-            final MavenReport report = (MavenReport) it.next();
-
             final DocumentTOCItem reportItem = new DocumentTOCItem();
             reportItem.setName( report.getName( locale ) );
             reportItem.setRef( "/" + report.getOutputName() );
@@ -1622,13 +1618,11 @@ public class PdfMojo
      * @see FileUtils#getDefaultExcludesAsString()
      * @since 1.1
      */
-    private static String getDefaultExcludesWithLocales( List locales, Locale defaultLocale )
+    private static String getDefaultExcludesWithLocales( List<Locale> locales, Locale defaultLocale )
     {
         String excludesLocales = FileUtils.getDefaultExcludesAsString();
-        for ( final Iterator it = locales.iterator(); it.hasNext(); )
+        for ( final Locale locale : locales )
         {
-            final Locale locale = (Locale) it.next();
-
             if ( !locale.getLanguage().equals( defaultLocale.getLanguage() ) )
             {
                 excludesLocales = excludesLocales + ",**/" + locale.getLanguage() + "/*";
@@ -1680,13 +1674,13 @@ public class PdfMojo
     private static class ProjectInfoRenderer
         extends AbstractMavenReportRenderer
     {
-        private final List generatedReports;
+        private final List<MavenReport> generatedReports;
 
         private final I18N i18n;
 
         private final Locale locale;
 
-        ProjectInfoRenderer( Sink sink, List generatedReports, I18N i18n, Locale locale )
+        ProjectInfoRenderer( Sink sink, List<MavenReport> generatedReports, I18N i18n, Locale locale )
         {
             super( sink );
 
@@ -1747,10 +1741,8 @@ public class PdfMojo
 
             if ( generatedReports != null )
             {
-                for ( final Iterator it = generatedReports.iterator(); it.hasNext(); )
+                for ( final MavenReport report : generatedReports )
                 {
-                    final MavenReport report = (MavenReport) it.next();
-
                     sink.tableRow();
                     sink.tableCell();
                     sink.link( report.getOutputName() + ".html" );
