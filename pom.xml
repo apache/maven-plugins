@@ -184,8 +184,8 @@ under the License.
   </issueManagement>
 
   <properties>
-    <doxiaVersion>1.4-SNAPSHOT</doxiaVersion>
-    <doxiaSitetoolsVersion>1.4-SNAPSHOT</doxiaSitetoolsVersion>
+    <doxiaVersion>1.4</doxiaVersion>
+    <doxiaSitetoolsVersion>1.4</doxiaSitetoolsVersion>
     <mavenVersion>3.0</mavenVersion>
     <prerequisiteMavenVersion>2.2.1</prerequisiteMavenVersion>
     <wagonVersion>1.0</wagonVersion>
