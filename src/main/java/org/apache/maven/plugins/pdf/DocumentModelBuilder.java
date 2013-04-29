@@ -234,21 +234,17 @@ public class DocumentModelBuilder
             author.setCompanyName( developer.getOrganization() );
             StringBuilder roles = null;
 
-            for ( final Iterator it2 = developer.getRoles().iterator(); it2.hasNext(); )
+            for ( final String role : developer.getRoles() )
             {
-                final String role = (String) it2.next();
-
                 if ( roles == null )
                 {
                     roles = new StringBuilder( 32 );
                 }
-
-                roles.append( role );
-
-                if ( it2.hasNext() )
+                else
                 {
                     roles.append( ',' ).append( ' ' );
                 }
+                roles.append( role );
             }
             if ( roles != null )
             {
