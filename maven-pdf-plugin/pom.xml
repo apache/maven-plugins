@@ -67,7 +67,7 @@ under the License.
 
   <properties>
     <doxiaVersion>1.4</doxiaVersion>
-    <mavenVersion>2.0.9</mavenVersion>
+    <mavenVersion>2.2.1</mavenVersion>
     <mavenPluginVersion>3.2</mavenPluginVersion>
   </properties>
 
@@ -223,8 +223,7 @@ under the License.
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-utils</artifactId>
-      <!-- needed by doc-renderer in doxia 1.1 -->
-      <version>1.5.7</version>
+      <version>3.0.10</version>
     </dependency>
     <dependency>
       <groupId>commons-io</groupId>
