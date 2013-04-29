@@ -568,12 +568,12 @@ public class PdfMojo
         }
 
         // Remove SCM files
-        List files =
+        List<String> files =
             FileUtils.getFileAndDirectoryNames( tmpSiteDir, FileUtils.getDefaultExcludesAsString(), null, true,
                                                 true, true, true );
-        for ( final Iterator it = files.iterator(); it.hasNext(); )
+        for ( final String fileName : files )
         {
-            final File file = new File( it.next().toString() );
+            final File file = new File( fileName );
 
             if ( file.isDirectory() )
             {
@@ -608,24 +608,22 @@ public class PdfMojo
         for ( final Locale locale : getAvailableLocales() )
         {
             String excludes = getDefaultExcludesWithLocales( getAvailableLocales(), getDefaultLocale() );
-            List siteFiles = FileUtils.getFileNames( siteDirectory, "**/*", excludes, false );
+            List<String> siteFiles = FileUtils.getFileNames( siteDirectory, "**/*", excludes, false );
             File siteDirectoryLocale = new File( siteDirectory, locale.getLanguage() );
             if ( !locale.getLanguage().equals( getDefaultLocale().getLanguage() ) && siteDirectoryLocale.exists() )
             {
                 siteFiles = FileUtils.getFileNames( siteDirectoryLocale, "**/*", excludes, false );
             }
 
-            List generatedSiteFiles = FileUtils.getFileNames( from, "**/*", excludes, false );
+            List<String> generatedSiteFiles = FileUtils.getFileNames( from, "**/*", excludes, false );
             File fromLocale = new File( from, locale.getLanguage() );
             if ( !locale.getLanguage().equals( getDefaultLocale().getLanguage() ) && fromLocale.exists() )
             {
                 generatedSiteFiles = FileUtils.getFileNames( fromLocale, "**/*", excludes, false );
             }
 
-            for ( final Iterator it = generatedSiteFiles.iterator(); it.hasNext(); )
+            for ( final String generatedSiteFile : generatedSiteFiles )
             {
-                final String generatedSiteFile = it.next().toString();
-
                 if ( siteFiles.contains( generatedSiteFile ) )
                 {
                     getLog().warn( "Generated-site already contains a file in site: " + generatedSiteFile
@@ -807,7 +805,7 @@ public class PdfMojo
 
                     String siteDescriptorContent = IOUtil.toString( reader );
                     siteDescriptorContent =
-                        siteTool.getInterpolatedSiteDescriptorContent( new HashMap( 2 ), project,
+                        siteTool.getInterpolatedSiteDescriptorContent( new HashMap<String, String>( 2 ), project,
                                                                        siteDescriptorContent, enc, enc );
 
                     decoration = new DecorationXpp3Reader().read( new StringReader( siteDescriptorContent ) );
@@ -965,22 +963,18 @@ public class PdfMojo
             return;
         }
 
-        for ( final Iterator it = project.getReporting().getPlugins().iterator(); it.hasNext(); )
+        for ( final ReportPlugin reportPlugin : project.getReporting().getPlugins() )
         {
-            final ReportPlugin reportPlugin = (ReportPlugin) it.next();
-
             final PluginDescriptor pluginDescriptor = getPluginDescriptor( reportPlugin );
 
             if ( pluginDescriptor != null )
             {
-                List goals = new ArrayList( 8 );
-                for ( final Iterator it2 = reportPlugin.getReportSets().iterator(); it2.hasNext(); )
+                List<String> goals = new ArrayList<String>( 8 );
+                for ( final ReportSet reportSet : reportPlugin.getReportSets() )
                 {
-                    final ReportSet reportSet = (ReportSet) it2.next();
-    
-                    for ( final Iterator it3 = reportSet.getReports().iterator(); it3.hasNext(); )
+                    for ( String goal : reportSet.getReports() )
                     {
-                        goals.add( it3.next().toString() );
+                        goals.add( goal );
                     }
                 }
     
@@ -1178,7 +1172,7 @@ public class PdfMojo
         File generatedReport = new File( outDir, report.getOutputName() + ".xml" );
 
         String excludes = getDefaultExcludesWithLocales( getAvailableLocales(), getDefaultLocale() );
-        List files = FileUtils.getFileNames( siteDirectory, "*/" + report.getOutputName() + ".*", excludes, false );
+        List<String> files = FileUtils.getFileNames( siteDirectory, "*/" + report.getOutputName() + ".*", excludes, false );
         if ( !locale.getLanguage().equals( defaultLocale.getLanguage() ) )
         {
             files =
@@ -1336,7 +1330,7 @@ public class PdfMojo
             if ( generatedSiteDirectory.exists() )
             {
                 String excludes = getDefaultExcludesWithLocales( getAvailableLocales(), getDefaultLocale() );
-                List generatedDirs = FileUtils.getDirectoryNames( generatedSiteDirectory, "*", excludes, true );
+                List<String> generatedDirs = FileUtils.getDirectoryNames( generatedSiteDirectory, "*", excludes, true );
                 if ( !locale.getLanguage().equals( getDefaultLocale().getLanguage() ) )
                 {
                     generatedDirs =
@@ -1344,16 +1338,13 @@ public class PdfMojo
                                                 excludes, true );
                 }
 
-                for ( final Iterator it = generatedDirs.iterator(); it.hasNext(); )
+                for ( final String generatedDir : generatedDirs )
                 {
-                    final String generatedDir = it.next().toString();
-
-                    List generatedFiles =
+                    List<String> generatedFiles =
                         FileUtils.getFileNames( new File( generatedDir ), "**.*", excludes, false );
 
-                    for ( final Iterator it2 = generatedFiles.iterator(); it2.hasNext(); )
+                    for ( final String generatedFile : generatedFiles )
                     {
-                        final String generatedFile = it2.next().toString();
                         final String ref = generatedFile.substring( 0, generatedFile.lastIndexOf( '.' ) );
 
                         if ( !addedRef.contains( ref ) )
@@ -1778,7 +1769,7 @@ public class PdfMojo
         public Object invoke( Object proxy, Method method, Object[] args )
             throws Throwable
         {
-            Class[] parameterTypes = method.getParameterTypes();
+            Class<?>[] parameterTypes = method.getParameterTypes();
 
             for ( int i = parameterTypes.length - 1; i >= 0; i-- )
             {
