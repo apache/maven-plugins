@@ -1633,15 +1633,6 @@ public class PdfMojo
         }
 
         /** {@inheritDoc} */
-        public void table()
-        {
-            super.table();
-
-            // workaround to fix reporting-impl issue, no call of tableRows( justification, grid )
-            writeStartTag( HtmlMarkup.TABLE );
-        }
-
-        /** {@inheritDoc} */
         public void text( String text )
         {
             // workaround to fix quotes introduced with MPIR-59 (then removed in MPIR-136)
