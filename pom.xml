@@ -165,10 +165,6 @@ under the License.
       <exclusions>
         <exclusion>
           <groupId>org.codehaus.plexus</groupId>
-          <artifactId>plexus-component-api</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.codehaus.plexus</groupId>
           <artifactId>plexus-container-default</artifactId>
         </exclusion>
       </exclusions>
@@ -178,10 +174,6 @@ under the License.
       <artifactId>doxia-doc-renderer</artifactId>
       <version>${doxiaVersion}</version>
       <exclusions>
-        <exclusion>
-          <groupId>org.codehaus.plexus</groupId>
-          <artifactId>plexus-component-api</artifactId>
-        </exclusion>
         <exclusion>
           <groupId>org.codehaus.plexus</groupId>
           <artifactId>plexus-container-default</artifactId>
@@ -195,10 +187,6 @@ under the License.
       <exclusions>
         <exclusion>
           <groupId>org.codehaus.plexus</groupId>
-          <artifactId>plexus-component-api</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.codehaus.plexus</groupId>
           <artifactId>plexus-container-default</artifactId>
         </exclusion>
       </exclusions>
@@ -208,10 +196,6 @@ under the License.
       <artifactId>doxia-site-renderer</artifactId>
       <version>${doxiaVersion}</version>
       <exclusions>
-        <exclusion>
-          <groupId>org.codehaus.plexus</groupId>
-          <artifactId>plexus-component-api</artifactId>
-        </exclusion>
         <exclusion>
           <groupId>org.codehaus.plexus</groupId>
           <artifactId>plexus-container-default</artifactId>
