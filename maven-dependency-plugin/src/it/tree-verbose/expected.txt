@@ -1,0 +1,84 @@
+org.apache.maven.its.dependency:tree-verbose:jar:1.0-SNAPSHOT
++- org.apache.maven:maven-project:jar:2.0.6:compile
+|  +- org.apache.maven:maven-settings:jar:2.0.6:compile
+|  |  +- (org.apache.maven:maven-model:jar:2.0.5:test - version managed from 2.0.6; scope managed from compile; omitted for duplicate)
+|  |  +- (org.codehaus.plexus:plexus-utils:jar:1.4.1:compile - omitted for duplicate)
+|  |  \- (org.codehaus.plexus:plexus-container-default:jar:1.0-alpha-9-stable-1:compile - omitted for duplicate)
+|  +- (org.apache.maven:maven-profile:jar:2.0.6:compile - omitted for conflict with 2.0.4)
+|  +- (org.apache.maven:maven-model:jar:2.0.5:test - version managed from 2.0.4; scope managed from compile; omitted for conflict with 2.0.7)
+|  +- org.apache.maven:maven-artifact-manager:jar:2.0.6:compile
+|  |  +- org.apache.maven:maven-repository-metadata:jar:2.0.6:compile
+|  |  |  \- (org.codehaus.plexus:plexus-utils:jar:1.4.1:compile - omitted for duplicate)
+|  |  +- (org.codehaus.plexus:plexus-utils:jar:1.4.1:compile - omitted for duplicate)
+|  |  +- (org.codehaus.plexus:plexus-container-default:jar:1.0-alpha-9-stable-1:compile - omitted for duplicate)
+|  |  \- org.apache.maven.wagon:wagon-provider-api:jar:1.0-beta-2:compile
+|  |     \- (org.codehaus.plexus:plexus-utils:jar:1.0.4:compile - omitted for conflict with 1.4.1)
+|  +- org.apache.maven:maven-plugin-registry:jar:2.0.6:compile
+|  |  +- (org.codehaus.plexus:plexus-utils:jar:1.4.1:compile - omitted for duplicate)
+|  |  \- (org.codehaus.plexus:plexus-container-default:jar:1.0-alpha-9-stable-1:compile - omitted for duplicate)
+|  +- org.codehaus.plexus:plexus-utils:jar:1.4.1:compile
+|  \- org.codehaus.plexus:plexus-container-default:jar:1.0-alpha-9-stable-1:compile
+|     +- junit:junit:jar:3.8.1:compile
+|     +- (org.codehaus.plexus:plexus-utils:jar:1.0.4:compile - omitted for conflict with 1.4.1)
+|     \- classworlds:classworlds:jar:1.1-alpha-2:compile
++- org.apache.maven:maven-profile:jar:2.0.4:test (scope not updated to compile)
+|  +- (org.apache.maven:maven-model:jar:2.0.5:test - version managed from 2.0.4; scope managed from compile; omitted for duplicate)
+|  +- (org.codehaus.plexus:plexus-utils:jar:1.1:test - omitted for conflict with 1.4.1)
+|  \- (org.codehaus.plexus:plexus-container-default:jar:1.0-alpha-9:test - omitted for conflict with 1.0-alpha-9-stable-1)
++- org.apache.maven:maven-model:jar:2.0.7:runtime
+|  \- (org.codehaus.plexus:plexus-utils:jar:1.4.1:runtime - omitted for duplicate)
+\- org.apache.xmlgraphics:batik-bridge:jar:1.7:compile
+   +- org.apache.xmlgraphics:batik-anim:jar:1.7:compile
+   |  +- (org.apache.xmlgraphics:batik-awt-util:jar:1.7:compile - omitted for duplicate)
+   |  +- (org.apache.xmlgraphics:batik-dom:jar:1.7:compile - omitted for duplicate)
+   |  +- (org.apache.xmlgraphics:batik-ext:jar:1.7:compile - omitted for duplicate)
+   |  +- (org.apache.xmlgraphics:batik-parser:jar:1.7:compile - omitted for duplicate)
+   |  +- (org.apache.xmlgraphics:batik-anim:jar:1.7:compile - omitted for cycle)
+   |  +- (org.apache.xmlgraphics:batik-svg-dom:jar:1.7:compile - omitted for duplicate)
+   |  +- (org.apache.xmlgraphics:batik-util:jar:1.7:compile - omitted for duplicate)
+   |  +- (xml-apis:xml-apis:jar:1.3.04:compile - omitted for duplicate)
+   |  \- (xml-apis:xml-apis-ext:jar:1.3.04:compile - omitted for duplicate)
+   +- org.apache.xmlgraphics:batik-awt-util:jar:1.7:compile
+   |  \- (org.apache.xmlgraphics:batik-util:jar:1.7:compile - omitted for duplicate)
+   +- org.apache.xmlgraphics:batik-css:jar:1.7:compile
+   |  +- (org.apache.xmlgraphics:batik-ext:jar:1.7:compile - omitted for duplicate)
+   |  +- (org.apache.xmlgraphics:batik-util:jar:1.7:compile - omitted for duplicate)
+   |  +- (xml-apis:xml-apis:jar:1.3.04:compile - omitted for duplicate)
+   |  \- (xml-apis:xml-apis-ext:jar:1.3.04:compile - omitted for duplicate)
+   +- org.apache.xmlgraphics:batik-dom:jar:1.7:compile
+   |  +- (org.apache.xmlgraphics:batik-css:jar:1.7:compile - omitted for duplicate)
+   |  +- (org.apache.xmlgraphics:batik-ext:jar:1.7:compile - omitted for duplicate)
+   |  +- (org.apache.xmlgraphics:batik-util:jar:1.7:compile - omitted for duplicate)
+   |  +- (org.apache.xmlgraphics:batik-xml:jar:1.7:compile - omitted for duplicate)
+   |  +- (xalan:xalan:jar:2.6.0:compile - omitted for duplicate)
+   |  +- (xml-apis:xml-apis:jar:1.3.04:compile - omitted for duplicate)
+   |  \- (xml-apis:xml-apis-ext:jar:1.3.04:compile - omitted for duplicate)
+   +- org.apache.xmlgraphics:batik-ext:jar:1.7:compile
+   |  \- (xml-apis:xml-apis:jar:1.3.04:compile - omitted for duplicate)
+   +- (org.apache.xmlgraphics:batik-bridge:jar:1.7:compile - omitted for cycle)
+   +- org.apache.xmlgraphics:batik-gvt:jar:1.7:compile
+   |  \- (org.apache.xmlgraphics:batik-awt-util:jar:1.7:compile - omitted for duplicate)
+   +- org.apache.xmlgraphics:batik-parser:jar:1.7:compile
+   |  +- (org.apache.xmlgraphics:batik-awt-util:jar:1.7:compile - omitted for duplicate)
+   |  +- (org.apache.xmlgraphics:batik-util:jar:1.7:compile - omitted for duplicate)
+   |  \- (org.apache.xmlgraphics:batik-xml:jar:1.7:compile - omitted for duplicate)
+   +- (org.apache.xmlgraphics:batik-bridge:jar:1.7:compile - omitted for cycle)
+   +- org.apache.xmlgraphics:batik-script:jar:1.7:compile
+   +- org.apache.xmlgraphics:batik-svg-dom:jar:1.7:compile
+   |  +- (org.apache.xmlgraphics:batik-svg-dom:jar:1.7:compile - omitted for cycle)
+   |  +- (org.apache.xmlgraphics:batik-anim:jar:1.7:compile - omitted for duplicate)
+   |  +- (org.apache.xmlgraphics:batik-awt-util:jar:1.7:compile - omitted for duplicate)
+   |  +- (org.apache.xmlgraphics:batik-css:jar:1.7:compile - omitted for duplicate)
+   |  +- (org.apache.xmlgraphics:batik-dom:jar:1.7:compile - omitted for duplicate)
+   |  +- (org.apache.xmlgraphics:batik-ext:jar:1.7:compile - omitted for duplicate)
+   |  +- (org.apache.xmlgraphics:batik-parser:jar:1.7:compile - omitted for duplicate)
+   |  +- (org.apache.xmlgraphics:batik-util:jar:1.7:compile - omitted for duplicate)
+   |  +- (xml-apis:xml-apis:jar:1.3.04:compile - omitted for duplicate)
+   |  \- (xml-apis:xml-apis-ext:jar:1.3.04:compile - omitted for duplicate)
+   +- org.apache.xmlgraphics:batik-util:jar:1.7:compile
+   +- org.apache.xmlgraphics:batik-xml:jar:1.7:compile
+   |  \- (org.apache.xmlgraphics:batik-util:jar:1.7:compile - omitted for duplicate)
+   +- xalan:xalan:jar:2.6.0:compile
+   |  \- (xml-apis:xml-apis:jar:1.0.b2:compile - omitted for conflict with 1.3.04)
+   +- xml-apis:xml-apis:jar:1.3.04:compile
+   \- xml-apis:xml-apis-ext:jar:1.3.04:compile
