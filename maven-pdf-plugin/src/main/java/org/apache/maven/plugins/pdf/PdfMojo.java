@@ -19,8 +19,25 @@ package org.apache.maven.plugins.pdf;
  * under the License.
  */
 
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.factory.ArtifactFactory;
+import java.io.File;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.swing.text.AttributeSet;
+
+import org.apache.commons.io.input.XmlStreamReader;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
@@ -37,7 +54,6 @@ import org.apache.maven.doxia.document.DocumentTOCItem;
 import org.apache.maven.doxia.document.io.xpp3.DocumentXpp3Writer;
 import org.apache.maven.doxia.index.IndexEntry;
 import org.apache.maven.doxia.index.IndexingSink;
-import org.apache.maven.doxia.markup.HtmlMarkup;
 import org.apache.maven.doxia.module.xdoc.XdocSink;
 import org.apache.maven.doxia.parser.ParseException;
 import org.apache.maven.doxia.parser.manager.ParserNotFoundException;
@@ -86,25 +102,7 @@ import org.codehaus.plexus.util.PathTool;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.WriterFactory;
-import org.apache.commons.io.input.XmlStreamReader;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
-
-import javax.swing.text.AttributeSet;
-import java.io.File;
-import java.io.IOException;
-import java.io.Reader;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
 /**
  * Generates a PDF document for a project.
@@ -177,14 +175,6 @@ public class PdfMojo
      */
     @Component
     private Doxia doxia;
-
-    /**
-     * Factory for creating artifact objects.
-     *
-     * @since 1.1
-     */
-    @Component
-    private ArtifactFactory artifactFactory;
 
     /**
      * Project builder.
@@ -1541,13 +1531,9 @@ public class PdfMojo
      */
     private MavenProject getReportPluginProject( PluginDescriptor pluginDescriptor )
     {
-        Artifact artifact =
-            artifactFactory.createProjectArtifact( pluginDescriptor.getGroupId(),
-                                                   pluginDescriptor.getArtifactId(),
-                                                   pluginDescriptor.getVersion(), Artifact.SCOPE_COMPILE );
         try
         {
-            return mavenProjectBuilder.buildFromRepository( artifact, remoteRepositories, localRepository );
+            return mavenProjectBuilder.buildFromRepository( pluginDescriptor.getPluginArtifact(), remoteRepositories, localRepository );
         }
         catch ( ProjectBuildingException e )
         {
