@@ -19,13 +19,6 @@ package org.apache.maven.plugin.pmd;
  * under the License.
  */
 
-import net.sourceforge.pmd.ReportListener;
-import net.sourceforge.pmd.RuleViolation;
-import net.sourceforge.pmd.stat.Metric;
-import org.apache.maven.doxia.sink.Sink;
-import org.apache.maven.plugin.logging.Log;
-import org.codehaus.plexus.util.StringUtils;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -35,6 +28,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
+
+import net.sourceforge.pmd.Report;
+import net.sourceforge.pmd.ReportListener;
+import net.sourceforge.pmd.RuleViolation;
+import net.sourceforge.pmd.stat.Metric;
+
+import org.apache.maven.doxia.sink.Sink;
+import org.apache.maven.plugin.logging.Log;
+import org.codehaus.plexus.util.StringUtils;
 
 /**
  * Handle events from PMD, converting them into Doxia events.
@@ -90,6 +92,18 @@ public class PmdReportListener
         return new ArrayList<RuleViolation>( violations );
     }
 
+    /**
+     * Create a new single report with all violations for further rendering into other formats than HTML.
+     */
+    public Report asReport() {
+        Report report = new Report();
+        for ( RuleViolation v : violations )
+        {
+            report.addRuleViolation( v );
+        }
+        return report;
+    }
+
     private void startFileSection( String currentFilename, PmdFileInfo fileInfo )
     {
         sink.section2();
@@ -105,7 +119,7 @@ public class PmdReportListener
         this.currentFilename = StringUtils.replace( this.currentFilename, "\\", "/" );
 
         String title = this.currentFilename;
-        if ( aggregate )
+        if ( aggregate && fileInfo != null && fileInfo.getProject() != null )
         {
             title = fileInfo.getProject().getName() + " - " + this.currentFilename;
         }
