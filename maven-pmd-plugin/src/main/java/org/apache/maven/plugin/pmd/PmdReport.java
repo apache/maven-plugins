@@ -26,7 +26,6 @@ import net.sourceforge.pmd.RuleContext;
 import net.sourceforge.pmd.RulePriority;
 import net.sourceforge.pmd.RuleSetFactory;
 import net.sourceforge.pmd.RuleSetReferenceId;
-import net.sourceforge.pmd.RuleViolation;
 import net.sourceforge.pmd.lang.LanguageVersion;
 import net.sourceforge.pmd.renderers.CSVRenderer;
 import net.sourceforge.pmd.renderers.HTMLRenderer;
@@ -212,16 +211,8 @@ public class PmdReport
 
         PMDConfiguration pmdConfiguration = getPMDConfiguration();
         final PmdReportListener reportSink = new PmdReportListener( getLog(), sink, getBundle( locale ), aggregate );
-        RuleContext ruleContext = new RuleContext()
-        {
-            @Override
-            public void setReport( Report report )
-            {
-                super.setReport( report );
-                // make sure our listener is added - the Report is created by PMD internally now
-                report.addListener( reportSink );
-            }
-        };
+        RuleContext ruleContext = new RuleContext();
+        ruleContext.getReport().addListener( reportSink );
         reportSink.beginDocument();
 
         RuleSetFactory ruleSetFactory = new RuleSetFactory();
@@ -285,15 +276,7 @@ public class PmdReport
 
         try
         {
-            List<Renderer> renderers = Collections.emptyList();
-
-            // Unfortunately we need to disable multi-threading for now - as otherwise our PmdReportListener
-            // will be ignored.
-            // Longer term solution could be to use a custom renderer instead. And collect with this renderer
-            // all the violations.
-            pmdConfiguration.setThreads( 0 );
-
-            PMD.processFiles( pmdConfiguration, ruleSetFactory, dataSources, ruleContext, renderers );
+            PMD.processFiles( pmdConfiguration, ruleSetFactory, dataSources, ruleContext, Collections.<Renderer> emptyList() );
         }
         catch ( Exception e )
         {
@@ -309,13 +292,7 @@ public class PmdReport
             getLog().warn( "Failure creating the report: " + e.getLocalizedMessage(), e );
         }
 
-        // copy over the violations into a single report - PMD now creates one report per file
-        Report report = new Report();
-        for ( RuleViolation v : reportSink.getViolations() )
-        {
-            report.addRuleViolation( v );
-        }
-        return report;
+        return reportSink.asReport();
     }
 
     /**
