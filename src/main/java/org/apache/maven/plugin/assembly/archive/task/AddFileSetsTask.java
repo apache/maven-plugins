@@ -149,6 +149,11 @@ public class AddFileSetsTask
             logger.debug( "Adding file-set from directory: '" + fileSetDir.getAbsolutePath()
                             + "'\nassembly output directory is: \'" + destDirectory + "\'" );
 
+            if (fileSetDir.getPath().equals( File.separator ))
+            {
+                throw new AssemblyFormattingException( "Your assembly descriptor specifies a directory of " + File.separator +
+                   ", which is your *entire* file system.\nThese are not the files you are looking for");
+            }
             final AddDirectoryTask task = new AddDirectoryTask( fileSetDir );
 
             final int dirMode = TypeConversionUtils.modeToInt( fileSet.getDirectoryMode(), logger );

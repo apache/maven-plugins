@@ -28,7 +28,6 @@ import org.codehaus.plexus.archiver.util.DefaultFileSet;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -110,10 +109,10 @@ public class AddDirectoryTask
                         includesArray = new String[includes.size()];
 
                         int i = 0;
-                        for ( final Iterator<String> it = includes.iterator(); it.hasNext(); )
+                        for ( String include : includes )
                         {
-                            String value = AssemblyFormatUtils.fixRelativeRefs( it.next() );
-                            
+                            String value = AssemblyFormatUtils.fixRelativeRefs( include );
+
                             if ( value.startsWith( "/" ) || value.startsWith( "\\" ) )
                             {
                                 value = value.substring( 1 );
@@ -129,10 +128,10 @@ public class AddDirectoryTask
                     final String[] excludesArray = new String[directoryExcludes.size()];
 
                     int i = 0;
-                    for ( final Iterator<String> it = directoryExcludes.iterator(); it.hasNext(); )
+                    for ( String directoryExclude : directoryExcludes )
                     {
-                        String value = AssemblyFormatUtils.fixRelativeRefs( it.next() );
-                        
+                        String value = AssemblyFormatUtils.fixRelativeRefs( directoryExclude );
+
                         if ( value.startsWith( "/" ) || value.startsWith( "\\" ) )
                         {
                             value = value.substring( 1 );
