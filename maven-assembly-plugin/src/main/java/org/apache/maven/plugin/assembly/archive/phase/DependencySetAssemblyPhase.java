@@ -51,6 +51,7 @@ public class DependencySetAssemblyPhase
     @Requirement
     private ArchiverManager archiverManager;
 
+    @SuppressWarnings( "UnusedDeclaration" )
     public DependencySetAssemblyPhase()
     {
         // used for plexus init

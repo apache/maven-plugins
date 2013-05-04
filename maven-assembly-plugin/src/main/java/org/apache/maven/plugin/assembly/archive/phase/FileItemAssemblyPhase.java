@@ -20,7 +20,6 @@ package org.apache.maven.plugin.assembly.archive.phase;
  */
 
 import java.io.File;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
@@ -59,10 +58,8 @@ public class FileItemAssemblyPhase
         final File basedir = configSource.getBasedir();
 
         final FileFormatter fileFormatter = new FileFormatter( configSource, getLogger() );
-        for ( final Iterator<FileItem> i = fileList.iterator(); i.hasNext(); )
+        for ( final FileItem fileItem : fileList )
         {
-            final FileItem fileItem = i.next();
-
             final String sourcePath = fileItem.getSource();
 
             // ensure source file is in absolute path for reactor build to work
@@ -77,9 +74,8 @@ public class FileItemAssemblyPhase
                 source = new File( basedir, sourcePath );
             }
 
-            source =
-                fileFormatter.format( source, fileItem.isFiltered(), fileItem.getLineEnding(),
-                                      configSource.getEncoding() );
+            source = fileFormatter.format( source, fileItem.isFiltered(), fileItem.getLineEnding(),
+                                           configSource.getEncoding() );
 
             String destName = fileItem.getDestName();
 
@@ -110,7 +106,8 @@ public class FileItemAssemblyPhase
 
             try
             {
-                archiver.addFile( source, target, TypeConversionUtils.modeToInt( fileItem.getFileMode(), getLogger() ) );
+                archiver.addFile( source, target,
+                                  TypeConversionUtils.modeToInt( fileItem.getFileMode(), getLogger() ) );
             }
             catch ( final ArchiverException e )
             {

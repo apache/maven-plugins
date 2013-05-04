@@ -158,7 +158,7 @@ public abstract class AbstractLineAggregatingHandler
         {
             reader = new BufferedReader( new InputStreamReader( fileInfo.getContents(), getEncoding() ) );
 
-            String line = null;
+            String line;
             while ( ( line = reader.readLine() ) != null )
             {
                 if ( !lines.contains( line ) )
@@ -171,16 +171,6 @@ public abstract class AbstractLineAggregatingHandler
         {
             IOUtil.close( reader );
         }
-    }
-
-    protected final Map<String, List<String>> getCatalog()
-    {
-        return catalog;
-    }
-
-    protected final void setCatalog( final Map<String, List<String>> catalog )
-    {
-        this.catalog = catalog;
     }
 
 }

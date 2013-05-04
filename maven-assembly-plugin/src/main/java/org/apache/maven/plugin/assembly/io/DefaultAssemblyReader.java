@@ -32,7 +32,6 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -71,11 +70,16 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 /**
  * @version $Id$
  */
+@SuppressWarnings( "JavaDoc" )
 @org.codehaus.plexus.component.annotations.Component( role = AssemblyReader.class )
 public class DefaultAssemblyReader
     extends AbstractLogEnabled
     implements AssemblyReader
 {
+
+    public DefaultAssemblyReader()
+    {
+    }
 
     public List<Assembly> readAssemblies( final AssemblerConfigurationSource configSource )
         throws AssemblyReadException, InvalidAssemblerConfigurationException
@@ -112,19 +116,19 @@ public class DefaultAssemblyReader
         if ( ( descriptors != null ) && ( descriptors.length > 0 ) )
         {
             locator.setStrategies( strategies );
-            for ( int i = 0; i < descriptors.length; i++ )
+            for ( String descriptor1 : descriptors )
             {
-                getLogger().info( "Reading assembly descriptor: " + descriptors[i] );
-                addAssemblyFromDescriptor( descriptors[i], locator, configSource, assemblies );
+                getLogger().info( "Reading assembly descriptor: " + descriptor1 );
+                addAssemblyFromDescriptor( descriptor1, locator, configSource, assemblies );
             }
         }
 
         if ( ( descriptorRefs != null ) && ( descriptorRefs.length > 0 ) )
         {
             locator.setStrategies( refStrategies );
-            for ( int i = 0; i < descriptorRefs.length; i++ )
+            for ( String descriptorRef : descriptorRefs )
             {
-                addAssemblyForDescriptorReference( descriptorRefs[i], configSource, assemblies );
+                addAssemblyForDescriptorReference( descriptorRef, configSource, assemblies );
             }
         }
 
@@ -166,9 +170,9 @@ public class DefaultAssemblyReader
 
             if ( paths != null )
             {
-                for ( int i = 0; i < paths.length; i++ )
+                for ( String path : paths )
                 {
-                    addAssemblyFromDescriptor( paths[i], locator, configSource, assemblies );
+                    addAssemblyFromDescriptor( path, locator, configSource, assemblies );
                 }
             }
         }
@@ -187,9 +191,8 @@ public class DefaultAssemblyReader
 
         // check unique IDs
         final Set<String> ids = new HashSet<String>();
-        for ( final Iterator<Assembly> i = assemblies.iterator(); i.hasNext(); )
+        for ( final Assembly assembly : assemblies )
         {
-            final Assembly assembly = i.next();
             if ( !ids.add( assembly.getId() ) )
             {
                 getLogger().warn( "The assembly id " + assembly.getId() + " is used more than once." );
@@ -467,10 +470,8 @@ public class DefaultAssemblyReader
 
         final List<String> componentLocations = assembly.getComponentDescriptors();
 
-        for ( final Iterator<String> it = componentLocations.iterator(); it.hasNext(); )
+        for ( String location : componentLocations )
         {
-            String location = it.next();
-
             // allow expressions in path to component descriptor... MASSEMBLY-486
             try
             {
@@ -498,12 +499,12 @@ public class DefaultAssemblyReader
             catch ( final IOException e )
             {
                 throw new AssemblyReadException( "Error reading component descriptor: " + location + " (resolved to: "
-                    + resolvedLocation.getSpecification() + ")", e );
+                                                     + resolvedLocation.getSpecification() + ")", e );
             }
             catch ( final XmlPullParserException e )
             {
                 throw new AssemblyReadException( "Error reading component descriptor: " + location + " (resolved to: "
-                    + resolvedLocation.getSpecification() + ")", e );
+                                                     + resolvedLocation.getSpecification() + ")", e );
             }
             finally
             {
@@ -525,44 +526,36 @@ public class DefaultAssemblyReader
         final List<ContainerDescriptorHandlerConfig> containerHandlerDescriptors =
             component.getContainerDescriptorHandlers();
 
-        for ( final Iterator<ContainerDescriptorHandlerConfig> it = containerHandlerDescriptors.iterator(); it.hasNext(); )
+        for ( final ContainerDescriptorHandlerConfig cfg : containerHandlerDescriptors )
         {
-            final ContainerDescriptorHandlerConfig cfg = it.next();
             assembly.addContainerDescriptorHandler( cfg );
         }
 
         final List<DependencySet> dependencySetList = component.getDependencySets();
 
-        for ( final Iterator<DependencySet> it = dependencySetList.iterator(); it.hasNext(); )
+        for ( final DependencySet dependencySet : dependencySetList )
         {
-            final DependencySet dependencySet = it.next();
             assembly.addDependencySet( dependencySet );
         }
 
         final List<FileSet> fileSetList = component.getFileSets();
 
-        for ( final Iterator<FileSet> it = fileSetList.iterator(); it.hasNext(); )
+        for ( final FileSet fileSet : fileSetList )
         {
-            final FileSet fileSet = it.next();
-
             assembly.addFileSet( fileSet );
         }
 
         final List<FileItem> fileList = component.getFiles();
 
-        for ( final Iterator<FileItem> it = fileList.iterator(); it.hasNext(); )
+        for ( final FileItem fileItem : fileList )
         {
-            final FileItem fileItem = it.next();
-
             assembly.addFile( fileItem );
         }
 
         final List<Repository> repositoriesList = component.getRepositories();
 
-        for ( final Iterator<Repository> it = repositoriesList.iterator(); it.hasNext(); )
+        for ( final Repository repository : repositoriesList )
         {
-            final Repository repository = it.next();
-
             assembly.addRepository( repository );
         }
 

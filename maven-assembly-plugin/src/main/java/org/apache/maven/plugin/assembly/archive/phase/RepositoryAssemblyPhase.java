@@ -20,7 +20,6 @@ package org.apache.maven.plugin.assembly.archive.phase;
  */
 
 import java.io.File;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
@@ -56,6 +55,7 @@ public class RepositoryAssemblyPhase
     @Requirement
     private RepositoryAssembler repositoryAssembler;
 
+    @SuppressWarnings( "UnusedDeclaration" )
     public RepositoryAssemblyPhase()
     {
         // used for plexus.
@@ -70,6 +70,7 @@ public class RepositoryAssemblyPhase
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings( "ResultOfMethodCallIgnored" )
     public void execute( final Assembly assembly, final Archiver archiver,
                          final AssemblerConfigurationSource configSource, final AssemblyContext context )
         throws ArchiveCreationException, AssemblyFormattingException, InvalidAssemblerConfigurationException
@@ -78,10 +79,8 @@ public class RepositoryAssemblyPhase
 
         final File tempRoot = configSource.getTemporaryRootDirectory();
 
-        for ( final Iterator<Repository> i = repositoriesList.iterator(); i.hasNext(); )
+        for ( final Repository repository : repositoriesList )
         {
-            final Repository repository = i.next();
-
             final String outputDirectory =
                 AssemblyFormatUtils.getOutputDirectory( repository.getOutputDirectory(), configSource.getProject(),
                                                         null, configSource.getFinalName(), configSource );
@@ -96,7 +95,8 @@ public class RepositoryAssemblyPhase
             try
             {
                 getLogger().debug( "Assembling repository to: " + repositoryDirectory );
-                repositoryAssembler.buildRemoteRepository( repositoryDirectory, wrap( repository ), wrap( configSource ) );
+                repositoryAssembler.buildRemoteRepository( repositoryDirectory, wrap( repository ),
+                                                           wrap( configSource ) );
                 getLogger().debug( "Finished assembling repository to: " + repositoryDirectory );
             }
             catch ( final RepositoryAssemblyException e )

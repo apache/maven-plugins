@@ -233,24 +233,21 @@ public class DefaultAssemblyArchiver
         final List<ContainerDescriptorHandler> handlers = new ArrayList<ContainerDescriptorHandler>();
         final List<String> hints = new ArrayList<String>();
 
-        if ( ( requestedContainerDescriptorHandlers != null ) && !requestedContainerDescriptorHandlers.isEmpty() )
+        if ( !requestedContainerDescriptorHandlers.isEmpty() )
         {
-            for ( final Iterator<ContainerDescriptorHandlerConfig> it = requestedContainerDescriptorHandlers.iterator(); it.hasNext(); )
+            for ( final ContainerDescriptorHandlerConfig config : requestedContainerDescriptorHandlers )
             {
-                final ContainerDescriptorHandlerConfig config = it.next();
-
                 final String hint = config.getHandlerName();
                 final ContainerDescriptorHandler handler = containerDescriptorHandlers.get( hint );
 
                 if ( handler == null )
                 {
                     throw new InvalidAssemblerConfigurationException(
-                                                                      "Cannot find ContainerDescriptorHandler with hint: "
-                                                                          + hint );
+                        "Cannot find ContainerDescriptorHandler with hint: " + hint );
                 }
 
-                getLogger().debug( "Found container descriptor handler with hint: " + hint + " (component: " + handler
-                                       + ")" );
+                getLogger().debug(
+                    "Found container descriptor handler with hint: " + hint + " (component: " + handler + ")" );
 
                 if ( config.getConfiguration() != null )
                 {
@@ -434,8 +431,8 @@ public class DefaultAssemblyArchiver
                     PlexusConfiguration.class, ExpressionEvaluator.class, (Class<?>) containerRealm[1],
                     ConfigurationListener.class } );
 
-            configureComponent.invoke( configurator, new Object[] { component, configuration, expressionEvaluator,
-                containerRealm[0], listener } );
+            configureComponent.invoke( configurator, component, configuration, expressionEvaluator, containerRealm[0],
+                                       listener );
         }
         catch ( final NoSuchMethodException e )
         {
