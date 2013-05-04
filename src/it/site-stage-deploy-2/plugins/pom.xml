@@ -22,31 +22,30 @@ under the License.
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>site-plugin-its</groupId>
-  <artifactId>pom</artifactId>
+  <parent>
+    <groupId>site-plugin-its</groupId>
+    <artifactId>pom</artifactId>
+    <version>1-SNAPSHOT</version>
+    <relativePath>../pom/pom.xml</relativePath>
+  </parent>
+
+  <artifactId>aggregator</artifactId>
   <version>1-SNAPSHOT</version>
   <packaging>pom</packaging>
 
-  <name>POM</name>
-
-  <url>http://example.net/</url>
+  <name>Plugins</name>
+  <url>http://example.net/plugins/</url>
 
   <distributionManagement>
+    <!-- override parent because artifactId does not match -->
     <site>
       <id>website</id>
-      <url>file://@project.build.directory@/it/site-stage-deploy/deploy/</url>
+      <url>file://@project.build.directory@/it/site-stage-deploy-2/deploy/plugins/</url>
     </site>
   </distributionManagement>
 
-  <build>
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <artifactId>maven-site-plugin</artifactId>
-          <version>@project.version@</version>
-        </plugin>
-      </plugins>
-    </pluginManagement>
-  </build>
+  <modules>
+    <module>maven-rocks-plugin</module>
+  </modules>
 
 </project>
