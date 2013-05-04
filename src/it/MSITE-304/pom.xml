@@ -34,7 +34,7 @@ under the License.
     <site>
       <id>msite-304</id>
       <name>Example company web server</name>
-      <url>file://${java.io.tmpdir}/www.example.com/parent</url>
+      <url>file://@project.build.directory@/it/MSITE-304/target/www.example.com/parent</url>
     </site>
   </distributionManagement>
 

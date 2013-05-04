@@ -38,8 +38,6 @@ try
         return false;
     }
 
-    String tmpDir = System.getProperty( "java.io.tmpdir" );
-
     File childDirectory = new File( stagingDirectory, "MSITE-304-child" );
     if ( !childDirectory.exists() || !childDirectory.isDirectory() )
     {
@@ -47,7 +45,7 @@ try
         return false;
     }
 
-    File stageDeployDirectory = new File( tmpDir + "/www.example.com/parent" );
+    File stageDeployDirectory = new File( target + "/www.example.com/parent" );
     if ( !stageDeployDirectory.exists() || !stageDeployDirectory.isDirectory() )
     {
         System.err.println( "Stage deploy directory '" + stageDeployDirectory + "' is missing or not a directory." );
