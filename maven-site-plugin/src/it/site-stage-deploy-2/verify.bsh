@@ -28,7 +28,7 @@ try
     final File deployDirectory = new File( basedir, "deploy" );
     if ( !deployDirectory.exists() || !deployDirectory.isDirectory() )
     {
-        System.err.println( "deployDirectory is missing or not a directory." );
+        System.err.println( "deploy directory is missing or not a directory: " + deployDirectory );
         return false;
     }
 
@@ -36,7 +36,7 @@ try
     File junkDirectory = new File( deployDirectory, "junk" );
     if ( !junkDirectory.exists() || !junkDirectory.isDirectory() )
     {
-        System.err.println( "junkDirectory is missing or not a directory." );
+        System.err.println( "junk directory is missing or not a directory: " + junkDirectory );
         return false;
     }
 
@@ -44,7 +44,7 @@ try
     File pluginsDirectory = new File( deployDirectory, "plugins" );
     if ( !pluginsDirectory.exists() || !pluginsDirectory.isDirectory() )
     {
-        System.err.println( "deploy pluginsDirectory is missing or not a directory." );
+        System.err.println( "deploy pluginsDirectory is missing or not a directory: " + pluginsDirectory );
         return false;
     }
 
@@ -52,7 +52,7 @@ try
     File mavenRocksDirectory = new File( pluginsDirectory, "maven-rocks-plugin" );
     if ( !mavenRocksDirectory.exists() || !mavenRocksDirectory.isDirectory() )
     {
-        System.err.println( "deploy mavenRocksDirectory is missing or not a directory." );
+        System.err.println( "deploy mavenRocksDirectory is missing or not a directory: " + mavenRocksDirectory );
         return false;
     }
 
