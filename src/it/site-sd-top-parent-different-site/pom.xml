@@ -41,7 +41,7 @@ under the License.
   <distributionManagement>
     <site>
       <id>website</id>
-      <url>file://@project.build.directory@/it/site-stage-deploy-4/deploy/</url>
+      <url>file://@project.build.directory@/it/site-sd-top-parent-different-site/deploy/</url>
     </site>
   </distributionManagement>
 

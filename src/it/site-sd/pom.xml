@@ -35,7 +35,7 @@ under the License.
     <site>
       <id>msite-304</id>
       <name>Example company web server</name>
-      <url>file://@project.build.directory@/it/site-stage-deploy/target/www.example.com/parent</url>
+      <url>file://@project.build.directory@/it/site-sd/target/www.example.com/parent</url>
     </site>
   </distributionManagement>
 

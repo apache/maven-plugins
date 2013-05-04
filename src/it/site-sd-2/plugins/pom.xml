@@ -40,7 +40,7 @@ under the License.
     <!-- override parent because artifactId does not match -->
     <site>
       <id>website</id>
-      <url>file://@project.build.directory@/it/site-stage-deploy-2/deploy/plugins/</url>
+      <url>file://@project.build.directory@/it/site-sd-2/deploy/plugins/</url>
     </site>
   </distributionManagement>
 
