@@ -1287,7 +1287,7 @@ public class PdfMojo
 
         writeGeneratedReport( sw.toString(), generatedReport );
 
-        if ( isValidGeneratedReport( mojoDescriptor, generatedReport, localReportName ) )
+        if ( isValidGeneratedReport( mojoDescriptor.getPluginDescriptor().getPluginArtifact(), generatedReport, localReportName ) )
         {
             getGeneratedMavenReports( locale ).add( report );
         }
@@ -1464,7 +1464,7 @@ public class PdfMojo
      * @return <code>true</code> if Doxia is able to parse the generated report, <code>false</code> otherwise.
      * @since 1.1
      */
-    private boolean isValidGeneratedReport( MojoDescriptor mojoDescriptor, File generatedReport,
+    private boolean isValidGeneratedReport( Artifact pluginArtifact, File generatedReport,
                                             String localReportName )
     {
         SinkAdapter sinkAdapter = new SinkAdapter();
@@ -1488,16 +1488,16 @@ public class PdfMojo
             sb.append( "You could:" ).append( EOL );
             sb.append( "  * exclude all reports using -DincludeReports=false" ).append( EOL );
             sb.append( "  * remove the " );
-            sb.append( mojoDescriptor.getPluginDescriptor().getGroupId() );
+            sb.append( pluginArtifact.getGroupId() );
             sb.append( ":" );
-            sb.append( mojoDescriptor.getPluginDescriptor().getArtifactId() );
+            sb.append( pluginArtifact.getArtifactId() );
             sb.append( ":" );
-            sb.append( mojoDescriptor.getPluginDescriptor().getVersion() );
+            sb.append( pluginArtifact.getVersion() );
             sb.append( " from the <reporting/> part. To not affect the site generation, " );
             sb.append( "you could create a PDF profile." ).append( EOL );
             sb.append( EOL );
 
-            MavenProject pluginProject = getReportPluginProject( mojoDescriptor.getPluginDescriptor().getPluginArtifact() );
+            MavenProject pluginProject = getReportPluginProject( pluginArtifact );
 
             if ( pluginProject == null )
             {
