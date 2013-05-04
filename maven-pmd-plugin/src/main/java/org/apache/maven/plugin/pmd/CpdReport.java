@@ -42,7 +42,6 @@ import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
@@ -92,6 +91,9 @@ public class CpdReport
     @Parameter( property = "cpd.ignoreIdentifiers", defaultValue = "false" )
     private boolean ignoreIdentifiers;
 
+    /** The CPD instance used to analyze the files. Will itself collect the duplicated code matches. */
+    private CPD cpd;
+
     /**
      * {@inheritDoc}
      */
@@ -137,9 +139,9 @@ public class CpdReport
             {
                 Thread.currentThread().setContextClassLoader( this.getClass().getClassLoader() );
 
-                CPD cpd = generateReport( locale );
+                generateReport( locale );
 
-                if ( !isHtml() )
+                if ( !isHtml() && !isXml() )
                 {
                     writeNonHtml( cpd );
                 }
@@ -152,9 +154,52 @@ public class CpdReport
         }
     }
 
-    private CPD generateReport( Locale locale )
+    public boolean canGenerateReport()
+    {
+        boolean result = super.canGenerateReport();
+        if ( result )
+        {
+            try
+            {
+                executeCpdWithClassloader();
+                if ( skipEmptyReport )
+                {
+                    result = cpd.getMatches().hasNext();
+                }
+            }
+            catch ( MavenReportException e )
+            {
+                throw new RuntimeException( e );
+            }
+        }
+        return result;
+    }
+
+    private void executeCpdWithClassloader()
         throws MavenReportException
     {
+        ClassLoader origLoader = Thread.currentThread().getContextClassLoader();
+        try
+        {
+            Thread.currentThread().setContextClassLoader( this.getClass().getClassLoader() );
+            executeCpd();
+        }
+        finally
+        {
+            Thread.currentThread().setContextClassLoader( origLoader );
+        }
+    }
+
+    private void executeCpd()
+        throws MavenReportException
+    {
+        if ( cpd != null )
+        {
+            // CPD has already been run
+            getLog().debug( "CPD has already been run - skipping redundant execution." );
+            return;
+        }
+
         Properties p = new Properties();
         if ( ignoreLiterals )
         {
@@ -165,18 +210,19 @@ public class CpdReport
             p.setProperty( JavaTokenizer.IGNORE_IDENTIFIERS, "true" );
         }
 
-        CPD cpd;
-        Map<File, PmdFileInfo> files = null;
-
         try
         {
-            files = getFilesToProcess();
-            String encoding = determineEncoding( !files.isEmpty() );
+            if ( filesToProcess == null )
+            {
+                filesToProcess = getFilesToProcess();
+            }
+
+            String encoding = determineEncoding( !filesToProcess.isEmpty() );
 
             CPDConfiguration cpdConfiguration = new CPDConfiguration( minimumTokens, new JavaLanguage( p ), encoding );
             cpd = new CPD( cpdConfiguration );
 
-            for ( File file : files.keySet() )
+            for ( File file : filesToProcess.keySet() )
             {
                 cpd.add( file );
             }
@@ -189,12 +235,22 @@ public class CpdReport
         {
             throw new MavenReportException( e.getMessage(), e );
         }
+        getLog().debug( "Executing CPD..." );
         cpd.go();
+        getLog().debug( "CPD finished." );
 
-        CpdReportGenerator gen = new CpdReportGenerator( getSink(), files, getBundle( locale ), aggregate );
+        // if format is XML, we need to output it even if the file list is empty or we have no duplications
+        // so the "check" goals can check for violations
+        if ( isXml() )
+        {
+            writeNonHtml( cpd );
+        }
+    }
+
+    private void generateReport( Locale locale )
+    {
+        CpdReportGenerator gen = new CpdReportGenerator( getSink(), filesToProcess, getBundle( locale ), aggregate );
         gen.generate( cpd.getMatches() );
-
-        return cpd;
     }
 
     private String determineEncoding( boolean showWarn )
@@ -283,9 +339,7 @@ public class CpdReport
         Renderer renderer = null;
         if ( "xml".equals( format ) )
         {
-            //TODO: pmd should provide a better way to specify the output encoding (getOutputEncoding());
-            System.setProperty( "file.encoding", getOutputEncoding() );
-            renderer = new XMLRenderer();
+            renderer = new XMLRenderer( getOutputEncoding() );
         }
         else if ( "csv".equals( format ) )
         {

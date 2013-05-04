@@ -195,6 +195,18 @@ public abstract class AbstractPmdReport
     protected boolean includeXmlInSite;
 
     /**
+     * Skip the PMD/CPD report generation if there are no violations or duplications found.
+     * Defaults to <code>false</code> to preserve legacy behaviour pre 3.1.
+     *
+     * @since 3.1
+     */
+    @Parameter( defaultValue = "false" )
+    protected boolean skipEmptyReport;
+
+    /** The files that are being analyzed. */
+    protected Map<File, PmdFileInfo> filesToProcess;
+
+    /**
      * {@inheritDoc}
      */
     protected MavenProject getProject()
@@ -396,6 +408,10 @@ public abstract class AbstractPmdReport
     {
         return "html".equals( format );
     }
+    protected boolean isXml()
+    {
+        return "xml".equals( format );
+    }
 
     /**
      * {@inheritDoc}
@@ -414,13 +430,13 @@ public abstract class AbstractPmdReport
 
         // if format is XML, we need to output it even if the file list is empty
         // so the "check" goals can check for failures
-        if ( "xml".equals( format ) )
+        if ( isXml() )
         {
             return true;
         }
         try
         {
-            Map<File, PmdFileInfo> filesToProcess = getFilesToProcess();
+            filesToProcess = getFilesToProcess();
             if ( filesToProcess.isEmpty() )
             {
                 return false;
