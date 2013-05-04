@@ -40,6 +40,7 @@ import java.util.Properties;
 import javax.swing.text.AttributeSet;
 
 import org.apache.commons.io.input.XmlStreamReader;
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
@@ -1496,7 +1497,7 @@ public class PdfMojo
             sb.append( "you could create a PDF profile." ).append( EOL );
             sb.append( EOL );
 
-            MavenProject pluginProject = getReportPluginProject( mojoDescriptor.getPluginDescriptor() );
+            MavenProject pluginProject = getReportPluginProject( mojoDescriptor.getPluginDescriptor().getPluginArtifact() );
 
             if ( pluginProject == null )
             {
@@ -1576,11 +1577,11 @@ public class PdfMojo
      * @return the MavenProject for the current plugin descriptor or null if an error occurred.
      * @since 1.1
      */
-    private MavenProject getReportPluginProject( PluginDescriptor pluginDescriptor )
+    private MavenProject getReportPluginProject( Artifact pluginArtifact )
     {
         try
         {
-            return mavenProjectBuilder.buildFromRepository( pluginDescriptor.getPluginArtifact(), remoteRepositories, localRepository );
+            return mavenProjectBuilder.buildFromRepository( pluginArtifact, remoteRepositories, localRepository );
         }
         catch ( ProjectBuildingException e )
         {
