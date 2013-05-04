@@ -95,7 +95,12 @@ import org.apache.maven.reporting.MavenReport;
 import org.apache.maven.reporting.MavenReportException;
 import org.apache.maven.settings.Settings;
 import org.codehaus.classworlds.ClassRealm;
+import org.codehaus.plexus.PlexusConstants;
+import org.codehaus.plexus.PlexusContainer;
+import org.codehaus.plexus.context.Context;
+import org.codehaus.plexus.context.ContextException;
 import org.codehaus.plexus.i18n.I18N;
+import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.PathTool;
@@ -112,7 +117,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
  */
 @Mojo( name = "pdf", threadSafe = true )
 public class PdfMojo
-    extends AbstractMojo
+    extends AbstractMojo implements Contextualizable
 {
     /**
      * The vm line separator
@@ -305,6 +310,27 @@ public class PdfMojo
      */
     @Parameter( property = "validate", defaultValue = "false" )
     private boolean validate;
+    
+    /**
+     * Reports (Maven 2).
+     * @since 1.3
+     */
+    @Parameter( defaultValue = "${reports}", required = true, readonly = true )
+    private List<MavenReport> reports;
+    
+    /**
+     * <p>Configuration section <b>used internally</b> by Maven 3.</p>
+     * <p>More details available here:
+     * <a href="http://maven.apache.org/plugins/maven-site-plugin/maven-3.html#Configuration_formats" target="_blank">
+     * http://maven.apache.org/plugins/maven-site-plugin/maven-3.html#Configuration_formats</a>
+     * </p>
+     * <p><b>Note:</b> using this field is not mandatory with Maven 3 as Maven core injects usual
+     * <code>&lt;reporting&gt;</code> section into this field.</p>
+     *
+     * @since 1.3
+     */
+    @Parameter( readonly = true )
+    private org.apache.maven.reporting.exec.ReportPlugin[] reportPlugins;
 
     // ----------------------------------------------------------------------
     // Instance fields
@@ -351,6 +377,11 @@ public class PdfMojo
      * @since 1.1
      */
     private Map<Locale, List<MavenReport>> generatedMavenReports;
+    
+    /**
+     * @since 1.3
+     */
+    private PlexusContainer container;
 
     // ----------------------------------------------------------------------
     // Public methods
@@ -381,6 +412,13 @@ public class PdfMojo
         {
             throw new MojoExecutionException( "Error copying generated PDF: " + e.getMessage(), e );
         }
+    }
+    
+    /** {@inheritDoc} */
+    public void contextualize( Context context )
+        throws ContextException
+    {
+        container = (PlexusContainer) context.get( PlexusConstants.PLEXUS_KEY );
     }
 
     // ----------------------------------------------------------------------
