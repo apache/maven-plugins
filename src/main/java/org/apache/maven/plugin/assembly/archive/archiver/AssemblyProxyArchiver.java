@@ -42,7 +42,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -61,8 +60,6 @@ import java.util.Set;
 public class AssemblyProxyArchiver
     implements Archiver
 {
-
-    private static final String[] STR_TEMPLATE = new String[0];
 
     private final Archiver delegate;
 
@@ -113,10 +110,8 @@ public class AssemblyProxyArchiver
 
         if ( containerDescriptorHandlers != null )
         {
-            for ( final Iterator<ContainerDescriptorHandler> it = containerDescriptorHandlers.iterator(); it.hasNext(); )
+            for ( final ContainerDescriptorHandler handler : containerDescriptorHandlers )
             {
-                final ContainerDescriptorHandler handler = it.next();
-
                 selectors.add( handler );
 
                 if ( isFinalizerEnabled )
@@ -128,18 +123,17 @@ public class AssemblyProxyArchiver
 
         if ( extraSelectors != null )
         {
-            for ( final Iterator<FileSelector> it = extraSelectors.iterator(); it.hasNext(); )
+            for ( final FileSelector selector : extraSelectors )
             {
-                final FileSelector selector = it.next();
                 selectors.add( selector );
             }
         }
 
         if ( ( extraFinalizers != null ) && isFinalizerEnabled )
         {
-            for ( final Iterator<ArchiveFinalizer> it = extraFinalizers.iterator(); it.hasNext(); )
+            for ( ArchiveFinalizer extraFinalizer : extraFinalizers )
             {
-                ( (FinalizerEnabled) delegate ).addArchiveFinalizer( it.next() );
+                ( (FinalizerEnabled) delegate ).addArchiveFinalizer( extraFinalizer );
             }
         }
 
@@ -749,7 +743,6 @@ public class AssemblyProxyArchiver
         if ( fsPath.equals( assemblyWorkPath ) )
         {
             logger.debug( "SKIPPING fileset with source directory matching assembly working-directory: " + fsPath );
-            return;
         }
         else if ( assemblyWorkPath.startsWith( fsPath ) )
         {
@@ -782,9 +775,9 @@ public class AssemblyProxyArchiver
 
             dfs.setCaseSensitive( fs.isCaseSensitive() );
             dfs.setDirectory( fs.getDirectory() );
-            dfs.setExcludes( newEx.toArray( STR_TEMPLATE ) );
+            dfs.setExcludes( newEx.toArray( new String[newEx.size()] ) );
             dfs.setFileSelectors( fs.getFileSelectors() );
-            dfs.setIncludes( newIn.toArray( STR_TEMPLATE ) );
+            dfs.setIncludes( newIn.toArray( new String[newIn.size()] ) );
             dfs.setIncludingEmptyDirectories( fs.isIncludingEmptyDirectories() );
             dfs.setPrefix( fs.getPrefix() );
             dfs.setUsingDefaultExcludes( fs.isUsingDefaultExcludes() );
@@ -816,10 +809,8 @@ public class AssemblyProxyArchiver
             {
                 final FileInfo fileInfo = new DefaultFileInfo( inputFile );
 
-                for ( int i = 0; i < selectors.length; i++ )
+                for ( final FileSelector selector : selectors )
                 {
-                    final FileSelector selector = selectors[i];
-
                     try
                     {
                         if ( !selector.isSelected( fileInfo ) )
@@ -829,8 +820,8 @@ public class AssemblyProxyArchiver
                     }
                     catch ( final IOException e )
                     {
-                        throw new ArchiverException( "Error processing file: " + inputFile + " using selector: "
-                                        + selectors[i], e );
+                        throw new ArchiverException(
+                            "Error processing file: " + inputFile + " using selector: " + selector, e );
                     }
                 }
             }
