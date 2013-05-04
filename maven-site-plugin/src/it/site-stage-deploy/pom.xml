@@ -28,13 +28,14 @@ under the License.
   <packaging>pom</packaging>
 
   <name>MSITE-304 IT parent</name>
+  <description>Basic stage-deploy test</description>
   <url>http://www.example.com/parent/</url>
 
   <distributionManagement>
     <site>
       <id>msite-304</id>
       <name>Example company web server</name>
-      <url>file://@project.build.directory@/it/MSITE-304/target/www.example.com/parent</url>
+      <url>file://@project.build.directory@/it/site-stage-deploy/target/www.example.com/parent</url>
     </site>
   </distributionManagement>
 
