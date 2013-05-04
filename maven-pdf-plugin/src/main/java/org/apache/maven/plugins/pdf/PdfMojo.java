@@ -1000,7 +1000,7 @@ public class PdfMojo
             getLog().info( "No report was specified." );
             return;
         }
-
+        
         for ( final ReportPlugin reportPlugin : project.getReporting().getPlugins() )
         {
             final PluginDescriptor pluginDescriptor = getPluginDescriptor( reportPlugin );
@@ -1025,7 +1025,7 @@ public class PdfMojo
                     {
                         MavenReport report = getMavenReport( mojoDescriptor );
     
-                        generateMavenReport( mojoDescriptor, report, locale );
+                        generateMavenReport( report, mojoDescriptor.getPluginDescriptor().getPluginArtifact(), locale );
                     }
                 }
             }
@@ -1163,7 +1163,7 @@ public class PdfMojo
      * @see #isValidGeneratedReport(MojoDescriptor, File, String)
      * @since 1.1
      */
-    private void generateMavenReport( MojoDescriptor mojoDescriptor, MavenReport report, Locale locale )
+    private void generateMavenReport( MavenReport report, Artifact pluginArtifact, Locale locale )
         throws IOException, MojoExecutionException
     {
         if ( report == null )
@@ -1253,30 +1253,6 @@ public class PdfMojo
         {
             throw new MojoExecutionException( "MavenReportException: " + e.getMessage(), e );
         }
-        catch ( LinkageError e )
-        {
-            if ( getLog().isErrorEnabled() )
-            {
-                ClassRealm reportPluginRealm = mojoDescriptor.getPluginDescriptor().getClassRealm();
-                StringBuilder sb = new StringBuilder( 1024 );
-                sb.append( report.getClass().getName() ).append( "#generate(...) caused a linkage error (" );
-                sb.append( e.getClass().getName() )
-                        .append( ") and may be out-of-date. Check the realms:" ).append( EOL );
-                sb.append( "Maven Report Plugin realm = " ).append( reportPluginRealm.getId() ).append( EOL );
-                for ( int i = 0; i < reportPluginRealm.getConstituents().length; i++ )
-                {
-                    sb.append( "urls[" ).append( i ).append( "] = " ).append( reportPluginRealm.getConstituents()[i] );
-                    if ( i != ( reportPluginRealm.getConstituents().length - 1 ) )
-                    {
-                        sb.append( EOL );
-                    }
-                }
-
-                getLog().error( sb.toString() );
-            }
-
-            throw e;
-        }
         finally
         {
             if ( sink != null )
@@ -1287,7 +1263,7 @@ public class PdfMojo
 
         writeGeneratedReport( sw.toString(), generatedReport );
 
-        if ( isValidGeneratedReport( mojoDescriptor.getPluginDescriptor().getPluginArtifact(), generatedReport, localReportName ) )
+        if ( isValidGeneratedReport( pluginArtifact, generatedReport, localReportName ) )
         {
             getGeneratedMavenReports( locale ).add( report );
         }
