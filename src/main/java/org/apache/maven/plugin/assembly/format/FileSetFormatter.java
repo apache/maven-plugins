@@ -45,6 +45,7 @@ public class FileSetFormatter
         this.logger = logger;
     }
 
+    @SuppressWarnings( "ResultOfMethodCallIgnored" )
     public File formatFileSetForAssembly( File fileSetDir, org.apache.maven.plugin.assembly.model.FileSet set )
         throws AssemblyFormattingException, IOException
     {
@@ -84,10 +85,8 @@ public class FileSetFormatter
                 formattedDir.mkdirs();
 
                 FileFormatter fileFormatter = new FileFormatter( configSource, logger );
-                for ( int i = 0; i < files.length; i++ )
+                for ( String file : files )
                 {
-                    String file = files[i];
-                    
                     logger.debug( "Filtering: " + file );
 
                     File targetFile = new File( formattedDir, file );
@@ -97,9 +96,8 @@ public class FileSetFormatter
                     File sourceFile = new File( fileSetDir, file );
                     try
                     {
-                        sourceFile =
-                            fileFormatter.format( sourceFile, set.isFiltered(), lineEndingHint, formattedDir,
-                                                  configSource.getEncoding() );
+                        sourceFile = fileFormatter.format( sourceFile, set.isFiltered(), lineEndingHint, formattedDir,
+                                                           configSource.getEncoding() );
                         AssemblyFileUtils.copyFile( sourceFile, targetFile );
                     }
                     catch ( AssemblyFormattingException e )
