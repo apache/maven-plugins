@@ -21,6 +21,7 @@ package org.apache.maven.plugins.pdf;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -34,6 +35,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Properties;
 
 import javax.swing.text.AttributeSet;
 
@@ -41,7 +43,10 @@ import org.apache.commons.io.input.XmlStreamReader;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
+import org.apache.maven.artifact.versioning.ArtifactVersion;
+import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
+import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.doxia.Doxia;
 import org.apache.maven.doxia.docrenderer.AbstractDocumentRenderer;
 import org.apache.maven.doxia.docrenderer.DocumentRenderer;
@@ -93,10 +98,14 @@ import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.reporting.AbstractMavenReportRenderer;
 import org.apache.maven.reporting.MavenReport;
 import org.apache.maven.reporting.MavenReportException;
+import org.apache.maven.reporting.exec.MavenReportExecution;
+import org.apache.maven.reporting.exec.MavenReportExecutor;
+import org.apache.maven.reporting.exec.MavenReportExecutorRequest;
 import org.apache.maven.settings.Settings;
 import org.codehaus.classworlds.ClassRealm;
 import org.codehaus.plexus.PlexusConstants;
 import org.codehaus.plexus.PlexusContainer;
+import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.codehaus.plexus.context.Context;
 import org.codehaus.plexus.context.ContextException;
 import org.codehaus.plexus.i18n.I18N;
@@ -316,7 +325,7 @@ public class PdfMojo
      * @since 1.3
      */
     @Parameter( defaultValue = "${reports}", required = true, readonly = true )
-    private List<MavenReport> reports;
+    private MavenReport[] reports;
     
     /**
      * <p>Configuration section <b>used internally</b> by Maven 3.</p>
@@ -1580,6 +1589,82 @@ public class PdfMojo
         }
 
         return null;
+    }
+    
+    protected List<MavenReportExecution> getReports()
+        throws MojoExecutionException
+    {
+        if ( isMaven3OrMore() )
+        {
+            MavenReportExecutorRequest mavenReportExecutorRequest = new MavenReportExecutorRequest();
+            mavenReportExecutorRequest.setLocalRepository( localRepository );
+            mavenReportExecutorRequest.setMavenSession( session );
+            mavenReportExecutorRequest.setProject( project );
+            mavenReportExecutorRequest.setReportPlugins( reportPlugins );
+
+            MavenReportExecutor mavenReportExecutor;
+            try
+            {
+                mavenReportExecutor = (MavenReportExecutor) container.lookup( MavenReportExecutor.class.getName() );
+            }
+            catch ( ComponentLookupException e )
+            {
+                throw new MojoExecutionException( "could not get MavenReportExecutor component", e );
+            }
+            return mavenReportExecutor.buildMavenReports( mavenReportExecutorRequest );
+        }
+
+        List<MavenReportExecution> reportExecutions = new ArrayList<MavenReportExecution>( reports.length );
+        for ( MavenReport report : reports )
+        {
+            if ( report.canGenerateReport() )
+            {
+                reportExecutions.add( new MavenReportExecution( report ) );
+            }
+        }
+        return reportExecutions;
+    }
+    
+    /**
+     * Check the current Maven version to see if it's Maven 3.0 or newer.
+     */
+    protected static boolean isMaven3OrMore()
+    {
+        try
+        {
+            ArtifactVersion mavenVersion = new DefaultArtifactVersion( getMavenVersion() );
+            return VersionRange.createFromVersionSpec( "[3.0,)" ).containsVersion( mavenVersion );
+        }
+        catch ( InvalidVersionSpecificationException e )
+        {
+            return false;
+        }
+//        return new ComparableVersion( getMavenVersion() ).compareTo( new ComparableVersion( "3.0" ) ) >= 0;
+    }
+
+    protected static String getMavenVersion()
+    {
+        // This relies on the fact that MavenProject is the in core classloader
+        // and that the core classloader is for the maven-core artifact
+        // and that should have a pom.properties file
+        // if this ever changes, we will have to revisit this code.
+        final Properties properties = new Properties();
+        final InputStream in =
+            MavenProject.class.getClassLoader().getResourceAsStream( "META-INF/maven/org.apache.maven/maven-core/pom.properties" );
+        try
+        {
+            properties.load( in );
+        }
+        catch ( IOException ioe )
+        {
+            return "";
+        }
+        finally
+        {
+            IOUtil.close( in );
+        }
+
+        return properties.getProperty( "version" ).trim();
     }
 
     // ----------------------------------------------------------------------
