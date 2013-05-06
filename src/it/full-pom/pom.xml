@@ -172,6 +172,13 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-site-plugin</artifactId>
         <version>@sitePluginVersion@</version>
+        <dependencies><!-- Maven 3.1.0-alpha-1 compatibility before m-site-p 3.3 is released -->
+          <dependency>
+            <groupId>org.apache.maven.reporting</groupId>
+            <artifactId>maven-reporting-exec</artifactId>
+            <version>1.1</version>
+          </dependency>
+        </dependencies>
         <configuration>
           <locales>en,cs,de,es,fr,hu,it,ja,ko,nl,no,pl,pt,pt_BR,sk,sv,tr,zh_CN,zh_TW</locales>
         </configuration>

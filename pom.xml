@@ -104,7 +104,7 @@ under the License.
     <mavenVersion>2.2.0</mavenVersion>
     <wagonVersion>1.0</wagonVersion>
     <scmVersion>1.8</scmVersion>
-    <sitePluginVersion>3.3-SNAPSHOT</sitePluginVersion>
+    <sitePluginVersion>3.2</sitePluginVersion>
     <mavenPluginVersion>3.2</mavenPluginVersion>
   </properties>
 
