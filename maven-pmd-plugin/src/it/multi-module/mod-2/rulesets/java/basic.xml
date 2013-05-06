@@ -7,5 +7,5 @@
   <description>
     The relative path of this ruleset matches the built-in ruleset "basic".
   </description>
-  <rule ref="rulesets/basic.xml/EmptyStatementNotInLoop" message="TEST: LOCAL-FILE-RULESET"/>
+  <rule ref="rulesets/java/basic.xml/EmptyStatementNotInLoop" message="TEST: LOCAL-FILE-RULESET"/>
 </ruleset>

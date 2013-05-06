@@ -23,7 +23,7 @@ under the License.
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.apache.maven.plugin.pmd.its</groupId>
-  <artifactId>mpmd-168-empty-report</artifactId>
+  <artifactId>mpmd-168-empty-report-skipped</artifactId>
   <version>1.0-SNAPSHOT</version>
 
   <name>MPMD-168 skip empty report</name>
@@ -45,7 +45,6 @@ under the License.
           </execution>
         </executions>
         <configuration>
-          <skipEmptyReport>true</skipEmptyReport>
           <verbose>true</verbose>
           <minimumTokens>25</minimumTokens>
           <sourceEncoding>UTF-8</sourceEncoding>
@@ -62,7 +61,7 @@ under the License.
         <artifactId>maven-pmd-plugin</artifactId>
         <version>@project.version@</version>
         <configuration>
-            <skipEmptyReport>true</skipEmptyReport>
+<!--           <skipEmptyReport>true</skipEmptyReport> it's by default true -->
         </configuration>
       </plugin>
       <plugin>

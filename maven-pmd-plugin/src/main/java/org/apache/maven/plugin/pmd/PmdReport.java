@@ -212,6 +212,10 @@ public class PmdReport
                 if ( skipEmptyReport )
                 {
                     result = reportListener.hasViolations();
+                    if ( result )
+                    {
+                        getLog().debug("Skipping Report as skipEmptyReport is true and there are no PMD violations.");
+                    }
                 }
             }
             catch ( MavenReportException e )

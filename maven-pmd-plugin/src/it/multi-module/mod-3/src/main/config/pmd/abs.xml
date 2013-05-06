@@ -7,5 +7,5 @@
   <description>
     This ruleset is specified via an absolute filesystem path.
   </description>
-  <rule ref="rulesets/basic.xml/UnnecessaryReturn" message="TEST: ABSOLUTE-PATH"/>
+  <rule ref="rulesets/java/basic.xml/UnnecessaryReturn" message="TEST: ABSOLUTE-PATH"/>
 </ruleset>

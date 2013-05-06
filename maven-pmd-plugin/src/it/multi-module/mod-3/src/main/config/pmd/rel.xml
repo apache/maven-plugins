@@ -7,5 +7,5 @@
   <description>
     This ruleset is specified via a relative filesystem path.
   </description>
-  <rule ref="rulesets/basic.xml/EmptyStatementNotInLoop" message="TEST: RELATIVE-PATH"/>
+  <rule ref="rulesets/java/basic.xml/EmptyStatementNotInLoop" message="TEST: RELATIVE-PATH"/>
 </ruleset>

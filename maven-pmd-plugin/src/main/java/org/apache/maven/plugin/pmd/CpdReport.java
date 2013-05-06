@@ -165,6 +165,10 @@ public class CpdReport
                 if ( skipEmptyReport )
                 {
                     result = cpd.getMatches().hasNext();
+                    if ( result )
+                    {
+                        getLog().debug("Skipping Report as skipEmptyReport is true and there are no CPD issues.");
+                    }
                 }
             }
             catch ( MavenReportException e )

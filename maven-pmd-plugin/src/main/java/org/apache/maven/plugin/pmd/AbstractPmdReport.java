@@ -196,11 +196,11 @@ public abstract class AbstractPmdReport
 
     /**
      * Skip the PMD/CPD report generation if there are no violations or duplications found.
-     * Defaults to <code>false</code> to preserve legacy behaviour pre 3.1.
+     * Defaults to <code>true</code>.
      *
      * @since 3.1
      */
-    @Parameter( defaultValue = "false" )
+    @Parameter( defaultValue = "true" )
     protected boolean skipEmptyReport;
 
     /** The files that are being analyzed. */
