@@ -23,6 +23,8 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.logging.Logger;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
@@ -41,7 +43,8 @@ public final class ProjectUtils
     {
     }
 
-    public static String getClassifier( Artifact artifact )
+    @Nullable
+    public static String getClassifier( @Nonnull Artifact artifact )
     {
         String classifier = artifact.getClassifier();
         if ( classifier != null && classifier.length() == 0 )
@@ -51,9 +54,9 @@ public final class ProjectUtils
         return classifier;
     }
 
-    public static Set<MavenProject> getProjectModules( final MavenProject project,
-                                                       final List<MavenProject> reactorProjects,
-                                                       final boolean includeSubModules, final Logger logger )
+    @Nonnull public static Set<MavenProject> getProjectModules( @Nonnull final MavenProject project,
+                                                       @Nonnull final List<MavenProject> reactorProjects,
+                                                       final boolean includeSubModules, @Nonnull final Logger logger )
         throws IOException
     {
         final Set<MavenProject> singleParentSet = Collections.singleton( project );
@@ -70,7 +73,7 @@ public final class ProjectUtils
         // AND modules of those direct modules.
         modules.add( project );
 
-        int changed = 0;
+        int changed;
 
         do
         {
@@ -98,16 +101,14 @@ public final class ProjectUtils
                     currentPotentialParents = singleParentSet;
                 }
 
-                for ( final Iterator<MavenProject> parentIterator = currentPotentialParents.iterator(); parentIterator.hasNext(); )
+                for ( final MavenProject potentialParent : currentPotentialParents )
                 {
-                    final MavenProject potentialParent = parentIterator.next();
-
                     if ( potentialParent.getFile() == null )
                     {
                         logger.warn( "Cannot use: " + moduleCandidate.getId()
-                                        + " as a potential module-parent while computing the module set for: "
-                                        + project.getId()
-                                        + "; it does not have an associated POM file on the local filesystem." );
+                                         + " as a potential module-parent while computing the module set for: "
+                                         + project.getId()
+                                         + "; it does not have an associated POM file on the local filesystem." );
                         continue;
                     }
 
@@ -141,7 +142,8 @@ public final class ProjectUtils
         return modules;
     }
 
-    private static boolean projectContainsModule( final MavenProject mainProject, final MavenProject moduleProject )
+    private static boolean projectContainsModule( @Nonnull final MavenProject mainProject,
+                                                  @Nonnull final MavenProject moduleProject )
         throws IOException
     {
         @SuppressWarnings( "unchecked" )
@@ -168,10 +170,8 @@ public final class ProjectUtils
 
         moduleBasedir = moduleBasedir.getCanonicalFile();
 
-        for ( final Iterator<String> it = modules.iterator(); it.hasNext(); )
+        for ( final String moduleSubpath : modules )
         {
-            final String moduleSubpath = it.next();
-
             final File moduleDir = new File( basedir, moduleSubpath ).getCanonicalFile();
 
             if ( moduleDir.equals( moduleFile ) || moduleDir.equals( moduleBasedir ) )

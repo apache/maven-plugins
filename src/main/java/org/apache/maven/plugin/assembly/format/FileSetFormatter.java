@@ -26,6 +26,7 @@ import org.apache.maven.shared.model.fileset.util.FileSetManager;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.util.FileUtils;
 
+import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.IOException;
 
@@ -46,7 +47,7 @@ public class FileSetFormatter
     }
 
     @SuppressWarnings( "ResultOfMethodCallIgnored" )
-    public File formatFileSetForAssembly( File fileSetDir, org.apache.maven.plugin.assembly.model.FileSet set )
+    public File formatFileSetForAssembly( @Nonnull File fileSetDir, @Nonnull org.apache.maven.plugin.assembly.model.FileSet set )
         throws AssemblyFormattingException, IOException
     {
         String lineEndingHint = set.getLineEnding();

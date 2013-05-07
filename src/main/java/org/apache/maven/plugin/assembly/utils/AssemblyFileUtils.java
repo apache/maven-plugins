@@ -35,8 +35,10 @@ import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.UnArchiver;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
-import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.util.IOUtil;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * @version $Id$
@@ -95,10 +97,11 @@ public final class AssemblyFileUtils
         return path;
     }
 
-    public static void verifyTempDirectoryAvailability( final File tempDir, final Logger logger )
+    public static void verifyTempDirectoryAvailability( @Nonnull final File tempDir )
     {
         if ( !tempDir.exists() )
         {
+            //noinspection ResultOfMethodCallIgnored
             tempDir.mkdirs();
         }
     }
@@ -136,11 +139,11 @@ public final class AssemblyFileUtils
      * @param lineEndings This is the result of the getLineEndingChars(..) method in this utility class; the actual
      *   line-ending characters.
      */
-    public static void convertLineEndings( Reader source, File dest, String lineEndings, String encoding )
+    public static void convertLineEndings( @Nonnull Reader source, File dest, String lineEndings, String encoding )
         throws IOException
     {
         BufferedWriter out = null;
-        BufferedReader bufferedSource = null;
+        BufferedReader bufferedSource;
         try
         {
             if ( source instanceof BufferedReader )
@@ -182,7 +185,7 @@ public final class AssemblyFileUtils
         }
     }
 
-    public static String getLineEndingCharacters( String lineEnding )
+    @Nullable public static String getLineEndingCharacters( @Nullable String lineEnding )
         throws AssemblyFormattingException
     {
         String value = lineEnding;
@@ -216,6 +219,7 @@ public final class AssemblyFileUtils
         FileChannel c2 = new RandomAccessFile( dst, "rw" ).getChannel();
 
         long tCount = 0, size = c1.size();
+        //noinspection StatementWithEmptyBody
         while ( ( tCount += c2.transferFrom( c1, 0, size - tCount ) ) < size )
             ;
 
@@ -224,7 +228,7 @@ public final class AssemblyFileUtils
         c2.close();
     }
 
-    public static String normalizePath( String path )
+    @Nonnull public static String normalizePath( @Nonnull String path )
     {
         return path.replace( '\\', '/' );
     }
