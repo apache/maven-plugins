@@ -1439,6 +1439,12 @@ public class DependenciesRenderer
 
                     continue;
                 }
+
+                if ( artifact.getFile() == null )
+                {
+                    log.error( "Artifact: " + artifact.getId() + " has no file, even after resolution." );
+                    continue;
+                }
             }
 
             if ( JAR_SUBTYPE.contains( artifact.getType().toLowerCase() ) )
