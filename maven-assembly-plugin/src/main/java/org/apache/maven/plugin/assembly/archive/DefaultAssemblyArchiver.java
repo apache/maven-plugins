@@ -25,7 +25,6 @@ import java.io.StringReader;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -144,7 +143,7 @@ public class DefaultAssemblyArchiver
             filename += "." + format;
         }
 
-        AssemblyFileUtils.verifyTempDirectoryAvailability( configSource.getTemporaryRootDirectory(), getLogger() );
+        AssemblyFileUtils.verifyTempDirectoryAvailability( configSource.getTemporaryRootDirectory() );
 
         final File outputDirectory = configSource.getOutputDirectory();
 

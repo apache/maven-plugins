@@ -29,6 +29,8 @@ import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -59,10 +61,10 @@ public class FileFormatter
         return format ( source, filter, lineEnding, configSource.getTemporaryRootDirectory(), encoding );
     }
 
-    public File format( File source, boolean filter, String lineEnding, File tempRoot, String encoding )
+    public File format( @Nonnull File source, boolean filter, String lineEnding, @Nullable File tempRoot, String encoding )
         throws AssemblyFormattingException
     {
-        AssemblyFileUtils.verifyTempDirectoryAvailability( tempRoot, logger );
+        AssemblyFileUtils.verifyTempDirectoryAvailability( tempRoot );
 
         File result = source;
         
@@ -87,7 +89,8 @@ public class FileFormatter
         return result;
     }
 
-    private File doFileFilter( File source, File tempRoot, String encoding, String escapeString )
+    private File doFileFilter( @Nonnull File source,
+                               @Nullable File tempRoot, String encoding, String escapeString )
         throws AssemblyFormattingException
     {
         try
