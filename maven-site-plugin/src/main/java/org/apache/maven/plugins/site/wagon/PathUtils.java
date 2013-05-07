@@ -48,7 +48,7 @@ public final class PathUtils
      */
     public static String dirname( final String path )
     {
-        final int i = path.lastIndexOf( "/" );
+        final int i = path.lastIndexOf( '/' );
 
         return ( ( i >= 0 ) ? path.substring( 0, i ) : "" );
     }
@@ -60,7 +60,7 @@ public final class PathUtils
      */
     public static String filename( final String path )
     {
-        final int i = path.lastIndexOf( "/" );
+        final int i = path.lastIndexOf( '/' );
         return ( ( i >= 0 ) ? path.substring( i + 1 ) : path );
     }
 
@@ -172,17 +172,17 @@ public final class PathUtils
         if ( protocol.equalsIgnoreCase( "scm" ) )
         {
             // skip over type
-            host = host.substring( host.indexOf( ":", 4 ) + 1 ).trim();
+            host = host.substring( host.indexOf( ':', 4 ) + 1 ).trim();
         }
 
         // skip over protocol
-        host = host.substring( host.indexOf( ":" ) + 1 ).trim();
+        host = host.substring( host.indexOf( ':' ) + 1 ).trim();
         if ( host.startsWith( "//" ) )
         {
             host = host.substring( 2 );
         }
 
-        int pos = host.indexOf( "/" );
+        int pos = host.indexOf( '/' );
 
         if ( pos > 0 )
         {
@@ -197,7 +197,7 @@ public final class PathUtils
         }
         else
         {
-            pos = host.indexOf( ":" );
+            pos = host.indexOf( ':' );
         }
 
         if ( pos > 0 )
@@ -219,7 +219,7 @@ public final class PathUtils
      */
     public static String protocol( final String url )
     {
-        final int pos = url.indexOf( ":" );
+        final int pos = url.indexOf( ':' );
 
         if ( pos == -1 )
         {
@@ -252,7 +252,7 @@ public final class PathUtils
         if ( protocol.equalsIgnoreCase( "scm" ) )
         {
             // skip over type
-            url = url.substring( url.indexOf( ":", 4 ) + 1 ).trim();
+            url = url.substring( url.indexOf( ':', 4 ) + 1 ).trim();
         }
 
         if ( url.regionMatches( true, 0, "file:", 0, 5 ) || url.regionMatches( true, 0, "local:", 0, 6 ) )
@@ -261,7 +261,7 @@ public final class PathUtils
         }
 
         // skip over protocol
-        url = url.substring( url.indexOf( ":" ) + 1 ).trim();
+        url = url.substring( url.indexOf( ':' ) + 1 ).trim();
         if ( url.startsWith( "//" ) )
         {
             url = url.substring( 2 );
@@ -311,7 +311,7 @@ public final class PathUtils
             // skip over SCM bits
             if ( url.regionMatches( true, 0, "scm:svn:", 0, 8 ) )
             {
-                url = url.substring( url.indexOf( ":", 4 ) + 1 );
+                url = url.substring( url.indexOf( ':', 4 ) + 1 );
                 protocol = PathUtils.protocol( url );
             }
         }
@@ -333,7 +333,7 @@ public final class PathUtils
                 else
                 {
                     // Now we expect the host
-                    int index = retValue.indexOf( "/" );
+                    int index = retValue.indexOf( '/' );
                     if ( index >= 0 )
                     {
                         retValue = retValue.substring( index + 1 );
@@ -368,8 +368,8 @@ public final class PathUtils
 
             if ( protocol.equalsIgnoreCase( "scm" ) )
             {
-                pos = url.indexOf( ":", 4 ) + 1;
-                pos = url.indexOf( ":", pos ) + 1;
+                pos = url.indexOf( ':', 4 ) + 1;
+                pos = url.indexOf( ':', pos ) + 1;
             }
             else
             {
