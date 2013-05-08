@@ -42,7 +42,8 @@ Maven Site Plugin 3
    The Site Plugin has seven goals:
 
    * {{{./site-mojo.html}site:site}} is used generate a site for a single project.
-     Note that links between module sites in a multi module build will <<not>> work.
+     Note that links between module sites in a multi module build will <<not>> work, since local build directory structure
+     doesn't match deployed site.
 
    * {{{./deploy-mojo.html}site:deploy}} is used to deploy the generated site using Wagon supported protocol to
      the site URL specified in the <<<\<distributionManagement\>>>> section of the POM.
