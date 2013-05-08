@@ -48,7 +48,7 @@ public class SiteDeployMojo
     {
         if ( site == null )
         {
-            site = getRootSite( project );
+            site = getTopLevelSite( project );
         }
 
         return site.getId();
@@ -60,7 +60,7 @@ public class SiteDeployMojo
     {
         if ( site == null )
         {
-            site = getRootSite( project );
+            site = getTopLevelSite( project );
         }
 
         return site.getUrl();
