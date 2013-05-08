@@ -1,4 +1,4 @@
-package org.apache.maven.plugins.site.wagon.repository;
+package org.apache.maven.plugins.site.wagon;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -19,7 +19,6 @@ package org.apache.maven.plugins.site.wagon.repository;
  * under the License.
  */
 
-import org.apache.maven.plugins.site.wagon.PathUtils;
 import org.apache.maven.wagon.WagonConstants;
 import org.apache.maven.wagon.repository.RepositoryPermissions;
 import org.codehaus.plexus.util.StringUtils;
@@ -31,13 +30,13 @@ import java.util.Properties;
  * can be transfered.
  *
  * <strong>Note: </strong> This is a copy of a file from Wagon. It was copied here to be able to work around WAGON-307.
- * This class can be removed when the prerequisite Maven version uses wagon-provider-api:1.0-beta-7.
+ * This class can be removed when the prerequisite Maven version uses wagon-provider-api:1.0-beta-7, ie Maven &gt;= 3.0.1.
  *
  * @author <a href="michal.maczka@dimatics.com">Michal Maczka</a>
  * @version $Id$
  * @todo [BP] some things are specific to certain wagons (eg key stuff in authInfo, permissions)
  */
-public class Repository
+public class BugFixedRepository
     extends org.apache.maven.wagon.repository.Repository
 {
     private static final long serialVersionUID = 1312227676322136247L;
@@ -69,15 +68,7 @@ public class Repository
 
     private String password = null;
 
-    /**
-     * @deprecated use {@link #Repository(String, String)}
-     */
-    public Repository()
-    {
-        // no op
-    }
-
-    public Repository( String id, String url )
+    public BugFixedRepository( String id, String url )
     {
         if ( id == null )
         {
@@ -281,7 +272,7 @@ public class Repository
         {
             return false;
         }
-        final Repository other = (Repository) obj;
+        final BugFixedRepository other = (BugFixedRepository) obj;
         if ( id == null )
         {
             if ( other.id != null )

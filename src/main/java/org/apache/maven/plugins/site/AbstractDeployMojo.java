@@ -29,6 +29,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.site.wagon.BugFixedRepository;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Server;
@@ -161,8 +162,7 @@ public abstract class AbstractDeployMojo
             return;
         }
 
-        deployTo( new org.apache.maven.plugins.site.wagon.repository.Repository( getDeployRepositoryID(), appendSlash(
-            getDeployRepositoryURL() ) ) );
+        deployTo( new BugFixedRepository( getDeployRepositoryID(), appendSlash( getDeployRepositoryURL() ) ) );
     }
 
     /**
