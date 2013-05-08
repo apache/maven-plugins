@@ -805,12 +805,14 @@ public abstract class AbstractDeployMojo
     /**
      * Extract the distributionManagement site of the top level parent of the given MavenProject.
      * This climbs up the project hierarchy and returns the site of the last project
-     * for which {@link #getSite(org.apache.maven.project.MavenProject)} returns a site.
+     * for which {@link #getSite(org.apache.maven.project.MavenProject)} returns a site lives in the
+     * same site.
      *
-     * @param project the MavenProject. Not null.
-     * @return the top level site. Not null.
-     *         Also site.getUrl() and site.getId() are guaranteed to be not null.
+     * @param project the MavenProject. Not <code>null</code>.
+     * @return the top level site. Not <code>null</code>.
+     *         Also site.getUrl() and site.getId() are guaranteed to be not <code>null</code>.
      * @throws MojoExecutionException if no site info is found in the tree.
+     * @see URIPathDescriptor#sameSite(java.net.URI)
      */
     protected Site getRootSite( MavenProject project )
         throws MojoExecutionException
