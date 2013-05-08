@@ -20,11 +20,13 @@ package org.apache.maven.plugins.site;
  */
 
 import java.io.File;
+import java.util.List;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.apache.maven.project.MavenProject;
 
 /**
  * Deploys the generated site to a local staging or mock directory based on the site URL
@@ -133,5 +135,59 @@ public class SiteStageMojo
         // or
         //   executionRootProjectURL + "staging"
         return stagingDirectory;
+    }
+
+    /**
+     * Find the build directory of the execution root project in the reactor.
+     * If no execution root project is found, the build directory of the current project is returned.
+     *
+     * @return the build directory of the execution root project.
+     */
+    protected File getExecutionRootBuildDirectory()
+    {
+        // Find the top level project in the reactor
+        final MavenProject executionRootProject = getExecutionRootProject( reactorProjects );
+
+        // Use the top level project's build directory if there is one, otherwise use this project's build directory
+        final File buildDirectory;
+
+        if ( executionRootProject == null )
+        {
+            getLog().debug( "No execution root project found in the reactor, using the current project." );
+
+            buildDirectory = new File( project.getBuild().getDirectory() );
+        }
+        else
+        {
+            getLog().debug( "Using the execution root project found in the reactor: " + executionRootProject.getArtifactId() );
+
+            buildDirectory = new File( executionRootProject.getBuild().getDirectory() );
+        }
+
+        return buildDirectory;
+    }
+
+    /**
+     * Find the execution root in the reactor.
+     *
+     * @param reactorProjects The projects in the reactor. May be <code>null</code> in which case <code>null</code> is returned.
+     * @return The execution root project in the reactor, or <code>null</code> if none can be found
+     */
+    private static MavenProject getExecutionRootProject( List<MavenProject> reactorProjects )
+    {
+        if ( reactorProjects == null )
+        {
+            return null;
+        }
+
+        for ( MavenProject reactorProject : reactorProjects )
+        {
+            if ( reactorProject.isExecutionRoot() )
+            {
+                return reactorProject;
+            }
+        }
+
+        return null;
     }
 }
