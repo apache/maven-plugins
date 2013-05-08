@@ -305,30 +305,30 @@ public abstract class AbstractDeployMojo
     }
 
     /**
-     * Find the build directory of the top level project in the reactor.
-     * If no top level project is found, the build directory of the current project is returned.
+     * Find the build directory of the execution root project in the reactor.
+     * If no execution root project is found, the build directory of the current project is returned.
      *
-     * @return the build directory of the top level project.
+     * @return the build directory of the execution root project.
      */
-    protected File getTopLevelBuildDirectory()
+    protected File getExecutionRootBuildDirectory()
     {
         // Find the top level project in the reactor
-        final MavenProject topLevelProject = getTopLevelProject( reactorProjects );
+        final MavenProject executionRootProject = getExecutionRootProject( reactorProjects );
 
         // Use the top level project's build directory if there is one, otherwise use this project's build directory
         final File buildDirectory;
 
-        if ( topLevelProject == null )
+        if ( executionRootProject == null )
         {
-            getLog().debug( "No top level project found in the reactor, using the current project." );
+            getLog().debug( "No execution root project found in the reactor, using the current project." );
 
             buildDirectory = new File( project.getBuild().getDirectory() );
         }
         else
         {
-            getLog().debug( "Using the top level project found in the reactor." );
+            getLog().debug( "Using the execution root project found in the reactor: " + executionRootProject.getArtifactId() );
 
-            buildDirectory = new File( topLevelProject.getBuild().getDirectory() );
+            buildDirectory = new File( executionRootProject.getBuild().getDirectory() );
         }
 
         return buildDirectory;
@@ -741,12 +741,12 @@ public abstract class AbstractDeployMojo
     }
 
     /**
-     * Find the top level parent in the reactor, i.e. the execution root.
+     * Find the execution root in the reactor.
      *
-     * @param reactorProjects The projects in the reactor. May be null in which case null is returned.
-     * @return The top level project in the reactor, or <code>null</code> if none can be found
+     * @param reactorProjects The projects in the reactor. May be <code>null</code> in which case <code>null</code> is returned.
+     * @return The execution root project in the reactor, or <code>null</code> if none can be found
      */
-    private static MavenProject getTopLevelProject( List<MavenProject> reactorProjects )
+    private static MavenProject getExecutionRootProject( List<MavenProject> reactorProjects )
     {
         if ( reactorProjects == null )
         {

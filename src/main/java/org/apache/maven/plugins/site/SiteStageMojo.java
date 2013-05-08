@@ -112,26 +112,26 @@ public class SiteStageMojo
      */
     private String getStagingDirectory( String usersStagingDirectory )
     {
-        String topLevelURL = null;
+        String stagingDirectory = null;
 
         if ( usersStagingDirectory != null )
         {
             // the user has specified a stagingDirectory - use it
             getLog().debug( "stagingDirectory specified by the user: " + usersStagingDirectory );
-            topLevelURL = usersStagingDirectory;
+            stagingDirectory = usersStagingDirectory;
         }
         else
         {
             // The user didn't specify a URL, use the top level target dir
-            topLevelURL =
-                getTopLevelBuildDirectory().getAbsolutePath() + "/" + DEFAULT_STAGING_DIRECTORY;
-            getLog().debug( "stagingDirectory NOT specified, using the top level project: " + topLevelURL );
+            stagingDirectory =
+                getExecutionRootBuildDirectory().getAbsolutePath() + "/" + DEFAULT_STAGING_DIRECTORY;
+            getLog().debug( "stagingDirectory NOT specified, using the execution root project: " + stagingDirectory );
         }
 
         // Return either
         //   usersURL
         // or
-        //   topLevelProjectURL + "staging"
-        return topLevelURL;
+        //   executionRootProjectURL + "staging"
+        return stagingDirectory;
     }
 }
