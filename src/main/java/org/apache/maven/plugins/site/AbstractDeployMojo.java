@@ -805,8 +805,8 @@ public abstract class AbstractDeployMojo
     /**
      * Extract the distributionManagement site of the top level parent of the given MavenProject.
      * This climbs up the project hierarchy and returns the site of the last project
-     * for which {@link #getSite(org.apache.maven.project.MavenProject)} returns a site lives in the
-     * same site.
+     * for which {@link #getSite(org.apache.maven.project.MavenProject)} returns a site that resides in the
+     * same site. Notice that it doesn't take into account if the parent is in the reactor or not.
      *
      * @param project the MavenProject. Not <code>null</code>.
      * @return the top level site. Not <code>null</code>.
@@ -853,7 +853,7 @@ public abstract class AbstractDeployMojo
     /**
      * Detect if the mojo is staging or deploying.
      *
-     * @return rue if the mojo is for deploy and not staging
+     * @return <code>true</code> if the mojo is for deploy and not staging (local or deploy)
      */
     protected boolean isDeploy()
     {
