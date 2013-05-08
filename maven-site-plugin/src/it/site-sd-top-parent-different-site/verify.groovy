@@ -1,4 +1,3 @@
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,34 +17,22 @@
  * under the License.
  */
 
-import java.io.*;
-import org.codehaus.plexus.util.*;
+target = new File( basedir, 'target' );
+assert target.isDirectory();
 
-boolean result = true;
+// deploy
+deployDirectory = new File( basedir, 'deploy' );
+assert deployDirectory.isDirectory();
+assert new File( deployDirectory, 'module1' ).isDirectory();
 
-try
-{
-    final File target = new File( basedir, "target" );
+// stage
+stageDirectory = new File( target, 'staging' );
+assert stageDirectory.isDirectory();
+assert new File( stageDirectory, 'module1' ).isDirectory();
 
-    final File stageDeployDirectory = new File( target, "site-deployed/staging" );
-    if ( !stageDeployDirectory.exists() || !stageDeployDirectory.isDirectory() )
-    {
-        System.err.println( "stageDeployDirectory is missing or not a directory." );
-        return false;
-    }
+// stage deploy
+stageDeployDirectory = new File( deployDirectory, 'staging' );
+assert stageDeployDirectory.isDirectory();
+assert new File( stageDeployDirectory, 'module1' ).isDirectory();
 
-    // module directory
-    final File moduleDirectory = new File( stageDeployDirectory, "module" );
-    if ( !moduleDirectory.exists() || !moduleDirectory.isDirectory() )
-    {
-        System.err.println( "stage deploy moduleDirectory is missing or not a directory." );
-        return false;
-    }
-}
-catch ( IOException e )
-{
-    e.printStackTrace();
-    result = false;
-}
-
-return result;
+return true;

@@ -1,4 +1,3 @@
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,20 +17,11 @@
  * under the License.
  */
 
-import java.io.*;
+target = new File( basedir, 'target' );
+assert target.isDirectory();
 
-File stageDeploy = new File( basedir, "target/MSITE-649-1.0-SNAPSHOT" );
-if ( !stageDeploy.exists() || !stageDeploy.isDirectory() )
-{
-    System.err.println( "stageDeploy base directory is missing or not a directory." );
-    return false;
-}
-
-File wrongSubdirectory = new File( stageDeploy, "MSITE-649" );
-if ( wrongSubdirectory.exists() )
-{
-    System.err.println( "a MSITE-649 subdirectory has been created inside the staging directory" );
-    return false;
-}
+stageDeploy = new File( target, 'site-deployed/staging' );
+assert stageDeploy.isDirectory();
+assert new File( stageDeploy, 'module' ).exists();
 
 return true;
