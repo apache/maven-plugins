@@ -775,33 +775,35 @@ public abstract class AbstractDeployMojo
     protected static Site getSite( final MavenProject project )
         throws MojoExecutionException
     {
-        final String name =
-            project.getName() + " (" + project.getGroupId() + ":" + project.getArtifactId() + ":" + project.getVersion()
-                + ")";
-
         final DistributionManagement distributionManagement = project.getDistributionManagement();
 
         if ( distributionManagement == null )
         {
-            throw new MojoExecutionException( "Missing distribution management in project " + name );
+            throw new MojoExecutionException( "Missing distribution management in project " + getFullName( project ) );
         }
 
         final Site site = distributionManagement.getSite();
 
         if ( site == null )
         {
-            throw new MojoExecutionException(
-                "Missing site information in the distribution management of the project " + name );
+            throw new MojoExecutionException( "Missing site information in the distribution management of the project "
+                + getFullName( project ) );
         }
 
         if ( site.getUrl() == null || site.getId() == null )
         {
-            throw new MojoExecutionException( "Missing site data: specify url and id for project " + name );
+            throw new MojoExecutionException( "Missing site data: specify url and id for project "
+                + getFullName( project ) );
         }
 
         return site;
     }
 
+    private static String getFullName( MavenProject project )
+    {
+        return project.getName() + " (" + project.getGroupId() + ':' + project.getArtifactId() + ':'
+            + project.getVersion() + ')';
+    }
     /**
      * Extract the distributionManagement site of the top level parent of the given MavenProject.
      * This climbs up the project hierarchy and returns the site of the last project
