@@ -33,7 +33,7 @@ import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 
 /**
- * Deploys the generated site to a staging or mock directory to the site URL
+ * Deploys the generated site to a staging or mock URL to the site URL
  * specified in the <code>&lt;distributionManagement&gt;</code> section of the
  * POM, using <a href="/wagon/">wagon supported protocols</a>
  *
