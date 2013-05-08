@@ -42,7 +42,7 @@ import org.apache.maven.reporting.exec.MavenReportExecution;
  * Generates the site for a single project.
  * <p>
  * Note that links between module sites in a multi module build will <b>not</b>
- * work.
+ * work, since local build directory structure doesn't match deployed site.
  * </p>
  *
  * @author <a href="mailto:evenisse@apache.org">Emmanuel Venisse</a>
