@@ -126,7 +126,7 @@ public class SiteStageDeployMojo
     protected String getDeployRepositoryURL()
         throws MojoExecutionException
     {
-        String stagingURL = determineStagingSiteURL( stagingSiteURL );
+        String stagingURL = determineStageDeploySiteURL( stagingSiteURL );
 
         getLog().info( "Using this base URL for stage deploy: " + stagingURL );
 
@@ -141,7 +141,7 @@ public class SiteStageDeployMojo
      * This climbs up the project hierarchy and returns the site of the top most
      * project for which
      * {@link #getStagingSiteURL(org.apache.maven.project.MavenProject)} returns
-     * a URL.
+     * same URL as actual.
      *
      * @param project the MavenProject. Not null.
      * @return the site for the top most project that has a stagingSiteURL. Not null.
@@ -231,7 +231,7 @@ public class SiteStageDeployMojo
      * 
      * @return the site URL for staging
      */
-    private String determineStagingSiteURL( final String usersStagingSiteURL )
+    private String determineStageDeploySiteURL( final String usersStagingSiteURL )
         throws MojoExecutionException
     {
         String topLevelURL = null;
