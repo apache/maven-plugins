@@ -212,7 +212,7 @@ public abstract class AbstractDeployMojo
     protected String getDeployModuleDirectory()
         throws MojoExecutionException
     {
-        String relative = siteTool.getRelativePath( getSite( project ).getUrl(), getRootSite( project ).getUrl() );
+        String relative = siteTool.getRelativePath( getSite( project ).getUrl(), getTopLevelSite( project ).getUrl() );
 
         // SiteTool.getRelativePath() uses File.separatorChar,
         // so we need to convert '\' to '/' in order for the URL to be valid for Windows users
@@ -763,7 +763,7 @@ public abstract class AbstractDeployMojo
      * @throws MojoExecutionException if no site info is found in the tree.
      * @see URIPathDescriptor#sameSite(java.net.URI)
      */
-    protected Site getRootSite( MavenProject project )
+    protected Site getTopLevelSite( MavenProject project )
         throws MojoExecutionException
     {
         Site site = getSite( project );
