@@ -32,7 +32,7 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
  * POM.
  * <p>
  * It can be used to test that links between module sites in a multi-module
- * build works.
+ * build work.
  * </p>
  *
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
