@@ -245,8 +245,7 @@ public class SiteStageDeployMojo
         else
         {
             // The user didn't specify a URL, use the top level site distribution URL and add "[/]staging/" to it
-            topLevelURL = appendSlash( getTopLevelSite( project ).getUrl() )
-                + DEFAULT_STAGING_DIRECTORY;
+            topLevelURL = appendSlash( getTopLevelSite( project ).getUrl() ) + DEFAULT_STAGING_DIRECTORY;
             getLog().debug( "stagingSiteURL NOT specified, using the top level project: " + topLevelURL );
         }
 

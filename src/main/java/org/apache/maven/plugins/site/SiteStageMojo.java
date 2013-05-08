@@ -72,12 +72,10 @@ public class SiteStageMojo
     protected String getDeployRepositoryURL()
         throws MojoExecutionException
     {
-        final String stageDir = ( stagingDirectory == null ) ? null : stagingDirectory.getAbsolutePath();
-        final String outputDir = getStagingDirectory( stageDir );
+        final File outputDirectory = determineStagingDirectory( stagingDirectory );
 
-        getLog().info( "Using this base directory for staging: " + outputDir );
+        getLog().info( "Using this base directory for staging: " + outputDirectory );
 
-        final File outputDirectory = new File( outputDir );
         // Safety
         if ( !outputDirectory.exists() )
         {
@@ -112,9 +110,9 @@ public class SiteStageMojo
      *
      * @return the directory for staging
      */
-    private String getStagingDirectory( String usersStagingDirectory )
+    private File determineStagingDirectory( File usersStagingDirectory )
     {
-        String stagingDirectory = null;
+        File stagingDirectory = null;
 
         if ( usersStagingDirectory != null )
         {
@@ -125,8 +123,7 @@ public class SiteStageMojo
         else
         {
             // The user didn't specify a URL, use the top level target dir
-            stagingDirectory =
-                getExecutionRootBuildDirectory().getAbsolutePath() + "/" + DEFAULT_STAGING_DIRECTORY;
+            stagingDirectory = new File( getExecutionRootBuildDirectory(), DEFAULT_STAGING_DIRECTORY );
             getLog().debug( "stagingDirectory NOT specified, using the execution root project: " + stagingDirectory );
         }
 
