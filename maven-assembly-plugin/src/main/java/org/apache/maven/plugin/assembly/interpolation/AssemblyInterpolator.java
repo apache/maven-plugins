@@ -45,6 +45,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
@@ -126,13 +127,15 @@ public class AssemblyInterpolator
         {
             final StringBuilder sb = new StringBuilder();
 
-            sb.append( "One or more minor errors occurred while interpolating the assembly with ID: " ).append(
-                assembly.getId() ).append( ":\n" );
+            sb.append( "One or more minor errors occurred while interpolating the assembly with ID: "
+                            + assembly.getId() + ":\n" );
 
             @SuppressWarnings( "unchecked" )
             final List<ObjectInterpolationWarning> warnings = objectInterpolator.getWarnings();
-            for ( final ObjectInterpolationWarning warning : warnings )
+            for ( final Iterator<ObjectInterpolationWarning> it = warnings.iterator(); it.hasNext(); )
             {
+                final ObjectInterpolationWarning warning = it.next();
+
                 sb.append( '\n' ).append( warning );
             }
 

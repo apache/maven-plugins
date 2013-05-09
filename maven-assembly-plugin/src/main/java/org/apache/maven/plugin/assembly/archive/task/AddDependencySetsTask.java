@@ -117,8 +117,10 @@ public class AddDependencySetsTask
             logger.debug( "Project " + project.getId() + " has no dependencies. Skipping dependency set addition." );
         }
 
-        for ( final DependencySet dependencySet : dependencySets )
+        for ( final Iterator<DependencySet> i = dependencySets.iterator(); i.hasNext(); )
         {
+            final DependencySet dependencySet = i.next();
+
             addDependencySet( dependencySet, archiver, configSource );
         }
     }
@@ -150,19 +152,21 @@ public class AddDependencySetsTask
 
         logger.debug( "Adding " + dependencyArtifacts.size() + " dependency artifacts." );
 
-        for ( final Artifact depArtifact : dependencyArtifacts )
+        for ( final Iterator<Artifact> j = dependencyArtifacts.iterator(); j.hasNext(); )
         {
+            final Artifact depArtifact = j.next();
+
             MavenProject depProject;
             try
             {
-                depProject = projectBuilder.buildFromRepository( depArtifact, configSource.getRemoteRepositories(),
-                                                                 configSource.getLocalRepository() );
+                depProject =
+                    projectBuilder.buildFromRepository( depArtifact, configSource.getRemoteRepositories(),
+                                                        configSource.getLocalRepository() );
             }
             catch ( final ProjectBuildingException e )
             {
-                logger.debug(
-                    "Error retrieving POM of module-dependency: " + depArtifact.getId() + "; Reason: " + e.getMessage()
-                        + "\n\nBuilding stub project instance." );
+                logger.debug( "Error retrieving POM of module-dependency: " + depArtifact.getId() + "; Reason: "
+                                + e.getMessage() + "\n\nBuilding stub project instance." );
 
                 depProject = buildProjectStub( depArtifact );
             }
@@ -199,7 +203,7 @@ public class AddDependencySetsTask
             mapping = defaultOutputFileNameMapping;
         }
 
-        if ( ( dir == null || !dir.contains( "${" ) ) && ( mapping == null || !mapping.contains( "${" ) ) )
+        if ( ( dir == null || dir.indexOf( "${" ) < 0 ) && ( mapping == null || mapping.indexOf( "${" ) < 0 ) )
         {
             logger.warn( "NOTE: Your assembly specifies a dependencySet that matches multiple artifacts, but specifies a concrete output format. "
                             + "THIS MAY RESULT IN ONE OR MORE ARTIFACTS BEING OBSCURED!\n\nOutput directory: '"
@@ -208,7 +212,6 @@ public class AddDependencySetsTask
         }
     }
 
-    @SuppressWarnings( "ResultOfMethodCallIgnored" )
     private void addFilteredUnpackedArtifact( final DependencySet dependencySet, final Artifact depArtifact,
                                               final MavenProject depProject, final Archiver archiver,
                                               final AssemblerConfigurationSource configSource )
@@ -393,17 +396,18 @@ public class AddDependencySetsTask
             final List<Artifact> attachments = project.getAttachedArtifacts();
             if ( attachments != null )
             {
-                for ( final Artifact attachment : attachments )
+                for ( final Iterator<Artifact> attachmentIt = attachments.iterator(); attachmentIt.hasNext(); )
                 {
+                    final Artifact attachment = attachmentIt.next();
+
                     if ( attachment.getFile() != null )
                     {
                         dependencyArtifacts.add( attachment );
                     }
                     else
                     {
-                        logger.warn(
-                            "Cannot include attached artifact: " + project.getId() + " for project: " + project.getId()
-                                + "; it doesn't have an associated file or directory." );
+                        logger.warn( "Cannot include attached artifact: " + project.getId() + " for project: "
+                                        + project.getId() + "; it doesn't have an associated file or directory." );
                     }
                 }
             }

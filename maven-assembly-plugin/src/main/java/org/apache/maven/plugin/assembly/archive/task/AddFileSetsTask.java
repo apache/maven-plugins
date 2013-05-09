@@ -35,6 +35,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -86,8 +87,10 @@ public class AddFileSetsTask
             }
         }
 
-        for ( final FileSet fileSet : fileSets )
+        for ( final Iterator<FileSet> i = fileSets.iterator(); i.hasNext(); )
         {
+            final FileSet fileSet = i.next();
+
             addFileSet( fileSet, archiver, configSource, archiveBaseDir );
         }
     }
@@ -190,7 +193,7 @@ public class AddFileSetsTask
             sourceDirectory = basedir.getAbsolutePath();
         }
 
-        File fileSetDir;
+        File fileSetDir = null;
 
         if ( archiveBaseDir == null )
         {
@@ -225,6 +228,11 @@ public class AddFileSetsTask
     public void setProject( final MavenProject project )
     {
         this.project = project;
+    }
+
+    public MavenProject getModuleProject()
+    {
+        return moduleProject;
     }
 
     public void setModuleProject( final MavenProject moduleProject )

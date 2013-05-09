@@ -138,8 +138,10 @@ public class DefaultDependencyResolver
 
         final List<Artifact> missing = new ArrayList<Artifact>();
         final Set<Artifact> resolved = new LinkedHashSet<Artifact>();
-        for ( final Artifact depArtifact : dependencyArtifacts )
+        for ( final Iterator<Artifact> it = dependencyArtifacts.iterator(); it.hasNext(); )
         {
+            final Artifact depArtifact = it.next();
+
             try
             {
                 resolver.resolve( depArtifact, repos, configSource.getLocalRepository() );
@@ -149,8 +151,8 @@ public class DefaultDependencyResolver
             {
                 if ( getLogger().isDebugEnabled() )
                 {
-                    getLogger().debug(
-                        "Failed to resolve: " + depArtifact.getId() + " for assembly: " + assembly.getId() );
+                    getLogger().debug( "Failed to resolve: " + depArtifact.getId() + " for assembly: "
+                                           + assembly.getId() );
                 }
                 missing.add( depArtifact );
             }
@@ -158,8 +160,8 @@ public class DefaultDependencyResolver
             {
                 if ( getLogger().isDebugEnabled() )
                 {
-                    getLogger().debug(
-                        "Failed to resolve: " + depArtifact.getId() + " for assembly: " + assembly.getId() );
+                    getLogger().debug( "Failed to resolve: " + depArtifact.getId() + " for assembly: "
+                                           + assembly.getId() );
                 }
                 missing.add( depArtifact );
             }
@@ -280,8 +282,7 @@ public class DefaultDependencyResolver
                     {
                         getDependencySetResolutionRequirements( assembly,
                                                                 ModuleSetAssemblyPhase.getDependencySets( binaries ),
-                                                                requirements,
-                                                                projects.toArray( new MavenProject[projects.size()] ) );
+                                                                requirements, projects.toArray( new MavenProject[] {} ) );
                     }
                 }
             }
@@ -374,12 +375,16 @@ public class DefaultDependencyResolver
         final List<ArtifactRepository> remoteRepos = new ArrayList<ArtifactRepository>();
         final Set<String> encounteredUrls = new HashSet<String>();
 
-        for ( final List<ArtifactRepository> repositoryList : repoLists )
+        for ( final Iterator<List<ArtifactRepository>> listIterator = repoLists.iterator(); listIterator.hasNext(); )
         {
+            final List<ArtifactRepository> repositoryList = listIterator.next();
+
             if ( ( repositoryList != null ) && !repositoryList.isEmpty() )
             {
-                for ( final ArtifactRepository repo : repositoryList )
+                for ( final Iterator<ArtifactRepository> it = repositoryList.iterator(); it.hasNext(); )
                 {
+                    final ArtifactRepository repo = it.next();
+
                     if ( !encounteredUrls.contains( repo.getUrl() ) )
                     {
                         remoteRepos.add( repo );

@@ -24,6 +24,7 @@ import org.apache.maven.plugin.assembly.model.Repository;
 import org.apache.maven.shared.repository.model.RepositoryInfo;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -56,8 +57,10 @@ public class RepoInfoWrapper
             final List<GroupVersionAlignmentWrapper> l =
                 new ArrayList<GroupVersionAlignmentWrapper>( alignments.size() );
 
-            for ( final GroupVersionAlignment alignment : alignments )
+            for ( final Iterator<GroupVersionAlignment> it = alignments.iterator(); it.hasNext(); )
             {
+                final GroupVersionAlignment alignment = it.next();
+
                 l.add( new GroupVersionAlignmentWrapper( alignment ) );
             }
 
