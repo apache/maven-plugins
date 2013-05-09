@@ -53,7 +53,7 @@ public class SiteDeployMojo
     protected String determineTopDistributionManagementSiteUrl()
         throws MojoExecutionException
     {
-        return getSite( project ).getUrl();
+        return getDeploySite().getUrl();
     }
 
     /**
@@ -63,6 +63,6 @@ public class SiteDeployMojo
     protected Site determineDeploySite()
         throws MojoExecutionException
     {
-        return getSite( project );
+        return getSite( getTopLevelProject( project ) );
     }
 }

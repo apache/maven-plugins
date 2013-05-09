@@ -26,7 +26,8 @@ under the License.
   <artifactId>multimodule</artifactId>
   <version>1.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
-  <name>Multimodule</name>
+
+  <name>MSITE-322 Multi-module with multiple languages</name>
 
   <url>http://my.url.com/</url>
 
@@ -34,7 +35,7 @@ under the License.
     <site>
       <id>website</id>
       <name>MSITE-322 Web Site</name>
-      <url>file://@project.build.directory@/it/MSITE-322/deploy/</url>
+      <url>file://@project.build.directory@/it/site-sd-lang/deploy/</url>
     </site>
   </distributionManagement>
 
