@@ -22,6 +22,7 @@ package org.apache.maven.plugins.site;
 import java.io.File;
 import java.util.List;
 
+import org.apache.maven.model.Site;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -42,7 +43,7 @@ import org.apache.maven.project.MavenProject;
  */
 @Mojo( name = "stage", requiresDependencyResolution = ResolutionScope.TEST )
 public class SiteStageMojo
-    extends AbstractDeployMojo
+    extends AbstractStagingMojo
 {
     /**
      * Staging directory location. This needs to be an absolute path, like
@@ -61,30 +62,6 @@ public class SiteStageMojo
     @Parameter( property = "maven.site.skip", defaultValue = "false" )
     private boolean skip;
 
-    @Override
-    protected String getDeployRepositoryID()
-        throws MojoExecutionException
-    {
-        return "stagingLocal";
-    }
-
-    @Override
-    protected String getDeployRepositoryURL()
-        throws MojoExecutionException
-    {
-        final File outputDirectory = determineStagingDirectory( stagingDirectory );
-
-        getLog().info( "Using this base directory for staging: " + outputDirectory );
-
-        // Safety
-        if ( !outputDirectory.exists() )
-        {
-            outputDirectory.mkdirs();
-        }
-
-        return "file://" + outputDirectory.getAbsolutePath();
-    }
-
     public void execute()
         throws MojoExecutionException
     {
@@ -97,41 +74,45 @@ public class SiteStageMojo
         super.execute();
     }
 
-    protected boolean isDeploy()
+    @Override
+    protected Site determineDeploySite()
+        throws MojoExecutionException
     {
-        // this mojo is for staging, not deploy
-        return false;
+        Site staging = new Site();
+        staging.setId( "stagingLocal" );
+
+        final File outputDirectory = determineStagingDirectory();
+        getLog().info( "Using this base directory for staging: " + outputDirectory );
+
+        // Safety
+        if ( !outputDirectory.exists() )
+        {
+            outputDirectory.mkdirs();
+        }
+
+        staging.setUrl( "file://" + outputDirectory.getAbsolutePath() );
+
+        return staging;
     }
 
     /**
      * Find the directory where staging will take place.
      *
-     * @param usersStagingDirectory The staging directory as suggested by the user's configuration
-     *
      * @return the directory for staging
      */
-    private File determineStagingDirectory( File usersStagingDirectory )
+    private File determineStagingDirectory()
     {
-        File stagingDirectory = null;
-
-        if ( usersStagingDirectory != null )
+        if ( stagingDirectory != null )
         {
             // the user has specified a stagingDirectory - use it
-            getLog().debug( "stagingDirectory specified by the user: " + usersStagingDirectory );
-            stagingDirectory = usersStagingDirectory;
-        }
-        else
-        {
-            // The user didn't specify a URL, use the top level target dir
-            stagingDirectory = new File( getExecutionRootBuildDirectory(), DEFAULT_STAGING_DIRECTORY );
-            getLog().debug( "stagingDirectory NOT specified, using the execution root project: " + stagingDirectory );
+            getLog().debug( "stagingDirectory specified by the user: " + stagingDirectory );
+            return stagingDirectory;
         }
 
-        // Return either
-        //   usersURL
-        // or
-        //   executionRootProjectURL + "staging"
-        return stagingDirectory;
+        // The user didn't specify a URL: calculate default in the execution root target dir
+        File defaultStagingDirectory = new File( getExecutionRootBuildDirectory(), DEFAULT_STAGING_DIRECTORY );
+        getLog().debug( "stagingDirectory NOT specified, using the execution root project: " + defaultStagingDirectory );
+        return defaultStagingDirectory;
     }
 
     /**

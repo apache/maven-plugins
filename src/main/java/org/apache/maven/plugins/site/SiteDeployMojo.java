@@ -40,29 +40,29 @@ import org.apache.maven.plugins.annotations.Mojo;
 public class SiteDeployMojo
     extends AbstractDeployMojo
 {
-    private Site site;
-
     @Override
-    public String getDeployRepositoryID()
-        throws MojoExecutionException
+    protected boolean isDeploy()
     {
-        if ( site == null )
-        {
-            site = getTopLevelSite( project );
-        }
-
-        return site.getId();
+        return true;
     }
 
+    /**
+     * Deploy distribution site url is directly the current project value.
+     */
     @Override
-    public String getDeployRepositoryURL()
+    protected String determineTopDistributionManagementSiteUrl()
         throws MojoExecutionException
     {
-        if ( site == null )
-        {
-            site = getTopLevelSite( project );
-        }
+        return getSite( project ).getUrl();
+    }
 
-        return site.getUrl();
+    /**
+     * Deploy directly to the current project's distribution management site.
+     */
+    @Override
+    protected Site determineDeploySite()
+        throws MojoExecutionException
+    {
+        return getSite( project );
     }
 }

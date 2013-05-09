@@ -143,12 +143,11 @@ public abstract class AbstractDeployMojo
     @Component
     protected MavenSession mavenSession;
 
-    private PlexusContainer container;
+    private String topDistributionManagementSiteUrl;
 
-    /**
-     * The String "staging/".
-     */
-    protected static final String DEFAULT_STAGING_DIRECTORY = "staging/";
+    private Site deploySite;
+
+    private PlexusContainer container;
 
     /**
      * {@inheritDoc}
@@ -162,7 +161,7 @@ public abstract class AbstractDeployMojo
             return;
         }
 
-        deployTo( new BugFixedRepository( getDeployRepositoryID(), appendSlash( getDeployRepositoryURL() ) ) );
+        deployTo( new BugFixedRepository( getDeploySite().getId(), appendSlash( getDeploySite().getUrl() ) ) );
     }
 
     /**
@@ -184,27 +183,63 @@ public abstract class AbstractDeployMojo
         }
     }
 
+
     /**
-     * Specifies the id to look up credential settings.
+     * Detect if the mojo is staging or deploying.
      *
-     * @return the id to look up credentials for the deploy. Not null.
-     * @throws MojoExecutionException if the ID cannot be determined
+     * @return <code>true</code> if the mojo is for deploy and not staging (local or deploy)
      */
-    protected abstract String getDeployRepositoryID()
+    protected abstract boolean isDeploy();
+
+    /**
+     * Get the top distribution management site url, used for module relative path calculations.
+     * This should be a top-level URL, ie above modules and locale sub-directories. Each deploy mojo
+     * can tweak algorithm to determine this top site by implementing determineTopDistributionManagementSiteUrl().
+     *
+     * @return the site for deployment
+     * @throws MojoExecutionException
+     * @see #determineTopDistributionManagementSiteUrl()
+     */
+    protected String getTopDistributionManagementSiteUrl()
+        throws MojoExecutionException
+    {
+        if ( topDistributionManagementSiteUrl == null )
+        {
+            topDistributionManagementSiteUrl = determineTopDistributionManagementSiteUrl();
+
+            getLog().debug( "top distributionManagement.site.url=" + topDistributionManagementSiteUrl
+                                + ", actual module relative path: " + getDeployModuleDirectory() );
+        }
+        return topDistributionManagementSiteUrl;
+    }
+
+    protected abstract String determineTopDistributionManagementSiteUrl()
         throws MojoExecutionException;
 
     /**
-     * Specifies the target URL for the deploy.
-     * This should be the top-level URL, ie above modules and locale sub-directories.
+     * Get the site used for deployment, with its id to look up credential settings and the target URL for the deploy.
+     * This should be a top-level URL, ie above modules and locale sub-directories. Each deploy mojo
+     * can tweak algorithm to determine this deploy site by implementing determineDeploySite().
      *
-     * @return the url to deploy to. Not null.
-     * @throws MojoExecutionException if the URL cannot be constructed
+     * @return the site for deployment
+     * @throws MojoExecutionException
+     * @see #determineDeploySite()
      */
-    protected abstract String getDeployRepositoryURL()
+    protected Site getDeploySite()
+        throws MojoExecutionException
+    {
+        if ( deploySite == null )
+        {
+            deploySite = determineDeploySite();
+        }
+        return deploySite;
+    }
+
+    protected abstract Site determineDeploySite()
         throws MojoExecutionException;
 
     /**
-     * Find the relative path between the distribution URLs of the top parent and the current project.
+     * Find the relative path between the distribution URLs of the top site and the current project.
      *
      * @return the relative path or "./" if the two URLs are the same.
      * @throws MojoExecutionException
@@ -212,7 +247,7 @@ public abstract class AbstractDeployMojo
     protected String getDeployModuleDirectory()
         throws MojoExecutionException
     {
-        String relative = siteTool.getRelativePath( getSite( project ).getUrl(), getTopLevelSite( project ).getUrl() );
+        String relative = siteTool.getRelativePath( getSite( project ).getUrl(), getTopDistributionManagementSiteUrl() );
 
         // SiteTool.getRelativePath() uses File.separatorChar,
         // so we need to convert '\' to '/' in order for the URL to be valid for Windows users
@@ -678,7 +713,7 @@ public abstract class AbstractDeployMojo
                                                   PlexusConfiguration plexusConf, PlexusContainer container )
         throws ComponentConfigurationException
     {
-        // in maven 2.x   :
+        // in Maven 2.x   :
         // * container.getContainerRealm() -> org.codehaus.classworlds.ClassRealm
         // * componentConfiguration 3rd param is org.codehaus.classworlds.ClassRealm
         // so use some reflection see MSITE-609
@@ -697,7 +732,7 @@ public abstract class AbstractDeployMojo
         catch ( Exception e )
         {
             throw new ComponentConfigurationException(
-                "fail to configure wagon component for a maven2 use " + e.getMessage(), e );
+                "Failed to configure wagon component for a Maven2 use " + e.getMessage(), e );
         }
     }
 
@@ -749,90 +784,5 @@ public abstract class AbstractDeployMojo
     {
         return project.getName() + " (" + project.getGroupId() + ':' + project.getArtifactId() + ':'
             + project.getVersion() + ')';
-    }
-
-    /**
-     * Extract the distributionManagement site of the top level parent of the given MavenProject.
-     * This climbs up the project hierarchy and returns the site of the last project
-     * for which {@link #getSite(org.apache.maven.project.MavenProject)} returns a site that resides in the
-     * same site. Notice that it doesn't take into account if the parent is in the reactor or not.
-     *
-     * @param project the MavenProject. Not <code>null</code>.
-     * @return the top level site. Not <code>null</code>.
-     *         Also site.getUrl() and site.getId() are guaranteed to be not <code>null</code>.
-     * @throws MojoExecutionException if no site info is found in the tree.
-     * @see URIPathDescriptor#sameSite(java.net.URI)
-     */
-    protected Site getTopLevelSite( MavenProject project )
-        throws MojoExecutionException
-    {
-        Site site = getSite( project );
-
-        MavenProject parent = project;
-
-        while ( parent.getParent() != null )
-        {
-            // MSITE-585, MNG-1943
-            parent = siteTool.getParentProject( parent, reactorProjects, localRepository );
-
-            Site oldSite = site;
-
-            try
-            {
-                site = getSite( parent );
-            }
-            catch ( MojoExecutionException e )
-            {
-                break;
-            }
-
-            // MSITE-600
-            URIPathDescriptor siteURI = new URIPathDescriptor( URIEncoder.encodeURI( site.getUrl() ), "" );
-            URIPathDescriptor oldSiteURI = new URIPathDescriptor( URIEncoder.encodeURI( oldSite.getUrl() ), "" );
-
-            if ( !siteURI.sameSite( oldSiteURI.getBaseURI() ) )
-            {
-                return oldSite;
-            }
-        }
-
-        return site;
-    }
-
-    /**
-     * Detect if the mojo is staging or deploying.
-     *
-     * @return <code>true</code> if the mojo is for deploy and not staging (local or deploy)
-     */
-    protected boolean isDeploy()
-    {
-        return true;
-    }
-
-    private static class URIEncoder
-    {
-        private static final String MARK = "-_.!~*'()";
-        private static final String RESERVED = ";/?:@&=+$,";
-
-        public static String encodeURI( final String uriString )
-        {
-            final char[] chars = uriString.toCharArray();
-            final StringBuilder uri = new StringBuilder( chars.length );
-
-            for ( char c : chars )
-            {
-                if ( ( c >= '0' && c <= '9' ) || ( c >= 'a' && c <= 'z' ) || ( c >= 'A' && c <= 'Z' )
-                        || MARK.indexOf( c ) != -1  || RESERVED.indexOf( c ) != -1 )
-                {
-                    uri.append( c );
-                }
-                else
-                {
-                    uri.append( '%' );
-                    uri.append( Integer.toHexString( (int) c ) );
-                }
-            }
-            return uri.toString();
-        }
     }
 }
