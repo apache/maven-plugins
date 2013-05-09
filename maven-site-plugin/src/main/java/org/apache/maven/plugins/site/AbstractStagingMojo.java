@@ -1,10 +1,5 @@
 package org.apache.maven.plugins.site;
 
-import org.apache.maven.doxia.site.decoration.inheritance.URIPathDescriptor;
-import org.apache.maven.model.Site;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.project.MavenProject;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -24,6 +19,13 @@ import org.apache.maven.project.MavenProject;
  * under the License.
  */
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.maven.doxia.site.decoration.inheritance.URIPathDescriptor;
+import org.apache.maven.model.Site;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.MavenProject;
+
 /**
  * Abstract base class for staging mojos.
  *
@@ -33,6 +35,13 @@ import org.apache.maven.project.MavenProject;
 public abstract class AbstractStagingMojo
     extends AbstractDeployMojo
 {
+    /**
+     * Top distribution management site url, for manual configuration when auto-calculated value
+     * doesn't match expectations. Relative module directory will be calculated from this url.
+     */
+    @Parameter( property = "topSiteURL" )
+    protected String topSiteURL;
+
     /**
      * The String "staging/".
      */
@@ -46,13 +55,14 @@ public abstract class AbstractStagingMojo
 
     /**
      * By default, staging mojos will get their top distribution management site url by getting top parent
-     * with the same site.
+     * with the same site, which is a good heuristics. But in case the default value doesn't match
+     * expectations, <code>topSiteURL</code> can be configured: it will be used instead.
      */
     @Override
     protected String determineTopDistributionManagementSiteUrl()
         throws MojoExecutionException
     {
-        return getSite( getTopLevelProject( project ) ).getUrl();
+        return ( StringUtils.isEmpty( topSiteURL ) ) ? getSite( getTopLevelProject( project ) ).getUrl() : topSiteURL;
     }
 
     /**
