@@ -182,6 +182,12 @@ under the License.
     <system>JIRA</system>
     <url>http://jira.codehaus.org/browse/MSITE</url>
   </issueManagement>
+  <distributionManagement>
+    <site>
+      <id>apache.website</id>
+      <url>scm:svn:https://svn.apache.org/repos/infra/websites/production/maven/content/${maven.site.path}</url>
+    </site>
+  </distributionManagement>
 
   <properties>
     <doxiaVersion>1.4</doxiaVersion>
@@ -192,6 +198,7 @@ under the License.
     <plexusVersion>1.5.4</plexusVersion>
     <scmVersion>1.4</scmVersion>
     <mavenPluginPluginVersion>3.2</mavenPluginPluginVersion>
+    <maven.site.path>plugins-archives/${project.artifactId}-LATEST</maven.site.path>
     <!-- for ITs -->
     <javadocPluginVersion>2.8.1</javadocPluginVersion>
     <projectInfoReportsPluginVersion>2.4</projectInfoReportsPluginVersion>
