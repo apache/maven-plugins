@@ -28,7 +28,7 @@ import java.util.StringTokenizer;
  * Various path (URL) manipulation routines.
  *
  * <strong>Note: </strong> This is a copy of a file from Wagon. It was copied here to be able to work around WAGON-307.
- * This class can be removed when the prerequisite Maven version uses wagon-provider-api:1.0-beta-7.
+ * This class can be removed when the prerequisite Maven version uses wagon-provider-api:1.0-beta-7, ie Maven &gt;= 3.0.1.
  *
  * @author <a href="michal.maczka@dimatics.com">Michal Maczka</a>
  * @version $Id$
