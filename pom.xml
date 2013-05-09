@@ -104,7 +104,7 @@ under the License.
   <properties>
     <doxiaVersion>1.2</doxiaVersion>
     <doxia-sitetoolsVersion>1.2</doxia-sitetoolsVersion>
-    <mavenVersion>2.2.0</mavenVersion>
+    <mavenVersion>2.2.1</mavenVersion>
     <wagonVersion>1.0</wagonVersion>
     <scmVersion>1.8</scmVersion>
     <sitePluginVersion>3.2</sitePluginVersion>
