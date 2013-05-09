@@ -33,7 +33,7 @@
 
 Building multi-module sites
 
-  Running <<<mvn site>>> on a top level project, maven will build all sites for every module
+  When running <<<mvn site>>> on a top level project, Maven will build all sites for every module
   defined in the <<<modules>>> section of the pom individually. Note that each site is
   generated in each individual project's target location. As a result, relative links between
   different modules will NOT work. They will however work when you deploy or stage the site.
@@ -41,13 +41,13 @@ Building multi-module sites
 * Staging and deploying
 
   To preview the whole tree of a multi-module site, you can use the
-  <<<{{{../stage-mojo.html}site:stage}}>>> goal. This will build the whole site
-  and copy individual sites to their proper place at the staging location.
+  <<<{{{../stage-mojo.html}site:stage}}>>> goal. This will
+  copy individual sites to their proper place at the staging location.
 
-  <<<{{{../deploy-mojo.html}site:deploy}}>>> does the same thing as <<<site:stage>>>
+  <<<{{{../deploy-mojo.html}site:deploy}}>>> does the same thing as <<<site:stage>>>,
   but uses the url defined in the <<<\<distributionManagement\>>>> element of the pom
-  as deployment location. This is usually a remote url, but both <<<scp>>> and <<<file>>>
-  protocols are supported.
+  as deployment location. This is usually a remote url, but both remote protocols like
+  <<<scp>>> and local protocols like <<<file>>> are supported.
 
   Finally, <<<{{{../stage-deploy-mojo.html}site:stage-deploy}}>>> does the same thing as
   <<<site:deploy>>> but uses the <<<stagingDirectory>>> parameter as deployment location.
@@ -61,7 +61,7 @@ Building multi-module sites
   <<<\<distributionManagement\>>>> element of the pom.
 
   * If your multi-module tree does not
-  follow the maven conventions, or if module directories are named differently than
+  follow the Maven conventions, or if module directories are named differently than
   module artifacts, you have to specify the url's for <<each>> child project.
   See also <<<{{{../faq.html#Use_of_url}How does the Site Plugin use the \<url\> element in the POM?}}>>>.
 
