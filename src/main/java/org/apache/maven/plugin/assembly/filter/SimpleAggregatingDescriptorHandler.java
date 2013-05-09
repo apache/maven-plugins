@@ -55,6 +55,8 @@ public class SimpleAggregatingDescriptorHandler
 
     private String outputPath;
 
+    private final String commentChars = "#";
+
     // calculated, temporary values.
 
     private boolean overrideFilterAction;
@@ -105,11 +107,12 @@ public class SimpleAggregatingDescriptorHandler
             // FIXME if it is a properties file, encoding should be ISO-8859-1
             writer = new FileWriter( f ); // platform encoding
 
-            String commentChars = "#";
             writer.write( commentChars + " Aggregated on " + new Date() + " from: " );
 
-            for ( final String filename : filenames )
+            for ( final Iterator<String> it = filenames.iterator(); it.hasNext(); )
             {
+                final String filename = it.next();
+
                 writer.write( "\n" + commentChars + " " + filename );
             }
 

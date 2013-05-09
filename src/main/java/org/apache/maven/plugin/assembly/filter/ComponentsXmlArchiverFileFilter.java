@@ -39,6 +39,7 @@ import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -74,14 +75,17 @@ public class ComponentsXmlArchiverFileFilter
         {
             final Xpp3Dom[] children = newDom.getChildren();
 
-            for ( final Xpp3Dom component : children )
+            for ( int i = 0; i < children.length; i++ )
             {
+                final Xpp3Dom component = children[i];
+
                 if ( components == null )
                 {
                     components = new LinkedHashMap<String, Xpp3Dom>();
                 }
 
-                final String role = component.getChild( "role" ).getValue();
+                final String role = component.getChild( "role" )
+                                             .getValue();
                 final Xpp3Dom child = component.getChild( "role-hint" );
                 final String roleHint = child != null ? child.getValue() : "";
 
@@ -130,8 +134,10 @@ public class ComponentsXmlArchiverFileFilter
                 final Xpp3Dom componentDom = new Xpp3Dom( "components" );
                 dom.addChild( componentDom );
 
-                for ( final Xpp3Dom component : components.values() )
+                for ( final Iterator<Xpp3Dom> i = components.values()
+                                                            .iterator(); i.hasNext(); )
                 {
+                    final Xpp3Dom component = i.next();
                     componentDom.addChild( component );
                 }
 
