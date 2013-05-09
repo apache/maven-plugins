@@ -42,7 +42,7 @@ import org.codehaus.plexus.util.xml.Xpp3Dom;
  */
 @Mojo( name = "stage-deploy", requiresDependencyResolution = ResolutionScope.TEST )
 public class SiteStageDeployMojo
-    extends AbstractDeployMojo
+    extends AbstractStagingMojo
 {
     /**
      * The staged site will be deployed to this URL.
@@ -78,59 +78,33 @@ public class SiteStageDeployMojo
     private String stagingRepositoryId;
 
     @Override
-    /**
-     * Find the relative path between the distribution URLs of the parent that
-     * supplied the staging deploy URL and the current project.
-     *
-     * @return the relative path or "./" if the two URLs are the same.
-     *
-     * @throws MojoExecutionException
-     */
-    protected String getDeployModuleDirectory()
+    protected String determineTopDistributionManagementSiteUrl()
         throws MojoExecutionException
     {
-        // MSITE-602: If the user specified an explicit stagingSiteURL, use a special relative path
         if ( StringUtils.isNotEmpty( stagingSiteURL ) )
         {
-            // We need to calculate the relative path between this project and
-            // the first one that supplied a stagingSiteURL
-            String relative = siteTool.getRelativePath( getSite( project ).getUrl(),
-                getSiteForTopMostParentWithSameStagingSiteURL( project ).getUrl() );
-
-            // SiteTool.getRelativePath() uses File.separatorChar,
-            // so we need to convert '\' to '/' in order for the URL to be valid for Windows users
-            relative = relative.replace( '\\', '/' );
-
-            getLog().debug( "The stagingSiteURL is configured, using special way to calculate relative path." );
-            return ( "".equals( relative ) ) ? "./" : relative;
+            // We need to calculate the first project that supplied same stagingSiteURL
+            return getSite( getTopMostParentWithSameStagingSiteURL( project ) ).getUrl();
         }
-        else
-        {
-            getLog().debug( "No stagingSiteURL is configured, using standard way to calculate relative path." );
-            return super.getDeployModuleDirectory();
-        }
+
+        return super.determineTopDistributionManagementSiteUrl();
     }
 
     @Override
-    protected String getDeployRepositoryID()
+    protected Site determineDeploySite()
         throws MojoExecutionException
     {
-        stagingRepositoryId = stagingRepoId( stagingRepositoryId );
+        Site top = new Site();
 
-        getLog().info( "Using this server ID for stage deploy: " + stagingRepositoryId );
+        top.setId( stagingRepoId() );
+        getLog().info( "Using this server ID for stage deploy: " + top.getId() );
 
-        return stagingRepositoryId;
-    }
-
-    @Override
-    protected String getDeployRepositoryURL()
-        throws MojoExecutionException
-    {
-        String stagingURL = determineStageDeploySiteURL( stagingSiteURL );
-
+        String stagingURL = determineStageDeploySiteURL();
         getLog().info( "Using this base URL for stage deploy: " + stagingURL );
 
-        return stagingURL;
+        top.setUrl( stagingURL );
+
+        return top;
     }
 
     /**
@@ -146,23 +120,22 @@ public class SiteStageDeployMojo
      * @param project the MavenProject. Not null.
      * @return the site for the top most project that has a stagingSiteURL. Not null.
      */
-    private Site getSiteForTopMostParentWithSameStagingSiteURL( MavenProject project )
+    private MavenProject getTopMostParentWithSameStagingSiteURL( MavenProject project )
     {
         String actualStagingSiteURL = getStagingSiteURL( project );
 
         MavenProject parent = project;
-        Site site = null;
 
         while ( parent != null
                 && actualStagingSiteURL.equals( getStagingSiteURL( parent ) ) )
         {
-            site = parent.getDistributionManagement().getSite();
-
+            project = parent;
+ 
             // MSITE-585, MNG-1943
             parent = siteTool.getParentProject( parent, reactorProjects, localRepository );
         }
 
-        return site;
+        return project;
     }
 
     /**
@@ -227,40 +200,30 @@ public class SiteStageDeployMojo
     /**
      * Find the URL where staging will take place.
      *
-     * @param usersStagingSiteURL The staging site URL as suggested by the user's configuration
-     * 
      * @return the site URL for staging
      */
-    private String determineStageDeploySiteURL( final String usersStagingSiteURL )
+    private String determineStageDeploySiteURL()
         throws MojoExecutionException
     {
-        String topLevelURL = null;
-
-        if ( usersStagingSiteURL != null )
+        if ( stagingSiteURL != null )
         {
             // the user has specified a stagingSiteURL - use it
-            getLog().debug( "stagingSiteURL specified by the user: " + usersStagingSiteURL );
-            topLevelURL = usersStagingSiteURL;
-        }
-        else
-        {
-            // The user didn't specify a URL, use the top level site distribution URL and add "[/]staging/" to it
-            topLevelURL = appendSlash( getTopLevelSite( project ).getUrl() ) + DEFAULT_STAGING_DIRECTORY;
-            getLog().debug( "stagingSiteURL NOT specified, using the top level project: " + topLevelURL );
+            getLog().debug( "stagingSiteURL specified by the user: " + stagingSiteURL );
+            return stagingSiteURL;
         }
 
-        // Return either
-        //   usersURL
-        // or
-        //   topLevelProjectURL + "staging"
-        return topLevelURL;
+        // The user didn't specify a URL, use the top level site distribution URL and add "[/]staging/" to it
+        String defaultStagingSiteURL = appendSlash( getTopDistributionManagementSiteUrl() ) + DEFAULT_STAGING_DIRECTORY;
+        getLog().debug( "stagingSiteURL NOT specified, using the top level project: " + defaultStagingSiteURL );
+
+        return defaultStagingSiteURL;
     }
 
-    private String stagingRepoId( final String stagingRepoId )
+    private String stagingRepoId()
     {
-        if ( stagingRepoId != null )
+        if ( stagingRepositoryId != null )
         {
-            return stagingRepoId;
+            return stagingRepositoryId;
         }
 
         try

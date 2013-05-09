@@ -28,13 +28,13 @@ under the License.
   <packaging>pom</packaging>
 
   <name>Aggregator</name>
-  <description>Complex stage-deploy test</description>
-  <url>http://example.net/junk/</url>
+  <description>Complex stage-deploy test: aggregator and parent pom are not the same</description>
+  <url>http://example.net/aggregator/</url>
 
   <distributionManagement>
     <site>
       <id>website</id>
-      <url>file://@project.build.directory@/it/site-sd-2/deploy/junk/</url>
+      <url>file://@project.build.directory@/it/site-sd-2/deploy/aggregator/</url>
     </site>
   </distributionManagement>
 

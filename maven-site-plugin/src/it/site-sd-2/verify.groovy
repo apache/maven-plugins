@@ -20,10 +20,14 @@
 target = new File( basedir, 'target' );
 assert target.isDirectory();
 
-// deploy
+// deploy: reference layout
+// deploy/
+//     |- aggregator/
+//     `- plugins/
+//         `- maven-rocks-plugin/
 deployDirectory = new File( basedir, 'deploy' );
 assert deployDirectory.isDirectory();
-assert new File( deployDirectory, 'junk' ).isDirectory(); // junk directory (aggregator)
+assert new File( deployDirectory, 'aggregator' ).isDirectory();
 pluginsDirectory = new File( deployDirectory, 'plugins' );
 assert pluginsDirectory.isDirectory();
 assert new File( pluginsDirectory, 'maven-rocks-plugin' ).isDirectory();
