@@ -123,7 +123,6 @@ public abstract class AbstractDeployMojo
      * @since 3.0
      */
     @Parameter( property = "maven.site.deploy.skip", defaultValue = "false" )
-
     private boolean skipDeploy;
 
     /**

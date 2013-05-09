@@ -62,6 +62,7 @@ public class SiteStageMojo
     @Parameter( property = "maven.site.skip", defaultValue = "false" )
     private boolean skip;
 
+    @Override
     public void execute()
         throws MojoExecutionException
     {
@@ -72,6 +73,12 @@ public class SiteStageMojo
         }
 
         super.execute();
+    }
+
+    @Override
+    protected boolean isDeploy()
+    {
+        return false;
     }
 
     @Override
