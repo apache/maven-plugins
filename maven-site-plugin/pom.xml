@@ -273,17 +273,10 @@ under the License.
       <version>2.4.2</version>
     </dependency>
 
-    <dependency>
-      <groupId>org.apache.maven.shared</groupId>
-      <artifactId>maven-project-utils</artifactId>
-      <version>1.0-SNAPSHOT</version>
-    </dependency>
-
     <!-- dependencies to annotations -->
     <dependency>
       <groupId>org.apache.maven.plugin-tools</groupId>
       <artifactId>maven-plugin-annotations</artifactId>
-      <version>${mavenPluginPluginVersion}</version>
       <scope>provided</scope>
     </dependency>
 
@@ -526,7 +519,6 @@ under the License.
       <plugin>
         <groupId>org.codehaus.plexus</groupId>
         <artifactId>plexus-component-metadata</artifactId>
-        <version>${plexusVersion}</version>
         <executions>
           <execution>
             <goals>
