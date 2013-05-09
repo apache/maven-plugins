@@ -77,10 +77,19 @@ public class SiteStageDeployMojo
     @Parameter( property = "stagingRepositoryId" )
     private String stagingRepositoryId;
 
+    /**
+     * If <code>stagingSiteURL</code> is configured, top most parent with same staging site url
+     * will be used.
+     */
     @Override
     protected String determineTopDistributionManagementSiteUrl()
         throws MojoExecutionException
     {
+        if ( StringUtils.isNotEmpty( topSiteURL ) )
+        {
+            return topSiteURL;
+        }
+
         if ( StringUtils.isNotEmpty( stagingSiteURL ) )
         {
             // We need to calculate the first project that supplied same stagingSiteURL
