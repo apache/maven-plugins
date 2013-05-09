@@ -322,3 +322,23 @@ Using maven-site-plugin with Maven 3
     </plugins>
   </build>
 +-----+
+
+* Inheritance of reports for Maven 3 before 3.0.4
+
+  Maven 3 before 3.0.4 works differently from Maven 2 when dealing with inheritance of reports: given
+  a plugin providing multiple report goals, in Maven 2,
+  reports configured in child pom are added to reports from parent, whereas in Maven 3 up to 3.0.3
+  reports from child replace reports from parent. Since 3.0.4, though, inheritance of reports works
+  back like Maven 2.
+
+  For example, given a multi module build where the parent POM has the <<<index>>> report
+  configured and the child POM has the <<<summary>>> report configured for
+  <<<maven-project-info-reports-plugin>>> plugin:
+
+  * with Maven 2 and Maven 3.0.4, the child site will have both the <<<index>>> and <<<summary>>> reports,
+
+  * with Maven 3.0.3, the child site will have only the <<<summary>>> report.
+
+  []
+
+  For more info see {{{http://jira.codehaus.org/browse/MSITE-596}MSITE-596}}.
