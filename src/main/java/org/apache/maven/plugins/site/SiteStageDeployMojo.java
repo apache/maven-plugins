@@ -77,6 +77,12 @@ public class SiteStageDeployMojo
     @Parameter( property = "stagingRepositoryId" )
     private String stagingRepositoryId;
 
+    @Override
+    protected boolean isDeploy()
+    {
+        return true;
+    }
+
     /**
      * If <code>stagingSiteURL</code> is configured, top most parent with same staging site url
      * will be used.

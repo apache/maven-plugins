@@ -47,12 +47,6 @@ public abstract class AbstractStagingMojo
      */
     protected static final String DEFAULT_STAGING_DIRECTORY = "staging/";
 
-    @Override
-    protected boolean isDeploy()
-    {
-        return false;
-    }
-
     /**
      * By default, staging mojos will get their top distribution management site url by getting top parent
      * with the same site, which is a good heuristics. But in case the default value doesn't match
