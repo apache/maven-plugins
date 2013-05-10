@@ -1,0 +1,4 @@
+org.apache.maven.its.dependency:test:jar:1.0-SNAPSHOT
+\- org.apache.maven:maven-project:jar:2.0.6:compile
+   \- org.apache.maven:maven-artifact-manager:jar:2.0.6:compile
+      \- org.apache.maven.wagon:wagon-provider-api:jar:1.0-beta-2:compile
