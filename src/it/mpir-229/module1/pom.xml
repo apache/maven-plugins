@@ -31,4 +31,6 @@
   <artifactId>mpir-229-module1</artifactId>
   <packaging>pom</packaging>
 
+  <url>${artifacts.url}/${project.artifactId}-${project.version}</url>
+
 </project>

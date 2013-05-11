@@ -23,6 +23,7 @@ import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
@@ -101,8 +102,6 @@ public class ModulesReport
         @Override
         public void renderBody()
         {
-            List<String> modules = model.getModules();
-
             startSection( getTitle() );
 
             paragraph( getI18nString( "intro" ) );
@@ -113,45 +112,18 @@ public class ModulesReport
             String description = getI18nString( "header.description" );
             tableHeader( new String[] {name, description} );
 
-            for ( String module : modules )
+            final String baseURL = project.getUrl();
+            
+            // before MPIR-229 this was model.getModules(), which could have uninherited/unresolved values
+            // @todo also include modules which are not part of reactor, e.g. caused by -pl 
+            List<MavenProject> modules = project.getCollectedProjects();
+            for ( MavenProject moduleProject : modules )
             {
-                Model moduleModel;
-                File f = new File( project.getBasedir(), module + "/pom.xml" );
+                Model moduleModel = moduleProject.getModel();
 
-                if ( f.exists() )
-                {
-                    moduleModel = readModel( f );
+                final String moduleName = moduleProject.getName();
 
-                    if ( moduleModel == null )
-                    {
-                        getLog().warn( "Unable to read filesystem POM for module " + module );
-
-                        moduleModel = new Model();
-                        moduleModel.setName( module );
-                        moduleModel.setArtifactId( module );
-                    }
-                }
-                else
-                {
-                    getLog().warn( "No filesystem POM found for module " + module );
-
-                    moduleModel = new Model();
-                    moduleModel.setName( module );
-                    moduleModel.setArtifactId( module );
-                }
-
-                final String moduleName = moduleModel.getName();
-
-                String baseURL = model.getUrl();
-
-                // re-read the parent URL because the above gives some relative link (why?)
-                final Model parentModel = readModel( new File( project.getBasedir(), "pom.xml" ) );
-                if ( parentModel != null )
-                {
-                    baseURL = parentModel.getUrl();
-                }
-
-                final String moduleHref = getRelativeLink( baseURL, moduleModel.getUrl(), moduleModel.getArtifactId() );
+                final String moduleHref = getRelativeLink( baseURL, moduleProject.getUrl(), moduleProject.getArtifactId() );
 
                 tableRow( new String[] {linkedName( moduleName, moduleHref ), moduleModel.getDescription()} );
             }

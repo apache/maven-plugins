@@ -16,7 +16,7 @@
   ~ KIND, either express or implied.  See the License for the
   ~ specific language governing permissions and limitations
   ~ under the License.
-  -->
+-->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -30,11 +30,12 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <some.property>http://maven.apache.org/plugins/it</some.property>
+    <some.property>TEST</some.property>
+    <artifacts.url>http://maven.apache.org/plugins/it/${some.property}</artifacts.url>
   </properties>
-  
-  <url>${some.property}/${project.artifactId}-${project.version}</url>
-  
+
+  <url>${artifacts.url}</url>
+
   <build>
     <plugins>
       <plugin>
