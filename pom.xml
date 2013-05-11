@@ -102,7 +102,7 @@ under the License.
   </issueManagement>
 
   <properties>
-    <doxiaVersion>1.2</doxiaVersion>
+    <doxiaVersion>1.4</doxiaVersion>
     <doxia-sitetoolsVersion>1.2</doxia-sitetoolsVersion>
     <mavenVersion>2.2.1</mavenVersion>
     <wagonVersion>1.0</wagonVersion>
