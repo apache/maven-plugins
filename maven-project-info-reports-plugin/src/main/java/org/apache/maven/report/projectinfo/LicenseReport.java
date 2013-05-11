@@ -19,7 +19,7 @@ package org.apache.maven.report.projectinfo;
  * under the License.
  */
 
-import org.apache.commons.validator.UrlValidator;
+import org.apache.commons.validator.routines.UrlValidator;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.doxia.util.HtmlTools;
 import org.apache.maven.model.License;
