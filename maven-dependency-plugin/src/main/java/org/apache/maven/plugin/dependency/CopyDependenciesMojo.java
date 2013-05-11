@@ -136,7 +136,7 @@ public class CopyDependenciesMojo
             getLog().info( artifact.getFile().getName() + " already exists in destination." );
         }
 
-        if ( isCopyPom() )
+        if ( isCopyPom() && !useRepositoryLayout )
         {
             copyPoms( getOutputDirectory(), artifacts, this.stripVersion );
             copyPoms( getOutputDirectory(), skippedArtifacts,
@@ -144,6 +144,12 @@ public class CopyDependenciesMojo
         }
     }
 
+    /**
+     * install the artifact and the corresponding pom if copyPoms=true
+     * 
+     * @param artifact
+     * @param targetRepository
+     */
     private void installArtifact( Artifact artifact, ArtifactRepository targetRepository )
     {
         try
