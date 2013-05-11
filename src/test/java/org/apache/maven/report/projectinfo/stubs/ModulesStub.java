@@ -1,5 +1,10 @@
 package org.apache.maven.report.projectinfo.stubs;
 
+import java.util.Arrays;
+import java.util.List;
+
+import org.apache.maven.project.MavenProject;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -30,5 +35,11 @@ public class ModulesStub
     protected String getPOM()
     {
         return "modules-plugin-config.xml";
+    }
+    
+    @Override
+    public List<MavenProject> getCollectedProjects()
+    {
+        return Arrays.<MavenProject>asList( new SubProject1Stub(), new SubProject2Stub() );
     }
 }

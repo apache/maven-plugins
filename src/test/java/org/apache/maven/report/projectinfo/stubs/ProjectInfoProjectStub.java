@@ -131,6 +131,12 @@ public abstract class ProjectInfoProjectStub
     }
 
     @Override
+    public File getFile()
+    {
+        return new File( getBasedir(), getPOM() );
+    }
+
+    @Override
     public Set<Artifact> getArtifacts()
     {
         return Collections.emptySet();
