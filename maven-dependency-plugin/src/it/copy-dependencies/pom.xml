@@ -100,6 +100,16 @@
               <outputDirectory>${project.build.directory}/it/copy-dep-test-3</outputDirectory>
             </configuration>
           </execution>
+          <execution>
+            <id>repositoryLayout</id>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${project.build.directory}/it/repositoryLayout</outputDirectory>
+              <useRepositoryLayout>true</useRepositoryLayout>
+            </configuration>
+          </execution>
         </executions>
       </plugin>
     </plugins>
