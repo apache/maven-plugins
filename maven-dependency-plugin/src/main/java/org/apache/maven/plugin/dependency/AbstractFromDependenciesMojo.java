@@ -64,14 +64,6 @@ public abstract class AbstractFromDependenciesMojo
     protected boolean useRepositoryLayout;
 
     /**
-     * Also copy the pom of each artifact.
-     *
-     * @since 2.0
-     */
-    @Parameter( property = "mdep.copyPom", defaultValue = "false" )
-    protected boolean copyPom = true;
-
-    /**
      * Place each type of file in a separate subdirectory. (example
      * /outputDirectory/runtime /outputDirectory/provided etc)
      *
@@ -206,21 +198,4 @@ public abstract class AbstractFromDependenciesMojo
     {
         this.useRepositoryLayout = useRepositoryLayout;
     }
-
-    /**
-     * @return true, if the pom of each artifact must be copied
-     */
-    public boolean isCopyPom()
-    {
-        return this.copyPom;
-    }
-
-    /**
-     * @param copyPom - true if the pom of each artifact must be copied
-     */
-    public void setCopyPom( boolean copyPom )
-    {
-        this.copyPom = copyPom;
-    }
-
 }

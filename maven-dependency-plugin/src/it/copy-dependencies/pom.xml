@@ -108,6 +108,7 @@
             <configuration>
               <outputDirectory>${project.build.directory}/it/repositoryLayout</outputDirectory>
               <useRepositoryLayout>true</useRepositoryLayout>
+              <copyPom>true</copyPom>
             </configuration>
           </execution>
         </executions>

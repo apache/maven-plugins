@@ -55,6 +55,14 @@ public class CopyDependenciesMojo
     extends AbstractFromDependenciesMojo
 {
     /**
+     * Also copy the pom of each artifact.
+     *
+     * @since 2.0
+     */
+    @Parameter( property = "mdep.copyPom", defaultValue = "false" )
+    protected boolean copyPom = true;
+
+    /**
      *
      */
     @Component
@@ -193,10 +201,11 @@ public class CopyDependenciesMojo
      * @see DependencyUtil#copyFile(File, File, Log)
      * @see DependencyUtil#getFormattedFileName(Artifact, boolean)
      */
-    protected void copyArtifact( Artifact artifact, boolean removeVersion, boolean prependGroupId, 
-    		boolean useBaseVersion ) throws MojoExecutionException
+    protected void copyArtifact( Artifact artifact, boolean removeVersion, boolean prependGroupId,
+                                 boolean useBaseVersion )
+        throws MojoExecutionException
     {
-        copyArtifact(artifact, removeVersion, prependGroupId, useBaseVersion, false);
+        copyArtifact( artifact, removeVersion, prependGroupId, useBaseVersion, false );
     }
 
     /**
@@ -214,8 +223,9 @@ public class CopyDependenciesMojo
      * @see DependencyUtil#copyFile(File, File, Log)
      * @see DependencyUtil#getFormattedFileName(Artifact, boolean)
      */
-    protected void copyArtifact( Artifact artifact, boolean removeVersion, boolean prependGroupId, 
-            boolean useBaseVersion, boolean removeClassifier ) throws MojoExecutionException
+    protected void copyArtifact( Artifact artifact, boolean removeVersion, boolean prependGroupId,
+                                 boolean useBaseVersion, boolean removeClassifier )
+        throws MojoExecutionException
     {
 
         String destFileName = DependencyUtil.getFormattedFileName( artifact, removeVersion, prependGroupId, 
@@ -237,7 +247,7 @@ public class CopyDependenciesMojo
         throws MojoExecutionException
 
     {
-        copyPoms(destDir, artifacts, removeVersion, false);
+        copyPoms( destDir, artifacts, removeVersion, false );
     }
     
     /**
@@ -254,8 +264,9 @@ public class CopyDependenciesMojo
             // Copy the pom
             if ( pomArtifact.getFile() != null && pomArtifact.getFile().exists() )
             {
-                File pomDestFile = new File( destDir, DependencyUtil.getFormattedFileName( pomArtifact, removeVersion,
-                                                                                           prependGroupId, useBaseVersion, removeClassifier ) );
+                File pomDestFile =
+                    new File( destDir, DependencyUtil.getFormattedFileName( pomArtifact, removeVersion, prependGroupId,
+                                                                            useBaseVersion, removeClassifier ) );
                 if ( !pomDestFile.exists() )
                 {
                     copyFile( pomArtifact.getFile(), pomDestFile );
@@ -287,5 +298,21 @@ public class CopyDependenciesMojo
                                    this.useSubDirectoryPerArtifact, this.useSubDirectoryPerType,
                                    this.useSubDirectoryPerScope, this.useRepositoryLayout, this.stripVersion,
                                    this.outputDirectory );
+    }
+
+    /**
+     * @return true, if the pom of each artifact must be copied
+     */
+    public boolean isCopyPom()
+    {
+        return this.copyPom;
+    }
+
+    /**
+     * @param copyPom - true if the pom of each artifact must be copied
+     */
+    public void setCopyPom( boolean copyPom )
+    {
+        this.copyPom = copyPom;
     }
 }
