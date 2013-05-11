@@ -20,6 +20,8 @@ package org.apache.maven.plugin.dependency;
  */
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
+import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.dependency.utils.DependencyStatusSets;
 import org.apache.maven.plugin.dependency.utils.DependencyUtil;
@@ -27,7 +29,11 @@ import org.apache.maven.plugin.dependency.utils.resolvers.ArtifactsResolver;
 import org.apache.maven.plugin.dependency.utils.resolvers.DefaultArtifactsResolver;
 import org.apache.maven.plugin.dependency.utils.translators.ArtifactTranslator;
 import org.apache.maven.plugin.dependency.utils.translators.ClassifierTypeTranslator;
+import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.MavenProjectBuilder;
+import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.shared.artifact.filter.collection.ArtifactFilterException;
 import org.apache.maven.shared.artifact.filter.collection.ArtifactIdFilter;
 import org.apache.maven.shared.artifact.filter.collection.ArtifactsFilter;
@@ -40,6 +46,7 @@ import org.apache.maven.shared.artifact.filter.collection.TypeFilter;
 import org.codehaus.plexus.util.StringUtils;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -204,6 +211,9 @@ public abstract class AbstractDependencyFilterMojo
     @Parameter( property = "mdep.prependGroupId", defaultValue = "false" )
     protected boolean prependGroupId = false;
 
+    @Component
+    MavenProjectBuilder projectBuilder;
+
     /**
      * Return an {@link ArtifactsFilter} indicating which artifacts must be filtered out.
      * 
@@ -226,6 +236,12 @@ public abstract class AbstractDependencyFilterMojo
         return status.getResolvedDependencies();
     }
 
+    protected DependencyStatusSets getDependencySets( boolean stopOnFailure )
+        throws MojoExecutionException
+    {
+        return getDependencySets( stopOnFailure, false );
+    }
+
     /**
      * Method creates filters and filters the projects dependencies. This method
      * also transforms the dependencies if classifier is set. The dependencies
@@ -236,7 +252,7 @@ public abstract class AbstractDependencyFilterMojo
      *         on the projects dependencies
      * @throws MojoExecutionException
      */
-    protected DependencyStatusSets getDependencySets( boolean stopOnFailure )
+    protected DependencyStatusSets getDependencySets( boolean stopOnFailure, boolean includeParents )
         throws MojoExecutionException
     {
         // add filters in well known order, least specific to most specific
@@ -262,6 +278,18 @@ public abstract class AbstractDependencyFilterMojo
         // start with all artifacts.
         @SuppressWarnings( "unchecked" ) Set<Artifact> artifacts = project.getArtifacts();
 
+        if ( includeParents )
+        {
+            // add dependencies parents
+            for ( Artifact dep : new ArrayList<Artifact>( artifacts ) )
+            {
+                addParentArtifacts( buildProjectFromArtifact( dep ), artifacts );
+            }
+
+            // add current project parent
+            addParentArtifacts( project, artifacts );
+        }
+
         // perform filtering
         try
         {
@@ -286,6 +314,44 @@ public abstract class AbstractDependencyFilterMojo
         return status;
     }
 
+    private MavenProject buildProjectFromArtifact( Artifact artifact )
+        throws MojoExecutionException
+    {
+        try
+        {
+            return projectBuilder.buildFromRepository( artifact, remoteRepos, getLocal() );
+        }
+        catch ( ProjectBuildingException e )
+        {
+            throw new MojoExecutionException( e.getMessage(), e );
+        }
+    }
+
+    private void addParentArtifacts( MavenProject project, Set<Artifact> artifacts )
+        throws MojoExecutionException
+    {
+        while ( project.hasParent() )
+        {
+            project = project.getParent();
+            if ( !artifacts.add( project.getArtifact() ) )
+            {
+                // artifact already in the set
+                break;
+            }
+            try
+            {
+                resolver.resolve( project.getArtifact(), this.remoteRepos, this.getLocal() );
+            }
+            catch ( ArtifactResolutionException e )
+            {
+                throw new MojoExecutionException( e.getMessage(), e );
+            }
+            catch ( ArtifactNotFoundException e )
+            {
+                throw new MojoExecutionException( e.getMessage(), e );
+            }
+        }
+    }
     /**
      * Transform artifacts
      *
