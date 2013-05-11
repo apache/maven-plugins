@@ -50,6 +50,7 @@ try
     int index1 = 10;
     int index2 = 10;
     String previousReportLink;
+    // MPIR-182: verify order of reports
     for ( String report : reports )
     {
         File reportFile = new File( siteDir, report + ".html" );
@@ -67,14 +68,14 @@ try
             System.out.println( "Wrong order for first report link: expected " + previousReportLink + " -> " + link + ", but found " + i1 + " < " + index1 );
             System.out.println( "   previous report link: " + info.substring( index1 - 10, index1 + 70 ) );
             System.out.println( "     actual report link: " + info.substring( i1 - 10, i1 + 70 ) );
-            //return false; // test known to fail: MPIR-182
+            return false;
         }
         if ( i2 < index2 )
         {
             System.out.println( "Wrong order for second report link: expected " + previousReportLink + " -> " + link + ", but found " + i2 + " < " + index2 );
             System.out.println( "   previous report link: " + info.substring( index2 - 10, index2 + 70 ) );
             System.out.println( "     actual report link: " + info.substring( i2 - 10, i2 + 70 ) );
-            //return false; // test known to fail: MPIR-182
+            return false;
         }
         index1 = i1;
         index2 = i2;
