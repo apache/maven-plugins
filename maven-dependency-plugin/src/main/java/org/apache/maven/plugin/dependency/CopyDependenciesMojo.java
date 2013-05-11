@@ -90,6 +90,13 @@ public class CopyDependenciesMojo
     protected boolean useBaseVersion = true;
 
     /**
+     * Add parent poms to the list of copied dependencies (both current project pom parents and dependencies parents).
+     * @since 2.8
+     */
+    @Parameter( defaultValue = "false" )
+    protected boolean addParentPoms;
+
+    /**
      * Main entry into mojo. Gets the list of dependencies and iterates through
      * calling copyArtifact.
      *
@@ -100,7 +107,7 @@ public class CopyDependenciesMojo
     protected void doExecute()
         throws MojoExecutionException
     {
-        DependencyStatusSets dss = getDependencySets( this.failOnMissingClassifierArtifact );
+        DependencyStatusSets dss = getDependencySets( this.failOnMissingClassifierArtifact, addParentPoms );
         Set<Artifact> artifacts = dss.getResolvedDependencies();
 
         if ( !useRepositoryLayout )
@@ -177,7 +184,7 @@ public class CopyDependenciesMojo
         }
         catch ( ArtifactInstallationException e )
         {
-            getLog().info( e.getMessage() );
+            getLog().warn( "unable to install " + artifact, e );
         }
     }
 
