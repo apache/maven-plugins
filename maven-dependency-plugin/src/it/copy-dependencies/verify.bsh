@@ -1,7 +1,37 @@
 import java.io.*;
 
-File libDir = new File( basedir, "target/it/copy-dep-test-1" );
+void checkExpected( File dir, String[] expectedFiles )
+{
+    for ( String expectedFile : expectedFiles )
+    {
+        File file = new File( dir, expectedFile );
+        System.out.println( "Checking for existence of " + file );
+        if ( !file.isFile() )
+        {
+            throw new Exception( "Missing file " + file );
+        }
+    }
+}
 
+void checkExpected( File dir, String[] expectedFiles, String[] unexpectedFiles )
+{
+    checkExpected( dir, expectedFiles );
+
+    for ( String unexpectedFile : unexpectedFiles )
+    {
+        File file = new File( dir, unexpectedFile );
+        System.out.println( "Checking for inexistence of " + file );
+        if ( file.isFile() )
+        {
+            throw new Exception( "Unexpected file " + file  + " found" );
+        }
+    }
+}
+
+File baseOutput = new File( basedir, "target/it" );
+
+
+// test-1
 String[] expectedFiles = {
     "maven-model-2.0.6.jar",
     "maven-model-2.0.6.pom",
@@ -11,18 +41,10 @@ String[] expectedFiles = {
     "maven-model-2.0.6-javadoc.jar",
 };
 
-for ( String expectedFile : expectedFiles )
-{
-    File file = new File( libDir, expectedFile );
-    System.out.println( "Checking for existence of " + file );
-    if ( !file.isFile() )
-    {
-        throw new Exception( "Missing file " + file );
-    }
-}
+checkExpected( new File( baseOutput, "copy-dep-test-1" ), expectedFiles );
 
-libDir = new File( basedir, "target/it/copy-dep-test-2" );
 
+// test-2
 String [] expectedFiles2 = {
     "maven-model-2.0.6.jar",
     "plexus-utils-1.4.1.jar",
@@ -35,28 +57,11 @@ String [] unexpectedFiles2 = {
     "maven-model-2.0.6-javadoc.jar",
 };
 
-for ( String expectedFile : expectedFiles2 )
-{
-    File file = new File( libDir, expectedFile );
-    System.out.println( "Checking for existence of " + file );
-    if ( !file.isFile() )
-    {
-        throw new Exception( "Missing file " + file );
-    }
-}
+checkExpected( new File( baseOutput, "copy-dep-test-2" ), expectedFiles2, unexpectedFiles2 );
 
-for ( String unexpectedFile : unexpectedFiles2 )
-{
-    File file = new File( libDir, unexpectedFile );
-    System.out.println( "Checking for existence of " + file );
-    if ( file.isFile() )
-    {
-        throw new Exception( "Unexpected file " + file  + " found" );
-    }
-}
 
-libDir = new File( basedir, "target/it/copy-dep-test-3" );
 
+// test-3
 String [] expectedFiles3 = {
     "maven-model-2.0.6-sources.jar",
 };
@@ -69,25 +74,7 @@ String [] unexpectedFiles3 = {
     "plexus-utils-1.4.1.jar",
 };
 
-for ( String expectedFile : expectedFiles3 )
-{
-    File file = new File( libDir, expectedFile );
-    System.out.println( "Checking for existence of " + file );
-    if ( !file.isFile() )
-    {
-        throw new Exception( "Missing file " + file );
-    }
-}
-
-for ( String unexpectedFile : unexpectedFiles3 )
-{
-    File file = new File( libDir, unexpectedFile );
-    System.out.println( "Checking for existence of " + file );
-    if ( file.isFile() )
-    {
-        throw new Exception( "Unexpected file " + file  + " found" );
-    }
-}
+checkExpected( new File( baseOutput, "copy-dep-test-3" ), expectedFiles3, unexpectedFiles3 );
 
 
 return true;
