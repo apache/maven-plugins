@@ -113,8 +113,16 @@ public abstract class AbstractDependencyFilterMojo
     protected String excludeTypes;
 
     /**
-     * Scope to include. An Empty string indicates all scopes (default).
-     *
+     * Scope to include. An Empty string indicates all scopes (default). The scopes being interpreted are the scopes as
+     * Maven sees them, not as specified in the pom. In summary:
+     * <ul>
+     * <li><code>runtime</code> scope gives runtime and compile dependencies,</li>
+     * <li><code>compile</code> scope gives compile, provided, and system dependencies,</li>
+     * <li><code>test</code> (default) scope gives all dependencies,</li>
+     * <li><code>provided</code> scope just gives provided dependencies,</li>
+     * <li><code>system</code> scope just gives system dependencies.</li>
+     * </ul>
+     * 
      * @since 2.0
      */
     @Parameter( property = "includeScope", defaultValue = "" )
