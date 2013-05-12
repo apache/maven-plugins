@@ -31,6 +31,15 @@ under the License.
     Test that the cpd.xml and pmd.xml files are included in the generated site.
   </description>
 
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-site-plugin</artifactId>
+        <version>@sitePluginVersion@</version>
+      </plugin>
+    </plugins>
+  </build>
+
   <reporting>
     <plugins>
       <plugin>
