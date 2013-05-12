@@ -20,7 +20,6 @@ package org.apache.maven.plugin.dependency.resolvers;
  */
 
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.dependency.AbstractResolveMojo;
 import org.apache.maven.plugin.dependency.utils.DependencyStatusSets;
 import org.apache.maven.plugin.dependency.utils.DependencyUtil;
 import org.apache.maven.plugin.dependency.utils.filters.ResolveFileFilter;
