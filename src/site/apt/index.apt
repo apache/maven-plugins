@@ -61,7 +61,7 @@ Maven Dependency Plugin
   optionally transitive dependencies and copies them to a specified location, stripping the version if desired.
   This goal can also be run from the command line.
 
-  *{{{./get-mojo.html}dependency:get}} downloads a single artifact transitively from a specified remote repository.
+  *{{{./get-mojo.html}dependency:get}} resolves a single artifact, eventually transitively, from a specified remote repository.
 
   *{{{./go-offline-mojo.html}dependency:go-offline}} tells Maven to resolve everything this project is dependent on
   (dependencies, plugins, reports) in preparation for going offline.
