@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.dependency;
+package org.apache.maven.plugin.dependency.analyze;
 
 /* 
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -23,6 +23,8 @@ import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
+import org.apache.maven.plugin.dependency.AbstractDependencyMojoTestCase;
+import org.apache.maven.plugin.dependency.analyze.AnalyzeDuplicateMojo;
 import org.apache.maven.plugin.logging.Log;
 
 /**
