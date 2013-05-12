@@ -38,10 +38,19 @@ String[] expectedFiles = {
     "plexus-utils-1.4.1.jar",
     "plexus-utils-1.4.1.pom",
     "maven-model-2.0.6-sources.jar",
-    "maven-model-2.0.6-javadoc.jar"
+    "maven-model-2.0.6-javadoc.jar",
+    "maven-settings-2.0.6.jar",
+    "maven-settings-2.0.6.pom"
 };
 
-checkExpected( new File( baseOutput, "copy-dep-test-1" ), expectedFiles );
+String [] unexpectedFiles = {
+    "plexus-interpolation-1.11.jar",
+    "plexus-interpolation-1.11.pom",
+    "plexus-plexus-container-default-1.0-alpha-9-stable-1.jar",
+    "plexus-plexus-container-default-1.0-alpha-9-stable-1.pom"
+};
+
+checkExpected( new File( baseOutput, "copy-dep-test-1" ), expectedFiles, unexpectedFiles );
 
 
 // test-2
