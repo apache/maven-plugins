@@ -115,6 +115,7 @@ under the License.
           <artifactId>maven-release-plugin</artifactId>
           <configuration>
             <tagBase>https://svn.apache.org/repos/asf/maven/plugins/tags</tagBase>
+            <releaseProfiles>apache-release,rat,run-its</releaseProfiles>
           </configuration>
         </plugin>
         <plugin>
