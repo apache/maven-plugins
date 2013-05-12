@@ -132,7 +132,7 @@ public abstract class AbstractDependencyMojo
      * @since 2.0
      */
     @Parameter( property = "silent", defaultValue = "false" )
-    public boolean silent;
+    protected boolean silent;
 
     /**
      * Output absolute filename for resolved artifacts

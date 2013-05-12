@@ -75,4 +75,8 @@ public abstract class AbstractDependencyMojoTestCase
         stubFactory = null;
     }
 
+    protected void setSilent( AbstractDependencyMojo mojo, boolean silent )
+    {
+        mojo.silent = silent;
+    }
 }

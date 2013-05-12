@@ -55,7 +55,7 @@ public class TestResolveMojo
         assertNotNull( mojo.getProject() );
         MavenProject project = mojo.getProject();
 
-        mojo.silent = true;
+        setSilent( mojo, true );
         Set<Artifact> artifacts = this.stubFactory.getScopedArtifacts();
         Set<Artifact> directArtifacts = this.stubFactory.getReleaseAndSnapshotArtifacts();
         artifacts.addAll( directArtifacts );
@@ -81,7 +81,7 @@ public class TestResolveMojo
     {
         File testPom = new File( getBasedir(), "target/test-classes/unit/resolve-test/plugin-config.xml" );
         ResolveDependenciesMojo mojo = (ResolveDependenciesMojo) lookupMojo( "resolve", testPom );
-        mojo.silent = false;
+        setSilent( mojo, false );
 
         assertFalse( mojo.getLog() instanceof SilentLog );
     } // TODO: Test skipping artifacts.
