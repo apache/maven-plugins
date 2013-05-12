@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.dependency;
+package org.apache.maven.plugin.dependency.tree;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -27,6 +27,8 @@ import java.util.List;
 import java.util.ArrayList;
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.plugin.dependency.AbstractDependencyMojoTestCase;
+import org.apache.maven.plugin.dependency.tree.TreeMojo;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.dependency.graph.DependencyNode;
 
