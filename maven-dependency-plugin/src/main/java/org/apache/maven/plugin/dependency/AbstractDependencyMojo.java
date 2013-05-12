@@ -402,7 +402,7 @@ public abstract class AbstractDependencyMojo
     /**
      * @return Returns the resolver.
      */
-    public org.apache.maven.artifact.resolver.ArtifactResolver getResolver()
+    public ArtifactResolver getResolver()
     {
         return this.resolver;
     }

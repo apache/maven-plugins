@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.dependency;
+package org.apache.maven.plugin.dependency.fromDependencies;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -29,6 +29,8 @@ import java.util.Set;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.dependency.AbstractDependencyMojoTestCase;
+import org.apache.maven.plugin.dependency.fromDependencies.CopyDependenciesMojo;
 import org.apache.maven.plugin.dependency.testUtils.DependencyTestUtils;
 import org.apache.maven.plugin.dependency.utils.DependencyUtil;
 import org.apache.maven.plugin.dependency.utils.markers.DefaultFileMarkerHandler;
@@ -91,7 +93,7 @@ public class TestCopyDependenciesMojo
 
         assertFalse( dest.exists() );
 
-        mojo.copyFile( src, dest );
+        copyFile( mojo, src, dest );
         assertTrue( dest.exists() );
     }
 
@@ -104,7 +106,7 @@ public class TestCopyDependenciesMojo
         throws Exception
     {
         mojo.execute();
-        Set<Artifact> artifacts = mojo.project.getArtifacts();
+        Set<Artifact> artifacts = mojo.getProject().getArtifacts();
         for ( Artifact artifact : artifacts )
         {
             String fileName = DependencyUtil.getFormattedFileName( artifact, false );
@@ -122,7 +124,7 @@ public class TestCopyDependenciesMojo
         mojo.stripVersion = true;
         mojo.execute();
 
-        Set<Artifact> artifacts = mojo.project.getArtifacts();
+        Set<Artifact> artifacts = mojo.getProject().getArtifacts();
         for ( Artifact artifact : artifacts )
         {
             String fileName = DependencyUtil.getFormattedFileName( artifact, true );
@@ -137,7 +139,7 @@ public class TestCopyDependenciesMojo
             mojo.stripClassifier = true;
             mojo.execute();
 
-            Set<Artifact> artifacts = mojo.project.getArtifacts();
+            Set<Artifact> artifacts = mojo.getProject().getArtifacts();
             for ( Artifact artifact : artifacts )
             {
                 String fileName = DependencyUtil.getFormattedFileName( artifact, false, false, false, true );
@@ -153,7 +155,7 @@ public class TestCopyDependenciesMojo
         mojo.useBaseVersion = true;
         mojo.execute();
 
-        Set<Artifact> artifacts = mojo.project.getArtifacts();
+        Set<Artifact> artifacts = mojo.getProject().getArtifacts();
         for ( Artifact artifact : artifacts )
         {
             String fileName = DependencyUtil.getFormattedFileName( artifact, false, false, true );
@@ -168,7 +170,7 @@ public class TestCopyDependenciesMojo
         mojo.excludeTransitive = true;
         mojo.execute();
 
-        Set<Artifact> artifacts = mojo.project.getDependencyArtifacts();
+        Set<Artifact> artifacts = mojo.getProject().getDependencyArtifacts();
         for ( Artifact artifact : artifacts )
         {
             String fileName = DependencyUtil.getFormattedFileName( artifact, false );
@@ -180,12 +182,12 @@ public class TestCopyDependenciesMojo
     public void testExcludeType()
         throws Exception
     {
-        mojo.project.setArtifacts( stubFactory.getTypedArtifacts() );
-        mojo.project.setDependencyArtifacts( new HashSet<Artifact>() );
+        mojo.getProject().setArtifacts( stubFactory.getTypedArtifacts() );
+        mojo.getProject().setDependencyArtifacts( new HashSet<Artifact>() );
         mojo.excludeTypes = "jar";
         mojo.execute();
 
-        Set<Artifact> artifacts = mojo.project.getArtifacts();
+        Set<Artifact> artifacts = mojo.getProject().getArtifacts();
         for ( Artifact artifact : artifacts )
         {
             String fileName = DependencyUtil.getFormattedFileName( artifact, false );
@@ -197,8 +199,8 @@ public class TestCopyDependenciesMojo
     public void testIncludeType()
         throws Exception
     {
-        mojo.project.setArtifacts( stubFactory.getTypedArtifacts() );
-        mojo.project.setDependencyArtifacts( new HashSet<Artifact>() );
+        mojo.getProject().setArtifacts( stubFactory.getTypedArtifacts() );
+        mojo.getProject().setDependencyArtifacts( new HashSet<Artifact>() );
 
         mojo.includeTypes = "jar";
         mojo.excludeTypes = "jar";
@@ -206,7 +208,7 @@ public class TestCopyDependenciesMojo
 
         mojo.execute();
 
-        Set<Artifact> artifacts = mojo.project.getArtifacts();
+        Set<Artifact> artifacts = mojo.getProject().getArtifacts();
         for ( Artifact artifact : artifacts )
         {
             String fileName = DependencyUtil.getFormattedFileName( artifact, false );
@@ -217,7 +219,7 @@ public class TestCopyDependenciesMojo
         mojo.excludeTypes = "";
         mojo.execute();
 
-        artifacts = mojo.project.getArtifacts();
+        artifacts = mojo.getProject().getArtifacts();
         for ( Artifact artifact : artifacts )
         {
             String fileName = DependencyUtil.getFormattedFileName( artifact, false );
@@ -230,12 +232,12 @@ public class TestCopyDependenciesMojo
     public void testExcludeArtifactId()
         throws Exception
     {
-        mojo.project.setArtifacts( stubFactory.getArtifactArtifacts() );
-        mojo.project.setDependencyArtifacts( new HashSet<Artifact>() );
+        mojo.getProject().setArtifacts( stubFactory.getArtifactArtifacts() );
+        mojo.getProject().setDependencyArtifacts( new HashSet<Artifact>() );
         mojo.excludeArtifactIds = "one";
         mojo.execute();
 
-        Set<Artifact> artifacts = mojo.project.getArtifacts();
+        Set<Artifact> artifacts = mojo.getProject().getArtifacts();
         for ( Artifact artifact : artifacts )
         {
             String fileName = DependencyUtil.getFormattedFileName( artifact, false );
@@ -247,8 +249,8 @@ public class TestCopyDependenciesMojo
     public void testIncludeArtifactId()
         throws Exception
     {
-        mojo.project.setArtifacts( stubFactory.getArtifactArtifacts() );
-        mojo.project.setDependencyArtifacts( new HashSet<Artifact>() );
+        mojo.getProject().setArtifacts( stubFactory.getArtifactArtifacts() );
+        mojo.getProject().setDependencyArtifacts( new HashSet<Artifact>() );
 
         mojo.includeArtifactIds = "one";
         mojo.excludeArtifactIds = "one";
@@ -256,7 +258,7 @@ public class TestCopyDependenciesMojo
 
         mojo.execute();
 
-        Set<Artifact> artifacts = mojo.project.getArtifacts();
+        Set<Artifact> artifacts = mojo.getProject().getArtifacts();
         for ( Artifact artifact : artifacts )
         {
             String fileName = DependencyUtil.getFormattedFileName( artifact, false );
@@ -267,7 +269,7 @@ public class TestCopyDependenciesMojo
         mojo.excludeArtifactIds = "";
         mojo.execute();
 
-        artifacts = mojo.project.getArtifacts();
+        artifacts = mojo.getProject().getArtifacts();
         for ( Artifact artifact : artifacts )
         {
             String fileName = DependencyUtil.getFormattedFileName( artifact, false );
@@ -279,15 +281,15 @@ public class TestCopyDependenciesMojo
     public void testIncludeGroupId()
         throws Exception
     {
-        mojo.project.setArtifacts( stubFactory.getGroupIdArtifacts() );
-        mojo.project.setDependencyArtifacts( new HashSet<Artifact>() );
+        mojo.getProject().setArtifacts( stubFactory.getGroupIdArtifacts() );
+        mojo.getProject().setDependencyArtifacts( new HashSet<Artifact>() );
         mojo.includeGroupIds = "one";
         mojo.excludeGroupIds = "one";
         //shouldn't get anything
 
         mojo.execute();
 
-        Set<Artifact> artifacts = mojo.project.getArtifacts();
+        Set<Artifact> artifacts = mojo.getProject().getArtifacts();
         for ( Artifact artifact : artifacts )
         {
             String fileName = DependencyUtil.getFormattedFileName( artifact, false );
@@ -298,7 +300,7 @@ public class TestCopyDependenciesMojo
         mojo.excludeGroupIds = "";
         mojo.execute();
 
-        artifacts = mojo.project.getArtifacts();
+        artifacts = mojo.getProject().getArtifacts();
         for ( Artifact artifact : artifacts )
         {
             String fileName = DependencyUtil.getFormattedFileName( artifact, false );
@@ -311,12 +313,12 @@ public class TestCopyDependenciesMojo
     public void testExcludeGroupId()
         throws Exception
     {
-        mojo.project.setArtifacts( stubFactory.getGroupIdArtifacts() );
-        mojo.project.setDependencyArtifacts( new HashSet<Artifact>() );
+        mojo.getProject().setArtifacts( stubFactory.getGroupIdArtifacts() );
+        mojo.getProject().setDependencyArtifacts( new HashSet<Artifact>() );
         mojo.excludeGroupIds = "one";
         mojo.execute();
 
-        Set<Artifact> artifacts = mojo.project.getArtifacts();
+        Set<Artifact> artifacts = mojo.getProject().getArtifacts();
         for ( Artifact artifact : artifacts )
         {
             String fileName = DependencyUtil.getFormattedFileName( artifact, false );
@@ -328,12 +330,12 @@ public class TestCopyDependenciesMojo
     public void testExcludeMultipleGroupIds()
         throws Exception
     {
-        mojo.project.setArtifacts( stubFactory.getGroupIdArtifacts() );
-        mojo.project.setDependencyArtifacts( new HashSet<Artifact>() );
+        mojo.getProject().setArtifacts( stubFactory.getGroupIdArtifacts() );
+        mojo.getProject().setDependencyArtifacts( new HashSet<Artifact>() );
         mojo.excludeGroupIds = "one,two";
         mojo.execute();
 
-        Set<Artifact> artifacts = mojo.project.getArtifacts();
+        Set<Artifact> artifacts = mojo.getProject().getArtifacts();
         for ( Artifact artifact : artifacts )
         {
             String fileName = DependencyUtil.getFormattedFileName( artifact, false );
@@ -346,12 +348,12 @@ public class TestCopyDependenciesMojo
     public void testExcludeClassifier()
         throws Exception
     {
-        mojo.project.setArtifacts( stubFactory.getClassifiedArtifacts() );
-        mojo.project.setDependencyArtifacts( new HashSet<Artifact>() );
+        mojo.getProject().setArtifacts( stubFactory.getClassifiedArtifacts() );
+        mojo.getProject().setDependencyArtifacts( new HashSet<Artifact>() );
         mojo.excludeClassifiers = "one";
         mojo.execute();
 
-        Set<Artifact> artifacts = mojo.project.getArtifacts();
+        Set<Artifact> artifacts = mojo.getProject().getArtifacts();
         for ( Artifact artifact : artifacts )
         {
             String fileName = DependencyUtil.getFormattedFileName( artifact, false );
@@ -363,8 +365,8 @@ public class TestCopyDependenciesMojo
     public void testIncludeClassifier()
         throws Exception
     {
-        mojo.project.setArtifacts( stubFactory.getClassifiedArtifacts() );
-        mojo.project.setDependencyArtifacts( new HashSet<Artifact>() );
+        mojo.getProject().setArtifacts( stubFactory.getClassifiedArtifacts() );
+        mojo.getProject().setDependencyArtifacts( new HashSet<Artifact>() );
 
         mojo.includeClassifiers = "one";
         mojo.excludeClassifiers = "one";
@@ -372,7 +374,7 @@ public class TestCopyDependenciesMojo
 
         mojo.execute();
 
-        Set<Artifact> artifacts = mojo.project.getArtifacts();
+        Set<Artifact> artifacts = mojo.getProject().getArtifacts();
         for ( Artifact artifact : artifacts )
         {
             String fileName = DependencyUtil.getFormattedFileName( artifact, false );
@@ -383,7 +385,7 @@ public class TestCopyDependenciesMojo
         mojo.excludeClassifiers = "";
         mojo.execute();
 
-        artifacts = mojo.project.getArtifacts();
+        artifacts = mojo.getProject().getArtifacts();
         for ( Artifact artifact : artifacts )
         {
             String fileName = DependencyUtil.getFormattedFileName( artifact, false );
@@ -396,12 +398,12 @@ public class TestCopyDependenciesMojo
     public void testSubPerType()
         throws Exception
     {
-        mojo.project.setArtifacts( stubFactory.getTypedArtifacts() );
-        mojo.project.setDependencyArtifacts( new HashSet<Artifact>() );
+        mojo.getProject().setArtifacts( stubFactory.getTypedArtifacts() );
+        mojo.getProject().setDependencyArtifacts( new HashSet<Artifact>() );
         mojo.useSubDirectoryPerType = true;
         mojo.execute();
 
-        Set<Artifact> artifacts = mojo.project.getArtifacts();
+        Set<Artifact> artifacts = mojo.getProject().getArtifacts();
         for ( Artifact artifact : artifacts )
         {
             String fileName = DependencyUtil.getFormattedFileName( artifact, false );
@@ -443,7 +445,7 @@ public class TestCopyDependenciesMojo
 
         mojo.execute();
 
-        Set<Artifact> artifacts = mojo.project.getArtifacts();
+        Set<Artifact> artifacts = mojo.getProject().getArtifacts();
         for ( Artifact artifact : artifacts )
         {
             String useClassifier = artifact.getClassifier();
@@ -490,8 +492,8 @@ public class TestCopyDependenciesMojo
         mojo.type = "java-sources";
 
         // init classifier things
-        mojo.factory = DependencyTestUtils.getArtifactFactory();
-        mojo.resolver = new StubArtifactResolver( null, are, anfe );
+        mojo.setFactory( DependencyTestUtils.getArtifactFactory() );
+        setResolver( mojo, new StubArtifactResolver( null, are, anfe ) );
         mojo.setLocal( new StubArtifactRepository( this.testDir.getAbsolutePath() ) );
 
         try
@@ -523,8 +525,8 @@ public class TestCopyDependenciesMojo
 
         artifacts.add( release );
 
-        mojo.project.setArtifacts( artifacts );
-        mojo.project.setDependencyArtifacts( artifacts );
+        mojo.getProject().setArtifacts( artifacts );
+        mojo.getProject().setDependencyArtifacts( artifacts );
 
         mojo.overWriteIfNewer = false;
 
@@ -554,8 +556,8 @@ public class TestCopyDependenciesMojo
 
         artifacts.add( release );
 
-        mojo.project.setArtifacts( artifacts );
-        mojo.project.setDependencyArtifacts( artifacts );
+        mojo.getProject().setArtifacts( artifacts );
+        mojo.getProject().setDependencyArtifacts( artifacts );
 
         mojo.overWriteReleases = true;
         mojo.overWriteIfNewer = false;
@@ -588,8 +590,8 @@ public class TestCopyDependenciesMojo
 
         artifacts.add( snap );
 
-        mojo.project.setArtifacts( artifacts );
-        mojo.project.setDependencyArtifacts( artifacts );
+        mojo.getProject().setArtifacts( artifacts );
+        mojo.getProject().setDependencyArtifacts( artifacts );
 
         mojo.overWriteReleases = false;
         mojo.overWriteSnapshots = false;
@@ -621,8 +623,8 @@ public class TestCopyDependenciesMojo
 
         artifacts.add( snap );
 
-        mojo.project.setArtifacts( artifacts );
-        mojo.project.setDependencyArtifacts( artifacts );
+        mojo.getProject().setArtifacts( artifacts );
+        mojo.getProject().setDependencyArtifacts( artifacts );
 
         mojo.overWriteReleases = false;
         mojo.overWriteSnapshots = true;
@@ -656,14 +658,14 @@ public class TestCopyDependenciesMojo
     public void testExcludeProvidedScope()
         throws Exception
     {
-        mojo.project.setArtifacts( stubFactory.getScopedArtifacts() );
-        mojo.project.setDependencyArtifacts( new HashSet<Artifact>() );
+        mojo.getProject().setArtifacts( stubFactory.getScopedArtifacts() );
+        mojo.getProject().setDependencyArtifacts( new HashSet<Artifact>() );
         mojo.excludeScope = "provided";
         // mojo.silent = false;
 
         mojo.execute();
 
-        Set<Artifact> artifacts = mojo.project.getArtifacts();
+        Set<Artifact> artifacts = mojo.getProject().getArtifacts();
         for ( Artifact artifact : artifacts )
         {
             String fileName = DependencyUtil.getFormattedFileName( artifact, false );
@@ -678,14 +680,14 @@ public class TestCopyDependenciesMojo
     public void testExcludeSystemScope()
         throws Exception
     {
-        mojo.project.setArtifacts( stubFactory.getScopedArtifacts() );
-        mojo.project.setDependencyArtifacts( new HashSet<Artifact>() );
+        mojo.getProject().setArtifacts( stubFactory.getScopedArtifacts() );
+        mojo.getProject().setDependencyArtifacts( new HashSet<Artifact>() );
         mojo.excludeScope = "system";
         // mojo.silent = false;
 
         mojo.execute();
 
-        Set<Artifact> artifacts = mojo.project.getArtifacts();
+        Set<Artifact> artifacts = mojo.getProject().getArtifacts();
         for ( Artifact artifact : artifacts )
         {
             String fileName = DependencyUtil.getFormattedFileName( artifact, false );
@@ -700,13 +702,13 @@ public class TestCopyDependenciesMojo
     public void testExcludeCompileScope()
         throws Exception
     {
-        mojo.project.setArtifacts( stubFactory.getScopedArtifacts() );
-        mojo.project.setDependencyArtifacts( new HashSet<Artifact>() );
+        mojo.getProject().setArtifacts( stubFactory.getScopedArtifacts() );
+        mojo.getProject().setDependencyArtifacts( new HashSet<Artifact>() );
         mojo.excludeScope = "compile";
         mojo.execute();
         ScopeArtifactFilter saf = new ScopeArtifactFilter( mojo.excludeScope );
 
-        Set<Artifact> artifacts = mojo.project.getArtifacts();
+        Set<Artifact> artifacts = mojo.getProject().getArtifacts();
         for ( Artifact artifact : artifacts )
         {
             String fileName = DependencyUtil.getFormattedFileName( artifact, false );
@@ -719,8 +721,8 @@ public class TestCopyDependenciesMojo
     public void testExcludeTestScope()
         throws IOException, MojoFailureException
     {
-        mojo.project.setArtifacts( stubFactory.getScopedArtifacts() );
-        mojo.project.setDependencyArtifacts( new HashSet<Artifact>() );
+        mojo.getProject().setArtifacts( stubFactory.getScopedArtifacts() );
+        mojo.getProject().setDependencyArtifacts( new HashSet<Artifact>() );
         mojo.excludeScope = "test";
 
         try
@@ -738,13 +740,13 @@ public class TestCopyDependenciesMojo
     public void testExcludeRuntimeScope()
         throws Exception
     {
-        mojo.project.setArtifacts( stubFactory.getScopedArtifacts() );
-        mojo.project.setDependencyArtifacts( new HashSet<Artifact>() );
+        mojo.getProject().setArtifacts( stubFactory.getScopedArtifacts() );
+        mojo.getProject().setDependencyArtifacts( new HashSet<Artifact>() );
         mojo.excludeScope = "runtime";
         mojo.execute();
         ScopeArtifactFilter saf = new ScopeArtifactFilter( mojo.excludeScope );
 
-        Set<Artifact> artifacts = mojo.project.getArtifacts();
+        Set<Artifact> artifacts = mojo.getProject().getArtifacts();
         for ( Artifact artifact : artifacts )
         {
             String fileName = DependencyUtil.getFormattedFileName( artifact, false );
@@ -763,10 +765,10 @@ public class TestCopyDependenciesMojo
 
         Set<Artifact> set = new HashSet<Artifact>();
         set.add( stubFactory.createArtifact( "org.apache.maven", "maven-artifact", "2.0.7", Artifact.SCOPE_COMPILE ) );
-        mojo.project.setArtifacts( set );
+        mojo.getProject().setArtifacts( set );
         mojo.execute();
 
-        Set<Artifact> artifacts = mojo.project.getArtifacts();
+        Set<Artifact> artifacts = mojo.getProject().getArtifacts();
         for ( Artifact artifact : artifacts )
         {
             String fileName = DependencyUtil.getFormattedFileName( artifact, false );
@@ -781,7 +783,7 @@ public class TestCopyDependenciesMojo
         mojo.prependGroupId = true;
         mojo.execute();
     
-        Set<Artifact> artifacts = mojo.project.getArtifacts();
+        Set<Artifact> artifacts = mojo.getProject().getArtifacts();
         for ( Artifact artifact : artifacts )
         {
             String fileName = DependencyUtil.getFormattedFileName( artifact, false, true );
