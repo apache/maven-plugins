@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.dependency.treeSerializers ;
+package org.apache.maven.plugin.dependency.tree ;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one

@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.dependency;
+package org.apache.maven.plugin.dependency.tree;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -28,9 +28,6 @@ import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugin.dependency.treeSerializers.DOTDependencyNodeVisitor;
-import org.apache.maven.plugin.dependency.treeSerializers.GraphmlDependencyNodeVisitor;
-import org.apache.maven.plugin.dependency.treeSerializers.TGFDependencyNodeVisitor;
 import org.apache.maven.plugin.dependency.utils.DependencyUtil;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
