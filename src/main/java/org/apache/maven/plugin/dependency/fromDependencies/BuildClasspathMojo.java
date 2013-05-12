@@ -476,7 +476,7 @@ public class BuildClasspathMojo
     {
         this.outputProperty = theOutputProperty;
     }
-	
+
     /**
      * @return the fileSeparator
      */

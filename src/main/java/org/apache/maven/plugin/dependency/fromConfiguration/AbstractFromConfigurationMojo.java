@@ -172,8 +172,9 @@ public abstract class AbstractFromConfigurationMojo
 
             if ( StringUtils.isEmpty( artifactItem.getDestFileName() ) )
             {
-                artifactItem.setDestFileName(
-                    DependencyUtil.getFormattedFileName( artifactItem.getArtifact(), removeVersion, prependGroupId, useBaseVersion, removeClassifier) );
+                artifactItem.setDestFileName( DependencyUtil.getFormattedFileName( artifactItem.getArtifact(),
+                                                                                   removeVersion, prependGroupId,
+                                                                                   useBaseVersion, removeClassifier ) );
             }
 
             try
