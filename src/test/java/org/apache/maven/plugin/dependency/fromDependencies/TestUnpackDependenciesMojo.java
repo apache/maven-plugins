@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.dependency;
+package org.apache.maven.plugin.dependency.fromDependencies;
 
 /* 
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -24,6 +24,8 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.dependency.AbstractDependencyMojoTestCase;
+import org.apache.maven.plugin.dependency.fromDependencies.UnpackDependenciesMojo;
 import org.apache.maven.plugin.dependency.testUtils.DependencyArtifactStubFactory;
 import org.apache.maven.plugin.dependency.testUtils.DependencyTestUtils;
 import org.apache.maven.plugin.dependency.utils.DependencyUtil;
@@ -58,7 +60,7 @@ public class TestUnpackDependenciesMojo
         File testPom = new File( getBasedir(), "target/test-classes/unit/unpack-dependencies-test/plugin-config.xml" );
         mojo = (UnpackDependenciesMojo) lookupMojo( "unpack-dependencies", testPom );
         mojo.outputDirectory = new File( this.testDir, "outputDirectory" );
-        mojo.useJvmChmod = true;
+        mojo.setUseJvmChmod( true );
         // mojo.silent = true;
 
         // it needs to get the archivermanager
@@ -124,7 +126,7 @@ public class TestUnpackDependenciesMojo
         throws Exception
     {
         mojo.execute();
-        Iterator<Artifact> iter = mojo.project.getArtifacts().iterator();
+        Iterator<Artifact> iter = mojo.getProject().getArtifacts().iterator();
         while ( iter.hasNext() )
         {
             Artifact artifact = iter.next();
@@ -137,7 +139,7 @@ public class TestUnpackDependenciesMojo
     {
         mojo.excludeTransitive = true;
         mojo.execute();
-        Iterator<Artifact> iter = mojo.project.getDependencyArtifacts().iterator();
+        Iterator<Artifact> iter = mojo.getProject().getDependencyArtifacts().iterator();
         while ( iter.hasNext() )
         {
             Artifact artifact = iter.next();
@@ -148,12 +150,12 @@ public class TestUnpackDependenciesMojo
     public void testExcludeType()
         throws Exception
     {
-        mojo.project.setArtifacts( stubFactory.getTypedArchiveArtifacts() );
-        mojo.project.setDependencyArtifacts( new HashSet<Artifact>() );
+        mojo.getProject().setArtifacts( stubFactory.getTypedArchiveArtifacts() );
+        mojo.getProject().setDependencyArtifacts( new HashSet<Artifact>() );
         mojo.excludeTypes = "jar";
         mojo.execute();
 
-        Iterator<Artifact> iter = mojo.project.getArtifacts().iterator();
+        Iterator<Artifact> iter = mojo.getProject().getArtifacts().iterator();
         while ( iter.hasNext() )
         {
             Artifact artifact = iter.next();
@@ -165,14 +167,14 @@ public class TestUnpackDependenciesMojo
     public void testExcludeProvidedScope()
         throws Exception
     {
-        mojo.project.setArtifacts( stubFactory.getScopedArtifacts() );
-        mojo.project.setDependencyArtifacts( new HashSet<Artifact>() );
+        mojo.getProject().setArtifacts( stubFactory.getScopedArtifacts() );
+        mojo.getProject().setDependencyArtifacts( new HashSet<Artifact>() );
         mojo.excludeScope = "provided";
         // mojo.silent = false;
 
         mojo.execute();
 
-        Iterator<Artifact> iter = mojo.project.getArtifacts().iterator();
+        Iterator<Artifact> iter = mojo.getProject().getArtifacts().iterator();
         while ( iter.hasNext() )
         {
             Artifact artifact = iter.next();
@@ -184,14 +186,14 @@ public class TestUnpackDependenciesMojo
     public void testExcludeSystemScope()
         throws Exception
     {
-        mojo.project.setArtifacts( stubFactory.getScopedArtifacts() );
-        mojo.project.setDependencyArtifacts( new HashSet<Artifact>() );
+        mojo.getProject().setArtifacts( stubFactory.getScopedArtifacts() );
+        mojo.getProject().setDependencyArtifacts( new HashSet<Artifact>() );
         mojo.excludeScope = "system";
         // mojo.silent = false;
 
         mojo.execute();
 
-        Iterator<Artifact> iter = mojo.project.getArtifacts().iterator();
+        Iterator<Artifact> iter = mojo.getProject().getArtifacts().iterator();
         while ( iter.hasNext() )
         {
             Artifact artifact = iter.next();
@@ -203,13 +205,13 @@ public class TestUnpackDependenciesMojo
     public void testExcludeCompileScope()
         throws Exception
     {
-        mojo.project.setArtifacts( stubFactory.getScopedArtifacts() );
-        mojo.project.setDependencyArtifacts( new HashSet<Artifact>() );
+        mojo.getProject().setArtifacts( stubFactory.getScopedArtifacts() );
+        mojo.getProject().setDependencyArtifacts( new HashSet<Artifact>() );
         mojo.excludeScope = "compile";
         mojo.execute();
         ScopeArtifactFilter saf = new ScopeArtifactFilter( mojo.excludeScope );
 
-        Iterator<Artifact> iter = mojo.project.getArtifacts().iterator();
+        Iterator<Artifact> iter = mojo.getProject().getArtifacts().iterator();
         while ( iter.hasNext() )
         {
             Artifact artifact = iter.next();
@@ -220,8 +222,8 @@ public class TestUnpackDependenciesMojo
     public void testExcludeTestScope()
         throws IOException, MojoFailureException
     {
-        mojo.project.setArtifacts( stubFactory.getScopedArtifacts() );
-        mojo.project.setDependencyArtifacts( new HashSet<Artifact>() );
+        mojo.getProject().setArtifacts( stubFactory.getScopedArtifacts() );
+        mojo.getProject().setDependencyArtifacts( new HashSet<Artifact>() );
         mojo.excludeScope = "test";
 
         try
@@ -239,13 +241,13 @@ public class TestUnpackDependenciesMojo
     public void testExcludeRuntimeScope()
         throws Exception
     {
-        mojo.project.setArtifacts( stubFactory.getScopedArtifacts() );
-        mojo.project.setDependencyArtifacts( new HashSet<Artifact>() );
+        mojo.getProject().setArtifacts( stubFactory.getScopedArtifacts() );
+        mojo.getProject().setDependencyArtifacts( new HashSet<Artifact>() );
         mojo.excludeScope = "runtime";
         mojo.execute();
         ScopeArtifactFilter saf = new ScopeArtifactFilter( mojo.excludeScope );
 
-        Iterator<Artifact> iter = mojo.project.getArtifacts().iterator();
+        Iterator<Artifact> iter = mojo.getProject().getArtifacts().iterator();
         while ( iter.hasNext() )
         {
             Artifact artifact = iter.next();
@@ -256,8 +258,8 @@ public class TestUnpackDependenciesMojo
     public void testIncludeType()
         throws Exception
     {
-        mojo.project.setArtifacts( stubFactory.getTypedArchiveArtifacts() );
-        mojo.project.setDependencyArtifacts( new HashSet<Artifact>() );
+        mojo.getProject().setArtifacts( stubFactory.getTypedArchiveArtifacts() );
+        mojo.getProject().setDependencyArtifacts( new HashSet<Artifact>() );
 
         mojo.includeTypes = "jar";
         mojo.excludeTypes = "jar";
@@ -265,7 +267,7 @@ public class TestUnpackDependenciesMojo
 
         mojo.execute();
 
-        Iterator<Artifact> iter = mojo.project.getArtifacts().iterator();
+        Iterator<Artifact> iter = mojo.getProject().getArtifacts().iterator();
         while ( iter.hasNext() )
         {
             Artifact artifact = iter.next();
@@ -276,7 +278,7 @@ public class TestUnpackDependenciesMojo
         mojo.excludeTypes = "";
         mojo.execute();
 
-        iter = mojo.project.getArtifacts().iterator();
+        iter = mojo.getProject().getArtifacts().iterator();
         while ( iter.hasNext() )
         {
             Artifact artifact = iter.next();
@@ -288,12 +290,12 @@ public class TestUnpackDependenciesMojo
     public void testSubPerType()
         throws Exception
     {
-        mojo.project.setArtifacts( stubFactory.getTypedArchiveArtifacts() );
-        mojo.project.setDependencyArtifacts( new HashSet<Artifact>() );
+        mojo.getProject().setArtifacts( stubFactory.getTypedArchiveArtifacts() );
+        mojo.getProject().setDependencyArtifacts( new HashSet<Artifact>() );
         mojo.useSubDirectoryPerType = true;
         mojo.execute();
 
-        Iterator<Artifact> iter = mojo.project.getArtifacts().iterator();
+        Iterator<Artifact> iter = mojo.getProject().getArtifacts().iterator();
         while ( iter.hasNext() )
         {
             Artifact artifact = iter.next();
@@ -307,7 +309,7 @@ public class TestUnpackDependenciesMojo
         mojo.useSubDirectoryPerArtifact = true;
         mojo.execute();
 
-        Iterator<Artifact> iter = mojo.project.getArtifacts().iterator();
+        Iterator<Artifact> iter = mojo.getProject().getArtifacts().iterator();
         while ( iter.hasNext() )
         {
             Artifact artifact = iter.next();
@@ -318,13 +320,13 @@ public class TestUnpackDependenciesMojo
     public void testSubPerArtifactAndType()
         throws Exception
     {
-        mojo.project.setArtifacts( stubFactory.getTypedArchiveArtifacts() );
-        mojo.project.setDependencyArtifacts( new HashSet<Artifact>() );
+        mojo.getProject().setArtifacts( stubFactory.getTypedArchiveArtifacts() );
+        mojo.getProject().setDependencyArtifacts( new HashSet<Artifact>() );
         mojo.useSubDirectoryPerArtifact = true;
         mojo.useSubDirectoryPerType = true;
         mojo.execute();
 
-        Iterator<Artifact> iter = mojo.project.getArtifacts().iterator();
+        Iterator<Artifact> iter = mojo.getProject().getArtifacts().iterator();
         while ( iter.hasNext() )
         {
             Artifact artifact = iter.next();
@@ -339,7 +341,7 @@ public class TestUnpackDependenciesMojo
         mojo.stripVersion = true;
         mojo.execute();
 
-        Iterator<Artifact> iter = mojo.project.getArtifacts().iterator();
+        Iterator<Artifact> iter = mojo.getProject().getArtifacts().iterator();
         while ( iter.hasNext() )
         {
             Artifact artifact = iter.next();
@@ -350,14 +352,14 @@ public class TestUnpackDependenciesMojo
     public void testSubPerArtifactAndTypeRemoveVersion()
         throws Exception
     {
-        mojo.project.setArtifacts( stubFactory.getTypedArchiveArtifacts() );
-        mojo.project.setDependencyArtifacts( new HashSet<Artifact>() );
+        mojo.getProject().setArtifacts( stubFactory.getTypedArchiveArtifacts() );
+        mojo.getProject().setDependencyArtifacts( new HashSet<Artifact>() );
         mojo.useSubDirectoryPerArtifact = true;
         mojo.useSubDirectoryPerType = true;
         mojo.stripVersion = true;
         mojo.execute();
 
-        Iterator<Artifact> iter = mojo.project.getArtifacts().iterator();
+        Iterator<Artifact> iter = mojo.getProject().getArtifacts().iterator();
         while ( iter.hasNext() )
         {
             Artifact artifact = iter.next();
@@ -368,13 +370,13 @@ public class TestUnpackDependenciesMojo
     public void testIncludeCompileScope()
         throws Exception
     {
-        mojo.project.setArtifacts( stubFactory.getScopedArtifacts() );
-        mojo.project.setDependencyArtifacts( new HashSet<Artifact>() );
+        mojo.getProject().setArtifacts( stubFactory.getScopedArtifacts() );
+        mojo.getProject().setDependencyArtifacts( new HashSet<Artifact>() );
         mojo.includeScope = "compile";
         mojo.execute();
         ScopeArtifactFilter saf = new ScopeArtifactFilter( mojo.includeScope );
 
-        Iterator<Artifact> iter = mojo.project.getArtifacts().iterator();
+        Iterator<Artifact> iter = mojo.getProject().getArtifacts().iterator();
         while ( iter.hasNext() )
         {
             Artifact artifact = iter.next();
@@ -385,14 +387,14 @@ public class TestUnpackDependenciesMojo
     public void testIncludeTestScope()
         throws Exception
     {
-        mojo.project.setArtifacts( stubFactory.getScopedArtifacts() );
-        mojo.project.setDependencyArtifacts( new HashSet<Artifact>() );
+        mojo.getProject().setArtifacts( stubFactory.getScopedArtifacts() );
+        mojo.getProject().setDependencyArtifacts( new HashSet<Artifact>() );
         mojo.includeScope = "test";
 
         mojo.execute();
         ScopeArtifactFilter saf = new ScopeArtifactFilter( mojo.includeScope );
 
-        Iterator<Artifact> iter = mojo.project.getArtifacts().iterator();
+        Iterator<Artifact> iter = mojo.getProject().getArtifacts().iterator();
         while ( iter.hasNext() )
         {
             Artifact artifact = iter.next();
@@ -403,13 +405,13 @@ public class TestUnpackDependenciesMojo
     public void testIncludeRuntimeScope()
         throws Exception
     {
-        mojo.project.setArtifacts( stubFactory.getScopedArtifacts() );
-        mojo.project.setDependencyArtifacts( new HashSet<Artifact>() );
+        mojo.getProject().setArtifacts( stubFactory.getScopedArtifacts() );
+        mojo.getProject().setDependencyArtifacts( new HashSet<Artifact>() );
         mojo.includeScope = "runtime";
         mojo.execute();
         ScopeArtifactFilter saf = new ScopeArtifactFilter( mojo.includeScope );
 
-        Iterator<Artifact> iter = mojo.project.getArtifacts().iterator();
+        Iterator<Artifact> iter = mojo.getProject().getArtifacts().iterator();
         while ( iter.hasNext() )
         {
             Artifact artifact = iter.next();
@@ -420,12 +422,12 @@ public class TestUnpackDependenciesMojo
     public void testIncludeprovidedScope()
         throws Exception
     {
-        mojo.project.setArtifacts( stubFactory.getScopedArtifacts() );
-        mojo.project.setDependencyArtifacts( new HashSet<Artifact>() );
+        mojo.getProject().setArtifacts( stubFactory.getScopedArtifacts() );
+        mojo.getProject().setDependencyArtifacts( new HashSet<Artifact>() );
         mojo.includeScope = "provided";
 
         mojo.execute();
-        Iterator<Artifact> iter = mojo.project.getArtifacts().iterator();
+        Iterator<Artifact> iter = mojo.getProject().getArtifacts().iterator();
         while ( iter.hasNext() )
         {
             Artifact artifact = iter.next();
@@ -436,13 +438,13 @@ public class TestUnpackDependenciesMojo
     public void testIncludesystemScope()
         throws Exception
     {
-        mojo.project.setArtifacts( stubFactory.getScopedArtifacts() );
-        mojo.project.setDependencyArtifacts( new HashSet<Artifact>() );
+        mojo.getProject().setArtifacts( stubFactory.getScopedArtifacts() );
+        mojo.getProject().setDependencyArtifacts( new HashSet<Artifact>() );
         mojo.includeScope = "system";
 
         mojo.execute();
 
-        Iterator<Artifact> iter = mojo.project.getArtifacts().iterator();
+        Iterator<Artifact> iter = mojo.getProject().getArtifacts().iterator();
         while ( iter.hasNext() )
         {
             Artifact artifact = iter.next();
@@ -453,15 +455,15 @@ public class TestUnpackDependenciesMojo
     public void testIncludeArtifactId()
         throws Exception
     {
-        mojo.project.setArtifacts( stubFactory.getArtifactArtifacts() );
-        mojo.project.setDependencyArtifacts( new HashSet<Artifact>() );
+        mojo.getProject().setArtifacts( stubFactory.getArtifactArtifacts() );
+        mojo.getProject().setDependencyArtifacts( new HashSet<Artifact>() );
 
         mojo.includeArtifactIds = "one";
         mojo.excludeArtifactIds = "one";
         //shouldn't get anything
         mojo.execute();
 
-        Iterator<Artifact> iter = mojo.project.getArtifacts().iterator();
+        Iterator<Artifact> iter = mojo.getProject().getArtifacts().iterator();
         while ( iter.hasNext() )
         {
             Artifact artifact = iter.next();
@@ -470,7 +472,7 @@ public class TestUnpackDependenciesMojo
         mojo.excludeArtifactIds = "";
         mojo.execute();
 
-        iter = mojo.project.getArtifacts().iterator();
+        iter = mojo.getProject().getArtifacts().iterator();
         while ( iter.hasNext() )
         {
             Artifact artifact = iter.next();
@@ -482,15 +484,15 @@ public class TestUnpackDependenciesMojo
     public void testExcludeArtifactId()
         throws Exception
     {
-        mojo.project.setArtifacts( stubFactory.getArtifactArtifacts() );
-        mojo.project.setDependencyArtifacts( new HashSet<Artifact>() );
+        mojo.getProject().setArtifacts( stubFactory.getArtifactArtifacts() );
+        mojo.getProject().setDependencyArtifacts( new HashSet<Artifact>() );
         mojo.excludeArtifactIds = "one";
         mojo.execute();
 
         // test - get all direct dependencies and verify that they exist if they
         // do not have a classifier of "one"
         // then delete the file and at the end, verify the folder is empty.
-        Iterator<Artifact> iter = mojo.project.getArtifacts().iterator();
+        Iterator<Artifact> iter = mojo.getProject().getArtifacts().iterator();
         while ( iter.hasNext() )
         {
             Artifact artifact = iter.next();
@@ -501,12 +503,12 @@ public class TestUnpackDependenciesMojo
     public void testExcludeGroupId()
         throws Exception
     {
-        mojo.project.setArtifacts( stubFactory.getGroupIdArtifacts() );
-        mojo.project.setDependencyArtifacts( new HashSet<Artifact>() );
+        mojo.getProject().setArtifacts( stubFactory.getGroupIdArtifacts() );
+        mojo.getProject().setDependencyArtifacts( new HashSet<Artifact>() );
         mojo.excludeGroupIds = "one";
         mojo.execute();
 
-        Iterator<Artifact> iter = mojo.project.getArtifacts().iterator();
+        Iterator<Artifact> iter = mojo.getProject().getArtifacts().iterator();
         while ( iter.hasNext() )
         {
             Artifact artifact = iter.next();
@@ -517,15 +519,15 @@ public class TestUnpackDependenciesMojo
     public void testIncludeGroupId()
         throws Exception
     {
-        mojo.project.setArtifacts( stubFactory.getGroupIdArtifacts() );
-        mojo.project.setDependencyArtifacts( new HashSet<Artifact>() );
+        mojo.getProject().setArtifacts( stubFactory.getGroupIdArtifacts() );
+        mojo.getProject().setDependencyArtifacts( new HashSet<Artifact>() );
         mojo.includeGroupIds = "one";
         mojo.excludeGroupIds = "one";
         //shouldn't get anything
 
         mojo.execute();
 
-        Iterator<Artifact> iter = mojo.project.getArtifacts().iterator();
+        Iterator<Artifact> iter = mojo.getProject().getArtifacts().iterator();
         while ( iter.hasNext() )
         {
             Artifact artifact = iter.next();
@@ -536,7 +538,7 @@ public class TestUnpackDependenciesMojo
         mojo.excludeGroupIds = "";
         mojo.execute();
 
-        iter = mojo.project.getArtifacts().iterator();
+        iter = mojo.getProject().getArtifacts().iterator();
         while ( iter.hasNext() )
         {
             Artifact artifact = iter.next();
@@ -569,13 +571,13 @@ public class TestUnpackDependenciesMojo
     {
         mojo.classifier = testClassifier;
         mojo.type = testType;
-        mojo.factory = DependencyTestUtils.getArtifactFactory();
-        mojo.resolver = new StubArtifactResolver( stubFactory, false, false );
+        mojo.setFactory( DependencyTestUtils.getArtifactFactory() );
+        mojo.setResolver( new StubArtifactResolver( stubFactory, false, false ) );
         mojo.setLocal( new StubArtifactRepository( this.testDir.getAbsolutePath() ) );
 
         mojo.execute();
 
-        Iterator<Artifact> iter = mojo.project.getArtifacts().iterator();
+        Iterator<Artifact> iter = mojo.getProject().getArtifacts().iterator();
         while ( iter.hasNext() )
         {
             Artifact artifact = iter.next();

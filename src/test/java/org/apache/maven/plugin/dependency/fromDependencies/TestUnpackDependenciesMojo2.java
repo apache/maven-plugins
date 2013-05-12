@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.dependency;
+package org.apache.maven.plugin.dependency.fromDependencies;
 
 /* 
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -23,6 +23,8 @@ import org.apache.maven.plugin.MojoFailureException;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.dependency.AbstractDependencyMojoTestCase;
+import org.apache.maven.plugin.dependency.fromDependencies.UnpackDependenciesMojo;
 import org.apache.maven.plugin.dependency.testUtils.DependencyArtifactStubFactory;
 import org.apache.maven.plugin.dependency.utils.DependencyUtil;
 import org.apache.maven.project.MavenProject;
@@ -51,7 +53,7 @@ public class TestUnpackDependenciesMojo2
         File testPom = new File( getBasedir(), "target/test-classes/unit/unpack-dependencies-test/plugin-config.xml" );
         mojo = (UnpackDependenciesMojo) lookupMojo( "unpack-dependencies", testPom );
         mojo.outputDirectory = new File( this.testDir, "outputDirectory" );
-        mojo.useJvmChmod = true;
+        mojo.setUseJvmChmod( true );
         // mojo.silent = true;
 
         // it needs to get the archivermanager
@@ -104,8 +106,8 @@ public class TestUnpackDependenciesMojo2
 
         artifacts.add( release );
 
-        mojo.project.setArtifacts( artifacts );
-        mojo.project.setDependencyArtifacts( artifacts );
+        mojo.getProject().setArtifacts( artifacts );
+        mojo.getProject().setDependencyArtifacts( artifacts );
 
         mojo.overWriteIfNewer = false;
 
@@ -124,8 +126,8 @@ public class TestUnpackDependenciesMojo2
 
         artifacts.add( release );
 
-        mojo.project.setArtifacts( artifacts );
-        mojo.project.setDependencyArtifacts( artifacts );
+        mojo.getProject().setArtifacts( artifacts );
+        mojo.getProject().setDependencyArtifacts( artifacts );
 
         mojo.overWriteReleases = true;
         mojo.overWriteIfNewer = false;
@@ -145,8 +147,8 @@ public class TestUnpackDependenciesMojo2
 
         artifacts.add( snap );
 
-        mojo.project.setArtifacts( artifacts );
-        mojo.project.setDependencyArtifacts( artifacts );
+        mojo.getProject().setArtifacts( artifacts );
+        mojo.getProject().setDependencyArtifacts( artifacts );
 
         mojo.overWriteReleases = false;
         mojo.overWriteSnapshots = false;
@@ -167,8 +169,8 @@ public class TestUnpackDependenciesMojo2
 
         artifacts.add( snap );
 
-        mojo.project.setArtifacts( artifacts );
-        mojo.project.setDependencyArtifacts( artifacts );
+        mojo.getProject().setArtifacts( artifacts );
+        mojo.getProject().setDependencyArtifacts( artifacts );
 
         mojo.overWriteReleases = false;
         mojo.overWriteSnapshots = true;
@@ -190,8 +192,8 @@ public class TestUnpackDependenciesMojo2
 
         artifacts.add( snap );
 
-        mojo.project.setArtifacts( artifacts );
-        mojo.project.setDependencyArtifacts( artifacts );
+        mojo.getProject().setArtifacts( artifacts );
+        mojo.getProject().setDependencyArtifacts( artifacts );
 
         mojo.overWriteReleases = false;
         mojo.overWriteSnapshots = false;

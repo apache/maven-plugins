@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.dependency;
+package org.apache.maven.plugin.dependency.fromDependencies;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -35,6 +35,8 @@ import org.apache.maven.artifact.repository.metadata.SnapshotArtifactRepositoryM
 import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
 import org.apache.maven.artifact.transform.SnapshotTransformation;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.dependency.AbstractDependencyMojoTestCase;
+import org.apache.maven.plugin.dependency.fromDependencies.CopyDependenciesMojo;
 import org.apache.maven.plugin.dependency.utils.DependencyUtil;
 import org.apache.maven.plugin.dependency.utils.markers.DefaultFileMarkerHandler;
 import org.apache.maven.project.MavenProject;
@@ -88,15 +90,15 @@ public class TestCopyDependenciesMojo2
     public void testCopyDependenciesMojoIncludeCompileScope()
         throws Exception
     {
-        mojo.project.setArtifacts( stubFactory.getScopedArtifacts() );
-        mojo.project.setDependencyArtifacts( new HashSet<Artifact>() );
+        mojo.getProject().setArtifacts( stubFactory.getScopedArtifacts() );
+        mojo.getProject().setDependencyArtifacts( new HashSet<Artifact>() );
         mojo.includeScope = "compile";
 
         mojo.execute();
 
         ScopeArtifactFilter saf = new ScopeArtifactFilter( mojo.includeScope );
 
-        Set<Artifact> artifacts = mojo.project.getArtifacts();
+        Set<Artifact> artifacts = mojo.getProject().getArtifacts();
         for ( Artifact artifact : artifacts )
         {
             String fileName = DependencyUtil.getFormattedFileName( artifact, false );
@@ -109,15 +111,15 @@ public class TestCopyDependenciesMojo2
     public void testCopyDependenciesMojoIncludeTestScope()
         throws Exception
     {
-        mojo.project.setArtifacts( stubFactory.getScopedArtifacts() );
-        mojo.project.setDependencyArtifacts( new HashSet<Artifact>() );
+        mojo.getProject().setArtifacts( stubFactory.getScopedArtifacts() );
+        mojo.getProject().setDependencyArtifacts( new HashSet<Artifact>() );
         mojo.includeScope = "test";
 
         mojo.execute();
 
         ScopeArtifactFilter saf = new ScopeArtifactFilter( mojo.includeScope );
 
-        Set<Artifact> artifacts = mojo.project.getArtifacts();
+        Set<Artifact> artifacts = mojo.getProject().getArtifacts();
         for ( Artifact artifact : artifacts )
         {
             String fileName = DependencyUtil.getFormattedFileName( artifact, false );
@@ -130,15 +132,15 @@ public class TestCopyDependenciesMojo2
     public void testCopyDependenciesMojoIncludeRuntimeScope()
         throws Exception
     {
-        mojo.project.setArtifacts( stubFactory.getScopedArtifacts() );
-        mojo.project.setDependencyArtifacts( new HashSet<Artifact>() );
+        mojo.getProject().setArtifacts( stubFactory.getScopedArtifacts() );
+        mojo.getProject().setDependencyArtifacts( new HashSet<Artifact>() );
         mojo.includeScope = "runtime";
 
         mojo.execute();
 
         ScopeArtifactFilter saf = new ScopeArtifactFilter( mojo.includeScope );
 
-        Set<Artifact> artifacts = mojo.project.getArtifacts();
+        Set<Artifact> artifacts = mojo.getProject().getArtifacts();
         for ( Artifact artifact : artifacts )
         {
             String fileName = DependencyUtil.getFormattedFileName( artifact, false );
@@ -151,13 +153,13 @@ public class TestCopyDependenciesMojo2
     public void testCopyDependenciesMojoIncludeprovidedScope()
         throws Exception
     {
-        mojo.project.setArtifacts( stubFactory.getScopedArtifacts() );
-        mojo.project.setDependencyArtifacts( new HashSet<Artifact>() );
+        mojo.getProject().setArtifacts( stubFactory.getScopedArtifacts() );
+        mojo.getProject().setDependencyArtifacts( new HashSet<Artifact>() );
         mojo.includeScope = "provided";
 
         mojo.execute();
 
-        Set<Artifact> artifacts = mojo.project.getArtifacts();
+        Set<Artifact> artifacts = mojo.getProject().getArtifacts();
         for ( Artifact artifact : artifacts )
         {
             String fileName = DependencyUtil.getFormattedFileName( artifact, false );
@@ -170,13 +172,13 @@ public class TestCopyDependenciesMojo2
     public void testCopyDependenciesMojoIncludesystemScope()
         throws Exception
     {
-        mojo.project.setArtifacts( stubFactory.getScopedArtifacts() );
-        mojo.project.setDependencyArtifacts( new HashSet<Artifact>() );
+        mojo.getProject().setArtifacts( stubFactory.getScopedArtifacts() );
+        mojo.getProject().setDependencyArtifacts( new HashSet<Artifact>() );
         mojo.includeScope = "system";
 
         mojo.execute();
 
-        Set<Artifact> artifacts = mojo.project.getArtifacts();
+        Set<Artifact> artifacts = mojo.getProject().getArtifacts();
         for ( Artifact artifact : artifacts )
         {
             String fileName = DependencyUtil.getFormattedFileName( artifact, false );
@@ -193,7 +195,7 @@ public class TestCopyDependenciesMojo2
 
         mojo.execute();
 
-        Set<Artifact> artifacts = mojo.project.getArtifacts();
+        Set<Artifact> artifacts = mojo.getProject().getArtifacts();
         for ( Artifact artifact : artifacts )
         {
             String fileName = DependencyUtil.getFormattedFileName( artifact, false );
@@ -207,14 +209,14 @@ public class TestCopyDependenciesMojo2
     public void testSubPerArtifactAndType()
         throws Exception
     {
-        mojo.project.setArtifacts( stubFactory.getTypedArtifacts() );
-        mojo.project.setDependencyArtifacts( new HashSet<Artifact>() );
+        mojo.getProject().setArtifacts( stubFactory.getTypedArtifacts() );
+        mojo.getProject().setDependencyArtifacts( new HashSet<Artifact>() );
         mojo.useSubDirectoryPerArtifact = true;
         mojo.useSubDirectoryPerType = true;
 
         mojo.execute();
 
-        Set<Artifact> artifacts = mojo.project.getArtifacts();
+        Set<Artifact> artifacts = mojo.getProject().getArtifacts();
         for ( Artifact artifact : artifacts )
         {
             String fileName = DependencyUtil.getFormattedFileName( artifact, false );
@@ -228,14 +230,14 @@ public class TestCopyDependenciesMojo2
     public void testSubPerArtifactAndScope()
         throws Exception
     {
-        mojo.project.setArtifacts( stubFactory.getTypedArtifacts() );
-        mojo.project.setDependencyArtifacts( new HashSet<Artifact>() );
+        mojo.getProject().setArtifacts( stubFactory.getTypedArtifacts() );
+        mojo.getProject().setDependencyArtifacts( new HashSet<Artifact>() );
         mojo.useSubDirectoryPerArtifact = true;
         mojo.useSubDirectoryPerScope = true;
 
         mojo.execute();
 
-        Set<Artifact> artifacts = mojo.project.getArtifacts();
+        Set<Artifact> artifacts = mojo.getProject().getArtifacts();
         for ( Artifact artifact : artifacts )
         {
             String fileName = DependencyUtil.getFormattedFileName( artifact, false );
@@ -260,8 +262,8 @@ public class TestCopyDependenciesMojo2
 				                                                   "jar",
 				                                                   null);
 
-        mojo.project.getArtifacts().add( expandedSnapshot );
-        mojo.project.getDependencyArtifacts().add( expandedSnapshot );
+        mojo.getProject().getArtifacts().add( expandedSnapshot );
+        mojo.getProject().getDependencyArtifacts().add( expandedSnapshot );
 
 		Artifact pomExpandedSnapshot = createExpandedVersionArtifact( baseVersion,
 													                  groupId, 
@@ -269,8 +271,8 @@ public class TestCopyDependenciesMojo2
 													                  "compile",
 													                  "pom",
 													                  null);
-        mojo.project.getArtifacts().add( pomExpandedSnapshot );
-        mojo.project.getDependencyArtifacts().add( pomExpandedSnapshot );
+        mojo.getProject().getArtifacts().add( pomExpandedSnapshot );
+        mojo.getProject().getDependencyArtifacts().add( pomExpandedSnapshot );
 
         mojo.useRepositoryLayout = true;
         mojo.execute();
@@ -282,18 +284,17 @@ public class TestCopyDependenciesMojo2
                 new DefaultRepositoryLayout(),
                 false );
 
-        Set<Artifact> artifacts = mojo.project.getArtifacts();
+        Set<Artifact> artifacts = mojo.getProject().getArtifacts();
         for ( Artifact artifact : artifacts )
         {
 			assertArtifactExists( artifact, targetRepository );
             
             if ( ! artifact.getBaseVersion().equals( artifact.getVersion() ) )
             {
-            	Artifact baseArtifact = mojo.factory.createArtifact( artifact.getGroupId(), 
-						            			                     artifact.getArtifactId(),
-						            			                     artifact.getBaseVersion(),
-						            			                     artifact.getScope(),
-						            			                     artifact.getType() );
+                Artifact baseArtifact =
+                    mojo.getFactory().createArtifact( artifact.getGroupId(), artifact.getArtifactId(),
+                                                      artifact.getBaseVersion(), artifact.getScope(),
+                                                      artifact.getType() );
     			assertArtifactExists( baseArtifact, targetRepository );
             }
 
@@ -343,7 +344,7 @@ public class TestCopyDependenciesMojo2
 
         mojo.execute();
 
-        Set<Artifact> artifacts = mojo.project.getArtifacts();
+        Set<Artifact> artifacts = mojo.getProject().getArtifacts();
         for ( Artifact artifact : artifacts )
         {
             String fileName = DependencyUtil.getFormattedFileName( artifact, true );
@@ -357,15 +358,15 @@ public class TestCopyDependenciesMojo2
     public void testSubPerArtifactAndTypeRemoveVersion()
         throws Exception
     {
-        mojo.project.setArtifacts( stubFactory.getTypedArtifacts() );
-        mojo.project.setDependencyArtifacts( new HashSet<Artifact>() );
+        mojo.getProject().setArtifacts( stubFactory.getTypedArtifacts() );
+        mojo.getProject().setDependencyArtifacts( new HashSet<Artifact>() );
         mojo.useSubDirectoryPerArtifact = true;
         mojo.useSubDirectoryPerType = true;
         mojo.stripVersion = true;
 
         mojo.execute();
 
-        Set<Artifact> artifacts = mojo.project.getArtifacts();
+        Set<Artifact> artifacts = mojo.getProject().getArtifacts();
         for ( Artifact artifact : artifacts )
         {
             String fileName = DependencyUtil.getFormattedFileName( artifact, true );
