@@ -173,21 +173,21 @@ Selecting Contents for Uber JAR
             </goals>
             <configuration>
               <minimizeJar>true</minimizeJar>
+              <filters>
+                <filter>
+                   <artifact>log4j:log4j</artifact>
+                   <includes>
+                       <include>**</include>
+                   </includes>
+                </filter>
+                <filter>
+                   <artifact>commons-logging:commons-logging</artifact>
+                   <includes>
+                       <include>**</include>
+                   </includes>
+                </filter>
+              </filters>            
             </configuration>
-            <filters>
-              <filter>
-                 <artifact>log4j:log4j</artifact>
-                 <includes>
-                     <include>**</include>
-                 </includes>
-              </filter>
-              <filter>
-                 <artifact>commons-logging:commons-logging</artifact>
-                 <includes>
-                     <include>**</include>
-                 </includes>
-              </filter>
-            </filters>            
           </execution>
         </executions>
       </plugin>
