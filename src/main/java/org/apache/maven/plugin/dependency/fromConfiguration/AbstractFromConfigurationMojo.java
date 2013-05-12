@@ -88,12 +88,6 @@ public abstract class AbstractFromConfigurationMojo
     private boolean overWriteIfNewer;
 
     /**
-     * To search for artifacts within the reactor and ensure consistent behaviour between Maven 2 and Maven 3.
-     */
-    @Parameter( defaultValue = "${reactorProjects}", readonly = true, required = true )
-    protected List<MavenProject> reactorProjects;
-
-    /**
      * Collection of ArtifactItems to work on. (ArtifactItem contains groupId, artifactId, version, type, classifier,
      * outputDirectory, destFileName and overWrite.) See <a href="./usage.html">Usage</a> for details.
      *
@@ -121,9 +115,6 @@ public abstract class AbstractFromConfigurationMojo
      * To host and cache localRepositoryDirectory
      */
     private ArtifactRepository overrideLocalRepository;
-
-    @Component
-    private ArtifactFactory artifactFactory;
 
     abstract ArtifactItemFilter getMarkedArtifactFilter( ArtifactItem item );
     
@@ -561,8 +552,8 @@ public abstract class AbstractFromConfigurationMojo
             }
     
             Artifact toUnpack = classifier == null
-            ? artifactFactory.createBuildArtifact( groupId, artifactId, version, packaging )
-            : artifactFactory.createArtifactWithClassifier( groupId, artifactId, version, packaging, classifier );
+            ? factory.createBuildArtifact( groupId, artifactId, version, packaging )
+            : factory.createArtifactWithClassifier( groupId, artifactId, version, packaging, classifier );
             
             setArtifactItems( Collections.singletonList( new ArtifactItem( toUnpack ) ) );
         }
