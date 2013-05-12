@@ -20,18 +20,12 @@ package org.apache.maven.report.projectinfo;
  */
 
 import org.apache.maven.doxia.sink.Sink;
+import org.apache.maven.doxia.tools.SiteTool;
 import org.apache.maven.model.Model;
-import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.i18n.I18N;
-import org.codehaus.plexus.util.IOUtil;
-import org.codehaus.plexus.util.ReaderFactory;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.Reader;
 import java.util.List;
 import java.util.Locale;
 
@@ -53,7 +47,7 @@ public class ModulesReport
     @Override
     public void executeReport( Locale locale )
     {
-        new ModulesRenderer( getSink(), getProject().getModel(), getI18N( locale ), locale ).render();
+        new ModulesRenderer( getSink(), getProject(), getI18N( locale ), locale, siteTool ).render();
     }
 
     /** {@inheritDoc} */
@@ -81,16 +75,19 @@ public class ModulesReport
     /**
      * Internal renderer class
      */
-    private class ModulesRenderer
+    static class ModulesRenderer
         extends AbstractProjectInfoRenderer
     {
-        private Model model;
+        protected MavenProject project;
 
-        ModulesRenderer( Sink sink, Model model, I18N i18n, Locale locale )
+        protected SiteTool siteTool;
+
+        ModulesRenderer( Sink sink, MavenProject project, I18N i18n, Locale locale, SiteTool siteTool )
         {
             super( sink, i18n, locale );
 
-            this.model = model;
+            this.project = project;
+            this.siteTool = siteTool;
         }
 
         @Override
@@ -132,70 +129,37 @@ public class ModulesReport
 
             endSection();
         }
-    }
 
-    // adapted from DefaultSiteTool#appendMenuItem
-    private String getRelativeLink( String baseUrl, String href, String defaultHref )
-    {
-        String selectedHref = href;
-
-        if ( selectedHref == null )
+        // adapted from DefaultSiteTool#appendMenuItem
+        private String getRelativeLink( String baseUrl, String href, String defaultHref )
         {
-            selectedHref = defaultHref;
+            String selectedHref = href;
+
+            if ( selectedHref == null )
+            {
+                selectedHref = defaultHref;
+            }
+
+            if ( baseUrl != null )
+            {
+                selectedHref = siteTool.getRelativePath( selectedHref, baseUrl );
+            }
+
+            if ( selectedHref.endsWith( "/" ) )
+            {
+                selectedHref = selectedHref.concat( "index.html" );
+            }
+            else
+            {
+                selectedHref = selectedHref.concat( "/index.html" );
+            }
+
+            return selectedHref;
         }
 
-        if ( baseUrl != null )
+        private String linkedName( String name, String link )
         {
-            selectedHref = siteTool.getRelativePath( selectedHref, baseUrl );
-        }
-
-        if ( selectedHref.endsWith( "/" ) )
-        {
-            selectedHref = selectedHref.concat( "index.html" );
-        }
-        else
-        {
-            selectedHref = selectedHref.concat( "/index.html" );
-        }
-
-        return selectedHref;
-    }
-
-    private String linkedName( String name, String link )
-    {
-        return "{" + name + ", ./" + link + "}";
-    }
-
-    /**
-     * Gets the pom model for this file.
-     *
-     * @param pom the pom
-     *
-     * @return the model
-     */
-    private Model readModel ( File pom )
-    {
-        MavenXpp3Reader xpp3 = new MavenXpp3Reader();
-        Reader reader = null;
-
-        try
-        {
-            reader = ReaderFactory.newXmlReader( pom );
-            return xpp3.read( reader );
-        }
-        catch ( IOException io )
-        {
-            getLog().debug( io );
-            return null;
-        }
-        catch ( XmlPullParserException xe )
-        {
-            getLog().debug( xe );
-            return null;
-        }
-        finally
-        {
-            IOUtil.close( reader );
+            return "{" + name + ", ./" + link + "}";
         }
     }
 }

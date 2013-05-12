@@ -20,8 +20,10 @@ package org.apache.maven.report.projectinfo;
  */
 
 import org.apache.maven.doxia.sink.Sink;
+import org.apache.maven.doxia.tools.SiteTool;
 import org.apache.maven.plugins.annotations.Mojo;
-import org.apache.maven.reporting.AbstractMavenReportRenderer;
+import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.i18n.I18N;
 
 import java.util.Locale;
 
@@ -67,7 +69,8 @@ public class ProjectIndexPageReport
     public void executeReport( Locale locale )
     {
         ProjectIndexRenderer r =
-            new ProjectIndexRenderer( getName( locale ), project.getName(), getDescription( locale ), getSink() );
+            new ProjectIndexRenderer( project, getName( locale ), getDescription( locale ), getSink(),
+                                      getI18N( locale ), locale, siteTool );
 
         r.render();
     }
@@ -92,37 +95,42 @@ public class ProjectIndexPageReport
      * Internal renderer class
      */
     private static class ProjectIndexRenderer
-        extends AbstractMavenReportRenderer
+        extends ModulesReport.ModulesRenderer
     {
         private final String title;
 
         private final String description;
 
-        private final String name;
+        private boolean modules = false;
 
-        ProjectIndexRenderer( String title, String name, String description, Sink sink )
+        ProjectIndexRenderer( MavenProject project, String title, String description, Sink sink, I18N i18n,
+                              Locale locale, SiteTool siteTool )
         {
-            super( sink );
+            super( sink, project, i18n, locale, siteTool );
 
             this.title = title;
 
             this.description = description;
-
-            this.name = name;
         }
 
         @Override
         public String getTitle()
         {
-            return title;
+            return modules ? super.getTitle() : title;
         }
 
         @Override
         public void renderBody()
         {
-            startSection( title.trim() + " " + name );
+            startSection( title.trim() + " " + project.getName() );
 
             paragraph( description );
+
+            if ( !project.getModules().isEmpty() )
+            {
+                modules = true;
+                super.renderBody();
+            }
 
             endSection();
         }

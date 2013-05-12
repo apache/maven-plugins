@@ -30,9 +30,9 @@ import org.codehaus.plexus.util.StringUtils;
 public abstract class AbstractProjectInfoRenderer
     extends AbstractMavenReportRenderer
 {
-    private I18N i18n;
+    protected I18N i18n;
 
-    private Locale locale;
+    protected Locale locale;
 
     public AbstractProjectInfoRenderer( Sink sink, I18N i18n, Locale locale )
     {
