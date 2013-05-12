@@ -39,6 +39,8 @@ String[] expectedFiles = {
     "plexus-utils-1.4.1.pom",
     "maven-model-2.0.6-sources.jar",
     "maven-model-2.0.6-javadoc.jar",
+    "maven-artifact-2.0.6.jar",
+    "maven-artifact-2.0.6.pom",
     "maven-settings-2.0.6.jar",
     "maven-settings-2.0.6.pom"
 };
