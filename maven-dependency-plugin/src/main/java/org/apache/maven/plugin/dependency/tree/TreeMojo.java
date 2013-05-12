@@ -586,7 +586,8 @@ public class TreeMojo
         ArtifactVersion recommendedVersion = allowedRange.getRecommendedVersion();
         if ( recommendedVersion == null )
         {
-            @SuppressWarnings ("unchecked") List<Restriction> restrictions = allowedRange.getRestrictions();
+            @SuppressWarnings( "unchecked" )
+            List<Restriction> restrictions = allowedRange.getRestrictions();
             for ( Restriction restriction : restrictions )
             {
                 if ( restriction.containsVersion( theVersion ) )

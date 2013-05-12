@@ -126,7 +126,8 @@ public class CopyDependenciesMojo
         {
             for ( Artifact artifact : artifacts )
             {
-                copyArtifact( artifact, isStripVersion(), this.prependGroupId, this.useBaseVersion, this.stripClassifier );
+                copyArtifact( artifact, isStripVersion(), this.prependGroupId, this.useBaseVersion,
+                              this.stripClassifier );
             }
         }
         else
@@ -137,7 +138,7 @@ public class CopyDependenciesMojo
                     repositoryFactory.createDeploymentArtifactRepository( "local",
                                                                           outputDirectory.toURL().toExternalForm(),
                                                                           repositoryLayouts.get( "default" ),
-                                                                          false /* uniqueVersion */);
+                                                                          false /* uniqueVersion */ );
                 for ( Artifact artifact : artifacts )
                 {
                     installArtifact( artifact, targetRepository );
@@ -159,7 +160,7 @@ public class CopyDependenciesMojo
         {
             copyPoms( getOutputDirectory(), artifacts, this.stripVersion );
             copyPoms( getOutputDirectory(), skippedArtifacts,
-                      this.stripVersion, this.stripClassifier );  // Artifacts that already exist may not already have poms.
+                      this.stripVersion, this.stripClassifier );  // Artifacts that already exist may not yet have poms
         }
     }
 

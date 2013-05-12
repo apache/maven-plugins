@@ -90,10 +90,10 @@ public final class DependencyUtil
      * @return Formatted file name in the format
      *         [groupId].artifactId-[version]-[classifier].[type]
      */
-    public static String getFormattedFileName( Artifact artifact, boolean removeVersion, boolean prependGroupId, 
-    		boolean useBaseVersion )
+    public static String getFormattedFileName( Artifact artifact, boolean removeVersion, boolean prependGroupId,
+                                               boolean useBaseVersion )
     {
-        return getFormattedFileName(artifact, removeVersion, prependGroupId, useBaseVersion, false);
+        return getFormattedFileName( artifact, removeVersion, prependGroupId, useBaseVersion, false );
     }
 
     /**
@@ -144,7 +144,7 @@ public final class DependencyUtil
 
         String classifierString = "";
 
-        if (!removeClassifier && StringUtils.isNotEmpty( artifact.getClassifier() ) )
+        if ( !removeClassifier && StringUtils.isNotEmpty( artifact.getClassifier() ) )
         {
             classifierString = "-" + artifact.getClassifier();
         }
