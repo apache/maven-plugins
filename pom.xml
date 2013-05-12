@@ -100,6 +100,12 @@ under the License.
     <system>JIRA</system>
     <url>http://jira.codehaus.org/browse/MPIR</url>
   </issueManagement>
+  <distributionManagement>
+    <site>
+      <id>apache.website</id>
+      <url>scm:svn:https://svn.apache.org/repos/infra/websites/production/maven/content/${maven.site.path}</url>
+    </site>
+  </distributionManagement>
 
   <properties>
     <doxiaVersion>1.4</doxiaVersion>
@@ -109,6 +115,7 @@ under the License.
     <scmVersion>1.8</scmVersion>
     <sitePluginVersion>3.2</sitePluginVersion>
     <mavenPluginVersion>3.2</mavenPluginVersion>
+    <maven.site.path>plugins-archives/${project.artifactId}-LATEST</maven.site.path>
   </properties>
 
   <dependencies>
@@ -178,7 +185,6 @@ under the License.
     <dependency>
       <groupId>org.apache.maven.plugin-tools</groupId>
       <artifactId>maven-plugin-annotations</artifactId>
-      <version>${mavenPluginVersion}</version>
       <scope>provided</scope>
     </dependency>
 
@@ -410,6 +416,12 @@ under the License.
             <alias>apache</alias>
             <validity>365</validity>
             <keyalg>RSA</keyalg>
+          </configuration>
+        </plugin>
+        <plugin>
+          <artifactId>maven-release-plugin</artifactId>
+          <configuration>
+            <releaseProfiles>apache-release,rat,run-its</releaseProfiles><!-- TODO add to parent pom -->
           </configuration>
         </plugin>
       </plugins>
