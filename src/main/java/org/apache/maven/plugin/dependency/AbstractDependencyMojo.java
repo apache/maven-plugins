@@ -212,12 +212,11 @@ public abstract class AbstractDependencyMojo
     protected void copyFile( File artifact, File destFile )
         throws MojoExecutionException
     {
-        Log theLog = this.getLog();
         try
         {
-            theLog.info(
-                "Copying " + ( this.outputAbsoluteArtifactFilename ? artifact.getAbsolutePath() : artifact.getName() )
-                    + " to " + destFile );
+            getLog().info( "Copying "
+                               + ( this.outputAbsoluteArtifactFilename ? artifact.getAbsolutePath()
+                                               : artifact.getName() ) + " to " + destFile );
 
             if ( artifact.isDirectory() )
             {
