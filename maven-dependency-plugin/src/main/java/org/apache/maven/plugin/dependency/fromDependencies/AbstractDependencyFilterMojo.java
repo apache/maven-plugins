@@ -63,6 +63,30 @@ public abstract class AbstractDependencyFilterMojo
     extends AbstractDependencyMojo
 {
     /**
+     * Overwrite release artifacts
+     *
+     * @since 1.0
+     */
+    @Parameter( property = "overWriteReleases", defaultValue = "false" )
+    protected boolean overWriteReleases;
+
+    /**
+     * Overwrite snapshot artifacts
+     *
+     * @since 1.0
+     */
+    @Parameter( property = "overWriteSnapshots", defaultValue = "false" )
+    protected boolean overWriteSnapshots;
+
+    /**
+     * Overwrite artifacts that don't exist or are older than the source.
+     *
+     * @since 2.0
+     */
+    @Parameter( property = "overWriteIfNewer", defaultValue = "true" )
+    protected boolean overWriteIfNewer;
+
+    /**
      * If we should exclude transitive dependencies
      *
      * @since 2.0
@@ -179,30 +203,6 @@ public abstract class AbstractDependencyFilterMojo
     @Parameter( property = "markersDirectory",
                 defaultValue = "${project.build.directory}/dependency-maven-plugin-markers" )
     protected File markersDirectory;
-
-    /**
-     * Overwrite release artifacts
-     *
-     * @since 1.0
-     */
-    @Parameter( property = "overWriteReleases", defaultValue = "false" )
-    protected boolean overWriteReleases;
-
-    /**
-     * Overwrite snapshot artifacts
-     *
-     * @since 1.0
-     */
-    @Parameter( property = "overWriteSnapshots", defaultValue = "false" )
-    protected boolean overWriteSnapshots;
-
-    /**
-     * Overwrite artifacts that don't exist or are older than the source.
-     *
-     * @since 2.0
-     */
-    @Parameter( property = "overWriteIfNewer", defaultValue = "true" )
-    protected boolean overWriteIfNewer;
 
     /**
      * Prepend the groupId during copy.

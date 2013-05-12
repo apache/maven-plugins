@@ -20,7 +20,6 @@ package org.apache.maven.plugin.dependency.fromConfiguration;
  */
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.ArtifactRepositoryFactory;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
@@ -56,7 +55,7 @@ public abstract class AbstractFromConfigurationMojo
     extends AbstractDependencyMojo
 {
     /**
-     * Default location used for mojo unless overridden in ArtifactItem
+     * Default output location used for mojo, unless overridden in ArtifactItem.
      *
      * @since 1.0
      */
