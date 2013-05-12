@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.dependency;
+package org.apache.maven.plugin.dependency.resolvers;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -23,6 +23,7 @@ import java.io.File;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.plugin.dependency.AbstractDependencyMojoTestCase;
 import org.apache.maven.plugin.dependency.resolvers.ResolveDependenciesMojo;
 import org.apache.maven.plugin.dependency.utils.DependencyStatusSets;
 import org.apache.maven.plugin.testing.SilentLog;
