@@ -38,7 +38,7 @@
         <configuration>
           <project implementation="org.apache.maven.plugin.dependency.testUtils.stubs.DuplicateDependenciesProjectStub"/>
           <skip>true</skip>
-          <outputDirectory>/some/folder</outputDirectory>
+          <outputDirectory>target/unit-tests/skip-test</outputDirectory>
         </configuration>
       </plugin>
     </plugins>
