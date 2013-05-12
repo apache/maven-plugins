@@ -280,7 +280,20 @@ Transformers in <<<org.apache.maven.plugins.shade.resource>>>
   </build>
   ...
 </project>
-+----- 
++-----
+
+  Since maven-shade-plugin-3.0 it is also possible to give a list of resources which should not be included, like: 
+
++-----
+<transformer implementation="org.apache.maven.plugins.shade.resource.DontIncludeResourceTransformer">
+  <resources>
+    <resource>.txt</resource>
+    <resource>READ.me</resource>
+  </resources>
+</transformer>
++-----
+
+
 
 * Adding New Resources with the {IncludeResourceTransformer}
 
