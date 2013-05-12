@@ -32,131 +32,130 @@ public class TestSkip
     public void testSkipAnalyze()
         throws Exception
     {
-        doTest("analyze");
+        doTest( "analyze" );
     }
 
     public void testSkipAnalyzeDepMgt()
         throws Exception
     {
-        doTest("analyze-dep-mgt");
+        doTest( "analyze-dep-mgt" );
     }
 
     public void testSkipAnalyzeOnly()
         throws Exception
     {
-        doTest("analyze-only");
+        doTest( "analyze-only" );
     }
 
     public void testSkipAnalyzeReport()
         throws Exception
     {
-        doSpecialTest("analyze-report");
+        doSpecialTest( "analyze-report" );
     }
 
     public void testSkipAnalyzeDuplicate()
         throws Exception
     {
-        doTest("analyze-duplicate");
+        doTest( "analyze-duplicate" );
     }
 
     public void testSkipBuildClasspath()
         throws Exception
     {
-        doTest("build-classpath");
+        doTest( "build-classpath" );
     }
 
     public void testSkipCopy()
         throws Exception
     {
-        doTest("copy");
+        doTest( "copy" );
     }
 
     public void testSkipCopyDependencies()
         throws Exception
     {
-        doTest("copy-dependencies");
+        doTest( "copy-dependencies" );
     }
 
     public void testSkipGet()
         throws Exception
     {
-        doSpecialTest("get");
+        doSpecialTest( "get" );
     }
 
     public void testSkipGoOffline()
         throws Exception
     {
-        doTest("go-offline");
+        doTest( "go-offline" );
     }
 
     public void testSkipList()
         throws Exception
     {
-        doTest("list");
+        doTest( "list" );
     }
 
     public void testSkipProperties()
         throws Exception
     {
-        doTest("properties");
+        doTest( "properties" );
     }
 
     public void testSkipPurgeLocalRepository()
         throws Exception
     {
-        doTest("purge-local-repository");
+        doTest( "purge-local-repository" );
     }
 
     public void testSkipResolve()
         throws Exception
     {
-        doTest("resolve");
+        doTest( "resolve" );
     }
 
     public void testSkipResolvePlugins()
         throws Exception
     {
-        doTest("resolve-plugins");
+        doTest( "resolve-plugins" );
     }
 
     public void testSkipSources()
         throws Exception
     {
-        doTest("sources");
+        doTest( "sources" );
     }
 
     public void testSkipTree()
         throws Exception
     {
-        doTest("tree");
+        doTest( "tree" );
     }
 
     public void testSkipUnpack()
         throws Exception
     {
-        doTest("unpack");
+        doTest( "unpack" );
     }
 
     public void testSkipUnpackDependencies()
         throws Exception
     {
-        doTest("unpack-dependencies");
+        doTest( "unpack-dependencies" );
     }
 
-
-    protected void doTest(String mojoName)
+    protected void doTest( String mojoName )
         throws Exception
     {
-        doConfigTest(mojoName, "plugin-config.xml");
+        doConfigTest( mojoName, "plugin-config.xml" );
     }
 
-    protected void doSpecialTest(String mojoName)
+    protected void doSpecialTest( String mojoName )
         throws Exception
     {
-        doConfigTest(mojoName, "plugin-" + mojoName + "-config.xml");
+        doConfigTest( mojoName, "plugin-" + mojoName + "-config.xml" );
     }
 
-    private void doConfigTest(String mojoName, String configFile)
+    private void doConfigTest( String mojoName, String configFile )
         throws Exception
     {
         File testPom =
