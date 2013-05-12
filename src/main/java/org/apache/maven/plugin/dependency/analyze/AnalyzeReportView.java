@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.dependency;
+package org.apache.maven.plugin.dependency.analyze;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one

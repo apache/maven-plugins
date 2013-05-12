@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.dependency;
+package org.apache.maven.plugin.dependency.analyze;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -19,15 +19,15 @@ package org.apache.maven.plugin.dependency;
  * under the License.
  */
 
-import org.apache.maven.plugins.annotations.Execute;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 
 /**
  * Analyzes the dependencies of this project and determines which are: used and declared; used and undeclared; unused
- * and declared. This goal is intended to be used standalone, thus it always executes the <code>test-compile</code>
- * phase - use the <code>dependency:analyze-only</code> goal instead when participating in the build lifecycle.
+ * and declared. This goal is intended to be used in the build lifecycle, thus it assumes that the
+ * <code>test-compile</code> phase has been executed - use the <code>dependency:analyze</code> goal instead when
+ * running standalone.
  * 
  * <p>By default, <a href="http://maven.apache.org/shared/maven-dependency-analyzer/">maven-dependency-analyzer</a> is
  * used to perform the analysis, with limitations due to the fact that it works at bytecode level, but any
@@ -35,12 +35,12 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
  *
  * @author <a href="mailto:markhobson@gmail.com">Mark Hobson</a>
  * @version $Id$
- * @see AnalyzeOnlyMojo
- * @since 2.0-alpha-3
+ * @see AnalyzeMojo
+ * @since 2.0
  */
-@Mojo( name = "analyze", requiresDependencyResolution = ResolutionScope.TEST, threadSafe = true )
-@Execute( phase = LifecyclePhase.TEST_COMPILE )
-public class AnalyzeMojo
+@Mojo( name = "analyze-only", requiresDependencyResolution = ResolutionScope.TEST,
+       defaultPhase = LifecyclePhase.VERIFY, threadSafe = true )
+public class AnalyzeOnlyMojo
     extends AbstractAnalyzeMojo
 {
     // subclassed to provide annotations
