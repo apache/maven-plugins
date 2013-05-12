@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.dependency;
+package org.apache.maven.plugin.dependency.fromDependencies;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -21,7 +21,6 @@ package org.apache.maven.plugin.dependency;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.dependency.fromDependencies.AbstractDependencyFilterMojo;
 import org.apache.maven.plugin.dependency.utils.DependencyUtil;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
