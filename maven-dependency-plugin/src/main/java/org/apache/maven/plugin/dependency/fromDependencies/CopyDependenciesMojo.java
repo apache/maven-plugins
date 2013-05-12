@@ -97,6 +97,18 @@ public class CopyDependenciesMojo
     protected boolean addParentPoms;
 
     /**
+     * hide property defined in parent class, since it is specific to unpack but doesn't have any meaning in copy
+     */
+    @Parameter( property = "dependency.useJvmChmod", defaultValue = "true", readonly = true )
+    protected boolean useJvmChmod = true;
+
+    /**
+     * hide property defined in parent class, since it is specific to unpack but doesn't have any meaning in copy
+     */
+    @Parameter( property = "dependency.ignorePermissions", defaultValue = "false", readonly = true )
+    protected boolean ignorePermissions;
+
+    /**
      * Main entry into mojo. Gets the list of dependencies and iterates through
      * calling copyArtifact.
      *

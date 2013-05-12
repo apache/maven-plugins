@@ -123,7 +123,7 @@ public abstract class AbstractDependencyMojo
     /**
      * Contains the full list of projects in the reactor.
      */
-    @Parameter( defaultValue = "${reactorProjects}" )
+    @Parameter( defaultValue = "${reactorProjects}", readonly = true )
     protected List<MavenProject> reactorProjects;
 
     /**
@@ -282,7 +282,7 @@ public abstract class AbstractDependencyMojo
 
             unArchiver.setUseJvmChmod( useJvmChmod );
 
-            unArchiver.setIgnorePermissions( this.ignorePermissions );
+            unArchiver.setIgnorePermissions( ignorePermissions );
 
             unArchiver.setSourceFile( file );
 

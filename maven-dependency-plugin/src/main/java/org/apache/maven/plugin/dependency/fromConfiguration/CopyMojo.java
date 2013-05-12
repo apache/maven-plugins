@@ -77,6 +77,18 @@ public class CopyMojo
     private String artifact;
 
     /**
+     * hide property defined in parent class, since it is specific to unpack but doesn't have any meaning in copy
+     */
+    @Parameter( property = "dependency.useJvmChmod", defaultValue = "true", readonly = true )
+    protected boolean useJvmChmod = true;
+
+    /**
+     * hide property defined in parent class, since it is specific to unpack but doesn't have any meaning in copy
+     */
+    @Parameter( property = "dependency.ignorePermissions", defaultValue = "false", readonly = true )
+    protected boolean ignorePermissions;
+
+    /**
      * Main entry into mojo. This method gets the ArtifactItems and iterates through each one passing it to
      * copyArtifact.
      *
