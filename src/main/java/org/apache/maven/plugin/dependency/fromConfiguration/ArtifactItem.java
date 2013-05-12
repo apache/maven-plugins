@@ -349,7 +349,7 @@ public class ArtifactItem
     /**
      * @return Returns a comma separated list of excluded items
      */
-    public String getExcludes ()
+    public String getExcludes()
     {
         return DependencyUtil.cleanToBeTokenizedString( this.excludes );
     }
@@ -373,7 +373,7 @@ public class ArtifactItem
     /**
      * @param includes A comma separated list of items to include i.e. <code>**\/*.xml, **\/*.properties</code>
      */
-    public void setIncludes ( String includes )
+    public void setIncludes( String includes )
     {
         this.includes = includes;
     }

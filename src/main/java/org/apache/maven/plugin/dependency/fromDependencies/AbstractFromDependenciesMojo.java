@@ -33,6 +33,13 @@ import java.io.File;
 public abstract class AbstractFromDependenciesMojo
     extends AbstractDependencyFilterMojo
 {
+    /**
+     * Output location.
+     *
+     * @since 1.0
+     */
+    @Parameter( property = "outputDirectory", defaultValue = "${project.build.directory}/dependency" )
+    protected File outputDirectory;
 
     /**
      * Strip artifact version during copy
@@ -45,14 +52,6 @@ public abstract class AbstractFromDependenciesMojo
      */
     @Parameter( property = "mdep.stripClassifier", defaultValue = "false" )
     protected boolean stripClassifier = false;
-
-    /**
-     * Default location used for mojo unless overridden in ArtifactItem
-     *
-     * @since 1.0
-     */
-    @Parameter( property = "outputDirectory", defaultValue = "${project.build.directory}/dependency" )
-    protected File outputDirectory;
 
     /**
      * Place each artifact in the same directory layout as a default repository.
