@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.dependency;
+package org.apache.maven.plugin.dependency.fromConfiguration;
 
 /* 
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -21,6 +21,7 @@ package org.apache.maven.plugin.dependency;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.dependency.AbstractDependencyMojoTestCase;
 import org.apache.maven.plugin.dependency.fromConfiguration.ArtifactItem;
 import org.apache.maven.plugin.dependency.fromConfiguration.UnpackMojo;
 import org.apache.maven.plugin.dependency.testUtils.DependencyTestUtils;
