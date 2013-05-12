@@ -20,6 +20,7 @@ package org.apache.maven.plugins.shade.resource;
  */
 
 import org.apache.maven.plugins.shade.relocation.Relocator;
+import org.codehaus.plexus.util.StringUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,12 +35,25 @@ public class DontIncludeResourceTransformer
     implements ResourceTransformer
 {
     String resource;
+    
+    List<String> resources;
 
     public boolean canTransformResource( String r )
     {
-        if ( r.endsWith( resource ) )
+        if ( StringUtils.isNotEmpty( resource ) && r.endsWith( resource ) )
         {
             return true;
+        }
+        
+        if( resources != null )
+        {
+            for( String resourceEnd : resources )
+            {
+                if( r.endsWith( resourceEnd ) )
+                {
+                    return true;
+                }
+            }
         }
 
         return false;
