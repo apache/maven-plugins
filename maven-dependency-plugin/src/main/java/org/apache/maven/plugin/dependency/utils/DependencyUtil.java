@@ -206,30 +206,27 @@ public final class DependencyUtil
 
         sb.append( artifact.getArtifactId() );
 
+        if ( !removeVersion )
+        {
+            sb.append( "-" );
+            sb.append( artifact.getVersion() );
+        }
+
         if ( StringUtils.isNotEmpty( artifact.getClassifier() ) )
         {
             sb.append( "-" );
             sb.append( artifact.getClassifier() );
         }
 
-        if ( !removeVersion )
+        // if the classifier and type are the same (sources), then don't
+        // repeat.
+        // avoids names like foo-sources-sources
+        if ( !StringUtils.equals( artifact.getClassifier(), artifact.getType() ) )
         {
-            sb.append( "-" );
-            sb.append( artifact.getVersion() );
             sb.append( "-" );
             sb.append( artifact.getType() );
         }
-        else
-        {
-            // if the classifier and type are the same (sources), then don't
-            // repeat.
-            // avoids names like foo-sources-sources
-            if ( !StringUtils.equals( artifact.getClassifier(), artifact.getType() ) )
-            {
-                sb.append( "-" );
-                sb.append( artifact.getType() );
-            }
-        }
+
         return sb.toString();
     }
 
