@@ -88,7 +88,7 @@ String [] expectedFiles4 = {
     "org/codehaus/plexus/plexus-utils/1.4.1/plexus-utils-1.4.1.jar",
     "org/codehaus/plexus/plexus-utils/1.4.1/plexus-utils-1.4.1.pom",
     "org/apache/apache/5/apache-5.pom", // parent pom
-    "org/apache/maven/maven/2.0.6/maven-2.0.6.jar", // parent of maven-model
+    "org/apache/maven/maven/2.0.6/maven-2.0.6.pom", // parent of maven-model
     "org/apache/apache/3/apache-3.pom", // parent of parent of maven
     "org/codehaus/plexus/plexus/1.0.11/plexus-1.0.11.pom" // parent of plexus-utils
 };
