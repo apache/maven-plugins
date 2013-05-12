@@ -94,8 +94,7 @@ public class ResolvePluginsMojo
                 String logStr = "Plugin Resolved: " + DependencyUtil.getFormattedFileName( plugin, false );
                 if ( !silent )
                 {
-                    this.getLog()
-                        .info( logStr );
+                    this.getLog().info( logStr );
                 }
 
                 if ( outputWriter != null )
@@ -113,8 +112,7 @@ public class ResolvePluginsMojo
 
                         if ( !silent )
                         {
-                            this.getLog()
-                                .info( logStr );
+                            this.getLog().info( logStr );
                         }
 
                         if ( outputWriter != null )

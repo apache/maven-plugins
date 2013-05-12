@@ -227,11 +227,10 @@ public class AnalyzeReportMojo
     public boolean isSkip()
     {
         return skip;
-}
+    }
 
     public void setSkip( boolean skip )
     {
         this.skip = skip;
     }
-
 }

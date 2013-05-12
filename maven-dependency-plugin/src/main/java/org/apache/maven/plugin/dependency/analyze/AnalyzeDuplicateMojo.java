@@ -172,7 +172,7 @@ public class AnalyzeDuplicateMojo
     public boolean isSkip()
     {
         return skip;
-}
+    }
 
     public void setSkip( boolean skip )
     {
