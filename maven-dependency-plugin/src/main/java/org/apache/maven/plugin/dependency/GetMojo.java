@@ -48,7 +48,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Downloads a single artifact transitively from the specified remote repositories. Caveat: will always check the
+ * Resolves a single artifact, eventually transitively, from the specified remote repositories. Caveat: will always check the
  * central repository defined in the super pom. You could use a mirror entry in your settings.xml
  */
 @Mojo( name = "get", requiresProject = false, threadSafe = true )
@@ -158,6 +158,7 @@ public class GetMojo
      * The destination file or directory to copy the artifact to, if other than the local repository
      *
      * @since 2.4
+     * @deprecated if you need to copy the resolved artifact, use dependency:copy
      */
     @Parameter( property = "dest" )
     private String destination;
@@ -262,11 +263,13 @@ public class GetMojo
         {
             if ( transitive )
             {
+                getLog().info( "Resolving " + toDownload + " with transitive dependencies" );
                 artifactResolver.resolveTransitively( Collections.singleton( toDownload ), dummyOriginatingArtifact,
                                                       repoList, localRepository, source );
             }
             else
             {
+                getLog().info( "Resolving " + toDownload );
                 artifactResolver.resolve( toDownload, repoList, localRepository );
             }
         }
@@ -277,12 +280,17 @@ public class GetMojo
 
         if ( destination != null )
         {
+            getLog().warn( "destination/dest parameter is deprecated: it will disappear in future version." );
+
             File src = toDownload.getFile();
             File dest = new File( destination );
-            if ( getLog().isInfoEnabled() )
+
+            getLog().info( "Copying " + src.getAbsolutePath() + " to " + dest.getAbsolutePath() );
+            if ( transitive )
             {
-                getLog().info( "Copying " + src.getAbsolutePath() + " to " + dest.getAbsolutePath() );
+                getLog().warn( "Notice transitive dependencies won't be copied." );
             }
+
             try
             {
                 if ( dest.isDirectory() )
