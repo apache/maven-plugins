@@ -47,14 +47,14 @@ under the License.
   </ciManagement>
 
   <distributionManagement>
-    <site>
+    <site><!-- to be copied in every plugin pom, since inheritance adds unwanted artifactId -->
       <id>apache.website</id>
-      <url>scm:svn:https://svn.apache.org/repos/infra/websites/production/maven/content/plugins-archives</url>
+      <url>scm:svn:https://svn.apache.org/repos/infra/websites/production/maven/content/plugins-archives/${maven.site.path}</url>
     </site>
   </distributionManagement>
 
   <properties>
-    <maven.site.path>plugins-archives/${project.artifactId}</maven.site.path><!-- no "-LATEST" to match distributionManagement url -->
+    <maven.site.path>plugins-archives/${project.artifactId}-LATEST</maven.site.path>
   </properties>
 
   <repositories>
