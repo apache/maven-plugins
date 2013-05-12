@@ -41,7 +41,7 @@ import java.util.List;
  * @since 1.0
  */
 @Mojo( name = "unpack", defaultPhase = LifecyclePhase.PROCESS_SOURCES, requiresProject = false, threadSafe = true )
-public final class UnpackMojo
+public class UnpackMojo
     extends AbstractFromConfigurationMojo
 {
 
