@@ -342,6 +342,16 @@ public abstract class AbstractDependencyFilterMojo
         while ( project.hasParent() )
         {
             project = project.getParent();
+
+            if ( project.getArtifact() == null )
+            {
+                // Maven 2.x bug
+                Artifact artifact =
+                    factory.createBuildArtifact( project.getGroupId(), project.getArtifactId(), project.getVersion(),
+                                                 project.getPackaging() );
+                project.setArtifact( artifact );
+            }
+
             if ( !artifacts.add( project.getArtifact() ) )
             {
                 // artifact already in the set
