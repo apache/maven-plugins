@@ -23,7 +23,10 @@ package org.apache.maven.plugin.dependency.utils;
  *
  */
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
@@ -141,6 +144,11 @@ public class DependencyStatusSets
 
     public String getOutput( boolean outputAbsoluteArtifactFilename, boolean outputScope )
     {
+        return getOutput(outputAbsoluteArtifactFilename, outputScope, false);
+    }
+
+    public String getOutput( boolean outputAbsoluteArtifactFilename, boolean outputScope, boolean sort )
+    {
         StringBuilder sb = new StringBuilder();
         sb.append( "\n" );
         sb.append( "The following files have been resolved:\n" );
@@ -150,27 +158,7 @@ public class DependencyStatusSets
         }
         else
         {
-            for ( Artifact artifact : resolvedDependencies )
-            {
-                String artifactFilename = null;
-                if ( outputAbsoluteArtifactFilename )
-                {
-                    try
-                    {
-                        // we want to print the absolute file name here
-                        artifactFilename = artifact.getFile().getAbsoluteFile().getPath();
-                    }
-                    catch ( NullPointerException e )
-                    {
-                        // ignore the null pointer, we'll output a null string
-                        artifactFilename = null;
-                    }
-                }
-
-                String id = outputScope ? artifact.toString() : artifact.getId();
-
-                sb.append( "   " + id + ( outputAbsoluteArtifactFilename ? ":" + artifactFilename : "" ) + "\n" );
-            }
+            sb.append( buildArtifactListOutput( resolvedDependencies, outputAbsoluteArtifactFilename, outputScope, sort ) );
         }
 
         if ( this.skippedDependencies != null && !this.skippedDependencies.isEmpty() )
@@ -179,10 +167,7 @@ public class DependencyStatusSets
             sb.append( "The following files were skipped:\n" );
             Set<Artifact> skippedDependencies = new LinkedHashSet<Artifact>();
             skippedDependencies.addAll( this.skippedDependencies );
-            for ( Artifact artifact : skippedDependencies )
-            {
-                sb.append( "   " + artifact.getId() + "\n" );
-            }
+            sb.append( buildArtifactListOutput( skippedDependencies, outputAbsoluteArtifactFilename, outputScope, sort ) );
         }
 
         if ( this.unResolvedDependencies != null && !this.unResolvedDependencies.isEmpty() )
@@ -191,13 +176,46 @@ public class DependencyStatusSets
             sb.append( "The following files have NOT been resolved:\n" );
             Set<Artifact> unResolvedDependencies = new LinkedHashSet<Artifact>();
             unResolvedDependencies.addAll( this.unResolvedDependencies );
-            for ( Artifact artifact : unResolvedDependencies )
-            {
-                sb.append( "   " + artifact.getId() + "\n" );
-            }
+            sb.append( buildArtifactListOutput( unResolvedDependencies, outputAbsoluteArtifactFilename, outputScope, sort ) );
         }
         sb.append( "\n" );
 
         return sb.toString();
+    }
+
+    private StringBuilder buildArtifactListOutput(Set<Artifact> artifacts,  boolean outputAbsoluteArtifactFilename, boolean outputScope, boolean sort )
+    {
+        StringBuilder sb = new StringBuilder();
+        List<String> artifactStringList = new ArrayList<String>();
+        for ( Artifact artifact : artifacts )
+        {
+            String artifactFilename = null;
+            if ( outputAbsoluteArtifactFilename )
+            {
+                try
+                {
+                    // we want to print the absolute file name here
+                    artifactFilename = artifact.getFile().getAbsoluteFile().getPath();
+                }
+                catch ( NullPointerException e )
+                {
+                    // ignore the null pointer, we'll output a null string
+                    artifactFilename = null;
+                }
+            }
+
+            String id = outputScope ? artifact.toString() : artifact.getId();
+
+            artifactStringList.add( "   " + id + ( outputAbsoluteArtifactFilename ? ":" + artifactFilename : "" ) + "\n" );
+        }
+        if ( sort )
+        {
+            Collections.sort( artifactStringList );
+        }
+        for (String artifactString : artifactStringList)
+        {
+            sb.append( artifactString );
+        }
+        return sb;
     }
 }
