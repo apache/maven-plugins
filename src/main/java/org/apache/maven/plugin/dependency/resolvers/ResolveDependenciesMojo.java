@@ -59,6 +59,15 @@ public class ResolveDependenciesMojo
     DependencyStatusSets results;
 
     /**
+     * Sort the output list of resolved artifacts alphabetically.
+     * The default ordering matches the classpath order.
+     * 
+     * @since 2.9
+     */
+    @Parameter( property = "sort", defaultValue = "false" )
+    boolean sort;
+
+    /**
      * Main entry into mojo. Gets the list of dependencies and iterates through displaying the resolved version.
      *
      * @throws MojoExecutionException with a message if an error occurs.
@@ -69,7 +78,7 @@ public class ResolveDependenciesMojo
         // get sets of dependencies
         results = this.getDependencySets( false );
 
-        String output = results.getOutput( outputAbsoluteArtifactFilename, outputScope );
+        String output = results.getOutput( outputAbsoluteArtifactFilename, outputScope, sort );
         try
         {
             if ( outputFile == null )
