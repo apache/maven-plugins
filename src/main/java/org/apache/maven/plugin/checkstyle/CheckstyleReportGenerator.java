@@ -69,6 +69,8 @@ public class CheckstyleReportGenerator
     private SiteTool siteTool;
 
     private String xrefLocation;
+    
+    private List<String> treeWalkerNames = Collections.singletonList( "TreeWalker" );
 
     public CheckstyleReportGenerator( Sink sink, ResourceBundle bundle, File basedir, SiteTool siteTool )
     {
@@ -363,7 +365,7 @@ public class CheckstyleReportGenerator
         {
             String ruleName = configChildren[cci].getName();
 
-            if ( "TreeWalker".equals( ruleName ) )
+            if ( treeWalkerNames.contains( ruleName ) )
             {
                 // special sub-case
                 doRuleChildren( configChildren[cci], parentConfigurations, results );
@@ -859,6 +861,17 @@ public class CheckstyleReportGenerator
     public void setCheckstyleConfig( Configuration config )
     {
         this.checkstyleConfig = config;
+    }
+    
+    
+    public void setTreeWalkerNames( List<String> treeWalkerNames )
+    {
+        this.treeWalkerNames = treeWalkerNames;
+    }
+    
+    public List<String> getTreeWalkerNames()
+    {
+        return treeWalkerNames;
     }
 
 }

@@ -165,6 +165,14 @@ public abstract class AbstractCheckstyleReport
     private File xrefLocation;
 
     /**
+     * When using custom treeWalkers, specify their names here so the checks inside the treeWalker end up the the rule-summary
+     * 
+     * @since 2.11
+     */
+    @Parameter
+    private List<String> treeWalkerNames;
+
+    /**
      */
     @Component
     private Renderer siteRenderer;
@@ -443,6 +451,10 @@ public abstract class AbstractCheckstyleReport
             {
                 getLog().warn( "Unable to locate Source XRef to link to - DISABLED" );
             }
+        }
+        if ( treeWalkerNames != null )
+        {
+            generator.setTreeWalkerNames( treeWalkerNames );
         }
         generator.generateReport( results );
     }
