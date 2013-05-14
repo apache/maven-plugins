@@ -101,6 +101,7 @@
             <configuration>
               <copyPom>true</copyPom>
               <outputDirectory>${project.build.directory}/it/copy-dep-test-1</outputDirectory>
+              <useJvmChmod>false</useJvmChmod>
             </configuration>
           </execution>
           <execution>

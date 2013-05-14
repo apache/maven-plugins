@@ -77,15 +77,15 @@ public class CopyMojo
     private String artifact;
 
     /**
-     * hide property defined in parent class, since it is specific to unpack but doesn't have any meaning in copy
+     * <i>not used in this goal</i>
      */
-    @Parameter( property = "dependency.useJvmChmod", defaultValue = "true", readonly = true )
+    @Parameter( defaultValue = "true" )
     protected boolean useJvmChmod = true;
 
     /**
-     * hide property defined in parent class, since it is specific to unpack but doesn't have any meaning in copy
+     * <i>not used in this goal</i>
      */
-    @Parameter( property = "dependency.ignorePermissions", defaultValue = "false", readonly = true )
+    @Parameter( defaultValue = "false" )
     protected boolean ignorePermissions;
 
     /**
