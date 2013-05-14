@@ -193,6 +193,7 @@ public class ShadeMojo
      * </pre>
      * <em>Note:</em> Support for includes exists only since version 1.4.
      */
+    @SuppressWarnings( "MismatchedReadAndWriteOfArray" )
     @Parameter
     private PackageRelocation[] relocations;
 
@@ -224,6 +225,7 @@ public class ShadeMojo
      * &lt;/filters&gt;
      * </pre>
      */
+    @SuppressWarnings( "MismatchedReadAndWriteOfArray" )
     @Parameter
     private ArchiveFilter[] filters;
 
@@ -539,20 +541,23 @@ public class ShadeMojo
                 {
                     getLog().info( "Replacing original artifact with shaded artifact." );
                     File originalArtifact = project.getArtifact().getFile();
-                    replaceFile( originalArtifact, outputJar );
-
-                    if ( createSourcesJar )
+                    if (originalArtifact != null)
                     {
-                        File shadedSources = shadedSourcesArtifactFile();
+                        replaceFile( originalArtifact, outputJar );
 
-                        replaceFile( shadedSources, sourcesJar );
+                        if ( createSourcesJar )
+                        {
+                            File shadedSources = shadedSourcesArtifactFile();
 
-                        projectHelper.attachArtifact( project, "jar", "sources", shadedSources );
-                    }
+                            replaceFile( shadedSources, sourcesJar );
 
-                    if ( createDependencyReducedPom )
-                    {
-                        createDependencyReducedPom( artifactIds );
+                            projectHelper.attachArtifact( project, "jar", "sources", shadedSources );
+                        }
+
+                        if ( createDependencyReducedPom )
+                        {
+                            createDependencyReducedPom( artifactIds );
+                        }
                     }
                 }
             }
@@ -671,10 +676,8 @@ public class ShadeMojo
             return relocators;
         }
 
-        for ( int i = 0; i < relocations.length; i++ )
+        for ( PackageRelocation r : relocations )
         {
-            PackageRelocation r = relocations[i];
-
             relocators.add( new SimpleRelocator( r.getPattern(), r.getShadedPattern(), r.getIncludes(), r.getExcludes(),
                                                  r.isRawString() ) );
         }
@@ -901,24 +904,19 @@ public class ShadeMojo
 
                 if ( f.exists() )
                 {
+                    //noinspection ResultOfMethodCallIgnored
                     f.delete();
                 }
 
                 Writer w = WriterFactory.newXmlWriter( f );
 
-                String origRelativePath = null;
                 String replaceRelativePath = null;
                 if ( model.getParent() != null )
                 {
-                    origRelativePath = model.getParent().getRelativePath();
+                    replaceRelativePath = model.getParent().getRelativePath();
 
                 }
-                replaceRelativePath = origRelativePath;
 
-                if ( origRelativePath == null )
-                {
-                    origRelativePath = "../pom.xml";
-                }
 
                 if ( model.getParent() != null )
                 {
