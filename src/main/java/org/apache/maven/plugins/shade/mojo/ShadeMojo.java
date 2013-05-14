@@ -193,6 +193,7 @@ public class ShadeMojo
      * </pre>
      * <em>Note:</em> Support for includes exists only since version 1.4.
      */
+    @SuppressWarnings( "MismatchedReadAndWriteOfArray" )
     @Parameter
     private PackageRelocation[] relocations;
 
@@ -224,6 +225,7 @@ public class ShadeMojo
      * &lt;/filters&gt;
      * </pre>
      */
+    @SuppressWarnings( "MismatchedReadAndWriteOfArray" )
     @Parameter
     private ArchiveFilter[] filters;
 
@@ -393,18 +395,7 @@ public class ShadeMojo
         throws MojoExecutionException
     {
 
-        if ( shaderHint != null )
-        {
-            try
-            {
-                shader = (Shader) plexusContainer.lookup( Shader.ROLE, shaderHint );
-            }
-            catch ( ComponentLookupException e )
-            {
-                throw new MojoExecutionException(
-                    "unable to lookup own Shader implementation with hint:'" + shaderHint + "'", e );
-            }
-        }
+        setupHintedShader();
 
         Set<File> artifacts = new LinkedHashSet<File>();
         Set<String> artifactIds = new LinkedHashSet<String>();
@@ -443,35 +434,7 @@ public class ShadeMojo
             }
         }
 
-        for ( Artifact artifact : project.getArtifacts() )
-        {
-            if ( !artifactSelector.isSelected( artifact ) )
-            {
-                getLog().info( "Excluding " + artifact.getId() + " from the shaded jar." );
-
-                continue;
-            }
-
-            if ( "pom".equals( artifact.getType() ) )
-            {
-                getLog().info( "Skipping pom dependency " + artifact.getId() + " in the shaded jar." );
-                continue;
-            }
-
-            getLog().info( "Including " + artifact.getId() + " in the shaded jar." );
-
-            artifacts.add( artifact.getFile() );
-            artifactIds.add( getId( artifact ) );
-
-            if ( createSourcesJar )
-            {
-                File file = resolveArtifactSources( artifact );
-                if ( file != null )
-                {
-                    sourceArtifacts.add( file );
-                }
-            }
-        }
+        processArtifactSelectors( artifacts, artifactIds, sourceArtifacts, artifactSelector );
 
         File outputJar = ( outputFile != null ) ? outputFile : shadedArtifactFileWithClassifier();
         File sourcesJar = shadedSourceArtifactFileWithClassifier();
@@ -539,20 +502,23 @@ public class ShadeMojo
                 {
                     getLog().info( "Replacing original artifact with shaded artifact." );
                     File originalArtifact = project.getArtifact().getFile();
-                    replaceFile( originalArtifact, outputJar );
-
-                    if ( createSourcesJar )
+                    if (originalArtifact != null)
                     {
-                        File shadedSources = shadedSourcesArtifactFile();
+                        replaceFile( originalArtifact, outputJar );
 
-                        replaceFile( shadedSources, sourcesJar );
+                        if ( createSourcesJar )
+                        {
+                            File shadedSources = shadedSourcesArtifactFile();
 
-                        projectHelper.attachArtifact( project, "jar", "sources", shadedSources );
-                    }
+                            replaceFile( shadedSources, sourcesJar );
 
-                    if ( createDependencyReducedPom )
-                    {
-                        createDependencyReducedPom( artifactIds );
+                            projectHelper.attachArtifact( project, "jar", "sources", shadedSources );
+                        }
+
+                        if ( createDependencyReducedPom )
+                        {
+                            createDependencyReducedPom( artifactIds );
+                        }
                     }
                 }
             }
@@ -560,6 +526,57 @@ public class ShadeMojo
         catch ( Exception e )
         {
             throw new MojoExecutionException( "Error creating shaded jar: " + e.getMessage(), e );
+        }
+    }
+
+    private void setupHintedShader()
+        throws MojoExecutionException
+    {
+        if ( shaderHint != null )
+        {
+            try
+            {
+                shader = (Shader) plexusContainer.lookup( Shader.ROLE, shaderHint );
+            }
+            catch ( ComponentLookupException e )
+            {
+                throw new MojoExecutionException(
+                    "unable to lookup own Shader implementation with hint:'" + shaderHint + "'", e );
+            }
+        }
+    }
+
+    private void processArtifactSelectors( Set<File> artifacts, Set<String> artifactIds, Set<File> sourceArtifacts,
+                                           ArtifactSelector artifactSelector )
+    {
+        for ( Artifact artifact : project.getArtifacts() )
+        {
+            if ( !artifactSelector.isSelected( artifact ) )
+            {
+                getLog().info( "Excluding " + artifact.getId() + " from the shaded jar." );
+
+                continue;
+            }
+
+            if ( "pom".equals( artifact.getType() ) )
+            {
+                getLog().info( "Skipping pom dependency " + artifact.getId() + " in the shaded jar." );
+                continue;
+            }
+
+            getLog().info( "Including " + artifact.getId() + " in the shaded jar." );
+
+            artifacts.add( artifact.getFile() );
+            artifactIds.add( getId( artifact ) );
+
+            if ( createSourcesJar )
+            {
+                File file = resolveArtifactSources( artifact );
+                if ( file != null )
+                {
+                    sourceArtifacts.add( file );
+                }
+            }
         }
     }
 
@@ -585,17 +602,7 @@ public class ShadeMojo
                 // Still didn't work.   We'll do a copy
                 try
                 {
-                    FileOutputStream fout = new FileOutputStream( origFile );
-                    FileInputStream fin = new FileInputStream( oldFile );
-                    try
-                    {
-                        IOUtil.copy( fin, fout );
-                    }
-                    finally
-                    {
-                        IOUtil.close( fin );
-                        IOUtil.close( fout );
-                    }
+                    copyFiles( oldFile, origFile );
                 }
                 catch ( IOException ex )
                 {
@@ -615,23 +622,29 @@ public class ShadeMojo
                 // Still didn't work.   We'll do a copy
                 try
                 {
-                    FileOutputStream fout = new FileOutputStream( oldFile );
-                    FileInputStream fin = new FileInputStream( newFile );
-                    try
-                    {
-                        IOUtil.copy( fin, fout );
-                    }
-                    finally
-                    {
-                        IOUtil.close( fin );
-                        IOUtil.close( fout );
-                    }
+                    copyFiles( newFile, oldFile );
                 }
                 catch ( IOException ex )
                 {
                     throw new MojoExecutionException( "Could not replace original artifact with shaded artifact!", ex );
                 }
             }
+        }
+    }
+
+    private void copyFiles( File source, File target )
+        throws IOException
+    {
+        FileOutputStream fout = new FileOutputStream( target );
+        FileInputStream fin = new FileInputStream( source );
+        try
+        {
+            IOUtil.copy( fin, fout );
+        }
+        finally
+        {
+            IOUtil.close( fin );
+            IOUtil.close( fout );
         }
     }
 
@@ -671,10 +684,8 @@ public class ShadeMojo
             return relocators;
         }
 
-        for ( int i = 0; i < relocations.length; i++ )
+        for ( PackageRelocation r : relocations )
         {
-            PackageRelocation r = relocations[i];
-
             relocators.add( new SimpleRelocator( r.getPattern(), r.getShadedPattern(), r.getIncludes(), r.getExcludes(),
                                                  r.isRawString() ) );
         }
@@ -901,24 +912,19 @@ public class ShadeMojo
 
                 if ( f.exists() )
                 {
+                    //noinspection ResultOfMethodCallIgnored
                     f.delete();
                 }
 
                 Writer w = WriterFactory.newXmlWriter( f );
 
-                String origRelativePath = null;
                 String replaceRelativePath = null;
                 if ( model.getParent() != null )
                 {
-                    origRelativePath = model.getParent().getRelativePath();
+                    replaceRelativePath = model.getParent().getRelativePath();
 
                 }
-                replaceRelativePath = origRelativePath;
 
-                if ( origRelativePath == null )
-                {
-                    origRelativePath = "../pom.xml";
-                }
 
                 if ( model.getParent() != null )
                 {
