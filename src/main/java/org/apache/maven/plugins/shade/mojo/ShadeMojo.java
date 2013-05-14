@@ -395,18 +395,7 @@ public class ShadeMojo
         throws MojoExecutionException
     {
 
-        if ( shaderHint != null )
-        {
-            try
-            {
-                shader = (Shader) plexusContainer.lookup( Shader.ROLE, shaderHint );
-            }
-            catch ( ComponentLookupException e )
-            {
-                throw new MojoExecutionException(
-                    "unable to lookup own Shader implementation with hint:'" + shaderHint + "'", e );
-            }
-        }
+        setupHintedShader();
 
         Set<File> artifacts = new LinkedHashSet<File>();
         Set<String> artifactIds = new LinkedHashSet<String>();
@@ -445,35 +434,7 @@ public class ShadeMojo
             }
         }
 
-        for ( Artifact artifact : project.getArtifacts() )
-        {
-            if ( !artifactSelector.isSelected( artifact ) )
-            {
-                getLog().info( "Excluding " + artifact.getId() + " from the shaded jar." );
-
-                continue;
-            }
-
-            if ( "pom".equals( artifact.getType() ) )
-            {
-                getLog().info( "Skipping pom dependency " + artifact.getId() + " in the shaded jar." );
-                continue;
-            }
-
-            getLog().info( "Including " + artifact.getId() + " in the shaded jar." );
-
-            artifacts.add( artifact.getFile() );
-            artifactIds.add( getId( artifact ) );
-
-            if ( createSourcesJar )
-            {
-                File file = resolveArtifactSources( artifact );
-                if ( file != null )
-                {
-                    sourceArtifacts.add( file );
-                }
-            }
-        }
+        processArtifactSelectors( artifacts, artifactIds, sourceArtifacts, artifactSelector );
 
         File outputJar = ( outputFile != null ) ? outputFile : shadedArtifactFileWithClassifier();
         File sourcesJar = shadedSourceArtifactFileWithClassifier();
@@ -568,6 +529,57 @@ public class ShadeMojo
         }
     }
 
+    private void setupHintedShader()
+        throws MojoExecutionException
+    {
+        if ( shaderHint != null )
+        {
+            try
+            {
+                shader = (Shader) plexusContainer.lookup( Shader.ROLE, shaderHint );
+            }
+            catch ( ComponentLookupException e )
+            {
+                throw new MojoExecutionException(
+                    "unable to lookup own Shader implementation with hint:'" + shaderHint + "'", e );
+            }
+        }
+    }
+
+    private void processArtifactSelectors( Set<File> artifacts, Set<String> artifactIds, Set<File> sourceArtifacts,
+                                           ArtifactSelector artifactSelector )
+    {
+        for ( Artifact artifact : project.getArtifacts() )
+        {
+            if ( !artifactSelector.isSelected( artifact ) )
+            {
+                getLog().info( "Excluding " + artifact.getId() + " from the shaded jar." );
+
+                continue;
+            }
+
+            if ( "pom".equals( artifact.getType() ) )
+            {
+                getLog().info( "Skipping pom dependency " + artifact.getId() + " in the shaded jar." );
+                continue;
+            }
+
+            getLog().info( "Including " + artifact.getId() + " in the shaded jar." );
+
+            artifacts.add( artifact.getFile() );
+            artifactIds.add( getId( artifact ) );
+
+            if ( createSourcesJar )
+            {
+                File file = resolveArtifactSources( artifact );
+                if ( file != null )
+                {
+                    sourceArtifacts.add( file );
+                }
+            }
+        }
+    }
+
     private boolean invalidMainArtifact()
     {
         return project.getArtifact().getFile() == null || !project.getArtifact().getFile().isFile();
@@ -590,17 +602,7 @@ public class ShadeMojo
                 // Still didn't work.   We'll do a copy
                 try
                 {
-                    FileOutputStream fout = new FileOutputStream( origFile );
-                    FileInputStream fin = new FileInputStream( oldFile );
-                    try
-                    {
-                        IOUtil.copy( fin, fout );
-                    }
-                    finally
-                    {
-                        IOUtil.close( fin );
-                        IOUtil.close( fout );
-                    }
+                    copyFiles( oldFile, origFile );
                 }
                 catch ( IOException ex )
                 {
@@ -620,23 +622,29 @@ public class ShadeMojo
                 // Still didn't work.   We'll do a copy
                 try
                 {
-                    FileOutputStream fout = new FileOutputStream( oldFile );
-                    FileInputStream fin = new FileInputStream( newFile );
-                    try
-                    {
-                        IOUtil.copy( fin, fout );
-                    }
-                    finally
-                    {
-                        IOUtil.close( fin );
-                        IOUtil.close( fout );
-                    }
+                    copyFiles( newFile, oldFile );
                 }
                 catch ( IOException ex )
                 {
                     throw new MojoExecutionException( "Could not replace original artifact with shaded artifact!", ex );
                 }
             }
+        }
+    }
+
+    private void copyFiles( File source, File target )
+        throws IOException
+    {
+        FileOutputStream fout = new FileOutputStream( target );
+        FileInputStream fin = new FileInputStream( source );
+        try
+        {
+            IOUtil.copy( fin, fout );
+        }
+        finally
+        {
+            IOUtil.close( fin );
+            IOUtil.close( fout );
         }
     }
 
