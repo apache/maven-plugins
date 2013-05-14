@@ -97,15 +97,15 @@ public class CopyDependenciesMojo
     protected boolean addParentPoms;
 
     /**
-     * hide property defined in parent class, since it is specific to unpack but doesn't have any meaning in copy
+     * <i>not used in this goal</i>
      */
-    @Parameter( property = "dependency.useJvmChmod", defaultValue = "true", readonly = true )
+    @Parameter
     protected boolean useJvmChmod = true;
 
     /**
-     * hide property defined in parent class, since it is specific to unpack but doesn't have any meaning in copy
+     * <i>not used in this goal</i>
      */
-    @Parameter( property = "dependency.ignorePermissions", defaultValue = "false", readonly = true )
+    @Parameter
     protected boolean ignorePermissions;
 
     /**

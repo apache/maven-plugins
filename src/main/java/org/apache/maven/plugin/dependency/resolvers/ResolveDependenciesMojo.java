@@ -59,6 +59,23 @@ public class ResolveDependenciesMojo
     DependencyStatusSets results;
 
     /**
+     * Sort the output list of resolved artifacts alphabetically.
+     * The default ordering matches the classpath order.
+     * 
+     * @since 2.8
+     */
+    @Parameter( property = "sort", defaultValue = "false" )
+    boolean sort;
+
+    /**
+     * Include parent poms in the dependency resolution list.
+     * 
+     * @since 2.8
+     */
+    @Parameter( property = "includeParents", defaultValue = "false" )
+    boolean includeParents;
+
+    /**
      * Main entry into mojo. Gets the list of dependencies and iterates through displaying the resolved version.
      *
      * @throws MojoExecutionException with a message if an error occurs.
@@ -67,9 +84,9 @@ public class ResolveDependenciesMojo
         throws MojoExecutionException
     {
         // get sets of dependencies
-        results = this.getDependencySets( false );
+        results = this.getDependencySets( false, includeParents );
 
-        String output = results.getOutput( outputAbsoluteArtifactFilename, outputScope );
+        String output = results.getOutput( outputAbsoluteArtifactFilename, outputScope, sort );
         try
         {
             if ( outputFile == null )
