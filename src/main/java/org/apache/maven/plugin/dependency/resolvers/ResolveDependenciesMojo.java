@@ -62,7 +62,7 @@ public class ResolveDependenciesMojo
      * Sort the output list of resolved artifacts alphabetically.
      * The default ordering matches the classpath order.
      * 
-     * @since 2.9
+     * @since 2.8
      */
     @Parameter( property = "sort", defaultValue = "false" )
     boolean sort;
@@ -70,7 +70,7 @@ public class ResolveDependenciesMojo
     /**
      * Include parent poms in the dependency resolution list.
      * 
-     * @since 2.9
+     * @since 2.8
      */
     @Parameter( property = "includeParents", defaultValue = "false" )
     boolean includeParents;
