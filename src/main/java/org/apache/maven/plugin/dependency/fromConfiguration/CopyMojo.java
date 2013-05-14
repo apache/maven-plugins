@@ -79,13 +79,13 @@ public class CopyMojo
     /**
      * <i>not used in this goal</i>
      */
-    @Parameter( defaultValue = "true" )
+    @Parameter
     protected boolean useJvmChmod = true;
 
     /**
      * <i>not used in this goal</i>
      */
-    @Parameter( defaultValue = "false" )
+    @Parameter
     protected boolean ignorePermissions;
 
     /**
