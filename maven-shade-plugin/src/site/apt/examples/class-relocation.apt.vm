@@ -1,0 +1,72 @@
+ ------
+ Relocating Classes
+ ------
+ Mauro Talevi
+ ------
+ 2008-07-21
+ ------
+
+~~ Licensed to the Apache Software Foundation (ASF) under one
+~~ or more contributor license agreements.  See the NOTICE file
+~~ distributed with this work for additional information
+~~ regarding copyright ownership.  The ASF licenses this file
+~~ to you under the Apache License, Version 2.0 (the
+~~ "License"); you may not use this file except in compliance
+~~ with the License.  You may obtain a copy of the License at
+~~
+~~   http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~ Unless required by applicable law or agreed to in writing,
+~~ software distributed under the License is distributed on an
+~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+~~ KIND, either express or implied.  See the License for the
+~~ specific language governing permissions and limitations
+~~ under the License.
+
+Relocating Classes
+
+  If the uber JAR is reused as a dependency of some other project, directly including classes from the artifact's
+  dependencies in the uber JAR can cause class loading conflicts due to duplicate classes on the class path. To
+  address this issue, one can relocate the classes which get included in the shaded artifact in order to create a
+  private copy of their bytecode:
+
++-----
+<project>
+  ...
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>${project.version}</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <relocations>
+                <relocation>
+                  <pattern>org.codehaus.plexus.util</pattern>
+                  <shadedPattern>org.shaded.plexus.util</shadedPattern>
+                  <excludes>
+                    <exclude>org.codehaus.plexus.util.xml.Xpp3Dom</exclude>
+                    <exclude>org.codehaus.plexus.util.xml.pull.*</exclude>
+                  </excludes>
+                </relocation>
+              </relocations>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  ...
+</project>
++-----
+
+  This instructs the plugin to move classes from the package <<<org.codehaus.plexus.util>>> and its subpackages
+  into the package <<<org.shaded.plexus.util>>> by moving the corresponding JAR file entries and rewritting the
+  affected bytecode. The class <<<Xpp3Dom>>> and some others will remain in their original package.
+

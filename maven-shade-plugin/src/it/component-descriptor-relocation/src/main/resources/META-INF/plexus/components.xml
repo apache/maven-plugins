@@ -1,0 +1,17 @@
+<component-set>
+  <components>
+    <component>
+      <role>org.apache.maven.component.api.Component</role>
+      <role-hint>test</role-hint>
+      <implementation>org.apache.maven.test.TestComponent</implementation>
+      <instantiation-strategy>per-lookup</instantiation-strategy>
+      <requirements>
+        <requirement>
+          <role>org.apache.maven.component.api.Component</role>
+          <role-hint>default</role-hint>
+          <field-name>component</field-name>
+        </requirement>
+      </requirements>
+    </component>
+  </components>
+</component-set>

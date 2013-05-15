@@ -1,0 +1,89 @@
+ ------
+ Usage
+ ------
+ Mauro Talevi
+ ------
+ 2008-07-21
+ ------
+
+~~ Licensed to the Apache Software Foundation (ASF) under one
+~~ or more contributor license agreements.  See the NOTICE file
+~~ distributed with this work for additional information
+~~ regarding copyright ownership.  The ASF licenses this file
+~~ to you under the Apache License, Version 2.0 (the
+~~ "License"); you may not use this file except in compliance
+~~ with the License.  You may obtain a copy of the License at
+~~
+~~   http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~ Unless required by applicable law or agreed to in writing,
+~~ software distributed under the License is distributed on an
+~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+~~ KIND, either express or implied.  See the License for the
+~~ specific language governing permissions and limitations
+~~ under the License.
+
+Usage
+
+* Creating a Shaded JAR
+
+  The goals for the Shade Plugin are bound to the <<<package>>> phase in the
+  build lifecycle.
+
++-----
+mvn package
++-----
+
+* Configuring Your Shade Plugin
+
++-----
+<project>
+  ...
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>${currentVersion}</version>
+        <configuration>
+          <!-- put your configurations here -->
+        </configuration>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  ...
+</project>
++-----
+
+* Resource Transformers
+
+*-----------------------------------------+--------------------------------------+
+| ApacheLicenseResourceTransformer        | Prevents license duplication         |
+*-----------------------------------------+--------------------------------------+
+| ApacheNoticeResourceTransformer         | Prepares merged NOTICE               |
+*-----------------------------------------+--------------------------------------+
+| AppendingTransformer                    | Adds content to a resource           |
+*-----------------------------------------+--------------------------------------+
+| ComponentsXmlResourceTransformer        | Aggregates Plexus <<<components.xml>>>|
+*-----------------------------------------+--------------------------------------+
+| DontIncludeResourceTransformer          | Prevents inclusion of matching resources |
+*-----------------------------------------+--------------------------------------+
+| IncludeResourceTransformer              | Adds files from the project          |
+*-----------------------------------------+--------------------------------------+
+| ManifestResourceTransformer             | Sets entries in the <<<MANIFEST>>>   |
+*-----------------------------------------+--------------------------------------+
+| ServicesResourceTransformer             | Merges <<<META-INF/services>>> resources |
+*-----------------------------------------+--------------------------------------+
+| XmlAppendingTransformer                 | Adds XML content to an XML resource  | 
+*-----------------------------------------+--------------------------------------+
+Transformers in <<<org.apache.maven.plugins.shade.resource>>>
+
+  For more information, see {{{./examples/resource-transformers.html}samples}}.
