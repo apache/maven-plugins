@@ -1,4 +1,3 @@
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,31 +17,15 @@
  * under the License.
  */
 
-import java.io.*;
-import org.codehaus.plexus.util.*;
+target = new File( basedir, 'target' );
+assert target.isDirectory();
 
-boolean result = true;
+// msite604.siteRepositoryUrl property value from settings.xml
+settingsDirectory = new File( target, 'settingsRepositoryUrl' );
+assert settingsDirectory.isDirectory();
 
-try
-{
-    File target = new File( basedir, "target" );
-    if ( !target.exists() || !target.isDirectory() )
-    {
-        System.err.println( "target file is missing or not a directory." );
-        return false;
-    }
+// msite604.siteRepositoryUrl property value from pom.xml
+defaultDirectory = new File( target, 'defaultRepositoryUrl' );
+assert !defaultDirectory.exists();
 
-    File siteDirectory = new File( target, "settingsRepositoryUrl" );
-    if ( !siteDirectory.exists() || !siteDirectory.isDirectory() )
-    {
-        System.err.println( "site file is missing or not a directory." );
-        return false;
-    }
-}
-catch ( IOException e )
-{
-    e.printStackTrace();
-    result = false;
-}
-
-return result;
+return true;
