@@ -34,7 +34,7 @@ Maven AntRun Plugin
   It is <not> the intention of this plugin to provide a means of polluting the
   POM, so it's encouraged to move all your Ant tasks to a <<<build.xml>>> file
   and just call it from the POM using Ant's
-  {{{http://ant.apache.org/manual/CoreTasks/ant.html}\<ant/\> task}}.
+  {{{http://ant.apache.org/manual/Tasks/ant.html}\<ant/\> task}}.
 
   One of the main purposes of this plugin is to facilitate the migration from Ant
   based projects to Maven. Some projects may not currently be able to migrate
