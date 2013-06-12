@@ -302,27 +302,30 @@ public abstract class AbstractWarPackagingTask
         }
         else
         {
-            if(source.isDirectory())
+            if ( source.isDirectory() )
             {
-	            context.getLog().warn( " + " + targetFilename + " is packaged from the source folder" );
+                context.getLog().warn( " + " + targetFilename + " is packaged from the source folder" );
 
-	            try {
-					JarArchiver archiver = context.getJarArchiver();
-					archiver.addDirectory(source);
-					archiver.setDestFile(destination);
-					archiver.createArchive();
-				} catch (ArchiverException e) {
-		            String msg = "Failed to create " + targetFilename;
-					context.getLog().error( msg, e );
-					throw new RuntimeException(msg, e);
-				}
+                try
+                {
+                    JarArchiver archiver = context.getJarArchiver();
+                    archiver.addDirectory( source );
+                    archiver.setDestFile( destination );
+                    archiver.createArchive();
+                }
+                catch ( ArchiverException e )
+                {
+                    String msg = "Failed to create " + targetFilename;
+                    context.getLog().error( msg, e );
+                    throw new RuntimeException( msg, e );
+                }
             }
             else
             {
-	        	FileUtils.copyFile( source.getCanonicalFile(), destination );
-	            // preserve timestamp
-	            destination.setLastModified( source.lastModified() );
-	            context.getLog().debug( " + " + targetFilename + " has been copied." );
+                FileUtils.copyFile( source.getCanonicalFile(), destination );
+                // preserve timestamp
+                destination.setLastModified( source.lastModified() );
+                context.getLog().debug( " + " + targetFilename + " has been copied." );
             }
             return true;
         }
