@@ -23,6 +23,7 @@ import com.puppycrawl.tools.checkstyle.DefaultLogger;
 import com.puppycrawl.tools.checkstyle.XMLLogger;
 import com.puppycrawl.tools.checkstyle.api.AuditListener;
 import com.puppycrawl.tools.checkstyle.api.CheckstyleException;
+import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -46,6 +47,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Reader;
+import java.util.List;
 
 /**
  * Perform a violation check against the last Checkstyle run to see if there are
@@ -125,6 +127,14 @@ public class CheckstyleViolationCheckMojo
      */
     @Parameter( property = "checkstyle.console", defaultValue = "false" )
     private boolean logViolationsToConsole;
+
+    /**
+     * Specifies the location of the resources to be used for Checkstyle.
+     *
+     * @since 2.11
+     */
+    @Parameter( defaultValue = "${project.resources}", readonly = true )
+    protected List<Resource> resources;
 
     /**
      * <p>
@@ -355,7 +365,7 @@ public class CheckstyleViolationCheckMojo
                     request.setConsoleListener( getConsoleListener() ).setConsoleOutput( consoleOutput )
                         .setExcludes( excludes ).setFailsOnError( failsOnError ).setIncludes( includes )
                         .setIncludeTestSourceDirectory( includeTestSourceDirectory ).setListener( getListener() )
-                        .setLog( getLog() ).setProject( project ).setSourceDirectory( sourceDirectory )
+                        .setLog( getLog() ).setProject( project ).setSourceDirectory( sourceDirectory ).setResources( resources )
                         .setStringOutputStream( stringOutputStream ).setSuppressionsLocation( suppressionsLocation )
                         .setTestSourceDirectory( testSourceDirectory ).setConfigLocation( configLocation )
                         .setPropertyExpansion( propertyExpansion ).setHeaderLocation( headerLocation )
