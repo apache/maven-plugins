@@ -317,7 +317,7 @@ public abstract class AbstractWarPackagingTask
                 {
                     String msg = "Failed to create " + targetFilename;
                     context.getLog().error( msg, e );
-                    throw new RuntimeException( msg, e );
+                    throw new IOException( msg, e );
                 }
             }
             else
