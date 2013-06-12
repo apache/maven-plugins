@@ -32,6 +32,7 @@ import org.apache.maven.plugin.war.util.WebappStructure;
 import org.apache.maven.shared.filtering.MavenFilteringException;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.UnArchiver;
+import org.codehaus.plexus.archiver.jar.JarArchiver;
 import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
 import org.codehaus.plexus.interpolation.InterpolationException;
 import org.codehaus.plexus.util.DirectoryScanner;
@@ -93,10 +94,10 @@ public abstract class AbstractWarPackagingTask
             {
                 destinationFileName = targetPrefix + fileToCopyName;
             }
-            
+
 
             if ( filtered
-                && !context.isNonFilteredExtension( sourceFile.getName() ) ) 
+                && !context.isNonFilteredExtension( sourceFile.getName() ) )
             {
                 copyFilteredFile( sourceId, context, sourceFile, destinationFileName );
             }
@@ -301,10 +302,28 @@ public abstract class AbstractWarPackagingTask
         }
         else
         {
-            FileUtils.copyFile( source.getCanonicalFile(), destination );
-            // preserve timestamp
-            destination.setLastModified( source.lastModified() );
-            context.getLog().debug( " + " + targetFilename + " has been copied." );
+            if(source.isDirectory())
+            {
+	            context.getLog().warn( " + " + targetFilename + " is packaged from the source folder" );
+
+	            try {
+					JarArchiver archiver = context.getJarArchiver();
+					archiver.addDirectory(source);
+					archiver.setDestFile(destination);
+					archiver.createArchive();
+				} catch (ArchiverException e) {
+		            String msg = "Failed to create " + targetFilename;
+					context.getLog().error( msg, e );
+					throw new RuntimeException(msg, e);
+				}
+            }
+            else
+            {
+	        	FileUtils.copyFile( source.getCanonicalFile(), destination );
+	            // preserve timestamp
+	            destination.setLastModified( source.lastModified() );
+	            context.getLog().debug( " + " + targetFilename + " has been copied." );
+            }
             return true;
         }
     }
