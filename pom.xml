@@ -35,7 +35,7 @@ under the License.
 
   <name>Apache Maven Javadoc Plugin</name>
   <description>
-    The Maven Javadoc Plugin is a plugin that uses the javadoc tool for
+    The Apache Maven Javadoc Plugin is a plugin that uses the javadoc tool for
     generating javadocs for the specified project.
   </description>
   <inceptionYear>2004</inceptionYear>
